@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <03 Nov 03 10:57:06 flechsig>              */
+/* Time-stamp: <03 Feb 04 14:55:50 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -13,7 +13,10 @@
 /* 19.2.99 Slope erweitert */
 
 #ifndef PHASE_H
-#define PHASE_H         
+#define PHASE_H   
+/* dont show a watch (work around static variables) */
+#define NOWATCH     
+      
 /* #define LOGFILE             /* compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
