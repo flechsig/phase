@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.h */
 /*   Date      : <16 Feb 04 14:51:56 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:13:55 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:15:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -45,7 +45,7 @@ struct mdatset
         double w1, w2, l1, l2;
         double slopew, slopel;
         double du, dw, dl, dRu, dRw, dRl;
-        int Art;
+  int Art;   /* UF 9.7.04 */
 };   
 
 int  	mgetpickfile(struct mdatset *, char *); 
