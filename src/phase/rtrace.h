@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.h */
 /*  Date      : <21 Oct 97 07:43:33 flechsig>  */
-/*  Time-stamp: <12 Nov 99 08:50:29 flechsig>  */
+/*  Time-stamp: <07 Jan 00 08:54:00 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]RTRACE.H           */
@@ -11,8 +11,6 @@
 
 #ifndef __RTRACE_LOADED
 #define __RTRACE_LOADED	1         
-
-   
 
 void RayTracec(struct PHASEset *, struct BeamlineType *), 
    /*  RayTracec(struct PHASEset *, struct datset *),      */
@@ -27,8 +25,8 @@ void RayTracec(struct PHASEset *, struct BeamlineType *),
   #define ray_tracef ray_tracef_
 #endif
 
-     
-extern void extractmap35(double *, double*, double *, double *, double*, int *),
+extern void extractmap35(double *, double*, double *, double *, double*, 
+			 int *),
 	    ray_tracef(struct RayType *, struct RayType *, int *, 
                        double *, double*, double *, double *),
             readmatrixfile35(FString *, double *);
