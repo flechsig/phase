@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <23 Dec 99 14:44:05 flechsig>              */
+/* Time-stamp: <07 Jan 00 08:39:36 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -14,7 +14,6 @@
 
 #ifndef PHASE_H
 #define PHASE_H         
-/* #define DEBUG */
 /* #define LOGFILE             /* compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
