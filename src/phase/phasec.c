@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <19 Nov 99 09:57:27 flechsig>  */
+/*  Time-stamp: <19 Nov 99 11:56:17 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -2053,6 +2053,7 @@ void FetchWidget(int wnr, char *boxname)
 }
 
 void  MultiplyMatrix() 
+     /* wird nicht mehr gebraucht ??? */
 {
   XmString label, *list;
   int      itemcount, ac= 0; 
@@ -2085,7 +2086,7 @@ void  MultiplyMatrix()
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*2. Matrix */ 
       XtFree(lab);
       printf("mmatr: %s\n%s\n%s\n", labfield[0], labfield[1], labfield[2]);
-      MMatrix(labfield);  
+      /*  MMatrix(labfield);  */
       while (ac < itemcount)    
         {        
 	  sprintf(copstr, "copy %s tmp.tmp", labfield[0]); 
@@ -2096,7 +2097,7 @@ void  MultiplyMatrix()
 	  sprintf(labfield[1], "tmp.tmp");   
 	  sprintf(labfield[2],"%s", lab);   
 	  XtFree(lab); 
-	  MMatrix(labfield);  
+	  /*  MMatrix(labfield); */ 
 	  system("delete/noconfirm tmp.tmp;*"); 
 	}       
     }
