@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <06 Jan 00 15:34:59 flechsig> 
+# Time-stamp: <07 Jan 00 08:25:19 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -28,13 +28,12 @@ PHASEDIR   = $(prefix)/phase
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
 #FFLAGS  = -w -f -s -N3 -N51
 #FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
-FFLAGS  = $(FDEBUG) -c -f -i -B108 -W -s -N3 -N51 -N22
+FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 -N22 -N33
 LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc 
 #FFLAGS for absoft f77 compiler
 #	-g generate debugging information
 #	-c generate object files
 #     	-f fold to lower case
-#       -i the default are two byte integer integer*2 (important)
 #	-B108 append a single underscore to funtion names
 #	-W allow > 72 columns
 #	-s force all program storage to be treated as static and initialized
@@ -45,6 +44,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
 #	-B111 Validate FPU stack after procedure calls (for debugging only)
 #	-m0 give more error messages
 #	-N22 append underscore to common block names (wichtig wegen pawc)
+#       -N33 pack structures (kein alignment) 
 
 .phony: all makewhat    
 #########################################################################
