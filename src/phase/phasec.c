@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <30 Apr 04 13:27:18 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:28:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -660,7 +660,7 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 
 	  XmListAddItem(widget_array[kCOptiList2], label, 0); 
 	  XmStringFree(label);                                 /* y zeile ok */
-	  printf("hallo\n");
+	  
 	  fscanf(f, "%d\n", &parameterzahl);      
 	  if ((f1= fopen(minname, "r")) == NULL)   
 	    fprintf(stderr, "Minfile: %s- not found\n", minname);
