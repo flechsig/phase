@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <29 Jan 04 13:59:27 flechsig> 
+#  Time-stamp: <03 Feb 04 15:23:18 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -12,21 +12,37 @@
 
 bin_PROGRAMS = phase
 phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
-	  geometrypck.c bline.c \
+	  geometrypck.c bline.c phase0.c\
 	  mirrorpck.c pst.c \
 	  cutils.c rtrace.c \
 	  phasegraffor.F phasefor.for \
 	  phase_source.for \
 	  phase_integration.for 
 
-phase_LDADD = $(libdir)/libphase.so
+##phase_LDADD = $(libdir)/libphase.so
+phase_LDADD = $(libdir)/@LIBPHASE@
 
-##AM_CPPFLAGS = -I/usr/X11R6/include
-##AM_FFLAGS = -c -f -B108 -W -s -N3 -N51 -N22 -N33
-AM_LDFLAGS = -L@F77LIB@ -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
+pkgdata_DATA = ../data/coefficient-example.dat \
+ ../data/higz_windows.dat\
+ ../data/map35_lh.omx\
+ ../data/map35_rh.omx\
+ ../data/map70_lh.omx\
+ ../data/map70_rh.omx\
+ ../data/news\
+ ../data/phase.dat\
+ ../data/phase.hlb\
+ ../data/phaseinit.com\
+ ../data/phaseuser.com
+
+AM_CPPFLAGS = -DLINUX @CDEBUG@
+AM_FFLAGS   = @FDEBUG@
+AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+          -L@F77LIB@ -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L@CERNLIB@ -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
 ##we use the c linker
 F77LINK = $(LINK)
+
+
 
 ## end Makefile.am
