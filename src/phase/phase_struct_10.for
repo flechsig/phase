@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.for
 c Date      : <22 Oct 97 14:56:27 flechsig> 
-c Time-stamp: <07 Jan 00 10:02:44 flechsig> 
+c Time-stamp: <07 Jan 00 10:30:09 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c
 c !!!! stuct statstics die Feldgrenzen halbiert da sonst
@@ -250,7 +250,7 @@ c------------------ flags ---------------------------------------
 
 c------------------ statistics ----------------------------------
 c /* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
-c so wars bei Johannes - halbiere felder
+c so wars bei Johannes - verkleinere felder
 
 c	structure/statistics/
 c	   real*8 fd1phmax(512,512)
@@ -259,8 +259,8 @@ c	   integer inumzit,inumyit,inumzan,inumyan
 c	end structure
 
 	structure/statistics/
-	   real*8 fd1phmax(256,256)
-	   integer nn1,nn2,inumb(550,550)
+	   real*8 fd1phmax(128,128)
+	   integer nn1,nn2,inumb(256,256)
 	   integer inumzit,inumyit,inumzan,inumyan
 	end structure
 
