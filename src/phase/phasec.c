@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <22 Apr 04 09:49:24 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:27:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -440,7 +440,7 @@ void GetOptiBox(struct PHASEset *x)
   parameterzahl-= 2;
   if ((oppickfile= fopen(x->optipckname, "w+")) == NULL)
     {
-      fprintf(stderr, "error: open file %s\n", opresname); exit(-1);   
+      fprintf(stderr, "error: open file %s\n", x->optipckname); exit(-1);   
     }    
   if ((minfile= fopen(minname, "w+")) == NULL)
     {
@@ -497,6 +497,7 @@ void GetOptiBox(struct PHASEset *x)
 
   fprintf(minfile, "\nMIGRAD\nRETURN\n");
   fclose(oppickfile); fclose(minfile);
+  fprintf("GetOptiBox: wrote files: %s and %s\n", x->optipckname, minname)
   XmStringFree(label); XtFree(minname); XtFree(opresname); 
 } /* end GetOptiBox */
 
