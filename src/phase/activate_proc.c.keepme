@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <21 Apr 04 11:23:29 flechsig>  */
+/*   Time-stamp: <30 Apr 04 08:20:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -370,7 +370,7 @@ void activate_proc(w, tag, reason)
 	i= GetOElement(&PHASESet,	/*  */
 		    &bl->ElementList[(bl->position)- 1].MDat,
 		    &bl->ElementList[(bl->position)- 1].GDat);  
-	printf("a. proc: returned etype= %d\n" ,i);
+	printf("activate_proc: returned etype= %d\n" ,i);
 
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
 		   &bl->ElementList[(bl->position)- 1].mir, i,
