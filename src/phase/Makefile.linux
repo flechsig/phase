@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <12 Jan 00 07:57:16 flechsig> 
+# Time-stamp: <11 Feb 00 15:59:16 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -69,7 +69,7 @@ OBJECTF = phasegraffor.o phasefor.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
-AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 \
+AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 Makefile.pc2038 \
           phase_struct.for news
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
