@@ -1,7 +1,12 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
-/*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <22 Jun 01 11:10:43 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
+/*   Date      : <29 Oct 03 11:53:02 flechsig>  */
+/*   Time-stamp: <29 Oct 03 11:53:12 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
