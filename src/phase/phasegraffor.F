@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phasegraffor.for
 c Date      : <27 Mar 97 10:05:09 flechsig> 
-c Time-stamp: <16 Dec 99 15:53:28 flechsig> 
+c Time-stamp: <16 Dec 99 16:19:59 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAFFOR.FOR
@@ -51,7 +51,7 @@ c
         end structure
         record /struct/ s
         dimension raysout(5,1)                  ! gummilaenge
-	character*(*) titel,metaname,dtitel,dmetaname
+	character*(80) titel,metaname,dtitel,dmetaname
         real*4     y1,y2,z1,z2,dy,dz,y,z       
         real*8	   yd,zd,dyd,dzd,dlfac,lambda,dlf
 c temporarely fixed
