@@ -1,6 +1,6 @@
 %  File      : /afs/psi.ch/user/f/flechsig/phase/doc/manual.tex
 %  Date      : <28 Oct 03 10:59:29 flechsig> 
-%  Time-stamp: <28 Oct 03 10:59:36 flechsig> 
+%  Time-stamp: <28 Oct 03 11:22:59 flechsig> 
 %  Author    : Uwe Flechsig, flechsig@psi.ch
 
 %  $Source$ 
@@ -8,17 +8,32 @@
 %  $Revision$ 
 %  $Author$ 
 
-% Datei: USERDISK_3:[FLECHSIG.PHASE.TEXT]MANUAL.TEX
-% Datum: 28.MAR.1995
-% Stand: 27-FEB-1996
-% Autor: FLECHSIG, BESSY Berlin
 
-\documentclass [12pt]{report}
-\usepackage{%
-%floatfig,
-epsfig}
-\psdraft
-%\usepackage{floatfig,{userdisk_3:{[}flechsig.text.tex{]}psfig}}
+
+\documentclass[12pt,a4paper,dvips]{report}
+\RequirePackage{graphics}
+\usepackage{epsfig}
+\usepackage{html}
+\usepackage[dvips]{color}
+\usepackage{times}    % in Acrobat-Reader integrierte Type-1-Schriften
+\usepackage[%
+	a4paper,%
+%	latex2html,%
+	dvips,%
+	breaklinks,%         allows links over more lines
+	pdftitle={Optics beamline},%
+	pdfauthor={Uwe Flechsig},%
+	pdfcreator={Uwe Flechsig},%
+	pdfsubject={},%	
+	pdfkeywords={},%	
+	pdfpagemode=UseThumbs,  % UseOutlines, FullScreen, Nome
+        baseurl={},%
+	bookmarks=true,%
+	bookmarksnumbered=true,%
+	colorlinks,%
+	linkcolor=blue,%
+	urlcolor=blue]{hyperref}
+\usepackage[dvips]{thumbpdf}
 
 \includeonly{header%
 ,install%
@@ -33,7 +48,7 @@ epsfig}
 \include{header}  
 
 \begin{document}
-\initfloatingfigs
+%\initfloatingfigs
   \thispagestyle{empty}
   
 %  \blogog GmbH, Lentzeallee 100, 14xxx Berlin, Germany
@@ -48,13 +63,14 @@ epsfig}
   \vspace*{\stretch{2}}
   \begin{center}
     \today \\[1cm]
-    Version 0.4
+    %Version 0.4
+   $Revision$	
 
   \end{center}
 
 \pagebreak
 
-\section* {Limitations}
+\section*{Limitations}
 The PHASE program package is still under construction and so this guide has to
 be very incomplete. The basic idea of the guide is to explain the main features
 and help you during the first steps using the program. Your hints, bug reports,
@@ -72,3 +88,4 @@ bahrdt@exp.bessy.de.
   \include{extract}
   \include{bibliogr}     
 \end{document}
+% end /afs/psi.ch/user/f/flechsig/phase/doc/manual.tex

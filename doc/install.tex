@@ -1,6 +1,6 @@
 %  File      : /afs/psi.ch/user/f/flechsig/phase/doc/install.tex
 %  Date      : <28 Oct 03 11:01:17 flechsig> 
-%  Time-stamp: <28 Oct 03 11:02:17 flechsig> 
+%  Time-stamp: <28 Oct 03 11:03:57 flechsig> 
 %  Author    : Uwe Flechsig, flechsig@psi.ch
 
 %  $Source$ 
@@ -33,39 +33,43 @@ With the interface it is easy to generate the input files for the
 calculations. The calculation programs can be started from the API or
 seperately, for example in a batch job. 
 
-The calculation prinziple and basic ideas of the program are explained in \cite{BAHRDT95a} and \cite{BAHRDT95b}.
+The calculation prinziple and basic ideas of the program are explained
+in \cite{BAHRDT95a} and \cite{BAHRDT95b}.
 
 \chapter{Installation}
 The \phase program at BESSY is availible at \prog{prg\_root:[phase]}.
 The installation is very simple using the installation makefile. After
-installation the file system is generated and PHASE can be used on your system.
-Later you have to set up the appropriate environment starting the setup program 
-(\prog{phaseinit.com}) at the begining of the session. That program and some
-other files should be found after installation in your PHASE directory-
-default: \~/phase. PHASE can be removed as simple as installed: \prog {make
-clear} \footnote {The files HIGZ\_WINDOWS.DAT and the makefile itselve are not
-removed automatically!}.    
+installation the file system is generated and PHASE can be used on
+your system.  Later you have to set up the appropriate environment
+starting the setup program (\prog{phaseinit.com}) at the begining of
+the session. That program and some other files should be found after
+installation in your PHASE directory- default: \~/phase. PHASE can be
+removed as simple as installed: \prog {make clear} \footnote {The
+files HIGZ\_WINDOWS.DAT and the makefile itselve are not removed
+automatically!}.
 
 \section{Default Installation}
-At your account the directory ~/phase is generated and some files are copied.
-For individual installation read the makefile. If there is no \~/phase directory
-on your system no problems should arise. For PAW- users: a X- defaults file for
-HIGZ (position and size of the HIGZ- window) will 
-be copied into your home directory, if you have your own setting- remove the
-copied version. 
-It is recommended to do as follows:
-\begin{enumerate}         
-   \item Copy the makefile to any directory on your account. The command:  
-   (at BESSY) \prog {copy prg\_root:[phase]makefile *} will copy the makefile
-   to your current directory. 
-  \item run the makefile  \prog{make install}.
+At your account the directory ~/phase is generated and some files are
+copied.  For individual installation read the makefile. If there is no
+\~/phase directory on your system no problems should arise. For PAW-
+users: a X- defaults file for HIGZ (position and size of the HIGZ-
+window) will be copied into your home directory, if you have your own
+setting- remove the copied version.  It is recommended to do as
+follows:
+\begin{enumerate}
+	\item Copy the makefile to any directory on your account. The
+   command: (at BESSY) \prog {copy prg\_root:[phase]makefile *} will
+   copy the makefile to your current directory.  
+	\item run the
+   makefile \prog{make install}.
 \end{enumerate}
 
 
 
 \section{PHASE at AXP- Systems}
-The \phase program runs at VAX-- and AXP-- (Alpha) systems. The  setup
-program \prog {phaseinit.com} detects your system and sets the right symbols
-automatically. The makefiles for optimization/extraction do it as well.
+The \phase program runs at VAX-- and AXP-- (Alpha) systems. The setup
+program \prog {phaseinit.com} detects your system and sets the right
+symbols automatically. The makefiles for optimization/extraction do it
+as well.
 
 \tiny{\it filename: /afs/psi.ch/user/f/flechsig/phase/doc/install.tex}  
