@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <24 Oct 00 09:06:02 flechsig> 
+# Time-stamp: <24 Oct 00 09:31:14 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -19,10 +19,9 @@ CDEBUG      = -gdwarf
 FDEBUG      = -g -C -B111 
 MAKE        = make
 
-srcdir     = .
-prefix    = /usr/local
-#prefix     = /home/pss060/sls/flechsig
-PHASEDIR   = $(prefix)/phase
+srcdir      = .
+INSTPATH    = /usr/local/phase
+BUILDPATH   = /home/pss060/sls/flechsig/phase
 
 #LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
@@ -99,8 +98,8 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 
 ##########################################################################
 install: all
-	$(INSTALL) $(PROGRAM) $(PHASEDIR)/bin/$(PROGRAM)
-	$(INSTALL) news $(PHASEDIR)/lib/news
+	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
+	$(INSTALL) news $(INSTPATH)/lib/news
 
 clear:
 	@echo "delete objects and exe..."  
@@ -127,6 +126,6 @@ dist: $(SRCS) $(AUX)
 	-rm -rf `cat .fname`.fname
 	tar -czhf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
-	ln `cat .fname`.tgz $(PHASEDIR)/release
+	ln `cat .fname`.tgz $(BUILDPATH)/release
 ####################      end makefile       ###############################
 #end /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux

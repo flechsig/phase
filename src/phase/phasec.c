@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <04 Jan 01 08:42:55 flechsig>  */
+/*  Time-stamp: <04 Jan 01 09:43:10 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -243,10 +243,10 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)  
      /* erzeugt elementmatrix im Fortran Speichermodell 	*/    
      /* Uwe 10.6.96 						*/
-     /* letzte Aenderung: 30.4.97 				*/
-     /* last modification: 17 Jun 97 08:10:41 flechsig          */
+     /* last modification: 4 Jan 2001         flechsig          */
      /* umgeschrieben auf memory 				*/
      /* etype auf defines umgeschrieben 17.6.97                 */
+     /* switch eingefuegt          4.1.2001                     */
 {
   double r, rho, *dp,
     alpha, aellip, bellip, cellip, eellip, f, z0, small;
@@ -254,15 +254,122 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)
 
   printf("DefMirrorC called\n");   
   small= 1e-15;   
-  r= x->rmi;
-  rho= x->rho;
-  dp= (double *)a;
+  r    = x->rmi;
+  rho  = x->rho;
+  dp   = (double *)a;
   alpha= x->alpha * PI/ 180.0;
       
   for (i= 0; i< 36; i++) dp[i]= 0.0;        /* initialisieren */
 
   /* Radien < small dann planspiegel */
-  if ((etype != kEOEElli) && (etype != kEOEPElli) )     
+  switch (etype)
+    {
+    case kEOETM:                          /* index a(i,j) */
+    case kEOETG:                          /* = i+ j* 6    */
+    case kEOEVLSG:  
+      printf("toroidal shape\n");                 
+      if (fabs(rho) > small) 
+	{
+	  dp[12]= 0.5/ rho;                		  /* 0,2 */
+	  dp[24]= 1.0/ (8.0* rho* rho* rho);              /* 0,4 */
+	}  
+      if (fabs(r) > small)  
+	{
+	  dp[2]= 0.5/ r;   
+	  dp[4]= 1.0/ (8.0* r* r* r);   
+	}  
+      if ((fabs(rho) > small) && (fabs(r) > small))  
+	{
+	  dp[14]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
+	} 
+      break; /* end toroid */ 
+
+    case kEOEGeneral:           /* read coefficients from file */
+      printf("read general coefficient file\n"); 
+      printf("not yet implemented\n");
+      break;
+
+    case kEOEElli: 
+      printf("elliptical shape\n");  
+      if (alpha < small) 
+	{
+	  beep(1);	
+	  fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
+	} 
+      else
+	{       
+	  aellip= (x->r1+ x->r2)/ 2.0;
+	  bellip= sqrt(aellip* aellip- 0.25* (x->r1* x->r1+ x->r2* x->r2- 
+					      2.0* x->r1* x->r2* 
+					      cos(2.0* alpha)));
+	  cellip= sqrt(aellip* aellip- bellip* bellip);
+	  eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
+	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
+	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
+	    
+	  printf("ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
+		 aellip, bellip, cellip, eellip, f, z0);
+	  
+	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
+	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
+	  dp[13]= (tan(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* pow(f, 2.0)* cos(alpha));                  /* 1,2 */
+	  dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* f* f);                              /* 3,0 */
+	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * 
+	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
+	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
+	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
+	  dp[14]= (pow(sin(alpha), 2.0)/ 
+		   (16.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
+	    (1.50* pow(cos(alpha), 2.0)- (pow(bellip, 2.0)/ 
+					  pow(aellip, 2.0))* 
+	     (1.0- 1.0/ (2.0* pow(tan(alpha), 2.0))));  	/*2,2 */
+	  dp[24]= (pow(bellip, 2.0)/ 
+		   (64.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
+	    (pow(sin(alpha), 2.0)/ pow(bellip, 2.0) + 
+	     1.0/ pow(aellip, 2.0));  				/* 0,4 */
+	}
+      break;
+
+    case kEOEPElli: 
+      printf("plane- elliptical shape\n");  
+      if (alpha < small) 
+	{
+	  beep(1);	
+	  fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
+	} 
+      else
+	{     
+	  aellip= (x->r1+ x->r2)/ 2.0;
+	  bellip= sqrt(aellip* aellip- 0.25* 
+		       (x->r1* x->r1+ x->r2* x->r2- 
+			2.0* x->r1* x->r2* cos(2.0* alpha)));
+	  cellip= sqrt(aellip* aellip- bellip* bellip);
+	  eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
+	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
+	  
+	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
+	  
+	  printf("ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
+		 aellip, bellip, cellip, eellip, f, z0);
+	  
+	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
+	  dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* f* f);                              /* 3,0 */
+	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))* 
+	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
+	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
+	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
+	}
+      break;
+
+    default:
+      fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
+      exit(-1);
+	} /* end switch */ 
+  if ((etype != kEOEElli) && (etype != kEOEPElli) 
+                          && (etype != kEOEGeneral) )     
     {                                                   /* index a(i,j) */
       printf("toroidal shape\n");                       /* = i+ j* 6    */
       if (fabs(rho) > small) 
@@ -279,82 +386,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)
 	{
 	  dp[14]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
 	} 
-    } /* end toroid */ else 
-  /**********************************************************/
-  if (etype == kEOEElli)     
-  {
-    printf("elliptical shape\n");  
-    if (alpha < small) 
-    {
-      beep(1);	
-      fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
-    } else
-    {       
-      aellip= (x->r1+ x->r2)/ 2.0;
-      bellip= sqrt(aellip* aellip- 0.25* (x->r1* x->r1+ x->r2* x->r2- 
-					  2.0* x->r1* x->r2* cos(2.0* alpha)));
-      cellip= sqrt(aellip* aellip- bellip* bellip);
-      eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
-      f     = (x->r1* x->r2)/ (x->r1+ x->r2);
-      z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
-
-      printf("ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
-	     aellip, bellip, cellip, eellip, f, z0);
-
-      dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
-      dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
-      dp[13]= (tan(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
-	(8.0* pow(f, 2.0)* cos(alpha));                  /* 1,2 */
-      dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
-	(8.0* f* f);                              /* 3,0 */
-      dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * 
-	      ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
-	      pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
-	      pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
-      dp[14]= (pow(sin(alpha), 2.0)/ (16.0* pow(f, 3.0)* 
-	       pow(cos(alpha), 3.0)))* (1.50* pow(cos(alpha), 2.0)- 
-	      (pow(bellip, 2.0)/ pow(aellip, 2.0))* (1.0- 1.0/ 
-	      (2.0* pow(tan(alpha), 2.0))));  			/*2,2 */
-      dp[24]= (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
-	(pow(sin(alpha), 2.0)/ pow(bellip, 2.0) + 
-	 1.0/ pow(aellip, 2.0));  				/* 0,4 */
-
-    } 
-  } else 
-  if (etype == kEOEPElli )     
-  {
-    printf("plane- elliptical shape\n");  
-    if (alpha < small) 
-    {
-      beep(1);	
-      fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
-    } else
-    {     
-      aellip= (x->r1+ x->r2)/ 2.0;
-      bellip= sqrt(aellip* aellip- 0.25* (x->r1* x->r1+ x->r2* x->r2- 
-					  2.0* x->r1* x->r2* cos(2.0* alpha)));
-      cellip= sqrt(aellip* aellip- bellip* bellip);
-      eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
-      f     = (x->r1* x->r2)/ (x->r1+ x->r2);
-
-      z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
-
-      printf("ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
-	     aellip, bellip, cellip, eellip, f, z0);
-
-      dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
-      dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
-	(8.0* f* f);                              /* 3,0 */
-      dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * (
-	      (5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
-	       pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
-	       pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
-    } 
-  } else 
-    { 
-      fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
-      exit(-1);
-    }
+    } /* end toroid */ 
 } /* end defmirrorc */
 
 void GetOptiBox(struct PHASEset *x) 
@@ -1727,9 +1759,6 @@ void InitGeometryBox(struct gdatset *gx)
 void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)  
 /* sw wird mit art initialisiert */    
 /* wird von activate_proc mit der widget- nummer der Taste aufgerufen */
-/* last modification: 09 Jun 97 15:58:12 flechsig */
-/* last modification: 11 Apr 97 15:37:07 flechsig */
-/* last modification: 17 Jun 97 08:27:46 flechsig */
 /* last modification: 30 Sep 97 08:24:02 flechsig */
 {
   static int ActualTask; 
@@ -1737,7 +1766,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   char TextField[12][40];
   XmString label; 	
   Widget w;
-  char LabelField1 [19][50] = {  
+  char LabelField1 [20][80] = {  
     "source [mm]", "r [mm]",
     "image [mm]",  "rho [mm]",
     "diff. order", "xdens[0]",
@@ -1749,7 +1778,8 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
     "variable linespace grating",  
     "elliptical mirror (r, rho- ignored)",  
     "plane- ellipt. mirror (r, rho- ignored)", 
-    "aperture/ slit (only w, l are valid)" 
+    "aperture/ slit (only w, l are valid)",
+    "read general coefficient file (all fields ignored)"
   };
        
   if ((sw != kEOEDefaults) && (sw != kFFileBoxOK)) 
@@ -1765,6 +1795,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
       case  kEOEElli:  ih= 15; imax= 11;  break; 
       case  kEOEPElli: ih= 16; imax= 11;  break;  
       case  kEOESlit:  ih= 17; imax= 11;  break;  
+      case  kEOEGeneral:  ih= 18; imax= 11;  break;  
       default:         ih= 14; imax= 11; sw= kEOEVLSG;   
       }
     } else  
@@ -2001,8 +2032,9 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
     if (strcmp(text, "elliptical mirror") == 0) etype= kEOEElli; else 
      if (strcmp(text, "toroidal mirror") == 0) etype= kEOETM; else 
        if (strcmp(text, "toroidal grating") == 0) etype= kEOETG; else 
-	 if (strcmp(text, "aperture/ slit (RT)") == 0) etype= kEOESlit; else 
-	   etype= kEOEVLSG;
+	 if (strcmp(text, "coefficient file") == 0) etype= kEOEGeneral; else
+	   if (strcmp(text, "aperture/ slit (RT)") == 0) etype= kEOESlit; else 
+	     etype= kEOEVLSG;
 	
   XtFree(text);
   printf("GetOelement: Elementtype: %d\n", etype);
