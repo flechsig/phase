@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/cutils.h */
 /*  Date      : <28 Oct 99 12:24:49 flechsig>  */
-/*  Time-stamp: <15 Nov 99 08:06:03 flechsig>  */
+/*  Time-stamp: <15 Dec 99 13:16:04 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #ifndef CUTILS_H
@@ -18,7 +18,11 @@
    typedef struct dsc$descriptor_s FString;         /* FORTRAN- String */
 #else                   /* linux */
    #define 	logfilename 		"/tmp/phaseuser.log" 
-   typedef      char FString; 
+   typedef struct FortranString
+   {   
+     char *string;
+     int length;
+   } FString; 
 #endif                  /*  VMS  */
 
 char    *delversion(char *); /* entfernt Versionsnummer von VMS- Filenamen */
