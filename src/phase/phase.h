@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <20 Apr 04 11:55:10 flechsig>  */
+/*   Time-stamp: <04 Jun 04 14:51:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -160,7 +160,7 @@
 #define kCWriteResultButton     97
 #define kEParameterInitButton   98
 #define kEOESlit                99
-#define kEOEDrift               999
+
 #define kCCGlueBox              100  
 #define kCCGResultButton        101   
 #define kCCGList                102   
@@ -368,9 +368,14 @@
 #define kSucAB                   362
 #define kMisalignmentButton      363
 
+#define kEOEDrift               999
+
+
+
+
 /******************** end defines uil **********************************/
 
-#define k_max_widget            400  		/* geaendert von 50 */
+#define k_max_widget            1000  		/* geaendert von 50 */
 #define MAX_WIDGETS (k_max_widget + 1)
 #define MaxPathLength           255         
 #define MainPickName 		"phase.pck"
