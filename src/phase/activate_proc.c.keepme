@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/activate_proc.c */
 /* Date      : <18 Mar 97 09:53:07 flechsig>  */
-/* Time-stamp: <28 Oct 99 09:52:27 flechsig>  */
+/* Time-stamp: <02 Nov 99 13:13:10 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]ACTIVATE_PROC.C    */
@@ -11,22 +11,22 @@
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */                                                
 
 #include <stdio.h>   
-#include <processes.h>                       
-#include <descrip.h>   
-
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h> 
-#include <DXm/DECspecific.h>    
-     
+#ifdef VMS 
+  #include <processes.h>                       
+  #include <descrip.h> 
+  #include <DXm/DECspecific.h>    
+#endif     
 #include "cutils.h"     
 #include "phase_struct.h"
 #include "fg3pck.h" 
 #include "mirrorpck.h"  
 #include "geometrypck.h" 
-#include "PHASE.h"       
+#include "phase.h"       
 #include "rtrace.h"    
 
 
@@ -583,7 +583,9 @@ void activate_proc(w, tag, reason)
       {   
 	XmListDeletePos(widget_array[kCOptiList], **itemlist);   
 	XtFree((char *)(*itemlist));  
+#ifdef VMS
 	topic = DXmCvtFCtoCS("select items ", &bc, &status);   
+#endif
 	set_something(widget_array[kCOptiSelectedLabel], 
 		      XmNlabelString, topic); 
       }    
@@ -808,19 +810,25 @@ void activate_proc(w, tag, reason)
     break;
 
   case k_help_overview:
+#ifdef VMS  
     topic = DXmCvtFCtoCS("overview", &bc, &status);   
+#endif
     create_help(topic);
     XmStringFree(topic);
     break;      
           
   case k_help_about:
+#ifdef VMS
     topic = DXmCvtFCtoCS("about", &bc, &status);   
+#endif
     create_help(topic);
     XmStringFree(topic);
     break;      
           
   case k_help_onhelp:
+#ifdef VMS
     topic = DXmCvtFCtoCS("onhelp", &bc, &status);
+#endif
     create_help(topic);          
     XmStringFree(topic);
     break;   

@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <28 Oct 99 10:05:29 flechsig>  */
+/*  Time-stamp: <02 Nov 99 13:09:00 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -17,22 +17,22 @@
                                          
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h> 	      	      /* needed for fopen      */  
-#include <processes.h>  /* eingefuegt fuer Starts anderer Programme*/
 #include <string.h>                           
 #include <math.h>                                                 
 #include <ctype.h>
 #include <stdarg.h> 
-#include <descrip.h>                      /* for FORTRAN- String */ 
-   
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
 #include <Xm/List.h>   
 #include <Xm/ToggleB.h>   
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
-#include <X11/Xutil.h>      
-#include <DXm/DECspecific.h>                  
-
+#include <X11/Xutil.h>  
+#ifdef VMS    
+  #include <processes.h>  /* eingefuegt fuer Starts anderer Programme*/
+  #include <descrip.h>                      /* for FORTRAN- String */
+  #include <DXm/DECspecific.h>                  
+#endif
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "fg3pck.h"   
@@ -365,9 +365,13 @@ void GetOptiBox(struct PHASEset *x)
   int parameterzahl, i, index, k;     
  
   get_something(widget_array[kCOptiResultButton], XmNlabelString, &label);
+#ifdef VMS
   opresname= DXmCvtCStoFC(label, &bc, &status);
+#endif
   get_something(widget_array[kCOptiMinuitButton], XmNlabelString, &label);
+#ifdef VMS
   minname= DXmCvtCStoFC(label, &bc, &status);   
+#endif
   /*  XtVaGetValues(widget_array[kCOptiList], 
 		XmNitems, &listitems,  XmNitemCount, &elementzahl, NULL); */ 
   XtVaGetValues(widget_array[kCOptiList2], 
@@ -390,7 +394,9 @@ void GetOptiBox(struct PHASEset *x)
 
   for (i= 0; i < 2; i++)  
     {
+#ifdef VMS
       zeile= DXmCvtCStoFC(list2items[i], &bc, &status); 
+#endif
       subzeile= zeile; k= 0; 
       while ((isdigit(*subzeile) == 0) && (k < 10)) 
 	{++subzeile; ++k;}  
@@ -404,7 +410,9 @@ void GetOptiBox(struct PHASEset *x)
   fprintf(oppickfile, "%d\n", parameterzahl);     
   for (i= 0; i < parameterzahl; i++)  
     {
+#ifdef VMS
       zeile= DXmCvtCStoFC(list2items[i+2], &bc, &status); 
+#endif
       sscanf(zeile,"%d", &index);
       subzeile= zeile; k= 0; 
       while ((*subzeile != ' ') && (k < 10)) 
@@ -562,12 +570,16 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 	{   
 	  fscanf(f, "%s\n", &minname); /* hier beamlinename ueberlesen */
 	  fscanf(f, "%s\n", &minname);   
+#ifdef VMS
 	  label= DXmCvtFCtoCS(minname, &bc, &status);   
+#endif
 	  XtVaSetValues(widget_array[kCOptiMinuitButton], 
 			XmNlabelString, label, NULL); 
 	  XmStringFree(label);  
 	  fscanf(f, "%s\n", &opresname);   
+#ifdef VMS
 	  label= DXmCvtFCtoCS(opresname, &bc, &status);   
+#endif
 	  XtVaSetValues(widget_array[kCOptiResultButton], 
 			XmNlabelString, label, NULL);  
 	  XmStringFree(label);  
@@ -575,12 +587,16 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 	  fgets(buffer, 80, f); buffer[strlen(buffer)-1]= '\0';
 	  sprintf(opresname, "x : %s", buffer); 
 	  XmListDeleteAllItems(widget_array[kCOptiList2]);
+#ifdef VMS
 	  label= DXmCvtFCtoCS(opresname, &bc, &status);   
+#endif
 	  XmListAddItem(widget_array[kCOptiList2], label, 0); 
 	  XmStringFree(label);  
 	  fgets(buffer, 80, f); buffer[strlen(buffer)-1]= '\0';     
 	  sprintf(opresname, "y : %s", buffer); 
+#ifdef VMS	 
 	  label= DXmCvtFCtoCS(opresname, &bc, &status);   
+#endif
 	  XmListAddItem(widget_array[kCOptiList2], label, 0); 
 	  XmStringFree(label);                                 /* y zeile ok */
 	  printf("hallo\n");
@@ -605,8 +621,10 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 		      while ((*subzeile != ' ') && (k < 10)) 
 			{++subzeile; ++k;}             /* remove number      */
 		      ++subzeile; 
-		      sprintf(opresname, "%d %s", index, subzeile); 
+		      sprintf(opresname, "%d %s", index, subzeile);
+#ifdef VMS 
 		      label= DXmCvtFCtoCS(opresname, &bc, &status);   
+#endif
 		      XmListAddItem(widget_array[kCOptiList2], label, 0); 
 		      XmStringFree(label);  
 		    }       
@@ -640,14 +658,18 @@ void InitOptiList2(int selpos, char *neu)
     {
     case -2:        /* Add Item */
       text= XmTextGetString(widget_array[kCOptiT1]); 
+#ifdef VMS
       str = DXmCvtFCtoCS(text, &bc, &status);              
+#endif
       XmListAddItem(widget_array[kCOptiList2], str, pos); 
       XtFree(text); XmStringFree(str);  
       break;
 
     case -1:       /* replace Item */
       text= XmTextGetString(widget_array[kCOptiT1]); 
+#ifdef VMS
       str = DXmCvtFCtoCS(text, &bc, &status);
+#endif
       XmListDeletePos(widget_array[kCOptiList2], pos);
       XmListAddItem(widget_array[kCOptiList2], str, pos); 
       XtFree(text); XmStringFree(str);  
@@ -659,8 +681,12 @@ void InitOptiList2(int selpos, char *neu)
       i= selpos- 1;
       if (i > 1) i= 2;
       sprintf(rbuffer, "%s", inhalt[i]);   
+#ifdef VMS
       str= DXmCvtFCtoCS(rbuffer, &bc, &status);  
       if (status == DXmCvtStatusOK)  
+#else
+      if (status == 1)
+#endif	
 	{
 	  sprintf(rbuffer, "%s", neu);   
 	  set_something(widget_array[kCOptiT1], XmNvalue, rbuffer);   
@@ -806,7 +832,9 @@ void xprintf(char *text)
 void xxprintf(char *text)
 {
   XmString	topic;
+#ifdef VMS
   topic= DXmCvtFCtoCS(text, &bc, &status); 
+#endif
   XmListAddItem(widget_array[kMainList], topic, 1); 
   /*XmListDeselectAllItems(widget_array[kMainList]); 
     XmListSetBPHASEmPos(widget_array[kMainList], 0); */
@@ -1328,7 +1356,9 @@ void InitFileBox(struct PHASEset *x)
   sprintf(TextField[12], "%s", x->optipckname);     
   for (i= 0; i < 13; i++)
     {	
+#ifdef VMS
       label= DXmCvtFCtoCS(TextField[i], &bc, &status);    
+#endif
       set_something(widget_array[kFFileButton1+ i], XmNlabelString, label);  
     }
   XmStringFree(label);   
@@ -1342,7 +1372,9 @@ void ActivateFileSelection(int task, char *pattern)
   if (ActualTask != task)
     {
       ActualTask= task;    			/* globale Variable */    
+#ifdef VMS
       topic= DXmCvtFCtoCS(pattern, &bc, &status);  
+#endif 
       set_something(widget_array[kFileSelectionDialog], XmNpattern, topic); 
       XmStringFree(topic); 
     }
@@ -1362,7 +1394,9 @@ void UpdateFilenames(struct PHASEset *x)
   for (i= 0; i < 13; i++)      /* liest + konvertiert Tastenlabel in *lab */
     {	
       get_something(widget_array[kFFileButton1+ i], XmNlabelString, &label);
+#ifdef VMS
       lab[i]= DXmCvtCStoFC(label, &bc, &status);  
+#endif 
       /*delversion(lab[i]);*/ 
       printf("%s\n", lab[i]);   
     }                              
@@ -1412,7 +1446,9 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
       for (i= 0; i < 13; i++) 
 	{
 	  strcpy(puffer1, puffer); strcat(puffer1, exfeld[i]); 
+#ifdef VMS
 	  label= DXmCvtFCtoCS(puffer1, &bc, &status); 
+#endif 
 	  set_something(widget_array[kFFileButton1+ i], 
 			XmNlabelString, label);
 	}
@@ -1630,7 +1666,9 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     for (i= 0; i< 8; i++)
       {	
 	set_something(widget_array[kEST1+ i], XmNvalue, TextField[i]);      
+#ifdef VMS
 	label= DXmCvtFCtoCS(LabelField1[IFeld[i]], &bc, &status); 
+#endif
 	set_something(widget_array[kEST1Label+ i], XmNlabelString, label);  
       }    /* */
     /*  label= DXmCvtFCtoCS(HeaderField[header], &bc, &status);     
@@ -1671,10 +1709,14 @@ void InitGeometryBox(struct gdatset *gx)
   for (i= 0; i< 4; i++)
     {	
       set_something(widget_array[kEGT1+ i], XmNvalue, TextField[i]);  
+#ifdef VMS
       label= DXmCvtFCtoCS(LabelField1[i], &bc, &status);
+#endif 
       set_something(widget_array[kEGT1Label+ i], XmNlabelString, label);  
     }     
+#ifdef VMS
   label= DXmCvtFCtoCS(LabelField1[4], &bc, &status);
+#endif 
   set_something(widget_array[kEGInputLabel], XmNlabelString, label); 	
   XmStringFree(label); 
   XmToggleButtonSetState(widget_array[kEGNITranslation], 
@@ -1748,16 +1790,22 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   for (i= 0; i < imax; i++)
     {	
       set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
+#ifdef VMS
       label= DXmCvtFCtoCS(LabelField1[i], &bc, &status);    
+#endif
       set_something(widget_array[kEOET1Label+ i], XmNlabelString, label);  
     }
+#ifdef VMS
   label= DXmCvtFCtoCS(" ", &bc, &status);  
+#endif
   for (i= imax; i < 12; i++)
     {	
       set_something(widget_array[kEOET1+ i], XmNvalue, " "); 
       set_something(widget_array[kEOET1Label+ i], XmNlabelString, label);  
     }    
+#ifdef VMS
   label= DXmCvtFCtoCS(LabelField1[ih], &bc, &status);  
+#endif
   set_something(widget_array[kEOEInputLabel], XmNlabelString, label); 
   XmStringFree(label);     
   /* set history */
@@ -2032,7 +2080,9 @@ void  MultiplyMatrix()
 		XmNitemCount, &itemcount, XmNitems, &list, NULL);       
   
   get_something(widget_array[kCCGResultButton], XmNlabelString, &label);  
+#ifdef VMS
   lab= DXmCvtCStoFC(label, &bc, &status); 
+#endif
   sprintf(labfield[0], "%s", lab);   
 
   printf("itemcount:%d\n",itemcount);   
@@ -2041,10 +2091,14 @@ void  MultiplyMatrix()
   if (itemcount < 2) xprintf("minimum: 2 Items! \n");    
   else 
     {
+#ifdef VMS
       lab= DXmCvtCStoFC(list[ac], &bc, &status); 
+#endif
       sprintf(labfield[1],"%s", lab);
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*1. Matrix */ 
+#ifdef VMS
       lab= DXmCvtCStoFC(list[ac], &bc, &status); 
+#endif
       sprintf(labfield[2],"%s", lab);
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*2. Matrix */ 
       printf("mmatr: %s\n%s\n%s\n", labfield[0], labfield[1], labfield[2]);
@@ -2053,7 +2107,9 @@ void  MultiplyMatrix()
         {        
 	  sprintf(copstr, "copy %s tmp.tmp", labfield[0]); 
 	  system(copstr);
+#ifdef VMS
 	  lab= DXmCvtCStoFC(list[ac], &bc, &status); 
+#endif
 	  printf("itemnr: %d  :: %s\n", ac++, lab);   
 	  sprintf(labfield[1], "tmp.tmp");   
 	  sprintf(labfield[2],"%s", lab);   
