@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <06 Jan 00 14:07:42 flechsig>  */
+/*  Time-stamp: <07 Jan 00 08:43:30 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -655,8 +655,11 @@ void activate_proc(w, tag, reason)
 	  {
 	    printf("write map of beamline to file\n");         
 	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
-		      bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc,
-		      bl->wc, bl->xlc, bl->xlm.xlen1c, bl->xlm.xlen2c);
+		      (double *) bl->ypc1, (double *) bl->zpc1, 
+		      (double *) bl->dypc, (double *) bl->dzpc,
+		      (double *) bl->wc,   (double *) bl->xlc, 
+		      (double *) bl->xlm.xlen1c, 
+		      (double *) bl->xlm.xlen2c);
   
 	  }
       } else 
