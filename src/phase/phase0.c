@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <31 Oct 03 09:20:29 flechsig>  */
+/*   Time-stamp: <31 Oct 03 10:38:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,12 +8,6 @@
 /*   $Revision$  */
 /*   $Author$  */
 
-
-/* das File ist identisch zu phase.c ohne main()     */
-/* es wird zur Optimierung benoetigt                 */
-/* todo: den Teil phase0.c aus phase.c entfernen,    */
-/*       und in phase.c nur noch main() belassen     */
- 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
