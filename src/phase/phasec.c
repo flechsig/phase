@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <11 Jan 00 08:12:42 flechsig>  */
+/*  Time-stamp: <11 Jan 00 08:56:41 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -2157,13 +2157,16 @@ void gpd(char *ifname, FILE *af)
   if ((ifile= fopen(ifname, "r")) == NULL)
     {
       fprintf(stderr,"gpd: error: open file %s\n", ifname); 
-      exit(-1);
-    }    
-  while (!feof(ifile))
-    {
-      fgets(puffer, 80, ifile); fputs(puffer, af);
+      /* 11.1.2000       exit(-1); */
+    }  
+  else
+    {  
+      while (!feof(ifile))
+	{
+	  fgets(puffer, 80, ifile); fputs(puffer, af);
+	}
+      fclose(ifile);
     }
-  fclose(ifile);
 }
 
 void PrintFileInMainList(char *fname)    
