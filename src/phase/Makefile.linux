@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <17 Dec 99 17:36:24 flechsig> 
+# Time-stamp: <20 Dec 99 10:56:06 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -48,7 +48,8 @@ OBJECTC = phase.o phasec.o \
 	  cutils.o rtrace.o 
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
-	  phase_integration.o 
+	  phase_integration.o \
+	  istkin_cspin.o
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h
@@ -61,7 +62,8 @@ SRCC    = phase.c phasec.c \
 	  cutils.c rtrace.c 
 SRCF    = phasegraffor.for phasefor.for \
 	  phase_source.for \
-	  phase_integration.for
+	  phase_integration.for \
+          istkin_cspin.for	
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
