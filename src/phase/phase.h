@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <11 Feb 00 16:07:04 flechsig>              */
+/* Time-stamp: <16 Feb 00 09:53:17 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -798,7 +798,7 @@ extern void inithplot(),
 /* wird auf dem Laptop benoetigt */
 
 #ifdef caddr_t
-typedef char *caddr_t;      
+typedef char * caddr_t;      
 #endif
 
 static MrmRegisterArg reglist[] = {
