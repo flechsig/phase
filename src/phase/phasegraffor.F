@@ -1,9 +1,9 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
 c Date      : <09 Jan 01 12:39:27 flechsig> 
-c Time-stamp: <09 Jan 01 12:40:01 flechsig> 
+c Time-stamp: <09 Jan 01 16:40:10 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
-c fortran file which will be preprocessed 
+c fortran file which will be preprocessed #define LINUX #define VMS
 c
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
@@ -79,12 +79,16 @@ c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile (unix)',metaname
-c           open(unit=11,file=metaname,
-c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
-c           open(unit=11,file=metaname,STATUS='UNKNOWN',
-c     1          Carriagecontrol='LIST',FORM='FORMATTED',err=4444)
+
+#ifdef VMS
+           type*,'open postsciptfile under VMS',metaname
+           open(unit=11,file=metaname,
+     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
+#else
+           type*,'open postsciptfile under UNIX',metaname
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=4444)
+#endif
+
            call igmeta(-11,-111) 
         endif
               
@@ -214,12 +218,15 @@ c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile (unix)'
-c           open(unit=11,file=metaname,
-c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
-c           open(unit=11,file=metaname,STATUS='UNKNOWN',
-c     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
+
+#ifdef VMS
+           type*,'open postsciptfile under VMS'
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
+     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
+#else
+           type*,'open postsciptfile under UNIX'
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
+#endif
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
@@ -321,11 +328,16 @@ c----------------------------------------------------------
 c 10.2.2000 scale in mrad
 c     postscriptfile 
         ifile=psfile             ! merker setzen
-        if(ifile.eq.1)then  
-           type*,'open postsciptfile (unix)'
-c           open(unit=11,file=metaname,STATUS='UNKNOWN',
-c     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666) 
+        if(ifile.eq.1)then 
+ 
+#ifdef VMS
+           type*,'open postsciptfile under VMS'
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
+     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
+#else 
+           type*,'open postsciptfile under UNIX'
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
+#endif
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
