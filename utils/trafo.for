@@ -1,3 +1,13 @@
+c$$$ File      : /afs/psi.ch/user/b/bahrdt/phase/utils/trafo.for
+c$$$ Date      : <28 Oct 03 13:47:56 bahrdt> 
+c$$$ Time-stamp: <28 Oct 03 13:48:07 bahrdt> 
+c$$$ Author    : Johannes Bahrdt, bahrdt@bessy.de
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 C Datei: USERDISK_3:[FLECHSIG.PHAS]TRAFO.FOR
 C Datum: 14.MAY.1996
 C Stand: 23-MAY-1996
