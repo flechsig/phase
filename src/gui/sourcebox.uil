@@ -1,12 +1,12 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/sourcebox.uil
 ! Date      : <21 Oct 97 07:55:09 flechsig> 
-! Time-stamp: <12 Feb 04 12:06:42 flechsig> 
+! Time-stamp: <09 Mar 04 11:48:11 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
-! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]SOURCEBOX.UIL
-! Datum: 19.JUL.1994
-! Stand: 26-JUL-1996
-! Autor: FLECHSIG, BESSY Berlin
+! $Source$ 
+! $Date$
+! $Revision$ 
+! $Author$ 
 
 
 /************************* Definition der Source Box  ********************/

@@ -1,13 +1,12 @@
-! File      : /home/vms/flechsig/vms/phas/phaseuil/editmenu.uil
-! Date      : <11 Apr 97 14:27:00 flechsig> 
-! Time-stamp: <12 Feb 04 12:02:58 flechsig> 
-! Author    : Uwe Flechsig, flechsig@exp.bessy.de
+! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/editmenu.uil
+! Date      : <09 Mar 04 11:46:29 flechsig> 
+! Time-stamp: <09 Mar 04 11:47:03 flechsig> 
+! Author    : Uwe Flechsig, flechsig@psi.ch
 
-! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]EDITMENU.UIL
-! Datum: 19.JUL.1994
-! Stand: 26-JUL-1996
-! Autor: FLECHSIG, BESSY Berlin
-
+! $Source$ 
+! $Date$
+! $Revision$ 
+! $Author$ 
 
 include file "sourcebox.uil";    
 include file "mirrorbox.uil";    
