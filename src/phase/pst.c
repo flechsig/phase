@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
 /*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <28 Oct 99 10:08:04 flechsig>  */
+/*  Time-stamp: <02 Nov 99 14:01:31 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
@@ -15,7 +15,7 @@
 
 #include <stdio.h> 
 #include <stdlib.h>
-#include <descrip.h>  
+
 #include <math.h>
 #include <time.h>
                                             
@@ -24,8 +24,10 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#include <DXm/DECspecific.h>                  
-      
+#ifdef VMS
+  #include <DXm/DECspecific.h>                  
+  #include <descrip.h>  
+#endif      
 #include "cutils.h" 
 #include "phase_struct.h"
 #include "fg3pck.h"  
