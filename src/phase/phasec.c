@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <13 Oct 03 17:00:45 flechsig>  */
+/*   Time-stamp: <04 Feb 04 17:12:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -23,7 +23,10 @@
 /* Stand: 21-FEB-1997                                          */
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
-                                         
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif
+
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h> 	      	      /* needed for fopen      */  
 #include <string.h>                           
@@ -2367,6 +2370,11 @@ void SetInfoString()
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
   sprintf(cstring, "Uwe.Flechsig@psi.ch");
+  xstring= XmStringCreateLocalized(cstring);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
+
+  sprintf(cstring, "configured: %s, debug: %s", CONFIGURED, DEBUG);
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
 
