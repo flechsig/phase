@@ -35,6 +35,7 @@ struct mdatset
         int order;  */
         double w1, w2, l1, l2;
         double slopew, slopel;
+        double du, dw, dl, dRu, dRw, dRl;
 };   
 
 int  	mgetpickfile(struct mdatset *, char *); 
