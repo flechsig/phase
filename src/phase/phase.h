@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <08 Apr 04 15:42:53 flechsig>  */
+/*   Time-stamp: <19 Apr 04 17:03:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -744,7 +744,7 @@ void 	ActivateFileSelection(int, char *),
   LoadHorMaps(struct BeamlineType *, int), 
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *),
   MultiplyMatrix(), 
-  pathlen0(struct mirrortype *, struct geometrytype *, int *, int *,
+  pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), 
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
