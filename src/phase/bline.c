@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Feb 04 11:26:24 flechsig>  */
+/*   Time-stamp: <19 Feb 04 11:27:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1543,7 +1543,7 @@ void SetDeltaLambda(struct BeamlineType *bl, struct ElementType *listpt)
 #endif						
        printf("SetDeltaLambda: Delta Lambda (nm) = %lg * y [mm], ", 
 		bl->deltalambdafactor* 1e6);
-       printf("	   Resolution = %lg / y (mm)\n",  
+       printf("Resolution = %lg / y (mm)\n",  
 	      listpt->GDat.lambda/ bl->deltalambdafactor);  
        /* printf("*** end SetDeltaLambda ***\n");*/
    } 
