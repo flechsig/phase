@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/Makefile.linux
 #  Date      : <27 Oct 03 13:47:54 flechsig> 
-#  Time-stamp: <27 Oct 03 13:57:56 flechsig> 
+#  Time-stamp: <27 Oct 03 14:01:55 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -19,10 +19,14 @@ BUILDPATH   = ~/phase
 # 2) tools
 SHELL    = /bin/sh
 INSTALL  = install -c
-UID	 = uid 
+UIL	 = uil
 #########################################################################
 # 3) switches
 UILFLAGS	= -o
+#########################################################################
+4) others
+UID	 = uid 
+#########################################################################
 
 .phony: all
 ################ dependencies ###########################################
@@ -37,7 +41,7 @@ all: phase.$(UID)
 	@echo "make phase.uid..."
 
 phase.$(UID): $(PHASEUILS)
-	uil $(UILFLAGS) phase.$(UID) phase.uil 
+	$(UIL) $(UILFLAGS) phase.$(UID) phase.uil 
 
 install: all
 	$(INSTALL) phase.$(UID) $(INSTPATH)/lib/phase.$(UID)
