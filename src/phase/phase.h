@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <15 Oct 99 16:52:16 flechsig>              */
+/* Time-stamp: <15 Oct 99 16:55:11 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -377,7 +377,7 @@
 #define D0printpclname          "test.pcl"   
 #define D0optipckname           "test.pcko"   
 
-#define PHASE_help  		"PHASE$prg:PHASE.hlb"
+#define PHASE_help  		"PHASE$lib:PHASE.hlb"
 
 
 /********************** Strukturen **************************************/
