@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <04 Feb 04 17:01:09 flechsig>  */
+/*  Time-stamp: <04 Feb 04 17:03:10 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -170,7 +170,7 @@ int main(argc, argv)
 	strcpy(filename, ".lib]news.");
 	PrependEnv(PHASE_HOME, filename);
 #else
-	sprintf(filename, "%s/news", prefix);
+	sprintf(filename, "%s/share/phase/news", prefix);
 #endif 
 	
 	PrintFileInMainList(filename);                      /* news anzeigen */

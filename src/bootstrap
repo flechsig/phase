@@ -1,7 +1,7 @@
 #! /bin/sh
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/bootstrap
 #   Date      : <11 Dec 03 14:04:40 flechsig> 
-#   Time-stamp: <05 Feb 04 10:51:45 flechsig> 
+#   Time-stamp: <05 Feb 04 10:52:12 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -11,7 +11,7 @@
 
 echo "==================================="
 echo "  Bootstrap script for autoconfig  "
-echo "  for maintainers only             "
+echo "  !!! for maintainers only !!!     "
 echo "==================================="
 echo "  before you use the script for the first time "
 echo "  you have to run libtoolize [--force] "

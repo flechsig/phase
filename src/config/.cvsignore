@@ -3,3 +3,5 @@ depcomp
 install-sh
 missing
 mkinstalldirs
+*.*
+*
