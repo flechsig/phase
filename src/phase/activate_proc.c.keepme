@@ -1,10 +1,14 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <21 May 01 15:21:29 flechsig>  */
+/*  Time-stamp: <10 Feb 04 16:32:16 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
                                       
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
+
 #include <stdio.h>   
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
@@ -834,10 +838,11 @@ void activate_proc(w, tag, reason)
     FetchWidget(kSetupInfo, "SetupInfo");
 #ifdef VMS
 	strcpy(buffer, ".lib]news.");
+	PrependEnv(PHASE_HOME, buffer);
 #else
-	strcpy(buffer, "/lib/news.");
+       sprintf(buffer, "%s/share/phase/news", PREFIX);
 #endif 
-    PrependEnv(PHASE_HOME, buffer);
+    
     PrintFileInMainList(buffer);  
     XtManageChild(widget_array[kSetupInfo]);   
     break;
