@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/activate_proc.c */
 /* Date      : <18 Mar 97 09:53:07 flechsig>  */
-/* Time-stamp: <02 Nov 99 13:13:10 flechsig>  */
+/* Time-stamp: <08 Nov 99 15:35:10 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]ACTIVATE_PROC.C    */
@@ -583,9 +583,7 @@ void activate_proc(w, tag, reason)
       {   
 	XmListDeletePos(widget_array[kCOptiList], **itemlist);   
 	XtFree((char *)(*itemlist));  
-#ifdef VMS
-	topic = DXmCvtFCtoCS("select items ", &bc, &status);   
-#endif
+	topic = XmStringCreateLocalized("select items ");   
 	set_something(widget_array[kCOptiSelectedLabel], 
 		      XmNlabelString, topic); 
       }    
@@ -810,25 +808,19 @@ void activate_proc(w, tag, reason)
     break;
 
   case k_help_overview:
-#ifdef VMS  
-    topic = DXmCvtFCtoCS("overview", &bc, &status);   
-#endif
+    topic = XmStringCreateLocalized("overview");   
     create_help(topic);
     XmStringFree(topic);
     break;      
           
   case k_help_about:
-#ifdef VMS
-    topic = DXmCvtFCtoCS("about", &bc, &status);   
-#endif
+    topic = XmStringCreateLocalized("about");   
     create_help(topic);
     XmStringFree(topic);
     break;      
           
   case k_help_onhelp:
-#ifdef VMS
-    topic = DXmCvtFCtoCS("onhelp", &bc, &status);
-#endif
+    topic = XmStringCreateLocalized("onhelp");
     create_help(topic);          
     XmStringFree(topic);
     break;   
