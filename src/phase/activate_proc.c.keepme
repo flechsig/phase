@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/activate_proc.c */
 /* Date      : <18 Mar 97 09:53:07 flechsig>  */
-/* Time-stamp: <15 Oct 99 16:49:44 flechsig>  */
+/* Time-stamp: <28 Oct 99 09:51:19 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]ACTIVATE_PROC.C    */
@@ -22,7 +22,7 @@
 #include <DXm/DECspecific.h>    
      
 #include "cutils.h"     
-#include "phase_struct_10.h"
+#include "phase_struct.h"
 #include "fg3pck.h" 
 #include "mirrorpck.h"  
 #include "geometrypck.h" 
