@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <08 Nov 99 15:28:24 flechsig>  */
+/*  Time-stamp: <10 Nov 99 16:42:14 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -56,8 +56,11 @@ unsigned int main(argc, argv)
     setupswitch= ProcComandLine(argc, argv); /* im Batch (-b) und  Help -h -? 
 						modus wird exit(3) gerufen 
 						*/
-
+#ifdef VMS
     inithplot();                        /* PHASEgraffor.for, hlimit, hplint  */
+#else
+    inithplot(); 
+#endif
 
     XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);       /* MOTIF 1.2  */
 
