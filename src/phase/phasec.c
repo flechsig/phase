@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <24 Nov 99 14:04:00 flechsig>  */
+/*  Time-stamp: <15 Dec 99 09:46:05 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -1385,17 +1385,23 @@ void UpdateFilenames(struct PHASEset *x)
 {
   int i; 
   XmString label;  
-  char **lab;
+  /*  char     **lab;                 < 15.12.99 UF */
+  char *fname= NULL, *lab[13];       /* 15.12.99 UF */
 
   for (i= 0; i < 13; i++)      /* liest + konvertiert Tastenlabel in *lab */
     {	
       get_something(widget_array[kFFileButton1+ i], XmNlabelString, &label);
-      if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &lab[i])) 
-	return;
+
+      /* 15.12.99 das geht nicht     
+	 if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &lab[i])) 
+	 return; */
+      if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fname)) 
+	 return;
+      lab[i]= fname;    
            /*delversion(lab[i]);*/ 
-      printf("%s\n", lab[i]);   
+      printf("%s\n", lab[i]);  
+      XmStringFree(label);
     }                              
-  XmStringFree(label);  
   strcpy(x->matrixname, 	lab[0]);    
   strcpy(x->mapname,    	lab[1]);    
   strcpy(x->sourceraysname, 	lab[2]);    
@@ -1411,7 +1417,7 @@ void UpdateFilenames(struct PHASEset *x)
   strcpy(x->optipckname, 	lab[12]);  
   for (i= 0; i < 13; i++) 
     XtFree(lab[i]);
-}  
+}  /* end UpdateFilenames */
 
 
 void ExpandFileNames(struct PHASEset *x, char *pfad)   
