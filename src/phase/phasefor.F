@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <28 Jan 00 16:59:34 flechsig> 
+c Time-stamp: <04 Feb 00 16:37:25 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -158,14 +158,14 @@ c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
         call initconstants(cs)
 
 c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
+c     von Johannes 4.2.00 imaxz entfernt
         xir.nsimp=0
         xir.iisimp=4
 	xir.isimp(1)=2
-c imaxz gibt es nicht mehr UF 21.12.99
-C hier muss etwas getan werden 28.1.2000 UF
-c	xir.isimp(2)=xi.imaxz+1
-c	xir.isimp(3)=2*xi.imaxz
-c	xir.isimp(4)=2*xi.imaxz+2
+        xir.isimp(2)=xi.ianzy0+1
+        xir.isimp(3)=2*xi.ianzy0
+        xir.isimp(4)=2*xi.ianzz0+2
+
 
 c------ copy stuff
 	do i=0,iord
