@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <11 Dec 03 15:38:39 flechsig> 
+#   Time-stamp: <11 Dec 03 17:03:46 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -45,7 +45,11 @@ else
      AC_SUBST([FFLAGS],"-c -vms -w95 -132")
   else
      AC_MSG_RESULT(found Absoft f77)
-     AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 cpmpiler)
+     AC_PATH_PROG([f77path],[f77])
+     f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'` 
+     
+     AC_MSG_NOTICE(we expect f77 libs  at ${f77lib})  
+     AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler)
      AC_SUBST([FFLAGS],"-g -C -B111 -c -f -B108 -W -s -N3 -N51 -N22 -N33")
 ##FFLAGS for absoft f77 compiler
 ##	-g generate debugging information
@@ -64,6 +68,16 @@ else
 ##      -N33 pack structures (kein alignment) 
   fi
 fi
+
+##check for cernlib
+AC_MSG_NOTICE(expect cern lib at environment \${CERN}/lib)
+CERNLIB=${CERN}/lib
+if test -z "${CERN}"; then
+  AC_MSG_ERROR("\${CERN} is not defined)
+else 
+  AC_MSG_NOTICE("use cern lib at $CERNLIB")
+fi
+
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lMrm:
