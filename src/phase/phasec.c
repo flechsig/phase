@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <10 Feb 00 13:34:15 flechsig>  */
+/*  Time-stamp: <04 Jan 01 08:42:55 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -244,9 +244,9 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)
      /* erzeugt elementmatrix im Fortran Speichermodell 	*/    
      /* Uwe 10.6.96 						*/
      /* letzte Aenderung: 30.4.97 				*/
-     /* last modification: 17 Jun 97 08:10:41 flechsig */
+     /* last modification: 17 Jun 97 08:10:41 flechsig          */
      /* umgeschrieben auf memory 				*/
-     /* etype auf defines umgeschrieben 17.6.97 */
+     /* etype auf defines umgeschrieben 17.6.97                 */
 {
   double r, rho, *dp,
     alpha, aellip, bellip, cellip, eellip, f, z0, small;
