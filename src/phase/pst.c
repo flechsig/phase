@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <08 Apr 04 15:40:00 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:46:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -165,7 +165,7 @@ void PST(struct BeamlineType *bl)
 
      /* debug */
   tmp= (double *) bl->ElementList[gratingposition].wc; 
-	printf("pst.c: wc4000: %lg\n", tmp[4]);
+	printf("pst.c: wc4000: %g\n", tmp[4]);
 
    pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, 
         &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, &bl->xlm.xlen1c, 
