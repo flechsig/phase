@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <18 Feb 04 11:08:13 flechsig>  */
+/*   Time-stamp: <18 Feb 04 16:45:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -248,7 +248,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   int i, j;
   struct mirrortype mirror;
 #ifdef DEBUG
-  printf("DefMirrorC: called\n");
+  /*  printf("DefMirrorC: called\n");*/
 #endif   
   small= 1e-15;   
   r    = x->rmi;
@@ -267,7 +267,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* 6    */
     case kEOEVLSG:  
-      printf("DefMirrorC: toroidal shape\n");                 
+      printf("DefMirrorC: toroidal shape ");                 
       if (fabs(rho) > small) 
 	{
 	  dp[12]= 0.5/ rho;                		  /* 0,2 */
@@ -388,10 +388,11 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   /* misalignment */
   if (Beamline.BLOptions.WithAlign == 1)
     {
-      printf("DefMirrorC: with misalignment\n");
+      printf("            with misalignment\n");
       memcpy(&mirror, a, sizeof(struct mirrortype));
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
-    }
+    } else
+      printf("            without misalignment\n");
 
   /* for (i=0; i < 15; i++) printf("%d %le\n", i, dp[i]); */
 } /* end defmirrorc */
@@ -570,7 +571,6 @@ void InitDataSets(struct PHASEset *x, char *mainpickname)
 
   ReadBLFile(x->beamlinename, &Beamline, x);
     
- 
   grdatstruct.status= 0;
   SetGrDatStruct(x->imageraysname, &Beamline, &grdatstruct);  
   /* PHASEgraf.c */
@@ -1815,7 +1815,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   if ((sw != kEOEDefaults) && (sw != kFFileBoxOK)) 
     {      
 #ifdef DEBUG
-      printf(" InitOElementBox: %d \n", sw);
+      /*   printf("InitOElementBox: %d \n", sw);*/
 #endif      
       
       switch (sw) {  
@@ -1885,7 +1885,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   XmToggleButtonSetState(widget_array[kEGNITranslation], 
   y->iflag == 1, FALSE); 
 #ifdef DEBUG
-  printf("InitOElementBox => done\n");
+  /*  printf("InitOElementBox => done\n");*/
 #endif
 } /* end InitOElementBox */
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <16 Feb 04 13:25:13 flechsig>  */
+/*   Time-stamp: <18 Feb 04 16:43:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -503,7 +503,7 @@ void toggle_proc(w, tag, toggle)
 	set_something(widget_array[kEOET4], XmNvalue, text);
       }
   }
-     printf("toggle_proc: done\n"); /**/
+  /*    printf("toggle_proc: done\n"); /**/
 } 	/* end toggle_proc */
 
 /*                   

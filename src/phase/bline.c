@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <17 Feb 04 15:54:13 flechsig>  */
+/*   Time-stamp: <18 Feb 04 16:38:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -494,8 +494,8 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
    /*  memcpy(xl1tmp, c1, sizeof(xl1tmp)); /* alte merken */
    /*  memcpy(xl2tmp, c2, sizeof(xl2tmp)); */
    
-   printf(
-       "\nMultiplikationsroutine pathlen input (Summe), (B)line, (E)lement\n");
+   /*   printf(
+	"\nMultiplikationsroutine pathlen input (Summe), (B)line, (E)lement\n");*/
    m= 0;
    for(i= 0; i< 5; i++)
      for(j= 0; j< (5-i); j++)
@@ -568,8 +568,8 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
    double wctmp[70], xlctmp[70], wcc[70], xlcc[70];
    int i, j, k, l, m, dim= 70, idx;
    
-   printf("\nMultiplikationsroutine wc, xlc, input\n");
- 
+   /*   printf("\nMultiplikationsroutine wc, xlc, input\n");
+    */
    m= 0;
    for(i= 0; i< 5; i++)
      for(j= 0; j< (5-i); j++)
@@ -583,7 +583,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 	     m++;
 	   } /* wctmp gefuellt */
 
-   printf("\njetzt wird multipliziert-> Ergebnis:\n\n");
+   /*   printf("\njetzt wird multipliziert-> Ergebnis:\n\n"); */
    for (i= 0; i< dim; i++) 
      {
        wcc[i]= xlcc[i]= 0.0;
@@ -594,7 +594,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 	   xlcc[i]+= xlctmp[k]* mat[idx];
 	 }
      }
-  printf("\nMultiplikationsroutine wc, xlc, output\n");
+   /*  printf("\nMultiplikationsroutine wc, xlc, output\n");*/
   m= 0;
    for(i= 0; i< 5; i++)
      for(j= 0; j< (5-i); j++)
@@ -607,7 +607,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 	     /*   printf("idx: %d wc: %le, xlc: %le\n", m, wcs[idx], xlcs[idx]);*/
 	     m++;
 	   } /* wctmp gefuellt */
-   printf("GlueWcXlc end\n");
+   /*   printf("GlueWcXlc end\n");*/
 }  /* end GlueWcXlc */
 
 /*
@@ -633,19 +633,18 @@ void InitBLBox(char *blname, struct BeamlineType *bl)
       XmListAddItem(widget_array[kEBLList], label, 0); 
       XmStringFree(label);
    }
-   printf("InitBLBox %d Elements in file %s\n", i, blname);
+   printf("InitBLBox: %d Elements in file %s\n", i, blname);
 
    /* radio box setzen */
-   printf("InitBLBox: SourcetoImage= %d\n", bl->BLOptions.SourcetoImage);
+#ifdef DEBUG
+   printf("           SourcetoImage= %d, WithAlign= %d\n", 
+	  bl->BLOptions.SourcetoImage, bl->BLOptions.WithAlign);
+#endif
    if ( bl->BLOptions.SourcetoImage == 1)
       XmToggleButtonSetState(widget_array[kEBLstoim], True, True);  
    else 
       XmToggleButtonSetState(widget_array[kEBLimtos], True, True); 
 
-#ifdef DEBUG
-   printf("InitBLBox: WithAlign= %d\n", bl->BLOptions.WithAlign);
-#endif
-   
    XmToggleButtonSetState(widget_array[kMisalignmentButton], 
 			  bl->BLOptions.WithAlign == 1, TRUE);  
    
@@ -670,7 +669,7 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
    XmStringTable listitems;
    char *text= NULL;   
 
-   fprintf(stderr, "GetBLBox ");
+   /*   fprintf(stderr, "GetBLBox ");*/
 
    /* get beamlinename vom tastenlabel */
    XtVaGetValues(widget_array[kEBLNameButton], XmNlabelString, &label, NULL);
@@ -773,9 +772,10 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		listpt->dzpc, &bl->BLOptions.ifl.iord); 
 	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, 
-		 listpt->ypc1, listpt->zpc1, &listpt->xlm);   
-	printf("source to image map and matrix created\n");  
-
+		 listpt->ypc1, listpt->zpc1, &listpt->xlm);
+#ifdef DEBUG   
+	printf("MakeMapandMatrix: source to image map and matrix created\n");  
+#endif
         /* image to source Rechnung bei RT und  pst */
 	if (bl->BLOptions.SourcetoImage != 1) 
 	  {	
@@ -787,21 +787,23 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord); 
 	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, 
-		 listpt->ypc1, listpt->zpc1, &listpt->xlm);        
-	    printf("image to source map and matrix created\n");  
+		 listpt->ypc1, listpt->zpc1, &listpt->xlm); 
+#ifdef DEBUG       
+	    printf("MakeMapandMatrix: image to source map and matrix created\n");  
+#endif
 	    /* wc,xlc, xlen ist jetzt von image to source Rechnung */ 
 	  } /* end image to source */
 
         /* horizontale Ablenkung */
         if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
         {
-           printf("horizontal deflection \n"); 
+           printf("MakeMapandMatrix: horizontal deflection \n"); 
 	   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
 	   msiz= mdim * mdim * sizeof(double);
 
            if (bl->hormapsloaded == 0)
            {
-              printf("load horizontal transformation matrixes \n"); 
+              printf("MakeMapandMatrix: load horizontal transformation matrixes \n"); 
               LoadHorMaps(bl, mdim);    
               bl->hormapsloaded= 1;
            }            /* hormaps  present in memory */
@@ -843,8 +845,10 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	  /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
 /* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
 /* 			  listpt->ypc1, listpt->zpc1, &listpt->xlm);    */
-	       }	  
-	   printf("hor. defl. matrix created\n");
+	       }	
+#ifdef DEBUG  
+	   printf("MakeMapandMatrix: hor. defl. matrix created\n");
+#endif
 	}
         listpt->ElementOK |= mapOK;
       }
@@ -1185,7 +1189,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
    struct OptionsType         *op;     
 
    rcode= -1;   
-   printf("ReadBLFile called, filename: %s\n", fname);
+   printf("ReadBLFile: filename: %s\n", fname);
 
    /* initialisiere Strings */
    i= sizeof(bl->src.so4.fsource4a);
@@ -1205,7 +1209,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
    {   
      if((rcode= CheckFileHeader(f, Fg3PickFileHeader, &version)) == 0)   
      {
-       printf("ReadBLFile: version: %d\n", version);
+       printf("ReadBLFile: file version: %d\n", version);
        if (SetFilePos(f, "SOURCE"))
        { 
          fscanf(f, " %c %[^\n]s %c", &bl->RTSource.QuellTyp, buffer, &buf); 
@@ -1302,8 +1306,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 	  sprintf(buffer, "Element %d", elnumber);	
 	  if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
-             fscanf(f, " %s %[^\n]s %c", &listpt->elementname, buffer, &buf); 
-             printf("   Name read: %s\n", listpt->elementname); 
+             fscanf(f, " %s %[^\n]s %c", &listpt->elementname, buffer, &buf);
+#ifdef DEBUG 
+	     /*    printf("   Name read: %s\n", listpt->elementname); */
+#endif
           } else rcode= -1;
 
           sprintf(buffer, "GEOMETRY %d", elnumber); 
@@ -1318,7 +1324,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
              fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.inout);  
              fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.iflag);  
              fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.azimut); 
-	     printf("   geometry read\n"); 
+	     /*  printf("   geometry read\n"); */
           } else rcode= -1;  
 
           sprintf(buffer, "MIRROR %d", elnumber);  
@@ -1348,8 +1354,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
 		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
 	      }
-	    printf("   mirror read\n"); 
-	    printf("Elementtype: %d\n", listpt->Art);
+#ifdef DEBUG
+	    /*  printf("   mirror read\n"); */
+#endif
+	    printf("Elementtype: %d, name: %s\n", listpt->Art, listpt->elementname);
           } else rcode= -1;
           elnumber++; listpt++;
        } 
@@ -1483,7 +1491,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
          fscanf(f, " %lf %[^\n]s %c", &bl->deltalambdafactor, buffer, &buf); 
 	 if (version >= 20040217)
 	   fscanf(f, " %d %[^\n]s %c", &op->WithAlign, buffer, &buf);
-	 printf("ReadBLFile: version: %d, WithAlign: %d\n", version, op->WithAlign);
+	 /* printf("ReadBLFile: file version: %d, WithAlign: %d\n", version, op->WithAlign);*/
  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.ndyfix, buffer, &buf);  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.ndzfix, buffer, &buf);    
@@ -1501,8 +1509,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
          fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.zhard, buffer, &buf);  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
          fscanf(f, " %d %[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
-
-         printf("   options read\n"); 
+#ifdef DEBUG
+	 /*    printf("   options read\n"); */
+#endif
        } else rcode= -1;  /* data not found in file */     
      } /* file ok */
      fclose(f);  

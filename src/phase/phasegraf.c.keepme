@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <11 Feb 00 09:47:52 flechsig>  */
+/*  Time-stamp: <18 Feb 04 16:47:38 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -221,11 +221,14 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
     struct RayType *rp;  
     double *rp0; 
     void *vo;
-
+#ifdef DEBUGALL
     printf("SetGrDatStruct called\n");
+#endif
     if (gr->status == 0)            /* bei initdatasets */
     {
-       printf("setgrdatstruct: grdatstruct init\n");
+#ifdef DEBUG
+       printf("SetGrDatStruct: init\n");
+#endif
        strcpy(gr->titel, "PHASE- graphic output"); 
        gr->status= gr->zeilen= 0; 
        gr->ymi= gr->yma= gr->zmi= gr->zma= gr->dymi= 
@@ -285,9 +288,10 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
       if (fehler == 1) gr->status= 0; 
       
                   /* end rtrace */
-      
+#ifdef DEBUG      
       printf("SetGrDatStruct GRDS: %f %f %f %f\nrays: %d\n", gr->ymi,gr->yma,
                                     gr->zmi,gr->zma, gr->zeilen);
+#endif
     }
     return vo;
 }  /* SetGrDatStruct end */
