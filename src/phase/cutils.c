@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <02 Nov 99 13:28:51 flechsig>  */
+/*  Time-stamp: <12 Nov 99 12:08:52 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */

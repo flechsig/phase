@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <10 Nov 99 16:42:14 flechsig>  */
+/*  Time-stamp: <12 Nov 99 12:12:12 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -52,6 +52,13 @@ unsigned int main(argc, argv)
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
+
+    if (getenv("PHASE_HOME") == NULL)
+      {
+	printf("phase.c: environment PHASE_HOME not defined- exit\n" );
+	exit;
+      }
+
 
     setupswitch= ProcComandLine(argc, argv); /* im Batch (-b) und  Help -h -? 
 						modus wird exit(3) gerufen 
