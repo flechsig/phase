@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <21 Dec 99 15:08:45 flechsig> 
+c Time-stamp: <21 Dec 99 15:14:48 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -11,7 +11,7 @@ c     versionsnummer im filenamen angelegt (nur unter UNIX)
 c     im VMS production release gibt es nur noch eine Version!
 c (3) SIMPS1 als record si1 in den record integration_results
 c     eingefuegt, z.B. jmult ansprechen ueber xir.si1.jmult
-c     common block geloescht
+c     common block geloescht, Aufrufe auf die Strukturvariaben gelenkt
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
 c*********************************************************
