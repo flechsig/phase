@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <22 Dec 99 09:56:03 flechsig> 
+# Time-stamp: <22 Dec 99 10:02:56 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -82,6 +82,7 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 ##########################################################################
 install: all
 	$(INSTALL) $(PROGRAM) $(PHASEDIR)/bin/$(PROGRAM)
+	$(INSTALL) news $(PHASEDIR)/lib/news
 
 clear:
 	@echo "delete objects and exe..."  
