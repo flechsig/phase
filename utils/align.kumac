@@ -1,3 +1,13 @@
+|   File      : /afs/psi.ch/user/f/flechsig/phase/utils/align.kumac
+|   Date      : <06 Feb 04 13:24:38 flechsig> 
+|   Time-stamp: <06 Feb 04 13:24:53 flechsig> 
+|   Author    : Uwe Flechsig, flechsig@psi.ch
+
+|   $Source$ 
+|   $Date$
+|   $Revision$ 
+|   $Author$
+ 
 macro align fi=! fo=!
 mess '(mis)alignment and surface errors'
 ****************************************************************
@@ -13,7 +23,7 @@ mess '(mis)alignment and surface errors'
 on error goto exit
 if [fi]='!' goto exit
 if [fo]='!' goto exit
-
+ 
 zone 3 3
 ***************************************************************
 * Spiegeldimension Bereich festlegen (etwa)
