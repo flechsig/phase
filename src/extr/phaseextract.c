@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <19 Feb 04 15:36:47 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:10:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,15 +8,11 @@
 /*   $Revision$  */
 /*   $Author$  */
 
-/*  File      : /home/vms/flechsig/vms/phas/extr.dir/phaseextract.c */
-/*  Date      : <16 Oct 97 14:10:56 flechsig>  */
-/*  Time-stamp: <31 Oct 03 10:22:37 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*
 
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.EXTRACT]EXTRACT.C         */
-/* Datum: 21.JUL.1994                                          */
-/* Stand: 25-MAR-1996                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
+
+
+*/
 
 /* !!!!!!!!!!!!!!!!! bei mehrdimensionale Matritzen schreibt Fortran
    zuerst die Spalten (umgekehrt wie c )
@@ -97,8 +93,8 @@ unsigned int main(argc, argv)
      unsigned int argc;                  /* Command line argument count. */
      char *argv[];                       /* Pointers to command line args. */
 { 
-  double 		ax, ay, ax0, CHI, dy, dz, yfwhm, zfwhm;
-  int 			ix, iy;
+  double ax, ay, ax0, dy, dz, yfwhm, zfwhm, rpower, transmittance;
+  int 	 ix, iy;
  
   PI= 4.0* atan(1.0); 
 #ifdef LOGFILE   
@@ -113,6 +109,11 @@ unsigned int main(argc, argv)
   
   getoptipickfile(&optistructure, argv[1]);   
   ReadBLFile(optistructure.beamlinefilename, &Beamline, &PHASESet);
+  /* get start for x, y from beamline */
+  out_struct(&Beamline, &ax0, optistructure.xindex);  
+  out_struct(&Beamline, &ay,  optistructure.yindex); 
+  MakeRTSource(&PHASESet, &Beamline);      /* Quelle herstellen */
+
   /* oeffnen des Ausgabefiles */
   if ((optistructure.filepointer= 
        fopen(optistructure.resultfilename, "w")) == NULL)
@@ -120,16 +121,12 @@ unsigned int main(argc, argv)
       fprintf(stderr,"\aError: write %s\n", optistructure.resultfilename);
       exit(-1);
     }  
-  /*  initoptidata(&optistructure);
-   */
-  out_struct(&Beamline, &ax0, optistructure.xindex);  
-  /* get x, y aus */
-  out_struct(&Beamline, &ay, optistructure.yindex);  /* index    */
-  
+  /*  initoptidata(&optistructure);   */
+   
   fprintf(optistructure.filepointer, "%d %d\n", 
-	  optistructure.xpoints, optistructure.ypoints);  
-  
-  for (iy= 0; iy< optistructure.ypoints; iy++)   
+	  optistructure.xpoints, optistructure.ypoints); /* write header */
+ 
+    for (iy= 0; iy< optistructure.ypoints; iy++)   
     {
       in_struct(&Beamline, &ay, optistructure.yindex);    
       ax= ax0;
@@ -146,26 +143,25 @@ unsigned int main(argc, argv)
 		  &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); */
           /* end orginale Variante 30.4.98 */
 	  /* hier koennte ein volles Raytrace eingeschoben werden  */
-	  MakeRTSource(&PHASESet, &Beamline); /* Quelle herstellen */
-	  RayTraceFull(&Beamline);                           /* rt */
-	  zfwhm= 2.35* GetRMS(&Beamline, 'z');
-	  CHI = yfwhm= 2.35* GetRMS(&Beamline, 'y');                               /* vert. spot  */
 	  
-	  /* Uwe 29.3.99, 2.35 eingefuegt */
-	  CHI *= Beamline.deltalambdafactor;         /* deltalambda */
-	  if (CHI > 0.0)                             /* Aufloesung  */
-	    CHI= Beamline.BLOptions.lambda/ CHI; 
-	  else 
-	    CHI= 1e12;
-	
-	  /* Ergebnisse holen und in CHI packen */
-	  /* bis hier her */
-	  /*
-	    fprintf(optistructure.filepointer, "%lf %lf %le\n", ax, ay, CHI);
-	  */
-	  /* 20.4.99 */
-	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le\n", 
-		  ax, ay, yfwhm, zfwhm, CHI);
+	  RayTraceFull(&Beamline);  /* rt */
+
+	  /* determine results */
+	  transmittance= (double)(Beamline.RESULT.points/
+			      Beamline.RTSource.raynumber);
+
+	  zfwhm= 2.35* GetRMS(&Beamline, 'z');
+	  yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
+          
+	  rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+	    Beamline.deltalambdafactor/ yfwhm ? 1e12;
+	  rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+	    Beamline.deltalambdafactor/ zfwhm ? 1e12;
+
+	  /* write result */  
+	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le %le %le\n", 
+		  ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance);
+
 	  ax+= optistructure.dx; 
 	}  
       ay+= optistructure.dy;  
@@ -176,29 +172,7 @@ unsigned int main(argc, argv)
   beep(4);
   printf("end extraction: results in file: %s\n", 
 	 optistructure.resultfilename);
+  printf("format: ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance\n");
   exit(1); 
 }
 /* end main */
-
-
-
-
-
-/* double DeltaLambda(struct optistruct *x, double dy, int index) */
-/* { */
-/*    double arm, cosb, n, dl; */
-/*    struct mirrortype   *m; */
-/*    struct geometrytype *g;   */
-/*    int elnumber, mtype, ipos, ord;   */
-   
-/*    elnumber= index >> 8;       */
-/*    g= &x->geoz[elnumber];   */
-/*    arm = 1;         /* auf armlaenge normiert */ 
-/*    cosb= g->cosb; */
-/*    n   = g->x[0]; */
-/*    ord = g->idefl; */
-
-/*    dl  = 1.0/ (arm * n * ord) * cosb * dy; */
-/*    return dl; */
-/* } */
-/* end phaseextract.c */
