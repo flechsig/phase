@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <03 Feb 04 14:55:50 flechsig>              */
+/* Time-stamp: <11 Feb 04 16:51:06 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -452,7 +452,8 @@ struct optistruct_xx
 struct RayType { double y, z, dy, dz, phi; };  
 /*23.11.98  deltaz neu UF */
 struct UndulatorSourceType { double length, lambda, sigvert, sighor, deltaz;};  
-struct DipolSourceType     { double sigy, sigdy, sigz, dz; };  
+struct DipolSourceType     { double sigy, sigdy, sigz, dz; }; 
+struct PointSourceType     { double sigy, sigdy, sigz, sigdz; }; 
 struct SRSourceType        { double y, z, dy, dz; };   
 struct HardEdgeSourceType  { double disty, distz, divy, divz;
   int    iy, iz, idy, idz; };  
@@ -469,6 +470,7 @@ struct RTSourceType {
     struct DipolSourceType     DipolSource;     
     struct SRSourceType        SRSource;
     struct PSImageType         PSImage;
+    struct PointSourceType     PointSource;
   } Quelle;
   struct RayType *SourceRays;          
   int QuellTyp, modified, raynumber; };       
