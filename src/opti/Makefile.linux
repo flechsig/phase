@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <29 Oct 03 16:37:07 flechsig> 
+#  Time-stamp: <31 Oct 03 10:05:58 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -15,8 +15,12 @@
 # at least the first part of the makefile must be modified if necessary
 #########################################################################
 # 1) paths
+# remarks: 
+# the library olib should be installed at a common directory INSTPATH0
+# the program olib should be installed at a personal account INSTPATH1
 SRCDIR      = .
-INSTPATH    = /usr/local/phase
+INSTPATH0   = /usr/local/phase
+INSTPATH1   = ~/phase
 BUILDPATH   = ~/phase
 CERNLIB     = /cern/2000/lib
 #CERNLIB    = /usr/local/cern/2000/lib
@@ -60,10 +64,9 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 .phony: all makewhat    
 #########################################################################
 PROGRAM = phaseopti
-OLIB    = phaseoptilib
+OLIB    = phaseoptilib.a
 #########################################################################
-LIBS    = $(INSTPATH)/lib/phaselib.a \
-	  $(INSTPATH)/lib/$(OLIB).a \
+LIBS    = $(INSTPATH0)/lib/$(OLIB) $(INSTPATH0)/lib/phaselib.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
@@ -77,7 +80,7 @@ OLIBOS  = ../phase/activate_proc.o ../phase/phasec.o ../phase/bline.o \
           ../phase/geometrypck.o ../phase/initdatset.o \
           ../phase/mirrorpck.o ../phase/phasegraffor.o ../phase/pst.o \
           ../phase/phase_integration.o ../phase/phase_source.o \
-          treiber.o optisubc.o
+          treiber.o optisubc.o ../phase/phase0.o ../phase/cutils.o
 ########################################################################
 PHASEHS = phaseopti.h
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 
@@ -109,14 +112,16 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 ##########################################################################
 # olib
 olib: $(OLIBOS)
-	$(AR) $@ $(OLIBOS)  
-	ranlib -v $@
-
+	$(AR) $(OLIB) $(OLIBOS)  
+	ranlib -v $(OLIB)
 ##########################################################################
 install: all
-	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
-	$(INSTALL) news $(INSTPATH)/lib/news
-	$(INSTALL) coefficient-example.dat $(INSTPATH)/lib/coefficient-example.dat
+	@echo "to install the olib use target: install-olib"
+	$(INSTALL) $(PROGRAM) $(INSTPATH1)/bin/$(PROGRAM)
+
+install-olib:
+	@echo "install the library..."
+	$(INSTALL) $(OLIB) $(INSTPATH0)/lib/$(OLIB)
 
 clear:
 	@echo "delete objects and exe..."  
