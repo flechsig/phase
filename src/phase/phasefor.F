@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <23 Dec 99 16:30:41 flechsig> 
+C Time-stamp: <23 Dec 99 16:46:10 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -58,7 +58,7 @@ c last modification: 24 Mar 97 09:22:28 flechsig
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
-        record /source_results/ sr
+c        record /source_results/ sr
         record /integration_results/ xir
         record /control_flags/ ifl
         record /sources/ src
@@ -81,8 +81,8 @@ c last modification: 24 Mar 97 09:22:28 flechsig
         end structure  
         record /psoptions/ pso   
 
-        integer inumb(1000,1000),i,j,k,l,iord,iii,jjj,
-     &       idivy,idivz,n1,n2,n3,n4,icheckk,ii,jj,iinumb
+        integer i,j,k,l,iord,
+     &       n1,n2,icheckk,ii,jj,iinumb
 
 
         real *8 xlam_test,xlen0,rin(4),a(0:5,0:5),
@@ -108,14 +108,6 @@ c last modification: 24 Mar 97 09:22:28 flechsig
      &		  fdetphc(0:4,0:4,0:4,0:4),        	! fdet
      &		  fdet1phc(0:4,0:4,0:4,0:4)        	! fdet  
 
-        dimension fdetrc(0:4,0:4),                	!subm1 
-     &            fdetphrc(0:4,0:4),                    !subm1 
-     &            fdet1phrc(0:4,0:4),                   !subm1 
-     &            yprc1(0:4,0:4),zprc1(0:4,0:4),
-     &            dyprc(0:4,0:4),dzprc(0:4,0:4),   
-     &            fdtrrc(0:4),                    	!subm2
-     &            yprrc1(0:4),zprrc1(0:4),
-     &            dyprrc(0:4),dzprrc(0:4)       
         dimension yiplot(1024),ziplot(1024)        ! bildpunkte
         dimension yipc(1),zipc(1),psdc(1),
      &            stfd1phmaxc(1),stinumbc(1),s1c(1),
@@ -123,7 +115,7 @@ c last modification: 24 Mar 97 09:22:28 flechsig
      &            eyimc(1),ezimc(1)
         dimension psdf(1024,1024),psd2(1024,1024)  !psd2 ist ergebnis   
         
-        complex*16 psd2c(1024,1024),yzint,fwert
+        complex*16 psd2c(1024,1024)
         complex*16 psd2cy(512,512)
 	complex*16 psd2cz(512,512) 
 
@@ -296,6 +288,7 @@ c------------------------------------------
 
 c****** Ende der Integration ueber die Winkel ******************
         enddo                   ! raster
+        write(*,*)'next row'
       enddo                     ! raster
 c****** Berechnung der Intensitaetsverteilung fertig ***********
       write(*,*)'stop intensity calculation'
