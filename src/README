@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <22 Mar 04 22:32:03 flechsig> 
+ Time-stamp: <25 Mar 04 16:35:26 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -63,4 +63,58 @@ SIGN of w and l
         Photon mitfliege, zeigt l z.B. immer nach links, egal, ob es rauf 
         oder runter geht. Daher ist die rechte-Hand-Regel hier nicht 
         anwendbar. 
+
+
+check signs of w,l and misalignment
+===================================
+
+a) 
+refl | y z dy dz | du dw dl ru rw rl | u w l | y z dy dz || remark
+-------------------------------------------------------------------------------------
+left | + 0  0  0 |  0  0  0  0  0  0 | 0 0 + | + 0  0  0 || JB ok, rhr sign problem l
+left | - 0  0  0 |  0  0  0  0  0  0 | 0 0 - | - 0  0  0 || JB ok, rhr sign problem l
+left | 0 +  0  0 |  0  0  0  0  0  0 | 0 - 0 | 0 -  0  0 || ok
+left | 0 -  0  0 |  0  0  0  0  0  0 | 0 + 0 | 0 +  0  0 || ok
+left | 0 0  +  0 |  0  0  0  0  0  0 | 0 0 + | 0 0  +  0 || ok
+left | 0 0  -  0 |  0  0  0  0  0  0 | 0 0 - | 0 0  -  0 || ok
+left | 0 0  0  + |  0  0  0  0  0  0 | 0 - 0 | 0 -  0  - || JB ok, rhr sign problem l
+left | 0 0  0  - |  0  0  0  0  0  0 | 0 + 0 | 0 +  0  + || JB ok, rhr sign problem l
+-------------------------------------------------------------------------------------
+left | 0 0  0  0 |  +  0  0  0  0  0 | + - 0 | 0 -  0  0 || u should be 0
+left | 0 0  0  0 |  -  0  0  0  0  0 | - + 0 | 0 +  0  0 || u should be 0
+left | 0 0  0  0 |  0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be -
+left | 0 0  0  0 |  0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be +
+left | 0 0  0  0 |  0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 || l should be -
+left | 0 0  0  0 |  0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 || l should be +
+left | 0 0  0  0 |  0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 || ok
+left | 0 0  0  0 |  0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 || ok
+left | 0 0  0  0 |  0  0  0  0  +  0 | 0 0 0 | - +  -  + || sign problem y, dy
+left | 0 0  0  0 |  0  0  0  0  -  0 | 0 0 0 | + +  +  + || sign problem y, dy
+left | 0 0  0  0 |  0  0  0  0  0  + | 0 0 0 | 0 +  0  + || rhr correct, JB def sign problem z, dz 
+left | 0 0  0  0 |  0  0  0  0  0  - | 0 0 0 | 0 -  0  - || rhr correct, JB def sign problem z, dz
+--------------------------------------------------------------------------------------------------
+up   | + 0  0  0 |  0  0  0  0  0  0 | 0 + 0 | - 0  0  0 || ok
+up   | - 0  0  0 |  0  0  0  0  0  0 | 0 - 0 | + 0  0  0 || ok
+up   | 0 +  0  0 |  0  0  0  0  0  0 | 0 0 + | 0 +  0  0 || JB ok, rhr sign problem l
+up   | 0 -  0  0 |  0  0  0  0  0  0 | 0 0 - | 0 -  0  0 || JB ok, rhr sign problem l
+up   | 0 0  +  0 |  0  0  0  0  0  0 | 0 + 0 | - 0  -  0 || ok
+up   | 0 0  -  0 |  0  0  0  0  0  0 | 0 - 0 | + 0  +  0 || ok
+up   | 0 0  0  + |  0  0  0  0  0  0 | 0 0 0 | 0 +  0  + || JB ok, rhr sign problem l
+up   | 0 0  0  - |  0  0  0  0  0  0 | 0 0 0 | 0 -  0  - || JB ok, rhr sign problem l
+-------------------------------------------------------------------------------------
+up   | 0 0  0  0 |  +  0  0  0  0  0 | + - 0 | + 0  0  0 || u should be 0
+up   | 0 0  0  0 |  -  0  0  0  0  0 | - + 0 | - 0  0  0 || u should be 0
+up   | 0 0  0  0 |  0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be -
+up   | 0 0  0  0 |  0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be +
+up   | 0 0  0  0 |  0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 || l should be -
+up   | 0 0  0  0 |  0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 || l should be +
+up   | 0 0  0  0 |  0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 || ok
+up   | 0 0  0  0 |  0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 || ok
+up   | 0 0  0  0 |  0  0  0  0  +  0 | 0 0 0 | - -  -  - || sign problem z, dz
+up   | 0 0  0  0 |  0  0  0  0  -  0 | 0 0 0 | - +  -  + || sign problem z, dz
+up   | 0 0  0  0 |  0  0  0  0  0  + | 0 0 0 | - 0  -  0 || rhr correct, JB def sign problem y, dy 
+up   | 0 0  0  0 |  0  0  0  0  0  - | 0 0 0 | + 0  +  0 || rhr correct, JB def sign problem y, dy
+--------------------------------------------------------------------------------------------------
+
+
 
