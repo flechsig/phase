@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <06 Jan 00 13:21:50 flechsig> 
+c Time-stamp: <11 Jan 00 14:44:27 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -14,6 +14,10 @@ c     eingefuegt, z.B. jmult ansprechen ueber xir.si1.jmult
 c     common block geloescht, Aufrufe auf die Strukturvariaben gelenkt
 c (4) Zeile 105 iterz0 auskommentiert (nicht mehr in der structur)  
 c     Zeile 282 itery0 auskommentiert (nicht mehr in der structur)
+c (5) stop durch return ersetzt 
+c        if(iiregion.eq.0)then ...
+c        if((iend(iiregion)-istart(iiregion)+1).eq.2)then ...
+c
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
 c*********************************************************
@@ -1068,13 +1072,15 @@ c------ now, search ianz0
 	if(iiregion.eq.0)then
 	  type*,' can not find region of stationary phase'
 	  type*,' increase number of grid points'
-	  stop
+c UF 11.11.00	  stop
+          return
 	endif
 
 	if((iend(iiregion)-istart(iiregion)+1).eq.2)then
 	  type*,' region of stationary phase has only two points'
 	  type*,' increase number of grid points'
-	  stop
+c	UF 11.11.00  stop
+          return
 	endif
 
 c------------- neu: 10.11.1996 -----
