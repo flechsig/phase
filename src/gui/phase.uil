@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phase.uil
 ! Date      : <22 Oct 99 09:54:11 flechsig> 
-! Time-stamp: <22 Oct 99 09:55:05 flechsig> 
+! Time-stamp: <28 Oct 99 11:23:26 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 !
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]PHASE.UIL
@@ -9,7 +9,7 @@
 ! Autor: FLECHSIG, BESSY Berlin
 
 module  PHASE
-        version = '1. 5'
+        version = '0.95'
         names = case_sensitive
                   
         objects = {
@@ -215,10 +215,22 @@ object
             MrmNcreateCallback  = procedure create_proc (kSetupInfo);   };
         };
 
+object           
+    DisableInfo : XmInformationDialog {         
+        arguments {
+            XmNdialogTitle      = "Disable Information";
+            XmNmessageString    = kDisableInfoString;
+            XmNmessageAlignment = XmALIGNMENT_CENTER;
+	    XmNdefaultPosition  = true;
+            XmNautoUnmanage     = true;
+            XmNnoResize         = true;
+            };
+        
 !************************ Options Menue ********************************
 
 !The colormix widget object   
 
+! not available on linux
 object
     main_color : DXmColorMixDialog 
         {
