@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <04 Feb 04 17:12:03 flechsig>  */
+/*   Time-stamp: <04 Feb 04 17:26:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -2360,27 +2360,31 @@ void SetInfoString()
 
   sprintf(cstring, "J. Bahrdt and U. Flechsig");
   xstring= XmStringCreateLocalized(cstring);
-  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring);
+  XmStringFree(xstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
   sprintf(cstring, "bahrdt@exp.bessy.de");
   xstring= XmStringCreateLocalized(cstring);
-  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring);
+  XmStringFree(xstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
   sprintf(cstring, "Uwe.Flechsig@psi.ch");
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  XmStringFree(xstring);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
-  sprintf(cstring, "configured: %s, debug: %s", CONFIGURED, DEBUG);
+  sprintf(cstring, "configured: %s", CONFIGURED);
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  XmStringFree(xstring);
 
   set_something(widget_array[kSetupInfo], XmNmessageString, SetUpInfoString);
   XmStringFree(separator); 
-  XmStringFree(xstring); 
   XmStringFree(SetUpInfoString);
 } /* end SetInfoString */
 
