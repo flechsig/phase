@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <24 Mar 00 14:44:34 flechsig>              */
+/* Time-stamp: <24 Mar 00 15:03:32 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -54,7 +54,7 @@
 #ifdef VMS
   #define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
 #else
-  #define HORMAPFILENAMEBASE	"PHASE_HOME/lib/map"
+  #define HORMAPFILENAMEBASE	"/lib/map"
 #endif
 /*******************  fileheader *******************************/
 
