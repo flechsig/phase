@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <21 Dec 99 14:16:50 flechsig> 
+C Time-stamp: <21 Dec 99 14:20:43 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -250,25 +250,7 @@ c---  parameter ddisty,z Schrittweiten--------------
 c---  schrittweiten im Bild bestimmt -----------------------   
 c      ddistz, ddisty sind berechnet
 c----------------------------------------------------------
-
-c-----------------------------------------------------------      
-        
-	if(pso.intmod.ne.2)then
-          write(*,*)' integration -> equidistant grid' 
-          write(*,*)'int. grenz. winkel dy',
-     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
-          write(*,*)'int. grenz. winkel dz',
-     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
-
-          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
-	  idivy=pso.ndyfix          	 ! integrationspunkte
-	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
-	  idivz=pso.ndzfix
-          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
-          ddzi=divz/floatj(idivz-1)
-c        endif
-c end 21.12.99
-
+C 21.12 hier fixed grid geloescht UF
 c************* Bildpunkt generieren *******************************
 
 	write(*,*)'pstf.for: start'
