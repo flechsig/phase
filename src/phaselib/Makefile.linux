@@ -1,13 +1,12 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <07 Jan 00 09:18:07 flechsig> 
+# Time-stamp: <30 Jan 01 14:24:55 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB on LINUX 
 #########################################################################
 SHELL = /bin/sh
 
-#FOR         = pgf77 -c 
 FOR         = f77 
 FDEBUG      =
 AR	    = ar -rv
@@ -21,8 +20,8 @@ FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 -N22 -N33
 
 # for install
 srcdir      = .
-#prefix     = /usr/local
-prefix      = /home/pss060/sls/flechsig
+prefix     = /usr/local
+#prefix      = /home/pss060/sls/flechsig
 PHASEDIR    = $(prefix)/phase
 
 .phony: all makewhat    
