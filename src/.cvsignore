@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/.cvsignore
 #   Date      : <04 Feb 04 09:37:50 flechsig> 
-#   Time-stamp: <04 Feb 04 09:54:30 flechsig> 
+#   Time-stamp: <04 Feb 04 09:57:59 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -15,3 +15,7 @@ Makefile.in
 config.log
 config.status
 Makefile
+configure
+libtool
+
+
