@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <19 Feb 04 10:17:06 flechsig>  */
+/*   Time-stamp: <19 Aug 04 16:51:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -345,6 +345,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
       XmStringFree(xlabel); 
+      Beamline.position= epos;
       if (epos > 0) /* make only sense if something is selected */
 	{
 #ifdef DEBUG
