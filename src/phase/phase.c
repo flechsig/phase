@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <05 Oct 04 08:51:46 flechsig>  */
+/*  Time-stamp: <26 Oct 04 13:33:32 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -56,6 +56,8 @@ int main(argc, argv)
 
     /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
+
+    set_program_name (*argv);       /* initialize program_name for errors */
 
     sprintf(filename, "%s/share/phase/phase.uid", PREFIX);
 
