@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <23 Dec 99 12:50:54 flechsig> 
+C Time-stamp: <23 Dec 99 16:09:34 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -567,7 +567,7 @@ c$$$        write(*,*)'sintre.dat + sintim.dat erzeugt'
            write(10,*)xir.d12(1,3,i),xir.d12(2,3,i)
            enddo
         close(10)
-
+        write(*,*)'pstf: d12.dat generated'
       return
       end
 c**** end pstf() ******************************************    
