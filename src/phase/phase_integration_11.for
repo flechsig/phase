@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
 c Date      : <28 Oct 99 09:17:59 flechsig> 
-c Time-stamp: <28 Oct 99 09:45:13 flechsig> 
+c Time-stamp: <28 Oct 99 10:58:28 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c 
 c 28.10.99 Die Versionsnummern im Fortran File werden nur noch
@@ -10,10 +10,9 @@ c namen ohen Versionsnummer benutzt werden. Im Source Release tauchen die
 c Filenamen ohen Versionsnummer auf!
 c
 c Aenderungen an der Version von JB:
-c     Versionsnummern (_11) bei includes entfernt
+c   Versionsnummern (_11) bei includes entfernt
+c   adaptive_int geloescht
 c                                                       UF
-c*********************************************************
-      subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -30,170 +29,8 @@ c	nur eine Iteration
 c	falls spaeter adaptive Integration implementiert werden soll,
 c	muss dies auf andere Weise als bisher geschehen.
 c
-c************************************************
-
-	implicit real*8(a-h,o-z)
-	complex*16 fwert,fwerty,fwertz,
-     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-     &      yzint,yzintey,yzintez
-	complex*16 fzey(4096),fzez(4096)
-
-	include 'phase_struct.for'
-        record /constants/ cs
-        record /geometryst/ g
-        record /rayst/ ra
-        record /source_results/ sr
-        record /integration_results/ xir
-        record /control_flags/ ifl
-        record /sources/ src
-	record /integration/ xi
-	record /apertures/ apr
-	record /statistics/ st
-	record /map4/ m4
-
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
-
-	dimension a(0:5,0:5)
-
-  	dimension z(4096),dz(4096)
-	dimension fya(4096),fyp(4096)
-	dimension fza(4096),fzp(4096)
-
-	if((iiheigh.eq.1).and.(iiwidth.eq.1).and.
-     &		(ifl.ispline.lt.0))then
-	call guess(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
-	endif
-	
-c*******************************************************
-c	Erstellen eines reduzierten Konstantensatzes
-c*******************************************************
-
-	yi=ra.ri.yi
-	zi=ra.ri.zi
-
-        call subm1(m4.fdetc,yi,zi,m4.fdetrc)
-        call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
-        call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
-        call subm1(m4.ypc1,yi,zi,m4.yprc1)
-        call subm1(m4.zpc1,yi,zi,m4.zprc1)
-        call subm1(m4.dypc,yi,zi,m4.dyprc)
-        call subm1(m4.dzpc,yi,zi,m4.dzprc)
-        call subm1(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
-        call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
-        call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
-        call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
-
-        call subm1(m4.wc,yi,zi,m4.wrc)
-        call subm1(m4.xlc,yi,zi,m4.xlrc)
-
-c------------------------------------------------------
-
-	st.inumb(st.nn1,st.nn2)=0.
-	fmax=0.
-
-	ianzz=xi.ianzz0
-	iterz=xi.iterz0
-
-c*** Number of Iterations:                      iterz
-c*** Integrationsgrenzen:                       zmin, zmax
-c*** Anzahl der Stuetzstellen im ersten Raster: ianzz
-c*** Maximale Anzahl von Stuetzstellen:         imaxz
-c*** Verhaeltnis von fmin zu fmax:              fracz
-c*** minimaler Quotient benachbarter Y-Werte:   frac1z
-
-c---------------- START ---------------------------------------
-c---------------- first grid is equdistant, the following are not
-
-	if(ianzz.eq.1)then
-	dzz=0.
-	else
-	dzz=(xi.zmax-xi.zmin)/dflotj(ianzz-1)
-	endif
-
-c----------------------------------------------------------
-	if(src.isrctype.lt.4)then
-c----------------------------------------------------------
-c
-c	noch nicht getestet, vergl. mit isrctype.eq.4
-c
-c----------------------------------------------------------
-
-	do i=1,ianzz
- 	   z(i)=xi.zmin+dflotj(i-1)*dzz
-	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
-     &		z(i),fwerty,fwertz,yintya,yintyp,yintza,yintzp)
-
-	   fzey(i)=cdabs(fwerty)
-	   dz(i)=dzz
-	   fmax=dmax1(fmax,cdabs(fwerty))
-	enddo
-
-	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,
-     &		xir.yzintey,xir.yzintya,xir.yzintyp)
-
-	endif
-
-c-----------------------------------------------------------
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &                        (src.isrctype.eq.6))then
-c-----------------------------------------------------------
-	do i=1,ianzz
-	   ra.n3=i
- 	   z(i)=xi.zmin+dflotj(i-1)*dzz
-	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
-     &		z(i),fwerty,fwertz,
-     &          yintya,yintyp,yintza,yintzp)
-	   if(ifl.ispline.ge.0)then
-	   	fzey(i)=fwerty
-	   	fzez(i)=fwertz
-	   endif
-	   if(ifl.ispline.lt.0)then
-	 	fya(i)=yintya
-	 	fza(i)=yintza
-	 	fyp(i)=yintyp
-	 	fzp(i)=yintzp
-	   endif
-	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
-	   dz(i)=dzz
-	enddo
-
-	ispline_save=ifl.ispline
-
-	if(ifl.ispline.eq.-2)then
-	ifl.ispline=0
-	do i=1,ianzz
-		fzey(i)=fya(i)*(dcos(fyp(i))+cs.sqrtm1*dsin(fyp(i)))
-		fzez(i)=fza(i)*(dcos(fzp(i))+cs.sqrtm1*dsin(fzp(i)))
-	enddo		
-	endif
-
-      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz)
-
-	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
-     &			xir.yzintya,xir.yzintyp)
-
-      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz)
-
-	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
-     &			xir.yzintza,xir.yzintzp)
-
-	ifl.ispline=ispline_save
-
-c------------------------------------------------------------
-	endif
-c------------------------------------------------------------
-
-	return
-	end
-
+c*********************************************************
+ 
 c*************************************************************
 	subroutine yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		dzi,yintey,yintez,
