@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <05 Feb 04 10:48:19 flechsig> 
+ Time-stamp: <05 Feb 04 14:26:28 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -41,3 +41,6 @@ Errors
 - you do not have Autoconfig version 2.57
   you may try to disable the request AC_PREREQ(2.57) in configure.ac
   you may have to link/rename configure.ac to configure.in
+
+- make will not run through the first time - you have to install the library 
+  first by doing make install and then do a make again
