@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <28 Oct 99 09:48:50 flechsig> 
+C Time-stamp: <03 Nov 99 16:29:28 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -213,7 +213,7 @@ c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
               enddo        
            enddo
 	enddo        
-        write(*,*),'phasefor.for: wc 4000',wc(4,0,0,0)
+        write(*,*) 'phasefor.for: wc 4000',wc(4,0,0,0)
 c	do iii=1,4
 c	do jjj=1,4
 c	do i=0,iord
@@ -856,9 +856,9 @@ c--------- Variablen ------------------------------------------
 
 	 
 c*****************************************************************
-       write(*,*),' iplmode=',iplmode
+       write(*,*) ' iplmode=',iplmode
        if (iplmode.eq.0)then
-        write(*,*),'do not subtract r and rp from path length' 
+        write(*,*) 'do not subtract r and rp from path length' 
 	call lsubb(a,g.sina,g.cosa,g.sinb,g.cosb,
      &             g.r,g.rp,g.idefl,dql1,dql2)    
         do n1=0,iord
@@ -1439,7 +1439,7 @@ c*****************************************************
         dimension a(0:5,0:5)   
 	character*255 ename
 c----------------------------------------------------------
-       	write(*,*),'***read opt. element data from: ',ename 
+       	write(*,*) '***read opt. element data from: ',ename 
         open(unit=10,file=ename,status='old')  
         do i=0,5
           do j=0,5
@@ -1473,7 +1473,7 @@ c----------------------------------------------------------
         pi= 4.d0*datan(1.d0)
 
         open(unit=10,file=gname,status='old')  
-        write(*,*),'***read Geometry data from: ',gname
+        write(*,*) '***read Geometry data from: ',gname
         read(10,*)alpha
         read(10,*)beta   
 	read(10,*)g.r
