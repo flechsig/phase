@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <18 Feb 04 10:47:23 flechsig>  */
+/*   Time-stamp: <18 Feb 04 11:06:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -63,25 +63,25 @@ void BatchMode(char *fname, int cmode)
   switch (cmode)
     {
     case 1:
-      printf("Ray Tracing\n");
+      printf("BatchMode: Ray Tracing\n");
       MakeRTSource(&PHASESet, &Beamline); 
       RayTracec(&PHASESet, &Beamline);
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESUnion.Rays); 
       break;
     case 2:
-      printf("Full Ray Tracing\n");
+      printf("BatchMode: Full Ray Tracing\n");
       MakeRTSource(&PHASESet, &Beamline); 
       RayTraceFull(&Beamline);
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESUnion.Rays); 
       break;
     case 5:
-      printf("Footprint Ray Tracing\n");
+      printf("BatchMode: Footprint Ray Tracing\n");
       Footprint(&Beamline, Beamline.position);
       break;
     case 3: 
-      printf("Phase Space Transformation\n");
+      printf("BatchMode: Phase Space Transformation\n");
       src_ini(&Beamline.src); 
       PST(&Beamline);
       WritePsd(PHASESet.imageraysname, &Beamline.RESULT.RESUnion.PSD, 
@@ -89,10 +89,10 @@ void BatchMode(char *fname, int cmode)
 	       Beamline.RESULT.RESUnion.PSD.iz);
       break;
     default: 
-      printf("unknown CalcMod: %d\n", cmode);
+      printf("BatchMode: unknown CalcMod: %d\n", cmode);
     }
   beep(5);
-  printf("program end\n");
+  printf("BatchMode: program end\n");
 } /* end Batchmode */
 
 void FixFocus(double cff, double lambda, double ldens, int m,
@@ -112,7 +112,8 @@ void FixFocus(double cff, double lambda, double ldens, int m,
       u  = -p/ 2.0+ sqrt(p* p/ 4.0- q); 
       *alpha= asin(u);
       *beta = asin(mld- u);
-    } else printf("FixFocus error: cff==1.0 or zero order ...?\n");
+    } else 
+      printf("FixFocus: error: cff==1.0 or zero order ...?\n");
 } /* end FixFocus */
 
 int ProcComandLine(unsigned int ac, char *av[])
@@ -144,19 +145,19 @@ int ProcComandLine(unsigned int ac, char *av[])
 	case 'm':
 	  ch++; 
 	  sscanf(ch, "%d", &cmode);
-	  printf("calculation mode: %d\n", cmode);
+	  printf("ProcComandLine: calculation mode: %d\n", cmode);
 	  break;
 	case 'F':
 	case 'f':
 	  ch++; dfname= ch;
 	  strcpy(PHASESet.beamlinename, ch);
-	  printf("filename: >>%s<<\n", ch);
+	  printf("ProcComandLine: filename: >>%s<<\n", ch);
 	  break;
 	case 'O':
 	case 'o':
 	  ch++; resultname= ch;
 	  strcpy(PHASESet.imageraysname, ch);
-	  printf("result- filename: >>%s<<\n", ch);
+	  printf("ProcComandLine: result- filename: >>%s<<\n", ch);
 	  break;
 	case 'B':             /* Batch Job ohne X */
 	case 'b':
@@ -205,21 +206,21 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 
   theta0= fabs(x->theta0* PI/ 180.0);   
   delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
-    alpha= (-theta0- delta);   /* eigentlich fi+ theta */
-    beta = ( theta0- delta);   /* nicht eher fi- theta???*/
+  alpha= (-theta0- delta);   /* eigentlich fi+ theta */
+  beta = ( theta0- delta);   /* nicht eher fi- theta???*/
 /* modification: 17 Feb 98 09:33:48 flechsig */
 /* modification: 19 Feb 98 11:08:59 flechsig */
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
-  printf("DefGeometryC: alpha: %f, beta: %f ?????, lambda= %g mm\n", 
-	 alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda);
+  printf("DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
+	 alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6);
   if ((x->iflag) == 1)
     {
       radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));   
       trans    = radius* (1.0- cos(delta));      
       gout->r  = x->r-  trans; 
       gout->rp = x->rp- trans;    
-      printf("NIM translation enabled, trans= %d mm\nr1= %d mm, r2= %d mm\n", 
+      printf("DefGeometryC: NIM translation enabled, trans= %d mm\nr1= %d mm, r2= %d mm\n", 
              trans, gout->r, gout->rp);  
     }  else 
       {
@@ -246,8 +247,9 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     alpha, aellip, bellip, cellip, eellip, f, z0, small;
   int i, j;
   struct mirrortype mirror;
-
-  printf("DefMirrorC called\n");   
+#ifdef DEBUG
+  printf("DefMirrorC: called\n");
+#endif   
   small= 1e-15;   
   r    = x->rmi;
   rho  = x->rho;
@@ -265,7 +267,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* 6    */
     case kEOEVLSG:  
-      printf("toroidal shape\n");                 
+      printf("DefMirrorC: toroidal shape\n");                 
       if (fabs(rho) > small) 
 	{
 	  dp[12]= 0.5/ rho;                		  /* 0,2 */
@@ -283,12 +285,12 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break; /* end toroid */ 
 
     case kEOEGeneral:           /* read coefficients from file */
-      printf("read general coefficient file\n");
+      printf("DefMirrorC: read general coefficient file\n");
       ReadCoefficientFile(dp,fname);
       break;
 
     case kEOECone:           
-      printf("cone shape\n");
+      printf("DefMirrorC: cone shape\n");
       if (fabs(l) > small)
 	{
 	  cone= (r - rho)/ l;
@@ -298,11 +300,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  dp[3]= sqrt(cone- cone* cone);
 	  dp[4]= -(r/sqrt(cone)- l/2.0)* sqrt(cone- cone* cone);
 	}
+#ifdef DEBUG
       printf("end cone shape\n");
+#endif
       break;
 
     case kEOEElli: 
-      printf("elliptical shape\n");  
+      printf("DefMirrorC: elliptical shape\n");  
       if (alpha < small) 
 	{
 	  beep(1);	
@@ -319,7 +323,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
 	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
 	    
-	  printf("ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
+	  printf("DefMirrorC: ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
 		 aellip, bellip, cellip, eellip, f, z0);
 	  
 	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
@@ -345,11 +349,11 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break;
 
     case kEOEPElli: 
-      printf("plane- elliptical shape\n");  
+      printf("DefMirrorC: plane- elliptical shape\n");  
       if (alpha < small) 
 	{
 	  beep(1);	
-	  fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
+	  fprintf(stderr, "DefMirrorC: theta = 0, elliptical shape makes no sense!\n");
 	} 
       else
 	{     
@@ -363,7 +367,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  
 	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
 	  
-	  printf("ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
+	  printf("DefMirrorC: ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
 		 aellip, bellip, cellip, eellip, f, z0);
 	  
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
@@ -571,7 +575,9 @@ void InitDataSets(struct PHASEset *x, char *mainpickname)
   SetGrDatStruct(x->imageraysname, &Beamline, &grdatstruct);  
   /* PHASEgraf.c */
   /*   optistructure.fileliste= NULL;     */
-  printf("InitDataSets end\n");     
+#ifdef DEBUG
+  printf("InitDataSets end\n");   
+#endif  
 }
 
 void InitOptiBox1(char *pickname)   
@@ -1557,10 +1563,10 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
 				"y points",  "z points", 
 				
 				"Delta z [mm]", };                     /*33*/
- 
-    printf("initsource0 wdgnumber: %d, bl->RTSource.QuellTyp: %c\n", 
+#ifdef DEBUG 
+    printf("InitSourceBox: wdgnumber: %d, bl->RTSource.QuellTyp: %c\n", 
 	   source, bl->RTSource.QuellTyp);   
-    
+#indif    
     switch (source) 
       {
       case kESDipolSourceButton: 	sou= 'D'; break;
@@ -1719,7 +1725,8 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     XmStringFree(label);      
 } /* end initsourcebox */
 
-void InitGeometryBox(struct gdatset *gx)  
+void InitGeometryBox(struct gdatset *gx) 
+     /* obsolete FEB 04 */ 
 /* modification: 20 Feb 98 09:23:35 flechsig */
 /* modification: 13 Mar 98 08:40:42 flechsig */
 {
@@ -1873,11 +1880,13 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
     set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
     
   /* set history */
-  printf("InitOElementBox: vor history\n"); 
+  /*  printf("InitOElementBox: vor history\n"); */
   XtVaSetValues(widget_array[kEOOptMenu], XmNmenuHistory, w, NULL); 
   XmToggleButtonSetState(widget_array[kEGNITranslation], 
   y->iflag == 1, FALSE); 
-  printf("InitOElementBox->done\n");
+#ifdef DEBUG
+  printf("InitOElementBox => done\n");
+#endif
 } /* end InitOElementBox */
 
 void GetSource(struct BeamlineType *bl)  
@@ -1889,8 +1898,10 @@ void GetSource(struct BeamlineType *bl)
   char *textf[8];
   struct datset x; 
   int i;
- 
+
+#ifdef DEBUG 
   printf("GetSource, type: %c\n", bl->RTSource.QuellTyp); 
+#endif
    
   bl->BLOptions.wrSource= 
     (XmToggleButtonGetState(widget_array[kESFile]) == TRUE) ? 1 : 0; 
@@ -2012,8 +2023,7 @@ void GetSource(struct BeamlineType *bl)
 }
 
 void GetGeometry(struct PHASEset *ph, struct gdatset *gp) 
-    
-/* modification: 20 Feb 98 09:23:44 flechsig */
+/*  obsolete Feb 2004 - function taken over by getoelement */   
 {
   char *text;
  
@@ -2032,12 +2042,11 @@ void GetGeometry(struct PHASEset *ph, struct gdatset *gp)
   gp->iflag= 
     (XmToggleButtonGetState(widget_array[kEGNITranslation]) == TRUE) ? 1 : 0; 
   XtFree(text);
-  /*  printf("getGeo: GActDat.theta0: %f\n", GActDat.theta0);    */
 } /* end GetGeometry */
 
-/*
+/******************************
   reads the optical element box
- */
+*******************************/
 int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
 {
   char *text= NULL; 
@@ -2084,7 +2093,7 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET26]); sscanf(text, "%lf", &mp->slopel);
   XtFree(text);
 #ifdef DEBUG
-  printf("getoelement: vor history\n"); 
+  /*  printf("getoelement: vor history\n"); */
 #endif
   get_something(widget_array[kEOEMenu], XmNmenuHistory, &w); /* kEOOptMenu */
   /*printf("getoelement: vor history 1\n");*/
@@ -2103,11 +2112,12 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
 	     etype= kEOEVLSG;
 	
   XtFree(text);
-  printf("GetOelement: Elementtype: %d\n", etype);
-
+  
   gp->iflag= 
     (XmToggleButtonGetState(widget_array[kEGNITranslation]) == TRUE) ? 1 : 0; 
-
+#ifdef DEBUG
+  printf("GetOelement: Elementtype: %d\n", etype);
+#endif
   return etype;
 } /* end GetOelement */
 
