@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <04 Feb 04 16:52:40 flechsig>  */
+/*  Time-stamp: <04 Feb 04 17:01:09 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -45,27 +45,23 @@ int main(argc, argv)
     char *argv[];                       /* Pointers to command line args. */
 {                                
     int setupswitch;
-    char prefix[255], uidfilename[255];
+    char prefix[255], filename[255];
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
     /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
+
     sprintf(prefix, "%s", PREFIX);
     if (strncmp(prefix, "NONE", 4) == 0) 
       strcpy(prefix, "/usr/local");
-#ifdef DEBUG
-    printf("main: prefix%s\n", prefix);
-#endif
 
+    sprintf(filename, "%s/share/phase/phase.uid", prefix);
 
-    sprintf(uidfilename, "%s/share/phase/phase.uid", PREFIX);
-    if (strncmp(uidfilename, "NONE", 4) == 0) 
-      strcpy(uidfilename, "/usr/local/share/phase/phase.uid");
-    
 #ifdef DEBUG
-    printf("expect: uidfile: %s\n", uidfilename);
+    printf("phase.main> prefix: %s\n", prefix);
+    printf("phase.main> uidfile: %s\n", filename);
 #endif
 
 #ifdef VMS
@@ -109,10 +105,10 @@ int main(argc, argv)
 
     /* set db_filename_vec with environment */
 #ifdef VMS
-    strcpy(uidfilename, ".lib]phase.uid");
-    PrependEnv(PHASE_HOME, uidfilename);
+    strcpy(filename, ".lib]phase.uid");
+    PrependEnv(PHASE_HOME, filename);
 #endif
-    db_filename_vec[0]= uidfilename;
+    db_filename_vec[0]= filename;
 
     if (MrmOpenHierarchyPerDisplay(
         XtDisplay (toplevel_widget),    /* display   */ 
@@ -171,12 +167,13 @@ int main(argc, argv)
 	SetInfoString();
 	XtManageChild(widget_array[kSetupInfo]);   
 #ifdef VMS
-	strcpy(string, ".lib]news.");
+	strcpy(filename, ".lib]news.");
+	PrependEnv(PHASE_HOME, filename);
 #else
-	strcpy(string, "/lib/news");
+	sprintf(filename, "%s/news", prefix);
 #endif 
-	PrependEnv(PHASE_HOME, string);
-	PrintFileInMainList(string);                      /* news anzeigen */
+	
+	PrintFileInMainList(filename);                      /* news anzeigen */
         /*renderinfo();               */
     }
     /* printf("vor der mainloop\n");*/

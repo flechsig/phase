@@ -52,5 +52,6 @@ Initialisierungsfehler bei ell. Elementen behoben
 04 Jan 01 input coefficient file as optical element
 21 May 01 bug with metafile under unix solved 
 24 Jun 03 bug fix slit for ray tracing
+04 Feb 04 apply autoconfigure
 ****************    end of NEWS  *****************           
 **************************************************
