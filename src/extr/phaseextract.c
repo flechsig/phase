@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <06 May 04 12:13:07 flechsig>  */
+/*   Time-stamp: <07 May 04 08:51:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,11 +8,6 @@
 /*   $Revision$  */
 /*   $Author$  */
 
-/*
-
-
-
-*/
 
 /* !!!!!!!!!!!!!!!!! bei mehrdimensionale Matritzen schreibt Fortran
    zuerst die Spalten (umgekehrt wie c )
@@ -23,6 +18,7 @@
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include <Xm/Text.h>                  /* fileBox               */
 #include <Xm/FileSB.h>    
@@ -96,7 +92,10 @@ int main(argc, argv)
   double ax, ay, ax0, ay0, dy, dz, yfwhm, zfwhm, rpy, rpz, 
     transmittance, done, ddone;
   int 	 ix, iy;
+  time_t start, l, h, m, s;
+  
  
+  start= time(NULL);
   PI= 4.0* atan(1.0); 
 #ifdef LOGFILE   
   CheckUser(logfilename, "Extraction"); 
@@ -134,6 +133,7 @@ int main(argc, argv)
   ax0= ax0- 0.5* (optistructure.xpoints- 1)* optistructure.dx;
   for (iy= 0; iy< optistructure.ypoints; iy++)   
     {
+      printf("************************ ay= %g **********************\n", ay);
       in_struct(&Beamline, &ay, optistructure.yindex);    
       ax= ax0;
       for (ix= 0; ix< optistructure.xpoints; ix++)   
@@ -173,11 +173,19 @@ int main(argc, argv)
 	  ax+= optistructure.dx; 
 	}  
       ay+= optistructure.dy;  
-      printf("ay= %f\n", ay); 
+       
     }
   free(optistructure.parindex);
   fclose(optistructure.filepointer);
   beep(4);
+
+  /* calc the time */
+  l= time(NULL)- start;
+  h= l/ 3600;
+  m= (l- (h * 3600))/ 60;
+  s= l- h * 3600- m * 60;
+  printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, l, s);
+
   printf("end extraction: results in file: %s\n", 
 	 optistructure.resultfilename);
   printf("file format: ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance\n");

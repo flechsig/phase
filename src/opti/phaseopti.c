@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <05 May 04 11:47:24 flechsig>  */
+/*   Time-stamp: <07 May 04 08:50:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -26,6 +26,7 @@
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include <Xm/Text.h>                  /* fileBox               */
 #include <Xm/FileSB.h>    
@@ -98,6 +99,7 @@
      index= 128+ 39 : 2l
      index= 128+ 40 : slopew
      index= 128+ 41 : slopel
+     index= 128+ 42 : STXM slits
      
 */
                                                                    
@@ -123,12 +125,14 @@ int main(argc, argv)
 {   
   double 		ax, ay, ax0;
   int 			ix, iy, iread= 20,luno;
+  time_t start, l, h, m, s;
 #ifdef VMS
   FString 		Fminuitfilename;
 #endif
   struct PHASEset      PHASESet;          /* wird u.a. als dummy gebraucht  */
   char optfname[]= "optimized.phase";
 
+  start= time(NULL);
    /* sprintf(PHASESet.beamlinename,"%s", optfname); */
    PI= 4.0* atan(1.0); 
 #ifdef LOGFILE 
@@ -233,6 +237,14 @@ int main(argc, argv)
    free(optistructure.parindex);
  
    beep(4);
+
+   /* calc the time */
+   l= time(NULL)- start;
+   h= l/ 3600;
+   m= (l- (h * 3600))/ 60;
+   s= l- h * 3600- m * 60;
+   printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, l, s);
+
    printf("optimized Beamlinefile: %s\n", optfname);
    WriteBLFile(optfname, &Beamline);
    printf("end optimization: results in file: %s\n", 

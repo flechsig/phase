@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <06 May 04 11:09:33 flechsig>  */
+/*   Time-stamp: <07 May 04 08:48:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -128,6 +128,20 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	case 41:			/* slopel */
 	  mdat->slopel= *z;
 	  break;
+	case 42:			/* rowland slits */
+	  listpt->ElementOK |= mapOK | elementOK;
+	  bl->ElementList[elnumber- 1].ElementOK &= (~mapOK); 
+	  bl->ElementList[elnumber- 1].ElementOK &= (~elementOK);
+	  bl->ElementList[elnumber+ 1].ElementOK &= (~mapOK); 
+	  bl->ElementList[elnumber+ 1].ElementOK &= (~elementOK);
+
+	  bl->ElementList[elnumber- 1].MDat.l1= -0.5* *z;
+	  bl->ElementList[elnumber- 1].MDat.l2=  0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.l1= -0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.l2=  0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.w1= -0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
+	  break;
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
@@ -235,13 +249,14 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->rp= *z;                    /* new distance */
 	  mdat= &listpt->MDat;             /* new radius r */
 	  teta= fabs(gdat->theta0* PI/ 180.0);
+	  listpt->ElementOK &= (~elementOK);  
 	  mdat->rmi= 2.0/ cos(teta) * gdat->rp * gdat->r /(gdat->rp + gdat->r);
 	  /* the spectrometer is 2 elements later- get the length */
 	  cl= bl->ElementList[elnumber+ 2].GDat.r+ 
 	    bl->ElementList[elnumber+ 2].GDat.rp + gdat->rp;  /* focal length rho */
 	  mdat->rho= 2.0* cos(teta) * cl * gdat->r /(cl + gdat->r);
-          printf("in_struct: (STXM special M1-S1): %.2f, M1 r, rho: %.2f, %.2f \n", 
-		 *z, mdat->rmi, mdat->rho);
+          printf("in_struct: (STXM special M1-S1): %.2f, M1 r, rho: %.2f, %.2f, focus %.2f \n", 
+		 gdat->rp, mdat->rmi, mdat->rho, cl);
 	  break;
 	case 19: /* STXM special S1-S2 spectrometer length */
 	  mdat= &listpt->MDat;
@@ -250,6 +265,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 					    (2.0* cos(teta)));
 	  cl= mdat->rmi;  /* old radius */  
 	  /* new grating radius assuming keep rowland conditions */
+	  listpt->ElementOK &= (~elementOK); 
 	  mdat->rmi= mdat->rho= *z/ (2* cos(teta) * cos(fi));  
 	  gdat->r= mdat->rmi * cos(teta + fi);
 	  gdat->rp= *z- gdat->r;
@@ -262,9 +278,12 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  bl->ElementList[elnumber- 2].MDat.rho= 2.0* cos(teta) * 
 	    cl * bl->ElementList[elnumber- 2].GDat.r /
 	    (cl + bl->ElementList[elnumber- 2].GDat.r);
-	  printf("in_struct: (STXM special S1-S2) M1-rho: %.2f, M1-R: %.2f, focal l. rho: %.2f\n", 
-		 bl->ElementList[elnumber- 2].MDat.rho,
-		 bl->ElementList[elnumber- 2].MDat.rmi, cl);
+	  printf("in_struct: (STXM special S1-S2) M1-R, rho: %.2f, %.2f, focal l. rho: %.2f\n", 
+		 bl->ElementList[elnumber- 2].MDat.rmi,
+		 bl->ElementList[elnumber- 2].MDat.rho, cl);
+	  bl->ElementList[elnumber- 2].ElementOK &= (~elementOK);
+	  bl->ElementList[elnumber- 2].ElementOK &= (~geometryOK); 
+	  bl->ElementList[elnumber- 2].ElementOK &= (~mapOK);
 	  break;
 	default:
 	  printf("in_struct: index %d not found\n", ipos);
@@ -311,7 +330,10 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	case 41:			/* slopel */
 	  *z= mdat->slopel;
 	  break;
-
+	case 42:			/* rowland slits */
+	  *z= bl->ElementList[elnumber- 1].MDat.l2- 
+	    bl->ElementList[elnumber- 1].MDat.l1;
+	  break;
 
 	default: 
 	  /*direktes beschreiben einzelner matrixelemente */
