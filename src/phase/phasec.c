@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <11 Jan 00 08:56:41 flechsig>  */
+/*  Time-stamp: <11 Jan 00 16:00:35 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -2292,5 +2292,17 @@ void *Alloc(void *p, int size)
     {  fprintf(stderr, "Alloc error- exit(-1)\n"); exit(-1);    } 
   return p;
 } /* end Alloc */
+
+void SetInfoString()
+{
+  XmString SetUpInfoString;
+  char cstring[255];
+
+  sprintf(cstring, "PHASE: Version %d", 1);
+  SetUpInfoString= XmStringCreateLocalized(cstring);
+  set_something(widget_array[kSetupInfo], XmNmessageString, SetUpInfoString);
+} /* end SetInfoString */
+
+
 
 /* end of file phasec.c */                                

@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <20 Dec 99 13:57:20 flechsig>  */
+/*  Time-stamp: <11 Jan 00 16:03:34 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -143,6 +143,7 @@ unsigned int main(argc, argv)
     if (setupswitch)   /* option -n */
     {
 	FetchWidget(kSetupInfo, "SetupInfo");
+	SetInfoString();
 	XtManageChild(widget_array[kSetupInfo]);   
 #ifdef VMS
 	strcpy(string, ".lib]news.");

@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <07 Jan 00 08:39:36 flechsig>              */
+/* Time-stamp: <11 Jan 00 16:02:11 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -745,6 +745,7 @@ void 	ActivateFileSelection(int, char *),
   ReadRayFile(char *, int *, struct RESULTType *), 
   SetDefaultParameter(struct BeamlineType *),
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
+  SetInfoString(),
   Slope(struct RayType *, double, double, double, double, int),
   UpdateBLBox(struct BeamlineType *, int),  
   UpdateFilenames(struct PHASEset *),
