@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
 /*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <18 Nov 99 16:38:34 flechsig>  */
+/*  Time-stamp: <19 Nov 99 09:02:57 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -43,15 +43,16 @@ void AddBLElement(struct BeamlineType *bl, XmString *path)
 {
    int *poslist, pos, i;
    struct ElementType *tmplist= NULL, *listpt, *tmplistpt;  
-   char **name;
+   char *name= NULL;
 
 #ifdef DEBUG
    printf("AddBLElement called\n");  
 #endif    
 /*   list widget aktualisieren   */
-   XmStringGetLtoR(*path, XmFONTLIST_DEFAULT_TAG, name);
+   if (!XmStringGetLtoR(*path, XmFONTLIST_DEFAULT_TAG, &name)) 
+     return;
 #ifdef DEBUG
-   printf("AddBLElement: add name >>%s<< to list\n", *name);
+   printf("AddBLElement: add name >>%s<< to list\n", name);
 #endif   
    if (XmListGetSelectedPos(widget_array[kEBLList], &poslist, &pos) == True)
    { 
@@ -89,9 +90,9 @@ void AddBLElement(struct BeamlineType *bl, XmString *path)
    {
      if ( i == pos)        /* fuellen mit daten */
      {
-       ExpandFileNames(&PHASESet, *name);  
+       ExpandFileNames(&PHASESet, name);  
        PutPHASE(&PHASESet, MainPickName);  
-       strcpy(listpt->elementname, *name);  
+       strcpy(listpt->elementname, name);  
        printf("AddBLElement: update filenames\n");
   
        if (ggetpickfile(&(listpt->GDat), PHASESet.geometrypckname) != 1)  
@@ -114,7 +115,8 @@ void AddBLElement(struct BeamlineType *bl, XmString *path)
      else
        memcpy(listpt, tmplistpt++, sizeof(struct ElementType));  
    }
-   free(tmplist); XtFree(*name);
+   free(tmplist); 
+   XtFree(name);
 } /* end AddBLElement */
 
 void BuildBeamline(struct BeamlineType *bl)  
@@ -652,15 +654,16 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
 
    XmString label;
    XmStringTable listitems;
-   char *text;   
+   char *text= NULL;   
 
    fprintf(stderr, "begin getBLBox\n");
 
 
    /* get beamlinename vom tastenlabel */
    XtVaGetValues(widget_array[kEBLNameButton], XmNlabelString, &label, NULL);
-   XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &text); 
-   strcpy(blname, text); XmStringFree(label); 
+   if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &text) 
+       return; 
+   strcpy(blname, text); XmStringFree(label); XtFree(text);
 
    text= XmTextGetString(widget_array[kEBLT31a]);    
    sscanf(text, "%lf", &bl->BLOptions.lambda); 
@@ -677,7 +680,7 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
    if ((bl->BLOptions.displength > 0.0) && (bl->deltalambdafactor > -100.0))
         bl->deltalambdafactor= bl->BLOptions.displength;
    else bl->deltalambdafactor= -100.0;
-   XtFree(text); 
+    
    bl->BLOptions.SourcetoImage= 
        (XmToggleButtonGetState(widget_array[kEBLstoim]) == TRUE) ? 1 : 2; 
    printf("end getBLBox\n");
