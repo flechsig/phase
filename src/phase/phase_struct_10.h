@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.h */
 /*  Date      : <22 Oct 97 15:02:57 flechsig>  */
-/*  Time-stamp: <13 Oct 99 17:37:15 flechsig>  */
+/*  Time-stamp: <22 Oct 99 13:02:58 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_9.h */
@@ -169,13 +169,13 @@ struct  source4 {
 
 	struct  integration {
 		double distfoc;
-		int  itery0,ianzy0,imaxy,inumy;
-		int  iterz0,ianzz0,imaxz,inumz;
-		double ymin,ymax,fracy,frac1y;
-		double zmin,zmax,fracz,frac1z;
+		int  ianzy0;
+		int  ianzz0;
+		double ymin,ymax;
+		double zmin,zmax;
 		double phase_change_1,phase_change_2,d12_max;
-		double amp_change,dphi_min;
-		int  iamp_smooth,iord_amp,iord_pha,iordap,iphase_curv;
+		double amp_change;
+		int  iamp_smooth,iord_amp,iord_pha,iphase_curv;
 		int  iphase_pi2,ifm_amp,ifm_pha,id12,ianz0_cal,ianz0_fixed;
 	};  
 

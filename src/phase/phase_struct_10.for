@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.for
 c Date      : <22 Oct 97 14:56:27 flechsig> 
-c Time-stamp: <13 Oct 99 17:36:16 flechsig> 
+c Time-stamp: <22 Oct 99 13:02:56 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c------------------------------------------------------------
 c
@@ -145,13 +145,13 @@ c---------------- integration --------------------------------
 
 	structure/integration/
 		real*8 distfoc
-		integer itery0,ianzy0,imaxy,inumy
-		integer iterz0,ianzz0,imaxz,inumz
-		real*8 ymin,ymax,fracy,frac1y
-		real*8 zmin,zmax,fracz,frac1z
+		integer ianzy0
+		integer ianzz0
+		real*8 ymin,ymax
+		real*8 zmin,zmax
 		real*8 phase_change_1,phase_change_2,d12_max
-		real*8 amp_change,dphi_min
-		integer iamp_smooth,iord_amp,iord_pha,iordap
+		real*8 amp_change
+		integer iamp_smooth,iord_amp,iord_pha
 		integer iphase_curv,iphase_pi2,ifm_amp,ifm_pha
 		integer id12,ianz0_cal,ianz0_fixed
 	end structure
