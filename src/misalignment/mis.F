@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mis.F
 c$$$ Date      : <16 Feb 04 16:27:42 flechsig> 
-c$$$ Time-stamp: <16 Feb 04 17:14:57 flechsig> 
+c$$$ Time-stamp: <17 Feb 04 09:53:24 flechsig> 
 
 c$$$
 c$$$ $Source$ 
@@ -40,8 +40,11 @@ c
 	   enddo
 	enddo
 
-	open(unit=10,name='mold.dat',type='new')
-	open(unit=11,name='mnew.dat',type='new')
+c UF	open(unit=10,name='mold.dat',type='new')
+c UF    open(unit=11,name='mnew.dat',type='new')
+	open(unit=10,name='mold.dat',type='unknown')
+	open(unit=11,name='mnew.dat',type='unknown')
+
 	write(10,*)ianzw,ianzl
 	write(11,*)ianzw,ianzl
 
