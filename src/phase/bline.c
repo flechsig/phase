@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/bline.c */
 /*  Date      : <30 Oct 98 10:02:42 flechsig>  */
-/*  Time-stamp: <30 Oct 98 10:02:58 flechsig>  */
+/*  Time-stamp: <22 Oct 99 12:54:34 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 /* File      : /home/vms/flechsig/vms/phas/phasec/bline.c 	*/
 /* Date      : <18 Mar 97 12:29:12 flechsig>  			*/
@@ -1022,36 +1022,36 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"\nINTEGRATION\n"); 
    fprintf(f, "%20lg distance to focus \n", op->xi.distfoc);
   
-   fprintf(f,"%20d     itery0\n", op->xi.itery0);
+   /* fprintf(f,"%20d     itery0\n", op->xi.itery0); */
    fprintf(f,"%20d     ianzy0\n", op->xi.ianzy0);   
-   fprintf(f,"%20d     imaxy\n",  op->xi.imaxy); 
-   fprintf(f,"%20d     inumy\n",  op->xi.inumy); 
+   /* fprintf(f,"%20d     imaxy\n",  op->xi.imaxy); 
+   /* fprintf(f,"%20d     inumy\n",  op->xi.inumy); */
 
-   fprintf(f,"%20d     iterz0\n", op->xi.iterz0);
+   /* fprintf(f,"%20d     iterz0\n", op->xi.iterz0); */
    fprintf(f,"%20d     ianzz0\n", op->xi.ianzz0);   
-   fprintf(f,"%20d     imaxz\n",  op->xi.imaxz); 
-   fprintf(f,"%20d     inumz\n",  op->xi.inumz); 
+   /* fprintf(f,"%20d     imaxz\n",  op->xi.imaxz); */
+   /* fprintf(f,"%20d     inumz\n",  op->xi.inumz); */
 
    fprintf(f,"%20lg     ymin \n", op->xi.ymin);   
    fprintf(f,"%20lg     ymax \n", op->xi.ymax); 
-   fprintf(f,"%20lg     fracy \n", op->xi.fracy);   
-   fprintf(f,"%20lg     frac1y\n", op->xi.frac1y); 
+   /* fprintf(f,"%20lg     fracy \n", op->xi.fracy);  */ 
+   /* fprintf(f,"%20lg     frac1y\n", op->xi.frac1y); */
 
    fprintf(f,"%20lg     zmin \n", op->xi.zmin);   
    fprintf(f,"%20lg     zmax \n", op->xi.zmax); 
-   fprintf(f,"%20lg     fracz \n", op->xi.fracz);   
-   fprintf(f,"%20lg     frac1z\n", op->xi.frac1z); 
+   /* fprintf(f,"%20lg     fracz \n", op->xi.fracz); */  
+   /* fprintf(f,"%20lg     frac1z\n", op->xi.frac1z);*/ 
 
 /*    fprintf(f, "%20lg     phase_change_1 \n", op->xi.phase_change_1);  */
 /*    fprintf(f, "%20lg     phase_change_2 \n", op->xi.phase_change_2);   */ 
    fprintf(f, "%20lg     d12_max \n", op->xi.d12_max); 
  /*   fprintf(f, "%20lg     amp_change \n", op->xi.amp_change);   */ 
-   fprintf(f, "%20lg     dphi_min \n", op->xi.dphi_min); 
+ /*  fprintf(f, "%20lg     dphi_min \n", op->xi.dphi_min); */
 
    fprintf(f, "%20d  iamp_smooth (0,1,2)   \n", op->xi.iamp_smooth);  
    fprintf(f, "%20d  iord_amp   \n", op->xi.iord_amp);  
    fprintf(f, "%20d  iord_pha   \n", op->xi.iord_pha);  
-   fprintf(f, "%20d  order of amplitude expansion   \n", op->xi.iordap);
+   /* fprintf(f, "%20d  order of amplitude expansion   \n", op->xi.iordap); */
 /*    fprintf(f,  */
 /*    "%20d  (0) do not allow, (1) allow change of curvature sign of phase   \n",  */
 /*            op->xi.iphase_curv);   */
@@ -1360,36 +1360,36 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
        { 
          op= (struct OptionsType *) &(bl->BLOptions); 
          fscanf(f, " %lf %[^\n]s %c", &op->xi.distfoc, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c", &op->xi.itery0, buffer, &buf);
+	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.itery0, buffer, &buf); */
 	 fscanf(f, " %d %[^\n]s %c", &op->xi.ianzy0, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c", &op->xi.imaxy, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c", &op->xi.inumy, buffer, &buf);
+	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.imaxy, buffer, &buf); */
+	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.inumy, buffer, &buf); */
 
-	 fscanf(f, " %d %[^\n]s %c", &op->xi.iterz0, buffer, &buf);
+	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.iterz0, buffer, &buf); */
 	 fscanf(f, " %d %[^\n]s %c", &op->xi.ianzz0, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c", &op->xi.imaxz, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c", &op->xi.inumz, buffer, &buf);
+	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.imaxz, buffer, &buf); */
+	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.inumz, buffer, &buf); */
        
 	 fscanf(f, " %lf %[^\n]s %c", &op->xi.ymin, buffer, &buf);  
          fscanf(f, " %lf %[^\n]s %c", &op->xi.ymax, buffer, &buf);
-	 fscanf(f, " %lf %[^\n]s %c", &op->xi.fracy, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &op->xi.frac1y, buffer, &buf);
+	 /* fscanf(f, " %lf %[^\n]s %c", &op->xi.fracy, buffer, &buf);  */ 
+         /* fscanf(f, " %lf %[^\n]s %c", &op->xi.frac1y, buffer, &buf); */ 
 	 
 	 fscanf(f, " %lf %[^\n]s %c", &op->xi.zmin, buffer, &buf);  
          fscanf(f, " %lf %[^\n]s %c", &op->xi.zmax, buffer, &buf);
-	 fscanf(f, " %lf %[^\n]s %c", &op->xi.fracz, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &op->xi.frac1z, buffer, &buf);
+	/* fscanf(f, " %lf %[^\n]s %c", &op->xi.fracz, buffer, &buf);  */
+        /* fscanf(f, " %lf %[^\n]s %c", &op->xi.frac1z, buffer, &buf); */
 
 /*     fscanf(f, " %lf %[^\n]s %c", &op->xi.phase_change_1, buffer, &buf);   */
 /*     fscanf(f, " %lf %[^\n]s %c", &op->xi.phase_change_2, buffer, &buf);   */
          fscanf(f, " %lf %[^\n]s %c", &op->xi.d12_max, buffer, &buf);
 /* 	 fscanf(f, " %lf %[^\n]s %c", &op->xi.amp_change, buffer, &buf);   */
-         fscanf(f, " %lf %[^\n]s %c", &op->xi.dphi_min, buffer, &buf);
+	 /* fscanf(f, " %lf %[^\n]s %c", &op->xi.dphi_min, buffer, &buf); */
 
          fscanf(f, " %d %[^\n]s %c", &op->xi.iamp_smooth, buffer, &buf);
          fscanf(f, " %d %[^\n]s %c", &op->xi.iord_amp, buffer, &buf);
          fscanf(f, " %d %[^\n]s %c", &op->xi.iord_pha, buffer, &buf);
-         fscanf(f, " %d %[^\n]s %c", &op->xi.iordap, buffer, &buf);
+         /* fscanf(f, " %d %[^\n]s %c", &op->xi.iordap, buffer, &buf); */
 /*          fscanf(f, " %d %[^\n]s %c", &op->xi.iphase_curv, buffer, &buf); */
 /*          fscanf(f, " %d %[^\n]s %c", &op->xi.iphase_pi2, buffer, &buf); */
          fscanf(f, " %d %[^\n]s %c", &op->xi.ifm_amp, buffer, &buf);
