@@ -1,12 +1,17 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mis.F
 c$$$ Date      : <16 Feb 04 16:27:42 flechsig> 
-c$$$ Time-stamp: <16 Feb 04 16:28:07 flechsig> 
+c$$$ Time-stamp: <16 Feb 04 17:14:57 flechsig> 
 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
+c
+c main program to test the misalignment
+c
+	program mis
 
 	implicit real*8(a-h,o-z)	
 
@@ -16,14 +21,23 @@ c$$$ $Author$
 	common/mirror/a(0:5,0:5),c1,c2
 	common/plot/wmin,wmax,deltaw,xlmin,xlmax,deltal,ianzw,ianzl
 
+c
+c get example input from file misali.par
+c
 	call get_input
 
+c
+c call the misalignment subroutine- output: anew
+c
 	call misali(a,anew,drz,drl,drw,dw,dl,dz)
 
+c
+c print results to screen and to the files mold.dat and mnew.dat (plot_2d)
+c
 	do i=0,5
-	do j=0,5
-	  type*,i,j,a(i,j),anew(i,j)
-	enddo
+	   do j=0,5
+	      type*,i,j,a(i,j),anew(i,j)
+	   enddo
 	enddo
 
 	open(unit=10,name='mold.dat',type='new')
@@ -32,26 +46,26 @@ c$$$ $Author$
 	write(11,*)ianzw,ianzl
 
 	do j=1,ianzl
-	do i=1,ianzw
-	  w=wmin+dflotj(i-1)*deltaw
-	  xl=xlmin+dflotj(j-1)*deltal
+	   do i=1,ianzw
+	      w=wmin+dflotj(i-1)*deltaw
+	      xl=xlmin+dflotj(j-1)*deltal
 
-	  zold=0.
-	  znew=0.
-	  do k=0,5
-	  do l=0,5
-	    fact=1.
-	    if(k.gt.0)fact=fact*w**k
-	    if(l.gt.0)fact=fact*xl**l
-	    zold=zold+a(k,l)*fact
-	    znew=znew+anew(k,l)*fact
-	  enddo
-	  enddo
+	      zold=0.
+	      znew=0.
+	      do k=0,5
+		 do l=0,5
+		    fact=1.
+		    if(k.gt.0)fact=fact*w**k
+		    if(l.gt.0)fact=fact*xl**l
+		    zold=zold+a(k,l)*fact
+		    znew=znew+anew(k,l)*fact
+		 enddo
+	      enddo
 
-	write(10,*)w,xl,zold
-	write(11,*)w,xl,znew
+	      write(10,*)w,xl,zold
+	      write(11,*)w,xl,znew
 
-	enddo
+	   enddo
 	enddo
 
 	close(11)
@@ -59,7 +73,7 @@ c$$$ $Author$
 
 	stop
 	end
-
+c end main
 
 c-------------------------------------------------------
 	subroutine get_input
@@ -70,7 +84,7 @@ c-------------------------------------------------------
 	common/mirror/a(0:5,0:5),c1,c2
 	common/plot/wmin,wmax,deltaw,xlmin,xlmax,deltal,ianzw,ianzl
 
-	open(unit=10,name='misali.par',type='old')
+	open(unit=10, name='misali.par', type='old')
 	read(10,*)dw
 	read(10,*)dl
 	read(10,*)dz
@@ -94,9 +108,9 @@ c-------------------------------------------------------
 	deltal=(xlmax-xlmin)/dflotj(ianzl-1)
 	
 	do i=0,5
-	do j=0,5
-	  a(i,j)=0.d0
-	enddo
+	   do j=0,5
+	      a(i,j)=0.d0
+	   enddo
 	enddo
 
 	a(2,0)=c1
