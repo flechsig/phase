@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
 /*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <24 Mar 00 15:03:24 flechsig>  */
+/*  Time-stamp: <24 Mar 00 15:46:37 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -709,20 +709,16 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
       fprintf(stderr, "malloc error\n");   exit(-1); 
    } 
 
-   phase_home= getenv(PHASE_HOME);
-
-#ifdef VMS
    sprintf(buffer,"%s%d_lh.omx\0", HORMAPFILENAMEBASE, dim); 
-#else
-   sprintf(buffer,"%s%s%d_lh.omx\0", phase_home, HORMAPFILENAMEBASE, dim);
+#ifndef VMS
+   PrependEnv(PHASE_HOME, buffer);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, bl->lmap, dim);    
 
-#ifdef VMS      
    sprintf(buffer,"%s%d_rh.omx\0", HORMAPFILENAMEBASE, dim);
-#else 
-   sprintf(buffer,"%s%s%d_rh.omx\0", phase_home, HORMAPFILENAMEBASE, dim);
+#ifndef VMS 
+   PrependEnv(PHASE_HOME, buffer);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, bl->rmap, dim); 
