@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <03 Nov 99 16:29:28 flechsig> 
+C Time-stamp: <08 Nov 99 10:56:49 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -375,8 +375,8 @@ c******* start of adaptive grid integration ***************************
 	    else
 c              write(*,*)'pstf.for: call to adaptive_int'
 c	      call adaptive_int(yzint,s0)
-              call adaptive_int(m4,g,a,src,apr,
-     .          	        cs,ra,ifl,xi,xir,st)  
+c              call adaptive_int(m4,g,a,src,apr,
+c     .          	        cs,ra,ifl,xi,xir,st)  
 
 c              psd2c(n1,n2)=yzint
 c	      psd2(n1,n2)=cdabs(yzint)**2
