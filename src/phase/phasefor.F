@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <23 Dec 99 16:09:34 flechsig> 
+C Time-stamp: <23 Dec 99 16:30:41 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -155,10 +155,7 @@ c        ifl.iord=iord   ! Uwe
 
 c***************** phase space imaging ************************
         pso.intmod=2
-        write(*,*)'intmod fest auf 2 (adaptive int) gesetzt'
-
-	write(*,*)' equidistant grid (1)' 
-        write(*,*)'    adaptive grid (2)' 
+        write(*,*)'pstf: intmod fixed'
 	write(*,*)'*** integration method',pso.intmod
 	write(*,*)'test_wavelength (mm), xl0 (mm)',xlam_test,xlen0  
         write(*,*)' image dimension in y-direction (mm),' 
@@ -213,25 +210,6 @@ c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
            enddo
 	enddo        
         write(*,*)'phasefor.for: wc 4000',wc(4,0,0,0)
-c	do iii=1,4
-c	do jjj=1,4
-c	do i=0,iord
-c	do j=0,iord-i
-c	do k=0,iord-i-j
-c	do l=0,iord-i-j-k
-c		m4.xmec(iii,jjj,i,j,k,l)=xmec(iii,jjj,i,j,k,l)
-c		m4.xmec1(iii,jjj,i,j,k,l)=xmec1(iii,jjj,i,j,k,l)
-c	enddo
-c	enddo        
-c	enddo
-c	enddo        
-c	enddo        
-c	enddo        
-
-
-c	idim1=100                    !?
-c	idim2=100                    !?
-c--------------------------------------------------
 
 c--------------------------------------------------
 c Schrittweiten in Bildkoordinaten bestimmen 
@@ -249,26 +227,6 @@ c---  parameter ddisty,z Schrittweiten--------------
 c---  schrittweiten im Bild bestimmt -----------------------   
 c      ddistz, ddisty sind berechnet
 c----------------------------------------------------------
-
-c-----------------------------------------------------------      
-        
-	if(pso.intmod.ne.2)then
-          write(*,*)' integration -> equidistant grid' 
-          write(*,*)'int. grenz. winkel dy',
-     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
-          write(*,*)'int. grenz. winkel dz',
-     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
-
-          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
-	  idivy=pso.ndyfix          	 ! integrationspunkte
-	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
-	  idivz=pso.ndzfix
-          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
-          ddzi=divz/floatj(idivz-1)
-        endif
-c--- schrittweiten fuer integration bestimmt fuer equidistant grid 
-c     ddyi, ddzi sind berechnet
-c -----------------------------------------------------------------         
 
 c************* Bildpunkt generieren *******************************
 
@@ -300,130 +258,47 @@ c************* save initial coordinates ****************
 
             st.nn1=n1
 	    st.nn2=n2
-
-            if(pso.intmod.eq.1) then
-c*******************************************************
-c	Erstellen eines reduzierten Konstantensatzes
-c       Dimension halbieren
-c*******************************************************
-            call subm1(fdetc,yi,zi,fdetrc)
-            call subm1(fdetphc,yi,zi,fdetphrc)
-            call subm1(fdet1phc,yi,zi,fdet1phrc)
-
-            call subm1(ypc1,yi,zi,yprc1)
-            call subm1(zpc1,yi,zi,zprc1)
-            call subm1(dypc,yi,zi,dyprc)
-            call subm1(dzpc,yi,zi,dzprc)
-c************ Integration ueber die Winkel **************
-
-c	    if(pso.intmod.ne.2)then
-c              write(*,*)' equidistant grid (1)' 
-
-c******* start fixed grid integration *******************
-              dzi=floatj(-(idivz-1)/2-1)*ddzi     ! Raster dz
-              do n3=1,idivz
-                dzi=dzi+ddzi
-                dzi_global=dzi                    ! merke dz
-
-c*******************************************************
-c	Erstellen eines nochmals reduzierten 
-c       Konstantensatzes
-c*******************************************************
-                call subm2(fdetrc,dzi,fdtrrc)
-                call subm2(yprc1,dzi,yprrc1)
-                call subm2(zprc1,dzi,zprrc1)
-                call subm2(dyprc,dzi,dyprrc)
-                call subm2(dzprc,dzi,dzprrc)
-
-                dyi=floatj(-(idivy-1)/2-1)*ddyi    ! Raster dy
-                do n4=1,idivy
-                  dyi=dyi+ddyi
-
-                  dyi_global=dyi 	       ! merke dyi  
-                  rin(1)=yi_global
-                  rin(2)=zi_global
-                  rin(3)=dyi_global
-                  rin(4)=dzi_global
-
-
-c hier kann fywert eingefuegt werden !! fwert muss complex sein 18.9.96
-c                  call fywert(fwert,s0,iord,rin,
-c     &                    fdtrrc,yprrc1,zprrc1,dyprrc,dzprrc,
-c     &                    xlam_test,xlen1c,xlen2c,xlen0)
-
-                
-c                  psdf(n4,n3)=fwert             ! fd oben berechnet
-                                                ! complex auf real ??
-                                                ! d.h. ich nehme nur den 
-						! realteil des E- Vektors
-                enddo  ! end raster dy
-              enddo    ! end raster dz
-
-                 
-c psdf enthaelt realteil der dichte im Winkelraster  ????
-
-c              write(*,*)'call int_2d'  
-c              call int_2d(psdf,dyi,idivy,dzi,idivz,xint)
-c psd2 enthaelt die integrierte dichte im imagesystem
-c              psd2(n1,n2)=xint
-              
-c******* end of fixed grid integration *******************************
-
-
 c******* start of adaptive grid integration *************************** 
-	    else
-c              write(*,*)'pstf.for: call to adaptive_int'
-c	      call adaptive_int(yzint,s0)
-              call adaptive_int(m4,g,a,src,apr,
-     .          	        cs,ra,ifl,xi,xir,st)  
+            call adaptive_int(m4,g,a,src,apr,
+     .           cs,ra,ifl,xi,xir,st)  
 
-c              psd2c(n1,n2)=yzint
-c	      psd2(n1,n2)=cdabs(yzint)**2
-
-        
-	if(ifl.ispline.eq.-1)then
-	  xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
-	  xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
-	endif
-
-	if(cdabs(xir.yzintez).lt.1.e-10)icheckk=1
-
-        psd2c(n1,n2)=cdabs(xir.yzintey)
-        psd2cy(n1,n2)=xir.yzintey
-        psd2cz(n1,n2)=xir.yzintez
-
-c------------- intensity:
-
-	if(src.isrctype.eq.1)then
-	  psd2(n1,n2)=cdabs(xir.yzintey)
-	endif
-
-	if((src.isrctype.ge.2).and.(src.isrctype.lt.4))then
-	  psd2(n1,n2)=cdabs(xir.yzintey)**2
-	endif
-
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
-	  psd2(n1,n2)=
-     &      (cdabs(xir.yzintey))**2+(cdabs(xir.yzintez))**2
-	endif
-
-	if(src.isrctype.eq.6)then
-c----------------- changed 23.4.1996 ------
-c	psd2(n1,n2)=cdabs(xir.yzintey)
-	  psd2(n1,n2)=dreal(xir.yzintey)
-
+            if(ifl.ispline.eq.-1)then
+               xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
+               xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
+            endif
+            
+            if(cdabs(xir.yzintez).lt.1.e-10)icheckk=1
+            psd2c(n1,n2)=cdabs(xir.yzintey)
+            psd2cy(n1,n2)=xir.yzintey
+            psd2cz(n1,n2)=xir.yzintez
+            
+c-------------intensity:
+            
+            if(src.isrctype.eq.1)then
+               psd2(n1,n2)=cdabs(xir.yzintey)
+            endif
+            
+            if((src.isrctype.ge.2).and.(src.isrctype.lt.4))then
+               psd2(n1,n2)=cdabs(xir.yzintey)**2
+            endif
+            
+            if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
+               psd2(n1,n2)=
+     &              (cdabs(xir.yzintey))**2+(cdabs(xir.yzintez))**2
+            endif
+            
+            if(src.isrctype.eq.6)then
+c-----------------changed 23.4.1996 ------
+c     psd2(n1,n2)=cdabs(xir.yzintey)
+               psd2(n1,n2)=dreal(xir.yzintey)
+            endif	
 c------------------------------------------
-	endif	
-c******* end of adaptive grid integration ***************************
 
-	    endif
 c****** Ende der Integration ueber die Winkel ******************
-
-         enddo  ! raster
-        enddo   ! raster
+        enddo                   ! raster
+      enddo                     ! raster
 c****** Berechnung der Intensitaetsverteilung fertig ***********
-
-	write(*,*)'stop intensity calculation'
+      write(*,*)'stop intensity calculation'
 c psd2 enthaelt intensitaet
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
