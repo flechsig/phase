@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/editmenu.uil
 ! Date      : <09 Mar 04 11:46:29 flechsig> 
-! Time-stamp: <20 Apr 04 12:15:31 flechsig> 
+! Time-stamp: <04 Jun 04 14:45:33 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
@@ -244,6 +244,7 @@ object
                     
  		   XmSeparator         {};
 		   XmPushButton        EOESlitButton;
+		   XmPushButton        EOEDriftButton;
 		   XmPushButton        EOEGeneralButton;
                          };
         callbacks {
@@ -287,6 +288,18 @@ object
         callbacks {
           MrmNcreateCallback = procedure create_proc (kEOESlit); 
 	  XmNactivateCallback = procedure activate_proc (kEOESlit);
+            XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };  
+
+object
+    EOEDriftButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "free drift";
+                                    };
+        callbacks {
+          MrmNcreateCallback = procedure create_proc (kEOEDrift); 
+	  XmNactivateCallback = procedure activate_proc (kEOEDrift);
             XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
             }; 
         };  
