@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <20 Dec 99 10:56:06 flechsig> 
+# Time-stamp: <20 Dec 99 11:11:42 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -55,6 +55,8 @@ PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h
 AUX     = version.h Makefile.linux Makefile.bessy Makefile.psicl0 \
           phase_struct.for
+LINKED  = phase_struct_10.for phase_struct_10.h \
+	  phase_source_10.for phase_integration_11.for
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
@@ -106,7 +108,7 @@ dist: $(SRCS) $(AUX)
 	version.h` > .fname
 	-rm -rf `cat .fname`
 	mkdir `cat .fname`
-	ln $(SRCS) $(AUX) `cat .fname`
+	ln $(SRCS) $(AUX) $(LINKED) `cat .fname`
 	-rm -rf `cat .fname`.fname
 	tar -czhf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
