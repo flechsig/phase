@@ -8,7 +8,7 @@ C Autor: FLECHSIG, BESSY Berlin
 	real*8 l
 	dimension a(0:5,0:5)
 
-        include 'phase_struct_7.for'
+        include 'phase_struct.for'
 
         record /geometryst/ g
         record /rayst/ ra
