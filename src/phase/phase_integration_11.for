@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
 c Date      : <28 Oct 99 09:17:59 flechsig> 
-c Time-stamp: <28 Oct 99 10:58:28 flechsig> 
+c Time-stamp: <20 Dec 99 10:02:28 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c 
 c 28.10.99 Die Versionsnummern im Fortran File werden nur noch
@@ -20,6 +20,9 @@ c	Datentransfer ueber Common-Block SIMPS1 zum Hauptprogramm.
 c	Das muss spaeter in PHASE_STRUCT_11.FOR integriert werden
 c	(in xir. etc).
 c	Datenausgabe auf File im Hauptprogramm.
+c
+c       erledigt simps1 als record si1 in integration_results integriert
+c       UF 21.12.99
 c
 c	gleichzeitig sollten distfocy und distfocz implementiert werden
 c	(in xi. etc).
@@ -114,7 +117,7 @@ c        call subm2(m4.xlrc,dzi,m4.xlrrc)
 c------------ end of changes 16.8.1996
 
 	ianzy=xi.ianzy0
-	itery=xi.itery0
+c 17.17.99 UF itery0 wurde gestrichen	itery=xi.itery0
 	fmax=0.
 
 c*** Number of Iterations:                      itery
