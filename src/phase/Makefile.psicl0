@@ -1,6 +1,6 @@
 # File      : /home/vms/flechsig/vms/phas/phasec/makefile
 # Date      : <19 Mar 97 11:31:08 flechsig> 
-# Time-stamp: <07 Jan 00 12:57:16 flechsig> 
+# Time-stamp: <21 Jan 00 09:22:08 flechsig> 
 # Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 # Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]MAKEFILE.
@@ -33,7 +33,7 @@ OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)
 DEFS            = VMS  
 #########        flags                                    ###############
 CFLAGS	 	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/DEF=$(DEFS)/OBJECT=     
-FFLAGS   	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/OBJECT= 
+FFLAGS   	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/OLD_F77/OBJECT= 
 UILFLAGS	= /motif/output=
 LINKFLAGS	= /$(DEBUG)debug/executable=  
 ###### system dependent flags                          ################## 
