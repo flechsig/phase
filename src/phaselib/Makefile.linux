@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <04 Nov 99 13:28:00 flechsig> 
+# Time-stamp: <04 Nov 99 13:34:06 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB on LINUX 
@@ -11,8 +11,8 @@ SHELL = /bin/sh
 FOR         = f77 -c 
 AR	    = ar -rv
 YACC        = bison -y
-INSTALL     = /usr/local/bin/install -c
-INSTALLDATA = /usr/local/bin/install -c -m 644
+INSTALL     = install -c
+INSTALLDATA = install -c -m 644
 
 FFLAGS    = -w -f -s -N3 -N51
 
