@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <20 Dec 99 14:55:20 flechsig> 
+C Time-stamp: <20 Dec 99 14:56:40 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -284,8 +284,8 @@ c       if(pso.intmod.ne.2)then
 	  idivz=xi.ianzz0
           ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
           ddzi=divz/floatj(idivz-1)
-        endif
-
+c        endif
+c end 21.12.99
 
 c************* Bildpunkt generieren *******************************
 
