@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
 c Date      : <20 Jan 00 10:23:01 flechsig> 
-c Time-stamp: <20 Jan 00 11:03:30 flechsig> 
+c Time-stamp: <27 Oct 00 14:22:44 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c--------------------------------------------------------------------------
 c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
@@ -724,6 +724,7 @@ c***********************************************************
 
 	dimension xx(400000),yy(400000)
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4a
 	open(unit=10,name=so4.fsource4a,type='old')
 	read(10,*)so4.ieyrex,so4.ieyrey
 	do j=1,so4.ieyrey
@@ -743,6 +744,7 @@ c***********************************************************
 	so4.dyeyre=(so4.yeyremax-so4.yeyremin)
      &		/dflotj(so4.ieyrey-1)
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	open(unit=10,name=so4.fsource4b,type='old')
 	read(10,*)so4.ieyimx,so4.ieyimy
 	do j=1,so4.ieyimy
