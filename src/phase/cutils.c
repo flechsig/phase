@@ -1,12 +1,13 @@
-/*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
-/*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <25 Jun 02 08:18:57 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
- 
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
-/* Datum: 21.JUL.1994                                          */
-/* Stand: 24-APR-1998                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
+/*   Date      : <25 Jun 02 08:20:05 flechsig>  */
+/*   Time-stamp: <25 Jun 02 08:20:14 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
 
 #include <stdio.h>  
 #include <stdlib.h>   
