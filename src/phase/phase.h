@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <04 Jun 04 14:51:05 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:29:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -542,7 +542,7 @@ struct datset
 
 struct ElementType   
 {
-  int ElementOK, Art;
+  int ElementOK;
   MAP70TYPE matrix, MtoSource;
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc; 
   struct xlenmaptype xlm; 
