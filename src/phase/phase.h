@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <11 Feb 04 17:21:01 flechsig>              */
+/* Time-stamp: <13 Feb 04 14:13:28 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -223,23 +223,20 @@
 #define        kEOET12                    168  
 #define        kEOET13                    169
 #define        kEOET14                    170
- 
-#define        kEOElementBox         	  171   
-#define        kEOET1Label                172   
-#define        kEOET2Label                173   
-#define        kEOET3Label                174   
-#define        kEOET4Label                175   
-#define        kEOET5Label                176   
-#define        kEOET6Label                177   
-#define        kEOET7Label                178   
-#define        kEOET8Label                179     
-#define        kEOET9Label                180   
-#define        kEOET10Label               181   
-#define        kEOET11Label               182   
-#define        kEOET12Label               183 
-#define        kEOET13Label               184   
-#define        kEOET14Label               185 
 
+#define    kEOET15                171
+#define    kEOET16                172
+#define    kEOET17                173
+#define    kEOET18                174
+#define    kEOET19                175
+#define    kEOET20                176
+#define    kEOET21                177
+#define    kEOET22                178
+#define    kEOET23                179
+#define    kEOET24                180
+#define    kEOET25                181
+#define    kEOET26                182
+#define    kEOElementBox          183
 
 #define        kEOEOK	        	  186 
 #define        kEOEApply    		  187 
@@ -363,6 +360,8 @@
 #define kCWriteMCoButton         352
 
 #define kESPointSourceButton     360
+#define kPreAB                   361
+#define kSucAB                   362
 
 /******************** end defines uil **********************************/
 

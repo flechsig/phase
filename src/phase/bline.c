@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <12 Feb 04 13:33:55 flechsig>  */
+/*   Time-stamp: <16 Feb 04 14:34:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -425,6 +425,7 @@ void GetSlope(struct ElementType *el)
 /* Uuebernimmt slope und Aperturdaten */
 /* Uwe 10.7.96 */
 /* last mod 10.7.96 */ 
+     /* obslolete since feb 04 -> getoelement */
 {
    char *text; 
   
@@ -612,8 +613,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 
 void InitBLBox(char *blname, struct BeamlineType *bl)   
 /*
-/* Initialisiert die Beamline Box 
-/* last mod. Uwe 10.7.96 				*/
+/* Initialisiert die Beamline Box */
 {
    XmString label;
    int i;
@@ -1564,11 +1564,11 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
 
    if ((widget_array[kEOElementBox] != NULL) &&
        XtIsRealized(widget_array[kEOElementBox]))		
-     InitOElementBox(&ep->MDat, &ep->GDat, ep->Art);   
+       InitOElementBox(&ep->MDat, &ep->GDat, ep->Art);   
    
-   if ((widget_array[kEGeometryBox] != NULL) &&
+   /*  if ((widget_array[kEGeometryBox] != NULL) &&
        XtIsRealized(widget_array[kEGeometryBox]))
-     InitGeometryBox(&ep->GDat); 
+       InitGeometryBox(&ep->GDat); */
    
    /* filenames updaten */
    ExpandFileNames(&PHASESet, ep->elementname); 
@@ -1583,8 +1583,8 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    sprintf(buffer[3], "%5G", ep->MDat.l2);   
    sprintf(buffer[4], "%5G", ep->MDat.slopew);   
    sprintf(buffer[5], "%5G", ep->MDat.slopel);   
-   for (i= 0; i < 6; i++)
-     set_something(widget_array[kEBLT11+ i], XmNvalue, buffer[i]);   
+   /* for (i= 0; i < 6; i++)
+     /*     set_something(widget_array[kEBLT11+ i], XmNvalue, buffer[i]);   */
 } /* end UpdateBLBox */
 /* end bline.c */
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <12 Feb 04 12:29:24 flechsig>  */
+/*   Time-stamp: <13 Feb 04 15:30:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -341,7 +341,13 @@ void activate_proc(w, tag, reason)
   case kEOEAB4:                                   /* OElement Box */
     SetRadius(widget_num);     
     xprintf("calculate radius\n");   
-    break;    
+    break; 
+
+   case kPreAB: 
+   case kSucAB:                                   /* OElement Box */
+    CopyLength(widget_num);     
+    xprintf("copy contents\n");   
+    break; 
 
    case kEOEOK:                                    /* OElement Box */ 
     XtUnmanageChild(widget_array[kEOElementBox]);

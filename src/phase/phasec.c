@@ -1,27 +1,12 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <12 Feb 04 13:25:37 flechsig>  */
+/*   Time-stamp: <16 Feb 04 15:07:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
 /*   $Date$ */
 /*   $Revision$  */
 /*   $Author$  */
-
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
-/*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <16 Nov 01 11:43:04 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
-
-/* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
-/* Date      : <18 Mar 97 12:27:02 flechsig>  */
-/* Time-stamp: <22 Oct 99 15:42:55 flechsig>  */
-/* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEC.C           */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 21-FEB-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -1759,20 +1744,22 @@ void InitGeometryBox(struct gdatset *gx)
   sprintf(TextField[1], "%f", gx->rp   );    
   sprintf(TextField[2], "%f", gx->theta0);  
   sprintf(TextField[3], "%.3f", cff);    
+
+  
     	        
-  for (i= 0; i< 4; i++)
+    for (i= 0; i< 4; i++)
     {	
-      set_something(widget_array[kEGT1+ i], XmNvalue, TextField[i]);  
+          set_something(widget_array[kEGT1+ i], XmNvalue, TextField[i]);  
 
-      label= XmStringCreateLocalized(LabelField1[i]);
+	  /*    label= XmStringCreateLocalized(LabelField1[i]);
 
-      set_something(widget_array[kEGT1Label+ i], XmNlabelString, label);  
-    }     
+		set_something(widget_array[kEGT1Label+ i], XmNlabelString, label);  */
+     }     
 
-  label= XmStringCreateLocalized(LabelField1[4]);
+  /*  label= XmStringCreateLocalized(LabelField1[4]);
 
   set_something(widget_array[kEGInputLabel], XmNlabelString, label); 	
-  XmStringFree(label); 
+  XmStringFree(label); */
   XmToggleButtonSetState(widget_array[kEGNITranslation], 
 			 gx->iflag == 1, FALSE);   
 } /* end InitGeometryBox */
@@ -1780,11 +1767,12 @@ void InitGeometryBox(struct gdatset *gx)
 void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)  
 /* sw wird mit art initialisiert */    
 /* wird von activate_proc mit der widget- nummer der Taste aufgerufen */
-/* last modification: 30 Sep 97 08:24:02 flechsig */
+/* setzt auch default werte */
 {
   static int ActualTask; 
   int i, ih, imax;
-  char TextField[12][40];
+  double cff, teta, fi;
+  char TextField[26][40], *text;
   XmString label; 	
   Widget w;
   char LabelField1 [20][80] = {  
@@ -1802,7 +1790,18 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
     "aperture/ slit (only w, l are valid)",
     "read general coefficient file (all fields ignored)"
   };
-       
+ 
+  /* from geometrybox */    
+  teta= fabs(y->theta0* PI/ 180.0);   /* theta */
+  text= XmTextGetString(widget_array[kEBLT31a]);
+  sscanf(text, "%lf", &y->lambda);
+  y->lambda*= 1e-6;
+  XtFree(text);
+
+  fi = (double)(y->inout)* 
+    asin(y->lambda* y->xdens[0]/ (2.0* cos(teta)));
+  cff= cos(fi- teta)/ cos(fi+ teta);
+
   if ((sw != kEOEDefaults) && (sw != kFFileBoxOK)) 
     {      
 #ifdef DEBUG
@@ -1812,7 +1811,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
       switch (sw) {  
       case  kEOETM:    ih= 12; imax= 11;  break;
       case  kEOETG:    ih= 13; imax= 11;  break;  
-      case  kEOEVLSG:  ih= 14; imax= 11;  break;  
+      case  kEOEVLSG:  ih= 14; imax= 26;  break;  
       case  kEOEElli:  ih= 15; imax= 11;  break; 
       case  kEOEPElli: ih= 16; imax= 11;  break;  
       case  kEOESlit:  ih= 17; imax= 11;  break;  
@@ -1823,43 +1822,60 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
       {
         ih= 14; imax= 11; 
 	sw= kEOEVLSG;
-	printf("defaults nur fuer tovlsg 09 Jun 97\n");
+	printf("InitOElementBox: set defaults (toroidal VLS grating)\n");
 	/*w= widget_array[sw];*/
       }
+  imax= 26;  /* new */
   w= widget_array[sw];    /* verschoben 24.11.99 */            
 #ifdef DEBUG
-  printf("initialisiere Elementbox mit typ %d\n", sw);    
+  printf("InitOElementBox: initialize with typ %d\n", sw);    
 #endif 
-  sprintf(TextField[0], "%.3f", x->r1);   
-  sprintf(TextField[1], "%.3f", x->rmi);      
-  sprintf(TextField[2], "%.3f", x->r2);
-  sprintf(TextField[3], "%.3f", x->rho);          
-  sprintf(TextField[4], "%d", y->inout);      	   
-  sprintf(TextField[5], "%.5f", y->xdens[0]);    
-  sprintf(TextField[6], "%.5f", y->xdens[1]);    
-  sprintf(TextField[7], "%.5f", y->xdens[2]);    
-  sprintf(TextField[8], "%.5f", y->xdens[3]);    
-  sprintf(TextField[9], "%.5f", y->xdens[4]); 
-  sprintf(TextField[10], "%.5f", x->alpha); 
+
+  sprintf(TextField[0], "%.2f", cff  );
+  sprintf(TextField[1], "%.1f"  , y->r );
+  sprintf(TextField[2], "%.1f"  , y->rp);
+
+  sprintf(TextField[3], "%.3f", y->theta0);
+  sprintf(TextField[4], "%.1f", x->r1);   
+  sprintf(TextField[5], "%.1f", x->r2);
+
+  sprintf(TextField[6], "%.1f", x->rmi);      
+  sprintf(TextField[7], "%.2f", x->rho);  
+        
+  sprintf(TextField[8], "%d", y->inout);      	   
+  sprintf(TextField[9], "%.f", y->xdens[1]); 
+  sprintf(TextField[10],"%.2f", y->xdens[3]);    
+     
+  sprintf(TextField[11], "%.2f" , y->xdens[0]);    
+  sprintf(TextField[12], "%.2f", y->xdens[2]);    
+  sprintf(TextField[13], "%.2f", y->xdens[4]);
+
+  sprintf(TextField[14], "%.2f", x->du);    
+  sprintf(TextField[15], "%.2f", x->dw);    
+  sprintf(TextField[16], "%.2f", x->dl);
+
+  sprintf(TextField[17], "%.2f", x->dRu);    
+  sprintf(TextField[18], "%.2f", x->dRw);    
+  sprintf(TextField[19], "%.2f", x->dRl);
+
+  sprintf(TextField[20], "%.f" , x->w1);    
+  sprintf(TextField[21], "%.f", x->w2);    
+  sprintf(TextField[22], "%.1f", x->slopew);
+
+  sprintf(TextField[23], "%.f", x->l1);    
+  sprintf(TextField[24], "%.f", x->l2);    
+  sprintf(TextField[25], "%.1f", x->slopel);
 
   for (i= 0; i < imax; i++)
-    {	
-      set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
-      label= XmStringCreateLocalized(LabelField1[i]);    
-      set_something(widget_array[kEOET1Label+ i], XmNlabelString, label);  
-    }
-  label= XmStringCreateLocalized(" ");  
-  for (i= imax; i < 12; i++)
-    {	
-      set_something(widget_array[kEOET1+ i], XmNvalue, " "); 
-      set_something(widget_array[kEOET1Label+ i], XmNlabelString, label);  
-    }    
-  label= XmStringCreateLocalized(LabelField1[ih]);  
-  set_something(widget_array[kEOEInputLabel], XmNlabelString, label); 
-  XmStringFree(label);     
+    set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
+    
   /* set history */
   printf("InitOElementBox: vor history\n"); 
   XtVaSetValues(widget_array[kEOOptMenu], XmNmenuHistory, w, NULL); 
+  XmToggleButtonSetState(widget_array[kEGNITranslation], 
+  y->iflag == 1, FALSE); 
+  printf("InitOElementBox->done\n");
+   
 } /* end InitOElementBox */
 
 void GetSource(struct BeamlineType *bl)  
@@ -2022,33 +2038,46 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
      /* das Unterprogramm  wurde auf Pointer umgeschrieben,
 	keine globalen  Variablen werden mehr genutzt 	*/
           
-/* last modification: 16 Jun 97 18:07:30 flechsig */
-/* last modification: 17 Jun 97 08:24:27 flechsig */
-/* last modification: 30 Sep 97 08:22:03 flechsig */
 {
   char *text= NULL; 
-  XmString label;   
+  XmString label; 
   Widget w;
   int etype;
  
-  text= XmTextGetString(widget_array[kEOET1]); sscanf(text, "%lf", &mp->r1);  
-  text= XmTextGetString(widget_array[kEOET2]); sscanf(text, "%lf", &mp->rmi); 
-  text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &mp->r2);  
-  text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &mp->rho); 
-  text= XmTextGetString(widget_array[kEOET5]); 
-  sscanf(text, "%d", &gp->inout); 
-  text= XmTextGetString(widget_array[kEOET6]); 
-  sscanf(text, "%lf", &gp->xdens[0]);
-  text= XmTextGetString(widget_array[kEOET7]); 
-  sscanf(text, "%lf", &gp->xdens[1]);
-  text= XmTextGetString(widget_array[kEOET8]); 
-  sscanf(text, "%lf", &gp->xdens[2]);
-  text= XmTextGetString(widget_array[kEOET9]); 
-  sscanf(text, "%lf", &gp->xdens[3]);
-  text= XmTextGetString(widget_array[kEOET10]);
-  sscanf(text, "%lf", &gp->xdens[4]);
-  text= XmTextGetString(widget_array[kEOET11]); 
-  sscanf(text, "%lf", &mp->alpha);
+  /* we do not need to read cff */
+  text= XmTextGetString(widget_array[kEOET2]); sscanf(text, "%lf", &gp->r);
+  text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
+
+  text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &gp->theta0);
+  text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &mp->r1); 
+  text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &mp->r2);
+ 
+  text= XmTextGetString(widget_array[kEOET7]); sscanf(text, "%lf", &mp->rmi); 
+  text= XmTextGetString(widget_array[kEOET8]); sscanf(text, "%lf", &mp->rho); 
+
+  text= XmTextGetString(widget_array[kEOET9]); sscanf(text, "%d", &gp->inout); 
+  text= XmTextGetString(widget_array[kEOET10]); sscanf(text, "%lf", &gp->xdens[1]);
+  text= XmTextGetString(widget_array[kEOET11]); sscanf(text, "%lf", &gp->xdens[3]);
+
+  text= XmTextGetString(widget_array[kEOET12]); sscanf(text, "%lf", &gp->xdens[0]);
+  text= XmTextGetString(widget_array[kEOET13]); sscanf(text, "%lf", &gp->xdens[2]);
+  text= XmTextGetString(widget_array[kEOET14]); sscanf(text, "%lf", &gp->xdens[4]);
+
+  text= XmTextGetString(widget_array[kEOET15]); sscanf(text, "%lf", &mp->du);
+  text= XmTextGetString(widget_array[kEOET16]); sscanf(text, "%lf", &mp->dw);
+  text= XmTextGetString(widget_array[kEOET17]); sscanf(text, "%lf", &mp->dl);
+
+  text= XmTextGetString(widget_array[kEOET18]); sscanf(text, "%lf", &mp->dRu);
+  text= XmTextGetString(widget_array[kEOET19]); sscanf(text, "%lf", &mp->dRw);
+  text= XmTextGetString(widget_array[kEOET20]); sscanf(text, "%lf", &mp->dRl);
+
+  text= XmTextGetString(widget_array[kEOET21]); sscanf(text, "%lf", &mp->w1);
+  text= XmTextGetString(widget_array[kEOET22]); sscanf(text, "%lf", &mp->w2);
+  text= XmTextGetString(widget_array[kEOET23]); sscanf(text, "%lf", &mp->slopew);
+
+  text= XmTextGetString(widget_array[kEOET24]); sscanf(text, "%lf", &mp->l1);
+  text= XmTextGetString(widget_array[kEOET25]); sscanf(text, "%lf", &mp->l2);
+  text= XmTextGetString(widget_array[kEOET26]); sscanf(text, "%lf", &mp->slopel);
   XtFree(text);
 
   printf("getoelement: vor history\n"); 
@@ -2073,16 +2102,30 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   return etype;
 } /* end GetOelement */
 
+void CopyLength(int wn) 
+     /* copy the contens of the length widget 3 widget numbers ahead */
+     /* UF 13.2.04 */
+{
+  char *text;
+  double l;
+
+  wn= (wn == kPreAB) ? kEOET2: kEOET3;
+  text= XmTextGetString(widget_array[wn]); sscanf(text, "%lf", &l); 
+  set_something(widget_array[wn+3], XmNvalue, text);
+  XtFree(text);
+}
+
+
 void SetRadius(int wn)               /*berechnet Radien von Toroiden */
      /* Uwe 7.6.96 */
 {
   char *text;     
   double r1, r2, alpha, r, alrad;
 
-  wn= (wn== kEOEAB2) ? kEOET2: kEOET4;
-  text= XmTextGetString(widget_array[kEOET1]); sscanf(text, "%lf", &r1);     
-  text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &r2);
-  text= XmTextGetString(widget_array[kEOET11]); sscanf(text, "%lf", &alpha);
+  wn= (wn== kEOEAB2) ? kEOET7: kEOET8;
+  text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &r1);     
+  text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &r2);
+  text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &alpha);
                                                
   /*     printf("GActDat.theta0: %f\n", GActDat.theta0);  /*tmp*/
   if (alpha >= 90.0)
@@ -2090,7 +2133,7 @@ void SetRadius(int wn)               /*berechnet Radien von Toroiden */
   else
     {
       alrad= alpha*  PI/180.0;   
-      if (wn == kEOET2) r= (2.0* r1* r2)/ ((r1+ r2)* cos(alrad));  
+      if (wn == kEOET7) r= (2.0* r1* r2)/ ((r1+ r2)* cos(alrad));  
       else r= 2.0* r1* r2* cos(alrad)/ (r1+ r2);          /*eigentlich rho*/
       sprintf(text,"%.3f", r);  
       set_something(widget_array[wn], XmNvalue, text); 
@@ -2099,13 +2142,11 @@ void SetRadius(int wn)               /*berechnet Radien von Toroiden */
 }      
 
 void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
-/* modification: 20 Feb 98 10:03:58 flechsig */
-/* modification: 06 Mar 98 15:35:10 flechsig */
 {
   char *text;     
   double cff, alpha, beta, theta0;
   
-  text= XmTextGetString(widget_array[kEGT4]); 
+  text= XmTextGetString(widget_array[kEOET1]); 
   sscanf(text, "%lf", &cff);
   if (cff != 1.0)
     {
@@ -2113,7 +2154,7 @@ void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
       sprintf(text, "%.4f", theta0);  
-      set_something(widget_array[kEGT3], XmNvalue, text); 
+      set_something(widget_array[kEOET4], XmNvalue, text); 
     }
   XtFree(text);
 } /* end SetTheta */

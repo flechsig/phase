@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <03 Feb 04 15:04:44 flechsig>  */
+/*   Time-stamp: <16 Feb 04 13:25:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -349,12 +349,12 @@ void list_proc(w, tag, list)                 /* selection callback */
       if (epos > 0) /* make only sense if something is selected */
 	{
 #ifdef DEBUG
-      printf("list_proc: fetch mirror and element box\n");
+      printf("list_proc: fetch optical element box\n");
 #endif
       FetchWidget(kEOElement, "EOElementBox");
       XtManageChild(widget_array[kEOElement]);
-      FetchWidget(kEGeometry, "EGeometryBox");
-      XtManageChild(widget_array[kEGeometry]);
+      /* FetchWidget(kEGeometry, "EGeometryBox");
+	 XtManageChild(widget_array[kEGeometry]);*/
 #ifdef DEBUG
       printf("list_proc: call UpdateBLBox\n");
 #endif      
@@ -462,6 +462,7 @@ void toggle_proc(w, tag, toggle)
      /****************************************************/     
 {
   int	widget_num = *tag, az; 
+  char text[30];
   
   switch (*tag) {
   case kEBLstoim: 
@@ -497,9 +498,12 @@ void toggle_proc(w, tag, toggle)
 		fabs(Beamline.ElementList[Beamline.position-1].GDat.theta0);   
 	      printf("theta forced positive\n");      
 	    } 
+	sprintf(text, "%f", 
+		Beamline.ElementList[Beamline.position-1].GDat.theta0);
+	set_something(widget_array[kEOET4], XmNvalue, text);
       }
   }
-  /*   printf("toggle Button callback gerufen\n"); /**/
+     printf("toggle_proc: done\n"); /**/
 } 	/* end toggle_proc */
 
 /*                   
