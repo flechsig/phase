@@ -1,3 +1,17 @@
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_12.for
+c Date      : <21 Dec 99 14:37:34 flechsig> 
+c Time-stamp: <21 Dec 99 15:08:45 flechsig> 
+c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+c
+c Aenderungen UF:
+c (1) file umbenannt in phase_integration_12.for
+c (2) versionsnummer bei den include files entfernt
+c     in der development version werden links auf die files mit
+c     versionsnummer im filenamen angelegt (nur unter UNIX)
+c     im VMS production release gibt es nur noch eine Version!
+c (3) SIMPS1 als record si1 in den record integration_results
+c     eingefuegt, z.B. jmult ansprechen ueber xir.si1.jmult
+c     common block geloescht
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
 c*********************************************************
@@ -27,7 +41,7 @@ c************************************************
      &      yzint,yzintey,yzintez
 	complex*16 fzey(4096),fzez(4096)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -40,14 +54,14 @@ c************************************************
 	record /statistics/ st
 	record /map4/ m4
 
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
+c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
+c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
+c     &		z1,z2,
+c     &		tya(301,301),tza(301,301),
+c     &		typ(301,301),tzp(301,301),
+c     &		ianz0_save(301,301),
+c     &		iiheigh,iiwidth,
+c     &		jmult
 
 	dimension a(0:5,0:5)
 
@@ -55,7 +69,7 @@ c************************************************
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
 
-	if((iiheigh.eq.1).and.(iiwidth.eq.1).and.
+	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
 	call guess(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
 	endif
@@ -202,7 +216,7 @@ c*************************************************************
 
 	dimension a(0:5,0:5)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -353,7 +367,7 @@ c*************************************************************
 
 	dimension a(0:5,0:5)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -889,22 +903,13 @@ c-----------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /rayst/ ra
         record /constants/ cs
 	record /statistics/ st
 	record /integration_results/ xir
 	record /integration/ xi
         record /control_flags/ ifl
-
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
 
 	dimension dx(4096),x(4096),
      &            amp(4096),pha(4096),pha_new(4096),
@@ -1075,7 +1080,7 @@ c	raauskommentiert am 26.4.1999
 c	ianz0=ianz0-1
 c-----------------------------------
 c------------- neu 22.4.1999
-        ianz0_save(ra.n2,ra.n1)=ianz0
+        xir.si1.ianz0_save(ra.n2,ra.n1)=ianz0
 
 c----------------------------------
 	if(xi.id12.eq.1)then
@@ -1402,21 +1407,12 @@ c-----------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
 	record /statistics/ st
         record /integration_results/ xir
         record /integration/ xi
         record /control_flags/ ifl
-
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
 
 	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
 
@@ -1864,16 +1860,9 @@ c
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
+c common simps1 ist in xir UF 21.12.99
 
       common/xlengthc/xlen1cc(0:4,0:4,0:4,0:4),
      &                 xlen1c(0:4,0:4,0:4,0:4),
@@ -1970,10 +1959,10 @@ c	type*,ii,jj,ra.rf.yp,ra.rf.zp
 
 	call psdi(g,src,apr,cs,ifl,ra,sr)
 
-	tya(ii,jj)=sr.eya
-        tza(ii,jj)=sr.eza
-        typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
-        tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
+	xir.si1.tya(ii,jj)=sr.eya
+        xir.si1.tza(ii,jj)=sr.eza
+        xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
+        xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
 
 	if(dabs(tya(ii,jj)).lt.small_loc)typ(ii,jj)=0.d0
 	if(dabs(tza(ii,jj)).lt.small_loc)tzp(ii,jj)=0.d0
