@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
 /*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <05 Jan 00 17:39:28 flechsig>  */
+/*  Time-stamp: <07 Jan 00 09:01:21 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -201,7 +201,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	     if (elcounter == 1)
 	       memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
 	     else		                   /* bline zusammenbauen */
-	       GlueLeft(bl->map70, listpt->matrix); 
+	       GlueLeft((double *)bl->map70, (double *)listpt->matrix); 
 	     /* GlueLeft(A, B) A= B* A */
         
 	     bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
@@ -236,17 +236,19 @@ void BuildBeamline(struct BeamlineType *bl)
 	      elcounter--; listpt--;
 	      if (listpt->Art != kEOESlit)
 		{
-		  GlueXlen(&bl->xlm, &listpt->xlm, bl->MtoSource, 
+		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->MtoSource, 
 			   &bl->BLOptions.ifl.iord, 1); 
 		  /*listpt->xlm bleibt gleich*/
 		  if ((listpt->Art == kEOETG) || (listpt->Art == kEOEVLSG))
 		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		    GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			      (double *)listpt->wc, (double *)listpt->xlc, 
-			      bl->MtoSource, &bl->BLOptions.ifl.iord);
+			      (double *)bl->MtoSource, 
+			      &bl->BLOptions.ifl.iord);
 
 		/* bei image to source werden die indiv. Matritzen geaendert! */
-		  GlueLeft(bl->MtoSource, listpt->MtoSource);
+		  GlueLeft((double *)bl->MtoSource, 
+			   (double *)listpt->MtoSource);
 		} /* end slit */
 	    }
 
@@ -255,7 +257,11 @@ void BuildBeamline(struct BeamlineType *bl)
 	  imodus= 1;        
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
       /* der imodus ist anders als bei fgmapidp!!!! */
-	  extractmap(bl->MtoSource, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	  extractmap((double *)bl->MtoSource, 
+		     (double *)bl->ypc1, 
+		     (double *)bl->zpc1, 
+		     (double *)bl->dypc, 
+		     (double *)bl->dzpc, 
 		     &bl->BLOptions.ifl.iord); 
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -361,7 +367,8 @@ void Footprint(struct BeamlineType *bl, int enummer)
         while (elcounter< enummer)      /* */
         {  
           listpt++;    
-          GlueLeft(matrix, listpt->matrix);  /* matrix multiplik */
+          GlueLeft((double *)matrix, (double *)listpt->matrix);  
+	  /* matrix multiplik */
           elcounter++; 
         }
         extractmap(matrix, ypc1, zpc1, dypc, dzpc, &bl->BLOptions.ifl.iord);  
@@ -387,7 +394,8 @@ void Footprint(struct BeamlineType *bl, int enummer)
          if (enummer > 1)
          {
 	   ray_tracef(Raysin, &elray, &bl->BLOptions.ifl.iord, 
-                      ypc1, zpc1, dypc, dzpc); 
+                      (double *)ypc1, (double *)zpc1, 
+		      (double *)dypc, (double *)dzpc); 
            elrayp= &elray; 
          }
          else 
@@ -692,11 +700,11 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    char buffer[MaxPathLength];
 				
    msiz= 70* 70* sizeof(double); /* fest auf 70 */
-   if ((bl->lmap= (double *)malloc(msiz)) == NULL)
+   if (((double *)bl->lmap= (double *)malloc(msiz)) == NULL)
    {
       fprintf(stderr, "malloc error\n");   exit(-1); 
    } 
-   if ((bl->rmap= (double *)malloc(msiz)) == NULL)
+   if (((double *)bl->rmap= (double *)malloc(msiz)) == NULL)
    {
       fprintf(stderr, "malloc error\n");   exit(-1); 
    } 
@@ -784,22 +792,24 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
                       
            memcpy(c, listpt->matrix, msiz);         /* save  matrix A in C */
 	   memcpy(listpt->matrix, bl->lmap, msiz);  /* copy lmap nach A    */
-           GlueLeft(listpt->matrix, c);             /* A= C * A            */  
-           GlueLeft(listpt->matrix, bl->rmap);      /* listpt matrix Ok    */
+           GlueLeft((double *)listpt->matrix, (double *)c);    /* A= C * A */  
+           GlueLeft((double *)listpt->matrix, (double *)bl->rmap);      
+	   /* listpt matrix Ok    */
 
   	   if (bl->BLOptions.SourcetoImage != 1) 
 	     {                /* wenn rueckwaerts dann zusaetzlich */
 	       memcpy(c, listpt->MtoSource, msiz);  /* save matrix */
 	       memcpy(listpt->MtoSource, bl->lmap, msiz); 
-	       GlueLeft(listpt->MtoSource, c); 
-	       GlueLeft(listpt->MtoSource, bl->rmap); /* im to s matrix OK */
+	       GlueLeft((double *)listpt->MtoSource, (double *)c); 
+	       GlueLeft((double *)listpt->MtoSource, (double *)bl->rmap); 
+	       /* im to s matrix OK */
 	       extractmap(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
 			  listpt->dypc, listpt->dzpc, 
 			  &bl->BLOptions.ifl.iord); 
 	       GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
 			  (double *)listpt->wc, (double *)listpt->xlc, 
-			  bl->lmap, &bl->BLOptions.ifl.iord);
-	       GlueXlen(&listpt->xlm, &listpt->xlm, bl->lmap, 
+			  (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+	       GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
 			&bl->BLOptions.ifl.iord, 0);
 	 /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
 /* 		    &bl->BLOptions.ifl.iplmode,  listpt->wc, listpt->xlc,  */
@@ -811,8 +821,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 			    &bl->BLOptions.ifl.iord);
 		 GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
 			  (double *)listpt->wc, (double *)listpt->xlc, 
-			  bl->lmap, &bl->BLOptions.ifl.iord);
-		 GlueXlen(&listpt->xlm, &listpt->xlm, bl->lmap, 
+			  (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+		 GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
 			  &bl->BLOptions.ifl.iord, 0);
 	  /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
 /* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
