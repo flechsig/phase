@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <23 Dec 99 13:17:51 flechsig> 
+# Time-stamp: <23 Dec 99 13:25:06 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -16,7 +16,7 @@ YACC        = bison -y
 INSTALL     = /usr/bin/install -c
 INSTALLDATA = /usr/bin/install -c -m 644
 CDEBUG      = -gdwarf
-FDEBUG      = -g -C -B111
+FDEBUG      = -g -C -B111 -m0
 MAKE        = make
 
 srcdir     = .
@@ -42,6 +42,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
 #	-N51 interpret RECL specifier as a number of 32bit words in a record
 #	-C Check array boundaries (for debugging only)
 #	-B111 Validate FPU stack after procedure calls (for debugging only)
+#	-m0 give more error messages
 
 .phony: all makewhat    
 #########################################################################
