@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
 /*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <16 Dec 99 13:58:56 flechsig>  */
+/*  Time-stamp: <23 Dec 99 16:37:06 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
@@ -36,19 +36,32 @@
 #include "phase.h"         
 #include "rtrace.h" 
 
+void PSTxx(struct BeamlineType *bl) 
+{
+   struct geometryst *gp;
+   struct rayst ra;
+   struct source_results sr;           /* kein problem ? */
+   struct integration_results xir;     /* kein problem ? */
+   /* struct statistics st;               /* das ist das problem ? */
+   struct map4 m4;                     /* kein problem ? */
+   double a[6][6], *tmp;
+   int size, i, gratingnumber, elart, gratingposition;
+
+   printf("PST: dummy phase space trafo PST called\n");
+   printf("PST: end \n");
+}
+
 void PST(struct BeamlineType *bl) 
 /* Phasenraumtransformation interface zur Fortran Routine 	*/
-/* Uwe 29.7.96 							*/
-/* last mod. 26.2.97 						*/
-/* last modification: 24 Mar 97 09:09:51 flechsig */
+/* Die Structur statistic macht probleme- als reine Ausgabe sollte sie 
+   in c allociert werden */
 {
 /* leere Variablen */
-   
    struct geometryst *gp;
    struct rayst ra;
    struct source_results sr;
    struct integration_results xir;
-   struct statistics st;
+   struct statistics st;          /* bereitet probleme (Absturz) */
    struct map4 m4;   
    double a[6][6], *tmp;
    int size, i, gratingnumber, elart, gratingposition;
@@ -67,7 +80,8 @@ void PST(struct BeamlineType *bl)
 	{
 	  gratingnumber++;
 	  gratingposition= i;
-      	  gp= &bl->ElementList[gratingposition].geo;
+      	  gp= (struct geometryst *)&bl->ElementList[gratingposition].geo;
+	  /*geometryst und geometrytype sind das gleiche */
 	}
      }
    printf("%d grating(s) recognized, position: %d\n", 
@@ -81,7 +95,8 @@ void PST(struct BeamlineType *bl)
       
    if(gratingnumber == 0)
        {
-	 gp= &bl->ElementList[0].geo;
+	 gp= (struct geometryst *)&bl->ElementList[0].geo;
+	 /*geometryst und geometrytype sind das gleiche */
 	 gp->xdens[0]= 0.0;
        } 
    else 
@@ -149,7 +164,7 @@ void PST(struct BeamlineType *bl)
    memcpy(&a[0][0], , sizeof(double)*36);*/
 
      /* debug */
-  tmp=bl->ElementList[gratingposition].wc; 
+  tmp= (double *) bl->ElementList[gratingposition].wc; 
 	printf("pst.c: wc4000: %lg\n", tmp[4]);
 
    pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, 
