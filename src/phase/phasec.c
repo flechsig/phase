@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <09 Jul 04 12:30:27 flechsig>  */
+/*   Time-stamp: <16 Aug 04 16:10:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -329,7 +329,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 
     case kEOEElli: 
       printf("DefMirrorC: elliptical shape\n");  
-      if (alpha < small) 
+      if (fabs(alpha) < small) 
 	{
 	  beep(1);	
 	  fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
@@ -373,7 +373,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOEPElli:
     case kEOEPElliG:
       printf("DefMirrorC: plane- elliptical shape\n");  
-      if (alpha < small) 
+      if (fabs(alpha) < small) 
 	{
 	  beep(1);	
 	  fprintf(stderr, 
