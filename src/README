@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <26 Mar 04 09:24:38 flechsig> 
+ Time-stamp: <26 Mar 04 09:25:38 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -165,8 +165,8 @@ down | 0 0  0  0 | 0  0  0  0  -  0 | 0 0 0 | + +  +  + | ok
 down | 0 0  0  0 | 0  0  0  0  0  + | 0 0 0 | + 0  +  0 | ok
 down | 0 0  0  0 | 0  0  0  0  0  - | 0 0 0 | - 0  -  0 | ok
 -------------------------------------------------------------------------
-b) resume
 
+b) resume
 the footprint is calculate in the original coordinats (u w l) i.e. (u w l)
 are not really the mirror surface coordinates ==> with misalignment
 the implemented clipping at w and l is an aproximation which may fail for 
