@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <16 Dec 99 07:50:15 flechsig>              */
+/* Time-stamp: <16 Dec 99 10:53:39 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -785,10 +785,10 @@ void 	ActivateFileSelection(int, char *),
 
 extern void inithplot(),    
 #ifdef VMS
-  hplotdisplayf(FString *, FString *, GRDATSTRUCTTYPE *,
-		struct RayType *, double*, double*);  
+  hplotdisplayf(GRDATSTRUCTTYPE *,
+		struct RayType *, double*, double*, FString *, FString *);  
 #else 
-  hplotdisplayf(char *, int, char *, int,  GRDATSTRUCTTYPE *,
+  hplotdisplayf(GRDATSTRUCTTYPE *,
 		struct RayType *, double*, double*);
 #endif
 /* The names and addresses of things that Mrm has to bind.  The names do
