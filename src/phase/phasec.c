@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Oct 04 14:06:05 flechsig>  */
+/*   Time-stamp: <23 Nov 04 13:50:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -253,7 +253,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 		int etype, char *fname)  
 {
   double r, rho, *dp, cone, l,
-    alpha, aellip, bellip, cellip, eellip, f, z0, small;
+    alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
+    rpole, fipole, small;
   int i, j;
   struct mirrortype mirror;
 
@@ -343,20 +344,33 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  bellip= sqrt(aellip* aellip- 0.25* 
 		       (x->r1* x->r1+ x->r2* x->r2- 
 			2.0* x->r1* x->r2* cos(2.0* alpha)));
-	  cellip= sqrt(aellip* aellip- bellip* bellip);
-	  eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
+	  /* lineare Exzentrizitaet oder brennweite e= sqrt(a^2-b^2) */
+	  eellip= sqrt(aellip* aellip- bellip* bellip);
+	  /* numerische exzentrizitaet epsilon= e/a */ 
+
+	  epsilon= eellip/ aellip;
 	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
-	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
-	  
-	  printf("DefMirrorC: ell. parameter: ");
-	  printf("a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
-		 aellip, bellip, cellip, eellip, f, z0);
-	  
+	  xpole    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
+	  ypole = sqrt(x->r1* x->r1-(eellip+ xpole)*(eellip+ xpole));
+	  rpole = sqrt(xpole* xpole + ypole* ypole);
+	  fipole= atan2(ypole, xpole)* 180.0/ PI;
+
+	  printf("DefMirrorC: ell. parameter: \n");
+	  printf("major axis:                   a= %f mm\n", aellip); 
+	  printf("minor axis:                   b= %f mm\n", bellip);
+	  printf("linear eccentricity:          e= %f mm\n", eellip);
+	  printf("numerical eccentricity: epsilon= %f   \n", epsilon);
+	  printf("pole:                         x= %f mm\n", xpole);
+	  printf("pole:                         y= %f mm\n", ypole);
+	  printf("pole:                         r= %f mm\n", rpole);
+	  printf("pole:                       phi= %f deg.\n", fipole);
+	  printf("f= %f\n", f);
+
 	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
-	  dp[13]= (tan(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
+	  dp[13]= (tan(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
 	    (8.0* pow(f, 2.0)* cos(alpha));                     /* 1,2 */
-	  dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
+	  dp[3] = (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
 	    (8.0* f* f);                              /* 3,0 */
 	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * 
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
@@ -389,18 +403,27 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  bellip= sqrt(aellip* aellip- 0.25* 
 		       (x->r1* x->r1+ x->r2* x->r2- 
 			2.0* x->r1* x->r2* cos(2.0* alpha)));
-	  cellip= sqrt(aellip* aellip- bellip* bellip);
-	  eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
+	  eellip= sqrt(aellip* aellip- bellip* bellip);
+	  epsilon= eellip/ aellip;
 	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
+	  xpole = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
+	  ypole = sqrt(x->r1* x->r1-(eellip+ xpole)*(eellip+ xpole));
+	  rpole = sqrt(xpole* xpole + ypole* ypole);
+	  fipole= atan2(ypole, xpole)* 180.0/ PI;
 	  
-	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
-	  
-	  printf("DefMirrorC: ell. parameter: ");
-	  printf("a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
-		 aellip, bellip, cellip, eellip, f, z0);
+	  printf("DefMirrorC: ell. parameter: \n");
+	  printf("major axis:                   a= %f mm\n", aellip); 
+	  printf("minor axis:                   b= %f mm\n", bellip);
+	  printf("linear eccentricity:          e= %f mm\n", eellip);
+	  printf("numerical eccentricity: epsilon= %f   \n", epsilon);
+	  printf("pole:                         x= %f mm\n", xpole);
+	  printf("pole:                         y= %f mm\n", ypole);
+	  printf("pole:                         r= %f mm\n", rpole);
+	  printf("pole:                       phi= %f deg.\n", fipole);
+	  printf("f= %f\n", f);
 	  
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
-	  dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
+	  dp[3] = (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
 	    (8.0* f* f);                                        /* 3,0 */
 	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))* 
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
