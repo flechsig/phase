@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <10 Feb 04 16:24:04 flechsig> 
+#   Time-stamp: <19 Feb 04 11:05:48 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -113,8 +113,11 @@ AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
       AC_SUBST([CDEBUG], "-DDEBUG -gdwarf")
       AC_SUBST([LIBPHASE], libphase.a)
   fi,
-  AC_MSG_NOTICE(*** enable production mode (using shared libs) ***)
-  AC_SUBST([LIBPHASE], libphase.so)
+## AC_MSG_NOTICE(*** enable production mode (using shared libs) ***)
+## AC_SUBST([LIBPHASE], libphase.so)
+## shared libs are not possible with our absoft compiler
+  AC_MSG_NOTICE(*** enable production mode ***)
+  AC_SUBST([LIBPHASE], libphase.a)
 )
 
 # get configure date put it into header
