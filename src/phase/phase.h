@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <04 Jan 01 08:54:56 flechsig>              */
+/* Time-stamp: <04 Jan 01 10:46:56 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -680,7 +680,7 @@ void 	ActivateFileSelection(int, char *),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   DefGeometryC(struct gdatset *, struct geometrytype *),  
-  DefMirrorC(struct mdatset *, struct mirrortype *, int),  
+  DefMirrorC(struct mdatset *, struct mirrortype *, int, char *),  
   DelBLElement(struct BeamlineType *bl),  
   exithplot(), 
   ExpandFileNames(),  
@@ -742,6 +742,7 @@ void 	ActivateFileSelection(int, char *),
   PutPHASE(struct  PHASEset *, char *), 
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
+  ReadCoefficientFile(double *, char *),
   ReadpsFile(char *, struct RESULTType *),
   ReadRayFile(char *, int *, struct RESULTType *), 
   SetDefaultParameter(struct BeamlineType *),
