@@ -1,12 +1,7 @@
-c File      : /home/vms/flechsig/vms/phas/phasec/phasegraffor.for
-c Date      : <27 Mar 97 10:05:09 flechsig> 
-c Time-stamp: <05 Jan 00 18:05:06 flechsig> 
-c Author    : Uwe Flechsig, flechsig@exp.bessy.de
-
-C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAFFOR.FOR
-C Datum: 19.JUL.1994
-C Stand:  3-JUL-1996
-C Autor: FLECHSIG, BESSY Berlin
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
+c Date      : <06 Jan 00 12:39:32 flechsig> 
+c Time-stamp: <06 Jan 00 12:50:51 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
         PARAMETER (NWPAW=200000)
@@ -76,16 +71,19 @@ c postscriptfile
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
            type*,'open postsciptfile'
+c           open(unit=11,file=metaname,
+c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
            open(unit=11,file=metaname,
-     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
+     1          Carriagecontrol='LIST',FORM='FORMATTED',err=4444) 
            call igmeta(-11,-111) 
            type*,'generate metafile ',metaname 
         endif
               
       write(*,*)'only for ray trace data'   
-         
+      goto 4445
+4444  write(*,*)'hplotdisplayf: error open file: ',metaname
 c---- buche histogramme -------------------------------------------
-        call kanalzahlf(s.plotsyle,iy,iz)     ! iy,iz neu belegt
+4445  call kanalzahlf(s.plotsyle,iy,iz) ! iy,iz neu belegt
 1001    y1=s.ymi
         y2=s.yma
         z1=s.zmi
@@ -208,12 +206,16 @@ c postscriptfile
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
            type*,'open postsciptfile'
+c           open(unit=11,file=metaname,
+c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
            open(unit=11,file=metaname,
-     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
+     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
-              
+        goto 5001
+ 1111   write(*,*)'hplotpsdf: error open file: ',metaname
+ 
               
 c---- buche histogramme -------------------------------------------
         
@@ -317,11 +319,16 @@ c     postscriptfile
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
            type*,'open postsciptfile'
+c           open(unit=11,file=metaname,
+c     1     Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')
            open(unit=11,file=metaname,
-     1     Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
+     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)  
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
+        goto 6667
+ 6666   write(*,*)'hplotpssimf: error open file: ',metaname
+ 6667   continue
 c buchen fuellen
         do ii=1,4
 c min/max- suche   
