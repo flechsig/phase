@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <02 Nov 99 13:17:23 flechsig>  */
+/*  Time-stamp: <15 Nov 99 09:58:05 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phasegraf.c */
@@ -45,9 +45,7 @@ void InitGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr)
     char TextField[4][20];
     XmString label;                         
 
-#ifdef VMS
-    label= DXmCvtFCtoCS(PHASE->plotpsname, &bc, &status);    
-#endif
+    label= XmStringCreateLocalized(PHASE->plotpsname);    
     sprintf(TextField[0], "%-8.3G", gr->zmi);    
     sprintf(TextField[1], "%-8.3G", gr->zma);    
     sprintf(TextField[2], "%-8.3G", gr->ymi);    
@@ -363,9 +361,6 @@ void AutoScalePS(struct PSDType *ps, GRDATSTRUCTTYPE *gr)
    printf("  AutoscalePS: %f < y < %f, %f < z < %f\n", gr->ymi, gr->yma, 
                           gr->zmi, gr->zma);
 } /* end scaleps */
-
-
-
 
 void Beauty(double *mi, double *ma) 
 /* setzt den min, max in Abh. von dx 	*/
