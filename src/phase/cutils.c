@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <12 Nov 99 12:08:52 flechsig>  */
+/*  Time-stamp: <15 Nov 99 08:03:35 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
@@ -31,6 +31,22 @@ char *delversion(char *fname) /* entfernt Versionsnummer von VMS- Filenamen */
   if ((semi= strchr(fname, ';')) != NULL) *semi= '\0'; 
   return fname;
 }   
+
+char *PrependEnv(char* env, char *str)
+/* prepend the contents of an environment variable on a string, 
+   the string will be altered!!!, if no environment variable found- 
+   the original string will be returned  */
+{
+   char string[255];
+   string= getenv(env);
+   if (string != NULL)
+     {
+       strcat(string, str);
+       strcpy(str, string);
+     }
+   return str;
+} /* end PrependEnv */
+
 
 char *FnameBody(char *pfad)      /* holt Rumpf von VMS- - Filenamen  */
 /* modification: 17 Oct 97 11:30:45 flechsig */
