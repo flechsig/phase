@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Oct 04 13:06:27 flechsig>  */
+/*   Time-stamp: <20 Oct 04 13:09:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1603,6 +1603,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 
 /**/
 /* berechnet den Energieaufloesungsfaktor R=tan(fi)/displength * y */
+/* last modification: 20 Oct 04 13:08:51 flechsig */
 /**/
 void SetDeltaLambda(struct BeamlineType *bl, struct ElementType *listpt)
 {
