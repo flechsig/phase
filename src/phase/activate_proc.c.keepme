@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/activate_proc.c */
 /* Date      : <18 Mar 97 09:53:07 flechsig>  */
-/* Time-stamp: <13 Mar 98 08:28:08 flechsig>  */
+/* Time-stamp: <15 Oct 99 16:49:44 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]ACTIVATE_PROC.C    */
@@ -803,7 +803,7 @@ void activate_proc(w, tag, reason)
     break;
   case kSetupInfo:
     FetchWidget(kSetupInfo, "SetupInfo");
-    PrintFileInMainList("PHASE$PRG:NEWS.");  
+    PrintFileInMainList("PHASE$LIB:NEWS.");  
     XtManageChild(widget_array[kSetupInfo]);   
     break;
 

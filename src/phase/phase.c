@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
 /* Date      : <18 Mar 97 09:46:28 flechsig>              */
-/* Time-stamp: <15 Oct 98 07:39:25 flechsig>              */
+/* Time-stamp: <15 Oct 99 16:50:48 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.C            */
@@ -129,7 +129,7 @@ unsigned int main(argc, argv)
     {
 	FetchWidget(kSetupInfo, "SetupInfo");
 	XtManageChild(widget_array[kSetupInfo]);   
-	PrintFileInMainList("PHASE$PRG:NEWS.");          /* news anzeigen */
+	PrintFileInMainList("PHASE$LIB:NEWS.");          /* news anzeigen */
         /*renderinfo();               */
     }
     /* printf("vor der mainloop\n");*/
