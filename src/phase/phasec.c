@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <15 Dec 99 09:51:40 flechsig>  */
+/*  Time-stamp: <20 Dec 99 13:30:19 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -960,9 +960,9 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
  /*    "dphi_min", */
     "distance to focus",
     "insert pinhole array in source plane",
-    "pin_yl0, ",
+    "pin_yl0",
     "pin_yl",
-    "pin_zl0, ",
+    "pin_zl0",
     "pin_zl",
       
       
