@@ -1,6 +1,6 @@
 /*   File      : /home/pss060/sls/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <07 Jan 00 09:23:38 flechsig>  */
-/*   Time-stamp: <07 Jan 00 09:25:36 flechsig>  */
+/*   Time-stamp: <07 Jan 00 09:56:38 flechsig>  */
 /*   Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* neu eingefuegt */
@@ -8,12 +8,8 @@ typedef struct ComplexStruct {
 	double re,im; 
 	} COMPLEX ;
 
-/* strings sind kritisch */
-/* chraracter[80] durch FStrings ersetzen !! in FString wird 
-   nur ein pointer gemerkt !! 
-/* modification: 16 Oct 97 15:27:15 flechsig */
-/* character[80] ist doch richtig 
- */ 
+/* !!!! stuct statstics die Feldgrenzen halbiert da sonst
+   run time error UF 7.1.2000 */
 
 /*-----------------------------------------------------------*/
 /*                                                           */
@@ -260,20 +256,20 @@ struct simps1 {
 /*
 #ifdef VMS
 */
+/* so wars bei Johannes halbiere die feldgrenzen
 	struct  statistics {
 	   double fd1phmax[512][512];
 	   int  nn1,nn2,inumb[1100][1100];
 	   int  inumzit,inumyit,inumzan,inumyan;
 	};  
-/*
-#else
+*/
+
         struct  statistics {
-	   double fd1phmax[128][128];
-	   int  nn1,nn2,inumb[128][128];
+	   double fd1phmax[256][256];
+	   int  nn1,nn2,inumb[550][550];
 	   int  inumzit,inumyit,inumzan,inumyan;
 	};  
-#endif
-*/
+
 /* ----------------- constants -----------------------------------*/
 
         struct  constants {
