@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <25 Mar 04 17:08:45 flechsig> 
+ Time-stamp: <26 Mar 04 09:24:38 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -69,55 +69,105 @@ check signs of w,l and misalignment
 ===================================
 
 a) check the signs of u w l and the output y z dy dz n single ray mode
+   => only one input parameter changed, only 1st order effects considered
+   => *sp* means sign problem, 
+   => JB means definition of Johannes Bahrdt- see previous remark
+   => rhr means right hand rule
+---------------------------------------------------------------------------
+     |        I N P U T             |   O U T P U T     |
+refl | y z dy dz |du dw dl ru rw rl | u w l | y z dy dz | remark
+---------------------------------------------------------------------------
+left | + 0  0  0 | 0  0  0  0  0  0 | 0 0 + | + 0  0  0 | JB ok, rhr *sp* l
+left | - 0  0  0 | 0  0  0  0  0  0 | 0 0 - | - 0  0  0 | JB ok, rhr *sp* l
+left | 0 +  0  0 | 0  0  0  0  0  0 | 0 - 0 | 0 -  0  0 | ok
+left | 0 -  0  0 | 0  0  0  0  0  0 | 0 + 0 | 0 +  0  0 | ok
+left | 0 0  +  0 | 0  0  0  0  0  0 | 0 0 + | 0 0  +  0 | ok
+left | 0 0  -  0 | 0  0  0  0  0  0 | 0 0 - | 0 0  -  0 | ok
+left | 0 0  0  + | 0  0  0  0  0  0 | 0 - 0 | 0 -  0  - | JB ok, rhr *sp* l
+left | 0 0  0  - | 0  0  0  0  0  0 | 0 + 0 | 0 +  0  + | JB ok, rhr *sp* l
+---------------------------------------------------------------------------
+left | 0 0  0  0 | +  0  0  0  0  0 | + - 0 | 0 -  0  0 | u should be 0 ?
+left | 0 0  0  0 | -  0  0  0  0  0 | - + 0 | 0 +  0  0 | u should be 0 ?
+left | 0 0  0  0 | 0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be - ?
+left | 0 0  0  0 | 0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be + ?
+left | 0 0  0  0 | 0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 | l should be - ?
+left | 0 0  0  0 | 0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 | l should be + ?
+left | 0 0  0  0 | 0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 | ok
+left | 0 0  0  0 | 0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 | ok
+left | 0 0  0  0 | 0  0  0  0  +  0 | 0 0 0 | - +  -  + | *sp* y, dy
+left | 0 0  0  0 | 0  0  0  0  -  0 | 0 0 0 | + +  +  + | *sp* y, dy
+left | 0 0  0  0 | 0  0  0  0  0  + | 0 0 0 | 0 +  0  + | rhr ok, JB *sp* z, dz 
+left | 0 0  0  0 | 0  0  0  0  0  - | 0 0 0 | 0 -  0  - | rhr ok, JB *sp* z, dz
+-------------------------------------------------------------------------------
+right| + 0  0  0 | 0  0  0  0  0  0 | 0 0 + | + 0  0  0 | ok
+right| - 0  0  0 | 0  0  0  0  0  0 | 0 0 - | - 0  0  0 | ok
+right| 0 +  0  0 | 0  0  0  0  0  0 | 0 + 0 | 0 -  0  0 | ok
+right| 0 -  0  0 | 0  0  0  0  0  0 | 0 - 0 | 0 +  0  0 | ok
+right| 0 0  +  0 | 0  0  0  0  0  0 | 0 0 + | + 0  +  0 | ok
+right| 0 0  -  0 | 0  0  0  0  0  0 | 0 0 - | - 0  -  0 | ok
+right| 0 0  0  + | 0  0  0  0  0  0 | 0 + 0 | 0 -  0  - | ok
+right| 0 0  0  - | 0  0  0  0  0  0 | 0 - 0 | 0 +  0  + | ok
+-------------------------------------------------------------------------
+right| 0 0  0  0 | +  0  0  0  0  0 | + - 0 | 0 +  0  0 | u should be 0 ?
+right| 0 0  0  0 | -  0  0  0  0  0 | - + 0 | 0 -  0  0 | u should be 0 ?
+right| 0 0  0  0 | 0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be - ? 
+right| 0 0  0  0 | 0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be + ?
+right| 0 0  0  0 | 0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 | l should be - ?
+right| 0 0  0  0 | 0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 | l should be + ?
+right| 0 0  0  0 | 0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 | ok
+right| 0 0  0  0 | 0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 | ok
+right| 0 0  0  0 | 0  0  0  0  +  0 | 0 0 0 | - -  -  - | ok
+right| 0 0  0  0 | 0  0  0  0  -  0 | 0 0 0 | + -  +  - | ok
+right| 0 0  0  0 | 0  0  0  0  0  + | 0 0 0 | 0 -  0  - | JB ok, rhr *sp* z, dz 
+right| 0 0  0  0 | 0  0  0  0  0  - | 0 0 0 | 0 +  0  + | JB ok, rhr *sp* z, dz
+-------------------------------------------------------------------------------
+up   | + 0  0  0 | 0  0  0  0  0  0 | 0 + 0 | - 0  0  0 | ok
+up   | - 0  0  0 | 0  0  0  0  0  0 | 0 - 0 | + 0  0  0 | ok
+up   | 0 +  0  0 | 0  0  0  0  0  0 | 0 0 + | 0 +  0  0 | JB ok, rhr *sp* l
+up   | 0 -  0  0 | 0  0  0  0  0  0 | 0 0 - | 0 -  0  0 | JB ok, rhr *sp* l
+up   | 0 0  +  0 | 0  0  0  0  0  0 | 0 + 0 | - 0  -  0 | ok
+up   | 0 0  -  0 | 0  0  0  0  0  0 | 0 - 0 | + 0  +  0 | ok
+up   | 0 0  0  + | 0  0  0  0  0  0 | 0 0 + | 0 +  0  + | JB ok, rhr *sp* l
+up   | 0 0  0  - | 0  0  0  0  0  0 | 0 0 - | 0 -  0  - | JB ok, rhr *sp* l
+---------------------------------------------------------------------------
+up   | 0 0  0  0 | +  0  0  0  0  0 | + - 0 | + 0  0  0 | u should be 0 ?
+up   | 0 0  0  0 | -  0  0  0  0  0 | - + 0 | - 0  0  0 | u should be 0 ?
+up   | 0 0  0  0 | 0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be - ? 
+up   | 0 0  0  0 | 0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be + ?
+up   | 0 0  0  0 | 0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 | l should be - ?
+up   | 0 0  0  0 | 0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 | l should be + ?
+up   | 0 0  0  0 | 0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 | ok
+up   | 0 0  0  0 | 0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 | ok
+up   | 0 0  0  0 | 0  0  0  0  +  0 | 0 0 0 | - -  -  - | *sp* z, dz
+up   | 0 0  0  0 | 0  0  0  0  -  0 | 0 0 0 | - +  -  + | *sp* z, dz
+up   | 0 0  0  0 | 0  0  0  0  0  + | 0 0 0 | - 0  -  0 | rhr ok, JB *sp* y, dy 
+up   | 0 0  0  0 | 0  0  0  0  0  - | 0 0 0 | + 0  +  0 | rhr ok, JB *sp* y, dy
+-------------------------------------------------------------------------------
+down | + 0  0  0 | 0  0  0  0  0  0 | 0 - 0 | - 0  0  0 | ok
+down | - 0  0  0 | 0  0  0  0  0  0 | 0 + 0 | + 0  0  0 | ok
+down | 0 +  0  0 | 0  0  0  0  0  0 | 0 0 + | 0 +  0  0 | ok
+down | 0 -  0  0 | 0  0  0  0  0  0 | 0 0 - | 0 -  0  0 | ok
+down | 0 0  +  0 | 0  0  0  0  0  0 | 0 - 0 | - 0  -  0 | ok
+down | 0 0  -  0 | 0  0  0  0  0  0 | 0 + 0 | + 0  +  0 | ok
+down | 0 0  0  + | 0  0  0  0  0  0 | 0 0 + | 0 +  0  + | ok
+down | 0 0  0  - | 0  0  0  0  0  0 | 0 0 - | 0 -  0  - | ok
+-------------------------------------------------------------------------
+down | 0 0  0  0 | +  0  0  0  0  0 | + - 0 | - 0  0  0 | u should be 0 ?
+down | 0 0  0  0 | -  0  0  0  0  0 | - + 0 | + 0  0  0 | u should be 0 ?
+down | 0 0  0  0 | 0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be - ? 
+down | 0 0  0  0 | 0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 | w should be + ?
+down | 0 0  0  0 | 0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 | l should be - ?
+down | 0 0  0  0 | 0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 | l should be + ?
+down | 0 0  0  0 | 0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 | ok
+down | 0 0  0  0 | 0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 | ok
+down | 0 0  0  0 | 0  0  0  0  +  0 | 0 0 0 | + -  +  - | ok
+down | 0 0  0  0 | 0  0  0  0  -  0 | 0 0 0 | + +  +  + | ok
+down | 0 0  0  0 | 0  0  0  0  0  + | 0 0 0 | + 0  +  0 | ok
+down | 0 0  0  0 | 0  0  0  0  0  - | 0 0 0 | - 0  -  0 | ok
+-------------------------------------------------------------------------
+b) resume
 
--------------------------------------------------------------------------------------
-     |        I N P U T              |   O U T P U T     ||
-refl | y z dy dz | du dw dl ru rw rl | u w l | y z dy dz || remark
--------------------------------------------------------------------------------------
-left | + 0  0  0 |  0  0  0  0  0  0 | 0 0 + | + 0  0  0 || JB ok, rhr sign problem l
-left | - 0  0  0 |  0  0  0  0  0  0 | 0 0 - | - 0  0  0 || JB ok, rhr sign problem l
-left | 0 +  0  0 |  0  0  0  0  0  0 | 0 - 0 | 0 -  0  0 || ok
-left | 0 -  0  0 |  0  0  0  0  0  0 | 0 + 0 | 0 +  0  0 || ok
-left | 0 0  +  0 |  0  0  0  0  0  0 | 0 0 + | 0 0  +  0 || ok
-left | 0 0  -  0 |  0  0  0  0  0  0 | 0 0 - | 0 0  -  0 || ok
-left | 0 0  0  + |  0  0  0  0  0  0 | 0 - 0 | 0 -  0  - || JB ok, rhr sign problem l
-left | 0 0  0  - |  0  0  0  0  0  0 | 0 + 0 | 0 +  0  + || JB ok, rhr sign problem l
--------------------------------------------------------------------------------------
-left | 0 0  0  0 |  +  0  0  0  0  0 | + - 0 | 0 -  0  0 || u should be 0
-left | 0 0  0  0 |  -  0  0  0  0  0 | - + 0 | 0 +  0  0 || u should be 0
-left | 0 0  0  0 |  0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be -
-left | 0 0  0  0 |  0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be +
-left | 0 0  0  0 |  0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 || l should be -
-left | 0 0  0  0 |  0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 || l should be +
-left | 0 0  0  0 |  0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 || ok
-left | 0 0  0  0 |  0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 || ok
-left | 0 0  0  0 |  0  0  0  0  +  0 | 0 0 0 | - +  -  + || sign problem y, dy
-left | 0 0  0  0 |  0  0  0  0  -  0 | 0 0 0 | + +  +  + || sign problem y, dy
-left | 0 0  0  0 |  0  0  0  0  0  + | 0 0 0 | 0 +  0  + || rhr correct, JB def sign problem z, dz 
-left | 0 0  0  0 |  0  0  0  0  0  - | 0 0 0 | 0 -  0  - || rhr correct, JB def sign problem z, dz
---------------------------------------------------------------------------------------------------
-up   | + 0  0  0 |  0  0  0  0  0  0 | 0 + 0 | - 0  0  0 || ok
-up   | - 0  0  0 |  0  0  0  0  0  0 | 0 - 0 | + 0  0  0 || ok
-up   | 0 +  0  0 |  0  0  0  0  0  0 | 0 0 + | 0 +  0  0 || JB ok, rhr sign problem l
-up   | 0 -  0  0 |  0  0  0  0  0  0 | 0 0 - | 0 -  0  0 || JB ok, rhr sign problem l
-up   | 0 0  +  0 |  0  0  0  0  0  0 | 0 + 0 | - 0  -  0 || ok
-up   | 0 0  -  0 |  0  0  0  0  0  0 | 0 - 0 | + 0  +  0 || ok
-up   | 0 0  0  + |  0  0  0  0  0  0 | 0 0 0 | 0 +  0  + || JB ok, rhr sign problem l
-up   | 0 0  0  - |  0  0  0  0  0  0 | 0 0 0 | 0 -  0  - || JB ok, rhr sign problem l
--------------------------------------------------------------------------------------
-up   | 0 0  0  0 |  +  0  0  0  0  0 | + - 0 | + 0  0  0 || u should be 0
-up   | 0 0  0  0 |  -  0  0  0  0  0 | - + 0 | - 0  0  0 || u should be 0
-up   | 0 0  0  0 |  0  +  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be -
-up   | 0 0  0  0 |  0  -  0  0  0  0 | 0 0 0 | 0 0  0  0 || w should be +
-up   | 0 0  0  0 |  0  0  +  0  0  0 | 0 0 0 | 0 0  0  0 || l should be -
-up   | 0 0  0  0 |  0  0  -  0  0  0 | 0 0 0 | 0 0  0  0 || l should be +
-up   | 0 0  0  0 |  0  0  0  +  0  0 | 0 0 0 | 0 0  0  0 || ok
-up   | 0 0  0  0 |  0  0  0  -  0  0 | 0 0 0 | 0 0  0  0 || ok
-up   | 0 0  0  0 |  0  0  0  0  +  0 | 0 0 0 | - -  -  - || sign problem z, dz
-up   | 0 0  0  0 |  0  0  0  0  -  0 | 0 0 0 | - +  -  + || sign problem z, dz
-up   | 0 0  0  0 |  0  0  0  0  0  + | 0 0 0 | - 0  -  0 || rhr correct, JB def sign problem y, dy 
-up   | 0 0  0  0 |  0  0  0  0  0  - | 0 0 0 | + 0  +  0 || rhr correct, JB def sign problem y, dy
---------------------------------------------------------------------------------------------------
-
-
-
+the footprint is calculate in the original coordinats (u w l) i.e. (u w l)
+are not really the mirror surface coordinates ==> with misalignment
+the implemented clipping at w and l is an aproximation which may fail for 
+larger alignment errors
