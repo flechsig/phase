@@ -1,3 +1,13 @@
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
+/*   Date      : <24 Jun 02 09:51:36 flechsig>  */
+/*   Time-stamp: <24 Jun 02 09:51:40 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
 /*  Time-stamp: <16 Nov 01 11:43:04 flechsig>  */

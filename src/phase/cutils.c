@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <05 Jan 00 17:19:25 flechsig>  */
+/*  Time-stamp: <25 Jun 02 07:54:16 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
@@ -49,13 +49,16 @@ char *PrependEnv(char* env, char *str)
 } /* end PrependEnv */
 
 
-char *FnameBody(char *pfad)      /* holt Rumpf von VMS- - Filenamen  */
+char *FnameBody(char *pfad)      /* holt Rumpf von Filenamen  */
 /* modification: 17 Oct 97 11:30:45 flechsig */
+/* modification: 25 Jun 02 07:52:49 flechsig , sucht letztes Vorkommen von . 
+   wegen afs */
+
 {
   char *ch, *ch1;
 
   if ((ch1= strrchr(pfad, ']')) == NULL) ch1= pfad;
-  if ((ch = strchr(ch1, '.'))    != NULL)  *ch=   '\0'; 
+  if ((ch = strrchr(ch1, '.'))  != NULL) *ch= '\0'; 
   return pfad;
 }
 

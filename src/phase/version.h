@@ -1,12 +1,17 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/version.h */
-/*  Date      : <04 Nov 99 15:42:23 flechsig>  */
-/*  Time-stamp: <21 May 01 15:19:16 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/version.h */
+/*   Date      : <25 Jun 02 07:56:56 flechsig>  */
+/*   Time-stamp: <25 Jun 02 07:57:13 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 #ifndef VERSION_H
   #define VERSION_H
-  #define              VERSION_STRING        "1.12" 
-  #define              VERSION_DATE          "21-May-2001"
+  #define              VERSION_STRING        "1.13" 
+  #define              VERSION_DATE          "25-Jun-2002"
 #endif    /* VERSION_H */   
 
-/* end /home/pss060/sls/flechsig/phase/src/phase/version.h */
+/* end version.h */
