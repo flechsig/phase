@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <05 Jan 00 15:17:51 flechsig> 
+C Time-stamp: <05 Jan 00 15:21:43 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -219,7 +219,7 @@ c----------------------------------------------------------
 
 c************* Bildpunkt generieren *******************************
 
-	write(*,*)'pstf.for: start'
+	write(*,*)'pstf: start'
 
 	st.inumzit=0
 	st.inumyit=0
@@ -285,7 +285,7 @@ c------------------------------------------
 
 c****** Ende der Integration ueber die Winkel ******************
         enddo                   ! raster
-        write(*,*)'next row'
+        write(*,*)'finished row ',n1,' from ', s.iheigh
       enddo                     ! raster
 c****** Berechnung der Intensitaetsverteilung fertig ***********
       write(*,*)'stop intensity calculation'
