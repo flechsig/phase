@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <26 Oct 04 14:17:22 flechsig>  */
+/*   Time-stamp: <30 Mar 05 14:13:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -672,8 +672,10 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
 
    /* get beamlinename vom tastenlabel */
    XtVaGetValues(widget_array[kEBLNameButton], XmNlabelString, &label, NULL);
-   if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &text)) 
-       return; 
+   /*if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &text)) 
+     return;*/ 
+   text= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			 NULL, 0, XmOUTPUT_ALL);
    strcpy(blname, text); XmStringFree(label); XtFree(text);
 
    text= XmTextGetString(widget_array[kEBLT31a]);    
