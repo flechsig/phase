@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <06 Jan 00 13:18:26 flechsig> 
+c Time-stamp: <06 Jan 00 13:36:19 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -2196,12 +2196,7 @@ c******* end sig  *****************************************
 c*********readfg34_par ***************************
       subroutine readfg34_par(src,apr,ifl,xi) 
 c liest ein Parameterfile von Johannes, Button im edit- menu 
-c last modification: 09 Jun 97 16:59:14 flechsig
-c last modification: 23 Apr 97 09:05:53 flechsig 
-c Version 7 auf 8 (iamp_smooth) einfuegen
-c modification: 31 Oct 97 08:56:02 flechsig
 
-c     implicit real*8(a-h,o-z) 
       implicit none
       include 'phase_struct.for'
       
@@ -2214,12 +2209,10 @@ c     implicit real*8(a-h,o-z)
       integer iname,clen1
       real *8 epsilon
 
-      write(*,*)'lese fg34.par '
-
  1    format(1a1)	
  3    format(a80)
 
-      write(*,*)' reading parameters from FG34.PAR (Version ab 23.12.99)'
+      write(*,*)' reading parameters from fg34.par (Version 23.12.99)'
       open(unit=16,name='fg34.par',type='old',err=777)
       read(16,1)dummy
       read(16,*)epsilon
