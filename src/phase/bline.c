@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Feb 04 16:59:36 flechsig>  */
+/*   Time-stamp: <10 Feb 04 17:02:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -711,7 +711,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    (double *)bl->lmap= (double *)xmalloc(msiz);
    (double *)bl->rmap= (double *)xmalloc(msiz);
 
-#ifndef VMS
+#ifdef VMS
    sprintf(buffer,"%s%d_lh.omx\0", HORMAPFILENAMEBASE, dim); 
    PrependEnv(PHASE_HOME, buffer);
 #else
@@ -720,7 +720,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, bl->lmap, dim);    
 
-#ifndef VMS 
+#ifdef VMS 
    sprintf(buffer,"%s%d_rh.omx\0", HORMAPFILENAMEBASE, dim);
    PrependEnv(PHASE_HOME, buffer);
 #else
