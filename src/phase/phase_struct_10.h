@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.h */
 /*  Date      : <22 Oct 97 15:02:57 flechsig>  */
-/*  Time-stamp: <20 Dec 99 09:58:40 flechsig>  */
+/*  Time-stamp: <20 Dec 99 10:40:17 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* neu eingefuegt */
@@ -220,7 +220,16 @@ struct  source4 {
            COMPLEX densy,densz;
 	   double dens,eya,eza,eyp,ezp;
         };  
-
+/* ----------------- U. F. 21.12.99 ----------------------------- */
+struct simps1 {
+  double fya1[501],fyp1[501],fza1[501],fzp1[501];
+  double fya2[501],fyp2[501],fza2[501],fzp2[501];
+  double z1,z2;
+  double tya[301,301],tza[301,301];
+  double typ[301,301],tzp[301,301];
+  int ianz0_save[301,301];
+  int iiheigh,iiwidth,jmult;
+};
 /* ----------------- results from integration --------------------*/
 
 	struct  integration_results {
@@ -260,14 +269,5 @@ struct  source4 {
 	   double pi;
 	   COMPLEX sqrtm1;
         };  
-/* ----------------- U. F. 21.12.99 ----------------------------- */
-struct simps1 {
-  double fya1[501],fyp1[501],fza1[501],fzp1[501];
-  double fya2[501],fyp2[501],fza2[501],fzp2[501];
-  double z1,z2;
-  double tya[301,301],tza[301,301];
-  double typ[301,301],tzp[301,301];
-  int ianz0_save[301,301];
-  int iiheigh,iiwidth,jmult;
-};
+
 /* end phase_struct_10.h */
