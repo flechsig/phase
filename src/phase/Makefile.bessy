@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
 # Date      : <15 Oct 99 11:36:53 flechsig> 
-# Time-stamp: <28 Oct 99 09:28:32 flechsig> 
+# Time-stamp: <02 Nov 99 09:48:54 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 # 
 # Makefile for Alpha and VAX @ BESSY
@@ -28,11 +28,12 @@ EXE		= exe
 OBJ             = obj
 LIB		= olb      
 #########################################################################
-#               debugging        
+#               debugging      
 DEBUG		= no           # comment out for debugging (DEBUG = # no)    
-OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
+OPTIMIZE	= no           # comment  for debugging (OPTIMIZE =   no)    
+DEFS            = VMS  
 #########        flags                                    ###############
-CFLAGS	 	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/OBJECT=     
+CFLAGS	 	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/DEF=$(DEFS)/OBJECT=     
 FFLAGS   	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/OBJECT= 
 UILFLAGS	= /motif/output=
 LINKFLAGS	= /$(DEBUG)debug/executable=  
