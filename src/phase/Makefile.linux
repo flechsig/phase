@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <04 Nov 99 16:48:58 flechsig> 
+# Time-stamp: <04 Nov 99 17:01:38 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -9,63 +9,40 @@ SHELL = /bin/sh
 
 DEFS        = -D LINUX
 CC          = gcc -O
-#FOR         = pgf77 -c
+#FOR        = pgf77 -c
 FOR         = f77 -c
 YACC        = bison -y
 INSTALL     = /usr/local/bin/install -c
 INSTALLDATA = /usr/local/bin/install -c -m 644
-CDEBUG = -g
+CDEBUG      = -g
 MAKE        = make
 
 
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir) $(DEFS)     # -c
 FFLAGS  = -w -f -s -N3 -N51 
 LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lm -lc
+LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
 
-srcdir    = .
-prefix    = /usr/local
-binprefix =
-
-
-SRCS = test-defines.c
-OBJS = test-defines.o
+srcdir     = .
+#prefix    = /usr/local
+prefix     = /home/pss060/sls/flechsig
+PHASEDIR   = $(prefix)/phase
 
 .phony: all makewhat    
 
-#
-#######          extensions                                    ##########
-#######          additional extension on AXP systems        #############
-         
-#######                    basic extension               ################
-LIB		= olb      
 #########################################################################
 #               debugging        
 DEBUG		= no           # comment out for debugging (DEBUG = # no)    
 OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
-#########        flags                                    ###############
- 
 
-
-LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
 #########################################################################
-#               variables 
-DESTDIR		= phase__prg:  
-# 
 PROGRAM		= phase
 #########################################################################
-LIBSdummy	 	= cern_lib:MATHLIB/LIB\
-	PACKLIB/LIB\
-	graflib/lib\
-	grafx11/lib\
-	PACKLIB/LIB\
-	KERNLIB/LIB
 LIBS    = -L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
           -lgrafX11 -lpacklib -lpawlib -lkernlib \
           -L/usr/pgi/linux86/lib -lpgftnrtl \
 	  -L/home/pss060/sls/flechsig/phase/lib 
-#          -lphaselib
-	  
-
+          -lphaselib
 #########################################################################
 OBJECTC = phase.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
@@ -78,17 +55,25 @@ OBJECTF=  phasegraffor.o phasefor.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  phasegraf.h cutils.h
+AUX     = version.h
+SRCC    = phase.c phasec.c \
+	  activate_proc.c phasegraf.c initdatset.c \
+	  geometrypck.c bline.c \
+	  mirrorpck.c pst.c \
+	  cutils.c rtrace.c 
+SRCF    = phasegraffor.for phasefor.for \
+	  phase_source_10.for \
+	  phase_integration_10.for
+SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
 all: 	
 	@echo "Making $(PROGRAM) for LINUX..." 
 	$(MAKE) $(PROGRAM)   
 ##############################################################################
-#
 # Dependencies section
 $(PROGRAM): $(OBJECTC) $(OBJECTF)
 	$(CC)  -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
-
 ##########################################################################
 %.o : %.c $(PHASEHS)
 	$(CC) $(CFLAGS) -o $@ $< 
@@ -97,6 +82,9 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 	$(FOR) $(FFLAGS) $@ $<   
 
 ##########################################################################
+install: all
+	$(INSTALL) $(PROGRAM) $(PHASEDIR)/bin/$(PROGRAM)
+
 clear:
 	@echo "delete objects and exe..."  
 	rm *.o $(PROGRAM)
@@ -111,14 +99,17 @@ distclean: clean
 	rm -f TAGS  config.status
 
 dist: $(SRCS) $(AUX)
-	echo phase-`/bin/sed \
-                  -e '/VERSION_STRING/!d' \
-                  -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
-                  -e 'q' \
+	echo phase-`sed \
+	-e '/VERSION_STRING/!d' \
+	-e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+	-e 'q' \
 	version.h` > .fname
 	-rm -rf `cat .fname`
 	mkdir `cat .fname`
 	ln $(SRCS) $(AUX) `cat .fname`
 	-rm -rf `cat .fname`.fname
 	tar -chzf `cat .fname`.tgz `cat .fname`
+	-rm -Rf `cat .fname`
+	ln `cat .fname`.tgz $(PHASEDIR)/release
 ####################      end makefile       ###############################
+#end /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
