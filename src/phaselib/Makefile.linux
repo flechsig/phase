@@ -1,14 +1,18 @@
-# File      : /home/pss060/sls/flechsig/phas/phasec/makefile
-# Date      : <19 Feb 99 17:25:30 flechsig> 
-# Time-stamp: <02 Nov 99 13:15:03 flechsig> 
+# File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
+# Date      : <02 Nov 99 16:48:34 flechsig> 
+# Time-stamp: <04 Nov 99 08:21:51 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
+# Makefile for the PHASE LIB 
 # Makefile PHASE on LINUX 
 #########################################################################
 SHELL = /bin/sh
 
 DEFS        = -D LINUX
 CC          = gcc -O
+#FOR         = pgf77 -c 
+FOR         = f77 -c 
+AR	    = ar -rv
 YACC        = bison -y
 INSTALL     = /usr/local/bin/install -c
 INSTALLDATA = /usr/local/bin/install -c -m 644CDEBUG = -g
@@ -16,7 +20,7 @@ MAKE        = make
 
 LIBS =
 CFLAGS = $(CDEBUG) -I. -I$(srcdir) $(DEFS)
-
+FFLAGS = -w -f -s -N3 -N51
 srcdir    = .
 prefix    = /usr/local
 binprefix =
@@ -27,71 +31,65 @@ OBJS = test-defines.o
 
 .phony: all makewhat    
 
-#
-#######          extensions                                    ##########
-#######          additional extension on AXP systems        #############
-         
-#######                    basic extension               ################
-LIB		= olb      
+      
 #########################################################################
 #               debugging        
 DEBUG		= no           # comment out for debugging (DEBUG = # no)    
 OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
 #########        flags                                    ###############
  
-FFLAGS   	=  
+ 
 LINKFLAGS	=  
 LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
 #########################################################################
 #               variables 
 DESTDIR		= phase__prg:  
 # 
-PROGRAM		= phase
+PROGRAM		= phaselib.a
 #########################################################################
-LIBS	 	= cern_lib:MATHLIB/LIB\
-	PACKLIB/LIB\
-	graflib/lib\
-	grafx11/lib\
-	PACKLIB/LIB\
-	KERNLIB/LIB
+LIBS	 	= 
 ####           system dependent libs ####################################
-LIBSVAX		= $(LIBS)\
-../phasefor/lib/phaselib.$(LIB)/lib\
-batchdisk:xliblink/opt   
 
-LIBSAXP		= $(LIBS)\
-DISK_201_SRC0:[FLECHSIG.PHAS.phasefor.lib]phaselib.$(LIB)$(ALPH)/lib\
-batchdisk:xliblink_axp/opt   
 #########################################################################
-OBJECTS = phase.o phasec.o \
-	  activate_proc.o phasegraf.o initdatset.o \
-	  geometrypck.o bline.o \
-	  mirrorpck.o phasegraffor.o \
-	  cutils.o rtrace.o phasefor.o pst.o \
-	  phase_integration_10.o \
-	  phase_source_10.o 
+OBJECTS = wdfgmapa4.o  wdfgmapb4.o  \
+wdfgmapc4.o  wdfgmapd14.o  \
+wdfgmapc4.o  wdfgmapd14.o  \
+wdfgmapd34.o  wdfgmapd44.o  \
+wdfgmapd54.o  wdfgmape14.o  \
+wdfgmape24.o  wdfgmapf4.o  \
+wdfgmapg4.o  wdfgmaph4.o  \
+wdfgmapi4.o  wdfgmapk14.o  \
+wdfgmapk24.o  wdfgmapl4.o  \
+wdfgmapm14.o  wdfgmapm24.o  \
+lengthab4.o  lengtha4.o  \
+lengthb4.o  lengthc4.o  \
+lengthd400.o  lengthd401.o  \
+lengthd402.o  lengthd410.o  \
+lengthd411.o  lengthd412.o  \
+lengthd42.o  lengthd43.o  \
+p_m_4.o  \
+zernike_nl_60.o  zernike_n_60.o
+#dfpl1_uf.o  dfpl2_uf.o  \
+#,\
+#phlib.o
+
 ########################################################################
-PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
-	  phasegraf.h cutils.h
+
 #########################################################################
 #                            targets                                    # 
-all: 	
+all: $(PROGRAM)	
 	@echo "Making $(PROGRAM) for LINUX..." 
-	$(MAKE) $(PROGRAM)   
+		   
 ##############################################################################
 #
 # Dependencies section
 $(PROGRAM): $(OBJECTS)
-	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+	$(AR) $@ $(OBJECTS)  
+	runlib -v $@
 ##########################################################################
-*.o : *.c 
-	$(CC) $(CFLAGS)$@ $< 
-#	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
-
-#*.o : *.for 
-#	fortran $(FFLAGS)$@ $<   
-
- 
+#$(OBJECTS): *.for
+%.o : %.for 
+	$(FOR) $(FFLAGS) $@ $<   
 ##########################################################################
 clear:
 	@echo "delete objects and exe..."  
