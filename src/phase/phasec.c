@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Nov 04 16:28:16 flechsig>  */
+/*   Time-stamp: <30 Mar 05 14:25:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -481,12 +481,19 @@ void GetOptiBox(struct PHASEset *x)
   int parameterzahl, i, index, k;     
  
   get_something(widget_array[kCOptiResultButton], XmNlabelString, &label);
+  /*
   if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &opresname)) 
-    return; 
+  return; */
+  opresname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
+  XmStringFree(label);
+
   get_something(widget_array[kCOptiMinuitButton], XmNlabelString, &label);
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &minname)) 
-    return;  
-  
+  /* if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &minname)) 
+     return;  */
+  minname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
+  XmStringFree(label);
   /*  XtVaGetValues(widget_array[kCOptiList], 
 		XmNitems, &listitems,  XmNitemCount, &elementzahl, NULL); */ 
   XtVaGetValues(widget_array[kCOptiList2], 
@@ -553,7 +560,7 @@ void GetOptiBox(struct PHASEset *x)
   fprintf(minfile, "\nMIGRAD\nRETURN\n");
   fclose(oppickfile); fclose(minfile);
   printf("GetOptiBox: wrote files:\n  %s\n  %s\n", x->optipckname, minname);
-  XmStringFree(label); XtFree(minname); XtFree(opresname); 
+  XtFree(minname); XtFree(opresname); 
 } /* end GetOptiBox */
 
 int GetPHASE(struct PHASEset *x, char *mainpickname)
@@ -1506,8 +1513,12 @@ void UpdateFilenames(struct PHASEset *x)
       /* 15.12.99 das geht nicht     
 	 if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &lab[i])) 
 	 return; */
-      if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fname)) 
-	 return;
+      
+      /*if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fname)) 
+	return;*/
+      fname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
+
       lab[i]= fname;    
            /*delversion(lab[i]);*/ 
       printf("%s\n", lab[i]);  
@@ -2411,22 +2422,32 @@ void  MultiplyMatrix()
 		XmNitemCount, &itemcount, XmNitems, &list, NULL);       
   
   get_something(widget_array[kCCGResultButton], XmNlabelString, &label);  
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &lab)) 
-    return;
+  /*if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &lab)) 
+    return;*/
+
+  lab= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
+
+
   sprintf(labfield[0], "%s", lab); 
-  XtFree(lab);
+  XtFree(lab); XmStringFree(label);
   printf("itemcount:%d\n", itemcount);   
   ac= 0; 
   if (itemcount < 2) xprintf("minimum: 2 Items! \n");    
   else 
     {
-      if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab)) 
-	return;
+      /*if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab)) 
+	return; */
+      lab= XmStringUnparse(list[ac], NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
       sprintf(labfield[1],"%s", lab);
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*1. Matrix */ 
       XtFree(lab);
-      if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab))
-	return;
+
+      /*   if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab))
+	   return;*/
+      lab= XmStringUnparse(list[ac], NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
       sprintf(labfield[2],"%s", lab);
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*2. Matrix */ 
       XtFree(lab);
@@ -2436,8 +2457,11 @@ void  MultiplyMatrix()
         {        
 	  sprintf(copstr, "copy %s tmp.tmp", labfield[0]); 
 	  system(copstr);
-	  if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab))
-	    return;
+
+	  /* if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab))
+	     return;*/
+	  lab= XmStringUnparse(list[ac], NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
 	  printf("itemnr: %d  :: %s\n", ac++, lab);   
 	  sprintf(labfield[1], "tmp.tmp");   
 	  sprintf(labfield[2],"%s", lab);   

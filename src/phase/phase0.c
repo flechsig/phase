@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <26 Oct 04 14:24:42 flechsig>  */
+/*   Time-stamp: <30 Mar 05 14:28:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -378,8 +378,10 @@ void list_proc(w, tag, list)                 /* selection callback */
       
     case kCOptiList2:
       xlabel= XmStringCopy(list->item);
-      if (!XmStringGetLtoR(xlabel, XmSTRING_DEFAULT_CHARSET, &clabelp))
-	return;
+      /* if (!XmStringGetLtoR(xlabel, XmSTRING_DEFAULT_CHARSET, &clabelp))
+	 return;*/
+      clabelp= XmStringUnparse(xlabel, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
       XmStringFree(xlabel); 
@@ -731,8 +733,10 @@ void FileSelectionProc(Widget wi,
   XmString path;
   char     *fname= NULL;
 
-  if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &fname))
-    return;
+  /*if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &fname))
+    return;*/
+  fname= XmStringUnparse(reason->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
 #ifdef VMS
   fname= delversion(fname);              /* Version entfernen    */
 #endif
@@ -821,8 +825,10 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
   switch (sw) 
     {
     case kESOK:
-      if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
-	return; 
+      /*if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
+	return; */
+      inhalt= XmStringUnparse(reason->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
       XtUnmanageChild(widget_array[kEParameterBox]);  
       FetchWidget(kEParameterBox, "EParameterBox");      
       InitParameterBox(&Beamline, inhalt);  
@@ -845,8 +851,10 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
       break; 
       
     case kCOptiList2: 
-      if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
-	return; 
+      /*if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
+	return; */
+      inhalt= XmStringUnparse(reason->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
       InitOptiList2(sw, inhalt);    
       /* XmStringFree(svalue); 24.11.99 */  
       XtFree(inhalt);                
