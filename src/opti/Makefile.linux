@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <29 Oct 03 12:19:37 flechsig> 
+#  Time-stamp: <29 Oct 03 16:37:07 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -25,7 +25,8 @@ CERNLIB     = /cern/2000/lib
 SHELL       = /bin/sh 
 CC          = gcc -v
 PP          = g77 -E -o
-FOR         = f77 
+FOR         = f77
+AR	    = ar -rv 
 YACC        = bison -y
 INSTALL     = /usr/bin/install -c
 INSTALLDATA = /usr/bin/install -c -m 644
@@ -59,9 +60,10 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 .phony: all makewhat    
 #########################################################################
 PROGRAM = phaseopti
+OLIB    = phaseoptilib
 #########################################################################
 LIBS    = $(INSTPATH)/lib/phaselib.a \
-	  $(INSTPATH)/lib/phaseoptilib.a \
+	  $(INSTPATH)/lib/$(OLIB).a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
@@ -69,6 +71,13 @@ LIBS    = $(INSTPATH)/lib/phaselib.a \
 #########################################################################
 OBJECTC = phaseopti.o
 OBJECTF = cost.o 
+########################################################################
+OLIBOS  = ../phase/activate_proc.o ../phase/phasec.o ../phase/bline.o \
+	  ../phase/phasefor.o ../phase/rtrace.o ../phase/phasegraf.o \
+          ../phase/geometrypck.o ../phase/initdatset.o \
+          ../phase/mirrorpck.o ../phase/phasegraffor.o ../phase/pst.o \
+          ../phase/phase_integration.o ../phase/phase_source.o \
+          treiber.o optisubc.o
 ########################################################################
 PHASEHS = phaseopti.h
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 
@@ -97,6 +106,11 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 #preprocessor
 %.f : %.fpp
 	$(PP) $@ $<
+##########################################################################
+# olib
+olib: $(OLIBOS)
+	$(AR) $@ $(OLIBOS)  
+	ranlib -v $@
 
 ##########################################################################
 install: all
