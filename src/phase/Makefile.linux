@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <07 Feb 01 09:45:00 flechsig> 
+# Time-stamp: <07 Feb 01 16:51:11 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -49,12 +49,10 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = /usr/local/phase/lib/phaselib.a \
+LIBS    =  /usr/local/phase/lib/phaselib.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math \
-          -L/usr/lib/gcc-lib/gcc-lib/i386-redhat-linux/egcs-2.91.66 -lg2c \
-	  -L/usr/local/cern/pro/lib -lpawlib -lpacklib \
-	  -lgraflib -lgrafX11 -lpacklib -lmathlib \
-	  -lkernlib -L/usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66 -lg2c 
+          -L/usr/local/cern/pro/lib -lpawlib -lpacklib \
+          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib  
 #	  -Xlinker -defsym -Xlinker MAIN__=main
 #########################################################################
 OBJECTC = phase.o phasec.o \
