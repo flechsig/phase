@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <22 Nov 99 15:07:07 flechsig>  */
+/*  Time-stamp: <24 Nov 99 13:18:45 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -460,6 +460,8 @@ void list_proc(w, tag, list)                 /* selection callback */
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
       XmStringFree(xlabel); 
+      if (epos > 0) /* make only sense if something is selected */
+	{
 #ifdef DEBUG
       printf("list_proc: fetch mirror and element box\n");
 #endif
@@ -471,6 +473,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       printf("list_proc: call UpdateBLBox\n");
 #endif      
       UpdateBLBox(&Beamline, epos);
+	}
       break;
 
     case kCOptiList:
@@ -826,22 +829,22 @@ void cancel_color_proc(widget_id, tag, reason)
 }                   
 
 
-void FileSelectionProc(Widget wi, int *tag, 
+void FileSelectionProc(Widget wi, 
+		       int *tag, 
 		       XmFileSelectionBoxCallbackStruct *reason)
 {
-  int sw= *tag, itemcount, pos, i, *itemlist[20];
+  int      sw= *tag, itemcount, pos, i, *itemlist[20];
   XmString path;
-  char *fname= NULL;
+  char     *fname= NULL;
 
-  path= reason->value;
-  /* Version entfernen */
-#ifdef VMS
-  if (!XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname))
+  if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &fname))
     return;
-  fname= delversion(fname); 
-  path= XmStringCreateLocalized(fname);
-  XtFree(fname);  
+#ifdef VMS
+  fname= delversion(fname);              /* Version entfernen    */
 #endif
+  path= XmStringCreateLocalized(fname);  /* erzeuge XmString neu */
+  /* path und fname sind allociert */  
+
   if (sw == kFileSelectionOk)
     {
       switch (ActualTask)
@@ -865,14 +868,11 @@ void FileSelectionProc(Widget wi, int *tag,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-	  if (!XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname)) 
-	    return;  
 	  strcpy((char *)&PHASESet.beamlinename, fname);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);  
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
 	  ExpandFileNames(&PHASESet, fname); 
 	  PutPHASE(&PHASESet, MainPickName); 
-	  XtFree(fname);  
 	  break;
 	case kCCGAdd:  /* an der richtigen stelle einfuegen */
 	  /* 0 fuegt immer ans ende ein /*/
@@ -884,7 +884,7 @@ void FileSelectionProc(Widget wi, int *tag,
 	  XmListAddItem(widget_array[kCCGList], path, pos);
 	  break;     
 	case kEBLAdd:  
-	  AddBLElement(&Beamline, &path);
+	  AddBLElement(&Beamline, fname);
 	  break;     
 	  
 	case kCOptiAdd:
@@ -906,14 +906,12 @@ void FileSelectionProc(Widget wi, int *tag,
 	  break;
 	  
 	case kFSaveAsButton:
-	  if (!XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname))
-	    return;
 	  printf("save data as: %s\n", fname);
 	  WriteBLFile(fname, &Beamline);
-	  XtFree(fname);  
 	  break;  
 	}
-    }
+    } /* end if */
+  XtFree(fname);
   XmStringFree(path);
 #ifdef DEBUG
   printf("FileSelectionProc: end\n");  
