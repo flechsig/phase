@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <04 Nov 99 15:51:51 flechsig> 
+# Time-stamp: <04 Nov 99 16:02:59 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB on LINUX 
@@ -20,7 +20,7 @@ FFLAGS      = -w -f -s -N3 -N51
 srcdir      = .
 #prefix     = /usr/local
 prefix      = /home/pss060/sls/flechsig
-DESTDIR	    = $(prefix)/phase
+PHASEDIR    = $(prefix)/phase
 
 .phony: all makewhat    
 ######################################################################### 
@@ -79,7 +79,7 @@ $(LIB): $(OBJECTS)
 	$(FOR) $(FFLAGS) $@ $<   
 ##########################################################################
 install: all
-	$(INSTALL) $(LIB) $(DESTDIR)/lib/$(LIB)
+	$(INSTALL) $(LIB) $(PHASEDIR)/lib/$(LIB)
 
 clear:
 	@echo "delete objects and exe..."  
@@ -106,5 +106,6 @@ dist: $(SRCS) $(AUX)
 	-rm -rf `cat .fname`.fname
 	tar -chzf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
+	ln `cat .fname` $(PHASEDIR)/release
 ####################      end makefile       ###############################
 #end /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
