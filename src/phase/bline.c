@@ -1,16 +1,8 @@
-/*  File      : /home/vms/flechsig/vms/phas/phasec/bline.c */
-/*  Date      : <30 Oct 98 10:02:42 flechsig>  */
-/*  Time-stamp: <02 Nov 99 13:20:29 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-/* File      : /home/vms/flechsig/vms/phas/phasec/bline.c 	*/
-/* Date      : <18 Mar 97 12:29:12 flechsig>  			*/
-/* Time-stamp: <13 Mar 98 08:49:07 flechsig>  			*/
-/* Author    : Uwe Flechsig, flechsig@exp.bessy.de 		*/
+/*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
+/*  Date      : <15 Nov 99 11:20:47 flechsig>  */
+/*  Time-stamp: <18 Nov 99 15:58:20 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
-/* Datei: USERDISK_3:[FLECHSIg.PHAS.PHASEC]BLINE.C             */
-/* Datum: 30.MAY.1996                                          */
-/* Stand:  5-MAY-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
 
 /* 24.11.98 UF Undulatorsource schreiben/ lesen geaendert */
 
@@ -20,7 +12,6 @@
 #include <string.h>                           
 #include <math.h> 
 
-                                       
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
 #include <Xm/List.h>   
@@ -54,9 +45,14 @@ void AddBLElement(struct BeamlineType *bl, XmString *path)
    struct ElementType *tmplist= NULL, *listpt, *tmplistpt;  
    char *name;
 
-/*   printf("debug 0\n");   
+#ifdef DEBUG
+   printf("AddBLElement called\n");  
+#endif    
 /*   list widget aktualisieren   */
-   XmStringGetLtoR(*path, XmFONTLIST_DEFAULT_TAG, &name); 
+   XmStringGetLtoR(*path, XmFONTLIST_DEFAULT_TAG, &name);
+#ifdef DEBUG
+   printf("AddBLElement: add name >>%s<< to list\n", *name);
+#endif   
    if (XmListGetSelectedPos(widget_array[kEBLList], &poslist, &pos) == True)
    { 
      pos= *poslist; XtFree((char *)(poslist));  }  
@@ -114,11 +110,9 @@ void AddBLElement(struct BeamlineType *bl, XmString *path)
 	   printf("init mirror with %s\n", PHASESet.elementpckname); 
 	   printf("!!! Element Type must be selected by hand !!!\n");
 	 }
-
      }
      else
        memcpy(listpt, tmplistpt++, sizeof(struct ElementType));  
-     
    }
    free(tmplist); XtFree(name);
 } /* end AddBLElement */
@@ -1243,7 +1237,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
              fscanf(f, " %lf %[^\n]s %c", &sp->dz, buffer, &buf);    
            break;  
            case 'I':
-             psip= (struct PSImageTypee *) &(bl->RTSource.Quelle.PSImage);
+             psip= (struct PSImageType *) &(bl->RTSource.Quelle.PSImage);
              fscanf(f, " %lf %[^\n]s %c", &psip->ymin,  buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &psip->ymax, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &psip->zmin,  buffer, &buf);  
@@ -1545,7 +1539,7 @@ int SetFilePos(FILE *f, char *s)
 void  UpdateBLBox(struct BeamlineType *bl, int pos)  
 /* Aufruf vom selection callback der bllist, pos ist selected  	*/
 /* Uwe 3.6.96 							*/
-/* last modification: 21 Mar 97 15:16:10 flechsig */
+/* last modification: 21 Mar 97 15:16:10 flechsig               */
 {
    struct ElementType *ep;
    int i;
@@ -1556,13 +1550,13 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    bl->position= pos;
 
    if ((widget_array[kEOElementBox] != NULL) &&
-	XtIsRealized(widget_array[kEOElementBox]))		
-                    InitOElementBox(&ep->MDat, &ep->GDat, ep->Art);   
-	
+       XtIsRealized(widget_array[kEOElementBox]))		
+     InitOElementBox(&ep->MDat, &ep->GDat, ep->Art);   
+   
    if ((widget_array[kEGeometryBox] != NULL) &&
-	XtIsRealized(widget_array[kEGeometryBox]))
- 		     InitGeometryBox(&ep->GDat); 
-
+       XtIsRealized(widget_array[kEGeometryBox]))
+     InitGeometryBox(&ep->GDat); 
+   
    /* filenames updaten */
    ExpandFileNames(&PHASESet, ep->elementname); 
    
@@ -1578,8 +1572,7 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    sprintf(buffer[5], "%5G", ep->MDat.slopel);   
    for (i= 0; i < 6; i++)
      set_something(widget_array[kEBLT11+ i], XmNvalue, buffer[i]);   
-
 } /* end UpdateBLBox */
-
-
 /* end bline.c */
+
+
