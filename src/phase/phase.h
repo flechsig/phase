@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <19 Feb 99 16:12:35 flechsig>              */
+/* Time-stamp: <15 Oct 99 16:52:16 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -52,7 +52,7 @@
 #define PLsimpph            0x8000000   /*  */
 #define PLd12              0x10000000   /*  */
 
-#define HORMAPFILENAMEBASE	"PHASE$PRG:MAP"        
+#define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
 
 /*******************  fileheader *******************************/
 
