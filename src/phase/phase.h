@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <11 Jan 00 16:02:11 flechsig>              */
+/* Time-stamp: <11 Feb 00 09:38:45 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -710,7 +710,7 @@ void 	ActivateFileSelection(int, char *),
   hplotpsdc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
 	    struct PHASEset *, struct PSDType *, double *),
   hplotpssimc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
-	      struct PHASEset *, struct PSDType *, double *), 
+	      struct PHASEset *, double *), 
   
   InitBLBox(char *, struct BeamlineType *), 
   intersection(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
