@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <31 Oct 03 11:02:48 flechsig>  */
+/*   Time-stamp: <03 Feb 04 15:04:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -859,17 +859,24 @@ void xmstring_append (XmString *string1, XmString string2)
 
 void start_watch()   
 {
+#ifndef NOWATCH
 #ifdef VMS
   if (watch == (Cursor)NULL)
     watch = DXmCreateCursor(main_window_widget, decw$c_wait_cursor);
 #endif
+
   XDefineCursor(the_display, XtWindow(main_window_widget), watch);
   XFlush(the_display);
+#endif
 }
 
 void stop_watch()
 {
-  XUndefineCursor(the_display, XtWindow(main_window_widget));
+#ifndef NOWATCH
+  /*  XUndefineCursor(the_display, XtWindow(main_window_widget)); */
+  watch = 0;
+  XDefineCursor(the_display, XtWindow(main_window_widget), watch);
+#endif 
 }
 
 
