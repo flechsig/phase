@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <17 Jan 00 10:36:36 flechsig> 
+c Time-stamp: <18 Jan 00 16:33:04 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -13,7 +13,7 @@ c     &               xlength1,xlength2,xlength)
 c subroutine readmatrixfile35(fname,xmap35)  
 c subroutine readintersection(fname,wc,xlc,iord) 
 c subroutine extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)  
-c subroutine reduce_1(iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
+c subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c subroutine transponiere (a,g)   
 c subroutine ray_tracef(rin, rout, iord,ypc1,zpc1,dypc,dzpc)       
 c subroutine writemap(mapname,iord,ypc1,zpc1,dypc,dzpc)  
@@ -541,7 +541,7 @@ c        write(*,*)'for: fgmapidp called'
           write(*,*)' make map for source to image iord=',iord 
 	endif 
 c------------------------------------------------------- 
-        call reduce_1(iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
+        call reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
 c------------------------------------------------------- 
         if(imodus.eq.2)then
           call transponiere(a,g)    ! bild zur quelle
@@ -1050,7 +1050,7 @@ c******* extractmap ************************************
 
 
 c********************************************************** 
-	subroutine reduce_1(iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
+	subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c********************************************************** 
         implicit real*8(a-h,o-z) 
 c       mirror a und geometry g gehen herein
@@ -1154,6 +1154,13 @@ c-------- produziere density aus xdens(5) ------------------------
         do n1=0,4
 	   density(n1,0,0,0,0,0)=g.xdens(n1)
 	enddo     
+
+c----------- 18.1.2000
+	if(imodus.eq.2)then
+	  density(1,0,0,0,0,0)=-density(1,0,0,0,0,0)
+	  density(3,0,0,0,0,0)=-density(3,0,0,0,0,0)
+	endif
+c----------- end 18.1.2000
 
         do n1=0,iord
 	 do n2=0,iord
