@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <21 Dec 99 14:20:43 flechsig> 
+C Time-stamp: <21 Dec 99 14:28:47 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -36,7 +36,6 @@ c subroutine fywert()
 c subroutine psdi_gh(yp,zp,dyp,dzp,dens,s0)  
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
- 
 
 c*************************** neu **************************
         subroutine pstf(s,pso,xlam_test,iord,xlen1c,xlen2c,
@@ -178,13 +177,12 @@ c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
         call initconstants(cs)
 
 c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
-c imaxz entfernt UF 22.10.99
         xir.nsimp=0
         xir.iisimp=4
 	xir.isimp(1)=2
-c	xir.isimp(2)=xi.imaxz+1
-c	xir.isimp(3)=2*xi.imaxz
-c	xir.isimp(4)=2*xi.imaxz+2
+	xir.isimp(2)=xi.imaxz+1
+	xir.isimp(3)=2*xi.imaxz
+	xir.isimp(4)=2*xi.imaxz+2
 
 c------ copy stuff
 	do i=0,iord
@@ -213,7 +211,7 @@ c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
               enddo        
            enddo
 	enddo        
-        write(*,*) 'phasefor.for: wc 4000',wc(4,0,0,0)
+        write(*,*)'phasefor.for: wc 4000',wc(4,0,0,0)
 c	do iii=1,4
 c	do jjj=1,4
 c	do i=0,iord
@@ -250,7 +248,27 @@ c---  parameter ddisty,z Schrittweiten--------------
 c---  schrittweiten im Bild bestimmt -----------------------   
 c      ddistz, ddisty sind berechnet
 c----------------------------------------------------------
-C 21.12 hier fixed grid geloescht UF
+
+c-----------------------------------------------------------      
+        
+	if(pso.intmod.ne.2)then
+          write(*,*)' integration -> equidistant grid' 
+          write(*,*)'int. grenz. winkel dy',
+     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
+          write(*,*)'int. grenz. winkel dz',
+     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
+
+          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
+	  idivy=pso.ndyfix          	 ! integrationspunkte
+	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
+	  idivz=pso.ndzfix
+          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
+          ddzi=divz/floatj(idivz-1)
+        endif
+c--- schrittweiten fuer integration bestimmt fuer equidistant grid 
+c     ddyi, ddzi sind berechnet
+c -----------------------------------------------------------------         
+
 c************* Bildpunkt generieren *******************************
 
 	write(*,*)'pstf.for: start'
@@ -552,8 +570,7 @@ c$$$        write(*,*)'sintre.dat + sintim.dat erzeugt'
       return
       end
 c**** end pstf() ******************************************    
-
-
+ 
 c*********************************************************
 	function facult(nn) 
 c*********************************************************
