@@ -1,7 +1,12 @@
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]MIRRORPCK.H        */
-/* Datum: 19.JUL.1994                                          */
-/* Stand:  1-JUL-1996                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.h */
+/*   Date      : <16 Feb 04 14:51:56 flechsig>  */
+/*   Time-stamp: <16 Feb 04 14:52:02 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 
 #ifndef __MIRRORPCK_LOADED
@@ -14,7 +19,11 @@
 #define 	D0alpha         80
 #define 	D0rmi           2000
 #define 	D0rho           2000   
-#define 	D0iflagmi       0   
+#define 	D0iflagmi       0 
+#define         D0w             100
+#define         D0l             10
+#define         D0slopew        0.1
+#define         D0slopel        1.0
 
 struct grating
 {
