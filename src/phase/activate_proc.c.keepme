@@ -1,15 +1,10 @@
-/* File      : /home/vms/flechsig/vms/phas/phasec/activate_proc.c */
-/* Date      : <18 Mar 97 09:53:07 flechsig>  */
-/* Time-stamp: <08 Nov 99 15:35:10 flechsig>  */
-/* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
+/*  Date      : <15 Nov 99 11:26:25 flechsig>  */
+/*  Time-stamp: <15 Nov 99 11:26:38 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]ACTIVATE_PROC.C    */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 26-FEB-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
-
-/* 23.11.98 SIS, SIM undulator eingefuegt UF */                                                
-
+/* 23.11.98 SIS, SIM undulator eingefuegt UF */     
+                                     
 #include <stdio.h>   
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
@@ -803,7 +798,9 @@ void activate_proc(w, tag, reason)
     break;
   case kSetupInfo:
     FetchWidget(kSetupInfo, "SetupInfo");
-    PrintFileInMainList("PHASE$LIB:NEWS.");  
+    strcpy(buffer, "/lib/news.");
+    PrependEnv(PHASE_HOME, buffer);
+    PrintFileInMainList(buffer);  
     XtManageChild(widget_array[kSetupInfo]);   
     break;
 
