@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <03 Feb 04 13:59:31 flechsig> 
+#   Time-stamp: <04 Feb 04 14:27:59 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -90,8 +90,8 @@ AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
   if test "$enable_debug" = "yes"; then
       AC_MSG_NOTICE(*** enable debugging mode (using static libs) ***)
 ##      AC_DEFINE(FDEBUG, [-g -C -B111], "Debugger options f77")
-      AC_DEFINE(DEBUG, ["debug mode, static linking"], 
-    "debug mode with static libraries")
+##      AC_DEFINE(DEBUG, ["yes"], 
+##    "debug mode with static libraries")
       AC_SUBST([FDEBUG], "-g -C -B111")
       AC_SUBST([CDEBUG], "-DDEBUG -gdwarf")
       AC_SUBST([LIBPHASE], libphase.a)
@@ -100,9 +100,10 @@ AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
   AC_SUBST([LIBPHASE], libphase.so)
 )
 
-# get configure date
+# get configure date put it into header
 configured=`date`
 AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
+AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
 
 dnl Checks for header files.
 AC_PATH_X
