@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <16 Dec 99 07:48:57 flechsig>  */
+/*  Time-stamp: <16 Dec 99 12:07:08 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -428,12 +428,15 @@ void hplotdisplay(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
 
     CreateFString(&fstitle, gr->titel);    
     CreateFString(&fsmetaname,  ph->plotpsname);    
-    hplotdisplayf(&fstitle, &fsmetaname, gr, rp, &bl->deltalambdafactor,
-		  &bl->BLOptions.lambda);   
+    hplotdisplayf(gr, rp, &bl->deltalambdafactor,
+		  &bl->BLOptions.lambda, &fstitle, &fsmetaname);   
 #else   
-    hplotdisplayf(gr->titel, strlen(gr->titel), 
-		  ph->plotpsname, strlen(ph->plotpsname), 
-		  gr, rp, &bl->deltalambdafactor,
+    static char title[MaxPathLength], metaname[MaxPathLength];
+
+    strcpy(title, gr->titel);
+    strcpy(metaname, ph->plotpsname);
+    printf("hplotdisplay: title and metaname are fixed with linux");
+    hplotdisplayf(gr, rp, &bl->deltalambdafactor,
 		  &bl->BLOptions.lambda); 
 #endif 
 }  /* end  hplotdisplay */
