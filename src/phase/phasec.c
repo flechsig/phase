@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <03 May 04 09:36:30 flechsig>  */
+/*   Time-stamp: <04 May 04 12:18:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -557,6 +557,10 @@ int iindex(int e, int p)
 	case 18: p=  36;  break;     
 	case 19: p=  37;  break;  
 	case 20: p=   0;  break;
+	case 21: p=  38;  break;
+	case 22: p=  39;  break;
+	case 23: p=  40;  break;
+	case 24: p=  41;  break;
         }
       p++;                             /* fuer kompatibil. mit  (p-1) */
     }                                  /* ende mtyp */
