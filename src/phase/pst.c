@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <08 Apr 04 15:46:27 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:48:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -165,23 +165,24 @@ void PST(struct BeamlineType *bl)
 
      /* debug */
   tmp= (double *) bl->ElementList[gratingposition].wc; 
-	printf("pst.c: wc4000: %g\n", tmp[4]);
 
-   pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, 
-        &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, &bl->xlm.xlen1c, 
-	&bl->xlm.xlen2c, 
-        &bl->xlen0, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-        &bl->wc, &bl->xlc,
-        bl->RESULT.RESUnion.PSD.y, bl->RESULT.RESUnion.PSD.z, 
-        bl->RESULT.RESUnion.PSD.psd, bl->RESULT.RESUnion.PSD.stfd1phmaxc,
-	bl->RESULT.RESUnion.PSD.stinumbc, bl->RESULT.RESUnion.PSD.s1c,
-	bl->RESULT.RESUnion.PSD.s2c, bl->RESULT.RESUnion.PSD.s3c,
-	bl->RESULT.RESUnion.PSD.eyrec, bl->RESULT.RESUnion.PSD.ezrec,
-	bl->RESULT.RESUnion.PSD.eyimc, bl->RESULT.RESUnion.PSD.ezimc,
-	&m4, gp, &bl->ElementList->mir,
-	&bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl, 
-	&bl->BLOptions.xi, &xir, &st,
-	&bl->fdetc, &bl->fdetphc, &bl->fdet1phc);      
+  printf("pst.c: wc4000: %g\n", tmp[4]);
+
+  pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, 
+       &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, &bl->xlm.xlen1c, 
+       &bl->xlm.xlen2c, 
+       &bl->xlen0, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+       &bl->wc, &bl->xlc,
+       bl->RESULT.RESUnion.PSD.y, bl->RESULT.RESUnion.PSD.z, 
+       bl->RESULT.RESUnion.PSD.psd, bl->RESULT.RESUnion.PSD.stfd1phmaxc,
+       bl->RESULT.RESUnion.PSD.stinumbc, bl->RESULT.RESUnion.PSD.s1c,
+       bl->RESULT.RESUnion.PSD.s2c, bl->RESULT.RESUnion.PSD.s3c,
+       bl->RESULT.RESUnion.PSD.eyrec, bl->RESULT.RESUnion.PSD.ezrec,
+       bl->RESULT.RESUnion.PSD.eyimc, bl->RESULT.RESUnion.PSD.ezimc,
+       &m4, gp, &bl->ElementList->mir,
+       &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl, 
+       &bl->BLOptions.xi, &xir, &st,
+       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc);      
 
    /* simpson resuslts copieren */
    printf("copy simpson results\n");
