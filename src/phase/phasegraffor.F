@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phasegraffor.for
 c Date      : <27 Mar 97 10:05:09 flechsig> 
-c Time-stamp: <03 Nov 99 16:26:11 flechsig> 
+c Time-stamp: <16 Dec 99 12:47:00 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAFFOR.FOR
@@ -36,7 +36,7 @@ C Autor: FLECHSIG, BESSY Berlin
         end
 
 c*********************** Grafik Display ********************************
-        subroutine hplotdisplayf(titel,metaname,s,raysout,dlf,lambda) 
+        subroutine hplotdisplayf(s,raysout,dlf,lambda,dtitel,dmetaname) 
 c
 c       Uwe 3.7.96 raytype auf dim 5 erweitert (phase)
 c       4.7.96 kein lesen von file mehr
@@ -51,10 +51,12 @@ c
         end structure
         record /struct/ s
         dimension raysout(5,1)                  ! gummilaenge
-	character*(*) titel,metaname
+	character*(*) titel,metaname,dtitel,dmetaname
         real*4     y1,y2,z1,z2,dy,dz,y,z       
         real*8	   yd,zd,dyd,dzd,dlfac,lambda,dlf
-	
+c temporarely fixed
+	parameter (titel = 'PHASE')
+        parameter (metaname= 'pmeta.ps')
 c************************************************************************
  
         y1=s.ymi
@@ -62,7 +64,8 @@ c************************************************************************
         z1=s.zmi
         z2=s.zma  
         
-        type*,'phasegraffor:',y1,y2,z1,z2    
+        type*,'title and plotfilename are temporarely fixed'
+        type*,'hplotdisplayf:',y1,y2,z1,z2    
         type*,'ps   filename  ',metaname    
         type*,'titel       ',titel  
         type*,'status, zeilen ',s.status, s.zeilen
