@@ -1,0 +1,146 @@
+# File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
+# Date      : <04 Nov 99 16:48:19 flechsig> 
+# Time-stamp: <21 May 01 15:31:15 flechsig> 
+# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+#########################################################################
+# Makefile PHASE on LINUX 
+#########################################################################
+SHELL = /bin/sh 
+
+DEBUG	    = -DDEBUG
+DEFS        = -DLINUX $(DEBUG) -DCADDR_T  # caddr_t im Headerfile
+CC          = gcc -v
+PP          = g77 -E -o
+FOR         = ifc  
+#CERNLIB     = /cern/2000/lib
+#CERNLIB    = /usr/local/cern/2000/lib
+YACC        = bison -y
+INSTALL     = /home/bahrdt/phas/phase -c
+INSTALLDATA = /home/bahrdt/phas/phase -c -m 644
+CDEBUG      = -gdwarf
+FDEBUG      = -g -C -B111 
+MAKE        = make
+
+srcdir      = .
+INSTPATH    = /home/bahrdt/phas/phase
+BUILDPATH   = /home/bahrdt/phas/phase
+
+LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
+CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
+#FFLAGS  = -w -f -s -N3 -N51
+#FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
+FFLAGS  =  -c -vms -w95 -132
+LDFLAGS = -L/home/bahrdt/phas/phase/lib -lMyXm -lMyMrm \
+-L/usr/X11R6/lib -lXt -lXext -lXp -lX11 -lm -lc -lnsl  
+#LDFLAGS = -L/usr/X11R6/lib -lXm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
+#FFLAGS for absoft f77 compiler
+#	-g generate debugging information
+#	-c generate object files
+#     	-f fold to lower case
+#	-B108 append a single underscore to funtion names
+#	-W allow > 72 columns
+#	-s force all program storage to be treated as static and initialized
+#	   to zero (weglassen???)
+#	-N3 include record length information for sequential, unformated files
+#	-N51 interpret RECL specifier as a number of 32bit words in a record
+#	-C Check array boundaries (for debugging only)
+#	-B111 Validate FPU stack after procedure calls (for debugging only)
+#	-m0 give more error messages
+#	-N22 append underscore to common block names (wichtig wegen pawc)
+#       -N33 pack structures (kein alignment) 
+
+.phony: all makewhat    
+#########################################################################
+PROGRAM		= phase
+#########################################################################
+LIBS    = /home/bahrdt/phas/phase/lib/phaselib.a \
+-L/opt/cern/pro/lib \
+-lpacklib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib \
+/lib/libpthread.so.0 \
+/usr/lib/libg2c.a \
+/usr/X11R6/lib/libX11.so.6 \
+-L/opt/intel/compiler/ia32/lib \
+-lCEPCF90 -lIEPCF90 -lintrins -lF90 \
+#	  -Xlinker -defsym -Xlinker MAIN__=main
+#########################################################################
+OBJECTC = phase.o phasec.o \
+	  activate_proc.o phasegraf.o initdatset.o \
+	  geometrypck.o bline.o \
+	  mirrorpck.o pst.o \
+	  cutils.o rtrace.o 
+OBJECTF = phasegraffor.o phasefor.o \
+	  phase_source.o \
+	  phase_integration.o 
+	  
+########################################################################
+PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
+	  cutils.h phase_struct.h rtrace.h version.h
+AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 Makefile.pc2346 \
+          Makefile.egcs.pc2038 \
+          phase_struct.for news coefficient-example.dat
+SRCC    = phase.c phasec.c \
+	  activate_proc.c phasegraf.c initdatset.c \
+	  geometrypck.c bline.c \
+	  mirrorpck.c pst.c \
+	  cutils.c rtrace.c 
+SRCF    = phasegraffor.fpp phasefor.for \
+	  phase_source.for \
+	  phase_integration.for 
+SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
+#########################################################################
+#                            targets                                    # 
+all: 	
+	@echo "Making $(PROGRAM) for LINUX..." 
+	$(MAKE) $(PROGRAM)   
+##############################################################################
+# Dependencies section
+$(PROGRAM): $(OBJECTC) $(OBJECTF)
+	$(FOR)  -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
+##########################################################################
+%.o : %.c $(PHASEHS)
+	$(CC) $(CFLAGS) -o $@ $< 
+
+%.o : %.for phase_struct.for 
+	$(FOR) $(FFLAGS) $@ $<   
+
+%.o : %.f
+	$(FOR) $(FFLAGS) $@ $<   
+
+#mit preprocessor
+%.f: %.fpp
+	$(PP) $@ $<
+
+##########################################################################
+install: all
+	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
+	$(INSTALL) news $(INSTPATH)/lib/news
+	$(INSTALL) coefficient-example.dat $(INSTPATH)/lib/coefficient-example.dat
+
+clear:
+	@echo "delete objects and exe..."  
+	rm *.o $(PROGRAM)
+
+TAGS:   $(SRCS)
+	etags $(SRCS)
+     
+clean:
+	rm -f *.o  core
+     
+distclean: clean
+	rm -f TAGS  config.status
+
+dist: $(SRCS) $(AUX)
+	echo phase-`sed \
+	-e '/VERSION_STRING/!d' \
+	-e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+	-e 'q' \
+	version.h` > .fname
+	-rm -rf `cat .fname`
+	mkdir `cat .fname`
+	ln $(SRCS) $(AUX) `cat .fname`
+	-rm -rf `cat .fname`.fname
+	tar -czhf `cat .fname`.tgz `cat .fname`
+	-rm -Rf `cat .fname`
+	ln `cat .fname`.tgz $(BUILDPATH)/release
+####################      end makefile       ###############################
+#end /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
