@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.c */
 /*   Date      : <17 Feb 04 14:48:09 flechsig>  */
-/*   Time-stamp: <17 Feb 04 14:48:33 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:21:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -26,19 +26,20 @@ void mputpickfile(struct mdatset *x, char *mpickname)
 	exit(-1);
    } else 
    {
-        fprintf(f,"%s\n", MirrorPickFileHeader);  
-	fprintf(f,"%20lf               source distance (ARC) \n", x->r1);     
-	fprintf(f,"%20lf               image  distance (ARC) \n", x->r2);
-	fprintf(f,"%20lf               theta  (ARC)          \n", x->alpha);
-	fprintf(f,"%20lf               radius r	       \n", x->rmi);
-	fprintf(f,"%20lf               radius rho      \n", x->rho);    
-        fprintf(f,"%20d               translation flag\n", x->iflagmi);    
+        fprintf(f, "%s\n", MirrorPickFileHeader);  
+	fprintf(f, "%20lf               source distance (ARC) \n", x->r1);     
+	fprintf(f, "%20lf               image  distance (ARC) \n", x->r2);
+	fprintf(f, "%20lf               theta  (ARC)          \n", x->alpha);
+	fprintf(f, "%20lf               radius r	       \n", x->rmi);
+	fprintf(f, "%20lf               radius rho      \n", x->rho);    
+        fprintf(f, "%20d               translation flag\n", x->iflagmi);    
        	fprintf(f, "%20lf               wmin\n", x->w1);    
         fprintf(f, "%20lf     		wmax\n", x->w2);  
         fprintf(f, "%20lf     		lmin\n", x->l1);  
         fprintf(f, "%20lf     		lmax\n", x->l2);  
         fprintf(f, "%20lf     		slope w (arcsec rms)\n", x->slopew);  
-        fprintf(f, "%20lf     		slope l (arcsec rms)\n", x->slopel);  
+        fprintf(f, "%20lf     		slope l (arcsec rms)\n", x->slopel);
+	fprintf(f, "%20d     	       Elementtype\n", x->Art);
         fclose(f);  
      }
 }	
@@ -69,7 +70,8 @@ int mgetpickfile(struct mdatset *x, char *mpickname)
 	fgets(buffer, 80, f); sscanf(buffer, "%lf", &x->l1);  
 	fgets(buffer, 80, f); sscanf(buffer, "%lf", &x->l2);  
         fgets(buffer, 80, f); sscanf(buffer, "%lf", &x->slopew);  
-	fgets(buffer, 80, f); sscanf(buffer, "%lf", &x->slopel);  
+	fgets(buffer, 80, f); sscanf(buffer, "%lf", &x->slopel);
+        fgets(buffer, 80, f); sscanf(buffer, "%d", &x->Art);
 	rcode= 1;
      }
      fclose(f);  
@@ -92,5 +94,6 @@ void minitdatset(struct mdatset *x)
 	 x->slopew      = D0slopew;
 	 x->slopel      = D0slopel;
 	 x->du= x->dw= x->dl= x->dRu= x->dRw= x->dRl= 0.0;
+	 x->Art= D0Art;
 }
 /* end mirrorpck.c */
