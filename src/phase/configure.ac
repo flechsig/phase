@@ -1,7 +1,7 @@
 -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/configure.ac
 #   Date      : <26 Nov 03 15:50:42 flechsig> 
-#   Time-stamp: <26 Nov 03 15:51:10 flechsig> 
+#   Time-stamp: <26 Nov 03 16:04:32 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -9,8 +9,11 @@
 #   $Revision$ 
 #   $Author$ 
 
+# configure template to built phase with autoconfig
+
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(activate_proc.c)
+AC_INIT(phase, 0.5, flechsig@psi.ch)
+AC_REVISION($Revision$)
 
 dnl Checks for programs.
 AC_PROG_AWK
