@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
 /*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <02 Nov 99 14:01:31 flechsig>  */
+/*  Time-stamp: <16 Dec 99 13:31:39 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
@@ -188,23 +188,58 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 /* Uwe 2.8.96 					*/
 /* last mod. 7.8.96 				*/   
 {
-   FILE *f;
+   FILE *f0,*f1,*f2,*f3,*f4;
    int i, j, dim;
+   char fname[MaxPathLength];
 
-   printf("WritePsd: Write Psd to %s\n", name);
+   printf("WritePsd: Write Psd to %s-[psd,eyrec,ezrec,eyimc,ezimc]\n", name);
 
-   if ((f= fopen(name, "w+")) == NULL)
+   sprintf(fname, "%s-psd", name);
+   if ((f0= fopen(fname, "w+")) == NULL)
    {
-       fprintf(stderr, "error: open file %s\n", name); exit(-1);   
+       fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
    } 
 
-   fprintf(f, "   %d    %d\n", nz, ny);  
+   sprintf(fname, "%s-eyrec", name);
+   if ((f1= fopen(fname, "w+")) == NULL)
+   {
+       fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
+   } 
+
+   sprintf(fname, "%s-ezrec", name);
+   if ((f2= fopen(fname, "w+")) == NULL)
+   {
+       fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
+   } 
+
+   sprintf(fname, "%s-eyimc", name);
+   if ((f3= fopen(fname, "w+")) == NULL)
+   {
+       fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
+   } 
+
+   sprintf(fname, "%s-ezimc", name);
+   if ((f4= fopen(fname, "w+")) == NULL)
+   {
+       fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
+   } 
+
+   fprintf(f0, "   %d    %d\n", nz, ny);  
+   fprintf(f1, "   %d    %d\n", nz, ny);
+   fprintf(f2, "   %d    %d\n", nz, ny);
+   fprintf(f3, "   %d    %d\n", nz, ny);
+   fprintf(f4, "   %d    %d\n", nz, ny);
    for (i= 0; i< ny; i++) 
      for (j= 0; j< nz; j++) 
        /* psd ist fortran format */
-       fprintf(f, "%15le %15le %15le\n", p->z[j], p->y[i], p->psd[i+ j* ny]);  
-
-   fclose(f);   
+       {
+	 fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->psd[i+ j* ny]);  
+	 fprintf(f1, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyrec[i+ j* ny]);  
+	 fprintf(f2, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezrec[i+ j* ny]);  
+	 fprintf(f3, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyimc[i+ j* ny]);  
+	 fprintf(f4, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezimc[i+ j* ny]);  
+       }
+   fclose(f0); fclose(f1); fclose(f2); fclose(f3);fclose(f4);    
 }  /* end writepsd */
 
 void FreeResultMem(struct RESULTType *Re)  
