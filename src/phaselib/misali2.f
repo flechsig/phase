@@ -1,8 +1,7 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/misali2.for
 c$$$ Date      : <16 Feb 04 16:38:37 flechsig> 
-c$$$ Time-stamp: <16 Feb 04 16:47:22 flechsig> 
+c$$$ Time-stamp: <18 Feb 04 11:17:55 flechsig> 
 
-c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
@@ -11,6 +10,10 @@ c$$$ $Author$
       subroutine misali2(a,anew,drl)
       implicit real*8(a-h,o-z)
       dimension a(0:5,0:5),anew(0:5,0:5)
+
+c UF correction of the direction
+      drl=- drl
+
       dsindrl=dsin(drl)
       dcosdrl=dcos(drl)
       anew(0,0)=0.
@@ -1062,6 +1065,9 @@ c$$$ $Author$
      . 3.0*a(3.0,0.0)*anew(0.0,0.0)**2*dcosdrl*dsindrl**3+2.0*a(2.0,
      . 0.0)*anew(0.0,0.0)*dcosdrl*dsindrl**2+a(1.0,0.0)*dcosdrl*
      . dsindrl+dsindrl**2-1.0)
+
+c UF back correction of the direction
+      drl=- drl
       return
       end
 c end /afs/psi.ch/user/f/flechsig/phase/src/phase/misali2.for
