@@ -1,14 +1,17 @@
-c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
-c Date      : <09 Jan 01 12:39:27 flechsig> 
-c Time-stamp: <21 May 01 16:08:51 flechsig> 
-c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
+c$$$ Date      : <11 Nov 03 09:30:31 flechsig> 
+c$$$ Time-stamp: <11 Nov 03 09:30:53 flechsig> 
+c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c
 c fortran file which will be preprocessed #define LINUX #define VMS
 c
-c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
-c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <09 Jan 01 12:39:26 flechsig> 
-c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+
 
        	subroutine inithplot 
         PARAMETER (NWPAW=200000)
