@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <12 Feb 04 12:23:00 flechsig>  */
+/*   Time-stamp: <12 Feb 04 12:44:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1608,7 +1608,8 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[1], "%f", bl->RTSource.Quelle.DipolSource.sigdy);    
       sprintf(TextField[2], "%f", bl->RTSource.Quelle.DipolSource.sigz);    
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.DipolSource.dz);    
-      sprintf(TextField[4], "%d", bl->RTSource.raynumber);    
+      sprintf(TextField[4], "%d", bl->RTSource.raynumber);   
+      xprintf("Dipol Source: h. div. hard edge, the rest are sigma values"); 
       break;    
     case 'o':
       w= widget_array[kESPointSourceButton];  
@@ -1618,7 +1619,8 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[1], "%f", bl->RTSource.Quelle.PointSource.sigdy);    
       sprintf(TextField[2], "%f", bl->RTSource.Quelle.PointSource.sigz);    
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.PointSource.sigdz);    
-      sprintf(TextField[4], "%d", bl->RTSource.raynumber);    
+      sprintf(TextField[4], "%d", bl->RTSource.raynumber); 
+      xprintf("Point Source: all sigma values");
       break;    
     case 'U':  
       w= widget_array[kESUndulatorSourceButton]; 
