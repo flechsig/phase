@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <09 Jan 01 12:29:24 flechsig> 
+# Time-stamp: <09 Jan 01 12:36:09 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -77,7 +77,7 @@ SRCC    = phase.c phasec.c \
 	  geometrypck.c bline.c \
 	  mirrorpck.c pst.c \
 	  cutils.c rtrace.c 
-SRCF    = phasegraffor.for phasefor.for \
+SRCF    = phasegraffor.fpp phasefor.for \
 	  phase_source.for \
 	  phase_integration.for 
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)

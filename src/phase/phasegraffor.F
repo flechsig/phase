@@ -1,6 +1,13 @@
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
+c Date      : <09 Jan 01 12:39:27 flechsig> 
+c Time-stamp: <09 Jan 01 12:40:01 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+c
+c fortran file which will be preprocessed 
+c
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <15 Nov 00 15:23:34 flechsig> 
+c Time-stamp: <09 Jan 01 12:39:26 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
