@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phas/phasec/makefile
 # Date      : <19 Feb 99 17:25:30 flechsig> 
-# Time-stamp: <02 Nov 99 16:33:13 flechsig> 
+# Time-stamp: <04 Nov 99 08:37:47 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -9,14 +9,18 @@ SHELL = /bin/sh
 
 DEFS        = -D LINUX
 CC          = gcc -O
-FOR         = pgf77 -c
+#FOR         = pgf77 -c
+FOR         = f77 -c
 YACC        = bison -y
 INSTALL     = /usr/local/bin/install -c
-INSTALLDATA = /usr/local/bin/install -c -m 644CDEBUG = -g
+INSTALLDATA = /usr/local/bin/install -c -m 644
+CDEBUG = -g
 MAKE        = make
 
-LIBS =
-CFLAGS = $(CDEBUG) -I. -I$(srcdir) $(DEFS)
+
+CFLAGS  = $(CDEBUG) -I. -I$(srcdir) $(DEFS)     # -c
+FFLAGS  = -w -f -s -N3 -N51 
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lm -lc
 
 srcdir    = .
 prefix    = /usr/local
@@ -40,8 +44,8 @@ DEBUG		= no           # comment out for debugging (DEBUG = # no)
 OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
 #########        flags                                    ###############
  
-FFLAGS   	=  
-LINKFLAGS	=  
+
+
 LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
 #########################################################################
 #               variables 
@@ -49,29 +53,28 @@ DESTDIR		= phase__prg:
 # 
 PROGRAM		= phase
 #########################################################################
-LIBS	 	= cern_lib:MATHLIB/LIB\
+LIBSdummy	 	= cern_lib:MATHLIB/LIB\
 	PACKLIB/LIB\
 	graflib/lib\
 	grafx11/lib\
 	PACKLIB/LIB\
 	KERNLIB/LIB
-####           system dependent libs ####################################
-LIBSVAX		= $(LIBS)\
-../phasefor/lib/phaselib.$(LIB)/lib\
-batchdisk:xliblink/opt   
+LIBS    = -L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
+          -lgrafX11 -lpacklib -lpawlib -lkernlib \
+          -L/usr/pgi/linux86/lib -lpgftnrtl 
+#	  -L/home/pss060/sls/flechsig/phase/src/phaselib \
+#          -lphaselib
+	  
 
-LIBSAXP		= $(LIBS)\
-DISK_201_SRC0:[FLECHSIG.PHAS.phasefor.lib]phaselib.$(LIB)$(ALPH)/lib\
-batchdisk:xliblink_axp/opt   
 #########################################################################
 OBJECTC = phase.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
 	  geometrypck.o bline.o \
 	  mirrorpck.o pst.o \
 	  cutils.o rtrace.o 
-OBJECTF=  phasegraffor.o phasefor.o  \
-	  phase_integration_10.o \
+OBJECTF=  phasegraffor.o phasefor.o \
 	  phase_source_10.o 
+#	  phase_integration_10.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  phasegraf.h cutils.h
@@ -84,16 +87,15 @@ all:
 #
 # Dependencies section
 $(PROGRAM): $(OBJECTC) $(OBJECTF)
-	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+	$(CC)  -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
+
 ##########################################################################
-*.o : *.c 
-	$(CC) $(CFLAGS)$@ $< 
-#	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+%.o : %.c $(PHASEHS)
+	$(CC) $(CFLAGS) -o $@ $< 
 
-$(OBJECTF) : *.for 
-	$(FOR) $(FFLAGS)$@ $<   
+%.o : %.for 
+	$(FOR) $(FFLAGS) $@ $<   
 
- 
 ##########################################################################
 clear:
 	@echo "delete objects and exe..."  
