@@ -1,6 +1,6 @@
-c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
+gc File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
 c Date      : <28 Oct 99 09:17:59 flechsig> 
-c Time-stamp: <20 Dec 99 10:02:28 flechsig> 
+c Time-stamp: <20 Dec 99 10:37:11 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c 
 c 28.10.99 Die Versionsnummern im Fortran File werden nur noch
@@ -22,7 +22,7 @@ c	(in xir. etc).
 c	Datenausgabe auf File im Hauptprogramm.
 c
 c       erledigt simps1 als record si1 in integration_results integriert
-c       UF 21.12.99
+c       UF 21.12.99 und entsprechende structuren eingefuegt
 c
 c	gleichzeitig sollten distfocy und distfocz implementiert werden
 c	(in xi. etc).
@@ -749,14 +749,14 @@ c-----------------
 	record /integration/ xi
         record /control_flags/ ifl
 
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
+c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
+c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
+c     &		z1,z2,
+c     &		tya(301,301),tza(301,301),
+c     &		typ(301,301),tzp(301,301),
+c     &		ianz0_save(301,301),
+c     &		iiheigh,iiwidth,
+c     &		jmult
 
 	dimension dx(4096),x(4096),
      &            amp(4096),pha(4096),pha_new(4096),
@@ -927,7 +927,7 @@ c	raauskommentiert am 26.4.1999
 c	ianz0=ianz0-1
 c-----------------------------------
 c------------- neu 22.4.1999
-        ianz0_save(ra.n2,ra.n1)=ianz0
+        xir.si1.ianz0_save(ra.n2,ra.n1)=ianz0
 
 c----------------------------------
 	if(xi.id12.eq.1)then
@@ -1261,14 +1261,14 @@ c-----------------------------------------------------------------------
         record /integration/ xi
         record /control_flags/ ifl
 
-	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-     &		z1,z2,
-     &		tya(301,301),tza(301,301),
-     &		typ(301,301),tzp(301,301),
-     &		ianz0_save(301,301),
-     &		iiheigh,iiwidth,
-     &		jmult
+c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
+c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
+c     &		z1,z2,
+c     &		tya(301,301),tza(301,301),
+c     &		typ(301,301),tzp(301,301),
+c     &		ianz0_save(301,301),
+c     &		iiheigh,iiwidth,
+c     &		jmult
 
 	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
 
@@ -1321,7 +1321,7 @@ c	write(10,*)x(i),fyza(i),fyzp(i)
 c	enddo
 c	close(10)
 
-	if(jmult.gt.1)then
+	if(xir.si1.jmult.gt.1)then
 c	Raster verfeinern mit Multiplikator jmult
 c
 c	fyza --> fyza_loc	
@@ -1335,11 +1335,11 @@ c------ convert to real numbers, spaeter durch double ersetzen
 	ffyzp(i)=fyzp(i)
 	enddo
 
-	ianz_loc=jmult*(ianz-1)+1
+	ianz_loc=xir.si1.jmult*(ianz-1)+1
 
 	do i=1,ianz-1
-	do j=1,jmult
-	  dyz_loc((i-1)*jmult+j)=dyz(i)/floatj(jmult)
+	do j=1,xir.si1.jmult
+	  dyz_loc((i-1)*xir.si1.jmult+j)=dyz(i)/floatj(xir.si1.jmult)
 	enddo
 	enddo
 
@@ -1870,13 +1870,13 @@ c	type*,ii,jj,ra.rf.yp,ra.rf.zp
 
 	call psdi(g,src,apr,cs,ifl,ra,sr)
 
-	tya(ii,jj)=sr.eya
-        tza(ii,jj)=sr.eza
-        typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
-        tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
+	xir.si1.tya(ii,jj)=sr.eya
+        xir.si1.tza(ii,jj)=sr.eza
+        xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
+        xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
 
-	if(dabs(tya(ii,jj)).lt.small_loc)typ(ii,jj)=0.d0
-	if(dabs(tza(ii,jj)).lt.small_loc)tzp(ii,jj)=0.d0
+	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc)xir.si1.typ(ii,jj)=0.d0
+	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc)xir.si1.tzp(ii,jj)=0.d0
  
 	enddo
 	enddo
