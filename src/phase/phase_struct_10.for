@@ -1,7 +1,11 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.for
 c Date      : <22 Oct 97 14:56:27 flechsig> 
-c Time-stamp: <20 Dec 99 10:41:08 flechsig> 
+c Time-stamp: <07 Jan 00 10:02:44 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
+c
+c !!!! stuct statstics die Feldgrenzen halbiert da sonst
+c run time error UF 7.1.2000 */
+
 c------------------------------------------------------------
 c
 c	variable structures for PHASE
@@ -245,10 +249,18 @@ c------------------ flags ---------------------------------------
         end structure
 
 c------------------ statistics ----------------------------------
+c /* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
+c so wars bei Johannes - halbiere felder
+
+c	structure/statistics/
+c	   real*8 fd1phmax(512,512)
+c	   integer nn1,nn2,inumb(1100,1100)
+c	   integer inumzit,inumyit,inumzan,inumyan
+c	end structure
 
 	structure/statistics/
-	   real*8 fd1phmax(512,512)
-	   integer nn1,nn2,inumb(1100,1100)
+	   real*8 fd1phmax(256,256)
+	   integer nn1,nn2,inumb(550,550)
 	   integer inumzit,inumyit,inumzan,inumyan
 	end structure
 
