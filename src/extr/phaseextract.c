@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <30 Apr 04 13:42:15 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:56:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -93,8 +93,8 @@ int main(argc, argv)
      unsigned int argc;                  /* Command line argument count. */
      char *argv[];                       /* Pointers to command line args. */
 { 
-  double ax, ay, ax0, dy, dz, yfwhm, zfwhm, rpy, rpz, transmittance;
-  int 	 ix, iy;
+  double ax, ay, ax0, dy, dz, yfwhm, zfwhm, rpy, rpz, transmittance, ddone;
+  int 	 ix, iy, done;
  
   PI= 4.0* atan(1.0); 
 #ifdef LOGFILE   
@@ -125,8 +125,10 @@ int main(argc, argv)
    
   fprintf(optistructure.filepointer, "%d %d\n", 
 	  optistructure.xpoints, optistructure.ypoints); /* write header */
- 
-    for (iy= 0; iy< optistructure.ypoints; iy++)   
+
+  ddone= 100.0/(optistructure.ypoints * optistructure.xpoints);
+  done= 0;
+  for (iy= 0; iy< optistructure.ypoints; iy++)   
     {
       in_struct(&Beamline, &ay, optistructure.yindex);    
       ax= ax0;
@@ -161,7 +163,7 @@ int main(argc, argv)
 	  /* write result */  
 	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le %le %le\n", 
 		  ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance);
-
+	  printf("******** done: %d \% ********\n", done);
 	  ax+= optistructure.dx; 
 	}  
       ay+= optistructure.dy;  
