@@ -1,0 +1,86 @@
+% Datei: USERDISK_3:[FLECHSIG.PHASE.TEXT]USERAPI.TEX
+% Datum: 22.JUN.1995
+% Stand: 18-MAR-1996
+% Autor: FLECHSIG, BESSY Berlin
+
+\chapter{User Interface}
+The graphical user interface is mostly self explaining. 
+\section {Main Program}
+\subsection{Start}
+After \prog {@phaseinit} the program can be started with \prog {phase}. Then a
+window for graphical output and the main window (figure \ref{mw}) and an
+information window will appear.
+\begin{figure}
+\centerline{ \hbox{
+ \psfig{figure=pmain.eps,height=4cm,angle=270}}}  
+  \caption {\label{mw} \phase main Window with status messages} 
+\end {figure}     
+
+\subsection {Prinziple}
+To make an calculation one has to generate a phase space transformation matrix
+for the optical system. The matrix can describe one optical element or may be a
+product matrix of different elements.
+For one element do as follows:  
+\begin{enumerate} 
+\item select a fileset for the element using the file/files dialog (figure 
+\ref{fseldia}).
+\item create a geometry set with the edit/geometry dialog.
+\item create a optical element set with the edit/optical element dialog.    
+\item create a source with the edit/source dialog.    
+\item create a matrix with commands/create matrix.
+\item make the calculation with commands/calculation
+\item graphical output with commands/graphic
+\end {enumerate}
+
+\begin{figure}
+\centerline{ \hbox{
+ \psfig{figure=fileseldialog.eps,height=9cm}}}  
+  \caption {\label{fseldia} File selection Box, each file can be selected
+pressing the button, pressing the icon button selects default fileneames
+according to the matrix file.} 
+\end {figure}  
+   
+For optical systems on has to generate the matrixes for each element. In a next
+step the transformation matrix of the whole system has to be generated using
+the commands/multiply matrix dialog box \ref {mbox}. Then this matrix has to be
+included in a fileset and a source has to be selected after that the
+calculation can be carried out directly. (!! do never press commands/create 
+matrix - probably you would not overwrite the product matrix!!). 
+
+\begin{figure}
+\centerline{ \hbox{
+ \psfig{figure=mamubox.eps,height=5cm,angle=270}}}  
+  \caption {\label{mbox} File selection Box, each file can be selected
+pressing the button, pressing the icon button selects default fileneames
+according to the matrix file.} 
+\end {figure}    
+
+
+
+\section{Graphical Output}
+A direct graphical output is implemented using a very limited selection
+of the HIGZ/HPLOT package from the CERN library. For example: scatter plots,
+lego plots, surface plots, contour plots. Similar to the RAY program
+footprints, vertical and horizontal profiles are included. With tight
+boundarys and profile plots  "cuts" are possible.
+For more sophisticated output
+a direct usage of PAW, IDL, GNUPLOT $\ldots$ is recommended.
+
+
+\section {Filesystem}
+
+\subsection {Ray Type}
+ 
+For ray trace input and output files of the "ray type" are used. The 
+format is:
+
+\%i 0                  header: $<number of rays> <0>$; 0= ray filetype \\
+\%lf \%lf \%lf \%lf       ray : $<y> <z> <dy> <dz> $        \\
+ $\vdots$                                                  \\
+\%lf \%lf \%lf \%lf        \\
+
+With the  '0' in the header  \phase recognizes the file as ray type.
+ 
+
+{\it filename: userdisk\_3:[flechsig.phase.text]userapi.tex}  
+

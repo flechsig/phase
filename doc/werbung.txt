@@ -1,0 +1,56 @@
+Werbung fuer PHASE
+
+PHASE ist ein von uns (Johannes & Uwe) entwickeltes Programmpaket fuer 
+Rechnungen an Optiken fuer SR. 
+
+Einige der vielfaeltigen Moeglichkeiten sind z.B.: Optimierung,
+Transformation von Phasenraumdichten, Ray Tracing, Berechnen von
+Abbildungsfehlern komplexer optischer Systeme, Beugungseffekte an Aperturen,
+Polarisation... . 
+Eine Grossteil der Funktionalitaet ist bereits ueber die grafische 
+Benutzeroberflaeche zugaenglich und kann somit von jedem relativ einfach 
+genutzt werden.
+
+Das Programm steht auf VAX- und Alpha- Rechnern zur Verfuegung, die
+Installation wurde jetzt stark vereinfacht und gleich vornweg-  das 
+Entfernen auch. Also einfach mal ausprobieren:
+
+1. makefile holen: copy prg_root:[phase]makefile *
+2. installieren: make install
+   das Verzeichnis [Loginname.PHASE] wird angelegt und einige Dateien kopiert.
+3. Umgebungsvariablen setzen: @phaseinit.com
+   diese Datei befindet sich im vorher erzeugten Verzeichnis [Loginname.PHASE]
+4. PHASE starten: phase
+   Nutzung siehe unten
+(5.) Installation entfernen: make clear
+   fuer jene denen das Programm nicht zusagt. Das makefile selbst und die von
+   PAW genutzte Datei HIGZ_WINDOWS.DAT werden nicht automatisch entfernt!
+
+
+Durch die Benutzeroberflaeche ist das Programm weitgehend selbsterklaerend.
+Hier nur zwei einfache Beispiele: 
+1. Ray Trace Rechnung an einem Toroid.
+1.0. Filenamen waehlen: File/Files -> OK
+     die rote Icon Taste erzeugt default- Filenamen 
+1.1. Quelle waehlen (SourceBox): Edit/Source/Dipol   -> Apply o. OK
+1.2. Geometrie eingeben (GeometryBox): Edit/Geometry -> Apply
+1.3. opt. Element (ElementBox): Edit/opt. Elements/to. vls- grating -> OK
+     Radien eingeben oder ausrechnen lassen (">"- Tasten) 
+1.4. Transformationsmatrix erzeugen: Commands/Create Matrix/ray trace
+1.5. Rechnung: Commands/Calculation/ray tracing
+1.6. graphischer Output: Commands/Graphic  -> Defaults -> Apply
+     mit dem Style PopUp- Menue koennen verschiedene Formen der Ausgabe
+     gewaehlt werden.
+
+2. Berechnung eines einzelnen Strahles
+2.1. Matrix erzeugen: analog 1.0, 1.2- 1.4
+2.2. ein Strahl: Edit/Source/trace a single ray  -> Apply
+     Eingangskoordinaten eingeben- Ausgangskoordinaten erscheinen nach "Apply" 
+     im gleichen Fenster.
+
+Das soll erst mal genuegen- wir erwarten Euere Meinungen, Fragen, 
+Fehlermeldungen, Hinweise und Verbesserungsvorschlaege.
+
+Uwe und Johannes
+
+
