@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <07 May 04 08:48:45 flechsig>  */
+/*   Time-stamp: <07 May 04 10:03:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -129,7 +129,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  mdat->slopel= *z;
 	  break;
 	case 42:			/* rowland slits */
-	  listpt->ElementOK |= mapOK | elementOK;
+	  /*  listpt->ElementOK |= mapOK | elementOK; */
 	  bl->ElementList[elnumber- 1].ElementOK &= (~mapOK); 
 	  bl->ElementList[elnumber- 1].ElementOK &= (~elementOK);
 	  bl->ElementList[elnumber+ 1].ElementOK &= (~mapOK); 
@@ -141,6 +141,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  bl->ElementList[elnumber+ 1].MDat.l2=  0.5* *z;
 	  bl->ElementList[elnumber+ 1].MDat.w1= -0.5* *z;
 	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
+	  printf("insert rowland slits: %f\n", *z);
 	  break;
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */

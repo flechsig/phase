@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <07 May 04 08:51:13 flechsig>  */
+/*   Time-stamp: <07 May 04 09:20:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -184,7 +184,7 @@ int main(argc, argv)
   h= l/ 3600;
   m= (l- (h * 3600))/ 60;
   s= l- h * 3600- m * 60;
-  printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, l, s);
+  printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, m, s);
 
   printf("end extraction: results in file: %s\n", 
 	 optistructure.resultfilename);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <07 May 04 08:50:55 flechsig>  */
+/*   Time-stamp: <07 May 04 10:54:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -164,6 +164,11 @@ int main(argc, argv)
    out_struct(&Beamline, &ax0, optistructure.xindex); 
    /* get x, y aus */
    out_struct(&Beamline, &ay, optistructure.yindex);  /* index    */
+
+#ifdef WITH_FULL_RT
+   MakeRTSource(&PHASESet, &Beamline);
+#endif
+
 #ifdef VMS
    CreateFString(&Fminuitfilename,  optistructure.minuitfilename); 
    fminuinit(&iread, &Fminuitfilename);                 /* treiber.for */
@@ -243,7 +248,7 @@ int main(argc, argv)
    h= l/ 3600;
    m= (l- (h * 3600))/ 60;
    s= l- h * 3600- m * 60;
-   printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, l, s);
+   printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, m, s);
 
    printf("optimized Beamlinefile: %s\n", optfname);
    WriteBLFile(optfname, &Beamline);
@@ -278,7 +283,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       buildsystem(&Beamline);    
 
 #ifndef WITH_FULL_RT
-      printf("**************************full rt\n");
+      printf("************************** full rt\n");
       RayTraceFull(&Beamline);
       transmittance= (double)Beamline.RESULT.points/
 	(double)Beamline.RTSource.raynumber;
@@ -300,7 +305,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
          
       printf("debug: FCN: chi: %e; chitmp %e\n", *CHI, chitmp);
       fitoutput(NPAR, XPAR, CHI);         
-
+      break;
      case 4:
       for (i= 0; i < *NPAR; i++)
 	{
@@ -312,7 +317,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       /*iflag44(&XPAR[0]);  */
       /**CHI= costfunction(&Beamline);*/
 #ifdef WITH_FULL_RT
-      printf("**************************full rt\n");
+      printf("************************** full rt\n");
       RayTraceFull(&Beamline);
       transmittance= (double)Beamline.RESULT.points/
 			      (double)Beamline.RTSource.raynumber;
