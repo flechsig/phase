@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <11 Feb 00 11:16:50 flechsig> 
+c Time-stamp: <11 Feb 00 12:33:23 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -23,7 +23,7 @@ c      wird zum Ruecksprung benutzt
 c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
-c Aenderungen von JBam 11.2.00
+c Aenderungen von JB am 11.2.00
 c*********************************************************
 c UF 12.1.2000
       subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st,sp)
