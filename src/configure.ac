@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <19 Feb 04 11:05:48 flechsig> 
+#   Time-stamp: <19 Feb 04 11:09:01 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -103,9 +103,9 @@ dnl Checks for libraries.
 
 ## deal with debugger
 AC_ARG_ENABLE([debug],
-AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
+AC_HELP_STRING([--enable-debug],[debugging code, static linking]),
   if test "$enable_debug" = "yes"; then
-      AC_MSG_NOTICE(*** enable debugging mode (using static libs) ***)
+      AC_MSG_NOTICE(*** produce debugging code ***)
 ##      AC_DEFINE(FDEBUG, [-g -C -B111], "Debugger options f77")
 ##      AC_DEFINE(DEBUG, ["yes"], 
 ##    "debug mode with static libraries")
@@ -113,7 +113,7 @@ AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
       AC_SUBST([CDEBUG], "-DDEBUG -gdwarf")
       AC_SUBST([LIBPHASE], libphase.a)
   fi,
-## AC_MSG_NOTICE(*** enable production mode (using shared libs) ***)
+## AC_MSG_NOTICE(*** produce production code (using shared libs) ***)
 ## AC_SUBST([LIBPHASE], libphase.so)
 ## shared libs are not possible with our absoft compiler
   AC_MSG_NOTICE(*** enable production mode ***)
