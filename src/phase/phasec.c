@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <05 Jan 00 17:42:02 flechsig>  */
+/*  Time-stamp: <11 Jan 00 08:12:42 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -2122,7 +2122,8 @@ void GeneratePrintDataFile(char *name)
 
   if ((pdf= fopen(name, "w+")) == NULL)
     {
-      fprintf(stderr,"error: open %s\n", name); exit(-1);
+      fprintf(stderr, "GeneratePrintDataFile: error: open file %s\n", name); 
+      exit(-1);
     }
 
   for (i= 0; i< 80; i++) fprintf(pdf,"*");  
@@ -2155,7 +2156,8 @@ void gpd(char *ifname, FILE *af)
 
   if ((ifile= fopen(ifname, "r")) == NULL)
     {
-      fprintf(stderr,"error: open %s\n", ifname); exit(-1);
+      fprintf(stderr,"gpd: error: open file %s\n", ifname); 
+      exit(-1);
     }    
   while (!feof(ifile))
     {
@@ -2171,7 +2173,7 @@ void PrintFileInMainList(char *fname)
 
   if ((f= fopen(fname, "r")) == NULL)
     {
-      sprintf(zeile,"error: open %s\n", fname);
+      sprintf(zeile, "PrintFileInMainList: error: open file %s\n", fname);
       xprintf(zeile); 
     } else
       {
@@ -2198,7 +2200,7 @@ void writemapc(char *fname, int iord,
   
   if ((f= fopen(fname, "w+")) == NULL)
     {
-      fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
+      fprintf(stderr, "writemapc: error: open file %s\n", fname); exit(-1);   
     }    
   fprintf(stdout,"write transformation map to: %s\n", fname);
   fprintf(f,
@@ -2246,7 +2248,7 @@ void WriteMKos(struct mirrortype *a, char *name)
 
   if ((f= fopen(name, "w+")) == NULL)
     {
-      fprintf(stderr, "error: open file %s\n", name); exit(-1);   
+      fprintf(stderr, "WriteMKos: error: open file %s\n", name); exit(-1);   
     }    
   for (i= 0; i <= 5; i++) 
     for (j= 0; j <= 5; j++) 
@@ -2268,7 +2270,8 @@ void ReadMKos(struct mirrortype *a, char *name)
       dp= (double *)a;
       if ((f= fopen(name, "r+")) == NULL)
 	{
-	  fprintf(stderr, "error: open file %s\n", name); exit(-1);   
+	  fprintf(stderr, "ReadMKos: error: open file %s\n", name); 
+	  exit(-1);   
 	}   
       for (i= 0; i <= 5; i++) 
 	for (j= 0; j <= 5; j++) 
