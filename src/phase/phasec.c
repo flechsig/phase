@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Jun 02 09:51:40 flechsig>  */
+/*   Time-stamp: <24 Jun 03 16:32:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -274,6 +274,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   /* Radien < small dann planspiegel */
   switch (etype)
     {
+    case kEOESlit:
+      printf("DefMirrorC: slit- fill dummy entries from toroid\n"); 
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* 6    */
     case kEOEVLSG:  
