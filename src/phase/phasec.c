@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Apr 04 14:50:32 flechsig>  */
+/*   Time-stamp: <20 Apr 04 17:38:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1983,6 +1983,8 @@ void SetOElementBoxSensitivity(int etype)
   case kEOEPElliG:
     break;
   case kEOEPGV:
+    set_something(widget_array[kEOET7],  XmNvalue, "0");
+    set_something(widget_array[kEOET8],  XmNvalue, "0");
     set_something(widget_array[kEOEAB2], XmNsensitive, False);
     set_something(widget_array[kEOEAB4], XmNsensitive, False);
     for (i= kEOET5; i<= kEOET8; i++)
