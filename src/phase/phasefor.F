@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <22 Oct 99 15:51:39 flechsig> 
+C Time-stamp: <28 Oct 99 09:48:50 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -54,7 +54,7 @@ c last modification: 24 Mar 97 09:22:28 flechsig
 
 
         implicit none
-        include 'phase_struct_10.for'
+        include 'phase_struct.for'
 
         record /constants/ cs
         record /geometryst/ g
@@ -595,7 +595,7 @@ c	initialisieren der Konstanten
 c	U. Flechsig 21.1.97
 c----------------------------------------------------------
 	subroutine initconstants(cs)
-        include 'phase_struct_10.for'
+        include 'phase_struct.for'
 
         complex*16 xm1
 	record /constants/ cs
@@ -2330,7 +2330,7 @@ c modification: 31 Oct 97 08:56:02 flechsig
 
 c     implicit real*8(a-h,o-z) 
       implicit none
-      include 'phase_struct_10.for'
+      include 'phase_struct.for'
       
       record /control_flags/ ifl
       record /sources/ src
