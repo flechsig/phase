@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <21 Apr 04 12:04:43 flechsig>  */
+/*   Time-stamp: <22 Apr 04 09:49:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1916,8 +1916,8 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
 */
 void SetOElementBoxSensitivity(int etype)
 {
-  int i;
-
+  int i, red= 16711680;
+  
   /* activate all */
   for (i= kEOET1; i<= kEOET26; i++)
     set_something(widget_array[i], XmNsensitive, True);
@@ -1926,9 +1926,10 @@ void SetOElementBoxSensitivity(int etype)
   set_something(widget_array[kEOEAB2], XmNsensitive, True);
   set_something(widget_array[kEOEAB4], XmNsensitive, True);
   set_something(widget_array[kEGT3Button], XmNsensitive, True);
-  /* set it back to red - 1 is a guess */
-  /*set_something(widget_array[kEOET5], XmNforeground, 1);
-    set_something(widget_array[kEOET6], XmNforeground, 1); */
+  /* set it back to red */
+  /*  get_something(widget_array[kEOET1], XmNforeground, &red); */
+  set_something(widget_array[kEOET5], XmNforeground, red);
+  set_something(widget_array[kEOET6], XmNforeground, red); 
 
   switch (etype) {
   
