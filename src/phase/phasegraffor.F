@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <06 Jan 00 13:15:58 flechsig> 
+c Time-stamp: <07 Jan 00 08:37:35 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -36,8 +36,8 @@ c
 c       Uwe 3.7.96 raytype auf dim 5 erweitert (phase)
 c       4.7.96 kein lesen von file mehr
 c
-	implicit real*8(a-h,o-z)    
-  
+        implicit none
+
 	structure/struct/
             real*8 ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma 
             integer zeilen,psfile,status,plotsyle,
@@ -46,8 +46,10 @@ c
         record /struct/ s
         dimension raysout(5,1)                  ! gummilaenge
 	character*(*) titel,metaname
-        real*4     y1,y2,z1,z2,dy,dz,y,z       
-        real*8	   yd,zd,dyd,dzd,dlfac,lambda,dlf
+        real*4        y1,y2,z1,z2       
+        real*8	      dlfac,lambda,dlf,raysout
+        integer       ifile,i,iy,iz
+
 c temporarely fixed
 c	parameter (dtitel = 'PHASE')
 c        parameter (dmetaname= 'pmeta.ps')
