@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <30 Apr 04 13:13:25 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:14:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -89,7 +89,7 @@
                                                                    
 /* Prototype */
 
-unsigned int main(argc, argv)
+int main(argc, argv)
      unsigned int argc;                  /* Command line argument count. */
      char *argv[];                       /* Pointers to command line args. */
 { 
