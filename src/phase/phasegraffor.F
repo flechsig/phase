@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
 c Date      : <09 Jan 01 12:39:27 flechsig> 
-c Time-stamp: <21 May 01 15:18:14 flechsig> 
+c Time-stamp: <21 May 01 16:08:51 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c fortran file which will be preprocessed #define LINUX #define VMS
@@ -82,15 +82,14 @@ c postscriptfile
 
 #ifdef VMS
            type*,'open postsciptfile under VMS ',metaname
-c           open(unit=11,file=metaname,
-c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
+           open(unit=11,file=metaname,
+     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
 #else
            type*,'open postsciptfile under UNIX ',metaname
 c           open(unit=11,file=metaname,FORM='FORMATTED',
 c     1          STATUS='UNKNOWN',err=4444)
-           
-#endif
            call kuopen(11,metaname,'UNKNOWN',istat)
+#endif
 c           call igmeta(-11,-111) UF 12.1.2001
            call igmeta(11,-111)
         endif
@@ -143,8 +142,11 @@ c           write(*,*)'fill histogr.',i
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-c           close(11) 
+#ifdef VMS
+           close(11) 
+#else
            call kuclos(11,' ',1)
+#endif
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 1001
@@ -224,14 +226,14 @@ c postscriptfile
 
 #ifdef VMS
            type*,'open postsciptfile under VMS '
-c           open(unit=11,file=metaname,STATUS='UNKNOWN',
-c     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
+     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
 #else
            type*,'open postsciptfile under UNIX '
-           open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
-           
-#endif
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
            call kuopen(11,metaname,'UNKNOWN',istat)
+#endif
+           
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
@@ -277,8 +279,11 @@ c        endif
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-c           close(11)
+#ifdef VMS
+           close(11)
+#else
            call kuclos(11,' ',1)
+#endif
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 5001
@@ -338,14 +343,13 @@ c     postscriptfile
  
 #ifdef VMS
            type*,'open postsciptfile under VMS '
-c           open(unit=11,file=metaname,STATUS='UNKNOWN',
-c     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
+     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
 #else 
            type*,'open postsciptfile under UNIX '
 c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
-           
-#endif
            call kuopen(11,metaname,'UNKNOWN',istat)
+#endif
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
@@ -395,8 +399,11 @@ c bei postscript ab hier doppelt
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-c           close(11) 
+#ifdef VMS
+           close(11) 
+#else
            call kuclos(11,' ',1)
+#endif
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 6001
