@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <11 Jan 00 16:00:35 flechsig>  */
+/*  Time-stamp: <12 Jan 00 07:50:33 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -40,6 +40,7 @@
 #include "geometrypck.h"   
 #include "phase.h"
 #include "rtrace.h"
+#include "version.h"
 
 void BatchMode(char *fname, int cmode)
 /* Uwe 2.10.96 */
@@ -2295,12 +2296,35 @@ void *Alloc(void *p, int size)
 
 void SetInfoString()
 {
-  XmString SetUpInfoString;
+  XmString SetUpInfoString, xstring, separator;
   char cstring[255];
 
-  sprintf(cstring, "PHASE: Version %d", 1);
+  separator= XmStringSeparatorCreate(); 
+  
+  sprintf(cstring, "PHASE: Version %s    %s", VERSION_STRING, VERSION_DATE);
   SetUpInfoString= XmStringCreateLocalized(cstring);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
+
+  sprintf(cstring, "J. Bahrdt and U. Flechsig");
+  xstring= XmStringCreateLocalized(cstring);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
+
+  sprintf(cstring, "bahrdt@exp.bessy.de");
+  xstring= XmStringCreateLocalized(cstring);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+  SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
+
+  sprintf(cstring, "Uwe.Flechsig@psi.ch");
+  xstring= XmStringCreateLocalized(cstring);
+  SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
+
   set_something(widget_array[kSetupInfo], XmNmessageString, SetUpInfoString);
+  XmStringFree(separator); 
+  XmStringFree(xstring); 
+  XmStringFree(SetUpInfoString);
 } /* end SetInfoString */
 
 
