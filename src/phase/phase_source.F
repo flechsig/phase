@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
 c Date      : <20 Jan 00 10:23:01 flechsig> 
-c Time-stamp: <27 Oct 00 14:22:44 flechsig> 
+c Time-stamp: <06 Feb 04 09:07:31 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c--------------------------------------------------------------------------
 c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
@@ -16,7 +16,16 @@ c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+c a trick to have the struct only in the ./phase and find it from opti 
+#ifdef VMS
+c not yet tested
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+
+        include '../phase/phase_struct.for'
+#endif
+cc	include 'phase_struct.for'
 
 c**************************************************
 
