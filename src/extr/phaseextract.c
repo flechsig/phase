@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <06 May 04 10:18:02 flechsig>  */
+/*   Time-stamp: <06 May 04 12:13:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -130,8 +130,8 @@ int main(argc, argv)
   ddone= 100.0/(optistructure.ypoints * optistructure.xpoints);
   done= 0;
   /* initialize start symmetric to original value */
-  ay = ay0- 0.5* optistructure.ypoints* optistructure.dy;
-  ax0= ax0- 0.5* optistructure.xpoints* optistructure.dx;
+  ay = ay0- 0.5* (optistructure.ypoints- 1)* optistructure.dy;
+  ax0= ax0- 0.5* (optistructure.xpoints- 1)* optistructure.dx;
   for (iy= 0; iy< optistructure.ypoints; iy++)   
     {
       in_struct(&Beamline, &ay, optistructure.yindex);    
