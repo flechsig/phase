@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <15 Nov 99 11:26:38 flechsig>  */
+/*  Time-stamp: <15 Dec 99 09:58:35 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -617,16 +617,17 @@ void activate_proc(w, tag, reason)
       {
 	if ((bl->position <= bl->elementzahl) && (bl->position != 0))
 	  {
-	    printf("write map of element %d to file\n", bl->position);         
+	    printf("write map of element %d to file\n", bl->position);  
+	    /* casting 15.12.99 */
 	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
-		      bl->ElementList[bl->position- 1].ypc1, 
-		      bl->ElementList[bl->position- 1].zpc1, 
-		      bl->ElementList[bl->position- 1].dypc, 
-		      bl->ElementList[bl->position- 1].dzpc,
-		      bl->ElementList[bl->position- 1].wc, 
-		      bl->ElementList[bl->position- 1].xlc, 
-		      bl->ElementList[bl->position- 1].xlm.xlen1c, 
-		      bl->ElementList[bl->position- 1].xlm.xlen2c);
+		      (double *) bl->ElementList[bl->position- 1].ypc1, 
+		      (double *) bl->ElementList[bl->position- 1].zpc1, 
+		      (double *) bl->ElementList[bl->position- 1].dypc, 
+		      (double *) bl->ElementList[bl->position- 1].dzpc,
+		      (double *) bl->ElementList[bl->position- 1].wc, 
+		      (double *) bl->ElementList[bl->position- 1].xlc, 
+		      (double *) bl->ElementList[bl->position- 1].xlm.xlen1c, 
+		      (double *) bl->ElementList[bl->position- 1].xlm.xlen2c);
 	  } 
 	else
 	  {
