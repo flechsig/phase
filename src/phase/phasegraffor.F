@@ -574,11 +574,11 @@ c************************************************************************
         endif  
         if(ist.eq.20)then 
            call hplot(202,'SURF3',' ',0)
-           call hplax('z (mm)', 'y (mm)', 'phase (rad)') 
+           call hplax('z (mm)', 'y (mm)') 
         endif   
         if(ist.eq.21)then 
            call hplot(202,'SURF3',' ',0)
-           call hplax('z (mm)', 'y (mm)', 'time (fs)')
+           call hplax('z (mm)', 'y (mm)')
         endif   
         if(ist.eq.22)then 
            call hplot(800,' ',' ',0) 
