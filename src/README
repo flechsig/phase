@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <23 Jan 04 11:06:15 flechsig> 
+ Time-stamp: <05 Feb 04 10:48:19 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -13,3 +13,31 @@ variety of systems. While this is very nice for making usable
 binaries, it can be a pain when trying to debug a program. For that
 reason, compilation of shared libraries can be turned off by
 specifying the `--disable-shared' option to `configure'.
+
+Installation
+============
+
+1) install the package
+   tar -xzvf phase-xxxx.tgz
+
+2) for maintainers only: configure libtool
+   libtoolize
+
+3) for maintainers only: bootstrap - create the script configure
+   ./bootstrap
+
+4) configure the package
+   ./configure [--enable-debug]
+
+5) make
+
+6) su -c "make install"
+
+Errors
+======
+- you configured libtool on a different machine (nfs)
+  run libtoolize with the option --force
+
+- you do not have Autoconfig version 2.57
+  you may try to disable the request AC_PREREQ(2.57) in configure.ac
+  you may have to link/rename configure.ac to configure.in
