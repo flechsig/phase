@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <15 Dec 99 13:14:45 flechsig>  */
+/*  Time-stamp: <05 Jan 00 17:19:25 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
@@ -113,7 +113,12 @@ void CheckUser(char *logname, char *progname)
 }
 
 FString *CreateFString(FString *fstring, char *cstring)  
-/* erzeugt Fortran- String VMS oder allgemein 15.12.99 */
+/* erzeugt einen Fortran- String fuer VMS */
+/* unter Unix funktioniert das nur falls nur ein Parameter uebergeben wird,
+   der Absoft Compiler erwartet den char * an der richtigen Position
+   die Laengen Parameter werden als Liste am Ende angehaengt
+*/
+
 {        
   int l= strlen(cstring);
 
