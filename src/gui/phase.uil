@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phase.uil
 ! Date      : <22 Oct 99 09:54:11 flechsig> 
-! Time-stamp: <28 Oct 99 11:36:12 flechsig> 
+! Time-stamp: <28 Oct 99 12:03:33 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 !
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]PHASE.UIL
@@ -154,7 +154,6 @@ object
         };      
 
 
-
 object   
     InfoMenuEntry : XmCascadeButton {
         arguments {
@@ -225,11 +224,10 @@ object
             XmNautoUnmanage     = true;
             XmNnoResize         = true;
             };
-        
+        };
 !************************ Options Menue ********************************
 
 !The colormix widget object   
-
 !not available on linux commneted out 28.10.99
 !object
 !    main_color : DXmColorMixDialog 
@@ -247,7 +245,6 @@ object
 !            XmNapplyCallback    = procedure apply_color_proc();
 !            };                            
 !        };  
-
 ! The options pulldown entry and its associated pulldown menu.
 
 object                    
@@ -265,7 +262,7 @@ object
     m_options_control_button : XmPushButton {
         arguments {              
             XmNlabelString      = 'Background Color...'; 
-            XmNsensitive            = false; 
+            XmNsensitive        = false; 
 	    XmNmnemonic         = keysym("C");  
             };     
         callbacks {
