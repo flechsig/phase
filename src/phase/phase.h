@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <11 Feb 00 09:38:45 flechsig>              */
+/* Time-stamp: <11 Feb 00 16:07:04 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -794,6 +794,12 @@ extern void inithplot(),
 #endif
 /* The names and addresses of things that Mrm has to bind.  The names do
  * not have to be in alphabetical command.  */
+
+/* wird auf dem Laptop benoetigt */
+
+#ifdef caddr_t
+typedef char *caddr_t;      
+#endif
 
 static MrmRegisterArg reglist[] = {
   {"activate_proc",     (caddr_t) activate_proc}, 
