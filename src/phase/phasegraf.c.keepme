@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <28 Oct 99 10:06:34 flechsig>  */
+/*  Time-stamp: <28 Oct 99 10:07:15 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phasegraf.c */
@@ -32,7 +32,7 @@
 #include "fg3pck.h"  
 #include "mirrorpck.h"  
 #include "geometrypck.h"   
-#include "PHASE.h"   
+#include "phase.h"   
 #include "rtrace.h" 
  
 
