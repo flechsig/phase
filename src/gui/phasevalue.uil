@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <05 May 04 11:40:11 flechsig> 
+! Time-stamp: <05 May 04 12:14:38 flechsig> 
 ! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
 ! $Source$ 
@@ -389,16 +389,18 @@ value
 			'CL- r1 constant',
 			'SGM Vodar mode',
 			'Fixfocus constant cff', 
-			'Energy at Fixfocus (cff) == constant', 
+			'Energy at Fixfocus (cff) == constant', 				       'CL- r2 constant',
+			'STXM special: M1- S1',
+			'STXM special: S1- S2',
+
+			'a(i, j);  index= index+ i+ 6* j;   i, j= 0..5',
 			'radius r [mm]',
 			'radius rho [mm]',
- 			'a(i, j);  index= index+ i+ 6* j;   i, j= 0..5',
-			'2 w', 
+ 			'2 w', 
 			'2 l', 
 			'slope w', 
-			'slope l',
-			'STXM special: M1- S1',
-			'STXM special: S1- S2'
+			'slope l'
+			
 			);
 
         kOptiParStrings	:   

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <03 May 04 16:15:49 flechsig>  */
+/*   Time-stamp: <05 May 04 11:47:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -82,6 +82,12 @@
      index == 12 : theta am CLRCM bei BESSY I dy= 43 mm   
      index == 13 : clvar mit festem r1   
      index == 14 : sgm-vodar theta r2 ist fest (nicht universell!! )
+     index == 15 : cff constant
+     index == 16 : Energiescan mit cff constant
+     index == 17 : cl r2 fest
+     index == 18 : STXM special M1- S1
+     index == 19 : STXM special S1-S2
+
 
      index == 128: elementparameter
      index == 256: elementnummer

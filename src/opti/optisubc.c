@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <03 May 04 16:11:27 flechsig>  */
+/*   Time-stamp: <05 May 04 14:41:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -87,13 +87,6 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 }
    
 void in_struct(struct BeamlineType* bl, double *z, int index)
-/* modification: 24 Oct 97 15:51:55 flechsig */
-/* modification: 27 Oct 97 09:33:59 flechsig */
-/* modification: 05 Nov 97 08:09:59 flechsig */
-/* modification: 13 Feb 98 13:59:23 flechsig */
-/* modification: 17 Feb 98 08:47:02 flechsig   (cff) */
-/* modification: 04 Mar 98 08:42:15 flechsig */
-/* modification: 09 Mar 98 09:08:41 flechsig */
 {
   int elnumber, mtype, ipos;  
   double *xd, cl, alpha, beta, teta, fi, cff;
@@ -237,19 +230,45 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	case 17: xd[4]= (*z) - xd[5];     /*cl r2 fest*/
 	  gdat->r= (*z)- gdat->rp;
 	  break;
+	case 18: /* STXM special M1- S1 */
+	  gdat->rp= *z;                    /* new distance */
+	  mdat= &listpt->MDat;             /* new radius r */
+	  teta= fabs(gdat->theta0* PI/ 180.0);
+	  mdat->rmi= cos(teta)/2 * gdat->rp * gdat->r /(gdat->rp + gdat->r);
+	  /* the spectrometer is 2 elements later- get the length */
+	  cl= bl->ElementList[elnumber+ 2].GDat.r+ 
+	    bl->ElementList[elnumber+ 2].GDat.rp;
+	  cl+= gdat->rp;  /* focus length */
+	  mdat->rho= 1/ (2* cos(teta)) * cl * gdat->r /(cl + gdat->r);
+	  break;
+	case 19: /* STXM special S1-S2 spectrometer length */
+	  teta= fabs(gdat->theta0* PI/ 180.0);
+	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
+					    (2.0* cos(teta)));
+	  mdat= &listpt->MDat;  
+	  /* new grating radius assuming keep rowland conditions */
+	  mdat->rmi= mdat->rho= *z/ (2* cos(teta) * cos(fi));  
+	  gdat->r= mdat->rmi * cos(teta + fi);
+	  gdat->rp= *z- gdat->r;
+	  cl= gdat->rp- mdat->rmi * cos(fi- teta);
+	  printf("Rowland error: %d\n", cl);
+	  bl->BLOptions.displength= gdat->rp;
+	  /* change radius rho of mirror 2 elements upstream */
+	  teta= fabs(bl->ElementList[elnumber- 2].GDat.theta0* PI/ 180.0);
+	  cl= bl->ElementList[elnumber- 2].GDat.rp+ *z; 
+	  bl->ElementList[elnumber- 2].MDat.rho= 1/ (2* cos(teta)) * 
+	    cl * bl->ElementList[elnumber- 2].GDat.r /
+	    (cl + bl->ElementList[elnumber- 2].GDat.r);
+	  
+	  break;
 	default:
-	  printf("index %d not found\n", ipos);
+	  printf("in_struct: index %d not found\n", ipos);
 	  break;
 	}          
     }
 } /* end in_struct */
 
 double out_struct(struct BeamlineType  *bl, double *z, int index)    
-/* modification: 24 Oct 97 14:39:54 flechsig */
-/* holt den Wert z entsprechend dem index aus der beamlinestruct */
-/* modification: 27 Oct 97 11:15:34 flechsig */
-/* modification: 13 Feb 98 14:03:41 flechsig */
-/* modification: 17 Feb 98 08:47:02 flechsig   (cff) */
 {
   int elnumber, mtype, ipos;
   double *xd, teta, fi, cff;
@@ -343,6 +362,7 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  break; 
 	case 17:
 	case 13:  
+	case 19:  
 	  *z= gdat->r+ gdat->rp; 
 	  break;
 	case 14:   	/*sgm vodar*/
@@ -364,8 +384,16 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	    (1240.0e-6/ bl->BLOptions.lambda) : 0.0;
 	  printf("outstruct: cff= %f ?????\n", cff);
 	  break;
+	  /*	case 17: siehe weiter oben */
+	case 18: /* STXM special M1- S1 */
+	  *z= gdat->r;
+	  break;
+	  /* case 19: /* STXM special S1-S2 spectrometer length */
+	  /* case 19: siehe weiter oben analog 13 und 17 */  
+	  
+	  
 	default:
-	  printf("index %d not found\n", ipos);
+	  printf("out_struct: index %d not found\n", ipos);
 	  break;
 	  }          
       }
@@ -373,11 +401,10 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 }     /* end outstruct */
 
 void buildsystem(struct BeamlineType *bl) 
-/* modification: 16 Oct 97 14:48:09 flechsig            */
+
 /* durch abgespecktes (schnelles) buildbeamline ersetzt */
 /* baut beamline und extrahiert map                     */
-/* modification: 24 Oct 97 13:58:02 flechsig            */
-/* modification: 04 Feb 98 08:46:30 flechsig */
+
 {
   int     elcounter, i, mdim;
   struct  ElementType *listpt;    
