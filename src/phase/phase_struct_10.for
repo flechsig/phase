@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.for
 c Date      : <22 Oct 97 14:56:27 flechsig> 
-c Time-stamp: <22 Oct 99 13:02:56 flechsig> 
+c Time-stamp: <20 Dec 99 09:08:49 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c------------------------------------------------------------
 c
@@ -247,5 +247,15 @@ c------------------ constants -----------------------------------
 	   real*8 pi
 	   complex*16 sqrtm1
         end structure
-
+c----------------- U. F. 21.12.99 -------------------------------
+c common simps 	
+	structure/simps1/
+	   real*8 fya1(501),fyp1(501),fza1(501),fzp1(501)
+	   real*8 fya2(501),fyp2(501),fza2(501),fzp2(501)
+	   real*8 z1,z2
+     	   real*8 tya(301,301),tza(301,301)
+     	   real*8 typ(301,301),tzp(301,301)
+	   integer ianz0_save(301,301)
+     	   integer iiheigh,iiwidth,jmult
+        end structure
 c end phase_struct_10.for
