@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #   File      : /afs/psi.ch/user/f/flechsig/phase/utils/create-coefficients.pl
 #   Date      : <06 Feb 04 10:13:16 flechsig> 
-#   Time-stamp: <06 Feb 04 10:29:12 flechsig> 
+#   Time-stamp: <06 Feb 04 10:46:10 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -26,10 +26,9 @@ die "Version $version\n" if $opt_V;
 &ManPage() if $opt_H;
 &Usage()   if $opt_h || @ARGV==0;
 $fname= shift;
-
 $today= localtime;
 
-print "=" x 80, "\n";
+print "\n", "=" x 80, "\n";
 print "  create coefficient file for an optical element for PHASE\n";
 print "=" x 80, "\n";
 
@@ -121,10 +120,13 @@ print FILE << "END";
 ####################################################################### 
 END
 
+    print "\ncalculated coefficients (a(i,j) != 0):\n" if $verbose;
 while (($i,$j,$aij)= splice (@coeff, 0, 3))
 {
-    print FILE "$i $j $aij\n"
+    print FILE "$i $j $aij\n";
+    print "$i $j $aij\n" if $verbose;
 }
+print "\n" if $verbose;
 print FILE "# end $fname\n";
 close(FILE);
 print "file \"$fname\" generated\n";
