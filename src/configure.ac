@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <05 Feb 04 15:43:44 flechsig> 
+#   Time-stamp: <10 Feb 04 16:24:04 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -120,7 +120,13 @@ AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
 # get configure date put it into header
 configured=`date`
 AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
-AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
+if test "$prefix" = "NONE"; then
+  AC_MSG_NOTICE(***************** prefix: /usr/local ****************** )
+  AC_DEFINE_UNQUOTED(PREFIX, "/usr/local", "the installation prefix")
+else
+  AC_MSG_NOTICE(***************** prefix: $prefix ****************** )
+  AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
+fi
 
 dnl Checks for header files.
 AC_PATH_X
