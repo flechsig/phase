@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <11 Jan 00 15:15:40 flechsig>  */
+/*  Time-stamp: <11 Feb 00 09:37:30 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -766,30 +766,22 @@ void activate_proc(w, tag, reason)
 
 	    if ((grdatstruct.status & PLsimpre) > 0) 
 	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->simpre);
+			  (double *)((struct PSDType *)vo)->simpre);
 	    if ((grdatstruct.status & PLsimpim) > 0) 
 	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->simpim);
+			  (double *)((struct PSDType *)vo)->simpim);
 	    if ((grdatstruct.status & PLsintre) > 0) 
-	      { printf("PLsintre Daten\n");
 	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->sintre);
-	      }
+			  (double *)((struct PSDType *)vo)->sintre);
 	    if ((grdatstruct.status & PLsintim) > 0) 
 	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->sintim);
+			  (double *)((struct PSDType *)vo)->sintim);
 	    if ((grdatstruct.status & PLsimpam) > 0) 
 	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->simpa);
+			  (double *)((struct PSDType *)vo)->simpa);
 	    if ((grdatstruct.status & PLsimpph) > 0) 
 	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->simpp);
+			  (double *)((struct PSDType *)vo)->simpp);
 
 	  } /* end plotinhaltmenue phasespace */
      }
