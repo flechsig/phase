@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <12 Nov 99 12:12:12 flechsig>  */
+/*  Time-stamp: <15 Nov 99 08:13:21 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -49,25 +49,22 @@ unsigned int main(argc, argv)
     char *argv[];                       /* Pointers to command line args. */
 {                                
     int setupswitch;
+    char string[255];
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
-    if (getenv("PHASE_HOME") == NULL)
+    if (getenv(PHASE_HOME) == NULL)
       {
-	printf("phase.c: environment PHASE_HOME not defined- exit\n" );
+	printf("phase.c: environment variable %s not defined- exit\n",
+	       PHASE_HOME);
 	exit;
       }
-
 
     setupswitch= ProcComandLine(argc, argv); /* im Batch (-b) und  Help -h -? 
 						modus wird exit(3) gerufen 
 						*/
-#ifdef VMS
     inithplot();                        /* PHASEgraffor.for, hlimit, hplint  */
-#else
-    inithplot(); 
-#endif
 
     XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);       /* MOTIF 1.2  */
 
@@ -138,7 +135,7 @@ unsigned int main(argc, argv)
     /* Set up Help System environment */
 #ifdef VMS              
     DXmHelpSystemOpen(&help_context, toplevel_widget, PHASE_help, 
-                            help_error, "Help System Error");      
+		      help_error, "Help System Error");      
 #endif    
 /*****************  Aenderung gegenueber Beispiel **************************/
     InitDataSets(&PHASESet, (char*) MainPickName);             /* PHASEc.c */
@@ -147,6 +144,8 @@ unsigned int main(argc, argv)
     {
 	FetchWidget(kSetupInfo, "SetupInfo");
 	XtManageChild(widget_array[kSetupInfo]);   
+	strcpy(string, "/lib/NEWS.");
+	PrependEnv(PHASE_HOME, string);
 	PrintFileInMainList("PHASE$LIB:NEWS.");          /* news anzeigen */
         /*renderinfo();               */
     }
