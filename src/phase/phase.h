@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <23 Dec 99 14:41:54 flechsig>              */
+/* Time-stamp: <23 Dec 99 14:44:05 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -423,11 +423,11 @@ struct mirrortype {
 };
 
 /* in phase_struct.h ist die analoge structur geometryst */
-/* struct geometrytype {
+struct geometrytype {
   double sina, cosa, sinb, cosb, r, rp, x[5], xlam;
   int idefl;
   }; 
-*/
+
 
 struct xlenmaptype {
   MAP7TYPE xlen1c, xlen2c;
