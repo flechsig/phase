@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <24 Nov 99 13:18:45 flechsig>  */
+/*  Time-stamp: <24 Nov 99 14:09:47 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -922,19 +922,17 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
 {
   int  sw= *tag;
   char *inhalt= NULL;
-  XmString svalue;
-  
+    
   switch (sw) 
     {
     case kESOK:
-      svalue= reason->value; 
-      if (!XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, &inhalt))
+      if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
 	return; 
       XtUnmanageChild(widget_array[kEParameterBox]);  
       FetchWidget(kEParameterBox, "EParameterBox");      
       InitParameterBox(&Beamline, inhalt);  
       XtManageChild(widget_array[kEParameterBox]);     
-      XmStringFree(svalue);   
+      /* XmStringFree(svalue); 24.11.99 */   
       XtFree(inhalt);
       break;
       
@@ -952,12 +950,10 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
       break; 
       
     case kCOptiList2: 
-      svalue= reason->value; 
-      /* *inhalt= NULL; */
-      if (!XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, &inhalt))
+      if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
 	return; 
       InitOptiList2(sw, inhalt);    
-      XmStringFree(svalue);   
+      /* XmStringFree(svalue); 24.11.99 */  
       XtFree(inhalt);                
       break;
     default: break;

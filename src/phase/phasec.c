@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <24 Nov 99 12:18:51 flechsig>  */
+/*  Time-stamp: <24 Nov 99 14:04:00 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -1010,8 +1010,9 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   op= (struct OptionsType *)    &(bl->BLOptions); 
   pop= (struct PSOptionsType *) &(bl->BLOptions.PSO);  
   psp= (struct PSSourceType *)  &(bl->BLOptions.PSO.PSSource);
-		      
-  printf("begin initparameterbox \n"); 
+#ifdef DEBUG 		      
+  printf("InitParameterBox: begin\n"); 
+#endif
   /* Werte von Variablen auf Strings uebertragen */ 
   k= 0;
   sprintf(pvals[k++], "%g", op->epsilon);
@@ -1106,8 +1107,9 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   sprintf(pvals[k++], "%g", bl->src.pin_yl);
   sprintf(pvals[k++], "%g", bl->src.pin_zl0);
   sprintf(pvals[k++], "%g", bl->src.pin_zl);
-  
-  printf("Parameter : %d\n", k); /* fuer debug */
+#ifdef DEBUG  
+  printf("InitParameterBox: parameter : %d\n", k); /* fuer debug */
+#endif
   /*****************************************
     ende fg34 */
   /*
@@ -1140,8 +1142,9 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
     **************************************************/
   if ((neu != NULL) && (*neu != 0)) 
     {
-      printf("initparameterbox value change\n");   
-      
+#ifdef DEBUG  
+      printf("InitParameterBox: initparameterbox value change\n");   
+#endif      
       /* geaenderten Wert aus der Edit- Zeile entnehmen und den
 	 betreffenden String ersetzen, die Zahl dient der Zuordnung */
       
@@ -1323,7 +1326,9 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 			NULL);  
   
   /* Speicherplatz fuer Xstrings freigeben */  
-  
+#ifdef DEBUG  
+  printf("InitParameterBox: free memory: %d\n"); /* fuer debug */
+#endif  
   i= itemzahl; while(--i >= 0) XmStringFree(str[i]);  /*XtFree(str );*/
   i= 4;        while(--i >= 0) XmStringFree(str1[i]); /*XtFree(str1);*/
 }  /* end initparameterbox */

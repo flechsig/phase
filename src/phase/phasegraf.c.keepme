@@ -1,18 +1,7 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <19 Nov 99 09:33:28 flechsig>  */
+/*  Time-stamp: <24 Nov 99 14:22:21 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
-
-/*  File      : /home/vms/flechsig/vms/phas/phasec/phasegraf.c */
-/*  Date      : <27 Mar 97 10:01:44 flechsig>  */
-/*  Time-stamp: <14 Nov 97 13:44:19 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAF.C        */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 27FEB-1997                                          */     
-/* Autor: FLECHSIG, BESSY Berlin                               */
-
 
 #include <stdio.h>  
 #include <stdlib.h>                                                       
