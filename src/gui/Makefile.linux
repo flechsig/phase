@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux
 # Date      : <04 Nov 99 16:25:46 flechsig> 
-# Time-stamp: <04 Nov 99 17:07:51 flechsig> 
+# Time-stamp: <07 Jan 00 12:02:39 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE GUI on LINUX
@@ -33,7 +33,7 @@ phase.$(UID): $(PHASEUILS)
 	uil $(UILFLAGS) phase.$(UID) phase.uil 
 
 install: all
-	$(INSTALL) phase.$(UID) $(PHASEDIR)/bin/phase.$(UID)
+	$(INSTALL) phase.$(UID) $(PHASEDIR)/lib/phase.$(UID)
 
 clear: 
 	@echo "delete phase.uid.."
