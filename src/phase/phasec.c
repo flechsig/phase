@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <19 Nov 99 09:24:46 flechsig>  */
+/*  Time-stamp: <19 Nov 99 09:57:27 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -1380,7 +1380,7 @@ void UpdateFilenames(struct PHASEset *x)
 {
   int i; 
   XmString label;  
-  char *lab[13]= NULL;
+  char **lab;
 
   for (i= 0; i < 13; i++)      /* liest + konvertiert Tastenlabel in *lab */
     {	
