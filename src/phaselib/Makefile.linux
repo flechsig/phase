@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <04 Nov 99 08:21:51 flechsig> 
+# Time-stamp: <04 Nov 99 11:22:28 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB 
@@ -85,7 +85,7 @@ all: $(PROGRAM)
 # Dependencies section
 $(PROGRAM): $(OBJECTS)
 	$(AR) $@ $(OBJECTS)  
-	runlib -v $@
+	ranlib -v $@
 ##########################################################################
 #$(OBJECTS): *.for
 %.o : %.for 
