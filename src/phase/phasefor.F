@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <22 Oct 99 15:45:39 flechsig> 
+C Time-stamp: <22 Oct 99 15:51:39 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -178,12 +178,13 @@ c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
         call initconstants(cs)
 
 c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
+c imaxz entfernt UF 22.10.99
         xir.nsimp=0
         xir.iisimp=4
 	xir.isimp(1)=2
-	xir.isimp(2)=xi.imaxz+1
-	xir.isimp(3)=2*xi.imaxz
-	xir.isimp(4)=2*xi.imaxz+2
+c	xir.isimp(2)=xi.imaxz+1
+c	xir.isimp(3)=2*xi.imaxz
+c	xir.isimp(4)=2*xi.imaxz+2
 
 c------ copy stuff
 	do i=0,iord
