@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <24 Mar 00 15:47:55 flechsig>  */
+/*  Time-stamp: <28 Sep 00 17:05:00 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -98,7 +98,7 @@ int main(argc, argv)
     PrependEnv(PHASE_HOME, uidfilename);
     db_filename_vec[0]= uidfilename;
 
-    if (MrmOpenHierarchy(
+    if (MrmOpenHierarchyPerDisplay(
 	db_filename_num,		/* Number of files. */
 	db_filename_vec,		/* Array of file names.  */
 	NULL,				/* Default OS extenstion. */
