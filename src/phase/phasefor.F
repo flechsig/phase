@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <20 Feb 98 16:51:20 flechsig> 
+C Time-stamp: <22 Oct 99 15:45:39 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -2397,12 +2397,12 @@ c      read(16,*)src.so5.dipzmin,src.so5.dipzmax
       read(16,*)xi.ymin,xi.ymax ! mrad -> rad
       xi.ymin=xi.ymin/1000.
       xi.ymax=xi.ymax/1000.
-      read(16,*)xi.inumy
-      read(16,*)xi.itery0
+c      read(16,*)xi.inumy
+c      read(16,*)xi.itery0
       read(16,*)xi.ianzy0
-      read(16,*)xi.imaxy
-      read(16,*)xi.fracy
-      read(16,*)xi.frac1y
+c      read(16,*)xi.imaxy
+c      read(16,*)xi.fracy
+c      read(16,*)xi.frac1y
 
       read(16,*)src.so1.isrcz,src.so1.isrcdz
       read(16,*)src.so1.sigmaz,src.so1.sigmazp
@@ -2410,12 +2410,12 @@ c      read(16,*)src.so5.dipzmin,src.so5.dipzmax
       read(16,*)xi.zmin,xi.zmax ! mrad -> rad
       xi.zmin=xi.zmin/1000.		
       xi.zmax=xi.zmax/1000.
-      read(16,*)xi.inumz
-      read(16,*)xi.iterz0
+c      read(16,*)xi.inumz
+c      read(16,*)xi.iterz0
       read(16,*)xi.ianzz0
-      read(16,*)xi.imaxz
-      read(16,*)xi.fracz
-      read(16,*)xi.frac1z
+c      read(16,*)xi.imaxz
+c      read(16,*)xi.fracz
+c      read(16,*)xi.frac1z
 
       read(16,*)ifl.ibright
 
@@ -2433,8 +2433,8 @@ c      read(16,*)xi.amp_change
 c      read(16,*)xi.phase_change_1,xi.phase_change_2
 c      read(16,*)xi.iphase_curv
 c      read(16,*)xi.iphase_pi2
-      read(16,*)xi.iordap
-      read(16,*)xi.dphi_min
+c      read(16,*)xi.iordap
+c      read(16,*)xi.dphi_min
 
       read(16,*)xi.distfoc
 

@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
 /* Date      : <18 Mar 97 12:27:02 flechsig>  */
-/* Time-stamp: <22 Oct 99 12:41:17 flechsig>  */
+/* Time-stamp: <22 Oct 99 15:42:55 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEC.C           */
@@ -831,17 +831,17 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.PSO.dzminfix= -1e-2;
   bl->BLOptions.PSO.dzmaxfix=  1e-2;
 
-  bl->BLOptions.xi.itery0=  5;
+  /*bl->BLOptions.xi.itery0=  5;*/
   bl->BLOptions.xi.ianzy0=  15;
-  bl->BLOptions.xi.imaxy=   25;
-  bl->BLOptions.xi.fracy=   0.7;
-  bl->BLOptions.xi.frac1y=  0.2;
+  /*  bl->BLOptions.xi.imaxy=   25;*/
+  /*bl->BLOptions.xi.fracy=   0.7;*/
+  /*bl->BLOptions.xi.frac1y=  0.2;*/
 
-  bl->BLOptions.xi.iterz0=  5;
+  /*bl->BLOptions.xi.iterz0=  5;*/
   bl->BLOptions.xi.ianzz0=  15;
-  bl->BLOptions.xi.imaxz=   25;
-  bl->BLOptions.xi.fracz=   0.7;
-  bl->BLOptions.xi.frac1z=  0.2;
+  /*bl->BLOptions.xi.imaxz=   25;*/
+  /*bl->BLOptions.xi.fracz=   0.7;*/
+  /*bl->BLOptions.xi.frac1z=  0.2;*/
 
   printf("\nDefaults sind nicht mehr aktuell!\n");
  
