@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasefor/ph7/phase_source_10.for
 c Date      : <22 Oct 97 14:45:58 flechsig> 
-c Time-stamp: <22 Oct 97 14:46:06 flechsig> 
+c Time-stamp: <28 Oct 99 09:47:00 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c**************************************************************
 	subroutine src_ini(src)	
@@ -8,7 +8,7 @@ c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 c**************************************************
 
@@ -94,7 +94,7 @@ c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 c**************************************************
 
@@ -175,7 +175,7 @@ c	returns complex*16 densy
 c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -228,7 +228,7 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -259,7 +259,7 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -287,7 +287,7 @@ c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -412,7 +412,7 @@ c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -533,7 +533,7 @@ c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -567,7 +567,7 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source2/ so2
 
@@ -611,7 +611,7 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source3/ so3
 
@@ -637,7 +637,7 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source4/ so4
 
@@ -729,7 +729,7 @@ c*****************************************************************
 c*****************************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source6/ so6
 
@@ -760,7 +760,7 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	complex*16 carg
 
@@ -844,7 +844,7 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source3/ so3
 	record /constants/ cs
@@ -947,7 +947,7 @@ c			 dimag(XXX)=phase
 c
 c-----------------------------------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source4/ so4
 	record /constants/ cs
@@ -1019,7 +1019,7 @@ c**********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 	record /source6/ so6
 	record /geometryst/ g
@@ -1106,7 +1106,7 @@ c-----------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_10.for'
+	include 'phase_struct.for'
 
 c**************************************************
 
@@ -1131,3 +1131,4 @@ c**************************************************
 	return
 	end
 
+c end /home/pss060/sls/flechsig/phase/src/phase/phase_source_10.for
