@@ -1,3 +1,8 @@
+! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
+! Date      : <28 Oct 99 11:16:38 flechsig> 
+! Time-stamp: <28 Oct 99 11:24:41 flechsig> 
+! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
 ! Date      : <19 Mar 97 14:26:20 flechsig> 
 ! Time-stamp: <09 Apr 99 15:13:00 flechsig> 
@@ -9,6 +14,7 @@
 ! Autor: FLECHSIG, BESSY Berlin
 
 ! 23.11.98 108, 109 eingefuegt UF
+! 28.10.99 disableinfostring UF
 
 value
     kMainList             : 1;		/*******         Main        ********/
@@ -118,7 +124,7 @@ value
     k_help_onhelp         : 121;   
     k_help_sensitive      : 122;   
     k_help_menu           : 123;    
-
+    
     kESourceBox           : 131;  
     kESourceMenuButton    : 132;  
     kEST1                 : 133;
@@ -332,6 +338,9 @@ value
              "J. Bahrdt and U. Flechsig" & kCNL & kCNL &
 	     "bahrdt@exp.bessy.de" & kCNL &
               #character_set('bold') "flechsig@psi.ch"; 
+
+	    kDisableInfoString          : kCNL &
+		"Functionality temporarely disabled" & kCNL;
 
 !         compound_string("xxx",separate= true) ; 
 !1compound_string("PHASE:  Version 1.51    25. 8. 1994", separate= true) &   
