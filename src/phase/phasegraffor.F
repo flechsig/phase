@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
 c Date      : <09 Jan 01 12:39:27 flechsig> 
-c Time-stamp: <12 Jan 01 07:49:08 flechsig> 
+c Time-stamp: <12 Jan 01 07:50:53 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c fortran file which will be preprocessed #define LINUX #define VMS
@@ -81,7 +81,7 @@ c postscriptfile
         if(ifile.eq.1)then  
 
 #ifdef VMS
-           type*,'open postsciptfile under VMS',metaname
+           type*,'open postsciptfile under VMS ',metaname
            open(unit=11,file=metaname,
      1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
 #else
@@ -220,7 +220,7 @@ c postscriptfile
         if(ifile.eq.1)then  
 
 #ifdef VMS
-           type*,'open postsciptfile under VMS'
+           type*,'open postsciptfile under VMS '
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
 #else
@@ -331,7 +331,7 @@ c     postscriptfile
         if(ifile.eq.1)then 
  
 #ifdef VMS
-           type*,'open postsciptfile under VMS'
+           type*,'open postsciptfile under VMS '
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
 #else 
