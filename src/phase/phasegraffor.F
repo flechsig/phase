@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
 c$$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c$$$ Time-stamp: <24 Mar 04 16:38:53 flechsig> 
+c$$$ Time-stamp: <09 Jul 04 14:31:40 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -124,7 +124,8 @@ c bei postscript ab hier doppelt
         y1=(y1*dlfac+lambda)*1e6
         y2=(y2*dlfac+lambda)*1e6
         call hbook1(700,'PHASE',iy,y1,y2,0.)   ! dlambda 
-
+c use projections- book it
+        call hbpro(200,0.)
          
         y1=s.dymi*1e3
         y2=s.dyma*1e3
@@ -173,6 +174,8 @@ c           write(*,*)'fill histogr.',i
      &                    raysout(3,i),raysout(4,i),
      &	                  lambda,dlfac,raysout(5,i))
            enddo
+
+
         endif
 #ifdef DEBUG	
         write(*,*)'for: histograms filled'  
@@ -495,7 +498,7 @@ c************************************************************************
            call hplax('z "M# mm "N#', 'y "M# mm "N#')  
         endif
         if(ist.eq.6)then 
-           call hplot(200,'COL',' ',0)
+           call hplot(200,'COLZ',' ',0)
            call hplax('z "M# mm "N#', 'y "M# mm "N#')
         endif      
         if(ist.eq.7)then 
@@ -541,6 +544,21 @@ c************************************************************************
            call hplot(300,' ',' ',0)          !plot all ,1d punkte'' oder *
            call hplax('y "M# mm "N#', 'rays') 
            call hplopt('NSTA',1) 
+        endif  
+        if(ist.eq.177)then 
+           write(*,*)'test hplpro'
+           call hplzon(2,2,1,' ')
+           call hplot(200,' ',' ',0)          !plot all ,1d punkte'' oder *
+           call hplopt('STAT',1) 
+           call hplot(200,' ','PROY',0) 
+           call hplax('y "M# mm "N#', 'rays')
+           call hplot(200,' ','PROX',0) 
+           call hplax('z "M# mm "N#', 'rays')
+           call hplot(700,' ',' ',0) 
+           call hplax('[l] "M# nm "N#', 'rays') 
+           call hplopt('NSTA',1) 
+c           call hplpro(200,'xp','yp') ! scatter plot with projections
+           call hplzon(1,1,1,' ')
         endif  
         if(ist.eq.17)then 
            call hplzon(2,2,1,' ')
