@@ -1,14 +1,14 @@
 # File      : /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux
 # Date      : <04 Nov 99 16:25:46 flechsig> 
-# Time-stamp: <07 Jan 00 12:02:39 flechsig> 
+# Time-stamp: <24 Mar 00 15:37:03 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE GUI on LINUX
 #########################################################################
 SHELL    = /bin/sh
 INSTALL  = install -c
-#prefix  = /usr/local
-prefix   = /home/pss060/sls/flechsig
+prefix  = /usr/local
+#prefix   = /home/pss060/sls/flechsig
 PHASEDIR = $(prefix)/phase
 
 .phony: all
