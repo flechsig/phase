@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <04 Nov 99 17:06:41 flechsig> 
+# Time-stamp: <05 Nov 99 08:30:28 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -54,8 +54,9 @@ OBJECTF=  phasegraffor.o phasefor.o \
 #	  phase_integration_10.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
-	  cutils.h
-AUX     = version.h Makefile.linux Makefile.bessy Makefile.psicl0
+	  cutils.h phase_struct.h
+AUX     = version.h Makefile.linux Makefile.bessy Makefile.psicl0 \
+          phase_struct.for
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
@@ -78,7 +79,7 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 %.o : %.c $(PHASEHS)
 	$(CC) $(CFLAGS) -o $@ $< 
 
-%.o : %.for 
+%.o : %.for phase_struct.for
 	$(FOR) $(FFLAGS) $@ $<   
 
 ##########################################################################
@@ -108,7 +109,7 @@ dist: $(SRCS) $(AUX)
 	mkdir `cat .fname`
 	ln $(SRCS) $(AUX) `cat .fname`
 	-rm -rf `cat .fname`.fname
-	tar -chzf `cat .fname`.tgz `cat .fname`
+	tar -czf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
 	ln `cat .fname`.tgz $(PHASEDIR)/release
 ####################      end makefile       ###############################
