@@ -51,5 +51,6 @@ Initialisierungsfehler bei ell. Elementen behoben
 	Diagnose- Felder werden wieder gefuellt 
 04 Jan 01 input coefficient file as optical element
 21 May 01 bug with metafile under unix solved 
+24 Jun 03 bug fix slit for ray tracing
 ****************    end of NEWS  *****************           
 **************************************************
