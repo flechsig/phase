@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <16 Dec 99 09:44:23 flechsig> 
+# Time-stamp: <17 Dec 99 17:36:24 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -30,12 +30,6 @@ FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108
 LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc 
 
 .phony: all makewhat    
-
-#########################################################################
-#               debugging        
-# DEBUG		= no           # comment out for debugging (DEBUG = # no)    
-OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
-
 #########################################################################
 PROGRAM		= phase
 #########################################################################
@@ -53,21 +47,21 @@ OBJECTC = phase.o phasec.o \
 	  mirrorpck.o pst.o \
 	  cutils.o rtrace.o 
 OBJECTF = phasegraffor.o phasefor.o \
-	  phase_source.o 
-#	  phase_integration_10.o \
+	  phase_source.o \
+	  phase_integration.o 
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
-	  cutils.h phase_struct_10.h
+	  cutils.h phase_struct.h rtrace.h
 AUX     = version.h Makefile.linux Makefile.bessy Makefile.psicl0 \
-          phase_struct_10.for
+          phase_struct.for
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
 	  mirrorpck.c pst.c \
 	  cutils.c rtrace.c 
 SRCF    = phasegraffor.for phasefor.for \
-	  phase_source_10.for \
-	  phase_integration_10.for
+	  phase_source.for \
+	  phase_integration.for
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
