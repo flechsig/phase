@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <04 Nov 99 16:02:59 flechsig> 
+# Time-stamp: <04 Nov 99 16:17:53 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB on LINUX 
@@ -106,6 +106,6 @@ dist: $(SRCS) $(AUX)
 	-rm -rf `cat .fname`.fname
 	tar -chzf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
-	ln `cat .fname` $(PHASEDIR)/release
+	ln `cat .fname`.tgz $(PHASEDIR)/release
 ####################      end makefile       ###############################
 #end /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
