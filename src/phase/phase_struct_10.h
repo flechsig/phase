@@ -1,6 +1,6 @@
 /*   File      : /home/pss060/sls/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <07 Jan 00 09:23:38 flechsig>  */
-/*   Time-stamp: <07 Jan 00 09:56:38 flechsig>  */
+/*   Time-stamp: <07 Jan 00 10:28:50 flechsig>  */
 /*   Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* neu eingefuegt */
@@ -8,7 +8,7 @@ typedef struct ComplexStruct {
 	double re,im; 
 	} COMPLEX ;
 
-/* !!!! stuct statstics die Feldgrenzen halbiert da sonst
+/* !!!! stuct statstics die Feldgrenzen verkleinert
    run time error UF 7.1.2000 */
 
 /*-----------------------------------------------------------*/
@@ -256,7 +256,7 @@ struct simps1 {
 /*
 #ifdef VMS
 */
-/* so wars bei Johannes halbiere die feldgrenzen
+/* so wars bei Johannes, ich verkleinere die feldgrenzen
 	struct  statistics {
 	   double fd1phmax[512][512];
 	   int  nn1,nn2,inumb[1100][1100];
@@ -265,8 +265,8 @@ struct simps1 {
 */
 
         struct  statistics {
-	   double fd1phmax[256][256];
-	   int  nn1,nn2,inumb[550][550];
+	   double fd1phmax[128][128];
+	   int  nn1,nn2,inumb[256][256];
 	   int  inumzit,inumyit,inumzan,inumyan;
 	};  
 
