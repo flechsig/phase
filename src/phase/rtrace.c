@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
 /*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <19 Feb 04 14:12:01 flechsig>  */
+/*  Time-stamp: <09 Mar 04 15:16:56 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
@@ -313,6 +313,17 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
      }
    switch (bl->RTSource.QuellTyp)
      {
+     case 'F':
+       ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
+		  &bl->RESULT); 
+      if (bl->RTSource.SourceRays != NULL) free(bl->RTSource.SourceRays);
+
+      bl->RTSource.SourceRays= (struct RayType *)
+	xmalloc(bl->RTSource.raynumber* sizeof(struct RayType));
+
+      memcpy(bl->RTSource.SourceRays, bl->RESULT.RESUnion.Rays,
+	     sizeof(struct RayType)* bl->RTSource.raynumber);
+       break;
      case 'U':
        MakeUndulatorSource(&(bl->RTSource), 'H');       /* high beta */
        break; 

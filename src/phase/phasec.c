@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <09 Mar 04 14:39:58 flechsig>  */
+/*   Time-stamp: <09 Mar 04 15:16:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1940,20 +1940,7 @@ void GetSource(struct BeamlineType *bl)
     {
     case 'F':
       printf("GetSource: source from file not yet fully implemented!\n");
-      /*   bl->RTSource.SourceRays= (struct RayType *)     */
-      ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
-		  &bl->RESULT); 
-      if (bl->RTSource.SourceRays != NULL) free(bl->RTSource.SourceRays);
-
-      bl->RTSource.SourceRays= (struct RayType *)
-	xmalloc(bl->RTSource.raynumber* sizeof(struct RayType));
-
-      /* old      if ((bl->RTSource.SourceRays= (struct RayType *)
-	   malloc(bl->RTSource.raynumber* sizeof(struct RayType))) == NULL)
-	   {    fprintf(stderr, "malloc error in ReadRayFile\n"); exit(-1); }*/
-  
-      memcpy(bl->RTSource.SourceRays, bl->RESULT.RESUnion.Rays,
-	     sizeof(struct RayType)* bl->RTSource.raynumber);
+      MakeRTSource(&PHASESet, bl);
       break; 
     case 'H': 	
       sscanf(textf[0], "%lf", &bl->RTSource.Quelle.HardEdgeSource.disty);   
