@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <23 Dec 99 13:25:06 flechsig> 
+# Time-stamp: <23 Dec 99 13:28:24 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -16,7 +16,7 @@ YACC        = bison -y
 INSTALL     = /usr/bin/install -c
 INSTALLDATA = /usr/bin/install -c -m 644
 CDEBUG      = -gdwarf
-FDEBUG      = -g -C -B111 -m0
+FDEBUG      = -g -C -B111 
 MAKE        = make
 
 srcdir     = .
