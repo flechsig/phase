@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <09 Jul 04 09:12:01 flechsig>  */
+/*   Time-stamp: <09 Jul 04 09:14:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -415,9 +415,9 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     } else
       printf("            without misalignment\n");
 #ifdef DEBUG
-  printf "DEBUG: mirror coefficients\n";
+  printf("DEBUG: mirror coefficients\n");
   for (i=0; i < 15; i++) printf("%d %le\n", i, dp[i]);
-  printf "DEBUG: end defmirrorc\n";
+  printf("DEBUG: end defmirrorc\n");
 #endif
 } /* end defmirrorc */
 
