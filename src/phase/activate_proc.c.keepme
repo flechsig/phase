@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <17 Dec 99 15:37:24 flechsig>  */
+/*  Time-stamp: <20 Dec 99 13:46:44 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -821,7 +821,11 @@ void activate_proc(w, tag, reason)
     break;
   case kSetupInfo:
     FetchWidget(kSetupInfo, "SetupInfo");
-    strcpy(buffer, "/lib/news.");
+#ifdef VMS
+	strcpy(buffer, ".lib]news.");
+#else
+	strcpy(buffer, "/lib/news.");
+#endif 
     PrependEnv(PHASE_HOME, buffer);
     PrintFileInMainList(buffer);  
     XtManageChild(widget_array[kSetupInfo]);   
