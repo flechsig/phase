@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <05 Feb 04 14:26:28 flechsig> 
+ Time-stamp: <20 Feb 04 07:54:22 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -44,3 +44,14 @@ Errors
 
 - make will not run through the first time - you have to install the library 
   first by doing make install and then do a make again
+
+SIGN of w and l
+===============
+        Mit den Vorzeichen ist das so ne Sache. Ich habe die
+        Routinen so programmiert, dass w der optischen Elemente immer in 
+        Ausbreitungsrichtung zeigt und l immer auf die gleiche Seite zeigt,
+        egal, ob ich nach oben oder nach unten ablenke. Wenn ich mit dem 
+        Photon mitfliege, zeigt l z.B. immer nach links, egal, ob es rauf 
+        oder runter geht. Daher ist die rechte-Hand-Regel hier nicht 
+        anwendbar. 
+
