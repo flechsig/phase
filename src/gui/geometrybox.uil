@@ -1,0 +1,369 @@
+! Datei: USERDISK_3:[FLECHSIG.XWIN]GEOMETRYBOX.UIL
+! Datum: 10.FEB.1994
+! Stand: 23-MAR-1994
+! Autor: FLECHSIG, BESSY Berlin
+
+!************************* Definition der Geometry Box  ********************/
+
+object
+    EGeometryBox  : XmFormDialog {                   
+        arguments {
+            XmNdialogTitle      = "Geometry Box";
+            XmNdialogStyle      = XmDIALOG_MODELESS;
+            XmNnoResize         = true;
+            XmNdefaultPosition  = false;
+            XmNx                = 250;
+            XmNy                = 350;
+            XmNautoUnmanage     = false;
+            XmNallowOverlap     = false;
+            XmNdefaultButton    = XmPushButton EGOK;
+            XmNcancelButton     = XmPushButton EGCancel;
+            XmNhorizontalSpacing = 10;
+            XmNverticalSpacing  = 20;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            };
+            controls {
+            XmForm              EGInputForm;
+            XmSeparator         EGSeparator; 
+            XmPushButton        EGOK;
+            XmPushButton        EGApply;
+            XmPushButton        EGDefault;
+            XmPushButton        EGCancel;
+            XmSeparator         EGSeparator1; 
+            };          
+        callbacks { MrmNcreateCallback = procedure create_proc(kEGeometryBox);};
+        };   
+
+object
+    EGInputForm : XmForm {
+        arguments {
+            XmNshadowType       = XmSHADOW_IN;
+            XmNshadowThickness  = 3;
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 10; 
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNrightAttachment  = XmATTACH_FORM;
+            XmNrightOffset      = 10; 
+            XmNallowOverlap     = false;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            XmNforeground       = color('white'); 
+            XmNbackground       = color('blue');      
+                         };
+        controls {
+            XmLabel             EGInputLabel;
+            XmLabel             EGT1Label;
+            XmText              EGT1;  
+            XmLabel             EGT2Label;
+            XmText              EGT2;  
+	    XmLabel             EGT3Label;
+            XmText              EGT3;  
+ 	    XmPushButton        EGT3Button;
+	    XmLabel             EGT4Label;   
+            XmText              EGT4;  
+            XmToggleButton      EGNITranslation;    
+
+            /*
+            XmLabel             EGT5Label;
+
+            XmText              EGT5;  
+	    XmLabel             EGT6Label;
+            XmText              EGT6;    
+            XmLabel             EGT7Label;
+            XmText              EGT7;  
+	    XmLabel             EGT8Label;
+            XmText              EGT8;          */
+		};
+        };
+
+object
+    EGInputLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "geometry parameter ";
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 10;
+            XmNleftAttachment   = XmATTACH_POSITION;
+            XmNleftPosition     = 20;
+            XmNrightAttachment  = XmATTACH_POSITION;  
+            XmNrightPosition    = 80;
+            XmNalignment        = XmALIGNMENT_CENTER;
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGInputLabel);
+        };
+    };
+!******************************* Texte ****************************
+object  
+    EGT1 : XmText  {
+        arguments  {
+            arguments 		  ESText1Args;       
+            XmNtopWidget        = XmLabel EGInputLabel;     
+            XmNrightWidget      = XmLabel EGT2Label;
+                   };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEGT1);
+                   };        
+    };
+
+object
+    EGT1Label : XmLabel  {          
+        arguments {
+            arguments		  ESLabel1Args;      
+            XmNtopWidget        = XmLabel EGInputLabel;     
+                  };     
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT1Label);
+        };        
+    };
+
+object  
+    EGT2 : XmText {
+        arguments {
+              arguments		    ESText2Args;
+              XmNtopWidget        = XmLabel EGInputLabel;     
+                  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT2);
+        };
+    };
+
+object
+    EGT2Label : XmLabel {          
+        arguments {
+            arguments             ESLabel2Args;
+            XmNtopWidget        = XmLabel EGInputLabel;     
+                   };
+            callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT2Label);
+        };  
+	};
+object  
+    EGT3 : XmText {
+        arguments {
+            arguments 		  ESText1Args;
+            XmNtopWidget        = XmText EGT1;     
+            XmNrightWidget      = XmPushButton EGT3Button;
+                   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT3);  };
+    };
+
+object
+    EGT3Label : XmLabel {          
+        arguments {
+                  arguments		ESLabel1Args;      
+                  XmNtopWidget        = XmLabel EGT1Label;   
+                 };
+          callbacks {
+              MrmNcreateCallback  = procedure create_proc (kEGT3Label);  };
+        };
+
+object  
+    EGT4 : XmText {
+        arguments {
+            arguments		  ESText2Args;
+            XmNtopWidget        = XmLabel EGT2Label;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT4); };
+    };
+
+object
+    EGT4Label : XmLabel {          
+        arguments { 
+		XmNlabelString      = "";
+                XmNleftAttachment   = XmATTACH_POSITION;   
+ 	        XmNleftPosition     = 54; 
+ 	        XmNtopAttachment    = XmATTACH_WIDGET; 
+                XmNtopOffset        = 11;
+                XmNtopWidget        = XmLabel EGT2Label; }; 
+         callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT4Label);  };
+        };
+
+object  
+    EGT5 : XmText {
+        arguments {
+            arguments 		  ESText1Args;         
+            XmNtopWidget        = XmText EGT3;     
+            XmNrightWidget      = XmLabel EGT6Label;  };                      
+           };        
+
+object
+    EGT5Label : XmLabel {          
+        arguments {    
+		arguments	      ESLabel1Args;  
+                XmNtopWidget        = XmLabel EGT3Label; };
+          callbacks {
+                MrmNcreateCallback  = procedure create_proc (kEGT5Label);  };  
+        };
+
+object  
+    EGT6 : XmText {
+        arguments {
+            arguments 		  ESText2Args;         
+            XmNtopWidget        = XmText EGT4;
+ 	    XmNbottomAttachment = XmATTACH_FORM;   
+            XmNbottomOffset     = 10;    };
+       /* callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT6);  };*/
+    };
+
+object
+    EGT6Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel2Args;   
+            XmNtopWidget        = XmLabel EGT4Label; };
+         callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT6Label); };  
+    };
+
+object  
+    EGT7 : XmText {
+        arguments {
+            arguments 		  ESText1Args;        
+            XmNtopWidget        = XmText EGT5;     
+            XmNrightWidget      = XmLabel EGT8Label;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT7); };
+    };
+
+object
+    EGT7Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel1Args;   
+            XmNtopWidget        = XmLabel EGT5Label;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT7Label); };  
+     };
+
+object  
+    EGT8 : XmText {
+        arguments {
+            arguments 		  ESText2Args;               
+            XmNtopWidget        = XmText EGT6;  
+            XmNbottomAttachment = XmATTACH_FORM;  
+            XmNbottomOffset     = 10;     
+            XmNleftWidget       = XmLabel EGT8Label;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT8);  };  
+    };
+
+object
+    EGT8Label : XmLabel   {          
+        arguments {
+            arguments	          ESLabel2Args; 
+            XmNtopWidget        = XmLabel EGT6Label;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT8Label); };  
+        }; 
+
+object
+    EGNITranslation : XmToggleButton {
+        arguments {
+            XmNlabelString      = 
+            "translate grating (normal incidence monochromator)";
+            XmNtopAttachment    = XmATTACH_WIDGET; 
+	    XmNtopWidget        = XmLabel EGT3Label;
+            XmNtopOffset        = 10; 
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNleftOffset       = 10;  
+            XmNbottomAttachment = XmATTACH_FORM;   
+            XmNbottomOffset     = 10; 
+            XmNselectColor	= gold;
+ 		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGNITranslation);
+            !XmNvalueChangedCallback = procedure  (kEGNITranslation);
+    };
+    }; 
+
+object
+    EGSeparator : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmForm EGInputForm;     };      
+        };             
+
+object
+    EGSeparator1 : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmPushButton EGOK;      };      
+        };             
+                   
+object
+    EGOK : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+	    XmNlabelString      = "OK";
+            XmNtopWidget        = XmSeparator EGSeparator;
+            XmNleftAttachment   = XmATTACH_POSITION; 
+            XmNleftPosition     = 10;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGOK);
+            XmNactivateCallback = procedure activate_proc (kEGOK);  };
+    }; 
+
+object
+    EGApply : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+            XmNlabelString      = "Apply";
+            XmNtopWidget        = XmSeparator EGSeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton EGOK;
+            XmNleftOffset       = 20;   
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGApply);
+            XmNactivateCallback = procedure activate_proc (kEGApply);
+        };
+    };              
+
+object
+    EGDefault : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+   	    XmNlabelString      = "Defaults";
+            XmNtopWidget        = XmSeparator EGSeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton EGApply;
+            XmNleftOffset       = 20;   
+            XmNrightAttachment  = XmATTACH_WIDGET;
+            XmNrightWidget      = XmPushButton EGCancel;
+            XmNrightOffset      = 20;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGDefaults);
+            XmNactivateCallback = procedure activate_proc (kEGDefaults);
+        };
+    };              
+
+object
+    EGCancel : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+	    XmNlabelString      = "Cancel";
+            XmNtopWidget        = XmSeparator EGSeparator;
+            XmNrightAttachment  = XmATTACH_POSITION;
+            XmNrightPosition    = 90;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGCancel);
+            XmNactivateCallback = procedure activate_proc (kEGCancel);  };
+    };           
+
+object  
+    EGT3Button : XmPushButton widget {
+        arguments {
+              XmNlabelString      = "<"; 
+              XmNtopAttachment    = XmATTACH_WIDGET;
+              XmNtopWidget        = XmLabel EGT2Label;  
+              XmNtopOffset        = 10; 
+              XmNleftAttachment   = XmATTACH_POSITION; 
+              XmNleftPosition     = 49;    
+           /*   XmNleftAttachment  = XmATTACH_WIDGET;
+              XmNleftWidget      = XmText EGT3;*/
+                             };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT3Button);
+            XmNactivateCallback = procedure activate_proc (kEGT3Button);    };
+    };     	
+/* end /home/vms/flechsig/vms/phas/phaseuil/geometrybox.uil */
