@@ -1,3 +1,17 @@
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
+c Date      : <28 Oct 99 09:17:59 flechsig> 
+c Time-stamp: <28 Oct 99 09:45:13 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+c 
+c 28.10.99 Die Versionsnummern im Fortran File werden nur noch
+c in der urspruenglichen Source beibehalten, es werden mit namen ohne
+c Versionsnummer angelegt. Im Makefile und bei includes sollten die
+c namen ohen Versionsnummer benutzt werden. Im Source Release tauchen die 
+c Filenamen ohen Versionsnummer auf!
+c
+c Aenderungen an der Version von JB:
+c     Versionsnummern (_11) bei includes entfernt
+c                                                       UF
 c*********************************************************
       subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
 c*********************************************************
@@ -25,7 +39,7 @@ c************************************************
      &      yzint,yzintey,yzintez
 	complex*16 fzey(4096),fzez(4096)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -200,7 +214,7 @@ c*************************************************************
 
 	dimension a(0:5,0:5)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -351,7 +365,7 @@ c*************************************************************
 
 	dimension a(0:5,0:5)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -887,7 +901,7 @@ c-----------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /rayst/ ra
         record /constants/ cs
 	record /statistics/ st
@@ -1400,7 +1414,7 @@ c-----------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
         record /constants/ cs
 	record /statistics/ st
         record /integration_results/ xir
@@ -1910,7 +1924,7 @@ c
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
      &                fya2(501),fyp2(501),fza2(501),fzp2(501),
@@ -2029,6 +2043,6 @@ c	type*,ii,jj,ra.rf.yp,ra.rf.zp
 
 	return
 	end
-c 
+c /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for 
 
 
