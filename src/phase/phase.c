@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <11 Jan 00 16:03:34 flechsig>  */
+/*  Time-stamp: <16 Feb 00 10:01:42 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -33,7 +33,7 @@
 #include "phase.h" 
 #include "rtrace.h"   
 
-unsigned int main(argc, argv)
+int main(argc, argv)
     unsigned int argc;                  /* Command line argument count.   */
     char *argv[];                       /* Pointers to command line args. */
 {                                
