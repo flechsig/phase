@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <15 Oct 99 16:55:11 flechsig>              */
+/* Time-stamp: <12 Nov 99 09:11:57 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -14,7 +14,7 @@
 
 #ifndef PHASE_H
 #define PHASE_H         
-#define DEBUG
+/* #define DEBUG */
 /* #define LOGFILE             /* compile with logfile: logfilename  */
 #define sourceOK   	1
 #define mapOK      	2                /* werden und verknuepft */ 
@@ -51,9 +51,11 @@
 #define PLsimpam            0x4000000   /*  */
 #define PLsimpph            0x8000000   /*  */
 #define PLd12              0x10000000   /*  */
-
-#define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
-
+#ifdef VMS
+  #define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
+#else
+  #define HORMAPFILENAMEBASE	"HORMAPFILENAMEBASE"
+#endif
 /*******************  fileheader *******************************/
 
 #define MainPickFileHeader	"MainPickFileType"        
@@ -359,9 +361,12 @@
 #define k_max_widget            400  		/* geaendert von 50 */
 #define MAX_WIDGETS (k_max_widget + 1)
 #define MaxPathLength           255         
-
-#define MainPickName 		"PHASE.PCK"
-#define	MainListFileName        "PHASE$disk:PHASElist.pck"
+#define MainPickName 		"phase.pck"
+#ifdef VMS
+  #define	MainListFileName        "PHASE$disk:PHASElist.pck"
+#else
+  #define	MainListFileName        "MainListFileName"
+#endif
 #define D0matrixname		"test.omx"     
 #define D0mapname		"test.map"     
 #define D0sourceraysname 	"test.inp"     
@@ -376,10 +381,11 @@
 #define D0plotpsname            "pmeta.ps"
 #define D0printpclname          "test.pcl"   
 #define D0optipckname           "test.pcko"   
-
-#define PHASE_help  		"PHASE$lib:PHASE.hlb"
-
-
+#ifdef VMS
+  #define PHASE_help  		"PHASE$lib:PHASE.hlb"
+#else
+  #define PHASE_help  		"PHASE_help"
+#endif
 /********************** Strukturen **************************************/
            
 struct PHASEset                       /* Datensatz in MainPickName 	*/
@@ -593,10 +599,15 @@ static XmString latin_create;		/* Variables for */
 static XmString latin_dismiss;	  	/* compound strings. */
 static XmString latin_space;
 static XmString latin_zero;
+#ifdef VMS
+  static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
+  {"PHASE$prg:PHASE.uid"};	/* uid Namen eintragen*/
+                                /* There is only one UID file for */
+                                /* this application. */
+#else
 static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
-{"PHASE$prg:PHASE.uid"};	/* uid Namen eintragen*/
-/* There is only one UID file for */
-/* this application. */
+  {"phase.uid"};	
+#endif
 static int db_filename_num =
 (sizeof db_filename_vec / sizeof db_filename_vec [0]);
                                                                  
@@ -613,6 +624,34 @@ GRDATSTRUCTTYPE grdatstruct;
 /*double map35[35][35];  */
 /*int pawc[200000]; */
 
+/********* FORTRAN calls ******************************************/
+/* in der CERN lib fuer LINUX werden werden FORTRAN Symbole mit einem 
+   underscore am Ende abgelegt. Man muss daher auch beim compilieren 
+   der eigenen Routinen den entsprechenden Compiler Schalter fuer 
+   trailing underscore setzen. Bei c nach FORTRAN calls werden im 
+   Folgenden mit Makros die Routinennamen umdefiniert, d. h. alle 
+   FORTRAN Routinen die aus c gerufen werden muessen hier erscheinen.
+*/
+#ifdef LINUX
+  #define exithplot      exithplot_ 
+  #define extractmap     extractmap_
+  #define fdet           fdet_
+  #define fgmapidp       fgmapidp_
+  #define hlimit         hlimit_
+  #define hplint         hplint_
+  #define hplotdisplayf  hplotdisplayf_
+  #define hplotpsdf      hplotpsdf_
+  #define hplotpssimf    hplotpssimf_
+  #define inithplot      inithplot_
+  #define intersection   intersection_
+  #define pathlen0       pathlen0_
+  #define pathlen1       pathlen1_
+  #define pstf           pstf_ 
+  #define readfg34_par   readfg34_par_
+  #define readmatrixfile readmatrixfile_
+  #define src_ini        src_ini_
+  #define xxmap70        xxmap70_ 
+#endif
 /************************* Prototypen *****************************/
 
 int	CheckFileHeader(FILE *, char *),  
