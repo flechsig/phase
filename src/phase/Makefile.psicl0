@@ -1,6 +1,6 @@
 # File      : /home/vms/flechsig/vms/phas/phasec/makefile
 # Date      : <19 Mar 97 11:31:08 flechsig> 
-# Time-stamp: <20 Dec 99 10:58:26 flechsig> 
+# Time-stamp: <20 Dec 99 15:31:59 flechsig> 
 # Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 # Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]MAKEFILE.
@@ -68,8 +68,7 @@ activate_proc.$(OBJ),PHASEgraf.$(OBJ),initdatset.$(OBJ),-
 geometrypck.$(OBJ),bline.$(OBJ),-
 mirrorpck.$(OBJ),PHASEgraffor.$(OBJ),-
 cutils.$(OBJ),rtrace.$(OBJ),phasefor.$(OBJ),pst.$(OBJ),-
-phase_source.$(OBJ),phase_integration.$(OBJ),-
-istkin_cspin.$(OBJ)   
+phase_source.$(OBJ),phase_integration.$(OBJ)
 
 #fg3pck.$(OBJ)$(ALPH),
 OBJECTSAXP 	= phase.$(OBJ)$(ALPH),phasec.$(OBJ)$(ALPH),-
@@ -78,8 +77,7 @@ initdatset.$(OBJ)$(ALPH),geometrypck.$(OBJ)$(ALPH),bline.$(OBJ)$(ALPH),-
 mirrorpck.$(OBJ)$(ALPH),PHASEgraffor.$(OBJ)$(ALPH),-
 cutils.$(OBJ)$(ALPH),rtrace.$(OBJ)$(ALPH),phasefor.$(OBJ)$(ALPH),-
 pst.$(OBJ)$(ALPH),-
-phase_source.$(OBJ)$(ALPH),phase_integration.$(OBJ)$(ALPH),-
-istkin_cspin.$(OBJ)$(ALPH)    
+phase_source.$(OBJ)$(ALPH),phase_integration.$(OBJ)$(ALPH)
 ########################################################################
 PHASEHS   	= PHASE.h,fg3pck.h,mirrorpck.h,geometrypck.h,phasegraf.h,-
 cutils.h
