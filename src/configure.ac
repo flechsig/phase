@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <11 Dec 03 17:03:46 flechsig> 
+#   Time-stamp: <03 Feb 04 13:59:31 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -21,36 +21,36 @@ AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(phase/config.h)
 ## adds the maintainer option to configure
-AM_MAINTAINER_MODE
+##AM_MAINTAINER_MODE
 
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_CC
-AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_CHECK_PROG([UIL],[uil],[uil])
+##do test after fortran stuff
+##AC_PROG_LIBTOOL
 
 ## the preference of fortran compilers
 AC_PROG_F77(f90com f77 g77)
-
+AC_F77_LIBRARY_LDFLAGS
+AC_PATH_PROG([f77path],[f77])
 AC_MSG_CHECKING(for a supported compiler type)
+##if test "$F77" = "g77"; then
 if test "$G77" = "yes"; then
    AC_MSG_RESULT(no)
    AC_MSG_WARN([[GNU g77 will probably not work]])
 else 
-  if test "$F77" = "f90com"; then
+    if test "$F77" = "f90com"; then
      AC_MSG_RESULT(found Intel f90com)
-     AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler)
+     AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
      AC_SUBST([FFLAGS],"-c -vms -w95 -132")
   else
      AC_MSG_RESULT(found Absoft f77)
-     AC_PATH_PROG([f77path],[f77])
-     f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'` 
-     
-     AC_MSG_NOTICE(we expect f77 libs  at ${f77lib})  
-     AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler)
-     AC_SUBST([FFLAGS],"-g -C -B111 -c -f -B108 -W -s -N3 -N51 -N22 -N33")
+     AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
+     AC_SUBST([FFLAGS],"-c -f -B108 -W -s -N3 -N51 -N22 -N33")
 ##FFLAGS for absoft f77 compiler
 ##	-g generate debugging information
 ##	-c generate object files
@@ -66,66 +66,50 @@ else
 ##	-m0 give more error messages
 ##	-N22 append underscore to common block names (wichtig wegen pawc)
 ##      -N33 pack structures (kein alignment) 
+    f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'`
+    AC_MSG_NOTICE(we expect f77 libs at ${f77lib}) 
+    AC_SUBST(F77LIB,${f77lib})
   fi
 fi
+## libtool init after selecting the fortran compiler
+AC_PROG_LIBTOOL
 
-##check for cernlib
-AC_MSG_NOTICE(expect cern lib at environment \${CERN}/lib)
-CERNLIB=${CERN}/lib
-if test -z "${CERN}"; then
-  AC_MSG_ERROR("\${CERN} is not defined)
-else 
-  AC_MSG_NOTICE("use cern lib at $CERNLIB")
-fi
-
+## check for cernlib 
+## we search for paw and expect the cernlib there
+AC_MSG_NOTICE(search for CERN lib by searching for paw)
+cernlib=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
+AC_MSG_NOTICE(we expect the CERN lib at ${cernlib})
+AC_SUBST(CERNLIB,${cernlib})
 
 dnl Checks for libraries.
-dnl Replace `main' with a function in -lMrm:
-AC_CHECK_LIB(Mrm, main)
-dnl Replace `main' with a function in -lU77:
-AC_CHECK_LIB(U77, main)
-dnl Replace `main' with a function in -lV77:
-AC_CHECK_LIB(V77, main)
-dnl Replace `main' with a function in -lX11:
-AC_CHECK_LIB(X11, main)
-dnl Replace `main' with a function in -lXext:
-AC_CHECK_LIB(Xext, main)
-dnl Replace `main' with a function in -lXm:
-AC_CHECK_LIB(Xm, main)
-dnl Replace `main' with a function in -lXp:
-AC_CHECK_LIB(Xp, main)
-dnl Replace `main' with a function in -lXt:
-AC_CHECK_LIB(Xt, main)
-dnl Replace `main' with a function in -lc:
-AC_CHECK_LIB(c, main)
-dnl Replace `main' with a function in -lf77math:
-AC_CHECK_LIB(f77math, main)
-dnl Replace `main' with a function in -lfio:
-AC_CHECK_LIB(fio, main)
-dnl Replace `main' with a function in -lg2c:
-AC_CHECK_LIB(g2c, main)
-dnl Replace `main' with a function in -lgrafX11:
-AC_CHECK_LIB(grafX11, main)
-dnl Replace `main' with a function in -lgraflib:
-AC_CHECK_LIB(graflib, main)
-dnl Replace `main' with a function in -lkernlib:
-AC_CHECK_LIB(kernlib, main)
-dnl Replace `main' with a function in -lm:
-AC_CHECK_LIB(m, main)
-dnl Replace `main' with a function in -lmathlib:
-AC_CHECK_LIB(mathlib, main)
-dnl Replace `main' with a function in -lnsl:
-AC_CHECK_LIB(nsl, main)
-dnl Replace `main' with a function in -lpacklib:
-AC_CHECK_LIB(packlib, main)
-dnl Replace `main' with a function in -lpawlib:
-AC_CHECK_LIB(pawlib, main)
+## we skip all library tests
+
+## deal with debugger
+AC_ARG_ENABLE([debug],
+AC_HELP_STRING([--enable-debug],[debugging mode, static linking]),
+  if test "$enable_debug" = "yes"; then
+      AC_MSG_NOTICE(*** enable debugging mode (using static libs) ***)
+##      AC_DEFINE(FDEBUG, [-g -C -B111], "Debugger options f77")
+      AC_DEFINE(DEBUG, ["debug mode, static linking"], 
+    "debug mode with static libraries")
+      AC_SUBST([FDEBUG], "-g -C -B111")
+      AC_SUBST([CDEBUG], "-DDEBUG -gdwarf")
+      AC_SUBST([LIBPHASE], libphase.a)
+  fi,
+  AC_MSG_NOTICE(*** enable production mode (using shared libs) ***)
+  AC_SUBST([LIBPHASE], libphase.so)
+)
+
+# get configure date
+configured=`date`
+AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
 
 dnl Checks for header files.
 AC_PATH_X
+AC_PATH_XTRA
 AC_HEADER_STDC
 AC_CHECK_HEADERS(strings.h unistd.h)
-AC_SUBST([CPPFLAGS],"-I$x_includes")
+AC_SUBST([CPPFLAGS],[-I$x_includes])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
@@ -137,8 +121,11 @@ AC_TYPE_SIZE_T
 
 
 
+
+
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile phase/Makefile)
+AC_OUTPUT(Makefile phaselib/Makefile phase/Makefile \
+          opti/Makefile extr/Makefile gui/Makefile)
 
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
