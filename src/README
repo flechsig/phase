@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <22 Mar 04 13:31:02 flechsig> 
+ Time-stamp: <22 Mar 04 22:32:03 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -25,6 +25,9 @@ Installation
    cvs -d :pserver:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot co phase
    ...
    cvs logout         (removes the locally stored passwordfile $HOME/.cvspass)
+
+1c) or try methode ext
+   cvs -d :ext:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot co phase
 
 2) for maintainers only: configure libtool
    libtoolize
