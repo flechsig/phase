@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:44:03 flechsig>  */
+/*   Time-stamp: <20 Oct 04 13:06:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1601,18 +1601,17 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
    return rcode;  
 }  /* end ReadBLFile */
 
+/**/
+/* berechnet den Energieaufloesungsfaktor R=tan(fi)/displength * y */
+/**/
 void SetDeltaLambda(struct BeamlineType *bl, struct ElementType *listpt)
-/* Uwe 10.7.96 */          
-/* berechnet den Energieaufloesungsfaktor R=tan(fi)/displength * y */ 
-/* last modification: 26 Sep 97 11:30:54 flechsig */
-/* last modification: 29 Sep 97 10:49:47 flechsig */
 {
       
    if ((listpt->GDat.inout != 0) && (bl->BLOptions.displength > 0.0) && 
        (listpt->GDat.xdens[0] > 0.0))
    {
        bl->deltalambdafactor= 1.0/(listpt->GDat.xdens[0]* 
-				   (double)(listpt->GDat.inout))* 
+				   (double)(abs(listpt->GDat.inout)))* 
 	 (listpt->geo.cosb/ bl->BLOptions.displength); 
 #ifdef DEBUG
        printf("\n**** SetdeltaLambda *******\n");
