@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <12 Feb 04 12:44:19 flechsig>  */
+/*   Time-stamp: <12 Feb 04 13:25:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1609,7 +1609,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[2], "%f", bl->RTSource.Quelle.DipolSource.sigz);    
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.DipolSource.dz);    
       sprintf(TextField[4], "%d", bl->RTSource.raynumber);   
-      xprintf("Dipol Source: h. div. hard edge, the rest are sigma values"); 
+      xprintf("Dipol Source: h. div. hard edge, the rest are sigma values\n"); 
       break;    
     case 'o':
       w= widget_array[kESPointSourceButton];  
@@ -1620,7 +1620,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[2], "%f", bl->RTSource.Quelle.PointSource.sigz);    
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.PointSource.sigdz);    
       sprintf(TextField[4], "%d", bl->RTSource.raynumber); 
-      xprintf("Point Source: all sigma values");
+      xprintf("Point Source: all sigma values\n");
       break;    
     case 'U':  
       w= widget_array[kESUndulatorSourceButton]; 
@@ -1889,9 +1889,14 @@ void GetSource(struct BeamlineType *bl)
       ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
 		  &bl->RESULT); 
       if (bl->RTSource.SourceRays != NULL) free(bl->RTSource.SourceRays);
-      if ((bl->RTSource.SourceRays= (struct RayType *)
+
+      bl->RTSource.SourceRays= (struct RayType *)
+	xmalloc(bl->RTSource.raynumber* sizeof(struct RayType));
+
+      /* old      if ((bl->RTSource.SourceRays= (struct RayType *)
 	   malloc(bl->RTSource.raynumber* sizeof(struct RayType))) == NULL)
-	{    fprintf(stderr, "malloc error in ReadRayFile\n"); exit(-1); }  
+	   {    fprintf(stderr, "malloc error in ReadRayFile\n"); exit(-1); }*/
+  
       memcpy(bl->RTSource.SourceRays, bl->RESULT.RESUnion.Rays,
 	     sizeof(struct RayType)* bl->RTSource.raynumber);
       break; 
