@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <11 Jan 00 15:16:15 flechsig>  */
+/*  Time-stamp: <11 Feb 00 09:47:52 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -459,10 +459,10 @@ void hplotpsdc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
 }  /* end  hplotpsd */
 
 void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr, 
-	       struct PHASEset *ph, struct PSDType *pd, double *plotdata) 
-     /* 27.2.97 simpson ausdrucke*/
+	       struct PHASEset *ph, double *plotdata) 
+     /* 27.2.97 simpson ausdrucke                       */
      /* c- fortran interface 				*/
-     /* last mod. 27.2.97 				*/
+     /* last mod. 11.2.00 				*/
    
 {
 #ifdef VMS
@@ -471,10 +471,20 @@ void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
   printf("hplotpssimc called\n");
   CreateFString(&fstitle, gr->titel);    
   CreateFString(&fsmetaname,  ph->plotpsname);    /* psd sind die daten */
-  hplotpssimf(&fstitle, &fsmetaname, gr, plotdata); 
+  hplotpssimf(&fstitle, &fsmetaname, &gr->psfile, 
+	      &bl->BLOptions.xi.ymin, &bl->BLOptions.xi.ymax,
+	      &bl->BLOptions.xi.ianzy0,
+	      &bl->BLOptions.xi.zmin, &bl->BLOptions.xi.zmax,
+	      &bl->BLOptions.xi.ianzz0,
+	      plotdata); 
 #else
   printf("hplotpssimc called\n");
-  hplotpssimf(gr->titel, ph->plotpsname, gr, plotdata, 
+  hplotpssimf(gr->titel, ph->plotpsname, &gr->psfile, 
+	      &bl->BLOptions.xi.ymin, &bl->BLOptions.xi.ymax,
+	      &bl->BLOptions.xi.ianzy0,
+	      &bl->BLOptions.xi.zmin, &bl->BLOptions.xi.zmax,
+	      &bl->BLOptions.xi.ianzz0,
+	      plotdata, 
 	      strlen(gr->titel),strlen(ph->plotpsname)); 
 #endif     
 }  /* end  hplotpssimc */
