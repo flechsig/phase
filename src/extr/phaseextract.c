@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <08 Oct 04 13:38:36 flechsig>  */
+/*   Time-stamp: <08 Oct 04 13:44:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -159,7 +159,7 @@ int main(argc, argv)
 	  zfwhm= 2.35* GetRMS(&Beamline, 'z');
 	  yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
           
-	  if (Beamline.deltalambdafactor > 0)
+	  if (Beamline.deltalambdafactor > 0.0)
 	    {
 	      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
 		Beamline.deltalambdafactor/ yfwhm : 1e12;
