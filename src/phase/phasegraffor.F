@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
 c Date      : <09 Jan 01 12:39:27 flechsig> 
-c Time-stamp: <09 Jan 01 16:40:10 flechsig> 
+c Time-stamp: <12 Jan 01 07:49:08 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c fortran file which will be preprocessed #define LINUX #define VMS
@@ -85,7 +85,7 @@ c postscriptfile
            open(unit=11,file=metaname,
      1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
 #else
-           type*,'open postsciptfile under UNIX',metaname
+           type*,'open postsciptfile under UNIX ',metaname
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=4444)
 #endif
 
@@ -224,7 +224,7 @@ c postscriptfile
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
 #else
-           type*,'open postsciptfile under UNIX'
+           type*,'open postsciptfile under UNIX '
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
 #endif
            call igmeta(-11,-111) 
@@ -335,7 +335,7 @@ c     postscriptfile
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
 #else 
-           type*,'open postsciptfile under UNIX'
+           type*,'open postsciptfile under UNIX '
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
 #endif
            call igmeta(-11,-111) 
