@@ -1,17 +1,13 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
-/*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <12 Feb 04 13:30:59 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
+/*   Date      : <08 Apr 04 15:21:48 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:40:00 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
-/*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
-/*  Date      : <24 Mar 97 09:09:33 flechsig>  */
-/*  Time-stamp: <22 Oct 97 15:24:25 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
-/* Datei: USERDISK_3:[FLECHSIG.PHAS.PHASEC]PST.C               */
-/* Datum: 29.JUL.1996                                          */
-/* Stand: 25-FEB-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
 
 #include <stdio.h> 
 #include <stdlib.h>
@@ -149,24 +145,16 @@ void PST(struct BeamlineType *bl)
         malloc(size)) == NULL)
 	{  fprintf(stderr, "malloc error\n"); exit(-1);    }   */
 
-   bl->RESULT.RESUnion.PSD.stfd1phmaxc= (double *) 
-     Alloc(bl->RESULT.RESUnion.PSD.stfd1phmaxc, size);
-   bl->RESULT.RESUnion.PSD.stinumbc= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.stinumbc, size);
-   bl->RESULT.RESUnion.PSD.s1c= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.s1c, size);
-   bl->RESULT.RESUnion.PSD.s2c= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.s2c, size);
-   bl->RESULT.RESUnion.PSD.s3c= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.s3c, size);
-   bl->RESULT.RESUnion.PSD.eyrec= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.eyrec, size);
-   bl->RESULT.RESUnion.PSD.ezrec= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.ezrec, size);
-   bl->RESULT.RESUnion.PSD.eyimc= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.eyimc, size);
-   bl->RESULT.RESUnion.PSD.ezimc= (double *)
-     Alloc(bl->RESULT.RESUnion.PSD.ezimc, size);
+   bl->RESULT.RESUnion.PSD.stfd1phmaxc= (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.stinumbc=    (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.s1c=         (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.s2c=         (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.s3c=         (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.eyrec=       (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.ezrec=       (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.eyimc=       (double *)xmalloc(size);
+   bl->RESULT.RESUnion.PSD.ezimc=       (double *)xmalloc(size);
+     
 
    printf("memory reserved\n");
    bl->RESULT.typ |= PLphspacetype;  
