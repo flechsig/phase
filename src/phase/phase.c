@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <04 Feb 04 17:03:10 flechsig>  */
+/*  Time-stamp: <10 Feb 04 16:28:02 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -45,7 +45,7 @@ int main(argc, argv)
     char *argv[];                       /* Pointers to command line args. */
 {                                
     int setupswitch;
-    char prefix[255], filename[255];
+    char filename[255];
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
@@ -53,14 +53,9 @@ int main(argc, argv)
     /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
 
-    sprintf(prefix, "%s", PREFIX);
-    if (strncmp(prefix, "NONE", 4) == 0) 
-      strcpy(prefix, "/usr/local");
-
-    sprintf(filename, "%s/share/phase/phase.uid", prefix);
+    sprintf(filename, "%s/share/phase/phase.uid", PREFIX);
 
 #ifdef DEBUG
-    printf("phase.main> prefix: %s\n", prefix);
     printf("phase.main> uidfile: %s\n", filename);
 #endif
 
@@ -170,7 +165,7 @@ int main(argc, argv)
 	strcpy(filename, ".lib]news.");
 	PrependEnv(PHASE_HOME, filename);
 #else
-	sprintf(filename, "%s/share/phase/news", prefix);
+	sprintf(filename, "%s/share/phase/news", PREFIX);
 #endif 
 	
 	PrintFileInMainList(filename);                      /* news anzeigen */
