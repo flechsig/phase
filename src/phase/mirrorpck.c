@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/mirrorpck.c */
 /*  Date      : <28 Oct 99 10:00:19 flechsig>  */
-/*  Time-stamp: <16 Feb 04 14:50:56 flechsig>  */
+/*  Time-stamp: <16 Feb 04 15:04:10 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/mirrorpck.c */
@@ -91,8 +91,8 @@ void minitdatset(struct mdatset *x)
 	 x->rmi		= D0rmi;
 	 x->rho		= D0rho;           
       	 x->iflagmi	= D0iflagmi;  
-         x->w1          = -D0w ;
-	 x->w2          = D0w;
+         x->w1          = -D0ww ;
+	 x->w2          = D0ww;
 	 x->l1          = -D0l;
 	 x->l2          = D0l;
 	 x->slopew      = D0slopew;
