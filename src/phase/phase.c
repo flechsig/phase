@@ -1,7 +1,12 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <03 Feb 04 15:06:53 flechsig>  */
+/*  Time-stamp: <04 Feb 04 16:25:56 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
@@ -25,6 +30,8 @@
   #include <DXm/DECspecific.h>  
   #include <sys$library/DECw$Cursor.h>
 #endif
+
+
 #include "cutils.h"                     /* muss for rtrace.h stehen */    
 #include "phase_struct.h"
 #include "fg3pck.h"     
@@ -43,22 +50,26 @@ int main(argc, argv)
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
+    /* Feb 04 get the data directory from installation prefix and 
+       not from the environment in unix */
+
+    sprintf(uidfilename, "%s/share/phase/phase.uid", PREFIX);
+    if (strncmp(uidfilename, "NONE", 4) == 0) 
+      strcpy(uidfilename, "/usr/local/share/phase/phase.uid");
+    
+#ifdef DEBUG
+    printf("expect: uidfile: %s\n", uidfilename);
+#endif
+
+#ifdef VMS
     if (getenv(PHASE_HOME) == NULL)
       {
 	printf("\nphase.c: environment variable %s not defined- exit\n",
 	       PHASE_HOME);
-	printf("example for unix bash: export %s=/usr/local/phase\n", 
-	       PHASE_HOME);
-#ifdef VMS
 	printf("example for VMS: define %s \"[myname.phase\"\n", PHASE_HOME);
-#else
-	printf("example for unix tcsh: setenv %s ~/phase\n", PHASE_HOME);
-	printf("example for unix tcsh: setenv %s /usr/local/phase\n", 
-	       PHASE_HOME);
-#endif
 	exit(-1);
       }
-
+#endif
     setupswitch= ProcComandLine(argc, argv); /* im Batch (-b) und  Help -h -? 
 						modus wird exit(3) gerufen 
 						*/
@@ -92,10 +103,8 @@ int main(argc, argv)
     /* set db_filename_vec with environment */
 #ifdef VMS
     strcpy(uidfilename, ".lib]phase.uid");
-#else
-    strcpy(uidfilename, "/lib/phase.uid");
-#endif
     PrependEnv(PHASE_HOME, uidfilename);
+#endif
     db_filename_vec[0]= uidfilename;
 
     if (MrmOpenHierarchyPerDisplay(
