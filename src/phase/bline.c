@@ -1,8 +1,8 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Apr 04 14:50:52 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:29:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
-
+ 
 /*   $Source$  */
 /*   $Date$ */
 /*   $Revision$  */
@@ -94,7 +94,7 @@ void AddBLElement(struct BeamlineType *bl, char *name)
    if (pos == 0) pos= bl->elementzahl;
    for (i= 1; i<= bl->elementzahl; i++, listpt++)
    {
-     if ( i == pos)        /* fuellen mit daten */
+     if (i == pos)        /* fuellen mit daten */
      {
        ExpandFileNames(&PHASESet, name);  
        PutPHASE(&PHASESet, MainPickName);  
@@ -181,7 +181,7 @@ void BuildBeamline(struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->Art, 
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, 
 			 listpt->elementname);    
 	      /*  mputpickfile(&listpt->MDat, PHASESet.elementpckname); */ 
 	      /* fuer dejustierung */
@@ -208,7 +208,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	    listpt->ElementOK|= mapOK; 
          }             /* map ist OK */
 
-	 if (listpt->Art != kEOESlit)
+	 if (listpt->MDat.Art != kEOESlit)
 	   {
 	     if (elcounter == 1)
 	       memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
@@ -235,7 +235,7 @@ void BuildBeamline(struct BeamlineType *bl)
       
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
-	  if (listpt->Art != kEOESlit)
+	  if (listpt->MDat.Art != kEOESlit)
 	    {
 	      memcpy(&bl->MtoSource, &listpt->MtoSource, sizeof(MAP70TYPE)); 
 	      memcpy(&bl->wc, &listpt->wc, sizeof(MAP7TYPE)); 
@@ -247,12 +247,12 @@ void BuildBeamline(struct BeamlineType *bl)
 	  while (elcounter > 1)	      /* nur bei mehreren Elementen */
 	    {				     /* Schleife von hinten */
 	      elcounter--; listpt--;
-	      if (listpt->Art != kEOESlit)
+	      if (listpt->MDat.Art != kEOESlit)
 		{
 		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->MtoSource, 
 			   &bl->BLOptions.ifl.iord, 1); 
 		  /*listpt->xlm bleibt gleich*/
-		  if ((listpt->Art == kEOETG) || (listpt->Art == kEOEVLSG))
+		  if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
 		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		    GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			      (double *)listpt->wc, (double *)listpt->xlc, 
@@ -767,12 +767,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	/*   printf("c: call fgmapidp\n"); */
         imodus= 1;   /* source to image zuerst */
 
-	if(listpt->Art==999)
+	if(listpt->MDat.Art==999)
 	   {imodus=imodus+1000;};
 	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
-	if(listpt->Art==999)
+	if(listpt->MDat.Art==999)
 	   {imodus=imodus-1000;};
 
 	 xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
@@ -793,12 +793,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	if (bl->BLOptions.SourcetoImage != 1) 
 	  {	
 	    imodus= 2;   
-	    if(listpt->Art==999)
+	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;}; 
 	    fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);   
-	    if(listpt->Art==999)
+	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;};
 
 	    xxmap70(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
@@ -1030,7 +1030,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
  /* end geometry section */  	  
 
      fprintf(f, "\nMIRROR %d  \n", elnumber);  
-     fprintf(f, "%20d     element type\n", listpt->Art);   
+     fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
      fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha);
@@ -1415,7 +1415,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
           sprintf(buffer, "MIRROR %d", elnumber);  
           if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
-	    fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->Art);
+	    fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->MDat.Art);
             /* fscanf(f, " %d %[^\n]s %c", &listpt->Art, buffer, &buf);*/
 	     
 	    pd= (double *) &listpt->MDat.r1;                 
@@ -1442,7 +1442,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 #ifdef DEBUG
 	    /*  printf("   mirror read\n"); */
 #endif
-	    printf("Elementtype: %d, name: %s\n", listpt->Art, listpt->elementname);
+	    printf("Elementtype: %d, name: %s\n", listpt->MDat.Art, listpt->elementname);
           } else rcode= -1;
           elnumber++; listpt++;
        } 
@@ -1683,7 +1683,7 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
 
    if ((widget_array[kEOElementBox] != NULL) &&
        XtIsRealized(widget_array[kEOElementBox]))		
-       InitOElementBox(&ep->MDat, &ep->GDat, ep->Art);   
+       InitOElementBox(&ep->MDat, &ep->GDat, ep->MDat.Art);   
    
    /*  if ((widget_array[kEGeometryBox] != NULL) &&
        XtIsRealized(widget_array[kEGeometryBox]))
