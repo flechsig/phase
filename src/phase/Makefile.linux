@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <27 Oct 03 13:51:28 flechsig> 
+#  Time-stamp: <31 Oct 03 10:32:30 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -69,7 +69,7 @@ LIBS    = $(INSTPATH)/lib/phaselib.a \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
 #	  -Xlinker -defsym -Xlinker MAIN__=main
 #########################################################################
-OBJECTC = phase.o phasec.o \
+OBJECTC = phase.o phase0.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
 	  geometrypck.o bline.o \
 	  mirrorpck.o pst.o \
@@ -82,7 +82,7 @@ PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 \
           phase_struct.for news coefficient-example.dat
-SRCC    = phase.c phasec.c \
+SRCC    = phase.c phase0.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
 	  mirrorpck.c pst.c \
