@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/grafbox.uil
 ! Date      : <11 Apr 97 14:15:22 flechsig> 
-! Time-stamp: <14 Nov 97 13:39:14 flechsig> 
+! Time-stamp: <24 Mar 04 08:40:54 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]GRAFBOX.UIL
@@ -144,8 +144,12 @@ object
                };      
 	controls {
             XmPushButton        CGr3Button;     
-            XmPushButton        CGrDivButton;     
-            XmPushButton        CGrPhiButton;   
+            XmPushButton        CGrDivButton;
+            XmPushButton        CGrResButton;
+            XmPushButton        CGrPhiButton;
+            XmPushButton        CGrTimeButton;
+            XmPushButton        CGrTimeHisButton;
+            XmSeparator         {};
             XmPushButton        CGrScatterButton;  
 	    XmPushButton        CGrhorButton;     
             XmPushButton        CGrvertButton;     
@@ -198,6 +202,7 @@ CGrOptPdme1 : XmPulldownMenu widget {
     XmPushButton   CGRTakeFile; 
     XmPushButton   CGRTakeSource; 
     XmPushButton   CGRTakeResult;
+    XmSeparator         {};
     XmPushButton   CGRfd1phmax;
     XmPushButton   CGRinumb; 
     XmPushButton   CGRS1;
@@ -352,12 +357,32 @@ object
                 };      
 
 object
-    CGrPhiButton : XmPushButton {
+    CGrResButton : XmPushButton {
         arguments {
             XmNlabelString      = "resolution";
                   };
-        
-        };      
+                };     
+
+object
+    CGrPhiButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "phase(y,z)";
+                  };
+                };  
+
+object
+    CGrTimeButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "time(y,z)";
+                  };
+                };   
+
+object
+    CGrTimeHisButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "time (histogr)";
+                  };
+                };   
 
 object 
     CGRTakeFile : XmPushButton {
