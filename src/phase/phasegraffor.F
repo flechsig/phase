@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <11 Feb 00 11:20:32 flechsig> 
+c Time-stamp: <24 Mar 00 16:31:11 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -72,7 +72,7 @@ c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile',metaname
+           type*,'open postsciptfile ',metaname
 c           open(unit=11,file=metaname,
 c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
            open(unit=11,file=metaname,STATUS='UNKNOWN',
