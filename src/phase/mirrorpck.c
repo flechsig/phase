@@ -1,3 +1,8 @@
+/*  File      : /home/pss060/sls/flechsig/phase/src/phase/mirrorpck.c */
+/*  Date      : <28 Oct 99 10:00:19 flechsig>  */
+/*  Time-stamp: <28 Oct 99 10:00:49 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
 /*  File      : /home/vms/flechsig/vms/phas/phasec/mirrorpck.c */
 /*  Date      : <02 Oct 97 08:12:25 flechsig>  */
 /*  Time-stamp: <15 Oct 97 15:08:00 flechsig>  */
@@ -9,9 +14,9 @@
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
 
-#include stdio  
-#include stdlib 
-#include descrip
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <descrip.h>
 
 #include "cutils.h"
 #include "mirrorpck.h"

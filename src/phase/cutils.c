@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <15 Oct 98 07:40:52 flechsig>  */
+/*  Time-stamp: <28 Oct 99 09:55:24 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
@@ -8,12 +8,12 @@
 /* Stand: 24-APR-1998                                          */
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
-#include stdio  
-#include stdlib   
-#include string
-#include time 
-#include math
-#include descrip                      /* for FORTRAN- String */    
+#include <stdio.h>  
+#include <stdlib.h>   
+#include <string.h>
+#include <time.h> 
+#include <math.h>
+#include <descrip.h>                      /* for FORTRAN- String */    
 
 #include "cutils.h"
 

@@ -1,11 +1,16 @@
+/*  File      : /home/pss060/sls/flechsig/phase/src/phase/geometrypck.c */
+/*  Date      : <28 Oct 99 09:57:07 flechsig>  */
+/*  Time-stamp: <28 Oct 99 09:58:04 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.C      */
 /* Datum: 19.JUL.1994                                          */
 /* Stand: 12-JUN-1996                                          */
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
 
-#include stdio
-#include stdlib
+#include <stdio.h>
+#include <stdlib.h>
 #include "cutils.h"
 #include "geometrypck.h"      
                              
@@ -83,3 +88,4 @@ void ginitdatset(struct gdatset *x)
 	 x->iflag	= D0iflag; 
          x->azimut      = D0azimut;
 }
+/* end /home/pss060/sls/flechsig/phase/src/phase/geometrypck.c */
