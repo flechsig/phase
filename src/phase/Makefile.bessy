@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
 # Date      : <15 Oct 99 11:36:53 flechsig> 
-# Time-stamp: <20 Dec 99 15:32:33 flechsig> 
+# Time-stamp: <07 Jan 00 12:56:03 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 # 
 # Makefile for Alpha and VAX @ BESSY
@@ -108,10 +108,12 @@ makewhat:
 # for vax
 $(PROGRAM): $(OBJECTSVAX)
 	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+	copy news. phase$lib:*
 
 # for axp
 $(PROGRAM)$(ALPH): $(OBJECTSAXP)   
-	link$(LINKFLAGS)$(PROGRAM)$(ALPH) $(OBJECTSAXP),$(LIBSAXP)  
+	link$(LINKFLAGS)$(PROGRAM)$(ALPH) $(OBJECTSAXP),$(LIBSAXP)
+	copy news. phase$lib:*
 
 $(DESTDIR)PHASE.uid : $(PHASEUILS)
         define/user/nolog uil$include decw$include 

@@ -1,6 +1,6 @@
 # File      : /home/vms/flechsig/vms/phas/phasec/makefile
 # Date      : <19 Mar 97 11:31:08 flechsig> 
-# Time-stamp: <20 Dec 99 15:31:59 flechsig> 
+# Time-stamp: <07 Jan 00 12:57:16 flechsig> 
 # Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 # Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]MAKEFILE.
@@ -107,10 +107,12 @@ makewhat:
 # for vax
 $(PROGRAM): $(OBJECTSVAX)
 	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+	copy news. phase$lib:*
 
 # for axp
 $(PROGRAM)$(ALPH): $(OBJECTSAXP)   
-	link$(LINKFLAGS)$(PROGRAM)$(ALPH) $(OBJECTSAXP),$(LIBSAXP)  
+	link$(LINKFLAGS)$(PROGRAM)$(ALPH) $(OBJECTSAXP),$(LIBSAXP)
+	copy news. phase$lib:*  
 
 $(DESTDIR)PHASE.uid : $(PHASEUILS)
         define/user/nolog uil$include decw$include 
