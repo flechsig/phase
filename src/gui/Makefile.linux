@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux
 # Date      : <04 Nov 99 16:25:46 flechsig> 
-# Time-stamp: <04 Nov 99 16:45:03 flechsig> 
+# Time-stamp: <04 Nov 99 17:07:51 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE GUI on LINUX
@@ -19,7 +19,7 @@ UID		= uid
 #!!!!!!!!!!!!!!! flags       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 UILFLAGS	= -o  
 ################ dependencies ###########################################
-AUX       = version.uil
+AUX       = version.uil Makefile.linux Makefile.vms
 PHASEUILS = phase.uil geometrybox.uil mirrorbox.uil \
 	    grafbox.uil filemenu.uil commandsmenu.uil \
 	    phasevalue.uil editmenu.uil sourcebox.uil \
