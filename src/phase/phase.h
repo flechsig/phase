@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <08 Mar 04 13:42:14 flechsig>  */
+/*   Time-stamp: <24 Mar 04 11:17:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,7 +12,8 @@
 #define PHASE_H   
 /* dont show a watch (work around static variables) */
 #define NOWATCH     
-      
+
+#define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */    
 /* #define LOGFILE             /* compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
@@ -417,7 +418,7 @@ typedef double MAP70TYPE [70][70];
 typedef double MAP7TYPE [5][5][5][5];    
 
 typedef struct grdatstructtype {
-  double ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma;
+  double ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma,tmi,tma;
   int    zeilen, psfile, status, plotstyle, iykanal, izkanal;
   char   titel[80];
 } GRDATSTRUCTTYPE;  
@@ -687,7 +688,7 @@ void    *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
 void 	ActivateFileSelection(int, char *), 
   activate_proc(),  
   AddBLElement(struct BeamlineType *, char *),
-  AutoScale(struct RayType *, GRDATSTRUCTTYPE *),  
+  AutoScale(struct RayType *, GRDATSTRUCTTYPE *, struct BeamlineType *),  
   BatchMode(char *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),

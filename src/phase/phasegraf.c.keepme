@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <19 Feb 04 10:26:40 flechsig>  */
+/*  Time-stamp: <24 Mar 04 14:47:26 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -88,6 +88,10 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
     if (strcmp(fn, "footprint") == 0)   gr->plotstyle= 17; else 
       if (strcmp(fn, "divergency") == 0)  gr->plotstyle= 18; else   
 	if (strcmp(fn, "resolution") == 0)   gr->plotstyle= 19; else 
+/*  <<============== Einrueckung =========== */
+    if (strcmp(fn, "phase(y,z)") == 0) gr->plotstyle= 20; else 
+      if (strcmp(fn, "time(y,z)") == 0) gr->plotstyle= 21; else   
+	if (strcmp(fn, "time (histogr)") == 0) gr->plotstyle= 22; else 
 	  if (strcmp(fn, "horizontal profile") == 0) gr->plotstyle= 15; else 
 	    if (strcmp(fn, "vertical profile") == 0)   gr->plotstyle= 16; else 
 	      if (strcmp(fn, "BOX plot") == 0)     gr->plotstyle= 1; else 
@@ -232,7 +236,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
        strcpy(gr->titel, "PHASE- graphic output"); 
        gr->status= gr->zeilen= 0; 
        gr->ymi= gr->yma= gr->zmi= gr->zma= gr->dymi= 
-       gr->dyma= gr->dzmi=gr->dzma= 0.0;    
+       gr->dyma= gr->dzmi= gr->dzma= gr->tmi= gr->tma= 0.0;    
     }  
    
     if ((gr->status & PLdatfromfile) == PLdatfromfile) 
@@ -296,10 +300,11 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
     return vo;
 }  /* SetGrDatStruct end */
 
-void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr)  
+void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr, 
+	       struct BeamlineType *bl)  
 /* Autoscale der grdatstruct an hand der daten 	*/   
 /* Uwe 29.7.96 					*/   
-/* last modifyed Uwe 9.8.96 			*/   
+/* */ 
 {
    int i, zahl;
    
@@ -311,7 +316,8 @@ void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr)
        gr->ymi=  gr->yma=  rp->y; 
        gr->zmi=  gr->zma=  rp->z; 
        gr->dymi= gr->dyma= rp->dy; 
-       gr->dzmi= gr->dzma= rp->dz;   
+       gr->dzmi= gr->dzma= rp->dz;
+       gr->tmi = gr->tma=  rp->phi;
    
        for (i= 0; i< zahl; i++, rp++)
        {
@@ -323,15 +329,20 @@ void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr)
          gr->dymi = min(rp->dy,gr->dymi); 
          gr->dyma = max(rp->dy,gr->dyma);    
          gr->dzmi = min(rp->dz,gr->dzmi); 
-         gr->dzma = max(rp->dz,gr->dzma); 
+         gr->dzma = max(rp->dz,gr->dzma);
+	 gr->tmi  = min(rp->phi, gr->tmi) * 
+	   bl->BLOptions.lambda/ (2 * PI * LIGHT_VELO); 
+         gr->tma =  max(rp->phi, gr->tma) * 
+	   bl->BLOptions.lambda/ (2 * PI * LIGHT_VELO);
        }
    }
     /* fuers auge */
    /*  printf("call Beauty\n"); */
-   Beauty(&gr->ymi, &gr->yma);
-   Beauty(&gr->zmi, &gr->zma);
+   Beauty(&gr->ymi,  &gr->yma);
+   Beauty(&gr->zmi,  &gr->zma);
    Beauty(&gr->dymi, &gr->dyma);
    Beauty(&gr->dzmi, &gr->dzma);
+   Beauty(&gr->tmi,  &gr->tma);
 } /* end scale */
 
 void AutoScalePS(struct PSDType *ps, GRDATSTRUCTTYPE *gr)  
@@ -520,8 +531,8 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
 
        for (i= 0; i< rz; i++)
        {
-           fscanf(f, "%lf %lf %lf %lf\n", 
-		&Rp[i].y, &Rp[i].z, &Rp[i].dy, &Rp[i].dz);   
+           fscanf(f, "%lf %lf %lf %lf %lf\n", 
+		&Rp[i].y, &Rp[i].z, &Rp[i].dy, &Rp[i].dz, &Rp[i].phi);   
        /*    printf("%lf %lf %lf %lf\n", 
 		Rp[i].y, Rp[i].z, Rp[i].dy, Rp[i].dz);    */
        }

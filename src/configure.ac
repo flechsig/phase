@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <20 Feb 04 08:50:42 flechsig> 
+#   Time-stamp: <23 Mar 04 09:08:08 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -136,6 +136,11 @@ AC_PATH_X
 AC_PATH_XTRA
 AC_HEADER_STDC
 AC_CHECK_HEADERS(strings.h unistd.h)
+AC_CHECK_HEADERS([Xm/Text.h X11/Xlib.h],
+    [
+# AC_MSG_NOTICE(Motif headers found )
+],
+    [AC_MSG_WARN([[headers missing - Motif installation is probably not OK]])])
 AC_SUBST([CPPFLAGS],[-I$x_includes])
 
 dnl Checks for typedefs, structures, and compiler characteristics.

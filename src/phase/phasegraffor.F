@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
 c$$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c$$$ Time-stamp: <19 Feb 04 10:39:32 flechsig> 
+c$$$ Time-stamp: <24 Mar 04 16:38:53 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -10,7 +10,9 @@ c$$$ $Author$
 
 c
 c fortran file which will be preprocessed #define LINUX #define VMS
-c
+c !!! wird die Struktur grdatstructtype in phase.h veraendert
+c     muss dies hier von Hand in den betroffenen Subroutinen 
+c     nachgefuehrt werden (UF 24.3.04)
 
 
        	subroutine inithplot 
@@ -49,15 +51,15 @@ c
         implicit none
 
 	structure/struct/
-            real*8 ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma 
+            real*8 ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma,tmi,tma 
             integer zeilen,psfile,status,plotsyle,
      &              iykanal,izkanal,ititel(80)
         end structure
         record /struct/ s
 	dimension raysout(5,1)                  ! gummilaenge
 	character*(*) titel,metaname
-        real*4        y1,y2,z1,z2       
-        real*8	      dlfac,lambda,dlf,raysout
+        real*4        y1,y2,z1,z2,scale       
+        real*8	      dlfac,lambda,dlf,raysout,scaled
         integer       ifile,i,iy,iz,istat
 
 c temporarely fixed
@@ -114,12 +116,15 @@ c bei postscript ab hier doppelt
         write(*,*)'prior hbook2 ny nz      : ',iy,iz        
         write(*,*)'prior hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
 #endif   
-      	call hbook2(200,'PHASE',iz,z1,z2,iy,y1,y2,5000.)         
+      	call hbook2(200,'PHASE',iz,z1,z2,iy,y1,y2,5000.)
+        call hbook2(201,'PHASE',iz,z1,z2,iy,y1,y2,5000.)
+        call hbook2(202,'PHASE',iz,z1,z2,iy,y1,y2,50000.)
         call hbook1(300,'PHASE',iy,y1,y2,5000.)   
         call hbook1(400,'PHASE',iz,z1,z2,5000.)  
         y1=(y1*dlfac+lambda)*1e6
         y2=(y2*dlfac+lambda)*1e6
         call hbook1(700,'PHASE',iy,y1,y2,5000.)   ! dlambda 
+
          
         y1=s.dymi*1e3
         y2=s.dyma*1e3
@@ -129,22 +134,50 @@ c bei postscript ab hier doppelt
         write(*,*)'diverg.: book dy1,dy2,dz1,dz2: ',y1,y2,z1,z2     
 #endif
         call hbook1(500,'PHASE',iy,y1,y2,5000.)   
-        call hbook1(600,'PHASE',iz,z1,z2,5000.)       
+        call hbook1(600,'PHASE',iz,z1,z2,5000.)  
+
+c time structure
+        y1=s.tmi*1e15         ! output in fs
+        y2=s.tma*1e15
+#ifdef DEBUG
+        write(*,*)'time: book iy,y1,y2: ',iy,y1,y2     
+#endif
+        call hbook1(800,'PHASE',iy,y1,y2,5000.)   
+     
 c--------- histogramme gebucht ------------------------
 
 c--------- fuellen ------------------------------------
 #ifdef DEBUG
         write(*,*)'fill histogram'
-#endif        
-        do i=1,s.zeilen 
+#endif  
+        if (s.plotsyle.ge.20)then 
+           do i=1,s.zeilen 
 c           write(*,*)'fill histogr.',i  
-	call rtfill(raysout(1,i),raysout(2,i),
-     &                 raysout(3,i),raysout(4,i),
-     &	               lambda,dlfac)
-     	enddo
+              call rtfillnorm(raysout(1,i),raysout(2,i),
+     &                        raysout(5,i),lambda)
+           enddo
+           if (s.plotsyle.eq.20)then
+               call hopera(201,'/',200,202,1.0,1.0)
+           else
+               scaled=lambda/1.8849e-3      !1.8849e-3= 1e15(fs)/(2 pi c(mm/s))
+               scale=sngl(scaled)
+c manchmal funktioniert das skalieren nicht- keine Ahnung warum
+c               write(*,*)'scaled,scale',scaled,scale
+               call hopera(201,'/',200,202,scale,1.0) 
+           endif
+ 
+        else
+           do i=1,s.zeilen 
+c           write(*,*)'fill histogr.',i  
+              call rtfill(raysout(1,i),raysout(2,i),
+     &                    raysout(3,i),raysout(4,i),
+     &	                  lambda,dlfac,raysout(5,i))
+           enddo
+        endif
 #ifdef DEBUG	
         write(*,*)'for: histograms filled'  
-#endif        
+#endif      
+c--------- end fuellen --------------------------------  
         call makeplotf(titel,s.plotsyle) ! eigentliches plotten
         call iuwk(0,1)                   ! puffer leeren update alle ws S.12
 
@@ -212,7 +245,7 @@ c
 	implicit real*8(a-h,o-z)    
   
 	structure/struct/
-            real*8 ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma 
+            real*8 ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma,tmi,tma 
             integer zeilen,psfile,status,plotsyle,
      &              iykanal,izkanal,ititel(80)
         end structure
@@ -538,7 +571,19 @@ c************************************************************************
            call hplot(700,' ',' ',0) 
            call hplax('[l] "M# nm "N#', 'rays') 
            call hplopt('NSTA',1) 
-        endif      
+        endif  
+        if(ist.eq.20)then 
+           call hplot(202,'SURF3',' ',0)
+           call hplax('z (mm)', 'y (mm)', 'phase (rad)') 
+        endif   
+        if(ist.eq.21)then 
+           call hplot(202,'SURF3',' ',0)
+           call hplax('z (mm)', 'y (mm)', 'time (fs)')
+        endif   
+        if(ist.eq.22)then 
+           call hplot(800,' ',' ',0) 
+           call hplax('time (fs)', 'rays') 
+        endif 
         RETURN
 	END 
 c****** end   subroutine makeplotf(titel,ist) ***************************       
@@ -564,6 +609,9 @@ c************************************************************************
         if(ist.eq.19)then
 	  ixkanal=300 
         endif
+        if(ist.eq.20.or.ist.eq.21)then
+	  ixkanal=30 
+        endif
         iykanal=ixkanal 
 
         RETURN
@@ -571,18 +619,18 @@ c************************************************************************
 c************  end  subroutine kanalzahlf(ist,ixkanal,iykanal) ************    
 
 c************************************************************************
-        subroutine rtfill(yd,zd,dyd,dzd,lam,dla)                   
+        subroutine rtfill(yd,zd,dyd,dzd,lam,dla,dt)                   
 c last modification: 30 Sep 97 10:00:14 flechsig
-	implicit real*8(a-h,o-z)  
 c************************************************************************
-        real*4 dy,dz,y,z,la       
-        real*8 lam,dla
+        real*4 dy,dz,y,z,la,t       
+        real*8 yd,zd,dyd,dzd,lam,dla,dt
 
         y=sngl(yd)
         z=sngl(zd)      
         dy=sngl(dyd)*1e3
         dz=sngl(dzd)*1e3  
-        la=sngl(yd*dla+lam)*1e6
+        la=sngl(yd*dla+lam)*1e6 
+c        t=sngl(dt)*5.309e2       ! 1e15/(2pi c)  time in fs
 c        phi= 1.0
 		     
         call hfill(200,z,y,1.0)  
@@ -590,10 +638,35 @@ c        phi= 1.0
         call hfill(400,z,0.0,1.0)   
         call hfill(500,dy,0.0,1.0)  
         call hfill(600,dz,0.0,1.0)   
-        call hfill(700,la,0.0,1.0)  
+        call hfill(700,la,0.0,1.0)
+c        call hfill(800,t,0.0,1.0) 
                                   
         RETURN
 	END 
 c************  end  subroutine rtfill() ************    
+
+c************************************************************************
+        subroutine rtfillnorm(yd,zd,pd,lambda)  
+c        implicit real*8(a-h,o-z)
+C special for phase and time fill histogram and average
+c************************************************************************
+        real*4 y,z,t,p       
+        real*8 yd,zd,pd,td,lambda
+
+        y=sngl(yd)
+        z=sngl(zd) 
+        p=sngl(pd)              
+        td= pd* lambda/ 1.8849e-3
+        t=sngl(td)         ! (1e15/1.8849e12 = 2*3.1415*3e11))   2pi c  t in fs
+
+c        write(*,*)'p,t,td,pd,lambda',p,t,td,pd,lambda	
+        call hfill(201,z,y,p) 
+        call hfill(200,z,y,1.0) 
+        call hfill(800,t,0.0,1.0) 
+                                  
+        RETURN
+	END 
+c************  end  subroutine rtfillnorm() ************    
+
 
 c*************** end phasegraffor.for   ***********************************

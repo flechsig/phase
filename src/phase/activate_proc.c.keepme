@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <19 Feb 04 10:32:31 flechsig>  */
+/*   Time-stamp: <24 Mar 04 11:16:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -825,7 +825,7 @@ void activate_proc(w, tag, reason)
 	vo= SetGrDatStruct(PHASESet.imageraysname, &Beamline, 
 			   &grdatstruct);  
 	if ((grdatstruct.status & PLrttype) > 0)   
-	  AutoScale((struct RayType *)vo, &grdatstruct);  
+	  AutoScale((struct RayType *)vo, &grdatstruct, &Beamline);  
 	else 
 	  AutoScalePS((struct PSDType *)vo, &grdatstruct);  
 

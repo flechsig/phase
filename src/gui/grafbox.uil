@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/grafbox.uil
 ! Date      : <11 Apr 97 14:15:22 flechsig> 
-! Time-stamp: <24 Mar 04 08:40:54 flechsig> 
+! Time-stamp: <24 Mar 04 10:59:48 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]GRAFBOX.UIL
@@ -722,7 +722,7 @@ object
     CGrDefault : XmPushButton widget {
         arguments {
             arguments		  ESButtonArgs;      
-   	    XmNlabelString      = "Defaults";
+   	    XmNlabelString      = "AutoScale";
             XmNtopWidget        = XmSeparator CGrSeparator;
             XmNleftAttachment   = XmATTACH_WIDGET;
             XmNleftWidget       = XmPushButton CGrApply;

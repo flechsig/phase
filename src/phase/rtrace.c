@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <24 Mar 04 08:09:44 flechsig>  */
+/*   Time-stamp: <24 Mar 04 11:23:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -724,8 +724,8 @@ void WriteRayFile(char *name, int *zahl, struct RayType *Rp)
        fprintf(f, "%d %d\n", *zahl, 0);    
       
        for (i= 0; i< *zahl; i++)
-           fprintf(f, "% .16lE % .16lE % .16lE % .16lE\n", 
-		Rp[i].y, Rp[i].z, Rp[i].dy, Rp[i].dz);         
+           fprintf(f, "% .6lE % .6lE % .6lE % .6lE % .6lE\n", 
+		Rp[i].y, Rp[i].z, Rp[i].dy, Rp[i].dz, Rp[i].phi);         
        fclose(f);   
        printf("  --> done\n");     
     }
