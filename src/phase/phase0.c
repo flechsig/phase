@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <31 Oct 03 10:38:12 flechsig>  */
+/*   Time-stamp: <31 Oct 03 11:02:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -770,7 +770,8 @@ void FileSelectionProc(Widget wi,
 	  XmListAddItem(widget_array[kCCGList], path, pos);
 	  break;     
 	case kEBLAdd:  
-	  AddBLElement(&Beamline, &path);
+	  /* UF 31.10.	  AddBLElement(&Beamline, &path);*/
+	  AddBLElement(&Beamline, fname);
 	  break;     
 	  
 	case kCOptiAdd:
