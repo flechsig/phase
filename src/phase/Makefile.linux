@@ -1,32 +1,32 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <05 Nov 99 09:16:51 flechsig> 
+# Time-stamp: <12 Nov 99 09:16:55 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
 #########################################################################
 SHELL = /bin/sh
 
-DEFS        = -D LINUX
+DEFS        = -DLINUX
 CC          = gcc -O
 #FOR        = pgf77 -c
 FOR         = f77 -c
 YACC        = bison -y
-INSTALL     = /usr/local/bin/install -c
-INSTALLDATA = /usr/local/bin/install -c -m 644
+INSTALL     = /usr/bin/install -c
+INSTALLDATA = /usr/bin/install -c -m 644
 CDEBUG      = -g
 MAKE        = make
-
-
-CFLAGS  = $(CDEBUG) -I. -I$(srcdir) $(DEFS)     # -c
-FFLAGS  = -w -f -s -N3 -N51 
-LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lm -lc
-LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
 
 srcdir     = .
 #prefix    = /usr/local
 prefix     = /home/pss060/sls/flechsig
 PHASEDIR   = $(prefix)/phase
+
+#LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
+CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS)      -c
+#FFLAGS  = -w -f -s -N3 -N51
+FFLAGS  = -f -N110 -N109 -W -N90 -N22 -B108 -s
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
 
 .phony: all makewhat    
 
@@ -38,11 +38,13 @@ OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = -L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
-          -lgrafX11 -lpacklib -lpawlib -lkernlib \
-          -L/usr/pgi/linux86/lib -lpgftnrtl \
-	  -L/home/pss060/sls/flechsig/phase/lib \
-          -lphaselib.a
+LIBS    = /home/pss060/sls/flechsig/phase/lib/phaselib.a \
+          -L/tools/soft/cern/99/lib -lgraflib -lgrafX11\
+	  -lkernlib -lpacklib -lphtools -lmathlib -lpawlib \
+	  -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf90math \
+	  /home/pss060/sls/flechsig/phase/libf2c.a
+#-L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
+#          -lgrafX11 -lpacklib -lpawlib -lkernlib \
 #########################################################################
 OBJECTC = phase.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
@@ -50,13 +52,13 @@ OBJECTC = phase.o phasec.o \
 	  mirrorpck.o pst.o \
 	  cutils.o rtrace.o 
 OBJECTF=  phasegraffor.o phasefor.o \
-	  phase_source_10.o 
+	  phase_source.o 
 #	  phase_integration_10.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct_10.h
-AUX     = version.h Makefile.linux Makefile.bessy Makefile.psicl0 #\
-       #   phase_struct_10.for
+AUX     = version.h Makefile.linux Makefile.bessy Makefile.psicl0 \
+          phase_struct_10.for
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
@@ -79,7 +81,7 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 %.o : %.c $(PHASEHS)
 	$(CC) $(CFLAGS) -o $@ $< 
 
-%.o : %.for 
+%.o : %.for phase_struct.for
 	$(FOR) $(FFLAGS) $@ $<   
 
 ##########################################################################
