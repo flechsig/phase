@@ -61,5 +61,7 @@ Initialisierungsfehler bei ell. Elementen behoben
           batchmode with source from file fixed
 09 Mar 04 Generic Undulator source 
           batchmode with source from file fixed in full RT mode
+24 Mar 04 full ray trace and single ray trace 
+          includes time/phase calculation
 ****************    end of NEWS  *****************           
 **************************************************
