@@ -1,0 +1,103 @@
+! File      : /home/pss060/sls/flechsig/phase/src/gui/helpmenu.uil
+! Date      : <28 Oct 99 11:39:43 flechsig> 
+! Time-stamp: <28 Oct 99 11:40:56 flechsig> 
+! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+
+! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]HELPMENU.UIL
+! Datum: 11.AUG.1994
+! Stand: 12-AUG-1994
+! Autor: FLECHSIG, BESSY Berlin
+
+
+!The help widget object
+
+!auskommentiert
+!object
+!    main_help : DXmHelpDialog {
+!        arguments            
+!            {
+!            DXmNapplicationName = compound_string("Help Example");  
+!            DXmNglossaryTopic   = compound_string("glossary");
+!            DXmNoverviewTopic   = compound_string("overview");  
+!            DXmNlibrarySpec     = compound_string("PHASE$prg:PHASE.hlb");
+!            };
+!        };     
+                
+object
+    help_menu : XmPulldownMenu                          
+        {
+        controls   
+            {                 
+            XmPushButton        help_sensitive;
+            XmPushButton        help_window; 
+            XmPushButton        help_version; 
+            XmPushButton        help_onhelp;
+            };
+        callbacks
+            {                             
+            XmNhelpCallback     = procedure sens_help_proc(k_help_help);
+            }; 
+        };         
+                                           
+
+object
+    help_sensitive : XmPushButton
+        {                  
+        arguments
+            {                
+            XmNlabelString      = k_sensitive_label_text;
+            XmNmnemonic         = keysym("C");  
+            };     
+        callbacks
+            {                                                  
+            XmNactivateCallback = procedure activate_proc (k_help_sensitive);
+            XmNhelpCallback     = procedure sens_help_proc(k_sensitive_help);
+            };                                     
+        };                                                 
+
+object
+    help_onhelp : XmPushButton
+        {                  
+        arguments
+            {
+            XmNlabelString      = k_onhelp_label_text;
+            XmNmnemonic         = keysym("H");
+            };     
+        callbacks
+            {                             
+            XmNactivateCallback = procedure activate_proc (k_help_onhelp);
+            XmNhelpCallback     = procedure sens_help_proc(k_onhelp_help);
+            };     
+        };                                                 
+             
+object
+    help_version : XmPushButton   
+        {
+        arguments 
+            {                                  
+            XmNlabelString      = k_about_label_text;
+            XmNmnemonic         = keysym("V");
+            };
+        callbacks
+            {
+            XmNactivateCallback = procedure activate_proc (k_help_about);
+            XmNhelpCallback     = procedure sens_help_proc(k_about_help);
+            };                      
+        };   
+
+object         
+    help_window : XmPushButton 
+        {
+        arguments 
+            {
+            XmNlabelString      = k_overview_label_text;
+            XmNmnemonic         = keysym("W");
+            };
+         callbacks
+            {                           
+            XmNactivateCallback = procedure activate_proc (k_help_overview);
+            XmNhelpCallback     = procedure sens_help_proc(k_overview_help);
+            };                                   
+        };
+
+! end /home/pss060/sls/flechsig/phase/src/gui/helpmenu.uil
