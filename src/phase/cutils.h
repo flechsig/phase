@@ -1,7 +1,12 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/cutils.h */
-/*  Date      : <28 Oct 99 12:24:49 flechsig>  */
-/*  Time-stamp: <17 Feb 04 14:33:24 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
+/*   Date      : <08 Apr 04 15:05:08 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:05:29 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 #ifndef CUTILS_H
 #define CUTILS_H    
