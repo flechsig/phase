@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <20 Dec 99 13:05:18 flechsig> 
+C Time-stamp: <20 Dec 99 14:55:20 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -252,24 +252,40 @@ c      ddistz, ddisty sind berechnet
 c----------------------------------------------------------
 
 c-----------------------------------------------------------      
-        
-	if(pso.intmod.ne.2)then
-          write(*,*)' integration -> equidistant grid' 
-          write(*,*)'int. grenz. winkel dy',
-     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
-          write(*,*)'int. grenz. winkel dz',
-     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
-
-          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
-	  idivy=pso.ndyfix          	 ! integrationspunkte
-	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
-	  idivz=pso.ndzfix
-          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
-          ddzi=divz/floatj(idivz-1)
-        endif
+C auskommentiert UF 21.12.99        
+c	if(pso.intmod.ne.2)then
+c          write(*,*)' integration -> equidistant grid' 
+c          write(*,*)'int. grenz. winkel dy',
+c     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
+c          write(*,*)'int. grenz. winkel dz',
+c     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
+c
+c          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
+c	  idivy=pso.ndyfix          	 ! integrationspunkte
+c	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
+c	  idivz=pso.ndzfix
+c          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
+c          ddzi=divz/floatj(idivz-1)
+c        endif
 c--- schrittweiten fuer integration bestimmt fuer equidistant grid 
 c     ddyi, ddzi sind berechnet
 c -----------------------------------------------------------------         
+C neu UF 21.12.99
+c       if(pso.intmod.ne.2)then
+          write(*,*)' integration -> equidistant grid' 
+          write(*,*)'int. grenz. winkel dy',
+     &               xi.ymin,xi.ymax,xi.ianzy0 
+          write(*,*)'int. grenz. winkel dz',
+     &               xi.zmin,xi.zmax,xi.ianzz0 
+
+          divy=xi.ymax-xi.ymin ! ymax, dyminfix integrationsgrenzen (winkel)
+	  idivy=xi.ianzy0          	 ! integrationspunkte
+	  divz=xi.zmax-xi.zmin ! divz gesamter Integrationsbereich
+	  idivz=xi.ianzz0
+          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
+          ddzi=divz/floatj(idivz-1)
+        endif
+
 
 c************* Bildpunkt generieren *******************************
 
