@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <20 Dec 99 13:30:19 flechsig>  */
+/*  Time-stamp: <05 Jan 00 17:42:02 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -877,10 +877,6 @@ void SetDefaultParameter(struct BeamlineType *bl)
 } /* end SetDefaultParameter  */
 
 void InitParameterBox(struct BeamlineType *bl, char *neu) 
-/* modification: 23 Apr 97 09:20:47 flechsig */
-/* modification: 09 Jun 97 17:18:29 flechsig */
-/* modification: 31 Oct 97 08:25:50 flechsig */
-
 {
   struct OptionsType   *op; 
   struct PSOptionsType *pop;
@@ -1329,7 +1325,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   
   /* Speicherplatz fuer Xstrings freigeben */  
 #ifdef DEBUG  
-  printf("InitParameterBox: free memory: %d\n"); /* fuer debug */
+  printf("InitParameterBox: free memory: %d items\n", itemzahl); 
 #endif  
   i= itemzahl; while(--i >= 0) XmStringFree(str[i]);  /*XtFree(str );*/
   i= 4;        while(--i >= 0) XmStringFree(str1[i]); /*XtFree(str1);*/

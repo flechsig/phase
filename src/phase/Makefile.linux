@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <23 Dec 99 13:28:24 flechsig> 
+# Time-stamp: <23 Dec 99 13:35:41 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -28,7 +28,7 @@ PHASEDIR   = $(prefix)/phase
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
 #FFLAGS  = -w -f -s -N3 -N51
 #FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
-FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 
+FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 -N22
 LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc 
 #FFLAGS for absoft f77 compiler
 #	-g generate debugging information
@@ -43,6 +43,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
 #	-C Check array boundaries (for debugging only)
 #	-B111 Validate FPU stack after procedure calls (for debugging only)
 #	-m0 give more error messages
+#	-N22 append underscore to common block names (wichtig wegen pawc)
 
 .phony: all makewhat    
 #########################################################################
