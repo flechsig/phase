@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <11 Jan 00 14:44:27 flechsig> 
+c Time-stamp: <12 Jan 00 09:27:46 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -18,10 +18,13 @@ c (5) stop durch return ersetzt
 c        if(iiregion.eq.0)then ...
 c        if((iend(iiregion)-istart(iiregion)+1).eq.2)then ...
 c
+c (6) neuer Aufrufparameter s in adaptive_int und phacor 
+c      wird zum Ruecksprung benutzt
+c     siehe (5) und dort gesetzt
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
 c*********************************************************
-      subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
+      subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st,s)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -59,6 +62,7 @@ c************************************************
 	record /apertures/ apr
 	record /statistics/ st
 	record /map4/ m4
+        record /psimagest/ s
 
 c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
 c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
@@ -183,12 +187,12 @@ c-----------------------------------------------------------
 	enddo		
 	endif
 
-      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz)
+      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,s)
 
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
      &			xir.yzintya,xir.yzintyp)
 
-      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz)
+      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,s)
 
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
      &			xir.yzintza,xir.yzintzp)
@@ -811,7 +815,7 @@ c**************************************************************
 	end
 
 c***********************************************************
-	subroutine phacor(cs,ra,xi,xir,dx,amp,pha,ianz)
+	subroutine phacor(cs,ra,xi,xir,dx,amp,pha,ianz,s)
 c***********************************************************
 c
 c	PHACOR funktioniert folgendermassen:
@@ -916,6 +920,7 @@ c-----------------
 	record /integration_results/ xir
 	record /integration/ xi
         record /control_flags/ ifl
+        record /psimagest/ s
 
 	dimension dx(4096),x(4096),
      &            amp(4096),pha(4096),pha_new(4096),
@@ -1073,6 +1078,8 @@ c------ now, search ianz0
 	  type*,' can not find region of stationary phase'
 	  type*,' increase number of grid points'
 c UF 11.11.00	  stop
+          s.iwidth= 1
+          s.iheigh= 1
           return
 	endif
 
@@ -1080,6 +1087,8 @@ c UF 11.11.00	  stop
 	  type*,' region of stationary phase has only two points'
 	  type*,' increase number of grid points'
 c	UF 11.11.00  stop
+          s.iwidth= 1
+          s.iheigh= 1
           return
 	endif
 
