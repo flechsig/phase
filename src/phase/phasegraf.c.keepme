@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <05 Jan 00 17:29:22 flechsig>  */
+/*  Time-stamp: <11 Jan 00 14:55:06 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -142,9 +142,9 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
 			    if (strcmp(fn, "Ez real") == 0) 
 			      gr->status= PLEzreal | PLphspacetype; else
 				if (strcmp(fn, "Ey imag.") == 0) 
-				  gr->status= PLEzreal | PLphspacetype; else
+				  gr->status= PLEyimag | PLphspacetype; else
 				    if (strcmp(fn, "Ez imag.") == 0) 
-				      gr->status= PLEzreal | PLphspacetype; 
+				      gr->status= PLEzimag | PLphspacetype; 
   /* <<============== Einrueckung =========== */
    else
      if (strcmp(fn, "simp real") == 0) 
