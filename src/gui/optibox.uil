@@ -1,0 +1,495 @@
+! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]OPTIBOX.UIL
+! Datum: 26.JUL.1994
+! Stand: 27-JAN-1995
+! Autor: FLECHSIG, BESSY Berlin
+
+
+object
+    CCOptiDialog  : XmFormDialog {                   
+        arguments {
+            XmNdialogTitle      = "Beamline Optimization/ Extraction"; 
+            XmNdialogStyle      = XmDIALOG_MODELESS;
+            XmNnoResize         = true;
+            XmNdefaultPosition  = false;
+            XmNx                = 250;
+            XmNy                = 350;
+            XmNautoUnmanage     = false;
+            XmNallowOverlap     = false;
+            !XmNdefaultButton    = XmPushButton CGrOK;
+            !XmNcancelButton     = XmPushButton CGrCancel;
+            XmNhorizontalSpacing = 10;
+            XmNverticalSpacing  = 20;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            };
+            controls {
+            XmForm              COptiInputForm;
+            XmSeparator         COptiSeparator0; 
+            XmPushButton        COptiOK;
+            XmPushButton        CGrApply;
+            XmPushButton        CGrDefault;
+            XmPushButton        COptiCancel;    
+            XmSeparator         COptiSeparator1; 
+            };          
+        callbacks { MrmNcreateCallback = procedure create_proc(kCCOptiDialog);};
+        };   
+
+object
+    COptiInputForm : XmForm {
+        arguments {
+            XmNshadowType       = XmSHADOW_IN;
+            XmNshadowThickness  = 3;
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 10;      
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+            XmNrightOffset      = 10; 
+            XmNallowOverlap     = false;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            XmNforeground       = color('white');   
+            XmNbackground       = color('blue');      
+                         };
+        controls {
+            XmLabel             COptiResultLabel;
+            XmPushButton        COptiResultButton;   
+            XmLabel             COptiMinuitLabel;  
+            XmPushButton        COptiMinuitButton;   
+            XmSeparator         COptiSeph1;  
+	    XmScrolledList      COptiList; 
+            XmSeparator         COptiSeph2;   
+            XmLabel             COptiSelectedLabel;  
+            XmText              COptiT2; 
+            XmScrolledList      COptiList1; 
+            XmSeparator         COptiSeph3;  
+            XmScrolledList      COptiList2; 
+            XmLabel             COptiEditLabel; 
+            XmText              COptiT1;      
+            XmSeparator         COptiSepv1;  
+            XmPushButton        COptiAdd; 
+            XmPushButton        COptiDel;  
+            XmPushButton        COptiAdd1; 
+            XmPushButton        COptiDel1;  
+            XmPushButton        COptiAddOK;  
+                       	};
+        };
+
+object
+    COptiResultLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "Result- File: ";
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 15;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+           };   
+
+object
+     COptiResultButton :  XmPushButton widget {
+               arguments	{
+	       XmNlabelString 		= "opti_out.dat";
+	       XmNtopAttachment		= XmATTACH_FORM;
+               XmNtopOffset        	= 10;    
+               XmNrightAttachment	= XmATTACH_FORM;
+               XmNrightOffset      	= 20;    
+                              	};
+           callbacks {
+              MrmNcreateCallback  = procedure create_proc (kCOptiResultButton);
+              XmNactivateCallback = procedure activate_proc(kCOptiResultButton);
+        };   
+    };         
+
+object
+    COptiMinuitLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "Minuit- File: ";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = COptiResultLabel;   
+            XmNtopOffset        = 5;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+           };   
+
+object
+     COptiMinuitButton :  XmPushButton widget{
+               arguments	{
+	       XmNlabelString 		= "minuit.inp";
+	       XmNtopAttachment         = XmATTACH_WIDGET;
+	       XmNtopWidget             = COptiResultButton;  
+               XmNtopOffset        	= 3;    
+               XmNrightAttachment	= XmATTACH_FORM;
+               XmNrightOffset      	= 20;    
+                              	};
+           callbacks {
+              MrmNcreateCallback  = procedure create_proc (kCOptiMinuitButton);
+              XmNactivateCallback = procedure activate_proc(kCOptiMinuitButton);
+        };   
+    };         
+
+object
+    COptiSeph1 : XmSeparator  widget {
+        arguments {
+            XmNtopAttachment    = XmATTACH_FORM;      
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+	    XmNtopOffset        = 85; 
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmHORIZONTAL;
+                	};      
+};  
+
+object
+    COptiList : XmScrolledList {
+        arguments {
+            XmNscrollBarDisplayPolicy = XmSTATIC;  
+            XmNvisibleItemCount = 4;
+            XmNselectionPolicy  = XmSINGLE_SELECT; 
+            XmNunitType         = XmPIXELS;  
+            XmNlistSizePolicy   = XmCONSTANT;
+            XmNwidth		= 400;
+            XmNbackground	= color('white', background);
+            XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = COptiSeph1;     
+            XmNtopOffset        = 10;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+            !XmNrightAttachment  = XmATTACH_WIDGET;
+            !XmNrightWidget      = COptiSepv1;
+            !XmNbottomAttachment = XmATTACH_FORM;    
+            !XmNbottomOffset     = 70;
+            	  };                  
+        callbacks {
+           MrmNcreateCallback       = procedure create_proc(kCOptiList);
+           XmNsingleSelectionCallback = procedure list_proc(kCOptiList); 
+  	};                   
+};
+
+object
+    COptiSeph2 : XmSeparator widget {
+        arguments {
+            XmNtopAttachment    = XmATTACH_FORM;      
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;        
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;
+            XmNtopOffset	= 230;
+            !XmNshadowThickness	= 8;      
+            XmNbottomAttachment	= XmATTACH_FORM;    
+            XmNbottomOffset     = 450; 
+	};      
+};    
+
+object
+    COptiSelectedLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "select items!";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = COptiSeph2;   
+            XmNtopOffset        = 10;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+        callbacks {
+           MrmNcreateCallback  = procedure create_proc (kCOptiSelectedLabel);
+		};
+          };   
+
+object  
+    COptiT2 : XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET; 
+	    XmNtopWidget        = COptiSeph2;     
+            XmNtopOffset        = 6;    
+            XmNleftAttachment   = XmATTACH_WIDGET; 
+            XmNleftWidget       = COptiSelectedLabel;    
+            XmNeditable		= false;
+            XmNleftOffset       = 10;    
+            XmNcolumns		= 4;
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc   (kCOptiT2);
+            XmNactivateCallback = procedure activate_proc (kCOptiT2); };        
+    };
+
+object
+    COptiList1 : XmScrolledList {  
+        arguments {
+            XmNvisibleItemCount = 5;
+            XmNitems		= kOptiIndexStrings;  
+            XmNselectionPolicy  = XmSINGLE_SELECT; 
+            XmNunitType         = XmPIXELS;  
+            XmNlistSizePolicy   = XmCONSTANT; 
+            XmNwidth		= 400;
+            XmNbackground	= color('white', background);
+            XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = COptiT2;     
+            XmNtopOffset        = 6;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+            !XmNrightAttachment  = XmATTACH_WIDGET;
+            !XmNrightWidget      = COptiSepv1;
+            !XmNbottomAttachment = XmATTACH_FORM;    
+            !XmNbottomOffset     = 400; 
+            	  };                  
+        callbacks {
+           MrmNcreateCallback  = procedure create_proc (kCOptiList1);
+           XmNsingleSelectionCallback = procedure list_proc(kCOptiList1);
+                  };                   
+        };
+
+object
+    COptiSeph3 : XmSeparator widget {
+        arguments {
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;  
+            XmNseparatorType    = XmSHADOW_ETCHED_IN;
+            !XmNshadowThickness	= 8;      
+            XmNbottomAttachment	= XmATTACH_FORM;    
+            XmNbottomOffset     = 230;          !210
+	};      
+};    
+
+object
+     COptiList2 : XmScrolledList {  
+        arguments {                                      
+            XmNscrollBarDisplayPolicy = XmSTATIC;  
+	    XmNvisibleItemCount = 4;
+            XmNitems		= kOptiParStrings;  
+            XmNselectionPolicy  = XmSINGLE_SELECT; 
+            XmNunitType         = XmPIXELS;                        
+            XmNlistSizePolicy   = XmCONSTANT;
+            XmNwidth		= 400;
+            XmNbackground	= color('white', background);
+            XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = COptiSeph3;     
+            XmNtopOffset        = 16;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+                       	  };                  
+        callbacks {
+           MrmNcreateCallback 		= procedure create_proc (kCOptiList2);
+           XmNsingleSelectionCallback 	= procedure list_proc   (kCOptiList2); 
+                };                   
+};
+
+object  
+    COptiT1 : XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = COptiEditLabel;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 10;    
+            XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = COptiSepv1;   
+             XmNmaxLength	= 38;    
+             XmNcolumns		= 38;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kCOptiT1);
+            XmNactivateCallback = procedure activate_proc(kCOptiT1); };         
+    };
+
+
+
+object
+    COptiEditLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "x : index nx dx";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = COptiList2;   
+            XmNtopOffset        = 8;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+        callbacks {
+           MrmNcreateCallback  = procedure create_proc (kCOptiEditLabel);
+		};
+          };   
+
+
+
+object
+    COptiSepv1 : XmSeparator  widget {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;      
+            XmNbottomAttachment = XmATTACH_FORM;   
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNrightAttachment  = XmATTACH_FORM; 
+            XmNtopWidget        = XmSeparator  COptiSeph1; 
+            XmNleftOffset       = 420; 
+            XmNrightOffset      = 80; 
+     	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmVERTICAL;
+            !XmNshadowThickness	= 8;      
+	};      
+        };  
+
+object
+    COptiSeparator0 : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmForm COptiInputForm;     };      
+        };   
+
+object
+    COptiOK : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+	    XmNlabelString      = "OK";
+            XmNtopWidget        = XmSeparator COptiSeparator0;
+            XmNleftAttachment   = XmATTACH_POSITION; 
+            XmNleftPosition     = 10;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiOK);      
+            XmNactivateCallback = procedure activate_proc (kCOptiOK);  };
+    }; 
+
+object
+    C1GrApply : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+            XmNlabelString      = "Apply";
+            XmNtopWidget        = XmSeparator CGrSeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton CGrOK;
+            XmNleftOffset       = 20;   
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCGrApply);
+            XmNactivateCallback = procedure activate_proc (kCGrApply);
+        };
+    };              
+
+object
+    C1GrDefault : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+   	    XmNlabelString      = "Defaults";
+            XmNtopWidget        = XmSeparator CGrSeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton CGrApply;
+            XmNleftOffset       = 20;   
+            XmNrightAttachment  = XmATTACH_WIDGET;    
+            XmNrightWidget      = XmPushButton CGrCancel;
+            XmNrightOffset      = 20;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCGrDefaults);
+            XmNactivateCallback = procedure activate_proc (kCGrDefaults);
+        };
+    };              
+
+object
+    COptiCancel : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+	    XmNlabelString      = "Cancel";
+            XmNtopWidget        = XmSeparator COptiSeparator0;
+            XmNrightAttachment  = XmATTACH_POSITION;
+            XmNrightPosition    = 90;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiCancel);
+            XmNactivateCallback = procedure activate_proc (kCOptiCancel);  };
+    };           
+
+object
+    COptiSeparator1 : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmPushButton COptiOK;      };      
+        };  
+
+object
+  COptiAdd :  XmPushButton widget {
+               arguments       {
+	       XmNtopAttachment		= XmATTACH_WIDGET; 
+	       XmNtopWidget            	= XmSeparator COptiSeph1; 
+               XmNtopOffset		= 15;   
+	       XmNlabelString 		= " + ";
+		XmNsensitive		= false;
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator COptiSepv1; 
+               XmNleftOffset		= 20;  
+               XmNfontList		= k_button_font; 
+               	      			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kCOptiAdd);
+               XmNactivateCallback = procedure activate_proc(kCOptiAdd);
+        	};   
+  	};         
+
+object
+  COptiDel :  XmPushButton widget{
+               arguments	{
+	       XmNbottomAttachment	= XmATTACH_WIDGET; 
+		XmNsensitive		= false;
+	       XmNbottomWidget          = XmSeparator COptiSeph2;   
+	       XmNbottomOffset		= 15;   
+	       XmNlabelString 		= " - ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator COptiSepv1; 
+               XmNleftOffset		= 20;  
+	       XmNfontList		= k_button_font; 
+               				}; 
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kCOptiDel);
+               XmNactivateCallback = procedure activate_proc(kCOptiDel);
+	        };   
+	}; 
+        
+object
+  COptiAdd1 :  XmPushButton widget {
+               arguments       {
+	       XmNtopAttachment		= XmATTACH_WIDGET; 
+	       XmNtopWidget            	= XmSeparator COptiSeph3; 
+               XmNtopOffset		= 15;   
+	       XmNlabelString 		= " + ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator COptiSepv1; 
+               XmNleftOffset		= 20;  
+               XmNfontList		= k_button_font; 
+               
+			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc  (kCOptiAdd1);
+               XmNactivateCallback = procedure activate_proc(kCOptiAdd1);
+        	};   
+  	};      
+   
+object
+  COptiDel1 :  XmPushButton widget{
+               arguments	{
+	       XmNtopAttachment	        = XmATTACH_WIDGET; 
+	       XmNtopWidget          	= COptiAdd1;   
+	       XmNtopOffset		= 15;   
+	       XmNlabelString 		= " - ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator COptiSepv1; 
+               XmNleftOffset		= 20;  
+	       XmNfontList		= k_button_font; 
+
+               				}; 
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kCOptiDel1);
+               XmNactivateCallback = procedure activate_proc(kCOptiDel1);
+	        };   
+	}; 
+        
+object
+  COptiAddOK :  XmPushButton widget {
+               arguments       {
+	       XmNbottomAttachment	= XmATTACH_FORM; 
+	       XmNbottomOffset		= 15;   
+	       XmNlabelString 		= "OK";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator COptiSepv1; 
+               XmNleftOffset		= 12;  
+               XmNfontList		= k_button_font; 
+              			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc  (kCOptiAddOK);
+               XmNactivateCallback = procedure activate_proc(kCOptiAddOK);
+        	};   
+  	};         

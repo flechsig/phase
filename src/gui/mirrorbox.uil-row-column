@@ -1,0 +1,539 @@
+! File      : /home/vms/flechsig/vms/phas/phaseuil/mirrorbox.uil
+! Date      : <11 Apr 97 14:16:02 flechsig> 
+! Time-stamp: <12 Jan 00 08:54:52 flechsig> 
+! Author    : Uwe Flechsig, flechsig@exp.bessy.de
+
+! Datei: USERDISK_3:[FLECHSIG.XWIN]MIRRORBOX.UIL
+! Datum: 10.FEB.1994
+! Stand: 17-FEB-1997
+! Autor: FLECHSIG, BESSY Berlin
+
+/************************* Definition der opt. Element Box  *******************/
+
+object
+    EOElementBox  : XmFormDialog {                   
+        arguments {
+            XmNdialogTitle      = "Optical Element Box";
+            XmNdialogStyle      = XmDIALOG_MODELESS;
+            XmNnoResize         = true;
+            XmNdefaultPosition  = false;
+            XmNx                = 550;
+            XmNy                = 400;
+            XmNautoUnmanage     = false;
+            XmNallowOverlap     = false;
+            XmNdefaultButton    = XmPushButton EOEOK;
+            XmNcancelButton     = XmPushButton EOECancel;
+            XmNhorizontalSpacing = 10;
+            XmNverticalSpacing  = 20;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            };
+            controls {
+            XmForm              EOEInputForm;
+            XmSeparator         EOESeparator; 
+            XmPushButton        EOEOK;
+            XmPushButton        EOEApply;
+            XmPushButton        EOEDefault;
+            XmPushButton        EOECancel;
+            XmSeparator         EOESeparator1; 
+            };          
+       callbacks { MrmNcreateCallback = procedure create_proc(kEOElementBox);};
+        };   
+
+object
+    EOEInputForm : XmForm {
+        arguments {
+            XmNshadowType       = XmSHADOW_IN;
+            XmNshadowThickness  = 3;
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 10; 
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNrightAttachment  = XmATTACH_FORM;
+            XmNrightOffset      = 10; 
+            XmNallowOverlap     = false;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            XmNforeground       = color('white'); 
+            XmNbackground       = color('blue');      
+                         };
+        controls {
+            XmRowColumn         EOERC;
+	    XmOptionMenu        EOOptMenu; 
+	    XmLabel             EOEInputLabel;
+!            XmLabel             EOET1Label;
+!            XmText              EOET1;  
+!            XmLabel             EOET2Label;
+!            XmPushButton        EOEAB2; 
+!            XmText              EOET2;  
+	    XmLabel             EOET3Label;
+            XmText              EOET3;   
+	    XmLabel             EOET4Label;
+            XmPushButton        EOEAB4; 
+            XmText              EOET4;  
+            XmLabel             EOET5Label;
+            XmText              EOET5;  
+	    XmLabel             EOET6Label;
+            XmText              EOET6;  
+            XmLabel             EOET7Label;
+            XmText              EOET7;  
+	    XmLabel             EOET8Label;
+            XmText              EOET8;   
+            XmLabel             EOET9Label;
+            XmText              EOET9;  
+	    XmLabel             EOET10Label;
+            XmText              EOET10;       
+            XmLabel             EOET11Label;
+            XmText              EOET11;  
+	    XmLabel             EOET12Label;
+            XmText              EOET12;       
+            XmLabel             EOET13Label;
+            XmText              EOET13;  
+	    XmLabel             EOET14Label;
+            XmText              EOET14;       
+		};
+        };
+
+object
+    EOOptMenu : XmOptionMenu {
+        arguments {  
+            XmNbackground       = color('blue'); 
+            XmNforeground       = color('white');
+	    XmNlabelString      = "Element Type";
+            XmNmenuHistory      = XmPushButton EOEToroidButton;
+            XmNtopAttachment    = XmATTACH_FORM; 
+            !XmNtopWidget       = XmLabel EOEInputLabel; 
+            XmNtopOffset        = 5;
+            XmNrightAttachment  = XmATTACH_FORM;
+            XmNrightOffset      = 100;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            };
+        controls {                                                             
+            XmPulldownMenu        EOEMenu;
+            };
+        callbacks {                                                   
+            MrmNcreateCallback  = procedure create_proc (kEOOptMenu); 
+            }; 
+
+       };
+
+object
+    EOEInputLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "parameter of the optical element";
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 51;
+            XmNleftAttachment   = XmATTACH_POSITION;
+            XmNleftPosition     = 20;
+            XmNrightAttachment  = XmATTACH_POSITION;  
+            XmNrightPosition    = 80; 
+            XmNalignment        = XmALIGNMENT_CENTER;
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEInputLabel);
+        };
+    };                                  
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+object
+    EOERC : XmRowColumn {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;      
+            XmNtopWidget        = XmLabel EOEInputLabel;
+            XmNtopOffset        = 5;      
+	    XmNnumColumns	= 4;
+            XmNpacking		= XmPACK_COLUMN;
+            XmNorientation      = XmVERTICAL;  
+            XmNbackground       = color('blue');   
+            XmNforeground       = color('white');   
+	    XmNleftAttachment   = XmATTACH_FORM;    
+            XmNleftOffset       = 10; 
+         }; 
+        controls {
+            XmLabel             EOET1Label; 
+    	    XmText              EOET1; 
+	    XmLabel             EOET2Label;
+	    XmText              EOET2;  
+          };
+        };      
+
+
+!******************************* Texte ****************************
+object  
+    EOET1 : XmText  {
+        arguments  {
+!            arguments 		  ESText1Args;       
+!            XmNtopWidget        = XmLabel EOEInputLabel;     
+!            XmNrightWidget      = XmLabel EOET2Label;
+                   };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET1);
+                   };        
+    };
+
+object
+    EOET1Label : XmLabel  {          
+        arguments {
+!            arguments		  ESLabel1Args;      
+!            XmNtopWidget        = XmLabel EOEInputLabel;     
+                  };     
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET1Label);
+        };        
+    };
+
+object  
+    EOET2 : XmText {
+        arguments {
+!              arguments		    ESText2Args;
+!              XmNtopWidget        = XmLabel EOEInputLabel;     
+                  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET2);
+        };
+    };     
+
+object  
+    EOEAB2 : XmPushButton widget {
+        arguments {
+              XmNlabelString      = ">"; 
+              XmNtopAttachment    = XmATTACH_WIDGET;
+              XmNtopWidget        = XmLabel EOEInputLabel;  
+              XmNtopOffset        = 5;      
+              XmNrightAttachment  = XmATTACH_WIDGET;
+              XmNrightWidget      = XmText EOET2;
+                             };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEAB2);
+            XmNactivateCallback = procedure activate_proc (kEOEAB2);    };
+    };     
+
+object
+    EOET2Label : XmLabel {          
+        arguments {
+!            arguments             ESLabel2Args;
+!            XmNtopWidget        = XmLabel EOEInputLabel;      
+                   };
+            callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET2Label);
+        };  
+	};
+object  
+    EOET3 : XmText {
+        arguments {
+            arguments 		  ESText1Args;
+            XmNtopWidget        = XmText EOET1;     
+            XmNrightWidget      = XmLabel EOET4Label;
+                   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET3);  };
+    };
+
+object
+    EOET3Label : XmLabel {          
+        arguments {
+                  arguments		ESLabel1Args;      
+                  XmNtopWidget        = XmLabel EOET1Label;   
+                 };
+          callbacks {
+              MrmNcreateCallback  = procedure create_proc (kEOET3Label);  };
+        };
+
+object  
+    EOET4 : XmText {
+        arguments {
+            arguments		  ESText2Args; 
+            XmNtopWidget        = XmText EOET2; };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET4);
+	     };
+    };
+
+object  
+    EOEAB4 : XmPushButton widget {
+        arguments {
+              XmNlabelString      = ">"; 
+              XmNtopAttachment    = XmATTACH_WIDGET;
+              XmNtopWidget        = XmPushButton EOEAB2;  
+              XmNtopOffset        = 5;      
+              XmNrightAttachment  = XmATTACH_WIDGET;
+              XmNrightWidget      = XmText EOET4;
+                             };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEAB4); 
+	    XmNactivateCallback = procedure activate_proc (kEOEAB4);    };
+    };     
+
+object
+    EOET4Label : XmLabel {          
+        arguments { 
+		arguments	      ESLabel2Args;   
+                XmNtopWidget        = XmLabel EOET2Label; }; 
+         callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET4Label);  };
+        };
+
+object  
+    EOET5 : XmText {
+        arguments {
+            arguments 		  ESText1Args;         
+            XmNtopWidget        = XmText EOET3;     
+            XmNrightWidget      = XmLabel EOET6Label;  };                      
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET5);  };
+    };
+
+object
+    EOET5Label : XmLabel {          
+        arguments {    
+		arguments	      ESLabel1Args;  
+                XmNtopWidget        = XmLabel EOET3Label; };
+          callbacks {
+                MrmNcreateCallback  = procedure create_proc (kEOET5Label);  };  
+        };
+
+object  
+    EOET6 : XmText {
+        arguments {
+            arguments 		  ESText2Args;         
+            XmNtopWidget        = XmText EOET4; };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET6);  };
+    };
+
+object
+    EOET6Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel2Args;   
+            XmNtopWidget        = XmLabel EOET4Label; };
+         callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET6Label); };  
+    };
+
+object  
+    EOET7 : XmText {
+        arguments {
+            arguments 		  ESText1Args;         
+            XmNtopWidget        = XmText EOET5;     
+            XmNrightWidget      = XmLabel EOET8Label;  };                      
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET7);  };
+    };
+
+object
+    EOET7Label : XmLabel {          
+        arguments {    
+		arguments	      ESLabel1Args;  
+                XmNtopWidget        = XmLabel EOET5Label; };
+          callbacks {
+                MrmNcreateCallback  = procedure create_proc (kEOET7Label);  };  
+        };
+
+object  
+    EOET8 : XmText {
+        arguments {
+            arguments 		  ESText2Args;         
+            XmNtopWidget        = XmText EOET6; };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET8);  };
+    };
+
+object
+    EOET8Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel2Args;   
+            XmNtopWidget        = XmLabel EOET6Label; };
+         callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET8Label); };  
+    };
+
+object  
+    EOET9 : XmText {
+        arguments {
+            arguments 		  ESText1Args;         
+            XmNtopWidget        = XmText EOET7;     
+            XmNrightWidget      = XmLabel EOET10Label;  };                      
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET9);  };
+    };
+
+object
+    EOET9Label : XmLabel {          
+        arguments {    
+		arguments	      ESLabel1Args;  
+                XmNtopWidget        = XmLabel EOET7Label; };
+          callbacks {
+                MrmNcreateCallback  = procedure create_proc (kEOET9Label);  };  
+        };
+
+object  
+    EOET10 : XmText {
+        arguments {
+            arguments 		  ESText2Args;         
+            XmNtopWidget        = XmText EOET8; };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET10);  };
+    };
+
+object
+    EOET10Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel2Args;   
+            XmNtopWidget        = XmLabel EOET8Label; };
+         callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET10Label); };  
+    };
+
+object  
+    EOET11 : XmText {
+        arguments {
+            arguments 		  ESText1Args;        
+            XmNtopWidget        = XmText EOET9;     
+            XmNrightWidget      = XmLabel EOET12Label;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET11); };
+    };
+
+object
+    EOET11Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel1Args;   
+            XmNtopWidget        = XmLabel EOET9Label;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET11Label); };  
+     };
+
+object  
+    EOET12 : XmText {
+        arguments {
+            arguments 		  ESText2Args;               
+            XmNtopWidget        = XmText EOET10;  
+   /*         XmNbottomAttachment = XmATTACH_FORM;      
+            XmNbottomOffset     = 10;                   
+            XmNleftWidget       = XmLabel EOET12Label;  */
+	};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET12);  };  
+    };
+
+object
+    EOET12Label : XmLabel   {          
+        arguments {
+            arguments	          ESLabel2Args; 
+            XmNtopWidget        = XmLabel EOET10Label;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET12Label); };  
+        };
+
+
+object  
+    EOET13 : XmText {
+        arguments {
+            arguments 		  ESText1Args;        
+            XmNtopWidget        = XmText EOET11;     
+            XmNrightWidget      = XmLabel EOET14Label;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET13); };
+    };
+
+object
+    EOET13Label : XmLabel {          
+        arguments {
+            arguments	          ESLabel1Args;   
+            XmNtopWidget        = XmLabel EOET11Label;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET13Label); };  
+     };
+
+object  
+    EOET14 : XmText {
+        arguments {
+            arguments 		  ESText2Args;               
+            XmNtopWidget        = XmText EOET12;  
+            XmNbottomAttachment = XmATTACH_FORM;  
+            XmNbottomOffset     = 10;     
+            XmNleftWidget       = XmLabel EOET14Label;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET14);  };  
+    };
+
+object
+    EOET14Label : XmLabel   {          
+        arguments {
+            arguments	          ESLabel2Args; 
+            XmNtopWidget        = XmLabel EOET12Label;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOET14Label); };  
+        };
+
+                             
+object
+    EOESeparator : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmForm EOEInputForm;     };      
+        };             
+
+object
+    EOESeparator1 : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmPushButton EOEOK;      };      
+        };             
+                   
+object
+    EOEOK : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+	    XmNlabelString      = "OK";
+            XmNtopWidget        = XmSeparator EOESeparator;
+            XmNleftAttachment   = XmATTACH_POSITION; 
+            XmNleftPosition     = 10;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEOK);
+            XmNactivateCallback = procedure activate_proc (kEOEOK);  };
+    }; 
+
+object
+    EOEApply : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+            XmNlabelString      = "Apply";
+            XmNtopWidget        = XmSeparator EOESeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton EOEOK;
+            XmNleftOffset       = 20;   
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEApply);
+            XmNactivateCallback = procedure activate_proc (kEOEApply);
+        };
+    };              
+
+object
+    EOEDefault : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+   	    XmNlabelString      = "Defaults";   
+            XmNtopWidget        = XmSeparator EOESeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton EOEApply;
+            XmNleftOffset       = 20;   
+            XmNrightAttachment  = XmATTACH_WIDGET;
+            XmNrightWidget      = XmPushButton EOECancel;
+            XmNrightOffset      = 20;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEDefaults);
+            XmNactivateCallback = procedure activate_proc (kEOEDefaults);
+        };
+    };              
+
+object
+    EOECancel : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+	    XmNlabelString      = "Cancel";
+            XmNtopWidget        = XmSeparator EOESeparator;
+            XmNrightAttachment  = XmATTACH_POSITION;
+            XmNrightPosition    = 90;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOECancel);
+            XmNactivateCallback = procedure activate_proc (kEOECancel);  };
+    };           

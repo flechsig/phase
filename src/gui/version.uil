@@ -1,0 +1,10 @@
+/*  File      : /home/pss060/sls/flechsig/phase/src/gui/version.uil */
+/*  Date      : <04 Nov 99 16:38:26 flechsig>  */
+/*  Time-stamp: <21 May 01 15:34:22 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
+
+#ifndef VERSION_H
+  #define VERSION_H
+  #define              VERSION_STRING        1.12     
+#endif /* VERSION_H */   

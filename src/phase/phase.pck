@@ -1,0 +1,16 @@
+MainPickFileType
+/home/pss060/sls/flechsig/phase/data/uwe.omx
+/home/pss060/sls/flechsig/phase/data/uwe.map
+test.inp
+test.out
+/home/pss060/sls/flechsig/phase/data/uwe.isec
+/home/pss060/sls/flechsig/phase/data/uwe.datg
+/home/pss060/sls/flechsig/phase/data/uwe.date
+test.pck
+/home/pss060/sls/flechsig/phase/data/uwe.pckg
+/home/pss060/sls/flechsig/phase/data/uwe.pcke
+/home/pss060/sls/flechsig/phase/data/uwe.brig
+pmeta.ps
+test.pcl
+test.pcko
+/home/pss060/sls/flechsig/phase/data/uwe.phase

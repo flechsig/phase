@@ -1,0 +1,815 @@
+! Datei: USERDISK_3:[FLECHSIG.PHAS.PHASEUIL]BLBOX.UIL
+! Datum: 29.MAY.1996
+! Stand: 26-JUL-1996
+! Autor: FLECHSIG, BESSY Berlin
+
+object
+    EBLDialog  : XmFormDialog {                   
+        arguments {
+            XmNdialogTitle      = "Beamline Box"; 
+            XmNdialogStyle      = XmDIALOG_MODELESS;
+            XmNnoResize         = true;
+            XmNdefaultPosition  = false;
+            XmNx                = 250;
+            XmNy                = 350;
+            XmNautoUnmanage     = false;
+            XmNallowOverlap     = false;
+            XmNdefaultButton    = XmPushButton CGrOK;
+            !XmNcancelButton     = XmPushButton CGrCancel;
+            XmNhorizontalSpacing = 10;
+            XmNverticalSpacing  = 20;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            };
+            controls {
+            XmForm              EBLInputForm;
+            XmSeparator         EBLSeparator0; 
+            XmPushButton        EBLOK;
+            XmPushButton        EBLApply;
+            !XmPushButton        CGrDefault;
+            XmPushButton        EBLCancel;    
+            XmSeparator         EBLSeparator1; 
+            };          
+        callbacks { MrmNcreateCallback = procedure create_proc(kEBLDialog);};
+        };   
+
+object
+    EBLInputForm : XmForm {
+        arguments {
+            XmNshadowType       = XmSHADOW_IN;
+            XmNshadowThickness  = 3;
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 10;      
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+            XmNrightOffset      = 10; 
+            XmNallowOverlap     = false;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            XmNforeground       = color('white');   
+            XmNbackground       = color('blue');      
+                         };
+        controls {
+            XmLabel             EBLNameLabel;
+            XmPushButton        EBLNameButton;   
+            !XmLabel             EBLMinuitLabel;  
+            !XmPushButton        EBLMinuitButton;   
+            XmSeparator         EBLSeph1;  
+	    XmScrolledList      EBLList; 
+            XmSeparator         EBLSeph2;   
+            XmLabel             EBLSelectedLabel;  
+            !XmText              EBLT2; 
+            XmRadioBox          EBLRadBox;  
+            XmLabel             EBLL30a; 
+            XmText              EBLT31a;   
+            XmLabel             EBLL40a; 
+            XmText              EBLT41a;       
+            XmRadioBox          EBLRadBox1;  
+
+            XmSeparator         EBLSeph3;  
+            !XmScrolledList      EBLList2; 
+            XmText              EBLT11;   
+            XmLabel             EBLL10; 
+            XmText              EBLT12;    
+            XmText              EBLT21;   
+            XmLabel             EBLL20; 
+            XmText              EBLT22;   
+            XmLabel             EBLL30; 
+            XmText              EBLT31;   
+            XmLabel             EBLL40; 
+            XmText              EBLT41;       
+            XmSeparator         EBLSepv1;  
+            XmPushButton        EBLAdd; 
+            XmPushButton        EBLDel;  
+            !XmPushButton        EBLAdd1; 
+            !XmPushButton        EBLDel1;  
+            XmPushButton        EBLAddOK;  
+                       	};
+        };
+
+object
+    EBLNameLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "Beamline File: ";
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNtopOffset        = 15;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+           };   
+
+object
+     EBLNameButton :  XmPushButton widget {
+               arguments	{
+	       XmNtopAttachment		= XmATTACH_FORM;
+               XmNtopOffset        	= 42;    
+               XmNleftAttachment	= XmATTACH_FORM;
+               XmNleftOffset      	= 20;    
+                              	};
+           callbacks {
+              MrmNcreateCallback  = procedure create_proc (kEBLNameButton);
+              XmNactivateCallback = procedure activate_proc(kEBLNameButton);
+        };   
+    };         
+
+object
+    EBLMinuitLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "Minuit- File: ";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLNameLabel;   
+            XmNtopOffset        = 5;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+           };   
+
+object
+     EBLMinuitButton :  XmPushButton widget{
+               arguments	{
+	       XmNlabelString 		= "minuit.inp";
+	       XmNtopAttachment         = XmATTACH_WIDGET;
+	       XmNtopWidget             = EBLNameButton;  
+               XmNtopOffset        	= 3;    
+               XmNrightAttachment	= XmATTACH_FORM;
+               XmNrightOffset      	= 20;    
+                              	};
+           callbacks {
+              !MrmNcreateCallback  = procedure create_proc (kEBLMinuitButton);
+              !XmNactivateCallback = procedure activate_proc(kEBLMinuitButton);
+        };   
+    };         
+
+object
+    EBLSeph1 : XmSeparator  widget {
+        arguments {
+            XmNtopAttachment    = XmATTACH_FORM;      
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+	    XmNtopOffset        = 85; 
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmHORIZONTAL;
+                	};      
+};  
+
+object
+    EBLList : XmScrolledList {
+        arguments {
+            XmNscrollBarDisplayPolicy = XmSTATIC;  
+            XmNvisibleItemCount = 4;
+            XmNselectionPolicy  = XmSINGLE_SELECT; 
+            XmNunitType         = XmPIXELS;  
+            XmNlistSizePolicy   = XmCONSTANT;
+            XmNwidth		= 400;
+            XmNbackground	= color('white', background);
+            XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = EBLSeph1;     
+            XmNtopOffset        = 10;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+            !XmNrightAttachment  = XmATTACH_WIDGET;
+            !XmNrightWidget      = EBLSepv1;
+            !XmNbottomAttachment = XmATTACH_FORM;    
+            !XmNbottomOffset     = 70;
+            	  };                  
+        callbacks {
+           MrmNcreateCallback       = procedure create_proc(kEBLList);
+           XmNsingleSelectionCallback = procedure list_proc(kEBLList); 
+  	};                   
+};
+
+object
+    EBLSeph2 : XmSeparator widget {
+        arguments {
+            XmNtopAttachment    = XmATTACH_FORM;      
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;        
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;
+            XmNtopOffset	= 230;
+            !XmNshadowThickness	= 8;      
+            XmNbottomAttachment	= XmATTACH_FORM;    
+            XmNbottomOffset     = 450; 
+	};      
+};    
+
+object
+    EBLSelectedLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "select element!";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLSeph2;   
+            XmNtopOffset        = 10;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+        callbacks {
+           MrmNcreateCallback  = procedure create_proc (kEBLSelectedLabel);
+		};
+          };   
+
+object  
+    EBLT2 : XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET; 
+	    XmNtopWidget        = EBLSeph2;     
+            XmNtopOffset        = 6;    
+            XmNleftAttachment   = XmATTACH_WIDGET; 
+            XmNleftWidget       = EBLSelectedLabel;    
+            XmNeditable		= false;
+            XmNleftOffset       = 10;    
+            XmNcolumns		= 4;
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc   (kEBLT2);
+            XmNactivateCallback = procedure activate_proc (kEBLT2); };        
+    };
+
+object
+    EBLRadBox : XmRadioBox {  
+        arguments {
+            XmNorientation      = XmHORIZONTAL;  !XmVERTICAL; 
+	    XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = EBLSeph2;       
+            XmNtopOffset        = 40;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;    
+            XmNforeground       = color('white');   
+            XmNbackground       = color('blue');  
+
+            	  };                  
+        controls {
+            XmToggleButton      up;
+            XmToggleButton      left; 
+	    XmToggleButton      down;
+            XmToggleButton      right;          
+
+             };                   
+        };
+
+object
+    EBLRadBox1 : XmRadioBox {  
+        arguments {
+            XmNorientation      = XmHORIZONTAL;  !XmVERTICAL; 
+	    XmNbottomAttachment	= XmATTACH_WIDGET;
+            XmNbottomWidget     = EBLSeph3;       
+            XmNbottomOffset     = 10;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;    
+            XmNforeground       = color('white');   
+            XmNbackground       = color('blue');                      
+            	  };                  
+        controls {
+            XmToggleButton      stoim;
+            XmToggleButton      imtos; 
+	                };                   
+        };
+
+
+object
+    stoim : XmToggleButton {
+        arguments {
+            XmNlabelString      = "source to image";
+            XmNselectColor	= gold;    
+            XmNset              = on; ! A radio box requires one toggle to be set.
+            };                                                             
+        callbacks {
+            XmNvalueChangedCallback = procedure toggle_proc (kEBLstoim);
+            MrmNcreateCallback  = procedure create_proc (kEBLstoim);
+            };
+        };
+
+object
+    imtos : XmToggleButton {
+        arguments {
+            XmNlabelString      = "image to s. (PST)";
+            XmNselectColor	= gold;    
+               };                                                             
+        callbacks {
+            XmNvalueChangedCallback = procedure toggle_proc (kEBLimtos);
+            MrmNcreateCallback  = procedure create_proc (kEBLimtos);
+            };
+        };
+
+
+object
+    up : XmToggleButton {
+        arguments {
+            XmNlabelString      = "up";
+            XmNselectColor	= gold;    
+            XmNset              = on;           ! A radio box requires one toggle to be set.
+            };                                                             
+        callbacks {
+            XmNvalueChangedCallback = procedure toggle_proc (kEBLup);
+            MrmNcreateCallback  = procedure create_proc (kEBLup);
+            };
+        };
+
+object
+    down : XmToggleButton {
+        arguments {
+            XmNlabelString      = "down";
+            XmNselectColor	= gold;    
+            };
+        callbacks {
+            XmNvalueChangedCallback = procedure toggle_proc (kEBLdown);
+            MrmNcreateCallback  = procedure create_proc (kEBLdown);
+            };
+        };
+
+object
+    left : XmToggleButton {
+        arguments {
+            XmNlabelString      = "left";
+            XmNselectColor	= gold;  
+	};
+        callbacks {
+            XmNvalueChangedCallback = procedure toggle_proc (kEBLleft);
+            MrmNcreateCallback  = procedure create_proc (kEBLleft);
+            };
+        };
+
+object
+    right : XmToggleButton {
+        arguments {
+            XmNlabelString      = "right";
+            XmNselectColor	= gold;  
+            };
+        callbacks {
+            XmNvalueChangedCallback = procedure toggle_proc (kEBLright);
+            MrmNcreateCallback  = procedure create_proc (kEBLright);
+            };
+        };
+
+
+
+object
+    EBLSeph3 : XmSeparator widget {
+        arguments {
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;  
+            XmNseparatorType    = XmSHADOW_ETCHED_IN;
+            !XmNshadowThickness	= 8;      
+            XmNbottomAttachment	= XmATTACH_FORM;    
+            XmNbottomOffset     = 230;          !210
+	};      
+};    
+
+object
+     EBLList2 : XmScrolledList {  
+        arguments {                                      
+            XmNscrollBarDisplayPolicy = XmSTATIC;  
+	    XmNvisibleItemCount = 4;
+            XmNitems		= kOptiParStrings;  
+            XmNselectionPolicy  = XmSINGLE_SELECT; 
+            XmNunitType         = XmPIXELS;                        
+            XmNlistSizePolicy   = XmCONSTANT;
+            XmNwidth		= 400;
+            XmNbackground	= color('white', background);
+            XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = EBLSeph3;     
+            XmNtopOffset        = 16;
+            XmNleftOffset	= 10;
+	    XmNleftAttachment   = XmATTACH_FORM;
+                       	  };                  
+        callbacks {
+           MrmNcreateCallback 		= procedure create_proc (kEBLList2);
+           XmNsingleSelectionCallback 	= procedure list_proc   (kEBLList2); 
+                };                   
+};
+
+object  
+    EBLT11: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLSeph3;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 10;    
+            XmNmaxLength	= 5;    
+             XmNcolumns		= 5;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT11);
+             };         
+    };
+
+object
+    EBLL10 : XmLabel {
+        arguments {
+            XmNlabelString      = " < w < ";
+            XmNtopAttachment    = XmATTACH_WIDGET;   
+	    XmNtopWidget        = EBLSeph3;   
+            XmNtopOffset        = 7;    
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = EBLT11;   
+            XmNleftOffset       = 10;    
+                        };
+                };   
+
+object  
+    EBLT12: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLSeph3;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 160;    
+            XmNmaxLength	= 5;    
+             XmNcolumns		= 5;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT12);
+             };         
+    };
+
+object  
+    EBLT21: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLT11;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 10;    
+            !XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = EBLSepv1;   
+             XmNmaxLength	= 5;    
+             XmNcolumns		= 5;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT21);
+            };         
+    };
+
+
+
+object
+    EBLL20 : XmLabel {
+        arguments {
+            XmNlabelString      = " < l < ";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLL10;   
+            XmNtopOffset        = 18;    
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = EBLT21;   
+	    XmNleftOffset       = 10;    
+                        };
+                  };   
+
+object  
+    EBLT22: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLT12;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            !XmNleftWidget       = EBLL20;   
+            XmNleftOffset       = 160;    
+            !XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = EBLSepv1;   
+             XmNmaxLength	= 5;    
+             XmNcolumns		= 5;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT22);
+         };         
+    };
+
+object    
+    EBLL30 : XmLabel {
+        arguments {
+            XmNlabelString      = "slope w [arcsec rms]";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLL20;   
+            XmNtopOffset        = 28;    
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = EBLT31;     
+            XmNleftOffset       = 10;    
+                        };
+                 };   
+
+object  
+    EBLT31: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLT21;   
+            XmNtopOffset        = 16;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            !XmNleftWidget       = EBLL30;  
+            XmNleftOffset       = 10;    
+            !XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = EBLSepv1;   
+             XmNmaxLength	= 5;    
+             XmNcolumns		= 5;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT31);
+          };         
+    };
+
+
+
+object
+    EBLL40 : XmLabel {
+        arguments {
+            XmNlabelString      = "slope l [arcsec rms]";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLL30;   
+            XmNtopOffset        = 15;    
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = EBLT41;  
+            XmNleftOffset       = 10;    
+                        };
+          };   
+
+object  
+    EBLT41: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLT31;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            !XmNleftWidget       = EBLL40;  
+            XmNleftOffset       = 10;    
+            !XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = EBLSepv1;   
+             XmNmaxLength	= 5;    
+             XmNcolumns		= 5;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT41);
+           };         
+    };
+
+object    
+    EBLL30a : XmLabel {
+        arguments {
+            XmNlabelString      = "lambda [nm]";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLSeph2;   
+            XmNtopOffset        = 96;    
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = EBLT31a;     
+            XmNleftOffset       = 10;    
+                        };
+                };   
+
+object  
+    EBLT31a: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLSeph2;   
+            XmNtopOffset        = 90;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            !XmNleftWidget       = EBLL30a;  
+            XmNleftOffset       = 10;    
+            !XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = EBLSepv1;   
+             XmNmaxLength	= 10;    
+             XmNcolumns		= 10;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT31a);
+  };         
+    };
+
+
+
+object
+    EBLL40a : XmLabel {
+        arguments {
+            XmNlabelString      = "dispersive length [mm]";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLL30a;   
+            XmNtopOffset        = 15;    
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = EBLT41a;  
+            XmNleftOffset       = 10;    
+                        };
+                  };   
+
+object  
+    EBLT41a: XmText  {
+        arguments  {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = EBLT31a;   
+            XmNtopOffset        = 3;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            !XmNleftWidget       = EBLL40a;  
+            XmNleftOffset       = 10;    
+            !XmNrightOffset      = 10;    
+            !XmNrightAttachment  = XmATTACH_WIDGET;        
+	    !XmNrightWidget      = EBLSepv1;   
+             XmNmaxLength	= 10;    
+             XmNcolumns		= 10;  
+             XmNrows		= 1;
+
+                               };
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc  (kEBLT41a);
+           };         
+    };
+
+
+
+
+object
+    EBLSepv1 : XmSeparator  widget {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;      
+            XmNbottomAttachment = XmATTACH_FORM;   
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNrightAttachment  = XmATTACH_FORM; 
+            XmNtopWidget        = XmSeparator  EBLSeph1; 
+            XmNleftOffset       = 420; 
+            XmNrightOffset      = 80; 
+     	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmVERTICAL;
+            !XmNshadowThickness	= 8;      
+	};      
+        };  
+
+object
+    EBLSeparator0 : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmForm EBLInputForm;     };      
+        };   
+
+object
+    EBLOK : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+	    XmNlabelString      = "OK";
+            XmNtopWidget        = XmSeparator EBLSeparator0; 
+            XmNleftAttachment   = XmATTACH_POSITION; 
+            XmNleftPosition     = 10;   };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEBLOK);      
+            XmNactivateCallback = procedure activate_proc (kEBLOK);  };
+    }; 
+
+object
+    EBLApply : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;    
+            XmNlabelString      = "Apply";
+            XmNtopWidget        = XmSeparator EBLSeparator0; 
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton EBLOK;
+            XmNleftOffset       = 20;   
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEBLApply);
+            XmNactivateCallback = procedure activate_proc (kEBLApply);
+        };
+    };              
+
+object
+    EC1GrDefault : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+   	    XmNlabelString      = "Defaults";
+            XmNtopWidget        = XmSeparator CGrSeparator;
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmPushButton CGrApply;
+            XmNleftOffset       = 20;   
+            XmNrightAttachment  = XmATTACH_WIDGET;    
+            XmNrightWidget      = XmPushButton CGrCancel;
+            XmNrightOffset      = 20;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCGrDefaults);
+            XmNactivateCallback = procedure activate_proc (kCGrDefaults);
+        };
+    };              
+
+object
+    EBLCancel : XmPushButton widget {
+        arguments {
+            arguments		  ESButtonArgs;      
+	    XmNlabelString      = "Cancel";
+            XmNtopWidget        = XmSeparator EBLSeparator0;
+            XmNrightAttachment  = XmATTACH_POSITION;
+            XmNrightPosition    = 90;  };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEBLCancel);
+            XmNactivateCallback = procedure activate_proc (kEBLCancel);  };
+    };           
+
+object
+    EBLSeparator1 : XmSeparator {
+        arguments {
+            arguments             ESSeparatorArgs;      
+            XmNtopWidget        = XmPushButton EBLOK;      };      
+        };  
+
+object
+  EBLAdd :  XmPushButton widget {
+               arguments       {
+	       XmNtopAttachment		= XmATTACH_WIDGET; 
+	       XmNtopWidget            	= XmSeparator EBLSeph1; 
+               XmNtopOffset		= 15;   
+	       XmNlabelString 		= " + ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator EBLSepv1; 
+               XmNleftOffset		= 20;  
+               XmNfontList		= k_button_font; 
+               	      			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kEBLAdd);
+               XmNactivateCallback = procedure activate_proc(kEBLAdd);
+        	};   
+  	};         
+
+object
+  EBLDel :  XmPushButton widget{
+               arguments	{
+	       XmNbottomAttachment	= XmATTACH_WIDGET; 
+	       XmNbottomWidget          = XmSeparator EBLSeph2;   
+	       XmNbottomOffset		= 15;   
+	       XmNlabelString 		= " - ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator EBLSepv1; 
+               XmNleftOffset		= 20;  
+	       XmNfontList		= k_button_font; 
+
+               				}; 
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kEBLDel);
+               XmNactivateCallback = procedure activate_proc(kEBLDel);
+	        };   
+	}; 
+        
+object
+  EBLAdd1 :  XmPushButton widget {
+               arguments       {
+	       XmNtopAttachment		= XmATTACH_WIDGET; 
+	       XmNtopWidget            	= XmSeparator EBLSeph3; 
+               XmNtopOffset		= 15;   
+	       XmNlabelString 		= " + ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator EBLSepv1; 
+               XmNleftOffset		= 20;  
+               XmNfontList		= k_button_font; 
+               
+			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc  (kEBLAdd1);
+               XmNactivateCallback = procedure activate_proc(kEBLAdd1);
+        	};   
+  	};      
+   
+object
+  EBLDel1 :  XmPushButton widget{
+               arguments	{
+	       XmNtopAttachment	        = XmATTACH_WIDGET; 
+	       XmNtopWidget          	= EBLAdd1;   
+	       XmNtopOffset		= 15;   
+	       XmNlabelString 		= " - ";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator EBLSepv1; 
+               XmNleftOffset		= 20;  
+	       XmNfontList		= k_button_font; 
+
+               				}; 
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kEBLDel1);
+               XmNactivateCallback = procedure activate_proc(kEBLDel1);
+	        };   
+	}; 
+        
+object
+  EBLAddOK :  XmPushButton widget {
+               arguments       {
+	       XmNbottomAttachment	= XmATTACH_FORM; 
+	       XmNbottomOffset		= 15;   
+	       XmNlabelString 		= "OK";
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmSeparator EBLSepv1; 
+               XmNleftOffset		= 12;  
+               XmNfontList		= k_button_font; 
+              			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc  (kEBLAddOK);
+               XmNactivateCallback = procedure activate_proc(kEBLAddOK);
+        	};   
+  	};         
+! end blbox.uil
