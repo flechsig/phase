@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #   File      : /afs/psi.ch/user/f/flechsig/phase/utils/create-coefficients.pl
 #   Date      : <06 Feb 04 10:13:16 flechsig> 
-#   Time-stamp: <06 Feb 04 10:22:15 flechsig> 
+#   Time-stamp: <06 Feb 04 10:24:40 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -129,6 +129,37 @@ print FILE "# end $fname\n";
 close(FILE);
 print "file \"$fname\" generated\n";
 
+# end main
+
+# Usage --------------------------------------------------------------
+# Display the usage message by scanning the POD documentation for the
+# usage statement.
+sub Usage {
+    while (<DATA>) {
+	if (/^B<[-A-Za-z0-9_.]+>/) {
+	    s/[BI]<([^>]*)>/$1/g;
+	    print "Usage: $_";
+	    last;
+	}
+    }
+    exit 0;
+}
+
+# ManPage ------------------------------------------------------------
+# Display the man page by invoking the pod2man (or pod2text) script on
+# self.
+sub ManPage {
+    my($pager) = 'more';
+    $pager = $ENV{'PAGER'} if $ENV{'PAGER'};
+    if ($ENV{'TERM'} =~ /^(dumb|emacs)$/) {
+	system ("pod2text $0");
+    } else {
+	system ("pod2man $0 | nroff -man | $pager");
+    }
+    exit 0;
+}
+
+
 __END__
 
 =head1 NAME
@@ -142,8 +173,8 @@ B<create-coefficients.pl> B<[-v]> B<filename>
 
 =head1 DESCRIPTION 
 
-I<create-coefficients.pl> Create a coefficient file for PHASE. so far toroid 
-and cone is implemented.
+I<create-coefficients.pl> Create a coefficient file for PHASE. So far toroid 
+and cone are implemented.
 
 =head1 OPTIONS
 
