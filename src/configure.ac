@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <30 Apr 04 15:55:56 flechsig> 
+#   Time-stamp: <09 Jul 04 13:04:37 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -110,7 +110,8 @@ AC_HELP_STRING([--enable-debug],[debugging code, static linking]),
 ##      AC_DEFINE(DEBUG, ["yes"], 
 ##    "debug mode with static libraries")
       AC_SUBST([FDEBUG], "-g -C -B111")
-      AC_SUBST([CDEBUG], "-DDEBUG -gdwarf")
+      AC_SUBST([CDEBUG], "-DDEBUG -gdwarf-2 -g3")
+      AC_SUBST([CFLAGS], "")
       AC_SUBST([LIBPHASE], libphase.a)
   fi,
 ## AC_MSG_NOTICE(*** produce production code (using shared libs) ***)

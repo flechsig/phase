@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Aug 04 16:43:08 flechsig>  */
+/*   Time-stamp: <26 Oct 04 14:06:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -246,37 +246,40 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   gout->idefl= (x->theta0 > 0.0) ? 1 : -1;  
 } /* end DefGeometryC */ 
 
+/* DefMirrorC erzeugt                      */
+/* elementmatrix im Fortran Speichermodell */ 
+/*                                         */
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
 		int etype, char *fname)  
-     /* erzeugt elementmatrix im Fortran Speichermodell 	*/    
-     
 {
   double r, rho, *dp, cone, l,
     alpha, aellip, bellip, cellip, eellip, f, z0, small;
   int i, j;
   struct mirrortype mirror;
+
 #ifdef DEBUG
   /*  printf("DefMirrorC: called\n");*/
-#endif   
+#endif  
+ 
   small= 1e-15;   
   r    = x->rmi;
   rho  = x->rho;
   dp   = (double *)a;
   alpha= x->alpha * PI/ 180.0;
       
-  for (i= 0; i< 36; i++) dp[i]= 0.0;        /* initialisieren */
-#ifdef DEBUG
-  printf("DEBUG: mirror coefficients\n");
-  for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
-#endif
-  /* Radien < small dann planspiegel */
+  for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
+                               /* Radien < small dann planspiegel */
+
+  /* index fuer a(i,j) = i+ j* 6    */
+
   switch (etype)
     {
-    case kEOEPM:
-    case kEOEPG:
-    case kEOEPGV:
+    case kEOEPM:               /* plane mirror      */
+    case kEOEPG:               /* plane grating     */
+    case kEOEPGV:              /* plane VLS grating */
       printf("DefMirrorC: flat shape ");
-      break;
+      break;  /* end plane */
+
     case kEOESlit:
       printf("DefMirrorC: slit- geometry and element data are ignored - ");
       printf("fill dummy entries from toroid\n"); 
@@ -325,7 +328,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #ifdef DEBUG
       printf("end cone shape\n");
 #endif
-      break;
+      break; /* end cone */
 
     case kEOEElli: 
       printf("DefMirrorC: elliptical shape\n");  
@@ -337,21 +340,22 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       else
 	{       
 	  aellip= (x->r1+ x->r2)/ 2.0;
-	  bellip= sqrt(aellip* aellip- 0.25* (x->r1* x->r1+ x->r2* x->r2- 
-					      2.0* x->r1* x->r2* 
-					      cos(2.0* alpha)));
+	  bellip= sqrt(aellip* aellip- 0.25* 
+		       (x->r1* x->r1+ x->r2* x->r2- 
+			2.0* x->r1* x->r2* cos(2.0* alpha)));
 	  cellip= sqrt(aellip* aellip- bellip* bellip);
 	  eellip= sqrt(1.0- bellip* bellip/ (aellip* aellip));
 	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
 	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
-	    
-	  printf("DefMirrorC: ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
+	  
+	  printf("DefMirrorC: ell. parameter: ");
+	  printf("a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
 		 aellip, bellip, cellip, eellip, f, z0);
 	  
 	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 	  dp[13]= (tan(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
-	    (8.0* pow(f, 2.0)* cos(alpha));                  /* 1,2 */
+	    (8.0* pow(f, 2.0)* cos(alpha));                     /* 1,2 */
 	  dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
 	    (8.0* f* f);                              /* 3,0 */
 	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * 
@@ -368,7 +372,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	    (pow(sin(alpha), 2.0)/ pow(bellip, 2.0) + 
 	     1.0/ pow(aellip, 2.0));  				/* 0,4 */
 	}
-      break;
+      break; /* end ellipsoid */
 
     case kEOEPElli:
     case kEOEPElliG:
@@ -391,12 +395,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  
 	  z0    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* cellip);
 	  
-	  printf("DefMirrorC: ell. parameter: a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
+	  printf("DefMirrorC: ell. parameter: ");
+	  printf("a= %f, b= %f, c= %f, e= %f, f= %f, z0= %f\n",
 		 aellip, bellip, cellip, eellip, f, z0);
 	  
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 	  dp[3] = (sin(alpha)* sqrt(pow(eellip, 2.0)- pow(sin(alpha), 2.0)))/
-	    (8.0* f* f);                              /* 3,0 */
+	    (8.0* f* f);                                        /* 3,0 */
 	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))* 
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
 	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
@@ -2195,6 +2200,8 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   Widget w;
   int etype;
  
+  set_program_name("GetOElement");
+
   /* we do not need to read cff */
   text= XmTextGetString(widget_array[kEOET2]); sscanf(text, "%lf", &gp->r);
   text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
@@ -2247,8 +2254,16 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   /*printf("getoelement: vor history 1\n");*/
   get_something(w, XmNlabelString, &label);  
   /*printf("getoelement: vor history 2\n");*/
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &text)) 
-    return; 
+  /* UF 26.10.2004 XmStringGetLtoR die Funktion gibt manchmal 0 zureuck 
+     je nach locale setting
+     XmStringGetLtoR ist zudem obsolete 
+     eventuell fuer VMS belassen??  */
+  /* if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &text))
+     sic_fatal("can't extract element type\n");*/
+  text= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
+
+  /* end change */
   XmStringFree(label);
   printf("text: %s\n", text);
   if (strcmp(text, "plane mirror") == 0) etype= kEOEPM; else

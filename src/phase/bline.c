@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Oct 04 13:09:03 flechsig>  */
+/*   Time-stamp: <26 Oct 04 14:17:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -55,6 +55,7 @@ void AddBLElement(struct BeamlineType *bl, char *name)
    struct ElementType *tmplist= NULL, *listpt, *tmplistpt;  
    XmString path;
 
+   set_program_name("AddBLElement");
 #ifdef DEBUG
    printf("AddBLElement: add name >>%s<< to list\n", name);
 #endif   
@@ -78,7 +79,7 @@ void AddBLElement(struct BeamlineType *bl, char *name)
      if ((tmplist= (struct ElementType *)          /* mem reservieren */
         realloc(tmplist, 
                  bl->elementzahl* sizeof(struct ElementType))) == NULL)
-        {  fprintf(stderr, "realloc error\n"); exit(-1);    }      
+       sic_fatal("realloc error\n");     
      memcpy(tmplist, 
           bl->ElementList, bl->elementzahl* sizeof(struct ElementType));  
    } else bl->ElementList= NULL;
@@ -87,7 +88,7 @@ void AddBLElement(struct BeamlineType *bl, char *name)
    if ((bl->ElementList= (struct ElementType *)          /* mem reservieren */
          realloc(bl->ElementList, 
                  bl->elementzahl* sizeof(struct ElementType))) == NULL)
-      {  fprintf(stderr, "realloc error\n"); exit(-1);    }      
+     sic_fatal("realloc error\n");   
 
 /* umsortieren */
    listpt= bl->ElementList; tmplistpt= tmplist; 
