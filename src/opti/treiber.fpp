@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/treiber.fpp
 c$$$ Date      : <29 Oct 03 16:40:13 flechsig> 
-c$$$ Time-stamp: <04 Nov 03 15:03:03 flechsig> 
+c$$$ Time-stamp: <11 Nov 03 09:09:37 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -24,9 +24,14 @@ c$$$ $Author$
 	end     
    
         subroutine fminuend(iread)
-        integer iread
+        integer iread,istatus
 
+c     keep close for VMS version since kuclos not tested in VMS UF 11.11.03
+#ifdef VMS
+        close(iread)
+#else
         call kuclos(iread,' ',istatus)
+#endif 
         return
 	end    
 
