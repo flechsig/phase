@@ -1,12 +1,13 @@
-# File      : /home/vms/flechsig/vms/phas/phasec/makefile
-# Date      : <19 Mar 97 11:31:08 flechsig> 
-# Time-stamp: <13 Oct 98 11:16:59 flechsig> 
-# Author    : Uwe Flechsig, flechsig@exp.bessy.de
-
-# Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]MAKEFILE.
-# Datum: 19.JUL.1994
-# Stand: 31-JAN-1997                                           
-# Autor: FLECHSIG, BESSY Berlin
+# File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
+# Date      : <15 Oct 99 11:36:53 flechsig> 
+# Time-stamp: <15 Oct 99 16:24:16 flechsig> 
+# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+# 
+# Makefile for Alpha and VAX @ BESSY
+#########################################################################
+# history:
+# 15 Oct 99 : installation paths changed 
+#
 #########################################################################
 # Makefile for the PHASE user API 
 #
@@ -55,11 +56,11 @@ PACKLIB/LIB,-
 KERNLIB/LIB
 ####           system dependent libs ####################################
 LIBSVAX		= $(LIBS),-
-userdisk_3:[flechsig.phas.phasefor.lib]phaselib.$(LIB)/lib,-    
+phase$lib:phaselib.$(LIB)/lib,-    
 batchdisk:xliblink/opt   
 
 LIBSAXP		= $(LIBS),-
-userdisk_3:[flechsig.phas.phasefor.lib]phaselib.$(LIB)$(ALPH)/lib,-   
+phase$lib:phaselib.$(LIB)$(ALPH)/lib,-   
 batchdisk:xliblink_axp/opt   
 #########################################################################
 OBJECTSVAX 	= phase.$(OBJ),phasec.$(OBJ),-
@@ -67,8 +68,8 @@ activate_proc.$(OBJ),PHASEgraf.$(OBJ),initdatset.$(OBJ),-
 geometrypck.$(OBJ),bline.$(OBJ),-
 mirrorpck.$(OBJ),PHASEgraffor.$(OBJ),-
 cutils.$(OBJ),rtrace.$(OBJ),phasefor.$(OBJ),pst.$(OBJ),-
-userdisk_3:[flechsig.phas.phasefor.ph7]phase_integration_10.$(OBJ),-    
-userdisk_3:[flechsig.phas.phasefor.ph7]phase_source_10.$(OBJ) 
+phase_integration_10.$(OBJ),-    
+phase_source_10.$(OBJ) 
 
 #fg3pck.$(OBJ)$(ALPH),
 OBJECTSAXP 	= phase.$(OBJ)$(ALPH),phasec.$(OBJ)$(ALPH),-
@@ -77,8 +78,8 @@ initdatset.$(OBJ)$(ALPH),geometrypck.$(OBJ)$(ALPH),bline.$(OBJ)$(ALPH),-
 mirrorpck.$(OBJ)$(ALPH),PHASEgraffor.$(OBJ)$(ALPH),-
 cutils.$(OBJ)$(ALPH),rtrace.$(OBJ)$(ALPH),phasefor.$(OBJ)$(ALPH),-
 pst.$(OBJ)$(ALPH),-
-userdisk_3:[flechsig.phas.phasefor.ph7]phase_integration_10.$(OBJ)$(ALPH),-
-userdisk_3:[flechsig.phas.phasefor.ph7]phase_source_10.$(OBJ)$(ALPH)    
+phase_integration_10.$(OBJ)$(ALPH),-
+phase_source_10.$(OBJ)$(ALPH)    
 ########################################################################
 PHASEHS   	= PHASE.h,fg3pck.h,mirrorpck.h,geometrypck.h,phasegraf.h,-
 cutils.h
