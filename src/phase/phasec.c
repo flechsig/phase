@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <15 Dec 99 09:46:05 flechsig>  */
+/*  Time-stamp: <15 Dec 99 09:51:40 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -54,8 +54,9 @@ void BatchMode(char *fname, int cmode)
 #ifdef LOGFILE 
   CheckUser(logfilename, "Phase Batch");            /* user logfile  */
 #endif
-  Beamline.ElementList= Beamline.raysout= 
-    Beamline.RTSource.SourceRays= NULL;
+  Beamline.ElementList= NULL;                       /* 15.12.99 */
+  Beamline.raysout= NULL;
+  Beamline.RTSource.SourceRays= NULL;
   Beamline.beamlineOK= 0;
   ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);
 
@@ -519,8 +520,9 @@ void InitDataSets(struct PHASEset *x, char *mainpickname)
       PutPHASE(x, mainpickname);          	/* write names */   
     }
   /* neu beamline pointer initialisieren 7.6.96*/
-  Beamline.ElementList= Beamline.raysout= 
-    Beamline.RTSource.SourceRays= NULL;
+  Beamline.ElementList= NULL;                       /* 15.12.99 */
+  Beamline.raysout    = NULL;
+  Beamline.RTSource.SourceRays= NULL;
   Beamline.beamlineOK= 0;
 
   ginitdatset(&GDefDat);           /* init defaults */
