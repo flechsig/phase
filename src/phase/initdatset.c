@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/initdatset.c */
 /*  Date      : <28 Oct 99 09:58:52 flechsig>  */
-/*  Time-stamp: <02 Nov 99 13:19:14 flechsig>  */
+/*  Time-stamp: <12 Feb 04 12:14:08 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/initdatset.c */
@@ -44,30 +44,27 @@
 #include "rtrace.h"            
 
 void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
-/* last change: 12.8.96 */
-/* 24.6.96 BLOptions  eingefuegt */
-/* last modification: 24 Sep 97 15:35:50 flechsig */
-/* modification: 21 Oct 97 08:23:07 flechsig */
-/* 24.11.98 UF sls Aenderungen */
 {
   int i;
   
   struct UndulatorSourceType *up;
   struct DipolSourceType     *dp;
+  struct PointSourceType     *pp;
   struct HardEdgeSourceType  *hp;     
   struct SRSourceType        *sp;  
   struct PSImageType	     *ip;
   
   switch (sw) 
     {
-    case kESDipolSourceButton:     i= 'D'; break;  
+    case kESDipolSourceButton:     i= 'D'; break;
+    case kESPointSourceButton:     i= 'o'; break;
     case kESUndulatorSourceButton: i= 'U'; break; 
     case kESundulatorSourceButton: i= 'u'; break; 
     case kESUndulatorSISButton:    i= 'L'; break; 
     case kESUndulatorSIMButton:    i= 'M'; break; 
     case kESSR2Button:             i= 'S'; break; 
     case kESPhaseSpaceImageButton: i= 'I'; break;
-    case kESDefaults:              i=  0; break;
+    case kESDefaults:              i=  0 ; break;
     case kESRayTraceButton:    
     default:                       i= 'H'; break; 
     }
@@ -147,12 +144,20 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
 	up->lambda= 12.4e-6;
 	up->deltaz= 0.0;
 	break;
-	case 'D': dp=(struct DipolSourceType *) &(bl->RTSource.Quelle.DipolSource);
+	case 'D': dp=(struct DipolSourceType *) 
+		    &(bl->RTSource.Quelle.DipolSource);
 	  dp->sigy		= 0.093;  
 	  dp->sigdy	= 1.;  
 	  dp->sigz        	= 0.05;
 	  dp->dz          	= 4.0;
-	  break;   
+	  break;  
+	case 'o': pp=(struct PointSourceType *) 
+		    &(bl->RTSource.Quelle.PointSource);
+	  dp->sigy	= 0.093;  
+	  dp->sigdy	= 1.;  
+	  dp->sigz      = 0.05;
+	  dp->sigdz     = 1.0;
+	  break;  
 	case 'S': sp= (struct SRSourceType *) &(bl->RTSource.Quelle.SRSource);
 	  sp->y	=1.;  
 	  sp->dy	=1.;  
