@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/mirrorbox.uil
 !  Date      : <16 Feb 04 09:23:44 flechsig> 
-!  Time-stamp: <16 Feb 04 09:48:38 flechsig> 
+!  Time-stamp: <23 Feb 04 16:49:13 flechsig> 
 !  Author    : Uwe Flechsig, flechsig@psi.ch
 
 !  $Source$ 
@@ -697,7 +697,12 @@ object
 object  
     EOET7 : XmText {
         arguments {
-            arguments 		  ETextArgs; };                     
+!            arguments 		  ETextArgs; 
+	       XmNcolumns          = 8;
+               XmNrows             = 1;
+               XmNmaxLength        = 10;
+               XmNvalue            = "";
+};                     
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET7);  };
     };
@@ -706,7 +711,12 @@ object
 object  
     EOET8 : XmText {
         arguments {
-            arguments 		  ETextArgs; };
+!            arguments 		  ETextArgs; 
+	       XmNcolumns          = 8;
+               XmNrows             = 1;
+               XmNmaxLength        = 10;
+               XmNvalue            = "";
+};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET8);  };
     };
