@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <05 May 04 14:41:42 flechsig>  */
+/*   Time-stamp: <06 May 04 11:09:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -231,35 +231,40 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->r= (*z)- gdat->rp;
 	  break;
 	case 18: /* STXM special M1- S1 */
+	  
 	  gdat->rp= *z;                    /* new distance */
 	  mdat= &listpt->MDat;             /* new radius r */
 	  teta= fabs(gdat->theta0* PI/ 180.0);
-	  mdat->rmi= cos(teta)/2 * gdat->rp * gdat->r /(gdat->rp + gdat->r);
+	  mdat->rmi= 2.0/ cos(teta) * gdat->rp * gdat->r /(gdat->rp + gdat->r);
 	  /* the spectrometer is 2 elements later- get the length */
 	  cl= bl->ElementList[elnumber+ 2].GDat.r+ 
-	    bl->ElementList[elnumber+ 2].GDat.rp;
-	  cl+= gdat->rp;  /* focus length */
-	  mdat->rho= 1/ (2* cos(teta)) * cl * gdat->r /(cl + gdat->r);
+	    bl->ElementList[elnumber+ 2].GDat.rp + gdat->rp;  /* focal length rho */
+	  mdat->rho= 2.0* cos(teta) * cl * gdat->r /(cl + gdat->r);
+          printf("in_struct: (STXM special M1-S1): %.2f, M1 r, rho: %.2f, %.2f \n", 
+		 *z, mdat->rmi, mdat->rho);
 	  break;
 	case 19: /* STXM special S1-S2 spectrometer length */
+	  mdat= &listpt->MDat;
 	  teta= fabs(gdat->theta0* PI/ 180.0);
 	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
-	  mdat= &listpt->MDat;  
+	  cl= mdat->rmi;  /* old radius */  
 	  /* new grating radius assuming keep rowland conditions */
 	  mdat->rmi= mdat->rho= *z/ (2* cos(teta) * cos(fi));  
 	  gdat->r= mdat->rmi * cos(teta + fi);
 	  gdat->rp= *z- gdat->r;
-	  cl= gdat->rp- mdat->rmi * cos(fi- teta);
-	  printf("Rowland error: %d\n", cl);
+	  printf("in_struct: (STXM special S1-S2): %.2f, radius: %.2f, old R: %.2f\n", 
+		 *z, mdat->rmi, cl);
 	  bl->BLOptions.displength= gdat->rp;
 	  /* change radius rho of mirror 2 elements upstream */
 	  teta= fabs(bl->ElementList[elnumber- 2].GDat.theta0* PI/ 180.0);
-	  cl= bl->ElementList[elnumber- 2].GDat.rp+ *z; 
-	  bl->ElementList[elnumber- 2].MDat.rho= 1/ (2* cos(teta)) * 
+	  cl= bl->ElementList[elnumber- 2].GDat.rp+ *z; /* focal length rho */
+	  bl->ElementList[elnumber- 2].MDat.rho= 2.0* cos(teta) * 
 	    cl * bl->ElementList[elnumber- 2].GDat.r /
 	    (cl + bl->ElementList[elnumber- 2].GDat.r);
-	  
+	  printf("in_struct: (STXM special S1-S2) M1-rho: %.2f, M1-R: %.2f, focal l. rho: %.2f\n", 
+		 bl->ElementList[elnumber- 2].MDat.rho,
+		 bl->ElementList[elnumber- 2].MDat.rmi, cl);
 	  break;
 	default:
 	  printf("in_struct: index %d not found\n", ipos);
@@ -362,7 +367,7 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  break; 
 	case 17:
 	case 13:  
-	case 19:  
+	
 	  *z= gdat->r+ gdat->rp; 
 	  break;
 	case 14:   	/*sgm vodar*/
@@ -386,12 +391,15 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  break;
 	  /*	case 17: siehe weiter oben */
 	case 18: /* STXM special M1- S1 */
-	  *z= gdat->r;
+	  *z= gdat->rp;
+	  printf("outstruct: (STXM special M1-S1): %.2f\n", *z);
 	  break;
 	  /* case 19: /* STXM special S1-S2 spectrometer length */
 	  /* case 19: siehe weiter oben analog 13 und 17 */  
-	  
-	  
+	case 19:  
+	  *z= gdat->r+ gdat->rp;
+	  printf("outstruct: (STXM special S1-S2): %.2f\n", *z);
+	  break;
 	default:
 	  printf("out_struct: index %d not found\n", ipos);
 	  break;

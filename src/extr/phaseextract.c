@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <30 Apr 04 14:03:33 flechsig>  */
+/*   Time-stamp: <06 May 04 10:18:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -93,7 +93,7 @@ int main(argc, argv)
      unsigned int argc;                  /* Command line argument count. */
      char *argv[];                       /* Pointers to command line args. */
 { 
-  double ax, ay, ax0, dy, dz, yfwhm, zfwhm, rpy, rpz, 
+  double ax, ay, ax0, ay0, dy, dz, yfwhm, zfwhm, rpy, rpz, 
     transmittance, done, ddone;
   int 	 ix, iy;
  
@@ -112,7 +112,7 @@ int main(argc, argv)
   ReadBLFile(optistructure.beamlinefilename, &Beamline, &PHASESet);
   /* get start for x, y from beamline */
   out_struct(&Beamline, &ax0, optistructure.xindex);  
-  out_struct(&Beamline, &ay,  optistructure.yindex); 
+  out_struct(&Beamline, &ay0,  optistructure.yindex); 
   MakeRTSource(&PHASESet, &Beamline);      /* Quelle herstellen */
 
   /* oeffnen des Ausgabefiles */
@@ -129,13 +129,16 @@ int main(argc, argv)
 
   ddone= 100.0/(optistructure.ypoints * optistructure.xpoints);
   done= 0;
+  /* initialize start symmetric to original value */
+  ay = ay0- 0.5* optistructure.ypoints* optistructure.dy;
+  ax0= ax0- 0.5* optistructure.xpoints* optistructure.dx;
   for (iy= 0; iy< optistructure.ypoints; iy++)   
     {
       in_struct(&Beamline, &ay, optistructure.yindex);    
       ax= ax0;
       for (ix= 0; ix< optistructure.xpoints; ix++)   
 	{
-	  printf("ax: %g\n", ax);
+	  printf("phaseextract: ax: %g\n", ax);
 	  in_struct(&Beamline, &ax, optistructure.xindex); 
 	  /* extrakt */
 	  buildsystem(&Beamline); 
