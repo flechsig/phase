@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.h */
 /*   Date      : <16 Feb 04 14:51:56 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:15:10 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:18:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,6 +24,7 @@
 #define         D0l             10
 #define         D0slopew        0.1
 #define         D0slopel        1.0
+#define         D0Art           188        /* kEOEDefaults */
 
 struct grating
 {
@@ -33,18 +34,15 @@ struct grating
 
 struct mdatset 
 {
-        double r1;
-	double r2;
-	double alpha;        
-	double rmi;        
-	double rho;  
-        int    iflagmi;
-      /*  double l1h, l2h, thetah;
-        double n[5];
-        int order;  */
-        double w1, w2, l1, l2;
-        double slopew, slopel;
-        double du, dw, dl, dRu, dRw, dRl;
+  double r1;
+  double r2;
+  double alpha;        
+  double rmi;        
+  double rho;  
+  int    iflagmi;
+  double w1, w2, l1, l2;
+  double slopew, slopel;
+  double du, dw, dl, dRu, dRw, dRl;
   int Art;   /* UF 9.7.04 */
 };   
 
