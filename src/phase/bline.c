@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
 /*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <24 Nov 99 11:54:17 flechsig>  */
+/*  Time-stamp: <05 Jan 00 17:39:28 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -123,16 +123,10 @@ void BuildBeamline(struct BeamlineType *bl)
 /****************************************************************/
 /* Beamline zusammensetzen              			*/
 /* 								*/
-/* Uwe 11.6.96                                                  */
-/* last modification: 24 Mar 97 16:51:35 flechsig */
-/* last modification: 27 Mar 97 08:40:46 flechsig */
-/* last modification: 04 Jul 97 09:01:05 flechsig */
-/* last modification: 30 Sep 97 08:02:22 flechsig */
 /****************************************************************/
 {
    int     elcounter, i, imodus, mdim;
    struct  ElementType *listpt;      
-   FString Fname;
    char    command[MaxPathLength];
 
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
@@ -695,7 +689,6 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
 /***********************************************/   
 {
    int msiz;
-   FString Fname;  
    char buffer[MaxPathLength];
 				
    msiz= 70* 70* sizeof(double); /* fest auf 70 */
