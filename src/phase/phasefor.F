@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <06 Feb 04 09:01:58 flechsig> 
+c$$$ Time-stamp: <06 Feb 04 09:32:29 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -54,17 +54,15 @@ c*************************** neu **************************
      .                  ra,ifl,xi,xir,st,
      .                  fdetc,fdetphc,fdet1phc)       
 c*************************** neu **************************  
-c last mod. Uwe 6.2.97
-c last modification: 24 Mar 97 09:22:28 flechsig
-
 
         implicit none
+
+c a trick to have the struct only in the ./phase and find it from opti 
+c if it works under vms is not yet tested
 #ifdef VMS
-c not yet tested
         include '[-.phase]phase_struct.for'
 c        include 'phase_struct.for'
 #else
-c a trick
         include '../phase/phase_struct.for'
 #endif
         record /constants/ cs
@@ -507,7 +505,15 @@ c	initialisieren der Konstanten
 c	U. Flechsig 21.1.97
 c----------------------------------------------------------
 	subroutine initconstants(cs)
-        include 'phase_struct.for'
+ccc        include 'phase_struct.for'
+c a trick to have the struct only in the ./phase and find it from opti 
+c if it works under vms is not yet tested
+#ifdef VMS
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+        include '../phase/phase_struct.for'
+#endif
 
         complex*16 xm1
 	record /constants/ cs
@@ -2253,7 +2259,15 @@ c*********readfg34_par ***************************
 c liest ein Parameterfile von Johannes, Button im edit- menu 
 
       implicit none
-      include 'phase_struct.for'
+ccc      include 'phase_struct.for'
+c a trick to have the struct only in the ./phase and find it from opti 
+c if it works under vms is not yet tested
+#ifdef VMS
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+        include '../phase/phase_struct.for'
+#endif
       
       record /control_flags/ ifl
       record /sources/ src
