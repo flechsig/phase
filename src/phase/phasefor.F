@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <19 Feb 04 10:08:45 flechsig> 
+c$$$ Time-stamp: <19 Feb 04 14:11:59 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -612,7 +612,7 @@ c-------- end fgmapidp()-----------------------------------
 c**************************************************************
 	subroutine intersection(a,wc,xlc,rin,iord,
      &  			uu,ww,xll)   
-c 27.6.96
+c
 c 	intersection returns uu,ww,xll
 c**************************************************************
 	implicit real*8(a-h,o-z)

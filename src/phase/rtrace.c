@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
 /*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <19 Feb 04 10:45:48 flechsig>  */
+/*  Time-stamp: <19 Feb 04 14:12:01 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
@@ -344,16 +344,13 @@ int OnElement(struct mdatset *mi, double w, double l)
 } /* end OnElement */
 
 void RayTraceSingleRay(struct BeamlineType *bl)
-/* last modification: 04 Jul 97 09:35:49 flechsig */
-/* last modification: 24 Sep 97 16:00:08 flechsig */
-/* last modification: 26 Sep 97 10:12:58 flechsig */
 {
   struct RayType *Raysin, *Raysout, Tmpsource, Tmpresult;   
   int    i, iord, elcounter, elnumber;
-  double uu, ww, ll, xlength, xlength1, xlength2, phase, raylen, slopelen, 
-    dela, res;
+  double uu, ww, ll, xlength, xlength1, xlength2, phase, raylen, 
+    slopelen, dela, res;
   struct ElementType *ds; 
-  struct RESULTType *Re; 
+  struct RESULTType  *Re; 
 
   /*********************************************************************/
 
@@ -379,10 +376,12 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	printf("\n**************** Single Ray *****************\n");
 
 	if (bl->BLOptions.SourcetoImage != 1) 
-	  printf("  Image to source calculation.\n");
+	  printf("RayTraceSingleRay:   Image to source calculation.\n");
 	else 
-	  printf("  Source to image calculation.\n");
-	printf("  Beamline contains %d element(s).\n", bl->elementzahl);
+	  printf("RayTraceSingleRay:   Source to image calculation.\n");
+
+	printf("RayTraceSingleRay:   Beamline contains %d element(s).\n", 
+	       bl->elementzahl);
 
 	while (elcounter< bl->elementzahl)
 	  {                               /* Richtung beruecksichtigen */
@@ -400,7 +399,8 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	    else
 	      intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			   &bl->BLOptions.ifl.iord, &uu, &ww, &ll); 
-	    printf("  intersection: u= %g, w= %g, l= %g [mm]\n", uu, ww, ll);
+
+	    printf("  intersection: u= %g, w= %g, l= %g (mm)\n", uu, ww, ll);
 	    if (OnElement(&ds->MDat, ww, ll) == 0)
 	      {
 		beep(1);
