@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux
 # Date      : <04 Nov 99 16:25:46 flechsig> 
-# Time-stamp: <24 Mar 00 15:37:03 flechsig> 
+# Time-stamp: <04 Jan 01 15:47:27 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE GUI on LINUX
@@ -10,6 +10,11 @@ INSTALL  = install -c
 prefix  = /usr/local
 #prefix   = /home/pss060/sls/flechsig
 PHASEDIR = $(prefix)/phase
+
+srcdir      = .
+INSTPATH    = /usr/local/phase
+BUILDPATH   = /home/pss060/sls/flechsig/phase
+
 
 .phony: all
 
@@ -33,7 +38,7 @@ phase.$(UID): $(PHASEUILS)
 	uil $(UILFLAGS) phase.$(UID) phase.uil 
 
 install: all
-	$(INSTALL) phase.$(UID) $(PHASEDIR)/lib/phase.$(UID)
+	$(INSTALL) phase.$(UID) $(INSTPATH)/lib/phase.$(UID)
 
 clear: 
 	@echo "delete phase.uid.."
@@ -58,6 +63,6 @@ dist: $(SRCS) $(AUX)
 	-rm -rf `cat .fname`.fname
 	tar -chzf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
-	ln `cat .fname`.tgz $(PHASEDIR)/release
+	ln `cat .fname`.tgz $(BUILDPATH)/release
 ##################### end makefile ####################################
 # end /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux
