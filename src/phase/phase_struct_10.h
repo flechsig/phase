@@ -1,18 +1,7 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.h */
 /*  Date      : <22 Oct 97 15:02:57 flechsig>  */
-/*  Time-stamp: <22 Oct 99 13:02:58 flechsig>  */
+/*  Time-stamp: <20 Dec 99 09:14:15 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_9.h */
-/*  Date      : <09 Jun 97 16:36:27 flechsig>  */
-/*  Time-stamp: <22 Oct 97 15:02:16 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHAS.PHASEC]PHASE_STRUCT_7.H    */
-/* Datum: 21.JAN.1997                                          */
-/* Stand: 21-JAN-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
-
 
 /* neu eingefuegt */
 typedef struct ComplexStruct {
@@ -270,6 +259,14 @@ struct  source4 {
 	   double pi;
 	   COMPLEX sqrtm1;
         };  
-
-
+/* ----------------- U. F. 21.12.99 ----------------------------- */
+struct simps1 {
+  double fya1[501],fyp1[501],fza1[501],fzp1[501];
+  double fya2[501],fyp2[501],fza2[501],fzp2[501];
+  double z1,z2;
+  double tya[301,301],tza[301,301];
+  double typ[301,301],tzp[301,301];
+  int ianz0_save[301,301];
+  int iiheigh,iiwidth,jmult;
+};
 /* end phase_struct_10.h */
