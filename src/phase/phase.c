@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <24 Nov 99 14:09:47 flechsig>  */
+/*  Time-stamp: <20 Dec 99 12:39:25 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -82,7 +82,11 @@ unsigned int main(argc, argv)
     /* Open the UID files (the output of the UIL compiler) in the hierarchy */
 
     /* set db_filename_vec with environment */
+#ifdef VMS
+    strcpy(uidfilename, ".lib]phase.uid");
+#else
     strcpy(uidfilename, "/lib/phase.uid");
+#endif
     PrependEnv(PHASE_HOME, uidfilename);
     db_filename_vec[0]= uidfilename;
 
