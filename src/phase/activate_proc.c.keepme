@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <11 Feb 00 09:37:30 flechsig>  */
+/*  Time-stamp: <04 Jan 01 10:56:18 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -345,7 +345,8 @@ void activate_proc(w, tag, reason)
 	printf("a. proc: returned etype= %d\n" ,i);
 
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
-		   &bl->ElementList[(bl->position)- 1].mir, i); 
+		   &bl->ElementList[(bl->position)- 1].mir, i,
+		   bl->ElementList[(bl->position)- 1].elementname); 
 	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 		     PHASESet.elementpckname);
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 

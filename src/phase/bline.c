@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
 /*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <24 Mar 00 15:46:37 flechsig>  */
+/*  Time-stamp: <04 Jan 01 11:34:33 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -173,7 +173,8 @@ void BuildBeamline(struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->Art);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->Art, 
+			 listpt->elementname);    
 	      /*  mputpickfile(&listpt->MDat, PHASESet.elementpckname); */ 
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
