@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <19 Feb 04 11:10:38 flechsig> 
+#   Time-stamp: <19 Feb 04 11:29:59 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -11,7 +11,7 @@
 
 ## it is tested with autoconf 2.57
 AC_PREREQ(2.57)
-AC_INIT(phase,0.5,flechsig@psi.ch)
+AC_INIT(phase,1.15,flechsig@psi.ch)
 AC_CONFIG_SRCDIR(phase/phase.c)
 AC_REVISION($Revision$)
 AC_CONFIG_AUX_DIR(config)
