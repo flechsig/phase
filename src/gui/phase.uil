@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phase.uil
 ! Date      : <22 Oct 99 09:54:11 flechsig> 
-! Time-stamp: <28 Oct 99 11:23:26 flechsig> 
+! Time-stamp: <28 Oct 99 11:36:12 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 !
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]PHASE.UIL
@@ -230,23 +230,23 @@ object
 
 !The colormix widget object   
 
-! not available on linux
-object
-    main_color : DXmColorMixDialog 
-        {
-        arguments            
-            {
-            XmNdialogTitle      = "Background Color";
-            DXmNmainLabel       = compound_string("Colormix");
-            };      
-        callbacks                
-            {
-            XmNhelpCallback     = procedure sens_help_proc(k_options_help);
-            XmNcancelCallback   = procedure cancel_color_proc();
-            XmNokCallback       = procedure ok_color_proc();
-            XmNapplyCallback    = procedure apply_color_proc();
-            };                            
-        };  
+!not available on linux commneted out 28.10.99
+!object
+!    main_color : DXmColorMixDialog 
+!        {
+!        arguments            
+!            {
+!            XmNdialogTitle      = "Background Color";
+!            DXmNmainLabel       = compound_string("Colormix");
+!            };      
+!        callbacks                
+!            {
+!            XmNhelpCallback     = procedure sens_help_proc(k_options_help);
+!            XmNcancelCallback   = procedure cancel_color_proc();
+!            XmNokCallback       = procedure ok_color_proc();
+!            XmNapplyCallback    = procedure apply_color_proc();
+!            };                            
+!        };  
 
 ! The options pulldown entry and its associated pulldown menu.
 
@@ -265,7 +265,8 @@ object
     m_options_control_button : XmPushButton {
         arguments {              
             XmNlabelString      = 'Background Color...'; 
-            XmNmnemonic         = keysym("C");  
+            XmNsensitive            = false; 
+	    XmNmnemonic         = keysym("C");  
             };     
         callbacks {
             MrmNcreateCallback  = procedure create_proc (k_create_options);
