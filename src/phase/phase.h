@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <03 Nov 03 10:34:09 flechsig>              */
+/* Time-stamp: <03 Nov 03 10:57:06 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -594,17 +594,17 @@ Opaque       help_context;         	/* Global help system context */
                                                                              
 long status;        			/* fuer Stringumwandlung   */
 long bc;      
-/* UF remove static 3.11.03 */		/*           "             */
-Cursor watch = 0;
-Screen	*the_screen;		/* Pointer to screen data  */  
-Display	*the_display;		/* Pointer to display data */  
-XColor    savecolor;   
-int help_num = 0;                /* make sure they start zero */   
-int low_num  = 0;
-XmString latin_create;		/* Variables for */
-XmString latin_dismiss;	  	/* compound strings. */
-XmString latin_space;
-XmString latin_zero;
+
+static Cursor my_watch = 0;
+static Screen	*the_screen;		/* Pointer to screen data  */  
+static Display	*the_display;		/* Pointer to display data */  
+static XColor    savecolor;   
+static int help_num = 0;                /* make sure they start zero */   
+static int low_num  = 0;
+static XmString latin_create;		/* Variables for */
+static XmString latin_dismiss;	  	/* compound strings. */
+static XmString latin_space;
+static XmString latin_zero;
 /* #ifdef VMS */
 /*  static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
 /*  {"PHASE$prg:PHASE.uid"};	/* uid Namen eintragen*/
