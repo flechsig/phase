@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <24 Mar 04 11:23:19 flechsig>  */
+/*   Time-stamp: <03 May 04 15:07:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -601,7 +601,7 @@ void RayTraceFull(struct BeamlineType *bl)
        tmpresult= (struct RayType *) 
 	 xmalloc(zahl* sizeof(struct RayType));
        
-       printf("RayTraceFull: start with %d ray(s) \n", zahl); 
+       printf("RayTraceFull: start with %d ray(s) \t= 100 %s \n", zahl, "%"); 
        memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
 	      sizeof(struct RayType));
        
@@ -657,8 +657,8 @@ void RayTraceFull(struct BeamlineType *bl)
 	     } /* schleife ueber alle rays */
 	 } /* end Sonderbehandlung spalt */
        zahl-= lost;
-       printf("   element %d: lost %d, residual %d  ray(s): \n", 
-	      elnumber, lost, zahl); 
+       printf("   element %d: lost %d, residual %d  ray(s) \t= %d %s \n", 
+	      elnumber, lost, zahl, zahl*100/bl->RTSource.raynumber, "%"); 
        /* verzichte hier auf realloc */
        memcpy(tmpsource, tmpresult, zahl* sizeof(struct RayType));  
        elcounter++;
