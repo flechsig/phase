@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <04 Feb 04 16:25:56 flechsig>  */
+/*  Time-stamp: <04 Feb 04 16:52:40 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -45,13 +45,20 @@ int main(argc, argv)
     char *argv[];                       /* Pointers to command line args. */
 {                                
     int setupswitch;
-    char string[255], uidfilename[255];
+    char prefix[255], uidfilename[255];
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
     /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
+    sprintf(prefix, "%s", PREFIX);
+    if (strncmp(prefix, "NONE", 4) == 0) 
+      strcpy(prefix, "/usr/local");
+#ifdef DEBUG
+    printf("main: prefix%s\n", prefix);
+#endif
+
 
     sprintf(uidfilename, "%s/share/phase/phase.uid", PREFIX);
     if (strncmp(uidfilename, "NONE", 4) == 0) 
