@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Jun 03 16:37:47 flechsig>  */
+/*   Time-stamp: <13 Oct 03 17:00:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -2306,7 +2306,7 @@ void WriteMKos(struct mirrortype *a, char *name1)
     }    
   for (i= 0; i <= 5; i++) 
     for (j= 0; j <= 5; j++) 
-      if ((i + j) <= 5) /* fprintf(f, "%lE\n", dp[i+j*6]);  */
+      if ((i + j) <= 5)  fprintf(f, "%lE\n", dp[i+j*6]);  
   fclose(f); 
   printf("WriteMKos: done\n");
 }    
