@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <02 Nov 99 11:00:34 flechsig>  */
+/*  Time-stamp: <08 Nov 99 15:28:24 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -190,11 +190,10 @@ void init_application()
     print_widget= NULL; 		/* Initialize print widgets. */      
               
     color_widget= NULL;   		/* Initialize color mix widget. */      
-#ifdef VMS               
     /* Set up the compound strings that we need. */
-    latin_space = DXmCvtFCtoCS(" ", &bc, &status);
-    latin_zero  = DXmCvtFCtoCS(" 0", &bc, &status);
-#endif
+    latin_space = XmStringCreateLocalized(" ");
+    latin_zero  = XmStringCreateLocalized(" 0");
+
     ActualTask= 0;  
 }
                     
@@ -452,9 +451,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       ppos= (XmListGetSelectedPos(widget_array[kEBLList], pl, &pc) 
 	     == True) ? **pl : 0; 
       sprintf(clabel, "selected element %3d", epos); 
-#ifdef VMS
-      xlabel= DXmCvtFCtoCS(clabel, &bc, &status);
-#endif
+      xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
       printf("fetch\n");
@@ -479,9 +476,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       
     case kCOptiList2:
       xlabel= XmStringCopy(list->item);
-#ifdef VMS
-      clabelp= DXmCvtCStoFC(xlabel, &bc, &status);  
-#endif
+      clabelp= XmStringCreateLocalized(xlabel);  
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
       break;      
@@ -492,9 +487,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       printf("list_proc=> element %d, position %d\n", epos, ppos);
       indx= iindex(epos, ppos);
       sprintf(clabel, "selected element %3d;  index: ", epos);    
-#ifdef VMS
-      xlabel= DXmCvtFCtoCS(clabel, &bc, &status);
-#endif
+      xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kCOptiSelectedLabel], XmNlabelString, 
 		    xlabel); 
       sprintf(clabel, "%4d", indx);  
@@ -829,7 +822,7 @@ void FileSelectionProc(Widget wi, int *tag,
   /* Version entfernen */
 #ifdef VMS
   fname= delversion(DXmCvtCStoFC(path, &bc, &status)); 
-  path= DXmCvtFCtoCS(fname, &bc, &status);
+  path= XmStringCreateLocalized(fname);
 #endif
   XtFree(fname);  
   if (sw == kFileSelectionOk)
