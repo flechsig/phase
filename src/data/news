@@ -59,5 +59,7 @@ Initialisierungsfehler bei ell. Elementen behoben
           configure with --enable-debug for verbose output
 20 Feb 04 footprint available in batch mode
           batchmode with source from file fixed
+09 Mar 04 Generic Undulator source 
+          batchmode with source from file fixed in full RT mode
 ****************    end of NEWS  *****************           
 **************************************************
