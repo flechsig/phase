@@ -711,7 +711,7 @@ c        write(*,*)'intersection end'
 c*************** end intersection ****************************
                           
 c*************************************************************
-	subroutine pathlen0(a,g,iord,iplmode,wc,xlc,ypc1,zpc1,xlm)
+	subroutine pathlen0(a,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
 c*************************************************************
 c	(ini = 0 : calculate the transformation coefficients)
 c*************************************************************
@@ -721,10 +721,11 @@ c-------------------------------------------------------------
 c       input: a: mirrortype
 c	       g: geometrytype
 c	iplmode = 0 : do not subtract r and rp from path length
-c		     in analytical code
+c		      in analytical code
 c	iplmode = 1 : subtract r and rp from path length
-c		     in analytical code   
-c	       
+c		      in analytical code   
+c	isti    = 1  : Tarnsformation von Quelle zum Bild
+c	isti    != 1 : Tarnsformation von Bild zur Quelle
 c	       wc,xlc,ypc1,zpc1: Entwicklungskoeffizienten
 c       return: xlm: xlen1c, xlen2c (Koeffizientenstruktur)   
 c**************************************************************
@@ -766,7 +767,7 @@ c--------- Variablen ------------------------------------------
 	record /xlenmap/ xlm     
         record /geometryst/ g 
 
-        integer iord,n1,n2,n3,n4,n5,n6,iplmode  ! ,i,j,k,l
+        integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
 
 	real*8 a(0:5,0:5),                     ! mirrortype
      &         wc,xlc,ypc1,zpc1
@@ -778,11 +779,18 @@ c*****************************************************************
 #ifdef DEBUG
        write(*,*) 'pathlen0: iplmode=',iplmode
 #endif
-       if (iplmode.eq.0)then
+
+      if (iplmode.eq.0)then
 
         write(*,*) 'pathlen0: do not subtract r and rp from path length' 
-	call lsubb(a,g.sina,g.cosa,g.sinb,g.cosb,
-     &             g.r,g.rp,g.idefl,dql1,dql2)    
+
+	if(isti.eq.1)then
+	  call lsubb(a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,-g.idefl,dql1,dql2)
+	endif
+	if(isti.ne.1)then
+	  call lsubb(a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,dql1,dql2) 
+	endif
+	
         do n1=0,iord
 	  do n2=0,iord
 	   do n3=0,iord
@@ -847,7 +855,9 @@ c----------------------------------
 c----------------------------------
        if (iplmode.eq.1)then
 	write(*,*)'pathlen0: subtract r and rp from path length'
-	call lsubab(a,g.sina,g.cosa,g.sinb,g.cosb,
+	if(isti.eq.1)call lsubab(a,g.sinb,g.cosb,g.sina,g.cosa,
+     &              g.rp,g.r,-g.idefl,dsqrpl1,dsqrpl2)
+	if(isti.ne.1)call lsubab(a,g.sina,g.cosa,g.sinb,g.cosb,
      &              g.r,g.rp,g.idefl,dsqrpl1,dsqrpl2)
 	do n1=0,iord
          do n2=0,iord
@@ -884,16 +894,14 @@ c----------------------------------
        call lsubd3(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)
     
 c       write(*,*)'Sum of pathlen coefficients'
-c       do i=0,4
-c          do j=0,4-i
-c             do k=0,4-i-j
-c                do l=0,4-i-j-k
-c                   write(*,*)'xlm',i,j,k,l,
-c     &             xlm.xlen1c(i,j,k,l)+xlm.xlen2c(i,j,k,l)
-c                enddo
-c             enddo
-c          enddo
-c       enddo
+	do n1=0,4
+          do n2=0,4-n1
+             do n3=0,4-n1-n2
+                do n4=0,4-n3-n2-n1
+                enddo
+             enddo
+          enddo
+       enddo
 c       write(*,*)'end pathlen0'
        
        return
@@ -957,7 +965,7 @@ c--------------------------------------------------
      &            yi(i)*zi(j)*dyi(k)*dzi(l)
 	     xlength2=xlength2+xlm.xlen2c(i,j,k,l)*
      &            yi(i)*zi(j)*dyi(k)*dzi(l)
-	    enddo
+            enddo
 	   enddo
 	  enddo
 	enddo
@@ -1246,6 +1254,10 @@ c**********************************************************
 c----------------------------------------------------------
 c       "transponiert" die Geometriedaten und Spiegel- 
 c	koeffizienten fuer Rechnung      Bild-> Quelle
+c
+c	ACHTUNG: Vorzeichen von xdens(1) und xdens(3)
+c	werden lokal in reduce_1 umgedreht
+c
 c********************************************************** 
 	implicit real*8(a-h,o-z)    
 	structure/geometryst/
@@ -1312,7 +1324,7 @@ c         type*,'for:',yi,zi,dyi,dzi
                  zp=zp+zpc1(i,j,k,l)*var3
                  dyp=dyp+dypc(i,j,k,l)*var3
                  dzp=dzp+dzpc(i,j,k,l)*var3
-                 var3=var3*dzi
+		 var3=var3*dzi
                enddo
                var2=var2*dyi
              enddo
@@ -1326,7 +1338,7 @@ c         type*,'for:',yi,zi,dyi,dzi
         rout(3)=dyp 
         rout(4)=dzp 
 
-        return
+	return
 	end
 c****** end rtracef ********************************************
 

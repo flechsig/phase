@@ -771,9 +771,15 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 	xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
 		listpt->dzpc, &bl->BLOptions.ifl.iord); 
-	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	         &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, 
-		 listpt->ypc1, listpt->zpc1, &listpt->xlm);
+/*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+                 listpt->wc, listpt->xlc, listpt->ypc1, 
+		 listpt->zpc1, &listpt->xlm);
+*/
+        pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+                 listpt->wc, listpt->xlc, listpt->ypc1, 
+		 listpt->zpc1, &listpt->xlm);
 #ifdef DEBUG   
 	printf("MakeMapandMatrix: source to image map and matrix created\n");  
 #endif
@@ -786,9 +792,15 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);   
 	    xxmap70(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord); 
-	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	         &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, 
-		 listpt->ypc1, listpt->zpc1, &listpt->xlm); 
+/*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+		 listpt->wc, listpt->xlc, listpt->ypc1, 
+		 listpt->zpc1, &listpt->xlm); 
+*/
+            pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+		 listpt->wc, listpt->xlc, listpt->ypc1, 
+		 listpt->zpc1, &listpt->xlm); 
 #ifdef DEBUG       
 	    printf("MakeMapandMatrix: image to source map and matrix created\n");  
 #endif
