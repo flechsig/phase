@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <12 Jan 00 09:20:36 flechsig> 
+c Time-stamp: <12 Jan 00 09:33:28 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -76,7 +76,7 @@ c        record /source_results/ sr
         end structure  
         record /psoptions/ pso   
 
-        integer i,j,k,l,iord,iheigh,iwidth
+        integer i,j,k,l,iord,iheigh,iwidth,
      &       n1,n2,icheckk,ii,jj,iinumb
 
         real *8 xlam_test,xlen0,a(0:5,0:5),
