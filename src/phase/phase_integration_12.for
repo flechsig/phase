@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <21 Jan 00 09:08:42 flechsig> 
+c Time-stamp: <11 Feb 00 11:16:50 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -23,6 +23,7 @@ c      wird zum Ruecksprung benutzt
 c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
+c Aenderungen von JBam 11.2.00
 c*********************************************************
 c UF 12.1.2000
       subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st,sp)
@@ -150,8 +151,9 @@ c----------------------------------------------------------
 	   fmax=dmax1(fmax,cdabs(fwerty))
 	enddo
 
+	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,
-     &		xir.yzintey,xir.yzintya,xir.yzintyp)
+     &		xir.yzintey,xir.yzintya,xir.yzintyp,iyz)
 
 	endif
 
@@ -192,14 +194,16 @@ c-----------------------------------------------------------
 c UF 12.1.2000
       if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
 
+	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
-     &			xir.yzintya,xir.yzintyp)
+     &			xir.yzintya,xir.yzintyp,iyz)
 
 c UF 12.1.2000
       if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
 
+	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
-     &			xir.yzintza,xir.yzintzp)
+     &			xir.yzintza,xir.yzintzp,iyz)
 
 	ifl.ispline=ispline_save
 
@@ -329,8 +333,9 @@ c----------------------------------------------------------
 	  fmax=dmax1(fmax,cdabs(fwerty))
 	enddo
 
+	iyz=1
 	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-     &		yintey,yintya,yintyp)
+     &		yintey,yintya,yintyp,iyz)
 
 	endif
 
@@ -358,10 +363,12 @@ c------------------------------------------------------------
 	  dy(i)=dyy
 	enddo
 
+	iyz=1
 	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-     &		yintey,yintya,yintyp)
+     &		yintey,yintya,yintyp,iyz)
+	iyz=1
 	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
-     &		yintez,yintza,yintzp)
+     &		yintez,yintza,yintzp,iyz)
 
 c---------------------------------------------------------
 	endif
@@ -1391,7 +1398,7 @@ c-------- derivation of matrix A
 
 c******************************************************************
 	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
-     &                      xinta,xintp)
+     &                      xinta,xintp,iyz)
 c******************************************************************
 c
 c	''Turbo Version'' 
@@ -1428,6 +1435,9 @@ c	iordap_loc  = Ordnung der Polynomentwicklung der Amplitude (0,1,2)
 c	xk_loc_min  = Falls sich die Phase zweier aufeinander folgender
 c	              Punkte um weniger als xk_loc_min unterscheiden,
 c		      wird die Integration mittels (y1+y2)/2 ausgefuehrt.
+c
+c	iyz = 1 call from y-loop
+c	iyz = 2 call from z-loop
 c-----------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
@@ -1610,8 +1620,6 @@ c------------------------
 		xintp=0.d0
 	endif
 
-	endif
-
 c----------- output
 c	if(xir.nsimp.eq.2*xi.ianzy0+1)then
 
@@ -1629,10 +1637,12 @@ c	close(10)
 c
 c	endif
 
+	if(iyz.eq.1)xx=xi.ymin
+	if(iyz.eq.2)xx=xi.zmin
+
 	do ii=1,xir.iisimp
 	if(xir.isimp(ii).eq.xir.nsimp)then
 
-	xx=0.
 	do i=1,ianz_loc-1
 	xx=xx+dyz_loc(i)
 	xir.sintre(ii,1,i)=xx
@@ -1640,7 +1650,6 @@ c	endif
 	enddo
 	xir.isintre(ii)=ianz_loc-1
 
-	xx=0.
 	do i=1,ianz_loc-1
 	xx=xx+dyz_loc(i)
 	xir.sintim(ii,1,i)=xx
@@ -1648,7 +1657,6 @@ c	endif
 	enddo
 	xir.isintim(ii)=ianz_loc-1
 
-	xx=0.
 	do i=1,ianz_loc
 	xir.simpa(ii,1,i)=xx
 	xir.simpa(ii,2,i)=fyza_loc(i)
@@ -1656,7 +1664,6 @@ c	endif
 	enddo
 	xir.isimpa(ii)=ianz_loc
 
-	xx=0.
 	do i=1,ianz_loc
 	xir.simpp(ii,1,i)=xx
 	xir.simpp(ii,2,i)=fyzp_loc(i)
@@ -1666,6 +1673,10 @@ c	endif
 
 	endif
 	enddo
+
+c---------------------------------------------------------
+
+	endif		! ispline.lt.0
 
 c---------------------------------------------------------
 	if(ifl.ispline.eq.0)then
@@ -1680,10 +1691,12 @@ c---------------------------------------------------------
 	endif
 
 c----------- output
+	if(iyz.eq.1)xx=xi.ymin
+	if(iyz.eq.2)xx=xi.zmin
+
 	do ii=1,xir.iisimp
 	if(xir.isimp(ii).eq.xir.nsimp)then
 
-	xx=0.
 	do i=1,ianz-1
 	xx=xx+dyz(i)
 	xir.sintre(ii,1,i)=xx
@@ -1691,7 +1704,6 @@ c----------- output
 	enddo
 	xir.isintre(ii)=ianz-1
 
-	xx=0.
 	do i=1,ianz-1
 	xx=xx+dyz(i)
 	xir.sintim(ii,1,i)=xx
@@ -1699,7 +1711,6 @@ c----------- output
 	enddo
 	xir.isintim(ii)=ianz-1
 
-	xx=0.
 	do i=1,ianz
 	xir.simpre(ii,1,i)=xx
 	xir.simpre(ii,2,i)=dreal(fyz(i))*1.0d10
@@ -1707,7 +1718,6 @@ c----------- output
 	enddo
 	xir.isimpre(ii)=ianz
 
-	xx=0.
 	do i=1,ianz
 	xir.simpim(ii,1,i)=xx
 	xir.simpim(ii,2,i)=dimag(fyz(i))*1.0d10
@@ -1719,7 +1729,7 @@ c----------- output
 	enddo
 c-------------------
 
-	endif
+	endif		! ispline.eq.0
 
 c------------------------------------------------------------
 
@@ -1740,10 +1750,12 @@ c------------------------------------------------------------
 	xint=xintre+cs.sqrtm1*xintim
 
 c----------- output
+	if(iyz.eq.1)xx=xi.ymin
+	if(iyz.eq.2)xx=xi.zmin
+
 	do ii=1,xir.iisimp
 	if(xir.isimp(ii).eq.xir.nsimp)then
 
-	xx=0.
 	do i=1,ianz
 	xir.simpre(ii,1,i)=xx
 	xir.simpre(ii,2,i)=dreal(fyz(i))
@@ -1751,7 +1763,6 @@ c----------- output
 	enddo
 	xir.isimpre(ii)=ianz
 
-	xx=0.
 	do i=1,ianz
 	xir.simpim(ii,1,i)=xx
 	xir.simpim(ii,2,i)=dimag(fyz(i))
