@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <17 Feb 00 09:59:59 flechsig>  */
+/*  Time-stamp: <24 Mar 00 14:56:25 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -47,12 +47,15 @@ int main(argc, argv)
       {
 	printf("\nphase.c: environment variable %s not defined- exit\n",
 	       PHASE_HOME);
+	printf("example for unix bash: export %s=/usr/local/phase\n", 
+	       PHASE_HOME);
+#ifdef VMS
+	printf("example for VMS: define %s \"[myname.phase\"\n", PHASE_HOME);
+#else
 	printf("example for unix tcsh: setenv %s ~/phase\n", PHASE_HOME);
 	printf("example for unix tcsh: setenv %s /usr/local/phase\n", 
 	       PHASE_HOME);
-	printf("example for unix bash: export %s=/usr/local/phase\n", 
-	       PHASE_HOME);
-	printf("example for VMS: define %s \"[myname.phase\"\n", PHASE_HOME);
+#endif
 	exit(-1);
       }
 
