@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <17 Jan 00 09:56:22 flechsig> 
+c Time-stamp: <17 Jan 00 10:36:36 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -405,7 +405,8 @@ c        write(*,*)'file fd1ph.paw und surf_s0.paw erzeugt'
 c        write(*,*)'xir.iisimp:',xir.iisimp
 c	do ii=1,xir.iisimp
            open(unit=10,name='simpre.dat',type='unknown',err=123)
-           do i=1,xir.isimpre(ii)
+c           do i=1,xir.isimpre(ii)
+           do i=1,xir.isimpre(1)
 c              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
               write(10,*)xir.simpre(1,1,i),xir.simpre(1,2,i),
      .             xir.simpre(2,1,i),xir.simpre(2,2,i),
@@ -414,7 +415,8 @@ c              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
            enddo
            close(10)
            open(unit=10,name='simpim.dat',type='unknown',err=123)
-           do i=1,xir.isimpim(ii)
+c           do i=1,xir.isimpim(ii)
+           do i=1,xir.isimpim(1)
 c              write(10,*)xir.simpim(ii,1,i),xir.simpim(ii,2,i)
               write(10,*)xir.simpim(1,1,i),xir.simpim(1,2,i),
      .             xir.simpim(2,1,i),xir.simpim(2,2,i),
@@ -428,7 +430,8 @@ c	enddo
 
 c        do ii=1,xir.iisimp
            open(unit=10,name='sintre.dat',type='unknown',err=123)
-           do i=1,xir.isintre(ii)
+c           do i=1,xir.isintre(ii)
+           do i=1,xir.isintre(1)
 c              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
               write(10,*)xir.sintre(1,1,i),xir.sintre(1,2,i),
      .             xir.sintre(2,1,i),xir.sintre(2,2,i),
@@ -437,7 +440,8 @@ c              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
            enddo
            close(10)
            open(unit=10,name='sintim.dat',type='unknown',err=123)
-           do i=1,xir.isintim(ii)
+c           do i=1,xir.isintim(ii)
+           do i=1,xir.isintim(1)
 c              write(10,*)xir.sintim(ii,1,i),xir.sintim(ii,2,i)
               write(10,*)xir.sintim(1,1,i),xir.sintim(1,2,i),
      .             xir.sintim(2,1,i),xir.sintim(2,2,i),
