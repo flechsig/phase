@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.fpp
 c Date      : <09 Jan 01 12:39:27 flechsig> 
-c Time-stamp: <12 Jan 01 07:50:53 flechsig> 
+c Time-stamp: <21 May 01 15:18:14 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c fortran file which will be preprocessed #define LINUX #define VMS
@@ -55,7 +55,7 @@ c
 	character*(*) titel,metaname
         real*4        y1,y2,z1,z2       
         real*8	      dlfac,lambda,dlf,raysout
-        integer       ifile,i,iy,iz
+        integer       ifile,i,iy,iz,istat
 
 c temporarely fixed
 c	parameter (dtitel = 'PHASE')
@@ -82,18 +82,21 @@ c postscriptfile
 
 #ifdef VMS
            type*,'open postsciptfile under VMS ',metaname
-           open(unit=11,file=metaname,
-     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
+c           open(unit=11,file=metaname,
+c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
 #else
            type*,'open postsciptfile under UNIX ',metaname
-           open(unit=11,file=metaname,STATUS='UNKNOWN',err=4444)
+c           open(unit=11,file=metaname,FORM='FORMATTED',
+c     1          STATUS='UNKNOWN',err=4444)
+           
 #endif
-
-           call igmeta(-11,-111) 
+           call kuopen(11,metaname,'UNKNOWN',istat)
+c           call igmeta(-11,-111) UF 12.1.2001
+           call igmeta(11,-111)
         endif
               
-      write(*,*)'only for ray trace data'   
-      goto 4445
+        write(*,*)'only for ray trace data'   
+        goto 4445
 4444  write(*,*)'hplotdisplayf: error open file: ',metaname
 c---- buche histogramme -------------------------------------------
 4445  call kanalzahlf(s.plotsyle,iy,iz) ! iy,iz neu belegt
@@ -132,16 +135,16 @@ c           write(*,*)'fill histogr.',i
         enddo          
         write(*,*)'for: histograms filled'  
         
-       
-        call makeplotf(titel,s.plotsyle)    ! eigentliches plotten
-        call iuwk(0,1)                      !puffer leeren update alle ws S.12
+        call makeplotf(titel,s.plotsyle) ! eigentliches plotten
+        call iuwk(0,1)                   ! puffer leeren update alle ws S.12
 
         if(ifile.eq.1)then  
            type*,'close postscriptfile'
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-           close(11)  
+c           close(11) 
+           call kuclos(11,' ',1)
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 1001
@@ -205,7 +208,7 @@ c
         dimension yd(1), zd(1), psd(1)                  ! gummilaenge
 	character*(*) titel,metaname
         real*4     y1,y2,z1,z2,y,z,p       
-        
+        integer istat
 	
 c************************************************************************
  
@@ -221,12 +224,14 @@ c postscriptfile
 
 #ifdef VMS
            type*,'open postsciptfile under VMS '
-           open(unit=11,file=metaname,STATUS='UNKNOWN',
-     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',
+c     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
 #else
            type*,'open postsciptfile under UNIX '
            open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
+           
 #endif
+           call kuopen(11,metaname,'UNKNOWN',istat)
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
@@ -272,7 +277,8 @@ c        endif
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-           close(11)  
+c           close(11)
+           call kuclos(11,' ',1)
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 5001
@@ -321,7 +327,7 @@ c----------------------------------------------------------
         real*8 ymin,ymax,zmin,zmax,psd(4,2,4096)
         real*4 minx,maxx,tmp,x,y,dx
 	character*(*) titel,metaname
-        integer ifile,psfile,ii,i,id,ix,iy,iz
+        integer ifile,psfile,ii,i,id,ix,iy,iz,istat
         
         write(*,*)'hplotpssimf called (for)'
 
@@ -332,12 +338,14 @@ c     postscriptfile
  
 #ifdef VMS
            type*,'open postsciptfile under VMS '
-           open(unit=11,file=metaname,STATUS='UNKNOWN',
-     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',
+c     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
 #else 
            type*,'open postsciptfile under UNIX '
-           open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
+           
 #endif
+           call kuopen(11,metaname,'UNKNOWN',istat)
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
@@ -387,7 +395,8 @@ c bei postscript ab hier doppelt
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-           close(11)  
+c           close(11) 
+           call kuclos(11,' ',1)
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 6001
