@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #   File      : /afs/psi.ch/user/f/flechsig/phase/utils/create-coefficients.pl
 #   Date      : <06 Feb 04 10:13:16 flechsig> 
-#   Time-stamp: <06 Feb 04 10:46:10 flechsig> 
+#   Time-stamp: <06 Feb 04 12:08:46 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -40,11 +40,46 @@ if (-e $fname)
    die "we do not overwrite \"$fname\"- exit\n" unless $ch eq 'y';
 }
 open (FILE, "> $fname") or die "cant open file \"$fname\", $!\n";
-print "input the shape of the element: (c)one, (t)oroid: ";
+print "input the shape of the element: (c)one, (p)lane, (t)oroid: ";
 $ch= <STDIN>;
 chomp $ch;
-######################## toroid #####################################
-if ($ch eq "t")
+
+die "$ch - unknown shape, exit" unless grep { $ch eq $_ } ("t", "p", "c"); 
+&torus if $ch eq "t";
+&plane if $ch eq "p";
+&torus if $ch eq "c";
+
+$input=~ s/\n//g;
+
+# ab hier wird das File geschrieben, die Parameter wurden mit push in
+# einer Liste zwischengespeichert und mit splice wieder ausgelesen
+print FILE << "END";
+#######################################################################
+# PHASE coefficient file 
+# created by create-coefficients.pl  $today
+# format: i j a(i,j)
+# shape : $shape
+# input : $input
+####################################################################### 
+END
+
+    print "\ncalculated coefficients (a(i,j) != 0):\n" if $verbose;
+while (($i,$j,$aij)= splice (@coeff, 0, 3))
+{
+    print FILE "$i $j $aij\n";
+    print "$i $j $aij\n" if $verbose;
+}
+print "\n" if $verbose;
+print FILE "# end $fname\n";
+close(FILE);
+print "file \"$fname\" generated\n";
+
+# end main
+
+#
+# torus
+#
+sub torus
 {
     $shape= "toroid";
     print "toroid";
@@ -57,7 +92,7 @@ if ($ch eq "t")
     {
        $tmp= 0.5/ $rho;
        push (@coeff, 0, 2, $tmp);
-       $tmp= 1.0/ (8.0* $rho*3);
+       $tmp= 1.0/ (8.0* $rho**3);
        push (@coeff, 0, 4, $tmp);
     }
     if (abs($r) > 0)
@@ -73,9 +108,25 @@ if ($ch eq "t")
        }
     }
     $input= "R= $r mm, rho= $rho mm";
-} # end toroid
-######################## cone #####################################
-elsif ($ch eq "c")
+} # end torus
+
+#
+# plane
+#
+sub plane
+{
+    $shape= "plane";
+    print "flat mirror";
+# write one coefficient
+    push (@coeff, 0, 0, 0.0);
+    $input= "no input required";
+} # end plane
+
+
+#
+# cone
+#
+sub cone
 {
     $shape= "cone";
     print "cone";
@@ -102,36 +153,10 @@ elsif ($ch eq "c")
     $tmp= -8 *($r- $rho)**3/($l**3 * ($r + $rho)**4); # l^2 w^3
     push (@coeff, 3, 2, $tmp);
     $input= "R= $r mm, rho= $rho mm, l= $l mm";
+
+
 } # end cone
-else
-{
-   die "$ch - unknown shape, exit\n"; 
-}
-$input=~ s/\n//g;
-# ab hier wird das File geschrieben, die Parameter wurden mit push in
-# einer Liste zwischengespeichert und mit splice wieder ausgelesen
-print FILE << "END";
-#######################################################################
-# PHASE coefficient file 
-# created by create-coefficients.pl  $today
-# format: i j a(i,j)
-# shape : $shape
-# input : $input
-####################################################################### 
-END
 
-    print "\ncalculated coefficients (a(i,j) != 0):\n" if $verbose;
-while (($i,$j,$aij)= splice (@coeff, 0, 3))
-{
-    print FILE "$i $j $aij\n";
-    print "$i $j $aij\n" if $verbose;
-}
-print "\n" if $verbose;
-print FILE "# end $fname\n";
-close(FILE);
-print "file \"$fname\" generated\n";
-
-# end main
 
 # Usage --------------------------------------------------------------
 # Display the usage message by scanning the POD documentation for the
