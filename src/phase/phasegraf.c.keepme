@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <28 Oct 99 10:07:15 flechsig>  */
+/*  Time-stamp: <02 Nov 99 13:17:23 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phasegraf.c */
@@ -18,15 +18,15 @@
 #include <stdlib.h>                                                       
 #include <string.h>   
 #include <math.h>
-#include <descrip.h>                      /* for FORTRAN- String */     
-
 #include <Xm/Text.h>    
 #include <Xm/ToggleB.h>   
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>
-#include <DXm/DECspecific.h>   
-
+#ifdef VMS 
+  #include <DXm/DECspecific.h>   
+  #include <descrip.h>                      /* for FORTRAN- String */     
+#endif
 #include "cutils.h"
 #include "phase_struct.h"
 #include "fg3pck.h"  
@@ -45,7 +45,9 @@ void InitGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr)
     char TextField[4][20];
     XmString label;                         
 
+#ifdef VMS
     label= DXmCvtFCtoCS(PHASE->plotpsname, &bc, &status);    
+#endif
     sprintf(TextField[0], "%-8.3G", gr->zmi);    
     sprintf(TextField[1], "%-8.3G", gr->zma);    
     sprintf(TextField[2], "%-8.3G", gr->ymi);    
