@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.h */
 /*  Date      : <22 Oct 97 15:02:57 flechsig>  */
-/*  Time-stamp: <23 Dec 99 15:52:20 flechsig>  */
+/*  Time-stamp: <23 Dec 99 15:58:24 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* neu eingefuegt */
@@ -257,12 +257,19 @@ struct simps1 {
 
 /* ----------------- statistics ----------------------------------*/
 /* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
+#ifdef VMS
 	struct  statistics {
 	   double fd1phmax[512][512];
 	   int  nn1,nn2,inumb[1100][1100];
 	   int  inumzit,inumyit,inumzan,inumyan;
 	};  
-
+#else
+struct  statistics {
+	   double fd1phmax[128][128];
+	   int  nn1,nn2,inumb[128][128];
+	   int  inumzit,inumyit,inumzan,inumyan;
+	};  
+#endif
 /* ----------------- constants -----------------------------------*/
 
         struct  constants {
