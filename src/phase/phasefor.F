@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <19 Feb 04 14:11:59 flechsig> 
+c$$$ Time-stamp: <08 Apr 04 15:51:57 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -143,11 +143,12 @@ c          enddo
 c       enddo
 
 
-
-
-      write(*,*)'grating: (line density)',g.xdens(0)
+#ifdef DEBUG
+        write(*,*)'pstf called'
+        write(*,*)'grating: (line density)',g.xdens(0)
         write(*,*)'xi.ymin,xi.ymax,xi.zmin,xi.zmax'
         write(*,*)'   ',xi.ymin,xi.ymax,xi.zmin,xi.zmax
+
 c        pi= 4.d0* datan(1.d0)    
 c        call readfg34_par(src,apr,ifl,xi) 
 c        ifl.iord=iord   ! Uwe
@@ -169,7 +170,7 @@ c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
 
         ra.xlam_test=xlam_test 
         write(*,*)'ra.xlam_test (mm)',ra.xlam_test
-
+#endif
         call initconstants(cs)
 
 c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
