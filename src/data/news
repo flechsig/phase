@@ -58,5 +58,6 @@ Initialisierungsfehler bei ell. Elementen behoben
 	  remove noise from debug screen 
           configure with --enable-debug for verbose output
 20 Feb 04 footprint available in batch mode
+          batchmode with source from file fixed
 ****************    end of NEWS  *****************           
 **************************************************

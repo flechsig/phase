@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <20 Feb 04 08:19:56 flechsig>              */
+/* Time-stamp: <20 Feb 04 10:17:33 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -463,7 +463,7 @@ struct PSImageType         { double ymin, ymax, zmin, zmax;
   int    iy, iz; };         
 struct PSSourceType        { double sigy, sigdy, sigz, sigdz;
   int    yhard, dyhard, zhard, dzhard; };         
-
+struct FileSourceType { char *filename; };
     
 struct RTSourceType {
   union               	{ 
@@ -473,6 +473,7 @@ struct RTSourceType {
     struct SRSourceType        SRSource;
     struct PSImageType         PSImage;
     struct PointSourceType     PointSource;
+    struct FileSourceType      FileSource;
   } Quelle;
   struct RayType *SourceRays;          
   int QuellTyp, modified, raynumber; };       

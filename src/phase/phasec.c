@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Feb 04 09:01:40 flechsig>  */
+/*   Time-stamp: <20 Feb 04 10:21:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1922,7 +1922,7 @@ void GetSource(struct BeamlineType *bl)
   switch (bl->RTSource.QuellTyp) 
     {
     case 'F':
-      printf("source from file not yet fully implemented!\n");
+      printf("GetSource: source from file not yet fully implemented!\n");
       /*   bl->RTSource.SourceRays= (struct RayType *)     */
       ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
 		  &bl->RESULT); 

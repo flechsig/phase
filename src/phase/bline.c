@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Feb 04 11:27:41 flechsig>  */
+/*   Time-stamp: <20 Feb 04 10:21:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -950,6 +950,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    zmax\n", psip->zmax); 
        fprintf(f, "%20d    y points\n", psip->iy);
        fprintf(f, "%20d    z points\n", psip->iz); 
+     break; 
+   case 'F': 
+     fprintf(f, "%20c    *** Rays from file ***\n", 
+	       bl->RTSource.QuellTyp);
      break;    
    }
    fprintf(f,"%20d    number of points\n", bl->RTSource.raynumber); 
@@ -1276,6 +1280,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
              fscanf(f, " %d %[^\n]s %c", &psip->iy, buffer, &buf);  
 	     fscanf(f, " %d %[^\n]s %c", &psip->iz, buffer, &buf);  
            break;
+	   case 'F':
+	     break;
            default: 
 	     fprintf(stderr, "error: unknown source type!\n"); /* exit(-1); */
 	 }
