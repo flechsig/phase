@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Nov 04 16:00:45 flechsig>  */
+/*   Time-stamp: <26 Nov 04 16:28:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -267,6 +267,12 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   rho  = x->rho;
   dp   = (double *)a;
   alpha= x->alpha * PI/ 180.0;
+
+  /* UF 26. 11. 04        */
+  /* ellipsen Problem     */
+  /* alpha= -fabs(alpha); */ 
+  /* UF 26. 11. 04 end    */
+
       
   for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
                                /* Radien < small dann planspiegel */
