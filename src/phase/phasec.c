@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Feb 04 08:41:34 flechsig>  */
+/*   Time-stamp: <20 Feb 04 09:01:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1879,11 +1879,11 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
 
   sprintf(TextField[20], "%.f" , x->w1);    
   sprintf(TextField[21], "%.f", x->w2);    
-  sprintf(TextField[22], "%.1f", x->slopew);
+  sprintf(TextField[22], "%.3f", x->slopew);
 
   sprintf(TextField[23], "%.f", x->l1);    
   sprintf(TextField[24], "%.f", x->l2);    
-  sprintf(TextField[25], "%.1f", x->slopel);
+  sprintf(TextField[25], "%.3f", x->slopel);
 
   for (i= 0; i < imax; i++)
     set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
