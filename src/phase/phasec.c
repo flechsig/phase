@@ -1740,15 +1740,21 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     /* set history */
     XtVaSetValues(widget_array[kESOptMenu], XmNmenuHistory, w, NULL);
    
-    for (i= 0; i< 8; i++)
+   printf(" ################################################### \n");
+
+   for (i= 0; i< 8; i++)
       {	
-	set_something(widget_array[kEST1+ i], XmNvalue, TextField[i]);      
-	label= XmStringCreateLocalized(LabelField1[IFeld[i]]); 
-	set_something(widget_array[kEST1Label+ i], XmNlabelString, label);  
+   printf(" %s\n ",LabelField1[IFeld[i]]);
+   printf(" %s ",TextField[i]);
+	 
+	 set_something(widget_array[kEST1+ i], XmNvalue, TextField[i]);   
+	 label= XmStringCreateLocalized(LabelField1[IFeld[i]]); 
+	 set_something(widget_array[kEST1Label+ i], XmNlabelString, label);  
+
       }    /* */
-    /*  label= DXmCvtFCtoCS(HeaderField[header], &bc, &status);     
-    /* set_something(widget_array[kESInputLabel], XmNlabelString, label);  */
-    XmStringFree(label);      
+    /*  label= DXmCvtFCtoCS(HeaderField[header], &bc, &status);     */
+
+      XmStringFree(label);      
 } /* end initsourcebox */
 
 void InitGeometryBox(struct gdatset *gx) 
@@ -1879,7 +1885,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   sprintf(TextField[7], "%.2f", x->rho);  
         
   sprintf(TextField[8], "%d", y->inout);      	   
-  sprintf(TextField[9], "%.f", y->xdens[1]); 
+  sprintf(TextField[9], "%.2f", y->xdens[1]); 
   sprintf(TextField[10],"%.2f", y->xdens[3]);    
      
   sprintf(TextField[11], "%.2f" , y->xdens[0]);    
@@ -2517,6 +2523,7 @@ void ReadCoefficientFile(double *dp, char *fname)
       printf("took: %d %d %lg\n", i, j, x);
 #endif 
 	dp[i+j*6]= x;
+      
       }
   }
   fclose(f); 
