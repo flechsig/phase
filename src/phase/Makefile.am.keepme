@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <05 Feb 04 11:52:22 flechsig> 
+#  Time-stamp: <06 Feb 04 09:12:03 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -16,9 +16,9 @@ phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
 	  xstrdup.c \
 	  mirrorpck.c pst.c \
 	  cutils.c rtrace.c \
-	  phasegraffor.F phasefor.for \
-	  phase_source.for \
-	  phase_integration.for 
+	  phasegraffor.F phasefor.F \
+	  phase_source.F \
+	  phase_integration.F 
 
 ##phase_LDADD = $(libdir)/libphase.so
 phase_LDADD = $(libdir)/@LIBPHASE@
