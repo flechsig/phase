@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <29 Oct 03 11:40:02 flechsig> 
+#  Time-stamp: <31 Oct 03 10:28:49 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -16,8 +16,9 @@
 #########################################################################
 # 1) paths
 SRCDIR      = .
-INSTPATH    = /usr/local/phase
+INSTPATH    = ~/phase
 BUILDPATH   = ~/phase
+LIBPATH     = /usr/local/phase/lib
 CERNLIB     = /cern/2000/lib
 #CERNLIB    = /usr/local/cern/2000/lib
 #########################################################################
@@ -60,34 +61,19 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #########################################################################
 PROGRAM = phaseextract
 #########################################################################
-LIBS    = $(INSTPATH)/lib/phaselib.a \
+LIBS    = $(LIBPATH)/phaseoptilib.a $(LIBPATH)/phaselib.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
 #	  -Xlinker -defsym -Xlinker MAIN__=main
 #########################################################################
-OBJECTC = phase.o phasec.o \
-	  activate_proc.o phasegraf.o initdatset.o \
-	  geometrypck.o bline.o \
-	  mirrorpck.o pst.o \
-	  cutils.o rtrace.o 
-OBJECTF = phasegraffor.o phasefor.o \
-	  phase_source.o \
-	  phase_integration.o 
+OBJECTC = phaseextract.o
+OBJECTF = cost.o 
 ########################################################################
-PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
-	  cutils.h phase_struct.h rtrace.h version.h
+PHASEHS =  
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 \
-          phase_struct.for news coefficient-example.dat \
-          INSTALL.linux
-SRCC    = phase.c phasec.c \
-	  activate_proc.c phasegraf.c initdatset.c \
-	  geometrypck.c bline.c \
-	  mirrorpck.c pst.c \
-	  cutils.c rtrace.c 
-SRCF    = phasegraffor.fpp phasefor.for \
-	  phase_source.for \
-	  phase_integration.for 
+SRCC    = phaseextract.c  
+SRCF    = cost.fpp
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
@@ -115,8 +101,6 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 ##########################################################################
 install: all
 	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
-	$(INSTALL) news $(INSTPATH)/lib/news
-	$(INSTALL) coefficient-example.dat $(INSTPATH)/lib/coefficient-example.dat
 
 clear:
 	@echo "delete objects and exe..."  

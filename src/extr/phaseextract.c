@@ -1,6 +1,16 @@
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
+/*   Date      : <31 Oct 03 10:22:38 flechsig>  */
+/*   Time-stamp: <31 Oct 03 10:27:32 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
 /*  File      : /home/vms/flechsig/vms/phas/extr.dir/phaseextract.c */
 /*  Date      : <16 Oct 97 14:10:56 flechsig>  */
-/*  Time-stamp: <21 Apr 99 11:41:14 flechsig>  */
+/*  Time-stamp: <31 Oct 03 10:22:37 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.EXTRACT]EXTRACT.C         */
@@ -13,26 +23,48 @@
    c: a[zeilen][spalten] for: (spalten,zeilen)
 */ 
 
-#include stdio                                                
-#include string 
-#include stdlib 
-#include math
-#include descrip                      /* for FORTRAN- String */  
+#include <stdio.h>                    /* For printf and so on. */
+#include <stdlib.h>	    	      /* needed for fopen      */
+#include <string.h>
+#include <math.h>
 
-#include <Xm/Text.h>  
-#include <Xm/List.h>       
-#include <Mrm/MrmAppl.h>  
+#include <Xm/Text.h>                  /* fileBox               */
+#include <Xm/FileSB.h>    
+#include <Xm/List.h>   
+#include <Xm/MessageB.h>    
+#include <Xm/SelectioB.h>   
+#include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
-#include <X11/Xutil.h> 
-#include <DXm/DECspecific.h>  
+#include <X11/Xutil.h>      
+/* DEC specific */
+#ifdef VMS
+  #include <descrip.h>                  /* for FORTRAN- String   */ 
+  #include <DXm/DXmHelpB.h>      
+  #include <DXm/DXmPrint.h>      
+  #include <DXm/DXmColor.h>   
+  #include <DXm/DECspecific.h>  
+  #include <sys$library/DECw$Cursor.h>
+#endif
 
-#include "[-.phasec]cutils.h"  
-#include "[-.phasec]phase_struct_10.h"
-#include "[-.phasec]fg3pck.h"   
-#include "[-.phasec]mirrorpck.h"                 
-#include "[-.phasec]geometrypck.h"   
-#include "[-.phasec]PHASE.h"
-#include "[-.opti]phaseopti.h"
+#ifdef VMS
+  #include "[-.phase]cutils.h"  
+  #include "[-.phase]phase_struct_10.h"
+  #include "[-.phase]fg3pck.h"   
+  #include "[-.phase]mirrorpck.h"                 
+  #include "[-.phase]geometrypck.h"   
+  #include "[-.phase]PHASE.h"
+  #include "[-.opti]phaseopti.h" 
+#else
+  #include "../phase/cutils.h"  
+  #include "../phase/phase_struct_10.h"
+  #include "../phase/fg3pck.h"   
+  #include "../phase/mirrorpck.h"                 
+  #include "../phase/geometrypck.h"   
+  #include "../phase/phase.h"
+  #include "../opti/phaseopti.h" 
+#endif
+
+     
 
 /*          Der Index     
 
