@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <09 Mar 04 15:16:54 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:42:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -2441,16 +2441,6 @@ void ReadMKos(struct mirrortype *a, char *name)
       fclose(f); 
     }
 }    
-
-/* Alloc allociert/ reallociert einen pointer */
-/* bei fehler exit -1 */
-void *Alloc(void *p, int size)
-{
-  /*  if (p != NULL) free(p); */
-  if ((p= malloc(size)) == NULL)
-    {  fprintf(stderr, "Alloc error- exit(-1)\n"); exit(-1);    } 
-  return p;
-} /* end Alloc */
 
 void SetInfoString()
 {

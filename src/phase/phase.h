@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <24 Mar 04 11:17:21 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:42:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -578,8 +578,7 @@ struct BeamlineType
 
 int	getpickfile(struct datset *, struct BeamlineType *, char *);  
 
-void 	*Alloc(void *, int),
-  putpickfile(struct datset *, struct BeamlineType *, char *),    
+void putpickfile(struct datset *, struct BeamlineType *, char *),    
   initdatset (struct datset *, struct BeamlineType *, int);    
 
 
