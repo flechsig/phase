@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <03 May 04 15:13:23 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:35:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -419,7 +419,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	    
 	    /* ab hier wird ein voller rt durchgefuehrt */
 	    Raysin= &Tmpsource; Raysout= &Tmpresult;
-	    if (ds->Art == kEOESlit) /* Sonderbehandlung Spalt */
+	    if (ds->MDat.Art == kEOESlit) /* Sonderbehandlung Spalt */
 	      {
 		uu = 0.0; ww= Raysin->y; ll= Raysin->z;
 	      }
@@ -440,7 +440,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	      }
 	    else
 	      {
-		if (ds->Art == kEOESlit) /* Sonderbehandlung Spalt */
+		if (ds->MDat.Art == kEOESlit) /* Sonderbehandlung Spalt */
 		  {
 		    memcpy(Raysout, Raysin, sizeof(struct RayType));
 		    xlength1= xlength2= xlength= 0.0;
@@ -620,7 +620,7 @@ void RayTraceFull(struct BeamlineType *bl)
        ds= &(bl->ElementList[elnumber-1]); 
        Raysin= tmpsource; Raysout= tmpresult;  
        
-       if (ds->Art == kEOESlit) /* Sonderbehandlung Spalt */
+       if (ds->MDat.Art == kEOESlit) /* Sonderbehandlung Spalt */
 	 {
 	   printf("RayTraceFull: aperture/ slit in interface plane\n");
 	   for (i= 0; i< zahl; i++)

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <08 Apr 04 15:48:47 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:34:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -70,7 +70,7 @@ void PST(struct BeamlineType *bl)
    
    for (i= 0; i< bl->elementzahl; i++)
      {
-       elart= bl->ElementList[i].Art;
+       elart= bl->ElementList[i].MDat.Art;
        if((elart == kEOETG) || (elart == kEOEVLSG))
 	 {
 	  gratingnumber++;

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <30 Apr 04 08:20:25 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:33:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -367,7 +367,7 @@ void activate_proc(w, tag, reason)
     bl= &Beamline;   
     if ((bl->position <= bl->elementzahl) && (bl->position != 0)) 
       {
-	bl->ElementList[(bl->position)- 1].Art= 
+	bl->ElementList[(bl->position)- 1].MDat.Art= 
 	i= GetOElement(&PHASESet,	/*  */
 		    &bl->ElementList[(bl->position)- 1].MDat,
 		    &bl->ElementList[(bl->position)- 1].GDat);  

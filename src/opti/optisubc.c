@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <07 May 04 10:03:12 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:37:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -449,7 +449,7 @@ void buildsystem(struct BeamlineType *bl)
 	{ 
 	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
 	    {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->Art, 
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, 
 			 listpt->elementname);    
 	      listpt->ElementOK |= elementOK; 
 	    }
@@ -461,7 +461,7 @@ void buildsystem(struct BeamlineType *bl)
 	  MakeMapandMatrix(listpt, bl);
 	  listpt->ElementOK|= mapOK; 
 	}
-      if (listpt->Art != kEOESlit)
+      if (listpt->MDat.Art != kEOESlit)
 	{
 	  if (elcounter == 1)
 	    memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
