@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <28 Oct 99 10:02:45 flechsig>  */
+/*  Time-stamp: <02 Nov 99 10:01:23 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -17,7 +17,6 @@
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
-#include <descrip.h>                  /* for FORTRAN- String   */     
 #include <math.h>
 
 #include <Xm/Text.h>                  /* fileBox               */
@@ -25,15 +24,18 @@
 #include <Xm/List.h>   
 #include <Xm/MessageB.h>    
 #include <Xm/SelectioB.h>   
-#include <Mrm/MrmAppl.h>      
-#include <DXm/DXmHelpB.h>      
-#include <DXm/DXmPrint.h>      
+#include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#include <DXm/DXmColor.h>   
-#include <DXm/DECspecific.h>  
-#include <sys$library/DECw$Cursor.h>
-
+/* DEC specific */
+#ifdef VMS
+  #include <descrip.h>                  /* for FORTRAN- String   */ 
+  #include <DXm/DXmHelpB.h>      
+  #include <DXm/DXmPrint.h>      
+  #include <DXm/DXmColor.h>   
+  #include <DXm/DECspecific.h>  
+  #include <sys$library/DECw$Cursor.h>
+#endif
 #include "cutils.h"                     /* muss for rtrace.h stehen */    
 #include "phase_struct.h"
 #include "fg3pck.h"     
