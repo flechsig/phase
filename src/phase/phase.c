@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <19 Nov 99 08:55:59 flechsig>  */
+/*  Time-stamp: <22 Nov 99 15:07:07 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -446,18 +446,20 @@ void list_proc(w, tag, list)                 /* selection callback */
 {
   XmString xlabel;   
   char clabel[MaxPathLength], *clabelp = NULL;
-  int epos, ppos, indx, *pl[1], pc;
+  int epos, ppos, indx, *pl, pc;
   
   switch (*tag)
     {
     case kEBLList:
       epos= list->item_position; 
-      ppos= (XmListGetSelectedPos(widget_array[kEBLList], pl, &pc) 
-	     == True) ? **pl : 0; 
+      epos= (XmListGetSelectedPos(widget_array[kEBLList], &pl, &pc) 
+	 == True) ? pl[0] : 0; 
+      XtFree((char *) pl);
       sprintf(clabel, "selected element %3d", epos); 
       xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
+      XmStringFree(xlabel); 
 #ifdef DEBUG
       printf("list_proc: fetch mirror and element box\n");
 #endif
@@ -465,19 +467,24 @@ void list_proc(w, tag, list)                 /* selection callback */
       XtManageChild(widget_array[kEOElement]);
       FetchWidget(kEGeometry, "EGeometryBox");
       XtManageChild(widget_array[kEGeometry]);
+#ifdef DEBUG
+      printf("list_proc: call UpdateBLBox\n");
+#endif      
       UpdateBLBox(&Beamline, epos);
       break;
 
     case kCOptiList:
       epos= list->item_position; 
-      ppos= (XmListGetSelectedPos(widget_array[kCOptiList1], pl, &pc) 
-	     == True) ? **pl : 0; 
+      ppos= (XmListGetSelectedPos(widget_array[kCOptiList1], &pl, &pc) 
+	     == True) ? pl[0] : 0; 
+      XtFree((char *)pl);
       break;
 
     case kCOptiList1:
       ppos= list->item_position; 
-      epos= (XmListGetSelectedPos(widget_array[kCOptiList], pl, &pc) 
-	     == True) ? **pl : 0; 
+      epos= (XmListGetSelectedPos(widget_array[kCOptiList], &pl, &pc) 
+	     == True) ? pl[0] : 0; 
+      XtFree((char *)pl);
       break;    
       
     case kCOptiList2:
@@ -486,6 +493,7 @@ void list_proc(w, tag, list)                 /* selection callback */
 	return;
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
+      XmStringFree(xlabel); 
       break;      
       
     }
@@ -497,10 +505,11 @@ void list_proc(w, tag, list)                 /* selection callback */
       xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kCOptiSelectedLabel], XmNlabelString, 
 		    xlabel); 
+      XmStringFree(xlabel); 
       sprintf(clabel, "%4d", indx);  
       set_something(widget_array[kCOptiT2], XmNvalue, clabel); 
     } 
-  XmStringFree(xlabel);            
+               
 }
      
 
@@ -906,6 +915,9 @@ void FileSelectionProc(Widget wi, int *tag,
 	}
     }
   XmStringFree(path);
+#ifdef DEBUG
+  printf("FileSelectionProc: end\n");  
+#endif 
 }                    
 
 void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
