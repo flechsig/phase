@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <11 Feb 00 10:59:48 flechsig> 
+c Time-stamp: <11 Feb 00 11:20:32 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -302,10 +302,10 @@ c     UF 11.2.00
 c----------------------------------------------------------
         implicit none
 
-        real*8 psd(4,2,4096)
+        real*8 ymin,ymax,zmin,zmax,psd(4,2,4096)
         real*4 minx,maxx,tmp,x,y,dx
 	character*(*) titel,metaname
-        integer ifile,psfile,ii,i,id,ix
+        integer ifile,psfile,ii,i,id,ix,iy,iz
         
         write(*,*)'hplotpssimf called (for)'
 
