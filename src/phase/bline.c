@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:29:03 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:44:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -113,10 +113,7 @@ void AddBLElement(struct BeamlineType *bl, char *name)
           printf("AddBLElement: init new element with default mirror data\n");
           memcpy(&(listpt->MDat), &MDefDat, sizeof(struct mdatset)); 
        }  else 
-	 {
-	   printf("init mirror with %s\n", PHASESet.elementpckname); 
-	   printf("!!! Element Type must be selected by hand !!!\n");
-	 }
+	 printf("init mirror with %s\n", PHASESet.elementpckname); 
      }
      else
        memcpy(listpt, tmplistpt++, sizeof(struct ElementType));  
