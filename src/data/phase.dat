@@ -1,0 +1,21 @@
+! File      : /home/pss060/sls/flechsig/phase/lib/phase.dat
+! Date      : <15 Oct 98 08:31:38 flechsig> 
+! Time-stamp: <22 May 01 13:44:37 flechsig> 
+! Author    : Uwe Flechsig, flechsig@exp.bessy.de
+!
+!
+! define X resources here 
+! VMS: file phase.dat in the login directory
+! UNIX: merge into .Xresources
+!
+PHASE.title		: PHASE started with app-def from phase.dat
+PHASE.x			: 15
+PHASE.y			: 40
+PHASE*MainList.rows 	: 10  
+PHASE*MainList.columns : 60
+PHASE*fontlist :\
+         -Adobe-Times-medium-R-Normal--*-180-*-*-P-*-ISO8859-1=normal,\ 
+         -Adobe-Times-medium-o-Normal--*-180-*-*-P-*-ISO8859-1=italic,\  
+         -Adobe-Times-medium-R-Normal--*-180-*-*-P-*-ISO8859-7=greek,\      
+         -Adobe-Times-Bold-R-Normal--*-180-*-*-P-*-ISO8859-1=bold 
+! end /home/vms/flechsig/vms/phase.dat
