@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.for
 c Date      : <22 Oct 97 14:56:27 flechsig> 
-c Time-stamp: <20 Dec 99 09:08:49 flechsig> 
+c Time-stamp: <20 Dec 99 10:00:18 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c------------------------------------------------------------
 c
@@ -221,6 +221,7 @@ c------------------ results from integration --------------------
 	   integer isintre(4),isintim(4),isimpa(4),isimpp(4)
 	   integer isimpre(4),isimpim(4)
 	   real*8 d12(2,3,4096),ianzd12(3)
+	   record/simps1/si1                  ! UF 21.12.99
 	end structure
 
 c------------------ flags ---------------------------------------
