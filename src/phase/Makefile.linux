@@ -1,34 +1,36 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <21 May 01 15:31:15 flechsig> 
+# Time-stamp: <22 May 01 08:57:29 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
+# tested with RedHat 6.1 and SUSE 6
+# at least the first part of the makefile must be modified if necessary
 #########################################################################
-SHELL = /bin/sh 
-
-DEBUG	    = -DDEBUG
-DEFS        = -DLINUX $(DEBUG) -DCADDR_T  # caddr_t im Headerfile
+# 1) paths
+SRCDIR      = .
+INSTPATH    = /usr/local/phase
+BUILDPATH   = /home/pss060/sls/flechsig/phase
+CERNLIB     = /cern/2000/lib
+#CERNLIB    = /usr/local/cern/2000/lib
+#########################################################################
+# 2) tools
+SHELL       = /bin/sh 
 CC          = gcc -v
 PP          = g77 -E -o
 FOR         = f77 
-CERNLIB     = /cern/2000/lib
-#CERNLIB    = /usr/local/cern/2000/lib
 YACC        = bison -y
 INSTALL     = /usr/bin/install -c
 INSTALLDATA = /usr/bin/install -c -m 644
-CDEBUG      = -gdwarf
-FDEBUG      = -g -C -B111 
 MAKE        = make
-
-srcdir      = .
-INSTPATH    = /usr/local/phase
-BUILDPATH   = /home/pss060/sls/flechsig/phase
-
+#########################################################################
+# 3) switches
+DEBUG	= -DDEBUG
+DEFS    = -DLINUX $(DEBUG) -DCADDR_T         # caddr_t in header file
+CDEBUG  = -gdwarf
+FDEBUG  = -g -C -B111 
 LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
-CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
-#FFLAGS  = -w -f -s -N3 -N51
-#FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
+CFLAGS  = $(CDEBUG) -I. -I$(SRCDIR) $(LINUX_C) $(DEFS) -c 
 FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 -N22 -N33
 LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #FFLAGS for absoft f77 compiler
@@ -49,9 +51,9 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 
 .phony: all makewhat    
 #########################################################################
-PROGRAM		= phase
+PROGRAM = phase
 #########################################################################
-LIBS    =  /usr/local/phase/lib/phaselib.a \
+LIBS    = $(INSTPATH)/lib/phaselib.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
@@ -68,8 +70,7 @@ OBJECTF = phasegraffor.o phasefor.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
-AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 Makefile.pc2346 \
-          Makefile.egcs.pc2038 \
+AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 
           phase_struct.for news coefficient-example.dat
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
@@ -85,7 +86,7 @@ SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 all: 	
 	@echo "Making $(PROGRAM) for LINUX..." 
 	$(MAKE) $(PROGRAM)   
-##############################################################################
+#########################################################################
 # Dependencies section
 $(PROGRAM): $(OBJECTC) $(OBJECTF)
 	$(CC)  -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
