@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <05 May 04 13:25:44 flechsig>  */
+/*   Time-stamp: <09 Jul 04 09:12:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -414,8 +414,11 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
     } else
       printf("            without misalignment\n");
-
-  /* for (i=0; i < 15; i++) printf("%d %le\n", i, dp[i]); */
+#ifdef DEBUG
+  printf "DEBUG: mirror coefficients\n";
+  for (i=0; i < 15; i++) printf("%d %le\n", i, dp[i]);
+  printf "DEBUG: end defmirrorc\n";
+#endif
 } /* end defmirrorc */
 
 void GetOptiBox(struct PHASEset *x) 
