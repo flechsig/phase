@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <29 Oct 03 11:49:54 flechsig> 
+#  Time-stamp: <29 Oct 03 12:19:37 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -61,6 +61,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 PROGRAM = phaseopti
 #########################################################################
 LIBS    = $(INSTPATH)/lib/phaselib.a \
+	  $(INSTPATH)/lib/phaseoptilib.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
@@ -72,7 +73,7 @@ OBJECTF = cost.o
 PHASEHS = phaseopti.h
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 
 SRCC    = phaseopti.c 
-SRCF    = cost.for 
+SRCF    = cost.fpp 
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
