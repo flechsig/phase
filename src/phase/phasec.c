@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Aug 04 16:10:56 flechsig>  */
+/*   Time-stamp: <19 Aug 04 16:43:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2489,7 +2489,7 @@ void writemapc(char *fname, int iord,
     {
       fprintf(stderr, "writemapc: error: open file %s\n", fname); exit(-1);   
     }    
-  fprintf(stdout,"write transformation map to: %s\n", fname);
+  fprintf(stdout, "writemapc: write transformation map to: %s\n", fname);
   fprintf(f,
 	  "i j k l          ypc             zpc            dypc            dzpc\n");
   for (i= 0; i <= iord; i++)
