@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <04 Jan 01 14:06:59 flechsig> 
+# Time-stamp: <09 Jan 01 12:14:53 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -10,6 +10,7 @@ SHELL = /bin/sh
 DEBUG	    = -DDEBUG
 DEFS        = -DLINUX $(DEBUG)
 CC          = gcc 
+PP          = g77 -E
 #FOR        = pgf77 -c
 FOR         = f77 
 YACC        = bison -y
@@ -95,6 +96,13 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 
 %.o : %.for phase_struct.for
 	$(FOR) $(FFLAGS) $@ $<   
+
+%.o : %.f
+	$(FOR) $(FFLAGS) $< 
+
+#preprocessor
+%.f : %.fpp
+	g77 -E -o $@ $<
 
 ##########################################################################
 install: all
