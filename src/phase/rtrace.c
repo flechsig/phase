@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
 /*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <02 Nov 99 13:31:43 flechsig>  */
+/*  Time-stamp: <07 Jan 00 09:05:07 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
@@ -390,7 +390,8 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		else 
 		  {
 		    ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
-			       ds->ypc1, ds->zpc1, ds->dypc, ds->dzpc);
+			       (double *)ds->ypc1, (double *)ds->zpc1, 
+			       (double *)ds->dypc, (double *)ds->dzpc);
 		    pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
 			     &xlength1, &xlength2, &xlength); 
 		/* if ((bl->BLOptions.CalcMod & SlopeMod) == SlopeMod) */
@@ -488,7 +489,8 @@ void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
 	for (i= 0; i< bl->RTSource.raynumber; i++)
 	  { 
 	    ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
-		       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc); 
+		       (double *)bl->ypc1, (double *)bl->zpc1, 
+		       (double *)bl->dypc, (double *)bl->dzpc); 
 	    Raysout->phi= Raysin->phi;
 	    Raysin++; Raysout++;  
 	  }
@@ -576,7 +578,8 @@ void RayTraceFull(struct BeamlineType *bl)
 	       if (OnElement(&ds->MDat, ww, ll))
 		 {
 		   ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
-			      ds->ypc1, ds->zpc1, ds->dypc, ds->dzpc);  
+			      (double *)ds->ypc1, (double *)ds->zpc1, 
+			      (double *)ds->dypc, (double *)ds->dzpc);  
 		   Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, slopelen,  
 		             ds->geo.cosb, ds->GDat.azimut);
 		   /*
