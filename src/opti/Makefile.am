@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <10 Feb 04 16:49:22 flechsig> 
+#  Time-stamp: <17 Feb 04 16:46:17 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -21,7 +21,9 @@ phaseopti_SOURCES       = phaseopti.c phaseopti.h \
 	  ../phase/phasegraffor.F ../phase/phasefor.F \
 	  ../phase/phase_source.F ../phase/xmalloc.c ../phase/error.c ../phase/xstrdup.c \
 	  ../phase/phase_integration.F \
-	  treiber.F optisubc.c cost.F 
+	  treiber.F optisubc.c cost.F \
+	  ../phase/misali.F ../phase/misali1.f ../phase/misali2.f \
+          ../phase/misali3.f ../phase/misali4.f
 ##libphaseopti_la_SOURCES = 
           
 phaseopti_LDADD = $(libdir)/@LIBPHASE@

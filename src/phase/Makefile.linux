@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <17 Feb 04 12:07:21 flechsig> 
+#  Time-stamp: <17 Feb 04 12:12:39 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -40,10 +40,12 @@ DEBUG	= -DDEBUG
 DEFS    = -DLINUX $(DEBUG) -DCADDR_T         # caddr_t in header file
 CDEBUG  = -gdwarf
 FDEBUG  = -g -C -B111 
+LDEBUG  = #-static
 LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
 CFLAGS  = $(CDEBUG) -I. -I$(SRCDIR) $(LINUX_C) $(DEFS) -c 
 FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 -N22 -N33
-LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
+LDFLAGS = $(LDEBUG) -L/usr/X11R6/lib -lXm -lMrm \
+                    -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #FFLAGS for absoft f77 compiler
 #	-g generate debugging information
 #	-c generate object files

@@ -1,18 +1,12 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/mirrorpck.c */
-/*  Date      : <28 Oct 99 10:00:19 flechsig>  */
-/*  Time-stamp: <16 Feb 04 15:04:10 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.c */
+/*   Date      : <17 Feb 04 14:48:09 flechsig>  */
+/*   Time-stamp: <17 Feb 04 14:48:33 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
-/*  File      : /home/vms/flechsig/vms/phas/phasec/mirrorpck.c */
-/*  Date      : <02 Oct 97 08:12:25 flechsig>  */
-/*  Time-stamp: <15 Oct 97 15:08:00 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]MIRRORPCK.C        */
-/* Datum: 19.JUL.1994                                          */
-/* Stand:  2-JUL-1996                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
-
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -52,7 +46,7 @@ void mputpickfile(struct mdatset *x, char *mpickname)
 int mgetpickfile(struct mdatset *x, char *mpickname)
 {
    FILE *f;
-   int rcode, ii;
+   int rcode, ii, version;
    char buffer[80]; 
    double *pd; 
 
@@ -61,7 +55,7 @@ int mgetpickfile(struct mdatset *x, char *mpickname)
    	fprintf(stderr,"File %s not found- defaults used!\n", mpickname);
    else 
    {
-     if( CheckFileHeader(f, MirrorPickFileHeader) == 0)
+     if( CheckFileHeader(f, MirrorPickFileHeader, &version) == 0)
      { 
 	pd= (double *) &x->r1;                 
         for (ii= 0; ii < 5; ii++, pd++) 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <17 Feb 04 14:32:38 flechsig>  */
+/*   Time-stamp: <17 Feb 04 15:48:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -91,15 +91,21 @@ double RVZ()
 int CheckFileHeader(FILE *f, char *header, int *version)              /* bei Gleichheit 0 */
 {
   char headerread[50];
-  int rcode, version, headerfields;
+  int rcode, myversion, headerfields;
   
-  version= 0;
-  headerfields= fscanf(f, "%s %d\n", &headerread, &version);     
+  
+  headerfields= fscanf(f, "%s %d\n", &headerread, &myversion);     
   rcode= strncmp(header, headerread, strlen(header));
   if (rcode != 0)
     fprintf(stderr,"error: fileheader: %s != %s\n", headerread, header);
+  /*  *version= myversion;*/
+
+  *version= (headerfields == 2) ? myversion : 0;
+
 #ifdef DEBUG
-  printf("CheckFileHeader: file version: %d\n", version);
+  printf("CheckFileHeader: \n");
+  printf("     header: %s read: %s \n", header, headerread);
+  printf("     headerfields: %d, version: %d\n", headerfields, *version);
 #endif
   return rcode;
 }

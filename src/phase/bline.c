@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <16 Feb 04 14:34:32 flechsig>  */
+/*   Time-stamp: <17 Feb 04 15:54:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -610,10 +610,10 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
    printf("GlueWcXlc end\n");
 }  /* end GlueWcXlc */
 
-
-void InitBLBox(char *blname, struct BeamlineType *bl)   
 /*
-/* Initialisiert die Beamline Box */
+ Initialisiert die Beamline Box 
+*/
+void InitBLBox(char *blname, struct BeamlineType *bl)   
 {
    XmString label;
    int i;
@@ -640,8 +640,15 @@ void InitBLBox(char *blname, struct BeamlineType *bl)
    if ( bl->BLOptions.SourcetoImage == 1)
       XmToggleButtonSetState(widget_array[kEBLstoim], True, True);  
    else 
-      XmToggleButtonSetState(widget_array[kEBLimtos], True, True);  
+      XmToggleButtonSetState(widget_array[kEBLimtos], True, True); 
 
+#ifdef DEBUG
+   printf("InitBLBox: WithAlign= %d\n", bl->BLOptions.WithAlign);
+#endif
+   
+   XmToggleButtonSetState(widget_array[kMisalignmentButton], 
+			  bl->BLOptions.WithAlign == 1, TRUE);  
+   
 /**/   
    /* globale paras setzen */
 /* modification: 13 Feb 98 11:29:45 flechsig einheit mm */
@@ -663,8 +670,7 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
    XmStringTable listitems;
    char *text= NULL;   
 
-   fprintf(stderr, "begin getBLBox\n");
-
+   fprintf(stderr, "GetBLBox ");
 
    /* get beamlinename vom tastenlabel */
    XtVaGetValues(widget_array[kEBLNameButton], XmNlabelString, &label, NULL);
@@ -690,7 +696,9 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
     
    bl->BLOptions.SourcetoImage= 
        (XmToggleButtonGetState(widget_array[kEBLstoim]) == TRUE) ? 1 : 2; 
-   printf("end getBLBox\n");
+   bl->BLOptions.WithAlign= 
+       (XmToggleButtonGetState(widget_array[kMisalignmentButton]) == TRUE) ? 1 : 2;
+   printf("  ==> done\n");
 } /* end getBLBox */   
 
 void LoadHorMaps(struct BeamlineType *bl, int dim)    
@@ -850,13 +858,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 /* schreibt den datensatz auf ein file 		  */ 
 /* written: Uwe 29.5.96				  */                          
-/* last modification: 24 Mar 97 16:08:24 flechsig */
-/* last modification: 24 Sep 97 09:23:42 flechsig */
-/* 24.11.98 UF */
 /**************************************************************************/
 {   
    FILE *f;
-   int elnumber, i;
+   int elnumber, i, version= 20040217;
    struct UndulatorSourceType *up;
    struct DipolSourceType     *dp;
    struct HardEdgeSourceType  *hp;     
@@ -872,10 +877,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
       exit(-1);
    } 
    
-   printf("write beamlinedata to file %s ", fname);
+   printf("WriteBLFile: write data to %s ", fname);
 
-   fprintf(f, "%s\n", Fg3PickFileHeader);     /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE version 0.926, (NOV 97)\n\n");
+   fprintf(f, "%s %d\n", Fg3PickFileHeader, version);     /* einige Infos ins file */
+   fprintf(f, "This is a datafile of PHASE version FEB 04\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -981,13 +986,19 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20lg     lmin\n", listpt->MDat.l1);  
      fprintf(f, "%20lg     lmax\n", listpt->MDat.l2);  
      fprintf(f, "%20lg     slope w (arcsec rms)\n", listpt->MDat.slopew);  
-     fprintf(f, "%20lg     slope l (arcsec rms)\n", listpt->MDat.slopel);  
+     fprintf(f, "%20lg     slope l (arcsec rms)\n", listpt->MDat.slopel);
+
+     fprintf(f, "%20lg     misalignment du\n", listpt->MDat.du);
+     fprintf(f, "%20lg     misalignment dw\n", listpt->MDat.dw);
+     fprintf(f, "%20lg     misalignment dl\n", listpt->MDat.dl);
+     fprintf(f, "%20lg     misalignment dRu (rad)\n", listpt->MDat.dRu);
+     fprintf(f, "%20lg     misalignment dRw (rad)\n", listpt->MDat.dRw);
+     fprintf(f, "%20lg     misalignment dRl (rad)\n", listpt->MDat.dRl);
+
      /* end mirror section */ 
      /* end element        */
      elnumber++; listpt++;
    } 
-
-/* last modification: 18 Jul 97 09:24:42 flechsig */
 
    op= (struct OptionsType *) &(bl->BLOptions);
 
@@ -1013,6 +1024,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 	   op->ifl.igrating);
    fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
 	   op->ifl.ipinarr);
+   
    /* end control_flags */
 
    fprintf(f,"\nAPERTURES\n"); 
@@ -1118,7 +1130,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     flag calculation modus\n", op->CalcMod);    
    fprintf(f,"%20lg     lambda [nm]\n", op->lambda* 1e6);  
    fprintf(f,"%20lg     dispersive length\n", op->displength); 
-   fprintf(f,"%20lg     * y = dlambda\n", bl->deltalambdafactor); 
+   fprintf(f,"%20lg     * y = dlambda\n", bl->deltalambdafactor);
+   /* new feb 04 */
+   fprintf(f,"%20d     with alignment\n", op->WithAlign);
+
    fprintf(f,"%20d     dy integr. points (PS fixed grid)\n", op->PSO.ndyfix);  
    fprintf(f,"%20d     dz integr. points (PS fixed grid)\n", op->PSO.ndzfix); 
    fprintf(f,"%20lg     dymin [rad] (PS fixed grid)\n", op->PSO.dyminfix);   
@@ -1144,7 +1159,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
    fprintf(f,"\n*** end of file ***\n");    
    fclose(f); 
-   printf(" --> done\n");
+   printf(" ==> done\n");
 } /* end WriteBLFile */
 
 
@@ -1153,14 +1168,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 /* liest den datensatz vom file 					*/     
 /* PHASEset.ssourcename wird mit brightnessnamen initialisert */
 /* Uwe 30.5.96								*/     
-/* last modification: 24 Mar 97 16:10:50 flechsig */
-/* last modification: 24 Sep 97 09:21:18 flechsig */
-/* modification: 15 Oct 97 15:30:49 flechsig */
-/* modification: 17 Oct 97 08:09:56 flechsig */
 /************************************************************************/
 {   
    FILE *f; 
-   int  rcode, elnumber, alle, i;
+   int  rcode, elnumber, alle, i, version;
    char buffer[80], buf;  
    double *pd; 
    
@@ -1192,8 +1203,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
    }
    else 
    {   
-     if((rcode= CheckFileHeader(f, Fg3PickFileHeader)) == 0)   
+     if((rcode= CheckFileHeader(f, Fg3PickFileHeader, &version)) == 0)   
      {
+       printf("ReadBLFile: version: %d\n", version);
        if (SetFilePos(f, "SOURCE"))
        { 
          fscanf(f, " %c %[^\n]s %c", &bl->RTSource.QuellTyp, buffer, &buf); 
@@ -1327,6 +1339,15 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l2, buffer, &buf); 
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopew, buffer, &buf); 
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopel, buffer, &buf); 
+	    if (version >= 20040217)
+	      {
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.du, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dw, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dl, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRu, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
+	      }
 	    printf("   mirror read\n"); 
 	    printf("Elementtype: %d\n", listpt->Art);
           } else rcode= -1;
@@ -1460,6 +1481,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 	 op->lambda*= 1e-6;
          fscanf(f, " %lf %[^\n]s %c", &op->displength, buffer, &buf); 
          fscanf(f, " %lf %[^\n]s %c", &bl->deltalambdafactor, buffer, &buf); 
+	 if (version >= 20040217)
+	   fscanf(f, " %d %[^\n]s %c", &op->WithAlign, buffer, &buf);
+	 printf("ReadBLFile: version: %d, WithAlign: %d\n", version, op->WithAlign);
+ 
          fscanf(f, " %d %[^\n]s %c", &op->PSO.ndyfix, buffer, &buf);  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.ndzfix, buffer, &buf);    
          fscanf(f, " %lf %[^\n]s %c", &op->PSO.dyminfix, buffer, &buf);   

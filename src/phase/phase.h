@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <13 Feb 04 14:13:28 flechsig>              */
+/* Time-stamp: <17 Feb 04 16:33:07 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -362,6 +362,7 @@
 #define kESPointSourceButton     360
 #define kPreAB                   361
 #define kSucAB                   362
+#define kMisalignmentButton      363
 
 /******************** end defines uil **********************************/
 
@@ -549,7 +550,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* 24.6.96 */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign;
   double epsilon, lambda, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
@@ -667,10 +668,11 @@ GRDATSTRUCTTYPE grdatstruct;
   #define readmatrixfile readmatrixfile_
   #define src_ini        src_ini_
   #define xxmap70        xxmap70_ 
+  #define misali         misali_
 #endif
 /************************* Prototypen *****************************/
 
-int	CheckFileHeader(FILE *, char *),  
+int	  
   GetGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *, int),
   getgrfiletype(char *), 
   GetOElement(),  GetPHASE(struct  PHASEset *, char *),

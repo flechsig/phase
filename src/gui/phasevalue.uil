@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <13 Feb 04 14:13:25 flechsig> 
+! Time-stamp: <17 Feb 04 12:29:25 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
@@ -325,7 +325,7 @@ value
         kESPointSourceButton    : 360;
         kPreAB                  : 361;
         kSucAB                  : 362;
-       
+        kMisalignmentButton     : 363;
 
 !********************* Besonderheiten ****************************** 
 

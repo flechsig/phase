@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <31 Oct 03 08:28:49 flechsig>  */
+/*   Time-stamp: <17 Feb 04 14:49:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,15 +8,6 @@
 /*   $Revision$  */
 /*   $Author$  */
 
-/*  File      : /home/vms/flechsig/vms/phas/opti/optisubc.c */
-/*  Date      : <16 Oct 97 14:00:02 flechsig>  */
-/*  Time-stamp: <29 Oct 03 17:06:22 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]OPTISUBC.C           */
-/* Datum: 15.MAR.1995                                          */
-/* Stand: 25-MAR-1996                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
 
 /* 31.3.99 GetRMS erweitert auf z */
 
@@ -64,14 +55,14 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 /* modification: 24 Oct 97 14:04:37 flechsig */
 {                              
   FILE *f;
-  int ii, *indexlist;
+  int ii, *indexlist, version;
  
   if ((f= fopen(pickname, "r")) == NULL)
     {
       fprintf(stderr,"Error: read %s\n", pickname);
       exit(-1);
     }  
-  if( CheckFileHeader(f, OptiPickFileHeader) == 0) 
+  if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
     {
       fscanf(f, "%s\n", &x->beamlinefilename); 
       fscanf(f, "%s\n", &x->minuitfilename); 

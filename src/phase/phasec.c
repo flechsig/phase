@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Feb 04 15:07:14 flechsig>  */
+/*   Time-stamp: <17 Feb 04 16:30:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -240,15 +240,12 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
 		int etype, char *fname)  
      /* erzeugt elementmatrix im Fortran Speichermodell 	*/    
-     /* Uwe 10.6.96 						*/
-     /* last modification: 4 Jan 2001         flechsig          */
-     /* umgeschrieben auf memory 				*/
-     /* etype auf defines umgeschrieben 17.6.97                 */
-     /* switch eingefuegt          4.1.2001                     */
+     
 {
   double r, rho, *dp, cone, l,
     alpha, aellip, bellip, cellip, eellip, f, z0, small;
   int i, j;
+  struct mirrortype mirror;
 
   printf("DefMirrorC called\n");   
   small= 1e-15;   
@@ -383,6 +380,15 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
       exit(-1);
     } /* end switch */ 
+
+  /* misalignment */
+  if (Beamline.BLOptions.WithAlign == 1)
+    {
+      printf("DefMirrorC: with misalignment\n");
+      memcpy(&mirror, a, sizeof(struct mirrortype));
+      misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+    }
+
   /* for (i=0; i < 15; i++) printf("%d %le\n", i, dp[i]); */
 } /* end defmirrorc */
 
@@ -477,14 +483,14 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
      /* last mod. 26.7.96			*/
 {
   FILE *f;
-  int  rcode;
+  int  rcode, version;
    
   rcode= -1;
   if ((f= fopen(mainpickname, "r")) == NULL)
     fprintf(stderr, "File %s not found- defaults used!\n", mainpickname); 
   else 
     {
-      if( CheckFileHeader(f, MainPickFileHeader) == 0)   
+      if( CheckFileHeader(f, MainPickFileHeader, &version) == 0)   
 	{      
 	  fscanf(f,"%s\n", &x->matrixname);     
 	  fscanf(f,"%s\n", &x->mapname);    
@@ -580,7 +586,7 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
   char minname[MaxPathLength], opresname[MaxPathLength], 
     buffer[MaxPathLength], *subzeile; 
   XmString label;
-  int  parameterzahl, i, index, k;   
+  int  parameterzahl, i, index, k, version;   
   double eps;
   struct ElementType *list;
 
@@ -596,7 +602,7 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 
   if ((f= fopen(pickname, "r")) != NULL)   
     {
-      if( CheckFileHeader(f, OptiPickFileHeader) == 0) 
+      if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
 	{   
 	  fscanf(f, "%s\n", &minname); /* hier beamlinename ueberlesen */
 	  fscanf(f, "%s\n", &minname);   
@@ -635,7 +641,7 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 	    fprintf(stderr, "Minfile: %s- not found\n", minname);
 	  else     
 	    {
-	      if( CheckFileHeader(f1, "SET") != 0) 
+	      if( CheckFileHeader(f1, "SET", &version) != 0) 
 		fprintf(stderr, "error: InitOptiBox- minfile- fileheader\n");
 	      else 
 		{  
@@ -1705,9 +1711,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     for (i= 0; i< 8; i++)
       {	
 	set_something(widget_array[kEST1+ i], XmNvalue, TextField[i]);      
-
 	label= XmStringCreateLocalized(LabelField1[IFeld[i]]); 
-
 	set_something(widget_array[kEST1Label+ i], XmNlabelString, label);  
       }    /* */
     /*  label= DXmCvtFCtoCS(HeaderField[header], &bc, &status);     
@@ -1760,8 +1764,7 @@ void InitGeometryBox(struct gdatset *gx)
 
   set_something(widget_array[kEGInputLabel], XmNlabelString, label); 	
   XmStringFree(label); */
-  XmToggleButtonSetState(widget_array[kEGNITranslation], 
-			 gx->iflag == 1, FALSE);   
+  XmToggleButtonSetState(widget_array[kEGNITranslation], gx->iflag == 1, FALSE);   
 } /* end InitGeometryBox */
 
 void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)  
@@ -1854,9 +1857,9 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   sprintf(TextField[15], "%.2f", x->dw);    
   sprintf(TextField[16], "%.2f", x->dl);
 
-  sprintf(TextField[17], "%.2f", x->dRu);    
-  sprintf(TextField[18], "%.2f", x->dRw);    
-  sprintf(TextField[19], "%.2f", x->dRl);
+  sprintf(TextField[17], "%.2f", x->dRu * 1e3);    
+  sprintf(TextField[18], "%.2f", x->dRw * 1e3);    
+  sprintf(TextField[19], "%.2f", x->dRl * 1e3);
 
   sprintf(TextField[20], "%.f" , x->w1);    
   sprintf(TextField[21], "%.f", x->w2);    
@@ -1875,7 +1878,6 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   XmToggleButtonSetState(widget_array[kEGNITranslation], 
   y->iflag == 1, FALSE); 
   printf("InitOElementBox->done\n");
-   
 } /* end InitOElementBox */
 
 void GetSource(struct BeamlineType *bl)  
@@ -2033,11 +2035,10 @@ void GetGeometry(struct PHASEset *ph, struct gdatset *gp)
   /*  printf("getGeo: GActDat.theta0: %f\n", GActDat.theta0);    */
 } /* end GetGeometry */
 
+/*
+  reads the optical element box
+ */
 int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
-     /* Uwe 4.6.96 						*/
-     /* das Unterprogramm  wurde auf Pointer umgeschrieben,
-	keine globalen  Variablen werden mehr genutzt 	*/
-          
 {
   char *text= NULL; 
   XmString label; 
@@ -2071,6 +2072,9 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET19]); sscanf(text, "%lf", &mp->dRw);
   text= XmTextGetString(widget_array[kEOET20]); sscanf(text, "%lf", &mp->dRl);
 
+  /* input in mrad transfer to rad */
+  mp->dRu*= 1e-3; mp->dRw*= 1e-3; mp->dRl*= 1e-3;
+
   text= XmTextGetString(widget_array[kEOET21]); sscanf(text, "%lf", &mp->w1);
   text= XmTextGetString(widget_array[kEOET22]); sscanf(text, "%lf", &mp->w2);
   text= XmTextGetString(widget_array[kEOET23]); sscanf(text, "%lf", &mp->slopew);
@@ -2079,8 +2083,9 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET25]); sscanf(text, "%lf", &mp->l2);
   text= XmTextGetString(widget_array[kEOET26]); sscanf(text, "%lf", &mp->slopel);
   XtFree(text);
-
+#ifdef DEBUG
   printf("getoelement: vor history\n"); 
+#endif
   get_something(widget_array[kEOEMenu], XmNmenuHistory, &w);/*kEOOptMenu*/
   /*printf("getoelement: vor history 1\n");*/
   get_something(w, XmNlabelString, &label);  

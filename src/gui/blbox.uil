@@ -1,18 +1,12 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/blbox.uil
 ! Date      : <13 Feb 04 16:29:19 flechsig> 
-! Time-stamp: <16 Feb 04 14:29:51 flechsig> 
+! Time-stamp: <17 Feb 04 12:32:48 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
 ! $Date$
 ! $Revision$ 
 ! $Author$ 
-
-! Datei: USERDISK_3:[FLECHSIG.PHAS.PHASEUIL]BLBOX.UIL
-! Datum: 29.MAY.1996
-! Stand: 26-JUL-1996
-! Autor: FLECHSIG, BESSY Berlin
-
 
 object
     EBLDialog  : XmFormDialog {                   
@@ -76,7 +70,7 @@ object
             XmLabel             EBLL40a; 
             XmText              EBLT41a;       
             XmRadioBox          EBLRadBox1;  
-
+            XmToggleButton      MisalignmentButton;
             !XmSeparator         EBLSeph3;  
             !XmScrolledList      EBLList2; 
             !XmText              EBLT11;   
@@ -100,6 +94,30 @@ object
             !XmPushButton        EBLAddOK;  
                        	};
         };
+
+
+object
+    MisalignmentButton : XmToggleButton {
+        arguments {
+            XmNlabelString      = "calculation includes misalignment";
+            XmNtopAttachment    = XmATTACH_WIDGET; 
+	    XmNtopWidget        = XmRadioBox EBLRadBox1;
+            XmNtopOffset        = 10; 
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNleftOffset       = 14;  
+            XmNbottomAttachment = XmATTACH_FORM;   
+            XmNbottomOffset     = 10; 
+            XmNselectColor	= gold;
+ 		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kMisalignmentButton);
+            !XmNvalueChangedCallback = procedure  (kEGNITranslation);
+    };
+    }; 
+
+
+
+
 
 object
     EBLNameLabel : XmLabel {
@@ -188,7 +206,7 @@ object
             XmNselectionPolicy  = XmSINGLE_SELECT; 
             XmNunitType         = XmPIXELS;  
             XmNlistSizePolicy   = XmCONSTANT;
-            XmNwidth		= 400;
+            XmNwidth		= 320;
             XmNbackground	= color('white', background);
             XmNtopAttachment	= XmATTACH_WIDGET;
             XmNtopWidget        = XmLabel EBLListLabel;     
@@ -302,8 +320,8 @@ object
             XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;    
             XmNforeground       = color('white');   
             XmNbackground       = color('blue');
-            XmNbottomAttachment	= XmATTACH_FORM;    
-            XmNbottomOffset     = 15; 
+           ! XmNbottomAttachment	= XmATTACH_FORM;    
+           ! XmNbottomOffset     = 15; 
             	  };                  
         controls {
             XmToggleButton      stoim;

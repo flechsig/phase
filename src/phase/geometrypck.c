@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/geometrypck.c */
 /*  Date      : <28 Oct 99 09:57:07 flechsig>  */
-/*  Time-stamp: <28 Oct 99 09:58:04 flechsig>  */
+/*  Time-stamp: <17 Feb 04 14:46:53 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.C      */
@@ -44,7 +44,7 @@ int ggetpickfile(struct gdatset *x, char *gpickname)
 /* last mod. Uwe 12.6.96 */
 {
    FILE *f;
-   int i, rcode;
+   int i, rcode, version;
    char buffer[80];  
    double *pd; 
 
@@ -53,7 +53,7 @@ int ggetpickfile(struct gdatset *x, char *gpickname)
    	fprintf(stderr,"File %s not found- defaults used!\n", gpickname);
    else 
    {
-     if( CheckFileHeader(f, GeometryPickFileHeader) == 0)
+     if( CheckFileHeader(f, GeometryPickFileHeader, &version) == 0)
      { 
 	pd= (double *) &x->theta0; 
         for (i= 0; i < 9; i++, pd++) 
