@@ -1,11 +1,11 @@
-C Datei: USERDISK_3:[FLECHSIG.PHAS.PHASEFOR.LIB]DFPL2_UF.FOR
-C Datum: 16.JAN.1997
-C Stand: 16-JAN-1997
-C Autor: FLECHSIG, BESSY Berlin
+C File      : /home/pss060/sls/flechsig/phase/src/phaselib/dfpl2_uf.for
+C Date      : <20 Dec 99 08:14:12 flechsig> 
+C Time-stamp: <20 Dec 99 08:14:43 flechsig> 
+C Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 	subroutine subdfpl2(g,a,ra,pd)
 	implicit real*8(a-h,o-z)
-	real*8 l
+c	real*8 l   never used UF 21.12.99
 	dimension a(0:5,0:5)
 
         include 'phase_struct.for'
