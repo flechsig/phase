@@ -203,8 +203,8 @@ object
             XmNtopWidget        = XmText EGT4;
  	    XmNbottomAttachment = XmATTACH_FORM;   
             XmNbottomOffset     = 10;    };
-       /* callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEGT6);  };*/
+!        callbacks {
+!            MrmNcreateCallback  = procedure create_proc (kEGT6);  };
     };
 
 object
@@ -359,11 +359,11 @@ object
               XmNtopOffset        = 10; 
               XmNleftAttachment   = XmATTACH_POSITION; 
               XmNleftPosition     = 49;    
-           /*   XmNleftAttachment  = XmATTACH_WIDGET;
-              XmNleftWidget      = XmText EGT3;*/
+!              XmNleftAttachment  = XmATTACH_WIDGET;
+!              XmNleftWidget      = XmText EGT3;
                              };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEGT3Button);
             XmNactivateCallback = procedure activate_proc (kEGT3Button);    };
     };     	
-/* end /home/vms/flechsig/vms/phas/phaseuil/geometrybox.uil */
+!* end /home/vms/flechsig/vms/phas/phaseuil/geometrybox.uil */
