@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <05 Feb 04 14:20:33 flechsig> 
+#  Time-stamp: <05 Feb 04 15:05:28 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -34,6 +34,7 @@ dfpl1_uf.for  dfpl2_uf.for
 libphase_la_LDFLAGS = -rpath '$(libdir)' -version-info 3:12:1 
 
 ##AM_LDFLAGS = -L@F77LIB@ -lf77math -lfio -lU77 -lV77 -lf77math -lg2c
+AM_FFLAGS  = @FDEBUG@
 AM_LDFLAGS = @FLIBS@ 
 
 ##we use the c linker
