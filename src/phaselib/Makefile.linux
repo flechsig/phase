@@ -1,105 +1,102 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <04 Nov 99 11:22:28 flechsig> 
+# Time-stamp: <04 Nov 99 13:28:00 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
-# Makefile for the PHASE LIB 
-# Makefile PHASE on LINUX 
+# Makefile for the PHASE LIB on LINUX 
 #########################################################################
 SHELL = /bin/sh
 
-DEFS        = -D LINUX
-CC          = gcc -O
 #FOR         = pgf77 -c 
 FOR         = f77 -c 
 AR	    = ar -rv
 YACC        = bison -y
 INSTALL     = /usr/local/bin/install -c
-INSTALLDATA = /usr/local/bin/install -c -m 644CDEBUG = -g
-MAKE        = make
+INSTALLDATA = /usr/local/bin/install -c -m 644
 
-LIBS =
-CFLAGS = $(CDEBUG) -I. -I$(srcdir) $(DEFS)
-FFLAGS = -w -f -s -N3 -N51
+FFLAGS    = -w -f -s -N3 -N51
+
+# for install
 srcdir    = .
 prefix    = /usr/local
 binprefix =
-
-
-SRCS = test-defines.c
-OBJS = test-defines.o
+DESTDIR		= $(prefix)/phase
 
 .phony: all makewhat    
 
-      
-#########################################################################
-#               debugging        
-DEBUG		= no           # comment out for debugging (DEBUG = # no)    
-OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
-#########        flags                                    ###############
- 
- 
-LINKFLAGS	=  
-LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
 #########################################################################
 #               variables 
-DESTDIR		= phase__prg:  
-# 
-PROGRAM		= phaselib.a
-#########################################################################
-LIBS	 	= 
-####           system dependent libs ####################################
 
+# 
+LIB		= phaselib.a
 #########################################################################
-OBJECTS = wdfgmapa4.o  wdfgmapb4.o  \
-wdfgmapc4.o  wdfgmapd14.o  \
-wdfgmapc4.o  wdfgmapd14.o  \
+AUX  = Makefile.bessy Makefile.psicl0 Makefile.linux 
+SRCS = \
+wdfgmapa4.for  wdfgmapb4.for   \
+wdfgmapc4.for  wdfgmapd14.for  \
+wdfgmapc4.for  wdfgmapd14.for  \
+wdfgmapd34.for wdfgmapd44.for  \
+wdfgmapd54.for wdfgmape14.for  \
+wdfgmape24.for wdfgmapf4.for   \
+wdfgmapg4.for  wdfgmaph4.for   \
+wdfgmapi4.for  wdfgmapk14.for  \
+wdfgmapk24.for wdfgmapl4.for   \
+wdfgmapm14.for wdfgmapm24.for  \
+lengthab4.for  lengtha4.for    \
+lengthb4.for   lengthc4.for    \
+lengthd400.for lengthd401.for  \
+lengthd402.for lengthd410.for  \
+lengthd411.for lengthd412.for  \
+lengthd42.for  lengthd43.for   \
+p_m_4.for  \
+zernike_nl_60.for zernike_n_60.for
+#########################################################################
+OBJECTS = \
+wdfgmapa4.o   wdfgmapb4.o   \
+wdfgmapc4.o   wdfgmapd14.o  \
+wdfgmapc4.o   wdfgmapd14.o  \
 wdfgmapd34.o  wdfgmapd44.o  \
 wdfgmapd54.o  wdfgmape14.o  \
-wdfgmape24.o  wdfgmapf4.o  \
-wdfgmapg4.o  wdfgmaph4.o  \
-wdfgmapi4.o  wdfgmapk14.o  \
-wdfgmapk24.o  wdfgmapl4.o  \
+wdfgmape24.o  wdfgmapf4.o   \
+wdfgmapg4.o   wdfgmaph4.o   \
+wdfgmapi4.o   wdfgmapk14.o  \
+wdfgmapk24.o  wdfgmapl4.o   \
 wdfgmapm14.o  wdfgmapm24.o  \
-lengthab4.o  lengtha4.o  \
-lengthb4.o  lengthc4.o  \
+lengthab4.o   lengtha4.o    \
+lengthb4.o    lengthc4.o    \
 lengthd400.o  lengthd401.o  \
 lengthd402.o  lengthd410.o  \
 lengthd411.o  lengthd412.o  \
-lengthd42.o  lengthd43.o  \
+lengthd42.o   lengthd43.o   \
 p_m_4.o  \
 zernike_nl_60.o  zernike_n_60.o
 #dfpl1_uf.o  dfpl2_uf.o  \
 #,\
 #phlib.o
-
-########################################################################
-
 #########################################################################
 #                            targets                                    # 
-all: $(PROGRAM)	
-	@echo "Making $(PROGRAM) for LINUX..." 
-		   
-##############################################################################
-#
-# Dependencies section
-$(PROGRAM): $(OBJECTS)
+all: $(LIB)	
+	@echo "Making $(LIB) for LINUX..." 
+#########################################################################
+$(LIB): $(OBJECTS)
 	$(AR) $@ $(OBJECTS)  
 	ranlib -v $@
 ##########################################################################
-#$(OBJECTS): *.for
 %.o : %.for 
 	$(FOR) $(FFLAGS) $@ $<   
 ##########################################################################
+install: all
+	$(INSTALL) $(LIB) $(DESTDIR)/lib/$(LIB)
+	
 clear:
 	@echo "delete objects and exe..."  
-	rm *.o $(PROGRAM)
+	rm *.o $(LIB) core
 
 TAGS:   $(SRCS)
 	etags $(SRCS)
      
 clean:
-	rm -f *.o  core
+	rm -f *.o  core $(LIB)
      
 distclean: clean
 	rm -f TAGS  config.status
@@ -116,3 +113,4 @@ dist: $(SRCS) $(AUX)
 	-rm -rf `cat .fname` .fname
 	tar chZf `cat .fname`.tar.Z `cat .fname`
 ####################      end makefile       ###############################
+#end /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
