@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
 /*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <23 Dec 99 16:37:06 flechsig>  */
+/*  Time-stamp: <07 Feb 00 09:26:13 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
@@ -67,17 +67,16 @@ void PST(struct BeamlineType *bl)
    int size, i, gratingnumber, elart, gratingposition;
    
    printf("phase space trafo PST called\n");
-   printf("  Quelltyp: %d\n", bl->src.isrctype); 
+   printf("  source typ: %d\n", bl->src.isrctype); 
 
    /* gitterzahl erkennen und geometrypointer initialisieren */
-   /* last modification: 18 Jun 97 14:32:19 flechsig */
    gratingnumber= 0; gratingposition= 0;
    
    for (i= 0; i< bl->elementzahl; i++)
      {
        elart= bl->ElementList[i].Art;
        if((elart == kEOETG) || (elart == kEOEVLSG))
-	{
+	 {
 	  gratingnumber++;
 	  gratingposition= i;
       	  gp= (struct geometryst *)&bl->ElementList[gratingposition].geo;
@@ -98,12 +97,19 @@ void PST(struct BeamlineType *bl)
 	 gp= (struct geometryst *)&bl->ElementList[0].geo;
 	 /*geometryst und geometrytype sind das gleiche */
 	 gp->xdens[0]= 0.0;
+	 printf ("PST: no grating- set  igrating= 0\n");
+	 bl->BLOptions.ifl.igrating=0;
        } 
    else 
      if(gp->xdens[0] < 1)
        {
 	 fprintf(stderr, "line density of the grating: %lf --> exit \n");
 	 exit(-1);
+       } 
+     else
+       {
+	 printf ("PST: 1 grating- set  igrating= 1\n");
+	 bl->BLOptions.ifl.igrating=1;
        }
    
    /*   printf("pst: Daten fure Dipolquelle werden hier eingegeben (tmp)\n");
