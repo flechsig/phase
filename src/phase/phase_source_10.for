@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasefor/ph7/phase_source_10.for
 c Date      : <22 Oct 97 14:45:58 flechsig> 
-c Time-stamp: <28 Oct 99 09:47:00 flechsig> 
+c Time-stamp: <03 Nov 99 13:08:27 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c**************************************************************
 	subroutine src_ini(src)	
@@ -615,14 +615,14 @@ c***********************************************************
 
 	record /source3/ so3
 
-	open(unit=10,name=fsource3a,type='old')
+	open(unit=10,name=so3.fsource3a,type='old')
 	read(10,*)so3.isrcreal
 	do i=1,so3.isrcreal
 	read(10,*)so3.xsrcreal(i),so3.ysrcreal(i)
 	enddo
 	close(10)
 
-	open(unit=10,name=fsource3b,type='old')
+	open(unit=10,name=so3.fsource3b,type='old')
 	read(10,*)so3.isrcimag
 	do i=1,so3.isrcimag
 	read(10,*)so3.xsrcimag(i),so3.ysrcimag(i)
