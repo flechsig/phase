@@ -63,5 +63,8 @@ Initialisierungsfehler bei ell. Elementen behoben
           batchmode with source from file fixed in full RT mode
 24 Mar 04 full ray trace and single ray trace 
           includes time/phase calculation
+20 Apr 04 sensitivity added to OElementBox
+	  plane mirror/grating added
+          conical mirror added but not yet tested! 
 ****************    end of NEWS  *****************           
 **************************************************

@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <09 Mar 04 11:43:27 flechsig> 
+! Time-stamp: <20 Apr 04 11:55:20 flechsig> 
 ! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
 ! $Source$ 
@@ -314,7 +314,12 @@ value
 
   	kEOEGeneral             : 350;
 	kEOECone                : 351;
-        kCWriteMCoButton        : 352;
+	kEOEPElliG              : 352;
+        kEOEPM                  : 353;
+	kEOEPG                  : 354;
+        kEOEPGV                 : 355;
+
+        kCWriteMCoButton        : 358;
 
         kESPointSourceButton    : 360;
         kPreAB                  : 361;

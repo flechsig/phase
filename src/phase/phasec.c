@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <08 Apr 04 15:42:04 flechsig>  */
+/*   Time-stamp: <20 Apr 04 14:50:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -269,13 +269,18 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   /* Radien < small dann planspiegel */
   switch (etype)
     {
+    case kEOEPM:
+    case kEOEPG:
+    case kEOEPGV:
+      printf("DefMirrorC: flat shape ");
+      break;
     case kEOESlit:
       printf("DefMirrorC: slit- geometry and element data are ignored - ");
       printf("fill dummy entries from toroid\n"); 
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* 6    */
     case kEOEVLSG:  
-      printf("DefMirrorC: toroidal shape ");                 
+      printf("DefMirrorC: generic toroidal shape ");                 
       if (fabs(rho) > small) 
 	{
 	  dp[12]= 0.5/ rho;                		  /* 0,2 */
@@ -294,11 +299,14 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 
     case kEOEGeneral:           /* read coefficients from file */
       printf("DefMirrorC: read general coefficient file\n");
-      ReadCoefficientFile(dp,fname);
+      ReadCoefficientFile(dp, fname);
       break;
 
-    case kEOECone:           
-      printf("DefMirrorC: cone shape\n");
+    case kEOECone:  
+      l= 100;
+      printf("DefMirrorC: special conical cylinder (not tested)\n");
+      printf("fixed cone length l= %f mm\n");
+      printf("r, rho are the two radii\n");
       if (fabs(l) > small)
 	{
 	  cone= (r - rho)/ l;
@@ -356,7 +364,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	}
       break;
 
-    case kEOEPElli: 
+    case kEOEPElli:
+    case kEOEPElliG:
       printf("DefMirrorC: plane- elliptical shape\n");  
       if (alpha < small) 
 	{
@@ -1817,21 +1826,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   char TextField[26][40], *text;
   XmString label; 	
   Widget w;
-  char LabelField1 [20][80] = {  
-    "source [mm]", "r [mm]",
-    "image [mm]",  "rho [mm]",
-    "diff. order", "xdens[0]",
-    "xdens[1]",    "xdens[2]", 
-    "xdens[3]",    "xdens[4]", 
-    "theta",     "dummy12",  
-    "toroidal mirror", 
-    "toroidal grating",
-    "variable linespace grating",  
-    "elliptical mirror (r, rho- ignored)",  
-    "plane- ellipt. mirror (r, rho- ignored)", 
-    "aperture/ slit (only w, l are valid)",
-    "read general coefficient file (all fields ignored)"
-  };
+  
  
   /* from geometrybox */    
   teta= fabs(y->theta0* PI/ 180.0);   /* theta */
@@ -1844,29 +1839,19 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
     asin(y->lambda* y->xdens[0]/ (2.0* cos(teta)));
   cff= cos(fi- teta)/ cos(fi+ teta);
 
-  if ((sw != kEOEDefaults) && (sw != kFFileBoxOK)) 
+  if ((sw == kEOEDefaults) || (sw == kFFileBoxOK)) 
     {      
 #ifdef DEBUG
       /*   printf("InitOElementBox: %d \n", sw);*/
 #endif      
       
-      switch (sw) {  
-      case  kEOETM:    ih= 12; imax= 11;  break;
-      case  kEOETG:    ih= 13; imax= 11;  break;  
-      case  kEOEVLSG:  ih= 14; imax= 26;  break;  
-      case  kEOEElli:  ih= 15; imax= 11;  break; 
-      case  kEOEPElli: ih= 16; imax= 11;  break;  
-      case  kEOESlit:  ih= 17; imax= 11;  break;  
-      case  kEOEGeneral:  ih= 18; imax= 11;  break;  
-      default:         ih= 14; imax= 11; sw= kEOEVLSG;   
-      }
-    } else  
-      {
-        ih= 14; imax= 11; 
-	sw= kEOEVLSG;
+      	sw= kEOEVLSG;
 	printf("InitOElementBox: set defaults (toroidal VLS grating)\n");
 	/*w= widget_array[sw];*/
       }
+
+  
+
   imax= 26;  /* new */
   w= widget_array[sw];    /* verschoben 24.11.99 */            
 #ifdef DEBUG
@@ -1874,8 +1859,8 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
 #endif 
 
   sprintf(TextField[0], "%.2f", cff  );
-  sprintf(TextField[1], "%.1f"  , y->r );
-  sprintf(TextField[2], "%.1f"  , y->rp);
+  sprintf(TextField[1], "%.1f", y->r );
+  sprintf(TextField[2], "%.1f", y->rp);
 
   sprintf(TextField[3], "%.3f", y->theta0);
   sprintf(TextField[4], "%.1f", x->r1);   
@@ -1884,11 +1869,11 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   sprintf(TextField[6], "%.1f", x->rmi);      
   sprintf(TextField[7], "%.2f", x->rho);  
         
-  sprintf(TextField[8], "%d", y->inout);      	   
+  sprintf(TextField[8], "%d",   y->inout);      	   
   sprintf(TextField[9], "%.2f", y->xdens[1]); 
   sprintf(TextField[10],"%.2f", y->xdens[3]);    
      
-  sprintf(TextField[11], "%.2f" , y->xdens[0]);    
+  sprintf(TextField[11], "%.2f", y->xdens[0]);    
   sprintf(TextField[12], "%.2f", y->xdens[2]);    
   sprintf(TextField[13], "%.2f", y->xdens[4]);
 
@@ -1900,7 +1885,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   sprintf(TextField[18], "%.2f", x->dRw * 1e3);    
   sprintf(TextField[19], "%.2f", x->dRl * 1e3);
 
-  sprintf(TextField[20], "%.f" , x->w1);    
+  sprintf(TextField[20], "%.f", x->w1);    
   sprintf(TextField[21], "%.f", x->w2);    
   sprintf(TextField[22], "%.3f", x->slopew);
 
@@ -1910,16 +1895,101 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
 
   for (i= 0; i < imax; i++)
     set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
-    
+  
+  SetOElementBoxSensitivity(sw);  
   /* set history */
   /*  printf("InitOElementBox: vor history\n"); */
   XtVaSetValues(widget_array[kEOOptMenu], XmNmenuHistory, w, NULL); 
   XmToggleButtonSetState(widget_array[kEGNITranslation], 
   y->iflag == 1, FALSE); 
+
+  
 #ifdef DEBUG
   /*  printf("InitOElementBox => done\n");*/
 #endif
 } /* end InitOElementBox */
+
+/*
+  UF 20.4.04 setzt sensitivity - je nach elementtyp
+  setzt planspiegel radius auf 0 etc.
+*/
+void SetOElementBoxSensitivity(int etype)
+{
+  int i;
+
+  /* activate all */
+  for (i= kEOET1; i<= kEOET26; i++)
+    set_something(widget_array[i], XmNsensitive, True);
+
+  set_something(widget_array[kEGNITranslation], XmNsensitive, True);
+  set_something(widget_array[kEOEAB2], XmNsensitive, True);
+  set_something(widget_array[kEOEAB4], XmNsensitive, True);
+  set_something(widget_array[kEGT3Button], XmNsensitive, True);
+
+  switch (etype) {
+  
+  case kEOEGeneral:
+    set_something(widget_array[kEOET7],  XmNsensitive, False);
+    set_something(widget_array[kEOET8],  XmNsensitive, False);
+    set_something(widget_array[kEOEAB2], XmNsensitive, False);
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    break;
+  
+  case kEOESlit:
+    set_something(widget_array[kEGNITranslation], XmNsensitive, False);
+    set_something(widget_array[kEOEAB2], XmNsensitive, False);
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    set_something(widget_array[kEGT3Button], XmNsensitive, False);
+    set_something(widget_array[kEOET23], XmNsensitive, False);
+    set_something(widget_array[kEOET26], XmNsensitive, False);
+    for (i= kEOET1; i<= kEOET20; i++)
+      set_something(widget_array[i], XmNsensitive, False);
+    break;
+ 
+  case kEOEPM:
+    set_something(widget_array[kEOET7], XmNvalue, "0");
+    set_something(widget_array[kEOET8], XmNvalue, "0");
+  case kEOEElli:     
+  case kEOEPElli:
+    set_something(widget_array[kEOEAB2], XmNsensitive, False);
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    for (i= kEOET5; i<= kEOET8; i++)
+      set_something(widget_array[i], XmNsensitive, False);
+  case kEOETM:
+  case kEOECone:
+    XmToggleButtonSetState(widget_array[kEGNITranslation], FALSE, FALSE); 
+    set_something(widget_array[kEOET9], XmNvalue, "0");
+    set_something(widget_array[kEGT3Button], XmNsensitive, False);
+    set_something(widget_array[kEGNITranslation], XmNsensitive, False);
+    set_something(widget_array[kEOET1], XmNsensitive, False);
+    for (i= kEOET9; i<= kEOET14; i++)
+      set_something(widget_array[i], XmNsensitive, False);
+    break;
+
+  case kEOEPG:
+    set_something(widget_array[kEOET7],  XmNvalue, "0");
+    set_something(widget_array[kEOET8],  XmNvalue, "0");
+    set_something(widget_array[kEOEAB2], XmNsensitive, False);
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    for (i= kEOET5; i<= kEOET8; i++)
+      set_something(widget_array[i], XmNsensitive, False);
+  case kEOETG:
+    set_something(widget_array[kEOET10], XmNsensitive, False);
+    set_something(widget_array[kEOET11], XmNsensitive, False);
+    set_something(widget_array[kEOET13], XmNsensitive, False);
+    set_something(widget_array[kEOET14], XmNsensitive, False);
+    break;
+  case kEOEVLSG: 
+  case kEOEPElliG:
+    break;
+  case kEOEPGV:
+    set_something(widget_array[kEOEAB2], XmNsensitive, False);
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    for (i= kEOET5; i<= kEOET8; i++)
+      set_something(widget_array[i], XmNsensitive, False);
+    break;
+  }
+}
 
 void GetSource(struct BeamlineType *bl)  
      /****************************************************************/
@@ -2136,13 +2206,19 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
     return; 
   XmStringFree(label);
   printf("text: %s\n", text);
-  if (strcmp(text, "plane- ellipt. m.") == 0) etype= kEOEPElli; else 
-    if (strcmp(text, "elliptical mirror") == 0) etype= kEOEElli; else 
-     if (strcmp(text, "toroidal mirror") == 0) etype= kEOETM; else 
-       if (strcmp(text, "toroidal grating") == 0) etype= kEOETG; else 
-	 if (strcmp(text, "coefficient file") == 0) etype= kEOEGeneral; else
-	   if (strcmp(text, "aperture/ slit (RT)") == 0) etype= kEOESlit; else 
-	     etype= kEOEVLSG;
+  if (strcmp(text, "plane mirror") == 0) etype= kEOEPM; else
+    if (strcmp(text, "toroidal mirror") == 0) etype= kEOETM; else 
+      if (strcmp(text, "elliptical mirror") == 0) etype= kEOEElli; else
+	if (strcmp(text, "plane- ellipt. m.") == 0) etype= kEOEPElli; else
+	  if (strcmp(text, "conical mirror") == 0) etype= kEOECone; else 
+	    if (strcmp(text, "plane grating") == 0) etype= kEOEPG; else
+	      if (strcmp(text, "toroidal grating") == 0) etype= kEOETG; else
+		if (strcmp(text, "plane vls- g.") == 0) etype= kEOEPGV; else
+		  /* <<<<<<<<<<<<<<<<<<<<<<<< */
+  if (strcmp(text, "pl.- el.- vls- g.") == 0) etype= kEOEPElliG; else
+    if (strcmp(text, "coefficient file") == 0) etype= kEOEGeneral; else
+      if (strcmp(text, "aperture/ slit (RT)") == 0) etype= kEOESlit; else 
+	etype= kEOEVLSG;
 	
   XtFree(text);
   

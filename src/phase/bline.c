@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 Mar 04 14:58:08 flechsig>  */
+/*   Time-stamp: <20 Apr 04 14:50:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1666,7 +1666,7 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    int i;
    char buffer[6][20];  
 
-   printf("begin UpdateBLBox (geom , mirror) from memory pos: %d\n", pos);
+   printf("UpdateBLBox: (geom , mirror) from memory pos: %d\n", pos);
    ep= &(bl->ElementList[pos-1]);  
    bl->position= pos;
 

@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/editmenu.uil
 ! Date      : <09 Mar 04 11:46:29 flechsig> 
-! Time-stamp: <09 Mar 04 11:47:03 flechsig> 
+! Time-stamp: <20 Apr 04 12:15:31 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
@@ -230,11 +230,19 @@ object
 object
     EOEMenu : XmPulldownMenu {
         controls {
+	           XmPushButton        EOEPMButton;
                    XmPushButton        EOEToroidButton;
-                   XmPushButton        EOEGratingButton;  
+		   XmPushButton        EOEElliButton; 
+		   XmPushButton        EOEPElliButton;
+		   XmPushButton        EOEConeButton;
+                   XmSeparator         {};
+	           XmPushButton        EOEPGButton;
+                   XmPushButton        EOEGratingButton; 
+                   XmPushButton        EOEPGVButton; 
                    XmPushButton        EOEGratingVarButton;
-                   XmPushButton        EOEElliButton; 
-		   XmPushButton        EOEPElliButton; 
+                   XmPushButton        EOEPElliGButton;
+                    
+ 		   XmSeparator         {};
 		   XmPushButton        EOESlitButton;
 		   XmPushButton        EOEGeneralButton;
                          };
@@ -283,6 +291,19 @@ object
             }; 
         };  
 
+object
+    EOEConeButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "conical mirror";
+            XmNmnemonic         = keysym("C");
+                        };
+        callbacks {
+          MrmNcreateCallback = procedure create_proc (kEOECone); 
+	  XmNactivateCallback = procedure activate_proc (kEOECone);
+            XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };  
+
 
 object
     EOEGeneralButton : XmPushButton {
@@ -325,6 +346,45 @@ object
             }; 
         };    
 
+object
+    EOEPMButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "plane mirror";
+!            XmNmnemonic         = keysym("e");
+                        };
+        callbacks {
+        	MrmNcreateCallback = procedure create_proc(kEOEPM);    
+		XmNactivateCallback = procedure activate_proc (kEOEPM);
+            	XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };    
+
+object
+    EOEPGButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "plane grating";
+!            XmNmnemonic         = keysym("e");
+                        };
+        callbacks {
+        	MrmNcreateCallback = procedure create_proc(kEOEPG);    
+		XmNactivateCallback = procedure activate_proc (kEOEPG);
+            	XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };    
+
+object
+    EOEPGVButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "plane vls- g.";
+!            XmNmnemonic         = keysym("e");
+                        };
+        callbacks {
+        	MrmNcreateCallback = procedure create_proc(kEOEPGV);    
+		XmNactivateCallback = procedure activate_proc (kEOEPGV);
+            	XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };    
+
 
 object
     EOEPElliButton : XmPushButton {
@@ -337,7 +397,20 @@ object
 	    XmNactivateCallback = procedure activate_proc (kEOEPElli);
             XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
             }; 
-        };    
+        }; 
+
+ object
+    EOEPElliGButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "pl.- el.- vls- g.";
+!            XmNmnemonic         = keysym("p");
+                        };
+        callbacks {
+            MrmNcreateCallback = procedure create_proc (kEOEPElliG);
+	    XmNactivateCallback = procedure activate_proc (kEOEPElliG);
+            XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };   
 
             
 object

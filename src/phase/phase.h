@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Apr 04 17:03:23 flechsig>  */
+/*   Time-stamp: <20 Apr 04 11:55:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -355,7 +355,12 @@
 
 #define kEOEGeneral              350
 #define kEOECone                 351
-#define kCWriteMCoButton         352
+#define kEOEPElliG               352
+#define kEOEPM                   353
+#define kEOEPG                   354
+#define kEOEPGV                  355
+
+#define kCWriteMCoButton         358
 
 #define kESPointSourceButton     360
 #define kPreAB                   361
@@ -760,6 +765,7 @@ void 	ActivateFileSelection(int, char *),
   SetDefaultParameter(struct BeamlineType *),
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
   SetInfoString(),
+  SetOElementBoxSensitivity(int),
   Slope(struct RayType *, double, double, double, double, int),
   UpdateBLBox(struct BeamlineType *, int),  
   UpdateFilenames(struct PHASEset *),
