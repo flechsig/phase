@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <05 Feb 04 14:14:25 flechsig> 
+#   Time-stamp: <05 Feb 04 15:43:44 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -55,6 +55,7 @@ else
      AC_MSG_RESULT(found Absoft f77)
      AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
      AC_SUBST([FFLAGS],"-c -f -B108 -W -s -N3 -N51 -N22 -N33")
+     AC_DISABLE_SHARED
 ##FFLAGS for absoft f77 compiler
 ##	-g generate debugging information
 ##	-c generate object files
