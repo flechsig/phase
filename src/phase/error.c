@@ -1,3 +1,13 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/error.c */
+/*  Date      : <26 Oct 04 13:49:18 flechsig>  */
+/*  Time-stamp: <26 Oct 04 13:49:23 flechsig>  */
+/*  Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
+
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -15,6 +25,12 @@ error (int exit_status, const char *mode, const char *message)
 
   if (exit_status >= 0)
     exit (exit_status);
+}
+
+void
+sic_info (const char *message)
+{
+  error (-1, "info", message);
 }
 
 void
