@@ -2,3 +2,5 @@ Makefile.in
 Makefile
 *.cpp
 .*
+phaseopti
+phaseoptilib
