@@ -1,19 +1,12 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
-/*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <09 Mar 04 15:16:56 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
+/*   Date      : <23 Mar 04 11:27:42 flechsig>  */
+/*   Time-stamp: <24 Mar 04 08:09:44 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
-/*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
-/*  Date      : <23 Apr 97 09:17:34 flechsig>  */
-/*  Time-stamp: <29 Mar 99 17:07:58 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]RTRACE.C           */
-/* Datum: 28.MAR.1995                                          */
-/* Stand: 24-APR-1998                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
-/* 19.2.99 slope geaendert */
-/* 29.3.99  wellenlaenge beim Undulator explizit aus bloptions setzen */ 
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 #include <stdio.h> 
 #include <stdlib.h>
@@ -94,10 +87,10 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
    double beugung, zweipi, deltax, deltaz, sigdy, sigdz,
           sigey, sigez, sigedz, sigedy, factsig, factsigp;   /* e- emittance */
    time_t zeit;
-   struct UndulatorSourceType *x;  
+   struct UndulatorSourceType  *x;  
    struct UndulatorSource0Type *x0;  
    
-   x= (struct UndulatorSourceType *) &(y->Quelle.UndulatorSource);  
+   x=  (struct UndulatorSourceType *)  &(y->Quelle.UndulatorSource);  
    x0= (struct UndulatorSource0Type *) &(y->Quelle.UndulatorSource0);
    time(&zeit); srand(zeit);                 /* Random initialisieren */
    zweipi= 2.0* PI;                          /* 8.0* atan(1.0);       */
@@ -382,7 +375,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
   struct RayType *Raysin, *Raysout, Tmpsource, Tmpresult;   
   int    i, iord, elcounter, elnumber;
   double uu, ww, ll, xlength, xlength1, xlength2, phase, raylen, 
-    slopelen, dela, res;
+    slopelen, dela, res, dphase;
   struct ElementType *ds; 
   struct RESULTType  *Re; 
 
@@ -434,7 +427,8 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	      intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			   &bl->BLOptions.ifl.iord, &uu, &ww, &ll); 
 
-	    printf("  intersection: u= %g, w= %g, l= %g (mm)\n", uu, ww, ll);
+	    printf("  intersection: u= %.4g (mum), w= %.4g (mm), l= %.4g (mm)\n", 
+		   uu* 1e3 , ww, ll);
 	    if (OnElement(&ds->MDat, ww, ll) == 0)
 	      {
 		beep(1);
@@ -464,25 +458,31 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		    Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, 
 			  slopelen, ds->geo.cosb, ds->GDat.azimut); 
 		  }
-		raylen+= xlength;   /* Rechnung in nm */
-		phase= (bl->BLOptions.lambda > 0) ? 
-		  (phase+ xlength* 1e6/ bl->BLOptions.lambda- 
-		   floor(phase+ xlength* 1e6/ bl->BLOptions.lambda))* 
-		  2.0 : 2.0; 
+		/* calculate phase */
+		dphase= (bl->BLOptions.lambda > 0) ? 
+		  ((xlength/ bl->BLOptions.lambda)* 2.0* PI) : (2.0* PI);
+   
+		raylen+= xlength;
+                phase += dphase;
+                
 		/* 2PI entspricht lambda= 0 */
 		/* Ausgabe */
 		printf("  ray trace: \n"); 
-	        printf("    yi : %g, yo : %g [mm]\n", Raysin->y, Raysout->y);  
-		printf("    zi : %g, zo : %g [mm]\n", Raysin->z, Raysout->z);  
-		printf("    dyi: %g, dyo: %g [rad]\n", 
-		       Raysin->dy, Raysout->dy);    
-		printf("    dzi: %g, dzo: %g [rad]\n", 
-		       Raysin->dz, Raysout->dz); 
-		printf("  optical pathlength:\n");
-		printf("    over the element: %g, total %g [mm]\n", 
-		       xlength, raylen);
-		printf("  phase:\n    %g * pi = %g deg.\n", 
-		       phase, phase * 180.0);
+	        printf("    yi : % .4g,\tyo : % .4g\t (mm)\n", 
+		       Raysin->y, Raysout->y);  
+		printf("    zi : % .4g,\tzo : % .4g\t (mm)\n", 
+		       Raysin->z, Raysout->z);  
+		printf("    dyi: % .4g,\tdyo: % .4g\t (mrad)\n", 
+		       Raysin->dy  * 1e3, Raysout->dy * 1e3);    
+		printf("    dzi: % .4g,\tdzo: % .4g\t (mrad)\n", 
+		       Raysin->dz * 1e3, Raysout->dz  * 1e3); 
+		
+		printf("  pathlength over element: %.4g, \ttotal: %.4g \t(nm)\n", 
+		          xlength* 1e6, raylen* 1e6);
+		printf("  time delay over element: %.4g, \ttotal: %.4g \t(fs)\n", 
+		          xlength* 1e15/LIGHT_VELO, raylen* 1e15/LIGHT_VELO);
+		printf("  phaseshift over element: %.4g, \ttotal: %.4g \t(rad)\n",
+		          dphase, phase);
 #ifdef DEBUG
 		printf("      debug: xlength1: %g, xlength2: %g\n", 
 		       xlength1, xlength2);    
@@ -496,18 +496,18 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	  } /* end while  */
 	/*	if (bl->deltalambdafactor < 1e12)    /* wurde neu gesetzt */
 	  {
-	    printf("  energy resolution: \n");
+	    printf("  energy resolution: \t");
 	    dela= Raysout->y * bl->deltalambdafactor* 1e6;
 	    if (fabs(dela) < 1e-18)
 		{
-		  printf("     resolution= infinity\n");
-	          printf("     DeltaLambda= 0.0 nm ==> Lambda= %g nm\n", 
-			 bl->BLOptions.lambda);
+		  printf("infinity\n");
+	          printf("     DeltaLambda= 0.0 nm ==> Lambda= %g (nm)\n", 
+			 bl->BLOptions.lambda * 1e6);
 		} 
 	      else
 		{
 		  res= fabs(bl->BLOptions.lambda/ dela);
-		  printf("     resolution= %g\n", res);
+		  printf("%.4g\n", res);
 	          printf("     DeltaLambda= %g nm ==> Lambda= %g nm\n", 
 			 dela, bl->BLOptions.lambda+ dela);
 		}
@@ -572,14 +572,11 @@ void RayTraceFull(struct BeamlineType *bl)
 /********************************************************/
 /* macht komplettes ray trace mit clipping und slope 	*/
 /* Uwe 1.7.96 						*/
-/* last mod. 14.8.96 					*/
-/* last modification: 29 Sep 97 11:14:03 flechsig */
-/* last modification: 30 Sep 97 08:31:08 flechsig */
 /********************************************************/
 {
    struct RayType *Raysin, *Raysout, *tmpsource, *tmpresult;   
    int i, iord, lost, zahl, elnumber, elcounter;
-   double uu, ww, ll, xlength, xlength1, xlength2, phase, slopelen;
+   double uu, ww, ll, xlength, xlength1, xlength2, dphase, slopelen;
    struct ElementType *ds; 
    struct RESULTType *Re; 
 
@@ -645,25 +642,15 @@ void RayTraceFull(struct BeamlineType *bl)
 			      (double *)ds->dypc, (double *)ds->dzpc);  
 		   Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, slopelen,  
 		             ds->geo.cosb, ds->GDat.azimut);
-		   /*
+		   pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
+			    &xlength1, &xlength2, &xlength);  
+		
+		   /* calculate phase */
+		   dphase= (bl->BLOptions.lambda > 0) ? 
+		     ((xlength/ bl->BLOptions.lambda)* 2.0* PI) : (2.0* PI);
 
-           printf("RayTraceFull: pathlen1 geaendert\n");
-           pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
-	            &xlength1, &xlength2, &xlength);   
-           xlength-= (ds->GDat.r + ds->GDat.r);   /* rel Aenderung 
-           phase= (bl->BLOptions.lambda > 0) ? 
-                  (xlength* 1e6/ bl->BLOptions.lambda- 
-                 floor(xlength* 1e6/ bl->BLOptions.lambda))* 2.0 : 2.0; 
-           Raysout->phi= Raysin->phi+ phase;
-	   
-           if (Raysout->phi > 2.0) Raysout->phi-= 2.0; 
-           if ((bl->BLOptions.CalcMod & SlopeMod) == SlopeMod)
-	     {
-                slopelen=(bl->BLOptions.SourcetoImage == 1) ? xlength1 : xlength2;
-		Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, slopelen, 
-		          ds->geo.cosb);  
-	     }
-             /*!!!! 1 oder 2 !!!*/
+		   Raysout->phi= Raysin->phi+ dphase;
+		   
 		   Raysout++;  
 		 } else lost++;
 	       Raysin++; 
