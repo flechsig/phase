@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <15 Dec 99 09:58:35 flechsig>  */
+/*  Time-stamp: <16 Dec 99 07:58:18 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -283,6 +283,9 @@ void activate_proc(w, tag, reason)
     XtManageChild(widget_array[kEGeometry]); */
     /* initialisiert die Quellen bei PS */
       start_watch();
+#ifdef DEBUG
+      printf("activate_proc: call src_ini(&Beamline.src)\n");
+#endif
       src_ini(&Beamline.src); 
       stop_watch();
     break;
@@ -618,9 +621,9 @@ void activate_proc(w, tag, reason)
 	if ((bl->position <= bl->elementzahl) && (bl->position != 0))
 	  {
 	    printf("write map of element %d to file\n", bl->position);  
-	    /* casting 15.12.99 */
+	    /* casting 15.12.99 ist noch nicht OK */
 	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
-		      (double *) bl->ElementList[bl->position- 1].ypc1, 
+		      (double *)(bl->ElementList[bl->position- 1].ypc1), 
 		      (double *) bl->ElementList[bl->position- 1].zpc1, 
 		      (double *) bl->ElementList[bl->position- 1].dypc, 
 		      (double *) bl->ElementList[bl->position- 1].dzpc,
