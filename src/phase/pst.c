@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
 /*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <07 Feb 00 09:26:13 flechsig>  */
+/*  Time-stamp: <12 Feb 04 13:30:59 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
@@ -133,7 +133,13 @@ void PST(struct BeamlineType *bl)
    size= bl->RESULT.RESUnion.PSD.iy* bl->RESULT.RESUnion.PSD.iz* 
      sizeof(double);
    
-   if ((bl->RESULT.RESUnion.PSD.y= (double *)                  
+   bl->RESULT.RESUnion.PSD.y= (double *)
+     xmalloc(bl->RESULT.RESUnion.PSD.iy* sizeof(double));
+   bl->RESULT.RESUnion.PSD.z= (double *)
+     xmalloc(bl->RESULT.RESUnion.PSD.iz* sizeof(double));
+   bl->RESULT.RESUnion.PSD.psd= (double *)xmalloc(size);
+
+   /*   if ((bl->RESULT.RESUnion.PSD.y= (double *)                  
         malloc(bl->RESULT.RESUnion.PSD.iy* sizeof(double))) == NULL)
      {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
    if ((bl->RESULT.RESUnion.PSD.z= (double *)          
@@ -141,7 +147,7 @@ void PST(struct BeamlineType *bl)
      {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
    if ((bl->RESULT.RESUnion.PSD.psd= (double *)          
         malloc(size)) == NULL)
-     {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
+	{  fprintf(stderr, "malloc error\n"); exit(-1);    }   */
 
    bl->RESULT.RESUnion.PSD.stfd1phmaxc= (double *) 
      Alloc(bl->RESULT.RESUnion.PSD.stfd1phmaxc, size);
