@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
 # Date      : <15 Oct 99 11:36:53 flechsig> 
-# Time-stamp: <22 Oct 99 16:24:47 flechsig> 
+# Time-stamp: <28 Oct 99 09:28:32 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 # 
 # Makefile for Alpha and VAX @ BESSY
@@ -68,8 +68,7 @@ activate_proc.$(OBJ),PHASEgraf.$(OBJ),initdatset.$(OBJ),-
 geometrypck.$(OBJ),bline.$(OBJ),-
 mirrorpck.$(OBJ),PHASEgraffor.$(OBJ),-
 cutils.$(OBJ),rtrace.$(OBJ),phasefor.$(OBJ),pst.$(OBJ),-
-phase_source_10.$(OBJ)#,phase_integration_10.$(OBJ)
-phase_source_10.$(OBJ)$(ALPH)#,phase_integration_10.$(OBJ)$(ALPH) 
+phase_source.$(OBJ),phase_integration.$(OBJ)
 #fg3pck.$(OBJ)$(ALPH)
 
 OBJECTSAXP 	= phase.$(OBJ)$(ALPH),phasec.$(OBJ)$(ALPH),-
@@ -78,7 +77,7 @@ initdatset.$(OBJ)$(ALPH),geometrypck.$(OBJ)$(ALPH),bline.$(OBJ)$(ALPH),-
 mirrorpck.$(OBJ)$(ALPH),PHASEgraffor.$(OBJ)$(ALPH),-
 cutils.$(OBJ)$(ALPH),rtrace.$(OBJ)$(ALPH),phasefor.$(OBJ)$(ALPH),-
 pst.$(OBJ)$(ALPH),-
-  
+phase_source.$(OBJ)$(ALPH),phase_integration.$(OBJ)$(ALPH)  
 ########################################################################
 PHASEHS   	= PHASE.h,fg3pck.h,mirrorpck.h,geometrypck.h,phasegraf.h,-
 cutils.h
