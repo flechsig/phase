@@ -1,7 +1,12 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
-/*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <20 Feb 04 08:21:26 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
+/*  Date      : <05 Oct 04 08:51:37 flechsig>  */
+/*  Time-stamp: <05 Oct 04 08:51:46 flechsig>  */
+/*  Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
 
 
 #ifdef HAVE_CONFIG_H
