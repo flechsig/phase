@@ -335,11 +335,14 @@ void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr,
          gr->dyma = max(rp->dy,gr->dyma);    
          gr->dzmi = min(rp->dz,gr->dzmi); 
          gr->dzma = max(rp->dz,gr->dzma);
-	 gr->tmi  = min(rp->phi, gr->tmi) * 
-	   bl->BLOptions.lambda/ (2 * PI * LIGHT_VELO); 
-         gr->tma =  max(rp->phi, gr->tma) * 
-	   bl->BLOptions.lambda/ (2 * PI * LIGHT_VELO);
+	 gr->tmi  = min(rp->phi, gr->tmi);
+         gr->tma =  max(rp->phi, gr->tma);
        }
+      gr->tmi = 1.1 * gr->tmi * 
+	bl->BLOptions.lambda/ (2 * PI * LIGHT_VELO);
+      gr->tma = 1.1 * gr->tma * 
+	bl->BLOptions.lambda/ (2 * PI * LIGHT_VELO);
+   
    }
     /* fuers auge */
    /*  printf("call Beauty\n"); */
