@@ -1,7 +1,7 @@
-#    -*-sh-*-
+-*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/configure.ac
-#   Date      : <30 Oct 03 15:59:44 flechsig> 
-#   Time-stamp: <30 Oct 03 16:02:10 flechsig> 
+#   Date      : <26 Nov 03 15:50:42 flechsig> 
+#   Time-stamp: <26 Nov 03 15:51:10 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -10,12 +10,10 @@
 #   $Author$ 
 
 dnl Process this file with autoconf to produce a configure script.
-#UF AC_INIT(activate_proc.c)
-AC_INIT(phase,0.1,flechsig@psi.ch)
-AC_CONFIG_SRCDIR([phase.c])
-AC_CONFIG_HEADER([config.h])
+AC_INIT(activate_proc.c)
 
 dnl Checks for programs.
+AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_CC
 AC_PROG_INSTALL
