@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <24 Mar 00 16:31:11 flechsig> 
+c Time-stamp: <15 Nov 00 15:23:34 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -72,11 +72,12 @@ c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile ',metaname
+           type*,'open postsciptfile (unix)',metaname
 c           open(unit=11,file=metaname,
 c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
-           open(unit=11,file=metaname,STATUS='UNKNOWN',
-     1          Carriagecontrol='LIST',FORM='FORMATTED',err=4444) 
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',
+c     1          Carriagecontrol='LIST',FORM='FORMATTED',err=4444)
+           open(unit=11,file=metaname,STATUS='UNKNOWN',err=4444)
            call igmeta(-11,-111) 
         endif
               
@@ -206,16 +207,17 @@ c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile'
+           type*,'open postsciptfile (unix)'
 c           open(unit=11,file=metaname,
 c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
-           open(unit=11,file=metaname,STATUS='UNKNOWN',
-     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',
+c     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
+           open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
         goto 5001
- 1111   write(*,*)'hplotpsdf: error open file: ',metaname
+1111   write(*,*)'hplotpsdf: error open file: ',metaname
  
               
 c---- buche histogramme -------------------------------------------
@@ -313,9 +315,10 @@ c 10.2.2000 scale in mrad
 c     postscriptfile 
         ifile=psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile'
-           open(unit=11,file=metaname,STATUS='UNKNOWN',
-     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)  
+           type*,'open postsciptfile (unix)'
+c           open(unit=11,file=metaname,STATUS='UNKNOWN',
+c     1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666) 
+           open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
         endif
