@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/activate_proc.c */
 /* Date      : <18 Mar 97 09:53:07 flechsig>  */
-/* Time-stamp: <28 Oct 99 09:51:19 flechsig>  */
+/* Time-stamp: <28 Oct 99 09:52:27 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]ACTIVATE_PROC.C    */
@@ -10,9 +10,9 @@
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */                                                
 
-#include stdio   
-#include processes                       
-#include descrip   
+#include <stdio.h>   
+#include <processes.h>                       
+#include <descrip.h>   
 
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
