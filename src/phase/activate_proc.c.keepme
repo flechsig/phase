@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <04 Jan 01 10:56:18 flechsig>  */
+/*  Time-stamp: <30 Mar 01 14:33:36 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
@@ -668,6 +668,13 @@ void activate_proc(w, tag, reason)
 		"activateproc: beamline is not OK: beamlineOK: 0x%X\n", 
 		bl->beamlineOK); 
     break;   
+
+  case kCWriteMCoButton: 
+    bl= &Beamline;   
+    WriteMKos(bl->ElementList[bl->position- 1].mir, 
+	      "mirror-coefficients.dat"); 
+    break;   
+    
 
   case kCWriteResultButton: 
     bl= &Beamline;   
