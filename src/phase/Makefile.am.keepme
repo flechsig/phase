@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <16 Feb 04 17:15:46 flechsig> 
+#  Time-stamp: <19 Feb 04 14:44:08 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -13,13 +13,16 @@
 bin_PROGRAMS = phase mis
 mis_SOURCES  = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
 phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
-	  geometrypck.c bline.c phase0.c error.c error.h common.h xmalloc.c \
+	  geometrypck.c bline.c phase0.c error.c xmalloc.c \
 	  xstrdup.c \
 	  mirrorpck.c pst.c \
 	  cutils.c rtrace.c \
 	  phasegraffor.F phasefor.F \
 	  phase_source.F \
-	  phase_integration.F misali.F misali1.f misali2.f misali3.f misali4.f
+	  phase_integration.F \
+	  misali.F misali1.f misali2.f misali3.f misali4.f \
+	  cutils.h phase_struct.h fg3pck.h mirrorpck.h geometrypck.h \
+	  phase.h rtrace.h error.h common.h
 
 ##phase_LDADD = $(libdir)/libphase.so
 phase_LDADD = $(libdir)/@LIBPHASE@
