@@ -1,43 +1,21 @@
-From - Thu Jan 20 09:36:35 2000
-Received: from psi12.psi.ch ([129.129.12.142]) by psi14.psi.ch with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
-	id CVLHLQ0C; Wed, 19 Jan 2000 11:56:49 +0100
-Received: from 193.149.14.28 by psi12.psi.ch (InterScan E-Mail VirusWall NT); Wed, 19 Jan 2000 11:56:48 +0100 (W. Europe Standard Time)
-Received: by exp.bessy.de (MX V5.1 AnBl) id 38; Wed, 19 Jan 2000 11:56:48 +0100
-Date: Wed, 19 Jan 2000 11:56:48 +0100
-From: bahrdt@exp.bessy.de
-Reply-To: bahrdt@bessy.de
-To: UWE.FLECHSIG@PSI.CH
-Message-ID: <009E45FC.BAA8A96C.38@exp.bessy.de>
-Subject: neue Source-Routine
-
-
-
-	Hallo Uwe,
-
-	Anbei die Routine PHASE_SOURCE_11.FOR
-	Ich habe ein paar Aenderungen vorgenommen (gekennzeichnet
-	mit Datum 19.1.2000) und hoffe, dass die komischen Effekte, die
-	ich gestern gesehen habe, jetzt weg sind.
-
-	Die Variable ra.oe.w inPHASE_SOURCE_11.FOR ist der Auftreffpunkt 
-	auf dem Gitter. Falls mehrere optische Elemente vorhanden sind, 
-	muss dass entsprechend beruecksichtigt werden. Aber ich denke,
-	dass Du das bereits eingebaut hast.
-
-	Beste Gruesse,
-
-		Johannes
-
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
+c Date      : <20 Jan 00 10:23:01 flechsig> 
+c Time-stamp: <20 Jan 00 10:52:46 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c--------------------------------------------------------------------------
-
-
-**************************************************************
+c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
+c differences to phase_source_10.for from 19 Jan 2000
+c Aenderungen UF 20 Jan 2000
+c   include 'phase_struct_11.for' in phase_struct.for
+c   einige Kommentare eingefuegt
+c   filenamen auf Strukturvariablen gesetzt
+c**************************************************************
 	subroutine src_ini(src)	
 c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 c**************************************************
 
@@ -48,6 +26,9 @@ c**************************************************
 	record /source5/ so5
 	record /source6/ so6
 	record /sources/ src
+
+c comment U.F. 20.1.2000	
+	write(*,*) 'src_ini: source type:',src.isrctype
 
 	if(src.isrctype.eq.2)call src2_ini(src.so2)
 
@@ -123,7 +104,7 @@ c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 c**************************************************
 
@@ -204,7 +185,7 @@ c	returns complex*16 densy
 c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -257,7 +238,7 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -288,7 +269,7 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -316,7 +297,7 @@ c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -476,7 +457,7 @@ c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -630,7 +611,7 @@ c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -664,7 +645,7 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source2/ so2
 
@@ -708,18 +689,20 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source3/ so3
 
-	open(unit=10,name=fsource3a,type='old')
+	write(*,*) 'src3_ini: read file: ',so3.fsource3a
+	open(unit=10,name=so3.fsource3a,type='old')
 	read(10,*)so3.isrcreal
 	do i=1,so3.isrcreal
 	read(10,*)so3.xsrcreal(i),so3.ysrcreal(i)
 	enddo
 	close(10)
 
-	open(unit=10,name=fsource3b,type='old')
+	write(*,*) 'src3_ini: read file: ',so3.fsource3b
+	open(unit=10,name=so3.fsource3b,type='old')
 	read(10,*)so3.isrcimag
 	do i=1,so3.isrcimag
 	read(10,*)so3.xsrcimag(i),so3.ysrcimag(i)
@@ -734,7 +717,7 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source4/ so4
 
@@ -780,6 +763,7 @@ c***********************************************************
 
 c----------------------------------------------------------
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4c
 	open(unit=10,name=so4.fsource4c,type='old')
 	read(10,*)so4.iezrex,so4.iezrey
 	do j=1,so4.iezrey
@@ -799,6 +783,7 @@ c----------------------------------------------------------
 	so4.dyezre=(so4.yezremax-so4.yezremin)
      &		/dflotj(so4.iezrey-1)
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4d
 	open(unit=10,name=so4.fsource4d,type='old')
 	read(10,*)so4.iezimx,so4.iezimy
 	do j=1,so4.iezimy
@@ -826,7 +811,7 @@ c*****************************************************************
 c*****************************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source6/ so6
 
@@ -857,7 +842,7 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	complex*16 carg
 
@@ -941,7 +926,7 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source3/ so3
 	record /constants/ cs
@@ -1044,7 +1029,7 @@ c			 dimag(XXX)=phase
 c
 c-----------------------------------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source4/ so4
 	record /constants/ cs
@@ -1116,7 +1101,7 @@ c**********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 	record /source6/ so6
 	record /geometryst/ g
@@ -1203,7 +1188,7 @@ c-----------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct_11.for'
+	include 'phase_struct.for'
 
 c**************************************************
 
@@ -1227,3 +1212,5 @@ c**************************************************
 
 	return
 	end
+
+c /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
