@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <04 May 04 12:18:49 flechsig>  */
+/*   Time-stamp: <05 May 04 13:25:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -540,35 +540,27 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
   return rcode;
 }     /* end  GetPHASE */
 
-int iindex(int e, int p)             
 /* berechnet den index aus den selektierten Positionen */
-/* modification: 17 Feb 98 10:36:07 flechsig */
-/* modification: 23 Apr 98 14:14:32 flechsig */
-
+/* el: selektiertes element, pos: position             */
+/* pos und el starten mit 1                            */
+int iindex(int el, int pos)             
 {
-  int iret, k, mtp;
+  int iret, k, mtp, p;
+  int start_mtype= 21;                          /* position of first mtype */
 
-  iret = e * p;        				/* test ob 0 */
-  mtp  = (p > 17) ? (1 << 7) : 0;      /* position fuer mdaten */
-  if (mtp != 0) 
-    {
-      switch (p)
-        {
-	case 18: p=  36;  break;     
-	case 19: p=  37;  break;  
-	case 20: p=   0;  break;
-	case 21: p=  38;  break;
-	case 22: p=  39;  break;
-	case 23: p=  40;  break;
-	case 24: p=  41;  break;
-        }
-      p++;                             /* fuer kompatibil. mit  (p-1) */
-    }                                  /* ende mtyp */
-  k    = ((e- 1) << 8) | mtp | (p- 1);
+  iret = el * pos;        			/* test ob 0 */
+  mtp  = (pos >= start_mtype) ? (1 << 7) : 0;   /* position fuer mdaten 128 */
+  if (mtp > 0) 
+    p= (pos == start_mtype) ? 1 : (36 + pos- start_mtype);
+  else 
+    p= pos;    
+                               
+  k    = ((el- 1) << 8) | mtp | (p- 1);
   iret = (iret == 0) ? -1 : k;
-  printf("index:  %d\n", iret);
+  printf("iindex: return: %d, element: %d, selected item: %d\n", 
+	 iret, el, pos);
   return iret;
-} /* end index */
+} /* end iindex */
 
 void InitDataSets(struct PHASEset *x, char *mainpickname)   
      /* initialisiert die globalen Variablen */
