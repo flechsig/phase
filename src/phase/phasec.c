@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <18 Feb 04 11:06:27 flechsig>  */
+/*   Time-stamp: <18 Feb 04 11:08:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1566,7 +1566,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
 #ifdef DEBUG 
     printf("InitSourceBox: wdgnumber: %d, bl->RTSource.QuellTyp: %c\n", 
 	   source, bl->RTSource.QuellTyp);   
-#indif    
+#endif    
     switch (source) 
       {
       case kESDipolSourceButton: 	sou= 'D'; break;
