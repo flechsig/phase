@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <24 Jun 02 09:57:17 flechsig> 
+#  Time-stamp: <27 Oct 03 13:51:28 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -20,7 +20,7 @@
 # 1) paths
 SRCDIR      = .
 INSTPATH    = /usr/local/phase
-BUILDPATH   = /afs/psi.ch/user/f/flechsig/phase
+BUILDPATH   = ~/phase
 CERNLIB     = /cern/2000/lib
 #CERNLIB    = /usr/local/cern/2000/lib
 #########################################################################
