@@ -1,12 +1,31 @@
 #! /usr/bin/perl -w
-#   File      : /home/pss060/sls/flechsig/phase/utils/create-coefficients.pl
-#   Date      : <02 Apr 01 10:58:06 flechsig> 
-#   Time-stamp: <06 Apr 01 08:34:24 flechsig> 
-#   Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+#   File      : /afs/psi.ch/user/f/flechsig/phase/utils/create-coefficients.pl
+#   Date      : <06 Feb 04 10:13:16 flechsig> 
+#   Time-stamp: <06 Feb 04 10:22:15 flechsig> 
+#   Author    : Uwe Flechsig, flechsig@psi.ch
 
-# define variables
+#   $Source$ 
+#   $Date$
+#   $Revision$ 
+#   $Author$ 
+
+use strict;
+use Getopt::Std;
+use vars qw ($opt_h $opt_H  $opt_v $opt_V);
+
+# Initialize our variables
+my $version = '0.5';
+
 my ($ch, $shape, $fname, $i, $j, $aij, @coeff, $r, $rho, $l, $a, $tmp) = ();
 my ($input, $today)= ();
+
+# Main Program -------------------------------------------------------
+getopts("hHvV") || die "Command aborted.\n";          
+my $verbose = ($opt_v ? $opt_v : 0);
+die "Version $version\n" if $opt_V;
+&ManPage() if $opt_H;
+&Usage()   if $opt_h || @ARGV==0;
+$fname= shift;
 
 $today= localtime;
 
@@ -14,9 +33,6 @@ print "=" x 80, "\n";
 print "create coefficient file for PHASE\n";
 print "=" x 80, "\n";
 
-print "input filename: ";
-$fname= <STDIN>;
-chomp $fname;
 if (-e $fname)
 {
    print "\nfile \"$fname\" exists: do you really want to overwrite? (y/n) ";
@@ -112,4 +128,56 @@ while (($i,$j,$aij)= splice (@coeff, 0, 3))
 print FILE "# end $fname\n";
 close(FILE);
 print "file \"$fname\" generated\n";
+
+__END__
+
+=head1 NAME
+
+create-coefficients.pl - create a coefficient file for PHASE
+
+
+=head1 SYNOPSIS
+
+B<create-coefficients.pl> B<[-v]> B<filename>
+
+=head1 DESCRIPTION 
+
+I<create-coefficients.pl> Create a coefficient file for PHASE. so far toroid 
+and cone is implemented.
+
+=head1 OPTIONS
+
+=over 6
+
+=item B<-h> (help)
+
+Display a usage message.
+
+=item B<-H> (HELP ... man page)
+
+Display the man page.
+
+=item B<-v> (verbose mode)
+
+Display some debug messages. 
+
+=item B<-V> (version)
+
+show version.
+
+=back
+
+=head1 AUTHOR
+
+Uwe Flechsig <flechsig@psi.ch>
+
+=head1 VERSION
+
+$Revision$
+
+=head1 SEE ALSO
+
+See also related man pages for mdals2paw-scans
+
+=cut
 # end /home/pss060/sls/flechsig/phase/utils/create-coefficients.pl
