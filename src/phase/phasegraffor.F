@@ -156,7 +156,6 @@ c scale amplitudes in order to avoid histogram overflow
   	   do i=1,s.zeilen 
 	     ampmax=dmax1(ampmax,dabs(raysout(5,i)))	     
 	   enddo
-	   write(6,*)' ampmax = ',ampmax
   	   do i=1,s.zeilen 
 	     raysout(5,i)=1000.d0*(raysout(5,i)/ampmax)	     
 	   enddo
