@@ -142,5 +142,5 @@ dist: $(SRCS) $(AUX)
 	tar -czhf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
 	ln `cat .fname`.tgz $(BUILDPATH)/release
-####################      end makefile       ###############################
+###################      end makefile       ###############################
 #end /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
