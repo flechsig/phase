@@ -1,6 +1,6 @@
-gc File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
 c Date      : <28 Oct 99 09:17:59 flechsig> 
-c Time-stamp: <20 Dec 99 10:37:11 flechsig> 
+c Time-stamp: <20 Dec 99 10:45:54 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c 
 c 28.10.99 Die Versionsnummern im Fortran File werden nur noch
