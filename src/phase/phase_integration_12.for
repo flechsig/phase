@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <21 Dec 99 15:33:14 flechsig> 
+c Time-stamp: <21 Dec 99 17:09:36 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -1966,8 +1966,8 @@ c	type*,ii,jj,ra.rf.yp,ra.rf.zp
         xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
         xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
 
-	if(dabs(tya(ii,jj)).lt.small_loc)xir.si1.typ(ii,jj)=0.d0
-	if(dabs(tza(ii,jj)).lt.small_loc)xir.si1.tzp(ii,jj)=0.d0
+	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc)xir.si1.typ(ii,jj)=0.d0
+	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc)xir.si1.tzp(ii,jj)=0.d0
  
 	enddo
 	enddo
