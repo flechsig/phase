@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Feb 04 11:27:41 flechsig>  */
+/*   Time-stamp: <09 Mar 04 14:58:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -870,6 +870,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    struct UndulatorSourceType *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType     *dp;
+   struct PointSourceType     *sop;
    struct HardEdgeSourceType  *hp;     
    struct SRSourceType        *sp; 
    struct PSImageType         *psip;
@@ -943,8 +944,17 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    sigma y\n",  dp->sigy);
        fprintf(f, "%20lg    sigma dy\n", dp->sigdy);  
        fprintf(f, "%20lg    sigma z\n",  dp->sigz);
-       fprintf(f, "%20lg    dz (hard)\n", dp->dz); 
-     break;    
+       fprintf(f, "%20lg    dz (hard)\n", dp->dz);
+     break;   
+     case 'o': 
+       sop= (struct PointSourceType *) &(bl->RTSource.Quelle.PointSource);
+       fprintf(f, "%20c    *** Point Source for Ray Tracing ***\n", 
+	       bl->RTSource.QuellTyp);
+       fprintf(f, "%20lg    sigma y\n",  sop->sigy);
+       fprintf(f, "%20lg    sigma dy\n", sop->sigdy);  
+       fprintf(f, "%20lg    sigma z\n",  sop->sigz);
+       fprintf(f, "%20lg    sigma dz\n", sop->sigdz);
+     break;  
      case 'S': 
        sp= (struct SRSourceType *) &(bl->RTSource.Quelle.DipolSource);
        fprintf(f, "%20c    *** Single Ray for Ray Tracing***\n", 
@@ -964,6 +974,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    zmax\n", psip->zmax); 
        fprintf(f, "%20d    y points\n", psip->iy);
        fprintf(f, "%20d    z points\n", psip->iz); 
+     break; 
+   case 'F': 
+     fprintf(f, "%20c    *** Rays from file ***\n", 
+	       bl->RTSource.QuellTyp);
      break;    
    }
    fprintf(f,"%20d    number of points\n", bl->RTSource.raynumber); 
@@ -1197,6 +1211,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
    struct UndulatorSourceType *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType     *dp;
+   struct PointSourceType     *sop;
    struct HardEdgeSourceType  *hp;     
    struct SRSourceType        *sp; 
    struct PSImageType         *psip;
@@ -1295,7 +1310,15 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
              fscanf(f, " %lf %[^\n]s %c", &dp->sigdy, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &dp->sigz, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &dp->dz, buffer, &buf);  
-           break;   
+           break; 
+	   case 'o': 
+             sop= (struct PointSourceType *) 
+	       &(bl->RTSource.Quelle.PointSource);
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigy , buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigdy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigz , buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigdz, buffer, &buf);  
+           break; 
            case 'S': 
              sp= (struct SRSourceType *) &(bl->RTSource.Quelle.SRSource);
              fscanf(f, " %lf %[^\n]s %c", &sp->y,  buffer, &buf);  
@@ -1312,6 +1335,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
              fscanf(f, " %d %[^\n]s %c", &psip->iy, buffer, &buf);  
 	     fscanf(f, " %d %[^\n]s %c", &psip->iz, buffer, &buf);  
            break;
+	   case 'F':
+	     break;
            default: 
 	     fprintf(stderr, "error: unknown source type!\n"); /* exit(-1); */
 	 }
