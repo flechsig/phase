@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/bline.c */
 /*  Date      : <30 Oct 98 10:02:42 flechsig>  */
-/*  Time-stamp: <28 Oct 99 09:54:01 flechsig>  */
+/*  Time-stamp: <02 Nov 99 13:20:29 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 /* File      : /home/vms/flechsig/vms/phas/phasec/bline.c 	*/
 /* Date      : <18 Mar 97 12:29:12 flechsig>  			*/
@@ -19,7 +19,7 @@
 #include <stdlib.h> 	      	    	    	/* needed for fopen     */  
 #include <string.h>                           
 #include <math.h> 
-#include <descrip.h>   
+
                                        
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
@@ -28,8 +28,10 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#include <DXm/DECspecific.h>                                           
-
+#ifdef VMS
+  #include <DXm/DECspecific.h>                                           
+  #include <descrip.h>   
+#endif
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "fg3pck.h"   

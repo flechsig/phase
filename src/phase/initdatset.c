@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/initdatset.c */
 /*  Date      : <28 Oct 99 09:58:52 flechsig>  */
-/*  Time-stamp: <28 Oct 99 09:59:46 flechsig>  */
+/*  Time-stamp: <02 Nov 99 13:19:14 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/initdatset.c */
@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
-#include <descrip.h>
+
 
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
@@ -30,7 +30,10 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#include <DXm/DECspecific.h>                  
+#ifdef VMS 
+  #include <DXm/DECspecific.h>                  
+  #include <descrip.h>
+#endif
 
 #include "cutils.h"
 #include "phase_struct.h"
