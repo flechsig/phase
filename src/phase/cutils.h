@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/cutils.h */
 /*  Date      : <28 Oct 99 12:24:49 flechsig>  */
-/*  Time-stamp: <15 Dec 99 13:18:19 flechsig>  */
+/*  Time-stamp: <17 Feb 04 14:33:24 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #ifndef CUTILS_H
@@ -30,7 +30,7 @@ char    *FnameBody(char *);  /* holt Rumpf von VMS- - Filenamen            */
 char    *PrependEnv(char* , char *);
 void 	 beep(int); 
 void	 CheckUser(char *, char *); 
-int 	 CheckFileHeader(FILE *, char *);   
+int 	 CheckFileHeader(FILE *, char *, int *);   
 FString *CreateFString(FString *, char *); 
 double   uRandom(double), RVZ();   
    
