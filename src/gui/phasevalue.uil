@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <30 Mar 01 14:22:35 flechsig> 
+! Time-stamp: <30 Mar 01 14:23:24 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
@@ -337,7 +337,7 @@ value
 		"you can pass this massage with the Parameter N";
 
             kSetupInfoString		: kCNL & 
-             "PHASE:  Version 1.01    06-Jan-2000" & kCNL & kCNL &
+             "PHASE:  Version 1.02    02-Apr-2001" & kCNL & kCNL &
              "J. Bahrdt and U. Flechsig" & kCNL & kCNL &
 	     "bahrdt@exp.bessy.de" & kCNL &
               #character_set('bold') "flechsig@psi.ch"; 
