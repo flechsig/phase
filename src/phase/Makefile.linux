@@ -1,13 +1,14 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <12 Nov 99 09:16:55 flechsig> 
+# Time-stamp: <15 Nov 99 14:01:23 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
 #########################################################################
 SHELL = /bin/sh
 
-DEFS        = -DLINUX
+DEBUG	    = -DDEBUG
+DEFS        = -DLINUX $(DEBUG)
 CC          = gcc -O
 #FOR        = pgf77 -c
 FOR         = f77 -c
