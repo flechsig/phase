@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phasegraffor.for
 c Date      : <27 Mar 97 10:05:09 flechsig> 
-c Time-stamp: <13 Feb 98 11:58:38 flechsig> 
+c Time-stamp: <03 Nov 99 16:26:11 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAFFOR.FOR
@@ -68,7 +68,7 @@ c************************************************************************
         type*,'status, zeilen ',s.status, s.zeilen
         type*,'style ', s.plotsyle
         dlfac=dlf
-        write(*,*),'dlfactor (mm)',dlfac,' lambda (mm)',lambda
+        write(*,*) 'dlfactor (mm)',dlfac,' lambda (mm)',lambda
 c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
