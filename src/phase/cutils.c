@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <25 Jun 02 08:20:14 flechsig>  */
+/*   Time-stamp: <17 Feb 04 14:32:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -84,15 +84,23 @@ double RVZ()
    return vz;
 }    
 
-int CheckFileHeader(FILE *f, char *header)              /* bei Gleichheit 0 */
+/*
+ check file header with headerstring
+ return a file version (optional) FEB 2004, Format YYYYMMDD
+*/
+int CheckFileHeader(FILE *f, char *header, int *version)              /* bei Gleichheit 0 */
 {
-  char testzeile[50];
-  int rcode;
+  char headerread[50];
+  int rcode, version, headerfields;
   
-  fscanf(f,"%s\n", &testzeile);     
-  rcode= strcmp(header, testzeile);
+  version= 0;
+  headerfields= fscanf(f, "%s %d\n", &headerread, &version);     
+  rcode= strncmp(header, headerread, strlen(header));
   if (rcode != 0)
-    fprintf(stderr,"error: fileheader: %s != %s\n", testzeile, header);
+    fprintf(stderr,"error: fileheader: %s != %s\n", headerread, header);
+#ifdef DEBUG
+  printf("CheckFileHeader: file version: %d\n", version);
+#endif
   return rcode;
 }
 
