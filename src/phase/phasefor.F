@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <23 Dec 99 16:46:10 flechsig> 
+C Time-stamp: <23 Dec 99 16:54:26 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -84,15 +84,12 @@ c        record /source_results/ sr
         integer i,j,k,l,iord,
      &       n1,n2,icheckk,ii,jj,iinumb
 
-
-        real *8 xlam_test,xlen0,rin(4),a(0:5,0:5),
+        real *8 xlam_test,xlen0,a(0:5,0:5),
      &       wc,xlc,ypc1,zpc1,dypc,dzpc,
      &       xlen1c,xlen2c,fdetc,fdetphc,fdet1phc,
-     &       ddisty,ddistz,divy,divz,ddyi,ddzi,yi,zi,
+     &       ddisty,ddistz,yi,zi,
      &       yipc,zipc,yiplot,ziplot,yi_global,zi_global,
-     &       fdetrc,fdetphrc,fdet1phrc,yprc1,zprc1,dyprc,dzprc,
-     &       dzi,dzi_global,fdtrrc,yprrc1,zprrc1,dyprrc,dzprrc,
-     &       dyi,dyi_global,psdf,psd2,surfmax,psdc,
+     &       psd2,surfmax,psdc,
      &       stfd1phmaxc,stinumbc,s1c,s2c,s3c,eyrec,ezrec,
      &       eyimc,ezimc
 
@@ -113,7 +110,7 @@ c        record /source_results/ sr
      &            stfd1phmaxc(1),stinumbc(1),s1c(1),
      &            s2c(1),s3c(1),eyrec(1),ezrec(1),
      &            eyimc(1),ezimc(1)
-        dimension psdf(1024,1024),psd2(1024,1024)  !psd2 ist ergebnis   
+        dimension psd2(1024,1024)  !psd2 ist ergebnis   
         
         complex*16 psd2c(1024,1024)
         complex*16 psd2cy(512,512)
@@ -713,7 +710,7 @@ c--------- Variablen ------------------------------------------
 	record /xlenmap/ xlm     
         record /geometryst/ g 
 
-        integer iord,n1,n2,n3,n4,n5,n6,iplmode,i,j,k,l
+        integer iord,n1,n2,n3,n4,n5,n6,iplmode  ! ,i,j,k,l
 
 	real*8 a(0:5,0:5),                     ! mirrortype
      &         wc,xlc,ypc1,zpc1
@@ -2204,7 +2201,7 @@ c     implicit real*8(a-h,o-z)
       record /apertures/ apr
       character*80 dfile
       character*1 dummy
-      integer iname,clen1,isrctype
+      integer iname,clen1
       real *8 epsilon
 
       write(*,*)'lese fg34.par '
