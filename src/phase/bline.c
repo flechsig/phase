@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Feb 04 17:02:05 flechsig>  */
+/*   Time-stamp: <12 Feb 04 13:33:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -363,11 +363,8 @@ void Footprint(struct BeamlineType *bl, int enummer)
    {
       printf("calculate footprint at element %d\n", enummer); 
       msiz= dim* dim* sizeof(double); 
-      if ((matrix= (double *)malloc(msiz)) == NULL)
-      {
-         fprintf(stderr, "Footprint: malloc error\n");   exit(-1); 
-      }
- 
+      matrix= (double *)xmalloc(msiz);
+       
       listpt= bl->ElementList; 
       if (enummer > 1)
       {
@@ -390,10 +387,9 @@ void Footprint(struct BeamlineType *bl, int enummer)
       Re->points= bl->RTSource.raynumber;
       Re->typ= PLrttype; 
  
-      if ((Re->RESUnion.Rays= (struct RayType *) 
-          malloc(Re->points * sizeof(struct RayType))) == NULL)
-      {   fprintf(stderr, "malloc error\n"); exit(-1);  }  
-              
+      Re->RESUnion.Rays= (struct RayType *)
+	xmalloc(Re->points * sizeof(struct RayType));
+                    
       Raysin= bl->RTSource.SourceRays; foot= Re->RESUnion.Rays;  
       listpt= &bl->ElementList[enummer-1]; 
 
