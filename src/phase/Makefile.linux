@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <15 Dec 99 08:24:43 flechsig> 
+# Time-stamp: <15 Dec 99 08:31:23 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -52,7 +52,7 @@ OBJECTC = phase.o phasec.o \
 	  geometrypck.o bline.o \
 	  mirrorpck.o pst.o \
 	  cutils.o rtrace.o 
-OBJECTF=  phasegraffor.o phasefor.o \
+OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o 
 #	  phase_integration_10.o \
 ########################################################################
