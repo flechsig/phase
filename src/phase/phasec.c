@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <24 Nov 99 12:03:19 flechsig>  */
+/*  Time-stamp: <24 Nov 99 12:18:51 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -1743,9 +1743,10 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
        
   if ((sw != kEOEDefaults) && (sw != kFFileBoxOK)) 
     {      
+#ifdef DEBUG
       printf(" InitOElementBox: %d \n", sw);
-      /* fehler falls sw nicht initialisiert 24.11.99 */
-      w= widget_array[sw];    
+#endif      
+      
       switch (sw) {  
       case  kEOETM:    ih= 12; imax= 11;  break;
       case  kEOETG:    ih= 13; imax= 11;  break;  
@@ -1759,13 +1760,13 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
       {
         ih= 14; imax= 11; 
 	sw= kEOEVLSG;
-	w= widget_array[sw]; 
-	/* last modification: 09 Jun 97 16:10:12 flechsig */
 	printf("defaults nur fuer tovlsg 09 Jun 97\n");
 	/*w= widget_array[sw];*/
       }
-              
+  w= widget_array[sw];    /* verschoben 24.11.99 */            
+#ifdef DEBUG
   printf("initialisiere Elementbox mit typ %d\n", sw);    
+#endif 
   sprintf(TextField[0], "%.3f", x->r1);   
   sprintf(TextField[1], "%.3f", x->rmi);      
   sprintf(TextField[2], "%.3f", x->r2);
