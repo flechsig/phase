@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <21 May 01 15:21:04 flechsig>  */
+/*  Time-stamp: <16 Nov 01 11:43:04 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -1472,6 +1472,7 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
       auf beamlinename geaendert */
 
       strcpy(puffer, x->beamlinename); 
+      
       FnameBody(puffer);
            
       for (i= 0; i < 13; i++) 
@@ -2088,7 +2089,8 @@ void FetchWidget(int wnr, char *boxname)
   start_watch();
   if (widget_array[wnr] == NULL)
     if (MrmFetchWidget(s_MrmHierarchy, boxname, 
-		       toplevel_widget, &widget_array[wnr], &dummy_class) != MrmSUCCESS) 
+		       toplevel_widget, &widget_array[wnr], 
+		       &dummy_class) != MrmSUCCESS) 
       s_error("can't fetch  widget");  
   stop_watch();
 }
@@ -2179,9 +2181,11 @@ void GeneratePrintDataFile(char *name)
   fclose(pdf);
 }
 
+
+/*80 in Maxpathlengt 16.11.01 UF*/
 void gpd(char *ifname, FILE *af)  
 {
-  char puffer[80];
+  char puffer[MaxPathLength];
   FILE *ifile;
 
   if ((ifile= fopen(ifname, "r")) == NULL)
@@ -2193,7 +2197,7 @@ void gpd(char *ifname, FILE *af)
     {  
       while (!feof(ifile))
 	{
-	  fgets(puffer, 80, ifile); fputs(puffer, af);
+	  fgets(puffer, MaxPathLength, ifile); fputs(puffer, af);
 	}
       fclose(ifile);
     }
