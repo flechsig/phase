@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <20 Feb 04 07:54:22 flechsig> 
+ Time-stamp: <22 Mar 04 13:31:02 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -17,8 +17,14 @@ specifying the `--disable-shared' option to `configure'.
 Installation
 ============
 
-1) install the package
+1a) install the package from the tarball
    tar -xzvf phase-xxxx.tgz
+
+1b) or import the cvs tree
+   cvs -d :pserver:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot login
+   cvs -d :pserver:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot co phase
+   ...
+   cvs logout         (removes the locally stored passwordfile $HOME/.cvspass)
 
 2) for maintainers only: configure libtool
    libtoolize
