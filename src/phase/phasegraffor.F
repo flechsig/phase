@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phasegraffor.for
 c Date      : <27 Mar 97 10:05:09 flechsig> 
-c Time-stamp: <16 Dec 99 12:47:00 flechsig> 
+c Time-stamp: <16 Dec 99 15:53:28 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAFFOR.FOR
@@ -36,7 +36,7 @@ C Autor: FLECHSIG, BESSY Berlin
         end
 
 c*********************** Grafik Display ********************************
-        subroutine hplotdisplayf(s,raysout,dlf,lambda,dtitel,dmetaname) 
+        subroutine hplotdisplayf(s,raysout,dlf,lambda,titel,metaname) 
 c
 c       Uwe 3.7.96 raytype auf dim 5 erweitert (phase)
 c       4.7.96 kein lesen von file mehr
@@ -55,8 +55,8 @@ c
         real*4     y1,y2,z1,z2,dy,dz,y,z       
         real*8	   yd,zd,dyd,dzd,dlfac,lambda,dlf
 c temporarely fixed
-	parameter (titel = 'PHASE')
-        parameter (metaname= 'pmeta.ps')
+	parameter (dtitel = 'PHASE')
+        parameter (dmetaname= 'pmeta.ps')
 c************************************************************************
  
         y1=s.ymi
@@ -66,8 +66,8 @@ c************************************************************************
         
         type*,'title and plotfilename are temporarely fixed'
         type*,'hplotdisplayf:',y1,y2,z1,z2    
-        type*,'ps   filename  ',metaname    
-        type*,'titel       ',titel  
+        type*,'title         ',titel 
+        type*,'ps filename   ',metaname    
         type*,'status, zeilen ',s.status, s.zeilen
         type*,'style ', s.plotsyle
         dlfac=dlf
