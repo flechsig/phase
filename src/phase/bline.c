@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/bline.c */
 /*  Date      : <30 Oct 98 10:02:42 flechsig>  */
-/*  Time-stamp: <22 Oct 99 12:54:34 flechsig>  */
+/*  Time-stamp: <28 Oct 99 09:54:01 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 /* File      : /home/vms/flechsig/vms/phas/phasec/bline.c 	*/
 /* Date      : <18 Mar 97 12:29:12 flechsig>  			*/
@@ -15,11 +15,11 @@
 /* 24.11.98 UF Undulatorsource schreiben/ lesen geaendert */
 
 
-#include stdio                                  /* For printf and so on */
-#include stdlib 	      	    	    	/* needed for fopen     */  
-#include string                           
-#include math 
-#include descrip   
+#include <stdio.h>                              /* For printf and so on */
+#include <stdlib.h> 	      	    	    	/* needed for fopen     */  
+#include <string.h>                           
+#include <math.h> 
+#include <descrip.h>   
                                        
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
@@ -31,7 +31,7 @@
 #include <DXm/DECspecific.h>                                           
 
 #include "cutils.h"   
-#include "phase_struct_10.h"
+#include "phase_struct.h"
 #include "fg3pck.h"   
 #include "mirrorpck.h"                 
 #include "geometrypck.h"   
