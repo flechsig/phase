@@ -1,38 +1,58 @@
-/*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.c */
-/*  Date      : <16 Oct 97 13:45:33 flechsig>  */
-/*  Time-stamp: <15 Oct 98 08:13:40 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
+/*   Date      : <29 Oct 03 11:52:44 flechsig>  */
+/*   Time-stamp: <29 Oct 03 12:00:44 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.C          */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 25-MAR-1996                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
                                                    
-
 /* !!!!!!!!!!!!!!!!! bei mehrdimensionale Matritzen schreibt Fortran
    zuerst die Spalten (umgekehrt wie c )
    c: a[zeilen][spalten] for: (spalten,zeilen)
 */ 
 
-#include stdio                                                
-#include string 
-#include stdlib 
-#include math
-#include descrip                      /* for FORTRAN- String */    
+#include <stdio.h>                    /* For printf and so on. */
+#include <stdlib.h>	    	      /* needed for fopen      */
+#include <string.h>
+#include <math.h>
 
-#include <Xm/Text.h>  
-#include <Xm/List.h>       
-#include <Mrm/MrmAppl.h>  
+#include <Xm/Text.h>                  /* fileBox               */
+#include <Xm/FileSB.h>    
+#include <Xm/List.h>   
+#include <Xm/MessageB.h>    
+#include <Xm/SelectioB.h>   
+#include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
-#include <X11/Xutil.h> 
-#include <DXm/DECspecific.h>    
+#include <X11/Xutil.h>      
+/* DEC specific */
+#ifdef VMS
+  #include <descrip.h>                  /* for FORTRAN- String   */ 
+  #include <DXm/DXmHelpB.h>      
+  #include <DXm/DXmPrint.h>      
+  #include <DXm/DXmColor.h>   
+  #include <DXm/DECspecific.h>  
+  #include <sys$library/DECw$Cursor.h>
+#endif
 
-#include "[-.phasec]cutils.h"  
-#include "[-.phasec]phase_struct_10.h"
-#include "[-.phasec]fg3pck.h"   
-#include "[-.phasec]mirrorpck.h"                 
-#include "[-.phasec]geometrypck.h"   
-#include "[-.phasec]PHASE.h"
+#ifdef VMS
+  #include "[-.phase]cutils.h"  
+  #include "[-.phase]phase_struct_10.h"
+  #include "[-.phase]fg3pck.h"   
+  #include "[-.phase]mirrorpck.h"                 
+  #include "[-.phase]geometrypck.h"   
+  #include "[-.phase]PHASE.h"
+#else
+  #include "../phase/cutils.h"  
+  #include "../phase/phase_struct_10.h"
+  #include "../phase/fg3pck.h"   
+  #include "../phase/mirrorpck.h"                 
+  #include "../phase/geometrypck.h"   
+  #include "../phase/phase.h"
+#endif
+
 #include "phaseopti.h"     
 
 /*          Der Index     
@@ -78,7 +98,7 @@ void 	FCN(int *, double *, double *, double *, int *, char *),
 
 /****************************************************************************/
 
-unsigned int main(argc, argv)
+int main(argc, argv)
 	unsigned int argc;                /* Command line argument count.   */
     	char *argv[];                     /* Pointers to command line args. */
 {   
