@@ -1,10 +1,10 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/activate_proc.c */
 /*  Date      : <15 Nov 99 11:26:25 flechsig>  */
-/*  Time-stamp: <30 Mar 01 14:33:36 flechsig>  */
+/*  Time-stamp: <21 May 01 15:21:29 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
-                                     
+                                      
 #include <stdio.h>   
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
@@ -671,8 +671,9 @@ void activate_proc(w, tag, reason)
 
   case kCWriteMCoButton: 
     bl= &Beamline;   
-    WriteMKos(bl->ElementList[bl->position- 1].mir, 
-	      "mirror-coefficients.dat"); 
+    sprintf(buffer,"%s\n", "mirror-coefficients.dat");
+    printf("%s\n", buffer);
+    WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer); 
     break;   
     
 

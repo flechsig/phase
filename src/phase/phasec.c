@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <04 Jan 01 15:32:16 flechsig>  */
+/*  Time-stamp: <21 May 01 15:21:04 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -13,7 +13,6 @@
 /* Stand: 21-FEB-1997                                          */
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
-/*23.11.98 UF */
                                          
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h> 	      	      /* needed for fopen      */  
@@ -249,7 +248,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
      /* etype auf defines umgeschrieben 17.6.97                 */
      /* switch eingefuegt          4.1.2001                     */
 {
-  double r, rho, *dp,
+  double r, rho, *dp, cone, l,
     alpha, aellip, bellip, cellip, eellip, f, z0, small;
   int i, j;
 
@@ -288,6 +287,20 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOEGeneral:           /* read coefficients from file */
       printf("read general coefficient file\n");
       ReadCoefficientFile(dp,fname);
+      break;
+
+    case kEOECone:           
+      printf("cone shape\n");
+      if (fabs(l) > small)
+	{
+	  cone= (r - rho)/ l;
+	  cone*= cone;
+	  dp[1]= 1.0- cone;
+          dp[2]= 1.0- 2* cone;
+	  dp[3]= sqrt(cone- cone* cone);
+	  dp[4]= -(r/sqrt(cone)- l/2.0)* sqrt(cone- cone* cone);
+	}
+      printf("end cone shape\n");
       break;
 
     case kEOEElli: 
@@ -2256,14 +2269,18 @@ void writemapc(char *fname, int iord,
 /* ******** end writemapc() ************************************** */
 
 
-void WriteMKos(struct mirrortype *a, char *name)
+void WriteMKos(struct mirrortype *a, char *name1)
      /* schreibt mirrorkoordinaten auf file */
 {
   FILE *f;
   int i, j;
   double *dp; 
+  char buffer[MaxPathLength], *name;
 
-  printf("WriteMKos called: write to %s\n", name);
+  sprintf(buffer, "%s\n", "mirror-coefficients.dat");
+  name= &buffer[0]; 
+
+  printf("WriteMKos: write to %s\n", name);
   dp= (double *)a;
 
   if ((f= fopen(name, "w+")) == NULL)
@@ -2272,8 +2289,9 @@ void WriteMKos(struct mirrortype *a, char *name)
     }    
   for (i= 0; i <= 5; i++) 
     for (j= 0; j <= 5; j++) 
-      if ((i + j) <= 5) fprintf(f, "%lE\n", dp[i+j*6]);
+      if ((i + j) <= 5) /* fprintf(f, "%lE\n", dp[i+j*6]);  */
   fclose(f); 
+  printf("WriteMKos: done\n");
 }    
 
 void ReadMKos(struct mirrortype *a, char *name)
