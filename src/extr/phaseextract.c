@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <30 Apr 04 13:14:07 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:42:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -147,8 +147,8 @@ int main(argc, argv)
 	  RayTraceFull(&Beamline);  /* rt */
 
 	  /* determine results */
-	  transmittance= (double)(Beamline.RESULT.points/
-			      Beamline.RTSource.raynumber);
+	  transmittance= (double)Beamline.RESULT.points/
+			      (double)Beamline.RTSource.raynumber;
 
 	  zfwhm= 2.35* GetRMS(&Beamline, 'z');
 	  yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
@@ -172,7 +172,7 @@ int main(argc, argv)
   beep(4);
   printf("end extraction: results in file: %s\n", 
 	 optistructure.resultfilename);
-  printf("format: ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance\n");
+  printf("file format: ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance\n");
   exit(1); 
 }
 /* end main */
