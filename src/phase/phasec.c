@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <17 Feb 04 16:30:44 flechsig>  */
+/*   Time-stamp: <18 Feb 04 10:47:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -2086,7 +2086,7 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
 #ifdef DEBUG
   printf("getoelement: vor history\n"); 
 #endif
-  get_something(widget_array[kEOEMenu], XmNmenuHistory, &w);/*kEOOptMenu*/
+  get_something(widget_array[kEOEMenu], XmNmenuHistory, &w); /* kEOOptMenu */
   /*printf("getoelement: vor history 1\n");*/
   get_something(w, XmNlabelString, &label);  
   /*printf("getoelement: vor history 2\n");*/
@@ -2104,6 +2104,10 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
 	
   XtFree(text);
   printf("GetOelement: Elementtype: %d\n", etype);
+
+  gp->iflag= 
+    (XmToggleButtonGetState(widget_array[kEGNITranslation]) == TRUE) ? 1 : 0; 
+
   return etype;
 } /* end GetOelement */
 
