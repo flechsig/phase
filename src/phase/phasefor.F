@@ -1,12 +1,7 @@
-C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
-C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <05 Jan 00 15:21:43 flechsig> 
-C Author    : Uwe Flechsig, flechsig@exp.bessy.de
-
-C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
-C Datum: 28.MAR.1995
-C Stand: 17-FEB-1997         
-C Autor: FLECHSIG, BESSY Berlin
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
+c Date      : <06 Jan 00 13:18:08 flechsig> 
+c Time-stamp: <06 Jan 00 13:18:26 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
 c function   facult(nn) 
@@ -285,7 +280,7 @@ c------------------------------------------
 
 c****** Ende der Integration ueber die Winkel ******************
         enddo                   ! raster
-        write(*,*)'finished row ',n1,' from ', s.iheigh
+        write(*,*)'finished row ',n1,' of ', s.iheigh
       enddo                     ! raster
 c****** Berechnung der Intensitaetsverteilung fertig ***********
       write(*,*)'stop intensity calculation'

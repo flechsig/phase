@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <06 Jan 00 12:50:51 flechsig> 
+c Time-stamp: <06 Jan 00 13:15:58 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -65,18 +65,17 @@ c        type*,'title and plotfilename are temporarely fixed'
         type*,'status, zeilen ',s.status, s.zeilen
         type*,'style ', s.plotsyle
         dlfac=dlf
-        write(*,*) 'dlfactor (mm)',dlfac,' lambda (mm)',lambda
+        write(*,*)'dlfactor (mm)',dlfac,' lambda (mm)',lambda
 c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
-           type*,'open postsciptfile'
+           type*,'open postsciptfile',metaname
 c           open(unit=11,file=metaname,
 c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
            open(unit=11,file=metaname,
      1          Carriagecontrol='LIST',FORM='FORMATTED',err=4444) 
            call igmeta(-11,-111) 
-           type*,'generate metafile ',metaname 
         endif
               
       write(*,*)'only for ray trace data'   
@@ -110,7 +109,7 @@ c bei postscript ab hier doppelt
 c--------- histogramme gebucht ------------------------
 
 c--------- fuellen ------------------------------------
-        write(*,*)'fill histogr.'        
+        write(*,*)'fill histogram'        
         do i=1,s.zeilen 
 c           write(*,*)'fill histogr.',i  
            call rtfill(raysout(1,i),raysout(2,i),

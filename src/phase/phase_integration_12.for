@@ -1,6 +1,6 @@
-c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_12.for
+c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <21 Dec 99 17:09:36 flechsig> 
+c Time-stamp: <06 Jan 00 13:21:50 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
