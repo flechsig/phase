@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <04 Nov 99 17:01:38 flechsig> 
+# Time-stamp: <04 Nov 99 17:04:00 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -41,8 +41,8 @@ PROGRAM		= phase
 LIBS    = -L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
           -lgrafX11 -lpacklib -lpawlib -lkernlib \
           -L/usr/pgi/linux86/lib -lpgftnrtl \
-	  -L/home/pss060/sls/flechsig/phase/lib 
-          -lphaselib
+	  -L/home/pss060/sls/flechsig/phase/lib \
+          -lphaselib.a
 #########################################################################
 OBJECTC = phase.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
@@ -54,7 +54,7 @@ OBJECTF=  phasegraffor.o phasefor.o \
 #	  phase_integration_10.o \
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
-	  phasegraf.h cutils.h
+	  cutils.h
 AUX     = version.h
 SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
