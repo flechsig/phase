@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <04 Jan 01 09:43:10 flechsig>  */
+/*  Time-stamp: <04 Jan 01 15:32:16 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -240,7 +240,8 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   gout->idefl= (x->theta0 > 0.0) ? 1 : -1;  
 } /* end DefGeometryC */ 
 
-void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)  
+void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
+		int etype, char *fname)  
      /* erzeugt elementmatrix im Fortran Speichermodell 	*/    
      /* Uwe 10.6.96 						*/
      /* last modification: 4 Jan 2001         flechsig          */
@@ -285,8 +286,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)
       break; /* end toroid */ 
 
     case kEOEGeneral:           /* read coefficients from file */
-      printf("read general coefficient file\n"); 
-      printf("not yet implemented\n");
+      printf("read general coefficient file\n");
+      ReadCoefficientFile(dp,fname);
       break;
 
     case kEOEElli: 
@@ -367,26 +368,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a, int etype)
     default:
       fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
       exit(-1);
-	} /* end switch */ 
-  if ((etype != kEOEElli) && (etype != kEOEPElli) 
-                          && (etype != kEOEGeneral) )     
-    {                                                   /* index a(i,j) */
-      printf("toroidal shape\n");                       /* = i+ j* 6    */
-      if (fabs(rho) > small) 
-	{
-	  dp[12]= 0.5/ rho;                		/* 0,2 */
-	  dp[24]= 1.0/ (8.0* rho* rho* rho);              /* 0,4 */
-	}  
-      if (fabs(r) > small)  
-	{
-	  dp[2]= 0.5/ r;   
-	  dp[4]= 1.0/ (8.0* r* r* r);   
-	}  
-      if ((fabs(rho) > small) && (fabs(r) > small))  
-	{
-	  dp[14]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
-	} 
-    } /* end toroid */ 
+    } /* end switch */ 
+  /* for (i=0; i < 15; i++) printf("%d %le\n", i, dp[i]); */
 } /* end defmirrorc */
 
 void GetOptiBox(struct PHASEset *x) 
@@ -2360,6 +2343,42 @@ void SetInfoString()
   XmStringFree(SetUpInfoString);
 } /* end SetInfoString */
 
+void ReadCoefficientFile(double *dp, char *fname)
+     /* read coefficient files for mirror data */
+     /* FORTRAN memory model */
+     /* UF 04 Jan 2001 */
+{
+  FILE *f;
+  int i, j;
+  char buffer[100], buf;
+  double x;  
 
+  printf("read coefficients a(i,j) from %s\n", fname);
+  printf("see example file: coefficient-example.dat\n");
+
+  if ((f= fopen(fname, "r+")) == NULL)
+    {
+      fprintf(stderr, "ReadCoefficientFile: error open file %s\n", fname); 
+      exit(-1);   
+    }  
+
+  while (!feof(f))    
+  {
+    /*   fgets(buffer, 99, f); */
+    fscanf(f, " %[^\n]s %c", buffer, &buf); 
+#ifdef DEBUG  
+    printf("read: %s\n", buffer); 
+#endif 
+    if (buffer[0] != '#')             /* skip comments */
+      {
+	sscanf(buffer, "%d %d %lg", &i, &j, &x);
+#ifdef DEBUG  
+      printf("took: %d %d %lg\n", i, j, x);
+#endif 
+	dp[i+j*6]= x;
+      }
+  }
+  fclose(f); 
+} /* end ReadCoefficientFile */
 
 /* end of file phasec.c */                                
