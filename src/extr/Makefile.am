@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <02 Feb 04 17:37:40 flechsig> 
+#  Time-stamp: <03 Feb 04 15:00:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -10,11 +10,10 @@
 
 # makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS            = phaseopti
-lib_LTLIBRARIES         = libphaseopti.la
-phaseopti_SOURCES       = phaseopti.c phaseopti.h
-libphaseopti_la_SOURCES = \
-          ../phase/phasec.c      ../phase/activate_proc.c \
+bin_PROGRAMS            = phaseextract
+
+phaseextract_SOURCES    = phaseextract.c cost.F \
+../phase/phasec.c      ../phase/activate_proc.c \
           ../phase/phasegraf.c   ../phase/initdatset.c \
 	  ../phase/geometrypck.c ../phase/bline.c ../phase/phase0.c \
 	  ../phase/mirrorpck.c   ../phase/pst.c \
@@ -22,11 +21,12 @@ libphaseopti_la_SOURCES = \
 	  ../phase/phasegraffor.F ../phase/phasefor.for \
 	  ../phase/phase_source.for \
 	  ../phase/phase_integration.for \
-	 treiber.c optisubc.c 
+	 ../opti/treiber.F ../opti/optisubc.c
 
 
-phaseopti_LDADD = $(libdir)/@LIBPHASE@
-libphaseopti_la_LDFLAGS = -rpath '$(libdir)' -version-info 3:12:1 
+
+phaseextract_LDADD = $(libdir)/@LIBPHASE@
+ 
 
 AM_CPPFLAGS = -DLINUX @CDEBUG@
 AM_FFLAGS   = @FDEBUG@
@@ -36,6 +36,3 @@ AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
 ##we use the c linker
 F77LINK = $(LINK)
-##we use the c linker
-libphaseopti_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
