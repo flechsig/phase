@@ -1,20 +1,13 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <17 Feb 04 12:29:25 flechsig> 
-! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+! Time-stamp: <09 Mar 04 11:43:27 flechsig> 
+! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
-! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
-! Date      : <19 Mar 97 14:26:20 flechsig> 
-! Time-stamp: <09 Apr 99 15:13:00 flechsig> 
-! Author    : Uwe Flechsig, flechsig@exp.bessy.de
+! $Source$ 
+! $Date$
+! $Revision$ 
+! $Author$ 
 
-! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]PHASEVALUE.UIL
-! Datum: 19.JUL.1994
-! Stand: 24-FEB-1997
-! Autor: FLECHSIG, BESSY Berlin
-
-! 23.11.98 108, 109 eingefuegt UF
-! 28.10.99 disableinfostring UF
 
 value
     kMainList             : 1;		/*******         Main        ********/
@@ -467,7 +460,7 @@ value
 
 list 
    ETextArgs: arguments {
-               XmNcolumns          = 6;
+               XmNcolumns          = 7;
                XmNrows             = 1;
                XmNmaxLength        = 10;
                XmNvalue            = "";
