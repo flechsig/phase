@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/filemenu.uil
 ! Date      : <28 Oct 99 11:36:53 flechsig> 
-! Time-stamp: <28 Oct 99 11:38:12 flechsig> 
+! Time-stamp: <28 Oct 99 11:48:33 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]FILEMENU.UIL
@@ -91,7 +91,7 @@ object
 !            };                                       
 !        };                   
                        
-object                               /* Motif Widget */
+object                               !* Motif Widget 
     FileSelectionDialog : XmFileSelectionDialog {                   
         arguments {
             XmNdialogTitle       = "File Selection Box";   
