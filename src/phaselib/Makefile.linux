@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <10 Nov 99 12:10:44 flechsig> 
+# Time-stamp: <20 Dec 99 08:09:00 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB on LINUX 
@@ -45,7 +45,8 @@ lengthd402.for lengthd410.for  \
 lengthd411.for lengthd412.for  \
 lengthd42.for  lengthd43.for   \
 p_m_4.for  \
-zernike_nl_60.for zernike_n_60.for
+zernike_nl_60.for zernike_n_60.for \
+dfpl1_uf.for  dfpl2_uf.for
 #########################################################################
 OBJECTS = \
 wdfgmapa4.o   wdfgmapb4.o   \
@@ -64,8 +65,8 @@ lengthd402.o  lengthd410.o  \
 lengthd411.o  lengthd412.o  \
 lengthd42.o   lengthd43.o   \
 p_m_4.o  \
-zernike_nl_60.o  zernike_n_60.o
-#dfpl1_uf.o  dfpl2_uf.o  \
+zernike_nl_60.o  zernike_n_60.o \
+dfpl1_uf.o  dfpl2_uf.o  
 #phlib.o
 #########################################################################
 #                            targets                                    # 
