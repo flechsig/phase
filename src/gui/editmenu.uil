@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/editmenu.uil
 ! Date      : <11 Apr 97 14:27:00 flechsig> 
-! Time-stamp: <04 Jan 01 09:53:13 flechsig> 
+! Time-stamp: <11 Feb 04 17:18:36 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]EDITMENU.UIL
@@ -70,7 +70,19 @@ object
             MrmNcreateCallback  = procedure create_proc (kESDipolSourceButton);
 	    XmNactivateCallback = procedure activate_proc(kESDipolSourceButton);
             };
-        };      
+        };  
+
+ object
+    ESPointSourceButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Point";
+            XmNmnemonic         = keysym("o"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEPointSourceButton);
+	    XmNactivateCallback = procedure activate_proc(kEPointSourceButton);
+            };
+        };     
 
 object
     ESUndulatorSourceButton: XmPushButton {
