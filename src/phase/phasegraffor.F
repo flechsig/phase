@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasec/phasegraffor.for
 c Date      : <27 Mar 97 10:05:09 flechsig> 
-c Time-stamp: <05 Jan 00 16:41:16 flechsig> 
+c Time-stamp: <05 Jan 00 18:05:06 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEGRAFFOR.FOR
@@ -63,7 +63,7 @@ c************************************************************************
         z1=s.zmi
         z2=s.zma  
         
-        type*,'title and plotfilename are temporarely fixed'
+c        type*,'title and plotfilename are temporarely fixed'
         type*,'hplotdisplayf:',y1,y2,z1,z2    
         type*,'title         ',titel 
         type*,'ps filename   ',metaname    
