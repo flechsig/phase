@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <19 Feb 04 10:19:41 flechsig>  */
+/*  Time-stamp: <20 Feb 04 08:21:26 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -30,7 +30,6 @@
   #include <DXm/DECspecific.h>  
   #include <sys$library/DECw$Cursor.h>
 #endif
-
 
 #include "cutils.h"                     /* muss for rtrace.h stehen */    
 #include "phase_struct.h"

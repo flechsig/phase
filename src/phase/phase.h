@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <17 Feb 04 16:33:07 flechsig>              */
+/* Time-stamp: <20 Feb 04 08:19:56 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -687,7 +687,7 @@ void 	ActivateFileSelection(int, char *),
   activate_proc(),  
   AddBLElement(struct BeamlineType *, char *),
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *),  
-  BatchMode(char *fname, int cmode),
+  BatchMode(char *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   DefGeometryC(struct gdatset *, struct geometrytype *),  
