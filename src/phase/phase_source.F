@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
 c Date      : <20 Jan 00 10:23:01 flechsig> 
-c Time-stamp: <20 Jan 00 10:52:46 flechsig> 
+c Time-stamp: <20 Jan 00 11:03:30 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c--------------------------------------------------------------------------
 c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
@@ -9,6 +9,7 @@ c Aenderungen UF 20 Jan 2000
 c   include 'phase_struct_11.for' in phase_struct.for
 c   einige Kommentare eingefuegt
 c   filenamen auf Strukturvariablen gesetzt
+c   src3_ini structurvariablen eingefuegt
 c**************************************************************
 	subroutine src_ini(src)	
 c**************************************************************
