@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
 # Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <04 Nov 99 13:34:06 flechsig> 
+# Time-stamp: <04 Nov 99 15:36:05 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile for the PHASE LIB on LINUX 
@@ -18,22 +18,18 @@ FFLAGS    = -w -f -s -N3 -N51
 
 # for install
 srcdir    = .
-prefix    = /usr/local
+#prefix    = /usr/local
+prefix    = /home/pss060/sls/flechsig
 binprefix =
 DESTDIR		= $(prefix)/phase
 
 .phony: all makewhat    
-
-#########################################################################
-#               variables 
-
-# 
+######################################################################### 
 LIB		= phaselib.a
 #########################################################################
-AUX  = Makefile.bessy Makefile.psicl0 Makefile.linux 
+AUX  = Makefile.bessy Makefile.psicl0 Makefile.linux version.h
 SRCS = \
 wdfgmapa4.for  wdfgmapb4.for   \
-wdfgmapc4.for  wdfgmapd14.for  \
 wdfgmapc4.for  wdfgmapd14.for  \
 wdfgmapd34.for wdfgmapd44.for  \
 wdfgmapd54.for wdfgmape14.for  \
@@ -53,7 +49,6 @@ zernike_nl_60.for zernike_n_60.for
 #########################################################################
 OBJECTS = \
 wdfgmapa4.o   wdfgmapb4.o   \
-wdfgmapc4.o   wdfgmapd14.o  \
 wdfgmapc4.o   wdfgmapd14.o  \
 wdfgmapd34.o  wdfgmapd44.o  \
 wdfgmapd54.o  wdfgmape14.o  \
@@ -102,15 +97,15 @@ distclean: clean
 	rm -f TAGS  config.status
 
 dist: $(SRCS) $(AUX)
-	echo tar-`sed \
-                  -e '/version_string/!d' \
-                  -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
-                  -e q
-	version.c` > .fname
+	echo phaselib-`sed \
+	-e '/VERSION_STRING/!d' \
+	-e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+	-e 'q' \
+	version.h` > .fname
 	-rm -rf `cat .fname`
 	mkdir `cat .fname`
 	ln $(SRCS) $(AUX) `cat .fname`
-	-rm -rf `cat .fname` .fname
-	tar chZf `cat .fname`.tar.Z `cat .fname`
+	-rm -rf `cat .fname`.fname
+	tar -chzf `cat .fname`.tgz `cat .fname`
 ####################      end makefile       ###############################
 #end /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
