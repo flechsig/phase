@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <07 Feb 01 16:51:11 flechsig> 
+# Time-stamp: <30 Mar 01 15:09:44 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -12,6 +12,8 @@ DEFS        = -DLINUX $(DEBUG) -DCADDR_T  # caddr_t im Headerfile
 CC          = gcc -v
 PP          = g77 -E -o
 FOR         = f77 
+CERNLIB     = /cern/2000/lib
+#CERNLIB    = /usr/local/cern/2000/lib
 YACC        = bison -y
 INSTALL     = /usr/bin/install -c
 INSTALLDATA = /usr/bin/install -c -m 644
@@ -51,7 +53,7 @@ PROGRAM		= phase
 #########################################################################
 LIBS    =  /usr/local/phase/lib/phaselib.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math \
-          -L/usr/local/cern/pro/lib -lpawlib -lpacklib \
+          -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib  
 #	  -Xlinker -defsym -Xlinker MAIN__=main
 #########################################################################
