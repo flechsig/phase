@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <17 Feb 04 09:42:27 flechsig> 
+#  Time-stamp: <17 Feb 04 09:49:36 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -19,7 +19,7 @@
 #########################################################################
 # 1) paths
 SRCDIR      = .
-INSTPATH    = /usr/local/phase
+INSTPATH    = /usr/local
 BUILDPATH   = ~/phase
 CERNLIB     = /cern/2000/lib
 #CERNLIB    = /usr/local/cern/2000/lib
@@ -121,8 +121,9 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 ##########################################################################
 install: all
 	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
-	$(INSTALL) news $(INSTPATH)/lib/news
-	$(INSTALL) coefficient-example.dat $(INSTPATH)/lib/coefficient-example.dat
+	$(INSTALL) news $(INSTPATH)/share/$(PROGRAM)/news
+	$(INSTALL) coefficient-example.dat \
+                   $(INSTPATH)/share/$(PROGRAM)/coefficient-example.dat
 
 clear:
 	@echo "delete objects and exe..."  
