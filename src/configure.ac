@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <23 Mar 04 09:08:08 flechsig> 
+#   Time-stamp: <30 Apr 04 15:55:56 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -120,14 +120,24 @@ AC_HELP_STRING([--enable-debug],[debugging code, static linking]),
   AC_SUBST([LIBPHASE], libphase.a)
 )
 
+## Optimization with full ray trace
+AC_ARG_ENABLE([full_rt],
+    AC_HELP_STRING([--disable-full-rt],
+	[disable optimization in full ray trace mode]),
+    [AC_MSG_NOTICE(***** optimization without full ray trace ***)],
+    [AC_MSG_NOTICE(***** optimization in full ray trace mode *****)
+    AC_DEFINE_UNQUOTED(WITH_FULL_RT, "yes", 
+    "optimization in full ray trace mode")]
+)
+
 # get configure date put it into header
 configured=`date`
 AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
 if test "$prefix" = "NONE"; then
-  AC_MSG_NOTICE(***************** prefix: /usr/local ****************** )
+  AC_MSG_NOTICE(***** prefix: /usr/local ****************** )
   AC_DEFINE_UNQUOTED(PREFIX, "/usr/local", "the installation prefix")
 else
-  AC_MSG_NOTICE(***************** prefix: $prefix ****************** )
+  AC_MSG_NOTICE(***** prefix: $prefix ****************** )
   AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
 fi
 

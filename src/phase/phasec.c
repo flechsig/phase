@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <30 Apr 04 13:30:59 flechsig>  */
+/*   Time-stamp: <30 Apr 04 13:45:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -497,7 +497,7 @@ void GetOptiBox(struct PHASEset *x)
 
   fprintf(minfile, "\nMIGRAD\nRETURN\n");
   fclose(oppickfile); fclose(minfile);
-  printf("GetOptiBox: wrote files: %s and %s\n", x->optipckname, minname);
+  printf("GetOptiBox: wrote files:\n  %s\n  %s\n", x->optipckname, minname);
   XmStringFree(label); XtFree(minname); XtFree(opresname); 
 } /* end GetOptiBox */
 

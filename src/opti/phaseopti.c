@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <04 Nov 03 15:14:47 flechsig>  */
+/*   Time-stamp: <30 Apr 04 16:59:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -13,6 +13,14 @@
    zuerst die Spalten (umgekehrt wie c )
    c: a[zeilen][spalten] for: (spalten,zeilen)
 */ 
+
+/* define if optimization should be done with full ray trace (slow) */ 
+/* comment out if you want to have a fast optimization */ 
+/* its done by configure #define WITH_FULL_RT */
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
@@ -231,7 +239,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 {
   int i;
   double dy, dz;
-  static double chitmp; 
+  static double chitmp, yfwhm, zfwhm, rpy, rpz, transmittance; 
 
   /* printf("fcn eingang called with %d: chi: %e\n", *IFLAGS, *CHI);  */
   switch(*IFLAGS) 
@@ -243,10 +251,30 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 		 i, optistructure.parindex[i], XPAR[i]);
 	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
 	}
+      
       buildsystem(&Beamline);    
+
+#ifndef WITH_FULL_RT
+      printf("**************************full rt\n");
+      RayTraceFull(&Beamline);
+      transmittance= (double)Beamline.RESULT.points/
+	(double)Beamline.RTSource.raynumber;
+      
+      zfwhm= 2.35* GetRMS(&Beamline, 'z');
+      yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
+      
+      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+	Beamline.deltalambdafactor/ yfwhm : 1e12;
+      rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+	Beamline.deltalambdafactor/ zfwhm : 1e12;
+      /* define what you want to minimize */
+      *CHI= 1.0- transmittance;
+#else
       Get_dydz_fromSource(&Beamline, &dy, &dz);
       costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);          
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); 
+#endif
+         
       printf("debug: FCN: chi: %e; chitmp %e\n", *CHI, chitmp);
       fitoutput(NPAR, XPAR, CHI);         
 
@@ -260,9 +288,26 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       buildsystem(&Beamline);    
       /*iflag44(&XPAR[0]);  */
       /**CHI= costfunction(&Beamline);*/
+#ifdef WITH_FULL_RT
+      printf("**************************full rt\n");
+      RayTraceFull(&Beamline);
+      transmittance= (double)Beamline.RESULT.points/
+			      (double)Beamline.RTSource.raynumber;
+
+      zfwhm= 2.35* GetRMS(&Beamline, 'z');
+      yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
+      
+      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+	Beamline.deltalambdafactor/ yfwhm : 1e12;
+      rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+	Beamline.deltalambdafactor/ zfwhm : 1e12;
+      /* define what you want to minimize */
+      *CHI= 1.0- transmittance;
+#else
       Get_dydz_fromSource(&Beamline, &dy, &dz);
       costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);          
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); 
+#endif         
       break;
       
     case 1:
