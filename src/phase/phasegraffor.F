@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <11 Jan 00 08:05:00 flechsig> 
+c Time-stamp: <11 Feb 00 10:59:48 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -294,34 +294,26 @@ c************************************************************************
 
 c************************************************************************
 
-        subroutine hplotpssimf(titel,metaname,s,psd) 
+        subroutine hplotpssimf(titel,metaname,psfile,
+     &     ymin,ymax,iy,zmin,zmax,iz,
+     &     psd) 
 c     wird bei phasespace genutzt fuer simpson ausdruck
-c     Uwe 27.2.97
-c     last modification: 09 Apr 97 13:58:51 flechsig
-c     last modification: 10 Apr 97 09:08:41 flechsig
+c     UF 11.2.00
 c----------------------------------------------------------
         implicit none
 
-        structure/struct/
-            real*8 ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma 
-            integer zeilen,psfile,status,plotsyle,
-     &              iykanal,izkanal,ititel(80)
-        end structure
-
-        record /struct/ s
         real*8 psd(4,2,4096)
-        real*4 minx,maxx,x,y,mi,ma,dx
+        real*4 minx,maxx,tmp,x,y,dx
 	character*(*) titel,metaname
-        integer ifile,ii,i,id,iminx,imaxx,ix
+        integer ifile,psfile,ii,i,id,ix
         
         write(*,*)'hplotpssimf called (for)'
 
+c 10.2.2000 scale in mrad
 c     postscriptfile 
-        ifile=s.psfile             ! merker setzen
+        ifile=psfile             ! merker setzen
         if(ifile.eq.1)then  
            type*,'open postsciptfile'
-c           open(unit=11,file=metaname,
-c     1     Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)  
            call igmeta(-11,-111) 
@@ -330,45 +322,33 @@ c     1     Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')
         goto 6667
  6666   write(*,*)'hplotpssimf: error open file: ',metaname
  6667   continue
-c buchen fuellen
+c buchen fuellen,  10.2.output in mrad daher 1000*
         do ii=1,4
-c min/max- suche   
-           minx=sngl(psd(ii,1,1))
-           iminx=1
-           imaxx=1
-           maxx=minx
-           do i=1,4096
-c           do i=1,100
-              mi=min(minx,sngl(psd(ii,1,i)))
-              ma=max(maxx,sngl(psd(ii,1,i)))
-c              write(*,*),sngl(psd(ii,1,i))
-              if((mi-minx).lt.0.0)then
-                 iminx=i
-                 minx=mi
-              endif
-              if((ma-maxx).gt.0.0)then
-                 imaxx=i
-                 maxx=ma
-              endif
-           enddo
-           write(*,*)'iminx,imaxx',iminx,imaxx
-           if(iminx.gt.imaxx)then
-              write(*,*)'!! iminx > imaxx, setze iminx auf 1 !!'
-              iminx=1
-              minx=sngl(psd(ii,1,1))
+           if(ii.eq.4)then
+              minx= sngl(zmin)*1000
+              maxx= sngl(zmax)*1000
+              ix  = iz
+           else
+              minx= sngl(ymin)*1000
+              maxx= sngl(ymax)*1000
+              ix  = iy
            endif
-           ix=iabs(imaxx-iminx)+1
-           dx=abs(maxx-minx)/ix
-           write(*,*)'min,max,ix,dx',minx,maxx,ix,dx
+           dx= (maxx-minx)/ ix
            minx=minx- dx/2.0
            maxx=maxx+ dx/2.0
-
-           id=1000+ii 
-           call hbook1(id,'Si**',ix,minx,maxx,0.)
+           if(minx.gt.maxx)then
+              tmp=minx
+              minx=maxx
+              maxx=tmp
+           endif
+           
+           id=1000+ii
+           write(*,*)'call hbook1(',id,',mrad,',ix,minx,maxx,',0.)' 
+           call hbook1(id,'mrad',ix,minx,maxx,0.)
 
 c ---------- fuellen --------------------------------
-           do i=iminx,imaxx
-              x=sngl(psd(ii,1,i))
+           do i=1,ix
+              x=1000*sngl(psd(ii,1,i))
               y=sngl(psd(ii,2,i))
               call hf1(id,x,y)
            enddo
