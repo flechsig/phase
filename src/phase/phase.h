@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <12 Nov 99 09:57:38 flechsig>              */
+/* Time-stamp: <15 Nov 99 09:32:21 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -16,6 +16,7 @@
 #define PHASE_H         
 /* #define DEBUG */
 /* #define LOGFILE             /* compile with logfile: logfilename  */
+#define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
 #define mapOK      	2                /* werden und verknuepft */ 
 #define resultOK   	4
@@ -599,17 +600,21 @@ static XmString latin_create;		/* Variables for */
 static XmString latin_dismiss;	  	/* compound strings. */
 static XmString latin_space;
 static XmString latin_zero;
-#ifdef VMS
-  static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
-  {"PHASE$prg:PHASE.uid"};	/* uid Namen eintragen*/
+/* #ifdef VMS */
+/*  static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
+/*  {"PHASE$prg:PHASE.uid"};	/* uid Namen eintragen*/
                                 /* There is only one UID file for */
                                 /* this application. */
-#else
-static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
-  {"phase.uid"};	
-#endif
-static int db_filename_num =
-(sizeof db_filename_vec / sizeof db_filename_vec [0]);
+/* #else */
+/* static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
+/*  {"phase.uid"};	*/
+/* #endif */
+
+char *db_filename_vec[1];
+
+static int db_filename_num = 1;
+/*
+(sizeof db_filename_vec / sizeof db_filename_vec [0]); */
                                                                  
 double PI;
 int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
@@ -778,14 +783,10 @@ void 	ActivateFileSelection(int, char *),
   FileSelectionProc(Widget, int *,        /*callback der Fileselection*/ 
 		    XmFileSelectionBoxCallbackStruct *); 
 
-
 extern void inithplot(),    
   hplotdisplayf(FString *, FString *, GRDATSTRUCTTYPE *,
 		struct RayType *, double*, double*);  
 
-
-
-  
 /* The names and addresses of things that Mrm has to bind.  The names do
  * not have to be in alphabetical command.  */
 

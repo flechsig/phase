@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <15 Nov 99 08:13:21 flechsig>  */
+/*  Time-stamp: <15 Nov 99 09:11:42 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -49,7 +49,7 @@ unsigned int main(argc, argv)
     char *argv[];                       /* Pointers to command line args. */
 {                                
     int setupswitch;
-    char string[255];
+    char string[255], uidfilename[255];
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
@@ -90,6 +90,11 @@ unsigned int main(argc, argv)
 	0);				/* Number of override resources */
 
     /* Open the UID files (the output of the UIL compiler) in the hierarchy */
+
+    /* set db_filename_vec with environment */
+    strcpy(uidfilename, "/lib/phase.uid");
+    PrependEnv(PHASE_HOME, uidfilename);
+    db_filename_vec[0]= uidfilename;
 
     if (MrmOpenHierarchy(
 	db_filename_num,		/* Number of files. */
@@ -144,9 +149,9 @@ unsigned int main(argc, argv)
     {
 	FetchWidget(kSetupInfo, "SetupInfo");
 	XtManageChild(widget_array[kSetupInfo]);   
-	strcpy(string, "/lib/NEWS.");
+	strcpy(string, "/lib/news.");
 	PrependEnv(PHASE_HOME, string);
-	PrintFileInMainList("PHASE$LIB:NEWS.");          /* news anzeigen */
+	PrintFileInMainList(string);                      /* news anzeigen */
         /*renderinfo();               */
     }
     /* printf("vor der mainloop\n");*/
