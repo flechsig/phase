@@ -1,0 +1,122 @@
+# File      : /home/pss060/sls/flechsig/phas/phasec/makefile
+# Date      : <19 Feb 99 17:25:30 flechsig> 
+# Time-stamp: <02 Nov 99 16:33:13 flechsig> 
+# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+#########################################################################
+# Makefile PHASE on LINUX 
+#########################################################################
+SHELL = /bin/sh
+
+DEFS        = -D LINUX
+CC          = gcc -O
+FOR         = pgf77 -c
+YACC        = bison -y
+INSTALL     = /usr/local/bin/install -c
+INSTALLDATA = /usr/local/bin/install -c -m 644CDEBUG = -g
+MAKE        = make
+
+LIBS =
+CFLAGS = $(CDEBUG) -I. -I$(srcdir) $(DEFS)
+
+srcdir    = .
+prefix    = /usr/local
+binprefix =
+
+
+SRCS = test-defines.c
+OBJS = test-defines.o
+
+.phony: all makewhat    
+
+#
+#######          extensions                                    ##########
+#######          additional extension on AXP systems        #############
+         
+#######                    basic extension               ################
+LIB		= olb      
+#########################################################################
+#               debugging        
+DEBUG		= no           # comment out for debugging (DEBUG = # no)    
+OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
+#########        flags                                    ###############
+ 
+FFLAGS   	=  
+LINKFLAGS	=  
+LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK -DLINUX
+#########################################################################
+#               variables 
+DESTDIR		= phase__prg:  
+# 
+PROGRAM		= phase
+#########################################################################
+LIBS	 	= cern_lib:MATHLIB/LIB\
+	PACKLIB/LIB\
+	graflib/lib\
+	grafx11/lib\
+	PACKLIB/LIB\
+	KERNLIB/LIB
+####           system dependent libs ####################################
+LIBSVAX		= $(LIBS)\
+../phasefor/lib/phaselib.$(LIB)/lib\
+batchdisk:xliblink/opt   
+
+LIBSAXP		= $(LIBS)\
+DISK_201_SRC0:[FLECHSIG.PHAS.phasefor.lib]phaselib.$(LIB)$(ALPH)/lib\
+batchdisk:xliblink_axp/opt   
+#########################################################################
+OBJECTC = phase.o phasec.o \
+	  activate_proc.o phasegraf.o initdatset.o \
+	  geometrypck.o bline.o \
+	  mirrorpck.o pst.o \
+	  cutils.o rtrace.o 
+OBJECTF=  phasegraffor.o phasefor.o  \
+	  phase_integration_10.o \
+	  phase_source_10.o 
+########################################################################
+PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
+	  phasegraf.h cutils.h
+#########################################################################
+#                            targets                                    # 
+all: 	
+	@echo "Making $(PROGRAM) for LINUX..." 
+	$(MAKE) $(PROGRAM)   
+##############################################################################
+#
+# Dependencies section
+$(PROGRAM): $(OBJECTC) $(OBJECTF)
+	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+##########################################################################
+*.o : *.c 
+	$(CC) $(CFLAGS)$@ $< 
+#	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+$(OBJECTF) : *.for 
+	$(FOR) $(FFLAGS)$@ $<   
+
+ 
+##########################################################################
+clear:
+	@echo "delete objects and exe..."  
+	rm *.o $(PROGRAM)
+
+TAGS:   $(SRCS)
+	etags $(SRCS)
+     
+clean:
+	rm -f *.o  core
+     
+distclean: clean
+	rm -f TAGS  config.status
+
+dist: $(SRCS) $(AUX)
+	echo tar-`sed \
+                  -e '/version_string/!d' \
+                  -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+                  -e q
+	version.c` > .fname
+	-rm -rf `cat .fname`
+	mkdir `cat .fname`
+	ln $(SRCS) $(AUX) `cat .fname`
+	-rm -rf `cat .fname` .fname
+	tar chZf `cat .fname`.tar.Z `cat .fname`
+####################      end makefile       ###############################
