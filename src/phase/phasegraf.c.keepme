@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <28 Oct 99 10:06:01 flechsig>  */
+/*  Time-stamp: <28 Oct 99 10:06:34 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phasegraf.c */
@@ -14,11 +14,11 @@
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
 
-#include stdio  
-#include stdlib                                                       
-#include string   
-#include math
-#include descrip                      /* for FORTRAN- String */     
+#include <stdio.h>  
+#include <stdlib.h>                                                       
+#include <string.h>   
+#include <math.h>
+#include <descrip.h>                      /* for FORTRAN- String */     
 
 #include <Xm/Text.h>    
 #include <Xm/ToggleB.h>   
@@ -28,7 +28,7 @@
 #include <DXm/DECspecific.h>   
 
 #include "cutils.h"
-#include "phase_struct_10.h"
+#include "phase_struct.h"
 #include "fg3pck.h"  
 #include "mirrorpck.h"  
 #include "geometrypck.h"   

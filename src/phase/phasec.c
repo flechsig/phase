@@ -1,3 +1,8 @@
+/*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
+/*  Date      : <28 Oct 99 10:04:05 flechsig>  */
+/*  Time-stamp: <28 Oct 99 10:05:29 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
 /* Date      : <18 Mar 97 12:27:02 flechsig>  */
 /* Time-stamp: <22 Oct 99 15:42:55 flechsig>  */
@@ -10,14 +15,14 @@
 
 /*23.11.98 UF */
                                          
-#include stdio                                  /* For printf and so on. */
-#include stdlib 	      	    	    	/* needed for fopen      */  
-#include processes            /* eingefuegt fuer Starts anderer Programme*/ 
-#include string                           
-#include math                                                 
-#include ctype
-#include stdarg 
-#include descrip                      /* for FORTRAN- String */ 
+#include <stdio.h>                    /* For printf and so on. */
+#include <stdlib.h> 	      	      /* needed for fopen      */  
+#include <processes.h>  /* eingefuegt fuer Starts anderer Programme*/
+#include <string.h>                           
+#include <math.h>                                                 
+#include <ctype.h>
+#include <stdarg.h> 
+#include <descrip.h>                      /* for FORTRAN- String */ 
    
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
@@ -29,7 +34,7 @@
 #include <DXm/DECspecific.h>                  
 
 #include "cutils.h"   
-#include "phase_struct_10.h"
+#include "phase_struct.h"
 #include "fg3pck.h"   
 #include "mirrorpck.h"                 
 #include "geometrypck.h"   
