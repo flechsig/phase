@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <17 Feb 04 09:49:36 flechsig> 
+#  Time-stamp: <17 Feb 04 12:07:21 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -19,7 +19,8 @@
 #########################################################################
 # 1) paths
 SRCDIR      = .
-INSTPATH    = /usr/local
+#INSTPATH    = /usr/local
+INSTPATH    = /tmp
 BUILDPATH   = ~/phase
 CERNLIB     = /cern/2000/lib
 #CERNLIB    = /usr/local/cern/2000/lib
@@ -63,7 +64,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #########################################################################
 PROGRAM = phase
 #########################################################################
-LIBS    = $(INSTPATH)/lib/phaselib.a \
+LIBS    = $(INSTPATH)/lib/libphase.a \
           -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
           -L$(CERNLIB) -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 

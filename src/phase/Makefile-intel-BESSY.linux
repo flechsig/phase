@@ -1,7 +1,7 @@
 #    -*-makefile-*-                emacs hint
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <17 Feb 04 09:49:29 flechsig> 
+# Time-stamp: <17 Feb 04 12:07:40 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -53,7 +53,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = /home/bahrdt/phas/phase/lib/phaselib.a \
+LIBS    = /home/bahrdt/phas/phase/lib/libphase.a \
 -L/opt/cern/pro/lib \
 -lpacklib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib \
 /lib/libpthread.so.0 \
