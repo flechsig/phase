@@ -1,0 +1,5 @@
+.cvsignore
+depcomp
+install-sh
+missing
+mkinstalldirs

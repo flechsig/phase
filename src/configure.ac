@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <11 Dec 03 14:02:06 flechsig> 
+#   Time-stamp: <11 Dec 03 14:02:51 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -15,7 +15,7 @@ AC_INIT(phase,0.5,flechsig@psi.ch)
 AC_CONFIG_SRCDIR(src/ccut.c)
 AC_REVISION($Revision$)
 AC_CONFIG_AUX_DIR(config)
-#AC_PREFIX_PROGRAM([/afs/psi.ch/user/f/flechsig/tmp])
+##AC_PREFIX_PROGRAM([/afs/psi.ch/user/f/flechsig/tmp])
 
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(phase/config.h)
