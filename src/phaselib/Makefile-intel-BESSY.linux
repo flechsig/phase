@@ -8,6 +8,7 @@
 SHELL = /bin/sh
 
 FOR         = ifc
+PP          = g77 -E -o
 FDEBUG      =
 AR	    = ar -rv
 YACC        = bison -y
@@ -88,7 +89,7 @@ $(LIB): $(OBJECTS)
 ##########################################################################
 #mit preprocessor
 %.f: %.F  
-        $(PP) $@ $<  
+	$(PP) $@ $<
 ##########################################################################
 install: all
 	$(INSTALL) $(LIB) $(PHASEDIR)/lib/$(LIB)

@@ -25,12 +25,15 @@ srcdir      = .
 INSTPATH    = /home/bahrdt/phas/phase
 BUILDPATH   = /home/bahrdt/phas/phase
 
-LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
+LINUX_C	= -I/home/bahrdt/phasenew1/phase/src/phase/share/phase/include \
+-D_POSIX_SOURCE -DNOLOCK 
+#LINUX_C	= -I/usr/X11R6-SuSE/include -D_POSIX_SOURCE -DNOLOCK 
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
 #FFLAGS  = -w -f -s -N3 -N51
 #FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
 FFLAGS  =  -c -vms -w95 -132 
-LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl  
+LDFLAGS = -L/home/bahrdt/phasenew1/phase/src/phase/share/phase \
+-lXm -lMrm -L/usr/X11R6/lib -lXt -lXext -lXp -lX11 -lm -lc -lnsl   
 #LDFLAGS = -L/usr/X11R6/lib -lXm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #FFLAGS for absoft f77 compiler
 #	-g generate debugging information
@@ -52,11 +55,11 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = /home/bahrdt/phasenew/phase-1.15/lib/libphase.a \
+LIBS    = ../phaselib/libphase.a \
 -L/opt/cern/pro/lib \
 -lpacklib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib \
 /lib/libpthread.so.0 \
-/usr/lib/gcc-lib/i486-linux/3.3.3/libg2c.a \
+/usr/lib/libg2c.a \
 /usr/X11R6/lib/libX11.so.6 \
 -L/opt/intel/compiler/ia32/lib \
 -lCEPCF90 -lIEPCF90 -lintrins -lF90 \
