@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <29 Jan 01 15:04:22 flechsig> 
+# Time-stamp: <30 Jan 01 16:15:08 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -8,10 +8,9 @@
 SHELL = /bin/sh 
 
 DEBUG	    = -DDEBUG
-DEFS        = -DLINUX $(DEBUG)
-CC          = gcc 
+DEFS        = -DLINUX $(DEBUG) -DCADDR_T  # caddr_t im Headerfile
+CC          = gcc -v
 PP          = g77 -E -o
-#FOR        = pgf77 -c
 FOR         = f77 
 YACC        = bison -y
 INSTALL     = /usr/bin/install -c
@@ -24,12 +23,12 @@ srcdir      = .
 INSTPATH    = /usr/local/phase
 BUILDPATH   = /home/pss060/sls/flechsig/phase
 
-#LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
+LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
 #FFLAGS  = -w -f -s -N3 -N51
 #FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
 FFLAGS  = $(FDEBUG) -c -f -B108 -W -s -N3 -N51 -N22 -N33
-LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc 
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #FFLAGS for absoft f77 compiler
 #	-g generate debugging information
 #	-c generate object files
@@ -50,13 +49,13 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = /home/pss060/sls/flechsig/phase/lib/phaselib.a \
-          -L/tools/soft/cern/99/lib -lgraflib -lgrafX11\
-	  -lkernlib -lpacklib -lphtools -lmathlib -lpawlib \
-	  -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 \
-	   /home/pss060/sls/flechsig/phase/lib/libf2c.a \
-	  -L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
-          -lgrafX11 -lpacklib -lpawlib -lkernlib 
+LIBS    = /usr/local/phase/lib/phaselib.a \
+          -L/usr/absoft/lib -lf77math -lfio -lU77 -lV77 -lf77math \
+          -L/usr/lib/gcc-lib/gcc-lib/i386-redhat-linux/egcs-2.91.66 -lg2c \
+	  -L/cern/pro/lib -lpawlib -lpacklib \
+	  -lgraflib -lgrafX11 -lpacklib -lmathlib \
+	  -lkernlib -L/usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66 -lg2c \
+	  -Xlinker -defsym -Xlinker MAIN__=main
 #########################################################################
 OBJECTC = phase.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
