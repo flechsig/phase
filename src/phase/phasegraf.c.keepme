@@ -1,8 +1,13 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
-/*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <24 Mar 04 14:47:26 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
+/*   Date      : <29 Mar 04 10:58:14 flechsig>  */
+/*   Time-stamp: <29 Mar 04 10:58:23 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+ 
 #include <stdio.h>  
 #include <stdlib.h>                                                       
 #include <string.h>   
