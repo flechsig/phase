@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <23 Nov 99 13:51:51 flechsig> 
+# Time-stamp: <24 Nov 99 14:09:02 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -76,7 +76,7 @@ all:
 	$(MAKE) $(PROGRAM)   
 ##############################################################################
 # Dependencies section
-$(PROGRAM): $(OBJECTC) $(OBJECTF)
+$(PROGRAM): $(OBJECTC) #$(OBJECTF)
 	$(CC)  -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
 ##########################################################################
 %.o : %.c $(PHASEHS)
