@@ -1,7 +1,13 @@
+/*  File      : /home/pss060/sls/flechsig/phase/src/phase/initdatset.c */
+/*  Date      : <28 Oct 99 09:58:52 flechsig>  */
+/*  Time-stamp: <28 Oct 99 09:59:46 flechsig>  */
+/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
 /*  File      : /home/vms/flechsig/vms/phas/phasec/initdatset.c */
 /*  Date      : <13 Feb 98 12:27:39 flechsig>  */
-/*  Time-stamp: <13 Feb 98 12:28:27 flechsig>  */
+/*  Time-stamp: <28 Oct 99 09:58:51 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+
 /*  File      : /home/vms/flechsig/vms/phas/phasec/fg3pck.c */
 /*  Date      : <23 Apr 97 09:15:51 flechsig>  */
 /*  Time-stamp: <13 Feb 98 12:27:29 flechsig>  */
@@ -12,10 +18,10 @@
 /* Stand: 17-FEB-1997                                          */
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
-#include stdio
-#include stdlib 
-#include string
-#include descrip
+#include <stdio.h>
+#include <stdlib.h> 
+#include <string.h>
+#include <descrip.h>
 
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
@@ -27,7 +33,7 @@
 #include <DXm/DECspecific.h>                  
 
 #include "cutils.h"
-#include "phase_struct_10.h"
+#include "phase_struct.h"
 #include "fg3pck.h" 
 #include "mirrorpck.h" 
 #include "geometrypck.h"    
