@@ -1,19 +1,8 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <15 Nov 99 09:11:42 flechsig>  */
+/*  Time-stamp: <18 Nov 99 15:49:52 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
-/* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
-/* Date      : <18 Mar 97 09:46:28 flechsig>              */
-/* Time-stamp: <15 Oct 99 16:50:48 flechsig>              */
-/* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.C            */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 30-APR-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
-
- 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
@@ -58,7 +47,8 @@ unsigned int main(argc, argv)
       {
 	printf("phase.c: environment variable %s not defined- exit\n",
 	       PHASE_HOME);
-	exit;
+	printf("example for unix tcsh: setenv %s ~/phase\n", PHASE_HOME);
+	exit(-1);
       }
 
     setupswitch= ProcComandLine(argc, argv); /* im Batch (-b) und  Help -h -? 
@@ -455,7 +445,7 @@ void list_proc(w, tag, list)                 /* selection callback */
      XmListCallbackStruct *list;
 {
   XmString xlabel;   
-  char clabel[50], *clabelp;
+  char clabel[MaxPathLength], *clabelp;
   int epos, ppos, indx, *pl[1], pc;
   
   switch (*tag)
@@ -468,7 +458,9 @@ void list_proc(w, tag, list)                 /* selection callback */
       xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
-      printf("fetch\n");
+#ifdef DEBUG
+      printf("list_proc: fetch mirror and element box\n");
+#endif
       FetchWidget(kEOElement, "EOElementBox");
       XtManageChild(widget_array[kEOElement]);
       FetchWidget(kEGeometry, "EGeometryBox");
@@ -490,7 +482,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       
     case kCOptiList2:
       xlabel= XmStringCopy(list->item);
-      clabelp= XmStringCreateLocalized(xlabel);  
+      XmStringGetLtoR(xlabel, XmFONTLIST_DEFAULT_TAG, &clabelp);
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
       break;      
@@ -826,7 +818,6 @@ void cancel_color_proc(widget_id, tag, reason)
 
 void FileSelectionProc(Widget wi, int *tag, 
 		       XmFileSelectionBoxCallbackStruct *reason)
-/* last modification: 24 Sep 97 13:58:31 flechsig */
 {
   int sw= *tag, itemcount, pos, i, *itemlist[20];
   XmString path;
@@ -835,10 +826,10 @@ void FileSelectionProc(Widget wi, int *tag,
   path= reason->value;
   /* Version entfernen */
 #ifdef VMS
-  fname= delversion(DXmCvtCStoFC(path, &bc, &status)); 
+  fname= delversion(XmTextGetString(path)); 
   path= XmStringCreateLocalized(fname);
-#endif
   XtFree(fname);  
+#endif
   if (sw == kFileSelectionOk)
     {
       switch (ActualTask)
@@ -862,9 +853,7 @@ void FileSelectionProc(Widget wi, int *tag,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-#ifdef VMS
-	  fname= DXmCvtCStoFC(path, &bc, &status); 
-#endif
+	  XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname);  
 	  strcpy((char *)&PHASESet.beamlinename, fname);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);  
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
@@ -904,9 +893,7 @@ void FileSelectionProc(Widget wi, int *tag,
 	  break;
 	  
 	case kFSaveAsButton:
-#ifdef VMS
-	  fname= DXmCvtCStoFC(path, &bc, &status); 
-#endif
+	  XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname);
 	  printf("save data as: %s\n", fname);
 	  WriteBLFile(fname, &Beamline);
 	  XtFree(fname);  
@@ -925,20 +912,15 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
   switch (sw) 
     {
     case kESOK:
-      svalue= reason->value; inhalt= NULL;
-#ifdef VMS
-      inhalt= DXmCvtCStoFC(svalue, &bc, &status);   
-      if (status == DXmCvtStatusOK)  
-#else
-      if (status == 1)   /* dummy */
-#endif
-	{
-	  XtUnmanageChild(widget_array[kEParameterBox]);  
-	  FetchWidget(kEParameterBox, "EParameterBox");      
-	  InitParameterBox(&Beamline, inhalt);  
-	  XtManageChild(widget_array[kEParameterBox]);     
-	  XmStringFree(svalue);   
-	}                                              
+      svalue= reason->value; 
+      inhalt= NULL;
+      XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, &inhalt); 
+      XtUnmanageChild(widget_array[kEParameterBox]);  
+      FetchWidget(kEParameterBox, "EParameterBox");      
+      InitParameterBox(&Beamline, inhalt);  
+      XtManageChild(widget_array[kEParameterBox]);     
+      XmStringFree(svalue);   
+      XtFree(inhalt);
       break;
       
     case kESCancel:       
@@ -955,19 +937,13 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
       break; 
       
     case kCOptiList2: 
-      svalue= reason->value; inhalt= NULL;
-#ifdef VMS
-      inhalt= DXmCvtCStoFC(svalue, &bc, &status); 
-      if (status == DXmCvtStatusOK)
-#else
-      if (status == 1)
-#endif
-        {
-	  InitOptiList2(sw, inhalt);    
-	  XmStringFree(svalue);   
-	}                 
+      svalue= reason->value; 
+      inhalt= NULL;
+      XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, &inhalt); 
+      InitOptiList2(sw, inhalt);    
+      XmStringFree(svalue);   
+      XtFree(inhalt);                
       break;
-      
     default: break;
     }
 }  /* end  SelectionProc */      
