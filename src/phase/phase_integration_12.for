@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <11 Feb 00 12:33:23 flechsig> 
+c Time-stamp: <11 Feb 00 14:00:10 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -24,6 +24,7 @@ c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
 c Aenderungen von JB am 11.2.00
+c UF habe xxsave eingefuehrt !!! pruefen
 c*********************************************************
 c UF 12.1.2000
       subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st,sp)
@@ -1636,47 +1637,51 @@ c	enddo
 c	close(10)
 c
 c	endif
-
+c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
 	if(iyz.eq.1)xx=xi.ymin
 	if(iyz.eq.2)xx=xi.zmin
-
+        xxsave=xx
 	do ii=1,xir.iisimp
-	if(xir.isimp(ii).eq.xir.nsimp)then
-
-	do i=1,ianz_loc-1
-	xx=xx+dyz_loc(i)
-	xir.sintre(ii,1,i)=xx
-	xir.sintre(ii,2,i)=dreal(xxx(i))
-	enddo
-	xir.isintre(ii)=ianz_loc-1
-
-	do i=1,ianz_loc-1
-	xx=xx+dyz_loc(i)
-	xir.sintim(ii,1,i)=xx
-	xir.sintim(ii,2,i)=dimag(xxx(i))
-	enddo
-	xir.isintim(ii)=ianz_loc-1
-
-	do i=1,ianz_loc
-	xir.simpa(ii,1,i)=xx
-	xir.simpa(ii,2,i)=fyza_loc(i)
-	xx=xx+dyz_loc(i)
-	enddo
-	xir.isimpa(ii)=ianz_loc
-
-	do i=1,ianz_loc
-	xir.simpp(ii,1,i)=xx
-	xir.simpp(ii,2,i)=fyzp_loc(i)
-	xx=xx+dyz_loc(i)
+           if(xir.isimp(ii).eq.xir.nsimp)then
+c     UF
+              xx=xxsave
+              do i=1,ianz_loc-1
+                 xx=xx+dyz_loc(i)
+                 xir.sintre(ii,1,i)=xx
+                 xir.sintre(ii,2,i)=dreal(xxx(i))
+              enddo
+              xir.isintre(ii)=ianz_loc-1
+c     UF
+              xx=xxsave
+              do i=1,ianz_loc-1
+                 xx=xx+dyz_loc(i)
+                 xir.sintim(ii,1,i)=xx
+                 xir.sintim(ii,2,i)=dimag(xxx(i))
+              enddo
+              xir.isintim(ii)=ianz_loc-1
+c     UF
+              xx=xxsave
+              do i=1,ianz_loc
+                 xir.simpa(ii,1,i)=xx
+                 xir.simpa(ii,2,i)=fyza_loc(i)
+                 xx=xx+dyz_loc(i)
+              enddo
+              xir.isimpa(ii)=ianz_loc
+c     UF
+              xx=xxsave
+              do i=1,ianz_loc
+                 xir.simpp(ii,1,i)=xx
+                 xir.simpp(ii,2,i)=fyzp_loc(i)
+                 xx=xx+dyz_loc(i)
 	enddo
 	xir.isimpp(ii)=ianz_loc
-
-	endif
-	enddo
-
+        
+      endif
+      enddo
+      
 c---------------------------------------------------------
-
-	endif		! ispline.lt.0
+      
+      endif                     ! ispline.lt.0
 
 c---------------------------------------------------------
 	if(ifl.ispline.eq.0)then
@@ -1691,45 +1696,50 @@ c---------------------------------------------------------
 	endif
 
 c----------- output
+c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
 	if(iyz.eq.1)xx=xi.ymin
 	if(iyz.eq.2)xx=xi.zmin
-
+        xxsave=xx
 	do ii=1,xir.iisimp
-	if(xir.isimp(ii).eq.xir.nsimp)then
-
-	do i=1,ianz-1
-	xx=xx+dyz(i)
-	xir.sintre(ii,1,i)=xx
-	xir.sintre(ii,2,i)=dreal(xxx(i))*1.0d10
-	enddo
-	xir.isintre(ii)=ianz-1
-
-	do i=1,ianz-1
-	xx=xx+dyz(i)
-	xir.sintim(ii,1,i)=xx
-	xir.sintim(ii,2,i)=dimag(xxx(i))*1.0d10
-	enddo
-	xir.isintim(ii)=ianz-1
-
-	do i=1,ianz
-	xir.simpre(ii,1,i)=xx
-	xir.simpre(ii,2,i)=dreal(fyz(i))*1.0d10
-	xx=xx+dyz(i)
-	enddo
-	xir.isimpre(ii)=ianz
-
-	do i=1,ianz
-	xir.simpim(ii,1,i)=xx
-	xir.simpim(ii,2,i)=dimag(fyz(i))*1.0d10
-	xx=xx+dyz(i)
-	enddo
-	xir.isimpim(ii)=ianz
-
-	endif
+           if(xir.isimp(ii).eq.xir.nsimp)then
+c UF
+              xx=xxsave
+              do i=1,ianz-1
+                 xx=xx+dyz(i)
+                 xir.sintre(ii,1,i)=xx
+                 xir.sintre(ii,2,i)=dreal(xxx(i))*1.0d10
+              enddo
+              xir.isintre(ii)=ianz-1
+c UF
+              xx=xxsave               
+              do i=1,ianz-1
+                 xx=xx+dyz(i)
+                 xir.sintim(ii,1,i)=xx
+                 xir.sintim(ii,2,i)=dimag(xxx(i))*1.0d10
+              enddo
+              xir.isintim(ii)=ianz-1
+c UF
+              xx=xxsave               
+              do i=1,ianz
+                 xir.simpre(ii,1,i)=xx
+                 xir.simpre(ii,2,i)=dreal(fyz(i))*1.0d10
+                 xx=xx+dyz(i)
+              enddo
+              xir.isimpre(ii)=ianz
+c UF
+              xx=xxsave              
+              do i=1,ianz
+                 xir.simpim(ii,1,i)=xx
+                 xir.simpim(ii,2,i)=dimag(fyz(i))*1.0d10
+                 xx=xx+dyz(i)
+              enddo
+              xir.isimpim(ii)=ianz
+              
+           endif
 	enddo
 c-------------------
 
-	endif		! ispline.eq.0
+      endif                     ! ispline.eq.0
 
 c------------------------------------------------------------
 
@@ -1750,28 +1760,31 @@ c------------------------------------------------------------
 	xint=xintre+cs.sqrtm1*xintim
 
 c----------- output
+c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
 	if(iyz.eq.1)xx=xi.ymin
 	if(iyz.eq.2)xx=xi.zmin
-
+        xxsave=xx
 	do ii=1,xir.iisimp
-	if(xir.isimp(ii).eq.xir.nsimp)then
-
-	do i=1,ianz
-	xir.simpre(ii,1,i)=xx
-	xir.simpre(ii,2,i)=dreal(fyz(i))
-	xx=xx+dyz(i)
-	enddo
-	xir.isimpre(ii)=ianz
-
-	do i=1,ianz
-	xir.simpim(ii,1,i)=xx
-	xir.simpim(ii,2,i)=dimag(fyz(i))
-	xx=xx+dyz(i)
-	enddo
-	xir.isimpim(ii)=ianz
-
-	endif
-	enddo
+           if(xir.isimp(ii).eq.xir.nsimp)then
+c UF
+              xx=xxsave
+              do i=1,ianz
+                 xir.simpre(ii,1,i)=xx
+                 xir.simpre(ii,2,i)=dreal(fyz(i))
+                 xx=xx+dyz(i)
+              enddo
+              xir.isimpre(ii)=ianz
+c UF
+              xx=xxsave
+              do i=1,ianz
+                 xir.simpim(ii,1,i)=xx
+                 xir.simpim(ii,2,i)=dimag(fyz(i))
+                 xx=xx+dyz(i)
+              enddo
+              xir.isimpim(ii)=ianz
+              
+           endif
+      enddo
 c----------------
 
 	endif
