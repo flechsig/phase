@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <05 Feb 04 14:21:38 flechsig> 
+#  Time-stamp: <06 Feb 04 08:17:05 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -13,7 +13,7 @@
 bin_PROGRAMS            = phaseopti
 ##lib_LTLIBRARIES         = libphaseopti.la
 phaseopti_SOURCES       = phaseopti.c phaseopti.h \
- ../phase/phasec.c      ../phase/activate_proc.c \
+          ../phase/phasec.c       ../phase/activate_proc.c \
           ../phase/phasegraf.c   ../phase/initdatset.c \
 	  ../phase/geometrypck.c ../phase/bline.c ../phase/phase0.c \
 	  ../phase/mirrorpck.c   ../phase/pst.c \
@@ -21,7 +21,7 @@ phaseopti_SOURCES       = phaseopti.c phaseopti.h \
 	  ../phase/phasegraffor.F ../phase/phasefor.for \
 	  ../phase/phase_source.for \
 	  ../phase/phase_integration.for \
-	 treiber.F optisubc.c cost.F
+	  treiber.F optisubc.c cost.F
 ##libphaseopti_la_SOURCES = 
           
 
