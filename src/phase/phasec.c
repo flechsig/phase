@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <19 Nov 99 11:56:17 flechsig>  */
+/*  Time-stamp: <24 Nov 99 12:03:19 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -1744,6 +1744,7 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   if ((sw != kEOEDefaults) && (sw != kFFileBoxOK)) 
     {      
       printf(" InitOElementBox: %d \n", sw);
+      /* fehler falls sw nicht initialisiert 24.11.99 */
       w= widget_array[sw];    
       switch (sw) {  
       case  kEOETM:    ih= 12; imax= 11;  break;
