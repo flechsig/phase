@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/editmenu.uil
 ! Date      : <11 Apr 97 14:27:00 flechsig> 
-! Time-stamp: <31 Oct 97 09:46:24 flechsig> 
+! Time-stamp: <28 Oct 99 11:47:03 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]EDITMENU.UIL
@@ -34,7 +34,7 @@ object
             };
         };
 
-/************************ Source PDME **********************/
+!************************ Source PDME **********************/
 
 object
     ESourceMenuButton : XmPushButton {
