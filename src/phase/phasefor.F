@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <23 Dec 99 16:54:26 flechsig> 
+C Time-stamp: <05 Jan 00 15:17:51 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -347,7 +347,7 @@ c
      &             (src.so6.iabrpy.le.51) )then
 c     write 4-dim brightness
 
-                 open(unit=10,name='BR_RE_BIN_IMAGE.DAT',
+                 open(unit=10,name='BR_RE_BIN_IMAGE.DAT',err=557,
      &                type='new',form='unformatted',access='sequential')
                  write(10)src.so6.abrxmin,src.so6.abrxmax,
      &                src.so6.abrdx,src.so6.iabrx
@@ -371,6 +371,9 @@ c     write 4-dim brightness
               endif
            endif
         endif
+        goto 600
+ 557    write(*,*)'pstf: error open BR_RE_BIN_IMAGE.DAT '
+ 600    continue
 c-------------- file schreiben  ------------------------
 c        open(unit=15,file='fd1ph.paw',status='new')     !surf.paw <<x 
 c	open(unit=16,file='surf_s0.paw',status='new')     !surf.paw <<x 
@@ -427,14 +430,17 @@ c$$$           close(10)
 c$$$        enddo
 c$$$        write(*,*)'sintre.dat + sintim.dat erzeugt'
 
-        open(unit=10,name='d12.dat',type='new')
+c        open(unit=10,name='d12.dat',type='new')
+        open(unit=10,name='d12.dat',err=555)
         do i=1,xi.ianzz0
            write(10,*)xir.d12(1,3,i),xir.d12(2,3,i)
-           enddo
+        enddo
         close(10)
         write(*,*)'pstf: d12.dat generated'
-      return
-      end
+        return
+ 555    write(*,*)'pstf: error open d12.dat '
+        return
+        end
 c**** end pstf() ******************************************    
  
 c*********************************************************
@@ -928,7 +934,7 @@ c************************************************************
           idim=35
         endif
 
-        open(unit=10,file=fname,status='old') 
+        open(unit=10,file=fname,status='old',err=556) 
 	do i=1,idim
 	   do j=1,idim
 	      read(10,*)ii,jj,xmap70(i,j)
@@ -936,6 +942,8 @@ c************************************************************
 	enddo
 	close(10)     
 
+        return
+ 556    write(*,*)'readmatrixfile: error open ', fname
         return
         end
 c******* read matrixfile ************************************ 
@@ -948,7 +956,7 @@ c****************************************************************
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4)
         
-	open(unit=10,file=fname,status='old')
+	open(unit=10,file=fname,status='old',err=558)
         write(*,*)'****read intersection from: ',fname     
         do i=0,iord
 	 do j=0,iord-i
@@ -962,6 +970,8 @@ c****************************************************************
 	enddo
 	close(10)  
       	return
+ 558    write(*,*)'readintersection: error open file: ', fname
+        return
 	end
 c********* end readintersection() ***************************************
 
@@ -1269,7 +1279,7 @@ c****************************************************************
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)   
 
-	open(unit=10,file=mapname,status='new')
+	open(unit=10,file=mapname,status='new',err=559)
         write(*,*)'****write transformation map to: ',mapname  
 	write(10,*)' ypc, zpc, dypc, dzpc'
         do i=0,iord
@@ -1287,6 +1297,8 @@ c****************************************************************
         enddo        
         close(10)
 	return
+ 559    write(*,*)'writemap: error open file', mapname
+        return
 	end
 c********* end writemap() ***************************************
 
@@ -1303,7 +1315,7 @@ c*****************************************************
 	character*255 ename
 c----------------------------------------------------------
        	write(*,*) '***read opt. element data from: ',ename 
-        open(unit=10,file=ename,status='old')  
+        open(unit=10,file=ename,status='old',err=666)  
         do i=0,5
           do j=0,5
             if((i+j).le.5)then
@@ -1313,6 +1325,7 @@ c----------------------------------------------------------
         enddo
         close(10)
         return
+ 666    write(*,*)'mirror4dp: error open file',ename 
         end
 c*********** end mirror4dp.for ***************************
 
@@ -1335,7 +1348,7 @@ c*****************************************************
 c----------------------------------------------------------
         pi= 4.d0*datan(1.d0)
 
-        open(unit=10,file=gname,status='old')  
+        open(unit=10,file=gname,status='old',err=667)  
         write(*,*) '***read Geometry data from: ',gname
         read(10,*)alpha
         read(10,*)beta   
@@ -1347,7 +1360,9 @@ c----------------------------------------------------------
         read(10,*)g.xlam
 	read(10,*)g.idefl
         close(10) 
-
+        goto 668
+ 667    write(*,*)'geometrd: error open file ', gname
+ 668    continue
         alpha=alpha*(pi/180.d0)
         beta=beta*(pi/180.d0)
         g.xlam=g.xlam*1.d-6
@@ -2210,7 +2225,7 @@ c     implicit real*8(a-h,o-z)
  3    format(a80)
 
       write(*,*)' reading parameters from FG34.PAR (Version ab 23.12.99)'
-      open(unit=16,name='fg34.par',type='old')
+      open(unit=16,name='fg34.par',type='old',err=777)
       read(16,1)dummy
       read(16,*)epsilon
       read(16,*)ifl.iord,ifl.iordsc,ifl.iexpand
@@ -2306,7 +2321,8 @@ c      read(16,*)xi.dphi_min
       read(16,*)src.pin_yl0,src.pin_yl
       read(16,*)src.pin_zl0,src.pin_zl
       close(16)
-
+      return
+ 777  write(*,*)'readfg34_par: error open file fg34.par '
       return
       end
 c**** end readfg34_par *************************************
