@@ -1,3 +1,8 @@
+! File      : /home/pss060/sls/flechsig/phase/src/gui/filemenu.uil
+! Date      : <28 Oct 99 11:36:53 flechsig> 
+! Time-stamp: <28 Oct 99 11:38:12 flechsig> 
+! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]FILEMENU.UIL
 ! Datum: 11.FEB.1994
 ! Stand: 25-APR-1996
@@ -71,21 +76,20 @@ object
 
 
 !The print widget object
-                                    
-object
-    main_print : DXmPrintDialog     {              
-        arguments            
-            {
-            XmNdialogTitle         = "Print";
-            DXmNoptionsDialogTitle = "Print Options";
-            DXmNnumberCopies       = 1;
-            DXmNunmanageOnOk       = true;
-            DXmNunmanageOnCancel   = true;
-            };        
-        callbacks                {           
-            XmNhelpCallback     =  procedure sens_help_proc(k_print_help);  
-            };                                       
-        };                   
+!not available on linux commneted out 28.10.99                                 !object
+!    main_print : DXmPrintDialog     {              
+!        arguments            
+!            {
+!            XmNdialogTitle         = "Print";
+!            DXmNoptionsDialogTitle = "Print Options";
+!            DXmNnumberCopies       = 1;
+!            DXmNunmanageOnOk       = true;
+!            DXmNunmanageOnCancel   = true;
+!            };        
+!        callbacks                {           
+!            XmNhelpCallback     =  procedure sens_help_proc(k_print_help);  
+!            };                                       
+!        };                   
                        
 object                               /* Motif Widget */
     FileSelectionDialog : XmFileSelectionDialog {                   
