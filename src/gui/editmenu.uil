@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/editmenu.uil
 ! Date      : <11 Apr 97 14:27:00 flechsig> 
-! Time-stamp: <11 Feb 04 17:18:36 flechsig> 
+! Time-stamp: <12 Feb 04 12:02:58 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]EDITMENU.UIL
@@ -79,8 +79,8 @@ object
             XmNmnemonic         = keysym("o"); 
 		};
         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEPointSourceButton);
-	    XmNactivateCallback = procedure activate_proc(kEPointSourceButton);
+            MrmNcreateCallback  = procedure create_proc (kESPointSourceButton);
+	    XmNactivateCallback = procedure activate_proc(kESPointSourceButton);
             };
         };     
 

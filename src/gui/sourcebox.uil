@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/sourcebox.uil
 ! Date      : <21 Oct 97 07:55:09 flechsig> 
-! Time-stamp: <21 Oct 97 08:09:42 flechsig> 
+! Time-stamp: <12 Feb 04 12:06:42 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]SOURCEBOX.UIL
@@ -153,7 +153,8 @@ object
      ESOptPdme : XmPulldownMenu widget {
       	controls {
             XmPushButton        ESRayTraceButton; 
-            XmPushButton        ESDipolSourceButton; 
+            XmPushButton        ESDipolSourceButton;
+            XmPushButton        ESPointSourceButton;
             XmPushButton        ESUndulatorSourceButton; 
 	    XmPushButton	ESundulatorSourceButton;
 	    XmPushButton        ESUndulatorSISButton; 

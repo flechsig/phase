@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/mirrorbox.uil
 ! Date      : <11 Apr 97 14:16:02 flechsig> 
-! Time-stamp: <12 Jan 00 08:54:52 flechsig> 
+! Time-stamp: <11 Feb 04 15:32:00 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]MIRRORBOX.UIL
@@ -57,17 +57,17 @@ object
         controls {
             XmRowColumn         EOERC;
 	    XmOptionMenu        EOOptMenu; 
-	    XmLabel             EOEInputLabel;
+!	    XmLabel             EOEInputLabel;
 !            XmLabel             EOET1Label;
 !            XmText              EOET1;  
 !            XmLabel             EOET2Label;
 !            XmPushButton        EOEAB2; 
 !            XmText              EOET2;  
-	    XmLabel             EOET3Label;
-            XmText              EOET3;   
-	    XmLabel             EOET4Label;
-            XmPushButton        EOEAB4; 
-            XmText              EOET4;  
+!	    XmLabel             EOET3Label;
+!            XmText              EOET3;   
+!	    XmLabel             EOET4Label;
+!            XmPushButton        EOEAB4; 
+!            XmText              EOET4;  
             XmLabel             EOET5Label;
             XmText              EOET5;  
 	    XmLabel             EOET6Label;

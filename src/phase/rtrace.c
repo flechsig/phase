@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
 /*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <07 Jan 00 09:05:07 flechsig>  */
+/*  Time-stamp: <12 Feb 04 12:28:13 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
@@ -182,6 +182,34 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
 } /* end UndulatorSource() */
 
 /***********************************************************************/
+/* Modell einer Punkt Quelle Eingaben alles Sigma Werte,               */
+/*  		                           12.2.04      	       */
+/***********************************************************************/ 
+void MakePointSource(struct RTSourceType *y)       
+{
+   int i; 
+   double zz, tdy, tdz;
+   time_t zeit;
+   struct PointSourceType *x;  
+
+   x= (struct PointSourceType *) &(y->Quelle.PointSource);  
+   time(&zeit); srand(zeit);
+   tdy= x->sigdy/ 1000.0; 
+   tdz= x->sigdz/ 1000.0; 
+   i= 0;
+   while (i < y->raynumber)
+   {
+      zz= uRandom(tdz);  
+      y->SourceRays[i].y = gauss(x->sigy);     
+      y->SourceRays[i].z = gauss(x->sigz); 
+      y->SourceRays[i].dy= gauss(tdy); 
+      y->SourceRays[i].dz= gauss(tdz);    
+      y->SourceRays[i].phi= 0.0;
+      i++;
+   }
+} 
+
+/***********************************************************************/
 /* Modell einer Dipol Quelle Eingaben als Sigma Werte, die horizontale */
 /* Divergenz ist hard edge 		    19.3.96      	       */
 /***********************************************************************/ 
@@ -207,7 +235,8 @@ void MakeDipolSource(struct RTSourceType *y)
       y->SourceRays[i].phi= 0.0;
       i++;
    }
-} 
+} /* end MakePointSource */ 
+
 
 /* erzeugt Gauss verteilte Zufallszahl zw. +- 6 sigma                   */
 /* max auf 1 gesetzt wegen Geschwindigkeitsvorteil 10.5.96              */
@@ -278,6 +307,9 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
        break; 
      case 'D':
        MakeDipolSource(&(bl->RTSource));       
+       break; 
+     case 'o':
+       MakePointSource(&(bl->RTSource));       
        break; 
      case 'S':   /* single ray */
        bl->RTSource.SourceRays->y = bl->RTSource.Quelle.SRSource.y; 

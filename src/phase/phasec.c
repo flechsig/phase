@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <04 Feb 04 17:26:04 flechsig>  */
+/*   Time-stamp: <12 Feb 04 12:23:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1536,11 +1536,6 @@ void SetIndexField(int *field, int n,...)
 } /* end SetIndexField */
      
 void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)   
-     /* 3. 5. 96 					*/
-     /* last modif. 26.7.96 				*/
-/* last modification: 11 Apr 97 15:54:55 flechsig */
-/* last modification: 24 Sep 97 14:47:04 flechsig */
-
 {
   int i, header, IFeld[8], sou;
   struct RayType *Raysout;  
@@ -1578,6 +1573,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     switch (source) 
       {
       case kESDipolSourceButton: 	sou= 'D'; break;
+      case kESPointSourceButton: 	sou= 'o'; break;
       case kESUndulatorSourceButton: 	sou= 'U'; break;  
       case kESUndulatorSISButton: 	sou= 'L'; break;  /*23.11.98 UF*/
       case kESUndulatorSIMButton: 	sou= 'M'; break;  
@@ -1612,6 +1608,16 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[1], "%f", bl->RTSource.Quelle.DipolSource.sigdy);    
       sprintf(TextField[2], "%f", bl->RTSource.Quelle.DipolSource.sigz);    
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.DipolSource.dz);    
+      sprintf(TextField[4], "%d", bl->RTSource.raynumber);    
+      break;    
+    case 'o':
+      w= widget_array[kESPointSourceButton];  
+      header= 1;
+      SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0);      
+      sprintf(TextField[0], "%f", bl->RTSource.Quelle.PointSource.sigy);    
+      sprintf(TextField[1], "%f", bl->RTSource.Quelle.PointSource.sigdy);    
+      sprintf(TextField[2], "%f", bl->RTSource.Quelle.PointSource.sigz);    
+      sprintf(TextField[3], "%f", bl->RTSource.Quelle.PointSource.sigdz);    
       sprintf(TextField[4], "%d", bl->RTSource.raynumber);    
       break;    
     case 'U':  
@@ -1858,9 +1864,7 @@ void GetSource(struct BeamlineType *bl)
      /****************************************************************/
      /* wertet die sourcebox aus					*/
      /* 20.5.96                              			*/  
-     /* letzte Aenderung: 1.8.96 					*/     
-/* last modification: 24 Sep 97 14:52:21 flechsig */
-/* 24.11.98 UF*/
+
 {
   char *textf[8];
   struct datset x; 
@@ -1909,6 +1913,14 @@ void GetSource(struct BeamlineType *bl)
       sscanf(textf[1], "%lf", &bl->RTSource.Quelle.DipolSource.sigdy);   
       sscanf(textf[2], "%lf", &bl->RTSource.Quelle.DipolSource.sigz);   
       sscanf(textf[3], "%lf", &bl->RTSource.Quelle.DipolSource.dz);  
+      sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
+      MakeRTSource(&PHASESet, bl);   
+      break;
+    case 'o':
+      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.PointSource.sigy);   
+      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.PointSource.sigdy);   
+      sscanf(textf[2], "%lf", &bl->RTSource.Quelle.PointSource.sigz);   
+      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.PointSource.sigdz);  
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   
       break;

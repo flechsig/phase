@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <10 Feb 04 16:32:44 flechsig>  */
+/*   Time-stamp: <12 Feb 04 12:29:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -216,7 +216,8 @@ void activate_proc(w, tag, reason)
     XtManageChild(widget_array[kESourceBox]);        
     break;
   case kESRayTraceButton:                        /* Edit- Source- Pdme */
-  case kESDipolSourceButton:   
+  case kESDipolSourceButton:
+  case kESPointSourceButton:
   case kESUndulatorSourceButton:
   case kESundulatorSourceButton:
   case kESUndulatorSISButton:
