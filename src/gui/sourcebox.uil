@@ -159,7 +159,8 @@ object
 	    XmPushButton	ESundulatorSourceButton;
 	    XmPushButton        ESUndulatorSISButton; 
 	    XmPushButton	ESUndulatorSIMButton;
-           ! XmPushButton        ESSR1Button; 
+	    XmPushButton	ESUndulatorButton;
+          ! XmPushButton        ESSR1Button; 
             XmPushButton        ESSR2Button;     
             XmPushButton        ESPhaseSpaceButton; 
 	    XmPushButton        ESPhaseSpaceImageButton; 

@@ -333,7 +333,7 @@ object
 object
     stoim : XmToggleButton {
         arguments {
-            XmNlabelString      = "source to image";
+            XmNlabelString      = "geometrical optic";
             XmNselectColor	= gold;    
             XmNset              = on; ! A radio box requires one toggle to be set.
             };                                                             
@@ -346,7 +346,7 @@ object
 object
     imtos : XmToggleButton {
         arguments {
-            XmNlabelString      = "image to s. (PST)";
+            XmNlabelString      = "physical optic";
             XmNselectColor	= gold;    
                };                                                             
         callbacks {

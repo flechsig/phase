@@ -222,6 +222,7 @@ void activate_proc(w, tag, reason)
   case kESundulatorSourceButton:
   case kESUndulatorSISButton:
   case kESUndulatorSIMButton:
+  case kESUndulatorButton:
   case kESPhaseSpaceButton:
   case kESFileButton: 
   case kESPhaseSpaceImageButton:

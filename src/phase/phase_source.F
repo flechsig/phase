@@ -10,6 +10,10 @@ c   include 'phase_struct_11.for' in phase_struct.for
 c   einige Kommentare eingefuegt
 c   filenamen auf Strukturvariablen gesetzt
 c   src3_ini structurvariablen eingefuegt
+c
+c	Input files are expected to be in mm
+c	rather than in m 27.2.2004
+c
 c**************************************************************
 	subroutine src_ini(src)	
 c**************************************************************
@@ -257,13 +261,19 @@ c-------------------------------
 	record /control_flags/ ifl
 	record /source2/ so2
 
-	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)/1000.).
+c------	27.2.2004
+c	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)/1000.).
+c     &			ge.(0.9*so2.fscale))then
+	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)).
      &			ge.(0.9*so2.fscale))then
-	    sr.densy=0.
-          else
-	    call source_zernike(so2,cs,ra.rf.zp/1000.,
-     &			ra.rf.yp/1000.,sr.densy)
+     	sr.densy=0.
+	else
+c	    call source_zernike(so2,cs,ra.rf.zp/1000.,
+c     &			ra.rf.yp/1000.,sr.densy)
+	    call source_zernike(so2,cs,ra.rf.zp,
+     &			ra.rf.yp,sr.densy)
 	endif
+c-----  27.2.2004
 
 	if(ifl.ipinarr.eq.1)then
 	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
@@ -288,8 +298,12 @@ c-------------------------------
 	record /control_flags/ ifl
 	record /source3/ so3
 
-	call source_inter(so3,cs,ra.rf.zp/1000.,ra.rf.yp/1000.,
+c-------- 27.2.2004
+c	call source_inter(so3,cs,ra.rf.zp/1000.,ra.rf.yp/1000.,
+c     &			sr.densy)
+	call source_inter(so3,cs,ra.rf.zp,ra.rf.yp,
      &			sr.densy)
+c------- 27.2.2004
 
 	if(ifl.ipinarr.eq.1)then
 	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
@@ -423,8 +437,12 @@ c------- end 19.1.2000 ----------------------------------
 
 	endif			! grating
 
-	xwert=ra.rf.zp/1000.	! mm --> m
-	ywert=ra.rf.yp/1000.	! mm --> m
+c-------- 27.2.2004
+c       xwert=ra.rf.zp/1000.	! mm --> m
+c	ywert=ra.rf.yp/1000.	! mm --> m
+        xwert=ra.rf.zp	        ! units are mm
+	ywert=ra.rf.yp	        ! units are mm
+c------- 27.2.2004
 
 	if(  ((xwert.gt.so4.xeyremin).and.(xwert.gt.so4.xeyimmin)).and.
      &	     ((xwert.lt.so4.xeyremax).and.(xwert.lt.so4.xeyimmax)).and.
@@ -630,8 +648,12 @@ c----------------------------------------------
 	record /control_flags/ ifl
 	record /source6/ so6
 
-	xwert=ra.rf.zp/1000.		! mm --> m
-	ywert=ra.rf.yp/1000.		! mm --> m
+c-------- 27.2.2004
+c	xwert=ra.rf.zp/1000.		! mm --> m
+c	ywert=ra.rf.yp/1000.		! mm --> m
+	xwert=ra.rf.zp	 ! units are mm
+	ywert=ra.rf.yp	 ! units are mm
+c-------- 27.2.2004
 	pxwert=ra.rf.dzp		! rad
 	pywert=ra.rf.dyp		! rad
 

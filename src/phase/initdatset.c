@@ -53,6 +53,7 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
     case kESundulatorSourceButton: i= 'u'; break; 
     case kESUndulatorSISButton:    i= 'L'; break; 
     case kESUndulatorSIMButton:    i= 'M'; break; 
+    case kESUndulatorButton:       i= 'G'; break;
     case kESSR2Button:             i= 'S'; break; 
     case kESPhaseSpaceImageButton: i= 'I'; break;
     case kESDefaults:              i=  0 ; break;

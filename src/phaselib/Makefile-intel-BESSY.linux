@@ -1,112 +1,74 @@
-# File      : /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
-# Date      : <02 Nov 99 16:48:34 flechsig> 
-# Time-stamp: <30 Jan 01 14:24:55 flechsig> 
-# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
-#########################################################################
-# Makefile for the PHASE LIB on LINUX 
-#########################################################################
-SHELL = /bin/sh
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/Makefile.linux
+#  Date      : <27 Oct 03 13:47:54 flechsig> 
+#  Time-stamp: <27 Oct 03 14:04:04 flechsig> 
+#  Author    : Uwe Flechsig, flechsig@psi.ch
 
-FOR         = ifc
-FDEBUG      =
-AR	    = ar -rv
-YACC        = bison -y
-INSTALL     = /home/bahrdt/phas/phase -c
-INSTALLDATA = /home/bahrdt/phas/phase -c -m 644
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
 
-#FFLAGS      = -w -f -s -N3 -N51
-#FFLAGS  = -f -N110 -N109 -W -N90 -N22 -B108 -s
-FFLAGS  =  $(FDEBUG) -c -vms -w95 -132
+#########################################################################
+# Makefile for the PHASE GUI on LINUX
+#########################################################################
+# 1) paths
+SRCDIR      = .
+INSTPATH    = /usr/local/phase
+BUILDPATH   = ~/phase
+#########################################################################
+# 2) tools
+SHELL    = /bin/sh
+INSTALL  = install -c
+UIL	 = ~/phas/phase/lib/uil
+#########################################################################
+# 3) switches
+UILFLAGS	= -o
+#########################################################################
+# 4) others
+UID	 = uid 
+#########################################################################
 
-# for install
-srcdir      = .
-prefix     = /home/bahrdt/phas
-#prefix      = /home/pss060/sls/flechsig
-PHASEDIR    = $(prefix)/phase
+.phony: all
+################ dependencies ###########################################
+AUX       = version.uil Makefile.linux Makefile.vms
+PHASEUILS = phase.uil geometrybox.uil mirrorbox.uil \
+	    grafbox.uil filemenu.uil commandsmenu.uil \
+	    phasevalue.uil editmenu.uil sourcebox.uil \
+	    helpmenu.uil optibox.uil blbox.uil
+SRCS      = $(PHASEUILS)
 
-.phony: all makewhat    
-######################################################################### 
-LIB		= phaselib.a
-#########################################################################
-AUX  = Makefile.bessy Makefile.psicl0 Makefile.linux version.h
-SRCS = \
-wdfgmapa4.for  wdfgmapb4.for   \
-wdfgmapc4.for  wdfgmapd14.for  \
-wdfgmapd34.for wdfgmapd44.for  \
-wdfgmapd54.for wdfgmape14.for  \
-wdfgmape24.for wdfgmapf4.for   \
-wdfgmapg4.for  wdfgmaph4.for   \
-wdfgmapi4.for  wdfgmapk14.for  \
-wdfgmapk24.for wdfgmapl4.for   \
-wdfgmapm14.for wdfgmapm24.for  \
-lengthab4.for  lengtha4.for    \
-lengthb4.for   lengthc4.for    \
-lengthd400.for lengthd401.for  \
-lengthd402.for lengthd410.for  \
-lengthd411.for lengthd412.for  \
-lengthd42.for  lengthd43.for   \
-p_m_4.for  \
-zernike_nl_60.for zernike_n_60.for 
-#########################################################################
-OBJECTS = \
-wdfgmapa4.o   wdfgmapb4.o   \
-wdfgmapc4.o   wdfgmapd14.o  \
-wdfgmapd34.o  wdfgmapd44.o  \
-wdfgmapd54.o  wdfgmape14.o  \
-wdfgmape24.o  wdfgmapf4.o   \
-wdfgmapg4.o   wdfgmaph4.o   \
-wdfgmapi4.o   wdfgmapk14.o  \
-wdfgmapk24.o  wdfgmapl4.o   \
-wdfgmapm14.o  wdfgmapm24.o  \
-lengthab4.o   lengtha4.o    \
-lengthb4.o    lengthc4.o    \
-lengthd400.o  lengthd401.o  \
-lengthd402.o  lengthd410.o  \
-lengthd411.o  lengthd412.o  \
-lengthd42.o   lengthd43.o   \
-p_m_4.o  \
-zernike_nl_60.o  zernike_n_60.o 
-#phlib.o
-#########################################################################
-#                            targets                                    # 
-all: $(LIB)	
-	@echo "Making $(LIB) for LINUX..." 
-#########################################################################
-$(LIB): $(OBJECTS)
-	$(AR) $@ $(OBJECTS)  
-	ranlib -v $@
-##########################################################################
-%.o : %.for 
-	$(FOR) $(FFLAGS) $@ $<   
-##########################################################################
+all: phase.$(UID)
+	@echo "make phase.uid..."
+
+phase.$(UID): $(PHASEUILS)
+	$(UIL) $(UILFLAGS) phase.$(UID) phase.uil 
+
 install: all
-	$(INSTALL) $(LIB) $(PHASEDIR)/lib/$(LIB)
+	$(INSTALL) phase.$(UID) $(INSTPATH)/lib/phase.$(UID)
 
-clear:
-	@echo "delete objects and exe..."  
-	rm *.o $(LIB) core
+clear: 
+	@echo "delete phase.uid.."
+	rm     phase.$(UID) core *~
 
-TAGS:   $(SRCS)
-	etags $(SRCS)
-     
-clean:
-	rm -f *.o  core $(LIB)
-     
-distclean: clean
-	rm -f TAGS  config.status
+clean: 
+	@echo "delete phase.uid.."
+	rm     phase.$(UID) core *~
+
+TAGS:   $(PHASEUILS)
+	etags $(PHASEUILS)
 
 dist: $(SRCS) $(AUX)
-	echo phaselib-`sed \
+	echo phasegui-`sed \
 	-e '/VERSION_STRING/!d' \
 	-e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
 	-e 'q' \
-	version.h` > .fname
+	version.uil` > .fname
 	-rm -rf `cat .fname`
 	mkdir `cat .fname`
 	ln $(SRCS) $(AUX) `cat .fname`
 	-rm -rf `cat .fname`.fname
 	tar -chzf `cat .fname`.tgz `cat .fname`
 	-rm -Rf `cat .fname`
-	ln `cat .fname`.tgz $(PHASEDIR)/release
-####################      end makefile       ###############################
-#end /home/pss060/sls/flechsig/phase/src/phaselib/Makefile.linux
+	ln `cat .fname`.tgz $(BUILDPATH)/release
+##################### end makefile ####################################
+# end /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux

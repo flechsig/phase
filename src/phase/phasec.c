@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Feb 04 13:17:20 flechsig>  */
+/*   Time-stamp: <18 Feb 04 16:45:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -39,9 +39,11 @@
 #include "rtrace.h"
 #include "version.h"
 
-void BatchMode(char *fname, int cmode, int selected)
+void BatchMode(char *fname, int cmode)
 /* Uwe 2.10.96 */
 /* Batchmodus */
+/* modification: 14 Oct 97 13:41:13 flechsig */
+/* modification: 23 Oct 97 07:47:23 flechsig */
 {
   printf("BatchMode: datafilename  : %s\n", PHASESet.beamlinename);
   printf("BatchMode: resultfilename: %s\n", PHASESet.imageraysname);
@@ -74,13 +76,9 @@ void BatchMode(char *fname, int cmode, int selected)
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESUnion.Rays); 
       break;
-    case 4:
-      printf("BatchMode: Footprint at element %d\n", selected);
-      Beamline.position= selected;
-      MakeRTSource(&PHASESet, &Beamline);
+    case 5:
+      printf("BatchMode: Footprint Ray Tracing\n");
       Footprint(&Beamline, Beamline.position);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESUnion.Rays);
       break;
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
@@ -121,13 +119,14 @@ void FixFocus(double cff, double lambda, double ldens, int m,
 int ProcComandLine(unsigned int ac, char *av[])
 /* Uwe 2.10.96 */
 /* Wertet Kommandozeile aus */
+/* modification: 14 Oct 97 13:29:39 flechsig */
+/* modification: 23 Oct 97 07:48:12 flechsig */
 {
-  int  ret, i, cmode, selected;
+  int  ret, i, cmode;
   char *ch, *dfname, *resultname, *pfname; 
   
   i= ret= 1;
   cmode= -1;
-  selected= -1;
   /* defaults */
   pfname=     (char *) MainPickName; 
   resultname= (char *) PHASESet.imageraysname;
@@ -143,16 +142,11 @@ int ProcComandLine(unsigned int ac, char *av[])
 	  ret= 0;
 	  break;
 	case 'M':             /* rechenmodus */
+	case 'G':             /* rechenmodus */
 	case 'm':
 	  ch++; 
 	  sscanf(ch, "%d", &cmode);
 	  printf("ProcComandLine: calculation mode: %d\n", cmode);
-	  break;
-	case 'S':             /* selected element */
-	case 's':
-	  ch++; 
-	  sscanf(ch, "%d", &selected);
-	  printf("ProcComandLine: selected element: %d\n", selected);
 	  break;
 	case 'F':
 	case 'f':
@@ -183,8 +177,6 @@ int ProcComandLine(unsigned int ac, char *av[])
 	  printf("                                  1: ray trace\n");
 	  printf("                                  2: full ray trace\n");
 	  printf("                                  3: phase space density\n");
-	  printf("                                  4: footprint (requires option s)\n");
-	  printf("                -s, -Snumber:     selected element number (for footprint)\n");
 	  exit(3);
 	  break;
 	default: 
@@ -195,7 +187,7 @@ int ProcComandLine(unsigned int ac, char *av[])
 
   if (ret == -8)
     {
-      BatchMode(pfname, cmode, selected);
+      BatchMode(pfname, cmode);
       exit(3);
     }
   return ret;
@@ -206,7 +198,9 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
      /* Uwe 25.6.96 							*/
      /* umgeschrieben - keine fileausgabe mehr 			        */
      /* datenstruktur soll gleich sin und cosinus werte enthalten 	*/
-    /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
+  
+     /* last modification: 20 Jun 97 12:05:30 flechsig */
+/* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 {
   double delta, alpha, beta, theta0, trans, radius;
   int i;
@@ -787,9 +781,10 @@ void readmatrixfilec(char *fname, double *map, int dim)
       fscanf(f, "%d %d %lf\n", &i, &j, &tmp);
       /*     printf("i, j, tmp: %d %d %lf\n", i,j,tmp);   */   
       map[(i- 1)+ (j- 1)* dim]= tmp;
-      k++;
+       k++;
     }
   fclose(f);     
+
 }
 /******** read matrixfile ************************************/
 
@@ -1547,7 +1542,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
   Widget w;  
   char TextField[8][40],            /* 8 editfelder */
    
-    *LabelField1 [35] =  {	"", "-> points",         		/*0,1*/
+    *LabelField1 [39] =  {	"", "-> points",         		/*0,1*/
 				"height [mm]",     "width [mm]",   	/*2,3*/
 				"v. div. [mrad]", "h. div. [mrad]", 
 				"ray number", 				/* 6 */
@@ -1569,7 +1564,10 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
 				"zmin [mm]", "zmax [mm]",
 				"y points",  "z points", 
 				
-				"Delta z [mm]", };                     /*33*/
+				"Delta z [mm]",                      /*33*/  
+                                "sigmaez [mm]", "sigmaey [mm]",      /*34,35 */         
+                                "sigmaedz [mrad]", "sigmaedy [mrad]" /*36,37 */         
+    };                    
 #ifdef DEBUG 
     printf("InitSourceBox: wdgnumber: %d, bl->RTSource.QuellTyp: %c\n", 
 	   source, bl->RTSource.QuellTyp);   
@@ -1582,6 +1580,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       case kESUndulatorSISButton: 	sou= 'L'; break;  /*23.11.98 UF*/
       case kESUndulatorSIMButton: 	sou= 'M'; break;  
       case kESundulatorSourceButton: 	sou= 'u'; break;
+      case kESUndulatorButton:          sou= 'G'; break;
       case kESSR2Button: 		sou= 'S'; break;  
       case kESPhaseSpaceButton:	        sou= 'P'; break;  
       case kESPhaseSpaceImageButton: 	sou= 'I'; break; 
@@ -1655,7 +1654,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.UndulatorSource.deltaz);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;     
-        case 'M':  
+    case 'M':  
       w= widget_array[kESUndulatorSIMButton]; 
       header= 6;
       SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);      
@@ -1663,6 +1662,20 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
       sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
       sprintf(TextField[3], "%f", bl->RTSource.Quelle.UndulatorSource.deltaz);  
+      set_something(widget_array[kEST2], XmNsensitive, False); 
+      break;        
+    case 'G':  
+      w= widget_array[kESUndulatorButton]; 
+      header= 6;
+      SetIndexField(IFeld, 8, 7, 8, 6, 33, 34, 35, 36, 37);      
+      sprintf(TextField[0], "%f", bl->RTSource.Quelle.UndulatorSource0.length);
+      sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
+      sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
+      sprintf(TextField[3], "%f", bl->RTSource.Quelle.UndulatorSource0.deltaz);  
+      sprintf(TextField[4], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaez);  
+      sprintf(TextField[5], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaey);  
+      sprintf(TextField[6], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaedz);  
+      sprintf(TextField[7], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaedy);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;        
     case 'S':
@@ -1877,11 +1890,11 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
 
   sprintf(TextField[20], "%.f" , x->w1);    
   sprintf(TextField[21], "%.f", x->w2);    
-  sprintf(TextField[22], "%.3f", x->slopew);
+  sprintf(TextField[22], "%.1f", x->slopew);
 
   sprintf(TextField[23], "%.f", x->l1);    
   sprintf(TextField[24], "%.f", x->l2);    
-  sprintf(TextField[25], "%.3f", x->slopel);
+  sprintf(TextField[25], "%.1f", x->slopel);
 
   for (i= 0; i < imax; i++)
     set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
@@ -1920,7 +1933,7 @@ void GetSource(struct BeamlineType *bl)
   switch (bl->RTSource.QuellTyp) 
     {
     case 'F':
-      printf("GetSource: source from file not yet fully implemented!\n");
+      printf("source from file not yet fully implemented!\n");
       /*   bl->RTSource.SourceRays= (struct RayType *)     */
       ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
 		  &bl->RESULT); 
@@ -1979,12 +1992,25 @@ void GetSource(struct BeamlineType *bl)
       break;
     case 'L':
     case 'M':
-     sscanf(textf[0], "%lf", &bl->RTSource.Quelle.UndulatorSource.length);   
+      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.UndulatorSource.length);   
       sscanf(textf[1], "%lf", &bl->RTSource.Quelle.UndulatorSource.lambda);  
       bl->RTSource.Quelle.UndulatorSource.lambda= bl->BLOptions.lambda;
       sscanf(textf[2], "%d", &bl->RTSource.raynumber);   
       sscanf(textf[3], "%lf", &bl->RTSource.Quelle.UndulatorSource.deltaz);
       MakeRTSource(&PHASESet, bl);   /* */ 
+      break;
+    case 'G':
+      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.UndulatorSource0.length);   
+      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.UndulatorSource0.lambda);  
+      bl->RTSource.Quelle.UndulatorSource.lambda= bl->BLOptions.lambda;
+      sscanf(textf[2], "%d",  &bl->RTSource.raynumber);   
+      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.UndulatorSource0.deltaz);
+      sscanf(textf[4], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaez);  
+      sscanf(textf[5], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaey);  
+      sscanf(textf[6], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaedz);  
+      sscanf(textf[7], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaedy);   
+
+       MakeRTSource(&PHASESet, bl);   /* */ 
       break;
     case 'S':
       sscanf(textf[0], "%lf", &bl->RTSource.Quelle.SRSource.y);   
@@ -2066,7 +2092,6 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
 
   text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &gp->theta0);
-  mp->alpha= gp->theta0;
   text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &mp->r1); 
   text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &mp->r2);
  

@@ -1,7 +1,6 @@
-#    -*-makefile-*-                emacs hint
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <17 Feb 04 12:07:40 flechsig> 
+# Time-stamp: <21 May 01 15:31:15 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -9,7 +8,7 @@
 SHELL = /bin/sh 
 
 DEBUG	    = -DDEBUG
-DEFS        = -DLINUX $(DEBUG) -DCADDR_T  # caddr_t im Headerfile
+DEFS        = -DLINUX $(DEBUG) -DCADDR_T  -DHAVE_CONFIG_H # caddr_t im Headerfile
 CC          = gcc -v
 PP          = g77 -E -o
 FOR         = ifc  
@@ -53,46 +52,40 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = /home/bahrdt/phas/phase/lib/libphase.a \
+LIBS    = /home/bahrdt/phasenew/phase-1.15/lib/libphase.a \
 -L/opt/cern/pro/lib \
 -lpacklib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib \
 /lib/libpthread.so.0 \
-/usr/lib/libg2c.a \
+/usr/lib/gcc-lib/i486-linux/3.3.3/libg2c.a \
 /usr/X11R6/lib/libX11.so.6 \
 -L/opt/intel/compiler/ia32/lib \
 -lCEPCF90 -lIEPCF90 -lintrins -lF90 \
 #	  -Xlinker -defsym -Xlinker MAIN__=main
 #########################################################################
-OBJECTC = phase.o phasec.o \
+OBJECTC = phase.o phase0.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
 	  geometrypck.o bline.o \
 	  mirrorpck.o pst.o \
-	  cutils.o rtrace.o \
-	  error.o xmalloc.o xstrdup.o
+	  cutils.o rtrace.o xmalloc.o error.o xstrdup.o
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
-	  dfpl1_uf.o \
-	  dfpl2_uf.o \
 	  phase_integration.o \
-	  misali.o misali1.o misali2.o misali3.o misali4.o
+	  misali.o misali1.o misali2.o misali3.o misali4.o 
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 Makefile.pc2346 \
           Makefile.egcs.pc2038 \
           phase_struct.for news coefficient-example.dat
-SRCC    = phase.c phasec.c \
+SRCC    = phase.c phase0.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
 	  mirrorpck.c pst.c \
-	  cutils.c rtrace.c \
-          error.c xmalloc.c xstrdup.c
+	  cutils.c rtrace.c xmalloc.c error.c xstrdup.c
 SRCF    = phasegraffor.F phasefor.F \
 	  phase_source.F \
-	  dfpl1_uf.for \
-	  dfpl2_uf.for \
 	  phase_integration.F \
-          misali.F misali1.f misali2.f misali3.f misali4.f
+	  misali.F misali1.f misali2.f misali3.f misali4.f 
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
@@ -107,7 +100,7 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 %.o : %.c $(PHASEHS)
 	$(CC) $(CFLAGS) -o $@ $< 
 
-%.o : %.for phase_struct.for 
+%.o : %.f phase_struct.for 
 	$(FOR) $(FFLAGS) $@ $<   
 
 %.o : %.f
@@ -120,10 +113,8 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 ##########################################################################
 install: all
 	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
-	$(INSTALL) news $(INSTPATH)/share/$(PROGRAM)/news
-	$(INSTALL) coefficient-example.dat \
-                   $(INSTPATH)/share/$(PROGRAM)/coefficient-example.dat
-
+	$(INSTALL) news $(INSTPATH)/lib/news
+	$(INSTALL) coefficient-example.dat $(INSTPATH)/lib/coefficient-example.dat
 
 clear:
 	@echo "delete objects and exe..."  

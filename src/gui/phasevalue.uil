@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <23 Feb 04 16:47:21 flechsig> 
+! Time-stamp: <17 Feb 04 12:29:25 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
@@ -118,6 +118,7 @@ value
     kESundulatorSourceButton: 107;       !low beta
     kESUndulatorSISButton : 108;
     kESUndulatorSIMButton : 109;
+    kESUndulatorButton    : 110;
 
     k_help_overview       : 119;        ! help 
     k_help_about          : 120; 
@@ -466,7 +467,7 @@ value
 
 list 
    ETextArgs: arguments {
-               XmNcolumns          = 7;
+               XmNcolumns          = 6;
                XmNrows             = 1;
                XmNmaxLength        = 10;
                XmNvalue            = "";

@@ -92,11 +92,13 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
 {
    int i;                          
    double beugung, zweipi, deltax, deltaz, sigdy, sigdz,
-          sigey, sigez, sigedz, sigedy;                /* e- emittance */
+          sigey, sigez, sigedz, sigedy, factsig, factsigp;   /* e- emittance */
    time_t zeit;
    struct UndulatorSourceType *x;  
+   struct UndulatorSource0Type *x0;  
    
    x= (struct UndulatorSourceType *) &(y->Quelle.UndulatorSource);  
+   x0= (struct UndulatorSource0Type *) &(y->Quelle.UndulatorSource0);
    time(&zeit); srand(zeit);                 /* Random initialisieren */
    zweipi= 2.0* PI;                          /* 8.0* atan(1.0);       */
 
@@ -126,6 +128,14 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
        sigedz  = (fabs(x->deltaz) > 1e-6) ?  4.5e-5 : 5.1e-5;   
        sigedy  = (fabs(x->deltaz) > 1e-6) ? 3.24e-6 : 3.31e-6; 
      break;
+     case 'G':
+       printf("Generic Undulator\n");
+       sigez   = x0->sigmaez;          /* mm */
+       sigey   = x0->sigmaey;
+       sigedz  = (x0->sigmaedz)/1000.;  /* rad */   
+       sigedy  = (x0->sigmaedy)/1000.;  /* rad */
+       x->deltaz=0; /* kein horizontaler Versatz */
+     break;
      default:
        printf("BESSY II undulator in low beta section\n");
        sigez  = 0.076; 
@@ -134,13 +144,23 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
        sigedz = 1.7e-5;  
      break;
    }
-   beugung    = sqrt(x->lambda* x->length)* 0.21; /*  (2.* zweipi);*/
+
+/******** hier gibt es verschieden Definitionen **********************/
+/*** Coisson factor wegen energyspread ??  */
+   factsig=0.21;              /* = 0.210 */
+   factsigp=sqrt(0.34);       /* = 0.583 */
+   
+/*** fitten von Gaussglocken, Buch von Elleaume oder Rechnungen mit WAVE **/
+
+   factsig=sqrt(2.)/zweipi;   /* = 0.225 */
+   factsigp=1./sqrt(2.);       /* = 0.707 */
+   
+   beugung    = sqrt(x->lambda* x->length)* factsig;
    x->sigvert = sqrt(sigey* sigey + beugung * beugung);
    x->sighor  = sqrt(sigez* sigez + beugung * beugung);
 /********************************************************************/
-   /* Coissons factor wurde eingefuegt wegen energyspread  */
-   sigdy= sqrt(0.34* x->lambda/ x->length + sigedy* sigedy);  /*Coisson*/
-   sigdz= sqrt(0.34* x->lambda/ x->length + sigedz* sigedz);
+   sigdy= sqrt(factsigp*factsigp * x->lambda/ x->length + sigedy* sigedy);
+   sigdz= sqrt(factsigp*factsigp * x->lambda/ x->length + sigedz* sigedz);
    i= 0;
    
    if (fabs(x->deltaz) > 1e-6)                     /* sls sonderfall */
@@ -304,6 +324,9 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
        break; 
      case 'M':
        MakeUndulatorSource(&(bl->RTSource), 'M');       /* SIM */
+       break; 
+     case 'G':
+       MakeUndulatorSource(&(bl->RTSource), 'G');       /* generic */
        break; 
      case 'D':
        MakeDipolSource(&(bl->RTSource));       

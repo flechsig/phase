@@ -140,6 +140,19 @@ object
 ! end 23.11.98
 
 object
+    ESUndulatorButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Generic Undulator";
+            XmNmnemonic         = keysym("G"); 
+		};
+        callbacks {
+         MrmNcreateCallback  = procedure create_proc(kESUndulatorButton);
+         XmNactivateCallback = procedure 
+			        activate_proc(kESUndulatorButton);
+            };
+        };      
+
+object
     ESPhaseSpaceButton: XmPushButton {
         arguments {
             XmNlabelString      = "PS Source";
