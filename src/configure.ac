@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <05 Feb 04 11:08:35 flechsig> 
+#   Time-stamp: <05 Feb 04 14:14:25 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -33,8 +33,10 @@ AC_CHECK_PROG([UIL],[uil],[uil])
 ##do LIBTOOL test after fortran stuff
 
 ## the preference of fortran compilers
-AC_PROG_F77(f90com f77 g77)
+AC_PROG_F77(ifc f77 g77)
 AC_F77_LIBRARY_LDFLAGS
+AC_SUBST(F77LIBS,${FLIBS})
+##AC_MSG_NOTICE(***FLIBS*** ${FLIBS})
 AC_PATH_PROG([f77path],[f77])
 AC_MSG_CHECKING(for a supported compiler type)
 ##if test "$F77" = "g77"; then
@@ -42,10 +44,13 @@ if test "$G77" = "yes"; then
    AC_MSG_RESULT(no)
    AC_MSG_WARN([[GNU g77 will probably not work]])
 else 
-    if test "$F77" = "f90com"; then
-     AC_MSG_RESULT(found Intel f90com)
+    if test "$F77" = "ifc"; then
+     AC_MSG_RESULT(found Intel ifc)
      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
      AC_SUBST([FFLAGS],"-c -vms -w95 -132")
+##     f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'`
+##     AC_MSG_NOTICE(we expect f77 libs at ${f77lib}) 
+##     AC_SUBST(F77LIB,${f77lib})
   else
      AC_MSG_RESULT(found Absoft f77)
      AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
@@ -65,9 +70,12 @@ else
 ##	-m0 give more error messages
 ##	-N22 append underscore to common block names (wichtig wegen pawc)
 ##      -N33 pack structures (kein alignment) 
-    f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'`
-    AC_MSG_NOTICE(we expect f77 libs at ${f77lib}) 
-    AC_SUBST(F77LIB,${f77lib})
+##    f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'`
+
+##    AC_MSG_NOTICE(we expect f77 libs at ${f77lib}) 
+##    f77lib= ${f77lib} -lf77math -lfio -lU77 -lV77 -lf77math
+##    AC_MSG_NOTICE(we expect f77 libs at ${f77lib})
+##    AC_SUBST(F77LIB,${f77lib})
   fi
 fi
 ## libtool init after selecting the fortran compiler
@@ -77,8 +85,17 @@ AC_PROG_LIBTOOL
 ## we search for paw and expect the cernlib there
 AC_MSG_NOTICE(search for CERN lib by searching for paw)
 cernlib=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
-AC_MSG_NOTICE(we expect the CERN lib at ${cernlib})
-AC_SUBST(CERNLIB,${cernlib})
+AC_MSG_NOTICE((1) we search the CERN lib at ${cernlib})
+## check if we find the packlib there libpacklib.a
+AC_CHECK_FILE([${cernlib}/libpacklib.a], 
+  AC_SUBST(CERNLIB,${cernlib}),
+  [ cernlib=`echo ${cernlib} | sed -e 's|lib|apps/cern/2000/lib|'`
+    AC_MSG_NOTICE((2) we search the CERN lib at ${cernlib})
+    AC_CHECK_FILE([${cernlib}/libpacklib.a], 
+      AC_SUBST(CERNLIB,${cernlib}), AC_MSG_ERROR(cannot find the CERN lib))
+])
+
+##AC_SUBST(CERNLIB,${cernlib})
 
 dnl Checks for libraries.
 ## we skip all library tests
@@ -119,11 +136,9 @@ AC_TYPE_SIZE_T
 ## call own m4
 ##SIC_VAR_SYS_ERRLIST
 
-
-
-
-
 dnl Checks for library functions.
+
+
 
 AC_OUTPUT(Makefile phaselib/Makefile phase/Makefile \
           opti/Makefile extr/Makefile gui/Makefile)

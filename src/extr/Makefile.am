@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <03 Feb 04 15:00:25 flechsig> 
+#  Time-stamp: <05 Feb 04 14:22:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -31,7 +31,7 @@ phaseextract_LDADD = $(libdir)/@LIBPHASE@
 AM_CPPFLAGS = -DLINUX @CDEBUG@
 AM_FFLAGS   = @FDEBUG@
 AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-          -L@F77LIB@ -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
+          @FLIBS@ \
           -L@CERNLIB@ -lpawlib -lpacklib \
           -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
 ##we use the c linker
