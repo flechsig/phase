@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <19 Feb 04 11:09:01 flechsig> 
+#   Time-stamp: <19 Feb 04 11:10:38 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -116,7 +116,7 @@ AC_HELP_STRING([--enable-debug],[debugging code, static linking]),
 ## AC_MSG_NOTICE(*** produce production code (using shared libs) ***)
 ## AC_SUBST([LIBPHASE], libphase.so)
 ## shared libs are not possible with our absoft compiler
-  AC_MSG_NOTICE(*** enable production mode ***)
+  AC_MSG_NOTICE(***** produce production code *****)
   AC_SUBST([LIBPHASE], libphase.a)
 )
 
