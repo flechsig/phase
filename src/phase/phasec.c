@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Feb 04 10:21:17 flechsig>  */
+/*   Time-stamp: <26 Feb 04 13:17:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -206,9 +206,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
      /* Uwe 25.6.96 							*/
      /* umgeschrieben - keine fileausgabe mehr 			        */
      /* datenstruktur soll gleich sin und cosinus werte enthalten 	*/
-  
-     /* last modification: 20 Jun 97 12:05:30 flechsig */
-/* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
+    /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 {
   double delta, alpha, beta, theta0, trans, radius;
   int i;
@@ -2068,6 +2066,7 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
 
   text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &gp->theta0);
+  mp->alpha= gp->theta0;
   text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &mp->r1); 
   text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &mp->r2);
  
