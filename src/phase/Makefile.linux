@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <15 Nov 99 17:04:25 flechsig> 
+# Time-stamp: <23 Nov 99 11:50:53 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -24,7 +24,7 @@ prefix     = /home/pss060/sls/flechsig
 PHASEDIR   = $(prefix)/phase
 
 #LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
-CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS)      -c
+CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c -g
 #FFLAGS  = -w -f -s -N3 -N51
 FFLAGS  = -f -N110 -N109 -W -N90 -N22 -B108 -s
 LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
