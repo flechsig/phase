@@ -1,7 +1,12 @@
-/*  File      : /home/vms/flechsig/vms/phas/phasec/phase0.c */
-/*  Date      : <15 Oct 98 08:08:39 flechsig>  */
-/*  Time-stamp: <15 Oct 98 08:09:53 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
+/*   Date      : <31 Oct 03 09:07:21 flechsig>  */
+/*   Time-stamp: <31 Oct 03 09:20:29 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 
 /* das File ist identisch zu phase.c ohne main()     */
@@ -9,28 +14,30 @@
 /* todo: den Teil phase0.c aus phase.c entfernen,    */
 /*       und in phase.c nur noch main() belassen     */
  
-#include stdio                               /* For printf and so on. */
-#include stdlib	    	    	    	     /* needed for fopen      */
-#include string
-#include descrip                             /* for FORTRAN- String   */     
-#include math
+#include <stdio.h>                    /* For printf and so on. */
+#include <stdlib.h>	    	      /* needed for fopen      */
+#include <string.h>
+#include <math.h>
 
-#include <Xm/Text.h>                         /* fileBox               */
+#include <Xm/Text.h>                  /* fileBox               */
 #include <Xm/FileSB.h>    
 #include <Xm/List.h>   
 #include <Xm/MessageB.h>    
 #include <Xm/SelectioB.h>   
-#include <Mrm/MrmAppl.h>      
-#include <DXm/DXmHelpB.h>      
-#include <DXm/DXmPrint.h>      
+#include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#include <DXm/DXmColor.h>   
-#include <DXm/DECspecific.h>  
-#include <sys$library/DECw$Cursor.h>
-
+/* DEC specific */
+#ifdef VMS
+  #include <descrip.h>                  /* for FORTRAN- String   */ 
+  #include <DXm/DXmHelpB.h>      
+  #include <DXm/DXmPrint.h>      
+  #include <DXm/DXmColor.h>   
+  #include <DXm/DECspecific.h>  
+  #include <sys$library/DECw$Cursor.h>
+#endif
 #include "cutils.h"                     /* muss for rtrace.h stehen */    
-#include "phase_struct_10.h"
+#include "phase_struct.h"
 #include "fg3pck.h"     
 #include "mirrorpck.h" 
 #include "geometrypck.h"                         
@@ -79,10 +86,9 @@ void init_application()
     print_widget= NULL; 		/* Initialize print widgets. */      
               
     color_widget= NULL;   		/* Initialize color mix widget. */      
-               
     /* Set up the compound strings that we need. */
-    latin_space = DXmCvtFCtoCS(" ", &bc, &status);
-    latin_zero  = DXmCvtFCtoCS(" 0", &bc, &status);
+    latin_space = XmStringCreateLocalized(" ");
+    latin_zero  = XmStringCreateLocalized(" 0");
 
     ActualTask= 0;  
 }
@@ -181,16 +187,19 @@ void create_help (help_topic)
         if (MrmFetchWidget (s_MrmHierarchy, "main_help", toplevel_widget,
 	    	  	    &help_widget[help_num], &dummy_class) != MrmSUCCESS)
 	s_error ("can't fetch help widget");     
-           
+#ifdef VMS           
         XtSetArg (arglist[0], DXmNfirstTopic, help_topic);
+#endif
         XtSetValues (help_widget[help_num], arglist, 1);       
         XtManageChild(help_widget[help_num]);    
         help_num++;   
     	stop_watch();
         return; 
     }   
-      
+
+#ifdef VMS      
     XtSetArg (arglist[0], DXmNfirstTopic, help_topic);
+#endif
     XtSetValues (main_help_widget, arglist, 1);
     XtManageChild(main_help_widget);     
     stop_watch();
@@ -203,7 +212,9 @@ void create_help (help_topic)
 
 void tracking_help()
 {          
+#ifdef VMS
   DXmHelpOnContext(toplevel_widget, FALSE);	
+#endif
 }
 
 
@@ -230,8 +241,10 @@ void create_print()
     
     ac = 0;                       
     XtSetArg (arglist[ac], XmNokCallback, callback_arg);ac++;
+#ifdef VMS
     XtSetArg (arglist[ac], DXmNsuppressOptionsMask, 
 	      DXmSUPPRESS_DELETE_FILE | DXmSUPPRESS_OPERATOR_MESSAGE); ac++;
+#endif
 	      XtSetValues (print_widget, arglist, ac);      
   }      
   
@@ -261,9 +274,11 @@ void create_color()
 		XDefaultColormapOfScreen(the_screen), &newcolor);
     
     ac = 0;                          
+#ifdef VMS
     XtSetArg (arglist[ac], DXmNorigRedValue, newcolor.red); ac++;		
     XtSetArg (arglist[ac], DXmNorigGreenValue, newcolor.green); ac++; 
     XtSetArg (arglist[ac], DXmNorigBlueValue, newcolor.blue); ac++;
+#endif
     XtSetValues(color_widget, arglist, ac);     
     
     savecolor.red = newcolor.red;
@@ -322,44 +337,58 @@ void list_proc(w, tag, list)                 /* selection callback */
      XmListCallbackStruct *list;
 {
   XmString xlabel;   
-  char clabel[50], *clabelp;
-  int epos, ppos, indx, *pl[1], pc;
+  char clabel[MaxPathLength], *clabelp = NULL;
+  int epos, ppos, indx, *pl, pc;
   
   switch (*tag)
     {
     case kEBLList:
       epos= list->item_position; 
-      ppos= (XmListGetSelectedPos(widget_array[kEBLList], pl, &pc) 
-	     == True) ? **pl : 0; 
+      epos= (XmListGetSelectedPos(widget_array[kEBLList], &pl, &pc) 
+	 == True) ? pl[0] : 0; 
+      XtFree((char *) pl);
       sprintf(clabel, "selected element %3d", epos); 
-      xlabel= DXmCvtFCtoCS(clabel, &bc, &status);
+      xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
-      printf("fetch\n");
+      XmStringFree(xlabel); 
+      if (epos > 0) /* make only sense if something is selected */
+	{
+#ifdef DEBUG
+      printf("list_proc: fetch mirror and element box\n");
+#endif
       FetchWidget(kEOElement, "EOElementBox");
       XtManageChild(widget_array[kEOElement]);
       FetchWidget(kEGeometry, "EGeometryBox");
       XtManageChild(widget_array[kEGeometry]);
+#ifdef DEBUG
+      printf("list_proc: call UpdateBLBox\n");
+#endif      
       UpdateBLBox(&Beamline, epos);
+	}
       break;
 
     case kCOptiList:
       epos= list->item_position; 
-      ppos= (XmListGetSelectedPos(widget_array[kCOptiList1], pl, &pc) 
-	     == True) ? **pl : 0; 
+      ppos= (XmListGetSelectedPos(widget_array[kCOptiList1], &pl, &pc) 
+	     == True) ? pl[0] : 0; 
+      XtFree((char *)pl);
       break;
 
     case kCOptiList1:
       ppos= list->item_position; 
-      epos= (XmListGetSelectedPos(widget_array[kCOptiList], pl, &pc) 
-	     == True) ? **pl : 0; 
+      epos= (XmListGetSelectedPos(widget_array[kCOptiList], &pl, &pc) 
+	     == True) ? pl[0] : 0; 
+      XtFree((char *)pl);
       break;    
       
     case kCOptiList2:
       xlabel= XmStringCopy(list->item);
-      clabelp= DXmCvtCStoFC(xlabel, &bc, &status);  
+      if (!XmStringGetLtoR(xlabel, XmSTRING_DEFAULT_CHARSET, &clabelp))
+	return;
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
+      XmStringFree(xlabel); 
       break;      
       
     }
@@ -368,13 +397,14 @@ void list_proc(w, tag, list)                 /* selection callback */
       printf("list_proc=> element %d, position %d\n", epos, ppos);
       indx= iindex(epos, ppos);
       sprintf(clabel, "selected element %3d;  index: ", epos);    
-      xlabel= DXmCvtFCtoCS(clabel, &bc, &status);
+      xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kCOptiSelectedLabel], XmNlabelString, 
 		    xlabel); 
+      XmStringFree(xlabel); 
       sprintf(clabel, "%4d", indx);  
       set_something(widget_array[kCOptiT2], XmNvalue, clabel); 
     } 
-  XmStringFree(xlabel);            
+               
 }
      
 
@@ -421,8 +451,9 @@ void exit_proc(w, tag, reason)
   if (tag != NULL) printf("Exit - %s\n", tag);
   exithplot();
   /* Close the Help System */  
+#ifdef VMS
   DXmHelpSystemClose(help_context, help_error, "Help System Error");  
-  
+#endif  
   exit(1);
 }           
 
@@ -496,8 +527,10 @@ void help_system_proc(w, tag, reason)
     XmAnyCallbackStruct *reason; 
                         
 {                               
+#ifdef VMS
   DXmHelpSystemDisplay(help_context, PHASE_help, "topic", (char *)tag,
 		       help_error, "Help System Error");    
+#endif
   /*%%%DXmHelpSystemDisplay(help_context, PHASE_help, "topic", tag,
     help_error, "Help System Error");  */
 }                    
@@ -573,9 +606,10 @@ void activate_print(w, tag, reason)
     {
       file_pointer[i] = XmStringCopy(list[i]);     
     }
-  
+#ifdef VMS  
   l_status = DXmPrintWgtPrintJob(print_widget, file_pointer, itemcount);
   printf("DXmPrintWgtPrintJob return status: %x\n",l_status);
+#endif
   for (i= 0; i< itemcount; i++) XmStringFree(file_pointer[i]);   
 }
 
@@ -586,15 +620,22 @@ void activate_print(w, tag, reason)
 void ok_color_proc(widget_id, tag, reason)
      Widget                     widget_id;
      int                        *tag;        
+#ifdef VMS
      DXmColorMixCallbackStruct  *reason;
+#else
+     void                       *reason;   /* dummy */
+#endif
+
 {                        
   int         ac;
   Arg         arglist[10];
   XColor      newcolor;
   
-  newcolor.red = reason->newred;
+#ifdef VMS
+  newcolor.red   = reason->newred;
   newcolor.green = reason->newgrn;
-  newcolor.blue = reason->newblu;
+  newcolor.blue  = reason->newblu;
+#endif
   
   if (XAllocColor(the_display,
                   XDefaultColormapOfScreen(the_screen), &newcolor)) {
@@ -611,9 +652,11 @@ void ok_color_proc(widget_id, tag, reason)
   XtUnmanageChild(color_widget);     
   
   ac = 0;                     
+#ifdef VMS
   XtSetArg (arglist[ac], DXmNorigRedValue, newcolor.red);ac++;	     	
   XtSetArg (arglist[ac], DXmNorigGreenValue, newcolor.green);ac++; 
   XtSetArg (arglist[ac], DXmNorigBlueValue, newcolor.blue);ac++;          
+#endif
   XtSetValues(color_widget, arglist, ac);     
 }
 
@@ -623,16 +666,21 @@ void ok_color_proc(widget_id, tag, reason)
 void apply_color_proc(widget_id, tag, reason)
      Widget			widget_id;
      int				*tag;        
+#ifdef VMS
      DXmColorMixCallbackStruct	*reason;
-     
+#else
+     void                       *reason;   /* dummy */
+#endif     
 {                        
   int		ac;
   Arg		arglist[10];
   XColor	newcolor;
   
-  newcolor.red = reason->newred;
+#ifdef VMS
+  newcolor.red   = reason->newred;
   newcolor.green = reason->newgrn;
-  newcolor.blue = reason->newblu;
+  newcolor.blue  = reason->newblu;
+#endif 
   
   if (XAllocColor(the_display,
                   XDefaultColormapOfScreen(the_screen), &newcolor)) {
@@ -655,8 +703,11 @@ void apply_color_proc(widget_id, tag, reason)
 void cancel_color_proc(widget_id, tag, reason)
      Widget			widget_id;
      int				*tag;        
+#ifdef VMS
      DXmColorMixCallbackStruct	*reason;
-     
+#else
+     void                       *reason;   /* dummy */
+#endif     
 {                        
   int         ac;
   Arg         arglist[10];
@@ -670,19 +721,22 @@ void cancel_color_proc(widget_id, tag, reason)
 }                   
 
 
-void FileSelectionProc(Widget wi, int *tag, 
+void FileSelectionProc(Widget wi, 
+		       int *tag, 
 		       XmFileSelectionBoxCallbackStruct *reason)
-/* last modification: 24 Sep 97 13:58:31 flechsig */
 {
-  int sw= *tag, itemcount, pos, i, *itemlist[20];
+  int      sw= *tag, itemcount, pos, i, *itemlist[20];
   XmString path;
-  char *fname;
+  char     *fname= NULL;
 
-  path= reason->value;
-  /* Version entfernen */
-  fname= delversion(DXmCvtCStoFC(path, &bc, &status)); 
-  path= DXmCvtFCtoCS(fname, &bc, &status);
-  XtFree(fname);  
+  if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &fname))
+    return;
+#ifdef VMS
+  fname= delversion(fname);              /* Version entfernen    */
+#endif
+  path= XmStringCreateLocalized(fname);  /* erzeuge XmString neu */
+  /* path und fname sind allociert */  
+
   if (sw == kFileSelectionOk)
     {
       switch (ActualTask)
@@ -706,13 +760,11 @@ void FileSelectionProc(Widget wi, int *tag,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-	  fname= DXmCvtCStoFC(path, &bc, &status); 
-	  strcpy(&PHASESet.beamlinename, fname);
+	  strcpy((char *)&PHASESet.beamlinename, fname);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);  
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
 	  ExpandFileNames(&PHASESet, fname); 
 	  PutPHASE(&PHASESet, MainPickName); 
-	  XtFree(fname);  
 	  break;
 	case kCCGAdd:  /* an der richtigen stelle einfuegen */
 	  /* 0 fuegt immer ans ende ein /*/
@@ -746,35 +798,34 @@ void FileSelectionProc(Widget wi, int *tag,
 	  break;
 	  
 	case kFSaveAsButton:
-	  fname= DXmCvtCStoFC(path, &bc, &status); 
 	  printf("save data as: %s\n", fname);
 	  WriteBLFile(fname, &Beamline);
-	  XtFree(fname);  
 	  break;  
 	}
-    }
+    } /* end if */
+  XtFree(fname);
   XmStringFree(path);
+#ifdef DEBUG
+  printf("FileSelectionProc: end\n");  
+#endif 
 }                    
 
 void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
 {
   int  sw= *tag;
-  char *inhalt;
-  XmString svalue;
-  
+  char *inhalt= NULL;
+    
   switch (sw) 
     {
     case kESOK:
-      svalue= reason->value; inhalt= NULL;
-      inhalt= DXmCvtCStoFC(svalue, &bc, &status);   
-      if (status == DXmCvtStatusOK)  
-	{
-	  XtUnmanageChild(widget_array[kEParameterBox]);  
-	  FetchWidget(kEParameterBox, "EParameterBox");      
-	  InitParameterBox(&Beamline, inhalt);  
-	  XtManageChild(widget_array[kEParameterBox]);     
-	  XmStringFree(svalue);   
-	}                                              
+      if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
+	return; 
+      XtUnmanageChild(widget_array[kEParameterBox]);  
+      FetchWidget(kEParameterBox, "EParameterBox");      
+      InitParameterBox(&Beamline, inhalt);  
+      XtManageChild(widget_array[kEParameterBox]);     
+      /* XmStringFree(svalue); 24.11.99 */   
+      XtFree(inhalt);
       break;
       
     case kESCancel:       
@@ -791,15 +842,12 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
       break; 
       
     case kCOptiList2: 
-      svalue= reason->value; inhalt= NULL;
-      inhalt= DXmCvtCStoFC(svalue, &bc, &status); 
-      if (status == DXmCvtStatusOK)
-	{
-	  InitOptiList2(sw, inhalt);    
-	  XmStringFree(svalue);   
-	}                 
+      if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &inhalt))
+	return; 
+      InitOptiList2(sw, inhalt);    
+      /* XmStringFree(svalue); 24.11.99 */  
+      XtFree(inhalt);                
       break;
-      
     default: break;
     }
 }  /* end  SelectionProc */      
@@ -816,8 +864,10 @@ void xmstring_append (XmString *string1, XmString string2)
 
 void start_watch()   
 {
+#ifdef VMS
   if (watch == (Cursor)NULL)
     watch = DXmCreateCursor(main_window_widget, decw$c_wait_cursor);
+#endif
   XDefineCursor(the_display, XtWindow(main_window_widget), watch);
   XFlush(the_display);
 }
