@@ -1,12 +1,12 @@
-! File      : /home/vms/flechsig/vms/phas/phaseuil/mirrorbox.uil
-! Date      : <11 Apr 97 14:16:02 flechsig> 
-! Time-stamp: <11 Feb 04 15:32:00 flechsig> 
-! Author    : Uwe Flechsig, flechsig@exp.bessy.de
+! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/mirrorbox.uil
+!  Date      : <16 Feb 04 09:23:44 flechsig> 
+!  Time-stamp: <16 Feb 04 09:48:38 flechsig> 
+!  Author    : Uwe Flechsig, flechsig@psi.ch
 
-! Datei: USERDISK_3:[FLECHSIG.XWIN]MIRRORBOX.UIL
-! Datum: 10.FEB.1994
-! Stand: 17-FEB-1997
-! Autor: FLECHSIG, BESSY Berlin
+!  $Source$ 
+!  $Date$
+!  $Revision$ 
+!  $Author$ 
 
 /************************* Definition der opt. Element Box  *******************/
 
@@ -17,8 +17,8 @@ object
             XmNdialogStyle      = XmDIALOG_MODELESS;
             XmNnoResize         = true;
             XmNdefaultPosition  = false;
-            XmNx                = 550;
-            XmNy                = 400;
+            XmNx                = 0;
+            XmNy                = 600;
             XmNautoUnmanage     = false;
             XmNallowOverlap     = false;
             XmNdefaultButton    = XmPushButton EOEOK;
@@ -55,41 +55,42 @@ object
             XmNbackground       = color('blue');      
                          };
         controls {
-            XmRowColumn         EOERC;
-	    XmOptionMenu        EOOptMenu; 
-!	    XmLabel             EOEInputLabel;
-!            XmLabel             EOET1Label;
-!            XmText              EOET1;  
-!            XmLabel             EOET2Label;
-!            XmPushButton        EOEAB2; 
-!            XmText              EOET2;  
-!	    XmLabel             EOET3Label;
-!            XmText              EOET3;   
-!	    XmLabel             EOET4Label;
-!            XmPushButton        EOEAB4; 
-!            XmText              EOET4;  
-            XmLabel             EOET5Label;
-            XmText              EOET5;  
-	    XmLabel             EOET6Label;
-            XmText              EOET6;  
-            XmLabel             EOET7Label;
-            XmText              EOET7;  
-	    XmLabel             EOET8Label;
-            XmText              EOET8;   
-            XmLabel             EOET9Label;
-            XmText              EOET9;  
-	    XmLabel             EOET10Label;
-            XmText              EOET10;       
-            XmLabel             EOET11Label;
-            XmText              EOET11;  
-	    XmLabel             EOET12Label;
-            XmText              EOET12;       
-            XmLabel             EOET13Label;
-            XmText              EOET13;  
-	    XmLabel             EOET14Label;
-            XmText              EOET14;       
+             XmOptionMenu        EOOptMenu; 
+	     XmRadioBox          EORadBox;	 
+             XmSeparator         EOESeparatorM;
+             XmLabel             CFFHeaderLabel;
+             XmLabel             CFFHeader1Label;
+             XmRowColumn         EOERCFF;
+	     XmRowColumn         EOERRad;
+             XmSeparator         EOESeparatorN;
+             XmRowColumn         EOERGR;
+             XmSeparator         EOESeparatorO;
+             XmRowColumn         EOERAli;
+	    ! XmRowColumn         EOERC;
+             XmToggleButton      EGNITranslation1;
+	     XmLabel             EOEInputLabel;
+             XmLabel             GratingLabel;
+             XmLabel             AliLabel;
 		};
         };
+
+object
+    EGNITranslation1 : XmToggleButton {
+        arguments {
+            XmNlabelString      = "translate grating (NIM)";
+            XmNbottomAttachment    = XmATTACH_WIDGET; 
+	    XmNbottomWidget        = XmSeparator EOESeparatorO;
+            XmNbottomOffset        = 6; 
+            XmNrightAttachment  = XmATTACH_FORM; 
+            XmNrightOffset       = 20;  
+            
+            XmNselectColor	= gold;
+ 		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGNITranslation);
+            !XmNvalueChangedCallback = procedure  (kEGNITranslation);
+    };
+    }; 
 
 object
     EOOptMenu : XmOptionMenu {
@@ -99,10 +100,9 @@ object
 	    XmNlabelString      = "Element Type";
             XmNmenuHistory      = XmPushButton EOEToroidButton;
             XmNtopAttachment    = XmATTACH_FORM; 
-            !XmNtopWidget       = XmLabel EOEInputLabel; 
-            XmNtopOffset        = 5;
-            XmNrightAttachment  = XmATTACH_FORM;
-            XmNrightOffset      = 100;
+            XmNtopOffset        = 4;
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 6;
             XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
             };
         controls {                                                             
@@ -114,30 +114,190 @@ object
 
        };
 
+
+object
+    EORadBox : XmRadioBox {  
+        arguments {
+            
+            XmNorientation      = XmHORIZONTAL;  !XmVERTICAL; 
+	    XmNtopAttachment	= XmATTACH_FORM;
+            XmNtopOffset        = 4;
+            XmNrightOffset	= 6;
+	    XmNrightAttachment   = XmATTACH_FORM;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;    
+            XmNforeground       = color('white');   
+            XmNbackground       = color('blue');  
+
+            	  };                  
+        controls {
+            XmToggleButton      up;
+            XmToggleButton      left; 
+	    XmToggleButton      down;
+            XmToggleButton      right;          
+             };                   
+        };
+
+
 object
     EOEInputLabel : XmLabel {
         arguments {
-            XmNlabelString      = "parameter of the optical element";
+            XmNlabelString      = "reflection";
             XmNtopAttachment    = XmATTACH_FORM;
-            XmNtopOffset        = 51;
-            XmNleftAttachment   = XmATTACH_POSITION;
-            XmNleftPosition     = 20;
-            XmNrightAttachment  = XmATTACH_POSITION;  
-            XmNrightPosition    = 80; 
-            XmNalignment        = XmALIGNMENT_CENTER;
+	   ! XmNtopWidget        = XmRadioBox EORadBox;
+            XmNtopOffset        = 12;
+            XmNrightAttachment   = XmATTACH_WIDGET;
+	    XmNrightWidget       = XmRadioBox EORadBox;
+            XmNrightOffset       = 10;
+   !         XmNalignment        = XmALIGNMENT_CENTER;
             };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOEInputLabel);
         };
+    }; 
+
+object
+    GratingLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "grating parameter";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmSeparator EOESeparatorN;
+            XmNtopOffset        = 12;
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNleftOffset       = 250; 
+            
+   !         XmNalignment        = XmALIGNMENT_CENTER;
+            };
+        
+    };  
+
+object
+    CFFHeaderLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "geometry and shape parameter";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmSeparator EOESeparatorM;
+            XmNtopOffset        = 12;
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNleftOffset       = 120; 
+            
+   !         XmNalignment        = XmALIGNMENT_CENTER;
+            };
+        
+    };     
+
+ object
+!    CFFHeader1Label : XmLabel widget {
+     CFFHeader1Label : XmLabel {
+        arguments {
+            XmNlabelString      = "(support fields in red)";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmSeparator EOESeparatorM;
+            XmNtopOffset        = 12;
+            XmNleftAttachment   = XmATTACH_WIDGET; 
+            XmNleftOffset       = 10; 
+            XmNleftWidget        = XmLabel CFFHeaderLabel;
+   !         XmNalignment        = XmALIGNMENT_CENTER;
+   !          XmNforeground       = color('red');
+	!     XmNbackground       = color('blue');
+            };
+        
+    };       
+
+object
+    AliLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "for Full Ray Trace Mode: misalignment, optical surface size, RMS slope error (arcsec) ";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmSeparator EOESeparatorO;
+            XmNtopOffset        = 12;
+            XmNleftAttachment   = XmATTACH_FORM; 
+            XmNleftOffset       = 15; 
+            
+   !         XmNalignment        = XmALIGNMENT_CENTER;
+            };
+        
     };                                  
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 object
-    EOERC : XmRowColumn {
+    EOERCFF : XmRowColumn {
         arguments {
             XmNtopAttachment    = XmATTACH_WIDGET;      
-            XmNtopWidget        = XmLabel EOEInputLabel;
+            XmNtopWidget        = XmLabel CFFHeaderLabel;
             XmNtopOffset        = 5;      
+	    XmNnumColumns	= 5;
+            XmNpacking		= XmPACK_COLUMN;
+            XmNorientation      = XmVERTICAL;  
+            XmNbackground       = color('blue');   
+            XmNforeground       = color('white');   
+	    XmNleftAttachment   = XmATTACH_FORM;    
+            XmNleftOffset       = 10; 
+	  
+         }; 
+        controls {
+            XmLabel             CFFLabel; 
+	    XmLabel             PreLabel;
+            XmLabel             SucLabel;
+
+            XmText              EOET1;
+            XmText              EOET2;
+            XmText              EOET3;
+
+	    XmArrowButton       EGT3CFFAB;
+            XmArrowButton       PreAB;
+            XmArrowButton       SucAB;
+
+            XmLabel             ThetaLabel; 
+	    XmLabel             SoLabel;
+            XmLabel             ImLabel;
+
+            XmText              EOET4;
+            XmText              EOET5;
+            XmText              EOET6;
+	         };
+        };      
+
+
+object
+    EOERRad : XmRowColumn {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;      
+            XmNtopWidget        = XmLabel CFFHeaderLabel;
+            XmNtopOffset        = 15;      
+	    XmNnumColumns	= 3;
+            XmNpacking		= XmPACK_COLUMN;
+            XmNorientation      = XmVERTICAL;  
+            XmNbackground       = color('blue');   
+            XmNforeground       = color('white');   
+	    XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget        = XmRowColumn EOERCFF;
+            XmNleftOffset       = 10; 
+	    XmNrightAttachment  = XmATTACH_FORM;    
+            XmNrightOffset      = 10;      
+          !  XmNbottomAttachment = XmATTACH_FORM;    
+          !  XmNbottomOffset     = 5; 
+         }; 
+        controls {
+            
+	    XmArrowButton       EGT3rAB;
+            XmArrowButton       EGT3rhoAB;
+            
+            XmLabel             RLabel; 
+	    XmLabel             RhoLabel;
+            
+            XmText              EOET7;
+            XmText              EOET8;
+            
+	         };
+        };      
+
+
+object
+    EOERGR : XmRowColumn {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;      
+            XmNtopWidget        = XmLabel GratingLabel;
+            XmNtopOffset        = 4;      
 	    XmNnumColumns	= 4;
             XmNpacking		= XmPACK_COLUMN;
             XmNorientation      = XmVERTICAL;  
@@ -145,324 +305,597 @@ object
             XmNforeground       = color('white');   
 	    XmNleftAttachment   = XmATTACH_FORM;    
             XmNleftOffset       = 10; 
+	  
          }; 
         controls {
-            XmLabel             EOET1Label; 
-    	    XmText              EOET1; 
-	    XmLabel             EOET2Label;
-	    XmText              EOET2;  
-          };
+            XmLabel             orderLabel; 
+	    XmLabel             vl1Label;
+            XmLabel             vl3Label;
+
+            XmText              EOET9;
+            XmText              EOET10;
+            XmText              EOET11;
+
+            XmLabel             densLabel; 
+	    XmLabel             vl2Label;
+            XmLabel             vl4Label;
+
+            XmText              EOET12;
+            XmText              EOET13;
+            XmText              EOET14;
+	         };
         };      
+
+
+object
+    EOERAli : XmRowColumn {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;      
+            XmNtopWidget        = XmLabel AliLabel;
+            XmNtopOffset        = 4;      
+	    XmNnumColumns	= 8;
+            XmNpacking		= XmPACK_COLUMN;
+            XmNorientation      = XmVERTICAL;  
+            XmNbackground       = color('blue');   
+            XmNforeground       = color('white');   
+	    XmNleftAttachment   = XmATTACH_FORM;    
+            XmNleftOffset       = 10; 
+	    XmNbottomAttachment = XmATTACH_FORM;    
+            XmNbottomOffset     = 5; 
+	  
+         }; 
+        controls {
+            XmLabel             duLabel; 
+	    XmLabel             dwLabel;
+            XmLabel             dlLabel;
+
+            XmText              EOET15;
+            XmText              EOET16;
+            XmText              EOET17;
+
+	    XmLabel             dRuLabel; 
+	    XmLabel             dRwLabel;
+            XmLabel             dRlLabel;
+
+            XmText              EOET18;
+            XmText              EOET19;
+            XmText              EOET20;
+
+            XmLabel             w1Label; 
+	    XmLabel             w2Label;
+            XmLabel             swLabel;
+
+            XmText              EOET21;
+            XmText              EOET22;
+            XmText              EOET23;
+
+	    XmLabel             l1Label; 
+	    XmLabel             l2Label;
+            XmLabel             slLabel;
+
+            XmText              EOET24;
+            XmText              EOET25;
+            XmText              EOET26;
+	         };
+        };      
+
+
+! labels
+object
+    duLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "du (mm)";
+	};
+    };
+
+object
+    dwLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "dw (mm)";
+	};
+    };
+
+object
+    dlLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "dl (mm)";
+	};
+    };
+
+object
+    dRuLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "dRu (mrad)";
+	};
+    };
+
+object
+    dRwLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "dRw (mrad)";
+	};
+    };
+
+object
+    dRlLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "dRl (mrad)";
+	};
+    };
+
+
+! labels
+object
+    w1Label : XmLabel  {          
+    	arguments { XmNlabelString      = "w1 (mm)";
+	};
+    };
+
+object
+    w2Label : XmLabel  {          
+    	arguments { XmNlabelString      = "w2 (mm)";
+	};
+    };
+
+object
+    swLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "w slope";
+	};
+    };
+
+object
+    l1Label : XmLabel  {          
+    	arguments { XmNlabelString      = "l1 (mm)";
+	};
+    };
+
+object
+    l2Label : XmLabel  {          
+    	arguments { XmNlabelString      = "l2 (mm)";
+	};
+    };
+
+object
+    slLabel : XmLabel  {          
+    	arguments { XmNlabelString      = " l slope";
+	};
+    };
+
+! labels
+object
+    orderLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "diff order";
+	};
+    };
+
+object
+    vl1Label : XmLabel  {          
+    	arguments { XmNlabelString      = "vls x[1]";
+	};
+    };
+
+object
+    vl3Label : XmLabel  {          
+    	arguments { XmNlabelString      = "vls x[3]";
+	};
+    };
+
+object
+    vl4Label : XmLabel  {          
+    	arguments { XmNlabelString      = "vls x[4]";
+	};
+    };
+
+object
+    vl2Label : XmLabel  {          
+    	arguments { XmNlabelString      = "vls x[2]";
+	};
+    };
+
+object
+    densLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "N (1/mm)";
+	};
+    };
+
+
+
+
+
+
+! labels
+object
+    CFFLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "cff (PGM)";
+!XmNforeground       = color('gold');
+	};
+    };
+
+object
+    PreLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "Prec (mm)";
+	};
+    };
+
+object
+    SucLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "Succ (mm)";
+	};
+    };
+
+object
+    ThetaLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "theta (deg)";
+	};
+    };
+
+object
+    SoLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "source (mm)";
+!XmNforeground       = color('gold');
+	};
+    };
+
+object
+    ImLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "image (mm)";
+!XmNforeground       = color('gold');
+	};
+    };
+
+object
+    RLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "r (mm)";
+	};
+    };
+
+object
+    RhoLabel : XmLabel  {          
+    	arguments { XmNlabelString      = "rho (mm)";
+	};
+    };
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+object  
+    EGT3rAB : XmArrowButton {
+        arguments {
+          XmNarrowDirection=   XmARROW_RIGHT;
+                             };
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEAB2);
+            XmNactivateCallback = procedure activate_proc (kEOEAB2);    };
+        }; 
+
+object  
+    EGT3rhoAB : XmArrowButton {
+        arguments {
+          XmNarrowDirection=   XmARROW_RIGHT;
+                             };
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEOEAB4);
+            XmNactivateCallback = procedure activate_proc (kEOEAB4);    };
+        }; 
+
+
+object  
+    EGT3CFFAB : XmArrowButton {
+        arguments {
+          XmNarrowDirection=   XmARROW_RIGHT;
+                             };
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kEGT3Button);
+            XmNactivateCallback = procedure activate_proc (kEGT3Button);    };
+        }; 
+
+object  
+    PreAB : XmArrowButton {
+        arguments {
+          XmNarrowDirection=   XmARROW_RIGHT;
+                             };
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kPreAB);
+            XmNactivateCallback = procedure activate_proc (kPreAB);    };
+        }; 
+
+object  
+    SucAB : XmArrowButton {
+        arguments {
+          XmNarrowDirection=   XmARROW_RIGHT;
+                             };
+	callbacks {
+            MrmNcreateCallback  = procedure create_proc (kSucAB);
+            XmNactivateCallback = procedure activate_proc (kSucAB);    };
+        }; 
+
+
+
+
+
+
+
+
+
+
+
 
 
 !******************************* Texte ****************************
 object  
     EOET1 : XmText  {
-        arguments  {
-!            arguments 		  ESText1Args;       
-!            XmNtopWidget        = XmLabel EOEInputLabel;     
-!            XmNrightWidget      = XmLabel EOET2Label;
-                   };
+        arguments {
+            arguments 		  ETextArgs; 
+	    XmNforeground       = color('red');  
+};
         callbacks  {
             MrmNcreateCallback  = procedure create_proc (kEOET1);
                    };        
     };
 
-object
-    EOET1Label : XmLabel  {          
-        arguments {
-!            arguments		  ESLabel1Args;      
-!            XmNtopWidget        = XmLabel EOEInputLabel;     
-                  };     
-	callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET1Label);
-        };        
-    };
-
 object  
     EOET2 : XmText {
-        arguments {
-!              arguments		    ESText2Args;
-!              XmNtopWidget        = XmLabel EOEInputLabel;     
-                  };
+arguments {
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET2);
         };
     };     
 
+
 object  
-    EOEAB2 : XmPushButton widget {
+    EOEAB2 : XmArrowButton {
         arguments {
-              XmNlabelString      = ">"; 
-              XmNtopAttachment    = XmATTACH_WIDGET;
-              XmNtopWidget        = XmLabel EOEInputLabel;  
-              XmNtopOffset        = 5;      
-              XmNrightAttachment  = XmATTACH_WIDGET;
-              XmNrightWidget      = XmText EOET2;
+          XmNarrowDirection=   XmARROW_RIGHT;
                              };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOEAB2);
             XmNactivateCallback = procedure activate_proc (kEOEAB2);    };
-    };     
+    };   
+  
 
-object
-    EOET2Label : XmLabel {          
-        arguments {
-!            arguments             ESLabel2Args;
-!            XmNtopWidget        = XmLabel EOEInputLabel;      
-                   };
-            callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET2Label);
-        };  
-	};
 object  
     EOET3 : XmText {
         arguments {
-            arguments 		  ESText1Args;
-            XmNtopWidget        = XmText EOET1;     
-            XmNrightWidget      = XmLabel EOET4Label;
-                   };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET3);  };
     };
 
-object
-    EOET3Label : XmLabel {          
-        arguments {
-                  arguments		ESLabel1Args;      
-                  XmNtopWidget        = XmLabel EOET1Label;   
-                 };
-          callbacks {
-              MrmNcreateCallback  = procedure create_proc (kEOET3Label);  };
-        };
-
 object  
     EOET4 : XmText {
         arguments {
-            arguments		  ESText2Args; 
-            XmNtopWidget        = XmText EOET2; };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET4);
 	     };
     };
 
 object  
-    EOEAB4 : XmPushButton widget {
+    EOEAB4 : XmArrowButton {
         arguments {
-              XmNlabelString      = ">"; 
-              XmNtopAttachment    = XmATTACH_WIDGET;
-              XmNtopWidget        = XmPushButton EOEAB2;  
-              XmNtopOffset        = 5;      
-              XmNrightAttachment  = XmATTACH_WIDGET;
-              XmNrightWidget      = XmText EOET4;
+          XmNarrowDirection=   XmARROW_RIGHT;
                              };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOEAB4); 
 	    XmNactivateCallback = procedure activate_proc (kEOEAB4);    };
     };     
 
-object
-    EOET4Label : XmLabel {          
-        arguments { 
-		arguments	      ESLabel2Args;   
-                XmNtopWidget        = XmLabel EOET2Label; }; 
-         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET4Label);  };
-        };
-
 object  
     EOET5 : XmText {
         arguments {
-            arguments 		  ESText1Args;         
-            XmNtopWidget        = XmText EOET3;     
-            XmNrightWidget      = XmLabel EOET6Label;  };                      
+            arguments 		  ETextArgs;
+ XmNforeground       = color('red');
+};                   
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET5);  };
     };
 
-object
-    EOET5Label : XmLabel {          
-        arguments {    
-		arguments	      ESLabel1Args;  
-                XmNtopWidget        = XmLabel EOET3Label; };
-          callbacks {
-                MrmNcreateCallback  = procedure create_proc (kEOET5Label);  };  
-        };
-
 object  
     EOET6 : XmText {
         arguments {
-            arguments 		  ESText2Args;         
-            XmNtopWidget        = XmText EOET4; };
+            arguments 		  ETextArgs; 
+	XmNforeground       = color('red');
+};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET6);  };
-    };
-
-object
-    EOET6Label : XmLabel {          
-        arguments {
-            arguments	          ESLabel2Args;   
-            XmNtopWidget        = XmLabel EOET4Label; };
-         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET6Label); };  
     };
 
 object  
     EOET7 : XmText {
         arguments {
-            arguments 		  ESText1Args;         
-            XmNtopWidget        = XmText EOET5;     
-            XmNrightWidget      = XmLabel EOET8Label;  };                      
+            arguments 		  ETextArgs; };                     
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET7);  };
     };
 
-object
-    EOET7Label : XmLabel {          
-        arguments {    
-		arguments	      ESLabel1Args;  
-                XmNtopWidget        = XmLabel EOET5Label; };
-          callbacks {
-                MrmNcreateCallback  = procedure create_proc (kEOET7Label);  };  
-        };
 
 object  
     EOET8 : XmText {
         arguments {
-            arguments 		  ESText2Args;         
-            XmNtopWidget        = XmText EOET6; };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET8);  };
-    };
-
-object
-    EOET8Label : XmLabel {          
-        arguments {
-            arguments	          ESLabel2Args;   
-            XmNtopWidget        = XmLabel EOET6Label; };
-         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET8Label); };  
     };
 
 object  
     EOET9 : XmText {
         arguments {
-            arguments 		  ESText1Args;         
-            XmNtopWidget        = XmText EOET7;     
-            XmNrightWidget      = XmLabel EOET10Label;  };                      
+            arguments 		  ETextArgs; };                     
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET9);  };
     };
 
-object
-    EOET9Label : XmLabel {          
-        arguments {    
-		arguments	      ESLabel1Args;  
-                XmNtopWidget        = XmLabel EOET7Label; };
-          callbacks {
-                MrmNcreateCallback  = procedure create_proc (kEOET9Label);  };  
-        };
+
 
 object  
     EOET10 : XmText {
         arguments {
-            arguments 		  ESText2Args;         
-            XmNtopWidget        = XmText EOET8; };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET10);  };
     };
 
-object
-    EOET10Label : XmLabel {          
-        arguments {
-            arguments	          ESLabel2Args;   
-            XmNtopWidget        = XmLabel EOET8Label; };
-         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET10Label); };  
-    };
+
 
 object  
     EOET11 : XmText {
         arguments {
-            arguments 		  ESText1Args;        
-            XmNtopWidget        = XmText EOET9;     
-            XmNrightWidget      = XmLabel EOET12Label;   };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET11); };
     };
 
-object
-    EOET11Label : XmLabel {          
-        arguments {
-            arguments	          ESLabel1Args;   
-            XmNtopWidget        = XmLabel EOET9Label;   };
-        callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET11Label); };  
-     };
+
 
 object  
     EOET12 : XmText {
         arguments {
-            arguments 		  ESText2Args;               
-            XmNtopWidget        = XmText EOET10;  
-   /*         XmNbottomAttachment = XmATTACH_FORM;      
-            XmNbottomOffset     = 10;                   
-            XmNleftWidget       = XmLabel EOET12Label;  */
-	};
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET12);  };  
     };
 
-object
-    EOET12Label : XmLabel   {          
-        arguments {
-            arguments	          ESLabel2Args; 
-            XmNtopWidget        = XmLabel EOET10Label;  };
-        callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET12Label); };  
-        };
+
 
 
 object  
     EOET13 : XmText {
         arguments {
-            arguments 		  ESText1Args;        
-            XmNtopWidget        = XmText EOET11;     
-            XmNrightWidget      = XmLabel EOET14Label;   };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET13); };
     };
 
-object
-    EOET13Label : XmLabel {          
-        arguments {
-            arguments	          ESLabel1Args;   
-            XmNtopWidget        = XmLabel EOET11Label;   };
-        callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET13Label); };  
-     };
+
 
 object  
     EOET14 : XmText {
         arguments {
-            arguments 		  ESText2Args;               
-            XmNtopWidget        = XmText EOET12;  
-            XmNbottomAttachment = XmATTACH_FORM;  
-            XmNbottomOffset     = 10;     
-            XmNleftWidget       = XmLabel EOET14Label;  };
+            arguments 		  ETextArgs; };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET14);  };  
     };
 
-object
-    EOET14Label : XmLabel   {          
-        arguments {
-            arguments	          ESLabel2Args; 
-            XmNtopWidget        = XmLabel EOET12Label;  };
-        callbacks {
-            MrmNcreateCallback  = procedure create_proc (kEOET14Label); };  
-        };
 
+
+
+object  
+    EOET15 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET15);
+                   };        
+    };
+
+object  
+    EOET16 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET16);
+                   };        
+    };
+
+object  
+    EOET17 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET17);
+                   };        
+    };
+
+object  
+    EOET18 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET18);
+                   };        
+    };
+
+object  
+    EOET19 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET19);
+                   };        
+    };
+
+object  
+    EOET20 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET20);
+                   };        
+    };
+
+
+
+object  
+    EOET21 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET21);
+                   };        
+    };
+
+object  
+    EOET22 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET22);
+                   };        
+    };
+
+
+object  
+    EOET23 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET23);
+                   };        
+    };
+
+object  
+    EOET24 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET24);
+                   };        
+    };
+
+
+object  
+    EOET25 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET25);
+                   };        
+    };
+
+object  
+    EOET26 : XmText  {
+        arguments {
+            arguments 		  ETextArgs; 
+};
+        callbacks  {
+            MrmNcreateCallback  = procedure create_proc (kEOET26);
+                   };        
+    };
                              
 object
     EOESeparator : XmSeparator {
@@ -470,6 +903,49 @@ object
             arguments             ESSeparatorArgs;      
             XmNtopWidget        = XmForm EOEInputForm;     };      
         };             
+
+object
+    EOESeparatorM : XmSeparator {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+        !    XmNtopWidget        = XmLabel EOEInputLabel;
+            XmNtopWidget        = XmOptionMenu EOOptMenu  ;
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+	    XmNtopOffset        = 1; 
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmHORIZONTAL;
+            	};       
+        };  
+
+object
+    EOESeparatorN : XmSeparator {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+        !    XmNtopWidget        = XmLabel EOEInputLabel;
+            XmNtopWidget        = XmRowColumn  EOERCFF ;
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+	    XmNtopOffset        = 1; 
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmHORIZONTAL;
+            	};       
+        };  
+
+object
+    EOESeparatorO : XmSeparator {
+        arguments {
+            XmNtopAttachment    = XmATTACH_WIDGET;
+        !    XmNtopWidget        = XmLabel EOEInputLabel;
+            XmNtopWidget        = XmRowColumn  EOERGR ;
+            XmNleftAttachment   = XmATTACH_FORM;    
+            XmNrightAttachment  = XmATTACH_FORM;    
+	    XmNtopOffset        = 1; 
+	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+            XmNorientation      = XmHORIZONTAL;
+            	};       
+        };  
+
 
 object
     EOESeparator1 : XmSeparator {

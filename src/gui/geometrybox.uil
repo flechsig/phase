@@ -260,7 +260,7 @@ object
     EGNITranslation : XmToggleButton {
         arguments {
             XmNlabelString      = 
-            "translate grating (normal incidence monochromator)";
+            "translate grating (NIM)";
             XmNtopAttachment    = XmATTACH_WIDGET; 
 	    XmNtopWidget        = XmLabel EGT3Label;
             XmNtopOffset        = 10; 

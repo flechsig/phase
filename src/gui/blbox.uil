@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/blbox.uil
 ! Date      : <13 Feb 04 16:29:19 flechsig> 
-! Time-stamp: <13 Feb 04 16:29:48 flechsig> 
+! Time-stamp: <16 Feb 04 14:29:51 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
@@ -63,36 +63,41 @@ object
             XmPushButton        EBLNameButton;   
             !XmLabel             EBLMinuitLabel;  
             !XmPushButton        EBLMinuitButton;   
-            XmSeparator         EBLSeph1;  
+            XmSeparator         EBLSeph1; 
+            XmLabel             EBLListLabel;
 	    XmScrolledList      EBLList; 
             XmSeparator         EBLSeph2;   
-            XmLabel             EBLSelectedLabel;  
+            XmLabel             EBLSelectedLabel; 
+            XmLabel              EBLTotalLabel;
             !XmText              EBLT2; 
-            XmRadioBox          EBLRadBox;  
+            !XmRadioBox          EBLRadBox;  
             XmLabel             EBLL30a; 
             XmText              EBLT31a;   
             XmLabel             EBLL40a; 
             XmText              EBLT41a;       
             XmRadioBox          EBLRadBox1;  
 
-            XmSeparator         EBLSeph3;  
+            !XmSeparator         EBLSeph3;  
             !XmScrolledList      EBLList2; 
-            XmText              EBLT11;   
-            XmLabel             EBLL10; 
-            XmText              EBLT12;    
-            XmText              EBLT21;   
-            XmLabel             EBLL20; 
-            XmText              EBLT22;   
-            XmLabel             EBLL30; 
-            XmText              EBLT31;   
-            XmLabel             EBLL40; 
-            XmText              EBLT41;       
-            XmSeparator         EBLSepv1;  
-            XmPushButton        EBLAdd; 
-            XmPushButton        EBLDel;  
+            !XmText              EBLT11;   
+            !XmLabel             EBLL10; 
+            !XmText              EBLT12;    
+            !XmText              EBLT21;   
+            !XmLabel             EBLL20; 
+            !XmText              EBLT22;   
+            !XmLabel             EBLL30; 
+            !XmText              EBLT31;   
+            !XmLabel             EBLL40; 
+            !XmText              EBLT41;       
+            !XmSeparator         EBLSepv1;  
+            !XmPushButton        EBLAdd; 
+            XmLabel EBLListADLabel;
+	    XmArrowButton EBLAdd; 
+            XmArrowButton EBLDel; 
+            !XmPushButton        EBLDel;  
             !XmPushButton        EBLAdd1; 
             !XmPushButton        EBLDel1;  
-            XmPushButton        EBLAddOK;  
+            !XmPushButton        EBLAddOK;  
                        	};
         };
 
@@ -101,7 +106,7 @@ object
         arguments {
             XmNlabelString      = "Beamline File: ";
             XmNtopAttachment    = XmATTACH_FORM;
-            XmNtopOffset        = 15;    
+            XmNtopOffset        = 4;    
             XmNleftAttachment   = XmATTACH_FORM;
             XmNleftOffset       = 20;    
                         };
@@ -110,8 +115,9 @@ object
 object
      EBLNameButton :  XmPushButton widget {
                arguments	{
-	       XmNtopAttachment		= XmATTACH_FORM;
-               XmNtopOffset        	= 42;    
+	       XmNtopAttachment		= XmATTACH_WIDGET;
+               XmNtopWidget        = XmLabel EBLNameLabel;
+               XmNtopOffset        	= 4;    
                XmNleftAttachment	= XmATTACH_FORM;
                XmNleftOffset      	= 20;    
                               	};
@@ -122,14 +128,26 @@ object
     };         
 
 object
-    EBLMinuitLabel : XmLabel {
+    EBLListLabel : XmLabel {
         arguments {
-            XmNlabelString      = "Minuit- File: ";
+            XmNlabelString      = "optical element list";
             XmNtopAttachment    = XmATTACH_WIDGET;
-	    XmNtopWidget        = EBLNameLabel;   
+	    XmNtopWidget        = XmSeparator         EBLSeph1;   
             XmNtopOffset        = 5;    
             XmNleftAttachment   = XmATTACH_FORM;
             XmNleftOffset       = 20;    
+                        };
+           };   
+
+object
+    EBLListADLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "add / del";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmSeparator EBLSeph1;   
+            XmNtopOffset        = 5;    
+            XmNrightAttachment   = XmATTACH_FORM;
+            XmNrightOffset       = 10;    
                         };
            };   
 
@@ -152,10 +170,11 @@ object
 object
     EBLSeph1 : XmSeparator  widget {
         arguments {
-            XmNtopAttachment    = XmATTACH_FORM;      
+            XmNtopAttachment    = XmATTACH_WIDGET;      
             XmNleftAttachment   = XmATTACH_FORM;    
             XmNrightAttachment  = XmATTACH_FORM;    
-	    XmNtopOffset        = 85; 
+	    XmNtopOffset        = 5; 
+            XmNtopWidget        = XmPushButton EBLNameButton;
 	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
             XmNorientation      = XmHORIZONTAL;
                 	};      
@@ -165,14 +184,14 @@ object
     EBLList : XmScrolledList {
         arguments {
             XmNscrollBarDisplayPolicy = XmSTATIC;  
-            XmNvisibleItemCount = 4;
+            XmNvisibleItemCount = 5;
             XmNselectionPolicy  = XmSINGLE_SELECT; 
             XmNunitType         = XmPIXELS;  
             XmNlistSizePolicy   = XmCONSTANT;
             XmNwidth		= 400;
             XmNbackground	= color('white', background);
             XmNtopAttachment	= XmATTACH_WIDGET;
-            XmNtopWidget        = EBLSeph1;     
+            XmNtopWidget        = XmLabel EBLListLabel;     
             XmNtopOffset        = 10;
             XmNleftOffset	= 10;
 	    XmNleftAttachment   = XmATTACH_FORM;
@@ -190,14 +209,16 @@ object
 object
     EBLSeph2 : XmSeparator widget {
         arguments {
-            XmNtopAttachment    = XmATTACH_FORM;      
+            XmNtopAttachment    = XmATTACH_WIDGET;      
             XmNleftAttachment   = XmATTACH_FORM;    
             XmNrightAttachment  = XmATTACH_FORM;        
 	    XmNseparatorType    = XmSHADOW_ETCHED_IN;
-            XmNtopOffset	= 230;
+            XmNtopOffset	= 10;
+	    XmNtopWidget        = XmLabel EBLSelectedLabel;
+
             !XmNshadowThickness	= 8;      
-            XmNbottomAttachment	= XmATTACH_FORM;    
-            XmNbottomOffset     = 450; 
+            !XmNbottomAttachment	= XmATTACH_FORM;    
+            !XmNbottomOffset     = 450; 
 	};      
 };    
 
@@ -206,7 +227,7 @@ object
         arguments {
             XmNlabelString      = "select element!";
             XmNtopAttachment    = XmATTACH_WIDGET;
-	    XmNtopWidget        = EBLSeph2;   
+	    XmNtopWidget        = XmScrolledList EBLList;   
             XmNtopOffset        = 10;    
             XmNleftAttachment   = XmATTACH_FORM;
             XmNleftOffset       = 20;    
@@ -214,6 +235,19 @@ object
         callbacks {
            MrmNcreateCallback  = procedure create_proc (kEBLSelectedLabel);
 		};
+          };   
+
+object
+    EBLTotalLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "general beamline and calculation parameter";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmSeparator EBLSeph2;   
+            XmNtopOffset        = 10;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+        
           };   
 
 object  
@@ -259,15 +293,17 @@ object
 object
     EBLRadBox1 : XmRadioBox {  
         arguments {
-            XmNorientation      = XmHORIZONTAL;  !XmVERTICAL; 
-	    XmNbottomAttachment	= XmATTACH_WIDGET;
-            XmNbottomWidget     = EBLSeph3;       
-            XmNbottomOffset     = 10;
+            XmNorientation      = XmVERTICAL; ! XmHORIZONTAL;  !XmVERTICAL; 
+	    XmNtopAttachment	= XmATTACH_WIDGET;
+            XmNtopWidget        = XmLabel              EBLTotalLabel;       
+            XmNtopOffset        = 10;
             XmNleftOffset	= 10;
 	    XmNleftAttachment   = XmATTACH_FORM;
             XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;    
             XmNforeground       = color('white');   
-            XmNbackground       = color('blue');                      
+            XmNbackground       = color('blue');
+            XmNbottomAttachment	= XmATTACH_FORM;    
+            XmNbottomOffset     = 15; 
             	  };                  
         controls {
             XmToggleButton      stoim;
@@ -360,8 +396,12 @@ object
             XmNrightAttachment  = XmATTACH_FORM;  
             XmNseparatorType    = XmSHADOW_ETCHED_IN;
             !XmNshadowThickness	= 8;      
-            XmNbottomAttachment	= XmATTACH_FORM;    
-            XmNbottomOffset     = 230;          !210
+          !  XmNbottomAttachment	= XmATTACH_FORM;    
+          !  XmNbottomOffset     = 230;          !210
+XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = XmRadioBox          EBLRadBox1;   
+XmNtopOffset       = 10;
+
 	};      
 };    
 
@@ -514,9 +554,9 @@ object
             XmNtopAttachment    = XmATTACH_WIDGET;
 	    XmNtopWidget        = EBLT21;   
             XmNtopOffset        = 16;    
-            XmNleftAttachment   = XmATTACH_FORM;
+            XmNrightAttachment   = XmATTACH_FORM;
             !XmNleftWidget       = EBLL30;  
-            XmNleftOffset       = 10;    
+            XmNrightOffset       = 10;    
             !XmNrightOffset      = 10;    
             !XmNrightAttachment  = XmATTACH_WIDGET;        
 	    !XmNrightWidget      = EBLSepv1;   
@@ -551,9 +591,9 @@ object
             XmNtopAttachment    = XmATTACH_WIDGET;
 	    XmNtopWidget        = EBLT31;   
             XmNtopOffset        = 3;    
-            XmNleftAttachment   = XmATTACH_FORM;
+            XmNrightAttachment   = XmATTACH_FORM;
             !XmNleftWidget       = EBLL40;  
-            XmNleftOffset       = 10;    
+            XmNrightOffset       = 10;    
             !XmNrightOffset      = 10;    
             !XmNrightAttachment  = XmATTACH_WIDGET;        
 	    !XmNrightWidget      = EBLSepv1;   
@@ -570,13 +610,13 @@ object
 object    
     EBLL30a : XmLabel {
         arguments {
-            XmNlabelString      = "lambda [nm]";
+            XmNlabelString      = "wavelength (nm)";
             XmNtopAttachment    = XmATTACH_WIDGET;
-	    XmNtopWidget        = EBLSeph2;   
-            XmNtopOffset        = 96;    
-            XmNleftAttachment   = XmATTACH_WIDGET;
-            XmNleftWidget       = EBLT31a;     
-            XmNleftOffset       = 10;    
+	    XmNtopWidget        = XmLabel EBLTotalLabel;   
+            XmNtopOffset        = 16;    
+            XmNrightAttachment   = XmATTACH_WIDGET;
+            XmNrightWidget       = XmText EBLT31a;     
+            XmNrightOffset       = 10;    
                         };
                 };   
 
@@ -584,15 +624,11 @@ object
     EBLT31a: XmText  {
         arguments  {
             XmNtopAttachment    = XmATTACH_WIDGET;
-	    XmNtopWidget        = EBLSeph2;   
-            XmNtopOffset        = 90;    
-            XmNleftAttachment   = XmATTACH_FORM;
-            !XmNleftWidget       = EBLL30a;  
-            XmNleftOffset       = 10;    
-            !XmNrightOffset      = 10;    
-            !XmNrightAttachment  = XmATTACH_WIDGET;        
-	    !XmNrightWidget      = EBLSepv1;   
-             XmNmaxLength	= 10;    
+	    XmNtopWidget        = XmLabel EBLTotalLabel;   
+            XmNtopOffset        = 10;    
+            XmNrightOffset      = 10;    
+            XmNrightAttachment  = XmATTACH_FORM;        
+	    XmNmaxLength	= 10;    
              XmNcolumns		= 10;  
              XmNrows		= 1;
 
@@ -607,13 +643,13 @@ object
 object
     EBLL40a : XmLabel {
         arguments {
-            XmNlabelString      = "dispersive length [mm]";
+            XmNlabelString      = "dispersive length (mm)";
             XmNtopAttachment    = XmATTACH_WIDGET;
-	    XmNtopWidget        = EBLL30a;   
+	    XmNtopWidget        = XmLabel EBLL30a;   
             XmNtopOffset        = 15;    
-            XmNleftAttachment   = XmATTACH_WIDGET;
-            XmNleftWidget       = EBLT41a;  
-            XmNleftOffset       = 10;    
+            XmNrightAttachment   = XmATTACH_WIDGET;
+            XmNrightWidget       = XmText EBLT41a;  
+            XmNrightOffset       = 10;    
                         };
                   };   
 
@@ -621,14 +657,14 @@ object
     EBLT41a: XmText  {
         arguments  {
             XmNtopAttachment    = XmATTACH_WIDGET;
-	    XmNtopWidget        = EBLT31a;   
+	    XmNtopWidget        = XmText EBLT31a;   
             XmNtopOffset        = 3;    
-            XmNleftAttachment   = XmATTACH_FORM;
+        !    XmNleftAttachment   = XmATTACH_FORM;
             !XmNleftWidget       = EBLL40a;  
-            XmNleftOffset       = 10;    
-            !XmNrightOffset      = 10;    
-            !XmNrightAttachment  = XmATTACH_WIDGET;        
-	    !XmNrightWidget      = EBLSepv1;   
+           ! XmNleftOffset       = 10;    
+            XmNrightOffset      = 10;    
+            XmNrightAttachment  = XmATTACH_FORM;        
+	    !XmNrightWidget      = XmText              EBLT41a;   
              XmNmaxLength	= 10;    
              XmNcolumns		= 10;  
              XmNrows		= 1;
@@ -652,7 +688,7 @@ object
             XmNtopWidget        = XmSeparator  EBLSeph1; 
             XmNleftOffset       = 420; 
             XmNrightOffset      = 80; 
-     	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
+     	  !  XmNseparatorType    = XmSHADOW_ETCHED_IN;  
             XmNorientation      = XmVERTICAL;
             !XmNshadowThickness	= 8;      
 	};      
@@ -733,7 +769,7 @@ object
         };  
 
 object
-  EBLAdd :  XmPushButton widget {
+  EBLAdd_old :  XmPushButton widget {
                arguments       {
 	       XmNtopAttachment		= XmATTACH_WIDGET; 
 	       XmNtopWidget            	= XmSeparator EBLSeph1; 
@@ -748,21 +784,37 @@ object
                MrmNcreateCallback  = procedure create_proc (kEBLAdd);
                XmNactivateCallback = procedure activate_proc(kEBLAdd);
         	};   
+  	};    
+
+object
+  EBLAdd :  XmArrowButton {
+               arguments       {
+	       XmNarrowDirection=   XmARROW_LEFT;
+	       XmNtopAttachment		= XmATTACH_WIDGET; 
+	       XmNtopWidget            	= XmLabel EBLListADLabel; 
+               XmNtopOffset		= 20;   
+	       XmNleftAttachment   	= XmATTACH_WIDGET;
+               XmNleftWidget            = XmScrolledList      EBLList; 
+               XmNleftOffset		= 30; 
+ XmNrightAttachment  = XmATTACH_FORM;
+ XmNrightOffset      = 20;                            	      			};
+	callbacks {
+               MrmNcreateCallback  = procedure create_proc (kEBLAdd);
+               XmNactivateCallback = procedure activate_proc(kEBLAdd);
+        	};   
   	};         
 
 object
-  EBLDel :  XmPushButton widget{
+  EBLDel :  XmArrowButton  {
                arguments	{
-	       XmNbottomAttachment	= XmATTACH_WIDGET; 
-	       XmNbottomWidget          = XmSeparator EBLSeph2;   
-	       XmNbottomOffset		= 15;   
-	       XmNlabelString 		= " - ";
+	       XmNarrowDirection=   XmARROW_RIGHT;
+	       XmNtopAttachment	= XmATTACH_WIDGET; 
+	       XmNtopWidget     = XmArrowButton EBLAdd;   
+	       XmNtopOffset		= 15;   
 	       XmNleftAttachment   	= XmATTACH_WIDGET;
-               XmNleftWidget            = XmSeparator EBLSepv1; 
-               XmNleftOffset		= 20;  
-	       XmNfontList		= k_button_font; 
-
-               				}; 
+               XmNleftWidget            = XmScrolledList      EBLList; 
+               XmNleftOffset		= 30;  
+	                       				}; 
 	callbacks {
                MrmNcreateCallback  = procedure create_proc (kEBLDel);
                XmNactivateCallback = procedure activate_proc(kEBLDel);

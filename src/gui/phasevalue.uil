@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <11 Feb 04 17:19:39 flechsig> 
+! Time-stamp: <13 Feb 04 14:13:25 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
@@ -166,23 +166,20 @@ value
     kEOET12               : 168;            !noch EOE   
     kEOET13               : 169;
     kEOET14               : 170;
- 
 
-    kEOElementBox         : 171;     
-    kEOET1Label           : 172;  
-    kEOET2Label           : 173;  
-    kEOET3Label           : 174;  
-    kEOET4Label           : 175;  
-    kEOET5Label           : 176;  
-    kEOET6Label           : 177;  
-    kEOET7Label           : 178;  
-    kEOET8Label           : 179;
-    kEOET9Label           : 180;   
-    kEOET10Label          : 181;   
-    kEOET11Label          : 182;   
-    kEOET12Label          : 183;
-    kEOET13Label          : 184;
-    kEOET14Label          : 185;
+    kEOET15               : 171;
+    kEOET16               : 172;
+    kEOET17               : 173;
+    kEOET18               : 174;
+    kEOET19               : 175;
+    kEOET20               : 176;
+    kEOET21               : 177;
+    kEOET22               : 178;
+    kEOET23               : 179;
+    kEOET24               : 180;
+    kEOET25               : 181;
+    kEOET26               : 182;
+    kEOElementBox         : 183;
 
     kEOEOK	          : 186;
     kEOEApply    	  : 187;
@@ -326,6 +323,9 @@ value
         kCWriteMCoButton        : 352;
 
         kESPointSourceButton    : 360;
+        kPreAB                  : 361;
+        kSucAB                  : 362;
+       
 
 !********************* Besonderheiten ****************************** 
 
@@ -466,7 +466,7 @@ value
 
 list 
    ETextArgs: arguments {
-               XmNcolumns          = 11;
+               XmNcolumns          = 6;
                XmNrows             = 1;
                XmNmaxLength        = 10;
                XmNvalue            = "";
