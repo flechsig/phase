@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/optisubc.c */
 /*  Date      : <16 Oct 97 14:00:02 flechsig>  */
-/*  Time-stamp: <31 Mar 99 11:15:24 flechsig>  */
+/*  Time-stamp: <29 Oct 03 17:06:22 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]OPTISUBC.C           */
@@ -10,18 +10,46 @@
 
 /* 31.3.99 GetRMS erweitert auf z */
 
-#include stdio                                                
-#include string 
-#include stdlib 
-#include math
-#include descrip                      /* for FORTRAN- String */    
-
-#include <Xm/Text.h>  
-#include <Xm/List.h>       
-#include <Mrm/MrmAppl.h>  
+#include <stdio.h>                    /* For printf and so on. */
+#include <stdlib.h>	    	      /* needed for fopen      */
+#include <string.h>
+#include <math.h>
+#include <Xm/Text.h>                  /* fileBox               */
+#include <Xm/List.h>   
+#include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
-#include <X11/Xutil.h> 
-#include <DXm/DECspecific.h>   
+#include <X11/Xutil.h>      
+/* DEC specific */
+#ifdef VMS
+  #include <descrip.h>                  /* for FORTRAN- String   */ 
+  #include <DXm/DXmHelpB.h>      
+  #include <DXm/DXmPrint.h>      
+  #include <DXm/DXmColor.h>   
+  #include <DXm/DECspecific.h>  
+  #include <sys$library/DECw$Cursor.h>
+#endif
+
+#ifdef VMS
+  #include "[-.phase]cutils.h"  
+  #include "[-.phase]phase_struct_10.h"
+  #include "[-.phase]fg3pck.h"   
+  #include "[-.phase]mirrorpck.h"                 
+  #include "[-.phase]geometrypck.h"   
+  #include "[-.phase]PHASE.h"
+#else
+  #include "../phase/cutils.h"  
+  #include "../phase/phase_struct_10.h"
+  #include "../phase/fg3pck.h"   
+  #include "../phase/mirrorpck.h"                 
+  #include "../phase/geometrypck.h"   
+  #include "../phase/phase.h"
+#endif
+
+#include "phaseopti.h"     
+
+
+
+
 
 #include "[-.phasec]cutils.h"  
 #include "[-.phasec]phase_struct_10.h"
