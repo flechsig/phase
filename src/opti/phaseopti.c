@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <30 Apr 04 16:59:56 flechsig>  */
+/*   Time-stamp: <03 May 04 16:15:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -85,9 +85,14 @@
 
      index == 128: elementparameter
      index == 256: elementnummer
+     index= 128+ i+ 6j
      index= 128+ 36 : r
      index= 128+ 37 : rho
-     index= 128+ i+ 6j
+     index= 128+ 38 : 2w
+     index= 128+ 39 : 2l
+     index= 128+ 40 : slopew
+     index= 128+ 41 : slopel
+     
 */
                                                                    
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <17 Feb 04 14:49:50 flechsig>  */
+/*   Time-stamp: <03 May 04 16:11:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -120,6 +120,20 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  break;
 	case 37:			/* rp */
 	  mdat->rho= *z;
+	  break;
+	case 38:			/* 2w */
+	  mdat->w1= -0.5* *z;
+	  mdat->w2=  0.5* *z;
+	  break;
+	case 39:			/* 2l */
+	  mdat->l1= -0.5* *z;
+	  mdat->l2=  0.5* *z;
+	  break;
+	case 40:			/* slopew */
+	  mdat->slopew= *z;
+	  break;
+	case 41:			/* slopel */
+	  mdat->slopel= *z;
 	  break;
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */
@@ -261,6 +275,20 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	case 37:			/* rp = 37 */
 	  *z= mdat->rho;  
 	  break;
+	case 38:			/* 2w */
+	  *z=  mdat->w2- mdat->w1;
+	  break;
+	case 39:			/* 2l */
+	  *z=  mdat->l2- mdat->l1;
+	  break;
+	case 40:			/* slopew */
+	  *z= mdat->slopew;
+	  break;
+	case 41:			/* slopel */
+	  *z= mdat->slopel;
+	  break;
+
+
 	default: 
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
