@@ -34,7 +34,7 @@
 #include "phase.h"       
 #include "rtrace.h"    
 
-
+ 
 void activate_proc(w, tag, reason)
      Widget		w;
      int			*tag;
@@ -289,6 +289,7 @@ void activate_proc(w, tag, reason)
   case kEOEElli:     
   case kEOEPElli: 
   case kEOESlit:
+  case kEOEDrift:
   case kEOEGeneral:
   case kEOECone: 
     /*    printf("activate_proc: OEBox PDM: widget_num: %d\n", widget_num);*/

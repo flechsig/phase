@@ -25,6 +25,7 @@ c subroutine readmatrixfile35(fname,xmap35)
 c subroutine readintersection(fname,wc,xlc,iord) 
 c subroutine extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)  
 c subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
+c subroutine reduce_1_drift(iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
 c subroutine transponiere (a,g)   
 c subroutine ray_tracef(rin, rout, iord,ypc1,zpc1,dypc,dzpc)       
 c subroutine writemap(mapname,iord,ypc1,zpc1,dypc,dzpc)  
@@ -558,6 +559,13 @@ c	imodus = 2 : ray tracing vom Bild zur Quelle
 c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
+c        write(*,*)'fortran gerufen'
+        idrift=0
+        if(imodus.ge.1000)then
+           imodus=imodus-1000
+           idrift=1
+           endif
+
 c        write(*,*)'for: fgmapidp called'
 	if(imodus.eq.2)then
           write(*,*)'fgmapidp: make map for image to source iord=',iord 
@@ -566,7 +574,12 @@ c        write(*,*)'for: fgmapidp called'
           write(*,*)'fgmapidp: make map for source to image iord=',iord 
 	endif 
 c------------------------------------------------------- 
-        call reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
+        if(idrift.eq.0)then
+	  call reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
+	endif
+	if(idrift.eq.1)then
+	  call reduce_1_drift(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
+	endif
 c------------------------------------------------------- 
         if(imodus.eq.2)then
           call transponiere(a,g)    ! bild zur quelle
@@ -1085,6 +1098,102 @@ c	implicit real*8(a-h,o-z)
 c******* extractmap ************************************     
 
 
+c********************************************************** 
+	subroutine reduce_1_drift(imodus,iord,a,g,acc,wc,
+     &	xlc,ypc1,zpc1,dypc,dzpc)    
+c********************************************************** 
+        implicit real*8(a-h,o-z) 
+c       mirror a und geometry g gehen herein
+c       map7 und map8 gehen heraus
+c 	wird von fgmapidp genutzt
+c----------------------------------------------------------
+        structure/geometryst/
+           real*8 sina,cosa,sinb,cosb,
+     &            r,rp,xdens(0:4),xlam
+	   integer idefl   
+        end structure
+        record /geometryst/ g  
+        dimension a(0:5,0:5)
+
+      	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              dq2(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              dq3(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              dq4(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              dq5(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              dq6(0:4,0:4,0:4,0:4,0:4,0:4)    
+     	
+        dimension   f2c1(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              f2c2(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              f2c3(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              f2c4(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              g2c(0:4,0:4,0:4,0:4,0:4,0:4)
+
+	dimension dsqrq1(0:4,0:4,0:4,0:4,0:4,0:4),    
+     &            dsqrq2(0:4,0:4,0:4,0:4,0:4,0:4),
+     &  	  g2cc(0:4,0:4,0:4,0:4,0:4,0:4),
+     &		  density(0:4,0:4,0:4,0:4,0:4,0:4),   
+     &		  fak(0:4)
+        dimension   eq1c(0:4,0:4,0:4,0:4,0:4,0:4),
+     &              eq2c(0:4,0:4,0:4,0:4,0:4,0:4)
+        dimension   ypc(0:4,0:4,0:4,0:4),
+     &              zpc(0:4,0:4,0:4,0:4)
+        dimension   dq7(0:4,0:4,0:4,0:4),
+     &              dq8(0:4,0:4,0:4,0:4),
+     &              dq9(0:4,0:4,0:4,0:4),
+     &              dqa(0:4,0:4,0:4,0:4),
+     &              dqb(0:4,0:4,0:4,0:4),
+     &              dqc(0:4,0:4,0:4,0:4),
+     &              dqd(0:4,0:4,0:4,0:4),
+     &              dqe(0:4,0:4,0:4,0:4)
+        dimension   dyic(0:4,0:4,0:4,0:4),
+     &              dzic(0:4,0:4,0:4,0:4)
+        dimension   wc(0:4,0:4,0:4,0:4),
+     &              xlc(0:4,0:4,0:4,0:4),
+     &              ypc1(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4)
+        dimension   dyp1c(0:4,0:4,0:4,0:4),
+     &              dzp1c(0:4,0:4,0:4,0:4),
+     &              dypc(0:4,0:4,0:4,0:4),
+     &              dzpc(0:4,0:4,0:4,0:4)
+        dimension dqk(0:4,0:4,0:4,0:4)
+        dimension dyp2c(0:4,0:4,0:4,0:4,0:4,0:4),
+     &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
+
+        drift=g.r+g.rp
+	do n1=0,4
+	 do n2=0,4
+	  do n3=0,4
+	   do n4=0,4
+	    ypc1(n1,n2,n3,n4)=0.d0
+	    zpc1(n1,n2,n3,n4)=0.d0
+            dypc(n1,n2,n3,n4)=0.d0
+            dzpc(n1,n2,n3,n4)=0.d0
+	    wc(n1,n2,n3,n4)=0.d0
+	    xlc(n1,n2,n3,n4)=0.d0
+	   enddo
+	  enddo
+	 enddo
+        enddo
+
+        ypc1(0,1,0,0)=1.d0
+        ypc1(0,0,0,1)=drift
+		
+	wc(0,1,0,0)=1.d0
+	wc(0,0,0,1)=g.r
+				
+	zpc1(1,0,0,0)=1.d0
+	zpc1(0,0,1,0)=drift
+						
+	xlc(1,0,0,0)=1.d0
+	xlc(0,0,1,0)=g.r
+								
+	dypc(0,0,0,1)=1.d0
+									
+        dzpc(0,0,1,0)=1.d0
+ 
+        return
+	end
+		    
 c********************************************************** 
 	subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c********************************************************** 

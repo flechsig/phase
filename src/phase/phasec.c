@@ -277,6 +277,9 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOESlit:
       printf("DefMirrorC: slit- geometry and element data are ignored - ");
       printf("fill dummy entries from toroid\n"); 
+    case kEOEDrift:
+      printf("DefMirrorC: drift- geometry and element data are ignored - ");
+      printf("fill dummy entries from toroid\n"); 
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* 6    */
     case kEOEVLSG:  
@@ -1947,7 +1950,21 @@ void SetOElementBoxSensitivity(int etype)
     for (i= kEOET1; i<= kEOET20; i++)
       set_something(widget_array[i], XmNsensitive, False);
     break;
- 
+
+  case kEOEDrift:
+/*    set_something(widget_array[kEGNITranslation], XmNsensitive, False);
+    set_something(widget_array[kEOEAB2], XmNsensitive, False); 
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    set_something(widget_array[kEGT3Button], XmNsensitive, False); */
+    set_something(widget_array[kEOET23], XmNsensitive, False); 
+    set_something(widget_array[kEOET26], XmNsensitive, False); 
+    for (i= kEOET1; i<= kEOET20; i++)
+       if ((i!=159) && (i!=158)) 
+	 {
+       set_something(widget_array[i], XmNsensitive, False);
+	 };
+    break;
+
   case kEOEPM:
     set_something(widget_array[kEOET7], XmNvalue, "0");
     set_something(widget_array[kEOET8], XmNvalue, "0");
@@ -2236,7 +2253,8 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   if (strcmp(text, "pl.- el.- vls- g.") == 0) etype= kEOEPElliG; else
     if (strcmp(text, "coefficient file") == 0) etype= kEOEGeneral; else
       if (strcmp(text, "aperture/ slit (RT)") == 0) etype= kEOESlit; else 
-	etype= kEOEVLSG;
+        if (strcmp(text, "free drift") == 0) etype= kEOEDrift; else 
+	  etype= kEOEVLSG;
 	
   XtFree(text);
   

@@ -130,7 +130,6 @@ void set_something(w, resource, value)
     char	*resource, *value;
 {
     Arg al[1]; 
-
     XtSetArg(al[0], resource, value);
     XtSetValues(w, al, 1);
 }

@@ -160,6 +160,7 @@
 #define kCWriteResultButton     97
 #define kEParameterInitButton   98
 #define kEOESlit                99
+#define kEOEDrift               999
 #define kCCGlueBox              100  
 #define kCCGResultButton        101   
 #define kCCGList                102   

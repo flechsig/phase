@@ -766,10 +766,16 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
       { /* neu */
 	/*   printf("c: call fgmapidp\n"); */
         imodus= 1;   /* source to image zuerst */
-        fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+
+	if(listpt->Art==999)
+	   {imodus=imodus+1000;};
+	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
-	xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
+	if(listpt->Art==999)
+	   {imodus=imodus-1000;};
+
+	 xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
 		listpt->dzpc, &bl->BLOptions.ifl.iord); 
 /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
@@ -787,9 +793,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	if (bl->BLOptions.SourcetoImage != 1) 
 	  {	
 	    imodus= 2;   
+	    if(listpt->Art==999)
+	       {imodus=imodus+1000;}; 
 	    fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);   
+	    if(listpt->Art==999)
+	       {imodus=imodus+1000;};
+
 	    xxmap70(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord); 
 /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,

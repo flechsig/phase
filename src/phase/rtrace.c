@@ -452,11 +452,14 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 			       (double *)ds->dypc, (double *)ds->dzpc);
 		    pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
 			     &xlength1, &xlength2, &xlength); 
-		/* if ((bl->BLOptions.CalcMod & SlopeMod) == SlopeMod) */
+		     
+       /* if ((bl->BLOptions.CalcMod & SlopeMod) == SlopeMod) */
 		    slopelen= (bl->BLOptions.SourcetoImage == 1) ? 
 		      ds->GDat.rp : ds->GDat.r; 
-		    Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, 
+
+		     Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, 
 			  slopelen, ds->geo.cosb, ds->GDat.azimut); 
+
 		  }
 		/* calculate phase */
 		dphase= (bl->BLOptions.lambda > 0) ? 
@@ -467,6 +470,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
                 
 		/* 2PI entspricht lambda= 0 */
 		/* Ausgabe */
+
 		printf("  ray trace: \n"); 
 	        printf("    yi : % .4g,\tyo : % .4g\t (mm)\n", 
 		       Raysin->y, Raysout->y);  
