@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <07 Jan 00 09:21:06 flechsig> 
+! Time-stamp: <04 Jan 01 09:46:06 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/phasevalue.uil
@@ -319,7 +319,9 @@ value
  	kEBLT31		 	: 334; 
 	kEBLT41		 	: 335; 
 	kEBLT31a		: 336; 
- 	kEBLT41a		: 337;    
+ 	kEBLT41a		: 337;  
+
+  	kEOEGeneral             : 350;
 
 
 !********************* Besonderheiten ****************************** 
