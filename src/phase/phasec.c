@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Apr 04 17:38:28 flechsig>  */
+/*   Time-stamp: <21 Apr 04 12:04:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -370,7 +370,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       if (alpha < small) 
 	{
 	  beep(1);	
-	  fprintf(stderr, "DefMirrorC: theta = 0, elliptical shape makes no sense!\n");
+	  fprintf(stderr, 
+		  "DefMirrorC: theta = 0, elliptical shape makes no sense!\n");
 	} 
       else
 	{     
@@ -1925,6 +1926,9 @@ void SetOElementBoxSensitivity(int etype)
   set_something(widget_array[kEOEAB2], XmNsensitive, True);
   set_something(widget_array[kEOEAB4], XmNsensitive, True);
   set_something(widget_array[kEGT3Button], XmNsensitive, True);
+  /* set it back to red - 1 is a guess */
+  /*set_something(widget_array[kEOET5], XmNforeground, 1);
+    set_something(widget_array[kEOET6], XmNforeground, 1); */
 
   switch (etype) {
   
@@ -1953,7 +1957,9 @@ void SetOElementBoxSensitivity(int etype)
   case kEOEPElli:
     set_something(widget_array[kEOEAB2], XmNsensitive, False);
     set_something(widget_array[kEOEAB4], XmNsensitive, False);
-    for (i= kEOET5; i<= kEOET8; i++)
+    set_something(widget_array[kEOET5], XmNforeground, 0);
+    set_something(widget_array[kEOET6], XmNforeground, 0);
+    for (i= kEOET7; i<= kEOET8; i++)
       set_something(widget_array[i], XmNsensitive, False);
   case kEOETM:
   case kEOECone:
@@ -1979,8 +1985,14 @@ void SetOElementBoxSensitivity(int etype)
     set_something(widget_array[kEOET13], XmNsensitive, False);
     set_something(widget_array[kEOET14], XmNsensitive, False);
     break;
-  case kEOEVLSG: 
   case kEOEPElliG:
+    set_something(widget_array[kEOEAB2], XmNsensitive, False);
+    set_something(widget_array[kEOEAB4], XmNsensitive, False);
+    set_something(widget_array[kEOET5], XmNforeground, 0);
+    set_something(widget_array[kEOET6], XmNforeground, 0);
+    for (i= kEOET7; i<= kEOET8; i++)
+      set_something(widget_array[i], XmNsensitive, False);
+  case kEOEVLSG:
     break;
   case kEOEPGV:
     set_something(widget_array[kEOET7],  XmNvalue, "0");
@@ -2161,8 +2173,8 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   /* we do not need to read cff */
   text= XmTextGetString(widget_array[kEOET2]); sscanf(text, "%lf", &gp->r);
   text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
-
-  text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &gp->theta0);
+  text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", 
+						      &gp->theta0);
   mp->alpha= gp->theta0;
   text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &mp->r1); 
   text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &mp->r2);
@@ -2171,12 +2183,16 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET8]); sscanf(text, "%lf", &mp->rho); 
 
   text= XmTextGetString(widget_array[kEOET9]); sscanf(text, "%d", &gp->inout); 
-  text= XmTextGetString(widget_array[kEOET10]); sscanf(text, "%lf", &gp->xdens[1]);
-  text= XmTextGetString(widget_array[kEOET11]); sscanf(text, "%lf", &gp->xdens[3]);
-
-  text= XmTextGetString(widget_array[kEOET12]); sscanf(text, "%lf", &gp->xdens[0]);
-  text= XmTextGetString(widget_array[kEOET13]); sscanf(text, "%lf", &gp->xdens[2]);
-  text= XmTextGetString(widget_array[kEOET14]); sscanf(text, "%lf", &gp->xdens[4]);
+  text= XmTextGetString(widget_array[kEOET10]); sscanf(text, "%lf", 
+						       &gp->xdens[1]);
+  text= XmTextGetString(widget_array[kEOET11]); sscanf(text, "%lf", 
+						       &gp->xdens[3]);
+  text= XmTextGetString(widget_array[kEOET12]); sscanf(text, "%lf", 
+						       &gp->xdens[0]);
+  text= XmTextGetString(widget_array[kEOET13]); sscanf(text, "%lf", 
+						       &gp->xdens[2]);
+  text= XmTextGetString(widget_array[kEOET14]); sscanf(text, "%lf", 
+						       &gp->xdens[4]);
 
   text= XmTextGetString(widget_array[kEOET15]); sscanf(text, "%lf", &mp->du);
   text= XmTextGetString(widget_array[kEOET16]); sscanf(text, "%lf", &mp->dw);
@@ -2191,11 +2207,13 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
 
   text= XmTextGetString(widget_array[kEOET21]); sscanf(text, "%lf", &mp->w1);
   text= XmTextGetString(widget_array[kEOET22]); sscanf(text, "%lf", &mp->w2);
-  text= XmTextGetString(widget_array[kEOET23]); sscanf(text, "%lf", &mp->slopew);
+  text= XmTextGetString(widget_array[kEOET23]); sscanf(text, "%lf", 
+						       &mp->slopew);
 
   text= XmTextGetString(widget_array[kEOET24]); sscanf(text, "%lf", &mp->l1);
   text= XmTextGetString(widget_array[kEOET25]); sscanf(text, "%lf", &mp->l2);
-  text= XmTextGetString(widget_array[kEOET26]); sscanf(text, "%lf", &mp->slopel);
+  text= XmTextGetString(widget_array[kEOET26]); sscanf(text, "%lf", 
+						       &mp->slopel);
   XtFree(text);
 #ifdef DEBUG
   /*  printf("getoelement: vor history\n"); */
