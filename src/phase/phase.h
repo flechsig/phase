@@ -1,16 +1,12 @@
-/* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
-/* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <17 Feb 04 16:33:07 flechsig>              */
-/* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
+/*   Date      : <08 Mar 04 13:35:03 flechsig>  */
+/*   Time-stamp: <08 Mar 04 13:42:14 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 17-FEB-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
-
-/* 23.11.98 108, 109 eingefuegt, undulatorsourcetype erweitert UF */
-/* 3.12.98 Slope erweitert */
-/* 19.2.99 Slope erweitert */
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 #ifndef PHASE_H
 #define PHASE_H   
@@ -456,7 +452,7 @@ struct RayType { double y, z, dy, dz, phi; };
 /*23.11.98  deltaz neu UF */
 struct UndulatorSourceType { double length, lambda, sigvert, sighor, deltaz;};  
 struct UndulatorSource0Type { double length, lambda, sigvert, sighor, deltaz,
-   sigmaez, sigmaey, sigmaedz, sigmaedy ;};  
+   sigmaez, sigmaey, sigmaedz, sigmaedy; };  
 struct DipolSourceType     { double sigy, sigdy, sigz, dz; }; 
 struct PointSourceType     { double sigy, sigdy, sigz, sigdz; }; 
 struct SRSourceType        { double y, z, dy, dz; };   
@@ -466,7 +462,7 @@ struct PSImageType         { double ymin, ymax, zmin, zmax;
   int    iy, iz; };         
 struct PSSourceType        { double sigy, sigdy, sigz, sigdz;
   int    yhard, dyhard, zhard, dzhard; };         
-
+struct FileSourceType { char *filename; };
     
 struct RTSourceType {
   union               	{ 
@@ -477,6 +473,7 @@ struct RTSourceType {
     struct SRSourceType        SRSource;
     struct PSImageType         PSImage;
     struct PointSourceType     PointSource;
+    struct FileSourceType      FileSource;
   } Quelle;
   struct RayType *SourceRays;          
   int QuellTyp, modified, raynumber; };       
@@ -691,7 +688,7 @@ void 	ActivateFileSelection(int, char *),
   activate_proc(),  
   AddBLElement(struct BeamlineType *, char *),
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *),  
-  BatchMode(char *fname, int cmode),
+  BatchMode(char *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   DefGeometryC(struct gdatset *, struct geometrytype *),  
