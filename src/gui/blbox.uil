@@ -1,7 +1,18 @@
+! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/blbox.uil
+! Date      : <13 Feb 04 16:29:19 flechsig> 
+! Time-stamp: <13 Feb 04 16:29:48 flechsig> 
+! Author    : Uwe Flechsig, flechsig@psi.ch
+
+! $Source$ 
+! $Date$
+! $Revision$ 
+! $Author$ 
+
 ! Datei: USERDISK_3:[FLECHSIG.PHAS.PHASEUIL]BLBOX.UIL
 ! Datum: 29.MAY.1996
 ! Stand: 26-JUL-1996
 ! Autor: FLECHSIG, BESSY Berlin
+
 
 object
     EBLDialog  : XmFormDialog {                   
@@ -11,7 +22,7 @@ object
             XmNnoResize         = true;
             XmNdefaultPosition  = false;
             XmNx                = 250;
-            XmNy                = 350;
+            XmNy                = 150;
             XmNautoUnmanage     = false;
             XmNallowOverlap     = false;
             XmNdefaultButton    = XmPushButton CGrOK;
