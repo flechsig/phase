@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <21 Dec 99 15:14:48 flechsig> 
+c Time-stamp: <21 Dec 99 15:33:14 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -12,6 +12,8 @@ c     im VMS production release gibt es nur noch eine Version!
 c (3) SIMPS1 als record si1 in den record integration_results
 c     eingefuegt, z.B. jmult ansprechen ueber xir.si1.jmult
 c     common block geloescht, Aufrufe auf die Strukturvariaben gelenkt
+c (4) Zeile 105 iterz0 auskommentiert (nicht mehr in der structur)  
+c     Zeile 282 itery0 auskommentiert (nicht mehr in der structur)
 c------------------------------------------------------------------
 c von J.B. am 20.12.99
 c*********************************************************
@@ -102,7 +104,7 @@ c------------------------------------------------------
 	fmax=0.
 
 	ianzz=xi.ianzz0
-	iterz=xi.iterz0
+c gestrichen UF 21.12.99 iterz=xi.iterz0
 
 c*** Number of Iterations:                      iterz
 c*** Integrationsgrenzen:                       zmin, zmax
@@ -279,7 +281,7 @@ c        call subm2(m4.xlrc,dzi,m4.xlrrc)
 c------------ end of changes 16.8.1996
 
 	ianzy=xi.ianzy0
-	itery=xi.itery0
+c UF 21.12.99	itery=xi.itery0
 	fmax=0.
 
 c*** Number of Iterations:                      itery
@@ -1964,8 +1966,8 @@ c	type*,ii,jj,ra.rf.yp,ra.rf.zp
         xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
         xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
 
-	if(dabs(tya(ii,jj)).lt.small_loc)typ(ii,jj)=0.d0
-	if(dabs(tza(ii,jj)).lt.small_loc)tzp(ii,jj)=0.d0
+	if(dabs(tya(ii,jj)).lt.small_loc)xir.si1.typ(ii,jj)=0.d0
+	if(dabs(tza(ii,jj)).lt.small_loc)xir.si1.tzp(ii,jj)=0.d0
  
 	enddo
 	enddo
