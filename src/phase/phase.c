@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <18 Nov 99 16:55:25 flechsig>  */
+/*  Time-stamp: <19 Nov 99 08:55:59 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>                    /* For printf and so on. */
@@ -445,7 +445,7 @@ void list_proc(w, tag, list)                 /* selection callback */
      XmListCallbackStruct *list;
 {
   XmString xlabel;   
-  char clabel[MaxPathLength], *clabelp;
+  char clabel[MaxPathLength], *clabelp = NULL;
   int epos, ppos, indx, *pl[1], pc;
   
   switch (*tag)
@@ -482,7 +482,8 @@ void list_proc(w, tag, list)                 /* selection callback */
       
     case kCOptiList2:
       xlabel= XmStringCopy(list->item);
-      XmStringGetLtoR(xlabel, XmFONTLIST_DEFAULT_TAG, &clabelp);
+      if (!XmStringGetLtoR(xlabel, XmSTRING_DEFAULT_CHARSET, &clabelp))
+	return;
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
       break;      
@@ -821,12 +822,14 @@ void FileSelectionProc(Widget wi, int *tag,
 {
   int sw= *tag, itemcount, pos, i, *itemlist[20];
   XmString path;
-  char *fname;
+  char *fname= NULL;
 
   path= reason->value;
   /* Version entfernen */
 #ifdef VMS
-  fname= delversion(XmTextGetString(path)); 
+  if (!XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname))
+    return;
+  fname= delversion(fname); 
   path= XmStringCreateLocalized(fname);
   XtFree(fname);  
 #endif
@@ -853,7 +856,8 @@ void FileSelectionProc(Widget wi, int *tag,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-	  XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname);  
+	  if (!XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname)) 
+	    return;  
 	  strcpy((char *)&PHASESet.beamlinename, fname);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);  
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
@@ -893,7 +897,8 @@ void FileSelectionProc(Widget wi, int *tag,
 	  break;
 	  
 	case kFSaveAsButton:
-	  XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname);
+	  if (!XmStringGetLtoR(path, XmFONTLIST_DEFAULT_TAG, &fname))
+	    return;
 	  printf("save data as: %s\n", fname);
 	  WriteBLFile(fname, &Beamline);
 	  XtFree(fname);  
@@ -906,21 +911,21 @@ void FileSelectionProc(Widget wi, int *tag,
 void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
 {
   int  sw= *tag;
-  char **inhalt;
+  char *inhalt= NULL;
   XmString svalue;
   
   switch (sw) 
     {
     case kESOK:
       svalue= reason->value; 
-      inhalt= NULL;
-      XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, inhalt); 
+      if (!XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, &inhalt))
+	return; 
       XtUnmanageChild(widget_array[kEParameterBox]);  
       FetchWidget(kEParameterBox, "EParameterBox");      
-      InitParameterBox(&Beamline, *inhalt);  
+      InitParameterBox(&Beamline, inhalt);  
       XtManageChild(widget_array[kEParameterBox]);     
       XmStringFree(svalue);   
-      XtFree(*inhalt);
+      XtFree(inhalt);
       break;
       
     case kESCancel:       
@@ -939,10 +944,11 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
     case kCOptiList2: 
       svalue= reason->value; 
       /* *inhalt= NULL; */
-      XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, inhalt); 
-      InitOptiList2(sw, *inhalt);    
+      if (!XmStringGetLtoR(svalue, XmFONTLIST_DEFAULT_TAG, &inhalt))
+	return; 
+      InitOptiList2(sw, inhalt);    
       XmStringFree(svalue);   
-      XtFree(*inhalt);                
+      XtFree(inhalt);                
       break;
     default: break;
     }
