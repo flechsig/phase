@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <25 Mar 04 16:35:26 flechsig> 
+ Time-stamp: <25 Mar 04 17:08:45 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -68,7 +68,10 @@ SIGN of w and l
 check signs of w,l and misalignment
 ===================================
 
-a) 
+a) check the signs of u w l and the output y z dy dz n single ray mode
+
+-------------------------------------------------------------------------------------
+     |        I N P U T              |   O U T P U T     ||
 refl | y z dy dz | du dw dl ru rw rl | u w l | y z dy dz || remark
 -------------------------------------------------------------------------------------
 left | + 0  0  0 |  0  0  0  0  0  0 | 0 0 + | + 0  0  0 || JB ok, rhr sign problem l
