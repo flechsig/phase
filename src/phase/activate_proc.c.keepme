@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <20 Apr 04 14:50:51 flechsig>  */
+/*   Time-stamp: <21 Apr 04 11:23:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -290,7 +290,8 @@ void activate_proc(w, tag, reason)
   case kEOEPElli: 
   case kEOESlit:
   case kEOEGeneral:
-    printf("activate_proc: OEBox PDM: widget_num: %d\n", widget_num);
+  case kEOECone: 
+    /*    printf("activate_proc: OEBox PDM: widget_num: %d\n", widget_num);*/
     SetOElementBoxSensitivity(widget_num);
     
     /* last modification: 17 Jun 97 08:49:57 flechsig */
