@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <12 Feb 04 12:17:52 flechsig>  */
+/*   Time-stamp: <12 Feb 04 12:32:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -145,10 +145,10 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
 	  break;  
 	case 'o': pp=(struct PointSourceType *) 
 		    &(bl->RTSource.Quelle.PointSource);
-	  dp->sigy	= 0.093;  
-	  dp->sigdy	= 1.;  
-	  dp->sigz      = 0.05;
-	  dp->sigdz     = 1.0;
+	  pp->sigy	= 0.093;  
+	  pp->sigdy	= 1.;  
+	  pp->sigz      = 0.05;
+	  pp->sigdz     = 1.0;
 	  break;  
 	case 'S': sp= (struct SRSourceType *) &(bl->RTSource.Quelle.SRSource);
 	  sp->y	=1.;  
