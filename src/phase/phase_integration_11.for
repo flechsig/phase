@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_integration_11.for
 c Date      : <28 Oct 99 09:17:59 flechsig> 
-c Time-stamp: <20 Dec 99 10:45:54 flechsig> 
+c Time-stamp: <20 Dec 99 15:29:36 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c 
 c 28.10.99 Die Versionsnummern im Fortran File werden nur noch
@@ -1286,20 +1286,10 @@ c	dimension xxr(4096),ffyza(4096),ffyzp(4096)
 	dimension x(4096),y(4096)
 	dimension fyza(4096),fyzp(4096)
 
-	dimension bb(6)
-	common /cstak/ rstak(6*4096)
-	bb(1)=0.
-	bb(2)=1.
-	bb(3)=0.
-	bb(4)=0.
-	bb(5)=1.
-	bb(6)=0.
-
 	dphi_loc_min=1.e-2
 	iordap_loc=2
 
 	xir.nsimp=xir.nsimp+1	! number of calls of simpson
-	if(xir.nsimp.eq.1)call istkin(6*4096, 3)
 
 c---------------------------------------------------------
 	if(ifl.ispline.lt.0)then
@@ -1321,45 +1311,9 @@ c	write(10,*)x(i),fyza(i),fyzp(i)
 c	enddo
 c	close(10)
 
-	if(xir.si1.jmult.gt.1)then
-c	Raster verfeinern mit Multiplikator jmult
-c
 c	fyza --> fyza_loc	
 c	fyzp --> fyzp_loc	
 c	ianz --> ianz_loc
-
-c------ convert to real numbers, spaeter durch double ersetzen
-	do i=1,ianz
-	xxr(i)=x(i)
-	ffyza(i)=fyza(i)
-	ffyzp(i)=fyzp(i)
-	enddo
-
-	ianz_loc=xir.si1.jmult*(ianz-1)+1
-
-	do i=1,ianz-1
-	do j=1,xir.si1.jmult
-	  dyz_loc((i-1)*xir.si1.jmult+j)=dyz(i)/floatj(xir.si1.jmult)
-	enddo
-	enddo
-
-	x_loc(1)=dyz_loc(1)
-	do i=2,ianz_loc-2
-	x_loc(i)=x_loc(i-1)+dyz_loc(i)
-	enddo
-
-	ianz_loc=ianz_loc-2
-
-c	open(unit=10,name='t00.dat',type='new')
-c	do i=1,ianz_loc
-c	write(10,*)i,x_loc(i)
-c	enddo
-c	close(10)
-
-	call cspin(xxr,ffyza,ianz,x_loc,fyza_loc,ianz_loc)
-	call cspin(xxr,ffyzp,ianz,x_loc,fyzp_loc,ianz_loc)
-
-	else
 
 	ianz_loc=ianz
 	do i=1,ianz_loc
@@ -1368,8 +1322,6 @@ c	close(10)
 	fyza_loc(i)=fyza(i)
 	fyzp_loc(i)=fyzp(i)
 	enddo
-
-	endif		! jmult.gt.1
 
 	ph2=fyzp_loc(1)
 	dsinph2=dsin(ph2)
