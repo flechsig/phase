@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <31 Oct 03 10:27:32 flechsig>  */
+/*   Time-stamp: <19 Feb 04 15:36:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -48,7 +48,7 @@
 
 #ifdef VMS
   #include "[-.phase]cutils.h"  
-  #include "[-.phase]phase_struct_10.h"
+  #include "[-.phase]phase_struct.h"
   #include "[-.phase]fg3pck.h"   
   #include "[-.phase]mirrorpck.h"                 
   #include "[-.phase]geometrypck.h"   
@@ -56,7 +56,7 @@
   #include "[-.opti]phaseopti.h" 
 #else
   #include "../phase/cutils.h"  
-  #include "../phase/phase_struct_10.h"
+  #include "../phase/phase_struct.h"
   #include "../phase/fg3pck.h"   
   #include "../phase/mirrorpck.h"                 
   #include "../phase/geometrypck.h"   
