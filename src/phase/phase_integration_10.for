@@ -130,8 +130,8 @@ c                              ------------------------------
 	fmax=dmax1(fmax,cdabs(fzey(ianzz)))
 	fmin=xi.fracz*fmax
 
-	if(ianzz.lt.(xi.imaxz-(iold-i)))then	! insert grid point
-
+c Uwe	if(ianzz.lt.(xi.imaxz-(iold-i)))then	! insert grid point
+        if(ianzz.lt.(9999-(iold-i)))then ! insert grid point
 	s1=xi.frac1z*fzoldey(i)
 	s2=xi.frac1z*fzoldey(i+1)
 
@@ -179,7 +179,8 @@ c                    ---------------------------------
 c------------------------------------------------------
 
 	if((ianzz.gt.iold).and.
-     &     ((iterz.gt.0).and.(ianzz.lt.xi.imaxz)))then
+&     ((iterz.gt.0).and.(ianzz.lt.9999)))then
+c Uwe     &     ((iterz.gt.0).and.(ianzz.lt.xi.imaxz)))then
 
 	iterz=iterz-1
 
@@ -452,7 +453,7 @@ c        call subm2(m4.xlrc,dzi,m4.xlrrc)
 c------------ end of changes 16.8.1996
 
 	ianzy=xi.ianzy0
-	itery=xi.itery0
+c Uwe	itery=xi.itery0
 	fmax=0.
 
 c*** Number of Iterations:                      itery
