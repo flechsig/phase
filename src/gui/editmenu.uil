@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/editmenu.uil
 ! Date      : <11 Apr 97 14:27:00 flechsig> 
-! Time-stamp: <28 Oct 99 11:47:03 flechsig> 
+! Time-stamp: <04 Jan 01 09:53:13 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]EDITMENU.UIL
@@ -211,7 +211,8 @@ object
                    XmPushButton        EOEGratingVarButton;
                    XmPushButton        EOEElliButton; 
 		   XmPushButton        EOEPElliButton; 
-		   XmPushButton 	EOESlitButton;
+		   XmPushButton        EOESlitButton;
+		   XmPushButton        EOEGeneralButton;
                          };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOEMenu); 
@@ -257,6 +258,21 @@ object
             XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
             }; 
         };  
+
+
+object
+    EOEGeneralButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "coefficient file";
+            XmNmnemonic         = keysym("f");
+                        };
+        callbacks {
+          MrmNcreateCallback  = procedure create_proc (kEOEGeneral); 
+	  XmNactivateCallback = procedure activate_proc (kEOEGeneral);
+          XmNhelpCallback     = procedure sens_help_proc(k_nyi_help); 
+            }; 
+        };  
+
 
 object
     EOEGratingVarButton : XmPushButton {
