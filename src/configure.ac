@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <11 Dec 03 14:02:51 flechsig> 
+#   Time-stamp: <11 Dec 03 15:38:39 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -12,10 +12,11 @@
 ## it is tested with autoconf 2.57
 AC_PREREQ(2.57)
 AC_INIT(phase,0.5,flechsig@psi.ch)
-AC_CONFIG_SRCDIR(src/ccut.c)
+AC_CONFIG_SRCDIR(phase/phase.c)
 AC_REVISION($Revision$)
 AC_CONFIG_AUX_DIR(config)
 ##AC_PREFIX_PROGRAM([/afs/psi.ch/user/f/flechsig/tmp])
+
 
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(phase/config.h)
@@ -65,20 +66,55 @@ else
 fi
 
 dnl Checks for libraries.
+dnl Replace `main' with a function in -lMrm:
+AC_CHECK_LIB(Mrm, main)
+dnl Replace `main' with a function in -lU77:
+AC_CHECK_LIB(U77, main)
+dnl Replace `main' with a function in -lV77:
+AC_CHECK_LIB(V77, main)
+dnl Replace `main' with a function in -lX11:
+AC_CHECK_LIB(X11, main)
+dnl Replace `main' with a function in -lXext:
+AC_CHECK_LIB(Xext, main)
+dnl Replace `main' with a function in -lXm:
+AC_CHECK_LIB(Xm, main)
+dnl Replace `main' with a function in -lXp:
+AC_CHECK_LIB(Xp, main)
+dnl Replace `main' with a function in -lXt:
+AC_CHECK_LIB(Xt, main)
 dnl Replace `main' with a function in -lc:
 AC_CHECK_LIB(c, main)
+dnl Replace `main' with a function in -lf77math:
+AC_CHECK_LIB(f77math, main)
+dnl Replace `main' with a function in -lfio:
+AC_CHECK_LIB(fio, main)
 dnl Replace `main' with a function in -lg2c:
 AC_CHECK_LIB(g2c, main)
+dnl Replace `main' with a function in -lgrafX11:
+AC_CHECK_LIB(grafX11, main)
+dnl Replace `main' with a function in -lgraflib:
+AC_CHECK_LIB(graflib, main)
+dnl Replace `main' with a function in -lkernlib:
+AC_CHECK_LIB(kernlib, main)
 dnl Replace `main' with a function in -lm:
 AC_CHECK_LIB(m, main)
+dnl Replace `main' with a function in -lmathlib:
+AC_CHECK_LIB(mathlib, main)
 dnl Replace `main' with a function in -lnsl:
 AC_CHECK_LIB(nsl, main)
+dnl Replace `main' with a function in -lpacklib:
+AC_CHECK_LIB(packlib, main)
+dnl Replace `main' with a function in -lpawlib:
+AC_CHECK_LIB(pawlib, main)
 
 dnl Checks for header files.
+AC_PATH_X
 AC_HEADER_STDC
 AC_CHECK_HEADERS(strings.h unistd.h)
+AC_SUBST([CPPFLAGS],"-I$x_includes")
 
 dnl Checks for typedefs, structures, and compiler characteristics.
+AC_STRUCT_TM
 AC_C_CONST
 AC_TYPE_SIZE_T
 
