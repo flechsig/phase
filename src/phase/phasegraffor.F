@@ -59,7 +59,7 @@ c
 	dimension raysout(5,1)                  ! gummilaenge
 	character*(*) titel,metaname
         real*4        y1,y2,z1,z2,scale       
-        real*8	      dlfac,lambda,dlf,raysout,scaled,ampmax
+        real*8	      dlfac,lambda,dlf,raysout,scaled
         integer       ifile,i,iy,iz,istat
 
 c temporarely fixed
@@ -116,14 +116,14 @@ c bei postscript ab hier doppelt
         write(*,*)'prior hbook2 ny nz      : ',iy,iz        
         write(*,*)'prior hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
 #endif   
-      	call hbook2(200,'PHASE',iz,z1,z2,iy,y1,y2,5000000.)
-        call hbook2(201,'PHASE',iz,z1,z2,iy,y1,y2,5000000.)
-        call hbook2(202,'PHASE',iz,z1,z2,iy,y1,y2,5000000.)
-        call hbook1(300,'PHASE',iy,y1,y2,50000.)   
-        call hbook1(400,'PHASE',iz,z1,z2,50000.)  
+      	call hbook2(200,'PHASE',iz,z1,z2,iy,y1,y2,0.)
+        call hbook2(201,'PHASE',iz,z1,z2,iy,y1,y2,0.)
+        call hbook2(202,'PHASE',iz,z1,z2,iy,y1,y2,0.)
+        call hbook1(300,'PHASE',iy,y1,y2,0.)   
+        call hbook1(400,'PHASE',iz,z1,z2,0.)  
         y1=(y1*dlfac+lambda)*1e6
         y2=(y2*dlfac+lambda)*1e6
-        call hbook1(700,'PHASE',iy,y1,y2,5000.)   ! dlambda 
+        call hbook1(700,'PHASE',iy,y1,y2,0.)   ! dlambda 
 
          
         y1=s.dymi*1e3
@@ -133,8 +133,8 @@ c bei postscript ab hier doppelt
 #ifdef DEBUG
         write(*,*)'diverg.: book dy1,dy2,dz1,dz2: ',y1,y2,z1,z2     
 #endif
-        call hbook1(500,'PHASE',iy,y1,y2,50000.)   
-        call hbook1(600,'PHASE',iz,z1,z2,50000.)  
+        call hbook1(500,'PHASE',iy,y1,y2,0.)   
+        call hbook1(600,'PHASE',iz,z1,z2,0.)  
 
 c time structure
         y1=s.tmi*1e15         ! output in fs
@@ -142,7 +142,7 @@ c time structure
 #ifdef DEBUG
         write(*,*)'time: book iy,y1,y2: ',iy,y1,y2     
 #endif
-        call hbook1(800,'PHASE',iy,y1,y2,50000.)   
+        call hbook1(800,'PHASE',iy,y1,y2,0.)   
      
 c--------- histogramme gebucht ------------------------
 
@@ -151,15 +151,6 @@ c--------- fuellen ------------------------------------
         write(*,*)'fill histogram'
 #endif  
         if (s.plotsyle.ge.20)then 
-c scale amplitudes in order to avoid histogram overflow
-  	   ampmax=0.d0
-  	   do i=1,s.zeilen 
-	     ampmax=dmax1(ampmax,dabs(raysout(5,i)))	     
-	   enddo
-  	   do i=1,s.zeilen 
-	     raysout(5,i)=1000.d0*(raysout(5,i)/ampmax)	     
-	   enddo
-
 	   do i=1,s.zeilen 
 c           write(*,*)'fill histogr.',i  
               call rtfillnorm(raysout(1,i),raysout(2,i),
