@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <29 Oct 03 12:00:44 flechsig>  */
+/*   Time-stamp: <04 Nov 03 15:14:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -89,7 +89,7 @@
 void 	FCN(int *, double *, double *, double *, int *, char *),    
      	fitoutput(int *, double *, double *), 
 	fminuend(int *),                          	/* treiber.for */
-        fminuinit(int *, FString *),   			/* treiber.for */ 
+        fminuinit(),   			/* treiber.for */ 
         rewindinput(int *),                             /* treiber.for */
 	minuit();                          /* cernlib     */
 
@@ -104,7 +104,9 @@ int main(argc, argv)
 {   
   double 		ax, ay, ax0;
   int 			ix, iy, iread= 20;
+#ifdef VMS
   FString 		Fminuitfilename;
+#endif
   struct PHASEset      PHASESet;          /* wird u.a. als dummy gebraucht  */
   char optfname[]= "optimized.phase";
 
@@ -113,6 +115,8 @@ int main(argc, argv)
 #ifdef LOGFILE 
    CheckUser(logfilename, "Optimization"); 
 #endif
+
+#ifndef DEBUG
    if (argc != 2)
    {
      fprintf(stderr,"syntax: phaseopti <inputfilename>\n");
@@ -121,6 +125,10 @@ int main(argc, argv)
    printf("read from file: %s\n", argv[1]);
 
    getoptipickfile(&optistructure, argv[1]); 
+#else
+   printf("debug mode -> read from file: test.pcko\n");
+   getoptipickfile(&optistructure, "test.pcko");
+#endif
    ReadBLFile(optistructure.beamlinefilename, &Beamline, &PHASESet);
    /* oeffnen des Ausgabefiles */
    if ((optistructure.filepointer= 
@@ -133,9 +141,10 @@ int main(argc, argv)
    out_struct(&Beamline, &ax0, optistructure.xindex); 
    /* get x, y aus */
    out_struct(&Beamline, &ay, optistructure.yindex);  /* index    */
-
+#ifdef VMS
    CreateFString(&Fminuitfilename,  optistructure.minuitfilename); 
    fminuinit(&iread, &Fminuitfilename);                 /* treiber.for */
+#endif
 
    /*   subroutine fminuinit(iread, readname) 
         character*(*) readname
@@ -163,22 +172,30 @@ int main(argc, argv)
 	 {
 	   in_struct(&Beamline, &ax, optistructure.xindex); 
 	   printf("scan x: %g, y:  %g\n", ax, ay); 
+#ifdef VMS
 	   rewindinput(&iread);                        /* treiber.for */
 	   
 	   /*  subroutine rewindinput(iread) 
 	       rewind(iread)
 	       return
 	       end         */
+#else
+	   fminuinit(&iread, optistructure.minuitfilename,
+		     strlen(optistructure.minuitfilename));
+#endif
 	   
 	   minuit(FCN, 0);                             /* cernlib     */
 	    printf("nach return ax: %f ay: %f\n", ax, ay); 
 	   ax+= optistructure.dx; 
+#ifndef VMS   
+   fminuend(&iread);                                    /* treiber.for */
+#endif 
 	 }
        ay+= optistructure.dy;  
      }
-   
+#ifdef VMS   
    fminuend(&iread);                                    /* treiber.for */
-   
+#endif   
    /*  subroutine fminuend(iread)
        close(iread)
        return
