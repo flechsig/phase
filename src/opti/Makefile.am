@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <06 Feb 04 08:17:21 flechsig> 
+#  Time-stamp: <06 Feb 04 09:03:11 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -18,14 +18,12 @@ phaseopti_SOURCES       = phaseopti.c phaseopti.h \
 	  ../phase/geometrypck.c ../phase/bline.c ../phase/phase0.c \
 	  ../phase/mirrorpck.c   ../phase/pst.c \
 	  ../phase/cutils.c      ../phase/rtrace.c \
-	  ../phase/phasegraffor.F ../phase/phasefor.for \
+	  ../phase/phasegraffor.F ../phase/phasefor.F \
 	  ../phase/phase_source.for \
 	  ../phase/phase_integration.for \
-	  treiber.F optisubc.c cost.F
+	  treiber.F optisubc.c cost.F 
 ##libphaseopti_la_SOURCES = 
           
-
-
 phaseopti_LDADD = $(libdir)/@LIBPHASE@
 ##libphaseopti_la_LDFLAGS = -rpath '$(libdir)' -version-info 3:13:1 
 
@@ -40,3 +38,7 @@ F77LINK = $(LINK)
 ##we use the c linker
 ##libphaseopti_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
 ##	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+
+
+
+
