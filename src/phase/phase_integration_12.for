@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <12 Jan 00 09:41:05 flechsig> 
+c Time-stamp: <21 Jan 00 09:08:42 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -1989,8 +1989,9 @@ c	type*,ii,jj,ra.rf.yp,ra.rf.zp
         xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
         xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
 
-	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc)xir.si1.typ(ii,jj)=0.d0
-	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc)xir.si1.tzp(ii,jj)=0.d0
+c UF 21.1.2000 leerzeichen eingefuegt
+	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc) xir.si1.typ(ii,jj)=0.d0
+	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc) xir.si1.tzp(ii,jj)=0.d0
  
 	enddo
 	enddo
