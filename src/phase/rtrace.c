@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
 /*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <12 Feb 04 12:28:13 flechsig>  */
+/*  Time-stamp: <12 Feb 04 13:37:56 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
@@ -372,10 +372,8 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	raylen= phase= 0.0;
 	memcpy(&Tmpsource, bl->RTSource.SourceRays, sizeof(struct RayType));
 
-	if ((Re->RESUnion.Rays= (struct RayType *) 
-	     malloc(sizeof(struct RayType))) == NULL)
-	  {    fprintf(stderr, "malloc error: raysout\n"); exit(-1);  }  
-        	
+	Re->RESUnion.Rays= (struct RayType *)xmalloc(sizeof(struct RayType));
+	        	
 	/* Schleife ueber die elemente */
 	elcounter= 0;
 	printf("\n**************** Single Ray *****************\n");
@@ -511,10 +509,9 @@ void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
 	Re->points= bl->RTSource.raynumber;
 	Re->typ= PLrttype;      
 
-	if ((Re->RESUnion.Rays= (struct RayType *) 
-	     malloc(Re->points * sizeof(struct RayType))) == NULL)
-	  {    fprintf(stderr, "malloc error: raysout\n"); exit(-1);  }  
-        
+	Re->RESUnion.Rays= (struct RayType *)
+	  xmalloc(Re->points * sizeof(struct RayType));
+	        
 	printf("calculate %d ray(s) \n", Re->points); 
 	Raysin= bl->RTSource.SourceRays; Raysout= Re->RESUnion.Rays;    
 
@@ -566,18 +563,16 @@ void RayTraceFull(struct BeamlineType *bl)
        Re->typ= PLrttype;      
 
      /* reserviere speicher */
-     if ((tmpsource= (struct RayType *) 
-          malloc(zahl* sizeof(struct RayType))) == NULL)
-     {    fprintf(stderr, "realloc error: raysout\n"); exit(-1);  }  
-
-     if ((tmpresult= (struct RayType *) 
-          malloc(zahl* sizeof(struct RayType))) == NULL)
-       {    fprintf(stderr, "realloc error: raysout\n"); exit(-1);  }  
-     
-     printf("calculate %d ray(s) \n", zahl); 
-     memcpy(tmpsource, bl->RTSource.SourceRays, zahl* sizeof(struct RayType));
-     
-     elcounter= 0;
+       tmpsource= (struct RayType *) 
+	 xmalloc(zahl* sizeof(struct RayType));
+       tmpresult= (struct RayType *) 
+	 xmalloc(zahl* sizeof(struct RayType));
+       
+       printf("calculate %d ray(s) \n", zahl); 
+       memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
+	      sizeof(struct RayType));
+       
+       elcounter= 0;
 
      while ((elcounter < bl->elementzahl) && (zahl > 1))
      {
@@ -647,9 +642,10 @@ void RayTraceFull(struct BeamlineType *bl)
      } /* schleife ueber elemente */
      free(tmpsource); 
      Re->points= zahl;
-     if ((Re->RESUnion.Rays= (struct RayType *) 
-          malloc(Re->points * sizeof(struct RayType))) == NULL)
-     {    fprintf(stderr, "realloc error: raysout\n"); exit(-1);  }  
+
+     Re->RESUnion.Rays= (struct RayType *) 
+       xmalloc(Re->points * sizeof(struct RayType));
+
      memcpy(Re->RESUnion.Rays, tmpresult, zahl* sizeof(struct RayType)); 
 
      free(tmpresult);
