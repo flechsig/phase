@@ -1,6 +1,16 @@
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
+#  Date      : <24 Jun 02 09:57:06 flechsig> 
+#  Time-stamp: <24 Jun 02 09:57:17 flechsig> 
+#  Author    : Uwe Flechsig, flechsig@psi.ch
+
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
+#
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <22 Jun 01 09:43:16 flechsig> 
+# Time-stamp: <24 Jun 02 09:56:55 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -10,7 +20,7 @@
 # 1) paths
 SRCDIR      = .
 INSTPATH    = /usr/local/phase
-BUILDPATH   = /home/pss060/sls/flechsig/phase
+BUILDPATH   = /afs/psi.ch/user/f/flechsig/phase
 CERNLIB     = /cern/2000/lib
 #CERNLIB    = /usr/local/cern/2000/lib
 #########################################################################
