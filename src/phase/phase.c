@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <02 Nov 99 10:01:23 flechsig>  */
+/*  Time-stamp: <02 Nov 99 11:00:34 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.c */
@@ -63,8 +63,9 @@ unsigned int main(argc, argv)
 
     MrmInitialize();			/* Initialize MRM before initializing */
 					/* the X Toolkit. */
-
+#ifdef VMS
     DXmInitialize();			/* Initialize DXm widgets */    
+#endif
 
     /* If we had user-defined widgets, we would register them with Mrm.here. */
     /* Initialize the X Toolkit. We get back a top level shell widget.       */
@@ -125,10 +126,10 @@ unsigned int main(argc, argv)
 
 
     /* Set up Help System environment */
-              
+#ifdef VMS              
     DXmHelpSystemOpen(&help_context, toplevel_widget, PHASE_help, 
                             help_error, "Help System Error");      
-    
+#endif    
 /*****************  Aenderung gegenueber Beispiel **************************/
     InitDataSets(&PHASESet, (char*) MainPickName);             /* PHASEc.c */
 
@@ -189,11 +190,11 @@ void init_application()
     print_widget= NULL; 		/* Initialize print widgets. */      
               
     color_widget= NULL;   		/* Initialize color mix widget. */      
-               
+#ifdef VMS               
     /* Set up the compound strings that we need. */
     latin_space = DXmCvtFCtoCS(" ", &bc, &status);
     latin_zero  = DXmCvtFCtoCS(" 0", &bc, &status);
-
+#endif
     ActualTask= 0;  
 }
                     
@@ -291,16 +292,19 @@ void create_help (help_topic)
         if (MrmFetchWidget (s_MrmHierarchy, "main_help", toplevel_widget,
 	    	  	    &help_widget[help_num], &dummy_class) != MrmSUCCESS)
 	s_error ("can't fetch help widget");     
-           
+#ifdef VMS           
         XtSetArg (arglist[0], DXmNfirstTopic, help_topic);
+#endif
         XtSetValues (help_widget[help_num], arglist, 1);       
         XtManageChild(help_widget[help_num]);    
         help_num++;   
     	stop_watch();
         return; 
     }   
-      
+
+#ifdef VMS      
     XtSetArg (arglist[0], DXmNfirstTopic, help_topic);
+#endif
     XtSetValues (main_help_widget, arglist, 1);
     XtManageChild(main_help_widget);     
     stop_watch();
@@ -313,7 +317,9 @@ void create_help (help_topic)
 
 void tracking_help()
 {          
+#ifdef VMS
   DXmHelpOnContext(toplevel_widget, FALSE);	
+#endif
 }
 
 
@@ -340,8 +346,10 @@ void create_print()
     
     ac = 0;                       
     XtSetArg (arglist[ac], XmNokCallback, callback_arg);ac++;
+#ifdef VMS
     XtSetArg (arglist[ac], DXmNsuppressOptionsMask, 
 	      DXmSUPPRESS_DELETE_FILE | DXmSUPPRESS_OPERATOR_MESSAGE); ac++;
+#endif
 	      XtSetValues (print_widget, arglist, ac);      
   }      
   
@@ -371,9 +379,11 @@ void create_color()
 		XDefaultColormapOfScreen(the_screen), &newcolor);
     
     ac = 0;                          
+#ifdef VMS
     XtSetArg (arglist[ac], DXmNorigRedValue, newcolor.red); ac++;		
     XtSetArg (arglist[ac], DXmNorigGreenValue, newcolor.green); ac++; 
     XtSetArg (arglist[ac], DXmNorigBlueValue, newcolor.blue); ac++;
+#endif
     XtSetValues(color_widget, arglist, ac);     
     
     savecolor.red = newcolor.red;
@@ -442,7 +452,9 @@ void list_proc(w, tag, list)                 /* selection callback */
       ppos= (XmListGetSelectedPos(widget_array[kEBLList], pl, &pc) 
 	     == True) ? **pl : 0; 
       sprintf(clabel, "selected element %3d", epos); 
+#ifdef VMS
       xlabel= DXmCvtFCtoCS(clabel, &bc, &status);
+#endif
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
       printf("fetch\n");
@@ -467,7 +479,9 @@ void list_proc(w, tag, list)                 /* selection callback */
       
     case kCOptiList2:
       xlabel= XmStringCopy(list->item);
+#ifdef VMS
       clabelp= DXmCvtCStoFC(xlabel, &bc, &status);  
+#endif
       InitOptiList2(list->item_position, clabelp);   
       XtFree(clabelp);
       break;      
@@ -478,7 +492,9 @@ void list_proc(w, tag, list)                 /* selection callback */
       printf("list_proc=> element %d, position %d\n", epos, ppos);
       indx= iindex(epos, ppos);
       sprintf(clabel, "selected element %3d;  index: ", epos);    
+#ifdef VMS
       xlabel= DXmCvtFCtoCS(clabel, &bc, &status);
+#endif
       set_something(widget_array[kCOptiSelectedLabel], XmNlabelString, 
 		    xlabel); 
       sprintf(clabel, "%4d", indx);  
@@ -531,8 +547,9 @@ void exit_proc(w, tag, reason)
   if (tag != NULL) printf("Exit - %s\n", tag);
   exithplot();
   /* Close the Help System */  
+#ifdef VMS
   DXmHelpSystemClose(help_context, help_error, "Help System Error");  
-  
+#endif  
   exit(1);
 }           
 
@@ -606,8 +623,10 @@ void help_system_proc(w, tag, reason)
     XmAnyCallbackStruct *reason; 
                         
 {                               
+#ifdef VMS
   DXmHelpSystemDisplay(help_context, PHASE_help, "topic", (char *)tag,
 		       help_error, "Help System Error");    
+#endif
   /*%%%DXmHelpSystemDisplay(help_context, PHASE_help, "topic", tag,
     help_error, "Help System Error");  */
 }                    
@@ -683,9 +702,10 @@ void activate_print(w, tag, reason)
     {
       file_pointer[i] = XmStringCopy(list[i]);     
     }
-  
+#ifdef VMS  
   l_status = DXmPrintWgtPrintJob(print_widget, file_pointer, itemcount);
   printf("DXmPrintWgtPrintJob return status: %x\n",l_status);
+#endif
   for (i= 0; i< itemcount; i++) XmStringFree(file_pointer[i]);   
 }
 
@@ -696,15 +716,22 @@ void activate_print(w, tag, reason)
 void ok_color_proc(widget_id, tag, reason)
      Widget                     widget_id;
      int                        *tag;        
+#ifdef VMS
      DXmColorMixCallbackStruct  *reason;
+#else
+     void                       *reason;   /* dummy */
+#endif
+
 {                        
   int         ac;
   Arg         arglist[10];
   XColor      newcolor;
   
-  newcolor.red = reason->newred;
+#ifdef VMS
+  newcolor.red   = reason->newred;
   newcolor.green = reason->newgrn;
-  newcolor.blue = reason->newblu;
+  newcolor.blue  = reason->newblu;
+#endif
   
   if (XAllocColor(the_display,
                   XDefaultColormapOfScreen(the_screen), &newcolor)) {
@@ -721,9 +748,11 @@ void ok_color_proc(widget_id, tag, reason)
   XtUnmanageChild(color_widget);     
   
   ac = 0;                     
+#ifdef VMS
   XtSetArg (arglist[ac], DXmNorigRedValue, newcolor.red);ac++;	     	
   XtSetArg (arglist[ac], DXmNorigGreenValue, newcolor.green);ac++; 
   XtSetArg (arglist[ac], DXmNorigBlueValue, newcolor.blue);ac++;          
+#endif
   XtSetValues(color_widget, arglist, ac);     
 }
 
@@ -733,16 +762,21 @@ void ok_color_proc(widget_id, tag, reason)
 void apply_color_proc(widget_id, tag, reason)
      Widget			widget_id;
      int				*tag;        
+#ifdef VMS
      DXmColorMixCallbackStruct	*reason;
-     
+#else
+     void                       *reason;   /* dummy */
+#endif     
 {                        
   int		ac;
   Arg		arglist[10];
   XColor	newcolor;
   
-  newcolor.red = reason->newred;
+#ifdef VMS
+  newcolor.red   = reason->newred;
   newcolor.green = reason->newgrn;
-  newcolor.blue = reason->newblu;
+  newcolor.blue  = reason->newblu;
+#endif 
   
   if (XAllocColor(the_display,
                   XDefaultColormapOfScreen(the_screen), &newcolor)) {
@@ -765,8 +799,11 @@ void apply_color_proc(widget_id, tag, reason)
 void cancel_color_proc(widget_id, tag, reason)
      Widget			widget_id;
      int				*tag;        
+#ifdef VMS
      DXmColorMixCallbackStruct	*reason;
-     
+#else
+     void                       *reason;   /* dummy */
+#endif     
 {                        
   int         ac;
   Arg         arglist[10];
@@ -790,8 +827,10 @@ void FileSelectionProc(Widget wi, int *tag,
 
   path= reason->value;
   /* Version entfernen */
+#ifdef VMS
   fname= delversion(DXmCvtCStoFC(path, &bc, &status)); 
   path= DXmCvtFCtoCS(fname, &bc, &status);
+#endif
   XtFree(fname);  
   if (sw == kFileSelectionOk)
     {
@@ -816,8 +855,10 @@ void FileSelectionProc(Widget wi, int *tag,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
+#ifdef VMS
 	  fname= DXmCvtCStoFC(path, &bc, &status); 
-	  strcpy(&PHASESet.beamlinename, fname);
+#endif
+	  strcpy((char *)&PHASESet.beamlinename, fname);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);  
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
 	  ExpandFileNames(&PHASESet, fname); 
@@ -856,7 +897,9 @@ void FileSelectionProc(Widget wi, int *tag,
 	  break;
 	  
 	case kFSaveAsButton:
+#ifdef VMS
 	  fname= DXmCvtCStoFC(path, &bc, &status); 
+#endif
 	  printf("save data as: %s\n", fname);
 	  WriteBLFile(fname, &Beamline);
 	  XtFree(fname);  
@@ -876,8 +919,12 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
     {
     case kESOK:
       svalue= reason->value; inhalt= NULL;
+#ifdef VMS
       inhalt= DXmCvtCStoFC(svalue, &bc, &status);   
       if (status == DXmCvtStatusOK)  
+#else
+      if (status == 1)   /* dummy */
+#endif
 	{
 	  XtUnmanageChild(widget_array[kEParameterBox]);  
 	  FetchWidget(kEParameterBox, "EParameterBox");      
@@ -902,9 +949,13 @@ void SelectionProc(Widget wi, int *tag, XmSelectionBoxCallbackStruct *reason)
       
     case kCOptiList2: 
       svalue= reason->value; inhalt= NULL;
+#ifdef VMS
       inhalt= DXmCvtCStoFC(svalue, &bc, &status); 
       if (status == DXmCvtStatusOK)
-	{
+#else
+      if (status == 1)
+#endif
+        {
 	  InitOptiList2(sw, inhalt);    
 	  XmStringFree(svalue);   
 	}                 
@@ -926,8 +977,10 @@ void xmstring_append (XmString *string1, XmString string2)
 
 void start_watch()   
 {
+#ifdef VMS
   if (watch == (Cursor)NULL)
     watch = DXmCreateCursor(main_window_widget, decw$c_wait_cursor);
+#endif
   XDefineCursor(the_display, XtWindow(main_window_widget), watch);
   XFlush(the_display);
 }
