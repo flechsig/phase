@@ -1,11 +1,19 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
-/*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <04 Jan 01 11:34:33 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
+/*   Date      : <10 Feb 04 16:34:18 flechsig>  */
+/*   Time-stamp: <10 Feb 04 16:59:36 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
 
 /* 24.11.98 UF Undulatorsource schreiben/ lesen geaendert */
 
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>                              /* For printf and so on */
 #include <stdlib.h> 	      	    	    	/* needed for fopen     */  
@@ -692,34 +700,31 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
 void LoadHorMaps(struct BeamlineType *bl, int dim)    
 /***********************************************/   
 /* load horizontale Transformationsmatritzen  */
-/* Uwe 11.6.96 */
-/* last modification: 25 Mar 97 10:45:19 flechsig */
-/* last modification: 24 Mar 97 15:40:01 flechsig */
 /***********************************************/   
 {
    int msiz;
    char buffer[MaxPathLength], *phase_home;
 				
    msiz= 70* 70* sizeof(double); /* fest auf 70 */
-   if (((double *)bl->lmap= (double *)malloc(msiz)) == NULL)
-   {
-      fprintf(stderr, "malloc error\n");   exit(-1); 
-   } 
-   if (((double *)bl->rmap= (double *)malloc(msiz)) == NULL)
-   {
-      fprintf(stderr, "malloc error\n");   exit(-1); 
-   } 
 
-   sprintf(buffer,"%s%d_lh.omx\0", HORMAPFILENAMEBASE, dim); 
+    /* replace old code with xmalloc 10.2.04 UF*/ 
+   (double *)bl->lmap= (double *)xmalloc(msiz);
+   (double *)bl->rmap= (double *)xmalloc(msiz);
+
 #ifndef VMS
+   sprintf(buffer,"%s%d_lh.omx\0", HORMAPFILENAMEBASE, dim); 
    PrependEnv(PHASE_HOME, buffer);
+#else
+   sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", PREFIX,  dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, bl->lmap, dim);    
 
-   sprintf(buffer,"%s%d_rh.omx\0", HORMAPFILENAMEBASE, dim);
 #ifndef VMS 
+   sprintf(buffer,"%s%d_rh.omx\0", HORMAPFILENAMEBASE, dim);
    PrependEnv(PHASE_HOME, buffer);
+#else
+   sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", PREFIX, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, bl->rmap, dim); 
