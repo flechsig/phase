@@ -595,7 +595,7 @@ Opaque       help_context;         	/* Global help system context */
 long status;        			/* fuer Stringumwandlung   */
 long bc;      
 
-static Cursor my_watch = 0;
+static Cursor watch = 0;
 static Screen	*the_screen;		/* Pointer to screen data  */  
 static Display	*the_display;		/* Pointer to display data */  
 static XColor    savecolor;   

@@ -70,9 +70,9 @@ c        record /source_results/ sr
         end structure   
 
         structure/psoptions/
-          integer intmod, ndyfix, ndzfix
           record /PSSourceType/ PSSource
           real *8 dyminfix, dymaxfix, dzminfix, dzmaxfix  
+          integer intmod, ndyfix, ndzfix
         end structure  
         record /psoptions/ pso   
 

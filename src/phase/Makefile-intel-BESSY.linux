@@ -29,9 +29,8 @@ LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
 #FFLAGS  = -w -f -s -N3 -N51
 #FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
-FFLAGS  =  -c -vms -w95 -132
-LDFLAGS = -L/home/bahrdt/phas/phase/lib -lMyXm -lMyMrm \
--L/usr/X11R6/lib -lXt -lXext -lXp -lX11 -lm -lc -lnsl  
+FFLAGS  =  -c -vms -w95 -132 
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl  
 #LDFLAGS = -L/usr/X11R6/lib -lXm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
 #FFLAGS for absoft f77 compiler
 #	-g generate debugging information
@@ -70,8 +69,9 @@ OBJECTC = phase.o phasec.o \
 	  cutils.o rtrace.o 
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
+	  dfpl1_uf.o \
+	  dfpl2_uf.o \
 	  phase_integration.o 
-	  
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
@@ -85,6 +85,8 @@ SRCC    = phase.c phasec.c \
 	  cutils.c rtrace.c 
 SRCF    = phasegraffor.fpp phasefor.for \
 	  phase_source.for \
+	  dfpl1_uf.for \
+	  dfpl2_uf.for \
 	  phase_integration.for 
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
@@ -95,7 +97,7 @@ all:
 ##############################################################################
 # Dependencies section
 $(PROGRAM): $(OBJECTC) $(OBJECTF)
-	$(FOR)  -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
+	$(FOR) -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
 ##########################################################################
 %.o : %.c $(PHASEHS)
 	$(CC) $(CFLAGS) -o $@ $< 

@@ -2285,18 +2285,15 @@ void writemapc(char *fname, int iord,
 }	
 /* ******** end writemapc() ************************************** */
 
-
-void WriteMKos(struct mirrortype *a, char *name1)
+void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
      /* schreibt mirrorkoordinaten auf file */
 {
   FILE *f;
   int i, j;
   double *dp; 
-  char buffer[MaxPathLength], *name;
-
-  sprintf(buffer, "%s\n", "mirror-coefficients.dat");
-  name= &buffer[0]; 
-
+  char *name;  
+   
+  name= &buffer[0];  
   printf("WriteMKos: write to %s\n", name);
   dp= (double *)a;
 
@@ -2306,7 +2303,8 @@ void WriteMKos(struct mirrortype *a, char *name1)
     }    
   for (i= 0; i <= 5; i++) 
     for (j= 0; j <= 5; j++) 
-      if ((i + j) <= 5)  fprintf(f, "%lE\n", dp[i+j*6]);  
+/* write also i and j to file J.B. 9.11.2003 */
+       if ((i + j) <= 5)  fprintf(f, "%d %d %lE\n", i, j, dp[i+j*6]);  
   fclose(f); 
   printf("WriteMKos: done\n");
 }    

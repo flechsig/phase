@@ -671,7 +671,8 @@ void activate_proc(w, tag, reason)
 
   case kCWriteMCoButton: 
     bl= &Beamline;   
-    sprintf(buffer,"%s\n", "mirror-coefficients.dat");
+     /* \n weggenommen J.B. 10.11.2003 */
+    sprintf(buffer,"%s", "mirror-coefficients.dat");
     printf("%s\n", buffer);
     WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer); 
     break;   

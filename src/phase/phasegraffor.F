@@ -51,7 +51,7 @@ c
      &              iykanal,izkanal,ititel(80)
         end structure
         record /struct/ s
-        dimension raysout(5,1)                  ! gummilaenge
+	dimension raysout(5,1)                  ! gummilaenge
 	character*(*) titel,metaname
         real*4        y1,y2,z1,z2       
         real*8	      dlfac,lambda,dlf,raysout
@@ -67,12 +67,12 @@ c************************************************************************
         z1=s.zmi
         z2=s.zma  
         
-c        type*,'title and plotfilename are temporarely fixed'
-        type*,'hplotdisplayf:',y1,y2,z1,z2    
-        type*,'title         ',titel 
-        type*,'ps filename   ',metaname    
-        type*,'status, zeilen ',s.status, s.zeilen
-        type*,'style ', s.plotsyle
+c        print*,'title and plotfilename are temporarely fixed'
+        print*,'hplotdisplayf:',y1,y2,z1,z2    
+        print*,'title         ',titel 
+        print*,'ps filename   ',metaname    
+        print*,'status, zeilen ',s.status, s.zeilen
+        print*,'style ', s.plotsyle
         dlfac=dlf
         write(*,*)'dlfactor (mm)',dlfac,' lambda (mm)',lambda
 c********************* kanaele ****************************************
@@ -81,11 +81,11 @@ c postscriptfile
         if(ifile.eq.1)then  
 
 #ifdef VMS
-           type*,'open postsciptfile under VMS ',metaname
+           print*,'open postsciptfile under VMS ',metaname
            open(unit=11,file=metaname,
      1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW') 
 #else
-           type*,'open postsciptfile under UNIX ',metaname
+           print*,'open postsciptfile under UNIX ',metaname
 c           open(unit=11,file=metaname,FORM='FORMATTED',
 c     1          STATUS='UNKNOWN',err=4444)
            call kuopen(11,metaname,'UNKNOWN',istat)
@@ -128,17 +128,18 @@ c--------- fuellen ------------------------------------
         write(*,*)'fill histogram'        
         do i=1,s.zeilen 
 c           write(*,*)'fill histogr.',i  
-           call rtfill(raysout(1,i),raysout(2,i),
+	call rtfill(raysout(1,i),raysout(2,i),
      &                 raysout(3,i),raysout(4,i),
      &	               lambda,dlfac)
-        enddo          
+     	enddo
+	
         write(*,*)'for: histograms filled'  
         
         call makeplotf(titel,s.plotsyle) ! eigentliches plotten
         call iuwk(0,1)                   ! puffer leeren update alle ws S.12
 
         if(ifile.eq.1)then  
-           type*,'close postscriptfile'
+           print*,'close postscriptfile'
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
@@ -168,7 +169,7 @@ c             enddo
 c             close(10)
 c           else
 c       if(s.jftyp.gt.0)then         			! phase space  file 
-c           type*,'read phase space data'   
+c           print*,'read phase space data'   
 c            y und z sind bei psd vertauscht
 c             
 c           open(unit=10,file=datname,status='old') 
@@ -178,8 +179,8 @@ c           y1=s.ymi-(s.yma-s.ymi)/(2.0*iy)
 c           y2=s.yma+(s.yma-s.ymi)/(2.0*iy) 
 c           z1=s.zmi-(s.zma-s.zmi)/(2.0*iz) 
 c           z2=s.zma+(s.zma-s.zmi)/(2.0*iz) 
-c           type*,'vor hbook2 ny nz      : ',iy,iz
-c           type*,'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
+c           print*,'vor hbook2 ny nz      : ',iy,iz
+c           print*,'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
 c    	   call hbook2(200,'intensity',iz,z1,z2,iy,y1,y2,0.0)    
 c           do i=1,ianz 
 c              read(10,*) zd,yd,dzd        ! richtig
@@ -188,7 +189,7 @@ c              z=sngl(zd)
 c              dz=sngl(dzd)     ! *100.0
 c              call hfill(200,z,y,dz) 
 c           enddo
-c           type*,'gelesene Zeilen: ',ianz 
+c           print*,'gelesene Zeilen: ',ianz 
 c           close(10)
 c        else                                                   ! rtrace file
 c***** end   subroutine hplotdisplayf *********************************** 
@@ -207,7 +208,9 @@ c
         end structure
         record /struct/ s
 
-        dimension yd(1), zd(1), psd(1)                  ! gummilaenge
+c	changed dimension form 1 to 128  5.11.2003
+	dimension yd(1), zd(1), psd(1)        ! gummilaenge
+c	end changes
 	character*(*) titel,metaname
         real*4     y1,y2,z1,z2,y,z,p       
         integer istat
@@ -215,27 +218,27 @@ c
 c************************************************************************
  
         write(*,*)'hplotpsdf called (for)'
-        type*,'ps-filename  ',metaname    
-        type*,'titel       ',titel  
-        type*,'status,iy,iz',s.status,iy,iz
-        type*,'plotstyle ', s.plotsyle
+        print*,'ps-filename  ',metaname    
+        print*,'titel       ',titel  
+        print*,'status,iy,iz',s.status,iy,iz
+        print*,'plotstyle ', s.plotsyle
 c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
 
 #ifdef VMS
-           type*,'open postsciptfile under VMS '
+           print*,'open postsciptfile under VMS '
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
 #else
-           type*,'open postsciptfile under UNIX '
+           print*,'open postsciptfile under UNIX '
 c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
            call kuopen(11,metaname,'UNKNOWN',istat)
 #endif
            
            call igmeta(-11,-111) 
-           type*,'generate Postscript- File: ',metaname 
+           print*,'generate Postscript- File: ',metaname 
         endif
         goto 5001
 1111   write(*,*)'hplotpsdf: error open file: ',metaname
@@ -249,8 +252,8 @@ c bei postscript ab hier doppelt
            z1=s.zmi-(s.zma-s.zmi)/(2.0*iz) 
            z2=s.zma+(s.zma-s.zmi)/(2.0*iz) 
 
-           type*,'vor hbook2 ny nz      : ',iy,iz
-           type*,'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
+           print*,'vor hbook2 ny nz      : ',iy,iz
+           print*,'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
     	   call hbook2(200,'intensity',iz,z1,z2,iy,y1,y2,0.0)    
            do i=1,iy 
               y=sngl(yd(i))
@@ -275,7 +278,7 @@ c        endif
         call iuwk(0,1)                      !puffer leeren update alle ws S.12
 
         if(ifile.eq.1)then  
-           type*,'close postscriptfile'
+           print*,'close postscriptfile'
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
@@ -293,7 +296,7 @@ c        endif
         RETURN
 	END
 
-c           type*,'read phase space data'   
+c           print*,'read phase space data'   
 c            y und z sind bei psd vertauscht
 c             
 c           open(unit=10,file=datname,status='old') 
@@ -303,8 +306,8 @@ c           y1=s.ymi-(s.yma-s.ymi)/(2.0*iy)
 c           y2=s.yma+(s.yma-s.ymi)/(2.0*iy) 
 c           z1=s.zmi-(s.zma-s.zmi)/(2.0*iz) 
 c           z2=s.zma+(s.zma-s.zmi)/(2.0*iz) 
-c           type*,'vor hbook2 ny nz      : ',iy,iz
-c           type*,'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
+c           print*,'vor hbook2 ny nz      : ',iy,iz
+c           print*,'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
 c    	   call hbook2(200,'intensity',iz,z1,z2,iy,y1,y2,0.0)    
 c           do i=1,ianz 
 c              read(10,*) zd,yd,dzd        ! richtig
@@ -313,7 +316,7 @@ c              z=sngl(zd)
 c              dz=sngl(dzd)     ! *100.0
 c              call hfill(200,z,y,dz) 
 c           enddo
-c           type*,'gelesene Zeilen: ',ianz 
+c           print*,'gelesene Zeilen: ',ianz 
 c           close(10)
 c        else                                                   ! rtrace file
 c***** end   subroutine hplotpsdff *********************************** 
@@ -342,16 +345,16 @@ c     postscriptfile
         if(ifile.eq.1)then 
  
 #ifdef VMS
-           type*,'open postsciptfile under VMS '
+           print*,'open postsciptfile under VMS '
            open(unit=11,file=metaname,STATUS='UNKNOWN',
      1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)
 #else 
-           type*,'open postsciptfile under UNIX '
+           print*,'open postsciptfile under UNIX '
 c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
            call kuopen(11,metaname,'UNKNOWN',istat)
 #endif
            call igmeta(-11,-111) 
-           type*,'generate Postscript- File: ',metaname 
+           print*,'generate Postscript- File: ',metaname 
         endif
         goto 6667
  6666   write(*,*)'hplotpssimf: error open file: ',metaname
@@ -395,7 +398,7 @@ c bei postscript ab hier doppelt
         call iuwk(0,1)                      !puffer leeren update alle ws S.12
 
         if(ifile.eq.1)then  
-           type*,'close postscriptfile'
+           print*,'close postscriptfile'
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
