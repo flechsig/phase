@@ -1,3 +1,8 @@
+! File      : /home/pss060/sls/flechsig/phase/src/gui/phase.uil
+! Date      : <22 Oct 99 09:54:11 flechsig> 
+! Time-stamp: <22 Oct 99 09:55:05 flechsig> 
+! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+!
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]PHASE.UIL
 ! Datum: 19.JUL.1994
 ! Stand: 29-MAY-1996
@@ -30,7 +35,7 @@ procedure
 
 /************************ Include Files ******************************/
 
-include file "PHASEvalue.uil";             !Konstanten          
+include file "phasevalue.uil";             !Konstanten          
 include file "filemenu.uil";  
 include file "editmenu.uil"; 
 include file "commandsmenu.uil";       
@@ -259,3 +264,4 @@ object
 
                    
 end module;
+! end /home/pss060/sls/flechsig/phase/src/gui/phase.uil
