@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <16 Feb 00 09:53:17 flechsig>              */
+/* Time-stamp: <24 Mar 00 14:44:34 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -54,7 +54,7 @@
 #ifdef VMS
   #define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
 #else
-  #define HORMAPFILENAMEBASE	"PHASE_HOME/lib/"
+  #define HORMAPFILENAMEBASE	"PHASE_HOME/lib/map"
 #endif
 /*******************  fileheader *******************************/
 
@@ -797,8 +797,9 @@ extern void inithplot(),
 
 /* wird auf dem Laptop benoetigt */
 
-#ifdef caddr_t
-typedef char * caddr_t;      
+#ifdef CADDR_T
+/* #define caddr_t "char *" */
+   typedef XtPointer caddr_t;
 #endif
 
 static MrmRegisterArg reglist[] = {
