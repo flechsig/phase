@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <21 Dec 99 15:11:33 flechsig> 
+C Time-stamp: <23 Dec 99 12:50:54 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -2344,7 +2344,7 @@ c     implicit real*8(a-h,o-z)
  1    format(1a1)	
  3    format(a80)
 
-      write(*,*)' reading parameters from FG34.PAR (Version ab 9.6.97)'
+      write(*,*)' reading parameters from FG34.PAR (Version ab 23.12.99)'
       open(unit=16,name='fg34.par',type='old')
       read(16,1)dummy
       read(16,*)epsilon
