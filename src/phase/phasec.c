@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasec.c */
 /*  Date      : <28 Oct 99 10:04:05 flechsig>  */
-/*  Time-stamp: <12 Jan 00 07:50:33 flechsig>  */
+/*  Time-stamp: <10 Feb 00 13:34:15 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
@@ -908,7 +908,8 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 /*     "ymax of dipole source (in mm)", */
 /*     "zmin of dipole source (in mm)", */
 /*     "zmax of dipole source (in mm)", */
-    "(1): phase advance for grating, (0): mirror",
+    /*UF 10.2.00 igating wird automatisch gesetzt */
+    /*    "(1): phase advance for grating, (0): mirror", */
     "(1) normalize output, (0) do not normalize",
     "inorm1",
     "inorm2 (0, 1, 2)",
@@ -1004,7 +1005,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 
   /* ende der Variablendefinitionen */
 		      
-  itemzahl= 56;  /* Eintraege in der Liste */
+  itemzahl= 55;  /* Eintraege in der Liste */
 		      
   op= (struct OptionsType *)    &(bl->BLOptions); 
   pop= (struct PSOptionsType *) &(bl->BLOptions.PSO);  
@@ -1043,7 +1044,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 /*   sprintf(pvals[k++], "%g", bl->src.so5.dipzmin); */
 /*   sprintf(pvals[k++], "%g", bl->src.so5.dipzmax); */
   
-  sprintf(pvals[k++], "%d", op->ifl.igrating);
+  /*UF 10.2.00  sprintf(pvals[k++], "%d", op->ifl.igrating); */
   sprintf(pvals[k++], "%d", op->ifl.inorm);
   sprintf(pvals[k++], "%d", op->ifl.inorm1);
   sprintf(pvals[k++], "%d", op->ifl.inorm2);
@@ -1184,7 +1185,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 /*       sscanf(pvals[k++], "%lf", &bl->src.so5.dipzmin); */
 /*       sscanf(pvals[k++], "%lf", &bl->src.so5.dipzmax); */
       
-      sscanf(pvals[k++], "%d",  &op->ifl.igrating);
+      /*UF 10.2.00      sscanf(pvals[k++], "%d",  &op->ifl.igrating); */
       sscanf(pvals[k++], "%d",  &op->ifl.inorm);
       sscanf(pvals[k++], "%d",  &op->ifl.inorm1);
       sscanf(pvals[k++], "%d",  &op->ifl.inorm2);
