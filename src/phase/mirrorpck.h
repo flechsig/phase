@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.h */
 /*   Date      : <16 Feb 04 14:51:56 flechsig>  */
-/*   Time-stamp: <16 Feb 04 14:52:02 flechsig>  */
+/*   Time-stamp: <16 Feb 04 15:04:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -20,7 +20,7 @@
 #define 	D0rmi           2000
 #define 	D0rho           2000   
 #define 	D0iflagmi       0 
-#define         D0w             100
+#define         D0ww            100
 #define         D0l             10
 #define         D0slopew        0.1
 #define         D0slopel        1.0
