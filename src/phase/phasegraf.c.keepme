@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <24 Nov 99 14:22:21 flechsig>  */
+/*  Time-stamp: <16 Dec 99 07:48:57 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -423,12 +423,19 @@ void hplotdisplay(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
      /* Interface wird beim rtrace genutzt */
 /* last modification: 30 Sep 97 09:31:25 flechsig */
 {
+#ifdef VMS
     FString fstitle, fsmetaname;
 
     CreateFString(&fstitle, gr->titel);    
     CreateFString(&fsmetaname,  ph->plotpsname);    
     hplotdisplayf(&fstitle, &fsmetaname, gr, rp, &bl->deltalambdafactor,
-		  &bl->BLOptions.lambda);      
+		  &bl->BLOptions.lambda);   
+#else   
+    hplotdisplayf(gr->titel, strlen(gr->titel), 
+		  ph->plotpsname, strlen(ph->plotpsname), 
+		  gr, rp, &bl->deltalambdafactor,
+		  &bl->BLOptions.lambda); 
+#endif 
 }  /* end  hplotdisplay */
 
 void hplotpsdc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr, 
@@ -455,7 +462,7 @@ void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
      /* last mod. 27.2.97 				*/
    
 {
-  FString fstitle, fsmetaname;
+  static FString fstitle, fsmetaname;
 
   printf("hplotpssimc called\n");
   CreateFString(&fstitle, gr->titel);    
