@@ -1,0 +1,16 @@
+#   -*-sh-*-
+#   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/.cvsignore
+#   Date      : <04 Feb 04 09:37:50 flechsig> 
+#   Time-stamp: <04 Feb 04 10:01:02 flechsig> 
+#   Author    : Uwe Flechsig, flechsig@psi.ch
+
+#   $Source$ 
+#   $Date$
+#   $Revision$ 
+#   $Author$ 
+#
+*.lo
+Makefile.in
+Makefile
+.libs
+phaselib.la
