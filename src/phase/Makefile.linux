@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <15 Nov 99 14:01:23 flechsig> 
+# Time-stamp: <15 Nov 99 17:04:25 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -33,7 +33,7 @@ LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc
 
 #########################################################################
 #               debugging        
-DEBUG		= no           # comment out for debugging (DEBUG = # no)    
+# DEBUG		= no           # comment out for debugging (DEBUG = # no)    
 OPTIMIZE	= no         # comment  for debugging (OPTIMIZE =   no)    
 
 #########################################################################
