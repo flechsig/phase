@@ -1,0 +1,17 @@
+#! /bin/sh
+#   File      : /afs/psi.ch/user/f/flechsig/phase/src/bootstrap
+#   Date      : <11 Dec 03 14:04:40 flechsig> 
+#   Time-stamp: <11 Dec 03 14:04:54 flechsig> 
+#   Author    : Uwe Flechsig, flechsig@psi.ch
+
+#   $Source$ 
+#   $Date$
+#   $Revision$ 
+#   $Author$ 
+
+set -x
+aclocal -I config
+autoheader
+automake --foreign --add-missing --copy
+autoconf
+# end /afs/psi.ch/user/f/flechsig/phase/src/bootstrap
