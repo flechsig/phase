@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.h */
 /*  Date      : <22 Oct 97 15:02:57 flechsig>  */
-/*  Time-stamp: <20 Dec 99 09:14:15 flechsig>  */
+/*  Time-stamp: <20 Dec 99 09:58:40 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* neu eingefuegt */
@@ -233,6 +233,7 @@ struct  source4 {
 	   int  isintre[4],isintim[4],isimpa[4],isimpp[4];
 	   int  isimpre[4],isimpim[4];
 	   double d12[2][3][4096],ianzd12[3];
+	   struct simps1 si1;            /* UF 21.12.99 */
 	};  
 
 /* ----------------- flags ---------------------------------------*/
