@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/geometrypck.h */
 /*  Date      : <21 Mar 97 15:22:51 flechsig>  */
-/*  Time-stamp: <21 Mar 97 15:23:02 flechsig>  */
+/*  Time-stamp: <16 Feb 04 15:15:06 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.H      */
@@ -14,7 +14,7 @@
 
 #define 	GeometryPickFileHeader	"GeometryPickFileType"    
 
-#define 	D0theta0        80   /* defaults in mm, degree, eV */
+#define 	D0theta0        88   /* defaults in mm, degree, eV */
 #define 	D0r             10000
 #define 	D0rp            1000
 #define 	D0xdens         0 
