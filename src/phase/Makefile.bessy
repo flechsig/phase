@@ -1,12 +1,13 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
 # Date      : <15 Oct 99 11:36:53 flechsig> 
-# Time-stamp: <07 Jan 00 12:56:03 flechsig> 
+# Time-stamp: <09 Jan 01 13:45:32 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 # 
 # Makefile for Alpha and VAX @ BESSY
 #########################################################################
 # history:
 # 15 Oct 99 : installation paths changed 
+# 09 Jan 01 : preprocessor step for fortran fpp files
 #
 #########################################################################
 # Makefile for the PHASE user API 
@@ -19,6 +20,8 @@
 #########################################################################
 .phony: all makewhat    
 MAKE= make/noveri         # no debug messages
+DEFS= DEFINE=VMS
+PP  = CC/PREPROCESS_ONLY/$(DEFS)
 #
 #######          extensions                                    ##########
 #######          additional extension on AXP systems        #############
@@ -130,6 +133,16 @@ $(DESTDIR)PHASE.uid : $(PHASEUILS)
 
 *.$(OBJ)$(ALPH): *.for 
 	fortran $(FFLAGSAXP)$@ $<   
+
+*.$(OBJ) : *.i 
+	fortran $(FFLAGSVAX)$@ $<   
+
+*.$(OBJ)$(ALPH): *.i 
+	fortran $(FFLAGSAXP)$@ $<  
+
+#preprocessor
+*.i : *.fpp
+	$(PP) $<
 ##########################################################################
 clear:
 	write sys$output "delete objects and exe..."  
