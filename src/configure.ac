@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <05 Feb 04 10:49:02 flechsig> 
+#   Time-stamp: <05 Feb 04 11:08:35 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -30,8 +30,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_CHECK_PROG([UIL],[uil],[uil])
-##do test after fortran stuff
-AC_PROG_LIBTOOL
+##do LIBTOOL test after fortran stuff
 
 ## the preference of fortran compilers
 AC_PROG_F77(f90com f77 g77)
