@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <28 Oct 99 09:55:24 flechsig>  */
+/*  Time-stamp: <02 Nov 99 13:28:51 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
@@ -13,8 +13,9 @@
 #include <string.h>
 #include <time.h> 
 #include <math.h>
-#include <descrip.h>                      /* for FORTRAN- String */    
-
+#ifdef VMS
+  #include <descrip.h>                      /* for FORTRAN- String */    
+#endif
 #include "cutils.h"
 
 
@@ -97,10 +98,13 @@ void CheckUser(char *logname, char *progname)
 FString *CreateFString(FString *fstring, char *cstring)  
 {        /* erzeugt VMS Fortran- String */
   int l= strlen(cstring);
+
+#ifdef VMS 
   fstring->dsc$b_dtype  = DSC$K_DTYPE_T;    
   fstring->dsc$b_class  = DSC$K_CLASS_S;    
   fstring->dsc$w_length = l;    
-  fstring->dsc$a_pointer= cstring;    
+  fstring->dsc$a_pointer= cstring; 
+#endif   
   return (fstring);
 }         
 
