@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <31 Oct 03 10:14:33 flechsig> 
+#  Time-stamp: <31 Oct 03 12:39:36 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -122,8 +122,6 @@ install: all
 install-olib:
 	@echo "install the library..."
 	$(INSTALL) $(OLIB) $(INSTPATH0)/lib/$(OLIB)
-	$(INSTALL) coefficient-example.dat \
-	$(INSTPATH0)/lib/coefficient-example.dat
 
 clear:
 	@echo "delete objects and exe..."  
