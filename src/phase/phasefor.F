@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <20 Dec 99 14:56:40 flechsig> 
+C Time-stamp: <21 Dec 99 14:16:50 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -155,11 +155,11 @@ c        call readfg34_par(src,apr,ifl,xi)
 c        ifl.iord=iord   ! Uwe
 
 c***************** phase space imaging ************************
-        pso.intmod=1
-c        write(*,*)'intmod fest auf 2 (adaptive int) gesetzt'
-        write(*,*)'pstf: intmod hard coded to 1 (equidistant grid)'
-c	write(*,*)' equidistant grid (1)' 
-c        write(*,*)'    adaptive grid (2)' 
+        pso.intmod=2
+        write(*,*)'intmod fest auf 2 (adaptive int) gesetzt'
+
+	write(*,*)' equidistant grid (1)' 
+        write(*,*)'    adaptive grid (2)' 
 	write(*,*)'*** integration method',pso.intmod
 	write(*,*)'test_wavelength (mm), xl0 (mm)',xlam_test,xlen0  
         write(*,*)' image dimension in y-direction (mm),' 
@@ -252,36 +252,18 @@ c      ddistz, ddisty sind berechnet
 c----------------------------------------------------------
 
 c-----------------------------------------------------------      
-C auskommentiert UF 21.12.99        
-c	if(pso.intmod.ne.2)then
-c          write(*,*)' integration -> equidistant grid' 
-c          write(*,*)'int. grenz. winkel dy',
-c     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
-c          write(*,*)'int. grenz. winkel dz',
-c     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
-c
-c          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
-c	  idivy=pso.ndyfix          	 ! integrationspunkte
-c	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
-c	  idivz=pso.ndzfix
-c          ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
-c          ddzi=divz/floatj(idivz-1)
-c        endif
-c--- schrittweiten fuer integration bestimmt fuer equidistant grid 
-c     ddyi, ddzi sind berechnet
-c -----------------------------------------------------------------         
-C neu UF 21.12.99
-c       if(pso.intmod.ne.2)then
+        
+	if(pso.intmod.ne.2)then
           write(*,*)' integration -> equidistant grid' 
           write(*,*)'int. grenz. winkel dy',
-     &               xi.ymin,xi.ymax,xi.ianzy0 
+     &               pso.dyminfix,pso.dymaxfix,pso.ndyfix 
           write(*,*)'int. grenz. winkel dz',
-     &               xi.zmin,xi.zmax,xi.ianzz0 
+     &               pso.dzminfix,pso.dzmaxfix,pso.ndzfix 
 
-          divy=xi.ymax-xi.ymin ! ymax, dyminfix integrationsgrenzen (winkel)
-	  idivy=xi.ianzy0          	 ! integrationspunkte
-	  divz=xi.zmax-xi.zmin ! divz gesamter Integrationsbereich
-	  idivz=xi.ianzz0
+          divy=pso.dymaxfix-pso.dyminfix ! dymaxfix, dyminfix integrationsgrenzen (winkel)
+	  idivy=pso.ndyfix          	 ! integrationspunkte
+	  divz=pso.dzmaxfix-pso.dzminfix ! divz gesamter Integrationsbereich
+	  idivz=pso.ndzfix
           ddyi=divy/floatj(idivy-1)      ! ddyi winkelschritt
           ddzi=divz/floatj(idivz-1)
 c        endif
@@ -391,8 +373,8 @@ c******* start of adaptive grid integration ***************************
 	    else
 c              write(*,*)'pstf.for: call to adaptive_int'
 c	      call adaptive_int(yzint,s0)
-c              call adaptive_int(m4,g,a,src,apr,
-c     .          	        cs,ra,ifl,xi,xir,st)  
+              call adaptive_int(m4,g,a,src,apr,
+     .          	        cs,ra,ifl,xi,xir,st)  
 
 c              psd2c(n1,n2)=yzint
 c	      psd2(n1,n2)=cdabs(yzint)**2
