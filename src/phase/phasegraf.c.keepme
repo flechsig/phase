@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <29 Mar 04 10:58:23 flechsig>  */
+/*   Time-stamp: <30 Mar 05 14:09:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -73,21 +73,33 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
   /*
   printf("getgrafbox called\n");
   */
+#ifdef DEBUG
+       printf("DEBUG: GetGrafBox called\n");
+#endif
+
 /* togglebuttons und psname und titel --------------------------*/
   gr->psfile= 
     (XmToggleButtonGetState(widget_array[kCGrPSFile]) == TRUE) ? 1 : 0; 
   get_something(widget_array[kCGrPSFileButton], XmNlabelString, &label);  
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn)) 
-    return; 
+  /*  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn)) 
+      return; */
+  fn= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);  
   strcpy(PHASE->plotpsname, fn); 
   XtFree(fn);
   text= XmTextGetString(widget_array[kCGrT5]); strcpy(gr->titel, text); 
   get_something(widget_array[kCGrOptMenu], XmNmenuHistory, &w);  
   get_something(w, XmNlabelString, &label);  
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn))
-    return; 
+  /*  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn))
+      return; */
+  fn= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);
+
+#ifdef DEBUG
+       printf("DEBUG: GetGrafBox->check plotstyle\n");
+#endif
 				/* Plotstyle- Menue */
   if (strcmp(fn, "SCATer plot") == 0) gr->plotstyle= 0; else 
     if (strcmp(fn, "footprint") == 0)   gr->plotstyle= 17; else 
@@ -130,8 +142,10 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
 /* plot inhalt menue auswerten 					*/
   get_something(widget_array[kCGrOptMenu1], XmNmenuHistory, &w);  
   get_something(w, XmNlabelString, &label);  
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn)) 
-    return; 
+  /*  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn)) 
+      return; */
+  fn= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);   
   if (strcmp(fn, "Result") == 0) gr->status= 0; else 
     if (strcmp(fn, "Source") == 0) gr->status= (PLsource | PLrttype); else 
@@ -236,7 +250,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
     if (gr->status == 0)            /* bei initdatasets */
     {
 #ifdef DEBUG
-       printf("SetGrDatStruct: init\n");
+       printf("DEBUG: SetGrDatStruct: init\n");
 #endif
        strcpy(gr->titel, "PHASE- graphic output"); 
        gr->status= gr->zeilen= 0; 
