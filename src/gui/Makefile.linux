@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/Makefile.linux
 #  Date      : <27 Oct 03 13:47:54 flechsig> 
-#  Time-stamp: <27 Oct 03 14:01:55 flechsig> 
+#  Time-stamp: <27 Oct 03 14:04:04 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -24,7 +24,7 @@ UIL	 = uil
 # 3) switches
 UILFLAGS	= -o
 #########################################################################
-4) others
+# 4) others
 UID	 = uid 
 #########################################################################
 
