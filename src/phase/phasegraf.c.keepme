@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <11 Jan 00 14:55:06 flechsig>  */
+/*  Time-stamp: <11 Jan 00 15:16:15 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -222,7 +222,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
     double *rp0; 
     void *vo;
 
-    printf("setgrdatstruct called\n");
+    printf("SetGrDatStruct called\n");
     if (gr->status == 0)            /* bei initdatasets */
     {
        printf("setgrdatstruct: grdatstruct init\n");
@@ -242,7 +242,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
            vo= bl->RESULT.RESUnion.Rays;  
       } else 
       {
-          printf("read phase space file \n");
+          printf("SetGrDatStruct: read phase space file \n");
           /* phase space mode */
           ReadpsFile(fname, &bl->RESULT);  
           vo= &bl->RESULT.RESUnion.PSD;  
@@ -260,14 +260,14 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
         if (((bl->beamlineOK & sourceOK) == sourceOK) && 
            ((gr->status & PLsource) == PLsource))  
         {
-           printf("plot source\n");
+           printf("SetGrDatStruct: plot source\n");
            vo= bl->RTSource.SourceRays;  
            gr->zeilen= bl->RTSource.raynumber;  
    	   fehler= 0;
         } else 
           if ((bl->beamlineOK & resultOK) == resultOK)  
           {
-             printf("plot result (rt)\n");
+             printf("SetGrDatStruct: plot result (rt)\n");
              vo= bl->RESULT.RESUnion.Rays;  
              gr->zeilen= bl->RESULT.points;  
              fehler= 0;
@@ -277,18 +277,16 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
       if (((bl->beamlineOK & resultOK) == resultOK) && 
           ((gr->status & PLphspacetype) == PLphspacetype))
       {
-          printf("plot result (phasesp)\n");
+          printf("SetGrDatStruct: plot result (phasesp)\n");
           vo= &bl->RESULT.RESUnion.PSD;  
           gr->zeilen= bl->RESULT.points;  
           fehler= 0;
       }           
-
       if (fehler == 1) gr->status= 0; 
       
-               
-          /* end rtrace */
+                  /* end rtrace */
       
-      printf("setgrdatstruct GRDS: %f %f %f %f\nrays: %d\n", gr->ymi,gr->yma,
+      printf("SetGrDatStruct GRDS: %f %f %f %f\nrays: %d\n", gr->ymi,gr->yma,
                                     gr->zmi,gr->zma, gr->zeilen);
     }
     return vo;
