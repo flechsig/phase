@@ -1,6 +1,6 @@
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
 # Date      : <15 Oct 99 11:36:53 flechsig> 
-# Time-stamp: <31 Oct 03 10:34:10 flechsig> 
+# Time-stamp: <17 Feb 04 09:16:27 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 # 
 # Makefile for Alpha and VAX @ BESSY
@@ -75,13 +75,17 @@ cutils.$(OBJ),rtrace.$(OBJ),phasefor.$(OBJ),pst.$(OBJ),-
 phase_source.$(OBJ),phase_integration.$(OBJ)
 #fg3pck.$(OBJ)$(ALPH)
 
-OBJECTSAXP 	= phase.$(OBJ)$(ALPH),phase0.$(OBJ)$(ALPH),phasec.$(OBJ)$(ALPH),-
+OBJECTSAXP 	= phase.$(OBJ)$(ALPH),phase0.$(OBJ)$(ALPH),-
+phasec.$(OBJ)$(ALPH),-
 activate_proc.$(OBJ)$(ALPH),PHASEgraf.$(OBJ)$(ALPH),-
 initdatset.$(OBJ)$(ALPH),geometrypck.$(OBJ)$(ALPH),bline.$(OBJ)$(ALPH),-
 mirrorpck.$(OBJ)$(ALPH),PHASEgraffor.$(OBJ)$(ALPH),-
 cutils.$(OBJ)$(ALPH),rtrace.$(OBJ)$(ALPH),phasefor.$(OBJ)$(ALPH),-
 pst.$(OBJ)$(ALPH),-
-phase_source.$(OBJ)$(ALPH),phase_integration.$(OBJ)$(ALPH)
+phase_source.$(OBJ)$(ALPH),phase_integration.$(OBJ)$(ALPH),-
+error.$(OBJ)$(ALPH),xmalloc.$(OBJ)$(ALPH),xstrdup.$(OBJ)$(ALPH),-
+misali.$(OBJ)$(ALPH),misali1.$(OBJ)$(ALPH),misali2.$(OBJ)$(ALPH),-
+misali3.$(OBJ)$(ALPH),misali4.$(OBJ)$(ALPH)
 ########################################################################
 PHASEHS   	= PHASE.h,fg3pck.h,mirrorpck.h,geometrypck.h,phasegraf.h,-
 cutils.h
@@ -141,7 +145,7 @@ $(DESTDIR)PHASE.uid : $(PHASEUILS)
 	fortran $(FFLAGSAXP)$@ $<  
 
 #preprocessor
-*.i : *.fpp
+*.i : *.f
 	$(PP) $<
 ##########################################################################
 clear:
