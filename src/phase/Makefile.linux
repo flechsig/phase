@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.linux
 #  Date      : <24 Jun 02 09:57:06 flechsig> 
-#  Time-stamp: <31 Oct 03 12:54:10 flechsig> 
+#  Time-stamp: <17 Feb 04 09:42:27 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -73,23 +73,27 @@ OBJECTC = phase.o phase0.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
 	  geometrypck.o bline.o \
 	  mirrorpck.o pst.o \
-	  cutils.o rtrace.o 
+	  cutils.o rtrace.o \
+          error.o  xmalloc.o xstrdup.o
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
-	  phase_integration.o 
+	  phase_integration.o \
+          misali.o misali1.o misali2.o misali3.o misali4.o
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
-	  cutils.h phase_struct.h rtrace.h version.h
+	  cutils.h phase_struct.h rtrace.h version.h error.h common.h
 AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 \
           phase_struct.for news coefficient-example.dat
 SRCC    = phase.c phase0.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
 	  mirrorpck.c pst.c \
-	  cutils.c rtrace.c 
-SRCF    = phasegraffor.fpp phasefor.for \
-	  phase_source.for \
-	  phase_integration.for 
+	  cutils.c rtrace.c \
+	  error.c xmalloc.c xstrdup.c 
+SRCF    = phasegraffor.F phasefor.F \
+	  phase_source.F \
+	  phase_integration.F \
+          misali.F misali1.f misali2.f misali3.f misali4.f 
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
@@ -111,7 +115,7 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 	$(FOR) $(FFLAGS) $< 
 
 #preprocessor
-%.f : %.fpp
+%.f : %.F
 	$(PP) $@ $<
 
 ##########################################################################

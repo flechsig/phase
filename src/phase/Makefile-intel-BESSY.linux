@@ -1,6 +1,7 @@
+#    -*-makefile-*-                emacs hint
 # File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
 # Date      : <04 Nov 99 16:48:19 flechsig> 
-# Time-stamp: <21 May 01 15:31:15 flechsig> 
+# Time-stamp: <17 Feb 04 09:42:30 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -66,12 +67,14 @@ OBJECTC = phase.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
 	  geometrypck.o bline.o \
 	  mirrorpck.o pst.o \
-	  cutils.o rtrace.o 
+	  cutils.o rtrace.o \
+	  error.o xmalloc.o xstrdup.o
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
 	  dfpl1_uf.o \
 	  dfpl2_uf.o \
-	  phase_integration.o 
+	  phase_integration.o \
+	  misali.o misali1.o misali2.o misali3.o misali4.o
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
@@ -82,12 +85,14 @@ SRCC    = phase.c phasec.c \
 	  activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c \
 	  mirrorpck.c pst.c \
-	  cutils.c rtrace.c 
-SRCF    = phasegraffor.fpp phasefor.for \
-	  phase_source.for \
+	  cutils.c rtrace.c \
+          error.c xmalloc.c xstrdup.c
+SRCF    = phasegraffor.F phasefor.F \
+	  phase_source.F \
 	  dfpl1_uf.for \
 	  dfpl2_uf.for \
-	  phase_integration.for 
+	  phase_integration.F \
+          misali.F misali1.f misali2.f misali3.f misali4.f
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
@@ -109,7 +114,7 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 	$(FOR) $(FFLAGS) $@ $<   
 
 #mit preprocessor
-%.f: %.fpp
+%.f: %.F
 	$(PP) $@ $<
 
 ##########################################################################
