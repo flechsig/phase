@@ -1,28 +1,30 @@
-# File      : /home/pss060/sls/flechsig/phase/src/gui/Makefile.linux
-# Date      : <04 Nov 99 16:25:46 flechsig> 
-# Time-stamp: <04 Jan 01 15:47:27 flechsig> 
-# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/Makefile.linux
+#  Date      : <27 Oct 03 13:47:54 flechsig> 
+#  Time-stamp: <27 Oct 03 13:57:56 flechsig> 
+#  Author    : Uwe Flechsig, flechsig@psi.ch
+
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
+
 #########################################################################
 # Makefile for the PHASE GUI on LINUX
 #########################################################################
+# 1) paths
+SRCDIR      = .
+INSTPATH    = /usr/local/phase
+BUILDPATH   = ~/phase
+#########################################################################
+# 2) tools
 SHELL    = /bin/sh
 INSTALL  = install -c
-prefix  = /usr/local
-#prefix   = /home/pss060/sls/flechsig
-PHASEDIR = $(prefix)/phase
-
-srcdir      = .
-INSTPATH    = /usr/local/phase
-BUILDPATH   = /home/pss060/sls/flechsig/phase
-
+UID	 = uid 
+#########################################################################
+# 3) switches
+UILFLAGS	= -o
 
 .phony: all
-
-
-#!!!!!!!!!!!!!!! extension   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-UID		= uid     
-#!!!!!!!!!!!!!!! flags       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-UILFLAGS	= -o  
 ################ dependencies ###########################################
 AUX       = version.uil Makefile.linux Makefile.vms
 PHASEUILS = phase.uil geometrybox.uil mirrorbox.uil \
