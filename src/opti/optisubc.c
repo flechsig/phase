@@ -1,3 +1,13 @@
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
+/*   Date      : <31 Oct 03 08:15:40 flechsig>  */
+/*   Time-stamp: <31 Oct 03 08:28:49 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
 /*  File      : /home/vms/flechsig/vms/phas/opti/optisubc.c */
 /*  Date      : <16 Oct 97 14:00:02 flechsig>  */
 /*  Time-stamp: <29 Oct 03 17:06:22 flechsig>  */
@@ -9,6 +19,7 @@
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
 /* 31.3.99 GetRMS erweitert auf z */
+
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
@@ -48,16 +59,6 @@
 #include "phaseopti.h"     
 
 
-
-
-
-#include "[-.phasec]cutils.h"  
-#include "[-.phasec]phase_struct_10.h"
-#include "[-.phasec]fg3pck.h"   
-#include "[-.phasec]mirrorpck.h"                 
-#include "[-.phasec]geometrypck.h"   
-#include "[-.phasec]PHASE.h"
-#include "phaseopti.h"    
    
 void getoptipickfile(struct optistruct *x, char *pickname)    
 /* modification: 24 Oct 97 14:04:37 flechsig */
@@ -131,7 +132,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  break;
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */
-	  xd= &listpt->mir;       /******** in mirrortype */
+	  xd= (double *)&listpt->mir;       /******** in mirrortype */
 	  xd[ipos] = *z;
 	  listpt->ElementOK |= elementOK; 
 	  /* damit DefMirrorC nicht gerufen wird */
@@ -259,7 +260,7 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  break;
 	default: 
 	  /*direktes beschreiben einzelner matrixelemente */
-	  xd= &listpt->mir;       /******** in mirrortype */
+	  xd= (double *)&listpt->mir;       /******** in mirrortype */
 	  *z= xd[ipos];
 	  break;
 	}
@@ -348,7 +349,8 @@ void buildsystem(struct BeamlineType *bl)
 	{ 
 	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
 	    {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->Art);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->Art, 
+			 listpt->elementname);    
 	      listpt->ElementOK |= elementOK; 
 	    }
 	  if ((listpt->ElementOK & geometryOK) == 0) /* geometry rebuild */
@@ -364,9 +366,9 @@ void buildsystem(struct BeamlineType *bl)
 	  if (elcounter == 1)
 	    memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
 	  else		                          /* bline zusammenbauen */
-	    GlueLeft(bl->map70, listpt->matrix);              /* A= B* A */
-      
-	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
+	    GlueLeft((double *)bl->map70, (double *)listpt->matrix);  
+            /* A= B* A */
+      	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
 	} 
       elcounter++; listpt++; 
     } /* Schleife ueber alle Elemente fertig */
