@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <19 Feb 04 15:41:20 flechsig> 
+#  Time-stamp: <30 Mar 05 13:11:30 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -51,5 +51,7 @@ AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 F77LINK = $(LINK)
 ##-L@F77LIB@ -lf77math -lfio -lU77 -lV77 -lf77math -lg2c\
 
+## overwrite default
+PPF77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS) 
 
 ## end Makefile.am
