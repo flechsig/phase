@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/phasefor/ph7/phase_source_10.for
 c Date      : <22 Oct 97 14:45:58 flechsig> 
-c Time-stamp: <03 Nov 99 13:08:27 flechsig> 
+c Time-stamp: <16 Dec 99 08:53:51 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 c**************************************************************
 	subroutine src_ini(src)	
@@ -19,6 +19,8 @@ c**************************************************
 	record /source5/ so5
 	record /source6/ so6
 	record /sources/ src
+	
+	write(*,*) 'src_ini: source type:',src.isrctype
 
 	if(src.isrctype.eq.2)call src2_ini(src.so2)
 
@@ -615,6 +617,7 @@ c***********************************************************
 
 	record /source3/ so3
 
+	write(*,*) 'src3_ini: read file: ',so3.fsource3a
 	open(unit=10,name=so3.fsource3a,type='old')
 	read(10,*)so3.isrcreal
 	do i=1,so3.isrcreal
@@ -622,6 +625,7 @@ c***********************************************************
 	enddo
 	close(10)
 
+	write(*,*) 'src3_ini: read file: ',so3.fsource3b
 	open(unit=10,name=so3.fsource3b,type='old')
 	read(10,*)so3.isrcimag
 	do i=1,so3.isrcimag
@@ -643,6 +647,7 @@ c***********************************************************
 
 	dimension xx(400000),yy(400000)
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4a
 	open(unit=10,name=so4.fsource4a,type='old')
 	read(10,*)so4.ieyrex,so4.ieyrey
 	do j=1,so4.ieyrey
@@ -662,6 +667,7 @@ c***********************************************************
 	so4.dyeyre=(so4.yeyremax-so4.yeyremin)
      &		/dflotj(so4.ieyrey-1)
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	open(unit=10,name=so4.fsource4b,type='old')
 	read(10,*)so4.ieyimx,so4.ieyimy
 	do j=1,so4.ieyimy
@@ -683,6 +689,7 @@ c***********************************************************
 
 c----------------------------------------------------------
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4c
 	open(unit=10,name=so4.fsource4c,type='old')
 	read(10,*)so4.iezrex,so4.iezrey
 	do j=1,so4.iezrey
@@ -702,6 +709,7 @@ c----------------------------------------------------------
 	so4.dyezre=(so4.yezremax-so4.yezremin)
      &		/dflotj(so4.iezrey-1)
 
+	write(*,*) 'src4_ini: read file: ',so4.fsource4d
 	open(unit=10,name=so4.fsource4d,type='old')
 	read(10,*)so4.iezimx,so4.iezimy
 	do j=1,so4.iezimy
@@ -733,6 +741,7 @@ c*****************************************************************
 
 	record /source6/ so6
 
+	write(*,*) 'src6_ini: read file: ',so6.fsource6
 	open(unit=10,name=so6.fsource6,
      &  type='old',form='unformatted',access='sequential')
 	read(10)so6.brxmin,so6.brxmax,so6.brdx,so6.ibrx
