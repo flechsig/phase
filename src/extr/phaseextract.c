@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <08 Oct 04 13:37:49 flechsig>  */
+/*   Time-stamp: <08 Oct 04 13:38:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -165,7 +165,10 @@ int main(argc, argv)
 		Beamline.deltalambdafactor/ yfwhm : 1e12;
 	      rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
 		Beamline.deltalambdafactor/ zfwhm : 1e12;
-	    } else {rpy= rpz= 0.0 }
+	    } else 
+	      {
+		rpy= rpz= 0.0; 
+	      }
 	  /* write result */  
 	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le %le %le\n", 
 		  ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance);
