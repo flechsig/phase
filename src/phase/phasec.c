@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phasec.c */
 /* Date      : <18 Mar 97 12:27:02 flechsig>  */
-/* Time-stamp: <29 Oct 98 14:43:34 flechsig>  */
+/* Time-stamp: <22 Oct 99 12:41:17 flechsig>  */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEC.C           */
@@ -893,24 +893,24 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
     "source size/div.: sigmay(mm) / sigmayp or half height/angle",
     "ymin, zu integrierender Winkelbereich in mrad",
     "ymax, zu integrierender Winkelbereich in mrad",
-    "number of integration points for equidistant grid",
-    "itery0,     Anzahl der Iterationen",
+ /*   "number of integration points for equidistant grid", */
+ /*   "itery0,     Anzahl der Iterationen", */
     "ianzy0,     Anzahl der Stuetzstellen im ersten Raster",
-    "imaxy",
-    "fracy,      Verhaeltnis von fmin zu fmax",
-    "frac1y,     minimaler Quotient benachbarter Werte",
+ /*   "imaxy", */
+ /*   "fracy,      Verhaeltnis von fmin zu fmax", */
+ /*   "frac1y,     minimaler Quotient benachbarter Werte", */
     "source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
     "source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
     "source size/div.: sigmay(mm) / sigmayp or half height/angle",
     "source size/div.: sigmay(mm) / sigmayp or half height/angle",
     "zmin, ",
     "zmax",
-    "number of integration points for equidistant grid",
-    "iterz01",
+ /*   "number of integration points for equidistant grid",*/
+ /*   "iterz01",*/
     "ianzz0",
-    "imaxz",
-    "fracz",
-    "frac1z",
+ /*   "imaxz",*/
+ /*   "fracz",*/
+ /*   "frac1z",*/
     "(1) write 4-dim brightness to file",
     "(0) simpson integration, (1) spline integration",
     "d12_max",
@@ -927,8 +927,8 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 /*     "phase_change_2", */
 /*     "(0) do not allow, (1) allow change of curvature sign of phase", */
 /*     "(1) correct phase for pi and 2pi, (0) correct only for 2 pi", */
-    "order of amplitude expansion",
-    "dphi_min",
+  /*  "order of amplitude expansion", */
+ /*    "dphi_min", */
     "distance to focus",
     "insert pinhole array in source plane",
     "pin_yl0, ",
@@ -978,7 +978,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 
   /* ende der Variablendefinitionen */
 		      
-  itemzahl= 68;  /* Eintraege in der Liste */
+  itemzahl= 56;  /* Eintraege in der Liste */
 		      
   op= (struct OptionsType *)    &(bl->BLOptions); 
   pop= (struct PSOptionsType *) &(bl->BLOptions.PSO);  
@@ -1029,12 +1029,12 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   
   sprintf(pvals[k++], "%g", op->xi.ymin * 1e3);
   sprintf(pvals[k++], "%g", op->xi.ymax * 1e3);
-  sprintf(pvals[k++], "%d", op->xi.inumy);
-  sprintf(pvals[k++], "%d", op->xi.itery0);
+  /*  sprintf(pvals[k++], "%d", op->xi.inumy);  */
+  /*  sprintf(pvals[k++], "%d", op->xi.itery0); */
   sprintf(pvals[k++], "%d", op->xi.ianzy0);
-  sprintf(pvals[k++], "%d", op->xi.imaxy);
-  sprintf(pvals[k++], "%g", op->xi.fracy);
-  sprintf(pvals[k++], "%g", op->xi.frac1y);
+ /* sprintf(pvals[k++], "%d", op->xi.imaxy);  */
+ /* sprintf(pvals[k++], "%g", op->xi.fracy);  */
+ /* sprintf(pvals[k++], "%g", op->xi.frac1y); */ 
   
   sprintf(pvals[k++], "%d", bl->src.so1.isrcz);
   sprintf(pvals[k++], "%d", bl->src.so1.isrcdz);
@@ -1043,12 +1043,12 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   
   sprintf(pvals[k++], "%g", op->xi.zmin * 1e3);
   sprintf(pvals[k++], "%g", op->xi.zmax * 1e3);
-  sprintf(pvals[k++], "%d", op->xi.inumz);
-  sprintf(pvals[k++], "%d", op->xi.iterz0);
+  /* sprintf(pvals[k++], "%d", op->xi.inumz);  */
+  /* sprintf(pvals[k++], "%d", op->xi.iterz0); */ 
   sprintf(pvals[k++], "%d", op->xi.ianzz0);
-  sprintf(pvals[k++], "%d", op->xi.imaxz);
-  sprintf(pvals[k++], "%g", op->xi.fracz);
-  sprintf(pvals[k++], "%g", op->xi.frac1z);
+  /* sprintf(pvals[k++], "%d", op->xi.imaxz);  */
+  /* sprintf(pvals[k++], "%g", op->xi.fracz);  */
+  /* sprintf(pvals[k++], "%g", op->xi.frac1z); */ 
   
   sprintf(pvals[k++], "%d", op->ifl.ibright); 
   sprintf(pvals[k++], "%d", op->ifl.ispline); 
@@ -1062,7 +1062,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   sprintf(pvals[k++], "%d", op->xi.ifm_amp);
 /*   sprintf(pvals[k++], "%g", op->xi.amp_change); */
   sprintf(pvals[k++], "%d", op->xi.iord_pha);
-  sprintf(pvals[k++], "%d", op->xi.iordap);
+  /* sprintf(pvals[k++], "%d", op->xi.iordap); */
    /* modification: 29 Oct 98 14:43:25 flechsig */
 
  /*  sprintf(pvals[k++], "%g", op->xi.phase_change_1); */
@@ -1070,7 +1070,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
  /*  sprintf(pvals[k++], "%d", op->xi.iphase_curv); */
 /*   sprintf(pvals[k++], "%d", op->xi.iphase_pi2); */
   sprintf(pvals[k++], "%d", op->xi.ifm_pha);
-  sprintf(pvals[k++], "%g", op->xi.dphi_min);
+  /*  sprintf(pvals[k++], "%g", op->xi.dphi_min); */
   
   sprintf(pvals[k++], "%g", op->xi.distfoc);
   sprintf(pvals[k++], "%d", op->ifl.ipinarr);
@@ -1168,12 +1168,12 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       bl->src.so1.sigmayp*= 1e-3;
       sscanf(pvals[k++], "%lf", &op->xi.ymin); op->xi.ymin*= 1e-3;
       sscanf(pvals[k++], "%lf", &op->xi.ymax); op->xi.ymax*= 1e-3;
-      sscanf(pvals[k++], "%d",  &op->xi.inumy);
-      sscanf(pvals[k++], "%d",  &op->xi.itery0);
+   /*    sscanf(pvals[k++], "%d",  &op->xi.inumy);*/
+   /*    sscanf(pvals[k++], "%d",  &op->xi.itery0);*/
       sscanf(pvals[k++], "%d",  &op->xi.ianzy0);
-      sscanf(pvals[k++], "%d",  &op->xi.imaxy);
-      sscanf(pvals[k++], "%lf", &op->xi.fracy);
-      sscanf(pvals[k++], "%lf", &op->xi.frac1y);
+   /*    sscanf(pvals[k++], "%d",  &op->xi.imaxy);*/
+   /*    sscanf(pvals[k++], "%lf", &op->xi.fracy);*/
+   /*    sscanf(pvals[k++], "%lf", &op->xi.frac1y);*/
       
       sscanf(pvals[k++], "%d",  &bl->src.so1.isrcz);
       sscanf(pvals[k++], "%d",  &bl->src.so1.isrcdz);
@@ -1182,12 +1182,12 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       bl->src.so1.sigmazp*= 1e-3;
       sscanf(pvals[k++], "%lf", &op->xi.zmin); op->xi.zmin*= 1e-3;
       sscanf(pvals[k++], "%lf", &op->xi.zmax); op->xi.zmax*= 1e-3;
-      sscanf(pvals[k++], "%d",  &op->xi.inumz);
-      sscanf(pvals[k++], "%d",  &op->xi.iterz0);
+    /*  sscanf(pvals[k++], "%d",  &op->xi.inumz);*/
+    /*  sscanf(pvals[k++], "%d",  &op->xi.iterz0);*/
       sscanf(pvals[k++], "%d",  &op->xi.ianzz0);
-      sscanf(pvals[k++], "%d",  &op->xi.imaxz);
-      sscanf(pvals[k++], "%lf", &op->xi.fracz);
-      sscanf(pvals[k++], "%lf", &op->xi.frac1z);
+    /*  sscanf(pvals[k++], "%d",  &op->xi.imaxz);*/
+    /*  sscanf(pvals[k++], "%lf", &op->xi.fracz);*/
+    /*  sscanf(pvals[k++], "%lf", &op->xi.frac1z);*/
       
       sscanf(pvals[k++], "%d",  &op->ifl.ibright); 
       sscanf(pvals[k++], "%d",  &op->ifl.ispline); 
@@ -1201,13 +1201,13 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       sscanf(pvals[k++], "%d",  &op->xi.ifm_amp);
       /*     sscanf(pvals[k++], "%lf", &op->xi.amp_change); */
       sscanf(pvals[k++], "%d",  &op->xi.iord_pha);
-      sscanf(pvals[k++], "%d",  &op->xi.ifm_pha);
+   /*    sscanf(pvals[k++], "%d",  &op->xi.ifm_pha);*/
     /*   sscanf(pvals[k++], "%lf", &op->xi.phase_change_1); */
 /*       sscanf(pvals[k++], "%lf", &op->xi.phase_change_2); */
   /*     sscanf(pvals[k++], "%d",  &op->xi.iphase_curv); */
 /*       sscanf(pvals[k++], "%d",  &op->xi.iphase_pi2); */
       sscanf(pvals[k++], "%d",  &op->xi.ifm_pha);
-      sscanf(pvals[k++], "%lf", &op->xi.dphi_min);
+/*      sscanf(pvals[k++], "%lf", &op->xi.dphi_min);*/
       
       sscanf(pvals[k++], "%lf", &op->xi.distfoc);
       sscanf(pvals[k++], "%d",  &op->ifl.ipinarr);
