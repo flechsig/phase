@@ -1,7 +1,21 @@
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
+/*   Date      : <31 Oct 03 12:31:32 flechsig>  */
+/*   Time-stamp: <31 Oct 03 12:31:39 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
+
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
+
 /*   File      : /home/pss060/sls/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <07 Jan 00 09:23:38 flechsig>  */
-/*   Time-stamp: <07 Jan 00 10:28:50 flechsig>  */
+/*   Time-stamp: <31 Oct 03 12:31:32 flechsig>  */
 /*   Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+
+#ifndef __PHASE_STRUCT
+#define __PHASE_STRUCT
 
 /* neu eingefuegt */
 typedef struct ComplexStruct {
@@ -277,4 +291,5 @@ struct simps1 {
 	   COMPLEX sqrtm1;
         };  
 
+#endif 
 /* end phase_struct_10.h */
