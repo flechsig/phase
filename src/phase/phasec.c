@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <18 Feb 04 16:45:33 flechsig>  */
+/*   Time-stamp: <09 Mar 04 14:39:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -39,11 +39,9 @@
 #include "rtrace.h"
 #include "version.h"
 
-void BatchMode(char *fname, int cmode)
+void BatchMode(char *fname, int cmode, int selected)
 /* Uwe 2.10.96 */
 /* Batchmodus */
-/* modification: 14 Oct 97 13:41:13 flechsig */
-/* modification: 23 Oct 97 07:47:23 flechsig */
 {
   printf("BatchMode: datafilename  : %s\n", PHASESet.beamlinename);
   printf("BatchMode: resultfilename: %s\n", PHASESet.imageraysname);
@@ -76,9 +74,13 @@ void BatchMode(char *fname, int cmode)
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESUnion.Rays); 
       break;
-    case 5:
-      printf("BatchMode: Footprint Ray Tracing\n");
+    case 4:
+      printf("BatchMode: Footprint at element %d\n", selected);
+      Beamline.position= selected;
+      MakeRTSource(&PHASESet, &Beamline);
       Footprint(&Beamline, Beamline.position);
+      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
+		   Beamline.RESULT.RESUnion.Rays);
       break;
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
@@ -119,14 +121,13 @@ void FixFocus(double cff, double lambda, double ldens, int m,
 int ProcComandLine(unsigned int ac, char *av[])
 /* Uwe 2.10.96 */
 /* Wertet Kommandozeile aus */
-/* modification: 14 Oct 97 13:29:39 flechsig */
-/* modification: 23 Oct 97 07:48:12 flechsig */
 {
-  int  ret, i, cmode;
+  int  ret, i, cmode, selected;
   char *ch, *dfname, *resultname, *pfname; 
   
   i= ret= 1;
   cmode= -1;
+  selected= -1;
   /* defaults */
   pfname=     (char *) MainPickName; 
   resultname= (char *) PHASESet.imageraysname;
@@ -147,6 +148,12 @@ int ProcComandLine(unsigned int ac, char *av[])
 	  ch++; 
 	  sscanf(ch, "%d", &cmode);
 	  printf("ProcComandLine: calculation mode: %d\n", cmode);
+	  break;
+	case 'S':             /* selected element */
+	case 's':
+	  ch++; 
+	  sscanf(ch, "%d", &selected);
+	  printf("ProcComandLine: selected element: %d\n", selected);
 	  break;
 	case 'F':
 	case 'f':
@@ -177,6 +184,8 @@ int ProcComandLine(unsigned int ac, char *av[])
 	  printf("                                  1: ray trace\n");
 	  printf("                                  2: full ray trace\n");
 	  printf("                                  3: phase space density\n");
+	  printf("                                  4: footprint (requires option s)\n");
+	  printf("                -s, -Snumber:     selected element number (for footprint)\n");
 	  exit(3);
 	  break;
 	default: 
@@ -187,7 +196,7 @@ int ProcComandLine(unsigned int ac, char *av[])
 
   if (ret == -8)
     {
-      BatchMode(pfname, cmode);
+      BatchMode(pfname, cmode, selected);
       exit(3);
     }
   return ret;
@@ -198,9 +207,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
      /* Uwe 25.6.96 							*/
      /* umgeschrieben - keine fileausgabe mehr 			        */
      /* datenstruktur soll gleich sin und cosinus werte enthalten 	*/
-  
-     /* last modification: 20 Jun 97 12:05:30 flechsig */
-/* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
+    /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 {
   double delta, alpha, beta, theta0, trans, radius;
   int i;
@@ -781,10 +788,9 @@ void readmatrixfilec(char *fname, double *map, int dim)
       fscanf(f, "%d %d %lf\n", &i, &j, &tmp);
       /*     printf("i, j, tmp: %d %d %lf\n", i,j,tmp);   */   
       map[(i- 1)+ (j- 1)* dim]= tmp;
-       k++;
+      k++;
     }
   fclose(f);     
-
 }
 /******** read matrixfile ************************************/
 
@@ -1890,11 +1896,11 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
 
   sprintf(TextField[20], "%.f" , x->w1);    
   sprintf(TextField[21], "%.f", x->w2);    
-  sprintf(TextField[22], "%.1f", x->slopew);
+  sprintf(TextField[22], "%.3f", x->slopew);
 
   sprintf(TextField[23], "%.f", x->l1);    
   sprintf(TextField[24], "%.f", x->l2);    
-  sprintf(TextField[25], "%.1f", x->slopel);
+  sprintf(TextField[25], "%.3f", x->slopel);
 
   for (i= 0; i < imax; i++)
     set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
@@ -1933,7 +1939,7 @@ void GetSource(struct BeamlineType *bl)
   switch (bl->RTSource.QuellTyp) 
     {
     case 'F':
-      printf("source from file not yet fully implemented!\n");
+      printf("GetSource: source from file not yet fully implemented!\n");
       /*   bl->RTSource.SourceRays= (struct RayType *)     */
       ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
 		  &bl->RESULT); 
@@ -2092,6 +2098,7 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
 
   text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", &gp->theta0);
+  mp->alpha= gp->theta0;
   text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &mp->r1); 
   text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &mp->r2);
  
