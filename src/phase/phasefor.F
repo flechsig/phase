@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <08 Nov 99 10:56:49 flechsig> 
+C Time-stamp: <16 Dec 99 16:01:38 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -155,11 +155,11 @@ c        call readfg34_par(src,apr,ifl,xi)
 c        ifl.iord=iord   ! Uwe
 
 c***************** phase space imaging ************************
-        pso.intmod=2
-        write(*,*)'intmod fest auf 2 (adaptive int) gesetzt'
-
-	write(*,*)' equidistant grid (1)' 
-        write(*,*)'    adaptive grid (2)' 
+        pso.intmod=1
+c        write(*,*)'intmod fest auf 2 (adaptive int) gesetzt'
+        write(*,*)'pstf: intmod hard coded to 1 (equidistant grid)'
+c	write(*,*)' equidistant grid (1)' 
+c        write(*,*)'    adaptive grid (2)' 
 	write(*,*)'*** integration method',pso.intmod
 	write(*,*)'test_wavelength (mm), xl0 (mm)',xlam_test,xlen0  
         write(*,*)' image dimension in y-direction (mm),' 
