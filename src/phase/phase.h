@@ -1,6 +1,6 @@
 /* File      : /home/vms/flechsig/vms/phas/phasec/phase.h */
 /* Date      : <19 Mar 97 09:44:06 flechsig>              */
-/* Time-stamp: <30 Mar 01 13:29:51 flechsig>              */
+/* Time-stamp: <30 Mar 01 14:21:51 flechsig>              */
 /* Author    : Uwe Flechsig, flechsig@exp.bessy.de        */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASE.H            */
@@ -357,6 +357,7 @@
 
 #define kEOEGeneral              350
 #define kEOECone                 351
+#define kCWriteMCoButton         352
 
 /******************** end defines uil **********************************/
 
