@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/bline.c */
 /*  Date      : <15 Nov 99 11:20:47 flechsig>  */
-/*  Time-stamp: <19 Nov 99 10:01:41 flechsig>  */
+/*  Time-stamp: <24 Nov 99 11:54:17 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -32,40 +32,38 @@
 #include "rtrace.h"                 
 
 
-void AddBLElement(struct BeamlineType *bl, XmString *path)
+void AddBLElement(struct BeamlineType *bl, char *name)
 /****************************************************************/
 /* an der richtigen stelle einfuegen in die Liste und in die    */
 /* Datenstruktur						*/
 /* 0 fuegt ans ende ein              				*/ 
 /* !!! benutze globale defaultwerte MDefDat, GDefDat, PHASESet 	*/
 /* Uwe 3.6.96               					*/ 
+/* path und name sind allokiert                                 */
+/* werden von der calling routine freigegeben                   */
 /****************************************************************/
 {
    int *poslist, pos, i;
    struct ElementType *tmplist= NULL, *listpt, *tmplistpt;  
-   char *name= NULL;
+   XmString path;
 
-#ifdef DEBUG
-   printf("AddBLElement called\n");  
-#endif    
-/*   list widget aktualisieren   */
-   if (!XmStringGetLtoR(*path, XmFONTLIST_DEFAULT_TAG, &name)) 
-     return;
 #ifdef DEBUG
    printf("AddBLElement: add name >>%s<< to list\n", name);
 #endif   
-   if (XmListGetSelectedPos(widget_array[kEBLList], &poslist, &pos) == True)
-   { 
-     pos= *poslist; XtFree((char *)(poslist));  }  
-   else      					/* kritisch */
+   if (XmListGetSelectedPos(widget_array[kEBLList], &poslist, &pos) == True) 
+     { 
+       pos= *poslist; 
+       XtFree((char *)(poslist));  
+     }  
+   else      					
      pos= 0; 			/*    pos=0 ist das Ende;   */      
-  /*  printf("debug 1\n"); */  
-                     
-   XmListAddItem(widget_array[kEBLList], *path, pos); /* elementname in liste*/ 
-  /*  printf("debug 2\n"); */  
-
-/* beamline aktualisieren */
-
+#ifdef DEBUG
+  printf("AddBLElement: AddItem at pos %d\n", pos );  
+#endif  
+   path= XmStringCreateLocalized(name);                  
+   XmListAddItemUnselected(widget_array[kEBLList], path, pos); 
+   XmStringFree(path);
+  
 /* alte liste zwischenspeichern */
    if (bl->elementzahl > 0)
    {
@@ -116,7 +114,9 @@ void AddBLElement(struct BeamlineType *bl, XmString *path)
        memcpy(listpt, tmplistpt++, sizeof(struct ElementType));  
    }
    free(tmplist); 
-   XtFree(name);
+#ifdef DEBUG
+   printf("AddBLElement: return\n");
+#endif
 } /* end AddBLElement */
 
 void BuildBeamline(struct BeamlineType *bl)  
@@ -610,7 +610,7 @@ void InitBLBox(char *blname, struct BeamlineType *bl)
 {
    XmString label;
    int i;
-   char buffer[6];  
+   char buffer[20];                      /* erhoeht von 5 24.11.99 */
    struct ElementType *list;
    
    label= XmStringCreateLocalized(blname);
@@ -1542,11 +1542,10 @@ int SetFilePos(FILE *f, char *s)
 void  UpdateBLBox(struct BeamlineType *bl, int pos)  
 /* Aufruf vom selection callback der bllist, pos ist selected  	*/
 /* Uwe 3.6.96 							*/
-/* last modification: 21 Mar 97 15:16:10 flechsig               */
 {
    struct ElementType *ep;
    int i;
-   char buffer[6][6];  
+   char buffer[6][20];  
 
    printf("begin UpdateBLBox (geom , mirror) from memory pos: %d\n", pos);
    ep= &(bl->ElementList[pos-1]);  
