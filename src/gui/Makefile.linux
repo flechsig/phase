@@ -1,0 +1,46 @@
+# File      : /home/pss060/sls/flechsig/phas/phaseuil/Makefile
+# Date      : <19 Feb 99 16:37:40 flechsig> 
+# Time-stamp: <28 Oct 99 17:14:32 flechsig> 
+# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+# LINUX version
+# 
+#
+SHELL = /bin/s
+
+
+DEFS = -D LINUX
+CC = gcc -O
+YACC = bison -y
+INSTALL = /usr/local/bin/install -c
+INSTALLDATA = /usr/local/bin/install -c -m 644CDEBUG = -g
+
+.phony: all
+
+
+#!!!!!!!!!!!!!!! extension   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+UID		= uid     
+#!!!!!!!!!!!!!!! flags       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+UILFLAGS	= -o  
+################ dependencies ###########################################
+PHASEUILS	= phase.uil geometrybox.uil mirrorbox.uil \
+		grafbox.uil filemenu.uil commandsmenu.uil \
+		phasevalue.uil editmenu.uil sourcebox.uil \
+		helpmenu.uil optibox.uil blbox.uil
+
+EXDIR		= PHASE__prg:                      #PHASE-> path
+
+all: phase.$(UID)
+	@echo "make phase.uid..."
+
+phase.$(UID): $(PHASEUILS)
+#        define/user/nolog uil__include decw__include 
+	uil $(UILFLAGS) phase.$(UID) phase.uil 
+
+install:
+	@echo "no installation until now"
+
+clear: 
+	@echo "delete phase.uid.."
+	rm     phase.$(UID)
+##################### end makefile ####################################
+# end /home/pss060/sls/flechsig/phas/phaseuil/Makefile
