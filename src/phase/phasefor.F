@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <06 Feb 04 09:32:29 flechsig> 
+c$$$ Time-stamp: <18 Feb 04 11:45:56 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2254,9 +2254,10 @@ c     write(*,*)' isig ',isig
       end
 c******* end sig  ***************************************** 
 
-c*********readfg34_par ***************************
-      subroutine readfg34_par(src,apr,ifl,xi) 
-c liest ein Parameterfile von Johannes, Button im edit- menu 
+c*********readfg34_par ******************************
+      subroutine readfg34_par(src,apr,ifl,xi,epsilon) 
+c liest ein Parameterfile von Johannes, Button im edit- menu
+c add epsilon feb 04 
 
       implicit none
 ccc      include 'phase_struct.for'

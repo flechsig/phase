@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <13 Feb 04 15:30:58 flechsig>  */
+/*   Time-stamp: <18 Feb 04 11:46:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -252,7 +252,8 @@ void activate_proc(w, tag, reason)
 	memset(&Beamline.src.so4.fsource4d, 0, i);
 	memset(&Beamline.src.so6.fsource6,  0, i);
 	readfg34_par(&Beamline.src, &Beamline.BLOptions.apr,
-		     &Beamline.BLOptions.ifl, &Beamline.BLOptions.xi); 
+		     &Beamline.BLOptions.ifl, &Beamline.BLOptions.xi,
+		     &Beamline.BLOptions.epsilon); 
 	strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
 	PutPHASE(&PHASESet, MainPickName);  
 	Beamline.beamlineOK= 0;
