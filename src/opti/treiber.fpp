@@ -26,7 +26,7 @@ c$$$ $Author$
         subroutine fminuend(iread)
         integer iread
 
-        close(iread)
+        call kuclos(iread,' ',istatus)
         return
 	end    
 

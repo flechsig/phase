@@ -42,14 +42,14 @@
 
 #ifdef VMS
   #include "[-.phase]cutils.h"  
-  #include "[-.phase]phase_struct_10.h"
+  #include "[-.phase]phase_struct.h"
   #include "[-.phase]fg3pck.h"   
   #include "[-.phase]mirrorpck.h"                 
   #include "[-.phase]geometrypck.h"   
   #include "[-.phase]PHASE.h"
 #else
   #include "../phase/cutils.h"  
-  #include "../phase/phase_struct_10.h"
+  #include "../phase/phase_struct.h"
   #include "../phase/fg3pck.h"   
   #include "../phase/mirrorpck.h"                 
   #include "../phase/geometrypck.h"   
@@ -169,6 +169,18 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->rp= *z;
 	  break; 
 	case 6:            			     /* dens */
+	  gdat->xdens[ipos- 6]= *z;   
+	  break;  
+	case 7:            			     /* dens */
+	  gdat->xdens[ipos- 6]= *z;   
+	  break;  
+	case 8:            			     /* dens */
+	  gdat->xdens[ipos- 6]= *z;   
+	  break;  
+	case 9:            			     /* dens */
+	  gdat->xdens[ipos- 6]= *z;   
+	  break;  
+	case 10:            			     /* dens */
 	  gdat->xdens[ipos- 6]= *z;   
 	  break;  
 	case 11:        	           /* m lambda in nm */ 
@@ -292,6 +304,18 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	case 6:
 	  *z= gdat->xdens[ipos- 6];
 	  break;
+	case 7:
+	  *z= gdat->xdens[ipos- 6];
+	  break;
+	case 8:
+	  *z= gdat->xdens[ipos- 6];
+	  break;
+	case 9:
+	  *z= gdat->xdens[ipos- 6];
+	  break;
+	case 10:
+	  *z= gdat->xdens[ipos- 6];
+	  break;
 	case 11: 
 	  *z= bl->BLOptions.lambda* 1e6;               /* m lambda in nm */ 
 	  break;
@@ -329,7 +353,6 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
   return *z;
 }     /* end outstruct */
 
-  
 void buildsystem(struct BeamlineType *bl) 
 /* modification: 16 Oct 97 14:48:09 flechsig            */
 /* durch abgespecktes (schnelles) buildbeamline ersetzt */

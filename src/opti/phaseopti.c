@@ -39,14 +39,14 @@
 
 #ifdef VMS
   #include "[-.phase]cutils.h"  
-  #include "[-.phase]phase_struct_10.h"
+  #include "[-.phase]phase_struct.h"
   #include "[-.phase]fg3pck.h"   
   #include "[-.phase]mirrorpck.h"                 
   #include "[-.phase]geometrypck.h"   
   #include "[-.phase]PHASE.h"
 #else
   #include "../phase/cutils.h"  
-  #include "../phase/phase_struct_10.h"
+  #include "../phase/phase_struct.h"
   #include "../phase/fg3pck.h"   
   #include "../phase/mirrorpck.h"                 
   #include "../phase/geometrypck.h"   
@@ -103,7 +103,7 @@ int main(argc, argv)
     	char *argv[];                     /* Pointers to command line args. */
 {   
   double 		ax, ay, ax0;
-  int 			ix, iy, iread= 20;
+  int 			ix, iy, iread= 20,luno;
 #ifdef VMS
   FString 		Fminuitfilename;
 #endif
@@ -180,16 +180,26 @@ int main(argc, argv)
 	       return
 	       end         */
 #else
-	   fminuinit(&iread, optistructure.minuitfilename,
+	    /* luno=ku_inqf(optistructure.minuitfilename);
+	    printf(" status1 of minuit.inp %d\n",luno); */ /* for debugging */
+	    fminuinit(&iread, optistructure.minuitfilename,
 		     strlen(optistructure.minuitfilename));
+	    /* luno=ku_inqf(optistructure.minuitfilename);
+	    printf(" status2 of minuit.inp %d\n",luno); */ /* for debugging */
 #endif
 	   
 	   minuit(FCN, 0);                             /* cernlib     */
-	    printf("nach return ax: %f ay: %f\n", ax, ay); 
+	   printf("nach return ax: %f ay: %f\n", ax, ay); 
 	   ax+= optistructure.dx; 
 #ifndef VMS   
-   fminuend(&iread);                                    /* treiber.for */
+	    /* luno=ku_inqf(optistructure.minuitfilename);
+	    printf(" status3 of minuit.inp %d\n",luno);  */ /* for debugging */
+	    fminuend(&iread);                            /* treiber.for */
+	    /* ku_close(iread); */  /* geht auch */
+	    /* luno=ku_inqf(optistructure.minuitfilename);
+	    printf(" status4 of minuit.inp %d\n",luno); */
 #endif 
+
 	 }
        ay+= optistructure.dy;  
      }
@@ -227,9 +237,20 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
   switch(*IFLAGS) 
     {
     case 3:              /*output*/
+      for (i= 0; i < *NPAR; i++)
+	{
+	  printf("Parameter: %d index: %d Wert des Parameters: %f\n",
+		 i, optistructure.parindex[i], XPAR[i]);
+	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
+	}
+      buildsystem(&Beamline);    
+      Get_dydz_fromSource(&Beamline, &dy, &dz);
+      costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);          
       printf("debug: FCN: chi: %e; chitmp %e\n", *CHI, chitmp);
-      fitoutput(NPAR, XPAR, &chitmp);               
-    case 4:
+      fitoutput(NPAR, XPAR, CHI);         
+
+     case 4:
       for (i= 0; i < *NPAR; i++)
 	{
 	  printf("Parameter: %d index: %d Wert des Parameters: %f\n",
