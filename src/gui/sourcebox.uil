@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/sourcebox.uil
 ! Date      : <21 Oct 97 07:55:09 flechsig> 
-! Time-stamp: <09 Mar 04 11:48:11 flechsig> 
+! Time-stamp: <24 Mar 04 08:29:25 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! $Source$ 
@@ -160,11 +160,14 @@ object
 	    XmPushButton        ESUndulatorSISButton; 
 	    XmPushButton	ESUndulatorSIMButton;
 	    XmPushButton	ESUndulatorButton;
+            XmPushButton        ESFileButton;
+	    XmSeparator         {};
           ! XmPushButton        ESSR1Button; 
-            XmPushButton        ESSR2Button;     
+            XmPushButton        ESSR2Button;  
+	    XmSeparator         {};	   
             XmPushButton        ESPhaseSpaceButton; 
 	    XmPushButton        ESPhaseSpaceImageButton; 
-            XmPushButton        ESFileButton;  
+              
                                    };
         };
 
