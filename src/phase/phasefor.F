@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <17 Jan 00 09:02:01 flechsig> 
+c Time-stamp: <17 Jan 00 09:56:22 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -402,33 +402,50 @@ c        write(*,*)'file fd1ph.paw und surf_s0.paw erzeugt'
 	write(*,*)' reached maximum number of grid points'
 	write(*,*)'        in y ',st.inumyan,' times '
 
-        write(*,*)'xir.iisimp:',xir.iisimp
-	do ii=1,xir.iisimp
+c        write(*,*)'xir.iisimp:',xir.iisimp
+c	do ii=1,xir.iisimp
            open(unit=10,name='simpre.dat',type='unknown',err=123)
            do i=1,xir.isimpre(ii)
-              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
+c              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
+              write(10,*)xir.simpre(1,1,i),xir.simpre(1,2,i),
+     .             xir.simpre(2,1,i),xir.simpre(2,2,i),
+     .             xir.simpre(3,1,i),xir.simpre(3,2,i),
+     .             xir.simpre(4,1,i),xir.simpre(4,2,i)
            enddo
            close(10)
            open(unit=10,name='simpim.dat',type='unknown',err=123)
            do i=1,xir.isimpim(ii)
-              write(10,*)xir.simpim(ii,1,i),xir.simpim(ii,2,i)
+c              write(10,*)xir.simpim(ii,1,i),xir.simpim(ii,2,i)
+              write(10,*)xir.simpim(1,1,i),xir.simpim(1,2,i),
+     .             xir.simpim(2,1,i),xir.simpim(2,2,i),
+     .             xir.simpim(3,1,i),xir.simpim(3,2,i),
+     .             xir.simpim(4,1,i),xir.simpim(4,2,i)
+
            enddo
            close(10)
-	enddo
+c	enddo
         write(*,*)'simpre.dat + simpim.dat erzeugt'
 
-        do ii=1,xir.iisimp
+c        do ii=1,xir.iisimp
            open(unit=10,name='sintre.dat',type='unknown',err=123)
            do i=1,xir.isintre(ii)
-              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
+c              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
+              write(10,*)xir.sintre(1,1,i),xir.sintre(1,2,i),
+     .             xir.sintre(2,1,i),xir.sintre(2,2,i),
+     .             xir.sintre(3,1,i),xir.sintre(3,2,i),
+     .             xir.sintre(4,1,i),xir.sintre(4,2,i)
            enddo
            close(10)
            open(unit=10,name='sintim.dat',type='unknown',err=123)
            do i=1,xir.isintim(ii)
-              write(10,*)xir.sintim(ii,1,i),xir.sintim(ii,2,i)
+c              write(10,*)xir.sintim(ii,1,i),xir.sintim(ii,2,i)
+              write(10,*)xir.sintim(1,1,i),xir.sintim(1,2,i),
+     .             xir.sintim(2,1,i),xir.sintim(2,2,i),
+     .             xir.sintim(3,1,i),xir.sintim(3,2,i),
+     .             xir.sintim(4,1,i),xir.sintim(4,2,i)
            enddo
            close(10)
-        enddo
+c        enddo
         write(*,*)'sintre.dat + sintim.dat erzeugt'
        goto 200
  123   write(*,*)'pstf: error open files'
