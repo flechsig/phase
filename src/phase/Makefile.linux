@@ -1,6 +1,6 @@
-# File      : /home/pss060/sls/flechsig/phas/phasec/makefile
-# Date      : <19 Feb 99 17:25:30 flechsig> 
-# Time-stamp: <04 Nov 99 08:37:47 flechsig> 
+# File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
+# Date      : <04 Nov 99 16:48:19 flechsig> 
+# Time-stamp: <04 Nov 99 16:48:58 flechsig> 
 # Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 #########################################################################
 # Makefile PHASE on LINUX 
@@ -61,8 +61,8 @@ LIBSdummy	 	= cern_lib:MATHLIB/LIB\
 	KERNLIB/LIB
 LIBS    = -L/tools/soft/cern/99/lib -lmathlib -lpacklib -lgraflib \
           -lgrafX11 -lpacklib -lpawlib -lkernlib \
-          -L/usr/pgi/linux86/lib -lpgftnrtl 
-#	  -L/home/pss060/sls/flechsig/phase/src/phaselib \
+          -L/usr/pgi/linux86/lib -lpgftnrtl \
+	  -L/home/pss060/sls/flechsig/phase/lib 
 #          -lphaselib
 	  
 
@@ -111,14 +111,14 @@ distclean: clean
 	rm -f TAGS  config.status
 
 dist: $(SRCS) $(AUX)
-	echo tar-`sed \
-                  -e '/version_string/!d' \
+	echo phase-`/bin/sed \
+                  -e '/VERSION_STRING/!d' \
                   -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
-                  -e q
-	version.c` > .fname
+                  -e 'q' \
+	version.h` > .fname
 	-rm -rf `cat .fname`
 	mkdir `cat .fname`
 	ln $(SRCS) $(AUX) `cat .fname`
-	-rm -rf `cat .fname` .fname
-	tar chZf `cat .fname`.tar.Z `cat .fname`
+	-rm -rf `cat .fname`.fname
+	tar -chzf `cat .fname`.tgz `cat .fname`
 ####################      end makefile       ###############################
