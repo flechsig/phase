@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/cutils.c */
 /*  Date      : <27 Mar 97 11:01:52 flechsig>  */
-/*  Time-stamp: <15 Nov 99 08:03:35 flechsig>  */
+/*  Time-stamp: <15 Nov 99 08:21:48 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
  
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]CUTILS.C           */
@@ -37,10 +37,11 @@ char *PrependEnv(char* env, char *str)
    the string will be altered!!!, if no environment variable found- 
    the original string will be returned  */
 {
-   char string[255];
-   string= getenv(env);
-   if (string != NULL)
+   char string[255], *stp;
+   stp= getenv(env);
+   if (stp != NULL)
      {
+       strcpy(string, stp);
        strcat(string, str);
        strcpy(str, string);
      }
