@@ -55,5 +55,7 @@ Initialisierungsfehler bei ell. Elementen behoben
 04 Feb 04 apply autoconfigure
 17 Feb 04 new widgets for beamline and mirror
           include misalignment
+	  remove noise from debug screen 
+          configure with --enable-debug for verbose output
 ****************    end of NEWS  *****************           
 **************************************************

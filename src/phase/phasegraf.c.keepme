@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <18 Feb 04 16:47:38 flechsig>  */
+/*  Time-stamp: <19 Feb 04 10:26:40 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 #include <stdio.h>  
@@ -65,9 +65,9 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
   double x[3]; 
   int fehler;
   Widget w;   /* *w geaender 12.2.97 */
-
+  /*
   printf("getgrafbox called\n");
-
+  */
 /* togglebuttons und psname und titel --------------------------*/
   gr->psfile= 
     (XmToggleButtonGetState(widget_array[kCGrPSFile]) == TRUE) ? 1 : 0; 
@@ -175,12 +175,12 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
       if (fehler == 0)   
       {  
          gr->status |= PLrttype; 
-         printf("filetype: Ray\n");   
+         printf("GetGrafBox: filetype: Ray\n");   
       }
       if (fehler > 0) 
       {
          gr->status |= PLphspacetype;  
-         printf("filetype: Phase Space density\n");   
+         printf("GetGrafBox: filetype: Phase Space density\n");   
       }
    }      /* end dat from file */
    
@@ -198,7 +198,7 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
      text= XmTextGetString(widget_array[kCGrT4]); 
      sscanf(text, "%lf", &gr->yma);   
    }
-   printf("getgrafbox: ymi: %f %f %f %f\n", 
+   printf("GetGrafBox: ymi: %f %f %f %f\n", 
 	  gr->ymi, gr->yma, gr->zmi, gr->zma);
    XtFree(text);    
    return fehler;
@@ -303,7 +303,7 @@ void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr)
 {
    int i, zahl;
    
-   printf("AutoScale called\n");    
+   printf("AutoScale: called\n");    
    zahl= gr->zeilen;
 /*   printf("AutoScale called %d\n",zahl); */  
    if (zahl > 0)
@@ -327,7 +327,7 @@ void AutoScale(struct RayType *rp, GRDATSTRUCTTYPE *gr)
        }
    }
     /* fuers auge */
-   printf("call Beauty\n");
+   /*  printf("call Beauty\n"); */
    Beauty(&gr->ymi, &gr->yma);
    Beauty(&gr->zmi, &gr->zma);
    Beauty(&gr->dymi, &gr->dyma);

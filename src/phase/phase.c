@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phase.c */
 /*  Date      : <28 Oct 99 10:02:31 flechsig>  */
-/*  Time-stamp: <10 Feb 04 16:28:02 flechsig>  */
+/*  Time-stamp: <19 Feb 04 10:19:41 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 
@@ -157,7 +157,9 @@ int main(argc, argv)
 
     if (setupswitch)   /* option -n */
     {
-      printf("kSetupInfo: %d\n", kSetupInfo);
+#ifdef DEBUG
+      printf("main: kSetupInfo: %d\n", kSetupInfo);
+#endif
 	FetchWidget(kSetupInfo, "SetupInfo");
 	SetInfoString();
 	XtManageChild(widget_array[kSetupInfo]);   

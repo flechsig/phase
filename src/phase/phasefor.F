@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <18 Feb 04 11:45:56 flechsig> 
+c$$$ Time-stamp: <19 Feb 04 10:08:45 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -559,10 +559,10 @@ c
 c----------------------------------------------------------
 c        write(*,*)'for: fgmapidp called'
 	if(imodus.eq.2)then
-          write(*,*)' make map for image to source iord=',iord 
+          write(*,*)'fgmapidp: make map for image to source iord=',iord 
           call transponiere(a,g)    ! bild zur quelle
         else 
-          write(*,*)' make map for source to image iord=',iord 
+          write(*,*)'fgmapidp: make map for source to image iord=',iord 
 	endif 
 c------------------------------------------------------- 
         call reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
@@ -774,9 +774,12 @@ c--------- Variablen ------------------------------------------
 
 	 
 c*****************************************************************
-       write(*,*) ' iplmode=',iplmode
+#ifdef DEBUG
+       write(*,*) 'pathlen0: iplmode=',iplmode
+#endif
        if (iplmode.eq.0)then
-        write(*,*) 'do not subtract r and rp from path length' 
+
+        write(*,*) 'pathlen0: do not subtract r and rp from path length' 
 	call lsubb(a,g.sina,g.cosa,g.sinb,g.cosb,
      &             g.r,g.rp,g.idefl,dql1,dql2)    
         do n1=0,iord
@@ -842,7 +845,7 @@ c----------------------------------
        endif 	! iplmode = 0
 c----------------------------------
        if (iplmode.eq.1)then
-	write(*,*)'subtract r and rp from path length'
+	write(*,*)'pathlen0: subtract r and rp from path length'
 	call lsubab(a,g.sina,g.cosa,g.sinb,g.cosb,
      &              g.r,g.rp,g.idefl,dsqrpl1,dsqrpl2)
 	do n1=0,iord
@@ -890,7 +893,7 @@ c                enddo
 c             enddo
 c          enddo
 c       enddo
-       write(*,*)'end pathlen0'
+c       write(*,*)'end pathlen0'
        
        return
        end
@@ -1134,8 +1137,9 @@ c----------------------------------------------------------
      &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
 	
 c----------------- initialisieren -----------------
-
-        write(*,*)'reduce_1 called epsilon:',acc
+#ifdef DEBUG
+        write(*,*)'reduce_1: epsilon:',acc
+#endif
         fak(0)=1.d0
 	fak(1)=1.d0
 	fak(2)=2.d0
@@ -1337,7 +1341,7 @@ c****************************************************************
 
 	open(unit=10,file=mapname,status='new',err=559)
         write(*,*)'****write transformation map to: ',mapname  
-	write(10,*)' ypc, zpc, dypc, dzpc'
+	write(10,*)'writemap: ypc, zpc, dypc, dzpc'
         do i=0,iord
          do j=0,iord
           do k=0,iord

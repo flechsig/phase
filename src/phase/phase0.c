@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <18 Feb 04 16:43:39 flechsig>  */
+/*   Time-stamp: <19 Feb 04 10:17:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -470,7 +470,7 @@ void toggle_proc(w, tag, toggle)
        Beamline.beamlineOK &= ~mapOK;
        for (az= 0; az < Beamline.elementzahl; az++)
 	 Beamline.ElementList[az].ElementOK &= ~mapOK; 
-       printf("set mapOK to 0 for all elements\n");
+       printf("toggle_proc: set mapOK to 0 for all elements\n");
        break;
   default:
     if ((toggle->set == True) && 
@@ -478,7 +478,7 @@ void toggle_proc(w, tag, toggle)
 	(Beamline.position != 0))
       {
 	az= *tag- kEBLup;        /* azimut = az * 90 grad (0- oben) */
-	printf("az: %d\n", az);    
+	/* printf("az: %d\n", az);    */
 	
 	if (az > 3) az= 0;
 	/* aendert den azimut im gdatset des Elementes */
@@ -490,13 +490,17 @@ void toggle_proc(w, tag, toggle)
 	if (az > 1) 
 	  {
             Beamline.ElementList[Beamline.position-1].GDat.theta0= 
-	      -fabs(Beamline.ElementList[Beamline.position-1].GDat.theta0);   
-            printf("theta forced negative\n");      
+	      -fabs(Beamline.ElementList[Beamline.position-1].GDat.theta0);
+#ifdef DEBUG   
+            printf("toggle_proc: theta forced negative\n"); 
+#endif     
 	  } else 
 	    {
 	      Beamline.ElementList[Beamline.position-1].GDat.theta0= 
 		fabs(Beamline.ElementList[Beamline.position-1].GDat.theta0);   
-	      printf("theta forced positive\n");      
+#ifdef DEBUG
+	      printf("toggle_proc: theta forced positive\n");  
+#endif    
 	    } 
 	sprintf(text, "%f", 
 		Beamline.ElementList[Beamline.position-1].GDat.theta0);

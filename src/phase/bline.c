@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Feb 04 16:38:51 flechsig>  */
+/*   Time-stamp: <19 Feb 04 10:52:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -197,11 +197,14 @@ void BuildBeamline(struct BeamlineType *bl)
 	       listpt->ElementOK |= geometryOK; 
             }  /* Elementdaten sind ok jetzt map */ 
         
-            printf("c: call MakemapandMatrix\n");      
+            /*printf("c: call MakemapandMatrix\n");*/      
             MakeMapandMatrix(listpt, bl); 
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
-            printf(" matrix of %d. element created\n", elcounter);  
+#ifdef DEBUG
+            printf("BuildBeamline: matrix of %d. element created\n", 
+		   elcounter); 
+#endif 
 	    listpt->ElementOK|= mapOK; 
          }             /* map ist OK */
 
@@ -214,7 +217,8 @@ void BuildBeamline(struct BeamlineType *bl)
 	     /* GlueLeft(A, B) A= B* A */
         
 	     bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
-	     printf("bl->xlen0 (opt. Achse): %lf\n", bl->xlen0);
+	     printf("BuildBeamline: length of optical axis (bl->xlen0): %lf\n",
+		    bl->xlen0);
 	     SetDeltaLambda(bl, listpt);              /* resolutionfactor */
 	   }    
 	 elcounter++; listpt++; 
@@ -281,7 +285,7 @@ void BuildBeamline(struct BeamlineType *bl)
       bl->beamlineOK |= geometryOK; 
       bl->beamlineOK |= elementOK; 
 
-      printf("whole Beamline is now OK\n"); 
+      printf("BuildBeamline: whole Beamline is now OK\n"); 
    }	
 }   /* end BuildBeamline */
 
@@ -361,7 +365,7 @@ void Footprint(struct BeamlineType *bl, int enummer)
    if (/*((bl->beamlineOK & (sourceOK | mapOK)) == (sourceOK | mapOK)) &&*/
        (enummer <= bl->elementzahl) && (enummer > 0))    
    {
-      printf("calculate footprint at element %d\n", enummer); 
+      printf("Footprint: at element %d ", enummer); 
       msiz= dim* dim* sizeof(double); 
       matrix= (double *)xmalloc(msiz);
        
@@ -380,7 +384,7 @@ void Footprint(struct BeamlineType *bl, int enummer)
         extractmap(matrix, ypc1, zpc1, dypc, dzpc, &bl->BLOptions.ifl.iord);  
      /* matrix und map bis zum vorhergehenden element sind erzeugt */
         free(matrix);
-        printf("matrix and map created\n");
+        printf("Footprint: matrix and map created\n");
       }
       Re= &bl->RESULT;   
       FreeResultMem(Re); 
@@ -418,7 +422,8 @@ void Footprint(struct BeamlineType *bl, int enummer)
       bl->beamlineOK |= resultOK;
    }
    else 
-     printf("beamline not OK or ... - no footprint\n");
+     printf("Footprint: beamline not OK or ... - no footprint\n");
+   printf(" ==> done\n");
 } /* end footprint */
 
 void GetSlope(struct ElementType *el) 
@@ -475,11 +480,7 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 /* summiert */
 /* lmap==  lmap * mat 							 */
 /* Uwe 15.8.96 								 */
-/* last modification: 26 Mar 97 10:20:06 flechsig */
-/* last modification: 27 Mar 97 08:46:29 flechsig */
-/* last modification: 25 Jun 97 18:54:34 flechsig */
-/* last modification: 04 Jul 97 11:29:47 flechsig */
-/* last modification: 15 Jul 97 11:47:35 flechsig */
+
 
 {
    double S, C, *c1, *c2, *s1, *s2, 
@@ -551,7 +552,7 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 		   m++;
 		 }
        }
-   printf("GlueXlen end\n");
+   /*   printf("GlueXlen end\n"); */
    /* die indiv. map wird nicht geaendert */
 }  /* end GlueXlen */
 

@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/rtrace.c */
 /*  Date      : <28 Oct 99 10:09:18 flechsig>  */
-/*  Time-stamp: <12 Feb 04 13:37:56 flechsig>  */
+/*  Time-stamp: <19 Feb 04 10:45:48 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.c */
@@ -512,7 +512,7 @@ void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
 	Re->RESUnion.Rays= (struct RayType *)
 	  xmalloc(Re->points * sizeof(struct RayType));
 	        
-	printf("calculate %d ray(s) \n", Re->points); 
+	printf("RayTracec: calculate %d ray(s) \n", Re->points); 
 	Raysin= bl->RTSource.SourceRays; Raysout= Re->RESUnion.Rays;    
 
 	for (i= 0; i< bl->RTSource.raynumber; i++)
@@ -526,7 +526,9 @@ void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
       	/*   free(raysin);      */
 	bl->beamlineOK|= resultOK; /* resultrays in memory */
       } /* beamline OK*/
-  printf("end ray-trace\n"); 
+#ifdef DEBUG
+  printf("RayTracec: end ray-trace\n"); 
+#endif
 }
 
 /********************************************************/
@@ -549,7 +551,7 @@ void RayTraceFull(struct BeamlineType *bl)
 
 /*********************************************************************/
 
-   fprintf(stderr, "fullrtrace: beamlineOK: %X\n", bl->beamlineOK); 
+   fprintf(stderr, "RayTraceFull: beamlineOK: %X\n", bl->beamlineOK); 
    Re= &bl->RESULT;
    if ((bl->beamlineOK & (sourceOK | mapOK)) == 0)
    { 
@@ -568,7 +570,7 @@ void RayTraceFull(struct BeamlineType *bl)
        tmpresult= (struct RayType *) 
 	 xmalloc(zahl* sizeof(struct RayType));
        
-       printf("calculate %d ray(s) \n", zahl); 
+       printf("RayTraceFull: start with %d ray(s) \n", zahl); 
        memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
 	      sizeof(struct RayType));
        
@@ -584,7 +586,7 @@ void RayTraceFull(struct BeamlineType *bl)
        
        if (ds->Art == kEOESlit) /* Sonderbehandlung Spalt */
 	 {
-	   printf("aperture/ slit in interface plane\n");
+	   printf("RayTraceFull: aperture/ slit in interface plane\n");
 	   for (i= 0; i< zahl; i++)
 	     { 
 	       ww= Raysin->y; ll= Raysin->z;
@@ -634,7 +636,7 @@ void RayTraceFull(struct BeamlineType *bl)
 	     } /* schleife ueber alle rays */
 	 } /* end Sonderbehandlung spalt */
        zahl-= lost;
-       printf("element %d: lost %d, residual %d  ray(s): \n", 
+       printf("   element %d: lost %d, residual %d  ray(s): \n", 
 	      elnumber, lost, zahl); 
        /* verzichte hier auf realloc */
        memcpy(tmpsource, tmpresult, zahl* sizeof(struct RayType));  
@@ -651,7 +653,7 @@ void RayTraceFull(struct BeamlineType *bl)
      free(tmpresult);
      /* resultrays in memory */
    } /* beamline OK*/
-   printf("end full ray-trace\n"); 
+   /* printf("RayTraceFull: ==> done\n"); */
 }  /* end raytracefull */
 
 void Slope(struct RayType *ray, double slopew, double slopel, double xlen, 

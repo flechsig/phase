@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
 c$$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c$$$ Time-stamp: <11 Nov 03 09:30:53 flechsig> 
+c$$$ Time-stamp: <19 Feb 04 10:39:32 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -69,15 +69,18 @@ c************************************************************************
         y2=s.yma
         z1=s.zmi
         z2=s.zma  
+
+        dlfac=dlf
         
 c        print*,'title and plotfilename are temporarely fixed'
+#ifdef DEBUG
         print*,'hplotdisplayf:',y1,y2,z1,z2    
         print*,'title         ',titel 
         print*,'ps filename   ',metaname    
         print*,'status, zeilen ',s.status, s.zeilen
         print*,'style ', s.plotsyle
-        dlfac=dlf
         write(*,*)'dlfactor (mm)',dlfac,' lambda (mm)',lambda
+#endif
 c********************* kanaele ****************************************
 c postscriptfile 
         ifile=s.psfile             ! merker setzen
@@ -97,7 +100,7 @@ c           call igmeta(-11,-111) UF 12.1.2001
            call igmeta(11,-111)
         endif
               
-        write(*,*)'only for ray trace data'   
+c        write(*,*)'only for ray trace data'   
         goto 4445
 4444  write(*,*)'hplotdisplayf: error open file: ',metaname
 c---- buche histogramme -------------------------------------------
@@ -107,8 +110,10 @@ c---- buche histogramme -------------------------------------------
         z1=s.zmi
         z2=s.zma
 c bei postscript ab hier doppelt
-        write(*,*)'vor hbook2 ny nz      : ',iy,iz        
-        write(*,*)'vor hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2     
+#ifdef DEBUG
+        write(*,*)'prior hbook2 ny nz      : ',iy,iz        
+        write(*,*)'prior hbook2 y1,y2,z1,z2: ',y1,y2,z1,z2  
+#endif   
       	call hbook2(200,'PHASE',iz,z1,z2,iy,y1,y2,5000.)         
         call hbook1(300,'PHASE',iy,y1,y2,5000.)   
         call hbook1(400,'PHASE',iz,z1,z2,5000.)  
@@ -120,24 +125,26 @@ c bei postscript ab hier doppelt
         y2=s.dyma*1e3
         z1=s.dzmi*1e3
         z2=s.dzma*1e3
-
+#ifdef DEBUG
         write(*,*)'diverg.: book dy1,dy2,dz1,dz2: ',y1,y2,z1,z2     
-
+#endif
         call hbook1(500,'PHASE',iy,y1,y2,5000.)   
         call hbook1(600,'PHASE',iz,z1,z2,5000.)       
 c--------- histogramme gebucht ------------------------
 
 c--------- fuellen ------------------------------------
-        write(*,*)'fill histogram'        
+#ifdef DEBUG
+        write(*,*)'fill histogram'
+#endif        
         do i=1,s.zeilen 
 c           write(*,*)'fill histogr.',i  
 	call rtfill(raysout(1,i),raysout(2,i),
      &                 raysout(3,i),raysout(4,i),
      &	               lambda,dlfac)
      	enddo
-	
+#ifdef DEBUG	
         write(*,*)'for: histograms filled'  
-        
+#endif        
         call makeplotf(titel,s.plotsyle) ! eigentliches plotten
         call iuwk(0,1)                   ! puffer leeren update alle ws S.12
 

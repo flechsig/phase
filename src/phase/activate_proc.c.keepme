@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <18 Feb 04 11:46:37 flechsig>  */
+/*   Time-stamp: <19 Feb 04 10:32:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -742,7 +742,9 @@ void activate_proc(w, tag, reason)
     if (GetGrafBox(&PHASESet, &grdatstruct, 
 		   Beamline.RESULT.typ) != -1)
       { 
+#ifdef DEBUG
 	printf("activate_proc: grafic start\n");  
+#endif
 	vo= SetGrDatStruct(PHASESet.imageraysname, &Beamline,
 			   &grdatstruct);
 	if ((grdatstruct.status & PLrttype) > 0) 
