@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraffor.for
 c Date      : <06 Jan 00 12:39:32 flechsig> 
-c Time-stamp: <07 Jan 00 08:37:35 flechsig> 
+c Time-stamp: <11 Jan 00 08:05:00 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
        	subroutine inithplot 
@@ -75,7 +75,7 @@ c postscriptfile
            type*,'open postsciptfile',metaname
 c           open(unit=11,file=metaname,
 c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
-           open(unit=11,file=metaname,
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
      1          Carriagecontrol='LIST',FORM='FORMATTED',err=4444) 
            call igmeta(-11,-111) 
         endif
@@ -209,7 +209,7 @@ c postscriptfile
            type*,'open postsciptfile'
 c           open(unit=11,file=metaname,
 c     1          Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')  
-           open(unit=11,file=metaname,
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
      1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
@@ -322,7 +322,7 @@ c     postscriptfile
            type*,'open postsciptfile'
 c           open(unit=11,file=metaname,
 c     1     Carriagecontrol='LIST',FORM='FORMATTED',STATUS='NEW')
-           open(unit=11,file=metaname,
+           open(unit=11,file=metaname,STATUS='UNKNOWN',
      1     Carriagecontrol='LIST',FORM='FORMATTED',err=6666)  
            call igmeta(-11,-111) 
            type*,'generate Postscript- File: ',metaname 
