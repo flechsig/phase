@@ -1,22 +1,13 @@
-/*  File      : /home/pss060/sls/flechsig/phase/src/phase/initdatset.c */
-/*  Date      : <28 Oct 99 09:58:52 flechsig>  */
-/*  Time-stamp: <12 Feb 04 12:14:08 flechsig>  */
-/*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
+/*   Date      : <12 Feb 04 12:17:45 flechsig>  */
+/*   Time-stamp: <12 Feb 04 12:17:52 flechsig>  */
+/*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
-/*  File      : /home/vms/flechsig/vms/phas/phasec/initdatset.c */
-/*  Date      : <13 Feb 98 12:27:39 flechsig>  */
-/*  Time-stamp: <28 Oct 99 09:58:51 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
 
-/*  File      : /home/vms/flechsig/vms/phas/phasec/fg3pck.c */
-/*  Date      : <23 Apr 97 09:15:51 flechsig>  */
-/*  Time-stamp: <13 Feb 98 12:27:29 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
-
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]FG3PCK.C           */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 17-FEB-1997                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
 
 #include <stdio.h>
 #include <stdlib.h> 
@@ -68,6 +59,7 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
     case kESRayTraceButton:    
     default:                       i= 'H'; break; 
     }
+
   if ((bl->RTSource.QuellTyp != i) || (i == 0)) 
     {
       if (i != 0) bl->RTSource.QuellTyp = i;
