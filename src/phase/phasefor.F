@@ -1,6 +1,6 @@
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <06 Jan 00 13:36:19 flechsig> 
+c Time-stamp: <12 Jan 00 09:20:36 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c einige routinen aus fgmap3dpp
@@ -76,7 +76,7 @@ c        record /source_results/ sr
         end structure  
         record /psoptions/ pso   
 
-        integer i,j,k,l,iord,
+        integer i,j,k,l,iord,iheigh,iwidth
      &       n1,n2,icheckk,ii,jj,iinumb
 
         real *8 xlam_test,xlen0,a(0:5,0:5),
@@ -220,6 +220,9 @@ c************* Bildpunkt generieren *******************************
 	st.inumyit=0
 	st.inumzan=0
 	st.inumyan=0
+c merken da die parameter im fehlerfall auf 1 gesetzt werden
+        iheigh=s.iheigh
+        iwidth=s.iwidth
 
         yi=s.disty1-ddisty       ! punkt disty unter minimum
         do n1=1,s.iheigh         ! y- Raster im Bild
@@ -244,7 +247,7 @@ c************* save initial coordinates ****************
 	    st.nn2=n2
 c******* start of adaptive grid integration *************************** 
             call adaptive_int(m4,g,a,src,apr,
-     .           cs,ra,ifl,xi,xir,st)  
+     .           cs,ra,ifl,xi,xir,st,s)  
 
             if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
@@ -277,11 +280,14 @@ c     psd2(n1,n2)=cdabs(xir.yzintey)
                psd2(n1,n2)=dreal(xir.yzintey)
             endif	
 c------------------------------------------
-
-c****** Ende der Integration ueber die Winkel ******************
-        enddo                   ! raster
-        write(*,*)'finished row ',n1,' of ', s.iheigh
+            
+c******Ende der Integration ueber die Winkel ******************
+         enddo                  ! raster
+         write(*,*)'finished row ',n1,' of ', iheigh
       enddo                     ! raster
+c     restore parameter in case of error
+      s.iheigh= iheigh
+      s.iwidth= iwidth
 c****** Berechnung der Intensitaetsverteilung fertig ***********
       write(*,*)'stop intensity calculation'
 c psd2 enthaelt intensitaet
