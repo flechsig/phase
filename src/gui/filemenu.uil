@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/filemenu.uil
 ! Date      : <28 Oct 99 11:36:53 flechsig> 
-! Time-stamp: <28 Oct 99 11:48:33 flechsig> 
+! Time-stamp: <28 Oct 99 12:15:33 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]FILEMENU.UIL
@@ -30,7 +30,8 @@ object
         arguments {
             XmNlabelString      = "Print...";                         
             XmNmnemonic         = keysym("P");
-            };        
+            XmNsensitive        = false;
+	};        
         callbacks {      
             XmNactivateCallback = procedure activate_proc (kFPrint);
             XmNhelpCallback     = procedure sens_help_proc(k_print_help);   
