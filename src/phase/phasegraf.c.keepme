@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/phasegraf.c */
 /*  Date      : <28 Oct 99 10:06:00 flechsig>  */
-/*  Time-stamp: <15 Nov 99 09:58:05 flechsig>  */
+/*  Time-stamp: <19 Nov 99 09:33:28 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/phasegraf.c */
@@ -70,7 +70,7 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
      /* return: -1 error (kein file) sonst 0     		     */
      /* der resultstatus geht mit ein */
 {
-  char *text, fname[MaxPathLength], *fn;
+  char *text, fname[MaxPathLength], *fn= NULL;
   XmString label; 
   FILE *f;  
   double x[3]; 
@@ -83,12 +83,16 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
   gr->psfile= 
     (XmToggleButtonGetState(widget_array[kCGrPSFile]) == TRUE) ? 1 : 0; 
   get_something(widget_array[kCGrPSFileButton], XmNlabelString, &label);  
-  XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn); XmStringFree(label);  
+  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn)) 
+    return; 
+  XmStringFree(label);  
   strcpy(PHASE->plotpsname, fn); 
+  XtFree(fn);
   text= XmTextGetString(widget_array[kCGrT5]); strcpy(gr->titel, text); 
   get_something(widget_array[kCGrOptMenu], XmNmenuHistory, &w);  
   get_something(w, XmNlabelString, &label);  
-  XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn); 
+  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn))
+    return; 
   XmStringFree(label);
 				/* Plotstyle- Menue */
   if (strcmp(fn, "SCATer plot") == 0) gr->plotstyle= 0; else 
@@ -121,13 +125,16 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
 					gr->plotstyle= 13; else 
 					if (strcmp(fn, "SURF4 plot") == 0) 
 					  gr->plotstyle= 14;  
-  printf("GetGrafBox: plotstyle: %s --> %d\n", fn, gr->plotstyle);     
+  printf("GetGrafBox: plotstyle: %s --> %d\n", fn, gr->plotstyle);  
+  XtFree(fn); 
   /*-- plotsyle menue ausgewertet ------------------------------------*/
 
 /* plot inhalt menue auswerten 					*/
   get_something(widget_array[kCGrOptMenu1], XmNmenuHistory, &w);  
   get_something(w, XmNlabelString, &label);  
-  XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn); XmStringFree(label);   
+  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn)) 
+    return; 
+  XmStringFree(label);   
   if (strcmp(fn, "Result") == 0) gr->status= 0; else 
     if (strcmp(fn, "Source") == 0) gr->status= (PLsource | PLrttype); else 
       if (strcmp(fn, "Data from file") == 0) gr->status= PLdatfromfile; else
@@ -167,7 +174,7 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
 			       gr->status= PLd12 | PLphspacetype;
 
    printf("GetGrafBox: Data: %s --> 0X%X\n", fn, gr->status);     
-
+   XtFree(fn); 
 /* 
  * der status wurde soeben initialisiert 
  */
@@ -204,7 +211,7 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
    }
    printf("getgrafbox: ymi: %f %f %f %f\n", 
 	  gr->ymi, gr->yma, gr->zmi, gr->zma);
-   XtFree(text); XtFree(fn);   
+   XtFree(text);    
    return fehler;
 }
 
