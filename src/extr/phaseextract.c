@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <30 Apr 04 13:56:01 flechsig>  */
+/*   Time-stamp: <30 Apr 04 14:03:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -93,8 +93,9 @@ int main(argc, argv)
      unsigned int argc;                  /* Command line argument count. */
      char *argv[];                       /* Pointers to command line args. */
 { 
-  double ax, ay, ax0, dy, dz, yfwhm, zfwhm, rpy, rpz, transmittance, ddone;
-  int 	 ix, iy, done;
+  double ax, ay, ax0, dy, dz, yfwhm, zfwhm, rpy, rpz, 
+    transmittance, done, ddone;
+  int 	 ix, iy;
  
   PI= 4.0* atan(1.0); 
 #ifdef LOGFILE   
@@ -163,7 +164,9 @@ int main(argc, argv)
 	  /* write result */  
 	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le %le %le\n", 
 		  ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance);
-	  printf("******** done: %d \% ********\n", done);
+	  printf("                          ******** done: %d %s ********\n", 
+		 (int)done, "%");
+	  done+= ddone; 
 	  ax+= optistructure.dx; 
 	}  
       ay+= optistructure.dy;  
