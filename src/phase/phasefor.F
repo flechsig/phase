@@ -1,8 +1,19 @@
+c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
+c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
+c$$$ Time-stamp: <06 Feb 04 09:01:58 flechsig> 
+c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
 c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <04 Feb 00 16:37:25 flechsig> 
+c Time-stamp: <06 Feb 04 08:50:29 flechsig> 
 c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
 c einige routinen aus fgmap3dpp
 c function   facult(nn) 
 c subroutine fgmapidp(iord,imodus,acc,a,g,wc,xlc,ypc1,zpc1,dypc,dzpc)       
@@ -48,8 +59,14 @@ c last modification: 24 Mar 97 09:22:28 flechsig
 
 
         implicit none
-        include 'phase_struct.for'
-
+#ifdef VMS
+c not yet tested
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+c a trick
+        include '../phase/phase_struct.for'
+#endif
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
