@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #   File      : /afs/psi.ch/user/f/flechsig/phase/utils/create-coefficients.pl
 #   Date      : <06 Feb 04 10:13:16 flechsig> 
-#   Time-stamp: <06 Feb 04 10:24:40 flechsig> 
+#   Time-stamp: <06 Feb 04 10:29:12 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -30,7 +30,7 @@ $fname= shift;
 $today= localtime;
 
 print "=" x 80, "\n";
-print "create coefficient file for PHASE\n";
+print "  create coefficient file for an optical element for PHASE\n";
 print "=" x 80, "\n";
 
 if (-e $fname)
@@ -41,7 +41,7 @@ if (-e $fname)
    die "we do not overwrite \"$fname\"- exit\n" unless $ch eq 'y';
 }
 open (FILE, "> $fname") or die "cant open file \"$fname\", $!\n";
-print "input shape: (c)one, (t)oroid: ";
+print "input the shape of the element: (c)one, (t)oroid: ";
 $ch= <STDIN>;
 chomp $ch;
 ######################## toroid #####################################
@@ -173,8 +173,9 @@ B<create-coefficients.pl> B<[-v]> B<filename>
 
 =head1 DESCRIPTION 
 
-I<create-coefficients.pl> Create a coefficient file for PHASE. So far toroid 
-and cone are implemented.
+I<create-coefficients.pl> Create a coefficient file of an optical 
+element to be used with PHASE. So far toroidal and conical shapes 
+are implemented.
 
 =head1 OPTIONS
 
@@ -208,7 +209,6 @@ $Revision$
 
 =head1 SEE ALSO
 
-See also related man pages for mdals2paw-scans
 
 =cut
 # end /home/pss060/sls/flechsig/phase/utils/create-coefficients.pl
