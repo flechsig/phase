@@ -1,6 +1,6 @@
 C File      : /home/vms/flechsig/vms/phas/phasec/phasefor.for
 C Date      : <19 Mar 97 11:44:33 flechsig> 
-C Time-stamp: <16 Dec 99 16:01:38 flechsig> 
+C Time-stamp: <20 Dec 99 13:05:18 flechsig> 
 C Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 C Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]PHASEFOR.FOR
@@ -2383,8 +2383,8 @@ c--------pinhole in aperture plane
       read(16,*)src.so5.dipcz
       read(16,*)src.so5.dipdisy
       read(16,*)src.so5.dipdisz
-c      read(16,*)src.so5.dipymin,src.so5.dipymax
-c      read(16,*)src.so5.dipzmin,src.so5.dipzmax
+      read(16,*)src.so5.dipymin,src.so5.dipymax
+      read(16,*)src.so5.dipzmin,src.so5.dipzmax
 
       read(16,*)ifl.igrating
       read(16,*)ifl.inorm
