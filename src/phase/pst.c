@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/pst.c */
 /*  Date      : <28 Oct 99 10:07:36 flechsig>  */
-/*  Time-stamp: <16 Dec 99 13:31:39 flechsig>  */
+/*  Time-stamp: <16 Dec 99 13:58:56 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /*  File      : /home/vms/flechsig/vms/phas/phasec/pst.c */
@@ -239,7 +239,8 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 	 fprintf(f3, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyimc[i+ j* ny]);  
 	 fprintf(f4, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezimc[i+ j* ny]);  
        }
-   fclose(f0); fclose(f1); fclose(f2); fclose(f3);fclose(f4);    
+   fclose(f0); fclose(f1); fclose(f2); fclose(f3);fclose(f4);  
+   printf("WritePsd: --> done\n");
 }  /* end writepsd */
 
 void FreeResultMem(struct RESULTType *Re)  
