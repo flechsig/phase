@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.h */
 /*   Date      : <16 Feb 04 14:51:56 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:18:14 flechsig>  */
+/*   Time-stamp: <09 Jul 04 15:22:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
