@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <30 Mar 05 14:25:11 flechsig>  */
+/*   Time-stamp: <06 Jul 05 17:26:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -254,7 +254,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 {
   double r, rho, *dp, cone, l,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
-    rpole, fipole, small;
+    rpole, fipole, small, kellip, Rellip;
   int i, j;
   struct mirrortype mirror;
 
@@ -354,6 +354,11 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  /* lineare Exzentrizitaet oder brennweite e= sqrt(a^2-b^2) */
 	  eellip= sqrt(aellip* aellip- bellip* bellip);
 
+	  /* Parameter k und R in der generic cone equation */
+	  /* y(x)= \frac{x^2/R}{1+\sqrt{1-(k+1)(x/R)^2}} */
+	  kellip= (aellip* aellip)/(bellip* bellip) - 1.0;
+	  Rellip= (aellip* aellip)/ bellip;
+
 	  /* numerische exzentrizitaet epsilon= e/a */ 
 	  epsilon= eellip/ aellip;
 
@@ -368,6 +373,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("minor axis:                   b = % f mm\n", bellip);
 	  printf("linear eccentricity:          e = % f mm\n", eellip);
 	  printf("numerical eccentricity: epsilon = % f   \n", epsilon);
+
+	  printf("cone parameter:               k = % f mm\n", kellip);
+	  printf("cone radius:                  R = % f mm\n", Rellip);
+
 	  printf("pole:                         x = % f mm\n", xpole);
 	  printf("pole:                         y = % f mm\n", ypole);
 	  printf("pole:                         r = % f mm\n", rpole);
@@ -417,6 +426,12 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 		       (x->r1* x->r1+ x->r2* x->r2- 
 			2.0* x->r1* x->r2* cos(2.0* alpha)));
 	  eellip= sqrt(aellip* aellip- bellip* bellip);
+
+	  /* Parameter k und R in der generic cone equation */
+	  /* y(x)= \frac{x^2/R}{1+\sqrt{1-(k+1)(x/R)^2}} */
+	  kellip= (aellip* aellip)/(bellip* bellip) - 1.0;
+	  Rellip= (aellip* aellip)/ bellip;
+
 	  epsilon= eellip/ aellip;
 	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
 	  xpole = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
@@ -429,6 +444,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("minor axis:                   b = %f mm\n", bellip);
 	  printf("linear eccentricity:          e = %f mm\n", eellip);
 	  printf("numerical eccentricity: epsilon = %f   \n", epsilon);
+
+	  printf("cone parameter:               k = % f mm\n", kellip);
+	  printf("cone radius:                  R = % f mm\n", Rellip);
+
 	  printf("pole:                         x = %f mm\n", xpole);
 	  printf("pole:                         y = %f mm\n", ypole);
 	  printf("pole:                         r = %f mm\n", rpole);
