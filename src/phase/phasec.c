@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <06 Jul 05 17:26:17 flechsig>  */
+/*   Time-stamp: <06 Jul 05 17:36:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -374,7 +374,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("linear eccentricity:          e = % f mm\n", eellip);
 	  printf("numerical eccentricity: epsilon = % f   \n", epsilon);
 
-	  printf("cone parameter:               k = % f mm\n", kellip);
+	  printf("cone parameter:               k = % f   \n", kellip);
 	  printf("cone radius:                  R = % f mm\n", Rellip);
 
 	  printf("pole:                         x = % f mm\n", xpole);
@@ -445,7 +445,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("linear eccentricity:          e = %f mm\n", eellip);
 	  printf("numerical eccentricity: epsilon = %f   \n", epsilon);
 
-	  printf("cone parameter:               k = % f mm\n", kellip);
+	  printf("cone parameter:               k = % f   \n", kellip);
 	  printf("cone radius:                  R = % f mm\n", Rellip);
 
 	  printf("pole:                         x = %f mm\n", xpole);
