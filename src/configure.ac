@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <30 Mar 05 11:59:37 flechsig> 
+#   Time-stamp: <13 Dec 05 22:30:13 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -90,7 +90,7 @@ AC_MSG_NOTICE((1) we search the CERN lib at ${cernlib})
 ## check if we find the packlib there libpacklib.a
 AC_CHECK_FILE([${cernlib}/libpacklib.a], 
   AC_SUBST(CERNLIB,${cernlib}),
-  [ cernlib=`echo ${cernlib} | sed -e 's|lib|apps/cern/2000/lib|'`
+  [ cernlib=`echo ${cernlib} | sed -e 's|lib|apps/cern/2003/lib|'`
     AC_MSG_NOTICE((2) we search the CERN lib at ${cernlib})
     AC_CHECK_FILE([${cernlib}/libpacklib.a], 
       AC_SUBST(CERNLIB,${cernlib}), AC_MSG_ERROR(cannot find the CERN lib))
