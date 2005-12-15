@@ -733,7 +733,12 @@ object
 object  
     EOET10 : XmText {
         arguments {
-            arguments 		  ETextArgs; };
+            arguments 		  ETextArgs; 
+	       XmNcolumns          = 8;
+               XmNrows             = 1;
+               XmNmaxLength        = 20;
+               XmNvalue            = "";
+};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET10);  };
     };
@@ -743,7 +748,12 @@ object
 object  
     EOET11 : XmText {
         arguments {
-            arguments 		  ETextArgs; };
+            arguments 		  ETextArgs; 
+	       XmNcolumns          = 8;
+               XmNrows             = 1;
+               XmNmaxLength        = 20;
+               XmNvalue            = "";
+};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET11); };
     };
@@ -764,7 +774,12 @@ object
 object  
     EOET13 : XmText {
         arguments {
-            arguments 		  ETextArgs; };
+            arguments 		  ETextArgs; 
+	       XmNcolumns          = 8;
+               XmNrows             = 1;
+               XmNmaxLength        = 20;
+               XmNvalue            = "";
+};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET13); };
     };
@@ -774,7 +789,12 @@ object
 object  
     EOET14 : XmText {
         arguments {
-            arguments 		  ETextArgs; };
+            arguments 		  ETextArgs; 
+	       XmNcolumns          = 8;
+               XmNrows             = 1;
+               XmNmaxLength        = 20;
+               XmNvalue            = "";
+};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET14);  };  
     };

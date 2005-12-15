@@ -126,6 +126,7 @@ object
         controls {
                    XmPushButton        CCRayTraceButton;
                    XmPushButton        CCPTButton; 
+                   XmPushButton        CCMPTButton; 
                    XmPushButton        CCSR1Button; 
                    XmPushButton        CCSR2Button; 
 		   XmPushButton        CCOptiButton;    
@@ -157,7 +158,18 @@ object
             XmNactivateCallback = procedure activate_proc (kCCPTButton);
             };
         };    
-   
+
+object
+    CCMPTButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "multiple phase space imaging";
+            XmNmnemonic         = keysym("q"); 
+	};
+        callbacks {
+            XmNactivateCallback = procedure activate_proc (kCCMPTButton);
+            };
+        };    
+
 object
     CCSR1Button : XmPushButton {
         arguments {

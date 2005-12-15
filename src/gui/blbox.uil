@@ -191,7 +191,7 @@ object
             XmNtopAttachment    = XmATTACH_WIDGET;      
             XmNleftAttachment   = XmATTACH_FORM;    
             XmNrightAttachment  = XmATTACH_FORM;    
-	    XmNtopOffset        = 5; 
+	    XmNtopOffset        = 10; 
             XmNtopWidget        = XmPushButton EBLNameButton;
 	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
             XmNorientation      = XmHORIZONTAL;
@@ -273,7 +273,7 @@ object
         arguments  {
             XmNtopAttachment    = XmATTACH_WIDGET; 
 	    XmNtopWidget        = EBLSeph2;     
-            XmNtopOffset        = 6;    
+            XmNtopOffset        = 10;    
             XmNleftAttachment   = XmATTACH_WIDGET; 
             XmNleftWidget       = EBLSelectedLabel;    
             XmNeditable		= false;
@@ -296,7 +296,7 @@ object
 	    XmNleftAttachment   = XmATTACH_FORM;
             XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;    
             XmNforeground       = color('white');   
-            XmNbackground       = color('blue');  
+            XmNbackground       = color('red');  
 
             	  };                  
         controls {
@@ -664,7 +664,7 @@ object
             XmNlabelString      = "dispersive length (mm)";
             XmNtopAttachment    = XmATTACH_WIDGET;
 	    XmNtopWidget        = XmLabel EBLL30a;   
-            XmNtopOffset        = 15;    
+            XmNtopOffset        = 12;    
             XmNrightAttachment   = XmATTACH_WIDGET;
             XmNrightWidget       = XmText EBLT41a;  
             XmNrightOffset       = 10;    

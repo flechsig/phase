@@ -87,6 +87,7 @@ value
     kCMatrixPSButton      : 83;   
     kCCRayTraceButton     : 84;   
     kCCPTButton           : 85;    
+    kCCMPTButton          : 1085;    
     kCCSR1Button          : 86;
     kCCSR2Button          : 87; 
     kCPurge               : 88;      
@@ -101,6 +102,7 @@ value
     kCWriteResultButton   : 97;
     kEParameterInitButton : 98;
     kEOESlit		  : 99;
+    kEOEDrift		  : 999;
     kCCGlueBox            : 100;            !glue Box
     kCCGResultButton      : 101;
     kCCGList	          : 102;  
