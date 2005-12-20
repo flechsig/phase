@@ -34,7 +34,6 @@
 #include "phase.h"       
 #include "rtrace.h"    
 
- 
 void activate_proc(w, tag, reason)
      Widget		w;
      int			*tag;
@@ -51,8 +50,11 @@ void activate_proc(w, tag, reason)
   struct BeamlineType *bl;
   void *vo;
 
+  printf(" widget_num ",widget_num);     
+
   switch (widget_num) {
-    /*******************   global ****************************************/
+
+     /*******************   global ****************************************/
 
   case kNyi:                                       /* Not yet impl. Box */
     FetchWidget(kNyi, "nyi");        
@@ -379,7 +381,7 @@ void activate_proc(w, tag, reason)
 	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 		     PHASESet.elementpckname);
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
-		     &bl->ElementList[(bl->position)- 1].geo);  
+		     &bl->ElementList[(bl->position)- 1].geo); 
 	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
 		     PHASESet.geometrypckname);   
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);   
@@ -571,7 +573,11 @@ void activate_proc(w, tag, reason)
     UpdateMainList();
     stop_watch();    
     break;   
-        
+
+  case kCCMPTButton:                              /*  Phase Trafo */  
+    MPST(&Beamline);     
+    break;   
+     
   case kCCSR1Button:                          /*  footprint */  
     start_watch(); 
     Footprint(&Beamline, Beamline.position);
