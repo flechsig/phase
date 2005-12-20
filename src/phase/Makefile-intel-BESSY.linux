@@ -11,9 +11,10 @@ DEBUG	    = -DDEBUG
 DEFS        = -DLINUX $(DEBUG) -DCADDR_T  -DHAVE_CONFIG_H # caddr_t im Headerfile
 CC          = gcc -v
 PP          = g77 -E -o
-FOR         = ifc  
-#CERNLIB     = /cern/2000/lib
-#CERNLIB    = /usr/local/cern/2000/lib
+
+FOR         = /home/bahrdt/intel/compiler70/ia32/bin/ifc
+#FOR	     = /opt/intel_8/bin/ifort
+
 YACC        = bison -y
 INSTALL     = /home/bahrdt/phas/phase -c
 INSTALLDATA = /home/bahrdt/phas/phase -c -m 644
@@ -25,45 +26,36 @@ srcdir      = .
 INSTPATH    = /home/bahrdt/phas/phase
 BUILDPATH   = /home/bahrdt/phas/phase
 
-LINUX_C	= -I/home/bahrdt/phasenew1/phase/src/phase/share/phase/include \
--D_POSIX_SOURCE -DNOLOCK 
-#LINUX_C	= -I/usr/X11R6-SuSE/include -D_POSIX_SOURCE -DNOLOCK 
+LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
+
 CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
-#FFLAGS  = -w -f -s -N3 -N51
-#FFLAGS  = -g -f -s -N3 -N51 -N110 -N109 -W -N90 -N22 -B108 
-FFLAGS  =  -c -vms -w95 -132 
-LDFLAGS = -L/home/bahrdt/phasenew1/phase/src/phase/share/phase \
--lXm -lMrm -L/usr/X11R6/lib -lXt -lXext -lXp -lX11 -lm -lc -lnsl   
-#LDFLAGS = -L/usr/X11R6/lib -lXm -lXt -lXext -lXp -lX11 -lm -lc -lnsl
-#FFLAGS for absoft f77 compiler
-#	-g generate debugging information
-#	-c generate object files
-#     	-f fold to lower case
-#	-B108 append a single underscore to funtion names
-#	-W allow > 72 columns
-#	-s force all program storage to be treated as static and initialized
-#	   to zero (weglassen???)
-#	-N3 include record length information for sequential, unformated files
-#	-N51 interpret RECL specifier as a number of 32bit words in a record
-#	-C Check array boundaries (for debugging only)
-#	-B111 Validate FPU stack after procedure calls (for debugging only)
-#	-m0 give more error messages
-#	-N22 append underscore to common block names (wichtig wegen pawc)
-#       -N33 pack structures (kein alignment) 
+FFLAGS  = -c -vms -w95 -132
+#FFLAGS   = -c -check all -fpe0  -fpstkchk -mp -traceback -vms -w95 -132 -save \
+#-check all
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl  
 
 .phony: all makewhat    
 #########################################################################
 PROGRAM		= phase
 #########################################################################
-LIBS    = ../phaselib/libphase.a \
+LIBS    = share/phase/libphase.a \
 -L/opt/cern/pro/lib \
 -lpacklib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib \
+/home/bahrdt/intel/compiler70/ia32/lib/libcxa.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libcxa.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libCEPCF90.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libIEPCF90.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libintrins.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libF90.a \
 /lib/libpthread.so.0 \
 /usr/lib/libg2c.a \
-/usr/X11R6/lib/libX11.so.6 \
--L/opt/intel/compiler/ia32/lib \
--lCEPCF90 -lIEPCF90 -lintrins -lF90 \
-#	  -Xlinker -defsym -Xlinker MAIN__=main
+/usr/X11R6/lib/libX11.so.6 
+
+#/opt/intel_new/compiler70/ia32/lib/libcxa.a \
+#/opt/intel_new/compiler70/ia32/lib/libCEPCF90.a \
+#/opt/intel_new/compiler70/ia32/lib/libIEPCF90.a \
+#/opt/intel_new/compiler70/ia32/lib/libintrins.a \
+#/opt/intel_new/compiler70/ia32/lib/libF90.a \
 #########################################################################
 OBJECTC = phase.o phase0.o phasec.o \
 	  activate_proc.o phasegraf.o initdatset.o \
@@ -73,7 +65,7 @@ OBJECTC = phase.o phase0.o phasec.o \
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
 	  phase_integration.o \
-	  misali.o misali1.o misali2.o misali3.o misali4.o 
+	  misali.o misali1.o misali2.o misali3.o misali4.o expired.o
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
@@ -88,7 +80,7 @@ SRCC    = phase.c phase0.c phasec.c \
 SRCF    = phasegraffor.F phasefor.F \
 	  phase_source.F \
 	  phase_integration.F \
-	  misali.F misali1.f misali2.f misali3.f misali4.f 
+	  misali.F misali1.f misali2.f misali3.f misali4.f expired.f
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
@@ -104,10 +96,10 @@ $(PROGRAM): $(OBJECTC) $(OBJECTF)
 	$(CC) $(CFLAGS) -o $@ $< 
 
 %.o : %.f phase_struct.for 
-	$(FOR) $(FFLAGS) $@ $<   
+	$(FOR) $(FFLAGS) $<   
 
-%.o : %.f
-	$(FOR) $(FFLAGS) $@ $<   
+# %.o : %.f
+#	$(FOR) $(FFLAGS) $<   
 
 #mit preprocessor
 %.f: %.F
