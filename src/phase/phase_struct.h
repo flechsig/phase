@@ -127,9 +127,10 @@ struct  source4 {
 	xezimmin,xezimmax,dxezim,
 	yezremin,yezremax,dyezre,
 	yezimmin,yezimmax,dyezim,
-	zezre[256][256],zezim[256][256];
+	zezre[256][256],zezim[256][256],deltatime;
   int  ieyrex,ieyimx,ieyrey,ieyimy,
-    iezrex,iezimx,iezrey,iezimy;
+       iezrex,iezimx,iezrey,iezimy,
+       nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
 };  
    		
         struct  source5 {                 /* Dipol Quelle  */
@@ -154,13 +155,13 @@ struct  source4 {
 	};  
 
         struct  sources {                   /* Sammelstruktur         */
+	   double pin_yl0,pin_yl,pin_zl0,pin_zl;   /* changed position 17.12.2005 */
            struct source1 so1;              /* Gauss + Hard edge      */
            struct source2 so2;              /* Zernike                */
            struct source3 so3;              /* radiale Vert. vom File */
            struct source4 so4;              /* Quelle von File        */
            struct source5 so5;              /* Dipol Quelle           */
            struct source6 so6;              /* Brightness             */
-	   double pin_yl0,pin_yl,pin_zl0,pin_zl;
 	   int  isrctype;
         };     
 
@@ -237,7 +238,7 @@ struct simps1 {
   double z1,z2;
 /*  double tya[301][301],tza[301][301];
   double typ[301][301],tzp[301][301]; */
-  int ianz0_save[301][301];
+  int ianz0_save[256][256];
   int iiheigh,iiwidth,jmult;
 };
 /* ----------------- results from integration --------------------*/
@@ -246,12 +247,12 @@ struct simps1 {
 	   COMPLEX yzintey,yzintez;
 	   double yzintya,yzintyp,yzintza,yzintzp;
 	   int  isimp[100],iisimp,nsimp;
-	   double sintre[4][2][256],sintim[4][2][256];
-	   double simpa[4][2][256],simpp[4][2][256];
-	   double simpre[4][2][256],simpim[4][2][256];
+	   double sintre[4][2][501],sintim[4][2][501];
+	   double simpa[4][2][501],simpp[4][2][501];
+	   double simpre[4][2][501],simpim[4][2][501];
 	   int  isintre[4],isintim[4],isimpa[4],isimpp[4];
 	   int  isimpre[4],isimpim[4];
-	   double d12[2][3][256],ianzd12[3];
+	   double d12[2][3][501],ianzd12[3];
 	   struct simps1 si1;            /* UF 21.12.99 */
 	};  
 
@@ -279,7 +280,7 @@ struct simps1 {
 */
 
         struct  statistics {
-	   double fd1phmax[128][128];
+	   double fd1phmax[256][256];
 	   int  nn1,nn2,inumb[256][256];
 	   int  inumzit,inumyit,inumzan,inumyan;
 	};  

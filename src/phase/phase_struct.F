@@ -108,9 +108,10 @@ c---------------- sources -----------------------------------
      &		  xezimmin,xezimmax,dxezim,
      &		  yezremin,yezremax,dyezre,
      &		  yezimmin,yezimmax,dyezim,
-     &       zezre(256,256),zezim(256,256)
+     &       zezre(256,256),zezim(256,256),deltatime
 	  integer ieyrex,ieyimx,ieyrey,ieyimy,
-     &		  iezrex,iezimx,iezrey,iezimy
+     &            iezrex,iezimx,iezrey,iezimy,
+     &            nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj
 	end structure
    		
         structure/source5/                 ! Dipol Quelle  
@@ -135,13 +136,13 @@ c---------------- sources -----------------------------------
 	end structure
 
         structure/sources/                 ! Sammelstruktur
+        real*8 pin_yl0,pin_yl,pin_zl0,pin_zl ! changed position 17.12.2005
            record/source1/so1              ! Gauss + Hard edge
            record/source2/so2              ! Zernike
            record/source3/so3              ! radiale Vert. vom File
            record/source4/so4              ! Quelle von File
            record/source5/so5              ! Dipol Quelle
            record/source6/so6              ! Brightness
-	   real*8 pin_yl0,pin_yl,pin_zl0,pin_zl
 	   integer isrctype
         end structure   
 
@@ -220,7 +221,7 @@ c common simps
 	   real*8 z1,z2
 c           real*8 tya(256,256),tza(256,256)
 c           real*8 typ(256,256),tzp(256,256)
-	   integer ianz0_save(301,301)
+           integer ianz0_save(301,301)
      	   integer iiheigh,iiwidth,jmult
         end structure
 c------------------ results from integration --------------------
@@ -229,12 +230,12 @@ c------------------ results from integration --------------------
 	   complex*16 yzintey,yzintez
 	   real*8 yzintya,yzintyp,yzintza,yzintzp
 	   integer isimp(100),iisimp,nsimp
-           real*8 sintre(4,2,256),sintim(4,2,256)
-           real*8 simpa(4,2,256),simpp(4,2,256)
-           real*8 simpre(4,2,256),simpim(4,2,256)
+           real*8 sintre(4,2,501),sintim(4,2,501)
+           real*8 simpa(4,2,501),simpp(4,2,501)
+           real*8 simpre(4,2,501),simpim(4,2,501)
 	   integer isintre(4),isintim(4),isimpa(4),isimpp(4)
 	   integer isimpre(4),isimpim(4)
-           real*8 d12(2,3,256),ianzd12(3)
+           real*8 d12(2,3,501),ianzd12(3)
 	   record/simps1/si1                  ! UF 21.12.99
 	end structure
 
@@ -259,8 +260,8 @@ c	   integer inumzit,inumyit,inumzan,inumyan
 c	end structure
 
 	structure/statistics/
-	   real*8 fd1phmax(128,128)
-	   integer nn1,nn2,inumb(256,256)
+        real*8 fd1phmax(128,128)
+        integer nn1,nn2,inumb(256,256)
 	   integer inumzit,inumyit,inumzan,inumyan
 	end structure
 

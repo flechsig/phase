@@ -145,6 +145,7 @@
 #define	kCMatrixPSButton        83  
 #define kCCRayTraceButton       84  
 #define	kCCPTButton             85    
+#define	kCCMPTButton            1085    
 #define	kCCSR1Button            86
 #define	kCCSR2Button            87  
 #define kCPurge			88  
@@ -564,7 +565,7 @@ struct PSOptionsType                   /* 20.9.96 */
 struct OptionsType                   			/* 24.6.96 */
 {
   int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign;
-  double epsilon, lambda, displength;
+  double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
   struct apertures apr;
@@ -681,6 +682,7 @@ GRDATSTRUCTTYPE grdatstruct;
   #define src_ini        src_ini_
   #define xxmap70        xxmap70_ 
   #define misali         misali_
+  #define already_expired already_expired_
 #endif
 /************************* Prototypen *****************************/
 

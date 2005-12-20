@@ -32,6 +32,21 @@
 #include "phase.h"         
 #include "rtrace.h" 
 
+void inttochar(int n,char *sn)
+{
+   if(n==0)strcpy(sn,"0");
+   if(n==1)strcpy(sn,"1");
+   if(n==2)strcpy(sn,"2");
+   if(n==3)strcpy(sn,"3");
+   if(n==4)strcpy(sn,"4");
+   if(n==5)strcpy(sn,"5");
+   if(n==6)strcpy(sn,"6");
+   if(n==7)strcpy(sn,"7");
+   if(n==8)strcpy(sn,"8");
+   if(n==9)strcpy(sn,"9");
+        
+}
+
 void PSTxx(struct BeamlineType *bl) 
 {
    struct geometryst *gp;
@@ -46,6 +61,262 @@ void PSTxx(struct BeamlineType *bl)
    printf("PST: dummy phase space trafo PST called\n");
    printf("PST: end \n");
 }
+
+void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)   
+/* schreibt phasenraumdichte auf ein file 	*/
+/* Uwe 2.8.96 					*/
+/* last mod. 7.8.96 				*/   
+{
+   FILE *f0,*f1,*f2,*f3,*f4;
+   int i, j, dim;
+
+   printf("WriteMPsd: Write Psd to %s \n", fname);
+
+   if ((f0= fopen(fname, "w+")) == NULL)
+   {
+       fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
+   } 
+
+   fprintf(f0, "   %d    %d\n", nz, ny);  
+
+   for (i= 0; i< ny; i++) 
+     for (j= 0; j< nz; j++) 
+       /* psd ist fortran format */
+       {
+    if(n==1) fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyrec[i+ j* ny]);  
+    if(n==2) fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezrec[i+ j* ny]);  
+    if(n==3) fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyimc[i+ j* ny]);  
+    if(n==4) fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezimc[i+ j* ny]);  
+       }
+   fclose(f0); 
+   printf("WriteMPsd: --> done\n");
+}  /* end writempsd */
+
+void get_nam(int n, 
+	     char *eyre,char *eyim,char *ezre,char *ezim,
+	     char *eyre1,char *eyim1, char *ezre1,char *ezim1)
+{
+#include "cutils.h"
+   
+   struct geometryst *gp;
+   struct rayst ra;
+   struct source_results sr;
+   struct integration_results xir;
+   struct statistics st;          /* bereitet probleme (Absturz) */
+   struct map4 m4;   
+
+   char s1[MaxPathLength], s2[MaxPathLength],sn[2];
+   
+   int i, j, c;
+   
+   strcpy(eyre,"eyres");
+   strcpy(eyim,"eyims");
+   strcpy(ezre,"ezres");
+   strcpy(ezim,"ezims");
+
+   strcpy(eyre1,"eyres");
+   strcpy(eyim1,"eyims");
+   strcpy(ezre1,"ezres");
+   strcpy(ezim1,"ezims");
+
+   if(n < 10000) strcpy(s1,"0");
+   if(n < 1000) strcat(s1,"0");
+   if(n < 100) strcat(s1,"0");
+   if(n < 10) strcat(s1,"0");
+
+   i=0;
+   do{
+      s2[i++]=n % 10 + '0';
+   } while ((n/= 10) > 0); 
+   s2[i]='\0';
+
+/* reverse s2 */
+   
+   for(i=0,j=strlen(s2)-1; i < j; i++, j--)
+     {c=s2[i];
+	s2[i]=s2[j];
+	s2[j]=c;
+     }
+   
+   strcat(s1,s2);
+	    
+   strcat(eyre,s1);
+   strcat(eyim,s1);
+   strcat(ezre,s1);
+   strcat(ezim,s1);
+
+   strcat(eyre1,s1);
+   strcat(eyim1,s1);
+   strcat(ezre1,s1);
+   strcat(ezim1,s1);
+
+   strcat(eyre,".da");
+   strcat(eyim,".da");
+   strcat(ezre,".da");
+   strcat(ezim,".da");
+
+   strcat(eyre1,".da");
+   strcat(eyim1,".da");
+   strcat(ezre1,".da");
+   strcat(ezim1,".da");
+
+   inttochar(Beamline.src.so4.nsource,sn);
+
+   strcat(eyre,sn);
+   strcat(eyim,sn);
+   strcat(ezre,sn);
+   strcat(ezim,sn);
+
+   inttochar(Beamline.src.so4.nimage,sn);
+
+   strcat(eyre1,sn);
+   strcat(eyim1,sn);
+   strcat(ezre1,sn);
+   strcat(ezim1,sn);
+
+}
+
+void MPST(struct BeamlineType *bl)
+{
+   struct geometryst *gp;
+   struct rayst ra;
+   struct source_results sr;
+   struct integration_results xir;
+   struct statistics st;          /* bereitet probleme (Absturz) */
+   struct map4 m4;   
+   double a[6][6], *tmp, nue0, dnue, lambda_save, lambda_local;
+   int size, i,j, gratingnumber, elart, gratingposition, ifour, istart, iend;
+   
+   char eyre[MaxPathLength],eyim[MaxPathLength];
+   char ezre[MaxPathLength],ezim[MaxPathLength];
+   char eyre1[MaxPathLength],eyim1[MaxPathLength];
+   char ezre1[MaxPathLength],ezim1[MaxPathLength];
+   char eyre2[MaxPathLength],eyim2[MaxPathLength];
+   char ezre2[MaxPathLength],ezim2[MaxPathLength];
+
+/*   int function get_nam, function WriteMPsd; */
+
+/*   dnue=2.87e12;  */
+   dnue=1./(Beamline.src.so4.deltatime*1.0e-15);
+   
+   Beamline.BLOptions.xlam_save=Beamline.BLOptions.lambda;
+   nue0=LIGHT_VELO/Beamline.BLOptions.xlam_save;
+   
+   printf(" main wavelength = %15le ",Beamline.BLOptions.xlam_save);
+   
+   ifour=Beamline.src.so4.nfreqtot;  /* 2048 */
+   istart=1;
+   iend=Beamline.src.so4.nfreqpos;   /* 20 */
+
+/* start loop */
+   for (i=istart-1; i<iend; i++)
+     {     
+	
+/* get names */
+
+   get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1);
+
+	printf(eyre,ezre);
+	
+   strcpy(bl->src.so4.fsource4a,eyre);
+   strcpy(bl->src.so4.fsource4b,eyim); 
+   strcpy(bl->src.so4.fsource4c,ezre); 
+   strcpy(bl->src.so4.fsource4d,ezim); 
+
+/* init source */
+   src_ini(&Beamline.src);   
+
+/* set actual lambda */
+
+   Beamline.BLOptions.lambda=LIGHT_VELO/(nue0+i*dnue);
+   lambda_local=Beamline.BLOptions.lambda;
+   printf(" === calculating wavelength %d %15le nm \n",i,Beamline.BLOptions.lambda*1e6);	
+
+   BuildBeamlineM(lambda_local,&Beamline);	
+
+   /* do PST */
+   start_watch();
+       Beamline.BLOptions.CalcMod= 3;
+   #ifdef DEBUG
+       printf("activate_proc: call MPST\n");
+   #endif
+       PST(&Beamline);
+       UpdateMainList();
+       stop_watch();
+   
+/* write results to file */   
+
+	WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,1);
+       WriteMPsd(ezre1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,2);
+       WriteMPsd(eyim1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,3);
+       WriteMPsd(ezim1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,4);
+};   
+
+
+   for (i=ifour-Beamline.src.so4.nfreqneg; i<ifour; i++)
+     {     
+	
+/* get names */
+
+   get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1);
+
+   strcpy(bl->src.so4.fsource4a,eyre);
+   strcpy(bl->src.so4.fsource4b,eyim); 
+   strcpy(bl->src.so4.fsource4c,ezre); 
+   strcpy(bl->src.so4.fsource4d,ezim); 
+
+/* init source */
+   src_ini(&Beamline.src);   
+
+/* get conjugate complex (already done in phase_source.F) */
+
+/* set actual lambda */
+
+   Beamline.BLOptions.lambda=LIGHT_VELO/(nue0-(ifour-i)*dnue);
+   lambda_local=Beamline.BLOptions.lambda;
+   printf(" === calculating wavelength %d %15le nm \n",i,Beamline.BLOptions.lambda*1e6);	
+
+   BuildBeamlineM(lambda_local,&Beamline);	
+
+/* do PST */
+   start_watch();
+       Beamline.BLOptions.CalcMod= 3;
+   #ifdef DEBUG
+       printf("activate_proc: call MPST\n");
+   #endif
+       PST(&Beamline);
+       UpdateMainList();
+       stop_watch();
+   
+/* write results to file */   
+
+	WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,1);
+       WriteMPsd(ezre1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,2);
+       WriteMPsd(eyim1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,3);
+       WriteMPsd(ezim1, &bl->RESULT.RESUnion.PSD, 
+		bl->RESULT.RESUnion.PSD.iy,
+		bl->RESULT.RESUnion.PSD.iz,4);
+};   
+
+   /* end loop */
+
+Beamline.BLOptions.lambda=Beamline.BLOptions.xlam_save;
+   
+} /* end MPST */
 
 void PST(struct BeamlineType *bl) 
 /* Phasenraumtransformation interface zur Fortran Routine 	*/
@@ -274,3 +545,4 @@ void FreeResultMem(struct RESULTType *Re)
    Re->typ= 0;
 } /* end freeResultmem */
 /* end pst.c */
+

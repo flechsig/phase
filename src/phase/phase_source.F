@@ -782,6 +782,9 @@ c***********************************************************
 	do i=1,so4.ieyimx
 	k=(j-1)*so4.ieyimx+i
 	read(10,*)xx(k),yy(k),so4.zeyim(i,j)
+c------------- 10.8.2005
+	if(so4.iconj.eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
+c------------- 10.8.2005
 	enddo
 	enddo
 	close(10)
@@ -824,6 +827,9 @@ c----------------------------------------------------------
 	do i=1,so4.iezimx
 	k=(j-1)*so4.iezimx+i
 	read(10,*)xx(k),yy(k),so4.zezim(i,j)
+c------------- 10.8.2005
+	if(so4.iconj.eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
+c------------- 10.8.2005
 	enddo
 	enddo
 	close(10)

@@ -1950,7 +1950,7 @@ c common simps1 ist in xir UF 21.12.99
         record /statistics/ st
         record /map4/ m4
 
-	dimension dyi_loc(301),dzi_loc(301)
+	dimension dyi_loc(1001),dzi_loc(1001)
 
 	small_loc=1.0d-15
 c-----------------------------------------------------------------

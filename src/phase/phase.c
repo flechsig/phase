@@ -54,7 +54,10 @@ int main(argc, argv)
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
-    /* Feb 04 get the data directory from installation prefix and 
+    printf(" checking date \n");
+       already_expired();
+    
+   /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
 
     set_program_name (*argv);       /* initialize program_name for errors */
