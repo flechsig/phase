@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <26 Oct 04 13:33:32 flechsig>  */
+/*  Time-stamp: <03 Feb 06 11:52:24 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -54,9 +54,11 @@ int main(argc, argv)
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
+#ifndef NOEXPIRE
     printf(" checking date \n");
        already_expired();
-    
+#endif    
+
    /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
 
