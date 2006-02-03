@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <13 Dec 05 22:30:13 flechsig> 
+#   Time-stamp: <03 Feb 06 21:44:31 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -34,10 +34,11 @@ AC_CHECK_PROG([UIL],[uil],[uil])
 
 ## the preference of fortran compilers
 AC_PROG_F77(ifc f77 g77)
+#AC_PROG_F77(ifc g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
 ##AC_MSG_NOTICE(***FLIBS*** ${FLIBS})
-AC_PATH_PROG([f77path],[f77])
+## UF 0602 AC_PATH_PROG([f77path],[f77])
 AC_MSG_CHECKING(for a supported compiler type)
 ##if test "$F77" = "g77"; then
 if test "$G77" = "yes"; then
@@ -130,6 +131,12 @@ AC_ARG_ENABLE([full_rt],
     AC_DEFINE_UNQUOTED(WITH_FULL_RT, "yes", 
     "optimization in full ray trace mode")]
 )
+
+## expire option
+AC_ARG_ENABLE([EXPIRE],
+   AC_HELP_STRING([--expire=],[expire date of the code yyyymmdd]),
+   AC_DEFINE([EXPIRE],"0605","expiring date"))
+
 
 # get configure date put it into header
 configured=`date`
