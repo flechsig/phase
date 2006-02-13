@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 #   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <03 Feb 06 21:44:31 flechsig> 
+#   Time-stamp: <13 Feb 06 18:59:11 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -134,9 +134,8 @@ AC_ARG_ENABLE([full_rt],
 
 ## expire option
 AC_ARG_ENABLE([EXPIRE],
-   AC_HELP_STRING([--expire=],[expire date of the code yyyymmdd]),
-   AC_DEFINE([EXPIRE],"0605","expiring date"))
-
+    AC_HELP_STRING([--enable-EXPIRE=YYYYMMDD],[expiring date of the code]),
+    AC_DEFINE_UNQUOTED([EXPIRE], $enableval, "expiring date"))
 
 # get configure date put it into header
 configured=`date`
