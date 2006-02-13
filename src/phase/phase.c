@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <03 Feb 06 11:52:24 flechsig>  */
+/*  Time-stamp: <13 Feb 06 18:57:55 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -17,6 +17,8 @@
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
 #include <math.h>
+#include <time.h>
+/* #include <errno.h> */
 
 #include <Xm/Text.h>                  /* fileBox               */
 #include <Xm/FileSB.h>    
@@ -50,15 +52,40 @@ int main(argc, argv)
 {                                
     int setupswitch;
     char filename[255];
+
+    time_t    timev;                    /* for expire option */  
+    struct tm *local_time;              /* for expire option */
+    
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     PI= 4.0* atan(1.0);
 
-#ifndef NOEXPIRE
-    printf(" checking date \n");
-       already_expired();
-#endif    
+    /*
+      define a expire date either with configure:
+             ./configure --enable-EXPIRE=YYYYMMDD
+      or add a define option to the CFLAGS directly in the Makefile:
+      gcc .... -DEXPIRE=YYYYMMDD ....
+    */
 
+#ifdef EXPIRE
+       printf(" defined expire date: %d\n", EXPIRE);
+       time(&timev);
+       local_time= localtime(&timev);
+       /* debug       printf("%d %d %d\n\n", local_time->tm_year, local_time->tm_mon, local_time->tm_mday); */
+
+       if (  local_time->tm_mday + 
+	    (local_time->tm_mon  + 1) * 100 + 
+	    (local_time->tm_year + 1900) * 10000 > EXPIRE )
+	 {
+	   printf("\n Program PHASE expired..., terminating\n Please, contact Johannes Bahrdt\n\n");
+	   exit(1);
+	 } else printf("  The program is not expired!\n");
+
+       /*       already_expired(); */
+#else
+    printf(" The program does not expire!\n\n");
+#endif
+    
    /* Feb 04 get the data directory from installation prefix and 
        not from the environment in unix */
 
