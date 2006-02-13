@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mis.F
 c$$$ Date      : <16 Feb 04 16:27:42 flechsig> 
-c$$$ Time-stamp: <17 Feb 04 09:53:24 flechsig> 
+c$$$ Time-stamp: <13 Feb 06 13:27:54 flechsig> 
 
 c$$$
 c$$$ $Source$ 
@@ -17,7 +17,7 @@ c
 
 	dimension anew(0:5,0:5)
 
-	common/mis/dw,dl,dz,drw,drl,drz
+	common/misi/dw,dl,dz,drw,drl,drz
 	common/mirror/a(0:5,0:5),c1,c2
 	common/plot/wmin,wmax,deltaw,xlmin,xlmax,deltal,ianzw,ianzl
 
@@ -83,7 +83,7 @@ c-------------------------------------------------------
 c-------------------------------------------------------
 	implicit real*8(a-h,o-z)	
 
-	common/mis/dw,dl,dz,drw,drl,drz
+	common/misi/dw,dl,dz,drw,drl,drz
 	common/mirror/a(0:5,0:5),c1,c2
 	common/plot/wmin,wmax,deltaw,xlmin,xlmax,deltal,ianzw,ianzl
 
