@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <26 Mar 04 09:25:38 flechsig> 
+ Time-stamp: <13 Feb 06 13:55:03 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -171,3 +171,17 @@ the footprint is calculate in the original coordinats (u w l) i.e. (u w l)
 are not really the mirror surface coordinates ==> with misalignment
 the implemented clipping at w and l is an aproximation which may fail for 
 larger alignment errors
+
+
+PROBLEMS with Intel Fortran Compiler at PSI
+===========================================
+phase: error while loading shared libraries: libintrins.so: cannot open shared o
+bject file: No such file or directory
+fix:
+setenv LD_LIBRARY_PATH /afs/psi.ch/sys/i386_linux24/apps/intel-fc-6.0.1/compiler60/ia32/lib:$LD_LIBRARY_PATH
+
+
+phase: relocation error: /afs/psi.ch/sys/i386_linux24/apps/intel-fc-6.0.1/compil                                                            er60/ia32/lib/libIEPCF90.so: symbol errno, version GLIBC_2.0 not defined in file                                                             libc.so.6 with link time reference
+
+fix:
+setenv LD_ASSUME_KERNEL 2.4.1
