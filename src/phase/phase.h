@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <02 Feb 06 21:04:22 flechsig>  */
+/*   Time-stamp: <13 Feb 06 19:04:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -682,7 +682,7 @@ GRDATSTRUCTTYPE grdatstruct;
   #define src_ini        src_ini_
   #define xxmap70        xxmap70_ 
   #define misali         misali_
-  #define already_expired already_expired_
+/*  #define already_expired already_expired_ */
 #endif
 /************************* Prototypen *****************************/
 
