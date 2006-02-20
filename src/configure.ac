@@ -1,13 +1,12 @@
-#   -*-sh-*-
-#   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
-#   Date      : <11 Dec 03 13:59:53 flechsig> 
-#   Time-stamp: <13 Feb 06 18:59:11 flechsig> 
-#   Author    : Uwe Flechsig, flechsig@psi.ch
+dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
+dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
+dnl   Time-stamp: <20 Feb 06 11:00:33 flechsig> 
+dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
-#   $Source$ 
-#   $Date$
-#   $Revision$ 
-#   $Author$ 
+dnl   $Source$ 
+dnl   $Date$
+dnl   $Revision$ 
+dnl   $Author$ 
 
 ## it is tested with autoconf 2.57
 ##AC_PREREQ(2.57)
@@ -48,7 +47,7 @@ else
     if test "$F77" = "ifc"; then
      AC_MSG_RESULT(found Intel ifc)
      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
-     AC_SUBST([FFLAGS],"-c -vms -w95 -132")
+     AC_SUBST([FFLAGS],"-vms -w95 -132 -fPIC")
 ##     f77lib=`echo $f77path | sed -e 's/bin\/f77/lib/'`
 ##     AC_MSG_NOTICE(we expect f77 libs at ${f77lib}) 
 ##     AC_SUBST(F77LIB,${f77lib})
@@ -119,7 +118,7 @@ AC_HELP_STRING([--enable-debug],[debugging code, static linking]),
 ## AC_SUBST([LIBPHASE], libphase.so)
 ## shared libs are not possible with our absoft compiler
   AC_MSG_NOTICE(***** produce production code *****)
-  AC_SUBST([LIBPHASE], libphase.a)
+  AC_SUBST([LIBPHASE], libphase)
 )
 
 ## Optimization with full ray trace
