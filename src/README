@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <13 Feb 06 13:55:03 flechsig> 
+ Time-stamp: <21 Feb 06 14:24:42 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -185,3 +185,10 @@ phase: relocation error: /afs/psi.ch/sys/i386_linux24/apps/intel-fc-6.0.1/compil
 
 fix:
 setenv LD_ASSUME_KERNEL 2.4.1
+
+PROBLEMS with old libtool versions
+==================================
+libtool: unrecognized option `--tag=F77'
+
+solution a) upgrade libtool
+         b) delete the option --tag=F77 from the Makefiles
