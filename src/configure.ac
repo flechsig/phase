@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <21 Feb 06 14:41:28 flechsig> 
+dnl   Time-stamp: <21 Feb 06 14:47:38 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -198,8 +198,9 @@ dnl Checks for library functions.
 dnl check if a phaselib is installed
 AC_MSG_NOTICE(search if library ${LIBPHASE} is installed)
 AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}.${libextension}"], 
-   AC_DEFINE_UNQUOTED([HAVE_LIBPHASE],"yes","installed phaselib"),
-   AC_DEFINE_UNQUOTED([HAVE_LIBPHASE],"no","installed phaselib"))
+   [have_libphase="yes"], [have_libphase="no"])
+#   AC_DEFINE_UNQUOTED([HAVE_LIBPHASE],"yes","installed phaselib"),
+#   AC_DEFINE_UNQUOTED([HAVE_LIBPHASE],"no","installed phaselib"))
 
 AC_OUTPUT(Makefile phaselib/Makefile phase/Makefile \
           opti/Makefile extr/Makefile gui/Makefile)
@@ -207,9 +208,10 @@ AC_OUTPUT(Makefile phaselib/Makefile phase/Makefile \
 echo ""
 echo "===================================================================="
 ### result of phaselib 
-if test "x$HAVE_LIBPHASE" = "xyes"; then
-   echo "we found an installed PhaseLibrary: ${LIBPHASE}"
-   echo "if make starts an unwanted rebuilt of the library you can interrupt"
+if test "x$have_libphase" = "xyes"; then
+   echo "we found an installed PhaseLibrary: ${LIBPHASE} ==> good"
+   echo ""
+   echo "if make starts an unwanted rebuild of the library you can interrupt"
    echo "and the individual subdirectories and call make and make install"
    echo "separately"
 else
