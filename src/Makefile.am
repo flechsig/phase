@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <19 Feb 04 15:41:29 flechsig> 
+##  Time-stamp: <22 Feb 06 16:00:08 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -13,6 +13,6 @@
 ## += is a automake assignment transfered to = in Makefile.in
 
 ## top level Makefile 
-EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh 
+EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
 SUBDIRS = phaselib phase opti extr gui
 ## end /afs/psi.ch/user/f/flechsig/phase/src/Makefile.am
