@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <22 Feb 06 15:51:59 flechsig> 
+#  Time-stamp: <22 Feb 06 15:52:59 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -36,8 +36,8 @@ dfpl1_uf.F  dfpl2_uf.F
 
 ## we use an AM_CONDITIONAL to switch library names for different compilers
 lib_LTLIBRARIES = 
-if WANT_F77
-   lib_LTLIBRARIES += libphasef77.la
+if WANT_ABSOFT
+   lib_LTLIBRARIES += libphaseabsoft.la
 endif
 if WANT_IFC
    lib_LTLIBRARIES += libphaseifc.la
