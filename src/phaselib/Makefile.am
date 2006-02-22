@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <22 Feb 06 15:52:59 flechsig> 
+#  Time-stamp: <22 Feb 06 17:17:45 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -43,17 +43,17 @@ if WANT_IFC
    lib_LTLIBRARIES += libphaseifc.la
 endif
 
-libphasef77_la_SOURCES = $(COMMONSOURCES)
-libphaseifc_la_SOURCES = $(COMMONSOURCES)
+libphaseabsoft_la_SOURCES = $(COMMONSOURCES)
+libphaseifc_la_SOURCES    = $(COMMONSOURCES)
 
 ## libtool versions (optional)
-## libphasef77_la_LDFLAGS =  -version-info 3:12:1 
+## libphaseabsoft_la_LDFLAGS =  -version-info 3:12:1 
 ## libphaseifc_la_LDFLAGS =  -version-info 3:12:1
 
 AM_LDFLAGS = @FLIBS@ 
 
 ## we want the c- Linker and not the fortran linker
-libphasef77_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
+libphaseabsoft_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 
 libphaseifc_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
