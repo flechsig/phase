@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <27 Feb 06 15:31:56 flechsig> 
+dnl   Time-stamp: <27 Feb 06 16:40:59 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -34,36 +34,44 @@ dnl do LIBTOOL test after fortran stuff
 dnl define the search preference of fortran compilers
 dnl ************** FORTRAN specials *********************
 dnl !!the environment variable F77 overwrites this test!!
-AC_PROG_F77(ifc f77 g77)
+AC_PROG_F77(ifc f77 pgf77 g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
 
 dnl set fortran compiler specials
 AC_MSG_CHECKING(for a supported compiler type)
-# init conditionals as false
-#AM_CONDITIONAL(WANT_IFC,    test xtrue=xfalse)  # generate a false
-#AM_CONDITIONAL(WANT_ABSOFT, test xtrue=xfalse)  # generate a false
 
 if test "$G77" = "yes"; then
    AC_MSG_RESULT(no)
    AC_MSG_ERROR([[GNU Fortran g77 will not work (lack of VAX extensions)]])
-else 
-   if test "$F77" = "ifc"; then   # intel compiler
-      AC_MSG_RESULT(found Intel ifc)
-      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
-      AC_SUBST([FFLAGS],"-vms -w95 -132")
-#      AM_CONDITIONAL(WANT_IFC, test xtrue=xtrue)
-      libphasename=libphaseifc
-      wantifc=true
-      wantabsoft=false
-   else   # assume absoft compiler as default
-      AC_MSG_RESULT(assume Absoft f77)
-      AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
-#      AM_CONDITIONAL(WANT_ABSOFT, test xtrue=xtrue)
-      libphasename=libphaseabsoft
-      wantifc=false
-      wantabsoft=true
-      AC_SUBST([FFLAGS],"-f -B108 -W -s -N3 -N51 -N22 -N33")
+fi
+
+case "$F77" in
+  "ifc")        # intel compiler
+      AC_MSG_RESULT(found Intel ifc);;
+      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler");;
+      AC_SUBST([FFLAGS],"-vms -w95 -132");;
+      libphasename=libphaseifc;;
+      wantifc=true;;
+      wantabsoft=false;;
+      wantportland=false;;
+  "pgf77")        # portland compiler
+      AC_MSG_RESULT(found Portland pgf77);;
+      AC_DEFINE(HAVE_PORTLAND_F77,"yes","Portland f77 compiler");;
+      AC_SUBST([FFLAGS],"");;
+      libphasename=libphaseportland;;
+      wantifc=false;;
+      wantabsoft=false;;
+      wantportland=true;;
+  "f77")
+      # assume absoft compiler as default
+      AC_MSG_RESULT(assume Absoft f77);;
+      AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler");;
+      libphasename=libphaseabsoft;;
+      wantifc=false;;
+      wantportland=false;;
+      wantabsoft=true;;
+      AC_SUBST([FFLAGS],"-f -B108 -W -s -N3 -N51 -N22 -N33");;
 
 ##FFLAGS for absoft f77 compiler
 ##	-g generate debugging information
@@ -81,11 +89,12 @@ else
 ##	-N22 append underscore to common block names (wichtig wegen pawc)
 ##      -N33 pack structures (kein alignment) 
 
-  fi
-fi
 
-AM_CONDITIONAL([WANT_IFC],    [test x"$wantifc" = xtrue])  
-AM_CONDITIONAL([WANT_ABSOFT], [test x"$wantabsoft" = xtrue])  
+esac
+
+AM_CONDITIONAL([WANT_IFC],      [test x"$wantifc"      = xtrue])  
+AM_CONDITIONAL([WANT_ABSOFT],   [test x"$wantabsoft"   = xtrue])
+AM_CONDITIONAL([WANT_PORTLAND], [test x"$wantportland" = xtrue])  
 dnl end fortran specials
 
 dnl ****************** CERN **************************
