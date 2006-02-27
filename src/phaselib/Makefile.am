@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <27 Feb 06 15:32:26 flechsig> 
+#  Time-stamp: <27 Feb 06 16:43:29 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -42,9 +42,13 @@ endif
 if WANT_IFC
    lib_LTLIBRARIES += libphaseifc.la
 endif
+if WANT_PORTLAND
+   lib_LTLIBRARIES += libphaseportland.la
+endif
 
-libphaseabsoft_la_SOURCES = $(COMMONSOURCES)
-libphaseifc_la_SOURCES    = $(COMMONSOURCES)
+libphaseabsoft_la_SOURCES   = $(COMMONSOURCES)
+libphaseportland_la_SOURCES = $(COMMONSOURCES)
+libphaseifc_la_SOURCES      = $(COMMONSOURCES)
 
 ## libtool versions (optional)
 ## libphaseabsoft_la_LDFLAGS =  -version-info 3:12:1 
@@ -58,5 +62,8 @@ libphaseabsoft_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
 
 libphaseifc_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+
+libphaseportland_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 
 # end
