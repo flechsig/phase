@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <01 Feb 06 17:21:32 flechsig> 
+#  Time-stamp: <27 Feb 06 15:39:59 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -20,18 +20,18 @@ phaseopti_SOURCES       = phaseopti.c phaseopti.h \
 	  ../phase/cutils.c      ../phase/rtrace.c \
 	  ../phase/phasegraffor.F ../phase/phasefor.F \
 	  ../phase/phase_source.F ../phase/xmalloc.c ../phase/error.c \
-	../phase/xstrdup.c ../phase/ctype.c \
+	  ../phase/xstrdup.c ../phase/ctype.c \
 	  ../phase/phase_integration.F \
 	  treiber.F optisubc.c cost.F \
 	  ../phase/misali.F ../phase/misali1.f ../phase/misali2.f \
           ../phase/misali3.f ../phase/misali4.f
 ##libphaseopti_la_SOURCES = 
-          
+
 phaseopti_LDADD = $(libdir)/@LIBPHASE@
 ##libphaseopti_la_LDFLAGS = -rpath '$(libdir)' -version-info 3:13:1 
 
-AM_CPPFLAGS = -DLINUX @CDEBUG@
-AM_FFLAGS   = @FDEBUG@
+AM_CPPFLAGS = -DLINUX 
+##AM_FFLAGS   = @FDEBUG@
 AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
           @FLIBS@\
           -L@CERNLIB@ -lpawlib -lpacklib \
