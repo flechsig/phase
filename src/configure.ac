@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <27 Feb 06 15:31:20 flechsig> 
+dnl   Time-stamp: <27 Feb 06 15:31:56 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -84,8 +84,8 @@ else
   fi
 fi
 
-AM_CONDITIONAL([WANTIFC],    [test x"$wantifc" = xtrue])  
-AM_CONDITIONAL([WANTABSOFT], [test x"$wantabsoft" = xtrue])  
+AM_CONDITIONAL([WANT_IFC],    [test x"$wantifc" = xtrue])  
+AM_CONDITIONAL([WANT_ABSOFT], [test x"$wantabsoft" = xtrue])  
 dnl end fortran specials
 
 dnl ****************** CERN **************************
