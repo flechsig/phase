@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <27 Feb 06 16:40:59 flechsig> 
+dnl   Time-stamp: <27 Feb 06 16:52:04 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -48,29 +48,29 @@ fi
 
 case "$F77" in
   "ifc")        # intel compiler
-      AC_MSG_RESULT(found Intel ifc);;
-      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler");;
-      AC_SUBST([FFLAGS],"-vms -w95 -132");;
-      libphasename=libphaseifc;;
-      wantifc=true;;
-      wantabsoft=false;;
+      AC_MSG_RESULT(found Intel ifc)
+      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
+      AC_SUBST([FFLAGS],"-vms -w95 -132")
+      libphasename=libphaseifc
+      wantifc=true
+      wantabsoft=false
       wantportland=false;;
   "pgf77")        # portland compiler
-      AC_MSG_RESULT(found Portland pgf77);;
-      AC_DEFINE(HAVE_PORTLAND_F77,"yes","Portland f77 compiler");;
-      AC_SUBST([FFLAGS],"");;
-      libphasename=libphaseportland;;
-      wantifc=false;;
-      wantabsoft=false;;
+      AC_MSG_RESULT(found Portland pgf77)
+      AC_DEFINE(HAVE_PORTLAND_F77,"yes","Portland f77 compiler")
+      AC_SUBST([FFLAGS],"")
+      libphasename=libphaseportland
+      wantifc=false
+      wantabsoft=false
       wantportland=true;;
   "f77")
       # assume absoft compiler as default
-      AC_MSG_RESULT(assume Absoft f77);;
-      AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler");;
-      libphasename=libphaseabsoft;;
-      wantifc=false;;
-      wantportland=false;;
-      wantabsoft=true;;
+      AC_MSG_RESULT(assume Absoft f77)
+      AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
+      libphasename=libphaseabsoft
+      wantifc=false
+      wantportland=false
+      wantabsoft=true
       AC_SUBST([FFLAGS],"-f -B108 -W -s -N3 -N51 -N22 -N33");;
 
 ##FFLAGS for absoft f77 compiler
