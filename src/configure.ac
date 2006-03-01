@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <01 Mar 06 13:17:21 flechsig> 
+dnl   Time-stamp: <01 Mar 06 13:25:35 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -58,7 +58,7 @@ case "$F77" in
   "pgf77")        # portland compiler
       AC_MSG_RESULT(found Portland pgf77)
       AC_DEFINE(HAVE_PORTLAND_F77,"yes","Portland f77 compiler")
-      AC_SUBST([FFLAGS],"-silent")
+      AC_SUBST([FFLAGS],"-w")
 
 ## FFLAGS -silent: no warnings ??
 ##        -w     : no warnings
