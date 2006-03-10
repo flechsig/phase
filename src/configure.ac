@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <01 Mar 06 13:25:35 flechsig> 
+dnl   Time-stamp: <10 Mar 06 10:36:52 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -34,7 +34,7 @@ dnl do LIBTOOL test after fortran stuff
 dnl define the search preference of fortran compilers
 dnl ************** FORTRAN specials *********************
 dnl !!the environment variable F77 overwrites this test!!
-AC_PROG_F77(ifc f77 pgf77 g77)
+AC_PROG_F77(f77 ifc f77 pgf77 g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
 
@@ -206,7 +206,8 @@ AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}"],
 
 dnl output files 
 AC_OUTPUT(Makefile phaselib/Makefile phase/Makefile \
-          opti/Makefile extr/Makefile gui/Makefile)
+          opti/Makefile extr/Makefile gui/Makefile \
+	  phasecommon/Makefile)
 
 dnl print some messages
 echo ""
