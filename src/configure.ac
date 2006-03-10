@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <10 Mar 06 10:36:52 flechsig> 
+dnl   Time-stamp: <10 Mar 06 12:01:29 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -205,9 +205,9 @@ AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}"],
    [have_libphase="yes"], [have_libphase="no"])
 
 dnl output files 
-AC_OUTPUT(Makefile phaselib/Makefile phase/Makefile \
+AC_OUTPUT(Makefile phase/Makefile \
           opti/Makefile extr/Makefile gui/Makefile \
-	  phasecommon/Makefile)
+	  phasecommon/Makefile phaselib/Makefile )
 
 dnl print some messages
 echo ""
