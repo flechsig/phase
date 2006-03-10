@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <08 Oct 04 13:44:57 flechsig>  */
+/*   Time-stamp: <10 Mar 06 12:05:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -108,7 +108,7 @@ int main(argc, argv)
   printf("read from file: %s\n", argv[1]);    
   
   getoptipickfile(&optistructure, argv[1]);   
-  ReadBLFile(optistructure.beamlinefilename, &Beamline, &PHASESet);
+  ReadBLFile(optistructure.beamlinefilename, &Beamline);
   /* get start for x, y from beamline */
   out_struct(&Beamline, &ax0, optistructure.xindex);  
   out_struct(&Beamline, &ay0,  optistructure.yindex); 
