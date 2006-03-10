@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <07 May 04 10:54:21 flechsig>  */
+/*   Time-stamp: <10 Mar 06 12:05:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -152,7 +152,7 @@ int main(argc, argv)
    printf("debug mode -> read from file: test.pcko\n");
    getoptipickfile(&optistructure, "test.pcko");
 #endif
-   ReadBLFile(optistructure.beamlinefilename, &Beamline, &PHASESet);
+   ReadBLFile(optistructure.beamlinefilename, &Beamline);
    /* oeffnen des Ausgabefiles */
    if ((optistructure.filepointer= 
 	fopen(optistructure.resultfilename, "w")) == NULL)
