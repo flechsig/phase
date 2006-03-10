@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <10 Mar 06 11:51:09 flechsig>  */
+/*   Time-stamp: <10 Mar 06 12:03:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -767,7 +767,7 @@ void FileSelectionProc(Widget wi,
 	  break;
 	case kEBLNameButton: 
 	  strcpy((char *)&PHASESet.beamlinename, fname);
-	  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);  
+	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
           strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
 	  ExpandFileNames(&PHASESet, fname); 
