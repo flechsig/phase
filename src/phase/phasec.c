@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <06 Jul 05 17:36:42 flechsig>  */
+/*   Time-stamp: <10 Mar 06 11:54:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -54,8 +54,8 @@ void BatchMode(char *fname, int cmode, int selected)
   Beamline.raysout= NULL;
   Beamline.RTSource.SourceRays= NULL;
   Beamline.beamlineOK= 0;
-  ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet);
-
+  ReadBLFile(PHASESet.beamlinename, &Beamline);
+  strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
   BuildBeamline(&Beamline); 
   if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
   switch (cmode)
@@ -720,8 +720,8 @@ void InitDataSets(struct PHASEset *x, char *mainpickname)
   ginitdatset(&GDefDat);           /* init defaults */
   minitdatset(&MDefDat);                   
 
-  ReadBLFile(x->beamlinename, &Beamline, x);
-    
+  ReadBLFile(x->beamlinename, &Beamline);
+  strcpy(x->pssourcename, Beamline.src.so6.fsource6);  
   grdatstruct.status= 0;
   SetGrDatStruct(x->imageraysname, &Beamline, &grdatstruct);  
   /* PHASEgraf.c */

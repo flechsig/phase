@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:33:44 flechsig>  */
+/*   Time-stamp: <10 Mar 06 11:54:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -273,7 +273,8 @@ void activate_proc(w, tag, reason)
 
   case kEBLButton:
     FetchWidget(kEBLDialog, "EBLDialog");  
-    ReadBLFile(PHASESet.beamlinename, &Beamline, &PHASESet); 
+    ReadBLFile(PHASESet.beamlinename, &Beamline); 
+    strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
     if ((widget_array[kESourceBox] != NULL) && 
 	XtIsRealized(widget_array[kESourceBox])) 
       InitSourceBox(&Fg3ActDat, &Beamline, kESDefaults); 

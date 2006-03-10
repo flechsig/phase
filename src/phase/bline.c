@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Mar 06 11:00:40 flechsig>  */
+/*   Time-stamp: <10 Mar 06 11:56:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1381,11 +1381,12 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 } /* end WriteBLFile */
 
 
-int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)  
+int ReadBLFile(char *fname, struct BeamlineType *bl)  
 /************************************************************************/
 /* liest den datensatz vom file 					*/     
-/* PHASEset.ssourcename wird mit brightnessnamen initialisert */
-/* Uwe 30.5.96								*/     
+/* PHASEset.psourcename sollte danach mit brightnessnamen initialisert  */
+/* werden: strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6)     */
+/* Uwe 30.5.96, UF 10.3.06			                        */     
 /************************************************************************/
 {   
    FILE *f; 
@@ -1722,7 +1723,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl, buffer, &buf);
 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl, buffer, &buf);
-	 strcpy(phset->pssourcename, bl->src.so6.fsource6);
+
+	 /* UF 10.3.06 put it outside	 strcpy(phset->pssourcename, bl->src.so6.fsource6); */ 
 	 /* PutPHASE(phset, MainPickName); */ 
        } else  rcode= -1;   /* end PSSOURCES */
 
