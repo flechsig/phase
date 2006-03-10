@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <30 Mar 05 14:13:10 flechsig>  */
+/*   Time-stamp: <10 Mar 06 11:00:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1390,7 +1390,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl, struct PHASEset *phset)
 {   
    FILE *f; 
    int  rcode, elnumber, alle, i, version;
-   char buffer[80], buf;  
+   char buffer[255], buf;  
    double *pd; 
    
    struct UndulatorSourceType *up;
