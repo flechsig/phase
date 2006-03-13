@@ -53,7 +53,7 @@ function initbeamline
 ;
 ;
 ; EXAMPLE:
-;
+;   IDL> clrcm=initbeamline()
 ;
 ;
 ; MODIFICATION HISTORY:
