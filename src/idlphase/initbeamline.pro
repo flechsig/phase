@@ -5,7 +5,7 @@ function initbeamline
 ;
 ;
 ; PURPOSE:
-;   generate a beamline object, define phaseidllib if undefined
+;   generate a new beamline object, define phaseidllib if undefined
 ;
 ;
 ; CATEGORY:
