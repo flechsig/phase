@@ -63,5 +63,5 @@ function initbeamline
 if (!phaseidllib eq '') then $
    defsysv, '!phaseidllib', '/usr/local/lib/libphabaseabsoft.so'
 
-return, obj_new('scan')
+return, obj_new('PHASE_BEAMLINE')
 end
