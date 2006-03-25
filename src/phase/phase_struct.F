@@ -108,7 +108,9 @@ c---------------- sources -----------------------------------
      &		  xezimmin,xezimmax,dxezim,
      &		  yezremin,yezremax,dyezre,
      &		  yezimmin,yezimmax,dyezim,
-     &       zezre(256,256),zezim(256,256),deltatime
+     &       zezre(256,256),zezim(256,256),
+     &       gridx(256),gridy(256),deltatime,
+     &       ampeyre,ampeyim,ampezre,ampezim
 	  integer ieyrex,ieyimx,ieyrey,ieyimy,
      &            iezrex,iezimx,iezrey,iezimy,
      &            nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj
@@ -149,7 +151,7 @@ c---------------- sources -----------------------------------
 c---------------- integration --------------------------------
 
 	structure/integration/
-		real*8 distfoc
+		real*8 distfocy,distfocz
 		integer ianzy0
 		integer ianzz0
 		real*8 ymin,ymax
@@ -211,7 +213,9 @@ c------------------ results from sources ------------------------
 
         structure/source_results/                 
            complex*16 densy,densz
-	   real*8 dens,eya,eza,eyp,ezp
+           real*8 dens,eya,eza,eyp,ezp,
+     &       densyre,densyim,denszre,denszim,
+     &       xintyre,xintyim,xintzre,xintzim
         end structure
 c----------------- U. F. 21.12.99 -------------------------------
 c common simps 	
