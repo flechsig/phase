@@ -144,6 +144,10 @@ c---------------- set values to zero by default
 	sr.eza=0.d0
 	sr.eyp=0.d0
 	sr.ezp=0.d0
+	sr.densyre=0.d0
+	sr.densyim=0.d0
+	sr.denszre=0.d0
+	sr.denszim=0.d0
 
 c------------------------------------------------------
 c	die folgenden drei Abfragen nach den Aperturen
@@ -152,31 +156,31 @@ c------------------------------------------------------
 
 c---------------- Aperture in source plane ------------
 
-	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
-     &		lt.apr.rpin).and.
-     &		((ra.rf.yp.gt.apr.srcymin).and.
-     &		 (ra.rf.yp.lt.apr.srcymax)).and.
-     &		((ra.rf.zp.gt.apr.srczmin).and.
-     &		(ra.rf.zp.lt.apr.srczmax)))then
+c	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
+c     &		lt.apr.rpin).and.
+c     &		((ra.rf.yp.gt.apr.srcymin).and.
+c     &		 (ra.rf.yp.lt.apr.srcymax)).and.
+c     &		((ra.rf.zp.gt.apr.srczmin).and.
+c     &		(ra.rf.zp.lt.apr.srczmax)))then
 
 c---------------- Aperture plane ----------------------
-	if( (dsqrt(ra.ap.yp_ap*ra.ap.yp_ap+
-     &		ra.ap.zp_ap*ra.ap.zp_ap).lt.apr.rpin_ap).and.
-     &		(ra.ap.yp_ap.gt.apr.ymin_ap).and.
-     &		(ra.ap.yp_ap.lt.apr.ymax_ap).and.
-     &		(ra.ap.zp_ap.gt.apr.zmin_ap).and.
-     &		(ra.ap.zp_ap.lt.apr.zmax_ap) ) then
+c	if( (dsqrt(ra.ap.yp_ap*ra.ap.yp_ap+
+c     &		ra.ap.zp_ap*ra.ap.zp_ap).lt.apr.rpin_ap).and.
+c     &		(ra.ap.yp_ap.gt.apr.ymin_ap).and.
+c     &		(ra.ap.yp_ap.lt.apr.ymax_ap).and.
+c     &		(ra.ap.zp_ap.gt.apr.zmin_ap).and.
+c     &		(ra.ap.zp_ap.lt.apr.zmax_ap) ) then
 
 c---------------- Finite size of OE--------------------
 
-	iii=1
-	if(ifl.ilimits.eq.1)then
-	    if( (ra.oe.w.lt.apr.w_min).or.   
-     &        (ra.oe.w.gt.apr.w_max).or.  
-     &        (ra.oe.xl.lt.apr.xl_min).or.  
-     &        (ra.oe.xl.gt.apr.xl_max) ) iii=0
-	endif
-	if(iii.eq.1)then
+c	iii=1
+c	if(ifl.ilimits.eq.1)then
+c	    if( (ra.oe.w.lt.apr.w_min).or.   
+c    &        (ra.oe.w.gt.apr.w_max).or.  
+c    &        (ra.oe.xl.lt.apr.xl_min).or.  
+c    &        (ra.oe.xl.gt.apr.xl_max) ) iii=0
+c	endif
+c	if(iii.eq.1)then
 
 	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
@@ -185,11 +189,11 @@ c---------------- Finite size of OE--------------------
 	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
 	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
-	endif	! size of OE
-	endif	! aperture plane
-	endif	! source plane
+c	endif	! size of OE
+c	endif	! aperture plane
+c	endif	! source plane
 
-        return
+	return
         end
 
 c*****************************************************************
@@ -362,10 +366,15 @@ c--------- get path length
 
 	if(ifl.iplmode.eq.1)then
 	phase = (2.*cs.pi*xlength)/ra.xlam_test 
+	phase = (2.*cs.pi*xlength)/ra.xlam_test 
 	endif
 
-	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
-	if(ifl.ispline.lt.0)then
+c--------------- 22.3.2006
+c       exponenten spaeter berechnen
+c	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
+c---------------------------------------------------
+
+        if(ifl.ispline.lt.0)then
 	sr.eyp=phase
 	sr.ezp=phase
 	endif
@@ -373,7 +382,10 @@ c--------- get path length
 c--------------- end path length
 
 c--------------- grating  
-	if((ifl.igrating.eq.1).and.(g.xdens(0).gt.1.d-10))then
+
+       delphi=0.d0
+
+       if((ifl.igrating.eq.1).and.(g.xdens(0).gt.1.d-10))then
 
 c********* aeussere Ordung      : xlam < 0
 c********* innere Ordung        : xlam > 0
@@ -409,23 +421,29 @@ c	has been checked for non VLS grating
 c		(ifl.ispline = 0 and = -1)
 c	has to be checked for VLS grating
 c--------------------------------------------------------
+c
+c	22.3.2006
+	w2=ra.oe.w*ra.oe.w
+	w3=w2*ra.oe.w
+	w4=w3*ra.oe.w
+	w5=w4*ra.oe.w
+
 	xden=g.xdens(0)-		! local line density
      &		ra.oe.w*g.xdens(1)+
-     &		ra.oe.w**2*g.xdens(2)-
-     &		ra.oe.w**3*g.xdens(3)+
-     &		ra.oe.w**4*g.xdens(4)
+     &		w2*g.xdens(2)-
+     &		w3*g.xdens(3)+
+     &		w4*g.xdens(4)
 	grdist=1.d0/xden		! local grid distance
 
 	xnn=ra.oe.w*g.xdens(0)-		! line number
-     &		(ra.oe.w**2/2.d0)*g.xdens(1)+
-     &		(ra.oe.w**3/3.d0)*g.xdens(2)-
-     &		(ra.oe.w**4/4.d0)*g.xdens(3)+
-     &		(ra.oe.w**5/5.d0)*g.xdens(4)
+     &		(w2/2.d0)*g.xdens(1)+
+     &		(w3/3.d0)*g.xdens(2)-
+     &		(w4/4.d0)*g.xdens(3)+
+     &		(w5/5.d0)*g.xdens(4)
 	nn=xnn
 
 	if(ifl.ispline.ge.0)then
 	  delphi=-dflotj(isig)*(xnn-dflotj(nn))*2.d0*cs.pi
-	  factor=factor*exp(cs.sqrtm1*delphi)
 	endif
 
 	if(ifl.ispline.lt.0)then
@@ -437,6 +455,9 @@ c------- end 19.1.2000 ----------------------------------
 
 	endif			! grating
 
+	factorre=dcos(delphi+phase)
+        factorim=dsin(delphi+phase)
+
 c-------- 27.2.2004
 c       xwert=ra.rf.zp/1000.	! mm --> m
 c	ywert=ra.rf.yp/1000.	! mm --> m
@@ -444,16 +465,12 @@ c	ywert=ra.rf.yp/1000.	! mm --> m
 	ywert=ra.rf.yp	        ! units are mm
 c------- 27.2.2004
 
-	if(  ((xwert.gt.so4.xeyremin).and.(xwert.gt.so4.xeyimmin)).and.
-     &	     ((xwert.lt.so4.xeyremax).and.(xwert.lt.so4.xeyimmax)).and.
-     &	     ((ywert.gt.so4.yeyremin).and.(ywert.gt.so4.yeyimmin)).and.
-     &	     ((ywert.lt.so4.yeyremax).and.(ywert.lt.so4.yeyimmax)).and.
-     &       ((xwert.gt.so4.xezremin).and.(xwert.gt.so4.xezimmin)).and.
-     &	     ((xwert.lt.so4.xezremax).and.(xwert.lt.so4.xezimmax)).and.
-     &	     ((ywert.gt.so4.yezremin).and.(ywert.gt.so4.yezimmin)).and.
-     &	     ((ywert.lt.so4.yezremax).and.(ywert.lt.so4.yezimmax)))then
+	if(  ((xwert.gt.so4.xeyremin)).and.
+     &	     ((xwert.lt.so4.xeyremax)).and.
+     &	     ((ywert.gt.so4.yeyremin)).and.
+     &	     ((ywert.lt.so4.yeyremax)))then
 
-	call source_inter_2d(so4,cs,xwert,ywert,sr.densy,sr.densz)
+	call source_inter_2d(so4,cs,xwert,ywert,sr)
 
 	endif	! min, max
 
@@ -464,14 +481,17 @@ c------- 27.2.2004
 	endif
 
 	if(ifl.ispline.ge.0)then
-		sr.densy=sr.densy*factor*f
-		sr.densz=sr.densz*factor*f
+		sr.densyre=sr.densyre*factorre*f
+		sr.densyim=sr.densyim*factorim*f
+		sr.denszre=sr.denszre*factorre*f
+		sr.denszim=sr.denszim*factorim*f
 	endif
+
 	if(ifl.ispline.lt.0)then
-		sr.eya=dreal(sr.densy)*f
-		sr.eyp=sr.eyp+dimag(sr.densy)
-		sr.eza=dreal(sr.densz)*f
-		sr.ezp=sr.ezp+dimag(sr.densz)
+		sr.eya=sr.densyre*f
+		sr.eyp=sr.eyp+sr.densyim
+		sr.eza=sr.denszre*f
+		sr.ezp=sr.ezp+sr.denszim
 	endif
 
 	return
@@ -775,7 +795,15 @@ c***********************************************************
 	so4.dyeyre=(so4.yeyremax-so4.yeyremin)
      &		/dflotj(so4.ieyrey-1)
 
-	write(*,*) 'src4_ini: read file: ',so4.fsource4b
+	do i=1,so4.ieyrex
+	  so4.gridx(i)=xx(i)
+	enddo
+
+	do j=1,so4.ieyrey
+	  so4.gridy(j)=yy((j-1)*so4.ieyrex+1)
+	enddo
+
+     	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	open(unit=10,name=so4.fsource4b,type='old')
 	read(10,*)so4.ieyimx,so4.ieyimy
 	do j=1,so4.ieyimy
@@ -1060,7 +1088,7 @@ c--------------------------------------------------------
 
 
 c********************************************************************
-	subroutine source_inter_2d(so4,cs,xwert,ywert,cargy,cargz)
+	subroutine source_inter_2d(so4,cs,xwert,ywert,sr)
 c********************************************************************
 c
 c	returns complex values densy, densz
@@ -1076,62 +1104,112 @@ c-----------------------------------------------------------
 	record /source_results/ sr 
 	record /control_flags/ ifl
 
-	complex*16 carg,cargy,cargz,amp1,amp2,amp3,amp4
+	complex*16 carg,cargy,cargz,amp1,amp2,amp3,amp4,fact1
 
-	sign=1.
+c	sign=1.
+c	fact1=sign*cs.sqrtm1
+	fact1=cs.sqrtm1
 
 c---------- es wird gleiches Raster fuer Real- und
 c---------- Imaginaerteil sowie fuer Ey und Ez vorausgesetzt
+c---------- Aenderungen 17.3.2006
 
 c---------  Interpolation of Ey
- 
+
 	ix1=(xwert-so4.xeyremin)/so4.dxeyre + 1
 	ix2=ix1+1
 	iy1=(ywert-so4.yeyremin)/so4.dyeyre + 1
 	iy2=iy1+1
 
-	x1=so4.xeyremin+dflotj(ix1-1)*so4.dxeyre
-	x2=x1+so4.dxeyre
-	y1=so4.yeyremin+dflotj(iy1-1)*so4.dyeyre
-	y2=y1+so4.dyeyre
+c--------------------- 22.3.2006
+c	x1=so4.xeyremin+dflotj(ix1-1)*so4.dxeyre
+c	x2=x1+so4.dxeyre
+c	y1=so4.yeyremin+dflotj(iy1-1)*so4.dyeyre
+c	y2=y1+so4.dyeyre
+	x1=so4.gridx(ix1)
+	x2=so4.gridx(ix2)
+	y1=so4.gridy(iy1)
+	y2=so4.gridy(iy2)
+c-----------22.3.2006 ----------------------------
 
-	amp1=so4.zeyre(ix1,iy1) + sign*cs.sqrtm1*so4.zeyim(ix1,iy1)
-	amp2=so4.zeyre(ix2,iy1) + sign*cs.sqrtm1*so4.zeyim(ix2,iy1)
-	amp3=so4.zeyre(ix1,iy2) + sign*cs.sqrtm1*so4.zeyim(ix1,iy2)
-	amp4=so4.zeyre(ix2,iy2) + sign*cs.sqrtm1*so4.zeyim(ix2,iy2)
+c	amp1=so4.zeyre(ix1,iy1) + sign*cs.sqrtm1*so4.zeyim(ix1,iy1)
+c	amp2=so4.zeyre(ix2,iy1) + sign*cs.sqrtm1*so4.zeyim(ix2,iy1)
+c	amp3=so4.zeyre(ix1,iy2) + sign*cs.sqrtm1*so4.zeyim(ix1,iy2)
+c	amp4=so4.zeyre(ix2,iy2) + sign*cs.sqrtm1*so4.zeyim(ix2,iy2)
 
-	cargy=(1./((x2-x1)*(y2-y1)))*     (
-     &       amp1*(x2-xwert)*(y2-ywert) +	
-     &       amp2*(xwert-x1)*(y2-ywert) +	
-     &       amp3*(x2-xwert)*(ywert-y1) +	
-     &       amp4*(xwert-x1)*(ywert-y1)  )	
+cc	amp1=so4.zeyre(ix1,iy1) + fact1*so4.zeyim(ix1,iy1)
+cc	amp2=so4.zeyre(ix2,iy1) + fact1*so4.zeyim(ix2,iy1)
+cc	amp3=so4.zeyre(ix1,iy2) + fact1*so4.zeyim(ix1,iy2)
+cc	amp4=so4.zeyre(ix2,iy2) + fact1*so4.zeyim(ix2,iy2)
 
-c---------  Interpolation of Ez
 
-	ix1=(xwert-so4.xezremin)/so4.dxezre + 1
-	ix2=ix1+1
-	iy1=(ywert-so4.yezremin)/so4.dyezre + 1
-	iy2=iy1+1
+	fact2=1./((x2-x1)*(y2-y1))
+	fact3=(x2-xwert)*(y2-ywert)
+	fact4=(xwert-x1)*(y2-ywert)
+	fact5=(x2-xwert)*(ywert-y1)
+	fact6=(xwert-x1)*(ywert-y1)
 
-	x1=so4.xezremin+dflotj(ix1-1)*so4.dxezre
-	x2=x1+so4.dxezre
-	y1=so4.yezremin+dflotj(iy1-1)*so4.dyezre
-	y2=y1+so4.dyezre
+c	cargy=(1./((x2-x1)*(y2-y1)))*     (
+c     &       amp1*(x2-xwert)*(y2-ywert) +	
+c     &       amp2*(xwert-x1)*(y2-ywert) +	
+c     &       amp3*(x2-xwert)*(ywert-y1) +	
+c     &       amp4*(xwert-x1)*(ywert-y1)  )	
 
-	amp1=so4.zezre(ix1,iy1) + sign*cs.sqrtm1*so4.zezim(ix1,iy1)
-	amp2=so4.zezre(ix2,iy1) + sign*cs.sqrtm1*so4.zezim(ix2,iy1)
-	amp3=so4.zezre(ix1,iy2) + sign*cs.sqrtm1*so4.zezim(ix1,iy2)
-	amp4=so4.zezre(ix2,iy2) + sign*cs.sqrtm1*so4.zezim(ix2,iy2)
+cc	cargy=fact2*(
+cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
 
-	cargz=(1./((x2-x1)*(y2-y1)))*     (
-     &       amp1*(x2-xwert)*(y2-ywert) +	
-     &       amp2*(xwert-x1)*(y2-ywert) +	
-     &       amp3*(x2-xwert)*(ywert-y1) +	
-     &       amp4*(xwert-x1)*(ywert-y1)  )	
+        sr.densyre=fact3*so4.zeyre(ix1,iy1)+
+     &             fact4*so4.zeyre(ix2,iy1)+
+     &	           fact5*so4.zeyre(ix1,iy2)+
+     &             fact6*so4.zeyre(ix2,iy2)
 
-c----------------------------------------------------------
+        sr.densyim=fact3*so4.zeyim(ix1,iy1)+
+     &             fact4*so4.zeyim(ix2,iy1)+
+     &	           fact5*so4.zeyim(ix1,iy2)+
+     &             fact6*so4.zeyim(ix2,iy2)
 
-	return
+c---------  Interpolation of Ez, same grid as for Ey
+
+c	ix1=(xwert-so4.xezremin)/so4.dxezre + 1
+c	ix2=ix1+1
+c	iy1=(ywert-so4.yezremin)/so4.dyezre + 1
+c	iy2=iy1+1
+
+c	x1=so4.xezremin+dflotj(ix1-1)*so4.dxezre
+c	x2=x1+so4.dxezre
+c	y1=so4.yezremin+dflotj(iy1-1)*so4.dyezre
+c	y2=y1+so4.dyezre
+
+c	amp1=so4.zezre(ix1,iy1) + sign*cs.sqrtm1*so4.zezim(ix1,iy1)
+c	amp2=so4.zezre(ix2,iy1) + sign*cs.sqrtm1*so4.zezim(ix2,iy1)
+c	amp3=so4.zezre(ix1,iy2) + sign*cs.sqrtm1*so4.zezim(ix1,iy2)
+c	amp4=so4.zezre(ix2,iy2) + sign*cs.sqrtm1*so4.zezim(ix2,iy2)
+
+cc	amp1=so4.zezre(ix1,iy1) + fact1*so4.zezim(ix1,iy1)
+cc	amp2=so4.zezre(ix2,iy1) + fact1*so4.zezim(ix2,iy1)
+cc	amp3=so4.zezre(ix1,iy2) + fact1*so4.zezim(ix1,iy2)
+cc	amp4=so4.zezre(ix2,iy2) + fact1*so4.zezim(ix2,iy2)
+
+c	cargz=(1./((x2-x1)*(y2-y1)))*     (
+c     &       amp1*(x2-xwert)*(y2-ywert) +	
+c     &       amp2*(xwert-x1)*(y2-ywert) +	
+c     &       amp3*(x2-xwert)*(ywert-y1) +	
+c     &       amp4*(xwert-x1)*(ywert-y1)  )	
+
+cc	cargz=fact2*(
+cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
+
+        sr.denszre=fact3*so4.zezre(ix1,iy1)+
+     &             fact4*so4.zezre(ix2,iy1)+
+     &	           fact5*so4.zezre(ix1,iy2)+
+     &             fact6*so4.zezre(ix2,iy2)
+
+        sr.denszim=fact3*so4.zezim(ix1,iy1)+
+     &             fact4*so4.zezim(ix2,iy1)+
+     &	           fact5*so4.zezim(ix1,iy2)+
+     &             fact6*so4.zezim(ix2,iy2)
+
+     	return
 	end
 
 c**********************************************************
