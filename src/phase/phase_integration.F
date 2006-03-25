@@ -36,9 +36,6 @@ c	Das muss spaeter in PHASE_STRUCT_11.FOR integriert werden
 c	(in xir. etc).
 c	Datenausgabe auf File im Hauptprogramm.
 c
-c	gleichzeitig sollten distfocy und distfocz implementiert werden
-c	(in xi. etc).
-c
 c	adaptive integration rausschmeissen
 c	nur eine Iteration
 c	falls spaeter adaptive Integration implementiert we rden soll,
@@ -67,6 +64,9 @@ c************************************************
 	record /map4/ m4
 c UF 12.1.2000
         record /psimagest/ sp
+
+	dimension densiyre(1000),densiyim(1000),
+     &            densizre(1000),densizim(1000)
 
 c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
 c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
@@ -145,21 +145,22 @@ c----------------------------------------------------------
 	do i=1,ianzz
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
-     &		z(i),fwerty,fwertz,yintya,yintyp,yintza,yintzp)
-
-	   fzey(i)=cdabs(fwerty)
+     &		z(i),fwerty,fwertz,yintya,yintyp,yintza,yintzp,sr)
+           fzey(i)=cdabs(fwerty)
 	   dz(i)=dzz
 	   fmax=dmax1(fmax,cdabs(fwerty))
 	enddo
 
 	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,
-     &		xir.yzintey,xir.yzintya,xir.yzintyp,iyz)
+     &		xir.yzintey,xir.yzintya,xir.yzintyp,
+     &          densiyre,densiyim,xintre,xintim,iyz)
 
 	endif
 
 c-----------------------------------------------------------
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
+
+       if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
      &                        (src.isrctype.eq.6))then
 c-----------------------------------------------------------
 	do i=1,ianzz
@@ -167,10 +168,15 @@ c-----------------------------------------------------------
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		z(i),fwerty,fwertz,
-     &          yintya,yintyp,yintza,yintzp)
+     &          yintya,yintyp,yintza,yintzp,sr)
 	   if(ifl.ispline.ge.0)then
-	   	fzey(i)=fwerty
-	   	fzez(i)=fwertz
+c	   	fzey(i)=fwerty
+c	   	fzez(i)=fwertz
+	   densiyre(i)=sr.xintyre
+	   densiyim(i)=sr.xintyim
+	   densizre(i)=sr.xintzre
+	   densizim(i)=sr.xintzim
+	   
 	   endif
 	   if(ifl.ispline.lt.0)then
 	 	fya(i)=yintya
@@ -197,14 +203,20 @@ c UF 12.1.2000
 
 	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
-     &			xir.yzintya,xir.yzintyp,iyz)
+     &			xir.yzintya,xir.yzintyp,
+     &          densiyre,densiyim,xintyzre,xintyzim,iyz)
+        sr.xintyre=xintyzre
+        sr.xintyim=xintyzim
 
 c UF 12.1.2000
       if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
 
 	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
-     &			xir.yzintza,xir.yzintzp,iyz)
+     &			xir.yzintza,xir.yzintzp,
+     &          densizre,densizim,xintyzre,xintyzim,iyz)
+        sr.xintzre=xintyzre
+        sr.xintzim=xintyzim
 
 	ifl.ispline=ispline_save
 
@@ -212,13 +224,16 @@ c------------------------------------------------------------
 	endif
 c------------------------------------------------------------
 
+	xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
+	xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
+
 	return
 	end
 
 c*************************************************************
 	subroutine yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		dzi,yintey,yintez,
-     &          yintya,yintyp,yintza,yintzp)
+     &          yintya,yintyp,yintza,yintzp,sr)
 c*************************************************************
 c
 c	INPUT : dzi
@@ -234,6 +249,8 @@ c*************************************************************
 	complex*16 fyey(4096),fyez(4096)
 
 	dimension a(0:5,0:5)
+	dimension densiyre(1000),densiyim(1000),
+     &            densizre(1000),densizim(1000)
 
 	include 'phase_struct.for'
         record /constants/ cs
@@ -259,15 +276,14 @@ c       Konstantensatzes
 c*******************************************************
 
 c------------ changed 16.8.1996 ----------
-	  if(xi.distfoc.gt.1.e-10)then
-	    dzii=dzi+ra.ri.zi/xi.distfoc
+	  if(xi.distfocz.gt.1.e-10)then
+	    dzii=dzi+ra.ri.zi/xi.distfocz
 	    else
 	    dzii=dzi
 	  endif
 c-----------------------------------------
 
-	ra.ri.dzi=dzi
-c	ra.ri.dzi=dzii
+	ra.ri.dzi=dzii
 
         call subm2(m4.fdetrc,dzii,m4.fdtrrc)
         call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
@@ -336,7 +352,8 @@ c----------------------------------------------------------
 
 	iyz=1
 	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-     &		yintey,yintya,yintyp,iyz)
+     &		yintey,yintya,yintyp,
+     &          densiyre,densiyim,xintre,xintim,iyz)
 
 	endif
 
@@ -347,29 +364,54 @@ c------------------------------------------------------------
 	do i=1,ianzy
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
+	  
+c---------------- 22.3.2006 ------------------
+c 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+c     &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
  	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
-     &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
+     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr)
+c---------------- 22.3.2006
+
+	 densiyre(i)=sr.densyre
+	 densiyim(i)=sr.densyim
+	 densizre(i)=sr.denszre
+	 densizim(i)=sr.denszim
+
 	  if(ifl.ibright.eq.1)then
 	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
 	  endif
-	  fyey(i)=fwerty
-	  fyez(i)=fwertz
-	  if(ifl.ispline.lt.0)then
-	   fya(i)=fwya
-	   fza(i)=fwza
-	   fyp(i)=fwyp
-	   fzp(i)=fwzp
-	  endif
-	  fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
-	  dy(i)=dyy
+	  
+c------------------ 22.3.2006
+c	  fyey(i)=fwerty
+c	  fyez(i)=fwertz
+c	  if(ifl.ispline.lt.0)then
+c	   fya(i)=fwya
+c	   fza(i)=fwza
+c	   fyp(i)=fwyp
+c	   fzp(i)=fwzp
+c	  endif
+c
+c	  diese Zeile braucht richtig lange, darum weg damit
+c	  fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
+c
+c---------------22.3.2006
+
+	dy(i)=dyy
 	enddo
 
 	iyz=1
 	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-     &		yintey,yintya,yintyp,iyz)
+     &		yintey,yintya,yintyp,densiyre,densiyim,
+     &          xintyzre,xintyzim,iyz)
+        sr.xintyre=xintyzre
+        sr.xintyim=xintyzim
+
 	iyz=1
 	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
-     &		yintez,yintza,yintzp,iyz)
+     &		yintez,yintza,yintzp,densizre,densizim,
+     &          xintyzre,xintyzim,iyz)
+        sr.xintzre=xintyzre
+        sr.xintzim=xintyzim
 
 c---------------------------------------------------------
 	endif
@@ -382,7 +424,7 @@ c---------------------------------------------------------
 
 c*************************************************************
  	subroutine fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
-     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp)
+     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
 c*************************************************************
 	implicit real*8(a-h,o-z)
 	complex*16 densy,densz,fwert,fwerty,fwertz
@@ -421,8 +463,8 @@ c*************************************************************
       dimension p22a(0:4,0:4,0:4,0:4)
       dimension p1122a(0:4,0:4,0:4,0:4)
 
-	  if(xi.distfoc.gt.1.e-10)then
-	    dyii=dyi+ra.ri.yi/xi.distfoc
+	  if(xi.distfocy.gt.1.e-10)then
+	    dyii=dyi+ra.ri.yi/xi.distfocy
 	    else
 	    dyii=dyi
 	  endif
@@ -444,14 +486,14 @@ c*************************************************************
 	ra.oe.w=0.
 	ra.oe.xl=0.
 
-        var0=1.
+	var0=1.
         do ii=0,ifl.iord
           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
           ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
-          ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
-          ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
-          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
-          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
+c          ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
+c          ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
+c          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
+c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
 	  ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
 	  ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
 
@@ -459,13 +501,14 @@ c*************************************************************
           fdph=fdph+m4.fdtphrrc(ii)*var0
           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
 
-	  ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
-          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+c         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
+c         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
 
           var0=var0*dyii
         enddo
 
 c---------- new 3.6.1997
+
 	fd1ph=0.d0
 
 	var0=1.d0
@@ -495,6 +538,7 @@ c----------new 28.4.
 	  fdph=1.d0
 	endif
 c--------- end new
+
 
 c----------------------------------------------
 	if(ifl.matrel.eq.1)then
@@ -713,11 +757,13 @@ c------------------------------------------
 	endif
 c------------------------------------------
 
-	ra.fd(ra.n4)=fd
-	ra.fdph(ra.n4)=fdph
-	if((ra.n3.le.201).and.(ra.n4.le.201))then
-	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
-	endif
+c--------- brauchen wir nicht 22.3.2006
+c	ra.fd(ra.n4)=fd
+c	ra.fdph(ra.n4)=fdph
+c	if((ra.n3.le.201).and.(ra.n4.le.201))then
+c	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
+c	endif
+c--------------------------------------------
 
 c----------------------------------------
 
@@ -736,17 +782,24 @@ c----------------------------------------
 	if(ifl.inorm1.eq.0)fdph=dabs(fdph)
 	
 	if(ifl.ispline.ge.0)then
-		fwerty=sr.densy*fdph
-		fwertz=sr.densz*fdph
+                ff=fdph*fd1ph
+c		fwerty=sr.densy*ff
+c		fwertz=sr.densz*ff
+		sr.densyre=sr.densyre*ff
+		sr.densyim=sr.densyim*ff
+		sr.denszre=sr.denszre*ff
+		sr.denszim=sr.denszim*ff
 	endif
+
 	if(ifl.ispline.lt.0)then
-		fwya=sr.eya*fdph
-		fwza=sr.eza*fdph
+		ff=fdph*fd1ph
+		fwya=sr.eya*ff
+		fwza=sr.eza*ff
 		fwyp=sr.eyp
 		fwzp=sr.ezp
 	endif
 
-	if(ifl.inorm2.eq.1)then
+        if(ifl.inorm2.eq.1)then
 	  fd1ph=1.d0
 	  if((ra.n3.le.201).and.(ra.n4.le.201))then
 	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
@@ -758,7 +811,7 @@ c----------------------------------------
 	  call subdfpl2(g,a,ra,pd)
 	endif
 
-	if(ifl.inorm2.eq.2)then
+        if(ifl.inorm2.eq.2)then
 	  fd1ph=dsqrt(dabs(pd.pl1w2+pd.pl2w2))*
      &        dsqrt(dabs(pd.pl1l2+pd.pl2l2))
 	  fd1ph=1.d0/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
@@ -778,20 +831,24 @@ c----------------------------------------
 	  endif
 	endif
 
-	if(ifl.ispline.ge.0)then
-		fwerty=fwerty*fd1ph
-		fwertz=fwertz*fd1ph
-	endif
-	if(ifl.ispline.lt.0)then
-		fwya=fwya*fd1ph
-		fwza=fwza*fd1ph
+c	if(ifl.ispline.ge.0)then
+c		fwerty=fwerty*fd1ph
+c		fwertz=fwertz*fd1ph
+c	endif
+
+c	if(ifl.ispline.lt.0)then
+c		fwya=fwya*fd1ph
+c		fwza=fwza*fd1ph
+c	endif
+
+c--------------- brauchen wir nicht 22.3.2006
+c	st.fd1phmax(ra.n1,ra.n2)=
+c     &        dmax1(fd1ph,st.fd1phmax(ra.n1,ra.n2))
+c-------------------------------------------------
+
 	endif
 
-	st.fd1phmax(ra.n1,ra.n2)=
-     &        dmax1(fd1ph,st.fd1phmax(ra.n1,ra.n2))
-
-	endif
-
+c--------------- ist zu checken
 	if(src.isrctype.eq.6)then
 	fwerty=sr.densy*abs(fd)
 	endif
@@ -1396,10 +1453,10 @@ c-------- derivation of matrix A
 	return
 	end
 
-
 c******************************************************************
 	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
-     &                      xinta,xintp,iyz)
+     &                      xinta,xintp,densiyzre,densiyzim,
+     &                      xintre,xintim,iyz)
 c******************************************************************
 c
 c	''Turbo Version'' 
@@ -1443,7 +1500,9 @@ c-----------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+	dimension densiyzre(1000),densiyzim(1000)
+
+        include 'phase_struct.for'
         record /constants/ cs
 	record /statistics/ st
         record /integration_results/ xir
@@ -1484,7 +1543,7 @@ c---------------------------------------------------------
 	x(i)=x(i-1)+dyz(i)
 	enddo
 
-111	format(3(3x,d12.5))
+c111	format(3(3x,d12.5))
 c	open(unit=10,name='t0.dat',type='new')
 c	do i=1,ianz
 c	write(10,*)x(i),fyza(i),fyzp(i)
@@ -1687,13 +1746,26 @@ c---------------------------------------------------------
 	if(ifl.ispline.eq.0)then
 c---------------------------------------------------------
 
-	xint=0.
+c	xint=0.
+c	if(ianz.ge.2)then
+c	do i=1,ianz-1
+c	xint=xint+0.5*dyz(i)*(fyz(i+1)+fyz(i))
+c	xxx(i)=xint
+c	enddo
+c	endif
+
+	xintre=0.
+	xintim=0.
 	if(ianz.ge.2)then
-	do i=1,ianz-1
-	xint=xint+0.5*dyz(i)*(fyz(i+1)+fyz(i))
-	xxx(i)=xint
+	do i=1,ianz
+	xintre=xintre+densiyzre(i)
+	xintim=xintim+densiyzim(i)
+	xxx(i)=xintre
 	enddo
 	endif
+
+	xintre=xintre*dyz(1)
+	xintim=xintim*dyz(1)
 
 c----------- output
 c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
@@ -1748,12 +1820,14 @@ c------------------------------------------------------------
 	x(i)=0.
 	do i=2,ianz
 	x(i)=x(i-1)+dyz(i)
-	y(i)=dreal(fyz(i))
-	enddo
+c	y(i)=dreal(fyz(i))
+	y(i)=densiyzre(i)
+        enddo
 	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintre)	
 
 	do i=2,ianz
-	y(i)=dimag(fyz(i))
+c	y(i)=dimag(fyz(i))
+	y(i)=densiyzim(i)
 	enddo
 	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintim)	
 
@@ -1770,7 +1844,7 @@ c UF
               xx=xxsave
               do i=1,ianz
                  xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=dreal(fyz(i))
+                 xir.simpre(ii,2,i)=densiyzre(i)
                  xx=xx+dyz(i)
               enddo
               xir.isimpre(ii)=ianz
@@ -1778,7 +1852,7 @@ c UF
               xx=xxsave
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=dimag(fyz(i))
+                 xir.simpim(ii,2,i)=densiyzim(i)
                  xx=xx+dyz(i)
               enddo
               xir.isimpim(ii)=ianz
@@ -1906,6 +1980,10 @@ c	- adapt grid in size and location accordingly
 c	  and get new ymin, ymax, zmin, zmax
 c	- grid for yi + dyi etc
 c
+c
+c	Routine gelegentlich rausschmeissen
+c
+c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
@@ -1968,11 +2046,11 @@ c-----------------------------------------------------------------
 	dyi_loc(ii)=xi.ymin+dflotj(ii-1)*dyy
 	dzi_loc(jj)=xi.zmin+dflotj(jj-1)*dzz
 
-	if(abs(xi.distfoc).gt.1.e-12)then
-	dyi_loc(ii)=dyi_loc(ii)+yi_loc/xi.distfoc
+	if(abs(xi.distfocy).gt.1.e-12)then
+	dyi_loc(ii)=dyi_loc(ii)+yi_loc/xi.distfocy
 	endif
-	if(abs(xi.distfoc).gt.1.e-12)then
-	dzi_loc(jj)=dzi_loc(jj)+zi_loc/xi.distfoc
+	if(abs(xi.distfocy).gt.1.e-12)then
+	dzi_loc(jj)=dzi_loc(jj)+zi_loc/xi.distfocy
 	endif
 
         yp=0.d0
