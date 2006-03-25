@@ -1,18 +1,18 @@
 c************* parameter file for FG4 ***** all values in mm or mrad *****
 1.e-4 	! epsilon for Newton routine
-4,4,1 	! ord. of map (3,4), ord. of scal.-fact. (1..4), expansion of OPL (1)
+4,1,1 	! ord. of map (3,4), ord. of scal.-fact. (1..4), expansion of OPL (1)
 1  	! numerical (0), analytical (1) subtraction of ideal path length
 4 	! source type
-eyre.da1
-eyim.da1
-ezre.da1
-ezim.da1
+ezre_gb_9000.dat      ezre_gb_1000.dat
+ezim_gb_9000.dat      ezim_gb_1000.dat
+ezre_gb_9000.dat      ezre_gb_1000.dat
+ezim_gb_9000.dat      ezim_gb_1000.dat
 2048	! total number of slices
-20,20	! used number of frequency slices (pos and negative frequencies)
-5.	! time difference between two time slices (in femto seconds)
-1	! convert source data to complex conjugate before start of simulation
+2,0	! used number of frequency slices (pos and negative frequencies)
+20.  5.	! time difference between two time slices (in femto seconds)
+0	! convert source data to complex conjugate before start of simulation
 br-re_bin_u2.dat
-200.	! radius of pinhole in source plane (mm)
+300.	! radius of pinhole in source plane (mm)
 -100., 100. 	! aperture in source plane, ymin, ymax (mm)
 -100., 100. 	! aperture in source plane, zmin, zmax (mm)
 200.		! radius in aperture plane
@@ -32,23 +32,23 @@ br-re_bin_u2.dat
 4,0  	! source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file
 0.1, 0.25   ! source size/div.: sigmay(mm) / sigmayp or half height/angle
 -10. 10. ! ymin, ymax, zu integrierender Winkelbereich in mrad
-301		! ianzy0,     Anzahl der Stuetzstellen im ersten Raster
+255		! ianzy0,     Anzahl der Stuetzstellen im ersten Raster
 4,4		! source type (size/div.):(0)sigma val.,(1)hard edge, etc...
 0.1, 2.5	! source size/div.: sigmay(mm) / sigmayp or half height/angle
--10.  10.		! zmin, zmax   mrad
-301		! ianzz0
+-10. 10.		! zmin, zmax   mrad
+255		! ianzz0
 0		! (1) write 4-dim brightness to file
 0   		! (0) simpson integration, (1) spline integration
 1.  0.5  0.01  8	!0.01		! d12_max
 1		! id12; (1) print d12 on file, (0) do not print
 0		! ianz0_cal
-101		! ianz0_fixed	
+301		! ianz0_fixed	
 0		! iamp_smooth (0,1)
 -2		! iord_amp
 3		! ifm_amp
 -1 		! iord_pha
 5 		! ifm_pha
-1000.    		! distance to focus
+0., 0.         	! distance to focus
 0		! insert pinhole array in source plane
 0.01,	0.005	! pin_yl0, pin_yl
 0.01,	0.005	! pin_zl0, pin_zl
