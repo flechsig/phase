@@ -127,7 +127,12 @@ struct  source4 {
 	xezimmin,xezimmax,dxezim,
 	yezremin,yezremax,dyezre,
 	yezimmin,yezimmax,dyezim,
-	zezre[256][256],zezim[256][256],deltatime;
+	zezre[256][256],zezim[256][256],
+        deltatime,gridx[256],gridy[256],
+        amp1eyre,amp1eyim,amp2eyre,amp2eyim,
+        amp3eyre,amp3eyim,amp4eyre,amp4eyim,
+        amp1ezre,amp1ezim,amp2ezre,amp2ezim,
+        amp3ezre,amp3ezim,amp4ezre,amp4ezim;
   int  ieyrex,ieyimx,ieyrey,ieyimy,
        iezrex,iezimx,iezrey,iezimy,
        nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
@@ -168,7 +173,7 @@ struct  source4 {
 /* --------------- integration --------------------------------*/
 
 	struct  integration {
-		double distfoc;
+		double distfocy,distfocz;
 		int  ianzy0;
 		int  ianzz0;
 		double ymin,ymax;
@@ -229,7 +234,9 @@ struct  source4 {
 
         struct  source_results {                 
            COMPLEX densy,densz;
-	   double dens,eya,eza,eyp,ezp;
+	   double dens,eya,eza,eyp,ezp,
+	   densyre,densyim,denszre,denszim,
+	   xintyre,xintyim,xintzre,xintzim;
         };  
 /* ----------------- U. F. 21.12.99 ----------------------------- */
 struct simps1 {
