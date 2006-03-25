@@ -2402,7 +2402,7 @@ c        include 'phase_struct.for'
       record /apertures/ apr
       character*80 dfile
       character*1 dummy
-      integer iname,clen1,stringtoint
+      integer iname,clen1
       real *8 epsilon
 
  1    format(1a1)	
@@ -2418,10 +2418,6 @@ c        include 'phase_struct.for'
       read(16,3)dfile
       iname=clen1(dfile)
       src.so4.fsource4a(:iname)=dfile(:iname)
-
-      src.so4.nsource=stringtoint(dfile(iname:iname))
-      src.so4.nimage=src.so4.nsource+1
-
       read(16,3)dfile
       iname=clen1(dfile)
       src.so4.fsource4b(:iname)=dfile(:iname)
@@ -2434,14 +2430,13 @@ c        include 'phase_struct.for'
 
       read(16,*)src.so4.nfreqtot
       read(16,*)src.so4.nfreqpos,src.so4.nfreqneg
-      read(16,*)src.so4.deltatime	   
+      read(16,*)src.so4.deltatime
       read(16,*)src.so4.iconj
 
-c------------ jetzt brightness file lesen
       read(16,3)dfile
       iname=clen1(dfile)
       src.so6.fsource6(:iname)=dfile(:iname)
-      
+
 c--------pinhole in source plane	
       read(16,*)apr.rpin
       read(16,*)apr.srcymin,apr.srcymax
@@ -2510,7 +2505,7 @@ c      read(16,*)xi.iphase_pi2
 c      read(16,*)xi.iordap
 c      read(16,*)xi.dphi_min
 
-      read(16,*)xi.distfoc
+      read(16,*)xi.distfocy,xi.distfocz
 
       read(16,*)ifl.ipinarr
       read(16,*)src.pin_yl0,src.pin_yl
@@ -2541,26 +2536,6 @@ c*************************************************************
       end
   
 c * end clen1 
-
-c*************************************************************
-      integer function stringtoint(str)
-c*************************************************************
-      character*(*) str
-
-      if(str.eq.'0')stringtoint=0
-      if(str.eq.'1')stringtoint=1
-      if(str.eq.'2')stringtoint=2
-      if(str.eq.'3')stringtoint=3
-      if(str.eq.'4')stringtoint=4
-      if(str.eq.'5')stringtoint=5
-      if(str.eq.'6')stringtoint=6
-      if(str.eq.'7')stringtoint=7
-      if(str.eq.'8')stringtoint=8
-      if(str.eq.'9')stringtoint=9
-      
-      return
-      end
-
 
 c*** end phasefor ***********************************************
                 
