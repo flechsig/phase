@@ -1794,7 +1794,7 @@ c UF
               xx=xxsave               
               do i=1,ianz
                  xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=dreal(fyz(i))*1.0d10
+                 xir.simpre(ii,2,i)=densiyzre(i)*1.0d10
                  xx=xx+dyz(i)
               enddo
               xir.isimpre(ii)=ianz
@@ -1802,7 +1802,7 @@ c UF
               xx=xxsave              
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=dimag(fyz(i))*1.0d10
+                 xir.simpim(ii,2,i)=densiyzim(i)*1.0d10
                  xx=xx+dyz(i)
               enddo
               xir.isimpim(ii)=ianz
