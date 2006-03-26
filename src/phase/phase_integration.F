@@ -1510,6 +1510,7 @@ c-----------------------------------------------------------------------
         record /control_flags/ ifl
 
 	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
+	dimension xxxre(4096),xxxim(4096)
 
 	real*4 fyza_loc(4096),fyzp_loc(4096)
 	real*4 x_loc(4096),dyz_loc(4096)
@@ -1760,7 +1761,8 @@ c	endif
 	do i=1,ianz
 	xintre=xintre+densiyzre(i)
 	xintim=xintim+densiyzim(i)
-	xxx(i)=xintre
+	xxxre(i)=xintre
+	xxxim(i)=xintim
 	enddo
 	endif
 
@@ -1779,7 +1781,7 @@ c UF
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=dreal(xxx(i))*1.0d10
+                 xir.sintre(ii,2,i)=xxxre(i)*1.0d10
               enddo
               xir.isintre(ii)=ianz-1
 c UF
@@ -1787,7 +1789,7 @@ c UF
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=dimag(xxx(i))*1.0d10
+                 xir.sintim(ii,2,i)=xxxim(i)*1.0d10
               enddo
               xir.isintim(ii)=ianz-1
 c UF
