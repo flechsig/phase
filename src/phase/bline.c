@@ -1260,7 +1260,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
    /* end apertures */
    fprintf(f,"\nINTEGRATION\n"); 
-   fprintf(f, "%20lg distance to focus \n", op->xi.distfoc);
+   fprintf(f, "%20lg distance to focus \n", op->xi.distfocy);
+   fprintf(f, "%20lg distance to focus \n", op->xi.distfocz);
   
    /* fprintf(f,"%20d     itery0\n", op->xi.itery0); */
    fprintf(f,"%20d     ianzy0\n", op->xi.ianzy0);   
@@ -1646,7 +1647,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        if (SetFilePos(f, "INTEGRATION"))
        { 
          op= (struct OptionsType *) &(bl->BLOptions); 
-         fscanf(f, " %lf %[^\n]s %c", &op->xi.distfoc, buffer, &buf);
+         fscanf(f, " %lf %[^\n]s %c", &op->xi.distfocy, buffer, &buf);
+         fscanf(f, " %lf %[^\n]s %c", &op->xi.distfocz, buffer, &buf);
 	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.itery0, buffer, &buf); */
 	 fscanf(f, " %d %[^\n]s %c", &op->xi.ianzy0, buffer, &buf);
 	 /* fscanf(f, " %d %[^\n]s %c", &op->xi.imaxy, buffer, &buf); */
