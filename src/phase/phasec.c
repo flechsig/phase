@@ -1148,13 +1148,13 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 /*     "(1) correct phase for pi and 2pi, (0) correct only for 2 pi", */
   /*  "order of amplitude expansion", */
  /*    "dphi_min", */
-    "distance to focus",
+    "distance to horizontal focus",
+    "distance to vertical focus",
     "insert pinhole array in source plane",
     "pin_yl0",
     "pin_yl",
     "pin_zl0",
     "pin_zl",
-      
       
     /*********************************************
       hier gehen meine frueheren Bezeichnungen los
@@ -1197,7 +1197,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 
   /* ende der Variablendefinitionen */
 		      
-  itemzahl= 55;  /* Eintraege in der Liste */
+  itemzahl= 56;  /* Eintraege in der Liste */
 		      
   op= (struct OptionsType *)    &(bl->BLOptions); 
   pop= (struct PSOptionsType *) &(bl->BLOptions.PSO);  
@@ -1292,7 +1292,8 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   sprintf(pvals[k++], "%d", op->xi.ifm_pha);
   /*  sprintf(pvals[k++], "%g", op->xi.dphi_min); */
   
-  sprintf(pvals[k++], "%g", op->xi.distfoc);
+  sprintf(pvals[k++], "%g", op->xi.distfocy);
+  sprintf(pvals[k++], "%g", op->xi.distfocz);
   sprintf(pvals[k++], "%d", op->ifl.ipinarr);
   
   sprintf(pvals[k++], "%g", bl->src.pin_yl0);
@@ -1431,7 +1432,8 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       sscanf(pvals[k++], "%d",  &op->xi.ifm_pha);
 /*      sscanf(pvals[k++], "%lf", &op->xi.dphi_min);*/
       
-      sscanf(pvals[k++], "%lf", &op->xi.distfoc);
+      sscanf(pvals[k++], "%lf", &op->xi.distfocy);
+      sscanf(pvals[k++], "%lf", &op->xi.distfocz);
       sscanf(pvals[k++], "%d",  &op->ifl.ipinarr);
       
       sscanf(pvals[k++], "%lf", &bl->src.pin_yl0);
