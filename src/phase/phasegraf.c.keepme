@@ -470,6 +470,7 @@ void hplotdisplay(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
 		  gr->titel, ph->plotpsname, 
 		  strlen(gr->titel), strlen(ph->plotpsname)); 
 #endif 
+
 }  /* end  hplotdisplay */
 
 void hplotpsdc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr, 

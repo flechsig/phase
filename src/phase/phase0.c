@@ -414,10 +414,11 @@ void create_proc(w, tag, reason)
     int			*tag;
     XmAnyCallbackStruct	*reason;
 {
+
   int widget_num = *tag;
   
   widget_array[widget_num] = w;
-  
+
   /*  For internationalization ease, we capture a few strings from the
    *  widgets themselves.  We could go out and fetch them as needed but
    *  since we use these all the time, this method if more efficient.
