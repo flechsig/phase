@@ -1,6 +1,6 @@
 c************* parameter file for FG4 ***** all values in mm or mrad *****
 1.e-4 	! epsilon for Newton routine
-4,4,1 	! ord. of map (3,4), ord. of scal.-fact. (1..4), expansion of OPL (1)
+4,1,1 	! ord. of map (3,4), ord. of scal.-fact. (1..4), expansion of OPL (1)
 1  	! numerical (0), analytical (1) subtraction of ideal path length
 4 	! source type
 ezre_gb_9000.dat      ezre_gb_1000.dat
@@ -48,7 +48,7 @@ br-re_bin_u2.dat
 3		! ifm_amp
 -1 		! iord_pha
 5 		! ifm_pha
-0.    		! distance to focus
+0., 0.         	! distance to focus
 0		! insert pinhole array in source plane
 0.01,	0.005	! pin_yl0, pin_yl
 0.01,	0.005	! pin_zl0, pin_zl
