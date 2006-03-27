@@ -9,7 +9,7 @@ C To determine date and time and write it to logical unit LUN
       CHARACTER*(10) TIM
       CHARACTER*(50) SPACER
 
-      c UF syntax error???     DATA SPACER/10*' '/
+c UF syntax error???     DATA SPACER/10*' '/
 
 c UF      CALL DATE_AND_TIME(DAY,TIM)
 
