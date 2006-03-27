@@ -144,10 +144,6 @@ c---------------- set values to zero by default
 	sr.eza=0.d0
 	sr.eyp=0.d0
 	sr.ezp=0.d0
-	sr.densyre=0.d0
-	sr.densyim=0.d0
-	sr.denszre=0.d0
-	sr.denszim=0.d0
 
 c------------------------------------------------------
 c	die folgenden drei Abfragen nach den Aperturen
@@ -193,7 +189,7 @@ c	endif	! size of OE
 c	endif	! aperture plane
 c	endif	! source plane
 
-	return
+        return
         end
 
 c*****************************************************************
@@ -455,7 +451,7 @@ c------- end 19.1.2000 ----------------------------------
 
 	endif			! grating
 
-	factorre=dcos(delphi+phase)
+        factorre=dcos(delphi+phase)
         factorim=dsin(delphi+phase)
 
 c-------- 27.2.2004
@@ -486,7 +482,6 @@ c------- 27.2.2004
 		sr.denszre=sr.denszre*factorre*f
 		sr.denszim=sr.denszim*factorim*f
 	endif
-
 	if(ifl.ispline.lt.0)then
 		sr.eya=sr.densyre*f
 		sr.eyp=sr.eyp+sr.densyim
@@ -1209,7 +1204,9 @@ cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
      &	           fact5*so4.zezim(ix1,iy2)+
      &             fact6*so4.zezim(ix2,iy2)
 
-     	return
+9999 	continue
+
+	return
 	end
 
 c**********************************************************
