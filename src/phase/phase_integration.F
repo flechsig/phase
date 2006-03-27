@@ -36,17 +36,10 @@ c	Das muss spaeter in PHASE_STRUCT_11.FOR integriert werden
 c	(in xir. etc).
 c	Datenausgabe auf File im Hauptprogramm.
 c
-c	gleichzeitig sollten distfocy und distfocz implementiert werden
-c	(in xi. etc).
-c
 c	adaptive integration rausschmeissen
 c	nur eine Iteration
 c	falls spaeter adaptive Integration implementiert we rden soll,
 c	muss dies auf andere Weise als bisher geschehen.
-c
-c
-c	diese Routine erzeugt xintre und xintim
-c
 c
 c************************************************
 
@@ -183,7 +176,8 @@ c	   	fzez(i)=fwertz
 	   densiyim(i)=sr.xintyim
 	   densizre(i)=sr.xintzre
 	   densizim(i)=sr.xintzim
-           endif
+	   
+	   endif
 	   if(ifl.ispline.lt.0)then
 	 	fya(i)=yintya
 	 	fza(i)=yintza
@@ -230,8 +224,8 @@ c------------------------------------------------------------
 	endif
 c------------------------------------------------------------
 
-	yzintey=sr.xintyre+cs.sqrtm1*xintyim
-	yzintez=sr.xintzre+cs.sqrtm1*xintzim
+	xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
+	xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
 
 	return
 	end
@@ -282,15 +276,14 @@ c       Konstantensatzes
 c*******************************************************
 
 c------------ changed 16.8.1996 ----------
-	  if(xi.distfoc.gt.1.e-10)then
-	    dzii=dzi+ra.ri.zi/xi.distfoc
+	  if(xi.distfocz.gt.1.e-10)then
+	    dzii=dzi+ra.ri.zi/xi.distfocz
 	    else
 	    dzii=dzi
 	  endif
 c-----------------------------------------
 
-	ra.ri.dzi=dzi
-c	ra.ri.dzi=dzii
+	ra.ri.dzi=dzii
 
         call subm2(m4.fdetrc,dzii,m4.fdtrrc)
         call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
@@ -470,8 +463,8 @@ c*************************************************************
       dimension p22a(0:4,0:4,0:4,0:4)
       dimension p1122a(0:4,0:4,0:4,0:4)
 
-	  if(xi.distfoc.gt.1.e-10)then
-	    dyii=dyi+ra.ri.yi/xi.distfoc
+	  if(xi.distfocy.gt.1.e-10)then
+	    dyii=dyi+ra.ri.yi/xi.distfocy
 	    else
 	    dyii=dyi
 	  endif
@@ -515,6 +508,7 @@ c         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
         enddo
 
 c---------- new 3.6.1997
+
 	fd1ph=0.d0
 
 	var0=1.d0
@@ -1459,7 +1453,6 @@ c-------- derivation of matrix A
 	return
 	end
 
-
 c******************************************************************
 	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
      &                      xinta,xintp,densiyzre,densiyzim,
@@ -1517,6 +1510,7 @@ c-----------------------------------------------------------------------
         record /control_flags/ ifl
 
 	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
+	dimension xxxre(4096),xxxim(4096)
 
 	real*4 fyza_loc(4096),fyzp_loc(4096)
 	real*4 x_loc(4096),dyz_loc(4096)
@@ -1753,13 +1747,27 @@ c---------------------------------------------------------
 	if(ifl.ispline.eq.0)then
 c---------------------------------------------------------
 
-	xint=0.
+c	xint=0.
+c	if(ianz.ge.2)then
+c	do i=1,ianz-1
+c	xint=xint+0.5*dyz(i)*(fyz(i+1)+fyz(i))
+c	xxx(i)=xint
+c	enddo
+c	endif
+
+	xintre=0.
+	xintim=0.
 	if(ianz.ge.2)then
-	do i=1,ianz-1
-	xint=xint+0.5*dyz(i)*(fyz(i+1)+fyz(i))
-	xxx(i)=xint
+	do i=1,ianz
+	xintre=xintre+densiyzre(i)
+	xintim=xintim+densiyzim(i)
+	xxxre(i)=xintre
+	xxxim(i)=xintim
 	enddo
 	endif
+
+	xintre=xintre*dyz(1)
+	xintim=xintim*dyz(1)
 
 c----------- output
 c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
@@ -1773,7 +1781,7 @@ c UF
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=dreal(xxx(i))*1.0d10
+                 xir.sintre(ii,2,i)=xxxre(i)*1.0d10
               enddo
               xir.isintre(ii)=ianz-1
 c UF
@@ -1781,14 +1789,14 @@ c UF
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=dimag(xxx(i))*1.0d10
+                 xir.sintim(ii,2,i)=xxxim(i)*1.0d10
               enddo
               xir.isintim(ii)=ianz-1
 c UF
               xx=xxsave               
               do i=1,ianz
                  xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=dreal(fyz(i))*1.0d10
+                 xir.simpre(ii,2,i)=densiyzre(i)*1.0d10
                  xx=xx+dyz(i)
               enddo
               xir.isimpre(ii)=ianz
@@ -1796,7 +1804,7 @@ c UF
               xx=xxsave              
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=dimag(fyz(i))*1.0d10
+                 xir.simpim(ii,2,i)=densiyzim(i)*1.0d10
                  xx=xx+dyz(i)
               enddo
               xir.isimpim(ii)=ianz
@@ -1816,7 +1824,7 @@ c------------------------------------------------------------
 	x(i)=x(i-1)+dyz(i)
 c	y(i)=dreal(fyz(i))
 	y(i)=densiyzre(i)
-	enddo
+        enddo
 	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintre)	
 
 	do i=2,ianz
@@ -1974,6 +1982,10 @@ c	- adapt grid in size and location accordingly
 c	  and get new ymin, ymax, zmin, zmax
 c	- grid for yi + dyi etc
 c
+c
+c	Routine gelegentlich rausschmeissen
+c
+c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
@@ -2036,11 +2048,11 @@ c-----------------------------------------------------------------
 	dyi_loc(ii)=xi.ymin+dflotj(ii-1)*dyy
 	dzi_loc(jj)=xi.zmin+dflotj(jj-1)*dzz
 
-	if(abs(xi.distfoc).gt.1.e-12)then
-	dyi_loc(ii)=dyi_loc(ii)+yi_loc/xi.distfoc
+	if(abs(xi.distfocy).gt.1.e-12)then
+	dyi_loc(ii)=dyi_loc(ii)+yi_loc/xi.distfocy
 	endif
-	if(abs(xi.distfoc).gt.1.e-12)then
-	dzi_loc(jj)=dzi_loc(jj)+zi_loc/xi.distfoc
+	if(abs(xi.distfocy).gt.1.e-12)then
+	dzi_loc(jj)=dzi_loc(jj)+zi_loc/xi.distfocy
 	endif
 
         yp=0.d0
