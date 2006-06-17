@@ -428,16 +428,17 @@ c	22.3.2006
 	w4=w3*ra.oe.w
 	w5=w4*ra.oe.w
 
-	xden=g.xdens(0)-		! local line density
+c------- signs changed 17.6.2006
+	xden=g.xdens(0)+		! local line density
      &		ra.oe.w*g.xdens(1)+
-     &		w2*g.xdens(2)-
+     &		w2*g.xdens(2)+
      &		w3*g.xdens(3)+
      &		w4*g.xdens(4)
 	grdist=1.d0/xden		! local grid distance
 
-	xnn=ra.oe.w*g.xdens(0)-		! line number
+	xnn=ra.oe.w*g.xdens(0)+	! line number
      &		(w2/2.d0)*g.xdens(1)+
-     &		(w3/3.d0)*g.xdens(2)-
+     &		(w3/3.d0)*g.xdens(2)+
      &		(w4/4.d0)*g.xdens(3)+
      &		(w5/5.d0)*g.xdens(4)
 	nn=xnn
@@ -481,10 +482,14 @@ c------- 27.2.2004
 	endif
 
 	if(ifl.ispline.ge.0)then
-		sr.densyre=sr.densyre*factorre*f
-		sr.densyim=sr.densyim*factorim*f
-		sr.denszre=sr.denszre*factorre*f
-		sr.denszim=sr.denszim*factorim*f
+		sr.densyre=f*(sr.densyre*factorre-
+     &          	      sr.densyim*factorim)
+		sr.densyim=f*(sr.densyre*factorim+
+     &          	      sr.densyim*factorre)
+		sr.denszre=f*(sr.denszre*factorre-
+     &          	      sr.denszim*factorim)
+		sr.denszim=f*(sr.denszre*factorim+
+     &          	      sr.denszim*factorre)
 	endif
 
 	if(ifl.ispline.lt.0)then
@@ -811,7 +816,7 @@ c***********************************************************
 	k=(j-1)*so4.ieyimx+i
 	read(10,*)xx(k),yy(k),so4.zeyim(i,j)
 c------------- 10.8.2005
-	if(so4.iconj.eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
+	if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
 c------------- 10.8.2005
 	enddo
 	enddo
@@ -856,7 +861,7 @@ c----------------------------------------------------------
 	k=(j-1)*so4.iezimx+i
 	read(10,*)xx(k),yy(k),so4.zezim(i,j)
 c------------- 10.8.2005
-	if(so4.iconj.eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
+	if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
 c------------- 10.8.2005
 	enddo
 	enddo
