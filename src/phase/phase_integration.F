@@ -501,8 +501,8 @@ c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
           fdph=fdph+m4.fdtphrrc(ii)*var0
           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
 
-c         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
-c         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
+         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
 
           var0=var0*dyii
         enddo
