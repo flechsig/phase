@@ -481,15 +481,20 @@ c------- 27.2.2004
 	  f=1.0d0
 	endif
 
+	srdensyre=sr.densyre
+	srdensyim=sr.densyim
+	srdenszre=sr.denszre
+	srdenszim=sr.denszim
+
 	if(ifl.ispline.ge.0)then
-		sr.densyre=f*(sr.densyre*factorre-
-     &          	      sr.densyim*factorim)
-		sr.densyim=f*(sr.densyre*factorim+
-     &          	      sr.densyim*factorre)
-		sr.denszre=f*(sr.denszre*factorre-
-     &          	      sr.denszim*factorim)
-		sr.denszim=f*(sr.denszre*factorim+
-     &          	      sr.denszim*factorre)
+		sr.densyre=f*(srdensyre*factorre-
+     &          	      srdensyim*factorim)
+		sr.densyim=f*(srdensyre*factorim+
+     &          	      srdensyim*factorre)
+		sr.denszre=f*(srdenszre*factorre-
+     &          	      srdenszim*factorim)
+		sr.denszim=f*(srdenszre*factorim+
+     &          	      srdenszim*factorre)
 	endif
 
 	if(ifl.ispline.lt.0)then
