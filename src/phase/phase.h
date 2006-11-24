@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Mar 06 11:57:16 flechsig>  */
+/*   Time-stamp: <24 Nov 06 17:02:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -488,6 +488,7 @@ struct RTSourceType {
     struct PointSourceType     PointSource;
     struct FileSourceType      FileSource;
   } Quelle;
+  void *Quellep;           /* UF 24.11.06 */
   struct RayType *SourceRays;          
   int QuellTyp, modified, raynumber; };       
 
@@ -504,6 +505,7 @@ struct RESULTType {
     struct RayType *Rays;  
     struct PSDType PSD; 
   } RESUnion; 
+  void *RESp;          /* UF 24.11.06 */
   int points, typ; };       
 
 
