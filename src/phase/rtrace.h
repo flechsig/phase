@@ -1,7 +1,13 @@
-/*  File      : /home/vms/flechsig/vms/phas/phasec/rtrace.h */
-/*  Date      : <21 Oct 97 07:43:33 flechsig>  */
-/*  Time-stamp: <07 Jan 00 08:54:00 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.h */
+/*  Date      : <28 Nov 06 09:06:56 flechsig>  */
+/*  Time-stamp: <28 Nov 06 09:07:07 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
+
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]RTRACE.H           */
 /* Datum: 28.MAR.1995                                          */
@@ -19,8 +25,10 @@ void RayTracec(struct PHASEset *, struct BeamlineType *),
      WriteRayFile (char *, int *, struct RayType *), 
      MakeHardEdgeSource (struct RTSourceType *), 
      MakeUndulatorSource(struct RTSourceType *, char),  
-     MakeDipolSource    (struct RTSourceType *);    
-               
+     MakeDipolSource    (struct RTSourceType *),
+     AllocRTSource(struct BeamlineType *),
+     AllocResult(struct BeamlineType *);
+             
 #ifdef LINUX
   #define ray_tracef ray_tracef_
 #endif
