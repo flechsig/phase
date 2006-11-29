@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.h */
 /*  Date      : <28 Nov 06 09:06:56 flechsig>  */
-/*  Time-stamp: <28 Nov 06 09:07:07 flechsig>  */
+/*  Time-stamp: <29 Nov 06 09:20:04 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -27,7 +27,8 @@ void RayTracec(struct PHASEset *, struct BeamlineType *),
      MakeUndulatorSource(struct RTSourceType *, char),  
      MakeDipolSource    (struct RTSourceType *),
      AllocRTSource(struct BeamlineType *),
-     AllocResult(struct BeamlineType *);
+     ReAllocResult(struct BeamlineType *, int, int, int),
+     FreeResultMem(struct RESULTType *);
              
 #ifdef LINUX
   #define ray_tracef ray_tracef_

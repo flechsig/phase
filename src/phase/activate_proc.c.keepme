@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <10 Mar 06 11:54:36 flechsig>  */
+/*   Time-stamp: <29 Nov 06 10:40:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -48,6 +48,8 @@ void activate_proc(w, tag, reason)
   FString Fname;    
 #endif
   struct BeamlineType *bl;
+  struct PSDType *PSDp;
+  struct PSImageType *psip;  
   void *vo;
 
   printf(" widget_num ",widget_num);     
@@ -213,8 +215,10 @@ void activate_proc(w, tag, reason)
 
     /*************************** Edit Pdme *******************************/    
   case kESourceMenuButton:
-    FetchWidget(kESourceBox, "ESourceBox");     
-    InitSourceBox(&Fg3ActDat, &Beamline, widget_num);  
+    FetchWidget(kESourceBox, "ESourceBox");  
+    InitSourceType(&Beamline, widget_num);
+    AllocRTSource(&Beamline);
+    InitSourceBox(&Fg3ActDat, &Beamline);  
     XtManageChild(widget_array[kESourceBox]);        
     break;
   case kESRayTraceButton:                        /* Edit- Source- Pdme */
@@ -231,8 +235,10 @@ void activate_proc(w, tag, reason)
     /* case kESSR1Button:  */                                        
   case kESSR2Button:  
     /*  FetchWidget(kESourceBox, "ESourceBox");    */ 
-    initdatset(&Fg3ActDat, &Beamline, widget_num); 
-    InitSourceBox(&Fg3ActDat, &Beamline, widget_num);       
+    InitSourceType(&Beamline, widget_num);
+    AllocRTSource(&Beamline);
+    initdatset(&Fg3ActDat, &Beamline); 
+    InitSourceBox(&Fg3ActDat, &Beamline);       
     XtManageChild(widget_array[kESourceBox]);        
     break;
    
@@ -277,7 +283,11 @@ void activate_proc(w, tag, reason)
     strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
     if ((widget_array[kESourceBox] != NULL) && 
 	XtIsRealized(widget_array[kESourceBox])) 
-      InitSourceBox(&Fg3ActDat, &Beamline, kESDefaults); 
+      {  
+	InitSourceType(&Beamline, kESDefaults);
+        AllocRTSource(&Beamline);
+	InitSourceBox(&Fg3ActDat, &Beamline); 
+      }
     InitBLBox(PHASESet.beamlinename, &Beamline);   
     XtManageChild(widget_array[kEBLDialog]); 
     break;   
@@ -343,9 +353,10 @@ void activate_proc(w, tag, reason)
     stop_watch(); 
     break;  
 
-  case kESDefaults: 
-    initdatset(&Fg3ActDat, &Beamline, widget_num);   
-    InitSourceBox(&Fg3ActDat, &Beamline, widget_num);      
+  case kESDefaults:
+    Beamline.RTSource.QuellTyp_old--;
+    initdatset(&Fg3ActDat, &Beamline); 
+    InitSourceBox(&Fg3ActDat, &Beamline);      
     break; 
 
   case kESCancel: 
@@ -543,11 +554,7 @@ void activate_proc(w, tag, reason)
     start_watch();  
     Beamline.BLOptions.CalcMod= 1;
     Fg3ActDat.imodus= 1; Fg3ActDat.itrans= 0;
-    /*    putpickfile(&Fg3ActDat, &Beamline, PHASESet.sourcepckname);  
-        sprintf(command,
-      "@PHASE$prg:startofor fg3dp_phasep /%s", MainPickName);
-      system(command); */  
-
+    
     if ((Beamline.beamlineOK & (sourceOK | mapOK)) != 
 	(sourceOK | mapOK))
       { 
@@ -558,8 +565,11 @@ void activate_proc(w, tag, reason)
 	  fprintf(stderr, "source not OK\n");
 
 	/*  exit(-1); */ 
-      } else  
-	RayTracec(&PHASESet, &Beamline);       
+      } else
+	{
+	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+	  RayTracec(&PHASESet, &Beamline); 
+	}     
     UpdateMainList();  
     stop_watch();    
     break;  
@@ -570,17 +580,41 @@ void activate_proc(w, tag, reason)
 #ifdef DEBUG
     printf("activate_proc: call PST\n");
 #endif
-    PST(&Beamline);     
+    if (Beamline.RTSource.QuellTyp == 'I')
+      {
+	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+	PST(&Beamline);
+      }  
+    else 
+      {
+	fprintf(stderr, 
+		"acticate_proc: error: no phase space image defined ");
+	fprintf(stderr, "(in source menu)\n");
+      }
     UpdateMainList();
     stop_watch();    
     break;   
 
   case kCCMPTButton:                              /*  Phase Trafo */  
-    MPST(&Beamline);     
+if (Beamline.RTSource.QuellTyp == 'I')
+      {
+	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+	MPST(&Beamline); 
+      }  
+    else 
+      {
+	fprintf(stderr, 
+		"acticate_proc: error: no phase space image defined ");
+	fprintf(stderr, "(in source menu)\n");
+      }
+       
     break;   
      
   case kCCSR1Button:                          /*  footprint */  
     start_watch(); 
+    ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
     Footprint(&Beamline, Beamline.position);
     stop_watch();    
     break; 
@@ -598,7 +632,8 @@ void activate_proc(w, tag, reason)
 	  fprintf(stderr, "source not OK\n");
       } else  
 	{
-	  printf("full ray trace\n");    
+	  printf("activate_proc: full ray trace\n");   
+	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
 	  RayTraceFull(&Beamline); 
 	  printf("full ray trace-> done\n");    
 	  Beamline.beamlineOK|= resultOK;
@@ -726,13 +761,12 @@ void activate_proc(w, tag, reason)
 #ifdef DEBUG
 	    printf("activate_proc: call WritePsd\n");
 #endif
-	    WritePsd(PHASESet.imageraysname, &bl->RESULT.RESUnion.PSD, 
-		     bl->RESULT.RESUnion.PSD.iy, 
-		     bl->RESULT.RESUnion.PSD.iz);   
+	    PSDp= (struct PSDType *)Beamline.RESULT.RESp;
+	    WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);   
 	  }
 	else 
 	  WriteRayFile(PHASESet.imageraysname, &bl->RESULT.points,
-		       bl->RESULT.RESUnion.Rays); 
+		       bl->RESULT.RESp); 
       } else 
 	fprintf(stderr, 
 		"activateproc: result is not OK: beamlineOK: 0x%X\n", 

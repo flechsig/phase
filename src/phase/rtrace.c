@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:35:52 flechsig>  */
+/*   Time-stamp: <29 Nov 06 10:53:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -28,7 +28,8 @@
 #include "mirrorpck.h"                 
 #include "geometrypck.h"   
 #include "phase.h"         
-#include "rtrace.h" 
+#include "rtrace.h"
+#include "common.h" 
  
 /***********************************************************************/
 /* Hard edge Quelle                   	                 19.3.96       */
@@ -39,7 +40,8 @@ void MakeHardEdgeSource(struct RTSourceType *y)
    double ly, lz, ldy, ldz, tdy, tdz, yi, zi, dyi, dzi;
    struct HardEdgeSourceType *x;
 
-   x= (struct HardEdgeSourceType *) &(y->Quelle.HardEdgeSource);  
+   /*  x= (struct HardEdgeSourceType *) &(y->Quelle.HardEdgeSource); */
+   x= (struct HardEdgeSourceType *)y->Quellep;
    tdy= x->divy/ 1000.0;
    tdz= x->divz/ 1000.0; 
    ly = (x->iy == 1) ?  0.0 : (x->disty / (x->iy- 1.0)); 
@@ -90,14 +92,14 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
    struct UndulatorSourceType  *x;  
    struct UndulatorSource0Type *x0;  
    
-   x=  (struct UndulatorSourceType *)  &(y->Quelle.UndulatorSource);  
-   x0= (struct UndulatorSource0Type *) &(y->Quelle.UndulatorSource0);
+   x=  (struct UndulatorSourceType *)  y->Quellep;  
+   x0= (struct UndulatorSource0Type *) y->Quellep;
    time(&zeit); srand(zeit);                 /* Random initialisieren */
    zweipi= 2.0* PI;                          /* 8.0* atan(1.0);       */
 
    switch (high)
    {
-     case 'H': 	               /* Bessy II langes gerades St"uck high beta */
+     case 'H': 	               /* Bessy II langes gerades Stueck high beta */
        printf("BESSY II undulator in high beta section\n");
        sigez  = 0.31;                                                /* mm */
        sigey  = 0.021;             /* 3% Kopplung ohne Beugungsbegrenzung  */ 
@@ -196,7 +198,6 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
 
 /***********************************************************************/
 /* Modell einer Punkt Quelle Eingaben alles Sigma Werte,               */
-/*  		                           12.2.04      	       */
 /***********************************************************************/ 
 void MakePointSource(struct RTSourceType *y)       
 {
@@ -204,8 +205,9 @@ void MakePointSource(struct RTSourceType *y)
    double zz, tdy, tdz;
    time_t zeit;
    struct PointSourceType *x;  
-
-   x= (struct PointSourceType *) &(y->Quelle.PointSource);  
+   
+   x= (struct PointSourceType *) y->Quellep;
+  
    time(&zeit); srand(zeit);
    tdy= x->sigdy/ 1000.0; 
    tdz= x->sigdz/ 1000.0; 
@@ -233,7 +235,7 @@ void MakeDipolSource(struct RTSourceType *y)
    time_t zeit;
    struct DipolSourceType *x;  
 
-   x= (struct DipolSourceType *) &(y->Quelle.DipolSource);  
+   x= (struct DipolSourceType *) y->Quellep;  
    time(&zeit); srand(zeit);
    tdy= x->sigdy/ 1000.0; 
    tdz= x->dz/ 1000.0; 
@@ -286,11 +288,16 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
 /* 29.3.99 wellenlaenge beim Undulator explizit aus bloptions setzen */ 
 {
    struct RayType *rays;
-  
-   if ((bl->RTSource.SourceRays= (struct RayType *) 
-      realloc(bl->RTSource.SourceRays, 
-              bl->RTSource.raynumber* sizeof(struct RayType))) == NULL)
-   {  fprintf(stderr, "realloc error\n"); exit(-1);    }     
+   struct UndulatorSourceType  *up;
+   struct UndulatorSource0Type *up0;
+   struct SRSourceType         *sp;
+   /* 24.11.06 */
+   bl->RTSource.SourceRays= XREALLOC(struct RayType, 
+				     bl->RTSource.SourceRays, 
+				     bl->RTSource.raynumber);
+        
+     
+
 
    /* hier gibt es bestimmt eine elegantere Loesung */
    switch (bl->RTSource.QuellTyp)
@@ -301,21 +308,24 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
      case 'M':
        /* Uwe 29.3.99 setzt die Wellenlaenge in der Undulator 
 	  Structur noch mal explizit (optimierung) */
-       bl->RTSource.Quelle.UndulatorSource.lambda= bl->BLOptions.lambda;
+       up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
+       up->lambda= bl->BLOptions.lambda;
        break;
      }
+
    switch (bl->RTSource.QuellTyp)
      {
      case 'F':
        ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
 		  &bl->RESULT); 
-      if (bl->RTSource.SourceRays != NULL) free(bl->RTSource.SourceRays);
-
-      bl->RTSource.SourceRays= (struct RayType *)
-	xmalloc(bl->RTSource.raynumber* sizeof(struct RayType));
-
-      memcpy(bl->RTSource.SourceRays, bl->RESULT.RESUnion.Rays,
-	     sizeof(struct RayType)* bl->RTSource.raynumber);
+      
+       bl->RTSource.SourceRays= XREALLOC(struct RayType, 
+					bl->RTSource.SourceRays, 
+					bl->RTSource.raynumber);
+       /* UF weiss nicht ob das noch OK ist UF 28.11.06 */
+       
+      memcpy(bl->RTSource.SourceRays, bl->RESULT.RESp,
+      sizeof(struct RayType)* bl->RTSource.raynumber); 
        break;
      case 'U':
        MakeUndulatorSource(&(bl->RTSource), 'H');       /* high beta */
@@ -339,11 +349,12 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
        MakePointSource(&(bl->RTSource));       
        break; 
      case 'S':   /* single ray */
-       bl->RTSource.SourceRays->y = bl->RTSource.Quelle.SRSource.y; 
-       bl->RTSource.SourceRays->z = bl->RTSource.Quelle.SRSource.z; 
-       bl->RTSource.SourceRays->dy= bl->RTSource.Quelle.SRSource.dy/ 1000.0; 
-       bl->RTSource.SourceRays->dz= bl->RTSource.Quelle.SRSource.dz/ 1000.0;
-       bl->RTSource.SourceRays->phi = 0.0; 
+       sp= (struct SRSourceType *)bl->RTSource.Quellep;
+       bl->RTSource.SourceRays->y  = sp->y; 
+       bl->RTSource.SourceRays->z  = sp->z; 
+       bl->RTSource.SourceRays->dy = sp->dy/ 1000.0; 
+       bl->RTSource.SourceRays->dz = sp->dz/ 1000.0;
+       bl->RTSource.SourceRays->phi= 0.0; 
        break;
      default:
        MakeHardEdgeSource(&(bl->RTSource));       	 
@@ -390,14 +401,11 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	      bl->beamlineOK);       /*  exit(-1); */ 
     } else  
       {
-	FreeResultMem(Re); 
 	Re->points= 1;
 	Re->typ= PLrttype; 
 	raylen= phase= 0.0;
 	memcpy(&Tmpsource, bl->RTSource.SourceRays, sizeof(struct RayType));
-
-	Re->RESUnion.Rays= (struct RayType *)xmalloc(sizeof(struct RayType));
-	        	
+			        	
 	/* Schleife ueber die elemente */
 	elcounter= 0;
 	printf("\n**************** Single Ray *****************\n");
@@ -435,7 +443,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		printf("!!! ray got lost on element number %d ==> exit\n", 
 		       elnumber);
 		/* ich muss Re->RESUnion.Rays irgendwie initialisieren */
-		memcpy(Re->RESUnion.Rays, &Tmpsource, sizeof(struct RayType)); 
+		memcpy(Re->RESp, &Tmpsource, sizeof(struct RayType)); 
 		elcounter= bl->elementzahl+ 1; /* Abbruch */
 	      }
 	    else
@@ -494,7 +502,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		       slopelen, bl->BLOptions.lambda);       
 #endif		
 		memcpy(&Tmpsource, &Tmpresult, sizeof(struct RayType));
-		memcpy(Re->RESUnion.Rays, &Tmpresult, sizeof(struct RayType)); 
+		memcpy(Re->RESp, &Tmpresult, sizeof(struct RayType)); 
 		elcounter++;
 	      }
 	  } /* end while  */
@@ -525,6 +533,7 @@ void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
      /* Uwe 20.5.96 		*/
      /* 3.2.97 		*/
      /* normal RT  */
+     /* umgeschrieben auf pointer UF 28.11.06 */
 {
   struct RayType *Raysin, *Raysout;   
   int i, iord;
@@ -543,15 +552,12 @@ void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
     } 
     else  
       {
-	FreeResultMem(Re); 
 	Re->points= bl->RTSource.raynumber;
-	Re->typ= PLrttype;      
-
-	Re->RESUnion.Rays= (struct RayType *)
-	  xmalloc(Re->points * sizeof(struct RayType));
-	        
+	Re->typ   = PLrttype;      
+	
 	printf("RayTracec: calculate %d ray(s) \n", Re->points); 
-	Raysin= bl->RTSource.SourceRays; Raysout= Re->RESUnion.Rays;    
+	Raysin = bl->RTSource.SourceRays; 
+	Raysout= Re->RESp;    
 
 	for (i= 0; i< bl->RTSource.raynumber; i++)
 	  { 
@@ -595,16 +601,11 @@ void RayTraceFull(struct BeamlineType *bl)
                   /*  exit(-1); */ 
    } else  
      {
-       FreeResultMem(Re);             /* ergebnis speicher frei */
        Re->points= zahl= bl->RTSource.raynumber;
-       Re->typ= PLrttype;      
-
-     /* reserviere speicher */
-       tmpsource= (struct RayType *) 
-	 xmalloc(zahl* sizeof(struct RayType));
-       tmpresult= (struct RayType *) 
-	 xmalloc(zahl* sizeof(struct RayType));
-       
+             
+       tmpsource= XMALLOC(struct RayType, Re->points);
+       tmpresult= XMALLOC(struct RayType, Re->points);
+           
        printf("RayTraceFull: start with \t\t%d ray(s) \t= 100 %s \n", 
 	      zahl, "%"); 
        memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
@@ -671,10 +672,8 @@ void RayTraceFull(struct BeamlineType *bl)
      free(tmpsource); 
      Re->points= zahl;
 
-     Re->RESUnion.Rays= (struct RayType *) 
-       xmalloc(Re->points * sizeof(struct RayType));
-
-     memcpy(Re->RESUnion.Rays, tmpresult, zahl* sizeof(struct RayType)); 
+     
+     memcpy(Re->RESp, tmpresult, zahl* sizeof(struct RayType)); 
 
      free(tmpresult);
      /* resultrays in memory */
@@ -735,5 +734,138 @@ void WriteRayFile(char *name, int *zahl, struct RayType *Rp)
        printf("  --> done\n");     
     }
 }  /* end WriteRayFile */
+
+
+/* reserves memory for a RTSource */
+/* use the XREALLOC macro         */
+void AllocRTSource(struct BeamlineType *bl)
+{
+  switch (bl->RTSource.QuellTyp)
+    {
+    case 'G':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct UndulatorSource0Type, bl->RTSource.Quellep, 1);
+      break;
+    case 'L':
+    case 'l':
+    case 'M':
+    case 'U': 
+    case 'u': 
+      bl->RTSource.Quellep= 
+	XREALLOC(struct UndulatorSourceType, bl->RTSource.Quellep, 1);
+      break;
+    case 'D':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct DipolSourceType, bl->RTSource.Quellep, 1);
+      break;
+    case 'o':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct PointSourceType, bl->RTSource.Quellep, 1);
+      break;
+    case 'H':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct HardEdgeSourceType, bl->RTSource.Quellep, 1);
+      break; 
+    case 'S':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct SRSourceType, bl->RTSource.Quellep, 1);
+      break; 
+    case 'I':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct PSImageType, bl->RTSource.Quellep, 1);
+      break; 
+    case 'F':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct FileSourceType, bl->RTSource.Quellep, 1);
+      break; 
+    case 'P':
+      printf("AllocRTSource: >>P<< (PhaseSpaceSource) no memory reserved\n");
+      break; 
+
+    default: fprintf(stderr, 
+		     "AllocRTSource: error: unknown source type! %c \n", 
+		     bl->RTSource.QuellTyp);
+      exit(-1);
+    }
+} /* AllocRTSource */
+
+/* frees and reserves memory for a RESULT    */
+/* use the XMALLOC macros in common.h        */
+/* dims is a field with dimensions           */
+/* in rt mode only dim1 is used              */
+/* ps mode: dim1: iy, dim2: iz               */ 
+void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
+{
+  struct PSDType *PSDp;
+  int ii, iy, iz;                   /* to make the code clearer */
+  FreeResultMem(&bl->RESULT); 
+
+  switch (newtype)
+    {
+    case PLrttype:
+      ii= dim1;
+      bl->RESULT.RESp= XMALLOC(struct RayType, ii);
+      bl->RESULT.points= ii;
+      break;
+    case PLphspacetype:
+      iy= dim1;
+      iz= dim2;
+      ii= iy * iz; 
+      bl->RESULT.RESp= XMALLOC(struct PSDType, 1);
+      PSDp= bl->RESULT.RESp;
+      /* PSDp->y  = XMALLOC(double, psip->iy); */
+      PSDp->y          = XMALLOC(double, iy);
+      PSDp->z          = XMALLOC(double, iz);
+      PSDp->psd        = XMALLOC(double, ii);
+      PSDp->stfd1phmaxc= XMALLOC(double, ii);
+      PSDp->stinumbc=    XMALLOC(double, ii);
+      PSDp->s1c=         XMALLOC(double, ii);
+      PSDp->s2c=         XMALLOC(double, ii);
+      PSDp->s3c=         XMALLOC(double, ii);
+      PSDp->eyrec=       XMALLOC(double, ii);
+      PSDp->ezrec=       XMALLOC(double, ii);
+      PSDp->eyimc=       XMALLOC(double, ii);
+      PSDp->ezimc=       XMALLOC(double, ii);
+      break;
+    default: 
+      fprintf(stderr, 
+	      "AllocResult: error: unknown type! %c -> exit\n", 
+	      bl->RESULT.typ);
+      exit(-1);
+    }
+  bl->RESULT.typ= newtype;
+} /* AllocResult */
+
+void FreeResultMem(struct RESULTType *Re) 
+/* macht den Speicher frei */
+/* uwe 8.8.96 */
+{
+  struct PSDType *PSDp;
+   if (((Re->typ & PLrttype) > 0) && (Re->RESp != NULL))
+      free(Re->RESp); 
+   if (((Re->typ & PLphspacetype) > 0) && (Re->RESp != NULL))
+   {  
+     PSDp= Re->RESp;
+     if (PSDp->psd != NULL)
+/* da der Speicher gemeinsam allociert wird teste ich nur einmal */
+/* man muss alle reservierten pointer einzeln freigeben!         */
+       {  
+	 free(PSDp->y);  
+	 free(PSDp->z);  
+	 free(PSDp->psd);
+	 free(PSDp->stfd1phmaxc);
+	 free(PSDp->stinumbc)  ;
+	 free(PSDp->s1c)       ;
+	 free(PSDp->s2c)       ;
+	 free(PSDp->s3c)       ;
+	 free(PSDp->eyrec)     ;
+	 free(PSDp->ezrec)     ;
+	 free(PSDp->eyimc)     ;
+	 free(PSDp->ezimc)     ;
+       }
+     free(Re->RESp);
+   }
+   Re->typ= 0;
+} /* end freeResultmem */
 
 /* end rtrace.c */

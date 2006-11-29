@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:37:00 flechsig>  */
+/*   Time-stamp: <29 Nov 06 14:13:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -479,12 +479,11 @@ void buildsystem(struct BeamlineType *bl)
 } /* end buildsystem */
 
 void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
-/* modification: 21 Jan 98 12:02:16 flechsig */
-/* modification: 03 Feb 98 12:31:29 flechsig */
 {
-  struct HardEdgeSourceType *hs;
-  struct DipolSourceType *ds;
+  struct HardEdgeSourceType  *hs;
+  struct DipolSourceType     *ds;
   struct UndulatorSourceType *us; 
+  struct SRSourceType        *sp; 
   double h, beugung; 
   
   switch (bl->RTSource.QuellTyp)
@@ -492,7 +491,7 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
     case 'U':
     case 'u':
       us= (struct UndulatorSourceType *) 
-	&(bl->RTSource.Quelle.UndulatorSource);
+	bl->RTSource.Quellep;
       us->lambda= bl->BLOptions.lambda;
       *dz= *dy= sqrt(us->lambda/ us->length);
       printf("Get_dydz_fromSource: undulator at BII, high/low beta s.\n");
@@ -502,20 +501,21 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       /* eigentlich brauche ich die Verteilung der rotierenden Verteilung */
       break; 
     case 'D':
-      ds= (struct DipolSourceType *) &(bl->RTSource.Quelle.DipolSource); 
+      ds= (struct DipolSourceType *) bl->RTSource.Quellep; 
       *dy= ds->sigdy/ 2000.0;  /* 2000 da totale Divergenz angegeben */
       *dz= ds->dz/ 2000.0; 
       printf("Get_dydz_fromSource: dipol source \n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break; 
     case 'S':   /* single ray */
-      *dy= bl->RTSource.Quelle.SRSource.dy/ 1000.0;
-      *dz= bl->RTSource.Quelle.SRSource.dz/ 1000.0;
+      sp= (struct SRSourceType *)bl->RTSource.Quellep;
+      *dy= sp->dy/ 1000.0;
+      *dz= sp->dz/ 1000.0;
       printf("Get_dydz_fromSource: single ray\n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break;
     default:
-      hs= (struct HardEdgeSourceType *) &(bl->RTSource.Quelle.HardEdgeSource);
+      hs= (struct HardEdgeSourceType *) bl->RTSource.Quellep;
       printf("Get_dydz_fromSource: default dy=dz= 0.001 rad\n");
       *dy= *dz= 0.001;         	 
       break;
@@ -527,8 +527,10 @@ double GetRMS(struct BeamlineType *bl, char ch)
 {
   double EX, EX2, rms;
   int i, n;
+  struct RayType *rays;
 
-  n= bl->RESULT.points;
+  n   = bl->RESULT.points;
+  rays= (struct RayType *)bl->RESULT.RESp;
   EX= EX2= 0.0;
   if (n > 0)
     {
@@ -536,18 +538,19 @@ double GetRMS(struct BeamlineType *bl, char ch)
 	{
 	  for (i= 0; i< n; i++)
 	    {
-	      EX += bl->RESULT.RESUnion.Rays[i].z;
+	      /*   EX += bl->RESULT.RESUnion.Rays[i].z;
 	      EX2+= bl->RESULT.RESUnion.Rays[i].z* 
-		bl->RESULT.RESUnion.Rays[i].z;
+	      bl->RESULT.RESUnion.Rays[i].z;*/
+	      EX += rays[i].z;
+	      EX2+= rays[i].z* rays[i].z;
 	    }
 	}
       else             /* y */
 	{
 	  for (i= 0; i< n; i++)
 	    {
-	      EX += bl->RESULT.RESUnion.Rays[i].y;
-	      EX2+= bl->RESULT.RESUnion.Rays[i].y* 
-		bl->RESULT.RESUnion.Rays[i].y;
+	      EX += rays[i].y;
+	      EX2+= rays[i].y * rays[i].y;
 	    }
 	}
       EX  /= (double) n;

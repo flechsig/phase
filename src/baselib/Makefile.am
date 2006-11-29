@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <13 Mar 06 08:23:12 flechsig> 
+#  Time-stamp: <14 Mar 06 12:22:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -16,7 +16,32 @@
 ## put all sources which are independent of the fortran compiler
 COMMONSOURCES= \
 	error.c xmalloc.c xstrdup.c cutils.c \
-	phaBLReadFromFile.c phaBLInit.c SetFilePos.c
+        phaBLBuild.c \
+	phaBLReadFromFile.c phaBLInit.c \
+        DefGeometryC.c DefMirrorC.c MakeMapandMatrix.c SetFilePos.c \
+        SetDeltaLambda.c rrtrace.c \
+        misali.F misali1.f misali2.f misali3.f misali4.f \
+	phasefor.F phase_integration.F phase_source.F \
+wdfgmapa4.for  wdfgmapb4.for   \
+wdfgmapc4.for  wdfgmapd14.for  \
+wdfgmapd34.for wdfgmapd44.for  \
+wdfgmapd54.for wdfgmape14.for  \
+wdfgmape24.for wdfgmapf4.for   \
+wdfgmapg4.for  wdfgmaph4.for   \
+wdfgmapi4.for  wdfgmapk14.for  \
+wdfgmapk24.for wdfgmapl4.for   \
+wdfgmapm14.for wdfgmapm24.for  \
+lengthab4.for  lengtha4.for    \
+lengthb4.for   lengthc4.for    \
+lengthd400.for lengthd401.for  \
+lengthd402.for lengthd410.for  \
+lengthd411.for lengthd412.for  \
+lengthd42.for  lengthd43.for   \
+p_m_4.for  \
+zernike_nl_60.for zernike_n_60.for \
+dfpl1_uf.F  dfpl2_uf.F \
+phabasestructs.h phabasedefs.h idl_export.h
+
 ## end common sources
 
 ## we use an AM_CONDITIONAL to switch library names for different compilers

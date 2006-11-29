@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:34:51 flechsig>  */
+/*   Time-stamp: <29 Nov 06 10:19:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -178,6 +178,7 @@ void get_nam(int n,
 
 void MPST(struct BeamlineType *bl)
 {
+   struct PSDType *PSDp;
    struct geometryst *gp;
    struct rayst ra;
    struct source_results sr;
@@ -193,6 +194,9 @@ void MPST(struct BeamlineType *bl)
    char ezre1[MaxPathLength],ezim1[MaxPathLength];
    char eyre2[MaxPathLength],eyim2[MaxPathLength];
    char ezre2[MaxPathLength],ezim2[MaxPathLength];
+
+   /* UF 28.11.06 */
+     PSDp= bl->RESULT.RESp; 
 
 /*   int function get_nam, function WriteMPsd; */
 
@@ -246,18 +250,14 @@ void MPST(struct BeamlineType *bl)
    
 /* write results to file */   
 
-	WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
+       /*  UF 28.11.06    WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
 		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,1);
-       WriteMPsd(ezre1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,2);
-       WriteMPsd(eyim1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,3);
-       WriteMPsd(ezim1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,4);
+		bl->RESULT.RESUnion.PSD.iz,1); */
+       WriteMPsd(eyre1, PSDp, PSDp->iy, PSDp->iz, 1);
+       WriteMPsd(ezre1, PSDp, PSDp->iy, PSDp->iz, 2);
+       WriteMPsd(eyim1, PSDp, PSDp->iy, PSDp->iz, 3);
+       WriteMPsd(ezim1, PSDp, PSDp->iy, PSDp->iz, 4);
+       
 };   
 
 
@@ -298,6 +298,12 @@ void MPST(struct BeamlineType *bl)
    
 /* write results to file */   
 
+       WriteMPsd(eyre1, PSDp, PSDp->iy, PSDp->iz, 1);
+       WriteMPsd(ezre1, PSDp, PSDp->iy, PSDp->iz, 2);
+       WriteMPsd(eyim1, PSDp, PSDp->iy, PSDp->iz, 3);
+       WriteMPsd(ezim1, PSDp, PSDp->iy, PSDp->iz, 4);
+       /*
+
 	WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
 		bl->RESULT.RESUnion.PSD.iy,
 		bl->RESULT.RESUnion.PSD.iz,1);
@@ -310,6 +316,7 @@ void MPST(struct BeamlineType *bl)
        WriteMPsd(ezim1, &bl->RESULT.RESUnion.PSD, 
 		bl->RESULT.RESUnion.PSD.iy,
 		bl->RESULT.RESUnion.PSD.iz,4);
+       */
 };   
 
 
@@ -325,7 +332,9 @@ void PST(struct BeamlineType *bl)
    in c allociert werden */
 {
 /* leere Variablen */
-   struct geometryst *gp;
+   struct PSImageType *psip;
+   struct PSDType *PSDp;
+   struct geometryst  *gp;
    struct rayst ra;
    struct source_results sr;
    struct integration_results xir;
@@ -334,6 +343,10 @@ void PST(struct BeamlineType *bl)
    double a[6][6], *tmp;
    int size, i, gratingnumber, elart, gratingposition;
    
+    /* UF 28.11.06 */
+   PSDp= bl->RESULT.RESp; 
+   psip= (struct PSImageType *)bl->RTSource.Quellep;
+
    printf("phase space trafo PST called\n");
    printf("  source typ: %d\n", bl->src.isrctype); 
 
@@ -392,44 +405,8 @@ void PST(struct BeamlineType *bl)
    src.so5.dipzmax= 10.0; */
 
    /* speicher reservieren fuers ergebnis 	*/
-   /* erst mal freigeben 			*/
-   FreeResultMem(&bl->RESULT);  
+   /* ausgelagert UF 28.11.06 */
    
-   /* mem reservieren */ 
-   bl->RESULT.RESUnion.PSD.iy= bl->RTSource.Quelle.PSImage.iy;  
-   bl->RESULT.RESUnion.PSD.iz= bl->RTSource.Quelle.PSImage.iz;  
-   size= bl->RESULT.RESUnion.PSD.iy* bl->RESULT.RESUnion.PSD.iz* 
-     sizeof(double);
-   
-   bl->RESULT.RESUnion.PSD.y= (double *)
-     xmalloc(bl->RESULT.RESUnion.PSD.iy* sizeof(double));
-   bl->RESULT.RESUnion.PSD.z= (double *)
-     xmalloc(bl->RESULT.RESUnion.PSD.iz* sizeof(double));
-   bl->RESULT.RESUnion.PSD.psd= (double *)xmalloc(size);
-
-   /*   if ((bl->RESULT.RESUnion.PSD.y= (double *)                  
-        malloc(bl->RESULT.RESUnion.PSD.iy* sizeof(double))) == NULL)
-     {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
-   if ((bl->RESULT.RESUnion.PSD.z= (double *)          
-        malloc(bl->RESULT.RESUnion.PSD.iz* sizeof(double))) == NULL)
-     {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
-   if ((bl->RESULT.RESUnion.PSD.psd= (double *)          
-        malloc(size)) == NULL)
-	{  fprintf(stderr, "malloc error\n"); exit(-1);    }   */
-
-   bl->RESULT.RESUnion.PSD.stfd1phmaxc= (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.stinumbc=    (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.s1c=         (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.s2c=         (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.s3c=         (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.eyrec=       (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.ezrec=       (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.eyimc=       (double *)xmalloc(size);
-   bl->RESULT.RESUnion.PSD.ezimc=       (double *)xmalloc(size);
-     
-
-   printf("memory reserved\n");
-   bl->RESULT.typ |= PLphspacetype;  
     
    /* map4 fuettern */
    /*   memcpy(&m4.,,sizeof());
@@ -440,17 +417,18 @@ void PST(struct BeamlineType *bl)
 
   printf("pst.c: wc4000: %g\n", tmp[4]);
 
-  pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, 
+  /* pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, */
+  pstf(psip, &bl->BLOptions.PSO,
        &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, &bl->xlm.xlen1c, 
        &bl->xlm.xlen2c, 
        &bl->xlen0, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
        &bl->wc, &bl->xlc,
-       bl->RESULT.RESUnion.PSD.y, bl->RESULT.RESUnion.PSD.z, 
-       bl->RESULT.RESUnion.PSD.psd, bl->RESULT.RESUnion.PSD.stfd1phmaxc,
-       bl->RESULT.RESUnion.PSD.stinumbc, bl->RESULT.RESUnion.PSD.s1c,
-       bl->RESULT.RESUnion.PSD.s2c, bl->RESULT.RESUnion.PSD.s3c,
-       bl->RESULT.RESUnion.PSD.eyrec, bl->RESULT.RESUnion.PSD.ezrec,
-       bl->RESULT.RESUnion.PSD.eyimc, bl->RESULT.RESUnion.PSD.ezimc,
+       PSDp->y, PSDp->z, 
+       PSDp->psd, PSDp->stfd1phmaxc,
+       PSDp->stinumbc, PSDp->s1c,
+       PSDp->s2c, PSDp->s3c,
+       PSDp->eyrec, PSDp->ezrec,
+       PSDp->eyimc, PSDp->ezimc,
        &m4, gp, &bl->ElementList->mir,
        &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl, 
        &bl->BLOptions.xi, &xir, &st,
@@ -458,13 +436,13 @@ void PST(struct BeamlineType *bl)
 
    /* simpson resuslts copieren */
    printf("copy simpson results\n");
-   memcpy(bl->RESULT.RESUnion.PSD.simpre, xir.simpre, sizeof(double)*0x8000);
-   memcpy(bl->RESULT.RESUnion.PSD.simpim, xir.simpim, sizeof(double)*0x8000);
-   memcpy(bl->RESULT.RESUnion.PSD.sintre, xir.sintre, sizeof(double)*0x8000);
-   memcpy(bl->RESULT.RESUnion.PSD.sintim, xir.sintim, sizeof(double)*0x8000);
-   memcpy(bl->RESULT.RESUnion.PSD.simpa, xir.simpa, sizeof(double)*0x8000);
-   memcpy(bl->RESULT.RESUnion.PSD.simpp, xir.simpp, sizeof(double)*0x8000);
-   memcpy(bl->RESULT.RESUnion.PSD.d12, xir.d12, sizeof(double)*24576);
+   memcpy(PSDp->simpre, xir.simpre, sizeof(double)*0x8000);
+   memcpy(PSDp->simpim, xir.simpim, sizeof(double)*0x8000);
+   memcpy(PSDp->sintre, xir.sintre, sizeof(double)*0x8000);
+   memcpy(PSDp->sintim, xir.sintim, sizeof(double)*0x8000);
+   memcpy(PSDp->simpa,  xir.simpa,  sizeof(double)*0x8000);
+   memcpy(PSDp->simpp,  xir.simpp,  sizeof(double)*0x8000);
+   memcpy(PSDp->d12,    xir.d12,    sizeof(double)*24576);
 /*   printf("dies muss noch geaendert werden!!!\n");*/
 
    bl->beamlineOK |= resultOK;  
@@ -531,19 +509,5 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
    printf("WritePsd: --> done\n");
 }  /* end writepsd */
 
-void FreeResultMem(struct RESULTType *Re)  
-/* macht den Speicher frei */
-/* uwe 8.8.96 */
-{
-   if (((Re->typ & PLrttype) > 0) && (Re->RESUnion.Rays != NULL))
-      free(Re->RESUnion.Rays); 
-   if (((Re->typ & PLphspacetype) > 0) && (Re->RESUnion.PSD.y != NULL))
-   {  /* da der Speicher gemeinsam allociert wird teste ich nur einmal */
-        free(Re->RESUnion.PSD.y);  
-        free(Re->RESUnion.PSD.z);  
-        free(Re->RESUnion.PSD.psd);  
-   }
-   Re->typ= 0;
-} /* end freeResultmem */
 /* end pst.c */
 

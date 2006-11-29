@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasecommon/phasecommon.h */
 /*  Date      : <10 Mar 06 08:59:22 flechsig>  */
-/*  Time-stamp: <13 Mar 06 08:25:48 flechsig>  */
+/*  Time-stamp: <13 Mar 06 09:48:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -8,13 +8,16 @@
 /*  $Revision$  */
 /*  $Author$  */
 
-/* 
-   Target: collect all routines and definitions which are 
-   independent of the gui
-*/
-/* uebernommen aus phase.h */      
 
-#define MaxPathLength           255
+#ifndef PHABASESTRUCTS_H
+  #define  PHABASESTRUCTS_H
+
+/* 
+   Target: collect all structures which are independent of the gui
+*/
+
+
+/* uebernommen aus phase.h */      
 
 /********************** Strukturen **************************************/
      
@@ -199,3 +202,4 @@ struct BeamlineType
   struct sources src;
 };
 
+#endif /* PHABASESTRUCTS_H */

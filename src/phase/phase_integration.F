@@ -1,6 +1,6 @@
 c File      : ~/phase/src/phase/phase_integration_12.for
 c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <11 Feb 00 14:00:10 flechsig> 
+c Time-stamp: <14 Mar 06 08:24:07 flechsig> 
 c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
@@ -1439,7 +1439,8 @@ c-------- derivation of matrix A
 	enddo
 
 	lnum=iiord+1
-	call deqn(lnum,a,number,work,ifail1,1,b)
+c 14.3.06 kann deqn nicht finden
+c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b)
  	if(ifail1.ne.0)then
 		print*,'******* Fehler in FITPAR ******'
 		print*,'******* Fehler beim Loesen' 

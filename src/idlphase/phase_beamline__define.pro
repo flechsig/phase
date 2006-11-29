@@ -1,12 +1,36 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/phase_beamline__define.pro
 ;  Date      : <09 Mar 06 10:01:36 flechsig> 
-;  Time-stamp: <13 Mar 06 08:18:03 flechsig> 
+;  Time-stamp: <14 Mar 06 13:09:02 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
 ;  $Date$
 ;  $Revision$ 
 ;  $Author$ 
+
+pro phase_beamline::WriteRayFile
+lib = !phaseidllib
+func= 'WriteRayFileIDL'
+ret= CALL_EXTERNAL(lib, func, self.beamline, /AUTO_GLUE)
+end
+
+pro phase_beamline::RayTracec
+lib = !phaseidllib
+func= 'RayTracecIDL'
+ret= CALL_EXTERNAL(lib, func, self.beamline, /AUTO_GLUE)
+end
+
+pro phase_beamline::RayTraceFull
+lib = !phaseidllib
+func= 'RayTraceFullIDL'
+ret= CALL_EXTERNAL(lib, func, self.beamline, /AUTO_GLUE)
+end
+
+pro phase_beamline::makertsource
+lib = !phaseidllib
+func= 'MakeRTSourceIDL'
+ret= CALL_EXTERNAL(lib, func, self.beamline, /AUTO_GLUE)
+end 
 
 pro phase_beamline::build
 ;+
@@ -19,7 +43,7 @@ pro phase_beamline::build
 ;
 ;
 ; CATEGORY:
-;
+;   PHASE
 ;
 ;
 ; CALLING SEQUENCE:
@@ -71,7 +95,8 @@ pro phase_beamline::build
 ;-
 lib = !phaseidllib
 func= 'phaBLBuildIDL'
-ret= CALL_EXTERNAL(lib, func, filename, self.beamline, /AUTO_GLUE)
+
+ret= CALL_EXTERNAL(lib, func, self.beamline, /AUTO_GLUE)
 end
 
 pro phase_beamline::read, filename

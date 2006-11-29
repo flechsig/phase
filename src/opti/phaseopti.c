@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <10 Mar 06 12:05:19 flechsig>  */
+/*   Time-stamp: <29 Nov 06 14:17:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -284,6 +284,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 
 #ifndef WITH_FULL_RT
       printf("************************** full rt\n");
+      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       RayTraceFull(&Beamline);
       transmittance= (double)Beamline.RESULT.points/
 	(double)Beamline.RTSource.raynumber;
@@ -318,6 +319,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       /**CHI= costfunction(&Beamline);*/
 #ifdef WITH_FULL_RT
       printf("************************** full rt\n");
+      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       RayTraceFull(&Beamline);
       transmittance= (double)Beamline.RESULT.points/
 			      (double)Beamline.RTSource.raynumber;

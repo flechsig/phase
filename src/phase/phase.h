@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <24 Nov 06 17:02:36 flechsig>  */
+/*   Time-stamp: <29 Nov 06 09:13:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -473,12 +473,12 @@ struct HardEdgeSourceType  { double disty, distz, divy, divz;
   int    iy, iz, idy, idz; };  
 struct PSImageType         { double ymin, ymax, zmin, zmax;
   int    iy, iz; };         
-struct PSSourceType        { double sigy, sigdy, sigz, sigdz;
+struct PSSourceType       { double sigy, sigdy, sigz, sigdz;
   int    yhard, dyhard, zhard, dzhard; };         
 struct FileSourceType { char *filename; };
     
 struct RTSourceType {
-  union               	{ 
+  /*  union               	{ 
     struct HardEdgeSourceType  HardEdgeSource; 
     struct UndulatorSourceType UndulatorSource;
     struct UndulatorSource0Type UndulatorSource0;
@@ -487,10 +487,10 @@ struct RTSourceType {
     struct PSImageType         PSImage;
     struct PointSourceType     PointSource;
     struct FileSourceType      FileSource;
-  } Quelle;
+    } Quelle; */
   void *Quellep;           /* UF 24.11.06 */
   struct RayType *SourceRays;          
-  int QuellTyp, modified, raynumber; };       
+  int QuellTyp, QuellTyp_old, modified, raynumber; };       
 
 struct PSDType  {
   double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
@@ -501,10 +501,10 @@ struct PSDType  {
 };
 
 struct RESULTType {
-  union               	{ 
+  /*  union               	{ 
     struct RayType *Rays;  
     struct PSDType PSD; 
-  } RESUnion; 
+    } RESUnion; */
   void *RESp;          /* UF 24.11.06 */
   int points, typ; };       
 
@@ -593,7 +593,7 @@ struct BeamlineType
 int	getpickfile(struct datset *, struct BeamlineType *, char *);  
 
 void putpickfile(struct datset *, struct BeamlineType *, char *),    
-  initdatset (struct datset *, struct BeamlineType *, int);    
+  initdatset (struct datset *, struct BeamlineType *);    
 
 
 /******************** globale Variable *****************************/
@@ -717,7 +717,6 @@ void 	ActivateFileSelection(int, char *),
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE),
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, int),
-  FreeResultMem(struct RESULTType *),  
   GeneratePrintDataFile(),
   GetBLBox(char *, struct BeamlineType *),  
   
@@ -752,7 +751,8 @@ void 	ActivateFileSelection(int, char *),
   InitOptiBox(char *, struct BeamlineType *),
   InitOptiList2(int, char *),
   InitParameterBox(struct BeamlineType *, char *), 
-  InitSourceBox(struct datset *, struct BeamlineType *, int),    
+  InitSourceBox(struct datset *, struct BeamlineType *),
+  InitSourceType(struct BeamlineType *, int),  
   InitGeometryBox(struct gdatset *), 
   InitGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *),                     
   InitPHASE(struct PHASEset *), 

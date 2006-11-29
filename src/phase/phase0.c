@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <10 Mar 06 12:03:53 flechsig>  */
+/*   Time-stamp: <28 Nov 06 11:55:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,6 +12,8 @@
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
 #include <math.h>
+#include <libgen.h>                   /* basename */
+
 
 #include <Xm/Text.h>                  /* fileBox               */
 #include <Xm/FileSB.h>    

@@ -1,12 +1,12 @@
-c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
-c$$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c$$$ Time-stamp: <09 Jul 04 14:31:40 flechsig> 
-c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
-c$$$
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
+c $$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
+c $$$ Date      : <11 Nov 03 09:30:31 flechsig> 
+c $$$ Time-stamp: <29 Nov 06 10:26:53 flechsig> 
+c $$$ Author    : Uwe Flechsig, flechsig@psi.ch
+c $$$
+c $$$ $Source$ 
+c $$$ $Date$
+c $$$ $Revision$ 
+c $$$ $Author$ 
 
 c
 c fortran file which will be preprocessed #define LINUX #define VMS

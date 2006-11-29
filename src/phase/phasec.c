@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <10 Mar 06 11:54:59 flechsig>  */
+/*   Time-stamp: <29 Nov 06 13:59:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -43,6 +43,9 @@ void BatchMode(char *fname, int cmode, int selected)
 /* Uwe 2.10.96 */
 /* Batchmodus */
 {
+  struct PSDType *PSDp;
+  struct PSImageType *psip;
+
   printf("BatchMode: datafilename  : %s\n", PHASESet.beamlinename);
   printf("BatchMode: resultfilename: %s\n", PHASESet.imageraysname);
   /*  InitDataSets(&PHASESet, fname); /* initialisiert auch Beamline */
@@ -63,32 +66,38 @@ void BatchMode(char *fname, int cmode, int selected)
     case 1:
       printf("BatchMode: Ray Tracing\n");
       MakeRTSource(&PHASESet, &Beamline); 
+      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       RayTracec(&PHASESet, &Beamline);
+      /* UF 28.11.06   WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
+	    Beamline.RESULT.RESUnion.Rays); */
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESUnion.Rays); 
+	    Beamline.RESULT.RESp);
       break;
     case 2:
       printf("BatchMode: Full Ray Tracing\n");
       MakeRTSource(&PHASESet, &Beamline); 
+      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       RayTraceFull(&Beamline);
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESUnion.Rays); 
+		   Beamline.RESULT.RESp); 
       break;
     case 4:
       printf("BatchMode: Footprint at element %d\n", selected);
       Beamline.position= selected;
       MakeRTSource(&PHASESet, &Beamline);
+      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       Footprint(&Beamline, Beamline.position);
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESUnion.Rays);
+		   Beamline.RESULT.RESp);
       break;
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
       src_ini(&Beamline.src); 
+      psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+      ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
       PST(&Beamline);
-      WritePsd(PHASESet.imageraysname, &Beamline.RESULT.RESUnion.PSD, 
-	       Beamline.RESULT.RESUnion.PSD.iy, 
-	       Beamline.RESULT.RESUnion.PSD.iz);
+      PSDp= (struct PSDType *)Beamline.RESULT.RESp;
+      WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
       break;
     default: 
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
@@ -1688,13 +1697,25 @@ void SetIndexField(int *field, int n,...)
     *ip++= va_arg(v, int);
   va_end(v);     
 } /* end SetIndexField */
-     
-void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)   
+
+/* UF 28.11.06 unions durch pointer ersetzt 
+bestimmen des sourcetype ausgelagert */     
+void InitSourceBox(struct datset *x, struct BeamlineType *bl)   
 {
   int i, header, IFeld[8], sou;
   struct RayType *Raysout;  
   XmString label;
   Widget w;  
+  
+  struct UndulatorSourceType  *up;
+  struct UndulatorSource0Type *up0;
+  struct DipolSourceType      *dp;
+  struct PointSourceType      *sop;
+  struct HardEdgeSourceType   *hp;     
+  struct SRSourceType         *sp; 
+  struct PSImageType          *psip;
+  struct PSSourceType         *pssp;  
+
   char TextField[8][40],            /* 8 editfelder */
    
     *LabelField1 [39] =  {	"", "-> points",         		/*0,1*/
@@ -1727,12 +1748,13 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     printf("InitSourceBox: wdgnumber: %d, bl->RTSource.QuellTyp: %c\n", 
 	   source, bl->RTSource.QuellTyp);   
 #endif    
+    /* UF 28.11.06 
     switch (source) 
       {
       case kESDipolSourceButton: 	sou= 'D'; break;
       case kESPointSourceButton: 	sou= 'o'; break;
       case kESUndulatorSourceButton: 	sou= 'U'; break;  
-      case kESUndulatorSISButton: 	sou= 'L'; break;  /*23.11.98 UF*/
+      case kESUndulatorSISButton: 	sou= 'L'; break;  
       case kESUndulatorSIMButton: 	sou= 'M'; break;  
       case kESundulatorSourceButton: 	sou= 'u'; break;
       case kESUndulatorButton:          sou= 'G'; break;
@@ -1746,7 +1768,12 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       case kESRayTraceButton:
       default : 			sou= 'H'; 
       }
-    bl->RTSource.QuellTyp= sou;
+      bl->RTSource.QuellTyp= sou; */
+    /* erst ab hier ist der source typ in der struktur gesetzt */
+    /* AllocRTSource(bl); */
+
+
+    sou= bl->RTSource.QuellTyp;
        
     for (i= 0; i< 8; i++) TextField[i][0]= '\0';
     printf("initsourcebox with source = %c\n", sou);  
@@ -1761,38 +1788,42 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     case 'D':
       w= widget_array[kESDipolSourceButton];  
       header= 1;
-      SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.DipolSource.sigy);    
-      sprintf(TextField[1], "%f", bl->RTSource.Quelle.DipolSource.sigdy);    
-      sprintf(TextField[2], "%f", bl->RTSource.Quelle.DipolSource.sigz);    
-      sprintf(TextField[3], "%f", bl->RTSource.Quelle.DipolSource.dz);    
+      SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0); 
+      dp= (struct DipolSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", dp->sigy);    
+      sprintf(TextField[1], "%f", dp->sigdy);    
+      sprintf(TextField[2], "%f", dp->sigz);    
+      sprintf(TextField[3], "%f", dp->dz);    
       sprintf(TextField[4], "%d", bl->RTSource.raynumber);   
       xprintf("Dipol Source: h. div. hard edge, the rest are sigma values\n"); 
       break;    
     case 'o':
       w= widget_array[kESPointSourceButton];  
       header= 1;
-      SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.PointSource.sigy);    
-      sprintf(TextField[1], "%f", bl->RTSource.Quelle.PointSource.sigdy);    
-      sprintf(TextField[2], "%f", bl->RTSource.Quelle.PointSource.sigz);    
-      sprintf(TextField[3], "%f", bl->RTSource.Quelle.PointSource.sigdz);    
+      SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0);
+      sop= (struct PointSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", sop->sigy);    
+      sprintf(TextField[1], "%f", sop->sigdy);    
+      sprintf(TextField[2], "%f", sop->sigz);    
+      sprintf(TextField[3], "%f", sop->sigdz);    
       sprintf(TextField[4], "%d", bl->RTSource.raynumber); 
       xprintf("Point Source: all sigma values\n");
       break;    
     case 'U':  
       w= widget_array[kESUndulatorSourceButton]; 
       header= 6;
-      SetIndexField(IFeld, 8, 7, 8, 6, 0, 0, 0, 0, 0);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.UndulatorSource.length);
+      SetIndexField(IFeld, 8, 7, 8, 6, 0, 0, 0, 0, 0);
+      up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", up->length);
       sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
       sprintf(TextField[2], "%d", bl->RTSource.raynumber);   
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;     
     case 'u':  
       w= widget_array[kESundulatorSourceButton]; 
-      SetIndexField(IFeld, 8, 7, 8, 6, 0, 0, 0, 0, 0);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.UndulatorSource.length);
+      SetIndexField(IFeld, 8, 7, 8, 6, 0, 0, 0, 0, 0);
+      up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", up->length);
       sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
       sprintf(TextField[2], "%d", bl->RTSource.raynumber);    
       set_something(widget_array[kEST2], XmNsensitive, False); 
@@ -1802,45 +1833,49 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     case 'L':  
       w= widget_array[kESUndulatorSISButton]; 
       header= 6;
-      SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.UndulatorSource.length);
+      SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);
+      up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", up->length);
       sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
       sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
-      sprintf(TextField[3], "%f", bl->RTSource.Quelle.UndulatorSource.deltaz);  
+      sprintf(TextField[3], "%f", up->deltaz);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;     
     case 'M':  
       w= widget_array[kESUndulatorSIMButton]; 
       header= 6;
-      SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.UndulatorSource.length);
+      SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);
+      up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", up->length);
       sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
       sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
-      sprintf(TextField[3], "%f", bl->RTSource.Quelle.UndulatorSource.deltaz);  
+      sprintf(TextField[3], "%f", up->deltaz);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;        
     case 'G':  
       w= widget_array[kESUndulatorButton]; 
       header= 6;
-      SetIndexField(IFeld, 8, 7, 8, 6, 33, 34, 35, 36, 37);      
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.UndulatorSource0.length);
+      SetIndexField(IFeld, 8, 7, 8, 6, 33, 34, 35, 36, 37); 
+      up0= (struct UndulatorSource0Type *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", up0->length);
       sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
       sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
-      sprintf(TextField[3], "%f", bl->RTSource.Quelle.UndulatorSource0.deltaz);  
-      sprintf(TextField[4], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaez);  
-      sprintf(TextField[5], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaey);  
-      sprintf(TextField[6], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaedz);  
-      sprintf(TextField[7], "%f", bl->RTSource.Quelle.UndulatorSource0.sigmaedy);  
+      sprintf(TextField[3], "%f", up0->deltaz);  
+      sprintf(TextField[4], "%f", up0->sigmaez);  
+      sprintf(TextField[5], "%f", up0->sigmaey);  
+      sprintf(TextField[6], "%f", up0->sigmaedz);  
+      sprintf(TextField[7], "%f", up0->sigmaedy);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;        
     case 'S':
       w= widget_array[kESSR2Button]; 
-      Raysout= bl->RESULT.RESUnion.Rays;  
+      Raysout= bl->RESULT.RESp;  
       SetIndexField(IFeld, 8, 9, 13, 10, 14, 15, 16, 17, 18); 
-      sprintf(TextField[0], "%lf", bl->RTSource.Quelle.SRSource.y);
-      sprintf(TextField[2], "%lf", bl->RTSource.Quelle.SRSource.z);
-      sprintf(TextField[4], "%lf", bl->RTSource.Quelle.SRSource.dy);  
-      sprintf(TextField[6], "%lf", bl->RTSource.Quelle.SRSource.dz);
+      sp= (struct SRSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%lf", sp->y);
+      sprintf(TextField[2], "%lf", sp->z);
+      sprintf(TextField[4], "%lf", sp->dy);  
+      sprintf(TextField[6], "%lf", sp->dz);
       if (Raysout != NULL)  /* noch nichts berechnet */
 	{ 
 	  sprintf(TextField[1], "%lf", Raysout->y);    
@@ -1851,7 +1886,9 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
       break; 
     case 'P':
       w= widget_array[kESPhaseSpaceButton]; 
-      SetIndexField(IFeld, 8, 19, 20, 21, 22, 23, 24, 25, 26); 
+      SetIndexField(IFeld, 8, 19, 20, 21, 22, 23, 24, 25, 26);
+      /*pssp= (struct PSSourceType *)bl->RTSource.Quellep;*/
+      /* wird nicht benutzt */
       sprintf(TextField[0], "%f", x->sigmay);
       sprintf(TextField[1], "%f", x->sigmayp);
       sprintf(TextField[2], "%f", x->ymin); 
@@ -1864,26 +1901,28 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
     case 'I':                          /*hard edge */
       w= widget_array[kESPhaseSpaceImageButton]; 
       SetIndexField(IFeld, 8, 27, 28, 29, 30, 31, 32, 0, 0); 
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.PSImage.ymin);    
-      sprintf(TextField[1], "%f", bl->RTSource.Quelle.PSImage.ymax);    
-      sprintf(TextField[2], "%f", bl->RTSource.Quelle.PSImage.zmin);   
-      sprintf(TextField[3], "%f", bl->RTSource.Quelle.PSImage.zmax);   
-      sprintf(TextField[4], "%d", bl->RTSource.Quelle.PSImage.iy);   
-      sprintf(TextField[5], "%d", bl->RTSource.Quelle.PSImage.iz); 
+      psip= (struct PSImageType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", psip->ymin);    
+      sprintf(TextField[1], "%f", psip->ymax);    
+      sprintf(TextField[2], "%f", psip->zmin);   
+      sprintf(TextField[3], "%f", psip->zmax);   
+      sprintf(TextField[4], "%d", psip->iy);   
+      sprintf(TextField[5], "%d", psip->iz); 
       /* sprintf(TextField[6], "%f", x->xlam_test);   */ 
       break; 
     case 'H':
     default:
       w= widget_array[kESRayTraceButton]; 
-      SetIndexField(IFeld, 8, 2, 1, 3, 1, 4, 1, 5, 1);  
-      sprintf(TextField[0], "%f", bl->RTSource.Quelle.HardEdgeSource.disty);
-      sprintf(TextField[1], "%d", bl->RTSource.Quelle.HardEdgeSource.iy);    
-      sprintf(TextField[2], "%f", bl->RTSource.Quelle.HardEdgeSource.distz);  
-      sprintf(TextField[3], "%d", bl->RTSource.Quelle.HardEdgeSource.iz);    
-      sprintf(TextField[4], "%f", bl->RTSource.Quelle.HardEdgeSource.divy);   
-      sprintf(TextField[5], "%d", bl->RTSource.Quelle.HardEdgeSource.idy);    
-      sprintf(TextField[6], "%f", bl->RTSource.Quelle.HardEdgeSource.divz);   
-      sprintf(TextField[7], "%d", bl->RTSource.Quelle.HardEdgeSource.idz);    
+      SetIndexField(IFeld, 8, 2, 1, 3, 1, 4, 1, 5, 1); 
+      hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", hp->disty);
+      sprintf(TextField[1], "%d", hp->iy);    
+      sprintf(TextField[2], "%f", hp->distz);  
+      sprintf(TextField[3], "%d", hp->iz);    
+      sprintf(TextField[4], "%f", hp->divy);   
+      sprintf(TextField[5], "%d", hp->idy);    
+      sprintf(TextField[6], "%f", hp->divz);   
+      sprintf(TextField[7], "%d", hp->idz);    
       break;   
     }
     /* set history */
@@ -1893,13 +1932,10 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl, int source)
 
    for (i= 0; i< 8; i++)
       {	
-   printf(" %s\n ",LabelField1[IFeld[i]]);
-   printf(" %s ",TextField[i]);
-	 
-	 set_something(widget_array[kEST1+ i], XmNvalue, TextField[i]);   
-	 label= XmStringCreateLocalized(LabelField1[IFeld[i]]); 
-	 set_something(widget_array[kEST1Label+ i], XmNlabelString, label);  
-
+	printf(" %s -> %s\n",LabelField1[IFeld[i]], TextField[i]);
+	set_something(widget_array[kEST1+ i], XmNvalue, TextField[i]);   
+	label= XmStringCreateLocalized(LabelField1[IFeld[i]]); 
+	set_something(widget_array[kEST1Label+ i], XmNlabelString, label);  
       }    /* */
     /*  label= DXmCvtFCtoCS(HeaderField[header], &bc, &status);     */
 
@@ -2162,12 +2198,23 @@ void SetOElementBoxSensitivity(int etype)
 void GetSource(struct BeamlineType *bl)  
      /****************************************************************/
      /* wertet die sourcebox aus					*/
-     /* 20.5.96                              			*/  
+     /* 20.5.96                              			*/
+     /* 28.11.06 umgeschrieben von union auf pointer */  
 
 {
   char *textf[8];
   struct datset x; 
   int i;
+
+  struct UndulatorSourceType  *up;
+  struct UndulatorSource0Type *up0;
+  struct DipolSourceType      *dp;
+  struct PointSourceType      *sop;
+  struct HardEdgeSourceType   *hp;     
+  struct SRSourceType         *sp; 
+  struct PSImageType          *psip;
+  struct PSSourceType         *pssp;
+
 
 #ifdef DEBUG 
   printf("GetSource, type: %c\n", bl->RTSource.QuellTyp); 
@@ -2186,95 +2233,101 @@ void GetSource(struct BeamlineType *bl)
       printf("GetSource: source from file not yet fully implemented!\n");
       MakeRTSource(&PHASESet, bl);
       break; 
-    case 'H': 	
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.HardEdgeSource.disty);   
-      sscanf(textf[1],  "%d", &bl->RTSource.Quelle.HardEdgeSource.iy);     
-      sscanf(textf[2], "%lf", &bl->RTSource.Quelle.HardEdgeSource.distz);   
-      sscanf(textf[3],  "%d", &bl->RTSource.Quelle.HardEdgeSource.iz);     
-      sscanf(textf[4], "%lf", &bl->RTSource.Quelle.HardEdgeSource.divy);   
-      sscanf(textf[5],  "%d", &bl->RTSource.Quelle.HardEdgeSource.idy);     
-      sscanf(textf[6], "%lf", &bl->RTSource.Quelle.HardEdgeSource.divz);   
-      sscanf(textf[7],  "%d", &bl->RTSource.Quelle.HardEdgeSource.idz);   
-      bl->RTSource.raynumber= bl->RTSource.Quelle.HardEdgeSource.iy* 
-	bl->RTSource.Quelle.HardEdgeSource.idy*
-	bl->RTSource.Quelle.HardEdgeSource.iz* 
-	bl->RTSource.Quelle.HardEdgeSource.idz;
+    case 'H': 
+      hp= (struct HardEdgeSourceType *) bl->RTSource.Quellep;	
+      sscanf(textf[0], "%lf", &hp->disty);   
+      sscanf(textf[1],  "%d", &hp->iy);     
+      sscanf(textf[2], "%lf", &hp->distz);   
+      sscanf(textf[3],  "%d", &hp->iz);     
+      sscanf(textf[4], "%lf", &hp->divy);   
+      sscanf(textf[5],  "%d", &hp->idy);     
+      sscanf(textf[6], "%lf", &hp->divz);   
+      sscanf(textf[7],  "%d", &hp->idz);   
+      bl->RTSource.raynumber= hp->iy* hp->idy* hp->iz* hp->idz;
       MakeRTSource(&PHASESet, bl);    
       break;
     case 'D':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.DipolSource.sigy);   
-      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.DipolSource.sigdy);   
-      sscanf(textf[2], "%lf", &bl->RTSource.Quelle.DipolSource.sigz);   
-      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.DipolSource.dz);  
+      dp= (struct DipolSourceType *)bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &dp->sigy);   
+      sscanf(textf[1], "%lf", &dp->sigdy);   
+      sscanf(textf[2], "%lf", &dp->sigz);   
+      sscanf(textf[3], "%lf", &dp->dz);  
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   
       break;
     case 'o':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.PointSource.sigy);   
-      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.PointSource.sigdy);   
-      sscanf(textf[2], "%lf", &bl->RTSource.Quelle.PointSource.sigz);   
-      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.PointSource.sigdz);  
+      sop= (struct PointSourceType *)bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &sop->sigy);   
+      sscanf(textf[1], "%lf", &sop->sigdy);   
+      sscanf(textf[2], "%lf", &sop->sigz);   
+      sscanf(textf[3], "%lf", &sop->sigdz);  
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   
       break;
     case 'U':
     case 'u':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.UndulatorSource.length);   
-      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.UndulatorSource.lambda);  
+      up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &up->length);   
+      sscanf(textf[1], "%lf", &up->lambda);  
 /*    modification: 04 Mar 98 13:24:43 flechsig */
 /*    bl->RTSource.Quelle.UndulatorSource.lambda*= 1e-6; */
-      bl->RTSource.Quelle.UndulatorSource.lambda= bl->BLOptions.lambda;
+      up->lambda= bl->BLOptions.lambda;
       sscanf(textf[2],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   /* */ 
       break;
     case 'L':
     case 'M':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.UndulatorSource.length);   
-      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.UndulatorSource.lambda);  
-      bl->RTSource.Quelle.UndulatorSource.lambda= bl->BLOptions.lambda;
+      up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &up->length);   
+      sscanf(textf[1], "%lf", &up->lambda);  
+      up->lambda= bl->BLOptions.lambda;
       sscanf(textf[2], "%d", &bl->RTSource.raynumber);   
-      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.UndulatorSource.deltaz);
+      sscanf(textf[3], "%lf", &up->deltaz);
       MakeRTSource(&PHASESet, bl);   /* */ 
       break;
     case 'G':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.UndulatorSource0.length);   
-      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.UndulatorSource0.lambda);  
-      bl->RTSource.Quelle.UndulatorSource.lambda= bl->BLOptions.lambda;
+      up0= (struct UndulatorSource0Type *) bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &up0->length);   
+      sscanf(textf[1], "%lf", &up0->lambda);  
+      up0->lambda= bl->BLOptions.lambda;
       sscanf(textf[2], "%d",  &bl->RTSource.raynumber);   
-      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.UndulatorSource0.deltaz);
-      sscanf(textf[4], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaez);  
-      sscanf(textf[5], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaey);  
-      sscanf(textf[6], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaedz);  
-      sscanf(textf[7], "%lf", &bl->RTSource.Quelle.UndulatorSource0.sigmaedy);   
-
-       MakeRTSource(&PHASESet, bl);   /* */ 
+      sscanf(textf[3], "%lf", &up0->deltaz);
+      sscanf(textf[4], "%lf", &up0->sigmaez);  
+      sscanf(textf[5], "%lf", &up0->sigmaey);  
+      sscanf(textf[6], "%lf", &up0->sigmaedz);  
+      sscanf(textf[7], "%lf", &up0->sigmaedy);   
+      MakeRTSource(&PHASESet, bl);   /* */ 
       break;
     case 'S':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.SRSource.y);   
-      sscanf(textf[2], "%lf", &bl->RTSource.Quelle.SRSource.z);   
-      sscanf(textf[4], "%lf", &bl->RTSource.Quelle.SRSource.dy);   
-      sscanf(textf[6], "%lf", &bl->RTSource.Quelle.SRSource.dz);   
+      sp= (struct SRSourceType *)bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &sp->y);   
+      sscanf(textf[2], "%lf", &sp->z);   
+      sscanf(textf[4], "%lf", &sp->dy);   
+      sscanf(textf[6], "%lf", &sp->dz);   
       bl->RTSource.raynumber= 1;   
       /* Fg3ActDat= x;      /** hier auch rt **/
+      ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       MakeRTSource(&PHASESet, bl);
       RayTraceSingleRay(bl);
       /* putpickfile(&Fg3ActDat, bl, PHASESet.sourcepckname);   */
-      FetchWidget(kESourceBox, "ESourceBox");  
-      InitSourceBox(&Fg3ActDat, bl, kESSR2Button);       
+      FetchWidget(kESourceBox, "ESourceBox"); 
+      InitSourceType(bl, kESSR2Button);
+      InitSourceBox(&Fg3ActDat, bl);       
       XtManageChild(widget_array[kESourceBox]);      
       break;
     case 'I':
-      sscanf(textf[0], "%lf", &bl->RTSource.Quelle.PSImage.ymin);
-      sscanf(textf[1], "%lf", &bl->RTSource.Quelle.PSImage.ymax); 
-      sscanf(textf[2], "%lf", &bl->RTSource.Quelle.PSImage.zmin); 
-      sscanf(textf[3], "%lf", &bl->RTSource.Quelle.PSImage.zmax); 
-      sscanf(textf[4], "%d", &bl->RTSource.Quelle.PSImage.iy); 
-      sscanf(textf[5], "%d", &bl->RTSource.Quelle.PSImage.iz);
-      bl->RTSource.raynumber= bl->RTSource.Quelle.PSImage.iy* 
-	bl->RTSource.Quelle.PSImage.iz;
+      psip= (struct PSImageType *)bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &psip->ymin);
+      sscanf(textf[1], "%lf", &psip->ymax); 
+      sscanf(textf[2], "%lf", &psip->zmin); 
+      sscanf(textf[3], "%lf", &psip->zmax); 
+      sscanf(textf[4], "%d",  &psip->iy); 
+      sscanf(textf[5], "%d",  &psip->iz);
+      bl->RTSource.raynumber= psip->iy* psip->iz;
       bl->BLOptions.SourcetoImage= 0;
       break;
     case 'P':
+
       sscanf(textf[0], "%lf", &x.sigmay);
       sscanf(textf[1], "%lf", &x.sigmayp);
       sscanf(textf[2], "%lf", &x.ymin); 
@@ -2803,4 +2856,38 @@ void ReadCoefficientFile(double *dp, char *fname)
   fclose(f); 
 } /* end ReadCoefficientFile */
 
-/* end of file phasec.c */                                
+/* setzt den sourcetype in der struktur abhanegig von einem Schalter */ 
+/* UF 28.11.06 */
+void InitSourceType(struct BeamlineType *bl, int widget_num)
+{
+  int sou;
+
+  switch (widget_num) 
+    {
+    case kESDipolSourceButton: 	   sou= 'D'; break;
+    case kESPointSourceButton: 	   sou= 'o'; break;
+    case kESUndulatorSourceButton: sou= 'U'; break;  
+    case kESUndulatorSISButton:    sou= 'L'; break;  /*23.11.98 UF*/
+    case kESUndulatorSIMButton:    sou= 'M'; break;  
+    case kESundulatorSourceButton: sou= 'u'; break;
+    case kESUndulatorButton:       sou= 'G'; break;
+    case kESSR2Button: 		   sou= 'S'; break;  
+    case kESPhaseSpaceButton:	   sou= 'P'; break;  
+    case kESPhaseSpaceImageButton: sou= 'I'; break; 
+    case kESFileButton:            sou= 'F'; break;
+    case kESDefaults:
+    case kESourceMenuButton:	   sou= bl->RTSource.QuellTyp; 
+      break;
+    case kESRayTraceButton:
+    default : 			   sou= 'H'; 
+    }
+  printf("InitSourceType: new: %c, old: %c, num: %d\n", 
+	 sou, bl->RTSource.QuellTyp, widget_num);
+  bl->RTSource.QuellTyp= sou;
+
+  
+
+} /* end InitSourceType */
+
+/* end of file phasec.c */     
+                           

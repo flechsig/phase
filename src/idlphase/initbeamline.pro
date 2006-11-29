@@ -1,3 +1,13 @@
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/initbeamline.pro
+;  Date      : <13 Mar 06 08:54:48 flechsig> 
+;  Time-stamp: <13 Mar 06 09:31:00 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$
+ 
 function initbeamline
 ;+
 ; NAME:
@@ -60,8 +70,11 @@ function initbeamline
 ;   U. Flechsig 13.3.06
 ;-
 
-if (!phaseidllib eq '') then $
+defsysv, '!phaseidllib', exist=exist
+if (exist eq 0) then $
    defsysv, '!phaseidllib', '/usr/local/lib/libphabaseabsoft.so'
+
+print, 'initbeamline: use shared lib: ', !phaseidllib 
 
 return, obj_new('PHASE_BEAMLINE')
 end

@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <22 Feb 06 16:00:08 flechsig> 
+##  Time-stamp: <13 Mar 06 12:00:06 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -14,5 +14,5 @@
 
 ## top level Makefile 
 EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
-SUBDIRS = phaselib phase opti extr gui
+SUBDIRS = phaselib phase opti extr gui baselib 
 ## end /afs/psi.ch/user/f/flechsig/phase/src/Makefile.am

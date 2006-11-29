@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <10 Mar 06 12:05:52 flechsig>  */
+/*   Time-stamp: <29 Nov 06 14:28:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -149,7 +149,7 @@ int main(argc, argv)
 		  &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); */
           /* end orginale Variante 30.4.98 */
 	  /* hier koennte ein volles Raytrace eingeschoben werden  */
-	  
+	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
 	  RayTraceFull(&Beamline);  /* rt */
 
 	  /* determine results */

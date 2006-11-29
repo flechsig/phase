@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Mar 06 11:56:55 flechsig>  */
+/*   Time-stamp: <28 Nov 06 15:25:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -38,7 +38,7 @@
 #include "geometrypck.h"   
 #include "phase.h"
 #include "rtrace.h"                 
-
+#include "common.h" 
 
 void AddBLElement(struct BeamlineType *bl, char *name)
 /****************************************************************/
@@ -547,14 +547,13 @@ void Footprint(struct BeamlineType *bl, int enummer)
         printf("Footprint: matrix and map created\n");
       }
       Re= &bl->RESULT;   
-      FreeResultMem(Re); 
+      
       Re->points= bl->RTSource.raynumber;
       Re->typ= PLrttype; 
- 
-      Re->RESUnion.Rays= (struct RayType *)
-	xmalloc(Re->points * sizeof(struct RayType));
+      Re->RESp= XREALLOC(struct RayType, Re->RESp, Re->points);
+      
                     
-      Raysin= bl->RTSource.SourceRays; foot= Re->RESUnion.Rays;  
+      Raysin= bl->RTSource.SourceRays; foot= Re->RESp;  
       listpt= &bl->ElementList[enummer-1]; 
 
       for (i= 0; i< bl->RTSource.raynumber; i++)
@@ -1046,8 +1045,9 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 
 void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
-/* schreibt den datensatz auf ein file 		  */ 
-/* written: Uwe 29.5.96				  */                          
+/* schreibt den datensatz auf ein file 		                          */ 
+/* written: Uwe 29.5.96				                          */  
+/* UF 28.11.06 unions durch pointer ersetzt                               */
 /**************************************************************************/
 {   
    FILE *f;
@@ -1079,8 +1079,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      {
      case 'U': 
      case 'u':
-       up= (struct UndulatorSourceType *)  
-	 &(bl->RTSource.Quelle.UndulatorSource);
+       up= (struct UndulatorSourceType *)bl->RTSource.Quellep;  
+       /*&(bl->RTSource.Quelle.UndulatorSource);*/
        fprintf(f, "%20c    ***Undulator Source for Ray Tracing***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    Undulator length     (mm)\n", up->length);
@@ -1088,8 +1088,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
       break;   
      case 'L':
      case 'M':
-       up= (struct UndulatorSourceType *)  
-	 &(bl->RTSource.Quelle.UndulatorSource);
+       up= (struct UndulatorSourceType *)bl->RTSource.Quellep;  
+       /*&(bl->RTSource.Quelle.UndulatorSource);*/
        fprintf(f, "%20c    ***Undulator Source for Ray Tracing***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    Undulator length     (mm)\n", up->length);
@@ -1097,8 +1097,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    Undulator SLS offset (mm)\n", up->deltaz);
        break;
      case 'G':
-       up0= (struct UndulatorSource0Type *)  
-	 &(bl->RTSource.Quelle.UndulatorSource0);
+       up0= (struct UndulatorSource0Type *)bl->RTSource.Quellep;  
+       /*&(bl->RTSource.Quelle.UndulatorSource0);*/
        fprintf(f, "%20c    ***Undulator Source for Ray Tracing***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    Undulator length     (mm)\n", up0->length);
@@ -1110,7 +1110,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    vert. e-beam divergence (mrad)\n", up0->sigmaedy);
        break;
      case 'H': 
-       hp= (struct HardEdgeSourceType *)&(bl->RTSource.Quelle.HardEdgeSource);
+       hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
+       /*&(bl->RTSource.Quelle.HardEdgeSource);*/
        fprintf(f, "%20c    ***Hard Edge Source for Ray Tracing***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    total height\n", hp->disty);
@@ -1123,7 +1124,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f,  "%20d    points \n"     , hp->idz);  
      break;   
      case 'D': 
-       dp= (struct DipolSourceType *) &(bl->RTSource.Quelle.DipolSource);
+       dp= (struct DipolSourceType *)bl->RTSource.Quellep;
+       /* &(bl->RTSource.Quelle.DipolSource);*/
        fprintf(f, "%20c    *** Dipol Source for Ray Tracing***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    sigma y\n",  dp->sigy);
@@ -1132,7 +1134,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    dz (hard)\n", dp->dz);
      break;   
      case 'o': 
-       sop= (struct PointSourceType *) &(bl->RTSource.Quelle.PointSource);
+       sop= (struct PointSourceType *)bl->RTSource.Quellep;
        fprintf(f, "%20c    *** Point Source for Ray Tracing ***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    sigma y\n",  sop->sigy);
@@ -1141,7 +1143,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    sigma dz\n", sop->sigdz);
      break;  
      case 'S': 
-       sp= (struct SRSourceType *) &(bl->RTSource.Quelle.DipolSource);
+       sp= (struct SRSourceType *)bl->RTSource.Quellep; 
        fprintf(f, "%20c    *** Single Ray for Ray Tracing***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    y  single ray\n", sp->y);
@@ -1150,7 +1152,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    dz single ray\n", sp->dz); 
      break;    
      case 'I': 
-       psip= (struct PSImageType *) &(bl->RTSource.Quelle.PSImage);
+       psip= (struct PSImageType *)bl->RTSource.Quellep;
+       /* &(bl->RTSource.Quelle.PSImage);*/
        fprintf(f, "%20c    *** Phase Space Transformation Image***\n", 
 	       bl->RTSource.QuellTyp);
        fprintf(f, "%20lg    ymin\n", psip->ymin);
@@ -1387,7 +1390,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 /* liest den datensatz vom file 					*/     
 /* PHASEset.psourcename sollte danach mit brightnessnamen initialisert  */
 /* werden: strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6)     */
-/* Uwe 30.5.96, UF 10.3.06			                        */     
+/* Uwe 30.5.96, UF 10.3.06			                        */  
+/* UF 28.11.06 unions durch pointer ersetzt                             */
 /************************************************************************/
 {   
    FILE *f; 
@@ -1421,7 +1425,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    {
      fprintf(stderr, "File %s not found- defaults used!\n", fname);
      bl->elementzahl= 0;
-     initdatset(&Fg3DefDat, &Beamline, 0); 		/* source init */
+     initdatset(&Fg3DefDat, &Beamline); 		/* source init */
    }
    else 
    {   
@@ -1432,12 +1436,14 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        { 
          fscanf(f, " %c %[^\n]s %c", &bl->RTSource.QuellTyp, buffer, &buf); 
          printf("source type: %c >> %s\n", bl->RTSource.QuellTyp, buffer);
+         AllocRTSource(bl);
          switch(bl->RTSource.QuellTyp)
 	   {
 	   case 'U': 
 	   case 'u':
-	     up= (struct UndulatorSourceType *) 
-	       &(bl->RTSource.Quelle.UndulatorSource);
+	     up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
+	     /*up= (struct UndulatorSourceType *)
+	       &(bl->RTSource.Quelle.UndulatorSource); */
              fscanf(f, " %lf %[^\n]s %c", &up->length, buffer, &buf);
 	     fscanf(f, " %lf %[^\n]s %c", &up->lambda, buffer, &buf);  
 	     
@@ -1448,8 +1454,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   break;   
 	   case 'L': 
 	   case 'M':
-             up= (struct UndulatorSourceType *) 
-	       &(bl->RTSource.Quelle.UndulatorSource);
+	     up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
+             /*up= (struct UndulatorSourceType *) 
+	       &(bl->RTSource.Quelle.UndulatorSource);*/
              fscanf(f, " %lf %[^\n]s %c", &up->length, buffer, &buf);
 	     fscanf(f, " %lf %[^\n]s %c", &up->lambda, buffer, &buf);  
 	     fscanf(f, " %lf %[^\n]s %c", &up->deltaz, buffer, &buf);  
@@ -1459,8 +1466,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     up->lambda*= 1e-6;                       /* intern in mm */
 	   break;   
 	   case 'G':
-             up0= (struct UndulatorSource0Type *) 
-	       &(bl->RTSource.Quelle.UndulatorSource0);
+	     up0= (struct UndulatorSource0Type *) bl->RTSource.Quellep;
+             /*up0= (struct UndulatorSource0Type *) 
+	       &(bl->RTSource.Quelle.UndulatorSource0);*/
              fscanf(f, " %lf %[^\n]s %c", &up0->length, buffer, &buf);
 	     fscanf(f, " %lf %[^\n]s %c", &up0->lambda, buffer, &buf);  
 	     fscanf(f, " %lf %[^\n]s %c", &up0->deltaz, buffer, &buf);  
@@ -1480,8 +1488,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	      up0->lambda*= 1e-6;                       /* intern in mm */
 	   break;   
 	 case 'H': 
-             hp= (struct HardEdgeSourceType *) 
-	       &(bl->RTSource.Quelle.HardEdgeSource);
+	   hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
+	   /*hp= (struct HardEdgeSourceType *) 
+	     &(bl->RTSource.Quelle.HardEdgeSource);*/
              fscanf(f, " %lf %[^\n]s %c", &hp->disty, buffer, &buf);  
 	     fscanf(f, " %d  %[^\n]s %c", &hp->iy   , buffer, &buf);   
              fscanf(f, " %lf %[^\n]s %c", &hp->distz, buffer, &buf);  
@@ -1492,29 +1501,32 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     fscanf(f, " %d  %[^\n]s %c", &hp->idz  , buffer, &buf);   
 	   break;   
            case 'D': 
-             dp= (struct DipolSourceType *) &(bl->RTSource.Quelle.DipolSource);
+	     dp= (struct DipolSourceType *)bl->RTSource.Quellep;
+             /*dp= (struct DipolSourceType *) &(bl->RTSource.Quelle.DipolSource);*/
              fscanf(f, " %lf %[^\n]s %c", &dp->sigy , buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &dp->sigdy, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &dp->sigz, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &dp->dz, buffer, &buf);  
            break; 
 	   case 'o': 
-             sop= (struct PointSourceType *) 
-	       &(bl->RTSource.Quelle.PointSource);
+             sop= (struct PointSourceType *)bl->RTSource.Quellep; 
+	       /*&(bl->RTSource.Quelle.PointSource);*/
              fscanf(f, " %lf %[^\n]s %c", &sop->sigy , buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sop->sigdy, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sop->sigz , buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sop->sigdz, buffer, &buf);  
            break; 
            case 'S': 
-             sp= (struct SRSourceType *) &(bl->RTSource.Quelle.SRSource);
+             sp= (struct SRSourceType *)bl->RTSource.Quellep;
+	     /* &(bl->RTSource.Quelle.SRSource);*/
              fscanf(f, " %lf %[^\n]s %c", &sp->y,  buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sp->dy, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sp->z,  buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sp->dz, buffer, &buf);    
            break;  
            case 'I':
-             psip= (struct PSImageType *) &(bl->RTSource.Quelle.PSImage);
+             psip= (struct PSImageType *)bl->RTSource.Quellep;
+	     /* &(bl->RTSource.Quelle.PSImage);*/
              fscanf(f, " %lf %[^\n]s %c", &psip->ymin,  buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &psip->ymax, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &psip->zmin,  buffer, &buf);  

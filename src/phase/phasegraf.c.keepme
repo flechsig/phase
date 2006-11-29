@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <30 Mar 05 14:09:00 flechsig>  */
+/*   Time-stamp: <28 Nov 06 15:17:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -27,7 +27,8 @@
 #include "mirrorpck.h"  
 #include "geometrypck.h"   
 #include "phase.h"   
-#include "rtrace.h" 
+#include "rtrace.h"
+#include "common.h"
  
 
 void InitGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr)   
@@ -265,13 +266,13 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
       {
         /* printf("setgrdatstruct: call ReadRayFile\n");   */
 	   ReadRayFile(fname, &gr->zeilen, &bl->RESULT);  
-           vo= bl->RESULT.RESUnion.Rays;  
+           vo= bl->RESULT.RESp;  
       } else 
       {
           printf("SetGrDatStruct: read phase space file \n");
           /* phase space mode */
           ReadpsFile(fname, &bl->RESULT);  
-          vo= &bl->RESULT.RESUnion.PSD;  
+          vo= bl->RESULT.RESp;  
       } /* end ps */
     }   /*  end dat from file */
 
@@ -294,7 +295,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
           if ((bl->beamlineOK & resultOK) == resultOK)  
           {
              printf("SetGrDatStruct: plot result (rt)\n");
-             vo= bl->RESULT.RESUnion.Rays;  
+             vo= bl->RESULT.RESp;  
              gr->zeilen= bl->RESULT.points;  
              fehler= 0;
           }    
@@ -304,7 +305,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
           ((gr->status & PLphspacetype) == PLphspacetype))
       {
           printf("SetGrDatStruct: plot result (phasesp)\n");
-          vo= &bl->RESULT.RESUnion.PSD;  
+          vo= bl->RESULT.RESp;  
           gr->zeilen= bl->RESULT.points;  
           fehler= 0;
       }           
@@ -543,14 +544,11 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
        fprintf(stderr, "error: open file %s\n", name); exit(-1);   
     } else
     {  					/* 12.3.96 filesystemAenderung */
-       FreeResultMem(Re);  
        fscanf(f, "%d %d\n", &rz, &i);
-       if ((Re->RESUnion.Rays= (struct RayType *)
-            malloc(rz* sizeof(struct RayType))) == NULL)
-       {    fprintf(stderr, "realloc error in ReadRayFile\n"); exit(-1); }  
-
+       Re->RESp= XREALLOC(struct RayType, Re->RESp, rz);
+       
        Re->typ= PLrttype; 
-       Rp= Re->RESUnion.Rays;
+       Rp= Re->RESp;
 
        for (i= 0; i< rz; i++)
        {
@@ -577,23 +575,19 @@ void ReadpsFile(char *name, struct RESULTType *Re)
     struct PSDType *p;
     
     printf("  ReadpsFile called: %s \n", name); 
-    p= &Re->RESUnion.PSD;
+    p= (struct PSDType *)Re->RESp;
 
     if ((f= fopen(name, "r")) == NULL)
     {
        fprintf(stderr, "error: open file %s\n", name); exit(-1);   
     } else
     {  					/* 12.3.96 filesystemAenderung */
-       FreeResultMem(Re);  
+      /* FreeResultMem(Re);  */
        fscanf(f, "%d %d\n", &p->iz, &p->iy);
-
-       if ((p->y= (double *) malloc(p->iy* sizeof(double))) == NULL)
-       {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
-       if ((p->z= (double *) malloc(p->iz* sizeof(double))) == NULL)
-       {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
-       if ((p->psd= (double *)          
-            malloc(p->iy* p->iz* sizeof(double))) == NULL)
-       {  fprintf(stderr, "malloc error\n"); exit(-1);    }   
+       p->y  = XREALLOC(double, p->y, p->iy);
+       p->z  = XREALLOC(double, p->z, p->iz);  
+       p->psd= XREALLOC(double, p->psd, p->iy* p->iz); 
+         
 
        printf("memory reserved\n");
        Re->typ= PLphspacetype;  

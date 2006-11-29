@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <12 Feb 04 12:32:31 flechsig>  */
+/*   Time-stamp: <29 Nov 06 13:31:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -34,7 +34,7 @@
 #include "phase.h"                                
 #include "rtrace.h"            
 
-void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
+void initdatset(struct datset *x, struct BeamlineType *bl)
 {
   int i;
   
@@ -45,26 +45,8 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
   struct SRSourceType        *sp;  
   struct PSImageType	     *ip;
   
-  switch (sw) 
+  if (bl->RTSource.QuellTyp != bl->RTSource.QuellTyp_old) 
     {
-    case kESDipolSourceButton:     i= 'D'; break;
-    case kESPointSourceButton:     i= 'o'; break;
-    case kESUndulatorSourceButton: i= 'U'; break; 
-    case kESundulatorSourceButton: i= 'u'; break; 
-    case kESUndulatorSISButton:    i= 'L'; break; 
-    case kESUndulatorSIMButton:    i= 'M'; break; 
-    case kESUndulatorButton:       i= 'G'; break;
-    case kESSR2Button:             i= 'S'; break; 
-    case kESPhaseSpaceImageButton: i= 'I'; break;
-    case kESDefaults:              i=  0 ; break;
-    case kESRayTraceButton:    
-    default:                       i= 'H'; break; 
-    }
-
-  if ((bl->RTSource.QuellTyp != i) || (i == 0)) 
-    {
-      if (i != 0) bl->RTSource.QuellTyp = i;
-      
       x->itrans	= D0itrans;     
       x->idir  	= D0idir;
       x->imodus	= D0imodus;
@@ -119,45 +101,41 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
       
       x->SR2out.y= x->SR2out.z= x->SR2out.dy= x->SR2out.dz= 0.0;  
       
-      
+      bl->RTSource.raynumber= 1000;
       switch(bl->RTSource.QuellTyp)
 	{
 	case 'U': 
 	case 'u':
-	  up= (struct UndulatorSourceType *) 
-		    &(bl->RTSource.Quelle.UndulatorSource);
-	up->length= 3800.0;
-	up->lambda= 12.4e-6;  
+	  up= (struct UndulatorSourceType *)bl->RTSource.Quellep; 
+	  up->length= 3800.0;
+	  up->lambda= 12.4e-6;  
 	break;   
 	case 'L': 
 	case 'M':
-	  up= (struct UndulatorSourceType *) 
-		    &(bl->RTSource.Quelle.UndulatorSource);
-	up->length= 3800.0;
-	up->lambda= 12.4e-6;
-	up->deltaz= 0.0;
+	  up= (struct UndulatorSourceType *)bl->RTSource.Quellep; 
+	  up->length= 3800.0;
+	  up->lambda= 12.4e-6;
+	  up->deltaz= 0.0;
 	break;
-	case 'D': dp=(struct DipolSourceType *) 
-		    &(bl->RTSource.Quelle.DipolSource);
+	case 'D': dp=(struct DipolSourceType *)bl->RTSource.Quellep; 
 	  dp->sigy		= 0.093;  
-	  dp->sigdy	= 1.;  
+	  dp->sigdy	        = 1.;  
 	  dp->sigz        	= 0.05;
 	  dp->dz          	= 4.0;
 	  break;  
-	case 'o': pp=(struct PointSourceType *) 
-		    &(bl->RTSource.Quelle.PointSource);
+	case 'o': pp=(struct PointSourceType *)bl->RTSource.Quellep; 
 	  pp->sigy	= 0.093;  
 	  pp->sigdy	= 1.;  
 	  pp->sigz      = 0.05;
 	  pp->sigdz     = 1.0;
 	  break;  
-	case 'S': sp= (struct SRSourceType *) &(bl->RTSource.Quelle.SRSource);
-	  sp->y	=1.;  
-	  sp->dy	=1.;  
-	  sp->z	=1.;  
-	  sp->dz	=1.; 
+	case 'S': sp= (struct SRSourceType *)bl->RTSource.Quellep;
+	  sp->y	        =0.1;  
+	  sp->dy	=0.1;  
+	  sp->z	        =0.1;  
+	  sp->dz	=0.1; 
 	  break;   
-	case 'I': ip= (struct PSImageType*) &(bl->RTSource.Quelle.PSImage);
+	case 'I': ip= (struct PSImageType*)bl->RTSource.Quellep; 
 	  ip->ymin	= -1.0e-1;  
 	  ip->ymax	=  1.0e-1;  
 	  ip->zmin	= -1.0e-1;  
@@ -166,22 +144,22 @@ void initdatset(struct datset *x, struct BeamlineType *bl, int sw)
 	  ip->iz   =   15;
 	  break;   
 	case 'H': 
-	default : hp= (struct HardEdgeSourceType *) 
-		    &(bl->RTSource.Quelle.HardEdgeSource);
-	bl->RTSource.QuellTyp= 'H';
-	hp->disty	= .1;  
-	hp->iy 		= 3;   
-	hp->distz	= .2;  
-	hp->iz		= 3;   
-	hp->divy	= 1.;  
-	hp->idy		= 7;   
-	hp->divz	= 4.;  
-	hp->idz		= 7;   
-	break;          
-	}
-      bl->RTSource.raynumber= (bl->RTSource.QuellTyp == 'H') ? 
-	hp->iy * hp->iz * hp->idy * hp->idz : 1000;
-    }
+	  hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep; 
+	  bl->RTSource.QuellTyp= 'H';
+	  hp->disty	= .1;  
+	  hp->iy 		= 3;   
+	  hp->distz	= .2;  
+	  hp->iz		= 3;   
+	  hp->divy	= 1.;  
+	  hp->idy		= 7;   
+	  hp->divz	= 4.;  
+	  hp->idz		= 7;   
+	  bl->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
+	  break;   
+	}  /* end case */
+      bl->RTSource.QuellTyp_old =  bl->RTSource.QuellTyp;
+      printf("initdatset: put defaults\n");
+    } else  printf("initdatset: same source- no defaults set\n");
   /* 24.6.96 */
   bl->BLOptions.SourcetoImage= x->idir; 
   bl->BLOptions.ifl.iord=      x->iord;
