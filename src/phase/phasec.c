@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <29 Nov 06 13:59:48 flechsig>  */
+/*   Time-stamp: <07 Dec 06 13:33:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1745,8 +1745,8 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
                                 "sigmaedz [mrad]", "sigmaedy [mrad]" /*36,37 */         
     };                    
 #ifdef DEBUG 
-    printf("InitSourceBox: wdgnumber: %d, bl->RTSource.QuellTyp: %c\n", 
-	   source, bl->RTSource.QuellTyp);   
+    printf("InitSourceBox: bl->RTSource.QuellTyp: %c\n", 
+	   bl->RTSource.QuellTyp);   
 #endif    
     /* UF 28.11.06 
     switch (source) 
