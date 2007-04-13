@@ -109,15 +109,15 @@ void get_nam(int n,
    
    int i, j, c;
    
-   strcpy(eyre,"eyres");
-   strcpy(eyim,"eyims");
-   strcpy(ezre,"ezres");
-   strcpy(ezim,"ezims");
+   strcpy(eyre,"EYRES");
+   strcpy(eyim,"EYIMS");
+   strcpy(ezre,"EZRES");
+   strcpy(ezim,"EZIMS");
 
-   strcpy(eyre1,"eyres");
-   strcpy(eyim1,"eyims");
-   strcpy(ezre1,"ezres");
-   strcpy(ezim1,"ezims");
+   strcpy(eyre1,"EYRES");
+   strcpy(eyim1,"EYIMS");
+   strcpy(ezre1,"EZRES");
+   strcpy(ezim1,"EZIMS");
 
    if(n < 10000) strcpy(s1,"0");
    if(n < 1000) strcat(s1,"0");
@@ -150,15 +150,15 @@ void get_nam(int n,
    strcat(ezre1,s1);
    strcat(ezim1,s1);
 
-   strcat(eyre,".da");
-   strcat(eyim,".da");
-   strcat(ezre,".da");
-   strcat(ezim,".da");
+   strcat(eyre,".DA");
+   strcat(eyim,".DA");
+   strcat(ezre,".DA");
+   strcat(ezim,".DA");
 
-   strcat(eyre1,".da");
-   strcat(eyim1,".da");
-   strcat(ezre1,".da");
-   strcat(ezim1,".da");
+   strcat(eyre1,".DA");
+   strcat(eyim1,".DA");
+   strcat(ezre1,".DA");
+   strcat(ezim1,".DA");
 
    inttochar(Beamline.src.so4.nsource,sn);
 
