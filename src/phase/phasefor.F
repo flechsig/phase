@@ -560,8 +560,11 @@ c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
-        idrift=0
-        if(imodus.ge.1000)then
+
+	 write(6,*)' imodus = ',imodus
+
+	 idrift=0
+         if(imodus.ge.1000)then
            imodus=imodus-1000
            idrift=1
            endif
@@ -606,8 +609,10 @@ c-------------------------------------------------------
 	  enddo
 	endif
 
+	write(6,*)g.cosa,g.cosb,g.sina,g.sinb
+
 c        write(*,*)'fgmapidp (wc, xlc results):'
-c        do i=0,4
+c       do i=0,4
 c          do j=0,4-i
 c             do k=0,4-i-j
 c                do l=0,4-i-j-k
@@ -617,9 +622,9 @@ c                enddo
 c             enddo
 c          enddo
 c       enddo
-c        write(*,*)'end fgmapidp'
-c        write(*,*),'wc 4000',wc(4,0,0,0)
-        return
+c       write(*,*)'end fgmapidp'
+
+	return
         end
 c-------- end fgmapidp()-----------------------------------
 
@@ -2134,6 +2139,7 @@ c frage warum zweimal aufrufen
           enddo
          enddo
         enddo   
+
 c------------------------------------------------------------------
 
         if(imodus.eq.1)then
@@ -2194,14 +2200,26 @@ c---------- ( d yp / d dyi ) * ( d zp / d dzi )
         do n1=0,iord
         do n2=0,iord
         do n3=0,iord
-         do n4=0,iord
+        do n4=0,iord
           p1(n1,n2,n3,n4)=xmec(1,3,n1,n2,n3,n4)
-          p2(n1,n2,n3,n4)=xmec(2,4,n1,n2,n3,n4)
-         enddo
+	  p2(n1,n2,n3,n4)=xmec(2,4,n1,n2,n3,n4)
+	enddo
         enddo
         enddo
         enddo
-        call p_m_4(p1,p2,fdetphcc)
+
+c       do n1=0,iord
+c       do n2=0,iord-n1
+c       do n3=0,iord-n1-n2
+c       do n4=0,iord-n1-n2-n3
+c	write(6,*)n1,n2,n3,n4,p1(n1,n2,n3,n4)
+c	write(6,*)p2(n1,n2,n3,n4)
+c	enddo
+c	enddo
+c	enddo
+c	enddo
+
+	call p_m_4(p1,p2,fdetphcc)
         do n1=0,iord
         do n2=0,iord
         do n3=0,iord
@@ -2212,6 +2230,17 @@ c---------- ( d yp / d dyi ) * ( d zp / d dzi )
         enddo
         enddo
         enddo
+
+c       do n1=0,iord
+c       do n2=0,iord-n1
+c       do n3=0,iord-n1-n2
+c       do n4=0,iord-n1-n2-n3
+c	write(6,*)n1,n2,n3,n4,fdetphc(n1,n2,n3,n4)
+c	enddo
+c	enddo
+c	enddo
+c	enddo
+
 c---------- ( d yp / d dzi ) * ( d zp / d dyi )
       do n1=0,iord
        do n2=0,iord
@@ -2236,6 +2265,8 @@ c---------- ( d yp / d dzi ) * ( d zp / d dyi )
       enddo
 
       endif	! (imodus.eq.1)
+       
+c-----------------------------------------------------------
       if(imodus.eq.0)then	! downstream
        do n1=0,iord
         do n2=0,iord
@@ -2324,6 +2355,18 @@ c	    xmec1(k,l,n1,n2,n3,n4)=xmec(k,l,n1,n2,n3,n4)
       enddo
       endif	! (imodus.eq.0)
 c--------------------------------------------
+
+c      do n1=0,iord
+c       do n2=0,iord-n1
+c        do n3=0,iord-n1-n2
+c         do n4=0,iord-n1-n2-n3
+c          write(6,*)n1,n2,n3,n4,fdet1phc(n1,n2,n3,n4)
+c	  write(6,*)fdetphc(n1,n2,n3,n4)
+c         enddo
+c        enddo
+c       enddo
+c      enddo
+
       return
       end
 c********** end fdet **************************************
@@ -2430,8 +2473,11 @@ c        include 'phase_struct.for'
 
       read(16,*)src.so4.nfreqtot
       read(16,*)src.so4.nfreqpos,src.so4.nfreqneg
+      read(16,*)src.so4.nsource,src.so4.nimage
       read(16,*)src.so4.deltatime
       read(16,*)src.so4.iconj
+
+      write(6,*)src.so4.nfreqtot
 
       read(16,3)dfile
       iname=clen1(dfile)
