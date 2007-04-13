@@ -490,8 +490,8 @@ c*************************************************************
         do ii=0,ifl.iord
           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
           ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
-c          ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
-c          ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
+          ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
+          ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
 c          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
 c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
 	  ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
@@ -507,7 +507,23 @@ c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
           var0=var0*dyii
         enddo
 
+c	write(6,*)' 1 ',fd1ph
+
+	goto 1111
+
+	fd1ph=0.
+	var0=1.
+        do ii=0,ifl.iord
+          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
+          var0=var0*dyii
+	enddo
+
+c	hier kommt das gleiche raus wie bei 1 wie es sein soll
+c	write(6,*)' 2 ',fd1ph
+
 c---------- new 3.6.1997
+c---------- new 1.3.2007
+c       Endkoordinaten geaendert auf Anfangskoordinaten
 
 	fd1ph=0.d0
 
@@ -520,15 +536,26 @@ c---------- new 3.6.1997
 	        var3=var2
 		do ll=0,ifl.iordsc-ii-jj-kk
          	  fd1ph=fd1ph+m4.fdet1phc(ii,jj,kk,ll)*var3
-	      	  var3=var3*ra.rf.dzp
+c		  write(6,*)ii,jj,kk,ll,m4.fdet1phc(ii,jj,kk,ll)
+c		  write(6,*)fd1ph
+		  var3=var3*ra.ri.dzi
 	      	enddo
-	    var2=var2*ra.rf.dyp
+	    var2=var2*ra.ri.dyi
 	    enddo
-	  var1=var1*ra.rf.zp
+	  var1=var1*ra.ri.zi
 	  enddo
-	var0=var0*ra.rf.yp
+	var0=var0*ra.ri.yi
 	enddo
+
+c	    hier kommt das gleiche raus 
+c	    write(6,*)' 3 ',fd1ph
+
+1111	continue
 c---------- end new 3.6.1997
+
+c	    beide Variablen stehen auf null
+c	    write(6,*)'  ifl.ipath ',ifl.ipath
+c	    write(6,*)'  ifl.matrel ',ifl.matrel
 
 c----------new 28.4.
 	if(ifl.ipath.eq.0)fd1ph=1.d0/dsqrt(dabs(fd1ph))
@@ -538,7 +565,6 @@ c----------new 28.4.
 	  fdph=1.d0
 	endif
 c--------- end new
-
 
 c----------------------------------------------
 	if(ifl.matrel.eq.1)then
@@ -754,7 +780,7 @@ c------- jetzt genauer:
 	ra.fdph2(ra.n4)=fdph2
 
 c------------------------------------------
-	endif
+	endif                  ! matrel.eq.1
 c------------------------------------------
 
 c--------- brauchen wir nicht 22.3.2006
@@ -779,24 +805,11 @@ c----------------------------------------
 
 	if(ifl.inorm1.eq.1)fdph=1.d0
 
-	if(ifl.inorm1.eq.0)fdph=dabs(fdph)
-	
-	if(ifl.ispline.ge.0)then
-                ff=fdph*fd1ph
-c		fwerty=sr.densy*ff
-c		fwertz=sr.densz*ff
-		sr.densyre=sr.densyre*ff
-		sr.densyim=sr.densyim*ff
-		sr.denszre=sr.denszre*ff
-		sr.denszim=sr.denszim*ff
-	endif
-
-	if(ifl.ispline.lt.0)then
-		ff=fdph*fd1ph
-		fwya=sr.eya*ff
-		fwza=sr.eza*ff
-		fwyp=sr.eyp
-		fwzp=sr.ezp
+	if(ifl.inorm1.eq.0)then
+	  fdph=dabs(fdph)
+c------------ 13.3.2007
+	  fd1ph=1.d0/sqrt(fdph)
+c------------------------------
 	endif
 
         if(ifl.inorm2.eq.1)then
@@ -807,14 +820,18 @@ c		fwertz=sr.densz*ff
 	endif
 
 	if((ifl.inorm2.eq.2).or.(ifl.inorm2.eq.3))then
-	  call subdfpl1(g,a,ra,pd)
+	  if(ifl.igrating.eq.0)call subdfpl1(g,a,ra,pd)	      ! mirror
+	  if(ifl.igrating.eq.1)call subdfpl1a(g,a,ra,pd)      ! grating
 	  call subdfpl2(g,a,ra,pd)
 	endif
 
         if(ifl.inorm2.eq.2)then
 	  fd1ph=dsqrt(dabs(pd.pl1w2+pd.pl2w2))*
      &        dsqrt(dabs(pd.pl1l2+pd.pl2l2))
-	  fd1ph=1.d0/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
+c-------- 10.3.2007
+c-------- das ist noch nicht ganz richtig, da das
+c         cosb mit den Startkoordinaten variiert
+          fd1ph=sqrt(g.cosa*g.cosb)/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
 	  if((ra.n3.le.201).and.(ra.n4.le.201))then
 	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
 	  endif
@@ -825,7 +842,10 @@ c		fwertz=sr.densz*ff
      &      (pd.pl1w2+pd.pl2w2) * (pd.pl1l2+pd.pl2l2) -
      &      (pd.pl1w1l1+pd.pl2w1l1) * (pd.pl1w1l1+pd.pl2w1l1)
      &               )    )
-	  fd1ph=1.d0/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
+c-------- 10.3.2007
+c-------- das ist noch nicht ganz richtig, da das
+c         cosb mit den Startkoordinaten variiert
+     	  fd1ph=sqrt(g.cosa*g.cosb)/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
 	  if((ra.n3.le.201).and.(ra.n4.le.201))then
 	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
 	  endif
@@ -845,6 +865,39 @@ c--------------- brauchen wir nicht 22.3.2006
 c	st.fd1phmax(ra.n1,ra.n2)=
 c     &        dmax1(fd1ph,st.fd1phmax(ra.n1,ra.n2))
 c-------------------------------------------------
+
+c--------- den folgenden Block hierher verschoben, damit 
+c          die Variable inorm2 auch wirken kann
+c          24.1.2007
+
+c	write(6,*)ra.oe.w,ra.oe.xl
+c	write(6,*)fdph,fd1ph,sqrt(pd.arg1),sqrt(pd.arg2)
+c	write(6,*)fdph,fd1ph
+c        call subdfpl1(g,a,ra,pd)      ! mirror
+c        call subdfpl1a(g,a,ra,pd)      ! grating
+c	write(6,*)' laengen ',sqrt(pd.arg1),sqrt(pd.arg2)
+c	write(6,*)' w, l ',ra.oe.w,ra.oe.xl
+c	write(6,*)' '
+
+	if(ifl.ispline.ge.0)then
+                ff=fdph*fd1ph
+c		fwerty=sr.densy*ff
+c		fwertz=sr.densz*ff
+		sr.densyre=sr.densyre*ff
+		sr.densyim=sr.densyim*ff
+		sr.denszre=sr.denszre*ff
+		sr.denszim=sr.denszim*ff
+	endif
+
+	if(ifl.ispline.lt.0)then
+		ff=fdph*fd1ph
+		fwya=sr.eya*ff
+		fwza=sr.eza*ff
+		fwyp=sr.eyp
+		fwzp=sr.ezp
+	endif
+
+c------------------------------------------------
 
 	endif
 
