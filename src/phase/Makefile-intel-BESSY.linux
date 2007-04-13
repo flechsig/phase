@@ -32,7 +32,7 @@ CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c
 FFLAGS  = -c -vms -w95 -132
 #FFLAGS   = -c -check all -fpe0  -fpstkchk -mp -traceback -vms -w95 -132 -save \
 #-check all
-LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl  
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl 
 
 .phony: all makewhat    
 #########################################################################
@@ -65,7 +65,8 @@ OBJECTC = phase.o phase0.o phasec.o \
 OBJECTF = phasegraffor.o phasefor.o \
 	  phase_source.o \
 	  phase_integration.o \
-	  misali.o misali1.o misali2.o misali3.o misali4.o expired.o
+	  misali.o misali1.o misali2.o misali3.o misali4.o expired.o \
+	  dfpl1a.o
 ########################################################################
 PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
 	  cutils.h phase_struct.h rtrace.h version.h
@@ -80,7 +81,8 @@ SRCC    = phase.c phase0.c phasec.c \
 SRCF    = phasegraffor.F phasefor.F \
 	  phase_source.F \
 	  phase_integration.F \
-	  misali.F misali1.f misali2.f misali3.f misali4.f expired.f
+	  misali.F misali1.f misali2.f misali3.f misali4.f expired.f \
+	  dfpl1a.f
 SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
 #########################################################################
 #                            targets                                    # 
