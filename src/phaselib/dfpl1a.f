@@ -1,9 +1,18 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
       subroutine subdfpl1a(g,a,ra,pd)
       implicit real*8(a-h,o-z)
       real*8 l
       dimension a(0:5,0:5)
-                          
-      include 'phase_struct.for'
+c     UF 23.4.07 weiss nicht warum ../phase/... notwendig aber sonst compiliert
+c     opti und extr nicht mehr
+c     ich breche damit das VMS compilieren saubere Loesung:
+c     file umbenennen in .F und ein define einfuegen
+
+      include '../phase/phase_struct.for'
                           
       record /geometryst/ g
       record /rayst/ ra
