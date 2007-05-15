@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 May 07 11:46:20 flechsig>  */
+/*   Time-stamp: <15 May 07 13:44:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -10,6 +10,10 @@
 
 #ifndef PHASE_H
 #define PHASE_H   
+
+#define DOALLOC 1
+#define NOALLOC 0
+
 /* dont show a watch (work around static variables) */
 #define NOWATCH     
 
