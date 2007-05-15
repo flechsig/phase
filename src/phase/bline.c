@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <28 Nov 06 15:25:51 flechsig>  */
+/*   Time-stamp: <15 May 07 11:50:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -865,16 +865,17 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
 void LoadHorMaps(struct BeamlineType *bl, int dim)    
 /***********************************************/   
 /* load horizontale Transformationsmatritzen  */
-/***********************************************/   
+/***********************************************/  
+/* UF, TL rmap, lmap static 15.5.07 */ 
 {
    int msiz;
    char buffer[MaxPathLength], *phase_home;
 				
-   msiz= 70* 70* sizeof(double); /* fest auf 70 */
+   /*  msiz= 70* 70* sizeof(double); /* fest auf 70 */
 
     /* replace old code with xmalloc 10.2.04 UF*/ 
-   (double *)bl->lmap= (double *)xmalloc(msiz);
-   (double *)bl->rmap= (double *)xmalloc(msiz);
+   /*   (double *)bl->lmap= (double *)xmalloc(msiz);
+	(double *)bl->rmap= (double *)xmalloc(msiz); */
 
 #ifdef VMS
    sprintf(buffer,"%s%d_lh.omx\0", HORMAPFILENAMEBASE, dim); 
