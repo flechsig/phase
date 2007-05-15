@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <29 Nov 06 14:17:46 flechsig>  */
+/*   Time-stamp: <15 May 07 13:53:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -138,6 +138,9 @@ int main(argc, argv)
 #ifdef LOGFILE 
    CheckUser(logfilename, "Optimization"); 
 #endif
+
+Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
+
 
 #ifndef DEBUG
    if (argc != 2)

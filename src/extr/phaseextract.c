@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <29 Nov 06 14:28:23 flechsig>  */
+/*   Time-stamp: <15 May 07 13:54:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -97,6 +97,10 @@ int main(argc, argv)
  
   start= time(NULL);
   PI= 4.0* atan(1.0); 
+
+  Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
+
+
 #ifdef LOGFILE   
   CheckUser(logfilename, "Extraction"); 
 #endif  

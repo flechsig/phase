@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 May 07 11:50:00 flechsig>  */
+/*   Time-stamp: <15 May 07 11:50:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -868,7 +868,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
 /***********************************************/  
 /* UF, TL rmap, lmap static 15.5.07 */ 
 {
-   int msiz;
+  /* int msiz; */
    char buffer[MaxPathLength], *phase_home;
 				
    /*  msiz= 70* 70* sizeof(double); /* fest auf 70 */

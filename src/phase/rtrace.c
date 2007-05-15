@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <29 Nov 06 10:53:07 flechsig>  */
+/*   Time-stamp: <15 May 07 13:49:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -292,10 +292,13 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
    struct UndulatorSource0Type *up0;
    struct SRSourceType         *sp;
    /* 24.11.06 */
-   bl->RTSource.SourceRays= XREALLOC(struct RayType, 
-				     bl->RTSource.SourceRays, 
-				     bl->RTSource.raynumber);
-        
+   /* UF , TL ausschalten ueber switch 15.5. 07 */
+   if (bl->localalloc == DOALLOC) 
+     {
+       bl->RTSource.SourceRays= XREALLOC(struct RayType, 
+					 bl->RTSource.SourceRays, 
+					 bl->RTSource.raynumber);
+     }
      
 
 
@@ -319,9 +322,13 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
        ReadRayFile(PHASESet.sourceraysname, &bl->RTSource.raynumber, 
 		  &bl->RESULT); 
       
-       bl->RTSource.SourceRays= XREALLOC(struct RayType, 
-					bl->RTSource.SourceRays, 
-					bl->RTSource.raynumber);
+       if (bl->localalloc == DOALLOC) 
+	 {
+	   bl->RTSource.SourceRays= XREALLOC(struct RayType, 
+					     bl->RTSource.SourceRays, 
+					     bl->RTSource.raynumber);
+	 }
+
        /* UF weiss nicht ob das noch OK ist UF 28.11.06 */
        
       memcpy(bl->RTSource.SourceRays, bl->RESULT.RESp,
