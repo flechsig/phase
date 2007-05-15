@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <29 Nov 06 09:13:21 flechsig>  */
+/*   Time-stamp: <15 May 07 11:46:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -578,7 +578,7 @@ struct BeamlineType
 {
   struct ElementType *ElementList;   
   struct RTSourceType RTSource; 
-  MAP70TYPE map70, *lmap, *rmap, MtoSource;                          
+  MAP70TYPE map70, lmap, rmap, MtoSource;                          
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc;
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
