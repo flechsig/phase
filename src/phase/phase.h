@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 May 07 13:44:49 flechsig>  */
+/*   Time-stamp: <15 May 07 13:46:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -587,7 +587,7 @@ struct BeamlineType
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
   struct RESULTType RESULT;
-  unsigned int beamlineOK, elementzahl, position, hormapsloaded; 
+  unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
   struct sources src;
