@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <15 May 07 15:28:37 flechsig> 
+dnl   Time-stamp: <15 May 07 15:41:46 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -203,6 +203,10 @@ AC_SUBST([LIBPHASE], "${libphasename}.${libextension}")
 AC_MSG_NOTICE(search if library ${LIBPHASE} is installed)
 AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}"], 
    [have_libphase="yes"], [have_libphase="no"])
+
+dnl IDL
+dnl idldir=${prefix}/share/phase/idl"
+dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/share/phase/idl", "xxx")
 
 dnl output files 
 AC_OUTPUT(Makefile phase/Makefile \
