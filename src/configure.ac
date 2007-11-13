@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 Nov 07 10:59:25 flechsig> 
+dnl   Time-stamp: <13 Nov 07 11:36:41 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -198,7 +198,9 @@ dnl autodetect Motif - but only add to libs_x later (if necessary)
 dnl Use a different function to the earlier test to avoid problems with the
 dnl internal cache.
 AC_CHECK_HEADER(Xm/Xm.h,
-   [AC_CHECK_LIB(Xm, XmStringCreate, have_motif=yes, have_motif=no)],
+   have_motif=yes,
+dnl checklib fails since -L/usr/X11R6/lib is not included in the default libs
+dnl  [AC_CHECK_LIB(Xm, XmStringCreate, have_motif=yes, have_motif=no, [-lXt -lX11])],
    have_motif=no)
 
 if test "$have_motif" = "yes"; then
