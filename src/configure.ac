@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 Nov 07 10:51:05 flechsig> 
+dnl   Time-stamp: <13 Nov 07 10:59:25 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -214,9 +214,9 @@ yes
 fi
 
 if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
-   AC_MSG_WARN([[Motif installation is not OK!]])]
+   AC_MSG_WARN([[Motif installation is not OK!]])
    if test "$have_lesstif" = "yes" ; then
-      AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])]
+      AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])
    fi
 fi
 
