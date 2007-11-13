@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <15 May 07 15:41:46 flechsig> 
+dnl   Time-stamp: <13 Nov 07 10:50:52 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -185,9 +185,40 @@ AC_PATH_X
 AC_PATH_XTRA
 AC_HEADER_STDC
 AC_CHECK_HEADERS(strings.h unistd.h)
-AC_CHECK_HEADERS([Xm/Text.h X11/Xlib.h],
-   [AC_MSG_NOTICE(Motif headers found)],
-   [AC_MSG_WARN([[headers missing - Motif installation is probably not OK]])])
+
+dnl **************** MOTIF ***************************
+
+dnl UF change to exclude lesstif13.11.07
+dnl AC_CHECK_HEADERS([Xm/Text.h X11/Xlib.h],
+dnl [AC_MSG_NOTICE(Motif headers found)],
+dnl [AC_MSG_WARN([[headers missing - Motif installation is probably not OK]])])
+
+
+dnl autodetect Motif - but only add to libs_x later (if necessary)
+dnl Use a different function to the earlier test to avoid problems with the
+dnl internal cache.
+AC_CHECK_HEADER(Xm/Xm.h,
+   [AC_CHECK_LIB(Xm, XmStringCreate, have_motif=yes, have_motif=no)],
+   have_motif=no)
+
+if test "$have_motif" = "yes"; then
+dnl autodetect lesstif
+    AC_MSG_CHECKING(for Lesstif)
+    AC_EGREP_CPP(yes,
+[#include <Xm/Xm.h>
+#ifdef LESSTIF_VERSION
+yes
+#endif
+], have_lesstif=yes, have_lesstif=no)
+  AC_MSG_RESULT($have_lesstif)
+fi
+
+if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
+   AC_MSG_WARN([[Motif installation is not OK!]])]
+   if test "$have_lesstif" = "yes" ; then
+      AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])]
+   fi
+fi
 
 dnl add include path to motif headers 
 AC_SUBST([CPPFLAGS],[-I$x_includes])
@@ -220,19 +251,17 @@ echo "===================================================================="
 if test "x$have_libphase" = "xyes"; then
    echo "we found an installed PhaseLibrary: ${LIBPHASE} ==> good"
    echo ""
-   echo "if make starts an unwanted rebuild of the library you can interrupt"
-   echo "and goto the individual subdirectories and call make and make install"
-   echo "separately"
 else
    echo "The required PhaseLibrary ${LIBPHASE} is not installed"
-   echo "we recommend (not required) to built the library in a separate step"
-   echo "(!! compilation of phaselib may take several hours !!)"
+   echo "the library has to be built and installed in a separate step"
+   echo "(!! compilation of ${LIBPHASE} may take several hours !!)"
    echo "cd ./phaselib"
    echo "make"
    echo "su -c \"make install\""
-   echo "and after the library is installed call make in the main directory"
+   echo "after the library has been installed- call make in the main directory"
    echo "cd .."
    echo "make"
+   echo "su -c \"make install\""
 fi
 echo "===================================================================="
 echo "summary: "
