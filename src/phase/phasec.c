@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <07 Dec 06 13:33:59 flechsig>  */
+/*   Time-stamp: <14 Nov 07 17:29:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2881,8 +2881,8 @@ void InitSourceType(struct BeamlineType *bl, int widget_num)
     case kESRayTraceButton:
     default : 			   sou= 'H'; 
     }
-  printf("InitSourceType: new: %c, old: %c, num: %d\n", 
-	 sou, bl->RTSource.QuellTyp, widget_num);
+  printf("InitSourceType: new: %c, old: %c, num: %d, int(old): %d\n", 
+	 sou, bl->RTSource.QuellTyp, widget_num, bl->RTSource.QuellTyp);
   bl->RTSource.QuellTyp= sou;
 
   
