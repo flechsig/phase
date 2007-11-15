@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <14 Nov 07 17:34:23 flechsig>  */
+/*   Time-stamp: <15 Nov 07 22:20:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2824,7 +2824,7 @@ void ReadCoefficientFile(double *dp, char *fname)
 {
   FILE *f;
   int i, j;
-  char buffer[100], buf;
+  char buffer[MaxPathLength], buf;
   double x;  
 
   printf("read coefficients a(i,j) from %s\n", fname);
@@ -2850,7 +2850,6 @@ void ReadCoefficientFile(double *dp, char *fname)
       printf("took: %d %d %lg\n", i, j, x);
 #endif 
 	dp[i+j*6]= x;
-      
       }
   }
   fclose(f); 
