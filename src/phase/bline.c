@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Nov 07 23:23:59 flechsig>  */
+/*   Time-stamp: <15 Nov 07 23:31:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1594,7 +1594,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
           {  /* lese ein ... */
 	    fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->MDat.Art);
             /* fscanf(f, " %d %[^\n]s %c", &listpt->Art, buffer, &buf);*/
-	    if (listpt->MDat.Art == kEOEGeneral) 
+	     if (listpt->MDat.Art == kEOEGeneral) 
 	      {
 		printf("ReadBLFile->read general coefficient file\n");
 		ReadCoefficientFile((double *)&listpt->mir, listpt->elementname);
