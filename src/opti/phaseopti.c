@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <15 Nov 07 23:46:29 flechsig>  */
+/*   Time-stamp: <15 Nov 07 23:50:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -313,7 +313,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
      case 4:
       for (i= 0; i < *NPAR; i++)
 	{
-	  printf("Parameter: %d index: %d Wert des Parameters: %f\n",
+	  printf("Parameter: %d index: %d Wert des Parameters: %lg\n",
 		 i, optistructure.parindex[i], XPAR[i]);
 	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
 	}
