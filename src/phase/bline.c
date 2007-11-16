@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Nov 07 23:31:44 flechsig>  */
+/*   Time-stamp: <16 Nov 07 08:12:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1484,9 +1484,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     printf("%20lf    vert. e-beam size (mm)\n", up0->sigmaey);  
 	     printf("%20lf    hor. e-beam divergence (mrad)\n", up0->sigmaedz);  
 	     printf("%20lf    vert. e-beam divergence (mrad)\n", up0->sigmaedy);  
-
-	      
-	      up0->lambda*= 1e-6;                       /* intern in mm */
+	     up0->lambda*= 1e-6;                       /* intern in mm */
 	   break;   
 	 case 'H': 
 	   hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
@@ -1594,34 +1592,33 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
           {  /* lese ein ... */
 	    fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->MDat.Art);
             /* fscanf(f, " %d %[^\n]s %c", &listpt->Art, buffer, &buf);*/
-	     if (listpt->MDat.Art == kEOEGeneral) 
+	    if (listpt->MDat.Art == kEOEGeneral)   
 	      {
+		/* read the coefficients once - is required for optimization if only 
+		   particular coefficients should be optimized */
 		printf("ReadBLFile->read general coefficient file\n");
 		ReadCoefficientFile((double *)&listpt->mir, listpt->elementname);
 	      } 
-	    else
+	    pd= (double *) &listpt->MDat.r1;                 
+	    for (i= 0; i < 5; i++, pd++) 
 	      {
-		pd= (double *) &listpt->MDat.r1;                 
-		for (i= 0; i < 5; i++, pd++) 
-		  {
-		    fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
-		  }
-		fscanf(f, " %d %[^\n]s %c", &listpt->MDat.iflagmi, buffer, &buf); 
-		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w1, buffer, &buf); 
-		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w2, buffer, &buf); 
-		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l1, buffer, &buf); 
-		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l2, buffer, &buf); 
-		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopew, buffer, &buf); 
-		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopel, buffer, &buf); 
-		if (version >= 20040217)
-		  {
-		    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.du, buffer, &buf);
-		    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dw, buffer, &buf);
-		    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dl, buffer, &buf);
-		    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRu, buffer, &buf);
-		    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
-		    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
-		  }
+		fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
+	      }
+	    fscanf(f, " %d %[^\n]s %c", &listpt->MDat.iflagmi, buffer, &buf); 
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w1, buffer, &buf); 
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w2, buffer, &buf); 
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l1, buffer, &buf); 
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l2, buffer, &buf); 
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopew, buffer, &buf); 
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopel, buffer, &buf); 
+	    if (version >= 20040217)
+	      {
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.du, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dw, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dl, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRu, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
+		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
 	      }
 #ifdef DEBUG
 	    /*  printf("   mirror read\n"); */
