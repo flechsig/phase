@@ -34,7 +34,7 @@ dnl do LIBTOOL test after fortran stuff
 dnl define the search preference of fortran compilers
 dnl ************** FORTRAN specials *********************
 dnl !!the environment variable F77 overwrites this test!!
-AC_PROG_F77(f77 ifc f77 pgf77 g77)
+AC_PROG_F77(ifort ifc f77 pgf77 g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
 
@@ -48,6 +48,14 @@ fi
 
 case "$F77" in
   "ifc")        # intel compiler
+      AC_MSG_RESULT(found Intel ifc)
+      AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
+      AC_SUBST([FFLAGS],"-vms -w95 -132")
+      libphasename=libphaseifc
+      wantifc=true
+      wantabsoft=false
+      wantportland=false;;
+  "ifort")        # intel compiler
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       AC_SUBST([FFLAGS],"-vms -w95 -132")
