@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 May 07 13:46:41 flechsig>  */
+/*   Time-stamp: <16 Nov 07 09:15:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -711,7 +711,7 @@ void 	ActivateFileSelection(int, char *),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   DefGeometryC(struct gdatset *, struct geometrytype *),  
-  DefMirrorC(struct mdatset *, struct mirrortype *, int, char *),  
+  DefMirrorC(struct mdatset *, struct mirrortype *, int),  
   DelBLElement(struct BeamlineType *bl),  
   exithplot(), 
   ExpandFileNames(),  
