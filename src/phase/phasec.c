@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <15 Nov 07 22:20:40 flechsig>  */
+/*   Time-stamp: <16 Nov 07 11:03:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -313,8 +313,13 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
    gout->idefl= (x->theta0 > 0.0) ? 1 : -1;
 } /* end DefGeometryCM */
 
+
+/*
+   UF 11/07 I take out the read coefficients file functionality - 
+   this is required for the optimization and probably for idl
+*/
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
-		int etype, char *fname)  
+		int etype)  
 {
   double r, rho, *dp, cone, l,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
@@ -332,13 +337,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   dp   = (double *)a;
   alpha= x->alpha * PI/ 180.0;
 
-  /* UF 26. 11. 04        */
-  /* ellipsen Problem     */
-  /* alpha= -fabs(alpha); */ 
-  /* UF 26. 11. 04 end    */
+  
 
-      
-  for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
+  if (etype != kEOEGeneral)
+    for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
                                /* Radien < small dann planspiegel */
 
   /* index fuer a(i,j) = i+ j* 6    */
@@ -378,8 +380,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break; /* end toroid */ 
 
     case kEOEGeneral:           /* read coefficients from file */
-      printf("DefMirrorC: read general coefficient file\n");
-      ReadCoefficientFile(dp, fname);
+      printf("DefMirrorC: general coefficient file- nothing to be done here\n");
+      /*    ReadCoefficientFile(dp, fname); */
       break;
 
     case kEOECone:  
@@ -2847,7 +2849,7 @@ void ReadCoefficientFile(double *dp, char *fname)
       {
 	sscanf(buffer, "%d %d %lg", &i, &j, &x);
 #ifdef DEBUG  
-      printf("took: %d %d %lg\n", i, j, x);
+      printf("took: %d %d %15.10lg\n", i, j, x);
 #endif 
 	dp[i+j*6]= x;
       }

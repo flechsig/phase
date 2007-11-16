@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <29 Nov 06 10:40:38 flechsig>  */
+/*   Time-stamp: <16 Nov 07 09:25:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -386,10 +386,11 @@ void activate_proc(w, tag, reason)
 		    &bl->ElementList[(bl->position)- 1].MDat,
 		    &bl->ElementList[(bl->position)- 1].GDat);  
 	printf("activate_proc: returned etype= %d\n" ,i);
-
+	if (i == kEOEGeneral)
+	  ReadCoefficientFile((double *)&bl->ElementList[(bl->position)- 1].mir, 
+			      bl->ElementList[(bl->position)- 1].elementname);
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
-		   &bl->ElementList[(bl->position)- 1].mir, i,
-		   bl->ElementList[(bl->position)- 1].elementname); 
+		   &bl->ElementList[(bl->position)- 1].mir, i); 
 	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 		     PHASESet.elementpckname);
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 

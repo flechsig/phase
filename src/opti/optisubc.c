@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <29 Nov 06 14:13:27 flechsig>  */
+/*   Time-stamp: <16 Nov 07 10:27:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -449,8 +449,7 @@ void buildsystem(struct BeamlineType *bl)
 	{ 
 	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
 	    {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, 
-			 listpt->elementname);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
 	      listpt->ElementOK |= elementOK; 
 	    }
 	  if ((listpt->ElementOK & geometryOK) == 0) /* geometry rebuild */

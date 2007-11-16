@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <15 Nov 07 23:50:01 flechsig>  */
+/*   Time-stamp: <16 Nov 07 11:53:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -142,7 +142,7 @@ int main(argc, argv)
 Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
 
-#ifndef DEBUG
+/*#ifndef DEBUG*/
    if (argc != 2)
    {
      fprintf(stderr,"syntax: phaseopti <inputfilename>\n");
@@ -151,10 +151,10 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
    printf("read from file: %s\n", argv[1]);
 
    getoptipickfile(&optistructure, argv[1]); 
-#else
-   printf("debug mode -> read from file: test.pcko\n");
-   getoptipickfile(&optistructure, "test.pcko");
-#endif
+/*#else*/
+   /*   printf("debug mode -> read from file: test.pcko\n");
+	getoptipickfile(&optistructure, "test.pcko");*/
+/*#endif*/
    ReadBLFile(optistructure.beamlinefilename, &Beamline);
    /* oeffnen des Ausgabefiles */
    if ((optistructure.filepointer= 
@@ -300,7 +300,14 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
 	Beamline.deltalambdafactor/ zfwhm : 1e12;
       /* define what you want to minimize */
-      *CHI= 1.0- transmittance;
+
+      /*  printf("optimize: transmittance ");
+       *CHI= 1.0- transmittance;*/
+      printf("optimize: focus ");
+      *CHI= zfwhm + yfwhm;
+      /*  printf("optimize: resolving power ");
+       *CHI= 1.0/rpy;*/
+
 #else
       Get_dydz_fromSource(&Beamline, &dy, &dz);
       costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
@@ -335,7 +342,14 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
 	Beamline.deltalambdafactor/ zfwhm : 1e12;
       /* define what you want to minimize */
-      *CHI= 1.0- transmittance;
+
+/*  printf("optimize: transmittance ");
+       *CHI= 1.0- transmittance;*/
+      printf("optimize: focus ");
+      *CHI= zfwhm + yfwhm;
+      /*  printf("optimize: resolving power ");
+       *CHI= 1.0/rpy;*/
+      
 #else
       Get_dydz_fromSource(&Beamline, &dy, &dz);
       costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
@@ -371,7 +385,7 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   out_struct(&Beamline, &y, op->yindex); 
   fprintf(op->filepointer, "%g %g %e %g", x, y, *chi, *XPAR);  
   for (i= 1; i< *NPAR; i++) 
-    fprintf(op->filepointer, " %g", XPAR[i]);  
+    fprintf(op->filepointer, " %15.10lg", XPAR[i]);  
   fprintf(op->filepointer, "\n");
   /* eine Zeile im outputfile fertig */
 } 

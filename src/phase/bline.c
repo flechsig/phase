@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <16 Nov 07 08:12:47 flechsig>  */
+/*   Time-stamp: <16 Nov 07 13:19:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -179,8 +179,7 @@ void BuildBeamline(struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, 
-			 listpt->elementname);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
 	      /*  mputpickfile(&listpt->MDat, PHASESet.elementpckname); */ 
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
@@ -341,8 +340,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, 
-			 listpt->elementname);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
 	      /*  mputpickfile(&listpt->MDat, PHASESet.elementpckname); */ 
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
@@ -1197,6 +1195,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
      fprintf(f, "\nMIRROR %d  \n", elnumber);  
      fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
+     if (listpt->MDat.Art == kEOEGeneral)   
+       {
+	 /* read the coefficients once - is required for optimization if only 
+	    particular coefficients should be optimized */
+	 printf("WriteBLFile->write general coefficient file new-mirror-coefficients\n");
+	 WriteMKos(&listpt->mir, "new-mirror-coefficients");
+       } 
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
      fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha);
