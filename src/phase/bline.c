@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <16 Nov 07 13:19:09 flechsig>  */
+/*   Time-stamp: <18 Nov 07 21:06:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1165,7 +1165,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    case 'F': 
      fprintf(f, "%20c    *** Rays from file ***\n", 
 	       bl->RTSource.QuellTyp);
-     break;    
+     break;  
+     default:
+       fprintf(f, "%20c    *** Error: Unknown Source ***\n", 
+	       bl->RTSource.QuellTyp);
    }
    fprintf(f,"%20d    number of points\n", bl->RTSource.raynumber); 
    /* end source section */ 
