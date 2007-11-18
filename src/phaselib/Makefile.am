@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <27 Feb 06 16:43:29 flechsig> 
+#  Time-stamp: <18 Nov 07 15:18:43 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -31,7 +31,7 @@ lengthd411.for lengthd412.for  \
 lengthd42.for  lengthd43.for   \
 p_m_4.for  \
 zernike_nl_60.for zernike_n_60.for \
-dfpl1_uf.F  dfpl2_uf.F
+dfpl1_uf.F  dfpl2_uf.F dfpl1a.f 
 ## end common sources
 
 ## we use an AM_CONDITIONAL to switch library names for different compilers
