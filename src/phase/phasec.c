@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Nov 07 11:03:14 flechsig>  */
+/*   Time-stamp: <19 Nov 07 09:58:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1087,85 +1087,85 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   struct PSSourceType  *psp;
   XmString str[73], str1[4];  	
   char *inhalt[]= {	
-    "epsilon for Newton routine",
-    "calculation up to (3,4) order", 
-    "iordsc", 
-    "expansion of pathlength (1),",
-    "subtraction of ideal path length (1)",
-    "source type",
-    "radius of pinhole in source plane (mm)",
-    "aperture in source plane, ymin (mm)",
-    "aperture in source plane, ymax (mm)",
-    "aperture in source plane, zmin (mm)",
-    "aperture in source plane, zmax (mm)",
-    "radius in aperture plane",
+    "(epsilon) epsilon for Newton routine",
+    "(iord) calculation up to (3,4) order", 
+    "(iordsc)", 
+    "(iexpand) expansion of pathlength (1),",
+    "(iplmode) subtraction of ideal path length (1)",
+    "(isrctype) source type",
+    "(rpin) radius of pinhole in source plane (mm)",
+    "(srcymin) aperture in source plane, ymin (mm)",
+    "(srcymax) aperture in source plane, ymax (mm)",
+    "(srczmin) aperture in source plane, zmin (mm)",
+    "(srczmax) aperture in source plane, zmax (mm)",
+    "(rpin_ap) radius in aperture plane",
     "op->apr.ymin_ap",
     "op->apr.ymax_ap",
     "op->apr.zmin_ap",
     "op->apr.zmax_ap",
-    "Dipole: Cy",
-    "Dipole: Cz",
-    "Dipole: y-Distance (virtual) between Dipole and source plane",
-    "Dipole: z-Distance (real) between Dipole and source plane",
+    "(so5.dipcy) Dipole: Cy",
+    "(so5.dipcz) Dipole: Cz",
+    "(so5.dipdisy) Dipole: y-Distance (virtual) between Dipole and source plane",
+    "(so5.dipdisz) Dipole: z-Distance (real) between Dipole and source plane",
    /*  "ymin of dipole source (in mm)", */
 /*     "ymax of dipole source (in mm)", */
 /*     "zmin of dipole source (in mm)", */
 /*     "zmax of dipole source (in mm)", */
     /*UF 10.2.00 igating wird automatisch gesetzt */
     /*    "(1): phase advance for grating, (0): mirror", */
-    "(1) normalize output, (0) do not normalize",
-    "inorm1",
-    "inorm2 (0, 1, 2)",
-    "derive matrix elements in 3 different ways (1) (for debugging)",
-    "source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
-    "source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
-    "source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "ymin, zu integrierender Winkelbereich in mrad",
-    "ymax, zu integrierender Winkelbereich in mrad",
+    "(inorm) (1) normalize output, (0) do not normalize",
+    "(inorm1)",
+    "(inorm2) (0, 1, 2)",
+    "(matrel) derive matrix elements in 3 different ways (1) (for debugging)",
+    "(so1.isrcy)   source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
+    "(so1.isrcdy)  source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
+    "(so1.sigmay)  source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(so1.sigmayp) source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(xi.ymin) ymin, zu integrierender Winkelbereich in mrad",
+    "(xi.ymax) ymax, zu integrierender Winkelbereich in mrad",
  /*   "number of integration points for equidistant grid", */
  /*   "itery0,     Anzahl der Iterationen", */
-    "ianzy0,     Anzahl der Stuetzstellen im ersten Raster",
+    "(xi.ianzy0) Anzahl der Stuetzstellen im ersten Raster",
  /*   "imaxy", */
  /*   "fracy,      Verhaeltnis von fmin zu fmax", */
  /*   "frac1y,     minimaler Quotient benachbarter Werte", */
-    "source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
-    "source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
-    "source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "zmin, ",
-    "zmax",
+    "(so1.isrcz) source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
+    "(so1.isrcdz) source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
+    "(so1.sigmaz) source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(so1.sigmazp) source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(xi.zmin)",
+    "(xi.zmax)",
  /*   "number of integration points for equidistant grid",*/
  /*   "iterz01",*/
-    "ianzz0",
+    "(xi.ianzz0)",
  /*   "imaxz",*/
  /*   "fracz",*/
  /*   "frac1z",*/
-    "(1) write 4-dim brightness to file",
-    "(0) simpson integration, (1) spline integration",
-    "d12_max",
-    "id12; (1) print d12 on file, (0) do not print",
-    "ianz0_cal",
-    "ianz0_fixed",
-    "iamp_smooth (0,1,2)",
-    "iord_amp",
-    "ifm_amp",
+    "(ifl.ibright) (1) write 4-dim brightness to file",
+    "(ifl.ispline) (0) simpson integration, (1) spline integration",
+    "(xi.d12_max)",
+    "(xi.id12); (1) print d12 on file, (0) do not print",
+    "(xi.ianz0_cal)",
+    "(xi.ianz0_fixed)",
+    "(xi.iamp_smooth) (0,1,2)",
+    "(xi.iord_amp)",
+    "(xi.ifm_amp)",
  /*    "amp_change", */
-    "iord_pha",
-    "ifm_pha",
+    "(xi.iord_pha)",
+    "(xi.ifm_pha)",
   /*   "phase_change_1, ", */
 /*     "phase_change_2", */
 /*     "(0) do not allow, (1) allow change of curvature sign of phase", */
 /*     "(1) correct phase for pi and 2pi, (0) correct only for 2 pi", */
   /*  "order of amplitude expansion", */
  /*    "dphi_min", */
-    "distance to horizontal focus",
-    "distance to vertical focus",
-    "insert pinhole array in source plane",
-    "pin_yl0",
-    "pin_yl",
-    "pin_zl0",
-    "pin_zl",
+    "(xi.distfocy) distance to horizontal focus",
+    "(xi.distfocz) distance to vertical focus",
+    "(ifl.ipinarr) insert pinhole array in source plane",
+    "(src.pin_yl0)",
+    "(src.pin_yl)",
+    "(src.pin_zl0)",
+    "(src.pin_zl)",
       
     /*********************************************
       hier gehen meine frueheren Bezeichnungen los
@@ -1632,7 +1632,7 @@ void UpdateFilenames(struct PHASEset *x)
 void ExpandFileNames(struct PHASEset *x, char *pfad)   
      /* beseitigt extension und Versionsnummer von path      */
      /* setzt neue namen fuer Einzelelemente                 */
-     /* ICON- Taste (pfad == \0), save as,  AddBLElement     */
+     /* ICON- Taste (pfad == \0), save as,  AddBLEleent     */
      /* Uwe 3.6.96 					     */
      /* last mod. 26.7.96 				     */
      /* 26.7.96 quellnamen, image werden ausgenommen 	     */
