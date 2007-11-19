@@ -128,11 +128,8 @@ struct  source4 {
 	yezremin,yezremax,dyezre,
 	yezimmin,yezimmax,dyezim,
 	zezre[256][256],zezim[256][256],
-        deltatime,gridx[256],gridy[256],
-        amp1eyre,amp1eyim,amp2eyre,amp2eyim,
-        amp3eyre,amp3eyim,amp4eyre,amp4eyim,
-        amp1ezre,amp1ezim,amp2ezre,amp2ezim,
-        amp3ezre,amp3ezim,amp4ezre,amp4ezim;
+        gridx[256],gridy[256],deltatime,
+        ampeyre,ampeyim,ampezre,ampezim;
   int  ieyrex,ieyimx,ieyrey,ieyimy,
        iezrex,iezimx,iezrey,iezimy,
        nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
@@ -245,7 +242,7 @@ struct simps1 {
   double z1,z2;
 /*  double tya[301][301],tza[301][301];
   double typ[301][301],tzp[301][301]; */
-  int ianz0_save[256][256];
+  int ianz0_save[301][301];
   int iiheigh,iiwidth,jmult;
 };
 /* ----------------- results from integration --------------------*/
@@ -287,7 +284,7 @@ struct simps1 {
 */
 
         struct  statistics {
-	   double fd1phmax[256][256];
+	   double fd1phmax[128][128];
 	   int  nn1,nn2,inumb[256][256];
 	   int  inumzit,inumyit,inumzan,inumyan;
 	};  
