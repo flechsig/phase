@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 May 07 13:49:11 flechsig>  */
+/*   Time-stamp: <19 Nov 07 12:58:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -792,7 +792,11 @@ void AllocRTSource(struct BeamlineType *bl)
     default: fprintf(stderr, 
 		     "AllocRTSource: error: unknown source type! %c \n", 
 		     bl->RTSource.QuellTyp);
-      exit(-1);
+             fprintf(stderr, 
+		     "AllocRTSource: set sourcetype to >>H<<\n");
+	     bl->RTSource.QuellTyp='H';
+	     AllocRTSource(bl);
+      
     }
 } /* AllocRTSource */
 
