@@ -196,31 +196,33 @@ void MPST(struct BeamlineType *bl)
    char ezre2[MaxPathLength],ezim2[MaxPathLength];
 
    /* UF 28.11.06 */
-     PSDp= bl->RESULT.RESp; 
+   
+   PSDp= bl->RESULT.RESp; 
 
 /*   int function get_nam, function WriteMPsd; */
 
 /*   dnue=2.87e12;  */
-   dnue=1./(Beamline.src.so4.deltatime*1.0e-15);
-   
+   dnue=1./(Beamline.src.so4.deltatime*Beamline.src.so4.nfreqtot*1.0e-15);
+
    Beamline.BLOptions.xlam_save=Beamline.BLOptions.lambda;
    nue0=LIGHT_VELO/Beamline.BLOptions.xlam_save;
-   
-   printf(" main wavelength = %15le ",Beamline.BLOptions.xlam_save);
+
+   printf(" \n test %d \n",Beamline.src.so4.iezimx);
+   printf(" main wavelength = %15le \n",Beamline.BLOptions.xlam_save);
    
    ifour=Beamline.src.so4.nfreqtot;  /* 2048 */
    istart=1;
    iend=Beamline.src.so4.nfreqpos;   /* 20 */
+   
+   printf("%5d %5d %5d \n ",ifour,istart,iend);
 
-/* start loop */
+   /* start loop */
    for (i=istart-1; i<iend; i++)
      {     
 	
 /* get names */
-
+	
    get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1);
-
-	printf(eyre,ezre);
 	
    strcpy(bl->src.so4.fsource4a,eyre);
    strcpy(bl->src.so4.fsource4b,eyim); 
@@ -488,8 +490,8 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
    if ((f4= fopen(fname, "w+")) == NULL)
    {
        fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
-   } 
-
+   }
+   
    fprintf(f0, "   %d    %d\n", nz, ny);  
    fprintf(f1, "   %d    %d\n", nz, ny);
    fprintf(f2, "   %d    %d\n", nz, ny);
