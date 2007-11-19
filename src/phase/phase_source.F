@@ -1,7 +1,14 @@
-c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
-c Date      : <20 Jan 00 10:23:01 flechsig> 
-c Time-stamp: <06 Feb 04 09:07:31 flechsig> 
-c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+c$$$ File      : phase_source.F
+c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
+c$$$ Time-stamp: <19 Nov 07 09:36:12 flechsig> 
+c$$$ Author    : Johannes Bahrdt
+c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+c
 c--------------------------------------------------------------------------
 c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
 c differences to phase_source_10.for from 19 Jan 2000
@@ -1341,4 +1348,4 @@ c**************************************************
 	return
 	end
 
-c /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
+c end
