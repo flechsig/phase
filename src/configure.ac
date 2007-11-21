@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <20 Nov 07 18:05:01 flechsig> 
+dnl   Time-stamp: <21 Nov 07 22:15:12 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -142,10 +142,10 @@ AC_ARG_ENABLE([debug],
   AC_HELP_STRING([--enable-debug],[debugging code, static linking]),
     if test "$enable_debug" = "yes"; then
        AC_MSG_NOTICE(*** produce debugging code ***)
-       if test "$F77" = "ifc"; then
-	  FFLAGS="-DDEBUG -g ${FFLAGS}"
+       if test "$F77" = "f77"; then
+	  FFLAGS="-DDEBUG -g -C -B111 ${FFLAGS}"
        else
-          FFLAGS="-DDEBUG -g -C -B111 ${FFLAGS}"
+          FFLAGS="-DDEBUG -g ${FFLAGS}"
        fi
        CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
        libextension="a"
