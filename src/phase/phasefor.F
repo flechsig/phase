@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <08 Apr 04 15:51:57 flechsig> 
+c$$$ Time-stamp: <21 Nov 07 12:57:22 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -247,6 +247,9 @@ c merken da die parameter im fehlerfall auf 1 gesetzt werden
           yi=yi+ddisty           ! begin bei disty1(minimum bildpunkt)
 	  yiplot(n1)=yi          ! bildpunkt merken
           yipc(n1)=yi
+#ifdef DEBUG
+c          write(*,*)'debug 0711 yipc n1', yipc(n1), n1
+#endif
           zi=s.distz1-ddistz     ! z- Raster im Bild
           do n2=1,s.iwidth
             zi=zi+ddistz
@@ -419,6 +422,12 @@ c        write(*,*)'file fd1ph.paw und surf_s0.paw erzeugt'
 	write(*,*)'        in z ',st.inumzan,' times '
 	write(*,*)' reached maximum number of grid points'
 	write(*,*)'        in y ',st.inumyan,' times '
+
+#ifdef DEBUG
+c          write(*,*)'debug 0711 yipc(1) yipc(2)', yipc(1), yipc(2) 
+#endif
+
+
 
 c        write(*,*)'xir.iisimp:',xir.iisimp
 c	do ii=1,xir.iisimp
