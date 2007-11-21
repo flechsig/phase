@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <19 Nov 07 12:58:39 flechsig>  */
+/*   Time-stamp: <21 Nov 07 12:03:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -821,7 +821,10 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
     case PLphspacetype:
       iy= dim1;
       iz= dim2;
-      ii= iy * iz; 
+      ii= iy * iz;
+#ifdef DEBUG 
+      printf("debug 0711: phase space allocate iy iz ii %d %d %d\n", iy, iz, ii);
+#endif
       bl->RESULT.RESp= XMALLOC(struct PSDType, 1);
       PSDp= bl->RESULT.RESp;
       /* PSDp->y  = XMALLOC(double, psip->iy); */
