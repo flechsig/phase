@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 Nov 07 11:36:41 flechsig> 
+dnl   Time-stamp: <20 Nov 07 18:05:01 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -37,6 +37,7 @@ dnl !!the environment variable F77 overwrites this test!!
 AC_PROG_F77(ifort ifc f77 pgf77 g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
+echo "debug: found FLIBS: ${FLIBS}"
 
 dnl set fortran compiler specials
 AC_MSG_CHECKING(for a supported compiler type)
