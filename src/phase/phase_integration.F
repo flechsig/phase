@@ -1,7 +1,12 @@
-c File      : ~/phase/src/phase/phase_integration_12.for
-c Date      : <21 Dec 99 14:37:34 flechsig> 
-c Time-stamp: <14 Mar 06 08:24:07 flechsig> 
-c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+c$$$ File      : ~/phase/src/phase/phase_integration.F
+c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
+c$$$ Time-stamp: <21 Nov 07 12:43:00 flechsig> 
+c$$$ Author    : J.B. + modification Uwe Flechsig
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 c
 c Aenderungen UF:
 c (1) file umbenannt in phase_integration_12.for
