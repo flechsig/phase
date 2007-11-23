@@ -1,0 +1,5 @@
+PHASE COMMON LIBRARY
+====================
+- the routines follow the new naming scheme
+- collection of basic api routines used by the graphical 
+  interface or from idl
