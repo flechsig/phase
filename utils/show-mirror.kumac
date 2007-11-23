@@ -1,12 +1,15 @@
 * File      : /home/pss060/sls/flechsig/phase/utils/show-mirror.kumac
 * Date      : <30 Mar 01 16:26:01 flechsig> 
-* Time-stamp: <02 Apr 01 10:52:53 flechsig> 
+* Time-stamp: <25 Oct 04 13:44:47 flechsig> 
 * Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 *********************************************************************
 * display the surface by reading a PHASE coefficient file
 * if there is no input we apply default mirror dimensions
-* units: mm
+* units: mm/mum
 * the histogram 1111 is generated and can be shown in different ways
+* histogram 1111 2d profile
+* histogram 2222 central cut in w
+* histogram 3333 central cut in l
 *********************************************************************
 macro show-mirror fn=! wmin=! wmax=! lmin=! lmax=!
 
@@ -27,7 +30,8 @@ if [lmax]= '!' then
    lmax= 10
 endif
 
-ve/del *                          | delete all vectors
+ ve/del i,j,aa,a		| delete all vectors
+ hi/del 1111,2222,3333
 ve/re i,j,aa [fn] ! ! -/#/        | read file skip comments
 ve/cr a(6,6) R
 
@@ -49,18 +53,55 @@ application comis quit
 	    sum=sum+a(i,j)* x**(i-1)*y**(j-1)
 	  enddo
         enddo	
-	su=sum
+	su=sum*1000
 	return
-	end
+        end
+ 
+        function sux(y)
+	vector a
+	
+	x=0.0
+	sum=0
+	do i=1,6
+	  do j=1,6
+	    sum=sum+a(i,j)* x**(i-1)*y**(j-1)
+	  enddo
+        enddo	
+	sux=sum*1000
+	return
+        end
+ 
+        function suy(x)
+	vector a
+	
+	y=0.0
+	sum=0
+	do i=1,6
+	  do j=1,6
+	    sum=sum+a(i,j)* x**(i-1)*y**(j-1)
+	  enddo
+        enddo	
+	suy=sum*1000
+	return
+        end
 
 quit
 
-fun2 1111 su 100 [wmin] [wmax] 100 [lmin] [lmax] ' '     | create histogram
+ fun2 1111 su  100 [wmin] [wmax] 100 [lmin] [lmax] ' ' | create histogram
+ fun1 2222 suy 100 [wmin] [wmax]  ' ' | create histogram
+ fun1 3333 sux 100 [lmin] [lmax]  ' '     | create histogram
 
-titel= file: [fn]
-title [titel]
-surf 1111 30 30 3                            | plot histogram
-atitle 'w (mm)' 'l (mm)' 'u (mm)'
+ titel= file: [fn]
+ title [titel]
+ zone 2 2
+ surf 1111 30 30 3                            | plot histogram
+ atitle 'w (mm)' 'l (mm)' 'u ([m]m)'
+ 
+ hi/pl 2222                                  | plot histogram
+ atitle 'w (mm)' 'u ([m]m)'
+ 
+ hi/pl 3333                                  | plot histogram
+ atitle 'w (mm)' 'u ([m]m)'
 
 exitm                                        | normal exit
 

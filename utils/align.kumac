@@ -1,6 +1,6 @@
 |   File      : /afs/psi.ch/user/f/flechsig/phase/utils/align.kumac
 |   Date      : <06 Feb 04 13:24:38 flechsig> 
-|   Time-stamp: <06 Feb 04 13:24:53 flechsig> 
+|   Time-stamp: <17 Feb 04 12:30:21 flechsig> 
 |   Author    : Uwe Flechsig, flechsig@psi.ch
 
 |   $Source$ 
@@ -20,11 +20,12 @@ mess '(mis)alignment and surface errors'
 *                      falignfit.for
 *		       trafo.for	
 ****************************************************************
-on error goto exit
+* on error goto exit
 if [fi]='!' goto exit
 if [fo]='!' goto exit
  
-zone 3 3
+ zone 3 3
+ zone 2 2
 ***************************************************************
 * Spiegeldimension Bereich festlegen (etwa)
 wmin=-100.
@@ -32,8 +33,8 @@ wmax=100.
 lmin=-10.
 lmax=10.
 * Raster festlegen
-nw=16
-nl=16
+nw=21
+nl=21
 * Raster1 ca. 0.75*Raster siehe unten
 nw1=12
 nl1=12
@@ -50,7 +51,50 @@ lmax1=$sigma(0.75*[lmax])
 ve/del *
 hi/del *
 * Phase Datenvektor lesen
-ve/re  a [fi]                                | read vektor from *.date
+*  umschreiben auf coeff file
+* ve/re  a [fi]			| read vektor from *.date
+ve/re i,j,aa [fi] ! ! -/#/        | read file skip comments
+ ve/cr a(6,6) R
+ ve/cr b(21) R
+ ve/cr io(21) I
+ ve/cr jo(21) I
+ 
+k=$sigma(nco(aa))                 | fill matrix a
+while [k] > 0 do
+  i=i([k])+1
+  j=j([k])+1
+  ve/input a([i],[j]) aa([k])
+  k= [k]-1
+endwhile 
+ 
+
+application comis quit
+	subroutine fillpar
+	vector a
+	vector b
+	vector io
+	vector jo
+	
+	k=1
+	do i=0,5
+	  do j=0,5
+	    if ((i+j).le.5) then 
+	      io(k)= i
+	      jo(k)= j
+	      b(k)= a((i+1),(j+1))
+	      k=k+1
+	     endif
+	  enddo
+        enddo	
+	end 
+quit  
+*  fill vector al
+call fillpar 
+ 
+
+ 
+ 
+ 
 nhigh=[nw]*[nl]
 ve/cr high([nhigh]) R                        | ve aus histo buffern
 
@@ -58,15 +102,32 @@ ve/cr high([nhigh]) R                        | ve aus histo buffern
 2d 8000 'misalignment' [nw1] [wmin1] [wmax1] [nl1] [lmin1] [lmax1]  
 2d 8001 'fill check' [nw1] [wmin1] [wmax1] [nl1] [lmin1] [lmax1]  
 2d 8002 'misalignment normalized' [nw1] [wmin1] [wmax1] [nl1] [lmin1] [lmax1]  
-2d 3000 'normalized fitting error' [nw1] [wmin1] [wmax1] [nl1] [lmin1] [lmax1] 
-
+2d 3000 'normalized fitting error in 1/100' [nw1] [wmin1] [wmax1] [nl1] [lmin1] [lmax1] 
+ 
+application comis quit
+	function su(x,y)
+	vector a
+	
+	sum=0
+	do i=1,6
+	  do j=1,6
+	    sum=sum+a(i,j)* x**(i-1)*y**(j-1)
+	  enddo
+        enddo	
+	su=sum
+	return
+	end 
+quit 
+ 
 * urspruengliche Spiegelform erzeugen (mit eingelesenem Vektor)
-fun2 1000 falign.for [nw] [wmin] [wmax] [nl] [lmin] [lmax] ' ' 
+* fun2 1000 falign.for [nw] [wmin] [wmax] [nl] [lmin] [lmax] ' ' 
+fun2 1000 su [nw] [wmin] [wmax] [nl] [lmin] [lmax] ' ' 
 surf 1000 30 30 1                            | darstellen
 mess ' histogram 1000 shows mirror shape'
 
 hi/copy 1000 1001 'surface misalignm. and -errors'     | hi mit namen buchen
-
+ goto djust
+ 
 * Oberflaechenfehler durch heat load o. ae. z. B. Fit aus Ansys daten
 mess ' include surface errors ?' 
 ok=1
@@ -102,11 +163,14 @@ if [ok] = '1' goto serror
 ************************************************************************
 weiter:
 surf 1001 30 30 1                        | deformierte Ofl. anzeigen
-
+ mess ' histogram 1001 shows shape plus deformation'
+djust:
 ***********************************************************************
 *           Dejustierung
 ***********************************************************************
 * default dejustierungen = 0
+ 
+ 
 dXi=0.0 
 dw=0.0
 dl=0.0
@@ -121,11 +185,20 @@ read dl
 read rXi
 read rw
 read rl
-
+ 
+ 
+ 
 * mrad in rad wandeln
 rXi=$sigma([rXi]/1000.0)
 rw=$sigma([rw]/1000.0)
 rl=$sigma([rl]/1000.0)
+ 
+ ve/cr dj(6) R [dXi] [dw] [dl] [rXi] [rw] [rl]
+ fun2 2000 alin.for [nw] [wmin] [wmax] [nl] [lmin] [lmax] ' ' 
+ surf 2000 30 30 1                            | darstellen
+ mess ' histogram 2000 shows dejusted mirror shape'
+ 
+ exitm
 * wegen rechenzeit
 ca=$sigma(cos([rXi]))
 cb=$sigma(cos([rw]))
@@ -149,6 +222,7 @@ do i=1,[nw]
      ve/cr pa(9) R [dXi] [dw] [dl] [ca] [cb] [cg] [sa] [sb] [sg] 
      ve/cr v(3)  R [vx] [vw] [vl]  
      call trafo.for
+* mess 'return from traf'
      call hfill(8000,v(2),v(3),v(1))
      call hfill(8001,v(2),v(3),1.0)
      ve/del pa
@@ -157,7 +231,7 @@ do i=1,[nw]
 enddo
 *fit result
 hi/op/div 8000 8001 8002                | falls mehrfach gefuellt
-*surf 8000 30 30 1
+surf 8000 30 30 1
 
 lego 8001 30 30 2
 conto 8002 20 0
@@ -167,20 +241,30 @@ ok=1
 read ok
 if [ok] <> '1' goto exit    
 
-sigma par=a
+
+ 
+call fillpar 
+ 
+ 
+ 
 ************************************************************************
 * fit der deformierten und dejustierten Oberfl"ache
 ************************************************************************
 hi/fit 8002 falignfit.for ! 21 par
+* hi/fit 8002 su ! 36 par
 fun2 2000 falignfit.for [nw1] [wmin1] [wmax1] [nl1] [lmin1] [lmax1] ' ' 
 surf 2000 30 30 1                       | ergebnis des Fit
 hi/op/sub 8002 2000 4000
 hi/op/div 4000 8002 3000 100. 1.
 surf 3000 30 30 1             		| prozentualer Fehler
 *surf 4000 30 30 1   
+ 
 
+ 
+ 
+ 
 * schreiben der Oberfl"achen Koeffizienten f"ur Phase
-ve/wr par [fo] 'XE20.13'
+ve/wr io,jo,par [fo] '2I3,2X,E20.13'
 
 exitm
 exit:

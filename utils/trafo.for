@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/b/bahrdt/phase/utils/trafo.for
 c$$$ Date      : <28 Oct 03 13:47:56 bahrdt> 
-c$$$ Time-stamp: <28 Oct 03 13:48:07 bahrdt> 
+c$$$ Time-stamp: <06 Feb 04 14:53:25 flechsig> 
 c$$$ Author    : Johannes Bahrdt, bahrdt@bessy.de
 c$$$
 c$$$ $Source$ 
@@ -19,10 +19,13 @@ c********************************************************************
         dimension u(3)
         vector pa,v
 
+	write(*,*)'a',v(1),v(2),v(3)
 c verschiebung
 	v(1)=v(1)+pa(1)
 	v(2)=v(2)+pa(2)
         v(3)=v(3)+pa(3) 
+        
+	write(*,*)'b',v(1),v(2),v(3)
 
        	ca=pa(4)
         cb=pa(5)
@@ -46,6 +49,6 @@ c produkt der drei Drehmatritzen
         v(1)=u(1) 
         v(2)=u(2) 
         v(3)=u(3) 
-
-8888	return
+	write(*,*)'c',v(1),v(2),v(3)
+c 8888	return
 	end
