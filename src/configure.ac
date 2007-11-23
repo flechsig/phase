@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <21 Nov 07 22:15:12 flechsig> 
+dnl   Time-stamp: <23 Nov 07 14:18:05 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -179,15 +179,19 @@ configured=`date`
 AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
 
 dnl deal with the prefix
-if test "$prefix" = "NONE"; then
-  AC_MSG_NOTICE(***** prefix: /usr/local ****************** )
-  prefixlib="/usr/local/lib"
-  AC_DEFINE_UNQUOTED(PREFIX, "/usr/local", "the installation prefix")
-else
-  AC_MSG_NOTICE(***** prefix: $prefix ****************** )
-  prefixlib=${prefix}/lib
-  AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
+if test "$prefix" = "NONE" ; then
+  atpsi=`/sbin/ifconfig | grep 129.129.`
+  if test "$atpsi" = "" ; then
+     prefix="/usr/local"
+  else
+     prefix="/afs/psi.ch/project/phase"
+  fi
 fi
+
+AC_MSG_NOTICE(***** prefix: $prefix ****************** )
+prefixlib=${prefix}/lib
+AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
+
 
 dnl Checks for header files.
 AC_PATH_X
