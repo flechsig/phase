@@ -1,2 +1,3 @@
+common.h
 *.cpp
-.deps/
+.deps
