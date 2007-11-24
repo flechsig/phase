@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <23 Apr 07 11:59:11 flechsig> 
+#  Time-stamp: <24 Nov 07 16:40:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -21,7 +21,7 @@ phaseextract_SOURCES    = phaseextract.c cost.F \
 	  ../phase/phasegraffor.F ../phase/phasefor.F \
 	  ../phase/phase_source.F ../phase/xmalloc.c \
 	  ../phase/error.c ../phase/xstrdup.c \
-          ../phase/ctype.c ../phase/dfpl1a.f \
+          ../phase/ctype.c \
 	  ../phase/phase_integration.F \
 	  ../opti/treiber.F ../opti/optisubc.c \
 	  ../phase/misali.F ../phase/misali1.f ../phase/misali2.f \
