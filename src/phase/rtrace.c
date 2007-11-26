@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <26 Nov 07 17:58:40 flechsig>  */
+/*   Time-stamp: <26 Nov 07 18:01:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -840,8 +840,8 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       PSDp->ezrec=       XMALLOC(double, ii);
       PSDp->eyimc=       XMALLOC(double, ii);
       PSDp->ezimc=       XMALLOC(double, ii);
-      PSDp->iy=iy
-      PSDp->iz=iz
+      PSDp->iy=iy;     /* initialize UF 26.11.07 */
+      PSDp->iz=iz;     /* initialize UF 26.11.07 */
       break;
     default: 
       fprintf(stderr, 
