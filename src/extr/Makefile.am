@@ -29,12 +29,23 @@ phaseextract_SOURCES    = phaseextract.c cost.F \
 
 phaseextract_LDADD = $(libdir)/@LIBPHASE@
  
-
-AM_CPPFLAGS = -DLINUX ##@CDEBUG@
+## Uwe's Original
+##AM_CPPFLAGS = -DLINUX 
+##@CDEBUG@
 ##AM_FFLAGS   = @FDEBUG@
-AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+##AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+##          @FLIBS@ \
+##          -L@CERNLIB@ -lpawlib -lpacklib \
+##          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
+
+## flags - mitgeliefertes openmotif
+AM_CPPFLAGS = -DLINUX -I../openmotiflibs/include
+## 
+AM_LDFLAGS = $(X_LIBS) -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
           @FLIBS@ \
           -L@CERNLIB@ -lpawlib -lpacklib \
-          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
+          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c \
+          ../openmotiflibs/libXm.so.2 ../openmotiflibs/libMrm.so.2
+
 ##we use the c linker
 F77LINK = $(LINK)
