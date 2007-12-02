@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <02 Dec 07 08:56:17 flechsig> 
+dnl   Time-stamp: <02 Dec 07 10:24:15 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -28,6 +28,17 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_CHECK_PROG([UIL],[uil],[uil])
+
+dnl check 64bit linux
+AC_MSG_CHECKING(for 64 bit linux)
+machine=`uname -m`
+echo machine: $machine
+if test "$machine" = "x86_64"; then
+   AC_MSG_RESULT(yes)
+   AM_CONDITIONAL([HAVE_X86_64],      [test x"$machine"      = xx86_64])
+fi 
+
+dnl end 64 bit
 
 dnl do LIBTOOL test after fortran stuff
 
