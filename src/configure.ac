@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <23 Nov 07 14:18:05 flechsig> 
+dnl   Time-stamp: <02 Dec 07 08:56:17 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -241,7 +241,8 @@ AC_SUBST([CPPFLAGS],[-I$x_includes])
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
 AC_C_CONST
-AC_TYPE_SIZE_T
+dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
+dnl AC_TYPE_SIZE_T
 
 dnl ************ PHASELIB *******************************
 dnl check if a phaselib is installed
