@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <03 Dec 07 14:10:57 flechsig> 
+dnl   Time-stamp: <03 Dec 07 15:56:30 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -217,21 +217,18 @@ AC_CHECK_HEADERS(strings.h unistd.h)
 
 dnl **************** MOTIF ***************************
 
-dnl UF change to exclude lesstif13.11.07
-dnl AC_CHECK_HEADERS([Xm/Text.h X11/Xlib.h],
-dnl [AC_MSG_NOTICE(Motif headers found)],
-dnl [AC_MSG_WARN([[headers missing - Motif installation is probably not OK]])])
-
-
+AC_ARG_WITH([motif],
+  AC_HELP_STRING([--with-motif=DIR],[path to motif libraries and includes]),
+  [ echo "motif path given as option: ${with_motif}"
+    motifpath=${with_motif}
+    AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
+    AC_SUBST([MOTIFLIBS],["-L${motifpath} -lXm -lMrm"])
+  ],
+  [
 dnl autodetect Motif - but only add to libs_x later (if necessary)
 dnl Use a different function to the earlier test to avoid problems with the
 dnl internal cache.
-AC_CHECK_HEADER(Xm/Xm.h,
-   have_motif=yes,
-dnl checklib fails since -L/usr/X11R6/lib is not included in the default libs
-dnl  [AC_CHECK_LIB(Xm, XmStringCreate, have_motif=yes, have_motif=no, [-lXt -lX11])],
-   have_motif=no)
-
+AC_CHECK_HEADER(Xm/Xm.h,have_motif=yes,have_motif=no)
 if test "$have_motif" = "yes"; then
 dnl autodetect lesstif
     AC_MSG_CHECKING(for Lesstif)
@@ -253,11 +250,12 @@ if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
    motifpath=`pwd | sed -e 's/src$/openmotiflibs/'`
    echo motifpath: ${motifpath}
    AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
-   AC_SUBST([MOTIFLIBS],[-L${motifpath} -lXm -lMrm])
+   AC_SUBST([MOTIFLIBS],["-L${motifpath} -lXm -lMrm"])
 else
 dnl add include path to motif headers 
    AC_SUBST([CPPFLAGS],[-I$x_includes])
 fi
+])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
