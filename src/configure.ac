@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <02 Dec 07 10:24:15 flechsig> 
+dnl   Time-stamp: <03 Dec 07 14:10:57 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -32,10 +32,11 @@ AC_CHECK_PROG([UIL],[uil],[uil])
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
 machine=`uname -m`
-echo machine: $machine
+dnl echo machine: $machine
 if test "$machine" = "x86_64"; then
    AC_MSG_RESULT(yes)
-   AM_CONDITIONAL([HAVE_X86_64],      [test x"$machine"      = xx86_64])
+else
+   AC_MSG_RESULT(no) 
 fi 
 
 dnl end 64 bit
@@ -70,7 +71,11 @@ case "$F77" in
   "ifort")        # intel compiler
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
-      AC_SUBST([FFLAGS],"-vms -w95 -132")
+      if test "$machine" = "x86_64"; then
+	 AC_SUBST([FFLAGS],"-vms -w95 -132 -O0")  # opti. fails on 64 bit
+      else
+         AC_SUBST([FFLAGS],"-vms -w95 -132")
+      fi	 
       libphasename=libphaseifc
       wantifc=true
       wantabsoft=false
@@ -244,16 +249,23 @@ if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
    if test "$have_lesstif" = "yes" ; then
       AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])
    fi
-fi
-
+   AC_MSG_NOTICE(*** add work around with included openmotiflibs ***)
+   motifpath=`pwd | sed -e 's/src$/openmotiflibs/'`
+   echo motifpath: ${motifpath}
+   AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
+   AC_SUBST([MOTIFLIBS],[-L${motifpath} -lXm -lMrm])
+else
 dnl add include path to motif headers 
-AC_SUBST([CPPFLAGS],[-I$x_includes])
+   AC_SUBST([CPPFLAGS],[-I$x_includes])
+fi
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
 AC_C_CONST
 dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
-dnl AC_TYPE_SIZE_T
+if test "$machine" != "x86_64"; then 
+   AC_TYPE_SIZE_T
+fi
 
 dnl ************ PHASELIB *******************************
 dnl check if a phaselib is installed
