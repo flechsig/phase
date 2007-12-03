@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <18 Nov 07 15:19:50 flechsig> 
+#  Time-stamp: <03 Dec 07 14:10:39 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -10,9 +10,8 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = phase 
-## mis
-## mis_SOURCES   = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
+bin_PROGRAMS  = phase mis
+mis_SOURCES   = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
 phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c phase0.c error.c xmalloc.c \
 	  xstrdup.c \
@@ -42,23 +41,12 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 
 EXTRA_DIST = phase_struct.for $(pkgdata_DATA)
 
-## flags - Original
-##AM_CPPFLAGS = -DLINUX 
-##
-##AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-##	     @FLIBS@ -L@CERNLIB@ -lpawlib -lpacklib \
-##             -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
-##
+## flags
+AM_CPPFLAGS = -DLINUX 
 
-
-## flags - mitgeliefertes openmotif
-AM_CPPFLAGS = -DLINUX -I../openmotiflibs/include
-## -L../openmotiflibs -lXm -L../openmotiflibs -lMrm \
-AM_LDFLAGS = $(X_LIBS) -lXt -lXext -lXp -lX11 -lm -lc -lnsl \
-	       @FLIBS@ -L@CERNLIB@ -lpawlib -lpacklib \
-             -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c \
-		 ../openmotiflibs/libXm.so.2 ../openmotiflibs/libMrm.so.2
-##		 -L../openmotiflibs -lXm -lMrm
+AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+	     @FLIBS@ @MOTIFLIBS@ -L@CERNLIB@ -lpawlib -lpacklib  \
+             -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
 
 
 ##we always use the c linker
