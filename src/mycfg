@@ -1,3 +1,5 @@
 
 
-./configure --prefix=$HOME/cvs
+### ./configure --prefix=$HOME/cvs
+
+ ./configure --prefix=$HOME/cvs --with-motif=$HOME/openmotiflibs

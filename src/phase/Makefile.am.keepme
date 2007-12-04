@@ -10,8 +10,9 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = phase mis
-mis_SOURCES   = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
+bin_PROGRAMS  = phase 
+#mis
+#mis_SOURCES   = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
 phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c phase0.c error.c xmalloc.c \
 	  xstrdup.c \
