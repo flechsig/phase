@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <03 Dec 07 15:56:30 flechsig> 
+dnl   Time-stamp: <05 Dec 07 13:06:24 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -279,7 +279,8 @@ dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/share/phase/idl", "xxx")
 dnl output files 
 AC_OUTPUT(Makefile phase/Makefile \
           opti/Makefile extr/Makefile gui/Makefile \
-	  baselib/Makefile phaselib/Makefile phaseidl/Makefile )
+	  baselib/Makefile phaselib/Makefile phaseidl/Makefile \
+	  misalignment/Makefile)
 
 dnl print some messages
 echo ""
