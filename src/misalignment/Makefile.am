@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <05 Dec 07 17:23:55 flechsig> 
+#  Time-stamp: <05 Dec 07 17:33:08 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -8,7 +8,7 @@
 #  $Revision$ 
 #  $Author$ 
 
-# this is the makefile template to built phase with automake/ autoconfig
+# this is the makefile template to built mis with automake/ autoconfig
 
 bin_PROGRAMS  = mis
 mis_SOURCES   = mis.F \
