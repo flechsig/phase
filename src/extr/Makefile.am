@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Nov 07 16:40:25 flechsig> 
+#  Time-stamp: <05 Dec 07 21:40:28 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -28,24 +28,13 @@ phaseextract_SOURCES    = phaseextract.c cost.F \
           ../phase/misali3.f ../phase/misali4.f
 
 phaseextract_LDADD = $(libdir)/@LIBPHASE@
- 
-## Uwe's Original
-##AM_CPPFLAGS = -DLINUX 
-##@CDEBUG@
-##AM_FFLAGS   = @FDEBUG@
-##AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-##          @FLIBS@ \
-##          -L@CERNLIB@ -lpawlib -lpacklib \
-##          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
 
-## flags - mitgeliefertes openmotif
-AM_CPPFLAGS = -DLINUX -I../openmotiflibs/include
-## 
-AM_LDFLAGS = $(X_LIBS) -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+AM_CPPFLAGS = -DLINUX ##@CDEBUG@
+AM_FFLAGS   = @FDEBUG@
+AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
           @FLIBS@ \
-          -L@CERNLIB@ -lpawlib -lpacklib \
-          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c \
-          ../openmotiflibs/libXm.so.2 ../openmotiflibs/libMrm.so.2
+         -L@CERNLIB@ -lpawlib -lpacklib \
+         -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
 
 ##we use the c linker
 F77LINK = $(LINK)
