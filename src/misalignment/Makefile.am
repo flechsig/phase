@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <05 Dec 07 12:41:56 flechsig> 
+#  Time-stamp: <05 Dec 07 13:05:15 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -10,45 +10,10 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = phase mis
-mis_SOURCES   = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
-phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
-	  geometrypck.c bline.c phase0.c error.c xmalloc.c \
-	  xstrdup.c \
-	  mirrorpck.c pst.c \
-	  cutils.c rtrace.c ctype.c \
-	  phasegraffor.F phasefor.F \
-	  phase_source.F \
-	  phase_integration.F \
-	  misali.F misali1.f misali2.f misali3.f misali4.f \
-	  cutils.h phase_struct.h fg3pck.h mirrorpck.h geometrypck.h \
-	  phase.h rtrace.h error.h common.h version.h 
+bin_PROGRAMS  = mis
+mis_SOURCES   = mis.F \
+	../phase/misali.F  ../phase/misali1.f \
+	../phase/misali2.f ../phase/misali3.f \
+	../phase/misali4.f
 
-phase_LDADD = $(libdir)/@LIBPHASE@
-
-pkgdata_DATA = ../data/coefficient-example.dat \
- ../data/higz_windows.dat\
- ../data/map35_lh.omx\
- ../data/map35_rh.omx\
- ../data/map70_lh.omx\
- ../data/map70_rh.omx\
- ../data/news\
- ../data/phase.dat\
- ../data/phase.hlb\
- ../data/phaseinit.com\
- ../data/phaseuser.com\
- ../data/phaseinit.csh
-
-EXTRA_DIST = phase_struct.for $(pkgdata_DATA)
-
-## flags
-AM_CPPFLAGS = -DLINUX 
-
-AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-	     @FLIBS@ @MOTIFLIBS@ -L@CERNLIB@ -lpawlib -lpacklib  \
-             -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c 
-
-
-##we always use the c linker
-F77LINK = $(LINK)
 # end
