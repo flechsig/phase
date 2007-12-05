@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <03 Dec 07 14:10:39 flechsig> 
+#  Time-stamp: <05 Dec 07 13:01:12 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -11,8 +11,6 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phase 
-#mis
-#mis_SOURCES   = mis.F misali.F misali1.f misali2.f misali3.f misali4.f
 phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
 	  geometrypck.c bline.c phase0.c error.c xmalloc.c \
 	  xstrdup.c \
