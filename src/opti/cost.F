@@ -1,6 +1,6 @@
 c File      : /home/vms/flechsig/vms/phas/opti/cost.for
 c Date      : <29 Oct 97 10:13:17 flechsig> 
-c Time-stamp: <04 Feb 98 08:52:17 flechsig> 
+c Time-stamp: <06 Dec 07 18:37:52 flechsig> 
 c Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -40,7 +40,7 @@ c          ! einheiten mm und rad !
      &     ypc1(0,0,0,2)*hdiv**2+
      &     ypc1(0,0,1,2)*vdiv*hdiv**2+
      &     ypc1(0,0,2,0)*vdiv**2   +    ! coma
-     &     ypc1(0,0,3,0)*vdiv**3     ! sph. abb		
+     &     ypc1(0,0,3,0)*vdiv**3        ! sph. abb		
       
         dres=dabs(dres)
         write(*,*)'cost.for: ',dres
