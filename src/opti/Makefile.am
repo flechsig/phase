@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Nov 07 16:40:53 flechsig> 
+#  Time-stamp: <06 Dec 07 12:48:45 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -14,40 +14,28 @@ bin_PROGRAMS            = phaseopti
 ##lib_LTLIBRARIES         = libphaseopti.la
 phaseopti_SOURCES       = phaseopti.c phaseopti.h \
           ../phase/phasec.c       ../phase/activate_proc.c \
-          ../phase/phasegraf.c   ../phase/initdatset.c \
-	  ../phase/geometrypck.c ../phase/bline.c ../phase/phase0.c \
-	  ../phase/mirrorpck.c   ../phase/pst.c \
-	  ../phase/cutils.c      ../phase/rtrace.c \
+          ../phase/phasegraf.c    ../phase/initdatset.c \
+	  ../phase/geometrypck.c  ../phase/bline.c ../phase/phase0.c \
+	  ../phase/mirrorpck.c    ../phase/pst.c \
+	  ../phase/cutils.c       ../phase/rtrace.c \
 	  ../phase/phasegraffor.F ../phase/phasefor.F \
 	  ../phase/phase_source.F ../phase/xmalloc.c ../phase/error.c \
-	  ../phase/xstrdup.c ../phase/ctype.c \
+	  ../phase/xstrdup.c      ../phase/ctype.c \
 	  ../phase/phase_integration.F \
 	  treiber.F optisubc.c cost.F \
-	  ../phase/misali.F ../phase/misali1.f ../phase/misali2.f \
+	  ../phase/misali.F  ../phase/misali1.f ../phase/misali2.f \
           ../phase/misali3.f ../phase/misali4.f
 ##libphaseopti_la_SOURCES = 
 
 phaseopti_LDADD = $(libdir)/@LIBPHASE@
 ##libphaseopti_la_LDFLAGS = -rpath '$(libdir)' -version-info 3:13:1 
 
-## Uwes Original ...
-## AM_CPPFLAGS = -DLINUX 
+AM_CPPFLAGS = -DLINUX 
 ##AM_FFLAGS   = @FDEBUG@
-## AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-##          @FLIBS@\
-##          -L@CERNLIB@ -lpawlib -lpacklib \
-##          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
-
-## flags - mitgeliefertes openmotif
-AM_CPPFLAGS = -DLINUX -I../openmotiflibs/include
-## 
-AM_LDFLAGS = $(X_LIBS) -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
           @FLIBS@\
           -L@CERNLIB@ -lpawlib -lpacklib \
-          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c \
-          ../openmotiflibs/libXm.so.2 ../openmotiflibs/libMrm.so.2
-
-
+          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib -lg2c
 ##we use the c linker
 F77LINK = $(LINK)
 ##we use the c linker
