@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <16 Nov 07 10:27:04 flechsig>  */
+/*   Time-stamp: <06 Dec 07 16:43:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -45,6 +45,7 @@
   #include "../phase/mirrorpck.h"                 
   #include "../phase/geometrypck.h"   
   #include "../phase/phase.h"
+  #include "../phase/rtrace.h"
 #endif
 
 #include "phaseopti.h"     
@@ -559,6 +560,31 @@ double GetRMS(struct BeamlineType *bl, char ch)
   fprintf(stderr, "%c- rms= %f, EX= %f, EX2= %f\n", ch, rms, EX, EX2);
   return rms;
 } /* end GetRMS */
+
+/*
+   calculates the focussize depending on the divergence
+*/
+
+double FocusSize(struct BeamlineType *bl, 
+		 double *dyin, double *dzin, double *yout, double *zout)
+{
+  double chi;
+  struct RayType Rayin, Rayout;
+
+  Rayin.y = Rayin.z= 0.0;
+  Rayin.dy= *dyin;
+  Rayin.dz= *dzin;
+
+  ray_tracef(&Rayin, &Rayout, &bl->BLOptions.ifl.iord, 
+	     (double *)bl->ypc1, (double *)bl->zpc1, 
+	     (double *)bl->dypc, (double *)bl->dzpc);
+  
+  *yout= fabs(Rayout.y);
+  *zout= fabs(Rayout.z);
+  
+  chi= sqrt(*yout * *yout + *zout * *zout);
+  return chi;
+} /* end FocusSize */
 
 
 /* dummy routinen aus phase.c um linker Fehler abzufangen */
