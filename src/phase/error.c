@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/error.c */
 /*  Date      : <26 Oct 04 13:49:18 flechsig>  */
-/*  Time-stamp: <26 Oct 04 14:14:11 flechsig>  */
+/*  Time-stamp: <06 Dec 07 18:32:38 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -57,7 +57,7 @@ void
 set_program_name (const char *path)
 {
   /*  if (!program_name) */
-    program_name = xstrdup (basename (path));
+    program_name = xstrdup ((const char *)basename (path));
 }
 
 
