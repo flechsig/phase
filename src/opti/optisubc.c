@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <06 Dec 07 16:43:09 flechsig>  */
+/*   Time-stamp: <06 Dec 07 16:59:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -562,7 +562,8 @@ double GetRMS(struct BeamlineType *bl, char ch)
 } /* end GetRMS */
 
 /*
-   calculates the focussize depending on the divergence
+   calculates the focussize depending on the divergence 
+   (for optimization of the spot size)
 */
 
 double FocusSize(struct BeamlineType *bl, 
@@ -586,10 +587,41 @@ double FocusSize(struct BeamlineType *bl,
   return chi;
 } /* end FocusSize */
 
+/*
+   calculates the focussize depending on the divergence 
+   (for optimization of the spot size)
+*/
 
-/* dummy routinen aus phase.c um linker Fehler abzufangen */
+double FullRTOpti(struct BeamlineType *bl, double *yout, double *zout)
+{
+  double chi, transmittance, yfwhm, zfwhm, rpy, rpz;
+  
+  
+  printf("************************** FullRTOpti ***********\n");
+  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+  RayTraceFull(&Beamline);
+  transmittance= (double)Beamline.RESULT.points/
+    (double)Beamline.RTSource.raynumber;
 
+  *zout= zfwhm= 2.35* GetRMS(&Beamline, 'z');
+  *yout= yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
+      
+  rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+    Beamline.deltalambdafactor/ yfwhm : 1e12;
+  rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+    Beamline.deltalambdafactor/ zfwhm : 1e12;
 
-
+  /* define what you want to minimize */
+  /* printf("optimize: transmittance ");
+       *CHI= 1.0- transmittance;*/
+  /* printf("optimize: resolving power ");
+       *CHI= 1.0/rpy;*/
+  /*printf("optimize: focus ");*/
+  /**CHI= zfwhm + yfwhm;*/
+      
+      
+  chi= sqrt(*yout * *yout + *zout * *zout);
+  return chi;
+} /* end FullRTOpti */
 
 /* end optisubc.c */

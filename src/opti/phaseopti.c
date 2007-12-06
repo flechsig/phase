@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <16 Nov 07 11:53:39 flechsig>  */
+/*   Time-stamp: <06 Dec 07 17:29:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -60,6 +60,7 @@
   #include "../phase/mirrorpck.h"                 
   #include "../phase/geometrypck.h"   
   #include "../phase/phase.h"
+  #include "../phase/rtrace.h"
 #endif
 
 #include "phaseopti.h"     
@@ -265,12 +266,23 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 /* Diese Routine wird von Minuit gerufen */
 void FCN (int *NPAR, double *G, double *CHI, double *XPAR, 
           int *IFLAGS, char *FUTIL)    
-/* modification: 04 Feb 98 09:01:13 flechsig */
-/* modification: 17 Feb 98 14:27:54 flechsig */
 {
   int i;
   double dy, dz;
   static double chitmp, yfwhm, zfwhm, rpy, rpz, transmittance; 
+
+
+  /* should later on be initiated in the optistructure */
+     
+#ifdef WITH_FULL_RT
+  optistructure.methode= FullRTOptiO; 
+#else
+  #ifdef WITH_COST
+    optistructure.methode= CostForO;
+  #else   
+    optistructure.methode= FocusSizeO;
+  #endif
+#endif  
 
   /* printf("fcn eingang called with %d: chi: %e\n", *IFLAGS, *CHI);  */
   switch(*IFLAGS) 
@@ -283,37 +295,22 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
 	}
       
-      buildsystem(&Beamline);    
-
-#ifndef WITH_FULL_RT
-      printf("************************** full rt\n");
-      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      RayTraceFull(&Beamline);
-      transmittance= (double)Beamline.RESULT.points/
-	(double)Beamline.RTSource.raynumber;
-      
-      zfwhm= 2.35* GetRMS(&Beamline, 'z');
-      yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
-      
-      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-	Beamline.deltalambdafactor/ yfwhm : 1e12;
-      rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-	Beamline.deltalambdafactor/ zfwhm : 1e12;
-      /* define what you want to minimize */
-
-      /*  printf("optimize: transmittance ");
-       *CHI= 1.0- transmittance;*/
-      printf("optimize: focus ");
-      *CHI= zfwhm + yfwhm;
-      /*  printf("optimize: resolving power ");
-       *CHI= 1.0/rpy;*/
-
-#else
-      Get_dydz_fromSource(&Beamline, &dy, &dz);
-      costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); 
-#endif
-         
+      buildsystem(&Beamline);   
+ 
+      switch(optistructure.methode) 
+	{
+	case FullRTOptiO:
+	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
+	  break;
+	case CostForO:
+	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+	  break;
+	case FocusSizeO:
+	default:
+	  Get_dydz_fromSource(&Beamline, &dy, &dz);
+	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
+	}
       printf("debug: FCN: chi: %e; chitmp %e\n", *CHI, chitmp);
       fitoutput(NPAR, XPAR, CHI);         
       break;
@@ -324,37 +321,23 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 		 i, optistructure.parindex[i], XPAR[i]);
 	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
 	}
-      buildsystem(&Beamline);    
-      /*iflag44(&XPAR[0]);  */
-      /**CHI= costfunction(&Beamline);*/
-#ifdef WITH_FULL_RT
-      printf("************************** full rt\n");
-      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      RayTraceFull(&Beamline);
-      transmittance= (double)Beamline.RESULT.points/
-			      (double)Beamline.RTSource.raynumber;
+      buildsystem(&Beamline); 
 
-      zfwhm= 2.35* GetRMS(&Beamline, 'z');
-      yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
-      
-      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-	Beamline.deltalambdafactor/ yfwhm : 1e12;
-      rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-	Beamline.deltalambdafactor/ zfwhm : 1e12;
-      /* define what you want to minimize */
-
-/*  printf("optimize: transmittance ");
-       *CHI= 1.0- transmittance;*/
-      printf("optimize: focus ");
-      *CHI= zfwhm + yfwhm;
-      /*  printf("optimize: resolving power ");
-       *CHI= 1.0/rpy;*/
-      
-#else
-      Get_dydz_fromSource(&Beamline, &dy, &dz);
-      costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); 
-#endif         
+      switch(optistructure.methode) 
+	{
+	case FullRTOptiO:
+	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
+	  break;
+	case CostForO:
+	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+	  break;
+	case FocusSizeO:
+	default:
+	  Get_dydz_fromSource(&Beamline, &dy, &dz);
+	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
+	}
+       
       break;
       
     case 1:

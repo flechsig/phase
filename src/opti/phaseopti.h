@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
 /*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <31 Oct 03 09:54:09 flechsig>  */
+/*  Time-stamp: <06 Dec 07 17:15:48 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
@@ -12,13 +12,17 @@
 
 
 #ifndef __PHASE_OPTI_LOADED
-#define __PHASE_OPTI_LOADED 1    
+#define __PHASE_OPTI_LOADED 1  
+
+#define FocusSizeO  0
+#define FullRTOptiO 1  
+#define CostForO    2
 
 struct optistruct
 {
   double dx, dy;
   int elementzahl, xpoints, ypoints, npars, 
-    xindex, yindex, *parindex;   
+    xindex, yindex, *parindex, methode;   
   char beamlinefilename[MaxPathLength], 
     minuitfilename[MaxPathLength],  
     resultfilename[MaxPathLength];    
@@ -32,9 +36,11 @@ void buildsystem(struct BeamlineType *),
   in_struct(struct BeamlineType *, double *, int);
       
 
-double  out_struct(struct BeamlineType  *, double *,  int); 
-double  DeltaLambda(struct optistruct *, double, int);
-double  GetRMS(struct  BeamlineType *, char);
+double out_struct(struct BeamlineType  *, double *,  int); 
+double DeltaLambda(struct optistruct *, double, int);
+double GetRMS(struct BeamlineType *, char);
+double FocusSize(struct BeamlineType *, double *, double *, double *, double *);
+double FullRTOpti(struct BeamlineType *, double *, double *);
 
 /****** globale vars */
 struct optistruct optistructure;                      /* globale Variablen */  
