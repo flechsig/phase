@@ -371,6 +371,11 @@ c--------- get path length
 	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
 	endif
 
+c-----------------------------------------------
+c	ra.xlam_test wird variiert bei multiple propagation
+c	so wie es sein soll
+c-----------------------------------------------
+
 	if(ifl.iplmode.eq.1)then
 	phase = (2.*cs.pi*xlength)/ra.xlam_test 
 	phase = (2.*cs.pi*xlength)/ra.xlam_test 
