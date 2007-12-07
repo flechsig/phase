@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <06 Dec 07 16:59:53 flechsig>  */
+/*   Time-stamp: <07 Dec 07 13:04:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -484,6 +484,7 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
   struct DipolSourceType     *ds;
   struct UndulatorSourceType *us; 
   struct SRSourceType        *sp; 
+  struct PointSourceType     *ps;
   double h, beugung; 
   
   switch (bl->RTSource.QuellTyp)
@@ -512,6 +513,13 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       *dy= sp->dy/ 1000.0;
       *dz= sp->dz/ 1000.0;
       printf("Get_dydz_fromSource: single ray\n");
+      printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
+      break;
+    case 'o':   /* point source */
+      ps= (struct PointSourceType *)bl->RTSource.Quellep;
+      *dy= ps->dy/ 1000.0;
+      *dz= ps->dz/ 1000.0;
+      printf("Get_dydz_fromSource: point source\n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break;
     default:
