@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Nov 07 21:06:42 flechsig>  */
+/*   Time-stamp: <07 Dec 07 11:00:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1051,6 +1051,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 {   
    FILE *f;
    int elnumber, i, version= 20040217;
+   char   elname[MaxPathLength];
    struct UndulatorSourceType *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType     *dp;
@@ -1182,8 +1183,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    elnumber= 1;
    while (elnumber<= bl->elementzahl) 
    {
-     fprintf(f, "\nElement %d\n", elnumber);	
-     fprintf(f, "%20s     name of elem. \n", listpt->elementname); 
+     fprintf(f, "\nElement %d\n", elnumber);
+     if (listpt->MDat.Art == kEOEGeneral) 
+       sprintf(elname, "%s-new", listpt->elementname);
+     else 
+       sprintf(elname, "%s", listpt->elementname);
+       
+     fprintf(f, "%20s     name of elem. \n", elname); 
      fprintf(f, "\nGEOMETRY %d\n", elnumber); 
      fprintf(f, "%20lg     theta              \n", listpt->GDat.theta0); 
      fprintf(f, "%20lg     source distance    \n", listpt->GDat.r);
@@ -1203,7 +1209,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 	 /* read the coefficients once - is required for optimization if only 
 	    particular coefficients should be optimized */
 	 printf("WriteBLFile->write general coefficient file new-mirror-coefficients\n");
-	 WriteMKos(&listpt->mir, "new-mirror-coefficients");
+	 WriteMKos(&listpt->mir, elname);
        } 
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
