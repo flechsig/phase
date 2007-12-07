@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <07 Dec 07 13:04:47 flechsig>  */
+/*   Time-stamp: <07 Dec 07 13:08:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -503,8 +503,8 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       break; 
     case 'D':
       ds= (struct DipolSourceType *) bl->RTSource.Quellep; 
-      *dy= ds->sigdy/ 2000.0;  /* 2000 da totale Divergenz angegeben */
-      *dz= ds->dz/ 2000.0; 
+      *dy= ds->sigdy/ 1000.0;  
+      *dz= ds->dz/ 1000.0; 
       printf("Get_dydz_fromSource: dipol source \n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break; 
@@ -517,8 +517,8 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       break;
     case 'o':   /* point source */
       ps= (struct PointSourceType *)bl->RTSource.Quellep;
-      *dy= ps->dy/ 1000.0;
-      *dz= ps->dz/ 1000.0;
+      *dy= ps->sigdy/ 1000.0;
+      *dz= ps->sigdz/ 1000.0;
       printf("Get_dydz_fromSource: point source\n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break;
