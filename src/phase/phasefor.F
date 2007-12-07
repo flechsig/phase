@@ -266,11 +266,12 @@ c************* save initial coordinates ****************
 
             st.nn1=n1
 	    st.nn2=n2
+
 c******* start of adaptive grid integration *************************** 
             call adaptive_int(m4,g,a,src,apr,
      .           cs,ra,ifl,xi,xir,st,s)  
 
-            if(ifl.ispline.eq.-1)then
+     	    if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
                xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
             endif
@@ -2485,8 +2486,6 @@ c        include 'phase_struct.for'
       read(16,*)src.so4.nsource,src.so4.nimage
       read(16,*)src.so4.deltatime
       read(16,*)src.so4.iconj
-
-      write(6,*)src.so4.nfreqtot
 
       read(16,3)dfile
       iname=clen1(dfile)
