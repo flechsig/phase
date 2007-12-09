@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Nov 07 09:58:09 flechsig>  */
+/*   Time-stamp: <09 Dec 07 20:18:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -538,7 +538,6 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #ifdef DEBUG
   printf("DEBUG: mirror coefficients\n");
   for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
-  
 #endif
   /* misalignment */
   if (Beamline.BLOptions.WithAlign == 1)
@@ -546,11 +545,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("            with misalignment\n");
       memcpy(&mirror, a, sizeof(struct mirrortype));
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+#ifdef DEBUG
+      printf("DEBUG: mirror coefficients with misalignment\n");
+      for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
+#endif
     } else
       printf("            without misalignment\n");
 #ifdef DEBUG
-  printf("DEBUG: mirror coefficients\n");
-  for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
   printf("DEBUG: end defmirrorc\n");
 #endif
 } /* end defmirrorc */
