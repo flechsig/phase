@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <21 Nov 07 12:57:22 flechsig> 
+c$$$ Time-stamp: <09 Dec 07 20:39:22 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -266,12 +266,11 @@ c************* save initial coordinates ****************
 
             st.nn1=n1
 	    st.nn2=n2
-
 c******* start of adaptive grid integration *************************** 
             call adaptive_int(m4,g,a,src,apr,
      .           cs,ra,ifl,xi,xir,st,s)  
 
-     	    if(ifl.ispline.eq.-1)then
+            if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
                xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
             endif
@@ -571,7 +570,7 @@ c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
 
-	 write(6,*)' imodus = ',imodus
+	 write(6,*)' fgmapidp: imodus = ',imodus
 
 	 idrift=0
          if(imodus.ge.1000)then
@@ -619,7 +618,7 @@ c-------------------------------------------------------
 	  enddo
 	endif
 
-	write(6,*)g.cosa,g.cosb,g.sina,g.sinb
+c	write(6,*)g.cosa,g.cosb,g.sina,g.sinb
 
 c        write(*,*)'fgmapidp (wc, xlc results):'
 c       do i=0,4
@@ -2486,6 +2485,8 @@ c        include 'phase_struct.for'
       read(16,*)src.so4.nsource,src.so4.nimage
       read(16,*)src.so4.deltatime
       read(16,*)src.so4.iconj
+
+      write(6,*)src.so4.nfreqtot
 
       read(16,3)dfile
       iname=clen1(dfile)
