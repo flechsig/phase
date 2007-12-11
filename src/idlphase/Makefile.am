@@ -1,0 +1,28 @@
+## Makefile template to copy idl functions to 
+## $bindir/phase4idl/.
+## 
+##
+## Author: Torsten.Leitner@email.de
+## 12/2007
+##
+##
+
+pkgdata_DATA = \
+##
+benchmark.pro     phabeamload.pro            pha_src4_functions.pro \
+c_test.pro        phainit.pro                phaSrcWFGauss.pro \
+phaplotting.pro            rtrace.pro \
+examples.pro      phaProp.pro                test.pro \
+ffttest.pro       phase4idl.compile_all.idl  uwe_initbeamline.pro \
+phase4idl.sh      uwe_phase_beamline__define.pro \
+object-tests.pro  phase_structures_1024.pro  uwe_README \
+phabeamcopy.pro   phase_structures_256.pro \
+phabeamdiff.pro   phase_structures.pro
+
+
+
+
+
+##
+
+
