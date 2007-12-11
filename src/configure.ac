@@ -299,7 +299,7 @@ dnl output files
 AC_OUTPUT(Makefile phase/Makefile \
           opti/Makefile extr/Makefile gui/Makefile \
 	  baselib/Makefile phaselib/Makefile phaseidl/Makefile \
-	  misalignment/Makefile)
+	  misalignment/Makefile phase4idl/Makefile)
 
 dnl print some messages
 echo ""

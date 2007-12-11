@@ -18,6 +18,9 @@
 ## now built/installed separately
 
 EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
-SUBDIRS = phase opti extr gui 
+
+SUBDIRS = phase opti extr gui baselib phase4idl
+
 ## baselib 
+
 ## end /afs/psi.ch/user/f/flechsig/phase/src/Makefile.am
