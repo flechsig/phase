@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <11 Dec 07 13:55:56 flechsig>  */
+/*   Time-stamp: <11 Dec 07 14:27:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -587,6 +587,11 @@ double FocusSize(struct BeamlineType *bl,
 
   Rayin[0].y= Rayin[0].z= Rayin[1].y= Rayin[1].z= 
     Rayin[2].y= Rayin[2].z= Rayin[3].y= Rayin[3].z= 0.0;
+
+/* empiric value optimization with 2 sigma gives better result */  
+
+  *dyin*= 2;    
+  *dzin*= 2; 
 
   Rayin[0].dy= Rayin[1].dy=  *dyin;
   Rayin[2].dy= Rayin[3].dy= -*dyin;
