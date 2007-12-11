@@ -22313,7 +22313,7 @@ fi
 
 
 
-                                                                                                    ac_config_files="$ac_config_files Makefile phase/Makefile opti/Makefile extr/Makefile gui/Makefile baselib/Makefile phaselib/Makefile phaseidl/Makefile misalignment/Makefile phase4idl/Makefile"
+                                                                                                              ac_config_files="$ac_config_files Makefile phase/Makefile opti/Makefile extr/Makefile gui/Makefile baselib/Makefile phaselib/Makefile phaseidl/Makefile misalignment/Makefile phase4idl/Makefile idlphase/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -22901,6 +22901,7 @@ do
   "phaseidl/Makefile" ) CONFIG_FILES="$CONFIG_FILES phaseidl/Makefile" ;;
   "misalignment/Makefile" ) CONFIG_FILES="$CONFIG_FILES misalignment/Makefile" ;;
   "phase4idl/Makefile" ) CONFIG_FILES="$CONFIG_FILES phase4idl/Makefile" ;;
+  "idlphase/Makefile" ) CONFIG_FILES="$CONFIG_FILES idlphase/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "phase/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS phase/config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
