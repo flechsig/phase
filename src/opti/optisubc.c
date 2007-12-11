@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <10 Dec 07 13:48:26 flechsig>  */
+/*   Time-stamp: <11 Dec 07 13:55:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -573,26 +573,42 @@ double GetRMS(struct BeamlineType *bl, char ch)
 /*
    calculates the focussize depending on the divergence 
    (for optimization of the spot size)
+   UF 11.12.07 add averaging with mirrored input i.e. do not only 
+   optimize the top right ray also the bottom right, bottom left 
+   and top left 
 */
 
 double FocusSize(struct BeamlineType *bl, 
 		 double *dyin, double *dzin, double *yout, double *zout)
 {
   double chi;
-  struct RayType Rayin, Rayout;
+  struct RayType Rayin[4], Rayout[4];
+  int i;
 
-  Rayin.y = Rayin.z= 0.0;
-  Rayin.dy= *dyin;
-  Rayin.dz= *dzin;
+  Rayin[0].y= Rayin[0].z= Rayin[1].y= Rayin[1].z= 
+    Rayin[2].y= Rayin[2].z= Rayin[3].y= Rayin[3].z= 0.0;
 
-  ray_tracef(&Rayin, &Rayout, &bl->BLOptions.ifl.iord, 
-	     (double *)bl->ypc1, (double *)bl->zpc1, 
-	     (double *)bl->dypc, (double *)bl->dzpc);
-  
-  *yout= fabs(Rayout.y);
-  *zout= fabs(Rayout.z);
-  
-  chi= sqrt(*yout * *yout + *zout * *zout);
+  Rayin[0].dy= Rayin[1].dy=  *dyin;
+  Rayin[2].dy= Rayin[3].dy= -*dyin;
+  Rayin[0].dz= Rayin[3].dz= -*dzin;
+  Rayin[1].dz= Rayin[2].dz=  *dzin;
+
+  *yout= *zout= chi=0.0;
+
+  for (i= 0; i< 4; i++)
+    {    
+      ray_tracef(&Rayin[i], &Rayout[i], &bl->BLOptions.ifl.iord, 
+		 (double *)bl->ypc1, (double *)bl->zpc1, 
+		 (double *)bl->dypc, (double *)bl->dzpc);
+    
+      *yout+= fabs(Rayout[i].y);
+      *zout+= fabs(Rayout[i].z);
+      chi+= sqrt(*yout * *yout + *zout * *zout);
+    }
+  *yout*= 0.25;
+  *zout*= 0.25;
+  chi  *= 0.25;
+
   return chi;
 } /* end FocusSize */
 
