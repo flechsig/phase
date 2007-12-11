@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <07 Dec 07 13:08:50 flechsig>  */
+/*   Time-stamp: <10 Dec 07 13:48:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -446,6 +446,7 @@ void buildsystem(struct BeamlineType *bl)
   listpt= bl->ElementList; 
   while (elcounter<= bl->elementzahl)
     { 
+      bl->position=elcounter;                     /* parameter fuer MakeMapandMatrix */
       if ((listpt->ElementOK & mapOK) == 0)       /* map must be rebuild */
 	{ 
 	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */

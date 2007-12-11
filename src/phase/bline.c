@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Dec 07 11:00:17 flechsig>  */
+/*   Time-stamp: <10 Dec 07 13:58:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -10,7 +10,7 @@
 
 
 /* 24.11.98 UF Undulatorsource schreiben/ lesen geaendert */
-
+ 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif 
@@ -897,14 +897,11 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
 void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 /************************************************************************/
 /* Uwe 7.6.96 								*/
-/* last modification: 25 Mar 97 10:27:18 flechsig */
-/* last modification: 24 Mar 97 16:54:08 flechsig */
 /* umgeschrieben auf memory 24.6.96 					*/
 /* erzeuge immer zwei Matritzen up + down 				*/
 /* bei horizontaler Ablenkung werden im ElementType die "horizontalen"
 /* Matritzen und map's gespeichert 
-/* last modification: 20 Jun 97 13:59:35 flechsig */
-/* last modification: 04 Jul 97 10:29:35 flechsig */
+/* werte position aus bei optimierung UF 07/12                          */
 /************************************************************************/
 {
       
@@ -947,7 +944,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
                  listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm);
 #ifdef DEBUG   
-	printf("MakeMapandMatrix: source to image map and matrix created\n");  
+printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
+	       bl->position);  
 #endif
         /* image to source Rechnung bei RT und  pst */
 	if (bl->BLOptions.SourcetoImage != 1) 

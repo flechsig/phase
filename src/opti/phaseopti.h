@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
 /*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <06 Dec 07 17:15:48 flechsig>  */
+/*  Time-stamp: <07 Dec 07 15:17:43 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
@@ -20,9 +20,9 @@
 
 struct optistruct
 {
-  double dx, dy;
+  double dx, dy, chistart, chistop;
   int elementzahl, xpoints, ypoints, npars, 
-    xindex, yindex, *parindex, methode;   
+    xindex, yindex, *parindex, methode, fcncall;   
   char beamlinefilename[MaxPathLength], 
     minuitfilename[MaxPathLength],  
     resultfilename[MaxPathLength];    

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <09 Dec 07 20:18:45 flechsig>  */
+/*   Time-stamp: <09 Dec 07 22:06:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -336,8 +336,6 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   rho  = x->rho;
   dp   = (double *)a;
   alpha= x->alpha * PI/ 180.0;
-
-  
 
   if (etype != kEOEGeneral)
     for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */

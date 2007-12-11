@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <06 Dec 07 17:29:03 flechsig>  */
+/*   Time-stamp: <09 Dec 07 22:06:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -136,12 +136,14 @@ int main(argc, argv)
   start= time(NULL);
    /* sprintf(PHASESet.beamlinename,"%s", optfname); */
    PI= 4.0* atan(1.0); 
+   
 #ifdef LOGFILE 
    CheckUser(logfilename, "Optimization"); 
 #endif
 
 Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
+optistructure.fcncall= 0;
 
 /*#ifndef DEBUG*/
    if (argc != 2)
@@ -271,8 +273,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
   double dy, dz;
   static double chitmp, yfwhm, zfwhm, rpy, rpz, transmittance; 
 
-
-  /* should later on be initiated in the optistructure */
+    /* should later on be initiated in the optistructure */
      
 #ifdef WITH_FULL_RT
   optistructure.methode= FullRTOptiO; 
@@ -284,7 +285,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
   #endif
 #endif  
 
-  /* printf("fcn eingang called with %d: chi: %e\n", *IFLAGS, *CHI);  */
+    /* printf("fcn eingang called with %d: chi: %e\n", *IFLAGS, *CHI);  */
   switch(*IFLAGS) 
     {
     case 3:              /*output*/
@@ -340,12 +341,43 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
        
       break;
       
-    case 1:
+    case 1:   /* 1st call */
+      for (i= 0; i < *NPAR; i++)
+	{
+	  printf("Parameter: %d index: %d Wert des Parameters: %lg\n",
+		 i, optistructure.parindex[i], XPAR[i]);
+	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
+	}
+      
+      buildsystem(&Beamline);   
+ 
+      switch(optistructure.methode) 
+	{
+	case FullRTOptiO:
+	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
+	  break;
+	case CostForO:
+	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+	  break;
+	case FocusSizeO:
+	default:
+	  Get_dydz_fromSource(&Beamline, &dy, &dz);
+	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
+	}
+      optistructure.chistart= *CHI;
+      optistructure.fcncall= 0; 
+      break;
     case 2: 
       break;                                         
     }
-  printf("fcn called with %d: chi: %e\n", *IFLAGS, *CHI);  
+  ++optistructure.fcncall;
+  optistructure.chistop= *CHI;
+
+  printf("\nfcn call %d with iflag %d: chi0: %e chi: %e\n\n", 
+	 optistructure.fcncall, *IFLAGS, optistructure.chistart, *CHI);  
   chitmp= *CHI; 
+    
 } /* end FCN */
 
 void fitoutput(int *NPAR, double *XPAR, double *chi) 
@@ -362,11 +394,12 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   FILE *f;
   
   op= &optistructure;
-  printf("debug: fitoutput: chi: %e\n", *chi);
+  printf("debug: fitoutput: chistart: %e chistop: %e\n", 
+	 op->chistart, op->chistop);
   
   out_struct(&Beamline, &x, op->xindex);   /* akt. Werte */
   out_struct(&Beamline, &y, op->yindex); 
-  fprintf(op->filepointer, "%g %g %e %g", x, y, *chi, *XPAR);  
+  fprintf(op->filepointer, "%g %g %e %e %g", x, y, op->chistart, op->chistop, *XPAR);  
   for (i= 1; i< *NPAR; i++) 
     fprintf(op->filepointer, " %15.10lg", XPAR[i]);  
   fprintf(op->filepointer, "\n");
