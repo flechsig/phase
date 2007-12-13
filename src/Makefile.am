@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <07 Dec 07 10:15:04 flechsig> 
+##  Time-stamp: <13 Dec 07 21:54:54 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -19,7 +19,10 @@
 
 EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
 
-SUBDIRS = phase opti extr gui baselib phase4idl
+SUBDIRS = phase opti extr gui baselib 
+
+## UF erst einfuegen wenn make in phase4idl funktioniert
+## phase4idl
 
 ## baselib 
 
