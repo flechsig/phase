@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <13 Dec 07 22:31:55 flechsig>  */
+/*   Time-stamp: <13 Dec 07 22:49:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -662,5 +662,38 @@ double FullRTOpti(struct BeamlineType *bl, double *yout, double *zout)
   chi= sqrt(*yout * *yout + *zout * *zout);
   return chi;
 } /* end FullRTOpti */
+
+double RTOpti(struct BeamlineType *bl, 
+	      double *yout, double *zout, double *rout)
+{
+  double chi, yfwhm, zfwhm, rfwhm, rpy, rpz;
+  
+  
+  printf("************************** FullRTOpti ***********\n");
+  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+  RayTracec(&PHASESet, &Beamline);
+  
+  *zout= zfwhm= 2.35* GetRMS(&Beamline, 'z');
+  *yout= yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
+  *rout= rfwhm= 2.35* GetRMS(&Beamline, 'r'); 
+      
+  rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+    Beamline.deltalambdafactor/ yfwhm : 1e12;
+  rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
+    Beamline.deltalambdafactor/ zfwhm : 1e12;
+
+  /* define what you want to minimize */
+  /* printf("optimize: transmittance ");
+       *CHI= 1.0- transmittance;*/
+  /* printf("optimize: resolving power ");
+       *CHI= 1.0/rpy;*/
+  /*printf("optimize: focus ");*/
+  /**CHI= zfwhm + yfwhm;*/
+      
+      
+  /* chi= sqrt(*yout * *yout + *zout * *zout);*/
+  chi= rfwhm;
+  return chi;
+} /* end RTOpti */
 
 /* end optisubc.c */

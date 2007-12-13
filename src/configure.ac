@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <06 Dec 07 18:27:23 flechsig> 
+dnl   Time-stamp: <13 Dec 07 23:25:20 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -174,7 +174,6 @@ dnl end debugger
 dnl libtool init after selecting the fortran compiler
 AC_PROG_LIBTOOL
 
-
 ## Optimization with full ray trace
 AC_ARG_ENABLE([fullrt_opti],
     AC_HELP_STRING([--enable-fullrt-opti],
@@ -186,6 +185,19 @@ AC_ARG_ENABLE([fullrt_opti],
       with_full_rt="yes"],
     [with_full_rt="no"]
 )
+
+## Optimization with ray trace
+AC_ARG_ENABLE([rt_opti],
+    AC_HELP_STRING([--enable-rt-opti],
+	[enable optimization in ray trace mode]),
+    [AC_MSG_NOTICE(***** optimization with ray trace ***)
+     AC_DEFINE_UNQUOTED(WITH_RT, "yes", 
+     "optimization in ray trace mode")
+      optimization="with RT mode"
+      with_rt="yes"],
+    [with_rt="no"]
+)
+
 
 ## Optimization with user cost function
 AC_ARG_ENABLE([cost_opti],
@@ -200,8 +212,10 @@ AC_ARG_ENABLE([cost_opti],
 )
 
 if test "$with_full_rt" = "no" -a "$with_cost" = "no" ; then
-   AC_MSG_NOTICE([**** default optimization  (spot size) ****])
-   optimization="spot size (default)"
+   if test "$with_rt" = "no" ; then  
+      AC_MSG_NOTICE([**** default optimization  (spot size) ****])
+      optimization="spot size (default)"
+   fi
 fi
 
 ## expire option

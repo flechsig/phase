@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
 /*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <07 Dec 07 15:17:43 flechsig>  */
+/*  Time-stamp: <13 Dec 07 22:51:55 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
@@ -17,6 +17,7 @@
 #define FocusSizeO  0
 #define FullRTOptiO 1  
 #define CostForO    2
+#define RTOptiO     3
 
 struct optistruct
 {

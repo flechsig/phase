@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <09 Dec 07 22:06:37 flechsig>  */
+/*   Time-stamp: <13 Dec 07 23:11:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -271,7 +271,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 {
   int i;
   double dy, dz;
-  static double chitmp, yfwhm, zfwhm, rpy, rpz, transmittance; 
+  static double chitmp, yfwhm, zfwhm, rfwhm, rpy, rpz, transmittance; 
 
     /* should later on be initiated in the optistructure */
      
@@ -280,8 +280,12 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 #else
   #ifdef WITH_COST
     optistructure.methode= CostForO;
-  #else   
-    optistructure.methode= FocusSizeO;
+  #else 
+    #ifdef WITH_RT
+      optistructure.methode= RTOptiO;
+    #else
+      optistructure.methode= FocusSizeO;
+    #endif
   #endif
 #endif  
 
@@ -300,6 +304,9 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
  
       switch(optistructure.methode) 
 	{
+	case RTOptiO:
+	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
+	  break;
 	case FullRTOptiO:
 	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
 	  break;
@@ -326,6 +333,9 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 
       switch(optistructure.methode) 
 	{
+	case RTOptiO:
+	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
+	  break;
 	case FullRTOptiO:
 	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
 	  break;
@@ -353,6 +363,9 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
  
       switch(optistructure.methode) 
 	{
+	case RTOptiO:
+	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
+	  break;
 	case FullRTOptiO:
 	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
 	  break;
