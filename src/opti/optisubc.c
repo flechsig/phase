@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <11 Dec 07 14:27:11 flechsig>  */
+/*   Time-stamp: <13 Dec 07 22:31:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -532,6 +532,7 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
 } /* end Get_dydz_fromSource */
 
 /* 31.3.99 erweitert auf z*/
+/* 13.12.07 erweitert auf r */
 double GetRMS(struct BeamlineType *bl, char ch)
 {
   double EX, EX2, rms;
@@ -543,24 +544,32 @@ double GetRMS(struct BeamlineType *bl, char ch)
   EX= EX2= 0.0;
   if (n > 0)
     {
-      if (ch == 'z')
+      switch (ch)
 	{
+	case 'z':
 	  for (i= 0; i< n; i++)
 	    {
 	      /*   EX += bl->RESULT.RESUnion.Rays[i].z;
-	      EX2+= bl->RESULT.RESUnion.Rays[i].z* 
-	      bl->RESULT.RESUnion.Rays[i].z;*/
+		   EX2+= bl->RESULT.RESUnion.Rays[i].z* 
+		   bl->RESULT.RESUnion.Rays[i].z;*/
 	      EX += rays[i].z;
 	      EX2+= rays[i].z* rays[i].z;
 	    }
-	}
-      else             /* y */
-	{
+	  break;
+	case 'y':
 	  for (i= 0; i< n; i++)
 	    {
 	      EX += rays[i].y;
 	      EX2+= rays[i].y * rays[i].y;
 	    }
+	  break;
+	default: /* r */
+	  for (i= 0; i< n; i++)
+	    {
+	      EX = 0.0;
+	      EX2+= rays[i].y * rays[i].y + rays[i].z * rays[i].z;
+	    }
+	  break;
 	}
       EX  /= (double) n;
       EX2 /= (double) n;
