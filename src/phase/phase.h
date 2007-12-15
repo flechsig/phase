@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <16 Nov 07 09:15:27 flechsig>  */
+/*   Time-stamp: <15 Dec 07 21:21:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -472,7 +472,8 @@ struct UndulatorSourceType { double length, lambda, sigvert, sighor, deltaz;};
 struct UndulatorSource0Type { double length, lambda, sigvert, sighor, deltaz,
    sigmaez, sigmaey, sigmaedz, sigmaedy; };  
 struct DipolSourceType     { double sigy, sigdy, sigz, dz; }; 
-struct PointSourceType     { double sigy, sigdy, sigz, sigdz; }; 
+struct PointSourceType     { double sigy, sigdy, sigz, sigdz; };
+struct RingSourceType      { double dy, dz; }; 
 struct SRSourceType        { double y, z, dy, dz; };   
 struct HardEdgeSourceType  { double disty, distz, divy, divz;
   int    iy, iz, idy, idz; };  
