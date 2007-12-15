@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Dec 07 13:58:58 flechsig>  */
+/*   Time-stamp: <15 Dec 07 22:26:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1054,7 +1054,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    struct UndulatorSource0Type *up0;
    struct DipolSourceType     *dp;
    struct PointSourceType     *sop;
-   struct HardEdgeSourceType  *hp;     
+   struct HardEdgeSourceType  *hp; 
+   struct RingSourceType      *rp;     
    struct SRSourceType        *sp; 
    struct PSImageType         *psip;
    struct PSSourceType        *pssp;    
@@ -1139,6 +1140,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20lg    sigma dy\n", sop->sigdy);  
        fprintf(f, "%20lg    sigma z\n",  sop->sigz);
        fprintf(f, "%20lg    sigma dz\n", sop->sigdz);
+     break;  
+     case 'R': 
+       rp= (struct RingSourceType *)bl->RTSource.Quellep;
+       fprintf(f, "%20c    *** Ring Source for Ray Tracing ***\n", 
+	       bl->RTSource.QuellTyp);
+       fprintf(f, "%20lg    dy\n", rp->dy);  
+       fprintf(f, "%20lg    dz\n", rp->dz);
      break;  
      case 'S': 
        sp= (struct SRSourceType *)bl->RTSource.Quellep; 
@@ -1416,7 +1424,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    struct UndulatorSource0Type *up0;
    struct DipolSourceType     *dp;
    struct PointSourceType     *sop;
-   struct HardEdgeSourceType  *hp;     
+   struct HardEdgeSourceType  *hp; 
+   struct RingSourceType      *rp;    
    struct SRSourceType        *sp; 
    struct PSImageType         *psip;
    struct PSSourceType        *pssp;    
@@ -1526,6 +1535,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
              fscanf(f, " %lf %[^\n]s %c", &sop->sigdy, buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sop->sigz , buffer, &buf);  
              fscanf(f, " %lf %[^\n]s %c", &sop->sigdz, buffer, &buf);  
+           break; 
+	   case 'R': 
+             rp= (struct RingSourceType *)bl->RTSource.Quellep; 
+	       /*&(bl->RTSource.Quelle.PointSource);*/
+	     fscanf(f, " %lf %[^\n]s %c", &sop->dy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->dz, buffer, &buf);  
            break; 
            case 'S': 
              sp= (struct SRSourceType *)bl->RTSource.Quellep;

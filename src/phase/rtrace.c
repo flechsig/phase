@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <26 Nov 07 18:01:50 flechsig>  */
+/*   Time-stamp: <15 Dec 07 22:17:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -253,6 +253,38 @@ void MakeDipolSource(struct RTSourceType *y)
 } /* end MakePointSource */ 
 
 
+/**************************************************************************/
+/* Modell einer Ring Quelle dy, dz sind die Halbachsen einer elliptischen */
+/* Divergenz Verteilung- y,z sind immer null,                             */
+/* der erste Strahl zeigt nach dy  		      15.12.2007          */
+/**************************************************************************/ 
+void MakeRingSource(struct RTSourceType *y)       
+{
+   int i; 
+   double a, b, t, dt;
+   struct RingSourceType *x;  
+
+   x= (struct RingSourceType *) y->Quellep;  
+  
+   b= x->dy/ 1000.0; /* grosse kleine halbachse */
+   a= x->dz/ 1000.0; 
+  
+   dt= 2.0* PI/y->raynumber;
+
+   i= 0;
+   while (i < y->raynumber)
+   {
+      t= i* dt;  
+      y->SourceRays[i].y = 0.0;     
+      y->SourceRays[i].z = 0.0; 
+      y->SourceRays[i].dy= b* cos(t); 
+      y->SourceRays[i].dz= a* sin(t);    
+      y->SourceRays[i].phi= 0.0;
+      i++;
+   }
+} /* end MakeRingSource */ 
+
+
 /* erzeugt Gauss verteilte Zufallszahl zw. +- 6 sigma                   */
 /* max auf 1 gesetzt wegen Geschwindigkeitsvorteil 10.5.96              */
                                                                       
@@ -354,6 +386,9 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
        break; 
      case 'o':
        MakePointSource(&(bl->RTSource));       
+       break; 
+     case 'R':
+       MakeRingSource(&(bl->RTSource));       
        break; 
      case 'S':   /* single ray */
        sp= (struct SRSourceType *)bl->RTSource.Quellep;
