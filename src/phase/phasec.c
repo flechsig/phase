@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <09 Dec 07 22:06:34 flechsig>  */
+/*   Time-stamp: <16 Dec 07 19:17:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1712,6 +1712,7 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
   struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
   struct PointSourceType      *sop;
+  struct RingSourceType       *rp;
   struct HardEdgeSourceType   *hp;     
   struct SRSourceType         *sp; 
   struct PSImageType          *psip;
@@ -1809,7 +1810,17 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       sprintf(TextField[3], "%f", sop->sigdz);    
       sprintf(TextField[4], "%d", bl->RTSource.raynumber); 
       xprintf("Point Source: all sigma values\n");
-      break;    
+      break;  
+  case 'R':
+      w= widget_array[kESRingSourceButton];  
+      header= 1;
+      SetIndexField(IFeld, 8, 4, 5, 6, 0, 0, 0, 0, 0);
+      rp= (struct RingSourceType *)bl->RTSource.Quellep;
+      sprintf(TextField[0], "%f", rp->dy);    
+      sprintf(TextField[1], "%f", rp->dz);    
+      sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
+      xprintf("Ring Source: half axis of the divergence ellipse, y,z are always 0\n");
+      break;  
     case 'U':  
       w= widget_array[kESUndulatorSourceButton]; 
       header= 6;
@@ -2211,6 +2222,7 @@ void GetSource(struct BeamlineType *bl)
   struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
   struct PointSourceType      *sop;
+  struct PointSourceType      *rp;
   struct HardEdgeSourceType   *hp;     
   struct SRSourceType         *sp; 
   struct PSImageType          *psip;
@@ -2262,6 +2274,13 @@ void GetSource(struct BeamlineType *bl)
       sscanf(textf[1], "%lf", &sop->sigdy);   
       sscanf(textf[2], "%lf", &sop->sigz);   
       sscanf(textf[3], "%lf", &sop->sigdz);  
+      sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
+      MakeRTSource(&PHASESet, bl);   
+      break;
+    case 'R':
+      rp= (struct RingSourceType *)bl->RTSource.Quellep;
+      sscanf(textf[0], "%lf", &sop->dy);   
+      sscanf(textf[1], "%lf", &sop->dz);   
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   
       break;
@@ -2866,6 +2885,7 @@ void InitSourceType(struct BeamlineType *bl, int widget_num)
     {
     case kESDipolSourceButton: 	   sou= 'D'; break;
     case kESPointSourceButton: 	   sou= 'o'; break;
+    case kESRingSourceButton: 	   sou= 'R'; break;
     case kESUndulatorSourceButton: sou= 'U'; break;  
     case kESUndulatorSISButton:    sou= 'L'; break;  /*23.11.98 UF*/
     case kESUndulatorSIMButton:    sou= 'M'; break;  

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 Dec 07 21:21:05 flechsig>  */
+/*   Time-stamp: <16 Dec 07 19:03:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -368,7 +368,7 @@
 #define kEOEPGV                  355
 
 #define kCWriteMCoButton         358
-
+#define kESRingSourceButton      359
 #define kESPointSourceButton     360
 #define kPreAB                   361
 #define kSucAB                   362

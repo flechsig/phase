@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/editmenu.uil
 ! Date      : <09 Mar 04 11:46:29 flechsig> 
-! Time-stamp: <04 Jun 04 14:45:33 flechsig> 
+! Time-stamp: <16 Dec 07 19:01:12 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
@@ -80,6 +80,18 @@ object
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kESPointSourceButton);
 	    XmNactivateCallback = procedure activate_proc(kESPointSourceButton);
+            };
+        };     
+
+object
+    ESRingSourceButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Ring";
+            XmNmnemonic         = keysym("R"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kESRingSourceButton);
+	    XmNactivateCallback = procedure activate_proc(kESRingSourceButton);
             };
         };     
 
