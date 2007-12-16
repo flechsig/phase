@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:17:33 flechsig>  */
+/*   Time-stamp: <16 Dec 07 19:26:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2222,7 +2222,7 @@ void GetSource(struct BeamlineType *bl)
   struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
   struct PointSourceType      *sop;
-  struct PointSourceType      *rp;
+  struct RingSourceType       *rp;
   struct HardEdgeSourceType   *hp;     
   struct SRSourceType         *sp; 
   struct PSImageType          *psip;
@@ -2279,8 +2279,8 @@ void GetSource(struct BeamlineType *bl)
       break;
     case 'R':
       rp= (struct RingSourceType *)bl->RTSource.Quellep;
-      sscanf(textf[0], "%lf", &sop->dy);   
-      sscanf(textf[1], "%lf", &sop->dz);   
+      sscanf(textf[0], "%lf", &rp->dy);   
+      sscanf(textf[1], "%lf", &rp->dz);   
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   
       break;

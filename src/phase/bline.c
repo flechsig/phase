@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Dec 07 22:26:01 flechsig>  */
+/*   Time-stamp: <16 Dec 07 19:28:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1539,8 +1539,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   case 'R': 
              rp= (struct RingSourceType *)bl->RTSource.Quellep; 
 	       /*&(bl->RTSource.Quelle.PointSource);*/
-	     fscanf(f, " %lf %[^\n]s %c", &sop->dy, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &sop->dz, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &rp->dy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &rp->dz, buffer, &buf);  
            break; 
            case 'S': 
              sp= (struct SRSourceType *)bl->RTSource.Quellep;
