@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 Dec 07 22:17:22 flechsig>  */
+/*   Time-stamp: <16 Dec 07 19:35:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -803,6 +803,10 @@ void AllocRTSource(struct BeamlineType *bl)
     case 'o':
       bl->RTSource.Quellep= 
 	XREALLOC(struct PointSourceType, bl->RTSource.Quellep, 1);
+      break;
+    case 'R':
+      bl->RTSource.Quellep= 
+	XREALLOC(struct RingSourceType, bl->RTSource.Quellep, 1);
       break;
     case 'H':
       bl->RTSource.Quellep= 
