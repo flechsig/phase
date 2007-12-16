@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:35:11 flechsig>  */
+/*   Time-stamp: <16 Dec 07 21:14:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -256,7 +256,7 @@ void MakeDipolSource(struct RTSourceType *y)
 /**************************************************************************/
 /* Modell einer Ring Quelle dy, dz sind die Halbachsen einer elliptischen */
 /* Divergenz Verteilung- y,z sind immer null,                             */
-/* der erste Strahl zeigt nach dy  		      15.12.2007          */
+/* der erste Strahl zeigt nach 45 grad 		      15.12.2007          */
 /**************************************************************************/ 
 void MakeRingSource(struct RTSourceType *y)       
 {
@@ -274,7 +274,7 @@ void MakeRingSource(struct RTSourceType *y)
    i= 0;
    while (i < y->raynumber)
    {
-      t= i* dt;  
+     t= i* dt+ PI/4.0;  /* wegen Optimierung 1 Strahl reicht (manchmal) */
       y->SourceRays[i].y = 0.0;     
       y->SourceRays[i].z = 0.0; 
       y->SourceRays[i].dy= b* cos(t); 
