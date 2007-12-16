@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <13 Dec 07 23:11:50 flechsig>  */
+/*   Time-stamp: <16 Dec 07 20:26:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -319,8 +319,9 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 	  Get_dydz_fromSource(&Beamline, &dy, &dz);
 	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
 	}
-      printf("debug: FCN: chi: %e; chitmp %e\n", *CHI, chitmp);
-      fitoutput(NPAR, XPAR, CHI);         
+      printf("debug: FCN: chi: %e; chitmp %e, methode: %d\n", 
+	     *CHI, chitmp, optistructure.methode);
+      fitoutput(NPAR, XPAR, CHI);   
       break;
      case 4:
       for (i= 0; i < *NPAR; i++)
