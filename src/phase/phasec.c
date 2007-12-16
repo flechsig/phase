@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:26:49 flechsig>  */
+/*   Time-stamp: <16 Dec 07 19:43:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2281,7 +2281,7 @@ void GetSource(struct BeamlineType *bl)
       rp= (struct RingSourceType *)bl->RTSource.Quellep;
       sscanf(textf[0], "%lf", &rp->dy);   
       sscanf(textf[1], "%lf", &rp->dz);   
-      sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
+      sscanf(textf[2],  "%d", &bl->RTSource.raynumber);   
       MakeRTSource(&PHASESet, bl);   
       break;
     case 'U':
