@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <17 Dec 07 18:59:41 flechsig>  */
+/*   Time-stamp: <17 Dec 07 19:16:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -53,10 +53,11 @@
 
    
 void getoptipickfile(struct optistruct *x, char *pickname)    
-/* modification: 24 Oct 97 14:04:37 flechsig */
+/* modification: 17.12.2007 flechsig */
 {                              
   FILE *f;
   int ii, *indexlist, version;
+  char buffer[255], buf;
  
   if ((f= fopen(pickname, "r")) == NULL)
     {
@@ -65,6 +66,17 @@ void getoptipickfile(struct optistruct *x, char *pickname)
     }  
   if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
     {
+      printf("getoptipickfile: file version: %d\n", version);
+      if (version >= 20071217)
+	{
+	  fscanf(f, " %d %[^\n]s %c", &x->methode, buffer, &buf);
+	} 
+      else
+	{
+	  x->methode= RTOptiO;
+	  printf("getoptipickfile: no methode defined- use default: %d\n", 
+		 x->methode); 
+	}
       fscanf(f, "%s\n", &x->beamlinefilename); 
       fscanf(f, "%s\n", &x->minuitfilename); 
       fscanf(f, "%s\n", &x->resultfilename); 
