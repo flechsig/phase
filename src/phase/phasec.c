@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:43:11 flechsig>  */
+/*   Time-stamp: <17 Dec 07 19:26:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -562,7 +562,7 @@ void GetOptiBox(struct PHASEset *x)
     puffer[MaxPathLength], *ch; 
   XmString label;
   XmStringTable list2items;
-  int parameterzahl, i, index, k;     
+  int parameterzahl, i, index, k, version= 20071217;     
  
   get_something(widget_array[kCOptiResultButton], XmNlabelString, &label);
   /*
@@ -593,8 +593,10 @@ void GetOptiBox(struct PHASEset *x)
       fprintf(stderr, "error: open file %s\n", minname); exit(-1);
     }
 
-  fprintf(oppickfile, "%s\n%s\n%s\n%s\n", 
-	  OptiPickFileHeader, x->beamlinename, minname, opresname);  
+  fprintf(oppickfile, "%s %d\n", OptiPickFileHeader, version);
+  fprintf(oppickfile, "%20d    Optimization methode\n", x->methode);
+  fprintf(oppickfile, "%s\n%s\n%s\n", 
+	   x->beamlinename, minname, opresname);
   fprintf(minfile,                                     
 	  "SET TITLE\nFit with program \"PHASE\"\nPARAMETERS\n");    
 
