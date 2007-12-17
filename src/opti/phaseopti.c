@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <16 Dec 07 20:26:14 flechsig>  */
+/*   Time-stamp: <17 Dec 07 18:58:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -172,6 +172,10 @@ optistructure.fcncall= 0;
    out_struct(&Beamline, &ay, optistructure.yindex);  /* index    */
 
 #ifdef WITH_FULL_RT
+   MakeRTSource(&PHASESet, &Beamline);
+#endif
+
+#ifdef WITH_RT
    MakeRTSource(&PHASESet, &Beamline);
 #endif
 

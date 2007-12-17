@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <15 Dec 07 21:08:00 flechsig>  */
+/*   Time-stamp: <17 Dec 07 18:59:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -670,6 +670,7 @@ double RTOpti(struct BeamlineType *bl,
     
   printf("************* RTOpti ***********\n");
   ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+
   RayTracec(&PHASESet, &Beamline);
   
   *zout= zfwhm= 2.35* GetRMS(&Beamline, 'z');
