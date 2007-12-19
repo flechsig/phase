@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
 /*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <13 Dec 07 22:51:55 flechsig>  */
+/*  Time-stamp: <19 Dec 07 11:35:46 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
@@ -14,29 +14,11 @@
 #ifndef __PHASE_OPTI_LOADED
 #define __PHASE_OPTI_LOADED 1  
 
-#define FocusSizeO  0
-#define FullRTOptiO 1  
-#define CostForO    2
-#define RTOptiO     3
-
-struct optistruct
-{
-  double dx, dy, chistart, chistop;
-  int elementzahl, xpoints, ypoints, npars, 
-    xindex, yindex, *parindex, methode, fcncall;   
-  char beamlinefilename[MaxPathLength], 
-    minuitfilename[MaxPathLength],  
-    resultfilename[MaxPathLength];    
-  FILE 	 *filepointer;
-};      
-
-void buildsystem(struct BeamlineType *), 
-  costfor(),            		/* fortran cost function */ 
-  getoptipickfile(struct optistruct *, char *),    
-  Get_dydz_fromSource(struct BeamlineType *, double *, double *),
-  in_struct(struct BeamlineType *, double *, int);
+void buildsystem(struct BeamlineType *); 
+void costfor();            		/* fortran cost function */ 
+void Get_dydz_fromSource(struct BeamlineType *, double *, double *);
+void in_struct(struct BeamlineType *, double *, int);
       
-
 double out_struct(struct BeamlineType  *, double *,  int); 
 double DeltaLambda(struct optistruct *, double, int);
 double GetRMS(struct BeamlineType *, char);

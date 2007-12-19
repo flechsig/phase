@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Dec 07 10:55:10 flechsig>  */
+/*   Time-stamp: <19 Dec 07 11:35:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -384,6 +384,12 @@
 #define kEOEDrift                999
 
 
+/* optimization methodes, I do not want to use the defines of the buttons twice */
+#define FocusSizeO  0
+#define FullRTOptiO 1  
+#define CostForO    2
+#define RTOptiO     3
+
 
 
 /******************** end defines uil **********************************/
@@ -602,6 +608,16 @@ struct BeamlineType
   struct sources src;
 };
 
+struct optistruct
+{
+  double dx, dy, chistart, chistop;
+  int elementzahl, xpoints, ypoints, npars, 
+    xindex, yindex, *parindex, methode, fcncall;   
+  char beamlinefilename[MaxPathLength], 
+    minuitfilename[MaxPathLength],  
+    resultfilename[MaxPathLength];    
+  FILE 	 *filepointer;
+};  
 
 int	getpickfile(struct datset *, struct BeamlineType *, char *);  
 
@@ -734,6 +750,7 @@ void 	ActivateFileSelection(int, char *),
   GetBLBox(char *, struct BeamlineType *),  
   
   GetOptiBox(struct PHASEset *), 
+  getoptipickfile(struct optistruct *, char *),
   GetGeometry(), 
   GetSlope(struct ElementType *), 
   GetSource(struct BeamlineType *), 

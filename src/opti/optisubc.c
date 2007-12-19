@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <17 Dec 07 19:16:55 flechsig>  */
+/*   Time-stamp: <19 Dec 07 11:37:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -50,54 +50,6 @@
 
 #include "phaseopti.h"     
 
-
-   
-void getoptipickfile(struct optistruct *x, char *pickname)    
-/* modification: 17.12.2007 flechsig */
-{                              
-  FILE *f;
-  int ii, *indexlist, version;
-  char buffer[255], buf;
- 
-  if ((f= fopen(pickname, "r")) == NULL)
-    {
-      fprintf(stderr,"Error: read %s\n", pickname);
-      exit(-1);
-    }  
-  if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
-    {
-      printf("getoptipickfile: file version: %d\n", version);
-      if (version >= 20071217)
-	{
-	  fscanf(f, " %d %[^\n]s %c", &x->methode, buffer, &buf);
-	} 
-      else
-	{
-	  x->methode= RTOptiO;
-	  printf("getoptipickfile: no methode defined- use default: %d\n", 
-		 x->methode); 
-	}
-      fscanf(f, "%s\n", &x->beamlinefilename); 
-      fscanf(f, "%s\n", &x->minuitfilename); 
-      fscanf(f, "%s\n", &x->resultfilename); 
-      fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
-      fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
-      fscanf(f, "%d\n", &x->npars); 
-      
-      x->parindex= (int *) malloc(x->npars * sizeof(int));
-      if (x->parindex == NULL)
-   	{	
-	  fprintf(stderr, "malloc error \n"); exit(-1);  
-   	}         /* speicher allocieren */
-      
-      indexlist= x->parindex;  
-      for (ii= 0; ii< x->npars; ii++, indexlist++)
-	fscanf(f, "%d\n", indexlist);  
-      fclose(f); 
-    }
-  else 
-    exit(-1); 
-}
    
 void in_struct(struct BeamlineType* bl, double *z, int index)
 {

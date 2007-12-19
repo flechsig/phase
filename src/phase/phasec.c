@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Dec 07 15:18:53 flechsig>  */
+/*   Time-stamp: <19 Dec 07 16:00:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -627,7 +627,7 @@ void GetOptiBox(struct PHASEset *x)
     {
       if (!XmStringGetLtoR(list2items[i+2], XmFONTLIST_DEFAULT_TAG, &zeile))
 	return;  
-      sscanf(zeile,"%d", &index);
+      sscanf(zeile, "%d", &index);
       subzeile= zeile; k= 0; 
       while ((*subzeile != ' ') && (k < 10)) 
 	{++subzeile; ++k;}                      /* remove index */

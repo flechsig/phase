@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:28:41 flechsig>  */
+/*   Time-stamp: <19 Dec 07 11:37:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1915,6 +1915,60 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    /* for (i= 0; i < 6; i++)
      /*     set_something(widget_array[kEBLT11+ i], XmNvalue, buffer[i]);   */
 } /* end UpdateBLBox */
+
+void getoptipickfile(struct optistruct *x, char *pickname)    
+/* modification: 17.12.2007 flechsig */
+/* Achtung: vergleichbarer code befindet sich auch in phasec.c
+   routine initoptibox- Aenderungen in der filestruktur muessen auch 
+   dort vorgenommen werden- will ich aendern UF 19.12.07
+*/
+{                              
+  FILE *f;
+  int ii, *indexlist, version;
+  char buffer[MaxPathLength], buf;
+ 
+  if ((f= fopen(pickname, "r")) == NULL)
+    {
+      fprintf(stderr,"Error: read %s\n", pickname);
+      exit(-1);
+    }  
+  if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
+    {
+      printf("getoptipickfile: file version: %d\n", version);
+      if (version >= 20071217)
+	{
+	  fscanf(f, " %d %[^\n]s %c", &x->methode, buffer, &buf);
+	} 
+      else
+	{
+	  x->methode= RTOptiO;
+	  printf("getoptipickfile: no methode defined- use default: %d\n", 
+		 x->methode); 
+	}
+      fscanf(f, "%s\n", &x->beamlinefilename); 
+      fscanf(f, "%s\n", &x->minuitfilename); 
+      fscanf(f, "%s\n", &x->resultfilename); 
+      fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
+      fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
+      fscanf(f, "%d\n", &x->npars); 
+      
+      x->parindex= (int *) malloc(x->npars * sizeof(int));
+      if (x->parindex == NULL)
+   	{	
+	  fprintf(stderr, "malloc error \n"); exit(-1);  
+   	}         /* speicher allocieren */
+      
+      indexlist= x->parindex;  
+      for (ii= 0; ii< x->npars; ii++, indexlist++)
+	fscanf(f, "%d\n", indexlist);  
+      fclose(f); 
+    }
+  else 
+    exit(-1); 
+}
+
+
+
 /* end bline.c */
 
 
