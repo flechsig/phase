@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Dec 07 15:10:17 flechsig>  */
+/*   Time-stamp: <19 Dec 07 15:18:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -565,6 +565,8 @@ void GetOptiBox(struct PHASEset *x)
   int parameterzahl, i, index, k, version= 20071217, methode;     
   Widget w;
 
+
+  printf("GetOptiBox called\n");
   get_something(widget_array[kCOptiResultButton], XmNlabelString, &label);
   opresname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			     NULL, 0, XmOUTPUT_ALL);
@@ -574,12 +576,7 @@ void GetOptiBox(struct PHASEset *x)
   minname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			   NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);
-  if (strcmp(text, "use cost.F") == 0) methode= CostForO; else
-    if (strcmp(text, "Focus special") == 0) methode= FocusSizeO; else
-      if (strcmp(text, "Full Ray Trace") == 0) methode= FullRTOptiO; else
-	if (strcmp(text, "Ray Trace") == 0) methode= RTOptiO; else methode= -1;
-
-  XtFree(text);
+  
   XtVaGetValues(widget_array[kCOptiList2], 
 		XmNitems, &list2items, XmNitemCount, &parameterzahl, NULL);  
   
@@ -588,7 +585,12 @@ void GetOptiBox(struct PHASEset *x)
   text= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);
+  if (strcmp(text, "use cost.F") == 0) methode= CostForO; else
+    if (strcmp(text, "Focus special") == 0) methode= FocusSizeO; else
+      if (strcmp(text, "Full Ray Trace") == 0) methode= FullRTOptiO; else
+	if (strcmp(text, "Ray Trace") == 0) methode= RTOptiO; else methode= -1;
 
+  XtFree(text);
   parameterzahl-= 2;
   if ((oppickfile= fopen(x->optipckname, "w+")) == NULL)
     {
