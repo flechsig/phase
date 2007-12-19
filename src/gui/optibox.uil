@@ -52,7 +52,9 @@ object
             XmLabel             COptiResultLabel;
             XmPushButton        COptiResultButton;   
             XmLabel             COptiMinuitLabel;  
-            XmPushButton        COptiMinuitButton;   
+            XmPushButton        COptiMinuitButton;
+            !XmLabel             COptiMethodeLabel;
+	    XmOptionMenu        COptiMenu;
             XmSeparator         COptiSeph1;  
 	    XmScrolledList      COptiList; 
             XmSeparator         COptiSeph2;   
@@ -132,7 +134,8 @@ object
             XmNtopAttachment    = XmATTACH_FORM;      
             XmNleftAttachment   = XmATTACH_FORM;    
             XmNrightAttachment  = XmATTACH_FORM;    
-	    XmNtopOffset        = 85; 
+	  !  XmNtopOffset        = 85;
+            XmNtopOffset        = 105;
 	    XmNseparatorType    = XmSHADOW_ETCHED_IN;  
             XmNorientation      = XmHORIZONTAL;
                 	};      
@@ -142,7 +145,7 @@ object
     COptiList : XmScrolledList {
         arguments {
             XmNscrollBarDisplayPolicy = XmSTATIC;  
-            XmNvisibleItemCount = 4;
+            XmNvisibleItemCount = 4;  !4
             XmNselectionPolicy  = XmSINGLE_SELECT; 
             XmNunitType         = XmPIXELS;  
             XmNlistSizePolicy   = XmCONSTANT;
@@ -174,7 +177,7 @@ object
             XmNtopOffset	= 230;
             !XmNshadowThickness	= 8;      
             XmNbottomAttachment	= XmATTACH_FORM;    
-            XmNbottomOffset     = 450; 
+            XmNbottomOffset     = 350;!450; 
 	};      
 };    
 
@@ -213,7 +216,7 @@ object
 object
     COptiList1 : XmScrolledList {  
         arguments {
-            XmNvisibleItemCount = 5;
+            XmNvisibleItemCount = 6; !5
             XmNitems		= kOptiIndexStrings;  
             XmNselectionPolicy  = XmSINGLE_SELECT; 
             XmNunitType         = XmPIXELS;  
@@ -244,7 +247,7 @@ object
             XmNseparatorType    = XmSHADOW_ETCHED_IN;
             !XmNshadowThickness	= 8;      
             XmNbottomAttachment	= XmATTACH_FORM;    
-            XmNbottomOffset     = 230;          !210
+            XmNbottomOffset     = 180; !230;          !210
 	};      
 };    
 
@@ -252,7 +255,7 @@ object
      COptiList2 : XmScrolledList {  
         arguments {                                      
             XmNscrollBarDisplayPolicy = XmSTATIC;  
-	    XmNvisibleItemCount = 4;
+	    XmNvisibleItemCount = 4;!4;
             XmNitems		= kOptiParStrings;  
             XmNselectionPolicy  = XmSINGLE_SELECT; 
             XmNunitType         = XmPIXELS;                        
@@ -493,3 +496,100 @@ object
                XmNactivateCallback = procedure activate_proc(kCOptiAddOK);
         	};   
   	};         
+
+
+! optimization methode
+object
+    COptiMenu : XmOptionMenu {
+        arguments {  
+            XmNbackground       = color('blue'); 
+            XmNforeground       = color('white');
+	    XmNlabelString      = "optimization methode: ";
+            XmNmenuHistory      = XmPushButton COptiRTButton; 
+            XmNtopAttachment    = XmATTACH_WIDGET;
+ 	    XmNtopWidget        = COptiMinuitButton;
+            XmNtopOffset        = 3;
+            !XmNrightAttachment  = XmATTACH_FORM;
+            !XmNrightOffset      = 20;
+	    XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset      = 20;
+            XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
+            };
+        controls {                                                             
+            XmPulldownMenu        COptiPdme;
+            };
+        callbacks {                                                   
+            MrmNcreateCallback  = procedure create_proc (kCOptiMenu); 
+            }; 
+       };
+
+
+object
+     COptiPdme : XmPulldownMenu widget {
+      	controls {
+	   XmPushButton        COptiRTButton;
+ 	   XmPushButton        COptiFullRTButton;
+	   XmPushButton        COptiFocusButton;
+           XmPushButton        COptiCostButton;
+	  	 };
+        };
+
+object
+    COptiRTButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Ray Trace";
+            XmNmnemonic         =  keysym("R"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiRTButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiRTButton);
+            };
+        }; 
+
+object
+    COptiFullRTButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Full Ray Trace";
+            XmNmnemonic         =  keysym("F"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiFullRTButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiFullRTButton);
+            };
+        }; 
+
+object
+    COptiFocusButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Focus special";
+            XmNmnemonic         =  keysym("F"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiFocusButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiFocusButton);
+            };
+        }; 
+
+object
+    COptiCostButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "use cost.F";
+            XmNmnemonic         =  keysym("C"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc  (kCOptiCostButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiCostButton);
+            };
+        }; 
+
+object
+    COptiMethodeLabel : XmLabel {
+        arguments {
+            XmNlabelString      = "optimization methode: ";
+            XmNtopAttachment    = XmATTACH_WIDGET;
+	    XmNtopWidget        = COptiMinuitLabel;   
+            XmNtopOffset        = 5;    
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNleftOffset       = 20;    
+                        };
+           };   

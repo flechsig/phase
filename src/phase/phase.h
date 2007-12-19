@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:03:29 flechsig>  */
+/*   Time-stamp: <19 Dec 07 10:55:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -374,7 +374,14 @@
 #define kSucAB                   362
 #define kMisalignmentButton      363
 
-#define kEOEDrift               999
+#define kCOptiRTButton           380
+#define kCOptiFullRTButton       381
+#define kCOptiFocusButton        382
+#define kCOptiCostButton         383
+
+#define kCOptiMenu               385
+
+#define kEOEDrift                999
 
 
 
