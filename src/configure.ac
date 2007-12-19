@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 Dec 07 23:25:20 flechsig> 
+dnl   Time-stamp: <19 Dec 07 13:07:47 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -174,50 +174,6 @@ dnl end debugger
 dnl libtool init after selecting the fortran compiler
 AC_PROG_LIBTOOL
 
-## Optimization with full ray trace
-AC_ARG_ENABLE([fullrt_opti],
-    AC_HELP_STRING([--enable-fullrt-opti],
-	[enable optimization in full ray trace mode]),
-    [AC_MSG_NOTICE(***** optimization with full ray trace ***)
-     AC_DEFINE_UNQUOTED(WITH_FULL_RT, "yes", 
-     "optimization in full ray trace mode")
-      optimization="with full RT mode"
-      with_full_rt="yes"],
-    [with_full_rt="no"]
-)
-
-## Optimization with ray trace
-AC_ARG_ENABLE([rt_opti],
-    AC_HELP_STRING([--enable-rt-opti],
-	[enable optimization in ray trace mode]),
-    [AC_MSG_NOTICE(***** optimization with ray trace ***)
-     AC_DEFINE_UNQUOTED(WITH_RT, "yes", 
-     "optimization in ray trace mode")
-      optimization="with RT mode"
-      with_rt="yes"],
-    [with_rt="no"]
-)
-
-
-## Optimization with user cost function
-AC_ARG_ENABLE([cost_opti],
-    AC_HELP_STRING([--enable-cost-opti ],
-	[enable optimization with user function cost.F]),
-    [AC_MSG_NOTICE(***** optimization with user function cost.F ***)
-    AC_DEFINE_UNQUOTED(WITH_COST, "yes", 
-    "optimization with user function")
-    optimization="with with user function cost.F"
-    with_cost="yes"],
-    [with_cost="no"]
-)
-
-if test "$with_full_rt" = "no" -a "$with_cost" = "no" ; then
-   if test "$with_rt" = "no" ; then  
-      AC_MSG_NOTICE([**** default optimization  (spot size) ****])
-      optimization="spot size (default)"
-   fi
-fi
-
 ## expire option
 AC_ARG_ENABLE([EXPIRE],
     AC_HELP_STRING([--enable-EXPIRE=YYYYMMDD],[expiring date of the code]),
@@ -341,5 +297,4 @@ echo "phaselib        : ${LIBPHASE}"
 echo "debug code      : ${enable_debug}"
 echo "cernlib:        : ${cernlib}"
 echo "prefix:         : ${prefix}"
-echo "optimization    : ${optimization}"
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
