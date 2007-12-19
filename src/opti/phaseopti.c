@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <17 Dec 07 18:58:44 flechsig>  */
+/*   Time-stamp: <19 Dec 07 15:42:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -125,7 +125,7 @@ int main(argc, argv)
     	char *argv[];                     /* Pointers to command line args. */
 {   
   double 		ax, ay, ax0;
-  int 			ix, iy, iread= 20,luno;
+  int 			ix, iy, iread= 20, luno;
   time_t start, l, h, m, s;
 #ifdef VMS
   FString 		Fminuitfilename;
@@ -146,18 +146,28 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 optistructure.fcncall= 0;
 
 /*#ifndef DEBUG*/
-   if (argc != 2)
+   if (argc < 2)
    {
-     fprintf(stderr,"syntax: phaseopti <inputfilename>\n");
+     fprintf(stderr,"syntax: phaseopti <inputfilename> [optimization_methode]\n");
      exit(-1);
    }
    printf("read from file: %s\n", argv[1]);
 
    getoptipickfile(&optistructure, argv[1]); 
-/*#else*/
-   /*   printf("debug mode -> read from file: test.pcko\n");
-	getoptipickfile(&optistructure, "test.pcko");*/
-/*#endif*/
+
+   if (argc == 3)
+     {
+       sscanf(argv[2], "%d", &optistructure.methode);
+       printf("take optimization methode from command line: %d\n", optistructure.methode);
+     }
+   
+   if ((optistructure.methode > 3) || (optistructure.methode < 0))
+     {
+       printf("error: %d unknown optimization methode -- set it to %d\n", 
+	      optistructure.methode, RTOptiO);
+       optistructure.methode= RTOptiO ;
+     }
+
    ReadBLFile(optistructure.beamlinefilename, &Beamline);
    /* oeffnen des Ausgabefiles */
    if ((optistructure.filepointer= 
@@ -171,13 +181,8 @@ optistructure.fcncall= 0;
    /* get x, y aus */
    out_struct(&Beamline, &ay, optistructure.yindex);  /* index    */
 
-#ifdef WITH_FULL_RT
-   MakeRTSource(&PHASESet, &Beamline);
-#endif
-
-#ifdef WITH_RT
-   MakeRTSource(&PHASESet, &Beamline);
-#endif
+   if ((optistructure.methode == RTOptiO) || (optistructure.methode == FullRTOptiO))
+     MakeRTSource(&PHASESet, &Beamline);
 
 #ifdef VMS
    CreateFString(&Fminuitfilename,  optistructure.minuitfilename); 
@@ -276,22 +281,6 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
   int i;
   double dy, dz;
   static double chitmp, yfwhm, zfwhm, rfwhm, rpy, rpz, transmittance; 
-
-    /* should later on be initiated in the optistructure */
-     
-#ifdef WITH_FULL_RT
-  optistructure.methode= FullRTOptiO; 
-#else
-  #ifdef WITH_COST
-    optistructure.methode= CostForO;
-  #else 
-    #ifdef WITH_RT
-      optistructure.methode= RTOptiO;
-    #else
-      optistructure.methode= FocusSizeO;
-    #endif
-  #endif
-#endif  
 
     /* printf("fcn eingang called with %d: chi: %e\n", *IFLAGS, *CHI);  */
   switch(*IFLAGS) 
