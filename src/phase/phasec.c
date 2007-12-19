@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <17 Dec 07 19:29:35 flechsig>  */
+/*   Time-stamp: <19 Dec 07 15:10:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -555,34 +555,40 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 } /* end defmirrorc */
 
 void GetOptiBox(struct PHASEset *x) 
-/* modification: 28 Oct 97 11:30:33 flechsig */
+/* modification: Dec 2007 flechsig */
 {
   FILE *oppickfile, *minfile;
   char *opresname= NULL,  *minname= NULL, *zeile= NULL, *subzeile, 
-    puffer[MaxPathLength], *ch; 
+    puffer[MaxPathLength], *ch, *text=NULL; 
   XmString label;
   XmStringTable list2items;
-  int parameterzahl, i, index, k, version= 20071217, methode= 3;     
- 
+  int parameterzahl, i, index, k, version= 20071217, methode;     
+  Widget w;
+
   get_something(widget_array[kCOptiResultButton], XmNlabelString, &label);
-  /*
-  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &opresname)) 
-  return; */
   opresname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
-			NULL, 0, XmOUTPUT_ALL);
+			     NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);
 
   get_something(widget_array[kCOptiMinuitButton], XmNlabelString, &label);
-  /* if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &minname)) 
-     return;  */
   minname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
-			NULL, 0, XmOUTPUT_ALL);
+			   NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);
-  /*  XtVaGetValues(widget_array[kCOptiList], 
-		XmNitems, &listitems,  XmNitemCount, &elementzahl, NULL); */ 
+  if (strcmp(text, "use cost.F") == 0) methode= CostForO; else
+    if (strcmp(text, "Focus special") == 0) methode= FocusSizeO; else
+      if (strcmp(text, "Full Ray Trace") == 0) methode= FullRTOptiO; else
+	if (strcmp(text, "Ray Trace") == 0) methode= RTOptiO; else methode= -1;
+
+  XtFree(text);
   XtVaGetValues(widget_array[kCOptiList2], 
 		XmNitems, &list2items, XmNitemCount, &parameterzahl, NULL);  
-   
+  
+  get_something(widget_array[kCOptiMenu], XmNmenuHistory, &w); /* kEOOptMenu */
+  get_something(w, XmNlabelString, &label);
+  text= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+			NULL, 0, XmOUTPUT_ALL);
+  XmStringFree(label);
+
   parameterzahl-= 2;
   if ((oppickfile= fopen(x->optipckname, "w+")) == NULL)
     {
@@ -592,7 +598,7 @@ void GetOptiBox(struct PHASEset *x)
     {
       fprintf(stderr, "error: open file %s\n", minname); exit(-1);
     }
-
+  
   fprintf(oppickfile, "%s %d\n", OptiPickFileHeader, version);
   fprintf(oppickfile, "%20d    Optimization methode\n", methode);
   fprintf(oppickfile, "%s\n%s\n%s\n", 
@@ -632,21 +638,12 @@ void GetOptiBox(struct PHASEset *x)
       XtFree(zeile);  
     } 
          
- /*  for (i= 0; i < elementzahl; i++)   */
-/*     { */
-/*       zeile= DXmCvtCStoFC(listitems[i], &bc, &status);  */
-/*       strcpy(puffer, zeile);   */
-/*       if ((subzeile= strrchr(puffer, ']')) == NULL) subzeile= puffer; */
-/*       if ((ch = strrchr(subzeile, '.'))    != NULL) *ch=   '\0';    */
-/*       fprintf(oppickfile, "%s.datg\n", puffer);   */
-/*       fprintf(oppickfile, "%s.date\n", puffer);   */
-/*       XtFree(zeile);   */
-/*     }            */
-
   fprintf(minfile, "\nMIGRAD\nRETURN\n");
-  fclose(oppickfile); fclose(minfile);
+  fclose(oppickfile); 
+  fclose(minfile);
   printf("GetOptiBox: wrote files:\n  %s\n  %s\n", x->optipckname, minname);
-  XtFree(minname); XtFree(opresname); 
+  XtFree(minname); 
+  XtFree(opresname); 
 } /* end GetOptiBox */
 
 int GetPHASE(struct PHASEset *x, char *mainpickname)
@@ -749,17 +746,21 @@ void InitOptiBox1(char *pickname)
 }
 
 void InitOptiBox(char *pickname, struct BeamlineType *bl)   
-/* modification: 28 Oct 97 14:56:23 flechsig */
+/* modification: 18.12.07 flechsig */
+/* entferne directes file lesen aus pickfile use routine instead UF 18.12.07  */
 {
   FILE *f, *f1;
-  char minname[MaxPathLength], opresname[MaxPathLength], 
-    buffer[MaxPathLength], *subzeile; 
+  char buffer[MaxPathLength], buffer1[MaxPathLength], *subzeile; 
   XmString label;
   int  parameterzahl, i, index, k, version;   
   double eps;
   struct ElementType *list;
+  struct optistruct os;
+  Widget w;
 
   printf("InitOptiBox called\n");
+  getoptipickfile(&os, pickname);
+
   XmListDeleteAllItems(widget_array[kCOptiList]);  
   list= bl->ElementList;
   for (i= 0; i< bl->elementzahl; i++, list++)
@@ -769,80 +770,61 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
       XmStringFree(label);
     }
 
-  if ((f= fopen(pickname, "r")) != NULL)   
+  label= XmStringCreateLocalized(os.minuitfilename);   
+  XtVaSetValues(widget_array[kCOptiMinuitButton], 
+		XmNlabelString, label, NULL); 
+  XmStringFree(label);  
+
+  label= XmStringCreateLocalized(os.resultfilename);   
+  XtVaSetValues(widget_array[kCOptiResultButton], 
+		XmNlabelString, label, NULL);  
+  XmStringFree(label);
+
+ switch (os.methode)   /* set history */
     {
-      if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
-	{   
-	  fscanf(f, "%s\n", &minname); /* hier beamlinename ueberlesen */
-	  fscanf(f, "%s\n", &minname);   
+    case FocusSizeO:  w= widget_array[kCOptiFocusButton];  break;
+    case FullRTOptiO: w= widget_array[kCOptiFullRTButton]; break;
+    case CostForO:    w= widget_array[kCOptiCostButton];   break;
+    case RTOptiO:     
+    default:          w= widget_array[kCOptiRTButton];     break;
+    }
+  XtVaSetValues(widget_array[kCOptiMenu], XmNmenuHistory, w, NULL); 
+  
+  XmListDeleteAllItems(widget_array[kCOptiList2]);
+  sprintf(buffer, "x : %d %d %f", os.xindex, os.xpoints, os.dx);
+  label= XmStringCreateLocalized(buffer);   
+  XmListAddItem(widget_array[kCOptiList2], label, 0); 
+  XmStringFree(label); 
+  sprintf(buffer, "y : %d %d %f", os.yindex, os.ypoints, os.dy);
+  label= XmStringCreateLocalized(buffer);   
+  XmListAddItem(widget_array[kCOptiList2], label, 0); 
+  XmStringFree(label); 
 
-	  label= XmStringCreateLocalized(minname);   
-
-	  XtVaSetValues(widget_array[kCOptiMinuitButton], 
-			XmNlabelString, label, NULL); 
-	  XmStringFree(label);  
-	  fscanf(f, "%s\n", &opresname);   
-
-	  label= XmStringCreateLocalized(opresname);   
-
-	  XtVaSetValues(widget_array[kCOptiResultButton], 
-			XmNlabelString, label, NULL);  
-	  XmStringFree(label);  
-	 
-	  fgets(buffer, 80, f); buffer[strlen(buffer)-1]= '\0';
-	  sprintf(opresname, "x : %s", buffer); 
-	  XmListDeleteAllItems(widget_array[kCOptiList2]);
-
-	  label= XmStringCreateLocalized(opresname);   
-
-	  XmListAddItem(widget_array[kCOptiList2], label, 0); 
-	  XmStringFree(label);  
-	  fgets(buffer, 80, f); buffer[strlen(buffer)-1]= '\0';     
-	  sprintf(opresname, "y : %s", buffer); 
-	 
-	  label= XmStringCreateLocalized(opresname);   
-
-	  XmListAddItem(widget_array[kCOptiList2], label, 0); 
-	  XmStringFree(label);                                 /* y zeile ok */
-	  
-	  fscanf(f, "%d\n", &parameterzahl);      
-	  if ((f1= fopen(minname, "r")) == NULL)   
-	    fprintf(stderr, "Minfile: %s- not found\n", minname);
-	  else     
-	    {
-	      if( CheckFileHeader(f1, "SET", &version) != 0) 
-		fprintf(stderr, "error: InitOptiBox- minfile- fileheader\n");
-	      else 
-		{  
-		  fscanf(f1, "%s\n", &buffer);        
-		  fgets(buffer, MaxPathLength, f1);    
-		  fgets(buffer, MaxPathLength, f1);    
-		  for (i= 0; i < parameterzahl; i++)
-		    {
-		      fgets(buffer, MaxPathLength, f1); 
-		      buffer[strlen(buffer) -1]= '\0';     
-		      subzeile= buffer; k= 0; 
-		      fscanf(f, "%d\n", &index);       /* index vom pickfile */
-		      while ((*subzeile != ' ') && (k < 10)) 
-			{++subzeile; ++k;}             /* remove number      */
-		      ++subzeile; 
-		      sprintf(opresname, "%d %s", index, subzeile);
- 
-		      label= XmStringCreateLocalized(opresname);   
-
-		      XmListAddItem(widget_array[kCOptiList2], label, 0); 
-		      XmStringFree(label);  
-		    }       
-		}  /* end checkfileheader(f1, set);*/
-	      fclose(f1);
-	    }  /* end open minfile */
-	}  
+  if ((f1= fopen(os.minuitfilename, "r")) == NULL)   
+    fprintf(stderr, "Minfile: %s- not found\n", os.minuitfilename);
+  else     
+    {
+      if( CheckFileHeader(f1, "SET", &version) != 0) 
+	fprintf(stderr, "error: InitOptiBox- minfile- fileheader\n");
       else 
-	fprintf(stderr, "error: InitOptiBox- fileheader\n");
-      fclose(f);
-    }  
-  else 
-    fprintf(stderr, "InitOptiBox not possible\n");
+	{  
+	  fscanf(f1, "%s\n", &buffer);        
+	  fgets(buffer, MaxPathLength, f1);    
+	  fgets(buffer, MaxPathLength, f1);    
+	  for (i= 0; i < os.npars; i++)
+	    {
+	      fgets(buffer, MaxPathLength-10, f1);
+	      buffer[strlen(buffer) -1]= '\0';
+	      subzeile= strchr(buffer, ' ');
+	      if (subzeile== NULL) printf("InitOptiBox: parse error- no space found\n");  
+	      sprintf(buffer1, "%d %s", os.parindex[i], ++subzeile);
+	      label= XmStringCreateLocalized(buffer1);   
+	      XmListAddItem(widget_array[kCOptiList2], label, 0); 
+	      XmStringFree(label);  
+	    }       
+	}  /* end checkfileheader(f1, set);*/
+      fclose(f1);
+    }  /* end open minfile */
 }
 
 void InitOptiList2(int selpos, char *neu)   
