@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Dec 07 11:37:43 flechsig>  */
+/*   Time-stamp: <20 Dec 07 13:35:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1049,7 +1049,6 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 {   
    FILE *f;
    int elnumber, i, version= 20040217;
-   char   elname[MaxPathLength];
    struct UndulatorSourceType *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType     *dp;
@@ -1070,7 +1069,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    
    printf("WriteBLFile: write data to %s ", fname);
 
-   fprintf(f, "%s %d\n", Fg3PickFileHeader, version);     /* einige Infos ins file */
+   fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
    fprintf(f, "This is a datafile of PHASE version FEB 04\n\n");
    fprintf(f, "SOURCE\n");
 
@@ -1190,12 +1189,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    while (elnumber<= bl->elementzahl) 
    {
      fprintf(f, "\nElement %d\n", elnumber);
-     if (listpt->MDat.Art == kEOEGeneral) 
-       sprintf(elname, "%s-new", listpt->elementname);
-     else 
-       sprintf(elname, "%s", listpt->elementname);
-       
-     fprintf(f, "%20s     name of elem. \n", elname); 
+     fprintf(f, "%20s     name of elem. \n", listpt->elementname); 
      fprintf(f, "\nGEOMETRY %d\n", elnumber); 
      fprintf(f, "%20lg     theta              \n", listpt->GDat.theta0); 
      fprintf(f, "%20lg     source distance    \n", listpt->GDat.r);
@@ -1210,13 +1204,6 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
      fprintf(f, "\nMIRROR %d  \n", elnumber);  
      fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
-     if (listpt->MDat.Art == kEOEGeneral)   
-       {
-	 /* read the coefficients once - is required for optimization if only 
-	    particular coefficients should be optimized */
-	 printf("WriteBLFile->write general coefficient file new-mirror-coefficients\n");
-	 WriteMKos(&listpt->mir, elname);
-       } 
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
      fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha);

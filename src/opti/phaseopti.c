@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <19 Dec 07 15:59:50 flechsig>  */
+/*   Time-stamp: <20 Dec 07 13:32:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -265,8 +265,7 @@ optistructure.fcncall= 0;
    s= l- h * 3600- m * 60;
    printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, m, s);
 
-   printf("optimized Beamlinefile: %s\n", optfname);
-   WriteBLFile(optfname, &Beamline);
+   SaveOptimizedBeamline(&Beamline, optfname);
    printf("end optimization: results in file: %s\n", 
 	  optistructure.resultfilename);
 
@@ -359,6 +358,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 	{
 	case RTOptiO:
 	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
+	  /**CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);*/
 	  break;
 	case FullRTOptiO:
 	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
@@ -412,4 +412,26 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   fprintf(op->filepointer, "\n");
   /* eine Zeile im outputfile fertig */
 } 
+
+void SaveOptimizedBeamline(struct BeamlineType *bl, char *optfname)
+{
+  struct ElementType *listpt;
+  int    elnumber;
+  
+  listpt  = bl->ElementList;
+  elnumber= 1;
+  while (elnumber<= bl->elementzahl) 
+    {
+      if (listpt->MDat.Art == kEOEGeneral)   
+	{
+	  strcat(listpt->elementname, "-optimized");
+	  WriteMKos(&listpt->mir, listpt->elementname);
+	}
+      elnumber++; listpt++;
+    }
+
+  printf("optimized Beamlinefile: %s\n", optfname);
+  WriteBLFile(optfname, bl);
+} /* end SaveOptimizedBeamline */
+
 /* end phaseopti */
