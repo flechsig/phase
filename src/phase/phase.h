@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Dec 07 11:35:49 flechsig>  */
+/*   Time-stamp: <20 Dec 07 14:18:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -797,6 +797,7 @@ void 	ActivateFileSelection(int, char *),
   PST(struct BeamlineType *), 
   adaptive_int(),
   PutPHASE(struct  PHASEset *, char *), 
+  RayTracec(struct BeamlineType *),
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
   ReadCoefficientFile(double *, char *),

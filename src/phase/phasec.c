@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Dec 07 16:00:10 flechsig>  */
+/*   Time-stamp: <20 Dec 07 14:22:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -67,11 +67,9 @@ void BatchMode(char *fname, int cmode, int selected)
       printf("BatchMode: Ray Tracing\n");
       MakeRTSource(&PHASESet, &Beamline); 
       ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      RayTracec(&PHASESet, &Beamline);
-      /* UF 28.11.06   WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-	    Beamline.RESULT.RESUnion.Rays); */
+      RayTracec(&Beamline);
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-	    Beamline.RESULT.RESp);
+		   Beamline.RESULT.RESp);
       break;
     case 2:
       printf("BatchMode: Full Ray Tracing\n");

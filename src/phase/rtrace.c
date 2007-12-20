@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <16 Dec 07 21:14:20 flechsig>  */
+/*   Time-stamp: <20 Dec 07 14:17:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -571,11 +571,10 @@ void RayTraceSingleRay(struct BeamlineType *bl)
   printf("********** end RayTraceSingleRay *******************\n\n"); 
 } /* end RayTraceSingleRay */
 
-void RayTracec(struct PHASEset *x, struct BeamlineType *bl)
-     /* Uwe 20.5.96 		*/
-     /* 3.2.97 		*/
-     /* normal RT  */
-     /* umgeschrieben auf pointer UF 28.11.06 */
+void RayTracec(struct BeamlineType *bl)
+/* normal RT                             */
+/* umgeschrieben auf pointer UF 28.11.06 */
+/* phaseset wird nicht mehr benutzt      */
 {
   struct RayType *Raysin, *Raysout;   
   int i, iord;

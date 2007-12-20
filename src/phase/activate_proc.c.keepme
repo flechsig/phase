@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <16 Dec 07 19:05:38 flechsig>  */
+/*   Time-stamp: <20 Dec 07 14:23:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -570,7 +570,7 @@ void activate_proc(w, tag, reason)
       } else
 	{
 	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	  RayTracec(&PHASESet, &Beamline); 
+	  RayTracec(&Beamline); 
 	}     
     UpdateMainList();  
     stop_watch();    
