@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <19 Dec 07 11:37:00 flechsig>  */
+/*   Time-stamp: <20 Dec 07 16:39:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -398,8 +398,8 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 
 void buildsystem(struct BeamlineType *bl) 
 
-/* durch abgespecktes (schnelles) buildbeamline ersetzt */
-/* baut beamline und extrahiert map                     */
+/* abgespecktes (schnelles) buildbeamline  */
+/* baut beamline und extrahiert map        */
 
 {
   int     elcounter, i, mdim;
@@ -410,7 +410,7 @@ void buildsystem(struct BeamlineType *bl)
   listpt= bl->ElementList; 
   while (elcounter<= bl->elementzahl)
     { 
-      bl->position=elcounter;                     /* parameter fuer MakeMapandMatrix */
+      bl->position=elcounter;         /* parameter fuer MakeMapandMatrix */
       if ((listpt->ElementOK & mapOK) == 0)       /* map must be rebuild */
 	{ 
 	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
@@ -439,7 +439,8 @@ void buildsystem(struct BeamlineType *bl)
     } /* Schleife ueber alle Elemente fertig */
  
   extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	     &bl->BLOptions.ifl.iord);    
+	     &bl->BLOptions.ifl.iord); 
+   bl->beamlineOK |= mapOK;
   /* bline ist fertig, map ist erzeugt */
 } /* end buildsystem */
 
@@ -551,10 +552,10 @@ double GetRMS(struct BeamlineType *bl, char ch)
    and top left 
 */
 
-double FocusSize(struct BeamlineType *bl, 
+void FocusSize(double *chi, struct BeamlineType *bl, 
 		 double *dyin, double *dzin, double *yout, double *zout)
 {
-  double chi;
+  
   struct RayType Rayin[4], Rayout[4];
   int i;
 
@@ -571,7 +572,7 @@ double FocusSize(struct BeamlineType *bl,
   Rayin[0].dz= Rayin[3].dz= -*dzin;
   Rayin[1].dz= Rayin[2].dz=  *dzin;
 
-  *yout= *zout= chi=0.0;
+  *yout= *zout= *chi=0.0;
 
   for (i= 0; i< 4; i++)
     {    
@@ -581,13 +582,13 @@ double FocusSize(struct BeamlineType *bl,
     
       *yout+= fabs(Rayout[i].y);
       *zout+= fabs(Rayout[i].z);
-      chi+= sqrt(*yout * *yout + *zout * *zout);
+      *chi+= sqrt(*yout * *yout + *zout * *zout);
     }
   *yout*= 0.25;
   *zout*= 0.25;
-  chi  *= 0.25;
+  *chi  *= 0.25;
 
-  return chi;
+  
 } /* end FocusSize */
 
 /*
@@ -595,9 +596,9 @@ double FocusSize(struct BeamlineType *bl,
    (for optimization of the spot size)
 */
 
-double FullRTOpti(struct BeamlineType *bl, double *yout, double *zout)
+void FullRTOpti(double *chi, struct BeamlineType *bl, double *yout, double *zout)
 {
-  double chi, transmittance, yfwhm, zfwhm, rpy, rpz;
+  double transmittance, yfwhm, zfwhm, rpy, rpz;
   
   
   printf("************************** FullRTOpti ***********\n");
@@ -623,19 +624,20 @@ double FullRTOpti(struct BeamlineType *bl, double *yout, double *zout)
   /**CHI= zfwhm + yfwhm;*/
       
       
-  chi= sqrt(*yout * *yout + *zout * *zout);
-  return chi;
+  *chi= sqrt(*yout * *yout + *zout * *zout);
+  
 } /* end FullRTOpti */
 
-double RTOpti(struct BeamlineType *bl, 
+
+void RTOpti(double *chi, struct BeamlineType *bl, 
 	      double *yout, double *zout, double *rout)
 {
-  double chi, yfwhm, zfwhm, rfwhm, rpy, rpz;
+  double yfwhm, zfwhm, rfwhm, rpy, rpz;
     
   printf("************* RTOpti ***********\n");
   ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
 
-  RayTracec(&PHASESet, &Beamline);
+  RayTracec(&Beamline);
   
   *zout= zfwhm= 2.35* GetRMS(&Beamline, 'z');
   *yout= yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
@@ -644,7 +646,7 @@ double RTOpti(struct BeamlineType *bl,
   rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
     Beamline.deltalambdafactor/ yfwhm : 1e12;
   rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-    Beamline.deltalambdafactor/ zfwhm : 1e12;
+  Beamline.deltalambdafactor/ zfwhm : 1e12; 
 
   /* define what you want to minimize */
   /* printf("optimize: transmittance ");
@@ -655,9 +657,9 @@ double RTOpti(struct BeamlineType *bl,
   /**CHI= zfwhm + yfwhm;*/
       
       
-  /* chi= sqrt(*yout * *yout + *zout * *zout);*/
-  chi= rfwhm;
-  return chi;
+  /*chi= sqrt(*yout * *yout + *zout * *zout);*/
+  *chi= rfwhm; 
+  
 } /* end RTOpti */
 
 /* end optisubc.c */

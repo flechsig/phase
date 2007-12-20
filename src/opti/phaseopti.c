@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <20 Dec 07 13:32:46 flechsig>  */
+/*   Time-stamp: <20 Dec 07 16:38:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -64,6 +64,8 @@
 #endif
 
 #include "phaseopti.h"     
+
+/* #define buildsystem BuildBeamline*/
 
 /*          Der Index     
 
@@ -181,11 +183,12 @@ optistructure.fcncall= 0;
    /* get x, y aus */
    out_struct(&Beamline, &ay, optistructure.yindex);  /* index    */
 
-   if ((optistructure.methode == RTOptiO) || (optistructure.methode == FullRTOptiO))
+   if ((optistructure.methode == RTOptiO) || 
+       (optistructure.methode == FullRTOptiO))
      MakeRTSource(&PHASESet, &Beamline);
 
 #ifdef VMS
-   CreateFString(&Fminuitfilename,  optistructure.minuitfilename); 
+   CreateFString(&Fminuitfilename, optistructure.minuitfilename); 
    fminuinit(&iread, &Fminuitfilename);                 /* treiber.for */
 #endif
 
@@ -274,14 +277,16 @@ optistructure.fcncall= 0;
 /*************************** end main ********************************/
 
 /* Diese Routine wird von Minuit gerufen */
+/* Achtung die aufzurufenden Routinen muessen fortran conform sein */ 
 void FCN (int *NPAR, double *G, double *CHI, double *XPAR, 
           int *IFLAGS, char *FUTIL)    
 {
   int i;
   double dy, dz;
-  static double chitmp, yfwhm, zfwhm, rfwhm, rpy, rpz, transmittance; 
-
-    /* printf("fcn eingang called with %d: chi: %e\n", *IFLAGS, *CHI);  */
+  double yfwhm, zfwhm, rfwhm, rpy, rpz, transmittance;
+#ifdef DEBUG
+  printf("FCN start- iflag= %d: chi: %e\n", *IFLAGS, *CHI); 
+#endif 
   switch(*IFLAGS) 
     {
     case 3:              /*output*/
@@ -297,10 +302,10 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       switch(optistructure.methode) 
 	{
 	case RTOptiO:
-	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
+	  RTOpti(CHI, &Beamline, &yfwhm, &zfwhm, &rfwhm);
 	  break;
 	case FullRTOptiO:
-	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
+	  FullRTOpti(CHI, &Beamline, &yfwhm, &zfwhm);
 	  break;
 	case CostForO:
 	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
@@ -309,10 +314,11 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 	case FocusSizeO:
 	default:
 	  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
+	  FocusSize(CHI, &Beamline, &dy, &dz, &yfwhm, &zfwhm);
 	}
-      printf("debug: FCN: chi: %e; chitmp %e, methode: %d\n", 
-	     *CHI, chitmp, optistructure.methode);
+      
+      printf("debug: FCN: chi: %e, methode: %d\n", 
+	     *CHI, optistructure.methode);
       fitoutput(NPAR, XPAR, CHI);   
       break;
      case 4:
@@ -322,15 +328,16 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 		 i, optistructure.parindex[i], XPAR[i]);
 	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
 	}
+
       buildsystem(&Beamline); 
 
       switch(optistructure.methode) 
 	{
 	case RTOptiO:
-	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
+	  RTOpti(CHI, &Beamline, &yfwhm, &zfwhm, &rfwhm);
 	  break;
 	case FullRTOptiO:
-	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
+	  FullRTOpti(CHI, &Beamline, &yfwhm, &zfwhm);
 	  break;
 	case CostForO:
 	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
@@ -339,7 +346,7 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 	case FocusSizeO:
 	default:
 	  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
+	  FocusSize(CHI, &Beamline, &dy, &dz, &yfwhm, &zfwhm);
 	}
        
       break;
@@ -357,11 +364,10 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       switch(optistructure.methode) 
 	{
 	case RTOptiO:
-	  *CHI= RTOpti(&Beamline, &yfwhm, &zfwhm, &rfwhm);
-	  /**CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);*/
+	  RTOpti(CHI, &Beamline, &yfwhm, &zfwhm, &rfwhm);
 	  break;
 	case FullRTOptiO:
-	  *CHI= FullRTOpti(&Beamline, &yfwhm, &zfwhm);
+	  FullRTOpti(CHI, &Beamline, &yfwhm, &zfwhm);
 	  break;
 	case CostForO:
 	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
@@ -370,8 +376,9 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 	case FocusSizeO:
 	default:
 	  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  *CHI= FocusSize(&Beamline, &dy, &dz, &yfwhm, &zfwhm);
+	  FocusSize(CHI, &Beamline, &dy, &dz, &yfwhm, &zfwhm);
 	}
+      
       optistructure.chistart= *CHI;
       optistructure.fcncall= 0; 
       break;
@@ -379,11 +386,12 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
       break;                                         
     }
   ++optistructure.fcncall;
+  
   optistructure.chistop= *CHI;
 
   printf("\nfcn call %d with iflag %d: chi0: %e chi: %e\n\n", 
 	 optistructure.fcncall, *IFLAGS, optistructure.chistart, *CHI);  
-  chitmp= *CHI; 
+   
     
 } /* end FCN */
 
