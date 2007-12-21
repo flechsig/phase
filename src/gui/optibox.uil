@@ -505,7 +505,7 @@ object
             XmNbackground       = color('blue'); 
             XmNforeground       = color('white');
 	    XmNlabelString      = "optimization methode: ";
-            XmNmenuHistory      = XmPushButton COptiYButton; 
+            XmNmenuHistory      = XmPushButton COptiRButton; 
             XmNtopAttachment    = XmATTACH_WIDGET;
  	    XmNtopWidget        = COptiMinuitButton;
             XmNtopOffset        = 3;
