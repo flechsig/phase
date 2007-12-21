@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <21 Dec 07 09:57:44 flechsig>  */
+/*   Time-stamp: <21 Dec 07 15:31:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -610,8 +610,8 @@ void FullRTOpti(double *chi, struct BeamlineType *bl)
 /* ch goes to GetRMS     */
 void RTOpti(double *chi, struct BeamlineType *bl, char *ch)
 {
-  printf(" ************ RTOpti *********** target: %c\n", ch);
+  printf(" ************ RTOpti *********** target: %c\n", *ch);
   RayTracec(&Beamline);
-  *chi= 2.35* GetRMS(&Beamline, ch);
+  *chi= 2.35* GetRMS(&Beamline, *ch);
 } /* end RTOpti */
 /* end optisubc.c */
