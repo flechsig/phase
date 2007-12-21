@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
 /*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <20 Dec 07 16:37:34 flechsig>  */
+/*  Time-stamp: <21 Dec 07 13:45:46 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
@@ -23,9 +23,9 @@ void SaveOptimizedBeamline(struct BeamlineType *, char *);
 double out_struct(struct BeamlineType  *, double *,  int); 
 double DeltaLambda(struct optistruct *, double, int);
 double GetRMS(struct BeamlineType *, char);
-void FocusSize(double *, struct BeamlineType *, double *, double *, double *, double *);
-void FullRTOpti(double *, struct BeamlineType *, double *, double *);
-void RTOpti(double *, struct BeamlineType *, double *, double *, double *);
+void FocusSize (double *, struct BeamlineType *, double *, double *);
+void FullRTOpti(double *, struct BeamlineType *);
+void RTOpti    (double *, struct BeamlineType *, char *);
 /****** globale vars */
 struct optistruct optistructure;                      /* globale Variablen */  
 

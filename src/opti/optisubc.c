@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <20 Dec 07 16:39:24 flechsig>  */
+/*   Time-stamp: <21 Dec 07 09:57:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -496,12 +496,12 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
     }
 } /* end Get_dydz_fromSource */
 
-/* 31.3.99 erweitert auf z*/
-/* 13.12.07 erweitert auf r */
+/* 31.3.99   erweitert auf z*/
+/* 13.12.07 erweitert  auf r */
 double GetRMS(struct BeamlineType *bl, char ch)
 {
   double EX, EX2, rms;
-  int i, n;
+  int    i, n;
   struct RayType *rays;
 
   n   = bl->RESULT.points;
@@ -553,11 +553,12 @@ double GetRMS(struct BeamlineType *bl, char ch)
 */
 
 void FocusSize(double *chi, struct BeamlineType *bl, 
-		 double *dyin, double *dzin, double *yout, double *zout)
+	       double *dyin, double *dzin)
 {
   
   struct RayType Rayin[4], Rayout[4];
   int i;
+  double yout, zout;
 
   Rayin[0].y= Rayin[0].z= Rayin[1].y= Rayin[1].z= 
     Rayin[2].y= Rayin[2].z= Rayin[3].y= Rayin[3].z= 0.0;
@@ -572,7 +573,7 @@ void FocusSize(double *chi, struct BeamlineType *bl,
   Rayin[0].dz= Rayin[3].dz= -*dzin;
   Rayin[1].dz= Rayin[2].dz=  *dzin;
 
-  *yout= *zout= *chi=0.0;
+  yout= zout= *chi=0.0;
 
   for (i= 0; i< 4; i++)
     {    
@@ -580,15 +581,12 @@ void FocusSize(double *chi, struct BeamlineType *bl,
 		 (double *)bl->ypc1, (double *)bl->zpc1, 
 		 (double *)bl->dypc, (double *)bl->dzpc);
     
-      *yout+= fabs(Rayout[i].y);
-      *zout+= fabs(Rayout[i].z);
-      *chi+= sqrt(*yout * *yout + *zout * *zout);
+      yout+= fabs(Rayout[i].y);
+      zout+= fabs(Rayout[i].z);
+      *chi+= sqrt(yout * yout + zout * zout);
     }
-  *yout*= 0.25;
-  *zout*= 0.25;
-  *chi  *= 0.25;
-
   
+  *chi *= 0.25;
 } /* end FocusSize */
 
 /*
@@ -596,70 +594,24 @@ void FocusSize(double *chi, struct BeamlineType *bl,
    (for optimization of the spot size)
 */
 
-void FullRTOpti(double *chi, struct BeamlineType *bl, double *yout, double *zout)
+void FullRTOpti(double *chi, struct BeamlineType *bl)
 {
-  double transmittance, yfwhm, zfwhm, rpy, rpz;
-  
+  double transmittance;
   
   printf("************************** FullRTOpti ***********\n");
   ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
   RayTraceFull(&Beamline);
   transmittance= (double)Beamline.RESULT.points/
     (double)Beamline.RTSource.raynumber;
-
-  *zout= zfwhm= 2.35* GetRMS(&Beamline, 'z');
-  *yout= yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
-      
-  rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-    Beamline.deltalambdafactor/ yfwhm : 1e12;
-  rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-    Beamline.deltalambdafactor/ zfwhm : 1e12;
-
-  /* define what you want to minimize */
-  /* printf("optimize: transmittance ");
-       *CHI= 1.0- transmittance;*/
-  /* printf("optimize: resolving power ");
-       *CHI= 1.0/rpy;*/
-  /*printf("optimize: focus ");*/
-  /**CHI= zfwhm + yfwhm;*/
-      
-      
-  *chi= sqrt(*yout * *yout + *zout * *zout);
-  
+  *chi= 1.0- transmittance;
 } /* end FullRTOpti */
 
-
-void RTOpti(double *chi, struct BeamlineType *bl, 
-	      double *yout, double *zout, double *rout)
+/* do a normal ray trace */
+/* ch goes to GetRMS     */
+void RTOpti(double *chi, struct BeamlineType *bl, char *ch)
 {
-  double yfwhm, zfwhm, rfwhm, rpy, rpz;
-    
-  printf("************* RTOpti ***********\n");
-  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-
+  printf(" ************ RTOpti *********** target: %c\n", ch);
   RayTracec(&Beamline);
-  
-  *zout= zfwhm= 2.35* GetRMS(&Beamline, 'z');
-  *yout= yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
-  *rout= rfwhm= 2.35* GetRMS(&Beamline, 'r'); 
-      
-  rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-    Beamline.deltalambdafactor/ yfwhm : 1e12;
-  rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-  Beamline.deltalambdafactor/ zfwhm : 1e12; 
-
-  /* define what you want to minimize */
-  /* printf("optimize: transmittance ");
-       *CHI= 1.0- transmittance;*/
-  /* printf("optimize: resolving power ");
-       *CHI= 1.0/rpy;*/
-  /*printf("optimize: focus ");*/
-  /**CHI= zfwhm + yfwhm;*/
-      
-      
-  /*chi= sqrt(*yout * *yout + *zout * *zout);*/
-  *chi= rfwhm; 
-  
+  *chi= 2.35* GetRMS(&Beamline, ch);
 } /* end RTOpti */
-
 /* end optisubc.c */

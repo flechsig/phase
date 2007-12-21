@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Dec 07 14:22:02 flechsig>  */
+/*   Time-stamp: <21 Dec 07 14:23:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -563,7 +563,6 @@ void GetOptiBox(struct PHASEset *x)
   int parameterzahl, i, index, k, version= 20071217, methode;     
   Widget w;
 
-
   printf("GetOptiBox called\n");
   get_something(widget_array[kCOptiResultButton], XmNlabelString, &label);
   opresname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
@@ -583,10 +582,14 @@ void GetOptiBox(struct PHASEset *x)
   text= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);
-  if (strcmp(text, "use cost.F") == 0) methode= CostForO; else
-    if (strcmp(text, "Focus special") == 0) methode= FocusSizeO; else
-      if (strcmp(text, "Full Ray Trace") == 0) methode= FullRTOptiO; else
-	if (strcmp(text, "Ray Trace") == 0) methode= RTOptiO; else methode= -1;
+  if (strcmp(text, "use cost.F") == 0) methode= OptiCost; else
+    if (strcmp(text, "Focus special") == 0) methode= OptiFocus; else
+      if (strcmp(text, "Transmittance") == 0) methode= OptiTrans; else
+	if (strcmp(text, "Focus vertical") == 0) methode= OptiY; else
+	  if (strcmp(text, "Focus horizontal") == 0) methode= OptiZ; else
+	    if (strcmp(text, "Res. power vertical") == 0) methode= OptiRpY; else
+	      if (strcmp(text, "Res. power horizontal)") == 0) methode= OptiRpZ; else
+		if (strcmp(text, "Focus") == 0) methode= OptiR; else methode= -1;
 
   XtFree(text);
   parameterzahl-= 2;
@@ -782,11 +785,15 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 
  switch (os.methode)   /* set history */
     {
-    case FocusSizeO:  w= widget_array[kCOptiFocusButton];  break;
-    case FullRTOptiO: w= widget_array[kCOptiFullRTButton]; break;
-    case CostForO:    w= widget_array[kCOptiCostButton];   break;
-    case RTOptiO:     
-    default:          w= widget_array[kCOptiRTButton];     break;
+    case OptiY:     w= widget_array[kCOptiYButton];  break;
+    case OptiZ:     w= widget_array[kCOptiZButton];  break;
+    case OptiRpY:   w= widget_array[kCOptiRpYButton];  break;
+    case OptiRpZ:   w= widget_array[kCOptiRpZButton];  break;
+    case OptiFocus: w= widget_array[kCOptiFocusButton];  break;
+    case OptiTrans: w= widget_array[kCOptiTransButton];   break;
+    case OptiCost:  w= widget_array[kCOptiCostButton];   break;
+    case OptiR:     
+    default:        w= widget_array[kCOptiRButton];     break;
     }
   XtVaSetValues(widget_array[kCOptiMenu], XmNmenuHistory, w, NULL); 
   

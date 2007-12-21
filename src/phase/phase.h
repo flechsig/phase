@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <20 Dec 07 14:18:45 flechsig>  */
+/*   Time-stamp: <21 Dec 07 13:56:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -374,23 +374,29 @@
 #define kSucAB                   362
 #define kMisalignmentButton      363
 
-#define kCOptiRTButton           380
-#define kCOptiFullRTButton       381
-#define kCOptiFocusButton        382
-#define kCOptiCostButton         383
+#define kCOptiRButton            380
+#define kCOptiYButton            381
+#define kCOptiZButton            382
+#define kCOptiTransButton        383
+#define kCOptiFocusButton        384
+#define kCOptiCostButton         385
+#define kCOptiRpYButton          386
+#define kCOptiRpZButton          387
 
-#define kCOptiMenu               385
+#define kCOptiMenu               390
 
 #define kEOEDrift                999
 
 
 /* optimization methodes, I do not want to use the defines of the buttons twice */
-#define FocusSizeO  0
-#define FullRTOptiO 1  
-#define CostForO    2
-#define RTOptiO     3
-
-
+#define OptiR       0
+#define OptiY       1
+#define OptiZ       2
+#define OptiTrans   3
+#define OptiFocus   4
+#define OptiCost    5
+#define OptiRpY     6
+#define OptiRpZ     7 
 
 /******************** end defines uil **********************************/
 

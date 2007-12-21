@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Dec 07 13:35:38 flechsig>  */
+/*   Time-stamp: <21 Dec 07 14:24:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1905,10 +1905,6 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
 
 void getoptipickfile(struct optistruct *x, char *pickname)    
 /* modification: 17.12.2007 flechsig */
-/* Achtung: vergleichbarer code befindet sich auch in phasec.c
-   routine initoptibox- Aenderungen in der filestruktur muessen auch 
-   dort vorgenommen werden- will ich aendern UF 19.12.07
-*/
 {                              
   FILE *f;
   int ii, *indexlist, version;
@@ -1928,7 +1924,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 	} 
       else
 	{
-	  x->methode= RTOptiO;
+	  x->methode= OptiR;
 	  printf("getoptipickfile: no methode defined- use default: %d\n", 
 		 x->methode); 
 	}
