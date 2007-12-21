@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Dec 07 14:24:36 flechsig>  */
+/*   Time-stamp: <21 Dec 07 15:16:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1912,8 +1912,16 @@ void getoptipickfile(struct optistruct *x, char *pickname)
  
   if ((f= fopen(pickname, "r")) == NULL)
     {
-      fprintf(stderr,"Error: read %s\n", pickname);
-      exit(-1);
+      fprintf(stderr, "no file: %s - init optistruct with defaults\n", 
+	      pickname);
+      x->methode= OptiR;
+      x->npars  = x->xindex= x->yindex=  0;
+      x->dx= x->dy= 0.0;
+      x->xpoints= x->ypoints= 1;
+      sprintf(x->minuitfilename, "minuit.inp");
+      sprintf(x->resultfilename, "opti_out.dat");
+      /*printf("%s %s\n", x->minuitfilename, x->resultfilename);*/
+      return;
     }  
   if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
     {

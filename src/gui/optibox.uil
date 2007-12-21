@@ -53,7 +53,7 @@ object
             XmPushButton        COptiResultButton;   
             XmLabel             COptiMinuitLabel;  
             XmPushButton        COptiMinuitButton;
-            XmLabel             COptiMethodeLabel;
+            !XmLabel             COptiMethodeLabel;
 	    XmOptionMenu        COptiMenu;
             XmSeparator         COptiSeph1;  
 	    XmScrolledList      COptiList; 
@@ -504,7 +504,7 @@ object
         arguments {  
             XmNbackground       = color('blue'); 
             XmNforeground       = color('white');
-	    XmNlabelString      = " ";
+	    XmNlabelString      = "optimization target:";
             XmNmenuHistory      = XmPushButton COptiRButton; 
             XmNtopAttachment    = XmATTACH_WIDGET;
  	    XmNtopWidget        = COptiMinuitButton;
