@@ -53,7 +53,7 @@ object
             XmPushButton        COptiResultButton;   
             XmLabel             COptiMinuitLabel;  
             XmPushButton        COptiMinuitButton;
-            !XmLabel             COptiMethodeLabel;
+            XmLabel             COptiMethodeLabel;
 	    XmOptionMenu        COptiMenu;
             XmSeparator         COptiSeph1;  
 	    XmScrolledList      COptiList; 
@@ -504,15 +504,15 @@ object
         arguments {  
             XmNbackground       = color('blue'); 
             XmNforeground       = color('white');
-	    XmNlabelString      = "optimization methode: ";
+	    XmNlabelString      = " ";
             XmNmenuHistory      = XmPushButton COptiRButton; 
             XmNtopAttachment    = XmATTACH_WIDGET;
  	    XmNtopWidget        = COptiMinuitButton;
             XmNtopOffset        = 3;
-            !XmNrightAttachment  = XmATTACH_FORM;
-            !XmNrightOffset      = 20;
-	    XmNleftAttachment   = XmATTACH_FORM;
-            XmNleftOffset      = 20;
+            XmNrightAttachment  = XmATTACH_FORM;
+            XmNrightOffset      = 20;
+	    !XmNleftAttachment   = XmATTACH_FORM;
+            !XmNleftOffset      = 20;
             XmNnavigationType   = XmEXCLUSIVE_TAB_GROUP;
             };
         controls {                                                             
