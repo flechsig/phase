@@ -505,7 +505,7 @@ object
             XmNbackground       = color('blue'); 
             XmNforeground       = color('white');
 	    XmNlabelString      = "optimization methode: ";
-            XmNmenuHistory      = XmPushButton COptiRTButton; 
+            XmNmenuHistory      = XmPushButton COptiYButton; 
             XmNtopAttachment    = XmATTACH_WIDGET;
  	    XmNtopWidget        = COptiMinuitButton;
             XmNtopOffset        = 3;
@@ -527,34 +527,63 @@ object
 object
      COptiPdme : XmPulldownMenu widget {
       	controls {
-	   XmPushButton        COptiRTButton;
- 	   XmPushButton        COptiFullRTButton;
+	   XmPushButton        COptiRButton;
+ 	   XmPushButton        COptiYButton;
+	   XmPushButton        COptiZButton;
+	   XmSeparator         {};
+ 	   XmPushButton        COptiTransButton;
 	   XmPushButton        COptiFocusButton;
            XmPushButton        COptiCostButton;
+	   XmPushButton        COptiRpYButton;
+	   XmPushButton        COptiRpZButton;
 	  	 };
         };
 
 object
-    COptiRTButton: XmPushButton {
+    COptiRButton: XmPushButton {
         arguments {
-            XmNlabelString      = "Ray Trace";
-            XmNmnemonic         =  keysym("R"); 
+            XmNlabelString      = "Focus";
+            XmNmnemonic         =  keysym("F"); 
 		};
         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kCOptiRTButton);
-	    XmNactivateCallback = procedure activate_proc(kCOptiRTButton);
+            MrmNcreateCallback  = procedure create_proc (kCOptiRButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiRButton);
             };
         }; 
 
 object
-    COptiFullRTButton: XmPushButton {
+    COptiYButton: XmPushButton {
         arguments {
-            XmNlabelString      = "Full Ray Trace";
-            XmNmnemonic         =  keysym("F"); 
+            XmNlabelString      = "Focus vertical";
+            XmNmnemonic         =  keysym("v"); 
 		};
         callbacks {
-            MrmNcreateCallback  = procedure create_proc (kCOptiFullRTButton);
-	    XmNactivateCallback = procedure activate_proc(kCOptiFullRTButton);
+            MrmNcreateCallback  = procedure create_proc (kCOptiYButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiYButton);
+            };
+        }; 
+
+object
+    COptiZButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Focus horizontal";
+            XmNmnemonic         =  keysym("h"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiZButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiZButton);
+            };
+        }; 
+
+object
+    COptiTransButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Transmittance";
+            XmNmnemonic         = keysym("T"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiTransButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiTransButton);
             };
         }; 
 
@@ -562,7 +591,7 @@ object
     COptiFocusButton: XmPushButton {
         arguments {
             XmNlabelString      = "Focus special";
-            XmNmnemonic         =  keysym("F"); 
+            XmNmnemonic         =  keysym("s"); 
 		};
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kCOptiFocusButton);
@@ -574,7 +603,7 @@ object
     COptiCostButton: XmPushButton {
         arguments {
             XmNlabelString      = "use cost.F";
-            XmNmnemonic         =  keysym("C"); 
+            XmNmnemonic         =  keysym("c"); 
 		};
         callbacks {
             MrmNcreateCallback  = procedure create_proc  (kCOptiCostButton);
@@ -583,9 +612,34 @@ object
         }; 
 
 object
+    COptiRpYButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Res. power vertical";
+            XmNmnemonic         =  keysym("t"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiRpYButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiRpYButton);
+            };
+        }; 
+
+object
+    COptiRpZButton: XmPushButton {
+        arguments {
+            XmNlabelString      = "Res. power horizontal";
+            XmNmnemonic         =  keysym("p"); 
+		};
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kCOptiRpZButton);
+	    XmNactivateCallback = procedure activate_proc(kCOptiRpZButton);
+            };
+        }; 
+
+
+object
     COptiMethodeLabel : XmLabel {
         arguments {
-            XmNlabelString      = "optimization methode: ";
+            XmNlabelString      = "optimization target: ";
             XmNtopAttachment    = XmATTACH_WIDGET;
 	    XmNtopWidget        = COptiMinuitLabel;   
             XmNtopOffset        = 5;    

@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <19 Dec 07 10:56:13 flechsig> 
+! Time-stamp: <21 Dec 07 13:58:21 flechsig> 
 ! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
 ! $Source$ 
@@ -328,12 +328,16 @@ value
         kSucAB                  : 362;
         kMisalignmentButton     : 363;
 
-	kCOptiRTButton          : 380;
-	kCOptiFullRTButton      : 381;
-	kCOptiFocusButton       : 382;
-        kCOptiCostButton        : 383;
+ 	kCOptiRButton           : 380;
+ 	kCOptiYButton           : 381;
+ 	kCOptiZButton           : 382;
+ 	kCOptiTransButton       : 383;
+ 	kCOptiFocusButton       : 384;
+ 	kCOptiCostButton        : 385;
+ 	kCOptiRpYButton         : 386;
+ 	kCOptiRpZButton         : 387;
 
-	kCOptiMenu              : 385;
+	kCOptiMenu              : 390;
 
 	kEOEDrift               : 999;
 
