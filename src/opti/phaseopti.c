@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <21 Dec 07 09:58:25 flechsig>  */
+/*   Time-stamp: <21 Dec 07 16:52:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -126,14 +126,17 @@ int main(argc, argv)
 	unsigned int argc;                /* Command line argument count.   */
     	char *argv[];                     /* Pointers to command line args. */
 {   
-  double ax, ay, ax0;
+  double ax, ay, ax0, chistart, *CHIP, dy, dz;
   int 	 ix, iy, iread= 20, luno;
   time_t start, l, h, m, s;
 #ifdef VMS
   FString Fminuitfilename;
 #endif
   struct PHASEset      PHASESet;          /* wird u.a. als dummy gebraucht  */
-  
+  char target;
+
+  CHIP= &chistart;
+
   start= time(NULL);
    /* sprintf(PHASESet.beamlinename,"%s", optfname); */
    PI= 4.0* atan(1.0); 
@@ -167,7 +170,7 @@ optistructure.fcncall= 0;
      {
        printf("error: %d unknown optimization methode -- set it to %d\n", 
 	      optistructure.methode, OptiR);
-       optistructure.methode= OptiR ;
+       optistructure.methode= OptiR;
      }
 
    ReadBLFile(optistructure.beamlinefilename, &Beamline);
@@ -185,6 +188,49 @@ optistructure.fcncall= 0;
 
    MakeRTSource(&PHASESet, &Beamline);   /* bei cost.F brauchts das eigentlich nicht */
    ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+   /* hier koennte man noch einen run mit den original parametern laufen lassen */
+
+   buildsystem(&Beamline); 
+   switch(optistructure.methode) 
+	{
+	case OptiR:
+	  target= 'r';
+	  RTOpti(CHIP, &Beamline, &target);
+	  break;
+	case OptiY:
+	  target= 'y';
+	  RTOpti(CHIP, &Beamline, &target);
+	  break;
+	case OptiZ:
+	  target= 'z';
+	  RTOpti(CHIP, &Beamline, &target);
+	  break;
+	case OptiTrans:
+	  FullRTOpti(CHIP, &Beamline);
+	  break;
+	case OptiFocus:
+	  Get_dydz_fromSource(&Beamline, &dy, &dz);
+	  FocusSize(CHIP, &Beamline, &dy, &dz);
+	  break;
+	case OptiCost:
+	  costfor(CHIP, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+	  break;
+	case OptiRpY:
+	  target= 'y';
+	  RTOpti(CHIP, &Beamline, &target);
+	  *CHIP= (*CHIP > 0.0) ? Beamline.BLOptions.lambda/ 
+	    Beamline.deltalambdafactor/ *CHIP : 1e12;
+	  break;
+	case OptiRpZ:
+	  target= 'z';
+	  RTOpti(CHIP, &Beamline, &target);
+	  *CHIP= (*CHIP > 0.0) ? Beamline.BLOptions.lambda/ 
+	    Beamline.deltalambdafactor/ *CHIP : 1e12;
+	  break;
+	}
+      
+
 
 #ifdef VMS
    CreateFString(&Fminuitfilename, optistructure.minuitfilename); 
@@ -270,7 +316,7 @@ optistructure.fcncall= 0;
    SaveOptimizedBeamline(&Beamline, optistructure.beamlinefilename);
    printf("end optimization: results in file: %s\n", 
 	  optistructure.resultfilename);
-
+   printf("chi with original parameter (witout minuit) %f\n", chistart);
    exit(1); 
 }
 /*************************** end main ********************************/
