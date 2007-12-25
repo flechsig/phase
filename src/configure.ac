@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <25 Dec 07 09:01:03 flechsig> 
+dnl   Time-stamp: <25 Dec 07 09:21:41 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -58,6 +58,8 @@ if test "$G77" = "yes"; then
    AC_MSG_RESULT(no)
    AC_MSG_ERROR([[GNU Fortran g77 will not work (lack of VAX extensions)]])
 fi
+dnl -lg2c does not work on 64 bit, ifort needs  -lintlc
+cforlib="-lg2c"
 
 case "$F77" in
   "ifc")        # intel compiler
@@ -73,6 +75,7 @@ case "$F77" in
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       if test "$machine" = "x86_64"; then
 	 AC_SUBST([FFLAGS],"-vms -w95 -132 -O0")  # opti. fails on 64 bit
+         cforlib="-lintlc"
       else
          AC_SUBST([FFLAGS],"-vms -w95 -132")
       fi	 
@@ -119,7 +122,7 @@ case "$F77" in
 
 
 esac
-
+AC_SUBST([CFORLIB],${cforlib})
 AM_CONDITIONAL([WANT_IFC],      [test x"$wantifc"      = xtrue])  
 AM_CONDITIONAL([WANT_ABSOFT],   [test x"$wantabsoft"   = xtrue])
 AM_CONDITIONAL([WANT_PORTLAND], [test x"$wantportland" = xtrue])  
