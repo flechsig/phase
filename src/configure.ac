@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <20 Dec 07 16:00:29 flechsig> 
+dnl   Time-stamp: <25 Dec 07 09:01:03 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -236,11 +236,6 @@ if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
    if test "$have_lesstif" = "yes" ; then
       AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])
    fi
-   AC_MSG_NOTICE(*** add work around with included openmotiflibs ***)
-   motifpath=`pwd | sed -e 's/src$/openmotiflibs/'`
-   echo motifpath: ${motifpath}
-   AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
-   AC_SUBST([MOTIFLIBS],["-L${motifpath} -lXm -lMrm"])
 else
 dnl add include path to motif headers 
    AC_SUBST([CPPFLAGS],[-I$x_includes])
