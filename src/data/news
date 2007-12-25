@@ -66,5 +66,6 @@ Initialisierungsfehler bei ell. Elementen behoben
 20 Apr 04 sensitivity added to OElementBox
 	  plane mirror/grating added
           conical mirror added but not yet tested! 
+25 Dec 07 compiles on x86_64
 ****************    end of NEWS  *****************           
 **************************************************
