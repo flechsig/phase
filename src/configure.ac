@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <25 Dec 07 09:21:41 flechsig> 
+dnl   Time-stamp: <25 Dec 07 11:28:55 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -35,6 +35,7 @@ machine=`uname -m`
 dnl echo machine: $machine
 if test "$machine" = "x86_64"; then
    AC_MSG_RESULT(yes)
+   AC_DEFINE(HAVE_X86_64,"yes","64 bit linux")
 else
    AC_MSG_RESULT(no) 
 fi 
