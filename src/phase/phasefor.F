@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <09 Dec 07 20:39:22 flechsig> 
+c$$$ Time-stamp: <03 Jan 08 10:49:08 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -210,9 +210,10 @@ c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
                  enddo
               enddo        
            enddo
-	enddo        
+	enddo  
+#ifdef DEBUG      
         write(*,*)'phasefor.for: wc 4000',wc(4,0,0,0)
-
+#endif
 c--------------------------------------------------
 c Schrittweiten in Bildkoordinaten bestimmen 
 c---  parameter ddisty,z Schrittweiten--------------
@@ -231,9 +232,9 @@ c      ddistz, ddisty sind berechnet
 c----------------------------------------------------------
 
 c************* Bildpunkt generieren *******************************
-
+#ifdef DEBUG
 	write(*,*)'pstf: start'
-
+#endif
 	st.inumzit=0
 	st.inumyit=0
 	st.inumzan=0
@@ -569,9 +570,9 @@ c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
-
+#ifdef DEBUG
 	 write(6,*)' fgmapidp: imodus = ',imodus
-
+#endif
 	 idrift=0
          if(imodus.ge.1000)then
            imodus=imodus-1000
@@ -580,10 +581,14 @@ c        write(*,*)'fortran gerufen'
 
 c        write(*,*)'for: fgmapidp called'
 	if(imodus.eq.2)then
+#ifdef DEBUG
           write(*,*)'fgmapidp: make map for image to source iord=',iord 
+#endif
           call transponiere(a,g)    ! bild zur quelle
         else 
+#ifdef DEBUG
           write(*,*)'fgmapidp: make map for source to image iord=',iord 
+#endif
 	endif 
 c------------------------------------------------------- 
         if(idrift.eq.0)then
@@ -808,9 +813,9 @@ c*****************************************************************
 #endif
 
       if (iplmode.eq.0)then
-
+#ifdef DEBUG
         write(*,*) 'pathlen0: do not subtract r and rp from path length' 
-
+#endif
 	if(isti.eq.1)then
 	  call lsubb(a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,-g.idefl,dql1,dql2)
 	endif
@@ -881,7 +886,9 @@ c----------------------------------
        endif 	! iplmode = 0
 c----------------------------------
        if (iplmode.eq.1)then
+#ifdef DEBUG
 	write(*,*)'pathlen0: subtract r and rp from path length'
+#endif
 	if(isti.eq.1)call lsubab(a,g.sinb,g.cosb,g.sina,g.cosa,
      &              g.rp,g.r,-g.idefl,dsqrpl1,dsqrpl2)
 	if(isti.ne.1)call lsubab(a,g.sina,g.cosa,g.sinb,g.cosb,
