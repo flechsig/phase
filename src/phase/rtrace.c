@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <03 Jan 08 10:51:19 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:19:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -596,8 +596,9 @@ void RayTracec(struct BeamlineType *bl)
       {
 	Re->points= bl->RTSource.raynumber;
 	Re->typ   = PLrttype;      
-	
-	printf("RayTracec: calculate %d ray(s) \n", Re->points); 
+#ifdef DEBUG	
+	printf("RayTracec: calculate %d ray(s) \n", Re->points);
+#endif 
 	Raysin = bl->RTSource.SourceRays; 
 	Raysout= Re->RESp;    
 

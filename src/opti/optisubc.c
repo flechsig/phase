@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:14:49 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:18:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -542,7 +542,9 @@ void GetRMS(struct BeamlineType *bl, char *ch, double *chi)
       EX2 /= (double) n;
       rms= sqrt(EX2- (EX * EX));
     } else rms= 0.0;
+#ifdef DEBUG 
   fprintf(stderr, "%c->rms= %g, EX= %g, EX2= %g\n", *ch, rms, EX, EX2);
+#endif
   *chi= rms;
 } /* end GetRMS */
 
