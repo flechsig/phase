@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <15 May 07 13:54:00 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:46:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -93,7 +93,7 @@ int main(argc, argv)
     transmittance, done, ddone;
   int 	 ix, iy;
   time_t start, l, h, m, s;
-  
+  char ch;
  
   start= time(NULL);
   PI= 4.0* atan(1.0); 
@@ -159,10 +159,13 @@ int main(argc, argv)
 	  /* determine results */
 	  transmittance= (double)Beamline.RESULT.points/
 			      (double)Beamline.RTSource.raynumber;
+	  ch= 'z';
+	  GetRMS(&Beamline, &ch, &zfwhm);
+	  zfwhm*= 2.35;
+	  ch= 'y';
+	  GetRMS(&Beamline, &ch, &yfwhm);
+	  yfwhm*= 2.35;
 
-	  zfwhm= 2.35* GetRMS(&Beamline, 'z');
-	  yfwhm= 2.35* GetRMS(&Beamline, 'y'); 
-          
 	  if (Beamline.deltalambdafactor > 0.0)
 	    {
 	      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
