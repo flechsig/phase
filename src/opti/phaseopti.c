@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:51:11 flechsig>  */
+/*   Time-stamp: <03 Jan 08 12:11:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -194,7 +194,7 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
    MakeRTSource(&PHASESet, &Beamline);   /* bei cost.F brauchts das eigentlich nicht */
    ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-   /* hier koennte man noch einen run mit den original parametern laufen lassen */
+   /* ein run mit den original parametern */
 
    buildsystem(&Beamline); 
    switch(optistructure.methode) 
