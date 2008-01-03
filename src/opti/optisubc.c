@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <21 Dec 07 15:31:15 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:14:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -496,11 +496,12 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
     }
 } /* end Get_dydz_fromSource */
 
-/* 31.3.99   erweitert auf z*/
+/* 31.3.99  erweitert auf z  */
 /* 13.12.07 erweitert  auf r */
-double GetRMS(struct BeamlineType *bl, char ch)
+/*  3.1.08 fun -> proc       */
+void GetRMS(struct BeamlineType *bl, char *ch, double *chi)
 {
-  double EX, EX2, rms;
+  double EX, EX2, rms, tmp;
   int    i, n;
   struct RayType *rays;
 
@@ -509,7 +510,7 @@ double GetRMS(struct BeamlineType *bl, char ch)
   EX= EX2= 0.0;
   if (n > 0)
     {
-      switch (ch)
+      switch (*ch)
 	{
 	case 'z':
 	  for (i= 0; i< n; i++)
@@ -531,8 +532,9 @@ double GetRMS(struct BeamlineType *bl, char ch)
 	default: /* r */
 	  for (i= 0; i< n; i++)
 	    {
-	      EX = 0.0;
-	      EX2+= rays[i].y * rays[i].y + rays[i].z * rays[i].z;
+	      tmp= rays[i].y * rays[i].y + rays[i].z * rays[i].z;
+	      EX += sqrt(tmp);
+	      EX2+= tmp;
 	    }
 	  break;
 	}
@@ -540,8 +542,8 @@ double GetRMS(struct BeamlineType *bl, char ch)
       EX2 /= (double) n;
       rms= sqrt(EX2- (EX * EX));
     } else rms= 0.0;
-  fprintf(stderr, "%c- rms= %f, EX= %f, EX2= %f\n", ch, rms, EX, EX2);
-  return rms;
+  fprintf(stderr, "%c->rms= %g, EX= %g, EX2= %g\n", *ch, rms, EX, EX2);
+  *chi= rms;
 } /* end GetRMS */
 
 /*
@@ -598,7 +600,7 @@ void FullRTOpti(double *chi, struct BeamlineType *bl)
 {
   double transmittance;
   
-  printf("************************** FullRTOpti ***********\n");
+  printf("************ FullRTOpti ************\n");
   ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
   RayTraceFull(&Beamline);
   transmittance= (double)Beamline.RESULT.points/
@@ -610,8 +612,9 @@ void FullRTOpti(double *chi, struct BeamlineType *bl)
 /* ch goes to GetRMS     */
 void RTOpti(double *chi, struct BeamlineType *bl, char *ch)
 {
-  printf(" ************ RTOpti *********** target: %c\n", *ch);
+  printf("************ RTOpti with target: %c ***********\n", *ch);
   RayTracec(&Beamline);
-  *chi= 2.35* GetRMS(&Beamline, *ch);
+  GetRMS(&Beamline, ch, chi);
+  *chi*= 2.35;
 } /* end RTOpti */
 /* end optisubc.c */
