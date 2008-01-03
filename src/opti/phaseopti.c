@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <25 Dec 07 18:02:00 flechsig>  */
+/*   Time-stamp: <03 Jan 08 10:36:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -14,9 +14,6 @@
    c: a[zeilen][spalten] for: (spalten,zeilen)
 */ 
 
-/* define if optimization should be done with full ray trace (slow) */ 
-/* comment out if you want to have a fast optimization */ 
-/* its done by configure #define WITH_FULL_RT */
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -107,8 +104,6 @@
 */
                                                                    
 
-
-
 /* Prototype */
 void 	FCN(int *, double *, double *, double *, int *, char *),    
      	fitoutput(int *, double *, double *), 
@@ -136,9 +131,9 @@ int main(argc, argv)
   char target;
 
   CHIP= &chistart;
-
+  optistructure.fcncall= 0;
   start= time(NULL);
-   /* sprintf(PHASESet.beamlinename,"%s", optfname); */
+   
    PI= 4.0* atan(1.0); 
    
 #ifdef LOGFILE 
@@ -146,8 +141,6 @@ int main(argc, argv)
 #endif
 
 Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
-
-optistructure.fcncall= 0;
 
 /*#ifndef DEBUG*/
    if (argc < 2)
@@ -174,13 +167,25 @@ optistructure.fcncall= 0;
      }
 
    ReadBLFile(optistructure.beamlinefilename, &Beamline);
-   /* oeffnen des Ausgabefiles */
+   
+/* oeffnen und initialisieren des Ausgabefiles */
    if ((optistructure.filepointer= 
 	fopen(optistructure.resultfilename, "w")) == NULL)
      {
        fprintf(stderr,"\aError: write %s\n", optistructure.resultfilename);
        exit(-1);
      }  
+   fprintf(optistructure.filepointer, 
+	   "#########################################################################\n");
+   fprintf(optistructure.filepointer, 
+	   "# file name:          %s\n", optistructure.resultfilename);
+   fprintf(optistructure.filepointer,
+	   "# beamline: %s\n", optistructure.beamlinefilename);
+   fprintf(optistructure.filepointer,
+	   "# format: x y chistart chistop fcncalls (parameter list)\n");
+   fprintf(optistructure.filepointer,
+	   "#########################################################################\n");
+   
    /* holen der Ausganswerte fuer Parameterscan */
    out_struct(&Beamline, &ax0, optistructure.xindex); 
    /* get x, y aus */
@@ -303,7 +308,9 @@ optistructure.fcncall= 0;
        end   */ 
    
    free(optistructure.parindex);
- 
+   fprintf(optistructure.filepointer,
+	   "################################# end ###################################\n");
+   fclose(optistructure.filepointer);
    beep(4);
 
    /* calc the time */
@@ -318,10 +325,10 @@ optistructure.fcncall= 0;
    printf("calculation time:                             %d:%d:%d (h:m:s)\n", h, m, s);
    printf("optimization results in file:                 %s\n",  optistructure.resultfilename);
    printf("optimized beamline (phase input) in file:     %s\n",  optistructure.optiblfilename);
-   printf("chi with original parameter set:              %g\n",  chistart);
-   printf("chi with parameter from minuit input:         %g\n",  optistructure.chistart);
-   printf("chi of optimized parameters:                  %g\n",  optistructure.chistop);
-   printf("number of optimization calls:                 %d\n",  optistructure.fcncall);
+   printf("chi with original parameter set               %g\n",  chistart);
+   printf("(last) chi with parameter from minuit input:  %g\n",  optistructure.chistart);
+   printf("(last) chi of optimized parameters:           %g\n",  optistructure.chistop);
+   printf("(last) number of optimization calls:          %d\n",  optistructure.fcncall);
    exit(1); 
 }
 /*************************** end main ********************************/
@@ -508,10 +515,10 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
 } /* end FCN */
 
 void fitoutput(int *NPAR, double *XPAR, double *chi) 
-     /* modification: 16 Oct 97 13:52:31 flechsig */
+     /* modification: Jan 2008 flechsig */
      /* aufgerufen wenn ein Fit erfolgreich war 
-	schreibt auf das globale Ausgabefile outputfile 
-	und auf das Matrixfile *.omx */
+	schreibt eine Zeile auf das geoeffnete globale Ausgabefile 
+     */
 {
   int i, j;
   struct optistruct *op; 
@@ -524,14 +531,15 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   
   out_struct(&Beamline, &x, op->xindex);   /* akt. Werte */
   out_struct(&Beamline, &y, op->yindex); 
-  fprintf(op->filepointer, "%g %g %e %e %g", 
-	  x, y, op->chistart, op->chistop, *XPAR);  
+  fprintf(op->filepointer, "%g %g %e %e %d %g", 
+	  x, y, op->chistart, op->chistop, op->fcncall, *XPAR);  
   for (i= 1; i< *NPAR; i++) 
     fprintf(op->filepointer, " %15.10lg", XPAR[i]);  
   fprintf(op->filepointer, "\n");
   /* eine Zeile im outputfile fertig */
 } 
 
+/* new beamline with optimization results */
 void SaveOptimizedBeamline(struct BeamlineType *bl, struct optistruct *os)
 {
   struct ElementType *listpt;
