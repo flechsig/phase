@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Dec 07 15:16:00 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:41:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1066,8 +1066,9 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
       fprintf(stderr, "fatal Error: write %s\n", fname);
       exit(-1);
    } 
-   
+#ifdef DEBUG   
    printf("WriteBLFile: write data to %s ", fname);
+#endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
    fprintf(f, "This is a datafile of PHASE version FEB 04\n\n");
@@ -1383,13 +1384,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     flag dz '' (PS Source)\n", op->PSO.PSSource.dzhard);  
    fprintf(f,"%20d     flag <> 2 fixed grid integr.\n", op->PSO.intmod); 
   
-
- 
 /* end options section */ 
 
    fprintf(f,"\n*** end of file ***\n");    
    fclose(f); 
+#ifdef DEBUG
    printf(" ==> done\n");
+#endif
 } /* end WriteBLFile */
 
 

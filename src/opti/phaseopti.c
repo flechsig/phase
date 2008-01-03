@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <03 Jan 08 10:42:16 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:41:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -236,8 +236,6 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	  break;
 	}
       
-
-
 #ifdef VMS
    CreateFString(&Fminuitfilename, optistructure.minuitfilename); 
    fminuinit(&iread, &Fminuitfilename);                 /* treiber.for */
@@ -342,177 +340,80 @@ void FCN (int *NPAR, double *G, double *CHI, double *XPAR,
   int i;
   double dy, dz;
   char   target;
+
 #ifdef DEBUG
   printf("FCN start- iflag= %d: chi: %e\n", *IFLAGS, *CHI); 
 #endif 
+
+  for (i= 0; i < *NPAR; i++)
+    {
+      printf("parameter: %d, index: %d, value: %lg\n",
+	     i, optistructure.parindex[i], XPAR[i]);
+      in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
+    }
+      
+  buildsystem(&Beamline); 
+
+  switch(optistructure.methode) 
+    {
+    case OptiR:
+      target= 'r';
+      RTOpti(CHI, &Beamline, &target);
+      break;
+    case OptiY:
+      target= 'y';
+      RTOpti(CHI, &Beamline, &target);
+      break;
+    case OptiZ:
+      target= 'z';
+      RTOpti(CHI, &Beamline, &target);
+      break;
+    case OptiTrans:
+      FullRTOpti(CHI, &Beamline);
+      break;
+    case OptiFocus:
+      Get_dydz_fromSource(&Beamline, &dy, &dz);
+      FocusSize(CHI, &Beamline, &dy, &dz);
+      break;
+    case OptiCost:
+      costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+      break;
+    case OptiRpY:
+      target= 'y';
+      RTOpti(CHI, &Beamline, &target);
+      *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
+	Beamline.deltalambdafactor/ *CHI : 1e12;
+      break;
+    case OptiRpZ:
+      target= 'z';
+      RTOpti(CHI, &Beamline, &target);
+      *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
+	Beamline.deltalambdafactor/ *CHI : 1e12;
+      break;
+    }
+
   switch(*IFLAGS) 
     {
-    case 3:              /*output*/
-      for (i= 0; i < *NPAR; i++)
-	{
-	  printf("Parameter: %d index: %d Wert des Parameters: %lg\n",
-		 i, optistructure.parindex[i], XPAR[i]);
-	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
-	}
-      
-      buildsystem(&Beamline);   
- 
-      switch(optistructure.methode) 
-	{
-	case OptiR:
-	  target= 'r';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiY:
-	  target= 'y';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiZ:
-	  target= 'z';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiTrans:
-	  FullRTOpti(CHI, &Beamline);
-	  break;
-	case OptiFocus:
-	  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  FocusSize(CHI, &Beamline, &dy, &dz);
-	  break;
-	case OptiCost:
-	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
-	  break;
-	case OptiRpY:
-	  target= 'y';
-	  RTOpti(CHI, &Beamline, &target);
-	  *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
-	    Beamline.deltalambdafactor/ *CHI : 1e12;
-	  break;
-	case OptiRpZ:
-	  target= 'z';
-	  RTOpti(CHI, &Beamline, &target);
-	  *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
-	    Beamline.deltalambdafactor/ *CHI : 1e12;
-	  break;
-	}
-      printf("debug: FCN: chi: %e, methode: %d\n", 
-	     *CHI, optistructure.methode);
+    case 3:              /* output */
       fitoutput(NPAR, XPAR, CHI);   
       break;
-     case 4:
-      for (i= 0; i < *NPAR; i++)
-	{
-	  printf("Parameter: %d index: %d Wert des Parameters: %lg\n",
-		 i, optistructure.parindex[i], XPAR[i]);
-	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
-	}
-
-      buildsystem(&Beamline); 
-
-      switch(optistructure.methode) 
-	{
-	case OptiR:
-	  target= 'r';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiY:
-	  target= 'y';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiZ:
-	  target= 'z';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiTrans:
-	  FullRTOpti(CHI, &Beamline);
-	  break;
-	case OptiFocus:
-	  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  FocusSize(CHI, &Beamline, &dy, &dz);
-	  break;
-	case OptiCost:
-	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
-	  break;
-	case OptiRpY:
-	  target= 'y';
-	  RTOpti(CHI, &Beamline, &target);
-	  *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
-	    Beamline.deltalambdafactor/ *CHI : 1e12;
-	  break;
-	case OptiRpZ:
-	  target= 'z';
-	  RTOpti(CHI, &Beamline, &target);
-	  *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
-	    Beamline.deltalambdafactor/ *CHI : 1e12;
-	  break;
-	}
-
-      break;
-      
-    case 1:   /* 1st call */
-      for (i= 0; i < *NPAR; i++)
-	{
-	  printf("Parameter: %d index: %d Wert des Parameters: %lg\n",
-		 i, optistructure.parindex[i], XPAR[i]);
-	  in_struct(&Beamline, &XPAR[i], optistructure.parindex[i]); 
-	}
-      
-      buildsystem(&Beamline);   
- 
-      switch(optistructure.methode) 
-	{
-	case OptiR:
-	  target= 'r';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiY:
-	  target= 'y';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiZ:
-	  target= 'z';
-	  RTOpti(CHI, &Beamline, &target);
-	  break;
-	case OptiTrans:
-	  FullRTOpti(CHI, &Beamline);
-	  break;
-	case OptiFocus:
-	  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  FocusSize(CHI, &Beamline, &dy, &dz);
-	  break;
-	case OptiCost:
-	  costfor(CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-	      &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
-	  break;
-	case OptiRpY:
-	  target= 'y';
-	  RTOpti(CHI, &Beamline, &target);
-	  *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
-	    Beamline.deltalambdafactor/ *CHI : 1e12;
-	  break;
-	case OptiRpZ:
-	  target= 'z';
-	  RTOpti(CHI, &Beamline, &target);
-	  *CHI= (*CHI > 0.0) ? Beamline.BLOptions.lambda/ 
-	    Beamline.deltalambdafactor/ *CHI : 1e12;
-	  break;
-	}
-      
+     case 4:        /* normal call */
+       break;
+    case 1:            /* 1st call */
       optistructure.chistart= *CHI;
       optistructure.fcncall = 0; 
       break;
-    case 2: 
+    case 2: /* not used */
+      beep(8);
       break;                                         
     }
   ++optistructure.fcncall;
   
   optistructure.chistop= *CHI;
 
-  printf("\nfcn call %d with iflag %d: chi0: %e chi: %e\n\n", 
+  printf("fcn call %d with iflag %d: chi0: %e chi: %e\n\n", 
 	 optistructure.fcncall, *IFLAGS, optistructure.chistart, *CHI);  
-   
-    
 } /* end FCN */
 
 void fitoutput(int *NPAR, double *XPAR, double *chi) 
@@ -527,9 +428,6 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   FILE *f;
   
   op= &optistructure;
-  printf("debug: fitoutput: chistart: %e chistop: %e\n", 
-	 op->chistart, op->chistop);
-  
   out_struct(&Beamline, &x, op->xindex);   /* akt. Werte */
   out_struct(&Beamline, &y, op->yindex); 
   fprintf(op->filepointer, "%g %g %e %e %d %g", 
@@ -562,7 +460,9 @@ void SaveOptimizedBeamline(struct BeamlineType *bl, struct optistruct *os)
   strcpy(os->optiblfilename, os->beamlinefilename);
   ch= strrchr(os->optiblfilename, '.');
   strcpy(ch, "-phaseopti.phase");
+#ifdef DEBUG
   printf("optimized Beamlinefile: %s\n", os->optiblfilename);
+#endif
   WriteBLFile(os->optiblfilename, bl);
 } /* end SaveOptimizedBeamline */
 
