@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <21 Dec 07 13:56:42 flechsig>  */
+/*   Time-stamp: <25 Dec 07 17:54:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -621,7 +621,8 @@ struct optistruct
     xindex, yindex, *parindex, methode, fcncall;   
   char beamlinefilename[MaxPathLength], 
     minuitfilename[MaxPathLength],  
-    resultfilename[MaxPathLength];    
+    resultfilename[MaxPathLength],
+    optiblfilename[MaxPathLength];    
   FILE 	 *filepointer;
 };  
 

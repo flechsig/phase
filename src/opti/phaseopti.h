@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
 /*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <21 Dec 07 13:45:46 flechsig>  */
+/*  Time-stamp: <25 Dec 07 18:02:37 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
@@ -18,7 +18,7 @@ void buildsystem(struct BeamlineType *);
 void costfor();            		/* fortran cost function */ 
 void Get_dydz_fromSource(struct BeamlineType *, double *, double *);
 void in_struct(struct BeamlineType *, double *, int);
-void SaveOptimizedBeamline(struct BeamlineType *, char *);
+void SaveOptimizedBeamline(struct BeamlineType *, struct optistruct *);
       
 double out_struct(struct BeamlineType  *, double *,  int); 
 double DeltaLambda(struct optistruct *, double, int);

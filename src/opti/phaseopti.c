@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <21 Dec 07 16:52:24 flechsig>  */
+/*   Time-stamp: <25 Dec 07 18:02:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -308,15 +308,20 @@ optistructure.fcncall= 0;
 
    /* calc the time */
    l= time(NULL)- start;
+   printf("time span: %d, start: %d\n", l, start);
    h= l/ 3600;
    m= (l- (h * 3600))/ 60;
    s= l- h * 3600- m * 60;
-   printf("calculation ready in: %d:%d:%d (h:m:s)\n", h, m, s);
+   SaveOptimizedBeamline(&Beamline, &optistructure);
 
-   SaveOptimizedBeamline(&Beamline, optistructure.beamlinefilename);
-   printf("end optimization: results in file: %s\n", 
-	  optistructure.resultfilename);
-   printf("chi with original parameter (witout minuit) %f\n", chistart);
+   printf("================================== summary =========================================\n");
+   printf("calculation time:                             %d:%d:%d (h:m:s)\n", h, m, s);
+   printf("optimization results in file:                 %s\n",  optistructure.resultfilename);
+   printf("optimized beamline (phase input) in file:     %s\n",  optistructure.optiblfilename);
+   printf("chi with original parameter set:              %g\n",  chistart);
+   printf("chi with parameter from minuit input:         %g\n",  optistructure.chistart);
+   printf("chi of optimized parameters:                  %g\n",  optistructure.chistop);
+   printf("number of optimization calls:                 %d\n",  optistructure.fcncall);
    exit(1); 
 }
 /*************************** end main ********************************/
@@ -527,11 +532,11 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   /* eine Zeile im outputfile fertig */
 } 
 
-void SaveOptimizedBeamline(struct BeamlineType *bl, char *blfname)
+void SaveOptimizedBeamline(struct BeamlineType *bl, struct optistruct *os)
 {
   struct ElementType *listpt;
   int    elnumber;
-  char   optfname[MaxPathLength], *ch;
+  char   *ch;
   
   listpt  = bl->ElementList;
   elnumber= 1;
@@ -545,11 +550,11 @@ void SaveOptimizedBeamline(struct BeamlineType *bl, char *blfname)
       elnumber++; listpt++;
     }
 
-  strcpy(optfname, blfname);
-  ch= strrchr(optfname, '.');
+  strcpy(os->optiblfilename, os->beamlinefilename);
+  ch= strrchr(os->optiblfilename, '.');
   strcpy(ch, "-phaseopti.phase");
-  printf("optimized Beamlinefile: %s\n", optfname);
-  WriteBLFile(optfname, bl);
+  printf("optimized Beamlinefile: %s\n", os->optiblfilename);
+  WriteBLFile(os->optiblfilename, bl);
 } /* end SaveOptimizedBeamline */
 
 /* end phaseopti */
