@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:41:41 flechsig>  */
+/*   Time-stamp: <03 Jan 08 12:13:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -443,7 +443,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("pole:                         y = % f mm\n", ypole);
 	  printf("pole:                         r = % f mm\n", rpole);
 	  printf("pole:                       phi = % f deg.\n", fipole);
-	  printf("f = %f\n", f);
+	  printf("                              f = % f mm\n", f);
 
 	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
@@ -514,7 +514,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("pole:                         y = %f mm\n", ypole);
 	  printf("pole:                         r = %f mm\n", rpole);
 	  printf("pole:                       phi = %f deg.\n", fipole);
-	  printf("f = %f\n", f);
+	  printf("                              f = %f mm\n", f);
 	  
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 /** Vorzeichen vermutlich falsch UF 26.11.04 - siehe oben */
@@ -538,15 +538,20 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   /* misalignment */
   if (Beamline.BLOptions.WithAlign == 1)
     {
+#ifdef DEBUG
       printf("            with misalignment\n");
+#endif
       memcpy(&mirror, a, sizeof(struct mirrortype));
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #ifdef DEBUG
       printf("DEBUG: mirror coefficients with misalignment\n");
       for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
 #endif
-    } else
+    } 
+#ifdef DEBUG
+  else
       printf("            without misalignment\n");
+#endif
 #ifdef DEBUG
   printf("DEBUG: end defmirrorc\n");
 #endif
