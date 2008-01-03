@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:41:50 flechsig>  */
+/*   Time-stamp: <03 Jan 08 11:51:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -284,7 +284,10 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 #endif
 	   
 	   minuit(FCN, 0);                             /* cernlib     */
-	   printf("nach return ax: %f ay: %f\n", ax, ay); 
+
+#ifdef DEBUG
+	   printf("after return ax: %f ay: %f\n", ax, ay); 
+#endif
 	   ax+= optistructure.dx; 
 #ifndef VMS   
 	    /* luno=ku_inqf(optistructure.minuitfilename);
@@ -314,7 +317,9 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
    /* calc the time */
    l= time(NULL)- start;
+#ifdef DEBUG
    printf("time span: %d, start: %d\n", l, start);
+#endif
    h= l/ 3600;
    m= (l- (h * 3600))/ 60;
    s= l- h * 3600- m * 60;
