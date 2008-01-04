@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/.cvsignore
 #   Date      : <04 Feb 04 09:37:50 flechsig> 
-#   Time-stamp: <04 Jan 08 08:10:01 flechsig> 
+#   Time-stamp: <04 Jan 08 08:10:47 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -23,6 +23,7 @@ config.h.in
 *.log
 work.pc
 work.pcl
+.deps
 
 
 
