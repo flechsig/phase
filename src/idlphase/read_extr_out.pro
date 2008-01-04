@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/read_opti_out.pro
 ;  Date      : <04 Jan 08 08:22:27 flechsig> 
-;  Time-stamp: <04 Jan 08 15:58:21 flechsig> 
+;  Time-stamp: <04 Jan 08 16:00:20 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -8,10 +8,10 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro read_opti_out, fname, array, column=column, all=all, grid=grid 
+pro read_extr_out, fname, array, column=column, all=all, grid=grid 
 ;+
 ; NAME:
-;   read_opti_out
+;   read_extr_out
 ;
 ;
 ; PURPOSE:
@@ -23,7 +23,7 @@ pro read_opti_out, fname, array, column=column, all=all, grid=grid
 ;
 ;
 ; CALLING SEQUENCE:
-;   read_opti_out, fname
+;   read_extr_out, fname
 ;
 ;
 ; INPUTS:
