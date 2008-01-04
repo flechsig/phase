@@ -1,12 +1,12 @@
-/*  File      : /home/vms/flechsig/vms/phas/opti/phaseopti.h */
-/*  Date      : <16 Oct 97 13:56:45 flechsig>  */
-/*  Time-stamp: <04 Jan 08 14:04:02 flechsig>  */
-/*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.h */
+/*  Date      : <04 Jan 08 14:04:24 flechsig>  */
+/*  Time-stamp: <04 Jan 08 14:04:38 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
-/* Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]PHASEOPTI.H          */
-/* Datum: 19.JUL.1994                                          */
-/* Stand: 23-APR-1996                                          */
-/* Autor: FLECHSIG, BESSY Berlin                               */
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
 
 /* fuer optimierung und extrahierung */
 
