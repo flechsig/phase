@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <04 Jan 08 16:24:09 flechsig>  */
+/*   Time-stamp: <04 Jan 08 16:25:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -110,7 +110,7 @@ int main(argc, argv)
       exit(-1);    
     }   
   printf("read from file: %s\n", argv[1]);    
-  
+  getoptipickfile(&optistructure, argv[1]); 
   if (argc == 3)
      {
        sscanf(argv[2], "%d", &optistructure.methode);
@@ -125,8 +125,6 @@ int main(argc, argv)
        optistructure.methode= OptiR;
      }
 
-
-  getoptipickfile(&optistructure, argv[1]);   
   ReadBLFile(optistructure.beamlinefilename, &Beamline);
   /* get start for x, y from beamline */
   out_struct(&Beamline, &ax0, optistructure.xindex);  
@@ -185,7 +183,7 @@ int main(argc, argv)
 			   &rpy, &rpz, &transmittance);
 		break;
 	      case OptiTrans:
-		printf("**** Full RT ****\n");
+		/*	printf("**** Full RT ****\n"); */
 		ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
 		RayTraceFull(&Beamline);
 		GetResults(&Beamline, &rfwhm, &yfwhm, &zfwhm, 
