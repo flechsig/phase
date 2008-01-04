@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:18:58 flechsig>  */
+/*   Time-stamp: <04 Jan 08 14:02:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -495,6 +495,12 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       break;
     }
 } /* end Get_dydz_fromSource */
+
+void GetFWHM(struct BeamlineType *bl, char *ch, double *chi)
+{
+  GetRMS(bl, ch, chi);
+  chi*= 2.35;
+}
 
 /* 31.3.99  erweitert auf z  */
 /* 13.12.07 erweitert  auf r */
