@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <03 Jan 08 12:11:49 flechsig>  */
+/*   Time-stamp: <04 Jan 08 12:49:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -182,11 +182,14 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
    fprintf(optistructure.filepointer,
 	   "# beamline:  %s\n", optistructure.beamlinefilename);
    fprintf(optistructure.filepointer,
+	   "# format:    nx ny coluns\n");
+   fprintf(optistructure.filepointer,
 	   "# format:    x y chistart chistop fcncalls parameter_list[%d]\n", 
 	   optistructure.npars);
    fprintf(optistructure.filepointer,
 	   "#########################################################################\n");
-   
+   fprintf(optistructure.filepointer, "%d %d %d\n",
+	   optistructure.xpoints, optistructure.ypoints, optistructure.npars+3);
    /* holen der Ausganswerte fuer Parameterscan */
    out_struct(&Beamline, &ax0, optistructure.xindex); 
    /* get x, y aus */
