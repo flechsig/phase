@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <04 Jan 08 15:06:48 flechsig>  */
+/*   Time-stamp: <04 Jan 08 16:24:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -185,6 +185,7 @@ int main(argc, argv)
 			   &rpy, &rpz, &transmittance);
 		break;
 	      case OptiTrans:
+		printf("**** Full RT ****\n");
 		ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
 		RayTraceFull(&Beamline);
 		GetResults(&Beamline, &rfwhm, &yfwhm, &zfwhm, 
