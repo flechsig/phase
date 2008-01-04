@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <04 Jan 08 13:45:53 flechsig>  */
+/*   Time-stamp: <04 Jan 08 15:05:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -121,7 +121,7 @@ int main(argc, argv)
 	unsigned int argc;                /* Command line argument count.   */
     	char *argv[];                     /* Pointers to command line args. */
 {   
-  double ax, ay, ax0, chistart, *CHIP, dy, dz;
+  double ax, ay, ax0, chistart, *CHIP, dy, dz, done, ddone;
   int 	 ix, iy, iread= 20, luno;
   time_t start, l, h, m, s;
 #ifdef VMS
@@ -190,6 +190,12 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	   "#########################################################################\n");
    fprintf(optistructure.filepointer, "%d %d %d\n",
 	   optistructure.xpoints, optistructure.ypoints, optistructure.npars+3);
+
+
+   ddone= 100.0/(optistructure.ypoints * optistructure.xpoints);
+   done= 0;
+
+
    /* holen der Ausganswerte fuer Parameterscan */
    out_struct(&Beamline, &ax0, optistructure.xindex); 
    /* get x, y aus */
@@ -300,6 +306,9 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	    /* luno=ku_inqf(optistructure.minuitfilename);
 	    printf(" status4 of minuit.inp %d\n",luno); */
 #endif 
+	    printf("                          ******** done: %d %s ********\n", 
+		   (int)done, "%");
+	    done+= ddone;
 
 	 }
        ay+= optistructure.dy;  
@@ -443,6 +452,7 @@ void fitoutput(int *NPAR, double *XPAR, double *chi)
   for (i= 1; i< *NPAR; i++) 
     fprintf(op->filepointer, " %15.10lg", XPAR[i]);  
   fprintf(op->filepointer, "\n");
+  fflush(op->filepointer);
   /* eine Zeile im outputfile fertig */
 } 
 

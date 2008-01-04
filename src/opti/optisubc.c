@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <04 Jan 08 14:03:29 flechsig>  */
+/*   Time-stamp: <04 Jan 08 14:49:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -496,6 +496,7 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
     }
 } /* end Get_dydz_fromSource */
 
+/* GetRMS wrapper */
 void GetFWHM(struct BeamlineType *bl, char *ch, double *chi)
 {
   GetRMS(bl, ch, chi);
@@ -622,7 +623,6 @@ void RTOpti(double *chi, struct BeamlineType *bl, char *ch)
 {
   printf("************ RTOpti with target: %c ***********\n", *ch);
   RayTracec(&Beamline);
-  GetRMS(&Beamline, ch, chi);
-  *chi*= 2.35;
+  GetFWHM(&Beamline, ch, chi);
 } /* end RTOpti */
 /* end optisubc.c */

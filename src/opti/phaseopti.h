@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.h */
 /*  Date      : <04 Jan 08 14:04:24 flechsig>  */
-/*  Time-stamp: <04 Jan 08 14:04:38 flechsig>  */
+/*  Time-stamp: <04 Jan 08 14:26:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -27,6 +27,9 @@ void GetRMS(struct BeamlineType *, char *, double *);
 void FocusSize (double *, struct BeamlineType *, double *, double *);
 void FullRTOpti(double *, struct BeamlineType *);
 void RTOpti    (double *, struct BeamlineType *, char *);
+void GetResults(struct BeamlineType *, double *, double *, double *, 
+		double *, double *, double *);
+
 /****** globale vars */
 struct optistruct optistructure;                      /* globale Variablen */  
 

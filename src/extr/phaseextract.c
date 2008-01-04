@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:46:34 flechsig>  */
+/*   Time-stamp: <04 Jan 08 15:06:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -89,7 +89,7 @@ int main(argc, argv)
      unsigned int argc;                  /* Command line argument count. */
      char *argv[];                       /* Pointers to command line args. */
 { 
-  double ax, ay, ax0, ay0, dy, dz, yfwhm, zfwhm, rpy, rpz, 
+  double ax, ay, ax0, ay0, dy, dz, rfwhm, yfwhm, zfwhm, rpy, rpz, 
     transmittance, done, ddone;
   int 	 ix, iy;
   time_t start, l, h, m, s;
@@ -100,22 +100,38 @@ int main(argc, argv)
 
   Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
-
 #ifdef LOGFILE   
   CheckUser(logfilename, "Extraction"); 
 #endif  
-  if (argc != 2)
+
+  if (argc < 2)
     {
-      fprintf(stderr, "syntax: phaseextract <inputfilename>\n");
+      fprintf(stderr, "syntax: phaseextract <inputfilename> [calculation_methode]\n");
       exit(-1);    
     }   
   printf("read from file: %s\n", argv[1]);    
   
+  if (argc == 3)
+     {
+       sscanf(argv[2], "%d", &optistructure.methode);
+       printf("take calculation methode from command line: %d\n", 
+	      optistructure.methode);
+     }
+
+  if ((optistructure.methode > OptiRpZ) || (optistructure.methode < 0))
+     {
+       printf("error: %d unknown calculation methode -- set it to %d\n", 
+	      optistructure.methode, OptiR);
+       optistructure.methode= OptiR;
+     }
+
+
   getoptipickfile(&optistructure, argv[1]);   
   ReadBLFile(optistructure.beamlinefilename, &Beamline);
   /* get start for x, y from beamline */
   out_struct(&Beamline, &ax0, optistructure.xindex);  
   out_struct(&Beamline, &ay0,  optistructure.yindex); 
+  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
   MakeRTSource(&PHASESet, &Beamline);      /* Quelle herstellen */
 
   /* oeffnen des Ausgabefiles */
@@ -126,9 +142,20 @@ int main(argc, argv)
       exit(-1);
     }  
   /*  initoptidata(&optistructure);   */
-   
-  fprintf(optistructure.filepointer, "%d %d\n", 
-	  optistructure.xpoints, optistructure.ypoints); /* write header */
+  fprintf(optistructure.filepointer, 
+	   "#########################################################################\n"); 
+  fprintf(optistructure.filepointer, 
+	  "# file name: %s\n", optistructure.resultfilename);
+  fprintf(optistructure.filepointer,
+	  "# beamline:  %s\n", optistructure.beamlinefilename);
+  fprintf(optistructure.filepointer,
+	   "# format:    nx ny columns\n");
+  fprintf(optistructure.filepointer,
+	   "# format:    x y rfwhm, yfwhm, zfwhm, rpy, rpz, transmittance\n");
+  fprintf(optistructure.filepointer,
+	  "#########################################################################\n");
+  fprintf(optistructure.filepointer, "%d %d %d\n", 
+	  optistructure.xpoints, optistructure.ypoints, 8); /* write header */
 
   ddone= 100.0/(optistructure.ypoints * optistructure.xpoints);
   done= 0;
@@ -146,39 +173,40 @@ int main(argc, argv)
 	  in_struct(&Beamline, &ax, optistructure.xindex); 
 	  /* extrakt */
 	  buildsystem(&Beamline); 
-	  
-	  /* orginale Variante 30.4.98 */
-	  /*  Get_dydz_fromSource(&Beamline, &dy, &dz);
-	  costfor(&CHI, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-		  &Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor); */
-          /* end orginale Variante 30.4.98 */
-	  /* hier koennte ein volles Raytrace eingeschoben werden  */
-	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	  RayTraceFull(&Beamline);  /* rt */
-
-	  /* determine results */
-	  transmittance= (double)Beamline.RESULT.points/
-			      (double)Beamline.RTSource.raynumber;
-	  ch= 'z';
-	  GetRMS(&Beamline, &ch, &zfwhm);
-	  zfwhm*= 2.35;
-	  ch= 'y';
-	  GetRMS(&Beamline, &ch, &yfwhm);
-	  yfwhm*= 2.35;
-
-	  if (Beamline.deltalambdafactor > 0.0)
-	    {
-	      rpy= (yfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-		Beamline.deltalambdafactor/ yfwhm : 1e12;
-	      rpz= (zfwhm > 0.0) ? Beamline.BLOptions.lambda/ 
-		Beamline.deltalambdafactor/ zfwhm : 1e12;
-	    } else 
+	    switch(optistructure.methode) 
 	      {
-		rpy= rpz= 0.0; 
+	      case OptiR:
+	      case OptiY:
+	      case OptiZ:
+	      case OptiRpY:
+	      case OptiRpZ:
+		RayTracec(&Beamline);
+		GetResults(&Beamline, &rfwhm, &yfwhm, &zfwhm, 
+			   &rpy, &rpz, &transmittance);
+		break;
+	      case OptiTrans:
+		ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+		RayTraceFull(&Beamline);
+		GetResults(&Beamline, &rfwhm, &yfwhm, &zfwhm, 
+			   &rpy, &rpz, &transmittance);
+		break;
+	      case OptiFocus:
+		printf("OptiFocus (methode %d) not used in phaseextract\n", optistructure.methode);
+		break;
+	      case OptiCost:
+		Get_dydz_fromSource(&Beamline, &dy, &dz);
+		costfor(&rfwhm, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
+			&Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+		yfwhm= zfwhm= rpy= rpz= transmittance= 0.0;
+		break;
+	      default:
+		printf("methode %d not used in phaseextract\n", optistructure.methode);
 	      }
+
 	  /* write result */  
-	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le %le %le\n", 
-		  ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance);
+	  fprintf(optistructure.filepointer, "%lf %lf %le %le %le %le %le %le\n", 
+		  ax, ay, rfwhm, yfwhm, zfwhm, rpy, rpz, transmittance);
+	  fflush(optistructure.filepointer);
 	  printf("                          ******** done: %d %s ********\n", 
 		 (int)done, "%");
 	  done+= ddone; 
@@ -188,6 +216,8 @@ int main(argc, argv)
        
     }
   free(optistructure.parindex);
+  fprintf(optistructure.filepointer,
+	  "################################# end ###################################\n");
   fclose(optistructure.filepointer);
   beep(4);
 
@@ -200,7 +230,35 @@ int main(argc, argv)
 
   printf("end extraction: results in file: %s\n", 
 	 optistructure.resultfilename);
-  printf("file format: ax, ay, yfwhm, zfwhm, rpy, rpz, transmittance\n");
+  printf("file format: ax, ay, rfwhm, yfwhm, zfwhm, rpy, rpz, transmittance\n");
   exit(1); 
 }
+
+void GetResults(struct BeamlineType *bl, double *rfwhm, double *yfwhm, double *zfwhm, 
+		double *rpy, double *rpz, double *trans)
+{
+  char target;
+
+  target= 'r';
+  GetFWHM(bl, &target, rfwhm);
+  target= 'y';
+  GetFWHM(bl, &target, yfwhm);
+  target= 'z';
+  GetFWHM(bl, &target, zfwhm);
+  if (bl->deltalambdafactor > 0.0)
+    {
+      *rpy= (*yfwhm > 0.0) ? bl->BLOptions.lambda/ 
+	bl->deltalambdafactor/ *yfwhm : 1e12;
+      *rpz= (*zfwhm > 0.0) ? bl->BLOptions.lambda/ 
+	bl->deltalambdafactor/ *zfwhm : 1e12;
+    } 
+  else 
+    {
+      *rpy= *rpz= 0.0; 
+    }
+  *trans= (double)bl->RESULT.points/
+    (double)bl->RTSource.raynumber;
+  *trans= 1.0- *trans;
+}
+
 /* end main */
