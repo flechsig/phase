@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/read_opti_out.pro
 ;  Date      : <04 Jan 08 08:22:27 flechsig> 
-;  Time-stamp: <04 Jan 08 16:00:20 flechsig> 
+;  Time-stamp: <04 Jan 08 16:14:05 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -8,7 +8,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro read_extr_out, fname, array, column=column, all=all, grid=grid 
+pro read_extr_out, fname, array, column=column, all=all, grid=grid, noplot=noplot 
 ;+
 ; NAME:
 ;   read_extr_out
@@ -77,7 +77,8 @@ data_start=6
 
 header= strarr(data_start)
 readf, lun, header
-print, 'header: ', header
+print, 'header: '
+print, header
 
 nx  = 0
 ny  = 0
@@ -98,7 +99,8 @@ if n_elements(column) eq 0 then begin
     array=parr
 endif else array=reform(parr[column-1,*,*])
 
-if n_elements(noplot) ne 0 then begin  
+if n_elements(noplot) eq 0 then begin  
+    print, 'plot'
     arr= reform(parr[column-1,*,*])
     if n_elements(grid) ne 0 then begin
         iy= fix(sqrt(cols-2)) 
@@ -110,9 +112,13 @@ if n_elements(noplot) ne 0 then begin
     if n_elements(all) ne 0 then begin
         for i=0, cols-3 do begin
             arr= reform(parr[i,*,*])
-            mycontour,arr,x,y,xtitle='x',ytitle='y',ztitle='column '+string(i+1)
+            ztitle='column '+ string(i+1)
+            mycontour,arr,x,y,xtitle='x',ytitle='y',ztitle=ztitle,title=ztitle,/nocolorbar
         endfor
-    endif else mycontour,arr,x,y,xtitle='x',ytitle='y',ztitle='column '+string(i+1)
+    endif else begin
+        ztitle='column '+ string(column)
+        mycontour,arr,x,y,xtitle='x',ytitle='y',ztitle=ztitle,title=ztitle
+    endelse
     
 endif ;; noplot
 return
