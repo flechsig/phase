@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/read_opti_out.pro
 ;  Date      : <04 Jan 08 08:22:27 flechsig> 
-;  Time-stamp: <09 Jan 08 15:59:34 flechsig> 
+;  Time-stamp: <09 Jan 08 16:17:46 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -71,6 +71,15 @@ pro read_int_file, fname, arr, column=column, all=all, grid=grid, noplot=noplot,
 ; MODIFICATION HISTORY:
 ;   UF Jan 08
 ;-
+
+;; determine the number of lines
+if n_elements(ny) eq 0 then begin
+    wc_cmd='wc -l ' + fname
+    spawn, wc_cmd , wc_result
+    ny=fix(stregex(wc_result,'[0-9]+', /extract))
+    print,'lines: ', ny
+endif
+
 
 linarr=dblarr(ny*8)
 OpenR, lun, fname, /get_lun
