@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/read_opti_out.pro
 ;  Date      : <04 Jan 08 08:22:27 flechsig> 
-;  Time-stamp: <08 Jan 08 13:24:43 flechsig> 
+;  Time-stamp: <09 Jan 08 15:59:34 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -86,7 +86,7 @@ zone,2,2
     plot,arr[0,*],arr[1,*],title='at min(z)',xtitle='y (mm)'
     plot,arr[2,*],arr[3,*],title='at center(z)',xtitle='y (mm)'
     plot,arr[4,*],arr[5,*],title='at max(z)',xtitle='y (mm)'
-    plot,arr[6,*],arr[7,*],title='y integral',xtitle='z (mm)'
+    plot,arr[6,*],arr[7,*],title='y integral',xtitle='z (mm)',subtitle=fname
 ;;endif ;; noplot
 return
 end
