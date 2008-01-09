@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <25 Dec 07 11:28:55 flechsig> 
+dnl   Time-stamp: <09 Jan 08 09:06:03 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -216,7 +216,7 @@ AC_ARG_WITH([motif],
   [ echo "motif path given as option: ${with_motif}"
     motifpath=${with_motif}
     AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
-    AC_SUBST([MOTIFLIBS],["-L${motifpath} -lXm -lMrm"])
+    AC_SUBST([MOTIFLIBS],["-L${motifpath}/lib -lXm -lMrm"])
   ],
   [
 dnl autodetect Motif - but only add to libs_x later (if necessary)
