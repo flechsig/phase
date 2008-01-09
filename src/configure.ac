@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <09 Jan 08 09:06:03 flechsig> 
+dnl   Time-stamp: <09 Jan 08 12:08:09 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -27,7 +27,6 @@ AC_PROG_YACC
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_CHECK_PROG([UIL],[uil],[uil])
 
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
@@ -212,13 +211,15 @@ AC_CHECK_HEADERS(strings.h unistd.h)
 dnl **************** MOTIF ***************************
 
 AC_ARG_WITH([motif],
-  AC_HELP_STRING([--with-motif=DIR],[path to motif libraries and includes]),
+  AC_HELP_STRING([--with-motif=DIR],[path to Motif libraries, includes, uil]),
   [ echo "motif path given as option: ${with_motif}"
     motifpath=${with_motif}
+    AC_CHECK_PROG([UIL],[uil],[${motifpath}/bin/uil],[],[${motifpath}/bin])
     AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
     AC_SUBST([MOTIFLIBS],["-L${motifpath}/lib -lXm -lMrm"])
   ],
   [
+    AC_CHECK_PROG([UIL],[uil],[uil])
 dnl autodetect Motif - but only add to libs_x later (if necessary)
 dnl Use a different function to the earlier test to avoid problems with the
 dnl internal cache.
