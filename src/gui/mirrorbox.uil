@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/mirrorbox.uil
 !  Date      : <16 Feb 04 09:23:44 flechsig> 
-!  Time-stamp: <20 Apr 04 12:44:48 flechsig> 
+!  Time-stamp: <09 Jan 08 08:23:44 flechsig> 
 !  Author    : Uwe Flechsig, flechsig@psi.ch
 
 !  $Source$ 
@@ -677,7 +677,7 @@ object
     EOET5 : XmText {
         arguments {
             arguments 		  ETextArgs;
- XmNforeground       = color('red');
+ 	    XmNforeground       = color('red');
 };                   
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET5);  };
@@ -687,7 +687,7 @@ object
     EOET6 : XmText {
         arguments {
             arguments 		  ETextArgs; 
-	XmNforeground       = color('red');
+	    XmNforeground       = color('red');
 };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEOET6);  };
@@ -733,7 +733,7 @@ object
 object  
     EOET10 : XmText {
         arguments {
-            arguments 		  ETextArgs; 
+!            arguments 		  ETextArgs; 
 	       XmNcolumns          = 8;
                XmNrows             = 1;
                XmNmaxLength        = 20;
@@ -748,7 +748,7 @@ object
 object  
     EOET11 : XmText {
         arguments {
-            arguments 		  ETextArgs; 
+!            arguments 		  ETextArgs; 
 	       XmNcolumns          = 8;
                XmNrows             = 1;
                XmNmaxLength        = 20;
@@ -774,7 +774,7 @@ object
 object  
     EOET13 : XmText {
         arguments {
-            arguments 		  ETextArgs; 
+!            arguments 		  ETextArgs; 
 	       XmNcolumns          = 8;
                XmNrows             = 1;
                XmNmaxLength        = 20;
@@ -789,7 +789,7 @@ object
 object  
     EOET14 : XmText {
         arguments {
-            arguments 		  ETextArgs; 
+!            arguments 		  ETextArgs; 
 	       XmNcolumns          = 8;
                XmNrows             = 1;
                XmNmaxLength        = 20;
