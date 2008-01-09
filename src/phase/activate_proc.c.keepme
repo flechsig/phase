@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <20 Dec 07 14:23:14 flechsig>  */
+/*   Time-stamp: <09 Jan 08 15:42:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -52,7 +52,9 @@ void activate_proc(w, tag, reason)
   struct PSImageType *psip;  
   void *vo;
 
-  printf(" widget_num ",widget_num);     
+#ifdef DEBUG
+  printf("activate_proc: widget_num %d\n",widget_num);  
+#endif   
 
   switch (widget_num) {
 
