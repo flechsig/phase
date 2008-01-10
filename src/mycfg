@@ -2,4 +2,9 @@
 
 ### ./configure --prefix=$HOME/cvs
 
- ./configure --prefix=$HOME/cvs --with-motif=$HOME/openmotiflibs
+# ./configure --prefix=$HOME/cvs --with-motif=$HOME/openmotiflibs
+
+
+./configure --prefix=$PWD/.. --with-motif=$PWD/old_openmotif
+
+
