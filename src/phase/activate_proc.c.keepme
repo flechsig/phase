@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <09 Jan 08 15:42:41 flechsig>  */
+/*   Time-stamp: <10 Jan 08 08:35:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -647,13 +647,13 @@ if (Beamline.RTSource.QuellTyp == 'I')
         
   case kCCOptiButton: 	                /*  Opti*/  
     sprintf(command,
-	    "PHASEopti %s", PHASESet.optipckname);
+	    "phaseopti %s", PHASESet.optipckname);
     system(command); 
     break;  
  
   case kCCExtractButton: 	                /*  Extr*/  
     sprintf(command,
-	    "PHASEextract %s", PHASESet.optipckname);
+	    "phaseextract %s", PHASESet.optipckname);
     system(command); 
     break;   
 
