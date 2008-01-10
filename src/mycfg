@@ -5,6 +5,6 @@
 ### ./configure --prefix=$HOME/cvs --with-motif=$HOME/openmotiflibs
 
 
-./configure --prefix=$PWD/../.. --with-motif=$HOME/openmotif
+./configure --prefix=$PWD/../.. --with-motif=$OPENMOTIF_PATH
 
 
