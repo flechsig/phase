@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <14 Jan 08 13:00:31 flechsig> 
+c$$$ Time-stamp: <14 Jan 08 17:01:01 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -48,11 +48,8 @@ c comment U.F. 20.1.2000
 	write(*,*) 'src_ini: source type:',src.isrctype
 
 	if(src.isrctype.eq.2)call src2_ini(src.so2)
-
 	if(src.isrctype.eq.3)call src3_ini(src.so3)
-
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
-
 	if(src.isrctype.eq.6)call src6_ini(src.so6)
 
 	return
@@ -805,10 +802,10 @@ c***********************************************************
 	open(unit=10,name=so4.fsource4a,type='old')
 	read(10,*)so4.ieyrex,so4.ieyrey
 	do j=1,so4.ieyrey
-	do i=1,so4.ieyrex
-	k=(j-1)*so4.ieyrex+i
-	read(10,*)xx(k),yy(k),so4.zeyre(i,j)
-	enddo
+	   do i=1,so4.ieyrex
+	      k=(j-1)*so4.ieyrex+i
+	      read(10,*)xx(k),yy(k),so4.zeyre(i,j)
+	   enddo
 	enddo
 	close(10)
 
