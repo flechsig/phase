@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <19 Nov 07 09:36:12 flechsig> 
+c$$$ Time-stamp: <14 Jan 08 13:00:31 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -29,14 +29,10 @@ c**************************************************************
 
 c a trick to have the struct only in the ./phase and find it from opti 
 #ifdef VMS
-c not yet tested
         include '[-.phase]phase_struct.for'
-c        include 'phase_struct.for'
 #else
-
         include '../phase/phase_struct.for'
 #endif
-cc	include 'phase_struct.for'
 
 c**************************************************
 
@@ -61,6 +57,7 @@ c comment U.F. 20.1.2000
 
 	return
 	end
+c------------------end src_ini -------------------------
 
 c**************************************************************
         subroutine psdi(g,src,apr,cs,ifl,ra,sr)
@@ -202,6 +199,7 @@ c	endif	! source plane
 
 	return
         end
+c---------------------- end psdi ------------------------------
 
 c*****************************************************************
 	subroutine src1(cs,g,ra,so1,sr,ifl)
@@ -256,6 +254,7 @@ c----------------------------------------------
 
 	return
 	end
+c-------------------- end src1 -------------------------------
 
 c*****************************************************************
 	subroutine src2(cs,g,ra,so2,sr,ifl)
@@ -293,6 +292,7 @@ c-----  27.2.2004
 
 	return
 	end
+c----------------------- end src2---------------------
 
 c*****************************************************************
 	subroutine src3(cs,g,ra,so3,sr,ifl)
@@ -323,6 +323,7 @@ c------- 27.2.2004
 
 	return
 	end
+c----------------------- end src3---------------------
 
 c*****************************************************************
 	subroutine src4(cs,g,ra,so4,sr,ifl)
@@ -518,6 +519,7 @@ c------- 27.2.2004
 
 	return
 	end
+c----------------------- end src4---------------------
 
 c*****************************************************************
 	subroutine src5(cs,g,ra,so5,sr,ifl)
@@ -672,6 +674,7 @@ c------- end 19.1.2000 ----------------------------------
 
 	return
 	end
+c----------------------- end src5---------------------
 
 c*****************************************************************
 	subroutine src6(cs,g,ra,so6,sr,ifl)
@@ -713,6 +716,7 @@ c-------- 27.2.2004
 
 	return
 	end
+c----------------------- end src6 ---------------------
 
 c***********************************************************
 	subroutine src2_ini(so2)

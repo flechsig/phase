@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <21 Nov 07 12:43:00 flechsig> 
+c$$$ Time-stamp: <14 Jan 08 12:54:33 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -234,6 +234,7 @@ c------------------------------------------------------------
 
 	return
 	end
+c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
 	subroutine yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
@@ -426,6 +427,8 @@ c---------------------------------------------------------
 
 	return
 	end
+c--------------------- end yyint -------------------------
+
 
 c*************************************************************
  	subroutine fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
@@ -450,29 +453,29 @@ c*************************************************************
         record /parder/ pd
 	record /map4/ m4
 
-      dimension p1(0:4,0:4,0:4,0:4)
-      dimension p2(0:4,0:4,0:4,0:4)
-      dimension p12(0:4,0:4,0:4,0:4)
-      dimension p3(0:4,0:4,0:4,0:4)
-      dimension p4(0:4,0:4,0:4,0:4)
-      dimension p34(0:4,0:4,0:4,0:4)
-      dimension p1234(0:4,0:4,0:4,0:4)
-      dimension p11(0:4,0:4,0:4,0:4)
-      dimension p22(0:4,0:4,0:4,0:4)
-      dimension p1122(0:4,0:4,0:4,0:4)
-      dimension p1a(0:4,0:4,0:4,0:4)
-      dimension p2a(0:4,0:4,0:4,0:4)
-      dimension p3a(0:4,0:4,0:4,0:4)
-      dimension p4a(0:4,0:4,0:4,0:4)
-      dimension p11a(0:4,0:4,0:4,0:4)
-      dimension p22a(0:4,0:4,0:4,0:4)
-      dimension p1122a(0:4,0:4,0:4,0:4)
+        dimension p1(0:4,0:4,0:4,0:4)
+        dimension p2(0:4,0:4,0:4,0:4)
+        dimension p12(0:4,0:4,0:4,0:4)
+        dimension p3(0:4,0:4,0:4,0:4)
+        dimension p4(0:4,0:4,0:4,0:4)
+        dimension p34(0:4,0:4,0:4,0:4)
+        dimension p1234(0:4,0:4,0:4,0:4)
+        dimension p11(0:4,0:4,0:4,0:4)
+        dimension p22(0:4,0:4,0:4,0:4)
+        dimension p1122(0:4,0:4,0:4,0:4)
+        dimension p1a(0:4,0:4,0:4,0:4)
+        dimension p2a(0:4,0:4,0:4,0:4)
+        dimension p3a(0:4,0:4,0:4,0:4)
+        dimension p4a(0:4,0:4,0:4,0:4)
+        dimension p11a(0:4,0:4,0:4,0:4)
+        dimension p22a(0:4,0:4,0:4,0:4)
+        dimension p1122a(0:4,0:4,0:4,0:4)
 
-	  if(xi.distfocy.gt.1.e-10)then
-	    dyii=dyi+ra.ri.yi/xi.distfocy
-	    else
-	    dyii=dyi
-	  endif
+        if(xi.distfocy.gt.1.e-10)then
+           dyii=dyi+ra.ri.yi/xi.distfocy
+        else
+           dyii=dyi
+        endif
 
 	ra.ri.dyi=dyii	
 
@@ -493,23 +496,23 @@ c*************************************************************
 
 	var0=1.
         do ii=0,ifl.iord
-          ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
-          ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
-          ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
-          ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
-c          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
-c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
-	  ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
-	  ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
-
-          fd=fd+m4.fdtrrc(ii)*var0
-          fdph=fdph+m4.fdtphrrc(ii)*var0
-          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
-
-         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
-         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
-
-          var0=var0*dyii
+           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
+           ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
+           ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
+           ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
+c     ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
+c     ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
+           ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
+           ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
+           
+           fd=fd+m4.fdtrrc(ii)*var0
+           fdph=fdph+m4.fdtphrrc(ii)*var0
+           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
+           
+           ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
+           ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+           
+           var0=var0*dyii
         enddo
 
 c	write(6,*)' 1 ',fd1ph
@@ -913,7 +916,7 @@ c--------------- ist zu checken
 
 	return
 	end
-
+c---------------------- end fywert -----------------------
 
 c**************************************************************
 	subroutine int_2d(f,xint,dy,dz,ny,nz)
@@ -940,6 +943,7 @@ c**************************************************************
 
 	return
 	end
+c------------------------- end int_2d ----------------------
 
 c***********************************************************
 c UF 12.1.2000
@@ -1442,6 +1446,7 @@ c	close(10)
 
 	return
 	end
+c--------------------------- end phacor ---------------
 
 c******************************************************************
 	subroutine fitpar(ianz,x,y,iiord,c)
@@ -1511,6 +1516,7 @@ c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b)
 
 	return
 	end
+c--------------------end fitpar ----------------
 
 c******************************************************************
 	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
@@ -1926,7 +1932,7 @@ c----------------
 
 	return
 	end
-	
+c-------------------- end simpson ---------------------------	
 
 c-------------------------------------------------------------
 
@@ -2021,7 +2027,7 @@ c------------------------------------------------------------------
 
       RETURN
       END
-
+c------------------ end UTIL_SPLINE_COEF --------------
 
 
 c------------------------------------------------------
@@ -2163,6 +2169,6 @@ c	ende 5.11.2003
 
 	return
 	end
-
+c------------------------ end guess -------------------------
 
 
