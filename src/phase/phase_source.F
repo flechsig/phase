@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <14 Jan 08 17:01:01 flechsig> 
+c$$$ Time-stamp: <14 Jan 08 17:16:21 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -35,13 +35,7 @@ c a trick to have the struct only in the ./phase and find it from opti
 #endif
 
 c**************************************************
-
-	record /source1/ so1
-	record /source2/ so2
-	record /source3/ so3
-	record /source4/ so4
-	record /source5/ so5
-	record /source6/ so6
+c removed unused vars UF 0801
 	record /sources/ src
 
 c comment U.F. 20.1.2000	
@@ -122,17 +116,17 @@ c**************************************************************
 	include 'phase_struct.for'
 
 c**************************************************
-
+c UF 0801 removed unused vars
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
-	record /source2/ so2
-	record /source3/ so3
-	record /source4/ so4
-	record /source5/ so5
-	record /source6/ so6
+c	record /source2/ so2
+c	record /source3/ so3
+c	record /source4/ so4
+c	record /source5/ so5
+c	record /source6/ so6
 	record /sources/ src
 	record /apertures/ apr
 
@@ -328,7 +322,7 @@ c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
 	implicit real*8(a-h,o-z)
-	complex*16 factor
+c	complex*16 factor     ! removed unused var UF 0801
 
 	include 'phase_struct.for'
 
@@ -1119,15 +1113,17 @@ c	for ispline.lt.0 dreal(XXX)=amplitude
 c			 dimag(XXX)=phase
 c
 c-----------------------------------------------------------
+c removed unused vars UF 0801
 	implicit real*8(a-h,o-z)
 	include 'phase_struct.for'
 
 	record /source4/ so4
 	record /constants/ cs
 	record /source_results/ sr 
-	record /control_flags/ ifl
+c	record /control_flags/ ifl
 
-	complex*16 carg,cargy,cargz,amp1,amp2,amp3,amp4,fact1
+	complex*16 fact1
+c       complex*16 carg,cargy,cargz,amp1,amp2,amp3,amp4,fact1
 
 c	sign=1.
 c	fact1=sign*cs.sqrtm1
@@ -1239,16 +1235,16 @@ c**********************************************************
 	subroutine source_inter_4d(so6,xwert,ywert,
      &		pxwert,pywert,sr)
 c**********************************************************
-
+c       comment out unused vars UF 0801
 	implicit real*8(a-h,o-z)
 
 	include 'phase_struct.for'
 
 	record /source6/ so6
-	record /geometryst/ g
-	record /rayst/ ra 
+c	record /geometryst/ g
+c	record /rayst/ ra 
 	record /source_results/ sr 
-	record /control_flags/ ifl
+c	record /control_flags/ ifl
 
 	ix1=(xwert-so6.brxmin)/so6.brdx + 1
 	ix2=ix1+1
@@ -1333,12 +1329,6 @@ c-----------------------------------------------------------------
 
 c**************************************************
 
-	record /source1/ so1
-	record /source2/ so2
-	record /source3/ so3
-	record /source4/ so4
-	record /source5/ so5
-	record /source6/ so6
 	record /sources/ src
 
 	f=1.d0
