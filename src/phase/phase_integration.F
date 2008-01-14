@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <14 Jan 08 12:54:33 flechsig> 
+c$$$ Time-stamp: <14 Jan 08 17:36:35 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -47,13 +47,14 @@ c	falls spaeter adaptive Integration implementiert we rden soll,
 c	muss dies auf andere Weise als bisher geschehen.
 c
 c************************************************
-
+c UF 0801 removed unused vars
 	implicit real*8(a-h,o-z)
-	complex*16 fwert,fwerty,fwertz,
-     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-     &      yzint,yzintey,yzintez
-	complex*16 fzey(4096),fzez(4096)
+c	complex*16 fwert,fwerty,fwertz,
+c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+c     &      yzint,yzintey,yzintez
+	complex*16 fwerty,fwertz
+     	complex*16 fzey(4096),fzez(4096)
 
 	include 'phase_struct.for'
         record /constants/ cs
@@ -246,12 +247,13 @@ c	INPUT : dzi
 c      OUTPUT : yint, yintey, yintez
 c
 c*************************************************************
-
+c UF 0801 removed unused vars
 	implicit real*8(a-h,o-z)
-	complex*16 fwert,fwerty,fwertz,
-     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-     &      yint,yintey,yintez
+c	complex*16 fwert,fwerty,fwertz,
+c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+	complex*16 fwerty,fwertz,
+     &      yintey,yintez
 	complex*16 fyey(4096),fyez(4096)
 
 	dimension a(0:5,0:5)
@@ -267,7 +269,7 @@ c*************************************************************
         record /sources/ src
 	record /integration/ xi
 	record /integration_results/ xir
-        record /source6/ so6
+c        record /source6/ so6
 	record /apertures/ apr
 	record /statistics/ st
 	record /map4/ m4
@@ -434,9 +436,10 @@ c*************************************************************
  	subroutine fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
 c*************************************************************
+c UF 0801 removed unused vars
 	implicit real*8(a-h,o-z)
-	complex*16 densy,densz,fwert,fwerty,fwertz
-
+c	complex*16 densy,densz,fwert,fwerty,fwertz
+	complex*16 fwerty,fwertz
 	dimension a(0:5,0:5)
 
 	include 'phase_struct.for'
@@ -460,16 +463,16 @@ c*************************************************************
         dimension p4(0:4,0:4,0:4,0:4)
         dimension p34(0:4,0:4,0:4,0:4)
         dimension p1234(0:4,0:4,0:4,0:4)
-        dimension p11(0:4,0:4,0:4,0:4)
-        dimension p22(0:4,0:4,0:4,0:4)
-        dimension p1122(0:4,0:4,0:4,0:4)
-        dimension p1a(0:4,0:4,0:4,0:4)
-        dimension p2a(0:4,0:4,0:4,0:4)
-        dimension p3a(0:4,0:4,0:4,0:4)
-        dimension p4a(0:4,0:4,0:4,0:4)
-        dimension p11a(0:4,0:4,0:4,0:4)
-        dimension p22a(0:4,0:4,0:4,0:4)
-        dimension p1122a(0:4,0:4,0:4,0:4)
+c        dimension p11(0:4,0:4,0:4,0:4)
+c        dimension p22(0:4,0:4,0:4,0:4)
+c        dimension p1122(0:4,0:4,0:4,0:4)
+c        dimension p1a(0:4,0:4,0:4,0:4)
+c        dimension p2a(0:4,0:4,0:4,0:4)
+c        dimension p3a(0:4,0:4,0:4,0:4)
+c        dimension p4a(0:4,0:4,0:4,0:4)
+c        dimension p11a(0:4,0:4,0:4,0:4)
+c        dimension p22a(0:4,0:4,0:4,0:4)
+c        dimension p1122a(0:4,0:4,0:4,0:4)
 
         if(xi.distfocy.gt.1.e-10)then
            dyii=dyi+ra.ri.yi/xi.distfocy
@@ -1042,16 +1045,16 @@ c	was passiert, wenn x3=-x1 und damit x3**2-x1**2=0 wird???
 c	(kein Problem bei linearer Extrapolation)
 c
 c-----------------
-
+c UF 0801 removed unused vars
 	implicit real*8(a-h,o-z)
 
 	include 'phase_struct.for'
         record /rayst/ ra
         record /constants/ cs
-	record /statistics/ st
+c	record /statistics/ st
 	record /integration_results/ xir
 	record /integration/ xi
-        record /control_flags/ ifl
+c        record /control_flags/ ifl
 c UF 12.1.2000
         record /psimagest/ sp
 
@@ -1062,7 +1065,8 @@ c UF 12.1.2000
 
 
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
-	dimension coef(1024),coef1(1024),xx(100)
+c	dimension coef(1024),coef1(1024),xx(100)
+	dimension coef(1024),xx(100)
 
 	small_loc=1.d-15
 	small_loc1=1.d-10
@@ -1457,12 +1461,12 @@ c	Routine fits a polynomial of order iiord through
 c	a set of data points
 c
 c------------------------------------------------------
-
+c UF 0801 removed unused vars
 	implicit real*8 (a-h,o-z)
 
 	parameter(number=210)
 
-	dimension work(number)
+c	dimension work(number)
 	dimension x(1024),y(1024)
 	dimension xx(number,1024)
 	dimension b(number),a(number,number)
@@ -1562,25 +1566,26 @@ c
 c	iyz = 1 call from y-loop
 c	iyz = 2 call from z-loop
 c-----------------------------------------------------------------------
-
+c UF0801 removed unused vars
 	implicit real*8(a-h,o-z)
 
 	dimension densiyzre(1000),densiyzim(1000)
 
         include 'phase_struct.for'
         record /constants/ cs
-	record /statistics/ st
+c	record /statistics/ st
         record /integration_results/ xir
         record /integration/ xi
         record /control_flags/ ifl
 
-	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
+c	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
+        complex*16 xint,fyz(4096),xxx(4096)
 	dimension xxxre(4096),xxxim(4096)
 
 	real*4 fyza_loc(4096),fyzp_loc(4096)
 	real*4 x_loc(4096),dyz_loc(4096)
-	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
-
+c	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
+	
 c	dimension fyza_loc(4096),fyzp_loc(4096)
 c	dimension x_loc(4096),dyz_loc(4096)
 c	dimension xxr(4096),ffyza(4096),ffyzp(4096)
@@ -2051,7 +2056,7 @@ c
 c	Routine gelegentlich rausschmeissen
 c
 c---------------------------------------------------------------------
-
+c UF0801 removed unused vars
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
 	include 'phase_struct.for'
@@ -2085,12 +2090,6 @@ c common simps1 ist in xir UF 21.12.99
         record /control_flags/ ifl
         record /sources/ src
         record /integration/ xi
-        record /source1/ so1
-        record /source2/ so2
-        record /source3/ so3
-        record /source4/ so4
-        record /source5/ so5
-        record /source6/ so6
         record /apertures/ apr
         record /statistics/ st
         record /map4/ m4
