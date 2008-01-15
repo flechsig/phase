@@ -1,7 +1,7 @@
 # -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/.cvsignore
 #  Date      : <23 Nov 07 14:36:47 flechsig> 
-#  Time-stamp: <15 Jan 08 08:55:22 flechsig> 
+#  Time-stamp: <15 Jan 08 09:28:46 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -9,7 +9,6 @@
 #  $Revision$ 
 #  $Author$ 
 #
-cvsroot
 bin
 share
 lib
