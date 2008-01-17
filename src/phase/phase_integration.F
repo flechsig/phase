@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <14 Jan 08 17:36:35 flechsig> 
+c$$$ Time-stamp: <17 Jan 08 16:49:50 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -47,14 +47,13 @@ c	falls spaeter adaptive Integration implementiert we rden soll,
 c	muss dies auf andere Weise als bisher geschehen.
 c
 c************************************************
-c UF 0801 removed unused vars
+
 	implicit real*8(a-h,o-z)
-c	complex*16 fwert,fwerty,fwertz,
-c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-c     &      yzint,yzintey,yzintez
-	complex*16 fwerty,fwertz
-     	complex*16 fzey(4096),fzez(4096)
+	complex*16 fwert,fwerty,fwertz,
+     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+     &      yzint,yzintey,yzintez
+	complex*16 fzey(4096),fzez(4096)
 
 	include 'phase_struct.for'
         record /constants/ cs
@@ -247,13 +246,12 @@ c	INPUT : dzi
 c      OUTPUT : yint, yintey, yintez
 c
 c*************************************************************
-c UF 0801 removed unused vars
+
 	implicit real*8(a-h,o-z)
-c	complex*16 fwert,fwerty,fwertz,
-c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-	complex*16 fwerty,fwertz,
-     &      yintey,yintez
+	complex*16 fwert,fwerty,fwertz,
+     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+     &      yint,yintey,yintez
 	complex*16 fyey(4096),fyez(4096)
 
 	dimension a(0:5,0:5)
@@ -269,7 +267,7 @@ c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
         record /sources/ src
 	record /integration/ xi
 	record /integration_results/ xir
-c        record /source6/ so6
+        record /source6/ so6
 	record /apertures/ apr
 	record /statistics/ st
 	record /map4/ m4
@@ -436,10 +434,9 @@ c*************************************************************
  	subroutine fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
 c*************************************************************
-c UF 0801 removed unused vars
 	implicit real*8(a-h,o-z)
-c	complex*16 densy,densz,fwert,fwerty,fwertz
-	complex*16 fwerty,fwertz
+	complex*16 densy,densz,fwert,fwerty,fwertz
+
 	dimension a(0:5,0:5)
 
 	include 'phase_struct.for'
@@ -456,29 +453,29 @@ c	complex*16 densy,densz,fwert,fwerty,fwertz
         record /parder/ pd
 	record /map4/ m4
 
-        dimension p1(0:4,0:4,0:4,0:4)
-        dimension p2(0:4,0:4,0:4,0:4)
-        dimension p12(0:4,0:4,0:4,0:4)
-        dimension p3(0:4,0:4,0:4,0:4)
-        dimension p4(0:4,0:4,0:4,0:4)
-        dimension p34(0:4,0:4,0:4,0:4)
-        dimension p1234(0:4,0:4,0:4,0:4)
-c        dimension p11(0:4,0:4,0:4,0:4)
-c        dimension p22(0:4,0:4,0:4,0:4)
-c        dimension p1122(0:4,0:4,0:4,0:4)
-c        dimension p1a(0:4,0:4,0:4,0:4)
-c        dimension p2a(0:4,0:4,0:4,0:4)
-c        dimension p3a(0:4,0:4,0:4,0:4)
-c        dimension p4a(0:4,0:4,0:4,0:4)
-c        dimension p11a(0:4,0:4,0:4,0:4)
-c        dimension p22a(0:4,0:4,0:4,0:4)
-c        dimension p1122a(0:4,0:4,0:4,0:4)
+      dimension p1(0:4,0:4,0:4,0:4)
+      dimension p2(0:4,0:4,0:4,0:4)
+      dimension p12(0:4,0:4,0:4,0:4)
+      dimension p3(0:4,0:4,0:4,0:4)
+      dimension p4(0:4,0:4,0:4,0:4)
+      dimension p34(0:4,0:4,0:4,0:4)
+      dimension p1234(0:4,0:4,0:4,0:4)
+      dimension p11(0:4,0:4,0:4,0:4)
+      dimension p22(0:4,0:4,0:4,0:4)
+      dimension p1122(0:4,0:4,0:4,0:4)
+      dimension p1a(0:4,0:4,0:4,0:4)
+      dimension p2a(0:4,0:4,0:4,0:4)
+      dimension p3a(0:4,0:4,0:4,0:4)
+      dimension p4a(0:4,0:4,0:4,0:4)
+      dimension p11a(0:4,0:4,0:4,0:4)
+      dimension p22a(0:4,0:4,0:4,0:4)
+      dimension p1122a(0:4,0:4,0:4,0:4)
 
-        if(xi.distfocy.gt.1.e-10)then
-           dyii=dyi+ra.ri.yi/xi.distfocy
-        else
-           dyii=dyi
-        endif
+	  if(xi.distfocy.gt.1.e-10)then
+	    dyii=dyi+ra.ri.yi/xi.distfocy
+	    else
+	    dyii=dyi
+	  endif
 
 	ra.ri.dyi=dyii	
 
@@ -499,23 +496,23 @@ c        dimension p1122a(0:4,0:4,0:4,0:4)
 
 	var0=1.
         do ii=0,ifl.iord
-           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
-           ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
-           ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
-           ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
-c     ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
-c     ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
-           ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
-           ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
-           
-           fd=fd+m4.fdtrrc(ii)*var0
-           fdph=fdph+m4.fdtphrrc(ii)*var0
-           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
-           
-           ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
-           ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
-           
-           var0=var0*dyii
+          ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
+          ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
+          ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
+          ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
+c          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
+c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
+	  ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
+	  ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
+
+          fd=fd+m4.fdtrrc(ii)*var0
+          fdph=fdph+m4.fdtphrrc(ii)*var0
+          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
+
+         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
+         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+
+          var0=var0*dyii
         enddo
 
 c	write(6,*)' 1 ',fd1ph
@@ -1045,16 +1042,16 @@ c	was passiert, wenn x3=-x1 und damit x3**2-x1**2=0 wird???
 c	(kein Problem bei linearer Extrapolation)
 c
 c-----------------
-c UF 0801 removed unused vars
+
 	implicit real*8(a-h,o-z)
 
 	include 'phase_struct.for'
         record /rayst/ ra
         record /constants/ cs
-c	record /statistics/ st
+	record /statistics/ st
 	record /integration_results/ xir
 	record /integration/ xi
-c        record /control_flags/ ifl
+        record /control_flags/ ifl
 c UF 12.1.2000
         record /psimagest/ sp
 
@@ -1065,8 +1062,7 @@ c UF 12.1.2000
 
 
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
-c	dimension coef(1024),coef1(1024),xx(100)
-	dimension coef(1024),xx(100)
+	dimension coef(1024),coef1(1024),xx(100)
 
 	small_loc=1.d-15
 	small_loc1=1.d-10
@@ -1461,12 +1457,12 @@ c	Routine fits a polynomial of order iiord through
 c	a set of data points
 c
 c------------------------------------------------------
-c UF 0801 removed unused vars
+
 	implicit real*8 (a-h,o-z)
 
 	parameter(number=210)
 
-c	dimension work(number)
+	dimension work(number)
 	dimension x(1024),y(1024)
 	dimension xx(number,1024)
 	dimension b(number),a(number,number)
@@ -1566,26 +1562,25 @@ c
 c	iyz = 1 call from y-loop
 c	iyz = 2 call from z-loop
 c-----------------------------------------------------------------------
-c UF0801 removed unused vars
+
 	implicit real*8(a-h,o-z)
 
 	dimension densiyzre(1000),densiyzim(1000)
 
         include 'phase_struct.for'
         record /constants/ cs
-c	record /statistics/ st
+	record /statistics/ st
         record /integration_results/ xir
         record /integration/ xi
         record /control_flags/ ifl
 
-c	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
-        complex*16 xint,fyz(4096),xxx(4096)
+	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
 	dimension xxxre(4096),xxxim(4096)
 
 	real*4 fyza_loc(4096),fyzp_loc(4096)
 	real*4 x_loc(4096),dyz_loc(4096)
-c	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
-	
+	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
+
 c	dimension fyza_loc(4096),fyzp_loc(4096)
 c	dimension x_loc(4096),dyz_loc(4096)
 c	dimension xxr(4096),ffyza(4096),ffyzp(4096)
@@ -1937,7 +1932,7 @@ c----------------
 
 	return
 	end
-c-------------------- end simpson ---------------------------	
+	
 
 c-------------------------------------------------------------
 
@@ -2056,7 +2051,7 @@ c
 c	Routine gelegentlich rausschmeissen
 c
 c---------------------------------------------------------------------
-c UF0801 removed unused vars
+
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
 	include 'phase_struct.for'
@@ -2090,6 +2085,12 @@ c common simps1 ist in xir UF 21.12.99
         record /control_flags/ ifl
         record /sources/ src
         record /integration/ xi
+        record /source1/ so1
+        record /source2/ so2
+        record /source3/ so3
+        record /source4/ so4
+        record /source5/ so5
+        record /source6/ so6
         record /apertures/ apr
         record /statistics/ st
         record /map4/ m4
