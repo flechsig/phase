@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <09 Jan 08 08:51:35 flechsig> 
+#  Time-stamp: <17 Jan 08 12:54:49 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -35,8 +35,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
  ../data/phase.dat\
  ../data/phase.hlb\
  ../data/phaseinit.com\
- ../data/phaseuser.com\
- ../data/phaseinit.csh
+ ../data/phaseuser.com
 
 EXTRA_DIST = phase_struct.for $(pkgdata_DATA)
 
