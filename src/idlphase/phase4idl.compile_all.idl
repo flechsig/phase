@@ -11,10 +11,10 @@
 .compile phaSrcWFGauss.pro		
 .compile pha_src4_functions.pro		
 .compile phaplotting.pro		
-.compile rtrace.pro			
+;.compile rtrace.pro			
 
-.compile uwe_phase_beamline__define.pro
-.compile uwe_initbeamline.pro
+;.compile uwe_phase_beamline__define.pro
+;.compile uwe_initbeamline.pro
 
 ;;; MISC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	.compile phabeamcopy.pro		

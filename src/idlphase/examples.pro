@@ -1,6 +1,58 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+pro ttt
+
+print,''
+print,'--------------------------------------------------------------'
+print,'     test - ttt'
+print,'--------------------------------------------------------------'
+
+phainit
+
+!P.Multi=[0,2,2]
+
+
+;  New Gaussian-Beam with 193x67 Points
+;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda)
+ beam=phaSrcWFGauss( 193,  -1  , 1    , 67 ,  0  ,   3  ,  0.2 ,  0   , 20    )
+
+print,'phaSrcWFGauss ...'
+phaIntensitySurface,beam,'Gauss-Source 193x67'
+
+
+;  Change number of gridpoints (don't change borders) , because FFT works fastest 
+;  with a number of gridpoints, which is a product of small prime-factors, eg.: 128=2^7
+;                 nz, ny 
+ phaModGrid,beam,128,128
+
+print,'phaModGrid ...'
+phaIntensitySurface,beam,'Gauss-Source 128x128'
+
+
+;  Propagate the field with the FFT-near-field-propagator
+;                     distance/[mm]
+ phaPropFFTnear, beam,  2000
+
+print,'phaPropFFTnear ...'
+phaIntensitySurface,beam,'FFTnear - 2000mm'
+
+
+;  Now let the beam propagate through a rectangular-slit (64x4) in the center of the beamline 
+;                    nz1 ,nz2 ,ny1 ,ny2
+ phaModSizeCut, beam, 32 , 96 , 62 , 66
+
+print,'phaModSizeCut ...'
+phaIntensitySurface,beam,'Slit (64x4)'
+
+
+
+
+END ; ttt
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 pro example1
 
 ; srcgauss - modgrid - propfftnear - modsizecut - modsizeaddzero - propfftfar
@@ -61,13 +113,14 @@ phaIntensitySurface,beam,'Slit with ZEROS'
  phaPropFFTfar, beam,  15000
 
 print,'phaPropFFTfar ...'
-phaIntensityShade_Surf,beam,'FFTfar - 15000mm'
+;phaIntensityShade_Surf,beam,'FFTfar - 15000mm'
+phaIntensitySurface,beam,'FFTfar - 15000mm'
 
 
 
 print,''
 print,'----------------------------------------------end-of-EXAMPLE1-'
-END
+END ;example1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -93,7 +146,8 @@ phainit
  beam=phaSrcWFGauss( 256,  -1.8  ,   1.8  , 256 ,  -1.8 ,   1.8  ,  0.2 , 5000 ,  20   )
 
 print,'phaSrcWFGauss ...'
-phaIntensityshade_surf,beam,'Gauss-Source '
+;phaIntensityshade_surf,beam,'Gauss-Source '
+phaIntensitySurface,beam,'Gauss-Source '
 
 
 ;  Now let the beam propagate through a rectangular-slit (2x4) in the center of the beamline 
@@ -108,7 +162,8 @@ phaIntensitySurface,beam,'rectangular Slit '
  phaModSizeAddZeros,beam,256,256
 
 print,'phaModSizeAddZeros ...'
-phaIntensityshade_Surf,beam,'Slit with ZEROS'
+;phaIntensityshade_Surf,beam,'Slit with ZEROS'
+phaIntensitySurface,beam,'Slit with ZEROS'
 
 
 ;  Propagate the field with the FFT-near-field-propagator
@@ -116,11 +171,13 @@ phaIntensityshade_Surf,beam,'Slit with ZEROS'
  phaPropFFTnear, beam,  1500
 
 print,'phaPropFFTnear ...'
-phaIntensityshade_surf,beam,'FFTnear - 2000mm'
+;phaIntensityshade_surf,beam,'FFTnear - 2000mm'
+phaIntensitySurface,beam,'FFTfar - 2000mm'
+
 
 
 
 print,''
 print,'----------------------------------------------end-of-EXAMPLE1-'
-END
+END ;example2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
