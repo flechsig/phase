@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <14 Jan 08 17:16:21 flechsig> 
+c$$$ Time-stamp: <17 Jan 08 17:00:07 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -35,20 +35,28 @@ c a trick to have the struct only in the ./phase and find it from opti
 #endif
 
 c**************************************************
-c removed unused vars UF 0801
+
+	record /source1/ so1
+	record /source2/ so2
+	record /source3/ so3
+	record /source4/ so4
+	record /source5/ so5
+	record /source6/ so6
 	record /sources/ src
 
 c comment U.F. 20.1.2000	
 	write(*,*) 'src_ini: source type:',src.isrctype
 
 	if(src.isrctype.eq.2)call src2_ini(src.so2)
+
 	if(src.isrctype.eq.3)call src3_ini(src.so3)
+
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
+
 	if(src.isrctype.eq.6)call src6_ini(src.so6)
 
 	return
 	end
-c------------------end src_ini -------------------------
 
 c**************************************************************
         subroutine psdi(g,src,apr,cs,ifl,ra,sr)
@@ -116,17 +124,17 @@ c**************************************************************
 	include 'phase_struct.for'
 
 c**************************************************
-c UF 0801 removed unused vars
+
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
-c	record /source2/ so2
-c	record /source3/ so3
-c	record /source4/ so4
-c	record /source5/ so5
-c	record /source6/ so6
+	record /source2/ so2
+	record /source3/ so3
+	record /source4/ so4
+	record /source5/ so5
+	record /source6/ so6
 	record /sources/ src
 	record /apertures/ apr
 
@@ -190,7 +198,6 @@ c	endif	! source plane
 
 	return
         end
-c---------------------- end psdi ------------------------------
 
 c*****************************************************************
 	subroutine src1(cs,g,ra,so1,sr,ifl)
@@ -245,7 +252,6 @@ c----------------------------------------------
 
 	return
 	end
-c-------------------- end src1 -------------------------------
 
 c*****************************************************************
 	subroutine src2(cs,g,ra,so2,sr,ifl)
@@ -283,7 +289,6 @@ c-----  27.2.2004
 
 	return
 	end
-c----------------------- end src2---------------------
 
 c*****************************************************************
 	subroutine src3(cs,g,ra,so3,sr,ifl)
@@ -314,7 +319,6 @@ c------- 27.2.2004
 
 	return
 	end
-c----------------------- end src3---------------------
 
 c*****************************************************************
 	subroutine src4(cs,g,ra,so4,sr,ifl)
@@ -322,7 +326,7 @@ c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
 	implicit real*8(a-h,o-z)
-c	complex*16 factor     ! removed unused var UF 0801
+	complex*16 factor
 
 	include 'phase_struct.for'
 
@@ -510,7 +514,6 @@ c------- 27.2.2004
 
 	return
 	end
-c----------------------- end src4---------------------
 
 c*****************************************************************
 	subroutine src5(cs,g,ra,so5,sr,ifl)
@@ -665,7 +668,6 @@ c------- end 19.1.2000 ----------------------------------
 
 	return
 	end
-c----------------------- end src5---------------------
 
 c*****************************************************************
 	subroutine src6(cs,g,ra,so6,sr,ifl)
@@ -707,7 +709,6 @@ c-------- 27.2.2004
 
 	return
 	end
-c----------------------- end src6 ---------------------
 
 c***********************************************************
 	subroutine src2_ini(so2)
@@ -796,10 +797,10 @@ c***********************************************************
 	open(unit=10,name=so4.fsource4a,type='old')
 	read(10,*)so4.ieyrex,so4.ieyrey
 	do j=1,so4.ieyrey
-	   do i=1,so4.ieyrex
-	      k=(j-1)*so4.ieyrex+i
-	      read(10,*)xx(k),yy(k),so4.zeyre(i,j)
-	   enddo
+	do i=1,so4.ieyrex
+	k=(j-1)*so4.ieyrex+i
+	read(10,*)xx(k),yy(k),so4.zeyre(i,j)
+	enddo
 	enddo
 	close(10)
 
@@ -1113,17 +1114,15 @@ c	for ispline.lt.0 dreal(XXX)=amplitude
 c			 dimag(XXX)=phase
 c
 c-----------------------------------------------------------
-c removed unused vars UF 0801
 	implicit real*8(a-h,o-z)
 	include 'phase_struct.for'
 
 	record /source4/ so4
 	record /constants/ cs
 	record /source_results/ sr 
-c	record /control_flags/ ifl
+	record /control_flags/ ifl
 
-	complex*16 fact1
-c       complex*16 carg,cargy,cargz,amp1,amp2,amp3,amp4,fact1
+	complex*16 carg,cargy,cargz,amp1,amp2,amp3,amp4,fact1
 
 c	sign=1.
 c	fact1=sign*cs.sqrtm1
@@ -1235,16 +1234,16 @@ c**********************************************************
 	subroutine source_inter_4d(so6,xwert,ywert,
      &		pxwert,pywert,sr)
 c**********************************************************
-c       comment out unused vars UF 0801
+
 	implicit real*8(a-h,o-z)
 
 	include 'phase_struct.for'
 
 	record /source6/ so6
-c	record /geometryst/ g
-c	record /rayst/ ra 
+	record /geometryst/ g
+	record /rayst/ ra 
 	record /source_results/ sr 
-c	record /control_flags/ ifl
+	record /control_flags/ ifl
 
 	ix1=(xwert-so6.brxmin)/so6.brdx + 1
 	ix2=ix1+1
@@ -1329,6 +1328,12 @@ c-----------------------------------------------------------------
 
 c**************************************************
 
+	record /source1/ so1
+	record /source2/ so2
+	record /source3/ so3
+	record /source4/ so4
+	record /source5/ so5
+	record /source6/ so6
 	record /sources/ src
 
 	f=1.d0
