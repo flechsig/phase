@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <25 Dec 07 11:07:53 flechsig> 
+##  Time-stamp: <17 Jan 08 12:34:23 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -18,6 +18,8 @@
 ## now built/installed separately
 
 EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
+
+bin_SCRIPTS = bin/create-coefficients.pl
 
 SUBDIRS = phase opti extr gui 
 
