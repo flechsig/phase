@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/read_opti_out.pro
 ;  Date      : <04 Jan 08 08:22:27 flechsig> 
-;  Time-stamp: <09 Jan 08 16:17:46 flechsig> 
+;  Time-stamp: <18 Jan 08 17:32:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -15,7 +15,8 @@ pro read_int_file, fname, arr, column=column, all=all, grid=grid, noplot=noplot,
 ;
 ;
 ; PURPOSE:
-;   read out an output file from phaseopti 
+;   read out the a simp or sint file. simp is the integrand and sint
+;   the integral. 
 ;
 ;
 ; CATEGORY:
