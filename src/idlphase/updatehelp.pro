@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/tmp/X/OL/App/lib/X_OL_IDL/updatehelp.pro
 ;  Date      : <04 Aug 05 16:43:01 flechsig> 
-;  Time-stamp: <18 Jan 08 16:59:10 flechsig> 
+;  Time-stamp: <18 Jan 08 17:01:40 flechsig> 
 ;  Author    : Uwe Flechsig, flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -24,7 +24,7 @@
 
 pro updatehelp
 
-pathlist= ['.']
+pathlist= ['']
 
 spawn, 'pwd', start
 
