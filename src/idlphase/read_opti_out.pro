@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/read_opti_out.pro
 ;  Date      : <04 Jan 08 08:22:27 flechsig> 
-;  Time-stamp: <04 Jan 08 12:53:00 flechsig> 
+;  Time-stamp: <18 Jan 08 16:18:32 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -36,7 +36,7 @@ pro read_opti_out, fname, array, column=column, all=all, grid=grid
 ;
 ; KEYWORD PARAMETERS:
 ;   /all      : plot all columns
-;   column: the column to plot, default is 1
+;   column    : the column to plot, default is 1
 ;   /grid     : automatic zone
 ;   /noplot
 ;
