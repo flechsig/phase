@@ -1,6 +1,6 @@
 c $$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
 c $$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c $$$ Time-stamp: <29 Nov 06 10:26:53 flechsig> 
+c $$$ Time-stamp: <17 Jan 08 17:38:56 flechsig> 
 c $$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c $$$
 c $$$ $Source$ 
@@ -381,6 +381,7 @@ c----------------------------------------------------------
         real*8 ymin,ymax,zmin,zmax,psd(4,2,4096)
         real*4 minx,maxx,tmp,x,y,dx
 	character*(*) titel,metaname
+        character*(9),subtitle
         integer ifile,psfile,ii,i,id,ix,iy,iz,istat
         
         write(*,*)'hplotpssimf called (for)'
@@ -406,6 +407,7 @@ c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=6666)
  6666   write(*,*)'hplotpssimf: error open file: ',metaname
  6667   continue
 c buchen fuellen,  10.2.output in mrad daher 1000*
+        subtitle= 'dy (mrad)'
         do ii=1,4
            if(ii.eq.4)then
               minx= sngl(zmin)*1000
@@ -424,10 +426,10 @@ c buchen fuellen,  10.2.output in mrad daher 1000*
               minx=maxx
               maxx=tmp
            endif
-           
+           if (ii.eq.4)subtitle='dz (mrad)'
            id=1000+ii
-           write(*,*)'call hbook1(',id,',mrad,',ix,minx,maxx,',0.)' 
-           call hbook1(id,'mrad',ix,minx,maxx,0.)
+           write(*,*)'call hbook1(',id,subtitle,ix,minx,maxx,',0.)' 
+           call hbook1(id,subtitle,ix,minx,maxx,0.)
 
 c ---------- fuellen --------------------------------
            do i=1,ix
