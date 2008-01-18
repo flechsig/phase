@@ -42,6 +42,7 @@ idldir= $(prefix)/idl
 
 idl_DATA  = help.html \
 	    read_extr_out.pro \
+	    read_int_file.pro \
 	    read_opti_out.pro
 
 ## phase_structures_256.pro \
