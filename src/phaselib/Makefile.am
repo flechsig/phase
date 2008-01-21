@@ -31,7 +31,8 @@ lengthd411.for lengthd412.for  \
 lengthd42.for  lengthd43.for   \
 p_m_4.for  \
 zernike_nl_60.for zernike_n_60.for \
-dfpl1_uf.F  dfpl2_uf.F dfpl1a.f 
+dfpl1_uf.F  dfpl2_uf.F dfpl1a.f \
+ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
 ## end common sources
 
 ## we use an AM_CONDITIONAL to switch library names for different compilers

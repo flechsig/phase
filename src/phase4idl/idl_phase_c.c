@@ -9,21 +9,14 @@
 //			 var1,var2,..., $
 //                       /I_VALUE,/UNLOAD,/AUTO_GLUE,/IGNORE_EXISTING_GLUE,/CDECL)
 
-//#define pi 3.14159265358979323846
-//#define izm 256   
-//#define iym 256
-//#define Nmax 256
-//#define MaxHarmonics 256  --> steht in "hhg_def.h"
 
-// phaselib: /home/leitner/phase4idl/phase/phase/share/phase/libphase.a
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
 #include <phase_struct.h>
-//#include "phase/phase/torstenIDLinclude.c"
-//#include "include/hhg_def.h"
 
 
 //#include "include/pha_functions.h"
@@ -56,31 +49,37 @@ You can learn more about the nuances of printf on a UNIX machine by typing man 3
 // */
 
 
- /* 
-int cproto_array_test (long N, double A[][], double B[N][N])
-{ 
+
+
+
+// Testfunction from 	libphase*.so0 
+// in file: 		phlib.for
+//
+// subroutine 	extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)
+//
+int test_libphase_access()
+{
+  double xmap35[35][35] ;
+  double ypc1[5][5][5][5] ;  
+  double zpc1[5][5][5][5] ;  
+  double dypc[5][5][5][5] ;  
+  double dzpc[5][5][5][5] ;  
+  int    iord ;
+  
+  extern void extractmap35_(); // Declare The Fortran Routine 
+  
+  extractmap35_(xmap35,ypc1,zpc1,dypc,dzpc,iord);
+  		// Call The Fortran Routine  
     
   return (0);
 }
 // */
 
 
- /*
-int hhg_SrcWFGauss (struct source4 *gb4, int *ianzz, double *zmin, double *zmax, 
-                                         int *ianzy, double *ymin, double *ymax, 
-				double *w0[MaxHarmonics], double *deltax[MaxHarmonics], double *xlambda)
-{
- // for ( j=1 ; j <= MaxHarmonics ; j++) {   }; 
-}
-*/
- /*
-int phaInitPHASEset(struct PHASEset *x)
-{
-  InitPHASE(x);
-  
-return 0;
-}
-// */
+
+
+
+
 
 // /* *** Fortran-Access ***
 int phaSrcWFGauss (struct source4 *gb4, int *ianzz, double *zmin, double *zmax, 

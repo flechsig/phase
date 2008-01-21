@@ -7,29 +7,31 @@
 ##
 
 
+
+
+
 ## we use an AM_CONDITIONAL to switch library names for different compilers
-PHASELIB = 
+HASELIB = 
 if WANT_ABSOFT
    PHASELIB += lphaseabsoft
 endif
 if WANT_IFC
    PHASELIB += lphaseifc
-##   AM_FFLAGS        = -O0                ## no optimization
+#   AM_FFLAGS        = -O0                ## no optimization
 endif
 if WANT_PORTLAND
    PHASELIB += lphaseportland
 endif
 
 
+lib_LTLIBRARIES = libphase4idl.la
 
-
-COMMONSOURCES= idl_phase_c.c \
+libphase4idl_la_SOURCES   = \
+               idl_phase_c.c \
                pha_Drift.f \
                pha_helper_functions.f \
-               pha_SrcWFGauss.f \
-               ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
-
-
+               pha_SrcWFGauss.f 
+##               ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
 ## benchmark.f \
 ## pha_Drift_1024.f \
 ## pha_Drift_256.f \
@@ -37,14 +39,11 @@ COMMONSOURCES= idl_phase_c.c \
 ## phase4idl_fortran_master_standalone.f \
 ## test_phase.f \
 ## test_phase_gaussetc.f \
+## ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
 
-## end common sources
 
-## we use an AM_CONDITIONAL to switch library names for different compilers
-##lib_LTLIBRARIES = 
-lib_LTLIBRARIES = libphase4idl.la
 
-libphase4idl_la_SOURCES   = $(COMMONSOURCES)
+
 
 # libphase4idl_la_LIBADD = $(libdir)/@LIBPHASE@
 # libphase4idl_LDADD = $(libdir)/@LIBPHASE@
@@ -54,11 +53,10 @@ libphase4idl_la_SOURCES   = $(COMMONSOURCES)
 ## libphaseabsoft_la_LDFLAGS =  -version-info 3:12:1 
 ## libphaseifc_la_LDFLAGS =  -version-info 3:12:1
 
-AM_LDFLAGS = @FLIBS@ 
-#@LIBPHASE@
+AM_LDFLAGS = @FLIBS@ -L$(libdir) -$(PHASELIB)
 
+## @LIBPHASE@
 ## L$(libdir) -lphaseifc
-
 ## -$(PHASELIB)
 
 ## we want the c- Linker and not the fortran linker
