@@ -22,13 +22,9 @@ EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
 bin_SCRIPTS = bin/create-coefficients.pl bin/phaseinit.csh  \
 	      bin/phaseinit.sh           bin/scale-wave-output.pl
 
-SUBDIRS = phase opti extr gui phase4idl 
+SUBDIRS = phase opti extr gui phase4idl idlphase
 
 ## UF baselib erst einfuegen wenn es wirklich geht
-
-## UF erst einfuegen wenn make in phase4idl funktioniert
-## phase4idl
-
 ## baselib 
 
 ## end /afs/psi.ch/user/f/flechsig/phase/src/Makefile.am

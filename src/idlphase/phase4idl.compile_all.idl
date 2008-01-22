@@ -34,6 +34,6 @@
 ;;; EXAMPLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .compile examples.pro
 
-.compile cpall.pro
+
 
 
