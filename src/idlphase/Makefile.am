@@ -15,13 +15,16 @@
 ## define the directory where phase related idl functions should be installed 
 ## this directory should be in your idl search path
 
-idldir   = $(prefix)/phase4idl
+idldir   = $(prefix)/idl
+
+idl_SCRIPTS = \
+       phase4idl.sh \
+       testphase4idl.sh
 
 idl_DATA  = \
-            help.html \
-	    read_extr_out.pro \
-	    read_int_file.pro \
-	    read_opti_out.pro \
+            read_extr_out.pro \
+            read_int_file.pro \
+            read_opti_out.pro \
             benchmark.pro \
             phabeamload.pro \
             pha_src4_functions.pro \
@@ -42,10 +45,12 @@ idl_DATA  = \
             uwe_initbeamline.pro \
             uwe_README \
             phase4idl.compile_all.idl \
-            phase4idl.sh 
+            phase4idl.compile-test-exit.idl
 
 ## phase_structures_256.pro \
 ## phase_structures_1024.pro \
+
+## idl_HTML = help.html
 
 
 ##

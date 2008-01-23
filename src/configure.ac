@@ -67,6 +67,7 @@ case "$F77" in
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       AC_SUBST([FFLAGS],"-vms -w95 -132")
       libphasename=libphaseifc
+	libphaselinkname=lphaseifc
       wantifc=true
       wantabsoft=false
       wantportland=false;;
@@ -80,6 +81,7 @@ case "$F77" in
          AC_SUBST([FFLAGS],"-vms -w95 -132")
       fi	 
       libphasename=libphaseifc
+	libphaselinkname=lphaseifc
       wantifc=true
       wantabsoft=false
       wantportland=false;;
@@ -91,6 +93,7 @@ case "$F77" in
 ## FFLAGS -silent: no warnings ??
 ##        -w     : no warnings
       libphasename=libphaseportland
+	libphaselinkname=lphaseportland
       wantifc=false
       wantabsoft=false
       wantportland=true;;
@@ -99,6 +102,7 @@ case "$F77" in
       AC_MSG_RESULT(assume Absoft f77)
       AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
       libphasename=libphaseabsoft
+	libphaselinkname=lphaseabsoft
       wantifc=false
       wantportland=false
       wantabsoft=true
@@ -261,10 +265,15 @@ AC_SUBST([LIBPHASE], "${libphasename}.${libextension}")
 AC_MSG_NOTICE(search if library ${LIBPHASE} is installed)
 AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}"], 
    [have_libphase="yes"], [have_libphase="no"])
+dnl Linkeroption to build "lphase4idl"
+AC_SUBST([LINK_LIBPHASE], "-L${prefixlib} -${libphaselinkname}")
 
+   
+   
+   
 dnl IDL
-dnl idldir=${prefix}/share/phase/idl"
-dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/share/phase/idl", "xxx")
+dnl idldir=${prefix}/idl"
+dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
 dnl output files 
 AC_OUTPUT(Makefile phase/Makefile \
@@ -295,7 +304,20 @@ echo "===================================================================="
 echo "summary: "
 echo "fortran compiler: ${F77}"
 echo "phaselib        : ${LIBPHASE}"
+echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
 echo "debug code      : ${enable_debug}"
 echo "cernlib:        : ${cernlib}"
 echo "prefix:         : ${prefix}"
+
+dnl., TORSTEN, einige Dinge um configure zu verstehen ...
+dnl., echo " "
+dnl., echo " ttttttttttssssssssssssssssssttttttttttttttttttttt"
+dnl., echo " "
+dnl., echo " LIBPHASE      : ${LIBPHASE} "
+dnl., echo " LINK_LIBPHASE : ${LINK_LIBPHASE} "
+dnl., echo " FLIBS         : ${FLIBS} "
+dnl., echo " "
+dnl., echo " ttttttttttssssssssssssssssssttttttttttttttttttttt"
+
+echo " "
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac

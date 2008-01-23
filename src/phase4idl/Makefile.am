@@ -13,7 +13,7 @@ libphase4idl_la_SOURCES   = \
                pha_Drift.f \
                pha_helper_functions.f \
                pha_SrcWFGauss.f 
-##               ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
+
 ## benchmark.f \
 ## pha_Drift_1024.f \
 ## pha_Drift_256.f \
@@ -27,12 +27,14 @@ libphase4idl_la_SOURCES   = \
 
 
 
-AM_LDFLAGS = @FLIBS@ @LIBPHASE@
-
+AM_LDFLAGS = @FLIBS@ @LINK_LIBPHASE@
 
 ## we want the c- Linker and not the fortran linker
 libphase4idl_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -L/home/leitner/cvs/lib -lphaseifc -o $@
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+##	$(AM_LDFLAGS) $(LDFLAGS) -L$(libdir) @LIBPHASE@ -o $@
+##	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+## 	$(AM_LDFLAGS) $(LDFLAGS) -L/home/leitner/cvs/lib -lphaseifc -o $@
 
 # end
 
