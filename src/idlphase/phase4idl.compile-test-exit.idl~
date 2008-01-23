@@ -1,0 +1,52 @@
+; Compiles all of the *.pro files included into the phase4idl project at the moment
+
+;;; Used C-Structures ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.compile phase_structures.pro		
+
+;;; INITIALIZATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.compile phainit.pro
+
+;;; The PROGRAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.compile phaProp.pro			
+.compile phaSrcWFGauss.pro		
+.compile pha_src4_functions.pro		
+.compile phaplotting.pro		
+;.compile rtrace.pro			
+
+;.compile uwe_phase_beamline__define.pro
+;.compile uwe_initbeamline.pro
+
+;;; MISC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	.compile phabeamcopy.pro		
+;	.compile phabeamdiff.pro		
+;	.compile phabeamload.pro		
+
+;	.compile phase_structures_1024.pro	
+;	.compile phase_structures_256.pro	
+;	.compile benchmark.pro	
+
+;	.compile test.pro			
+;	.compile c_test.pro			
+;	.compile ffttest.pro			
+;	.compile object-tests.pro		
+
+
+;;; EXAMPLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.compile examples.pro
+
+;;;; INITIALY RUN AN EXAMPLE
+ttt
+
+;;; wait for key pressed
+tmp=''
+read,tmp,prompt='Press enter to resume ... '
+
+;;; leave idl and return to shell
+exit
+
+
+
+
+
+
+
