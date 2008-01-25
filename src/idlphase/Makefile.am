@@ -21,7 +21,7 @@ idl_SCRIPTS = \
        phase4idl.sh \
        testphase4idl.sh
 
-idl_DATA  = \
+idl_DATA  = help.html \
             read_extr_out.pro \
             read_int_file.pro \
             read_opti_out.pro \
@@ -49,6 +49,11 @@ idl_DATA  = \
 
 ## phase_structures_256.pro \
 ## phase_structures_1024.pro \
+
+## target to automatically update the documentation 
+## before installation (needs idl)
+install-data-local:
+	./updateidlphasehelp.csh
 
 ## idl_HTML = help.html
 
