@@ -1,4 +1,6 @@
-/* idl_phase_c.c */
+// (C) 2007/2008: Torsten.Leitner@email.de
+
+// idl_phase_c.c 
 
 /* This file contains the wrapper routines called by IDL */
 
