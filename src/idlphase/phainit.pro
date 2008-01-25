@@ -14,21 +14,19 @@ PRO phainit
 
 
 
-;; Uwe's Vorschlag: Nach PHASE_HOME pfad suchen
-defsysv, '!phalib','libphase4idl.so'
 defsysv, '!phalib', exist=exist  ;; check if  defined
 ;; defaults if not defined
 if (exist eq 0) then begin
-        phasehome=getenv('PHASE_HOME')
+        phasehome=getenv('PHASE_HOME')	; get phasepath
         if (phasehome eq '' ) then phasehome= '/usr/local/phase'
-        defsysv, '!phalib', phasehome+'/lib'
-        phaselibs= expand_path('+'+!phalib)
-        !path=phaselibs+':'+!path
+        phaselibs= expand_path('+'+phasehome+'/lib')  ; path erweitern
+        !path=phaselibs+':'+!path				; path erweitern
+	  defsysv, '!phalib', 'libphase4idl.so'		; zeiger auf libphase4idl.so definieren
 endif
 
-
-defsysv,'!phaseidllib',!phalib
-defsysv,'!phase4idllib',!phalib
+; !phalib aliase
+defsysv, '!phaseidllib',!phalib
+defsysv, '!phase4idllib',!phalib
 
 
 ; Initialize Phase-Structures
@@ -36,3 +34,5 @@ defsysv,'!phase4idllib',!phalib
 init_phase_structures
 
 END
+
+
