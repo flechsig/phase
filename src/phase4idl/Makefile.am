@@ -27,7 +27,8 @@ libphase4idl_la_SOURCES   = \
 
 
 
-AM_LDFLAGS = @FLIBS@ @LINK_LIBPHASE@
+AM_LDFLAGS = @FLIBS@ @LINK_LIBPHASE@ -lphase4idl.tmp
+# libphase4idl.tmp.so liegt im selben pfad wie LIBPHASE ...
 
 ## we want the c- Linker and not the fortran linker
 libphase4idl_la_LINK = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) \
