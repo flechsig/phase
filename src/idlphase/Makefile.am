@@ -21,7 +21,7 @@ idl_SCRIPTS = \
        phase4idl.sh \
        testphase4idl.sh
 
-idl_DATA  = help.html \
+idl_DATA  = \
             read_extr_out.pro \
             read_int_file.pro \
             read_opti_out.pro \
@@ -47,6 +47,7 @@ idl_DATA  = help.html \
             phase4idl.compile_all.idl \
             phase4idl.compile-test-exit.idl
 
+## help.html
 ## phase_structures_256.pro \
 ## phase_structures_1024.pro \
 
