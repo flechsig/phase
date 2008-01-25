@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <15 Jan 08 11:19:02 flechsig> 
+#  Time-stamp: <25 Jan 08 12:11:27 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -32,7 +32,33 @@ lengthd42.for  lengthd43.for   \
 p_m_4.for  \
 zernike_nl_60.for zernike_n_60.for \
 dfpl1_uf.F  dfpl2_uf.F dfpl1a.f \
-../phase4idl/ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
+../phase4idl/ATnT_port3_driftroutines/drift_routines_02.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_03.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_04.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_05.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_06.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_07.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_08.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_09.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_10.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_12.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_13.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_14.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_15.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_16.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_17.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_18_no_machine_consts.f \
+../phase4idl/ATnT_port3_driftroutines/port/s1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/s2mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/s3mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/r1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/d1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/i1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/s88fmt.f 
+
+## funktioniert so nicht UF -- routinen muss man einzeln dazulinken 
+## oder im include den relativen pfad angeben startend von phaselib
+## ../phase4idl/ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
 ## end common sources
 
 ## we use an AM_CONDITIONAL to switch library names for different compilers
