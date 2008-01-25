@@ -279,7 +279,8 @@ dnl output files
 AC_OUTPUT(Makefile phase/Makefile \
           opti/Makefile extr/Makefile gui/Makefile \
 	  baselib/Makefile phaselib/Makefile phaseidl/Makefile \
-	  misalignment/Makefile phase4idl/Makefile idlphase/Makefile)
+	  misalignment/Makefile phase4idl/Makefile \
+	  idlphase/Makefile tmplib/Makefile)
 
 dnl print some messages
 echo ""
@@ -304,7 +305,7 @@ echo "===================================================================="
 echo "summary: "
 echo "fortran compiler: ${F77}"
 echo "phaselib        : ${LIBPHASE}"
-echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
+dnl echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
 echo "debug code      : ${enable_debug}"
 echo "cernlib:        : ${cernlib}"
 echo "prefix:         : ${prefix}"
