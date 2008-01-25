@@ -18,13 +18,18 @@
 idldir   = $(prefix)/idl
 
 idl_SCRIPTS = \
-       phase4idl.sh \
-       testphase4idl.sh
+            phase4idl.sh \
+            testphase4idl.sh
 
-idl_DATA  = \
-            read_extr_out.pro \
+## all idl scripts with a doc header
+idl_with_doc_header = \
+	    read_extr_out.pro \
             read_int_file.pro \
-            read_opti_out.pro \
+            read_opti_out.pro 
+
+## everything 2b installed in idldir
+idl_DATA  = help.html \
+            $(idl_with_doc_header) \
             benchmark.pro \
             phabeamload.pro \
             pha_src4_functions.pro \
@@ -43,18 +48,19 @@ idl_DATA  = \
             phase_structures.pro \
             uwe_phase_beamline__define.pro \
             uwe_initbeamline.pro \
-            uwe_README \
             phase4idl.compile_all.idl \
             phase4idl.compile-test-exit.idl
 
-## help.html
+help.html: $(idl_with_doc_header)
+	./updateidlphasehelp.csh	
+
 ## phase_structures_256.pro \
 ## phase_structures_1024.pro \
 
 ## target to automatically update the documentation 
 ## before installation (needs idl)
-install-data-local:
-	./updateidlphasehelp.csh
+##install-data-local:
+##	./updateidlphasehelp.csh
 
 ## idl_HTML = help.html
 
