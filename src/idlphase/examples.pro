@@ -1,4 +1,33 @@
 
+pro testbeamload
+
+beam={source4}
+
+LoadEzReal,beam,'ezre_gb_8000.dat'
+
+LoadEzImag,beam,'ezim_gb_8000.dat'
+
+phaIntensitySurface,beam,'TestBeamLoad'
+
+END
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pro testreadresults
+
+beam={source4}
+name='SGM.RESULT'
+
+LoadEzReal,beam,name+'-ezrec'
+LoadEzImag,beam,name+'-ezimc'
+
+LoadEyReal,beam,name+'-eyrec'
+LoadEyImag,beam,name+'-eyimc'
+
+phaIntensitySurface,beam,'TestBeamLoad'
+
+END
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 pro ttt

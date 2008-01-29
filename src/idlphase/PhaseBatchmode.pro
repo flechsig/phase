@@ -14,7 +14,12 @@ IF np LT 1  THEN BEGIN
    cmode=1
 ENDIF
 
-PhaseBatchMode, 'SGM.PHASE', 'SGM.RESULT', cmode
+
+inPHASEfile = 'SGM.PHASE'
+ResultFile  = 'SGM.RESULT'
+
+
+PhaseBatchMode, inPHASEfile , ResultFile, cmode
 
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -46,10 +51,10 @@ shellcommand='phase -b'$
 ;print,shellcommand
 ;WaitForEnter
 
-spawn,shellcommand,shelloutput
+spawn,shellcommand ;,shelloutput
 
-shelloutput='phase : '+shelloutput
-print,shelloutput
+;shelloutput='phase : '+shelloutput
+;print,shelloutput
 
 
 END

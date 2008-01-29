@@ -48,7 +48,10 @@ idl_DATA  = help.html \
             phase_structures.pro \
             uwe_phase_beamline__define.pro \
             uwe_initbeamline.pro \
+		updatehelp.pro \
             PhaseBatchmode.pro \
+		SharedLibAcessTests.pro \
+		UsefullTools.pro \
             phase4idl.compile_all.idl \
             phase4idl.compile-test-exit.idl
 

@@ -16,6 +16,8 @@
 .compile phaplotting.pro		
 ;.compile rtrace.pro			
 
+.compile ReadPhaseResults.pro
+
 
 .compile PhaseBatchmode.pro
 
