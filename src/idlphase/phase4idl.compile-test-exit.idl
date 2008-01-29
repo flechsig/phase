@@ -6,12 +6,20 @@
 ;;; INITIALIZATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .compile phainit.pro
 
+;;; Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.compile UsefullTools.pro
+
 ;;; The PROGRAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .compile phaProp.pro			
 .compile phaSrcWFGauss.pro		
 .compile pha_src4_functions.pro		
 .compile phaplotting.pro		
 ;.compile rtrace.pro			
+
+
+.compile PhaseBatchmode.pro
+
+.compile SharedLibAcessTests.pro
 
 ;.compile uwe_phase_beamline__define.pro
 ;.compile uwe_initbeamline.pro

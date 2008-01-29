@@ -23,7 +23,7 @@ idl_SCRIPTS = \
 
 ## all idl scripts with a doc header
 idl_with_doc_header = \
-	    read_extr_out.pro \
+	      read_extr_out.pro \
             read_int_file.pro \
             read_opti_out.pro 
 
@@ -48,9 +48,12 @@ idl_DATA  = help.html \
             phase_structures.pro \
             uwe_phase_beamline__define.pro \
             uwe_initbeamline.pro \
+            PhaseBatchmode.pro \
             phase4idl.compile_all.idl \
             phase4idl.compile-test-exit.idl
 
+
+###
 help.html: $(idl_with_doc_header)
 	./updateidlphasehelp.csh	
 
