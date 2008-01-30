@@ -122,3 +122,76 @@ isurface,(beam.zezim(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name
 
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pro phaRealSurface_Ey,beam,name
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+surface,(beam.zezre(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+
+end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+pro phaRealShade_Surf_Ey,beam,name
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+shade_surf,(beam.zeyre(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+
+end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;Phase 3D-Surface-Plot of Real Part
+pro iphaRealSurface_Ey,beam,name
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+isurface,(beam.zeyre(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+
+end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pro phaImagSurface_Ey,beam,name
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+surface,(beam.zeyim(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+
+end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pro phaImagShade_Surf_Ey,beam,name
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+shade_surf,(beam.zeyim(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+
+end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Phase 3D-Surface-Plot of Immaginary Part
+pro iphaImagSurface_Ey,beam,name
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+isurface,(beam.zeyim(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+
+end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -60,3 +60,35 @@ spawn,shellcommand ;,shelloutput
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+pro PhaseCopyFieldFiles, src, dest
+
+; infiles nach tmpfiles kopieren
+spawn,'cp -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
+spawn,'cp -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'
+spawn,'cp -f --reply=yes '+src+'-ezrec '+dest+'-ezrec'
+spawn,'cp -f --reply=yes '+src+'-ezimc '+dest+'-ezimc'
+
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+pro PhaseMoveFieldFiles, src, dest
+
+; tmpfiles nach outfiles kopieren
+spawn,'mv -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
+spawn,'mv -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'
+spawn,'mv -f --reply=yes '+src+'-ezrec '+dest+'-ezrec'
+spawn,'mv -f --reply=yes '+src+'-ezimc '+dest+'-ezimc'
+                         
+                         
+END                      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+

@@ -17,6 +17,7 @@
 ;.compile rtrace.pro			
 
 .compile ReadPhaseResults.pro
+.compile SavePhaseResults.pro
 
 
 .compile PhaseBatchmode.pro

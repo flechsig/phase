@@ -14,7 +14,7 @@
 #endif 
 
 #include <stdio.h>                    /* For printf and so on. */
-#include <stdlib.h>	    	      /* needed for fopen      */
+#include <stdlib.h>                   /* needed for fopen      */
 #include <string.h>
 #include <math.h>
 #include <time.h>
@@ -58,7 +58,8 @@ int main(argc, argv)
     
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
-    PI= 4.0* atan(1.0);
+    
+    PI = 4.0* atan(1.0);
 
     Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 

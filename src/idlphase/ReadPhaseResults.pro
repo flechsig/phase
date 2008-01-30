@@ -2,7 +2,27 @@
 
 ;; filename:  ReadPhaseResults.pro
 
-pro LoadEzReal, beam, fname
+PRO LoadPhaseResults, beam, MainFileName
+
+np=n_params()
+
+if np ne 2 then begin
+	print, 'Wrong Number of arguments ...'
+	print, 'Usage: LoadPhaseResults, beam[source4], MainFileName[string] '
+	print, ''
+	return
+endif
+
+LoadEzReal,beam,MainFileName+'-ezrec'
+LoadEzImag,beam,MainFileName+'-ezimc'
+LoadEyReal,beam,MainFileName+'-eyrec'
+LoadEyImag,beam,MainFileName+'-eyimc'
+
+END
+
+
+
+PRO LoadEzReal, beam, fname
 
 ; init source4:  beam = {source4}
 
@@ -38,26 +58,12 @@ for iy=0, ny-1 do begin
 	endfor    
 endfor
 
-;	xeyremin:dblzero , xeyremax:dblzero , dxeyre:dblzero ,$
-;	xeyimmin:dblzero , xeyimmax:dblzero , dxeyim:dblzero ,$
-;	yeyremin:dblzero , yeyremax:dblzero , dyeyre:dblzero ,$
-;	yeyimmin:dblzero , yeyimmax:dblzero , dyeyim:dblzero ,$
-;	zeyre:dblarr(256,256) , zeyim:dblarr(256,256) ,$
-;	xezremin:dblzero , xezremax:dblzero , dxezre:dblzero , $
-;	xezimmin:dblzero , xezimmax:dblzero , dxezim:dblzero , $
-;	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
-;	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
-;	zezre:dblarr(256,256) , zezim:dblarr(256,256) ,$
-;	ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
-;     iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero   $
-
-
-;return
-end
+END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-pro LoadEzImag, beam, fname
+PRO LoadEzImag, beam, fname
 
 ; init source4:  beam = {source4}
 
@@ -93,26 +99,11 @@ for iy=0, ny-1 do begin
 	endfor    
 endfor
 
-;	xeyremin:dblzero , xeyremax:dblzero , dxeyre:dblzero ,$
-;	xeyimmin:dblzero , xeyimmax:dblzero , dxeyim:dblzero ,$
-;	yeyremin:dblzero , yeyremax:dblzero , dyeyre:dblzero ,$
-;	yeyimmin:dblzero , yeyimmax:dblzero , dyeyim:dblzero ,$
-;	zeyre:dblarr(256,256) , zeyim:dblarr(256,256) ,$
-;	xezremin:dblzero , xezremax:dblzero , dxezre:dblzero , $
-;	xezimmin:dblzero , xezimmax:dblzero , dxezim:dblzero , $
-;	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
-;	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
-;	zezre:dblarr(256,256) , zezim:dblarr(256,256) ,$
-;	ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
-;     iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero   $
-
-
-;return
-end
+END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-pro LoadeyReal, beam, fname
+PRO LoadEyReal, beam, fname
 
 ; init source4:  beam = {source4}
 
@@ -148,26 +139,12 @@ for iy=0, ny-1 do begin
 	endfor    
 endfor
 
-;	xeyremin:dblzero , xeyremax:dblzero , dxeyre:dblzero ,$
-;	xeyimmin:dblzero , xeyimmax:dblzero , dxeyim:dblzero ,$
-;	yeyremin:dblzero , yeyremax:dblzero , dyeyre:dblzero ,$
-;	yeyimmin:dblzero , yeyimmax:dblzero , dyeyim:dblzero ,$
-;	zeyre:dblarr(256,256) , zeyim:dblarr(256,256) ,$
-;	xezremin:dblzero , xezremax:dblzero , dxezre:dblzero , $
-;	xezimmin:dblzero , xezimmax:dblzero , dxezim:dblzero , $
-;	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
-;	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
-;	zezre:dblarr(256,256) , zezim:dblarr(256,256) ,$
-;	ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
-;     iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero   $
 
-
-;return
-end
+END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-pro LoadeyImag, beam, fname
+PRO LoadEyImag, beam, fname
 
 ; init source4:  beam = {source4}
 
@@ -203,20 +180,6 @@ for iy=0, ny-1 do begin
 	endfor    
 endfor
 
-;	xeyremin:dblzero , xeyremax:dblzero , dxeyre:dblzero ,$
-;	xeyimmin:dblzero , xeyimmax:dblzero , dxeyim:dblzero ,$
-;	yeyremin:dblzero , yeyremax:dblzero , dyeyre:dblzero ,$
-;	yeyimmin:dblzero , yeyimmax:dblzero , dyeyim:dblzero ,$
-;	zeyre:dblarr(256,256) , zeyim:dblarr(256,256) ,$
-;	xezremin:dblzero , xezremax:dblzero , dxezre:dblzero , $
-;	xezimmin:dblzero , xezimmax:dblzero , dxezim:dblzero , $
-;	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
-;	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
-;	zezre:dblarr(256,256) , zezim:dblarr(256,256) ,$
-;	ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
-;     iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero   $
 
-
-;return
-end
+END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
