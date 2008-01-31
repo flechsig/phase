@@ -136,7 +136,7 @@ pro phaRealSurface_Ey,beam,name
 y=get_pha_src4_axis_y(beam)
 z=get_pha_src4_axis_z(beam)
 
-surface,(beam.zezre(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
+surface,(beam.zeyre(0:beam.ieyrex-1,0:beam.ieyrey-1)),z,y,title=name
 
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
