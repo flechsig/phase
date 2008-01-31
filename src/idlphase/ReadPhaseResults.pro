@@ -46,8 +46,10 @@ beam.yezremax = data(1,rows-1)
 beam.dyezre   = (beam.yezremax-beam.yezremin)/(beam.iezrey-1)
 
 
-print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
-print,'x/y-min/max ',beam.xezremin,beam.yezremin,beam.xezremax,beam.yezremax
+;print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
+;print,'x/y-min/max ',beam.xezremin,beam.yezremin,beam.xezremax,beam.yezremax
+print,'Read EzReal from : ',fname
+
 
 
 j=0
@@ -87,9 +89,10 @@ beam.yezimmax = data(1,rows-1)
 beam.dyezim   = (beam.yezimmax-beam.yezimmin)/(beam.iezimy-1)
 
 
-print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
-print,'x/y-min/max ',beam.xezimmin,beam.yezimmin,beam.xezimmax,beam.yezimmax
+;print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
+;print,'x/y-min/max ',beam.xezimmin,beam.yezimmin,beam.xezimmax,beam.yezimmax
 
+print,'Read EzImag from : ',fname
 
 j=0
 for iy=0, ny-1 do begin
@@ -127,9 +130,9 @@ beam.yeyremax = data(1,rows-1)
 beam.dyeyre   = (beam.yeyremax-beam.yeyremin)/(beam.ieyrey-1)
 
 
-print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
-print,'x/y-min/max ',beam.xeyremin,beam.yeyremin,beam.xeyremax,beam.yeyremax
-
+;print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
+;print,'x/y-min/max ',beam.xeyremin,beam.yeyremin,beam.xeyremax,beam.yeyremax
+print,'Read EyReal from : ',fname
 
 j=0
 for iy=0, ny-1 do begin
@@ -168,9 +171,9 @@ beam.yeyimmax = data(1,rows-1)
 beam.dyeyim   = (beam.yeyimmax-beam.yeyimmin)/(beam.ieyimy-1)
 
 
-print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
-print,'x/y-min/max ',beam.xeyimmin,beam.yeyimmin,beam.xeyimmax,beam.yeyimmax
-
+;print,'nx ',nx,' ny ',ny,' cols ',cols,' rows ',rows
+;print,'x/y-min/max ',beam.xeyimmin,beam.yeyimmin,beam.xeyimmax,beam.yeyimmax
+print,'Read EyImag from : ',fname
 
 j=0
 for iy=0, ny-1 do begin

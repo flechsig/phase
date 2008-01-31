@@ -2,7 +2,7 @@
 ; filename:   BatchModeExample.idl
 
 
-!P.Multi=[0,2,3]
+!P.Multi=[0,2,2]
 
 
 ; structures und sharedlib etc definieren
@@ -53,6 +53,10 @@ LoadPhaseResults, beam, tmpfile
 
 ; plotting
 phaIntensitysurface,beam,'Zwischen-Ergebnis vor FFT'
+
+;phaRealsurface_Ez,beam,'Zwischen-Ergebnis vor FFT'
+;phaRealsurface_Ey,beam,'Zwischen-Ergebnis vor FFT'
+
 
 
 ;  Now let the beam propagate through a rectangular-slit (64x4) in the center of the beamline 
