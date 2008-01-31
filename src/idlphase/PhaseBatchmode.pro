@@ -3,29 +3,6 @@
 ;
 
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-pro bb, cmode
-
-;; test fuer die eigentlichen Batchmode-Routinen
-
-np=n_params()
-IF np LT 1  THEN BEGIN 
-   print,' Using standard calculation mode: 1 - ray trace'
-   cmode=1
-ENDIF
-
-
-inPHASEfile = 'SGM.PHASE'
-ResultFile  = 'SGM.RESULT'
-
-
-PhaseBatchMode, inPHASEfile , ResultFile, cmode
-
-END
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pro PhaseBatchMode, inPHASEfile, ResultFile, cmode

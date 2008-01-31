@@ -1,7 +1,7 @@
 
 ; filename:   BatchModeExample.idl
 
-
+; PlotWindow Dimensions : !P.Multi(0,x,y) ergibt x*y unterfenster
 !P.Multi=[0,2,2]
 
 
@@ -18,10 +18,10 @@ cmode=3
 ; versch Dateinamen:
 beamlinefile='SGM.IDL.PHASE'
 ; enthaelt folgende dateinamen als arbeitsnamen:
-;phase.tmp-eyrec
-;phase.tmp-eyimc
-;phase.tmp-ezrec
-;phase.tmp-ezimc
+;phase.field.tmp-eyrec
+;phase.field.tmp-eyimc
+;phase.field.tmp-ezrec
+;phase.field.tmp-ezimc
 tmpfile='phase.field.tmp'
 
 infile  ='gb_8000' ; -eyrec, etc wird intern angehaengt
@@ -36,7 +36,7 @@ PhaseCopyFieldFiles, infile, tmpfile
 ; oder erstelle eigenen input:
 ;  New Gaussian-Beam with 193x67 Points
 ;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda)
-beam=phaSrcWFGauss( 128,  -1  , 1    , 128 ,  0  ,   3  ,  0.2 ,  0   , 20    )
+beam=phaSrcWFGauss( 128,  -1  , 1    , 128 ,  0  ,   3  ,  0.2 ,  0   , 60    )
 ; plotting
 phaIntensitysurface,beam,'Gauss'
 
@@ -44,6 +44,8 @@ phaIntensitysurface,beam,'Gauss'
 SavePhaseResults,beam, tmpfile
 ; namen fuer routinen sind noch verhandelbar !
 
+
+; Batchmode starten ...
 PhaseBatchMode, beamlinefile , tmpfile, cmode
 
 

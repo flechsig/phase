@@ -7,9 +7,9 @@ SOURCE
                  0.1    ymax
                 -0.1    zmin
                  0.1    zmax
-                 151    y points
-                 151    z points
-                  15    number of points
+                   5    y points
+                   5    z points
+                  25    number of points
 
 Data of optical Elements
 ELEMENTS
