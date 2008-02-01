@@ -60,7 +60,7 @@ lib_LTLIBRARIES = libphase4idl.la
 libphase4idl_la_SOURCES   = \
                idl_phase_c.c \
                idl_phase_batchmode_access.c \
-               pha_Drift.f \
+               pha_Drift.F \
                pha_helper_functions.f \
                pha_SrcWFGauss.f \
                $(ORIGINALPHASExSOURCES)
