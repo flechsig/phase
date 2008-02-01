@@ -1,8 +1,12 @@
 
 ; filename:   BatchModeExample.idl
 
+
+
 ; PlotWindow Dimensions : !P.Multi(0,x,y) ergibt x*y unterfenster
 !P.Multi=[0,2,2]
+
+
 
 
 ; structures und sharedlib etc definieren
