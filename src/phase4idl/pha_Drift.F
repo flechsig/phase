@@ -1,7 +1,10 @@
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c   Verwendete Module (globale Variablen, fuer Subroutines aus dieser Datei) 
 c--------------------------------------------------------------------------77 
+#ifdef ABSOFT
+#else
       include 'pha_drift_modules.for'
+#endif
 c--------------------------------------------------------------------------77
 
 
@@ -38,15 +41,23 @@ c	dimensions of array should be products of small prime factors
 c	(e.g. factors of 2 and 3) 
 c
 c------------------------------------------------------------------------
-      use drift_common_mod
+#ifdef ABSOFT
+        include 'pha_drift_include.f' 
+#else
+        use drift_common_mod
+#endif
 	
 	implicit none !real*8(a-h,o-z)
 
 	common/cstak/dstak
 
       include 'myphase_struct.for'
-      
+
+#ifdef ABSOFT
+      record /source4/ beam4
+#else      
       type(source4)::beam4 
+#endif
 	
 	integer i,j,k,l,icomp
      &       ,ifx(25),ianzz00,ianzy00
@@ -63,13 +74,14 @@ c------------------------------------------------------------------------
 
 	call phadrift_get_input(beam4)
 
-
 c	a1/2 Real Fields ... b1/2 Complex Parts 
+#ifdef ABSOFT
+#else
 	a1(:,:)=eyre(:,:)
-      b1(:,:)=eyim(:,:)
-      a2(:,:)=ezre(:,:)
-      b2(:,:)=ezim(:,:)
-	
+        b1(:,:)=eyim(:,:)
+        a2(:,:)=ezre(:,:)
+        b2(:,:)=ezim(:,:)
+#endif	
 
 c------------ allocate storage
 	call istkin(524288,4)	! (2*n*nns, itype=double)
@@ -224,10 +236,11 @@ c------------ step 5: multiplication with prefactor
 
 	enddo		! icomp, loop over components of electric field
 
-	
+#ifdef ABSOFT
+#else	
 	ey_1(:,:)=dcmplx(eyre_1(:,:),eyim_1(:,:))            
-      ez_1(:,:)=dcmplx(ezre_1(:,:),ezim_1(:,:))
-
+        ez_1(:,:)=dcmplx(ezre_1(:,:),ezim_1(:,:))
+#endif
 c --- New Gridparameters ...
 	ymin=y_1_min      
       ymax=y_1_max
@@ -273,7 +286,11 @@ c	dimensions of array should be products of small prime factors
 c	(e.g. factors of 2 and 3) 
 c
 c------------------------------------------------------------------------
-	use drift_common_mod
+#ifdef ABSOFT
+        include 'pha_drift_include.f' 
+#else
+        use drift_common_mod
+#endif	
 	
 	implicit none !real*8(a-h,o-z)
 
@@ -281,7 +298,11 @@ c------------------------------------------------------------------------
 
       include 'myphase_struct.for'
       
+#ifdef ABSOFT
+      record /source4/ beam4
+#else      
       type(source4)::beam4 
+#endif      
 	
 	integer i,j,k,l,icomp,n,nns 
      &       ,ifx(25),Nmax,ianzz00,ianzy00
@@ -308,6 +329,8 @@ c------------ allocate storage
 	Nmax=1024
 
 c	a1/2 Real Fields ... b1/2 Complex Parts 
+#ifdef ABSOFT
+#else
 	a1(:,:)=eyre(:,:)
       b1(:,:)=eyim(:,:)
       a2(:,:)=ezre(:,:)
@@ -317,7 +340,7 @@ c-- actualize coordinates
 	y_1(:)=y(:)
       z_1(:)=z(:)
 	
-
+#endif
 	do icomp=1,2	! loop over y and z-component of electric field
 c	  start with ey component
 c	  then ez component
@@ -426,9 +449,11 @@ c------------ step 3: FFTI
 
 	enddo		! icomp, loop over components of electric field
 
-
+#ifdef ABSOFT
+#else
 	ey_1(:,:)=dcmplx(eyre_1(:,:),eyim_1(:,:))         
       ez_1(:,:)=dcmplx(ezre_1(:,:),ezim_1(:,:))      
+#endif
 	
 	call phadrift_write_output(beam4)
 	
@@ -444,12 +469,21 @@ c----------------------------------------------------------------------------
       subroutine phadrift_propagate_fk( beam4 ,dist 
      &				,nz2 ,zmin2 ,zmax2 ,ny2 ,ymin2 ,ymax2)
 
-      use drift_common_mod
+#ifdef ABSOFT
+        include 'pha_drift_include.f' 
+#else
+        use drift_common_mod
+#endif     
+
       implicit none
       
       include 'myphase_struct.for'
       
+#ifdef ABSOFT
+      record /source4/ beam4
+#else      
       type(source4)::beam4 
+#endif     
       
       integer i,j,k,l,nz2,ny2
       real*8 zmin2,zmax2,ymin2,ymax2
@@ -540,7 +574,12 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	subroutine phadrift_get_input(beam4)
 
-	use drift_common_mod
+#ifdef ABSOFT
+        include 'pha_drift_include.f' 
+#else
+        use drift_common_mod
+#endif
+
       
       implicit none
       
@@ -549,7 +588,11 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
       integer i,j
       real*8 zmin0,zmax0,ymin0,ymax0
-	type(source4)::beam4
+#ifdef ABSOFT
+      record /source4/ beam4
+#else      
+      type(source4)::beam4 
+#endif	
 	
 	pi=4.d0*datan(1.d0)
 	pihalf=pi/2.d0
@@ -615,11 +658,20 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
       subroutine phadrift_write_output(beam4)
 c---------------------------------------------------
-	use drift_common_mod
+#ifdef ABSOFT
+        include 'pha_drift_include.f' 
+#else
+        use drift_common_mod
+#endif
+
       
       implicit none
 	include 'myphase_struct.for'
-	type(source4)::beam4
+#ifdef ABSOFT
+      record /source4/ beam4
+#else      
+      type(source4)::beam4 
+#endif	
       integer i,j
 	
 	do j=1,ianzy
@@ -642,7 +694,12 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c-----------------------------------------
 	subroutine phadrift_remap(iyz,nflag)
 c-----------------------------------------
-	use drift_common_mod
+#ifdef ABSOFT
+        include 'pha_drift_include.f' 
+#else
+        use drift_common_mod
+#endif
+
 
 	implicit real*8(a-h,o-z)
 
