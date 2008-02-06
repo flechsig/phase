@@ -1,3 +1,7 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 c----------------------------------------------------------------------
 c
 c	create field distribution of Gauss'schen beam to compare with
@@ -41,7 +45,11 @@ c
      &      ,rr2,z0,y0 
 	dimension z(1000),y(1000)
 	complex*16 ez(1000,1000),xi,fact  !,ey(1000,1000)
-	type(source4)::gb
+#ifdef ABSOFT
+      record /source4/ gb
+#else      
+      type(source4)::gb 
+#endif	
 	
 	write(*,*)'***'
 	write(*,*)'phaSrcWFGauss started...'
@@ -121,9 +129,11 @@ c	write(*,*) pow
 	enddo
 	enddo
 	pow=dsqrt(pow*dz*dy)
-	
+
+#ifdef ABSOFT	
+#else
 	ez(:,:)=ez(:,:)/pow
-	
+#endif	
 	do i=1,ianzz
 	do j=1,ianzy  
 	  gb.zezre(i,j)=dreal(ez(i,j))
