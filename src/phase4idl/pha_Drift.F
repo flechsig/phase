@@ -1,3 +1,7 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c   Verwendete Module (globale Variablen, fuer Subroutines aus dieser Datei) 
 c--------------------------------------------------------------------------77 
