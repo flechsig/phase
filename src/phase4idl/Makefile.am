@@ -64,11 +64,13 @@ lib_LTLIBRARIES = libphase4idl.la
 
 libphase4idl_la_SOURCES   = \
                idl_phase_c.c \
-               pha_SrcWF4Gauss.c \
                idl_phase_batchmode_access.c \
                pha_Drift.F \
+		   pha_Src4Drift.c \
                pha_helper_functions.F \
                pha_SrcWFGauss.F \
+               pha_Src4WFGauss.c \
+		   pha_Src4Tools.c \
                $(ORIGINALPHASExSOURCES)
 
 ## benchmark.f \
