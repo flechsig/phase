@@ -45,11 +45,11 @@ c
      &      ,rr2,z0,y0 
 	dimension z(1000),y(1000)
 	complex*16 ez(1000,1000),xi,fact  !,ey(1000,1000)
-c#ifdef ABSOFT
-c     record /source4/ gb
-c#else      
+#ifdef ABSOFT
+      record /source4/ gb
+#else      
       type(source4)::gb 
-c#endif	
+#endif	
 	
 	write(*,*)'***'
 	write(*,*)'phaSrcWFGauss started...'
@@ -129,13 +129,11 @@ c	write(*,*) pow
 	enddo
 	enddo
 	pow=dsqrt(pow*dz*dy)
-	
-	write(*,*)'pow : ',pow
 
-c#ifdef ABSOFT	
-c#else
+#ifdef ABSOFT	
+#else
 	ez(:,:)=ez(:,:)/pow
-c#endif	
+#endif	
 	do i=1,ianzz
 	do j=1,ianzy  
 	  gb.zezre(i,j)=dreal(ez(i,j))
