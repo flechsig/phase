@@ -35,7 +35,7 @@ outfile ='gb_8000_SGM.result'
 
 
 ; Copy input nach tmp dateien
-PhaseCopyFieldFiles, infile, tmpfile
+;PhaseCopyFieldFiles, infile, tmpfile
 
 ; oder erstelle eigenen input:
 ;  New Gaussian-Beam with 193x67 Points

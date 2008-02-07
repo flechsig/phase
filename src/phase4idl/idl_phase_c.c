@@ -13,13 +13,43 @@
 
 
 
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <ctype.h>
+#include <stdarg.h> 
 #include <string.h>
-#include <phase_struct.h>
 
+// /*                                          
+#include <Xm/Text.h>                                                  
+#include <Xm/FileSB.h>                //FileBox
+#include <Xm/List.h>   
+#include <Xm/ToggleB.h>   
+#include <Mrm/MrmAppl.h>  
+#include <X11/Xlib.h>      
+#include <X11/Xutil.h>  
+#ifdef VMS    
+  #include <processes.h>  // eingefuegt fuer Starts anderer Programme
+  #include <descrip.h>                      // for FORTRAN- String 
+  #include <DXm/DECspecific.h>                  
+#endif
+// */
+
+#include <cutils.h>
+#include <phase_struct.h>
+#include <fg3pck.h>
+#include <mirrorpck.h>
+#include <geometrypck.h>   
+#include <phase.h>
+#include <rtrace.h>
+#include <version.h>
+
+#include <idl_export.h>
 
 //#include "include/pha_functions.h"
 //#include "include/idl_export.h"
@@ -51,36 +81,41 @@ You can learn more about the nuances of printf on a UNIX machine by typing man 3
 // */
 
 
+// int ReadBLFile(char *fname, struct BeamlineType *bl)  
+//int testReadBeamLineFile(IDL_STRING *fname, struct BeamlineType *beamline)
+int testReadBeamLineFile(IDL_STRING *fname, IDL_VPTR *beamline)
+{ int err=-1;
 
+   struct BeamlineType *bl = (struct BeamlineType *) beamline;
 
+   //printf("%s \n",fname->s);
+   
+   err = ReadBLFile(fname->s, bl) ;
+   err = ReadBLFile(fname->s, beamline) ;
+   
+//   beamline=&bl;
 
-// Testfunction from 	libphase*.so0 
-// in file: 		phlib.for
-//
-// subroutine 	extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)
-//
-int test_libphase_access()
-{
-  double xmap35[35][35] ;
-  double ypc1[5][5][5][5] ;  
-  double zpc1[5][5][5][5] ;  
-  double dypc[5][5][5][5] ;  
-  double dzpc[5][5][5][5] ;  
-  int    iord ;
-  
-  extern void extractmap35_(); // Declare The Fortran Routine 
-  
-  extractmap35_(xmap35,ypc1,zpc1,dypc,dzpc,iord);
-  		// Call The Fortran Routine  
-    
-  return (0);
+  return err;
 }
-// */
 
 
 
+// void WriteBLFile(char *fname, struct BeamlineType *bl)
+int testWriteBeamLineFile(IDL_STRING *fname, struct BeamlineType *beamline)
+//int testWriteBeamLineFile(IDL_STRING fname, IDL_VPTR *beamline)
+{
 
+//   struct BeamlineType bl;
 
+ //  bl=*beamline;
+
+//   WriteBLFile(fname->s, &bl);
+
+   WriteBLFile(fname->s, beamline);
+
+  
+  return 0;
+}
 
 
 // /* *** Fortran-Access ***

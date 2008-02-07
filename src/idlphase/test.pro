@@ -3,6 +3,119 @@
 ;	
 ;   Tests the phase4idl-Routines
 
+
+PRO tst
+
+;Test SavePhaseResults.pro
+
+
+nz = 128
+ny = nz
+
+zmin = 0.1
+zmax = zmin
+
+ymin = zmin 
+ymax = zmin 
+
+waist  = 0.2
+focus  = 0.
+lambda = 60.
+
+
+
+filename='tstSaveResults'
+
+beam = {source4}
+
+beam=phaSrcWFGauss( nz , zmin , zmax , ny, ymin , ymax , waist, focus , lambda)
+
+
+SavePhaseResults,beam,filename
+
+END ;tst
+
+
+
+
+
+
+
+
+; teste write beamlinefile
+PRO WBLF
+
+bl = { BeamlineType }
+
+;bl.ElementList:cptr ,$;Hier wird auf Struktur gezeigt...  *ElementList:{ElementType} 
+;dummy_ElementType = { ElementType , $
+;  ElementOK:intzero , $
+;  matrix:MAP70TYPE, MtoSource:MAP70TYPE, $
+;  ypc1:MAP7TYPE, zpc1:MAP7TYPE, dypc:MAP7TYPE, dzpc:MAP7TYPE, wc:MAP7TYPE, xlc:MAP7TYPE, $ 
+;  xlm:{xlenmaptype}, $ 
+;  mir:{mirrortype}, $ 
+;  MDat:{mdatset},  $                          
+;  geo:{geometrytype},  $ 
+;  GDat:{gdatset}, $ 
+;  elementname:bytarr(MaxPathLength) $
+;};ElementType
+
+
+fnamein = bytarr(1)
+fnamein = byte('test.bl.in')
+
+
+fnameout = bytarr(1)
+fnameout = byte('test.bl.out')
+
+print,string(fnamein)
+print,string(fnameout)
+
+
+result = 1
+result = call_external(!phalib,'testReadBeamLineFile',$
+                        fnamein, bl ,$
+                       /I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+
+print, 'fehler? ',result
+
+
+result = 1
+result = call_external(!phalib,'testWriteBeamLineFile',$
+                        fnameout, bl ,$
+                       /I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+
+print, 'fehler? ',result
+
+			     
+			     
+;return, result
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 pro testprop,n,d
 
 np=n_params()
