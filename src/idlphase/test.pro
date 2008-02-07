@@ -4,23 +4,31 @@
 ;   Tests the phase4idl-Routines
 
 
-PRO tst
+PRO tst, nn
 
 ;Test SavePhaseResults.pro
 
+np=n_params()
 
-nz = 128
+if np lt 1  then begin
+	nn = 128
+	print, ''
+	print, 'Using Standard Number of Gridpoints: ',nn
+	print, ''
+endif 
+
+nz = nn
 ny = nz
 
-zmin = 0.1
+zmin = 1
 zmax = zmin
 
 ymin = zmin 
 ymax = zmin 
 
 waist  = 0.2
-focus  = 0.
-lambda = 60.
+focus  = 0.8
+lambda = 632
 
 
 
@@ -31,7 +39,10 @@ beam = {source4}
 beam=phaSrcWFGauss( nz , zmin , zmax , ny, ymin , ymax , waist, focus , lambda)
 
 
-SavePhaseResults,beam,filename
+phaIntensitySurface,beam,filename
+
+
+;SavePhaseResults,beam,filename
 
 END ;tst
 

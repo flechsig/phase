@@ -64,6 +64,7 @@ lib_LTLIBRARIES = libphase4idl.la
 
 libphase4idl_la_SOURCES   = \
                idl_phase_c.c \
+		   phaSrcWFGauss.c \
                idl_phase_batchmode_access.c \
                pha_Drift.F \
                pha_helper_functions.F \
