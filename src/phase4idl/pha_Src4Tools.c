@@ -1,18 +1,23 @@
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
-ccccccccccccccccccccccccccccccccccccccccccccccc
-c	module phasrc4modsize_variables
-c	
-c	integer nz1,ny1,nz_delta,ny_delta
-c	real*8  zmin,zmax,ymin,ymax,dz1,dy1,dz2,dy2
-c	
-c	end module phasrc4modsize_variables
-ccccccccccccccccccccccccccccccccccccccccccccccc
 
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_modgrid(src4,nz2,ny2)
+
+// phaSrcWFGauss.c
+//
+// (c) 2008 : Torsten.Leitner@email.de
+//
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+//#include <stdarg.h> 
+//#include <string.h>
+
+#include <idl_export.h>
+
+int pha_src4_modgrid(struct source4 *src4, IDL_ULONG nz2, IDL_ULONG ny2)
+{
+/*
      
 	implicit none
 	
@@ -136,9 +141,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	enddo
 	
 	call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
-      
-	return
-	end   !pha_src4_modgrid
+//*/
+	return 0;
+//	end   !pha_src4_modgrid
+}
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77

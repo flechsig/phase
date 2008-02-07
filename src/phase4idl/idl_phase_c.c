@@ -49,6 +49,8 @@
 #include <rtrace.h>
 #include <version.h>
 
+#include "Constants.h"
+
 #include <idl_export.h>
 
 //#include "include/pha_functions.h"
