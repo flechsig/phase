@@ -21,6 +21,103 @@
 #include <idl_export.h>
 
 
+
+
+int phaSrcWFGauss_cwrap (struct source4 *gb4, int *ianzz, double *zmin, double *zmax, 
+                                    int *ianzy, double *ymin, double *ymax, 
+						double *w0, double *deltax, double *xlambda)
+{ 
+  double waist=*w0;  // Dereferencing w0, so that w0 won't change in the calling program
+  double distance=*deltax;  // Same ...
+  
+  extern void phasesrcwfgauss_(); // Declare The Fortran Routine 
+  
+  phasesrcwfgauss_(gb4,ianzz,zmin,zmax,ianzy,ymin,ymax,&waist,&distance,xlambda);  
+  		// Call The Fortran Routine  
+    
+  return (0);
+}
+// */
+
+// /* *** Fortran-Access ***  --- Former Propagate_1
+int 
+phaPropWFFresnelKirchhoff_cwrap (struct source4 *beam4, double *distance, int *nz2, double *zmin2, double *zmax2, int *ny2, double *ymin2, double *ymax2)
+
+{ 
+  double dist = *distance;
+    // Dereferencing dist, so that it won't change in the calling program
+
+  extern void phadrift_propagate_fk_(); // Declare the Fortran Routine 
+  
+//  int   imode = 1; // -> Selects FresnelKirchh. Integration
+  
+  phadrift_propagate_fk_(beam4, &dist, nz2,zmin2,zmax2,  ny2,ymin2,ymax2);
+// Call the Fortran Routine 
+  return (0);
+}
+// */
+
+// /* *** Fortran-Access ***  --- Former Propagate_2
+int 
+phaPropFFTnear_cwrap (struct source4 *beam4, double *distance)
+{ 
+  double dist = *distance;
+  // Dereferencing dist, so that it won't change in the calling program
+  
+  extern void phadrift_propagate_fft_near_(); // Declare the Fortran Routine 
+  
+  //int   imode = 2; // -> Selects Near-Field FFT
+  
+  phadrift_propagate_fft_near_(beam4, &dist);
+// Call the Fortran Routine 
+  return (0);
+}
+// */
+
+// /* *** Fortran-Access ***  --- Former Propagate_3
+int 
+phaPropFFTfar_cwrap (struct source4 *beam4, double *distance)
+{ 
+  double dist = *distance;
+  // Dereferencing dist, so that it won't change in the calling program
+  
+  extern void phadrift_propagate_fft_far_(); // Declare the Fortran Routine 
+  
+  //int   imode = 3; // -> Selects Far-Field FFT
+     
+  phadrift_propagate_fft_far_(beam4, &dist);
+// Call the Fortran Routine 
+  return (0);
+}
+// */
+
+// /* *** Fortran-Access ***  
+int 
+phaModSizeAddZeros_cwrap (struct source4 *beam4, int *nz2, int *ny2)
+{ 
+  extern void pha_src4_addzeros_(); // Declare the Fortran Routine 
+  
+  pha_src4_addzeros_(beam4, nz2, ny2);
+// Call the Fortran Routine 
+  return (0);
+}
+// */
+
+// /* *** Fortran-Access ***  
+int 
+phaModSizeCut_cwrap (struct source4 *beam4, int *nzmin, int *nzmax, int *nymin, int *nymax)
+{ 
+  extern void pha_src4_cut_(); // Declare the Fortran Routine 
+  
+  pha_src4_cut_(beam4, nzmin,nzmax,nymin,nymax);
+// Call the Fortran Routine 
+  return (0);
+}
+// */
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+
+
 // /* *** Fortran-Access ***  
 // aus irgendnem grund den keiner versteht, klappt dies nur, wenn idl ne 
 // c-routine "phaModGrid" aufruft, die dann direkt "phaModGrid_cwrap" aufruft...
@@ -30,8 +127,9 @@ int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
 // /*
 
   int MaxDim = 256;
-  double
-   zezre[MaxDim][MaxDim],zezim[MaxDim][MaxDim],zeyre[MaxDim][MaxDim],zeyim[MaxDim][MaxDim];
+  
+  double zezre[MaxDim][MaxDim],zezim[MaxDim][MaxDim]
+        ,zeyre[MaxDim][MaxDim],zeyim[MaxDim][MaxDim];
   
   double zmin,zmax,ymin,ymax;
   
@@ -64,9 +162,9 @@ int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
  
 // /*  
   // Felder auf neuem Grid interpolieren
-  extern void pha_src4_modgrid_structfree_(); // Declare the Fortran Routine 
+  extern void pha_src4_modgrid_nostructs_(); // Declare the Fortran Routine 
 // /*  // Call the Fortran Routine 
-  pha_src4_modgrid_structfree_(MaxDim
+  pha_src4_modgrid_nostructs_( &MaxDim
                     ,zezre,zezim,zeyre,zeyim
                     ,&nz1,&nz2 ,&zmin,&zmax
                     ,&ny1,&ny2 ,&ymin,&ymax) ;
@@ -91,6 +189,11 @@ int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
 
 
 
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 

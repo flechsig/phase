@@ -10,37 +10,11 @@ c	real*8  zmin,zmax,ymin,ymax,dz1,dy1,dz2,dy2
 c	
 c	end module phasrc4modsize_variables
 ccccccccccccccccccccccccccccccccccccccccccccccc
-      
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine farraypassingtest(n,a)
-
-	implicit none
-	
-	integer i,j,k,n
-	
-	real*8 a(n,n)
-	
-c	a(:,:)=0
-	
-	do i=1,n
-	  do j=1,n
-	  
-	  write(*,*)'array : ',a(i,j)
-	  
-	  enddo
-	enddo
-	
-	write(*,*)' '
-	
-	return
-	end
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
 
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_modgrid_structfree( MaxDim
+	subroutine pha_src4_modgrid_nostructs( MaxDim
      &                           ,zezre,zezim,zeyre,zeyim
      &                           ,nz1,nz2,zmin,zmax
      &                           ,ny1,ny2,ymin,ymax )
@@ -56,10 +30,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
      &	 ,data_in(1024),data_out(1024)
      &	 ,dstak(6144)
      
+           
+      real*8 zezre(256,256),zezim(256,256)
+     &	,zeyre(256,256),zeyim(256,256)
      
-      real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
-     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
-     
+c      real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+c     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+
+
 c      real*8 zezre(1024,1024),zezim(1024,1024)
 c     &	,zeyre(1024,1024),zeyim(1024,1024)
 
