@@ -30,9 +30,9 @@ int pha_c_adjust_src4_grid(struct source4 *src4);
 
 // from file:  pha_Src4WFGauss.c
 
-int phaSrcWFGauss (struct source4 *gb4, int *ianzz, double *zmini, double *zmaxi, 
-                                    int *ianzy, double *ymini, double *ymaxi, 
-						double *w0, double *deltax, double *xlambda );
+//int phaSrcWFGauss (struct source4 *gb4, int *ianzz, double *zmini, double *zmaxi, 
+  //                                  int *ianzy, double *ymini, double *ymaxi, 
+	//					double *w0, double *deltax, double *xlambda );
 
 
 

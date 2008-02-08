@@ -49,6 +49,9 @@
 #include <rtrace.h>
 #include <version.h>
 
+
+#include "pha4idl_prototypes.h"
+
 #include "Constants.h"
 
 #include <idl_export.h>
@@ -215,15 +218,18 @@ phaModSizeCut (struct source4 *beam4, int *nzmin, int *nzmax, int *nymin, int *n
 }
 // */
 
+
+
+
 // /* *** Fortran-Access ***  
 int 
 phaModGrid (struct source4 *beam4, int *nz2, int *ny2)
 { 
-  extern void pha_src4_modgrid_(); // Declare the Fortran Routine 
-  // printf("Hallo");
-  pha_src4_modgrid_(beam4, nz2, ny2);
-// Call the Fortran Routine 
+  phaModGrid_cwrap (beam4, nz2, ny2);
   return (0);
 }
 // */
+
+
+
 

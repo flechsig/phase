@@ -21,6 +21,80 @@
 #include <idl_export.h>
 
 
+// /* *** Fortran-Access ***  
+// aus irgendnem grund den keiner versteht, klappt dies nur, wenn idl ne 
+// c-routine "phaModGrid" aufruft, die dann direkt "phaModGrid_cwrap" aufruft...
+//
+int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
+{ 
+// /*
+
+  int MaxDim = 256;
+  double
+   zezre[MaxDim][MaxDim],zezim[MaxDim][MaxDim],zeyre[MaxDim][MaxDim],zeyim[MaxDim][MaxDim];
+  
+  double zmin,zmax,ymin,ymax;
+  
+  int iz,iy,ny1,ny2,nz1,nz2;
+  
+  nz2=*nz2in;
+  ny2=*ny2in;
+  
+  // Aktuelles Grid aus Struktur lesen
+  pha_c_extract_src4_grid(beam,nz1,zmin,zmax,ny1,ymin,ymax);
+  
+  
+  if(nz1>MaxDim) return 1;
+  if(ny1>MaxDim) return 1;
+  if(nz2>MaxDim) return 1;
+  if(ny2>MaxDim) return 1;
+
+  
+   
+  // FElder kopieren oder feldpointer kopieren ???   TESTEN !!!
+  for(iz=0;iz<nz1;iz++) {
+     for(iy=0;iy<ny1;iy++) {
+        zezre[iz][iy] = beam->zezre[iz][iy]; 
+//printf("%i %i %g \n",iz,iy,zezre[iz][iy]);
+	  zezim[iz][iy] = beam->zezim[iz][iy];
+	  zeyre[iz][iy] = beam->zeyre[iz][iy];
+	  zeyim[iz][iy] = beam->zeyim[iz][iy];        
+     }
+  }
+ 
+// /*  
+  // Felder auf neuem Grid interpolieren
+  extern void pha_src4_modgrid_structfree_(); // Declare the Fortran Routine 
+// /*  // Call the Fortran Routine 
+  pha_src4_modgrid_structfree_(MaxDim
+                    ,zezre,zezim,zeyre,zeyim
+                    ,&nz1,&nz2 ,&zmin,&zmax
+                    ,&ny1,&ny2 ,&ymin,&ymax) ;
+// */
+// /*
+  // Neues Grid in Struktur schreiben
+  pha_c_define_src4_grid(beam, nz2, zmin, zmax, ny2, ymin, ymax);
+
+  // Neue Felder in Struktur schreiben
+  for(iz=0;iz<nz2;iz++) {
+     for(iy=0;iy<ny2;iy++) {
+        beam->zezre[iz][iy] = zezre[iz][iy];
+	  beam->zezim[iz][iy] = zezim[iz][iy];
+	  beam->zeyre[iz][iy] = zeyre[iz][iy];
+	  beam->zeyim[iz][iy] = zeyim[iz][iy];        
+     }
+  }
+// */  
+  return (0);
+}
+// */
+
+
+
+
+
+
+
 int pha_c_extract_src4_grid(struct source4 *src4,
                             int nz, double zmin, double zmax,
 				    int ny, double ymin, double ymax)

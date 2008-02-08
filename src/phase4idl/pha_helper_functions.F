@@ -10,6 +10,199 @@ c	real*8  zmin,zmax,ymin,ymax,dz1,dy1,dz2,dy2
 c	
 c	end module phasrc4modsize_variables
 ccccccccccccccccccccccccccccccccccccccccccccccc
+      
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+	subroutine farraypassingtest(n,a)
+
+	implicit none
+	
+	integer i,j,k,n
+	
+	real*8 a(n,n)
+	
+c	a(:,:)=0
+	
+	do i=1,n
+	  do j=1,n
+	  
+	  write(*,*)'array : ',a(i,j)
+	  
+	  enddo
+	enddo
+	
+	write(*,*)' '
+	
+	return
+	end
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+	subroutine pha_src4_modgrid_structfree( MaxDim
+     &                           ,zezre,zezim,zeyre,zeyim
+     &                           ,nz1,nz2,zmin,zmax
+     &                           ,ny1,ny2,ymin,ymax )
+     
+	implicit none
+	
+	common/cstak/dstak
+	
+
+	integer k,nz2,ny2,nz1,ny1, MaxDim
+	real*8  dz1,dz2,dy1,dy2,ymax,ymin,zmax,zmin
+     &	 ,z1(1024),z2(1024),y1(1024),y2(1024)
+     &	 ,data_in(1024),data_out(1024)
+     &	 ,dstak(6144)
+     
+     
+      real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+     
+c      real*8 zezre(1024,1024),zezim(1024,1024)
+c     &	,zeyre(1024,1024),zeyim(1024,1024)
+
+c      write(*,*)'Changing number of grid-points ...'
+      
+	call ISTKIN(6144,4)
+    
+c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
+	
+	dz1=(zmax-zmin)/(nz1-1)
+      dy1=(ymax-ymin)/(ny1-1)
+	do k=1,nz1
+		z1(k)=dble(k-1)*dz1
+	enddo
+	do k=1,ny1
+		y1(k)=dble(k-1)*dy1
+	enddo
+	
+	dz2=(zmax-zmin)/(nz2-1)
+      dy2=(ymax-ymin)/(ny2-1)
+	
+	do k=1,nz2
+		z2(k)=dble(k-1)*dz2
+	enddo
+	do k=1,ny2
+		y2(k)=dble(k-1)*dy2
+	enddo
+
+
+	do k=1,ny1  ! Interpoliere alle Vektoren in z-Richtung
+		data_in(1:nz1) = zezre(1:nz1,k)
+		zezre(:,k)= 0.d0
+		
+		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
+
+		zezre(1:nz2,k)=data_out(1:nz2)
+		data_in(1:nz1) = zezim(1:nz1,k)
+		zezim(:,k)= 0.d0
+
+		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
+		
+		zezim(1:nz2,k)=data_out(1:nz2)
+		
+		data_in(1:nz1) = zeyre(1:nz1,k)
+		zeyre(:,k)= 0.d0
+		
+		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
+
+		zeyre(1:nz2,k)=data_out(1:nz2)
+		
+		data_in(1:nz1) = zeyim(1:nz1,k)
+		zeyim(:,k)= 0.d0
+
+		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
+
+		zeyim(1:nz2,k)=data_out(1:nz2)
+	
+	enddo
+
+	data_in(:) =0.d0
+	data_out(:)=0.d0
+	
+	do k=1,nz2  ! Interpoliere alle Vektoren in y-Richtung
+			! Beachte: nz1 -> nz2 bereits durchgefuehrt 
+		
+
+		data_in(1:ny1) = zezre(k,1:ny1)
+		zezre(k,:)= 0.d0
+
+		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
+
+		zezre(k,1:ny2)=data_out(1:ny2)
+		
+		data_in(1:ny1) = zezim(k,1:ny1)
+		zezim(k,:)= 0.d0
+
+		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
+
+		zezim(k,1:ny2)=data_out(1:ny2)
+		
+		data_in(1:ny1) = zeyre(k,1:ny1)
+		zeyre(k,:)= 0.d0
+
+		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
+
+		zeyre(k,1:ny2)=data_out(1:ny2)
+		
+		data_in(1:ny1) = zeyim(k,1:ny1)
+		zeyim(k,:)= 0.d0
+
+		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
+
+		zeyim(k,1:ny2)=data_out(1:ny2)
+	
+	enddo
+	
+c in C:	call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
+      
+	return
+	end   !pha_src4_modgrid_structfree
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	subroutine pha_src4_modgrid(src4,nz2,ny2)
