@@ -121,7 +121,7 @@ int testWriteBeamLineFile(IDL_STRING *fname, struct BeamlineType *beamline)
 
 
 
-/*   Voruebergehend in 'phaSrcWFGauss.c'
+// /*   Voruebergehend in 'phaSrcWFGauss.c'
 // /* *** Fortran-Access ***
 int phaSrcWFGauss (struct source4 *gb4, int *ianzz, double *zmin, double *zmax, 
                                     int *ianzy, double *ymin, double *ymax, 

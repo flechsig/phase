@@ -12,8 +12,7 @@ c--------------------------------------------------------------------------77
 c--------------------------------------------------------------------------77
 
 
-	
-	
+
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	subroutine phadrift_propagate_fft_far( beam4 ,dist ) 
