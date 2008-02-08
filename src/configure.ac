@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <15 Jan 08 11:17:15 flechsig> 
+dnl   Time-stamp: <01 Feb 08 15:42:37 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -106,7 +106,7 @@ case "$F77" in
       wantifc=false
       wantportland=false
       wantabsoft=true
-      AC_SUBST([FFLAGS],"-f -B108 -W -s -N3 -N51 -N22 -N33");;
+      AC_SUBST([FFLAGS],"-DABSOFT -f -B108 -W -s -N3 -N51 -N22 -N33");;
 
 ##FFLAGS for absoft f77 compiler
 ##	-g generate debugging information
