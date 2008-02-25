@@ -23,94 +23,81 @@
 
 
 
-int phaSrcWFGauss_cwrap (struct source4 *gb4, int *ianzz, double *zmin, double *zmax, 
-                                    int *ianzy, double *ymin, double *ymax, 
-						double *w0, double *deltax, double *xlambda)
-{ 
-  double waist=*w0;  // Dereferencing w0, so that w0 won't change in the calling program
-  double distance=*deltax;  // Same ...
-  
-  extern void phasesrcwfgauss_(); // Declare The Fortran Routine 
-  
-  phasesrcwfgauss_(gb4,ianzz,zmin,zmax,ianzy,ymin,ymax,&waist,&distance,xlambda);  
-  		// Call The Fortran Routine  
-    
-  return (0);
-}
-// */
 
-// /* *** Fortran-Access ***  --- Former Propagate_1
-int 
-phaPropWFFresnelKirchhoff_cwrap (struct source4 *beam4, double *distance, int *nz2, double *zmin2, double *zmax2, int *ny2, double *ymin2, double *ymax2)
-
-{ 
-  double dist = *distance;
-    // Dereferencing dist, so that it won't change in the calling program
-
-  extern void phadrift_propagate_fk_(); // Declare the Fortran Routine 
-  
-//  int   imode = 1; // -> Selects FresnelKirchh. Integration
-  
-  phadrift_propagate_fk_(beam4, &dist, nz2,zmin2,zmax2,  ny2,ymin2,ymax2);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  --- Former Propagate_2
-int 
-phaPropFFTnear_cwrap (struct source4 *beam4, double *distance)
-{ 
-  double dist = *distance;
-  // Dereferencing dist, so that it won't change in the calling program
-  
-  extern void phadrift_propagate_fft_near_(); // Declare the Fortran Routine 
-  
-  //int   imode = 2; // -> Selects Near-Field FFT
-  
-  phadrift_propagate_fft_near_(beam4, &dist);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  --- Former Propagate_3
-int 
-phaPropFFTfar_cwrap (struct source4 *beam4, double *distance)
-{ 
-  double dist = *distance;
-  // Dereferencing dist, so that it won't change in the calling program
-  
-  extern void phadrift_propagate_fft_far_(); // Declare the Fortran Routine 
-  
-  //int   imode = 3; // -> Selects Far-Field FFT
-     
-  phadrift_propagate_fft_far_(beam4, &dist);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
 
 // /* *** Fortran-Access ***  
-int 
-phaModSizeAddZeros_cwrap (struct source4 *beam4, int *nz2, int *ny2)
-{ 
+int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
+{
+  int MaxDim = MaximumFieldDimension;
+
+  int  nz1,ny1;
+  double zmin,zmax,ymin,ymax;
+
+//c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
+  pha_c_extract_src4_grid(beam,&nz1,&zmin,&zmax,&ny1,&ymin,&ymax);
+
+ /*
   extern void pha_src4_addzeros_(); // Declare the Fortran Routine 
-  
+  // Call the Fortran Routine 
   pha_src4_addzeros_(beam4, nz2, ny2);
-// Call the Fortran Routine 
+// */
+ 
+// /*
+  extern void pha_src4_addzeros_nostructs_(); // Declare the Fortran Routine 
+  // Call the Fortran Routine 
+  pha_src4_addzeros_nostructs_( &MaxDim
+                        , beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+                        , &nz1,nz2,&zmin,&zmax
+                        , &ny1,ny2,&ymin,&ymax) ;
+// */
+
+  // Neues Grid in Struktur schreiben
+//c in C:call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
+  pha_c_define_src4_grid(beam, *nz2, zmin, zmax, *ny2, ymin, ymax);
+
   return (0);
 }
 // */
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
+
+
+
+
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 // /* *** Fortran-Access ***  
-int 
-phaModSizeCut_cwrap (struct source4 *beam4, int *nzmin, int *nzmax, int *nymin, int *nymax)
+int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int *nymax)
 { 
-  extern void pha_src4_cut_(); // Declare the Fortran Routine 
   
-  pha_src4_cut_(beam4, nzmin,nzmax,nymin,nymax);
-// Call the Fortran Routine 
+  int MaxDim = MaximumFieldDimension;
+
+  int  nz,ny;
+  double zmin,zmax,ymin,ymax;
+
+  pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
+
+  
+ /*
+  extern void pha_src4_cut_(); // Declare the Fortran Routine 
+  // Call the Fortran Routine   
+  pha_src4_cut_(beam, nzmin,nzmax,nymin,nymax);
+// */
+
+// /*
+  extern void pha_src4_cut_nostructs_(); // Declare the Fortran Routine 
+  // Call the Fortran Routine   
+  pha_src4_cut_nostructs_( &MaxDim
+                         ,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+                         , &nz,&zmin,&zmax,nzmin,nzmax
+                         , &ny,&ymin,&ymax,nymin,nymax) ;
+// */
+
+//  nz und ny wurden in Fortran mit den neuen Werten belegt
+  // Neues Grid in Struktur schreiben
+  pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
+
+
   return (0);
 }
 // */
@@ -118,19 +105,19 @@ phaModSizeCut_cwrap (struct source4 *beam4, int *nzmin, int *nzmax, int *nymin, 
 //cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
+
+
+
+
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 // /* *** Fortran-Access ***  
-// aus irgendnem grund den keiner versteht, klappt dies nur, wenn idl ne 
-// c-routine "phaModGrid" aufruft, die dann direkt "phaModGrid_cwrap" aufruft...
-//
-int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
+int phaModGrid (struct source4 *beam, int *nz2in, int *ny2in)
 { 
 // /*
 
-  int MaxDim = 256;
-  
-  double zezre[MaxDim][MaxDim],zezim[MaxDim][MaxDim]
-        ,zeyre[MaxDim][MaxDim],zeyim[MaxDim][MaxDim];
-  
+  int MaxDim = MaximumFieldDimension;
+
   double zmin,zmax,ymin,ymax;
   
   int iz,iy,ny1,ny2,nz1,nz2;
@@ -139,7 +126,7 @@ int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
   ny2=*ny2in;
   
   // Aktuelles Grid aus Struktur lesen
-  pha_c_extract_src4_grid(beam,nz1,zmin,zmax,ny1,ymin,ymax);
+  pha_c_extract_src4_grid(beam,&nz1,&zmin,&zmax,&ny1,&ymin,&ymax);
   
   
   if(nz1>MaxDim) return 1;
@@ -147,25 +134,12 @@ int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
   if(nz2>MaxDim) return 1;
   if(ny2>MaxDim) return 1;
 
-  
-   
-  // FElder kopieren oder feldpointer kopieren ???   TESTEN !!!
-  for(iz=0;iz<nz1;iz++) {
-     for(iy=0;iy<ny1;iy++) {
-        zezre[iz][iy] = beam->zezre[iz][iy]; 
-//printf("%i %i %g \n",iz,iy,zezre[iz][iy]);
-	  zezim[iz][iy] = beam->zezim[iz][iy];
-	  zeyre[iz][iy] = beam->zeyre[iz][iy];
-	  zeyim[iz][iy] = beam->zeyim[iz][iy];        
-     }
-  }
- 
 // /*  
   // Felder auf neuem Grid interpolieren
   extern void pha_src4_modgrid_nostructs_(); // Declare the Fortran Routine 
 // /*  // Call the Fortran Routine 
   pha_src4_modgrid_nostructs_( &MaxDim
-                    ,zezre,zezim,zeyre,zeyim
+                    ,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                     ,&nz1,&nz2 ,&zmin,&zmax
                     ,&ny1,&ny2 ,&ymin,&ymax) ;
 // */
@@ -173,45 +147,32 @@ int phaModGrid_cwrap (struct source4 *beam, int *nz2in, int *ny2in)
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, nz2, zmin, zmax, ny2, ymin, ymax);
 
-  // Neue Felder in Struktur schreiben
-  for(iz=0;iz<nz2;iz++) {
-     for(iy=0;iy<ny2;iy++) {
-        beam->zezre[iz][iy] = zezre[iz][iy];
-	  beam->zezim[iz][iy] = zezim[iz][iy];
-	  beam->zeyre[iz][iy] = zeyre[iz][iy];
-	  beam->zeyim[iz][iy] = zeyim[iz][iy];        
-     }
-  }
-// */  
+
   return (0);
-}
+} // END : phaModGrid_cwrap
 // */
-
-
-
-//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
-//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
 //cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 
 
+
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 int pha_c_extract_src4_grid(struct source4 *src4,
-                            int nz, double zmin, double zmax,
-				    int ny, double ymin, double ymax)
+                            int *nz, double *zmin, double *zmax,
+				    int *ny, double *ymin, double *ymax)
 //c% Routine liest Grid-Daten aus source4-Struktur aus
 {	
 //c  Definiere Referenzen explizit, um flexibler zu bleiben ...
 //c
 //c Lese aus Referenzsturkturen
-	  nz = src4->ieyrex;
-	zmin = src4->xeyremin;
-	zmax = src4->xeyremax;
-	  ny = src4->ieyrey;
-	ymin = src4->yeyremin;
-	ymax = src4->yeyremax;
+	  *nz = src4->ieyrex;
+	*zmin = src4->xeyremin;
+	*zmax = src4->xeyremax;
+	  *ny = src4->ieyrey;
+	*ymin = src4->yeyremin;
+	*ymax = src4->yeyremax;
 	
 	return 0;
 } //	end !extract_src4_grid
@@ -219,6 +180,8 @@ int pha_c_extract_src4_grid(struct source4 *src4,
 
 
 
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 int  pha_c_define_src4_grid(struct source4 *src4,
                             int nz, double zmin, double zmax,
 				    int ny, double ymin, double ymax)
@@ -271,7 +234,14 @@ int  pha_c_define_src4_grid(struct source4 *src4,
 
       return 0;
 } //      end !define_src4_grid
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
+
+
+
+
+
+//cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 int pha_c_adjust_src4_grid(struct source4 *src4)
 {
 //c% Routine gleicht die in src4-Structs redundanten Grid-Parameter
@@ -286,352 +256,14 @@ int pha_c_adjust_src4_grid(struct source4 *src4)
 	double zmin,zmax,ymin,ymax;
 	int    nz,ny;
 
-	pha_c_extract_src4_grid(src4,nz,zmin,zmax,ny,ymin,ymax);
+	pha_c_extract_src4_grid(src4,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
 
-	pha_c_define_src4_grid(src4,nz,zmin,zmax,ny,ymin,ymax);
+	pha_c_define_src4_grid (src4,nz,zmin,zmax,ny,ymin,ymax);
 
 	return 0;
 }	//end !adjust_src4_grid
 //cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
-/*
 
 
-	
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_cut(src4, nzmin,nzmax,nymin,nymax)
-	
-	implicit none
-	include 'myphase_struct.for'
-
-#ifdef ABSOFT
-      record /source4/ src4
-#else      
-      type(source4)::src4 
-#endif	
-
-	integer nz1,ny1,nzmax,nzmin,nymax,nymin,nz2,ny2
-	real*8  temp(1024,1024),zmin,zmax,ymin,ymax,dz1,dy1
-
-	if ((nzmax.gt.nzmin).and.(nymax.gt.nymin)) then
-	! Eingangsbedingung !
-	! Nur falls obere Grenzen goesser als untere wird gestartet ... !
-	
-	write(*,*)'Cutting grid ...'
-	
-	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
-
-	if (nzmax.gt.nz1) nzmax=nz1
-	if (nzmin.lt.1)   nzmin=1
-	if (nymax.gt.ny1) nymax=ny1
-	if (nymin.lt.1) nymin=1
-	
-	dz1=(zmax-zmin)/(nz1-1)
-      dy1=(ymax-ymin)/(ny1-1)
-      
-      zmin=zmin+(nzmin-1)*dz1
-      zmax=zmax-(nz1-nzmax)*dz1
-      
-      ymin=ymin+(nymin-1)*dy1
-      ymax=ymax-(ny1-nymax)*dy1
-	
-	nz2=nzmax-nzmin+1
-	ny2=nymax-nymin+1
-    
-	call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax  )
-#ifdef ABSOFT		
-#else
-	temp(1:nz2,1:ny2)   =  src4.zeyre(nzmin:nzmax,nymin:nymax)
-	src4.zeyre(:,:)     =  0
-	src4.zeyre(1:nz2,1:ny2)=temp(1:nz2,1:ny2)
-	
-	temp(1:nz2,1:ny2)   =  src4.zeyim(nzmin:nzmax,nymin:nymax)
-	src4.zeyim(:,:)     =  0
-	src4.zeyim(1:nz2,1:ny2)=temp(1:nz2,1:ny2)
-	
-	temp(1:nz2,1:ny2)   =  src4.zezre(nzmin:nzmax,nymin:nymax)
-	src4.zezre(:,:)     =  0
-	src4.zezre(1:nz2,1:ny2)=temp(1:nz2,1:ny2)
-	
-	temp(1:nz2,1:ny2)   =  src4.zezim(nzmin:nzmax,nymin:nymax)
-	src4.zezim(:,:)     =  0
-	src4.zezim(1:nz2,1:ny2)=temp(1:nz2,1:ny2)
-#endif     
-	endif ! Eingangsbedingung !
-	return
-	end
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_addzeros(src4,nz2,ny2)
-	
-	implicit none
-	include 'myphase_struct.for'
-#ifdef ABSOFT
-      record /source4/ src4
-#else      
-      type(source4)::src4 
-#endif
-
-	integer nz2,ny2,nz1,ny1,nz_delta,ny_delta
-	real*8  temp(1024,1024),zmin,zmax,ymin,ymax,dz1,dy1
-	
-	write(*,*)'Adding zeros ...'
-	
-	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
-	
-	if (nz2.lt.nz1) nz2=nz1
-	if (ny2.lt.ny1) ny2=ny1
-	! falls eine Grenze kleiner stuerzts ab...
-	! Setze kleinere Grenze auf Urspruengliche 
-
-	if (mod((nz2-nz1),2).eq.1) nz2=nz2-1  ! nxd=delta(nx1,nx2)=gerade
-      if (mod((ny2-ny1),2).eq.1) ny2=ny2-1
-	
-	nz_delta=(nz2-nz1)/2    ! Halber Unterschied der Anzahl der Datenpunkte
-      ny_delta=(ny2-ny1)/2    ! Immer ganzzahlig, da N_delta gerade oben 
-					! erzwungen wird
-
-	dz1=(zmax-zmin)/(nz1-1)
-      dy1=(ymax-ymin)/(ny1-1)
-      
-      zmin=zmin-nz_delta*dz1
-      zmax=zmax+nz_delta*dz1
-      
-      ymin=ymin-ny_delta*dy1
-      ymax=ymax+ny_delta*dy1
-	    
-	call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
-     
-c..... AddZeros.....
-#ifdef ABSOFT		
-#else
-	temp(1:nz1,1:ny1)   =  src4.zeyre(1:nz1,1:ny1)
-	src4.zeyre(:,:)     =  0
-	src4.zeyre(1+nz_delta:1+nz_delta+nz1,1+ny_delta:1+ny_delta+ny1) =
-     &		 temp(1:ny1,1:nz1)
-
-      
-	temp(1:nz1,1:ny1)   =  src4.zeyim(1:nz1,1:ny1)
-	src4.zeyim(:,:)     =  0
-	src4.zeyim(1+nz_delta:1+nz_delta+nz1,1+ny_delta:1+ny_delta+ny1) =
-     &		 temp(1:ny1,1:nz1)
-     
-      
-	temp(1:nz1,1:ny1)   =  src4.zezre(1:nz1,1:ny1)
-	src4.zezre(:,:)     =  0
-	src4.zezre(1+nz_delta:1+nz_delta+nz1,1+ny_delta:1+ny_delta+ny1) =
-     &		 temp(1:ny1,1:nz1)
-     
-      
-	temp(1:nz1,1:ny1)   =  src4.zezim(1:nz1,1:ny1)
-	src4.zezim(:,:)     =  0
-	src4.zezim(1+nz_delta:1+nz_delta+nz1,1+ny_delta:1+ny_delta+ny1) =
-     &		 temp(1:ny1,1:nz1)
-#endif     
-	return
-	end    ! pha_src4_addzero
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_init_src4(src4)
-      
-	implicit none
-	include 'myphase_struct.for'
-#ifdef ABSOFT
-      record /source4/ src4
-#else      
-      type(source4)::src4 
-#endif
-	integer i,j
-c alle nz
-	src4.ieyrex=0
-	src4.ieyimx=0
-	src4.iezrex=0
-	src4.iezimx=0
-c alle ny
-	src4.ieyrey=0
-	src4.ieyimy=0
-	src4.iezrey=0
-	src4.iezimy=0
-c alle dz
-	src4.dxeyre=0
-	src4.dxeyim=0
-	src4.dxezre=0
-	src4.dxezim=0
-c alle dy		
-	src4.dyeyre=0
-	src4.dyeyim=0
-	src4.dyezre=0
-	src4.dyezim=0
-c alle zmin
-	src4.xeyremin=dble(0)
-	src4.xeyimmin=dble(0)
-	src4.xezremin=dble(0)
-	src4.xezimmin=dble(0)
-c alle ymin
-	src4.yeyremin=dble(0)
-	src4.yeyimmin=dble(0)
-	src4.yezremin=dble(0)
-	src4.yezimmin=dble(0)
-c alle zmax
-	src4.xeyremax=dble(0)
-	src4.xeyimmax=dble(0)
-	src4.xezremax=dble(0)
-	src4.xezimmax=dble(0)
-c alle ymax
-	src4.yeyremax=dble(0)
-	src4.yeyimmax=dble(0)
-	src4.yezremax=dble(0)
-	src4.yezimmax=dble(0)
-c  lambda
-	src4.xlam=dble(0)
-c  Setze alle E-Felder 
-	do i=1,256
-	  do j=1,256
-	    src4.zeyre(i,j)=dble(0)
-	    src4.zeyim(i,j)=dble(0)
-	    src4.zezre(i,j)=dble(0)
-	    src4.zezim(i,j)=dble(0)
-	  enddo
-	enddo    
-	return
-	end !init_src4
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
-
-
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_modgrid(src4,nz2,ny2)
-     
-	implicit none
-	
-	common/cstak/dstak
-	
-	include 'myphase_struct.for'
-#ifdef ABSOFT
-      record /source4/ src4
-#else      
-      type(source4)::src4 
-#endif	
-	integer k,nz2,ny2,nz1,ny1
-	real*8  dz1,dz2,dy1,dy2,ymax,ymin,zmax,zmin
-     &	 ,z1(1024),z2(1024),y1(1024),y2(1024)
-     &	 ,data_in(1024),data_out(1024)
-     &	 ,dstak(6144)
-     
-      write(*,*)'Changing number of grid-points ...'
-      
-	call ISTKIN(6144,4)
-	
-	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
-	
-	dz1=(zmax-zmin)/(nz1-1)
-      dy1=(ymax-ymin)/(ny1-1)
-	do k=1,nz1
-		z1(k)=dble(k-1)*dz1
-	enddo
-	do k=1,ny1
-		y1(k)=dble(k-1)*dy1
-	enddo
-	
-	dz2=(zmax-zmin)/(nz2-1)
-      dy2=(ymax-ymin)/(ny2-1)
-	
-	do k=1,nz2
-		z2(k)=dble(k-1)*dz2
-	enddo
-	do k=1,ny2
-		y2(k)=dble(k-1)*dy2
-	enddo
-
-
-	do k=1,ny1  ! Interpoliere alle Vektoren in z-Richtung
-#ifdef ABSOFT		
-#else
-		data_in(1:nz1) = src4.zezre(1:nz1,k)
-		src4.zezre(:,k)= 0.d0
-#endif
-		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
-#ifdef ABSOFT		
-#else
-		src4.zezre(1:nz2,k)=data_out(1:nz2)
-		data_in(1:nz1) = src4.zezim(1:nz1,k)
-		src4.zezim(:,k)= 0.d0
-#endif
-		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
-#ifdef ABSOFT		
-#else
-		src4.zezim(1:nz2,k)=data_out(1:nz2)
-		
-		data_in(1:nz1) = src4.zeyre(1:nz1,k)
-		src4.zeyre(:,k)= 0.d0
-#endif
-		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
-#ifdef ABSOFT		
-#else
-		src4.zeyre(1:nz2,k)=data_out(1:nz2)
-		
-		data_in(1:nz1) = src4.zeyim(1:nz1,k)
-		src4.zeyim(:,k)= 0.d0
-#endif
-		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
-#ifdef ABSOFT		
-#else
-		src4.zeyim(1:nz2,k)=data_out(1:nz2)
-#endif	
-	enddo
-#ifdef ABSOFT		
-#else	
-	data_in(:) =0.d0
-	data_out(:)=0.d0
-#endif	
-	do k=1,nz2  ! Interpoliere alle Vektoren in y-Richtung
-			! Beachte: nz1 -> nz2 bereits durchgefuehrt 
-		
-#ifdef ABSOFT		
-#else
-		data_in(1:ny1) = src4.zezre(k,1:ny1)
-		src4.zezre(k,:)= 0.d0
-#endif
-		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
-#ifdef ABSOFT		
-#else
-		src4.zezre(k,1:ny2)=data_out(1:ny2)
-		
-		data_in(1:ny1) = src4.zezim(k,1:ny1)
-		src4.zezim(k,:)= 0.d0
-#endif
-		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
-#ifdef ABSOFT		
-#else
-		src4.zezim(k,1:ny2)=data_out(1:ny2)
-		
-		data_in(1:ny1) = src4.zeyre(k,1:ny1)
-		src4.zeyre(k,:)= 0.d0
-#endif
-		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
-#ifdef ABSOFT		
-#else
-		src4.zeyre(k,1:ny2)=data_out(1:ny2)
-		
-		data_in(1:ny1) = src4.zeyim(k,1:ny1)
-		src4.zeyim(k,:)= 0.d0
-#endif
-		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
-#ifdef ABSOFT		
-#else
-		src4.zeyim(k,1:ny2)=data_out(1:ny2)
-#endif	
-	enddo
-	
-	call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
-      
-	return
-	end   !pha_src4_modgrid
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-
-
-// */

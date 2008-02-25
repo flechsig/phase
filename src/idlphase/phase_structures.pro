@@ -3,6 +3,7 @@
 PRO init_phase_structures
 
 MaxPathLength=long(255)
+MaximumOptElements=long(64)
  
 intzero=long(0)
 dblzero=double(0)
@@ -53,10 +54,15 @@ dummy_source4 =  { source4 ,                                                $
 	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
 	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
 	zezre:dblarr(256,256) , zezim:dblarr(256,256) ,$
-	xlam:dblzero,$
-	ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
-        iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero   $
-} ;source4
+	gridx:dblarr(256)     , gridy:dblarr(256), deltatime:dblzero, $
+      ampeyre:dblzero , ampeyim:dblzero , $
+      ampezre:dblzero , ampezim:dblzero , $
+      xlam:dblzero , $
+      ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
+      iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero , $
+      nsource:intzero, nimage:intzero, nfreqtot:intzero, $
+	nfreqpos:intzero ,nfreqneg:intzero , iconj:intzero $
+};source4
 
 
 dummy_source5 = {  source5 ,  $;                 /* Dipol Quelle  */
@@ -111,6 +117,25 @@ dummy_PHASEset = { PHASEset, $   ;        /* Datensatz in MainPickName 	*/
 	beamlinename:bytarr(MaxPathLength) $
 };PHASEset              
 
+dummy_RTSourceType = { RTSourceType ,$
+  Quellep:ptr_new() , $
+  SourceRays:ptr_new() , $ ;struct RayType *SourceRays
+  QuellTyp:intzero, QuellTyp_old:intzero, modified:intzero, raynumber:intzero $
+};       
+
+;struct PSDType  {
+;  double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
+;    *eyrec, *ezrec, *eyimc, *ezimc;
+; double simpre[0x8000], simpim[0x8000], sintre[0x8000], sintim[0x8000], 
+;    simpa[0x8000], simpp[0x8000], d12[24576]; 
+;  int iy, iz;
+;};
+
+dummy_RESULTType = { RESULTType , $
+  RESp:ptr_new() , $
+  points:intzero, typ:intzero $
+};       
+
 
 dummy_mirrortype = { mirrortype, a:dblarr(6,6) }
 ;mirrortype
@@ -162,9 +187,9 @@ dummy_ElementType = { ElementType , $
   elementname:bytarr(MaxPathLength) $
 };ElementType
 
-;/* --------------- integration --------------------------------*/
+
 dummy_integration = { integration , $
-	distfoc:dblzero,$
+	distfocy:dblzero,distfocz:dblzero,$
 	ianzy0:intzero,$
 	ianzz0:intzero,$
 	ymin:dblzero,ymax:dblzero,$
@@ -191,16 +216,54 @@ dummy_control_flags = { control_flags , $
    ipath:intzero $ 
 };control_flags
 
+
+
 dummy_PSSourceType = { PSSourceType, $
     sigy:dblzero, sigdy:dblzero, sigz:dblzero, sigdz:dblzero,$
     yhard:intzero, dyhard:intzero, zhard:intzero, dzhard:intzero  $
 };PSSourceType 
- 
+
+;struct RayType { double y, z, dy, dz, phi; };  
+
+
+dummy_UndulatorSource0Type = { UndulatorSource0Type $
+      ,length:dblzero, lambda:dblzero, sigvert:dblzero, sighor:dblzero, deltaz:dblzero $
+      ,sigmaez:dblzero, sigmaey:dblzero, sigmaedz:dblzero, sigmaedy:dblzero $
+};
+
+dummy_DipolSourceType   =  { DipolSourceType $
+            , sigy:dblzero, sigdy:dblzero, sigz:dblzero, dz:dblzero $
+};
+dummy_PointSourceType   =  { PointSourceType $
+            , sigy:dblzero, sigdy:dblzero, sigz:dblzero, sigdz:dblzero $
+};
+dummy_RingSourceType    =  { RingSourceType  $
+            , dy:dblzero, dz:dblzero $
+};
+dummy_SRSourceType      =  { SRSourceType    $
+            , y:dblzero, z:dblzero, dy:dblzero, dz:dblzero $
+};
+dummy_HardEdgeSourceType=  { HardEdgeSourceType $
+            , disty:dblzero, distz:dblzero, divy:dblzero, divz:dblzero $
+            ,iy:intzero, iz:intzero, idy:intzero, idz:intzero $
+};
+
+dummy_PSImageType = { PSImageType, $
+    ymin:dblzero, ymax:dblzero, zmin:dblzero, zmax:dblzero, $
+    iy:intzero, iz:intzero  $
+};PSSourceType 
+
+
+
+
 dummy_PSOptionsType = { PSOptionsType , $
   intmod:intzero, ndyfix:intzero, ndzfix:intzero,$
   PSSource:{PSSourceType}, $
   dyminfix:dblzero, dymaxfix:dblzero, dzminfix:dblzero, dzmaxfix:dblzero $
 };PSOptionsType     
+
+
+
 
 dummy_OptionsType = { OptionsType, $
   SourcetoImage:intzero, wrMatrix:intzero, CalcMod:intzero, wrSource:intzero, WithAlign:intzero,$
@@ -214,7 +277,7 @@ dummy_OptionsType = { OptionsType, $
 dummy_BeamlineType = { BeamlineType, $
   	ElementList:cptr ,$;Hier wird auf Struktur gezeigt...  *ElementList:{ElementType}   
 ;  	RTSource:{RTSourceType} ,  $ 
-	map70:MAP70TYPE, lmap:cptr, rmap:cptr, MtoSource:MAP70TYPE, $  
+	map70:MAP70TYPE, lmap:MAP70TYPE, rmap:MAP70TYPE, MtoSource:MAP70TYPE, $  
 	ypc1:MAP7TYPE, zpc1:MAP7TYPE, dypc:MAP7TYPE, $
 	dzpc:MAP7TYPE, wc:MAP7TYPE, xlc:MAP7TYPE, $
 	fdetc:MAP7TYPE, fdetphc:MAP7TYPE, fdet1phc:MAP7TYPE, $;
@@ -228,4 +291,48 @@ dummy_BeamlineType = { BeamlineType, $
 }; 
 
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;// *************************************************************************/
+dummy_pha4idlBeamlineFile = { pha4idlBeamlineFile $
+;//  unsigned int beamlineOK, position, hormapsloaded :intzero $;
+    ,NumElements:intzero $;
+    ,raynumber:intzero $;
+    ,SourceType:byte(' ') $;
+    ,deltalambdafactor:dblzero $; 
+;//  double xlen0 :dblzero $;
+    ,ElementList:replicate({ElementType},MaximumOptElements)  $
+    ,BLOptions:{OptionsType} $
+    ,src:{sources}  $
+    ,PSImage:{ PSImageType } $
+    ,UndulatorSrc:{ UndulatorSource0Type } $; // Undu0Src enthaelt alle elemente von norm undu
+    ,DipolSrc:{ DipolSourceType } $;
+    ,PointSrc:{ PointSourceType } $;
+    ,SRSrc:{ SRSourceType } $;
+    ,HardEdgeSrc:{ HardEdgeSourceType }  $;
+    ,RingSrc:{ RingSourceType } $;
+    ,fnamesrc4ezre:string(''), fnamesrc4ezim:string('') $
+    ,fnamesrc4eyre:string(''), fnamesrc4eyim:string('') $ ;
+    ,fnamesrc6:string('') $
+}; 
+;// *************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
 END
+
+
+

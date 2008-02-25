@@ -1,3 +1,18 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 c----------------------------------------------------------------------
 c
 c	create field distribution of Gauss'schen beam to compare with
@@ -29,6 +44,11 @@ c----------------------------------------------------------------------
 c	This is the routine that does the work. It in principle 
 c   needs to know nothing about its call from IDL.
 c
+	
+	
+	
+
+
       SUBROUTINE phasesrcwfgauss(gb ,ianzz,zmin,zmax,ianzy,ymin,ymax,
      &							  w0, deltax, xlambda)
       implicit none    

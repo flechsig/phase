@@ -50,7 +50,7 @@
 #include <version.h>
 
 
-#include "pha4idl_prototypes.h"
+#include "phase4idl.h"
 
 #include "Constants.h"
 
@@ -86,148 +86,14 @@ You can learn more about the nuances of printf on a UNIX machine by typing man 3
 // */
 
 
-// int ReadBLFile(char *fname, struct BeamlineType *bl)  
-//int testReadBeamLineFile(IDL_STRING *fname, struct BeamlineType *beamline)
-int testReadBeamLineFile(IDL_STRING *fname, IDL_VPTR *beamline)
-{ int err=-1;
-
-   struct BeamlineType *bl = (struct BeamlineType *) beamline;
-
-   //printf("%s \n",fname->s);
-   
-   err = ReadBLFile(fname->s, bl) ;
-   err = ReadBLFile(fname->s, beamline) ;
-   
-//   beamline=&bl;
-
-  return err;
-}
-
-
-
-// void WriteBLFile(char *fname, struct BeamlineType *bl)
-int testWriteBeamLineFile(IDL_STRING *fname, struct BeamlineType *beamline)
-//int testWriteBeamLineFile(IDL_STRING fname, IDL_VPTR *beamline)
-{
-
-//   struct BeamlineType bl;
-
- //  bl=*beamline;
-
-//   WriteBLFile(fname->s, &bl);
-
-   WriteBLFile(fname->s, beamline);
-
-  
-  return 0;
-}
-
-
-
-// /* *** Fortran-Access ***
-int phaSrcWFGauss (struct source4 *gb4, int *ianzz, double *zmin, double *zmax, 
-                                    int *ianzy, double *ymin, double *ymax, 
-						double *w0, double *deltax, double *xlambda)
-{ 
-  double waist=*w0;  // Dereferencing w0, so that w0 won't change in the calling program
-  double distance=*deltax;  // Same ...
-  
-  extern void phasesrcwfgauss_(); // Declare The Fortran Routine 
-  
-  phasesrcwfgauss_(gb4,ianzz,zmin,zmax,ianzy,ymin,ymax,&waist,&distance,xlambda);  
-  		// Call The Fortran Routine  
-    
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  --- Former Propagate_1
-int 
-phaPropWFFresnelKirchhoff (struct source4 *beam4, double *distance, int *nz2, double *zmin2, double *zmax2, int *ny2, double *ymin2, double *ymax2)
-
-{ 
-  double dist = *distance;
-    // Dereferencing dist, so that it won't change in the calling program
-
-  extern void phadrift_propagate_fk_(); // Declare the Fortran Routine 
-  
-//  int   imode = 1; // -> Selects FresnelKirchh. Integration
-  
-  phadrift_propagate_fk_(beam4, &dist, nz2,zmin2,zmax2,  ny2,ymin2,ymax2);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  --- Former Propagate_2
-int 
-phaPropFFTnear (struct source4 *beam4, double *distance)
-{ 
-  double dist = *distance;
-  // Dereferencing dist, so that it won't change in the calling program
-  
-  extern void phadrift_propagate_fft_near_(); // Declare the Fortran Routine 
-  
-  //int   imode = 2; // -> Selects Near-Field FFT
-  
-  phadrift_propagate_fft_near_(beam4, &dist);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  --- Former Propagate_3
-int 
-phaPropFFTfar (struct source4 *beam4, double *distance)
-{ 
-  double dist = *distance;
-  // Dereferencing dist, so that it won't change in the calling program
-  
-  extern void phadrift_propagate_fft_far_(); // Declare the Fortran Routine 
-  
-  //int   imode = 3; // -> Selects Far-Field FFT
-     
-  phadrift_propagate_fft_far_(beam4, &dist);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  
-int 
-phaModSizeAddZeros (struct source4 *beam4, int *nz2, int *ny2)
-{ 
-  extern void pha_src4_addzeros_(); // Declare the Fortran Routine 
-  
-  pha_src4_addzeros_(beam4, nz2, ny2);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
-
-// /* *** Fortran-Access ***  
-int 
-phaModSizeCut (struct source4 *beam4, int *nzmin, int *nzmax, int *nymin, int *nymax)
-{ 
-  extern void pha_src4_cut_(); // Declare the Fortran Routine 
-  
-  pha_src4_cut_(beam4, nzmin,nzmax,nymin,nymax);
-// Call the Fortran Routine 
-  return (0);
-}
-// */
 
 
 
 
-// /* *** Fortran-Access ***  
-int 
-phaModGrid (struct source4 *beam4, int *nz2, int *ny2)
-{ 
-  phaModGrid_cwrap (beam4, nz2, ny2);
-  return (0);
-}
-// */
+
+
+
+
 
 
 

@@ -63,16 +63,23 @@ ORIGINALPHASExAMxLDFLAGS = @MOTIFLIBS@ $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX
 lib_LTLIBRARIES = libphase4idl.la
 
 libphase4idl_la_SOURCES   = \
-               idl_phase_c.c \
                idl_phase_batchmode_access.c \
-               pha_Drift.F \
-               pha_Src4Drift.c \
+               idl_phase_c.c \
+               idl_bline.c \
+               phase4idl.c \
+               phaSrc4Drift.f \
+               phaSrc4WFGauss.f \
+               phaSrc4Tools.f \
+               phase4idl.h \
                pha_helper_functions.F \
-               pha_SrcWFGauss.F \
-               pha_Src4WFGauss.c \
-               pha_Src4Tools.c \
                $(ORIGINALPHASExSOURCES)
 
+##
+##               pha_Drift.F \
+##                pha_Src4Drift.c \
+##                pha_Src4WFGauss.c \
+##               pha_helper_functions.F \
+##               pha_Src4Tools.c \
 ## benchmark.f \
 ## pha_Drift_1024.f \
 ## pha_Drift_256.f \

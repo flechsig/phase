@@ -359,3 +359,17 @@ phaModGrid,b,nz2,ny2
 phaintensitysurface,b
 
 END
+
+pro tmg,nz1,ny1,nz2,ny2
+
+phainit
+
+!P.Multi=[0,1,1]
+
+b=phaSrcWFGauss(nz1, -1, 1,ny1, -1, 1, 0.2 , 0 , 20)
+
+phaModGrid,b,nz2,ny2
+
+phaintensitysurface,b
+
+END

@@ -129,7 +129,9 @@ struct  source4 {
 	yezimmin,yezimmax,dyezim,
 	zezre[256][256],zezim[256][256],
         gridx[256],gridy[256],deltatime,
-        ampeyre,ampeyim,ampezre,ampezim;
+        ampeyre,ampeyim,ampezre,ampezim
+     ,xlam
+          ;
   int  ieyrex,ieyimx,ieyrey,ieyimy,
        iezrex,iezimx,iezrey,iezimy,
        nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;

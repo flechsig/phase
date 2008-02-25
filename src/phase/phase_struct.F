@@ -111,6 +111,7 @@ c---------------- sources -----------------------------------
      &       zezre(256,256),zezim(256,256),
      &       gridx(256),gridy(256),deltatime,
      &       ampeyre,ampeyim,ampezre,ampezim
+     &      ,xlam
 	  integer ieyrex,ieyimx,ieyrey,ieyimy,
      &            iezrex,iezimx,iezrey,iezimy,
      &            nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj

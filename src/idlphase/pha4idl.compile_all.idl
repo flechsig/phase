@@ -22,9 +22,9 @@
 
 .compile PhaseBatchmode.pro
 
-.compile SharedLibAcessTests.pro
+;.compile SharedLibAcessTests.pro
 
-.compile bl.pro
+.compile phaBeamline.pro
 
 
 ;.compile uwe_phase_beamline__define.pro
@@ -39,7 +39,7 @@
 ;	.compile phase_structures_256.pro	
 ;	.compile benchmark.pro	
 
-	.compile test.pro			
+;	.compile test.pro			
 
 ;	.compile c_test.pro			
 ;	.compile ffttest.pro			
@@ -47,7 +47,8 @@
 
 
 ;;; EXAMPLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.compile examples.pro
+;.compile examples.pro
+
 
 ; Init phase Variables
 phainit

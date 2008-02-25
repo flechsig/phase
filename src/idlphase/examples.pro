@@ -45,6 +45,7 @@ phainit
 ;  New Gaussian-Beam with 193x67 Points
 ;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda)
  beam=phaSrcWFGauss( 193,  -1  , 1    , 67 ,  0  ,   3  ,  0.2 ,  0   , 20    )
+beam.xlam=20
 
 print,'phaSrcWFGauss ...'
 phaIntensitySurface,beam,'Gauss-Source 193x67'
@@ -74,7 +75,7 @@ phaIntensitySurface,beam,'FFTnear - 2000mm'
 print,'phaModSizeCut ...'
 phaIntensitySurface,beam,'Slit (64x4)'
 
-
+; help,/structures,beam
 
 
 END ; ttt
