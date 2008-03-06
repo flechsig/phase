@@ -1,0 +1,43 @@
+When strings are passed with CALL_EXTERNAL they are passed as structures.
+
+It is best to avoid passing strings to routines through call_external.
+
+That being said, if you feel you must pass a string here is what the 
+structure that is passed looks like currently(that is i think the 
+makers of IDL consider this something that they are free to change). 
+
+-------------------------------------------------------------------
+
+
+C: 
+~~
+
+typedef struct IDL_STRING {   /* Define string descriptor */          
+  unsigned short slen;	      /* Length of string, 0 for null */      
+  short stype;		      /* type of string, static or dynamic */ 
+  char *s;		      /* Addr of string */                    
+} IDL_STRING;
+
+Declaration of string has this form:
+struct IDL_STRING my_string
+
+-------------------------------------------------------------------
+
+
+FORTRAN:
+~~~~~~~~
+
+STRUCTURE /IDL_STRING/
+  LOGICAL*2 slen
+  INTEGER*2 stype
+  INTEGER*4 s  ==> INTEGER*8 s on machines with 64-bit address spaces
+END STRUCTURE
+
+Declaration of string has this form:
+RECORD /IDL_STRING/ my_string
+
+
+___________________________________________________________________
+
+CHARACTER*n c          | char c[n];
+

@@ -1,0 +1,1 @@
+aktuelle Gridsize:  256x256
