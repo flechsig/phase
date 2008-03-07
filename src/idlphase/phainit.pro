@@ -32,7 +32,9 @@ defsysv, '!phaseidllib',!phalib
 defsysv, '!phase4idllib',!phalib
 
 
-; Initialize Phase-Structures
+; Initialize Phase-Structures and defines
+
+init_phase_defines
 
 init_phase_structures
 

@@ -1,7 +1,8 @@
 ; Compiles all of the *.pro files included into the phase4idl project at the moment
 
-;;; Used C-Structures ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.compile phase_structures.pro		
+;;; Used C-Structures and defines;;;;;;;;;;;;;;;;;;;;;;;;;
+.compile phase_defines.pro
+.compile phase_structures.pro
 
 ;;; INITIALIZATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .compile phainit.pro
