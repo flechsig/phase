@@ -58,9 +58,6 @@ phaSetPSsource, bl ,   4    , 4   ,  0   , 0.1  ,0.00025, 4   ,  4   ,  0.1 ,0.0
 ; struct OptEl = phaNewMirror(ElementName)
  mirror01  = phaNewOptElement('Spieglein an der Wand')
 
-;grating01  = phaNewOptElement('ein kleines gitter')
-
-
 ; define mirror    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 phaDefineOpticalElement , mirror01 $
 ; struct GDat - geometry
@@ -86,6 +83,10 @@ phaAddOptElement, bl, mirror01
 
 
 
+MirrorCoeffFileName  = 'MeinSpieglein.coeff'
+MirrorFromCoeffFile  = phaNewOptElement(MirrorCoeffFileName)
+MirrorFromCoeffFile.MDat.Art = 350  ; coeff.file is read
+phaAddOptElement, bl, MirrorFromCoeffFile
 
 ; create src field
 bl.src.so4 = phaSrcWFGauss(128, -1, 1,128, -1, 1, 0.2 , 0 , 20)
