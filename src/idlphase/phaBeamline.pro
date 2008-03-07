@@ -3,6 +3,29 @@
 ;;; FILE:  phaBeamline.pro
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewBeamline, blfname
+;input        -none-
+;output     bl : struct pha4idlBeamlineType
+
+if n_params() eq 0 then blfname=string('Unnamed')
+
+bl          = { pha4idlBeamlineType }
+bl.blfname = blfname
+bl.fnamesrc4ezre = blfname+'-ezrec'
+bl.fnamesrc4ezim = blfname+'-ezimc'
+bl.fnamesrc4eyre = blfname+'-eyrec'
+bl.fnamesrc4eyim = blfname+'-eyimc'
+bl.fnamesrc6 = blfname+'-so6'
+
+; defaultvalues
+bl.raynumber = 225
+
+
+
+return,bl
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 PRO phaAddOptElement, bl, OptElement 

@@ -22,15 +22,19 @@
 .compile phaplotting.pro		
 ;.compile rtrace.pro			
 
-.compile ReadPhaseResults.pro
-.compile SavePhaseResults.pro
+.compile tmptmp.pro
 
-
-.compile phaBatchmode.pro
-
+.compile phaOpticalElements.pro
+.compile phaSetSources.pro
+.compile phaSetBeamlineOptions.pro
 .compile phaBeamline.pro
 
-.compile tmptmp.pro
+
+.compile ReadPhaseResults.pro
+.compile SavePhaseResults.pro
+.compile phaBatchmode.pro
+
+
 
 
 
