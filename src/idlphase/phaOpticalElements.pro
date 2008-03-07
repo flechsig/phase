@@ -1,4 +1,790 @@
 
+; file: phaOpticalElements.pro
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOECoefficientFile, name
+Art = !phaOptElGeneral
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEPlaneGrating, name
+Art = !phaOptElPlaneGrating
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEPlaneVLSGrating, name
+Art = !phaOptElPlaneVLSGrating
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEPlaneMirror, name
+Art = !phaOptElPlaneMirror
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOESlit, name
+Art = !phaOptElSlit
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEDrift, name
+Art = !phaOptElDrift
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEToroidalMirror, name
+Art = !phaOptElToroidalMirror
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEToroidalGrating, name
+Art = !phaOptElToroidalGrating
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEToroidalVLSGrating, name
+Art = !phaOptElToroidalVLSGrating
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOECone, name
+Art = !phaOptElCone
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEEllipticalMirror, name
+Art = !phaOptElEllipticalMirror
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEPlaneEllipticalMirror, name
+Art = !phaOptElPlaneEllipticalMirror
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FUNCTION phaNewOEPlaneEllipticalGrating, name
+Art = !phaOptElPlaneEllipticalGrating
+;input      name        : idl_string
+;output     mirror      : struct pha4idlOptElementType
+
+OptElement = phaNewOptElement, name
+
+; define struct GDat:{gdatset}
+theta0=0
+r=0
+rp=0
+xdens0=0
+xdens1=0
+xdens2=0
+xdens3=0
+xdens4=0
+lambda=0
+inout=0
+iflag=0
+azimut=0
+
+; define struct MDat:{mdatset}
+r1=0
+r2=0
+alpha=0
+rmi=0
+rho=0
+iflagmi=0
+w1=0
+w2=0
+l1=0
+l2=0
+slopew=0
+slopel=0
+du=0
+dw=0
+dl=0
+dRu=0
+dRw=0
+dRl=0
+
+
+; Set/Write struct GDat:{gdatset}
+phaOptElementDefGeo, OptElement $
+      ,theta0,r,rp,xdens0,xdens1,xdens2,xdens3,xdens4,lambda,inout,iflag,azimut
+
+; Set/Write struct MDat:{mdatset}
+phaOptElementDefMDat, OptElement $
+      ,r1,r2,alpha,rmi,rho,iflagmi $
+      ,w1,w2,l1,l2,slopew,slopel,du,dw,dl $
+      ,dRu,dRw,dRl,Art
+
+
+return,OptElement
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+
+
+
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6,7 +792,9 @@ FUNCTION phaNewOptElement, name
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-if n_params() eq 0 then blfname=string('Unnamed')
+if n_params() eq 0    then name=string('Unnamed')
+if name eq string('') then name=string('Unnamed')
+
 
 OptElement = { pha4idlOptElementType }
 OptElement.name = name
