@@ -4,7 +4,8 @@
 ;	phaPropWFFresnelKirchhoff
 ;
 ; PURPOSE:
-;       Propagate the fields in a pha4idl beamline structure with the Fresnel-Kirchhoff integration method.
+;       Propagate the fields in a pha4idl beamline structure 
+;	with the Fresnel-Kirchhoff integration method.
 ;
 ; CATEGORY:
 ;	pha4idl - Free space propagator
@@ -13,6 +14,19 @@
 ;	phaPropWFFresnelKirchhoff, beam, distance, nz2, zmin2, zmax2, ny2, ymin2, ymax2 
 ;
 ; INPUTS:
+;     	beam:		struct Source4 containing EM fields to propagate
+;     	distance:	propagation distance [mm]
+;
+;	nz2:		imageplane: number of gridpoints in z-direction
+;	zmin2:		imageplane: lower border in z-direction [mm]
+;	zmax2:		imageplane: upper border in z-direction [mm]
+;
+;	ny2:		imageplane: number of gridpoints in y-direction
+;	ymin2:		imageplane: lower border in y-direction [mm]
+;	ymax2:		imageplane: upper border in y-direction [mm]
+;
+; OUTPUTS:
+;     	beam:		initial fields are overwritten with the new values
 ;
 ;
 ; KEYWORDS:

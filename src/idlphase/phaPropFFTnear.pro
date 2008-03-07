@@ -4,7 +4,8 @@
 ;	phaPropFFTnear
 ;
 ; PURPOSE:
-;       Propagate the fields in a pha4idl beamline structure with a nearfield fourier propagator.
+;       Propagate the fields in a pha4idl beamline structure 
+;	with a nearfield fourier propagator.
 ;
 ; CATEGORY:
 ;	pha4idl - Free space propagator
@@ -13,6 +14,12 @@
 ;	phaPropFFTnear, beam, distance	 
 ;
 ; INPUTS:
+;     	beam:		struct Source4 containing EM fields to propagate
+;     	distance:	propagation distance [mm]
+;
+; OUTPUTS:
+;     	beam:		initial fields are overwritten with the new values
+;
 ;
 ; KEYWORDS:
 ;	None.
