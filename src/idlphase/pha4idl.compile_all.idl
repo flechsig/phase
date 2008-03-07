@@ -7,10 +7,15 @@
 .compile phainit.pro
 
 ;;; Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.compile UsefullTools.pro
+.compile phaUsefullTools.pro
 
 ;;; The PROGRAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.compile phaProp.pro			
+
+;;;; .compile phaProp.pro	
+.compile phaPropWFFresnelKirchhoff.pro
+.compile phaPropFFTnear.pro
+.compile phaPropFFTfar.pro
+		
 .compile phaSrcWFGauss.pro		
 .compile pha_src4_functions.pro		
 .compile phaplotting.pro		
@@ -20,9 +25,7 @@
 .compile SavePhaseResults.pro
 
 
-.compile PhaseBatchmode.pro
-
-;.compile SharedLibAcessTests.pro
+.compile phaBatchmode.pro
 
 .compile phaBeamline.pro
 
@@ -40,15 +43,9 @@
 
 ;	.compile phase_structures_1024.pro	
 ;	.compile phase_structures_256.pro	
-;	.compile benchmark.pro	
 
 	.compile test.pro			
-
-;	.compile c_test.pro			
-;	.compile ffttest.pro			
-;	.compile object-tests.pro		
-
-
+;
 ;;; EXAMPLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .compile examples.pro
 

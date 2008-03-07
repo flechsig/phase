@@ -1,4 +1,4 @@
-;+
+;
 ; NAME: test.pro
 ;	
 ;   Tests the phase4idl-Routines

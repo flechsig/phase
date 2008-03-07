@@ -29,31 +29,35 @@ idl_with_doc_header = \
 
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
-            $(idl_with_doc_header) \
-            benchmark.pro \
-            phabeamload.pro \
-            pha_src4_functions.pro \
-            c_test.pro \
-            phainit.pro \
-            phaSrcWFGauss.pro \
-            phaplotting.pro \
-            rtrace.pro \
-            examples.pro \
-            phaProp.pro \
-            test.pro \
-            ffttest.pro \
-            object-tests.pro \
-            phabeamcopy.pro \
-            phabeamdiff.pro \
-            phase_structures.pro \
-            uwe_phase_beamline__define.pro \
-            uwe_initbeamline.pro \
-		updatehelp.pro \
-            PhaseBatchmode.pro \
-		SharedLibAcessTests.pro \
-		UsefullTools.pro \
-            phase4idl.compile_all.idl \
-            phase4idl.compile-test-exit.idl
+	$(idl_with_doc_header) \
+	phabeamload.pro \
+	pha_src4_functions.pro \
+	phainit.pro \
+	phaSrcWFGauss.pro \
+	phaplotting.pro \
+	examples.pro \
+	test.pro \
+	phabeamcopy.pro \
+	phabeamdiff.pro \
+	phase_structures.pro \
+	updatehelp.pro \
+	phaBatchmode.pro \
+	phaUsefullTools.pro \
+	pha4idl.compile_all.idl \
+	phaPropWFFresnelKirchoff.pro \
+	phaPropFFTnear.pro \
+	phaPropFFTfar.pro
+
+##          test-exit.idl
+##             benchmark.pro \
+##            c_test.pro \
+##            rtrace.pro \
+##            ffttest.pro \
+##            object-tests.pro \
+##            uwe_phase_beamline__define.pro \
+##            uwe_initbeamline.pro \
+##		SharedLibAcessTests.pro \
+##
 
 
 ###
