@@ -27,7 +27,7 @@ bl = phaNewBeamline(beamlinefilename)
 
 
 ;phaSetSrcPhaseSpace, bl, ny, ymin, ymax, nz, zmin, zmax
-phaSetSrcPhaseSpace, bl, 5, -0.1 , 0.1 , 5, -0.1, 0.1
+phaSetSrcPhaseSpace, bl, 15, -0.1 , 0.1 , 15, -0.1, 0.1
 
 
 ;phaSetControlFlags, bl , iord, iordsc, iexpand, iplmode, ibright, ispline, inorm, inorm1, inorm2, matrel, igrating, ipinarr
@@ -97,7 +97,7 @@ phaSaveEMField, bl.src.so4, bl.blfname
 phaWriteBLFile, bl
 
 cmode = 3 ; phasespace
-phaBatchMode, bl.blfname, bl.blfname, cmode
+phaBatchMode_nosubprocess, bl.blfname, bl.blfname, cmode
 
 phaLoadEMField, bl.src.so4, bl.blfname
 PHAINTENSITYSURFACE,bl.src.so4,'post phase run'
