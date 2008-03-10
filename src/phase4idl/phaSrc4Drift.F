@@ -131,12 +131,12 @@ c    dsqrt benoetigt nur rund 66% der Zeit, die eine Entwicklung zur 5.Ordnung b
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       tmp=distance**2 + dabs(y1(k)-y2(i))**2 + dabs(z1(l)-z2(j))**2
 	if (tmp.lt.small) then
-		write(*,*),tmp,' ... small sqrtarg at (i,j,k,l) ',i,j,k,l
+		write(*,*) tmp,' ... small sqrtarg at (i,j,k,l) ',i,j,k,l
 c		fact=cmplx(0,0)
 	endif
 
 	if (tmp.gt.big)  then
-		write(*,*),tmp,' ...   big sqrtarg at (i,j,k,l) ',i,j,k,l
+		write(*,*)tmp,' ...   big sqrtarg at (i,j,k,l) ',i,j,k,l
 c		fact=cmplx(0,0)
 	endif  
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -152,12 +152,12 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       tmp=dsqrt(dreal(fact)**2 + dimag(fact)**2) 	
 	if (tmp.lt.small) then
-		write(*,*),fact,' ... small fact at (i,j,k,l) ',i,j,k,l
+		write(*,*)fact,' ... small fact at (i,j,k,l) ',i,j,k,l
 c		fact=cmplx(0,0)
 	endif
 
 	if (tmp.gt.big)  then
-		write(*,*),fact,' ...   big fact at (i,j,k,l) ',i,j,k,l
+		write(*,*)fact,' ...   big fact at (i,j,k,l) ',i,j,k,l
 c		fact=cmplx(0,0)
 	endif
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
