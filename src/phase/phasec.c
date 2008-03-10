@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <03 Jan 08 12:13:20 flechsig>  */
+/*   Time-stamp: <10 Mar 08 13:53:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -79,15 +79,7 @@ void BatchMode(char *fname, int cmode, int selected)
       WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESp); 
       break;
-    case 4:
-      printf("BatchMode: Footprint at element %d\n", selected);
-      Beamline.position= selected;
-      MakeRTSource(&PHASESet, &Beamline);
-      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      Footprint(&Beamline, Beamline.position);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESp);
-      break;
+    
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
       src_ini(&Beamline.src); 
@@ -97,6 +89,27 @@ void BatchMode(char *fname, int cmode, int selected)
       PSDp= (struct PSDType *)Beamline.RESULT.RESp;
       WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
       break;
+
+    case 4:
+      printf("BatchMode: Footprint at element %d\n", selected);
+      Beamline.position= selected;
+      MakeRTSource(&PHASESet, &Beamline);
+      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+      Footprint(&Beamline, Beamline.position);
+      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
+		   Beamline.RESULT.RESp);
+      break;
+
+    case 5:
+      printf("BatchMode: multiple Phase Space Imaging\n");
+      src_ini(&Beamline.src); 
+      psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+      ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+      MPST(&Beamline);
+      PSDp= (struct PSDType *)Beamline.RESULT.RESp;
+      WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+      break;
+
     default: 
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
     }
@@ -190,8 +203,9 @@ int ProcComandLine(unsigned int ac, char *av[])
 	  printf("                -m, -Mcalcmode:   calculation mode \n");
 	  printf("                                  1: ray trace\n");
 	  printf("                                  2: full ray trace\n");
-	  printf("                                  3: phase space density\n");
+	  printf("                                  3: phase space imaging\n");
 	  printf("                                  4: footprint (requires option s)\n");
+	  printf("                                  5: multiple phase space imaging\n");
 	  printf("                -s, -Snumber:     selected element number (for footprint)\n");
 	  exit(3);
 	  break;
