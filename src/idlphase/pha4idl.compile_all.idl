@@ -12,10 +12,10 @@
 
 ;;; The PROGRAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;; .compile phaProp.pro	
-.compile phaPropWFFresnelKirchhoff.pro
-.compile phaPropFFTnear.pro
-.compile phaPropFFTfar.pro
+.compile phaPropagation.pro	
+;.compile phaPropWFFresnelKirchhoff.pro
+;.compile phaPropFFTnear.pro
+;.compile phaPropFFTfar.pro
 		
 .compile phaSrcWFGauss.pro		
 .compile pha_src4_functions.pro		
