@@ -59,7 +59,7 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       real*8  small, big, tmp
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      real*8  pi,pihalf,signum,const,a1_sav
+      real*8  pi,pihalf
      &       , distance, INdist
      &       , dist1, phase
      &       , xlam,     INxlam
@@ -179,15 +179,15 @@ ccc   END PROPAGATE FK   ccc
       
 	do j=1,MaxDim
 	  do i=1,MaxDim
-	    INezre(j,i)=dreal(ez2(i,j))
-	    INezim(j,i)=dimag(ez2(i,j))
-	    INeyre(j,i)=dreal(ey2(i,j))  
-	    INeyim(j,i)=dimag(ey2(i,j))
+	    INezre(i,j)=dreal(ez2(i,j))
+	    INezim(i,j)=dimag(ez2(i,j))
+	    INeyre(i,j)=dreal(ey2(i,j))
+	    INeyim(i,j)=dimag(ey2(i,j))
 	  enddo
 	enddo	  
 
-      write(*,*)'phaPropagateFresnellKirchhoff finished...'  
-      write(*,*)' '    
+      write(*,*)'phaPropagateFresnellKirchhoff finished...'
+      write(*,*)'.'
       end !phadrift_propagate_fk  (prop1)
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
@@ -321,18 +321,18 @@ c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	dz_1=dz
 
 c	a1/2 Real Fields ... b1/2 Complex Parts 
-
-       a1(1:MaxDim,1:MaxDim)=INeyre(1:MaxDim,1:MaxDim)
-       b1(1:MaxDim,1:MaxDim)=INeyim(1:MaxDim,1:MaxDim)
-       a2(1:MaxDim,1:MaxDim)=INezre(1:MaxDim,1:MaxDim)
-       b2(1:MaxDim,1:MaxDim)=INezim(1:MaxDim,1:MaxDim)
+	do j=1,MaxDim
+	  do i=1,MaxDim
+             a1(j,i)=INeyre(j,i)
+             b1(j,i)=INeyim(j,i)
+             a2(j,i)=INezre(j,i)
+             b2(j,i)=INezim(j,i)
+	  enddo
+	enddo
 
 c-- actualize coordinates
-c	y_1(:)=y(:)
-c       z_1(:)=z(:)
-	y_1=y
-        z_1=z
-
+	y_1(:)=y(:)
+        z_1(:)=z(:)
 
 	do icomp=1,2	! loop over y and z-component of electric field
 c	  start with ey component
@@ -557,11 +557,14 @@ c      END of call phadrift_get_input(beam4)
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 c	a1/2 Real Fields ... b1/2 Complex Parts 
-
-       a1(1:MaxDim,1:MaxDim)=INeyre(1:MaxDim,1:MaxDim)
-       b1(1:MaxDim,1:MaxDim)=INeyim(1:MaxDim,1:MaxDim)
-       a2(1:MaxDim,1:MaxDim)=INezre(1:MaxDim,1:MaxDim)
-       b2(1:MaxDim,1:MaxDim)=INezim(1:MaxDim,1:MaxDim)
+	do j=1,MaxDim
+	  do i=1,MaxDim
+             a1(j,i)=INeyre(j,i)
+             b1(j,i)=INeyim(j,i)
+             a2(j,i)=INezre(j,i)
+             b2(j,i)=INezim(j,i)
+	  enddo
+	enddo
 
 c------------ allocate storage
 	call istkin(524288,4)	! (2*n*nns, itype=double)
