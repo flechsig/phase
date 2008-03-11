@@ -331,8 +331,10 @@ c	a1/2 Real Fields ... b1/2 Complex Parts
 	enddo
 
 c-- actualize coordinates
-	y_1(:)=y(:)
-        z_1(:)=z(:)
+	do i=1,MaxDim
+	   y_1(i)=y(i)
+	   z_1(i)=z(i)
+	enddo
 
 	do icomp=1,2	! loop over y and z-component of electric field
 c	  start with ey component
