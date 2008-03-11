@@ -6,7 +6,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 
-
+c quick fix UF 11.3.08
+#define MaxDimm 1024
 
 
 
@@ -65,20 +66,18 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      &       , xlam,     INxlam
      &       ,   zmin1,   zmax1,   ymin1,   ymax1
      &       ,   zmin2,   zmax2,   ymin2,   ymax2
-     &       , dy1  , y1(MaxDim) 
-     &       , dz1  , z1(MaxDim)     
-     &       , dy2  , y2(MaxDim) 
-     &       , dz2  , z2(MaxDim)     
-     &       ,INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim)
-     &       ,INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
+     &       , dy1  , y1(MaxDimm) 
+     &       , dz1  , z1(MaxDimm)     
+     &       , dy2  , y2(MaxDimm) 
+     &       , dz2  , z2(MaxDimm)     
+     &       ,INeyre(MaxDimm,MaxDimm), INeyim(MaxDimm,MaxDimm)
+     &       ,INezre(MaxDimm,MaxDimm), INezim(MaxDimm,MaxDimm)
      &       , factre,factim,a10
 
       complex*16  cc,xm1,sqrtm1,fact,quad_fac,quad_fac_1
-     &       ,ey1(MaxDim,MaxDim), ez1(MaxDim,MaxDim)
-     &       ,ey2(MaxDim,MaxDim), ez2(MaxDim,MaxDim)
+     &       ,ey1(MaxDimm,MaxDimm), ez1(MaxDimm,MaxDimm)
+     &       ,ey2(MaxDimm,MaxDimm), ez2(MaxDimm,MaxDimm)
     
- 
-
 
 	write(*,*)'phaPropagateFresnellKirchhoff started...' 
 
@@ -93,6 +92,8 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         distance=dble(INdist)
 	xlam=dble(INxlam)*1.0d-6
 	  cc=(2.d0*pi)/xlam
+
+
 c	write(*,*),xlam,' ... xlam'  
 	do i=1, MaxDim
 	  do j=1, MaxDim
@@ -186,6 +187,7 @@ ccc   END PROPAGATE FK   ccc
 	  enddo
 	enddo	  
 
+
       write(*,*)'phaPropagateFresnellKirchhoff finished...'
       write(*,*)'.'
       end !phadrift_propagate_fk  (prop1)
@@ -260,8 +262,8 @@ c------------------------------------------------------------------------
      &       , zmin_1, zmax_1, ymin_1, ymax_1
      &       , dy_1  , y_1(1024) 
      &       , dz_1  , z_1(1024)     
-     &       ,INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim)
-     &       ,INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
+     &       ,INeyre(MaxDimm,MaxDimm), INeyim(MaxDimm,MaxDimm)
+     &       ,INezre(MaxDimm,MaxDimm), INezim(MaxDimm,MaxDimm)
      &       ,a1  (1024,1024)  , b1  (1024,1024)
      &       ,a2  (1024,1024)  , b2  (1024,1024)
      &       ,atmp(1024,1024)  , btmp(1024,1024)   
@@ -514,9 +516,9 @@ c------------------------------------------------------------------------
      &       , dz , z(1024)     
      &       , zmin_1, zmax_1, ymin_1, ymax_1
      &       , dy_1  , y_1(1024) 
-     &       , dz_1  , z_1(MaxDim)     
-     &       ,INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim)
-     &       ,INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
+     &       , dz_1  , z_1(MaxDimm)     
+     &       ,INeyre(MaxDimm,MaxDimm), INeyim(MaxDimm,MaxDimm)
+     &       ,INezre(MaxDimm,MaxDimm), INezim(MaxDimm,MaxDimm)
      &       ,a1  (1024,1024)  , b1  (1024,1024)
      &       ,a2  (1024,1024)  , b2  (1024,1024)
      &       ,atmp(1024,1024)  , btmp(1024,1024)   
