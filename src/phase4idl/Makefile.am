@@ -68,7 +68,7 @@ libphase4idl_la_SOURCES   = \
                idl_bline.c \
                phase4idl.c \
                phaSrc4Drift.F \
-               phaSrc4WFGauss.f \
+               phaSrc4WFGauss.F \
                phaSrc4Tools.f \
                phase4idl.h
 ##                \
