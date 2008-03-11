@@ -1,6 +1,12 @@
 
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 
 
+c quick fix UF 11.3.08
+#define MaxDimm 1024
 
 
 
@@ -29,11 +35,11 @@ c
 	real*8 z,dz,zmin,zmax,y,dy,ymin,ymax,w0,w,deltax,xlambda,xlam
      &	,xk,xr,small1,small3,pi,pow,dpow,R,theta,arg
      &      ,rr2,z0,y0 
-	dimension z(MaxDim),y(MaxDim)
-	complex*16 ez(MaxDim,MaxDim),xi,fact ,ey(MaxDim,MaxDim)
+	dimension z(MaxDimm),y(MaxDimm)
+	complex*16 ez(MaxDimm,MaxDimm),xi,fact ,ey(MaxDimm,MaxDimm)
       
-	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
-     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+	real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
+     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
 
 	
 	write(*,*)'***'
