@@ -2,6 +2,11 @@ c$$$ $Source$
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
+c quick fix UF 11.3.08
+#define MaxDimm 1024
+
+
 ccccccccccccccccccccccccccccccccccccccccccccccc
 c	module phasrc4modsize_variables
 c	
@@ -27,8 +32,8 @@ c	common/cstak/dstak(6*MaxDim)
 
 	integer k,nz2,ny2,nz1,ny1, MaxDim
 	real*8  dz1,dz2,dy1,dy2,ymax,ymin,zmax,zmin
-     &	 ,z1(MaxDim),z2(MaxDim),y1(MaxDim),y2(MaxDim)
-     &	 ,data_in(MaxDim),data_out(MaxDim)
+     &	 ,z1(MaxDimm),z2(MaxDimm),y1(MaxDimm),y2(MaxDimm)
+     &	 ,data_in(MaxDimm),data_out(MaxDimm)
 c     &	 ,dstak(6144)
      &	 ,dstak
      
@@ -36,8 +41,8 @@ c     &	 ,dstak(6144)
 c      real*8 zezre(256,256),zezim(256,256)
 c     &	,zeyre(256,256),zeyim(256,256)
      
-      real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
-     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+      real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
+     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
 
 
 c      real*8 zezre(1024,1024),zezim(1024,1024)
@@ -53,12 +58,13 @@ c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	
 	dz1=(zmax-zmin)/(nz1-1)
       dy1=(ymax-ymin)/(ny1-1)
-	
-	z1(:)=0.d0
-	y1(:)=0.d0
-	z2(:)=0.d0
-	y2(:)=0.d0
-	
+      do k=1,MaxDim	
+	z1(k)=0.d0
+	y1(k)=0.d0
+	z2(k)=0.d0
+	y2(k)=0.d0
+      enddo
+
 	do k=1,nz1
 		z1(k)=zmin + dble(k-1)*dz1
 	enddo
@@ -79,6 +85,8 @@ c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 
 	do k=1,ny1  ! Interpoliere alle Vektoren in z-Richtung
 		
+#ifdef ABSOFT
+#else
 		data_in(1:nz1) = zezre(1:nz1,k)
 		zezre(:,k)= 0.d0
 		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
@@ -98,16 +106,17 @@ c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 		zeyim(:,k)= 0.d0
 		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
 		zeyim(1:nz2,k)=data_out(1:nz2)
-	
+#endif	
 	enddo
-
-	data_in(:) =0.d0
-	data_out(:)=0.d0
-	
+        do k=1,MaxDim
+	data_in(k) =0.d0
+	data_out(k)=0.d0
+        enddo	
 	do k=1,nz2  ! Interpoliere alle Vektoren in y-Richtung
 			! Beachte: nz1 -> nz2 bereits durchgefuehrt 
 		
-
+#ifdef ABSOFT
+#else
 		data_in(1:ny1) = zezre(k,1:ny1)
 		zezre(k,:)= 0.d0
 		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
@@ -127,7 +136,7 @@ c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 		zeyim(k,:)= 0.d0
 		call DCSPIN(y1,data_in,ny1,y2,data_out,ny2)
 		zeyim(k,1:ny2)=data_out(1:ny2)
-	
+#endif	
 	enddo
 	
 c in C:	call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
@@ -154,9 +163,9 @@ c Cuts a part out of the grid ... from nz/ymin to nz/ymax
 	integer nz,ny,nzmax,nzmin,nymax,nymin, MaxDim
 	real*8  zmin,zmax,ymin,ymax,dz,dy
 	
-	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
-     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
-     &	, temp(MaxDim,MaxDim)
+	real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
+     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
+     &	, temp(MaxDimm,MaxDimm)
 
      
 	if ((nzmax.gt.nzmin).and.(nymax.gt.nymin)) then
@@ -184,7 +193,8 @@ c in C:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	
 	nz=nzmax-nzmin+1
 	ny=nymax-nymin+1
-    
+#ifdef ABSOFT
+#else    
 	zeyre(:,:)     =  0
 	zeyre(1:nz,1:ny)=temp(1:nz,1:ny)
 	
@@ -199,7 +209,7 @@ c in C:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	temp(1:nz,1:ny)   =  zezim(nzmin:nzmax,nymin:nymax)
 	zezim(:,:)     =  0
 	zezim(1:nz,1:ny)=temp(1:nz,1:ny)
-	
+#endif	
 c in C:call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax  )	
 
 
@@ -223,9 +233,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	integer nz2,ny2,nz1,ny1,nz_delta,ny_delta,MaxDim
 	real*8  zmin,zmax,ymin,ymax,dz,dy
 	
-	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
-     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
-     &	, temp(MaxDim,MaxDim)
+	real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
+     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
+     &	, temp(MaxDimm,MaxDimm)
 
 	
 
@@ -259,6 +269,8 @@ c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	    
     
 c..... AddZeros.....
+#ifdef ABSOFT
+#else
 	temp(1:nz1,1:ny1)   =   zeyre(1:nz1,1:ny1)
 	 zeyre(:,:)     =  0
 	 zeyre(1+nz_delta:1+nz_delta+nz1,1+ny_delta:1+ny_delta+ny1) =
@@ -278,7 +290,7 @@ c..... AddZeros.....
 	 zezim(:,:)     =  0
 	 zezim(1+nz_delta:1+nz_delta+nz1,1+ny_delta:1+ny_delta+ny1) =
      &		 temp(1:ny1,1:nz1)
-     
+#endif     
 c in C:call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
 
 	return
