@@ -44,7 +44,7 @@ idl_DATA  = help.html \
 	phaBatchmode.pro \
 	phaUsefullTools.pro \
 	pha4idl.compile_all.idl \
-	phaPropWFFresnelKirchoff.pro \
+	phaPropWFFresnelKirchhoff.pro \
 	phaPropFFTnear.pro \
 	phaPropFFTfar.pro
 
