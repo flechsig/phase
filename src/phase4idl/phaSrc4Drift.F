@@ -7,8 +7,14 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 c quick fix UF 11.3.08
-#define MaxDimm 1024
+c #define MaxDimm 1024
 
+
+cc TL 26.3.08 fixed the dimension problem
+cc MaxDim is the Dimension of the fieldsw in the src4-structure
+#define MaxDim 256
+cc BigMaxDim is for internal temporary fields
+#define BigMaxDim 1024
 
 
 
@@ -33,9 +39,9 @@ ccc  Rest raus !!!
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c      subroutine phadrift_propagate_fk( beam4 ,dist 
 c     &				,nz2 ,zmin2 ,zmax2 ,ny2 ,ymin2 ,ymax2)
-	subroutine phadrift_propagate_fk_nostructs( MaxDim
-     &					,INezre,INezim,INeyre,INeyim
-     &					,nz1,zmin1,zmax1,ny1,ymin1,ymax1     
+	subroutine phadrift_propagate_fk_nostructs(
+     &					 INezre,INezim,INeyre,INeyim
+     &					,nz1,zmin1,zmax1,ny1,ymin1,ymax1
      &					,nz2,zmin2,zmax2,ny2,ymin2,ymax2
      &					,INdist, INxlam)
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
@@ -54,7 +60,6 @@ c      real*8  pi,pihalf,signum,const,a1_sav
 	
       integer i,j,k,l
      &       ,nz1,ny1,nz2,ny2
-     &       ,MaxDim
 
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       real*8  small, big, tmp
@@ -66,17 +71,17 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      &       , xlam,     INxlam
      &       ,   zmin1,   zmax1,   ymin1,   ymax1
      &       ,   zmin2,   zmax2,   ymin2,   ymax2
-     &       , dy1  , y1(MaxDimm) 
-     &       , dz1  , z1(MaxDimm)     
-     &       , dy2  , y2(MaxDimm) 
-     &       , dz2  , z2(MaxDimm)     
-     &       ,INeyre(MaxDimm,MaxDimm), INeyim(MaxDimm,MaxDimm)
-     &       ,INezre(MaxDimm,MaxDimm), INezim(MaxDimm,MaxDimm)
+     &       , dy1  , y1(MaxDim) 
+     &       , dz1  , z1(MaxDim)     
+     &       , dy2  , y2(MaxDim) 
+     &       , dz2  , z2(MaxDim)     
+     &       ,INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim)
+     &       ,INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
      &       , factre,factim,a10
 
       complex*16  cc,xm1,sqrtm1,fact,quad_fac,quad_fac_1
-     &       ,ey1(MaxDimm,MaxDimm), ez1(MaxDimm,MaxDimm)
-     &       ,ey2(MaxDimm,MaxDimm), ez2(MaxDimm,MaxDimm)
+     &       ,ey1(MaxDim,MaxDim), ez1(MaxDim,MaxDim)
+     &       ,ey2(MaxDim,MaxDim), ez2(MaxDim,MaxDim)
     
 
 	write(*,*)'phaPropagateFresnellKirchhoff started...' 
@@ -206,8 +211,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine phadrift_propagate_fft_near_nostructs(MaxDim
-     &						,INezre,INezim,INeyre,INeyim
+	subroutine phadrift_propagate_fft_near_nostructs(
+     &						 INezre,INezim,INeyre,INeyim
      &						,INnz,INzmin,INzmax
      &						,INny,INymin,INymax
      &						,dist, INxlam)
@@ -246,7 +251,7 @@ c------------------------------------------------------------------------
       integer i,j,k,l,icomp
      &       ,ifx(25), nz00, ny00
      &       , INnz, INny
-     &       , iyz,nflag,MaxDim,nz,ny
+     &       , iyz,nflag,nz,ny
 
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
@@ -257,16 +262,16 @@ c------------------------------------------------------------------------
      &       , xlam, INxlam
      &       , INzmin, INzmax, INymin, INymax
      &       ,   zmin,   zmax,   ymin,   ymax
-     &       , dy , y(1024) 
-     &       , dz , z(1024)     
+     &       , dy , y(BigMaxDim) 
+     &       , dz , z(BigMaxDim)     
      &       , zmin_1, zmax_1, ymin_1, ymax_1
-     &       , dy_1  , y_1(1024) 
-     &       , dz_1  , z_1(1024)     
-     &       ,INeyre(MaxDimm,MaxDimm), INeyim(MaxDimm,MaxDimm)
-     &       ,INezre(MaxDimm,MaxDimm), INezim(MaxDimm,MaxDimm)
-     &       ,a1  (1024,1024)  , b1  (1024,1024)
-     &       ,a2  (1024,1024)  , b2  (1024,1024)
-     &       ,atmp(1024,1024)  , btmp(1024,1024)   
+     &       , dy_1  , y_1(BigMaxDim) 
+     &       , dz_1  , z_1(BigMaxDim)     
+     &       ,INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim)
+     &       ,INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
+     &       ,a1  (BigMaxDim,BigMaxDim)  , b1  (BigMaxDim,BigMaxDim)
+     &       ,a2  (BigMaxDim,BigMaxDim)  , b2  (BigMaxDim,BigMaxDim)
+     &       ,atmp(BigMaxDim,BigMaxDim)  , btmp(BigMaxDim,BigMaxDim)   
      &       , factre,factim,a10
 
 
@@ -274,8 +279,8 @@ c------------------------------------------------------------------------
       complex*16  cc,xm1,sqrtm1,fact,quad_fac,quad_fac_1
     
       
-	 ny00=1024
-	 nz00=1024
+	 ny00=BigMaxDim
+	 nz00=BigMaxDim
 
 c------------ allocate storage
 	call istkin(524288,4)	! (2*n*nns, itype=double)
@@ -456,8 +461,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c	subroutine phadrift_propagate_fft_far( beam4 ,dist ) 
-	subroutine phadrift_propagate_fft_far_nostructs(MaxDim
-     &						,INezre,INezim,INeyre,INeyim
+	subroutine phadrift_propagate_fft_far_nostructs(
+     &						 INezre,INezim,INeyre,INeyim
      &						,INnz,INzmin,INzmax
      &						,INny,INymin,INymax
      &						,dist, INxlam)
@@ -501,35 +506,35 @@ c------------------------------------------------------------------------
       integer i,j,k,l,icomp
      &       ,ifx(25), nz00, ny00
      &       , INnz, INny
-     &       , iyz,nflag,MaxDim,nz,ny
+     &       , iyz,nflag,nz,ny
 
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
-     &       ,dstak(524288),t(2048)
+     &       ,dstak(524288),t(2*BigMaxDim)
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
      &       ,width,ycenter,zcenter
      &       , xlam, INxlam
      &       , INzmin, INzmax, INymin, INymax
      &       ,   zmin,   zmax,   ymin,   ymax
-     &       , dy , y(1024) 
-     &       , dz , z(1024)     
+     &       , dy , y(BigMaxDim) 
+     &       , dz , z(BigMaxDim)     
      &       , zmin_1, zmax_1, ymin_1, ymax_1
-     &       , dy_1  , y_1(1024) 
-     &       , dz_1  , z_1(MaxDimm)     
-     &       ,INeyre(MaxDimm,MaxDimm), INeyim(MaxDimm,MaxDimm)
-     &       ,INezre(MaxDimm,MaxDimm), INezim(MaxDimm,MaxDimm)
-     &       ,a1  (1024,1024)  , b1  (1024,1024)
-     &       ,a2  (1024,1024)  , b2  (1024,1024)
-     &       ,atmp(1024,1024)  , btmp(1024,1024)   
+     &       , dy_1  , y_1(BigMaxDim) 
+     &       , dz_1  , z_1(MaxDim)     
+     &       ,INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim)
+     &       ,INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
+     &       ,a1  (BigMaxDim,BigMaxDim)  , b1  (BigMaxDim,BigMaxDim)
+     &       ,a2  (BigMaxDim,BigMaxDim)  , b2  (BigMaxDim,BigMaxDim)
+     &       ,atmp(BigMaxDim,BigMaxDim)  , btmp(BigMaxDim,BigMaxDim)
 
       complex*16  cc,xm1,sqrtm1,fact,quad_fac,quad_fac_1
     
       
       write(*,*)'phaPropagateFFTfar started...'
 
-	 ny00=1024
-	 nz00=1024
+	 ny00=BigMaxDim
+	 nz00=BigMaxDim
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c      	call phadrift_get_input(beam4)
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
@@ -752,8 +757,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	
 	integer k,l,iyz,nflag,nz,ny
 	
-	real*8  a1 (1024,1024),b1 (1024,1024)
-     &         ,a11(1024,1024),b11(1024,1024)   
+	real*8  a1 (BigMaxDim,BigMaxDim),b1 (BigMaxDim,BigMaxDim)
+     &         ,a11(BigMaxDim,BigMaxDim),b11(BigMaxDim,1024)
 
 c------------------------------
 	if(iyz.eq.1)then

@@ -6,8 +6,14 @@ c$$$ $Author$
 
 
 c quick fix UF 11.3.08
-#define MaxDimm 1024
+c #define MaxDimm 1024
 
+
+cc TL 26.3.08 fixed the dimension problem
+cc MaxDim is the Dimension of the fieldsw in the src4-structure
+#define MaxDim 256
+cc BigMaxDim is for internal temporary fields
+#define BigMaxDim 1024
 
 
 c
@@ -24,22 +30,21 @@ c	This is the routine that does the work. It in principle
 c   needs to know nothing about its call from IDL.
 c
 
-      SUBROUTINE phasesrcwfgauss_nostructs(MaxDim
-     &						,zezre,zezim,zeyre,zeyim
-     &						,ianzz,zmin,zmax,ianzy,ymin,ymax
-     &						,w0, deltax, xlambda)
+      SUBROUTINE phasesrcwfgauss_nostructs(zezre,zezim,zeyre,zeyim
+     &					,ianzz,zmin,zmax,ianzy,ymin,ymax
+     &					,w0, deltax, xlambda)
      
       implicit none    
 
-	integer i,j,ianzz,ianzy, MaxDim
+	integer i,j,ianzz,ianzy
 	real*8 z,dz,zmin,zmax,y,dy,ymin,ymax,w0,w,deltax,xlambda,xlam
      &	,xk,xr,small1,small3,pi,pow,dpow,R,theta,arg
      &      ,rr2,z0,y0 
-	dimension z(MaxDimm),y(MaxDimm)
-	complex*16 ez(MaxDimm,MaxDimm),xi,fact ,ey(MaxDimm,MaxDimm)
+	dimension z(MaxDim),y(MaxDim)
+	complex*16 ez(MaxDim,MaxDim),xi,fact ,ey(MaxDim,MaxDim)
       
-	real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
-     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
+	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
 
 	
 	write(*,*)'***'

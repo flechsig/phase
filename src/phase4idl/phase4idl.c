@@ -92,8 +92,6 @@ int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance,
 { 
  // Dereferencing dist, so that it won't change in the calling program  
   double dist = *distance;
-   
-  int MaxDim = MaximumFieldDimension;
 
   int    nz1,ny1;
   double zmin1,zmax1,ymin1,ymax1;
@@ -111,8 +109,7 @@ int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance,
 // /*
   extern void phadrift_propagate_fk_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine 
-  phadrift_propagate_fk_nostructs_(   &MaxDim
-				,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  phadrift_propagate_fk_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
 				,&nz1,&zmin1,&zmax1,&ny1,&ymin1,&ymax1     
 				,nz2,zmin2,zmax2,ny2,ymin2,ymax2
 				,&dist, &xlam) ;
@@ -137,8 +134,7 @@ int phaPropFFTnear (struct source4 *beam, double *distance)
 
   // Dereferencing dist, so that it won't change in the calling program  
   double dist = *distance;
-   
-  int MaxDim = MaximumFieldDimension;
+
   int i,j;
 
 
@@ -148,42 +144,16 @@ int phaPropFFTnear (struct source4 *beam, double *distance)
 
 //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
-  
 
- /*
-   double zezre[MaxDim][MaxDim],zezim[MaxDim][MaxDim]
-        ,zeyre[MaxDim][MaxDim],zeyim[MaxDim][MaxDim];
-// copy fields from src4 to tmp
-  for (i=0;i<MaxDim;i++) {
-	  for (j=0;j<MaxDim;j++) {
-		zezre[i][j]=beam->zezre[i][j];
-		zezim[i][j]=beam->zezim[i][j];
-		zeyre[i][j]=beam->zeyre[i][j];
-		zeyim[i][j]=beam->zeyim[i][j];
-	  }
-  }
-// */
 
 // /*  // Declare the Fortran Routine
   extern void phadrift_propagate_fft_near_nostructs_();  
   // Call the Fortran Routine       
-  phadrift_propagate_fft_near_nostructs_( &MaxDim
-					,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  phadrift_propagate_fft_near_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
 //					,zezre,zezim,zeyre,zeyim
 	 				,&nz,&zmin,&zmax
     					,&ny,&ymin,&ymax
      					,&dist, &xlam ) ;
-// */
- /* copy fields back to src4
-  for (i=0;i<MaxDim;i++) {
-	  for (j=0;j<MaxDim;j++) {
-		beam->zezre[i][j]=zezre[i][j];
-		beam->zezim[i][j]=zezim[i][j];
-		beam->zeyre[i][j]=zeyre[i][j];
-		beam->zeyim[i][j]=zeyim[i][j];
-	  }
-  }
-// */  
 //    pha_c_adjust_src4_grid(beam);
   // Neues Grid in Struktur schreiben
 //  pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
@@ -202,7 +172,7 @@ int phaPropFFTfar (struct source4 *beam, double *distance)
   // Dereferencing dist, so that it won't change in the calling program  
   double dist = *distance;
    
-  int MaxDim = MaximumFieldDimension;
+
 
   int    nz,ny;
   double zmin,zmax,ymin,ymax;
@@ -221,8 +191,7 @@ int phaPropFFTfar (struct source4 *beam, double *distance)
 // /*  
   extern void phadrift_propagate_fft_far_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine       
-  phadrift_propagate_fft_far_nostructs_( &MaxDim
-					,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  phadrift_propagate_fft_far_nostructs_( beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
 					,&nz,&zmin,&zmax
 					,&ny,&ymin,&ymax
 					,&dist, &xlam ) ;
@@ -255,49 +224,25 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
 					 double *w0, double *deltax, double *xlambda)
 {
 
-  int MaxDim = MaximumFieldDimension;
+
   int i,j;
   
   double waist=*w0;  // Dereferencing w0, so that w0 won't change in the calling program
   double distance=*deltax;  // Same ...
 
   beam->xlam=*xlambda;
- /*
-  double zezre[MaxDim][MaxDim],zezim[MaxDim][MaxDim]
-        ,zeyre[MaxDim][MaxDim],zeyim[MaxDim][MaxDim];
-// copy fields from src4 to tmp
-  for (i=0;i<MaxDim;i++) {
-	  for (j=0;j<MaxDim;j++) {
-		zezre[i][j]=beam->zezre[i][j];
-		zezim[i][j]=beam->zezim[i][j];
-		zeyre[i][j]=beam->zeyre[i][j];
-		zeyim[i][j]=beam->zeyim[i][j];
-	  }
-  }
-// */  
+  
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, *ianzz, *zmin, *zmax, *ianzy, *ymin, *ymax);
 // /*  
   extern void phasesrcwfgauss_nostructs_(); // Declare The Fortran Routine 
-  phasesrcwfgauss_nostructs_( &MaxDim
-				,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  phasesrcwfgauss_nostructs_(    beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
 //				,zezre,zezim,zeyre,zeyim
 				,ianzz,zmin,zmax,ianzy,ymin,ymax
 	  			,&waist, &distance, xlambda);
 // */
   pha_c_adjust_src4_grid(beam);
 
- /* copy fields back to src4
-  for (i=0;i<MaxDim;i++) {
-	  for (j=0;j<MaxDim;j++) {
-		beam->zezre[i][j]=zezre[i][j];
-		beam->zezim[i][j]=zezim[i][j];
-		beam->zeyre[i][j]=zeyre[i][j];
-		beam->zeyim[i][j]=zeyim[i][j];
-	  }
-  }
-// */
-  
   return (0);
 }
 // ***************************************************************************
@@ -316,8 +261,6 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
 // /* *** Fortran-Access ***  
 int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 {
-  int MaxDim = MaximumFieldDimension;
-
   int  nz1,ny1;
   double zmin,zmax,ymin,ymax;
 
@@ -333,8 +276,7 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 // /*
   extern void pha_src4_addzeros_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine 
-  pha_src4_addzeros_nostructs_( &MaxDim
-                        , beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  pha_src4_addzeros_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                         , &nz1,nz2,&zmin,&zmax
                         , &ny1,ny2,&ymin,&ymax) ;
 // */
@@ -354,9 +296,6 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 // /* *** Fortran-Access ***  
 int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int *nymax)
 { 
-  
-  int MaxDim = MaximumFieldDimension;
-
   int  nz,ny;
   double zmin,zmax,ymin,ymax;
 
@@ -372,8 +311,7 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
 // /*
   extern void pha_src4_cut_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine   
-  pha_src4_cut_nostructs_( &MaxDim
-                         ,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  pha_src4_cut_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                          , &nz,&zmin,&zmax,nzmin,nzmax
                          , &ny,&ymin,&ymax,nymin,nymax) ;
 // */
@@ -418,8 +356,7 @@ int phaModGrid (struct source4 *beam, int *nz2in, int *ny2in)
   // Felder auf neuem Grid interpolieren
   extern void pha_src4_modgrid_nostructs_(); // Declare the Fortran Routine 
 // /*  // Call the Fortran Routine 
-  pha_src4_modgrid_nostructs_( &MaxDim
-                    ,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  pha_src4_modgrid_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                     ,&nz1,&nz2 ,&zmin,&zmax
                     ,&ny1,&ny2 ,&ymin,&ymax) ;
 // */

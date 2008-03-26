@@ -4,36 +4,31 @@ c$$$ $Revision$
 c$$$ $Author$ 
 
 c quick fix UF 11.3.08
-#define MaxDimm 1024
+c #define MaxDimm 1024
 
 
-ccccccccccccccccccccccccccccccccccccccccccccccc
-c	module phasrc4modsize_variables
-c	
-c	integer nz1,ny1,nz_delta,ny_delta
-c	real*8  zmin,zmax,ymin,ymax,dz1,dy1,dz2,dy2
-c	
-c	end module phasrc4modsize_variables
-ccccccccccccccccccccccccccccccccccccccccccccccc
-
+cc TL 26.3.08 fixed the dimension problem
+cc MaxDim is the Dimension of the fieldsw in the src4-structure
+#define MaxDim 256
+cc BigMaxDim is for internal temporary fields
+#define BigMaxDim 1024
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_modgrid_nostructs( MaxDim
-     &                           ,zezre,zezim,zeyre,zeyim
-     &                           ,nz1,nz2,zmin,zmax
-     &                           ,ny1,ny2,ymin,ymax )
-     
+	subroutine pha_src4_modgrid_nostructs( zezre,zezim,zeyre,zeyim
+     &                                          ,nz1,nz2,zmin,zmax
+     &                                          ,ny1,ny2,ymin,ymax )
+
 	implicit none
 	
 	common/cstak/dstak(6144)
 c 	6144=6*1024
 c	common/cstak/dstak(6*MaxDim)
 
-	integer k,nz2,ny2,nz1,ny1, MaxDim
+	integer k,nz2,ny2,nz1,ny1
 	real*8  dz1,dz2,dy1,dy2,ymax,ymin,zmax,zmin
-     &	 ,z1(MaxDimm),z2(MaxDimm),y1(MaxDimm),y2(MaxDimm)
-     &	 ,data_in(MaxDimm),data_out(MaxDimm)
+     &	 ,z1(MaxDim),z2(MaxDim),y1(MaxDim),y2(MaxDim)
+     &	 ,data_in(MaxDim),data_out(MaxDim)
 c     &	 ,dstak(6144)
      &	 ,dstak
      
@@ -41,8 +36,8 @@ c     &	 ,dstak(6144)
 c      real*8 zezre(256,256),zezim(256,256)
 c     &	,zeyre(256,256),zeyim(256,256)
      
-      real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
-     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
+      real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
 
 
 c      real*8 zezre(1024,1024),zezim(1024,1024)
@@ -152,20 +147,19 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c Cuts a part out of the grid ... from nz/ymin to nz/ymax
-	subroutine pha_src4_cut_nostructs( MaxDim
-     &                           ,zezre,zezim,zeyre,zeyim
+	subroutine pha_src4_cut_nostructs( zezre,zezim,zeyre,zeyim
      &                           , nz,zmin,zmax,nzmin,nzmax
      &                           , ny,ymin,ymax,nymin,nymax)
 
 	
 	implicit none
 
-	integer nz,ny,nzmax,nzmin,nymax,nymin, MaxDim
+	integer nz,ny,nzmax,nzmin,nymax,nymin
 	real*8  zmin,zmax,ymin,ymax,dz,dy
 	
-	real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
-     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
-     &	, temp(MaxDimm,MaxDimm)
+	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+     &	, temp(MaxDim,MaxDim)
 
      
 	if ((nzmax.gt.nzmin).and.(nymax.gt.nymin)) then
@@ -176,9 +170,9 @@ c Cuts a part out of the grid ... from nz/ymin to nz/ymax
 c in C:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 
 	if (nzmax.gt.nz) nzmax=nz
-	if (nzmin.lt.1)   nzmin=1
+	if (nzmin.lt.1 ) nzmin=1
 	if (nymax.gt.ny) nymax=ny
-	if (nymin.lt.1) nymin=1
+	if (nymin.lt.1 ) nymin=1
 	
 	write(*,*)'Cutting grid ...'
 	
@@ -222,20 +216,19 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
-	subroutine pha_src4_addzeros_nostructs( MaxDim
-     &                           , zezre,zezim,zeyre,zeyim
+	subroutine pha_src4_addzeros_nostructs( zezre,zezim,zeyre,zeyim
      &                           , nz1,nz2,zmin,zmax
      &                           , ny1,ny2,ymin,ymax)
 
 
 	implicit none
 	
-	integer nz2,ny2,nz1,ny1,nz_delta,ny_delta,MaxDim
+	integer nz2,ny2,nz1,ny1,nz_delta,ny_delta
 	real*8  zmin,zmax,ymin,ymax,dz,dy
 	
-	real*8 zezre(MaxDimm,MaxDimm),zezim(MaxDimm,MaxDimm)
-     &	,zeyre(MaxDimm,MaxDimm),zeyim(MaxDimm,MaxDimm)
-     &	, temp(MaxDimm,MaxDimm)
+	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+     &	, temp(MaxDim,MaxDim)
 
 	
 
