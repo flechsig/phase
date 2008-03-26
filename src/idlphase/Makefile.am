@@ -30,34 +30,32 @@ idl_with_doc_header = \
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
 	$(idl_with_doc_header) \
-	phabeamload.pro \
-	pha_src4_functions.pro \
-	phainit.pro \
-	phaSrcWFGauss.pro \
-	phaplotting.pro \
+	MeinSpieglein.coeff \
+	ReadPhaseResults.pro \
+	SavePhaseResults.pro \
 	examples.pro \
-	test.pro \
+	pha4idl.compile_all.idl \
+	phaBatchmode.pro \
+	phaBeamline.pro \
+	phaExamples.pro \
+	phaOpticalElements.pro \
+	phaPredefinedOpticalElements.pro \
+	phaPropagation.pro \
+	phaSetBeamlineOptions.pro \
+	phaSetSources.pro \
+	phaSrcWFGauss.pro \
+	phaUsefullTools.pro \
+	pha_src4_functions.pro \
 	phabeamcopy.pro \
 	phabeamdiff.pro \
+	phabeamload.pro \
+	phainit.pro \
+	phaplotting.pro \
+	phase_defines.pro \
 	phase_structures.pro \
-	updatehelp.pro \
-	phaBatchmode.pro \
-	phaUsefullTools.pro \
-	pha4idl.compile_all.idl \
-	phaPropWFFresnelKirchhoff.pro \
-	phaPropFFTnear.pro \
-	phaPropFFTfar.pro
-
-##          test-exit.idl
-##             benchmark.pro \
-##            c_test.pro \
-##            rtrace.pro \
-##            ffttest.pro \
-##            object-tests.pro \
-##            uwe_phase_beamline__define.pro \
-##            uwe_initbeamline.pro \
-##		SharedLibAcessTests.pro \
-##
+	read_extr_out.pro \
+	read_int_file.pro \
+	read_opti_out.pro
 
 
 ###
