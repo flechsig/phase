@@ -219,9 +219,10 @@ int phaPropFFTfar (struct source4 *beam, double *distance)
 // ***************************************************************************
 
 // See phaSrc4WFGauss.f
-int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax, 
-                                         int *ianzy, double *ymin, double *ymax, 
-					 double *w0, double *deltax, double *xlambda)
+int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
+                                         int *ianzy, double *ymin, double *ymax,
+					 double *w0, double *deltax, double *xlambda,
+					 double *ez0,double *ey0, double *dphi_zy)
 {
 
 
@@ -239,7 +240,8 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
   phasesrcwfgauss_nostructs_(    beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
 //				,zezre,zezim,zeyre,zeyim
 				,ianzz,zmin,zmax,ianzy,ymin,ymax
-	  			,&waist, &distance, xlambda);
+	  			,&waist, &distance, xlambda
+	  			,ez0, ey0, dphi_zy);
 // */
   pha_c_adjust_src4_grid(beam);
 

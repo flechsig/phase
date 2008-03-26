@@ -110,8 +110,9 @@ int phaPropFFTfar  (struct source4 *beam, double *distance) ;
 // ************** Start of pha Src Initializations ***************************
 // /*
 int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax, 
-                                    int *ianzy, double *ymin, double *ymax, 
-						double *w0, double *deltax, double *xlambda) ;
+                                         int *ianzy, double *ymin, double *ymax, 
+					 double *w0, double *deltax, double *xlambda,
+					 double *ez0,double *ey0, double *dphi_zy) ;
 // */
 // *************** END of pha Src Initializations ****************************
 

@@ -32,19 +32,21 @@ c
 
       SUBROUTINE phasesrcwfgauss_nostructs(zezre,zezim,zeyre,zeyim
      &					,ianzz,zmin,zmax,ianzy,ymin,ymax
-     &					,w0, deltax, xlambda)
+     &					,w0, deltax, xlambda
+     &                                  ,ez0, ey0, dphi_zy )
      
       implicit none    
 
 	integer i,j,ianzz,ianzy
 	real*8 z,dz,zmin,zmax,y,dy,ymin,ymax,w0,w,deltax,xlambda,xlam
-     &	,xk,xr,small1,small3,pi,pow,dpow,R,theta,arg
+     &	,xk,xr,small1,small3,pi,pow,dpow,R,theta,arg, ez0, ey0, dphi_zy
      &      ,rr2,z0,y0 
 	dimension z(MaxDim),y(MaxDim)
-	complex*16 ez(MaxDim,MaxDim),xi,fact ,ey(MaxDim,MaxDim)
-      
+
+	complex*16 egauss(MaxDim,MaxDim),xi,fact
+
 	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
-     &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
+     &	      ,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
 
 	
 	write(*,*)'***'
@@ -113,25 +115,30 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	  else
 	  fact=1.d0
 	endif
-	  ez(i,j)=cdexp(xi*(xk*deltax-theta))*fact*dexp(arg)
+	  egauss(i,j)=cdexp(xi*(xk*deltax-theta))*fact*dexp(arg)
 	 else
-	  ez(i,j)=0.d0
+	  egauss(i,j)=0.d0
 	endif
-	!ey(i,j)=0.  ! location of waist - isn't needed
-	dpow= max(dabs(dreal(ez(i,j))),small3)**2+
-     &          max(dabs(dimag(ez(i,j))),small3)**2
+
+c	dpow= max(dabs(dreal(egauss(i,j))),small3)**2+
+c     &          max(dabs(dimag(egauss(i,j))),small3)**2
+     	dpow= (dabs(dreal(egauss(i,j))))**2 +
+     &          (dabs(dimag(egauss(i,j))))**2
+
 	pow=pow+dpow
 
 	enddo
 	enddo
-	pow=dsqrt(pow*dz*dy)
+	
+	pow  = dsqrt( pow*dz*dy*(ez0*ez0 + ey0*ey0) )
+	fact = cdexp( xi * dphi_zy )
 
 	do i=1,ianzz
 	do j=1,ianzy  
-	  zezre(i,j)=dreal(ez(i,j))/pow
-	  zezim(i,j)=dimag(ez(i,j))/pow
-	  zeyre(i,j)=dble(0)/pow  ! Initialize Ey(i,j)=0 
-	  zeyim(i,j)=dble(0)/pow
+	  zezre(i,j)=ez0*dreal(egauss(i,j))/pow
+	  zezim(i,j)=ez0*dimag(egauss(i,j))/pow
+	  zeyre(i,j)=ey0*dreal(fact*egauss(i,j))/pow
+	  zeyim(i,j)=ey0*dimag(fact*egauss(i,j))/pow
 	enddo
 	enddo
 	
