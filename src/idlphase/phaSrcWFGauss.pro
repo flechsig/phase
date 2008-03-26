@@ -52,3 +52,31 @@ result = call_external(!phalib,'phaSrcWFGauss',$
 
 return, source
 END
+
+
+
+
+
+function phaSrcWFGauss_zpolar, ianzz, zmin, zmax, $
+			ianzy, ymin, ymax, $
+                        w0  , deltax, xlam
+
+return, phaSrcWFGauss(ianzz, zmin, zmax, $
+			ianzy, ymin, ymax, $
+                        w0  , deltax, xlam, $
+                        1,0,0)
+END
+
+
+
+
+function phaSrcWFGauss_ypolar, ianzz, zmin, zmax, $
+			ianzy, ymin, ymax, $
+                        w0  , deltax, xlam
+
+return, phaSrcWFGauss(ianzz, zmin, zmax, $
+			ianzy, ymin, ymax, $
+                        w0  , deltax, xlam, $
+                        0,1,0)
+END
+
