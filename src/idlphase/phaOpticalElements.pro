@@ -8,7 +8,7 @@ Art = !phaOptElGeneral
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -66,7 +66,7 @@ Art = !phaOptElPlaneGrating
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -124,7 +124,7 @@ Art = !phaOptElPlaneVLSGrating
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -183,7 +183,7 @@ Art = !phaOptElPlaneMirror
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -243,7 +243,7 @@ Art = !phaOptElSlit
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -302,7 +302,7 @@ Art = !phaOptElDrift
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -361,7 +361,7 @@ Art = !phaOptElToroidalMirror
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -420,7 +420,7 @@ Art = !phaOptElToroidalGrating
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -481,7 +481,7 @@ Art = !phaOptElToroidalVLSGrating
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -542,7 +542,7 @@ Art = !phaOptElCone
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -602,7 +602,7 @@ Art = !phaOptElEllipticalMirror
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -664,7 +664,7 @@ Art = !phaOptElPlaneEllipticalMirror
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0
@@ -724,7 +724,7 @@ Art = !phaOptElPlaneEllipticalGrating
 ;input      name        : idl_string
 ;output     mirror      : struct pha4idlOptElementType
 
-OptElement = phaNewOptElement, name
+OptElement = phaNewOptElement(name)
 
 ; define struct GDat:{gdatset}
 theta0=0

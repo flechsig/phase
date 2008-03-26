@@ -14,8 +14,8 @@ phainit
 
 
 ;  New Gaussian-Beam with 193x67 Points
-;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda)
- beam=phaSrcWFGauss( 193,  -1  , 1    , 67 ,  0  ,   3  ,  0.2 ,  0   , 20    )
+;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda, ez0, ey0, dphi_zy)
+ beam=phaSrcWFGauss( 193,  -1  , 1    , 67 ,  0  ,   3  ,  0.2 ,  0   , 20     ,  1 ,  2 ,  0     )
 
 print,'phaSrcWFGauss ...'
 phaIntensitySurface,beam,'Gauss-Source 193x67'
@@ -100,8 +100,8 @@ phainit
 
 
 ;  New Gaussian-Beam 
-;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda)
- beam=phaSrcWFGauss( 256,  -1.8  ,   1.8  , 256 ,  -1.8 ,   1.8  ,  0.2 , 5000 ,  20   )
+;                  ( nz , zmin , zmax , ny , ymin , ymax , waist, dist , lambda, ez0, ey0, dphi_zy)
+ beam=phaSrcWFGauss( 256,-1.8  , 1.8  ,256 , -1.8 , 1.8  ,  0.2 , 5000 ,  20   ,  1 ,  1 , 0     )
 
 ;help,/str,beam
 

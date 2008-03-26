@@ -89,7 +89,7 @@ MirrorFromCoeffFile.MDat.Art = 350  ; coeff.file is read
 phaAddOptElement, bl, MirrorFromCoeffFile
 
 ; create src field
-bl.src.so4 = phaSrcWFGauss(128, -1, 1,128, -1, 1, 0.2 , 0 , 20)
+bl.src.so4 = phaSrcWFGauss(128, -1, 1,128, -1, 1, 0.2 , 0 , 20,1,0,0)
 
 
 ;;; DO THE PHASE RUN --> spaeter zu einer funktion zusammenfassen !!!

@@ -48,7 +48,7 @@ print,'-------------------------------------------------------------------------
 
 ;---------------------------------------------------------------------------------------------
 zeit=systime(1) ; "1" entspricht "/seconds"  
-beam=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda)
+beam=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda, 1,0,0)
 zeit=systime(1)-zeit
 print,'       Gauss at 0 :: Max:', $
 	   max(beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2,maxi), $
@@ -64,7 +64,7 @@ phaIntensitySurface,beam,'gauss at d=0'
 
 ;---------------------------------------------------------------------------------------------
 ;zeit=systime(1) ; "1" entspricht "/seconds" 
-;gauss=phaSrcWFGauss( nz2 , zmin2 , zmax2 , ny2, ymin2 , ymax2 , waist, distance , lambda)
+;gauss=phaSrcWFGauss( nz2 , zmin2 , zmax2 , ny2, ymin2 , ymax2 , waist, distance , lambda,1,0,0)
 ;zeit=systime(1)-zeit
 ;print,'       Gauss at d :: Max:' , $
 ;                 max(gauss.zezre^2+gauss.zezim^2+gauss.zeyre^2+gauss.zeyim^2), $
@@ -90,7 +90,7 @@ phaIntensitySurface,beam,'prop FK at dist'
 ;---------------------------------------------------------------------------------------------
 
 ;---------------------------------------------------------------------------------------------
-;beam=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda)
+;beam=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda,1,0,0)
 ;zeit=systime(1) ; "1" entspricht "/seconds" 
 ;phaPropFFTnear,beam,  distance
 ;zeit=systime(1)-zeit
@@ -105,7 +105,7 @@ phaIntensitySurface,beam,'prop FK at dist'
 ;---------------------------------------------------------------------------------------------
 
 ;---------------------------------------------------------------------------------------------
-;beam=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda)
+;beam=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda,1,0,0)
 ;zeit=systime(1) ; "1" entspricht "/seconds" 
 ;phaPropFFTfar, beam,  distance
 ;zeit=systime(1)-zeit
@@ -152,7 +152,7 @@ ymin1=zmin1
 zmax1=-zmin1
 ymax1=-ymin1
 
-beam0=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda)
+beam0=phaSrcWFGauss( nz1 , zmin1 , zmax1 , ny1, ymin1 , ymax1 , waist, d0 , lambda,1,1,0)
 
 phaIntensitySurface,beam0,'gauss original'
 print,''
