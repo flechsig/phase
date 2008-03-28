@@ -1,3 +1,0 @@
-;;;
-;;;  phaPredefinedOpticalElements.pro
-;;;

@@ -50,3 +50,62 @@ s=string( ba(kstart:slen-1) )
 return, s
 END
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+function phasrc4add, beam1, beam2
+
+; Calculates the difference of the EM-fields in 2 Beam-Structures
+; Assuming that beam2 has the same Grid-Parameters as beam1
+
+beamsum={source4}
+beamsum=beam1
+	
+beamsum.zeyre=beam1.zeyre+beam2.zeyre
+beamsum.zeyim=beam1.zeyim+beam2.zeyim
+beamsum.zezre=beam1.zezre+beam2.zezre
+beamsum.zezim=beam1.zezim+beam2.zezim
+
+return, beamsum
+
+END
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+function phasrc4diff, beam1, beam2
+
+; Calculates the difference of the EM-fields in 2 Beam-Structures
+; Assuming that beam2 has the same Grid-Parameters as beam1
+
+beamdiff={source4}
+beamdiff=beam1
+	
+beamdiff.zeyre=beam1.zeyre-beam2.zeyre
+beamdiff.zeyim=beam1.zeyim-beam2.zeyim
+beamdiff.zezre=beam1.zezre-beam2.zezre
+beamdiff.zezim=beam1.zezim-beam2.zezim
+
+return, beamdiff
+
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+pro phaLabelSrc4, beam, name
+
+; Labels the fsource4(a-d)-Tags
+
+;label = bytearr(80)
+;label(0:strlen(name)-1 = byte(name) 
+
+beam.fsource4a=bytarr(80)
+beam.fsource4b=bytarr(80)
+beam.fsource4c=bytarr(80)
+beam.fsource4d=bytarr(80)
+
+beam.fsource4a(0:strlen(name+'_a')-1) = byte(name+'_a') 
+beam.fsource4b(0:strlen(name+'_b')-1) = byte(name+'_b')
+beam.fsource4c(0:strlen(name+'_c')-1) = byte(name+'_c')
+beam.fsource4d(0:strlen(name+'_d')-1) = byte(name+'_d')
+
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

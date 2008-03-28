@@ -14,7 +14,7 @@
 ;                 phaReadBLFile
 ;
 
-
+FUNCTION phaNewBeamline, blfname
 ;+
 ; NAME:
 ;	phaNewBeamline
@@ -47,10 +47,6 @@
 ;-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FUNCTION phaNewBeamline, blfname
-;input        -none-
-;output     bl : struct pha4idlBeamlineType
-
 if n_params() eq 0 then blfname=string('Unnamed')
 
 bl          = { pha4idlBeamlineType }
@@ -71,10 +67,10 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-
+PRO phaAddOptElement, bl, OptElement 
 ;+
 ; NAME:
-;	phaAddOptElement, bl, OptElement 
+;	phaAddOptElement
 ;
 ; PURPOSE:
 ;       Add new optical element to beamline
@@ -83,11 +79,11 @@ END
 ;	pro : pha4idl - beamline
 ;
 ; CALLING SEQUENCE:
-;	AddOptElement, bl, OptElement
+;	phaAddOptElement, bl, OptElement
 ;
 ; INPUTS:
 ;     	bl:		beamline structure
-;	OptElement	OptElement structure to add to the beamline
+;	OptElement	OptElement structure to added to the beamline
 ;
 ; OUTPUTS:
 ;     	bl:		beamline structure with new opt. element
@@ -103,9 +99,6 @@ END
 ;      March 28, 2008, TL, added help
 ;
 ;-
-
-PRO phaAddOptElement, bl, OptElement 
-
 ;bl         = { pha4idlBeamlineType }
 ;OptElement = { pha4idlOptElement }
 
@@ -122,8 +115,9 @@ bl.NumElements++
 
 END
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+FUNCTION phaReadBLFile, blfname
 ;+
 ; NAME:
 ;	phaReadBLFile
@@ -156,8 +150,6 @@ END
 ;-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FUNCTION phaReadBLFile, blfname
-
 bl = { pha4idlBeamlineType }
 
 bl.blfname = blfname
@@ -184,6 +176,8 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
+PRO phaWriteBLFile, bl
 ;+
 ; NAME:
 ;	phaWriteBLFile
@@ -216,8 +210,6 @@ END
 ;-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-PRO phaWriteBLFile, bl
-;  bl = { pha4idlBeamlineType }
 
 lib = !phalib
 func= 'pha4idlWriteBLFile'

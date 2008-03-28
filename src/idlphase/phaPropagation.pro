@@ -16,7 +16,7 @@
 ;
 ;
 
-
+pro phaPropFFTfar, beam, distance
 ;+
 ; NAME:
 ;	phaPropFFTfar
@@ -53,10 +53,6 @@
 ;
 ;-
 
-
-;--------------------------------------------------------------------------------------------------;
-pro phaPropFFTfar, beam, distance
-
 lib= !phalib
 func='phaPropFFTfar'
 
@@ -86,7 +82,7 @@ END
 ;--------------------------------------------------------------------------------------------------;
 
 
-
+pro phaPropFFTnear, beam, distance	
 ;+
 ; NAME:
 ;	phaPropFFTnear
@@ -123,9 +119,6 @@ END
 ;
 ;-
 
-;- -------------------------------------------------------------------------------------------------;
-pro phaPropFFTnear, beam, distance	
-
 lib= !phalib
 func='phaPropFFTnear'
 
@@ -157,7 +150,7 @@ END
 
 
 
-
+pro phaPropWFFresnelKirchhoff, beam, distance, nz2, zmin2, zmax2, ny2, ymin2, ymax2 
 ;+
 ; NAME:
 ;	phaPropWFFresnelKirchhoff
@@ -201,13 +194,6 @@ END
 ;      March 7, 2008, TL, added help
 ;
 ;-
-
-
-
-;--------------------------------------------------------------------------------------------------;
-pro phaPropWFFresnelKirchhoff, beam, distance, nz2, zmin2, zmax2, ny2, ymin2, ymax2 
-; beam is of type src4 
-
 lib= !phalib
 func='phaPropWFFresnelKirchhoff'
 
