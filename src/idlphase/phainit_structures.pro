@@ -1,6 +1,6 @@
 ; phase structures...
 
-PRO init_phase_structures
+PRO phainit_structures
 
 MaxPathLength=long(255)
 MaximumOptElements=long(64)

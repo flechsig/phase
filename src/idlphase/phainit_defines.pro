@@ -1,6 +1,6 @@
 
 
-pro init_phase_defines
+pro phainit_defines
 
 ; defsysv, '!phalib', 'libphase4idl.so'		
 ; numbers are first defined in <phase.h>, see also <phasec.c>
