@@ -1,8 +1,8 @@
 ; Compiles all of the *.pro files included into the phase4idl project at the moment
 
 ;;; Used C-Structures and defines;;;;;;;;;;;;;;;;;;;;;;;;;
-.compile phase_defines.pro
-.compile phase_structures.pro
+.compile phainit_defines.pro
+.compile phainit_structures.pro
 
 ;;; INITIALIZATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .compile phainit.pro
@@ -16,7 +16,7 @@
 ;.compile phaPropWFFresnelKirchhoff.pro
 ;.compile phaPropFFTnear.pro
 ;.compile phaPropFFTfar.pro
-		
+
 .compile phaSrcWFGauss.pro		
 .compile pha_src4_functions.pro		
 .compile phaplotting.pro		
