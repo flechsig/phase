@@ -6,6 +6,60 @@ function phaSrcWFGauss, ianzz, zmin, zmax, $
 			ianzy, ymin, ymax, $
                         w0  , deltax, xlam, $
                         ez0, ey0, dphi_zy
+;+
+; NAME:
+;	phaSrcWFGauss
+;
+; PURPOSE:
+;       Fill struct src4 with gaussian EMfield distribution
+;	z and y polarized components are created
+;
+;	Ez = gauss(...) * ez0
+;	Ey = gauss(...) * ey0 * expi(dphi_zy)
+;
+;	Ditribution is allways normalized to 1
+;
+; CATEGORY:
+;	func : pha4idl - create src4
+;
+; CALLING SEQUENCE:
+;	src4struct = phaSrcWFGauss( ianzz, zmin, zmax, $
+;				    ianzy, ymin, ymax, $
+;       	                    w0   , zfoc, xlam, $
+;               	            ez0, ey0, dphi_zy )
+;
+;        e.g: IDL> beam0=phaSrcWFGauss(128,-1,1,128,-1,1,0.2,0,20,1,0,0)
+;	      for a completely z polarized field, 
+;
+; INPUTS:
+;	ianzz		no. of gridpoints in z direction
+;	zmin		lower border in z [mm]
+;	zmax		upper border in z [mm]
+;	ianzy		no. of gridpoints in y direction
+;	ymin		lower border in y [mm]
+;	ymax		upper border in y [mm]
+;	w0		waist of the beam in the focus / focal spotsize [mm]
+;	zfoc		distance of focus in direction of propagation [mm]
+;	xlam		wavelenght in [nm]
+;	ez0		scaling paramter for Ez
+;	ey0		scaling paramter for Ey
+;	dphi_zy		phase beetwen Ez and Ey [rad]
+;
+; OUTPUTS:
+;     	src4struct	struct source4 
+;			(eg struct beamline.src.so4)
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 
 
