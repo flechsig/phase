@@ -38,16 +38,11 @@ idl_DATA  = help.html \
 	phaBeamline.pro \
 	phaExamples.pro \
 	phaOpticalElements.pro \
-	phaPredefinedOpticalElements.pro \
 	phaPropagation.pro \
 	phaSetBeamlineOptions.pro \
 	phaSetSources.pro \
 	phaSrcWFGauss.pro \
 	phaUsefullTools.pro \
-	pha_src4_functions.pro \
-	phabeamcopy.pro \
-	phabeamdiff.pro \
-	phabeamload.pro \
 	phainit.pro \
 	phaplotting.pro \
 	phainit_defines.pro \
