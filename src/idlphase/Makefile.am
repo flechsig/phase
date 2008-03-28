@@ -33,7 +33,6 @@ idl_DATA  = help.html \
 	MeinSpieglein.coeff \
 	ReadPhaseResults.pro \
 	SavePhaseResults.pro \
-	examples.pro \
 	pha4idl.compile_all.idl \
 	phaBatchmode.pro \
 	phaBeamline.pro \
