@@ -2,7 +2,7 @@
 ; AUTHOR :  Torsten.Leitner@email.de
 ;     (c) 2007/2008
 ;
-; FILE : phaPropagation.pop
+; FILE : phaPropagation.pro
 ;
 ; PRODCEDURES :
 ;                 phaPropFFTfar
@@ -26,7 +26,7 @@
 ;	with a farfield fourier propagator.
 ;
 ; CATEGORY:
-;	pha4idl - Free space propagator
+;	pro : pha4idl - Free space propagator
 ;
 ; CALLING SEQUENCE:
 ;	phaPropFFTfar, beam, distance
@@ -96,7 +96,7 @@ END
 ;	with a nearfield fourier propagator.
 ;
 ; CATEGORY:
-;	pha4idl - Free space propagator
+;	pro : pha4idl - Free space propagator
 ;
 ; CALLING SEQUENCE:
 ;	phaPropFFTnear, beam, distance	 
@@ -167,7 +167,7 @@ END
 ;	with the Fresnel-Kirchhoff integration method.
 ;
 ; CATEGORY:
-;	pha4idl - Free space propagator
+;	pro : pha4idl - Free space propagator
 ;
 ; CALLING SEQUENCE:
 ;	phaPropWFFresnelKirchhoff, beam, distance, nz2, zmin2, zmax2, ny2, ymin2, ymax2 

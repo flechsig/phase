@@ -1,7 +1,50 @@
 
+;
+; AUTHOR :  Torsten.Leitner@email.de
+;     (c) 2007/2008
+;
+; FILE : phaBeamline.pro
+;
+; PRODCEDURES :
+;                 phaAddOptElement
+;                 phaWriteBLFile
+;
+; FUNCTIONS :
+;                 phaNewBeamline
+;                 phaReadBLFile
+;
 
-;;; FILE:  phaBeamline.pro
 
+;+
+; NAME:
+;	phaNewBeamline
+;
+; PURPOSE:
+;       Init new beamline structure
+;
+; CATEGORY:
+;	func : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	beamline = phaNewBeamline(blfname)
+;
+; INPUTS:
+;     	blfname:	name of the beamline(-file)
+;
+; OUTPUTS:
+;     	beamline:	pha4idl beamline structure (see phainit_structures.pro)
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FUNCTION phaNewBeamline, blfname
@@ -28,6 +71,39 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
+;+
+; NAME:
+;	phaAddOptElement, bl, OptElement 
+;
+; PURPOSE:
+;       Add new optical element to beamline
+;
+; CATEGORY:
+;	pro : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	AddOptElement, bl, OptElement
+;
+; INPUTS:
+;     	bl:		beamline structure
+;	OptElement	OptElement structure to add to the beamline
+;
+; OUTPUTS:
+;     	bl:		beamline structure with new opt. element
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
+
 PRO phaAddOptElement, bl, OptElement 
 
 ;bl         = { pha4idlBeamlineType }
@@ -48,6 +124,36 @@ END
 
 
 
+;+
+; NAME:
+;	phaReadBLFile
+;
+; PURPOSE:
+;       Read beamline from file
+;
+; CATEGORY:
+;	func : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	beamline = phaReadBLFile(blfname)
+;
+; INPUTS:
+;     	blfname:	name of the beamlinefile
+;
+; OUTPUTS:
+;     	beamline:	pha4idl beamline structure (see phainit_structures.pro)
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FUNCTION phaReadBLFile, blfname
@@ -78,6 +184,36 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;+
+; NAME:
+;	phaWriteBLFile
+;
+; PURPOSE:
+;       Write beamline to file
+;
+; CATEGORY:
+;	pro : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	beamline = phaWriteBLFile(blfname)
+;
+; INPUTS:
+;     	blfname:	name of the beamlinefile
+;
+; OUTPUTS:
+;     	beamlinefile on hdd named 'blfname'
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 PRO phaWriteBLFile, bl
