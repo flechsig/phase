@@ -22,7 +22,7 @@
 .compile phaplotting.pro		
 ;.compile rtrace.pro			
 
-.compile tmptmp.pro
+;;.compile tmptmp.pro ;; UF wird nicht installiert
 
 .compile phaOpticalElements.pro
 .compile phaSetSources.pro

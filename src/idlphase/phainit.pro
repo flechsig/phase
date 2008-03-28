@@ -19,12 +19,13 @@ defsysv, '!phalib', exist=exist  ;; check if  defined
 if (exist eq 0) then begin
         phasehome=getenv('PHASE_HOME')	; get phasepath
         if (phasehome eq '' ) then phasehome= '/usr/local/phase'
-;        phaselibs= expand_path('+'+phasehome+'/lib')  ; path erweitern
-;        !path=phaselibs+':'+!path				; path erweitern
-	   !path=phasehome+'/lib:'+phasehome+'/idl:'+!path
+        phaselibs= expand_path('+'+phasehome+'/lib')  ; path erweitern
+        !path=phaselibs+':'+!path
+				; path erweitern
+;	   !path=phasehome+'/lib:'+phasehome+'/idl:'+!path
 	        ; path erweitern
-
-	  defsysv, '!phalib', 'libphase4idl.so'		; zeiger auf libphase4idl.so definieren
+        defsysv, '!phalib', phasehome+'/lib/libphase4idl.so'
+;	  defsysv, '!phalib', 'libphase4idl.so'		; zeiger auf libphase4idl.so definieren
 endif
 
 ; !phalib aliase
