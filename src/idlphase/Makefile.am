@@ -51,8 +51,8 @@ idl_DATA  = help.html \
 	phabeamload.pro \
 	phainit.pro \
 	phaplotting.pro \
-	phase_defines.pro \
-	phase_structures.pro \
+	phainit_defines.pro \
+	phainit_structures.pro \
 	read_extr_out.pro \
 	read_int_file.pro \
 	read_opti_out.pro
