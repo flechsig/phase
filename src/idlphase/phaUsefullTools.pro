@@ -50,7 +50,41 @@ s=string( ba(kstart:slen-1) )
 return, s
 END
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+pro phaCopyFieldFiles, src, dest
+
+; infiles nach tmpfiles kopieren
+spawn,'cp -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
+spawn,'cp -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'
+spawn,'cp -f --reply=yes '+src+'-ezrec '+dest+'-ezrec'
+spawn,'cp -f --reply=yes '+src+'-ezimc '+dest+'-ezimc'
+
+END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+pro phaMoveFieldFiles, src, dest
+
+; tmpfiles nach outfiles kopieren
+spawn,'mv -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
+spawn,'mv -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'
+spawn,'mv -f --reply=yes '+src+'-ezrec '+dest+'-ezrec'
+spawn,'mv -f --reply=yes '+src+'-ezimc '+dest+'-ezimc'
+                         
+                         
+END                      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+
 
 function phasrc4add, beam1, beam2
 
@@ -69,7 +103,7 @@ return, beamsum
 
 END
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 function phasrc4diff, beam1, beam2
 
@@ -109,3 +143,5 @@ beam.fsource4d(0:strlen(name+'_d')-1) = byte(name+'_d')
 
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+

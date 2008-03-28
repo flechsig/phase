@@ -1,4 +1,4 @@
-;+
+;
 ; NAME: phaBatchmode.pro
 ;
 
@@ -6,45 +6,48 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pro phaBatchMode, BLfile, ResultFile, cmode
-
-
-CASE cmode OF
-	-1	: Modus='-1'
-	1	: Modus='1'
-	2	: Modus='2'
-	3	: Modus='3'
-	4	: Modus='4'
-ELSE	 : Modus='9'
-ENDCASE
-
-
-
-;; shellcommand='phase -b -fSGM.PHASE -oSGM.RESULT -m1'
-shellcommand='phase -b'$
-		+' -f'+BLfile $
-		+' -o'+ResultFile  $
-		+' -m'+Modus $
-		+' &'
-
-print,shellcommand
-;WaitForEnter
-
-spawn,shellcommand ,shelloutput
-
-shelloutput='phase : '+shelloutput
-
-print,'*** phaserun finished ***'
-print,'*** stdout:           ***'
-print,'phase : '+shelloutput
-
-
-END
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-pro phaBatchMode_noSubProcess, BLfile, ResultFile, cmode
-
+;+
+; NAME:
+;	phaBatchMode
+;
+; PURPOSE:
+;       Init new beamline structure
+;
+; CATEGORY:
+;	pro : pha4idl - run phase
+;
+; CALLING SEQUENCE:
+;	phaBatchMode, BLfile, ResultFile, cmode
+;
+; INPUTS:
+;     	BLfile:		name of the beamlinefile
+;	ResultFile	prefix for the phase results
+;			phase adds the following postfixes:
+;			-ezre, -ezim, -eyre, -eyim  : real and imaginary 
+;				of the EM-fields with z & y polarizaiton
+;			-psd  : phase space density
+;
+;	cmode		calculation mode
+;			1 : simple raytracing
+;			2 : full raytracing
+;			3 : phase space calculations
+;			4 : footprint (not yet tested)
+;			5 : multi freq. mode (not yet tested)
+;
+; OUTPUTS:
+;     	ResultFile	results are stored to hdd
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 CASE cmode OF
 	-1	: Modus='-1'
@@ -63,7 +66,8 @@ shellcommand='phase -b'$
 		+' -o'+ResultFile  $
 		+' -m'+Modus
 
-print,shellcommand
+print,'starting phasebatchmode with the following shellcommand:'
+print,'$> '+shellcommand
 ;WaitForEnter
 
 spawn,shellcommand ;,shelloutput
@@ -74,34 +78,4 @@ spawn,shellcommand ;,shelloutput
 
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-pro phaCopyFieldFiles, src, dest
-
-; infiles nach tmpfiles kopieren
-spawn,'cp -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
-spawn,'cp -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'
-spawn,'cp -f --reply=yes '+src+'-ezrec '+dest+'-ezrec'
-spawn,'cp -f --reply=yes '+src+'-ezimc '+dest+'-ezimc'
-
-END
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-pro phaMoveFieldFiles, src, dest
-
-; tmpfiles nach outfiles kopieren
-spawn,'mv -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
-spawn,'mv -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'
-spawn,'mv -f --reply=yes '+src+'-ezrec '+dest+'-ezrec'
-spawn,'mv -f --reply=yes '+src+'-ezimc '+dest+'-ezimc'
-                         
-                         
-END                      
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 
