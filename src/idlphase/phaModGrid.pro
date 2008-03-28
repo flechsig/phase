@@ -7,8 +7,7 @@ pro phaModGridSizeAddZeros,bl,nz2,ny2
 ;	phaModGridSizeAddZeros
 ;
 ; PURPOSE:
-;       Changes the number of gridpoints used to describe the EMFields.
-;		the size of the grid is conserved.
+;       Adds a rim of zeros to the grid
 ;
 ; CATEGORY:
 ;	pro : pha4idl - modify grid
@@ -30,6 +29,7 @@ pro phaModGridSizeAddZeros,bl,nz2,ny2
 ; SIDE EFFECTS:
 ;
 ; RESTRICTIONS:
+;	nz2 and ny2 have to be bigger than their original values
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
@@ -78,8 +78,41 @@ END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaModGridSizeCut,source4,nzmin,nzmax,nymin,nymax
-
+pro phaModGridSizeCut,bl,nzmin,nzmax,nymin,nymax
+;+
+; NAME:
+;	phaModGridSizeCut
+;
+; PURPOSE:
+;       Cuts the grid, reducing the size and the number of points.
+;
+; CATEGORY:
+;	pro : pha4idl - modify grid
+;
+; CALLING SEQUENCE:
+;	phaModGridSizeCut,bl,nzmin,nzmax,nymin,nymax
+;
+; INPUTS:
+;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;	nzmin	lower edge to be cut in z
+;	nzmax	upper edge to be cut in z
+;	nymin	lower edge to be cut in y
+;	nymax	upper edge to be cut in y
+;
+; OUTPUTS:
+;     	bl:	modified pha4idl beamline structure
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 np=n_params()
 IF np NE 5 THEN BEGIN 
    print,''
@@ -100,7 +133,7 @@ result=1
 ;   int phaModSizeCut(struct source4 *beam4, int *nzmax,int *nzmin,int *nymax,int *nymin)
 
 result = call_external(!phalib,'phaModSizeCut',$
-			source4,  $
+			bl.src.so4,  $
 			nzmin,nzmax,nymin,nymax, $
 			/I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
@@ -111,7 +144,40 @@ END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaModGridPoints,source4,nz2,ny2
+pro phaModGridPoints,bl,nz2,ny2
+;+
+; NAME:
+;	phaModGridPoints
+;
+; PURPOSE:
+;       Changes the number of gridpoints used to describe the EMFields.
+;		the size of the grid is conserved.
+;
+; CATEGORY:
+;	pro : pha4idl - modify grid
+;
+; CALLING SEQUENCE:
+;	phaModGridPoints,bl,nz2,ny2
+;
+; INPUTS:
+;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;	nz2	new number of gridpoints in z
+;	ny2	new number of gridpoints in y
+;
+; OUTPUTS:
+;     	bl:	modified pha4idl beamline structure
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 np=n_params()
 IF np NE 3 THEN BEGIN 
@@ -128,7 +194,7 @@ ny2=long(ny2)
 
 result=1
 result = call_external(!phalib,'phaModGrid',$
-			source4,  $
+			bl.src.so4,  $
 			nz2, ny2, $
 			/I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
