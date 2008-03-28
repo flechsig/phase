@@ -1,7 +1,40 @@
 
 
 
-pro phaModGridSizeAddZeros,source4,nz2,ny2
+pro phaModGridSizeAddZeros,bl,nz2,ny2
+;+
+; NAME:
+;	phaModGridSizeAddZeros
+;
+; PURPOSE:
+;       Changes the number of gridpoints used to describe the EMFields.
+;		the size of the grid is conserved.
+;
+; CATEGORY:
+;	pro : pha4idl - modify grid
+;
+; CALLING SEQUENCE:
+;	phaModGridSizeAddZeros,source4,nz2,ny2
+;
+; INPUTS:
+;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;	nz2	new number of gridpoints in z
+;	ny2	new number of gridpoints in y
+;
+; OUTPUTS:
+;     	bl:	modified pha4idl beamline structure
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 np=n_params()
 IF np NE 3 THEN BEGIN 
@@ -34,7 +67,7 @@ ny2=long(ny2)
 
 result=1
 result = call_external(!phalib,'phaModSizeAddZeros',$
-			source4,  $
+			bl.src.so4,  $
 			nz2, ny2, $
 			/I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 

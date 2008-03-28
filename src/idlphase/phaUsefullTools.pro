@@ -55,6 +55,40 @@ END
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pro phaCopyFieldFiles, src, dest
+;+
+; NAME:
+;	phaCopyFieldFiles
+;
+; PURPOSE:
+;       Copy phase field files on hdd
+;
+; CATEGORY:
+;	pro : pha4idl - tools
+;
+; CALLING SEQUENCE:
+;	phaCopyFieldFiles, src, dest
+;
+; INPUTS:
+;     	src		source prefix
+;     	dest		destination prefix
+;
+;			phase adds the following postfixes:
+;			-ezre, -ezim, -eyre, -eyim  : real and imaginary 
+;				of the EM-fields with z & y polarizaiton
+;
+; OUTPUTS:
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 ; infiles nach tmpfiles kopieren
 spawn,'cp -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
@@ -69,7 +103,40 @@ END
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pro phaMoveFieldFiles, src, dest
-
+;+
+; NAME:
+;	phaMoveFieldFiles
+;
+; PURPOSE:
+;       Move phase field files on hdd
+;
+; CATEGORY:
+;	pro : pha4idl - tools
+;
+; CALLING SEQUENCE:
+;	phaMoveFieldFiles, src, dest
+;
+; INPUTS:
+;     	src		source prefix
+;     	dest		destination prefix
+;
+;			phase adds the following postfixes:
+;			-ezre, -ezim, -eyre, -eyim  : real and imaginary 
+;				of the EM-fields with z & y polarizaiton
+;
+; OUTPUTS:
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 ; tmpfiles nach outfiles kopieren
 spawn,'mv -f --reply=yes '+src+'-eyrec '+dest+'-eyrec'
 spawn,'mv -f --reply=yes '+src+'-eyimc '+dest+'-eyimc'

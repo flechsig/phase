@@ -9,6 +9,36 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FUNCTION AnEasyPhaseRun01
+;+
+; NAME:
+;	AnEasyPhaseRun01
+;
+; PURPOSE:
+;       a simple example for a phase run ...
+;
+; CATEGORY:
+;	func : pha4idl - examples
+;
+; CALLING SEQUENCE:
+;	beamline = AnEasyPhaseRun01()
+;
+; INPUTS:
+;     	None.
+;
+; OUTPUTS:
+;     	beamline:	pha4idl beamline structure (see phainit_structures.pro)
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 
 !P.Multi=[0,1,2]
 
@@ -94,13 +124,13 @@ bl.src.so4 = phaSrcWFGauss(128, -1, 1,128, -1, 1, 0.2 , 0 , 20,1,0,0)
 
 ;;; DO THE PHASE RUN --> spaeter zu einer funktion zusammenfassen !!!
 PHAINTENSITYSURFACE,bl.src.so4,'pre  phase run'
-phaSaveEMField, bl.src.so4, bl.blfname
+phaSaveEMField, bl, bl.blfname
 phaWriteBLFile, bl
 
 cmode = 3 ; phasespace
 phaBatchMode_nosubprocess, bl.blfname, bl.blfname, cmode
 
-phaLoadEMField, bl.src.so4, bl.blfname
+phaLoadEMField, bl, bl.blfname
 PHAINTENSITYSURFACE,bl.src.so4,'post phase run'
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -112,14 +142,4 @@ return, bl
 
 END ; AnEasyPhaseRun01
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-PRO dummypro
-
-
-END ; dummypro
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 

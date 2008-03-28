@@ -1,8 +1,43 @@
 
 
-;; filename:  ReadPhaseResults.pro
+;; filename:  phaLoadEMField.pro
 
-PRO phaLoadEMField, beam, MainFileName
+PRO phaLoadEMField, bl, MainFileName
+;+
+; NAME:
+;	phaLoadEMField
+;
+; PURPOSE:
+;       Load phasestyle EMFields into beamline
+;
+; CATEGORY:
+;	pro : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	phaLoadEMField, bl, MainFileName
+;
+; INPUTS:
+;     	bl		beamline struct
+;	MainFileName	prefix for the phase EMField files
+;			phase adds the following postfixes:
+;			-ezre, -ezim, -eyre, -eyim  : real and imaginary 
+;				of the EM-fields with z & y polarizaiton
+;
+; OUTPUTS:
+;     	bl		filled beamline struct
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
+
 
 np=n_params()
 
@@ -13,10 +48,10 @@ if np ne 2 then begin
 	return
 endif
 
-phaLoadEzReal,beam,MainFileName+'-ezrec'
-phaLoadEzImag,beam,MainFileName+'-ezimc'
-phaLoadEyReal,beam,MainFileName+'-eyrec'
-phaLoadEyImag,beam,MainFileName+'-eyimc'
+phaLoadEzReal,bl.src.so4,MainFileName+'-ezrec'
+phaLoadEzImag,bl.src.so4,MainFileName+'-ezimc'
+phaLoadEyReal,bl.src.so4,MainFileName+'-eyrec'
+phaLoadEyImag,bl.src.so4,MainFileName+'-eyimc'
 
 END
 

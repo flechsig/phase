@@ -1,10 +1,43 @@
 
-; Name: SavePhaseResults.pro
+; Name: phaSaveEMField.pro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PRO phaSaveEMField, beam, MainFileName
-
+PRO phaSaveEMField, bl, MainFileName
+;+
+; NAME:
+;	phaSaveEMField
+;
+; PURPOSE:
+;       Save phasestyle EMFields from beamline
+;
+; CATEGORY:
+;	pro : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	phaSaveEMField, bl, MainFileName
+;
+; INPUTS:
+;     	bl		beamline struct
+;	MainFileName	prefix for the phase EMField files
+;			phase adds the following postfixes:
+;			-ezre, -ezim, -eyre, -eyim  : real and imaginary 
+;				of the EM-fields with z & y polarizaiton
+;
+; OUTPUTS:
+;     	phase style EMField files on hdd
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 28, 2008, TL, added help
+;
+;-
 np=n_params()
 
 if np ne 2 then begin
@@ -14,10 +47,10 @@ if np ne 2 then begin
 	return
 endif
 
-phaSaveEzReal,beam,MainFileName+'-ezrec'
-phaSaveEzImag,beam,MainFileName+'-ezimc'
-phaSaveEyReal,beam,MainFileName+'-eyrec'
-phaSaveEyImag,beam,MainFileName+'-eyimc'
+phaSaveEzReal,bl.src.so4,MainFileName+'-ezrec'
+phaSaveEzImag,bl.src.so4,MainFileName+'-ezimc'
+phaSaveEyReal,bl.src.so4,MainFileName+'-eyrec'
+phaSaveEyImag,bl.src.so4,MainFileName+'-eyimc'
 
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

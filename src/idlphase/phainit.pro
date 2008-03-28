@@ -8,61 +8,17 @@ PRO phainit
 ; NAME:
 ;   phainit
 ;
-;
 ; PURPOSE:
 ;   Initialize the IDL Phase environment.
 ;
-;
 ; CATEGORY:
-;   Phase
-;
+;   	pro : phase init
 ;
 ; CALLING SEQUENCE:
-;
-;
-;
-; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
-;
-; KEYWORD PARAMETERS:
-;
-;
-;
-; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
-;
-; EXAMPLE:
-;
-;
+;		phainit
 ;
 ; MODIFICATION HISTORY:
-;   
+;      March 28, 2008, TL, added help
 ;-
 
 

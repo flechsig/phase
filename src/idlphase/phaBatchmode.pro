@@ -11,7 +11,7 @@ pro phaBatchMode, BLfile, ResultFile, cmode
 ;	phaBatchMode
 ;
 ; PURPOSE:
-;       Init new beamline structure
+;       Start phase run in batchmode
 ;
 ; CATEGORY:
 ;	pro : pha4idl - run phase

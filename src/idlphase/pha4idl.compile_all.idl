@@ -28,8 +28,8 @@
 .compile phaBeamline.pro
 
 
-.compile ReadPhaseResults.pro
-.compile SavePhaseResults.pro
+.compile phaLoadEMField.pro
+.compile phaSaveEMField.pro
 .compile phaBatchmode.pro
 
 
