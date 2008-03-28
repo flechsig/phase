@@ -43,6 +43,7 @@ idl_DATA  = help.html \
 	phaSetSources.pro \
 	phaSrcWFGauss.pro \
 	phaUsefullTools.pro \
+	phaModGrid.pro \
 	phainit.pro \
 	phaplotting.pro \
 	phainit_defines.pro \

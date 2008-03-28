@@ -18,11 +18,9 @@
 ;.compile phaPropFFTfar.pro
 
 .compile phaSrcWFGauss.pro		
-.compile pha_src4_functions.pro		
+.compile phaModGrid.pro		
 .compile phaplotting.pro		
 ;.compile rtrace.pro			
-
-;;.compile tmptmp.pro ;; UF wird nicht installiert
 
 .compile phaOpticalElements.pro
 .compile phaSetSources.pro
@@ -35,25 +33,8 @@
 .compile phaBatchmode.pro
 
 
-
-
-
-;.compile uwe_phase_beamline__define.pro
-;.compile uwe_initbeamline.pro
-
-;;; MISC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;	.compile phabeamcopy.pro		
-;	.compile phabeamdiff.pro		
-;	.compile phabeamload.pro		
-
-;	.compile phase_structures_1024.pro	
-;	.compile phase_structures_256.pro	
-
-	.compile test.pro			
-;
 ;;; EXAMPLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.compile examples.pro
-
+.
 .compile phaExamples.pro
 
 
