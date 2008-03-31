@@ -31,8 +31,6 @@ idl_with_doc_header = \
 idl_DATA  = help.html \
 	$(idl_with_doc_header) \
 	MeinSpieglein.coeff \
-	ReadPhaseResults.pro \
-	SavePhaseResults.pro \
 	pha4idl.compile_all.idl \
 	phaBatchmode.pro \
 	phaBeamline.pro \
