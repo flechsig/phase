@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:41:51 flechsig>  */
+/*   Time-stamp: <01 Apr 08 15:10:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -37,6 +37,7 @@
 #include "mirrorpck.h"                 
 #include "geometrypck.h"   
 #include "phase.h"
+#include "phaseX.h"
 #include "rtrace.h"                 
 #include "common.h" 
 

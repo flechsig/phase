@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <10 Jan 08 08:35:45 flechsig>  */
+/*   Time-stamp: <01 Apr 08 15:09:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -31,7 +31,8 @@
 #include "fg3pck.h" 
 #include "mirrorpck.h"  
 #include "geometrypck.h" 
-#include "phase.h"       
+#include "phase.h" 
+#include "phaseX.h"      
 #include "rtrace.h"    
 
 void activate_proc(w, tag, reason)
