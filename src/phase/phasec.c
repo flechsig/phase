@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <01 Apr 08 15:08:22 flechsig>  */
+/*   Time-stamp: <04 Apr 08 16:44:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -238,6 +238,13 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
+
+  if ((fabs(alpha) > 90.0) || (fabs(beta) > 90.0))
+    {
+      beep(1);
+      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg.");
+    }
+
 /* modification: 17 Feb 98 09:33:48 flechsig */
 /* modification: 19 Feb 98 11:08:59 flechsig */
 /*   alpha= (theta0+ delta); */
