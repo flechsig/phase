@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <03 Jan 08 10:49:08 flechsig> 
+c$$$ Time-stamp: <04 Apr 08 16:26:33 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1279,6 +1279,13 @@ c----------------- initialisieren -----------------
 #ifdef DEBUG
         write(*,*)'reduce_1: epsilon:',acc
 #endif
+        if(acc.lt.1e-8)then
+           write(*,*)'reduce_1: epsilon < 1e-8'
+           write(*,*)'reduce_1: put epsilon to default'
+           acc=0.01
+           write(*,*)'reduce_1: (new) epsilon:',acc
+        endif
+
         fak(0)=1.d0
 	fak(1)=1.d0
 	fak(2)=2.d0
