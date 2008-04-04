@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <04 Apr 08 16:47:43 flechsig>  */
+/*   Time-stamp: <04 Apr 08 16:50:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -242,8 +242,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0))
     {
       beep(1);
-      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg.");
-    }
+      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg. !!\n");    }
 
 /* modification: 17 Feb 98 09:33:48 flechsig */
 /* modification: 19 Feb 98 11:08:59 flechsig */
