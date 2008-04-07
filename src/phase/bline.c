@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Apr 08 14:29:14 flechsig>  */
+/*   Time-stamp: <07 Apr 08 15:06:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1660,6 +1660,378 @@ void getoptipickfile(struct optistruct *x, char *pickname)
     exit(-1); 
 }
 
+void DefGeometryC(struct gdatset *x, struct geometrytype *gout)  
+     /* Uwe 25.6.96 							*/
+     /* umgeschrieben - keine fileausgabe mehr 			        */
+     /* datenstruktur soll gleich sin und cosinus werte enthalten 	*/
+    /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
+{
+  double delta, alpha, beta, theta0, trans, radius;
+  int i;
+
+  theta0= fabs(x->theta0* PI/ 180.0);   
+  delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
+  alpha= (-theta0- delta);   /* eigentlich fi+ theta */
+  beta = ( theta0- delta);   /* nicht eher fi- theta???*/
+
+  if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0))
+    {
+      beep(1);
+      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg. !!\n");    }
+
+/* modification: 17 Feb 98 09:33:48 flechsig */
+/* modification: 19 Feb 98 11:08:59 flechsig */
+/*   alpha= (theta0+ delta); */
+/*   beta = (delta- theta0); */
+  printf("DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
+	 alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6);
+  if ((x->iflag) == 1)
+    {
+      radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));   
+      trans    = radius* (1.0- cos(delta));      
+      gout->r  = x->r-  trans; 
+      gout->rp = x->rp- trans;    
+      printf("DefGeometryC: NIM translation enabled, trans= %d mm\nr1= %d mm, r2= %d mm\n", 
+             trans, gout->r, gout->rp);  
+    }  else 
+      {
+	gout->r  = x->r; 
+	gout->rp = x->rp;    
+      }
+
+  gout->sina= sin(alpha);   
+  gout->cosa= cos(alpha);   
+  gout->sinb= sin(beta);   
+  gout->cosb= cos(beta);   
+  for (i= 0; i< 5; i++) 
+    gout->x[i]= x->xdens[i]; 
+  gout->xlam = x->lambda* (double)(x->inout);  
+  gout->idefl= (x->theta0 > 0.0) ? 1 : -1;  
+} /* end DefGeometryC */ 
+
+/*
+   UF 11/07 I take out the read coefficients file functionality - 
+   this is required for the optimization and probably for idl
+*/
+void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
+		int etype)  
+{
+  double r, rho, *dp, cone, l,
+    alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
+    rpole, fipole, small, kellip, Rellip;
+  int i, j;
+  struct mirrortype mirror;
+
+#ifdef DEBUG
+  /*  printf("DefMirrorC: called\n");*/
+#endif  
+ 
+  small= 1e-15;   
+  r    = x->rmi;
+  rho  = x->rho;
+  dp   = (double *)a;
+  alpha= x->alpha * PI/ 180.0;
+
+  if (etype != kEOEGeneral)
+    for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
+                               /* Radien < small dann planspiegel */
+
+  /* index fuer a(i,j) = i+ j* 6    */
+
+  switch (etype)
+    {
+    case kEOEPM:               /* plane mirror      */
+    case kEOEPG:               /* plane grating     */
+    case kEOEPGV:              /* plane VLS grating */
+      printf("DefMirrorC: flat shape ");
+      break;  /* end plane */
+
+    case kEOESlit:
+      printf("DefMirrorC: slit- geometry and element data are ignored - ");
+      printf("fill dummy entries from toroid\n"); 
+    case kEOEDrift:
+      printf("DefMirrorC: drift- geometry and element data are ignored - ");
+      printf("fill dummy entries from toroid\n"); 
+    case kEOETM:                          /* index a(i,j) */
+    case kEOETG:                          /* = i+ j* 6    */
+    case kEOEVLSG:  
+      printf("DefMirrorC: generic toroidal shape ");                 
+      if (fabs(rho) > small) 
+	{
+	  dp[12]= 0.5/ rho;                		  /* 0,2 */
+	  dp[24]= 1.0/ (8.0* rho* rho* rho);              /* 0,4 */
+	}  
+      if (fabs(r) > small)  
+	{
+	  dp[2]= 0.5/ r;   
+	  dp[4]= 1.0/ (8.0* r* r* r);   
+	}  
+      if ((fabs(rho) > small) && (fabs(r) > small))  
+	{
+	  dp[14]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
+	} 
+      break; /* end toroid */ 
+
+    case kEOEGeneral:           /* read coefficients from file */
+      printf("DefMirrorC: general coefficient file- nothing to be done here\n");
+      /*    ReadCoefficientFile(dp, fname); */
+      break;
+
+    case kEOECone:  
+      l= 100;
+      printf("DefMirrorC: special conical cylinder (not tested)\n");
+      printf("fixed cone length l= %f mm\n");
+      printf("r, rho are the two radii\n");
+      if (fabs(l) > small)
+	{
+	  cone= (r - rho)/ l;
+	  cone*= cone;
+	  dp[1]= 1.0- cone;
+          dp[2]= 1.0- 2* cone;
+	  dp[3]= sqrt(cone- cone* cone);
+	  dp[4]= -(r/sqrt(cone)- l/2.0)* sqrt(cone- cone* cone);
+	}
+#ifdef DEBUG
+      printf("end cone shape\n");
+#endif
+      break; /* end cone */
+
+    case kEOEElli: 
+      printf("DefMirrorC: elliptical shape\n");  
+      if (fabs(alpha) < small) 
+	{
+	  beep(1);	
+	  fprintf(stderr, "theta = 0, elliptical shape makes no sense!\n");
+	} 
+      else
+	{       
+	  aellip= (x->r1+ x->r2)/ 2.0;
+	  bellip= sqrt(aellip* aellip- 0.25* 
+		       (x->r1* x->r1+ x->r2* x->r2- 
+			2.0* x->r1* x->r2* cos(2.0* alpha)));
+
+	  /* lineare Exzentrizitaet oder brennweite e= sqrt(a^2-b^2) */
+	  eellip= sqrt(aellip* aellip- bellip* bellip);
+
+	  /* Parameter k und R in der generic cone equation */
+	  /* y(x)= \frac{x^2/R}{1+\sqrt{1-(k+1)(x/R)^2}} */
+	  kellip= (aellip* aellip)/(bellip* bellip) - 1.0;
+	  Rellip= (aellip* aellip)/ bellip;
+
+	  /* numerische exzentrizitaet epsilon= e/a */ 
+	  epsilon= eellip/ aellip;
+
+	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
+	  xpole    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
+	  ypole = sqrt(x->r1* x->r1-(eellip+ xpole)*(eellip+ xpole));
+	  rpole = sqrt(xpole* xpole + ypole* ypole);
+	  fipole= atan2(ypole, xpole)* 180.0/ PI;
+
+	  printf("DefMirrorC: ell. parameter: \n");
+	  printf("major axis:                   a = % f mm\n", aellip); 
+	  printf("minor axis:                   b = % f mm\n", bellip);
+	  printf("linear eccentricity:          e = % f mm\n", eellip);
+	  printf("numerical eccentricity: epsilon = % f   \n", epsilon);
+
+	  printf("cone parameter:               k = % f   \n", kellip);
+	  printf("cone radius:                  R = % f mm\n", Rellip);
+
+	  printf("pole:                         x = % f mm\n", xpole);
+	  printf("pole:                         y = % f mm\n", ypole);
+	  printf("pole:                         r = % f mm\n", rpole);
+	  printf("pole:                       phi = % f deg.\n", fipole);
+	  printf("                              f = % f mm\n", f);
+
+	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
+	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
+
+	  dp[13]= (tan(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* pow(f, 2.0)* cos(alpha));                     /* 1,2 */
+	  /** UF 26.11.04 Vorzeichen ist vermutlich falsch    */
+	  /* bei negativen alpha scheint es richtig zu sein   */
+	  /* ist u(w,l) abhaengig vom Vorzeichen von alpha ?? */
+
+	  dp[3] = (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* f* f);                              /* 3,0 */
+	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * 
+	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
+	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
+	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
+	  dp[14]= (pow(sin(alpha), 2.0)/ 
+		   (16.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
+	    (1.50* pow(cos(alpha), 2.0)- (pow(bellip, 2.0)/ 
+					  pow(aellip, 2.0))* 
+	     (1.0- 1.0/ (2.0* pow(tan(alpha), 2.0))));  	/*2,2 */
+	  dp[24]= (pow(bellip, 2.0)/ 
+		   (64.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
+	    (pow(sin(alpha), 2.0)/ pow(bellip, 2.0) + 
+	     1.0/ pow(aellip, 2.0));  				/* 0,4 */
+	}
+      break; /* end ellipsoid */
+
+    case kEOEPElli:
+    case kEOEPElliG:
+      printf("DefMirrorC: plane- elliptical shape\n");  
+      if (fabs(alpha) < small) 
+	{
+	  beep(1);	
+	  fprintf(stderr, 
+		  "DefMirrorC: theta = 0, elliptical shape makes no sense!\n");
+	} 
+      else
+	{     
+	  aellip= (x->r1+ x->r2)/ 2.0;
+	  bellip= sqrt(aellip* aellip- 0.25* 
+		       (x->r1* x->r1+ x->r2* x->r2- 
+			2.0* x->r1* x->r2* cos(2.0* alpha)));
+	  eellip= sqrt(aellip* aellip- bellip* bellip);
+
+	  /* Parameter k und R in der generic cone equation */
+	  /* y(x)= \frac{x^2/R}{1+\sqrt{1-(k+1)(x/R)^2}} */
+	  kellip= (aellip* aellip)/(bellip* bellip) - 1.0;
+	  Rellip= (aellip* aellip)/ bellip;
+
+	  epsilon= eellip/ aellip;
+	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
+	  xpole = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
+	  ypole = sqrt(x->r1* x->r1-(eellip+ xpole)*(eellip+ xpole));
+	  rpole = sqrt(xpole* xpole + ypole* ypole);
+	  fipole= atan2(ypole, xpole)* 180.0/ PI;
+	  
+	  printf("DefMirrorC: ell. parameter: \n");
+	  printf("major axis:                   a = %f mm\n", aellip); 
+	  printf("minor axis:                   b = %f mm\n", bellip);
+	  printf("linear eccentricity:          e = %f mm\n", eellip);
+	  printf("numerical eccentricity: epsilon = %f   \n", epsilon);
+
+	  printf("cone parameter:               k = % f   \n", kellip);
+	  printf("cone radius:                  R = % f mm\n", Rellip);
+
+	  printf("pole:                         x = %f mm\n", xpole);
+	  printf("pole:                         y = %f mm\n", ypole);
+	  printf("pole:                         r = %f mm\n", rpole);
+	  printf("pole:                       phi = %f deg.\n", fipole);
+	  printf("                              f = %f mm\n", f);
+	  
+	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
+/** Vorzeichen vermutlich falsch UF 26.11.04 - siehe oben */
+	  dp[3] = (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* f* f);                                        /* 3,0 */
+	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))* 
+	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
+	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
+	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
+	}
+      break;
+
+    default:
+      fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
+      exit(-1);
+    } /* end switch */ 
+#ifdef DEBUG
+  printf("DEBUG: mirror coefficients\n");
+  for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
+#endif
+  /* misalignment */
+  if (Beamline.BLOptions.WithAlign == 1)
+    {
+#ifdef DEBUG
+      printf("            with misalignment\n");
+#endif
+      memcpy(&mirror, a, sizeof(struct mirrortype));
+      misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+#ifdef DEBUG
+      printf("DEBUG: mirror coefficients with misalignment\n");
+      for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
+#endif
+    } 
+#ifdef DEBUG
+  else
+      printf("            without misalignment\n");
+#endif
+#ifdef DEBUG
+  printf("DEBUG: end defmirrorc\n");
+#endif
+} /* end defmirrorc */
+
+/* DefMirrorC erzeugt                      */
+/* elementmatrix im Fortran Speichermodell */ 
+/*                                         */
+
+void DefGeometryCM(double lambda_local, struct gdatset *x,
+		                      struct geometrytype *gout)
+       /* Uwe 25.6.96                                                     */
+       /* umgeschrieben - keine fileausgabe mehr                          */
+       /* datenstruktur soll gleich sin und cosinus werte enthalten       */
+      /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha,
+       *      beta */
+{
+   double delta, alpha, beta, theta0, trans, radius;
+   int i;
+   
+   theta0= fabs(x->theta0* PI/ 180.0);
+   delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
+   
+   x->lambda=lambda_local;
+   printf(" \n lambda_local = %e \n",x->lambda);
+
+/* FEL2005 */
+   delta= (double)(x->inout)* asin(Beamline.BLOptions.xlam_save* 
+				   x->xdens[0]/(2.0* cos(theta0)));
+   
+   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
+   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
+/* modification: 17 Feb 98 09:33:48 flechsig */
+/* modification: 19 Feb 98 11:08:59 flechsig */
+/*   alpha= (theta0+ delta); */
+/*   beta = (delta- theta0); */
+   printf("DefGeometryCM: alpha: %f, beta: %f, lambda= %f nm ==> correct?\n",
+	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6);
+   if ((x->iflag) == 1)
+     {
+	radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));
+	trans    = radius* (1.0- cos(delta));
+	gout->r  = x->r-  trans;
+	gout->rp = x->rp- trans;
+	printf("DefGeometryC: NIM translation enabled, trans= %d mm\nr1= %d mm, r2= %d mm\n",
+	       trans, gout->r, gout->rp);
+     }  else
+     
+     {     
+	        gout->r  = x->r;
+	        gout->rp = x->rp;
+     }
+   
+     gout->sina= sin(alpha);
+     gout->cosa= cos(alpha);
+     gout->sinb= sin(beta);
+     gout->cosb= cos(beta);
+     for (i= 0; i< 5; i++)
+         gout->x[i]= x->xdens[i];
+     gout->xlam = x->lambda* (double)(x->inout);
+   gout->idefl= (x->theta0 > 0.0) ? 1 : -1;
+} /* end DefGeometryCM */
+
+void FixFocus(double cff, double lambda, double ldens, int m,
+	      double *alpha, double *beta)
+/* berechnet alpha und  beta ( in rad )aus cff         */
+/* modification: 17 Feb 98 10:06:46 flechsig */
+/* modification: 20 Feb 98 11:08:10 flechsig */
+{
+  double mld, c1, p, q, u;
+
+  mld= m* lambda * ldens;
+  if ((cff != 1.0) || (mld == 0.0))
+    {
+      c1 = 1.0- cff* cff;
+      p  = -2.0* mld/ c1;
+      q  = mld* mld/ c1 - 1.0;
+      u  = -p/ 2.0+ sqrt(p* p/ 4.0- q); 
+      *alpha= asin(u);
+      *beta = asin(mld- u);
+    } else 
+      printf("FixFocus: error: cff==1.0 or zero order ...?\n");
+} /* end FixFocus */
 
 
 /* end bline.c */
