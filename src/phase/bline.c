@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Apr 08 16:10:38 flechsig>  */
+/*   Time-stamp: <07 Apr 08 16:14:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -11,6 +11,7 @@
 
 /* 24.11.98 UF Undulatorsource schreiben/ lesen geaendert */
 /* 7.4.08 UF took out all X11 related routines to phaseX.c */
+/* took no X11 routines in */
  
 #ifdef HAVE_CONFIG_H
   #include <config.h>
