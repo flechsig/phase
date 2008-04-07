@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <03 Jan 08 11:19:48 flechsig>  */
+/*   Time-stamp: <07 Apr 08 15:16:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,19 +8,14 @@
 /*   $Revision$  */
 /*   $Author$  */
 
+
+/* UF 0804 no X11 left */
+
 #include <stdio.h> 
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include <Xm/Text.h>                                                  
-#include <Xm/FileSB.h>                /* FileBox */     
-#include <Mrm/MrmAppl.h>  
-#include <X11/Xlib.h>      
-#include <X11/Xutil.h>  
-#ifdef VMS    
-  #include <DXm/DECspecific.h>                  
-  #include <descrip.h>   
-#endif
+
     
 #include "cutils.h" 
 #include "phase_struct.h"

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <04 Jan 08 16:25:27 flechsig>  */
+/*   Time-stamp: <07 Apr 08 15:58:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -20,23 +20,6 @@
 #include <math.h>
 #include <time.h>
 
-#include <Xm/Text.h>                  /* fileBox               */
-#include <Xm/FileSB.h>    
-#include <Xm/List.h>   
-#include <Xm/MessageB.h>    
-#include <Xm/SelectioB.h>   
-#include <Mrm/MrmAppl.h> 
-#include <X11/Xlib.h>      
-#include <X11/Xutil.h>      
-/* DEC specific */
-#ifdef VMS
-  #include <descrip.h>                  /* for FORTRAN- String   */ 
-  #include <DXm/DXmHelpB.h>      
-  #include <DXm/DXmPrint.h>      
-  #include <DXm/DXmColor.h>   
-  #include <DXm/DECspecific.h>  
-  #include <sys$library/DECw$Cursor.h>
-#endif
 
 #ifdef VMS
   #include "[-.phase]cutils.h"  

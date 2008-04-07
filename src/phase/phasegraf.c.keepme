@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <01 Apr 08 15:09:27 flechsig>  */
+/*   Time-stamp: <07 Apr 08 15:40:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -529,42 +529,6 @@ void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
 #endif     
 }  /* end  hplotpssimc */
 
-void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)   
-/* wird von SetGrDatSruct gerufen 				*/
-/* Parameter: filename, number of rays, vektor mit rays         */
-/* last mod. Uwe 8.8.96 					*/ 
-{
-    FILE *f;
-    int i, rz;
-    double *dp;
-    struct RayType *Rp;
-    
-    printf("  ReadRayFile called \n"); 
-    if ((f= fopen(name, "r")) == NULL)
-    {
-       fprintf(stderr, "error: open file %s\n", name); exit(-1);   
-    } else
-    {  					/* 12.3.96 filesystemAenderung */
-       fscanf(f, "%d %d\n", &rz, &i);
-       Re->RESp= XREALLOC(struct RayType, Re->RESp, rz);
-       
-       Re->typ= PLrttype; 
-       Rp= Re->RESp;
-
-       for (i= 0; i< rz; i++)
-       {
-           fscanf(f, "%lf %lf %lf %lf %lf\n", 
-		&Rp[i].y, &Rp[i].z, &Rp[i].dy, &Rp[i].dz, &Rp[i].phi);   
-       /*    printf("%lf %lf %lf %lf\n", 
-		Rp[i].y, Rp[i].z, Rp[i].dy, Rp[i].dz);    */
-       }
-       fclose(f);
-       *zahl= rz;
-       Re->points= rz;
-       printf("read %d rays from file %s --> done\n", i, name);  
-
-    }
-}  /* end ReadRayFile */
 
 void ReadpsFile(char *name, struct RESULTType *Re)   
 /* wird von SetGrDatSruct gerufen 				*/
@@ -589,7 +553,6 @@ void ReadpsFile(char *name, struct RESULTType *Re)
        p->z  = XREALLOC(double, p->z, p->iz);  
        p->psd= XREALLOC(double, p->psd, p->iy* p->iz); 
          
-
        printf("memory reserved\n");
        Re->typ= PLphspacetype;  
   

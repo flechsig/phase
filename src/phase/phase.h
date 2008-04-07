@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <07 Apr 08 14:00:52 flechsig>  */
+/*   Time-stamp: <07 Apr 08 15:22:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -692,7 +692,8 @@ void
   BatchMode(char *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
-  DefGeometryC(struct gdatset *, struct geometrytype *),  
+  DefGeometryC(struct gdatset *, struct geometrytype *),
+  DefGeometryCM(double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int),  
   ExpandFileNames(),  
   fgmapidp(int *, 
@@ -702,7 +703,7 @@ void
   Footprint(struct BeamlineType *, int),
   GeneratePrintDataFile(),
   getoptipickfile(struct optistruct *, char *),
-  GetSlope(struct ElementType *), 
+   
   GlueLeft(double *, double *), 
   GlueXlen(struct xlenmaptype *, struct xlenmaptype *, double *, int *, int), 
   GlueWcXlc(double *, double *, double *, double *, double *, int *),
@@ -733,6 +734,7 @@ void
   ReadCoefficientFile(double *, char *),
   ReadpsFile(char *, struct RESULTType *),
   ReadRayFile(char *, int *, struct RESULTType *), 
+  readmatrixfilec(char *, double *, int),
   SetDefaultParameter(struct BeamlineType *),
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
   Slope(struct RayType *, double, double, double, double, int),

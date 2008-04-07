@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phaseX.h */
 /*  Date      : <01 Apr 08 14:43:24 flechsig>  */
-/*  Time-stamp: <07 Apr 08 14:00:47 flechsig>  */
+/*  Time-stamp: <07 Apr 08 14:25:38 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -37,6 +37,7 @@ void FileSelectionProc(Widget, int *,
 void GetBLBox(char *, struct BeamlineType *);
 void GetGeometry();
 void GetOptiBox(struct PHASEset *);
+void GetSlope(struct ElementType *);
 void GetSource(struct BeamlineType *);
 void get_something();
 void help_error();

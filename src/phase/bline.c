@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Apr 08 15:06:28 flechsig>  */
+/*   Time-stamp: <07 Apr 08 16:10:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -619,7 +619,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", PREFIX,  dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
-   readmatrixfilec(buffer, bl->lmap, dim);    
+   readmatrixfilec(buffer, (double *)bl->lmap, dim);    
 
 #ifdef VMS 
    sprintf(buffer,"%s%d_rh.omx\0", HORMAPFILENAMEBASE, dim);
@@ -628,7 +628,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", PREFIX, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
-   readmatrixfilec(buffer, bl->rmap, dim); 
+   readmatrixfilec(buffer, (double *)bl->rmap, dim); 
 } /* end LoadHorMaps */    
 
 void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
@@ -2032,6 +2032,164 @@ void FixFocus(double cff, double lambda, double ldens, int m,
     } else 
       printf("FixFocus: error: cff==1.0 or zero order ...?\n");
 } /* end FixFocus */
+
+/******* read matrixfile ************************************/ 
+void readmatrixfilec(char *fname, double *map, int dim)  
+/*------------------------------------------------------------*/
+/* located in fgmap3dpp.for,phasefor.for               */
+/* umgeschrieben auf c, liest eine in fortran Speichermodell
+   abgespeicherte transformationsmatrix
+   Uwe 14.6.96
+/**************************************************************/    
+{
+  int i, j, k, dim2;
+  FILE *f;
+  double tmp;
+
+  if ((f= fopen(fname, "r")) == NULL)
+    {
+      fprintf(stderr,"\aError: read %s\n", fname);
+      exit(-1);
+    } 
+  dim2= dim* dim;
+  k= 0;
+  while (k < dim2)   /* kein Test auf fileende */
+    {
+      fscanf(f, "%d %d %lf\n", &i, &j, &tmp);
+      /*     printf("i, j, tmp: %d %d %lf\n", i,j,tmp);   */   
+      map[(i- 1)+ (j- 1)* dim]= tmp;
+      k++;
+    }
+  fclose(f);     
+}
+/******** read matrixfile ************************************/
+
+void ReadCoefficientFile(double *dp, char *fname)
+     /* read coefficient files for mirror data */
+     /* FORTRAN memory model */
+     /* UF 04 Jan 2001 */
+{
+  FILE *f;
+  int i, j;
+  char buffer[MaxPathLength], buf;
+  double x;  
+
+  printf("read coefficients a(i,j) from %s\n", fname);
+  printf("see example file: coefficient-example.dat\n");
+
+  if ((f= fopen(fname, "r+")) == NULL)
+    {
+      fprintf(stderr, "ReadCoefficientFile: error open file %s\n", fname); 
+      exit(-1);   
+    }  
+
+  while (!feof(f))    
+  {
+    /*   fgets(buffer, 99, f); */
+    fscanf(f, " %[^\n]s %c", buffer, &buf); 
+#ifdef DEBUG  
+    printf("read: %s\n", buffer); 
+#endif 
+    if (buffer[0] != '#')             /* skip comments */
+      {
+	sscanf(buffer, "%d %d %lg", &i, &j, &x);
+#ifdef DEBUG  
+      printf("took: %d %d %15.10lg\n", i, j, x);
+#endif 
+	dp[i+j*6]= x;
+      }
+  }
+  fclose(f); 
+} /* end ReadCoefficientFile */
+
+void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)   
+/* wird von SetGrDatSruct gerufen 				*/
+/* Parameter: filename, number of rays, vektor mit rays         */
+/* last mod. Uwe 8.8.96 					*/ 
+{
+    FILE *f;
+    int i, rz;
+    double *dp;
+    struct RayType *Rp;
+    
+    printf("  ReadRayFile called \n"); 
+    if ((f= fopen(name, "r")) == NULL)
+    {
+       fprintf(stderr, "error: open file %s\n", name); exit(-1);   
+    } else
+    {  					/* 12.3.96 filesystemAenderung */
+       fscanf(f, "%d %d\n", &rz, &i);
+       Re->RESp= XREALLOC(struct RayType, Re->RESp, rz);
+       
+       Re->typ= PLrttype; 
+       Rp= Re->RESp;
+
+       for (i= 0; i< rz; i++)
+       {
+           fscanf(f, "%lf %lf %lf %lf %lf\n", 
+		&Rp[i].y, &Rp[i].z, &Rp[i].dy, &Rp[i].dz, &Rp[i].phi);   
+       /*    printf("%lf %lf %lf %lf\n", 
+		Rp[i].y, Rp[i].z, Rp[i].dy, Rp[i].dz);    */
+       }
+       fclose(f);
+       *zahl= rz;
+       Re->points= rz;
+       printf("read %d rays from file %s --> done\n", i, name);  
+
+    }
+}  /* end ReadRayFile */
+
+void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
+     /* schreibt mirrorkoordinaten auf file */
+{
+  FILE *f;
+  int i, j;
+  double *dp; 
+  char *name;  
+   
+  name= &buffer[0];  
+#ifdef DEBUG
+  printf("WriteMKos: write to %s\n", name);
+#endif 
+  dp= (double *)a;
+
+  if ((f= fopen(name, "w+")) == NULL)
+    {
+      fprintf(stderr, "WriteMKos: error: open file %s\n", name); exit(-1);   
+    }    
+  for (i= 0; i <= 5; i++) 
+    for (j= 0; j <= 5; j++) 
+/* write also i and j to file J.B. 9.11.2003 */
+       if ((i + j) <= 5)  fprintf(f, "%d %d %lE\n", i, j, dp[i+j*6]);  
+  fclose(f); 
+#ifdef DEBUG
+  printf("WriteMKos: done\n");
+#endif
+}    
+
+void ReadMKos(struct mirrortype *a, char *name)
+     /* liest mirrorkoordinaten von file */
+{
+  FILE *f;
+  int i, j;
+  double *dp; 
+  printf("read mkos from %s ? <1>", name);
+  scanf("%d", &i);
+  if (i == 1)
+    {
+      printf("READMKos called: read from %s\n", name); 
+      dp= (double *)a;
+      if ((f= fopen(name, "r+")) == NULL)
+	{
+	  fprintf(stderr, "ReadMKos: error: open file %s\n", name); 
+	  exit(-1);   
+	}   
+      for (i= 0; i <= 5; i++) 
+	for (j= 0; j <= 5; j++) 
+	  if ((i + j) <= 5) fscanf(f, "%lf\n", &dp[i+j*6]);
+      fclose(f); 
+    }
+}    
 
 
 /* end bline.c */

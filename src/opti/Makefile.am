@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <09 Jan 08 09:49:52 flechsig> 
+#  Time-stamp: <07 Apr 08 16:09:10 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -10,21 +10,19 @@
 
 # makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS            = phaseopti
-##lib_LTLIBRARIES         = libphaseopti.la
-phaseopti_SOURCES       = phaseopti.c phaseopti.h \
-          ../phase/phasec.c       ../phase/activate_proc.c \
-          ../phase/phasegraf.c    ../phase/initdatset.c \
-	  ../phase/geometrypck.c  ../phase/bline.c ../phase/phase0.c \
-	  ../phase/mirrorpck.c    ../phase/pst.c \
+bin_PROGRAMS       = phaseopti
+
+phaseopti_SOURCES = phaseopti.c  ../phase/phasefor.F \
+           ../phase/initdatset.c  \
+	  ../phase/geometrypck.c  ../phase/bline.c   \
+	  ../phase/mirrorpck.c     \
 	  ../phase/cutils.c       ../phase/rtrace.c \
-	  ../phase/phasegraffor.F ../phase/phasefor.F \
-	  ../phase/phase_source.F ../phase/xmalloc.c ../phase/error.c \
+	  ../phase/xmalloc.c      ../phase/error.c \
 	  ../phase/xstrdup.c      ../phase/ctype.c \
-	  ../phase/phase_integration.F \
 	  treiber.F optisubc.c cost.F \
 	  ../phase/misali.F  ../phase/misali1.f ../phase/misali2.f \
           ../phase/misali3.f ../phase/misali4.f
+
 ##libphaseopti_la_SOURCES = 
 
 phaseopti_LDADD = $(libdir)/@LIBPHASE@

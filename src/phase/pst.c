@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Jan 08 15:39:29 flechsig>  */
+/*   Time-stamp: <07 Apr 08 14:39:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -9,21 +9,15 @@
 /*   $Author$  */
 
 
+/* UF 0804 cleaned code from X11 related routines */
+
 #include <stdio.h> 
 #include <stdlib.h>
 
 #include <math.h>
 #include <time.h>
                                             
-#include <Xm/Text.h>                                                  
-#include <Xm/FileSB.h>                /* FileBox */     
-#include <Mrm/MrmAppl.h>  
-#include <X11/Xlib.h>      
-#include <X11/Xutil.h>      
-#ifdef VMS
-  #include <DXm/DECspecific.h>                  
-  #include <descrip.h>  
-#endif      
+    
 #include "cutils.h" 
 #include "phase_struct.h"
 #include "fg3pck.h"  
@@ -241,14 +235,14 @@ void MPST(struct BeamlineType *bl)
    BuildBeamlineM(lambda_local,&Beamline);	
 
    /* do PST */
-   start_watch();
+ /*  start_watch();*/
        Beamline.BLOptions.CalcMod= 3;
    #ifdef DEBUG
        printf("activate_proc: call MPST\n");
    #endif
        PST(&Beamline);
-       UpdateMainList();
-       stop_watch();
+       /* UF0804  UpdateMainList(); */
+   /*    stop_watch();*/
    
 /* write results to file */   
 
@@ -289,14 +283,14 @@ void MPST(struct BeamlineType *bl)
    BuildBeamlineM(lambda_local,&Beamline);	
 
 /* do PST */
-   start_watch();
+/*    start_watch();*/
        Beamline.BLOptions.CalcMod= 3;
    #ifdef DEBUG
        printf("activate_proc: call MPST\n");
    #endif
        PST(&Beamline);
-       UpdateMainList();
-       stop_watch();
+       /*UF0804     UpdateMainList();*/
+/*       stop_watch();*/
    
 /* write results to file */   
 
