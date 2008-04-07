@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <01 Apr 08 15:17:47 flechsig>  */
+/*   Time-stamp: <07 Apr 08 14:00:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -623,7 +623,7 @@ struct optistruct
   FILE 	 *filepointer;
 };  
 
-int	getpickfile(struct datset *, struct BeamlineType *, char *);  
+int getpickfile(struct datset *, struct BeamlineType *, char *);  
 
 void putpickfile(struct datset *, struct BeamlineType *, char *),    
   initdatset (struct datset *, struct BeamlineType *);    
@@ -677,7 +677,6 @@ struct BeamlineType Beamline;
 /************************* Prototypen *****************************/
 
 int	  
-  GetGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *, int),
   getgrfiletype(char *), 
   GetOElement(),  GetPHASE(struct  PHASEset *, char *),
   iindex(int, int), 
@@ -685,64 +684,37 @@ int
   ReadBLFile(char *, struct BeamlineType *), 
   SetFilePos(FILE *, char *);   
  
-void    *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
+void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  	
 void 	  
-  AddBLElement(struct BeamlineType *, char *),
+  
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *, struct BeamlineType *),  
   BatchMode(char *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   DefGeometryC(struct gdatset *, struct geometrytype *),  
   DefMirrorC(struct mdatset *, struct mirrortype *, int),  
-  DelBLElement(struct BeamlineType *bl),  
-  exithplot(), 
   ExpandFileNames(),  
-  FetchWidget(int, char *),   
   fgmapidp(int *, 
 	   int *, double *, struct mirrortype *, struct geometrytype *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE),
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, int),
   GeneratePrintDataFile(),
-  GetBLBox(char *, struct BeamlineType *),  
-  
-  GetOptiBox(struct PHASEset *), 
   getoptipickfile(struct optistruct *, char *),
-  GetGeometry(), 
   GetSlope(struct ElementType *), 
-  GetSource(struct BeamlineType *), 
   GlueLeft(double *, double *), 
   GlueXlen(struct xlenmaptype *, struct xlenmaptype *, double *, int *, int), 
   GlueWcXlc(double *, double *, double *, double *, double *, int *),
   gpd(), 
   GetUserName(), 
-  hplint(int *), 
-  hplotdisplay(struct BeamlineType *, GRDATSTRUCTTYPE *, 
-	       struct PHASEset *, struct RayType *), 
-
-  hlimit(int *),
-  hplotpsdc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
-	    struct PHASEset *, struct PSDType *, double *),
-  hplotpssimc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
-	      struct PHASEset *, double *), 
-  
-  InitBLBox(char *, struct BeamlineType *), 
   intersection(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, int *,double *, double *, double *),   
-  init_application(),  
+    
   initconstants(),  
   InitDataSets(struct PHASEset *, char *),   
-  InitFileBox(struct PHASEset *),  
-  inithplotc(int),
-  InitOElementBox(struct mdatset *, struct gdatset *, int), 
-  InitOptiBox(char *, struct BeamlineType *),
-  InitOptiList2(int, char *),
-  InitParameterBox(struct BeamlineType *, char *), 
-  InitSourceBox(struct datset *, struct BeamlineType *),
   InitSourceType(struct BeamlineType *, int),  
-  InitGeometryBox(struct gdatset *), 
-  InitGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *),                     
+                       
   InitPHASE(struct PHASEset *), 
   LoadHorMaps(struct BeamlineType *, int), 
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *),
@@ -751,7 +723,7 @@ void
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), 
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
-  PrintFileInMainList(char *),    
+     
   PST(struct BeamlineType *), 
   adaptive_int(),
   PutPHASE(struct  PHASEset *, char *), 
@@ -763,47 +735,15 @@ void
   ReadRayFile(char *, int *, struct RESULTType *), 
   SetDefaultParameter(struct BeamlineType *),
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
-  SetInfoString(),
-  SetOElementBoxSensitivity(int),
   Slope(struct RayType *, double, double, double, double, int),
-  UpdateBLBox(struct BeamlineType *, int),  
-  UpdateFilenames(struct PHASEset *),
+    
   MMatrix(),
 	        
-  xprintf(char *),
-  UpdateMainList(),  
   WriteBLFile(char *, struct BeamlineType *),
   writemapc(char *, int, double *, double *, double *, double *,
 	    double *, double *, double *, double *),  
   WritePsd(char *, struct PSDType *, int, int),     
-  get_something(),
-  set_something(),                         
-  SetIndexField(int *, int,...),  
-  SetRadius(int),
+  
+  SetIndexField(int *, int,...);
 	      
-  s_error(),  
-  start_watch(), 
-  stop_watch(),
-  help_error(),
-  create_help(),
-  tracking_help(), 
-  sens_help_proc(), 
-  help_system_proc(),
-  create_proc(),
-  create_print(),
-  activate_print(),
-  create_color(),
-  ok_color_proc(),
-  apply_color_proc(),
-  cancel_color_proc(),
-  xmstring_append(),
-  exit_proc(),
-  list_proc(),
-  toggle_proc(),
-  SelectionProc(Widget, int *, XmSelectionBoxCallbackStruct *), 
-  FileSelectionProc(Widget, int *,        /*callback der Fileselection*/ 
-		    XmFileSelectionBoxCallbackStruct *); 
-
-
-
 #endif  /* PHASE_H */      

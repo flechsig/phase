@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phaseX.h */
 /*  Date      : <01 Apr 08 14:43:24 flechsig>  */
-/*  Time-stamp: <01 Apr 08 15:19:02 flechsig>  */
+/*  Time-stamp: <07 Apr 08 14:00:47 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -19,9 +19,70 @@
 /************************* Prototypen *****************************/
 
 void ActivateFileSelection(int, char *);
+void activate_print();
 void activate_proc();
+void AddBLElement(struct BeamlineType *, char *);
+void apply_color_proc();
+void cancel_color_proc();
+void create_color();
+void create_help();
+void create_print();
+void create_proc();
+void DelBLElement(struct BeamlineType *);
+void exit_proc(); 
+void exithplot();
+void FetchWidget(int, char *);
+void FileSelectionProc(Widget, int *,         
+		       XmFileSelectionBoxCallbackStruct *);
+void GetBLBox(char *, struct BeamlineType *);
+void GetGeometry();
+void GetOptiBox(struct PHASEset *);
+void GetSource(struct BeamlineType *);
+void get_something();
+void help_error();
+void help_system_proc();
+void hlimit(int *);
+void hplint(int *); 
+void hplotdisplay(struct BeamlineType *, GRDATSTRUCTTYPE *, 
+		  struct PHASEset *, struct RayType *); 
+
+void hplotpsdc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
+	       struct PHASEset *, struct PSDType *, double *);
+void hplotpssimc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
+		 struct PHASEset *, double *); 
+void init_application();
+void InitFileBox(struct PHASEset *);
+void InitBLBox(char *, struct BeamlineType *); 
+void InitGeometryBox(struct gdatset *); 
+void InitGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *);
+void inithplotc(int);
+void InitOElementBox(struct mdatset *, struct gdatset *, int); 
+void InitOptiBox(char *, struct BeamlineType *);
+void InitOptiList2(int, char *);
+void InitParameterBox(struct BeamlineType *, char *); 
+void InitSourceBox(struct datset *, struct BeamlineType *);
+void list_proc();
+void ok_color_proc();
+void PrintFileInMainList(char *); 
+void s_error();
+void SelectionProc(Widget, int *, XmSelectionBoxCallbackStruct *);
+void sens_help_proc();
+void SetInfoString();
+void SetOElementBoxSensitivity(int);
+void SetRadius(int);
+void set_something();
+void start_watch();
+void stop_watch();
+void toggle_proc();
+void tracking_help();
+void UpdateBLBox(struct BeamlineType *, int);
+void UpdateFilenames(struct PHASEset *);
+void UpdateMainList();
+void xmstring_append();
+void xprintf(char *);
 
 
+int GetGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *, int);
 
 
 /******************** globale Variable *****************************/
@@ -96,9 +157,6 @@ static font_unit = 400;
 
 GRDATSTRUCTTYPE grdatstruct; 
  
-  
-
-
 extern void inithplot(),    
 #ifdef VMS
   hplotdisplayf(GRDATSTRUCTTYPE *,
