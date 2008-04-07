@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <09 Jan 08 09:50:56 flechsig> 
+#  Time-stamp: <07 Apr 08 15:45:00 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -13,19 +13,17 @@
 bin_PROGRAMS            = phaseextract
 
 phaseextract_SOURCES    = phaseextract.c cost.F \
-          ../phase/phasec.c      ../phase/activate_proc.c \
-          ../phase/phasegraf.c   ../phase/initdatset.c \
-	  ../phase/geometrypck.c ../phase/bline.c ../phase/phase0.c \
-	  ../phase/mirrorpck.c   ../phase/pst.c \
-	  ../phase/cutils.c      ../phase/rtrace.c \
-	  ../phase/phasegraffor.F ../phase/phasefor.F \
-	  ../phase/phase_source.F ../phase/xmalloc.c \
-	  ../phase/error.c ../phase/xstrdup.c \
-          ../phase/ctype.c \
-	  ../phase/phase_integration.F \
-	  ../opti/treiber.F ../opti/optisubc.c \
-	  ../phase/misali.F ../phase/misali1.f ../phase/misali2.f \
-          ../phase/misali3.f ../phase/misali4.f
+                ../phase/initdatset.c \
+	  	../phase/geometrypck.c ../phase/bline.c  \
+	  	../phase/mirrorpck.c      \
+	  	../phase/cutils.c ../phase/rtrace.c \
+	   	../phase/phasefor.F \
+	   	../phase/xmalloc.c \
+	  	../phase/error.c ../phase/xstrdup.c \
+		../phase/ctype.c \
+	  	../opti/treiber.F ../opti/optisubc.c \
+	  	../phase/misali.F ../phase/misali1.f ../phase/misali2.f \
+		../phase/misali3.f ../phase/misali4.f
 
 phaseextract_LDADD = $(libdir)/@LIBPHASE@
 
