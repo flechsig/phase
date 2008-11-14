@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <14 Nov 08 13:06:06 flechsig>  */
+/*   Time-stamp: <14 Nov 08 13:12:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -592,8 +592,8 @@ void activate_proc(w, tag, reason)
 	    (pstsourceOK | mapOK))
 	  { 
 	    fprintf(stderr, 
-		    "act_pr: beamline is not OK: beamlineOK: %X\n", 
-		    Beamline.beamlineOK); 
+		    "act_pr: beamline is not OK: beamlineOK: 0X%X, expexted is: 0X%X\n", 
+		    Beamline.beamlineOK, (pstsourceOK | mapOK)); 
 	  } 
 	else
 	  {
@@ -619,8 +619,8 @@ void activate_proc(w, tag, reason)
 	    (pstsourceOK | mapOK))
 	  { 
 	    fprintf(stderr, 
-		    "act_pr: beamline is not OK: beamlineOK: %X\n", 
-		    Beamline.beamlineOK); 
+		    "act_pr: beamline is not OK: beamlineOK: 0X%X, expexted is: 0X%X\n", 
+		    Beamline.beamlineOK, (pstsourceOK | mapOK));
 	  }
 	else
 	  {
