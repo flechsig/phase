@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <01 Apr 08 15:09:00 flechsig>  */
+/*   Time-stamp: <14 Nov 08 12:58:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -333,6 +333,7 @@ void activate_proc(w, tag, reason)
 	  (Beamline.src.isrctype == 6))
 	{
 	  src_ini(&Beamline.src); 
+          Beamline.beamlineOK |= pstsourceOK;
 #ifdef DEBUG
 	  printf("activate_proc: call src_ini(&Beamline.src)\n");
 #endif
@@ -587,6 +588,13 @@ void activate_proc(w, tag, reason)
 #endif
     if (Beamline.RTSource.QuellTyp == 'I')
       {
+	if ((Beamline.beamlineOK & (pstsourceOK | mapOK)) != 
+	    (pstsourceOK | mapOK))
+	  { 
+	    fprintf(stderr, 
+		    "act_pr: beamline is not OK: beamlineOK: %X\n", 
+		    Beamline.beamlineOK); 
+	  }
 	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
 	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
 	PST(&Beamline);
@@ -602,8 +610,15 @@ void activate_proc(w, tag, reason)
     break;   
 
   case kCCMPTButton:                              /*  Phase Trafo */  
-if (Beamline.RTSource.QuellTyp == 'I')
+    if (Beamline.RTSource.QuellTyp == 'I')
       {
+	if ((Beamline.beamlineOK & (pstsourceOK | mapOK)) != 
+	    (pstsourceOK | mapOK))
+	  { 
+	    fprintf(stderr, 
+		    "act_pr: beamline is not OK: beamlineOK: %X\n", 
+		    Beamline.beamlineOK); 
+	  }
 	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
 	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
 	MPST(&Beamline); 

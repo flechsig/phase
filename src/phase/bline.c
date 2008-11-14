@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Apr 08 16:14:46 flechsig>  */
+/*   Time-stamp: <10 Nov 08 08:57:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -787,17 +787,17 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 {   
    FILE *f;
    int elnumber, i, version= 20040217;
-   struct UndulatorSourceType *up;
+   struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
-   struct DipolSourceType     *dp;
-   struct PointSourceType     *sop;
-   struct HardEdgeSourceType  *hp; 
-   struct RingSourceType      *rp;     
-   struct SRSourceType        *sp; 
-   struct PSImageType         *psip;
-   struct PSSourceType        *pssp;    
-   struct ElementType 	      *listpt;   
-   struct OptionsType         *op;     
+   struct DipolSourceType      *dp;
+   struct PointSourceType      *sop;
+   struct HardEdgeSourceType   *hp; 
+   struct RingSourceType       *rp;     
+   struct SRSourceType         *sp; 
+   struct PSImageType          *psip;
+   struct PSSourceType         *pssp;    
+   struct ElementType 	       *listpt;   
+   struct OptionsType          *op;     
 
    if ((f= fopen(fname, "w")) == NULL)
    {
