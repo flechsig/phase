@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <07 Apr 08 15:22:33 flechsig>  */
+/*   Time-stamp: <14 Nov 08 12:45:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -22,7 +22,8 @@
 #define mapOK      	2                /* werden und verknuepft */ 
 #define resultOK   	4
 #define elementOK  	8
-#define geometryOK 	16             
+#define geometryOK 	16  
+#define pstsourceOK     32           
 
 #define RTMod   		1        /* CalcMod */
 #define PSMod      		2        /* werden und verknuepft */ 
