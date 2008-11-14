@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <14 Nov 08 12:58:47 flechsig>  */
+/*   Time-stamp: <14 Nov 08 13:06:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -594,10 +594,13 @@ void activate_proc(w, tag, reason)
 	    fprintf(stderr, 
 		    "act_pr: beamline is not OK: beamlineOK: %X\n", 
 		    Beamline.beamlineOK); 
+	  } 
+	else
+	  {
+	    psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+	    ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+	    PST(&Beamline);
 	  }
-	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
-	PST(&Beamline);
       }  
     else 
       {
@@ -619,9 +622,12 @@ void activate_proc(w, tag, reason)
 		    "act_pr: beamline is not OK: beamlineOK: %X\n", 
 		    Beamline.beamlineOK); 
 	  }
-	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
-	MPST(&Beamline); 
+	else
+	  {
+	    psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+	    ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+	    MPST(&Beamline);
+	  } 
       }  
     else 
       {
