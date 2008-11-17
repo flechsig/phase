@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Nov 08 08:57:07 flechsig>  */
+/*   Time-stamp: <17 Nov 08 09:24:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -786,7 +786,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int elnumber, i, version= 20040217;
+   int elnumber, i, version= 20081117;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType      *dp;
@@ -1072,6 +1072,15 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%s so4.b\n", bl->src.so4.fsource4b);
    fprintf(f, "%s so4.c\n", bl->src.so4.fsource4c);
    fprintf(f, "%s so4.d\n", bl->src.so4.fsource4d);
+   /* 17.11.08 */
+   fprintf(f, "%20d  so4: nfreqtot   \n", bl->src.so4.nfreqtot);
+   fprintf(f, "%20d  so4: nfreqpos   \n", bl->src.so4.nfreqpos);
+   fprintf(f, "%20d  so4: nfreqneg   \n", bl->src.so4.nfreqneg);
+   fprintf(f, "%20d  so4: nsource    \n", bl->src.so4.nsource);
+   fprintf(f, "%20d  so4: nimage     \n", bl->src.so4.nimage);
+   fprintf(f, "%20lg so4: deltatime  \n", bl->src.so4.deltatime);
+   fprintf(f, "%20d  so4: iconj      \n", bl->src.so4.iconj);
+
    /* source 5 */
    fprintf(f, "%20lg so5: (Dipol) dipcy   \n", bl->src.so5.dipcy);
    fprintf(f, "%20lg so5: (Dipol) dipcz   \n", bl->src.so5.dipcz);
@@ -1146,17 +1155,17 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char buffer[255], buf;  
    double *pd; 
    
-   struct UndulatorSourceType *up;
+   struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
-   struct DipolSourceType     *dp;
-   struct PointSourceType     *sop;
-   struct HardEdgeSourceType  *hp; 
-   struct RingSourceType      *rp;    
-   struct SRSourceType        *sp; 
-   struct PSImageType         *psip;
-   struct PSSourceType        *pssp;    
-   struct ElementType 	      *listpt;   
-   struct OptionsType         *op;     
+   struct DipolSourceType      *dp;
+   struct PointSourceType      *sop;
+   struct HardEdgeSourceType   *hp; 
+   struct RingSourceType       *rp;    
+   struct SRSourceType         *sp; 
+   struct PSImageType          *psip;
+   struct PSSourceType         *pssp;    
+   struct ElementType 	       *listpt;   
+   struct OptionsType          *op;     
 
    rcode= -1;   
    printf("ReadBLFile: filename: %s\n", fname);
@@ -1479,6 +1488,18 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
 	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
 	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
+	 /* UF 17.11.08 */
+	 if (version >= 20081117)
+	   {
+	     fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqtot,  buffer, &buf);
+	     fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqpos,  buffer, &buf);
+	     fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqneg,  buffer, &buf);
+	     fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nsource,   buffer, &buf);
+	     fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nimage,    buffer, &buf);
+	     fscanf(f, " %lf %[^\n]s %c", &bl->src.so4.deltatime, buffer, &buf);
+	     fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.iconj,     buffer, &buf);
+	   }
+
 	 /* source 5 */
 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcy, buffer, &buf);  
          fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcz, buffer, &buf);
