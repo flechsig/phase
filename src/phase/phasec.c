@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <07 Apr 08 16:10:42 flechsig>  */
+/*   Time-stamp: <17 Nov 08 09:45:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -782,7 +782,15 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
     "(src.pin_yl)",
     "(src.pin_zl0)",
     "(src.pin_zl)",
-      
+    /* 17.11.08 start */     
+    "(so4.nfreqtot)",
+    "(so4.nfreqpos)",
+    "(so4.nfreqneg)",
+    "(so4.nsource)",
+    "(so4.nimage)",
+    "(so4.deltatime)",
+    "(so4.iconj)",
+    /* 17.11.08 end */ 
     /*********************************************
       hier gehen meine frueheren Bezeichnungen los
 	
@@ -824,7 +832,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 
   /* ende der Variablendefinitionen */
 		      
-  itemzahl= 56;  /* Eintraege in der Liste */
+  itemzahl= 63;  /* Eintraege in der Liste 56 < 17.11.08*/
 		      
   op= (struct OptionsType *)    &(bl->BLOptions); 
   pop= (struct PSOptionsType *) &(bl->BLOptions.PSO);  
@@ -927,6 +935,15 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   sprintf(pvals[k++], "%g", bl->src.pin_yl);
   sprintf(pvals[k++], "%g", bl->src.pin_zl0);
   sprintf(pvals[k++], "%g", bl->src.pin_zl);
+  /* 17.11.08 */
+  sprintf(pvals[k++], "%d", bl->src.so4.nfreqtot);
+  sprintf(pvals[k++], "%d", bl->src.so4.nfreqpos);
+  sprintf(pvals[k++], "%d", bl->src.so4.nfreqneg);
+  sprintf(pvals[k++], "%d", bl->src.so4.nsource);
+  sprintf(pvals[k++], "%d", bl->src.so4.nimage);
+  sprintf(pvals[k++], "%g", bl->src.so4.deltatime);
+  sprintf(pvals[k++], "%d", bl->src.so4.iconj);
+
 #ifdef DEBUG  
   printf("InitParameterBox: parameter : %d\n", k); /* fuer debug */
 #endif
@@ -1067,6 +1084,15 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       sscanf(pvals[k++], "%lf", &bl->src.pin_yl);
       sscanf(pvals[k++], "%lf", &bl->src.pin_zl0);
       sscanf(pvals[k++], "%lf", &bl->src.pin_zl);
+      /* UF 17.11.08 */
+      sscanf(pvals[k++], "%d", &bl->src.so4.nfreqtot);
+      sscanf(pvals[k++], "%d", &bl->src.so4.nfreqpos);
+      sscanf(pvals[k++], "%d", &bl->src.so4.nfreqneg);
+      sscanf(pvals[k++], "%d", &bl->src.so4.nsource);
+      sscanf(pvals[k++], "%d", &bl->src.so4.nimage);
+      sscanf(pvals[k++], "%lf", &bl->src.so4.deltatime);
+      sscanf(pvals[k++], "%d", &bl->src.so4.iconj);
+
       
       /**************** ende von Johannes fg34.par */
       /*
