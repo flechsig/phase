@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <07 Apr 08 15:38:31 flechsig> 
+c$$$ Time-stamp: <17 Nov 08 08:59:44 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2042,17 +2042,21 @@ c        include 'phase_struct.for'
       iname=clen1(dfile)
       src.so4.fsource4d(:iname)=dfile(:iname)
 
+c-- UF 17.11.08 start
       read(16,*)src.so4.nfreqtot
       read(16,*)src.so4.nfreqpos,src.so4.nfreqneg
       read(16,*)src.so4.nsource,src.so4.nimage
       read(16,*)src.so4.deltatime
       read(16,*)src.so4.iconj
+c-- UF 17.11.08 end
 
       write(6,*)src.so4.nfreqtot
 
+c-- UF 17.11.08 start
       read(16,3)dfile
       iname=clen1(dfile)
       src.so6.fsource6(:iname)=dfile(:iname)
+c-- UF 17.11.08 end
 
 c--------pinhole in source plane	
       read(16,*)apr.rpin
