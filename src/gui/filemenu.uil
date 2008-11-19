@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/filemenu.uil
 ! Date      : <28 Oct 99 11:36:53 flechsig> 
-! Time-stamp: <28 Oct 99 12:15:33 flechsig> 
+! Time-stamp: <19 Nov 08 18:04:46 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]FILEMENU.UIL
@@ -173,7 +173,12 @@ object
                 XmLabel             FFileLabel10;     
                 XmLabel             FFileLabel11;     
                 XmLabel             FFileLabel12;  
-                XmLabel             FFileLabel13;  
+                XmLabel             FFileLabel13;
+  	        XmLabel             FFileLabel14;   
+                XmLabel             FFileLabel15;     
+                XmLabel             FFileLabel16;     
+                XmLabel             FFileLabel17;  
+                XmLabel             FFileLabel18;
 	};
 };
 
@@ -203,7 +208,12 @@ object
                 XmPushButton        FFileButton10;     
                 XmPushButton        FFileButton11; 
 	        XmPushButton        FFileButton12;  
-                XmPushButton        FFileButton13;  
+                XmPushButton        FFileButton13; 
+                XmPushButton        FFileButton14;      
+                XmPushButton        FFileButton15;     
+                XmPushButton        FFileButton16; 
+	        XmPushButton        FFileButton17;  
+                XmPushButton        FFileButton18; 
                 };
 };
 
@@ -446,6 +456,41 @@ object
              };
 
 object
+    FFileLabel14: XmLabel {          
+        arguments {  
+	       XmNlabelString      = "so4_source4a";
+               	  }; 
+             };
+
+object
+    FFileLabel15: XmLabel {          
+        arguments {  
+	       XmNlabelString      = "so4_source4b";
+               	  }; 
+             };
+
+object
+    FFileLabel16: XmLabel {          
+        arguments {  
+	       XmNlabelString      = "so4_source4c";
+               	  }; 
+             };
+
+object
+    FFileLabel17: XmLabel {          
+        arguments {  
+	       XmNlabelString      = "so4_source4d";
+               	  }; 
+             };
+
+object
+    FFileLabel18: XmLabel {          
+        arguments {  
+	       XmNlabelString      = "so6_source6";
+               	  }; 
+             };
+
+object
     FFileButton13: XmPushButton {
         arguments {
             XmNlabelString      = "optipck.pcko"; 
@@ -453,6 +498,56 @@ object
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kFFileButton13);
             XmNactivateCallback = procedure activate_proc (kFFileButton13);  };
+   };
+
+object
+    FFileButton14: XmPushButton {
+        arguments {
+            XmNlabelString      = "optipck.pcko"; 
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kFFileButton14);
+            XmNactivateCallback = procedure activate_proc (kFFileButton14);  };
+   };
+
+object
+    FFileButton15: XmPushButton {
+        arguments {
+            XmNlabelString      = "optipck.pcko"; 
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kFFileButton15);
+            XmNactivateCallback = procedure activate_proc (kFFileButton15);  };
+   };
+
+object
+    FFileButton16: XmPushButton {
+        arguments {
+            XmNlabelString      = "optipck.pcko"; 
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kFFileButton16);
+            XmNactivateCallback = procedure activate_proc (kFFileButton16);  };
+   };
+
+object
+    FFileButton17: XmPushButton {
+        arguments {
+            XmNlabelString      = "optipck.pcko"; 
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kFFileButton17);
+            XmNactivateCallback = procedure activate_proc (kFFileButton17);  };
+   };
+
+object
+    FFileButton18: XmPushButton {
+        arguments {
+            XmNlabelString      = "so6_source6"; 
+            };
+        callbacks {
+            MrmNcreateCallback  = procedure create_proc (kFFileButton18);
+            XmNactivateCallback = procedure activate_proc (kFFileButton18);  };
    };
 
 
