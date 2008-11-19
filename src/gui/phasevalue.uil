@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <21 Dec 07 13:58:21 flechsig> 
+! Time-stamp: <19 Nov 08 17:54:06 flechsig> 
 ! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
 ! $Source$ 
@@ -41,19 +41,7 @@ value
     kFFileLabel9          : 29; 
     kFFileLabel10         : 30;
     kFSaveAsButton        : 31;
-    kFFileButton1         : 41; 
-    kFFileButton2         : 42; 
-    kFFileButton3         : 43; 
-    kFFileButton4         : 44; 
-    kFFileButton5         : 45; 
-    kFFileButton6         : 46; 
-    kFFileButton7         : 47; 
-    kFFileButton8         : 48; 
-    kFFileButton9         : 49; 
-    kFFileButton10        : 50; 
-    kFFileButton11        : 51;   
-    kFFileButton12        : 52;   
-    kFFileButton13        : 53;
+
     kFPFList              : 54;
     kFPFOK                : 55;
     kFPFAdd               : 56;
@@ -338,6 +326,26 @@ value
  	kCOptiRpZButton         : 387;
 
 	kCOptiMenu              : 390;
+
+    kFFileButton1         : 401; 
+    kFFileButton2         : 402; 
+    kFFileButton3         : 403; 
+    kFFileButton4         : 404; 
+    kFFileButton5         : 405; 
+    kFFileButton6         : 406; 
+    kFFileButton7         : 407; 
+    kFFileButton8         : 408; 
+    kFFileButton9         : 409; 
+    kFFileButton10        : 410; 
+    kFFileButton11        : 411;   
+    kFFileButton12        : 412;   
+    kFFileButton13        : 413;
+    kFFileButton14        : 414;    
+    kFFileButton15        : 415;    
+    kFFileButton16        : 416;    
+    kFFileButton17        : 417;
+    kFFileButton18        : 418;
+
 
 	kEOEDrift               : 999;
 
