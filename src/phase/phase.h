@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Nov 08 12:24:04 flechsig>  */
+/*   Time-stamp: <19 Nov 08 17:32:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -445,8 +445,12 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
   char plotpsname[MaxPathLength]; 
   char printpclname[MaxPathLength];   
   char optipckname[MaxPathLength];   
-  char beamlinename[MaxPathLength];   
-
+  char beamlinename[MaxPathLength];
+  char so4_fsource4a[MaxPathLength];
+  char so4_fsource4b[MaxPathLength];
+  char so4_fsource4c[MaxPathLength];
+  char so4_fsource4d[MaxPathLength];
+  char so6_fsource6[MaxPathLength];
 };                                                                   
 
 typedef double MAP70TYPE [70][70];  
