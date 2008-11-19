@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Nov 08 17:32:11 flechsig>  */
+/*   Time-stamp: <19 Nov 08 17:51:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -103,19 +103,8 @@
 #define kFFileLabel10           30             
 #define kFSaveAsButton          31             
 
-#define kFFileButton1           41  
-#define kFFileButton2           42  
-#define kFFileButton3           43  
-#define kFFileButton4           44  
-#define kFFileButton5           45  
-#define kFFileButton6           46 
-#define kFFileButton7           47 
-#define kFFileButton8           48 
-#define kFFileButton9           49   
-#define kFFileButton10          50    
-#define kFFileButton11          51    
-#define kFFileButton12          52    
-#define kFFileButton13          53   
+  
+ 
 #define kFPFList                54
 #define kFPFOK                  55
 #define kFPFAdd                 56
@@ -383,6 +372,25 @@
 #define kCOptiRpZButton          387
 
 #define kCOptiMenu               390
+
+#define kFFileButton1            401
+#define kFFileButton2           402  
+#define kFFileButton3           403  
+#define kFFileButton4           404  
+#define kFFileButton5           405  
+#define kFFileButton6           406 
+#define kFFileButton7           407 
+#define kFFileButton8           408 
+#define kFFileButton9           409   
+#define kFFileButton10          410    
+#define kFFileButton11          411    
+#define kFFileButton12          412    
+#define kFFileButton13          413
+#define kFFileButton14          414    
+#define kFFileButton15          415    
+#define kFFileButton16          416    
+#define kFFileButton17          417
+#define kFFileButton18          418
 
 #define kEOEDrift                999
 

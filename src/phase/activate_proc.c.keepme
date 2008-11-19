@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <19 Nov 08 16:52:41 flechsig>  */
+/*   Time-stamp: <19 Nov 08 18:10:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -210,7 +210,16 @@ void activate_proc(w, tag, reason)
 
   case kFFileButton13: 
     ActivateFileSelection(widget_num, "*.pcko");  
-    break;   
+    break;
+
+ case kFFileButton14:
+ case kFFileButton15:
+ case kFFileButton16:
+ case kFFileButton17:
+ case kFFileButton18:
+    ActivateFileSelection(widget_num, "*.*");  
+    break;
+   
     
   case kFSaveAsButton: 
     ActivateFileSelection(widget_num, "*.phase");  

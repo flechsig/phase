@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <01 Apr 08 15:11:16 flechsig>  */
+/*   Time-stamp: <19 Nov 08 18:21:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -737,8 +737,6 @@ void FileSelectionProc(Widget wi,
   XmString path;
   char     *fname= NULL;
 
-  /*if (!XmStringGetLtoR(reason->value, XmFONTLIST_DEFAULT_TAG, &fname))
-    return;*/
   fname= XmStringUnparse(reason->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
 #ifdef VMS
@@ -763,7 +761,13 @@ void FileSelectionProc(Widget wi,
 	case kFFileButton10:
 	case kFFileButton11:
 	case kFFileButton12:  
-	case kFFileButton13:  
+	case kFFileButton13:
+	case kFFileButton14:
+	case kFFileButton15:
+	case kFFileButton16:
+	case kFFileButton17:
+	case kFFileButton18:
+  
 	case kCCGResultButton:
 	case kCOptiResultButton: 
 	case kCOptiMinuitButton: 

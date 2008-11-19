@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Nov 08 17:01:35 flechsig>  */
+/*   Time-stamp: <19 Nov 08 18:12:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -337,6 +337,14 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 	  if (!feof(f))    /* neu */
 	    fscanf(f,"%s\n", &x->beamlinename); 
 	  else strcpy(x->beamlinename, "SGM.PHASE"); 
+	  if (version >= 20081119)
+	    {
+	      fscanf(f,"%s\n", &x->so4_fsource4a);     
+	      fscanf(f,"%s\n", &x->so4_fsource4b);    
+	      fscanf(f,"%s\n", &x->so4_fsource4c);       
+	      fscanf(f,"%s\n", &x->so4_fsource4d);
+	      fscanf(f,"%s\n", &x->so6_fsource6);
+	    }
 	  rcode= 1;       /* OK zurueck */
 	}
       fclose(f);   
@@ -566,10 +574,10 @@ void InitPHASE(struct PHASEset *x)                   /* set defaults */
 
 
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
-     /* 30.5.96 */
+    
 {                              
   FILE *f;
-
+  int version= 20081119;
   printf("putphase: write filenames\n");
 
   if ((f= fopen(mainpickname, "w")) == NULL)
@@ -578,7 +586,7 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
       exit(-1);
     } else 
       {
-        fprintf(f,"%s\n", MainPickFileHeader); 
+	fprintf(f,"%s %d\n", MainPickFileHeader, version);
         fprintf(f,"%s\n", x->matrixname); 
         fprintf(f,"%s\n", x->mapname);    
  	fprintf(f,"%s\n", x->sourceraysname);       
@@ -593,7 +601,12 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
         fprintf(f,"%s\n", x->plotpsname);  
         fprintf(f,"%s\n", x->printpclname);   
         fprintf(f,"%s\n", x->optipckname);   
-        fprintf(f,"%s\n", x->beamlinename);   
+        fprintf(f,"%s\n", x->beamlinename);
+	fprintf(f,"%s\n", x->so4_fsource4a);
+	fprintf(f,"%s\n", x->so4_fsource4b);
+	fprintf(f,"%s\n", x->so4_fsource4c);
+	fprintf(f,"%s\n", x->so4_fsource4d);
+	fprintf(f,"%s\n", x->so6_fsource6);
        	fclose(f);  
       }
 }    /* end putphase */	
@@ -1184,27 +1197,32 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 void InitFileBox(struct PHASEset *x)  
 {
   int i;
-  char TextField[13][MaxPathLength];
+  char TextField[18][MaxPathLength];
   XmString label;  	
         
-  sprintf(TextField[0], "%s", x->matrixname);    
-  sprintf(TextField[1], "%s", x->mapname);    
-  sprintf(TextField[2], "%s", x->sourceraysname);    
-  sprintf(TextField[3], "%s", x->imageraysname);    
-  sprintf(TextField[4], "%s", x->intersecname);    
-  sprintf(TextField[5], "%s", x->geometryname);    
-  sprintf(TextField[6], "%s", x->elementname);     
-  sprintf(TextField[7], "%s", x->sourcepckname);    
-  sprintf(TextField[8], "%s", x->geometrypckname);    
-  sprintf(TextField[9], "%s", x->elementpckname);     
+  sprintf(TextField[0],  "%s", x->matrixname);    
+  sprintf(TextField[1],  "%s", x->mapname);    
+  sprintf(TextField[2],  "%s", x->sourceraysname);    
+  sprintf(TextField[3],  "%s", x->imageraysname);    
+  sprintf(TextField[4],  "%s", x->intersecname);    
+  sprintf(TextField[5],  "%s", x->geometryname);    
+  sprintf(TextField[6],  "%s", x->elementname);     
+  sprintf(TextField[7],  "%s", x->sourcepckname);    
+  sprintf(TextField[8],  "%s", x->geometrypckname);    
+  sprintf(TextField[9],  "%s", x->elementpckname);     
   sprintf(TextField[10], "%s", x->pssourcename);     
   sprintf(TextField[11], "%s", x->printpclname);     
-  sprintf(TextField[12], "%s", x->optipckname);     
-  for (i= 0; i < 13; i++)
+  sprintf(TextField[12], "%s", x->optipckname);
+
+  sprintf(TextField[13], "%s", x->so4_fsource4a);
+  sprintf(TextField[14], "%s", x->so4_fsource4b);
+  sprintf(TextField[15], "%s", x->so4_fsource4c);
+  sprintf(TextField[16], "%s", x->so4_fsource4d);
+  sprintf(TextField[17], "%s", x->so6_fsource6);
+
+  for (i= 0; i < 18; i++)
     {	
-
       label= XmStringCreateLocalized(TextField[i]);    
-
       set_something(widget_array[kFFileButton1+ i], XmNlabelString, label);  
     }
   XmStringFree(label);   
@@ -1233,20 +1251,15 @@ void UpdateFilenames(struct PHASEset *x)
   int i; 
   XmString label;  
   /*  char     **lab;                 < 15.12.99 UF */
-  char *fname= NULL, *lab[13];       /* 15.12.99 UF */
+  char *fname= NULL, *lab[18];       /* 19.11.08 UF */
 
-  for (i= 0; i < 13; i++)      /* liest + konvertiert Tastenlabel in *lab */
+  for (i= 0; i < 18; i++)      /* liest + konvertiert Tastenlabel in *lab */
     {	
       get_something(widget_array[kFFileButton1+ i], XmNlabelString, &label);
 
-      /* 15.12.99 das geht nicht     
-	 if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &lab[i])) 
-	 return; */
       
-      /*if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fname)) 
-	return;*/
       fname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
-			NULL, 0, XmOUTPUT_ALL);
+			     NULL, 0, XmOUTPUT_ALL);
 
       lab[i]= fname;    
            /*delversion(lab[i]);*/ 
@@ -1265,8 +1278,15 @@ void UpdateFilenames(struct PHASEset *x)
   strcpy(x->elementpckname, 	lab[9]);    
   strcpy(x->pssourcename, 	lab[10]);    
   strcpy(x->printpclname, 	lab[11]);  
-  strcpy(x->optipckname, 	lab[12]);  
-  for (i= 0; i < 13; i++) 
+  strcpy(x->optipckname, 	lab[12]);
+
+  strcpy(x->so4_fsource4a, 	lab[13]);
+  strcpy(x->so4_fsource4b, 	lab[14]);
+  strcpy(x->so4_fsource4c, 	lab[15]);
+  strcpy(x->so4_fsource4d, 	lab[16]);
+  strcpy(x->so6_fsource6, 	lab[17]);
+  
+  for (i= 0; i < 18; i++) 
     XtFree(lab[i]);
 }  /* end UpdateFilenames */
 
@@ -1280,10 +1300,10 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
      /* 26.7.96 quellnamen, image werden ausgenommen 	     */
 /* modification: 17 Oct 97 13:11:13 flechsig */
 {
-  XmString label, lfeld[13];  
+  XmString label, lfeld[18];  
   int i;
   char *name, *ch, *ch1, puffer[MaxPathLength], puffer1[MaxPathLength],
-    exfeld[13][6]= {".omx",".map",".inp",".out",".isec",".datg",".date",
+    exfeld[18][6]= {".omx",".map",".inp",".out",".isec",".datg",".date",
 		    ".pcks",".pckg",".pcke",".brig",".pcl",".pcko",};
  
   if (*pfad == '\0') /* icon */
@@ -1298,7 +1318,7 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
       
       FnameBody(puffer);
            
-      for (i= 0; i < 13; i++) 
+      for (i= 0; i < 18; i++) 
 	{
 	  strcpy(puffer1, puffer); strcat(puffer1, exfeld[i]); 
 	  label= XmStringCreateLocalized(puffer1); 
