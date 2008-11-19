@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <17 Nov 08 09:45:50 flechsig>  */
+/*   Time-stamp: <19 Nov 08 17:01:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2468,6 +2468,34 @@ void InitSourceType(struct BeamlineType *bl, int widget_num)
   
 
 } /* end InitSourceType */
+
+int CheckBLOK(int blok, int target, char *message)
+{
+  int ret;
+  ret= 1;
+  if ((blok & target) != target)
+    {
+      fprintf(stderr, "%s beamline is not OK: 0x%X & 0x%X = 0x%X\n", 
+	      message, blok, target, (blok & target)); 
+      if (((target & sourceOK) > 0) && ((blok & sourceOK) == 0)) 
+	fprintf(stderr, "  %s\n", "RT source not defined!");
+      if (((target & mapOK) > 0) && ((blok & mapOK) == 0)) 
+	fprintf(stderr, "  %s\n", "matrix and map not defined!");
+      if (((target & resultOK) > 0) && ((blok & resultOK) == 0)) 
+	fprintf(stderr, "  %s\n", "result not defined!");
+      if (((target & elementOK) > 0) && ((blok & elementOK) == 0)) 
+	fprintf(stderr, "  %s\n", "optical element not defined!");
+      if (((target & geometryOK) > 0) && ((blok & geometryOK) == 0))
+	fprintf(stderr, "  %s\n", "geometry of optical element not defined!");
+      if (((target & pstsourceOK) > 0) && ((blok & pstsourceOK) == 0)) 
+	fprintf(stderr, "  %s\n", "PST source not defined!");
+      if (((target & pstimageOK) > 0) && ((blok & pstimageOK) == 0))
+	fprintf(stderr, "  %s\n", "PST image plane not defined (in Source menu)!");
+      ret= 0;
+    }
+  return ret;
+}
+
 
 /* end of file phasec.c */     
                            

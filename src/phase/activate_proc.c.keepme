@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <14 Nov 08 13:14:21 flechsig>  */
+/*   Time-stamp: <19 Nov 08 16:52:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -352,9 +352,20 @@ void activate_proc(w, tag, reason)
   case kESOK:                                    /* Source Box */ 
     XtUnmanageChild(widget_array[kESourceBox]);
   case kESApply:
-    start_watch(); GetSource(&Beamline); 
+    start_watch(); 
+    GetSource(&Beamline); 
     Beamline.beamlineOK &= (~resultOK); 
-    Beamline.beamlineOK |= sourceOK; 
+    if (Beamline.RTSource.QuellTyp == 'I')
+      {
+	Beamline.beamlineOK |= pstimageOK;
+        Beamline.beamlineOK &= (~sourceOK); 
+      } 
+    else 
+      {
+	Beamline.beamlineOK &= (~pstimageOK);
+        Beamline.beamlineOK |= sourceOK; 
+      } 
+
     stop_watch(); 
     break;  
 
@@ -560,22 +571,12 @@ void activate_proc(w, tag, reason)
     start_watch();  
     Beamline.BLOptions.CalcMod= 1;
     Fg3ActDat.imodus= 1; Fg3ActDat.itrans= 0;
-    
-    if ((Beamline.beamlineOK & (sourceOK | mapOK)) != 
-	(sourceOK | mapOK))
-      { 
-	fprintf(stderr, 
-		"act_pr: beamline is not OK: beamlineOK: %X\n", 
-		Beamline.beamlineOK); 
-	if ((Beamline.beamlineOK & sourceOK) == 0)
-	  fprintf(stderr, "source not OK\n");
-
-	/*  exit(-1); */ 
-      } else
-	{
-	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	  RayTracec(&Beamline); 
-	}     
+    if (CheckBLOK(Beamline.beamlineOK, 
+		  (sourceOK | mapOK), "act_pr: ") > 0)
+      {
+	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+	RayTracec(&Beamline); 
+      }     
     UpdateMainList();  
     stop_watch();    
     break;  
@@ -586,84 +587,52 @@ void activate_proc(w, tag, reason)
 #ifdef DEBUG
     printf("activate_proc: call PST\n");
 #endif
-    if (Beamline.RTSource.QuellTyp == 'I')
+    if (CheckBLOK(Beamline.beamlineOK, 
+		  (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
       {
-	if ((Beamline.beamlineOK & (pstsourceOK | mapOK)) != 
-	    (pstsourceOK | mapOK))
-	  { 
-	    fprintf(stderr, 
-		    "act_pr: beamline is not OK: beamlineOK: 0x%X, expected is: 0x%X\n", 
-		    Beamline.beamlineOK, (pstsourceOK | mapOK)); 
-	  } 
-	else
-	  {
-	    psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-	    ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
-	    PST(&Beamline);
-	  }
-      }  
-    else 
-      {
-	fprintf(stderr, 
-		"acticate_proc: error: no phase space image defined ");
-	fprintf(stderr, "(in source menu)\n");
+	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+	PST(&Beamline);
       }
+    
     UpdateMainList();
     stop_watch();    
     break;   
 
   case kCCMPTButton:                              /*  Phase Trafo */  
-    if (Beamline.RTSource.QuellTyp == 'I')
+    if (CheckBLOK(Beamline.beamlineOK, 
+		  (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
       {
-	if ((Beamline.beamlineOK & (pstsourceOK | mapOK)) != 
-	    (pstsourceOK | mapOK))
-	  { 
-	    fprintf(stderr, 
-		    "act_pr: beamline is not OK: beamlineOK: 0x%X, expected is: 0x%X\n", 
-		    Beamline.beamlineOK, (pstsourceOK | mapOK));
-	  }
-	else
-	  {
-	    psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-	    ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
-	    MPST(&Beamline);
-	  } 
-      }  
-    else 
-      {
-	fprintf(stderr, 
-		"acticate_proc: error: no phase space image defined ");
-	fprintf(stderr, "(in source menu)\n");
-      }
-       
+	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
+	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+	MPST(&Beamline);
+      } 
     break;   
      
   case kCCSR1Button:                          /*  footprint */  
-    start_watch(); 
-    ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-    Footprint(&Beamline, Beamline.position);
+    start_watch();
+    if (CheckBLOK(Beamline.beamlineOK, 
+		  (sourceOK | mapOK), "act_pr: ") > 0)
+      {
+	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+	Footprint(&Beamline, Beamline.position);
+      }
     stop_watch();    
     break; 
   
   case kCCSR2Button:                          /*  full Ray Trace */  
     start_watch();  
     Beamline.BLOptions.CalcMod= 2;
-    if ((Beamline.beamlineOK & (sourceOK | mapOK)) != 
-	(sourceOK | mapOK))
-      { 
-	fprintf(stderr, 
-		"act_pr: beamline is not OK: beamlineOK: %X\n", 
-		Beamline.beamlineOK); 
-	if ((Beamline.beamlineOK & sourceOK) == 0)
-	  fprintf(stderr, "source not OK\n");
-      } else  
-	{
-	  printf("activate_proc: full ray trace\n");   
-	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	  RayTraceFull(&Beamline); 
-	  printf("full ray trace-> done\n");    
-	  Beamline.beamlineOK|= resultOK;
-	}
+
+    if (CheckBLOK(Beamline.beamlineOK, 
+		  (sourceOK | mapOK), "act_pr: ") > 0)
+      {
+	printf("activate_proc: full ray trace\n");   
+	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+	RayTraceFull(&Beamline); 
+	printf("full ray trace-> done\n");    
+	Beamline.beamlineOK |= resultOK;
+      }
     stop_watch();  
     break;   
         
@@ -732,8 +701,8 @@ void activate_proc(w, tag, reason)
     break;   
 
   case kCWriteMapButton: 
-    bl= &Beamline;   
-    if ((bl->beamlineOK & mapOK) != 0)
+    bl= &Beamline;  
+    if (CheckBLOK(bl->beamlineOK, mapOK, "act_pr: ") > 0)
       {
 	if ((bl->position <= bl->elementzahl) && (bl->position != 0))
 	  {
@@ -760,10 +729,7 @@ void activate_proc(w, tag, reason)
 		      (double *) bl->xlm.xlen2c);
   
 	  }
-      } else 
-	fprintf(stderr, 
-		"activateproc: beamline is not OK: beamlineOK: 0x%X\n", 
-		bl->beamlineOK); 
+      }  
     break;   
 
   case kCWriteMCoButton: 
@@ -777,7 +743,7 @@ void activate_proc(w, tag, reason)
 
   case kCWriteResultButton: 
     bl= &Beamline;   
-    if ((bl->beamlineOK & resultOK) > 0) 
+    if (CheckBLOK(Beamline.beamlineOK, resultOK, "act_pr: ") > 0)
       {
 
 	/*  WriteRayFile(PHASESet.imageraysname, &bl->RTSource.raynumber, 
@@ -793,10 +759,7 @@ void activate_proc(w, tag, reason)
 	else 
 	  WriteRayFile(PHASESet.imageraysname, &bl->RESULT.points,
 		       bl->RESULT.RESp); 
-      } else 
-	fprintf(stderr, 
-		"activateproc: result is not OK: beamlineOK: 0x%X\n", 
-		bl->beamlineOK); 
+      } 
     break;   
 
           

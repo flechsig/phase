@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <14 Nov 08 12:45:51 flechsig>  */
+/*   Time-stamp: <19 Nov 08 12:24:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -23,7 +23,8 @@
 #define resultOK   	4
 #define elementOK  	8
 #define geometryOK 	16  
-#define pstsourceOK     32           
+#define pstsourceOK     32
+#define pstimageOK      64           
 
 #define RTMod   		1        /* CalcMod */
 #define PSMod      		2        /* werden und verknuepft */ 
@@ -683,7 +684,8 @@ int
   iindex(int, int), 
   OnElement(struct mdatset *, double, double), 
   ReadBLFile(char *, struct BeamlineType *), 
-  SetFilePos(FILE *, char *);   
+  SetFilePos(FILE *, char *),
+  CheckBLOK(int, int, char*);   
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  	
