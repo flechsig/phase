@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <19 Nov 08 18:10:35 flechsig>  */
+/*   Time-stamp: <20 Nov 08 17:42:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -15,7 +15,8 @@
   #include <config.h>
 #endif 
 
-#include <stdio.h>   
+#include <stdio.h> 
+#include <string.h>  
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
 #include <Mrm/MrmAppl.h>  
@@ -105,47 +106,15 @@ void activate_proc(w, tag, reason)
     break;   
             
   case kFFileBoxOK:
-    UpdateFilenames(&PHASESet);
-    strcpy(buffer, PHASESet.pssourcename);
-    /* BL sourcefiles ueberbuegeln !! Reihenfolge ist wichtig (buffer) */
+    UpdateFilenames(&PHASESet); /* copy filenames from widgets into phaseset */
+    strncpy(Beamline.src.so4.fsource4a, PHASESet.so4_fsource4a, 80);
+    strncpy(Beamline.src.so4.fsource4b, PHASESet.so4_fsource4b, 80);
+    strncpy(Beamline.src.so4.fsource4c, PHASESet.so4_fsource4c, 80);
+    strncpy(Beamline.src.so4.fsource4d, PHASESet.so4_fsource4d, 80);
+    strncpy(Beamline.src.so6.fsource6,  PHASESet.so6_fsource6,  80);
     PutPHASE(&PHASESet, MainPickName);  
-
-    /*  20. 10.97  InitDataSets(&PHASESet, (char *)MainPickName);*/
-/* Sourcefilenames mit ueberbuegeln */
-    FnameBody(buffer);
-    /*    i= sizeof(Beamline.src.so4.fsource4a); */
-    i=80; /* sonst zu gefaehrlich U.F. 6.1.00 */
-    memset(&Beamline.src.so4.fsource4a, 0, i);
-    memset(&Beamline.src.so4.fsource4b, 0, i);
-    memset(&Beamline.src.so4.fsource4c, 0, i);
-    memset(&Beamline.src.so4.fsource4d, 0, i);
-    memset(&Beamline.src.so6.fsource6,  0, i);
-    if(Beamline.BLOptions.ifl.ispline != -1)
-      {
-	sprintf(Beamline.src.so4.fsource4a, "%s.eyre", buffer);
-	sprintf(Beamline.src.so4.fsource4b, "%s.eyim", buffer);
-	sprintf(Beamline.src.so4.fsource4c, "%s.ezre", buffer);
-	sprintf(Beamline.src.so4.fsource4d, "%s.ezim", buffer);
-      }
-    else
-      {
-	sprintf(Beamline.src.so4.fsource4a, "%s.yamp", buffer);
-	sprintf(Beamline.src.so4.fsource4b, "%s.ypha", buffer);
-	sprintf(Beamline.src.so4.fsource4c, "%s.zamp", buffer);
-	sprintf(Beamline.src.so4.fsource4d, "%s.zpha", buffer);
-      }
-    sprintf(Beamline.src.so6.fsource6, "%s.brig", buffer);
     WriteBLFile(PHASESet.beamlinename, &Beamline);   
-
-    /*    if ((widget_array[kESourceBox] != NULL) && 
-	XtIsRealized(widget_array[kESourceBox])) 
-      InitSourceBox(&Fg3ActDat, &Beamline, widget_num);   
-    if ((widget_array[kEOElementBox] != NULL) &&
-	XtIsRealized(widget_array[kEOElementBox]))		
-      InitOElementBox(&MActDat, &GActDat, widget_num); 
-    if ((widget_array[kEGeometryBox] != NULL) &&
-	XtIsRealized(widget_array[kEGeometryBox]))
-      InitGeometryBox(&GActDat);*/
+    
     if ((widget_array[kCCOptiDialog] != NULL) &&
 	XtIsRealized(widget_array[kCCOptiDialog]))
       InitOptiBox(PHASESet.optipckname, &Beamline); 
@@ -276,7 +245,12 @@ void activate_proc(w, tag, reason)
 	readfg34_par(&Beamline.src, &Beamline.BLOptions.apr,
 		     &Beamline.BLOptions.ifl, &Beamline.BLOptions.xi,
 		     &Beamline.BLOptions.epsilon); 
-	strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
+	strncpy(PHASESet.so4_fsource4a, Beamline.src.so4.fsource4a, 80);
+        strncpy(PHASESet.so4_fsource4b, Beamline.src.so4.fsource4b, 80);
+        strncpy(PHASESet.so4_fsource4c, Beamline.src.so4.fsource4c, 80);
+	strncpy(PHASESet.so4_fsource4d, Beamline.src.so4.fsource4d, 80);
+	strncpy(PHASESet.so6_fsource6,  Beamline.src.so6.fsource6,  80);
+	        
 	PutPHASE(&PHASESet, MainPickName);  
 	Beamline.beamlineOK= 0;
 	printf("---> OK\n");
@@ -293,7 +267,6 @@ void activate_proc(w, tag, reason)
   case kEBLButton:
     FetchWidget(kEBLDialog, "EBLDialog");  
     ReadBLFile(PHASESet.beamlinename, &Beamline); 
-    strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
     if ((widget_array[kESourceBox] != NULL) && 
 	XtIsRealized(widget_array[kESourceBox])) 
       {  

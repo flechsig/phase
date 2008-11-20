@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Nov 08 18:12:45 flechsig>  */
+/*   Time-stamp: <20 Nov 08 17:23:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1244,20 +1244,16 @@ void ActivateFileSelection(int task, char *pattern)
   /*  FileSelectionProc callback der dialog box */ 
 }
 
+/* copy filenames from widgets into phaseset */
 void UpdateFilenames(struct PHASEset *x) 
-/* callback der Fileselection */
-/* modification: 17 Oct 97 14:12:36 flechsig */
 {
   int i; 
   XmString label;  
-  /*  char     **lab;                 < 15.12.99 UF */
   char *fname= NULL, *lab[18];       /* 19.11.08 UF */
 
   for (i= 0; i < 18; i++)      /* liest + konvertiert Tastenlabel in *lab */
     {	
       get_something(widget_array[kFFileButton1+ i], XmNlabelString, &label);
-
-      
       fname= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			     NULL, 0, XmOUTPUT_ALL);
 
@@ -1304,7 +1300,8 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
   int i;
   char *name, *ch, *ch1, puffer[MaxPathLength], puffer1[MaxPathLength],
     exfeld[18][6]= {".omx",".map",".inp",".out",".isec",".datg",".date",
-		    ".pcks",".pckg",".pcke",".brig",".pcl",".pcko",};
+		    ".pcks",".pckg",".pcke",".brig",".pcl",".pcko",
+		    ".eyre",".eyim",".ezre",".ezim",".dat"};
  
   if (*pfad == '\0') /* icon */
     {

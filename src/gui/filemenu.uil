@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/filemenu.uil
 ! Date      : <28 Oct 99 11:36:53 flechsig> 
-! Time-stamp: <19 Nov 08 18:04:46 flechsig> 
+! Time-stamp: <20 Nov 08 17:52:22 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]FILEMENU.UIL
@@ -414,11 +414,9 @@ object
 object
     FFileLabel11: XmLabel {          
         arguments { 
-	       XmNlabelString      = "PS- Sourcefile ";
+	       XmNlabelString      = "PS- Sourcefile (obsolete) ";
                	  }; 
-        callbacks {
-            MrmNcreateCallback  = procedure create_proc (kFFileLabel10); };  
-     };
+        };
 
 object
     FFileButton11: XmPushButton {

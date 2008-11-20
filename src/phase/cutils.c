@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <21 Dec 07 16:55:16 flechsig>  */
+/*   Time-stamp: <20 Nov 08 17:23:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -49,9 +49,9 @@ char *PrependEnv(char* env, char *str)
    return str;
 } /* end PrependEnv */
 
+/* filename without extension */
+char *FnameBody(char *pfad)      
 
-char *FnameBody(char *pfad)      /* holt Rumpf von Filenamen  */
-/* modification: 17 Oct 97 11:30:45 flechsig */
 /* modification: 25 Jun 02 07:52:49 flechsig , sucht letztes Vorkommen von . 
    wegen afs */
 
