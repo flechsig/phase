@@ -796,7 +796,7 @@ c***********************************************************
 
 	record /source4/ so4
 
-	dimension xx(400000),yy(400000)
+	dimension xx(1048576),yy(1048576)
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4a
 	open(unit=10,name=so4.fsource4a,type='old')
