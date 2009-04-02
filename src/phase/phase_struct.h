@@ -122,13 +122,13 @@ struct  source4 {
 	xeyimmin,xeyimmax,dxeyim,
 	yeyremin,yeyremax,dyeyre,
 	yeyimmin,yeyimmax,dyeyim,
-	zeyre[256][256],zeyim[256][256],
+	zeyre[1024][1024],zeyim[1024][1024],
 	xezremin,xezremax,dxezre,
 	xezimmin,xezimmax,dxezim,
 	yezremin,yezremax,dyezre,
 	yezimmin,yezimmax,dyezim,
-	zezre[256][256],zezim[256][256],
-        gridx[256],gridy[256],deltatime,
+	zezre[1024][1024],zezim[1024][1024],
+        gridx[1024],gridy[1024],deltatime,
         ampeyre,ampeyim,ampezre,ampezim
      ,xlam
           ;
