@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <07 Apr 08 14:39:05 flechsig>  */
+/*   Time-stamp: <22 Jul 09 08:52:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -13,6 +13,7 @@
 
 #include <stdio.h> 
 #include <stdlib.h>
+#include <string.h>
 
 #include <math.h>
 #include <time.h>
