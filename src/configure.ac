@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <01 Feb 08 15:42:37 flechsig> 
+dnl   Time-stamp: <22 Jul 09 08:46:18 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -46,7 +46,7 @@ dnl do LIBTOOL test after fortran stuff
 dnl define the search preference of fortran compilers
 dnl ************** FORTRAN specials *********************
 dnl !!the environment variable F77 overwrites this test!!
-AC_PROG_F77(ifort ifc f77 pgf77 g77)
+AC_PROG_F77(ifort ifc pgf77 f77 gfortran g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
 echo "debug: found FLIBS: ${FLIBS}"
@@ -58,8 +58,10 @@ if test "$G77" = "yes"; then
    AC_MSG_RESULT(no)
    AC_MSG_ERROR([[GNU Fortran g77 will not work (lack of VAX extensions)]])
 fi
-dnl -lg2c does not work on 64 bit, ifort needs  -lintlc
-cforlib="-lg2c"
+
+dnl check for fortran compatibility libs
+AC_CHECK_LIB(gfortran,_gfortran_st_read)
+AC_CHECK_LIB(g2c,fseek_)
 
 case "$F77" in
   "ifc")        # intel compiler
@@ -74,9 +76,11 @@ case "$F77" in
   "ifort")        # intel compiler
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
-      if test "$machine" = "x86_64"; then
+      if test "$machine" = "x86_64"; then   
 	 AC_SUBST([FFLAGS],"-vms -w95 -132 -O0")  # opti. fails on 64 bit
-         cforlib="-lintlc"
+dnl UF cforlib="-lintlc"
+dnl UF to be modified and tested 
+         AC_CHECK_LIB(intlc,put_any_routine_from_intlc)
       else
          AC_SUBST([FFLAGS],"-vms -w95 -132")
       fi	 
@@ -126,6 +130,8 @@ case "$F77" in
 
 
 esac
+dnl cforlib is obsolete- can be taken out  (of makefiles)
+cforlib=""
 AC_SUBST([CFORLIB],${cforlib})
 AM_CONDITIONAL([WANT_IFC],      [test x"$wantifc"      = xtrue])  
 AM_CONDITIONAL([WANT_ABSOFT],   [test x"$wantabsoft"   = xtrue])
@@ -255,7 +261,8 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
 AC_C_CONST
 dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
-if test "$machine" != "x86_64"; then 
+dnl UF makes also problem on Scientific linux 5- add test i686
+if test "$machine" != "x86_64" -a "$machine" != "i686"; then 
    AC_TYPE_SIZE_T
 fi
 
@@ -303,12 +310,12 @@ else
 fi
 echo "===================================================================="
 echo "summary: "
-echo "fortran compiler: ${F77}"
-echo "phaselib        : ${LIBPHASE}"
+echo "fortran compiler         : ${F77}"
+echo "phaselib                 : ${LIBPHASE}"
 dnl echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
-echo "debug code      : ${enable_debug}"
-echo "cernlib:        : ${cernlib}"
-echo "prefix:         : ${prefix}"
+echo "debug code               : ${enable_debug}"
+echo "cernlib:                 : ${cernlib}"
+echo "prefix:                  : ${prefix}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
