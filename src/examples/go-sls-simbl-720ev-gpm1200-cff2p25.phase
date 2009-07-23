@@ -114,7 +114,7 @@ GEOMETRY 3
                    2     azimut * Pi/2      
 
 MIRROR 3  
-                  67     element type
+                 354     element type
                10000     source distance (ARC)
                 1000     image  distance (ARC)
             -87.0306     theta (ARC)
