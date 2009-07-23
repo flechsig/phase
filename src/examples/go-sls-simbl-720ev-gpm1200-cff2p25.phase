@@ -5,7 +5,7 @@ This is a datafile of PHASE version JUL 09
 # SLS surfaces and Interfaces Microscopy (SIM) beamline
 # phase matched undulators, 1st refocusing mirror
 # 720eV, 1200/mm grating, cff=2.25, 1st order
-# measured slope errors, open exit slits
+# measured slope errors, open exit slit
 #######################################################
 
 SOURCE
