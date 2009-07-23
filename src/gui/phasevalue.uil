@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <19 Nov 08 17:54:06 flechsig> 
+! Time-stamp: <23 Jul 09 07:52:27 flechsig> 
 ! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
 ! $Source$ 
@@ -41,6 +41,7 @@ value
     kFFileLabel9          : 29; 
     kFFileLabel10         : 30;
     kFSaveAsButton        : 31;
+    kFLoadButton          : 32;
 
     kFPFList              : 54;
     kFPFOK                : 55;
