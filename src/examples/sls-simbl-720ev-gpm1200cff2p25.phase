@@ -3,10 +3,11 @@ This is a datafile of PHASE version JUL 09
 #######################################################
 # example file for ray tracing
 # SLS surfaces and Interfaces Microscopy (SIM) beamline
-# phase matched undulators
+# phase matched undulators, 1st refocusing mirror
 # 720eV, 1200/mm grating, cff=2.25, 1st order
 # measured slope errors
 #######################################################
+
 SOURCE
                    M    ***Undulator Source for Ray Tracing***
                 3800    Undulator length     (mm)
