@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/blbox.uil
 ! Date      : <13 Feb 04 16:29:19 flechsig> 
-! Time-stamp: <17 Feb 04 12:32:48 flechsig> 
+! Time-stamp: <23 Jul 09 12:12:30 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
@@ -333,7 +333,7 @@ object
 object
     stoim : XmToggleButton {
         arguments {
-            XmNlabelString      = "geometrical optic";
+            XmNlabelString      = "geometrical optic (GO)";
             XmNselectColor	= gold;    
             XmNset              = on; ! A radio box requires one toggle to be set.
             };                                                             
@@ -346,7 +346,7 @@ object
 object
     imtos : XmToggleButton {
         arguments {
-            XmNlabelString      = "physical optic";
+            XmNlabelString      = "physical optic (PO)";
             XmNselectColor	= gold;    
                };                                                             
         callbacks {

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <19 Nov 08 18:21:32 flechsig>  */
+/*   Time-stamp: <23 Jul 09 12:00:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -774,13 +774,50 @@ void FileSelectionProc(Widget wi,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-	  strcpy((char *)&PHASESet.beamlinename, fname);
+       	  strcpy((char *)&PHASESet.beamlinename, fname);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
           strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
 	  ExpandFileNames(&PHASESet, fname); 
 	  PutPHASE(&PHASESet, MainPickName); 
 	  break;
+	case kFLoadButton: 
+	  strcpy((char *)&PHASESet.beamlinename, fname);
+	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
+          strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
+	  if ((widget_array[kESourceBox] != NULL) && 
+	      XtIsRealized(widget_array[kESourceBox])) 
+	    { 
+	      /* InitSourceType(&Beamline, kESDefaults);
+	      AllocRTSource(&Beamline);
+	      InitSourceBox(&Fg3ActDat, &Beamline); */
+	    }
+	  if ((widget_array[kEBLDialog] != NULL) && 
+	      XtIsRealized(widget_array[kEBLDialog])) 
+	    { 
+	      InitBLBox(PHASESet.beamlinename, &Beamline);
+	    }
+ 
+	  ExpandFileNames(&PHASESet, fname); 
+	  PutPHASE(&PHASESet, MainPickName); 
+          /* UF 0907 add auto build */
+          BuildBeamline(&Beamline);
+          if (Beamline.RTSource.QuellTyp != 'I') 
+	    {
+	      AllocRTSource(&Beamline);
+	      MakeRTSource(&PHASESet, &Beamline); 
+	      printf("ready to start calculations in geometrical optics mode\n");
+	    } else
+	    {
+	      AllocRTSource(&Beamline);
+	      src_ini(&Beamline.src); 
+              Beamline.beamlineOK |= pstimageOK;
+	      Beamline.beamlineOK |= pstsourceOK;
+	      printf("ready to start calculations in physical optics mode\n");
+	    }
+
+	  break;
+
 	case kCCGAdd:  /* an der richtigen stelle einfuegen */
 	  /* 0 fuegt immer ans ende ein /*/
 	  if (XmListGetSelectedPos(widget_array[kCCGList], itemlist, &i)

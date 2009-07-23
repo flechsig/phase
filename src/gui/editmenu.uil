@@ -1,6 +1,6 @@
 ! File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/editmenu.uil
 ! Date      : <09 Mar 04 11:46:29 flechsig> 
-! Time-stamp: <16 Dec 07 19:01:12 flechsig> 
+! Time-stamp: <23 Jul 09 12:22:27 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@psi.ch
 
 ! $Source$ 
@@ -19,13 +19,15 @@ object
     edit_menu : XmPulldownMenu {
         controls {
             XmPushButton        ESourceMenuButton;
+            XmPushButton        EBLButton; 
             XmCascadeButton     EOElementMenuButton;  
+            XmPushButton        EOptiButton; 
             XmSeparator         {};      
             XmPushButton        EGeometryButton;           
             XmPushButton        EParameterButton;
 	    XmPushButton        EParameterInitButton;
-            XmPushButton        EOptiButton; 
-            XmPushButton        EBLButton; 
+            
+            
             };
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kEditMenu);
@@ -38,7 +40,7 @@ object
 object
     ESourceMenuButton : XmPushButton {
         arguments {
-            XmNlabelString      = "Source/ PSImage...";
+            XmNlabelString      = "Define GO Source / PO Image Plane...";
             XmNmnemonic         = keysym("S");  }; 
         callbacks {
             MrmNcreateCallback  = procedure create_proc (kESourceMenuButton);
@@ -166,8 +168,9 @@ object
 object
     ESPhaseSpaceButton: XmPushButton {
         arguments {
-            XmNlabelString      = "PS Source";
+            XmNlabelString      = "PO Source";
             XmNmnemonic         = keysym("P"); 
+            XmNsensitive	= false;
 		};
         callbacks {
           MrmNcreateCallback  = procedure create_proc(kESPhaseSpaceButton);
@@ -178,7 +181,7 @@ object
 object
   ESPhaseSpaceImageButton: XmPushButton {
     arguments {
-            XmNlabelString      = "PS image plane";
+            XmNlabelString      = "PO image plane";
             XmNmnemonic         = keysym("i"); 
 	      };
     callbacks {
@@ -441,7 +444,7 @@ object
 object
     EGeometryButton : XmPushButton {
         arguments {
-            XmNlabelString      = "Init Source";
+            XmNlabelString      = "PO Init Source";
             XmNmnemonic         = keysym("I");
 	    ! XmNsensitive	= false;
                        };
@@ -454,7 +457,7 @@ object
 object
     EParameterButton : XmPushButton {
         arguments {
-            XmNlabelString      = "Parameter...";
+            XmNlabelString      = "Edit Parameter...";
             XmNmnemonic         = keysym("P");
             };
         callbacks {
@@ -466,7 +469,7 @@ object
 object
     EParameterInitButton : XmPushButton {
         arguments {
-            XmNlabelString      = "Read fg34.par";
+            XmNlabelString      = "Read Parameter from fg34.par";
             XmNmnemonic         = keysym("R");
             };
         callbacks {
@@ -480,7 +483,7 @@ object
 object
     EOptiButton : XmPushButton {
         arguments {
-            XmNlabelString      = "Optimization...";
+            XmNlabelString      = "Define Optimization...";
             XmNmnemonic         = keysym("O");
             };
         callbacks {
@@ -491,7 +494,7 @@ object
 object
     EBLButton : XmPushButton {
         arguments {
-            XmNlabelString      = "Beamline...";
+            XmNlabelString      = "Define Beamline...";
             XmNmnemonic         = keysym("B");
             };
         callbacks {

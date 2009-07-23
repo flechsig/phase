@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <20 Nov 08 17:42:05 flechsig>  */
+/*   Time-stamp: <23 Jul 09 17:17:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -55,7 +55,7 @@ void activate_proc(w, tag, reason)
   void *vo;
 
 #ifdef DEBUG
-  printf("activate_proc: widget_num %d\n",widget_num);  
+  printf("activate_proc: widget_num %d\n",widget_num); 
 #endif   
 
   switch (widget_num) {
@@ -77,8 +77,12 @@ void activate_proc(w, tag, reason)
   case kFPrint:                                    /* File Menu */
     FetchWidget(kFPFBox, "FPrintFileBox"); 
     XtManageChild(widget_array[kFPFBox]);   
-    break;      
+    break;  
 
+  case kFLoadButton:                                    /* Load File */
+    ActivateFileSelection(widget_num, "*.phase");   
+    break;  
+    
   case kFPFOK:
     create_print();
     XtUnmanageChild(widget_array[kFPFBox]);  
@@ -558,6 +562,7 @@ void activate_proc(w, tag, reason)
       {
 	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
 	RayTracec(&Beamline); 
+        printf("ray trace-> done\n");
       }     
     UpdateMainList();  
     stop_watch();    

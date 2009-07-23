@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Nov 08 17:23:15 flechsig>  */
+/*   Time-stamp: <23 Jul 09 08:47:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -44,7 +44,7 @@ void BatchMode(char *fname, int cmode, int selected)
 /* Uwe 2.10.96 */
 /* Batchmodus */
 {
-  struct PSDType *PSDp;
+  struct PSDType     *PSDp;
   struct PSImageType *psip;
 
   printf("BatchMode: datafilename  : %s\n", PHASESet.beamlinename);

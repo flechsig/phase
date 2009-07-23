@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <17 Nov 08 09:55:02 flechsig>  */
+/*   Time-stamp: <23 Jul 09 11:27:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -786,7 +786,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int elnumber, i, version= 20081117;
+   int elnumber, i, version= 20090722;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType      *dp;
@@ -809,7 +809,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE version NOV 08\n\n");
+   fprintf(f, "This is a datafile of PHASE version JUL 09\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -1111,6 +1111,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20lg     * y = dlambda\n", bl->deltalambdafactor);
    /* new feb 04 */
    fprintf(f,"%20d     with alignment\n", op->WithAlign);
+/* new jul 09 */
+   fprintf(f,"%20d     footprint at element\n", bl->position);
 
    fprintf(f,"%20d     dy integr. points (PS fixed grid)\n", op->PSO.ndyfix);  
    fprintf(f,"%20d     dz integr. points (PS fixed grid)\n", op->PSO.ndzfix); 
@@ -1533,7 +1535,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
          fscanf(f, " %lf %[^\n]s %c", &bl->deltalambdafactor, buffer, &buf); 
 	 if (version >= 20040217)
 	   fscanf(f, " %d %[^\n]s %c", &op->WithAlign, buffer, &buf);
-	 /* printf("ReadBLFile: file version: %d, WithAlign: %d\n", version, op->WithAlign);*/
+	 if (version >= 20090722)
+	   fscanf(f, " %d %[^\n]s %c", &bl->position, buffer, &buf);
+	 else 
+	   bl->position=1;
+	 
  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.ndyfix, buffer, &buf);  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.ndzfix, buffer, &buf);    

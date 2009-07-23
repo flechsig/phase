@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Nov 08 17:51:33 flechsig>  */
+/*   Time-stamp: <23 Jul 09 07:51:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -102,7 +102,7 @@
 #define kFFileLabel9            29 
 #define kFFileLabel10           30             
 #define kFSaveAsButton          31             
-
+#define kFLoadButton            32
   
  
 #define kFPFList                54

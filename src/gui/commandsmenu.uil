@@ -1,6 +1,6 @@
 ! File      : /home/vms/flechsig/vms/phas/phaseuil/commandsmenu.uil
 ! Date      : <11 Apr 97 15:30:46 flechsig> 
-! Time-stamp: <30 Mar 01 14:45:52 flechsig> 
+! Time-stamp: <23 Jul 09 12:25:20 flechsig> 
 ! Author    : Uwe Flechsig, flechsig@exp.bessy.de
 
 ! Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEUIL]COMMANDSMENU.UIL
@@ -15,11 +15,13 @@ include file "optibox.uil";
 object
     CommandMenu : XmPulldownMenu {
         controls {
+                XmCascadeButton     CCalculationMenuButton;  
+                XmPushButton        mGraphicCommandButton;
                 XmPushButton        CProductMatrixButton;  
                 XmCascadeButton     CMatrixMenuButton;  
-                XmCascadeButton     CCalculationMenuButton;  
+                
 		XmSeparator         {};  
-		XmPushButton        mGraphicCommandButton;
+		
                 XmPushButton        WriteResultButton;  
                 XmPushButton        CPSButton;     
                 XmPushButton        CPurgeButton;
@@ -125,10 +127,12 @@ object
     CCalculationMenu : XmPulldownMenu {
         controls {
                    XmPushButton        CCRayTraceButton;
+                   XmPushButton        CCSR2Button;
+                   XmPushButton        CCSR1Button; 
+                    XmSeparator         {};   
                    XmPushButton        CCPTButton; 
                    XmPushButton        CCMPTButton; 
-                   XmPushButton        CCSR1Button; 
-                   XmPushButton        CCSR2Button; 
+                    XmSeparator         {};   
 		   XmPushButton        CCOptiButton;    
                    XmPushButton        CCExtractButton;  
                      };
@@ -140,7 +144,7 @@ object
 object
     CCRayTraceButton: XmPushButton {
         arguments {
-            XmNlabelString      = "ray tracing";
+            XmNlabelString      = "GO ray tracing";
             XmNmnemonic         = keysym("a"); 
 		};
         callbacks {
@@ -151,7 +155,7 @@ object
 object
     CCPTButton : XmPushButton {
         arguments {
-            XmNlabelString      = "phase space imaging";
+            XmNlabelString      = "PO phase space imaging";
             XmNmnemonic         = keysym("p"); 
 	};
         callbacks {
@@ -162,7 +166,7 @@ object
 object
     CCMPTButton : XmPushButton {
         arguments {
-            XmNlabelString      = "multiple phase space imaging";
+            XmNlabelString      = "PO multiple phase space imaging";
             XmNmnemonic         = keysym("q"); 
 	};
         callbacks {
@@ -173,7 +177,7 @@ object
 object
     CCSR1Button : XmPushButton {
         arguments {
-            XmNlabelString      = "footprint at selected element"; 
+            XmNlabelString      = "GO footprint at selected element"; 
             XmNmnemonic         = keysym("f"); 
 !            XmNsensitive	= false;   
 	};
@@ -185,7 +189,7 @@ object
 object
     CCSR2Button : XmPushButton {
         arguments {
-            XmNlabelString      = "full ray trace"; 
+            XmNlabelString      = "GO full ray trace"; 
             XmNmnemonic         = keysym("y"); 
 	};
         callbacks {
@@ -242,7 +246,7 @@ object
 object
     CPurgeButton : XmPushButton {                   
         arguments {
-            XmNlabelString      = "User";   
+            XmNlabelString      = "Run User Script";   
             XmNmnemonic         = keysym("U"); 
             };     
         callbacks {

@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/filemenu.uil
 ! Date      : <28 Oct 99 11:36:53 flechsig> 
-! Time-stamp: <20 Nov 08 17:52:22 flechsig> 
+! Time-stamp: <23 Jul 09 08:28:52 flechsig> 
 ! Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 
 ! Datei: USERDISK_3:[FLECHSIG.XWIN]FILEMENU.UIL
@@ -14,9 +14,10 @@
 object
     file_menu : XmPulldownMenu {
         controls {
-            XmPushButton        FPrintButton;                  
+            XmPushButton        FLoadButton;    
             XmPushButton        FFileButton;   
-            XmPushButton        FSaveAsButton;      
+            XmPushButton        FSaveAsButton;  
+            XmPushButton        FPrintButton;    
             XmPushButton        FExitButton;
             };
         callbacks {
@@ -36,7 +37,20 @@ object
             XmNactivateCallback = procedure activate_proc (kFPrint);
             XmNhelpCallback     = procedure sens_help_proc(k_print_help);   
             };               
-        };            
+        };     
+
+
+object                      
+    FLoadButton : XmPushButton {
+        arguments {
+            XmNlabelString      = "Load...";                         
+            XmNmnemonic         = keysym("L");
+            };
+        callbacks {      
+            XmNactivateCallback = procedure activate_proc (kFLoadButton);
+            XmNhelpCallback     = procedure sens_help_proc(k_print_help);   
+            };               
+        };          
                  
 object                      
     FFileButton : XmPushButton {
