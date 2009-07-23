@@ -259,9 +259,9 @@ OPTIONS
                    2     flag calculation modus
                  3.1     lambda [nm]
                 4900     dispersive length
-                -100     * y = dlambda
+                4900     * y = dlambda
                    2     with alignment
-                   1     footprint at element
+                   3     footprint at element
                    0     dy integr. points (PS fixed grid)
                    0     dz integr. points (PS fixed grid)
                    0     dymin [rad] (PS fixed grid)
