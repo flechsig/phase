@@ -1,5 +1,12 @@
-Fg3PickFileType 20040217
-This is a datafile of PHASE version FEB 04
+Fg3PickFileType 20090722
+This is a datafile of PHASE version JUL 09
+
+#######################################################
+# example file for ray tracing
+# SLS PolLux  beamline
+# bending magnet, (we use here the hard edge source)
+# 400eV, 300/mm grating, 2theta fix, 1st order
+#######################################################
 
 SOURCE
                    H    ***Hard Edge Source for Ray Tracing***
@@ -30,7 +37,7 @@ GEOMETRY 1
                    0     line density x[2] 
                    0     line density x[3] 
                    0     line density x[4] 
-                1.55     lambda [nm]         
+                 3.1     lambda [nm]         
                    0     diffraction order  
                    0     flag               
                    3     azimut * Pi/2      
@@ -106,7 +113,7 @@ GEOMETRY 3
                    0     line density x[2] 
                    0     line density x[3] 
                    0     line density x[4] 
-                1.24     lambda [nm]         
+                 3.1     lambda [nm]         
                    1     diffraction order  
                    0     flag               
                    1     azimut * Pi/2      
@@ -229,6 +236,13 @@ PSSOURCES
 /afs/psi.ch/user/f/flechsig/phase/data/stxm/pollux.eyim so4.b
 /afs/psi.ch/user/f/flechsig/phase/data/stxm/pollux.ezre so4.c
 /afs/psi.ch/user/f/flechsig/phase/data/stxm/pollux.ezim so4.d
+                   0  so4: nfreqtot   
+                   0  so4: nfreqpos   
+                   0  so4: nfreqneg   
+                   0  so4: nsource    
+                   0  so4: nimage     
+                   0 so4: deltatime  
+                   0  so4: iconj      
                    0 so5: (Dipol) dipcy   
                    0 so5: (Dipol) dipcz   
                    0 so5: (Dipol) dipdisy 
@@ -243,10 +257,11 @@ OPTIONS
                    1     (1) RT Source to Image 
               0.0001     epsilon
                    2     flag calculation modus
-                1.24     lambda [nm]
+                 3.1     lambda [nm]
                 4900     dispersive length
-                4900     * y = dlambda
+                -100     * y = dlambda
                    2     with alignment
+                   1     footprint at element
                    0     dy integr. points (PS fixed grid)
                    0     dz integr. points (PS fixed grid)
                    0     dymin [rad] (PS fixed grid)
