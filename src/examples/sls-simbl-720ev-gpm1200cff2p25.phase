@@ -303,10 +303,10 @@ PSSOURCES
                    4  so1: isrcdz  
                  0.1 so1: sigmaz  
               0.0025 so1: sigmazp 
-/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ey/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ey/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez so4.a
-/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ey/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez so4.b
-/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez so4.c
-/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.ez so4.d
+empty1
+empty2
+empty3
+empty4
                    0  so4: nfreqtot   
                    0  so4: nfreqpos   
                    0  so4: nfreqneg   
@@ -318,7 +318,7 @@ PSSOURCES
                    1 so5: (Dipol) dipcz   
                  800 so5: (Dipol) dipdisy 
                  800 so5: (Dipol) dipdisz 
-/afs/psi.ch/user/f/flechsig/phase/src/examples/sls-simbl-720ev-gpm1200cff2p25.da so6
+sls-simbl-720ev-gpm1200cff2p25.da so6
                 0.01 pin_yl0 
                0.005 pin_yl  
                 0.01 pin_zl0 
