@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <04 Aug 09 12:12:53 flechsig>  */
+/*   Time-stamp: <04 Aug 09 12:15:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1263,7 +1263,7 @@ void UpdateFilenames(struct PHASEset *x)
       if ((i > 12) && (strlen(lab[i]) > 80)) 
 	{
 	  beep(1);
-	  fprintf(STDERR, "filename %s too long (limit is 80)!!\n"); 
+	  fprintf(stderr, "filename %s too long (limit is 80)!!\n"); 
 	}
       XmStringFree(label);
     }                              

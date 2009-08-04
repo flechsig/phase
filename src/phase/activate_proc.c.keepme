@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <04 Aug 09 12:13:22 flechsig>  */
+/*   Time-stamp: <04 Aug 09 12:17:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -119,7 +119,7 @@ void activate_proc(w, tag, reason)
     strncpy(Beamline.src.so6.fsource6,  PHASESet.so6_fsource6,  80);
     PutPHASE(&PHASESet, MainPickName); 
     if (Beamline.RTSource.QuellTyp == 'F') 
-      strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
+      strncpy(Beamline.RTSource.Quellep->filename, PHASESet.sourceraysname, MaxPathLength);
     WriteBLFile(PHASESet.beamlinename, &Beamline);   
     
     if ((widget_array[kCCOptiDialog] != NULL) &&
