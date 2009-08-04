@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <23 Jul 09 11:27:56 flechsig>  */
+/*   Time-stamp: <04 Aug 09 10:12:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1758,7 +1758,14 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   r    = x->rmi;
   rho  = x->rho;
   dp   = (double *)a;
-  alpha= x->alpha * PI/ 180.0;
+  /* 
+     UF 4.8.2009
+     the mirror coefficients should be independent from the orientation- JB is this correct???
+     i.e. they should be independent from the sign of alpha- therefor I change the following line
+     and introduce fabs()
+     reason- I observed strange results with elliptical mirrors
+  */
+  alpha= fabs(x->alpha * PI/ 180.0);
 
   if (etype != kEOEGeneral)
     for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
