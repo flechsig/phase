@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <04 Aug 09 13:54:16 flechsig>  */
+/*   Time-stamp: <04 Aug 09 13:55:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -157,7 +157,7 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 	  hp->idz		= 7;   
 	  bl->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
 	  break;   
-	case 'F'
+	case 'F':
 	  fp= (struct FileSourceType *)bl->RTSource.Quellep;
 	  strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
 	  /* we may add a test if the file exists */
