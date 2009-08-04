@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Aug 09 10:14:45 flechsig>  */
+/*   Time-stamp: <04 Aug 09 11:18:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -786,7 +786,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int elnumber, i, version= 20090722;
+   int elnumber, i, version= 20090804;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType      *dp;
@@ -797,7 +797,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    struct PSImageType          *psip;
    struct PSSourceType         *pssp;    
    struct ElementType 	       *listpt;   
-   struct OptionsType          *op;     
+   struct OptionsType          *op;    
+   struct FileSourceType       *fp;
 
    if ((f= fopen(fname, "w")) == NULL)
    {
@@ -809,7 +810,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE version JUL 09\n\n");
+   fprintf(f, "This is a datafile of PHASE version AUG 09\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -907,10 +908,12 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
        fprintf(f, "%20d    y points\n", psip->iy);
        fprintf(f, "%20d    z points\n", psip->iz); 
      break; 
-   case 'F': 
-     fprintf(f, "%20c    *** Rays from file ***\n", 
+     case 'F': 
+       fp= (struct FileSourceType *)bl->RTSource.Quellep;
+       fprintf(f, "%20c    *** Rays from file ***\n", 
 	       bl->RTSource.QuellTyp);
-     break;  
+       fprintf(f, "%s  source filename\n", fp->filename);
+       break;  
      default:
        fprintf(f, "%20c    *** Error: Unknown Source ***\n", 
 	       bl->RTSource.QuellTyp);
@@ -1167,7 +1170,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    struct PSImageType          *psip;
    struct PSSourceType         *pssp;    
    struct ElementType 	       *listpt;   
-   struct OptionsType          *op;     
+   struct OptionsType          *op;
+   struct FileSourceType       *fp;
 
    rcode= -1;   
    printf("ReadBLFile: filename: %s\n", fname);
@@ -1298,6 +1302,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     fscanf(f, " %d %[^\n]s %c", &psip->iz, buffer, &buf);  
            break;
 	   case 'F':
+	     fp= (struct FileSourceType *)bl->RTSource.Quellep;
+	     if (version >= 20090804)
+	       fscanf(f, "%s %[^\n]s %c", &fp->filename, buffer, &buf);
 	     break;
            default: 
 	     fprintf(stderr, "error: unknown source type!\n"); /* exit(-1); */
