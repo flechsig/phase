@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <29 Nov 06 13:31:28 flechsig>  */
+/*   Time-stamp: <04 Aug 09 13:54:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -44,6 +44,7 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
   struct HardEdgeSourceType  *hp;     
   struct SRSourceType        *sp;  
   struct PSImageType	     *ip;
+  struct FileSourceType      *fp;
   
   if (bl->RTSource.QuellTyp != bl->RTSource.QuellTyp_old) 
     {
@@ -156,11 +157,17 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 	  hp->idz		= 7;   
 	  bl->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
 	  break;   
+	case 'F'
+	  fp= (struct FileSourceType *)bl->RTSource.Quellep;
+	  strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
+	  /* we may add a test if the file exists */
+	break;   
 	}  /* end case */
       bl->RTSource.QuellTyp_old =  bl->RTSource.QuellTyp;
       printf("initdatset: put defaults\n");
     } else  printf("initdatset: same source- no defaults set\n");
   /* 24.6.96 */
+  printf("initdatset.c: set  idir, iord, epsilon to defaults\n");
   bl->BLOptions.SourcetoImage= x->idir; 
   bl->BLOptions.ifl.iord=      x->iord;
   bl->BLOptions.epsilon=       x->epsilon;  
