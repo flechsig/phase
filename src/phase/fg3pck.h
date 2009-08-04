@@ -37,7 +37,7 @@
 /**************** fg3.par ***************************************/
 
 #define	        D0epsilon 	1.0e-4
-#define         D0iord          3
+#define         D0iord          4
 #define         D0isrcy         1
 #define         D0isrcdy        1
 #define         D0sigmay        0.05
