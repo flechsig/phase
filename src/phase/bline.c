@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Aug 09 11:18:18 flechsig>  */
+/*   Time-stamp: <04 Aug 09 12:13:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1304,7 +1304,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   case 'F':
 	     fp= (struct FileSourceType *)bl->RTSource.Quellep;
 	     if (version >= 20090804)
-	       fscanf(f, "%s %[^\n]s %c", &fp->filename, buffer, &buf);
+	       {
+		 fscanf(f, "%s %[^\n]s %c", &fp->filename, buffer, &buf);
+		 strncpy(PHASESet.sourceraysname, fp->filename, MaxPathLength);
+	       }
 	     break;
            default: 
 	     fprintf(stderr, "error: unknown source type!\n"); /* exit(-1); */

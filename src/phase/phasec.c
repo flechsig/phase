@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <23 Jul 09 08:47:29 flechsig>  */
+/*   Time-stamp: <04 Aug 09 12:12:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1260,27 +1260,32 @@ void UpdateFilenames(struct PHASEset *x)
       lab[i]= fname;    
            /*delversion(lab[i]);*/ 
       printf("%s\n", lab[i]);  
+      if ((i > 12) && (strlen(lab[i]) > 80)) 
+	{
+	  beep(1);
+	  fprintf(STDERR, "filename %s too long (limit is 80)!!\n"); 
+	}
       XmStringFree(label);
     }                              
-  strcpy(x->matrixname, 	lab[0]);    
-  strcpy(x->mapname,    	lab[1]);    
-  strcpy(x->sourceraysname, 	lab[2]);    
-  strcpy(x->imageraysname, 	lab[3]);    
-  strcpy(x->intersecname, 	lab[4]);    
-  strcpy(x->geometryname, 	lab[5]);    
-  strcpy(x->elementname, 	lab[6]);    
-  strcpy(x->sourcepckname, 	lab[7]);    
-  strcpy(x->geometrypckname, 	lab[8]);    
-  strcpy(x->elementpckname, 	lab[9]);    
-  strcpy(x->pssourcename, 	lab[10]);    
-  strcpy(x->printpclname, 	lab[11]);  
-  strcpy(x->optipckname, 	lab[12]);
+  strncpy(x->matrixname, 	lab[0], MaxPathLength);    
+  strncpy(x->mapname,    	lab[1], MaxPathLength);    
+  strncpy(x->sourceraysname, 	lab[2], MaxPathLength);    
+  strncpy(x->imageraysname, 	lab[3], MaxPathLength);    
+  strncpy(x->intersecname, 	lab[4], MaxPathLength);    
+  strncpy(x->geometryname, 	lab[5], MaxPathLength);    
+  strncpy(x->elementname, 	lab[6], MaxPathLength);    
+  strncpy(x->sourcepckname, 	lab[7], MaxPathLength);    
+  strncpy(x->geometrypckname, 	lab[8], MaxPathLength);    
+  strncpy(x->elementpckname, 	lab[9], MaxPathLength);    
+  strncpy(x->pssourcename, 	lab[10], MaxPathLength);    
+  strncpy(x->printpclname, 	lab[11], MaxPathLength);  
+  strncpy(x->optipckname, 	lab[12], MaxPathLength);
 
-  strcpy(x->so4_fsource4a, 	lab[13]);
-  strcpy(x->so4_fsource4b, 	lab[14]);
-  strcpy(x->so4_fsource4c, 	lab[15]);
-  strcpy(x->so4_fsource4d, 	lab[16]);
-  strcpy(x->so6_fsource6, 	lab[17]);
+  strncpy(x->so4_fsource4a, 	lab[13], MaxPathLength);
+  strncpy(x->so4_fsource4b, 	lab[14], MaxPathLength);
+  strncpy(x->so4_fsource4c, 	lab[15], MaxPathLength);
+  strncpy(x->so4_fsource4d, 	lab[16], MaxPathLength);
+  strncpy(x->so6_fsource6, 	lab[17], MaxPathLength);
   
   for (i= 0; i < 18; i++) 
     XtFree(lab[i]);
@@ -1903,7 +1908,7 @@ void GetSource(struct BeamlineType *bl)
   switch (bl->RTSource.QuellTyp) 
     {
     case 'F':
-      printf("GetSource: source from file not yet fully implemented!\n");
+      printf("GetSource: source from file improved but not yet fully debugged 0908!\n");
       MakeRTSource(&PHASESet, bl);
       break; 
     case 'H': 
