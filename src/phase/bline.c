@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Aug 09 12:13:24 flechsig>  */
+/*   Time-stamp: <24 Aug 09 16:35:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -16,6 +16,8 @@
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif 
+
+/* #define DEBUG */
 
 #include <stdio.h>                              /* For printf and so on */
 #include <stdlib.h> 	      	    	    	/* needed for fopen     */  
@@ -1890,14 +1892,16 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 
-	  dp[13]= (tan(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
-	    (8.0* pow(f, 2.0)* cos(alpha));                     /* 1,2 */
+	  dp[13]= ((pow(epsilon, 2.0)- pow(sin(alpha), 2.0)) > small) ?
+	    (tan(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* pow(f, 2.0)* cos(alpha)) : 0.0;                     /* 1,2 */
 	  /** UF 26.11.04 Vorzeichen ist vermutlich falsch    */
 	  /* bei negativen alpha scheint es richtig zu sein   */
 	  /* ist u(w,l) abhaengig vom Vorzeichen von alpha ?? */
 
-	  dp[3] = (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
-	    (8.0* f* f);                              /* 3,0 */
+	  dp[3] = ((pow(epsilon, 2.0)- pow(sin(alpha), 2.0)) > small) ?
+	    (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* f* f) : 0.0;                             /* 3,0 */
 	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))  * 
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
 	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
@@ -1960,20 +1964,24 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 /** Vorzeichen vermutlich falsch UF 26.11.04 - siehe oben */
-	  dp[3] = (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
-	    (8.0* f* f);                                        /* 3,0 */
+/* UF 22.8.09 */
+	  dp[3] = ((pow(epsilon, 2.0)- pow(sin(alpha), 2.0)) > small) ?
+	    (sin(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
+	    (8.0* f* f) : 0.0; 
+                                                /* 3,0 */
 	  dp[4] = (pow(bellip, 2.0)/ (64.0* pow(f, 3.0)* cos(alpha)))* 
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
 	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
 	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
 	}
       break;
-
+ 
     default:
       fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
       exit(-1);
     } /* end switch */ 
 #ifdef DEBUG
+  printf("DEBUG: alpha: %f\n", alpha);
   printf("DEBUG: mirror coefficients\n");
   for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
 #endif
