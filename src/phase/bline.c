@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Aug 09 16:35:43 flechsig>  */
+/*   Time-stamp: <28 Aug 09 15:07:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1766,7 +1766,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   /*  printf("DefMirrorC: called\n");*/
 #endif  
  
-  small= 1e-15;   
+  small= 1e-30;   
   r    = x->rmi;
   rho  = x->rho;
   dp   = (double *)a;
