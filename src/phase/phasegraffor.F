@@ -1,6 +1,6 @@
 c $$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
 c $$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c $$$ Time-stamp: <17 Jan 08 17:38:56 flechsig> 
+c $$$ Time-stamp: <18 Sep 09 15:40:18 flechsig> 
 c $$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c $$$
 c $$$ $Source$ 
@@ -14,7 +14,7 @@ c !!! wird die Struktur grdatstructtype in phase.h veraendert
 c     muss dies hier von Hand in den betroffenen Subroutinen 
 c     nachgefuehrt werden (UF 24.3.04)
 
-
+c#define DEBUG
        	subroutine inithplot 
         PARAMETER (NWPAW=200000)
         COMMON/PAWC/RPAW(NWPAW)      
@@ -96,10 +96,12 @@ c postscriptfile
            print*,'open postsciptfile under UNIX ',metaname
 c           open(unit=11,file=metaname,FORM='FORMATTED',
 c     1          STATUS='UNKNOWN',err=4444)
-           call kuopen(11,metaname,'UNKNOWN',istat)
+c           call kuopen(11,metaname,'UNKNOWN',istat)
+           write(*,*)'status after open',istat
 #endif
 c           call igmeta(-11,-111) UF 12.1.2001
            call igmeta(11,-111)
+           write(*,*)'after igmeta'
         endif
               
 c        write(*,*)'only for ray trace data'   
@@ -107,6 +109,7 @@ c        write(*,*)'only for ray trace data'
 4444  write(*,*)'hplotdisplayf: error open file: ',metaname
 c---- buche histogramme -------------------------------------------
 4445  call kanalzahlf(s.plotsyle,iy,iz) ! iy,iz neu belegt
+       write(*,*)'after  kanalzahlf'
 1001    y1=s.ymi
         y2=s.yma
         z1=s.zmi
@@ -182,17 +185,26 @@ c           write(*,*)'fill histogr.',i
 #endif      
 c--------- end fuellen --------------------------------  
         call makeplotf(titel,s.plotsyle) ! eigentliches plotten
+#ifdef DEBUG	
+        write(*,*)'after plot'  
+#endif 
         call iuwk(0,1)                   ! puffer leeren update alle ws S.12
-
+#ifdef DEBUG	
+        write(*,*)'after iuwk'  
+#endif 
         if(ifile.eq.1)then  
            print*,'close postscriptfile'
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-#ifdef VMS
-           close(11) 
+#ifdef DEBUG	
+        write(*,*)'before close'  
+#endif 
+
+#ifdef ABSOFT
+        call kuclos(11,' ',1)
 #else
-           call kuclos(11,' ',1)
+        close(11) 
 #endif
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
