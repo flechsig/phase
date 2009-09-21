@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotdivergence.pro
 ;  Date      : <21 Sep 09 14:27:26 flechsig> 
-;  Time-stamp: <21 Sep 09 14:57:44 flechsig> 
+;  Time-stamp: <21 Sep 09 15:01:03 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -90,7 +90,7 @@ if n_elements(dymax)  eq 0 then dymax= (1.0+beauty)*max(dy)
 if n_elements(dzmin)  eq 0 then dzmin= (1.0-beauty)*min(dz)
 if n_elements(dzmax)  eq 0 then dzmax= (1.0+beauty)*max(dz)
 
-rays= n_elements(y)*1.0
+rays= n_elements(dy)*1.0
 
 dyhis=histogram(dy,min=dymin,max=dymax,nbins=nbins)
 dzhis=histogram(dz,min=dzmin,max=dzmax,nbins=nbins)
