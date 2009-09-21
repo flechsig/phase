@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotresult.pro
 ;  Date      : <21 Sep 09 12:13:39 flechsig> 
-;  Time-stamp: <21 Sep 09 15:31:22 flechsig> 
+;  Time-stamp: <21 Sep 09 15:40:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -17,7 +17,7 @@ pro plotphase, filename, nofit=nofit, title=title, $
 ;
 ;
 ; PURPOSE:
-;   plot the phase, noch nicht fertig
+;   plot the phase as function of y,z
 ;
 ;
 ; CATEGORY:
@@ -25,9 +25,8 @@ pro plotphase, filename, nofit=nofit, title=title, $
 ;
 ;
 ; CALLING SEQUENCE:
-;   plotresult, filename, nofit=nofit, title=title, ymin=ymin,
-;   ymax=ymax, zmin=zmin, zmax=zmax
-;
+;   plotphase, filename, nofit=nofit, title=title, $
+;                ymin=ymin, ymax=ymax, zmin=zmin, zmax=zmaxplotresult, filename,;
 ;
 ; INPUTS:
 ;   filename
@@ -98,14 +97,15 @@ phase=dblarr(nbins,nbins)
 count=make_array(nbins, nbins, /double, value=1.0)
 
 for i=0,n_elements(y)-1 do begin
-    posy= where(y[i] ge ybin, county)            ;; index in posy[0]
-    posz= where(z[i] ge zbin, countz)
+;;for i=0,1 do begin
+    posy= where(ybin ge y[i], county)            ;; index in posy[0]
+    posz= where(zbin ge z[i], countz)
     if ((county ne 0) and (countz ne 0)) then begin
         phase[posy[0],posz[0]]= phi[i]
         count[posy[0],posz[0]]+= 1.0
     endif
 endfor
-phase/= count;
+phase/= count
 
 zone,1,1
 mycontour,phase,ybin,zbin, xtitle='y (mm)', ytitle='z (mm)', ztitle='phase'
