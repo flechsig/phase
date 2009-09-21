@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plot2d.pro
 ;  Date      : <21 Sep 09 17:42:58 flechsig> 
-;  Time-stamp: <21 Sep 09 17:47:50 flechsig> 
+;  Time-stamp: <21 Sep 09 17:51:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -70,7 +70,7 @@ pro plot2d, filename
 ;
 ;-
 
-if n_elements(filename) eq 0 then filename=file_search()
+if n_elements(filename) eq 0 then filename=dialog_pickfile(default_extension='out')
 
 ;;filename='test2d.out'
 datalines=file_lines(filename)-1

@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotfootprint.pro
 ;  Date      : <21 Sep 09 14:22:52 flechsig> 
-;  Time-stamp: <21 Sep 09 14:26:19 flechsig> 
+;  Time-stamp: <21 Sep 09 17:54:58 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -102,19 +102,19 @@ zfit=gaussfit(zbin,zhis,zstat)
 !P.MULTI = [0, 2, 2]
 !P.region=[0.0,0.3,0.7,1.0]
 ;;!P.position=[0.0,0.3,0.7,1.0]
-plot, y, z, xrange=[ymin,ymax], yrange=[zmin,zmax], /nodata, $
-  xtitle='y (mm)', ytitle='z (mm)', title=title
+plot, z, y, xrange=[zmin,zmax], yrange=[ymin,ymax], /nodata, $
+  xtitle='z (mm)', ytitle='y (mm)', title=title
 oplot,y,z, psym=8, color=1, SYMSIZE=0.5
 
 !P.region=[0.7,0.3,1.0,1.0]
-plot,zhis,zbin,/nodata,xtitle='z density',ytitle='z (mm)'
-oplot,zhis,zbin,color=1
-if n_elements(nofit) eq 0 then oplot,zfit,zbin,color=3
-
-!P.region=[0.0,0.0,0.7,0.3]
 plot,ybin,yhis,/nodata,xtitle='y (mm)',ytitle='y density'
 oplot,ybin,yhis,color=1
 if n_elements(nofit) eq 0 then oplot,ybin,yfit,color=3
+
+!P.region=[0.0,0.0,0.7,0.3]
+plot,zhis,zbin,/nodata,xtitle='z density',ytitle='z (mm)'
+oplot,zhis,zbin,color=1
+if n_elements(nofit) eq 0 then oplot,zfit,zbin,color=3
 
 s1= string(n_elements(y),  format='(%"rays:     %7d")')
 s2= string(ystat[1],       format='(%"y center: %7.4f mm")')

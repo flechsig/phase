@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotresult.pro
 ;  Date      : <21 Sep 09 12:13:39 flechsig> 
-;  Time-stamp: <21 Sep 09 15:40:42 flechsig> 
+;  Time-stamp: <21 Sep 09 17:56:40 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -101,14 +101,14 @@ for i=0,n_elements(y)-1 do begin
     posy= where(ybin ge y[i], county)            ;; index in posy[0]
     posz= where(zbin ge z[i], countz)
     if ((county ne 0) and (countz ne 0)) then begin
-        phase[posy[0],posz[0]]= phi[i]
-        count[posy[0],posz[0]]+= 1.0
+        phase[posz[0],posy[0]]= phi[i]
+        count[posz[0],posy[0]]+= 1.0
     endif
 endfor
 phase/= count
 
 zone,1,1
-mycontour,phase,ybin,zbin, xtitle='y (mm)', ytitle='z (mm)', ztitle='phase'
+mycontour,phase,zbin,ybin, xtitle='y (mm)', ytitle='z (mm)', ztitle='phase'
 
 return
 end
