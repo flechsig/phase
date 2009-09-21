@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotdivergence.pro
 ;  Date      : <21 Sep 09 14:27:26 flechsig> 
-;  Time-stamp: <21 Sep 09 14:40:39 flechsig> 
+;  Time-stamp: <21 Sep 09 14:57:44 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -117,7 +117,7 @@ plot,dybin,dyhis,/nodata,xtitle='dy (mrad)',ytitle='dy density'
 oplot,dybin,dyhis,color=1
 if n_elements(nofit) eq 0 then oplot,dybin,dyfit,color=3
 
-s1= string(n_elements(y),   format='(%"rays:      %7d")')
+s1= string(n_elements(dy),  format='(%"rays:      %7d")')
 s2= string(dystat[1],       format='(%"dy center: %7.4f mrad")')
 s3= string(dystat[2]* 2.35, format='(%"dy FWHM:   %7.4f mrad")')
 s4= string(dzstat[1],       format='(%"dz center: %7.4f mrad")')
