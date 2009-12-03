@@ -40,7 +40,7 @@
 
 ; Init phase Variables
 phainit
-
+print, "Init done"
 
 
 
