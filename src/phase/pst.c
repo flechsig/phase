@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <03 Dec 09 16:36:17 flechsig>  */
+/*   Time-stamp: <04 Dec 09 15:31:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -352,44 +352,42 @@ void PST(struct BeamlineType *bl)
    
    for (i= 0; i< bl->elementzahl; i++)
      {
-       elart= bl->ElementList[i].MDat.Art;
-       if((elart == kEOETG)     || (elart == kEOEVLSG) || 
-	  (elart == kEOEPElliG) || (elart == kEOEPG)   || (elart == kEOEPGV))
+       gp= (struct geometryst *)&bl->ElementList[i].geo;
+       if( fabs(gp->xdens[0]) > ZERO )
 	 {
-	  gratingnumber++;
-	  gratingposition= i;
-      	  gp= (struct geometryst *)&bl->ElementList[gratingposition].geo;
-	  /*geometryst und geometrytype sind das gleiche */
-	}
+	   gratingnumber++;
+	   gratingposition= i;
+	   printf("grating %d recognized, position: %d\n", gratingnumber, gratingposition);
+	 }
      }
-   printf("%d grating(s) recognized, position: %d\n", 
-	  gratingnumber, gratingposition);
+   /* some tests */
    if(gratingnumber > 1) 
      {
-       fprintf(stderr, "!!!! more than 1 grating produce an error !!!!\n");
-       fprintf(stderr, "exit gracefully\n");
+       fprintf(stderr, "pst.c error: !!!! %d gratings defined, (maximum is 1) !!!!\n", gratingnumber);
+       fprintf(stderr, "exit\n");
        exit(-1);
      }
-      
+   
+   elart= bl->ElementList[gratingposition].MDat.Art;
+   if((elart != kEOETG) && (elart != kEOEVLSG) && (elart != kEOEPElliG) && (elart != kEOEPG) && (elart != kEOEPGV) && (gratingnumber > 0))
+     {
+       fprintf(stderr, "pst.c warning: elementtype mismatch on element %d\n", gratingposition);
+       fprintf(stderr, "      -> mirror with line density > 0 will be treated as grating\n");
+     }
+
    if(gratingnumber == 0)
-       {
-	 gp= (struct geometryst *)&bl->ElementList[0].geo;
-	 /*geometryst und geometrytype sind das gleiche */
-	 gp->xdens[0]= 0.0;
-	 printf ("PST: no grating- set  igrating= 0\n");
-	 bl->BLOptions.ifl.igrating=0;
-       } 
+     {
+       gp= (struct geometryst *)&bl->ElementList[0].geo;
+       /*geometryst und geometrytype sind das gleiche */
+       gp->xdens[0]= 0.0;
+       printf ("PST: no grating- set  igrating= 0\n");
+       bl->BLOptions.ifl.igrating=0;
+     } 
    else 
-     if(gp->xdens[0] < 1)
-       {
-	 fprintf(stderr, "line density of the grating: %lf --> exit \n");
-	 exit(-1);
-       } 
-     else
-       {
-	 printf ("PST: 1 grating- set  igrating= 1\n");
-	 bl->BLOptions.ifl.igrating=1;
-       }
+     {
+       printf ("PST: 1 grating- set  igrating= 1\n");
+       bl->BLOptions.ifl.igrating=1;
+     }
    
    /*   printf("pst: Daten fure Dipolquelle werden hier eingegeben (tmp)\n");
       src.isrctype= 5;
