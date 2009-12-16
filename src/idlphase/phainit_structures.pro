@@ -4,6 +4,8 @@ PRO phainit_structures
 
 MaxPathLength=long(255)
 MaximumOptElements=long(64)
+
+defsysv, '!phaMaxArraySize', 1024
  
 intzero=long(0)
 dblzero=double(0)
@@ -48,13 +50,13 @@ dummy_source4 =  { source4 ,                                                $
 	xeyimmin:dblzero , xeyimmax:dblzero , dxeyim:dblzero ,$
 	yeyremin:dblzero , yeyremax:dblzero , dyeyre:dblzero ,$
 	yeyimmin:dblzero , yeyimmax:dblzero , dyeyim:dblzero ,$
-	zeyre:dblarr(256,256) , zeyim:dblarr(256,256) ,$
+	zeyre:dblarr(!phaMaxArraySize,!phaMaxArraySize) , zeyim:dblarr(!phaMaxArraySize,!phaMaxArraySize) ,$
 	xezremin:dblzero , xezremax:dblzero , dxezre:dblzero , $
 	xezimmin:dblzero , xezimmax:dblzero , dxezim:dblzero , $
 	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
 	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
-	zezre:dblarr(256,256) , zezim:dblarr(256,256) ,$
-	gridx:dblarr(256)     , gridy:dblarr(256), deltatime:dblzero, $
+	zezre:dblarr(!phaMaxArraySize,!phaMaxArraySize) , zezim:dblarr(!phaMaxArraySize,!phaMaxArraySize) ,$
+	gridx:dblarr(!phaMaxArraySize)     , gridy:dblarr(!phaMaxArraySize), deltatime:dblzero, $
       ampeyre:dblzero , ampeyim:dblzero , $
       ampezre:dblzero , ampezim:dblzero , $
       xlam:dblzero , $

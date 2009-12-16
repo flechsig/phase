@@ -13,20 +13,15 @@
 ;;; The PROGRAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .compile phaPropagation.pro	
-;.compile phaPropWFFresnelKirchhoff.pro
-;.compile phaPropFFTnear.pro
-;.compile phaPropFFTfar.pro
 
 .compile phaSrcWFGauss.pro		
 .compile phaModGrid.pro		
 .compile phaplotting.pro		
-;.compile rtrace.pro			
 
 .compile phaOpticalElements.pro
 .compile phaSetSources.pro
 .compile phaSetBeamlineOptions.pro
 .compile phaBeamline.pro
-
 
 .compile phaLoadEMField.pro
 .compile phaSaveEMField.pro
@@ -36,11 +31,17 @@
 ;;; EXAMPLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .compile phaExamples.pro
+.compile examples.pro
 
 
 ; Init phase Variables
 phainit
-print, "Ready"
+
+; set current working directory
+OLDDIR = GETENV('OLD_CALLDIR')
+CD, OLDDIR
+CD, CURRENT=NEWDIR
+print, 'Current working directory is: ' + NEWDIR
 
 
 
