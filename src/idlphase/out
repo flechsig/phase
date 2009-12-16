@@ -1,0 +1,14 @@
+
+--------------------------------------------------------------
+     LTPtest
+--------------------------------------------------------------
+
+Wrong Number of Arguments in function:  phaSrcWFGauss 
+ArgCount is            9,    but should be    12.
+Returning to IDL-Level 0 (main) ...
+
+Raleigh range [mm] :        11170.328
+Distances [mm]     :       100.000     500     200
+Nearfield [boolean]:        1       1       1
+
+
