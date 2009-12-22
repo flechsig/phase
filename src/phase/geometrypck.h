@@ -1,6 +1,6 @@
 /*  File      : /home/vms/flechsig/vms/phas/phasec/geometrypck.h */
 /*  Date      : <21 Mar 97 15:22:51 flechsig>  */
-/*  Time-stamp: <16 Feb 04 15:15:06 flechsig>  */
+/*  Time-stamp: <22 Dec 09 14:48:26 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@exp.bessy.de */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.H      */
@@ -19,6 +19,8 @@
 #define 	D0rp            1000
 #define 	D0xdens         0 
 #define		D0lambda	0
+#define         D0dlambda       0
+#define         D0dlambdaflag   0
 #define 	D0inout		1
 #define 	D0iflag		0
 #define		D0azimut	0
@@ -26,14 +28,16 @@
 
 struct gdatset 
 {
-        double theta0;
-	double r;
-	double rp; 
-       	double xdens[5];  
-        double lambda; 
-        int    inout;                                 
-	int    iflag; 
-        int    azimut;     /* vertikal 0; nach links 1; nach unten 2 */
+  double theta0;
+  double r;
+  double rp; 
+  double xdens[5];  
+  double lambda; 
+  double dlambda;
+  int    dlambdaflag;
+  int    inout;                                 
+  int    iflag; 
+  int    azimut;     /* vertikal 0; nach links 1; nach unten 2 */
 };   
 
 int  	ggetpickfile(struct gdatset *, char *); 
