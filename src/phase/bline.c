@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <28 Aug 09 15:07:54 flechsig>  */
+/*   Time-stamp: <22 Dec 09 15:16:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -788,7 +788,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int elnumber, i, version= 20090804;
+   int elnumber, i, version= 20091222;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType      *dp;
@@ -812,7 +812,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE version AUG 09\n\n");
+   fprintf(f, "This is a datafile of PHASE version DEC 09\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -941,6 +941,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      for (i= 0; i< 5; i++) 
        fprintf(f, "%20lg     line density x[%d] \n", listpt->GDat.xdens[i], i);
      fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambda* 1e6); 
+     fprintf(f, "%20lg     dlambda [nm]        \n", listpt->GDat.dlambda* 1e6); 
+     fprintf(f, "%20d     dlambdaflag        \n", listpt->GDat.dlambdaflag);
      fprintf(f, "%20d     diffraction order  \n", listpt->GDat.inout);
      fprintf(f, "%20d     flag               \n", listpt->GDat.iflag);   
      fprintf(f, "%20d     azimut * Pi/2      \n", listpt->GDat.azimut);   
@@ -1357,6 +1359,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
                fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
              } 
 	     listpt->GDat.lambda*= 1e-6;
+	     if (version >= 20091222)
+	       {
+		 fgets(buffer, 80, f); sscanf(buffer, "%lf", &listpt->GDat.dlambda); 
+		 fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.dlambdaflag);
+		 listpt->GDat.dlambda*= 1e-6;
+	       }
              fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.inout);  
              fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.iflag);  
              fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.azimut); 
