@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Dec 09 15:35:20 flechsig>  */
+/*   Time-stamp: <22 Dec 09 15:37:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1722,7 +1722,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
 
-  if (x->deltalambdaflag == 1)
+  if (x->dlambdaflag == 1)
     {
       fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
       fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
