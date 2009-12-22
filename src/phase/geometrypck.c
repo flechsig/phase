@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/geometrypck.c */
 /*  Date      : <28 Oct 99 09:57:07 flechsig>  */
-/*  Time-stamp: <22 Dec 09 15:03:51 flechsig>  */
+/*  Time-stamp: <22 Dec 09 15:09:05 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.C      */
@@ -30,9 +30,9 @@ void gputpickfile(struct gdatset *x, char *gpickname)
      fprintf(f,"%20lf               image  distance    \n", x->rp);
      for (i= 0; i< 5; i++) 
        fprintf(f,"%20lf               line density x[%d] \n", x->xdens[i], i); 
-     fprintf(f,"%20lf           lambda  (nm)         \n", x->lambda* 1e6);
-     fprintf(f,"%20lf           dlambda  (nm)        \n", x->dlambda* 1e6);
-     fprintf(f,"%20d            dlambda flag          \n", x->dlambdaflag);    
+     fprintf(f,"%20lf               lambda  (nm)       \n", x->lambda* 1e6);
+     fprintf(f,"%20lf               dlambda  (nm)      \n", x->dlambda* 1e6);
+     fprintf(f,"%20d               dlambda flag       \n", x->dlambdaflag);    
      fprintf(f,"%20d               diffraction order  \n", x->inout);
      fprintf(f,"%20d               flag               \n", x->iflag);     
      fprintf(f,"%20d               azimut (* Pi/2)    \n", x->azimut);     
