@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/geometrypck.c */
 /*  Date      : <28 Oct 99 09:57:07 flechsig>  */
-/*  Time-stamp: <22 Dec 09 15:01:15 flechsig>  */
+/*  Time-stamp: <22 Dec 09 15:03:51 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.C      */
@@ -41,7 +41,6 @@ void gputpickfile(struct gdatset *x, char *gpickname)
 }	
 
 int ggetpickfile(struct gdatset *x, char *gpickname)
-/* last mod. Uwe 12.6.96 */
 {
    FILE *f;
    int i, rcode, version;
@@ -64,10 +63,11 @@ int ggetpickfile(struct gdatset *x, char *gpickname)
 	  {
 	    fgets(buffer, 80, f); sscanf(buffer, "%lf", &x->dlambda);  
 	    fgets(buffer, 80, f); sscanf(buffer, "%d",  &x->dlambdaflag);
+	    x->dlambda*= 1e-6;
 	  }
         fgets(buffer, 80, f);     sscanf(buffer, "%d", &x->inout);  
         fgets(buffer, 80, f);     sscanf(buffer, "%d", &x->iflag);  
-	x->lambda* 1e-6; /* modification: 13 Feb 98 11:50:55 flechsig */
+	x->lambda*= 1e-6; /* modification: 13 Feb 98 11:50:55 flechsig */
 
         if (!feof(f))
         {
