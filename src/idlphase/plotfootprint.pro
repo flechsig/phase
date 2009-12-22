@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotfootprint.pro
 ;  Date      : <21 Sep 09 14:22:52 flechsig> 
-;  Time-stamp: <21 Sep 09 17:54:58 flechsig> 
+;  Time-stamp: <22 Dec 09 12:32:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -78,10 +78,13 @@ pro plotfootprint, filename, nofit=nofit, title=title, $
 beauty=0.1
 nbins=100
 
-if n_elements(filename) eq 0 then a=read_ascii(data_start=1)
+if n_elements(filename) eq 0 then begin
+    a=read_ascii(data_start=1) 
+    filename=''
+end else a=read_ascii(filename, data_start=1)
 if n_elements(title)    eq 0 then title=filename
 
-a=read_ascii(filename, data_start=1)
+;;a=read_ascii(filename, data_start=1)
 y  = reform(a.field1[0,*])
 z  = reform(a.field1[1,*])
 
