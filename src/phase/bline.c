@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Dec 09 15:16:30 flechsig>  */
+/*   Time-stamp: <22 Dec 09 15:35:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1714,13 +1714,21 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
      /* datenstruktur soll gleich sin und cosinus werte enthalten 	*/
     /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 {
-  double delta, alpha, beta, theta0, trans, radius;
+  double delta, alpha, beta, theta0, trans, radius, delta1;
   int i;
 
   theta0= fabs(x->theta0* PI/ 180.0);   
   delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
+
+  if (x->deltalambdaflag == 1)
+    {
+      fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
+      fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
+      delta1= (double)(x->inout)* asin((x->lambda+ x->dlambda)* x->xdens[0]/(2.0* cos(theta0)));
+      beta  = (theta0- delta1);
+    }
 
   if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0))
     {
