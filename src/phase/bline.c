@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Dec 09 16:19:35 flechsig>  */
+/*   Time-stamp: <23 Dec 09 09:03:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1709,16 +1709,16 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 }
 
 void DefGeometryC(struct gdatset *x, struct geometrytype *gout)  
-     /* Uwe 25.6.96 							*/
-     /* umgeschrieben - keine fileausgabe mehr 			        */
-     /* datenstruktur soll gleich sin und cosinus werte enthalten 	*/
-    /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
+/* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
+/* Dec 2009 provisions for multiple wavelengths */
 {
-  double delta, alpha, beta, theta0, trans, radius, delta1;
+  double delta, alpha, beta, theta0, trans, radius, delta1, lambda;
   int i;
 
-  theta0= fabs(x->theta0* PI/ 180.0);   
-  delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
+  theta0= fabs(x->theta0* PI/ 180.0);  
+  lambda= x->lambda;
+ 
+  delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
 
@@ -1726,21 +1726,23 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
     {
       fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
       fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
-      fprintf(stderr, "debug: lambda: %e, dlambda: %e, io: %d\n", x->lambda, x->dlambda, x->inout );
-      beta= (-1.0)* asin((x->lambda+ x->dlambda)* x->xdens[0]+ sin(alpha));
+      lambda= x->lambda+ x->dlambda;
+      fprintf(stderr, "debug: lambda: %e, io: %d\n", lambda, x->inout );
+      beta= (-1.0)* asin(lambda* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
     }
 
   if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0))
     {
       beep(1);
-      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg. !!\n");    }
+      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg. !!\n");    
+    }
 
 /* modification: 17 Feb 98 09:33:48 flechsig */
 /* modification: 19 Feb 98 11:08:59 flechsig */
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
   printf("DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
-	 alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6);
+	 alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
   if ((x->iflag) == 1)
     {
       radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));   
@@ -1761,7 +1763,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   gout->cosb= cos(beta);   
   for (i= 0; i< 5; i++) 
     gout->x[i]= x->xdens[i]; 
-  gout->xlam = x->lambda* (double)(x->inout);  
+  gout->xlam = lambda* (double)(x->inout);  
   gout->idefl= (x->theta0 > 0.0) ? 1 : -1;  
 } /* end DefGeometryC */ 
 
