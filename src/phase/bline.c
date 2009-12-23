@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <23 Dec 09 09:03:44 flechsig>  */
+/*   Time-stamp: <23 Dec 09 09:13:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1763,7 +1763,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   gout->cosb= cos(beta);   
   for (i= 0; i< 5; i++) 
     gout->x[i]= x->xdens[i]; 
-  gout->xlam = lambda* (double)(x->inout);  
+  gout->xlam = lambda* (double)(x->inout);  /* UF 23.12.09 ist lambda richtig ??? oder x->lambda */
   gout->idefl= (x->theta0 > 0.0) ? 1 : -1;  
 } /* end DefGeometryC */ 
 
