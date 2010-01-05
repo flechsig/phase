@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <07 Apr 08 15:54:35 flechsig>  */
+/*   Time-stamp: <05 Jan 10 17:22:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -352,7 +352,7 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  *z= cos(fi- teta)/ cos(fi+ teta);    /* cos(beta)/ cos(alpha); */
-	  printf("outstruct: cff= %f?????\n", *z);
+	  printf("outstruct_15: cff= %f,??? theta= %f rad, phi= %f rad\n", *z, teta, fi);
 	  break;
 	case 16:       /* Energiescan mit cff constant */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
@@ -361,7 +361,7 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  cff= cos(fi- teta)/ cos(fi+ teta);   /* cos(beta)/ cos(alpha); */
 	  *z= (bl->BLOptions.lambda > 0.0) ? 
 	    (1240.0e-6/ bl->BLOptions.lambda) : 0.0;
-	  printf("outstruct: cff= %f ?????\n", cff);
+	  printf("outstruct_16: cff= %f ??? theta= %f rad, phi= %f rad\n", cff, teta, fi);
 	  break;
 	  /*	case 17: siehe weiter oben */
 	case 18: /* STXM special M1- S1 */
