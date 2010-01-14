@@ -151,7 +151,13 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       dist1=dsqrt( distance**2 + dabs(y1(k)-y2(i))**2 + dabs(z1(l)-z2(j))**2 )
      &     - dabs(distance)
 
-      phase=dist1*cc
+c     use correct sign for backward propagation
+      if (distance.gt.0) then
+        phase = dist1*cc
+      else 
+        phase= -dist1*cc 
+      endif
+
       fact=cmplx( dcos(phase) , dsin(phase) )/(dist1+distance)
       fact=(fact*dz1*dy1)/xlam
 
@@ -716,8 +722,8 @@ c------------ step 5: multiplication with prefactor
 	if(icomp.eq.1)then
 	  do k=1, ny
 	  do l=1, nz
-	    INeyre(l,k)=a1(k,l) 
-	    INeyim(l,k)=b1(k,l) 
+	    INeyre(l,k)=a1(l,k) 
+	    INeyim(l,k)=b1(l,k) 
 	  enddo
 	  enddo
 	endif
