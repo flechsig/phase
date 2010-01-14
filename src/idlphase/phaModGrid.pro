@@ -201,3 +201,70 @@ result = call_external(!phalib,'phaModGrid',$
 ;print, '***',result,'  ***'
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pro phaModApplyMask,beam,mask
+;+
+; NAME:
+; phaModApplyMask
+;
+; PURPOSE:
+;       Zeroes entries in a grid used to describe the EMFields
+;   according an array of bytes serving as mask. Every entry
+;   in the mask which is non-zero preserves the corresponding entry 
+;   in the grid.
+;
+; CATEGORY:
+;       pro : pha4idl - modify grid
+;
+; CALLING SEQUENCE:
+;       phaModApplyMask,beam,mask
+;
+; INPUTS:
+;       beam: pha4idl beam structure (see phainit_structures.pro)
+; mask: array of bytes with same dimensions as the grid in bl
+; 
+; OUTPUTS:
+;       beam: modified pha4idl beam structure
+;
+; KEYWORDS:
+;       None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;       No safety tests are done to make sure the dimensions match,
+; this is the caller's responsibility. 
+;
+; MODIFICATION HISTORY:
+;     
+;
+;-
+
+; determine source grid dimensions
+nz = N_ELEMENTS( mask(*, 0) )
+ny = N_ELEMENTS( mask(0, *) )
+
+;TODO: check for correct number of arguments?
+;TODO: replace the for-loops with WHERE for more efficiency
+
+; apply mask
+
+FOR j = 0, nz-1  DO BEGIN
+  FOR i = 0, ny-1  DO BEGIN
+    IF (mask[j, i] EQ 0) THEN BEGIN
+      beam.zeyre[j,i] = 0; 
+      beam.zeyim[j,i] = 0; 
+      beam.zezre[j,i] = 0; 
+      beam.zezim[j,i] = 0; 
+    ENDIF
+  ENDFOR
+ENDFOR
+
+END
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+

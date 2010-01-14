@@ -56,6 +56,68 @@ phaLoadEyImag,bl.src.so4,MainFileName+'-eyimc'
 END
 
 
+function phaSrcLoadEMField, MainFileName, lambda, _EXTRA = e
+;+
+; NAME:
+;	phaSrcLoadEMField
+;
+; PURPOSE:
+;       Loads phasestyle EMFields and creates 
+;         a src4 beam structure from it,
+;       sets wavelength in struct,
+;       optionally scales dimensions of field
+;
+; CATEGORY:
+;	pro : pha4idl - create src4
+;
+; CALLING SEQUENCE: 
+;	phaSrcLoadEMField(MainFileName, lambda)
+;
+; INPUTS:
+;	      MainFileName	prefix for the phase EMField files
+;			    phase adds the following postfixes:
+;			    -ezre, -ezim, -eyre, -eyim  : real and imaginary 
+;				  of the EM-fields with z & y polarizaiton
+;
+;       lambda  wavelength in nm
+;
+;       optional: SCALE=[double] scaling factor for field dimensions
+;                   default is 1.0, i.e. units in file are interpreted as [mm]
+;                   (often file format is in [m], therefore SCALE=10^3 is needed)
+; OUTPUTS:
+;     	beam		filled source4 struct
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      Nov. 1, 2009, SG, initial version
+;
+;-
+
+np=n_params()
+
+if np lt 2 then begin
+	print, 'Too few number of arguments ...'
+	print, 'Usage:phaSrcLoadEMField(MainFileName[string], lambda[double], {SCALE=[double]}) '
+	print, ''
+	retall
+endif
+
+beam={source4}
+phaLoadEzReal,beam,MainFileName+'-ezrec', _EXTRA = e
+phaLoadEzImag,beam,MainFileName+'-ezimc', _EXTRA = e
+phaLoadEyReal,beam,MainFileName+'-eyrec', _EXTRA = e
+phaLoadEyImag,beam,MainFileName+'-eyimc', _EXTRA = e
+
+beam.xlam = lambda;
+return, beam
+END
+
 
 PRO phaLoadEzReal, beam, fname, scale = SC
 
