@@ -6,14 +6,18 @@ c$$$ $Author$
 
 
 c quick fix UF 11.3.08
-c #define MaxDimm 1024
+c #define 1024m 1024
 
 
 cc TL 26.3.08 fixed the dimension problem
-cc MaxDim is the Dimension of the fieldsw in the src4-structure
-#define MaxDim 256
-cc BigMaxDim is for internal temporary fields
-#define BigMaxDim 1024
+cc 1024 is the Dimension of the fieldsw in the src4-structure
+cc #define 1024 256
+cc Big1024 is for internal temporary fields
+cc #define Big1024 1024
+
+cc TL 29.01.2009
+#include "pha4idlFORTRANdefines.h.f"
+cc#define MaxDim 1024
 
 
 c
@@ -37,6 +41,7 @@ c
      
       implicit none    
 
+        integer kkk
 	integer i,j,ianzz,ianzy
 	real*8 z,dz,zmin,zmax,y,dy,ymin,ymax,w0,w,deltax,xlambda,xlam
      &	,xk,xr,small1,small3,pi,pow,dpow,R,theta,arg, ez0, ey0, dphi_zy
@@ -49,8 +54,8 @@ c
      &	      ,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
 
 	
-	write(*,*)'***'
-	write(*,*)'phaSrcWFGauss started...'
+cc	write(*,*)'***'
+cc	write(*,*)'phaSrcWFGauss started...'
 	
 c in C:      call pha_define_src4_grid(gb,ianzz,zmin,zmax,ianzy,ymin,ymax)
 	
@@ -141,10 +146,10 @@ c     &          max(dabs(dimag(egauss(i,j))),small3)**2
 	  zeyim(i,j)=ey0*dimag(fact*egauss(i,j))/pow
 	enddo
 	enddo
-	
-	write(*,*)'phaSrcWFGauss finished...'
-	write(*,*)'***'
-	write(*,*)' '
+
+cc	write(*,*)'phaSrcWFGauss finished...'
+cc	write(*,*)'***'
+cc	write(*,*)' '
 
 	return
 	end

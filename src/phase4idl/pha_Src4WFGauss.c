@@ -34,7 +34,7 @@ int phaSrcWFGauss_old (struct source4 *beam, int *ianzz, double *zmin, double *z
   double distance=*deltax;  // Same ...
   
   int MaxDim = MaximumFieldDimension;
-  
+
 //  beam->xlam=*xlambda;
   
   // Neues Grid in Struktur schreiben
