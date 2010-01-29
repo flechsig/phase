@@ -96,13 +96,20 @@ dphi_zy=double(dphi_zy)
 source= {source4}
 
 result = 1
+
+print, '***'
+print, 'phaSrcWFGauss started...'
+
 result = call_external(!phalib,'phaSrcWFGauss',$
 			 source,  $
                          ianzz, zmin, zmax, $
 			 ianzy, ymin, ymax, $
 		         w0,  deltax, xlam, $
                          ez0, ey0, dphi_zy, $
-                       /I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+                       /I_VALUE,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+
+print, 'phaSrcWFGauss finished...'
+print, '***'
 
 return, source
 END
