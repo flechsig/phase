@@ -12,11 +12,13 @@ c #define MaxDimm 1024
 
 cc TL 26.3.08 fixed the dimension problem
 cc MaxDim is the Dimension of the fieldsw in the src4-structure
-#define MaxDim 256
+cc #define MaxDim 256
 cc BigMaxDim is for internal temporary fields
-#define BigMaxDim 1024
+cc #define BigMaxDim 1024
 
 
+cc TL 29.01.2009
+#include "pha4idlFORTRANdefines.h.f"
 
 
 
@@ -255,13 +257,14 @@ c------------------------------------------------------------------------
 	common/cstak/dstak
 
       integer i,j,k,l,icomp
-     &       ,ifx(25), nz00, ny00
+     &       ,ifx(50), nz00, ny00
      &       , INnz, INny
      &       , iyz,nflag,nz,ny
 
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
-     &       ,dstak(524288),t(2048)
+     &       ,dstak(2*MaxDim*MaxDim+16)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
+     &       ,t(2048)          ! 2*n=2*1024
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
      &       ,width,ycenter,zcenter
@@ -289,7 +292,7 @@ c------------------------------------------------------------------------
 	 nz00=BigMaxDim
 
 c------------ allocate storage
-	call istkin(524288,4)	! (2*n*nns, itype=double)
+	call istkin(2*MaxDim*MaxDim+16,4)	! (2*n*nns, itype=double)
 	
 	write(*,*)'phaPropagateFFTnear started...'
 	
@@ -311,7 +314,7 @@ c	write(*,*),xlam,' ... xlam'
 	zmin=INzmin
 	zmax=INzmax
 	ymax=INymax	
-	zmin=INymin
+	ymin=INymin
 	
 	 nz=INnz
 	 ny=INny
@@ -325,7 +328,7 @@ c	write(*,*),dz,' ... dz'
 	enddo
 	do i=1, ny
 	   y(i)=ymin+dble(i-1)*dy
-      enddo   
+        enddo   
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c      END of call phadrift_get_input(beam4)
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77	
@@ -371,7 +374,7 @@ c---------- get prime factors of n
 	call DMFTCI(ny,ifx,t)
 
 	call DMFTCC(ny,nz,a1(1,1),b1(1,1),1,ny00,
-     &		    a1(1,1),b1(1,1),1,ny00,ifx,t,signum)
+     &		          a1(1,1),b1(1,1),1,ny00,ifx,t,signum)
 
 	call DMFTCC(ny,nz,a1(1,1),b1(1,1),nz00,1,
      & 		          a1(1,1),b1(1,1),nz00,1,ifx,t,signum)
@@ -510,13 +513,14 @@ c------------------------------------------------------------------------
 	common/cstak/dstak
 
       integer i,j,k,l,icomp
-     &       ,ifx(25), nz00, ny00
+     &       ,ifx(50), nz00, ny00
      &       , INnz, INny
      &       , iyz,nflag,nz,ny
 
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
-     &       ,dstak(524288),t(2*BigMaxDim)
+     &       ,dstak(2*MaxDim*MaxDim+16)
+     &       ,t(2*BigMaxDim)
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
      &       ,width,ycenter,zcenter
@@ -554,7 +558,7 @@ c	write(*,*),xlam,' ...xlam'
 	zmin=INzmin
 	zmax=INzmax
 	ymax=INymax	
-	zmin=INymin
+	ymin=INymin
 	  nz=INnz
 	  ny=INny
 
@@ -582,8 +586,8 @@ c	a1/2 Real Fields ... b1/2 Complex Parts
 	enddo
 
 c------------ allocate storage
-	call istkin(524288,4)	! (2*n*nns, itype=double)
-c	call istkin(512*MaxDim,4)	! (2*n*nns, itype=double)
+	call istkin(2*MaxDim*MaxDim+16,4)	! (2*n*nns+16, itype=double)
+
 c-----	get new grid points
 c
 c      calculations -> GLAD-Manual:  dx2 = (xlam*dist)/(N*dx1)
