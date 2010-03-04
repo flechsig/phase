@@ -5,7 +5,7 @@ PRO phainit_structures
 MaxPathLength=long(255)
 MaximumOptElements=long(64)
 
-defsysv, '!phaMaxArraySize', 1024
+defsysv, '!phaMaxArraySize', 2048 
  
 intzero=long(0)
 dblzero=double(0)

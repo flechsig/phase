@@ -4,8 +4,7 @@ PATH=/bin:/usr/bin:/usr/local/bin
 export PATH
 
 declare -x LANG="C"
-declare -x PHASE_HOME=/home/gerhardt/tstopt/phase
-echo "FIXME: Declared absolute PHASE_HOME path in phase4idl.sh"
+declare -x PHASE_HOME=$PHASE_HOME/phase
 declare -x LD_LIBRARY_PATH=$PHASE_HOME"/lib":$LD_LIBRARY_PATH
 
 
