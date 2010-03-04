@@ -17,6 +17,9 @@
 #ifndef __PHASE_STRUCT
 #define __PHASE_STRUCT
 
+#define MAX_GRIDSIZE 2048 
+
+
 /* neu eingefuegt */
 typedef struct ComplexStruct {
 	double re,im; 
@@ -122,13 +125,13 @@ struct  source4 {
 	xeyimmin,xeyimmax,dxeyim,
 	yeyremin,yeyremax,dyeyre,
 	yeyimmin,yeyimmax,dyeyim,
-	zeyre[1024][1024],zeyim[1024][1024],
+	zeyre[MAX_GRIDSIZE][MAX_GRIDSIZE],zeyim[MAX_GRIDSIZE][MAX_GRIDSIZE],
 	xezremin,xezremax,dxezre,
 	xezimmin,xezimmax,dxezim,
 	yezremin,yezremax,dyezre,
 	yezimmin,yezimmax,dyezim,
-	zezre[1024][1024],zezim[1024][1024],
-        gridx[1024],gridy[1024],deltatime,
+	zezre[MAX_GRIDSIZE][MAX_GRIDSIZE],zezim[MAX_GRIDSIZE][MAX_GRIDSIZE],
+        gridx[MAX_GRIDSIZE],gridy[MAX_GRIDSIZE],deltatime,
         ampeyre,ampeyim,ampezre,ampezim
      ,xlam
           ;
