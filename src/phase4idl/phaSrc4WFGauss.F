@@ -56,6 +56,7 @@ c
 	
 cc	write(*,*)'***'
 cc	write(*,*)'phaSrcWFGauss started...'
+	write(*,*) MaxDim
 	
 c in C:      call pha_define_src4_grid(gb,ianzz,zmin,zmax,ianzy,ymin,ymax)
 	

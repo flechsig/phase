@@ -264,7 +264,7 @@ c------------------------------------------------------------------------
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
      &       ,dstak(2*MaxDim*MaxDim+16)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
-     &       ,t(2048)          ! 2*n=2*1024
+     &       ,t(4096)          ! 2*n=2*1024
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
      &       ,width,ycenter,zcenter
@@ -542,7 +542,7 @@ c------------------------------------------------------------------------
     
       
       write(*,*)'phaPropagateFFTfar started...'
-
+      
 	 ny00=BigMaxDim
 	 nz00=BigMaxDim
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
