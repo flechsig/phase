@@ -65,7 +65,9 @@
      index= 128+ 1: r
      index= 128+ 11: rho
 */
-                                                                   
+  
+const char *global_rundir;
+
 /* Prototype */
 
 int main(argc, argv)
@@ -86,6 +88,14 @@ int main(argc, argv)
 #ifdef LOGFILE   
   CheckUser(logfilename, "Extraction"); 
 #endif  
+
+/* Mar 10: get the data directory at runtime from ENV variable again, not at compile time*/
+    if ((global_rundir = getenv(PHASE_HOME)) == NULL)
+    {
+      printf("\nphase.c: needed environment variable %s not defined -- exiting\n", PHASE_HOME);
+      exit(-1);
+    } 
+    else printf("Runtime directory is %s\n", global_rundir);
 
   if (argc < 2)
     {
