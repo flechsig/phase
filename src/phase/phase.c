@@ -47,13 +47,16 @@
 #include "phaseX.h" 
 #include "rtrace.h"   
 
+const char *global_rundir;
+
+
 int main(argc, argv)
     unsigned int argc;                  /* Command line argument count.   */
     char *argv[];                       /* Pointers to command line args. */
 {                                
     int setupswitch;
     char filename[255];
-
+    
     time_t    timev;                    /* for expire option */  
     struct tm *local_time;              /* for expire option */
     
@@ -91,12 +94,17 @@ int main(argc, argv)
     printf(" The program does not expire!\n\n");
 #endif
     
-   /* Feb 04 get the data directory from installation prefix and 
-       not from the environment in unix */
-
+   /* Mar 10: get the data directory at runtime from ENV variable again, not at compile time*/
+    if ((global_rundir = getenv(PHASE_HOME)) == NULL)
+    {
+      printf("\nphase.c: needed environment variable %s not defined -- exiting\n", PHASE_HOME);
+      exit(-1);
+    } 
+    else printf("Runtime directory is %s\n", global_rundir);
+    
+    
     set_program_name (*argv);       /* initialize program_name for errors */
-
-    sprintf(filename, "%s/share/phase/phase.uid", PREFIX);
+    sprintf(filename, "%s/share/phase/phase.uid", global_rundir);
 
 #ifdef DEBUG
     printf("phase.main> uidfile: %s\n", filename);
@@ -210,7 +218,7 @@ int main(argc, argv)
 	strcpy(filename, ".lib]news.");
 	PrependEnv(PHASE_HOME, filename);
 #else
-	sprintf(filename, "%s/share/phase/news", PREFIX);
+	sprintf(filename, "%s/share/phase/news", global_rundir);
 #endif 
 	
 	PrintFileInMainList(filename);                      /* news anzeigen */

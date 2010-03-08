@@ -36,6 +36,9 @@
 #include "phaseX.h"      
 #include "rtrace.h"    
 
+extern const char *global_rundir;
+
+
 void activate_proc(w, tag, reason)
      Widget		w;
      int			*tag;
@@ -890,7 +893,7 @@ void activate_proc(w, tag, reason)
 	strcpy(buffer, ".lib]news.");
 	PrependEnv(PHASE_HOME, buffer);
 #else
-       sprintf(buffer, "%s/share/phase/news", PREFIX);
+       sprintf(buffer, "%s/share/phase/news", global_rundir);
 #endif 
     
     PrintFileInMainList(buffer);  

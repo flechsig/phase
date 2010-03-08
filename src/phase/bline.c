@@ -33,6 +33,8 @@
 #include "rtrace.h"                 
 #include "common.h" 
 
+extern const char *global_rundir;
+
 
 void BuildBeamline(struct BeamlineType *bl)  
 /****************************************************************/
@@ -619,7 +621,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    sprintf(buffer,"%s%d_lh.omx\0", HORMAPFILENAMEBASE, dim); 
    PrependEnv(PHASE_HOME, buffer);
 #else
-   sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", PREFIX,  dim);
+   sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", global_rundir, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->lmap, dim);    
@@ -628,7 +630,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    sprintf(buffer,"%s%d_rh.omx\0", HORMAPFILENAMEBASE, dim);
    PrependEnv(PHASE_HOME, buffer);
 #else
-   sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", PREFIX, dim);
+   sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", global_rundir, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
