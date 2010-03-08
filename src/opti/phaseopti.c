@@ -96,6 +96,7 @@ void 	FCN(int *, double *, double *, double *, int *, char *),
 	minuit();                                       /* cernlib     */
 
 /* global var */
+const char *global_rundir;
 
 
 /****************************************************************************/
@@ -124,6 +125,14 @@ int main(argc, argv)
 #endif
 
 Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
+
+/* Mar 10: get the data directory at runtime from ENV variable again, not at compile time*/
+    if ((global_rundir = getenv(PHASE_HOME)) == NULL)
+    {
+      printf("\nphase.c: needed environment variable %s not defined -- exiting\n", PHASE_HOME);
+      exit(-1);
+    } 
+    else printf("Runtime directory is %s\n", global_rundir);
 
 /*#ifndef DEBUG*/
    if (argc < 2)
