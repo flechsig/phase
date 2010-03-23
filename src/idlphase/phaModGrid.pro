@@ -46,16 +46,16 @@ IF np NE 3 THEN BEGIN
    retall
 ENDIF
 
-IF nz2 gt 256 THEN BEGIN 
+IF nz2 gt 2048 THEN BEGIN 
    print,''
-   print,'nz2 greater than 256 is not allowed in phaModSize(src4,nz,ny) '
+   print,'nz2 greater than 2048 is not allowed in phaModSize(src4,nz,ny) '
    print,'Returning to IDL-Level 0 (main) ...'
    print,''
    retall
 ENDIF
 IF ny2 gt 256 THEN BEGIN 
    print,''
-   print,'ny2 greater than 256 is not allowed in phaModSize(src4,nz,ny) '
+   print,'ny2 greater than 2048 is not allowed in phaModSize(src4,nz,ny) '
    print,'Returning to IDL-Level 0 (main) ...'
    print,''
    retall
