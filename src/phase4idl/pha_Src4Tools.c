@@ -77,6 +77,7 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
 
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
 
+  printf("Enter C code for phaModSizeCut\n"); 
   
  /*
   extern void pha_src4_cut_(); // Declare the Fortran Routine 
@@ -87,8 +88,7 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
 // /*
   extern void pha_src4_cut_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine   
-  pha_src4_cut_nostructs_( &MaxDim
-                         ,beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+  pha_src4_cut_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                          , &nz,&zmin,&zmax,nzmin,nzmax
                          , &ny,&ymin,&ymax,nymin,nymax) ;
 // */

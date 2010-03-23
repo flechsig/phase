@@ -9,7 +9,7 @@ c #define MaxDimm 1024
 
 cc TL 26.3.08 fixed the dimension problem
 cc MaxDim is the Dimension of the fieldsw in the src4-structure
-#define MaxDim 256
+#define MaxDim 2048
 cc BigMaxDim is for internal temporary fields
 #define BigMaxDim 1024
 
@@ -161,7 +161,9 @@ c Cuts a part out of the grid ... from nz/ymin to nz/ymax
      &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
      &	, temp(MaxDim,MaxDim)
 
-     
+      write(*,*)'Enter pha_src4_cut_nostructs'
+      write(*,*)'nzmax'
+      write(*,*) nzmax, nzmin, nymax, nymin
 	if ((nzmax.gt.nzmin).and.(nymax.gt.nymin)) then
 	! Eingangsbedingung !
 	! Nur falls obere Grenzen goesser als untere wird gestartet ... !
@@ -236,6 +238,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c           ,dz1,dy1
 	
 	write(*,*)'Adding zeros ...'
+c	write(*,*)nz1, nz2
+c	write(*,*)ny1, ny2
 	
 c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	
@@ -251,7 +255,7 @@ c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
       ny_delta=(ny2-ny1)/2    ! Immer ganzzahlig, da N_delta gerade oben 
 					! erzwungen wird
 
-	dz=(zmax-zmin)/(nz1-1)
+	    dz=(zmax-zmin)/(nz1-1)
       dy=(ymax-ymin)/(ny1-1)
       
       zmin=zmin-nz_delta*dz
@@ -259,7 +263,10 @@ c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
       
       ymin=ymin-ny_delta*dy
       ymax=ymax+ny_delta*dy
-	    
+
+	    write(*,*)'New boundaries:'
+    	write(*,*)zmin, zmax
+    	write(*,*)ymin, ymax
     
 c..... AddZeros.....
 #ifdef ABSOFT

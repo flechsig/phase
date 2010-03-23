@@ -269,6 +269,11 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz1,&zmin,&zmax,&ny1,&ymin,&ymax);
 
+  printf("nz1 = %d  ny1 = %d\n", nz1, ny1);
+  printf("nz2 = %d  ny2 = %d\n", *nz2, *ny2);
+  printf("zmin = %.2f  zmax = %.2f\n", zmin, zmax);
+  printf("ymin = %.2f  ymax = %.2f\n", ymin, ymax);
+
  /*
   extern void pha_src4_addzeros_(); // Declare the Fortran Routine 
   // Call the Fortran Routine 
@@ -301,6 +306,11 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
   int  nz,ny;
   double zmin,zmax,ymin,ymax;
 
+  printf("phase4idl.c Enter C code for phaModSizeCut\n"); 
+  printf("nzmin=%d \t nzmax=%d\n", *nzmin, *nzmax); 
+  printf("nymin=%d \t nymax=%d\n", *nymin, *nymax); 
+
+  
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
 
   
@@ -310,7 +320,7 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
   pha_src4_cut_(beam, nzmin,nzmax,nymin,nymax);
 // */
 
-// /*
+// /*  
   extern void pha_src4_cut_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine   
   pha_src4_cut_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
