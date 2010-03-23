@@ -81,8 +81,6 @@ libphase4idl_la_SOURCES   = \
 ##               pha_helper_functions.F \
 ##               pha_Src4Tools.c \
 ## benchmark.f \
-## pha_Drift_1024.f \
-## pha_Drift_256.f \
 ## phase4idl_fortran_master.f \
 ## phase4idl_fortran_master_standalone.f \
 ## test_phase.f \
