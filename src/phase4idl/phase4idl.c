@@ -149,11 +149,8 @@ int phaPropFFTnear (struct source4 *beam, double *distance)
 // /*  // Declare the Fortran Routine
   extern void phadrift_propagate_fft_near_nostructs_();  
   // Call the Fortran Routine       
-  phadrift_propagate_fft_near_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
-//					,zezre,zezim,zeyre,zeyim
-	 				,&nz,&zmin,&zmax
-    					,&ny,&ymin,&ymax
-     					,&dist, &xlam ) ;
+  phadrift_propagate_fft_near_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim,                                         
+          &nz,&zmin,&zmax,&ny,&ymin,&ymax,&dist,&xlam) ;
 //    pha_c_adjust_src4_grid(beam);
   // Neues Grid in Struktur schreiben
 //  pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
@@ -197,6 +194,47 @@ int phaPropFFTfar (struct source4 *beam, double *distance)
 					,&dist, &xlam ) ;
 // */
   
+  // Neues Grid in Struktur schreiben
+  pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
+
+  return (0);
+}
+// ***************************************************************************
+// */
+// ***************************************************************************
+
+
+// ***************************************************************************
+// /* *** Fortran-Access ***  
+int phaPropFkoe (struct source4 *beam, double *distance,  double *dista, 
+                    double* angle, int *mode, IDL_STRING* surffilename,
+                    int *nz2, double *zmin2, double *zmax2, 
+                    int *ny2, double *ymin2, double *ymax2 )                 
+{ 
+  // Dereferencing dist, so that it won't change in the calling program  
+  double dist = *distance;
+  
+  int    nz,ny,nlen;
+  double zmin,zmax,ymin,ymax;
+  double xlam = beam->xlam;
+  const char* string;
+
+//c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
+  pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);  
+
+  //necessary to pass explicit length of C string to Fortran
+  nlen = surffilename->slen;
+  string = surffilename->s;
+
+  extern void phadrift_propagate_fk_oe_nostructss_(); // Declare the Fortran Routine 
+  // Call the Fortran Routine       
+  phadrift_propagate_fk_oe_nostructs_( beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+					,&nz,&zmin,&zmax
+					,&ny,&ymin,&ymax
+					,&dist, dista, &xlam, angle, mode
+          ,string, &nlen
+          ,nz2, zmin2, zmax2, ny2, ymin2, ymax2);
+
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
 

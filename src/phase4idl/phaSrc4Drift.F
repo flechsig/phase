@@ -35,8 +35,6 @@ ccc  Rest raus !!!
 
 
 
-
-
 	
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c      subroutine phadrift_propagate_fk( beam4 ,dist 
@@ -931,7 +929,4 @@ c------------ phadrift_remap y
 	return
 	end ! phadrift_remap
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc	
-
-
-
 

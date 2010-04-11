@@ -70,7 +70,8 @@ libphase4idl_la_SOURCES   = \
                phaSrc4Drift.F \
                phaSrc4WFGauss.F \
                phaSrc4Tools.F \
-               phase4idl.h
+               phase4idl.h \
+               phaSrc4Drift_oe.F
 ##                \
 ##               $(ORIGINALPHASExSOURCES)
 
