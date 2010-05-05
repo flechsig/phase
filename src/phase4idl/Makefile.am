@@ -81,11 +81,8 @@ libphase4idl_la_SOURCES   = \
 ##                pha_Src4WFGauss.c \
 ##               pha_helper_functions.F \
 ##               pha_Src4Tools.c \
-## benchmark.f \
 ## phase4idl_fortran_master.f \
 ## phase4idl_fortran_master_standalone.f \
-## test_phase.f \
-## test_phase_gaussetc.f \
 
 ## ATnT_port3_driftroutines/ATnT_port3_driftroutines.for
 ## ---> these routines are included in libphase*.so
