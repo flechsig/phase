@@ -1,7 +1,7 @@
 
 
 
-pro phaModGridSizeAddZeros,bl,nz2,ny2
+pro phaModGridSizeAddZeros,beam,nz2,ny2
 ;+
 ; NAME:
 ;	phaModGridSizeAddZeros
@@ -16,12 +16,12 @@ pro phaModGridSizeAddZeros,bl,nz2,ny2
 ;	phaModGridSizeAddZeros,source4,nz2,ny2
 ;
 ; INPUTS:
-;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;     	beam:   pha4idl src4 structure (see phainit_structures.pro)
 ;	nz2	new number of gridpoints in z
 ;	ny2	new number of gridpoints in y
 ;
 ; OUTPUTS:
-;     	bl:	modified pha4idl beamline structure
+;     	beam:	modified src4 structure
 ;
 ; KEYWORDS:
 ;	None.
@@ -33,7 +33,7 @@ pro phaModGridSizeAddZeros,bl,nz2,ny2
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
-;
+;      August 27, 2010, SG, modified to accept src4 
 ;-
 
 np=n_params()
@@ -53,7 +53,7 @@ IF nz2 gt 2048 THEN BEGIN
    print,''
    retall
 ENDIF
-IF ny2 gt 256 THEN BEGIN 
+IF ny2 gt 2048 THEN BEGIN 
    print,''
    print,'ny2 greater than 2048 is not allowed in phaModSize(src4,nz,ny) '
    print,'Returning to IDL-Level 0 (main) ...'
@@ -67,7 +67,7 @@ ny2=long(ny2)
 
 result=1
 result = call_external(!phalib,'phaModSizeAddZeros',$
-			bl.src.so4,  $
+			beam,  $
 			nz2, ny2, $
 			/I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
@@ -76,9 +76,10 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaModGridSizeCut,bl,nzmin,nzmax,nymin,nymax
+pro phaModGridSizeCut,beam,nzmin,nzmax,nymin,nymax
 ;+
 ; NAME:
 ;	phaModGridSizeCut
@@ -93,14 +94,14 @@ pro phaModGridSizeCut,bl,nzmin,nzmax,nymin,nymax
 ;	phaModGridSizeCut,bl,nzmin,nzmax,nymin,nymax
 ;
 ; INPUTS:
-;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;     	beam:   pha4idl src4 structure (see phainit_structures.pro)
 ;	nzmin	lower edge to be cut in z
 ;	nzmax	upper edge to be cut in z
 ;	nymin	lower edge to be cut in y
 ;	nymax	upper edge to be cut in y
 ;
 ; OUTPUTS:
-;     	bl:	modified pha4idl beamline structure
+;     	beam:	modified pha4idl src4 structure
 ;
 ; KEYWORDS:
 ;	None.
@@ -111,7 +112,7 @@ pro phaModGridSizeCut,bl,nzmin,nzmax,nymin,nymax
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
-;
+;      August 27, 2010, SG, modified to accept src4 
 ;-
 np=n_params()
 IF np NE 5 THEN BEGIN 
@@ -133,7 +134,7 @@ result=1
 ;   int phaModSizeCut(struct source4 *beam4, int *nzmax,int *nzmin,int *nymax,int *nymin)
 
 result = call_external(!phalib,'phaModSizeCut',$
-			bl.src.so4,  $
+			beam,  $
 			nzmin,nzmax,nymin,nymax, $
 			/I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
@@ -142,9 +143,10 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaModGridPoints,bl,nz2,ny2
+pro phaModGridPoints,beam,nz2,ny2
 ;+
 ; NAME:
 ;	phaModGridPoints
@@ -157,15 +159,15 @@ pro phaModGridPoints,bl,nz2,ny2
 ;	pro : pha4idl - modify grid
 ;
 ; CALLING SEQUENCE:
-;	phaModGridPoints,bl,nz2,ny2
+;	phaModGridPoints,beam,nz2,ny2
 ;
 ; INPUTS:
-;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;     	beam	pha4idl src4 structure (see phainit_structures.pro)
 ;	nz2	new number of gridpoints in z
 ;	ny2	new number of gridpoints in y
 ;
 ; OUTPUTS:
-;     	bl:	modified pha4idl beamline structure
+;     	beam:	modified pha4idl src4 structure
 ;
 ; KEYWORDS:
 ;	None.
@@ -176,7 +178,7 @@ pro phaModGridPoints,bl,nz2,ny2
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
-;
+;      August 24, 2010, SG, modified to accept src4
 ;-
 
 np=n_params()
@@ -194,7 +196,7 @@ ny2=long(ny2)
 
 result=1
 result = call_external(!phalib,'phaModGrid',$
-			bl.src.so4,  $
+			beam,  $
 			nz2, ny2, $
 			/I_VALUE,/UNLOAD,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
@@ -222,11 +224,11 @@ pro phaModApplyMask,beam,mask
 ;       phaModApplyMask,beam,mask
 ;
 ; INPUTS:
-;       beam: pha4idl beam structure (see phainit_structures.pro)
+;       beam: pha4idl src4 structure (see phainit_structures.pro)
 ; mask: array of bytes with same dimensions as the grid in bl
 ; 
 ; OUTPUTS:
-;       beam: modified pha4idl beam structure
+;       beam: modified pha4idl src4 structure
 ;
 ; KEYWORDS:
 ;       None.

@@ -2,64 +2,10 @@
 
 ;; filename:  phaLoadEMField.pro
 
-PRO phaLoadEMField, bl, MainFileName
+function phaLoadEMField, MainFileName, lambda, _EXTRA = e
 ;+
 ; NAME:
 ;	phaLoadEMField
-;
-; PURPOSE:
-;       Load phasestyle EMFields into beamline
-;
-; CATEGORY:
-;	pro : pha4idl - beamline
-;
-; CALLING SEQUENCE:
-;	phaLoadEMField, bl, MainFileName
-;
-; INPUTS:
-;     	bl		beamline struct
-;	MainFileName	prefix for the phase EMField files
-;			phase adds the following postfixes:
-;			-ezre, -ezim, -eyre, -eyim  : real and imaginary 
-;				of the EM-fields with z & y polarizaiton
-;
-; OUTPUTS:
-;     	bl		filled beamline struct
-;
-; KEYWORDS:
-;	None.
-;
-; SIDE EFFECTS:
-;
-; RESTRICTIONS:
-;
-; MODIFICATION HISTORY:
-;      March 28, 2008, TL, added help
-;
-;-
-
-
-np=n_params()
-
-if np ne 2 then begin
-	print, 'Wrong Number of arguments ...'
-	print, 'Usage: LoadPhaseResults, beam[source4], MainFileName[string] '
-	print, ''
-	return
-endif
-
-phaLoadEzReal,bl.src.so4,MainFileName+'-ezrec'
-phaLoadEzImag,bl.src.so4,MainFileName+'-ezimc'
-phaLoadEyReal,bl.src.so4,MainFileName+'-eyrec'
-phaLoadEyImag,bl.src.so4,MainFileName+'-eyimc'
-
-END
-
-
-function phaSrcLoadEMField, MainFileName, lambda, _EXTRA = e
-;+
-; NAME:
-;	phaSrcLoadEMField
 ;
 ; PURPOSE:
 ;       Loads phasestyle EMFields and creates 
@@ -71,7 +17,7 @@ function phaSrcLoadEMField, MainFileName, lambda, _EXTRA = e
 ;	pro : pha4idl - create src4
 ;
 ; CALLING SEQUENCE: 
-;	phaSrcLoadEMField(MainFileName, lambda)
+;	phaLoadEMField(MainFileName, lambda)
 ;
 ; INPUTS:
 ;	      MainFileName	prefix for the phase EMField files
@@ -81,7 +27,7 @@ function phaSrcLoadEMField, MainFileName, lambda, _EXTRA = e
 ;
 ;       lambda  wavelength in nm
 ;
-;       optional: SCALE=[double] scaling factor for field dimensions
+;       [optional]: SCALE=[double] scaling factor for field dimensions
 ;                   default is 1.0, i.e. units in file are interpreted as [mm]
 ;                   (often file format is in [m], therefore SCALE=10^3 is needed)
 ; OUTPUTS:

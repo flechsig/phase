@@ -278,45 +278,55 @@ ELSE $; plot vector field where all vectors have point-like appearence
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaDrawIntensity, beam, name
+pro phaDrawIntensity, beam, name, colors = CO, _EXTRA = LOG
 ;+
 ; NAME:
-;	phaDrawIntensity
+; phaDrawIntensity
 ;
 ; PURPOSE:
 ;       Draws two-dimensional shaded contour plot of the intensity.
 ;
 ; CATEGORY:
-;	      pro : pha4idl - extract grid information
+;       pro : pha4idl - extract grid information
 ;
 ; CALLING SEQUENCE:
-;	      phaGetIntensityArray, beam, array
+;       phaGetIntensityArray, beam, array
 ;
 ; INPUTS:
-;     	beam:	pha4idl beam source4 structure (see phainit_structures.pro)
-;	      name: title of the plot
-;	
+;       beam: pha4idl beam source4 structure (see phainit_structures.pro)
+;       name: title of the plot
+;       [optional]: COLORS=N: use N shades for plot
+;       [optional]: /LOG: use logarithmic scale for values
+; 
 ; OUTPUTS:
-;     	None.
+;       None.
 ;
 ; KEYWORDS:
-;	      None.
+;       None.
 ;
 ; SIDE EFFECTS:
-;       
+;       None.
 ;
 ; RESTRICTIONS: 
 ;
 ; MODIFICATION HISTORY:
-;     
+;       SG: 08/24/2010 -- add LOG and COLORS option
 ;
 ;-
 
 y=get_pha_src4_axis_y(beam)
 z=get_pha_src4_axis_z(beam)
 
-contour, ((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL
+if KEYWORD_SET(CO) then colors=CO $
+  else colors=10;
+
+; TODO: y, z Labeling vertauscht durch mich, sonst Widerspruch zu Fresnel-Kirchhoff-Propagation
+if KEYWORD_SET(LOG) then $
+contour, alog((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL $
+  else $
+    contour, ((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL, NLEVELS=colors
 
 end

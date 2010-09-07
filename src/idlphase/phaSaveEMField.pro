@@ -3,7 +3,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PRO phaSaveEMField, bl, MainFileName
+PRO phaSaveEMField, beam, MainFileName
 ;+
 ; NAME:
 ;	phaSaveEMField
@@ -36,7 +36,7 @@ PRO phaSaveEMField, bl, MainFileName
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
-;
+;      August 24, 2010, SG, modified to accept src4 instead of bl's
 ;-
 np=n_params()
 
@@ -47,10 +47,10 @@ if np ne 2 then begin
 	return
 endif
 
-phaSaveEzReal,bl.src.so4,MainFileName+'-ezrec'
-phaSaveEzImag,bl.src.so4,MainFileName+'-ezimc'
-phaSaveEyReal,bl.src.so4,MainFileName+'-eyrec'
-phaSaveEyImag,bl.src.so4,MainFileName+'-eyimc'
+phaSaveEzReal,beam,MainFileName+'-ezrec'
+phaSaveEzImag,beam,MainFileName+'-ezimc'
+phaSaveEyReal,beam,MainFileName+'-eyrec'
+phaSaveEyImag,beam,MainFileName+'-eyimc'
 
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
