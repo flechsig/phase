@@ -161,22 +161,28 @@ c Cuts a part out of the grid ... from nz/ymin to nz/ymax
      &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
      &	, temp(MaxDim,MaxDim)
 
-      write(*,*)'Enter pha_src4_cut_nostructs'
-      write(*,*)'nzmax'
-      write(*,*) nzmax, nzmin, nymax, nymin
+
+c change indices from C to Fortran convention
+      nzmin = nzmin + 1
+      nzmax = nzmax + 1
+      nymin = nymin + 1
+      nymax = nymax + 1
+
+c      write(*,*)'Enter pha_src4_cut_nostructs'
+c      write(*,*)'nzmax, nzmin, nymax, nymin'
+c      write(*,*) nzmax, nzmin, nymax, nymin
 	if ((nzmax.gt.nzmin).and.(nymax.gt.nymin)) then
 	! Eingangsbedingung !
 	! Nur falls obere Grenzen goesser als untere wird gestartet ... !
 	
 	
 c in C:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
-
 	if (nzmax.gt.nz) nzmax=nz
 	if (nzmin.lt.1 ) nzmin=1
 	if (nymax.gt.ny) nymax=ny
 	if (nymin.lt.1 ) nymin=1
 	
-	write(*,*)'Cutting grid ...'
+c	write(*,*)'Cutting grid ...'
 	
 	dz=(zmax-zmin)/(nz-1)
       dy=(ymax-ymin)/(ny-1)
@@ -185,12 +191,15 @@ c in C:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
       zmax=zmax-(nz-nzmax)*dz
       
       ymin=ymin+(nymin-1)*dy
-      ymax=ymax-(ny-nymax)*dy
-	
+      ymax=ymax-(ny-nymax)*dy        
+
+      
 	nz=nzmax-nzmin+1
 	ny=nymax-nymin+1
-#ifdef ABSOFT
-#else    
+c      write(*,*)'nz, ny'
+c      write(*,*) nz, ny
+
+	temp(1:nz,1:ny)   =  zeyre(nzmin:nzmax,nymin:nymax)
 	zeyre(:,:)     =  0
 	zeyre(1:nz,1:ny)=temp(1:nz,1:ny)
 	
@@ -205,7 +214,7 @@ c in C:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	temp(1:nz,1:ny)   =  zezim(nzmin:nzmax,nymin:nymax)
 	zezim(:,:)     =  0
 	zezim(1:nz,1:ny)=temp(1:nz,1:ny)
-#endif	
+
 c in C:call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax  )	
 
 

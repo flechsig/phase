@@ -344,13 +344,11 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
   int  nz,ny;
   double zmin,zmax,ymin,ymax;
 
-  printf("phase4idl.c Enter C code for phaModSizeCut\n"); 
+  printf("phase4idl.c entering C code for phaModSizeCut\n"); 
   printf("nzmin=%d \t nzmax=%d\n", *nzmin, *nzmax); 
   printf("nymin=%d \t nymax=%d\n", *nymin, *nymax); 
-
-  
+    
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
-
   
  /*
   extern void pha_src4_cut_(); // Declare the Fortran Routine 
