@@ -26,12 +26,15 @@ END
 
 ;Phase 3D-Surface-Plot of Intensity
 
-pro phaIntensitySurface,beam,name
+pro phaIntensitySurface,beam,name, ax = AX, az = AZ
 
 y=get_pha_src4_axis_y(beam)
 z=get_pha_src4_axis_z(beam)
 
-surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name
+if KEYWORD_SET(AX) then ax=30+AX else ax=30;
+if KEYWORD_SET(AZ) then az=30+AZ else az=30;
+
+surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax
 ;shade_surf,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name
 
 end
