@@ -22,11 +22,44 @@ y = miny + ((beam.yezremax-beam.yezremin)/(beam.iezrey-1)) * dindgen(beam.iezrey
 return,y
 
 END
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Phase 3D-Surface-Plot of Intensity
-
-pro phaIntensitySurface,beam,name, ax = AX, az = AZ
+pro phaIntensitySurface,beam, name, ax = AX, az = AZ
+;+
+; NAME:
+; phaIntensitySurface
+;
+; PURPOSE:
+;       Draws three-dimensional surface mesh of the intensity.
+;
+; CATEGORY:
+;       pro : pha4idl - extract grid information
+;
+; CALLING SEQUENCE:
+;       phaIntensitySurface, beam, name, [ax = AX], [az = AZ]
+;
+; INPUTS:
+;       beam: pha4idl beam source4 structure (see phainit_structures.pro)
+;       name: title of the plot
+;       [optional]: ax = AX: rotate about X-axis, relative to 30 degrees
+;       [optional]: az = AZ: rotate about Z-axis, relative to 30 degrees
+; 
+; OUTPUTS:
+;       None.
+;
+; KEYWORDS:
+;       None.
+;
+; SIDE EFFECTS:
+;       None.
+;
+; RESTRICTIONS: 
+;
+; MODIFICATION HISTORY:
+;       SG: 09/17/2010 -- HELP added
+;
+;-
 
 y=get_pha_src4_axis_y(beam)
 z=get_pha_src4_axis_z(beam)
