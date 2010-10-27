@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <27 Oct 10 09:28:33 flechsig>  */
+/*  Time-stamp: <27 Oct 10 13:10:03 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -95,7 +95,7 @@ int main(argc, argv)
 
 #ifdef SEVEN_ORDER
     printf(" PHASE version > Nov: 2010: SEVEN_ORDER defined\n\n");
-#els
+#else
     printf(" PHASE version > Nov: 2010: SEVEN_ORDER undefined\n\n");
 #endif
     
