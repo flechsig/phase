@@ -1,8 +1,13 @@
-c File      : /home/vms/flechsig/vms/phas/phasec/phase_struct_10.for
-c Date      : <22 Oct 97 14:56:27 flechsig> 
-c Time-stamp: <07 Jan 00 10:30:09 flechsig> 
-c Author    : Uwe Flechsig, flechsig@exp.bessy.de
-c
+c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
+c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
+c$$$ Time-stamp: <27 Oct 10 11:39:14 flechsig> 
+c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c !!!! stuct statstics die Feldgrenzen halbiert da sonst
 c run time error UF 7.1.2000 */
 
@@ -14,44 +19,53 @@ c------------------------------------------------------------
 
 c--------------- fourth order map ---------------------------
 
+#ifdef SEVEN_ORDER
+/* number to be checked */
+  #define MAPDIM  7
+#else
+  #define MAPDIM  4
+#endif
+
+
+
 	structure/map4/
-	real*8      wc(0:4,0:4,0:4,0:4),
-     &              xlc(0:4,0:4,0:4,0:4),
-     &              ypc1(0:4,0:4,0:4,0:4),
-     &              zpc1(0:4,0:4,0:4,0:4),
-     &              dyp1c(0:4,0:4,0:4,0:4),
-     &              dzp1c(0:4,0:4,0:4,0:4),
-     &              dypc(0:4,0:4,0:4,0:4),
-     &              dzpc(0:4,0:4,0:4,0:4),
-     &              xlen1cc(0:4,0:4,0:4,0:4),
-     &              xlen1c(0:4,0:4,0:4,0:4),
-     &              xlen1c_r(0:4,0:4),
-     &              xlen1c_rr(0:4),xlength1,
-     &              xlen2cc(0:4,0:4,0:4,0:4),
-     &              xlen2c(0:4,0:4,0:4,0:4),
-     &              xlen2c_r(0:4,0:4),
-     &              xlen2c_rr(0:4),xlength2,
-     &              xlen3c(0:4,0:4,0:4,0:4),
-     &              xlen4c(0:4,0:4,0:4,0:4),
-     &              xlen5c(0:4,0:4,0:4,0:4),
-     &              ypc_ap(0:4,0:4,0:4,0:4),zpc_ap(0:4,0:4,0:4,0:4),
-     &              ypc_ap_r(0:4,0:4),zpc_ap_r(0:4,0:4),
-     &              ypc_ap_rr(0:4),zpc_ap_rr(0:4),
-     &              fdetc(0:4,0:4,0:4,0:4),
-     &              fdetphc(0:4,0:4,0:4,0:4),
-     &              fdet1phc(0:4,0:4,0:4,0:4),
-     &              fdetrc(0:4,0:4),
-     &              fdetphrc(0:4,0:4),fdet1phrc(0:4,0:4),
-     &              yprc1(0:4,0:4),zprc1(0:4,0:4),
-     &              dyprc(0:4,0:4),dzprc(0:4,0:4),
-     &              fdtrrc(0:4),
-     &              fdtphrrc(0:4),fdt1phrrc(0:4),
-     &              yprrc1(0:4),zprrc1(0:4),
-     &              dyprrc(0:4),dzprrc(0:4),
-     &              wrc(0:4,0:4),xlrc(0:4,0:4),
-     &              wrrc(0:4),xlrrc(0:4),
-     &              xmec(1:4,1:4,0:4,0:4,0:4,0:4),
-     &              xmec1(1:4,1:4,0:4,0:4,0:4,0:4)
+	real*8      wc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              ypc1(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              zpc1(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              dyp1c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              dzp1c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              dypc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              dzpc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen1cc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen1c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen1c_r(0:MAPDIM,0:MAPDIM),
+     &              xlen1c_rr(0:MAPDIM),xlength1,
+     &              xlen2cc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen2c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen2c_r(0:MAPDIM,0:MAPDIM),
+     &              xlen2c_rr(0:MAPDIM),xlength2,
+     &              xlen3c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen4c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xlen5c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              ypc_ap(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),zpc_ap(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              ypc_ap_r(0:MAPDIM,0:MAPDIM),zpc_ap_r(0:MAPDIM,0:MAPDIM),
+     &              ypc_ap_rr(0:MAPDIM),zpc_ap_rr(0:MAPDIM),
+     &              fdetc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              fdetphc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              fdet1phc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              fdetrc(0:MAPDIM,0:MAPDIM),
+     &              fdetphrc(0:MAPDIM,0:MAPDIM),fdet1phrc(0:MAPDIM,0:MAPDIM),
+     &              yprc1(0:MAPDIM,0:MAPDIM),zprc1(0:MAPDIM,0:MAPDIM),
+     &              dyprc(0:MAPDIM,0:MAPDIM),dzprc(0:MAPDIM,0:MAPDIM),
+     &              fdtrrc(0:MAPDIM),
+     &              fdtphrrc(0:MAPDIM),fdt1phrrc(0:MAPDIM),
+     &              yprrc1(0:MAPDIM),zprrc1(0:MAPDIM),
+     &              dyprrc(0:MAPDIM),dzprrc(0:MAPDIM),
+     &              wrc(0:MAPDIM,0:MAPDIM),xlrc(0:MAPDIM,0:MAPDIM),
+     &              wrrc(0:MAPDIM),xlrrc(0:MAPDIM),
+     &              xmec(1:4,1:4,0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              xmec1(1:4,1:4,0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
      	end structure
     
 c--------------- partial derivatives ------------------------
@@ -206,8 +220,8 @@ c---------------- rays  --------------------------------------
 c------------------ path length coefficients (notwendig ???) ---------
 
         structure/xlenmap/                 ! Entw. Koeffizienten
-	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
-     &  	  xlen2c(0:4,0:4,0:4,0:4)
+	   real*8 xlen1c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM), ! der Pfadlaenge
+     &  	  xlen2c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
        	end structure 
 
 c------------------ results from sources ------------------------
