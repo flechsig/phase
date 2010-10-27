@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <27 Oct 10 11:39:14 flechsig> 
+c$$$ Time-stamp: <27 Oct 10 12:49:01 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -12,7 +12,7 @@ c !!!! stuct statstics die Feldgrenzen halbiert da sonst
 c run time error UF 7.1.2000 */
 
 c------------------------------------------------------------
-c
+c 
 c	variable structures for PHASE
 c
 c------------------------------------------------------------
@@ -20,13 +20,10 @@ c------------------------------------------------------------
 c--------------- fourth order map ---------------------------
 
 #ifdef SEVEN_ORDER
-/* number to be checked */
-  #define MAPDIM  7
+#define MAPDIM  7
 #else
-  #define MAPDIM  4
+#define MAPDIM  4
 #endif
-
-
 
 	structure/map4/
 	real*8      wc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
@@ -291,4 +288,5 @@ c------------------ constants -----------------------------------
 	   complex*16 sqrtm1
         end structure
 
-c end phase_struct_10.for
+
+c end phase_struct.F
