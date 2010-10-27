@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <04 Dec 09 15:01:24 flechsig>  */
+/*   Time-stamp: <27 Oct 10 11:26:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -462,8 +462,13 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
   char so6_fsource6[MaxPathLength];
 };                                                                   
 
-typedef double MAP70TYPE [70][70];  
-typedef double MAP7TYPE [5][5][5][5];    
+#ifdef SEVEN_ORDER
+  typedef double MAP70TYPE [330][330];  
+  typedef double MAP7TYPE [8][8][8][8]; 
+#else
+  typedef double MAP70TYPE [70][70];  
+  typedef double MAP7TYPE [5][5][5][5];    
+#endif
 
 typedef struct grdatstructtype {
   double ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma,tmi,tma;
@@ -472,7 +477,11 @@ typedef struct grdatstructtype {
 } GRDATSTRUCTTYPE;  
 
 struct mirrortype {
+#ifdef SEVEN_ORDER
+  double a[9][9];
+#else
   double a[6][6];
+#endif
 };
 
 /* in phase_struct.h ist die analoge structur geometryst */
