@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <27 Oct 10 09:12:40 flechsig> 
+dnl   Time-stamp: <27 Oct 10 09:16:45 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -192,7 +192,6 @@ AC_PROG_LIBTOOL
 AC_ARG_ENABLE([EXPIRE],
     AC_HELP_STRING([--enable-EXPIRE=YYYYMMDD],[expiring date of the code]),
     AC_DEFINE_UNQUOTED([EXPIRE], $enableval, "expiring date"))
-
 
 ## phase with power series up to eighth order (iord= 1 ...7) Nov. 2010
 ## default (iord= 1..4)
