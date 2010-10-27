@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <31 Oct 03 12:31:39 flechsig>  */
+/*   Time-stamp: <27 Oct 10 09:59:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -9,15 +9,19 @@
 /*   $Author$  */
 
 
-/*   File      : /home/pss060/sls/flechsig/phase/src/phase/phase_struct_10.h */
-/*   Date      : <07 Jan 00 09:23:38 flechsig>  */
-/*   Time-stamp: <31 Oct 03 12:31:32 flechsig>  */
-/*   Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
-
 #ifndef __PHASE_STRUCT
 #define __PHASE_STRUCT
 
 #define MAX_GRIDSIZE 2048 
+
+/* we should put a similar section in each header file which has to be upgraded in order 
+   to be independent from the calling sequence */
+#ifdef SEVEN_ORDER
+/* number to be checked */
+  #define MAPDIM  8
+#else
+  #define MAPDIM  5
+#endif
 
 
 /* neu eingefuegt */
@@ -37,43 +41,46 @@ typedef struct ComplexStruct {
 /*-------------- fourth order map ---------------------------*/
 
 	struct  map4 {
-	double      wc[5][5][5][5],
-                    xlc[5][5][5][5],
-                    ypc1[5][5][5][5],
-                    zpc1[5][5][5][5],
-                    dyp1c[5][5][5][5],
-                    dzp1c[5][5][5][5],
-                    dypc[5][5][5][5],
-                    dzpc[5][5][5][5],
-                    xlen1cc[5][5][5][5],
-                    xlen1c[5][5][5][5],
-                    xlen1c_r[5][5],
-                    xlen1c_rr[5],xlength1,
-                    xlen2cc[5][5][5][5],
-                    xlen2c[5][5][5][5],
-                    xlen2c_r[5][5],
-                    xlen2c_rr[5],xlength2,
-	            xlen3c[5][5][5][5],
-                    xlen4c[5][5][5][5],
-                    xlen5c[5][5][5][5],
-                    ypc_ap[5][5][5][5],zpc_ap[5][5][5][5],
-                    ypc_ap_r[5][5],zpc_ap_r[5][5],
-                    ypc_ap_rr[5],zpc_ap_rr[5],
-                    fdetc[5][5][5][5],
-                    fdetphc[5][5][5][5],
-                    fdet1phc[5][5][5][5],
-                    fdetrc[5][5],
-                    fdetphrc[5][5],fdet1phrc[5][5],
-                    yprc1[5][5],zprc1[5][5],
-                    dyprc[5][5],dzprc[5][5],
-                    fdtrrc[5],
-                    fdtphrrc[5],fdt1phrrc[5],
-                    yprrc1[5],zprrc1[5],
-                    dyprrc[5],dzprrc[5],
-                    wrc[5][5],xlrc[5][5],
-                    wrrc[5],xlrrc[5],
-                    xmec[4][4][5][5][5][5],
-                    xmec1[4][4][5][5][5][5];
+	double      wc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    ypc1[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    zpc1[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    dyp1c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    dzp1c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    dypc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    dzpc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen1cc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen1c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen1c_r[MAPDIM][MAPDIM],
+                    xlen1c_rr[MAPDIM],xlength1,
+                    xlen2cc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen2c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen2c_r[MAPDIM][MAPDIM],
+                    xlen2c_rr[MAPDIM],xlength2,
+	            xlen3c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen4c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xlen5c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    ypc_ap[MAPDIM][MAPDIM][MAPDIM][MAPDIM],zpc_ap[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    ypc_ap_r[MAPDIM][MAPDIM],zpc_ap_r[MAPDIM][MAPDIM],
+                    ypc_ap_rr[MAPDIM],zpc_ap_rr[MAPDIM],
+                    fdetc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    fdetphc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    fdet1phc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    fdetrc[MAPDIM][MAPDIM],
+                    fdetphrc[MAPDIM][MAPDIM],fdet1phrc[MAPDIM][MAPDIM],
+                    yprc1[MAPDIM][MAPDIM],zprc1[MAPDIM][MAPDIM],
+                    dyprc[MAPDIM][MAPDIM],dzprc[MAPDIM][MAPDIM],
+                    fdtrrc[MAPDIM],
+                    fdtphrrc[MAPDIM],fdt1phrrc[MAPDIM],
+                    yprrc1[MAPDIM],zprrc1[MAPDIM],
+                    dyprrc[MAPDIM],dzprrc[MAPDIM],
+                    wrc[MAPDIM][MAPDIM],xlrc[MAPDIM][MAPDIM],
+                    wrrc[MAPDIM],xlrrc[MAPDIM],
+#ifdef SEVEN_ORDER
+	/* UF ist die 4 richtig */
+#endif
+                    xmec[4][4][MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    xmec1[4][4][MAPDIM][MAPDIM][MAPDIM][MAPDIM];
      	};  
     
 /* -------------- partial derivatives ------------------------*/
@@ -228,8 +235,12 @@ struct  source4 {
 /* ----------------- path length coefficients -------------------- */
 
         struct  xlenmap {                  /* Entw. Koeffizienten */
-	   double xlen1c[5][5][5][5],  /* der Pfadlaenge     */
-        	  xlen2c[5][5][5][5];
+#ifdef SEVEN_ORDER
+	/* UF ist das  richtig? */
+#endif
+
+	   double xlen1c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],  /* der Pfadlaenge     */
+        	  xlen2c[MAPDIM][MAPDIM][MAPDIM][MAPDIM];
        	};   
 
 /* ----------------- results from sources ------------------------*/
