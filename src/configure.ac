@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <22 Jul 09 08:46:18 flechsig> 
+dnl   Time-stamp: <27 Oct 10 09:12:40 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -193,6 +193,16 @@ AC_ARG_ENABLE([EXPIRE],
     AC_HELP_STRING([--enable-EXPIRE=YYYYMMDD],[expiring date of the code]),
     AC_DEFINE_UNQUOTED([EXPIRE], $enableval, "expiring date"))
 
+
+## phase with power series up to eighth order (iord= 1 ...7) Nov. 2010
+## default (iord= 1..4)
+AC_ARG_ENABLE([SEVEN],
+    AC_HELP_STRING([--enable-SEVEN],[max. order of power series 7, default: 4]),
+    AC_DEFINE([SEVEN_ORDER], 1, "expansion up to 7th order"))
+if test "$enable_SEVEN" != "yes" ; then
+   enable_SEVEN="no"
+fi
+
 dnl get configure date put it into header
 configured=`date`
 AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
@@ -316,6 +326,7 @@ dnl echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
 echo "debug code               : ${enable_debug}"
 echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
+echo "seventh order:           : ${enable_SEVEN}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
