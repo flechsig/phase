@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <07 Apr 08 15:38:55 flechsig> 
+c$$$ Time-stamp: <27 Oct 10 12:57:14 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -28,7 +28,8 @@ c if it works under vms is not yet tested
         include '[-.phase]phase_struct.for'
 c        include 'phase_struct.for'
 #else
-        include '../phase/phase_struct.for'
+cc        include '../phase/phase_struct.for'
+#include '../phase/phase_struct.F'
 #endif
         record /constants/ cs
         record /geometryst/ g

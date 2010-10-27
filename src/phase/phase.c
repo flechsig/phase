@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <01 Apr 08 15:04:16 flechsig>  */
+/*  Time-stamp: <27 Oct 10 09:28:33 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -67,7 +67,6 @@ int main(argc, argv)
 
     Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
-
     /*
       define a expire date either with configure:
              ./configure --enable-EXPIRE=YYYYMMDD
@@ -92,6 +91,12 @@ int main(argc, argv)
        /*       already_expired(); */
 #else
     printf(" The program does not expire!\n\n");
+#endif
+
+#ifdef SEVEN_ORDER
+    printf(" PHASE version > Nov: 2010: SEVEN_ORDER defined\n\n");
+#els
+    printf(" PHASE version > Nov: 2010: SEVEN_ORDER undefined\n\n");
 #endif
     
    /* Mar 10: get the data directory at runtime from ENV variable again, not at compile time*/

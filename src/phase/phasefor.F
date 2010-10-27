@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <17 Nov 08 08:59:44 flechsig> 
+c$$$ Time-stamp: <27 Oct 10 12:59:36 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -72,7 +72,8 @@ c if it works under vms is not yet tested
         include '[-.phase]phase_struct.for'
 c        include 'phase_struct.for'
 #else
-        include '../phase/phase_struct.for'
+cc        include '../phase/phase_struct.for'
+#include '../phase/phase_struct.F'
 #endif
 
         complex*16 xm1
@@ -2007,7 +2008,8 @@ c if it works under vms is not yet tested
         include '[-.phase]phase_struct.for'
 c        include 'phase_struct.for'
 #else
-        include '../phase/phase_struct.for'
+cc        include '../phase/phase_struct.for'
+#include '../phase/phase_struct.F'
 #endif
       
       record /control_flags/ ifl

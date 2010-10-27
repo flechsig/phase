@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <17 Jan 08 17:13:06 flechsig> 
+c$$$ Time-stamp: <27 Oct 10 12:52:12 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -20,6 +20,7 @@ c   src3_ini structurvariablen eingefuegt
 c
 c	Input files are expected to be in mm
 c	rather than in m 27.2.2004
+c !!! preprocessor directives must start at line 0
 c
 c**************************************************************
 	subroutine src_ini(src)	
@@ -31,7 +32,8 @@ c a trick to have the struct only in the ./phase and find it from opti
 #ifdef VMS
         include '[-.phase]phase_struct.for'
 #else
-        include '../phase/phase_struct.for'
+cc        include '../phase/phase_struct.F'
+#include '../phase/phase_struct.F'
 #endif
 
 c**************************************************
@@ -119,8 +121,8 @@ c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
-
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 c**************************************************
 
 	record /constants/ cs
@@ -205,7 +207,8 @@ c	returns complex*16 densy
 c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -259,8 +262,8 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct.for'
-
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
@@ -297,8 +300,8 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct.for'
-
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
@@ -330,7 +333,8 @@ c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -526,8 +530,8 @@ c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-	include 'phase_struct.for'
-
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
@@ -681,7 +685,8 @@ c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -720,8 +725,8 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
-
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 	record /source2/ so2
 
 	open(unit=10,name=so2.fsource2a,type='old')
@@ -764,7 +769,8 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /source3/ so3
 
@@ -792,7 +798,8 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /source4/ so4
 
@@ -902,7 +909,8 @@ c*****************************************************************
 c*****************************************************************
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /source6/ so6
 
@@ -933,7 +941,8 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	complex*16 carg
 
@@ -1017,7 +1026,8 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /source3/ so3
 	record /constants/ cs
@@ -1120,7 +1130,8 @@ c			 dimag(XXX)=phase
 c
 c-----------------------------------------------------------
 	implicit real*8(a-h,o-z)
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /source4/ so4
 	record /constants/ cs
@@ -1242,7 +1253,8 @@ c**********************************************************
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 	record /source6/ so6
 	record /geometryst/ g
@@ -1329,7 +1341,8 @@ c-----------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include 'phase_struct.F'
 
 c**************************************************
 
@@ -1354,4 +1367,7 @@ c**************************************************
 	return
 	end
 
+
+
 c end
+ 

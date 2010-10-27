@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <17 Jan 08 16:49:50 flechsig> 
+c$$$ Time-stamp: <27 Oct 10 13:01:22 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -55,7 +55,9 @@ c************************************************
      &      yzint,yzintey,yzintez
 	complex*16 fzey(4096),fzez(4096)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include '../phase/phase_struct.F'
+
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -258,7 +260,9 @@ c*************************************************************
 	dimension densiyre(1000),densiyim(1000),
      &            densizre(1000),densizim(1000)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include '../phase/phase_struct.F'
+
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -439,7 +443,9 @@ c*************************************************************
 
 	dimension a(0:5,0:5)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include '../phase/phase_struct.F'
+
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -1045,7 +1051,9 @@ c-----------------
 
 	implicit real*8(a-h,o-z)
 
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include '../phase/phase_struct.F'
+
         record /rayst/ ra
         record /constants/ cs
 	record /statistics/ st
@@ -1567,7 +1575,9 @@ c-----------------------------------------------------------------------
 
 	dimension densiyzre(1000),densiyzim(1000)
 
-        include 'phase_struct.for'
+cc        include 'phase_struct.for'
+#include '../phase/phase_struct.F'
+
         record /constants/ cs
 	record /statistics/ st
         record /integration_results/ xir
@@ -2054,7 +2064,8 @@ c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
-	include 'phase_struct.for'
+cc	include 'phase_struct.for'
+#include '../phase/phase_struct.F'
 
 c common simps1 ist in xir UF 21.12.99
 
