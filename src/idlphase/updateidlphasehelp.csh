@@ -14,5 +14,3 @@ unalias idl
 unsetenv IDL_STARTUP
 idl updatehelp.idl
 echo 'help.html updated!'
-
-
