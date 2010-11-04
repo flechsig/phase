@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <27 Oct 10 11:26:01 flechsig>  */
+/*   Time-stamp: <04 Nov 10 17:52:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -679,8 +679,6 @@ struct BeamlineType Beamline;
 #ifdef LINUX
   #define exithplot      exithplot_ 
   #define extractmap     extractmap_
-  #define fdet           fdet_
-  #define fgmapidp       fgmapidp_
   #define hlimit         hlimit_
   #define hplint         hplint_
   #define hplotdisplayf  hplotdisplayf_
@@ -695,7 +693,15 @@ struct BeamlineType Beamline;
   #define readmatrixfile readmatrixfile_
   #define src_ini        src_ini_
   #define xxmap70        xxmap70_ 
+#ifdef SEVEN_ORDER
+  #define fdet_8         fdet_8_
+  #define fgmapidp_8     fgmapidp_8_
+  #define misali_8       misali_8_
+#else
+  #define fdet           fdet_
+  #define fgmapidp       fgmapidp_
   #define misali         misali_
+#endif
 /*  #define already_expired already_expired_ */
 #endif
 /************************* Prototypen *****************************/
