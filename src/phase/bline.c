@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <23 Dec 09 09:13:39 flechsig>  */
+/*   Time-stamp: <04 Nov 10 17:32:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -138,9 +138,15 @@ void BuildBeamline(struct BeamlineType *bl)
       if (bl->BLOptions.SourcetoImage != 1)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
+
+#ifdef SEVEN_ORDER
+	  fdet_8(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#else      
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-      
+#endif
+
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
 	  if (listpt->MDat.Art != kEOESlit)
@@ -184,8 +190,14 @@ void BuildBeamline(struct BeamlineType *bl)
 		     (double *)bl->dypc, 
 		     (double *)bl->dzpc, 
 		     &bl->BLOptions.ifl.iord); 
+
+#ifdef SEVEN_ORDER
+	  fdet_8(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#endif
 
      	} /* image to source */
       /*********** map und det fertig ***********/
@@ -299,8 +311,15 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
       if (bl->BLOptions.SourcetoImage != 1)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
+
+#ifdef SEVEN_ORDER
+	  fdet_8(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#endif
+
       
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
@@ -345,8 +364,14 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		     (double *)bl->dypc, 
 		     (double *)bl->dzpc, 
 		     &bl->BLOptions.ifl.iord); 
+
+#ifdef SEVEN_ORDER
+	  fdet_8(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#endif
 
      	} /* image to source */
       /*********** map und det fertig ***********/
@@ -668,9 +693,17 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 
 	if(listpt->MDat.Art==999)
 	   {imodus=imodus+1000;};
+
+#ifdef SEVEN_ORDER
+	fgmapidp_8(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
+#else
 	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
+#endif
+
 	if(listpt->MDat.Art==999)
 	   {imodus=imodus-1000;};
 
@@ -695,9 +728,17 @@ printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix cr
 	    imodus= 2;   
 	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;}; 
+
+#ifdef SEVEN_ORDER
+	    fgmapidp_8(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
+#else
 	    fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);   
+	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
+#endif
+ 
 	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;};
 
@@ -2012,7 +2053,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("            with misalignment\n");
 #endif
       memcpy(&mirror, a, sizeof(struct mirrortype));
+
+#ifdef SEVEN_ORDER
+      misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+#else
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+#endif
+
 #ifdef DEBUG
       printf("DEBUG: mirror coefficients with misalignment\n");
       for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
