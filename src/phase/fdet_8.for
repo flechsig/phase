@@ -1,6 +1,6 @@
 c------------------------------------------------------------------
 	subroutine fdet_8(dfdw,dfdl,ypc1,zpc1,dypc,dzpc,
-     &                    fdetc,fdetphc,fdet1phc,inorm1,inorm2,iord)
+     &                    fdetc,fdetphc,fdet1phc,imodus,inorm1,inorm2,iord)
 c------------------------------------------------------------------
 	implicit real*8(a-h,o-z)
 
