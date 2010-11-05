@@ -1,3 +1,8 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+c
       subroutine misali2_8(a,anew,drl)
       implicit real*8(a-h,o-z)
       dimension a(0:8,0:8),anew(0:8,0:8)
@@ -5,7 +10,6 @@
       dsindrl=dsin(drl)
       dcosdrl=dcos(drl)
       anew(0,0)=0.
-      anew(0.0,0.0)=anew1(0.0,0.0)
       anew(0.0,1.0)=(-dcosdrl*(a(7.0,1.0)*anew(0.0,0.0)**7*dsindrl**7
      . +a(6.0,1.0)*anew(0.0,0.0)**6*dsindrl**6+a(5.0,1.0)*anew(0.0,
      . 0.0)**5*dsindrl**5+a(4.0,1.0)*anew(0.0,0.0)**4*dsindrl**4+a(
