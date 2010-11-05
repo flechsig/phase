@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <04 Nov 10 17:52:27 flechsig>  */
+/*   Time-stamp: <05 Nov 10 08:02:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -692,15 +692,17 @@ struct BeamlineType Beamline;
   #define readfg34_par   readfg34_par_
   #define readmatrixfile readmatrixfile_
   #define src_ini        src_ini_
-  #define xxmap70        xxmap70_ 
+  
 #ifdef SEVEN_ORDER
   #define fdet_8         fdet_8_
   #define fgmapidp_8     fgmapidp_8_
+  #define make_matrix_8  make_matrix_8_
   #define misali_8       misali_8_
 #else
   #define fdet           fdet_
   #define fgmapidp       fgmapidp_
   #define misali         misali_
+  #define xxmap70        xxmap70_ 
 #endif
 /*  #define already_expired already_expired_ */
 #endif
