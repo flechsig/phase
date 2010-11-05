@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Nov 10 17:32:02 flechsig>  */
+/*   Time-stamp: <05 Nov 10 07:58:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -707,8 +707,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	if(listpt->MDat.Art==999)
 	   {imodus=imodus-1000;};
 
-	 xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
+#ifdef SEVEN_ORDER
+	make_matrix_8();
+#else
+	xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
 		listpt->dzpc, &bl->BLOptions.ifl.iord); 
+#endif
 /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
                  listpt->wc, listpt->xlc, listpt->ypc1, 
@@ -719,7 +723,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
                  listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm);
 #ifdef DEBUG   
-printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
+	printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
 	       bl->position);  
 #endif
         /* image to source Rechnung bei RT und  pst */
@@ -742,8 +746,13 @@ printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix cr
 	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;};
 
+#ifdef SEVEN_ORDER
+	    make_matrix_8();
+#else
 	    xxmap70(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
-		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord); 
+		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+#endif
+	    
 /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
 		 listpt->wc, listpt->xlc, listpt->ypc1, 
