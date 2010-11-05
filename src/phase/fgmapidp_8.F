@@ -91,7 +91,7 @@ c------------- get optical path length for phase factor
 	call tay_sum_6(rtq1,rtq2,opl6,iord)
 	call tay_add_6(opl6,q0,iord)
 
-c---------- get dfdw and dwdl in seventh order
+c---------- get dfdw and dfdl in seventh order
 
 	call tay_deri_6a(q0_8,dq0w_8,1,1,iord)
 	call tay_deri_6a(q1_8,dq1w_8,1,1,iord)
@@ -139,20 +139,6 @@ c	imode = 2, use 2D Newton Raphson
 
 	call get_dypdzp(a1,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
-c---------------------------------------------------------------
-
-        if(imodus.eq.2)then
-#ifdef DEBUG
-          write(*,*)'fgmapidp: make map for image to source iord=',iord
-#endif
-          call transponiere(a,g)    ! bild zur quelle
-        else
-#ifdef DEBUG
-          write(*,*)'fgmapidp: make map for source to image iord=',iord
-#endif
-        endif
-c-------------------------------------------------------
-
 	call replace_6v4v(opl6,ypc1,zpc1,opl4,iord)
 	call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
      &                          opl,opl,1,iord)
@@ -174,11 +160,19 @@ c-------------------------------------------------------
         if(idrift.eq.1)then
           call drift_8(a,g,acc,wc,xlc,ypc1,zpc1,
      &                        dypc,dzpc,imodus,iord)
-        endif
+	xlm.xlen1c(0,0,0,0)=g.r*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0)
+        xlm.xlen2c(0,0,0,0)=g.rp*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0)
+        endif	! idrift = 1
 
-c-------------------------------------------------------
+c---------------------------------------------------------------
+
         if(imodus.eq.2)then
+#ifdef DEBUG
+          write(*,*)'fgmapidp: make map for image to source iord=',iord
+#endif
           call transponiere(a,g)    ! bild zur quelle
+	  g.xdens(1)=-g.xdens(1)
+	  g.xdens(3)=-g.xdens(3)
           do n1=0,iord
            do n2=0,iord-n1
             do n3=0,iord-n1-n2
@@ -195,17 +189,26 @@ c-------------------------------------------------------
      &                        wc(n1,n2,n3,n4)
               xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                         xlc(n1,n2,n3,n4)
-	      xlm.xlen1c(n1,n2,n3,n4)=0.d0
-	      xlm.xlen2c(n1,n2,n3,n4)=0.d0            
+
+	/* stimmt das ? */
+              dfdw(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         dfdw(n1,n2,n3,n4)
+              dfdl(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         dfdl(n1,n2,n3,n4)
+	/* stimmt das ? */
+
              enddo
             enddo
            enddo
           enddo
 
-	xlm.xlen1c(0,0,0,0)=g.r
-        xlm.xlen2c(0,0,0,0)=g.rp
+        else
+#ifdef DEBUG
+          write(*,*)'fgmapidp: make map for source to image iord=',iord
+#endif
+        endif	! imodus
 
-        endif       ! drift
+c-------------------------------------------------------
 
 	return 
 	end
