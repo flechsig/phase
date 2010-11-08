@@ -1,3 +1,8 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c-------------------------------------------------------------
 	subroutine fgmapidp_8(acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,

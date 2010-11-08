@@ -1,3 +1,8 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c------------------------------------------------------
 	subroutine make_matrix_8(xmap7,ypca,zpca,
      &     dypca,dzpca,iord)
