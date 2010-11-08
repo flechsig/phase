@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <05 Nov 10 08:02:08 flechsig>  */
+/*   Time-stamp: <08 Nov 10 16:38:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -464,10 +464,11 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
 
 #ifdef SEVEN_ORDER
   typedef double MAP70TYPE [330][330];  
-  typedef double MAP7TYPE [8][8][8][8]; 
+  typedef double MAP7TYPE  [8][8][8][8];
+  typedef double DFDXTYPE  [8][8][8][8][8][8];
 #else
   typedef double MAP70TYPE [70][70];  
-  typedef double MAP7TYPE [5][5][5][5];    
+  typedef double MAP7TYPE  [5][5][5][5];    
 #endif
 
 typedef struct grdatstructtype {
@@ -594,6 +595,9 @@ struct ElementType
   int ElementOK;
   MAP70TYPE matrix, MtoSource;
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc; 
+#ifdef SEVEN_ORDER
+  DFDXTYPE dfdw, dfdl;
+#endif
   struct xlenmaptype xlm; 
   struct mirrortype mir;
   struct mdatset MDat;                           
