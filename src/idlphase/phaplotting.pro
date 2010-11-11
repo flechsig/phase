@@ -25,7 +25,7 @@ END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaIntensitySurface,beam, name, ax = AX, az = AZ
+pro phaIntensitySurface,beam, name, ax = AX, az = AZ, _EXTRA = SHADE
 ;+
 ; NAME:
 ; phaIntensitySurface
@@ -42,8 +42,9 @@ pro phaIntensitySurface,beam, name, ax = AX, az = AZ
 ; INPUTS:
 ;       beam: pha4idl beam source4 structure (see phainit_structures.pro)
 ;       name: title of the plot
-;       [optional]: ax = AX: rotate about X-axis, relative to 30 degrees
-;       [optional]: az = AZ: rotate about Z-axis, relative to 30 degrees
+;       [optional]: ax = AX: rotate about X-axis, relative to 30 degree
+;       [optional]: az = AZ: rotate about Z-axis, relative to 30 degree
+;	[optional]: /SHADE:  draw shaded surface instead of wireframe mesh
 ; 
 ; OUTPUTS:
 ;       None.
@@ -67,7 +68,13 @@ z=get_pha_src4_axis_z(beam)
 if KEYWORD_SET(AX) then ax=30+AX else ax=30;
 if KEYWORD_SET(AZ) then az=30+AZ else az=30;
 
-surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax
+if KEYWORD_SET(SHADE) then $
+  shade_surf,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax $ 
+else $
+  surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax
+
+
+;surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax
 ;shade_surf,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name
 
 end
