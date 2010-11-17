@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <17 Nov 10 09:40:32 flechsig>  */
+/*   Time-stamp: <17 Nov 10 15:31:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -42,11 +42,27 @@ void BuildBeamline(struct BeamlineType *bl)
 /* 								*/
 /****************************************************************/
 {
-   int     elcounter, i, imodus, mdim;
+   int     elcounter, i, imodus;
    struct  ElementType *listpt;      
    char    command[MaxPathLength];
 
+#ifdef SEVEN_ORDER
+   double *dfdwp, *dfdlp;
+
+   dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
+   dfdlp= (double *)&(bl->ElementList[0].dfdl);
+#endif
+
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
+
+#ifdef SEVEN_ORDER
+   if (bl->BLOptions.ifl.iord > 7) 
+     {
+       printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+       printf("set iord to 7\n");
+       bl->BLOptions.ifl.iord= 7;
+    }
+#else 
    /* 3. oder 4. ordnung */
    if ((bl->BLOptions.ifl.iord == 3) || (bl->BLOptions.ifl.iord == 4))
      {
@@ -65,8 +81,8 @@ void BuildBeamline(struct BeamlineType *bl)
      printf("set iord to 4\n");
      bl->BLOptions.ifl.iord= 4;
    }
-   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
    /* ende if 3. oder 4. Ordnung */
+#endif
 /*--------------------------------------------------------*/ 
 
   /* baue erst mal immer */
@@ -137,16 +153,16 @@ void BuildBeamline(struct BeamlineType *bl)
 
       /* UF JB wir brauchen hier ein dfdw fuer die beamline */
       /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
-
+      /* mache das oben UF 17.11.10*/	
       /* beamline matrix und map ist fertig (source to image) */ 
       if (bl->BLOptions.SourcetoImage != 1)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1,
+	  fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
 		&bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
+		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2,
 		&bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
 		                           JB muss ich noch checken */
 #else      
@@ -199,9 +215,9 @@ void BuildBeamline(struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1,
+          fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
 	        &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
+		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2,
 		&bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
 		           JB *muss ich noch checken */
 #else
@@ -225,11 +241,26 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 /* 								*/
 /****************************************************************/
 {
-   int     elcounter, i, imodus, mdim;
+   int     elcounter, i, imodus;
    struct  ElementType *listpt;      
    char    command[MaxPathLength];
+#ifdef SEVEN_ORDER
+   double *dfdwp, *dfdlp;
+
+   dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
+   dfdlp= (double *)&(bl->ElementList[0].dfdl);
+#endif
 
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
+
+#ifdef SEVEN_ORDER
+   if (bl->BLOptions.ifl.iord > 7) 
+     {
+       printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+       printf("set iord to 7\n");
+       bl->BLOptions.ifl.iord= 7;
+    }
+#else 
    /* 3. oder 4. ordnung */
    if ((bl->BLOptions.ifl.iord == 3) || (bl->BLOptions.ifl.iord == 4))
      {
@@ -248,8 +279,9 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
      printf("set iord to 4\n");
      bl->BLOptions.ifl.iord= 4;
    }
-   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+   
    /* ende if 3. oder 4. Ordnung */
+#endif
 /*--------------------------------------------------------*/ 
 
   /* baue erst mal immer */
@@ -323,9 +355,9 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1, 
+	  fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1, 
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc, 
-	       &bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
+	       &bl->fdet1phc, &imodus,  &bl->BLOptions.ifl.inorm1,  &bl->BLOptions.ifl.inorm2,
 	       &bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ?? 
 				      JB *muss ich noch checken */
 #else
@@ -379,9 +411,9 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1,
+          fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-	       &bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
+	       &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,&bl->BLOptions.ifl.inorm2,
 	       &bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
 	                                     JB muss ich noch checken */
 #else
@@ -416,7 +448,11 @@ void Footprint(struct BeamlineType *bl, int enummer)
    struct ElementType *listpt;  
    struct RESULTType *Re; 
 
+#ifdef SEVEN_ORDER
+   dim= 330;
+#else
    dim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+#endif
    if (/*((bl->beamlineOK & (sourceOK | mapOK)) == (sourceOK | mapOK)) &&*/
        (enummer <= bl->elementzahl) && (enummer > 0))    
    {
@@ -488,10 +524,18 @@ void GlueLeft(double *a, double *b)
 /* Uwe 11.6.96 								 */
 /* 12.2.97 rechne immer mit 70 * 70 matrix*/
 {
+  int spalt, zeil, id, dim;
+
+#ifdef SEVEN_ORDER
+   double *c, C[330][330];
+
+   c= &C[0][0]; dim= 330;
+#else
    double *c, C[70][70];
-   int spalt, zeil, id, dim;
 
    c= &C[0][0]; dim= 70;
+#endif
+
    for (spalt= 0; spalt< dim; spalt++) 
      for (zeil= 0; zeil< dim; zeil++) 
         {
@@ -514,10 +558,16 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 
 
 {
+#ifdef SEVEN_ORDER
+   double S, C, *c1, *c2, *s1, *s2, 
+     pl_1c[330], pl_2c[330], pl_1cc[330], pl_2cc[330];
+   int i, k, dim= 330, idx, j ,l, m, maxord= 8;
+#else
    double S, C, *c1, *c2, *s1, *s2, 
      pl_1c[70], pl_2c[70], pl_1cc[70], pl_2cc[70];
-   int i, k, dim= 70, idx, j ,l, m;
-   
+   int i, k, dim= 70, idx, j ,l, m, maxord= 5;
+#endif  
+ 
    c1= (double *)&xlm->xlen1c;
    c2= (double *)&xlm->xlen2c;
    s1= (double *)&xlsum->xlen1c;
@@ -528,13 +578,14 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
    
    /*   printf(
 	"\nMultiplikationsroutine pathlen input (Summe), (B)line, (E)lement\n");*/
+   /* UF hier sicher noch nicht richtig */
    m= 0;
-   for(i= 0; i< 5; i++)
-     for(j= 0; j< (5-i); j++)
-       for(k= 0; k< (5-i-j); k++)
-	 for(l= 0; l< (5-i-j-k); l++)
+   for(i= 0; i< maxord; i++)
+     for(j= 0; j< (maxord-i); j++)
+       for(k= 0; k< (maxord-i-j); k++)
+	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
-	     idx=i+j*5+k*25+l*125;
+	     idx=i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
 	     pl_1c[m]= c1[idx];
 	     pl_2c[m]= c2[idx];
 	     /*	     S= s1[idx]+ s2[idx]; C= c1[idx]+ c2[idx];
@@ -557,12 +608,12 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
    if (summe == 1)
      {  
        m= 0;
-       for(i= 0; i< 5; i++)
-	 for(j= 0; j< (5-i); j++)
-	   for(k= 0; k< (5-i-j); k++)
-	     for(l= 0; l< (5-i-j-k); l++)
+       for(i= 0; i< maxord; i++)
+	 for(j= 0; j< (maxord-i); j++)
+	   for(k= 0; k< (maxord-i-j); k++)
+	     for(l= 0; l< (maxord-i-j-k); l++)
 	       {
-		 idx= i+j*5+k*25+l*125;
+		 idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
 		 s1[idx]+= pl_1cc[m];
 		 s2[idx]+= pl_2cc[m];
 		 /*     S= s1[idx]+s2[idx]; C= c1[idx]+ c2[idx];
@@ -572,12 +623,12 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
      } else
        {
 	 m= 0;
-	 for(i= 0; i< 5; i++)
-	   for(j= 0; j< (5-i); j++)
-	     for(k= 0; k< (5-i-j); k++)
-	       for(l= 0; l< (5-i-j-k); l++)
+	 for(i= 0; i< maxord; i++)
+	   for(j= 0; j< (maxord-i); j++)
+	     for(k= 0; k< (maxord-i-j); k++)
+	       for(l= 0; l< (maxord-i-j-k); l++)
 		 {
-		   idx= i+j*5+k*25+l*125;
+		   idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
 		   s1[idx]= pl_1cc[m];
 		   s2[idx]= pl_2cc[m];
 		   m++;
@@ -597,8 +648,13 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 /* last modification: 04 Jul 97 11:54:41 flechsig */
 
 {
+#ifdef SEVEN_ORDER
+   double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
+   int i, j, k, l, m, dim= 330, idx;
+#else
    double wctmp[70], xlctmp[70], wcc[70], xlcc[70];
    int i, j, k, l, m, dim= 70, idx;
+#endif
    
    /*   printf("\nMultiplikationsroutine wc, xlc, input\n");
     */
@@ -691,7 +747,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    char    command[MaxPathLength];
    int     i, msiz, imodus, mdim;
    MAP7TYPE wctmp, xlctmp;
+
+#ifdef SEVEN_ORDER
    double *c, C[70][70], *tmpp;
+#else
+   double *c, C[330][330], *tmpp;
+#endif
 
    c= &C[0][0];
    if (listpt->ElementOK & mapOK) 
@@ -795,7 +856,13 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
         if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
         {
            printf("MakeMapandMatrix: horizontal deflection \n"); 
+
+#ifdef SEVEN_ORDER
+	   mdim= 330;
+#else
 	   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+#endif
+
 	   msiz= mdim * mdim * sizeof(double);
 
            if (bl->hormapsloaded == 0)
@@ -2158,7 +2225,7 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
      gout->cosa= cos(alpha);
      gout->sinb= sin(beta);
      gout->cosb= cos(beta);
-     for (i= 0; i< 5; i++)
+     for (i= 0; i< 5; i++)    /* hier ist 5 richtig - nicht abhaengig von seven order */
          gout->x[i]= x->xdens[i];
      gout->xlam = x->lambda* (double)(x->inout);
    gout->idefl= (x->theta0 > 0.0) ? 1 : -1;
@@ -2194,8 +2261,8 @@ void readmatrixfilec(char *fname, double *map, int dim)
    Uwe 14.6.96
 /**************************************************************/    
 {
-  int i, j, k, dim2;
-  FILE *f;
+  int    i, j, k, dim2;
+  FILE   *f;
   double tmp;
 
   if ((f= fopen(fname, "r")) == NULL)
@@ -2221,9 +2288,9 @@ void ReadCoefficientFile(double *dp, char *fname)
      /* FORTRAN memory model */
      /* UF 04 Jan 2001 */
 {
-  FILE *f;
-  int i, j;
-  char buffer[MaxPathLength], buf;
+  FILE   *f;
+  int    i, j;
+  char   buffer[MaxPathLength], buf;
   double x;  
 
   printf("read coefficients a(i,j) from %s\n", fname);
@@ -2248,7 +2315,12 @@ void ReadCoefficientFile(double *dp, char *fname)
 #ifdef DEBUG  
       printf("took: %d %d %15.10lg\n", i, j, x);
 #endif 
-	dp[i+j*6]= x;
+
+#ifdef SEVEN_ORDER
+	dp[i+j*9]= x;
+#else
+        dp[i+j*6]= x;	  
+#endif
       }
   }
   fclose(f); 
@@ -2259,8 +2331,8 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
 /* Parameter: filename, number of rays, vektor mit rays         */
 /* last mod. Uwe 8.8.96 					*/ 
 {
-    FILE *f;
-    int i, rz;
+    FILE   *f;
+    int    i, rz;
     double *dp;
     struct RayType *Rp;
     
@@ -2292,12 +2364,19 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
 }  /* end ReadRayFile */
 
 void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
-     /* schreibt mirrorkoordinaten auf file */
+/* schreibt mirrorkoordinaten auf file */
+/* updated to seven order 11/2010*/
 {
-  FILE *f;
-  int i, j;
+  FILE   *f;
+  int    i, j, maxord;
   double *dp; 
-  char *name;  
+  char   *name;  
+
+#ifdef SEVEN_ORDER
+  maxord= 8;	  
+#else
+  maxord= 5;	  
+#endif
    
   name= &buffer[0];  
 #ifdef DEBUG
@@ -2309,10 +2388,10 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
     {
       fprintf(stderr, "WriteMKos: error: open file %s\n", name); exit(-1);   
     }    
-  for (i= 0; i <= 5; i++) 
-    for (j= 0; j <= 5; j++) 
+  for (i= 0; i <= maxord; i++) 
+    for (j= 0; j <= maxord; j++) 
 /* write also i and j to file J.B. 9.11.2003 */
-       if ((i + j) <= 5)  fprintf(f, "%d %d %lE\n", i, j, dp[i+j*6]);  
+      if ((i + j) <= maxord)  fprintf(f, "%d %d %lE\n", i, j, dp[i+j*(maxord+1)]);  
   fclose(f); 
 #ifdef DEBUG
   printf("WriteMKos: done\n");
@@ -2320,11 +2399,19 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
 }    
 
 void ReadMKos(struct mirrortype *a, char *name)
-     /* liest mirrorkoordinaten von file */
+/* liest mirrorkoordinaten von file */
+/* updated to seven order 11/2010*/
 {
-  FILE *f;
-  int i, j;
+  FILE   *f;
+  int    i, j, maxord;
   double *dp; 
+
+#ifdef SEVEN_ORDER
+  maxord= 8;	  
+#else
+  maxord= 5;	  
+#endif
+
   printf("read mkos from %s ? <1>", name);
   scanf("%d", &i);
   if (i == 1)
@@ -2335,10 +2422,11 @@ void ReadMKos(struct mirrortype *a, char *name)
 	{
 	  fprintf(stderr, "ReadMKos: error: open file %s\n", name); 
 	  exit(-1);   
-	}   
-      for (i= 0; i <= 5; i++) 
-	for (j= 0; j <= 5; j++) 
-	  if ((i + j) <= 5) fscanf(f, "%lf\n", &dp[i+j*6]);
+	}  
+ 
+      for (i= 0; i <= maxord; i++) 
+	for (j= 0; j <= maxord; j++) 
+	  if ((i + j) <= maxord) fscanf(f, "%lf\n", &dp[i+j*(maxord+1)]);
       fclose(f); 
     }
 }    
