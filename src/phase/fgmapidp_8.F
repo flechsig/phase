@@ -165,8 +165,8 @@ c	imode = 2, use 2D Newton Raphson
         if(idrift.eq.1)then
           call drift_8(a,g,acc,wc,xlc,ypc1,zpc1,
      &                        dypc,dzpc,imodus,iord)
-	xlm.xlen1c(0,0,0,0)=g.r*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0)
-        xlm.xlen2c(0,0,0,0)=g.rp*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0)
+	xlm.xlen1c(0,0,0,0)=g.r*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0))
+        xlm.xlen2c(0,0,0,0)=g.rp*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0))
         endif	! idrift = 1
 
 c---------------------------------------------------------------
@@ -195,12 +195,13 @@ c---------------------------------------------------------------
               xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                         xlc(n1,n2,n3,n4)
 
-	/* stimmt das ? */
-              dfdw(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                         dfdw(n1,n2,n3,n4)
-              dfdl(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                         dfdl(n1,n2,n3,n4)
-	/* stimmt das ? */
+c	/* stimmt das ? */
+C UF JB must be corrected
+              dfdw(n1,n2,n3,n4,n4,n4)=((-1)**(n2+n3+1))*
+     &                         dfdw(n1,n2,n3,n4,n4,n4)
+              dfdl(n1,n2,n3,n4,n4,n4)=((-1)**(n2+n3+1))*
+     &                         dfdl(n1,n2,n3,n4,n4,n4)
+c	/* stimmt das ? */
 
              enddo
             enddo
