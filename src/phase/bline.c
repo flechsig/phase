@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <05 Nov 10 07:58:38 flechsig>  */
+/*   Time-stamp: <17 Nov 10 09:40:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -134,13 +134,17 @@ void BuildBeamline(struct BeamlineType *bl)
 
       extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
+
+      /* UF JB wir brauchen hier ein dfdw fuer die beamline */
+      /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
+
       /* beamline matrix und map ist fertig (source to image) */ 
       if (bl->BLOptions.SourcetoImage != 1)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-          fdet_8(listpt->dfdw, listpt->dfdl, &bl->ypc1, &bl->zpc1,
+	  fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1,
 		&bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
 		&bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
 		&bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
@@ -195,7 +199,7 @@ void BuildBeamline(struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(listpt->dfdw, listpt->dfdl, &bl->ypc1, &bl->zpc1,
+          fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1,
 	        &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
 		&bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
 		&bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
@@ -319,7 +323,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(listpt->dfdw, listpt->dfdl, &bl->ypc1, &bl->zpc1, 
+	  fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1, 
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
 	       &bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ?? 
@@ -375,7 +379,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(listpt->dfdw, listpt->dfdl, &bl->ypc1, &bl->zpc1,
+          fdet_8(&bl->dfdw, &bl->dfdl, &bl->ypc1, &bl->zpc1,
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
 	       &bl->fdet1phc, &imodus, &op->ifl.inorm1, &op->ifl.inorm2,
 	       &bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
