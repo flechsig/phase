@@ -194,21 +194,34 @@ c---------------------------------------------------------------
      &                        wc(n1,n2,n3,n4)
               xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                         xlc(n1,n2,n3,n4)
+             enddo
+            enddo       
+           enddo
+          enddo 
+        
+c----------------------------------
+c         Reihenfolge der Indizes:
+c         w,l,yi,zi,yf,zf
+c----------------------------------
+         do n1=0,iord
+          do n2=0,iord-n1
+           do n3=0,iord-n1-n2
+            do n4=0,iord-n1-n2-n3
+             do n5=0,iord-n1-n2-n3-n4
+              do n6=0,iord-n1-n2-n3-n4-n5
+      dfdw(n1,n2,n3,n4,n5,n6)=((-1)**(n1+n2+n4+n6+1))*
+     &                         dfdw(n1,n2,n3,n4,n5,n6)
 
-c	/* stimmt das ? */
-C UF JB must be corrected
-              dfdw(n1,n2,n3,n4,n4,n4)=((-1)**(n2+n3+1))*
-     &                         dfdw(n1,n2,n3,n4,n4,n4)
-              dfdl(n1,n2,n3,n4,n4,n4)=((-1)**(n2+n3+1))*
-     &                         dfdl(n1,n2,n3,n4,n4,n4)
-c	/* stimmt das ? */
-
+      dfdl(n1,n2,n3,n4,n5,n6)=((-1)**(n1+n2+n4+n6+1))*
+     &                         dfdl(n1,n2,n3,n4,n5,n6)
+              enddo
              enddo
             enddo
            enddo
           enddo
+         enddo
 
-        else
+         else
 #ifdef DEBUG
           write(*,*)'fgmapidp: make map for source to image iord=',iord
 #endif
