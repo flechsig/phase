@@ -55,7 +55,7 @@ FOR j = 0, beam.iezrex-1 DO BEGIN
   z1 = z(j)
   
   ;call user defined function with distances-to-center
-  delta = Call_Function(shift_function, abs(y1-y0), abs(z1-z0));
+  delta = Call_Function(shift_function, y1-y0, absz1-z0);
   expo = complex(0, 1) * delta;
   
   ; multiply E-field by (complex) factor
