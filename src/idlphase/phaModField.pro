@@ -8,7 +8,7 @@ PRO phaPhaseshift, beam, shift_function
 ; PURPOSE:
 ;       Multiplies each complex gridpoint c(y,z) by
 ;       phasefactor exp(i * d), 
-;	where d = d(|y-y0|,|z-z0|) is a function provided
+;	where d = d(y-y0, z-z0) is a function provided
 ;	by the user.
 ;
 ; CATEGORY:
