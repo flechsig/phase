@@ -72,7 +72,7 @@ rows= nx * ny
 
 data=dblarr(cols,rows)
 
-j=0
+j=0L
 for iy=0, ny-1 do begin
 	for ix=0, nx-1 do begin
 		data(0,j)= beam.xezremin + ix * beam.dxezre ; x-coord
@@ -110,7 +110,7 @@ rows= nx * ny
 
 data=dblarr(cols,rows)
 
-j=0
+j=0L
 for iy=0, ny-1 do begin
 	for ix=0, nx-1 do begin
 		data(0,j)= beam.xezimmin + ix * beam.dxezim ; x-coord
@@ -150,7 +150,7 @@ rows= nx * ny
 
 data=dblarr(cols,rows)
 
-j=0
+j=0L
 for iy=0, ny-1 do begin
 	for ix=0, nx-1 do begin
 		data(0,j)= beam.xeyremin + ix * beam.dxeyre ; x-coord
@@ -188,7 +188,7 @@ rows= nx * ny
 
 data=dblarr(cols,rows)
 
-j=0
+j=0L
 for iy=0, ny-1 do begin
 	for ix=0, nx-1 do begin
 		data(0,j)= beam.xeyimmin + ix * beam.dxeyim ; x-coord

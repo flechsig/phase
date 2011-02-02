@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PRO phaPhaseshift, beam, shift_function
+PRO phaPhaseshift, beam, shift_function, params
 ;+
 ; NAME:
 ;	phaPhaseshift
@@ -8,7 +8,7 @@ PRO phaPhaseshift, beam, shift_function
 ; PURPOSE:
 ;       Multiplies each complex gridpoint c(y,z) by
 ;       phasefactor exp(i * d), 
-;	where d = d(y-y0, z-z0) is a function provided
+;	where d = d(|y-y0|,|z-z0|) is a function provided
 ;	by the user.
 ;
 ; CATEGORY:
@@ -22,6 +22,8 @@ PRO phaPhaseshift, beam, shift_function
 ;	shift_function: name of a custom function defined like 'FUNCTION funcname, dist_y, dist_z'
 ;			which returns the phaseshift as function of the distances
 ;			to the grid's center
+;       params: an array of numbers, serving as input parameters for the shift_function
+;               (in addition to dist_y, dist_z)
 ;	
 ;	
 ; OUTPUTS:
@@ -35,6 +37,7 @@ PRO phaPhaseshift, beam, shift_function
 ; RESTRICTIONS: 
 ;
 ; MODIFICATION HISTORY:
+;    December 2, 2010, SG, added parameter array
 ;    November 4, 2010, SG, initial version
 ;
 ;-
@@ -53,9 +56,9 @@ FOR i = 0, beam.iezrey-1 DO BEGIN
 FOR j = 0, beam.iezrex-1 DO BEGIN
   y1 = y(i)
   z1 = z(j)
-  
+
   ;call user defined function with distances-to-center
-  delta = Call_Function(shift_function, y1-y0, absz1-z0);
+  delta = Call_Function(shift_function, abs(y1-y0), abs(z1-z0), params);
   expo = complex(0, 1) * delta;
   
   ; multiply E-field by (complex) factor
