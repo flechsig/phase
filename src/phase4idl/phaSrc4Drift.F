@@ -293,9 +293,11 @@ c------------ allocate storage
 	call istkin(2*MaxDim*MaxDim+16,4)	! (2*n*nns, itype=double)
 	
 	write(*,*)'phaPropagateFFTnear started...'
+	write(*,*)'xlam[nm] = ', INxlam 
+	write(*,*)'dist = ', dist
 	
 	distance=dble(dist)
-
+	write(*,*)'distance = ', distance
 	
 c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c      	call phadrift_get_input(beam4)
@@ -304,10 +306,10 @@ c     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	pihalf=pi/2.d0
 	sqrtm1=dcmplx(0,1)
         distance=dble(dist)
-c	write(*,*),INxlam,' ... INxlam'	  
+	write(*,*),INxlam,' ... INxlam'	  
 	xlam=dble(INxlam)*1.0d-6
 	  cc=(2.d0*pi)/xlam
-c	write(*,*),xlam,' ... xlam'	  
+	write(*,*),xlam,' ... xlam'	  
 	
 	zmin=INzmin
 	zmax=INzmax
@@ -318,9 +320,9 @@ c	write(*,*),xlam,' ... xlam'
 	 ny=INny
 	
 	dy=(ymax-ymin)/dble( ny-1)
-c	write(*,*),dy,' ... dy'
+	write(*,*),dy,' ... dy'
 	dz=(zmax-zmin)/dble( nz-1)
-c	write(*,*),dz,' ... dz'	
+	write(*,*),dz,' ... dz'	
 	do i=1, nz
 	   z(i)=zmin+dble(i-1)*dz
 	enddo
@@ -384,9 +386,9 @@ c---- muss
 c------------ step 2: phase modification
 
 	dalpha=xlam/(dy*dflotj(ny))
-c	write(*,*),dalpha,' ... dalpha'
+	write(*,*),dalpha,' ... dalpha'
 	dbeta=xlam/(dz*dflotj(nz))
-c	write(*,*),dbeta,' ... dbeta'
+	write(*,*),dbeta,' ... dbeta'
 
 	do i=1,ny
 	do j=1,nz
