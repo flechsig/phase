@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/gui/version.uil */
 /*   Date      : <25 Jun 02 07:58:13 flechsig>  */
-/*   Time-stamp: <24 Aug 09 16:35:21 flechsig>  */
+/*   Time-stamp: <11 Mar 11 10:35:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -10,5 +10,5 @@
 
 #ifndef VERSION_H
   #define VERSION_H
-  #define              VERSION_STRING        1.27     
+  #define              VERSION_STRING        1.28     
 #endif /* VERSION_H */   
