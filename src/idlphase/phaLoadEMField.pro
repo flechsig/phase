@@ -355,10 +355,10 @@ beam.yeyremax = origin(1)+(NY-1)*delta(1);
 beam.zeyre(0:NY-1, 0:NZ-1) = field;
 
 ;----
-dataset = H5D_OPEN(group, 'ezre');
+dataset = H5D_OPEN(group, 'ezim');
 field = H5D_READ(dataset);
 
-beam.xezremin = origin(0);
+beam.xezimmin = origin(0);
 beam.yezimmin = origin(1);
 
 beam.dxezim   = delta(0);
@@ -370,7 +370,7 @@ beam.yezimmax = origin(1)+(NY-1)*delta(1);
 beam.zezim(0:NY-1, 0:NZ-1) = field;
 
 ;----
-dataset = H5D_OPEN(group, 'ezim');
+dataset = H5D_OPEN(group, 'eyim');
 field = H5D_READ(dataset);
 
 beam.ieyimx   = long(NZ);
