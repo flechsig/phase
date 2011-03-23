@@ -72,7 +72,7 @@ rows= nx * ny
 
 data=dblarr(cols,rows)
 
-j=0L
+j = 0L
 for iy=0, ny-1 do begin
 	for ix=0, nx-1 do begin
 		data(0,j)= beam.xezremin + ix * beam.dxezre ; x-coord
@@ -212,4 +212,110 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+PRO phaSaveEMFieldHDF5, beam, FileName, ziplevel = ZIP
+;+
+; NAME:
+;	phaSaveEMFieldHDF5
+;
+; PURPOSE:
+;       Save phasestyle EMFields from beamline in HDF5 file format
+;
+; CATEGORY:
+;	pro : pha4idl - beamline
+;
+; CALLING SEQUENCE:
+;	phaSaveEMFieldHDF5, beam, FileName, [ziplevel]
+;
+; INPUTS:
+;     	beam		beam src4 struct
+;	FileName	the name of the HDF5 file to be created
+;	ziplevel	optional level of data compression, 
+;                       0 if none is passed
+;                       9 is highest (takes most processing time)
+;
+; OUTPUTS:
+;     	EMField files on hdd in HDF5
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March 23, 2011, SG, initial version
+;-
 
+if KEYWORD_SET(ZIP) then ziplevel=ZIP $
+  else ziplevel=0;
+
+print, 'Saving fields to file', FileName, ' with compression=', ziplevel;
+
+fid = h5F_create(FileName);
+
+nz = beam.iezrex; TODO: wrong convention
+ny = beam.iezrey;
+
+lambda = DOUBLE(beam.xlam);
+
+origin = DBLARR(2);
+delta = DBLARR(2);
+
+origin(0) = beam.xezremin;
+origin(1) = beam.yezremin;
+
+delta(0) = beam.dxezre;
+delta(1) = beam.dyezre;
+
+datatype_double_id = H5T_IDL_CREATE(lambda);  
+dataspace_id = H5S_CREATE_SIMPLE(1);
+
+; store the wavelength
+dataset_id = H5D_CREATE(fid, 'lambda', datatype_double_id, dataspace_id);     
+H5D_WRITE, dataset_id, lambda;
+H5D_CLOSE,dataset_id    
+H5S_CLOSE,dataspace_id  
+
+; store the origin vector (y0, z0)
+dataspace_id = H5S_CREATE_SIMPLE(2);
+
+dataset_id = H5D_CREATE(fid, 'origin', datatype_double_id, dataspace_id);     
+H5D_WRITE, dataset_id, origin;
+H5D_CLOSE,dataset_id    
+
+; store the delta vector (dy, dz)
+dataset_id = H5D_CREATE(fid, 'delta', datatype_double_id, dataspace_id);     
+H5D_WRITE, dataset_id, delta;
+H5D_CLOSE,dataset_id;    
+
+H5S_CLOSE,dataspace_id;  
+
+
+; store the fields in extra group
+group_id = H5G_CREATE(fid, 'data');
+dataspace_id = H5S_CREATE_SIMPLE([ny, nz], max_dimensions=[2048, 2048]);
+
+dataset_id = H5D_CREATE(group_id,'eyre', datatype_double_id, dataspace_id, CHUNK_DIMENSIONS=[256, 256], GZIP=ziplevel)  
+H5D_WRITE, dataset_id, beam.zeyre(0:ny-1, 0:nz-1); save portion of grid which is actually used
+print,'Saved field eyre to ', FileName
+
+dataset_id = H5D_CREATE(group_id,'eyim', datatype_double_id, dataspace_id, CHUNK_DIMENSIONS=[256, 256], GZIP=ziplevel)  
+H5D_WRITE, dataset_id, beam.zeyim(0:ny-1, 0:nz-1); 
+print,'Saved field eyim to ', FileName
+
+dataset_id = H5D_CREATE(group_id,'ezre', datatype_double_id, dataspace_id, CHUNK_DIMENSIONS=[256, 256], GZIP=ziplevel)  
+H5D_WRITE, dataset_id, beam.zezre(0:ny-1, 0:nz-1);
+print,'Saved field ezre to ', FileName
+
+dataset_id = H5D_CREATE(group_id,'ezim', datatype_double_id, dataspace_id, CHUNK_DIMENSIONS=[256, 256], GZIP=ziplevel)  
+H5D_WRITE, dataset_id, beam.zezim(0:ny-1, 0:nz-1);
+print,'Saved field ezim to ', FileName
+
+   
+H5G_CLOSE, group_id;
+H5S_CLOSE,dataspace_id;
+
+H5T_CLOSE,datatype_double_id;
+H5F_CLOSE, fid;
+END

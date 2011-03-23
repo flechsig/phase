@@ -253,3 +253,147 @@ endfor
 
 END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+function phaLoadEMFieldHDF5, FileName
+;+
+; NAME:
+;	phaLoadEMFieldHDF5
+;
+; PURPOSE:
+;       Loads phasestyle EMFields from a HDF5 file 
+;       and creates a src4 beam structure from it,
+;       sets wavelength, origin and dx,dy in struct,
+;       
+; CATEGORY:
+;	pro : pha4idl - create src4
+;
+; CALLING SEQUENCE: 
+;	beam = phaLoadEMFieldHDF5(FileName);
+;
+; INPUTS:
+;	      FileName	name of the HDF5 file
+;
+; OUTPUTS:
+;     	beam		filled source4 struct
+;
+; KEYWORDS:
+;	None.
+;
+; SIDE EFFECTS:
+;
+; RESTRICTIONS:
+;
+; MODIFICATION HISTORY:
+;      March. 23, 2011, SG, initial version
+;
+;-
+beam={source4};
+
+fid = H5F_OPEN(FileName);
+
+print, "loading HDF5 file", FileName
+
+; read wavelength
+dataset = H5D_OPEN(fid, 'lambda');
+lambda = H5D_READ(dataset);
+print, "xlam = ", lambda;
+
+beam.xlam = lambda;
+
+; read origin vector (y0, z0)
+dataset = H5D_OPEN(fid, 'origin');
+origin = H5D_READ(dataset);
+print, "origin = ", origin;
+
+
+; read the delta vector (dy, dz)
+dataset = H5D_OPEN(fid, 'delta');
+delta = H5D_READ(dataset);
+print, "delta = ", delta;
+
+; read first field and determine extends from it
+group = H5G_OPEN(fid, 'data');
+dataset = H5D_OPEN(group, 'ezre');
+field = H5D_READ(dataset);
+
+NY = (size(field))(1);
+NZ = (size(field))(2);
+
+print, "NY:NZ = ", NY, "", NZ;
+
+beam.iezrex   = long(NZ);
+beam.iezrey   = long(NY);
+
+beam.xezremin = origin(0);
+beam.yezremin = origin(1);
+
+beam.dxezre   = delta(0);
+beam.dyezre   = delta(1);
+
+beam.xezremax = origin(0)+(NZ-1)*delta(0);
+beam.yezremax = origin(1)+(NY-1)*delta(1);
+
+beam.zezre(0:NY-1, 0:NZ-1) = field;
+
+;----
+dataset = H5D_OPEN(group, 'eyre');
+field = H5D_READ(dataset);
+
+beam.ieyrex   = long(NZ);
+beam.ieyrey   = long(NY);
+
+beam.xeyremin = origin(0);
+beam.yeyremin = origin(1);
+
+beam.dxeyre   = delta(0);
+beam.dyeyre   = delta(1);
+
+beam.xeyremax = origin(0)+(NZ-1)*delta(0);
+beam.yeyremax = origin(1)+(NY-1)*delta(1);
+
+beam.zeyre(0:NY-1, 0:NZ-1) = field;
+
+;----
+dataset = H5D_OPEN(group, 'ezre');
+field = H5D_READ(dataset);
+
+beam.xezremin = origin(0);
+beam.yezimmin = origin(1);
+
+beam.dxezim   = delta(0);
+beam.dyezim   = delta(1);
+
+beam.xezimmax = origin(0)+(NZ-1)*delta(0);
+beam.yezimmax = origin(1)+(NY-1)*delta(1);
+
+beam.zezim(0:NY-1, 0:NZ-1) = field;
+
+;----
+dataset = H5D_OPEN(group, 'ezim');
+field = H5D_READ(dataset);
+
+beam.ieyimx   = long(NZ);
+beam.ieyimy   = long(NY);
+
+beam.xeyimmin = origin(0);
+beam.yeyimmin = origin(1);
+
+beam.dxeyim   = delta(0);
+beam.dyeyim   = delta(1);
+
+beam.xeyimmax = origin(0)+(NZ-1)*delta(0);
+beam.yeyimmax = origin(1)+(NY-1)*delta(1);
+
+beam.zeyim(0:NY-1, 0:NZ-1) = field;
+
+;----
+
+H5F_CLOSE, fid;
+
+return, beam
+END
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
