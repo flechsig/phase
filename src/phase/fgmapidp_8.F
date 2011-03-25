@@ -3,6 +3,7 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+
 c-------------------------------------------------------------
 	subroutine fgmapidp_8(acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,
@@ -19,7 +20,7 @@ c-------------------------------------------------------------
 	  integer idefl
 	end structure
 	record /geometryst/ g
-	record /pathlength/xlm
+	record /pathlength/ xlm
 	dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
@@ -55,10 +56,13 @@ c       imodus = 2 : ray tracing vom Bild zur Quelle
 c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
-c        write(*,*)'fortran gerufen'
 #ifdef DEBUG
-         write(6,*)' fgmapidp: imodus = ',imodus
+        write(*,*)'fortran gerufen'
+        
+
+        write(*,*)' fgmapidp: imodus = ',imodus
 #endif
+	write(*,*)'iord: ', iord
         if(acc.lt.1e-8)then
            write(*,*)'epsilon for Newton routine < 1e-8'
            write(*,*)'put epsilon to default: 0.01'
@@ -86,6 +90,9 @@ c        write(*,*)'fortran gerufen'
 
 c------------- get optical path length for phase factor
 
+#ifdef DEBUG
+        write(*,*) 'call taylor-ops.for'
+#endif
 	call tay_copy_6_87(q0_8,q0,iord)
 	call tay_copy_6_87(q1_8,q1,iord)
 	call tay_copy_6_87(q2_8,q2,iord)
@@ -97,7 +104,11 @@ c------------- get optical path length for phase factor
 	call tay_add_6(opl6,q0,iord)
 
 c---------- get dfdw and dfdl in seventh order
-
+C UF 25.3.11 hier stuerzt es ab
+#ifdef DEBUG
+        write(*,*)'call tay_deri_6a'
+C        dq0w_8 ist nicht definiert
+#endif
 	call tay_deri_6a(q0_8,dq0w_8,1,1,iord)
 	call tay_deri_6a(q1_8,dq1w_8,1,1,iord)
 	call tay_deri_6a(q2_8,dq2w_8,1,1,iord)
