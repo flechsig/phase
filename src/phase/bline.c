@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <17 Nov 10 15:31:28 flechsig>  */
+/*   Time-stamp: <25 Mar 11 10:34:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -45,6 +45,7 @@ void BuildBeamline(struct BeamlineType *bl)
    int     elcounter, i, imodus;
    struct  ElementType *listpt;      
    char    command[MaxPathLength];
+
 
 #ifdef SEVEN_ORDER
    double *dfdwp, *dfdlp;
@@ -411,6 +412,8 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
+
+
           fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
 	       &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,&bl->BLOptions.ifl.inorm2,
@@ -772,13 +775,18 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	   {imodus=imodus+1000;};
 
 #ifdef SEVEN_ORDER
+#ifdef DEBUG
+	  printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
+          printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
+          printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
+#endif
 	fgmapidp_8(&bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		 listpt->dfdw, listpt->dfdl,
+		 &listpt->xlm, listpt->dfdw, listpt->dfdl,
 		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #else
-	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #endif
@@ -817,7 +825,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
            fgmapidp_8(&bl->BLOptions.epsilon,
                 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
                 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-                listpt->dfdw, listpt->dfdl,
+                listpt->xlm, listpt->dfdw, listpt->dfdl,
                 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	
 #else
