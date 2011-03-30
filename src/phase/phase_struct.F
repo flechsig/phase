@@ -71,7 +71,13 @@ c--------------- partial derivatives ------------------------
            real*8 pl1w2,pl1l2,pl2w2,pl2l2,
      &            pl1w1l1,pl2w1l1,arg1,arg2,
      &   arg1w1,arg1l1,arg1w2,arg1l2,arg1w1l1,
-     &   arg2w1,arg2l1,arg2w2,arg2l2,arg2w1l1
+     &   arg2w1,arg2l1,arg2w2,arg2l2,arg2w1l1,
+     &   opl(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &	 dfdw(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &	 dfdl(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &	 dfdww(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &	 dfdwl(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &	 dfdll(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
         end structure  
 
 c--------------- geometry -----------------------------------

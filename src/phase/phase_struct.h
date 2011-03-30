@@ -89,7 +89,13 @@ typedef struct ComplexStruct {
            double pl1w2, pl1l2, pl2w2, pl2l2,
                   pl1w1l1, pl2w1l1, arg1, arg2,
          	  arg1w1, arg1l1, arg1w2, arg1l2, arg1w1l1,
-         	  arg2w1, arg2l1, arg2w2, arg2l2, arg2w1l1;
+         	  arg2w1, arg2l1, arg2w2, arg2l2, arg2w1l1,
+	          opl[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+	          dfdw[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+	          dwdl[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+	          dfdww[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+	          dfdwl[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+	          dfdll[MAPDIM][MAPDIM][MAPDIM][MAPDIM];
         };    
 
 /* -------------- geometry -----------------------------------*/
