@@ -784,6 +784,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		 &listpt->xlm, listpt->dfdw, listpt->dfdl,
+		 listpt->dfdww, listpt->dfdwl,listpt->dfdll,
 		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #else
 	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
@@ -826,6 +827,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
                 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
                 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
                 listpt->xlm, listpt->dfdw, listpt->dfdl,
+		listpt->dfdww, listpt->dfdwl,listpt->dfdll,
                 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	
 #else
