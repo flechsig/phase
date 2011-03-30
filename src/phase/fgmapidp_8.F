@@ -1,14 +1,17 @@
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
-
-
 c-------------------------------------------------------------
 	subroutine fgmapidp_8(acc,a,g,
-     &             wc,xlc,ypc1,zpc1,dypc,dzpc,
-     &             xlm,dfdw,dfdl,iord,imodus,iplmode)
-c-------------------------------------------------------------
+     &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
+     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,
+     &             iord,imodus,iplmode)
+c--------------------------------------------------------------------
+c	this routine evaluates
+c	- the trasformation ypc1,zpc1,dypc,dzps
+c	- the intersetion points w xlc
+c	- the path length opl
+c	- the first derivatives of the pathlength dfdw, dfdl
+c	- the second derivatives of the pathlength dfdww, dfdwl, dfdll 
+c---------------------------------------------------------------------
+
 	implicit real*8(a-h,o-z)
 	structure/pathlength/
 	    real*8 xlen1c(0:7,0:7,0:7,0:7),
@@ -20,7 +23,7 @@ c-------------------------------------------------------------
 	  integer idefl
 	end structure
 	record /geometryst/ g
-	record /pathlength/ xlm
+	record /pathlength/xlm
 	dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
@@ -34,19 +37,42 @@ c-------------------------------------------------------------
 	dimension q0(0:7,0:7,0:7,0:7,0:7,0:7),
      &            q1(0:7,0:7,0:7,0:7,0:7,0:7),
      &            q2(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension dq0w_8(0:8,0:8,0:8,0:8,0:8,0:8),
+     &            dq1w_8(0:8,0:8,0:8,0:8,0:8,0:8),
+     &            dq2w_8(0:8,0:8,0:8,0:8,0:8,0:8),
+     &            dq1l_8(0:8,0:8,0:8,0:8,0:8,0:8),
+     &            dq2l_8(0:8,0:8,0:8,0:8,0:8,0:8)
+	dimension dq0w(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dq1w(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dq2w(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dq1l(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dq2l(0:7,0:7,0:7,0:7,0:7,0:7)
 	dimension rtq1(0:7,0:7,0:7,0:7,0:7,0:7),
      &            rtq2(0:7,0:7,0:7,0:7,0:7,0:7),
      &            rtq1i(0:7,0:7,0:7,0:7,0:7,0:7),
      &            rtq2i(0:7,0:7,0:7,0:7,0:7,0:7)
 	dimension dfdw1(0:7,0:7,0:7,0:7,0:7,0:7),
      &		  dfdw2(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            dfdw(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdw6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdww6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdwl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdl1(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdl2(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            dfdl(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdl6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdll6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl4(0:7,0:7,0:7,0:7),
-     &            opl(0:7,0:7,0:7,0:7)
+     &            opl(0:7,0:7,0:7,0:7),
+     &            dfdw4(0:7,0:7,0:7,0:7),
+     &            dfdl4(0:7,0:7,0:7,0:7),
+     &            dfdw(0:7,0:7,0:7,0:7),
+     &            dfdl(0:7,0:7,0:7,0:7),
+     &            dfdww4(0:7,0:7,0:7,0:7),
+     &            dfdwl4(0:7,0:7,0:7,0:7),
+     &            dfdll4(0:7,0:7,0:7,0:7),
+     &            dfdww(0:7,0:7,0:7,0:7),
+     &            dfdwl(0:7,0:7,0:7,0:7),
+     &            dfdll(0:7,0:7,0:7,0:7)
                  
 c----------------------------------------------------------
 c----------------------------------------------------------
@@ -56,13 +82,10 @@ c       imodus = 2 : ray tracing vom Bild zur Quelle
 c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
+c        write(*,*)'fortran gerufen'
 #ifdef DEBUG
-        write(*,*)'fortran gerufen'
-        
-
-        write(*,*)' fgmapidp: imodus = ',imodus
+         write(6,*)' fgmapidp: imodus = ',imodus
 #endif
-	write(*,*)'iord: ', iord
         if(acc.lt.1e-8)then
            write(*,*)'epsilon for Newton routine < 1e-8'
            write(*,*)'put epsilon to default: 0.01'
@@ -89,10 +112,9 @@ c----------------------------------------------------------
      &       q0_8,q1_8,q2_8)
 
 c------------- get optical path length for phase factor
+c	OPL=F=sqrt(Q1)+sqrt(Q2)+Q0
+c	OPL has six variables (w,l,y,z,yp,zp)
 
-#ifdef DEBUG
-        write(*,*) 'call taylor-ops.for'
-#endif
 	call tay_copy_6_87(q0_8,q0,iord)
 	call tay_copy_6_87(q1_8,q1,iord)
 	call tay_copy_6_87(q2_8,q2,iord)
@@ -103,12 +125,11 @@ c------------- get optical path length for phase factor
 	call tay_sum_6(rtq1,rtq2,opl6,iord)
 	call tay_add_6(opl6,q0,iord)
 
-c---------- get dfdw and dfdl in seventh order
-C UF 25.3.11 hier stuerzt es ab
-#ifdef DEBUG
-        write(*,*)'call tay_deri_6a'
-C        dq0w_8 ist nicht definiert
-#endif
+c---------- get dfdw6 and dfdl6 in seventh order
+c	dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ1/dw)/sqrt(Q1) + dQ0/dw 
+c	dfdl6=(dQ1/dl)/sqrt(Q1) + (dQ1/dl)/sqrt(Q1)
+c	dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
+
 	call tay_deri_6a(q0_8,dq0w_8,1,1,iord)
 	call tay_deri_6a(q1_8,dq1w_8,1,1,iord)
 	call tay_deri_6a(q2_8,dq2w_8,1,1,iord)
@@ -121,43 +142,98 @@ C        dq0w_8 ist nicht definiert
 	call tay_copy_6_87(dq1l_8,dq1l,iord)
 	call tay_copy_6_87(dq2l_8,dq2l,iord)
 
-	call Tay_sqrt_6(q1,rtq1,iord)	
-	call Tay_sqrt_6(q2,rtq2,iord)	
 	call Tay_inv_6(rtq1,rtq1i,iord)	
 	call Tay_inv_6(rtq2,rtq2i,iord)	
 
 	call Tay_mult_6(rtq1i,dq1w,dfdw1,iord)
 	call Tay_mult_6(rtq2i,dq2w,dfdw2,iord)
 
-	call Tay_sum_6(dfdw1,dfdw2,dfdw,iord)
-	call Tay_add_6(dq0w,dfdw,iord)
-
-c--------------
+	call Tay_sum_6(dfdw1,dfdw2,dfdw6,iord)
+	call Tay_add_6(dq0w,dfdw6,iord)
 
 	call Tay_mult_6(rtq1i,dq1l,dfdl1,iord)
 	call Tay_mult_6(rtq2i,dq2l,dfdl2,iord)
-	call Tay_sum_6(dfdl1,dfdl2,dfdl,iord)
+	call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
+
+c-------------- second derivatives
+	call tay_deri_6a(dfdw6,dfdww6,1,1,iord)
+	call tay_deri_6a(dfdw6,dfdwl6,2,1,iord)
+	call tay_deri_6a(dfdl6,dfdll6,2,1,iord)
 
 c-------------- solve system of linear equations
 c	imode = 1, use 1D Newton Raphson 
 c	imode = 2, use 2D Newton Raphson 
 
+c-------------- solve eqs. 19 & 20 iteratively
+c	input: 	dfdw6(w,l,y,z,yp,zp) & dfdl6(w,l,y,z,yp,zp)
+c	output:  ypc(w,l,y,z)       &  zpc(w,l,y,z)
+c
 	imode=2
-	call subd345a(acc,dfdw,dfdl,ypc,zpc,imode,iord)
+	call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
+
+c------------- replace w and l by power series in (y,z,dy,dz)
+c	input:	 ypc(w,l,y,z)   &  zpc(w,l,y,z) 
+c	output:	ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 
         call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
      &                        ypc1,zpc1,2,iord)
 
+c------------- set up eqs. 27 & 28 
+c	output:	eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
+
 	call get_dydz(a,eq27,eq28,iord)
 
+c------------- get Taylor expansion of w and l
+c	solve set of linear equations
+c	input:	eqs. 27 & 28
+c	output:	wc(y,z,dy,dz) & xlc(y,z,dy,dz)
 	imode=1
 	call subd345a(acc,eq27,eq28,wc,xlc,imode,iord)
 
+c------------- get Taylor expansion of dyp and dzp
+c	output:	dyp(y,z,dy,dz) & dzp(y,z,dy,dz)
+
 	call get_dypdzp(a1,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
+
+c------------- get path length in variable (w,l,y,z)
+c	input:  opl6(w,l,y,z,yp,zp)
+c	output:	opl4(w,l,y,z)
+
 	call replace_6v4v(opl6,ypc1,zpc1,opl4,iord)
+
+c------------- get partial derivatives in variables (w,l,y,z)
+c------------- first derivatives
+	call replace_6v4v(dfdw6,ypc1,zpc1,dfdw4,iord)
+	call replace_6v4v(dfdl6,ypc1,zpc1,dfdl4,iord)
+
+c------------- second derivatives
+	call replace_6v4v(dfdww6,ypc1,zpc1,dfdww4,iord)
+	call replace_6v4v(dfdwl6,ypc1,zpc1,dfdwl4,iord)
+	call replace_6v4v(dfdll6,ypc1,zpc1,dfdll4,iord)
+
+c------------- get path length in variables (y,z,dy,dz)
+c	input:	opl4(w,l,y,z)
+c	output:	opl(y,z,dy,dz)
+
 	call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
      &                          opl,opl,1,iord)
+
+c------------- get partial derivatives in variables (y,z,dy,dz)
+c------------- first derivatives
+	call replace_wl_in_ypzp(dfdw4,dfdw4,wc,xlc,
+     &                          dfdw,dfdw,1,iord)
+	call replace_wl_in_ypzp(dfdl4,dfdl4,wc,xlc,
+     &                          dfdl,dfdl,1,iord)
+
+c------------- second derivatives
+	call replace_wl_in_ypzp(dfdww4,dfdww4,wc,xlc,
+     &                          dfdww,dfdww,1,iord)
+	call replace_wl_in_ypzp(dfdwl4,dfdwl4,wc,xlc,
+     &                          dfdwl,dfdwl,1,iord)
+	call replace_wl_in_ypzp(dfdll4,dfdll4,wc,xlc,
+     &                          dfdll,dfdll,1,iord)
+
 	if(iplmode.eq.1)opl(0,0,0,0)=opl(0,0,0,0)-g.r-g.rp
 
 	do i=0,iord
@@ -173,13 +249,47 @@ c	imode = 2, use 2D Newton Raphson
 
 	endif	! idrift = 0
 
+c-----------------------------------------------------------------
+c-----------------------------------------------------------------
+
         if(idrift.eq.1)then
           call drift_8(a,g,acc,wc,xlc,ypc1,zpc1,
      &                        dypc,dzpc,imodus,iord)
-	xlm.xlen1c(0,0,0,0)=g.r*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0))
-        xlm.xlen2c(0,0,0,0)=g.rp*(1.d0+dypc(0,0,1,0)+dzpc(0,0,1,0))
+
+	do i=0,iord
+	 do j=0,iord-i
+          do k=0,iord-i-j
+	   do l=0,iord-i-j-k
+	    xlm.xlen1c(i,j,k,l)=0.d0
+	    xlm.xlen2c(i,j,k,l)=0.d0
+	   enddo
+          enddo
+         enddo
+        enddo
+
+	cc0=g.r+g.rp
+	cc1=dsqrt((g.r+g.rp)**2+((g.r+g.rp)*dypc(0,0,1,0))**2)
+	cc2=dsqrt((g.r+g.rp)**2+((g.r+g.rp)*dzpc(0,0,0,1))**2)
+	cc3=dsqrt((g.r+g.rp)**2+
+     &     ((g.r+g.rp)*dypc(0,0,1,0))**2+
+     &     ((g.r+g.rp)*dypc(0,0,1,0))**2)
+
+	do i=0,iord
+	 do j=0,iord-i
+	    xlm.xlen1c(i,j,0,0)=cc0/2.d0
+	    xlm.xlen2c(i,j,0,0)=cc0/2.d0
+	    xlm.xlen1c(i,j,1,0)=cc1/2.d0
+	    xlm.xlen2c(i,j,1,0)=cc1/2.d0
+	    xlm.xlen1c(i,j,0,1)=cc2/2.d0
+	    xlm.xlen2c(i,j,0,1)=cc2/2.d0
+	    xlm.xlen1c(i,j,1,1)=cc3/2.d0
+	    xlm.xlen2c(i,j,1,1)=cc3/2.d0
+         enddo
+        enddo
+
         endif	! idrift = 1
 
+c-----------------------------------------------------------------
 c---------------------------------------------------------------
 
         if(imodus.eq.2)then
@@ -205,34 +315,16 @@ c---------------------------------------------------------------
      &                        wc(n1,n2,n3,n4)
               xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                         xlc(n1,n2,n3,n4)
-             enddo
-            enddo       
-           enddo
-          enddo 
-        
-c----------------------------------
-c         Reihenfolge der Indizes:
-c         w,l,yi,zi,yf,zf
-c----------------------------------
-         do n1=0,iord
-          do n2=0,iord-n1
-           do n3=0,iord-n1-n2
-            do n4=0,iord-n1-n2-n3
-             do n5=0,iord-n1-n2-n3-n4
-              do n6=0,iord-n1-n2-n3-n4-n5
-      dfdw(n1,n2,n3,n4,n5,n6)=((-1)**(n1+n2+n4+n6+1))*
-     &                         dfdw(n1,n2,n3,n4,n5,n6)
-
-      dfdl(n1,n2,n3,n4,n5,n6)=((-1)**(n1+n2+n4+n6+1))*
-     &                         dfdl(n1,n2,n3,n4,n5,n6)
-              enddo
+              dfdw(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         dfdw(n1,n2,n3,n4)
+              dfdl(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         dfdl(n1,n2,n3,n4)
              enddo
             enddo
            enddo
           enddo
-         enddo
 
-         else
+        else
 #ifdef DEBUG
           write(*,*)'fgmapidp: make map for source to image iord=',iord
 #endif
