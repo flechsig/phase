@@ -73,6 +73,10 @@ c---------------------------------------------------------------------
      &            dfdww(0:7,0:7,0:7,0:7),
      &            dfdwl(0:7,0:7,0:7,0:7),
      &            dfdll(0:7,0:7,0:7,0:7)
+c UF 31.3. 2011
+       dimension eq27(0:7,0:7,0:7,0:7,0:7,0:7),
+     &           eq28(0:7,0:7,0:7,0:7,0:7,0:7)
+
                  
 c----------------------------------------------------------
 c----------------------------------------------------------
@@ -181,8 +185,8 @@ c	output:	ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 c------------- set up eqs. 27 & 28 
 c	output:	eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
 
-	call get_dydz(a,eq27,eq28,iord)
-
+c UF 31.3.2011	call get_dydz(a,eq27,eq28,iord)
+	call get_dydz(a,g,eq27,eq28,iord)
 c------------- get Taylor expansion of w and l
 c	solve set of linear equations
 c	input:	eqs. 27 & 28
@@ -193,6 +197,7 @@ c	output:	wc(y,z,dy,dz) & xlc(y,z,dy,dz)
 c------------- get Taylor expansion of dyp and dzp
 c	output:	dyp(y,z,dy,dz) & dzp(y,z,dy,dz)
 
+c UF 31.3.2011 a1 ist unbekannt
 	call get_dypdzp(a1,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
 
