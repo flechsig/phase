@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <25 Mar 11 10:34:44 flechsig>  */
+/*   Time-stamp: <31 Mar 11 14:39:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -783,8 +783,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	fgmapidp_8(&bl->BLOptions.epsilon, 
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		 &listpt->xlm, listpt->dfdw, listpt->dfdl,
-		 listpt->dfdww, listpt->dfdwl,listpt->dfdll,
+		 &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
+		 listpt->dfdww, listpt->dfdwl, listpt->dfdll,
 		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #else
 	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
@@ -826,7 +826,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
            fgmapidp_8(&bl->BLOptions.epsilon,
                 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
                 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-                listpt->xlm, listpt->dfdw, listpt->dfdl,
+		&listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
 		listpt->dfdww, listpt->dfdwl,listpt->dfdll,
                 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	
