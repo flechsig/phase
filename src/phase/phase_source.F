@@ -22,6 +22,11 @@ c	Input files are expected to be in mm
 c	rather than in m 27.2.2004
 c !!! preprocessor directives must start at line 0
 c
+c	!!!!!  ACHTUNG. es wird nur die Source 4 verwendet !!!!! JB 20.5.2011
+c
+c	spaeter kann man evetuell mal Source 6 testen und in Betrieb nehmen
+c	sie beschreibt die vierdimensionale Brightness
+c
 c**************************************************************
 	subroutine src_ini(src)	
 c**************************************************************
@@ -343,6 +348,7 @@ cc	include 'phase_struct.for'
 	record /control_flags/ ifl
 	record /source4/ so4
 
+c	iexpand sollte ausser fuer debug-Zwecke immer auf 1 gesetzt sein
 c--------- get path length
 	if(ifl.iexpand.eq.0)then
 
@@ -409,27 +415,6 @@ c********* Ablenkung nach unten : idefl < 0
 	if (g.xlam.ge.0)isig=1
 	if (g.xlam.lt.0)isig=-1
 
-c------- old (before 19.1.2000) -----------------------------
-c	grdist=1.d0/g.xdens(0)
-c	xx=dmod(ra.oe.w,grdist)
-c	xx=xx+grdist
-c	xx=dmod(xx,grdist)
-c
-c	if(ifl.ispline.ge.0)then
-c------- changed sign to minus at 19.1.2000
-c	  delphi=-dflotj(isig)*(xx/grdist)*2.d0*cs.pi
-c	  factor=factor*exp(cs.sqrtm1*delphi)
-c	endif
-c
-c	if(ifl.ispline.lt.0)then
-c-------  neu 20.6.1997
-c	  delphi=-dflotj(isig)*(ra.oe.w/grdist)*2.d0*cs.pi
-c-------  end neu 20.6.1997
-c	  sr.eyp=sr.eyp+delphi
-c	  sr.ezp=sr.ezp+delphi
-c	endif
-c--------------------------------------------------------
-
 c------- new 19.1.2000 ----------------------------------
 c	has been checked for non VLS grating 
 c		(ifl.ispline = 0 and = -1)
@@ -473,12 +458,8 @@ c------- end 19.1.2000 ----------------------------------
 	factorre=dcos(delphi+phase)
         factorim=dsin(delphi+phase)
 
-c-------- 27.2.2004
-c       xwert=ra.rf.zp/1000.	! mm --> m
-c	ywert=ra.rf.yp/1000.	! mm --> m
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
-c------- 27.2.2004
 
 	if(  ((xwert.gt.so4.xeyremin)).and.
      &	     ((xwert.lt.so4.xeyremax)).and.
@@ -803,6 +784,7 @@ cc	include 'phase_struct.for'
 
 	record /source4/ so4
 
+c	maximale Dimension der Quelle 1024 x 1024
 	dimension xx(1048576),yy(1048576)
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4a
@@ -832,6 +814,8 @@ cc	include 'phase_struct.for'
 	do j=1,so4.ieyrey
 	  so4.gridy(j)=yy((j-1)*so4.ieyrex+1)
 	enddo
+	
+c---------------------------------------------------------------
 
      	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	open(unit=10,name=so4.fsource4b,type='old')
@@ -877,6 +861,8 @@ c----------------------------------------------------------
 	so4.yezremax=yy(k)
 	so4.dyezre=(so4.yezremax-so4.yezremin)
      &		/dflotj(so4.iezrey-1)
+
+c-----------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4d
 	open(unit=10,name=so4.fsource4d,type='old')
@@ -1155,42 +1141,15 @@ c---------  Interpolation of Ey
 	iy1=(ywert-so4.yeyremin)/so4.dyeyre + 1
 	iy2=iy1+1
 
-c--------------------- 22.3.2006
-c	x1=so4.xeyremin+dflotj(ix1-1)*so4.dxeyre
-c	x2=x1+so4.dxeyre
-c	y1=so4.yeyremin+dflotj(iy1-1)*so4.dyeyre
-c	y2=y1+so4.dyeyre
 	x1=so4.gridx(ix1)
 	x2=so4.gridx(ix2)
 	y1=so4.gridy(iy1)
 	y2=so4.gridy(iy2)
-c-----------22.3.2006 ----------------------------
 
-c	amp1=so4.zeyre(ix1,iy1) + sign*cs.sqrtm1*so4.zeyim(ix1,iy1)
-c	amp2=so4.zeyre(ix2,iy1) + sign*cs.sqrtm1*so4.zeyim(ix2,iy1)
-c	amp3=so4.zeyre(ix1,iy2) + sign*cs.sqrtm1*so4.zeyim(ix1,iy2)
-c	amp4=so4.zeyre(ix2,iy2) + sign*cs.sqrtm1*so4.zeyim(ix2,iy2)
-
-cc	amp1=so4.zeyre(ix1,iy1) + fact1*so4.zeyim(ix1,iy1)
-cc	amp2=so4.zeyre(ix2,iy1) + fact1*so4.zeyim(ix2,iy1)
-cc	amp3=so4.zeyre(ix1,iy2) + fact1*so4.zeyim(ix1,iy2)
-cc	amp4=so4.zeyre(ix2,iy2) + fact1*so4.zeyim(ix2,iy2)
-
-
-	fact2=1./((x2-x1)*(y2-y1))
 	fact3=(x2-xwert)*(y2-ywert)
 	fact4=(xwert-x1)*(y2-ywert)
 	fact5=(x2-xwert)*(ywert-y1)
 	fact6=(xwert-x1)*(ywert-y1)
-
-c	cargy=(1./((x2-x1)*(y2-y1)))*     (
-c     &       amp1*(x2-xwert)*(y2-ywert) +	
-c     &       amp2*(xwert-x1)*(y2-ywert) +	
-c     &       amp3*(x2-xwert)*(ywert-y1) +	
-c     &       amp4*(xwert-x1)*(ywert-y1)  )	
-
-cc	cargy=fact2*(
-cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
 
         sr.densyre=fact3*so4.zeyre(ix1,iy1)+
      &             fact4*so4.zeyre(ix2,iy1)+
@@ -1203,35 +1162,6 @@ cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
      &             fact6*so4.zeyim(ix2,iy2)
 
 c---------  Interpolation of Ez, same grid as for Ey
-
-c	ix1=(xwert-so4.xezremin)/so4.dxezre + 1
-c	ix2=ix1+1
-c	iy1=(ywert-so4.yezremin)/so4.dyezre + 1
-c	iy2=iy1+1
-
-c	x1=so4.xezremin+dflotj(ix1-1)*so4.dxezre
-c	x2=x1+so4.dxezre
-c	y1=so4.yezremin+dflotj(iy1-1)*so4.dyezre
-c	y2=y1+so4.dyezre
-
-c	amp1=so4.zezre(ix1,iy1) + sign*cs.sqrtm1*so4.zezim(ix1,iy1)
-c	amp2=so4.zezre(ix2,iy1) + sign*cs.sqrtm1*so4.zezim(ix2,iy1)
-c	amp3=so4.zezre(ix1,iy2) + sign*cs.sqrtm1*so4.zezim(ix1,iy2)
-c	amp4=so4.zezre(ix2,iy2) + sign*cs.sqrtm1*so4.zezim(ix2,iy2)
-
-cc	amp1=so4.zezre(ix1,iy1) + fact1*so4.zezim(ix1,iy1)
-cc	amp2=so4.zezre(ix2,iy1) + fact1*so4.zezim(ix2,iy1)
-cc	amp3=so4.zezre(ix1,iy2) + fact1*so4.zezim(ix1,iy2)
-cc	amp4=so4.zezre(ix2,iy2) + fact1*so4.zezim(ix2,iy2)
-
-c	cargz=(1./((x2-x1)*(y2-y1)))*     (
-c     &       amp1*(x2-xwert)*(y2-ywert) +	
-c     &       amp2*(xwert-x1)*(y2-ywert) +	
-c     &       amp3*(x2-xwert)*(ywert-y1) +	
-c     &       amp4*(xwert-x1)*(ywert-y1)  )	
-
-cc	cargz=fact2*(
-cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
 
         sr.denszre=fact3*so4.zezre(ix1,iy1)+
      &             fact4*so4.zezre(ix2,iy1)+
