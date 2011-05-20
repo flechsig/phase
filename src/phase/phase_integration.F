@@ -46,6 +46,26 @@ c	nur eine Iteration
 c	falls spaeter adaptive Integration implementiert we rden soll,
 c	muss dies auf andere Weise als bisher geschehen.
 c
+c
+c	ACHTUNG. Umstellen auf 8 Ordnung Spiegelentwicklung
+c	erfolgt ueber Link-Flag SEVEN_ORDER,
+c	die Struktur m4 und die Variablen in der Struktur m4 
+c	haben zwar noch alte Namen, haben aber gegebenenfalls 
+c	hoehere Dimensionen
+c	JB 20.5.2011
+c
+c	ifl.iord ist ueberall eingesetzt (keine Hartverdrahtung der Ordnung)
+c	phacor nicht getestet
+c	turbo simpson nicht getestet 
+c	      JB 20.5.2011
+c
+c	Skalierungsfaktoren angepasst (neue Definition etc)
+c	      JB 20.5.2011
+c
+c	dimension a(0:8,0:8) ueberall gesetzt 
+c	dimension pij..() in fywert ueberall hochgesetzt
+c		  JB 20.5.2011
+c
 c************************************************
 
 	implicit real*8(a-h,o-z)
@@ -72,8 +92,8 @@ cc	include 'phase_struct.for'
 c UF 12.1.2000
         record /psimagest/ sp
 
-	dimension densiyre(1000),densiyim(1000),
-     &            densizre(1000),densizim(1000)
+	dimension densiyre(1024),densiyim(1024),
+     &            densizre(1024),densizim(1024)
 
 c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
 c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
@@ -84,7 +104,7 @@ c     &		ianz0_save(301,301),
 c     &		iiheigh,iiwidth,
 c     &		jmult
 
-	dimension a(0:5,0:5)
+	dimension a(0:8,0:8)
 
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
@@ -256,9 +276,9 @@ c*************************************************************
      &      yint,yintey,yintez
 	complex*16 fyey(4096),fyez(4096)
 
-	dimension a(0:5,0:5)
-	dimension densiyre(1000),densiyim(1000),
-     &            densizre(1000),densizim(1000)
+	dimension a(0:8,0:8)
+	dimension densiyre(1024),densiyim(1024),
+     &            densizre(1024),densizim(1024)
 
 cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
@@ -441,7 +461,7 @@ c*************************************************************
 	implicit real*8(a-h,o-z)
 	complex*16 densy,densz,fwert,fwerty,fwertz
 
-	dimension a(0:5,0:5)
+	dimension a(0:8,0:8)
 
 cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
@@ -459,23 +479,23 @@ cc	include 'phase_struct.for'
         record /parder/ pd
 	record /map4/ m4
 
-      dimension p1(0:4,0:4,0:4,0:4)
-      dimension p2(0:4,0:4,0:4,0:4)
-      dimension p12(0:4,0:4,0:4,0:4)
-      dimension p3(0:4,0:4,0:4,0:4)
-      dimension p4(0:4,0:4,0:4,0:4)
-      dimension p34(0:4,0:4,0:4,0:4)
-      dimension p1234(0:4,0:4,0:4,0:4)
-      dimension p11(0:4,0:4,0:4,0:4)
-      dimension p22(0:4,0:4,0:4,0:4)
-      dimension p1122(0:4,0:4,0:4,0:4)
-      dimension p1a(0:4,0:4,0:4,0:4)
-      dimension p2a(0:4,0:4,0:4,0:4)
-      dimension p3a(0:4,0:4,0:4,0:4)
-      dimension p4a(0:4,0:4,0:4,0:4)
-      dimension p11a(0:4,0:4,0:4,0:4)
-      dimension p22a(0:4,0:4,0:4,0:4)
-      dimension p1122a(0:4,0:4,0:4,0:4)
+      dimension p1(0:7,0:7,0:7,0:7)
+      dimension p2(0:7,0:7,0:7,0:7)
+      dimension p12(0:7,0:7,0:7,0:7)
+      dimension p3(0:7,0:7,0:7,0:7)
+      dimension p4(0:7,0:7,0:7,0:7)
+      dimension p34(0:7,0:7,0:7,0:7)
+      dimension p1234(0:7,0:7,0:7,0:7)
+      dimension p11(0:7,0:7,0:7,0:7)
+      dimension p22(0:7,0:7,0:7,0:7)
+      dimension p1122(0:7,0:7,0:7,0:7)
+      dimension p1a(0:7,0:7,0:7,0:7)
+      dimension p2a(0:7,0:7,0:7,0:7)
+      dimension p3a(0:7,0:7,0:7,0:7)
+      dimension p4a(0:7,0:7,0:7,0:7)
+      dimension p11a(0:7,0:7,0:7,0:7)
+      dimension p22a(0:7,0:7,0:7,0:7)
+      dimension p1122a(0:7,0:7,0:7,0:7)
 
 	  if(xi.distfocy.gt.1.e-10)then
 	    dyii=dyi+ra.ri.yi/xi.distfocy
@@ -797,16 +817,6 @@ c------------------------------------------
 	endif                  ! matrel.eq.1
 c------------------------------------------
 
-c--------- brauchen wir nicht 22.3.2006
-c	ra.fd(ra.n4)=fd
-c	ra.fdph(ra.n4)=fdph
-c	if((ra.n3.le.201).and.(ra.n4.le.201))then
-c	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
-c	endif
-c--------------------------------------------
-
-c----------------------------------------
-
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
 c----------------------------------------
@@ -819,7 +829,8 @@ c----------------------------------------
 
 	if(ifl.inorm1.eq.1)fdph=1.d0
 
-	if(ifl.inorm1.eq.0)then
+c	geaendert 20.5.2011
+	if(ifl.inorm1.eq.2)then
 	  fdph=dabs(fdph)
 c------------ 13.3.2007
 	  fd1ph=1.d0/sqrt(fdph)
@@ -1070,7 +1081,7 @@ c UF 12.1.2000
 
 
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
-	dimension coef(1024),coef1(1024),xx(100)
+	dimension coef(1024),coef1(1024),xx(1024)
 
 	small_loc=1.d-15
 	small_loc1=1.d-10
