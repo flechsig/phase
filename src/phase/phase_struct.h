@@ -19,8 +19,10 @@
 #ifdef SEVEN_ORDER
 /* number to be checked */
   #define MAPDIM  8
+  #define MAPDIM1  9
 #else
   #define MAPDIM  5
+  #define MAPDIM1  6
 #endif
 
 
@@ -248,6 +250,9 @@ struct  source4 {
 	   double xlen1c[MAPDIM][MAPDIM][MAPDIM][MAPDIM],  /* der Pfadlaenge     */
         	  xlen2c[MAPDIM][MAPDIM][MAPDIM][MAPDIM];
        	};   
+
+/* ----------------- mirror --------------------------------------*/
+           double a[MAPDIM1][MAPDIM1]
 
 /* ----------------- results from sources ------------------------*/
 
