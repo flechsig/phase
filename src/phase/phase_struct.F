@@ -21,8 +21,10 @@ c--------------- fourth order map ---------------------------
 
 #ifdef SEVEN_ORDER
 #define MAPDIM  7
+#define MAPDIM1  8
 #else
 #define MAPDIM  4
+#define MAPDIM1  5
 #endif
 
 	structure/map4/
@@ -227,6 +229,9 @@ c------------------ path length coefficients (notwendig ???) ---------
      &  	  xlen2c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
        	end structure 
 
+c------------------ mirror --------------------------------------
+	   real*8 a(0:MAPDIM1,0:MAPDIM1)
+	   
 c------------------ results from sources ------------------------
 
         structure/source_results/                 
