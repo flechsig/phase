@@ -60,7 +60,7 @@ c        record /source_results/ sr
         integer i,j,k,l,iord,iheigh,iwidth,
      &       n1,n2,icheckk,ii,jj,iinumb
 
-        real *8 xlam_test,xlen0,a(0:5,0:5),
+        real *8 xlam_test,xlen0,
      &       wc,xlc,ypc1,zpc1,dypc,dzpc,
      &       xlen1c,xlen2c,fdetc,fdetphc,fdet1phc,
      &       ddisty,ddistz,yi,zi,
