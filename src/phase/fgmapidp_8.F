@@ -1,15 +1,51 @@
 c-------------------------------------------------------------
 	subroutine fgmapidp_8(acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
-     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,
+     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,dfdwidlj,
      &             iord,imodus,iplmode)
 c--------------------------------------------------------------------
+c
+c	ACHTUNG in get_partial_derivatives muss npch Arbeit 
+c	reingesteckt werden
+c
+c
 c	this routine evaluates
-c	- the trasformation ypc1,zpc1,dypc,dzps
-c	- the intersetion points w xlc
+c	- the transformation ypc1,zpc1,dypc,dzpc
+c	- the intersection points wc, xlc
 c	- the path length opl
 c	- the first derivatives of the pathlength dfdw, dfdl
-c	- the second derivatives of the pathlength dfdww, dfdwl, dfdll 
+c	- further partial derivatives of the optical path length
+c
+c	Variables read in this routine
+c		q0(w,l,y,z,yp,zp)
+c		q1(w,l,y,z,yp,zp)
+c		q2(w,l,y,z,yp,zp)
+c	
+c	intermediate variables:
+c		ypc(w,l,y,z)
+c		zpc(w,l,y,z)
+c
+c		opl6(w,l,y,z,yp,zp)
+c		dfdw6(w,l,y,z,yp,zp)
+c		dfdl6(w,l,y,z,yp,zp)
+c
+c		opl4(w,l,y,z)
+c		dfdw4(w,l,y,z)
+c		dfdl4(w,l,y,z)
+c		
+c	Output variables:
+c		wc(y,z,dy,dz)
+c		xlc(y,z,dy,dz)
+c		ypc1(y,z,dy,dz)
+c		zpc1(y,z,dy,dz)
+c		dypc(y,z,dy,dz)
+c		dzpc(y,z,dy,dz)
+c
+c		opl(y,z,dy,dz)
+c		dfdw()
+c		dfdl()
+c		dfdwidlj(i,j,y,z,dy,dz)	i,j derivatives to w and l
+c
 c---------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
@@ -54,29 +90,26 @@ c---------------------------------------------------------------------
 	dimension dfdw1(0:7,0:7,0:7,0:7,0:7,0:7),
      &		  dfdw2(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdw6(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            dfdww6(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            dfdwl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdl1(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdl2(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdl6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdww6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdwl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdll6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl4(0:7,0:7,0:7,0:7),
      &            opl(0:7,0:7,0:7,0:7),
      &            dfdw4(0:7,0:7,0:7,0:7),
      &            dfdl4(0:7,0:7,0:7,0:7),
-     &            dfdw(0:7,0:7,0:7,0:7),
-     &            dfdl(0:7,0:7,0:7,0:7),
      &            dfdww4(0:7,0:7,0:7,0:7),
      &            dfdwl4(0:7,0:7,0:7,0:7),
      &            dfdll4(0:7,0:7,0:7,0:7),
+     &            dfdw(0:7,0:7,0:7,0:7),
+     &            dfdl(0:7,0:7,0:7,0:7),
      &            dfdww(0:7,0:7,0:7,0:7),
      &            dfdwl(0:7,0:7,0:7,0:7),
-     &            dfdll(0:7,0:7,0:7,0:7)
-c UF 31.3. 2011
-       dimension eq27(0:7,0:7,0:7,0:7,0:7,0:7),
-     &           eq28(0:7,0:7,0:7,0:7,0:7,0:7)
-
+     &            dfdll(0:7,0:7,0:7,0:7),
+     &            dfdwidlj(0:7,0:7,0:7,0:7,0:7,0:7)
                  
 c----------------------------------------------------------
 c----------------------------------------------------------
@@ -130,8 +163,8 @@ c	OPL has six variables (w,l,y,z,yp,zp)
 	call tay_add_6(opl6,q0,iord)
 
 c---------- get dfdw6 and dfdl6 in seventh order
-c	dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ1/dw)/sqrt(Q1) + dQ0/dw 
-c	dfdl6=(dQ1/dl)/sqrt(Q1) + (dQ1/dl)/sqrt(Q1)
+c	dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw 
+c	dfdl6=(dQ1/dl)/sqrt(Q1) + (dQ2/dl)/sqrt(Q2)
 c	dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
 
 	call tay_deri_6a(q0_8,dq0w_8,1,1,iord)
@@ -159,10 +192,11 @@ c	dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
 	call Tay_mult_6(rtq2i,dq2l,dfdl2,iord)
 	call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
 
-c-------------- second derivatives
-	call tay_deri_6a(dfdw6,dfdww6,1,1,iord)
-	call tay_deri_6a(dfdw6,dfdwl6,2,1,iord)
-	call tay_deri_6a(dfdl6,dfdll6,2,1,iord)
+c----------------------------------------------------
+	
+	call tay_deri_6(dfdw6,dfdww6,1,1,iord)
+	call tay_deri_6(dfdw6,dfdwl6,2,1,iord)
+	call tay_deri_6(dfdl6,dfdll6,2,1,iord)
 
 c-------------- solve system of linear equations
 c	imode = 1, use 1D Newton Raphson 
@@ -185,8 +219,8 @@ c	output:	ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 c------------- set up eqs. 27 & 28 
 c	output:	eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
 
-c UF 31.3.2011	call get_dydz(a,eq27,eq28,iord)
-	call get_dydz(a,g,eq27,eq28,iord)
+	call get_dydz(a,eq27,eq28,iord)
+
 c------------- get Taylor expansion of w and l
 c	solve set of linear equations
 c	input:	eqs. 27 & 28
@@ -195,27 +229,18 @@ c	output:	wc(y,z,dy,dz) & xlc(y,z,dy,dz)
 	call subd345a(acc,eq27,eq28,wc,xlc,imode,iord)
 
 c------------- get Taylor expansion of dyp and dzp
-c	output:	dyp(y,z,dy,dz) & dzp(y,z,dy,dz)
+c	input:	wc(y,z,dy,dz),xlc(y,z,dy,dz),
+c		ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
+c	output:	dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
 
-c UF 31.3.2011 a1 ist unbekannt
-	call get_dypdzp(a1,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
-
+	call get_dypdzp(a,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
 c------------- get path length in variable (w,l,y,z)
-c	input:  opl6(w,l,y,z,yp,zp)
+c	input:  opl6(w,l,y,z,yp,zp),
+c		ypc1(y,z,dy,dz),zpc1(y,z,dy,dz)
 c	output:	opl4(w,l,y,z)
 
 	call replace_6v4v(opl6,ypc1,zpc1,opl4,iord)
-
-c------------- get partial derivatives in variables (w,l,y,z)
-c------------- first derivatives
-	call replace_6v4v(dfdw6,ypc1,zpc1,dfdw4,iord)
-	call replace_6v4v(dfdl6,ypc1,zpc1,dfdl4,iord)
-
-c------------- second derivatives
-	call replace_6v4v(dfdww6,ypc1,zpc1,dfdww4,iord)
-	call replace_6v4v(dfdwl6,ypc1,zpc1,dfdwl4,iord)
-	call replace_6v4v(dfdll6,ypc1,zpc1,dfdll4,iord)
 
 c------------- get path length in variables (y,z,dy,dz)
 c	input:	opl4(w,l,y,z)
@@ -224,14 +249,20 @@ c	output:	opl(y,z,dy,dz)
 	call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
      &                          opl,opl,1,iord)
 
+c------------- get partial derivatives in variables (w,l,y,z)
+	call replace_6v4v(dfdw6,ypc1,zpc1,dfdw4,iord)
+	call replace_6v4v(dfdl6,ypc1,zpc1,dfdl4,iord)
+
+	call replace_6v4v(dfdww6,ypc1,zpc1,dfdww4,iord)
+	call replace_6v4v(dfdwl6,ypc1,zpc1,dfdwl4,iord)
+	call replace_6v4v(dfdll6,ypc1,zpc1,dfdll4,iord)
+	
 c------------- get partial derivatives in variables (y,z,dy,dz)
-c------------- first derivatives
 	call replace_wl_in_ypzp(dfdw4,dfdw4,wc,xlc,
      &                          dfdw,dfdw,1,iord)
 	call replace_wl_in_ypzp(dfdl4,dfdl4,wc,xlc,
      &                          dfdl,dfdl,1,iord)
 
-c------------- second derivatives
 	call replace_wl_in_ypzp(dfdww4,dfdww4,wc,xlc,
      &                          dfdww,dfdww,1,iord)
 	call replace_wl_in_ypzp(dfdwl4,dfdwl4,wc,xlc,
@@ -251,6 +282,21 @@ c------------- second derivatives
           enddo
          enddo
         enddo
+
+c---------------------------------------------------------------------
+c---------------------------------------------------------------------
+c
+c	hier muss noch Arbeit reingesteckt werden
+c
+c---------------------------------------------------------------------
+c---------------------------------------------------------------------
+c--------------------- get higher order partial derivatives of path length
+c	input:	opl6(w,l,y,z,yp,zp)
+c	output:	dfdwmdln(i,j,y,z,dy,dz)
+c
+c	call get_partial_derivatives(opl6,dfdwidlj,iord)
+c
+c-------------------------------------------
 
 	endif	! idrift = 0
 
