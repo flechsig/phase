@@ -283,20 +283,13 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
          enddo
         enddo
 
-c---------------------------------------------------------------------
-c---------------------------------------------------------------------
-c
-c	hier muss noch Arbeit reingesteckt werden
-c
-c---------------------------------------------------------------------
-c---------------------------------------------------------------------
 c--------------------- get higher order partial derivatives of path length
 c	input:	opl6(w,l,y,z,yp,zp)
-c	output:	dfdwmdln(i,j,y,z,dy,dz)
-c
-c	call get_partial_derivatives(opl6,dfdwidlj,iord)
-c
-c-------------------------------------------
+c	output:	dfdwidlj(i,j,y,z,dy,dz)
+
+	call get_partial_derivatives(opl6,dfdwidlj,iord)
+
+c------------------------------------------------------------
 
 	endif	! idrift = 0
 
