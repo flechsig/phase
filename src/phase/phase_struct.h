@@ -97,7 +97,8 @@ typedef struct ComplexStruct {
 	          dwdl[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
 	          dfdww[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
 	          dfdwl[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
-	          dfdll[MAPDIM][MAPDIM][MAPDIM][MAPDIM];
+	          dfdll[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+	          dfdwidlj[MAPDIM][MAPDIM][MAPDIM][MAPDIM][MAPDIM][MAPDIM];
         };    
 
 /* -------------- geometry -----------------------------------*/

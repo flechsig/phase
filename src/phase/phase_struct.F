@@ -79,7 +79,8 @@ c--------------- partial derivatives ------------------------
      &	 dfdl(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &	 dfdww(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &	 dfdwl(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
-     &	 dfdll(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
+     &	 dfdll(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &   dfdwidlj(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
         end structure  
 
 c--------------- geometry -----------------------------------
