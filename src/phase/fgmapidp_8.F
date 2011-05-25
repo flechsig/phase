@@ -7,8 +7,7 @@ c--------------------------------------------------------------------
 c
 c	ACHTUNG in get_partial_derivatives muss npch Arbeit 
 c	reingesteckt werden
-c
-c
+cc
 c	this routine evaluates
 c	- the transformation ypc1,zpc1,dypc,dzpc
 c	- the intersection points wc, xlc
@@ -99,6 +98,10 @@ c---------------------------------------------------------------------
      &            opl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl4(0:7,0:7,0:7,0:7),
      &            opl(0:7,0:7,0:7,0:7),
+     &            xloc1_6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            xloc2_6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            xloc1_4(0:7,0:7,0:7,0:7),
+     &            xloc2_4(0:7,0:7,0:7,0:7),
      &            dfdw4(0:7,0:7,0:7,0:7),
      &            dfdl4(0:7,0:7,0:7,0:7),
      &            dfdww4(0:7,0:7,0:7,0:7),
@@ -161,6 +164,9 @@ c	OPL has six variables (w,l,y,z,yp,zp)
 
 	call tay_sum_6(rtq1,rtq2,opl6,iord)
 	call tay_add_6(opl6,q0,iord)
+
+	call tay_sum_6(rtq1,q0,xloc1_6,iord)
+        call tay_copy_6(rtq2,xloc2_6,iord)
 
 c---------- get dfdw6 and dfdl6 in seventh order
 c	dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw 
@@ -242,12 +248,20 @@ c	output:	opl4(w,l,y,z)
 
 	call replace_6v4v(opl6,ypc1,zpc1,opl4,iord)
 
+        call replace_6v4v(xloc1_6,ypc1,zpc1,xloc1_4,iord)
+        call replace_6v4v(xloc2_6,ypc1,zpc1,xloc2_4,iord)
+
 c------------- get path length in variables (y,z,dy,dz)
 c	input:	opl4(w,l,y,z)
 c	output:	opl(y,z,dy,dz)
 
 	call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
      &                          opl,opl,1,iord)
+
+        call replace_wl_in_ypzp(xloc1_4,xloc1_4,wc,xlc,
+     &                          xlm.xlen1c,xlm.xlen1c,1,iord)
+        call replace_wl_in_ypzp(xloc2_4,xloc2_4,wc,xlc,
+     &                          xlm.xlen2c,xlm.xlen2c,1,iord)
 
 c------------- get partial derivatives in variables (w,l,y,z)
 	call replace_6v4v(dfdw6,ypc1,zpc1,dfdw4,iord)
@@ -270,19 +284,23 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
 	call replace_wl_in_ypzp(dfdll4,dfdll4,wc,xlc,
      &                          dfdll,dfdll,1,iord)
 
-	if(iplmode.eq.1)opl(0,0,0,0)=opl(0,0,0,0)-g.r-g.rp
+	if(iplmode.eq.1)then
+	  opl(0,0,0,0)=opl(0,0,0,0)-g.r-g.rp
+	  xlm.xlen1c(0,0,0,0)=xlm.xlen1c(0,0,0,0)-g.r
+	  xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
+	endif
 
-	do i=0,iord
-	 do j=0,iord-i
-          do k=0,iord-i-j
-	   do l=0,iord-i-j-k
-	    xlm.xlen1c(i,j,k,l)=opl(i,j,k,l)/2.d0
-	    xlm.xlen2c(i,j,k,l)=xlm.xlen1c(i,j,k,l)
-	   enddo
-          enddo
-         enddo
-        enddo
-
+c	do i=0,iord
+c	 do j=0,iord-i
+c         do k=0,iord-i-j
+c	   do l=0,iord-i-j-k
+c	    xlm.xlen1c(i,j,k,l)=opl(i,j,k,l)/2.d0
+c	    xlm.xlen2c(i,j,k,l)=xlm.xlen1c(i,j,k,l)
+c	   enddo
+c         enddo
+c        enddo
+c       enddo
+c
 c--------------------- get higher order partial derivatives of path length
 c	input:	opl6(w,l,y,z,yp,zp)
 c	output:	dfdwidlj(i,j,y,z,dy,dz)
