@@ -1,11 +1,6 @@
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
-
 c------------------------------------------------------------------
-	subroutine fdet_8(dfdw,dfdl,ypc1,zpc1,dypc,dzpc,
-     &                    fdetc,fdetphc,fdet1phc,imodus,inorm1,inorm2,iord)
+	subroutine fdet_8(ypc1,zpc1,dypc,dzpc,dfdww,dfdwl,dfdll,
+     &                    fdetc,fdetphc,fdet1phc,inorm1,inorm2,iord)
 c------------------------------------------------------------------
 	implicit real*8(a-h,o-z)
 
@@ -13,16 +8,19 @@ c------------------------------------------------------------------
      &            zpc1(0:7,0:7,0:7,0:7),
      &            dypc(0:7,0:7,0:7,0:7),
      &            dzpc(0:7,0:7,0:7,0:7)
+
+        dimension f1(0:7,0:7,0:7,0:7),
+     &            f2(0:7,0:7,0:7,0:7),
+     &            f12(0:7,0:7,0:7,0:7),
+     &            f34(0:7,0:7,0:7,0:7)
+
         dimension fdetc(0:7,0:7,0:7,0:7),
      &            fdetphc(0:7,0:7,0:7,0:7),
      &            fdetph1c(0:7,0:7,0:7,0:7)
 
-        dimension dfdw(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            dfdl(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            d2fdw2(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            d2fdwdl(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            d3fdw3(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            d2fdl2(0:7,0:7,0:7,0:7,0:7,0:7)
+        dimension dfdww(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdwl(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdll(0:7,0:7,0:7,0:7,0:7,0:7)
 
 c------------------------------------------------------------------
 c	evaluate factors
@@ -56,7 +54,20 @@ c---------------------------------------------------
 c	factor 1)
 c---------------------------------------------------	
 
-	if(inorm1.eq.0)then
+	if(inorm1.eq.1)then
+	do i=0,iord
+	 do j=0,iord-i
+	  do k=0,iord-i-j
+	   do l=0,iord-i-j-k
+	    fdetphc(i,j,k,l)=0.d0
+	   enddo
+	  enddo
+	 enddo
+	enddo
+	fdetphc(0,0,0,0)=1.d0
+	endif
+
+	if(inorm1.eq.2)then
 
 	call Tay_deri_4(ypc1,f1,3,1,iord)
 	call Tay_deri_4(zpc1,f2,4,1,iord)
@@ -71,21 +82,6 @@ c---------------------------------------------------
 
 	endif
 
-	if(inorm1.eq.1)then
-
-	do i=0,iord
-	 do j=0,iord-i
-	  do k=0,iord-i-j
-	   do l=0,iord-i-j-k
-	    fdetphc(i,j,k,l)=0.d0
-	   enddo
-	  enddo
-	 enddo
-	enddo
-	fdetphc(0,0,0,0)=1.d0
-		
-	endif
-
 c	bei diesem Faktor braucht man jetzt nur noch:
 c	- Taylorreihe berechnen
 c	- Absolutbetrag berechnen
@@ -93,31 +89,6 @@ c	- Absolutbetrag berechnen
 c------------------------------------------------------------------	
 c	factor 2)
 c------------------------------------------------------------------
-
-	if(inorm2.eq.0)then
-	  if(inorm1.eq.0)then
-	  do i=0,iord
-	   do j=0,iord-i
-	    do k=0,iord-i-j
-	     do l=0,iord-i-j-k
-	      fdetph1c(i,j,k,l)=fdetphc(i,j,k,l)
-	     enddo
-	    enddo
-	   enddo
-	  enddo
-	  else
-	   call Tay_deri_4(ypc1,f1,3,1,iord)
-	   call Tay_deri_4(zpc1,f2,4,1,iord)
-	   call Tay_mult_4(f1,f2,f12,iord)
-
-	   call Tay_deri_4(ypc1,f1,4,1,iord)
-	   call Tay_deri_4(zpc1,f2,3,1,iord)
-	   call Tay_mult_4(f1,f2,f34,iord)
-
-	   call Tay_const_4(f34,-1.,iord)
-	   call Tay_sum_4(f12,f34,fdetph1c,iord)
-	  endif
-	endif
 
 	if(inorm2.eq.1)then
 	do i=0,iord
@@ -130,45 +101,43 @@ c------------------------------------------------------------------
 	 enddo
 	enddo
 	fdetph1c(0,0,0,0)=1.d0
-		
-	endif
-
-	if((inorm2.eq.2).or.(inorm2.eq.3))then
-
-	call get_partial_derivatives(dfdw,dfdl,
-     &		d2fdw2,d2fdwdl,d2fdl2,d3fdw3,iord)
-
-	call replace_6v4v(d2fdw2,ypc1,zpc1,d2fdw2a,iord)
-	call replace_6v4v(d2fdwdl,ypc1,zpc1,d2fdwdla,iord)
-	call replace_6v4v(d2fdl2,ypc1,zpc1,d2fdl2a,iord)
-	call replace_6v4v(d3fdw3,ypc1,zpc1,d3fdw3a,iord)
-
-	call replace_wl_in_ypzp(d2fdw2a,d2fdwdla,wc,xlc,
-     &                          d2fdw2b,d2fdwdlb,2,iord)
-	call replace_wl_in_ypzp(d2fdl2a,d3fdw3a,wc,xlc,
-     &                          d2fdl2b,d3fdw3b,2,iord)
-
-	call Tay_mult_4(d2fdw2,d2fdl2,f1,iord)
-	call Tay_mult_4(d2fdwdl,d2fdwdl,f2,iord)
-
 	endif
 
 	if(inorm2.eq.2)then
-	  call Tay_mult_4(d2fdwdl,d2fdwdl,fdetph2c,iord)
+	 do i=0,iord
+	  do j=0,iord-i
+	   do k=0,iord-i-j
+	    do l=0,iord-i-j-k
+	     f1(i,j,k,l)=fdetphc(i,j,k,l)
+	    enddo
+	   enddo
+	  enddo
+	 enddo
+
+	 call Tay_inv_4(f1,f2,iord)
+	 call Tay_sqrt_4(f2,fdetph1c,iord)
 	endif
 
 	if(inorm2.eq.3)then
-	  call Tay_mult_4(d2fdwdl,d2fdwdl,f2,iord)
-	  call Tay_const_4(f2,-1.,iord)
-	  call Tay_sum_4(f1,f2,fdetph2c,iord)
+	 call Tay_mult_4(dfdww,dfdll,f1,iord)
+	 call Tay_inv_4(f1,f2,iord)
+	 call Tay_sqrt_4(f2,fdetph1c,iord)
 	endif
 
-c	jetzt braucht man nur noch:
+	if(inorm2.eq.4)then
+	 call Tay_mult_4(dfdww,dfdll,f1,iord)
+	 call Tay_mult_4(dfdwl,dfdwl,f2,iord)
+	 call Tay_const_4(f2,-1.,iord)
+	 call Tay_sum_4(f1,f2,f12,iord)
+	 call Tay_inv_4(f12,f34,iord)
+	 call Tay_sqrt_4(f34,fdetph1c,iord)
+	endif
+
+c	bei diesem Faktor braucht man jetzt nur noch:
 c	- die Taylorreihe berechnen
 c	- Betrag bilden
-c	- invertieren
-c	- Wurzel ziehen
-c	- mit lambda multiplizieren	
+c	- mit Vorfaktor und lambda multiplizieren	
+c	  Vorfaktor = sqrt(cosa*cosb)/(r*rp)
 
 	return
 	end
