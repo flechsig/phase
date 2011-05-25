@@ -48,10 +48,17 @@ void BuildBeamline(struct BeamlineType *bl)
 
 
 #ifdef SEVEN_ORDER
+# stimmt das hier???? Dimensionierung von dfdwwp etc
+   
    double *dfdwp, *dfdlp;
-
+   double *dfdwwp, *dfdwlp, *dfdllp;
+   
    dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
    dfdlp= (double *)&(bl->ElementList[0].dfdl);
+
+   dfdwwp= (double *)&(bl->ElementList[0].dfdww);   /* UF nicht sicher ob das pas$
+   dfdwlp= (double *)&(bl->ElementList[0].dfdwl);
+   dfdllp= (double *)&(bl->ElementList[0].dfdll);
 #endif
 
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
@@ -161,11 +168,10 @@ void BuildBeamline(struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
+	  fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1,
 		&bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2,
-		&bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
-		                           JB muss ich noch checken */
+		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
+		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else      
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -216,11 +222,10 @@ void BuildBeamline(struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
+          fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1,
 	        &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2,
-		&bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
-		           JB *muss ich noch checken */
+		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
+		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -247,9 +252,14 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
    char    command[MaxPathLength];
 #ifdef SEVEN_ORDER
    double *dfdwp, *dfdlp;
-
+   double *dfdwwp, *dfdwlp, *dfdllp;
+   
    dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
    dfdlp= (double *)&(bl->ElementList[0].dfdl);
+
+   dfdwwp= (double *)&(bl->ElementList[0].dfdww);
+   dfdwlp= (double *)&(bl->ElementList[0].dfdwl);
+   dfdllp= (double *)&(bl->ElementList[0].dfdll);
 #endif
 
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
@@ -356,11 +366,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1, 
+	  fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1, 
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc, 
-	       &bl->fdet1phc, &imodus,  &bl->BLOptions.ifl.inorm1,  &bl->BLOptions.ifl.inorm2,
-	       &bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ?? 
-				      JB *muss ich noch checken */
+	       &bl->fdet1phc, &imodus,  &bl->BLOptions.ifl.inorm1,  
+	       &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord); 
+	   
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -414,11 +424,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 #ifdef SEVEN_ORDER
 
 
-          fdet_8(dfdwp, dfdlp, &bl->ypc1, &bl->zpc1,
+          fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1,
 	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-	       &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,&bl->BLOptions.ifl.inorm2,
-	       &bl->BLOptions.ifl.iord);  /* imodus nicht gebraucht ??
-	                                     JB muss ich noch checken */
+	       &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+	       &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);  
+	   
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -784,7 +794,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		 &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		 listpt->dfdww, listpt->dfdwl, listpt->dfdll,
+		 listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
 		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #else
 	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
@@ -827,7 +837,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
                 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
                 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		&listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		listpt->dfdww, listpt->dfdwl,listpt->dfdll,
+		listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
                 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	
 #else
