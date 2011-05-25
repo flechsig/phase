@@ -45,8 +45,7 @@ c	adaptive integration rausschmeissen
 c	nur eine Iteration
 c	falls spaeter adaptive Integration implementiert we rden soll,
 c	muss dies auf andere Weise als bisher geschehen.
-c
-c
+cc
 c	ACHTUNG. Umstellen auf 8 Ordnung Spiegelentwicklung
 c	erfolgt ueber Link-Flag SEVEN_ORDER,
 c	die Struktur m4 und die Variablen in der Struktur m4 
@@ -62,9 +61,15 @@ c
 c	Skalierungsfaktoren angepasst (neue Definition etc)
 c	      JB 20.5.2011
 c
-c	dimension a(0:8,0:8) ueberall gesetzt 
+c	dimension von a rausgeworfen, wird jetzt direkt in
+c	phase_struct.h/F gesetzt
 c	dimension pij..() in fywert ueberall hochgesetzt
 c		  JB 20.5.2011
+c
+c	zu den vielen Parametern:
+c	   ifl.ipath   = 0 ausser fuer Debug-Zwecke
+c	   ifl.matrel  = 0 --------- " ------------
+c	   ifl.iexpand = 0 --------- " ------------
 c
 c************************************************
 
@@ -94,17 +99,6 @@ c UF 12.1.2000
 
 	dimension densiyre(1024),densiyim(1024),
      &            densizre(1024),densizim(1024)
-
-c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
-c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
-c     &		z1,z2,
-c     &		tya(301,301),tza(301,301),
-c     &		typ(301,301),tzp(301,301),
-c     &		ianz0_save(301,301),
-c     &		iiheigh,iiwidth,
-c     &		jmult
-
-	dimension a(0:8,0:8)
 
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
@@ -276,7 +270,6 @@ c*************************************************************
      &      yint,yintey,yintez
 	complex*16 fyey(4096),fyez(4096)
 
-	dimension a(0:8,0:8)
 	dimension densiyre(1024),densiyim(1024),
      &            densizre(1024),densizim(1024)
 
@@ -305,13 +298,11 @@ c	Erstellen eines nochmals reduzierten
 c       Konstantensatzes
 c*******************************************************
 
-c------------ changed 16.8.1996 ----------
 	  if(xi.distfocz.gt.1.e-10)then
 	    dzii=dzi+ra.ri.zi/xi.distfocz
 	    else
 	    dzii=dzi
 	  endif
-c-----------------------------------------
 
 	ra.ri.dzi=dzii
 
@@ -329,19 +320,6 @@ c-----------------------------------------
 
         call subm2(m4.wrc,dzii,m4.wrrc)
         call subm2(m4.xlrc,dzii,m4.xlrrc)
-
-c        call subm2(m4.fdetrc,dzi,m4.fdtrrc)
-c        call subm2(m4.fdetphrc,dzi,m4.fdtphrrc)
-c        call subm2(m4.fdet1phrc,dzi,m4.fdt1phrrc)
-c        call subm2(m4.yprc1,dzi,m4.yprrc1)
-c        call subm2(m4.zprc1,dzi,m4.zprrc1)
-c        call subm2(m4.dyprc,dzi,m4.dyprrc)
-c        call subm2(m4.dzprc,dzi,m4.dzprrc)
-c
-c        call subm2(m4.wrc,dzi,m4.wrrc)
-c        call subm2(m4.xlrc,dzi,m4.xlrrc)
-
-c------------ end of changes 16.8.1996
 
 	ianzy=xi.ianzy0
 c UF 21.12.99	itery=xi.itery0
@@ -395,12 +373,8 @@ c------------------------------------------------------------
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	  
-c---------------- 22.3.2006 ------------------
-c 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
-c     &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
  	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr)
-c---------------- 22.3.2006
 
 	 densiyre(i)=sr.densyre
 	 densiyim(i)=sr.densyim
@@ -410,21 +384,6 @@ c---------------- 22.3.2006
 	  if(ifl.ibright.eq.1)then
 	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
 	  endif
-	  
-c------------------ 22.3.2006
-c	  fyey(i)=fwerty
-c	  fyez(i)=fwertz
-c	  if(ifl.ispline.lt.0)then
-c	   fya(i)=fwya
-c	   fza(i)=fwza
-c	   fyp(i)=fwyp
-c	   fzp(i)=fwzp
-c	  endif
-c
-c	  diese Zeile braucht richtig lange, darum weg damit
-c	  fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
-c
-c---------------22.3.2006
 
 	dy(i)=dyy
 	enddo
@@ -460,8 +419,6 @@ c*************************************************************
 c*************************************************************
 	implicit real*8(a-h,o-z)
 	complex*16 densy,densz,fwert,fwerty,fwertz
-
-	dimension a(0:8,0:8)
 
 cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
@@ -526,8 +483,6 @@ cc	include 'phase_struct.for'
           ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
           ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
           ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
-c          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
-c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
 	  ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
 	  ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
 
@@ -540,9 +495,11 @@ c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
 
           var0=var0*dyii
         enddo
-
-c	write(6,*)' 1 ',fd1ph
-
+	
+	fd=dabs(fd)
+        fdph=dabs(fdph)
+        fd1ph=dabs(fd1ph)
+	
 	goto 1111
 
 	fd1ph=0.
@@ -585,21 +542,8 @@ c	    hier kommt das gleiche raus
 c	    write(6,*)' 3 ',fd1ph
 
 1111	continue
-c---------- end new 3.6.1997
 
-c	    beide Variablen stehen auf null
-c	    write(6,*)'  ifl.ipath ',ifl.ipath
-c	    write(6,*)'  ifl.matrel ',ifl.matrel
-
-c----------new 28.4.
-	if(ifl.ipath.eq.0)fd1ph=1.d0/dsqrt(dabs(fd1ph))
-	if((ifl.ipath.eq.1).or.(ifl.ipath.eq.2))then
-	  fd1ph=1.d0
-	  fd=1.d0
-	  fdph=1.d0
-	endif
-c--------- end new
-
+c	    matrel und ipath stehen auf null, wo gesetzt?
 c----------------------------------------------
 	if(ifl.matrel.eq.1)then
 c----------------------------------------------
@@ -822,92 +766,38 @@ c------------------------------------------
 c----------------------------------------
 
 	if(src.isrctype.lt.4)then
-	fwerty=cdabs(sr.densy*abs(fd))
+	fwerty=cdabs(sr.densy*fd)
 	endif
 
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
 
-	if(ifl.inorm1.eq.1)fdph=1.d0
+c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
+c	 wird nicht in phase_integration gesetzt, da hier nicht 
+c	 unterschieden wird, ob ein OE oder die Summe von mehreren 
+c	 OEs berechnet wird. Reihenentwicklungen fuer die Vorfaktoren 
+c	 fuer ein OE muessen sinnvollerweise in der Routine fdet_8 
+c	 berechnet werden und in bline.c yusammengabut werden.
+c	 Es ist darauf zu achten, dass
+c	 - alpha, beta functions of (z,y,dz,dy)
+c	 - r, rp functions of (z,y,dz,dy)
+c	 von den Startkoordinaten abhaengen
+c	 Das wird spaeter mit der Implementierung der hoeheren
+c	 Ordnungen der asymptotischen Entwicklung noch mal nachgeholt
+c	 (fuer ein optisches Element)
+c---------------------------------------------------------------------
+c	 Berechnung der Laengen r und rp
+c	 if only one OE
 
-c	geaendert 20.5.2011
-	if(ifl.inorm1.eq.2)then
-	  fdph=dabs(fdph)
-c------------ 13.3.2007
-	  fd1ph=1.d0/sqrt(fdph)
-c------------------------------
-	endif
-
-        if(ifl.inorm2.eq.1)then
-	  fd1ph=1.d0
-	  if((ra.n3.le.201).and.(ra.n4.le.201))then
-	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
-	  endif
-	endif
-
-	if((ifl.inorm2.eq.2).or.(ifl.inorm2.eq.3))then
-	  if(ifl.igrating.eq.0)call subdfpl1(g,a,ra,pd)	      ! mirror
-	  if(ifl.igrating.eq.1)call subdfpl1a(g,a,ra,pd)      ! grating
-	  call subdfpl2(g,a,ra,pd)
-	endif
-
-        if(ifl.inorm2.eq.2)then
-	  fd1ph=dsqrt(dabs(pd.pl1w2+pd.pl2w2))*
-     &        dsqrt(dabs(pd.pl1l2+pd.pl2l2))
-c-------- 10.3.2007
-c-------- das ist noch nicht ganz richtig, da das
-c         cosb mit den Startkoordinaten variiert
-          fd1ph=sqrt(g.cosa*g.cosb)/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
-	  if((ra.n3.le.201).and.(ra.n4.le.201))then
-	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
-	  endif
-	endif
-
-	if(ifl.inorm2.eq.3)then
-	  fd1ph=dsqrt(dabs(  
-     &      (pd.pl1w2+pd.pl2w2) * (pd.pl1l2+pd.pl2l2) -
-     &      (pd.pl1w1l1+pd.pl2w1l1) * (pd.pl1w1l1+pd.pl2w1l1)
-     &               )    )
-c-------- 10.3.2007
-c-------- das ist noch nicht ganz richtig, da das
-c         cosb mit den Startkoordinaten variiert
-     	  fd1ph=sqrt(g.cosa*g.cosb)/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
-	  if((ra.n3.le.201).and.(ra.n4.le.201))then
-	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
-	  endif
-	endif
-
-c	if(ifl.ispline.ge.0)then
-c		fwerty=fwerty*fd1ph
-c		fwertz=fwertz*fd1ph
-c	endif
-
-c	if(ifl.ispline.lt.0)then
-c		fwya=fwya*fd1ph
-c		fwza=fwza*fd1ph
-c	endif
-
-c--------------- brauchen wir nicht 22.3.2006
-c	st.fd1phmax(ra.n1,ra.n2)=
-c     &        dmax1(fd1ph,st.fd1phmax(ra.n1,ra.n2))
-c-------------------------------------------------
-
-c--------- den folgenden Block hierher verschoben, damit 
-c          die Variable inorm2 auch wirken kann
-c          24.1.2007
-
-c	write(6,*)ra.oe.w,ra.oe.xl
-c	write(6,*)fdph,fd1ph,sqrt(pd.arg1),sqrt(pd.arg2)
-c	write(6,*)fdph,fd1ph
-c        call subdfpl1(g,a,ra,pd)      ! mirror
+c	 Nutzung von  xlen1c, xlenc2c
+	 
+c	 call subdfpl1(g,a,ra,pd)       ! mirror
 c        call subdfpl1a(g,a,ra,pd)      ! grating
-c	write(6,*)' laengen ',sqrt(pd.arg1),sqrt(pd.arg2)
-c	write(6,*)' w, l ',ra.oe.w,ra.oe.xl
-c	write(6,*)' '
+c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
+	 
+c---------------------------------------------------------------------
 
 	if(ifl.ispline.ge.0)then
                 ff=fdph*fd1ph
-c		fwerty=sr.densy*ff
-c		fwertz=sr.densz*ff
 		sr.densyre=sr.densyre*ff
 		sr.densyim=sr.densyim*ff
 		sr.denszre=sr.denszre*ff
