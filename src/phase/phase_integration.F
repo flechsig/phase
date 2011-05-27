@@ -32,7 +32,7 @@ c Aenderungen von JB am 11.2.00
 c UF habe xxsave eingefuehrt !!! pruefen
 c*********************************************************
 c UF 12.1.2000
-      subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st,sp)
+      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,sp)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -93,6 +93,7 @@ cc	include 'phase_struct.for'
 	record /integration/ xi
 	record /apertures/ apr
 	record /statistics/ st
+	record /mirrortype/ am
 	record /map4/ m4
 c UF 12.1.2000
         record /psimagest/ sp
@@ -106,7 +107,7 @@ c UF 12.1.2000
 
 	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
-	call guess(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
+	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st)
 	endif
 	
 c*******************************************************
@@ -165,7 +166,7 @@ c----------------------------------------------------------
 
 	do i=1,ianzz
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
-	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		z(i),fwerty,fwertz,yintya,yintyp,yintza,yintzp,sr)
            fzey(i)=cdabs(fwerty)
 	   dz(i)=dzz
@@ -187,7 +188,7 @@ c-----------------------------------------------------------
 	do i=1,ianzz
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
-	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr)
 	   if(ifl.ispline.ge.0)then
@@ -253,7 +254,7 @@ c------------------------------------------------------------
 c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-	subroutine yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr)
 c*************************************************************
@@ -287,6 +288,7 @@ cc	include 'phase_struct.for'
         record /source6/ so6
 	record /apertures/ apr
 	record /statistics/ st
+	record /mirrortype/ am
 	record /map4/ m4
 
 	dimension y(4096),dy(4096)
@@ -351,7 +353,7 @@ c----------------------------------------------------------
 
 	do i=1,ianzy
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
- 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+ 	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
 	  fyey(i)=cdabs(fwerty)
 	  dy(i)=dyy
@@ -373,7 +375,7 @@ c------------------------------------------------------------
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	  
- 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+ 	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr)
 
 	 densiyre(i)=sr.densyre
@@ -414,7 +416,7 @@ c--------------------- end yyint -------------------------
 
 
 c*************************************************************
- 	subroutine fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+ 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
 c*************************************************************
 	implicit real*8(a-h,o-z)
@@ -434,6 +436,7 @@ cc	include 'phase_struct.for'
 	record /apertures /apr
 	record /statistics/ st
         record /parder/ pd
+	record /mirrortype/ am
 	record /map4/ m4
 
       dimension p1(0:7,0:7,0:7,0:7)
@@ -790,8 +793,8 @@ c	 if only one OE
 
 c	 Nutzung von  xlen1c, xlenc2c
 	 
-c	 call subdfpl1(g,a,ra,pd)       ! mirror
-c        call subdfpl1a(g,a,ra,pd)      ! grating
+c	 call subdfpl1(g,am.a,ra,pd)       ! mirror
+c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 	 
 c---------------------------------------------------------------------
@@ -1947,7 +1950,7 @@ c------------------ end UTIL_SPLINE_COEF --------------
 
 
 c------------------------------------------------------
-	subroutine guess(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
+	subroutine guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st)
 c------------------------------------------------------
 c	variable grid generation for dyi and dzi:
 c	- calculate tza, tzp for central ray: yi = zi = 0
@@ -2010,6 +2013,7 @@ c common simps1 ist in xir UF 21.12.99
         record /source6/ so6
         record /apertures/ apr
         record /statistics/ st
+	record /mirrortype/ am
         record /map4/ m4
 
 	dimension dyi_loc(1001),dzi_loc(1001)
