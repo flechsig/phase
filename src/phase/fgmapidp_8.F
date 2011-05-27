@@ -199,7 +199,7 @@ c	dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
 	call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
 
 c----------------------------------------------------
-C UF tay_deri_6 gibt es nicht	
+C UF 27.5.11 tay_deri_6 gibt es nicht	
 	call tay_deri_6(dfdw6,dfdww6,1,1,iord)
 	call tay_deri_6(dfdw6,dfdwl6,2,1,iord)
 	call tay_deri_6(dfdl6,dfdll6,2,1,iord)
