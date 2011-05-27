@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <27 May 11 12:52:01 flechsig> 
+c$$$ Time-stamp: <27 May 11 12:54:13 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -68,7 +68,8 @@ c--------------- fourth order map ---------------------------
      	end structure
     
 c--------------- partial derivatives ------------------------
-
+c UF 27.5.11 achtung die dimensionen scheinen mir nicht zu passen- unterschiede zu phase.h
+c bsp dfdll
 	structure/parder/
            real*8 pl1w2,pl1l2,pl2w2,pl2l2,
      &            pl1w1l1,pl2w1l1,arg1,arg2,
