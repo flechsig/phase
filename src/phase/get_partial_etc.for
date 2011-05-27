@@ -1,3 +1,7 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 c---------------------------------------------------------------
 	subroutine get_partial_derivatives(opl4,dfdwmdln,iord)
 c---------------------------------------------------------------
