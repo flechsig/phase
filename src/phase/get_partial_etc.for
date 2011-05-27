@@ -2,6 +2,7 @@ c$$$ $Source$
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
 c---------------------------------------------------------------
 	subroutine get_partial_derivatives(opl4,dfdwmdln,iord)
 c---------------------------------------------------------------
@@ -24,7 +25,7 @@ c----------------------------------------------------------------
 	dimension opl4(0:7,0:7,0:7,0:7)
 	dimension dfdwmdln0(0:7,0:7,0:7,0:7,0:7,0:7)
 	dimension dfdwmdln(0:7,0:7,0:7,0:7,0:7,0:7)
-c UF 27.5.11
+c UF 27.5.11 add
 	dimension d2fdwdl(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension d2fdl2(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension d3fdw3(0:7,0:7,0:7,0:7,0:7,0:7)
@@ -51,6 +52,7 @@ c---------------------------------------------------------------
 	do l=0,iord-i-j-k
 	do m=0,iord-i-j-k-l
 	do n=0,iord-i-j-k-l-m
+c UF dfdw ist unbekannt
 	  dfdwmdln0(i,j,k,l,m,n)=dflotj(i+1)*dfdw(i+1,j,k,l,m,n)
 	enddo
 	enddo
