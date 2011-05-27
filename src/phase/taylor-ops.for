@@ -556,6 +556,81 @@ c
 	end
 
 c-----------------------------------------------------------------
+	subroutine Tay_deri_6(a8,c8,m0,n0,iord)
+c-----------------------------------------------------------------
+c
+c	n0-times partial derivative of the Taylor series a 
+c	with respect to the m0-th variable
+c
+	implicit real*8(a-h,o-z)
+
+	dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
+
+	call Tay_clear_6a(c8,iord)
+ 
+	do i=0,iord
+	do j=0,iord-i
+	do k=0,iord-i-j
+	do l=0,iord-i-j-k
+	do m=0,iord-i-j-k-l
+	do n=0,iord-i-j-k-l-m
+	
+	if(m0.eq.1)then
+	if(i-n0.ge.0)then
+	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n0+1))
+	goto 100
+	endif
+	endif
+
+	if(m0.eq.2)then
+	if(j-n0.ge.0)then
+	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n0+1))
+	goto 100
+	endif
+	endif
+
+	if(m0.eq.3)then
+	if(k-n0.ge.0)then
+	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n0+1))
+	goto 100
+	endif
+	endif
+
+	if(m0.eq.4)then
+	if(l-n0.ge.0)then
+	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n0+1))
+	goto 100
+	endif
+	endif
+
+	if(m0.eq.5)then
+	if(m-n0.ge.0)then
+	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n0+1))
+	goto 100
+	endif
+	endif
+
+	if(m0.eq.6)then
+	if(n-n0.ge.0)then
+	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n0+1))
+	goto 100
+	endif
+	endif
+
+100	continue
+
+	enddo
+	enddo
+	enddo
+	enddo
+	enddo
+	enddo
+
+	return
+	end
+
+c-----------------------------------------------------------------
 	subroutine Tay_deri_4(a7,c7,m0,n0,iord)
 c-----------------------------------------------------------------
 c
@@ -690,6 +765,147 @@ c
 
 
 
+
+	do i=0,iord
+	do j=0,iord-i
+	do k=0,iord-i-j
+	do l=0,iord-i-j-k
+	do m=0,iord-i-j-k-l
+	do n=0,iord-i-j-k-l-m
+	
+	if(m2.eq.1)then
+	if(i-n2.ge.0)then
+	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(n2+1))
+	goto 200
+	endif
+	endif
+
+	if(m2.eq.2)then
+	if(j-n2.ge.0)then
+	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(n2+1))
+	goto 200
+	endif
+	endif
+
+	if(m2.eq.3)then
+	if(k-n2.ge.0)then
+	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(n2+1))
+	goto 200
+	endif
+	endif
+
+	if(m2.eq.4)then
+	if(l-n2.ge.0)then
+	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(n2+1))
+	goto 200
+	endif
+	endif
+
+	if(m2.eq.5)then
+	if(m-n2.ge.0)then
+	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(n2+1))
+	goto 200
+	endif
+	endif
+
+	if(m2.eq.6)then
+	if(n-n2.ge.0)then
+	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n2+1))
+	goto 200
+	endif
+	endif
+
+200	continue
+
+	enddo
+	enddo
+	enddo
+	enddo
+	enddo
+	enddo
+
+	return
+	end
+
+
+
+c-----------------------------------------------------------------
+	subroutine Tay_deri_6_2(a8,c8,m1,n1,m2,n2,iord)
+c-----------------------------------------------------------------
+c
+c	n1-times partial derivative with respect to variable m1
+c	n2-times partial derivative with respeft to variable m2
+c	of the Taylor series a 
+c	with respect to the m0-th variable
+c
+	implicit real*8(a-h,o-z)
+
+	dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            b8(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
+
+	call Tay_clear_6a(b8,iord)
+	call Tay_clear_6a(c8,iord)
+
+	do i=0,iord
+	do j=0,iord-i
+	do k=0,iord-i-j
+	do l=0,iord-i-j-k
+	do m=0,iord-i-j-k-l
+	do n=0,iord-i-j-k-l-m
+	
+	if(m1.eq.1)then
+	if(i-n1.ge.0)then
+	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n1+1))
+	goto 100
+	endif
+	endif
+
+	if(m1.eq.2)then
+	if(j-n1.ge.0)then
+	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n1+1))
+	goto 100
+	endif
+	endif
+
+	if(m1.eq.3)then
+	if(k-n1.ge.0)then
+	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n1+1))
+	goto 100
+	endif
+	endif
+
+	if(m1.eq.4)then
+	if(l-n1.ge.0)then
+	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n1+1))
+	goto 100
+	endif
+	endif
+
+	if(m1.eq.5)then
+	if(m-n1.ge.0)then
+	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n1+1))
+	goto 100
+	endif
+	endif
+
+	if(m1.eq.6)then
+	if(n-n1.ge.0)then
+	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n1+1))
+	goto 100
+	endif
+	endif
+
+100	continue
+
+	enddo
+	enddo
+	enddo
+	enddo
+	enddo
+	enddo
+
+c------------------------------------------------------------
 
 	do i=0,iord
 	do j=0,iord-i
