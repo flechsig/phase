@@ -15,7 +15,7 @@ c*************************** neu **************************
      &			yipc,zipc,psdc,stfd1phmaxc,stinumbc,
      .			s1c,s2c,s3c,eyrec,ezrec,
      &                  eyimc,ezimc,
-     .                  m4,g,a,src,apr,
+     .                  m4,g,am,src,apr,
      .                  ra,ifl,xi,xir,st,
      .                  fdetc,fdetphc,fdet1phc)       
 c*************************** neu **************************  
@@ -42,7 +42,7 @@ c        record /source_results/ sr
 	record /apertures/ apr
 	record /statistics/ st
 	record /map4/ m4          
-        
+        record /mirrortype/ am 
         record /psimagest/ s 
   
         structure/PSSourceType/
@@ -233,7 +233,7 @@ c************* save initial coordinates ****************
             st.nn1=n1
 	    st.nn2=n2
 c******* start of adaptive grid integration *************************** 
-            call adaptive_int(m4,g,a,src,apr,
+            call adaptive_int(m4,g,am,src,apr,
      .           cs,ra,ifl,xi,xir,st,s)  
 
             if(ifl.ispline.eq.-1)then
