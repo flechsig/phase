@@ -332,6 +332,7 @@ void PST(struct BeamlineType *bl)
    struct PSImageType *psip;
    struct PSDType *PSDp;
    struct geometryst  *gp;
+   struct mirrortype *mirp;
    struct rayst ra;
    struct source_results sr;
    struct integration_results xir;
@@ -353,6 +354,7 @@ void PST(struct BeamlineType *bl)
    for (i= 0; i< bl->elementzahl; i++)
      {
        gp= (struct geometryst *)&bl->ElementList[i].geo;
+       mirp= (struct mirrortype *)&bl->ElementList[i].mir;
        if( fabs(gp->xdens[0]) > ZERO )
 	 {
 	   gratingnumber++;
@@ -425,7 +427,8 @@ void PST(struct BeamlineType *bl)
        PSDp->s2c, PSDp->s3c,
        PSDp->eyrec, PSDp->ezrec,
        PSDp->eyimc, PSDp->ezimc,
-       &m4, gp, &bl->ElementList->mir,
+/*       &m4, gp, &bl->ElementList->mir, uebergebe Strukturvariable mirp */
+       &m4, gp, mirp, 
        &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl, 
        &bl->BLOptions.xi, &xir, &st,
        &bl->fdetc, &bl->fdetphc, &bl->fdet1phc);      
