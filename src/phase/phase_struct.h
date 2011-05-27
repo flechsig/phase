@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <27 Oct 10 09:59:17 flechsig>  */
+/*   Time-stamp: <27 May 11 12:46:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -18,10 +18,10 @@
    to be independent from the calling sequence */
 #ifdef SEVEN_ORDER
 /* number to be checked */
-  #define MAPDIM  8
+  #define MAPDIM   8
   #define MAPDIM1  9
 #else
-  #define MAPDIM  5
+  #define MAPDIM   5
   #define MAPDIM1  6
 #endif
 
@@ -253,7 +253,10 @@ struct  source4 {
        	};   
 
 /* ----------------- mirror --------------------------------------*/
-           double a[MAPDIM1][MAPDIM1]
+/* UF 27.5.2011 so macht man eine globale variable- ist nicht gut */
+/* double a[MAPDIM1][MAPDIM1];                                    */
+/* ausserdem gibt es das schon in phase.h struct mirrortype */
+
 
 /* ----------------- results from sources ------------------------*/
 

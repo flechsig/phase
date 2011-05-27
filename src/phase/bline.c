@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <31 Mar 11 14:39:02 flechsig>  */
+/*   Time-stamp: <25 May 11 16:53:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -48,7 +48,7 @@ void BuildBeamline(struct BeamlineType *bl)
 
 
 #ifdef SEVEN_ORDER
-# stimmt das hier???? Dimensionierung von dfdwwp etc
+   /*  stimmt das hier???? Dimensionierung von dfdwwp etc */
    
    double *dfdwp, *dfdlp;
    double *dfdwwp, *dfdwlp, *dfdllp;
@@ -56,7 +56,7 @@ void BuildBeamline(struct BeamlineType *bl)
    dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
    dfdlp= (double *)&(bl->ElementList[0].dfdl);
 
-   dfdwwp= (double *)&(bl->ElementList[0].dfdww);   /* UF nicht sicher ob das pas$
+   dfdwwp= (double *)&(bl->ElementList[0].dfdww);   /* UF nicht sicher ob das passt */
    dfdwlp= (double *)&(bl->ElementList[0].dfdwl);
    dfdllp= (double *)&(bl->ElementList[0].dfdll);
 #endif

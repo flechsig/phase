@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <27 Oct 10 13:01:22 flechsig> 
+c$$$ Time-stamp: <27 May 11 12:39:21 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -1028,7 +1028,12 @@ c-------- Scan from left to right
 	s=x3*x3-x1*x1
 
 	b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
+
 	a=(y3-y1-b*(x3-x1)) / s
+
+c UF 27.5.11 hier steigt es aus
+c The shapes of the array expressions do not conform
+
 	c=y1-a*x1*x1-b*x1
 
 	pha_guess=a*x(i+3)*x(i+3)+b*x(i+3)+c
