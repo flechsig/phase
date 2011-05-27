@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <31 Mar 11 14:33:21 flechsig>  */
+/*   Time-stamp: <27 May 11 12:29:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -596,7 +596,7 @@ struct ElementType
   MAP70TYPE matrix, MtoSource;
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc; 
 #ifdef SEVEN_ORDER
-  DFDXTYPE dfdw, dfdl, dfdww, dfdwl, dfdll, opl;
+  DFDXTYPE dfdw, dfdl, dfdww, dfdwl, dfdll, dfdwidlj, opl;
 #endif
   struct xlenmaptype xlm; 
   struct mirrortype mir;
