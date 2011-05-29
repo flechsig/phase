@@ -1,59 +1,49 @@
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
-
 c---------------------------------------------------------------
-	subroutine get_partial_derivatives(opl4,dfdwmdln,iord)
+	subroutine get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
+     &  dfdwidlj,iord)
 c---------------------------------------------------------------
 c
 c	Input:
-c		opl4(w,l,y,z)
+c		opl6(w,l,y,z,yp,zp)
 c
 c	intermediate variable:
-c		dfdwmdln0(w,l,y,z,m,n)
+c		dfdwidlj0(i,j,w,l,y,z,yp,zp)
 c
-c	dann replace w,l 
+c	replace yp, zp: 
+c	  Zwischenergebnis:	dfdwidlj1(i,j,w,l,y,z)
 c
-c	dann
-c	Output:	dfdwmdln(y,z,dy,dz,m,n)
+c	replace w,l:	
+c
+c	  Output:		dfdwidlj(i,j,y,z,dy,dz)
 c
 c----------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	dimension opl4(0:7,0:7,0:7,0:7)
-	dimension dfdwmdln0(0:7,0:7,0:7,0:7,0:7,0:7)
-	dimension dfdwmdln(0:7,0:7,0:7,0:7,0:7,0:7)
-c UF 27.5.11 add
-	dimension d2fdwdl(0:7,0:7,0:7,0:7,0:7,0:7)
-        dimension d2fdl2(0:7,0:7,0:7,0:7,0:7,0:7)
-        dimension d3fdw3(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension opl6(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension dopl6(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension dopl4(0:7,0:7,0:7,0:7),dopl4a(0:7,0:7,0:7,0:7)
+        dimension wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7),
+     &            ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7)
+	dimension dfdwidlj0(0:7,0:7,0:7,0:7,0:7,0:7,0:7)
+        dimension dfdwidlj1(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension dfdwidlj(0:7,0:7,0:7,0:7,0:7,0:7)
 
 c---------------------------------------------------------------
+c
+c	Die ersten 2 indizes werden zu einem zusammengefasst,
+c	da der Kompliler maximal 7 Dimensionen verkraftet
+c
 
-	do i=0,iord
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
-	  dfdwmdln0(i,j,k,l,m,n)=0.d0
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-
-	do i=0,iord-1
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
-c UF dfdw ist unbekannt
-	  dfdwmdln0(i,j,k,l,m,n)=dflotj(i+1)*dfdw(i+1,j,k,l,m,n)
+	do i1=0,iord
+	do j1=0,iord-i1
+	do k=0,iord
+	do l=0,iord-k
+	do m=0,iord
+	do n=0,iord-m
+	  dfdwidlj0(0,i1,j1,k,l,m,n)=opl6(i1,j1,k,l,m,n)
 	enddo
 	enddo
 	enddo
@@ -62,47 +52,98 @@ c UF dfdw ist unbekannt
 	enddo
 
 	do i=0,iord
-	do j=0,iord-i-1
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
-	  d2fdwdl(i,j,k,l,m,n)=dflotj(j+1)*dfdw(i,j+1,k,l,m,n)
+	do j=0,iord
+	  if(i+j.gt.0)then
+	  index=i*(iord+1)+j
+	  call tay_deri_6_2(opl6,dopl6,1,i,2,j,iord)
+	  do i1=0,iord
+	  do j1=0,iord-i1
+	  do k=0,iord
+	  do l=0,iord-k
+	  do m=0,iord
+	  do n=0,iord-m
+	    dfdwidlj0(index,i1,j1,k,l,m,n)=
+     &        dopl6(i1,j1,k,l,m,n)
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  endif
 	enddo
 	enddo
-	enddo
-	enddo
-	enddo
-	enddo
+
+c----------------- replace yp, zp
 
 	do i=0,iord
-	do j=0,iord-i-1
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
-	  d2fdl2(i,j,k,l,m,n)=dflotj(j+1)*dfdl(i,j+1,k,l,m,n)
-	enddo
-	enddo
-	enddo
-	enddo
+	do j=0,iord
+	  index=i*(iord+1)+j
+	  do i1=0,iord
+	  do j1=0,iord-i1
+	  do k=0,iord
+	  do l=0,iord-k
+	  do m=0,iord
+	  do n=0,iord-m
+	   dopl6(i1,j1,k,l,m,n)=dfdwidlj0(index,i1,j1,k,l,m,n)
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+
+	  call replace_6v4v(dopl6,ypc1,zpc1,dopl4,iord)
+
+	  do i1=0,iord
+	  do j1=0,iord-i1
+	  do k=0,iord
+	  do l=0,iord-k
+	  do m=0,iord
+	  do n=0,iord-m
+	    dfdwidlj1(i,j,i1,j1,k,l)=dopl4(i1,j1,k,l)
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+
 	enddo
 	enddo
 
-	do i=0,iord-2
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
-	  d3fdw3(i,j,k,l,m,n)=dflotj(i+1)*dflotj(i+2)*
-     &	    dfdw(i+2,j,k,l,m,n)
+c----------------- replace w, l
+
+	do i=0,iord
+	do j=0,iord
+
+	  do i1=0,iord
+	  do j1=0,iord-i1
+	  do k=0,iord
+	  do l=0,iord-k
+	    dopl4(i1,j1,k,l)=dfdwidlj1(i,j,i1,j1,k,l)
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+
+	  call replace_wl_in_ypzp(dopl4,dopl4,wc,xlc,
+     &		dopl4a,dopl4a,1,iord)
+
+	  do k=0,iord
+	  do l=0,iord-k
+	  do m=0,iord
+	  do n=0,iord-m
+	    dfdwidlj(i,j,k,l,m,n)=dopl4a(k,l,m,n)
+	  enddo
+	  enddo
+	  enddo
+	  enddo
+
 	enddo
 	enddo
-	enddo
-	enddo
-	enddo
-	enddo
+
+c--------------------------------------------------------------
 
 	return
 	end
