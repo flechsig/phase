@@ -493,52 +493,54 @@ c
      &            c8(0:8,0:8,0:8,0:8,0:8,0:8)
 
 	call Tay_clear_6a(c8,iord)
+
+	iord1=iord+1
  
-	do i=0,iord
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
+	do i=0,iord1
+	do j=0,iord1-i
+	do k=0,iord1-i-j
+	do l=0,iord1-i-j-k
+	do m=0,iord1-i-j-k-l
+	do n=0,iord1-i-j-k-l-m
 	
 	if(m0.eq.1)then
 	if(i-n0.ge.0)then
-	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n0+1))
+	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.2)then
 	if(j-n0.ge.0)then
-	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n0+1))
+	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.3)then
 	if(k-n0.ge.0)then
-	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n0+1))
+	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.4)then
 	if(l-n0.ge.0)then
-	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n0+1))
+	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.5)then
 	if(m-n0.ge.0)then
-	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n0+1))
+	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.6)then
 	if(n-n0.ge.0)then
-	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n0+1))
+	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n0))
 	goto 100
 	endif
 	endif
@@ -567,7 +569,7 @@ c
 	dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
 
-	call Tay_clear_6a(c8,iord)
+	call Tay_clear_6(c8,iord)
  
 	do i=0,iord
 	do j=0,iord-i
@@ -578,42 +580,42 @@ c
 	
 	if(m0.eq.1)then
 	if(i-n0.ge.0)then
-	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n0+1))
+	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.2)then
 	if(j-n0.ge.0)then
-	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n0+1))
+	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.3)then
 	if(k-n0.ge.0)then
-	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n0+1))
+	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.4)then
 	if(l-n0.ge.0)then
-	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n0+1))
+	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.5)then
 	if(m-n0.ge.0)then
-	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n0+1))
+	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.6)then
 	if(n-n0.ge.0)then
-	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n0+1))
+	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n0))
 	goto 100
 	endif
 	endif
@@ -651,28 +653,28 @@ c
 	
 	if(m0.eq.1)then
 	if(i-n0.ge.0)then
-	c7(i-n0,j,k,l)=a7(i,j,k,l)*(faku(i)/faku(n0+1))
+	c7(i-n0,j,k,l)=a7(i,j,k,l)*(faku(i)/faku(i-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.2)then
 	if(j-n0.ge.0)then
-	c7(i,j-n0,k,l)=a7(i,j,k,l)*(faku(j)/faku(n0+1))
+	c7(i,j-n0,k,l)=a7(i,j,k,l)*(faku(j)/faku(j-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.3)then
 	if(k-n0.ge.0)then
-	c7(i,j,k-n0,l)=a7(i,j,k,l)*(faku(k)/faku(n0+1))
+	c7(i,j,k-n0,l)=a7(i,j,k,l)*(faku(k)/faku(k-n0))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.4)then
 	if(l-n0.ge.0)then
-	c7(i,j,k,l-n0)=a7(i,j,k,l)*(faku(l)/faku(n0+1))
+	c7(i,j,k,l-n0)=a7(i,j,k,l)*(faku(l)/faku(l-n0))
 	goto 100
 	endif
 	endif
@@ -694,7 +696,6 @@ c
 c	n1-times partial derivative with respect to variable m1
 c	n2-times partial derivative with respeft to variable m2
 c	of the Taylor series a 
-c	with respect to the m0-th variable
 c
 	implicit real*8(a-h,o-z)
 
@@ -702,54 +703,57 @@ c
      &            b8(0:8,0:8,0:8,0:8,0:8,0:8),
      &            c8(0:8,0:8,0:8,0:8,0:8,0:8)
 
+
+	iord1=iord+1
+
 	call Tay_clear_6a(b8,iord)
 	call Tay_clear_6a(c8,iord)
 
-	do i=0,iord
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
+	do i=0,iord1
+	do j=0,iord1-i
+	do k=0,iord1-i-j
+	do l=0,iord1-i-j-k
+	do m=0,iord1-i-j-k-l
+	do n=0,iord1-i-j-k-l-m
 	
 	if(m1.eq.1)then
 	if(i-n1.ge.0)then
-	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n1+1))
+	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.2)then
 	if(j-n1.ge.0)then
-	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n1+1))
+	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.3)then
 	if(k-n1.ge.0)then
-	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n1+1))
+	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.4)then
 	if(l-n1.ge.0)then
-	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n1+1))
+	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.5)then
 	if(m-n1.ge.0)then
-	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n1+1))
+	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.6)then
 	if(n-n1.ge.0)then
-	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n1+1))
+	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n1))
 	goto 100
 	endif
 	endif
@@ -763,54 +767,53 @@ c
 	enddo
 	enddo
 
+c------------------------------------------------------------------
 
-
-
-	do i=0,iord
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
+	do i=0,iord1
+	do j=0,iord1-i
+	do k=0,iord1-i-j
+	do l=0,iord1-i-j-k
+	do m=0,iord1-i-j-k-l
+	do n=0,iord1-i-j-k-l-m
 	
 	if(m2.eq.1)then
 	if(i-n2.ge.0)then
-	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(n2+1))
+	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(i-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.2)then
 	if(j-n2.ge.0)then
-	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(n2+1))
+	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(j-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.3)then
 	if(k-n2.ge.0)then
-	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(n2+1))
+	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(k-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.4)then
 	if(l-n2.ge.0)then
-	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(n2+1))
+	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(l-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.5)then
 	if(m-n2.ge.0)then
-	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(n2+1))
+	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(m-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.6)then
 	if(n-n2.ge.0)then
-	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n2+1))
+	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n-n2))
 	goto 200
 	endif
 	endif
@@ -828,7 +831,6 @@ c
 	end
 
 
-
 c-----------------------------------------------------------------
 	subroutine Tay_deri_6_2(a8,c8,m1,n1,m2,n2,iord)
 c-----------------------------------------------------------------
@@ -836,7 +838,6 @@ c
 c	n1-times partial derivative with respect to variable m1
 c	n2-times partial derivative with respeft to variable m2
 c	of the Taylor series a 
-c	with respect to the m0-th variable
 c
 	implicit real*8(a-h,o-z)
 
@@ -844,8 +845,8 @@ c
      &            b8(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
 
-	call Tay_clear_6a(b8,iord)
-	call Tay_clear_6a(c8,iord)
+	call Tay_clear_6(b8,iord)
+	call Tay_clear_6(c8,iord)
 
 	do i=0,iord
 	do j=0,iord-i
@@ -856,42 +857,42 @@ c
 	
 	if(m1.eq.1)then
 	if(i-n1.ge.0)then
-	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n1+1))
+	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.2)then
 	if(j-n1.ge.0)then
-	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n1+1))
+	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.3)then
 	if(k-n1.ge.0)then
-	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n1+1))
+	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.4)then
 	if(l-n1.ge.0)then
-	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n1+1))
+	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.5)then
 	if(m-n1.ge.0)then
-	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n1+1))
+	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.6)then
 	if(n-n1.ge.0)then
-	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n1+1))
+	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n1))
 	goto 100
 	endif
 	endif
@@ -916,42 +917,42 @@ c------------------------------------------------------------
 	
 	if(m2.eq.1)then
 	if(i-n2.ge.0)then
-	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(n2+1))
+	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(i-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.2)then
 	if(j-n2.ge.0)then
-	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(n2+1))
+	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(j-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.3)then
 	if(k-n2.ge.0)then
-	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(n2+1))
+	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(k-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.4)then
 	if(l-n2.ge.0)then
-	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(n2+1))
+	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(l-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.5)then
 	if(m-n2.ge.0)then
-	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(n2+1))
+	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(m-n2))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.6)then
 	if(n-n2.ge.0)then
-	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n2+1))
+	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n-n2))
 	goto 200
 	endif
 	endif
