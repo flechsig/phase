@@ -168,8 +168,9 @@ void BuildBeamline(struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1,
-		&bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
+	   fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+		dfdwwp, dfdwlp, dfdllp, 
+		&bl->fdetc, &bl->fdetphc,
 		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
 		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else      
@@ -222,10 +223,11 @@ void BuildBeamline(struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1,
-	        &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
-		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+           dfdwwp, dfdwlp, dfdllp,
+           &bl->fdetc, &bl->fdetphc,
+           &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+           &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -366,10 +368,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1, 
-	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc, 
-	       &bl->fdet1phc, &imodus,  &bl->BLOptions.ifl.inorm1,  
-	       &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord); 
+           fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+               dfdwwp, dfdwlp, dfdllp,
+               &bl->fdetc, &bl->fdetphc,
+               &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+               &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	   
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
@@ -422,13 +425,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-
-
-          fdet_8(dfdwwp, dfdwlp, dfdllp, &bl->ypc1, &bl->zpc1,
-	       &bl->dypc, &bl->dzpc, &bl->fdetc, &bl->fdetphc,
-	       &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-	       &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);  
-	   
+          fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+               dfdwwp, dfdwlp, dfdllp,
+               &bl->fdetc, &bl->fdetphc,
+               &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+               &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
