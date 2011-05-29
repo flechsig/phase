@@ -1,13 +1,10 @@
 c-------------------------------------------------------------
-	subroutine fgmapidp_8(acc,am,g,
+	subroutine fgmapidp_8(acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
      &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,dfdwidlj,
      &             iord,imodus,iplmode)
 c--------------------------------------------------------------------
 c
-c	ACHTUNG in get_partial_derivatives muss npch Arbeit 
-c	reingesteckt werden
-cc
 c	this routine evaluates
 c	- the transformation ypc1,zpc1,dypc,dzpc
 c	- the intersection points wc, xlc
@@ -57,10 +54,9 @@ c---------------------------------------------------------------------
      &      r,rp,xdens(0:4),xlam
 	  integer idefl
 	end structure
-	structure/mirrortype/amir(0:8,0:8)
 	record /geometryst/ g
-	record /pathlength/ xlm
-	record /mirrortype/ am
+	record /pathlength/xlm
+	dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
      &            ypc1(0:7,0:7,0:7,0:7),
@@ -148,7 +144,7 @@ c        write(*,*)'fortran gerufen'
 	endif
 
 	xdefl=dflotj(g.idefl)
-	call q0_q1_q2_8(am.amir,g.sina,g.sinb,g.cosa,
+	call q0_q1_q2_8(a,g.sina,g.sinb,g.cosa,
      &       g.cosb,g.r,g.rp,g.xdens,g.xlam,xdefl,
      &       q0_8,q1_8,q2_8)
 
@@ -200,7 +196,7 @@ c	dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
 	call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
 
 c----------------------------------------------------
-C UF 27.5.11 tay_deri_6 gibt es nicht	
+	
 	call tay_deri_6(dfdw6,dfdww6,1,1,iord)
 	call tay_deri_6(dfdw6,dfdwl6,2,1,iord)
 	call tay_deri_6(dfdl6,dfdll6,2,1,iord)
@@ -306,7 +302,8 @@ c--------------------- get higher order partial derivatives of path length
 c	input:	opl6(w,l,y,z,yp,zp)
 c	output:	dfdwidlj(i,j,y,z,dy,dz)
 
-	call get_partial_derivatives(opl6,dfdwidlj,iord)
+	call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
+     &    dfdwidlj,iord)
 
 c------------------------------------------------------------
 
