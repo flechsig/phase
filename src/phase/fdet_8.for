@@ -1,3 +1,8 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c------------------------------------------------------------------
 	subroutine fdet_8(ypc1,zpc1,dypc,dzpc,dfdww,dfdwl,dfdll,
      &                    fdetc,fdetphc,fdet1phc,inorm1,inorm2,iord)
