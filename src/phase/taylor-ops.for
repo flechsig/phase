@@ -975,12 +975,12 @@ c------------------------------------------------------
 
         implicit real*8(a-h,o-z)
 
-	if(n.le.0)then
+	if(n.lt.0)then
 	type*, 'Value not defined in routine FAKU'
 	stop
 	endif
 
-	if(n.gt.0)then
+	if(n.ge.0)then
 	faku=1.d0
 	do i=1,n
 	faku=faku*dflotj(i)
