@@ -1,3 +1,7 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 c---------------------------------------------------------------
 c
 c	operations with 6 variables
