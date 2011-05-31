@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
-//  Date      : <30 May 11 09:27:24 flechsig> 
-//  Time-stamp: <30 May 11 09:29:14 flechsig> 
+//  Date      : <31 May 11 16:51:36 flechsig> 
+//  Time-stamp: <31 May 11 16:51:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -8,17 +8,16 @@
 //  $Revision$ 
 //  $Author$ 
 
-#include "phasegui.h"
 
+#include <QApplication>
 
-int main(int argc, char **argv)
+#include "mainwindow.h"
+
+int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-
-    MainWindow mainWindow;
-
-    //    mainWindow.resize(500,500);
-    mainWindow.show();
-
-    return a.exec(); 
+    QApplication app(argc, argv);
+    Q_INIT_RESOURCE(dockwidgets);
+    MainWindow mainWin;
+    mainWin.show();
+    return app.exec();
 }
