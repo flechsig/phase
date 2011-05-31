@@ -1,0 +1,21 @@
+<!-- -*-html-helper-*- -->
+<!--  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.qrc -->
+<!--  Date      : <31 May 11 17:03:54 flechsig>  -->
+<!--  Time-stamp: <31 May 11 17:04:37 flechsig>  -->
+<!--  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; -->
+
+<!--  $Source$  -->
+<!--  $Date$ -->
+<!--  $Revision$  -->
+<!--  $Author$  -->
+
+
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>images/new.png</file>
+    <file>images/print.png</file>
+    <file>images/save.png</file>
+    <file>images/undo.png</file>
+</qresource>
+</RCC>
+

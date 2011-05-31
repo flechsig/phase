@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <31 May 11 17:02:21 flechsig> 
+//  Time-stamp: <31 May 11 17:11:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -9,13 +9,10 @@
 //  $Author$ 
 
 
-//! [0]
 #include <QtGui>
 
 #include "mainwindow.h"
-//! [0]
 
-//! [1]
 MainWindow::MainWindow()
 {
     textEdit = new QTextEdit;
@@ -32,9 +29,7 @@ MainWindow::MainWindow()
     newLetter();
     setUnifiedTitleAndToolBarOnMac(true);
 }
-//! [1]
 
-//! [2]
 void MainWindow::newLetter()
 {
     textEdit->clear();
@@ -80,9 +75,7 @@ void MainWindow::newLetter()
     cursor.insertBlock();
     cursor.insertText("ADDRESS", italicFormat);
 }
-//! [2]
 
-//! [3]
 void MainWindow::print()
 {
 #ifndef QT_NO_PRINTDIALOG
@@ -98,9 +91,7 @@ void MainWindow::print()
     statusBar()->showMessage(tr("Ready"), 2000);
 #endif
 }
-//! [3]
 
-//! [4]
 void MainWindow::save()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -124,17 +115,13 @@ void MainWindow::save()
 
     statusBar()->showMessage(tr("Saved '%1'").arg(fileName), 2000);
 }
-//! [4]
 
-//! [5]
 void MainWindow::undo()
 {
     QTextDocument *document = textEdit->document();
     document->undo();
 }
-//! [5]
 
-//! [6]
 void MainWindow::insertCustomer(const QString &customer)
 {
     if (customer.isEmpty())
@@ -158,9 +145,7 @@ void MainWindow::insertCustomer(const QString &customer)
             oldcursor.endEditBlock();
     }
 }
-//! [6]
 
-//! [7]
 void MainWindow::addParagraph(const QString &paragraph)
 {
     if (paragraph.isEmpty())
@@ -177,7 +162,7 @@ void MainWindow::addParagraph(const QString &paragraph)
     cursor.endEditBlock();
 
 }
-//! [7]
+
 
 void MainWindow::about()
 {
@@ -310,4 +295,4 @@ void MainWindow::createDockWindows()
     connect(paragraphsList, SIGNAL(currentTextChanged(QString)),
             this, SLOT(addParagraph(QString)));
 }
-//! [9]
+// /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

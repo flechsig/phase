@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <31 May 11 17:01:30 flechsig>  */
+/*  Time-stamp: <31 May 11 17:09:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -20,7 +20,7 @@ class QMenu;
 class QTextEdit;
 QT_END_NAMESPACE
 
-//! [0]
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -62,6 +62,6 @@ private:
     QAction *aboutQtAct;
     QAction *quitAct;
 };
-//! [0]
+
 
 #endif
