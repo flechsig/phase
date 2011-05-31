@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <31 May 11 17:09:26 flechsig>  */
+/*  Time-stamp: <31 May 11 17:39:45 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -50,6 +50,7 @@ private:
 
     QMenu *fileMenu;
     QMenu *editMenu;
+    QMenu *calcMenu;
     QMenu *viewMenu;
     QMenu *helpMenu;
     QToolBar *fileToolBar;
@@ -61,6 +62,10 @@ private:
     QAction *aboutAct;
     QAction *aboutQtAct;
     QAction *quitAct;
+
+    // UF
+    QAction *raytracesimpleAct;
+    QAction *raytracefullAct;
 };
 
 

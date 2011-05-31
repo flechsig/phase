@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <31 May 11 17:11:14 flechsig> 
+//  Time-stamp: <31 May 11 17:40:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -24,7 +24,7 @@ MainWindow::MainWindow()
     createStatusBar();
     createDockWindows();
 
-    setWindowTitle(tr("Dock Widgets"));
+    setWindowTitle(tr("PHASE Qt"));
 
     newLetter();
     setUnifiedTitleAndToolBarOnMac(true);
@@ -101,7 +101,7 @@ void MainWindow::save()
         return;
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Dock Widgets"),
+        QMessageBox::warning(this, tr("PHASE Qt"),
                              tr("Cannot write file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
@@ -166,8 +166,8 @@ void MainWindow::addParagraph(const QString &paragraph)
 
 void MainWindow::about()
 {
-   QMessageBox::about(this, tr("About Dock Widgets"),
-            tr("The <b>Dock Widgets</b> example demonstrates how to "
+   QMessageBox::about(this, tr("About PHASE Qt"),
+            tr("The <b>PHASE Qt</b> example demonstrates how to "
                "use Qt's dock widgets. You can enter your own text, "
                "click a customer to add a customer name and "
                "address, and click standard paragraphs to add them."));
@@ -208,6 +208,15 @@ void MainWindow::createActions()
     aboutQtAct = new QAction(tr("About &Qt"), this);
     aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+// UF 
+    raytracesimpleAct = new QAction(tr("&Simple ray tracing"), this);
+    raytracesimpleAct->setStatusTip(tr("simple ray tracing"));
+    connect(raytracesimpleAct, SIGNAL(triggered()), this, SLOT(about()));
+
+    raytracefullAct = new QAction(tr("&Full ray tracing"), this);
+    raytracefullAct->setStatusTip(tr("full ray tracing"));
+    connect(raytracefullAct, SIGNAL(triggered()), this, SLOT(about()));
 }
 
 void MainWindow::createMenus()
@@ -221,6 +230,10 @@ void MainWindow::createMenus()
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
+
+    calcMenu = menuBar()->addMenu(tr("&Calc"));
+    calcMenu->addAction(raytracesimpleAct);
+    calcMenu->addAction(raytracefullAct);
 
     viewMenu = menuBar()->addMenu(tr("&View"));
 
@@ -242,14 +255,12 @@ void MainWindow::createToolBars()
     editToolBar->addAction(undoAct);
 }
 
-//! [8]
+
 void MainWindow::createStatusBar()
 {
     statusBar()->showMessage(tr("Ready"));
 }
-//! [8]
 
-//! [9]
 void MainWindow::createDockWindows()
 {
     QDockWidget *dock = new QDockWidget(tr("Customers"), this);
