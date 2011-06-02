@@ -350,30 +350,30 @@ cc	include 'phase_struct.for'
 
 c	iexpand sollte ausser fuer debug-Zwecke immer auf 1 gesetzt sein
 c--------- get path length
-	if(ifl.iexpand.eq.0)then
-
-	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
-	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
-	zzi=ra.ri.zi
-
-	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
-	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
-	zzp=ra.rf.zp
-
-	call intersection(uu,ww,xll)
-
-	xlength=dsqrt(
-     &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+(zzi-xll)*(zzi-xll))
-	ra.xlength1=xlength
-	xlength=xlength+
-     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+(zzp-xll)*(zzp-xll))
-	ra.xlength2=xlength-ra.xlength1
-
-	else
+c	if(ifl.iexpand.eq.0)then
+c
+c	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
+c	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
+c	zzi=ra.ri.zi
+c
+c	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
+c	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
+c	zzp=ra.rf.zp
+c
+c	call intersection(am.a,wc,xlc,rin,uu,ww,xll,iord)
+c
+c	xlength=dsqrt(
+c    &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+(zzi-xll)*(zzi-xll))
+c	ra.xlength1=xlength
+c	xlength=xlength+
+c     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+(zzp-xll)*(zzp-xll))
+c	ra.xlength2=xlength-ra.xlength1
+c
+c	else
 
 	xlength=ra.xlength1+ra.xlength2
 
-	endif	! iexpand
+c	endif	! iexpand
 
 	if(ifl.iplmode.eq.0)then
 	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
@@ -521,33 +521,33 @@ cc	include 'phase_struct.for'
 	record /source5/ so5
 
 c------------- get path length 
-
-	if(ifl.iexpand.eq.0)then
-
-	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
-	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
-	zzi=ra.ri.zi
-
-	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
-	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
-	zzp=ra.rf.zp
-
-	call intersection(uu,ww,xll)
-
-	xlength=dsqrt(
-     &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+
-     &  (zzi-xll)*(zzi-xll))
-	ra.xlength1=xlength
-	xlength=xlength+
-     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+
-     &  (zzp-xll)*(zzp-xll))
-	ra.xlength2=xlength-ra.xlength1
-
-	else
+c
+c	if(ifl.iexpand.eq.0)then
+c
+c	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
+c	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
+c	zzi=ra.ri.zi
+c
+c	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
+c	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
+c	zzp=ra.rf.zp
+c
+c	call intersection(uu,ww,xll)
+c
+c	xlength=dsqrt(
+c     &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+
+c     &  (zzi-xll)*(zzi-xll))
+c	ra.xlength1=xlength
+c	xlength=xlength+
+c     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+
+c     &  (zzp-xll)*(zzp-xll))
+c	ra.xlength2=xlength-ra.xlength1
+c
+c	else
 
 	xlength=ra.xlength1+ra.xlength2
 
-	endif	! iexpand
+c	endif	! iexpand
 
 	if(ifl.iplmode.eq.0)then
 	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
