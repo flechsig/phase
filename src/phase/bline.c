@@ -506,10 +506,16 @@ void Footprint(struct BeamlineType *bl, int enummer)
          /* muss erst noch einen rtrace nachen */
          if (enummer > 1)
          {
-	   ray_tracef(Raysin, &elray, &bl->BLOptions.ifl.iord, 
-                      (double *)ypc1, (double *)zpc1, 
-		      (double *)dypc, (double *)dzpc); 
-           elrayp= &elray; 
+#ifdef SEVEN_ORDER
+    ray_tracef_8(Raysin, &elray, &bl->BLOptions.ifl.iord,
+    (double *)ypc1, (double *)zpc1,
+    (double *)dypc, (double *)dzpc);
+#else
+    ray_tracef(Raysin, &elray, &bl->BLOptions.ifl.iord, 
+    (double *)ypc1, (double *)zpc1, 
+    (double *)dypc, (double *)dzpc); 
+#endif
+	    elrayp= &elray; 
          }
          else 
            elrayp= Raysin; 
@@ -810,18 +816,22 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
          make_matrix_8(listpt->MtoSource, listpt->ypc1, listpt->zpc1,
 		 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 #else
+/* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
 	xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
-		listpt->dzpc, &bl->BLOptions.ifl.iord); 
-#endif
+		listpt->dzpc, &bl->BLOptions.ifl.iord);
 /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
                  listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm);
 */
-        pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+/* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in 
+   fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
+	 pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
                  listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm);
+#endif
+
 #ifdef DEBUG   
 	printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
 	       bl->position);  
@@ -854,19 +864,23 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	    make_matrix_8(listpt->MtoSource, listpt->ypc1, listpt->zpc1,
 	    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 #else
+/* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
 	    xxmap70(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-#endif
-	    
+	     
 /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
 		 listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm); 
 */
-            pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+/* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in
+    fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
+	     pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
 		 listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm); 
+#endif
+
 #ifdef DEBUG       
 	    printf("MakeMapandMatrix: image to source map and matrix created\n");  
 #endif
