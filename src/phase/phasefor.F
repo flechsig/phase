@@ -18,7 +18,8 @@ c einige routinen aus fgmap3dpp
 c function   facult(nn) 
 c subroutine fgmapidp(iord,imodus,acc,a,g,wc,xlc,ypc1,zpc1,dypc,dzpc)       
 c subroutine intersection(a,wc,xlc,rin,iord,uu,ww,xll) 
-c subroutine pathlen0(a,g,iord,iplmode,wc,xlc,ypc1,zpc1,xlm)     
+c subroutine intersection_8(am,wc,xlc,rin,iord,uu,ww,xll) 
+c subroutine pathlen0(am,g,iord,iplmode,wc,xlc,ypc1,zpc1,xlm)     
 c subroutine pathlen1(xlm,rin,iord,
 c     &               xlength1,xlength2,xlength)
 c subroutine readmatrixfile35(fname,xmap35)  
@@ -27,6 +28,7 @@ c subroutine extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)
 c subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c subroutine reduce_1_drift(iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
 c subroutine transponiere (a,g)   
+c subroutine transponiere_8 (am,g)
 c subroutine ray_tracef(rin, rout, iord,ypc1,zpc1,dypc,dzpc)       
 c subroutine writemap(mapname,iord,ypc1,zpc1,dypc,dzpc)  
 c subroutine xxmap35(xmap35,ypc1,zpc1,dypc,dzpc)  
@@ -192,8 +194,7 @@ c       write(*,*)'end fgmapidp'
 c-------- end fgmapidp()-----------------------------------
 
 c**************************************************************
-	subroutine intersection(a,wc,xlc,rin,iord,
-     &  			uu,ww,xll)   
+	subroutine intersection(a,wc,xlc,rin,uu,ww,xll,iord)   
 c
 c 	intersection returns uu,ww,xll
 c**************************************************************
@@ -291,16 +292,115 @@ c        write(*,*)'intersection end'
 	end
 c*************** end intersection ****************************
                           
+c**************************************************************
+	subroutine intersection_8(a,wc,xlc,rin,uu,ww,xll,iord)   
+c
+c 	intersection returns uu,ww,xll
+c**************************************************************
+	implicit real*8(a-h,o-z)
+
+        dimension a(0:8,0:8)         ! mirror
+	real*8 yi_global,zi_global,dyi_global,dzi_global,rin(4)
+        dimension wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7)
+
+	yi_global=rin(1) 
+        zi_global=rin(2) 
+        dyi_global=rin(3)     
+        dzi_global=rin(4)   
+        
+	uu=0.d0
+	ww=0.d0
+	xll=0.d0
+c        write(*,*)'intersection called'   
+
+        do i=0,iord
+         do j=0,iord
+          do k=0,iord
+           do l=0,iord
+            if((i+j+k+l).le.iord)then
+	     deltaww=wc(i,j,k,l)
+	     deltall=xlc(i,j,k,l)
+             if(abs(yi_global).gt.1e-10)then
+	      deltaww=deltaww*yi_global**i
+	      deltall=deltall*yi_global**i
+	     else
+	      if(i.gt.0)then
+	       deltaww=0.d0
+	       deltall=0.d0
+	      endif
+	     endif
+             if(abs(zi_global).gt.1e-10)then
+	      deltaww=deltaww*zi_global**j
+	      deltall=deltall*zi_global**j
+	     else
+	      if(j.gt.0)then
+	       deltaww=0.d0
+	       deltall=0.d0
+              endif
+	     endif
+             if(abs(dyi_global).gt.1e-10)then
+	      deltaww=deltaww*dyi_global**k
+	      deltall=deltall*dyi_global**k
+	     else
+	      if(k.gt.0)then
+	       deltaww=0.d0
+	       deltall=0.d0
+              endif
+	     endif
+             if(abs(dzi_global).gt.1e-10)then
+	      deltaww=deltaww*dzi_global**l
+	      deltall=deltall*dzi_global**l
+	     else
+	      if(l.gt.0)then
+	       deltaww=0.d0
+	       deltall=0.d0
+              endif
+	     endif
+             ww=ww+deltaww
+	     xll=xll+deltall
+            endif
+           enddo
+          enddo
+         enddo
+        enddo
+c********************************************************
+	do i=0,iord+1
+	 do j=0,iord+1
+          deltauu=a(i,j)
+          if(abs(ww).gt.1e-10)then
+	   deltauu=deltauu*ww**i
+          else
+	   if(i.gt.0)then
+            deltauu=0.d0
+	   endif
+          endif
+          if(abs(xll).gt.1e-10)then
+           deltauu=deltauu*xll**j
+	  else
+	   if(j.gt.0)then
+            deltauu=0.d0
+	   endif
+          endif
+	  uu=uu+deltauu
+         enddo
+	enddo
+c        write(*,*)'intersection end'   
+
+	return
+	end
+c*************** end intersection_8 ****************************
+                          
 c*************************************************************
-	subroutine pathlen0(a,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
+	subroutine pathlen0(am,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
 c*************************************************************
 c	(ini = 0 : calculate the transformation coefficients)
 c*************************************************************
 c	Berechnung der Transformationskoeffizienten der 
 c	Pfadlaenge fuer ein opt. Element
 c-------------------------------------------------------------
-c       input: a: mirrortype
-c	       g: geometrytype
+c       input: am: mirrortype
+c	       g : geometrytype
 c	iplmode = 0 : do not subtract r and rp from path length
 c		      in analytical code
 c	iplmode = 1 : subtract r and rp from path length
@@ -314,20 +414,22 @@ c	J. Bahrdt  xx.xx.9x
 c	Stand:     30.1.97	UF
 c last modification: 26 Jun 97 08:29:17 flechsig
 c**************************************************************
-	implicit none        
+
+        implicit real*8(a-h,o-z)
+#include '../phase/phase_struct.F'
 
 c---------- Typen ---------------------------------------------
        	
-	structure/geometryst/
-           real*8 sina,cosa,sinb,cosb,
-     &            r,rp,xdens(0:4),xlam
-	   integer idefl   
-        end structure 
-	
-	structure/xlenmap/                 ! Entw. Koeffizienten
-	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
-     &  	  xlen2c(0:4,0:4,0:4,0:4)
-	end structure      
+c	structure/geometryst/
+c           real*8 sina,cosa,sinb,cosb,
+c     &            r,rp,xdens(0:4),xlam
+c	   integer idefl   
+c        end structure 
+c	
+c	structure/xlenmap/                 ! Entw. Koeffizienten
+c	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
+c     &  	  xlen2c(0:4,0:4,0:4,0:4)
+c	end structure      
 
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4),
@@ -347,15 +449,10 @@ c--------- Variablen ------------------------------------------
 
 	record /xlenmap/ xlm     
         record /geometryst/ g 
+	record /mirrortype/ am
 
-        integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
+	integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
 
-	real*8 a(0:5,0:5),                     ! mirrortype
-     &         wc,xlc,ypc1,zpc1
-        real*8 dpl0,dsqrl,dql1,dql2,           ! locale vars
-     &         xlen1cc,xlen2cc,dsqrpl1,dsqrpl2
-
-	 
 c*****************************************************************
 #ifdef DEBUG
        write(*,*) 'pathlen0: iplmode=',iplmode
@@ -366,10 +463,10 @@ c*****************************************************************
         write(*,*) 'pathlen0: do not subtract r and rp from path length' 
 #endif
 	if(isti.eq.1)then
-	  call lsubb(a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,-g.idefl,dql1,dql2)
+	  call lsubb(am.a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,-g.idefl,dql1,dql2)
 	endif
 	if(isti.ne.1)then
-	  call lsubb(a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,dql1,dql2) 
+	  call lsubb(am.a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,dql1,dql2) 
 	endif
 	
         do n1=0,iord
@@ -438,9 +535,9 @@ c----------------------------------
 #ifdef DEBUG
 	write(*,*)'pathlen0: subtract r and rp from path length'
 #endif
-	if(isti.eq.1)call lsubab(a,g.sinb,g.cosb,g.sina,g.cosa,
+	if(isti.eq.1)call lsubab(am.a,g.sinb,g.cosb,g.sina,g.cosa,
      &              g.rp,g.r,-g.idefl,dsqrpl1,dsqrpl2)
-	if(isti.ne.1)call lsubab(a,g.sina,g.cosa,g.sinb,g.cosb,
+	if(isti.ne.1)call lsubab(am.a,g.sina,g.cosa,g.sinb,g.cosb,
      &              g.r,g.rp,g.idefl,dsqrpl1,dsqrpl2)
 	do n1=0,iord
          do n2=0,iord
@@ -489,8 +586,7 @@ c       write(*,*)'end pathlen0'
        
        return
        end
-c************ end pathlen0 ********************************
-
+c************ end pathlen0 ***********************************
 
 c*************************************************************
 	subroutine pathlen1(xlm,rin,iord,
@@ -505,24 +601,25 @@ c**************************************************************
 c	J. Bahrdt  xx.xx.9x
 c	Stand:     18.10.96	UF
 c**************************************************************
-	implicit none        
+
+        implicit real*8(a-h,o-z)
+	#include '../phase/phase_struct.F'      
 
 c---------- Typen ---------------------------------------------
-       	structure/raytype/                 ! ein Phasenraumpunkt
-	   real*8 y,z,dy,dz
-	end structure
-
-	structure/xlenmap/                 ! Entw. Koeffizienten
-	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
-     &  	  xlen2c(0:4,0:4,0:4,0:4)
-	end structure
+c       	structure/raytype/                 ! ein Phasenraumpunkt
+c	   real*8 y,z,dy,dz
+c	end structure
+c
+c	structure/xlenmap/                 ! Entw. Koeffizienten
+c	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
+c     &  	  xlen2c(0:4,0:4,0:4,0:4)
+c	end structure
 c--------- Variablen ------------------------------------------   
 
-	record /raytype/ rin
+	record /ray_i/ rin
 	record /xlenmap/ xlm     
 
-       	real*8  yi(0:4),zi(0:4),dyi(0:4),dzi(0:4),
-     &          xlength,xlength1,xlength2
+       	dimension yi(0:7),zi(0:7),dyi(0:7),dzi(0:7)
 	integer iord,i,j,k,l
        
 c*****************************************************************
@@ -556,9 +653,7 @@ c--------------------------------------------------
         
 	return
 	end
-c************ end pathlen1 ********************************
-                          
-
+c************ end pathlen1 ********************************                          
                           
 c******* read matrixfile ************************************ 
 	subroutine readmatrixfile(fname,xmap70,iord)  
@@ -623,10 +718,8 @@ c***************************************************************
 	subroutine extractmap(xmap70,ypc1,zpc1,dypc,dzpc,iord)  
 c       Uwe 12.2.97 umgeschrieben auf universelle map
 c---------------------------------------------------------------      
-c	implicit real*8(a-h,o-z)    
-        implicit none
+	implicit real*8(a-h,o-z)
 
-        real*8  xmap70,ypc1,zpc1,dypc,dzpc
         integer iord,iy,iz,idy,idz,i,j,k,l,nn
 
         dimension xmap70(70,70),
@@ -973,6 +1066,50 @@ c**********************************************************
 	return
         end
 c******* end transponiere  ********************************** 
+
+c********************************************************** 
+	subroutine transponiere_8(am,g)   
+c
+c	wird gerufen von fgmapidp_8
+c
+c----------------------------------------------------------
+c       "transponiert" die Geometriedaten und Spiegel- 
+c	koeffizienten fuer Rechnung      Bild-> Quelle
+c
+c	ACHTUNG: Vorzeichen von xdens(1) und xdens(3)
+c	werden lokal in reduce_1 umgedreht
+c
+c********************************************************** 
+	implicit real*8(a-h,o-z)
+#include '../phase/phase_struct.F'
+c	structure/geometryst/
+c           real*8 sina,cosa,sinb,cosb,
+c     &            r,rp,xdens(0:4),xlam  
+c	   integer idefl   
+c        end structure
+        record /geometryst/ g  
+        record /mirrortype/ am  
+c        dimension a(0:5,0:5)    
+
+        do i=0,8
+          do j=0,8
+              am.a(i,j)=((-1)**(i+j)) * am.a(i,j)
+          enddo
+        enddo  
+
+	xxx=g.rp
+	g.rp=g.r
+	g.r=xxx
+	g.xlam=-g.xlam
+	xxx=g.cosa
+	g.cosa=g.cosb
+	g.cosb=xxx
+	xxx=g.sina
+	g.sina=-g.sinb
+	g.sinb=-xxx
+	return
+        end
+c******* end transponiere_8  ********************************** 
 
 c*********************************************************
 	subroutine ray_tracef(rin, rout, iord,
