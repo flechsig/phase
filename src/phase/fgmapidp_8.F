@@ -1,5 +1,5 @@
 c-------------------------------------------------------------
-	subroutine fgmapidp_8(acc,a,g,
+	subroutine fgmapidp_8(acc,am,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
      &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,dfdwidlj,
      &             iord,imodus,iplmode)
@@ -45,18 +45,20 @@ c
 c---------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
-	structure/pathlength/
-	    real*8 xlen1c(0:7,0:7,0:7,0:7),
-     &             xlen2c(0:7,0:7,0:7,0:7)
-	end structure
-	structure/geometryst/
-	  real*8 sina,cosa,sinb,cosb,
-     &      r,rp,xdens(0:4),xlam
-	  integer idefl
-	end structure
+#include '../phase/phase_struct.F'
+c	structure/pathlength/
+c	    real*8 xlen1c(0:7,0:7,0:7,0:7),
+c    &             xlen2c(0:7,0:7,0:7,0:7)
+c	end structure
+c	structure/geometryst/
+c	  real*8 sina,cosa,sinb,cosb,
+c     &      r,rp,xdens(0:4),xlam
+c	  integer idefl
+c	end structure
 	record /geometryst/ g
+        record /mirrortype/ am
 	record /pathlength/xlm
-	dimension a(0:8,0:8)              ! mirror
+c	dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
      &            ypc1(0:7,0:7,0:7,0:7),
@@ -140,11 +142,11 @@ c        write(*,*)'fortran gerufen'
 	if(imodus.eq.2)then
 	  g.xdens(1)=-g.xdens(1)
 	  g.xdens(3)=-g.xdens(3)
-	  call transponiere(a,g)
+	  call transponiere_8(am,g)
 	endif
 
 	xdefl=dflotj(g.idefl)
-	call q0_q1_q2_8(a,g.sina,g.sinb,g.cosa,
+	call q0_q1_q2_8(am.a,g.sina,g.sinb,g.cosa,
      &       g.cosb,g.r,g.rp,g.xdens,g.xlam,xdefl,
      &       q0_8,q1_8,q2_8)
 
@@ -222,7 +224,7 @@ c	output:	ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 c------------- set up eqs. 27 & 28 
 c	output:	eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
 
-	call get_dydz(a,eq27,eq28,iord)
+	call get_dydz(am.a,eq27,eq28,iord)
 
 c------------- get Taylor expansion of w and l
 c	solve set of linear equations
@@ -236,7 +238,7 @@ c	input:	wc(y,z,dy,dz),xlc(y,z,dy,dz),
 c		ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c	output:	dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
 
-	call get_dypdzp(a,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+	call get_dypdzp(am.a,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
 c------------- get path length in variable (w,l,y,z)
 c	input:  opl6(w,l,y,z,yp,zp),
@@ -313,7 +315,7 @@ c-----------------------------------------------------------------
 c-----------------------------------------------------------------
 
         if(idrift.eq.1)then
-          call drift_8(a,g,acc,wc,xlc,ypc1,zpc1,
+          call drift_8(am,g,acc,wc,xlc,ypc1,zpc1,
      &                        dypc,dzpc,imodus,iord)
 
 	do i=0,iord
@@ -356,7 +358,7 @@ c---------------------------------------------------------------
 #ifdef DEBUG
           write(*,*)'fgmapidp: make map for image to source iord=',iord
 #endif
-          call transponiere(a,g)    ! bild zur quelle
+          call transponiere_8(am,g)    ! bild zur quelle
 	  g.xdens(1)=-g.xdens(1)
 	  g.xdens(3)=-g.xdens(3)
           do n1=0,iord
