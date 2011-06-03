@@ -603,8 +603,10 @@ c	Stand:     18.10.96	UF
 c**************************************************************
 
         implicit real*8(a-h,o-z)
-	#include '../phase/phase_struct.F'      
+        integer iord,i,j,k,l
 
+#include '../phase/phase_struct.F'      
+	
 c---------- Typen ---------------------------------------------
 c       	structure/raytype/                 ! ein Phasenraumpunkt
 c	   real*8 y,z,dy,dz
@@ -620,7 +622,6 @@ c--------- Variablen ------------------------------------------
 	record /xlenmap/ xlm     
 
        	dimension yi(0:7),zi(0:7),dyi(0:7),dzi(0:7)
-	integer iord,i,j,k,l
        
 c*****************************************************************
 
@@ -629,10 +630,10 @@ c*****************************************************************
 	dyi(0)=1.d0
 	dzi(0)=1.d0
 	do i=1,iord
-	   yi(i)=yi(i-1)*rin.y
-	   zi(i)=zi(i-1)*rin.z
-	   dyi(i)=dyi(i-1)*rin.dy
-	   dzi(i)=dzi(i-1)*rin.dz
+	   yi(i)=yi(i-1)*rin.yi
+	   zi(i)=zi(i-1)*rin.zi
+	   dyi(i)=dyi(i-1)*rin.dyi
+	   dzi(i)=dzi(i-1)*rin.dzi
 	enddo
 c--------------------------------------------------
         xlength1=0.d0
