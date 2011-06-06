@@ -57,7 +57,7 @@ c	  integer idefl
 c	end structure
 	record /geometryst/ g
         record /mirrortype/ am
-	record /pathlength/xlm
+	record /xlenmaptype/xlm
 c	dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
