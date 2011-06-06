@@ -46,10 +46,10 @@ c---------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 #include '../phase/phase_struct.F'
-c	structure/pathlength/
-c	    real*8 xlen1c(0:7,0:7,0:7,0:7),
-c    &             xlen2c(0:7,0:7,0:7,0:7)
-c	end structure
+	structure/pathlength/
+	    real*8 xlen1c(0:7,0:7,0:7,0:7),
+     &             xlen2c(0:7,0:7,0:7,0:7)
+	end structure
 c	structure/geometryst/
 c	  real*8 sina,cosa,sinb,cosb,
 c     &      r,rp,xdens(0:4),xlam
@@ -57,7 +57,7 @@ c	  integer idefl
 c	end structure
 	record /geometryst/ g
         record /mirrortype/ am
-	record /xlenmaptype/xlm
+	record /pathlength/xlm
 c	dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
