@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <06 Jun 11 16:57:11 flechsig> 
+c$$$ Time-stamp: <06 Jun 11 17:13:09 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1142,11 +1142,17 @@ c*********************************************************
 c*********************************************************
         IMPLICIT REAL*8(A-H,O-Z)
 
+#ifdef SEVEN_ORDER
+        dimension ypc1(0:8,0:8,0:8,0:8),
+     &            zpc1(0:8,0:8,0:8,0:8),
+     &            dypc(0:8,0:8,0:8,0:8),
+     &            dzpc(0:8,0:8,0:8,0:8)
+#else
         dimension ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)
-                  
+#endif                  
         real*8 rin(4), rout(4)
 
          yp=0.
