@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Jun 11 16:00:19 flechsig>  */
+/*   Time-stamp: <06 Jun 11 16:27:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2108,10 +2108,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("pole:                       phi = % f deg.\n", fipole);
 	  printf("                              f = % f mm\n", f);
 
-	  dp[12]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
+	  dp[2* l]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 
-	  dp[13]= ((pow(epsilon, 2.0)- pow(sin(alpha), 2.0)) > small) ?
+	  dp[1+ 2* l]= ((pow(epsilon, 2.0)- pow(sin(alpha), 2.0)) > small) ?
 	    (tan(alpha)* sqrt(pow(epsilon, 2.0)- pow(sin(alpha), 2.0)))/
 	    (8.0* pow(f, 2.0)* cos(alpha)) : 0.0;                     /* 1,2 */
 	  /** UF 26.11.04 Vorzeichen ist vermutlich falsch    */
@@ -2125,12 +2125,12 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
 	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
 	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
-	  dp[14]= (pow(sin(alpha), 2.0)/ 
+	  dp[2+ 2* l]= (pow(sin(alpha), 2.0)/ 
 		   (16.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
 	    (1.50* pow(cos(alpha), 2.0)- (pow(bellip, 2.0)/ 
 					  pow(aellip, 2.0))* 
 	     (1.0- 1.0/ (2.0* pow(tan(alpha), 2.0))));  	/*2,2 */
-	  dp[24]= (pow(bellip, 2.0)/ 
+	  dp[4* l]= (pow(bellip, 2.0)/ 
 		   (64.0* pow(f, 3.0)* pow(cos(alpha), 3.0)))* 
 	    (pow(sin(alpha), 2.0)/ pow(bellip, 2.0) + 
 	     1.0/ pow(aellip, 2.0));  				/* 0,4 */
