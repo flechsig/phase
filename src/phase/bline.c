@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Jun 11 17:00:13 flechsig>  */
+/*   Time-stamp: <06 Jun 11 17:05:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -507,9 +507,9 @@ void Footprint(struct BeamlineType *bl, int enummer)
          if (enummer > 1)
          {
 #ifdef SEVEN_ORDER
-    ray_tracef_8(Raysin, &elray, &bl->BLOptions.ifl.iord,
+	   /* gibts noch nicht    ray_tracef_8(Raysin, &elray, &bl->BLOptions.ifl.iord,
     (double *)ypc1, (double *)zpc1,
-    (double *)dypc, (double *)dzpc);
+    (double *)dypc, (double *)dzpc); */
 #else
     ray_tracef(Raysin, &elray, &bl->BLOptions.ifl.iord, 
     (double *)ypc1, (double *)zpc1, 

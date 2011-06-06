@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <27 Oct 10 12:59:36 flechsig> 
+c$$$ Time-stamp: <06 Jun 11 16:57:11 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -658,6 +658,7 @@ c************ end pathlen1 ********************************
                           
 c******* read matrixfile ************************************ 
 	subroutine readmatrixfile(fname,xmap70,iord)  
+c UF 6.6.2011 xmap70 ist ein pointer auf MAP70TYPE d.h. hat unterschiedliche dimension bei seven order
 c------------------------------------------------------------
 c       located in fgmap3dpp.for,phasefor.for      
 c************************************************************    
@@ -666,13 +667,21 @@ c************************************************************
         character*255  	fname
         real*8 xmap70
         integer i,j,idim,ii,jj,iord
+#ifdef SEVEN_ORDER
+	dimension xmap70(330,330)
+#else
         dimension xmap70(70,70)
-        
+#endif        
+c UF 6.6.2011 andere ordnungen sollten auch noch beruecksichtigt werden
         if(iord.eq.4)then
           idim=70
-        else
-          idim=35
-        endif
+        else 
+	   if (iord.eq.3)then
+	      idim=35
+	   else
+              idim=330
+	   endif
+	endif
 
         open(unit=10,file=fname,status='old',err=556) 
 	do i=1,idim
@@ -722,24 +731,39 @@ c---------------------------------------------------------------
 	implicit real*8(a-h,o-z)
 
         integer iord,iy,iz,idy,idz,i,j,k,l,nn
-
+#ifdef SEVEN_ORDER
+        dimension xmap70(330,330),
+     &            ypc1(0:8,0:8,0:8,0:8),
+     &            zpc1(0:8,0:8,0:8,0:8),
+     &            dypc(0:8,0:8,0:8,0:8),
+     &            dzpc(0:8,0:8,0:8,0:8)
+#else
         dimension xmap70(70,70),
      &            ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)
-
+#endif
 
         if(iord.eq.4)then
          iy=36
          iz=16
          idy=6
          idz=2
-        else            ! iord=3
-         iy=21
-         iz=11
-         idy=5
-         idz=2
+        else 
+	   if(iord.eq.3)then
+          ! iord=3
+	      iy=21
+	      iz=11
+	      idy=5
+	      idz=2
+	   else
+cccc UF 6.6.2011 seven order correction not yet done
+	     iy=36
+             iz=16
+             idy=6
+            idz=2 
+	   endif
         endif   
 
         nn=0
@@ -1168,14 +1192,21 @@ c****** end rtracef ********************************************
 
 c****************************************************************
  	subroutine writemap(mapname,iord,ypc1,zpc1,dypc,dzpc)  
+c UF 6.6.2011 hier werden MAP7TYPE arrays uebergeben
 c****************************************************************
         implicit real*8(a-h,o-z)  
         character*255 mapname
+#ifdef SEVEN_ORDER
+	dimension   ypc1(0:8,0:8,0:8,0:8),
+     &              zpc1(0:8,0:8,0:8,0:8),
+     &              dypc(0:8,0:8,0:8,0:8),
+     &              dzpc(0:8,0:8,0:8,0:8) 
+#else
         dimension   ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)   
-
+#endif
 	open(unit=10,file=mapname,status='new',err=559)
         write(*,*)'****write transformation map to: ',mapname  
 	write(10,*)'writemap: ypc, zpc, dypc, dzpc'
