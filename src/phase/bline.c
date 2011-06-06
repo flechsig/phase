@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <25 May 11 16:53:04 flechsig>  */
+/*   Time-stamp: <06 Jun 11 16:00:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1954,7 +1954,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   double r, rho, *dp, cone, l,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
     rpole, fipole, small, kellip, Rellip;
-  int i, j;
+  int i, j, k, l;
   struct mirrortype mirror;
 
 #ifdef DEBUG
@@ -1974,11 +1974,19 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   */
   alpha= fabs(x->alpha * PI/ 180.0);
 
+#ifdef SEVEN_ORDER
+  l= 9;
+  k= 81;
+#else
+  l= 6;
+  k= 36;
+#endif
+
   if (etype != kEOEGeneral)
-    for (i= 0; i< 36; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
+    for (i= 0; i< k; i++) dp[i]= 0.0;  /* initialisieren alles 0.0 */
                                /* Radien < small dann planspiegel */
 
-  /* index fuer a(i,j) = i+ j* 6    */
+  /* index fuer a(i,j) = i+ j* l    */
 
   switch (etype)
     {
@@ -1995,22 +2003,38 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("DefMirrorC: drift- geometry and element data are ignored - ");
       printf("fill dummy entries from toroid\n"); 
     case kEOETM:                          /* index a(i,j) */
-    case kEOETG:                          /* = i+ j* 6    */
+    case kEOETG:                          /* = i+ j* l    */
     case kEOEVLSG:  
       printf("DefMirrorC: generic toroidal shape ");                 
       if (fabs(rho) > small) 
 	{
-	  dp[12]= 0.5/ rho;                		  /* 0,2 */
-	  dp[24]= 1.0/ (8.0* rho* rho* rho);              /* 0,4 */
+	  dp[2 * l]= 0.5/ rho;                		               /* 0,2 */
+	  dp[4 * l]= 1.0/ (8.0  * rho* rho* rho);                      /* 0,4 */
+#ifdef SEVEN_ORDER
+	  dp[6 * l]= 1.0/ (16.0 * rho* rho* rho* rho* rho);            /* 0,6 */
+	  dp[8 * l]= 5.0/ (128.0* rho* rho* rho* rho* rho* rho* rho);  /* 0,8 */
+#endif
 	}  
       if (fabs(r) > small)  
 	{
 	  dp[2]= 0.5/ r;   
-	  dp[4]= 1.0/ (8.0* r* r* r);   
+	  dp[4]= 1.0/ (8.0* r* r* r); 
+ 
+#ifdef SEVEN_ORDER
+	  dp[6]= 1.0/ (16.0 * r* r* r* r* r);
+	  dp[8]= 5.0/ (128.0* r* r* r* r* r* r* r);
+#endif 
 	}  
       if ((fabs(rho) > small) && (fabs(r) > small))  
 	{
-	  dp[14]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
+	  dp[2+ 2* l]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
+#ifdef SEVEN_ORDER
+	  dp[2+ 4* l]= (r+ 2.0* rho)/(16.0* r* r* r* rho* rho* rho);                 /* 2, 4 */
+	  dp[2+ 6* l]= (r* r+ 2.0* r* rho+ 2.0* rho* rho)/(32.0* r* r* r* r* rho* rho* rho* rho* rho);   /* 2, 6 */
+	  dp[4+ 2* l]= 3.0/(16.0* r* r* r* r* rho);                                  /* 4, 2 */
+	  dp[4+ 4* l]= (3.0* r+ 12.0* rho)/(64.0* r* r* r* r* r* rho* rho* rho);     /* 4, 4 */
+	  dp[6+ 2* l]= 5.0/(32.0* r* r* r* r* r* r* rho);                            /* 6, 2 */
+#endif 
 	} 
       break; /* end toroid */ 
 
