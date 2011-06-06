@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Jun 11 16:27:05 flechsig>  */
+/*   Time-stamp: <06 Jun 11 17:00:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1951,7 +1951,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
 		int etype)  
 {
-  double r, rho, *dp, cone, l,
+  double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
     rpole, fipole, small, kellip, Rellip;
   int i, j, k, l;
@@ -2044,18 +2044,18 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break;
 
     case kEOECone:  
-      l= 100;
+      ll= 100;
       printf("DefMirrorC: special conical cylinder (not tested)\n");
       printf("fixed cone length l= %f mm\n");
       printf("r, rho are the two radii\n");
-      if (fabs(l) > small)
+      if (fabs(ll) > small)
 	{
-	  cone= (r - rho)/ l;
+	  cone= (r - rho)/ ll;
 	  cone*= cone;
 	  dp[1]= 1.0- cone;
           dp[2]= 1.0- 2* cone;
 	  dp[3]= sqrt(cone- cone* cone);
-	  dp[4]= -(r/sqrt(cone)- l/2.0)* sqrt(cone- cone* cone);
+	  dp[4]= -(r/sqrt(cone)- ll/2.0)* sqrt(cone- cone* cone);
 	}
 #ifdef DEBUG
       printf("end cone shape\n");
