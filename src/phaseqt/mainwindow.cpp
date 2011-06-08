@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <01 Jun 11 17:16:14 flechsig> 
+//  Time-stamp: <07 Jun 11 17:39:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -14,24 +14,45 @@
 
 #include "mainwindow.h"
 
+// the constructor??
 MainWindow::MainWindow()
 {
-    textEdit = new QTextEdit;
-    setCentralWidget(textEdit);
-
-    createActions();
-    createMenus();
-    createToolBars();
-    createStatusBar();
-    createDockWindows();
-
-    setWindowTitle(tr("PHASE Qt"));
-
-    newLetter();
-    setUnifiedTitleAndToolBarOnMac(true);
+  //  textEdit = new QTextEdit;
+  //  setCentralWidget(textEdit);
+  graphicBox= createGraphicBox();
+  
+  setCentralWidget(graphicBox);
+  createActions();
+  createMenus();
+  createToolBars();
+  createStatusBar();
+  createDockWindows();
+  
+  setWindowTitle(tr("PHASE Qt"));
+    
+    //   newLetter();
+    //setUnifiedTitleAndToolBarOnMac(true);
 }
 
-// slot
+
+// slot called to read in a new beamline
+void MainWindow::newBeamline()
+{
+  printf("slot newBeamline activated\n");
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Open File"), QDir::currentPath());
+  if (!fileName.isEmpty()) {
+    QImage image(fileName);
+    if (image.isNull()) {
+      QMessageBox::information(this, tr("Phase"),
+			       tr("Cannot load %1.").arg(fileName));
+      return;
+    }
+  }
+}
+
+
+// slot?? the main widget obsolete
 void MainWindow::newLetter()
 {
     textEdit->clear();
@@ -203,20 +224,20 @@ void MainWindow::activateProc(const QString &action)
 // define action buttons
 void MainWindow::createActions()
 {
-    newLetterAct = new QAction(QIcon(":/images/new.png"), tr("&New Letter"),
+    newLetterAct = new QAction(QIcon(":/images/new.png"), tr("&New Beamline"),
                                this);
     newLetterAct->setShortcuts(QKeySequence::New);
-    newLetterAct->setStatusTip(tr("Create a new form letter"));
-    connect(newLetterAct, SIGNAL(triggered()), this, SLOT(newLetter()));
+    newLetterAct->setStatusTip(tr("Create a new Beamline"));
+    connect(newLetterAct, SIGNAL(triggered()), this, SLOT(newBeamline()));
 
     saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save..."), this);
     saveAct->setShortcuts(QKeySequence::Save);
-    saveAct->setStatusTip(tr("Save the current form letter"));
+    saveAct->setStatusTip(tr("Save the current beamline"));
     connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
     printAct = new QAction(QIcon(":/images/print.png"), tr("&Print..."), this);
     printAct->setShortcuts(QKeySequence::Print);
-    printAct->setStatusTip(tr("Print the current form letter"));
+    printAct->setStatusTip(tr("Print the current beamline"));
     connect(printAct, SIGNAL(triggered()), this, SLOT(print()));
 
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
@@ -323,7 +344,7 @@ void MainWindow::createStatusBar()
 // dock widgets
 void MainWindow::createDockWindows()
 {
-    QDockWidget *dock = new QDockWidget(tr("Customers"), this);
+  /*    QDockWidget *dock = new QDockWidget(tr("Customers"), this);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     customerList = new QListWidget(dock);
     customerList->addItems(QStringList()
@@ -333,9 +354,9 @@ void MainWindow::createDockWindows()
             << "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
             << "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
             << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
-    dock->setWidget(customerList);
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-    viewMenu->addAction(dock->toggleViewAction());
+      dock->setWidget(customerList);
+       addDockWidget(Qt::RightDockWidgetArea, dock);
+       viewMenu->addAction(dock->toggleViewAction());
 
  
 
@@ -343,60 +364,52 @@ void MainWindow::createDockWindows()
     paragraphsList = new QListWidget(dock);
     paragraphsList->addItems(QStringList()
             << "Thank you for your payment which we have received today."
-            << "Your order has been dispatched and should be with you "
-               "within 28 days."
-            << "We have dispatched those items that were in stock. The "
-               "rest of your order will be dispatched once all the "
-               "remaining items have arrived at our warehouse. No "
-               "additional shipping charges will be made."
-            << "You made a small overpayment (less than $5) which we "
-               "will keep on account for you, or return at your request."
-            << "You made a small underpayment (less than $1), but we have "
-               "sent your order anyway. We'll add this underpayment to "
-               "your next bill."
-            << "Unfortunately you did not send enough money. Please remit "
-               "an additional $. Your order will be dispatched as soon as "
-               "the complete amount has been received."
-            << "You made an overpayment (more than $5). Do you wish to "
-               "buy more items, or should we return the excess to you?");
-    dock->setWidget(paragraphsList);
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-    viewMenu->addAction(dock->toggleViewAction());
-
-
-    dock = new QDockWidget(tr("Paragraphs1"), this);
-    paragraphsList1 = new QListWidget(dock);
-    paragraphsList1->addItems(QStringList()
-            << "Thank you for your payment which we have received today."
-            << "Your order has been dispatched and should be with you "
-               "within 28 days."
 			     << "You made an overpayment (more than $5). Do you wish to "
                "buy more items, or should we return the excess to you?");
-    dock->setWidget(paragraphsList1);
+        dock->setWidget(paragraphsList);
+       addDockWidget(Qt::RightDockWidgetArea, dock);
+       viewMenu->addAction(dock->toggleViewAction());
+  */
+    // the beamline box on the left
+    QDockWidget *dock = new QDockWidget(tr("Beamline Box"), this);
+    dock->setWidget(createBeamlineBox());
+    addDockWidget(Qt::LeftDockWidgetArea, dock);
+    viewMenu->addAction(dock->toggleViewAction());
+  
+
+// the source box
+    dock = new QDockWidget(tr("Source Box"), this);
+    dock->setWidget(createSourceBox());
     addDockWidget(Qt::RightDockWidgetArea, dock);
     viewMenu->addAction(dock->toggleViewAction());
 
     // the optical element box
-
     dock = new QDockWidget(tr("Optical Element Box"), this);
     dock->setWidget(createOpticalElementBox());
-
     addDockWidget(Qt::RightDockWidgetArea, dock);
     viewMenu->addAction(dock->toggleViewAction());
 
+// the parameter box
+    dock = new QDockWidget(tr("Parameter Box"), this);
+    dock->setWidget(createParameterBox());
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    addDockWidget(Qt::LeftDockWidgetArea, dock);
+    viewMenu->addAction(dock->toggleViewAction());
 
-    connect(customerList, SIGNAL(currentTextChanged(QString)),
-            this, SLOT(insertCustomer(QString)));
-    connect(paragraphsList, SIGNAL(currentTextChanged(QString)),
-            this, SLOT(addParagraph(QString)));
+
+    //  connect(customerList, SIGNAL(currentTextChanged(QString)),
+    //     this, SLOT(insertCustomer(QString)));
+    //connect(paragraphsList, SIGNAL(currentTextChanged(QString)),
+    //        this, SLOT(addParagraph(QString)));
 }
 
+// the optical element box
 QWidget *MainWindow::createOpticalElementBox()
 {
   elementBox = new QWidget();
 
   //radio buttons
-  QGroupBox *groupBox = new QGroupBox(tr("orientation (reflection to)"));
+  QGroupBox *groupBox  = new QGroupBox(tr("orientation (reflection to)"));
   QRadioButton *radio1 = new QRadioButton(tr("&up"));
   QRadioButton *radio2 = new QRadioButton(tr("&left"));
   QRadioButton *radio3 = new QRadioButton(tr("&down"));
@@ -420,41 +433,43 @@ QWidget *MainWindow::createOpticalElementBox()
   hbox->addWidget(radio2);
   hbox->addWidget(radio3);
   hbox->addWidget(radio4);
-  hbox->addStretch(1);
+  //  hbox->addStretch(1);
   groupBox->setLayout(hbox);
 
   QGroupBox *groupBox1 = new QGroupBox(tr("&Element"));
   QHBoxLayout *hbox1 = new QHBoxLayout;
   hbox1->addWidget(popupButton);
+  hbox1->addStretch(1);
   hbox1->addWidget(groupBox);
   groupBox1->setLayout(hbox1);
 
   //radius
   QGroupBox *geometryGroup = new QGroupBox(tr("&geometry and shape parameters (support fields in red)"));
   QGridLayout *geometryLayout = new QGridLayout;
-  QLabel *cffLabel = new QLabel(tr("cff (PGM)"));
-  QLabel *preLabel = new QLabel(tr("Prec (mm)"));
-  QLabel *sucLabel = new QLabel(tr("Succ (mm)"));
-  QLabel *thetaLabel = new QLabel(tr("theta (deg)"));
+  QLabel *cffLabel    = new QLabel(tr("cff (PGM)"));
+  QLabel *preLabel    = new QLabel(tr("Prec (mm)"));
+  QLabel *sucLabel    = new QLabel(tr("Succ (mm)"));
+  QLabel *thetaLabel  = new QLabel(tr("theta (deg)"));
   QLabel *sourceLabel = new QLabel(tr("Source (mm)"));
-  QLabel *imageLabel = new QLabel(tr("Image (mm)"));
-  QLabel *rLabel = new QLabel(tr("r (mm)"));
-  QLabel *rhoLabel = new QLabel(tr("rho (mm)"));
+  QLabel *imageLabel  = new QLabel(tr("Image (mm)"));
+  QLabel *rLabel      = new QLabel(tr("r (mm)"));
+  QLabel *rhoLabel    = new QLabel(tr("rho (mm)"));
 
-  QLineEdit *cffE = new QLineEdit;
-  QLineEdit *preE = new QLineEdit;
-  QLineEdit *sucE = new QLineEdit;
-  QLineEdit *thetaE = new QLineEdit;
+  QLineEdit *cffE    = new QLineEdit;
+  QLineEdit *preE    = new QLineEdit;
+  QLineEdit *sucE    = new QLineEdit;
+  QLineEdit *thetaE  = new QLineEdit;
   QLineEdit *sourceE = new QLineEdit;
-  QLineEdit *imageE = new QLineEdit;
-  QLineEdit *rE = new QLineEdit;
-  QLineEdit *rhoE = new QLineEdit;
+  QLineEdit *imageE  = new QLineEdit;
+  QLineEdit *rE      = new QLineEdit;
+  QLineEdit *rhoE    = new QLineEdit;
 
-  QPushButton *thetaB = new QPushButton(tr("next"));
-  QPushButton *sourceB = new QPushButton(tr("next"));
-  QPushButton *imageB = new QPushButton(tr("next"));
-  QPushButton *rB = new QPushButton(tr("next"));
-  QPushButton *rhoB = new QPushButton(tr("next"));
+  //  QPushButton *thetaB = new QPushButton(tr("next"));
+  QPushButton *thetaB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  QPushButton *sourceB = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  QPushButton *imageB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  QPushButton *rB      = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  QPushButton *rhoB    = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
 
   geometryLayout->addWidget(cffLabel,0,0);
   geometryLayout->addWidget(preLabel,1,0);
@@ -481,8 +496,8 @@ QWidget *MainWindow::createOpticalElementBox()
 
   geometryLayout->addWidget(rLabel,  0,6);
   geometryLayout->addWidget(rhoLabel,1,6);
-  geometryLayout->addWidget(rE,  0,7);
-  geometryLayout->addWidget(rhoE,1,7);
+  geometryLayout->addWidget(rE,      0,7);
+  geometryLayout->addWidget(rhoE,    1,7);
 
   geometryGroup->setLayout(geometryLayout);
   //radius
@@ -538,32 +553,31 @@ QWidget *MainWindow::createOpticalElementBox()
   // misalignment
  QGroupBox *alignmentGroup = new QGroupBox(tr("&misalignment, opt. surface size, slope errors (arcsec)"));
  QGridLayout *alignmentLayout = new QGridLayout;
- QLabel *duLabel = new QLabel(tr("du (mm)"));
- QLabel *dwLabel = new QLabel(tr("dw (mm)"));
- QLabel *dlLabel = new QLabel(tr("dl (mm)"));
+ QLabel *duLabel  = new QLabel(tr("du (mm)"));
+ QLabel *dwLabel  = new QLabel(tr("dw (mm)"));
+ QLabel *dlLabel  = new QLabel(tr("dl (mm)"));
  QLabel *dRuLabel = new QLabel(tr("du (mrad)"));
  QLabel *dRwLabel = new QLabel(tr("dw (mrad)"));
  QLabel *dRlLabel = new QLabel(tr("dl (mrad)"));
- QLabel *w1Label = new QLabel(tr("w1 (mm)"));
- QLabel *w2Label = new QLabel(tr("w2 (mm)"));
- QLabel *wsLabel = new QLabel(tr("w slope"));
- QLabel *l1Label = new QLabel(tr("l1 (mm)"));
- QLabel *l2Label = new QLabel(tr("l2 (mm)"));
- QLabel *lsLabel = new QLabel(tr("l slope"));
+ QLabel *w1Label  = new QLabel(tr("w1 (mm)"));
+ QLabel *w2Label  = new QLabel(tr("w2 (mm)"));
+ QLabel *wsLabel  = new QLabel(tr("w slope"));
+ QLabel *l1Label  = new QLabel(tr("l1 (mm)"));
+ QLabel *l2Label  = new QLabel(tr("l2 (mm)"));
+ QLabel *lsLabel  = new QLabel(tr("l slope"));
 
- QLineEdit *duE = new QLineEdit;
- QLineEdit *dwE = new QLineEdit;
- QLineEdit *dlE = new QLineEdit;
+ QLineEdit *duE  = new QLineEdit;
+ QLineEdit *dwE  = new QLineEdit;
+ QLineEdit *dlE  = new QLineEdit;
  QLineEdit *dRuE = new QLineEdit;
  QLineEdit *dRwE = new QLineEdit;
  QLineEdit *dRlE = new QLineEdit;
- QLineEdit *w1E = new QLineEdit;
- QLineEdit *w2E = new QLineEdit;
- QLineEdit *wsE = new QLineEdit;
- QLineEdit *l1E = new QLineEdit;
- QLineEdit *l2E = new QLineEdit;
- QLineEdit *lsE = new QLineEdit;
-
+ QLineEdit *w1E  = new QLineEdit;
+ QLineEdit *w2E  = new QLineEdit;
+ QLineEdit *wsE  = new QLineEdit;
+ QLineEdit *l1E  = new QLineEdit;
+ QLineEdit *l2E  = new QLineEdit;
+ QLineEdit *lsE  = new QLineEdit;
 
  alignmentLayout->addWidget(duLabel,0,0);
  alignmentLayout->addWidget(dwLabel,1,0);
@@ -596,13 +610,265 @@ QWidget *MainWindow::createOpticalElementBox()
  alignmentGroup->setLayout(alignmentLayout);
  // end misalignment
  
-  QVBoxLayout *vbox = new QVBoxLayout;
-  vbox->addWidget(groupBox1);
-  vbox->addWidget(geometryGroup);
-  vbox->addWidget(gratingGroup);
-  vbox->addWidget(alignmentGroup);
-  elementBox->setLayout(vbox);
-
-  return elementBox;
+ QVBoxLayout *vbox = new QVBoxLayout;
+ vbox->addWidget(groupBox1);
+ vbox->addWidget(geometryGroup);
+ vbox->addWidget(gratingGroup);
+ vbox->addWidget(alignmentGroup);
+ elementBox->setLayout(vbox);
+ 
+ return elementBox;
 }
+
+// the optical element box
+QWidget *MainWindow::createSourceBox()
+{
+  sourceBox = new QWidget();
+
+  // upper part
+  QGroupBox *sourceTypeGroup = new QGroupBox(tr("&Source type"));
+  QHBoxLayout *sourceTypeLayout = new QHBoxLayout;
+
+// popup button
+  QPushButton *sourceTypeButton = new QPushButton(tr("&Type"));
+  QMenu *source = new QMenu(this);
+  source->addAction(tr("RT hard edge"));
+  source->addAction(tr("Dipol"));
+  source->addAction(tr("Point"));
+  source->addAction(tr("Ring"));
+  source->addSeparator();
+  source->addAction(tr("generic Undulador"));
+  source->addAction(tr("Undulator BESSY II (H)"));
+  source->addAction(tr("Undulator BESSY II (L)"));
+  source->addAction(tr("Undulator SLS - SIS"));
+  source->addAction(tr("Undulator SLS - SIM"));
+  source->addSeparator();
+  source->addAction(tr("Source from file"));
+  sourceTypeButton->setMenu(source);
+
+  QCheckBox *sourceFileBox = new QCheckBox(tr("create Source file"));
+
+  sourceTypeLayout->addWidget(sourceTypeButton);
+  sourceTypeLayout->addStretch(1);
+  sourceTypeLayout->addWidget(sourceFileBox);
+  sourceTypeGroup->setLayout(sourceTypeLayout); // end upper part
+  
+  QGroupBox *sourceParsGroup = new QGroupBox(tr("Parameters"));
+  QGridLayout *sourceParsLayout = new QGridLayout;
+
+  QLabel *S1Label = new QLabel(tr("height (mm)"));
+  QLabel *S3Label = new QLabel(tr("width (mm)"));
+  QLabel *S5Label = new QLabel(tr("vert. div. (mrad)"));
+  QLabel *S7Label = new QLabel(tr("hor. div. (mrad)"));
+  QLabel *S2Label = new QLabel(tr("-> points"));
+  QLabel *S4Label = new QLabel(tr("-> points"));
+  QLabel *S6Label = new QLabel(tr("-> points"));
+  QLabel *S8Label = new QLabel(tr("-> points"));
+
+  QLineEdit *S1E = new QLineEdit;
+  QLineEdit *S2E = new QLineEdit;
+  QLineEdit *S3E = new QLineEdit;
+  QLineEdit *S4E = new QLineEdit;
+  QLineEdit *S5E = new QLineEdit;
+  QLineEdit *S6E = new QLineEdit;
+  QLineEdit *S7E = new QLineEdit;
+  QLineEdit *S8E = new QLineEdit;
+
+  sourceParsLayout->addWidget(S1Label,0,0);
+  sourceParsLayout->addWidget(S3Label,1,0);
+  sourceParsLayout->addWidget(S5Label,2,0);
+  sourceParsLayout->addWidget(S7Label,3,0);
+  sourceParsLayout->addWidget(S2Label,0,2);
+  sourceParsLayout->addWidget(S4Label,1,2);
+  sourceParsLayout->addWidget(S6Label,2,2);
+  sourceParsLayout->addWidget(S8Label,3,2);
+
+  sourceParsLayout->addWidget(S1E,0,1);
+  sourceParsLayout->addWidget(S2E,0,3);
+  sourceParsLayout->addWidget(S3E,1,1);
+  sourceParsLayout->addWidget(S4E,1,3);
+  sourceParsLayout->addWidget(S5E,2,1);
+  sourceParsLayout->addWidget(S6E,2,3);
+  sourceParsLayout->addWidget(S7E,3,1);
+  sourceParsLayout->addWidget(S8E,3,3);
+
+  sourceParsGroup->setLayout(sourceParsLayout);
+
+  QVBoxLayout *vbox = new QVBoxLayout;
+  vbox->addWidget(sourceTypeGroup);
+  vbox->addWidget(sourceParsGroup);
+
+  sourceBox->setLayout(vbox);
+
+ return sourceBox;
+} // end source box
+
+
+// beamline box
+QWidget *MainWindow::createBeamlineBox()
+{
+  beamlineBox = new QWidget();
+
+  // upper part
+  QGroupBox   *beamlineElementGroup  = new QGroupBox(tr("optical element list"));
+  QVBoxLayout *beamlineElementLayout = new QVBoxLayout;
+
+  elementList = new QListWidget();
+  elementList->addItems(QStringList()
+			<< "Mirror 1"
+			<< "Mirror 2"
+			<< "Grating 1"
+			<< "Mirror 3"
+			<< "Mirror 4"
+			);
+
+  QGroupBox   *beamlineButtomGroup  = new QGroupBox();
+  QHBoxLayout *beamlineButtomLayout = new QHBoxLayout;
+  QPushButton *addB  = new QPushButton(QIcon(":/images/up-32.png"), tr("Add"), this);
+  QPushButton *delB  = new QPushButton(QIcon(":/images/down-32.png"), tr("Del"), this);
+  beamlineButtomLayout->addWidget(addB);
+  beamlineButtomLayout->addWidget(delB);
+  beamlineButtomGroup->setLayout(beamlineButtomLayout);
+
+  beamlineElementLayout->addWidget(elementList);
+  beamlineElementLayout->addWidget(beamlineButtomGroup);
+  beamlineElementGroup->setLayout(beamlineElementLayout);
+
+// central part
+    QGroupBox   *beamlineGenericGroup  = new QGroupBox(tr("generic parameters"));
+    QGridLayout *beamlineGenericLayout = new QGridLayout;
+
+    QLineEdit *lambdaE  = new QLineEdit;
+    QLineEdit *dislenE  = new QLineEdit;
+
+    QLabel *lambdaLabel  = new QLabel(tr("wavelength (nm)"));
+    QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
+
+    beamlineGenericLayout->addWidget(lambdaLabel, 0, 0);
+    beamlineGenericLayout->addWidget(dislenLabel, 1, 0);
+    beamlineGenericLayout->addWidget(lambdaE,     0, 1);
+    beamlineGenericLayout->addWidget(dislenE,     1, 1);
+    beamlineGenericGroup->setLayout(beamlineGenericLayout);
+
+// bottom part
+    QGroupBox   *beamlineCalcGroup  = new QGroupBox(tr("calculation parameters"));
+    QVBoxLayout *beamlineCalcLayout = new QVBoxLayout;
+
+    QRadioButton *goButton = new QRadioButton(tr("&geometrical optic (GO)"));
+    QRadioButton *poButton = new QRadioButton(tr("&physical optic (PO)"));
+    goButton->setChecked(true);
+    QCheckBox *misaliBox = new QCheckBox(tr("with misalignment"));
+
+    beamlineCalcLayout->addWidget(goButton);
+    beamlineCalcLayout->addWidget(poButton);
+    beamlineCalcLayout->addWidget(misaliBox);
+    beamlineCalcGroup->setLayout(beamlineCalcLayout);
+
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->addWidget(beamlineElementGroup);
+
+    vbox->addWidget(beamlineGenericGroup);
+    vbox->addWidget(beamlineCalcGroup);
+    vbox->addStretch(1);
+    beamlineBox->setLayout(vbox);
+    return beamlineBox;
+} // end beamline box
+
+
+// parameter box
+QWidget *MainWindow::createParameterBox()
+{
+  parameterBox = new QWidget();
+
+  // upper part
+  QGroupBox   *parameterGroup  = new QGroupBox(tr("Parameters"));
+  QVBoxLayout *parameterLayout = new QVBoxLayout;
+
+  elementList = new QListWidget();
+  elementList->addItems(QStringList()
+			<< "Mirror 1"
+			<< "Mirror 2"
+			<< "Grating 1"
+			<< "Mirror 3"
+			<< "Mirror 4"
+			<< "Mirror 4"
+			<< "Mirror 4"
+			<< "Mirror 4"
+			<< "Mirror 4"
+
+			);
+  QLabel *parameterLabel  = new QLabel(tr("edit only the value after ':'"));
+  QLineEdit *parameterE  = new QLineEdit;
+
+  parameterLayout->addWidget(elementList);
+  parameterLayout->addWidget(parameterLabel);
+  parameterLayout->addWidget(parameterE);
+  parameterGroup->setLayout(parameterLayout);
+
+  QVBoxLayout *vbox = new QVBoxLayout;
+  vbox->addWidget(parameterGroup);
+  
+  vbox->addStretch(1);
+  parameterBox->setLayout(vbox);
+  return parameterBox;
+} // end parameter box
+
+
+// graphic box
+QWidget *MainWindow::createGraphicBox()
+{
+  graphicBox = new QWidget();
+
+  // upper part
+  QGroupBox   *graphicGroup  = new QGroupBox(tr("Graphics"));
+  QGridLayout *graphicLayout = new QGridLayout;
+
+  
+  QLabel *zminLabel  = new QLabel(tr("zmin (mm)"));
+  QLabel *zmaxLabel  = new QLabel(tr("zmax (mm)"));
+  QLabel *yminLabel  = new QLabel(tr("ymin (mm)"));
+  QLabel *ymaxLabel  = new QLabel(tr("ymax (mm)"));
+
+  QLineEdit *zminE  = new QLineEdit;
+  QLineEdit *zmaxE  = new QLineEdit;
+  QLineEdit *yminE  = new QLineEdit;
+  QLineEdit *ymaxE  = new QLineEdit;
+
+  QPushButton *autoButton = new QPushButton(tr("A&utoscale"));
+  QPushButton *applyButton = new QPushButton(tr("&Apply"));
+  QPushButton *popupButton = new QPushButton(tr("&PlotStyle"));
+  QMenu *menu = new QMenu(this);
+  menu->addAction(tr("&footprint"));
+  menu->addAction(tr("&contour"));
+  popupButton->setMenu(menu);
+
+  QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
+  QMenu *subject = new QMenu(this);
+  subject->addAction(tr("&source"));
+  subject->addAction(tr("&image"));
+  subjectpopupButton->setMenu(subject);
+
+  graphicLayout->addWidget(zminLabel, 0, 0);
+  graphicLayout->addWidget(zmaxLabel, 0, 2);
+  graphicLayout->addWidget(yminLabel, 1, 0);
+  graphicLayout->addWidget(ymaxLabel, 1, 2);
+  graphicLayout->addWidget(zminE, 0, 1);
+  graphicLayout->addWidget(zmaxE, 0, 3);
+  graphicLayout->addWidget(yminE, 1, 1);
+  graphicLayout->addWidget(ymaxE, 1, 3);
+  graphicLayout->addWidget(autoButton, 2, 2);
+  graphicLayout->addWidget(applyButton, 2, 3);
+  graphicLayout->addWidget(subjectpopupButton, 2, 0);
+  graphicLayout->addWidget(popupButton, 2, 1);
+  //  graphicLayout->setRowStretch(1,1);
+  graphicGroup->setLayout(graphicLayout);
+
+  QVBoxLayout *vbox = new QVBoxLayout;
+  vbox->addWidget(graphicGroup);
+  
+    vbox->addStretch(1);
+  graphicBox->setLayout(vbox);
+  return graphicBox;
+} // end graphic box
+
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
