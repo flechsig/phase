@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <09 Jun 11 11:59:04 flechsig>  */
+/*  Time-stamp: <09 Jun 11 12:00:55 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -28,15 +28,7 @@
 #include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-/* DEC specific */
-#ifdef VMS
-  #include <descrip.h>                  /* for FORTRAN- String   */ 
-  #include <DXm/DXmHelpB.h>      
-  #include <DXm/DXmPrint.h>      
-  #include <DXm/DXmColor.h>   
-  #include <DXm/DECspecific.h>  
-  #include <sys$library/DECw$Cursor.h>
-#endif
+
 
 #include "cutils.h"                     /* muss for rtrace.h stehen */    
 #include "phase_struct.h"
@@ -125,9 +117,7 @@ int main(argc, argv)
 
     MrmInitialize();			/* Initialize MRM before initializing */
 					/* the X Toolkit. */
-#ifdef VMS
-    DXmInitialize();			/* Initialize DXm widgets */    
-#endif
+
 
     /* If we had user-defined widgets, we would register them with Mrm.here. */
     /* Initialize the X Toolkit. We get back a top level shell widget.       */
@@ -147,10 +137,7 @@ int main(argc, argv)
     /* Open the UID files (the output of the UIL compiler) in the hierarchy */
 
     /* set db_filename_vec with environment */
-#ifdef VMS
-    strcpy(filename, ".lib]phase.uid");
-    PrependEnv(PHASE_HOME, filename);
-#endif
+
     db_filename_vec[0]= filename;
 
     if (MrmOpenHierarchyPerDisplay(
@@ -196,10 +183,7 @@ int main(argc, argv)
 
 
     /* Set up Help System environment */
-#ifdef VMS              
-    DXmHelpSystemOpen(&help_context, toplevel_widget, PHASE_help, 
-		      help_error, "Help System Error");      
-#endif    
+   
 /*****************  Aenderung gegenueber Beispiel **************************/
     InitDataSets(&PHASESet, (char*) MainPickName);             /* PHASEc.c */
 
@@ -211,12 +195,9 @@ int main(argc, argv)
 	FetchWidget(kSetupInfo, "SetupInfo");
 	SetInfoString();
 	XtManageChild(widget_array[kSetupInfo]);   
-#ifdef VMS
-	strcpy(filename, ".lib]news.");
-	PrependEnv(PHASE_HOME, filename);
-#else
+
 	sprintf(filename, "%s/share/phase/news", global_rundir);
-#endif 
+
 	
 	PrintFileInMainList(filename);                      /* news anzeigen */
         /*renderinfo();               */
