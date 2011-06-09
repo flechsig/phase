@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <09 Jun 11 11:17:32 flechsig>  */
+/*   Time-stamp: <09 Jun 11 11:24:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -17,7 +17,7 @@
 
 #define ZERO            1e-30            /* a small number */
 #define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */    
-/* #define LOGFILE             /* compile with logfile: logfilename  */
+/* #define LOGFILE              compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
 #define mapOK      	2                /* werden und verknuepft */ 
