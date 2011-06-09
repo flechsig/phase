@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <27 May 11 12:29:26 flechsig>  */
+/*   Time-stamp: <09 Jun 11 11:17:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -659,6 +659,7 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
 
 /******************** globale Variable *****************************/
 
+#ifndef QTGUI
 double PI;
 int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
 
@@ -667,6 +668,8 @@ struct datset Fg3ActDat, Fg3DefDat;
 struct gdatset GActDat,   GDefDat;  
 struct mdatset MActDat,   MDefDat;  
 struct BeamlineType Beamline;
+#endif
+
 /*struct optistruct optistructure; */ 
 
 /*double map35[35][35];  */
