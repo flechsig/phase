@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <27 Oct 10 13:10:03 flechsig>  */
+/*  Time-stamp: <09 Jun 11 11:59:04 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -115,15 +115,7 @@ int main(argc, argv)
     printf("phase.main> uidfile: %s\n", filename);
 #endif
 
-#ifdef VMS
-    if (getenv(PHASE_HOME) == NULL)
-      {
-	printf("\nphase.c: environment variable %s not defined- exit\n",
-	       PHASE_HOME);
-	printf("example for VMS: define %s \"[myname.phase\"\n", PHASE_HOME);
-	exit(-1);
-      }
-#endif
+
     setupswitch= ProcComandLine(argc, argv); /* im Batch (-b) und  Help -h -? 
 						modus wird exit(3) gerufen 
 						*/
