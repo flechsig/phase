@@ -1,4 +1,0 @@
- 
- mit folgendem Befehl wurden die Drift Routinen kompiliert ...  
- 
- ifort -shared -fPIC -vms -o ATnT_port3_driftroutines.o -c pha_driftroutines.for
