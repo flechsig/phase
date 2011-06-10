@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <09 Jun 11 12:00:55 flechsig>  */
+/*  Time-stamp: <10 Jun 11 11:07:44 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -55,8 +55,6 @@ int main(argc, argv)
     XtAppContext app_context; 
     /* extern int PAWC[200000];		/* hplot, PAW common block        */
     
-    PI = 4.0* atan(1.0);
-
     Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
     /*
