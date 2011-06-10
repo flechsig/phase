@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <09 Jun 11 11:24:49 flechsig>  */
+/*   Time-stamp: <10 Jun 11 12:10:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -16,7 +16,8 @@
 #define NOALLOC 0
 
 #define ZERO            1e-30            /* a small number */
-#define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */    
+#define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */   
+#define PI 3.141592653589793115997963468544185161590576171875   /* double precision */
 /* #define LOGFILE              compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
@@ -619,9 +620,11 @@ struct OptionsType                   			/* 24.6.96 */
   int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign;
   double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
+#ifndef QTGUIXXX
   struct control_flags ifl;
   struct apertures apr;
   struct integration xi;
+#endif
 };    
                                             
 struct BeamlineType
@@ -636,7 +639,9 @@ struct BeamlineType
   unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
+#ifndef QTGUI
   struct sources src;
+#endif
 };
 
 struct optistruct
@@ -660,7 +665,7 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
 /******************** globale Variable *****************************/
 
 #ifndef QTGUI
-double PI;
+
 int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
 
 struct PHASEset PHASESet;  
@@ -723,6 +728,7 @@ int
   ReadBLFile(char *, struct BeamlineType *), 
   SetFilePos(FILE *, char *),
   CheckBLOK(int, int, char*);   
+int ProcComandLine(struct PHASEset *, unsigned int, char **); /* UF 10.6.11 */
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  	

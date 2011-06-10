@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <20 Nov 08 17:23:42 flechsig>  */
+/*   Time-stamp: <10 Jun 11 11:47:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -14,9 +14,7 @@
 #include <string.h>
 #include <time.h> 
 #include <math.h>
-#ifdef VMS
-  #include <descrip.h>                      /* for FORTRAN- String */    
-#endif
+
 #include "cutils.h"
 
 
@@ -96,7 +94,8 @@ int CheckFileHeader(FILE *f, char *header, int *version)              /* bei Gle
   int rcode, myversion, headerfields;
   
   fgets(headerbuffer, 50, f);
-  headerfields= sscanf(headerbuffer, "%s %d\n", &headerread, &myversion);     
+  /* UF 10.6.11  headerfields= sscanf(headerbuffer, "%s %d\n", &headerread, &myversion); */
+  headerfields= sscanf(headerbuffer, "%s %d\n", headerread, &myversion); 
   rcode= strncmp(header, headerread, strlen(header));
   if (rcode != 0)
     fprintf(stderr,"error: fileheader: %s != %s\n", headerread, header);
@@ -120,7 +119,9 @@ void CheckUser(char *logname, char *progname)
   FILE *f;
   
   time(&Times); lokal= localtime(&Times); p= asctime(lokal);
+#ifndef QTGUI
   cuserid(puffer); 
+#endif
   if ((f= fopen(logname, "r")) == NULL)
     {
       fprintf(stderr, 
