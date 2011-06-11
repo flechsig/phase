@@ -227,8 +227,8 @@ c	output:	ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 
 c------------- set up eqs. 27 & 28 
 c	output:	eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
-
-	call get_dydz(am.a,eq27,eq28,iord)
+cccc UF 11.6. add g it is expected in the subroutine
+	call get_dydz(am.a,g,eq27,eq28,iord)
 
 c------------- get Taylor expansion of w and l
 c	solve set of linear equations
@@ -241,7 +241,8 @@ c------------- get Taylor expansion of dyp and dzp
 c	input:	wc(y,z,dy,dz),xlc(y,z,dy,dz),
 c		ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c	output:	dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
-
+cccc UF 11.6. in dieser routine bleibt er haengen und zwar beim call von 
+cccc replace_wl_in_u.for
 	call get_dypdzp(am.a,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
 c------------- get path length in variable (w,l,y,z)
