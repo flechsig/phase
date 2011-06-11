@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <11 Mar 11 13:47:18 flechsig> 
+dnl   Time-stamp: <11 Jun 11 22:33:06 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -200,6 +200,9 @@ AC_ARG_ENABLE([SEVEN],
     AC_DEFINE([SEVEN_ORDER], 1, "expansion up to 7th order"))
 if test "$enable_SEVEN" != "yes" ; then
    enable_SEVEN="no"
+else 
+### AC_DEFINE adds the defines to configure.h - configure.h can not be used for fortran
+   FFLAGS="-DSEVEN_ORDER ${FFLAGS}"
 fi
 
 dnl get configure date put it into header
