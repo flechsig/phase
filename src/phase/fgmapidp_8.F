@@ -241,9 +241,14 @@ c------------- get Taylor expansion of dyp and dzp
 c	input:	wc(y,z,dy,dz),xlc(y,z,dy,dz),
 c		ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c	output:	dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
+<<<<<<< fgmapidp_8.F
+
+	call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+=======
 cccc UF 11.6. in dieser routine bleibt er haengen und zwar beim call von 
 cccc replace_wl_in_u.for
-	call get_dypdzp(am.a,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+	call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+>>>>>>> 1.21
 
 c------------- get path length in variable (w,l,y,z)
 c	input:  opl6(w,l,y,z,yp,zp),
