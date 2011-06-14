@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <10 Jun 11 12:17:10 flechsig>  */
+/*  Time-stamp: <10 Jun 11 15:27:38 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -106,7 +106,7 @@ int main(argc, argv)
 #endif
 
 
-    setupswitch= ProcComandLine(&PHASESet, argc, argv); /* im Batch (-b) und  Help -h -? 
+    setupswitch= ProcComandLine(&PHASESet, &Beamline, argc, argv); /* im Batch (-b) und  Help -h -? 
 						modus wird exit(3) gerufen 
 						*/
     inithplot();                        /* PHASEgraffor.for, hlimit, hplint  */
@@ -183,7 +183,7 @@ int main(argc, argv)
     /* Set up Help System environment */
    
 /*****************  Aenderung gegenueber Beispiel **************************/
-    InitDataSets(&PHASESet, (char*) MainPickName);             /* PHASEc.c */
+    InitDataSets(&PHASESet, &Beamline, (char*) MainPickName);             /* PHASEc.c */
 
     if (setupswitch)   /* option -n */
     {

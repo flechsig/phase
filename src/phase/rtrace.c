@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <04 Aug 09 11:39:01 flechsig>  */
+/*   Time-stamp: <10 Jun 11 14:55:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -471,9 +471,10 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		uu = 0.0; ww= Raysin->y; ll= Raysin->z;
 	      }
 	    else
+#ifndef QTGUI
 	      intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			   &bl->BLOptions.ifl.iord, &uu, &ww, &ll); 
-
+#endif
 	    printf("  intersection: u= %.4g (mum), w= %.4g (mm), l= %.4g (mm)\n", 
 		   uu* 1e3 , ww, ll);
 	    if (OnElement(&ds->MDat, ww, ll) == 0)
@@ -494,12 +495,13 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		  }
 		else 
 		  {
+#ifndef QTGUI
 		    ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
 			       (double *)ds->ypc1, (double *)ds->zpc1, 
 			       (double *)ds->dypc, (double *)ds->dzpc);
 		    pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
 			     &xlength1, &xlength2, &xlength); 
-		     
+#endif		     
        /* if ((bl->BLOptions.CalcMod & SlopeMod) == SlopeMod) */
 		    slopelen= (bl->BLOptions.SourcetoImage == 1) ? 
 		      ds->GDat.rp : ds->GDat.r; 
@@ -601,9 +603,11 @@ void RayTracec(struct BeamlineType *bl)
 
 	for (i= 0; i< bl->RTSource.raynumber; i++)
 	  { 
+#ifndef QTGUI
 	    ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
 		       (double *)bl->ypc1, (double *)bl->zpc1, 
 		       (double *)bl->dypc, (double *)bl->dzpc); 
+#endif
 	    Raysout->phi= Raysin->phi;
 	    Raysin++; Raysout++;  
 	  }
@@ -679,10 +683,13 @@ void RayTraceFull(struct BeamlineType *bl)
 	     ds->GDat.rp : ds->GDat.r; 
 	   for (i= 0; i< zahl; i++)
 	     { 
+#ifndef QTGUI
 	       intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
-			    &bl->BLOptions.ifl.iord, &uu, &ww, &ll);   
+			    &bl->BLOptions.ifl.iord, &uu, &ww, &ll); 
+#endif  
 	       if (OnElement(&ds->MDat, ww, ll))
 		 {
+#ifndef QTGUI
 		   ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
 			      (double *)ds->ypc1, (double *)ds->zpc1, 
 			      (double *)ds->dypc, (double *)ds->dzpc);  
@@ -690,7 +697,7 @@ void RayTraceFull(struct BeamlineType *bl)
 		             ds->geo.cosb, ds->GDat.azimut);
 		   pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
 			    &xlength1, &xlength2, &xlength);  
-		
+#endif		
 		   /* calculate phase */
 		   dphase= (bl->BLOptions.lambda > 0) ? 
 		     ((xlength/ bl->BLOptions.lambda)* 2.0* PI) : (2.0* PI);

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/error.c */
 /*  Date      : <26 Oct 04 13:49:18 flechsig>  */
-/*  Time-stamp: <25 Dec 07 11:59:33 flechsig>  */
+/*  Time-stamp: <10 Jun 11 15:03:24 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -48,7 +48,9 @@ sic_error (const char *message)
 void
 sic_fatal (const char *message)
 {
+#ifndef QTGUI
   error (EXIT_FAILURE, "FATAL", message);
+#endif
 }
 
 const char *program_name = NULL;
@@ -58,10 +60,11 @@ const char *program_name = NULL;
 void set_program_name (const char *path)
 {
   char *pathcopy;
-  
+#ifndef QTGUI  
   pathcopy= xstrdup(path);
   /*  if (!program_name) */
   program_name = (const char *)basename(pathcopy);
+#endif
 }
 
 

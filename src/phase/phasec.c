@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <10 Jun 11 12:28:54 flechsig>  */
+/*   Time-stamp: <10 Jun 11 15:26:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -40,83 +40,85 @@
 #include "version.h"
 
 
-void BatchMode(char *fname, int cmode, int selected)
+void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int selected)
 /* Uwe 2.10.96 */
 /* Batchmodus */
 {
   struct PSDType     *PSDp;
   struct PSImageType *psip;
 
-  printf("BatchMode: datafilename  : %s\n", PHASESet.beamlinename);
-  printf("BatchMode: resultfilename: %s\n", PHASESet.imageraysname);
+  printf("BatchMode: datafilename  : %s\n", ps->beamlinename);
+  printf("BatchMode: resultfilename: %s\n", ps->imageraysname);
   /*  InitDataSets(&PHASESet, fname);  initialisiert auch Beamline */
   /* habe die Initialisierung hier extra */
 #ifdef LOGFILE 
   CheckUser(logfilename, "Phase Batch");            /* user logfile  */
 #endif
-  Beamline.ElementList= NULL;                       /* 15.12.99 */
-  Beamline.raysout= NULL;
-  Beamline.RTSource.SourceRays= NULL;
-  Beamline.beamlineOK= 0;
-  ReadBLFile(PHASESet.beamlinename, &Beamline);
+  bl->ElementList= NULL;                       /* 15.12.99 */
+  bl->raysout= NULL;
+  bl->RTSource.SourceRays= NULL;
+  bl->beamlineOK= 0;
+  ReadBLFile(ps->beamlinename, bl);
 #ifndef QTGUI
-  strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
+  strcpy(ps->pssourcename, bl->src.so6.fsource6);
 #endif
-  BuildBeamline(&Beamline); 
-  if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
+  BuildBeamline(bl); 
+  if (cmode == -1) cmode= bl->BLOptions.CalcMod;
   switch (cmode)
     {
     case 1:
       printf("BatchMode: Ray Tracing\n");
-      MakeRTSource(&PHASESet, &Beamline); 
-      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      RayTracec(&Beamline);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESp);
+      MakeRTSource(ps, bl); 
+      ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
+      RayTracec(bl);
+      WriteRayFile(ps->imageraysname, &bl->RESULT.points,
+		   bl->RESULT.RESp);
       break;
     case 2:
       printf("BatchMode: Full Ray Tracing\n");
-      MakeRTSource(&PHASESet, &Beamline); 
-      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      RayTraceFull(&Beamline);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESp); 
+      MakeRTSource(ps, bl); 
+      ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
+      RayTraceFull(bl);
+      WriteRayFile(ps->imageraysname, &bl->RESULT.points,
+		   bl->RESULT.RESp); 
       break;
     
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
 #ifndef QTGUI
-      src_ini(&Beamline.src); 
+      src_ini(&bl->src); 
+
+      psip = (struct PSImageType *)bl->RTSource.Quellep;
+      ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
+      PST(bl);
+      PSDp= (struct PSDType *)bl->RESULT.RESp;
+      WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
 #endif
-      psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-      ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
-      PST(&Beamline);
-      PSDp= (struct PSDType *)Beamline.RESULT.RESp;
-      WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
       break;
 
     case 4:
       printf("BatchMode: Footprint at element %d\n", selected);
-      Beamline.position= selected;
-      MakeRTSource(&PHASESet, &Beamline);
-      ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-      Footprint(&Beamline, Beamline.position);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
-		   Beamline.RESULT.RESp);
+      bl->position= selected;
+      MakeRTSource(ps, bl);
+      ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
+      Footprint(bl, bl->position);
+      WriteRayFile(ps->imageraysname, &bl->RESULT.points,
+		   bl->RESULT.RESp);
       break;
 
     case 5:
       printf("BatchMode: multiple Phase Space Imaging\n");
 #ifndef QTGUI
-      src_ini(&Beamline.src); 
+      src_ini(&bl->src); 
 #endif
-      psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-      ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
+      psip = (struct PSImageType *)bl->RTSource.Quellep;
+      ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
 #ifndef QTGUI
-      MPST(&Beamline);
+      MPST(bl);
+
+      PSDp= (struct PSDType *)bl->RESULT.RESp;
+      WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
 #endif
-      PSDp= (struct PSDType *)Beamline.RESULT.RESp;
-      WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
       break;
 
     default: 
@@ -127,7 +129,7 @@ void BatchMode(char *fname, int cmode, int selected)
 } /* end Batchmode */
 
 
-int ProcComandLine(struct PHASEset *ps, unsigned int ac, char *av[])
+int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ac, char *av[])
 /* Uwe 2.10.96 */
 /* Wertet Kommandozeile aus */
 /* UF 10.6.11 remove global var */
@@ -210,7 +212,7 @@ int ProcComandLine(struct PHASEset *ps, unsigned int ac, char *av[])
 
   if (ret == -8)
     {
-      BatchMode(pfname, cmode, selected);
+      BatchMode(ps, bl, cmode, selected);
       exit(3);
     }
   return ret;
@@ -287,7 +289,7 @@ int iindex(int el, int pos)
 } /* end iindex */
 
 #ifndef QTGUI
-void InitDataSets(struct PHASEset *x, char *mainpickname)   
+void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpickname)   
      /* initialisiert die globalen Variablen */
      /* last mod. Uwe 21.1.97 		*/
 {
@@ -301,21 +303,21 @@ void InitDataSets(struct PHASEset *x, char *mainpickname)
       PutPHASE(x, mainpickname);          	/* write names */   
     }
   /* neu beamline pointer initialisieren 7.6.96*/
-  Beamline.ElementList= NULL;                       /* 15.12.99 */
-  Beamline.raysout    = NULL;
-  Beamline.RTSource.SourceRays= NULL;
-  Beamline.beamlineOK= 0;
+  bl->ElementList= NULL;                       /* 15.12.99 */
+  bl->raysout    = NULL;
+  bl->RTSource.SourceRays= NULL;
+  bl->beamlineOK= 0;
 
   ginitdatset(&GDefDat);           /* init defaults */
   minitdatset(&MDefDat);                   
 
-  ReadBLFile(x->beamlinename, &Beamline);
+  ReadBLFile(x->beamlinename, bl);
 #ifndef QTGUI
-  strcpy(x->pssourcename, Beamline.src.so6.fsource6);  
+  strcpy(x->pssourcename, bl->src.so6.fsource6);  
 #endif
 #ifndef QTGUI
   grdatstruct.status= 0;
-  SetGrDatStruct(x->imageraysname, &Beamline, &grdatstruct);  
+  SetGrDatStruct(x->imageraysname, bl, &grdatstruct);  
 #endif
   /* PHASEgraf.c */
   /*   optistructure.fileliste= NULL;     */

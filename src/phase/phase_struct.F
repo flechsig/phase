@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <27 May 11 12:54:13 flechsig> 
+c$$$ Time-stamp: <10 Jun 11 17:34:55 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -18,6 +18,7 @@ c
 c------------------------------------------------------------
 
 c--------------- fourth order map ---------------------------
+
 
 #ifdef SEVEN_ORDER
 #define MAPDIM   7

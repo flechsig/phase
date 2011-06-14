@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Jun 11 12:10:04 flechsig>  */
+/*   Time-stamp: <10 Jun 11 15:27:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -728,14 +728,14 @@ int
   ReadBLFile(char *, struct BeamlineType *), 
   SetFilePos(FILE *, char *),
   CheckBLOK(int, int, char*);   
-int ProcComandLine(struct PHASEset *, unsigned int, char **); /* UF 10.6.11 */
+int ProcComandLine(struct PHASEset *, struct BeamlineType *, unsigned int, char **); /* UF 10.6.11 */
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  	
 void 	  
   
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *, struct BeamlineType *),  
-  BatchMode(char *, int, int),
+  BatchMode(struct PHASEset *, struct BeamlineType *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   DefGeometryC(struct gdatset *, struct geometrytype *),
@@ -759,7 +759,7 @@ void
 	       struct RayType *, int *,double *, double *, double *),   
     
   initconstants(),  
-  InitDataSets(struct PHASEset *, char *),   
+  InitDataSets(struct PHASEset *, struct BeamlineType *, char *),   
   InitSourceType(struct BeamlineType *, int),  
                        
   InitPHASE(struct PHASEset *), 
