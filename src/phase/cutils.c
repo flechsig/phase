@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <10 Jun 11 11:47:11 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:15:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,6 +8,9 @@
 /*   $Revision$  */
 /*   $Author$  */
 
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>  
 #include <stdlib.h>   

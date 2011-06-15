@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/mirrorpck.c */
 /*   Date      : <17 Feb 04 14:48:09 flechsig>  */
-/*   Time-stamp: <09 Jul 04 15:21:51 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:13:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,11 +8,12 @@
 /*   $Revision$  */
 /*   $Author$  */
 
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
+
 #include <stdio.h>  
 #include <stdlib.h> 
-#ifdef VMS
-  #include <descrip.h>
-#endif
 #include "cutils.h"
 #include "mirrorpck.h"
 

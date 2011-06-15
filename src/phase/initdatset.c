@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <04 Aug 09 13:55:08 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:14:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,6 +8,9 @@
 /*   $Revision$  */
 /*   $Author$  */
 
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>
 #include <stdlib.h> 
@@ -21,10 +24,7 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#ifdef VMS 
-  #include <DXm/DECspecific.h>                  
-  #include <descrip.h>
-#endif
+
 
 #include "cutils.h"
 #include "phase_struct.h"

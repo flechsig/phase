@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <04 Aug 09 12:21:11 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:02:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -22,11 +22,6 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h> 
-#ifdef VMS 
-  #include <processes.h>                       
-  #include <descrip.h> 
-  #include <DXm/DECspecific.h>    
-#endif     
 #include "cutils.h"     
 #include "phase_struct.h"
 #include "fg3pck.h" 
@@ -49,9 +44,6 @@ void activate_proc(w, tag, reason)
   XmString	topic;    
   char 	command[MaxPathLength], buffer[MaxPathLength];
   extern GRDATSTRUCTTYPE grdatstruct; 
-#ifdef VMS
-  FString Fname;    
-#endif
   struct BeamlineType *bl;
   struct PSDType *PSDp;
   struct PSImageType *psip;  
@@ -59,7 +51,8 @@ void activate_proc(w, tag, reason)
   void *vo;
 
 #ifdef DEBUG
-  printf("activate_proc: widget_num %d\n",widget_num); 
+  printf("activate_proc: widget_num %d\n", widget_num); 
+  printf("activate_proc: Beamline.localalloc %d\n", Beamline.localalloc); 
 #endif   
 
   switch (widget_num) {

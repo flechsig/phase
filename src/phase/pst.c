@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <04 Dec 09 15:31:46 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:11:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -10,6 +10,10 @@
 
 
 /* UF 0804 cleaned code from X11 related routines */
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h> 
 #include <stdlib.h>

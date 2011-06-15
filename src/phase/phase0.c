@@ -1,12 +1,16 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <23 Jul 09 12:00:36 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:13:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
 /*   $Date$ */
 /*   $Revision$  */
 /*   $Author$  */
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
@@ -23,15 +27,7 @@
 #include <Mrm/MrmAppl.h> 
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-/* DEC specific */
-#ifdef VMS
-  #include <descrip.h>                  /* for FORTRAN- String   */ 
-  #include <DXm/DXmHelpB.h>      
-  #include <DXm/DXmPrint.h>      
-  #include <DXm/DXmColor.h>   
-  #include <DXm/DECspecific.h>  
-  #include <sys$library/DECw$Cursor.h>
-#endif
+
 #include "cutils.h"                     /* muss for rtrace.h stehen */    
 #include "phase_struct.h"
 #include "fg3pck.h"     

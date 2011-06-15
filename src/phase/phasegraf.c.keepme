@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <07 Apr 08 15:40:29 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:12:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,6 +8,10 @@
 /*   $Revision$  */
 /*   $Author$  */
  
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
+
 #include <stdio.h>  
 #include <stdlib.h>                                                       
 #include <string.h>   
@@ -17,10 +21,7 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>
-#ifdef VMS 
-  #include <DXm/DECspecific.h>   
-  #include <descrip.h>                      /* for FORTRAN- String */     
-#endif
+
 #include "cutils.h"
 #include "phase_struct.h"
 #include "fg3pck.h"  

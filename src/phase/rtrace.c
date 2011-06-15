@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <10 Jun 11 14:55:43 flechsig>  */
+/*   Time-stamp: <15 Jun 11 08:05:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -10,6 +10,10 @@
 
 
 /* UF 0804 no X11 left */
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h> 
 #include <stdlib.h>

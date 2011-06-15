@@ -1,6 +1,6 @@
 /*  File      : /home/pss060/sls/flechsig/phase/src/phase/geometrypck.c */
 /*  Date      : <28 Oct 99 09:57:07 flechsig>  */
-/*  Time-stamp: <22 Dec 09 15:09:05 flechsig>  */
+/*  Time-stamp: <15 Jun 11 08:14:43 flechsig>  */
 /*  Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch */
 
 /* Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEC]GEOMETRYPCK.C      */
@@ -8,6 +8,9 @@
 /* Stand: 12-JUN-1996                                          */
 /* Autor: FLECHSIG, BESSY Berlin                               */
 
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>
 #include <stdlib.h>
