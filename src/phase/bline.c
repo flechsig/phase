@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Jun 11 14:57:27 flechsig>  */
+/*   Time-stamp: <15 Jun 11 09:18:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -524,8 +524,13 @@ void Footprint(struct BeamlineType *bl, int enummer)
          else 
            elrayp= Raysin; 
 #ifndef QTGUI
-         intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
-	              &bl->BLOptions.ifl.iord, &uu, &ww, &ll); 
+#ifdef SEVEN_ORDER
+         intersection_8(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
+			&uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
+#else
+	 intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
+	              &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
+#endif
 #endif
          foot->y= ww;    
          foot->z= ll;    

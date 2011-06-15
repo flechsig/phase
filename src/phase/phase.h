@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Jun 11 15:27:01 flechsig>  */
+/*   Time-stamp: <15 Jun 11 09:02:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -697,7 +697,7 @@ struct BeamlineType Beamline;
   #define hplotpsdf      hplotpsdf_
   #define hplotpssimf    hplotpssimf_
   #define inithplot      inithplot_
-  #define intersection   intersection_
+  
   #define pathlen0       pathlen0_
   #define pathlen1       pathlen1_
   #define pstf           pstf_ 
@@ -706,13 +706,15 @@ struct BeamlineType Beamline;
   #define src_ini        src_ini_
   
 #ifdef SEVEN_ORDER
-  #define fdet_8         fdet_8_
-  #define fgmapidp_8     fgmapidp_8_
-  #define make_matrix_8  make_matrix_8_
-  #define misali_8       misali_8_
+  #define fdet_8          fdet_8_
+  #define fgmapidp_8      fgmapidp_8_
+  #define intersection_8  intersection_8_
+  #define make_matrix_8   make_matrix_8_
+  #define misali_8        misali_8_
 #else
   #define fdet           fdet_
   #define fgmapidp       fgmapidp_
+  #define intersection   intersection_
   #define misali         misali_
   #define xxmap70        xxmap70_ 
 #endif
