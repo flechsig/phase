@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <07 Jun 11 17:28:07 flechsig>  */
+/*  Time-stamp: <15 Jun 11 16:42:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -13,7 +13,10 @@
 
 #include <QMainWindow>
 #include <qsignalmapper.h>
+#include <QListWidget>
+#include <QGroupBox>
 
+#include "qtphase.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -23,7 +26,7 @@ class QTextEdit;
 QT_END_NAMESPACE
 
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public QtPhase 
 {
     Q_OBJECT
 
@@ -38,6 +41,9 @@ private slots:
     void undo();
     void about();
     void insertCustomer(const QString &customer);
+    void insertElement(); // UF
+    void deleteElement(); // UF
+    void selectElement(); // UF
     void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
     
@@ -47,13 +53,15 @@ private:
     void createToolBars();
     void createStatusBar();
     void createDockWindows();
+    void UpdateElementList();
 
     QTextEdit   *textEdit;
     QListWidget *customerList;
     QListWidget *paragraphsList;
 
     QSignalMapper *signalMapper;  // UF
-    QListWidget   *elementList;   
+    QListWidget   *elementList;
+    QListWidget   *parameterList;
     QWidget       *elementBox;
     QWidget       *createOpticalElementBox(); 
     QWidget       *sourceBox;
@@ -64,6 +72,8 @@ private:
     QWidget       *createParameterBox();
     QWidget       *graphicBox;
     QWidget       *createGraphicBox();
+    QGroupBox     *groupBox1;
+    QtPhase       *myQtPhase;
       // UF end
 
     QMenu *fileMenu;

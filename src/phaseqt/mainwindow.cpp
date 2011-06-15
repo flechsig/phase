@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <07 Jun 11 17:39:54 flechsig> 
+//  Time-stamp: <15 Jun 11 17:25:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -8,11 +8,14 @@
 //  $Revision$ 
 //  $Author$ 
 
+// this file contains the QT gui
+// the widgets and slots
+
 
 #include <QtGui>
-//#include <qsignalmapper.h> 
 
 #include "mainwindow.h"
+#include "qtphase.h"
 
 // the constructor??
 MainWindow::MainWindow()
@@ -29,26 +32,49 @@ MainWindow::MainWindow()
   createDockWindows();
   
   setWindowTitle(tr("PHASE Qt"));
-    
-    //   newLetter();
-    //setUnifiedTitleAndToolBarOnMac(true);
-}
+  
+  //   newLetter();
+  //setUnifiedTitleAndToolBarOnMac(true);
+  
+  myQtPhase= new QtPhase;    // constructor QtPhase
+  //  this->myQtPhase=myQtPhase;
+  myQtPhase->myPHASEset::init("default");
+  myQtPhase->myPHASEset::print();
+  myQtPhase->myBeamline::init();
+} // end MainWindow
 
 
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
 {
-  printf("slot newBeamline activated\n");
+#ifdef DEBUG
+  printf("Debug: slot newBeamline activated\n");
+#endif
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open File"), QDir::currentPath());
-  if (!fileName.isEmpty()) {
-    QImage image(fileName);
-    if (image.isNull()) {
-      QMessageBox::information(this, tr("Phase"),
-			       tr("Cannot load %1.").arg(fileName));
-      return;
+  char *name;
+  //  int result;
+  //this->QtPhase::print();
+
+  if (!fileName.isEmpty()) 
+    {
+      name= fileName.toAscii().data();
+      printf("MainWindow::newBeamline: try to read file: %s\n", name);
+      ReadBLFile(name, this);
+      UpdateElementList();
+      //this->myPHASEset::init("xxx"); // brauchts nicht
+      //      QtPhase::this->print(); 
+      //    myPHASEset::myPHASEsetp->init(text);
+  
+      //     result= ReadBLFile(text, &Beamline);
+      // QImage image(fileName);
+      //    if (image.isNull()) {
+      //QMessageBox::information(this, tr("Phase"),
+      //			       tr("Cannot load %1.").arg(fileName));
+      //return;
+      //}
     }
-  }
+  // this->myPHASEset::print();
 }
 
 
@@ -147,6 +173,35 @@ void MainWindow::undo()
     QTextDocument *document = textEdit->document();
     document->undo();
 }
+
+// UF slot insert a new optical element in the beamline box
+void MainWindow::insertElement()
+{
+  QListWidgetItem *item= new QListWidgetItem("New Element");
+  elementList->insertItem(elementList->currentRow(), item);
+  item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
+} 
+
+// UF slot delete optical element in the beamline box
+void MainWindow::deleteElement()
+{
+  delete elementList->takeItem(elementList->currentRow());
+} 
+
+// UF slot delete optical element in the beamline box
+void MainWindow::selectElement()
+{
+  QListWidgetItem *item;
+  int elementnumber;
+  char *text;
+  
+  item= elementList->currentItem();
+  text= item->text().toAscii().data();
+  elementnumber= elementList->currentRow();
+  groupBox1->setTitle(item->text());  // set text header
+ 
+    printf("elementindex: %d, %s\n", elementnumber, text);
+} 
 
 // slot
 // insert customer from list into letter
@@ -436,7 +491,7 @@ QWidget *MainWindow::createOpticalElementBox()
   //  hbox->addStretch(1);
   groupBox->setLayout(hbox);
 
-  QGroupBox *groupBox1 = new QGroupBox(tr("&Element"));
+  groupBox1 = new QGroupBox(tr("&Element"));
   QHBoxLayout *hbox1 = new QHBoxLayout;
   hbox1->addWidget(popupButton);
   hbox1->addStretch(1);
@@ -721,7 +776,7 @@ QWidget *MainWindow::createBeamlineBox()
 			<< "Mirror 3"
 			<< "Mirror 4"
 			);
-
+  
   QGroupBox   *beamlineButtomGroup  = new QGroupBox();
   QHBoxLayout *beamlineButtomLayout = new QHBoxLayout;
   QPushButton *addB  = new QPushButton(QIcon(":/images/up-32.png"), tr("Add"), this);
@@ -771,6 +826,12 @@ QWidget *MainWindow::createBeamlineBox()
     vbox->addWidget(beamlineCalcGroup);
     vbox->addStretch(1);
     beamlineBox->setLayout(vbox);
+
+    // slots
+    connect(addB, SIGNAL(pressed()), this, SLOT(insertElement()));
+    connect(delB, SIGNAL(pressed()), this, SLOT(deleteElement()));
+    connect(elementList, SIGNAL(itemSelectionChanged()), this, SLOT(selectElement()));
+
     return beamlineBox;
 } // end beamline box
 
@@ -784,8 +845,8 @@ QWidget *MainWindow::createParameterBox()
   QGroupBox   *parameterGroup  = new QGroupBox(tr("Parameters"));
   QVBoxLayout *parameterLayout = new QVBoxLayout;
 
-  elementList = new QListWidget();
-  elementList->addItems(QStringList()
+  parameterList = new QListWidget();
+  parameterList->addItems(QStringList()
 			<< "Mirror 1"
 			<< "Mirror 2"
 			<< "Grating 1"
@@ -800,7 +861,7 @@ QWidget *MainWindow::createParameterBox()
   QLabel *parameterLabel  = new QLabel(tr("edit only the value after ':'"));
   QLineEdit *parameterE  = new QLineEdit;
 
-  parameterLayout->addWidget(elementList);
+  parameterLayout->addWidget(parameterList);
   parameterLayout->addWidget(parameterLabel);
   parameterLayout->addWidget(parameterE);
   parameterGroup->setLayout(parameterLayout);
@@ -818,22 +879,22 @@ QWidget *MainWindow::createParameterBox()
 QWidget *MainWindow::createGraphicBox()
 {
   graphicBox = new QWidget();
-
+  
   // upper part
   QGroupBox   *graphicGroup  = new QGroupBox(tr("Graphics"));
   QGridLayout *graphicLayout = new QGridLayout;
-
+  
   
   QLabel *zminLabel  = new QLabel(tr("zmin (mm)"));
   QLabel *zmaxLabel  = new QLabel(tr("zmax (mm)"));
   QLabel *yminLabel  = new QLabel(tr("ymin (mm)"));
   QLabel *ymaxLabel  = new QLabel(tr("ymax (mm)"));
-
+  
   QLineEdit *zminE  = new QLineEdit;
   QLineEdit *zmaxE  = new QLineEdit;
   QLineEdit *yminE  = new QLineEdit;
   QLineEdit *ymaxE  = new QLineEdit;
-
+  
   QPushButton *autoButton = new QPushButton(tr("A&utoscale"));
   QPushButton *applyButton = new QPushButton(tr("&Apply"));
   QPushButton *popupButton = new QPushButton(tr("&PlotStyle"));
@@ -841,13 +902,13 @@ QWidget *MainWindow::createGraphicBox()
   menu->addAction(tr("&footprint"));
   menu->addAction(tr("&contour"));
   popupButton->setMenu(menu);
-
+  
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
   QMenu *subject = new QMenu(this);
   subject->addAction(tr("&source"));
   subject->addAction(tr("&image"));
   subjectpopupButton->setMenu(subject);
-
+  
   graphicLayout->addWidget(zminLabel, 0, 0);
   graphicLayout->addWidget(zmaxLabel, 0, 2);
   graphicLayout->addWidget(yminLabel, 1, 0);
@@ -862,13 +923,34 @@ QWidget *MainWindow::createGraphicBox()
   graphicLayout->addWidget(popupButton, 2, 1);
   //  graphicLayout->setRowStretch(1,1);
   graphicGroup->setLayout(graphicLayout);
-
+  
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(graphicGroup);
   
-    vbox->addStretch(1);
+  vbox->addStretch(1);
   graphicBox->setLayout(vbox);
   return graphicBox;
 } // end graphic box
+
+// updates the elementlist
+void MainWindow::UpdateElementList()
+{
+ 
+  unsigned int ui;
+  struct ElementType *list;
+  count= elementList->count();
+
+  printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", count);
+  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", elementzahl);
+  list= this->ElementList;
+  // loesche alles
+ 
+  while (elementList->count()) 
+    delete elementList->takeItem(0);
+  
+  for (ui= 0; ui < elementzahl; ui++, list++)
+    elementList->addItem(QString(list->elementname));
+}
+
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
