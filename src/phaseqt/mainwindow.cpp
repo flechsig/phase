@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Jun 11 17:25:45 flechsig> 
+//  Time-stamp: <16 Jun 11 18:45:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -62,11 +62,8 @@ void MainWindow::newBeamline()
       printf("MainWindow::newBeamline: try to read file: %s\n", name);
       ReadBLFile(name, this);
       UpdateElementList();
-      //this->myPHASEset::init("xxx"); // brauchts nicht
-      //      QtPhase::this->print(); 
-      //    myPHASEset::myPHASEsetp->init(text);
-  
-      //     result= ReadBLFile(text, &Beamline);
+      UpdateBeamlineBox();
+      UpdateSourceBox();
       // QImage image(fileName);
       //    if (image.isNull()) {
       //QMessageBox::information(this, tr("Phase"),
@@ -74,8 +71,7 @@ void MainWindow::newBeamline()
       //return;
       //}
     }
-  // this->myPHASEset::print();
-}
+ }
 
 
 // slot?? the main widget obsolete
@@ -200,7 +196,8 @@ void MainWindow::selectElement()
   elementnumber= elementList->currentRow();
   groupBox1->setTitle(item->text());  // set text header
  
-    printf("elementindex: %d, %s\n", elementnumber, text);
+  printf("elementindex: %d, %s\n", elementnumber, text);
+  UpdateElementBox(elementnumber);
 } 
 
 // slot
@@ -343,6 +340,10 @@ void MainWindow::createActions()
     signalMapper->setMapping(mphasespaceAct, QString("mphasespaceAct"));
     connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
+    //    rthardedgeAct = new QAction();
+    //    signalMapper->setMapping(rthardedgeAct, QString("rthardedgeAct"));
+    //    connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
     // finaly connect mapper to acticateProc
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
 }
@@ -464,38 +465,42 @@ QWidget *MainWindow::createOpticalElementBox()
   elementBox = new QWidget();
 
   //radio buttons
-  QGroupBox *groupBox  = new QGroupBox(tr("orientation (reflection to)"));
-  QRadioButton *radio1 = new QRadioButton(tr("&up"));
-  QRadioButton *radio2 = new QRadioButton(tr("&left"));
-  QRadioButton *radio3 = new QRadioButton(tr("&down"));
-  QRadioButton *radio4 = new QRadioButton(tr("&right"));
-  radio1->setChecked(true);
+  //QGroupBox *groupBox   = new QGroupBox(tr("orientation (reflection to)"));
+  QGroupBox *orientationBox   = new QGroupBox(tr("orientation (reflection to)"));
+  rup1    = new QRadioButton(tr("&up"));
+  rleft2  = new QRadioButton(tr("&left"));
+  rdown3  = new QRadioButton(tr("&down"));
+  rright4 = new QRadioButton(tr("&right"));
+  rup1->setChecked(true);
   
+  QHBoxLayout *orientationLayout = new QHBoxLayout;
+  orientationLayout->addWidget(rup1);
+  orientationLayout->addWidget(rleft2);
+  orientationLayout->addWidget(rdown3);
+  orientationLayout->addWidget(rright4);
+  orientationBox->setLayout(orientationLayout);
+
   // popup button
-  QPushButton *popupButton = new QPushButton(tr("&Shape"));
-  QMenu *menu = new QMenu(this);
-  menu->addAction(tr("&flat mirror"));
-  menu->addAction(tr("&toroidal mirror"));
-  menu->addAction(tr("&plane- elliptical mirror"));
-  menu->addAction(tr("&elliptical mirror"));
-  menu->addAction(tr("&conical mirror"));
-  menu->addSeparator();
-  menu->addAction(tr("&plane grating"));
-  popupButton->setMenu(menu);
+  QPushButton *shapeButton = new QPushButton(tr("&Shape"));
+  QMenu *shapeMenu = new QMenu(this);
+  shapeMenu->addAction(tr("&flat mirror"));
+  shapeMenu->addAction(tr("&toroidal mirror"));
+  shapeMenu->addAction(tr("&plane- elliptical mirror"));
+  shapeMenu->addAction(tr("&elliptical mirror"));
+  shapeMenu->addAction(tr("&conical mirror"));
+  shapeMenu->addSeparator();
+  shapeMenu->addAction(tr("&plane grating"));
+  shapeButton->setMenu(shapeMenu);
 
-  QHBoxLayout *hbox = new QHBoxLayout;
-  hbox->addWidget(radio1);
-  hbox->addWidget(radio2);
-  hbox->addWidget(radio3);
-  hbox->addWidget(radio4);
-  //  hbox->addStretch(1);
-  groupBox->setLayout(hbox);
+  shapeLabel = new QLabel(tr("flat mirror")); // return value of menu
 
-  groupBox1 = new QGroupBox(tr("&Element"));
+  groupBox1 = new QGroupBox(tr("&Element")); 
   QHBoxLayout *hbox1 = new QHBoxLayout;
-  hbox1->addWidget(popupButton);
+  hbox1->addWidget(shapeButton);
   hbox1->addStretch(1);
-  hbox1->addWidget(groupBox);
+  hbox1->addWidget(shapeLabel);
+  hbox1->addStretch(1);
+  hbox1->addWidget(orientationBox);
   groupBox1->setLayout(hbox1);
 
   //radius
@@ -510,14 +515,14 @@ QWidget *MainWindow::createOpticalElementBox()
   QLabel *rLabel      = new QLabel(tr("r (mm)"));
   QLabel *rhoLabel    = new QLabel(tr("rho (mm)"));
 
-  QLineEdit *cffE    = new QLineEdit;
-  QLineEdit *preE    = new QLineEdit;
-  QLineEdit *sucE    = new QLineEdit;
-  QLineEdit *thetaE  = new QLineEdit;
-  QLineEdit *sourceE = new QLineEdit;
-  QLineEdit *imageE  = new QLineEdit;
-  QLineEdit *rE      = new QLineEdit;
-  QLineEdit *rhoE    = new QLineEdit;
+  cffE    = new QLineEdit;
+  preE    = new QLineEdit;
+  sucE    = new QLineEdit;
+  thetaE  = new QLineEdit;
+  sourceE = new QLineEdit;
+  imageE  = new QLineEdit;
+  rE      = new QLineEdit;
+  rhoE    = new QLineEdit;
 
   //  QPushButton *thetaB = new QPushButton(tr("next"));
   QPushButton *thetaB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
@@ -558,29 +563,29 @@ QWidget *MainWindow::createOpticalElementBox()
   //radius
 
   // grating
-  QGroupBox *gratingGroup = new QGroupBox(tr("&Grating"));
+  gratingGroup = new QGroupBox(tr("&Grating"));
   gratingGroup->setCheckable(true);
   gratingGroup->setChecked(true);
 
   QLabel *orderLabel   = new QLabel(tr("Diffraction order"));
   QLabel *densityLabel = new QLabel(tr("line density (1/mm)"));
-  QSpinBox *integerSpinBox = new QSpinBox;
+  integerSpinBox = new QSpinBox;
   integerSpinBox->setRange(-20, 20);
   integerSpinBox->setSingleStep(1);
   integerSpinBox->setValue(1);
-  QLineEdit *lineDensity = new QLineEdit;
-  QCheckBox *nimBox = new QCheckBox(tr("&NIM Translation"));
+  lineDensity = new QLineEdit;
+  nimBox      = new QCheckBox(tr("&NIM Translation"));
 
   // vls
-  QGroupBox *vlsGroup = new QGroupBox(tr("&VLS Grating"));
+  vlsGroup = new QGroupBox(tr("&VLS Grating"));
   vlsGroup->setCheckable(true);
   vlsGroup->setChecked(false);
   QHBoxLayout *vlslayout = new QHBoxLayout;
   QLabel *vlsLabel = new QLabel(tr("coeff(1)...coeff(4)"));
-  QLineEdit *vls1 = new QLineEdit;
-  QLineEdit *vls2 = new QLineEdit;
-  QLineEdit *vls3 = new QLineEdit;
-  QLineEdit *vls4 = new QLineEdit;
+  vls1 = new QLineEdit;
+  vls2 = new QLineEdit;
+  vls3 = new QLineEdit;
+  vls4 = new QLineEdit;
   vlslayout->addWidget(vlsLabel);
   vlslayout->addWidget(vls1);
   vlslayout->addWidget(vls2);
@@ -621,18 +626,18 @@ QWidget *MainWindow::createOpticalElementBox()
  QLabel *l2Label  = new QLabel(tr("l2 (mm)"));
  QLabel *lsLabel  = new QLabel(tr("l slope"));
 
- QLineEdit *duE  = new QLineEdit;
- QLineEdit *dwE  = new QLineEdit;
- QLineEdit *dlE  = new QLineEdit;
- QLineEdit *dRuE = new QLineEdit;
- QLineEdit *dRwE = new QLineEdit;
- QLineEdit *dRlE = new QLineEdit;
- QLineEdit *w1E  = new QLineEdit;
- QLineEdit *w2E  = new QLineEdit;
- QLineEdit *wsE  = new QLineEdit;
- QLineEdit *l1E  = new QLineEdit;
- QLineEdit *l2E  = new QLineEdit;
- QLineEdit *lsE  = new QLineEdit;
+ duE  = new QLineEdit;
+ dwE  = new QLineEdit;
+ dlE  = new QLineEdit;
+ dRuE = new QLineEdit;
+ dRwE = new QLineEdit;
+ dRlE = new QLineEdit;
+ w1E  = new QLineEdit;
+ w2E  = new QLineEdit;
+ wsE  = new QLineEdit;
+ l1E  = new QLineEdit;
+ l2E  = new QLineEdit;
+ lsE  = new QLineEdit;
 
  alignmentLayout->addWidget(duLabel,0,0);
  alignmentLayout->addWidget(dwLabel,1,0);
@@ -686,24 +691,27 @@ QWidget *MainWindow::createSourceBox()
 
 // popup button
   QPushButton *sourceTypeButton = new QPushButton(tr("&Type"));
-  QMenu *source = new QMenu(this);
-  source->addAction(tr("RT hard edge"));
-  source->addAction(tr("Dipol"));
-  source->addAction(tr("Point"));
-  source->addAction(tr("Ring"));
-  source->addSeparator();
-  source->addAction(tr("generic Undulador"));
-  source->addAction(tr("Undulator BESSY II (H)"));
-  source->addAction(tr("Undulator BESSY II (L)"));
-  source->addAction(tr("Undulator SLS - SIS"));
-  source->addAction(tr("Undulator SLS - SIM"));
-  source->addSeparator();
-  source->addAction(tr("Source from file"));
-  sourceTypeButton->setMenu(source);
+  sourceTypeLabel = new QLabel(tr("RT hard edge")); // return value of menu
+  sourceMenu = new QMenu(this);
+  sourceMenu->addAction(tr("RT hard edge"));
+  sourceMenu->addAction(tr("Dipol"));
+  sourceMenu->addAction(tr("Point"));
+  sourceMenu->addAction(tr("Ring"));
+  sourceMenu->addSeparator();
+  sourceMenu->addAction(tr("generic Undulador"));
+  sourceMenu->addAction(tr("Undulator BESSY II (H)"));
+  sourceMenu->addAction(tr("Undulator BESSY II (L)"));
+  sourceMenu->addAction(tr("Undulator SLS - SIS"));
+  sourceMenu->addAction(tr("Undulator SLS - SIM"));
+  sourceMenu->addSeparator();
+  sourceMenu->addAction(tr("Source from file"));
+  sourceTypeButton->setMenu(sourceMenu);
 
   QCheckBox *sourceFileBox = new QCheckBox(tr("create Source file"));
 
   sourceTypeLayout->addWidget(sourceTypeButton);
+  sourceTypeLayout->addStretch(1);
+  sourceTypeLayout->addWidget(sourceTypeLabel);
   sourceTypeLayout->addStretch(1);
   sourceTypeLayout->addWidget(sourceFileBox);
   sourceTypeGroup->setLayout(sourceTypeLayout); // end upper part
@@ -711,23 +719,23 @@ QWidget *MainWindow::createSourceBox()
   QGroupBox *sourceParsGroup = new QGroupBox(tr("Parameters"));
   QGridLayout *sourceParsLayout = new QGridLayout;
 
-  QLabel *S1Label = new QLabel(tr("height (mm)"));
-  QLabel *S3Label = new QLabel(tr("width (mm)"));
-  QLabel *S5Label = new QLabel(tr("vert. div. (mrad)"));
-  QLabel *S7Label = new QLabel(tr("hor. div. (mrad)"));
-  QLabel *S2Label = new QLabel(tr("-> points"));
-  QLabel *S4Label = new QLabel(tr("-> points"));
-  QLabel *S6Label = new QLabel(tr("-> points"));
-  QLabel *S8Label = new QLabel(tr("-> points"));
+  S1Label = new QLabel(tr("height (mm)"));
+  S3Label = new QLabel(tr("width (mm)"));
+  S5Label = new QLabel(tr("vert. div. (mrad)"));
+  S7Label = new QLabel(tr("hor. div. (mrad)"));
+  S2Label = new QLabel(tr("-> points"));
+  S4Label = new QLabel(tr("-> points"));
+  S6Label = new QLabel(tr("-> points"));
+  S8Label = new QLabel(tr("-> points"));
 
-  QLineEdit *S1E = new QLineEdit;
-  QLineEdit *S2E = new QLineEdit;
-  QLineEdit *S3E = new QLineEdit;
-  QLineEdit *S4E = new QLineEdit;
-  QLineEdit *S5E = new QLineEdit;
-  QLineEdit *S6E = new QLineEdit;
-  QLineEdit *S7E = new QLineEdit;
-  QLineEdit *S8E = new QLineEdit;
+  S1E = new QLineEdit;
+  S2E = new QLineEdit;
+  S3E = new QLineEdit;
+  S4E = new QLineEdit;
+  S5E = new QLineEdit;
+  S6E = new QLineEdit;
+  S7E = new QLineEdit;
+  S8E = new QLineEdit;
 
   sourceParsLayout->addWidget(S1Label,0,0);
   sourceParsLayout->addWidget(S3Label,1,0);
@@ -793,8 +801,8 @@ QWidget *MainWindow::createBeamlineBox()
     QGroupBox   *beamlineGenericGroup  = new QGroupBox(tr("generic parameters"));
     QGridLayout *beamlineGenericLayout = new QGridLayout;
 
-    QLineEdit *lambdaE  = new QLineEdit;
-    QLineEdit *dislenE  = new QLineEdit;
+    lambdaE = new QLineEdit;
+    dislenE = new QLineEdit;
 
     QLabel *lambdaLabel  = new QLabel(tr("wavelength (nm)"));
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
@@ -809,10 +817,10 @@ QWidget *MainWindow::createBeamlineBox()
     QGroupBox   *beamlineCalcGroup  = new QGroupBox(tr("calculation parameters"));
     QVBoxLayout *beamlineCalcLayout = new QVBoxLayout;
 
-    QRadioButton *goButton = new QRadioButton(tr("&geometrical optic (GO)"));
-    QRadioButton *poButton = new QRadioButton(tr("&physical optic (PO)"));
+    goButton = new QRadioButton(tr("&geometrical optic (GO)"));
+    poButton = new QRadioButton(tr("&physical optic (PO)"));
     goButton->setChecked(true);
-    QCheckBox *misaliBox = new QCheckBox(tr("with misalignment"));
+    misaliBox = new QCheckBox(tr("with misalignment"));
 
     beamlineCalcLayout->addWidget(goButton);
     beamlineCalcLayout->addWidget(poButton);
@@ -932,22 +940,259 @@ QWidget *MainWindow::createGraphicBox()
   return graphicBox;
 } // end graphic box
 
+void MainWindow::UpdateBeamlineBox()
+{
+  struct OptionsType *blo;
+  char   buffer[5];
+  
+  blo= &(this->BLOptions);
+
+  sprintf(buffer, "%4f", blo->lambda* 1e6);
+  lambdaE->setText(QString(buffer));
+
+  sprintf(buffer, "%4f", blo->displength);
+  dislenE->setText(QString(buffer));
+
+  if (blo->SourcetoImage) goButton->setChecked(true); else poButton->setChecked(true);
+  if (blo->WithAlign) misaliBox->setChecked(true);    else misaliBox->setChecked(false);
+}
+
+void MainWindow::UpdateElementBox(int number)
+{
+  double cff, teta, fi;
+  char TextField [26][40];            /* 26 editfelder */
+  struct mdatset *md;
+  struct gdatset *gd;
+ 
+  md= &(this->ElementList[number].MDat);
+  gd= &(this->ElementList[number].GDat);
+
+  teta= fabs(gd->theta0* PI/ 180.0);
+  fi  = (double)(gd->inout)* 
+    asin(gd->lambda* gd->xdens[0]/ (2.0* cos(teta)));
+  cff = cos(fi- teta)/ cos(fi+ teta);
+
+  sprintf(TextField[0], "%.2f", cff);
+  sprintf(TextField[1], "%.1f", gd->r);
+  sprintf(TextField[2], "%.1f", gd->rp);
+  sprintf(TextField[3], "%.3f", gd->theta0);
+  sprintf(TextField[4], "%.1f", md->r1);   
+  sprintf(TextField[5], "%.1f", md->r2);
+  sprintf(TextField[6], "%.1f", md->rmi);      
+  sprintf(TextField[7], "%.2f", md->rho);
+
+  sprintf(TextField[8], "%d",   gd->inout);   // not used   	   
+  sprintf(TextField[9], "%.2f", gd->xdens[0]); 
+  sprintf(TextField[10],"%.2f", gd->xdens[1]);    
+     
+  sprintf(TextField[11], "%.2f", gd->xdens[2]);    
+  sprintf(TextField[12], "%.2f", gd->xdens[3]);    
+  sprintf(TextField[13], "%.2f", gd->xdens[4]);
+
+  sprintf(TextField[14], "%.2f", md->du);    
+  sprintf(TextField[15], "%.2f", md->dw);    
+  sprintf(TextField[16], "%.2f", md->dl);
+
+  sprintf(TextField[17], "%.2f", md->dRu * 1e3);    
+  sprintf(TextField[18], "%.2f", md->dRw * 1e3);    
+  sprintf(TextField[19], "%.2f", md->dRl * 1e3);
+  sprintf(TextField[20], "%.2f", md->w1);    
+  sprintf(TextField[21], "%.2f", md->w2);    
+  sprintf(TextField[22], "%.3f", md->slopew);
+  sprintf(TextField[23], "%.2f", md->l1);    
+  sprintf(TextField[24], "%.2f", md->l2);    
+  sprintf(TextField[25], "%.3f", md->slopel);
+
+  // update widgets
+  cffE   ->setText(QString(tr(TextField[0])));
+  preE   ->setText(QString(tr(TextField[1])));
+  sucE   ->setText(QString(tr(TextField[2])));
+  thetaE ->setText(QString(tr(TextField[3])));
+  sourceE->setText(QString(tr(TextField[4])));
+  imageE ->setText(QString(tr(TextField[5])));
+  rE     ->setText(QString(tr(TextField[6])));
+  rhoE   ->setText(QString(tr(TextField[7])));
+
+  integerSpinBox->setValue(gd->inout);
+  lineDensity->setText(QString(tr(TextField[9])));
+  
+  vls1->setText(QString(tr(TextField[10])));
+  vls2->setText(QString(tr(TextField[11])));
+  vls3->setText(QString(tr(TextField[12])));
+  vls4->setText(QString(tr(TextField[13])));
+  
+  duE->setText(QString(tr(TextField[14])));
+  dwE->setText(QString(tr(TextField[15])));
+  dlE->setText(QString(tr(TextField[16])));
+  dRuE->setText(QString(tr(TextField[17])));
+  dRwE->setText(QString(tr(TextField[18])));
+  dRlE->setText(QString(tr(TextField[19])));
+  w1E->setText(QString(tr(TextField[20])));
+  w2E->setText(QString(tr(TextField[21])));
+  wsE->setText(QString(tr(TextField[22])));
+  l1E->setText(QString(tr(TextField[23])));
+  l2E->setText(QString(tr(TextField[24])));
+  lsE->setText(QString(tr(TextField[25])));
+
+  if (gd->iflag) nimBox->setChecked(true); else nimBox->setChecked(false);
+
+#ifdef DEBUG 		      
+  printf("debug: UpdateElementBox: gd->azimut: %d\n", gd->azimut); 
+  printf("debug: UpdateElementBox: md->Art:    %d\n", md->Art); 
+#endif
+
+  switch (gd->azimut)
+    {
+    case 0: rup1   ->setChecked(true); break;
+    case 1: rleft2 ->setChecked(true); break;
+    case 2: rdown3 ->setChecked(true); break;
+    case 3: rright4->setChecked(true); break;
+    }
+
+  switch (md->Art)
+    {
+    case kEOETM:   
+      shapeLabel->setText(QString(tr("toroidal mirror"))); 
+      gratingGroup->setChecked(false);
+      vlsGroup    ->setChecked(false);
+      break;
+    case kEOETG:
+      shapeLabel->setText(QString(tr("toroidal grating")));  
+      gratingGroup->setChecked(true);
+      vlsGroup    ->setChecked(false);
+      break;
+    case kEOEVLSG: 
+      shapeLabel->setText(QString(tr("toroidal VLS grating")));
+      gratingGroup->setChecked(true);
+      vlsGroup    ->setChecked(true);
+      break;
+    default: 
+      QMessageBox::warning(this, tr("UpdateElementBox"),
+			   tr("Shape type %1 not recognized.")
+			   .arg(md->Art));
+      printf("error: md->Art: %d not recognized\n", md->Art);
+      break;
+    }
+
+} // end UpdateElementBox
+
+void MainWindow::UpdateSourceBox()
+{
+
+  int sou;
+  struct UndulatorSourceType  *up;
+  struct UndulatorSource0Type *up0;
+  struct DipolSourceType      *dp;
+  struct PointSourceType      *sop;
+  struct RingSourceType       *rp;
+  struct HardEdgeSourceType   *hp;     
+  struct SRSourceType         *sp; 
+  struct PSImageType          *psip;
+  struct PSSourceType         *pssp; 
+
+  char TextField [8][40];            /* 8 editfelder */
+  char LabelField[9][40]; 
+   
+  char  *LabelField1 [39] =  {	"", "-> points",         		/*0,1*/
+				"height [mm]",     "width [mm]",   	/*2,3*/
+				"v. div. [mrad]", "h. div. [mrad]", 
+				"ray number", 				/* 6 */
+				"length [mm]", "lambda [nm]",           /*7,8*/
+				
+				"yi [mm]",   "zi [mm]", 
+				"dyi [rad]", "dzi [rad]",             /*11,12*/
+				
+				"yo [mm]", "zo [mm]",
+				"dyi [mrad]", "dyo [mrad]", 
+				"dzi [mrad]", "dzo [mrad]",          /*17,18*/
+				
+				"sigy [mm]",    "sigdyp [mrad]",     /*19,20*/
+				"dymin [mrad]", "dymax [mrad]", 
+				"sigz [mm]",    "sigdzp [mrad]", 
+				"dzmin [mrad]", "dzmax [mrad]",      /*25,26*/
+				
+				"ymin [mm]", "ymax [mm]",
+				"zmin [mm]", "zmax [mm]",
+				"y points",  "z points", 
+				
+				"Delta z [mm]",                      /*33*/  
+                                "sigmaez [mm]", "sigmaey [mm]",      /*34,35 */         
+                                "sigmaedz [mrad]", "sigmaedy [mrad]" /*36,37 */         
+    };                    
+#ifdef DEBUG 
+    printf("InitSourceBox: bl->RTSource.QuellTyp: %c\n", 
+	   this->RTSource.QuellTyp);   
+#endif   
+ 
+    sou= this->RTSource.QuellTyp;
+
+  switch (sou) {
+ 
+    case 'H':
+      hp= (struct HardEdgeSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", hp->disty);
+      sprintf(TextField[1],  "%d", hp->iy);    
+      sprintf(TextField[2],  "%f", hp->distz);  
+      sprintf(TextField[3],  "%d", hp->iz);    
+      sprintf(TextField[4],  "%f", hp->divy);   
+      sprintf(TextField[5],  "%d", hp->idy);    
+      sprintf(TextField[6],  "%f", hp->divz);   
+      sprintf(TextField[7],  "%d", hp->idz); 
+      sprintf(LabelField[0], "%s", "height (mm)");
+      sprintf(LabelField[1], "%s", "-> points");  
+      sprintf(LabelField[2], "%s", "width (mm)");  
+      sprintf(LabelField[3], "%s", "-> points");  
+      sprintf(LabelField[4], "%s", "vert. div. (mrad)");   
+      sprintf(LabelField[5], "%s", "-> points");   
+      sprintf(LabelField[6], "%s", "hor. div. (mrad)");   
+      sprintf(LabelField[7], "%s", "-> points");
+      sprintf(LabelField[8], "%s", "Ray Trace hard edge");
+      break;  
+
+  default:
+    QMessageBox::warning(this, tr("UpdateSourceBox"),
+			 tr("Source type %1 not recognized.")
+			 .arg(sou));
+    break;
+    }
+
+  // update widgets
+  S1E->setText(QString(tr(TextField[0])));
+  S2E->setText(QString(tr(TextField[1])));
+  S3E->setText(QString(tr(TextField[2])));
+  S4E->setText(QString(tr(TextField[3])));
+  S5E->setText(QString(tr(TextField[4])));
+  S6E->setText(QString(tr(TextField[5])));
+  S7E->setText(QString(tr(TextField[6])));
+  S8E->setText(QString(tr(TextField[7])));
+  S1Label->setText(QString(tr(LabelField[0])));
+  S2Label->setText(QString(tr(LabelField[1])));
+  S3Label->setText(QString(tr(LabelField[2])));
+  S4Label->setText(QString(tr(LabelField[3])));
+  S5Label->setText(QString(tr(LabelField[4])));
+  S6Label->setText(QString(tr(LabelField[5])));
+  S7Label->setText(QString(tr(LabelField[6])));
+  S8Label->setText(QString(tr(LabelField[7])));
+  sourceTypeLabel->setText(QString(tr(LabelField[8])));
+} // end Updatesourcebox
+
+
 // updates the elementlist
 void MainWindow::UpdateElementList()
 {
- 
   unsigned int ui;
   struct ElementType *list;
-  count= elementList->count();
-
-  printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", count);
-  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", elementzahl);
-  list= this->ElementList;
-  // loesche alles
- 
-  while (elementList->count()) 
-    delete elementList->takeItem(0);
   
+#ifdef DEBUG
+  printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", elementList->count());
+  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", elementzahl);
+#endif
+
+  // loesche alles
+   while (elementList->count()) 
+    delete elementList->takeItem(0);
+
+  list= this->ElementList;
   for (ui= 0; ui < elementzahl; ui++, list++)
     elementList->addItem(QString(list->elementname));
 }

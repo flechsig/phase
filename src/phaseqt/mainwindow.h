@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <15 Jun 11 16:42:29 flechsig>  */
+/*  Time-stamp: <16 Jun 11 18:46:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,6 +23,11 @@ class QAction;
 class QListWidget;
 class QMenu;
 class QTextEdit;
+class QCheckBox;
+class QRadioButton;
+class QLabel;
+class QSpinBox;
+class QGroupBox;
 QT_END_NAMESPACE
 
 
@@ -54,6 +59,9 @@ private:
     void createStatusBar();
     void createDockWindows();
     void UpdateElementList();
+    void UpdateBeamlineBox();
+    void UpdateSourceBox();
+    void UpdateElementBox(int);
 
     QTextEdit   *textEdit;
     QListWidget *customerList;
@@ -74,13 +82,77 @@ private:
     QWidget       *createGraphicBox();
     QGroupBox     *groupBox1;
     QtPhase       *myQtPhase;
-      // UF end
+
+    QLineEdit    *lambdaE;  // generic parameters
+    QLineEdit    *dislenE;
+    QRadioButton *goButton;
+    QRadioButton *poButton;
+    QCheckBox    *misaliBox;
+
+    QLabel    *sourceTypeLabel;
+    QLabel    *S1Label;        // source box
+    QLabel    *S2Label;
+    QLabel    *S3Label;
+    QLabel    *S4Label;
+    QLabel    *S5Label;
+    QLabel    *S6Label;
+    QLabel    *S7Label;
+    QLabel    *S8Label;
+    QLineEdit *S1E;
+    QLineEdit *S2E;
+    QLineEdit *S3E;
+    QLineEdit *S4E;
+    QLineEdit *S5E;
+    QLineEdit *S6E;
+    QLineEdit *S7E;
+    QLineEdit *S8E;
+
+    QLineEdit *cffE;     // element box
+    QLineEdit *preE;    
+    QLineEdit *sucE;    
+    QLineEdit *thetaE;  
+    QLineEdit *sourceE; 
+    QLineEdit *imageE;  
+    QLineEdit *rE;      
+    QLineEdit *rhoE;    
+    
+    QSpinBox  *integerSpinBox;   // grating
+    QGroupBox *gratingGroup;
+    QGroupBox *vlsGroup;
+    QLineEdit *lineDensity;
+    QCheckBox *nimBox;
+    QLineEdit *vls1;
+    QLineEdit *vls2;
+    QLineEdit *vls3;
+    QLineEdit *vls4;
+    QLineEdit *duE;  
+    QLineEdit *dwE;  
+    QLineEdit *dlE;  
+    QLineEdit *dRuE; 
+    QLineEdit *dRwE; 
+    QLineEdit *dRlE; 
+    QLineEdit *w1E;  
+    QLineEdit *w2E;  
+    QLineEdit *wsE;  
+    QLineEdit *l1E;  
+    QLineEdit *l2E;  
+    QLineEdit *lsE;  
+
+    QRadioButton *rup1;            //orientation
+    QRadioButton *rleft2;
+    QRadioButton *rdown3;
+    QRadioButton *rright4; 
+    QLabel *shapeLabel;
+    QLabel *typeLabel;
+  // UF end
 
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *calcMenu;
     QMenu *viewMenu;
     QMenu *helpMenu;
+    QMenu *sourceMenu;
+
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
     QAction *newLetterAct;
