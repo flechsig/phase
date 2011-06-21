@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 Jun 11 09:02:02 flechsig>  */
+/*   Time-stamp: <17 Jun 11 11:28:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -18,6 +18,10 @@
 #define ZERO            1e-30            /* a small number */
 #define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */   
 #define PI 3.141592653589793115997963468544185161590576171875   /* double precision */
+#define NEWARTBIT          1024             /* bit for new type of optical element in Art */
+#define GRATINGBIT         4096             /* grating bit */
+#define VLSBIT             8192             /* VLS bit */
+
 /* #define LOGFILE              compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
@@ -413,11 +417,9 @@
 #define MAX_WIDGETS (k_max_widget + 1)
 #define MaxPathLength           255         
 #define MainPickName 		"phase.pck"
-#ifdef VMS
-  #define	MainListFileName        "PHASE$disk:PHASElist.pck"
-#else
-  #define	MainListFileName        "MainListFileName"
-#endif
+
+#define	MainListFileName        "MainListFileName"
+
 #define D0matrixname		"test.omx"     
 #define D0mapname		"test.map"     
 #define D0sourceraysname 	"test.inp"     
@@ -432,11 +434,9 @@
 #define D0plotpsname            "pmeta.ps"
 #define D0printpclname          "test.pcl"   
 #define D0optipckname           "test.pcko"   
-#ifdef VMS
-  #define PHASE_help  		"PHASE$lib:PHASE.hlb"
-#else
-  #define PHASE_help  		"$PHASE_HOME/lib/phase.hlb"
-#endif
+
+#define PHASE_help  		"$PHASE_HOME/lib/phase.hlb"
+
 /********************** Strukturen **************************************/
            
 struct PHASEset                       /* Datensatz in MainPickName 	*/

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <16 Jun 11 18:46:18 flechsig>  */
+/*  Time-stamp: <20 Jun 11 15:06:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -28,6 +28,7 @@ class QRadioButton;
 class QLabel;
 class QSpinBox;
 class QGroupBox;
+class QPushButton;
 QT_END_NAMESPACE
 
 
@@ -39,7 +40,6 @@ public:
     MainWindow();
 
 private slots:
-    void newLetter();
     void newBeamline(); // UF
     void save();
     void print();
@@ -49,6 +49,30 @@ private slots:
     void insertElement(); // UF
     void deleteElement(); // UF
     void selectElement(); // UF
+    void pmslot();        // shape slots
+    void toslot();
+    void peslot();
+    void elslot();
+    void coslot();
+    void geslot();
+    void grslot();
+    void grvlsslot();
+   
+    void rup1slot();
+    void rleft2slot();
+    void rdown3slot();
+    void rright4slot();
+
+    void thetaBslot();
+    void sourceBslot();
+    void imageBslot();
+    void rBslot();
+    void rhoBslot();
+    void elementApplyBslot();
+    void sourceApplyBslot();
+    void sourceDefaultBslot();
+    void debugslot();
+
     void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
     
@@ -106,7 +130,18 @@ private:
     QLineEdit *S6E;
     QLineEdit *S7E;
     QLineEdit *S8E;
-
+    QPushButton *sourceApplyB;
+    QPushButton *sourceDefaultB;
+    QAction *rthAct;
+    QAction *dipAct;
+    QAction *poiAct;
+    QAction *rinAct;
+    QAction *genAct;
+    QAction *b2hAct;
+    QAction *b2lAct;
+    QAction *sisAct;
+    QAction *simAct;
+    QAction *sffAct;
     QLineEdit *cffE;     // element box
     QLineEdit *preE;    
     QLineEdit *sucE;    
@@ -114,7 +149,21 @@ private:
     QLineEdit *sourceE; 
     QLineEdit *imageE;  
     QLineEdit *rE;      
-    QLineEdit *rhoE;    
+    QLineEdit *rhoE; 
+
+    QPushButton *thetaB;
+    QPushButton *sourceB;
+    QPushButton *imageB;
+    QPushButton *rB;
+    QPushButton *rhoB;    
+    QPushButton *elementApplyB;
+
+    QAction *pmAct;
+    QAction *toAct;
+    QAction *peAct;
+    QAction *elAct;
+    QAction *coAct;
+    QAction *geAct;
     
     QSpinBox  *integerSpinBox;   // grating
     QGroupBox *gratingGroup;

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <16 Jun 11 18:45:49 flechsig> 
+//  Time-stamp: <20 Jun 11 18:25:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -10,14 +10,14 @@
 
 // this file contains the QT gui
 // the widgets and slots
-
+// we try to keep the functions in alphabetic order within each section
 
 #include <QtGui>
 
 #include "mainwindow.h"
 #include "qtphase.h"
 
-// the constructor??
+// the constructor of the main window
 MainWindow::MainWindow()
 {
   //  textEdit = new QTextEdit;
@@ -43,6 +43,10 @@ MainWindow::MainWindow()
   myQtPhase->myBeamline::init();
 } // end MainWindow
 
+//////////////////////////////////////////////
+// begin slots section (callback functions) //
+//////////////////////////////////////////////
+
 
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
@@ -50,8 +54,11 @@ void MainWindow::newBeamline()
 #ifdef DEBUG
   printf("Debug: slot newBeamline activated\n");
 #endif
-  QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open File"), QDir::currentPath());
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
+						  // QDir::currentPath()
+						  "/afs/psi.ch/user/f/flechsig/phase/data",
+						  "Text files (*.phase)"
+						  );
   char *name;
   //  int result;
   //this->QtPhase::print();
@@ -71,55 +78,7 @@ void MainWindow::newBeamline()
       //return;
       //}
     }
- }
-
-
-// slot?? the main widget obsolete
-void MainWindow::newLetter()
-{
-    textEdit->clear();
-
-    QTextCursor cursor(textEdit->textCursor());
-    cursor.movePosition(QTextCursor::Start);
-    QTextFrame *topFrame = cursor.currentFrame();
-    QTextFrameFormat topFrameFormat = topFrame->frameFormat();
-    topFrameFormat.setPadding(16);
-    topFrame->setFrameFormat(topFrameFormat);
-
-    QTextCharFormat textFormat;
-    QTextCharFormat boldFormat;
-    boldFormat.setFontWeight(QFont::Bold);
-    QTextCharFormat italicFormat;
-    italicFormat.setFontItalic(true);
-
-    QTextTableFormat tableFormat;
-    tableFormat.setBorder(1);
-    tableFormat.setCellPadding(16);
-    tableFormat.setAlignment(Qt::AlignRight);
-    cursor.insertTable(1, 1, tableFormat);
-    cursor.insertText("The Firm", boldFormat);
-    cursor.insertBlock();
-    cursor.insertText("321 City Street", textFormat);
-    cursor.insertBlock();
-    cursor.insertText("Industry Park");
-    cursor.insertBlock();
-    cursor.insertText("Some Country");
-    cursor.setPosition(topFrame->lastPosition());
-    cursor.insertText(QDate::currentDate().toString("d MMMM yyyy"), textFormat);
-    cursor.insertBlock();
-    cursor.insertBlock();
-    cursor.insertText("Dear ", textFormat);
-    cursor.insertText("NAME", italicFormat);
-    cursor.insertText(",", textFormat);
-    for (int i = 0; i < 3; ++i)
-        cursor.insertBlock();
-    cursor.insertText(tr("Yours sincerely,"), textFormat);
-    for (int i = 0; i < 3; ++i)
-        cursor.insertBlock();
-    cursor.insertText("The Boss", textFormat);
-    cursor.insertBlock();
-    cursor.insertText("ADDRESS", italicFormat);
-}
+} // end newBeamline()
 
 // slot
 void MainWindow::print()
@@ -136,7 +95,7 @@ void MainWindow::print()
 
     statusBar()->showMessage(tr("Ready"), 2000);
 #endif
-}
+} // end print()
 
 // slot
 void MainWindow::save()
@@ -161,7 +120,346 @@ void MainWindow::save()
     QApplication::restoreOverrideCursor();
 
     statusBar()->showMessage(tr("Saved '%1'").arg(fileName), 2000);
+} // end save
+
+// calc slots
+void MainWindow::thetaBslot()  // SetTheta from cff
+{
+  double cff, alpha, beta, theta0;
+  int number= elementList->currentRow();
+  char *text= cffE->text().toAscii().data();          // get string from widget
+  struct gdatset *gdat= &(this->ElementList[number].GDat);
+  char  buffer[9];
+  printf("text: %s\n", text);
+
+  // !! we take other relevant data (gdat->lambda, gdat->xdens[0], gdat->inout) from dataset and not from widget
+  sscanf(text, "%lf", &cff);
+  if (cff != 1.0)
+    {
+      FixFocus(cff, gdat->lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
+      theta0= (alpha- beta)* 90.0/ PI;
+      if (gdat->azimut > 1) theta0= -fabs(theta0);
+      sprintf(buffer, "%8.4f", theta0);  
+      thetaE->setText(QString(tr(buffer)));  // update widget
+      gdat->theta0= theta0;                  // update data
+    } 
+  else
+    QMessageBox::warning(this, tr("Calculate theta from cff"),
+			 tr("cff=1 is undefined\ntake no action"));
 }
+
+void MainWindow::sourceBslot() // copy source distance
+{
+  sourceE->setText(preE->text()); // copy text from widget, no update of datasets
+}
+
+void MainWindow::imageBslot()
+{
+  imageE->setText(sucE->text()); // copy text from widget, no update of datasets
+}
+
+void MainWindow::rhoBslot()  // calculate roho
+{
+  double theta, rho, source, image;
+  char buffer[10];
+  
+  sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
+  sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
+  sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
+
+  sprintf(buffer, "%9.3f", theta); // for message box
+ 
+  if (theta >= 90.0)
+    QMessageBox::warning(this, tr("Calculate Radius"),
+			 tr("theta %1 >= 90 deg.\ntake no action").arg(buffer));
+  else
+    {
+      rho= 2.0* source* image* cos(theta * PI/180.0)/ (source+ image); 
+      sprintf(buffer, "%9.3f", rho);
+      rhoE->setText(QString(tr(buffer)));
+    }
+ 
+}
+
+void MainWindow::rBslot()
+{
+  double theta, rmi, source, image;
+  char buffer[10];
+  
+  sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
+  sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
+  sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
+
+  sprintf(buffer, "%9.3f", theta); // for message box
+
+  if (theta >= 90.0)
+    QMessageBox::warning(this, tr("Calculate Radius"),
+			 tr("theta %1 >= 90 deg.\ntake no action").arg(buffer));
+  else
+    {
+      rmi= (2.0* source* image)/ ((source+ image)* cos(theta * PI/180.0)); 
+      sprintf(buffer, "%9.3f", rmi);
+      rE->setText(QString(tr(buffer)));
+    }
+}
+// end calc slots
+
+// apply slot for source
+void MainWindow::sourceApplyBslot()
+{
+  int sou;
+  double lambda;
+  struct UndulatorSourceType  *up;
+  struct UndulatorSource0Type *up0;
+  struct DipolSourceType      *dp;
+  struct PointSourceType      *sop;
+  struct RingSourceType       *rp;
+  struct HardEdgeSourceType   *hp;     
+  struct SRSourceType         *sp; 
+  struct PSImageType          *psip;
+  struct PSSourceType         *pssp; 
+
+#ifdef DEBUG
+  printf("sourceApplyBslot activated\n");
+#endif
+
+  sou= this->RTSource.QuellTyp;
+  switch (sou) {
+    
+  case 'D':
+    dp= (struct DipolSourceType *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &dp->sigy);
+    sscanf(S2E->text().toAscii().data(), "%lf", &dp->sigdy);
+    sscanf(S3E->text().toAscii().data(), "%lf", &dp->sigz);
+    sscanf(S4E->text().toAscii().data(), "%lf", &dp->dz);
+    sscanf(S5E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    break;
+    
+  case 'G':
+    up0= (struct UndulatorSource0Type *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &up0->length);
+    sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
+    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S4E->text().toAscii().data(), "%lf", &up0->deltaz);
+    sscanf(S5E->text().toAscii().data(), "%lf", &up0->sigmaey);
+    sscanf(S6E->text().toAscii().data(), "%lf", &up0->sigmaez);
+    sscanf(S7E->text().toAscii().data(), "%lf", &up0->sigmaedy);
+    sscanf(S8E->text().toAscii().data(), "%lf", &up0->sigmaedz);
+    break;
+    
+  case 'H':
+    hp= (struct  HardEdgeSourceType *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &hp->disty);
+    sscanf(S2E->text().toAscii().data(), "%lf", &this->BLOptions.lambda);
+    sscanf(S3E->text().toAscii().data(), "%lf", &hp->distz);
+    sscanf(S4E->text().toAscii().data(), "%d",  &hp->iz);
+    sscanf(S5E->text().toAscii().data(), "%lf", &hp->divy);
+    sscanf(S6E->text().toAscii().data(), "%d",  &hp->idy);
+    sscanf(S7E->text().toAscii().data(), "%lf", &hp->divz);
+    sscanf(S8E->text().toAscii().data(), "%d",  &hp->idz);
+    break;
+    
+  case 'L':
+  case 'M':
+    up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &up->length);
+    sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
+    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S4E->text().toAscii().data(), "%lf", &up->deltaz);
+    break;
+    
+    
+    
+  case 'o':
+    sop= (struct PointSourceType *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &sop->sigy);
+    sscanf(S2E->text().toAscii().data(), "%lf", &sop->sigdy);
+    sscanf(S3E->text().toAscii().data(), "%lf", &sop->sigz);
+    sscanf(S4E->text().toAscii().data(), "%lf", &sop->sigdz);
+    sscanf(S5E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    break;
+    
+  case 'R':
+    rp= (struct RingSourceType *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &rp->dy);
+    sscanf(S2E->text().toAscii().data(), "%lf", &rp->dz);
+    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    break;
+    
+  case 'U':
+    up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &up->length);
+    sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
+    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    break;
+    
+  default:
+    QMessageBox::warning(this, tr("sourceApplyBslot"),
+			 tr("Source type %1 not recognized.\nreport bug to uwe.flechsig@psi.ch")
+			 .arg(sou));
+  }
+} //sourceApplyBslot
+
+// apply slot for source
+void MainWindow::sourceDefaultBslot()
+{
+#ifdef DEBUG
+  printf("sourceDefaultBslot activated\n");
+#endif
+  QMessageBox::warning(this, tr("sourceDefaultBslot"),
+			   tr("no function so far"));
+}
+
+// apply slot for optical element
+void MainWindow::elementApplyBslot()
+{
+  int number= elementList->currentRow();
+  struct gdatset *gd= &(this->ElementList[number].GDat);
+  struct mdatset *md= &(this->ElementList[number].MDat);
+
+  printf("elementApplyBslot activated\nfeed data from widget into dataset\n");
+
+#ifdef DEBUG
+  printf("elementApplyBslot activated\n");
+#endif
+
+  sscanf(preE   ->text().toAscii().data(), "%lf", &gd->r);  
+  sscanf(sucE   ->text().toAscii().data(), "%lf", &gd->rp);
+  sscanf(thetaE ->text().toAscii().data(), "%lf", &gd->theta0);       
+  sscanf(sourceE->text().toAscii().data(), "%lf", &md->r1);   
+  sscanf(imageE ->text().toAscii().data(), "%lf", &md->r2);
+  sscanf(rE     ->text().toAscii().data(), "%lf", &md->rmi);          
+  sscanf(rhoE   ->text().toAscii().data(), "%lf", &md->rho);  
+  sscanf(lineDensity->text().toAscii().data(), "%lf", &gd->xdens[0]);
+  sscanf(vls1->text().toAscii().data(), "%lf", &gd->xdens[1]);
+  sscanf(vls2->text().toAscii().data(), "%lf", &gd->xdens[2]);
+  sscanf(vls3->text().toAscii().data(), "%lf", &gd->xdens[3]);
+  sscanf(vls4->text().toAscii().data(), "%lf", &gd->xdens[4]);
+  
+  sscanf(duE ->text().toAscii().data(), "%lf", &md->du);
+  sscanf(dwE ->text().toAscii().data(), "%lf", &md->dw);
+  sscanf(dlE ->text().toAscii().data(), "%lf", &md->dl);
+  sscanf(dRuE->text().toAscii().data(), "%lf", &md->dRu);
+  sscanf(dRwE->text().toAscii().data(), "%lf", &md->dRw);
+  sscanf(dRlE->text().toAscii().data(), "%lf", &md->dRl);
+  sscanf(w1E ->text().toAscii().data(), "%lf", &md->w1);
+  sscanf(w2E ->text().toAscii().data(), "%lf", &md->w2);
+  sscanf(wsE ->text().toAscii().data(), "%lf", &md->slopew);
+  sscanf(l1E ->text().toAscii().data(), "%lf", &md->l1);
+  sscanf(l2E ->text().toAscii().data(), "%lf", &md->l2);
+  sscanf(lsE ->text().toAscii().data(), "%lf", &md->slopel);
+  md->dRu*= 1e-3;
+  md->dRw*= 1e-3;
+  md->dRl*= 1e-3;
+  gd->inout= integerSpinBox->value();
+  gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
+  
+} // elementApplyBslot
+
+
+// calc slos
+void MainWindow::debugslot()
+{
+  printf("debugslot activated\n");
+}
+
+// slot grating
+void MainWindow::grslot()
+{
+  int number= elementList->currentRow();
+  if (gratingGroup->isChecked() == true)
+    this->ElementList[number].MDat.Art |= GRATINGBIT ; 
+  else
+    this->ElementList[number].MDat.Art &= ~(GRATINGBIT) ; 
+  UpdateElementBox(number);
+}
+
+// slot grating vls
+void MainWindow::grvlsslot()
+{
+  int number= elementList->currentRow();
+  if (vlsGroup->isChecked() == true)
+    this->ElementList[number].MDat.Art |= VLSBIT ; 
+  else
+    this->ElementList[number].MDat.Art &= ~(VLSBIT) ; 
+  UpdateElementBox(number);
+}
+
+// slot orientation radio buttons
+void MainWindow::rup1slot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].GDat.azimut= 0;
+}
+
+void MainWindow::rleft2slot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].GDat.azimut= 1;
+}
+
+void MainWindow::rdown3slot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].GDat.azimut= 2;
+}
+
+void MainWindow::rright4slot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].GDat.azimut= 3;
+} 
+// end slot orientation radio buttons
+
+// slot shapeMenu
+// slot shapeMenu plane mirror
+void MainWindow::pmslot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].MDat.Art= kEOEPM;
+  UpdateElementBox(number);
+}
+
+// slot shapeMenu toroidal mirror
+void MainWindow::toslot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].MDat.Art= kEOETM;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu plane elliptical mirror
+void MainWindow::peslot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].MDat.Art= kEOEPElli;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu elliptical mirror
+void MainWindow::elslot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].MDat.Art= kEOEElli;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu conical mirror
+void MainWindow::coslot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].MDat.Art= kEOECone;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu generic shape
+void MainWindow::geslot()
+{
+  int number= elementList->currentRow();
+  this->ElementList[number].MDat.Art= kEOEGeneral;
+  UpdateElementBox(number); 
+}
+// end slots shapeMenu
 
 // slot
 void MainWindow::undo()
@@ -173,16 +471,68 @@ void MainWindow::undo()
 // UF slot insert a new optical element in the beamline box
 void MainWindow::insertElement()
 {
+  struct ElementType *tmplist, *listpt, *tmplistpt;
+  int i;
+  int pos= elementList->currentRow();
   QListWidgetItem *item= new QListWidgetItem("New Element");
   elementList->insertItem(elementList->currentRow(), item);
   item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
+
+#ifdef DEBUG
+  printf("AddBLElement: AddItem at pos %d, out of %d\n", pos,  this->elementzahl);  
+#endif 
+  tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
+  memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
+  this->elementzahl++;
+  this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
+  listpt= this->ElementList; tmplistpt= tmplist; 
+  for (i= 1; i<= this->elementzahl; i++, listpt++)
+    {
+      if (i == pos)
+	{
+	  memcpy(listpt, tmplistpt, sizeof(struct ElementType)); // copy the previous element
+	}
+      memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
+    }
+  this->beamlineOK &= ~(mapOK | resultOK);
+  //  WriteBLFile(PHASESet.beamlinename, bl); 
+  XFREE(tmplist);
+  
 } 
 
 // UF slot delete optical element in the beamline box
 void MainWindow::deleteElement()
 {
-  delete elementList->takeItem(elementList->currentRow());
-} 
+  struct ElementType *tmplist, *listpt, *tmplistpt;
+  int i;
+  int pos= elementList->currentRow();
+  if (pos >= 0)
+    {
+      delete elementList->takeItem(pos); // delete the widget
+      printf ("delete element with idx %d out of %d\n", pos, this->elementzahl);
+      tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
+      memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
+      this->elementzahl--;
+      if (this->elementzahl == 0) 
+	XFREE(this->ElementList);
+      else
+	this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
+      
+      /* umsortieren */
+      listpt= this->ElementList; tmplistpt= tmplist; 
+      for (i= 1; i<= this->elementzahl; i++, listpt++)
+	{
+	  if (i == pos)  tmplistpt++;  /* ueberlesen */
+	  memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
+	}
+      this->beamlineOK &= ~(mapOK | resultOK);
+      //  WriteBLFile(PHASESet.beamlinename, bl); 
+      XFREE(tmplist);
+    } 
+  else
+    QMessageBox::warning(this, tr("deleteElement"),
+            tr("can't delete anything, list is empty or nothing is selected!\n"));
+} // deleteElement()
 
 // UF slot delete optical element in the beamline box
 void MainWindow::selectElement()
@@ -243,7 +593,7 @@ void MainWindow::addParagraph(const QString &paragraph)
     cursor.insertBlock();
     cursor.endEditBlock();
 
-}
+} // addParagraph
 
 // slot
 void MainWindow::about()
@@ -269,8 +619,28 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("footprintAct"))      printf("footprintAct button pressed\n"); 
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
   if (!action.compare("mphasespaceAct"))    printf("mphasespaceAct button pressed\n"); 
-  
+
+  if (!action.compare("rthAct")) { this->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
+  if (!action.compare("dipAct")) { this->RTSource.QuellTyp= 'D'; UpdateSourceBox(); }
+  if (!action.compare("poiAct")) { this->RTSource.QuellTyp= 'o'; UpdateSourceBox(); }
+  if (!action.compare("rinAct")) { this->RTSource.QuellTyp= 'R'; UpdateSourceBox(); }   
+  if (!action.compare("genAct")) { this->RTSource.QuellTyp= 'G'; UpdateSourceBox(); }    
+  if (!action.compare("b2hAct")) { this->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }   
+  if (!action.compare("b2lAct")) { this->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }    
+  if (!action.compare("sisAct")) { this->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
+  if (!action.compare("simAct")) { this->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
+  if (!action.compare("sffAct")) { this->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }   
 } // end activateProc
+
+///////////////////////
+// end slots section //
+///////////////////////
+
+/////////////////////////////////////
+// begin widget definition section //
+/////////////////////////////////////
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 // define action buttons
@@ -280,6 +650,7 @@ void MainWindow::createActions()
                                this);
     newLetterAct->setShortcuts(QKeySequence::New);
     newLetterAct->setStatusTip(tr("Create a new Beamline"));
+
     connect(newLetterAct, SIGNAL(triggered()), this, SLOT(newBeamline()));
 
     saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save..."), this);
@@ -473,6 +844,11 @@ QWidget *MainWindow::createOpticalElementBox()
   rright4 = new QRadioButton(tr("&right"));
   rup1->setChecked(true);
   
+  connect(rup1,    SIGNAL(clicked()), this, SLOT(rup1slot()));
+  connect(rleft2,  SIGNAL(clicked()), this, SLOT(rleft2slot()));
+  connect(rdown3,  SIGNAL(clicked()), this, SLOT(rdown3slot()));
+  connect(rright4, SIGNAL(clicked()), this, SLOT(rright4slot()));
+  
   QHBoxLayout *orientationLayout = new QHBoxLayout;
   orientationLayout->addWidget(rup1);
   orientationLayout->addWidget(rleft2);
@@ -483,16 +859,29 @@ QWidget *MainWindow::createOpticalElementBox()
   // popup button
   QPushButton *shapeButton = new QPushButton(tr("&Shape"));
   QMenu *shapeMenu = new QMenu(this);
-  shapeMenu->addAction(tr("&flat mirror"));
-  shapeMenu->addAction(tr("&toroidal mirror"));
-  shapeMenu->addAction(tr("&plane- elliptical mirror"));
-  shapeMenu->addAction(tr("&elliptical mirror"));
-  shapeMenu->addAction(tr("&conical mirror"));
+  pmAct = new QAction(tr("&flat"), this);
+  toAct = new QAction(tr("&toroidal"), this);
+  peAct = new QAction(tr("&plane- elliptical"), this);
+  elAct = new QAction(tr("&elliptical"), this);
+  coAct = new QAction(tr("&conical"), this);
+  geAct = new QAction(tr("&generic"), this);    
+  shapeMenu->addAction(pmAct);
+  shapeMenu->addAction(toAct);
+  shapeMenu->addAction(peAct);
+  shapeMenu->addAction(elAct);
+  shapeMenu->addAction(coAct);
   shapeMenu->addSeparator();
-  shapeMenu->addAction(tr("&plane grating"));
+  shapeMenu->addAction(geAct);
   shapeButton->setMenu(shapeMenu);
 
-  shapeLabel = new QLabel(tr("flat mirror")); // return value of menu
+  connect(pmAct, SIGNAL(triggered()), this, SLOT(pmslot()));
+  connect(toAct, SIGNAL(triggered()), this, SLOT(toslot()));
+  connect(peAct, SIGNAL(triggered()), this, SLOT(peslot()));
+  connect(elAct, SIGNAL(triggered()), this, SLOT(elslot()));
+  connect(coAct, SIGNAL(triggered()), this, SLOT(coslot()));
+  connect(geAct, SIGNAL(triggered()), this, SLOT(geslot()));
+
+  shapeLabel = new QLabel(tr("unknown")); // return value of menu
 
   groupBox1 = new QGroupBox(tr("&Element")); 
   QHBoxLayout *hbox1 = new QHBoxLayout;
@@ -524,12 +913,21 @@ QWidget *MainWindow::createOpticalElementBox()
   rE      = new QLineEdit;
   rhoE    = new QLineEdit;
 
-  //  QPushButton *thetaB = new QPushButton(tr("next"));
-  QPushButton *thetaB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
-  QPushButton *sourceB = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
-  QPushButton *imageB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
-  QPushButton *rB      = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
-  QPushButton *rhoB    = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  thetaB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  sourceB = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  imageB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  rB      = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  rhoB    = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+
+  elementApplyB = new QPushButton(tr("Apply"), this);
+
+  connect(thetaB,  SIGNAL(clicked()), this, SLOT(thetaBslot()));
+  connect(sourceB, SIGNAL(clicked()), this, SLOT(sourceBslot()));
+  connect(imageB,  SIGNAL(clicked()), this, SLOT(imageBslot()));
+  connect(rB,      SIGNAL(clicked()), this, SLOT(rBslot()));
+  connect(rhoB,    SIGNAL(clicked()), this, SLOT(rhoBslot()));
+  //connect(elementApplyB, SIGNAL(clicked()), this, SLOT(debugslot()));
+  connect(elementApplyB, SIGNAL(clicked()), this, SLOT(elementApplyBslot()));
 
   geometryLayout->addWidget(cffLabel,0,0);
   geometryLayout->addWidget(preLabel,1,0);
@@ -559,6 +957,8 @@ QWidget *MainWindow::createOpticalElementBox()
   geometryLayout->addWidget(rE,      0,7);
   geometryLayout->addWidget(rhoE,    1,7);
 
+  geometryLayout->addWidget(elementApplyB, 2,7);
+
   geometryGroup->setLayout(geometryLayout);
   //radius
 
@@ -566,6 +966,8 @@ QWidget *MainWindow::createOpticalElementBox()
   gratingGroup = new QGroupBox(tr("&Grating"));
   gratingGroup->setCheckable(true);
   gratingGroup->setChecked(true);
+  //connect(gratingGroup, SIGNAL(clicked(bool on)), this, SLOT(grslot(bool on)));
+  connect(gratingGroup, SIGNAL(clicked()), this, SLOT(grslot()));
 
   QLabel *orderLabel   = new QLabel(tr("Diffraction order"));
   QLabel *densityLabel = new QLabel(tr("line density (1/mm)"));
@@ -580,6 +982,8 @@ QWidget *MainWindow::createOpticalElementBox()
   vlsGroup = new QGroupBox(tr("&VLS Grating"));
   vlsGroup->setCheckable(true);
   vlsGroup->setChecked(false);
+  connect(vlsGroup, SIGNAL(clicked()), this, SLOT(grvlsslot()));
+
   QHBoxLayout *vlslayout = new QHBoxLayout;
   QLabel *vlsLabel = new QLabel(tr("coeff(1)...coeff(4)"));
   vls1 = new QLineEdit;
@@ -693,20 +1097,54 @@ QWidget *MainWindow::createSourceBox()
   QPushButton *sourceTypeButton = new QPushButton(tr("&Type"));
   sourceTypeLabel = new QLabel(tr("RT hard edge")); // return value of menu
   sourceMenu = new QMenu(this);
-  sourceMenu->addAction(tr("RT hard edge"));
-  sourceMenu->addAction(tr("Dipol"));
-  sourceMenu->addAction(tr("Point"));
-  sourceMenu->addAction(tr("Ring"));
+  rthAct = new QAction(tr("RT hard edge"), this);
+  dipAct = new QAction(tr("Dipol"), this);
+  poiAct = new QAction(tr("Point"), this);
+  rinAct = new QAction(tr("Ring"), this);
+  genAct = new QAction(tr("generic Undulador"), this);    
+  b2hAct = new QAction(tr("Undulator BESSY II (H)"), this);
+  b2lAct = new QAction(tr("Undulator BESSY II (L)"), this);
+  sisAct = new QAction(tr("Undulator SLS - SIS"), this);  
+  simAct = new QAction(tr("Undulator SLS - SIM"), this);  
+  sffAct = new QAction(tr("Source from file"), this);  
+
+  sourceMenu->addAction(rthAct);
+  sourceMenu->addAction(dipAct);
+  sourceMenu->addAction(poiAct);
+  sourceMenu->addAction(rinAct);
   sourceMenu->addSeparator();
-  sourceMenu->addAction(tr("generic Undulador"));
-  sourceMenu->addAction(tr("Undulator BESSY II (H)"));
-  sourceMenu->addAction(tr("Undulator BESSY II (L)"));
-  sourceMenu->addAction(tr("Undulator SLS - SIS"));
-  sourceMenu->addAction(tr("Undulator SLS - SIM"));
+  sourceMenu->addAction(genAct);
+  sourceMenu->addAction(b2hAct);
+  sourceMenu->addAction(b2lAct);
+  sourceMenu->addAction(sisAct);
+  sourceMenu->addAction(simAct);  
   sourceMenu->addSeparator();
-  sourceMenu->addAction(tr("Source from file"));
+  sourceMenu->addAction(sffAct);
   sourceTypeButton->setMenu(sourceMenu);
 
+  connect(rthAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(dipAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(poiAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(rinAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(genAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(b2hAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(b2lAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(sisAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(simAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(sffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+  signalMapper->setMapping(rthAct, QString("rthAct"));
+  signalMapper->setMapping(dipAct, QString("dipAct"));
+  signalMapper->setMapping(poiAct, QString("poiAct"));
+  signalMapper->setMapping(rinAct, QString("rinAct"));
+  signalMapper->setMapping(genAct, QString("genAct"));
+
+  signalMapper->setMapping(b2hAct, QString("b2hAct"));
+  signalMapper->setMapping(b2lAct, QString("b2lAct"));
+  signalMapper->setMapping(sisAct, QString("sisAct"));
+  signalMapper->setMapping(simAct, QString("simAct"));
+  signalMapper->setMapping(sffAct, QString("sffAct"));
+  
   QCheckBox *sourceFileBox = new QCheckBox(tr("create Source file"));
 
   sourceTypeLayout->addWidget(sourceTypeButton);
@@ -737,6 +1175,9 @@ QWidget *MainWindow::createSourceBox()
   S7E = new QLineEdit;
   S8E = new QLineEdit;
 
+  sourceApplyB   = new QPushButton(tr("Apply"));
+  sourceDefaultB = new QPushButton(tr("Defaults"));
+
   sourceParsLayout->addWidget(S1Label,0,0);
   sourceParsLayout->addWidget(S3Label,1,0);
   sourceParsLayout->addWidget(S5Label,2,0);
@@ -755,13 +1196,18 @@ QWidget *MainWindow::createSourceBox()
   sourceParsLayout->addWidget(S7E,3,1);
   sourceParsLayout->addWidget(S8E,3,3);
 
-  sourceParsGroup->setLayout(sourceParsLayout);
+  sourceParsLayout->addWidget(sourceApplyB,  3, 4);
+  sourceParsLayout->addWidget(sourceDefaultB,2, 4);
+
+    sourceParsGroup->setLayout(sourceParsLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(sourceTypeGroup);
   vbox->addWidget(sourceParsGroup);
 
   sourceBox->setLayout(vbox);
+  connect(sourceApplyB,   SIGNAL(clicked()), this, SLOT(sourceApplyBslot()));
+  connect(sourceDefaultB, SIGNAL(clicked()), this, SLOT(sourceDefaultBslot()));
 
  return sourceBox;
 } // end source box
@@ -777,13 +1223,15 @@ QWidget *MainWindow::createBeamlineBox()
   QVBoxLayout *beamlineElementLayout = new QVBoxLayout;
 
   elementList = new QListWidget();
-  elementList->addItems(QStringList()
+  /*
+    elementList->addItems(QStringList()
 			<< "Mirror 1"
 			<< "Mirror 2"
 			<< "Grating 1"
 			<< "Mirror 3"
 			<< "Mirror 4"
 			);
+  */
   
   QGroupBox   *beamlineButtomGroup  = new QGroupBox();
   QHBoxLayout *beamlineButtomLayout = new QHBoxLayout;
@@ -940,11 +1388,22 @@ QWidget *MainWindow::createGraphicBox()
   return graphicBox;
 } // end graphic box
 
+///////////////////////////////////
+// end widget definition section //
+///////////////////////////////////
+
+///////////////////////////////////
+// begin widget handling section //
+///////////////////////////////////
+
+
+// UpdateBeamlineBox()
+// the box on the left
 void MainWindow::UpdateBeamlineBox()
 {
   struct OptionsType *blo;
   char   buffer[5];
-  
+    
   blo= &(this->BLOptions);
 
   sprintf(buffer, "%4f", blo->lambda* 1e6);
@@ -955,44 +1414,41 @@ void MainWindow::UpdateBeamlineBox()
 
   if (blo->SourcetoImage) goButton->setChecked(true); else poButton->setChecked(true);
   if (blo->WithAlign) misaliBox->setChecked(true);    else misaliBox->setChecked(false);
-}
+} // end UpdateBeamlineBox
 
+// UpdateElementBox
+// box at right buttom
+// called with the index of the optical element in the list
 void MainWindow::UpdateElementBox(int number)
 {
   double cff, teta, fi;
   char TextField [26][40];            /* 26 editfelder */
-  struct mdatset *md;
-  struct gdatset *gd;
- 
-  md= &(this->ElementList[number].MDat);
-  gd= &(this->ElementList[number].GDat);
+  struct mdatset *md= &(this->ElementList[number].MDat);
+  struct gdatset *gd= &(this->ElementList[number].GDat);
 
   teta= fabs(gd->theta0* PI/ 180.0);
   fi  = (double)(gd->inout)* 
     asin(gd->lambda* gd->xdens[0]/ (2.0* cos(teta)));
   cff = cos(fi- teta)/ cos(fi+ teta);
 
-  sprintf(TextField[0], "%.2f", cff);
-  sprintf(TextField[1], "%.1f", gd->r);
-  sprintf(TextField[2], "%.1f", gd->rp);
-  sprintf(TextField[3], "%.3f", gd->theta0);
-  sprintf(TextField[4], "%.1f", md->r1);   
-  sprintf(TextField[5], "%.1f", md->r2);
-  sprintf(TextField[6], "%.1f", md->rmi);      
-  sprintf(TextField[7], "%.2f", md->rho);
-
-  sprintf(TextField[8], "%d",   gd->inout);   // not used   	   
-  sprintf(TextField[9], "%.2f", gd->xdens[0]); 
-  sprintf(TextField[10],"%.2f", gd->xdens[1]);    
-     
+  // create strings
+  sprintf(TextField[0],  "%.2f", cff);
+  sprintf(TextField[1],  "%.1f", gd->r);
+  sprintf(TextField[2],  "%.1f", gd->rp);
+  sprintf(TextField[3],  "%.3f", gd->theta0);
+  sprintf(TextField[4],  "%.1f", md->r1);   
+  sprintf(TextField[5],  "%.1f", md->r2);
+  sprintf(TextField[6],  "%.1f", md->rmi);      
+  sprintf(TextField[7],  "%.2f", md->rho);
+  sprintf(TextField[8],  "%d",   gd->inout);   // not used   	   
+  sprintf(TextField[9],  "%.2f", gd->xdens[0]); 
+  sprintf(TextField[10], "%.2f", gd->xdens[1]);    
   sprintf(TextField[11], "%.2f", gd->xdens[2]);    
   sprintf(TextField[12], "%.2f", gd->xdens[3]);    
   sprintf(TextField[13], "%.2f", gd->xdens[4]);
-
   sprintf(TextField[14], "%.2f", md->du);    
   sprintf(TextField[15], "%.2f", md->dw);    
   sprintf(TextField[16], "%.2f", md->dl);
-
   sprintf(TextField[17], "%.2f", md->dRu * 1e3);    
   sprintf(TextField[18], "%.2f", md->dRw * 1e3);    
   sprintf(TextField[19], "%.2f", md->dRl * 1e3);
@@ -1012,27 +1468,24 @@ void MainWindow::UpdateElementBox(int number)
   imageE ->setText(QString(tr(TextField[5])));
   rE     ->setText(QString(tr(TextField[6])));
   rhoE   ->setText(QString(tr(TextField[7])));
-
   integerSpinBox->setValue(gd->inout);
   lineDensity->setText(QString(tr(TextField[9])));
-  
   vls1->setText(QString(tr(TextField[10])));
   vls2->setText(QString(tr(TextField[11])));
   vls3->setText(QString(tr(TextField[12])));
   vls4->setText(QString(tr(TextField[13])));
-  
-  duE->setText(QString(tr(TextField[14])));
-  dwE->setText(QString(tr(TextField[15])));
-  dlE->setText(QString(tr(TextField[16])));
+  duE ->setText(QString(tr(TextField[14])));
+  dwE ->setText(QString(tr(TextField[15])));
+  dlE ->setText(QString(tr(TextField[16])));
   dRuE->setText(QString(tr(TextField[17])));
   dRwE->setText(QString(tr(TextField[18])));
   dRlE->setText(QString(tr(TextField[19])));
-  w1E->setText(QString(tr(TextField[20])));
-  w2E->setText(QString(tr(TextField[21])));
-  wsE->setText(QString(tr(TextField[22])));
-  l1E->setText(QString(tr(TextField[23])));
-  l2E->setText(QString(tr(TextField[24])));
-  lsE->setText(QString(tr(TextField[25])));
+  w1E ->setText(QString(tr(TextField[20])));
+  w2E ->setText(QString(tr(TextField[21])));
+  wsE ->setText(QString(tr(TextField[22])));
+  l1E ->setText(QString(tr(TextField[23])));
+  l2E ->setText(QString(tr(TextField[24])));
+  lsE ->setText(QString(tr(TextField[25])));
 
   if (gd->iflag) nimBox->setChecked(true); else nimBox->setChecked(false);
 
@@ -1041,6 +1494,7 @@ void MainWindow::UpdateElementBox(int number)
   printf("debug: UpdateElementBox: md->Art:    %d\n", md->Art); 
 #endif
 
+  // orientation
   switch (gd->azimut)
     {
     case 0: rup1   ->setChecked(true); break;
@@ -1049,36 +1503,66 @@ void MainWindow::UpdateElementBox(int number)
     case 3: rright4->setChecked(true); break;
     }
 
-  switch (md->Art)
+  // element type set strings and sensitivity
+  gratingGroup->setChecked(false);
+  vlsGroup    ->setChecked(false);
+  switch (md->Art & 1023)          // strip off higher bits
     {
+    case kEOEPG:                   // for compatibility with old datasets
+      md->Art= kEOEPM + GRATINGBIT ;   
+    case kEOEPM:
+      shapeLabel->setText(QString(tr("flat"))); break;
+    case kEOETG:                   // for compatibility with old datasets
+      md->Art= kEOETM + GRATINGBIT ;
+    case kEOEVLSG:                 // for compatibility with old datasets 
+      md->Art= kEOETM + GRATINGBIT + VLSBIT ;
     case kEOETM:   
-      shapeLabel->setText(QString(tr("toroidal mirror"))); 
-      gratingGroup->setChecked(false);
-      vlsGroup    ->setChecked(false);
-      break;
-    case kEOETG:
-      shapeLabel->setText(QString(tr("toroidal grating")));  
-      gratingGroup->setChecked(true);
-      vlsGroup    ->setChecked(false);
-      break;
-    case kEOEVLSG: 
-      shapeLabel->setText(QString(tr("toroidal VLS grating")));
-      gratingGroup->setChecked(true);
-      vlsGroup    ->setChecked(true);
-      break;
+      shapeLabel->setText(QString(tr("toroidal"))); break;
+    case kEOEPElli:   
+      shapeLabel->setText(QString(tr("plane-elliptical"))); break;
+    case kEOEElli:   
+      shapeLabel->setText(QString(tr("elliptical"))); break;
+    case kEOECone:   
+      shapeLabel->setText(QString(tr("conical"))); break;
+    case kEOEGeneral:
+      shapeLabel->setText(QString(tr("generic"))); break;
     default: 
+      shapeLabel->setText(QString(tr("unknown")));
       QMessageBox::warning(this, tr("UpdateElementBox"),
-			   tr("Shape type %1 not recognized.")
+			   tr("Shape type %1 not recognized.\nreport bug to uwe.flechsig@psi.ch")
 			   .arg(md->Art));
-      printf("error: md->Art: %d not recognized\n", md->Art);
       break;
     }
+  if (md->Art & GRATINGBIT ) gratingGroup->setChecked(true);
+  if (md->Art & VLSBIT     )     vlsGroup->setChecked(true);
 
 } // end UpdateElementBox
 
+
+
+// updates the elementlist
+void MainWindow::UpdateElementList()
+{
+  unsigned int ui;
+  struct ElementType *list;
+  
+#ifdef DEBUG
+  printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", elementList->count());
+  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", elementzahl);
+#endif
+
+  // loesche alles
+   while (elementList->count()) 
+    delete elementList->takeItem(0);
+
+  list= this->ElementList;
+  for (ui= 0; ui < elementzahl; ui++, list++)
+    elementList->addItem(QString(list->elementname));
+} // end UpdateElementList()
+
+// update the source box
 void MainWindow::UpdateSourceBox()
 {
-
   int sou;
   struct UndulatorSourceType  *up;
   struct UndulatorSource0Type *up0;
@@ -1093,32 +1577,7 @@ void MainWindow::UpdateSourceBox()
   char TextField [8][40];            /* 8 editfelder */
   char LabelField[9][40]; 
    
-  char  *LabelField1 [39] =  {	"", "-> points",         		/*0,1*/
-				"height [mm]",     "width [mm]",   	/*2,3*/
-				"v. div. [mrad]", "h. div. [mrad]", 
-				"ray number", 				/* 6 */
-				"length [mm]", "lambda [nm]",           /*7,8*/
-				
-				"yi [mm]",   "zi [mm]", 
-				"dyi [rad]", "dzi [rad]",             /*11,12*/
-				
-				"yo [mm]", "zo [mm]",
-				"dyi [mrad]", "dyo [mrad]", 
-				"dzi [mrad]", "dzo [mrad]",          /*17,18*/
-				
-				"sigy [mm]",    "sigdyp [mrad]",     /*19,20*/
-				"dymin [mrad]", "dymax [mrad]", 
-				"sigz [mm]",    "sigdzp [mrad]", 
-				"dzmin [mrad]", "dzmax [mrad]",      /*25,26*/
-				
-				"ymin [mm]", "ymax [mm]",
-				"zmin [mm]", "zmax [mm]",
-				"y points",  "z points", 
-				
-				"Delta z [mm]",                      /*33*/  
-                                "sigmaez [mm]", "sigmaey [mm]",      /*34,35 */         
-                                "sigmaedz [mrad]", "sigmaedy [mrad]" /*36,37 */         
-    };                    
+           
 #ifdef DEBUG 
     printf("InitSourceBox: bl->RTSource.QuellTyp: %c\n", 
 	   this->RTSource.QuellTyp);   
@@ -1126,8 +1585,48 @@ void MainWindow::UpdateSourceBox()
  
     sou= this->RTSource.QuellTyp;
 
-  switch (sou) {
+    switch (sou) {
  
+    case 'D':
+      dp= (struct DipolSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", dp->sigy);
+      sprintf(TextField[1],  "%f", dp->sigdy);    
+      sprintf(TextField[2],  "%f", dp->sigz);  
+      sprintf(TextField[3],  "%f", dp->dz);    
+      sprintf(TextField[4],  "%d", this->RTSource.raynumber);   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "sigmay (mm)");
+      sprintf(LabelField[1], "%s", "sigmady (mrad)");  
+      sprintf(LabelField[2], "%s", "sigmaz (mm)");  
+      sprintf(LabelField[3], "%s", "dz hard edge (mrad)");  
+      sprintf(LabelField[4], "%s", "ray number");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "Dipol (Bending Magnet)");
+      break;  
+    case 'G':
+      up0= (struct UndulatorSource0Type *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", up0->length);
+      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[3],  "%f", up0->deltaz);    
+      sprintf(TextField[4],  "%f", up0->sigmaey);   
+      sprintf(TextField[5],  "%f", up0->sigmaez);    
+      sprintf(TextField[6],  "%f", up0->sigmaedy);   
+      sprintf(TextField[7],  "%f", up0->sigmaedz); 
+      sprintf(LabelField[0], "%s", "length (mm)");
+      sprintf(LabelField[1], "%s", "lambda (nm)");  
+      sprintf(LabelField[2], "%s", "ray number");  
+      sprintf(LabelField[3], "%s", "deltaz (mm)");  
+      sprintf(LabelField[4], "%s", "sigmaey (mm)");   
+      sprintf(LabelField[5], "%s", "sigmaez (mm)");   
+      sprintf(LabelField[6], "%s", "sigmaedy (mrad)");   
+      sprintf(LabelField[7], "%s", "sigmaedz (mrad)");
+      sprintf(LabelField[8], "%s", "Generic undulator");
+      break;  
     case 'H':
       hp= (struct HardEdgeSourceType *)this->RTSource.Quellep;
       sprintf(TextField[0],  "%f", hp->disty);
@@ -1149,11 +1648,117 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[8], "%s", "Ray Trace hard edge");
       break;  
 
-  default:
-    QMessageBox::warning(this, tr("UpdateSourceBox"),
-			 tr("Source type %1 not recognized.")
+    case 'L':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", up->length);
+      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[3],  "%f", up->deltaz);    
+      sprintf(TextField[4],  "%s", "");   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "length (mm)");
+      sprintf(LabelField[1], "%s", "lambda (nm)");  
+      sprintf(LabelField[2], "%s", "ray number");  
+      sprintf(LabelField[3], "%s", "deltaz (mm)");  
+      sprintf(LabelField[4], "%s", "");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "SLS SIS undulator");
+      break; 
+
+    case 'M':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", up->length);
+      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[3],  "%f", up->deltaz);    
+      sprintf(TextField[4],  "%s", "");   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "length (mm)");
+      sprintf(LabelField[1], "%s", "lambda (nm)");  
+      sprintf(LabelField[2], "%s", "ray number");  
+      sprintf(LabelField[3], "%s", "deltaz (mm)");  
+      sprintf(LabelField[4], "%s", "");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "SLS SIM undulator");
+      break;  
+
+    case 'o':
+      sop= (struct PointSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", sop->sigy);
+      sprintf(TextField[1],  "%f", sop->sigdy);    
+      sprintf(TextField[2],  "%f", sop->sigz);  
+      sprintf(TextField[3],  "%f", sop->sigdz);    
+      sprintf(TextField[4],  "%d", this->RTSource.raynumber);   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "sigy (mm)");
+      sprintf(LabelField[1], "%s", "sigdy (mrad)");  
+      sprintf(LabelField[2], "%s", "sigz (mm)");  
+      sprintf(LabelField[3], "%s", "sigdz (mrad)");  
+      sprintf(LabelField[4], "%s", "ray number");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "Point Source: all sigma values");
+      break;  
+
+ case 'R':
+      rp= (struct RingSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%lf", rp->dy);
+      sprintf(TextField[1],  "%lf", rp->dz);    
+      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[3],  "%s", "");    
+      sprintf(TextField[4],  "%s", "");   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "dy (mrad)");
+      sprintf(LabelField[1], "%s", "dz (mrad)");  
+      sprintf(LabelField[2], "%s", "ray number");  
+      sprintf(LabelField[3], "%s", "");  
+      sprintf(LabelField[4], "%s", "");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "Ring Source: half axis of the divergence ellipse, y,z are always 0");
+      break;  
+   
+    case 'U':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", up->length);
+      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[3],  "%s", "");    
+      sprintf(TextField[4],  "%s", "");   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "length (mm)");
+      sprintf(LabelField[1], "%s", "lambda (nm)");  
+      sprintf(LabelField[2], "%s", "ray number");  
+      sprintf(LabelField[3], "%s", "");  
+      sprintf(LabelField[4], "%s", "");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "Undulator");
+      break;  
+
+
+    default:
+      QMessageBox::warning(this, tr("UpdateSourceBox"),
+			   tr("Source type %1 not recognized.")
 			 .arg(sou));
-    break;
+      break;
     }
 
   // update widgets
@@ -1174,28 +1779,11 @@ void MainWindow::UpdateSourceBox()
   S7Label->setText(QString(tr(LabelField[6])));
   S8Label->setText(QString(tr(LabelField[7])));
   sourceTypeLabel->setText(QString(tr(LabelField[8])));
-} // end Updatesourcebox
+} // end UpdateSourceBox
 
 
-// updates the elementlist
-void MainWindow::UpdateElementList()
-{
-  unsigned int ui;
-  struct ElementType *list;
-  
-#ifdef DEBUG
-  printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", elementList->count());
-  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", elementzahl);
-#endif
-
-  // loesche alles
-   while (elementList->count()) 
-    delete elementList->takeItem(0);
-
-  list= this->ElementList;
-  for (ui= 0; ui < elementzahl; ui++, list++)
-    elementList->addItem(QString(list->elementname));
-}
-
+/////////////////////////////////
+// end widget handling section //
+/////////////////////////////////
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 Jun 11 09:16:54 flechsig>  */
+/*   Time-stamp: <15 Jun 11 09:20:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -476,11 +476,11 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	      }
 	    else
 #ifndef QTGUI
-
-	      intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
-			   &uu, &ww, &ll, &bl->BLOptions.ifl.iord);
+#ifdef SEVEN_ORDER
+	      intersection_8(&ds->mir, ds->wc, ds->xlc, Raysin, 
+			     &uu, &ww, &ll, &bl->BLOptions.ifl.iord);
 #else
-	      intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
+	    intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			 &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
 #endif
 #endif

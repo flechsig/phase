@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <15 Jun 11 16:42:34 flechsig> 
+//  Time-stamp: <20 Jun 11 17:42:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -65,11 +65,12 @@ void myPHASEset::print()
 
 void myBeamline::init()
 {
-  beamlineOK=  0;
+  beamlineOK = 0;
   elementzahl= 0;
   ElementList= NULL;
   raysout    = NULL;
   RTSource.SourceRays= NULL;
+  RTSource.Quellep= NULL;
 }
 
 
