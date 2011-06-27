@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Jun 11 09:18:27 flechsig>  */
+/*   Time-stamp: <27 Jun 11 17:04:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -46,6 +46,10 @@ void BuildBeamline(struct BeamlineType *bl)
    int     i, imodus;
    struct  ElementType *listpt;      
    char    command[MaxPathLength];
+
+#ifdef DEBUG
+  printf("BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
+#endif
 
 
 #ifdef SEVEN_ORDER
@@ -95,7 +99,7 @@ void BuildBeamline(struct BeamlineType *bl)
 /*--------------------------------------------------------*/ 
 
   /* baue erst mal immer */
-   bl->beamlineOK &= ~mapOK;
+   bl->beamlineOK &= ~mapOK; 
    if (bl->beamlineOK & mapOK)     
       printf("BuildBeamline: Beamline elements are already OK- do nothing\n");
    /* nothing to do */
@@ -242,6 +246,11 @@ void BuildBeamline(struct BeamlineType *bl)
       bl->beamlineOK |= elementOK; 
 
       printf("BuildBeamline: whole Beamline is now OK\n"); 
+
+#ifdef DEBUG
+  printf("BuildBeamline:   end: beamlineOK: %X\n", bl->beamlineOK); 
+#endif
+
    }	
 }   /* end BuildBeamline */
 
@@ -731,27 +740,30 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 
 void LoadHorMaps(struct BeamlineType *bl, int dim)    
 /***********************************************/   
-/* load horizontale Transformationsmatritzen  */
+/* load horizontale Transformationsmatritzen   */
 /***********************************************/  
-/* UF, TL rmap, lmap static 15.5.07 */ 
+/* UF Jun 2011 umgeschrieben auf environment variable */
 {
-  /* int msiz; */
-   char buffer[MaxPathLength], *phase_home;
+  char buffer[MaxPathLength], *phase_home;
 				
-   /*  msiz= 70* 70* sizeof(double);  fest auf 70 */
-
-    /* replace old code with xmalloc 10.2.04 UF*/ 
-   /*   (double *)bl->lmap= (double *)xmalloc(msiz);
-	(double *)bl->rmap= (double *)xmalloc(msiz); */
+  if ((phase_home = getenv(PHASE_HOME)) == NULL)
+    {
+      printf("\nLoadHorMaps: environment variable %s not defined -- exit\n", PHASE_HOME);
+      exit(-1);
+    } 
 
 #ifndef QTGUI
    sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", global_rundir, dim);
+#else
+   sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", phase_home, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->lmap, dim);    
 
 #ifndef QTGUI
    sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", global_rundir, dim);
+#else
+   sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", phase_home, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
@@ -773,9 +785,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    MAP7TYPE wctmp, xlctmp;
 
 #ifdef SEVEN_ORDER
-   double *c, C[70][70], *tmpp;
-#else
    double *c, C[330][330], *tmpp;
+   printf("seven order defined\n");
+#else
+   double *c, C[70][70], *tmpp;
+   printf("seven order not defined\n");
 #endif
 
    c= &C[0][0];
@@ -896,14 +910,13 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
         /* horizontale Ablenkung */
         if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
         {
-           printf("MakeMapandMatrix: horizontal deflection \n"); 
-
+           
 #ifdef SEVEN_ORDER
 	   mdim= 330;
 #else
 	   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
 #endif
-
+	   printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
 	   msiz= mdim * mdim * sizeof(double);
 
            if (bl->hormapsloaded == 0)
@@ -2218,7 +2231,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
       exit(-1);
     } /* end switch */ 
-#ifdef DEBUG
+#ifdef DEBUG2
   printf("DEBUG: alpha: %f\n", alpha);
   printf("DEBUG: mirror coefficients\n");
   for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
@@ -2230,7 +2243,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     if (1)  /* UF !!!! nur zum debuggen*/
 #endif
     {
-#ifdef DEBUG
+#ifdef DEBUG2
       printf("            with misalignment\n");
 #endif
       memcpy(&mirror, a, sizeof(struct mirrortype));
@@ -2242,7 +2255,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #endif
 #endif
-#ifdef DEBUG
+#ifdef DEBUG2
       printf("DEBUG: mirror coefficients with misalignment\n");
       for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
 #endif
