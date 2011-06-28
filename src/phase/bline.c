@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <28 Jun 11 16:01:27 flechsig>  */
+/*   Time-stamp: <28 Jun 11 16:47:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -779,7 +779,6 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 /************************************************************************/
 {
       
-   char    command[MaxPathLength];
    int     i, msiz, imodus, mdim;
    MAP7TYPE wctmp, xlctmp;
 
@@ -1361,7 +1360,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 /************************************************************************/
 {   
    FILE *f; 
-   int  rcode, elnumber, alle, i, version;
+   int  rcode, elnumber, i, version;
    char buffer[255], buf;  
    double *pd; 
    
@@ -1920,7 +1919,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 /* Dec 2009 provisions for multiple wavelengths */
 {
-  double delta, alpha, beta, theta0, trans, radius, delta1, lambda;
+  double delta, alpha, beta, theta0, trans, radius, lambda;
   int i;
 
   theta0= fabs(x->theta0* PI/ 180.0);  
@@ -1985,7 +1984,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
     rpole, fipole, small, kellip, Rellip;
-  int i, j, k, l;
+  int i, k, l;
   struct mirrortype mirror;
 
 #ifdef DEBUG
@@ -2349,7 +2348,7 @@ void FixFocus(double cff, double lambda, double ldens, int m,
 } /* end FixFocus */
 
 /******* read matrixfile ************************************/ 
-void readmatrixfilec(char *fname, double *map, int dim)  
+void readmatrixfilec(char *fname, double *map, int dim)   
 /*------------------------------------------------------------*/
 /* located in fgmap3dpp.for,phasefor.for               */
 /* umgeschrieben auf c, liest eine in fortran Speichermodell */
@@ -2425,11 +2424,9 @@ void ReadCoefficientFile(double *dp, char *fname)
 void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)   
 /* wird von SetGrDatSruct gerufen 				*/
 /* Parameter: filename, number of rays, vektor mit rays         */
-/* last mod. Uwe 8.8.96 					*/ 
 {
     FILE   *f;
     int    i, rz;
-    double *dp;
     struct RayType *Rp;
     
     printf("  ReadRayFile called \n"); 
