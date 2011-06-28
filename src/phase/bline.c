@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <27 Jun 11 17:13:17 flechsig>  */
+/*   Time-stamp: <28 Jun 11 16:01:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -159,10 +159,10 @@ void BuildBeamline(struct BeamlineType *bl)
 	   }    
 	 elcounter++; listpt++; 
       } /* Schleife ueber alle Elemente fertig */
-#ifndef QTGUII
+
       extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
-#endif
+
       /* UF JB wir brauchen hier ein dfdw fuer die beamline */
       /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
       /* mache das oben UF 17.11.10*/	
@@ -170,7 +170,7 @@ void BuildBeamline(struct BeamlineType *bl)
       if (bl->BLOptions.SourcetoImage != 1)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
 	   fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
 		dfdwwp, dfdwlp, dfdllp, 
@@ -181,7 +181,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
-#endif
+
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
 	  if (listpt->MDat.Art != kEOESlit)
@@ -219,7 +219,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  imodus= 1;        
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
       /* der imodus ist anders als bei fgmapidp!!!! */
-#ifndef QTGUI
+
 	  extractmap((double *)bl->MtoSource, 
 		     (double *)bl->ypc1, 
 		     (double *)bl->zpc1, 
@@ -237,7 +237,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
-#endif
+
      	} /* image to source */
       /*********** map und det fertig ***********/
       bl->beamlineOK |= mapOK;    
@@ -370,15 +370,15 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	   }    
 	 elcounter++; listpt++; 
       } /* Schleife ueber alle Elemente fertig */
-#ifndef QTGUI
+
       extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
-#endif
+
       /* beamline matrix und map ist fertig (source to image) */ 
       if (bl->BLOptions.SourcetoImage != 1)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
            fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
                dfdwwp, dfdwlp, dfdllp,
@@ -390,7 +390,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
-#endif
+
       
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
@@ -429,7 +429,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  imodus= 1;        
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
       /* der imodus ist anders als bei fgmapidp!!!! */
-#ifndef QTGUI
+
 	  extractmap((double *)bl->MtoSource, 
 		     (double *)bl->ypc1, 
 		     (double *)bl->zpc1, 
@@ -447,7 +447,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
-#endif
+
      	} /* image to source */
       /*********** map und det fertig ***********/
       bl->beamlineOK |= mapOK;    
@@ -807,7 +807,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 
 	if(listpt->MDat.Art==999)
 	   {imodus=imodus+1000;};
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
 #ifdef DEBUG
 	  printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
@@ -825,11 +825,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #endif
-#endif
+
 
 	if(listpt->MDat.Art==999)
 	   {imodus=imodus-1000;};
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
          make_matrix_8(listpt->MtoSource, listpt->ypc1, listpt->zpc1,
 		 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
@@ -849,7 +849,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
                  listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm);
 #endif
-#endif
+
 #ifdef DEBUG   
 	printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
 	       bl->position);  
@@ -860,7 +860,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	    imodus= 2;   
 	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;}; 
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
            fgmapidp_8(&bl->BLOptions.epsilon,
                 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
@@ -874,10 +874,10 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
 #endif
-#endif 
+ 
 	    if(listpt->MDat.Art==999)
 	       {imodus=imodus+1000;};
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
 	    make_matrix_8(listpt->MtoSource, listpt->ypc1, listpt->zpc1,
 	    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
@@ -898,7 +898,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		 listpt->wc, listpt->xlc, listpt->ypc1, 
 		 listpt->zpc1, &listpt->xlm); 
 #endif
-#endif
+
 
 #ifdef DEBUG       
 	    printf("MakeMapandMatrix: image to source map and matrix created\n");  
@@ -935,7 +935,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	     {                /* wenn rueckwaerts dann zusaetzlich */
 	       memcpy(c, listpt->MtoSource, msiz);  /* save matrix */
 	       memcpy(listpt->MtoSource, bl->lmap, msiz); 
-#ifndef QTGUI
+
 	       GlueLeft((double *)listpt->MtoSource, (double *)c); 
 	       GlueLeft((double *)listpt->MtoSource, (double *)bl->rmap); 
 	       /* im to s matrix OK */
@@ -948,13 +948,13 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 			  (double *)bl->lmap, &bl->BLOptions.ifl.iord);
 	       GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
 			&bl->BLOptions.ifl.iord, 0);
-#endif
+
 	 /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
 /* 		    &bl->BLOptions.ifl.iplmode,  listpt->wc, listpt->xlc,  */
 /* 			listpt->ypc1, listpt->zpc1, &listpt->xlm);  */
 	     } else /* horizontal source to image */
 	       {
-#ifndef QTGUI
+
 		 extractmap(listpt->matrix, listpt->ypc1, listpt->zpc1, 
 			    listpt->dypc, listpt->dzpc, 
 			    &bl->BLOptions.ifl.iord);
@@ -966,7 +966,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	  /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
 /* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
 /* 			  listpt->ypc1, listpt->zpc1, &listpt->xlm);    */
-#endif
+
 	       }	
 #ifdef DEBUG  
 	   printf("MakeMapandMatrix: hor. defl. matrix created\n");
