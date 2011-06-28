@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <27 Jun 11 17:04:34 flechsig>  */
+/*   Time-stamp: <27 Jun 11 17:13:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -39,7 +39,6 @@ extern const char *global_rundir;
 void BuildBeamline(struct BeamlineType *bl)  
 /****************************************************************/
 /* Beamline zusammensetzen              			*/
-/* 								*/
 /****************************************************************/
 {
    unsigned int elcounter;
@@ -160,7 +159,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	   }    
 	 elcounter++; listpt++; 
       } /* Schleife ueber alle Elemente fertig */
-#ifndef QTGUI
+#ifndef QTGUII
       extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
 #endif
@@ -1958,7 +1957,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
       trans    = radius* (1.0- cos(delta));      
       gout->r  = x->r-  trans; 
       gout->rp = x->rp- trans;    
-      printf("DefGeometryC: NIM translation enabled, trans= %d mm\nr1= %d mm, r2= %d mm\n", 
+      printf("DefGeometryC: NIM translation enabled, trans= %lf mm\nr1= %lf mm, r2= %lf mm\n", 
              trans, gout->r, gout->rp);  
     }  else 
       {
@@ -2078,7 +2077,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOECone:  
       ll= 100;
       printf("DefMirrorC: special conical cylinder (not tested)\n");
-      printf("fixed cone length l= %f mm\n");
+      printf("fixed cone length l= %f mm\n", ll);
       printf("r, rho are the two radii\n");
       if (fabs(ll) > small)
 	{
@@ -2309,7 +2308,7 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
 	trans    = radius* (1.0- cos(delta));
 	gout->r  = x->r-  trans;
 	gout->rp = x->rp- trans;
-	printf("DefGeometryC: NIM translation enabled, trans= %d mm\nr1= %d mm, r2= %d mm\n",
+	printf("DefGeometryC: NIM translation enabled, trans= %lf mm\nr1= %lf mm, r2= %lf mm\n",
 	       trans, gout->r, gout->rp);
      }  else
      

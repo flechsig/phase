@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <20 Jun 11 17:42:45 flechsig> 
+//  Time-stamp: <22 Jun 11 16:44:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -71,6 +71,9 @@ void myBeamline::init()
   raysout    = NULL;
   RTSource.SourceRays= NULL;
   RTSource.Quellep= NULL;
+  RESULT.points = 0;
+  RESULT.RESp = NULL;
+  localalloc = DOALLOC;
 }
 
 

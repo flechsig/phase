@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <20 Jun 11 15:06:36 flechsig>  */
+/*  Time-stamp: <27 Jun 11 16:26:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -49,6 +49,7 @@ private slots:
     void insertElement(); // UF
     void deleteElement(); // UF
     void selectElement(); // UF
+    void selectParameter(); // UF
     void pmslot();        // shape slots
     void toslot();
     void peslot();
@@ -94,6 +95,7 @@ private:
     QSignalMapper *signalMapper;  // UF
     QListWidget   *elementList;
     QListWidget   *parameterList;
+    QLineEdit     *parameterE;
     QWidget       *elementBox;
     QWidget       *createOpticalElementBox(); 
     QWidget       *sourceBox;
@@ -105,7 +107,7 @@ private:
     QWidget       *graphicBox;
     QWidget       *createGraphicBox();
     QGroupBox     *groupBox1;
-    QtPhase       *myQtPhase;
+    //   QtPhase       *myQtPhase;
 
     QLineEdit    *lambdaE;  // generic parameters
     QLineEdit    *dislenE;
@@ -114,6 +116,7 @@ private:
     QCheckBox    *misaliBox;
 
     QLabel    *sourceTypeLabel;
+    QCheckBox *sourceFileBox;
     QLabel    *S1Label;        // source box
     QLabel    *S2Label;
     QLabel    *S3Label;
@@ -198,6 +201,7 @@ private:
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *calcMenu;
+    QMenu *cmdMenu;
     QMenu *viewMenu;
     QMenu *helpMenu;
     QMenu *sourceMenu;
@@ -218,6 +222,9 @@ private:
     QAction *footprintAct;
     QAction *phasespaceAct;
     QAction *mphasespaceAct;
+
+    QAction *writemapAct;
+    QAction *writecoeffAct;
 };
 
 

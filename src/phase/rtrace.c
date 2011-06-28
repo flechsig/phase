@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 Jun 11 09:20:28 flechsig>  */
+/*   Time-stamp: <27 Jun 11 15:49:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -325,6 +325,12 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
    struct FileSourceType       *fp;
    /* 24.11.06 */
    /* UF , TL ausschalten ueber switch 15.5. 07 */
+
+#ifdef DEBUG
+   printf("MakeRTSource start: beamlineOK: %X\n", bl->beamlineOK);
+#endif
+
+
    if (bl->localalloc == DOALLOC) 
      {
        bl->RTSource.SourceRays= XREALLOC(struct RayType, 
@@ -406,10 +412,15 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
    bl->beamlineOK |= sourceOK;
    if (bl->BLOptions.wrSource == 1)
    {
-      printf("write RT- source to file\n");
-      WriteRayFile(xp->sourceraysname, &bl->RTSource.raynumber, 
-		   bl->RTSource.SourceRays);    
+     printf("write RT- source to file %s\n", xp->sourceraysname);
+     
+     WriteRayFile(xp->sourceraysname, &bl->RTSource.raynumber, 
+		  bl->RTSource.SourceRays); 
+
    }
+#ifdef DEBUG
+   printf("MakeRTSource   end: beamlineOK: %X\n", bl->beamlineOK);
+#endif
    /* 2.5.96 free(bl->RTSource.SourceRays);                /* ?? */
 }  /* end makertsource */
 
@@ -592,13 +603,14 @@ void RayTracec(struct BeamlineType *bl)
 
   /*********************************************************************/
 #ifdef DEBUG
-  fprintf(stderr, "rtrace.c: beamlineOK: %X\n", bl->beamlineOK); 
+  fprintf(stderr, "RayTracec start: beamlineOK: %X, expect: %X\n", bl->beamlineOK, (sourceOK | mapOK)); 
 #endif
+
   Re= &bl->RESULT;   
-  if ((bl->beamlineOK & (sourceOK | mapOK)) == 0)
+  if ((bl->beamlineOK & (sourceOK | mapOK)) != (sourceOK | mapOK))
     { 
-      fprintf(stderr, "rtrace.c: beamline is not OK: beamlineOK: %X\n", 
-	      bl->beamlineOK);       /*  exit(-1); */ 
+      fprintf(stderr, "RayTracec: beamline is not OK: beamlineOK: %X != %X\nwe do nothing\n", 
+	      bl->beamlineOK, (sourceOK | mapOK));       /*  exit(-1); */ 
     } 
     else  
       {
@@ -624,7 +636,7 @@ void RayTracec(struct BeamlineType *bl)
 	bl->beamlineOK|= resultOK; /* resultrays in memory */
       } /* beamline OK*/
 #ifdef DEBUG
-  printf("RayTracec: end ray-trace\n"); 
+  printf("RayTracec:   end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 }
 
@@ -868,8 +880,9 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 {
   struct PSDType *PSDp;
   int ii, iy, iz;                   /* to make the code clearer */
+#ifndef QTGUI
   FreeResultMem(&bl->RESULT); 
-
+#endif
   switch (newtype)
     {
     case PLrttype:

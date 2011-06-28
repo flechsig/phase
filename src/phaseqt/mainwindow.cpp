@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <20 Jun 11 18:25:45 flechsig> 
+//  Time-stamp: <27 Jun 11 16:54:28 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -20,27 +20,20 @@
 // the constructor of the main window
 MainWindow::MainWindow()
 {
-  //  textEdit = new QTextEdit;
-  //  setCentralWidget(textEdit);
   graphicBox= createGraphicBox();
-  
   setCentralWidget(graphicBox);
   createActions();
   createMenus();
   createToolBars();
   createStatusBar();
   createDockWindows();
-  
   setWindowTitle(tr("PHASE Qt"));
   
-  //   newLetter();
-  //setUnifiedTitleAndToolBarOnMac(true);
-  
-  myQtPhase= new QtPhase;    // constructor QtPhase
-  //  this->myQtPhase=myQtPhase;
-  myQtPhase->myPHASEset::init("default");
-  myQtPhase->myPHASEset::print();
-  myQtPhase->myBeamline::init();
+  // ;myQtPhase= new QtPhase;    // constructor QtPhase
+  // ;myQtPhase->myPHASEset::init("default");
+  this->myPHASEset::init("default");
+  //  myQtPhase->myPHASEset::print();
+  //  myQtPhase->myBeamline::init();
 } // end MainWindow
 
 //////////////////////////////////////////////
@@ -51,13 +44,15 @@ MainWindow::MainWindow()
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
 {
+  int rcode;
 #ifdef DEBUG
   printf("Debug: slot newBeamline activated\n");
+  //  myQtPhase->myPHASEset::print();
 #endif
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
 						  // QDir::currentPath()
 						  "/afs/psi.ch/user/f/flechsig/phase/data",
-						  "Text files (*.phase)"
+						  tr("Text files (*.phase);;(*)")
 						  );
   char *name;
   //  int result;
@@ -67,31 +62,33 @@ void MainWindow::newBeamline()
     {
       name= fileName.toAscii().data();
       printf("MainWindow::newBeamline: try to read file: %s\n", name);
-      ReadBLFile(name, this);
-      UpdateElementList();
-      UpdateBeamlineBox();
-      UpdateSourceBox();
-      // QImage image(fileName);
-      //    if (image.isNull()) {
-      //QMessageBox::information(this, tr("Phase"),
-      //			       tr("Cannot load %1.").arg(fileName));
-      //return;
-      //}
+      rcode= ReadBLFile(name, this);
+      if (rcode != -1)
+	{
+	  UpdateElementList();
+	  UpdateBeamlineBox();
+	  UpdateSourceBox();
+	  this->beamlineOK= 0;
+	} 
+      else
+	QMessageBox::information(this, tr("Phase: newBeamline"),
+				 tr("Cannot load %1.\n wrong file type!").arg(fileName));
     }
+  this->myPHASEset::print();
 } // end newBeamline()
 
 // slot
 void MainWindow::print()
 {
 #ifndef QT_NO_PRINTDIALOG
-    QTextDocument *document = textEdit->document();
+  //QTextDocument *document = textEdit->document();
     QPrinter printer;
 
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
     if (dlg->exec() != QDialog::Accepted)
         return;
 
-    document->print(&printer);
+    //  document->print(&printer);
 
     statusBar()->showMessage(tr("Ready"), 2000);
 #endif
@@ -127,6 +124,14 @@ void MainWindow::thetaBslot()  // SetTheta from cff
 {
   double cff, alpha, beta, theta0;
   int number= elementList->currentRow();
+
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
+
   char *text= cffE->text().toAscii().data();          // get string from widget
   struct gdatset *gdat= &(this->ElementList[number].GDat);
   char  buffer[9];
@@ -179,7 +184,7 @@ void MainWindow::rhoBslot()  // calculate roho
       rhoE->setText(QString(tr(buffer)));
     }
  
-}
+} // rhoBslot
 
 void MainWindow::rBslot()
 {
@@ -201,7 +206,7 @@ void MainWindow::rBslot()
       sprintf(buffer, "%9.3f", rmi);
       rE->setText(QString(tr(buffer)));
     }
-}
+} // rBslot  
 // end calc slots
 
 // apply slot for source
@@ -215,13 +220,16 @@ void MainWindow::sourceApplyBslot()
   struct PointSourceType      *sop;
   struct RingSourceType       *rp;
   struct HardEdgeSourceType   *hp;     
-  struct SRSourceType         *sp; 
-  struct PSImageType          *psip;
-  struct PSSourceType         *pssp; 
+  //struct SRSourceType         *sp; 
+  //struct PSImageType          *psip;
+  //struct PSSourceType         *pssp; 
 
 #ifdef DEBUG
   printf("sourceApplyBslot activated\n");
 #endif
+
+  if (RTSource.Quellep == NULL )
+    return;
 
   sou= this->RTSource.QuellTyp;
   switch (sou) {
@@ -298,6 +306,10 @@ void MainWindow::sourceApplyBslot()
 			 tr("Source type %1 not recognized.\nreport bug to uwe.flechsig@psi.ch")
 			 .arg(sou));
   }
+
+  this->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;
+  //  MakeRTSource(this, this);
+  
 } //sourceApplyBslot
 
 // apply slot for source
@@ -314,6 +326,15 @@ void MainWindow::sourceDefaultBslot()
 void MainWindow::elementApplyBslot()
 {
   int number= elementList->currentRow();
+
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
+
+
   struct gdatset *gd= &(this->ElementList[number].GDat);
   struct mdatset *md= &(this->ElementList[number].MDat);
 
@@ -367,6 +388,13 @@ void MainWindow::debugslot()
 void MainWindow::grslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
+
   if (gratingGroup->isChecked() == true)
     this->ElementList[number].MDat.Art |= GRATINGBIT ; 
   else
@@ -378,6 +406,14 @@ void MainWindow::grslot()
 void MainWindow::grvlsslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
+
+
   if (vlsGroup->isChecked() == true)
     this->ElementList[number].MDat.Art |= VLSBIT ; 
   else
@@ -389,24 +425,48 @@ void MainWindow::grvlsslot()
 void MainWindow::rup1slot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].GDat.azimut= 0;
 }
 
 void MainWindow::rleft2slot()
 {
   int number= elementList->currentRow();
+if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].GDat.azimut= 1;
 }
 
 void MainWindow::rdown3slot()
 {
   int number= elementList->currentRow();
+if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].GDat.azimut= 2;
 }
 
 void MainWindow::rright4slot()
 {
   int number= elementList->currentRow();
+if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].GDat.azimut= 3;
 } 
 // end slot orientation radio buttons
@@ -416,6 +476,12 @@ void MainWindow::rright4slot()
 void MainWindow::pmslot()
 {
   int number= elementList->currentRow();
+if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			 tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].MDat.Art= kEOEPM;
   UpdateElementBox(number);
 }
@@ -424,6 +490,12 @@ void MainWindow::pmslot()
 void MainWindow::toslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].MDat.Art= kEOETM;
   UpdateElementBox(number); 
 }
@@ -432,6 +504,12 @@ void MainWindow::toslot()
 void MainWindow::peslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].MDat.Art= kEOEPElli;
   UpdateElementBox(number); 
 }
@@ -440,6 +518,12 @@ void MainWindow::peslot()
 void MainWindow::elslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].MDat.Art= kEOEElli;
   UpdateElementBox(number); 
 }
@@ -448,6 +532,12 @@ void MainWindow::elslot()
 void MainWindow::coslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].MDat.Art= kEOECone;
   UpdateElementBox(number); 
 }
@@ -456,6 +546,12 @@ void MainWindow::coslot()
 void MainWindow::geslot()
 {
   int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
   this->ElementList[number].MDat.Art= kEOEGeneral;
   UpdateElementBox(number); 
 }
@@ -464,8 +560,8 @@ void MainWindow::geslot()
 // slot
 void MainWindow::undo()
 {
-    QTextDocument *document = textEdit->document();
-    document->undo();
+  //QTextDocument *document = textEdit->document();
+  //  document->undo();
 }
 
 // UF slot insert a new optical element in the beamline box
@@ -474,45 +570,77 @@ void MainWindow::insertElement()
   struct ElementType *tmplist, *listpt, *tmplistpt;
   int i;
   int pos= elementList->currentRow();
-  QListWidgetItem *item= new QListWidgetItem("New Element");
-  elementList->insertItem(elementList->currentRow(), item);
-  item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
+  if (pos < 0) pos= 0;  // empty list 
+  if (abs(this->elementzahl) > 1000) this->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("AddBLElement: AddItem at pos %d, out of %d\n", pos,  this->elementzahl);  
+  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, this->elementzahl);  
 #endif 
+ 
+  QListWidgetItem *item= new QListWidgetItem("New Element");
+  elementList->insertItem(pos, item);
+  item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
   tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
   memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
   this->elementzahl++;
   this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
   listpt= this->ElementList; tmplistpt= tmplist; 
-  for (i= 1; i<= this->elementzahl; i++, listpt++)
+  for (i= 0; i< (int)this->elementzahl; i++, listpt++)
     {
+#ifdef DEBUG
+      printf("i= %d, pos= %d, nmax %u\n", i, pos, this->elementzahl);
+#endif
       if (i == pos)
 	{
-	  memcpy(listpt, tmplistpt, sizeof(struct ElementType)); // copy the previous element
+	  listpt->ElementOK= 0;
+	  sprintf(listpt->elementname, "%s", "New Element");
+	  minitdatset(&listpt->MDat);
+	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
+	  ginitdatset(&listpt->GDat);
+	  
 	}
-      memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
+      else
+	memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
     }
   this->beamlineOK &= ~(mapOK | resultOK);
   //  WriteBLFile(PHASESet.beamlinename, bl); 
   XFREE(tmplist);
-  
-} 
+  printf("inserElement: end list should have %u elements\n", this->elementzahl);
+} // insertElement
 
+//
 // UF slot delete optical element in the beamline box
+//
 void MainWindow::deleteElement()
 {
   struct ElementType *tmplist, *listpt, *tmplistpt;
+  QListWidgetItem *item;
   int i;
   int pos= elementList->currentRow();
+  //  char *text;
+
+#ifdef DEBUG
+  printf("deleteElement: delete element with idx %d out of %u\n", pos, this->elementzahl);
+#endif
+
   if (pos >= 0)
     {
-      delete elementList->takeItem(pos); // delete the widget
-      printf ("delete element with idx %d out of %d\n", pos, this->elementzahl);
+      item= elementList->takeItem(pos);
+      this->elementzahl= this->elementList->count();
+      if (item)
+	{
+	  printf("remove item %d, new count: %d\n", pos, this->elementzahl);
+	  delete item;
+	} 
+      else 
+	printf("item unvalid \n");
+      
+      
+      //#ifdef XXX
+      printf ("widget deleted\n");
       tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
       memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
-      this->elementzahl--;
+      
       if (this->elementzahl == 0) 
 	XFREE(this->ElementList);
       else
@@ -520,7 +648,7 @@ void MainWindow::deleteElement()
       
       /* umsortieren */
       listpt= this->ElementList; tmplistpt= tmplist; 
-      for (i= 1; i<= this->elementzahl; i++, listpt++)
+      for (i= 1; i<= (int)this->elementzahl; i++, listpt++)
 	{
 	  if (i == pos)  tmplistpt++;  /* ueberlesen */
 	  memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
@@ -528,27 +656,50 @@ void MainWindow::deleteElement()
       this->beamlineOK &= ~(mapOK | resultOK);
       //  WriteBLFile(PHASESet.beamlinename, bl); 
       XFREE(tmplist);
+      //#endif
+      printf("done\n");
     } 
   else
     QMessageBox::warning(this, tr("deleteElement"),
-            tr("can't delete anything, list is empty or nothing is selected!\n"));
+			 tr("can't delete anything, list is empty or nothing is selected!\n"));
 } // deleteElement()
 
-// UF slot delete optical element in the beamline box
+// UF selection slot
 void MainWindow::selectElement()
 {
   QListWidgetItem *item;
-  int elementnumber;
+  int elementnumber= elementList->currentRow();
   char *text;
   
+  if (elementnumber < 0) 
+    return;
+
   item= elementList->currentItem();
   text= item->text().toAscii().data();
   elementnumber= elementList->currentRow();
   groupBox1->setTitle(item->text());  // set text header
- 
-  printf("elementindex: %d, %s\n", elementnumber, text);
   UpdateElementBox(elementnumber);
-} 
+} // selectElement
+
+// UF selection slot
+void MainWindow::selectParameter()
+{
+  QListWidgetItem *item;
+  int parameternumber= parameterList->currentRow();
+  char *text, buffer[255];
+  
+  if (parameternumber < 0) 
+    return;
+
+  item= parameterList->currentItem();
+  text= item->text().toAscii().data();
+  sprintf(buffer, "%s", text);
+  parameterE->setText(buffer);
+  //  parameternumber= parameterList->currentRow();
+  //groupBox1->setTitle(item->text());  // set text header
+  //UpdateElementBox(elementnumber);
+} // selectParameter
+
 
 // slot
 // insert customer from list into letter
@@ -609,12 +760,29 @@ void MainWindow::about()
 // UF slot
 // here we call our own code dependign on which button has been pressed
 void MainWindow::activateProc(const QString &action)
-
 {
+  char buffer[MaxPathLength];
+
   if (action.isEmpty())
           return;
   
-  if (!action.compare("raytracesimpleAct")) printf("raytracesimpleAct button  pressed\n"); 
+  if (!action.compare("raytracesimpleAct")) 
+    { 
+      printf("\nraytracesimpleAct button  pressed\n");
+      
+      this->localalloc= DOALLOC;   // fix wrong initialization
+      if (this->hormapsloaded != 1) this->hormapsloaded= 0;      // fix
+
+      MakeRTSource(this, this);
+      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      BuildBeamline(this);
+      RayTracec(this); 
+      //this->myPHASEset::init("default");
+      //     this->myPHASEset::print();
+      WriteRayFile(this->imageraysname, &this->RESULT.points,
+		   (RayType*)this->RESULT.RESp);
+      printf("ray trace-> done\n");
+    }
   if (!action.compare("raytracefullAct"))   printf("raytracefullAct button pressed\n"); 
   if (!action.compare("footprintAct"))      printf("footprintAct button pressed\n"); 
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
@@ -629,7 +797,46 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("b2lAct")) { this->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }    
   if (!action.compare("sisAct")) { this->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
   if (!action.compare("simAct")) { this->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
-  if (!action.compare("sffAct")) { this->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }   
+  if (!action.compare("sffAct")) { this->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }  
+
+  if (!action.compare("writemapAct")) 
+    { 
+      printf("writemapAct button pressed\n");
+      if ((this->position <= this->elementzahl) && (this->position != 0))
+	{
+	  printf("write map of element %d to file\n", this->position);  
+	  /* casting 15.12.99 ist noch nicht OK */
+	  writemapc(this->mapname, this->BLOptions.ifl.iord, 
+		    (double *)(this->ElementList[this->position- 1].ypc1), 
+		    (double *) this->ElementList[this->position- 1].zpc1, 
+		    (double *) this->ElementList[this->position- 1].dypc, 
+		    (double *) this->ElementList[this->position- 1].dzpc,
+		    (double *) this->ElementList[this->position- 1].wc, 
+		    (double *) this->ElementList[this->position- 1].xlc, 
+		    (double *) this->ElementList[this->position- 1].xlm.xlen1c, 
+		    (double *) this->ElementList[this->position- 1].xlm.xlen2c);
+	} 
+      
+      else
+	{ 
+	  printf("write map of beamline to file\n");  
+	  
+	  writemapc(this->mapname, this->BLOptions.ifl.iord, 
+		    (double *) this->ypc1, (double *) this->zpc1, 
+		    (double *) this->dypc, (double *) this->dzpc,
+		    (double *) this->wc,   (double *) this->xlc, 
+		    (double *) this->xlm.xlen1c, 
+		    (double *) this->xlm.xlen2c);
+	}
+    } 
+  if (!action.compare("writecoeffAct")) 
+    { 
+      printf("writecoeffmapAct button pressed\n"); 
+      sprintf(buffer, "%s", "mirror-coefficients.dat");
+      printf("write coefficients to file: %s\n", buffer);
+      WriteMKos((struct mirrortype *)&this->ElementList[this->position- 1].mir, buffer);
+    } 
+
 } // end activateProc
 
 ///////////////////////
@@ -711,6 +918,16 @@ void MainWindow::createActions()
     signalMapper->setMapping(mphasespaceAct, QString("mphasespaceAct"));
     connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
+    writemapAct = new QAction(tr("&Write Map"), this);
+    writemapAct->setStatusTip(tr("Write file with transfer map"));
+    signalMapper->setMapping(writemapAct, QString("writemapAct"));
+    connect(writemapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    writecoeffAct = new QAction(tr("Write Mirr&or Coefficients"), this);
+    writecoeffAct->setStatusTip(tr("Write file with mirror coefficients"));
+    signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
+    connect(writecoeffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
     //    rthardedgeAct = new QAction();
     //    signalMapper->setMapping(rthardedgeAct, QString("rthardedgeAct"));
     //    connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -739,6 +956,10 @@ void MainWindow::createMenus()
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);
     calcMenu->addAction(mphasespaceAct);
+
+    cmdMenu = menuBar()->addMenu(tr("C&ommands"));
+    cmdMenu->addAction(writemapAct);
+    cmdMenu->addAction(writecoeffAct);
 
     viewMenu = menuBar()->addMenu(tr("&View"));
 
@@ -771,39 +992,13 @@ void MainWindow::createStatusBar()
 // dock widgets
 void MainWindow::createDockWindows()
 {
-  /*    QDockWidget *dock = new QDockWidget(tr("Customers"), this);
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    customerList = new QListWidget(dock);
-    customerList->addItems(QStringList()
-            << "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
-            << "Jane Doe, Memorabilia, 23 Watersedge, Beaton"
-            << "Tammy Shea, Tiblanka, 38 Sea Views, Carlton"
-            << "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
-            << "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
-            << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
-      dock->setWidget(customerList);
-       addDockWidget(Qt::RightDockWidgetArea, dock);
-       viewMenu->addAction(dock->toggleViewAction());
-
- 
-
-    dock = new QDockWidget(tr("Paragraphs"), this);
-    paragraphsList = new QListWidget(dock);
-    paragraphsList->addItems(QStringList()
-            << "Thank you for your payment which we have received today."
-			     << "You made an overpayment (more than $5). Do you wish to "
-               "buy more items, or should we return the excess to you?");
-        dock->setWidget(paragraphsList);
-       addDockWidget(Qt::RightDockWidgetArea, dock);
-       viewMenu->addAction(dock->toggleViewAction());
-  */
+  
     // the beamline box on the left
     QDockWidget *dock = new QDockWidget(tr("Beamline Box"), this);
     dock->setWidget(createBeamlineBox());
     addDockWidget(Qt::LeftDockWidgetArea, dock);
     viewMenu->addAction(dock->toggleViewAction());
   
-
 // the source box
     dock = new QDockWidget(tr("Source Box"), this);
     dock->setWidget(createSourceBox());
@@ -822,13 +1017,7 @@ void MainWindow::createDockWindows()
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
     viewMenu->addAction(dock->toggleViewAction());
-
-
-    //  connect(customerList, SIGNAL(currentTextChanged(QString)),
-    //     this, SLOT(insertCustomer(QString)));
-    //connect(paragraphsList, SIGNAL(currentTextChanged(QString)),
-    //        this, SLOT(addParagraph(QString)));
-}
+} // createDockwindows
 
 // the optical element box
 QWidget *MainWindow::createOpticalElementBox()
@@ -1145,7 +1334,7 @@ QWidget *MainWindow::createSourceBox()
   signalMapper->setMapping(simAct, QString("simAct"));
   signalMapper->setMapping(sffAct, QString("sffAct"));
   
-  QCheckBox *sourceFileBox = new QCheckBox(tr("create Source file"));
+  sourceFileBox = new QCheckBox(tr("create Source file"));
 
   sourceTypeLayout->addWidget(sourceTypeButton);
   sourceTypeLayout->addStretch(1);
@@ -1231,8 +1420,8 @@ QWidget *MainWindow::createBeamlineBox()
 			<< "Mirror 3"
 			<< "Mirror 4"
 			);
-  */
   
+  */
   QGroupBox   *beamlineButtomGroup  = new QGroupBox();
   QHBoxLayout *beamlineButtomLayout = new QHBoxLayout;
   QPushButton *addB  = new QPushButton(QIcon(":/images/up-32.png"), tr("Add"), this);
@@ -1303,8 +1492,8 @@ QWidget *MainWindow::createParameterBox()
 
   parameterList = new QListWidget();
   parameterList->addItems(QStringList()
-			<< "Mirror 1"
-			<< "Mirror 2"
+			<< "(epsilon) for Newton routine (1e-4)"
+			<< "(iord) calculation up to order (3..7)"
 			<< "Grating 1"
 			<< "Mirror 3"
 			<< "Mirror 4"
@@ -1315,7 +1504,7 @@ QWidget *MainWindow::createParameterBox()
 
 			);
   QLabel *parameterLabel  = new QLabel(tr("edit only the value after ':'"));
-  QLineEdit *parameterE  = new QLineEdit;
+  parameterE  = new QLineEdit;
 
   parameterLayout->addWidget(parameterList);
   parameterLayout->addWidget(parameterLabel);
@@ -1327,6 +1516,7 @@ QWidget *MainWindow::createParameterBox()
   
   vbox->addStretch(1);
   parameterBox->setLayout(vbox);
+  connect(parameterList, SIGNAL(itemSelectionChanged()), this, SLOT(selectParameter()));
   return parameterBox;
 } // end parameter box
 
@@ -1423,6 +1613,8 @@ void MainWindow::UpdateElementBox(int number)
 {
   double cff, teta, fi;
   char TextField [26][40];            /* 26 editfelder */
+
+  if (number < 0) return;
   struct mdatset *md= &(this->ElementList[number].MDat);
   struct gdatset *gd= &(this->ElementList[number].GDat);
 
@@ -1570,9 +1762,9 @@ void MainWindow::UpdateSourceBox()
   struct PointSourceType      *sop;
   struct RingSourceType       *rp;
   struct HardEdgeSourceType   *hp;     
-  struct SRSourceType         *sp; 
-  struct PSImageType          *psip;
-  struct PSSourceType         *pssp; 
+  //  struct SRSourceType         *sp; 
+  //  struct PSImageType          *psip;
+  //  struct PSSourceType         *pssp; 
 
   char TextField [8][40];            /* 8 editfelder */
   char LabelField[9][40]; 
@@ -1583,6 +1775,10 @@ void MainWindow::UpdateSourceBox()
 	   this->RTSource.QuellTyp);   
 #endif   
  
+    if (RTSource.Quellep == NULL)
+      return;
+
+
     sou= this->RTSource.QuellTyp;
 
     switch (sou) {

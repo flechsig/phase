@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <17 Jun 11 11:28:06 flechsig>  */
+/*   Time-stamp: <27 Jun 11 16:45:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -758,7 +758,7 @@ void
   gpd(), 
   GetUserName(), 
   intersection(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
-	       struct RayType *, int *,double *, double *, double *),   
+	       struct RayType *, double *, double *, double *, int *),   
     
   initconstants(),  
   InitDataSets(struct PHASEset *, struct BeamlineType *, char *),   
@@ -790,6 +790,7 @@ void
   MMatrix(),
 	        
   WriteBLFile(char *, struct BeamlineType *),
+  WriteMKos(struct mirrortype *, char *),
   writemapc(char *, int, double *, double *, double *, double *,
 	    double *, double *, double *, double *),  
   WritePsd(char *, struct PSDType *, int, int),     
