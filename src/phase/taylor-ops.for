@@ -264,23 +264,17 @@ cc--------------------------------------------------------------
 	do m4=0,l
 	do m5=0,m
 	do m6=0,n
-
-	do n1=0,i-m1
-	do n2=0,j-m2
-	do n3=0,k-m3
-	do n4=0,l-m4
-	do n5=0,m-m5
-	do n6=0,n-m6
+	
+c     Achtung geaendert am 1.7.2011
+	n1=i-m1
+	n2=j-m2
+	n3=k-m3
+	n4=l-m4
+	n5=m-m5
+	n6=n-m6
 
 	c(i,j,k,l,m,n)=c(i,j,k,l,m,n)+
      &     a(m1,m2,m3,m4,m5,m6)*b(n1,n2,n3,n4,n5,n6)
-
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
 
 	enddo
 	enddo
@@ -497,83 +491,6 @@ c
      &            c8(0:8,0:8,0:8,0:8,0:8,0:8)
 
 	call Tay_clear_6a(c8,iord)
-
-	iord1=iord+1
- 
-	do i=0,iord1
-	do j=0,iord1-i
-	do k=0,iord1-i-j
-	do l=0,iord1-i-j-k
-	do m=0,iord1-i-j-k-l
-	do n=0,iord1-i-j-k-l-m
-	
-	if(m0.eq.1)then
-	if(i-n0.ge.0)then
-	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n0))
-	goto 100
-	endif
-	endif
-
-	if(m0.eq.2)then
-	if(j-n0.ge.0)then
-	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n0))
-	goto 100
-	endif
-	endif
-
-	if(m0.eq.3)then
-	if(k-n0.ge.0)then
-	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n0))
-	goto 100
-	endif
-	endif
-
-	if(m0.eq.4)then
-	if(l-n0.ge.0)then
-	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n0))
-	goto 100
-	endif
-	endif
-
-	if(m0.eq.5)then
-	if(m-n0.ge.0)then
-	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n0))
-	goto 100
-	endif
-	endif
-
-	if(m0.eq.6)then
-	if(n-n0.ge.0)then
-	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n0))
-	goto 100
-	endif
-	endif
-
-100	continue
-
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-
-	return
-	end
-
-c-----------------------------------------------------------------
-	subroutine Tay_deri_6(a8,c8,m0,n0,iord)
-c-----------------------------------------------------------------
-c
-c	n0-times partial derivative of the Taylor series a 
-c	with respect to the m0-th variable
-c
-	implicit real*8(a-h,o-z)
-
-	dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
-
-	call Tay_clear_6(c8,iord)
  
 	do i=0,iord
 	do j=0,iord-i
@@ -584,42 +501,42 @@ c
 	
 	if(m0.eq.1)then
 	if(i-n0.ge.0)then
-	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n0))
+	c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.2)then
 	if(j-n0.ge.0)then
-	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n0))
+	c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.3)then
 	if(k-n0.ge.0)then
-	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n0))
+	c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.4)then
 	if(l-n0.ge.0)then
-	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n0))
+	c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.5)then
 	if(m-n0.ge.0)then
-	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n0))
+	c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.6)then
 	if(n-n0.ge.0)then
-	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n0))
+	c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n0+1))
 	goto 100
 	endif
 	endif
@@ -657,28 +574,28 @@ c
 	
 	if(m0.eq.1)then
 	if(i-n0.ge.0)then
-	c7(i-n0,j,k,l)=a7(i,j,k,l)*(faku(i)/faku(i-n0))
+	c7(i-n0,j,k,l)=a7(i,j,k,l)*(faku(i)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.2)then
 	if(j-n0.ge.0)then
-	c7(i,j-n0,k,l)=a7(i,j,k,l)*(faku(j)/faku(j-n0))
+	c7(i,j-n0,k,l)=a7(i,j,k,l)*(faku(j)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.3)then
 	if(k-n0.ge.0)then
-	c7(i,j,k-n0,l)=a7(i,j,k,l)*(faku(k)/faku(k-n0))
+	c7(i,j,k-n0,l)=a7(i,j,k,l)*(faku(k)/faku(n0+1))
 	goto 100
 	endif
 	endif
 
 	if(m0.eq.4)then
 	if(l-n0.ge.0)then
-	c7(i,j,k,l-n0)=a7(i,j,k,l)*(faku(l)/faku(l-n0))
+	c7(i,j,k,l-n0)=a7(i,j,k,l)*(faku(l)/faku(n0+1))
 	goto 100
 	endif
 	endif
@@ -700,6 +617,7 @@ c
 c	n1-times partial derivative with respect to variable m1
 c	n2-times partial derivative with respeft to variable m2
 c	of the Taylor series a 
+c	with respect to the m0-th variable
 c
 	implicit real*8(a-h,o-z)
 
@@ -707,57 +625,54 @@ c
      &            b8(0:8,0:8,0:8,0:8,0:8,0:8),
      &            c8(0:8,0:8,0:8,0:8,0:8,0:8)
 
-
-	iord1=iord+1
-
 	call Tay_clear_6a(b8,iord)
 	call Tay_clear_6a(c8,iord)
 
-	do i=0,iord1
-	do j=0,iord1-i
-	do k=0,iord1-i-j
-	do l=0,iord1-i-j-k
-	do m=0,iord1-i-j-k-l
-	do n=0,iord1-i-j-k-l-m
+	do i=0,iord
+	do j=0,iord-i
+	do k=0,iord-i-j
+	do l=0,iord-i-j-k
+	do m=0,iord-i-j-k-l
+	do n=0,iord-i-j-k-l-m
 	
 	if(m1.eq.1)then
 	if(i-n1.ge.0)then
-	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n1))
+	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(n1+1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.2)then
 	if(j-n1.ge.0)then
-	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n1))
+	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(n1+1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.3)then
 	if(k-n1.ge.0)then
-	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n1))
+	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(n1+1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.4)then
 	if(l-n1.ge.0)then
-	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n1))
+	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(n1+1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.5)then
 	if(m-n1.ge.0)then
-	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n1))
+	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(n1+1))
 	goto 100
 	endif
 	endif
 
 	if(m1.eq.6)then
 	if(n-n1.ge.0)then
-	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n1))
+	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n1+1))
 	goto 100
 	endif
 	endif
@@ -771,146 +686,8 @@ c
 	enddo
 	enddo
 
-c------------------------------------------------------------------
-
-	do i=0,iord1
-	do j=0,iord1-i
-	do k=0,iord1-i-j
-	do l=0,iord1-i-j-k
-	do m=0,iord1-i-j-k-l
-	do n=0,iord1-i-j-k-l-m
-	
-	if(m2.eq.1)then
-	if(i-n2.ge.0)then
-	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(i-n2))
-	goto 200
-	endif
-	endif
-
-	if(m2.eq.2)then
-	if(j-n2.ge.0)then
-	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(j-n2))
-	goto 200
-	endif
-	endif
-
-	if(m2.eq.3)then
-	if(k-n2.ge.0)then
-	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(k-n2))
-	goto 200
-	endif
-	endif
-
-	if(m2.eq.4)then
-	if(l-n2.ge.0)then
-	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(l-n2))
-	goto 200
-	endif
-	endif
-
-	if(m2.eq.5)then
-	if(m-n2.ge.0)then
-	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(m-n2))
-	goto 200
-	endif
-	endif
-
-	if(m2.eq.6)then
-	if(n-n2.ge.0)then
-	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n-n2))
-	goto 200
-	endif
-	endif
-
-200	continue
-
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-
-	return
-	end
 
 
-c-----------------------------------------------------------------
-	subroutine Tay_deri_6_2(a8,c8,m1,n1,m2,n2,iord)
-c-----------------------------------------------------------------
-c
-c	n1-times partial derivative with respect to variable m1
-c	n2-times partial derivative with respeft to variable m2
-c	of the Taylor series a 
-c
-	implicit real*8(a-h,o-z)
-
-	dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            b8(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
-
-	call Tay_clear_6(b8,iord)
-	call Tay_clear_6(c8,iord)
-
-	do i=0,iord
-	do j=0,iord-i
-	do k=0,iord-i-j
-	do l=0,iord-i-j-k
-	do m=0,iord-i-j-k-l
-	do n=0,iord-i-j-k-l-m
-	
-	if(m1.eq.1)then
-	if(i-n1.ge.0)then
-	b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n1))
-	goto 100
-	endif
-	endif
-
-	if(m1.eq.2)then
-	if(j-n1.ge.0)then
-	b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n1))
-	goto 100
-	endif
-	endif
-
-	if(m1.eq.3)then
-	if(k-n1.ge.0)then
-	b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n1))
-	goto 100
-	endif
-	endif
-
-	if(m1.eq.4)then
-	if(l-n1.ge.0)then
-	b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n1))
-	goto 100
-	endif
-	endif
-
-	if(m1.eq.5)then
-	if(m-n1.ge.0)then
-	b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n1))
-	goto 100
-	endif
-	endif
-
-	if(m1.eq.6)then
-	if(n-n1.ge.0)then
-	b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n1))
-	goto 100
-	endif
-	endif
-
-100	continue
-
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-	enddo
-
-c------------------------------------------------------------
 
 	do i=0,iord
 	do j=0,iord-i
@@ -921,42 +698,42 @@ c------------------------------------------------------------
 	
 	if(m2.eq.1)then
 	if(i-n2.ge.0)then
-	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(i-n2))
+	c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(n2+1))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.2)then
 	if(j-n2.ge.0)then
-	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(j-n2))
+	c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(n2+1))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.3)then
 	if(k-n2.ge.0)then
-	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(k-n2))
+	c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(n2+1))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.4)then
 	if(l-n2.ge.0)then
-	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(l-n2))
+	c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(n2+1))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.5)then
 	if(m-n2.ge.0)then
-	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(m-n2))
+	c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(n2+1))
 	goto 200
 	endif
 	endif
 
 	if(m2.eq.6)then
 	if(n-n2.ge.0)then
-	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n-n2))
+	c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n2+1))
 	goto 200
 	endif
 	endif
@@ -979,12 +756,12 @@ c------------------------------------------------------
 
         implicit real*8(a-h,o-z)
 
-	if(n.lt.0)then
+	if(n.le.0)then
 	type*, 'Value not defined in routine FAKU'
 	stop
 	endif
 
-	if(n.ge.0)then
+	if(n.gt.0)then
 	faku=1.d0
 	do i=1,n
 	faku=faku*dflotj(i)
@@ -1173,7 +950,7 @@ c-----------------------------------------------------------------
 c---------------------------------------------------------------
 	subroutine Tay_mult_4(a,b,c,iord)
 c---------------------------------------------------------------
-c	Multiplication of two Taylor series with six Variables
+c	Multiplication of two Taylor series with four Variables
 c	the order of expansion is iord
 cc--------------------------------------------------------------
 
@@ -1194,19 +971,15 @@ cc--------------------------------------------------------------
 	do m2=0,j
 	do m3=0,k
 	do m4=0,l
-
-	do n1=0,i-m1
-	do n2=0,j-m2
-	do n3=0,k-m3
-	do n4=0,l-m4
+	
+c     Achtung geaendert am 1.Juli, 2011
+	n1=i-m1
+	n2=j-m2
+	n3=k-m3
+	n4=l-m4
 
 	c(i,j,k,l)=c(i,j,k,l)+
      &     a(m1,m2,m3,m4)*b(n1,n2,n3,n4)
-
-	enddo
-	enddo
-	enddo
-	enddo
 
 	enddo
 	enddo
