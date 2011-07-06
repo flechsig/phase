@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <06 Jul 11 13:12:34 flechsig>  */
+/*   Time-stamp: <06 Jul 11 13:13:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -23,7 +23,7 @@ typedef struct FortranString
   char *string;
   int length;
 } FString; 
-/*  VMS  */
+
 
 char    *delversion(char *); /* entfernt Versionsnummer von VMS- Filenamen */
 char    *FnameBody(char *);  /* holt Rumpf von VMS- - Filenamen            */
