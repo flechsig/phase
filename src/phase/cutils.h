@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <08 Apr 04 15:05:29 flechsig>  */
+/*   Time-stamp: <06 Jul 11 13:12:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -16,19 +16,14 @@
 
 #define		FASTNULL		1.0e-15
 
-#ifdef VMS
-   #define 	logfilename 		"golden\"name password\"::userdisk_3:\
-					 [flechsig.PHAS]PHASEuser.log"   
-
-   typedef struct dsc$descriptor_s FString;         /* FORTRAN- String */
-#else                                               /* linux */
-   #define 	logfilename 		"/tmp/phaseuser.log" 
-   typedef struct FortranString
-   {   
-     char *string;
-     int length;
-   } FString; 
-#endif                                              /*  VMS  */
+                                              /* linux */
+#define 	logfilename 		"/tmp/phaseuser.log" 
+typedef struct FortranString
+{   
+  char *string;
+  int length;
+} FString; 
+/*  VMS  */
 
 char    *delversion(char *); /* entfernt Versionsnummer von VMS- Filenamen */
 char    *FnameBody(char *);  /* holt Rumpf von VMS- - Filenamen            */
