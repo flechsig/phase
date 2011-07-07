@@ -1,3 +1,7 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
 c-------------------------------------------------------------
 	subroutine fgmapidp_8(acc,am,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
@@ -310,8 +314,9 @@ c--------------------- get higher order partial derivatives of path length
 c	input:	opl6(w,l,y,z,yp,zp)
 c	output:	dfdwidlj(i,j,y,z,dy,dz)
 
-	call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
-     &    dfdwidlj,iord)
+ccUF erst mal auskommentiert nach Absprache mit JB 7.7.2011
+ccUF	call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
+ccUF     &    dfdwidlj,iord)
 
 c------------------------------------------------------------
 
