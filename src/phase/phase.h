@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <27 Jun 11 16:45:57 flechsig>  */
+/*   Time-stamp: <06 Jul 11 13:09:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -780,6 +780,11 @@ void
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
   ReadCoefficientFile(double *, char *),
+#ifdef QTGUI
+  readfg34_par(struct BeamlineType *, struct apertures *,
+	       struct control_flags *,  struct integration *,
+	       double *),
+#endif
   ReadpsFile(char *, struct RESULTType *),
   ReadRayFile(char *, int *, struct RESULTType *), 
   readmatrixfilec(char *, double *, int),
