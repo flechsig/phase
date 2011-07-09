@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <27 Jun 11 16:26:00 flechsig>  */
+/*  Time-stamp: <08 Jul 11 15:33:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,17 +40,19 @@ public:
     MainWindow();
 
 private slots:
+    void grautoscaleslot();
+    void grapplyslot();
     void newBeamline(); // UF
     void save();
     void print();
     void undo();
     void about();
     void insertCustomer(const QString &customer);
-    void insertElement(); // UF
-    void deleteElement(); // UF
-    void selectElement(); // UF
+    void insertElement();   // UF
+    void deleteElement();   // UF
+    void selectElement();   // UF
     void selectParameter(); // UF
-    void pmslot();        // shape slots
+    void pmslot();          // shape slots
     void toslot();
     void peslot();
     void elslot();
@@ -222,9 +224,31 @@ private:
     QAction *footprintAct;
     QAction *phasespaceAct;
     QAction *mphasespaceAct;
+    QAction *readFg34Act;
 
     QAction *writemapAct;
     QAction *writecoeffAct;
+    QAction *writeRTresultAct;
+
+    QMenu   *plotstyleMenu;
+    QAction *grfootprintAct;
+    QAction *grcontourAct;
+    QAction *grcontourisoAct;
+    QAction *grisoAct;
+    QAction *grsourceAct;
+    QAction *grimageAct;
+    QAction *grexample1Act;
+    QAction *grexample2Act;
+    Plot    *d_plot;
+
+    QPushButton *grautoButton;
+    QPushButton *grapplyButton;
+    QLineEdit *grzminE;
+    QLineEdit *grzmaxE;
+    QLineEdit *gryminE;
+    QLineEdit *grymaxE;
+
+    QSignalMapper *grsignalMapper;  // UF
 };
 
 

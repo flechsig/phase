@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <27 Jun 11 17:33:37 flechsig> 
+#  Time-stamp: <07 Jul 11 15:37:35 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -11,8 +11,10 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phaseqt 
-phaseqt_SOURCES = main.cpp mainwindow.cpp qtphase.cpp phasec.c cutils.c bline.c rtrace.c \
-                  xmalloc.c error.c geometrypck.c mirrorpck.c
+phaseqt_SOURCES = main.cpp mainwindow.cpp qtphase.cpp ../phase/phasec.c ../phase/cutils.c ../phase/bline.c ../phase/rtrace.c \
+                  ../phase/xmalloc.c ../phase/error.c ../phase/geometrypck.c ../phase/mirrorpck.c ../phase/phasefor.F \
+	../phase/fgmapidp_8.F ../phase/make_matrix_8.for ../phase/taylor-ops.for ../phase/q0_q1_q2_8.for ../phase/get_partial_etc.for ../phase/rekursiv_2d_8.for \
+	../phase/replace_6v4v.for ../phase/replace_wl_in_ypzp.for ../phase/replace_wl_in_u.for ../phase/drift_8.for ../phase/fdet_8.for
 
 
 #phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
@@ -48,11 +50,11 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 EXTRA_DIST = phase_struct.for $(pkgdata_DATA)
 
 ## flags
-AM_CPPFLAGS = -DLINUX -DQTGUI
-
-AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-	     @FLIBS@    @CFORLIB@
-
+AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+AM_CXXFLAGS   = -I/usr/local/Trolltech/Qt-4.7.3/mkspecs/linux-g++ -I. -I/usr/local/Trolltech/Qt-4.7.3/include/QtCore -I/usr/local/Trolltech/Qt-4.7.3/include/QtGui -I/usr/local/Trolltech/Qt-4.7.3/include -I../phase -I. -pipe -g -D_REENTRANT -Wall -W 
+###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
+#####	     @FLIBS@    @CFORLIB@
+AM_LDFLAGS = moc_mainwindow.o qrc_qtgui.o -Wl,-rpath,/usr/local/Trolltech/Qt-4.7.3/lib -L/usr/local/Trolltech/Qt-4.7.3/lib -lQtGui -L/usr/local/Trolltech/Qt-4.7.3/lib -L/usr/X11R6/lib -lQtCore -lpthread  @FLIBS@    @CFORLIB@
 
 ##we always use the c linker
 F77LINK = $(LINK)

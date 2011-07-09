@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <27 Jun 11 16:54:28 flechsig> 
+//  Time-stamp: <08 Jul 11 18:02:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -33,7 +33,7 @@ MainWindow::MainWindow()
   // ;myQtPhase->myPHASEset::init("default");
   this->myPHASEset::init("default");
   //  myQtPhase->myPHASEset::print();
-  //  myQtPhase->myBeamline::init();
+  this->myBeamline::init();
 } // end MainWindow
 
 //////////////////////////////////////////////
@@ -89,7 +89,7 @@ void MainWindow::print()
         return;
 
     //  document->print(&printer);
-
+    d_plot->printPlot();
     statusBar()->showMessage(tr("Ready"), 2000);
 #endif
 } // end print()
@@ -777,14 +777,36 @@ void MainWindow::activateProc(const QString &action)
       ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
       BuildBeamline(this);
       RayTracec(this); 
-      //this->myPHASEset::init("default");
-      //     this->myPHASEset::print();
-      WriteRayFile(this->imageraysname, &this->RESULT.points,
-		   (RayType*)this->RESULT.RESp);
       printf("ray trace-> done\n");
     }
-  if (!action.compare("raytracefullAct"))   printf("raytracefullAct button pressed\n"); 
-  if (!action.compare("footprintAct"))      printf("footprintAct button pressed\n"); 
+  if (!action.compare("raytracefullAct")) 
+    { 
+      printf("\nraytracefullAct button  pressed\n");
+      
+      this->localalloc= DOALLOC;   // fix wrong initialization
+      if (this->hormapsloaded != 1) this->hormapsloaded= 0;      // fix
+
+      MakeRTSource(this, this);
+      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      BuildBeamline(this);
+      RayTraceFull(this); 
+      printf("full ray trace-> done\n");
+    }
+  if (!action.compare("footprintAct")) 
+    { 
+      printf("\nfootprintAct button  pressed\n");
+      
+      this->localalloc= DOALLOC;   // fix wrong initialization
+      if (this->hormapsloaded != 1) this->hormapsloaded= 0;      // fix
+
+      MakeRTSource(this, this);
+      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      BuildBeamline(this);
+      Footprint(this, this->position);
+      printf("footprint-> done\n");
+    }
+
+
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
   if (!action.compare("mphasespaceAct"))    printf("mphasespaceAct button pressed\n"); 
 
@@ -837,7 +859,141 @@ void MainWindow::activateProc(const QString &action)
       WriteMKos((struct mirrortype *)&this->ElementList[this->position- 1].mir, buffer);
     } 
 
+  if (!action.compare("writeRTresultAct")) 
+    { 
+      printf("writereRTsultAct button pressed\n"); 
+      printf("write result to file: %s\n", this->imageraysname);
+      WriteRayFile(this->imageraysname, &this->RESULT.points,
+		   (struct RayType *)this->RESULT.RESp);
+    } 
+  if (!action.compare("grfootprintAct")) 
+    { 
+      printf("grcontourAct button pressed\n"); 
+      //d_plot->showSpectrogram(true);
+    } 
+
+
+  if (!action.compare("grcontourAct")) 
+    { 
+      d_plot->showContour(false);
+      d_plot->showSpectrogram(true);
+    } 
+
+  if (!action.compare("grcontourisoAct")) 
+    { 
+      d_plot->showSpectrogram(true);
+      d_plot->showContour(true);
+    } 
+  if (!action.compare("grisoAct")) 
+    { 
+      d_plot->showSpectrogram(false);
+      d_plot->showContour(true);
+    } 
+
+  if (!action.compare("grsourceAct")) 
+    { 
+      d_plot->plotsubject= 0;
+      //  d_plot->setTitle(tr("Source Plane"));
+      //  d_plot->setphaseData("grsourceAct");
+    }
+
+  if (!action.compare("grimageAct")) 
+    { 
+      d_plot->plotsubject= 1;
+      //  d_plot->setTitle(tr("Image Plane"));
+      //  d_plot->setphaseData("grimageAct");
+    }
+
+  if (!action.compare("grexample1Act")) 
+    { 
+      d_plot->plotsubject= 2;
+      //   d_plot->setTitle(tr("PhaseQt: example 1"));
+      //   d_plot->setdefaultData();
+    }
+
+  if (!action.compare("grexample2Act")) 
+    { 
+      d_plot->plotsubject= 3;
+      //  d_plot->setTitle(tr("PhaseQt: example 2"));
+      //   d_plot->setdefaultData2();
+    }
+
+  if (!action.compare("readFg34Act")) 
+    { 
+      printf("readFg34Act button pressed\n"); 
+      printf("Initialize parameters with fg34.par from J. Bahrdt\n"); 
+      if (fexists("fg34.par") == 1)
+	{
+	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
+	  readfg34_par(this, &this->BLOptions.apr,
+		       &this->BLOptions.ifl, &this->BLOptions.xi,
+		       &this->BLOptions.epsilon);
+	} else
+	QMessageBox::warning(this, tr("readFg34Act"),
+			     tr("file fg34.par not found!"));
+    } 
+
 } // end activateProc
+
+// slot autscale
+void MainWindow::grautoscaleslot()
+{
+  char buffer[10];
+  printf("autscale activated\n");
+
+  if (d_plot->plotsubject == 1) 
+    d_plot->Plot::autoScale((struct RayType *)this->RESULT.RESp, this->RESULT.points); 
+  else 
+    d_plot->Plot::autoScale((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber);
+
+
+  sprintf(buffer, "%9.3f", d_plot->Plot::ymin);
+  gryminE->setText(QString(tr(buffer)));
+  sprintf(buffer, "%9.3f", d_plot->Plot::ymax);
+  grymaxE->setText(QString(tr(buffer)));
+  sprintf(buffer, "%9.3f", d_plot->Plot::zmin);
+  grzminE->setText(QString(tr(buffer)));
+  sprintf(buffer, "%9.3f", d_plot->Plot::zmax);
+  grzmaxE->setText(QString(tr(buffer)));
+}
+
+// slot autoscale
+void MainWindow::grapplyslot()
+{
+  printf("apply activated\n");
+  sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
+  sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
+  sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
+  sscanf(grzmaxE->text().toAscii().data(), "%lf", &d_plot->Plot::zmax);
+
+  if (d_plot->plotsubject == 0) 
+    {
+      d_plot->Plot::hfill((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber);
+      d_plot->setTitle(tr("Source Plane"));
+      d_plot->setphaseData("grsourceAct");
+    }
+  if (d_plot->plotsubject == 1) 
+    {
+      d_plot->Plot::hfill((struct RayType *)this->RESULT.RESp, this->RESULT.points);
+      d_plot->setTitle(tr("Image Plane"));
+      d_plot->setphaseData("grimageAct");
+    }
+  if (d_plot->plotsubject == 2) 
+    {
+      d_plot->setTitle(tr("PhaseQt: example 1"));
+      d_plot->setdefaultData();
+      
+    }
+
+  if (d_plot->plotsubject == 3) 
+    {
+      d_plot->setTitle(tr("PhaseQt: example 2"));
+      d_plot->setdefaultData2();
+      
+    }
+
+  d_plot->replot();
+}
 
 ///////////////////////
 // end slots section //
@@ -928,6 +1084,16 @@ void MainWindow::createActions()
     signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
     connect(writecoeffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
+    writeRTresultAct = new QAction(tr("Write &RT results "), this);
+    writeRTresultAct->setStatusTip(tr("Write file with ray trace results"));
+    signalMapper->setMapping(writeRTresultAct, QString("writeRTresultAct"));
+    connect(writeRTresultAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    readFg34Act = new QAction(tr("&Read file fg34.par"), this);
+    readFg34Act->setStatusTip(tr("Read parameter file fg34.par (for compatibility with previous phase versions)"));
+    signalMapper->setMapping(readFg34Act, QString("readFg34Act"));
+    connect(readFg34Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
     //    rthardedgeAct = new QAction();
     //    signalMapper->setMapping(rthardedgeAct, QString("rthardedgeAct"));
     //    connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -948,6 +1114,7 @@ void MainWindow::createMenus()
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
+    editMenu->addAction(readFg34Act);
 
     calcMenu = menuBar()->addMenu(tr("&Calc"));
     calcMenu->addAction(raytracesimpleAct);
@@ -958,8 +1125,10 @@ void MainWindow::createMenus()
     calcMenu->addAction(mphasespaceAct);
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
+    cmdMenu->addAction(writeRTresultAct);
     cmdMenu->addAction(writemapAct);
     cmdMenu->addAction(writecoeffAct);
+    
 
     viewMenu = menuBar()->addMenu(tr("&View"));
 
@@ -1525,7 +1694,7 @@ QWidget *MainWindow::createParameterBox()
 QWidget *MainWindow::createGraphicBox()
 {
   graphicBox = new QWidget();
-  
+
   // upper part
   QGroupBox   *graphicGroup  = new QGroupBox(tr("Graphics"));
   QGridLayout *graphicLayout = new QGridLayout;
@@ -1536,43 +1705,89 @@ QWidget *MainWindow::createGraphicBox()
   QLabel *yminLabel  = new QLabel(tr("ymin (mm)"));
   QLabel *ymaxLabel  = new QLabel(tr("ymax (mm)"));
   
-  QLineEdit *zminE  = new QLineEdit;
-  QLineEdit *zmaxE  = new QLineEdit;
-  QLineEdit *yminE  = new QLineEdit;
-  QLineEdit *ymaxE  = new QLineEdit;
+  grzminE  = new QLineEdit;
+  grzmaxE  = new QLineEdit;
+  gryminE  = new QLineEdit;
+  grymaxE  = new QLineEdit;
   
-  QPushButton *autoButton = new QPushButton(tr("A&utoscale"));
-  QPushButton *applyButton = new QPushButton(tr("&Apply"));
+  grautoButton  = new QPushButton(tr("A&utoscale"));
+  grapplyButton = new QPushButton(tr("&Apply"));
   QPushButton *popupButton = new QPushButton(tr("&PlotStyle"));
-  QMenu *menu = new QMenu(this);
-  menu->addAction(tr("&footprint"));
-  menu->addAction(tr("&contour"));
-  popupButton->setMenu(menu);
+
+  connect(grapplyButton, SIGNAL(clicked()), this, SLOT(grapplyslot()));
+  connect(grautoButton,  SIGNAL(clicked()), this, SLOT(grautoscaleslot()));
+
+  plotstyleMenu   = new QMenu(this);
+  grfootprintAct  = new QAction(tr("&footprint"), this);
+  grcontourAct    = new QAction(tr("&contour"), this);
+  grcontourisoAct = new QAction(tr("contour + iso &lines"), this);
+  grisoAct        = new QAction(tr("&iso lines"), this);
+
+  plotstyleMenu->addAction(grfootprintAct);
+  plotstyleMenu->addAction(grcontourAct);
+  plotstyleMenu->addAction(grcontourisoAct);
+  plotstyleMenu->addAction(grisoAct);
+  
+  popupButton->setMenu(plotstyleMenu);
+  grsignalMapper = new QSignalMapper(this);
+  connect(grsignalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
+
+  connect(grfootprintAct,  SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grcontourAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grcontourisoAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grisoAct,        SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
+  grsignalMapper->setMapping(grfootprintAct,  QString("grfootprintAct"));
+  grsignalMapper->setMapping(grcontourAct,    QString("grcontourAct"));
+  grsignalMapper->setMapping(grcontourisoAct, QString("grcontourisoAct"));
+  grsignalMapper->setMapping(grisoAct,        QString("grisoAct"));
   
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
   QMenu *subject = new QMenu(this);
-  subject->addAction(tr("&source"));
-  subject->addAction(tr("&image"));
+  grsourceAct  = new QAction(tr("&source"), this);
+  grimageAct   = new QAction(tr("&image"), this);
+  grexample1Act = new QAction(tr("&example 1"), this);
+  grexample2Act = new QAction(tr("&example 2"), this);
+
+  subject->addAction(grsourceAct);
+  subject->addAction(grimageAct);
+  subject->addAction(grexample1Act);
+  subject->addAction(grexample2Act);
   subjectpopupButton->setMenu(subject);
-  
+
+  connect(grsourceAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grimageAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grexample1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grexample2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
+  grsignalMapper->setMapping(grsourceAct,   QString("grsourceAct"));
+  grsignalMapper->setMapping(grimageAct,    QString("grimageAct"));
+  grsignalMapper->setMapping(grexample1Act, QString("grexample1Act"));
+  grsignalMapper->setMapping(grexample2Act, QString("grexample2Act"));
+ 
   graphicLayout->addWidget(zminLabel, 0, 0);
   graphicLayout->addWidget(zmaxLabel, 0, 2);
   graphicLayout->addWidget(yminLabel, 1, 0);
   graphicLayout->addWidget(ymaxLabel, 1, 2);
-  graphicLayout->addWidget(zminE, 0, 1);
-  graphicLayout->addWidget(zmaxE, 0, 3);
-  graphicLayout->addWidget(yminE, 1, 1);
-  graphicLayout->addWidget(ymaxE, 1, 3);
-  graphicLayout->addWidget(autoButton, 2, 2);
-  graphicLayout->addWidget(applyButton, 2, 3);
+  graphicLayout->addWidget(grzminE, 0, 1);
+  graphicLayout->addWidget(grzmaxE, 0, 3);
+  graphicLayout->addWidget(gryminE, 1, 1);
+  graphicLayout->addWidget(grymaxE, 1, 3);
+  graphicLayout->addWidget(grautoButton, 2, 2);
+  graphicLayout->addWidget(grapplyButton, 2, 3);
   graphicLayout->addWidget(subjectpopupButton, 2, 0);
   graphicLayout->addWidget(popupButton, 2, 1);
   //  graphicLayout->setRowStretch(1,1);
   graphicGroup->setLayout(graphicLayout);
   
+  d_plot = new Plot(this);
+  d_plot->setAxisTitle(2, tr("z (mm)"));
+  d_plot->setAxisTitle(0, tr("y (mm)"));
+  d_plot->setTitle(tr("PhaseQt"));
+
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(graphicGroup);
-  
+  vbox->addWidget(d_plot);
   vbox->addStretch(1);
   graphicBox->setLayout(vbox);
   return graphicBox;

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <08 Jul 11 15:54:01 flechsig>  */
+/*  Time-stamp: <08 Jul 11 17:32:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -37,6 +37,7 @@ public:
     double h2max;
     void   hfill(struct RayType *, int);
     QwtPlotSpectrogram *d_spectrogram;
+    int    plotsubject;
 
 public Q_SLOTS:
     void showContour(bool on);
@@ -55,4 +56,6 @@ private:
     int    SetUpArrays(int n);
     QPen   *pen_ptr;
     void   Beauty(double *, double *);
+    struct BeamlineType *bt;
+    
 };
