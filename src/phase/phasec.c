@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <22 Jun 11 18:06:03 flechsig>  */
+/*   Time-stamp: <08 Jul 11 09:11:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -44,7 +44,9 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 /* Uwe 2.10.96 */
 /* Batchmodus */
 {
+#ifndef QTGUI
   struct PSDType     *PSDp;
+#endif
   struct PSImageType *psip;
 
   printf("BatchMode: datafilename  : %s\n", ps->beamlinename);
@@ -87,7 +89,6 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
       printf("BatchMode: Phase Space Transformation\n");
 #ifndef QTGUI
       src_ini(&bl->src); 
-
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       PST(bl);
@@ -329,7 +330,7 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
 
 void InitOptiBox1(char *pickname)   
 {
-  printf("dummy\n");
+  printf("dummy %s\n", pickname);
 }
 
 
@@ -529,13 +530,12 @@ void gpd(char *ifname, FILE *af)
 
 /************************************************************************/
 void writemapc(char *fname, int iord, 
-               double *ypc1, double *zpc1, double *dypc, double *dzpc,
-	       double *wc, double *xlc, double *xlen1c, double *xlen2c)   
-     /************************************************************************/
-     /* schreibt die Transformationskoeffizienten auf ein file       	*/
-     /* Uwe 28.6.96 							*/ 
-     /* letzte Aenderung: Uwe 28.6.96 					*/ 
-     /************************************************************************/
+               double *ypc1, double *zpc1, double *dypc,   double *dzpc,
+	       double *wc,   double *xlc,  double *xlen1c, double *xlen2c)   
+/************************************************************************/
+/* schreibt die Transformationskoeffizienten auf ein file       	*/
+/* Anpassung an SEVEN_ORDER 8.7.2011 UF                                 */     
+/************************************************************************/
 {
   FILE *f;
   int i, j, k, l, index;
@@ -553,7 +553,11 @@ void writemapc(char *fname, int iord,
 	for (l= 0; l <= iord; l++)
 	  if((i+j+k+l) <= iord)
 	    {
+#ifdef SEVEN_ORDER
+	      index=i+ j*8+ k*64 + l*512;
+#else
 	      index=i+ j*5+ k*25 + l*125;
+#endif
 	      /*     printf("%d\n", index); */
 	      fprintf(f, "%d %d %d %d % 15.5E % 15.5E % 15.5E % 15.5E\n", 
                       i, j, k, l, ypc1[index], zpc1[index],
