@@ -222,12 +222,16 @@ c
 	imode=2
 	call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
 
+c UF 9.7.2011 move this section on request of JB
+c to be called after Taylor expansion of w and l
 c------------- replace w and l by power series in (y,z,dy,dz)
 c	input:	 ypc(w,l,y,z)   &  zpc(w,l,y,z) 
 c	output:	ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
-
-        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
-     &                        ypc1,zpc1,2,iord)
+c
+c        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
+c     &                        ypc1,zpc1,2,iord)
+c
+c end uf 9.7.2011
 
 c------------- set up eqs. 27 & 28 
 c	output:	eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
@@ -240,6 +244,15 @@ c	input:	eqs. 27 & 28
 c	output:	wc(y,z,dy,dz) & xlc(y,z,dy,dz)
 	imode=1
 	call subd345a(acc,eq27,eq28,wc,xlc,imode,iord)
+
+c UF 9.7.2011 insert from above
+c------------- replace w and l by power series in (y,z,dy,dz)
+c       input:   ypc(w,l,y,z)   &  zpc(w,l,y,z)
+c       output: ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
+        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
+     &                        ypc1,zpc1,2,iord)
+
+c UF 9.7.2011 end
 
 c------------- get Taylor expansion of dyp and dzp
 c	input:	wc(y,z,dy,dz),xlc(y,z,dy,dz),
