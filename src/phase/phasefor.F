@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <06 Jun 11 17:13:09 flechsig> 
+c$$$ Time-stamp: <12 Jul 11 10:19:04 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2178,15 +2178,9 @@ c add epsilon feb 04
       implicit none
 ccc      include 'phase_struct.for'
 c a trick to have the struct only in the ./phase and find it from opti 
-c if it works under vms is not yet tested
-#ifdef VMS
-        include '[-.phase]phase_struct.for'
-c        include 'phase_struct.for'
-#else
 cc        include '../phase/phase_struct.for'
 #include '../phase/phase_struct.F'
-#endif
-      
+
       record /control_flags/ ifl
       record /sources/ src
       record /integration/ xi
@@ -2334,6 +2328,199 @@ c*************************************************************
       end
   
 c * end clen1 
+c-----------------------------------------------------------------------------------
+c aus create_hor_defl_file.for von JP
+	subroutine create_hormap(xmap7, iord, idefl)
+c UF 12.7.2011 create subroutine
+c-----------------------------------------------------------------------------------
+	implicit none
+	integer iord, idefl, i, j, k, l, idim
+	
+        real *8 ypc1, zpc1, dypc, dzpc, xmap7
+        dimension ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7),
+     &            dypc(0:7,0:7,0:7,0:7),
+     &            dzpc(0:7,0:7,0:7,0:7),
+     &            xmap7(1:330,1:330)
+
+       	do i=0,iord
+	   do j=0,iord
+	      do k=0,iord
+		 do l=0,iord
+		    if((i+j+k+l).le.iord)then
+		       ypc1(i,j,k,l)=0.
+		       zpc1(i,j,k,l)=0.
+		       dypc(i,j,k,l)=0.
+		       dzpc(i,j,k,l)=0.
+		    endif
+		 enddo
+	      enddo        
+	   enddo
+	enddo        
+
+c---------- rh deflection 
+
+        if(idefl.eq.1)then
+	   ypc1(0,1,0,0)=1.
+	   zpc1(1,0,0,0)=-1.
+	   dypc(0,0,0,1)=1.
+	   dzpc(0,0,1,0)=-1.
+	endif
+
+c---------- lh deflection
+        if(idefl.eq.2)then
+	   ypc1(0,1,0,0)=-1.
+	   zpc1(1,0,0,0)=1.
+	   dypc(0,0,0,1)=-1.
+	   dzpc(0,0,1,0)=1.
+	endif
+            
+	call make_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
+	write(*,*)'create_hormap: made matrix of dimension: ', idim
+
+	return
+	end
+c end create_hormap
+
+c helper routines for hormaps
+c------------------------------------------------------
+	subroutine make_matrix(xmap7,ypca,zpca,dypca,dzpca,iord,idim)
+c------------------------------------------------------
+	implicit real*8(a-h,o-z)
+
+	dimension ypca(0:7,0:7,0:7,0:7),
+     &            zpca(0:7,0:7,0:7,0:7),
+     &            dypca(0:7,0:7,0:7,0:7),
+     &            dzpca(0:7,0:7,0:7,0:7)
+
+	dimension xmap7(1:330,1:330)
+
+	dimension cc(0:7,0:7,0:7,0:7,330)
+	dimension cc0(0:7,0:7,0:7,0:7)
+	dimension cc1(0:7,0:7,0:7,0:7)
+
+c----------------------------------------------------
+c
+c	Bedeutung der Indizes
+c	i: Zeilen
+c	j: Spalten
+c	k: y
+c	l: z
+c	m: dy
+c	n: dz
+c
+c--------------- get dimension of square matrix
+	call matrix_dim(iord,idim)
+c-------------- get cc row vectors
+
+	do k=0,iord
+	 if(k.eq.0)then
+
+	 do l=0,iord-k
+	  if((k.eq.0).and.(l.eq.0))then
+
+	  do m=0,iord-k-l
+	   if((k.eq.0).and.(l.eq.0).and.(m.eq.0))then
+
+	   do n=0,iord-k-l-m
+	    if((k.eq.0).and.(l.eq.0).and.
+     &         (m.eq.0).and.(n.eq.0))then
+	 	call Tay_fill_4(cc0,0.d0,iord)	! fuelle Arbeitsvektor mit Nullen
+	 	    cc0(0,0,0,0)=1.d0           ! ausser erstem Element
+		call Tay_copy_vm_4(cc0,cc,k,l,m,n,iord)	! und kopiere ihn in die erste Zeile		
+	       else
+		call Tay_mult_4(cc0,dzpca,cc1,iord)
+
+		call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord)	! copy in naechste Zeile
+		call Tay_copy_4(cc1,cc0,iord)		    ! und aufheben fuer naechste Multiplikation
+		
+	   endif	! n-Schleife nur einmal durchlaufen
+	   enddo	! und cc(0,0,0,n,idim) berechnen
+	
+	   else
+
+	    do n=0,iord-k-l-m
+	     call Tay_copy_mv_4(cc,cc0,k,l,m-1,n,iord)
+	     call Tay_mult_4(cc0,dypca,cc1,iord)
+	     call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord)
+	     call Tay_copy_4(cc1,cc0,iord)		
+	    enddo
+	   endif
+
+	   enddo	! m-loop nur einmal durchlaufen
+
+	   else
+
+	    do m=0,iord-k-l
+	     do n=0,iord-k-l-m
+	      call Tay_copy_mv_4(cc,cc0,k,l-1,m,n,iord)
+	      call Tay_mult_4(cc0,zpca,cc1,iord)
+	      call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord)
+	      call Tay_copy_4(cc1,cc0,iord)		
+	     enddo
+	    enddo
+	   endif
+
+	  enddo		! l-loop nur einmal durchlaufen
+
+	  else
+	   do l=0,iord-k
+	    do m=0,iord-k-l
+	     do n=0,iord-k-l-m
+	      call Tay_copy_mv_4(cc,cc0,k-1,l,m,n,iord)
+	      call Tay_mult_4(cc0,ypca,cc1,iord)
+	      call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord) 
+	      call Tay_copy_4(cc1,cc0,iord)		
+	     enddo
+	    enddo
+	   enddo
+	  endif
+
+	 enddo		! loop over k
+
+c------------------------------------------------------
+
+      ii=0
+      do k=0,iord
+       do l=0,iord-k
+	  do m=0,iord-k-l
+	   do n=0,iord-k-l-m   
+
+         ii=ii+1      
+         do j=1,idim
+         xmap7(ii,j)=cc(k,l,m,n,j)
+         enddo
+   
+         enddo
+        enddo
+       enddo
+      enddo
+	
+	return
+	end
+
+#ifdef OBSOLETE
+c UF duplicate function in make_matrix_8
+c---------------------------------------------------
+        subroutine matrix_dim(iord,idim)
+c---------------------------------------------------
+
+        idim=0
+
+        do i=0,iord
+         do j=0,iord-i
+          do k=0,iord-i-j
+           do l=0,iord-i-j-k
+            idim=idim+1
+           enddo
+          enddo
+         enddo
+        enddo
+
+        return
+        end
+#endif
+c end helper routines for hormaps
 
 c*** end phasefor ***********************************************
                 
