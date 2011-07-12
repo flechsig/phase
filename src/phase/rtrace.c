@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <28 Jun 11 16:05:20 flechsig>  */
+/*   Time-stamp: <12 Jul 11 10:44:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -318,9 +318,9 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
 /* modification: 17 Oct 97 09:21:43 flechsig */
 /* 29.3.99 wellenlaenge beim Undulator explizit aus bloptions setzen */ 
 {
-   struct RayType *rays;
+  /*struct RayType *rays;*/
    struct UndulatorSourceType  *up;
-   struct UndulatorSource0Type *up0;
+   /*   struct UndulatorSource0Type *up0; */
    struct SRSourceType         *sp;
    struct FileSourceType       *fp;
    /* 24.11.06 */
@@ -421,7 +421,7 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
 #ifdef DEBUG
    printf("MakeRTSource   end: beamlineOK: %X\n", bl->beamlineOK);
 #endif
-   /* 2.5.96 free(bl->RTSource.SourceRays);                /* ?? */
+   /* 2.5.96 free(bl->RTSource.SourceRays);           */
 }  /* end makertsource */
 
 
@@ -438,7 +438,8 @@ int OnElement(struct mdatset *mi, double w, double l)
 void RayTraceSingleRay(struct BeamlineType *bl)
 {
   struct RayType *Raysin, *Raysout, Tmpsource, Tmpresult;   
-  int    i, iord, elcounter, elnumber;
+  int      elnumber;
+  unsigned int elcounter;
   double uu, ww, ll, xlength, xlength1, xlength2, phase, raylen, 
     slopelen, dela, res, dphase;
   struct ElementType *ds; 
@@ -567,7 +568,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 		elcounter++;
 	      }
 	  } /* end while  */
-	/*	if (bl->deltalambdafactor < 1e12)    /* wurde neu gesetzt */
+	/*	if (bl->deltalambdafactor < 1e12)     wurde neu gesetzt */
 	  {
 	    printf("  energy resolution: \t");
 	    dela= Raysout->y * bl->deltalambdafactor* 1e6;
@@ -596,9 +597,9 @@ void RayTracec(struct BeamlineType *bl)
 /* phaseset wird nicht mehr benutzt      */
 {
   struct RayType *Raysin, *Raysout;   
-  int i, iord;
-  double uu, ww, ll, xlength, xlength1, xlength2, phase;
-  struct ElementType *ds; 
+  int i/*, iord*/;
+  /*double uu, ww, ll, xlength, xlength1, xlength2, phase;*/
+  /*struct ElementType *ds; */
   struct RESULTType *Re; 
 
   /*********************************************************************/
@@ -650,7 +651,8 @@ void RayTraceFull(struct BeamlineType *bl)
 /********************************************************/
 {
    struct RayType *Raysin, *Raysout, *tmpsource, *tmpresult;   
-   int i, iord, lost, zahl, elnumber, elcounter;
+   int i, lost, zahl, elnumber;
+   unsigned int elcounter;
    double uu, ww, ll, xlength, xlength1, xlength2, dphase, slopelen;
    struct ElementType *ds; 
    struct RESULTType *Re; 
