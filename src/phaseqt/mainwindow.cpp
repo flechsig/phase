@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-14 00:38:33 flechsig> 
+//  Time-stamp: <2011-07-14 00:43:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -46,6 +46,7 @@ MainWindow::MainWindow()
   UpdateElementList();
   UpdateBeamlineBox();
   UpdateSourceBox();
+  parameterUpdateAll(NPARS);
 } // end MainWindow
 
 //////////////////////////////////////////////
@@ -630,7 +631,7 @@ void MainWindow::newBeamline()
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
-	  parameterUpdateAll(5);
+	  parameterUpdateAll(NPARS);
 	  this->beamlineOK= 0;
           this->myPHASEset::init(name);
 	  PutPHASE(this, (char*) MainPickName);
