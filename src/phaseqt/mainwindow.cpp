@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 23:59:19 flechsig> 
+//  Time-stamp: <2011-07-14 00:06:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1882,7 +1882,7 @@ void MainWindow::parameterUpdate(int pos, char *text)
     case 0:
       scanned= sscanf(text, "%lf", &this->BLOptions.epsilon);
       if ((scanned == EOF) || (scanned == 0)) this->BLOptions.epsilon= 1e-4; // default
-      sprintf(buffer, "%5lg : %s", this->BLOptions.epsilon, "(epsilon) for Newton routine (1e-4)");
+      sprintf(buffer, "%-5lg : %s", this->BLOptions.epsilon, "(epsilon) for Newton routine (1e-4)");
       break;
     case 1:
       scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
