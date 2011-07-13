@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 23:10:04 flechsig> 
+//  Time-stamp: <2011-07-13 23:11:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1689,7 +1689,7 @@ QWidget *MainWindow::createParameterBox()
      model->setHeaderData(3, Qt::Horizontal, QObject::tr("Country"));
 #endif
 
-  QLabel *parameterLabel  = new QLabel(tr("edit only the value after ':'"));
+  QLabel *parameterLabel  = new QLabel(tr("edit value"));
   parameterE  = new QLineEdit;
 
   parameterLayout->addWidget(parameterList);
