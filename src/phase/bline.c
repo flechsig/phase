@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <12 Jul 11 10:24:52 flechsig>  */
+/*   Time-stamp: <13 Jul 11 16:11:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -42,9 +42,9 @@ void BuildBeamline(struct BeamlineType *bl)
 /****************************************************************/
 {
    unsigned int elcounter;
-   int     i, imodus;
+   int     imodus;
    struct  ElementType *listpt;      
-   char    command[MaxPathLength];
+   /*   char    command[MaxPathLength]; */
 
 #ifdef DEBUG
   printf("BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
@@ -147,9 +147,9 @@ void BuildBeamline(struct BeamlineType *bl)
 	 if (listpt->MDat.Art != kEOESlit)
 	   {
 	     if (elcounter == 1)
-	       memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
+	       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
 	     else		                   /* bline zusammenbauen */
-	       GlueLeft((double *)bl->map70, (double *)listpt->matrix); 
+	       GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
 	     /* GlueLeft(A, B) A= B* A */
         
 	     bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
@@ -160,7 +160,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	 elcounter++; listpt++; 
       } /* Schleife ueber alle Elemente fertig */
 
-      extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+      extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
 
       /* UF JB wir brauchen hier ein dfdw fuer die beamline */
@@ -172,11 +172,11 @@ void BuildBeamline(struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	   fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-		dfdwwp, dfdwlp, dfdllp, 
-		&bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
-		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+		 dfdwwp, dfdwlp, dfdllp, 
+		 &bl->fdetc, &bl->fdetphc,
+		 &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
+		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else      
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -186,7 +186,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
 	  if (listpt->MDat.Art != kEOESlit)
 	    {
-	      memcpy(&bl->MtoSource, &listpt->MtoSource, sizeof(MAP70TYPE)); 
+	      memcpy(&bl->M_ItoS, &listpt->M_ItoS, sizeof(MAP70TYPE)); 
 	      memcpy(&bl->wc, &listpt->wc, sizeof(MAP7TYPE)); 
 	      memcpy(&bl->xlc, &listpt->xlc, sizeof(MAP7TYPE));
 	      memcpy(&bl->xlm, &listpt->xlm, sizeof(struct xlenmaptype));
@@ -198,19 +198,19 @@ void BuildBeamline(struct BeamlineType *bl)
 	      elcounter--; listpt--;
 	      if (listpt->MDat.Art != kEOESlit)
 		{
-		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->MtoSource, 
+		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
 			   &bl->BLOptions.ifl.iord, 1); 
 		  /*listpt->xlm bleibt gleich*/
 		  if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
 		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		    GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			      (double *)listpt->wc, (double *)listpt->xlc, 
-			      (double *)bl->MtoSource, 
+			      (double *)bl->M_ItoS, 
 			      &bl->BLOptions.ifl.iord);
 
 		/* bei image to source werden die indiv. Matritzen geaendert! */
-		  GlueLeft((double *)bl->MtoSource, 
-			   (double *)listpt->MtoSource);
+		  GlueLeft((double *)bl->M_ItoS, 
+			   (double *)listpt->M_ItoS);
 		} /* end slit */
 	    }
 
@@ -220,7 +220,7 @@ void BuildBeamline(struct BeamlineType *bl)
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
       /* der imodus ist anders als bei fgmapidp!!!! */
 
-	  extractmap((double *)bl->MtoSource, 
+	  extractmap((double *)bl->M_ItoS, 
 		     (double *)bl->ypc1, 
 		     (double *)bl->zpc1, 
 		     (double *)bl->dypc, 
@@ -260,9 +260,9 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 /****************************************************************/
 {
   unsigned int     elcounter;
-   int i, imodus;
-   struct  ElementType *listpt;      
-   char    command[MaxPathLength];
+  int imodus;
+  struct  ElementType *listpt;      
+  /*   char    command[MaxPathLength]; */
 #ifdef SEVEN_ORDER
    double *dfdwp, *dfdlp;
    double *dfdwwp, *dfdwlp, *dfdllp;
@@ -358,9 +358,9 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	 if (listpt->MDat.Art != kEOESlit)
 	   {
 	     if (elcounter == 1)
-	       memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
+	       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
 	     else		                   /* bline zusammenbauen */
-	       GlueLeft((double *)bl->map70, (double *)listpt->matrix); 
+	       GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
 	     /* GlueLeft(A, B) A= B* A */
         
 	     bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
@@ -371,7 +371,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	 elcounter++; listpt++; 
       } /* Schleife ueber alle Elemente fertig */
 
-      extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+      extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
 
       /* beamline matrix und map ist fertig (source to image) */ 
@@ -396,7 +396,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
 	  if (listpt->MDat.Art != kEOESlit)
 	    {
-	      memcpy(&bl->MtoSource, &listpt->MtoSource, sizeof(MAP70TYPE)); 
+	      memcpy(&bl->M_ItoS, &listpt->M_ItoS, sizeof(MAP70TYPE)); 
 	      memcpy(&bl->wc, &listpt->wc, sizeof(MAP7TYPE)); 
 	      memcpy(&bl->xlc, &listpt->xlc, sizeof(MAP7TYPE));
 	      memcpy(&bl->xlm, &listpt->xlm, sizeof(struct xlenmaptype));
@@ -408,19 +408,19 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	      elcounter--; listpt--;
 	      if (listpt->MDat.Art != kEOESlit)
 		{
-		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->MtoSource, 
+		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
 			   &bl->BLOptions.ifl.iord, 1); 
 		  /*listpt->xlm bleibt gleich*/
 		  if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
 		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		    GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			      (double *)listpt->wc, (double *)listpt->xlc, 
-			      (double *)bl->MtoSource, 
+			      (double *)bl->M_ItoS, 
 			      &bl->BLOptions.ifl.iord);
 
 		/* bei image to source werden die indiv. Matritzen geaendert! */
-		  GlueLeft((double *)bl->MtoSource, 
-			   (double *)listpt->MtoSource);
+		  GlueLeft((double *)bl->M_ItoS, 
+			   (double *)listpt->M_ItoS);
 		} /* end slit */
 	    }
 
@@ -430,7 +430,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
       /* der imodus ist anders als bei fgmapidp!!!! */
 
-	  extractmap((double *)bl->MtoSource, 
+	  extractmap((double *)bl->M_ItoS, 
 		     (double *)bl->ypc1, 
 		     (double *)bl->zpc1, 
 		     (double *)bl->dypc, 
@@ -459,16 +459,15 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 }   /* end BuildBeamlineM */
 
 
-void Footprint(struct BeamlineType *bl, int enummer)
+void Footprint(struct BeamlineType *bl, unsigned int enummer)
 /****************************************************************/
-/* erzeugt einen Footprint auf Element enummer und speichert 
-/* ihn auf Result
-/* Uwe 28.6.96
-/* last modification: 19 Mar 97 09:43:03 flechsig               */
-/* last modification: 29 Sep 97 14:41:40 flechsig */
+/* erzeugt einen Footprint auf Element enummer und speichert    */
+/* ihn auf Result                                               */
+/* es wird nur ein simple ray trace gemacht                     */
 /****************************************************************/
 {
-   int elcounter, msiz, i, dim;
+   int msiz, i, dim;
+   unsigned int elcounter;
    double *matrix, uu, ww, ll;
    MAP7TYPE ypc1, zpc1, dypc, dzpc;
    struct RayType *Raysin, *foot, elray, *elrayp;   
@@ -480,6 +479,7 @@ void Footprint(struct BeamlineType *bl, int enummer)
 #else
    dim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
 #endif
+
    if (/*((bl->beamlineOK & (sourceOK | mapOK)) == (sourceOK | mapOK)) &&*/
        (enummer <= bl->elementzahl) && (enummer > 0))    
    {
@@ -490,18 +490,18 @@ void Footprint(struct BeamlineType *bl, int enummer)
       listpt= bl->ElementList; 
       if (enummer > 1)
       {
-        memcpy(matrix, &listpt->matrix, sizeof(MAP70TYPE));   
+        memcpy(matrix, &listpt->M_StoI, sizeof(MAP70TYPE));   
         elcounter= 2;    /* erst ab enummer 3 */
         while (elcounter< enummer)      /* */
         {  
-          listpt++;    
-          GlueLeft((double *)matrix, (double *)listpt->matrix);  
+          listpt++; 
+	  if (listpt->MDat.Art != kEOESlit) GlueLeft((double *)matrix, (double *)listpt->M_StoI);  /* UF 13.7.11 */
 	  /* matrix multiplik */
           elcounter++; 
         }
-#ifndef QTGUI
+
         extractmap(matrix, ypc1, zpc1, dypc, dzpc, &bl->BLOptions.ifl.iord);  
-#endif
+
      /* matrix und map bis zum vorhergehenden element sind erzeugt */
         free(matrix);
         printf("Footprint: matrix and map created\n");
@@ -522,16 +522,16 @@ void Footprint(struct BeamlineType *bl, int enummer)
          if (enummer > 1)
          {
 	   /* UF 6.6.11 habe ray_tracef fuer 7 order angepasst */
-#ifndef QTGUI
+
 	   ray_tracef(Raysin, &elray, &bl->BLOptions.ifl.iord, 
 		      (double *)ypc1, (double *)zpc1, 
 		      (double *)dypc, (double *)dzpc); 
-#endif
+
 	    elrayp= &elray; 
          }
          else 
            elrayp= Raysin; 
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
          intersection_8(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
 			&uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
@@ -539,7 +539,7 @@ void Footprint(struct BeamlineType *bl, int enummer)
 	 intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
 	              &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
 #endif
-#endif
+
          foot->y= ww;    
          foot->z= ll;    
          foot->dy= uu/1000.;       /* sonst paw ueberlauf */
@@ -596,12 +596,13 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 
 
 {
+  iord= iord;  /* dummy */
 #ifdef SEVEN_ORDER
-   double S, C, *c1, *c2, *s1, *s2, 
+   double  *c1, *c2, *s1, *s2, 
      pl_1c[330], pl_2c[330], pl_1cc[330], pl_2cc[330];
    int i, k, dim= 330, idx, j ,l, m, maxord= 8;
 #else
-   double S, C, *c1, *c2, *s1, *s2, 
+   double *c1, *c2, *s1, *s2, 
      pl_1c[70], pl_2c[70], pl_1cc[70], pl_2cc[70];
    int i, k, dim= 70, idx, j ,l, m, maxord= 5;
 #endif  
@@ -611,7 +612,7 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
    s1= (double *)&xlsum->xlen1c;
    s2= (double *)&xlsum->xlen2c;
 
-   /*  memcpy(xl1tmp, c1, sizeof(xl1tmp)); /* alte merken */
+   /*  memcpy(xl1tmp, c1, sizeof(xl1tmp));  alte merken */
    /*  memcpy(xl2tmp, c2, sizeof(xl2tmp)); */
    
    /*   printf(
@@ -686,6 +687,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 /* last modification: 04 Jul 97 11:54:41 flechsig */
 
 {
+ iord= iord;  /* dummy */
 #ifdef SEVEN_ORDER
    double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
    int i, j, k, l, m, dim= 330, idx;
@@ -765,17 +767,17 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
     } 
 
 #ifndef QTGUI
-   sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", global_rundir, dim);
+   sprintf(buffer, "%s/share/phase/map%d_lh.omx", global_rundir, dim);
 #else
-   sprintf(buffer, "%s/share/phase/map%d_lh.omx\0", phase_home, dim);
+   sprintf(buffer, "%s/share/phase/map%d_lh.omx", phase_home, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->lmap, dim);    
 
 #ifndef QTGUI
-   sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", global_rundir, dim);
+   sprintf(buffer,"%s/share/phase/map%d_rh.omx", global_rundir, dim);
 #else
-   sprintf(buffer,"%s/share/phase/map%d_rh.omx\0", phase_home, dim);
+   sprintf(buffer,"%s/share/phase/map%d_rh.omx", phase_home, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
@@ -792,14 +794,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 /************************************************************************/
 {
       
-   int     i, msiz, imodus, mdim;
-   MAP7TYPE wctmp, xlctmp;
+   int      msiz, imodus, mdim;
+   /*   MAP7TYPE wctmp, xlctmp; */
 
 #ifdef SEVEN_ORDER
-   double *c, C[330][330], *tmpp;
+   double *c, C[330][330];
    printf("seven order defined\n");
 #else
-   double *c, C[70][70], *tmpp;
+   double *c, C[70][70];
    printf("seven order not defined\n");
 #endif
 
@@ -843,11 +845,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	   {imodus=imodus-1000;};
 
 #ifdef SEVEN_ORDER
-         make_matrix_8(listpt->MtoSource, listpt->ypc1, listpt->zpc1,
+         make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
 		 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 #else
 /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-	xxmap70(listpt->matrix, listpt->ypc1, listpt->zpc1, listpt->dypc, 
+	xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
 		listpt->dzpc, &bl->BLOptions.ifl.iord);
 /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
 	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
@@ -891,11 +893,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	       {imodus=imodus+1000;};
 
 #ifdef SEVEN_ORDER
-	    make_matrix_8(listpt->MtoSource, listpt->ypc1, listpt->zpc1,
+	    make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
 	    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 #else
 /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-	    xxmap70(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
+	    xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 	     
 /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
@@ -942,22 +944,22 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	     bl->hormapsloaded= 1;
            }            /* hormaps  present in memory */
                       
-           memcpy(c, listpt->matrix, msiz);         /* save  matrix A in C */
-	   memcpy(listpt->matrix, bl->lmap, msiz);  /* copy lmap nach A    */
-           GlueLeft((double *)listpt->matrix, (double *)c);    /* A= C * A */  
-           GlueLeft((double *)listpt->matrix, (double *)bl->rmap);      
+           memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
+	   memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
+           GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
+           GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap);      
 	   /* listpt matrix Ok    */
 
   	   if (bl->BLOptions.SourcetoImage != 1) 
 	     {                /* wenn rueckwaerts dann zusaetzlich */
-	       memcpy(c, listpt->MtoSource, msiz);  /* save matrix */
-	       memcpy(listpt->MtoSource, bl->lmap, msiz); 
+	       memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
+	       memcpy(listpt->M_ItoS, bl->lmap, msiz); 
 
-	       GlueLeft((double *)listpt->MtoSource, (double *)c); 
-	       GlueLeft((double *)listpt->MtoSource, (double *)bl->rmap); 
+	       GlueLeft((double *)listpt->M_ItoS, (double *)c); 
+	       GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap); 
 	       /* im to s matrix OK */
 
-	       extractmap(listpt->MtoSource, listpt->ypc1, listpt->zpc1, 
+	       extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
 			  listpt->dypc, listpt->dzpc, 
 			  &bl->BLOptions.ifl.iord); 
 	       GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
@@ -972,7 +974,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	     } else /* horizontal source to image */
 	       {
 
-		 extractmap(listpt->matrix, listpt->ypc1, listpt->zpc1, 
+		 extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
 			    listpt->dypc, listpt->dzpc, 
 			    &bl->BLOptions.ifl.iord);
 		 GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
@@ -1005,7 +1007,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int elnumber, i, version= 20091222;
+   int  i, version= 20091222;
+   unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType      *dp;
@@ -1014,7 +1017,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    struct RingSourceType       *rp;     
    struct SRSourceType         *sp; 
    struct PSImageType          *psip;
-   struct PSSourceType         *pssp;    
+   /*struct PSSourceType         *pssp;    */
    struct ElementType 	       *listpt;   
    struct OptionsType          *op;    
    struct FileSourceType       *fp;
@@ -1378,7 +1381,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 /************************************************************************/
 {   
    FILE *f; 
-   int  rcode, elnumber, i, version;
+   int  rcode, i, version;
+   unsigned int elnumber;
    char buffer[255], buf;  
    double *pd; 
    
@@ -1390,7 +1394,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    struct RingSourceType       *rp;    
    struct SRSourceType         *sp; 
    struct PSImageType          *psip;
-   struct PSSourceType         *pssp;    
+   /*struct PSSourceType         *pssp;   */ 
    struct ElementType 	       *listpt;   
    struct OptionsType          *op;
    struct FileSourceType       *fp;
@@ -1530,7 +1534,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     fp= (struct FileSourceType *)bl->RTSource.Quellep;
 	     if (version >= 20090804)
 	       {
-		 fscanf(f, "%s %[^\n]s %c", &fp->filename, buffer, &buf);
+		 fscanf(f, "%s %[^\n]s %c", (char *)&fp->filename, buffer, &buf);
 #ifndef QTGUI
 		 strncpy(PHASESet.sourceraysname, fp->filename, MaxPathLength);
 #endif
@@ -1567,7 +1571,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	  sprintf(buffer, "Element %d", elnumber);	
 	  if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
-             fscanf(f, " %s %[^\n]s %c", &listpt->elementname, buffer, &buf);
+	    fscanf(f, " %s %[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
 #ifdef DEBUG 
 	     /*    printf("   Name read: %s\n", listpt->elementname); */
 #endif
@@ -1911,9 +1915,9 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 	  printf("getoptipickfile: no methode defined- use default: %d\n", 
 		 x->methode); 
 	}
-      fscanf(f, "%s\n", &x->beamlinefilename); 
-      fscanf(f, "%s\n", &x->minuitfilename); 
-      fscanf(f, "%s\n", &x->resultfilename); 
+      fscanf(f, "%s\n", (char *)&x->beamlinefilename); 
+      fscanf(f, "%s\n", (char *)&x->minuitfilename); 
+      fscanf(f, "%s\n", (char *)&x->resultfilename); 
       fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
       fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
       fscanf(f, "%d\n", &x->npars); 
@@ -2009,6 +2013,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   /*  printf("DefMirrorC: called\n");*/
 #endif  
  
+  etype &= 1023;  /* UF 11.7.2011 strip off grating bits */
+
   small= 1e-30;   
   r    = x->rmi;
   rho  = x->rho;
@@ -2244,7 +2250,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break;
  
     default:
-      fprintf(stderr, "defmirrorc: %d - unknown shape:", etype); 
+      fprintf(stderr, "defmirrorc: %d - unknown shape\n", etype); 
       exit(-1);
     } /* end switch */ 
 #ifdef DEBUG2
@@ -2264,13 +2270,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #endif
       memcpy(&mirror, a, sizeof(struct mirrortype));
 
-#ifndef QTGUI
+
 #ifdef SEVEN_ORDER
       misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #else
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #endif
-#endif
+
 #ifdef DEBUG2
       printf("DEBUG: mirror coefficients with misalignment\n");
       for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
@@ -2310,6 +2316,8 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
 #ifndef QTGUI
    delta= (double)(x->inout)* asin(Beamline.BLOptions.xlam_save* 
 				   x->xdens[0]/(2.0* cos(theta0)));
+#else 
+   printf("!!!! DefGeometryCM noch nicht auf 7. Ordnung angepasst!!!\n");
 #endif   
    alpha= (-theta0- delta);   /* eigentlich fi+ theta */
    beta = ( theta0- delta);   /* nicht eher fi- theta???*/
