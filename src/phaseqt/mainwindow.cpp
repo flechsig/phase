@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <13 Jul 11 17:45:21 flechsig> 
+//  Time-stamp: <2011-07-13 22:34:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -641,23 +641,11 @@ void MainWindow::newBeamline()
   this->myPHASEset::print();
 } // end newBeamline()
 
-//slot parameter update
-void MainWindow::parameterUpdate()
+// slot parameter update, callback des Editors
+void MainWindow::parameterUpdateSlot()
 {
-  char *text1, *ch;
-  char buffer1[MaxPathLength], buffer2[MaxPathLength];
-  QListWidgetItem *item;
-
-  printf("parameterUpdate activated\n");
-  item= parameterList->currentItem();
-  text1= item->text().toAscii().data();
-  strncpy(buffer2, text1, MaxPathLength);  /* save text in buffer2 */
-  ch= strrchr(buffer2, ':');
-  if (ch != NULL) *ch='\0';                 /* base string in buffer2 */
- 
-  sprintf(buffer1, "%s : %s", buffer2, parameterE->text().toAscii().data());
-  item->setText(buffer1);
-}
+  parameterUpdate(parameterList->currentRow(), parameterE->text().toAscii().data());
+} // end parameterUpdateSlot
 
 // slot orientation radio buttons
 void MainWindow::rup1slot()
@@ -1720,7 +1708,7 @@ QWidget *MainWindow::createParameterBox()
   vbox->addStretch(1);
   parameterBox->setLayout(vbox);
   connect(parameterList, SIGNAL(itemSelectionChanged()), this, SLOT(selectParameter()));
-  connect(parameterE, SIGNAL(editingFinished()), this, SLOT(parameterUpdate()));
+  connect(parameterE, SIGNAL(editingFinished()), this, SLOT(parameterUpdateSlot()));
   return parameterBox;
 } // end createparameter box
 
@@ -1884,6 +1872,30 @@ void MainWindow::createToolBars()
 ///////////////////////////////////
 // begin widget handling section //
 ///////////////////////////////////
+
+// helper function for the parameterUpdateSlot
+void MainWindow::parameterUpdate(int pos, char *text)
+{
+  char buffer[MaxPathLength];
+  int scanned;
+  QListWidgetItem *item= parameterList->item(pos);
+
+  switch (pos)
+    {
+    case 1:
+      scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
+      if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
+      sprintf(buffer, "%s : %d", "(epsilon) for Newton routine (1e-4)", this->BLOptions.ifl.iord);
+      break;
+    case 2:
+      sprintf(buffer, "%s : %d", "(iord) calculation up to order (3..7)", this->BLOptions.ifl.iord);
+      break;
+    case 3:
+      sprintf(buffer, "%s : %d", "(iord) calculation up to order (3..7)", this->BLOptions.ifl.iord);
+      break;
+    }
+  item->setText(buffer);
+} // end parameterUpdate
 
 // UpdateBeamlineBox()
 // the box on the left
