@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <11 Jul 11 13:58:06 flechsig>  */
+/*  Time-stamp: <13 Jul 11 16:18:51 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -37,7 +37,7 @@ public:
     double phimax;
     double h2arr[BINS2][BINS2];   // odd number
     double h2max;
-    double cz, cy, wz, wy, cdz, cdy, wdz, wdy;  // statistics
+    double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
 
     void   hfill(struct RayType *, int);
     void statistics(struct RayType *, int);

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <13 Jul 11 09:04:44 flechsig> 
+//  Time-stamp: <13 Jul 11 17:45:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -66,7 +66,7 @@ void MainWindow::about()
 // here we call our own code dependign on which button has been pressed
 void MainWindow::activateProc(const QString &action)
 {
-  char buffer[MaxPathLength];
+  char buffer[MaxPathLength], header[MaxPathLength];
 
   if (action.isEmpty())
           return;
@@ -125,9 +125,12 @@ void MainWindow::activateProc(const QString &action)
       printf("writemapAct button pressed\n");
       if ((this->position <= this->elementzahl) && (this->position != 0))
 	{
-	  printf("write map of element %d to file\n", this->position);  
+	  printf("write map of element %d to file\n", this->position); 
+	  sprintf(header, "beamline: %s, map of element %d, iord: %d", 
+		    this->beamlinename, this->position, this->BLOptions.ifl.iord);
+	  sprintf(buffer, "%s-%d", this->mapname, this->position);
 	  /* casting 15.12.99 ist noch nicht OK */
-	  writemapc(this->mapname, this->BLOptions.ifl.iord, 
+	  writemapc(buffer, header, this->BLOptions.ifl.iord, 
 		    (double *)(this->ElementList[this->position- 1].ypc1), 
 		    (double *) this->ElementList[this->position- 1].zpc1, 
 		    (double *) this->ElementList[this->position- 1].dypc, 
@@ -138,11 +141,13 @@ void MainWindow::activateProc(const QString &action)
 		    (double *) this->ElementList[this->position- 1].xlm.xlen2c);
 	} 
       
-      else
+      //  else wir schreiben hier immer beides
 	{ 
-	  printf("write map of beamline to file\n");  
-	  
-	  writemapc(this->mapname, this->BLOptions.ifl.iord, 
+	  printf("write map of beamline to file\n"); 
+	  sprintf(buffer, "beamline: %s, map of beamline, iord: %d\n", 
+		    this->beamlinename, this->BLOptions.ifl.iord);
+	  sprintf(buffer, "%s-0", this->mapname);
+	  writemapc(buffer, header, this->BLOptions.ifl.iord, 
 		    (double *) this->ypc1, (double *) this->zpc1, 
 		    (double *) this->dypc, (double *) this->dzpc,
 		    (double *) this->wc,   (double *) this->xlc, 
@@ -636,6 +641,23 @@ void MainWindow::newBeamline()
   this->myPHASEset::print();
 } // end newBeamline()
 
+//slot parameter update
+void MainWindow::parameterUpdate()
+{
+  char *text1, *ch;
+  char buffer1[MaxPathLength], buffer2[MaxPathLength];
+  QListWidgetItem *item;
+
+  printf("parameterUpdate activated\n");
+  item= parameterList->currentItem();
+  text1= item->text().toAscii().data();
+  strncpy(buffer2, text1, MaxPathLength);  /* save text in buffer2 */
+  ch= strrchr(buffer2, ':');
+  if (ch != NULL) *ch='\0';                 /* base string in buffer2 */
+ 
+  sprintf(buffer1, "%s : %s", buffer2, parameterE->text().toAscii().data());
+  item->setText(buffer1);
+}
 
 // slot orientation radio buttons
 void MainWindow::rup1slot()
@@ -774,7 +796,7 @@ void MainWindow::selectParameter()
 {
   QListWidgetItem *item;
   int parameternumber= parameterList->currentRow();
-  char *text, buffer[255];
+  char *text, buffer[255], *ch;
   
   if (parameternumber < 0) 
     return;
@@ -782,7 +804,9 @@ void MainWindow::selectParameter()
   item= parameterList->currentItem();
   text= item->text().toAscii().data();
   sprintf(buffer, "%s", text);
-  parameterE->setText(buffer);
+  ch= strrchr(buffer, ':');
+  ch++; // skip space
+  if (ch != NULL) parameterE->setText(ch);
   //  parameternumber= parameterList->currentRow();
   //groupBox1->setTitle(item->text());  // set text header
   //UpdateElementBox(elementnumber);
@@ -1326,6 +1350,8 @@ QWidget *MainWindow::createGraphicBox()
   wdyLabel  = new QLabel(tr("dy FWHM (mm)"));
   rayLabel  = new QLabel(tr("rays"));
   traLabel  = new QLabel(tr("transmittance"));
+  ryLabel   = new QLabel(tr("y E/dE FWHM"));
+  rzLabel   = new QLabel(tr("z E/dE FWHM"));
 
   statLayout->addWidget(czLabel,  0, 0);
   statLayout->addWidget(cyLabel,  0, 1);
@@ -1337,6 +1363,8 @@ QWidget *MainWindow::createGraphicBox()
   statLayout->addWidget(wdyLabel, 3, 1);
   statLayout->addWidget(rayLabel, 4, 0);
   statLayout->addWidget(traLabel, 4, 1);
+  statLayout->addWidget(ryLabel, 5, 0);
+  statLayout->addWidget(rzLabel, 5, 1);
   statGroup->setLayout(statLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
@@ -1654,8 +1682,8 @@ QWidget *MainWindow::createParameterBox()
 
   parameterList = new QListWidget();
   parameterList->addItems(QStringList()
-			<< "(epsilon) for Newton routine (1e-4)"
-			<< "(iord) calculation up to order (3..7)"
+			<< "(epsilon) for Newton routine (1e-4): 0.0004"
+			<< "(iord) calculation up to order (3..7): 7"
 			<< "Grating 1"
 			<< "Mirror 3"
 			<< "Mirror 4"
@@ -1665,12 +1693,25 @@ QWidget *MainWindow::createParameterBox()
 			<< "Mirror 4"
 
 			);
+#ifdef HEINZ
+  QTableView *view = new QTableView;
+  QSqlTableModel *model = new QSqlTableModel;
+     view->setModel(model);
+     view->show();
+  model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
+     model->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
+     model->setHeaderData(2, Qt::Horizontal, QObject::tr("City"));
+     model->setHeaderData(3, Qt::Horizontal, QObject::tr("Country"));
+#endif
+
   QLabel *parameterLabel  = new QLabel(tr("edit only the value after ':'"));
   parameterE  = new QLineEdit;
 
   parameterLayout->addWidget(parameterList);
   parameterLayout->addWidget(parameterLabel);
   parameterLayout->addWidget(parameterE);
+  //  parameterLayout->addWidget(view);
+
   parameterGroup->setLayout(parameterLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
@@ -1679,6 +1720,7 @@ QWidget *MainWindow::createParameterBox()
   vbox->addStretch(1);
   parameterBox->setLayout(vbox);
   connect(parameterList, SIGNAL(itemSelectionChanged()), this, SLOT(selectParameter()));
+  connect(parameterE, SIGNAL(editingFinished()), this, SLOT(parameterUpdate()));
   return parameterBox;
 } // end createparameter box
 
@@ -2015,7 +2057,7 @@ void MainWindow::UpdateElementList()
 // update the source box
 void MainWindow::UpdateSourceBox()
 {
-  int sou;
+  char sou;
   struct UndulatorSourceType  *up;
   struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
@@ -2269,6 +2311,13 @@ void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
   rayLabel->setText(QString(tr(buffer)));
   sprintf(buffer, "%s %8.3f", "transmittance: ",    trans);  
   traLabel->setText(QString(tr(buffer)));
+
+  sprintf(buffer, "%s %8.3f", "y E/dE FWHM: ",      pp->ry);  
+  ryLabel->setText(QString(tr(buffer)));
+
+  sprintf(buffer, "%s %8.3f", "z E/dE FWHM: ",      pp->rz);  
+  rzLabel->setText(QString(tr(buffer)));
+
 } // UpdateStatistics
 
 /////////////////////////////////

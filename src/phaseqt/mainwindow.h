@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <13 Jul 11 08:40:46 flechsig>  */
+/*  Time-stamp: <13 Jul 11 17:06:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -66,7 +66,7 @@ private slots:
     void rleft2slot();
     void rdown3slot();
     void rright4slot();
-
+    void parameterUpdate();
     void thetaBslot();
     void sourceBslot();
     void imageBslot();
@@ -262,6 +262,8 @@ private:
     QLabel *wdyLabel;  
     QLabel *rayLabel;  
     QLabel *traLabel;
+    QLabel *ryLabel;
+    QLabel *rzLabel;
 
     QSignalMapper *grsignalMapper;  // UF
 };

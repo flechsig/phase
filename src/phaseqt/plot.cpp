@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <11 Jul 11 17:03:54 flechsig> 
+//  Time-stamp: <13 Jul 11 16:20:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -439,6 +439,8 @@ void Plot::statistics(struct RayType *rays, int points)
       cdy/= points;
       wdy = 2.35* sqrt(wdy/points- cdy*cdy);
     }
+  ry= wy;
+  rz= wz;
 }
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
