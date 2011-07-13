@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-14 00:28:18 flechsig> 
+//  Time-stamp: <2011-07-14 00:38:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -630,6 +630,7 @@ void MainWindow::newBeamline()
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
+	  parameterUpdateAll(5);
 	  this->beamlineOK= 0;
           this->myPHASEset::init(name);
 	  PutPHASE(this, (char*) MainPickName);
@@ -1870,6 +1871,12 @@ void MainWindow::createToolBars()
 // begin widget handling section //
 ///////////////////////////////////
 
+// update all parameters from dataset
+void MainWindow::parameterUpdateAll(int zahl)
+{
+  int i;
+  for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
+}
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
 // defaults can be set with an empty text
