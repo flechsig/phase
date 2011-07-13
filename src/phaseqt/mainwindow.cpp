@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-14 00:06:21 flechsig> 
+//  Time-stamp: <2011-07-14 00:10:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1667,15 +1667,15 @@ QWidget *MainWindow::createParameterBox()
 
   parameterList = new QListWidget();
   parameterList->addItems(QStringList()
-			<< "0.001 : (epsilon) for Newton routine (1e-4)"
-			<< "7: (iord) calculation up to order (3..7)"
-			<< "1 : Grating 1"
-			<< "1 : Mirror 3"
-			<< "1 : Mirror 4"
-			<< "1 : Mirror 4"
-			<< "Mirror 4"
-			<< "Mirror 4"
-			<< "Mirror 4"
+			<< "0 : (epsilon) for Newton routine (1e-4)"
+			<< "1 : (iord) calculation up to order (3..7)"
+			<< "2 : Grating 1"
+			<< "3 : Mirror 3"
+			<< "4 : Mirror 4"
+			<< "5 : Mirror 4"
+			<< "6 : Mirror 4"
+			<< "7 : Mirror 4"
+			<< "8 : Mirror 4"
 
 			);
 #ifdef HEINZ
