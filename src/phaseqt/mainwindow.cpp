@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 23:42:53 flechsig> 
+//  Time-stamp: <2011-07-13 23:47:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1886,6 +1886,7 @@ void MainWindow::parameterUpdate(int pos, char *text)
       break;
     case 1:
       scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
+      printf("scanned: %d\n",scanned);
       if ((scanned == EOF) || (this->BLOptions.ifl.iord < 1) || (this->BLOptions.ifl.iord > 7)) 
 	this->BLOptions.ifl.iord= 4; // default
       sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (1..7)");
