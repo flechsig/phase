@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <08 Jul 11 15:33:23 flechsig>  */
+/*  Time-stamp: <13 Jul 11 08:40:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -44,10 +44,11 @@ private slots:
     void grapplyslot();
     void newBeamline(); // UF
     void save();
+    void saveas();
     void print();
     void undo();
     void about();
-    void insertCustomer(const QString &customer);
+    //void insertCustomer(const QString &customer);
     void insertElement();   // UF
     void deleteElement();   // UF
     void selectElement();   // UF
@@ -76,8 +77,9 @@ private slots:
     void sourceDefaultBslot();
     void debugslot();
 
-    void addParagraph(const QString &paragraph);
+    //void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
+    void UpdateStatistics(Plot *, char *, int);
     
 private:
     void createActions();
@@ -212,6 +214,7 @@ private:
     QToolBar *editToolBar;
     QAction *newLetterAct;
     QAction *saveAct;
+    QAction *saveasAct;
     QAction *printAct;
     QAction *undoAct;
     QAction *aboutAct;
@@ -247,6 +250,18 @@ private:
     QLineEdit *grzmaxE;
     QLineEdit *gryminE;
     QLineEdit *grymaxE;
+
+    QGroupBox   *statGroup;
+    QLabel *czLabel;   
+    QLabel *cyLabel;   
+    QLabel *wzLabel;   
+    QLabel *wyLabel;   
+    QLabel *cdzLabel;  
+    QLabel *cdyLabel;  
+    QLabel *wdzLabel;  
+    QLabel *wdyLabel;  
+    QLabel *rayLabel;  
+    QLabel *traLabel;
 
     QSignalMapper *grsignalMapper;  // UF
 };

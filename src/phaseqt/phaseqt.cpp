@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <07 Jul 11 16:59:39 flechsig> 
+//  Time-stamp: <12 Jul 11 14:22:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -12,8 +12,13 @@
 #include "qtphase.h"
 
 // initialize the c structure of filenames with a name
-void myPHASEset::init(char *name)
+// removes a possible extension
+void myPHASEset::init(char *fname)
 {
+  char name[MaxPathLength];
+  strncpy(name, fname, MaxPathLength);
+  FnameBody(name);
+
   sprintf(matrixname,      "%s.%s", name, "omx");
   sprintf(mapname,         "%s.%s", name, "map");
   sprintf(sourceraysname,  "%s.%s", name, "inp"); 

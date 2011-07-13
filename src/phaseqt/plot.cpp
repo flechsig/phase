@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <08 Jul 11 17:52:02 flechsig> 
+//  Time-stamp: <11 Jul 11 17:03:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -138,56 +138,56 @@ Plot::Plot(QWidget *parent):
 {
   bt= (struct BeamlineType *) parent;
   d_spectrogram = new QwtPlotSpectrogram();
-    d_spectrogram->setRenderThreadCount(0); // use system specific thread count
+  d_spectrogram->setRenderThreadCount(0); // use system specific thread count
+  
+  d_spectrogram->setColorMap(new ColorMap());
+  
+  d_spectrogram->setData(new SpectrogramData());
+  d_spectrogram->attach(this);
 
-    d_spectrogram->setColorMap(new ColorMap());
-
-    d_spectrogram->setData(new SpectrogramData());
-    d_spectrogram->attach(this);
-
-    QList<double> contourLevels;
-    for ( double level = 0.5; level < 10.0; level += 1.0 )
-        contourLevels += level;
-    d_spectrogram->setContourLevels(contourLevels);
-
-    const QwtInterval zInterval = d_spectrogram->data()->interval( Qt::ZAxis );
-    // A color bar on the right axis
-    QwtScaleWidget *rightAxis = axisWidget(QwtPlot::yRight);
-    rightAxis->setTitle("Intensity");
-    rightAxis->setColorBarEnabled(true);
-    rightAxis->setColorMap( zInterval, new ColorMap());
-
-    setAxisScale(QwtPlot::yRight, zInterval.minValue(), zInterval.maxValue() );
-    enableAxis(QwtPlot::yRight);
-
-    plotLayout()->setAlignCanvasToScales(true);
-    replot();
-
-    // LeftButton for the zooming
-    // MidButton for the panning
-    // RightButton: zoom out by 1
-    // Ctrl+RighButton: zoom out to full size
-
-    QwtPlotZoomer* zoomer = new MyZoomer(canvas());
-    zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
-        Qt::RightButton, Qt::ControlModifier);
-    zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
-        Qt::RightButton);
-
-    QwtPlotPanner *panner = new QwtPlotPanner(canvas());
-    panner->setAxisEnabled(QwtPlot::yRight, false);
-    panner->setMouseButton(Qt::MidButton);
-
-    // Avoid jumping when labels with more/less digits
-    // appear/disappear when scrolling vertically
-
-    const QFontMetrics fm(axisWidget(QwtPlot::yLeft)->font());
-    QwtScaleDraw *sd = axisScaleDraw(QwtPlot::yLeft);
-    sd->setMinimumExtent( fm.width("100.00") );
-
-    const QColor c(Qt::darkBlue);
-    zoomer->setRubberBandPen(c);
-    zoomer->setTrackerPen(c);
+  QList<double> contourLevels;
+  for ( double level = 0.5; level < 10.0; level += 1.0 )
+    contourLevels += level;
+  d_spectrogram->setContourLevels(contourLevels);
+  
+  const QwtInterval zInterval = d_spectrogram->data()->interval( Qt::ZAxis );
+  // A color bar on the right axis
+  QwtScaleWidget *rightAxis = axisWidget(QwtPlot::yRight);
+  rightAxis->setTitle("Intensity");
+  rightAxis->setColorBarEnabled(true);
+  rightAxis->setColorMap( zInterval, new ColorMap());
+  
+  setAxisScale(QwtPlot::yRight, zInterval.minValue(), zInterval.maxValue() );
+  enableAxis(QwtPlot::yRight);
+  
+  plotLayout()->setAlignCanvasToScales(true);
+  replot();
+  
+  // LeftButton for the zooming
+  // MidButton for the panning
+  // RightButton: zoom out by 1
+  // Ctrl+RighButton: zoom out to full size
+  
+  QwtPlotZoomer* zoomer = new MyZoomer(canvas());
+  zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
+			  Qt::RightButton, Qt::ControlModifier);
+  zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
+			  Qt::RightButton);
+  
+  QwtPlotPanner *panner = new QwtPlotPanner(canvas());
+  panner->setAxisEnabled(QwtPlot::yRight, false);
+  panner->setMouseButton(Qt::MidButton);
+  
+  // Avoid jumping when labels with more/less digits
+  // appear/disappear when scrolling vertically
+  
+  const QFontMetrics fm(axisWidget(QwtPlot::yLeft)->font());
+  QwtScaleDraw *sd = axisScaleDraw(QwtPlot::yLeft);
+  sd->setMinimumExtent( fm.width("100.00") );
+  
+  const QColor c(Qt::darkBlue);
+  zoomer->setRubberBandPen(c);
+  zoomer->setTrackerPen(c);
 }
 
 // plotstyle
@@ -382,8 +382,8 @@ void Plot::hfill(struct RayType *rays, int points)
   
   rp= rays;
 
-  for (ix=0; ix< 100; ix++)
-    for (iy=0; iy< 100; iy++) h2arr[ix][iy]= 0.0;
+  for (ix=0; ix< BINS2; ix++)
+    for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]= 0.0;
 
   if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
   if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
@@ -399,10 +399,46 @@ void Plot::hfill(struct RayType *rays, int points)
 
   // scale maximum to 10
   if (h2max > 0.0)
-    for (ix=0; ix< 100; ix++)
-      for (iy=0; iy< 100; iy++) h2arr[ix][iy]*= 10.0/h2max;
+    for (ix=0; ix< BINS2; ix++)
+      for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]*= 10.0/h2max;
 
   printf("hfill:end  hmax  %f\n", h2max);
+}
+
+void Plot::statistics(struct RayType *rays, int points)
+{
+  int i;
+  struct RayType *rp;
+  
+  printf("statistics called\n");
+  cz= cy= wz= wy= cdz= cdy= wdz= wdy= 0.0;
+
+  rp= rays;
+
+  // sum ai and sum ai^2
+  for (i=0; i< points; i++, rp++)
+    {
+      cz += rp->z;
+      cy += rp->y;
+      cdz+= rp->dz;
+      cdy+= rp->dy;
+      wz += rp->z * rp->z;
+      wy += rp->y * rp->y;
+      wdz+= rp->dz* rp->dz;
+      wdy+= rp->dy* rp->dy;
+    }
+
+  if (points > 0)
+    {
+      cz /= points;
+      wz  = 2.35* sqrt(wz/points-  cz*cz);
+      cy /= points;
+      wy  = 2.35* sqrt(wy/points-  cy*cy);
+      cdz/= points;
+      wdz = 2.35* sqrt(wdz/points- cdz*cdz);
+      cdy/= points;
+      wdy = 2.35* sqrt(wdy/points- cdy*cdy);
+    }
 }
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

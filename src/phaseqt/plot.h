@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <08 Jul 11 17:32:29 flechsig>  */
+/*  Time-stamp: <11 Jul 11 13:58:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -11,6 +11,8 @@
 #include <qwt_plot.h>
 #include <qwt_plot_spectrogram.h>
 
+#define BINS2 101
+
 class Plot: public QwtPlot
 {
     Q_OBJECT
@@ -18,8 +20,8 @@ class Plot: public QwtPlot
 public:
     Plot(QWidget * = NULL);
     void setphaseData(char *); // UF
-    void setdefaultData(); // UF
-    void setdefaultData2(); // UF
+    void setdefaultData();     // UF
+    void setdefaultData2();    // UF
     void autoScale(struct RayType *, int);
     void SetData(int n, double* dx, double* dy);
 
@@ -33,9 +35,12 @@ public:
     double dzmax;
     double phimin;
     double phimax;
-    double h2arr[101][101];   // odd number
+    double h2arr[BINS2][BINS2];   // odd number
     double h2max;
+    double cz, cy, wz, wy, cdz, cdy, wdz, wdy;  // statistics
+
     void   hfill(struct RayType *, int);
+    void statistics(struct RayType *, int);
     QwtPlotSpectrogram *d_spectrogram;
     int    plotsubject;
 
