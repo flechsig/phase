@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 22:34:30 flechsig> 
+//  Time-stamp: <2011-07-13 22:52:31 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -782,23 +782,16 @@ void MainWindow::selectElement()
 // UF selection slot
 void MainWindow::selectParameter()
 {
-  QListWidgetItem *item;
-  int parameternumber= parameterList->currentRow();
-  char *text, buffer[255], *ch;
-  
+  char buffer[MaxPathLength], *ch;
+   
   if (parameternumber < 0) 
     return;
 
-  item= parameterList->currentItem();
-  text= item->text().toAscii().data();
-  sprintf(buffer, "%s", text);
-  ch= strrchr(buffer, ':');
-  ch++; // skip space
-  if (ch != NULL) parameterE->setText(ch);
-  //  parameternumber= parameterList->currentRow();
-  //groupBox1->setTitle(item->text());  // set text header
-  //UpdateElementBox(elementnumber);
-} // selectParameter
+  strcpy(buffer, parameterList->currentItem()->text().toAscii().data());
+  ch= strchr(buffer, ':');
+  *ch= '\0';
+  parameterE->setText(buffer);
+ } // selectParameter
 
 // slot shapeMenu
 // slot shapeMenu plane mirror
@@ -1885,7 +1878,7 @@ void MainWindow::parameterUpdate(int pos, char *text)
     case 1:
       scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
       if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
-      sprintf(buffer, "%s : %d", "(epsilon) for Newton routine (1e-4)", this->BLOptions.ifl.iord);
+      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(epsilon) for Newton routine (1e-4)");
       break;
     case 2:
       sprintf(buffer, "%s : %d", "(iord) calculation up to order (3..7)", this->BLOptions.ifl.iord);
