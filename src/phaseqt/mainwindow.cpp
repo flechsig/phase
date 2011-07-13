@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 22:58:00 flechsig> 
+//  Time-stamp: <2011-07-13 23:00:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -783,7 +783,8 @@ void MainWindow::selectElement()
 void MainWindow::selectParameter()
 {
   char buffer[MaxPathLength], *ch;
-   
+  int parameternumber= parameterList->currentItem()
+
   if (parameternumber < 0) 
     return;
 
