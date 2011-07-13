@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 23:30:33 flechsig> 
+//  Time-stamp: <2011-07-13 23:36:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1879,21 +1879,23 @@ void MainWindow::parameterUpdate(int pos, char *text)
   printf("parameterUpdate: pos: %d\n", pos);
   switch (pos)
     {
-    case 1:
+    case 0:
       scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
       if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
       sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(epsilon) for Newton routine (1e-4)");
+      break;
+    case 1:
+      scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
+      if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
+      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (3..7)");
       break;
     case 2:
       scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
       if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
       sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (3..7)");
       break;
-    case 3:
-      scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
-      if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
-      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (3..7)");
-      break;
+    default:
+      sprintf(buffer, "%d : unknown parameter", pos);
     }
   item->setText(buffer);
 } // end parameterUpdate
