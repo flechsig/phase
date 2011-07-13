@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 23:04:41 flechsig> 
+//  Time-stamp: <2011-07-13 23:10:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -790,8 +790,11 @@ void MainWindow::selectParameter()
 
   strcpy(buffer, parameterList->currentItem()->text().toAscii().data());
   ch= strchr(buffer, ':');
-  *ch= '\0';
-  parameterE->setText(buffer);
+  if (ch != NULL) 
+    {
+      *ch= '\0';
+      parameterE->setText(buffer);
+    }
  } // selectParameter
 
 // slot shapeMenu
@@ -1664,12 +1667,12 @@ QWidget *MainWindow::createParameterBox()
 
   parameterList = new QListWidget();
   parameterList->addItems(QStringList()
-			<< "(epsilon) for Newton routine (1e-4): 0.0004"
-			<< "(iord) calculation up to order (3..7): 7"
-			<< "Grating 1"
-			<< "Mirror 3"
-			<< "Mirror 4"
-			<< "Mirror 4"
+			<< "0.001 : (epsilon) for Newton routine (1e-4)"
+			<< "7: (iord) calculation up to order (3..7)"
+			<< "1 : Grating 1"
+			<< "1 : Mirror 3"
+			<< "1 : Mirror 4"
+			<< "1 : Mirror 4"
 			<< "Mirror 4"
 			<< "Mirror 4"
 			<< "Mirror 4"
