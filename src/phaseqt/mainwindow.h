@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2011-07-13 22:24:35 flechsig>  */
+/*  Time-stamp: <2011-07-14 00:22:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -88,7 +88,7 @@ private:
     void createToolBars();
     void createStatusBar();
     void createDockWindows();
-    void parameterUpdate(int, char *);
+    void parameterUpdate(int, char *, int);
     void UpdateElementList();
     void UpdateBeamlineBox();
     void UpdateSourceBox();

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-14 00:26:36 flechsig> 
+//  Time-stamp: <2011-07-14 00:28:18 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -644,7 +644,7 @@ void MainWindow::newBeamline()
 // slot parameter update, callback des Editors
 void MainWindow::parameterUpdateSlot()
 {
-  parameterUpdate(parameterList->currentRow(), parameterE->text().toAscii().data());
+  parameterUpdate(parameterList->currentRow(), parameterE->text().toAscii().data(), 0);
 } // end parameterUpdateSlot
 
 // slot orientation radio buttons
