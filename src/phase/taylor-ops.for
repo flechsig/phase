@@ -347,46 +347,60 @@ c---------------------------------------------------------------
         return
         end
 
+
 c-----------------------------------------------------------------
         subroutine Tay_sqrt_6(a,d,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-
-        dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
+       dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            d(0:7,0:7,0:7,0:7,0:7,0:7)
+     &            d(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            x(0:7,0:7,0:7,0:7,0:7,0:7)
 
         call Tay_clear_6(d,iord)                ! array for results
 
-        f0=a(0,0,0,0,0,0)               ! prefactor
+        f0=a(0,0,0,0,0,0)                       ! prefactor
         sqf0=dsqrt(a(0,0,0,0,0,0))
 
+c----- iord = 0
         if(iord.eq.0)then
           d(0,0,0,0,0,0)=sqf0
           goto 100
         endif
+        
+c----- iord = 1 
+        call Tay_copy_6(a,x,iord)
+        call Tay_const_6(x,1.d0/f0,iord) 
+        x(0,0,0,0,0,0)=0.d0                     ! abs(x) lt. 1
+        d(0,0,0,0,0,0)=1.d0
 
-        call Tay_const_6(a,1/f0,iord)           ! prepare a/tilde
-        call Tay_fill_6(b,1.d0,iord)
+        call Tay_copy_6(x,b,iord)
+        call Tay_copy_6(x,c,iord)
+        call Tay_const_6(c,0.5d0,iord)        
+        call Tay_add_6(c,d,iord)
 
-c--------- start summation,
+c--------- iord gt. 1
+c          start summation,
 c          store intermediate exponentials in b
 c          collecting data in d
 c
-        do n=1,iord
-          call Tay_mult_6(a,b,c,iord)
+        if(iord.gt.1)then
+        do n=2,iord
+          call Tay_mult_6(x,b,c,iord)
           call Tay_copy_6(c,b,iord)
           call Tay_const_6(c,Tay_sqrt_fact(n),iord)
           call Tay_add_6(c,d,iord)
-        enddo
+        enddo       
+        endif
+        
         call Tay_const_6(d,sqf0,iord)
-        call Tay_const_6(a,f0,iord)
 
 100     continue
 
         return
         end
+
 
 c------------------------------------------------------
         function Tay_sqrt_fact(n)
@@ -397,22 +411,35 @@ c------------------------------------------------------
         if(n.eq.0)Tay_sqrt_fact=1.d0
         if(n.eq.1)Tay_sqrt_fact=0.5d0
         if(n.ge.2)then
-
-        Tay_fact1=1.d0
-        Tay_fact2=2.d0
-
-        do i=2,n
-        Tay_fact1=Tay_fact1*dflotj(2*(i-1)-1)
-        Tay_fact2=Tay_fact2*dflotj(2*i)
-        enddo
-
-        Tay_sqrt_fact=(-1.d0)**(n-1)*(Tay_fact1/Tay_fact2)
-
+        
+         Tay_sqrt_fact=((-1.d0)**(n)*facult(2*n))/
+     &                 ((1-2*n)*facult(n)**2*4**n)
+        
         endif
 
         return
         end
 
+
+c------------------------------------------------------
+        function facult(n)
+c------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+
+        if(n.eq.0)facult=1.d0
+        if(n.eq.1)facult=1.d0
+        if(n.ge.2)then
+          facult=1.d0
+          do i=2,n
+          facult=facult*dflotj(n)
+          enddo
+        endif
+
+        return
+        end
+        
+        
 c-----------------------------------------------------------------
         subroutine Tay_inv_6(a,d,iord)
 c-----------------------------------------------------------------
@@ -421,33 +448,45 @@ c-----------------------------------------------------------------
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            d(0:7,0:7,0:7,0:7,0:7,0:7)
+     &            d(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            x(0:7,0:7,0:7,0:7,0:7,0:7)
 
         call Tay_clear_6(d,iord)                ! array for results
 
         f0=a(0,0,0,0,0,0)                       ! prefactor
-
+ 
+c----- iord = 0
         if(iord.eq.0)then
           d(0,0,0,0,0,0)=1.d0/f0
           goto 100
         endif
+        
+c----- iord = 1 
+        call Tay_copy_6(a,x,iord)
+        call Tay_const_6(x,1.d0/f0,iord) 
+        x(0,0,0,0,0,0)=0.d0                     ! abs(x) lt. 1
+        d(0,0,0,0,0,0)=1.d0
 
-        call Tay_const_6(a,1/f0,iord)           ! prepare a/tilde
-        call Tay_fill_6(b,1.d0,iord)
+        call Tay_copy_6(x,b,iord)
+        call Tay_copy_6(x,c,iord)
+        call Tay_const_6(c,-1.d0,iord)        
+        call Tay_add_6(c,d,iord)
 
-c--------- start summation,
+c--------- iord gt. 1
+c          start summation,
 c          store intermediate exponentials in b
 c          collecting data in d
 c
-
-        do n=1,iord
-          call Tay_mult_6(a,b,c,iord)
+        if(iord.gt.1)then
+        do n=2,iord
+          call Tay_mult_6(x,b,c,iord)
           call Tay_copy_6(c,b,iord)
           call Tay_const_6(c,Tay_inv_fact(n),iord)
           call Tay_add_6(c,d,iord)
-        enddo
+        enddo        
+        endif      
+        
         call Tay_const_6(d,1.d0/f0,iord)
-        call Tay_const_6(a,f0,iord)
 
 100     continue
 
@@ -457,6 +496,7 @@ c
 c------------------------------------------------------
         function Tay_inv_fact(n)
 c------------------------------------------------------
+c  Achtung checken
 
         implicit real*8(a-h,o-z)
 
@@ -1264,38 +1304,49 @@ c-----------------------------------------------------------------
         subroutine Tay_sqrt_4(a,d,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-
-        dimension a(0:7,0:7,0:7,0:7),
+       dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7),
-     &            d(0:7,0:7,0:7,0:7)
+     &            d(0:7,0:7,0:7,0:7),
+     &            x(0:7,0:7,0:7,0:7)
 
-        call Tay_clear_4(d,iord)        ! array for results
+        call Tay_clear_4(d,iord)                ! array for results
 
-        f0=a(0,0,0,0)                   ! prefactor
+        f0=a(0,0,0,0)                           ! prefactor
         sqf0=dsqrt(a(0,0,0,0))
 
+c----- iord = 0
         if(iord.eq.0)then
           d(0,0,0,0)=sqf0
           goto 100
         endif
+        
+c----- iord = 1 
+        call Tay_copy_4(a,x,iord)
+        call Tay_const_4(x,1.d0/f0,iord) 
+        x(0,0,0,0)=0.d0                     ! abs(x) lt. 1
+        d(0,0,0,0)=1.d0
 
-        call Tay_const_4(a,1/f0,iord)           ! prepare a/tilde
-        call Tay_fill_4(b,1.d0,iord)
+        call Tay_copy_4(x,b,iord)
+        call Tay_copy_4(x,c,iord)
+        call Tay_const_4(c,0.5d0,iord)        
+        call Tay_add_4(c,d,iord)
 
-c--------- start summation,
+c--------- iord gt. 1
+c          start summation,
 c          store intermediate exponentials in b
 c          collecting data in d
 c
-
-        do n=1,iord
-          call Tay_mult_4(a,b,c,iord)
+        if(iord.gt.1)then
+        do n=2,iord
+          call Tay_mult_4(x,b,c,iord)
           call Tay_copy_4(c,b,iord)
           call Tay_const_4(c,Tay_sqrt_fact(n),iord)
           call Tay_add_4(c,d,iord)
-        enddo
+        enddo       
+        endif
+        
         call Tay_const_4(d,sqf0,iord)
-        call Tay_const_4(a,f0,iord)
 
 100     continue
 
@@ -1310,33 +1361,45 @@ c-----------------------------------------------------------------
         dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7),
-     &            d(0:7,0:7,0:7,0:7)
+     &            d(0:7,0:7,0:7,0:7),
+     &            x(0:7,0:7,0:7,0:7)
 
         call Tay_clear_4(d,iord)                ! array for results
 
-        f0=a(0,0,0,0)                   ! prefactor
-
+        f0=a(0,0,0,0)                           ! prefactor
+ 
+c----- iord = 0
         if(iord.eq.0)then
           d(0,0,0,0)=1.d0/f0
           goto 100
         endif
+        
+c----- iord = 1 
+        call Tay_copy_4(a,x,iord)
+        call Tay_const_4(x,1.d0/f0,iord) 
+        x(0,0,0,0)=0.d0                     ! abs(x) lt. 1
+        d(0,0,0,0)=1.d0
 
-        call Tay_const_4(a,1/f0,iord)           ! prepare a/tilde
-        call Tay_fill_4(b,1.d0,iord)
+        call Tay_copy_4(x,b,iord)
+        call Tay_copy_4(x,c,iord)
+        call Tay_const_4(c,-1.d0,iord)        
+        call Tay_add_4(c,d,iord)
 
-c--------- start summation,
+c--------- iord gt. 1
+c          start summation,
 c          store intermediate exponentials in b
 c          collecting data in d
 c
-
-        do n=1,iord
-          call Tay_mult_4(a,b,c,iord)
+        if(iord.gt.1)then
+        do n=2,iord
+          call Tay_mult_4(x,b,c,iord)
           call Tay_copy_4(c,b,iord)
           call Tay_const_4(c,Tay_inv_fact(n),iord)
           call Tay_add_4(c,d,iord)
-        enddo
+        enddo        
+        endif     
+          
         call Tay_const_4(d,1.d0/f0,iord)
-        call Tay_const_4(a,f0,iord)
 
 100     continue
 
@@ -1394,3 +1457,4 @@ c-----------------------------------------------------------------
 
         return
         end
+c end of file
