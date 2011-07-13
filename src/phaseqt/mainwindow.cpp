@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 23:27:34 flechsig> 
+//  Time-stamp: <2011-07-13 23:30:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1876,7 +1876,7 @@ void MainWindow::parameterUpdate(int pos, char *text)
   char buffer[MaxPathLength];
   int scanned;
   QListWidgetItem *item= parameterList->item(pos);
-
+  printf("parameterUpdate: pos: %d\n", pos);
   switch (pos)
     {
     case 1:
