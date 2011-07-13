@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <06 Jul 11 13:09:50 flechsig>  */
+/*   Time-stamp: <13 Jul 11 13:57:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -594,7 +594,7 @@ struct datset
 struct ElementType   
 {
   int ElementOK;
-  MAP70TYPE matrix, MtoSource;
+  MAP70TYPE M_StoI, M_ItoS;
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc; 
 #ifdef SEVEN_ORDER
   DFDXTYPE dfdw, dfdl, dfdww, dfdwl, dfdll, dfdwidlj, opl;
@@ -704,6 +704,7 @@ struct BeamlineType Beamline;
   #define readfg34_par   readfg34_par_
   #define readmatrixfile readmatrixfile_
   #define src_ini        src_ini_
+  #define create_hormap  create_hormap_
   
 #ifdef SEVEN_ORDER
   #define fdet_8          fdet_8_
@@ -766,6 +767,7 @@ void
                        
   InitPHASE(struct PHASEset *), 
   LoadHorMaps(struct BeamlineType *, int), 
+  MakeHorMaps(struct BeamlineType *, int),
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *),
   MultiplyMatrix(), 
   pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
@@ -796,7 +798,7 @@ void
 	        
   WriteBLFile(char *, struct BeamlineType *),
   WriteMKos(struct mirrortype *, char *),
-  writemapc(char *, int, double *, double *, double *, double *,
+  writemapc(char *, char *, int, double *, double *, double *, double *,
 	    double *, double *, double *, double *),  
   WritePsd(char *, struct PSDType *, int, int),     
   
