@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-13 22:52:31 flechsig> 
+//  Time-stamp: <2011-07-13 22:58:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1881,10 +1881,14 @@ void MainWindow::parameterUpdate(int pos, char *text)
       sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(epsilon) for Newton routine (1e-4)");
       break;
     case 2:
-      sprintf(buffer, "%s : %d", "(iord) calculation up to order (3..7)", this->BLOptions.ifl.iord);
+      scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
+      if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
+      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (3..7)");
       break;
     case 3:
-      sprintf(buffer, "%s : %d", "(iord) calculation up to order (3..7)", this->BLOptions.ifl.iord);
+      scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
+      if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
+      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (3..7)");
       break;
     }
   item->setText(buffer);
