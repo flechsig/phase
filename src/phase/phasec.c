@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <08 Jul 11 09:11:43 flechsig>  */
+/*   Time-stamp: <13 Jul 11 10:00:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -289,7 +289,7 @@ int iindex(int el, int pos)
   return iret;
 } /* end iindex */
 
-#ifndef QTGUI
+
 void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpickname)   
      /* initialisiert die globalen Variablen */
      /* last mod. Uwe 21.1.97 		*/
@@ -308,9 +308,10 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
   bl->raysout    = NULL;
   bl->RTSource.SourceRays= NULL;
   bl->beamlineOK= 0;
-
+#ifndef QTGUI
   ginitdatset(&GDefDat);           /* init defaults */
-  minitdatset(&MDefDat);                   
+  minitdatset(&MDefDat);
+#endif
 
   ReadBLFile(x->beamlinename, bl);
 #ifndef QTGUI
@@ -326,7 +327,7 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
   printf("InitDataSets end\n");   
 #endif  
 }
-#endif
+
 
 void InitOptiBox1(char *pickname)   
 {
@@ -529,7 +530,7 @@ void gpd(char *ifname, FILE *af)
 
 
 /************************************************************************/
-void writemapc(char *fname, int iord, 
+void writemapc(char *fname, char *header, int iord, 
                double *ypc1, double *zpc1, double *dypc,   double *dzpc,
 	       double *wc,   double *xlc,  double *xlen1c, double *xlen2c)   
 /************************************************************************/
@@ -545,6 +546,7 @@ void writemapc(char *fname, int iord,
       fprintf(stderr, "writemapc: error: open file %s\n", fname); exit(-1);   
     }    
   fprintf(stdout, "writemapc: write transformation map to: %s\n", fname);
+  fprintf(f, "#\n# %s\n#\n", header);
   fprintf(f,
 	  "i j k l          ypc             zpc            dypc            dzpc\n");
   for (i= 0; i <= iord; i++)
@@ -572,7 +574,12 @@ void writemapc(char *fname, int iord,
 	for (l= 0; l <= iord; l++)
 	  if((i+j+k+l) <= iord)
 	    {
+#ifdef SEVEN_ORDER
+	      index=i+ j*8+ k*64 + l*512;
+#else
 	      index=i+ j*5+ k*25 + l*125;
+#endif
+	    
 	      fprintf(f, "%d %d %d %d % 15.5E % 15.5E % 15.5E % 15.5E\n", 
                       i, j, k, l, wc[index], xlc[index],
 		      xlen1c[index], xlen2c[index]);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <28 Jun 11 16:24:51 flechsig>  */
+/*   Time-stamp: <13 Jul 11 14:06:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -42,7 +42,7 @@ void activate_proc(w, tag, reason)
   int		widget_num = *tag; 	 /* Convert tag to widget number. */
   int		i, value, *itemlist[10]; /* for del gluebox */
   XmString	topic;    
-  char 	command[MaxPathLength], buffer[MaxPathLength];
+  char 	command[MaxPathLength], buffer[MaxPathLength], header[MaxPathLength];
   extern GRDATSTRUCTTYPE grdatstruct; 
   struct BeamlineType *bl;
   struct PSDType *PSDp;
@@ -538,18 +538,13 @@ void activate_proc(w, tag, reason)
     bl= &Beamline; 
     printf("activate_proc: read matrix from file: %s\n", 
 	   PHASESet.matrixname); 
-#ifdef VMS
-    CreateFString(&Fname, PHASESet.matrixname);
-    readmatrixfile(&Fname, bl->map70, &Beamline.BLOptions.ifl.iord);  
-    CreateFString(&Fname, PHASESet.intersecname);  
-    /*   readintersection(&Fname, bl->wc, bl->xlc, &iord);       */
-#else
-    readmatrixfile(PHASESet.matrixname, bl->map70, 
+
+    readmatrixfile(PHASESet.matrixname, bl->M_StoI, 
 		   &Beamline.BLOptions.ifl.iord, strlen(PHASESet.matrixname));
-#endif
+
     printf("activate_proc: read matrix ende, hardcoded: iord= %d\n", 
 	   Beamline.BLOptions.ifl.iord);    
-    extractmap(bl->map70, 
+    extractmap(bl->M_StoI, 
 	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	       &Beamline.BLOptions.ifl.iord); 
     bl->beamlineOK |= mapOK; 
@@ -697,8 +692,15 @@ void activate_proc(w, tag, reason)
 	if ((bl->position <= bl->elementzahl) && (bl->position != 0))
 	  {
 	    printf("write map of element %d to file\n", bl->position);  
+            sprintf(header, "beamline: %s, map of element %d, iord: %d", 
+		    PHASESet.beamlinename, bl->position, bl->BLOptions.ifl.iord);
+#ifdef SEVEN_ORDER
+	    sprintf(buffer, "%s-%d_7", PHASESet.mapname, bl->position);
+#else
+	    sprintf(buffer, "%s-%d", PHASESet.mapname, bl->position);
+#endif
 	    /* casting 15.12.99 ist noch nicht OK */
-	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
+	    writemapc(buffer, header, bl->BLOptions.ifl.iord, 
 		      (double *)(bl->ElementList[bl->position- 1].ypc1), 
 		      (double *) bl->ElementList[bl->position- 1].zpc1, 
 		      (double *) bl->ElementList[bl->position- 1].dypc, 
@@ -710,8 +712,15 @@ void activate_proc(w, tag, reason)
 	  } 
 	else
 	  {
-	    printf("write map of beamline to file\n");         
-	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
+	    printf("write map of beamline to file\n");
+	    sprintf(header, "beamline: %s, map of beamline, iord: %d", 
+		    PHASESet.beamlinename, bl->BLOptions.ifl.iord);
+#ifdef SEVEN_ORDER
+	    sprintf(buffer, "%s-0_7", PHASESet.mapname);
+#else	    
+	    sprintf(buffer, "%s-0", PHASESet.mapname);
+#endif
+	    writemapc(buffer, header, bl->BLOptions.ifl.iord, 
 		      (double *) bl->ypc1, (double *) bl->zpc1, 
 		      (double *) bl->dypc, (double *) bl->dzpc,
 		      (double *) bl->wc,   (double *) bl->xlc, 

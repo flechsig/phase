@@ -189,19 +189,20 @@ c------------------------------------------------------
 c---------------------------------------------------
         subroutine matrix_dim(iord,idim)
 c---------------------------------------------------
-
+	integer iord, idim, i, j, k, i
+	
         idim=0
-
+	
         do i=0,iord
-         do j=0,iord-i
-          do k=0,iord-i-j
-           do l=0,iord-i-j-k
-            idim=idim+1
-           enddo
-          enddo
-         enddo
+	   do j=0,iord-i
+	      do k=0,iord-i-j
+		 do l=0,iord-i-j-k
+		    idim=idim+1
+		 enddo
+	      enddo
+	   enddo
         enddo
-
+	
         return
         end
 

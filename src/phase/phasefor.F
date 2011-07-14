@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <12 Jul 11 10:19:04 flechsig> 
+c$$$ Time-stamp: <14 Jul 11 11:13:09 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -45,22 +45,26 @@ c subroutine psdi_gh(yp,zp,dyp,dzp,dens,s0)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 c UF 0804 routine pstf ausgelagert in separate file
- 
+
 c*********************************************************
-	function facult(nn) 
+	function facult(n) 
 c*********************************************************
-        integer nn,i
+        integer n,i
 	real*8 facult
 
-	facult=1.
-	if(nn.gt.1)then
-	  do i=1,nn
-	     facult=facult*float(i)
-	  enddo
-	endif
+	if(n.eq.0)facult=1.d0
+        if(n.eq.1)facult=1.d0
+        if(n.ge.2)then
+	   facult=1.d0
+	   do i=2,n
+	      facult=facult*dflotj(n)
+	   enddo
+        endif
+	
 	return
 	end 
 c*********** end facult()*********************************   
+
 
 c**********************************************************
 c	initialisieren der Konstanten

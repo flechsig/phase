@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <12 Jul 11 10:44:40 flechsig>  */
+/*   Time-stamp: <13 Jul 11 16:11:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -9,7 +9,7 @@
 /*   $Author$  */
 
 
-/* UF 0804 no X11 left */
+/*  UF 0804 no X11 left  */
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -327,19 +327,22 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
    /* UF , TL ausschalten ueber switch 15.5. 07 */
 
 #ifdef DEBUG
-   printf("MakeRTSource start: beamlineOK: %X\n", bl->beamlineOK);
+   printf("MakeRTSource start: beamlineOK: %X, raynumber: %d\n", bl->beamlineOK, bl->RTSource.raynumber);
 #endif
-
 
    if (bl->localalloc == DOALLOC) 
      {
+       
+#ifdef DEBUG
+   printf("MakeRTSource: realloc source\n");
+#endif
+
+
        bl->RTSource.SourceRays= XREALLOC(struct RayType, 
 					 bl->RTSource.SourceRays, 
 					 bl->RTSource.raynumber);
      }
      
-
-
    /* hier gibt es bestimmt eine elegantere Loesung */
    switch (bl->RTSource.QuellTyp)
      {
@@ -419,7 +422,7 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
 
    }
 #ifdef DEBUG
-   printf("MakeRTSource   end: beamlineOK: %X\n", bl->beamlineOK);
+   printf("MakeRTSource   end: beamlineOK: %X, raynumber: %d\n", bl->beamlineOK, bl->RTSource.raynumber);
 #endif
    /* 2.5.96 free(bl->RTSource.SourceRays);           */
 }  /* end makertsource */
@@ -882,9 +885,9 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 {
   struct PSDType *PSDp;
   int ii, iy, iz;                   /* to make the code clearer */
-#ifndef QTGUI
+
   FreeResultMem(&bl->RESULT); 
-#endif
+
   switch (newtype)
     {
     case PLrttype:

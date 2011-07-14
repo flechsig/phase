@@ -421,24 +421,7 @@ c------------------------------------------------------
         end
 
 
-c------------------------------------------------------
-        function facult(n)
-c------------------------------------------------------
-
-        implicit real*8(a-h,o-z)
-
-        if(n.eq.0)facult=1.d0
-        if(n.eq.1)facult=1.d0
-        if(n.ge.2)then
-          facult=1.d0
-          do i=2,n
-          facult=facult*dflotj(n)
-          enddo
-        endif
-
-        return
-        end
-        
+c UF remove facult- it is already in phasefor.F
         
 c-----------------------------------------------------------------
         subroutine Tay_inv_6(a,d,iord)

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <13 Jul 11 13:57:26 flechsig>  */
+/*   Time-stamp: <13 Jul 11 16:09:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -538,7 +538,9 @@ struct RTSourceType {
     } Quelle; */
   void *Quellep;           /* UF 24.11.06 */
   struct RayType *SourceRays;          
-  int QuellTyp, QuellTyp_old, modified, raynumber; };       
+  int QuellTyp_old, modified, raynumber; 
+  char QuellTyp;
+};       
 
 struct PSDType  {
   double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
@@ -631,7 +633,7 @@ struct BeamlineType
 {
   struct ElementType *ElementList;   
   struct RTSourceType RTSource; 
-  MAP70TYPE map70, lmap, rmap, MtoSource;                          
+  MAP70TYPE lmap, rmap, M_StoI, M_ItoS;                          
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc;
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
@@ -741,15 +743,19 @@ void
   BatchMode(struct PHASEset *, struct BeamlineType *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
+  create_hormap(),
   DefGeometryC(struct gdatset *, struct geometrytype *),
   DefGeometryCM(double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int),  
-  ExpandFileNames(),  
+  ExpandFileNames(),
+  extractmap(),
+  fdet_8(),
   fgmapidp(int *, 
 	   int *, double *, struct mirrortype *, struct geometrytype *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE),
+  fgmapidp_8(),
   FixFocus(double, double, double, int, double *, double *),
-  Footprint(struct BeamlineType *, int),
+  Footprint(struct BeamlineType *, unsigned int),
   GeneratePrintDataFile(),
   getoptipickfile(struct optistruct *, char *),
    
@@ -760,7 +766,8 @@ void
   GetUserName(), 
   intersection(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, double *, double *, double *, int *),   
-    
+  intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
+	       struct RayType *, double *, double *, double *, int *),  
   initconstants(),  
   InitDataSets(struct PHASEset *, struct BeamlineType *, char *),   
   InitSourceType(struct BeamlineType *, int),  
@@ -769,6 +776,8 @@ void
   LoadHorMaps(struct BeamlineType *, int), 
   MakeHorMaps(struct BeamlineType *, int),
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *),
+  make_matrix_8(),
+  misali_8(),
   MultiplyMatrix(), 
   pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), 
