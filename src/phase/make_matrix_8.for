@@ -98,9 +98,26 @@ c-------------- get cc row vectors
 
 c---------------- replace first line
 	xmap7(1,1)=1.d0
-	do j=1,idim
+	do j=2,idim
 	 xmap7(1,j)=0.d0
 	enddo
+
+c---------------- fill other lines
+      iline=1
+	  do k=0,iord
+	  do l=0,iord-k
+        do m=0,iord-k-l
+	  do n=0,iord-k-l-m
+          if(k+l+m+n.gt.0)then
+          iline=iline+1
+          do j=1,idim
+	    xmap7(iline,j)=cc(k,l,m,n,j) 
+	    enddo 
+          endif
+	  enddo
+	  enddo
+	  enddo
+	  enddo 
 
 	return
 	end
