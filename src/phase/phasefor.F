@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <2011-07-14 22:13:34 flechsig> 
+c$$$ Time-stamp: <2011-07-14 22:18:25 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -779,7 +779,7 @@ c******* extractmap ************************************
       idy=2+iord
       
       n=0
-      do i=0,iord,
+      do i=0,iord
       do j=0,iord-i
       do k=0,iord-i-j
       do l=0,iord-i-j-k
