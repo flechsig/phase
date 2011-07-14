@@ -190,6 +190,8 @@ c--------------------------------------------------------
         dimension eq28dn(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension eq28dni(0:7,0:7,0:7,0:7,0:7,0:7)
 
+        xdefl=dflotj(g.idefl)
+        
         do i=0,iord
         do j=0,iord-i
         do k=0,iord-i-j
@@ -211,11 +213,11 @@ c------- eq27
 c------- eq27 nominator
         do m=0,iord
         do n=0,iord-m
-          eq27n(0,0,0,0,m,n)=g.sina*a(m,n)
+          eq27n(0,0,0,0,m,n)=-xdefl*g.sina*a(m,n)
         enddo
         enddo
 
-        eq27n(0,0,0,0,1,0)=eq27n(0,0,0,0,1,0)-g.cosa
+        eq27n(0,0,0,0,1,0)=eq27n(0,0,0,0,1,0)+xdefl*g.cosa
         eq27n(1,0,0,0,0,0)=eq27n(1,0,0,0,0,0)-1.d0
        
 c------- eq27 denominator
@@ -314,7 +316,8 @@ c
 c       2)       then, evaluate the quotient getting dypc and dzpc
 c
 c-----------------------------------------------------------------
-       
+        xdefl=dflotj(g.idefl)
+         
         do i=0,iord
         do j=0,iord-i
         do k=0,iord-i-j
@@ -334,8 +337,8 @@ c------- eq33 nominator
         do j=0,iord-i
         do k=0,iord-i-j
         do l=0,iord-i-j-k
-          eq33n(i,j,k,l)=a1(i,j,k,l)*g.sinb
-     &         -wc(i,j,k,l)*g.cosb+ypc1(i,j,k,l)
+          eq33n(i,j,k,l)=-xdefl*a1(i,j,k,l)*g.sinb
+     &         +xdefl*wc(i,j,k,l)*g.cosb+ypc1(i,j,k,l)
         enddo
         enddo
         enddo
