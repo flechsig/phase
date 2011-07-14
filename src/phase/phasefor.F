@@ -1,17 +1,12 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <14 Jul 11 11:13:09 flechsig> 
+c$$$ Time-stamp: <2011-07-14 22:13:34 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
-
-c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
-c Date      : <06 Jan 00 13:18:08 flechsig> 
-c Time-stamp: <06 Feb 04 08:50:29 flechsig> 
-c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 c einige routinen aus fgmap3dpp
@@ -73,14 +68,9 @@ c----------------------------------------------------------
 	subroutine initconstants(cs)
 ccc        include 'phase_struct.for'
 c a trick to have the struct only in the ./phase and find it from opti 
-c if it works under vms is not yet tested
-#ifdef VMS
-        include '[-.phase]phase_struct.for'
-c        include 'phase_struct.for'
-#else
 cc        include '../phase/phase_struct.for'
 #include '../phase/phase_struct.F'
-#endif
+
 
         complex*16 xm1
 	record /constants/ cs
@@ -730,17 +720,16 @@ c********* end readintersection() ***************************************
 
 c*************************************************************** 
 	subroutine extractmap(xmap70,ypc1,zpc1,dypc,dzpc,iord)  
-c       Uwe 12.2.97 umgeschrieben auf universelle map
 c---------------------------------------------------------------      
 	implicit real*8(a-h,o-z)
 
         integer iord,iy,iz,idy,idz,i,j,k,l,nn
 #ifdef SEVEN_ORDER
         dimension xmap70(330,330),
-     &            ypc1(0:8,0:8,0:8,0:8),
-     &            zpc1(0:8,0:8,0:8,0:8),
-     &            dypc(0:8,0:8,0:8,0:8),
-     &            dzpc(0:8,0:8,0:8,0:8)
+     &            ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7),
+     &            dypc(0:7,0:7,0:7,0:7),
+     &            dzpc(0:7,0:7,0:7,0:7)
 #else
         dimension xmap70(70,70),
      &            ypc1(0:4,0:4,0:4,0:4),
@@ -749,26 +738,21 @@ c---------------------------------------------------------------
      &            dzpc(0:4,0:4,0:4,0:4)
 #endif
 
-        if(iord.eq.4)then
-         iy=36
-         iz=16
-         idy=6
-         idz=2
-        else 
-	   if(iord.eq.3)then
-          ! iord=3
-	      iy=21
-	      iz=11
-	      idy=5
-	      idz=2
-	   else
-cccc UF 6.6.2011 seven order correction not yet done
-	     iy=36
-             iz=16
-             idy=6
-            idz=2 
-	   endif
-        endif   
+c        if(iord.eq.4)then
+c         iy=36
+c         iz=16
+c         idy=6
+c         idz=2
+c        else 
+c	   if(iord.eq.3)then
+c	      iy=21
+c	      iz=11
+c	      idy=5
+c	      idz=2
+c	   else
+          call idnum(iord,idz,idy,iz,iy)
+c	   endif
+c        endif   
 
         nn=0
         do i=0,iord
@@ -789,7 +773,27 @@ cccc UF 6.6.2011 seven order correction not yet done
         end
 c******* extractmap ************************************     
 
+      subroutine idnum(iord,idz,idy,iz,iy)
 
+      idz=2
+      idy=2+iord
+      
+      n=0
+      do i=0,iord,
+      do j=0,iord-i
+      do k=0,iord-i-j
+      do l=0,iord-i-j-k
+      n=n+1
+      if((i.eq.0).and.(j.eq.1).and.(k.eq.0).and.(l.eq.0))iz=n
+      if((i.eq.1).and.(j.eq.0).and.(k.eq.0).and.(l.eq.0))iy=n
+      enddo
+      enddo
+      enddo
+      enddo
+
+      return
+      end
+        
 c********************************************************** 
 	subroutine reduce_1_drift(imodus,iord,a,g,acc,wc,
      &	xlc,ypc1,zpc1,dypc,dzpc)    
@@ -2333,7 +2337,7 @@ c*************************************************************
   
 c * end clen1 
 c-----------------------------------------------------------------------------------
-c aus create_hor_defl_file.for von JP
+c aus create_hor_defl_file.for von JB
 	subroutine create_hormap(xmap7, iord, idefl)
 c UF 12.7.2011 create subroutine
 c-----------------------------------------------------------------------------------

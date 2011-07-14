@@ -304,7 +304,7 @@ c--------------------------------------------------------
      &            zpc1(0:7,0:7,0:7,0:7),
      &            dypc(0:7,0:7,0:7,0:7),
      &            dzpc(0:7,0:7,0:7,0:7)
-
+        
 c------------------ replace variables
 c
 c       0)      wc(y,z,dy,dz) and xlc(y,z,dy,dz) are known
@@ -368,7 +368,7 @@ c------- eq34 nominator
         do j=0,iord-i
         do k=0,iord-i-j
         do l=0,iord-i-j-k
-          eq34n(i,j,k,l)=xlc(i,j,k,l)-zpc1(i,j,k,l)
+          eq34n(i,j,k,l)=-xlc(i,j,k,l)+zpc1(i,j,k,l)
         enddo
         enddo
         enddo
