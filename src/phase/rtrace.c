@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <13 Jul 11 16:11:57 flechsig>  */
+/*   Time-stamp: <15 Jul 11 15:20:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -934,6 +934,7 @@ void FreeResultMem(struct RESULTType *Re)
 /* uwe 8.8.96 */
 {
   struct PSDType *PSDp;
+
    if (((Re->typ & PLrttype) > 0) && (Re->RESp != NULL))
       free(Re->RESp); 
    if (((Re->typ & PLphspacetype) > 0) && (Re->RESp != NULL))

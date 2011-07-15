@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <13 Jul 11 16:20:26 flechsig> 
+//  Time-stamp: <14 Jul 11 17:14:28 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -405,7 +405,7 @@ void Plot::hfill(struct RayType *rays, int points)
   printf("hfill:end  hmax  %f\n", h2max);
 }
 
-void Plot::statistics(struct RayType *rays, int points)
+void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor)
 {
   int i;
   struct RayType *rp;
@@ -439,8 +439,8 @@ void Plot::statistics(struct RayType *rays, int points)
       cdy/= points;
       wdy = 2.35* sqrt(wdy/points- cdy*cdy);
     }
-  ry= wy;
-  rz= wz;
+  ry= wy* deltalambdafactor;
+  rz= wz* deltalambdafactor;
 }
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

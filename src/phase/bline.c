@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <13 Jul 11 16:11:00 flechsig>  */
+/*   Time-stamp: <15 Jul 11 15:20:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1376,14 +1376,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 /* liest den datensatz vom file 					*/     
 /* PHASEset.psourcename sollte danach mit brightnessnamen initialisert  */
 /* werden: strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6)     */
-/* Uwe 30.5.96, UF 10.3.06			                        */  
-/* UF 28.11.06 unions durch pointer ersetzt                             */
 /************************************************************************/
 {   
    FILE *f; 
    int  rcode, i, version;
    unsigned int elnumber;
-   char buffer[255], buf;  
+   char buffer[MaxPathLength], buf;  
    double *pd; 
    
    struct UndulatorSourceType  *up;
@@ -1416,7 +1414,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
      fprintf(stderr, "File %s not found- defaults used!\n", fname);
      bl->elementzahl= 0;
 #ifndef QTGUI
-     initdatset(&Fg3DefDat, &Beamline); 		/* source init */
+     initdatset(&Fg3DefDat, &Beamline); 		/* source init with defaults*/
 #endif
    }
    else 
@@ -1428,7 +1426,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        { 
          fscanf(f, " %c %[^\n]s %c", &bl->RTSource.QuellTyp, buffer, &buf); 
          printf("source type: %c >> %s\n", bl->RTSource.QuellTyp, buffer);
-         AllocRTSource(bl);
+         AllocRTSource(bl);         /* reserves memory for source parameter */
          switch(bl->RTSource.QuellTyp)
 	   {
 	   case 'U': 
@@ -1552,15 +1550,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        
        if (SetFilePos(f, "ELEMENTS"))                       
          fscanf(f, " %d %[^\n]s %c", &bl->elementzahl, buffer, &buf); 
-       else rcode= -1;  /* data not found in file */     
+       else rcode= -1;                      /* data not found in file */     
 
-       if (bl->elementzahl > 0)   	/* allociere memory */
-       {
-	 if ((bl->ElementList= (struct ElementType *) 
-	      realloc(bl->ElementList, 
-		      bl->elementzahl* sizeof(struct ElementType))) == NULL)
-	   {  fprintf(stderr, "realloc error in ReadBLFile \n"); exit(-1); }   
-       }
+       if (bl->elementzahl > 0)   	    /* allociere memory */
+       	 bl->ElementList= XREALLOC(struct ElementType, bl->ElementList, bl->elementzahl);
+	  
        elnumber= 1;
        listpt= bl->ElementList;
 
@@ -1572,11 +1566,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	  if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
 	    fscanf(f, " %s %[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
-#ifdef DEBUG 
-	     /*    printf("   Name read: %s\n", listpt->elementname); */
+#ifdef DEBUG1 
+	    printf("   Name read: %s\n", listpt->elementname); 
 #endif
           } else rcode= -1;
-
+	  
           sprintf(buffer, "GEOMETRY %d", elnumber); 
           if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
@@ -1631,8 +1625,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
 		fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
 	      }
-#ifdef DEBUG
-	    /*  printf("   mirror read\n"); */
+#ifdef DEBUG1
+	    printf("   mirror read\n"); 
 #endif
 	    printf("Elementtype: %d, name: %s\n", listpt->MDat.Art, listpt->elementname);
           } else rcode= -1;

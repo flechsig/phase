@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <2011-07-14 22:18:25 flechsig> 
+c$$$ Time-stamp: <15 Jul 11 12:30:59 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1151,10 +1151,10 @@ c*********************************************************
         IMPLICIT REAL*8(A-H,O-Z)
 
 #ifdef SEVEN_ORDER
-        dimension ypc1(0:8,0:8,0:8,0:8),
-     &            zpc1(0:8,0:8,0:8,0:8),
-     &            dypc(0:8,0:8,0:8,0:8),
-     &            dzpc(0:8,0:8,0:8,0:8)
+        dimension ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7),
+     &            dypc(0:7,0:7,0:7,0:7),
+     &            dzpc(0:7,0:7,0:7,0:7)
 #else
         dimension ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
@@ -1211,10 +1211,10 @@ c****************************************************************
         implicit real*8(a-h,o-z)  
         character*255 mapname
 #ifdef SEVEN_ORDER
-	dimension   ypc1(0:8,0:8,0:8,0:8),
-     &              zpc1(0:8,0:8,0:8,0:8),
-     &              dypc(0:8,0:8,0:8,0:8),
-     &              dzpc(0:8,0:8,0:8,0:8) 
+	dimension   ypc1(0:7,0:7,0:7,0:7),
+     &              zpc1(0:7,0:7,0:7,0:7),
+     &              dypc(0:7,0:7,0:7,0:7),
+     &              dzpc(0:7,0:7,0:7,0:7) 
 #else
         dimension   ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),

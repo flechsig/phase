@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <15 Jun 11 08:14:18 flechsig>  */
+/*   Time-stamp: <15 Jul 11 15:20:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -148,7 +148,7 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 	  hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep; 
 	  bl->RTSource.QuellTyp= 'H';
 	  hp->disty	= .1;  
-	  hp->iy 		= 3;   
+	  hp->iy 		= 3;   quellty
 	  hp->distz	= .2;  
 	  hp->iz		= 3;   
 	  hp->divy	= 1.;  

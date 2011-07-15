@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2011-07-14 00:45:14 flechsig>  */
+/*  Time-stamp: <15 Jul 11 16:33:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "plot.h"
+#include "singleray.h"
 
 extern "C" {
   #include "cutils.h"
@@ -31,7 +32,7 @@ extern "C" {
   #include "common.h"
 }
 
-# define NPARS 5
+# define NPARS 163
 
 // interface to the c structure PHASEset
 class myPHASEset : public PHASEset
@@ -64,6 +65,9 @@ public:
   struct gdatset GActDat,   GDefDat;  
   struct mdatset MActDat,   MDefDat; 
   int ActualTask; 
+
+  
+
 private:
   
   

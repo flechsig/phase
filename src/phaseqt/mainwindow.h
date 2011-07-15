@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2011-07-14 00:39:24 flechsig>  */
+/*  Time-stamp: <15 Jul 11 16:32:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,9 +40,12 @@ public:
     MainWindow();
 
 private slots:
+    void dislenSlot();
     void grautoscaleslot();
     void grapplyslot();
+    void lambdaSlot();
     void newBeamline(); // UF
+    void openBeamline(); // UF
     void save();
     void saveas();
     void print();
@@ -215,7 +218,8 @@ private:
 
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
-    QAction *newLetterAct;
+    QAction *newBeamlineAct;
+    QAction *openBeamlineAct;
     QAction *saveAct;
     QAction *saveasAct;
     QAction *printAct;
@@ -228,6 +232,7 @@ private:
     QAction *raytracesimpleAct;
     QAction *raytracefullAct;
     QAction *footprintAct;
+    QAction *singleRayAct;
     QAction *phasespaceAct;
     QAction *mphasespaceAct;
     QAction *readFg34Act;
@@ -246,6 +251,7 @@ private:
     QAction *grexample1Act;
     QAction *grexample2Act;
     Plot    *d_plot;
+    SingleRay *s_ray;
 
     QPushButton *grautoButton;
     QPushButton *grapplyButton;

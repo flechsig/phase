@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-07-14 00:43:16 flechsig> 
+//  Time-stamp: <15 Jul 11 16:27:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -106,6 +106,11 @@ void MainWindow::activateProc(const QString &action)
       printf("footprint-> done\n");
     }
 
+  if (!action.compare("singleRayAct")) 
+    { 
+      printf("singleRayAct button pressed\n");
+      s_ray= new SingleRay();
+    }
 
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
   if (!action.compare("mphasespaceAct"))    printf("mphasespaceAct button pressed\n"); 
@@ -392,6 +397,11 @@ void MainWindow::deleteElement()
 			 tr("can't delete anything, list is empty or nothing is selected!\n"));
 } // deleteElement()
 
+// slot changed dispersive length
+void MainWindow::dislenSlot()
+{
+  sscanf(dislenE->text().toAscii().data(), "%lf", &this->BLOptions.displength);
+} // dislenSlot
 
 // apply slot for optical element
 void MainWindow::elementApplyBslot()
@@ -460,7 +470,7 @@ void MainWindow::grapplyslot()
     if (this->beamlineOK & sourceOK)
       {
 	d_plot->Plot::hfill((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber);
-	d_plot->Plot::statistics((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber);
+	d_plot->Plot::statistics((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber, this->deltalambdafactor);
 	UpdateStatistics(d_plot, "Source", this->RTSource.raynumber);
 	d_plot->setTitle(tr("Source Plane"));
 	d_plot->setphaseData("grsourceAct");
@@ -471,7 +481,7 @@ void MainWindow::grapplyslot()
     if (this->beamlineOK & resultOK)
     {
       d_plot->Plot::hfill((struct RayType *)this->RESULT.RESp, this->RESULT.points);
-      d_plot->Plot::statistics((struct RayType *)this->RESULT.RESp, this->RESULT.points);
+      d_plot->Plot::statistics((struct RayType *)this->RESULT.RESp, this->RESULT.points, this->deltalambdafactor);
       UpdateStatistics(d_plot, "Image", this->RESULT.points);
       d_plot->setTitle(tr("Image Plane"));
       d_plot->setphaseData("grimageAct");
@@ -603,13 +613,55 @@ void MainWindow::insertElement()
   printf("inserElement: end list should have %u elements\n", this->elementzahl);
 } // insertElement
 
+// slot changed  lambda
+void MainWindow::lambdaSlot()
+{
+  unsigned int i;
+  sscanf(lambdaE->text().toAscii().data(), "%lf", &this->BLOptions.lambda);
+  beamlineOK= 0;
+  for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
+} // lambdaSlot
+
+
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
 {
   int rcode;
+  char *name= "new_beamline.phase";
+
+  if ( fexists(name)) 
+    QMessageBox::warning(this, tr("Phase: newBeamline"),
+			 tr("File %1. already exists but we do not read it!\n Save as will overwite it!").arg(name));
+  
+  this->beamlineOK= 0;
+  this->myPHASEset::init(name);
+  PutPHASE(this, (char*) MainPickName);
+  this->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
+  AllocRTSource(this);                          /* reserves source memory */
+  this->RTSource.raynumber= 0;                  /* set default raynumber  */
+  XFREE(RTSource.SourceRays);
+  this->elementzahl = 0; 
+  XFREE(this->ElementList);                     /* clean up memory of elements  */
+  this->RESULT.points= 0;
+  FreeResultMem(&this->RESULT);
+  this->BLOptions.lambda= 3.1e-6;                /* 400 ev */
+  this->BLOptions.displength= 5000;
+  this->BLOptions.SourcetoImage= 1;
+  this->BLOptions.WithAlign= 0;
+  UpdateElementList();
+  UpdateBeamlineBox();
+  UpdateSourceBox();
+  parameterUpdateAll(NPARS);
+  statusBar()->showMessage(tr("New Beamline '%1' created!").arg(name), 2000);
+} // end newBeamline()
+
+// slot called to read in a new beamline
+void MainWindow::openBeamline()
+{
+  int rcode;
   
 #ifdef DEBUG
-  printf("Debug: slot newBeamline activated\n");
+  printf("Debug: slot openBeamline activated\n");
   //  myQtPhase->myPHASEset::print();
 #endif
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
@@ -641,7 +693,7 @@ void MainWindow::newBeamline()
 				 tr("Cannot load %1.\n wrong file type!").arg(fileName));
     }
   this->myPHASEset::print();
-} // end newBeamline()
+} // end openBeamline()
 
 // slot parameter update, callback des Editors
 void MainWindow::parameterUpdateSlot()
@@ -1022,12 +1074,15 @@ void MainWindow::undo()
 // define action buttons
 void MainWindow::createActions()
 {
-    newLetterAct = new QAction(QIcon(":/images/new.png"), tr("&New Beamline"),
-                               this);
-    newLetterAct->setShortcuts(QKeySequence::New);
-    newLetterAct->setStatusTip(tr("Create a new Beamline"));
+    newBeamlineAct = new QAction(QIcon(":/images/new.png"), tr("&New Beamline"), this);
+    newBeamlineAct->setShortcuts(QKeySequence::New);
+    newBeamlineAct->setStatusTip(tr("Create a new Beamline"));
+    connect(newBeamlineAct, SIGNAL(triggered()), this, SLOT(newBeamline()));
 
-    connect(newLetterAct, SIGNAL(triggered()), this, SLOT(newBeamline()));
+    openBeamlineAct = new QAction(QIcon(":/images/new.png"), tr("&Open Beamline"), this);
+    openBeamlineAct->setShortcuts(QKeySequence::New);
+    openBeamlineAct->setStatusTip(tr("Open Beamline"));
+    connect(openBeamlineAct, SIGNAL(triggered()), this, SLOT(openBeamline()));
 
     saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save..."), this);
     saveAct->setShortcuts(QKeySequence::Save);
@@ -1080,6 +1135,11 @@ void MainWindow::createActions()
     footprintAct->setStatusTip(tr("geometrical optics, footprint at selected element"));
     signalMapper->setMapping(footprintAct, QString("footprintAct"));
     connect(footprintAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    singleRayAct = new QAction(tr("GO single Ray &trace"), this);
+    singleRayAct->setStatusTip(tr("geometrical optics, single Ray trace"));
+    signalMapper->setMapping(singleRayAct, QString("singleRayAct"));
+    connect(singleRayAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     phasespaceAct = new QAction(tr("PO &phase space imaging"), this);
     phasespaceAct->setStatusTip(tr("physical optics, phase space imaging"));
@@ -1195,7 +1255,8 @@ QWidget *MainWindow::createBeamlineBox()
     connect(addB, SIGNAL(pressed()), this, SLOT(insertElement()));
     connect(delB, SIGNAL(pressed()), this, SLOT(deleteElement()));
     connect(elementList, SIGNAL(itemSelectionChanged()), this, SLOT(selectElement()));
-
+    connect(lambdaE, SIGNAL(editingFinished()), this, SLOT(lambdaSlot()));
+    connect(dislenE, SIGNAL(editingFinished()), this, SLOT(dislenSlot()));
     return beamlineBox;
 } // end createbeamline box
 
@@ -1350,8 +1411,8 @@ QWidget *MainWindow::createGraphicBox()
   statLayout->addWidget(wdyLabel, 3, 1);
   statLayout->addWidget(rayLabel, 4, 0);
   statLayout->addWidget(traLabel, 4, 1);
-  statLayout->addWidget(ryLabel, 5, 0);
-  statLayout->addWidget(rzLabel, 5, 1);
+  statLayout->addWidget(ryLabel, 5, 1);
+  statLayout->addWidget(rzLabel, 5, 0);
   statGroup->setLayout(statLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
@@ -1370,7 +1431,8 @@ QWidget *MainWindow::createGraphicBox()
 void MainWindow::createMenus()
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(newLetterAct);
+    fileMenu->addAction(newBeamlineAct);
+    fileMenu->addAction(openBeamlineAct);
     fileMenu->addAction(saveAct);
     fileMenu->addAction(saveasAct);
     fileMenu->addAction(printAct);
@@ -1385,6 +1447,7 @@ void MainWindow::createMenus()
     calcMenu->addAction(raytracesimpleAct);
     calcMenu->addAction(raytracefullAct);
     calcMenu->addAction(footprintAct);
+    calcMenu->addAction(singleRayAct);
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);
     calcMenu->addAction(mphasespaceAct);
@@ -1662,34 +1725,22 @@ QWidget *MainWindow::createOpticalElementBox()
 QWidget *MainWindow::createParameterBox()
 {
   parameterBox = new QWidget();
+  QListWidgetItem *item;
+  char buffer[50];
+  int i;
 
   // upper part
   QGroupBox   *parameterGroup  = new QGroupBox(tr("Parameters"));
   QVBoxLayout *parameterLayout = new QVBoxLayout;
 
   parameterList = new QListWidget();
-  parameterList->addItems(QStringList()
-			<< "0 : (epsilon) for Newton routine (1e-4)"
-			<< "1 : (iord) calculation up to order (3..7)"
-			<< "2 : Grating 1"
-			<< "3 : Mirror 3"
-			<< "4 : Mirror 4"
-			<< "5 : Mirror 4"
-			<< "6 : Mirror 4"
-			<< "7 : Mirror 4"
-			<< "8 : Mirror 4"
 
-			);
-#ifdef HEINZ
-  QTableView *view = new QTableView;
-  QSqlTableModel *model = new QSqlTableModel;
-     view->setModel(model);
-     view->show();
-  model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
-     model->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
-     model->setHeaderData(2, Qt::Horizontal, QObject::tr("City"));
-     model->setHeaderData(3, Qt::Horizontal, QObject::tr("Country"));
-#endif
+  for (i= 0; i< NPARS; i++)
+    {
+      sprintf(buffer, "%d : parameter",  i);
+      item= new QListWidgetItem(buffer);
+      parameterList->insertItem(i, item);
+    }
 
   QLabel *parameterLabel  = new QLabel(tr("edit value"));
   parameterE  = new QLineEdit;
@@ -1710,8 +1761,6 @@ QWidget *MainWindow::createParameterBox()
   connect(parameterE, SIGNAL(editingFinished()), this, SLOT(parameterUpdateSlot()));
   return parameterBox;
 } // end createparameter box
-
-
 
 
 // the optical element box
@@ -1853,7 +1902,8 @@ void MainWindow::createStatusBar()
 void MainWindow::createToolBars()
 {
     fileToolBar = addToolBar(tr("File"));
-    fileToolBar->addAction(newLetterAct);
+    //fileToolBar->addAction(newBeamlineAct);
+    fileToolBar->addAction(openBeamlineAct);
     fileToolBar->addAction(saveAct);
     fileToolBar->addAction(printAct);
 
@@ -1878,6 +1928,7 @@ void MainWindow::parameterUpdateAll(int zahl)
   int i;
   for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
 }
+
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
 // defaults can be set with an empty text
@@ -1886,29 +1937,260 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
   char buffer[MaxPathLength];
   int scanned;
   QListWidgetItem *item= parameterList->item(pos);
+
+  char *inhalt[]= {	
+    "(epsilon) epsilon for Newton routine (1e-4)",         // 0
+    "(iord) calculation up to order (1..7)", 
+    "(iordsc)", 
+    "(iexpand) expansion of pathlength (1),",
+    "(iplmode) subtraction of ideal path length (1)",
+    "(isrctype) source type",
+    "(rpin) radius of pinhole in source plane (mm)",
+    "(srcymin) aperture in source plane, ymin (mm)",
+    "(srcymax) aperture in source plane, ymax (mm)",
+    "(srczmin) aperture in source plane, zmin (mm)",
+
+    "(srczmax) aperture in source plane, zmax (mm)", // 10
+    "(rpin_ap) radius in aperture plane",
+    "op->apr.ymin_ap",
+    "op->apr.ymax_ap",
+    "op->apr.zmin_ap",
+    "op->apr.zmax_ap",
+    "(so5.dipcy) Dipole: Cy",
+    "(so5.dipcz) Dipole: Cz",
+    "(so5.dipdisy) Dipole: y-Distance (virtual) between Dipole and source plane",
+    "(so5.dipdisz) Dipole: z-Distance (real) between Dipole and source plane",
+   
+    "(inorm) (1) normalize output, (0) do not normalize",   // 20
+    "(inorm1)",
+    "(inorm2) (0, 1, 2)",
+    "(matrel) derive matrix elements in 3 different ways (1) (for debugging)",
+    "(so1.isrcy)   source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
+    "(so1.isrcdy)  source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
+    "(so1.sigmay)  source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(so1.sigmayp) source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(xi.ymin) ymin, zu integrierender Winkelbereich in mrad",
+    "(xi.ymax) ymax, zu integrierender Winkelbereich in mrad",
+
+    "(xi.ianzy0) Anzahl der Stuetzstellen im ersten Raster",    // 30
+    "(so1.isrcz) source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
+    "(so1.isrcdz) source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
+    "(so1.sigmaz) source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(so1.sigmazp) source size/div.: sigmay(mm) / sigmayp or half height/angle",
+    "(xi.zmin)",
+    "(xi.zmax)",
+    "(xi.ianzz0)",
+    "(ifl.ibright) (1) write 4-dim brightness to file",
+    "(ifl.ispline) (0) simpson integration, (1) spline integration",
+
+    "(xi.d12_max)", // 40
+    "(xi.id12); (1) print d12 on file, (0) do not print",
+    "(xi.ianz0_cal)",
+    "(xi.ianz0_fixed)",
+    "(xi.iamp_smooth) (0,1,2)",
+    "(xi.iord_amp)",
+    "(xi.ifm_amp)",
+    "(xi.iord_pha)",
+    "(xi.ifm_pha)",
+    "(xi.distfocy) distance to horizontal focus",
+
+    "(xi.distfocz) distance to vertical focus", // 50
+    "(ifl.ipinarr) insert pinhole array in source plane",
+    "(src.pin_yl0)",
+    "(src.pin_yl)",
+    "(src.pin_zl0)",
+    "(src.pin_zl)",
+    "(so4.nfreqtot)",
+    "(so4.nfreqpos)",
+    "(so4.nfreqneg)",
+    "(so4.nsource)",
+
+    "(so4.nimage)", // 60
+    "(so4.deltatime)",
+    "(so4.iconj)",
+}; /* ende der Liste */ 
+
+  struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
+  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
+  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
+
+
   printf("parameterUpdate: pos: %d\n", pos);
+
   scanned= 1;      // set a default 
   switch (pos)
     {
     case 0: 
-      if (!init) scanned= sscanf(text, "%lf", &this->BLOptions.epsilon);
-      if ((scanned == EOF) || (scanned == 0)) this->BLOptions.epsilon= 1e-4; // default
-      sprintf(buffer, "%-5lg : %s", this->BLOptions.epsilon, "(epsilon) for Newton routine (1e-4)");
+      if (!init) scanned= sscanf(text, "%lf", &op->epsilon);
+      if ((scanned == EOF) || (scanned == 0)) op->epsilon= 1e-4; // default
+      sprintf(buffer, "%-5lg \t: %s", op->epsilon, inhalt[pos]);
       break;
     case 1:
-      if (!init) scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
       printf("scanned: %d\n",scanned);
-      if ((scanned == EOF) || (scanned == 0) || (this->BLOptions.ifl.iord < 1) || 
-	  (this->BLOptions.ifl.iord > 7)) this->BLOptions.ifl.iord= 4;             // set default
-      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (1..7)");
+      if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
+	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
+      sprintf(buffer, "%d \t: %s", op->ifl.iord, inhalt[pos]);
       break;
     case 2:
-      if (!init) scanned= sscanf(text, "%d", &this->BLOptions.ifl.iord);
-      if (scanned == EOF) this->BLOptions.ifl.iord= 4; // default
-      sprintf(buffer, "%d : %s", this->BLOptions.ifl.iord, "(iord) calculation up to order (3..7)");
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iordsc);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iordsc= 4; // default
+      sprintf(buffer, "%d \t: %s", op->ifl.iordsc, inhalt[pos]);
       break;
+    case 3:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iexpand);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.iexpand, inhalt[pos]);
+      break;
+    case 4:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iplmode);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.iplmode, inhalt[pos]);
+      break;
+      /*  case 5:
+      if (!init) scanned= sscanf(text, "%d", &this->src.isrctype);
+      if ((scanned == EOF) || (scanned == 0)) this->src.isrctype= 0;   // default
+      sprintf(buffer, "%d : %s", this->src.isrctype, inhalt[pos]);
+      break; */
+    case 6:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.rpin= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.rpin, inhalt[pos]);
+      break;
+    case 7:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymin);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srcymin= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.srcymin, inhalt[pos]);
+      break;
+    case 8:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymax);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srcymax= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.srcymax, inhalt[pos]);
+      break;
+    case 9:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmin);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srczmin= 0;   // default
+      sprintf(buffer, "%lg \t: %s",  op->apr.srczmin, inhalt[pos]);
+      break;
+    case 10:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmax);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srczmax= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.srczmax, inhalt[pos]);
+      break;
+    case 11:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.rpin_ap= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.rpin_ap, inhalt[pos]);
+      break;
+    case 12:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.ymin_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.ymin_ap= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.ymin_ap, inhalt[pos]);
+      break;
+    case 13:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.ymax_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.ymax_ap= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.ymax_ap, inhalt[pos]);
+      break;
+    case 14:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.zmin_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.zmin_ap= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.zmin_ap, inhalt[pos]);
+      break;
+    case 15:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.zmax_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.zmax_ap= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->apr.zmax_ap, inhalt[pos]);
+      break;
+#ifdef HEONZ
+    case 16:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+    case 17:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+    case 18:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+    case 19:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+#endif
+    case 20:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.inorm, inhalt[pos]);
+      break;
+    case 21:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm1);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm1= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.inorm1, inhalt[pos]);
+      break;
+    case 22:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm2);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.inorm2, inhalt[pos]);
+      break;
+    case 23:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.matrel);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.matrel, inhalt[pos]);
+      break;
+#ifdef SOURCE
+    case 24:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+    case 25:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+    case 26:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+    case 27:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+#endif
+    case 28:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.ymin);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.ymin, inhalt[pos]);
+      break;
+    case 29:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.ymax);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.ymax, inhalt[pos]);
+      break;
+    case 30:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.ianzy0, inhalt[pos]);
+      break;
+
+#ifdef XXX
+case 10:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+#endif
     default:
-      sprintf(buffer, "%d : unknown parameter", pos);
+      sprintf(buffer, "%d \t: unknown parameter", pos);
     }
   item->setText(buffer);
 } // end parameterUpdate
