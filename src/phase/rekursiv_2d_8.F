@@ -33,6 +33,7 @@ c--------- get ypca(0,0,0,0)
 
 	if(imode.eq.2)then
 c--------- get ypca(0,0,0,0) and zpca(0,0,0,0)
+
 	call newton_2D(acc,eq1c,eq2c,ypca,zpca,iord)
 	endif
 
@@ -215,15 +216,17 @@ c	jetz sind die Konstanten c1(i,k,s,t) und c2(i,k,s,t) bekannt
 c	Gleichungssystem loesen
 c---------------------------------------------------------
 
-	if((dabs(a1).gt.1.0d-15).and.(dabs(a2).gt.1.0d15))then
+      acc_loc=1.d-12
+
+	if((dabs(a1).gt.acc_loc).and.(dabs(a2).gt.acc_loc))then
 	  zpca(ii,ik,is,it)=-(c1/a1-c2/a2)/(b1/a1-b2/a2)
 	  ypca(ii,ik,is,it)=-c1/a1-(b1/a1)* zpca(ii,ik,is,it)
 	 else
-	  if((dabs(a1).lt.1.0d-15).and.(dabs(a2).gt.1.0d-15))then	  
+	  if((dabs(a1).lt.acc_loc).and.(dabs(a2).gt.acc_loc))then	  
 	    zpca(ii,ik,is,it)=-c1/b1
 	    ypca(ii,ik,is,it)=-c2/a2-(b2/a2)*zpca(ii,ik,is,it)
 	  endif
-	  if((dabs(a2).lt.1.0d-15).and.(dabs(a1).gt.1.0d-15))then	  
+	  if((dabs(a2).lt.acc_loc).and.(dabs(a1).gt.acc_loc))then
 	    zpca(ii,ik,is,it)=-c2/b2
 	    ypca(ii,ik,is,it)=-c1/a1-(b1/a1)*zpca(ii,ik,is,it)
 	  endif
@@ -441,8 +444,8 @@ c-------------------------------------------------
 
 c-------------------------------------------------
 	subroutine newton_2D(acc,eq1c,eq2c,ypca,zpca,iord)
-c
 c	two dimensional Newton-Raphson Method
+c     rather unprecise on a PC
 c-------------------------------------------------
 
         implicit real*8 (a-h,o-z)
@@ -455,6 +458,7 @@ c-------------------------------------------------
 	ypca(0,0,0,0)=0.d0
 	zpca(0,0,0,0)=0.d0
 
+      acc=1.e-10
 10	continue
 
 	e1=0.d0
