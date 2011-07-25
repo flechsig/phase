@@ -1,3 +1,8 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c---------------------------------------------------------------
 c
 c	Spiegelkoordinaten bis 8. Ordnung
