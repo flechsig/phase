@@ -412,7 +412,7 @@ c------------------------------------------------------
         if(n.eq.1)Tay_sqrt_fact=0.5d0
         if(n.ge.2)then
         
-         Tay_sqrt_fact=((-1.d0)**(n)*facult(2*n))/
+         Tay_sqrt_fact=((-1.d0)**n*facult(2*n))/
      &                 ((1-2*n)*facult(n)**2*4**n)
         
         endif
@@ -479,23 +479,11 @@ c
 c------------------------------------------------------
         function Tay_inv_fact(n)
 c------------------------------------------------------
-c  Achtung checken
 
         implicit real*8(a-h,o-z)
 
         if(n.eq.0)Tay_inv_fact=1.d0
-        if(n.eq.1)Tay_inv_fact=-1.d0
-        if(n.ge.2)then
-
-        Tay_fact=1.d0
-
-        do i=2,n
-        Tay_fact=Tay_fact*dflotj(i-1)
-        enddo
-
-        Tay_inv_fact=(-1.d0)**n*(1.d0/Tay_fact)
-
-        endif
+        if(n.ge.1)Tay_inv_fact=(-1.d0)**n
 
         return
         end
@@ -525,42 +513,42 @@ c
        
         if(m0.eq.1)then
         if(i-n0.ge.0)then
-        c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n0))
+        c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(i)/facult(i-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.2)then
         if(j-n0.ge.0)then
-        c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n0))
+        c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(j)/facult(j-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.3)then
         if(k-n0.ge.0)then
-        c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n0))
+        c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(facult(k)/facult(k-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.4)then
         if(l-n0.ge.0)then
-        c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n0))
+        c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(facult(l)/facult(l-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.5)then
         if(m-n0.ge.0)then
-        c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n0))
+        c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(facult(m)/facult(m-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.6)then
         if(n-n0.ge.0)then
-        c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n0))
+        c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(facult(n)/facult(n-n0))
         goto 100
         endif
         endif
@@ -600,42 +588,42 @@ c
        
         if(m0.eq.1)then
         if(i-n0.ge.0)then
-        c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n0))
+        c8(i-n0,j,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(i)/facult(i-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.2)then
         if(j-n0.ge.0)then
-        c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n0))
+        c8(i,j-n0,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(j)/facult(j-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.3)then
         if(k-n0.ge.0)then
-        c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n0))
+        c8(i,j,k-n0,l,m,n)=a8(i,j,k,l,m,n)*(facult(k)/facult(k-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.4)then
         if(l-n0.ge.0)then
-        c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n0))
+        c8(i,j,k,l-n0,m,n)=a8(i,j,k,l,m,n)*(facult(l)/facult(l-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.5)then
         if(m-n0.ge.0)then
-        c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n0))
+        c8(i,j,k,l,m-n0,n)=a8(i,j,k,l,m,n)*(facult(m)/facult(m-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.6)then
         if(n-n0.ge.0)then
-        c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n0))
+        c8(i,j,k,l,m,n-n0)=a8(i,j,k,l,m,n)*(facult(n)/facult(n-n0))
         goto 100
         endif
         endif
@@ -673,28 +661,28 @@ c
        
         if(m0.eq.1)then
         if(i-n0.ge.0)then
-        c7(i-n0,j,k,l)=a7(i,j,k,l)*(faku(i)/faku(i-n0))
+        c7(i-n0,j,k,l)=a7(i,j,k,l)*(facult(i)/facult(i-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.2)then
         if(j-n0.ge.0)then
-        c7(i,j-n0,k,l)=a7(i,j,k,l)*(faku(j)/faku(j-n0))
+        c7(i,j-n0,k,l)=a7(i,j,k,l)*(facult(j)/facult(j-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.3)then
         if(k-n0.ge.0)then
-        c7(i,j,k-n0,l)=a7(i,j,k,l)*(faku(k)/faku(k-n0))
+        c7(i,j,k-n0,l)=a7(i,j,k,l)*(facult(k)/facult(k-n0))
         goto 100
         endif
         endif
 
         if(m0.eq.4)then
         if(l-n0.ge.0)then
-        c7(i,j,k,l-n0)=a7(i,j,k,l)*(faku(l)/faku(l-n0))
+        c7(i,j,k,l-n0)=a7(i,j,k,l)*(facult(l)/facult(l-n0))
         goto 100
         endif
         endif
@@ -738,42 +726,42 @@ c
        
         if(m1.eq.1)then
         if(i-n1.ge.0)then
-        b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n1))
+        b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(i)/facult(i-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.2)then
         if(j-n1.ge.0)then
-        b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n1))
+        b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(j)/facult(j-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.3)then
         if(k-n1.ge.0)then
-        b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n1))
+        b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(facult(k)/facult(k-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.4)then
         if(l-n1.ge.0)then
-        b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n1))
+        b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(facult(l)/facult(l-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.5)then
         if(m-n1.ge.0)then
-        b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n1))
+        b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(facult(m)/facult(m-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.6)then
         if(n-n1.ge.0)then
-        b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n1))
+        b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(facult(n)/facult(n-n1))
         goto 100
         endif
         endif
@@ -798,42 +786,42 @@ c------------------------------------------------------------------
        
         if(m2.eq.1)then
         if(i-n2.ge.0)then
-        c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(i-n2))
+        c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(facult(i)/facult(i-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.2)then
         if(j-n2.ge.0)then
-        c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(j-n2))
+        c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(facult(j)/facult(j-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.3)then
         if(k-n2.ge.0)then
-        c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(k-n2))
+        c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(facult(k)/facult(k-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.4)then
         if(l-n2.ge.0)then
-        c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(l-n2))
+        c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(facult(l)/facult(l-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.5)then
         if(m-n2.ge.0)then
-        c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(m-n2))
+        c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(facult(m)/facult(m-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.6)then
         if(n-n2.ge.0)then
-        c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n-n2))
+        c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(facult(n)/facult(n-n2))
         goto 200
         endif
         endif
@@ -877,42 +865,42 @@ c
        
         if(m1.eq.1)then
         if(i-n1.ge.0)then
-        b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(i)/faku(i-n1))
+        b8(i-n1,j,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(i)/facult(i-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.2)then
         if(j-n1.ge.0)then
-        b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(faku(j)/faku(j-n1))
+        b8(i,j-n1,k,l,m,n)=a8(i,j,k,l,m,n)*(facult(j)/facult(j-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.3)then
         if(k-n1.ge.0)then
-        b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(faku(k)/faku(k-n1))
+        b8(i,j,k-n1,l,m,n)=a8(i,j,k,l,m,n)*(facult(k)/facult(k-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.4)then
         if(l-n1.ge.0)then
-        b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(faku(l)/faku(l-n1))
+        b8(i,j,k,l-n1,m,n)=a8(i,j,k,l,m,n)*(facult(l)/facult(l-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.5)then
         if(m-n1.ge.0)then
-        b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(faku(m)/faku(m-n1))
+        b8(i,j,k,l,m-n1,n)=a8(i,j,k,l,m,n)*(facult(m)/facult(m-n1))
         goto 100
         endif
         endif
 
         if(m1.eq.6)then
         if(n-n1.ge.0)then
-        b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(faku(n)/faku(n-n1))
+        b8(i,j,k,l,m,n-n1)=a8(i,j,k,l,m,n)*(facult(n)/facult(n-n1))
         goto 100
         endif
         endif
@@ -937,42 +925,42 @@ c------------------------------------------------------------
        
         if(m2.eq.1)then
         if(i-n2.ge.0)then
-        c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(i)/faku(i-n2))
+        c8(i-n2,j,k,l,m,n)=b8(i,j,k,l,m,n)*(facult(i)/facult(i-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.2)then
         if(j-n2.ge.0)then
-        c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(faku(j)/faku(j-n2))
+        c8(i,j-n2,k,l,m,n)=b8(i,j,k,l,m,n)*(facult(j)/facult(j-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.3)then
         if(k-n2.ge.0)then
-        c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(faku(k)/faku(k-n2))
+        c8(i,j,k-n2,l,m,n)=b8(i,j,k,l,m,n)*(facult(k)/facult(k-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.4)then
         if(l-n2.ge.0)then
-        c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(faku(l)/faku(l-n2))
+        c8(i,j,k,l-n2,m,n)=b8(i,j,k,l,m,n)*(facult(l)/facult(l-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.5)then
         if(m-n2.ge.0)then
-        c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(faku(m)/faku(m-n2))
+        c8(i,j,k,l,m-n2,n)=b8(i,j,k,l,m,n)*(facult(m)/facult(m-n2))
         goto 200
         endif
         endif
 
         if(m2.eq.6)then
         if(n-n2.ge.0)then
-        c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(faku(n)/faku(n-n2))
+        c8(i,j,k,l,m,n-n2)=b8(i,j,k,l,m,n)*(facult(n)/facult(n-n2))
         goto 200
         endif
         endif
@@ -985,27 +973,6 @@ c------------------------------------------------------------
         enddo
         enddo
         enddo
-
-        return
-        end
-
-c------------------------------------------------------
-        function faku(n)
-c------------------------------------------------------
-
-        implicit real*8(a-h,o-z)
-
-        if(n.lt.0)then
-        type*, 'Value not defined in routine FAKU'
-        stop
-        endif
-
-        if(n.ge.0)then
-        faku=1.d0
-        do i=1,n
-        faku=faku*dflotj(i)
-        enddo
-        endif
 
         return
         end
