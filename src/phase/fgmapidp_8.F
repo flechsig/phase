@@ -176,34 +176,37 @@ c	OPL has six variables (w,l,y,z,yp,zp)
         call tay_copy_6(rtq2,xloc2_6,iord)
 
 c---------- get dfdw6 and dfdl6 in seventh order
-c	dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw 
-c	dfdl6=(dQ1/dl)/sqrt(Q1) + (dQ2/dl)/sqrt(Q2)
-c	dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
+c       dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw
+c       dfdl6=(dQ1/dl)/sqrt(Q1) + (dQ2/dl)/sqrt(Q2)
+c       dfdw6 and dfdl6 have six variables (w,l,y,z,yp,zp)
 
-	call tay_deri_6a(q0_8,dq0w_8,1,1,iord)
-	call tay_deri_6a(q1_8,dq1w_8,1,1,iord)
-	call tay_deri_6a(q2_8,dq2w_8,1,1,iord)
-	call tay_deri_6a(q1_8,dq1l_8,2,1,iord)
-	call tay_deri_6a(q2_8,dq2l_8,2,1,iord)
+        call tay_deri_6a(q0_8,dq0w_8,1,1,iord)
+        call tay_deri_6a(q1_8,dq1w_8,1,1,iord)
+        call tay_deri_6a(q2_8,dq2w_8,1,1,iord)
+        call tay_deri_6a(q1_8,dq1l_8,2,1,iord)
+        call tay_deri_6a(q2_8,dq2l_8,2,1,iord)
 
-	call tay_copy_6_87(dq0w_8,dq0w,iord)
-	call tay_copy_6_87(dq1w_8,dq1w,iord)
-	call tay_copy_6_87(dq2w_8,dq2w,iord)
-	call tay_copy_6_87(dq1l_8,dq1l,iord)
-	call tay_copy_6_87(dq2l_8,dq2l,iord)
+        call tay_copy_6_87(dq0w_8,dq0w,iord)
+        call tay_copy_6_87(dq1w_8,dq1w,iord)
+        call tay_copy_6_87(dq2w_8,dq2w,iord)
+        call tay_copy_6_87(dq1l_8,dq1l,iord)
+        call tay_copy_6_87(dq2l_8,dq2l,iord)
 
-	call Tay_inv_6(rtq1,rtq1i,iord)	
-	call Tay_inv_6(rtq2,rtq2i,iord)	
+        call Tay_inv_6(rtq1,rtq1i,iord)
+        call Tay_inv_6(rtq2,rtq2i,iord)
 
-	call Tay_mult_6(rtq1i,dq1w,dfdw1,iord)
-	call Tay_mult_6(rtq2i,dq2w,dfdw2,iord)
+        call Tay_mult_6(rtq1i,dq1w,dfdw1,iord)
+        call Tay_mult_6(rtq2i,dq2w,dfdw2,iord)
 
-	call Tay_sum_6(dfdw1,dfdw2,dfdw6,iord)
-	call Tay_add_6(dq0w,dfdw6,iord)
+        call Tay_sum_6(dfdw1,dfdw2,dfdw6,iord)
+        
+c       dq0w mit Faktor 2 multipliziert 18.7.2011
+        call Tay_const_6(dq0w,2.d0,iord) 
+        call Tay_add_6(dq0w,dfdw6,iord)
 
-	call Tay_mult_6(rtq1i,dq1l,dfdl1,iord)
-	call Tay_mult_6(rtq2i,dq2l,dfdl2,iord)
-	call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
+        call Tay_mult_6(rtq1i,dq1l,dfdl1,iord)
+        call Tay_mult_6(rtq2i,dq2l,dfdl2,iord)
+        call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
 
 c----------------------------------------------------
 	
@@ -219,16 +222,11 @@ c-------------- solve eqs. 19 & 20 iteratively
 c	input: 	dfdw6(w,l,y,z,yp,zp) & dfdl6(w,l,y,z,yp,zp)
 c	output:  ypc(w,l,y,z)       &  zpc(w,l,y,z)
 c
-	imode=2
-	call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
+        imode=2
+        call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
 
-c------------- replace w and l by power series in (y,z,dy,dz)
-c       input:   ypc(w,l,y,z)   &  zpc(w,l,y,z)
-c       output: ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 
-        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
-     &                        ypc1,zpc1,2,iord)
-
+c------------- ACHTUNG Reihenfolge der Aufrufe geaendert 8. Juli        
 c------------- set up eqs. 27 & 28
 c       output: eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
 cccc UF 11.6. add g it is expected in the subroutine
@@ -239,17 +237,25 @@ c       solve set of linear equations
 c       input:  eqs. 27 & 28
 c       output: wc(y,z,dy,dz) & xlc(y,z,dy,dz)
         imode=1
+        
         call subd345a(acc,eq27,eq28,wc,xlc,imode,iord)
-
+        
+c------------- replace w and l by power series in (y,z,dy,dz)
+c       input:   ypc(w,l,y,z)   &  zpc(w,l,y,z)
+c       output: ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
+        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
+     &                        ypc1,zpc1,2,iord)
+     
 c------------- get Taylor expansion of dyp and dzp
-c	input:	wc(y,z,dy,dz),xlc(y,z,dy,dz),
-c		ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
-c	output:	dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
+c       input:  wc(y,z,dy,dz),xlc(y,z,dy,dz),
+c               ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
+c       output: dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
+        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
-
-	call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
-
-
+c------------- warum 2 mal Aufruf, auskommetiert am 18.7. 2011      
+cccc UF 11.6. in dieser routine bleibt er haengen und zwar beim call von
+cccc replace_wl_in_u.for
+c        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 c------------- get path length in variable (w,l,y,z)
 c	input:  opl6(w,l,y,z,yp,zp),
 c		ypc1(y,z,dy,dz),zpc1(y,z,dy,dz)
@@ -293,35 +299,36 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
 	call replace_wl_in_ypzp(dfdll4,dfdll4,wc,xlc,
      &                          dfdll,dfdll,1,iord)
 
-	if(iplmode.eq.1)then
-	  opl(0,0,0,0)=opl(0,0,0,0)-g.r-g.rp
-	  xlm.xlen1c(0,0,0,0)=xlm.xlen1c(0,0,0,0)-g.r
-	  xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
-	endif
+        if(iplmode.eq.1)then
+          opl(0,0,0,0)=opl(0,0,0,0)-g.r-g.rp
+          xlm.xlen1c(0,0,0,0)=xlm.xlen1c(0,0,0,0)-g.r
+          xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
+        endif
 
-c	do i=0,iord
-c	 do j=0,iord-i
-c         do k=0,iord-i-j
-c	   do l=0,iord-i-j-k
-c	    xlm.xlen1c(i,j,k,l)=opl(i,j,k,l)/2.d0
-c	    xlm.xlen2c(i,j,k,l)=xlm.xlen1c(i,j,k,l)
-c	   enddo
-c         enddo
-c        enddo
-c       enddo
-c
+       do i=0,iord
+        do j=0,iord-i
+         do k=0,iord-i-j
+         do l=0,iord-i-j-k
+          xlm.xlen1c(i,j,k,l)=opl(i,j,k,l)/2.d0
+          xlm.xlen2c(i,j,k,l)=xlm.xlen1c(i,j,k,l)
+          enddo
+         enddo
+        enddo
+       enddo
+
 c--------------------- get higher order partial derivatives of path length
 c	input:	opl6(w,l,y,z,yp,zp)
 c	output:	dfdwidlj(i,j,y,z,dy,dz)
 
-        call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
-     &    dfdwidlj,iord)
+c        call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
+c     &    dfdwidlj,iord)
 
 c------------------------------------------------------------
 
 	endif	! idrift = 0
 
-c-----------------------------------------------------------------
+1     format(4i4,2d15.3) 
+      
 c-----------------------------------------------------------------
 
         if(idrift.eq.1)then
@@ -406,3 +413,4 @@ c-------------------------------------------------------
 
 	return 
 	end
+
