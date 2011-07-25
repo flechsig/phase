@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <15 Jul 11 12:30:59 flechsig> 
+c$$$ Time-stamp: <25 Jul 11 13:54:04 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -52,7 +52,7 @@ c*********************************************************
         if(n.ge.2)then
 	   facult=1.d0
 	   do i=2,n
-	      facult=facult*dflotj(n)
+	      facult=facult*dflotj(i)
 	   enddo
         endif
 	
