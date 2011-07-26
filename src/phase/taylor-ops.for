@@ -1364,16 +1364,27 @@ c-----------------------------------------------------------------
         dimension cc1(0:7,0:7,0:7,0:7),
      &            cc(0:7,0:7,0:7,0:7,1:330)
 
-        icol=0
-
+c       get row
+        irow=0
+      
         do k=0,iord
         do l=0,iord-k
         do m=0,iord-k-l
         do n=0,iord-k-l-m
+          irow=irow+1
+         if((k.eq.k0).and.(l.eq.l0).and.(m.eq.m0).and.(n.eq.n0))goto 100
+        enddo
+        enddo
+        enddo
+        enddo
 
-        icol=icol+1    
-        cc(k0,l0,m0,n0,icol)=cc1(k,l,m,n)
-
+100     continue
+ 
+        do k=0,iord
+        do l=0,iord-k
+        do m=0,iord-k-l
+        do n=0,iord-k-l-m 
+          cc(k,l,m,n,irow)=cc1(k,l,m,n)
         enddo
         enddo
         enddo
