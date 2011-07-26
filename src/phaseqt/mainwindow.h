@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <15 Jul 11 16:32:59 flechsig>  */
+/*  Time-stamp: <25 Jul 11 17:14:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -17,6 +17,7 @@
 #include <QGroupBox>
 
 #include "qtphase.h"
+#include "singleray.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;

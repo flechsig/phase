@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Jul 11 16:27:45 flechsig> 
+//  Time-stamp: <25 Jul 11 17:22:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -109,7 +109,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("singleRayAct")) 
     { 
       printf("singleRayAct button pressed\n");
-      s_ray= new SingleRay();
+      s_ray= new SingleRay((void *)this);
     }
 
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
