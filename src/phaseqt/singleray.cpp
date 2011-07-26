@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <26 Jul 11 14:18:08 flechsig> 
+//  Time-stamp: <26 Jul 11 14:25:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -188,12 +188,12 @@ void SingleRay:: RayTraceSingleRayCpp(struct BeamlineType *bl)
 
       if (OnElement(&ds->MDat, ww, ll) == 0)
 	{
-	  QMessageBox::information(this, tr("Phase: RayTraceSingleRayCpp"),
-				   tr("ray got lost on element number %1.\n set output to input!").arg(elnumber));
 	  beep(1);
 	  printf("!!! ray got lost on element number %d ==> exit\n", 
 	  	 elnumber);
-          
+	  QMessageBox::information(this, tr("Phase: RayTraceSingleRayCpp"),
+				   tr("ray got lost on element number %1.\n set output to input!").arg(elnumber));
+	            
 	  /* setze out wie in */
 	  memcpy(&rayout, &Tmpsource, sizeof(struct RayType)); 
 	  elcounter= bl->elementzahl+ 1; /* Abbruch */
