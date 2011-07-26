@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <25 Jul 11 17:14:23 flechsig>  */
+/*  Time-stamp: <26 Jul 11 12:06:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -16,7 +16,7 @@
 #include <QListWidget>
 #include <QGroupBox>
 
-#include "qtphase.h"
+#include "phaseqt.h"
 #include "singleray.h"
 
 QT_BEGIN_NAMESPACE

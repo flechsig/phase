@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/singleray.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <25 Jul 11 18:44:53 flechsig>  */
+/*  Time-stamp: <26 Jul 11 13:58:09 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -14,17 +14,17 @@
 
 #include <QtGui>
 
-#include "qtphase.h"
+#include "phaseqt.h"
 
-class SingleRay : public QWidget//, public MainWindow //public QWidget, public QtPhase */
+class SingleRay : public QWidget, public QtPhase   //, public MainWindow //public QWidget, public QtPhase */
 {
     Q_OBJECT
     
     struct RayType rayin, rayout;
 
 public:
-    
-    SingleRay(void *);
+    QWidget     *singleRayBox;
+    SingleRay(struct BeamlineType *);
     //    ~SingleRay(){close();};
 
 private slots:
@@ -51,7 +51,7 @@ private:
     QPushButton *sourceDefaultB;
     QPushButton *sourceApplyB;
     QPushButton *sourceQuitB;
-    void        *myparent;
+    struct BeamlineType  *myparent;
     void        RayTraceSingleRayCpp(struct BeamlineType *);
     
 };

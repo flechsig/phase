@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <25 Jul 11 18:08:05 flechsig>  */
+/*  Time-stamp: <26 Jul 11 12:09:25 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -8,8 +8,8 @@
 /*  $Revision$  */
 /*  $Author$  */
 
-#ifndef QTPHASE_H
-#define QTPHASE_H
+#ifndef PHASEQT_H
+#define PHASEQT_H
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>

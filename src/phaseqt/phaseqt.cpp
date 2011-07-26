@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <12 Jul 11 14:22:56 flechsig> 
+//  Time-stamp: <26 Jul 11 12:08:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -9,7 +9,7 @@
 //  $Author$ 
 
 
-#include "qtphase.h"
+#include "phaseqt.h"
 
 // initialize the c structure of filenames with a name
 // removes a possible extension

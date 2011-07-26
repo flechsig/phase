@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <26 Jul 11 12:52:54 flechsig> 
+//  Time-stamp: <26 Jul 11 14:18:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -12,17 +12,18 @@
 #include "singleray.h"
 
 // constructor
-SingleRay::SingleRay(void *parent)
+SingleRay::SingleRay(struct BeamlineType *parent)
+//SingleRay::SingleRay()
 {
-  QWidget *singleRayBox = new QWidget();
+  singleRayBox = new QWidget();
 
   QGroupBox   *sourceParsGroup  = new QGroupBox(tr("single Ray trace "));
   QGridLayout *sourceParsLayout = new QGridLayout;
 
-  S1Label  = new QLabel(tr("z (mm)"));
-  S2Label  = new QLabel(tr("y (mm)"));
-  S3Label  = new QLabel(tr("dz (mrad)"));
-  S4Label  = new QLabel(tr("dy (mrad)"));
+  S1Label  = new QLabel(tr("y (mm)"));
+  S2Label  = new QLabel(tr("z (mm)"));
+  S3Label  = new QLabel(tr("dy (mrad)"));
+  S4Label  = new QLabel(tr("dz (mrad)"));
   S5Label  = new QLabel(tr("phi (deg.)"));
   S6Label  = new QLabel(tr("-> 0.0"));
   S7Label  = new QLabel(tr("-> 0.0"));
@@ -64,8 +65,8 @@ SingleRay::SingleRay(void *parent)
 
   connect(sourceDefaultB, SIGNAL(clicked()), this,  SLOT(defaultSlot()));
   connect(sourceApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
-  connect(sourceQuitB,    SIGNAL(clicked()), this,  SLOT(close()));
-  //  connect(sourceQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
+  //connect(sourceQuitB,    SIGNAL(clicked()), this,  SLOT(close()));
+  connect(sourceQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
   singleRayBox->show();
   this->myparent= parent;
   this->defaultSlot();   // initialize fields with defaults
@@ -77,26 +78,29 @@ void SingleRay::applySlot()
   char buffer[MaxPathLength];
   
   printf("applySlot\n");
-  sscanf(S1E->text().toAscii().data(), "%lf", &rayin.z);
-  sscanf(S2E->text().toAscii().data(), "%lf", &rayin.y);
-  sscanf(S3E->text().toAscii().data(), "%lf", &rayin.dz);
-  sscanf(S4E->text().toAscii().data(), "%lf", &rayin.dy);
+  sscanf(S1E->text().toAscii().data(), "%lf", &rayin.y);
+  sscanf(S2E->text().toAscii().data(), "%lf", &rayin.z);
+  sscanf(S3E->text().toAscii().data(), "%lf", &rayin.dy);
+  sscanf(S4E->text().toAscii().data(), "%lf", &rayin.dz);
   sscanf(S5E->text().toAscii().data(), "%lf", &rayin.phi);
 
   rayin.dz*= 1e-3; // into rad
   rayin.dy*= 1e-3; // into rad
   //  bl->beamlineOK |= sourceOK;
-  //  BuildBeamline(bl);
-  RayTraceSingleRayCpp((struct BeamlineType *)this->myparent);
+  
+  BuildBeamline(this->myparent);
+  RayTraceSingleRayCpp(this->myparent);
+  //  BuildBeamline(this);
+  //  RayTraceSingleRayCpp(this);
 
   // the output
-  sprintf(buffer, "-> %g", rayout.z);
-  S6Label->setText(QString(tr(buffer)));
   sprintf(buffer, "-> %g", rayout.y);
+  S6Label->setText(QString(tr(buffer)));
+  sprintf(buffer, "-> %g", rayout.z);
   S7Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %g", rayout.dz * 1e3);
-  S8Label->setText(QString(tr(buffer)));
   sprintf(buffer, "-> %g", rayout.dy * 1e3);
+  S8Label->setText(QString(tr(buffer)));
+  sprintf(buffer, "-> %g", rayout.dz * 1e3);
   S9Label->setText(QString(tr(buffer)));
   sprintf(buffer, "-> %g", rayout.phi);
   S10Label->setText(QString(tr(buffer)));
@@ -115,11 +119,9 @@ void SingleRay::defaultSlot()
 
 void SingleRay::quitSlot()
 {
-  printf("quitSlot\n");
-  //  this->hide();
-  //  this->close();
-  // delete this;
-}
+  // printf("quitSlot\n");
+  this->singleRayBox->close();
+} // quitSlot
 
 // reimplemented from rtrace.c
 // we do not use the source and result pointer
@@ -140,7 +142,7 @@ void SingleRay:: RayTraceSingleRayCpp(struct BeamlineType *bl)
 
   if ((bl->beamlineOK & mapOK) == 0)
     { 
-      fprintf(stderr, "rtrace.c: beamline is not OK: beamlineOK: %X\n", 
+      fprintf(stderr, "RayTraceSingleRayCpp: beamline is not OK: beamlineOK: %X\nreturn\n", 
 	      bl->beamlineOK);       
       return;
     }

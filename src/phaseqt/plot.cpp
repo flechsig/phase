@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <14 Jul 11 17:14:28 flechsig> 
+//  Time-stamp: <26 Jul 11 12:10:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -24,7 +24,7 @@
 #include <qwt_plot_curve.h>
 
 //#include "plot.h"
-#include "qtphase.h"
+#include "phaseqt.h"
 
 using namespace std;   // UF weiss nicht was das ist
 
