@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 Jul 11 15:20:52 flechsig>  */
+/*   Time-stamp: <25 Jul 11 18:21:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -438,6 +438,7 @@ int OnElement(struct mdatset *mi, double w, double l)
    return on;
 } /* end OnElement */
 
+/* for cpp we have a different version in singleray.cpp */
 void RayTraceSingleRay(struct BeamlineType *bl)
 {
   struct RayType *Raysin, *Raysout, Tmpsource, Tmpresult;   
