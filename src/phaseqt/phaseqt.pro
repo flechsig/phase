@@ -1,7 +1,7 @@
 # -*-makefile-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.pro
 #  Date      : <31 May 11 16:59:10 flechsig> 
-#  Time-stamp: <15 Jul 11 15:37:34 flechsig> 
+#  Time-stamp: <26 Jul 11 12:05:23 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -20,8 +20,8 @@ DEPENDPATH  += .
 INCLUDEPATH += ../phase/.
 
 # Input
-HEADERS   += mainwindow.h qtphase.h plot.h singleray.h
-SOURCES   += main.cpp mainwindow.cpp qtphase.cpp plot.cpp singleray.cpp ../phase/phasec.c ../phase/cutils.c ../phase/bline.c \
+HEADERS   += mainwindow.h phaseqt.h plot.h singleray.h
+SOURCES   += main.cpp mainwindow.cpp phaseqt.cpp plot.cpp singleray.cpp ../phase/phasec.c ../phase/cutils.c ../phase/bline.c \
 	../phase/rtrace.c ../phase/xmalloc.c ../phase/error.c ../phase/geometrypck.c ../phase/mirrorpck.c
 RESOURCES += qtgui.qrc
 DEFINES   += QTGUI DEBUG HAVE_CONFIG_H LINUX
