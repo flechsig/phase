@@ -25,10 +25,10 @@ c--------------------------------------------------------
         dimension iac1l(1000000,0:7)
 
 c	zu bestimmende Konstanten festlegen (ikst)
-	do ii=0,iord
-	do ik=0,iord-ii
-	do is=0,iord-ii-ik
-	do it=0,iord-ii-ik-is
+	do ii=0,iord              ! y
+	do ik=0,iord-ii           ! z
+	do is=0,iord-ii-ik        ! dy
+	do it=0,iord-ii-ik-is     ! dz
 
 	ypc1(ii,ik,is,it)=0.d0
 	if(ionetwo.eq.2)zpc1(ii,ik,is,it)=0.d0
@@ -60,7 +60,7 @@ c--------------------------------------------------------
 	ianz4=0
 
 	if(n5+n6.eq.0)then
-	  if((ii-ij.ne.0).or.(ik-im.ne.0))then
+	  if((ii-ij.ne.0).or.(ik-im.ne.0).or.(is.ne.0).or.(it.ne.0))then
 	  sum=0.d0
 	  else 
 	  sum=1.d0
@@ -82,7 +82,7 @@ c--------- vierte Spalte
 
 c-----------------------------------------------------------
 c	jetzt gueltige Kombinationen der verschiedenen Kombinationen 
-c	fuer die Spalten 1.-4. suchen
+c	fuer die Spalten 1 - 4 suchen
 c	bei jeder gueltigen Kombination gleich sum anpassen, damit 
 c	Kombi-Kombinationen nicht zwischengespeichert werden muessen
 c-----------------------------------------------------------
@@ -90,7 +90,7 @@ c	ACHTUNG, es gibt immer mindesten eine gültige Spaltenkombination
 c	und zwar: (0,0,0,0)  (0,0,0,0)
 c-----------------------------------------------------------
 
-	do m1=1,ianz1	! loop über alle gültige Spaltenkombinationen
+	do m1=1,ianz1	! loop über alle gültigen Spaltenkombinationen
 	do m2=1,ianz2
 	do m3=1,ianz3
 	do m4=1,ianz4
@@ -138,6 +138,7 @@ c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
 	ypc1(ii,ik,is,it)=ypc1(ii,ik,is,it)+ypc(n5,n6,ij,im)*sum
 	if(ionetwo.eq.2)then
 	zpc1(ii,ik,is,it)=zpc1(ii,ik,is,it)+zpc(n5,n6,ij,im)*sum
+	
 	endif
 
 	enddo	! loop ueber n6
