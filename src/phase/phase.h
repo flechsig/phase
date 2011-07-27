@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <13 Jul 11 16:09:36 flechsig>  */
+/*   Time-stamp: <27 Jul 11 09:02:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -622,11 +622,9 @@ struct OptionsType                   			/* 24.6.96 */
   int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign;
   double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
-#ifndef QTGUIXXX
   struct control_flags ifl;
   struct apertures apr;
   struct integration xi;
-#endif
 };    
                                             
 struct BeamlineType
@@ -774,7 +772,7 @@ void
                        
   InitPHASE(struct PHASEset *), 
   LoadHorMaps(struct BeamlineType *, int), 
-  MakeHorMaps(struct BeamlineType *, int),
+  MakeHorMaps(struct BeamlineType *),
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *),
   make_matrix_8(),
   misali_8(),
@@ -791,11 +789,9 @@ void
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
   ReadCoefficientFile(double *, char *),
-#ifdef QTGUI
   readfg34_par(struct BeamlineType *, struct apertures *,
 	       struct control_flags *,  struct integration *,
 	       double *),
-#endif
   ReadpsFile(char *, struct RESULTType *),
   ReadRayFile(char *, int *, struct RESULTType *), 
   readmatrixfilec(char *, double *, int),

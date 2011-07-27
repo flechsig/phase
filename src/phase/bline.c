@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Jul 11 15:20:54 flechsig>  */
+/*   Time-stamp: <27 Jul 11 09:00:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -740,11 +740,11 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 
 /* UF 11.7.2011 create the Maps analytically */
 /* only for seven order */
-void MakeHorMaps(struct BeamlineType *bl, int dim)
+void MakeHorMaps(struct BeamlineType *bl)
 {
   int iord, idefl;
 
-  iord = dim;
+  iord = bl->BLOptions.ifl.iord;
   idefl= 1;                                         /*  right hand deflection (rh) */
   create_hormap((double *)bl->rmap, &iord, &idefl); 
   idefl= 2;                                         /*  left hand deflection (lh)  */
@@ -935,10 +935,10 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
            if (bl->hormapsloaded == 0)
            {
 #ifdef SEVEN_ORDER
-	     printf("MakeMapandMatrix: create horizontal transformation matrixes \n"); 
-	     MakeHorMaps(bl, mdim);
+	     printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 
+	     MakeHorMaps(bl);
 #else
-	     printf("MakeMapandMatrix: load horizontal transformation matrixes \n"); 
+	     printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
 	     LoadHorMaps(bl, mdim);    
 #endif
 	     bl->hormapsloaded= 1;
