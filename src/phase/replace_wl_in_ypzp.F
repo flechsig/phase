@@ -1,3 +1,8 @@
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c--------------------------------------------------------
 	subroutine replace_wl_in_ypzp(ypc,zpc,wc,xlc,
      &                        ypc1,zpc1,ionetwo,iord)
