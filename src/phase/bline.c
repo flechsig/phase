@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <27 Jul 11 09:00:37 flechsig>  */
+/*   Time-stamp: <28 Jul 11 18:33:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -473,6 +473,8 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
    struct RayType *Raysin, *foot, elray, *elrayp;   
    struct ElementType *listpt;  
    struct RESULTType *Re; 
+
+   bl->beamlineOK &= ~resultOK;
 
 #ifdef SEVEN_ORDER
    dim= 330;
@@ -2088,7 +2090,9 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 
     case kEOEGeneral:           /* read coefficients from file */
       printf("DefMirrorC: general coefficient file- nothing to be done here\n");
-      /*    ReadCoefficientFile(dp, fname); */
+#ifdef QTGUI
+      /*     ReadCoefficientFile(dp, fname); */
+#endif
       break;
 
     case kEOECone:  
@@ -2452,7 +2456,7 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
     printf("  ReadRayFile called \n"); 
     if ((f= fopen(name, "r")) == NULL)
     {
-       fprintf(stderr, "error: open file %s\n", name); exit(-1);   
+       fprintf(stderr, "error: open file %s\n - exit", name); exit(-1);   
     } else
     {  					/* 12.3.96 filesystemAenderung */
        fscanf(f, "%d %d\n", &rz, &i);
