@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <25 Jul 11 13:54:04 flechsig> 
+c$$$ Time-stamp: <28 Jul 11 11:45:05 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1160,8 +1160,10 @@ c*********************************************************
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)
-#endif                  
-        real*8 rin(4), rout(4)
+#endif       
+c UF we use 5 dim rays with phase- but we can also use the 4 dim arrays since the phase is alculated elsewhere           
+c        real*8 rin(4), rout(4)
+	real*8 rin(5), rout(5)
 
          yp=0.
          zp=0.
@@ -2383,16 +2385,18 @@ c---------- lh deflection
 	   dzpc(0,0,1,0)=1.
 	endif
             
-	call make_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
-	write(*,*)'create_hormap: made matrix of dimension: ', idim
+	call make_matrix_8(xmap7,ypc1,zpc1,dypc,dzpc,iord)
+c        call make_hor_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
+	write(*,*)'create_hormap: made matrix of dimension: '
 
 	return
 	end
 c end create_hormap
 
 c helper routines for hormaps
+c UF renamed from make_matrix to make_hor_matrix
 c------------------------------------------------------
-	subroutine make_matrix(xmap7,ypca,zpca,dypca,dzpca,iord,idim)
+	subroutine make_hor_matrix(xmap7,ypca,zpca,dypca,dzpca,iord,idim)
 c------------------------------------------------------
 	implicit real*8(a-h,o-z)
 
