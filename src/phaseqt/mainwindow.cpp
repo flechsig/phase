@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <26 Jul 11 13:57:16 flechsig> 
+//  Time-stamp: <28 Jul 11 14:25:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -109,7 +109,6 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("singleRayAct")) 
     { 
       printf("singleRayAct button pressed\n");
-      //if (!s_ray) s_ray= new SingleRay(); else s_ray->singleRayBox->show();
       if (!s_ray) s_ray= new SingleRay((struct BeamlineType *) this); else s_ray->singleRayBox->show();
     }
 
@@ -245,6 +244,53 @@ void MainWindow::activateProc(const QString &action)
     } 
 
 } // end activateProc
+
+
+// UF slot append a new optical element in the beamline box
+void MainWindow::appendElement()
+{
+  struct ElementType *tmplist, *listpt, *tmplistpt;
+  int i;
+  int pos= elementList->count();
+  if (pos < 0) pos= 0;  // empty list 
+  if (abs(this->elementzahl) > 1000) this->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
+
+#ifdef DEBUG
+  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, this->elementzahl);  
+#endif 
+ 
+  QListWidgetItem *item= new QListWidgetItem("New Element");
+  elementList->insertItem(pos, item);
+  item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
+  tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
+  memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
+  this->elementzahl++;
+  this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
+  listpt= this->ElementList; tmplistpt= tmplist; 
+  for (i= 0; i< (int)this->elementzahl; i++, listpt++)
+    {
+#ifdef DEBUG
+      printf("i= %d, pos= %d, nmax %u\n", i, pos, this->elementzahl);
+#endif
+      if (i == pos)
+	{
+	  listpt->ElementOK= 0;
+	  sprintf(listpt->elementname, "%s", "New Element");
+	  minitdatset(&listpt->MDat);
+	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
+	  ginitdatset(&listpt->GDat);
+	  
+	}
+      else
+	memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
+    }
+  this->beamlineOK &= ~(mapOK | resultOK);
+  //  WriteBLFile(PHASESet.beamlinename, bl); 
+  XFREE(tmplist);
+  printf("inserElement: end list should have %u elements\n", this->elementzahl);
+  writeBackupFile();
+} // appendElement
+
 
 // calc slots in element box
 void MainWindow::thetaBslot()  // SetTheta from cff
@@ -396,18 +442,27 @@ void MainWindow::deleteElement()
   else
     QMessageBox::warning(this, tr("deleteElement"),
 			 tr("can't delete anything, list is empty or nothing is selected!\n"));
+  writeBackupFile();
 } // deleteElement()
 
 // slot changed dispersive length
 void MainWindow::dislenSlot()
 {
   sscanf(dislenE->text().toAscii().data(), "%lf", &this->BLOptions.displength);
+  writeBackupFile();
 } // dislenSlot
+
+// UF slot
+void MainWindow::doubleclickElement()
+{
+  printf("doubleclickElement: called \n");
+} // doubleclickElement
 
 // apply slot for optical element
 void MainWindow::elementApplyBslot()
 {
   int number= elementList->currentRow();
+  //char buffer[MaxPathLength];
 
   if (number < 0) 
     {
@@ -419,6 +474,8 @@ void MainWindow::elementApplyBslot()
   struct gdatset *gd= &(this->ElementList[number].GDat);
   struct mdatset *md= &(this->ElementList[number].MDat);
 
+  strcpy(this->ElementList[number].elementname, elementList->currentItem()->text().toAscii().data()); // the name of the element
+  
   printf("elementApplyBslot activated\nfeed data from widget into dataset\n");
 
 #ifdef DEBUG
@@ -455,7 +512,7 @@ void MainWindow::elementApplyBslot()
   md->dRl*= 1e-3;
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
-  
+  writeBackupFile();
 } // elementApplyBslot
 
 // gr apply
@@ -619,6 +676,7 @@ void MainWindow::lambdaSlot()
 {
   unsigned int i;
   sscanf(lambdaE->text().toAscii().data(), "%lf", &this->BLOptions.lambda);
+  this->BLOptions.lambda*= 1e-6;
   beamlineOK= 0;
   for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
 } // lambdaSlot
@@ -627,12 +685,12 @@ void MainWindow::lambdaSlot()
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
 {
-  int rcode;
+  // int rcode;
   char *name= "new_beamline.phase";
 
   if ( fexists(name)) 
     QMessageBox::warning(this, tr("Phase: newBeamline"),
-			 tr("File %1. already exists but we do not read it!\n Save as will overwite it!").arg(name));
+			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
   
   this->beamlineOK= 0;
   this->myPHASEset::init(name);
@@ -864,6 +922,8 @@ if (number < 0)
       return;
     }
   this->ElementList[number].MDat.Art= kEOEPM;
+  this->ElementList[number].MDat.rmi= 0.0;
+  this->ElementList[number].MDat.rho= 0.0;
   UpdateElementBox(number);
 }
 
@@ -934,6 +994,20 @@ void MainWindow::geslot()
       return;
     }
   this->ElementList[number].MDat.Art= kEOEGeneral;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu generic shape
+void MainWindow::apslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  this->ElementList[number].MDat.Art= kEOESlit;
   UpdateElementBox(number); 
 }
 // end slots shapeMenu
@@ -1181,17 +1255,24 @@ void MainWindow::createActions()
 } // createActions
 
 
-
 // beamline box
 QWidget *MainWindow::createBeamlineBox()
 {
   beamlineBox = new QWidget();
 
   // upper part
+
+  QGroupBox   *fileGroup       = new QGroupBox(tr("file"));
+  QVBoxLayout *fileGroupLayout = new QVBoxLayout;
+  fileNameLabel                = new QLabel(tr("undefined"));
+  fileGroupLayout->addWidget(fileNameLabel);
+  fileGroup->setLayout(fileGroupLayout);
+
   QGroupBox   *beamlineElementGroup  = new QGroupBox(tr("optical element list"));
   QVBoxLayout *beamlineElementLayout = new QVBoxLayout;
 
   elementList = new QListWidget();
+  elementList->setAlternatingRowColors(true);
   /*
     elementList->addItems(QStringList()
 			<< "Mirror 1"
@@ -1204,9 +1285,11 @@ QWidget *MainWindow::createBeamlineBox()
   */
   QGroupBox   *beamlineButtomGroup  = new QGroupBox();
   QHBoxLayout *beamlineButtomLayout = new QHBoxLayout;
-  QPushButton *addB  = new QPushButton(QIcon(":/images/up-32.png"), tr("Add"), this);
+  QPushButton *insB  = new QPushButton(QIcon(":/images/up-32.png"),   tr("Ins"), this);
+  QPushButton *appB  = new QPushButton(QIcon(":/images/up-32.png"),   tr("App"), this);
   QPushButton *delB  = new QPushButton(QIcon(":/images/down-32.png"), tr("Del"), this);
-  beamlineButtomLayout->addWidget(addB);
+  beamlineButtomLayout->addWidget(insB);
+  beamlineButtomLayout->addWidget(appB);
   beamlineButtomLayout->addWidget(delB);
   beamlineButtomGroup->setLayout(beamlineButtomLayout);
 
@@ -1223,6 +1306,7 @@ QWidget *MainWindow::createBeamlineBox()
 
     QLabel *lambdaLabel  = new QLabel(tr("wavelength (nm)"));
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
+    
 
     beamlineGenericLayout->addWidget(lambdaLabel, 0, 0);
     beamlineGenericLayout->addWidget(dislenLabel, 1, 0);
@@ -1239,12 +1323,15 @@ QWidget *MainWindow::createBeamlineBox()
     goButton->setChecked(true);
     misaliBox = new QCheckBox(tr("with misalignment"));
 
+   
+
     beamlineCalcLayout->addWidget(goButton);
     beamlineCalcLayout->addWidget(poButton);
     beamlineCalcLayout->addWidget(misaliBox);
     beamlineCalcGroup->setLayout(beamlineCalcLayout);
 
     QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->addWidget(fileGroup);
     vbox->addWidget(beamlineElementGroup);
 
     vbox->addWidget(beamlineGenericGroup);
@@ -1253,7 +1340,8 @@ QWidget *MainWindow::createBeamlineBox()
     beamlineBox->setLayout(vbox);
 
     // slots
-    connect(addB, SIGNAL(pressed()), this, SLOT(insertElement()));
+    connect(insB, SIGNAL(pressed()), this, SLOT(insertElement()));
+    connect(appB, SIGNAL(pressed()), this, SLOT(appendElement()));
     connect(delB, SIGNAL(pressed()), this, SLOT(deleteElement()));
     connect(elementList, SIGNAL(itemSelectionChanged()), this, SLOT(selectElement()));
     connect(lambdaE, SIGNAL(editingFinished()), this, SLOT(lambdaSlot()));
@@ -1417,6 +1505,7 @@ QWidget *MainWindow::createGraphicBox()
   statGroup->setLayout(statLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
+
   vbox->addWidget(graphicGroup);
   vbox->addWidget(d_plot);
   vbox->addWidget(statGroup);
@@ -1424,9 +1513,6 @@ QWidget *MainWindow::createGraphicBox()
   graphicBox->setLayout(vbox);
   return graphicBox;
 } // end creagraphic box
-
-
-
 
 // create menus with buttons
 void MainWindow::createMenus()
@@ -1458,7 +1544,6 @@ void MainWindow::createMenus()
     cmdMenu->addAction(writemapAct);
     cmdMenu->addAction(writecoeffAct);
     
-
     viewMenu = menuBar()->addMenu(tr("&View"));
 
     menuBar()->addSeparator();
@@ -1502,7 +1587,8 @@ QWidget *MainWindow::createOpticalElementBox()
   peAct = new QAction(tr("&plane- elliptical"), this);
   elAct = new QAction(tr("&elliptical"), this);
   coAct = new QAction(tr("&conical"), this);
-  geAct = new QAction(tr("&generic"), this);    
+  geAct = new QAction(tr("&generic"), this); 
+  apAct = new QAction(tr("&Aperture/Slit"), this); 
   shapeMenu->addAction(pmAct);
   shapeMenu->addAction(toAct);
   shapeMenu->addAction(peAct);
@@ -1510,6 +1596,8 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(coAct);
   shapeMenu->addSeparator();
   shapeMenu->addAction(geAct);
+  shapeMenu->addSeparator();
+  shapeMenu->addAction(apAct);
   shapeButton->setMenu(shapeMenu);
 
   connect(pmAct, SIGNAL(triggered()), this, SLOT(pmslot()));
@@ -1518,6 +1606,7 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(elAct, SIGNAL(triggered()), this, SLOT(elslot()));
   connect(coAct, SIGNAL(triggered()), this, SLOT(coslot()));
   connect(geAct, SIGNAL(triggered()), this, SLOT(geslot()));
+  connect(apAct, SIGNAL(triggered()), this, SLOT(apslot()));
 
   shapeLabel = new QLabel(tr("unknown")); // return value of menu
 
@@ -1552,8 +1641,8 @@ QWidget *MainWindow::createOpticalElementBox()
   rhoE    = new QLineEdit;
 
   thetaB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
-  sourceB = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
-  imageB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  sourceB = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("copy"), this);
+  imageB  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("copy"), this);
   rB      = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
   rhoB    = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
 
@@ -1735,6 +1824,7 @@ QWidget *MainWindow::createParameterBox()
   QVBoxLayout *parameterLayout = new QVBoxLayout;
 
   parameterList = new QListWidget();
+  parameterList->setAlternatingRowColors(true);
 
   for (i= 0; i< NPARS; i++)
     {
@@ -2012,11 +2102,12 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
 }; /* ende der Liste */ 
 
   struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
-  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
-  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
+  //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
+  //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
-
+#ifdef DEBUG1
   printf("parameterUpdate: pos: %d\n", pos);
+#endif
 
   scanned= 1;      // set a default 
   switch (pos)
@@ -2202,13 +2293,15 @@ void MainWindow::UpdateBeamlineBox()
 {
   struct OptionsType *blo;
   char   buffer[5];
-    
+   
+  fileNameLabel->setText(QString(tr(this->beamlinename)));
+
   blo= &(this->BLOptions);
 
-  sprintf(buffer, "%4f", blo->lambda* 1e6);
+  sprintf(buffer, "%.3lf", blo->lambda* 1e6);
   lambdaE->setText(QString(buffer));
 
-  sprintf(buffer, "%4f", blo->displength);
+  sprintf(buffer, "%.3lf", blo->displength);
   dislenE->setText(QString(buffer));
 
   if (blo->SourcetoImage) goButton->setChecked(true); else poButton->setChecked(true);
@@ -2308,29 +2401,73 @@ void MainWindow::UpdateElementBox(int number)
     case 3: rright4->setChecked(true); break;
     }
 
-  // element type set strings and sensitivity
+  // element type set default sensitivity
   gratingGroup->setChecked(false);
   vlsGroup    ->setChecked(false);
+  rhoE->setEnabled(false);
+  rE->setEnabled(false);
+  cffE->setEnabled(false);
+  rB->setEnabled(false);
+  rhoB->setEnabled(false);
+  sourceB->setEnabled(false);
+  imageB->setEnabled(false);
+  sourceE->setEnabled(false);
+  imageE->setEnabled(false);
+  thetaB->setEnabled(false);
   switch (md->Art & 1023)          // strip off higher bits
     {
     case kEOEPG:                   // for compatibility with old datasets
-      md->Art= kEOEPM + GRATINGBIT ;   
+      md->Art= kEOEPM + GRATINGBIT ; 
+      cffE->setEnabled( true );
     case kEOEPM:
-      shapeLabel->setText(QString(tr("flat"))); break;
+      shapeLabel->setText(QString(tr("flat"))); 
+      break;
     case kEOETG:                   // for compatibility with old datasets
       md->Art= kEOETM + GRATINGBIT ;
+      cffE->setEnabled( true );
+      rhoE->setEnabled( true );
+      rE->setEnabled( true );
+      rB->setEnabled( true );
+      rhoB->setEnabled( true );
     case kEOEVLSG:                 // for compatibility with old datasets 
       md->Art= kEOETM + GRATINGBIT + VLSBIT ;
+      cffE->setEnabled( true );
+      rhoE->setEnabled( true );
+      rE->setEnabled( true );
+      rB->setEnabled( true );
+      rhoB->setEnabled( true );
     case kEOETM:   
-      shapeLabel->setText(QString(tr("toroidal"))); break;
+      shapeLabel->setText(QString(tr("toroidal"))); 
+      rhoE->setEnabled(true);
+      rE->setEnabled(true);
+      rB->setEnabled(true);
+      rhoB->setEnabled(true);
+      sourceB->setEnabled(true);
+      imageB->setEnabled(true);
+      sourceE->setEnabled(true);
+      imageE->setEnabled(true);
+      break;
     case kEOEPElli:   
-      shapeLabel->setText(QString(tr("plane-elliptical"))); break;
+      shapeLabel->setText(QString(tr("plane-elliptical"))); 
+      sourceB->setEnabled(true);
+      imageB->setEnabled(true);
+      sourceE->setEnabled(true);
+      imageE->setEnabled(true);
+      break;
     case kEOEElli:   
-      shapeLabel->setText(QString(tr("elliptical"))); break;
+      shapeLabel->setText(QString(tr("elliptical"))); 
+      sourceB->setEnabled(true);
+      imageB->setEnabled(true);
+      sourceE->setEnabled(true);
+      imageE->setEnabled(true);
+      break;
     case kEOECone:   
       shapeLabel->setText(QString(tr("conical"))); break;
     case kEOEGeneral:
       shapeLabel->setText(QString(tr("generic"))); break;
+    case kEOESlit:
+      shapeLabel->setText(QString(tr("Aperture/Slit"))); 
+      break;
     default: 
       shapeLabel->setText(QString(tr("unknown")));
       QMessageBox::warning(this, tr("UpdateElementBox"),
@@ -2338,12 +2475,19 @@ void MainWindow::UpdateElementBox(int number)
 			   .arg(md->Art));
       break;
     }
-  if (md->Art & GRATINGBIT ) gratingGroup->setChecked(true);
-  if (md->Art & VLSBIT     )     vlsGroup->setChecked(true);
-
+  if (md->Art & GRATINGBIT ) 
+    {
+      gratingGroup->setChecked(true); 
+      cffE->setEnabled( true ); 
+      thetaB->setEnabled(true);
+    }
+  if (md->Art & VLSBIT ) 
+    {
+      vlsGroup->setChecked(true); 
+      cffE->setEnabled( true ); 
+      thetaB->setEnabled(true);
+    }
 } // end UpdateElementBox
-
-
 
 // updates the elementlist
 void MainWindow::UpdateElementList()
@@ -2362,7 +2506,11 @@ void MainWindow::UpdateElementList()
 
   list= this->ElementList;
   for (ui= 0; ui < elementzahl; ui++, list++)
-    elementList->addItem(QString(list->elementname));
+    {
+      QListWidgetItem *item= new QListWidgetItem(QString(list->elementname));
+      item->setFlags (item->flags () | Qt::ItemIsEditable); 
+      elementList->addItem(item);
+    }
 } // end UpdateElementList()
 
 // update the source box
@@ -2634,5 +2782,17 @@ void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
 /////////////////////////////////
 // end widget handling section //
 /////////////////////////////////
+
+// write a backupfile
+void MainWindow::writeBackupFile()
+{
+  char buffer[MaxPathLength];
+  strncpy(buffer, this->beamlinename, (MaxPathLength-1));
+  strcat(buffer, "~");
+  WriteBLFile(buffer, this);
+#ifdef DEBUG
+  printf("writeBackupFile: %s\n", buffer);
+#endif
+} // writeBackupFile()
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
