@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <29 Jul 11 09:39:32 flechsig>  */
+/*   Time-stamp: <29 Jul 11 09:40:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -20,8 +20,6 @@
 #include <math.h>
 #include <time.h>
 
-
-
 #include "../phase/cutils.h"  
 #include "../phase/phase_struct.h"
 #include "../phase/fg3pck.h"   
@@ -29,9 +27,6 @@
 #include "../phase/geometrypck.h"   
 #include "../phase/phase.h"
 #include "../opti/phaseopti.h" 
-
-
-     
 
 /*          Der Index     
 
