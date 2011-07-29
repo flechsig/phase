@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <29 Jul 11 09:21:31 flechsig>  */
+/*   Time-stamp: <29 Jul 11 09:25:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -101,9 +101,6 @@ int main(argc, argv)
   double ax, ay, ax0, chistart, *CHIP, dy, dz, done, ddone;
   int 	 ix, iy, iread= 20, luno;
   time_t start, l, h, m, s;
-#ifdef VMS
-  FString Fminuitfilename;
-#endif
   struct PHASEset      PHASESet;          /* wird u.a. als dummy gebraucht  */
   char target;
 
@@ -261,21 +258,14 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	 {
 	   in_struct(&Beamline, &ax, optistructure.xindex); 
 	   printf("scan x: %g, y:  %g\n", ax, ay); 
-#ifdef VMS
-	   rewindinput(&iread);                        /* treiber.for */
-	   
-	   /*  subroutine rewindinput(iread) 
-	       rewind(iread)
-	       return
-	       end         */
-#else
+
 	    /* luno=ku_inqf(optistructure.minuitfilename);
 	    printf(" status1 of minuit.inp %d\n",luno); */ /* for debugging */
 	    fminuinit(&iread, optistructure.minuitfilename,
 		     strlen(optistructure.minuitfilename));
 	    /* luno=ku_inqf(optistructure.minuitfilename);
 	    printf(" status2 of minuit.inp %d\n",luno); */ /* for debugging */
-#endif
+
 	   
 	   minuit(FCN, 0);                             /* cernlib     */
 
@@ -283,14 +273,14 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	   printf("after return ax: %f ay: %f\n", ax, ay); 
 #endif
 	   ax+= optistructure.dx; 
-#ifndef VMS   
+   
 	    /* luno=ku_inqf(optistructure.minuitfilename);
 	    printf(" status3 of minuit.inp %d\n",luno);  */ /* for debugging */
 	    fminuend(&iread);                            /* treiber.for */
 	    /* ku_close(iread); */  /* geht auch */
 	    /* luno=ku_inqf(optistructure.minuitfilename);
 	    printf(" status4 of minuit.inp %d\n",luno); */
-#endif 
+ 
 	    printf("                          ******** done: %d %s ********\n", 
 		   (int)done, "%");
 	    done+= ddone;
@@ -298,9 +288,7 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	 }
        ay+= optistructure.dy;  
      }
-#ifdef VMS   
-   fminuend(&iread);                                    /* treiber.for */
-#endif   
+  
    /*  subroutine fminuend(iread)
        close(iread)
        return
