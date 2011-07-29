@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <29 Jul 11 10:59:34 flechsig>  */
+/*   Time-stamp: <29 Jul 11 16:25:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2084,32 +2084,32 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("DefMirrorC: generic toroidal shape ");                 
       if (fabs(rho) > small) 
 	{
-	  dp[2 * l]= 0.5/ rho;                		               /* 0,2 */
-	  dp[4 * l]= 1.0/ (8.0  * rho* rho* rho);                      /* 0,4 */
+	  dp[2 * l]= 0.5/ rho;                		             /* 0,2 */
+	  dp[4 * l]= 1.0/ (8.0  * pow(rho, 3));                      /* 0,4 */
 #ifdef SEVEN_ORDER
-	  dp[6 * l]= 1.0/ (16.0 * rho* rho* rho* rho* rho);            /* 0,6 */
-	  dp[8 * l]= 5.0/ (128.0* rho* rho* rho* rho* rho* rho* rho);  /* 0,8 */
+	  dp[6 * l]= 1.0/ (16.0 * pow(rho, 5));                      /* 0,6 */
+	  dp[8 * l]= 5.0/ (128.0* pow(rho, 7));                      /* 0,8 */
 #endif
 	}  
       if (fabs(r) > small)  
 	{
 	  dp[2]= 0.5/ r;   
-	  dp[4]= 1.0/ (8.0* r* r* r); 
+	  dp[4]= 1.0/ (8.0* pow(r, 3)); 
  
 #ifdef SEVEN_ORDER
-	  dp[6]= 1.0/ (16.0 * r* r* r* r* r);
-	  dp[8]= 5.0/ (128.0* r* r* r* r* r* r* r);
+	  dp[6]= 1.0/ (16.0 * pow(r, 5));
+	  dp[8]= 5.0/ (128.0* pow(r, 7));
 #endif 
 	}  
       if ((fabs(rho) > small) && (fabs(r) > small))  
 	{
-	  dp[2+ 2* l]= 1.0/(4.0* r * r* rho);                 /* 2, 2 */
+	  dp[2+ 2* l]= 1.0/(4.0* pow(r, 2)* rho);                                           /* 2, 2 */
 #ifdef SEVEN_ORDER
-	  dp[2+ 4* l]= (r+ 2.0* rho)/(16.0* r* r* r* rho* rho* rho);                 /* 2, 4 */
-	  dp[2+ 6* l]= (r* r+ 2.0* r* rho+ 2.0* rho* rho)/(32.0* r* r* r* r* rho* rho* rho* rho* rho);   /* 2, 6 */
-	  dp[4+ 2* l]= 3.0/(16.0* r* r* r* r* rho);                                  /* 4, 2 */
-	  dp[4+ 4* l]= (3.0* r+ 12.0* rho)/(64.0* r* r* r* r* r* rho* rho* rho);     /* 4, 4 */
-	  dp[6+ 2* l]= 5.0/(32.0* r* r* r* r* r* r* rho);                            /* 6, 2 */
+	  dp[2+ 4* l]= (r+ 2.0* rho)/(16.0* pow(r, 3)* pow(rho, 3));                        /* 2, 4 */
+	  dp[2+ 6* l]= (pow(r, 2)+ 2.0* r* rho+ 2.0* pow(rho, 2))/ (32.0* pow(r, 4)* pow(rho, 5));   /* 2, 6 */
+	  dp[4+ 2* l]= 3.0/(16.0* pow(r, 4)* rho);                                         /* 4, 2 */
+	  dp[4+ 4* l]= (3.0* r+ 12.0* rho)/ (64.0* pow(r, 5)* pow(rho, 3));                /* 4, 4 */
+	  dp[6+ 2* l]= 5.0/ (32.0* pow(r, 6)* rho);                                        /* 6, 2 */
 #endif 
 	} 
       break; /* end toroid */ 
@@ -2166,7 +2166,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  epsilon= eellip/ aellip;
 
 	  f     = (x->r1* x->r2)/ (x->r1+ x->r2);
-	  xpole    = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
+	  xpole = (x->r1* x->r1- x->r2* x->r2)/ (4.0* eellip);
 	  ypole = sqrt(x->r1* x->r1-(eellip+ xpole)*(eellip+ xpole));
 	  rpole = sqrt(xpole* xpole + ypole* ypole);
 	  fipole= atan2(ypole, xpole)* 180.0/ PI;
