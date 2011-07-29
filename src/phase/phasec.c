@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <13 Jul 11 10:00:00 flechsig>  */
+/*   Time-stamp: <29 Jul 11 11:23:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -278,7 +278,8 @@ int iindex(int el, int pos)
   iret = el * pos;        			/* test ob 0 */
   mtp  = (pos >= start_mtype) ? (1 << 7) : 0;   /* position fuer mdaten 128 */
   if (mtp > 0) 
-    p= (pos == start_mtype) ? 1 : (36 + pos- start_mtype);
+    p= (pos == start_mtype) ? 1 : (81 + pos- start_mtype);
+  /*   p= (pos == start_mtype) ? 1 : (36 + pos- start_mtype); bis jul 2011 */
   else 
     p= pos;    
                                
