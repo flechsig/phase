@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <05 Jan 10 17:22:09 flechsig>  */
+/*   Time-stamp: <29 Jul 11 09:31:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -17,22 +17,15 @@
 #include <string.h>
 #include <math.h>
 
-#ifdef VMS
-  #include "[-.phase]cutils.h"  
-  #include "[-.phase]phase_struct.h"
-  #include "[-.phase]fg3pck.h"   
-  #include "[-.phase]mirrorpck.h"                 
-  #include "[-.phase]geometrypck.h"   
-  #include "[-.phase]PHASE.h"
-#else
-  #include "../phase/cutils.h"  
-  #include "../phase/phase_struct.h"
-  #include "../phase/fg3pck.h"   
-  #include "../phase/mirrorpck.h"                 
-  #include "../phase/geometrypck.h"   
-  #include "../phase/phase.h"
-  #include "../phase/rtrace.h"
-#endif
+
+#include "../phase/cutils.h"  
+#include "../phase/phase_struct.h"
+#include "../phase/fg3pck.h"   
+#include "../phase/mirrorpck.h"                 
+#include "../phase/geometrypck.h"   
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"
+
 
 #include "phaseopti.h"     
 
@@ -390,8 +383,11 @@ void buildsystem(struct BeamlineType *bl)
 {
   int     elcounter, i, mdim;
   struct  ElementType *listpt;    
-
+#ifdef SEVEN_ORDER
+  mdim= 330;
+#else
   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+#endif
   elcounter= 1; 
   listpt= bl->ElementList; 
   while (elcounter<= bl->elementzahl)
@@ -415,16 +411,16 @@ void buildsystem(struct BeamlineType *bl)
       if (listpt->MDat.Art != kEOESlit)
 	{
 	  if (elcounter == 1)
-	    memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
+	    memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
 	  else		                          /* bline zusammenbauen */
-	    GlueLeft((double *)bl->map70, (double *)listpt->matrix);  
+	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI);  
             /* A= B* A */
       	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
 	} 
       elcounter++; listpt++; 
     } /* Schleife ueber alle Elemente fertig */
  
-  extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+  extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	     &bl->BLOptions.ifl.iord); 
    bl->beamlineOK |= mapOK;
   /* bline ist fertig, map ist erzeugt */
