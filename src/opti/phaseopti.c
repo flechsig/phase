@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <07 Apr 08 15:54:13 flechsig>  */
+/*   Time-stamp: <29 Jul 11 09:21:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -26,22 +26,15 @@
 #include <time.h>
 
 
-#ifdef VMS
-  #include "[-.phase]cutils.h"  
-  #include "[-.phase]phase_struct.h"
-  #include "[-.phase]fg3pck.h"   
-  #include "[-.phase]mirrorpck.h"                 
-  #include "[-.phase]geometrypck.h"   
-  #include "[-.phase]PHASE.h"
-#else
-  #include "../phase/cutils.h"  
-  #include "../phase/phase_struct.h"
-  #include "../phase/fg3pck.h"   
-  #include "../phase/mirrorpck.h"                 
-  #include "../phase/geometrypck.h"   
-  #include "../phase/phase.h"
-  #include "../phase/rtrace.h"
-#endif
+
+#include "../phase/cutils.h"  
+#include "../phase/phase_struct.h"
+#include "../phase/fg3pck.h"   
+#include "../phase/mirrorpck.h"                 
+#include "../phase/geometrypck.h"   
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"
+
 
 #include "phaseopti.h"     
 
@@ -118,7 +111,7 @@ int main(argc, argv)
   optistructure.fcncall= 0;
   start= time(NULL);
    
-   PI= 4.0* atan(1.0); 
+ 
    
 #ifdef LOGFILE 
    CheckUser(logfilename, "Optimization"); 
