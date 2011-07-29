@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <29 Jul 11 09:40:45 flechsig>  */
+/*   Time-stamp: <29 Jul 11 11:43:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -74,7 +74,13 @@ int main(argc, argv)
 
 #ifdef LOGFILE   
   CheckUser(logfilename, "Extraction"); 
-#endif  
+#endif 
+
+#ifdef SEVEN_ORDER
+    printf(" PHASEextract version > Jul: 2011: SEVEN_ORDER defined\n\n");
+#else
+    printf(" PHASEextract version > Jul: 2011: SEVEN_ORDER undefined\n\n");
+#endif 
 
 /* Mar 10: get the data directory at runtime from ENV variable again, not at compile time*/
     if ((global_rundir = getenv(PHASE_HOME)) == NULL)

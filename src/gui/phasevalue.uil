@@ -1,6 +1,6 @@
 ! File      : /home/pss060/sls/flechsig/phase/src/gui/phasevalue.uil
 ! Date      : <28 Oct 99 11:16:38 flechsig> 
-! Time-stamp: <23 Jul 09 07:52:27 flechsig> 
+! Time-stamp: <29 Jul 11 11:55:58 flechsig> 
 ! Author    : Flechsig Uwe  4535, flechsig@psi.ch
 
 ! $Source$ 
@@ -417,7 +417,7 @@ value
 			'STXM special: M1- S1',
 			'STXM special: S1- S2',
 
-			'a(i, j);  index= index+ i+ 6* j;   i, j= 0..5',
+			'a(i, j);  index= index+ i+ 9* j;   i, j= 0..8',
 			'radius r [mm]',
 			'radius rho [mm]',
  			'2 w', 

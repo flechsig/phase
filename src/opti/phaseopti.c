@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <29 Jul 11 09:42:06 flechsig>  */
+/*   Time-stamp: <29 Jul 11 11:43:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -41,6 +41,8 @@
 /* #define buildsystem BuildBeamline*/
 
 /*          Der Index     
+
+!!! JUL 2011 anederung des index fuer 7 order !!! 
 
      index= (elnumber << 8) & ((mtype & 1) << 7) & (ipos & 0x7f);    
      oder
@@ -108,11 +110,16 @@ int main(argc, argv)
   optistructure.fcncall= 0;
   start= time(NULL);
    
- 
-   
 #ifdef LOGFILE 
    CheckUser(logfilename, "Optimization"); 
 #endif
+
+#ifdef SEVEN_ORDER
+    printf(" PHASEopti version > Jul: 2011: SEVEN_ORDER defined\n\n");
+#else
+    printf(" PHASEopti version > Jul: 2011: SEVEN_ORDER undefined\n\n");
+#endif
+
 
 Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
