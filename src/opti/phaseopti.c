@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <29 Jul 11 09:25:28 flechsig>  */
+/*   Time-stamp: <29 Jul 11 09:42:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -227,10 +227,6 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 	  break;
 	}
       
-#ifdef VMS
-   CreateFString(&Fminuitfilename, optistructure.minuitfilename); 
-   fminuinit(&iread, &Fminuitfilename);                 /* treiber.for */
-#endif
 
    /*   subroutine fminuinit(iread, readname) 
         character*(*) readname
