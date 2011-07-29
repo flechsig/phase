@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <07 Apr 08 15:58:41 flechsig>  */
+/*   Time-stamp: <29 Jul 11 09:39:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -21,23 +21,15 @@
 #include <time.h>
 
 
-#ifdef VMS
-  #include "[-.phase]cutils.h"  
-  #include "[-.phase]phase_struct.h"
-  #include "[-.phase]fg3pck.h"   
-  #include "[-.phase]mirrorpck.h"                 
-  #include "[-.phase]geometrypck.h"   
-  #include "[-.phase]PHASE.h"
-  #include "[-.opti]phaseopti.h" 
-#else
-  #include "../phase/cutils.h"  
-  #include "../phase/phase_struct.h"
-  #include "../phase/fg3pck.h"   
-  #include "../phase/mirrorpck.h"                 
-  #include "../phase/geometrypck.h"   
-  #include "../phase/phase.h"
-  #include "../opti/phaseopti.h" 
-#endif
+
+#include "../phase/cutils.h"  
+#include "../phase/phase_struct.h"
+#include "../phase/fg3pck.h"   
+#include "../phase/mirrorpck.h"                 
+#include "../phase/geometrypck.h"   
+#include "../phase/phase.h"
+#include "../opti/phaseopti.h" 
+
 
      
 
@@ -81,7 +73,7 @@ int main(argc, argv)
   char ch;
  
   start= time(NULL);
-  PI= 4.0* atan(1.0); 
+   
 
   Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
