@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <25 Jul 11 18:21:12 flechsig>  */
+/*   Time-stamp: <28 Jul 11 14:56:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -606,11 +606,13 @@ void RayTracec(struct BeamlineType *bl)
   /*struct ElementType *ds; */
   struct RESULTType *Re; 
 
+  bl->beamlineOK &= ~resultOK;
+
   /*********************************************************************/
 #ifdef DEBUG
   fprintf(stderr, "RayTracec start: beamlineOK: %X, expect: %X\n", bl->beamlineOK, (sourceOK | mapOK)); 
 #endif
-
+ 
   Re= &bl->RESULT;   
   if ((bl->beamlineOK & (sourceOK | mapOK)) != (sourceOK | mapOK))
     { 
@@ -662,7 +664,7 @@ void RayTraceFull(struct BeamlineType *bl)
    struct RESULTType *Re; 
 
 /*********************************************************************/
-
+   bl->beamlineOK &= ~resultOK;
    fprintf(stderr, "RayTraceFull: beamlineOK: %X\n", bl->beamlineOK); 
    Re= &bl->RESULT;
    if ((bl->beamlineOK & (sourceOK | mapOK)) == 0)
@@ -752,7 +754,7 @@ void RayTraceFull(struct BeamlineType *bl)
      free(tmpsource); 
      Re->points= zahl;
 
-     
+     if (zahl > 0) bl->beamlineOK |= resultOK; 
      memcpy(Re->RESp, tmpresult, zahl* sizeof(struct RayType)); 
 
      free(tmpresult);

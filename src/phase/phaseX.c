@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <10 Jun 11 08:56:42 flechsig>  */
+/*  Time-stamp: <29 Jul 11 11:20:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -337,14 +337,14 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
 
 
 void GetOptiBox(struct PHASEset *x) 
-/* modification: Dec 2007 flechsig */
+/* modification: Jul 2011 flechsig */
 {
   FILE *oppickfile, *minfile;
   char *opresname= NULL,  *minname= NULL, *zeile= NULL, *subzeile, 
     puffer[MaxPathLength], *ch, *text=NULL; 
   XmString label;
   XmStringTable list2items;
-  int parameterzahl, i, index, k, version= 20071217, methode;     
+  int parameterzahl, i, index, k, version= 20110729, methode;     
   Widget w;
 
   printf("GetOptiBox called\n");
@@ -2255,3 +2255,5 @@ void PrintFileInMainList(char *fname)
 	fclose(f);
       }
 }
+
+

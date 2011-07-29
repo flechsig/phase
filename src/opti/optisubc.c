@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <29 Jul 11 09:31:41 flechsig>  */
+/*   Time-stamp: <29 Jul 11 11:33:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -17,7 +17,6 @@
 #include <string.h>
 #include <math.h>
 
-
 #include "../phase/cutils.h"  
 #include "../phase/phase_struct.h"
 #include "../phase/fg3pck.h"   
@@ -25,7 +24,6 @@
 #include "../phase/geometrypck.h"   
 #include "../phase/phase.h"
 #include "../phase/rtrace.h"
-
 
 #include "phaseopti.h"     
 
@@ -52,6 +50,8 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
       mdat= &listpt->MDat; 
       switch (ipos)
 	{  
+#ifdef PRIOR_JUL2011
+	  /* UF 29.7.2011 um die optimierung fuer 7. ordnung tauglich zu machen muesste ich hier den bereich von 36 auf 81 schieben */
 	case 36:			/* r */
 	  mdat->rmi= *z;
 	  break;
@@ -87,6 +87,43 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
 	  printf("insert rowland slits: %f\n", *z);
 	  break;
+#else      /* new version compatible to seven order */ 
+	case 81:			/* r */
+	  mdat->rmi= *z;
+	  break;
+	case 82:			/* rp */
+	  mdat->rho= *z;
+	  break;
+	case 83:			/* 2w */
+	  mdat->w1= -0.5* *z;
+	  mdat->w2=  0.5* *z;
+	  break;
+	case 84:			/* 2l */
+	  mdat->l1= -0.5* *z;
+	  mdat->l2=  0.5* *z;
+	  break;
+	case 85:			/* slopew */
+	  mdat->slopew= *z;
+	  break;
+	case 86:			/* slopel */
+	  mdat->slopel= *z;
+	  break;
+	case 87:			/* rowland slits */
+	  /*  listpt->ElementOK |= mapOK | elementOK; */
+	  bl->ElementList[elnumber- 1].ElementOK &= (~mapOK); 
+	  bl->ElementList[elnumber- 1].ElementOK &= (~elementOK);
+	  bl->ElementList[elnumber+ 1].ElementOK &= (~mapOK); 
+	  bl->ElementList[elnumber+ 1].ElementOK &= (~elementOK);
+
+	  bl->ElementList[elnumber- 1].MDat.l1= -0.5* *z;
+	  bl->ElementList[elnumber- 1].MDat.l2=  0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.l1= -0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.l2=  0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.w1= -0.5* *z;
+	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
+	  printf("insert rowland slits: %f\n", *z);
+	  break;
+#endif
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
@@ -256,7 +293,8 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
     {
       mdat= &listpt->MDat; 
       switch (ipos)
-	{  
+	{ 
+#ifdef PRIOR_JUL2011 
 	case 36:			/* r = 36 */
 	  *z= mdat->rmi;    
 	  break;  
@@ -279,7 +317,30 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  *z= bl->ElementList[elnumber- 1].MDat.l2- 
 	    bl->ElementList[elnumber- 1].MDat.l1;
 	  break;
-
+#else
+	case 81:			/* r = 36 */
+	  *z= mdat->rmi;    
+	  break;  
+	case 82:			/* rp = 37 */
+	  *z= mdat->rho;  
+	  break;
+	case 83:			/* 2w */
+	  *z=  mdat->w2- mdat->w1;
+	  break;
+	case 84:			/* 2l */
+	  *z=  mdat->l2- mdat->l1;
+	  break;
+	case 85:			/* slopew */
+	  *z= mdat->slopew;
+	  break;
+	case 86:			/* slopel */
+	  *z= mdat->slopel;
+	  break;
+	case 87:			/* rowland slits */
+	  *z= bl->ElementList[elnumber- 1].MDat.l2- 
+	    bl->ElementList[elnumber- 1].MDat.l1;
+	  break;
+#endif
 	default: 
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
