@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <13 Jul 11 14:06:26 flechsig>  */
+/*   Time-stamp: <09 Aug 11 15:37:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -49,6 +49,7 @@ void activate_proc(w, tag, reason)
   struct PSImageType *psip;  
   struct FileSourceType    *fp;
   void *vo;
+  time_t    time1, time2;
 
 #ifdef DEBUG
   printf("activate_proc: widget_num %d\n", widget_num); 
@@ -474,10 +475,13 @@ void activate_proc(w, tag, reason)
   case kEBLApply:    
     /* get...*/
     start_watch(); 
+    time(&time1);
     GetBLBox(PHASESet.beamlinename, &Beamline);
     WriteBLFile(PHASESet.beamlinename, &Beamline); 
     BuildBeamline(&Beamline);
     stop_watch(); 
+    time(&time2);
+    printf("time: %d\n",time2-time1);
     break; 
   case kEBLAddOK:
  /* modification: 23 Oct 97 08:30:55 flechsig */
