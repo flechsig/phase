@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <27 Jul 11 09:02:26 flechsig>  */
+/*   Time-stamp: <08 Aug 11 13:15:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -712,6 +712,7 @@ struct BeamlineType Beamline;
   #define intersection_8  intersection_8_
   #define make_matrix_8   make_matrix_8_
   #define misali_8        misali_8_
+  #define elli_8          elli_8_
 #else
   #define fdet           fdet_
   #define fgmapidp       fgmapidp_
