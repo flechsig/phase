@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <09 Aug 11 15:37:50 flechsig>  */
+/*   Time-stamp: <10 Aug 11 08:33:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -556,7 +556,8 @@ void activate_proc(w, tag, reason)
     break;      
 
   case kCCRayTraceButton:                          /*  Ray Trace */  
-    start_watch();  
+    start_watch(); 
+    time(&time1);
     Beamline.BLOptions.CalcMod= 1;
     Fg3ActDat.imodus= 1; Fg3ActDat.itrans= 0;
     if (CheckBLOK(Beamline.beamlineOK, 
@@ -567,7 +568,9 @@ void activate_proc(w, tag, reason)
         printf("ray trace-> done\n");
       }     
     UpdateMainList();  
-    stop_watch();    
+    stop_watch();   
+    time(&time2);
+    printf("time: %d\n", time2-time1);
     break;  
  
   case kCCPTButton:                              /*  Phase Trafo */  
@@ -610,7 +613,8 @@ void activate_proc(w, tag, reason)
     break; 
   
   case kCCSR2Button:                          /*  full Ray Trace */  
-    start_watch();  
+    start_watch(); 
+    time(&time1);
     Beamline.BLOptions.CalcMod= 2;
 
     if (CheckBLOK(Beamline.beamlineOK, 
@@ -623,6 +627,8 @@ void activate_proc(w, tag, reason)
 	Beamline.beamlineOK |= resultOK;
       }
     stop_watch();  
+    time(&time2);
+    printf("time: %d\n",time2-time1);
     break;   
         
   case kCCOptiButton: 	                /*  Opti*/  

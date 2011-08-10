@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <10 Jun 11 15:27:38 flechsig>  */
+/*  Time-stamp: <10 Aug 11 14:21:44 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -46,7 +46,7 @@ int main(argc, argv)
     unsigned int argc;                  /* Command line argument count.   */
     char *argv[];                       /* Pointers to command line args. */
 {                                
-    int setupswitch;
+  int setupswitch, cmode, selected;
     char filename[255];
     
     time_t    timev;                    /* for expire option */  
@@ -106,9 +106,14 @@ int main(argc, argv)
 #endif
 
 
-    setupswitch= ProcComandLine(&PHASESet, &Beamline, argc, argv); /* im Batch (-b) und  Help -h -? 
-						modus wird exit(3) gerufen 
-						*/
+    setupswitch= ProcComandLine(&PHASESet, &Beamline, argc, argv, &cmode, &selected); 
+    if (setupswitch == -8)
+      {
+	BatchMode(&PHASESet, &Beamline, cmode, selected);
+	exit(3);
+      }
+    
+					
     inithplot();                        /* PHASEgraffor.for, hlimit, hplint  */
 
     XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);       /* MOTIF 1.2  */

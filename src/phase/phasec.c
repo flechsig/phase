@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <29 Jul 11 11:23:58 flechsig>  */
+/*   Time-stamp: <10 Aug 11 14:25:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -18,6 +18,8 @@
 #include <math.h>                                                 
 #include <ctype.h>
 #include <stdarg.h> 
+#include <unistd.h>
+
 #ifndef QTGUI
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
@@ -130,6 +132,133 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 } /* end Batchmode */
 
 
+int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int argc, char *argv[], int *cmode, int *selected)
+/* Uwe new version 10.8.2011 using getopt */
+{
+  int bflag = 0;
+  char *fvalue = NULL;
+  char *mvalue = NULL;
+  char *ovalue = NULL;
+  char *svalue = NULL;
+  int index;
+  int c;
+
+  int ret= 1;
+  *cmode= -1;
+  *selected= -1;
+
+  
+  opterr = 0;
+  
+  while ((c = getopt (argc, argv, "BbF:f:HhM:m:NnO:o:S:s:V")) != -1)
+    switch (c)
+      {
+      case 'B':
+      case 'b':
+	bflag = 1;
+	ret= -8;
+	printf("option -%c\n", c);
+	break;
+      case 'F':
+      case 'f':
+	printf("option -%c\n", c);
+	fvalue = optarg;
+	strncpy(ps->beamlinename, fvalue, MaxPathLength);
+	printf("ProcComandLine: use input_filename from parameter: >>%s<<\n", fvalue);
+	break;
+      case 'H':
+      case 'h':
+	printf("option -%c\n", c);
+	printf("usage: phase [options] [input_filename] [output_filename]\n");
+	printf("       options: -b, -B:           batch mode (no X11)\n");
+	printf("                -f, -Ffilename:   use datafile (*.phase)\n");
+	printf("                -h, -H:           show this message\n");
+	printf("                -m, -Mcalcmode:   calculation mode \n");
+	printf("                                  1: ray trace\n");
+	printf("                                  2: full ray trace\n");
+	printf("                                  3: phase space imaging\n");
+	printf("                                  4: footprint (requires option s)\n");
+	printf("                                  5: multiple phase space imaging\n");
+	printf("                -n, -N:           no startup- info (X11)\n");
+	printf("                -o, -Oresultfile: filename\n");
+	printf("                -s, -Snumber:     selected element number (for footprint)\n");
+	printf("                -V:               Version\n");
+	exit(0);
+	break;
+      case 'M':
+      case 'm':
+	mvalue = optarg;
+	sscanf(mvalue, "%d", cmode);
+	printf("ProcComandLine: calculation mode: %d\n", *cmode);
+	break;
+      case 'N':
+      case 'n':
+	ret= 0;
+	printf("option -n is obsolete\n");
+	break;
+      case 'O':
+      case 'o':
+	printf("option -%c\n", c);
+	ovalue = optarg;
+	strncpy(ps->beamlinename, ovalue, MaxPathLength);
+	printf("ProcComandLine: use output_filename from parameter: >>%s<<\n", ovalue);
+	break;
+      case 'S':
+      case 's':
+	svalue = optarg;
+	sscanf(svalue, "%d", selected);
+	printf("ProcComandLine: selected element: %d\n", *selected);
+	break;
+      case 'V':
+	printf("Version: %s\n", VERSION);
+	break;	
+      case '?':
+	switch (optopt)
+	  {
+	  case 'F':
+	  case 'f':
+	  case 'M':
+	  case 'm':
+	  case 'O':
+	  case 'o':
+	  case 'S':
+	  case 's':
+	    fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+	    break;
+	  default:
+	    if (isprint (optopt))
+	      fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+	    else
+	      fprintf (stderr,
+		       "Unknown option character `\\x%x'.\n", optopt);
+	    exit (-1);
+	  }
+      default:
+	abort ();
+      }
+  
+  /*printf ("aflag = %d, bflag = %d, cvalue = %s\n",
+    aflag, bflag, cvalue);*/
+
+  /* no option arguments */   
+  index = optind;   
+  if (index < argc)  /* wir nehmen das erste argument als filename und ueberschreiben damit den parameter -f */
+    {
+      strncpy(ps->beamlinename, argv[index], MaxPathLength);
+      printf("ProcComandLine: use input_filename from argument: >>%s<<\n", argv[index]);
+    }
+  index++;
+  if (index < argc)  /* wir nehmen das zweite argument als output_filename und ueberschreiben damit den parameter -o */
+    {
+      strncpy(ps->imageraysname, argv[index], MaxPathLength);
+      printf("ProcComandLine: use output_filename from argument: >>%s<<\n", argv[index]);
+    }
+
+  return ret;
+} /* end ProcComandLine */
+
+
+#ifdef OBSOLETE
 int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ac, char *av[])
 /* Uwe 2.10.96 */
 /* Wertet Kommandozeile aus */
@@ -218,7 +347,7 @@ int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ac
     }
   return ret;
 } /* end ProcComandLine */
-
+#endif
 
 int GetPHASE(struct PHASEset *x, char *mainpickname)
      /* return 1: file gelesen- OK		*/
