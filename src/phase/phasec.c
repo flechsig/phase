@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <10 Aug 11 14:25:58 flechsig>  */
+/*   Time-stamp: <12 Aug 11 14:23:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -132,7 +132,7 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 } /* end Batchmode */
 
 
-int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int argc, char *argv[], int *cmode, int *selected)
+int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected)
 /* Uwe new version 10.8.2011 using getopt */
 {
   int bflag = 0;
@@ -200,7 +200,7 @@ int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ar
       case 'o':
 	printf("option -%c\n", c);
 	ovalue = optarg;
-	strncpy(ps->beamlinename, ovalue, MaxPathLength);
+	strncpy(ps->imageraysname, ovalue, MaxPathLength);
 	printf("ProcComandLine: use output_filename from parameter: >>%s<<\n", ovalue);
 	break;
       case 'S':
@@ -210,7 +210,9 @@ int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ar
 	printf("ProcComandLine: selected element: %d\n", *selected);
 	break;
       case 'V':
+	printf("option -%c\n", c);
 	printf("Version: %s\n", VERSION);
+	exit(0);
 	break;	
       case '?':
 	switch (optopt)
