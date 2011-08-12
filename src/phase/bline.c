@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 Aug 11 12:28:30 flechsig>  */
+/*   Time-stamp: <10 Aug 11 14:54:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2235,7 +2235,18 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 		  "DefMirrorC: theta = 0, elliptical shape makes no sense!\n");
 	} 
       else
-	{     
+	{ 
+
+#ifdef SEVEN_ORDER
+	  printf("DefMirrorC: plane elliptical shape- preliminary Fortran special\n");  
+	  double sina, cosa, pa, pb, pc, px0, py0, ptendel;
+	  sina=sin(alpha);
+	  cosa=cos(alpha);
+	  elli_8(&x->r1, &x->r2, &sina, &cosa, &pa, &pb, &pc, &px0, &py0, &ptendel, dp);
+	  /* ueberschreibe die l terme wieder */
+	  for (i=9; i < 81; i++)   /* nur erste spalte != 0.0 */
+	    dp[i]= 0.0;
+#else    
 	  aellip= (x->r1+ x->r2)/ 2.0;
 	  bellip= sqrt(aellip* aellip- 0.25* 
 		       (x->r1* x->r1+ x->r2* x->r2- 
@@ -2280,6 +2291,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	    ((5.0* pow(sin(alpha), 2.0)* pow(cos(alpha),2.0))/ 
 	     pow(bellip, 2.0)- (5.0* pow(sin(alpha), 2.0))/ 
 	     pow(aellip, 2.0)+ 1.0/ pow(aellip, 2.0));  	/* 4,0 */ 
+#endif
 	}
       break;
  

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <28 Jul 11 11:45:05 flechsig> 
+c$$$ Time-stamp: <10 Aug 11 17:31:12 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1165,6 +1165,7 @@ c UF we use 5 dim rays with phase- but we can also use the 4 dim arrays since th
 c        real*8 rin(4), rout(4)
 	real*8 rin(5), rout(5)
 
+c	write(*,*)'ray_tracef: iord= ',iord
          yp=0.
          zp=0.
          dyp=0.

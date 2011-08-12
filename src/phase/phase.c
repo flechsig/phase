@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <10 Aug 11 14:21:44 flechsig>  */
+/*  Time-stamp: <12 Aug 11 14:25:21 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -106,7 +106,7 @@ int main(argc, argv)
 #endif
 
 
-    setupswitch= ProcComandLine(&PHASESet, &Beamline, argc, argv, &cmode, &selected); 
+    setupswitch= ProcComandLine(&PHASESet, argc, argv, &cmode, &selected); 
     if (setupswitch == -8)
       {
 	BatchMode(&PHASESet, &Beamline, cmode, selected);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <28 Jul 11 14:56:49 flechsig>  */
+/*   Time-stamp: <10 Aug 11 17:12:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -665,7 +665,7 @@ void RayTraceFull(struct BeamlineType *bl)
 
 /*********************************************************************/
    bl->beamlineOK &= ~resultOK;
-   fprintf(stderr, "RayTraceFull: beamlineOK: %X\n", bl->beamlineOK); 
+   fprintf(stderr, "RayTraceFull: beamlineOK: %X, iord=%d\n", bl->beamlineOK, bl->BLOptions.ifl.iord); 
    Re= &bl->RESULT;
    if ((bl->beamlineOK & (sourceOK | mapOK)) == 0)
    { 

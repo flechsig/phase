@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Aug 11 14:22:46 flechsig>  */
+/*   Time-stamp: <11 Aug 11 09:09:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -732,7 +732,7 @@ int
   ReadBLFile(char *, struct BeamlineType *), 
   SetFilePos(FILE *, char *),
   CheckBLOK(int, int, char*);   
-int ProcComandLine(struct PHASEset *, struct BeamlineType *, unsigned int, char **, int *,  int *); /* UF 10.6.11 */
+  int ProcComandLine(struct PHASEset *, int, char **, int *,  int *); /* UF 10.6.11 */
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  	
