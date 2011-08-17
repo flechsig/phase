@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <26 Jul 11 12:06:33 flechsig>  */
+/*  Time-stamp: <17 Aug 11 17:25:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -18,6 +18,8 @@
 
 #include "phaseqt.h"
 #include "singleray.h"
+#include "optiinput.h"
+#include "configwindow.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -39,9 +41,18 @@ class MainWindow : public QMainWindow, public QtPhase
 
 public:
     MainWindow();
+    void parameterUpdateAll(int);
+    void print();
+    void UpdateBeamlineBox();
+    void UpdateElementList();
+    void UpdateSourceBox();
+    void UpdateStatus();
+    void writeBackupFile();
 
 private slots:
+    void appendElement();
     void dislenSlot();
+    void doubleclickElement();
     void grautoscaleslot();
     void grapplyslot();
     void lambdaSlot();
@@ -49,7 +60,7 @@ private slots:
     void openBeamline(); // UF
     void save();
     void saveas();
-    void print();
+    
     void undo();
     void about();
     //void insertCustomer(const QString &customer);
@@ -63,6 +74,7 @@ private slots:
     void elslot();
     void coslot();
     void geslot();
+    void apslot();
     void grslot();
     void grvlsslot();
    
@@ -86,6 +98,7 @@ private slots:
     void activateProc(const QString &action);
     void UpdateStatistics(Plot *, char *, int);
     
+
 private:
     void createActions();
     void createMenus();
@@ -93,10 +106,7 @@ private:
     void createStatusBar();
     void createDockWindows();
     void parameterUpdate(int, char *, int);
-    void parameterUpdateAll(int);
-    void UpdateElementList();
-    void UpdateBeamlineBox();
-    void UpdateSourceBox();
+    
     void UpdateElementBox(int);
 
     QTextEdit   *textEdit;
@@ -125,6 +135,7 @@ private:
     QRadioButton *goButton;
     QRadioButton *poButton;
     QCheckBox    *misaliBox;
+    QLabel       *fileNameLabel;
 
     QLabel    *sourceTypeLabel;
     QCheckBox *sourceFileBox;
@@ -178,6 +189,7 @@ private:
     QAction *elAct;
     QAction *coAct;
     QAction *geAct;
+    QAction *apAct;
     
     QSpinBox  *integerSpinBox;   // grating
     QGroupBox *gratingGroup;
@@ -234,9 +246,11 @@ private:
     QAction *raytracefullAct;
     QAction *footprintAct;
     QAction *singleRayAct;
+    QAction *optiInputAct;
     QAction *phasespaceAct;
     QAction *mphasespaceAct;
     QAction *readFg34Act;
+    QAction *configureAct;
 
     QAction *writemapAct;
     QAction *writecoeffAct;
@@ -253,6 +267,8 @@ private:
     QAction *grexample2Act;
     Plot    *d_plot;
     SingleRay *s_ray;
+    OptiInput *o_input;
+    ConfigWindow *c_window;
 
     QPushButton *grautoButton;
     QPushButton *grapplyButton;
@@ -274,6 +290,11 @@ private:
     QLabel *traLabel;
     QLabel *ryLabel;
     QLabel *rzLabel;
+    
+    QLabel *sourceStatLabel;  
+    QLabel *imageStatLabel;  
+    QLabel *mapStatLabel;
+    
 
     QSignalMapper *grsignalMapper;  // UF
 };

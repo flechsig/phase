@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <26 Jul 11 14:25:25 flechsig> 
+//  Time-stamp: <28 Jul 11 16:11:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -94,25 +94,30 @@ void SingleRay::applySlot()
   //  RayTraceSingleRayCpp(this);
 
   // the output
-  sprintf(buffer, "-> %g", rayout.y);
+  sprintf(buffer, "-> %10.3lg", rayout.y);
   S6Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %g", rayout.z);
+  sprintf(buffer, "-> %10.3lg", rayout.z);
   S7Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %g", rayout.dy * 1e3);
+  sprintf(buffer, "-> %10.3lg", rayout.dy * 1e3);
   S8Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %g", rayout.dz * 1e3);
+  sprintf(buffer, "-> %10.3lg", rayout.dz * 1e3);
   S9Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %g", rayout.phi);
+  if ((rayout.phi > 360) || (rayout.phi < 1e-3)) 
+    sprintf(buffer, "-> %s", "undef"); 
+  else
+    sprintf(buffer, "-> %10.3lg", rayout.phi);
+
   S10Label->setText(QString(tr(buffer)));
+  //  this->parent->UpdateStatus();
 } // end applySlot
 
 // set defaults for single ray
 void SingleRay::defaultSlot()
 {
-  S1E->setText(QString(tr("1.0")));
-  S2E->setText(QString(tr("1.0")));
-  S3E->setText(QString(tr("1.0")));
-  S4E->setText(QString(tr("1.0")));
+  S1E->setText(QString(tr("0.0")));
+  S2E->setText(QString(tr("0.0")));
+  S3E->setText(QString(tr("0.0")));
+  S4E->setText(QString(tr("0.0")));
   S5E->setText(QString(tr("0.0")));
 } // end defaultSlot
 

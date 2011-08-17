@@ -1,12 +1,15 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <14 Jul 11 17:15:48 flechsig>  */
+/*  Time-stamp: <29 Jul 11 13:58:16 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
 /*  $Date$ */
 /*  $Revision$  */
 /*  $Author$  */
+
+#ifndef PLOT_H
+#define PLOT_H
 
 #include <qwt_plot.h>
 #include <qwt_plot_spectrogram.h>
@@ -64,3 +67,5 @@ private:
     struct BeamlineType *bt;
     
 };
+#endif
+// end

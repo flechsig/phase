@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <26 Jul 11 12:08:51 flechsig> 
+//  Time-stamp: <16 Aug 11 11:00:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -39,6 +39,8 @@ void myPHASEset::init(char *fname)
   sprintf(so4_fsource4c,   "%s.%s", name, "s4c");	  
   sprintf(so4_fsource4d,   "%s.%s", name, "s4d");	  
   sprintf(so6_fsource6,    "%s.%s", name, "s6");
+  sprintf(opresname,       "%s.%s", name, "opti");	  
+  sprintf(minname,         "%s.%s", name, "minu");
 }
 
 // print the contents of the data for debugging
@@ -65,6 +67,8 @@ void myPHASEset::print()
   printf("so4_fsource4c:   %s\n", so4_fsource4c);	  
   printf("so4_fsource4d:   %s\n", so4_fsource4d);	  
   printf("so6_fsource6:    %s\n", so6_fsource6);    
+  printf("opresname:       %s\n", opresname);
+  printf("minname:         %s\n", minname);
   printf("<= myPHASEset::print()\n");
 }
 
@@ -83,7 +87,7 @@ void myBeamline::init()
 
 
 
-#ifdef xxx
+
 
 // constructor
 //QtPhase::QtPhase()
@@ -91,11 +95,14 @@ void myBeamline::init()
   //char *matrixname= new char[MaxPathLength];
 //}
 
-QtPhase::ijQtPhase()
+QtPhase::QtPhase()
 {
-  
+#ifdef DEBUG  
   printf("QtPhase constructor called\n");
-  
+#endif
+}
+
+#ifdef xxx  
   Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
 
 #ifdef EXPIRE

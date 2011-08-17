@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <28 Jul 11 14:25:59 flechsig> 
+//  Time-stamp: <17 Aug 11 17:01:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -34,19 +34,14 @@ MainWindow::MainWindow()
   setWindowTitle(tr("PHASE Qt"));
   resize(1800,1000);
 
-//InitDataSets(this, this, (char*) MainPickName);   // I call the contents here 
-  if (GetPHASE(this, (char*) MainPickName) != 1)           /* filenamen lesen */
-    { 
-      this->myPHASEset::init("default");              // default filenames
-      PutPHASE(this, (char*) MainPickName);          	/* write names */   
-    }
-  this->QtPhase::print();
+  this->myPHASEset::init("default");
+  //  this->QtPhase::print();
   this->myBeamline::init();                           // empty pointers
-  ReadBLFile(this->beamlinename, this);
-  UpdateElementList();
-  UpdateBeamlineBox();
-  UpdateSourceBox();
-  parameterUpdateAll(NPARS);
+  
+  
+  this->s_ray= NULL;
+  this->o_input= NULL;
+  this->c_window= NULL;
 } // end MainWindow
 
 //////////////////////////////////////////////
@@ -91,6 +86,7 @@ void MainWindow::activateProc(const QString &action)
       BuildBeamline(this);
       RayTraceFull(this); 
       printf("full ray trace-> done\n");
+
     }
   if (!action.compare("footprintAct")) 
     { 
@@ -109,7 +105,21 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("singleRayAct")) 
     { 
       printf("singleRayAct button pressed\n");
-      if (!s_ray) s_ray= new SingleRay((struct BeamlineType *) this); else s_ray->singleRayBox->show();
+      if (!s_ray) 
+	s_ray= new SingleRay((struct BeamlineType *) this); 
+      else 
+	s_ray->singleRayBox->show();
+    }
+
+  if (!action.compare("optiInputAct")) 
+    { 
+      printf("optiInputAct button pressed %d\n", this->elementzahl);
+      if (!o_input) 
+	o_input= new OptiInput(this->ElementList, this->elementzahl,
+			       this->beamlinename, this->optipckname, 
+			       this->opresname, this->minname); 
+      else 
+	o_input->optiInputBox->show();
     }
 
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
@@ -243,6 +253,16 @@ void MainWindow::activateProc(const QString &action)
 			     tr("file fg34.par not found!"));
     } 
 
+  if (!action.compare("configureAct")) 
+    { 
+      printf("configure button pressed\n");
+      if (!c_window) 
+	c_window= new ConfigWindow((struct  PHASEset *) this); 
+      else 
+	c_window->configWindowBox->show();
+    }
+  
+  UpdateStatus();
 } // end activateProc
 
 
@@ -288,6 +308,7 @@ void MainWindow::appendElement()
   //  WriteBLFile(PHASESet.beamlinename, bl); 
   XFREE(tmplist);
   printf("inserElement: end list should have %u elements\n", this->elementzahl);
+  UpdateStatus();
   writeBackupFile();
 } // appendElement
 
@@ -442,6 +463,7 @@ void MainWindow::deleteElement()
   else
     QMessageBox::warning(this, tr("deleteElement"),
 			 tr("can't delete anything, list is empty or nothing is selected!\n"));
+  UpdateStatus();
   writeBackupFile();
 } // deleteElement()
 
@@ -449,6 +471,7 @@ void MainWindow::deleteElement()
 void MainWindow::dislenSlot()
 {
   sscanf(dislenE->text().toAscii().data(), "%lf", &this->BLOptions.displength);
+  UpdateStatus();
   writeBackupFile();
 } // dislenSlot
 
@@ -473,6 +496,10 @@ void MainWindow::elementApplyBslot()
 
   struct gdatset *gd= &(this->ElementList[number].GDat);
   struct mdatset *md= &(this->ElementList[number].MDat);
+
+  this->beamlineOK &= ~mapOK;
+  this->beamlineOK &= ~resultOK;
+  this->ElementList[number].ElementOK = 0;
 
   strcpy(this->ElementList[number].elementname, elementList->currentItem()->text().toAscii().data()); // the name of the element
   
@@ -512,6 +539,7 @@ void MainWindow::elementApplyBslot()
   md->dRl*= 1e-3;
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
+  UpdateStatus();
   writeBackupFile();
 } // elementApplyBslot
 
@@ -545,7 +573,7 @@ void MainWindow::grapplyslot()
       d_plot->setphaseData("grimageAct");
     }
     else
-      QMessageBox::warning(this, tr("grapplyslot"), tr("No results available"));
+      QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
   if (d_plot->plotsubject == 2) 
     {
       d_plot->setTitle(tr("PhaseQt: example 1"));
@@ -679,6 +707,7 @@ void MainWindow::lambdaSlot()
   this->BLOptions.lambda*= 1e-6;
   beamlineOK= 0;
   for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
+  UpdateStatus();
 } // lambdaSlot
 
 
@@ -739,12 +768,12 @@ void MainWindow::openBeamline()
       rcode= ReadBLFile(name, this);
       if (rcode != -1)
 	{
+	  this->myPHASEset::init(name);
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
 	  parameterUpdateAll(NPARS);
 	  this->beamlineOK= 0;
-          this->myPHASEset::init(name);
 	  PutPHASE(this, (char*) MainPickName);
 	} 
       else
@@ -757,7 +786,14 @@ void MainWindow::openBeamline()
 // slot parameter update, callback des Editors
 void MainWindow::parameterUpdateSlot()
 {
+  unsigned int i;
+  printf("parameterUpdateSlot called\n");
   parameterUpdate(parameterList->currentRow(), parameterE->text().toAscii().data(), 0);
+  this->beamlineOK &= ~mapOK;
+  this->beamlineOK &= ~resultOK;
+  for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
+  UpdateStatus();
+  writeBackupFile();
 } // end parameterUpdateSlot
 
 // slot orientation radio buttons
@@ -771,6 +807,7 @@ void MainWindow::rup1slot()
       return;
     }
   this->ElementList[number].GDat.azimut= 0;
+  this->ElementList[number].GDat.theta0= fabs(this->ElementList[number].GDat.theta0);
   UpdateElementBox(number);
 }
 
@@ -784,6 +821,7 @@ void MainWindow::rleft2slot()
       return;
     }
   this->ElementList[number].GDat.azimut= 1;
+  this->ElementList[number].GDat.theta0= fabs(this->ElementList[number].GDat.theta0);
   UpdateElementBox(number);
 }
 
@@ -864,9 +902,10 @@ void MainWindow::saveas()
                              .arg(file.errorString()));
         return;
     }
- 
+    this->myPHASEset::init(name);
+    PutPHASE(this, (char*) MainPickName);
     WriteBLFile(name, this);
-
+    UpdateBeamlineBox();
     //    QTextStream out(&file);
     //    QApplication::setOverrideCursor(Qt::WaitCursor);
     //    out << textEdit->toHtml();
@@ -994,6 +1033,8 @@ void MainWindow::geslot()
       return;
     }
   this->ElementList[number].MDat.Art= kEOEGeneral;
+  QMessageBox::information(this, tr("gerneric element slot"),
+			   tr("The elementname must be the file name!\nsave and reload the beamline!"));
   UpdateElementBox(number); 
 }
 
@@ -1116,6 +1157,9 @@ void MainWindow::sourceApplyBslot()
     sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
     sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
     break;
+  case 'F':
+    // hier muss nichts gemacht werden
+    break;
     
   default:
     QMessageBox::warning(this, tr("sourceApplyBslot"),
@@ -1126,6 +1170,8 @@ void MainWindow::sourceApplyBslot()
 
   this->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
   MakeRTSource(this, this);
+  UpdateStatus();
+  writeBackupFile();
 } //sourceApplyBslot
 
 // slot
@@ -1201,7 +1247,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(raytracesimpleAct, QString("raytracesimpleAct"));
     connect(raytracesimpleAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    raytracefullAct = new QAction(tr("GO &Full ray tracing"), this);
+    //  raytracefullAct = new QAction(tr("GO &Full ray tracing"), this);
+    raytracefullAct = new QAction(QIcon(":/images/rtrace.png"), tr("GO &Full ray tracing"), this);
     raytracefullAct->setStatusTip(tr("geometrical optics, full ray tracing"));
     signalMapper->setMapping(raytracefullAct, QString("raytracefullAct"));
     connect(raytracefullAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -1215,6 +1262,11 @@ void MainWindow::createActions()
     singleRayAct->setStatusTip(tr("geometrical optics, single Ray trace"));
     signalMapper->setMapping(singleRayAct, QString("singleRayAct"));
     connect(singleRayAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    optiInputAct = new QAction(tr("&optimization input"), this);
+    optiInputAct->setStatusTip(tr("optimization input"));
+    signalMapper->setMapping(optiInputAct, QString("optiInputAct"));
+    connect(optiInputAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     phasespaceAct = new QAction(tr("PO &phase space imaging"), this);
     phasespaceAct->setStatusTip(tr("physical optics, phase space imaging"));
@@ -1245,6 +1297,11 @@ void MainWindow::createActions()
     readFg34Act->setStatusTip(tr("Read parameter file fg34.par (for compatibility with previous phase versions)"));
     signalMapper->setMapping(readFg34Act, QString("readFg34Act"));
     connect(readFg34Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    configureAct = new QAction(tr("&Configure..."), this);
+    configureAct->setStatusTip(tr("Configure auxiliary files"));
+    signalMapper->setMapping(configureAct, QString("configureAct"));
+    connect(configureAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     //    rthardedgeAct = new QAction();
     //    signalMapper->setMapping(rthardedgeAct, QString("rthardedgeAct"));
@@ -1280,6 +1337,7 @@ QWidget *MainWindow::createBeamlineBox()
 			<< "Grating 1"
 			<< "Mirror 3"
 			<< "Mirror 4"
+                   
 			);
   
   */
@@ -1386,6 +1444,16 @@ QWidget *MainWindow::createGraphicBox()
   graphicBox = new QWidget();
 
   // upper part
+  QGroupBox   *statusGroup  = new QGroupBox(tr("Status"));
+  QHBoxLayout *statusLayout = new QHBoxLayout;
+  sourceStatLabel   = new QLabel(tr("source: undef"));
+  imageStatLabel    = new QLabel(tr("image: undef"));
+  mapStatLabel      = new QLabel(tr("maps: undef"));
+  statusLayout->addWidget(mapStatLabel);
+  statusLayout->addWidget(sourceStatLabel);
+  statusLayout->addWidget(imageStatLabel);
+  statusGroup->setLayout(statusLayout);
+
   QGroupBox   *graphicGroup  = new QGroupBox(tr("Graphics"));
   QGridLayout *graphicLayout = new QGridLayout;
   
@@ -1433,15 +1501,16 @@ QWidget *MainWindow::createGraphicBox()
   
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
   QMenu *subject = new QMenu(this);
-  grsourceAct  = new QAction(tr("&source"), this);
-  grimageAct   = new QAction(tr("&image"), this);
-  grexample1Act = new QAction(tr("&example 1"), this);
-  grexample2Act = new QAction(tr("&example 2"), this);
+  grsourceAct    = new QAction(tr("&source"), this);
+  grimageAct     = new QAction(tr("&image"), this);
+  grexample1Act  = new QAction(tr("&example 1"), this);
+  grexample2Act  = new QAction(tr("&example 2"), this);
 
   subject->addAction(grsourceAct);
   subject->addAction(grimageAct);
   subject->addAction(grexample1Act);
   subject->addAction(grexample2Act);
+  subject->setDefaultAction(grimageAct);
   subjectpopupButton->setMenu(subject);
 
   connect(grsourceAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -1505,7 +1574,7 @@ QWidget *MainWindow::createGraphicBox()
   statGroup->setLayout(statLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
-
+  vbox->addWidget(statusGroup);
   vbox->addWidget(graphicGroup);
   vbox->addWidget(d_plot);
   vbox->addWidget(statGroup);
@@ -1529,15 +1598,20 @@ void MainWindow::createMenus()
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
     editMenu->addAction(readFg34Act);
+    editMenu->addAction(configureAct);
 
     calcMenu = menuBar()->addMenu(tr("&Calc"));
     calcMenu->addAction(raytracesimpleAct);
     calcMenu->addAction(raytracefullAct);
     calcMenu->addAction(footprintAct);
     calcMenu->addAction(singleRayAct);
+    
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);
     calcMenu->addAction(mphasespaceAct);
+    calcMenu->addSeparator();
+    calcMenu->addAction(optiInputAct);
+
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
     cmdMenu->addAction(writeRTresultAct);
@@ -1819,6 +1893,8 @@ QWidget *MainWindow::createParameterBox()
   char buffer[50];
   int i;
 
+  printf("createParameterBox called\n");
+
   // upper part
   QGroupBox   *parameterGroup  = new QGroupBox(tr("Parameters"));
   QVBoxLayout *parameterLayout = new QVBoxLayout;
@@ -1849,7 +1925,8 @@ QWidget *MainWindow::createParameterBox()
   vbox->addStretch(1);
   parameterBox->setLayout(vbox);
   connect(parameterList, SIGNAL(itemSelectionChanged()), this, SLOT(selectParameter()));
-  connect(parameterE, SIGNAL(editingFinished()), this, SLOT(parameterUpdateSlot()));
+  // connect(parameterE, SIGNAL(editingFinished()), this, SLOT(parameterUpdateSlot()));
+  connect(parameterE, SIGNAL(returnPressed()), this, SLOT(parameterUpdateSlot()));
   return parameterBox;
 } // end createparameter box
 
@@ -1999,7 +2076,8 @@ void MainWindow::createToolBars()
     fileToolBar->addAction(printAct);
 
     editToolBar = addToolBar(tr("Edit"));
-    editToolBar->addAction(undoAct);
+    //    editToolBar->addAction(undoAct);
+    editToolBar->addAction(raytracefullAct);
 } // createToolBars
 
 
@@ -2119,7 +2197,7 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
       break;
     case 1:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
-      printf("scanned: %d\n",scanned);
+      printf("parameterUpdate: scanned_pos: %d\n", scanned);
       if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
 	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
       sprintf(buffer, "%d \t: %s", op->ifl.iord, inhalt[pos]);
@@ -2522,7 +2600,8 @@ void MainWindow::UpdateSourceBox()
   struct DipolSourceType      *dp;
   struct PointSourceType      *sop;
   struct RingSourceType       *rp;
-  struct HardEdgeSourceType   *hp;     
+  struct HardEdgeSourceType   *hp;    
+  struct FileSourceType       *fp; 
   //  struct SRSourceType         *sp; 
   //  struct PSImageType          *psip;
   //  struct PSSourceType         *pssp; 
@@ -2712,7 +2791,29 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "Undulator");
       break;  
-
+    case 'F':
+      fp= (struct FileSourceType *)this->RTSource.Quellep;
+      printf("source from file %s\n", this->sourceraysname);
+      strncpy(fp->filename, this->sourceraysname, MaxPathLength);
+      sprintf(TextField[0],  "%s", "");
+      sprintf(TextField[1],  "%s", "");    
+      sprintf(TextField[2],  "%s", "");  
+      sprintf(TextField[3],  "%s", "");    
+      sprintf(TextField[4],  "%s", "");   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "");
+      sprintf(LabelField[1], "%s", "");  
+      sprintf(LabelField[2], "%s", "");  
+      sprintf(LabelField[3], "%s", "");  
+      sprintf(LabelField[4], "%s", "");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "Source from file");
+      
+	break;
 
     default:
       QMessageBox::warning(this, tr("UpdateSourceBox"),
@@ -2779,6 +2880,22 @@ void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
 
 } // UpdateStatistics
 
+void MainWindow::UpdateStatus()
+{
+  if (this->beamlineOK & sourceOK) 
+    sourceStatLabel->setText(QString(tr("source: OK"))); 
+  else 
+    sourceStatLabel->setText(QString(tr("source: undef")));
+  if (this->beamlineOK & resultOK) 
+    imageStatLabel->setText(QString(tr("image: OK"))); 
+  else 
+    imageStatLabel->setText(QString(tr("image: undef")));
+  if (this->beamlineOK & mapOK) 
+    mapStatLabel->setText(QString(tr("maps: OK"))); 
+  else 
+    mapStatLabel->setText(QString(tr("maps: undef")));
+}
+
 /////////////////////////////////
 // end widget handling section //
 /////////////////////////////////
@@ -2789,10 +2906,11 @@ void MainWindow::writeBackupFile()
   char buffer[MaxPathLength];
   strncpy(buffer, this->beamlinename, (MaxPathLength-1));
   strcat(buffer, "~");
-  WriteBLFile(buffer, this);
+  
 #ifdef DEBUG
-  printf("writeBackupFile: %s\n", buffer);
+  printf("writeBackupFile: -> ");
 #endif
+  WriteBLFile(buffer, this);
 } // writeBackupFile()
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

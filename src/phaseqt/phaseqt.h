@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <26 Jul 11 12:09:25 flechsig>  */
+/*  Time-stamp: <10 Aug 11 15:37:19 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -60,7 +60,7 @@ class QtPhase : public myPHASEset, public myBeamline
 {
   //  char my_global_rundir[MaxPathLength];
 public:
-  QtPhase() { };
+  QtPhase();
   // void UpdateElementList();
   //  QtPhase *qtpp;
   struct datset  Fg3ActDat, Fg3DefDat;  

@@ -1,7 +1,7 @@
 # -*-makefile-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.pro
 #  Date      : <31 May 11 16:59:10 flechsig> 
-#  Time-stamp: <29 Jul 11 14:03:31 flechsig> 
+#  Time-stamp: <16 Aug 11 15:00:04 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -20,8 +20,9 @@ DEPENDPATH  += .
 INCLUDEPATH += ../phase/.
 
 # Input
-HEADERS   += mainwindow.h phaseqt.h plot.h singleray.h optiinput.h
-SOURCES   += main.cpp mainwindow.cpp phaseqt.cpp plot.cpp singleray.cpp optiinput.cpp ../phase/phasec.c ../phase/cutils.c ../phase/bline.c \
+HEADERS   += mainwindow.h phaseqt.h plot.h singleray.h optiinput.h configwindow.h
+SOURCES   += main.cpp mainwindow.cpp phaseqt.cpp plot.cpp singleray.cpp optiinput.cpp \
+	configwindow.cpp ../phase/phasec.c ../phase/cutils.c ../phase/bline.c \
 	../phase/rtrace.c ../phase/xmalloc.c ../phase/error.c ../phase/geometrypck.c ../phase/mirrorpck.c
 RESOURCES += phaseqt.qrc
 DEFINES   += QTGUI DEBUG HAVE_CONFIG_H LINUX
@@ -30,7 +31,7 @@ CONFIG    += qt debug
 LIBS      += ../phase/drift_8.o ../phase/phasefor.o ../phase/make_matrix_8.o ../phase/taylor-ops.o \
 	../phase/q0_q1_q2_8.o ../phase/replace_wl_in_ypzp.o ../phase/replace_wl_in_u.o \
 	../phase/misali_8.o ../phase/misali1_8.o ../phase/misali2_8.o ../phase/misali3_8.o ../phase/misali4_8.o\
-	../phase/replace_6v4v.o ../phase/rekursiv_2d_8.o ../phase/fdet_8.o ../phase/fgmapidp_8.o \
+	../phase/replace_6v4v.o ../phase/rekursiv_2d_8.o ../phase/fdet_8.o ../phase/fgmapidp_8.o ../phase/elli_8.o \
 	../phase/get_partial_etc.o -L/opt/intel/intel-10.0/fc-10.0/lib \
 	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/ \
 	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/../../../ \
