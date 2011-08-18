@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <17 Aug 11 17:01:47 flechsig> 
+//  Time-stamp: <18 Aug 11 17:02:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -32,7 +32,7 @@ MainWindow::MainWindow()
   createStatusBar();
   createDockWindows();
   setWindowTitle(tr("PHASE Qt"));
-  resize(1800,1000);
+  resize(1400,940);
 
   this->myPHASEset::init("default");
   //  this->QtPhase::print();
@@ -70,7 +70,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("raytracesimpleAct")) 
     { 
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", this->localalloc, this->hormapsloaded);
-      
+      this->beamlineOK &= ~resultOK;
+      UpdateStatus();
       MakeRTSource(this, this);
       ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
       BuildBeamline(this);
@@ -80,7 +81,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("raytracefullAct")) 
     { 
       printf("\nraytracefullAct button  pressed\n");
-      
+      this->beamlineOK &= ~resultOK;
+      UpdateStatus();
       MakeRTSource(this, this);
       ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
       BuildBeamline(this);
@@ -329,13 +331,14 @@ void MainWindow::thetaBslot()  // SetTheta from cff
   char *text= cffE->text().toAscii().data();          // get string from widget
   struct gdatset *gdat= &(this->ElementList[number].GDat);
   char  buffer[9];
-  printf("text: %s\n", text);
+  printf("thetaBslot: text: %s\n", text);
 
   // !! we take other relevant data (gdat->lambda, gdat->xdens[0], gdat->inout) from dataset and not from widget
   sscanf(text, "%lf", &cff);
   if (cff != 1.0)
     {
-      FixFocus(cff, gdat->lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
+      printf("fixfocus: %f, %lg\n", gdat->xdens[0], this->BLOptions.lambda);
+      FixFocus(cff, this->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
       sprintf(buffer, "%8.4f", theta0);  
@@ -539,6 +542,11 @@ void MainWindow::elementApplyBslot()
   md->dRl*= 1e-3;
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
+  // build the element
+  DefMirrorC(md,   &(this->ElementList[number].mir), md->Art);
+  DefGeometryC(gd, &(this->ElementList[number].geo));
+  MakeMapandMatrix(&(this->ElementList[number]), this);
+  //  this->ElementList[number].ElementOK |= elementOK;
   UpdateStatus();
   writeBackupFile();
 } // elementApplyBslot
@@ -753,9 +761,9 @@ void MainWindow::openBeamline()
   //  myQtPhase->myPHASEset::print();
 #endif
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
-						  // QDir::currentPath()
-						  "/afs/psi.ch/user/f/flechsig/phase/data",
-						  tr("Text files (*.phase);;(*)")
+						  QDir::currentPath(),
+						  //"/afs/psi.ch/user/f/flechsig/phase/data",
+						  tr("Phase files (*.phase);;(*)")
 						  );
   char *name;
   //  int result;
@@ -1059,8 +1067,11 @@ void MainWindow::sourceDefaultBslot()
 #ifdef DEBUG
   printf("sourceDefaultBslot activated\n");
 #endif
-  QMessageBox::warning(this, tr("sourceDefaultBslot"),
-			   tr("no function so far"));
+  //sourceSetDefaults();
+  oldsource='0';    // something not valid
+  UpdateSourceBox();
+  //  QMessageBox::warning(this, tr("sourceDefaultBslot"),
+  //			   tr("no function so far"));
 } // end sourceDefaultBslot
 
 
@@ -1446,10 +1457,12 @@ QWidget *MainWindow::createGraphicBox()
   // upper part
   QGroupBox   *statusGroup  = new QGroupBox(tr("Status"));
   QHBoxLayout *statusLayout = new QHBoxLayout;
-  sourceStatLabel   = new QLabel(tr("source: undef"));
-  imageStatLabel    = new QLabel(tr("image: undef"));
-  mapStatLabel      = new QLabel(tr("maps: undef"));
+  sourceStatLabel   = new QLabel(tr("<b><FONT COLOR=red>source</FONT></b>"));
+  imageStatLabel    = new QLabel(tr("<b><FONT COLOR=red>image</FONT></b>"));
+  mapStatLabel      = new QLabel(tr("<b><FONT COLOR=red>maps</FONT></b>"));
+  elementStatLabel  = new QLabel(tr("<b><FONT COLOR=red>OE-X</FONT></b>"));
   statusLayout->addWidget(mapStatLabel);
+  statusLayout->addWidget(elementStatLabel);
   statusLayout->addWidget(sourceStatLabel);
   statusLayout->addWidget(imageStatLabel);
   statusGroup->setLayout(statusLayout);
@@ -1484,6 +1497,7 @@ QWidget *MainWindow::createGraphicBox()
   plotstyleMenu->addAction(grcontourAct);
   plotstyleMenu->addAction(grcontourisoAct);
   plotstyleMenu->addAction(grisoAct);
+  plotstyleMenu->setDefaultAction(grcontourAct);
   
   popupButton->setMenu(plotstyleMenu);
   grsignalMapper = new QSignalMapper(this);
@@ -1598,6 +1612,8 @@ void MainWindow::createMenus()
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
     editMenu->addAction(readFg34Act);
+    editMenu->addAction(optiInputAct);
+    editMenu->addSeparator();
     editMenu->addAction(configureAct);
 
     calcMenu = menuBar()->addMenu(tr("&Calc"));
@@ -1609,8 +1625,8 @@ void MainWindow::createMenus()
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);
     calcMenu->addAction(mphasespaceAct);
-    calcMenu->addSeparator();
-    calcMenu->addAction(optiInputAct);
+    //calcMenu->addSeparator();
+    //calcMenu->addAction(optiInputAct);
 
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
@@ -1672,6 +1688,7 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(geAct);
   shapeMenu->addSeparator();
   shapeMenu->addAction(apAct);
+  shapeMenu->setDefaultAction(toAct);
   shapeButton->setMenu(shapeMenu);
 
   connect(pmAct, SIGNAL(triggered()), this, SLOT(pmslot()));
@@ -1967,6 +1984,7 @@ QWidget *MainWindow::createSourceBox()
   sourceMenu->addAction(simAct);  
   sourceMenu->addSeparator();
   sourceMenu->addAction(sffAct);
+  sourceMenu->setDefaultAction(poiAct);
   sourceTypeButton->setMenu(sourceMenu);
 
   connect(rthAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -2365,6 +2383,132 @@ case 10:
   item->setText(buffer);
 } // end parameterUpdate
 
+// interactive version checks for backupfile
+void MainWindow::ReadBLFileInteractive(char *blname)
+{
+  char fname[MaxPathLength], oname[MaxPathLength], buffer[300];        
+  struct stat fstatus;
+  time_t mtime_data, mtime_backup;
+  
+  strncpy(fname, blname, (MaxPathLength - 1));
+  strncpy(oname, blname,  MaxPathLength);
+  strcat(fname, "~");
+
+  if (fexists(fname))
+    {
+      if (stat(fname, &fstatus) == 0)
+	{
+	  mtime_backup= fstatus.st_mtime;
+	  if (stat(blname, &fstatus) == 0)
+	    {
+	      mtime_data= fstatus.st_mtime;
+	      if (mtime_data < mtime_backup)
+		{
+		  
+		  QMessageBox *msgBox = new QMessageBox;
+		  sprintf(buffer, "<b>We found a newer backupfile</b>\n%s", fname);
+		  msgBox->setText(buffer);
+		  msgBox->setInformativeText("Do you want to use the backup?");
+		  msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		  msgBox->setDefaultButton(QMessageBox::Yes);
+		  msgBox->setIcon(QMessageBox::Question);
+		  int ret = msgBox->exec();
+		  if (ret == QMessageBox::Yes) 
+		    strncpy(oname, fname, MaxPathLength);
+		}
+	    }
+	  
+	}
+    }
+  ReadBLFile(oname, this);
+  WriteBLFile(blname, this);  // to reset the time
+} // ReadBLFileInteractive
+
+// rewrite of initdatsets
+void MainWindow::sourceSetDefaults()
+{
+  char sou;
+  struct UndulatorSourceType  *up;
+  // struct UndulatorSource0Type *up0;
+  struct DipolSourceType      *dp;
+  struct PointSourceType      *pp;
+  struct RingSourceType       *rp;
+  struct HardEdgeSourceType   *hp;    
+  struct FileSourceType       *fp;
+  struct SRSourceType         *sp;
+  struct PSImageType *ip;
+
+  this->RTSource.raynumber= 25000;
+  sou= this->RTSource.QuellTyp;
+
+  printf(" set defaults for source: %c\n", sou);
+  switch(sou)
+    {
+    case 'U': 
+    case 'u':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep; 
+      up->length= 3800.0;
+      up->lambda= 12.4e-6;  
+      break;   
+    case 'L': 
+    case 'M':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep; 
+      up->length= 3800.0;
+      up->lambda= 12.4e-6;
+      up->deltaz= 0.0;
+      break;
+    case 'D': dp=(struct DipolSourceType *)this->RTSource.Quellep; 
+      dp->sigy		= 0.093;  
+      dp->sigdy	        = 1.;  
+      dp->sigz        	= 0.05;
+      dp->dz          	= 4.0;
+      break;  
+    case 'o': pp=(struct PointSourceType *)this->RTSource.Quellep; 
+      pp->sigy	= 0.093;  
+      pp->sigdy	= 1.;  
+      pp->sigz  = 0.05;
+      pp->sigdz = 1.0;
+      break;  
+    case 'S': sp= (struct SRSourceType *)this->RTSource.Quellep;
+      sp->y	=0.1;  
+      sp->dy	=0.1;  
+      sp->z	=0.1;  
+      sp->dz	=0.1; 
+      break;   
+    case 'I': ip= (struct PSImageType*)this->RTSource.Quellep; 
+      ip->ymin	= -1.0e-1;  
+      ip->ymax	=  1.0e-1;  
+      ip->zmin	= -1.0e-1;  
+      ip->zmax	=  1.0e-1;
+      ip->iy   =   15;
+      ip->iz   =   15;
+      break;   
+    case 'H': 
+      hp= (struct HardEdgeSourceType *)this->RTSource.Quellep; 
+      hp->disty	= .1;  
+      hp->iy 	= 3;   
+      hp->distz	= .2;  
+      hp->iz	= 3;   
+      hp->divy	= 1.;  
+      hp->idy	= 7;   
+      hp->divz	= 4.;  
+      hp->idz	= 7;   
+      this->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
+      break;   
+    case 'R': 
+      rp= (struct RingSourceType *)this->RTSource.Quellep;
+      rp->dy= 0.1;
+      rp->dz= 0.1;
+      break;
+    case 'F':
+      fp= (struct FileSourceType *)this->RTSource.Quellep;
+      strncpy(fp->filename, this->sourceraysname, MaxPathLength);
+      /* we may add a test if the file exists */
+      break;   
+    }  /* end case */
+} // sourceSetDefaults
+
+
 // UpdateBeamlineBox()
 // the box on the left
 void MainWindow::UpdateBeamlineBox()
@@ -2396,14 +2540,14 @@ void MainWindow::UpdateElementBox(int number)
 
   if (number < 0) return;
   this->ElementList[number].ElementOK = 0;
-  this->beamlineOK                    &= ~mapOK;
+  this->beamlineOK                   &= ~(mapOK | resultOK);
 
   struct mdatset *md= &(this->ElementList[number].MDat);
   struct gdatset *gd= &(this->ElementList[number].GDat);
 
   teta= fabs(gd->theta0* PI/ 180.0);
   fi  = (double)(gd->inout)* 
-    asin(gd->lambda* gd->xdens[0]/ (2.0* cos(teta)));
+    asin(this->BLOptions.lambda* gd->xdens[0]/ (2.0* cos(teta)));
   cff = cos(fi- teta)/ cos(fi+ teta);
 
   // create strings
@@ -2565,6 +2709,7 @@ void MainWindow::UpdateElementBox(int number)
       cffE->setEnabled( true ); 
       thetaB->setEnabled(true);
     }
+  UpdateStatus();
 } // end UpdateElementBox
 
 // updates the elementlist
@@ -2595,6 +2740,7 @@ void MainWindow::UpdateElementList()
 void MainWindow::UpdateSourceBox()
 {
   char sou;
+  
   struct UndulatorSourceType  *up;
   struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
@@ -2607,13 +2753,13 @@ void MainWindow::UpdateSourceBox()
   //  struct PSSourceType         *pssp; 
 
   char TextField [8][40];            /* 8 editfelder */
-  char LabelField[9][40]; 
+  char LabelField[9][100]; 
    
   this->beamlineOK &= ~sourceOK; 
         
 #ifdef DEBUG 
-    printf("InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X\n", 
-	   this->RTSource.QuellTyp, this->beamlineOK);   
+    printf("InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
+	   this->RTSource.QuellTyp, this->beamlineOK, oldsource);   
 #endif   
  
     if (RTSource.Quellep == NULL)
@@ -2623,6 +2769,22 @@ void MainWindow::UpdateSourceBox()
       }
     AllocRTSource(this);
     sou= this->RTSource.QuellTyp;
+    
+    if (sou != this->oldsource)
+      {
+	printf("source changed: set defaults\n");
+	oldsource= sou;
+	sourceSetDefaults();
+      }
+
+    S1E->setEnabled(false);
+    S2E->setEnabled(false);
+    S3E->setEnabled(false);
+    S4E->setEnabled(false);
+    S5E->setEnabled(false);
+    S6E->setEnabled(false);
+    S7E->setEnabled(false);
+    S8E->setEnabled(false);
 
     switch (sou) {
  
@@ -2645,6 +2807,11 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "Dipol (Bending Magnet)");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
+      S5E->setEnabled(true);
       break;  
     case 'G':
       up0= (struct UndulatorSource0Type *)this->RTSource.Quellep;
@@ -2665,6 +2832,14 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "sigmaedy (mrad)");   
       sprintf(LabelField[7], "%s", "sigmaedz (mrad)");
       sprintf(LabelField[8], "%s", "Generic undulator");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
+      S5E->setEnabled(true);
+      S6E->setEnabled(true);
+      S7E->setEnabled(true);
+      S8E->setEnabled(true);
       break;  
     case 'H':
       hp= (struct HardEdgeSourceType *)this->RTSource.Quellep;
@@ -2685,6 +2860,14 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "hor. div. (mrad)");   
       sprintf(LabelField[7], "%s", "-> points");
       sprintf(LabelField[8], "%s", "Ray Trace hard edge");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
+      S5E->setEnabled(true);
+      S6E->setEnabled(true);
+      S7E->setEnabled(true);
+      S8E->setEnabled(true);
       break;  
 
     case 'L':
@@ -2706,6 +2889,10 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "SLS SIS undulator");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
       break; 
 
     case 'M':
@@ -2727,6 +2914,10 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "SLS SIM undulator");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
       break;  
 
     case 'o':
@@ -2748,6 +2939,11 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "Point Source: all sigma values");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
+      S5E->setEnabled(true);
       break;  
 
  case 'R':
@@ -2769,6 +2965,9 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "Ring Source: half axis of the divergence ellipse, y,z are always 0");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
       break;  
    
     case 'U':
@@ -2790,6 +2989,9 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "Undulator");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
       break;  
     case 'F':
       fp= (struct FileSourceType *)this->RTSource.Quellep;
@@ -2882,19 +3084,36 @@ void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
 
 void MainWindow::UpdateStatus()
 {
+  int elementnumber= elementList->currentRow();
+  char buffer[100];
+
+  //  printf("UpdateStatus: element: %d, of %d\n", elementnumber, elementList->count());
+
+  if ((elementnumber < 0) || (elementnumber > elementList->count()- 1)) 
+    elementnumber= 0;
+
+  if (this->ElementList[elementnumber].ElementOK & elementOK) 
+    sprintf(buffer, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
+  else 
+    sprintf(buffer, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
+
+  elementStatLabel->setText(QString(tr(buffer)));
+
   if (this->beamlineOK & sourceOK) 
-    sourceStatLabel->setText(QString(tr("source: OK"))); 
+    sourceStatLabel->setText(QString(tr("<b><FONT COLOR=green>source</FONT></b>"))); 
   else 
-    sourceStatLabel->setText(QString(tr("source: undef")));
+    sourceStatLabel->setText(QString(tr("<b><FONT COLOR=red>source</FONT></b>")));
+
   if (this->beamlineOK & resultOK) 
-    imageStatLabel->setText(QString(tr("image: OK"))); 
+    imageStatLabel->setText(QString(tr("<b><FONT COLOR=green>image</FONT></b>"))); 
   else 
-    imageStatLabel->setText(QString(tr("image: undef")));
+    imageStatLabel->setText(QString(tr("<b><FONT COLOR=red>image</FONT></b>")));
+
   if (this->beamlineOK & mapOK) 
-    mapStatLabel->setText(QString(tr("maps: OK"))); 
+    mapStatLabel->setText(QString(tr("<b><FONT COLOR=green>maps</FONT></b>"))); 
   else 
-    mapStatLabel->setText(QString(tr("maps: undef")));
-}
+    mapStatLabel->setText(QString(tr("<b><FONT COLOR=red>maps</FONT></b>")));
+} // UpdateStatus
 
 /////////////////////////////////
 // end widget handling section //

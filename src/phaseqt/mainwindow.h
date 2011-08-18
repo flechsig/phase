@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <17 Aug 11 17:25:54 flechsig>  */
+/*  Time-stamp: <18 Aug 11 15:44:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -15,6 +15,8 @@
 #include <qsignalmapper.h>
 #include <QListWidget>
 #include <QGroupBox>
+#include <sys/stat.h>
+
 
 #include "phaseqt.h"
 #include "singleray.h"
@@ -48,6 +50,8 @@ public:
     void UpdateSourceBox();
     void UpdateStatus();
     void writeBackupFile();
+    void ReadBLFileInteractive(char *);
+    char oldsource;
 
 private slots:
     void appendElement();
@@ -98,7 +102,6 @@ private slots:
     void activateProc(const QString &action);
     void UpdateStatistics(Plot *, char *, int);
     
-
 private:
     void createActions();
     void createMenus();
@@ -106,8 +109,10 @@ private:
     void createStatusBar();
     void createDockWindows();
     void parameterUpdate(int, char *, int);
+    void sourceSetDefaults();
     
     void UpdateElementBox(int);
+    
 
     QTextEdit   *textEdit;
     QListWidget *customerList;
@@ -294,9 +299,12 @@ private:
     QLabel *sourceStatLabel;  
     QLabel *imageStatLabel;  
     QLabel *mapStatLabel;
-    
+    QLabel *elementStatLabel;
 
     QSignalMapper *grsignalMapper;  // UF
+    
+    
+ 
 };
 
 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <16 Aug 11 11:58:31 flechsig> 
+//  Time-stamp: <18 Aug 11 15:12:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -33,7 +33,9 @@ int main(int argc, char *argv[])
     default:
       GetPHASE(&mainWin, (char*) MainPickName);
     }
-  ReadBLFile(mainWin.beamlinename, &mainWin);
+  mainWin.ReadBLFileInteractive(mainWin.beamlinename);
+  mainWin.oldsource= mainWin.RTSource.QuellTyp;
+  //  ReadBLFile(mainWin.beamlinename, &mainWin);
   mainWin.UpdateElementList();
   mainWin.UpdateBeamlineBox();
   mainWin.UpdateSourceBox();
