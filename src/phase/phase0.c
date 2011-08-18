@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <15 Jun 11 08:13:05 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:40:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -32,7 +32,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h"     
 #include "mirrorpck.h" 
-#include "geometrypck.h"                         
+                        
 #include "phase.h" 
 #include "phaseX.h"
 #include "rtrace.h"   
@@ -485,9 +485,9 @@ void toggle_proc(w, tag, toggle)
 	if (az > 3) az= 0;
 	/* aendert den azimut im gdatset des Elementes */
 	
-	Beamline.beamlineOK &= ~(mapOK | geometryOK);  
+	Beamline.beamlineOK &= ~(mapOK);  
 	Beamline.ElementList[Beamline.position-1].ElementOK &= 
-	  ~(mapOK | geometryOK);  
+	  ~(mapOK);  
 	Beamline.ElementList[Beamline.position-1].GDat.azimut= az;   
 	if (az > 1) 
 	  {

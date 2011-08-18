@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <12 Jul 11 14:17:27 flechsig>  */
+/*   Time-stamp: <18 Aug 11 13:53:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -145,15 +145,10 @@ FString *CreateFString(FString *fstring, char *cstring)
 {        
   int l= strlen(cstring);
 
-#ifdef VMS 
-  fstring->dsc$b_dtype  = DSC$K_DTYPE_T;    
-  fstring->dsc$b_class  = DSC$K_CLASS_S;    
-  fstring->dsc$w_length = l;    
-  fstring->dsc$a_pointer= cstring; 
-#else
+
   fstring->string= cstring;
   fstring->length= l;
-#endif   
+   
   return (fstring);
 }         
 

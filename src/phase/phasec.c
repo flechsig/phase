@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <12 Aug 11 14:23:28 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:36:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -33,7 +33,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h"   
 #include "mirrorpck.h"                 
-#include "geometrypck.h"   
+  
 #include "phase.h"
 #ifndef QTGUI
 #include "phaseX.h"
@@ -147,7 +147,6 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   *cmode= -1;
   *selected= -1;
 
-  
   opterr = 0;
   
   while ((c = getopt (argc, argv, "BbF:f:HhM:m:NnO:o:S:s:V")) != -1)
@@ -161,6 +160,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	break;
       case 'F':
       case 'f':
+	ret= 5;
 	printf("option -%c\n", c);
 	fvalue = optarg;
 	strncpy(ps->beamlinename, fvalue, MaxPathLength);
@@ -248,6 +248,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
     {
       strncpy(ps->beamlinename, argv[index], MaxPathLength);
       printf("ProcComandLine: use input_filename from argument: >>%s<<\n", argv[index]);
+      ret= 5;
     }
   index++;
   if (index < argc)  /* wir nehmen das zweite argument als output_filename und ueberschreiben damit den parameter -o */
@@ -352,9 +353,6 @@ int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ac
 #endif
 
 int GetPHASE(struct PHASEset *x, char *mainpickname)
-     /* return 1: file gelesen- OK		*/
-     /* 30.5.96 				*/
-     /* last mod. 26.7.96			*/
 {
   FILE *f;
   int  rcode, version;
@@ -390,6 +388,11 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 	      fscanf(f,"%s\n", (char *) &x->so4_fsource4c);       
 	      fscanf(f,"%s\n", (char *) &x->so4_fsource4d);
 	      fscanf(f,"%s\n", (char *) &x->so6_fsource6);
+	    }
+	  if (version >= 20110814)
+	    {
+	      fscanf(f,"%s\n", (char *) &x->opresname);     
+	      fscanf(f,"%s\n", (char *) &x->minname);    
 	    }
 	  rcode= 1;       /* OK zurueck */
 	}
@@ -460,16 +463,12 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
 #endif  
 }
 
-
 void InitOptiBox1(char *pickname)   
 {
   printf("dummy %s\n", pickname);
 }
 
-
-
 void InitPHASE(struct PHASEset *x)                   /* set defaults */
-     /* 30.5.96 */
 {
   strcpy(x->matrixname,      D0matrixname);
   strcpy(x->mapname,         D0mapname);    
@@ -486,15 +485,14 @@ void InitPHASE(struct PHASEset *x)                   /* set defaults */
   strcpy(x->printpclname,    D0printpclname);   
   strcpy(x->optipckname,     D0optipckname);   
   strcpy(x->beamlinename,    "SGM.PHASE"); 
+  strcpy(x->opresname,       "opti_out.dat"); 
+  strcpy(x->minname,         "minuit.inp"); 
 }
    
-
-
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
-    
 {                              
   FILE *f;
-  int version= 20081119;
+  int version= 20110814;
   printf("putphase: write filenames\n");
 
   if ((f= fopen(mainpickname, "w")) == NULL)
@@ -524,14 +522,11 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 	fprintf(f,"%s\n", x->so4_fsource4c);
 	fprintf(f,"%s\n", x->so4_fsource4d);
 	fprintf(f,"%s\n", x->so6_fsource6);
+	fprintf(f,"%s\n", x->opresname);
+	fprintf(f,"%s\n", x->minname);
        	fclose(f);  
       }
 }    /* end putphase */	
-
-
-
-
-
 
 
 void SetDefaultParameter(struct BeamlineType *bl) 
@@ -774,8 +769,8 @@ int CheckBLOK(int blok, int target, char *message)
 	fprintf(stderr, "  %s\n", "result not defined!");
       if (((target & elementOK) > 0) && ((blok & elementOK) == 0)) 
 	fprintf(stderr, "  %s\n", "optical element not defined!");
-      if (((target & geometryOK) > 0) && ((blok & geometryOK) == 0))
-	fprintf(stderr, "  %s\n", "geometry of optical element not defined!");
+      /*if (((target & geometryOK) > 0) && ((blok & geometryOK) == 0))
+	fprintf(stderr, "  %s\n", "geometry of optical element not defined!");*/
       if (((target & pstsourceOK) > 0) && ((blok & pstsourceOK) == 0)) 
 	fprintf(stderr, "  %s\n", "PST source not defined!");
       if (((target & pstimageOK) > 0) && ((blok & pstimageOK) == 0))
@@ -784,6 +779,24 @@ int CheckBLOK(int blok, int target, char *message)
     }
   return ret;
 }
+
+void ginitdatset(struct gdatset *x)
+{
+   int i;
+        
+   x->theta0	= 88.0;     
+   x->r		= 10000;
+   x->rp	= 1000;
+   for (i= 0; i< 5; i++) 
+     x->xdens[i] = 0; 
+   x->lambda  	 = 0;  
+   x->dlambda     = 0; 
+   x->dlambdaflag = 0; 
+   x->inout	= 1;  
+   x->iflag	= 0; 
+   x->azimut    = 0;
+}
+
 
 
 /* end of file phasec.c */     

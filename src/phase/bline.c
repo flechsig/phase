@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Aug 11 12:53:17 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:39:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -28,7 +28,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h"   
 #include "mirrorpck.h"                 
-#include "geometrypck.h"   
+  
 #include "phase.h"
 #include "rtrace.h"                 
 #include "common.h" 
@@ -525,20 +525,19 @@ void GlueLeft(double *a, double *b)
 /* multipliziert quadratische matritzen im fortran Speichermodell        */
 /* Die Matrix des nachfolgenden Elements wird von links aufmultipliziert */
 /* A=  B * A 								 */
-/* Uwe 11.6.96 								 */
-/* 12.2.97 rechne immer mit 70 * 70 matrix*/
 {
   int spalt, zeil, id, dim;
+  double *c;
 
 #ifdef SEVEN_ORDER
-   double *c, C[330][330];
-
-   c= &C[0][0]; dim= 330;
+   double C[330][330];
+   dim= 330;
 #else
    double *c, C[70][70];
-
-   c= &C[0][0]; dim= 70;
+   dim= 70;
 #endif
+
+   c= &C[0][0];
 
    for (spalt= 0; spalt< dim; spalt++) 
      for (zeil= 0; zeil< dim; zeil++) 
@@ -765,10 +764,10 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
    double *c, C[330][330];
-   printf("seven order defined\n");
+   printf("MakeMapandMatrix: seven order defined\n");
 #else
    double *c, C[70][70];
-   printf("seven order not defined\n");
+   printf("MakeMapandMatrix: seven order not defined\n");
 #endif
 
    c= &C[0][0];
@@ -2105,13 +2104,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	} 
       else
 	{   
-#ifdef SEVEN_ORDER
-	  printf("DefMirrorC: elliptical shape- preliminary Fortran special\n");  
-	  double sina, cosa, pa, pb, pc, px0, py0, ptendel;
-	  sina=sin(alpha);
-	  cosa=cos(alpha);
-	  elli_8(&x->r1, &x->r2, &sina, &cosa, &pa, &pb, &pc, &px0, &py0, &ptendel, dp);
-#else
+
     
 	  aellip= (x->r1+ x->r2)/ 2.0;
 	  bellip= sqrt(aellip* aellip- 0.25* 
@@ -2149,6 +2142,14 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("pole:                         r = % f mm\n", rpole);
 	  printf("pole:                       phi = % f deg.\n", fipole);
 	  printf("                              f = % f mm\n", f);
+
+#ifdef SEVEN_ORDER
+	 
+	  double sina, cosa, pa, pb, pc, px0, py0, ptendel;
+	  sina=sin(alpha);
+	  cosa=cos(alpha);
+	  elli_8(&x->r1, &x->r2, &sina, &cosa, &pa, &pb, &pc, &px0, &py0, &ptendel, dp);
+#else
 
 	  dp[2* l]= 1.0/ (4.0* f* cos(alpha));    		/* 0,2 */
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
@@ -2193,16 +2194,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       else
 	{ 
 
-#ifdef SEVEN_ORDER
-	  printf("DefMirrorC: plane elliptical shape- preliminary Fortran special\n");  
-	  double sina, cosa, pa, pb, pc, px0, py0, ptendel;
-	  sina=sin(alpha);
-	  cosa=cos(alpha);
-	  elli_8(&x->r1, &x->r2, &sina, &cosa, &pa, &pb, &pc, &px0, &py0, &ptendel, dp);
-	  /* ueberschreibe die l terme wieder */
-	  for (i=9; i < 81; i++)   /* nur erste spalte != 0.0 */
-	    dp[i]= 0.0;
-#else    
+  
 	  aellip= (x->r1+ x->r2)/ 2.0;
 	  bellip= sqrt(aellip* aellip- 0.25* 
 		       (x->r1* x->r1+ x->r2* x->r2- 
@@ -2235,6 +2227,19 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("pole:                         r = %f mm\n", rpole);
 	  printf("pole:                       phi = %f deg.\n", fipole);
 	  printf("                              f = %f mm\n", f);
+
+
+#ifdef SEVEN_ORDER
+	 
+	  double sina, cosa, pa, pb, pc, px0, py0, ptendel;
+	  sina=sin(alpha);
+	  cosa=cos(alpha);
+	  elli_8(&x->r1, &x->r2, &sina, &cosa, &pa, &pb, &pc, &px0, &py0, &ptendel, dp);
+	  /* ueberschreibe die l terme wieder */
+	  for (i=9; i < 81; i++)   /* nur erste spalte != 0.0 */
+	    dp[i]= 0.0;
+#else  
+
 	  
 	  dp[2] = cos(alpha)/ (4.0* f);          		/* 2,0 */
 /** Vorzeichen vermutlich falsch UF 26.11.04 - siehe oben */

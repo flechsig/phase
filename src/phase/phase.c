@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <12 Aug 11 14:25:21 flechsig>  */
+/*  Time-stamp: <18 Aug 11 22:36:47 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -34,7 +34,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h"     
 #include "mirrorpck.h" 
-#include "geometrypck.h"                         
+                         
 #include "phase.h" 
 #include "phaseX.h" 
 #include "rtrace.h"   

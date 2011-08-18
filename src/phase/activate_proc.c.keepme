@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <10 Aug 11 08:33:56 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:37:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -26,7 +26,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h" 
 #include "mirrorpck.h"  
-#include "geometrypck.h" 
+
 #include "phase.h" 
 #include "phaseX.h"      
 #include "rtrace.h"    
@@ -397,12 +397,12 @@ void activate_proc(w, tag, reason)
 			      bl->ElementList[(bl->position)- 1].elementname);
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
 		   &bl->ElementList[(bl->position)- 1].mir, i); 
-	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
-		     PHASESet.elementpckname);
+	/*mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
+	  PHASESet.elementpckname);*/
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
 		     &bl->ElementList[(bl->position)- 1].geo); 
-	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
-		     PHASESet.geometrypckname);   
+	/*gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
+	  PHASESet.geometrypckname);  */ 
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);   
                              
 	bl->ElementList[(bl->position)- 1].ElementOK |= elementOK;
@@ -434,10 +434,10 @@ void activate_proc(w, tag, reason)
 		    &bl->ElementList[(bl->position)- 1].GDat);
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
 		     &bl->ElementList[(bl->position)- 1].geo);  
-	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
-		     PHASESet.geometrypckname); 
+	/*	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
+	  PHASESet.geometrypckname); */
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);  
-	bl->ElementList[(bl->position)- 1].ElementOK |= geometryOK; 
+	/*	bl->ElementList[(bl->position)- 1].ElementOK |= geometryOK; */
 	bl->ElementList[(bl->position)- 1].ElementOK |= elementOK; 
 	bl->ElementList[(bl->position)- 1].ElementOK &= (~mapOK);  
 	bl->beamlineOK &= (~mapOK); /* ausschalten */    
@@ -494,10 +494,10 @@ void activate_proc(w, tag, reason)
 	/* speichern der daten */
 	ExpandFileNames(&PHASESet, 
 			&bl->ElementList[(bl->position)- 1].elementname);
-	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
+	/*	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 		     PHASESet.elementpckname); 
 	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat,
-		     PHASESet.geometrypckname);
+	PHASESet.geometrypckname);*/
 	WriteBLFile(PHASESet.beamlinename, bl); 
       }
     else 

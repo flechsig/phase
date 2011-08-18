@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <29 Jul 11 11:20:54 flechsig>  */
+/*  Time-stamp: <18 Aug 11 22:40:39 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,7 +31,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h"   
 #include "mirrorpck.h"                 
-#include "geometrypck.h"   
+  
 #include "phase.h"
 #include "phaseX.h"
 #include "rtrace.h"                 
@@ -99,20 +99,13 @@ void AddBLElement(struct BeamlineType *bl, char *name)
        PutPHASE(&PHASESet, MainPickName);  
        strcpy(listpt->elementname, name);  
        printf("AddBLElement: update filenames\n");
-  
-       if (ggetpickfile(&(listpt->GDat), PHASESet.geometrypckname) != 1)  
-       {  /* copy default */  
-          printf("AddBLElement: init new element with default geometry data\n");
-          memcpy(&(listpt->GDat), &GDefDat, sizeof(struct gdatset)); 
-       }  else   
-            printf("init geometry with %s\n", PHASESet.geometrypckname);  
-
-       if (mgetpickfile(&(listpt->MDat), PHASESet.elementpckname) != 1)  
-       {  /* copy default */  
-          printf("AddBLElement: init new element with default mirror data\n");
-          memcpy(&(listpt->MDat), &MDefDat, sizeof(struct mdatset)); 
-       }  else 
-	 printf("init mirror with %s\n", PHASESet.elementpckname); 
+         
+       printf("AddBLElement: init new element with default geometry data\n");
+       memcpy(&(listpt->GDat), &GDefDat, sizeof(struct gdatset)); 
+            
+       printf("AddBLElement: init new element with default mirror data\n");
+       memcpy(&(listpt->MDat), &MDefDat, sizeof(struct mdatset)); 
+       
      }
      else
        memcpy(listpt, tmplistpt++, sizeof(struct ElementType));  
@@ -331,10 +324,6 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    /* for (i= 0; i < 6; i++)
      /*     set_something(widget_array[kEBLT11+ i], XmNvalue, buffer[i]);   */
 } /* end UpdateBLBox */
-
-
-
-
 
 void GetOptiBox(struct PHASEset *x) 
 /* modification: Jul 2011 flechsig */

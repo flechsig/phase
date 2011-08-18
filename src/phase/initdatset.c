@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/initdatset.c */
 /*   Date      : <12 Feb 04 12:17:45 flechsig>  */
-/*   Time-stamp: <25 Jul 11 14:05:34 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:39:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -30,7 +30,7 @@
 #include "phase_struct.h"
 #include "fg3pck.h" 
 #include "mirrorpck.h" 
-#include "geometrypck.h"    
+   
 #include "phase.h"                                
 #include "rtrace.h"            
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <16 Aug 11 10:21:01 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:34:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -28,7 +28,7 @@
 #define mapOK      	2                /* werden und verknuepft */ 
 #define resultOK   	4
 #define elementOK  	8
-#define geometryOK 	16  
+/* #define geometryOK 	16  */           /* no longer used */
 #define pstsourceOK     32
 #define pstimageOK      64           
 
@@ -494,6 +494,21 @@ struct geometrytype {
   int idefl;
   }; 
 
+struct gdatset 
+{
+  double theta0;
+  double r;
+  double rp; 
+  double xdens[5];  
+  double lambda; 
+  double dlambda;
+  int    dlambdaflag;
+  int    inout;                                 
+  int    iflag; 
+  int    azimut;     /* vertikal 0; nach links 1; nach unten 2 */
+}; 
+
+
 
 struct xlenmaptype {
   MAP7TYPE xlen1c, xlen2c;
@@ -511,7 +526,7 @@ struct optistruct_xx
 };      
 
 struct RayType { double y, z, dy, dz, phi; };  
-/*23.11.98  deltaz neu UF */
+
 struct UndulatorSourceType { double length, lambda, sigvert, sighor, deltaz;};  
 struct UndulatorSource0Type { double length, lambda, sigvert, sighor, deltaz,
    sigmaez, sigmaey, sigmaedz, sigmaedy; };  
@@ -528,17 +543,7 @@ struct PSSourceType       { double sigy, sigdy, sigz, sigdz;
 struct FileSourceType { char filename[MaxPathLength]; };
     
 struct RTSourceType {
-  /*  union               	{ 
-    struct HardEdgeSourceType  HardEdgeSource; 
-    struct UndulatorSourceType UndulatorSource;
-    struct UndulatorSource0Type UndulatorSource0;
-    struct DipolSourceType     DipolSource;     
-    struct SRSourceType        SRSource;
-    struct PSImageType         PSImage;
-    struct PointSourceType     PointSource;
-    struct FileSourceType      FileSource;
-    } Quelle; */
-  void *Quellep;           /* UF 24.11.06 */
+  void *Quellep;          
   struct RayType *SourceRays;          
   int QuellTyp_old, modified, raynumber; 
   char QuellTyp;
@@ -553,11 +558,7 @@ struct PSDType  {
 };
 
 struct RESULTType {
-  /*  union               	{ 
-    struct RayType *Rays;  
-    struct PSDType PSD; 
-    } RESUnion; */
-  void *RESp;          /* UF 24.11.06 */
+  void *RESp;         
   int points, typ; };       
 
 
@@ -759,7 +760,7 @@ void
   Footprint(struct BeamlineType *, unsigned int),
   GeneratePrintDataFile(),
   getoptipickfile(struct optistruct *, char *),
-   
+  ginitdatset (struct gdatset *),
   GlueLeft(double *, double *), 
   GlueXlen(struct xlenmaptype *, struct xlenmaptype *, double *, int *, int), 
   GlueWcXlc(double *, double *, double *, double *, double *, int *),
