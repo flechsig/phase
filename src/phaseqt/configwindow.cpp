@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <18 Aug 11 09:19:07 flechsig> 
+//  Time-stamp: <18 Aug 11 09:23:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -91,10 +91,9 @@ if (elementnumber < 0)
  dialog->selectFile(oldname);
 
  QString fileName = dialog->getSaveFileName(this, tr("Define File Name"), 
-						 QDir::currentPath(),
-						 //"/afs/psi.ch/user/f/flechsig/phase/data",
-						 tr(filter)
-						  );
+					    QDir::currentPath(),
+					    tr(filter)
+					    );
 
 
  if (!fileName.isEmpty()) 
