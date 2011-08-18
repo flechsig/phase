@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <10 Aug 11 14:54:17 flechsig>  */
+/*   Time-stamp: <18 Aug 11 12:53:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -35,21 +35,19 @@
 
 extern const char *global_rundir;
 
-
-void BuildBeamline(struct BeamlineType *bl)  
 /****************************************************************/
 /* Beamline zusammensetzen              			*/
 /****************************************************************/
+void BuildBeamline(struct BeamlineType *bl)  
 {
    unsigned int elcounter;
-   int     imodus;
-   struct  ElementType *listpt;      
+   int      imodus;
+   struct   ElementType *listpt;      
    /*   char    command[MaxPathLength]; */
 
 #ifdef DEBUG
   printf("BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
-
 
 #ifdef SEVEN_ORDER
    /*  stimmt das hier???? Dimensionierung von dfdwwp etc */
@@ -75,26 +73,14 @@ void BuildBeamline(struct BeamlineType *bl)
        bl->BLOptions.ifl.iord= 7;
     }
 #else 
-   /* 3. oder 4. ordnung */
-   if ((bl->BLOptions.ifl.iord == 3) || (bl->BLOptions.ifl.iord == 4))
+   if (bl->BLOptions.ifl.iord > 4) 
      {
-       printf("   Buildbeamline: %d. order calculation\n", 
-		bl->BLOptions.ifl.iord);
-       if (bl->BLOptions.ifl.iord == 3)
-	 {
-	   printf("!! 3. order calculation currently not supported\n !!");
-	   printf("   set iord to 4 !! \n");
-	   bl->BLOptions.ifl.iord = 4;
-	 }
+       printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+       printf("set iord to 4\n");
+       bl->BLOptions.ifl.iord= 4;
      }
-   else
-   {
-     printf("%d. order calc. not supported!-> exit\n", bl->BLOptions.ifl.iord);
-     printf("set iord to 4\n");
-     bl->BLOptions.ifl.iord= 4;
-   }
-   /* ende if 3. oder 4. Ordnung */
 #endif
+   printf("BuildBeamline: %d order calculation\n", bl->BLOptions.ifl.iord);
 /*--------------------------------------------------------*/ 
 
   /* baue erst mal immer */
@@ -111,40 +97,22 @@ void BuildBeamline(struct BeamlineType *bl)
       /* Schleife ueber alle Elemente */
       while (elcounter<= bl->elementzahl)
       {  
-	/*  ExpandFileNames(&PHASESet, listpt->elementname); */
-       /********  PutPHASE(&PHASESet, MainPickName);    */  
-         listpt->ElementOK = 0;                         /* erst mal immer */
-         if ((listpt->ElementOK & mapOK) == 0)     /* map must be rebuild */
-         { 
-            if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
-            {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
-	      /*  mputpickfile(&listpt->MDat, PHASESet.elementpckname); */ 
-	      /* fuer dejustierung */
-	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
-	      /*     ReadMKos(&listpt->mir, "newmkos.dat");  */
-			    /* */
-	      listpt->ElementOK |= elementOK; 
-            }   
-            if ((listpt->ElementOK & geometryOK) == 0) /* geometry rebuild */
-            {
-               DefGeometryC(&listpt->GDat, &listpt->geo);  
-	       /*  gputpickfile(&listpt->GDat, PHASESet.geometrypckname); */
-	       listpt->ElementOK |= geometryOK; 
-            }  /* Elementdaten sind ok jetzt map */ 
-        
-            /*printf("c: call MakemapandMatrix\n");*/      
-            MakeMapandMatrix(listpt, bl); 
+	if (listpt->ElementOK == 0)  /* element rebuild */
+	  {
+	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
+	    DefGeometryC(&listpt->GDat, &listpt->geo);  
+	    MakeMapandMatrix(listpt, bl); 
+	    
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
+
 #ifdef DEBUG
             printf("BuildBeamline: matrix of %d. element created\n", 
 		   elcounter); 
 #endif 
-	    listpt->ElementOK|= mapOK; 
-         }             /* map ist OK */
+	  }             /* map ist OK */
 
-	 if (listpt->MDat.Art != kEOESlit)
+	if (listpt->MDat.Art != kEOESlit)         /* slit not */
 	   {
 	     if (elcounter == 1)
 	       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
@@ -202,12 +170,12 @@ void BuildBeamline(struct BeamlineType *bl)
 			   &bl->BLOptions.ifl.iord, 1); 
 		  /*listpt->xlm bleibt gleich*/
 		  if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
-		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
+		    /* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		    GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			      (double *)listpt->wc, (double *)listpt->xlc, 
 			      (double *)bl->M_ItoS, 
 			      &bl->BLOptions.ifl.iord);
-
+		  
 		/* bei image to source werden die indiv. Matritzen geaendert! */
 		  GlueLeft((double *)bl->M_ItoS, 
 			   (double *)listpt->M_ItoS);
@@ -228,11 +196,11 @@ void BuildBeamline(struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-           dfdwwp, dfdwlp, dfdllp,
-           &bl->fdetc, &bl->fdetphc,
-           &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-           &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+		 dfdwwp, dfdwlp, dfdllp,
+		 &bl->fdetc, &bl->fdetphc,
+		 &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -241,9 +209,7 @@ void BuildBeamline(struct BeamlineType *bl)
      	} /* image to source */
       /*********** map und det fertig ***********/
       bl->beamlineOK |= mapOK;    
-      bl->beamlineOK |= geometryOK; 
-      bl->beamlineOK |= elementOK; 
-
+      
       printf("BuildBeamline: whole Beamline is now OK\n"); 
 
 #ifdef DEBUG
@@ -337,12 +303,10 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 			    /* */
 	      listpt->ElementOK |= elementOK; 
             }   
-            if ((listpt->ElementOK & geometryOK) == 0) /* geometry rebuild */
-            {
+            
                DefGeometryCM(lambda_local,&listpt->GDat, &listpt->geo);  
 	       /*  gputpickfile(&listpt->GDat, PHASESet.geometrypckname); */
-	       listpt->ElementOK |= geometryOK; 
-            }  /* Elementdaten sind ok jetzt map */ 
+	      
         
             /*printf("c: call MakemapandMatrix\n");*/      
             MakeMapandMatrix(listpt, bl); 
@@ -451,7 +415,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
      	} /* image to source */
       /*********** map und det fertig ***********/
       bl->beamlineOK |= mapOK;    
-      bl->beamlineOK |= geometryOK; 
+     
       bl->beamlineOK |= elementOK; 
 
       printf("BuildBeamline: whole Beamline is now OK\n"); 
@@ -808,133 +772,126 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 #endif
 
    c= &C[0][0];
-   if (listpt->ElementOK & mapOK) 
+   if (listpt->ElementOK & elementOK) 
       printf("MakeMapandMatrix: map is alredy OK- nothing to do\n");
    else
    {
-      /* check ob datenfiles vorliegen */
-      if ((listpt->ElementOK & (geometryOK | elementOK)) != 
-			       (geometryOK | elementOK)) 
-         printf("MakeMapandMatrix: element not Ok\n");
-      else
-      { /* neu */
-	/*   printf("c: call fgmapidp\n"); */
-        imodus= 1;   /* source to image zuerst */
-
-	if(listpt->MDat.Art==999)
-	   {imodus=imodus+1000;};
-
+     imodus= 1;   /* source to image zuerst */
+     
+     if(listpt->MDat.Art==999)
+       {imodus=imodus+1000;};
+     
 #ifdef SEVEN_ORDER
 #ifdef DEBUG
-	  printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
-          printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
-          printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
+     printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
+     printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
+     printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
 #endif
-	fgmapidp_8(&bl->BLOptions.epsilon, 
-		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		 &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		 listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
-		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-#else
-	fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
-		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
-#endif
-
-
-	if(listpt->MDat.Art==999)
-	   {imodus=imodus-1000;};
-
-#ifdef SEVEN_ORDER
-         make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
-		 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-#else
-/* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-	xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
-		listpt->dzpc, &bl->BLOptions.ifl.iord);
-/*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-                 listpt->wc, listpt->xlc, listpt->ypc1, 
-		 listpt->zpc1, &listpt->xlm);
-*/
-/* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in 
-   fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
-	 pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-                 listpt->wc, listpt->xlc, listpt->ypc1, 
-		 listpt->zpc1, &listpt->xlm);
-#endif
-
-#ifdef DEBUG   
-	printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
-	       bl->position);  
-#endif
-        /* image to source Rechnung bei RT und  pst */
-	if (bl->BLOptions.SourcetoImage != 1) 
-	  {	
-	    imodus= 2;   
-	    if(listpt->MDat.Art==999)
-	       {imodus=imodus+1000;}; 
-
-#ifdef SEVEN_ORDER
-           fgmapidp_8(&bl->BLOptions.epsilon,
-                &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
-                listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+     fgmapidp_8(&bl->BLOptions.epsilon, 
+		&listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		&listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
-                &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-	
+		listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
+		&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #else
-	    fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
-		 &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-	 	 listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
+     fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
+	      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+	      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #endif
- 
-	    if(listpt->MDat.Art==999)
-	       {imodus=imodus+1000;};
-
+     
+     
+     if(listpt->MDat.Art==999)
+       {imodus=imodus-1000;};
+     
 #ifdef SEVEN_ORDER
-	    make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
-	    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+     make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
+		   listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 #else
-/* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-	    xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
-		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-	     
-/*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-		 listpt->wc, listpt->xlc, listpt->ypc1, 
-		 listpt->zpc1, &listpt->xlm); 
-*/
-/* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in
-    fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
-	     pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	         &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-		 listpt->wc, listpt->xlc, listpt->ypc1, 
-		 listpt->zpc1, &listpt->xlm); 
+     /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
+     xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
+	     listpt->dzpc, &bl->BLOptions.ifl.iord);
+     /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+       &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+       listpt->wc, listpt->xlc, listpt->ypc1, 
+       listpt->zpc1, &listpt->xlm);
+     */
+     /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in 
+	fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
+     pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	      &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+	      listpt->wc, listpt->xlc, listpt->ypc1, 
+	      listpt->zpc1, &listpt->xlm);
 #endif
-
-
+     
+#ifdef DEBUG   
+     printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
+	    bl->position);  
+#endif
+     /* image to source Rechnung bei RT und  pst */
+     if (bl->BLOptions.SourcetoImage != 1) 
+       {	
+	 imodus= 2;   
+	 if(listpt->MDat.Art==999)
+	   {imodus=imodus+1000;}; 
+	 
+#ifdef SEVEN_ORDER
+	 fgmapidp_8(&bl->BLOptions.epsilon,
+		    &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
+		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		    &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
+		    listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
+		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	 
+#else
+	 fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
+#endif
+	 
+	 if(listpt->MDat.Art==999)
+	   {imodus=imodus+1000;};
+	 
+#ifdef SEVEN_ORDER
+	 make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
+		       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+#else
+	 /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
+	 xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
+		 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+	 
+	 /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	   &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+	   listpt->wc, listpt->xlc, listpt->ypc1, 
+	   listpt->zpc1, &listpt->xlm); 
+	 */
+	 /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in
+	    fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
+	 pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+		  &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+		  listpt->wc, listpt->xlc, listpt->ypc1, 
+		  listpt->zpc1, &listpt->xlm); 
+#endif
+	 
+	 
 #ifdef DEBUG       
-	    printf("MakeMapandMatrix: image to source map and matrix created\n");  
+	 printf("MakeMapandMatrix: image to source map and matrix created\n");  
 #endif
-	    /* wc,xlc, xlen ist jetzt von image to source Rechnung */ 
-	  } /* end image to source */
-
-        /* horizontale Ablenkung */
-        if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
-        {
-           
+	 /* wc,xlc, xlen ist jetzt von image to source Rechnung */ 
+       } /* end image to source */
+     
+     /* horizontale Ablenkung */
+     if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
+       {
+	 
 #ifdef SEVEN_ORDER
-	   mdim= 330;
+	 mdim= 330;
 #else
-	   mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+	 mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
 #endif
-	   printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
-	   msiz= mdim * mdim * sizeof(double);
-
-           if (bl->hormapsloaded == 0)
+	 printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
+	 msiz= mdim * mdim * sizeof(double);
+	 
+	 if (bl->hormapsloaded == 0)
            {
 #ifdef SEVEN_ORDER
 	     printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 
@@ -945,57 +902,56 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 #endif
 	     bl->hormapsloaded= 1;
            }            /* hormaps  present in memory */
-                      
-           memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
-	   memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
-           GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
-           GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap);      
-	   /* listpt matrix Ok    */
-
-  	   if (bl->BLOptions.SourcetoImage != 1) 
-	     {                /* wenn rueckwaerts dann zusaetzlich */
-	       memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
-	       memcpy(listpt->M_ItoS, bl->lmap, msiz); 
-
-	       GlueLeft((double *)listpt->M_ItoS, (double *)c); 
-	       GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap); 
-	       /* im to s matrix OK */
-
-	       extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
-			  listpt->dypc, listpt->dzpc, 
-			  &bl->BLOptions.ifl.iord); 
-	       GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
-			  (double *)listpt->wc, (double *)listpt->xlc, 
-			  (double *)bl->lmap, &bl->BLOptions.ifl.iord);
-	       GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
-			&bl->BLOptions.ifl.iord, 0);
-
-	 /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
-/* 		    &bl->BLOptions.ifl.iplmode,  listpt->wc, listpt->xlc,  */
-/* 			listpt->ypc1, listpt->zpc1, &listpt->xlm);  */
-	     } else /* horizontal source to image */
-	       {
-
-		 extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
-			    listpt->dypc, listpt->dzpc, 
-			    &bl->BLOptions.ifl.iord);
-		 GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
-			  (double *)listpt->wc, (double *)listpt->xlc, 
-			  (double *)bl->lmap, &bl->BLOptions.ifl.iord);
-		 GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
-			  &bl->BLOptions.ifl.iord, 0);
-	  /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
-/* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
-/* 			  listpt->ypc1, listpt->zpc1, &listpt->xlm);    */
-
-	       }	
+	 
+	 memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
+	 memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
+	 GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
+	 GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap);      
+	 /* listpt matrix Ok    */
+	 
+	 if (bl->BLOptions.SourcetoImage != 1) 
+	   {                /* wenn rueckwaerts dann zusaetzlich */
+	     memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
+	     memcpy(listpt->M_ItoS, bl->lmap, msiz); 
+	     
+	     GlueLeft((double *)listpt->M_ItoS, (double *)c); 
+	     GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap); 
+	     /* im to s matrix OK */
+	     
+	     extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
+			listpt->dypc, listpt->dzpc, 
+			&bl->BLOptions.ifl.iord); 
+	     GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
+		       (double *)listpt->wc, (double *)listpt->xlc, 
+		       (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+	     GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
+		      &bl->BLOptions.ifl.iord, 0);
+	     
+	     /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
+	     /* 		    &bl->BLOptions.ifl.iplmode,  listpt->wc, listpt->xlc,  */
+	     /* 			listpt->ypc1, listpt->zpc1, &listpt->xlm);  */
+	   } else /* horizontal source to image */
+	   {
+	     
+	     extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
+			listpt->dypc, listpt->dzpc, 
+			&bl->BLOptions.ifl.iord);
+	     GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
+		       (double *)listpt->wc, (double *)listpt->xlc, 
+		       (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+	     GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
+		      &bl->BLOptions.ifl.iord, 0);
+	     /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
+	     /* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
+	     /* 			  listpt->ypc1, listpt->zpc1, &listpt->xlm);    */
+	     
+	   }	
 #ifdef DEBUG  
-	   printf("MakeMapandMatrix: hor. defl. matrix created\n");
+	 printf("MakeMapandMatrix: hor. defl. matrix created\n");
 #endif
-	}
-        listpt->ElementOK |= mapOK;
-      }
-   } /* end else */
+       }
+     listpt->ElementOK |= elementOK;
+   }
    /* wc,xlc,xlm sind richtungsabhaengig!! */
 } /* end MakeMapandMatrix */
 
