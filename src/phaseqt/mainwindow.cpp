@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <18 Aug 11 17:02:32 flechsig> 
+//  Time-stamp: <19 Aug 11 13:50:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -38,7 +38,7 @@ MainWindow::MainWindow()
   //  this->QtPhase::print();
   this->myBeamline::init();                           // empty pointers
   
-  
+  this->hormapsloaded = 0;
   this->s_ray= NULL;
   this->o_input= NULL;
   this->c_window= NULL;
@@ -77,6 +77,7 @@ void MainWindow::activateProc(const QString &action)
       BuildBeamline(this);
       RayTracec(this); 
       printf("ray trace-> done\n");
+      statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }
   if (!action.compare("raytracefullAct")) 
     { 
@@ -88,6 +89,7 @@ void MainWindow::activateProc(const QString &action)
       BuildBeamline(this);
       RayTraceFull(this); 
       printf("full ray trace-> done\n");
+      statusBar()->showMessage(tr("full ray trace-> done!"), 4000);
 
     }
   if (!action.compare("footprintAct")) 
@@ -102,6 +104,7 @@ void MainWindow::activateProc(const QString &action)
       BuildBeamline(this);
       Footprint(this, this->position);
       printf("footprint-> done\n");
+      statusBar()->showMessage(tr("Footprint-> done!"), 4000);
     }
 
   if (!action.compare("singleRayAct")) 
@@ -176,9 +179,12 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writecoeffAct")) 
     { 
       printf("writecoeffmapAct button pressed\n"); 
-      sprintf(buffer, "%s", "mirror-coefficients.dat");
+
+      //  sprintf(buffer, "%s", "mirror-coefficients.dat");
+      sprintf(buffer, "%s.coeff", this->elementList->currentItem()->text().toAscii().data());
       printf("write coefficients to file: %s\n", buffer);
       WriteMKos((struct mirrortype *)&this->ElementList[this->position- 1].mir, buffer);
+      statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
     } 
 
   if (!action.compare("writeRTresultAct")) 
@@ -543,7 +549,7 @@ void MainWindow::elementApplyBslot()
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
   // build the element
-  DefMirrorC(md,   &(this->ElementList[number].mir), md->Art);
+  DefMirrorC(md,   &(this->ElementList[number].mir), md->Art, gd->theta0);
   DefGeometryC(gd, &(this->ElementList[number].geo));
   MakeMapandMatrix(&(this->ElementList[number]), this);
   //  this->ElementList[number].ElementOK |= elementOK;
@@ -748,7 +754,7 @@ void MainWindow::newBeamline()
   UpdateBeamlineBox();
   UpdateSourceBox();
   parameterUpdateAll(NPARS);
-  statusBar()->showMessage(tr("New Beamline '%1' created!").arg(name), 2000);
+  statusBar()->showMessage(tr("New Beamline '%1' created!").arg(name), 4000);
 } // end newBeamline()
 
 // slot called to read in a new beamline
@@ -875,7 +881,7 @@ void MainWindow::print()
 
     //  document->print(&printer);
     d_plot->printPlot();
-    statusBar()->showMessage(tr("Ready"), 2000);
+    statusBar()->showMessage(tr("Ready"), 4000);
 #endif
 } // end print()
 
@@ -887,7 +893,7 @@ void MainWindow::save()
   WriteBLFile(name, this);
  
 
-  statusBar()->showMessage(tr("Saved '%1'").arg(name), 2000);
+  statusBar()->showMessage(tr("Saved '%1'").arg(name), 4000);
 } // end save
 
 // slot
@@ -919,7 +925,7 @@ void MainWindow::saveas()
     //    out << textEdit->toHtml();
     //   QApplication::restoreOverrideCursor();
 
-    statusBar()->showMessage(tr("Saved '%1'").arg(fileName), 2000);
+    statusBar()->showMessage(tr("Saved '%1'").arg(fileName), 4000);
 } // end save
 
 // UF selection slot
