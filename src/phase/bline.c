@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Aug 11 22:39:51 flechsig>  */
+/*   Time-stamp: <19 Aug 11 10:16:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -27,7 +27,7 @@
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "fg3pck.h"   
-#include "mirrorpck.h"                 
+                
   
 #include "phase.h"
 #include "rtrace.h"                 
@@ -97,9 +97,11 @@ void BuildBeamline(struct BeamlineType *bl)
       /* Schleife ueber alle Elemente */
       while (elcounter<= bl->elementzahl)
       {  
+        printf("buildbeamline: force built\n");
+	listpt->ElementOK=0;
 	if (listpt->ElementOK == 0)  /* element rebuild */
 	  {
-	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
+	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0);    
 	    DefGeometryC(&listpt->GDat, &listpt->geo);  
 	    MakeMapandMatrix(listpt, bl); 
 	    
@@ -295,8 +297,8 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
-	      /*  mputpickfile(&listpt->MDat, PHASESet.elementpckname); */ 
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0);    
+	      
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
 	      /*     ReadMKos(&listpt->mir, "newmkos.dat");  */
@@ -704,11 +706,11 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 }  /* end GlueWcXlc */
 
 /* UF 11.7.2011 create the Maps analytically */
-/* only for seven order */
 void MakeHorMaps(struct BeamlineType *bl)
 {
   int iord, idefl;
 
+  printf("MakeHorMaps called\n");
   iord = bl->BLOptions.ifl.iord;
   idefl= 1;                                         /*  right hand deflection (rh) */
   create_hormap((double *)bl->rmap, &iord, &idefl); 
@@ -892,11 +894,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 
 	 if (bl->hormapsloaded == 0)
            {
-#ifdef SEVEN_ORDER
+#ifdef SEVEN_ORDER_XXXX
 	     printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 
-	     MakeHorMaps(bl);
+	     MakeHorMaps(bl);     /* UF 18.8.11 does not work so far */
 #else
 	     printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
+	     printf("!!!!!!!!!! fails for iord > 4\n");
 	     LoadHorMaps(bl, mdim);    
 #endif
 	     bl->hormapsloaded= 1;
@@ -960,11 +963,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 /* schreibt den datensatz auf ein file 		                          */ 
 /* written: Uwe 29.5.96				                          */  
-/* UF 28.11.06 unions durch pointer ersetzt                               */
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20091222;
+   int  i, version= 20110819;
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1129,7 +1131,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
-     fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha);
+     /*fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha); UF 11.8.11 */
+     
      fprintf(f, "%20lg     radius rw (r)       \n", listpt->MDat.rmi);
      fprintf(f, "%20lg     radius rl (rho)     \n", listpt->MDat.rho);    
      fprintf(f, "%20d     translation flag\n", listpt->MDat.iflagmi);    
@@ -1561,11 +1564,19 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 		printf("ReadBLFile->read general coefficient file\n");
 		ReadCoefficientFile((double *)&listpt->mir, listpt->elementname);
 	      } 
-	    pd= (double *) &listpt->MDat.r1;                 
+
+	    /*   fehleranfaellig pd= (double *) &listpt->MDat.r1;                 
 	    for (i= 0; i < 5; i++, pd++) 
 	      {
 		fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
-	      }
+		} */
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r1, buffer, &buf);
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r2, buffer, &buf);
+	    if (version < 20110819)
+	      fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf); /* read obsolete alpha */
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf);
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rho, buffer, &buf);
+
 	    fscanf(f, " %d %[^\n]s %c", &listpt->MDat.iflagmi, buffer, &buf); 
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w1, buffer, &buf); 
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w2, buffer, &buf); 
@@ -1978,7 +1989,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
    this is required for the optimization and probably for idl
 */
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
-		int etype)  
+		int etype, double theta)  
 {
   double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
@@ -2003,7 +2014,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
      and introduce fabs()
      reason- I observed strange results with elliptical mirrors in down or right orientation
   */
-  alpha= fabs(x->alpha * PI/ 180.0);
+  alpha= fabs(theta * PI/ 180.0);
 
 #ifdef SEVEN_ORDER
   l= 9;
@@ -2400,7 +2411,7 @@ void readmatrixfilec(char *fname, double *map, int dim)
     } 
   dim2= dim* dim;
   k= 0;
-  while (k < dim2)   /* kein Test auf fileende */
+  while ((k < dim2) && !feof(f))   
     {
       fscanf(f, "%d %d %lf\n", &i, &j, &tmp);
       /*     printf("i, j, tmp: %d %d %lf\n", i,j,tmp);   */   

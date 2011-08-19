@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <18 Aug 11 22:40:39 flechsig>  */
+/*  Time-stamp: <19 Aug 11 08:03:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,7 +30,7 @@
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "fg3pck.h"   
-#include "mirrorpck.h"                 
+                 
   
 #include "phase.h"
 #include "phaseX.h"
@@ -1965,7 +1965,7 @@ int GetOElement(struct PHASEset *ph, struct mdatset *mp, struct gdatset *gp)
   text= XmTextGetString(widget_array[kEOET3]); sscanf(text, "%lf", &gp->rp);
   text= XmTextGetString(widget_array[kEOET4]); sscanf(text, "%lf", 
 						      &gp->theta0);
-  mp->alpha= gp->theta0;
+  //*  mp->alpha= gp->theta0; uf 18.8.11 */
   text= XmTextGetString(widget_array[kEOET5]); sscanf(text, "%lf", &mp->r1); 
   text= XmTextGetString(widget_array[kEOET6]); sscanf(text, "%lf", &mp->r2);
  

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <18 Aug 11 22:36:22 flechsig>  */
+/*   Time-stamp: <18 Aug 11 23:09:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -32,7 +32,7 @@
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "fg3pck.h"   
-#include "mirrorpck.h"                 
+               
   
 #include "phase.h"
 #ifndef QTGUI
@@ -797,7 +797,23 @@ void ginitdatset(struct gdatset *x)
    x->azimut    = 0;
 }
 
-
+void minitdatset(struct mdatset *x)
+{
+         x->r1		= 10000;     
+	 x->r2		= 1000;
+	 /*x->alpha	= 88;*/                           
+	 x->rmi		= 2000;
+	 x->rho		= 2000;           
+      	 x->iflagmi	= 0;  
+         x->w1          = -100 ;
+	 x->w2          = 100;
+	 x->l1          = -10;
+	 x->l2          = 10;
+	 x->slopew      = 0.1;
+	 x->slopel      = 1;
+	 x->du= x->dw= x->dl= x->dRu= x->dRw= x->dRl= 0.0;
+	 x->Art= 188;
+}
 
 /* end of file phasec.c */     
                            

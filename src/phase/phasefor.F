@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <10 Aug 11 17:31:12 flechsig> 
+c$$$ Time-stamp: <19 Aug 11 09:27:18 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2348,12 +2348,20 @@ c-------------------------------------------------------------------------------
 	integer iord, idefl, i, j, k, l, idim
 	
         real *8 ypc1, zpc1, dypc, dzpc, xmap7
+#ifdef SEVEN_ORDER
         dimension ypc1(0:7,0:7,0:7,0:7),
      &            zpc1(0:7,0:7,0:7,0:7),
      &            dypc(0:7,0:7,0:7,0:7),
      &            dzpc(0:7,0:7,0:7,0:7),
-     &            xmap7(1:330,1:330)
+     &            xmap7(330,330)
+#else
+	dimension ypc1(0:4,0:4,0:4,0:4),
+     &            zpc1(0:4,0:4,0:4,0:4),
+     &            dypc(0:4,0:4,0:4,0:4),
+     &            dzpc(0:4,0:4,0:4,0:4),
+     &            xmap7(70,70)
 
+#endif
        	do i=0,iord
 	   do j=0,iord
 	      do k=0,iord
@@ -2385,15 +2393,42 @@ c---------- lh deflection
 	   dypc(0,0,0,1)=-1.
 	   dzpc(0,0,1,0)=1.
 	endif
-            
+
+#ifdef SEVEN_ORDER            
+	idim=330
 	call make_matrix_8(xmap7,ypc1,zpc1,dypc,dzpc,iord)
-c        call make_hor_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
-	write(*,*)'create_hormap: made matrix of dimension: '
+#else
+	idim=70 
+        call make_hor_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
+#endif
+	write(*,*)'create_hormap: made matrix of dimension: ',idim
+
+
+#ifdef DEBUG
+	idim=70
+c------------ write transformation matrix to file or keep it in memory
+	if(idefl.eq.1)then
+	   write(*,*)' writing transformation matrix to mapn.OUT1'
+	   open(unit=10,name='mapn.out1',type='unknown')
+	endif
+	if(idefl.eq.2)then
+	   write(*,*)' writing transformation matrix to mapn.OUT2'
+	   open(unit=10,name='mapn.out2',type='unknown')
+	endif
+
+	do i=1,idim
+	   do j=1,idim
+	      write(10,*)i,j,xmap7(i,j)
+	   enddo
+	enddo
+	close(10)
+
+#endif
 
 	return
 	end
 c end create_hormap
-
+ 
 c helper routines for hormaps
 c UF renamed from make_matrix to make_hor_matrix
 c------------------------------------------------------

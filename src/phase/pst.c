@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <18 Aug 11 22:41:24 flechsig>  */
+/*   Time-stamp: <18 Aug 11 22:53:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -26,7 +26,7 @@
 #include "cutils.h" 
 #include "phase_struct.h"
 #include "fg3pck.h"  
-#include "mirrorpck.h"                                         
+                                        
   
 #include "phase.h"         
 #include "rtrace.h" 

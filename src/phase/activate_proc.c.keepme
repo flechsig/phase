@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <18 Aug 11 22:37:20 flechsig>  */
+/*   Time-stamp: <19 Aug 11 08:01:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -25,7 +25,7 @@
 #include "cutils.h"     
 #include "phase_struct.h"
 #include "fg3pck.h" 
-#include "mirrorpck.h"  
+
 
 #include "phase.h" 
 #include "phaseX.h"      
@@ -396,7 +396,8 @@ void activate_proc(w, tag, reason)
 	  ReadCoefficientFile((double *)&bl->ElementList[(bl->position)- 1].mir, 
 			      bl->ElementList[(bl->position)- 1].elementname);
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
-		   &bl->ElementList[(bl->position)- 1].mir, i); 
+		   &bl->ElementList[(bl->position)- 1].mir, i, 
+		   bl->ElementList[(bl->position)- 1].GDat.theta0); 
 	/*mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 	  PHASESet.elementpckname);*/
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
