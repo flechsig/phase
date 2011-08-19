@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:35:10 flechsig>  */
+/*   Time-stamp: <19 Aug 11 15:18:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -535,7 +535,7 @@ void GlueLeft(double *a, double *b)
    double C[330][330];
    dim= 330;
 #else
-   double *c, C[70][70];
+   double C[70][70];
    dim= 70;
 #endif
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:59:23 flechsig>  */
+/*   Time-stamp: <19 Aug 11 11:05:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -937,7 +937,9 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 	  break;   
 	case 'F':
 	  fp= (struct FileSourceType *)bl->RTSource.Quellep;
+#ifndef QTGUI
 	  strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
+#endif
 	  /* we may add a test if the file exists */
 	break;   
 	}  /* end case */
