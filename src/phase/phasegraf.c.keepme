@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <18 Aug 11 22:55:02 flechsig>  */
+/*   Time-stamp: <19 Aug 11 10:39:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,7 +24,7 @@
 
 #include "cutils.h"
 #include "phase_struct.h"
-#include "fg3pck.h"  
+/*#include "fg3pck.h"  */
   
    
 #include "phase.h" 

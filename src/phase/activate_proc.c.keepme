@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <19 Aug 11 08:01:57 flechsig>  */
+/*   Time-stamp: <19 Aug 11 10:38:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,7 +24,7 @@
 #include <X11/Xutil.h> 
 #include "cutils.h"     
 #include "phase_struct.h"
-#include "fg3pck.h" 
+/*#include "fg3pck.h" */
 
 
 #include "phase.h" 

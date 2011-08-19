@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <18 Aug 11 23:09:24 flechsig>  */
+/*   Time-stamp: <19 Aug 11 10:53:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -31,7 +31,7 @@
 #endif
 #include "cutils.h"   
 #include "phase_struct.h"
-#include "fg3pck.h"   
+/*#include "fg3pck.h"   */
                
   
 #include "phase.h"
@@ -814,6 +814,149 @@ void minitdatset(struct mdatset *x)
 	 x->du= x->dw= x->dl= x->dRu= x->dRw= x->dRl= 0.0;
 	 x->Art= 188;
 }
+
+void initdatset(struct datset *x, struct BeamlineType *bl)
+{
+  int i;
+  
+  struct UndulatorSourceType *up;
+  struct DipolSourceType     *dp;
+  struct PointSourceType     *pp;
+  struct HardEdgeSourceType  *hp;     
+  struct SRSourceType        *sp;  
+  struct PSImageType	     *ip;
+  struct FileSourceType      *fp;
+  
+  if (bl->RTSource.QuellTyp != bl->RTSource.QuellTyp_old) 
+    {
+      x->itrans	= 1;     
+      x->idir  	= 1;
+      x->imodus	= 1;
+      x->disty 	= 0.2;   
+      x->iheigh	= 3;
+      x->distz 	= 0.5;
+      x->iwidth	= 3;
+      x->divy  	= 1.0;
+      x->idivy 	= 11;
+      x->divz  	= 1.0;
+      x->idivz 	= 11;
+      x->intmod	= 2;
+      x->disty1	= -0.1;
+      x->disty2	= 0.1;        
+      x->distz1	= -0.1;        
+      x->distz2	= 0.1;        
+      x->yi    	= 1.0;            
+      x->zi    	= 1.0;            
+      x->dyi   	= 1.0;           
+      x->dzi   	= 1.0;           
+      x->w     	= 1.0;            
+      x->xl    	= 1.0; 
+      x->isourcefile = 0;  
+      x->xlam_test   = 10;  
+      
+      x->sigmay  = 0.05;
+      x->sigmayp = 1500;
+      x->ymin	 = -30;
+      x->ymax	 = 30;    
+      x->sigmaz	 = 0.05;  
+      x->sigmazp = 1500;  
+      x->zmin	 = -30;	  
+      x->zmax	 = 30;    
+      x->epsilon = 1e-4;
+      x->fracy 	= 0.005;
+      x->frac1y	= 0.3;
+      x->fracz	= 0.005;
+      x->frac1z	= 0.3;
+      x->iord	= 4;
+      x->isrcy 	= 1;
+      x->isrcdy	= 1;
+      x->inumy	= 51;
+      x->itery0	= 12;
+      x->ianzy0	= 150;
+      x->imaxy	= 200;
+      x->isrcz	= 1;
+      x->isrcdz	= 1;
+      x->inumz	= 51;
+      x->iterz0	= 12;                
+      x->ianzz0	= 150;
+      x->imaxz	= 200;
+      
+      x->SR2out.y= x->SR2out.z= x->SR2out.dy= x->SR2out.dz= 0.0;  
+      
+      bl->RTSource.raynumber= 1000;
+      switch(bl->RTSource.QuellTyp)
+	{
+	case 'U': 
+	case 'u':
+	  up= (struct UndulatorSourceType *)bl->RTSource.Quellep; 
+	  up->length= 3800.0;
+	  up->lambda= 12.4e-6;  
+	break;   
+	case 'L': 
+	case 'M':
+	  up= (struct UndulatorSourceType *)bl->RTSource.Quellep; 
+	  up->length= 3800.0;
+	  up->lambda= 12.4e-6;
+	  up->deltaz= 0.0;
+	break;
+	case 'D': dp=(struct DipolSourceType *)bl->RTSource.Quellep; 
+	  dp->sigy		= 0.093;  
+	  dp->sigdy	        = 1.;  
+	  dp->sigz        	= 0.05;
+	  dp->dz          	= 4.0;
+	  break;  
+	case 'o': pp=(struct PointSourceType *)bl->RTSource.Quellep; 
+	  pp->sigy	= 0.093;  
+	  pp->sigdy	= 1.;  
+	  pp->sigz      = 0.05;
+	  pp->sigdz     = 1.0;
+	  break;  
+	case 'S': sp= (struct SRSourceType *)bl->RTSource.Quellep;
+	  sp->y	        =0.1;  
+	  sp->dy	=0.1;  
+	  sp->z	        =0.1;  
+	  sp->dz	=0.1; 
+	  break;   
+	case 'I': ip= (struct PSImageType*)bl->RTSource.Quellep; 
+	  ip->ymin	= -1.0e-1;  
+	  ip->ymax	=  1.0e-1;  
+	  ip->zmin	= -1.0e-1;  
+	  ip->zmax	=  1.0e-1;
+	  ip->iy   =   15;
+	  ip->iz   =   15;
+	  break;   
+	case 'H': 
+	  hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep; 
+	  bl->RTSource.QuellTyp= 'H';
+	  hp->disty	= .1;  
+	  hp->iy 		= 3;   
+	  hp->distz	= .2;  
+	  hp->iz		= 3;   
+	  hp->divy	= 1.;  
+	  hp->idy		= 7;   
+	  hp->divz	= 4.;  
+	  hp->idz		= 7;   
+	  bl->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
+	  break;   
+	case 'F':
+	  fp= (struct FileSourceType *)bl->RTSource.Quellep;
+	  strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
+	  /* we may add a test if the file exists */
+	break;   
+	}  /* end case */
+      bl->RTSource.QuellTyp_old =  bl->RTSource.QuellTyp;
+      printf("initdatset: put defaults\n");
+    } else  printf("initdatset: same source- no defaults set\n");
+  /* 24.6.96 */
+  printf("initdatset.c: set  idir, iord, epsilon to defaults\n");
+  bl->BLOptions.SourcetoImage= x->idir; 
+  bl->BLOptions.ifl.iord=      x->iord;
+  bl->BLOptions.epsilon=       x->epsilon;  
+}
+
+
+
+
 
 /* end of file phasec.c */     
                            

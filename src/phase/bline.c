@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:16:25 flechsig>  */
+/*   Time-stamp: <19 Aug 11 10:35:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -26,7 +26,7 @@
 
 #include "cutils.h"   
 #include "phase_struct.h"
-#include "fg3pck.h"   
+/*#include "fg3pck.h"   */
                 
   
 #include "phase.h"
@@ -892,7 +892,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
 	 msiz= mdim * mdim * sizeof(double);
 	 
-	 if (bl->hormapsloaded == 0)
+	 if (bl->hormapsloaded != 1)
            {
 #ifdef SEVEN_ORDER_XXXX
 	     printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 

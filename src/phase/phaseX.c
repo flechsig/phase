@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <19 Aug 11 08:03:05 flechsig>  */
+/*  Time-stamp: <19 Aug 11 10:54:09 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -29,7 +29,7 @@
 
 #include "cutils.h"   
 #include "phase_struct.h"
-#include "fg3pck.h"   
+/*#include "fg3pck.h"   */
                  
   
 #include "phase.h"
