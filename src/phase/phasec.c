@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:53:17 flechsig>  */
+/*   Time-stamp: <19 Aug 11 10:59:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -31,9 +31,6 @@
 #endif
 #include "cutils.h"   
 #include "phase_struct.h"
-/*#include "fg3pck.h"   */
-               
-  
 #include "phase.h"
 #ifndef QTGUI
 #include "phaseX.h"
