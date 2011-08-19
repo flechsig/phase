@@ -1,8 +1,0 @@
-# -*-sh-*-
-#produce qtgui.pro
-qmake-qt4 -project 
-
-# produce makefile
-qmake-qt4
-
-# run make
