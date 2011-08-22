@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Aug 11 15:18:15 flechsig>  */
+/*   Time-stamp: <22 Aug 11 17:59:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1131,7 +1131,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
-     /*fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha); UF 11.8.11 */
+     fprintf(f, "%20lg     theta (ARC)\n", listpt->MDat.alpha); /* obsolete UF 11.8.11 */
      
      fprintf(f, "%20lg     radius rw (r)       \n", listpt->MDat.rmi);
      fprintf(f, "%20lg     radius rl (rho)     \n", listpt->MDat.rho);    
@@ -1572,7 +1572,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 		} */
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r1, buffer, &buf);
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r2, buffer, &buf);
-	    if (version < 20110819)
+	    /*	    if (version < 20110819)        */                        
 	      fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf); /* read obsolete alpha */
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf);
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rho, buffer, &buf);
