@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <07 Jul 11 15:37:35 flechsig> 
+#  Time-stamp: <2011-08-26 22:43:18 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -11,10 +11,20 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phaseqt 
-phaseqt_SOURCES = main.cpp mainwindow.cpp qtphase.cpp ../phase/phasec.c ../phase/cutils.c ../phase/bline.c ../phase/rtrace.c \
-                  ../phase/xmalloc.c ../phase/error.c ../phase/geometrypck.c ../phase/mirrorpck.c ../phase/phasefor.F \
-	../phase/fgmapidp_8.F ../phase/make_matrix_8.for ../phase/taylor-ops.for ../phase/q0_q1_q2_8.for ../phase/get_partial_etc.for ../phase/rekursiv_2d_8.for \
-	../phase/replace_6v4v.for ../phase/replace_wl_in_ypzp.for ../phase/replace_wl_in_u.for ../phase/drift_8.for ../phase/fdet_8.for
+phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp ../phase/phasec.c ../phase/cutils.c \
+	../phase/bline.c ../phase/rtrace.c \
+        ../phase/xmalloc.c ../phase/error.c ../phase/geometrypck.c ../phase/mirrorpck.c \
+	../phase/phasefor.F \
+	../phase/fgmapidp_8.F ../phase/make_matrix_8.for ../phase/taylor-ops.for \
+	../phase/q0_q1_q2_8.for ../phase/get_partial_etc.for ../phase/rekursiv_2d_8.for \
+	../phase/replace_6v4v.for ../phase/replace_wl_in_ypzp.for ../phase/replace_wl_in_u.for \
+	../phase/drift_8.for ../phase/fdet_8.for
+
+# You have one .h file, it's called myapp.h. Therefore, here I list
+# its mocced name, moc_myapp.cpp.
+nodist_phaseqt_SOURCES = \
+	moc_phaseqt.cpp
+
 
 
 #phase.c phasec.c activate_proc.c phasegraf.c initdatset.c \
@@ -47,15 +57,38 @@ pkgdata_DATA = ../data/coefficient-example.dat \
  ../data/phaseinit.com\
  ../data/phaseuser.com
 
-EXTRA_DIST = phase_struct.for $(pkgdata_DATA)
+# This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
+# I also have a resources.qrc I need to include. The png is used in myapp.
+EXTRA_DIST = phase_struct.for $(pkgdata_DATA) \
+phaseqt.qrc images/Blue-arrow-left-32.png images/Blue-arrow-right-32.png images/down-32.png	\
+images/Left-arrow-48.png images/new.png images/print.png images/Right-arrow-48.png \
+images/save.png images/undo.png images/up-32.png
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
-AM_CXXFLAGS   = -I/usr/local/Trolltech/Qt-4.7.3/mkspecs/linux-g++ -I. -I/usr/local/Trolltech/Qt-4.7.3/include/QtCore -I/usr/local/Trolltech/Qt-4.7.3/include/QtGui -I/usr/local/Trolltech/Qt-4.7.3/include -I../phase -I. -pipe -g -D_REENTRANT -Wall -W 
+AM_CXXFLAGS   = -I/usr/local/Trolltech/Qt-4.7.3/mkspecs/linux-g++ -I. \
+	-I/usr/local/Trolltech/Qt-4.7.3/include/QtCore \
+	-I/usr/local/Trolltech/Qt-4.7.3/include/QtGui -I/usr/local/Trolltech/Qt-4.7.3/include \
+	-I../phase -I. -pipe -g -D_REENTRANT -Wall -W 
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
-AM_LDFLAGS = moc_mainwindow.o qrc_qtgui.o -Wl,-rpath,/usr/local/Trolltech/Qt-4.7.3/lib -L/usr/local/Trolltech/Qt-4.7.3/lib -lQtGui -L/usr/local/Trolltech/Qt-4.7.3/lib -L/usr/X11R6/lib -lQtCore -lpthread  @FLIBS@    @CFORLIB@
+AM_LDFLAGS = moc_mainwindow.o qrc_qtgui.o -Wl,-rpath,/usr/local/Trolltech/Qt-4.7.3/lib \
+	-L/usr/local/Trolltech/Qt-4.7.3/lib -lQtGui -L/usr/local/Trolltech/Qt-4.7.3/lib \
+	-L/usr/X11R6/lib -lQtCore -lpthread  @FLIBS@  @CFORLIB@
 
 ##we always use the c linker
 F77LINK = $(LINK)
+
+
+# This rule lets GNU make create any moc_*.cpp from the equivalent *.h
+moc_%.cpp: %.h
+	moc $< -o $@
+
+# Adjust this line according to your resources.qrc
+resources.cpp : phaseqt.qrc
+	rcc phaseqt.qrc -o resources.cpp
+
+# This line ensures that generated moc_*.cpp and resources.cpp files are
+# deleted when we make clean.
+CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) resources.cpp
 # end
