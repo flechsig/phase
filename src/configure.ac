@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-26 23:42:43 flechsig> 
+dnl   Time-stamp: <2011-08-26 23:49:57 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -141,7 +141,7 @@ dnl end fortran specials
 dnl ****************** CERN **************************
 dnl check for cernlib 
 AC_ARG_WITH([cernlib],
-  AC_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries]),
+  AC_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries or --without-cernlib]),
   [ echo "found cernlib option: ${with_cernlib}"
     cernlib=${with_cernlib}
     if test "${cernlib}" = "no"; then
@@ -339,6 +339,8 @@ echo "debug code               : ${enable_debug}"
 echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
+echo "QT:                      : ${qt}"
+echo "QTW:                     : ${qtw}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
