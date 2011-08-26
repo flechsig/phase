@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-26 23:49:57 flechsig> 
+dnl   Time-stamp: <2011-08-26 23:55:09 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -242,11 +242,15 @@ AC_ARG_WITH([motif],
   AC_HELP_STRING([--with-motif=DIR],[path to Motif libraries, includes, uil]),
   [ echo "motif path given as option: ${with_motif}"
     motifpath=${with_motif}
-    AC_CHECK_PROG([UIL],[uil],[${motifpath}/bin/uil],[],[${motifpath}/bin])
-    if test ${motifpath} != "" ; then
-       AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
-    fi
-    AC_SUBST([MOTIFLIBS],["-L${motifpath}/lib -lXm -lMrm"])
+    if test "$motifpath" = "no"; then
+      echo "without motif"
+    else
+      AC_CHECK_PROG([UIL],[uil],[${motifpath}/bin/uil],[],[${motifpath}/bin])
+      if test ${motifpath} != "" ; then
+        AC_SUBST([CPPFLAGS],[-I${motifpath}/include])
+      fi
+      AC_SUBST([MOTIFLIBS],["-L${motifpath}/lib -lXm -lMrm"])
+    fi  
   ],
   [
     AC_CHECK_PROG([UIL],[uil],[uil])
@@ -339,8 +343,8 @@ echo "debug code               : ${enable_debug}"
 echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
-echo "QT:                      : ${qt}"
-echo "QTW:                     : ${qtw}"
+echo "qt:                      : ${qt}"
+echo "qtw:                     : ${qtw}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
