@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-26 23:25:42 flechsig> 
+dnl   Time-stamp: <2011-08-26 23:34:14 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -144,7 +144,8 @@ AC_ARG_WITH([cernlib],
   AC_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries]),
   [ echo "cernlib given as option: ${with_cernlib}"
     cernlib=${with_cernlib}
-    if test "$cernlib" = "no"; then
+    echo "cccccccc" $cernlib
+    if test "${cernlib}" = "no"; then
        echo "do not use cernlib"
     else
        echo "do use cernlib"
