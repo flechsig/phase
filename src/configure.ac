@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <19 Aug 11 15:13:54 flechsig> 
+dnl   Time-stamp: <2011-08-26 23:25:42 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -144,10 +144,16 @@ AC_ARG_WITH([cernlib],
   AC_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries]),
   [ echo "cernlib given as option: ${with_cernlib}"
     cernlib=${with_cernlib}
+    if test "$cernlib" = "no"; then
+       echo "do not use cernlib"
+    else
+       echo "do use cernlib"
     dnl check if we find the libpacklib.a there
     AC_CHECK_FILE([${cernlib}/libpacklib.a], 
       AC_SUBST(CERNLIB,${cernlib}), 
-      AC_MSG_ERROR(cannot find a CERN lib))],
+      AC_MSG_ERROR(cannot find a CERN lib))
+      fi
+      ],
   [ dnl cernlib is not given- we do a search
     dnl we search for paw and expect the cernlib there
     AC_MSG_NOTICE(search for CERN lib by searching for paw)
