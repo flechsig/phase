@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-27 17:13:41 flechsig> 
+dnl   Time-stamp: <2011-08-27 17:49:48 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -175,6 +175,69 @@ AC_ARG_WITH([cernlib],
       AC_MSG_ERROR(cannot find a CERN lib))])])
 dnl end cern lib
 
+dnl ****************** QT **************************
+AC_ARG_WITH([qt],
+  AC_HELP_STRING([--with-qt=DIR],[path to QT libraries or --without-qt]),
+  [ echo "found qt option: ${with_qt}"
+    qt=${with_qt}
+    if test "${qt}" = "no"; then
+       echo "do not use qt"
+    else
+    dnl   echo "do use qt"
+    dnl check if we find the libpacklib.a there
+    AC_CHECK_FILE([${qt}/libpacklib.a], 
+      AC_SUBST(QT,${qt}), 
+      AC_MSG_ERROR(cannot find a CERN lib))
+      fi
+      ],
+  [ dnl qt is not given- we do a search
+    dnl we search for paw and expect the qt there
+    AC_MSG_NOTICE(search for CERN lib by searching for paw)
+    dnl call a script which determines the absolute path of a 
+    dnl program without symbolic links
+    qt=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
+    AC_MSG_NOTICE((1) we search the CERN lib at ${qt})
+    dnl check if we find the libpacklib.a there 
+    AC_CHECK_FILE([${qt}/libpacklib.a], 
+    AC_SUBST(QT,${qt}),
+    [ qt=`echo ${qt} | sed -e 's|lib|apps/cern/2003/lib|'`
+      AC_MSG_NOTICE((2) we search the CERN lib at ${qt})
+      AC_CHECK_FILE([${qt}/libpacklib.a], 
+      AC_SUBST(QT,${qt}), 
+      AC_MSG_ERROR(cannot find a QT lib))])])
+dnl end QT
+
+dnl ****************** QTW **************************
+AC_ARG_WITH([qtw],
+  AC_HELP_STRING([--with-qtw=DIR],[path to QTW libraries or --without-qtw]),
+  [ echo "found qtw option: ${with_qtw}"
+    qtw=${with_qtw}
+    if test "${qtw}" = "no"; then
+       echo "do not use qtw"
+    else
+    dnl   echo "do use qtw"
+    dnl check if we find the libpacklib.a there
+    AC_CHECK_FILE([${qtw}/libpacklib.a], 
+      AC_SUBST(QTW,${qtw}), 
+      AC_MSG_ERROR(cannot find a CERN lib))
+      fi
+      ],
+  [ dnl qtw is not given- we do a search
+    dnl we search for paw and expect the qtw there
+    AC_MSG_NOTICE(search for CERN lib by searching for paw)
+    dnl call a script which determines the absolute path of a 
+    dnl program without symbolic links
+    qtw=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
+    AC_MSG_NOTICE((1) we search the CERN lib at ${qtw})
+    dnl check if we find the libpacklib.a there 
+    AC_CHECK_FILE([${qtw}/libpacklib.a], 
+    AC_SUBST(QTW,${qtw}),
+    [ qtw=`echo ${qtw} | sed -e 's|lib|apps/cern/2003/lib|'`
+      AC_MSG_NOTICE((2) we search the CERN lib at ${qtw})
+      AC_CHECK_FILE([${qtw}/libpacklib.a], 
+      AC_SUBST(QTW,${qtw}), 
+      AC_MSG_ERROR(cannot find a QTW lib))])])
+dnl end QTW
 
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
