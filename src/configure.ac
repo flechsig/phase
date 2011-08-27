@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-27 17:49:48 flechsig> 
+dnl   Time-stamp: <2011-08-27 19:12:04 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -185,59 +185,61 @@ AC_ARG_WITH([qt],
     else
     dnl   echo "do use qt"
     dnl check if we find the libpacklib.a there
-    AC_CHECK_FILE([${qt}/libpacklib.a], 
+    AC_CHECK_FILE([${qt}/libQtGui.la], 
       AC_SUBST(QT,${qt}), 
-      AC_MSG_ERROR(cannot find a CERN lib))
+      AC_MSG_ERROR(cannot find libQtGui.la))
       fi
       ],
   [ dnl qt is not given- we do a search
-    dnl we search for paw and expect the qt there
-    AC_MSG_NOTICE(search for CERN lib by searching for paw)
+    dnl we search for qmake and expect the qt there
+    AC_MSG_NOTICE(search for QT libs by searching for qmake)
     dnl call a script which determines the absolute path of a 
     dnl program without symbolic links
-    qt=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
-    AC_MSG_NOTICE((1) we search the CERN lib at ${qt})
+    qt=`bin/apps_home.sh qmake | sed -e 's/bin/lib/'`
+    AC_MSG_NOTICE((1) we search the QT lib at ${qt})
     dnl check if we find the libpacklib.a there 
-    AC_CHECK_FILE([${qt}/libpacklib.a], 
+    AC_CHECK_FILE([${qt}/libQtGui.la], 
     AC_SUBST(QT,${qt}),
     [ qt=`echo ${qt} | sed -e 's|lib|apps/cern/2003/lib|'`
-      AC_MSG_NOTICE((2) we search the CERN lib at ${qt})
-      AC_CHECK_FILE([${qt}/libpacklib.a], 
+      AC_MSG_NOTICE((2) we search the QT lib at ${qt})
+      AC_CHECK_FILE([${qt}/libQtGui.la], 
       AC_SUBST(QT,${qt}), 
-      AC_MSG_ERROR(cannot find a QT lib))])])
+      AC_MSG_ERROR(cannot find libQtGui.la))])])
 dnl end QT
 
-dnl ****************** QTW **************************
-AC_ARG_WITH([qtw],
-  AC_HELP_STRING([--with-qtw=DIR],[path to QTW libraries or --without-qtw]),
-  [ echo "found qtw option: ${with_qtw}"
-    qtw=${with_qtw}
-    if test "${qtw}" = "no"; then
-       echo "do not use qtw"
+dnl ****************** QWT **************************
+AC_ARG_WITH([qwt],
+  AC_HELP_STRING([--with-qwt=DIR],[path to QWT libraries or --without-qwt]),
+  [ echo "found qwt option: ${with_qwt}"
+    qwt=${with_qwt}
+    if test "${qwt}" = "no"; then
+       echo "do not use qwt"
     else
-    dnl   echo "do use qtw"
+    dnl   echo "do use qwt"
     dnl check if we find the libpacklib.a there
-    AC_CHECK_FILE([${qtw}/libpacklib.a], 
-      AC_SUBST(QTW,${qtw}), 
-      AC_MSG_ERROR(cannot find a CERN lib))
+    AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
+      AC_SUBST(QWT,${qwt}), 
+      AC_MSG_ERROR(cannot find libqwt.so))
       fi
       ],
-  [ dnl qtw is not given- we do a search
-    dnl we search for paw and expect the qtw there
-    AC_MSG_NOTICE(search for CERN lib by searching for paw)
+  [ dnl qwt is not given- we do a search
+    dnl we search for paw and expect the qwt there
+    AC_MSG_NOTICE(search for QWT lib in /usr/local/qwt)
     dnl call a script which determines the absolute path of a 
     dnl program without symbolic links
-    qtw=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
-    AC_MSG_NOTICE((1) we search the CERN lib at ${qtw})
+    dnl qwt=`bin/apps_home.sh qmake | sed -e 's/bin/lib/'`
+    qwt='/usr/local/qwt'
+    AC_MSG_NOTICE((1) we search the QWT lib at ${qwt})
     dnl check if we find the libpacklib.a there 
-    AC_CHECK_FILE([${qtw}/libpacklib.a], 
-    AC_SUBST(QTW,${qtw}),
-    [ qtw=`echo ${qtw} | sed -e 's|lib|apps/cern/2003/lib|'`
-      AC_MSG_NOTICE((2) we search the CERN lib at ${qtw})
-      AC_CHECK_FILE([${qtw}/libpacklib.a], 
-      AC_SUBST(QTW,${qtw}), 
-      AC_MSG_ERROR(cannot find a QTW lib))])])
-dnl end QTW
+    AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
+    AC_SUBST(QWT,${qwt}),
+    [ dnl qwt=`echo ${qwt} | sed -e 's|lib|apps/cern/2003/lib|'`
+    qwt='/usr'
+      AC_MSG_NOTICE((2) we search the QWT lib at ${qwt})
+      AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
+      AC_SUBST(QWT,${qwt}), 
+      AC_MSG_ERROR(cannot find libqwt.so))])])
+dnl end QWT
 
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
@@ -411,7 +413,7 @@ echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "qt:                      : ${qt}"
-echo "qtw:                     : ${qtw}"
+echo "qwt:                     : ${qwt}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
