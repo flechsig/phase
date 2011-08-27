@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 Aug 11 13:50:33 flechsig> 
+//  Time-stamp: <26 Aug 11 16:44:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -51,11 +51,11 @@ MainWindow::MainWindow()
 // slot
 void MainWindow::about()
 {
-   QMessageBox::about(this, tr("About PHASE Qt"),
-            tr("The <b>PHASE Qt</b> example demonstrates how to "
-               "use Qt's dock widgets. You can enter your own text, "
-               "click a customer to add a customer name and "
-               "address, and click standard paragraphs to add them."));
+   QMessageBox::about(this, tr("About PhaseQt"),
+            tr("<b>phaseqt</b> is the new graphical user interface for the software package <b>phase</b>-"
+               "the wave front propagation and ray tracing code developed by "
+               "<center><a href=mailto:Johannes.Bahrdt@helmholtz-berlin.de>Johannes Bahrdt</a>, <a href=mailto:uwe.flechsig&#64;psi.&#99;&#104;>Uwe Flechsig</a> and others. </center><hr>"
+               "version: '%1', configured: '%2' ").arg(VERSION).arg(CONFIGURED));
 } // about
 
 // UF slot
@@ -479,7 +479,11 @@ void MainWindow::deleteElement()
 // slot changed dispersive length
 void MainWindow::dislenSlot()
 {
+#ifdef DEBUG
+  printf("dislenSlot called\n");
+#endif
   sscanf(dislenE->text().toAscii().data(), "%lf", &this->BLOptions.displength);
+  this->beamlineOK &= ~resultOK;
   UpdateStatus();
   writeBackupFile();
 } // dislenSlot
@@ -556,6 +560,20 @@ void MainWindow::elementApplyBslot()
   UpdateStatus();
   writeBackupFile();
 } // elementApplyBslot
+
+// slot goButton
+void MainWindow::goButtonslot()
+{
+#ifdef DEBUG
+  printf("goButtonslot called\n");
+#endif
+
+  this->BLOptions.SourcetoImage= 1;
+  this->beamlineOK &= ~resultOK;
+  UpdateStatus();
+  writeBackupFile();
+} // goButtonslot
+
 
 // gr apply
 void MainWindow::grapplyslot()
@@ -716,14 +734,26 @@ void MainWindow::insertElement()
 // slot changed  lambda
 void MainWindow::lambdaSlot()
 {
+#ifdef DEBUG
+  printf("lambdaSlot called\n");
+#endif
   unsigned int i;
   sscanf(lambdaE->text().toAscii().data(), "%lf", &this->BLOptions.lambda);
   this->BLOptions.lambda*= 1e-6;
-  beamlineOK= 0;
+  this->beamlineOK= 0;
   for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
   UpdateStatus();
 } // lambdaSlot
 
+// misaliBoxslot
+void MainWindow::misaliBoxslot(int newstate)
+{
+#ifdef DEBUG
+  printf("misaliBoxslot called: new state: %d\n", newstate);
+#endif
+  
+  this->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
+} // misaliBoxslot
 
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
@@ -794,7 +824,8 @@ void MainWindow::openBeamline()
 	QMessageBox::information(this, tr("Phase: newBeamline"),
 				 tr("Cannot load %1.\n wrong file type!").arg(fileName));
     }
-  this->myPHASEset::print();
+  //this->myPHASEset::print();
+  UpdateStatus();
 } // end openBeamline()
 
 // slot parameter update, callback des Editors
@@ -809,6 +840,20 @@ void MainWindow::parameterUpdateSlot()
   UpdateStatus();
   writeBackupFile();
 } // end parameterUpdateSlot
+
+// slot goButton
+void MainWindow::poButtonslot()
+{
+#ifdef DEBUG
+  printf("poButtonslot called\n");
+#endif
+
+  this->BLOptions.SourcetoImage= 2;
+  this->beamlineOK &= ~resultOK;
+  UpdateStatus();
+  writeBackupFile();
+} // poButtonslot
+
 
 // slot orientation radio buttons
 void MainWindow::rup1slot()
@@ -1187,6 +1232,7 @@ void MainWindow::sourceApplyBslot()
 
   this->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
   MakeRTSource(this, this);
+  this->beamlineOK &= ~resultOK;
   UpdateStatus();
   writeBackupFile();
 } //sourceApplyBslot
@@ -1234,7 +1280,7 @@ void MainWindow::createActions()
     printAct = new QAction(QIcon(":/images/print.png"), tr("&Print..."), this);
     printAct->setShortcuts(QKeySequence::Print);
     printAct->setStatusTip(tr("Print the current beamline"));
-    connect(printAct, SIGNAL(triggered()), this, SLOT(print()));
+    connect(printAct, SIGNAL(triggered()), this, SLOT(myPHASEset::print()));
 
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
@@ -1382,7 +1428,6 @@ QWidget *MainWindow::createBeamlineBox()
     QLabel *lambdaLabel  = new QLabel(tr("wavelength (nm)"));
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
     
-
     beamlineGenericLayout->addWidget(lambdaLabel, 0, 0);
     beamlineGenericLayout->addWidget(dislenLabel, 1, 0);
     beamlineGenericLayout->addWidget(lambdaE,     0, 1);
@@ -1397,8 +1442,6 @@ QWidget *MainWindow::createBeamlineBox()
     poButton = new QRadioButton(tr("&physical optic (PO)"));
     goButton->setChecked(true);
     misaliBox = new QCheckBox(tr("with misalignment"));
-
-   
 
     beamlineCalcLayout->addWidget(goButton);
     beamlineCalcLayout->addWidget(poButton);
@@ -1421,6 +1464,9 @@ QWidget *MainWindow::createBeamlineBox()
     connect(elementList, SIGNAL(itemSelectionChanged()), this, SLOT(selectElement()));
     connect(lambdaE, SIGNAL(editingFinished()), this, SLOT(lambdaSlot()));
     connect(dislenE, SIGNAL(editingFinished()), this, SLOT(dislenSlot()));
+    connect(goButton, SIGNAL(clicked()), this, SLOT(goButtonslot()));
+    connect(poButton, SIGNAL(clicked()), this, SLOT(poButtonslot()));
+    connect(misaliBox, SIGNAL(stateChanged(int)), this, SLOT(misaliBoxslot(int)));
     return beamlineBox;
 } // end createbeamline box
 
@@ -1566,31 +1612,58 @@ QWidget *MainWindow::createGraphicBox()
   statGroup  = new QGroupBox(tr("Statistics"));
   QGridLayout *statLayout = new QGridLayout;
   
-  czLabel   = new QLabel(tr("z center (mm)"));
-  cyLabel   = new QLabel(tr("y center (mm)"));
-  wzLabel   = new QLabel(tr("z FWHM (mm)"));
-  wyLabel   = new QLabel(tr("y FWHM (mm)"));
-  cdzLabel  = new QLabel(tr("dz center (mm)"));
-  cdyLabel  = new QLabel(tr("dy center (mm)"));
-  wdzLabel  = new QLabel(tr("dz FWHM (mm)"));
-  wdyLabel  = new QLabel(tr("dy FWHM (mm)"));
-  rayLabel  = new QLabel(tr("rays"));
-  traLabel  = new QLabel(tr("transmittance"));
-  ryLabel   = new QLabel(tr("y E/dE FWHM"));
-  rzLabel   = new QLabel(tr("z E/dE FWHM"));
+  czLabel   = new QLabel("0");
+  cyLabel   = new QLabel("0");
+  wzLabel   = new QLabel("0");
+  wyLabel   = new QLabel("0");
+  cdzLabel  = new QLabel("0");
+  cdyLabel  = new QLabel("0");
+  wdzLabel  = new QLabel("0");
+  wdyLabel  = new QLabel("0");
+  rayLabel  = new QLabel("0");
+  traLabel  = new QLabel("0");
+  ryLabel   = new QLabel("0");
+  rzLabel   = new QLabel("0");
 
-  statLayout->addWidget(czLabel,  0, 0);
-  statLayout->addWidget(cyLabel,  0, 1);
-  statLayout->addWidget(wzLabel,  1, 0);
-  statLayout->addWidget(wyLabel,  1, 1);
-  statLayout->addWidget(cdzLabel, 2, 0);
-  statLayout->addWidget(cdyLabel, 2, 1);
-  statLayout->addWidget(wdzLabel, 3, 0);
-  statLayout->addWidget(wdyLabel, 3, 1);
-  statLayout->addWidget(rayLabel, 4, 0);
-  statLayout->addWidget(traLabel, 4, 1);
-  statLayout->addWidget(ryLabel, 5, 1);
-  statLayout->addWidget(rzLabel, 5, 0);
+  czLabel0   = new QLabel(tr("z center (mm)"));
+  cyLabel0   = new QLabel(tr("y center (mm)"));
+  wzLabel0   = new QLabel(tr("z FWHM (mm)"));
+  wyLabel0   = new QLabel(tr("y FWHM (mm)"));
+  cdzLabel0  = new QLabel(tr("dz center (mm)"));
+  cdyLabel0  = new QLabel(tr("dy center (mm)"));
+  wdzLabel0  = new QLabel(tr("dz FWHM (mm)"));
+  wdyLabel0  = new QLabel(tr("dy FWHM (mm)"));
+  rayLabel0  = new QLabel(tr("rays"));
+  traLabel0  = new QLabel(tr("transmittance"));
+  ryLabel0   = new QLabel(tr("y E/dE FWHM"));
+  rzLabel0   = new QLabel(tr("z E/dE FWHM"));
+
+  statLayout->addWidget(czLabel0,  0, 0);
+  statLayout->addWidget(cyLabel0,  0, 2);
+  statLayout->addWidget(wzLabel0,  1, 0);
+  statLayout->addWidget(wyLabel0,  1, 2);
+  statLayout->addWidget(cdzLabel0, 2, 0);
+  statLayout->addWidget(cdyLabel0, 2, 2);
+  statLayout->addWidget(wdzLabel0, 3, 0);
+  statLayout->addWidget(wdyLabel0, 3, 2);
+  statLayout->addWidget(rayLabel0, 4, 0);
+  statLayout->addWidget(traLabel0, 4, 2);
+  statLayout->addWidget(ryLabel0,  5, 2);
+  statLayout->addWidget(rzLabel0,  5, 0);
+
+  statLayout->addWidget(czLabel,  0, 1);
+  statLayout->addWidget(cyLabel,  0, 3);
+  statLayout->addWidget(wzLabel,  1, 1);
+  statLayout->addWidget(wyLabel,  1, 3);
+  statLayout->addWidget(cdzLabel, 2, 1);
+  statLayout->addWidget(cdyLabel, 2, 3);
+  statLayout->addWidget(wdzLabel, 3, 1);
+  statLayout->addWidget(wdyLabel, 3, 3);
+  statLayout->addWidget(rayLabel, 4, 1);
+  statLayout->addWidget(traLabel, 4, 3);
+  statLayout->addWidget(ryLabel, 5, 3);
+  statLayout->addWidget(rzLabel, 5, 1);
+
   statGroup->setLayout(statLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
@@ -2532,7 +2605,7 @@ void MainWindow::UpdateBeamlineBox()
   sprintf(buffer, "%.3lf", blo->displength);
   dislenE->setText(QString(buffer));
 
-  if (blo->SourcetoImage) goButton->setChecked(true); else poButton->setChecked(true);
+  if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
   if (blo->WithAlign) misaliBox->setChecked(true);    else misaliBox->setChecked(false);
 } // end UpdateBeamlineBox
 
@@ -2761,10 +2834,10 @@ void MainWindow::UpdateSourceBox()
   char TextField [8][40];            /* 8 editfelder */
   char LabelField[9][100]; 
    
-  this->beamlineOK &= ~sourceOK; 
+  this->beamlineOK &= ~(sourceOK | resultOK); 
         
 #ifdef DEBUG 
-    printf("InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
+    printf("debug: InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
 	   this->RTSource.QuellTyp, this->beamlineOK, oldsource);   
 #endif   
  
@@ -3020,8 +3093,37 @@ void MainWindow::UpdateSourceBox()
       sprintf(LabelField[6], "%s", "");   
       sprintf(LabelField[7], "%s", "");
       sprintf(LabelField[8], "%s", "Source from file");
-      
-	break;
+      break;
+    case 'S':
+      QMessageBox::warning(this, tr("UpdateSourceBox"),
+			   tr("Source type %1 is obsolete.\nenable point source with defaults")
+			 .arg(sou));
+      this->RTSource.QuellTyp= 'o';
+      sop= (struct PointSourceType *)this->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", 0.1);
+      sprintf(TextField[1],  "%f", 0.1);    
+      sprintf(TextField[2],  "%f", 0.1);  
+      sprintf(TextField[3],  "%f", 0.1);    
+      sprintf(TextField[4],  "%d", 25000);   
+      sprintf(TextField[5],  "%s", "");    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "sigy (mm)");
+      sprintf(LabelField[1], "%s", "sigdy (mrad)");  
+      sprintf(LabelField[2], "%s", "sigz (mm)");  
+      sprintf(LabelField[3], "%s", "sigdz (mrad)");  
+      sprintf(LabelField[4], "%s", "ray number");   
+      sprintf(LabelField[5], "%s", "");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "Point Source: all sigma values");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
+      S5E->setEnabled(true);
+
+      break;
 
     default:
       QMessageBox::warning(this, tr("UpdateSourceBox"),
@@ -3056,34 +3158,33 @@ void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
   char buffer[255];
   double trans;
 
-  trans= (this->RTSource.raynumber > 0) ? this->RESULT.points/ this->RTSource.raynumber : 0;
+  trans= (this->RTSource.raynumber > 0) ? (double)this->RESULT.points/ (double)this->RTSource.raynumber : -1.0;
+  
   sprintf(buffer, "%s Statistics", label);  
   statGroup->setTitle(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "z center (mm): ",    pp->cz);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cz);  
   czLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "y center (mm): ",    pp->cy);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cy);  
   cyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "z FWHM (mm): ",      pp->wz);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wz);  
   wzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "y FWHM (mm): ",      pp->wy);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wy);  
   wyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "dz center (mrad): ", pp->cdz * 1e3);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdz * 1e3);  
   cdzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "dy center (mrad): ", pp->cdy * 1e3);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdy * 1e3);  
   cdyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "dz FWHM (mrad): ",   pp->wdz * 1e3);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdz * 1e3);  
   wdzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "dy FWHM (mrad): ",   pp->wdy * 1e3);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdy * 1e3);  
   wdyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %d", "rays: ", rays);  
+  sprintf(buffer, "<FONT COLOR=blue>%8d</FONT>", rays);  
   rayLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "%s %8.3f", "transmittance: ",    trans);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", trans);  
   traLabel->setText(QString(tr(buffer)));
-
-  sprintf(buffer, "%s %8.3f", "y E/dE FWHM: ",      pp->ry);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->ry);  
   ryLabel->setText(QString(tr(buffer)));
-
-  sprintf(buffer, "%s %8.3f", "z E/dE FWHM: ",      pp->rz);  
+  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->rz);  
   rzLabel->setText(QString(tr(buffer)));
 
 } // UpdateStatistics

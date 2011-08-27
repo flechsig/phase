@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <10 Aug 11 15:37:19 flechsig>  */
+/*  Time-stamp: <19 Aug 11 10:56:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -22,9 +22,6 @@
 
 extern "C" {
   #include "cutils.h"
-  #include "fg3pck.h"
-  #include "mirrorpck.h"
-  #include "geometrypck.h"
   #include "rtrace.h"
   #include "phase_struct.h"
   #include "phase.h"

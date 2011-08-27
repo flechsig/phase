@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <18 Aug 11 09:23:23 flechsig> 
+//  Time-stamp: <19 Aug 11 13:26:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -10,8 +10,10 @@
 
 // the configure window
 
+#include <string.h>
 #include <QtGui>
 #include "configwindow.h"
+
 
 // the constructor
 ConfigWindow::ConfigWindow(struct PHASEset *parent)
@@ -69,15 +71,17 @@ if (elementnumber < 0)
  strncpy(buffer, text, 310);                 // save old entry buffer
  cp= strchr(buffer, ':');
  ++cp; 
- ++cp;                                    // cp points now to the start of the filename
+ ++cp;                                       // cp points now to the start of the filename
  if (cp != NULL) 
    {
      strncpy(oldname, cp, MaxPathLength);
      printf("selected file: >>%s<<\n", cp);
      *cp='\0';                            // description in buffer string ends here
      ++cp;
-     cp= strchr(cp, '.');
+     cp= strrchr(cp, '/');               // search for directory from right    
+     cp= strchr(cp, '.'); 
      strncpy(extension, cp, 10);
+     extension[9]= '\0';
      sprintf(filter, "Files (*%s);;(*)", extension);
    }
  else 
@@ -98,24 +102,28 @@ if (elementnumber < 0)
 
  if (!fileName.isEmpty()) 
    {
-     printf("description: %s\n", text);
+     //printf("description: >>%s<<\nevaluate  \n", buffer);
      fname= fileName.toAscii().data();
+
 // update data
-     if (strcmp(text, "optimization input") >= 0) 
+
+     if ( !strncmp(buffer, "optimization input", 16) ) 
        strncpy(myparent->optipckname, fname, MaxPathLength); else
-       if (strcmp(text, "optimization results") >= 0) 
+       if ( !strncmp(buffer, "optimization results", 16) ) 
 	 strncpy(myparent->opresname, fname, MaxPathLength); else
-	 if (strcmp(text, "minuit input") >= 0) 
+	 if ( !strncmp(buffer, "minuit input", 10) ) 
 	   strncpy(myparent->minname, fname, MaxPathLength); else
-	   if (strcmp(text, "ray input (source)") >= 0) 
+	   if ( !strncmp(buffer, "ray input (source)", 6) ) 
 	     strncpy(myparent->sourceraysname, fname, MaxPathLength); else
-	     if (strcmp(text, "ray output (image)") >= 0) 
-	       strncpy(myparent->imageraysname, fname, MaxPathLength); else
-	       if (strcmp(text, "matrix") >= 0) 
+	     if ( !strncmp(buffer, "ray output (image)", 6) )
+	       strncpy(myparent->imageraysname, fname, MaxPathLength); 
+	     else
+	       if ( !strncmp(buffer, "matrix", 4) ) 
 		 strncpy(myparent->matrixname, fname, MaxPathLength); else
-		 if (strcmp(text, "mapname") >= 0) 
-		   strncpy(myparent->mapname, fname, MaxPathLength); 
-     
+		 if ( !strncmp(buffer, "mapname", 4) ) 
+		   strncpy(myparent->mapname, fname, MaxPathLength); else
+		   printf("selectSlot: error: no matching buffer: >>%s<<\n", buffer);
+       
      // update widget
      mkRow(buffer, buffer, fname);
      item->setText(buffer);
