@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <18 Aug 11 23:19:07 flechsig>  */
+/*   Time-stamp: <26 Aug 11 15:38:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -660,9 +660,7 @@ struct BeamlineType
   unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
-#ifndef QTGUI
   struct sources src;
-#endif
 };
 
 struct optistruct

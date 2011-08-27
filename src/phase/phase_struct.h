@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <27 May 11 12:46:13 flechsig>  */
+/*   Time-stamp: <26 Aug 11 15:52:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,8 +12,11 @@
 #ifndef __PHASE_STRUCT
 #define __PHASE_STRUCT
 
+#ifdef QTGUI
+#define MAX_GRIDSIZE 256
+#else
 #define MAX_GRIDSIZE 2048 
-
+#endif
 /* we should put a similar section in each header file which has to be upgraded in order 
    to be independent from the calling sequence */
 #ifdef SEVEN_ORDER
@@ -179,12 +182,18 @@ struct  source4 {
 
         struct  sources {                   /* Sammelstruktur         */
 	   double pin_yl0,pin_yl,pin_zl0,pin_zl;   /* changed position 17.12.2005 */
+
            struct source1 so1;              /* Gauss + Hard edge      */
+
            struct source2 so2;              /* Zernike                */
+
            struct source3 so3;              /* radiale Vert. vom File */
+
            struct source4 so4;              /* Quelle von File        */
+
            struct source5 so5;              /* Dipol Quelle           */
            struct source6 so6;              /* Brightness             */
+
 	   int  isrctype;
         };     
 

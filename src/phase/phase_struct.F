@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <10 Jun 11 17:34:55 flechsig> 
+c$$$ Time-stamp: <26 Aug 11 15:55:27 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -16,6 +16,13 @@ c
 c	variable structures for PHASE
 c
 c------------------------------------------------------------
+
+#ifdef QTGUI
+#define MAX_GRIDSIZE 256
+#else
+#define MAX_GRIDSIZE 2048 
+#endif
+
 
 c--------------- fourth order map ---------------------------
 
@@ -119,19 +126,20 @@ c---------------- sources -----------------------------------
 	   integer isrcreal,isrcimag,iactreal,iactimag
         end structure
 
+
 	structure/source4/
 	   character*80 fsource4a,fsource4b,fsource4c,fsource4d
 	   real*8 xeyremin,xeyremax,dxeyre,
      &		  xeyimmin,xeyimmax,dxeyim,
      &		  yeyremin,yeyremax,dyeyre,
      &		  yeyimmin,yeyimmax,dyeyim,
-     &       zeyre(1024,1024),zeyim(1024,1024),
+     &       zeyre(MAX_GRIDSIZE,MAX_GRIDSIZE),zeyim(MAX_GRIDSIZE,MAX_GRIDSIZE),
      &		  xezremin,xezremax,dxezre,
      &		  xezimmin,xezimmax,dxezim,
      &		  yezremin,yezremax,dyezre,
      &		  yezimmin,yezimmax,dyezim,
-     &       zezre(1024,1024),zezim(1024,1024),
-     &       gridx(1024),gridy(1024),deltatime,
+     &       zezre(MAX_GRIDSIZE,MAX_GRIDSIZE),zezim(MAX_GRIDSIZE,MAX_GRIDSIZE),
+     &       gridx(MAX_GRIDSIZE),gridy(MAX_GRIDSIZE),deltatime,
      &       ampeyre,ampeyim,ampezre,ampezim
      &      ,xlam
 	  integer ieyrex,ieyimx,ieyrey,ieyimy,

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Aug 11 18:01:01 flechsig>  */
+/*   Time-stamp: <26 Aug 11 15:59:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -991,7 +991,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE version DEC 09\n\n");
+   fprintf(f, "This is a datafile of PHASE version AUG 2011\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -1244,8 +1244,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
       /* end integration */
 
    fprintf(f, "\nPSSOURCES\n"); 
-#ifndef QTGUI
    fprintf(f, "%20d  source type \n", bl->src.isrctype);
+
    /* source 1 */
    fprintf(f, "%20d  so1: isrcy   \n", bl->src.so1.isrcy);
    fprintf(f, "%20d  so1: isrcdy  \n", bl->src.so1.isrcdy);
@@ -1255,6 +1255,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20d  so1: isrcdz  \n", bl->src.so1.isrcdz);
    fprintf(f, "%20lg so1: sigmaz  \n", bl->src.so1.sigmaz);
    fprintf(f, "%20lg so1: sigmazp \n", bl->src.so1.sigmazp);
+
    /* source 4 */
    fprintf(f, "%s so4.a\n", bl->src.so4.fsource4a);
    fprintf(f, "%s so4.b\n", bl->src.so4.fsource4b);
@@ -1285,7 +1286,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20lg pin_yl  \n", bl->src.pin_yl);
    fprintf(f, "%20lg pin_zl0 \n", bl->src.pin_zl0);
    fprintf(f, "%20lg pin_zl  \n", bl->src.pin_zl);
-#endif
+
 /* end PSSOURCES */
 /* ende neu */
   
@@ -1361,14 +1362,14 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    printf("ReadBLFile: filename: %s\n", fname);
 
    /* initialisiere Strings */
-#ifndef QTGUI
+
    i= sizeof(bl->src.so4.fsource4a);
    memset(&bl->src.so4.fsource4a, 0, i);
    memset(&bl->src.so4.fsource4b, 0, i);
    memset(&bl->src.so4.fsource4c, 0, i);
    memset(&bl->src.so4.fsource4d, 0, i);
    memset(&bl->src.so6.fsource6,  0, i);
-#endif   
+  
    if ((f= fopen(fname, "r")) == NULL) 
    {
      fprintf(stderr, "File %s not found- defaults used!\n", fname);
@@ -1683,7 +1684,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
        if (SetFilePos(f, "PSSOURCES"))
        { 
-#ifndef QTGUI
+#ifndef QTGUII
 	 fscanf(f, " %d %[^\n]s %c", &bl->src.isrctype, buffer, &buf); 
 	 /* source 1 */
 	 fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcy, buffer, &buf);
