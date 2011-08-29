@@ -1,31 +1,22 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/dfpl2_uf.F
 c$$$ Date      : <06 Feb 04 09:39:28 flechsig> 
-c$$$ Time-stamp: <06 Feb 04 09:39:53 flechsig> 
+c$$$ Time-stamp: <2011-08-29 21:37:10 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
-C File      : /home/pss060/sls/flechsig/phase/src/phaselib/dfpl2_uf.for
-C Date      : <20 Dec 99 08:14:12 flechsig> 
-C Time-stamp: <06 Feb 04 09:39:28 flechsig> 
-C Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+
 
 	subroutine subdfpl2(g,a,ra,pd)
 	implicit real*8(a-h,o-z)
 c	real*8 l   never used UF 21.12.99
 	dimension a(0:5,0:5)
 
-ccc        include 'phase_struct.for'
-c a trick to have the struct only in the ./phase and find it from opti 
-c if it works under vms is not yet tested
-#ifdef VMS
-        include '[-.phase]phase_struct.for'
-c        include 'phase_struct.for'
-#else
-        include '../phase/phase_struct.for'
-#endif
+
+#include '../phase/phase_struct.F'
+
         record /geometryst/ g
         record /rayst/ ra
         record /parder/ pd
