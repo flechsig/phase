@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Aug 11 18:15:41 flechsig> 
+dnl   Time-stamp: <2011-08-29 21:49:08 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -72,7 +72,7 @@ case "$F77" in
   "ifc")        # intel compiler
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
-      AC_SUBST([FFLAGS],"-vms -w95 -132")
+      AC_SUBST([FFLAGS],"-vms -132")
       libphasename=libphaseifc
 	libphaselinkname=lphaseifc
       wantifc=true
@@ -82,7 +82,7 @@ case "$F77" in
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       if test "$machine" = "x86_64"; then   
-	 AC_SUBST([FFLAGS],"-vms -w95 -132 -O0")  # opti. fails on 64 bit
+	 AC_SUBST([FFLAGS],"-vms -132 -O0")  # opti. fails on 64 bit
 dnl UF cforlib="-lintlc"
 dnl UF to be modified and tested 
          AC_CHECK_LIB(intlc,put_any_routine_from_intlc)
