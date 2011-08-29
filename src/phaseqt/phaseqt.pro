@@ -1,7 +1,7 @@
 # -*-makefile-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.pro
 #  Date      : <31 May 11 16:59:10 flechsig> 
-#  Time-stamp: <19 Aug 11 15:22:54 flechsig> 
+#  Time-stamp: <29 Aug 11 16:30:14 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -32,7 +32,8 @@ LIBS      += ../phase/drift_8.o ../phase/phasefor.o ../phase/make_matrix_8.o ../
 	../phase/q0_q1_q2_8.o ../phase/replace_wl_in_ypzp.o ../phase/replace_wl_in_u.o \
 	../phase/misali_8.o ../phase/misali1_8.o ../phase/misali2_8.o ../phase/misali3_8.o ../phase/misali4_8.o\
 	../phase/replace_6v4v.o ../phase/rekursiv_2d_8.o ../phase/fdet_8.o ../phase/fgmapidp_8.o ../phase/elli_8.o \
-	../phase/get_partial_etc.o -L/opt/intel/intel-10.0/fc-10.0/lib ../phase/misali.o ../phase/misali1.o ../phase/misali2.o ../phase/misali3.o ../phase/misali4.o \
+	../phase/get_partial_etc.o -L/opt/intel/intel-10.0/fc-10.0/lib ../phase/misali.o ../phase/misali1.o \
+        ../phase/misali2.o ../phase/misali3.o ../phase/misali4.o \
 	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/ \
-	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/../../../ \
+	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/../../../  \
 	-lifport -lifcore -limf -lm -lipgo -lirc -lgcc_s -lirc_s -ldl /afs/psi.ch/project/phase/lib/libphaseifc.a -lgfortran 
