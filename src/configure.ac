@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-27 19:12:04 flechsig> 
+dnl   Time-stamp: <29 Aug 11 15:53:29 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -146,6 +146,7 @@ dnl ****************** CERN **************************
 dnl check for cernlib 
 AC_ARG_WITH([cernlib],
   AC_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries or --without-cernlib]),
+  dnl option given action
   [ echo "found cernlib option: ${with_cernlib}"
     cernlib=${with_cernlib}
     if test "${cernlib}" = "no"; then
@@ -178,33 +179,39 @@ dnl end cern lib
 dnl ****************** QT **************************
 AC_ARG_WITH([qt],
   AC_HELP_STRING([--with-qt=DIR],[path to QT libraries or --without-qt]),
+  dnl given action
   [ echo "found qt option: ${with_qt}"
     qt=${with_qt}
     if test "${qt}" = "no"; then
        echo "do not use qt"
     else
     dnl   echo "do use qt"
-    dnl check if we find the libpacklib.a there
-    AC_CHECK_FILE([${qt}/libQtGui.la], 
+    dnl check if we find the libQtGui.so there
+      AC_CHECK_FILE([${qt}/lib/libQtGui.so], 
       AC_SUBST(QT,${qt}), 
-      AC_MSG_ERROR(cannot find libQtGui.la))
-      fi
-      ],
+      AC_MSG_ERROR(cannot find libQtGui.so))
+    fi
+  ],
   [ dnl qt is not given- we do a search
-    dnl we search for qmake and expect the qt there
-    AC_MSG_NOTICE(search for QT libs by searching for qmake)
-    dnl call a script which determines the absolute path of a 
-    dnl program without symbolic links
-    qt=`bin/apps_home.sh qmake | sed -e 's/bin/lib/'`
-    AC_MSG_NOTICE((1) we search the QT lib at ${qt})
-    dnl check if we find the libpacklib.a there 
-    AC_CHECK_FILE([${qt}/libQtGui.la], 
-    AC_SUBST(QT,${qt}),
-    [ qt=`echo ${qt} | sed -e 's|lib|apps/cern/2003/lib|'`
-      AC_MSG_NOTICE((2) we search the QT lib at ${qt})
-      AC_CHECK_FILE([${qt}/libQtGui.la], 
-      AC_SUBST(QT,${qt}), 
-      AC_MSG_ERROR(cannot find libQtGui.la))])])
+    AC_MSG_NOTICE((1) search for QT lib libQtGui.so on /usr/local)
+    dnl to avoid permission denied measages
+    qt=`find /usr/local -name libQtGui.so -print 2>/dev/null | sed -e 's|/lib/libQtGui.so||'`
+    if test ${qt}; then
+        AC_MSG_NOTICE((1) we found libQtGui.so under ${qt} - OK)
+	dnl check if we find the libQtGui.so there 
+	AC_SUBST(QT, [${qt}])
+    else
+      AC_MSG_NOTICE((1) did not found libQtGui.so /usr/local)
+      AC_MSG_NOTICE((2) search for libQtGui.so on /usr/lib)
+      qt=`find /usr/lib -name libQtGui.so -print 2>/dev/null | sed -e 's|/lib/libQtGui.so||'`
+      if test ${qt}; then
+         AC_MSG_NOTICE([(2) we found libQtGui.so under ${qt} - OK])
+         AC_SUBST(QT, [${qt}])
+      else
+         AC_MSG_ERROR(cannot find any libQtGui.so)
+      fi	 
+    fi
+  ])
 dnl end QT
 
 dnl ****************** QWT **************************
@@ -215,30 +222,32 @@ AC_ARG_WITH([qwt],
     if test "${qwt}" = "no"; then
        echo "do not use qwt"
     else
-    dnl   echo "do use qwt"
-    dnl check if we find the libpacklib.a there
-    AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
-      AC_SUBST(QWT,${qwt}), 
-      AC_MSG_ERROR(cannot find libqwt.so))
-      fi
-      ],
-  [ dnl qwt is not given- we do a search
-    dnl we search for paw and expect the qwt there
-    AC_MSG_NOTICE(search for QWT lib in /usr/local/qwt)
-    dnl call a script which determines the absolute path of a 
-    dnl program without symbolic links
-    dnl qwt=`bin/apps_home.sh qmake | sed -e 's/bin/lib/'`
-    qwt='/usr/local/qwt'
-    AC_MSG_NOTICE((1) we search the QWT lib at ${qwt})
-    dnl check if we find the libpacklib.a there 
-    AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
-    AC_SUBST(QWT,${qwt}),
-    [ dnl qwt=`echo ${qwt} | sed -e 's|lib|apps/cern/2003/lib|'`
-    qwt='/usr'
-      AC_MSG_NOTICE((2) we search the QWT lib at ${qwt})
+      dnl   echo "do use qwt"
       AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
       AC_SUBST(QWT,${qwt}), 
-      AC_MSG_ERROR(cannot find libqwt.so))])])
+      AC_MSG_ERROR(cannot find libqwt.so))
+    fi
+  ],
+  [ dnl qwt is not given- we do a search
+    AC_MSG_NOTICE((1) search for QWT lib libqwt.so in /usr/local/qwt)
+    dnl to avoid permission denied measages
+    qwt=`find /usr/local -name libqwt.so -print 2>/dev/null | sed -e 's|/lib/libqwt.so||'`
+    if test ${qwt}; then
+        AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
+	dnl check if we find the libqwt.so there 
+	AC_SUBST(QT, [${qwt}])
+    else
+      AC_MSG_NOTICE((1) did not found libqwt.so /usr/local)
+      AC_MSG_NOTICE((2) search for libqwt.so on /usr/lib)
+      qt=`find /usr/lib -name libqwt.so -print 2>/dev/null | sed -e 's|/lib/libqwt.so||'`
+      if test ${qwt}; then
+         AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
+         AC_SUBST(QT, [${qwt}])
+      else
+         AC_MSG_ERROR(cannot find any libqwt.so)
+      fi	 
+    fi
+  ])
 dnl end QWT
 
 dnl deal with the debugger 
