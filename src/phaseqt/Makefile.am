@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2011-08-29 22:11:07 flechsig> 
+#  Time-stamp: <2011-08-29 22:20:49 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -11,14 +11,16 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phaseqt 
-phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp optiinput.cpp singleray.cpp \
+phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp optiinput.cpp singleray.cpp plot.cpp \
 	../phase/phasec.c ../phase/cutils.c ../phase/bline.c ../phase/rtrace.c \
         ../phase/xmalloc.c ../phase/error.c  \
 	../phase/phasefor.F \
 	../phase/fgmapidp_8.F ../phase/make_matrix_8.for ../phase/taylor-ops.for \
 	../phase/q0_q1_q2_8.for ../phase/get_partial_etc.for ../phase/rekursiv_2d_8.for \
 	../phase/replace_6v4v.for ../phase/replace_wl_in_ypzp.for ../phase/replace_wl_in_u.for \
-	../phase/drift_8.for ../phase/fdet_8.for
+	../phase/drift_8.for ../phase/fdet_8.for ../phase/misali.F ../phase/misali_8.f ../phase/misali1_8.f \
+	../phase/misali2_8.f ../phase/misali2.f ../phase/misali1.f ../phase/misali3_8.f \
+	../phase/misali3.f ../phase/misali4_8.f ../phase/misali4.f
 
 # You have one .h file, it's called myapp.h. Therefore, here I list
 # its mocced name, moc_myapp.cpp.
