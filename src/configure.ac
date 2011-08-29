@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2011-08-29 21:49:08 flechsig> 
+dnl   Time-stamp: <2011-08-29 21:56:05 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -87,7 +87,7 @@ dnl UF cforlib="-lintlc"
 dnl UF to be modified and tested 
          AC_CHECK_LIB(intlc,put_any_routine_from_intlc)
       else
-         AC_SUBST([FFLAGS],"-vms -w95 -132")
+         AC_SUBST([FFLAGS],"-vms  -132")
       fi	 
       libphasename=libphaseifc
 	libphaselinkname=lphaseifc
