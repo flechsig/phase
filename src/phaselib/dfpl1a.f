@@ -12,7 +12,7 @@ c     opti und extr nicht mehr
 c     ich breche damit das VMS compilieren saubere Loesung:
 c     file umbenennen in .F und ein define einfuegen
 
-      include '../phase/phase_struct.for'
+      include '../phase/phase_struct.F'
                           
       record /geometryst/ g
       record /rayst/ ra
