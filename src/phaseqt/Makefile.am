@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2011-08-29 22:07:28 flechsig> 
+#  Time-stamp: <2011-08-29 22:11:07 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -11,7 +11,7 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phaseqt 
-phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp \
+phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp optiinput.cpp singleray.cpp \
 	../phase/phasec.c ../phase/cutils.c ../phase/bline.c ../phase/rtrace.c \
         ../phase/xmalloc.c ../phase/error.c  \
 	../phase/phasefor.F \
