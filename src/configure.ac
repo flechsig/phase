@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Aug 11 15:53:29 flechsig> 
+dnl   Time-stamp: <29 Aug 11 18:15:41 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -16,7 +16,8 @@ AC_REVISION($Revision$)
 AC_CONFIG_AUX_DIR(config)
 
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(phase/config.h)
+dnl obsolete AM_CONFIG_HEADER(phase/config.h)
+AC_CONFIG_HEADERS([phase/config.h phaseqt/config.h opti/config.h extr/config.h])
 
 dnl uf Aug 2011
 dnl AC_CONFIG_MACRO_DIR([m4])
@@ -235,14 +236,14 @@ AC_ARG_WITH([qwt],
     if test ${qwt}; then
         AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
 	dnl check if we find the libqwt.so there 
-	AC_SUBST(QT, [${qwt}])
+	AC_SUBST(QWT, [${qwt}])
     else
       AC_MSG_NOTICE((1) did not found libqwt.so /usr/local)
       AC_MSG_NOTICE((2) search for libqwt.so on /usr/lib)
-      qt=`find /usr/lib -name libqwt.so -print 2>/dev/null | sed -e 's|/lib/libqwt.so||'`
+      qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | sed -e 's|/lib/libqwt.so||'`
       if test ${qwt}; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
-         AC_SUBST(QT, [${qwt}])
+         AC_SUBST(QWT, [${qwt}])
       else
          AC_MSG_ERROR(cannot find any libqwt.so)
       fi	 
@@ -355,7 +356,7 @@ if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
    fi
 else
 dnl add include path to motif headers 
-   if test ${x_includes} != "" ; then 
+   if test -n ${x_includes} ; then 
       AC_SUBST([CPPFLAGS],[-I${x_includes}])
    fi
 fi
@@ -363,7 +364,8 @@ fi
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
-AC_C_CONST
+dnl UF Aug 2011 AC_C_CONST test makes problems with c++
+dnl AC_C_CONST it is obsolete
 dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
 dnl UF makes also problem on Scientific linux 5- add test i686
 if test "$machine" != "x86_64" -a "$machine" != "i686"; then 
@@ -387,11 +389,11 @@ dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
 dnl output files 
-AC_OUTPUT(Makefile phase/Makefile \
+AC_OUTPUT(Makefile phase/Makefile  phaseqt/Makefile \
           opti/Makefile extr/Makefile gui/Makefile \
 	  baselib/Makefile phaselib/Makefile phaseidl/Makefile \
 	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile tmplib/Makefile phaseqt/Makefile)
+	  idlphase/Makefile tmplib/Makefile)
 
 dnl print some messages
 echo ""
