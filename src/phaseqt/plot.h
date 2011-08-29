@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <29 Jul 11 13:58:16 flechsig>  */
+/*  Time-stamp: <29 Aug 11 09:47:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -41,9 +41,10 @@ public:
     double h2arr[BINS2][BINS2];   // odd number
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
+    int    fwhmon;
 
     void   hfill(struct RayType *, int);
-    void statistics(struct RayType *, int, double);
+    void   statistics(struct RayType *, int, double);
     QwtPlotSpectrogram *d_spectrogram;
     int    plotsubject;
 

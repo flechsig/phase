@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <26 Aug 11 16:07:08 flechsig>  */
+/*  Time-stamp: <29 Aug 11 09:33:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -97,6 +97,8 @@ private slots:
     void rBslot();
     void rhoBslot();
     void elementApplyBslot();
+    void sigmaslot();
+    void fwhmslot();
     void sourceApplyBslot();
     void sourceDefaultBslot();
     void debugslot();
@@ -142,6 +144,8 @@ private:
     QLineEdit    *dislenE;
     QRadioButton *goButton;
     QRadioButton *poButton;
+    QRadioButton *sigmaButton;
+    QRadioButton *fwhmButton;
     QCheckBox    *misaliBox;
     QLabel       *fileNameLabel;
 

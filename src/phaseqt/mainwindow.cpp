@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <26 Aug 11 16:44:19 flechsig> 
+//  Time-stamp: <29 Aug 11 09:54:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -561,11 +561,21 @@ void MainWindow::elementApplyBslot()
   writeBackupFile();
 } // elementApplyBslot
 
+// sigmabutton 
+void MainWindow::fwhmslot()
+{
+#ifdef DEBUG
+  printf("debug: fwhmslot called\n");
+#endif
+  d_plot->fwhmon= 1;
+} // fwhmslot
+
+
 // slot goButton
 void MainWindow::goButtonslot()
 {
 #ifdef DEBUG
-  printf("goButtonslot called\n");
+  printf("debug: goButtonslot called\n");
 #endif
 
   this->BLOptions.SourcetoImage= 1;
@@ -578,7 +588,10 @@ void MainWindow::goButtonslot()
 // gr apply
 void MainWindow::grapplyslot()
 {
-  printf("apply activated\n");
+#ifdef DEBUG
+  printf("debug: grapplyslot called\n");
+#endif
+
   sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
   sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
   sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
@@ -595,29 +608,31 @@ void MainWindow::grapplyslot()
       }
     else
       QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
+  
   if (d_plot->plotsubject == 1) 
     if (this->beamlineOK & resultOK)
-    {
-      d_plot->Plot::hfill((struct RayType *)this->RESULT.RESp, this->RESULT.points);
-      d_plot->Plot::statistics((struct RayType *)this->RESULT.RESp, this->RESULT.points, this->deltalambdafactor);
-      UpdateStatistics(d_plot, "Image", this->RESULT.points);
-      d_plot->setTitle(tr("Image Plane"));
-      d_plot->setphaseData("grimageAct");
-    }
+      {
+	d_plot->Plot::hfill((struct RayType *)this->RESULT.RESp, this->RESULT.points);
+	d_plot->Plot::statistics((struct RayType *)this->RESULT.RESp, this->RESULT.points, this->deltalambdafactor);
+	UpdateStatistics(d_plot, "Image", this->RESULT.points);
+	d_plot->setTitle(tr("Image Plane"));
+	d_plot->setphaseData("grimageAct");
+      }
     else
       QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
+  
   if (d_plot->plotsubject == 2) 
     {
       d_plot->setTitle(tr("PhaseQt: example 1"));
       d_plot->setdefaultData();
     }
-
+  
   if (d_plot->plotsubject == 3) 
     {
       d_plot->setTitle(tr("PhaseQt: example 2"));
       d_plot->setdefaultData2();
     }
-
+  
   d_plot->replot();
 } // grapply
 
@@ -625,7 +640,10 @@ void MainWindow::grapplyslot()
 void MainWindow::grautoscaleslot()
 {
   char buffer[10];
-  printf("autscale activated\n");
+
+#ifdef DEBUG
+  printf("debug: grautoscaleslot called\n");
+#endif
 
   if (d_plot->plotsubject == 1) 
     if (this->beamlineOK & resultOK)
@@ -653,6 +671,11 @@ void MainWindow::grautoscaleslot()
 void MainWindow::grslot()
 {
   int number= elementList->currentRow();
+
+#ifdef DEBUG
+  printf("debug: grslot called\n");
+#endif
+
   if (number < 0) 
     {
       QMessageBox::warning(this, tr("No valid dataset!"),
@@ -672,6 +695,11 @@ void MainWindow::grslot()
 void MainWindow::grvlsslot()
 {
   int number= elementList->currentRow();
+
+#ifdef DEBUG
+  printf("debug: grvlsslot called\n");
+#endif
+
   if (number < 0) 
     {
       QMessageBox::warning(this, tr("No valid dataset!"),
@@ -690,6 +718,12 @@ void MainWindow::grvlsslot()
 // UF slot insert a new optical element in the beamline box
 void MainWindow::insertElement()
 {
+
+#ifdef DEBUG
+  printf("debug: insertElement called\n");
+#endif
+
+
   struct ElementType *tmplist, *listpt, *tmplistpt;
   int i;
   int pos= elementList->currentRow();
@@ -737,6 +771,7 @@ void MainWindow::lambdaSlot()
 #ifdef DEBUG
   printf("lambdaSlot called\n");
 #endif
+
   unsigned int i;
   sscanf(lambdaE->text().toAscii().data(), "%lf", &this->BLOptions.lambda);
   this->BLOptions.lambda*= 1e-6;
@@ -1111,6 +1146,16 @@ void MainWindow::apslot()
   UpdateElementBox(number); 
 }
 // end slots shapeMenu
+
+
+// sigmabutton 
+void MainWindow::sigmaslot()
+{
+#ifdef DEBUG
+  printf("debug: sigmaslot called\n");
+#endif
+  d_plot->fwhmon= 0;
+} // sigmaslot
 
 // apply slot for source
 void MainWindow::sourceDefaultBslot()
@@ -1612,6 +1657,12 @@ QWidget *MainWindow::createGraphicBox()
   statGroup  = new QGroupBox(tr("Statistics"));
   QGridLayout *statLayout = new QGridLayout;
   
+  sigmaButton = new QRadioButton(tr("&RMS"));
+  fwhmButton  = new QRadioButton(tr("&FWHM"));
+  fwhmButton->setChecked(true);
+  connect(sigmaButton,    SIGNAL(clicked()), this, SLOT(sigmaslot()));
+  connect(fwhmButton,     SIGNAL(clicked()), this, SLOT(fwhmslot()));
+
   czLabel   = new QLabel("0");
   cyLabel   = new QLabel("0");
   wzLabel   = new QLabel("0");
@@ -1638,31 +1689,34 @@ QWidget *MainWindow::createGraphicBox()
   ryLabel0   = new QLabel(tr("y E/dE FWHM"));
   rzLabel0   = new QLabel(tr("z E/dE FWHM"));
 
-  statLayout->addWidget(czLabel0,  0, 0);
-  statLayout->addWidget(cyLabel0,  0, 2);
-  statLayout->addWidget(wzLabel0,  1, 0);
-  statLayout->addWidget(wyLabel0,  1, 2);
-  statLayout->addWidget(cdzLabel0, 2, 0);
-  statLayout->addWidget(cdyLabel0, 2, 2);
-  statLayout->addWidget(wdzLabel0, 3, 0);
-  statLayout->addWidget(wdyLabel0, 3, 2);
-  statLayout->addWidget(rayLabel0, 4, 0);
-  statLayout->addWidget(traLabel0, 4, 2);
-  statLayout->addWidget(ryLabel0,  5, 2);
-  statLayout->addWidget(rzLabel0,  5, 0);
+  statLayout->addWidget(sigmaButton, 0, 0);
+  statLayout->addWidget(fwhmButton,  0, 1);
 
-  statLayout->addWidget(czLabel,  0, 1);
-  statLayout->addWidget(cyLabel,  0, 3);
-  statLayout->addWidget(wzLabel,  1, 1);
-  statLayout->addWidget(wyLabel,  1, 3);
-  statLayout->addWidget(cdzLabel, 2, 1);
-  statLayout->addWidget(cdyLabel, 2, 3);
-  statLayout->addWidget(wdzLabel, 3, 1);
-  statLayout->addWidget(wdyLabel, 3, 3);
-  statLayout->addWidget(rayLabel, 4, 1);
-  statLayout->addWidget(traLabel, 4, 3);
-  statLayout->addWidget(ryLabel, 5, 3);
-  statLayout->addWidget(rzLabel, 5, 1);
+  statLayout->addWidget(czLabel0,  1, 0);
+  statLayout->addWidget(cyLabel0,  1, 2);
+  statLayout->addWidget(wzLabel0,  2, 0);
+  statLayout->addWidget(wyLabel0,  2, 2);
+  statLayout->addWidget(cdzLabel0, 3, 0);
+  statLayout->addWidget(cdyLabel0, 3, 2);
+  statLayout->addWidget(wdzLabel0, 4, 0);
+  statLayout->addWidget(wdyLabel0, 4, 2);
+  statLayout->addWidget(rayLabel0, 5, 0);
+  statLayout->addWidget(traLabel0, 5, 2);
+  statLayout->addWidget(ryLabel0,  6, 2);
+  statLayout->addWidget(rzLabel0,  6, 0);
+
+  statLayout->addWidget(czLabel,  1, 1);
+  statLayout->addWidget(cyLabel,  1, 3);
+  statLayout->addWidget(wzLabel,  2, 1);
+  statLayout->addWidget(wyLabel,  2, 3);
+  statLayout->addWidget(cdzLabel, 3, 1);
+  statLayout->addWidget(cdyLabel, 3, 3);
+  statLayout->addWidget(wdzLabel, 4, 1);
+  statLayout->addWidget(wdyLabel, 4, 3);
+  statLayout->addWidget(rayLabel, 5, 1);
+  statLayout->addWidget(traLabel, 5, 3);
+  statLayout->addWidget(ryLabel,  6, 3);
+  statLayout->addWidget(rzLabel,  6, 1);
 
   statGroup->setLayout(statLayout);
 
@@ -3186,6 +3240,21 @@ void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
   ryLabel->setText(QString(tr(buffer)));
   sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->rz);  
   rzLabel->setText(QString(tr(buffer)));
+
+  if (pp->fwhmon)
+    {
+      wzLabel0->setText(QString(tr("z FWHM (mm)")));
+      wyLabel0->setText(QString(tr("y FWHM (mm)")));
+      wdzLabel0->setText(QString(tr("dz FWHM (mm)")));
+      wdyLabel0->setText(QString(tr("dy FWHM (mm)")));
+    } else
+    {
+      wzLabel0->setText(QString(tr("z RMS (mm)")));
+      wyLabel0->setText(QString(tr("y RMS (mm)")));
+      wdzLabel0->setText(QString(tr("dz RMS (mm)")));
+      wdyLabel0->setText(QString(tr("dy RMS (mm)")));
+
+    }
 
 } // UpdateStatistics
 

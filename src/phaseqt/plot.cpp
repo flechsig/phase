@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <26 Jul 11 12:10:41 flechsig> 
+//  Time-stamp: <29 Aug 11 10:00:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -188,7 +188,8 @@ Plot::Plot(QWidget *parent):
   const QColor c(Qt::darkBlue);
   zoomer->setRubberBandPen(c);
   zoomer->setTrackerPen(c);
-}
+  this->fwhmon= 1;
+} // end constructor
 
 // plotstyle
 void Plot::showContour(bool on)
@@ -355,14 +356,14 @@ int Plot::SetUpArrays(int n){
   return n;
 }
 
-void Plot::SetData(int n, double* data_x, double *data_y){
+void Plot::SetData(int n, double* data_x, double *data_y)
+{
 
   
   n = SetUpArrays(n);
 
   ndata=n;
   
-
   for(int i=0; i<ndata; i++){
     int b = i;
     x[b] = data_x ? data_x[i]:0;
@@ -409,8 +410,14 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
 {
   int i;
   struct RayType *rp;
-  
-  printf("statistics called\n");
+  double fwhmfac;
+
+#ifdef DEBUG  
+  printf("debug: statistics called, fwhmon= %d\n", fwhmon);
+#endif
+
+  fwhmfac= 2.35;              // more accurate on request
+
   cz= cy= wz= wy= cdz= cdy= wdz= wdy= 0.0;
 
   rp= rays;
@@ -430,17 +437,26 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
 
   if (points > 0)
     {
-      cz /= points;
-      wz  = 2.35* sqrt(wz/points-  cz*cz);
-      cy /= points;
-      wy  = 2.35* sqrt(wy/points-  cy*cy);
-      cdz/= points;
-      wdz = 2.35* sqrt(wdz/points- cdz*cdz);
-      cdy/= points;
-      wdy = 2.35* sqrt(wdy/points- cdy*cdy);
+      cz /= (double)points;
+      wz  = sqrt(wz/points-  cz*cz);
+      cy /= (double)points;
+      wy  = sqrt(wy/points-  cy*cy);
+      cdz/= (double)points;
+      wdz = sqrt(wdz/points- cdz*cdz);
+      cdy/= (double)points;
+      wdy = sqrt(wdy/points- cdy*cdy);
     }
-  ry= wy* deltalambdafactor;
-  rz= wz* deltalambdafactor;
-}
+
+  ry= wy* deltalambdafactor * fwhmfac;   // for resolving power we always take fwhm
+  rz= wz* deltalambdafactor * fwhmfac;
+
+  if (fwhmon)
+    {
+      wz *= fwhmfac;
+      wy *= fwhmfac;
+      wdz*= fwhmfac;
+      wdy*= fwhmfac;
+    }
+} // Plot::statistics
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
