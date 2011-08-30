@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2011-08-29 22:20:49 flechsig> 
+#  Time-stamp: <30 Aug 11 12:18:24 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -25,7 +25,8 @@ phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp optiinput
 # You have one .h file, it's called myapp.h. Therefore, here I list
 # its mocced name, moc_myapp.cpp.
 nodist_phaseqt_SOURCES = \
-	moc_phaseqt.cpp moc_mainwindow.cpp qrc_phaseqt.cpp moc_singleray.cpp moc_configwindow.cpp moc_optiinput.cpp
+	moc_mainwindow.cpp moc_plot.cpp moc_singleray.cpp moc_optiinput.cpp moc_configwindow.cpp \
+	qrc_phaseqt.cpp
 
 
 
@@ -80,8 +81,9 @@ AM_CXXFLAGS   =  -I. \
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
 AM_LDFLAGS =  -Wl,-rpath,@QT@/lib \
-	-L@QT@/lib -lQtGui  \
-	-L/usr/X11R6/lib -lQtCore -lpthread  @FLIBS@  @CFORLIB@
+	-L@QT@/lib -lQtGui -lQtCore \
+	-L@QWT@/lib -lqwt \
+	@FLIBS@  @CFORLIB@
 
 ##we always use the c linker
 F77LINK = $(LINK)
@@ -89,13 +91,15 @@ F77LINK = $(LINK)
 
 # This rule lets GNU make create any moc_*.cpp from the equivalent *.h
 moc_%.cpp: %.h
-	moc $< -o $@
+	@QT@/bin/moc $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 # Adjust this line according to your resources.qrc
 qrc_%.cpp : %.qrc
-	rcc $< -o $@
+	@QT@/bin/rcc -name $(bin_PROGRAMS) $< -o $@
 
 # This line ensures that generated moc_*.cpp and resources.cpp files are
 # deleted when we make clean.
-CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) 
+##CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) 
+## CLEANFILES is a variable called from target clean: rm -f $CLEANFILES
+CLEANFILES = moc_*.cpp qrc_*.cpp
 # end
