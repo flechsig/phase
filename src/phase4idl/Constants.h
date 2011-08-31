@@ -1,3 +1,12 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/Constants.h */
+/*  Date      : <31 Aug 11 16:25:30 flechsig>  */
+/*  Time-stamp: <31 Aug 11 16:25:42 flechsig>  */
+
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
 
 // Constants.h
 //
