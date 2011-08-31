@@ -1,3 +1,12 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/idl_bline.c */
+/*  Date      : <31 Aug 11 16:16:00 flechsig>  */
+/*  Time-stamp: <31 Aug 11 16:16:22 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -15,15 +24,10 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>      
-#ifdef VMS
-  #include <DXm/DECspecific.h>                                           
-  #include <descrip.h>   
-#endif
+
 #include "cutils.h"   
 #include "phase_struct.h"
-#include "fg3pck.h"   
-#include "mirrorpck.h"                 
-#include "geometrypck.h"   
+  
 #include "phase.h"
 #include "rtrace.h"                 
 #include "common.h" 

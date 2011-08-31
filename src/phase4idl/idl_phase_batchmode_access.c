@@ -20,16 +20,13 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>  
-#ifdef VMS    
-  #include <processes.h>  /* eingefuegt fuer Starts anderer Programme*/
-  #include <descrip.h>                      /* for FORTRAN- String */
-  #include <DXm/DECspecific.h>                  
-#endif
+
 #include "cutils.h"   
 #include "phase_struct.h"
-#include "fg3pck.h"   
+/*#include "fg3pck.h"   
 #include "mirrorpck.h"                 
-#include "geometrypck.h"   
+#include "geometrypck.h" 
+*/  
 #include "phase.h"
 #include "rtrace.h"
 #include "version.h"
