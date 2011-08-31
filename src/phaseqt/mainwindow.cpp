@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <29 Aug 11 09:54:14 flechsig> 
+//  Time-stamp: <31 Aug 11 12:45:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -253,9 +253,10 @@ void MainWindow::activateProc(const QString &action)
       if (fexists("fg34.par") == 1)
 	{
 	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
-	  readfg34_par(this, &this->BLOptions.apr,
+	  readfg34_par(&this->src, &this->BLOptions.apr,
 		       &this->BLOptions.ifl, &this->BLOptions.xi,
 		       &this->BLOptions.epsilon);
+	  parameterUpdateAll(NPARS);
 	} else
 	QMessageBox::warning(this, tr("readFg34Act"),
 			     tr("file fg34.par not found!"));
@@ -1011,6 +1012,9 @@ void MainWindow::saveas()
 // UF selection slot
 void MainWindow::selectElement()
 {
+#ifdef DEBUG
+  printf("debug: selectElement called\n");
+#endif
   QListWidgetItem *item;
   int elementnumber= elementList->currentRow();
   char *text;
@@ -1028,6 +1032,9 @@ void MainWindow::selectElement()
 // UF selection slot
 void MainWindow::selectParameter()
 {
+#ifdef DEBUG
+  printf("debug: selectParameter called\n");
+#endif
   char buffer[MaxPathLength], *ch;
   int parameternumber= parameterList->currentRow();
   
@@ -1350,8 +1357,8 @@ void MainWindow::createActions()
 // and pass the name of the button as string which is then evaluated by activateProc
     signalMapper = new QSignalMapper(this);
 
-    raytracesimpleAct = new QAction(tr("GO &Simple ray tracing"), this);
-    raytracesimpleAct->setStatusTip(tr("geometrical optics, simple ray tracing"));
+    raytracesimpleAct = new QAction(QIcon(":/images/quickrtrace.png"),tr("GO &Quick ray tracing"), this);
+    raytracesimpleAct->setStatusTip(tr("geometrical optics, Quick ray tracing"));
     signalMapper->setMapping(raytracesimpleAct, QString("raytracesimpleAct"));
     connect(raytracesimpleAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -1361,7 +1368,7 @@ void MainWindow::createActions()
     signalMapper->setMapping(raytracefullAct, QString("raytracefullAct"));
     connect(raytracefullAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
    
-    footprintAct = new QAction(tr("GO &footprint at selected element"), this);
+    footprintAct = new QAction(QIcon(":/images/footprint.png"),tr("GO &footprint at selected element"), this);
     footprintAct->setStatusTip(tr("geometrical optics, footprint at selected element"));
     signalMapper->setMapping(footprintAct, QString("footprintAct"));
     connect(footprintAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -2228,6 +2235,8 @@ void MainWindow::createToolBars()
 
     editToolBar = addToolBar(tr("Edit"));
     //    editToolBar->addAction(undoAct);
+    editToolBar->addAction(footprintAct);
+    editToolBar->addAction(raytracesimpleAct);
     editToolBar->addAction(raytracefullAct);
 } // createToolBars
 
@@ -2245,9 +2254,12 @@ void MainWindow::createToolBars()
 // update all parameters from dataset
 void MainWindow::parameterUpdateAll(int zahl)
 {
+#ifdef DEBUG
+  printf("debug: parameterUpdateAll: zahl: %d\n", zahl);
+#endif
   int i;
   for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
-}
+} // parameterUpdateAll
 
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
@@ -2328,14 +2340,14 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
     "(so4.nimage)", // 60
     "(so4.deltatime)",
     "(so4.iconj)",
-}; /* ende der Liste */ 
+  }; /* ende der Liste */ 
 
   struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
   //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
   //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
-#ifdef DEBUG1
-  printf("parameterUpdate: pos: %d\n", pos);
+#ifdef DEBUG
+  printf("debug: parameterUpdate: pos: %d\n", pos);
 #endif
 
   scanned= 1;      // set a default 
@@ -2368,11 +2380,11 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
       sprintf(buffer, "%d \t: %s", op->ifl.iplmode, inhalt[pos]);
       break;
-      /*  case 5:
+    case 5:
       if (!init) scanned= sscanf(text, "%d", &this->src.isrctype);
       if ((scanned == EOF) || (scanned == 0)) this->src.isrctype= 0;   // default
-      sprintf(buffer, "%d : %s", this->src.isrctype, inhalt[pos]);
-      break; */
+      sprintf(buffer, "%d \t: %s", this->src.isrctype, inhalt[pos]);
+      break; 
     case 6:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.rpin= 0;   // default
@@ -2423,28 +2435,28 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
       if ((scanned == EOF) || (scanned == 0)) op->apr.zmax_ap= 0;   // default
       sprintf(buffer, "%lg \t: %s", op->apr.zmax_ap, inhalt[pos]);
       break;
-#ifdef HEONZ
+
     case 16:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipcy);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipcy= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so5.dipcy, inhalt[pos]);
       break;
     case 17:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipcz);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipcz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so5.dipcz, inhalt[pos]);
       break;
     case 18:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipdisy);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipdisy= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so5.dipdisy, inhalt[pos]);
       break;
     case 19:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipdisz);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipdisz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so5.dipdisz, inhalt[pos]);
       break;
-#endif
+
     case 20:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm= 0;   // default
@@ -2465,37 +2477,40 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
       if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
       sprintf(buffer, "%d \t: %s", op->ifl.matrel, inhalt[pos]);
       break;
-#ifdef SOURCE
+
     case 24:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcy);
+      if ((scanned == EOF) || (scanned == 0))  this->src.so1.isrcy= 0;   // default
+      sprintf(buffer, "%d \t: %s",  this->src.so1.isrcy, inhalt[pos]);
       break;
     case 25:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcdy);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so1.isrcdy= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so1.isrcdy, inhalt[pos]);
       break;
     case 26:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmay);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmay= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmay, inhalt[pos]);
       break;
     case 27:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmayp);
+      this->src.so1.sigmayp*= 1e-3;
+      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmayp= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmayp*1e3, inhalt[pos]);
       break;
-#endif
+
     case 28:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.ymin);
+      op->xi.ymin*= 1e-3;
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.ymin, inhalt[pos]);
+      sprintf(buffer, "%lg \t: %s", op->xi.ymin* 1e3, inhalt[pos]);
       break;
     case 29:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.ymax);
+      op->xi.ymax*= 1e-3;
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.ymax, inhalt[pos]);
+      sprintf(buffer, "%lg \t: %s", op->xi.ymax* 1e3, inhalt[pos]);
       break;
     case 30:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
@@ -2503,11 +2518,189 @@ void MainWindow::parameterUpdate(int pos, char *text, int init)
       sprintf(buffer, "%d \t: %s", op->xi.ianzy0, inhalt[pos]);
       break;
 
-#ifdef XXX
+    case 31:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcz);
+      if ((scanned == EOF) || (scanned == 0))  this->src.so1.isrcz= 0;   // default
+      sprintf(buffer, "%d \t: %s",  this->src.so1.isrcz, inhalt[pos]);
+      break;
+    case 32:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcdz);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so1.isrcdz= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so1.isrcdz, inhalt[pos]);
+      break;
+    case 33:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmaz);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmaz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmaz, inhalt[pos]);
+      break;
+    case 34:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmazp);
+      this->src.so1.sigmazp*= 1e-3;
+      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmazp= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmazp*1e3, inhalt[pos]);
+      break;
+
+    case 35:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.zmin);
+      op->xi.zmin*=1e-3;
+      if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.zmin* 1e3, inhalt[pos]);
+      break;
+    case 36:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.zmax);
+      op->xi.zmax*= 1e-3;
+      if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.zmax* 1e3, inhalt[pos]);
+      break;
+    case 37:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianzz0);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.ianzz0, inhalt[pos]);
+      break;
+
+    case 38:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.ibright);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.ibright, inhalt[pos]);
+      break;
+
+    case 39:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.ispline);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ispline= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.ispline, inhalt[pos]);
+      break;
+
+    case 40:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.d12_max);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.d12_max= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.d12_max, inhalt[pos]);
+      break;
+    case 41:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.id12);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.id12= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.id12, inhalt[pos]);
+      break;
+    case 42:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_cal);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_cal= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.ianz0_cal, inhalt[pos]);
+      break;
+    case 43:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_fixed);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_fixed= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.ianz0_fixed, inhalt[pos]);
+      break;
+    case 44:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.iamp_smooth);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.iamp_smooth= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.iamp_smooth, inhalt[pos]);
+      break;
+    case 45:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.iord_amp);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.iord_amp= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.iord_amp, inhalt[pos]);
+      break;
+    case 46:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_amp);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_amp= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.ifm_amp, inhalt[pos]);
+      break;
+      
+    case 47:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.iord_pha);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.iord_pha= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.iord_pha, inhalt[pos]);
+      break;
+      
+    case 48:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_pha);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_pha= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->xi.ifm_pha, inhalt[pos]);
+      break;
+    case 49:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocy);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.distfocy= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.distfocy, inhalt[pos]);
+      break;
+    case 50:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocz);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.distfocz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", op->xi.distfocz, inhalt[pos]);
+      break;
+    case 51:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.ipinarr);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ipinarr= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->ifl.ipinarr, inhalt[pos]);
+      break;    
+    case 52:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_yl0);
+      if ((scanned == EOF) || (scanned == 0)) this->src.pin_yl0= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.pin_yl0, inhalt[pos]);
+      break;
+    case 53:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_yl);
+      if ((scanned == EOF) || (scanned == 0)) this->src.pin_yl= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.pin_yl, inhalt[pos]);
+      break;
+    case 54:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_zl0);
+      if ((scanned == EOF) || (scanned == 0)) this->src.pin_zl0= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.pin_zl0, inhalt[pos]);
+      break;
+    case 55:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_zl);
+      if ((scanned == EOF) || (scanned == 0)) this->src.pin_zl= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.pin_zl, inhalt[pos]);
+      break;
+case 56:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nfreqtot);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nfreqtot= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so4.nfreqtot, inhalt[pos]);
+      break;
+case 57:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nfreqpos);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nfreqpos= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so4.nfreqpos, inhalt[pos]);
+      break;
+case 58:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nfreqneg);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nfreqneg= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so4.nfreqneg, inhalt[pos]);
+      break;
+    case 59:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nsource);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nsource= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so4.nsource, inhalt[pos]);
+      break;
+    case 60:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nimage);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nimage= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so4.nimage, inhalt[pos]);
+      break;
+      
+    case 61:
+      if (!init) scanned= sscanf(text, "%lg", &this->src.so4.deltatime);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.deltatime= 0;   // default
+      sprintf(buffer, "%lg \t: %s", this->src.so4.deltatime, inhalt[pos]);
+      break;
+      
+    case 62:
+      if (!init) scanned= sscanf(text, "%d", &this->src.so4.iconj);
+      if ((scanned == EOF) || (scanned == 0)) this->src.so4.iconj= 0;   // default
+      sprintf(buffer, "%d \t: %s", this->src.so4.iconj, inhalt[pos]);
+      break;
+
+#ifdef XXXTEMPLATE
 case 10:
       if (!init) scanned= sscanf(text, "%d", &);
       if ((scanned == EOF) || (scanned == 0)) = 0;   // default
       sprintf(buffer, "%d \t: %s", , inhalt[pos]);
+      break;
+
+case 10:
+      if (!init) scanned= sscanf(text, "%lg", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%lg \t: %s", , inhalt[pos]);
       break;
 #endif
     default:
