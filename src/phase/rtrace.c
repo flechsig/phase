@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:54:44 flechsig>  */
+/*   Time-stamp: <31 Aug 11 15:38:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -17,6 +17,7 @@
 
 #include <stdio.h> 
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <time.h>
 
