@@ -1,7 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/idl_bline.c */
 /*  Date      : <31 Aug 11 16:16:00 flechsig>  */
-/*  Time-stamp: <31 Aug 11 16:16:22 flechsig>  */
-/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+/*  Time-stamp: <31 Aug 11 16:16:43 flechsig>  */
 
 /*  $Source$  */
 /*  $Date$ */
