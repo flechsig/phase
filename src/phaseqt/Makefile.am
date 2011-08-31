@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <31 Aug 11 15:15:50 flechsig> 
+#  Time-stamp: <31 Aug 11 17:00:34 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -12,6 +12,7 @@
 
 bin_PROGRAMS  = phaseqt 
 phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp optiinput.cpp singleray.cpp plot.cpp \
+	configwindow.h mainwindow.h optiinput.h phaseqt.h  plot.h singleray.h \
 	../phase/phasec.c ../phase/cutils.c ../phase/bline.c ../phase/rtrace.c \
         ../phase/xmalloc.c ../phase/error.c  \
 	../phase/phasefor.F ../phase/elli_8.F \
@@ -62,7 +63,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.
-EXTRA_DIST = phase_struct.for $(pkgdata_DATA) \
+EXTRA_DIST = ../phase/phase_struct.F $(pkgdata_DATA) \
 phaseqt.qrc images/Blue-arrow-left-32.png images/Blue-arrow-right-32.png images/down-32.png images/footprint.png \
 images/Left-arrow-48.png images/new.png images/print.png  images/quickrtrace.png images/Right-arrow-48.png \
 images/rtrace.png images/save.png images/undo.png images/up-32.png
