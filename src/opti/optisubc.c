@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <29 Jul 11 11:33:31 flechsig>  */
+/*   Time-stamp: <31 Aug 11 15:52:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -19,12 +19,8 @@
 
 #include "../phase/cutils.h"  
 #include "../phase/phase_struct.h"
-#include "../phase/fg3pck.h"   
-#include "../phase/mirrorpck.h"                 
-#include "../phase/geometrypck.h"   
 #include "../phase/phase.h"
 #include "../phase/rtrace.h"
-
 #include "phaseopti.h"     
 
    
@@ -136,7 +132,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
   else  /* gdat */
     {
       gdat= &listpt->GDat;
-      listpt->ElementOK &= (~geometryOK); 
+      /*   listpt->ElementOK &= (~geometryOK); */
       switch (ipos)
 	{
 	case 0:                 	/* theta */
@@ -264,7 +260,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 		 bl->ElementList[elnumber- 2].MDat.rmi,
 		 bl->ElementList[elnumber- 2].MDat.rho, cl);
 	  bl->ElementList[elnumber- 2].ElementOK &= (~elementOK);
-	  bl->ElementList[elnumber- 2].ElementOK &= (~geometryOK); 
+	  /* bl->ElementList[elnumber- 2].ElementOK &= (~geometryOK); */
 	  bl->ElementList[elnumber- 2].ElementOK &= (~mapOK);
 	  break;
 	default:
@@ -458,14 +454,12 @@ void buildsystem(struct BeamlineType *bl)
 	{ 
 	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
 	    {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0);    
 	      listpt->ElementOK |= elementOK; 
 	    }
-	  if ((listpt->ElementOK & geometryOK) == 0) /* geometry rebuild */
-	    {
-	      DefGeometryC(&listpt->GDat, &listpt->geo);  
-	      listpt->ElementOK |= geometryOK; 
-	    }                          /* Elementdaten sind ok jetzt map */ 
+	  
+	  DefGeometryC(&listpt->GDat, &listpt->geo);  
+	    
 	  MakeMapandMatrix(listpt, bl);
 	  listpt->ElementOK|= mapOK; 
 	}
