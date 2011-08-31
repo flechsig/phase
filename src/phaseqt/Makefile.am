@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <30 Aug 11 12:18:24 flechsig> 
+#  Time-stamp: <31 Aug 11 12:53:06 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -14,7 +14,7 @@ bin_PROGRAMS  = phaseqt
 phaseqt_SOURCES = main.cpp mainwindow.cpp phaseqt.cpp configwindow.cpp optiinput.cpp singleray.cpp plot.cpp \
 	../phase/phasec.c ../phase/cutils.c ../phase/bline.c ../phase/rtrace.c \
         ../phase/xmalloc.c ../phase/error.c  \
-	../phase/phasefor.F \
+	../phase/phasefor.F ../phase/elli_8.F \
 	../phase/fgmapidp_8.F ../phase/make_matrix_8.for ../phase/taylor-ops.for \
 	../phase/q0_q1_q2_8.for ../phase/get_partial_etc.for ../phase/rekursiv_2d_8.for \
 	../phase/replace_6v4v.for ../phase/replace_wl_in_ypzp.for ../phase/replace_wl_in_u.for \
