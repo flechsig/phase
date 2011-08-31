@@ -1,3 +1,13 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phase4idl.c */
+/*  Date      : <31 Aug 11 16:29:52 flechsig>  */
+/*  Time-stamp: <31 Aug 11 16:30:01 flechsig>  */
+
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
+
 // (C) 2007/2008: Torsten.Leitner@email.de
 
 // phase4idl.c 
@@ -33,18 +43,12 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>  
-#ifdef VMS    
-  #include <processes.h>  // eingefuegt fuer Starts anderer Programme
-  #include <descrip.h>                      // for FORTRAN- String 
-  #include <DXm/DECspecific.h>                  
-#endif
+
 // */
 
 #include <cutils.h>
 #include <phase_struct.h>
-#include <fg3pck.h>
-#include <mirrorpck.h>
-#include <geometrypck.h>   
+  
 #include <phase.h>
 #include <rtrace.h>
 #include <version.h>

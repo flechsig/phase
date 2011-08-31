@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/idl_bline.c */
 /*  Date      : <31 Aug 11 16:16:00 flechsig>  */
-/*  Time-stamp: <31 Aug 11 16:16:43 flechsig>  */
+/*  Time-stamp: <31 Aug 11 16:28:50 flechsig>  */
 
 /*  $Source$  */
 /*  $Date$ */
@@ -201,7 +201,9 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
      fprintf(f, "%20d     element type\n", bl->ElementList[elnumber-1].MDat.Art);   
      fprintf(f, "%20lg     source distance (ARC)\n", bl->ElementList[elnumber-1].MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", bl->ElementList[elnumber-1].MDat.r2);
+#ifdef OBSOLETE
      fprintf(f, "%20lg     theta (ARC)\n", bl->ElementList[elnumber-1].MDat.alpha);
+#endif
      fprintf(f, "%20lg     radius rw (r)       \n", bl->ElementList[elnumber-1].MDat.rmi);
      fprintf(f, "%20lg     radius rl (rho)     \n", bl->ElementList[elnumber-1].MDat.rho);    
      fprintf(f, "%20d     translation flag\n", bl->ElementList[elnumber-1].MDat.iflagmi);    
