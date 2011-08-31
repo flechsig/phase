@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <19 Aug 11 10:42:14 flechsig> 
+#  Time-stamp: <31 Aug 11 15:17:55 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -20,7 +20,7 @@ phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c  \
 	  phase_source.F \
 	  phase_integration.F \
 	  misali.F misali1.f misali2.f misali3.f misali4.f \
-	  cutils.h phase_struct.h fg3pck.h mirrorpck.h geometrypck.h \
+	  cutils.h phase_struct.h  \
 	  phase.h rtrace.h error.h common.h version.h phaseX.h \
           misali_8.f misali1_8.f misali2_8.f misali3_8.f misali4_8.f \
           drift_8.for fgmapidp_8.F get_partial_etc.for rekursiv_2d_8.for \
