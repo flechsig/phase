@@ -1,8 +1,66 @@
 # -*-sh-*-
-#produce qtgui.pro
-qmake-qt4 -project 
+PREREQUISITE 
+============
+(1) Fortran compiler with VAX extensions for instrance the INTEL fortran 
+compiler which can be downloaded from
 
-# produce makefile
-qmake-qt4
+http://software.intel.com/en-us/articles/intel-compilers/
 
-# run make
+(2) QT and QWT development kit
+=======================================
+if QT and QWT is not available or there are related errors during built we 
+recommend to install an actual QT and QWT. With root access you can do this 
+under /usr/local or anywhere else. Without root access you install it on 
+your account.
+
+a) download the "Qt libraries 4.7.3 for Linux/X11 (202 MB)"  from 
+http://qt.nokia.com/downloads
+Save the file on your account, unpack it with
+
+tar -xzvf qt-everywhere-opensource-src-4.7.3.tar.gz
+cd qt-everywhere-opensource-src-4.7.3
+./configure --prefix=/usr/local
+
+you will be asked to accept the licence, choose open-source, you may 
+set another prefix according to your preference like --prefix=${HOME}/tmp/qt
+the configure takes a while, then run:
+
+make
+make install
+
+(it takes a while)
+
+b) QWT
+------
+download the code from qwt.sourceforge.net
+
+svn co https://qwt.svn.sourceforge.net/svnroot/qwt/branches/qwt-6.0
+
+first you may want to edit qwtconfig.pri to define the QWT_INSTALL_PREFIX, 
+    default is /usr/local/qwt-$$QWT_VERSION-svn
+
+then call the qmake from your previously intalled qt version- use the absolute path
+
+example: 
+
+$HOME/tmp/bin/qmake
+make
+make install
+
+BUILD phaseqt
+=============
+tar -xzvf phase-1.20.tar.gz
+cd phase-1.20
+./configure --help
+./configure --enable-debug --without-cernlib --with-qt=your_qt_prefix --with-qtw=your_qtw_prefix --enable-SEVEN
+
+cd phaseqt
+make
+#make install         # perhaps
+
+RUN phaseqt
+===========
+./phaseqt
+
+if shared libraries are not found you have to update the search path of the dynamic linker- either as root put an entry in /etc/ld.so.conf.d/ and run ldconfig or as normal user define the environment variable $LD_LIBRARY_PATH  
+
