@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <01 Sep 11 14:00:19 flechsig> 
+#  Time-stamp: <01 Sep 11 16:19:17 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -41,6 +41,7 @@ nodist_phaseqt_SOURCES = \
 
 phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
+# files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \
  ../data/higz_windows.dat\
  ../data/map35_lh.omx\
@@ -62,7 +63,8 @@ EXTRA_DIST = ../phase/phase_struct.F $(pkgdata_DATA) \
 	images/Left-arrow-48.png images/new.png \
 	images/print.png  images/quickrtrace.png \
 	images/Right-arrow-48.png images/rtrace.png \
-	images/save.png images/undo.png images/up-32.png README
+	images/save.png images/undo.png images/up-32.png \
+	README
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
