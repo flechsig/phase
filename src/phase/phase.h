@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <30 Aug 11 12:27:58 flechsig>  */
+/*   Time-stamp: <02 Sep 11 11:04:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -17,7 +17,8 @@
 
 #define ZERO            1e-30            /* a small number */
 #define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */   
-#define PI 3.141592653589793115997963468544185161590576171875   /* double precision */
+#define PI 3.141592653589793238462643383279502884197169399375105820974944592   /* double precision */
+           
 #define NEWARTBIT          1024             /* bit for new type of optical element in Art */
 #define GRATINGBIT         4096             /* grating bit */
 #define VLSBIT             8192             /* VLS bit */
@@ -640,7 +641,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* 24.6.96 */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps;
   double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
