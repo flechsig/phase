@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <19 Aug 11 09:27:18 flechsig> 
+c$$$ Time-stamp: <02 Sep 11 12:15:49 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -13,7 +13,6 @@ c einige routinen aus fgmap3dpp
 c function   facult(nn) 
 c subroutine fgmapidp(iord,imodus,acc,a,g,wc,xlc,ypc1,zpc1,dypc,dzpc)       
 c subroutine intersection(a,wc,xlc,rin,iord,uu,ww,xll) 
-c subroutine intersection_8(am,wc,xlc,rin,iord,uu,ww,xll) 
 c subroutine pathlen0(am,g,iord,iplmode,wc,xlc,ypc1,zpc1,xlm)     
 c subroutine pathlen1(xlm,rin,iord,
 c     &               xlength1,xlength2,xlength)
@@ -191,13 +190,20 @@ c**************************************************************
 	subroutine intersection(a,wc,xlc,rin,uu,ww,xll,iord)   
 c
 c 	intersection returns uu,ww,xll
+c       UF 2.9.11 merge in intersection_8 
 c**************************************************************
 	implicit real*8(a-h,o-z)
 
-        dimension a(0:5,0:5)         ! mirror
 	real*8 yi_global,zi_global,dyi_global,dzi_global,rin(4)
-        dimension wc(0:4,0:4,0:4,0:4),
+#ifdef SEVEN_ORDER
+        dimension a(0:8,0:8)         ! mirror
+	dimension wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7)
+#else
+	dimension a(0:5,0:5)	! mirror
+	dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4)
+#endif
 
 	yi_global=rin(1) 
         zi_global=rin(2) 
@@ -286,104 +292,6 @@ c        write(*,*)'intersection end'
 	end
 c*************** end intersection ****************************
                           
-c**************************************************************
-	subroutine intersection_8(a,wc,xlc,rin,uu,ww,xll,iord)   
-c
-c 	intersection returns uu,ww,xll
-c**************************************************************
-	implicit real*8(a-h,o-z)
-
-        dimension a(0:8,0:8)         ! mirror
-	real*8 yi_global,zi_global,dyi_global,dzi_global,rin(4)
-        dimension wc(0:7,0:7,0:7,0:7),
-     &            xlc(0:7,0:7,0:7,0:7)
-
-	yi_global=rin(1) 
-        zi_global=rin(2) 
-        dyi_global=rin(3)     
-        dzi_global=rin(4)   
-        
-	uu=0.d0
-	ww=0.d0
-	xll=0.d0
-c        write(*,*)'intersection called'   
-
-        do i=0,iord
-         do j=0,iord
-          do k=0,iord
-           do l=0,iord
-            if((i+j+k+l).le.iord)then
-	     deltaww=wc(i,j,k,l)
-	     deltall=xlc(i,j,k,l)
-             if(abs(yi_global).gt.1e-10)then
-	      deltaww=deltaww*yi_global**i
-	      deltall=deltall*yi_global**i
-	     else
-	      if(i.gt.0)then
-	       deltaww=0.d0
-	       deltall=0.d0
-	      endif
-	     endif
-             if(abs(zi_global).gt.1e-10)then
-	      deltaww=deltaww*zi_global**j
-	      deltall=deltall*zi_global**j
-	     else
-	      if(j.gt.0)then
-	       deltaww=0.d0
-	       deltall=0.d0
-              endif
-	     endif
-             if(abs(dyi_global).gt.1e-10)then
-	      deltaww=deltaww*dyi_global**k
-	      deltall=deltall*dyi_global**k
-	     else
-	      if(k.gt.0)then
-	       deltaww=0.d0
-	       deltall=0.d0
-              endif
-	     endif
-             if(abs(dzi_global).gt.1e-10)then
-	      deltaww=deltaww*dzi_global**l
-	      deltall=deltall*dzi_global**l
-	     else
-	      if(l.gt.0)then
-	       deltaww=0.d0
-	       deltall=0.d0
-              endif
-	     endif
-             ww=ww+deltaww
-	     xll=xll+deltall
-            endif
-           enddo
-          enddo
-         enddo
-        enddo
-c********************************************************
-	do i=0,iord+1
-	 do j=0,iord+1
-          deltauu=a(i,j)
-          if(abs(ww).gt.1e-10)then
-	   deltauu=deltauu*ww**i
-          else
-	   if(i.gt.0)then
-            deltauu=0.d0
-	   endif
-          endif
-          if(abs(xll).gt.1e-10)then
-           deltauu=deltauu*xll**j
-	  else
-	   if(j.gt.0)then
-            deltauu=0.d0
-	   endif
-          endif
-	  uu=uu+deltauu
-         enddo
-	enddo
-c        write(*,*)'intersection end'   
-
-	return
-	end
-c*************** end intersection_8 ****************************
                           
 c*************************************************************
 	subroutine pathlen0(am,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
