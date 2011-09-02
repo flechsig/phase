@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <02 Sep 11 17:33:05 flechsig> 
+c$$$ Time-stamp: <02 Sep 11 17:47:10 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -342,12 +342,18 @@ c	structure/xlenmap/                 ! Entw. Koeffizienten
 c	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
 c     &  	  xlen2c(0:4,0:4,0:4,0:4)
 c	end structure      
-
+#ifdef SEVEN_ORDER
+	dimension wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7),  
+     &            ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7)
+    
+#else
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4),
      &            ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4)  
-     
+#endif     
         dimension dpl0(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dsqrl(0:4,0:4,0:4,0:4,0:4,0:4),
      &		  dsqrpl2(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -475,6 +481,10 @@ c----------------------------------
 	enddo
        endif	! iplmode = 1
 c----------------------------------
+c UF 2.9.11 alle routinen umschreiben auf seven order
+#ifdef SEVEN_ORDER
+	write(*,*)'pathlen0 not ready for 7 order !!!! expect errors with seven order !!!!'
+#endif
        call lsubc(wc,xlc,xlen1cc,xlm.xlen1c)
        call lsubd00(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)
        call lsubd01(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)

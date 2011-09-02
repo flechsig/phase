@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.h */
 /*  Date      : <04 Jan 08 14:04:24 flechsig>  */
-/*  Time-stamp: <04 Jan 08 14:26:54 flechsig>  */
+/*  Time-stamp: <02 Sep 11 17:35:40 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -47,6 +47,7 @@ struct optistruct optistructure;                      /* globale Variablen */
   #define minuit      minuit_
   #define fminuend    fminuend_
   #define costfor     costfor_
+  
 #endif
 
 #endif       

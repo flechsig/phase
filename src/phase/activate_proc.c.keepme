@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:38:42 flechsig>  */
+/*   Time-stamp: <02 Sep 11 13:26:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -397,7 +397,8 @@ void activate_proc(w, tag, reason)
 			      bl->ElementList[(bl->position)- 1].elementname);
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
 		   &bl->ElementList[(bl->position)- 1].mir, i, 
-		   bl->ElementList[(bl->position)- 1].GDat.theta0); 
+		   bl->ElementList[(bl->position)- 1].GDat.theta0,
+		   bl->BLOptions.REDUCE_maps); 
 	/*mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 	  PHASESet.elementpckname);*/
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 

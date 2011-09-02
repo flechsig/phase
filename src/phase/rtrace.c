@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <31 Aug 11 15:38:35 flechsig>  */
+/*   Time-stamp: <02 Sep 11 13:30:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -493,13 +493,10 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	      }
 	    else
 
-#ifdef SEVEN_ORDER
-	      intersection_8(&ds->mir, ds->wc, ds->xlc, Raysin, 
-			     &uu, &ww, &ll, &bl->BLOptions.ifl.iord);
-#else
+
 	    intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			 &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-#endif
+
 
 	    printf("  intersection: u= %.4g (mum), w= %.4g (mm), l= %.4g (mm)\n", 
 		   uu* 1e3 , ww, ll);
@@ -714,14 +711,10 @@ void RayTraceFull(struct BeamlineType *bl)
 	   for (i= 0; i< zahl; i++)
 	     { 
 
-#ifdef SEVEN_ORDER
-	       intersection_8(&ds->mir, ds->wc, ds->xlc, Raysin, 
-			    &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-#else
 
 	       intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			    &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-#endif 
+
   
 	       if (OnElement(&ds->MDat, ww, ll))
 		 {

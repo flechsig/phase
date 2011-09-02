@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Sep 11 11:48:07 flechsig>  */
+/*   Time-stamp: <02 Sep 11 17:09:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -101,7 +101,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	listpt->ElementOK=0;
 	if (listpt->ElementOK == 0)  /* element rebuild */
 	  {
-	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0);    
+	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, bl->BLOptions.REDUCE_maps);    
 	    DefGeometryC(&listpt->GDat, &listpt->geo);  
 	    MakeMapandMatrix(listpt, bl); 
 	    
@@ -149,10 +149,10 @@ void BuildBeamline(struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
-	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #else      
-	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
 
@@ -192,7 +192,7 @@ void BuildBeamline(struct BeamlineType *bl)
       /* map aus matrix herausholen und Determinanten berechnen */ 
 	  imodus= 1;        
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
-      /* der imodus ist anders als bei fgmapidp!!!! */
+      /* der imodus ist anders als bei fgmapidp_4!!!! */
 
 	  extractmap((double *)bl->M_ItoS, 
 		     (double *)bl->ypc1, 
@@ -209,10 +209,10 @@ void BuildBeamline(struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
-	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #else
-	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
 
@@ -312,7 +312,7 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, bl->BLOptions.REDUCE_maps);    
 	      
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
@@ -368,11 +368,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
-	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 	   
 #else
-	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
 
@@ -430,10 +430,10 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
-	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #else
-	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
 
@@ -523,19 +523,10 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
          else 
            elrayp= Raysin; 
 
-#ifdef SEVEN_ORDER
-	 if (bl->BLOptions.REDUCE_maps == 0)
-	   intersection_8(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
-			  &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-	 else
-	   intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
-			&uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-#else
 	 intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
 	              &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-#endif
 
-         foot->y= ww;    
+	 foot->y= ww;    
          foot->z= ll;    
          foot->dy= uu/1000.;       /* sonst paw ueberlauf */
          foot->dz= i/1000.0;        /* */
@@ -810,11 +801,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
        {imodus=imodus+1000;};
      
 #ifdef SEVEN_ORDER
-#ifdef DEBUG
+     /*#ifdef DEBUG*/
      printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
      printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
      printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
-#endif
+     printf(" ********use old REDUCE maps:  %d\n", bl->BLOptions.REDUCE_maps);
+     /*#endif*/
      if (bl->BLOptions.REDUCE_maps == 0)
        fgmapidp_8(&bl->BLOptions.epsilon, 
 		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
@@ -823,11 +815,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
      else
-       fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
+       fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 		&listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #else
-     fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
+     fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 	      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 	      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #endif
@@ -886,12 +878,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 else
-	   fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+	   fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		    &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
 	 
 #else
-	 fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+	 fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
 #endif
@@ -2055,7 +2047,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
    this is required for the optimization and probably for idl
 */
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
-		int etype, double theta)  
+		int etype, double theta, int lREDUCE_maps)  
 {
   double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
@@ -2356,12 +2348,12 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 
 
 #ifdef SEVEN_ORDER
-      if (bl->BLOptions.REDUCE_maps == 0)
+      if (lREDUCE_maps == 0)
 	misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
       else
-	misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+	misali_4(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #else
-      misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+      misali_4(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #endif
 
 #ifdef DEBUG2

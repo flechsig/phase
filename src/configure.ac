@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <31 Aug 11 16:32:45 flechsig> 
+dnl   Time-stamp: <02 Sep 11 11:22:15 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -237,6 +237,7 @@ AC_ARG_WITH([qwt],
         AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
 	dnl check if we find the libqwt.so there 
 	AC_SUBST(QWT, [${qwt}])
+        AC_SUBST(QWTI, [${qwt}])
     else
       AC_MSG_NOTICE((1) did not found libqwt.so /usr/local)
       AC_MSG_NOTICE((2) search for libqwt.so on /usr/lib)
@@ -244,9 +245,18 @@ AC_ARG_WITH([qwt],
       if test ${qwt}; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
          AC_SUBST(QWT, [${qwt}])
+         AC_SUBST(QWTI, [${qwt}])
       else
          AC_MSG_ERROR(cannot find any libqwt.so)
-      fi	 
+      fi
+      AC_MSG_NOTICE((2) search for qwt_plot.h on /usr/include)	 
+      qwti=`find /usr/include -name qwt_plot.h -print 2>/dev/null | sed -e 's|/qwt_plot.h||'`
+      if test ${qwti}; then
+         AC_MSG_NOTICE([(2) we found qwt_plot.h under ${qwti} - OK])
+         AC_SUBST(QWTI, [${qwti}])
+      else
+         AC_MSG_ERROR(cannot find any qwt_plot.h)
+      fi
     fi
   ])
 dnl end QWT
@@ -382,9 +392,6 @@ AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}"],
 dnl Linkeroption to build "lphase4idl"
 AC_SUBST([LINK_LIBPHASE], "-L${prefixlib} -${libphaselinkname}")
 
-   
-   
-   
 dnl IDL
 dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
@@ -392,10 +399,11 @@ dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 dnl output files 
 AC_OUTPUT(Makefile phase/Makefile  phaseqt/Makefile \
           opti/Makefile extr/Makefile gui/Makefile \
-	  baselib/Makefile phaselib/Makefile phaseidl/Makefile \
+	  phaselib/Makefile phaseidl/Makefile \
 	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile tmplib/Makefile)
+	  idlphase/Makefile )
 
+dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
 dnl print some messages
 echo ""
 echo "===================================================================="

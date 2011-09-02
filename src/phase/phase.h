@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <02 Sep 11 11:04:20 flechsig>  */
+/*   Time-stamp: <02 Sep 11 13:25:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -62,11 +62,9 @@
 #define PLsimpam            0x4000000   /*  */
 #define PLsimpph            0x8000000   /*  */
 #define PLd12              0x10000000   /*  */
-#ifdef VMS
-  #define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
-#else
-  #define HORMAPFILENAMEBASE	"/lib/map"
-#endif
+
+#define HORMAPFILENAMEBASE	"/lib/map"
+
 /*******************  fileheader *******************************/
 
 #define MainPickFileHeader	"MainPickFileType"        
@@ -726,20 +724,19 @@ struct BeamlineType Beamline;
   #define src_ini        src_ini_
   #define create_hormap  create_hormap_
   
-#ifdef SEVEN_ORDER
+
   #define fdet_8          fdet_8_
   #define fgmapidp_8      fgmapidp_8_
-  #define intersection_8  intersection_8_
   #define make_matrix_8   make_matrix_8_
   #define misali_8        misali_8_
   #define elli_8          elli_8_
-#else
-  #define fdet           fdet_
-  #define fgmapidp       fgmapidp_
+
+  #define fdet_4         fdet_4_
+  #define fgmapidp_4     fgmapidp_4_
   #define intersection   intersection_
-  #define misali         misali_
+  #define misali_4       misali_4_
   #define xxmap70        xxmap70_ 
-#endif
+
 /*  #define already_expired already_expired_ */
 #endif
 /************************* Prototypen *****************************/
@@ -765,7 +762,7 @@ void
   create_hormap(),
   DefGeometryC(struct gdatset *, struct geometrytype *),
   DefGeometryCM(double, struct gdatset *, struct geometrytype *),
-  DefMirrorC(struct mdatset *, struct mirrortype *, int, double),  
+  DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int),  
   elli_8(),
   ExpandFileNames(),
   extractmap(),

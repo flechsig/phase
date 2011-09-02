@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <29 Jul 11 11:43:40 flechsig>  */
+/*   Time-stamp: <31 Aug 11 15:35:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -29,9 +29,6 @@
 
 #include "../phase/cutils.h"  
 #include "../phase/phase_struct.h"
-#include "../phase/fg3pck.h"   
-#include "../phase/mirrorpck.h"                 
-#include "../phase/geometrypck.h"   
 #include "../phase/phase.h"
 #include "../phase/rtrace.h"
 
