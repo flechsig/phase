@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Sep 11 11:13:54 flechsig>  */
+/*   Time-stamp: <02 Sep 11 11:48:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -142,11 +142,15 @@ void BuildBeamline(struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-	  fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-		 dfdwwp, dfdwlp, dfdllp, 
-		 &bl->fdetc, &bl->fdetphc,
-		 &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
-		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  if (bl->BLOptions.REDUCE_maps == 0)
+	    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+		   dfdwwp, dfdwlp, dfdllp, 
+		   &bl->fdetc, &bl->fdetphc,
+		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
+		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  else
+	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #else      
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -198,11 +202,15 @@ void BuildBeamline(struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-	  fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-		 dfdwwp, dfdwlp, dfdllp,
-		 &bl->fdetc, &bl->fdetphc,
-		 &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  if (bl->BLOptions.REDUCE_maps == 0)
+	    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+		   dfdwwp, dfdwlp, dfdllp,
+		   &bl->fdetc, &bl->fdetphc,
+		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  else
+	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -252,6 +260,13 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
        printf("set iord to 7\n");
        bl->BLOptions.ifl.iord= 7;
     }
+   if ((bl->BLOptions.ifl.iord > 4) && (bl->BLOptions.REDUCE_maps))
+     {
+       printf("%d. order calc. not supported with REDUCE_maps enabled!\n", bl->BLOptions.ifl.iord);
+       printf("set iord to 4\n");
+       bl->BLOptions.ifl.iord= 4;
+    }
+   
 #else 
    /* 3. oder 4. ordnung */
    if ((bl->BLOptions.ifl.iord == 3) || (bl->BLOptions.ifl.iord == 4))
@@ -346,11 +361,15 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 	  imodus= 0; /* fuer det source to image ????? */
 
 #ifdef SEVEN_ORDER
-           fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-               dfdwwp, dfdwlp, dfdllp,
-               &bl->fdetc, &bl->fdetphc,
-               &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-               &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  if (bl->BLOptions.REDUCE_maps == 0)
+	    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+		   dfdwwp, dfdwlp, dfdllp,
+		   &bl->fdetc, &bl->fdetphc,
+		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  else
+	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 	   
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
@@ -404,11 +423,15 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 #ifdef SEVEN_ORDER
-          fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-               dfdwwp, dfdwlp, dfdllp,
-               &bl->fdetc, &bl->fdetphc,
-               &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-               &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  if (bl->BLOptions.REDUCE_maps == 0)
+	    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
+		   dfdwwp, dfdwlp, dfdllp,
+		   &bl->fdetc, &bl->fdetphc,
+		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
+		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  else
+	    fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #else
 	  fdet(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -501,7 +524,11 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
            elrayp= Raysin; 
 
 #ifdef SEVEN_ORDER
-         intersection_8(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
+	 if (bl->BLOptions.REDUCE_maps == 0)
+	   intersection_8(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
+			  &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
+	 else
+	   intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
 			&uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
 #else
 	 intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
@@ -788,12 +815,17 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
      printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
 #endif
-     fgmapidp_8(&bl->BLOptions.epsilon, 
+     if (bl->BLOptions.REDUCE_maps == 0)
+       fgmapidp_8(&bl->BLOptions.epsilon, 
+		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		  &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
+		  listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
+		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+     else
+       fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 		&listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		&listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
-		&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #else
      fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 	      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
@@ -805,8 +837,18 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
        {imodus=imodus-1000;};
      
 #ifdef SEVEN_ORDER
-     make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
-		   listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+     if (bl->BLOptions.REDUCE_maps == 0)
+       make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
+		     listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+     else
+       {
+	 xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
+		 listpt->dzpc, &bl->BLOptions.ifl.iord);
+	 pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+		  &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+		  listpt->wc, listpt->xlc, listpt->ypc1, 
+		  listpt->zpc1, &listpt->xlm);
+       }
 #else
      /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
      xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
@@ -836,12 +878,17 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	   {imodus=imodus+1000;}; 
 	 
 #ifdef SEVEN_ORDER
-	 fgmapidp_8(&bl->BLOptions.epsilon,
-		    &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
-		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		    &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		    listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
-		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	 if (bl->BLOptions.REDUCE_maps == 0)
+	   fgmapidp_8(&bl->BLOptions.epsilon,
+		      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
+		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		      &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
+		      listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
+		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	 else
+	   fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+		    &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
 	 
 #else
 	 fgmapidp(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
@@ -853,8 +900,18 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	   {imodus=imodus+1000;};
 	 
 #ifdef SEVEN_ORDER
-	 make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
-		       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+	 if (bl->BLOptions.REDUCE_maps == 0)
+	   make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
+			 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+	 else
+	   {
+	     xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
+		     listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+	     pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+		      &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+		      listpt->wc, listpt->xlc, listpt->ypc1, 
+		      listpt->zpc1, &listpt->xlm); 
+	   }
 #else
 	 /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
 	 xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
@@ -2299,7 +2356,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 
 
 #ifdef SEVEN_ORDER
-      misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+      if (bl->BLOptions.REDUCE_maps == 0)
+	misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+      else
+	misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #else
       misali(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #endif
