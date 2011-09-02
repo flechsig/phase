@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/misali.F
 c$$$ Date      : <16 Feb 04 16:37:12 flechsig> 
-c$$$ Time-stamp: <16 Feb 04 17:07:51 flechsig> 
+c$$$ Time-stamp: <02 Sep 11 13:13:02 flechsig> 
 
 
 c$$$ $Source$ 
@@ -8,7 +8,7 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
-	subroutine misali(a,anew,drz,drl,drw,dw,dl,dz)
+	subroutine misali_4(a,anew,drz,drl,drw,dw,dl,dz)
 	implicit real*8(a-h,o-z)
 
 	dimension a(0:5,0:5),anew(0:5,0:5)
