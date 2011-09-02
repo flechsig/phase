@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <02 Sep 11 12:24:08 flechsig> 
+c$$$ Time-stamp: <02 Sep 11 17:33:05 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -30,7 +30,7 @@ c subroutine geometrd(gname, g)
 c subroutine mirror4d(ename, a)
 c subroutine adaptive_int_old(yzint,s0)
 c subroutine int_2d(f,dy,ny,dz,nz,xint)	
-c subroutine fdet(iord,fdetc,ypc1,zpc1,dypc,dzpc)      
+c subroutine fdet_4(iord,fdetc,ypc1,zpc1,dypc,dzpc)      
 c subroutine sig(i,j,k,l,isig)   
 c subroutine simpson(ianz,dyz,fyz,xint)   
 c subroutine psdi(dens,phase) 
@@ -82,12 +82,12 @@ cc        include '../phase/phase_struct.for'
 c*********** end initconstants ****************************
 
 c*************************** neu **************************
- 	subroutine fgmapidp(iord,imodus,acc,a,g,
+ 	subroutine fgmapidp_4(iord,imodus,acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc)       
 c*************************** neu **************************  
 c       acc ist epsilon
 c 10.10.96 umbenannt und iord eingefuegt
-
+c 2.9.11 umbenannt in _4
  	implicit real*8(a-h,o-z) 
         integer iord
        	structure/geometryst/
@@ -96,6 +96,16 @@ c 10.10.96 umbenannt und iord eingefuegt
 	   integer idefl   
         end structure   
         record /geometryst/ g   
+#ifdef SEVEN_ORDER
+	dimension a(0:8,0:8) ! mirror     
+
+        dimension wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7),  
+     &            ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7),
+     &            dypc(0:7,0:7,0:7,0:7),
+     &            dzpc(0:7,0:7,0:7,0:7)
+#else
         dimension a(0:5,0:5)              ! mirror     
 
         dimension wc(0:4,0:4,0:4,0:4),
@@ -104,7 +114,7 @@ c 10.10.96 umbenannt und iord eingefuegt
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)    
-
+#endif
 c----------------------------------------------------------       
 c----------------------------------------------------------
 c
@@ -716,9 +726,12 @@ c----------------------------------------------------------
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
         end structure
-        record /geometryst/ g  
+        record /geometryst/ g 
+#ifdef SEVEN_ORDER
+        dimension a(0:8,0:8)
+#else 
         dimension a(0:5,0:5)
-
+#endif
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq2(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq3(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -751,14 +764,26 @@ c----------------------------------------------------------
      &              dqe(0:4,0:4,0:4,0:4)
         dimension   dyic(0:4,0:4,0:4,0:4),
      &              dzic(0:4,0:4,0:4,0:4)
+
+#ifdef SEVEN_ORDER
+        dimension   wc(0:7,0:7,0:7,0:7),
+     &              xlc(0:7,0:7,0:7,0:7),
+     &              ypc1(0:7,0:7,0:7,0:7),
+     &              zpc1(0:7,0:7,0:7,0:7),
+     &              dypc(0:7,0:7,0:7,0:7),
+     &              dzpc(0:7,0:7,0:7,0:7)
+#else
         dimension   wc(0:4,0:4,0:4,0:4),
      &              xlc(0:4,0:4,0:4,0:4),
      &              ypc1(0:4,0:4,0:4,0:4),
-     &              zpc1(0:4,0:4,0:4,0:4)
-        dimension   dyp1c(0:4,0:4,0:4,0:4),
-     &              dzp1c(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)
+#endif
+
+        dimension   dyp1c(0:4,0:4,0:4,0:4),
+     &              dzp1c(0:4,0:4,0:4,0:4)
+     
         dimension dqk(0:4,0:4,0:4,0:4)
         dimension dyp2c(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
@@ -812,8 +837,11 @@ c----------------------------------------------------------
 	   integer idefl   
         end structure
         record /geometryst/ g  
+#ifdef SEVEN_ORDER
+        dimension a(0:8,0:8)
+#else
         dimension a(0:5,0:5)
-
+#endif
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq2(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq3(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -846,14 +874,25 @@ c----------------------------------------------------------
      &              dqe(0:4,0:4,0:4,0:4)
         dimension   dyic(0:4,0:4,0:4,0:4),
      &              dzic(0:4,0:4,0:4,0:4)
+
+#ifdef SEVEN_ORDER
+        dimension   wc(0:7,0:7,0:7,0:7),
+     &              xlc(0:7,0:7,0:7,0:7),
+     &              ypc1(0:7,0:7,0:7,0:7),
+     &              zpc1(0:7,0:7,0:7,0:7),
+     &              dypc(0:7,0:7,0:7,0:7),
+     &              dzpc(0:7,0:7,0:7,0:7)
+#else
         dimension   wc(0:4,0:4,0:4,0:4),
      &              xlc(0:4,0:4,0:4,0:4),
      &              ypc1(0:4,0:4,0:4,0:4),
-     &              zpc1(0:4,0:4,0:4,0:4)
-        dimension   dyp1c(0:4,0:4,0:4,0:4),
-     &              dzp1c(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)
+#endif
+        dimension   dyp1c(0:4,0:4,0:4,0:4),
+     &              dzp1c(0:4,0:4,0:4,0:4)
+     
         dimension dqk(0:4,0:4,0:4,0:4)
         dimension dyp2c(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
@@ -986,7 +1025,11 @@ c**********************************************************
 	   integer idefl   
         end structure
         record /geometryst/ g  
-        dimension a(0:5,0:5)    
+#ifdef SEVEN_ORDER
+        dimension a(0:8,0:8)
+#else
+	dimension a(0:5,0:5)
+#endif    
 
         do i=0,5
           do j=0,5
