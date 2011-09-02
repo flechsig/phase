@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <19 Aug 11 10:54:09 flechsig>  */
+/*  Time-stamp: <02 Sep 11 13:36:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -623,7 +623,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   struct OptionsType   *op; 
   struct PSOptionsType *pop;
   struct PSSourceType  *psp;
-  XmString str[73], str1[4];  	
+  XmString str[74], str1[4];  	
   char *inhalt[]= {	
     "(epsilon) epsilon for Newton routine",
     "(iord) calculation up to (3,4) order", 
@@ -712,7 +712,8 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
     "(so4.nimage)",
     "(so4.deltatime)",
     "(so4.iconj)",
-    /* 17.11.08 end */ 
+    "(REDUCE_maps)",
+    /* 2.9.11 end */ 
     /*********************************************
       hier gehen meine frueheren Bezeichnungen los
 	
@@ -749,12 +750,12 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 
   *labels[]= {"Parameter:", "Defaults", "Dismiss", 
 	      "Edit only the values after ':'", }, 
-  pvals[73][21], rbuffer[100], *cp; 
+  pvals[74][21], rbuffer[100], *cp; 
   int i, k, itemzahl;
 
   /* ende der Variablendefinitionen */
 		      
-  itemzahl= 63;  /* Eintraege in der Liste 56 < 17.11.08*/
+  itemzahl= 64;  /* Eintraege in Liste 64 2.9.2011 */
 		      
   op= (struct OptionsType *)    &(bl->BLOptions); 
   pop= (struct PSOptionsType *) &(bl->BLOptions.PSO);  
@@ -865,6 +866,8 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   sprintf(pvals[k++], "%d", bl->src.so4.nimage);
   sprintf(pvals[k++], "%g", bl->src.so4.deltatime);
   sprintf(pvals[k++], "%d", bl->src.so4.iconj);
+
+  sprintf(pvals[k++], "%d", op->REDUCE_maps);
 
 #ifdef DEBUG  
   printf("InitParameterBox: parameter : %d\n", k); /* fuer debug */
@@ -1015,6 +1018,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       sscanf(pvals[k++], "%lf", &bl->src.so4.deltatime);
       sscanf(pvals[k++], "%d", &bl->src.so4.iconj);
 
+      sscanf(pvals[k++], "%d", &op->REDUCE_maps);
       
       /**************** ende von Johannes fg34.par */
       /*
