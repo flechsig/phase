@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <31 Aug 11 12:07:11 flechsig>  */
+/*  Time-stamp: <02 Sep 11 11:21:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,7 +31,7 @@ extern "C" {
 // nach phase.h
 //#include "singleray.h"
 
-# define NPARS 63
+# define NPARS 64
 
 // interface to the c structure PHASEset
 class myPHASEset : public PHASEset
