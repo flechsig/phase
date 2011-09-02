@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <29 Aug 11 10:00:41 flechsig> 
+//  Time-stamp: <2011-09-02 22:14:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -206,7 +206,7 @@ void Plot::showSpectrogram(bool on)
 }
 
 // UF should fill in new data
-void Plot::setphaseData(char *datatype)
+void Plot::setphaseData(const char *datatype)
 {
   // struct BeamlineType *bt;
   

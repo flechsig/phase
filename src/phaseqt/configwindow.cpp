@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <19 Aug 11 13:26:44 flechsig> 
+//  Time-stamp: <2011-09-02 22:10:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -160,7 +160,7 @@ void ConfigWindow::fillList()
 } // fillList
 
 // helper function
-void ConfigWindow::mkRow(char *out, char *desc, char *fname)
+void ConfigWindow::mkRow(char *out, const char *desc, const char *fname)
 {
   strncpy(out, desc,  50);
   strncat(out, fname, 260);

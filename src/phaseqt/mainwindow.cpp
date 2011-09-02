@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-09-02 20:42:19 flechsig> 
+//  Time-stamp: <2011-09-02 22:18:01 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -250,7 +250,7 @@ void MainWindow::activateProc(const QString &action)
     { 
       printf("readFg34Act button pressed\n"); 
       printf("Initialize parameters with fg34.par from J. Bahrdt\n"); 
-      if (fexists("fg34.par") == 1)
+      if (fexists((char *)"fg34.par") == 1)
 	{
 	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
 	  readfg34_par(&this->src, &this->BLOptions.apr,
@@ -554,7 +554,7 @@ void MainWindow::elementApplyBslot()
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
   // build the element
-  DefMirrorC(md,   &(this->ElementList[number].mir), md->Art, gd->theta0);
+  DefMirrorC(md,   &(this->ElementList[number].mir), md->Art, gd->theta0, this->BLOptions.REDUCE_maps);
   DefGeometryC(gd, &(this->ElementList[number].geo));
   MakeMapandMatrix(&(this->ElementList[number]), this);
   //  this->ElementList[number].ElementOK |= elementOK;
@@ -797,7 +797,7 @@ void MainWindow::newBeamline()
   // int rcode;
   const char *name= "new_beamline.phase";
 
-  if ( fexists(name)) 
+  if ( fexists((char *)name)) 
     QMessageBox::warning(this, tr("Phase: newBeamline"),
 			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
   

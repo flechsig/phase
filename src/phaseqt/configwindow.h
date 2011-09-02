@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.h */
 /*  Date      : <16 Aug 11 12:20:20 flechsig>  */
-/*  Time-stamp: <17 Aug 11 16:57:03 flechsig>  */
+/*  Time-stamp: <2011-09-02 22:11:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -33,7 +33,7 @@ private:
     QListWidget *fileList;
     struct PHASEset  *myparent;
     void fillList();
-    void mkRow(char *, char *, char *);
+    void mkRow(char *, const char *, const char *);
 };
 #endif
 // end
