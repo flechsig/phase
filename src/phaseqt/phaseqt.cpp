@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <16 Aug 11 11:00:32 flechsig> 
+//  Time-stamp: <2011-09-02 21:56:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -13,7 +13,7 @@
 
 // initialize the c structure of filenames with a name
 // removes a possible extension
-void myPHASEset::init(char *fname)
+void myPHASEset::init(const char *fname)
 {
   char name[MaxPathLength];
   strncpy(name, fname, MaxPathLength);

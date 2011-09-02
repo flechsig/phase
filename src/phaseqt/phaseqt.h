@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <02 Sep 11 11:21:23 flechsig>  */
+/*  Time-stamp: <2011-09-02 21:57:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -38,7 +38,7 @@ class myPHASEset : public PHASEset
 {
  public:
   myPHASEset() { };      // default constructor
-  void init(char *);
+  void init(const char *);
   void print();
 }; 
 // end class myPHASEset
