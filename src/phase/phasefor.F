@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <02 Sep 11 12:15:49 flechsig> 
+c$$$ Time-stamp: <02 Sep 11 12:24:08 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1754,7 +1754,7 @@ c**** end xxmap70 ******************************
 
 
 c*********************************************************
-        subroutine fdet(imodus,iord,fdetc,fdetphc,fdet1phc,
+        subroutine fdet_4(imodus,iord,fdetc,fdetphc,fdet1phc,
      &			ypc1,zpc1,dypc,dzpc)
 c	Stand 29.1.97
 c*********************************************************
