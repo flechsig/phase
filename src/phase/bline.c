@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <26 Aug 11 15:59:44 flechsig>  */
+/*   Time-stamp: <02 Sep 11 11:13:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -966,7 +966,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20110819;
+   int  i, version= 20110902;
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1321,6 +1321,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     flag z  '' (PS Source)\n", op->PSO.PSSource.zhard);   
    fprintf(f,"%20d     flag dz '' (PS Source)\n", op->PSO.PSSource.dzhard);  
    fprintf(f,"%20d     flag <> 2 fixed grid integr.\n", op->PSO.intmod); 
+   fprintf(f,"%20d     use (old) REDUCE maps (up to 4th order) \n", op->REDUCE_maps);              /* new sep 2011 */
   
 /* end options section */ 
 
@@ -1375,7 +1376,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
      fprintf(stderr, "File %s not found- defaults used!\n", fname);
      bl->elementzahl= 0;
 #ifndef QTGUI
+#ifndef OPTI
+#ifndef EXTR
      initdatset(&Fg3DefDat, &Beamline); 		/* source init with defaults*/
+#endif
+#endif
 #endif
    }
    else 
@@ -1684,7 +1689,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
        if (SetFilePos(f, "PSSOURCES"))
        { 
-#ifndef QTGUII
+
 	 fscanf(f, " %d %[^\n]s %c", &bl->src.isrctype, buffer, &buf); 
 	 /* source 1 */
 	 fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcy, buffer, &buf);
@@ -1732,7 +1737,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
 	 /* UF 10.3.06 put it outside	 strcpy(phset->pssourcename, bl->src.so6.fsource6); */ 
 	 /* PutPHASE(phset, MainPickName); */ 
-#endif
+
        } else  rcode= -1;   /* end PSSOURCES */
 
        if (SetFilePos(f, "OPTIONS"))
@@ -1769,6 +1774,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
          fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.zhard, buffer, &buf);  
          fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
          fscanf(f, " %d %[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
+	 if (version >= 20110902)
+	   fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
+	 
 #ifdef DEBUG
 	 /*    printf("   options read\n"); */
 #endif
