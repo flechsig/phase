@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <31 Aug 11 12:45:59 flechsig> 
+//  Time-stamp: <2011-09-02 20:42:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -795,7 +795,7 @@ void MainWindow::misaliBoxslot(int newstate)
 void MainWindow::newBeamline()
 {
   // int rcode;
-  char *name= "new_beamline.phase";
+  const char *name= "new_beamline.phase";
 
   if ( fexists(name)) 
     QMessageBox::warning(this, tr("Phase: newBeamline"),
@@ -2264,13 +2264,13 @@ void MainWindow::parameterUpdateAll(int zahl)
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
 // defaults can be set with an empty text
-void MainWindow::parameterUpdate(int pos, char *text, int init)
+void MainWindow::parameterUpdate(int pos, const char *text, int init)
 {
   char buffer[MaxPathLength];
   int scanned;
   QListWidgetItem *item= parameterList->item(pos);
 
-  char *inhalt[]= {	
+  const char *inhalt[]= {	
     "(epsilon) epsilon for Newton routine (1e-4)",         // 0
     "(iord) calculation up to order (1..7)", 
     "(iordsc)", 
@@ -3400,7 +3400,7 @@ void MainWindow::UpdateSourceBox()
 } // end UpdateSourceBox
 
 // update the statistics in graphic box
-void MainWindow::UpdateStatistics(Plot *pp, char *label, int rays)
+void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   char buffer[255];
   double trans;

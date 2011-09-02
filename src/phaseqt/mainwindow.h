@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <29 Aug 11 09:33:56 flechsig>  */
+/*  Time-stamp: <2011-09-02 20:41:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -105,7 +105,7 @@ private slots:
 
     //void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
-    void UpdateStatistics(Plot *, char *, int);
+    void UpdateStatistics(Plot *, const char *, int);
     
 private:
     void createActions();
@@ -113,7 +113,7 @@ private:
     void createToolBars();
     void createStatusBar();
     void createDockWindows();
-    void parameterUpdate(int, char *, int);
+    void parameterUpdate(int, const char *, int);
     void sourceSetDefaults();
     
     void UpdateElementBox(int);
