@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <02 Sep 11 17:47:10 flechsig> 
+c$$$ Time-stamp: <2011-09-04 19:15:48 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -88,6 +88,7 @@ c*************************** neu **************************
 c       acc ist epsilon
 c 10.10.96 umbenannt und iord eingefuegt
 c 2.9.11 umbenannt in _4
+c 4th order routine only
  	implicit real*8(a-h,o-z) 
         integer iord
        	structure/geometryst/
@@ -96,16 +97,7 @@ c 2.9.11 umbenannt in _4
 	   integer idefl   
         end structure   
         record /geometryst/ g   
-#ifdef SEVEN_ORDER
-	dimension a(0:8,0:8) ! mirror     
 
-        dimension wc(0:7,0:7,0:7,0:7),
-     &            xlc(0:7,0:7,0:7,0:7),  
-     &            ypc1(0:7,0:7,0:7,0:7),
-     &            zpc1(0:7,0:7,0:7,0:7),
-     &            dypc(0:7,0:7,0:7,0:7),
-     &            dzpc(0:7,0:7,0:7,0:7)
-#else
         dimension a(0:5,0:5)              ! mirror     
 
         dimension wc(0:4,0:4,0:4,0:4),
@@ -114,7 +106,7 @@ c 2.9.11 umbenannt in _4
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)    
-#endif
+
 c----------------------------------------------------------       
 c----------------------------------------------------------
 c
@@ -321,6 +313,7 @@ c	isti    = 1  : Tarnsformation von Quelle zum Bild
 c	isti    != 1 : Tarnsformation von Bild zur Quelle
 c	       wc,xlc,ypc1,zpc1: Entwicklungskoeffizienten
 c       return: xlm: xlen1c, xlen2c (Koeffizientenstruktur)   
+c       4th order routine only
 c**************************************************************
 c	J. Bahrdt  xx.xx.9x
 c	Stand:     30.1.97	UF
@@ -342,18 +335,12 @@ c	structure/xlenmap/                 ! Entw. Koeffizienten
 c	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
 c     &  	  xlen2c(0:4,0:4,0:4,0:4)
 c	end structure      
-#ifdef SEVEN_ORDER
-	dimension wc(0:7,0:7,0:7,0:7),
-     &            xlc(0:7,0:7,0:7,0:7),  
-     &            ypc1(0:7,0:7,0:7,0:7),
-     &            zpc1(0:7,0:7,0:7,0:7)
-    
-#else
+
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4),
      &            ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4)  
-#endif     
+    
         dimension dpl0(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dsqrl(0:4,0:4,0:4,0:4,0:4,0:4),
      &		  dsqrpl2(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -481,10 +468,7 @@ c----------------------------------
 	enddo
        endif	! iplmode = 1
 c----------------------------------
-c UF 2.9.11 alle routinen umschreiben auf seven order
-#ifdef SEVEN_ORDER
-	write(*,*)'pathlen0 not ready for 7 order !!!! expect errors with seven order !!!!'
-#endif
+
        call lsubc(wc,xlc,xlen1cc,xlm.xlen1c)
        call lsubd00(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)
        call lsubd01(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)
@@ -730,6 +714,7 @@ c**********************************************************
 c       mirror a und geometry g gehen herein
 c       map7 und map8 gehen heraus
 c 	wird von fgmapidp genutzt
+c       4th order only
 c----------------------------------------------------------
         structure/geometryst/
            real*8 sina,cosa,sinb,cosb,
@@ -737,11 +722,9 @@ c----------------------------------------------------------
 	   integer idefl   
         end structure
         record /geometryst/ g 
-#ifdef SEVEN_ORDER
-        dimension a(0:8,0:8)
-#else 
+
         dimension a(0:5,0:5)
-#endif
+
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq2(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq3(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -775,21 +758,14 @@ c----------------------------------------------------------
         dimension   dyic(0:4,0:4,0:4,0:4),
      &              dzic(0:4,0:4,0:4,0:4)
 
-#ifdef SEVEN_ORDER
-        dimension   wc(0:7,0:7,0:7,0:7),
-     &              xlc(0:7,0:7,0:7,0:7),
-     &              ypc1(0:7,0:7,0:7,0:7),
-     &              zpc1(0:7,0:7,0:7,0:7),
-     &              dypc(0:7,0:7,0:7,0:7),
-     &              dzpc(0:7,0:7,0:7,0:7)
-#else
+
         dimension   wc(0:4,0:4,0:4,0:4),
      &              xlc(0:4,0:4,0:4,0:4),
      &              ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)
-#endif
+
 
         dimension   dyp1c(0:4,0:4,0:4,0:4),
      &              dzp1c(0:4,0:4,0:4,0:4)
@@ -840,6 +816,7 @@ c**********************************************************
 c       mirror a und geometry g gehen herein
 c       map7 und map8 gehen heraus
 c 	wird von fgmapidp genutzt
+c       4rd order routine only!
 c----------------------------------------------------------
         structure/geometryst/
            real*8 sina,cosa,sinb,cosb,
@@ -847,11 +824,8 @@ c----------------------------------------------------------
 	   integer idefl   
         end structure
         record /geometryst/ g  
-#ifdef SEVEN_ORDER
-        dimension a(0:8,0:8)
-#else
+
         dimension a(0:5,0:5)
-#endif
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq2(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq3(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -885,21 +859,14 @@ c----------------------------------------------------------
         dimension   dyic(0:4,0:4,0:4,0:4),
      &              dzic(0:4,0:4,0:4,0:4)
 
-#ifdef SEVEN_ORDER
-        dimension   wc(0:7,0:7,0:7,0:7),
-     &              xlc(0:7,0:7,0:7,0:7),
-     &              ypc1(0:7,0:7,0:7,0:7),
-     &              zpc1(0:7,0:7,0:7,0:7),
-     &              dypc(0:7,0:7,0:7,0:7),
-     &              dzpc(0:7,0:7,0:7,0:7)
-#else
+
         dimension   wc(0:4,0:4,0:4,0:4),
      &              xlc(0:4,0:4,0:4,0:4),
      &              ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)
-#endif
+
         dimension   dyp1c(0:4,0:4,0:4,0:4),
      &              dzp1c(0:4,0:4,0:4,0:4)
      
@@ -1026,7 +993,7 @@ c	koeffizienten fuer Rechnung      Bild-> Quelle
 c
 c	ACHTUNG: Vorzeichen von xdens(1) und xdens(3)
 c	werden lokal in reduce_1 umgedreht
-c
+c       4th order routine only
 c********************************************************** 
 	implicit real*8(a-h,o-z)    
 	structure/geometryst/
@@ -1035,11 +1002,9 @@ c**********************************************************
 	   integer idefl   
         end structure
         record /geometryst/ g  
-#ifdef SEVEN_ORDER
-        dimension a(0:8,0:8)
-#else
+
 	dimension a(0:5,0:5)
-#endif    
+    
 
         do i=0,5
           do j=0,5
@@ -2531,5 +2496,58 @@ c---------------------------------------------------
 #endif
 c end helper routines for hormaps
 
+
+c copys a SEVEN_ORDER mirror array into a 4th order one
+	subroutine mirror7to4(a7,a4)
+	dimension a4(0:5,0:5)              ! mirror 
+        dimension a7(0:8,0:8)              ! mirror
+        integer i, j
+
+	do i=0,5
+	   do j=0,5
+	      a4(i,j)=a7(i,j)
+	   enddo
+	enddo
+	return
+        end
+
+c copys a SEVEN_ORDER map array into a 4th order one
+	subroutine map7to4(m7,m4)
+	dimension m4(0:4,0:4,0:4,0:4) ! map
+        dimension m7(0:7,0:7,0:7,0:7) ! map
+        integer i, j, k, l
+	
+	do i=0,5
+	   do j=0,5
+	      do k=0,5
+		 do l=0,5
+		    m4(i,j,k,l)=m7(i,j,k,l)
+		 enddo
+	      enddo
+	   enddo
+	enddo
+	return
+	end
+c end map7to4
+
+c copys a 4th order map onto a SEVEN_ORDER one
+	subroutine map4to7(m4,m7)
+	dimension m4(0:4,0:4,0:4,0:4) ! map
+        dimension m7(0:7,0:7,0:7,0:7) ! map
+        integer i, j, k, l
+	
+	do i=0,4
+	   do j=0,4
+	      do k=0,4
+		 do l=0,4
+		    m7(i,j,k,l)=m4(i,j,k,l)
+		 enddo
+	      enddo
+	   enddo
+	enddo
+	return
+	end
+c map4to7
+	
 c*** end phasefor ***********************************************
                 
