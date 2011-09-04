@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Sep 11 17:09:39 flechsig>  */
+/*   Time-stamp: <2011-09-04 19:51:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -101,7 +101,8 @@ void BuildBeamline(struct BeamlineType *bl)
 	listpt->ElementOK=0;
 	if (listpt->ElementOK == 0)  /* element rebuild */
 	  {
-	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, bl->BLOptions.REDUCE_maps);    
+	    DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+		       bl->BLOptions.REDUCE_maps);    
 	    DefGeometryC(&listpt->GDat, &listpt->geo);  
 	    MakeMapandMatrix(listpt, bl); 
 	    
@@ -778,13 +779,17 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 /* werte position aus bei optimierung UF 07/12                          */
 /************************************************************************/
 {
-      
-   int      msiz, imodus, mdim;
+  int      msiz, imodus, mdim;
    /*   MAP7TYPE wctmp, xlctmp; */
 
 #ifdef SEVEN_ORDER
    double *c, C[330][330];
+   /* for compatibility mapping */
+   double wc4[5][5][5][5],   xlc4[5][5][5][5],  ypc14[5][5][5][5]; 
+   double zpc14[5][5][5][5], dypc4[5][5][5][5], dzpc4[5][5][5][5];
+   double mir4[6][6];
    printf("MakeMapandMatrix: seven order defined\n");
+
 #else
    double *c, C[70][70];
    printf("MakeMapandMatrix: seven order not defined\n");
@@ -815,9 +820,20 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
      else
-       fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
-		&listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
+       {
+	 mirror7to4(&listpt->mir, &mir4);
+         
+	 fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
+		    &mir4, &listpt->geo, &wc4, &xlc4, 
+		    &ypc14, &zpc14, &dypc4, &dzpc4); 
+
+	 map4to7(&wc4,   listpt->wc);
+	 map4to7(&xlc4,  listpt->xlc);
+	 map4to7(&ypc14, listpt->ypc1);
+	 map4to7(&zpc14, listpt->zpc1);
+	 map4to7(&dypc4, listpt->dypc);
+	 map4to7(&dzpc4, listpt->dzpc);
+       }
 #else
      fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 	      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
