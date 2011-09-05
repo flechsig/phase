@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <27 May 11 12:39:21 flechsig> 
+c$$$ Time-stamp: <05 Sep 11 10:49:22 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -435,7 +435,9 @@ cc	include 'phase_struct.for'
 	record /integration_results/ xir
 	record /apertures /apr
 	record /statistics/ st
-        record /parder/ pd
+        record /parder/ pd                          !!! UF 5.9.2011 
+c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
+c in der phaselib benutze ich parder4 
 	record /mirrortype/ am
 	record /map4/ m4
 
