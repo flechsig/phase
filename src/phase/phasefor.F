@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <2011-09-04 19:15:48 flechsig> 
+c$$$ Time-stamp: <05 Sep 11 16:38:58 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -117,7 +117,7 @@ c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
 #ifdef DEBUG
-	 write(6,*)' fgmapidp: imodus = ',imodus
+	 write(*,*)' fgmapidp_4: imodus = ',imodus 
 #endif
 	 idrift=0
          if(imodus.ge.1000)then
@@ -193,6 +193,7 @@ c**************************************************************
 c
 c 	intersection returns uu,ww,xll
 c       UF 2.9.11 merge in intersection_8 
+c       i.e. works for SEVEN_ORDER and 4th order
 c**************************************************************
 	implicit real*8(a-h,o-z)
 
@@ -317,24 +318,33 @@ c       4th order routine only
 c**************************************************************
 c	J. Bahrdt  xx.xx.9x
 c	Stand:     30.1.97	UF
-c last modification: 26 Jun 97 08:29:17 flechsig
+c       Anpassungen wegen seven_order compatibility
+c       die Eingansmaps sind immer 4th order
+c       wir definieren die typen hier fuer 4rd order und nehmen nicht die 
+c       typen aus phase_struct
 c**************************************************************
-
-        implicit real*8(a-h,o-z)
-#include '../phase/phase_struct.F'
-
+         implicit none
+c        implicit real*8(a-h,o-z)
+c #include '../phase/phase_struct.F'
+         real *8 dql1, dql2, dpl0, dsqrl, dsqrpl2, dsqrpl1  
+         real *8 xlen1cc, xlen2cc
+	 real *8 wc,xlc,ypc1,zpc1
 c---------- Typen ---------------------------------------------
        	
-c	structure/geometryst/
-c           real*8 sina,cosa,sinb,cosb,
-c     &            r,rp,xdens(0:4),xlam
-c	   integer idefl   
-c        end structure 
-c	
-c	structure/xlenmap/                 ! Entw. Koeffizienten
-c	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
-c     &  	  xlen2c(0:4,0:4,0:4,0:4)
-c	end structure      
+	structure/geometryst/
+           real*8 sina,cosa,sinb,cosb,
+     &            r,rp,xdens(0:4),xlam
+	   integer idefl   
+        end structure 
+	
+        structure/xlenmap4/                 ! Entw. Koeffizienten
+	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
+     &  	  xlen2c(0:4,0:4,0:4,0:4)
+	end structure   
+
+  	structure/mirrortype4/	! Entw. Koeffizienten
+	   real*8 a(0:5,0:5)
+       	end structure 
 
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4),
@@ -352,9 +362,9 @@ c	end structure
 
 c--------- Variablen ------------------------------------------   
 
-	record /xlenmap/ xlm     
+	record /xlenmap4/ xlm     
         record /geometryst/ g 
-	record /mirrortype/ am
+	record /mirrortype4/ am
 
 	integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
 
@@ -1247,249 +1257,6 @@ c----------------------------------------------------------
         end
 c*********** end geometrdp.for ***************************     
 
-c**********************************************************
-      subroutine xxmap35(xmap35,ypc1,zpc1,dypc,dzpc)  
-c**********************************************************
-c     Berechnung der vollstaendigen 35x35 Matrix
-c     zur Transformation 3. Ordnung
-c**********************************************************
-	implicit real*8(a-h,o-z)
-
-      	dimension   ypc1(0:4,0:4,0:4,0:4),
-     &              zpc1(0:4,0:4,0:4,0:4),
-     &              dypc(0:4,0:4,0:4,0:4),
-     &              dzpc(0:4,0:4,0:4,0:4),   
-     & 		    xmap35(35,35)
-ccccccccccccccccccc alt cccccccccccccccccccccccccccccc
-c        common/map7/wc(0:4,0:4,0:4,0:4),
-c     &              xlc(0:4,0:4,0:4,0:4),
-c        common/map8/dyp1c(0:4,0:4,0:4,0:4),
-c     &              dzp1c(0:4,0:4,0:4,0:4), 
-c        common/map35/   
-cccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      dimension cc(0:4,0:4,0:4,0:4,35)
-      dimension p1(0:4,0:4,0:4,0:4)
-      dimension p2(0:4,0:4,0:4,0:4)
-      dimension p11(0:4,0:4,0:4,0:4)
-      dimension ispalte(0:4,0:4,0:4,0:4)
-      dimension facul(0:4,0:4,0:4,0:4)	
-
-      write(*,*)'iord=3fest'
-      iord=3
-      inum=35
-      isube1=1
-     
-      ianz=0
-      do n1=0,iord
-       do n2=0,iord-n1
-        do n3=0,iord-n1-n2
-         do n4=0,iord-n1-n2-n3
-          facul(n1,n2,n3,n4)=
-     &           facult(n1)*facult(n2)*facult(n3)*facult(n4)	
-          ianz=ianz+1
-          ispalte(n1,n2,n3,n4)=ianz
-         enddo
-        enddo
-       enddo
-      enddo
-
-c***************************************************************
-c             Potenzen von dzp
-c***************************************************************
-
-      do n1=0,iord
-       do n2=0,iord-n1
-        do n3=0,iord-n1-n2
-         do n4=0,iord-n1-n2-n3
-          cc(0,0,0,1,ispalte(n1,n2,n3,n4))=dzpc(n1,n2,n3,n4)
-         enddo
-        enddo
-       enddo
-      enddo
-
-      do l4=2,iord
-       do n1=0,iord
-        do n2=0,iord-n1
-         do n3=0,iord-n1-n2
-          do n4=0,iord-n1-n2-n3
-           p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &          cc(0,0,0,1,ispalte(n1,n2,n3,n4))
-           p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &          cc(0,0,0,l4-1,ispalte(n1,n2,n3,n4))
-          enddo
-         enddo
-        enddo
-       enddo
-       call sube1(p1,p2,p11)
-       do n1=0,iord
-        do n2=0,iord-n1
-         do n3=0,iord-n1-n2
-          do n4=0,iord-n1-n2-n3
-           cc(0,0,0,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
-          enddo
-         enddo
-        enddo
-       enddo
-      enddo
-
-c***********************************************************
-c        Potenzen von dyp und dzp
-c***********************************************************
-      do n1=0,iord
-       do n2=0,iord-n1
-        do n3=0,iord-n1-n2
-         do n4=0,iord-n1-n2-n3
-          cc(0,0,1,0,ispalte(n1,n2,n3,n4))=dypc(n1,n2,n3,n4)
-         enddo
-        enddo
-       enddo
-      enddo
-
-      do l3=1,iord
-       do l4=0,iord-l3
-        if((l3+l4).gt.1)then
-         do n1=0,iord
-          do n2=0,iord-n1
-           do n3=0,iord-n1-n2
-            do n4=0,iord-n1-n2-n3
-             p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &           cc(0,0,1,0,ispalte(n1,n2,n3,n4))
-             p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &           cc(0,0,l3-1,l4,ispalte(n1,n2,n3,n4))
-            enddo
-           enddo
-          enddo
-         enddo
-         call sube1(p1,p2,p11)
-         do n1=0,iord
-          do n2=0,iord-n1
-           do n3=0,iord-n1-n2
-            do n4=0,iord-n1-n2-n3
-             cc(0,0,l3,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
-            enddo
-           enddo
-          enddo
-         enddo
-        endif
-       enddo
-      enddo
-
-c***********************************************************
-c        Potenzen von zp, dyp und dzp
-c***********************************************************
-
-      do n1=0,iord
-       do n2=0,iord-n1
-        do n3=0,iord-n1-n2
-         do n4=0,iord-n1-n2-n3
-          cc(0,1,0,0,ispalte(n1,n2,n3,n4))=zpc1(n1,n2,n3,n4)
-         enddo
-        enddo
-       enddo
-      enddo
-
-      do l2=1,iord
-       do l3=0,iord-l2
-        do l4=0,iord-l2-l3
-         if((l2+l3+l4).gt.1)then
-          do n1=0,iord
-           do n2=0,iord-n1
-            do n3=0,iord-n1-n2
-             do n4=0,iord-n1-n2-n3
-              p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &          cc(0,1,0,0,ispalte(n1,n2,n3,n4))
-              p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &          cc(0,l2-1,l3,l4,ispalte(n1,n2,n3,n4))
-             enddo
-            enddo
-           enddo
-          enddo
-          call sube1(p1,p2,p11)
-          do n1=0,iord
-           do n2=0,iord-n1
-            do n3=0,iord-n1-n2
-             do n4=0,iord-n1-n2-n3
-              cc(0,l2,l3,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
-             enddo
-            enddo
-           enddo
-          enddo
-         endif
-        enddo
-       enddo
-      enddo
-
-c***********************************************************
-c        Potenzen von yp, zp, dyp und dzp
-c***********************************************************
-      do n1=0,iord
-       do n2=0,iord-n1
-        do n3=0,iord-n1-n2
-         do n4=0,iord-n1-n2-n3
-          cc(1,0,0,0,ispalte(n1,n2,n3,n4))=ypc1(n1,n2,n3,n4)
-         enddo
-        enddo
-       enddo
-      enddo
-
-      do l1=1,iord
-       do l2=0,iord-l1
-        do l3=0,iord-l1-l2
-         do l4=0,iord-l1-l2-l3
-          if((l1+l2+l3+l4).gt.1)then
-           do n1=0,iord
-            do n2=0,iord-n1
-             do n3=0,iord-n1-n2
-              do n4=0,iord-n1-n2-n3
-               p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &                 cc(1,0,0,0,ispalte(n1,n2,n3,n4))
-               p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
-     &                 cc(l1-1,l2,l3,l4,ispalte(n1,n2,n3,n4))
-              enddo
-             enddo
-            enddo
-           enddo
-           call sube1(p1,p2,p11)
-           do n1=0,iord
-            do n2=0,iord-n1
-             do n3=0,iord-n1-n2
-              do n4=0,iord-n1-n2-n3
-               cc(l1,l2,l3,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
-              enddo
-             enddo
-            enddo
-           enddo
-          endif
-         enddo
-        enddo
-       enddo
-      enddo
-
-c*************************************************************
-
-      izeile=1
-      xmap35(izeile,1)=1.
-      do i=2,inum
-        xmap35(izeile,i)=0.
-      enddo
-
-      do l1=0,iord                ! Zeilennummerierung
-       do l2=0,iord-l1
-        do l3=0,iord-l1-l2
-         do l4=0,iord-l1-l2-l3
-          if((l1+l2+l3+l4).gt.0)then
-           izeile=izeile+1
-           do nn=1,35                 ! Spaltennummerierung
-            xmap35(izeile,nn)=cc(l1,l2,l3,l4,nn)
-           enddo
-          endif
-         enddo
-        enddo
-       enddo
-      enddo
-      return
-      end
-c**** end xxmap35() ***************************************     
 
 
 c**********************************************************
@@ -1498,8 +1265,8 @@ c**********************************************************
 c     Berechnung der vollstaendigen 70x70 Matrix
 c     zur Transformation 4. Ordnung
 c**********************************************************
-c	implicit real*8(a-h,o-z)
-c     Uwe 12.2.97
+c     die maps muessen immer fuer 4th order sein
+c     die Ausgangsmatrix ist compatibel mit 7 order
 
         implicit none
 
@@ -1511,23 +1278,22 @@ c     Uwe 12.2.97
       	dimension   ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
-     &              dzpc(0:4,0:4,0:4,0:4),   
-     & 		    xmap70(70,70)
+     &              dzpc(0:4,0:4,0:4,0:4) 
 
-      dimension cc(0:4,0:4,0:4,0:4,70)
-      dimension p1(0:4,0:4,0:4,0:4)
-      dimension p2(0:4,0:4,0:4,0:4)
-      dimension p11(0:4,0:4,0:4,0:4)
-      dimension ispalte(0:4,0:4,0:4,0:4)
-      dimension facul(0:4,0:4,0:4,0:4)	
-
-c einziger Unterschied xxmap70, xxmap35
-      if(iord.eq.4)then
-       inum=70
-      else
-       inum=35
-      endif
-      
+#ifdef SEVEN_ORDER
+	dimension xmap70(330,330)
+#else  
+        dimension xmap70(70,70)
+#endif
+	dimension cc(0:4,0:4,0:4,0:4,70)
+	dimension p1(0:4,0:4,0:4,0:4)
+	dimension p2(0:4,0:4,0:4,0:4)
+	dimension p11(0:4,0:4,0:4,0:4)
+	dimension ispalte(0:4,0:4,0:4,0:4)
+	dimension facul(0:4,0:4,0:4,0:4)	
+	
+	inum=70
+        
       isube1=1
       ianz=0
       do n1=0,iord
@@ -2478,7 +2244,8 @@ c UF duplicate function in make_matrix_8
 c---------------------------------------------------
         subroutine matrix_dim(iord,idim)
 c---------------------------------------------------
-
+        implicit none
+        integer iord, idim
         idim=0
 
         do i=0,iord
@@ -2496,16 +2263,50 @@ c---------------------------------------------------
 #endif
 c end helper routines for hormaps
 
-
 c copys a SEVEN_ORDER mirror array into a 4th order one
 	subroutine mirror7to4(a7,a4)
-	dimension a4(0:5,0:5)              ! mirror 
-        dimension a7(0:8,0:8)              ! mirror
-        integer i, j
+        implicit none
+
+	structure/mirrortype4/	! Entw. Koeffizienten
+	   real*8 a(0:5,0:5)
+       	end structure
+
+	structure/mirrortype7/	! Entw. Koeffizienten
+	   real*8 a(0:8,0:8)
+       	end structure
+
+	integer i, j
+	record /mirrortype4/ a4
+	record /mirrortype7/ a7
 
 	do i=0,5
 	   do j=0,5
-	      a4(i,j)=a7(i,j)
+	      a4.a(i,j)=a7.a(i,j)
+	   enddo
+	enddo
+	return
+        end
+
+
+c copys a 4th into SEVEN_ORDER mirror array 
+	subroutine mirror4to7(a4,a7)
+        implicit none
+
+	structure/mirrortype4/	! Entw. Koeffizienten
+	   real*8 a(0:5,0:5)
+       	end structure
+
+	structure/mirrortype7/	! Entw. Koeffizienten
+	   real*8 a(0:8,0:8)
+       	end structure
+
+	integer i, j
+	record /mirrortype4/ a4
+	record /mirrortype7/ a7
+
+	do i=0,5
+	   do j=0,5
+	      a7.a(i,j)=a4.a(i,j)
 	   enddo
 	enddo
 	return
@@ -2513,9 +2314,11 @@ c copys a SEVEN_ORDER mirror array into a 4th order one
 
 c copys a SEVEN_ORDER map array into a 4th order one
 	subroutine map7to4(m7,m4)
+        implicit none
 	dimension m4(0:4,0:4,0:4,0:4) ! map
         dimension m7(0:7,0:7,0:7,0:7) ! map
         integer i, j, k, l
+	real *8 m4,m7
 	
 	do i=0,5
 	   do j=0,5
@@ -2532,9 +2335,11 @@ c end map7to4
 
 c copys a 4th order map onto a SEVEN_ORDER one
 	subroutine map4to7(m4,m7)
+        implicit none
 	dimension m4(0:4,0:4,0:4,0:4) ! map
         dimension m7(0:7,0:7,0:7,0:7) ! map
         integer i, j, k, l
+        real *8 m4, m7
 	
 	do i=0,4
 	   do j=0,4
