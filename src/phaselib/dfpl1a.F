@@ -6,16 +6,13 @@ c$$$ $Author$
       subroutine subdfpl1a(g,a,ra,pd)
       implicit real*8(a-h,o-z)
       real*8 l
-      dimension a(0:5,0:5)
-      structure/geometryst/
-         real*8 sina,cosa,sinb,cosb,
-     &        r,rp,xdens(0:4),xlam
-         integer idefl   
-      end structure 
-                          
+
+#include '../phase/phase_struct.F'
+      
+      dimension a(0:5,0:5)      ! lib is only for 4th order      
       record /geometryst/ g
       record /rayst/ ra
-      record /parder/ pd
+      record /parder4/ pd        ! wir muessen parder4 benutzen 
                           
       xdefl=dflotj(g.idefl)
       xlam=g.xlam

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/dfpl2_uf.F
 c$$$ Date      : <06 Feb 04 09:39:28 flechsig> 
-c$$$ Time-stamp: <2011-08-29 21:37:10 flechsig> 
+c$$$ Time-stamp: <05 Sep 11 10:37:45 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -19,7 +19,7 @@ c	real*8 l   never used UF 21.12.99
 
         record /geometryst/ g
         record /rayst/ ra
-        record /parder/ pd
+        record /parder4/ pd
  
       pd.pl1w2=(2.*sqrt(pd.arg1)*pd.arg1*pd.arg1w2-
      . sqrt(pd.arg1)*pd.arg1w1**2)/(4.*pd.arg1**2)

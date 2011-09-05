@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/dfpl1_uf.F
 c$$$ Date      : <06 Feb 04 09:38:12 flechsig> 
-c$$$ Time-stamp: <2011-08-29 21:35:57 flechsig> 
+c$$$ Time-stamp: <05 Sep 11 10:37:00 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -18,7 +18,7 @@ c$$$ $Author$
 
         record /geometryst/ g
         record /rayst/ ra
-        record /parder/ pd
+        record /parder4/ pd
  
       xdefl=dflotj(g.idefl)
       yi=ra.ri.yi
