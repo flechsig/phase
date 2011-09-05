@@ -19,6 +19,10 @@ c subroutine transponiere(a,g)
 c subroutine xxmap35(xmap35,ypc1,zpc1,dypc,dzpc) 
 c subroutine xxmap70(xmap70,ypc1,zpc1,dypc,dzpc)
 
+C
+C obsolete ??? UF 5.9.2011
+C
+
 
 c*************************************************************** 
 	subroutine extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)  

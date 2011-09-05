@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <2011-08-29 21:50:58 flechsig> 
+#  Time-stamp: <05 Sep 11 10:23:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -31,7 +31,7 @@ lengthd411.for lengthd412.for  \
 lengthd42.for  lengthd43.for   \
 p_m_4.for  \
 zernike_nl_60.for zernike_n_60.for \
-dfpl1_uf.F  dfpl2_uf.F dfpl1a.F \
+dfpl1_uf.F  dfpl2_uf.F dfpl1a.f \
 ../phase4idl/ATnT_port3_driftroutines/drift_routines_02.f \
 ../phase4idl/ATnT_port3_driftroutines/drift_routines_03.f \
 ../phase4idl/ATnT_port3_driftroutines/drift_routines_04.f \
