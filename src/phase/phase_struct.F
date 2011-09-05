@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <26 Aug 11 15:55:27 flechsig> 
+c$$$ Time-stamp: <05 Sep 11 10:49:56 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -90,6 +90,21 @@ c bsp dfdll
      &	 dfdwl(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &	 dfdll(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &   dfdwidlj(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM)
+        end structure  
+
+c spezielle Version fuer 4. order fuer die benutzung in der phaselib
+	structure/parder4/
+           real*8 pl1w2,pl1l2,pl2w2,pl2l2,
+     &            pl1w1l1,pl2w1l1,arg1,arg2,
+     &   arg1w1,arg1l1,arg1w2,arg1l2,arg1w1l1,
+     &   arg2w1,arg2l1,arg2w2,arg2l2,arg2w1l1,
+     &   opl(0:4,0:4,0:4,0:4),
+     &	 dfdw(0:4,0:4,0:4,0:4),
+     &	 dfdl(0:4,0:4,0:4,0:4),
+     &	 dfdww(0:4,0:4,0:4,0:4),
+     &	 dfdwl(0:4,0:4,0:4,0:4),
+     &	 dfdll(0:4,0:4,0:4,0:4),
+     &   dfdwidlj(0:4,0:4,0:4,0:4,0:4,0:4)
         end structure  
 
 c--------------- geometry -----------------------------------

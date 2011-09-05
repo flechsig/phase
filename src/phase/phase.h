@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <02 Sep 11 13:25:08 flechsig>  */
+/*   Time-stamp: <05 Sep 11 17:04:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -728,6 +728,12 @@ struct BeamlineType Beamline;
   #define fdet_8          fdet_8_
   #define fgmapidp_8      fgmapidp_8_
   #define make_matrix_8   make_matrix_8_
+  #define map7to4         map7to4_
+  #define map4to7         map4to7_
+  #define mat4to7         mat4to7_
+  #define mat7to4         mat7to4_
+  #define mirror7to4      mirror7to4_
+  #define mirror4to7      mirror4to7_
   #define misali_8        misali_8_
   #define elli_8          elli_8_
 
@@ -797,8 +803,9 @@ void
   minitdatset (struct mdatset *),
   misali_8(),
   MultiplyMatrix(), 
-  pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
-	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), 
+/* pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
+   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), */
+  pathlen0(),
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
      

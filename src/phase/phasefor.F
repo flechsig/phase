@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <05 Sep 11 16:38:58 flechsig> 
+c$$$ Time-stamp: <05 Sep 11 17:02:18 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1258,33 +1258,29 @@ c----------------------------------------------------------
 c*********** end geometrdp.for ***************************     
 
 
-
 c**********************************************************
-      subroutine xxmap70(xmap70,ypc1,zpc1,dypc,dzpc,iord)
+	subroutine xxmap70(xmap70,ypc1,zpc1,dypc,dzpc,iord)
 c**********************************************************
-c     Berechnung der vollstaendigen 70x70 Matrix
-c     zur Transformation 4. Ordnung
+c       Berechnung der vollstaendigen 70x70 Matrix
+c       zur Transformation 4. Ordnung
 c**********************************************************
-c     die maps muessen immer fuer 4th order sein
-c     die Ausgangsmatrix ist compatibel mit 7 order
+c       die maps muessen immer fuer 4th order sein
+c       die Ausgangsmatrix ist compatibel mit 7 order
 
-        implicit none
+c        implicit none
 
-        real*8 xmap70,ypc1,zpc1,dypc,dzpc,cc,p1,p2,p11,facul,
-     .         facult
+        real*8  xmap70,ypc1,zpc1,dypc,dzpc,cc,p1,p2,p11,facul
         integer ispalte,iord,inum,isube1,ianz,n1,n2,n3,n4,
-     .          nn,i,izeile,l1,l2,l3,l4
+     &	        nn,i,izeile,l1,l2,l3,l4
 
       	dimension   ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4) 
 
-#ifdef SEVEN_ORDER
-	dimension xmap70(330,330)
-#else  
+ 
         dimension xmap70(70,70)
-#endif
+
 	dimension cc(0:4,0:4,0:4,0:4,70)
 	dimension p1(0:4,0:4,0:4,0:4)
 	dimension p2(0:4,0:4,0:4,0:4)
@@ -2353,6 +2349,39 @@ c copys a 4th order map onto a SEVEN_ORDER one
 	return
 	end
 c map4to7
+
+c copys a 4th order matrix onto a SEVEN_ORDER one
+	subroutine mat4to7(m4,m7)
+        implicit none
+	dimension m4(70,70)   ! map
+        dimension m7(330,330) ! map
+        integer i, j
+        real *8 m4, m7
 	
+	do i=1,70
+	   do j=1,70
+	      m7(i,j)=m4(i,j)
+	   enddo
+	enddo
+	return
+	end
+c 
+
+c copys a 4th order matrix onto a SEVEN_ORDER one
+	subroutine mat7to4(m7,m4)
+        implicit none
+	dimension m4(70,70)   ! map
+        dimension m7(330,330) ! map
+        integer i, j
+        real *8 m4, m7
+	
+	do i=1,70
+	   do j=1,70
+	      m4(i,j)=m7(i,j)
+	   enddo
+	enddo
+	return
+	end
+c 	
 c*** end phasefor ***********************************************
                 

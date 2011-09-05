@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2011-09-04 19:51:12 flechsig>  */
+/*   Time-stamp: <05 Sep 11 17:10:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -46,7 +46,7 @@ void BuildBeamline(struct BeamlineType *bl)
    /*   char    command[MaxPathLength]; */
 
 #ifdef DEBUG
-  printf("BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
+  printf("debug BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 
 #ifdef SEVEN_ORDER
@@ -118,7 +118,10 @@ void BuildBeamline(struct BeamlineType *bl)
 	if (listpt->MDat.Art != kEOESlit)         /* slit not */
 	   {
 	     if (elcounter == 1)
-	       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
+	       {
+		 printf("BuildBeamline- only one element- copy matrix\n");
+		 memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
+	       }
 	     else		                   /* bline zusammenbauen */
 	       GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
 	     /* GlueLeft(A, B) A= B* A */
@@ -131,6 +134,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	 elcounter++; listpt++; 
       } /* Schleife ueber alle Elemente fertig */
 
+      printf("Buildbeamline: extract beamline map\n");
       extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
                  &bl->BLOptions.ifl.iord); 
 
@@ -150,8 +154,11 @@ void BuildBeamline(struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
-	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    {
+	      printf("7 - 4 not ready\n");
+	      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    }
 #else      
 	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -210,8 +217,11 @@ void BuildBeamline(struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
+	    {
+	      printf("7 - 4 not ready\n");
 	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    }
 #else
 	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -270,24 +280,12 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
    
 #else 
    /* 3. oder 4. ordnung */
-   if ((bl->BLOptions.ifl.iord == 3) || (bl->BLOptions.ifl.iord == 4))
+   if (bl->BLOptions.ifl.iord > 4) 
      {
-       printf("   Buildbeamline: %d. order calculation\n", 
-		bl->BLOptions.ifl.iord);
-       if (bl->BLOptions.ifl.iord == 3)
-	 {
-	   printf("!! 3. order calculation currently not supported\n !!");
-	   printf("   set iord to 4 !! \n");
-	   bl->BLOptions.ifl.iord = 4;
-	 }
+       printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+       printf("set iord to 4\n");
+       bl->BLOptions.ifl.iord= 4;
      }
-   else
-   {
-     printf("%d. order calc. not supported!-> exit\n", bl->BLOptions.ifl.iord);
-     printf("set iord to 4\n");
-     bl->BLOptions.ifl.iord= 4;
-   }
-   
    /* ende if 3. oder 4. Ordnung */
 #endif
 /*--------------------------------------------------------*/ 
@@ -369,8 +367,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
-	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    {
+	      printf("7 - 4 not ready\n");
+	      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    }
 	   
 #else
 	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
@@ -431,8 +432,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
 		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
+	    {
+	      printf("7 - 4 not ready\n");
 	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    }
 #else
 	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
@@ -784,10 +788,17 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
    double *c, C[330][330];
-   /* for compatibility mapping */
+   /* temporary arrays for compatibility  */
    double wc4[5][5][5][5],   xlc4[5][5][5][5],  ypc14[5][5][5][5]; 
    double zpc14[5][5][5][5], dypc4[5][5][5][5], dzpc4[5][5][5][5];
-   double mir4[6][6];
+   double mat4[70][70];
+   struct mirrortype4 {
+     double a[6][6];
+   } mir4;
+   struct xlenmaptype4 {
+     double xlen1c[5][5][5][5], xlen2c[5][5][5][5];
+   } xlm4;
+
    printf("MakeMapandMatrix: seven order defined\n");
 
 #else
@@ -803,7 +814,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      imodus= 1;   /* source to image zuerst */
      
      if(listpt->MDat.Art==999)
-       {imodus=imodus+1000;};
+       imodus=imodus+1000;
      
 #ifdef SEVEN_ORDER
      /*#ifdef DEBUG*/
@@ -821,7 +832,9 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
      else
        {
-	 mirror7to4(&listpt->mir, &mir4);
+	 printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
+
+	 mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
          
 	 fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 		    &mir4, &listpt->geo, &wc4, &xlc4, 
@@ -842,7 +855,9 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      
      
      if(listpt->MDat.Art==999)
-       {imodus=imodus-1000;};
+       imodus=imodus-1000;
+     else
+       imodus=imodus;  /* dummy */
      
 #ifdef SEVEN_ORDER
      if (bl->BLOptions.REDUCE_maps == 0)
@@ -850,12 +865,27 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		     listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
      else
        {
-	 xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
-		 listpt->dzpc, &bl->BLOptions.ifl.iord);
-	 pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	 printf("debug: MakeMapandMatrix: use reduce maps with seven order- make matrix\n");
+	 map7to4(listpt->ypc1, &ypc14);
+	 map7to4(listpt->zpc1, &zpc14);
+	 map7to4(listpt->dypc, &dypc4);
+	 map7to4(listpt->dzpc, &dzpc4);
+	 map7to4(listpt->wc,   &wc4);
+	 map7to4(listpt->xlc,  &xlc4);
+         mirror7to4(&listpt->mir, &mir4);
+         mat7to4(listpt->M_StoI, &mat4);
+
+	 xxmap70(&mat4, &ypc14, &zpc14, &dypc4, 
+		 &dzpc4, &bl->BLOptions.ifl.iord);
+
+	 pathlen0(&mir4, &listpt->geo, &bl->BLOptions.ifl.iord,
 		  &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-		  listpt->wc, listpt->xlc, listpt->ypc1, 
-		  listpt->zpc1, &listpt->xlm);
+		  &wc4, &xlc4, &ypc14, 
+		  &zpc14, &xlm4);
+
+	 mat4to7(&mat4, listpt->M_StoI);
+	 map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
+	 map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c); 
        }
 #else
      /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
@@ -894,9 +924,19 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 else
-	   fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
-		    &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
+	   {
+	     printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
+	     mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
+	     fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+			&mir4, &listpt->geo, &wc4, &xlc4, 
+			&ypc14, &zpc14, &dypc4, &dzpc4);
+	     map4to7(&wc4,   listpt->wc);
+	     map4to7(&xlc4,  listpt->xlc);
+	     map4to7(&ypc14, listpt->ypc1);
+	     map4to7(&zpc14, listpt->zpc1);
+	     map4to7(&dypc4, listpt->dypc);
+	     map4to7(&dzpc4, listpt->dzpc);
+	   }
 	 
 #else
 	 fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
@@ -913,12 +953,28 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 			 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 	 else
 	   {
-	     xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
-		     listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-	     pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	     printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
+	     map7to4(listpt->ypc1, &ypc14);
+	     map7to4(listpt->zpc1, &zpc14);
+	     map7to4(listpt->dypc, &dypc4);
+	     map7to4(listpt->dzpc, &dzpc4);
+	     map7to4(listpt->wc,   &wc4);
+	     map7to4(listpt->xlc,  &xlc4);
+	     mirror7to4(&listpt->mir, &mir4);
+	     mat7to4(listpt->M_ItoS, &mat4);
+
+	     xxmap70(listpt->M_ItoS, &ypc14, &zpc14, &dypc4, 
+		     &dzpc4, &bl->BLOptions.ifl.iord);
+             
+	     pathlen0(&mir4, &listpt->geo, &bl->BLOptions.ifl.iord,
 		      &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-		      listpt->wc, listpt->xlc, listpt->ypc1, 
-		      listpt->zpc1, &listpt->xlm); 
+		      &wc4, &xlc4, &ypc14, 
+		      &zpc14, &xlm4);
+
+	     mat4to7(&mat4, listpt->M_ItoS);
+	     map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
+	     map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c);
+	     
 	   }
 #else
 	 /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
@@ -2070,6 +2126,11 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     rpole, fipole, small, kellip, Rellip;
   int i, k, l;
   struct mirrortype mirror;
+#ifdef SEVEN_ORDER
+  struct mirrortype4 {
+    double a[6][6];
+  } mir41, mir42;
+#endif
 
 #ifdef DEBUG
   /*  printf("DefMirrorC: called\n");*/
@@ -2121,7 +2182,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* l    */
     case kEOEVLSG:  
-      printf("DefMirrorC: generic toroidal shape ");                 
+      printf("DefMirrorC: generic toroidal shape \n");                 
       if (fabs(rho) > small) 
 	{
 	  dp[2 * l]= 0.5/ rho;                		             /* 0,2 */
@@ -2367,7 +2428,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       if (lREDUCE_maps == 0)
 	misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
       else
-	misali_4(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+	{
+	  printf("Defmirroc, 7order with 4th order misalignment\n");
+	  mirror7to4(&mirror, &mir41);
+          mirror7to4(&mirror, &mir42);
+	  misali_4(&mir41, &mir42, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+	  mirror4to7(&mir42, a);
+	}
 #else
       misali_4(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
 #endif
