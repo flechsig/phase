@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <06 Sep 11 17:03:36 flechsig> 
+dnl   Time-stamp: <07 Sep 11 11:17:05 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -368,8 +368,6 @@ if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
    fi
 else
 dnl add include path to motif headers 
-   echo "FFFFFFFFFFFFFFFFFFFFFFF"${x_includes}"9999999999"
-   
    if test -n "${x_includes}" ; then 
       AC_SUBST([CPPFLAGS],[-I${x_includes}])
    fi
