@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <06 Sep 11 16:21:30 flechsig> 
+c$$$ Time-stamp: <07 Sep 11 16:06:49 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -605,54 +605,38 @@ c******* read matrixfile ************************************
 
 
 c******* write matrixfile *********************************** 
-c	subroutine writematrixfile(fname, xmap70, iord)  
-        subroutine writematrixfile(xmap70)  
+        subroutine writematrixfile(xmap70, fname, header)  
 c************************************************************    
         implicit none
 
-        character*255  	fname 
+        character*(*) fname, header 
         real*8 xmap70
         integer i, j, idim, iord
 #ifdef SEVEN_ORDER
 	dimension xmap70(330,330)
         idim=330
-	write(*,*)'write matrix to file SEVEN_ORDER'
+	write(*,*)'writematrixfile: write matrix [330][330] to file >>', fname, '<<' 
 #else
         dimension xmap70(70,70)
         idim=70
-        write(*,*)'write matrix to file no SEVEN_ORDER'
+        write(*,*)'writematrixfile: write matrix [70][70] to file >>', fname, '<<'
 #endif        
+c	write(*,*)'writematrixfile: write header>>', header , '<<'
 
-	fname='matrix.mat'
-
-#ifdef DEBUG
-	write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEBUG ON'	
-#else
-	write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEBUG OFF'
-#endif
-
-
-
-c        open(unit=10,file=fname,status='new',err=557)
-	 write(*,*)'write matrix to file ', fname
-c	 open(unit=10,file=fname,status='new',err=557)
-	 open(unit=10,file='matrix.mat',status='unknown',err=557)
+	open(unit=10,file=fname,status='unknown',err=557)
+	write(10,*)header
 	do i=1,idim
 	   do j=1,idim
 	      write(10,*)i,j,xmap70(i,j)
 	   enddo
 	enddo
 	close(10)     
-
+	
         return
  557    write(*,*)'writematrixfile: error open ', fname
         return
         end
 c******* write matrixfile ************************************ 
-
-
-
-
 
 c****************************************************************
  	subroutine readintersection(fname,wc,xlc,iord) 
