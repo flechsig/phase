@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Sep 11 12:15:56 flechsig>  */
+/*   Time-stamp: <07 Sep 11 12:17:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -908,8 +908,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 #endif
      
 #ifdef DEBUG   
-     char *fname= "matrixi.mat";
-     writematrixfile(fname, listpt->M_StoI);
+     /*    char *fname= "matrixi.mat";
+	   writematrixfile(fname, (double *)listpt->M_StoI);*/
      printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
 	    bl->position);  
 #endif

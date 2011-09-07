@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <06 Sep 11 15:39:40 flechsig>  */
+/*   Time-stamp: <07 Sep 11 16:01:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -832,7 +832,9 @@ void
   WriteBLFile(char *, struct BeamlineType *),
   WriteMKos(struct mirrortype *, char *),
   writemapc(char *, char *, int, double *, double *, double *, double *,
-	    double *, double *, double *, double *),  
+	    double *, double *, double *, double *),
+/* writematrixfile(char *, int, char *, int, double *),  */
+  writematrixfile(double *, char *, char *, int, int),
   WritePsd(char *, struct PSDType *, int, int),     
   
   SetIndexField(int *, int,...);

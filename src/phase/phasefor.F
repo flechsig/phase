@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <07 Sep 11 16:06:49 flechsig> 
+c$$$ Time-stamp: <07 Sep 11 16:32:33 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -622,6 +622,7 @@ c************************************************************
         write(*,*)'writematrixfile: write matrix [70][70] to file >>', fname, '<<'
 #endif        
 c	write(*,*)'writematrixfile: write header>>', header , '<<'
+	write(*,*)''
 
 	open(unit=10,file=fname,status='unknown',err=557)
 	write(10,*)header
@@ -2341,10 +2342,10 @@ c copys a SEVEN_ORDER map array into a 4th order one
         integer i, j, k, l
 	real *8 m4,m7
 	
-	do i=0,5
-	   do j=0,5
-	      do k=0,5
-		 do l=0,5
+	do i=0,4
+	   do j=0,4
+	      do k=0,4
+		 do l=0,4
 		    m4(i,j,k,l)=m7(i,j,k,l)
 		 enddo
 	      enddo
