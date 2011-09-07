@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <05 Sep 11 14:44:36 flechsig> 
+dnl   Time-stamp: <06 Sep 11 17:03:36 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -197,7 +197,7 @@ AC_ARG_WITH([qt],
     AC_MSG_NOTICE((1) search for QT lib libQtGui.so on /usr/local)
     dnl to avoid permission denied measages
     qt=`find /usr/local -name libQtGui.so -print 2>/dev/null | sed -e 's|/lib/libQtGui.so||'`
-    if test ${qt}; then
+    if test -n "${qt}"; then
         AC_MSG_NOTICE((1) we found libQtGui.so under ${qt} - OK)
 	dnl check if we find the libQtGui.so there 
 	AC_SUBST(QT, [${qt}])
@@ -205,7 +205,7 @@ AC_ARG_WITH([qt],
       AC_MSG_NOTICE((1) did not found libQtGui.so /usr/local)
       AC_MSG_NOTICE((2) search for libQtGui.so on /usr/lib)
       qt=`find /usr/lib -name libQtGui.so -print 2>/dev/null | sed -e 's|/lib/libQtGui.so||'`
-      if test ${qt}; then
+      if test -n "${qt}"; then
          AC_MSG_NOTICE([(2) we found libQtGui.so under ${qt} - OK])
          AC_SUBST(QT, [${qt}])
       else
@@ -233,7 +233,7 @@ AC_ARG_WITH([qwt],
     AC_MSG_NOTICE((1) search for QWT lib libqwt.so in /usr/local/qwt)
     dnl to avoid permission denied measages
     qwt=`find /usr/local -name libqwt.so -print 2>/dev/null | sed -e 's|/lib/libqwt.so||'`
-    if test ${qwt}; then
+    if test -n "${qwt}"; then
         AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
 	dnl check if we find the libqwt.so there 
 	AC_SUBST(QWT, [${qwt}])
@@ -242,7 +242,7 @@ AC_ARG_WITH([qwt],
       AC_MSG_NOTICE((1) did not found libqwt.so /usr/local)
       AC_MSG_NOTICE((2) search for libqwt.so on /usr/lib)
       qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | sed -e 's|/lib/libqwt.so||'`
-      if test ${qwt}; then
+      if test -n "${qwt}"; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
          AC_SUBST(QWT, [${qwt}])
          AC_SUBST(QWTI, [${qwt}])
@@ -251,7 +251,7 @@ AC_ARG_WITH([qwt],
       fi
       AC_MSG_NOTICE((2) search for qwt_plot.h on /usr/include)	 
       qwti=`find /usr/include -name qwt_plot.h -print 2>/dev/null | sed -e 's|/qwt_plot.h||'`
-      if test ${qwti}; then
+      if test -n "${qwti}"; then
          AC_MSG_NOTICE([(2) we found qwt_plot.h under ${qwti} - OK])
          AC_SUBST(QWTI, [${qwti}])
       else
@@ -368,7 +368,9 @@ if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
    fi
 else
 dnl add include path to motif headers 
-   if test -n ${x_includes} ; then 
+   echo "FFFFFFFFFFFFFFFFFFFFFFF"${x_includes}"9999999999"
+   
+   if test -n "${x_includes}" ; then 
       AC_SUBST([CPPFLAGS],[-I${x_includes}])
    fi
 fi
@@ -435,6 +437,7 @@ echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "qt:                      : ${qt}"
 echo "qwt:                     : ${qwt}"
+echo "CPPFLAGS:                : ${CPPFLAGS}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <05 Sep 11 17:04:03 flechsig>  */
+/*   Time-stamp: <06 Sep 11 15:39:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -741,6 +741,7 @@ struct BeamlineType Beamline;
   #define fgmapidp_4     fgmapidp_4_
   #define intersection   intersection_
   #define misali_4       misali_4_
+  #define writematrixfile writematrixfile_
   #define xxmap70        xxmap70_ 
 
 /*  #define already_expired already_expired_ */

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <05 Sep 11 17:02:18 flechsig> 
+c$$$ Time-stamp: <06 Sep 11 16:21:30 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -573,31 +573,21 @@ c--------------------------------------------------
 c************ end pathlen1 ********************************                          
                           
 c******* read matrixfile ************************************ 
-	subroutine readmatrixfile(fname,xmap70,iord)  
-c UF 6.6.2011 xmap70 ist ein pointer auf MAP70TYPE d.h. hat unterschiedliche dimension bei seven order
-c------------------------------------------------------------
-c       located in fgmap3dpp.for,phasefor.for      
+	subroutine readmatrixfile(fname, xmap70, iord)  
 c************************************************************    
         implicit none
 
         character*255  	fname
         real*8 xmap70
-        integer i,j,idim,ii,jj,iord
+        integer i, j, idim, ii, jj, iord
+
 #ifdef SEVEN_ORDER
 	dimension xmap70(330,330)
+        idim=330
 #else
         dimension xmap70(70,70)
+        idim=70
 #endif        
-c UF 6.6.2011 andere ordnungen sollten auch noch beruecksichtigt werden
-        if(iord.eq.4)then
-          idim=70
-        else 
-	   if (iord.eq.3)then
-	      idim=35
-	   else
-              idim=330
-	   endif
-	endif
 
         open(unit=10,file=fname,status='old',err=556) 
 	do i=1,idim
@@ -612,6 +602,57 @@ c UF 6.6.2011 andere ordnungen sollten auch noch beruecksichtigt werden
         return
         end
 c******* read matrixfile ************************************ 
+
+
+c******* write matrixfile *********************************** 
+c	subroutine writematrixfile(fname, xmap70, iord)  
+        subroutine writematrixfile(xmap70)  
+c************************************************************    
+        implicit none
+
+        character*255  	fname 
+        real*8 xmap70
+        integer i, j, idim, iord
+#ifdef SEVEN_ORDER
+	dimension xmap70(330,330)
+        idim=330
+	write(*,*)'write matrix to file SEVEN_ORDER'
+#else
+        dimension xmap70(70,70)
+        idim=70
+        write(*,*)'write matrix to file no SEVEN_ORDER'
+#endif        
+
+	fname='matrix.mat'
+
+#ifdef DEBUG
+	write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEBUG ON'	
+#else
+	write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEBUG OFF'
+#endif
+
+
+
+c        open(unit=10,file=fname,status='new',err=557)
+	 write(*,*)'write matrix to file ', fname
+c	 open(unit=10,file=fname,status='new',err=557)
+	 open(unit=10,file='matrix.mat',status='unknown',err=557)
+	do i=1,idim
+	   do j=1,idim
+	      write(10,*)i,j,xmap70(i,j)
+	   enddo
+	enddo
+	close(10)     
+
+        return
+ 557    write(*,*)'writematrixfile: error open ', fname
+        return
+        end
+c******* write matrixfile ************************************ 
+
+
+
+
 
 c****************************************************************
  	subroutine readintersection(fname,wc,xlc,iord) 
