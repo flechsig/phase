@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Sep 11 15:52:15 flechsig>  */
+/*   Time-stamp: <07 Sep 11 12:15:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -72,6 +72,12 @@ void BuildBeamline(struct BeamlineType *bl)
        printf("set iord to 7\n");
        bl->BLOptions.ifl.iord= 7;
     }
+   if ((bl->BLOptions.ifl.iord > 4) && bl->BLOptions.REDUCE_maps)
+     {
+       printf("%d. order calc. not supported with REDUCE maps!\n", bl->BLOptions.ifl.iord);
+       printf("set iord to 4\n");
+       bl->BLOptions.ifl.iord= 4;
+     }
 #else 
    if (bl->BLOptions.ifl.iord > 4) 
      {
@@ -902,7 +908,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 #endif
      
 #ifdef DEBUG   
-     writematrixfile(listpt->M_StoI);
+     char *fname= "matrixi.mat";
+     writematrixfile(fname, listpt->M_StoI);
      printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
 	    bl->position);  
 #endif
