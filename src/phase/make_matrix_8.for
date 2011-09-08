@@ -14,7 +14,7 @@ c------------------------------------------------------
      &            dypca(0:7,0:7,0:7,0:7),
      &            dzpca(0:7,0:7,0:7,0:7)
 
-	dimension xmap7(1:330,1:330)
+	dimension xmap7t(1:330,1:330),xmap7(1:330,1:330)
 
 	dimension cc(0:7,0:7,0:7,0:7,330)
 	dimension cc0(0:7,0:7,0:7,0:7)
@@ -128,9 +128,9 @@ c---------- loop over dz
 	 enddo		! loop over k
 
 c---------------- replace first line
-	xmap7(1,1)=1.d0
+	xmap7t(1,1)=1.d0
 	do j=2,idim
-	 xmap7(1,j)=0.d0
+	 xmap7t(1,j)=0.d0
 	enddo
 
 c---------------- fill other lines
@@ -149,7 +149,7 @@ c---------------- fill other lines
           do m1=0,iord-k1-l1
 	    do n1=0,iord-k1-l1-m1
           icol=icol+1	   
-	    xmap7(iline,icol)=cc(k1,l1,m1,n1,iline)
+	    xmap7t(iline,icol)=cc(k1,l1,m1,n1,iline)
           enddo
 	    enddo
 	    enddo
@@ -160,6 +160,12 @@ c---------------- fill other lines
 	  enddo
 	  enddo
 	  enddo
+
+	do i=1,idim
+	do j=1,idim
+	  xmap7(i,j)=xmap7t(j,i)
+	enddo
+	enddo
 
 	return
 	end
