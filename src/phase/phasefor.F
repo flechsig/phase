@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <09 Sep 11 16:45:20 flechsig> 
+c$$$ Time-stamp: <09 Sep 11 17:14:11 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2120,8 +2120,8 @@ c---------- lh deflection
 	write(*,*)'create_hormap: made matrix of dimension: ',idim
 
 
-#ifdef DEBUGX
-	idim=70
+#ifdef DEBUG
+	
 c------------ write transformation matrix to file or keep it in memory
 	if(idefl.eq.1)then
 	   write(*,*)' writing transformation matrix to mapn.OUT1'
