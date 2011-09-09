@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <07 Sep 11 12:00:23 flechsig> 
+//  Time-stamp: <09 Sep 11 16:29:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -26,7 +26,7 @@
 //#include "plot.h"
 #include "phaseqt.h"
 
-using namespace std;   // UF weiss nicht genau was das ist
+using namespace std;   // fuer cout z.B.
 
 class MyZoomer: public QwtPlotZoomer
 {

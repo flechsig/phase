@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <01 Sep 11 16:19:17 flechsig> 
+#  Time-stamp: <09 Sep 11 15:25:58 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -13,7 +13,7 @@
 bin_PROGRAMS  = phaseqt 
 phaseqt_SOURCES = \
 	configwindow.cpp configwindow.h \
-	main.cpp mainwindow.cpp mainwindow.h \
+	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
 	optiinput.cpp optiinput.h  \
 	phaseqt.cpp phaseqt.h \
 	plot.cpp plot.h \

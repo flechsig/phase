@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.h */
 /*  Date      : <16 Aug 11 12:20:20 flechsig>  */
-/*  Time-stamp: <2011-09-02 22:11:14 flechsig>  */
+/*  Time-stamp: <09 Sep 11 15:16:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -15,7 +15,7 @@
 
 #include "phaseqt.h"
 
-class ConfigWindow : public QWidget, public QtPhase
+class ConfigWindow : public QWidget
 {
     Q_OBJECT
 
@@ -28,12 +28,12 @@ private slots:
     void quitSlot();
     void selectSlot();
 private:
-    QPushButton *configApplyB;
-    QPushButton *configQuitB;
-    QListWidget *fileList;
+    QPushButton      *configApplyB;
+    QPushButton      *configQuitB;
+    QListWidget      *fileList;
     struct PHASEset  *myparent;
-    void fillList();
-    void mkRow(char *, const char *, const char *);
+    void             fillList();
+    void             mkRow(char *, const char *, const char *);
 };
 #endif
 // end
