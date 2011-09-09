@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Sep 11 16:10:07 flechsig> 
+//  Time-stamp: <09 Sep 11 16:59:28 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1098,7 +1098,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
   //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
 #ifdef DEBUG
-  printf("debug: parameterUpdate: pos: %d\n", pos);
+  printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
 #endif
 
   scanned= 1;      // set a default 
@@ -1445,6 +1445,7 @@ case 58:
       if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
       if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
       sprintf(buffer, "%d \t: %s", op->REDUCE_maps, inhalt[pos]);
+      this->hormapsloaded= 0;
       break;
 
 #ifdef XXXTEMPLATE
