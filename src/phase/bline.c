@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Sep 11 12:17:37 flechsig>  */
+/*   Time-stamp: <09 Sep 11 17:03:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1013,16 +1013,26 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 #ifdef SEVEN_ORDER
 	 mdim= 330;
 #else
-	 mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+	 mdim= 70;
 #endif
 	 printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
 	 msiz= mdim * mdim * sizeof(double);
 	 
 	 if (bl->hormapsloaded != 1)
            {
-#ifdef SEVEN_ORDER_XXXX
-	     printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 
-	     MakeHorMaps(bl);     /* UF 18.8.11 does not work so far */
+#ifdef SEVEN_ORDER
+	     if (bl->BLOptions.REDUCE_maps == 0)
+	       {
+		 printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 
+		 MakeHorMaps(bl);     /* UF 18.8.11 does not work so far */
+	       } else
+	       {
+		 printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
+		 printf("!!!!!!!!!! fails for iord > 4\n");
+		 LoadHorMaps(bl, mdim); 
+
+	       }
+
 #else
 	     printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
 	     printf("!!!!!!!!!! fails for iord > 4\n");
