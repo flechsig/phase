@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <2011-09-02 22:14:50 flechsig>  */
+/*  Time-stamp: <05 Sep 11 09:43:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -13,6 +13,7 @@
 
 #include <qwt_plot.h>
 #include <qwt_plot_spectrogram.h>
+#include <qwt_plot_zoomer.h>
 
 #define BINS2 101
 
@@ -66,7 +67,7 @@ private:
     QPen   *pen_ptr;
     void   Beauty(double *, double *);
     struct BeamlineType *bt;
-    
+    //QwtPlotZoomer *zoomer;
 };
 #endif
 // end

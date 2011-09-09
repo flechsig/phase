@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2011-09-02 22:14:27 flechsig> 
+//  Time-stamp: <07 Sep 11 12:00:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -26,7 +26,7 @@
 //#include "plot.h"
 #include "phaseqt.h"
 
-using namespace std;   // UF weiss nicht was das ist
+using namespace std;   // UF weiss nicht genau was das ist
 
 class MyZoomer: public QwtPlotZoomer
 {
@@ -48,6 +48,7 @@ public:
     }
 };
 
+// UF the original data
 class SpectrogramData: public QwtRasterData
 {
 public:
@@ -69,6 +70,8 @@ public:
     }
 };
 
+
+// UF my copy with slightly changed patrameters
 class SpectrogramData2: public QwtRasterData
 {
 public:
@@ -168,7 +171,7 @@ Plot::Plot(QWidget *parent):
   // RightButton: zoom out by 1
   // Ctrl+RighButton: zoom out to full size
   
-  QwtPlotZoomer* zoomer = new MyZoomer(canvas());
+  QwtPlotZoomer *zoomer = new MyZoomer(canvas());
   zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
 			  Qt::RightButton, Qt::ControlModifier);
   zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
@@ -189,6 +192,7 @@ Plot::Plot(QWidget *parent):
   zoomer->setRubberBandPen(c);
   zoomer->setTrackerPen(c);
   this->fwhmon= 1;
+  //  this->p_zoomer= zoomer;
 } // end constructor
 
 // plotstyle
@@ -219,7 +223,7 @@ void Plot::setphaseData(const char *datatype)
   
   d_spectrogram->setData(new SpectrogramDataPhase(this));
   replot();
-}
+} // setphaseData
 
 void Plot::setdefaultData()
 {
@@ -227,7 +231,7 @@ void Plot::setdefaultData()
   
   d_spectrogram->setData(new SpectrogramData());
   replot();
-}
+} // setdefaultData
 
 void Plot::setdefaultData2()
 {
@@ -236,7 +240,7 @@ void Plot::setdefaultData2()
   QwtRasterData *data = new SpectrogramData2();
   d_spectrogram->setData(data);
   replot();
-}
+} // setdefaultData2
 
 #ifndef QT_NO_PRINTER
 
@@ -268,7 +272,11 @@ void Plot::autoScale(struct RayType *rays, int raynumber)
   struct RayType *rp;
 
   rp= rays;
-  printf("raynumber: %d\n", raynumber);
+
+#ifdef DEBUG
+  printf("debug: autoScale: raynumber: %d\n", raynumber);
+#endif
+
   if (rays)
     {
       ymin  = ymax  = rp->y;
@@ -306,11 +314,11 @@ void Plot::autoScale(struct RayType *rays, int raynumber)
   Beauty(&dzmin,  &dzmax);
   Beauty(&phimin, &phimax);
   //printf("autscale: %f, %f\n", ymin, ymax);
-}
+} //autoScale
 
+// helper function for autoscale
+// add 5% border
 void Plot::Beauty(double *mi, double *ma) 
-/* setzt den min, max in Abh. von dx 	*/
-/* Uwe 29.7.96 				*/
 {
    double delta;
 
@@ -358,8 +366,6 @@ int Plot::SetUpArrays(int n){
 
 void Plot::SetData(int n, double* data_x, double *data_y)
 {
-
-  
   n = SetUpArrays(n);
 
   ndata=n;
@@ -372,9 +378,9 @@ void Plot::SetData(int n, double* data_x, double *data_y)
   }
 
   //setRawData(x,y,ndata);
-}
+} // SetData
 
-// fills a 2d histogram
+// fills a 2d histogram with ray data
 void Plot::hfill(struct RayType *rays, int points)
 {
   int i;
@@ -384,7 +390,7 @@ void Plot::hfill(struct RayType *rays, int points)
   rp= rays;
 
   for (ix=0; ix< BINS2; ix++)
-    for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]= 0.0;
+    for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]= 0.0;    // set array data to 0.0
 
   if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
   if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
@@ -394,18 +400,20 @@ void Plot::hfill(struct RayType *rays, int points)
     {
       ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
       iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
-      if ((ix < 100) && (iy < 100)) h2arr[ix][iy]+= 1;
-      h2max= max(h2max, h2arr[ix][iy]);
+      if ((ix < 100) && (iy < 100)) h2arr[ix][iy]+= 1;          // add one hit
+      h2max= max(h2max, h2arr[ix][iy]);                         // save maximum
     }
 
   // scale maximum to 10
   if (h2max > 0.0)
     for (ix=0; ix< BINS2; ix++)
       for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]*= 10.0/h2max;
+#ifdef DEBUG
+  printf("debug: hfill end:  hmax  %f\n", h2max);
+#endif
+} // hfill
 
-  printf("hfill:end  hmax  %f\n", h2max);
-}
-
+// calculate statistics of an array of rays
 void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor)
 {
   int i;

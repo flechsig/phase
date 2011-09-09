@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-09-02 22:18:01 flechsig> 
+//  Time-stamp: <07 Sep 11 17:33:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -51,11 +51,19 @@ MainWindow::MainWindow()
 // slot
 void MainWindow::about()
 {
+#ifdef SEVEN_ORDER
+  const char *onoff="on";
+#else
+  const char *onoff="off";
+#endif
+
    QMessageBox::about(this, tr("About PhaseQt"),
             tr("<b>phaseqt</b> is the new graphical user interface for the software package <b>phase</b>-"
                "the wave front propagation and ray tracing code developed by "
                "<center><a href=mailto:Johannes.Bahrdt@helmholtz-berlin.de>Johannes Bahrdt</a>, <a href=mailto:uwe.flechsig&#64;psi.&#99;&#104;>Uwe Flechsig</a> and others. </center><hr>"
-               "version: '%1', configured: '%2' ").arg(VERSION).arg(CONFIGURED));
+               "<center>phaseqt version: '%1',<br>"
+               "configured: '%2',<br>"
+               "SEVEN_ORDER: '%3'</center>").arg(VERSION).arg(CONFIGURED).arg(onoff));
 } // about
 
 // UF slot
@@ -147,8 +155,8 @@ void MainWindow::activateProc(const QString &action)
       if ((this->position <= this->elementzahl) && (this->position != 0))
 	{
 	  printf("write map of element %d to file\n", this->position); 
-	  sprintf(header, "beamline: %s, map of element %d, iord: %d", 
-		    this->beamlinename, this->position, this->BLOptions.ifl.iord);
+	  sprintf(header, "beamline: %s, map of element %d, iord: %d%d", 
+		  this->beamlinename, this->position, this->BLOptions.ifl.iord,0);
 	  sprintf(buffer, "%s-%d", this->mapname, this->position);
 	  /* casting 15.12.99 ist noch nicht OK */
 	  writemapc(buffer, header, this->BLOptions.ifl.iord, 
@@ -165,10 +173,10 @@ void MainWindow::activateProc(const QString &action)
       //  else wir schreiben hier immer beides
 	{ 
 	  printf("write map of beamline to file\n"); 
-	  sprintf(buffer, "beamline: %s, map of beamline, iord: %d\n", 
-		    this->beamlinename, this->BLOptions.ifl.iord);
+	  sprintf(header, "beamline: %s, map of beamline, iord: %d", 
+		  this->beamlinename, this->BLOptions.ifl.iord);
 	  sprintf(buffer, "%s-0", this->mapname);
-	  writemapc(buffer, header, this->BLOptions.ifl.iord, 
+	  writemapc(buffer,  header,  this->BLOptions.ifl.iord, 
 		    (double *) this->ypc1, (double *) this->zpc1, 
 		    (double *) this->dypc, (double *) this->dzpc,
 		    (double *) this->wc,   (double *) this->xlc, 
@@ -176,6 +184,31 @@ void MainWindow::activateProc(const QString &action)
 		    (double *) this->xlm.xlen2c);
 	}
     } 
+
+  if (!action.compare("writematAct")) 
+    { 
+      printf("writematAct button pressed\n");
+      if ((this->position <= this->elementzahl) && (this->position != 0))
+	{
+	  printf("write matrix of element %d to file\n", this->position); 
+	  sprintf(header, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
+		  this->beamlinename, this->position, this->BLOptions.ifl.iord,
+		  this->BLOptions.REDUCE_maps);
+	  sprintf(buffer, "%s-%d\x00", this->matrixname, this->position);
+          writematrixfile((double *)this->ElementList[this->position- 1].M_StoI, buffer, header, 
+			  strlen(buffer), strlen(header)); // add hidden length parameter 
+	} 
+      
+      //  else wir schreiben hier immer beides
+	{ 
+	  printf("activateProc: write matrix of beamline to file\n"); 
+	  sprintf(header, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
+		  this->beamlinename, this->BLOptions.ifl.iord, this->BLOptions.REDUCE_maps);
+	  sprintf(buffer, "%s-0\x00", this->matrixname);
+	  writematrixfile((double *)this->M_StoI, buffer, header, strlen(buffer), strlen(header));
+	}
+    } 
+
   if (!action.compare("writecoeffAct")) 
     { 
       printf("writecoeffmapAct button pressed\n"); 
@@ -593,6 +626,12 @@ void MainWindow::grapplyslot()
   printf("debug: grapplyslot called\n");
 #endif
 
+  if (!d_plot)
+    {
+      printf("debug: grapplyslot: d_plot not defined\n");
+      return;
+    }
+
   sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
   sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
   sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
@@ -633,7 +672,9 @@ void MainWindow::grapplyslot()
       d_plot->setTitle(tr("PhaseQt: example 2"));
       d_plot->setdefaultData2();
     }
-  
+#ifdef DEBUG
+  printf("debug: grapplyslot end with replot\n");
+#endif
   d_plot->replot();
 } // grapply
 
@@ -952,6 +993,10 @@ void MainWindow::rright4slot()
 // slot
 void MainWindow::print()
 {
+#ifdef DEBUG
+  std::cout << "debug: MainWindow::print called \n";
+#endif
+
 #ifndef QT_NO_PRINTDIALOG
   //QTextDocument *document = textEdit->document();
     QPrinter printer;
@@ -1398,6 +1443,11 @@ void MainWindow::createActions()
     signalMapper->setMapping(writemapAct, QString("writemapAct"));
     connect(writemapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
+    writematAct = new QAction(tr("&Write Matrix"), this);
+    writematAct->setStatusTip(tr("Write file with transfer matrix"));
+    signalMapper->setMapping(writematAct, QString("writematAct"));
+    connect(writematAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
     writecoeffAct = new QAction(tr("Write Mirr&or Coefficients"), this);
     writecoeffAct->setStatusTip(tr("Write file with mirror coefficients"));
     signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
@@ -1772,6 +1822,7 @@ void MainWindow::createMenus()
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
     cmdMenu->addAction(writeRTresultAct);
     cmdMenu->addAction(writemapAct);
+    cmdMenu->addAction(writematAct);
     cmdMenu->addAction(writecoeffAct);
     
     viewMenu = menuBar()->addMenu(tr("&View"));
@@ -2340,6 +2391,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
     "(so4.nimage)", // 60
     "(so4.deltatime)",
     "(so4.iconj)",
+    "(REDUCE_maps) use old REDUCE maps",
   }; /* ende der Liste */ 
 
   struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
@@ -2688,6 +2740,12 @@ case 58:
       if (!init) scanned= sscanf(text, "%d", &this->src.so4.iconj);
       if ((scanned == EOF) || (scanned == 0)) this->src.so4.iconj= 0;   // default
       sprintf(buffer, "%d \t: %s", this->src.so4.iconj, inhalt[pos]);
+      break;
+
+    case 63:
+      if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
+      if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
+      sprintf(buffer, "%d \t: %s", op->REDUCE_maps, inhalt[pos]);
       break;
 
 #ifdef XXXTEMPLATE

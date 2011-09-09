@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2011-09-02 21:57:01 flechsig>  */
+/*  Time-stamp: <07 Sep 11 17:30:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 #include "plot.h"
 

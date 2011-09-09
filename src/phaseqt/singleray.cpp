@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <28 Jul 11 16:11:19 flechsig> 
+//  Time-stamp: <02 Sep 11 15:48:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -180,13 +180,10 @@ void SingleRay:: RayTraceSingleRayCpp(struct BeamlineType *bl)
 	}
       else
 	{
-#ifdef SEVEN_ORDER
-	  intersection_8(&ds->mir, ds->wc, ds->xlc, Raysin, 
-			 &uu, &ww, &ll, &bl->BLOptions.ifl.iord);
-#else
+
           intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 		       &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-#endif
+
 	}
       printf("  intersection: u= %.4g (mum), w= %.4g (mm), l= %.4g (mm)\n", 
 	     uu* 1e3 , ww, ll);
