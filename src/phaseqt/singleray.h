@@ -1,12 +1,16 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/singleray.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <29 Jul 11 14:33:36 flechsig>  */
+/*  Time-stamp: <09 Sep 11 14:59:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
 /*  $Date$ */
 /*  $Revision$  */
 /*  $Author$  */
+
+//
+// this SingleRay class defines the SingleRay widget
+//
 
 #ifndef SINGLERAY_H
 #define SINGLERAY_H
@@ -15,7 +19,7 @@
 
 #include "phaseqt.h"
 
-class SingleRay : public QWidget, public QtPhase   //, public MainWindow //public QWidget, public QtPhase */
+class SingleRay : public QWidget
 {
     Q_OBJECT
     
@@ -23,8 +27,8 @@ class SingleRay : public QWidget, public QtPhase   //, public MainWindow //publi
 
 public:
     QWidget     *singleRayBox;
-    SingleRay(struct BeamlineType *);
-    //    ~SingleRay(){close();};
+    SingleRay(struct BeamlineType *, QWidget *);
+    ~SingleRay();
 
 private slots:
     void defaultSlot();
@@ -52,6 +56,6 @@ private:
     QPushButton *sourceQuitB;
     struct BeamlineType  *myparent;
     void        RayTraceSingleRayCpp(struct BeamlineType *);
-    
+       
 };
 #endif
