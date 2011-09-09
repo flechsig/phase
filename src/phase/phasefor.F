@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <07 Sep 11 16:32:33 flechsig> 
+c$$$ Time-stamp: <09 Sep 11 16:45:20 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2057,6 +2057,7 @@ c-------------------------------------------------------------------------------
 c aus create_hor_defl_file.for von JB
 	subroutine create_hormap(xmap7, iord, idefl)
 c UF 12.7.2011 create subroutine
+c UF we create the matrix for maximum iord
 c-----------------------------------------------------------------------------------
 	implicit none
 	integer iord, idefl, i, j, k, l, idim
@@ -2068,13 +2069,14 @@ c-------------------------------------------------------------------------------
      &            dypc(0:7,0:7,0:7,0:7),
      &            dzpc(0:7,0:7,0:7,0:7),
      &            xmap7(330,330)
+	iord= 7
 #else
 	dimension ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4),
      &            xmap7(70,70)
-
+	iord=4
 #endif
        	do i=0,iord
 	   do j=0,iord
@@ -2118,7 +2120,7 @@ c---------- lh deflection
 	write(*,*)'create_hormap: made matrix of dimension: ',idim
 
 
-#ifdef DEBUG
+#ifdef DEBUGX
 	idim=70
 c------------ write transformation matrix to file or keep it in memory
 	if(idefl.eq.1)then
