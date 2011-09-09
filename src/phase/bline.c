@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 Sep 11 17:03:59 flechsig>  */
+/*   Time-stamp: <09 Sep 11 17:07:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1030,7 +1030,6 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		 printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
 		 printf("!!!!!!!!!! fails for iord > 4\n");
 		 LoadHorMaps(bl, mdim); 
-
 	       }
 
 #else
