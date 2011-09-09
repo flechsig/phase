@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Sep 11 15:24:46 flechsig> 
+//  Time-stamp: <09 Sep 11 16:53:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -884,7 +884,9 @@ void MainWindow::openBeamline()
 void MainWindow::parameterUpdateSlot()
 {
   unsigned int i;
-  printf("parameterUpdateSlot called\n");
+#ifdef DEBUG
+  printf("debug: parameterUpdateSlot called, file: %s\n", __FILE__);
+#endif
   parameterUpdate(parameterList->currentRow(), parameterE->text().toAscii().data(), 0);
   this->beamlineOK &= ~mapOK;
   this->beamlineOK &= ~resultOK;
