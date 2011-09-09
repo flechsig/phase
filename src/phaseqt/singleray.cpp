@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <02 Sep 11 15:48:48 flechsig> 
+//  Time-stamp: <09 Sep 11 15:08:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -8,12 +8,15 @@
 //  $Revision$ 
 //  $Author$ 
 
+//
+// implementation of the SingleRay class (SingleRay widget)
+//
+
 #include <QtGui>
 #include "singleray.h"
 
 // constructor
-SingleRay::SingleRay(struct BeamlineType *parent)
-//SingleRay::SingleRay()
+SingleRay::SingleRay(struct BeamlineType *parent, QWidget *pw)
 {
   singleRayBox = new QWidget();
 
@@ -50,11 +53,11 @@ SingleRay::SingleRay(struct BeamlineType *parent)
   sourceParsLayout->addWidget(S8Label, 2,2);
   sourceParsLayout->addWidget(S9Label, 3,2);
   sourceParsLayout->addWidget(S10Label,4,2);
-  sourceParsLayout->addWidget(S1E,0,1);
-  sourceParsLayout->addWidget(S2E,1,1);
-  sourceParsLayout->addWidget(S3E,2,1);
-  sourceParsLayout->addWidget(S4E,3,1);
-  sourceParsLayout->addWidget(S5E,4,1);
+  sourceParsLayout->addWidget(S1E,     0,1);
+  sourceParsLayout->addWidget(S2E,     1,1);
+  sourceParsLayout->addWidget(S3E,     2,1);
+  sourceParsLayout->addWidget(S4E,     3,1);
+  sourceParsLayout->addWidget(S5E,     4,1);
   sourceParsLayout->addWidget(sourceDefaultB, 0, 3);
   sourceParsLayout->addWidget(sourceApplyB,   1, 3);
   sourceParsLayout->addWidget(sourceQuitB,    4, 3);
@@ -67,11 +70,24 @@ SingleRay::SingleRay(struct BeamlineType *parent)
   connect(sourceApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
   //connect(sourceQuitB,    SIGNAL(clicked()), this,  SLOT(close()));
   connect(sourceQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
+  // does not work singleRayBox->setAttribute( Qt::WA_DeleteOnClose, true );              // delete on close
   singleRayBox->show();
   this->myparent= parent;
   this->defaultSlot();   // initialize fields with defaults
-  printf("SingleRay: constructor called\n");
-}
+
+#ifdef DEBUG
+  printf("debug: SingleRay: constructor called, file: %s, line: %d\n", __FILE__,  __LINE__);
+#endif
+} // constructor
+
+// destructor
+SingleRay::~SingleRay()
+{
+#ifdef DEBUG
+  printf("debug: SingleRay destructor called, file: %s, line: %d\n", __FILE__, __LINE__);
+#endif
+} // destructor
+
 
 void SingleRay::applySlot()
 {
@@ -121,11 +137,10 @@ void SingleRay::defaultSlot()
   S5E->setText(QString(tr("0.0")));
 } // end defaultSlot
 
-
 void SingleRay::quitSlot()
 {
-  // printf("quitSlot\n");
-  this->singleRayBox->close();
+  printf("quitSlot called\n");
+  singleRayBox->close();
 } // quitSlot
 
 // reimplemented from rtrace.c
@@ -257,7 +272,7 @@ void SingleRay:: RayTraceSingleRayCpp(struct BeamlineType *bl)
 		 slopelen, bl->BLOptions.lambda);       
 #endif		
 	  memcpy(&Tmpsource, &Tmpresult, sizeof(struct RayType));
-	  memcpy(&rayout, &Tmpresult, sizeof(struct RayType)); 
+	  memcpy(&rayout,    &Tmpresult, sizeof(struct RayType)); 
 	  elcounter++;
 	} // end else
     } // end elements
