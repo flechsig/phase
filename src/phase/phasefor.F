@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <14 Sep 11 12:08:53 flechsig> 
+c$$$ Time-stamp: <14 Sep 11 12:11:32 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2060,7 +2060,7 @@ c UF 12.7.2011 create subroutine
 c UF we create the matrix for maximum iord
 c-----------------------------------------------------------------------------------
 	implicit none
-	integer iord, idefl, i, j, k, l, idim, iordmax
+	integer iord, idefl, i, j, k, l, idim
 	
         real *8 ypc1, zpc1, dypc, dzpc, xmap7
 #ifdef SEVEN_ORDER
@@ -2069,20 +2069,20 @@ c-------------------------------------------------------------------------------
      &            dypc(0:7,0:7,0:7,0:7),
      &            dzpc(0:7,0:7,0:7,0:7),
      &            xmap7(330,330)
-	iordmax= 7
+	
 #else
 	dimension ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4),
      &            xmap7(70,70)
-	iordmax=4
+	
 #endif
-       	do i=0,iordmax
-	   do j=0,iordmax
-	      do k=0,iordmax
-		 do l=0,iordmax
-		    if((i+j+k+l).le.iordmax)then
+       	do i=0,iord
+	   do j=0,iord
+	      do k=0,iord
+		 do l=0,iord
+		    if((i+j+k+l).le.iord)then
 		       ypc1(i,j,k,l)=0.
 		       zpc1(i,j,k,l)=0.
 		       dypc(i,j,k,l)=0.
