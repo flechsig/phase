@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 Sep 11 17:07:35 flechsig>  */
+/*   Time-stamp: <14 Sep 11 12:16:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1018,26 +1018,27 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
 	 msiz= mdim * mdim * sizeof(double);
 	 
-	 if (bl->hormapsloaded != 1)
+	 if (bl->hormapsloaded != bl->BLOptions.ifl.iord)
            {
 #ifdef SEVEN_ORDER
 	     if (bl->BLOptions.REDUCE_maps == 0)
 	       {
-		 printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d\n", mdim); 
+		 printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d, iord: %d\n", 
+			mdim, bl->BLOptions.ifl.iord); 
 		 MakeHorMaps(bl);     /* UF 18.8.11 does not work so far */
 	       } else
 	       {
 		 printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
-		 printf("!!!!!!!!!! fails for iord > 4\n");
+		 printf("!!!!!!!!!! fails for iord != 4\n");
 		 LoadHorMaps(bl, mdim); 
 	       }
 
 #else
 	     printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
-	     printf("!!!!!!!!!! fails for iord > 4\n");
+	     printf("!!!!!!!!!! fails for iord != 4\n");
 	     LoadHorMaps(bl, mdim);    
 #endif
-	     bl->hormapsloaded= 1;
+	     bl->hormapsloaded= bl->BLOptions.ifl.iord;
            }            /* hormaps  present in memory */
 	 
 	 memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
