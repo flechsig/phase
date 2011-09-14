@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <07 Sep 11 11:17:05 flechsig> 
+dnl   Time-stamp: <14 Sep 11 10:36:09 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -17,7 +17,7 @@ AC_CONFIG_AUX_DIR(config)
 
 AM_INIT_AUTOMAKE
 dnl obsolete AM_CONFIG_HEADER(phase/config.h)
-AC_CONFIG_HEADERS([phase/config.h phaseqt/config.h opti/config.h extr/config.h phase4idl/config.h])
+AC_CONFIG_HEADERS([phase/config.h])
 
 dnl uf Aug 2011
 dnl AC_CONFIG_MACRO_DIR([m4])

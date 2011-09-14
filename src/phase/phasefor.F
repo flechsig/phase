@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <09 Sep 11 17:14:11 flechsig> 
+c$$$ Time-stamp: <13 Sep 11 16:49:49 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2131,7 +2131,8 @@ c------------ write transformation matrix to file or keep it in memory
 	   write(*,*)' writing transformation matrix to mapn.OUT2'
 	   open(unit=10,name='mapn.out2',type='unknown')
 	endif
-
+c special for comparison- remove it later
+	idim=70
 	do i=1,idim
 	   do j=1,idim
 	      write(10,*)i,j,xmap7(i,j)
