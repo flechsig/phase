@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Sep 11 16:53:53 flechsig> 
+//  Time-stamp: <14 Sep 11 17:55:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -55,8 +55,11 @@ void MainWindow::activateProc(const QString &action)
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", this->localalloc, this->hormapsloaded);
       this->beamlineOK &= ~resultOK;
       UpdateStatus();
-      MakeRTSource(this, this);
-      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      if (!(this->beamlineOK & sourceOK))
+	{
+	  MakeRTSource(this, this);
+	  ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+	}
       BuildBeamline(this);
       RayTracec(this); 
       printf("ray trace-> done\n");
@@ -67,8 +70,11 @@ void MainWindow::activateProc(const QString &action)
       printf("\nraytracefullAct button  pressed\n");
       this->beamlineOK &= ~resultOK;
       UpdateStatus();
-      MakeRTSource(this, this);
-      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      if (!(this->beamlineOK & sourceOK))
+	{
+	  MakeRTSource(this, this);
+	  ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+	}
       BuildBeamline(this);
       RayTraceFull(this); 
       printf("full ray trace-> done\n");
