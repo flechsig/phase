@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <14 Sep 11 10:36:09 flechsig> 
+dnl   Time-stamp: <14 Sep 11 11:49:46 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -145,6 +145,7 @@ dnl end fortran specials
 
 dnl ****************** CERN **************************
 dnl check for cernlib 
+cernliblist="-lpawlib -lpacklib -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib"
 AC_ARG_WITH([cernlib],
   AS_HELP_STRING(--with-cernlib=DIR,path to CERN libraries or --without-cernlib),
   dnl option given action
@@ -156,10 +157,10 @@ AC_ARG_WITH([cernlib],
     dnl   echo "do use cernlib"
     dnl check if we find the libpacklib.a there
     AC_CHECK_FILE([${cernlib}/libpacklib.a], 
-      AC_SUBST(CERNLIB,${cernlib}), 
+      AC_SUBST(CERNLIBS,["-L${cernlib} ${cernliblist}"]), 
       AC_MSG_ERROR(cannot find a CERN lib))
       fi
-      ],
+  ],
   [ dnl cernlib is not given- we do a search
     dnl we search for paw and expect the cernlib there
     AC_MSG_NOTICE(search for CERN lib by searching for paw)
@@ -169,11 +170,11 @@ AC_ARG_WITH([cernlib],
     AC_MSG_NOTICE((1) we search the CERN lib at ${cernlib})
     dnl check if we find the libpacklib.a there 
     AC_CHECK_FILE([${cernlib}/libpacklib.a], 
-    AC_SUBST(CERNLIB,${cernlib}),
+    AC_SUBST(CERNLIBS,["-L${cernlib} ${cernliblist}"]), 
     [ cernlib=`echo ${cernlib} | sed -e 's|lib|apps/cern/2003/lib|'`
       AC_MSG_NOTICE((2) we search the CERN lib at ${cernlib})
       AC_CHECK_FILE([${cernlib}/libpacklib.a], 
-      AC_SUBST(CERNLIB,${cernlib}), 
+      AC_SUBST(CERNLIBS,["-L${cernlib} ${cernliblist}"]), 
       AC_MSG_ERROR(cannot find a CERN lib))])])
 dnl end cern lib
 

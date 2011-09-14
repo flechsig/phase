@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <02 Sep 11 16:49:34 flechsig> 
+#  Time-stamp: <14 Sep 11 11:52:26 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -33,9 +33,7 @@ phaseopti_LDADD = $(libdir)/@LIBPHASE@
 AM_CPPFLAGS = -DLINUX -DOPTI
 ##AM_FFLAGS   = @FDEBUG@
 AM_LDFLAGS = @MOTIFLIBS@ $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-          @FLIBS@\
-          -L@CERNLIB@ -lpawlib -lpacklib \
-          -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib @CFORLIB@
+          @FLIBS@ @CERNLIBS@ @CFORLIB@
 ##we use the c linker
 F77LINK = $(LINK)
 ##we use the c linker
