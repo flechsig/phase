@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 Sep 11 17:55:00 flechsig> 
+//  Time-stamp: <15 Sep 11 12:52:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -56,10 +56,9 @@ void MainWindow::activateProc(const QString &action)
       this->beamlineOK &= ~resultOK;
       UpdateStatus();
       if (!(this->beamlineOK & sourceOK))
-	{
-	  MakeRTSource(this, this);
-	  ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
-	}
+	MakeRTSource(this, this);
+		
+      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
       BuildBeamline(this);
       RayTracec(this); 
       printf("ray trace-> done\n");
@@ -71,10 +70,9 @@ void MainWindow::activateProc(const QString &action)
       this->beamlineOK &= ~resultOK;
       UpdateStatus();
       if (!(this->beamlineOK & sourceOK))
-	{
-	  MakeRTSource(this, this);
-	  ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
-	}
+	MakeRTSource(this, this);
+      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+	
       BuildBeamline(this);
       RayTraceFull(this); 
       printf("full ray trace-> done\n");
@@ -85,10 +83,10 @@ void MainWindow::activateProc(const QString &action)
     { 
       printf("\nfootprintAct button  pressed\n");
       
-      this->localalloc= DOALLOC;   // fix wrong initialization
-      if (this->hormapsloaded != 1) this->hormapsloaded= 0;      // fix
-
-      MakeRTSource(this, this);
+      
+      
+      if (!(this->beamlineOK & sourceOK))
+	MakeRTSource(this, this);
       ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
       BuildBeamline(this);
       Footprint(this, this->position);
