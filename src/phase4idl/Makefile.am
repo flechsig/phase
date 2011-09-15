@@ -55,8 +55,7 @@ ORIGINALPHASExSOURCES   = \
 ORIGINALPHASExAMxCPPFLAGS = -DLINUX 
 
 ORIGINALPHASExAMxLDFLAGS = -shared @MOTIFLIBS@ $(X_LIBS) -lm -lc -lnsl\
-	     @FLIBS@  -L@CERNLIB@ -lpawlib -lpacklib  \
-             -packlib -lmathlib -lkernlib @CFORLIB@ @LINK_LIBPHASE@
+	     @FLIBS@ @CERNLIBS@ @CFORLIB@ @LINK_LIBPHASE@
 
 #######################################################################
 
