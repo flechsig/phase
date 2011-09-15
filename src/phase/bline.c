@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <14 Sep 11 12:16:45 flechsig>  */
+/*   Time-stamp: <14 Sep 11 18:07:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -90,10 +90,10 @@ void BuildBeamline(struct BeamlineType *bl)
 /*--------------------------------------------------------*/ 
 
   /* baue erst mal immer */
-   bl->beamlineOK &= ~mapOK; 
+   /*   bl->beamlineOK &= ~mapOK; */
    if (bl->beamlineOK & mapOK)  
      {   
-       printf("BuildBeamline: Beamline elements are already OK- do nothing\n");
+       printf("BuildBeamline: all beamline elements are already OK- return\n");
        return;  /* nothing to do */
      }
    
@@ -103,9 +103,10 @@ void BuildBeamline(struct BeamlineType *bl)
       
    /* Schleife ueber alle Elemente */
    while (elcounter<= bl->elementzahl)
-     {  
-       printf("buildbeamline: force built\n");
-       listpt->ElementOK=0;
+     { 
+       /*
+          printf("buildbeamline: force built\n");
+      listpt->ElementOK=0; */
        if (listpt->ElementOK == 0)  /* element rebuild */
 	 {
 	   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
@@ -120,6 +121,11 @@ void BuildBeamline(struct BeamlineType *bl)
 	   printf("BuildBeamline: matrix of %d. element created\n", elcounter); 
 #endif 
 	 }             /* map ist OK */
+       else
+	 {
+	   printf("debug: BuildBeamline: element %d already OK- keep matrix\n");
+
+	 }
        
        if (listpt->MDat.Art != kEOESlit)         /* slit not */
 	 {
