@@ -59,6 +59,7 @@ public:
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		int etype, double theta, int lREDUCE_maps) { DefMirrorC(x, a, 
 		etype, theta, lREDUCE_maps); }
+  void myFootprint() { Footprint(); }
 
   void myGetPHASE(char *name) { GetPHASE(this, name); }
   void myMakeMapandMatrix(struct ElementType *listpt) { MakeMapandMatrix(listpt, this); }
@@ -70,7 +71,13 @@ public:
   void myReAllocResult(int newtype, int dim1, int dim2)   { ReAllocResult(this, newtype, dim1, dim2); }
   void myRayTracec() { RayTracec(this); }
   void myRayTraceFull() { RayTraceFull(this); }
+  void myReadBLFile(char *name){ ReadBLFile(name); }
+  void myreadfg34_par() { readfg34_par(); }
+
   void myWriteBLFile(char *name) { WriteBLFile(name, this); }
+  void mywritemapc() { writemapc(); }
+
+  void myWriteRayFile() { WriteRayFile(); }
   void sourceSetDefaults();
   void writeBackupFile();
 
