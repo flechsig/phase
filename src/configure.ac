@@ -7,7 +7,7 @@ dnl   $Source$
 dnl   $Date$
 dnl   $Revision$ 
 dnl   $Author$ 
-
+ 
 dnl we need autoconf 2.57 for bootstrapping
 AC_PREREQ(2.59)
 AC_INIT([phase],[1.20],[uwe.flechsig@psi.ch])
@@ -331,7 +331,8 @@ AC_CHECK_HEADERS(strings.h unistd.h)
 dnl **************** MOTIF ***************************
 
 AC_ARG_WITH([motif],
-  AS_HELP_STRING([--with-motif=DIR],[path to Motif libraries, includes, uil]),
+  AS_HELP_STRING([--with-motif=DIR],
+  [path to Motif libraries, includes, uil or --without-motif]),
   [ echo "motif path given as option: ${with_motif}"
     motifpath=${with_motif}
     if test "$motifpath" = "no"; then
@@ -344,36 +345,39 @@ AC_ARG_WITH([motif],
       AC_SUBST([MOTIFLIBS],["-L${motifpath}/lib -lXm -lMrm"])
     fi  
   ],
+dnl end --with[out]-motif
+dnl begin autodetect
   [
     AC_CHECK_PROG([UIL],[uil],[uil])
 dnl autodetect Motif - but only add to libs_x later (if necessary)
 dnl Use a different function to the earlier test to avoid problems with the
 dnl internal cache.
-AC_CHECK_HEADER(Xm/Xm.h,have_motif=yes,have_motif=no)
-if test "$have_motif" = "yes"; then
+    AC_CHECK_HEADER(Xm/Xm.h,have_motif=yes,have_motif=no)
+    if test "$have_motif" = "yes"; then
 dnl autodetect lesstif
-    AC_MSG_CHECKING(for Lesstif)
-    AC_EGREP_CPP(yes,
-[#include <Xm/Xm.h>
-#ifdef LESSTIF_VERSION
-yes
-#endif
-], have_lesstif=yes, have_lesstif=no)
-  AC_MSG_RESULT($have_lesstif)
-fi
+       AC_MSG_CHECKING(for Lesstif)
+       AC_EGREP_CPP(yes,
+       [#include <Xm/Xm.h>
+       #ifdef LESSTIF_VERSION
+          yes
+       #endif
+       ], have_lesstif=yes, have_lesstif=no)
+       AC_MSG_RESULT($have_lesstif)
+     fi
 
-if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
-   AC_MSG_WARN([[Motif installation is not OK!]])
-   if test "$have_lesstif" = "yes" ; then
-      AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])
-   fi
-else
+     if test "$have_motif" = "no" -o "$have_lesstif" = "yes" ; then
+        AC_MSG_WARN([[Motif installation is not OK!]])
+        if test "$have_lesstif" = "yes" ; then
+           AC_MSG_WARN([[with LESSTIF expect problems- use openMotif instead]])
+        fi
+     else
 dnl add include path to motif headers 
-   if test -n "${x_includes}" ; then 
-      AC_SUBST([CPPFLAGS],[-I${x_includes}])
-   fi
-fi
-])
+        if test -n "${x_includes}" ; then 
+           AC_SUBST([CPPFLAGS],[-I${x_includes}])
+        fi
+     fi
+  ])
+dnl end motif
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM

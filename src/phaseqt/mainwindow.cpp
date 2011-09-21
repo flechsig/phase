@@ -22,7 +22,7 @@
 #include "phaseqt.h"
 
 // the constructor of the main window
-MainWindow::MainWindow()
+MainWindow::MainWindow(PhaseQt *parent)
 {
   graphicBox= createGraphicBox();
   setCentralWidget(graphicBox);
@@ -43,6 +43,7 @@ MainWindow::MainWindow()
   this->s_ray= NULL;
   this->o_input= NULL;
   this->c_window= NULL;
+  myparent= parent;
 } // end MainWindow
 
 
@@ -1094,7 +1095,9 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
     "(REDUCE_maps) use old REDUCE maps",
   }; /* ende der Liste */ 
 
-  struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
+  // struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
+  struct OptionsType   *op = myparent->myOptions();
+  struct sources    *mysrc = &(myparent->myBeamline()->src);
   //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
   //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
@@ -1133,9 +1136,9 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       sprintf(buffer, "%d \t: %s", op->ifl.iplmode, inhalt[pos]);
       break;
     case 5:
-      if (!init) scanned= sscanf(text, "%d", &this->src.isrctype);
-      if ((scanned == EOF) || (scanned == 0)) this->src.isrctype= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.isrctype, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
+      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 0;   // default
+      sprintf(buffer, "%d \t: %s", myparent->myBeamline()->src.isrctype, inhalt[pos]);
       break; 
     case 6:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
@@ -1189,24 +1192,24 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 16:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipcy);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipcy= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so5.dipcy, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipcy, inhalt[pos]);
       break;
     case 17:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipcz);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipcz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so5.dipcz, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipcz, inhalt[pos]);
       break;
     case 18:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipdisy);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipdisy= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so5.dipdisy, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipdisy, inhalt[pos]);
       break;
     case 19:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so5.dipdisz);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so5.dipdisz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so5.dipdisz, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipdisz, inhalt[pos]);
       break;
 
     case 20:
@@ -1231,25 +1234,25 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 24:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcy);
-      if ((scanned == EOF) || (scanned == 0))  this->src.so1.isrcy= 0;   // default
-      sprintf(buffer, "%d \t: %s",  this->src.so1.isrcy, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
+      sprintf(buffer, "%d \t: %s",  mysrc->so1.isrcy, inhalt[pos]);
       break;
     case 25:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcdy);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so1.isrcdy= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so1.isrcdy, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so1.isrcdy, inhalt[pos]);
       break;
     case 26:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmay);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmay= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmay, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmay, inhalt[pos]);
       break;
     case 27:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmayp);
-      this->src.so1.sigmayp*= 1e-3;
-      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmayp= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmayp*1e3, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
+      mysrc->so1.sigmayp*= 1e-3;
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmayp*1e3, inhalt[pos]);
       break;
 
     case 28:
@@ -1271,25 +1274,25 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 31:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcz);
-      if ((scanned == EOF) || (scanned == 0))  this->src.so1.isrcz= 0;   // default
-      sprintf(buffer, "%d \t: %s",  this->src.so1.isrcz, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
+      sprintf(buffer, "%d \t: %s",  mysrc->so1.isrcz, inhalt[pos]);
       break;
     case 32:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so1.isrcdz);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so1.isrcdz= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so1.isrcdz, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so1.isrcdz, inhalt[pos]);
       break;
     case 33:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmaz);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmaz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmaz, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmaz, inhalt[pos]);
       break;
     case 34:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so1.sigmazp);
-      this->src.so1.sigmazp*= 1e-3;
-      if ((scanned == EOF) || (scanned == 0)) this->src.so1.sigmazp= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so1.sigmazp*1e3, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
+      mysrc->so1.sigmazp*= 1e-3;
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmazp*1e3, inhalt[pos]);
       break;
 
     case 35:
@@ -1385,68 +1388,68 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       sprintf(buffer, "%d \t: %s", op->ifl.ipinarr, inhalt[pos]);
       break;    
     case 52:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_yl0);
-      if ((scanned == EOF) || (scanned == 0)) this->src.pin_yl0= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.pin_yl0, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->pin_yl0, inhalt[pos]);
       break;
     case 53:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_yl);
-      if ((scanned == EOF) || (scanned == 0)) this->src.pin_yl= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.pin_yl, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->pin_yl, inhalt[pos]);
       break;
     case 54:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_zl0);
-      if ((scanned == EOF) || (scanned == 0)) this->src.pin_zl0= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.pin_zl0, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->pin_zl0, inhalt[pos]);
       break;
     case 55:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.pin_zl);
-      if ((scanned == EOF) || (scanned == 0)) this->src.pin_zl= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.pin_zl, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->pin_zl, inhalt[pos]);
       break;
 case 56:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nfreqtot);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nfreqtot= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so4.nfreqtot, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqtot, inhalt[pos]);
       break;
 case 57:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nfreqpos);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nfreqpos= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so4.nfreqpos, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqpos, inhalt[pos]);
       break;
 case 58:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nfreqneg);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nfreqneg= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so4.nfreqneg, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqneg, inhalt[pos]);
       break;
     case 59:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nsource);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nsource= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so4.nsource, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nsource);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nsource= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so4.nsource, inhalt[pos]);
       break;
     case 60:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so4.nimage);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.nimage= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so4.nimage, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nimage);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nimage= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so4.nimage, inhalt[pos]);
       break;
       
     case 61:
-      if (!init) scanned= sscanf(text, "%lg", &this->src.so4.deltatime);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.deltatime= 0;   // default
-      sprintf(buffer, "%lg \t: %s", this->src.so4.deltatime, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so4.deltatime);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.deltatime= 0;   // default
+      sprintf(buffer, "%lg \t: %s", mysrc->so4.deltatime, inhalt[pos]);
       break;
       
     case 62:
-      if (!init) scanned= sscanf(text, "%d", &this->src.so4.iconj);
-      if ((scanned == EOF) || (scanned == 0)) this->src.so4.iconj= 0;   // default
-      sprintf(buffer, "%d \t: %s", this->src.so4.iconj, inhalt[pos]);
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
+      sprintf(buffer, "%d \t: %s", mysrc->so4.iconj, inhalt[pos]);
       break;
 
     case 63:
       if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
       if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
       sprintf(buffer, "%d \t: %s", op->REDUCE_maps, inhalt[pos]);
-      this->hormapsloaded= 0;
+      myparent->myBeamline()->hormapsloaded= 0;
       break;
 
 #ifdef XXXTEMPLATE
@@ -1505,93 +1508,10 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	  
 	}
     }
-  ReadBLFile(oname, this);
-  WriteBLFile(blname, this);  // to reset the time
+  myparent->myReadBLFile(oname);
+  myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
 
-// rewrite of initdatsets
-void MainWindow::sourceSetDefaults()
-{
-  char sou;
-  struct UndulatorSourceType  *up;
-  // struct UndulatorSource0Type *up0;
-  struct DipolSourceType      *dp;
-  struct PointSourceType      *pp;
-  struct RingSourceType       *rp;
-  struct HardEdgeSourceType   *hp;    
-  struct FileSourceType       *fp;
-  struct SRSourceType         *sp;
-  struct PSImageType *ip;
-
-  this->RTSource.raynumber= 25000;
-  sou= this->RTSource.QuellTyp;
-
-  printf(" set defaults for source: %c\n", sou);
-  switch(sou)
-    {
-    case 'U': 
-    case 'u':
-      up= (struct UndulatorSourceType *)this->RTSource.Quellep; 
-      up->length= 3800.0;
-      up->lambda= 12.4e-6;  
-      break;   
-    case 'L': 
-    case 'M':
-      up= (struct UndulatorSourceType *)this->RTSource.Quellep; 
-      up->length= 3800.0;
-      up->lambda= 12.4e-6;
-      up->deltaz= 0.0;
-      break;
-    case 'D': dp=(struct DipolSourceType *)this->RTSource.Quellep; 
-      dp->sigy		= 0.093;  
-      dp->sigdy	        = 1.;  
-      dp->sigz        	= 0.05;
-      dp->dz          	= 4.0;
-      break;  
-    case 'o': pp=(struct PointSourceType *)this->RTSource.Quellep; 
-      pp->sigy	= 0.093;  
-      pp->sigdy	= 1.;  
-      pp->sigz  = 0.05;
-      pp->sigdz = 1.0;
-      break;  
-    case 'S': sp= (struct SRSourceType *)this->RTSource.Quellep;
-      sp->y	=0.1;  
-      sp->dy	=0.1;  
-      sp->z	=0.1;  
-      sp->dz	=0.1; 
-      break;   
-    case 'I': ip= (struct PSImageType*)this->RTSource.Quellep; 
-      ip->ymin	= -1.0e-1;  
-      ip->ymax	=  1.0e-1;  
-      ip->zmin	= -1.0e-1;  
-      ip->zmax	=  1.0e-1;
-      ip->iy   =   15;
-      ip->iz   =   15;
-      break;   
-    case 'H': 
-      hp= (struct HardEdgeSourceType *)this->RTSource.Quellep; 
-      hp->disty	= .1;  
-      hp->iy 	= 3;   
-      hp->distz	= .2;  
-      hp->iz	= 3;   
-      hp->divy	= 1.;  
-      hp->idy	= 7;   
-      hp->divz	= 4.;  
-      hp->idz	= 7;   
-      this->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
-      break;   
-    case 'R': 
-      rp= (struct RingSourceType *)this->RTSource.Quellep;
-      rp->dy= 0.1;
-      rp->dz= 0.1;
-      break;
-    case 'F':
-      fp= (struct FileSourceType *)this->RTSource.Quellep;
-      strncpy(fp->filename, this->sourceraysname, MaxPathLength);
-      /* we may add a test if the file exists */
-      break;   
-    }  /* end case */
-} // sourceSetDefaults
 
 
 // UpdateBeamlineBox()
@@ -1601,9 +1521,9 @@ void MainWindow::UpdateBeamlineBox()
   struct OptionsType *blo;
   char   buffer[5];
    
-  fileNameLabel->setText(QString(tr(this->beamlinename)));
+  fileNameLabel->setText(QString(tr(myparent->myPHASEset()->beamlinename)));
 
-  blo= &(this->BLOptions);
+  blo= &(myparent->myBeamline()->BLOptions);
 
   sprintf(buffer, "%.3lf", blo->lambda* 1e6);
   lambdaE->setText(QString(buffer));
@@ -1624,15 +1544,15 @@ void MainWindow::UpdateElementBox(int number)
   char TextField [26][40];            /* 26 editfelder */
 
   if (number < 0) return;
-  this->ElementList[number].ElementOK = 0;
-  this->beamlineOK                   &= ~(mapOK | resultOK);
+  myparent->myBeamline()->ElementList[number].ElementOK = 0;
+  myparent->myBeamline()->beamlineOK                   &= ~(mapOK | resultOK);
 
-  struct mdatset *md= &(this->ElementList[number].MDat);
-  struct gdatset *gd= &(this->ElementList[number].GDat);
+  struct mdatset *md= &(myparent->myBeamline()->ElementList[number].MDat);
+  struct gdatset *gd= &(myparent->myBeamline()->ElementList[number].GDat);
 
   teta= fabs(gd->theta0* PI/ 180.0);
   fi  = (double)(gd->inout)* 
-    asin(this->BLOptions.lambda* gd->xdens[0]/ (2.0* cos(teta)));
+    asin(myparent->myBeamline()->BLOptions.lambda* gd->xdens[0]/ (2.0* cos(teta)));
   cff = cos(fi- teta)/ cos(fi+ teta);
 
   // create strings
@@ -1805,15 +1725,15 @@ void MainWindow::UpdateElementList()
   
 #ifdef DEBUG
   printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", elementList->count());
-  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", elementzahl);
+  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", myparent->myBeamline()->elementzahl);
 #endif
 
   // loesche alles
    while (elementList->count()) 
     delete elementList->takeItem(0);
 
-  list= this->ElementList;
-  for (ui= 0; ui < elementzahl; ui++, list++)
+  list= myparent->myBeamline()->ElementList;
+  for (ui= 0; ui < myparent->myBeamline()->elementzahl; ui++, list++)
     {
       QListWidgetItem *item= new QListWidgetItem(QString(list->elementname));
       item->setFlags (item->flags () | Qt::ItemIsEditable); 
@@ -1840,26 +1760,26 @@ void MainWindow::UpdateSourceBox()
   char TextField [8][40];            /* 8 editfelder */
   char LabelField[9][100]; 
    
-  this->beamlineOK &= ~(sourceOK | resultOK); 
+  myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK); 
         
 #ifdef DEBUG 
     printf("debug: InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
-	   this->RTSource.QuellTyp, this->beamlineOK, oldsource);   
+	   myparent->myBeamline()->RTSource.QuellTyp, myparent->myBeamline()->beamlineOK, oldsource);   
 #endif   
  
-    if (RTSource.Quellep == NULL)
+    if (myparent->myBeamline()->RTSource.Quellep == NULL)
       {
 	printf("error: UpdateSourceBox: Quellep == NULL\n");
 	return;
       }
-    AllocRTSource(this);
-    sou= this->RTSource.QuellTyp;
+    myparent->myAllocRTSource();
+    sou= myparent->myBeamline()->RTSource.QuellTyp;
     
-    if (sou != this->oldsource)
+    if (sou != oldsource)
       {
 	printf("source changed: set defaults\n");
 	oldsource= sou;
-	sourceSetDefaults();
+	myparent->sourceSetDefaults();
       }
 
     S1E->setEnabled(false);
@@ -1874,12 +1794,12 @@ void MainWindow::UpdateSourceBox()
     switch (sou) {
  
     case 'D':
-      dp= (struct DipolSourceType *)this->RTSource.Quellep;
+      dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", dp->sigy);
       sprintf(TextField[1],  "%f", dp->sigdy);    
       sprintf(TextField[2],  "%f", dp->sigz);  
       sprintf(TextField[3],  "%f", dp->dz);    
-      sprintf(TextField[4],  "%d", this->RTSource.raynumber);   
+      sprintf(TextField[4],  "%d", myparent->myBeamline()->RTSource.raynumber);   
       sprintf(TextField[5],  "%s", "");    
       sprintf(TextField[6],  "%s", "");   
       sprintf(TextField[7],  "%s", ""); 
@@ -1899,10 +1819,10 @@ void MainWindow::UpdateSourceBox()
       S5E->setEnabled(true);
       break;  
     case 'G':
-      up0= (struct UndulatorSource0Type *)this->RTSource.Quellep;
+      up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", up0->length);
-      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
       sprintf(TextField[3],  "%f", up0->deltaz);    
       sprintf(TextField[4],  "%f", up0->sigmaey);   
       sprintf(TextField[5],  "%f", up0->sigmaez);    
@@ -1927,7 +1847,7 @@ void MainWindow::UpdateSourceBox()
       S8E->setEnabled(true);
       break;  
     case 'H':
-      hp= (struct HardEdgeSourceType *)this->RTSource.Quellep;
+      hp= (struct HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", hp->disty);
       sprintf(TextField[1],  "%d", hp->iy);    
       sprintf(TextField[2],  "%f", hp->distz);  
@@ -1956,10 +1876,10 @@ void MainWindow::UpdateSourceBox()
       break;  
 
     case 'L':
-      up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+      up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", up->length);
-      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
       sprintf(TextField[3],  "%f", up->deltaz);    
       sprintf(TextField[4],  "%s", "");   
       sprintf(TextField[5],  "%s", "");    
@@ -1981,10 +1901,10 @@ void MainWindow::UpdateSourceBox()
       break; 
 
     case 'M':
-      up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+      up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", up->length);
-      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
       sprintf(TextField[3],  "%f", up->deltaz);    
       sprintf(TextField[4],  "%s", "");   
       sprintf(TextField[5],  "%s", "");    
@@ -2006,12 +1926,12 @@ void MainWindow::UpdateSourceBox()
       break;  
 
     case 'o':
-      sop= (struct PointSourceType *)this->RTSource.Quellep;
+      sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", sop->sigy);
       sprintf(TextField[1],  "%f", sop->sigdy);    
       sprintf(TextField[2],  "%f", sop->sigz);  
       sprintf(TextField[3],  "%f", sop->sigdz);    
-      sprintf(TextField[4],  "%d", this->RTSource.raynumber);   
+      sprintf(TextField[4],  "%d", myparent->myBeamline()->RTSource.raynumber);   
       sprintf(TextField[5],  "%s", "");    
       sprintf(TextField[6],  "%s", "");   
       sprintf(TextField[7],  "%s", ""); 
@@ -2032,10 +1952,10 @@ void MainWindow::UpdateSourceBox()
       break;  
 
  case 'R':
-      rp= (struct RingSourceType *)this->RTSource.Quellep;
+      rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%lf", rp->dy);
       sprintf(TextField[1],  "%lf", rp->dz);    
-      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
       sprintf(TextField[3],  "%s", "");    
       sprintf(TextField[4],  "%s", "");   
       sprintf(TextField[5],  "%s", "");    
@@ -2056,10 +1976,10 @@ void MainWindow::UpdateSourceBox()
       break;  
    
     case 'U':
-      up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+      up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", up->length);
-      sprintf(TextField[1],  "%f", this->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", this->RTSource.raynumber);  
+      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
       sprintf(TextField[3],  "%s", "");    
       sprintf(TextField[4],  "%s", "");   
       sprintf(TextField[5],  "%s", "");    
@@ -2079,9 +1999,9 @@ void MainWindow::UpdateSourceBox()
       S3E->setEnabled(true);
       break;  
     case 'F':
-      fp= (struct FileSourceType *)this->RTSource.Quellep;
-      printf("source from file %s\n", this->sourceraysname);
-      strncpy(fp->filename, this->sourceraysname, MaxPathLength);
+      fp= (struct FileSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      printf("source from file %s\n", myparent->myPHASEset()->sourceraysname);
+      strncpy(fp->filename, myparent->myPHASEset()->sourceraysname, MaxPathLength);
       sprintf(TextField[0],  "%s", "");
       sprintf(TextField[1],  "%s", "");    
       sprintf(TextField[2],  "%s", "");  
@@ -2104,8 +2024,8 @@ void MainWindow::UpdateSourceBox()
       QMessageBox::warning(this, tr("UpdateSourceBox"),
 			   tr("Source type %1 is obsolete.\nenable point source with defaults")
 			 .arg(sou));
-      this->RTSource.QuellTyp= 'o';
-      sop= (struct PointSourceType *)this->RTSource.Quellep;
+      myparent->myBeamline()->RTSource.QuellTyp= 'o';
+      sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sprintf(TextField[0],  "%f", 0.1);
       sprintf(TextField[1],  "%f", 0.1);    
       sprintf(TextField[2],  "%f", 0.1);  
@@ -2164,7 +2084,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   char buffer[255];
   double trans;
 
-  trans= (this->RTSource.raynumber > 0) ? (double)this->RESULT.points/ (double)this->RTSource.raynumber : -1.0;
+  trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? (double)myparent->myBeamline()->RESULT.points/ (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
   
   sprintf(buffer, "%s Statistics", label);  
   statGroup->setTitle(QString(tr(buffer)));
@@ -2220,24 +2140,24 @@ void MainWindow::UpdateStatus()
   if ((elementnumber < 0) || (elementnumber > elementList->count()- 1)) 
     elementnumber= 0;
 
-  if (this->ElementList[elementnumber].ElementOK & elementOK) 
+  if (myparent->myBeamline()->ElementList[elementnumber].ElementOK & elementOK) 
     sprintf(buffer, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
   else 
     sprintf(buffer, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
 
   elementStatLabel->setText(QString(tr(buffer)));
 
-  if (this->beamlineOK & sourceOK) 
+  if (myparent->myBeamline()->beamlineOK & sourceOK) 
     sourceStatLabel->setText(QString(tr("<b><FONT COLOR=green>source</FONT></b>"))); 
   else 
     sourceStatLabel->setText(QString(tr("<b><FONT COLOR=red>source</FONT></b>")));
 
-  if (this->beamlineOK & resultOK) 
+  if (myparent->myBeamline()->beamlineOK & resultOK) 
     imageStatLabel->setText(QString(tr("<b><FONT COLOR=green>image</FONT></b>"))); 
   else 
     imageStatLabel->setText(QString(tr("<b><FONT COLOR=red>image</FONT></b>")));
 
-  if (this->beamlineOK & mapOK) 
+  if (myparent->myBeamline()->beamlineOK & mapOK) 
     mapStatLabel->setText(QString(tr("<b><FONT COLOR=green>maps</FONT></b>"))); 
   else 
     mapStatLabel->setText(QString(tr("<b><FONT COLOR=red>maps</FONT></b>")));
@@ -2247,17 +2167,6 @@ void MainWindow::UpdateStatus()
 // end widget handling section //
 /////////////////////////////////
 
-// write a backupfile
-void MainWindow::writeBackupFile()
-{
-  char buffer[MaxPathLength];
-  strncpy(buffer, this->beamlinename, (MaxPathLength-1));
-  strcat(buffer, "~");
-  
-#ifdef DEBUG
-  printf("writeBackupFile: -> ");
-#endif
-  WriteBLFile(buffer, this);
-} // writeBackupFile()
+
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

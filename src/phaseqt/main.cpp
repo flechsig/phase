@@ -35,8 +35,9 @@ int main(int argc, char *argv[])
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);
     }
-  myphaseQt.mainWin = new MainWindow;
-  myphaseQt.mainWin.ReadBLFileInteractive(myphaseQt.beamlinename);
+  myphaseQt.mainWin = new MainWindow(&myphaseQt);
+#ifdef TOBEDONE
+  myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.beamlinename);
   myphaseQt.mainWin.oldsource= mainWin.RTSource.QuellTyp;
   //  ReadBLFile(mainWin.beamlinename, &mainWin);
   myphaseQt.mainWin.UpdateElementList();
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
   myphaseQt.myPutPHASE((char*) MainPickName);
 
   myphaseQt.mainWin.show();
+#endif
   return app.exec();
 }
 // end 

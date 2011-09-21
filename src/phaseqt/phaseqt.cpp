@@ -87,6 +87,25 @@ void PhaseQt::initBeamline()
 } // end initBeamline
 
 
+// returns a pointer to the beamline struct
+struct BeamlineType *PhasQt::myBeamline()
+{
+  return (struct BeamlineType *)this;
+} // end myBeamline
+
+// returns a pointer to the PHASEset struct
+struct PHASEset *PhasQt::myPHASEset()
+{
+  return (struct PHASEset *)this;
+} // end myPHASEset
+
+// returns a pointer to the beamline struct
+struct OptionsType *PhasQt::myOptions()
+{
+  return &(this->BLOptions);
+} // end myBeamline
+
+
 // constructor
 //QtPhase::QtPhase()
 //{
@@ -144,4 +163,103 @@ PhaseQt::PhaseQt()
 }
 
 #endif
+
+
+// rewrite of initdatsets
+void PhaseQt::sourceSetDefaults()
+{
+  char sou;
+  struct UndulatorSourceType  *up;
+  // struct UndulatorSource0Type *up0;
+  struct DipolSourceType      *dp;
+  struct PointSourceType      *pp;
+  struct RingSourceType       *rp;
+  struct HardEdgeSourceType   *hp;    
+  struct FileSourceType       *fp;
+  struct SRSourceType         *sp;
+  struct PSImageType *ip;
+
+  this->RTSource.raynumber= 25000;
+  sou= this->RTSource.QuellTyp;
+
+  printf(" set defaults for source: %c\n", sou);
+  switch(sou)
+    {
+    case 'U': 
+    case 'u':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep; 
+      up->length= 3800.0;
+      up->lambda= 12.4e-6;  
+      break;   
+    case 'L': 
+    case 'M':
+      up= (struct UndulatorSourceType *)this->RTSource.Quellep; 
+      up->length= 3800.0;
+      up->lambda= 12.4e-6;
+      up->deltaz= 0.0;
+      break;
+    case 'D': dp=(struct DipolSourceType *)this->RTSource.Quellep; 
+      dp->sigy		= 0.093;  
+      dp->sigdy	        = 1.;  
+      dp->sigz        	= 0.05;
+      dp->dz          	= 4.0;
+      break;  
+    case 'o': pp=(struct PointSourceType *)this->RTSource.Quellep; 
+      pp->sigy	= 0.093;  
+      pp->sigdy	= 1.;  
+      pp->sigz  = 0.05;
+      pp->sigdz = 1.0;
+      break;  
+    case 'S': sp= (struct SRSourceType *)this->RTSource.Quellep;
+      sp->y	=0.1;  
+      sp->dy	=0.1;  
+      sp->z	=0.1;  
+      sp->dz	=0.1; 
+      break;   
+    case 'I': ip= (struct PSImageType*)this->RTSource.Quellep; 
+      ip->ymin	= -1.0e-1;  
+      ip->ymax	=  1.0e-1;  
+      ip->zmin	= -1.0e-1;  
+      ip->zmax	=  1.0e-1;
+      ip->iy   =   15;
+      ip->iz   =   15;
+      break;   
+    case 'H': 
+      hp= (struct HardEdgeSourceType *)this->RTSource.Quellep; 
+      hp->disty	= .1;  
+      hp->iy 	= 3;   
+      hp->distz	= .2;  
+      hp->iz	= 3;   
+      hp->divy	= 1.;  
+      hp->idy	= 7;   
+      hp->divz	= 4.;  
+      hp->idz	= 7;   
+      this->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
+      break;   
+    case 'R': 
+      rp= (struct RingSourceType *)this->RTSource.Quellep;
+      rp->dy= 0.1;
+      rp->dz= 0.1;
+      break;
+    case 'F':
+      fp= (struct FileSourceType *)this->RTSource.Quellep;
+      strncpy(fp->filename, this->sourceraysname, MaxPathLength);
+      /* we may add a test if the file exists */
+      break;   
+    }  /* end case */
+} // sourceSetDefaults
+
+// write a backupfile
+void PhaseQt::writeBackupFile()
+{
+  char buffer[MaxPathLength];
+  strncpy(buffer, this->beamlinename, (MaxPathLength-1));
+  strcat(buffer, "~");
+  
+#ifdef DEBUG
+  printf("writeBackupFile: -> ");
+#endif
+  WriteBLFile(buffer, this);
+} // writeBackupFile()
+
 // end 

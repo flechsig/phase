@@ -36,13 +36,16 @@ class QGroupBox;
 class QPushButton;
 QT_END_NAMESPACE
 
+
+class Plot;
+
 // UF I'm not sure whether we should inherit from QtPhase
-class MainWindow : public QMainWindow, public PhaseQt 
+class MainWindow : public QMainWindow//UF nein, public PhaseQt 
 {
     Q_OBJECT
 
 public:
-    MainWindow();
+    MainWindow(PhaseQt *parent);
     void parameterUpdateAll(int);
     void print();
     void UpdateBeamlineBox();
@@ -114,7 +117,7 @@ private:
     void createStatusBar();
     void createDockWindows();
     void parameterUpdate(int, const char *, int);
-    void sourceSetDefaults();
+    
     
     void UpdateElementBox(int);
     
@@ -324,7 +327,7 @@ private:
 
     QSignalMapper *grsignalMapper;  // UF
     
-    
+    PhaseQt *myparent;
  
 };
 

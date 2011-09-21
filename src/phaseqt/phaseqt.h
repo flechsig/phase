@@ -1,4 +1,4 @@
-/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
 /*  Time-stamp: <16 Sep 11 17:50:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
@@ -16,10 +16,10 @@
 #endif
 
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include <iostream>
 
-#include "plot.h"
+#include "plot.h"   // UF not sure
 
 extern "C" {
   #include "cutils.h"
@@ -29,6 +29,8 @@ extern "C" {
   #include "common.h"
 }
 
+class MainWindow; // forward declaration
+
 // nach phase.h
 //#include "singleray.h"
 
@@ -36,6 +38,8 @@ extern "C" {
 
 
 // our class inherits the structures from c like base classes
+// !! they are considered public !!
+// we should define member functions to access/modify them
 class PhaseQt : public PHASEset, public BeamlineType 
 {
   //  char my_global_rundir[MaxPathLength];
@@ -45,10 +49,18 @@ public:
   void initSet(const char *);
   void printSet();
   void initBeamline();
+  struct BeamlineType *myBeamline();
+  struct OptionsType *myOptions();
+  struct PHASEset *myPHASEset(); 
+  void myAllocRTSource() { AllocRTSource(this); }
   void myBatchMode(int cmode, int selected) { BatchMode(this, this, cmode, selected); }
   void myGetPHASE(char *name) { GetPHASE(this, name); }
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected) { return ProcComandLine(this, argc, argv, cmode, selected); }
   void myPutPHASE(char *name) { PutPHASE(this, name); }
+  void myReadBLFile(char *name) { ReadBLFile(name, this); }
+  void myWriteBLFile(char *name) { WriteBLFile(name, this); }
+  void sourceSetDefaults();
+  void writeBackupFile();
 
   // void UpdateElementList();
   //  QtPhase *qtpp;
@@ -59,9 +71,12 @@ public:
   int ActualTask; 
 
   
-private:
-  MainWindow *mainWin;
+  //private:
+  MainWindow *mainWin;   // must be public
   
+ private:
+  
+
 };
 
 
