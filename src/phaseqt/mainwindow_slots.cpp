@@ -1312,10 +1312,10 @@ void MainWindow::sourceApplyBslot()
   }
 
   myparent->myBeamline()->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
-  MakeRTSource(this, this);
+  myparent->myMakeRTSource();
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } //sourceApplyBslot
 
 // slot
