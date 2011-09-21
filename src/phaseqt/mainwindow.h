@@ -13,6 +13,7 @@
 
 #include <QMainWindow>
 #include <qsignalmapper.h>
+#include <QKeySequence>
 #include <QListWidget>
 #include <QGroupBox>
 #include <sys/stat.h>

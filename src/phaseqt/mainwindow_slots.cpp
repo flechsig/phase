@@ -52,13 +52,13 @@ void MainWindow::activateProc(const QString &action)
   
   if (!action.compare("raytracesimpleAct")) 
     { 
-      printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", this->localalloc, this->hormapsloaded);
-      this->beamlineOK &= ~resultOK;
+      printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(this->beamlineOK & sourceOK))
+      if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	MakeRTSource(this, this);
 		
-      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      ReAllocResult(this, PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
       BuildBeamline(this);
       RayTracec(this); 
       printf("ray trace-> done\n");
@@ -67,11 +67,11 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("raytracefullAct")) 
     { 
       printf("\nraytracefullAct button  pressed\n");
-      this->beamlineOK &= ~resultOK;
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(this->beamlineOK & sourceOK))
+      if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	MakeRTSource(this, this);
-      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      ReAllocResult(this, PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
 	
       BuildBeamline(this);
       RayTraceFull(this); 
@@ -85,9 +85,9 @@ void MainWindow::activateProc(const QString &action)
       
       
       
-      if (!(this->beamlineOK & sourceOK))
+      if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	MakeRTSource(this, this);
-      ReAllocResult(this, PLrttype, this->RTSource.raynumber, 0);  
+      ReAllocResult(this, PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
       BuildBeamline(this);
       Footprint(this, this->position);
       printf("footprint-> done\n");
@@ -105,10 +105,10 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("optiInputAct")) 
     { 
-      printf("optiInputAct button pressed %d\n", this->elementzahl);
+      printf("optiInputAct button pressed %d\n", myparent->myBeamline()->elementzahl);
       if (!o_input) 
-	o_input= new OptiInput(this->ElementList, this->elementzahl,
-			       this->beamlinename, this->optipckname, 
+	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
+			       myparent->myBeamline()->beamlinename, this->optipckname, 
 			       this->opresname, this->minname); 
       else 
 	o_input->optiInputBox->show();
@@ -117,45 +117,45 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("phasespaceAct"))     printf("phasespaceAct button pressed\n"); 
   if (!action.compare("mphasespaceAct"))    printf("mphasespaceAct button pressed\n"); 
 
-  if (!action.compare("rthAct")) { this->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
-  if (!action.compare("dipAct")) { this->RTSource.QuellTyp= 'D'; UpdateSourceBox(); }
-  if (!action.compare("poiAct")) { this->RTSource.QuellTyp= 'o'; UpdateSourceBox(); }
-  if (!action.compare("rinAct")) { this->RTSource.QuellTyp= 'R'; UpdateSourceBox(); }   
-  if (!action.compare("genAct")) { this->RTSource.QuellTyp= 'G'; UpdateSourceBox(); }    
-  if (!action.compare("b2hAct")) { this->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }   
-  if (!action.compare("b2lAct")) { this->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }    
-  if (!action.compare("sisAct")) { this->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
-  if (!action.compare("simAct")) { this->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
-  if (!action.compare("sffAct")) { this->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }  
+  if (!action.compare("rthAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
+  if (!action.compare("dipAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'D'; UpdateSourceBox(); }
+  if (!action.compare("poiAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'o'; UpdateSourceBox(); }
+  if (!action.compare("rinAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'R'; UpdateSourceBox(); }   
+  if (!action.compare("genAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'G'; UpdateSourceBox(); }    
+  if (!action.compare("b2hAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }   
+  if (!action.compare("b2lAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }    
+  if (!action.compare("sisAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
+  if (!action.compare("simAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
+  if (!action.compare("sffAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }  
 
   if (!action.compare("writemapAct")) 
     { 
       printf("writemapAct button pressed\n");
-      if ((this->position <= this->elementzahl) && (this->position != 0))
+      if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && (myparent->myBeamline()->position != 0))
 	{
-	  printf("write map of element %d to file\n", this->position); 
+	  printf("write map of element %d to file\n", myparent->myBeamline()->position); 
 	  sprintf(header, "beamline: %s, map of element %d, iord: %d%d", 
-		  this->beamlinename, this->position, this->BLOptions.ifl.iord,0);
-	  sprintf(buffer, "%s-%d", this->mapname, this->position);
+		  this->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,0);
+	  sprintf(buffer, "%s-%d", this->mapname, myparent->myBeamline()->position);
 	  /* casting 15.12.99 ist noch nicht OK */
-	  writemapc(buffer, header, this->BLOptions.ifl.iord, 
-		    (double *)(this->ElementList[this->position- 1].ypc1), 
-		    (double *) this->ElementList[this->position- 1].zpc1, 
-		    (double *) this->ElementList[this->position- 1].dypc, 
-		    (double *) this->ElementList[this->position- 1].dzpc,
-		    (double *) this->ElementList[this->position- 1].wc, 
-		    (double *) this->ElementList[this->position- 1].xlc, 
-		    (double *) this->ElementList[this->position- 1].xlm.xlen1c, 
-		    (double *) this->ElementList[this->position- 1].xlm.xlen2c);
+	  writemapc(buffer, header, myparent->myBeamline()->BLOptions.ifl.iord, 
+		    (double *)(myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].ypc1), 
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].zpc1, 
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].dypc, 
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].dzpc,
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].wc, 
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].xlc, 
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].xlm.xlen1c, 
+		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].xlm.xlen2c);
 	} 
       
       //  else wir schreiben hier immer beides
 	{ 
 	  printf("write map of beamline to file\n"); 
 	  sprintf(header, "beamline: %s, map of beamline, iord: %d", 
-		  this->beamlinename, this->BLOptions.ifl.iord);
+		  this->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
 	  sprintf(buffer, "%s-0", this->mapname);
-	  writemapc(buffer,  header,  this->BLOptions.ifl.iord, 
+	  writemapc(buffer,  header,  myparent->myBeamline()->BLOptions.ifl.iord, 
 		    (double *) this->ypc1, (double *) this->zpc1, 
 		    (double *) this->dypc, (double *) this->dzpc,
 		    (double *) this->wc,   (double *) this->xlc, 
@@ -167,14 +167,14 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writematAct")) 
     { 
       printf("writematAct button pressed\n");
-      if ((this->position <= this->elementzahl) && (this->position != 0))
+      if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && (myparent->myBeamline()->position != 0))
 	{
-	  printf("write matrix of element %d to file\n", this->position); 
+	  printf("write matrix of element %d to file\n", myparent->myBeamline()->position); 
 	  sprintf(header, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
-		  this->beamlinename, this->position, this->BLOptions.ifl.iord,
-		  this->BLOptions.REDUCE_maps);
-	  sprintf(buffer, "%s-%d\x00", this->matrixname, this->position);
-          writematrixfile((double *)this->ElementList[this->position- 1].M_StoI, buffer, header, 
+		  myparent->myBeamline()->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,
+		  myparent->myBeamline()->BLOptions.REDUCE_maps);
+	  sprintf(buffer, "%s-%d\x00", this->matrixname, myparent->myBeamline()->position);
+          writematrixfile((double *)myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].M_StoI, buffer, header, 
 			  strlen(buffer), strlen(header)); // add hidden length parameter 
 	} 
       
@@ -182,7 +182,7 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
 	  sprintf(header, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
-		  this->beamlinename, this->BLOptions.ifl.iord, this->BLOptions.REDUCE_maps);
+		  this->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, myparent->myBeamline()->BLOptions.REDUCE_maps);
 	  sprintf(buffer, "%s-0\x00", this->matrixname);
 	  writematrixfile((double *)this->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
@@ -193,9 +193,9 @@ void MainWindow::activateProc(const QString &action)
       printf("writecoeffmapAct button pressed\n"); 
 
       //  sprintf(buffer, "%s", "mirror-coefficients.dat");
-      sprintf(buffer, "%s.coeff", this->elementList->currentItem()->text().toAscii().data());
+      sprintf(buffer, "%s.coeff", myparent->myBeamline()->elementList->currentItem()->text().toAscii().data());
       printf("write coefficients to file: %s\n", buffer);
-      WriteMKos((struct mirrortype *)&this->ElementList[this->position- 1].mir, buffer);
+      WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
       statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
     } 
 
@@ -294,24 +294,24 @@ void MainWindow::appendElement()
   int i;
   int pos= elementList->count();
   if (pos < 0) pos= 0;  // empty list 
-  if (abs(this->elementzahl) > 1000) this->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
+  if (abs(myparent->myBeamline()->elementzahl) > 1000) myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, this->elementzahl);  
+  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
 #endif 
  
   QListWidgetItem *item= new QListWidgetItem("New Element");
   elementList->insertItem(pos, item);
   item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
-  tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
-  memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
-  this->elementzahl++;
-  this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
-  listpt= this->ElementList; tmplistpt= tmplist; 
-  for (i= 0; i< (int)this->elementzahl; i++, listpt++)
+  tmplist= XMALLOC(struct ElementType, myparent->myBeamline()->elementzahl); // alloc memory
+  memcpy(tmplist, myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl* sizeof(struct ElementType)); // copy contents
+  myparent->myBeamline()->elementzahl++;
+  myparent->myBeamline()->ElementList= XREALLOC(struct ElementType, myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl);
+  listpt= myparent->myBeamline()->ElementList; tmplistpt= tmplist; 
+  for (i= 0; i< (int)myparent->myBeamline()->elementzahl; i++, listpt++)
     {
 #ifdef DEBUG
-      printf("i= %d, pos= %d, nmax %u\n", i, pos, this->elementzahl);
+      printf("i= %d, pos= %d, nmax %u\n", i, pos, myparent->myBeamline()->elementzahl);
 #endif
       if (i == pos)
 	{
@@ -325,10 +325,10 @@ void MainWindow::appendElement()
       else
 	memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
     }
-  this->beamlineOK &= ~(mapOK | resultOK);
+  myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
   //  WriteBLFile(PHASESet.beamlinename, bl); 
   XFREE(tmplist);
-  printf("inserElement: end list should have %u elements\n", this->elementzahl);
+  printf("inserElement: end list should have %u elements\n", myparent->myBeamline()->elementzahl);
   UpdateStatus();
   writeBackupFile();
 } // appendElement
@@ -348,7 +348,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
     }
 
   char *text= cffE->text().toAscii().data();          // get string from widget
-  struct gdatset *gdat= &(this->ElementList[number].GDat);
+  struct gdatset *gdat= &(myparent->myBeamline()->ElementList[number].GDat);
   char  buffer[9];
   printf("thetaBslot: text: %s\n", text);
 
@@ -356,8 +356,8 @@ void MainWindow::thetaBslot()  // SetTheta from cff
   sscanf(text, "%lf", &cff);
   if (cff != 1.0)
     {
-      printf("fixfocus: %f, %lg\n", gdat->xdens[0], this->BLOptions.lambda);
-      FixFocus(cff, this->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
+      printf("fixfocus: %f, %lg\n", gdat->xdens[0], myparent->myBeamline()->BLOptions.lambda);
+      FixFocus(cff, myparent->myBeamline()->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
       sprintf(buffer, "%8.4f", theta0);  
@@ -443,16 +443,16 @@ void MainWindow::deleteElement()
   //  char *text;
 
 #ifdef DEBUG
-  printf("deleteElement: delete element with idx %d out of %u\n", pos, this->elementzahl);
+  printf("deleteElement: delete element with idx %d out of %u\n", pos, myparent->myBeamline()->elementzahl);
 #endif
 
   if (pos >= 0)
     {
       item= elementList->takeItem(pos);
-      this->elementzahl= this->elementList->count();
+      myparent->myBeamline()->elementzahl= myparent->myBeamline()->elementList->count();
       if (item)
 	{
-	  printf("remove item %d, new count: %d\n", pos, this->elementzahl);
+	  printf("remove item %d, new count: %d\n", pos, myparent->myBeamline()->elementzahl);
 	  delete item;
 	} 
       else 
@@ -461,22 +461,22 @@ void MainWindow::deleteElement()
       
       //#ifdef XXX
       printf ("widget deleted\n");
-      tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
-      memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
+      tmplist= XMALLOC(struct ElementType, myparent->myBeamline()->elementzahl); // alloc memory
+      memcpy(tmplist, myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl* sizeof(struct ElementType)); // copy contents
       
-      if (this->elementzahl == 0) 
-	XFREE(this->ElementList);
+      if (myparent->myBeamline()->elementzahl == 0) 
+	XFREE(myparent->myBeamline()->ElementList);
       else
-	this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
+	myparent->myBeamline()->ElementList= XREALLOC(struct ElementType, myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl);
       
       /* umsortieren */
-      listpt= this->ElementList; tmplistpt= tmplist; 
-      for (i= 1; i<= (int)this->elementzahl; i++, listpt++)
+      listpt= myparent->myBeamline()->ElementList; tmplistpt= tmplist; 
+      for (i= 1; i<= (int)myparent->myBeamline()->elementzahl; i++, listpt++)
 	{
 	  if (i == pos)  tmplistpt++;  /* ueberlesen */
 	  memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
 	}
-      this->beamlineOK &= ~(mapOK | resultOK);
+      myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
       //  WriteBLFile(PHASESet.beamlinename, bl); 
       XFREE(tmplist);
       //#endif
@@ -495,8 +495,8 @@ void MainWindow::dislenSlot()
 #ifdef DEBUG
   printf("dislenSlot called\n");
 #endif
-  sscanf(dislenE->text().toAscii().data(), "%lf", &this->BLOptions.displength);
-  this->beamlineOK &= ~resultOK;
+  sscanf(dislenE->text().toAscii().data(), "%lf", &myparent->myBeamline()->BLOptions.displength);
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   writeBackupFile();
 } // dislenSlot
@@ -520,14 +520,14 @@ void MainWindow::elementApplyBslot()
       return;
     }
 
-  struct gdatset *gd= &(this->ElementList[number].GDat);
-  struct mdatset *md= &(this->ElementList[number].MDat);
+  struct gdatset *gd= &(myparent->myBeamline()->ElementList[number].GDat);
+  struct mdatset *md= &(myparent->myBeamline()->ElementList[number].MDat);
 
-  this->beamlineOK &= ~mapOK;
-  this->beamlineOK &= ~resultOK;
-  this->ElementList[number].ElementOK = 0;
+  myparent->myBeamline()->beamlineOK &= ~mapOK;
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
+  myparent->myBeamline()->ElementList[number].ElementOK = 0;
 
-  strcpy(this->ElementList[number].elementname, elementList->currentItem()->text().toAscii().data()); // the name of the element
+  strcpy(myparent->myBeamline()->ElementList[number].elementname, elementList->currentItem()->text().toAscii().data()); // the name of the element
   
   printf("elementApplyBslot activated\nfeed data from widget into dataset\n");
 
@@ -566,10 +566,10 @@ void MainWindow::elementApplyBslot()
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
   // build the element
-  DefMirrorC(md,   &(this->ElementList[number].mir), md->Art, gd->theta0, this->BLOptions.REDUCE_maps);
-  DefGeometryC(gd, &(this->ElementList[number].geo));
-  MakeMapandMatrix(&(this->ElementList[number]), this);
-  //  this->ElementList[number].ElementOK |= elementOK;
+  DefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
+  DefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
+  MakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), this);
+  //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
   UpdateStatus();
   writeBackupFile();
 } // elementApplyBslot
@@ -591,8 +591,8 @@ void MainWindow::goButtonslot()
   printf("debug: goButtonslot called\n");
 #endif
 
-  this->BLOptions.SourcetoImage= 1;
-  this->beamlineOK &= ~resultOK;
+  myparent->myBeamline()->BLOptions.SourcetoImage= 1;
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   writeBackupFile();
 } // goButtonslot
@@ -617,11 +617,11 @@ void MainWindow::grapplyslot()
   sscanf(grzmaxE->text().toAscii().data(), "%lf", &d_plot->Plot::zmax);
 
   if (d_plot->plotsubject == 0) 
-    if (this->beamlineOK & sourceOK)
+    if (myparent->myBeamline()->beamlineOK & sourceOK)
       {
-	d_plot->Plot::hfill((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber);
-	d_plot->Plot::statistics((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber, this->deltalambdafactor);
-	UpdateStatistics(d_plot, "Source", this->RTSource.raynumber);
+	d_plot->Plot::hfill((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, myparent->myBeamline()->RTSource.raynumber);
+	d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, myparent->myBeamline()->RTSource.raynumber, myparent->myBeamline()->deltalambdafactor);
+	UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
 	d_plot->setTitle(tr("Source Plane"));
 	d_plot->setphaseData("grsourceAct");
       }
@@ -629,11 +629,11 @@ void MainWindow::grapplyslot()
       QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
   
   if (d_plot->plotsubject == 1) 
-    if (this->beamlineOK & resultOK)
+    if (myparent->myBeamline()->beamlineOK & resultOK)
       {
-	d_plot->Plot::hfill((struct RayType *)this->RESULT.RESp, this->RESULT.points);
-	d_plot->Plot::statistics((struct RayType *)this->RESULT.RESp, this->RESULT.points, this->deltalambdafactor);
-	UpdateStatistics(d_plot, "Image", this->RESULT.points);
+	d_plot->Plot::hfill((struct RayType *)myparent->myBeamline()->RESULT.RESp, myparent->myBeamline()->RESULT.points);
+	d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, myparent->myBeamline()->RESULT.points, myparent->myBeamline()->deltalambdafactor);
+	UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
 	d_plot->setTitle(tr("Image Plane"));
 	d_plot->setphaseData("grimageAct");
       }
@@ -667,14 +667,14 @@ void MainWindow::grautoscaleslot()
 #endif
 
   if (d_plot->plotsubject == 1) 
-    if (this->beamlineOK & resultOK)
-      d_plot->Plot::autoScale((struct RayType *)this->RESULT.RESp, this->RESULT.points); 
+    if (myparent->myBeamline()->beamlineOK & resultOK)
+      d_plot->Plot::autoScale((struct RayType *)myparent->myBeamline()->RESULT.RESp, myparent->myBeamline()->RESULT.points); 
     else
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No results available"));
 			
   if (d_plot->plotsubject == 0) 
-    if (this->beamlineOK & sourceOK)
-      d_plot->Plot::autoScale((struct RayType *)this->RTSource.SourceRays, this->RTSource.raynumber);
+    if (myparent->myBeamline()->beamlineOK & sourceOK)
+      d_plot->Plot::autoScale((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, myparent->myBeamline()->RTSource.raynumber);
     else
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No source data available"));
   
@@ -705,9 +705,9 @@ void MainWindow::grslot()
     }
 
   if (gratingGroup->isChecked() == true)
-    this->ElementList[number].MDat.Art |= GRATINGBIT; 
+    myparent->myBeamline()->ElementList[number].MDat.Art |= GRATINGBIT; 
   else
-    this->ElementList[number].MDat.Art &= ~(GRATINGBIT); 
+    myparent->myBeamline()->ElementList[number].MDat.Art &= ~(GRATINGBIT); 
 
   UpdateElementBox(number);
 } // grslot
@@ -729,9 +729,9 @@ void MainWindow::grvlsslot()
     }
 
   if (vlsGroup->isChecked() == true)
-    this->ElementList[number].MDat.Art |= VLSBIT ; 
+    myparent->myBeamline()->ElementList[number].MDat.Art |= VLSBIT ; 
   else
-    this->ElementList[number].MDat.Art &= ~(VLSBIT) ;
+    myparent->myBeamline()->ElementList[number].MDat.Art &= ~(VLSBIT) ;
  
   UpdateElementBox(number);
 } // end grvlsslot
@@ -749,24 +749,24 @@ void MainWindow::insertElement()
   int i;
   int pos= elementList->currentRow();
   if (pos < 0) pos= 0;  // empty list 
-  if (abs(this->elementzahl) > 1000) this->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
+  if (abs(myparent->myBeamline()->elementzahl) > 1000) myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, this->elementzahl);  
+  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
 #endif 
  
   QListWidgetItem *item= new QListWidgetItem("New Element");
   elementList->insertItem(pos, item);
   item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
-  tmplist= XMALLOC(struct ElementType, this->elementzahl); // alloc memory
-  memcpy(tmplist, this->ElementList, this->elementzahl* sizeof(struct ElementType)); // copy contents
-  this->elementzahl++;
-  this->ElementList= XREALLOC(struct ElementType, this->ElementList, this->elementzahl);
-  listpt= this->ElementList; tmplistpt= tmplist; 
-  for (i= 0; i< (int)this->elementzahl; i++, listpt++)
+  tmplist= XMALLOC(struct ElementType, myparent->myBeamline()->elementzahl); // alloc memory
+  memcpy(tmplist, myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl* sizeof(struct ElementType)); // copy contents
+  myparent->myBeamline()->elementzahl++;
+  myparent->myBeamline()->ElementList= XREALLOC(struct ElementType, myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl);
+  listpt= myparent->myBeamline()->ElementList; tmplistpt= tmplist; 
+  for (i= 0; i< (int)myparent->myBeamline()->elementzahl; i++, listpt++)
     {
 #ifdef DEBUG
-      printf("i= %d, pos= %d, nmax %u\n", i, pos, this->elementzahl);
+      printf("i= %d, pos= %d, nmax %u\n", i, pos, myparent->myBeamline()->elementzahl);
 #endif
       if (i == pos)
 	{
@@ -780,10 +780,10 @@ void MainWindow::insertElement()
       else
 	memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
     }
-  this->beamlineOK &= ~(mapOK | resultOK);
+  myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
   //  WriteBLFile(PHASESet.beamlinename, bl); 
   XFREE(tmplist);
-  printf("inserElement: end list should have %u elements\n", this->elementzahl);
+  printf("inserElement: end list should have %u elements\n", myparent->myBeamline()->elementzahl);
 } // insertElement
 
 // slot changed  lambda
@@ -794,10 +794,10 @@ void MainWindow::lambdaSlot()
 #endif
 
   unsigned int i;
-  sscanf(lambdaE->text().toAscii().data(), "%lf", &this->BLOptions.lambda);
-  this->BLOptions.lambda*= 1e-6;
-  this->beamlineOK= 0;
-  for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
+  sscanf(lambdaE->text().toAscii().data(), "%lf", &myparent->myBeamline()->BLOptions.lambda);
+  myparent->myBeamline()->BLOptions.lambda*= 1e-6;
+  myparent->myBeamline()->beamlineOK= 0;
+  for (i=0; i< myparent->myBeamline()->elementzahl; i++) myparent->myBeamline()->ElementList[i].ElementOK= 0;
   UpdateStatus();
 } // lambdaSlot
 
@@ -808,7 +808,7 @@ void MainWindow::misaliBoxslot(int newstate)
   printf("misaliBoxslot called: new state: %d\n", newstate);
 #endif
   
-  this->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
+  myparent->myBeamline()->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
 } // misaliBoxslot
 
 // slot called to read in a new beamline
@@ -821,22 +821,22 @@ void MainWindow::newBeamline()
     QMessageBox::warning(this, tr("Phase: newBeamline"),
 			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
   
-  this->beamlineOK= 0;
-  //this->myPHASEset::init(name);
-  this->initSet(name);
+  myparent->myBeamline()->beamlineOK= 0;
+  //myparent->myBeamline()->myPHASEset::init(name);
+  myparent->myBeamline()->initSet(name);
   PutPHASE(this, (char*) MainPickName);
-  this->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
+  myparent->myBeamline()->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
   AllocRTSource(this);                          /* reserves source memory */
-  this->RTSource.raynumber= 0;                  /* set default raynumber  */
+  myparent->myBeamline()->RTSource.raynumber= 0;                  /* set default raynumber  */
   XFREE(RTSource.SourceRays);
-  this->elementzahl = 0; 
-  XFREE(this->ElementList);                     /* clean up memory of elements  */
-  this->RESULT.points= 0;
-  FreeResultMem(&this->RESULT);
-  this->BLOptions.lambda= 3.1e-6;                /* 400 ev */
-  this->BLOptions.displength= 5000;
-  this->BLOptions.SourcetoImage= 1;
-  this->BLOptions.WithAlign= 0;
+  myparent->myBeamline()->elementzahl = 0; 
+  XFREE(myparent->myBeamline()->ElementList);                     /* clean up memory of elements  */
+  myparent->myBeamline()->RESULT.points= 0;
+  FreeResultMem(&myparent->myBeamline()->RESULT);
+  myparent->myBeamline()->BLOptions.lambda= 3.1e-6;                /* 400 ev */
+  myparent->myBeamline()->BLOptions.displength= 5000;
+  myparent->myBeamline()->BLOptions.SourcetoImage= 1;
+  myparent->myBeamline()->BLOptions.WithAlign= 0;
   UpdateElementList();
   UpdateBeamlineBox();
   UpdateSourceBox();
@@ -860,7 +860,7 @@ void MainWindow::openBeamline()
 						  );
   char *name;
   //  int result;
-  //this->QtPhase::print();
+  //myparent->myBeamline()->QtPhase::print();
 
   if (!fileName.isEmpty()) 
     {
@@ -869,20 +869,20 @@ void MainWindow::openBeamline()
       rcode= ReadBLFile(name, this);
       if (rcode != -1)
 	{
-	  //this->myPHASEset::init(name);
-	  this->initSet(name);
+	  //myparent->myBeamline()->myPHASEset::init(name);
+	  myparent->myBeamline()->initSet(name);
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
 	  parameterUpdateAll(NPARS);
-	  this->beamlineOK= 0;
+	  myparent->myBeamline()->beamlineOK= 0;
 	  PutPHASE(this, (char*) MainPickName);
 	} 
       else
 	QMessageBox::information(this, tr("Phase: newBeamline"),
 				 tr("Cannot load %1.\n wrong file type!").arg(fileName));
     }
-  //this->myPHASEset::print();
+  //myparent->myBeamline()->myPHASEset::print();
   UpdateStatus();
 } // end openBeamline()
 
@@ -894,9 +894,9 @@ void MainWindow::parameterUpdateSlot()
   printf("debug: parameterUpdateSlot called, file: %s\n", __FILE__);
 #endif
   parameterUpdate(parameterList->currentRow(), parameterE->text().toAscii().data(), 0);
-  this->beamlineOK &= ~mapOK;
-  this->beamlineOK &= ~resultOK;
-  for (i=0; i< this->elementzahl; i++) this->ElementList[i].ElementOK= 0;
+  myparent->myBeamline()->beamlineOK &= ~mapOK;
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
+  for (i=0; i< myparent->myBeamline()->elementzahl; i++) myparent->myBeamline()->ElementList[i].ElementOK= 0;
   UpdateStatus();
   writeBackupFile();
 } // end parameterUpdateSlot
@@ -908,8 +908,8 @@ void MainWindow::poButtonslot()
   printf("poButtonslot called\n");
 #endif
 
-  this->BLOptions.SourcetoImage= 2;
-  this->beamlineOK &= ~resultOK;
+  myparent->myBeamline()->BLOptions.SourcetoImage= 2;
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   writeBackupFile();
 } // poButtonslot
@@ -925,8 +925,8 @@ void MainWindow::rup1slot()
 			 tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].GDat.azimut= 0;
-  this->ElementList[number].GDat.theta0= fabs(this->ElementList[number].GDat.theta0);
+  myparent->myBeamline()->ElementList[number].GDat.azimut= 0;
+  myparent->myBeamline()->ElementList[number].GDat.theta0= fabs(myparent->myBeamline()->ElementList[number].GDat.theta0);
   UpdateElementBox(number);
 }
 
@@ -939,8 +939,8 @@ void MainWindow::rleft2slot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].GDat.azimut= 1;
-  this->ElementList[number].GDat.theta0= fabs(this->ElementList[number].GDat.theta0);
+  myparent->myBeamline()->ElementList[number].GDat.azimut= 1;
+  myparent->myBeamline()->ElementList[number].GDat.theta0= fabs(myparent->myBeamline()->ElementList[number].GDat.theta0);
   UpdateElementBox(number);
 }
 
@@ -953,8 +953,8 @@ void MainWindow::rdown3slot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].GDat.azimut= 2;
-  this->ElementList[number].GDat.theta0= -fabs(this->ElementList[number].GDat.theta0);
+  myparent->myBeamline()->ElementList[number].GDat.azimut= 2;
+  myparent->myBeamline()->ElementList[number].GDat.theta0= -fabs(myparent->myBeamline()->ElementList[number].GDat.theta0);
   UpdateElementBox(number);
 }
 
@@ -967,8 +967,8 @@ void MainWindow::rright4slot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].GDat.azimut= 3;
-  this->ElementList[number].GDat.theta0= -fabs(this->ElementList[number].GDat.theta0);
+  myparent->myBeamline()->ElementList[number].GDat.azimut= 3;
+  myparent->myBeamline()->ElementList[number].GDat.theta0= -fabs(myparent->myBeamline()->ElementList[number].GDat.theta0);
   UpdateElementBox(number);
 } 
 // end slot orientation radio buttons
@@ -997,7 +997,7 @@ void MainWindow::print()
 // slot
 void MainWindow::save()
 {
-  char *name= this->beamlinename;
+  char *name= myparent->myBeamline()->beamlinename;
 
   WriteBLFile(name, this);
  
@@ -1025,8 +1025,8 @@ void MainWindow::saveas()
                              .arg(file.errorString()));
         return;
     }
-    //this->myPHASEset::init(name);
-    this->initSet(name);
+    //myparent->myBeamline()->myPHASEset::init(name);
+    myparent->myBeamline()->initSet(name);
     PutPHASE(this, (char*) MainPickName);
     WriteBLFile(name, this);
     UpdateBeamlineBox();
@@ -1090,9 +1090,9 @@ if (number < 0)
 			 tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOEPM;
-  this->ElementList[number].MDat.rmi= 0.0;
-  this->ElementList[number].MDat.rho= 0.0;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEPM;
+  myparent->myBeamline()->ElementList[number].MDat.rmi= 0.0;
+  myparent->myBeamline()->ElementList[number].MDat.rho= 0.0;
   UpdateElementBox(number);
 }
 
@@ -1106,7 +1106,7 @@ void MainWindow::toslot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOETM;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOETM;
   UpdateElementBox(number); 
 }
 
@@ -1120,7 +1120,7 @@ void MainWindow::peslot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOEPElli;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEPElli;
   UpdateElementBox(number); 
 }
 
@@ -1134,7 +1134,7 @@ void MainWindow::elslot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOEElli;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEElli;
   UpdateElementBox(number); 
 }
 
@@ -1148,7 +1148,7 @@ void MainWindow::coslot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOECone;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOECone;
   UpdateElementBox(number); 
 }
 
@@ -1162,7 +1162,7 @@ void MainWindow::geslot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOEGeneral;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEGeneral;
   QMessageBox::information(this, tr("gerneric element slot"),
 			   tr("The elementname must be the file name!\nsave and reload the beamline!"));
   UpdateElementBox(number); 
@@ -1178,7 +1178,7 @@ void MainWindow::apslot()
 			   tr("(nothing selected)"));
       return;
     }
-  this->ElementList[number].MDat.Art= kEOESlit;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOESlit;
   UpdateElementBox(number); 
 }
 // end slots shapeMenu
@@ -1232,23 +1232,23 @@ void MainWindow::sourceApplyBslot()
       return;
     }
     
-  sou= this->RTSource.QuellTyp;
+  sou= myparent->myBeamline()->RTSource.QuellTyp;
   switch (sou) {
     
   case 'D':
-    dp= (struct DipolSourceType *)this->RTSource.Quellep;
+    dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &dp->sigy);
     sscanf(S2E->text().toAscii().data(), "%lf", &dp->sigdy);
     sscanf(S3E->text().toAscii().data(), "%lf", &dp->sigz);
     sscanf(S4E->text().toAscii().data(), "%lf", &dp->dz);
-    sscanf(S5E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S5E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
     break;
     
   case 'G':
-    up0= (struct UndulatorSource0Type *)this->RTSource.Quellep;
+    up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &up0->length);
     sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
-    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
     sscanf(S4E->text().toAscii().data(), "%lf", &up0->deltaz);
     sscanf(S5E->text().toAscii().data(), "%lf", &up0->sigmaey);
     sscanf(S6E->text().toAscii().data(), "%lf", &up0->sigmaez);
@@ -1257,7 +1257,7 @@ void MainWindow::sourceApplyBslot()
     break;
     
   case 'H':
-    hp= (struct  HardEdgeSourceType *)this->RTSource.Quellep;
+    hp= (struct  HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &hp->disty);
     sscanf(S2E->text().toAscii().data(), "%d",  &hp->iy);
     sscanf(S3E->text().toAscii().data(), "%lf", &hp->distz);
@@ -1266,39 +1266,39 @@ void MainWindow::sourceApplyBslot()
     sscanf(S6E->text().toAscii().data(), "%d",  &hp->idy);
     sscanf(S7E->text().toAscii().data(), "%lf", &hp->divz);
     sscanf(S8E->text().toAscii().data(), "%d",  &hp->idz);
-    this->RTSource.raynumber=  hp->iy* hp->idy* hp->iz* hp->idz;
+    myparent->myBeamline()->RTSource.raynumber=  hp->iy* hp->idy* hp->iz* hp->idz;
     break;
     
   case 'L':
   case 'M':
-    up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+    up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &up->length);
     sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
-    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
     sscanf(S4E->text().toAscii().data(), "%lf", &up->deltaz);
     break;
     
   case 'o':
-    sop= (struct PointSourceType *)this->RTSource.Quellep;
+    sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &sop->sigy);
     sscanf(S2E->text().toAscii().data(), "%lf", &sop->sigdy);
     sscanf(S3E->text().toAscii().data(), "%lf", &sop->sigz);
     sscanf(S4E->text().toAscii().data(), "%lf", &sop->sigdz);
-    sscanf(S5E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S5E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
     break;
     
   case 'R':
-    rp= (struct RingSourceType *)this->RTSource.Quellep;
+    rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &rp->dy);
     sscanf(S2E->text().toAscii().data(), "%lf", &rp->dz);
-    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
     break;
     
   case 'U':
-    up= (struct UndulatorSourceType *)this->RTSource.Quellep;
+    up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
     sscanf(S1E->text().toAscii().data(), "%lf", &up->length);
     sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
-    sscanf(S3E->text().toAscii().data(), "%d",  &this->RTSource.raynumber);
+    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
     break;
   case 'F':
     // hier muss nichts gemacht werden
@@ -1311,9 +1311,9 @@ void MainWindow::sourceApplyBslot()
     return;
   }
 
-  this->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
+  myparent->myBeamline()->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
   MakeRTSource(this, this);
-  this->beamlineOK &= ~resultOK;
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   writeBackupFile();
 } //sourceApplyBslot
