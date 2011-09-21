@@ -108,8 +108,8 @@ void MainWindow::activateProc(const QString &action)
       printf("optiInputAct button pressed %d\n", myparent->myBeamline()->elementzahl);
       if (!o_input) 
 	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
-			       myparent->myBeamline()->beamlinename, this->optipckname, 
-			       this->opresname, this->minname); 
+			       myparent->myBeamline()->beamlinename, myparent->myPHASEset()->optipckname, 
+			       myparent->myPHASEset()->opresname, myparent->myPHASEset()->minname); 
       else 
 	o_input->optiInputBox->show();
     }
@@ -135,8 +135,8 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  printf("write map of element %d to file\n", myparent->myBeamline()->position); 
 	  sprintf(header, "beamline: %s, map of element %d, iord: %d%d", 
-		  this->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,0);
-	  sprintf(buffer, "%s-%d", this->mapname, myparent->myBeamline()->position);
+		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,0);
+	  sprintf(buffer, "%s-%d", myparent->myPHASEset()->mapname, myparent->myBeamline()->position);
 	  /* casting 15.12.99 ist noch nicht OK */
 	  writemapc(buffer, header, myparent->myBeamline()->BLOptions.ifl.iord, 
 		    (double *)(myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].ypc1), 
@@ -204,7 +204,7 @@ void MainWindow::activateProc(const QString &action)
     { 
       printf("writereRTsultAct button pressed\n"); 
       printf("write result to file: %s\n", myparent->myPHASEset()->imageraysname);
-      myparent->myWriteRayFile(this->imageraysname, &myparent->myBeamline()->RESULT.points,
+      myparent->myWriteRayFile(myparent->myPHASEset()->imageraysname, &myparent->myBeamline()->RESULT.points,
 		   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
     } 
   if (!action.compare("grfootprintAct")) 
