@@ -153,14 +153,15 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("write map of beamline to file\n"); 
 	  sprintf(header, "beamline: %s, map of beamline, iord: %d", 
-		  this->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
-	  sprintf(buffer, "%s-0", this->mapname);
-	  writemapc(buffer,  header,  myparent->myBeamline()->BLOptions.ifl.iord, 
-		    (double *) this->ypc1, (double *) this->zpc1, 
-		    (double *) this->dypc, (double *) this->dzpc,
-		    (double *) this->wc,   (double *) this->xlc, 
-		    (double *) this->xlm.xlen1c, 
-		    (double *) this->xlm.xlen2c);
+		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
+	  sprintf(buffer, "%s-0", myparent->myPHASEset()->mapname);
+	  myparent->mywritemapc(buffer,  header,  
+				myparent->myBeamline()->BLOptions.ifl.iord, 
+		    (double *) myparent->myBeamline()->ypc1, (double *) myparent->myBeamline()->zpc1, 
+		    (double *) myparent->myBeamline()->dypc, (double *) myparent->myBeamline()->dzpc,
+		    (double *) myparent->myBeamline()->wc,   (double *) myparent->myBeamline()->xlc, 
+		    (double *) myparent->myBeamline()->xlm.xlen1c, 
+		    (double *) myparent->myBeamline()->xlm.xlen2c);
 	}
     } 
 
@@ -173,7 +174,7 @@ void MainWindow::activateProc(const QString &action)
 	  sprintf(header, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
 		  myparent->myBeamline()->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,
 		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  sprintf(buffer, "%s-%d\x00", this->matrixname, myparent->myBeamline()->position);
+	  sprintf(buffer, "%s-%d\x00", myparent->myPHASEset()->matrixname, myparent->myBeamline()->position);
           writematrixfile((double *)myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].M_StoI, buffer, header, 
 			  strlen(buffer), strlen(header)); // add hidden length parameter 
 	} 
@@ -182,9 +183,9 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
 	  sprintf(header, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
-		  this->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  sprintf(buffer, "%s-0\x00", this->matrixname);
-	  writematrixfile((double *)this->M_StoI, buffer, header, strlen(buffer), strlen(header));
+		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, myparent->myBeamline()->BLOptions.REDUCE_maps);
+	  sprintf(buffer, "%s-0\x00", myparent->myPHASEset()->matrixname);
+	  writematrixfile((double *)myparent->myBeamline()->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
     } 
 
@@ -203,8 +204,8 @@ void MainWindow::activateProc(const QString &action)
     { 
       printf("writereRTsultAct button pressed\n"); 
       printf("write result to file: %s\n", myparent->myPHASEset()->imageraysname);
-      myparent->myWriteRayFile(this->imageraysname, &this->RESULT.points,
-		   (struct RayType *)this->RESULT.RESp);
+      myparent->myWriteRayFile(this->imageraysname, &myparent->myBeamline()->RESULT.points,
+		   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
     } 
   if (!action.compare("grfootprintAct")) 
     { 
@@ -265,9 +266,9 @@ void MainWindow::activateProc(const QString &action)
       if (fexists((char *)"fg34.par") == 1)
 	{
 	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
-	  readfg34_par(&this->src, &this->BLOptions.apr,
-		       &this->BLOptions.ifl, &this->BLOptions.xi,
-		       &this->BLOptions.epsilon);
+	  myparent->myreadfg34_par(&myparent->myBeamline()->src, &myparent->myBeamline()->BLOptions.apr,
+		       &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
+		       &myparent->myBeamline()->BLOptions.epsilon);
 	  parameterUpdateAll(NPARS);
 	} else
 	QMessageBox::warning(this, tr("readFg34Act"),
