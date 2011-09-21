@@ -824,7 +824,7 @@ void MainWindow::newBeamline()
   myparent->myBeamline()->beamlineOK= 0;
   //myparent->myBeamline()->myPHASEset::init(name);
   myparent->myBeamline()->initSet(name);
-  PutPHASE(this, (char*) MainPickName);
+  myparent->myPutPHASE((char*) MainPickName);
   myparent->myBeamline()->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
   AllocRTSource(this);                          /* reserves source memory */
   myparent->myBeamline()->RTSource.raynumber= 0;                  /* set default raynumber  */
@@ -870,13 +870,13 @@ void MainWindow::openBeamline()
       if (rcode != -1)
 	{
 	  //myparent->myBeamline()->myPHASEset::init(name);
-	  myparent->myBeamline()->initSet(name);
+	  myparent->initSet(name);
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
 	  parameterUpdateAll(NPARS);
 	  myparent->myBeamline()->beamlineOK= 0;
-	  PutPHASE(this, (char*) MainPickName);
+	  myparent->myPutPHASE((char*) MainPickName);
 	} 
       else
 	QMessageBox::information(this, tr("Phase: newBeamline"),
