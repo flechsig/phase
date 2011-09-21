@@ -70,11 +70,11 @@ void MainWindow::activateProc(const QString &action)
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
-	MakeRTSource(this, this);
-      ReAllocResult(this, PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+	myparent->myMakeRTSource();
+      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
 	
-      BuildBeamline(this);
-      RayTraceFull(this); 
+      myparent->myBuildBeamline();
+      myparent->myRayTraceFull(); 
       printf("full ray trace-> done\n");
       statusBar()->showMessage(tr("full ray trace-> done!"), 4000);
 
@@ -86,10 +86,10 @@ void MainWindow::activateProc(const QString &action)
       
       
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
-	MakeRTSource(this, this);
-      ReAllocResult(this, PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
-      BuildBeamline(this);
-      Footprint(this, this->position);
+	myparent->myMakeRTSource();
+      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+      myparent->myBuildBeamline();
+      myparent->myFootprint(myparent->myBeamline()->position);
       printf("footprint-> done\n");
       statusBar()->showMessage(tr("Footprint-> done!"), 4000);
     }
