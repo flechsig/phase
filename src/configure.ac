@@ -20,7 +20,7 @@ dnl obsolete AM_CONFIG_HEADER(phase/config.h)
 AC_CONFIG_HEADERS([phase/config.h])
 
 dnl uf Aug 2011
-dnl AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
 dnl maintainer option i.e. make does not bootstrap
 ##AM_MAINTAINER_MODE
@@ -147,7 +147,7 @@ dnl ****************** CERN **************************
 dnl check for cernlib 
 cernliblist="-lpawlib -lpacklib -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib"
 AC_ARG_WITH([cernlib],
-  AS_HELP_STRING(--with-cernlib=DIR,path to CERN libraries or --without-cernlib),
+  AS_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries or --without-cernlib]),
   dnl option given action
   [ echo "found cernlib option: ${with_cernlib}"
     cernlib=${with_cernlib}
@@ -180,7 +180,7 @@ dnl end cern lib
 
 dnl ****************** QT **************************
 AC_ARG_WITH([qt],
-  AS_HELP_STRING(--with-qt=DIR,path to QT libraries or --without-qt),
+  AS_HELP_STRING([--with-qt=DIR],[path to QT libraries or --without-qt]),
   dnl given action
   [ echo "found qt option: ${with_qt}"
     qt=${with_qt}
@@ -218,7 +218,7 @@ dnl end QT
 
 dnl ****************** QWT **************************
 AC_ARG_WITH([qwt],
-  AS_HELP_STRING(--with-qwt=DIR,path to QWT libraries or --without-qwt),
+  AS_HELP_STRING([--with-qwt=DIR],[path to QWT libraries or --without-qwt]),
   [ echo "found qwt option: ${with_qwt}"
     qwt=${with_qwt}
     if test "${qwt}" = "no"; then
@@ -264,7 +264,7 @@ dnl end QWT
 
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
-  AS_HELP_STRING(--enable-debug,debugging code, static linking),
+  AS_HELP_STRING([--enable-debug],[debugging code, static linking]),
     if test "$enable_debug" = "yes"; then
        AC_DEFINE([DEBUG], 1, "debugging on")
        AC_MSG_NOTICE(*** produce debugging code ***)
@@ -294,7 +294,7 @@ AC_ARG_ENABLE([EXPIRE],
 ## phase with power series up to eighth order (iord= 1 ...7) Nov. 2010
 ## default (iord= 1..4)
 AC_ARG_ENABLE([SEVEN],
-    AS_HELP_STRING(--enable-SEVEN,max. order of power series 7, default: 4),
+    AS_HELP_STRING([--enable-SEVEN],[max. order of power series 7, default: 4]),
     AC_DEFINE([SEVEN_ORDER], 1, "expansion up to 7th order"))
 if test "$enable_SEVEN" != "yes" ; then
    enable_SEVEN="no"
@@ -331,7 +331,7 @@ AC_CHECK_HEADERS(strings.h unistd.h)
 dnl **************** MOTIF ***************************
 
 AC_ARG_WITH([motif],
-  AS_HELP_STRING(--with-motif=DIR,path to Motif libraries, includes, uil),
+  AS_HELP_STRING([--with-motif=DIR],[path to Motif libraries, includes, uil]),
   [ echo "motif path given as option: ${with_motif}"
     motifpath=${with_motif}
     if test "$motifpath" = "no"; then
