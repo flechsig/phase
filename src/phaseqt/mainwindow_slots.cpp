@@ -108,7 +108,7 @@ void MainWindow::activateProc(const QString &action)
       printf("optiInputAct button pressed %d\n", myparent->myBeamline()->elementzahl);
       if (!o_input) 
 	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
-			       myparent->myBeamline()->beamlinename, myparent->myPHASEset()->optipckname, 
+			       myparent->myPHASEset()->beamlinename, myparent->myPHASEset()->optipckname, 
 			       myparent->myPHASEset()->opresname, myparent->myPHASEset()->minname); 
       else 
 	o_input->optiInputBox->show();
@@ -567,12 +567,12 @@ void MainWindow::elementApplyBslot()
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
   // build the element
-  DefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
-  DefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
-  MakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), this);
+  myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
+  myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
+  myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), this);
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
   UpdateStatus();
-  writeBackupFile();
+  myparent->mywriteBackupFile();
 } // elementApplyBslot
 
 // sigmabutton 

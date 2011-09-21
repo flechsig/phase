@@ -55,7 +55,13 @@ public:
   void myAllocRTSource() { AllocRTSource(this); }
   void myBatchMode(int cmode, int selected) { BatchMode(this, this, cmode, selected); }
   void myBuildBeamline() { BuildBeamline(this); }
+  void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout); }
+  void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
+		int etype, double theta, int lREDUCE_maps) { DefMirrorC(x, a, 
+		etype, theta, lREDUCE_maps); }
+
   void myGetPHASE(char *name) { GetPHASE(this, name); }
+  void myMakeMapandMatrix(struct ElementType *listpt) { MakeMapandMatrix(listpt, this); }
   void myMakeRTSource() { MakeRTSource(this, this);  }
   
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected) { return ProcComandLine(this, argc, argv, cmode, selected); }
