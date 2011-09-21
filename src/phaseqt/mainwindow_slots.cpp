@@ -997,9 +997,9 @@ void MainWindow::print()
 // slot
 void MainWindow::save()
 {
-  char *name= myparent->myBeamline()->beamlinename;
+  char *name= myparent->myPHASEset()->beamlinename;
 
-  WriteBLFile(name, this);
+  myparent->myWriteBLFile(name);
  
 
   statusBar()->showMessage(tr("Saved '%1'").arg(name), 4000);
@@ -1026,9 +1026,9 @@ void MainWindow::saveas()
         return;
     }
     //myparent->myBeamline()->myPHASEset::init(name);
-    myparent->myBeamline()->initSet(name);
+    myparent->initSet(name);
     PutPHASE(this, (char*) MainPickName);
-    WriteBLFile(name, this);
+    myparent->myWriteBLFile(name);
     UpdateBeamlineBox();
     //    QTextStream out(&file);
     //    QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1226,7 +1226,7 @@ void MainWindow::sourceApplyBslot()
   printf("sourceApplyBslot activated\n");
 #endif
 
-  if (RTSource.Quellep == NULL )
+  if (myparent->myBeamline()->RTSource.Quellep == NULL )
     {
       printf("error: sourceApplyBslot: Quellep == NULL\n");
       return;
