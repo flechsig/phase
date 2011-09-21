@@ -1027,7 +1027,7 @@ void MainWindow::saveas()
     }
     //myparent->myBeamline()->myPHASEset::init(name);
     myparent->initSet(name);
-    PutPHASE(this, (char*) MainPickName);
+    myparent->myPutPHASE((char*) MainPickName);
     myparent->myWriteBLFile(name);
     UpdateBeamlineBox();
     //    QTextStream out(&file);
