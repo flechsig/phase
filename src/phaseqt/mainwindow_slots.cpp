@@ -56,11 +56,11 @@ void MainWindow::activateProc(const QString &action)
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
-	MakeRTSource(this, this);
+	myparent->myMakeRTSource();
 		
-      ReAllocResult(this, PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
-      BuildBeamline(this);
-      RayTracec(this); 
+      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+      myparent->myBuildBeamline();
+      myparent->myRayTracec(); 
       printf("ray trace-> done\n");
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }

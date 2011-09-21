@@ -63,7 +63,7 @@ public:
   void myReadBLFile(char *name) { ReadBLFile(name, this); }
   void myReAllocResult(int newtype, int dim1, int dim2) 
   { ReAllocResult(this, newtype, dim1, dim2); }
-  void myRayTracec() { RayTracec(); }
+  void myRayTracec() { RayTracec(this); }
   void myWriteBLFile(char *name) { WriteBLFile(name, this); }
   void sourceSetDefaults();
   void writeBackupFile();
