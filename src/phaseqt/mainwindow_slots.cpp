@@ -202,8 +202,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writeRTresultAct")) 
     { 
       printf("writereRTsultAct button pressed\n"); 
-      printf("write result to file: %s\n", this->imageraysname);
-      WriteRayFile(this->imageraysname, &this->RESULT.points,
+      printf("write result to file: %s\n", myparent->myPHASEset()->imageraysname);
+      myparent->myWriteRayFile(this->imageraysname, &this->RESULT.points,
 		   (struct RayType *)this->RESULT.RESp);
     } 
   if (!action.compare("grfootprintAct")) 
@@ -866,7 +866,7 @@ void MainWindow::openBeamline()
     {
       name= fileName.toAscii().data();
       printf("MainWindow::newBeamline: try to read file: %s\n", name);
-      rcode= ReadBLFile(name, this);
+      rcode= myparent->myReadBLFile(name);
       if (rcode != -1)
 	{
 	  //myparent->myBeamline()->myPHASEset::init(name);
