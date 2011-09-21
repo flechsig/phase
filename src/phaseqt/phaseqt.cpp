@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <2011-09-02 21:56:36 flechsig> 
+//  Time-stamp: <16 Sep 11 16:08:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -13,7 +13,7 @@
 
 // initialize the c structure of filenames with a name
 // removes a possible extension
-void myPHASEset::init(const char *fname)
+void PhaseQt::initSet(const char *fname)
 {
   char name[MaxPathLength];
   strncpy(name, fname, MaxPathLength);
@@ -44,9 +44,9 @@ void myPHASEset::init(const char *fname)
 }
 
 // print the contents of the data for debugging
-void myPHASEset::print()
+void PhaseQt::printSet()
 {
-  printf("=> myPHASEset::print()\n");
+  printf("=> PhaseQt::printSet()\n");
   printf("matrixname:      %s\n", matrixname);
   printf("mapname:         %s\n", mapname);
   printf("sourceraysname:  %s\n", sourceraysname ); 
@@ -72,10 +72,11 @@ void myPHASEset::print()
   printf("<= myPHASEset::print()\n");
 }
 
-void myBeamline::init()
+void PhaseQt::initBeamline()
 {
   beamlineOK         = 0;
   elementzahl        = 0;
+  hormapsloaded      = 0;
   ElementList        = NULL;
   raysout            = NULL;
   RTSource.SourceRays= NULL;
@@ -83,10 +84,7 @@ void myBeamline::init()
   RESULT.points      = 0;
   RESULT.RESp        = NULL;
   localalloc         = DOALLOC;
-}
-
-
-
+} // end initBeamline
 
 
 // constructor
@@ -95,12 +93,14 @@ void myBeamline::init()
   //char *matrixname= new char[MaxPathLength];
 //}
 
-QtPhase::QtPhase()
+PhaseQt::PhaseQt()
 {
 #ifdef DEBUG  
-  printf("QtPhase constructor called\n");
+  printf("debug: PhaseQt constructor called\n");
 #endif
-}
+  initSet("default");
+  initBeamline();
+} // end constructor
 
 #ifdef xxx  
   Beamline.localalloc= DOALLOC;       /* init should go somwhere else */

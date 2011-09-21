@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <15 Sep 11 12:52:20 flechsig> 
+//  Time-stamp: <16 Sep 11 15:30:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -822,7 +822,8 @@ void MainWindow::newBeamline()
 			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
   
   this->beamlineOK= 0;
-  this->myPHASEset::init(name);
+  //this->myPHASEset::init(name);
+  this->initSet(name);
   PutPHASE(this, (char*) MainPickName);
   this->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
   AllocRTSource(this);                          /* reserves source memory */
@@ -868,7 +869,8 @@ void MainWindow::openBeamline()
       rcode= ReadBLFile(name, this);
       if (rcode != -1)
 	{
-	  this->myPHASEset::init(name);
+	  //this->myPHASEset::init(name);
+	  this->initSet(name);
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
@@ -1023,7 +1025,8 @@ void MainWindow::saveas()
                              .arg(file.errorString()));
         return;
     }
-    this->myPHASEset::init(name);
+    //this->myPHASEset::init(name);
+    this->initSet(name);
     PutPHASE(this, (char*) MainPickName);
     WriteBLFile(name, this);
     UpdateBeamlineBox();

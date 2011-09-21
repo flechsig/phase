@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Sep 11 16:59:28 flechsig> 
+//  Time-stamp: <16 Sep 11 15:42:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -34,11 +34,12 @@ MainWindow::MainWindow()
   setWindowTitle(tr("PHASE Qt"));
   resize(1400,940);
 
-  this->myPHASEset::init("default");
+  //this->myPHASEset::init("default");
+  //this->initSet("default");
   //  this->QtPhase::print();
-  this->myBeamline::init();                           // empty pointers
-  
-  this->hormapsloaded = 0;
+  //this->myBeamline::init();                           // empty pointers
+  //this->initBeamline();
+  // this->hormapsloaded = 0;
   this->s_ray= NULL;
   this->o_input= NULL;
   this->c_window= NULL;

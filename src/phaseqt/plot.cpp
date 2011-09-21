@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <09 Sep 11 16:29:39 flechsig> 
+//  Time-stamp: <16 Sep 11 13:32:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -54,9 +54,9 @@ class SpectrogramData: public QwtRasterData
 public:
     SpectrogramData()
     {
-        setInterval( Qt::XAxis, QwtInterval( -1.5, 1.5 ) );
-        setInterval( Qt::YAxis, QwtInterval( -1.5, 1.5 ) );
-        setInterval( Qt::ZAxis, QwtInterval( 0.0, 10.0 ) );
+        setInterval( Qt::XAxis, QwtInterval( -1.5,  1.5 ) );
+        setInterval( Qt::YAxis, QwtInterval( -1.5,  1.5 ) );
+        setInterval( Qt::ZAxis, QwtInterval(  0.0, 10.0 ) );
     }
 
     virtual double value(double x, double y) const
@@ -213,7 +213,9 @@ void Plot::showSpectrogram(bool on)
 void Plot::setphaseData(const char *datatype)
 {
   // struct BeamlineType *bt;
-  
+#ifdef DEBUG
+  printf("debug: Plot::setphaseData called\n");
+#endif  
 
   delete d_spectrogram->data();   // clean up the old data - correct??
   if (qstrcmp(datatype, "grsourceAct") == 0) ;//hfill((struct RayType *)bt->RTSource.SourceRays, bt->RTSource.raynumber);

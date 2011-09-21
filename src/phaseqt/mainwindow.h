@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <07 Sep 11 11:44:39 flechsig>  */
+/*  Time-stamp: <16 Sep 11 15:49:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -36,8 +36,8 @@ class QGroupBox;
 class QPushButton;
 QT_END_NAMESPACE
 
-
-class MainWindow : public QMainWindow, public QtPhase 
+// UF I'm not sure whether we should inherit from QtPhase
+class MainWindow : public QMainWindow, public PhaseQt 
 {
     Q_OBJECT
 

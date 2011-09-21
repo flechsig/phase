@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <18 Aug 11 15:12:47 flechsig> 
+//  Time-stamp: <16 Sep 11 16:44:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -19,30 +19,33 @@ int main(int argc, char *argv[])
   int setupswitch, cmode, selected; 
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
-  MainWindow mainWin;
-  setupswitch= ProcComandLine(&mainWin, argc, argv, &cmode, &selected); 
+  //  MainWindow mainWin;
+  PhaseQt myphaseQt;
+  //setupswitch= ProcComandLine(&mainWin, argc, argv, &cmode, &selected); 
+  setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected);
   switch (setupswitch)
     {
     case -8:
-      BatchMode(&mainWin, &mainWin, cmode, selected);
+      myphaseQt.myBatchMode(cmode, selected);
       exit(3);
       break;
     case 5:
       
       break;
     default:
-      GetPHASE(&mainWin, (char*) MainPickName);
+      myphaseQt.myGetPHASE((char*) MainPickName);
     }
-  mainWin.ReadBLFileInteractive(mainWin.beamlinename);
-  mainWin.oldsource= mainWin.RTSource.QuellTyp;
+  myphaseQt.mainWin = new MainWindow;
+  myphaseQt.mainWin.ReadBLFileInteractive(myphaseQt.beamlinename);
+  myphaseQt.mainWin.oldsource= mainWin.RTSource.QuellTyp;
   //  ReadBLFile(mainWin.beamlinename, &mainWin);
-  mainWin.UpdateElementList();
-  mainWin.UpdateBeamlineBox();
-  mainWin.UpdateSourceBox();
-  mainWin.parameterUpdateAll(NPARS);
-  PutPHASE(&mainWin, (char*) MainPickName);
+  myphaseQt.mainWin.UpdateElementList();
+  myphaseQt.mainWin.UpdateBeamlineBox();
+  myphaseQt.mainWin.UpdateSourceBox();
+  myphaseQt.mainWin.parameterUpdateAll(NPARS);
+  myphaseQt.myPutPHASE((char*) MainPickName);
 
-  mainWin.show();
+  myphaseQt.mainWin.show();
   return app.exec();
 }
 // end 

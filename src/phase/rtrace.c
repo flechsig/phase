@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <02 Sep 11 13:30:14 flechsig>  */
+/*   Time-stamp: <15 Sep 11 12:55:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -882,6 +882,11 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 {
   struct PSDType *PSDp;
   int ii, iy, iz;                   /* to make the code clearer */
+
+#ifdef DEBUG 
+  printf("debug: ReAllocResult\n");
+#endif
+
 
   FreeResultMem(&bl->RESULT); 
 
