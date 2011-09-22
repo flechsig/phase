@@ -827,7 +827,7 @@ void MainWindow::newBeamline()
   myparent->myBeamline()->initSet(name);
   myparent->myPutPHASE((char*) MainPickName);
   myparent->myBeamline()->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
-  AllocRTSource(this);                          /* reserves source memory */
+  myparent->myAllocRTSource();                          /* reserves source memory */
   myparent->myBeamline()->RTSource.raynumber= 0;                  /* set default raynumber  */
   XFREE(RTSource.SourceRays);
   myparent->myBeamline()->elementzahl = 0; 
