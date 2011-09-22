@@ -194,7 +194,7 @@ void MainWindow::activateProc(const QString &action)
       printf("writecoeffmapAct button pressed\n"); 
 
       //  sprintf(buffer, "%s", "mirror-coefficients.dat");
-      sprintf(buffer, "%s.coeff", myparent->myBeamline()->elementList->currentItem()->text().toAscii().data());
+      sprintf(buffer, "%s.coeff", elementList->currentItem()->text().toAscii().data());
       printf("write coefficients to file: %s\n", buffer);
       WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
       statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
@@ -450,7 +450,7 @@ void MainWindow::deleteElement()
   if (pos >= 0)
     {
       item= elementList->takeItem(pos);
-      myparent->myBeamline()->elementzahl= myparent->myBeamline()->elementList->count();
+      myparent->myBeamline()->elementzahl= elementList->count();
       if (item)
 	{
 	  printf("remove item %d, new count: %d\n", pos, myparent->myBeamline()->elementzahl);
@@ -824,7 +824,7 @@ void MainWindow::newBeamline()
   
   myparent->myBeamline()->beamlineOK= 0;
   //myparent->myBeamline()->myPHASEset::init(name);
-  myparent->myBeamline()->initSet(name);
+  myparent->initSet(name);
   myparent->myPutPHASE((char*) MainPickName);
   myparent->myBeamline()->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
   myparent->myAllocRTSource();                          /* reserves source memory */
