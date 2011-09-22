@@ -59,7 +59,7 @@ public:
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		int etype, double theta, int lREDUCE_maps) { DefMirrorC(x, a, 
 		etype, theta, lREDUCE_maps); }
-  void myFootprint() { Footprint(); }
+  void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
 
   void myGetPHASE(char *name) { GetPHASE(this, name); }
   void myMakeMapandMatrix(struct ElementType *listpt) { MakeMapandMatrix(listpt, this); }
@@ -72,10 +72,14 @@ public:
   void myRayTracec() { RayTracec(this); }
   void myRayTraceFull() { RayTraceFull(this); }
   void myReadBLFile(char *name){ ReadBLFile(name); }
-  void myreadfg34_par() { readfg34_par(); }
+  void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
 
   void myWriteBLFile(char *name) { WriteBLFile(name, this); }
-  void mywritemapc() { writemapc(); }
+  void mywritemapc(char *fname, char *header, int iord, 
+               double *ypc1, double *zpc1, double *dypc,   double *dzpc,
+	       double *wc,   double *xlc,  double *xlen1c, double *xlen2c) { writemapc(fname, header, iord, 
+               ypc1, zpc1, dypc,   dzpc,
+	       wc,   xlc,  xlen1c, xlen2c); }
 
   void myWriteRayFile() { WriteRayFile(); }
   void sourceSetDefaults();
