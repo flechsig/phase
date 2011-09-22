@@ -80,7 +80,7 @@ public:
 		   double *wc,   double *xlc,  double *xlen1c, double *xlen2c) { 
                    writemapc(fname, header, iord, 
 			     ypc1, zpc1, dypc,   dzpc,
-			     wc,   xlc,  xlen1c, xlen2c);
+			     wc,   xlc,  xlen1c, xlen2c); }
   void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();
   void writeBackupFile();
