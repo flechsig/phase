@@ -1407,17 +1407,17 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
       sprintf(buffer, "%lg \t: %s", mysrc->pin_zl, inhalt[pos]);
       break;
-case 56:
+    case 56:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
       sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqtot, inhalt[pos]);
       break;
-case 57:
+    case 57:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
       sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqpos, inhalt[pos]);
       break;
-case 58:
+    case 58:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
       sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqneg, inhalt[pos]);
@@ -2084,7 +2084,9 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   char buffer[255];
   double trans;
 
-  trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? (double)myparent->myBeamline()->RESULT.points/ (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
+  trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
+    (double)myparent->myBeamline()->RESULT.points/ 
+    (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
   
   sprintf(buffer, "%s Statistics", label);  
   statGroup->setTitle(QString(tr(buffer)));

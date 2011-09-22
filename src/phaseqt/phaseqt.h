@@ -101,24 +101,5 @@ public:
   
 
 };
-
-
-
 #endif
 
-#ifdef trash
-//struct BeamlineType Beamline;  
-  #ifdef HEINZ
-  // struct BeamlineType Beamline;
-  
-  int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
-  //  QtPhase *qtppp;
-  //  const char *global_rundir;
-
-  
-  struct datset  Fg3ActDat, Fg3DefDat;  
-  struct gdatset GActDat,   GDefDat;  
-  struct mdatset MActDat,   MDefDat; 
-#endif
-
-#endif
