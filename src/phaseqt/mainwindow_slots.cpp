@@ -829,7 +829,7 @@ void MainWindow::newBeamline()
   myparent->myBeamline()->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
   myparent->myAllocRTSource();                          /* reserves source memory */
   myparent->myBeamline()->RTSource.raynumber= 0;                  /* set default raynumber  */
-  XFREE(RTSource.SourceRays);
+  XFREE(myparent->myBeamline()->RTSource.SourceRays);
   myparent->myBeamline()->elementzahl = 0; 
   XFREE(myparent->myBeamline()->ElementList);                     /* clean up memory of elements  */
   myparent->myBeamline()->RESULT.points= 0;

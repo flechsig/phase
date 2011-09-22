@@ -67,7 +67,7 @@ public:
   
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected) { return ProcComandLine(this, argc, argv, cmode, selected); }
   void myPutPHASE(char *name) { PutPHASE(this, name); }
-  void myReadBLFile(char *name) { ReadBLFile(name, this); }
+  int myReadBLFile(char *name) { return ReadBLFile(name, this); }
   void myReAllocResult(int newtype, int dim1, int dim2)   { ReAllocResult(this, newtype, dim1, dim2); }
   void myRayTracec() { RayTracec(this); }
   void myRayTraceFull() { RayTraceFull(this); }
