@@ -331,7 +331,7 @@ void MainWindow::appendElement()
   XFREE(tmplist);
   printf("inserElement: end list should have %u elements\n", myparent->myBeamline()->elementzahl);
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } // appendElement
 
 
@@ -487,7 +487,7 @@ void MainWindow::deleteElement()
     QMessageBox::warning(this, tr("deleteElement"),
 			 tr("can't delete anything, list is empty or nothing is selected!\n"));
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } // deleteElement()
 
 // slot changed dispersive length
@@ -499,7 +499,7 @@ void MainWindow::dislenSlot()
   sscanf(dislenE->text().toAscii().data(), "%lf", &myparent->myBeamline()->BLOptions.displength);
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } // dislenSlot
 
 // UF slot
@@ -595,7 +595,7 @@ void MainWindow::goButtonslot()
   myparent->myBeamline()->BLOptions.SourcetoImage= 1;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } // goButtonslot
 
 
@@ -899,7 +899,7 @@ void MainWindow::parameterUpdateSlot()
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   for (i=0; i< myparent->myBeamline()->elementzahl; i++) myparent->myBeamline()->ElementList[i].ElementOK= 0;
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } // end parameterUpdateSlot
 
 // slot goButton
@@ -912,7 +912,7 @@ void MainWindow::poButtonslot()
   myparent->myBeamline()->BLOptions.SourcetoImage= 2;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
-  writeBackupFile();
+  myparent->writeBackupFile();
 } // poButtonslot
 
 
