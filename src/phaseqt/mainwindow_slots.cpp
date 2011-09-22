@@ -572,7 +572,7 @@ void MainWindow::elementApplyBslot()
   myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]));
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
   UpdateStatus();
-  myparent->mywriteBackupFile();
+  myparent->writeBackupFile();
 } // elementApplyBslot
 
 // sigmabutton 

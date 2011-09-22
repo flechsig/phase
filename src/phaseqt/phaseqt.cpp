@@ -88,19 +88,19 @@ void PhaseQt::initBeamline()
 
 
 // returns a pointer to the beamline struct
-struct BeamlineType *PhasQt::myBeamline()
+struct BeamlineType *PhaseQt::myBeamline()
 {
   return (struct BeamlineType *)this;
 } // end myBeamline
 
 // returns a pointer to the PHASEset struct
-struct PHASEset *PhasQt::myPHASEset()
+struct PHASEset *PhaseQt::myPHASEset()
 {
   return (struct PHASEset *)this;
 } // end myPHASEset
 
 // returns a pointer to the beamline struct
-struct OptionsType *PhasQt::myOptions()
+struct OptionsType *PhaseQt::myOptions()
 {
   return &(this->BLOptions);
 } // end myBeamline
