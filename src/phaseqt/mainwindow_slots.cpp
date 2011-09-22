@@ -172,7 +172,7 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  printf("write matrix of element %d to file\n", myparent->myBeamline()->position); 
 	  sprintf(header, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
-		  myparent->myBeamline()->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,
+		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->position, myparent->myBeamline()->BLOptions.ifl.iord,
 		  myparent->myBeamline()->BLOptions.REDUCE_maps);
 	  sprintf(buffer, "%s-%d\x00", myparent->myPHASEset()->matrixname, myparent->myBeamline()->position);
           writematrixfile((double *)myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].M_StoI, buffer, header, 
@@ -569,7 +569,7 @@ void MainWindow::elementApplyBslot()
   // build the element
   myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
-  myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), this);
+  myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]));
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
   UpdateStatus();
   myparent->mywriteBackupFile();
