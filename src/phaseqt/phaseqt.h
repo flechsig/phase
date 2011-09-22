@@ -81,7 +81,7 @@ public:
                ypc1, zpc1, dypc,   dzpc,
 	       wc,   xlc,  xlen1c, xlen2c); }
 
-  void myWriteRayFile() { WriteRayFile(); }
+  void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();
   void writeBackupFile();
 
