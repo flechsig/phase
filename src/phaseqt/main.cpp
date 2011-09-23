@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   myphaseQt.mainWin->parameterUpdateAll(NPARS);
   myphaseQt.myPutPHASE((char*) MainPickName);
 
-  myphaseQt.mainWin.show();
+  myphaseQt.mainWin->show();
   //#endif
   return app.exec();
 }
