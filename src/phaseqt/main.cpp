@@ -19,9 +19,8 @@ int main(int argc, char *argv[])
   int setupswitch, cmode, selected; 
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
-  //  MainWindow mainWin;
-  PhaseQt myphaseQt;
-  //setupswitch= ProcComandLine(&mainWin, argc, argv, &cmode, &selected); 
+  PhaseQt myphaseQt;                   // create the object on the stack
+ 
   setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected);
   switch (setupswitch)
     {
@@ -30,12 +29,12 @@ int main(int argc, char *argv[])
       exit(3);
       break;
     case 5:
-      
+      cout << "switch 5 called- no action so far" << endl;
       break;
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);
     }
-  myphaseQt.mainWin = new MainWindow(&myphaseQt);
+  myphaseQt.mainWin = new MainWindow(&myphaseQt);     // create the mainwindow on the heap
 #ifdef TOBEDONE
   myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.beamlinename);
   myphaseQt.mainWin.oldsource= mainWin.RTSource.QuellTyp;

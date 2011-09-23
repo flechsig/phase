@@ -27,6 +27,7 @@ private slots:
     void applySlot();
     void quitSlot();
     void selectSlot();
+
 private:
     QPushButton      *configApplyB;
     QPushButton      *configQuitB;
