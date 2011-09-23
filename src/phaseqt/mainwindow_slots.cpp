@@ -97,7 +97,7 @@ void MainWindow::activateProc(const QString &action)
     { 
       printf("singleRayAct button pressed\n");
       if (!s_ray) 
-	s_ray= new SingleRay((struct BeamlineType *) this, this); 
+	s_ray= new SingleRay(myparent, this); 
       else 
 	s_ray->singleRayBox->show();
     }

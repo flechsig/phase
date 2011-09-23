@@ -27,7 +27,7 @@ class SingleRay : public QWidget
 
 public:
     QWidget     *singleRayBox;
-    SingleRay(struct BeamlineType *, QWidget *);
+    SingleRay(PhaseQt *, QWidget *);
     ~SingleRay();
 
 private slots:
@@ -54,8 +54,10 @@ private:
     QPushButton *sourceDefaultB;
     QPushButton *sourceApplyB;
     QPushButton *sourceQuitB;
-    struct BeamlineType  *myparent;
+    //    struct BeamlineType  *myparent;
     void        RayTraceSingleRayCpp(struct BeamlineType *);
+
+    PhaseQt *myparent;
        
 };
 #endif

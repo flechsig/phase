@@ -16,7 +16,7 @@
 #include "singleray.h"
 
 // constructor
-SingleRay::SingleRay(struct BeamlineType *parent, QWidget *pw)
+SingleRay::SingleRay(PhaseQt *parent, QWidget *pw)
 {
   singleRayBox = new QWidget();
 
@@ -107,9 +107,9 @@ void SingleRay::applySlot()
   rayin.dy*= 1e-3; // into rad
   //  bl->beamlineOK |= sourceOK;
   
-  //myparent->myBuildBeamline();
+  myparent->myBuildBeamline();
   //RayTraceSingleRayCpp();
-  BuildBeamline(this->myparent);
+  //BuildBeamline(this->myparent);
   RayTraceSingleRayCpp(this->myparent);
 
   // the output
@@ -149,7 +149,7 @@ void SingleRay::quitSlot()
 // reimplemented from rtrace.c
 // we do not use the source and result pointer
 // i.e. single ray trace is possible in addition to other calculations
-void SingleRay:: RayTraceSingleRayCpp(struct BeamlineType *bl)
+void SingleRay::RayTraceSingleRayCpp(PhaseQt *bl)
 {
   struct RayType *Raysin, *Raysout, Tmpsource, Tmpresult;   
   int          elnumber;
