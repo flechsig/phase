@@ -21,6 +21,8 @@
 #include "mainwindow.h"
 #include "phaseqt.h"
 
+using namespace std;
+
 // the constructor of the main window
 MainWindow::MainWindow(PhaseQt *parent)
 {
