@@ -1476,7 +1476,7 @@ case 10:
 // interactive version checks for backupfile
 void MainWindow::ReadBLFileInteractive(char *blname)
 {
-  char fname[MaxPathLength], oname[MaxPathLength], buffer[300];  
+  char fname[MaxPathLength], oname[MaxPathLength];  
   char buffer[300];      
   struct stat fstatus;
   time_t mtime_data, mtime_backup;
@@ -1549,7 +1549,7 @@ void MainWindow::UpdateElementBox(int number)
 
   if (number < 0) return;
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
-  myparent->myBeamline()->beamlineOK                   &= ~(mapOK | resultOK);
+  myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
 
   struct mdatset *md= &(myparent->myBeamline()->ElementList[number].MDat);
   struct gdatset *gd= &(myparent->myBeamline()->ElementList[number].GDat);
@@ -2172,7 +2172,6 @@ void MainWindow::UpdateStatus()
 /////////////////////////////////
 // end widget handling section //
 /////////////////////////////////
-
 
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
