@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
 
   myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.beamlinename);
   //#ifdef TOBEDONE
-  myphaseQt.mainWin.oldsource= mainWin.RTSource.QuellTyp;
+  myphaseQt.myBeamline()->oldsource= myphaseQt.myBeamline()->RTSource.QuellTyp;
   //  ReadBLFile(mainWin.beamlinename, &mainWin);
-  myphaseQt.mainWin.UpdateElementList();
-  myphaseQt.mainWin.UpdateBeamlineBox();
-  myphaseQt.mainWin.UpdateSourceBox();
-  myphaseQt.mainWin.parameterUpdateAll(NPARS);
+  myphaseQt.mainWin->UpdateElementList();
+  myphaseQt.mainWin->UpdateBeamlineBox();
+  myphaseQt.mainWin->UpdateSourceBox();
+  myphaseQt.mainWin->parameterUpdateAll(NPARS);
   myphaseQt.myPutPHASE((char*) MainPickName);
 
   myphaseQt.mainWin.show();
