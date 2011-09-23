@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
   myphaseQt.mainWin = new MainWindow(&myphaseQt);     // create the mainwindow on the heap
 
   myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.beamlinename);
-#ifdef TOBEDONE
+  //#ifdef TOBEDONE
   myphaseQt.mainWin.oldsource= mainWin.RTSource.QuellTyp;
   //  ReadBLFile(mainWin.beamlinename, &mainWin);
   myphaseQt.mainWin.UpdateElementList();
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
   myphaseQt.myPutPHASE((char*) MainPickName);
 
   myphaseQt.mainWin.show();
-#endif
+  //#endif
   return app.exec();
 }
 // end 
