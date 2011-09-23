@@ -48,7 +48,7 @@ class MainWindow : public QMainWindow//UF nein, public PhaseQt
 public:
     MainWindow(PhaseQt *parent);
     void parameterUpdateAll(int);
-    void print();
+    //  void print();
     void UpdateBeamlineBox();
     void UpdateElementList();
     void UpdateSourceBox();
@@ -69,6 +69,7 @@ private slots:
     void newBeamline(); // UF
     void openBeamline(); // UF
     void poButtonslot();
+    void print();
     void save();
     void saveas();
     
