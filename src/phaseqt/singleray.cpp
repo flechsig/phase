@@ -109,8 +109,8 @@ void SingleRay::applySlot()
   
   //myparent->myBuildBeamline();
   //RayTraceSingleRayCpp();
-  BuildBeamline(this);
-  RayTraceSingleRayCpp(this);
+  BuildBeamline(this->myparent);
+  RayTraceSingleRayCpp(this->myparent);
 
   // the output
   sprintf(buffer, "-> %10.3lg", rayout.y);
