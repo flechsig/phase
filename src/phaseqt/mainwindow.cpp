@@ -1476,21 +1476,26 @@ case 10:
 // interactive version checks for backupfile
 void MainWindow::ReadBLFileInteractive(char *blname)
 {
-  char fname[MaxPathLength], oname[MaxPathLength], buffer[300];        
+  string fname, oname;
+  //  char fname[MaxPathLength], oname[MaxPathLength], buffer[300];  
+  char buffer[300];      
   struct stat fstatus;
   time_t mtime_data, mtime_backup;
   
 #ifdef DEBUG
-  cout << "debug: ReadBLFileInteractive called with file " << blname << endl;
+  cout << "debug: ReadBLFileInteractive called with file >>" << blname << "<<" << endl;
 #endif
 
-  strncpy(fname, blname, (MaxPathLength - 1));
-  strncpy(oname, blname,  MaxPathLength);
-  strcat(fname, "~");
+  //  strncpy(fname, blname, (MaxPathLength - 1));
+  //strncpy(oname, blname,  MaxPathLength);
+  //strcat(fname, "~");
 
-  if (fexists(fname))
+  fname= blname + "~";
+  oname= blmame;
+
+  if (fexists(fname.c_str()))
     {
-      if (stat(fname, &fstatus) == 0)
+      if (stat(fname.c_str(), &fstatus) == 0)
 	{
 	  mtime_backup= fstatus.st_mtime;
 	  if (stat(blname, &fstatus) == 0)
@@ -1498,23 +1503,21 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	      mtime_data= fstatus.st_mtime;
 	      if (mtime_data < mtime_backup)
 		{
-		  
 		  QMessageBox *msgBox = new QMessageBox;
-		  sprintf(buffer, "<b>We found a newer backupfile</b>\n%s", fname);
+		  sprintf(buffer, "<b>We found a newer backupfile</b>\n%s", fname.c_str());
 		  msgBox->setText(buffer);
 		  msgBox->setInformativeText("Do you want to use the backup?");
 		  msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		  msgBox->setDefaultButton(QMessageBox::Yes);
 		  msgBox->setIcon(QMessageBox::Question);
 		  int ret = msgBox->exec();
-		  if (ret == QMessageBox::Yes) 
-		    strncpy(oname, fname, MaxPathLength);
+		  if (ret == QMessageBox::Yes) oname= fname;
 		}
 	    }
 	  
 	}
     }
-  myparent->myReadBLFile(oname);
+  myparent->myReadBLFile(oname.c_str());
   myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
 

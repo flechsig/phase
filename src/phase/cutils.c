@@ -145,7 +145,6 @@ FString *CreateFString(FString *fstring, char *cstring)
 {        
   int l= strlen(cstring);
 
-
   fstring->string= cstring;
   fstring->length= l;
    
