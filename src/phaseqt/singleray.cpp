@@ -107,10 +107,10 @@ void SingleRay::applySlot()
   rayin.dy*= 1e-3; // into rad
   //  bl->beamlineOK |= sourceOK;
   
-  myparent->myBuildBeamline();
-  RayTraceSingleRayCpp();
-  //  BuildBeamline(this);
-  //  RayTraceSingleRayCpp(this);
+  //myparent->myBuildBeamline();
+  //RayTraceSingleRayCpp();
+  BuildBeamline(this);
+  RayTraceSingleRayCpp(this);
 
   // the output
   sprintf(buffer, "-> %10.3lg", rayout.y);
