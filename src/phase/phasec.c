@@ -131,28 +131,28 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 
 int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected)
 /* Uwe new version 10.8.2011 using getopt */
+/* used in phaseqt                        */
 {
-  int bflag = 0;
   char *fvalue = NULL;
   char *mvalue = NULL;
   char *ovalue = NULL;
   char *svalue = NULL;
   int index;
   int c;
+  int bflag =  0;
+  int ret   =  1;
 
-  int ret= 1;
-  *cmode= -1;
-  *selected= -1;
-
-  opterr = 0;
+  *cmode    = -1;
+  *selected = -1;
+  opterr    =  0;
   
-  while ((c = getopt (argc, argv, "BbF:f:HhM:m:NnO:o:S:s:V")) != -1)
+  while ((c = getopt(argc, argv, "BbF:f:HhM:m:NnO:o:S:s:V")) != -1)
     switch (c)
       {
       case 'B':
       case 'b':
-	bflag = 1;
-	ret= -8;
+	bflag =  1;
+	ret   = -8;
 	printf("option -%c\n", c);
 	break;
       case 'F':
@@ -160,7 +160,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	ret= 5;
 	printf("option -%c\n", c);
 	fvalue = optarg;
-	strncpy(ps->beamlinename, fvalue, MaxPathLength);
+	strncpy(ps->beamlinename, fvalue, MaxPathLength- 1);
 	printf("ProcComandLine: use input_filename from parameter: >>%s<<\n", fvalue);
 	break;
       case 'H':
@@ -256,98 +256,6 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 
   return ret;
 } /* end ProcComandLine */
-
-
-#ifdef OBSOLETE
-int ProcComandLine(struct PHASEset *ps, struct BeamlineType *bl, unsigned int ac, char *av[])
-/* Uwe 2.10.96 */
-/* Wertet Kommandozeile aus */
-/* UF 10.6.11 remove global var */
-{
-  int  ret, i, cmode, selected;
-  char *ch, *dfname, *resultname, *pfname; 
-  
-  i= ret= 1;
-  cmode= -1;
-  selected= -1;
-  /* defaults */
-  pfname=     (char *) MainPickName; 
-  /*  resultname= (char *) PHASESet.imageraysname;
-      dfname=     (char *) PHASESet.beamlinename; */
-  resultname= (char *) ps->imageraysname;
-  dfname=     (char *) ps->beamlinename; 
-  while (i < (int)ac)
-    {
-      ch= av[i];
-      if (*ch == '-') ch++; 
-      switch (*ch)
-	{
-	case 'N':             /* keine Info */
-	case 'n':
-	  ret= 0;
-	  break;
-	case 'M':             /* rechenmodus */
-	case 'G':             /* rechenmodus */
-	case 'm':
-	  ch++; 
-	  sscanf(ch, "%d", &cmode);
-	  printf("ProcComandLine: calculation mode: %d\n", cmode);
-	  break;
-	case 'S':             /* selected element */
-	case 's':
-	  ch++; 
-	  sscanf(ch, "%d", &selected);
-	  printf("ProcComandLine: selected element: %d\n", selected);
-	  break;
-	case 'F':
-	case 'f':
-	  ch++; dfname= ch;
-	  /*	  strcpy(PHASESet.beamlinename, ch);*/
-	  strcpy(ps->beamlinename, ch);
-	  printf("ProcComandLine: filename: >>%s<<\n", ch);
-	  break;
-	case 'O':
-	case 'o':
-	  ch++; resultname= ch;
-	  strcpy(ps->imageraysname, ch);
-	  printf("ProcComandLine: result- filename: >>%s<<\n", ch);
-	  break;
-	case 'B':             /* Batch Job ohne X */
-	case 'b':
-	  ret= -8;
-	  break;
-	case 'H':             /* Help */
-	case 'h':
-	case '?':
-	  printf("usage: phase [options]\n");
-	  printf("       options: -n, -N:           no startup- info (X11)\n");
-	  printf("                -h, -H, -?:       show this message\n");
-	  printf("                -f, -Ffilename:   use datafile (*.phase)\n");
-	  printf("                -o, -Oresultfile: filename\n");
-	  printf("                -b, -B:           batch mode (no X11)\n");
-	  printf("                -m, -Mcalcmode:   calculation mode \n");
-	  printf("                                  1: ray trace\n");
-	  printf("                                  2: full ray trace\n");
-	  printf("                                  3: phase space imaging\n");
-	  printf("                                  4: footprint (requires option s)\n");
-	  printf("                                  5: multiple phase space imaging\n");
-	  printf("                -s, -Snumber:     selected element number (for footprint)\n");
-	  exit(3);
-	  break;
-	default: 
-	  printf("unknown option %c \n", *ch);
-	}
-      i++;
-    }
-
-  if (ret == -8)
-    {
-      BatchMode(ps, bl, cmode, selected);
-      exit(3);
-    }
-  return ret;
-} /* end ProcComandLine */
-#endif
 
 int GetPHASE(struct PHASEset *x, char *mainpickname)
 {

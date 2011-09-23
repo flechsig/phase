@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
       exit(3);
       break;
     case 5:
-      cout << "switch 5 called- no action so far" << endl;
+      cout << "main: switch 5 called" << endl;
       break;
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);

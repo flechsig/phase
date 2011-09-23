@@ -1478,6 +1478,10 @@ void MainWindow::ReadBLFileInteractive(char *blname)
   struct stat fstatus;
   time_t mtime_data, mtime_backup;
   
+#ifdef DEBUG
+  cout << "debug: ReadBLFileInteractive called with file " << blname << endl;
+#endif
+
   strncpy(fname, blname, (MaxPathLength - 1));
   strncpy(oname, blname,  MaxPathLength);
   strcat(fname, "~");
