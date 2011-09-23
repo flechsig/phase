@@ -93,7 +93,10 @@ void SingleRay::applySlot()
 {
   char buffer[MaxPathLength];
   
-  printf("applySlot\n");
+#ifdef DEBUG
+  printf("debug: applySlot called\n");
+#endif
+
   sscanf(S1E->text().toAscii().data(), "%lf", &rayin.y);
   sscanf(S2E->text().toAscii().data(), "%lf", &rayin.z);
   sscanf(S3E->text().toAscii().data(), "%lf", &rayin.dy);
@@ -104,8 +107,8 @@ void SingleRay::applySlot()
   rayin.dy*= 1e-3; // into rad
   //  bl->beamlineOK |= sourceOK;
   
-  BuildBeamline(this->myparent);
-  RayTraceSingleRayCpp(this->myparent);
+  myparent->myBuildBeamline();
+  RayTraceSingleRayCpp();
   //  BuildBeamline(this);
   //  RayTraceSingleRayCpp(this);
 
@@ -158,7 +161,9 @@ void SingleRay:: RayTraceSingleRayCpp(struct BeamlineType *bl)
   Raysin = &rayin;   // for compatibility with the previous code we use pointers
   Raysout= &rayout;
 
-  printf("RayTraceSingleRayCpp called: beamlineOK: %X\n", bl->beamlineOK);
+#ifdef DEBUG
+  printf("debug: RayTraceSingleRayCpp called: beamlineOK: %X\n", bl->beamlineOK);
+#endif
 
   if ((bl->beamlineOK & mapOK) == 0)
     { 

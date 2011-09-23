@@ -804,7 +804,9 @@ QWidget *MainWindow::createParameterBox()
   char buffer[50];
   int i;
 
-  printf("createParameterBox called\n");
+#ifdef DEBUG
+  printf("debug: createParameterBox called\n");
+#endif
 
   // upper part
   QGroupBox   *parameterGroup  = new QGroupBox(tr("Parameters"));

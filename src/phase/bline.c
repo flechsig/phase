@@ -89,8 +89,7 @@ void BuildBeamline(struct BeamlineType *bl)
    printf("BuildBeamline: %d order calculation\n", bl->BLOptions.ifl.iord);
 /*--------------------------------------------------------*/ 
 
-  /* baue erst mal immer */
-   /*   bl->beamlineOK &= ~mapOK; */
+  
    if (bl->beamlineOK & mapOK)  
      {   
        printf("BuildBeamline: all beamline elements are already OK- return\n");
@@ -483,7 +482,7 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
 #ifdef SEVEN_ORDER
    dim= 330;
 #else
-   dim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+   dim= 70;
 #endif
 
    if (/*((bl->beamlineOK & (sourceOK | mapOK)) == (sourceOK | mapOK)) &&*/

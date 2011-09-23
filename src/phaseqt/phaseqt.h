@@ -71,6 +71,7 @@ public:
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
   void myReAllocResult(int newtype, int dim1, int dim2)   { ReAllocResult(this, newtype, dim1, dim2); }
   void myRayTracec() { RayTracec(this); }
+  
   void myRayTraceFull() { RayTraceFull(this); }
   void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, 
 		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
