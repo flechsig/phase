@@ -14,6 +14,8 @@
 #include "mainwindow.h"
 #include "phaseqt.h"
 
+using namespace std;
+
 int main(int argc, char *argv[])
 {
   int setupswitch, cmode, selected; 
