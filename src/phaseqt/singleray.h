@@ -55,7 +55,7 @@ private:
     QPushButton *sourceApplyB;
     QPushButton *sourceQuitB;
     //    struct BeamlineType  *myparent;
-    void        RayTraceSingleRayCpp(struct BeamlineType *);
+    void        RayTraceSingleRayCpp(PhaseQt *);
 
     PhaseQt *myparent;
        
