@@ -79,7 +79,7 @@ void MainWindow::createActions()
     printAct = new QAction(QIcon(":/images/print.png"), tr("&Print..."), this);
     printAct->setShortcuts(QKeySequence::Print);
     printAct->setStatusTip(tr("Print the current beamline"));
-    connect(printAct, SIGNAL(triggered()), this, SLOT(PhaseQt::printSet()));
+    connect(printAct, SIGNAL(triggered()), this, SLOT(print()));
 
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
