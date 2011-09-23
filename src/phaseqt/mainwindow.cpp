@@ -1476,8 +1476,7 @@ case 10:
 // interactive version checks for backupfile
 void MainWindow::ReadBLFileInteractive(char *blname)
 {
-  string fname, oname;
-  //  char fname[MaxPathLength], oname[MaxPathLength], buffer[300];  
+  char fname[MaxPathLength], oname[MaxPathLength], buffer[300];  
   char buffer[300];      
   struct stat fstatus;
   time_t mtime_data, mtime_backup;
@@ -1486,16 +1485,13 @@ void MainWindow::ReadBLFileInteractive(char *blname)
   cout << "debug: ReadBLFileInteractive called with file >>" << blname << "<<" << endl;
 #endif
 
-  //  strncpy(fname, blname, (MaxPathLength - 1));
-  //strncpy(oname, blname,  MaxPathLength);
-  //strcat(fname, "~");
+  strncpy(fname, blname, (MaxPathLength - 1));
+  strncpy(oname, blname, (MaxPathLength - 1));
+  strcat(fname, "~");
 
-  fname= blname + "~";
-  oname= blmame;
-
-  if (fexists(fname.c_str()))
+  if (fexists(fname))
     {
-      if (stat(fname.c_str(), &fstatus) == 0)
+      if (stat(fname, &fstatus) == 0)
 	{
 	  mtime_backup= fstatus.st_mtime;
 	  if (stat(blname, &fstatus) == 0)
@@ -1504,20 +1500,19 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	      if (mtime_data < mtime_backup)
 		{
 		  QMessageBox *msgBox = new QMessageBox;
-		  sprintf(buffer, "<b>We found a newer backupfile</b>\n%s", fname.c_str());
+		  sprintf(buffer, "<b>We found a newer backupfile</b>\n%s", fname);
 		  msgBox->setText(buffer);
 		  msgBox->setInformativeText("Do you want to use the backup?");
 		  msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		  msgBox->setDefaultButton(QMessageBox::Yes);
 		  msgBox->setIcon(QMessageBox::Question);
 		  int ret = msgBox->exec();
-		  if (ret == QMessageBox::Yes) oname= fname;
+		  if (ret == QMessageBox::Yes) strncpy(oname, fname, (MaxPathLength - 1));
 		}
 	    }
-	  
 	}
     }
-  myparent->myReadBLFile(oname.c_str());
+  myparent->myReadBLFile(oname);
   myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
 
