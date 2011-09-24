@@ -31,8 +31,7 @@ using namespace std;   // fuer cout z.B.
 class MyZoomer: public QwtPlotZoomer
 {
 public:
-    MyZoomer(QwtPlotCanvas *canvas):
-        QwtPlotZoomer(canvas)
+    MyZoomer(QwtPlotCanvas *canvas): QwtPlotZoomer(canvas)
     {
         setTrackerMode(AlwaysOn);
     }
@@ -77,9 +76,9 @@ class SpectrogramData2: public QwtRasterData
 public:
     SpectrogramData2()
     {
-        setInterval( Qt::XAxis, QwtInterval( -2.5, 3.5 ) );
-        setInterval( Qt::YAxis, QwtInterval( -2.5, 3.5 ) );
-        setInterval( Qt::ZAxis, QwtInterval( 0.0, 10.0 ) );
+        setInterval( Qt::XAxis, QwtInterval( -2.5,  3.5 ) );
+        setInterval( Qt::YAxis, QwtInterval( -2.5,  3.5 ) );
+        setInterval( Qt::ZAxis, QwtInterval(  0.0, 10.0 ) );
     }
 
     virtual double value(double x, double y) const
@@ -116,7 +115,7 @@ public:
     {
       int ix = qRound(100*(x- po->zmin)/(po->zmax - po->zmin));
       int iy = qRound(100*(y- po->ymin)/(po->ymax - po->ymin));
-      if ( ix >= 0 && ix < 100 && iy >= 0 && iy < 100 )
+      if ( ix >= 0 && ix < BINS2 && iy >= 0 && iy < BINS2 )
 	return po->h2arr[ix][iy];  
 
         return 1.0;
@@ -126,8 +125,7 @@ public:
 class ColorMap: public QwtLinearColorMap
 {
 public:
-    ColorMap():
-        QwtLinearColorMap(Qt::darkCyan, Qt::red)
+    ColorMap(): QwtLinearColorMap(Qt::darkCyan, Qt::red)
     {
         addColorStop(0.1,  Qt::cyan);
         addColorStop(0.6,  Qt::green);
@@ -136,8 +134,7 @@ public:
 };
 
 // constructor of the plot
-Plot::Plot(QWidget *parent):
-    QwtPlot(parent)
+Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
   bt= (struct BeamlineType *) parent;
   d_spectrogram = new QwtPlotSpectrogram();
@@ -153,7 +150,9 @@ Plot::Plot(QWidget *parent):
     contourLevels += level;
   d_spectrogram->setContourLevels(contourLevels);
   
-  const QwtInterval zInterval = d_spectrogram->data()->interval( Qt::ZAxis );
+  // const QwtInterval zInterval = d_spectrogram->data()->interval( Qt::ZAxis );
+  QwtInterval zInterval = d_spectrogram->data()->interval( Qt::ZAxis );
+
   // A color bar on the right axis
   QwtScaleWidget *rightAxis = axisWidget(QwtPlot::yRight);
   rightAxis->setTitle("Intensity");
@@ -218,7 +217,7 @@ void Plot::setphaseData(const char *datatype)
 #endif  
 
   delete d_spectrogram->data();   // clean up the old data - correct??
-  if (qstrcmp(datatype, "grsourceAct") == 0) ;//hfill((struct RayType *)bt->RTSource.SourceRays, bt->RTSource.raynumber);
+  if (qstrcmp(datatype, "grsourceAct") == 0) ; //hfill((struct RayType *)bt->RTSource.SourceRays, bt->RTSource.raynumber);
   //  if (qstrcmp(datatype, "grimageAct")  == 0) hfill((struct RayType *)bt->RESULT.RESp,         bt->RESULT.points);
 
   //  printf("hfill done\n");
@@ -402,14 +401,15 @@ void Plot::hfill(struct RayType *rays, int points)
     {
       ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
       iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
-      if ((ix < 100) && (iy < 100)) h2arr[ix][iy]+= 1;          // add one hit
+      if ((ix < BINS2) && (iy < BINS2)) h2arr[ix][iy]+= 1;          // add one hit
       h2max= max(h2max, h2arr[ix][iy]);                         // save maximum
     }
 
   // scale maximum to 10
   if (h2max > 0.0)
     for (ix=0; ix< BINS2; ix++)
-      for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]*= 10.0/h2max;
+      for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]*= 10.0/ h2max;
+
 #ifdef DEBUG
   printf("debug: hfill end:  hmax  %f\n", h2max);
 #endif
