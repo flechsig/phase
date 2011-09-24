@@ -39,12 +39,13 @@ public:
     double dzmax;
     double phimin;
     double phimax;
+    double h1arr[BINS2];   // odd number
     double h2arr[BINS2][BINS2];   // odd number
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
-
-    void   hfill(struct RayType *, int);
+    void   hfill1(struct RayType *, int, const char *);
+    void   hfill2(struct RayType *, int);
     void   statistics(struct RayType *, int, double);
     QwtPlotSpectrogram *d_spectrogram;
     QwtPlotZoomer      *zoomer;

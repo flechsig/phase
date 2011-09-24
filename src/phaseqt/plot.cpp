@@ -383,15 +383,90 @@ void Plot::SetData(int n, double* data_x, double *data_y)
   //setRawData(x,y,ndata);
 } // SetData
 
+
+// fills a 1d histogram with ray data
+void Plot::hfill1(struct RayType *rays, int points, const char *type)
+{
+  int i;
+  unsigned int ix;
+  struct RayType *rp;
+  
+#ifdef DEBUG
+  cout << "Plot::hfill1 called" << endl;
+#endif
+
+  rp= rays;
+
+  for (ix=0; ix< BINS2; ix++) h1arr[ix]= 0.0;    // set array data to 0.0
+
+  if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
+  if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
+  h2max= 0.0;
+
+  switch (type)
+    {
+    case "y":
+      for (i=0; i< points; i++, rp++)
+	{
+	  ix= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
+	  if (ix < BINS2) h1arr[ix]+= 1;          // add one hit
+	  h2max= max(h2max, h1arr[ix]);           // save maximum
+	}
+      break;
+    case "z":
+      for (i=0; i< points; i++, rp++)
+	{
+	  ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
+	  if (ix < BINS2) h1arr[ix]+= 1;          // add one hit
+	  h2max= max(h2max, h2arr[ix]);                         // save maximum
+	}
+      break;
+    case "dy":
+      for (i=0; i< points; i++, rp++)
+	{
+	  ix= (unsigned int)((rp->dy- dymin)/(dymax-dymin)*100);
+	  if (ix < BINS2) h1arr[ix]+= 1;          // add one hit
+	  h2max= max(h2max, h1arr[ix]);           // save maximum
+	}
+      break;
+    case "dz":
+      for (i=0; i< points; i++, rp++)
+	{
+	  ix= (unsigned int)((rp->dz- dzmin)/(dzmax-dzmin)*100);
+	  if (ix < BINS2)  h1arr[ix]+= 1;          // add one hit
+	  h2max= max(h2max, h2arr[ix]);                         // save maximum
+	}
+      break;
+    case "phi":
+      for (i=0; i< points; i++, rp++)
+	{
+	  ix= (unsigned int)((rp->phi- phimin)/(phimax-[phimin)*100);
+	  if (ix < BINS2)  h1arr[ix]+= 1;          // add one hit
+	  h2max= max(h2max, h2arr[ix]);                         // save maximum
+	}
+      break;
+    }
+
+  // scale maximum to 10
+  if (h2max > 0.0)
+    for (ix=0; ix< BINS2; ix++)
+      h1arr[ix]*= 10.0/ h2max;
+
+#ifdef DEBUG
+  printf("debug: hfill1 end:  hmax  %f\n", h2max);
+#endif
+} // hfill1
+
+
 // fills a 2d histogram with ray data
-void Plot::hfill(struct RayType *rays, int points)
+void Plot::hfill2(struct RayType *rays, int points)
 {
   int i;
   unsigned int ix, iy;
   struct RayType *rp;
   
 #ifdef DEBUG
-  cout << "Plot::hfill called" << endl;
+  cout << "Plot::hfill2 called" << endl;
 #endif
 
   rp= rays;
@@ -417,9 +492,9 @@ void Plot::hfill(struct RayType *rays, int points)
       for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]*= 10.0/ h2max;
 
 #ifdef DEBUG
-  printf("debug: hfill end:  hmax  %f\n", h2max);
+  printf("debug: hfill2 end:  hmax  %f\n", h2max);
 #endif
-} // hfill
+} // hfill2
 
 // calculate statistics of an array of rays
 void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor)

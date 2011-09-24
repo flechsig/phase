@@ -630,7 +630,7 @@ void MainWindow::grapplyslot()
   if (d_plot->plotsubject == 0) 
     if (myparent->myBeamline()->beamlineOK & sourceOK)
       {
-	d_plot->Plot::hfill((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+	d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 			    myparent->myBeamline()->RTSource.raynumber);
 	d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 				 myparent->myBeamline()->RTSource.raynumber, 
@@ -645,7 +645,7 @@ void MainWindow::grapplyslot()
   if (d_plot->plotsubject == 1) 
     if (myparent->myBeamline()->beamlineOK & resultOK)
       {
-	d_plot->Plot::hfill((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+	d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 			    myparent->myBeamline()->RESULT.points);
 	d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 				 myparent->myBeamline()->RESULT.points, 
