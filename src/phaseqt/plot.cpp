@@ -388,7 +388,7 @@ void Plot::hfill(struct RayType *rays, int points)
   unsigned int ix, iy;
   struct RayType *rp;
   
-#ifdef
+#ifdef DEBUG
   cout << "Plot::hfill called" << endl;
 #endif
 
