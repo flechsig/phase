@@ -47,6 +47,8 @@ public:
     void   hfill(struct RayType *, int);
     void   statistics(struct RayType *, int, double);
     QwtPlotSpectrogram *d_spectrogram;
+    QwtPlotZoomer      *zoomer;
+
     int    plotsubject;
 
 public Q_SLOTS:

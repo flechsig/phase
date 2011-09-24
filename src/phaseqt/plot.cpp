@@ -170,7 +170,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   // RightButton: zoom out by 1
   // Ctrl+RighButton: zoom out to full size
   
-  QwtPlotZoomer *zoomer = new MyZoomer(canvas());
+  zoomer = new MyZoomer(canvas());
   zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
 			  Qt::RightButton, Qt::ControlModifier);
   zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
@@ -217,13 +217,11 @@ void Plot::setphaseData(const char *datatype)
 #endif  
 
   delete d_spectrogram->data();   // clean up the old data - correct??
-  if (qstrcmp(datatype, "grsourceAct") == 0) ; //hfill((struct RayType *)bt->RTSource.SourceRays, bt->RTSource.raynumber);
-  //  if (qstrcmp(datatype, "grimageAct")  == 0) hfill((struct RayType *)bt->RESULT.RESp,         bt->RESULT.points);
-
-  //  printf("hfill done\n");
+  
   
   d_spectrogram->setData(new SpectrogramDataPhase(this));
   replot();
+  zoomer->setZoomBase(canvas());
 } // setphaseData
 
 void Plot::setdefaultData()
@@ -232,6 +230,8 @@ void Plot::setdefaultData()
   
   d_spectrogram->setData(new SpectrogramData());
   replot();
+  zoomer->setZoomBase(canvas());
+
 } // setdefaultData
 
 void Plot::setdefaultData2()
@@ -241,6 +241,7 @@ void Plot::setdefaultData2()
   QwtRasterData *data = new SpectrogramData2();
   d_spectrogram->setData(data);
   replot();
+  zoomer->setZoomBase(canvas());
 } // setdefaultData2
 
 #ifndef QT_NO_PRINTER
@@ -365,6 +366,7 @@ int Plot::SetUpArrays(int n){
   return n;
 }
 
+// UF Sep 11 not used
 void Plot::SetData(int n, double* data_x, double *data_y)
 {
   n = SetUpArrays(n);
