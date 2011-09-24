@@ -388,6 +388,10 @@ void Plot::hfill(struct RayType *rays, int points)
   unsigned int ix, iy;
   struct RayType *rp;
   
+#ifdef
+  cout << "Plot::hfill called" << endl;
+#endif
+
   rp= rays;
 
   for (ix=0; ix< BINS2; ix++)
