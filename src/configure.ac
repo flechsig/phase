@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Sep 11 17:17:38 flechsig> 
+dnl   Time-stamp: <29 Sep 11 17:21:07 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -69,7 +69,7 @@ AC_CHECK_LIB(gfortran,_gfortran_st_read)
 AC_CHECK_LIB(g2c,fseek_)
 
 dnl if $F77 is already defined we should strip a possible path
-F77bn=basename $F77
+F77bn=`basename $F77`
 
 case "$F77bn" in
   "ifc")        # intel compiler
