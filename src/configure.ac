@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Sep 11 09:59:02 flechsig> 
+dnl   Time-stamp: <29 Sep 11 13:28:32 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -74,12 +74,12 @@ case "$F77" in
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       AC_SUBST([FFLAGS],"-vms -132")
       libphasename=libphaseifc
-	libphaselinkname=lphaseifc
+      libphaselinkname=lphaseifc
       wantifc=true
       wantabsoft=false
       wantportland=false;;
   "ifort")        # intel compiler
-      AC_MSG_RESULT(found Intel ifc)
+      AC_MSG_RESULT(found Intel ifort)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       if test "$machine" = "x86_64"; then   
 	 AC_SUBST([FFLAGS],"-vms -132 -O0")  # opti. fails on 64 bit
@@ -90,7 +90,7 @@ dnl UF to be modified and tested
          AC_SUBST([FFLAGS],"-vms  -132")
       fi	 
       libphasename=libphaseifc
-	libphaselinkname=lphaseifc
+      libphaselinkname=lphaseifc
       wantifc=true
       wantabsoft=false
       wantportland=false;;
@@ -102,7 +102,7 @@ dnl UF to be modified and tested
 ## FFLAGS -silent: no warnings ??
 ##        -w     : no warnings
       libphasename=libphaseportland
-	libphaselinkname=lphaseportland
+      libphaselinkname=lphaseportland
       wantifc=false
       wantabsoft=false
       wantportland=true;;
@@ -111,7 +111,7 @@ dnl UF to be modified and tested
       AC_MSG_RESULT(assume Absoft f77)
       AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
       libphasename=libphaseabsoft
-	libphaselinkname=lphaseabsoft
+      libphaselinkname=lphaseabsoft
       wantifc=false
       wantportland=false
       wantabsoft=true
