@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <14 Sep 11 11:49:46 flechsig> 
+dnl   Time-stamp: <29 Sep 11 09:59:02 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -20,7 +20,7 @@ dnl obsolete AM_CONFIG_HEADER(phase/config.h)
 AC_CONFIG_HEADERS([phase/config.h])
 
 dnl uf Aug 2011
-AC_CONFIG_MACRO_DIR([m4])
+dnl AC_CONFIG_MACRO_DIR([m4])
 
 dnl maintainer option i.e. make does not bootstrap
 ##AM_MAINTAINER_MODE
@@ -133,7 +133,8 @@ dnl UF to be modified and tested
 ##	-N22 append underscore to common block names (wichtig wegen pawc)
 ##      -N33 pack structures (kein alignment) 
 
-
+   *)
+      AC_MSG_ERROR([Your Fortran compiler $F77 can not be used to built PHASE]);;
 esac
 dnl cforlib is obsolete- can be taken out  (of makefiles)
 cforlib=""
