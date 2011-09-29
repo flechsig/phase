@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Sep 11 13:28:32 flechsig> 
+dnl   Time-stamp: <29 Sep 11 17:17:38 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -68,7 +68,10 @@ dnl check for fortran compatibility libs
 AC_CHECK_LIB(gfortran,_gfortran_st_read)
 AC_CHECK_LIB(g2c,fseek_)
 
-case "$F77" in
+dnl if $F77 is already defined we should strip a possible path
+F77bn=basename $F77
+
+case "$F77bn" in
   "ifc")        # intel compiler
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
@@ -134,7 +137,7 @@ dnl UF to be modified and tested
 ##      -N33 pack structures (kein alignment) 
 
    *)
-      AC_MSG_ERROR([Your Fortran compiler $F77 can not be used to built PHASE]);;
+      AC_MSG_ERROR([Your Fortran compiler $F77bn can not be used to built PHASE]);;
 esac
 dnl cforlib is obsolete- can be taken out  (of makefiles)
 cforlib=""
