@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <30 Sep 11 13:07:15 flechsig> 
+dnl   Time-stamp: <30 Sep 11 13:09:25 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -448,7 +448,7 @@ echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "qt:                      : ${qt}"
 echo "qwt:                     : ${qwt}"
-echo "$qwti:                   : ${qwti}"
+echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
