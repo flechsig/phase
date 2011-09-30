@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Sep 11 17:21:07 flechsig> 
+dnl   Time-stamp: <30 Sep 11 13:07:15 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -230,7 +230,10 @@ AC_ARG_WITH([qwt],
     else
       dnl   echo "do use qwt"
       AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
-      AC_SUBST(QWT,${qwt}), 
+      [
+        AC_SUBST(QWT,[${qwt}])
+	AC_SUBST(QWTI,[${qwt}])
+      ],
       AC_MSG_ERROR(cannot find libqwt.so))
     fi
   ],
@@ -445,6 +448,7 @@ echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "qt:                      : ${qt}"
 echo "qwt:                     : ${qwt}"
+echo "$qwti:                   : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
