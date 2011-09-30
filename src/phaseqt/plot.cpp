@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <16 Sep 11 13:32:34 flechsig> 
+//  Time-stamp: <30 Sep 11 15:19:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -402,7 +402,7 @@ void Plot::hfill1(struct RayType *rays, int points, const char *type)
   if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
   if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
   h2max= 0.0;
-
+  /*
   switch (type)
     {
     case "y":
@@ -446,7 +446,7 @@ void Plot::hfill1(struct RayType *rays, int points, const char *type)
 	}
       break;
     }
-
+  */
   // scale maximum to 10
   if (h2max > 0.0)
     for (ix=0; ix< BINS2; ix++)
