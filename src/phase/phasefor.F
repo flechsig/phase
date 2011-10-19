@@ -378,10 +378,12 @@ c*****************************************************************
         write(*,*) 'pathlen0: do not subtract r and rp from path length' 
 #endif
 	if(isti.eq.1)then
-	  call lsubb(am.a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,-g.idefl,dql1,dql2)
+	  call lsubb(am.a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,
+     &               -g.idefl,dql1,dql2)
 	endif
 	if(isti.ne.1)then
-	  call lsubb(am.a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,dql1,dql2) 
+	  call lsubb(am.a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,
+     &                g.idefl,dql1,dql2) 
 	endif
 	
         do n1=0,iord
@@ -615,11 +617,13 @@ c************************************************************
 #ifdef SEVEN_ORDER
 	dimension xmap70(330,330)
         idim=330
-	write(*,*)'writematrixfile: write matrix [330][330] to file >>', fname, '<<' 
+	write(*,*)'writematrixfile: write matrix [330][330] to file >>',
+     &            fname, '<<' 
 #else
         dimension xmap70(70,70)
         idim=70
-        write(*,*)'writematrixfile: write matrix [70][70] to file >>', fname, '<<'
+        write(*,*)'writematrixfile: write matrix [70][70] to file >>', 
+     &            fname, '<<'
 #endif        
 c	write(*,*)'writematrixfile: write header>>', header , '<<'
 	write(*,*)''
