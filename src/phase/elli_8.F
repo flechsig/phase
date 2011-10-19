@@ -10,7 +10,8 @@ c$$$ $Author$
 
       subroutine elli_8(r1,r2,sina,cosa,a,b,c,x0,y0,tandel,a1)
       implicit none
-      real *8 r1,r2,sina,cosa,a,b,c,x0,y0,tandel,a1,sina1,cosa1,sd,cd,ax0,bx0,cx0,dx0,cx1,ax2,ax1,az2
+      real *8 r1,r2,sina,cosa,a,b,c,x0,y0,tandel,a1,sina1,cosa1,sd,cd,
+     &        ax0,bx0,cx0,dx0,cx1,ax2,ax1,az2
       dimension a1(0:8,0:8)
 c---------------------------------------------------------------------------
 c
@@ -34,7 +35,8 @@ c---------------------------------------------------------------------------
       cosa1=dabs(sina)
 
 c     get ellipse parameters
-      c=0.5d0*dsqrt((r1+r2*(cosa1**2-sina1**2))**2+(r2*2.d0*sina1*cosa1)**2)
+      c=0.5d0*dsqrt((r1+r2*(cosa1**2-sina1**2))**2+
+     &   (r2*2.d0*sina1*cosa1)**2)
       a=(r1+r2)/2.d0
       b=dsqrt(a**2-c**2)
 
