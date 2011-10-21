@@ -117,6 +117,22 @@ c*******************************************************
 	yi=ra.ri.yi
 	zi=ra.ri.zi
 
+#ifdef SEVEN_ORDER
+        call subm17(m4.fdetc,yi,zi,m4.fdetrc)
+        call subm17(m4.fdetphc,yi,zi,m4.fdetphrc)
+        call subm17(m4.fdet1phc,yi,zi,m4.fdet1phrc)
+        call subm17(m4.ypc1,yi,zi,m4.yprc1)
+        call subm17(m4.zpc1,yi,zi,m4.zprc1)
+        call subm17(m4.dypc,yi,zi,m4.dyprc)
+        call subm17(m4.dzpc,yi,zi,m4.dzprc)
+        call subm17(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
+        call subm17(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
+        call subm17(m4.xlen1c,yi,zi,m4.xlen1c_r)
+        call subm17(m4.xlen2c,yi,zi,m4.xlen2c_r)
+
+        call subm17(m4.wc,yi,zi,m4.wrc)
+        call subm17(m4.xlc,yi,zi,m4.xlrc)
+#else
         call subm1(m4.fdetc,yi,zi,m4.fdetrc)
         call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
         call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
@@ -131,6 +147,8 @@ c*******************************************************
 
         call subm1(m4.wc,yi,zi,m4.wrc)
         call subm1(m4.xlc,yi,zi,m4.xlrc)
+#endif
+
 
 c------------------------------------------------------
 
@@ -308,6 +326,22 @@ c*******************************************************
 
 	ra.ri.dzi=dzii
 
+#ifdef SEVEN_ORDER
+        call subm27(m4.fdetrc,dzii,m4.fdtrrc)
+        call subm27(m4.fdetphrc,dzii,m4.fdtphrrc)
+        call subm27(m4.fdet1phrc,dzii,m4.fdt1phrrc)
+        call subm27(m4.yprc1,dzii,m4.yprrc1)
+        call subm27(m4.zprc1,dzii,m4.zprrc1)
+        call subm27(m4.dyprc,dzii,m4.dyprrc)
+        call subm27(m4.dzprc,dzii,m4.dzprrc)
+        call subm27(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
+        call subm27(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
+        call subm27(m4.xlen1c_r,dzii,m4.xlen1c_rr)
+        call subm27(m4.xlen2c_r,dzii,m4.xlen2c_rr)
+
+        call subm27(m4.wrc,dzii,m4.wrrc)
+        call subm27(m4.xlrc,dzii,m4.xlrrc)
+#else
         call subm2(m4.fdetrc,dzii,m4.fdtrrc)
         call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
         call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
@@ -322,6 +356,7 @@ c*******************************************************
 
         call subm2(m4.wrc,dzii,m4.wrrc)
         call subm2(m4.xlrc,dzii,m4.xlrrc)
+#endif
 
 	ianzy=xi.ianzy0
 c UF 21.12.99	itery=xi.itery0
@@ -564,11 +599,19 @@ c--------- fd und fdph genauer: ---------------
 	fd1=0.
 	fd2=0.
 
+#ifdef SEVEN_ORDER
+       call subl7(m4.ypc1,m4.zpc1,m4.dypc,m4.dzpc,m4.xmec)
+			! Berechnung der Matrixelemente xmec
+			! Indizes 1 und 2: Reihe, Spalte
+			! Indizes 3 bis 6: Koeffizienten von
+			! yp, zp, dyp, dzp
+#else
         call subl(m4.ypc1,m4.zpc1,m4.dypc,m4.dzpc,m4.xmec)
 			! Berechnung der Matrixelemente xmec
 			! Indizes 1 und 2: Reihe, Spalte
 			! Indizes 3 bis 6: Koeffizienten von
 			! yp, zp, dyp, dzp
+#endif
 
 c----- check:
 
