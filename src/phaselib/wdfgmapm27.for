@@ -1,4 +1,4 @@
-      subroutine subm2(p2c,dz,p2rc)
+      subroutine subm2xx(p2c,dz,p2rc)
       implicit real*8(a-h,o-z)
       dimension   p2c(0:7,0:7)
       dimension   p2rc(0:7)

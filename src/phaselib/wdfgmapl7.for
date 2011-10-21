@@ -1,4 +1,4 @@
-      subroutine subl
+      subroutine sublxx
       implicit real*8(a-h,o-z)
       common/map7/wc(0:7,0:7,0:7,0:7),
      &              xlc(0:7,0:7,0:7,0:7),
