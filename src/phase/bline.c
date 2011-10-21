@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <14 Sep 11 18:07:29 flechsig>  */
+/*   Time-stamp: <21 Oct 11 16:58:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -161,6 +161,7 @@ void BuildBeamline(struct BeamlineType *bl)
        if (bl->BLOptions.REDUCE_maps == 0)
 	 fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
 		dfdwwp, dfdwlp, dfdllp, 
+
 		&bl->fdetc, &bl->fdetphc,
 		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
 		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
@@ -836,8 +837,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
        fgmapidp_8(&bl->BLOptions.epsilon, 
 		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		  &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		  listpt->dfdww, listpt->dfdwl, listpt->dfdll, listpt->dfdwidlj,
+		  &listpt->xlm, 
+                  listpt->opl6, listpt->dfdw6, listpt->dfdl6, listpt->dfdww6,
+		  listpt->dfdwl6, listpt->dfdll6, listpt->dfdwww6,
+		  listpt->opl, listpt->dfdw, listpt->dfdl,
+		  listpt->dfdww, listpt->dfdwl, listpt->dfdll, /*listpt->dfdwidlj,*/
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
      else
        {
@@ -930,8 +934,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	   fgmapidp_8(&bl->BLOptions.epsilon,
 		      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
 		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		      &listpt->xlm, listpt->opl, listpt->dfdw, listpt->dfdl,
-		      listpt->dfdww, listpt->dfdwl,listpt->dfdll, listpt->dfdwidlj,
+		      &listpt->xlm, 
+		      listpt->opl6, listpt->dfdw6, listpt->dfdl6, listpt->dfdww6,
+		      listpt->dfdwl6, listpt->dfdll6, listpt->dfdwww6,
+		      listpt->opl, listpt->dfdw, listpt->dfdl,
+		      listpt->dfdww, listpt->dfdwl,listpt->dfdll, /*listpt->dfdwidlj,*/
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 else
 	   {
