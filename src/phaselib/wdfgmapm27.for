@@ -1,4 +1,9 @@
-      subroutine subm2xx(p2c,dz,p2rc)
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
+      subroutine subm27(p2c,dz,p2rc)
       implicit real*8(a-h,o-z)
       dimension   p2c(0:7,0:7)
       dimension   p2rc(0:7)

@@ -1,4 +1,9 @@
-      subroutine subm1xx(p1c,y,z,p1rc)
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
+      subroutine subm17(p1c,y,z,p1rc)
       implicit real*8(a-h,o-z)
       dimension   p1c(0:7,0:7,0:7,0:7)
       dimension   p1rc(0:7,0:7)
