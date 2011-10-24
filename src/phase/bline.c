@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Oct 11 16:58:51 flechsig>  */
+/*   Time-stamp: <24 Oct 11 09:09:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -9,10 +9,6 @@
 /*   $Author$  */
 
 
-/* 24.11.98 UF Undulatorsource schreiben/ lesen geaendert */
-/* 7.4.08 UF took out all X11 related routines to phaseX.c */
-/* took no X11 routines in */
- 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif 
@@ -26,9 +22,6 @@
 
 #include "cutils.h"   
 #include "phase_struct.h"
-/*#include "fg3pck.h"   */
-                
-  
 #include "phase.h"
 #include "rtrace.h"                 
 #include "common.h" 
@@ -41,8 +34,8 @@ extern const char *global_rundir;
 void BuildBeamline(struct BeamlineType *bl)  
 {
    unsigned int elcounter;
-   int      imodus;
-   struct   ElementType *listpt;      
+   int          imodus;
+   struct ElementType *listpt;      
    /*   char    command[MaxPathLength]; */
 
 #ifdef DEBUG
@@ -89,7 +82,6 @@ void BuildBeamline(struct BeamlineType *bl)
    printf("BuildBeamline: %d order calculation\n", bl->BLOptions.ifl.iord);
 /*--------------------------------------------------------*/ 
 
-  
    if (bl->beamlineOK & mapOK)  
      {   
        printf("BuildBeamline: all beamline elements are already OK- return\n");
@@ -123,7 +115,6 @@ void BuildBeamline(struct BeamlineType *bl)
        else
 	 {
 	   printf("debug: BuildBeamline: element %d already OK- keep matrix\n");
-
 	 }
        
        if (listpt->MDat.Art != kEOESlit)         /* slit not */
@@ -161,7 +152,6 @@ void BuildBeamline(struct BeamlineType *bl)
        if (bl->BLOptions.REDUCE_maps == 0)
 	 fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
 		dfdwwp, dfdwlp, dfdllp, 
-
 		&bl->fdetc, &bl->fdetphc,
 		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
 		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
@@ -2525,10 +2515,9 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
 	printf("DefGeometryC: NIM translation enabled, trans= %lf mm\nr1= %lf mm, r2= %lf mm\n",
 	       trans, gout->r, gout->rp);
      }  else
-     
      {     
-	        gout->r  = x->r;
-	        gout->rp = x->rp;
+       gout->r  = x->r;
+       gout->rp = x->rp;
      }
    
      gout->sina= sin(alpha);
@@ -2671,9 +2660,9 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
     }
 }  /* end ReadRayFile */
 
-void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
 /* schreibt mirrorkoordinaten auf file */
 /* updated to seven order 11/2010*/
+void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
 {
   FILE   *f;
   int    i, j, maxord;
@@ -2704,11 +2693,11 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
 #ifdef DEBUG
   printf("WriteMKos: done\n");
 #endif
-}    
+}  /* end  WriteMKos */ 
 
-void ReadMKos(struct mirrortype *a, char *name)
 /* liest mirrorkoordinaten von file */
 /* updated to seven order 11/2010*/
+void ReadMKos(struct mirrortype *a, char *name)
 {
   FILE   *f;
   int    i, j, maxord;
@@ -2737,7 +2726,7 @@ void ReadMKos(struct mirrortype *a, char *name)
 	  if ((i + j) <= maxord) fscanf(f, "%lf\n", &dp[i+j*(maxord+1)]);
       fclose(f); 
     }
-}    
+}  /* end  ReadMKos */ 
 
 
 /* end bline.c */

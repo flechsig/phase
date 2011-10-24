@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <21 Oct 11 16:37:33 flechsig>  */
+/*   Time-stamp: <24 Oct 11 08:38:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -465,13 +465,17 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
 };                                                                   
 
 #ifdef SEVEN_ORDER
-  typedef double MAP70TYPE   [330][330];  
-  typedef double MAP7TYPE    [8][8][8][8];
-  typedef double DFDXTYPE    [8][8][8][8][8][8];
-  typedef double MAPTYPE_8X6 [8][8][8][8][8][8];
+  typedef double MAP70TYPE     [330][330];  
+  typedef double MAP7TYPE      [8][8][8][8];
+  typedef double DFDXTYPE      [8][8][8][8][8][8];
+  typedef double MAPTYPE_330X2 [330][330];
+  typedef double MAPTYPE_8X4   [8][8][8][8];
+  typedef double MAPTYPE_8X6   [8][8][8][8][8][8];
 #else
-  typedef double MAP70TYPE [70][70];  
-  typedef double MAP7TYPE  [5][5][5][5];    
+  typedef double MAP70TYPE    [70][70];  
+  typedef double MAP7TYPE     [5][5][5][5]; 
+  typedef double MAPTYPE_70X2 [70][70];  
+  typedef double MAPTYPE_5X4  [5][5][5][5];   
 #endif
 
 typedef struct grdatstructtype {
@@ -492,7 +496,7 @@ struct mirrortype {
 struct geometrytype {
   double sina, cosa, sinb, cosb, r, rp, x[5], xlam;
   int idefl;
-  }; 
+}; 
 
 struct gdatset 
 {
@@ -529,7 +533,11 @@ struct mdatset
 };  
 
 struct xlenmaptype {
-  MAP7TYPE xlen1c, xlen2c;
+#ifdef SEVEN_ORDER
+  MAPTYPE_8X4 xlen1c, xlen2c;
+#else
+  MAPTYPE_5X4 xlen1c, xlen2c;
+#endif
 };
 
 struct optistruct_xx
