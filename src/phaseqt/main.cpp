@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <24 Oct 11 13:51:19 flechsig> 
+//  Time-stamp: <24 Oct 11 14:11:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -29,17 +29,15 @@ int main(int argc, char *argv[])
 
   switch (setupswitch)
     {
-    case -8: 
-      cout << "main: switch -8 called" << endl;
-      exit(setupswitch);  
-    case -4:
-      cout << "main: switch -4 called" << endl;
+     
+    case 3:
+    case 7:
+    case 15:
+      cout << "main: Batchmode  called" << endl;
       myphaseQt.myBatchMode(cmode, selected);
       exit(3);
       break;
-    case 5:
-      cout << "main: switch 5 called" << endl;
-      break;
+    
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);
     }

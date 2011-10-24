@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <19 Aug 11 10:37:38 flechsig>  */
+/*  Time-stamp: <24 Oct 11 14:14:55 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -107,12 +107,15 @@ int main(argc, argv)
 
 
     setupswitch= ProcComandLine(&PHASESet, argc, argv, &cmode, &selected); 
-    if (setupswitch == -8)
+    switch (setupswitch)
       {
-	BatchMode(&PHASESet, &Beamline, cmode, selected);
+      case 3:
+      case 7:
+      case 15:
+    	BatchMode(&PHASESet, &Beamline, cmode, selected);
 	exit(3);
+	break;
       }
-    
 					
     inithplot();                        /* PHASEgraffor.for, hlimit, hplint  */
 

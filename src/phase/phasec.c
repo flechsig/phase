@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Oct 11 13:52:59 flechsig>  */
+/*   Time-stamp: <24 Oct 11 14:07:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -151,8 +151,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
       {
       case 'B':
       case 'b':
-	bflag  =  1;
-	ret   += -9;
+	ret += 2;
 	printf("option -%c\n", c);
 	break;
       case 'F':
@@ -195,6 +194,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	break;
       case 'O':
       case 'o':
+	ret += 8;
 	printf("option -%c\n", c);
 	ovalue = optarg;
 	strncpy(ps->imageraysname, ovalue, MaxPathLength);
@@ -245,13 +245,14 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
     {
       strncpy(ps->beamlinename, argv[index], MaxPathLength);
       printf("ProcComandLine: use input_filename from argument: >>%s<<\n", argv[index]);
-      ret= 5;
+      ret+= 4;
     }
   index++;
   if (index < argc)  /* wir nehmen das zweite argument als output_filename und ueberschreiben damit den parameter -o */
     {
       strncpy(ps->imageraysname, argv[index], MaxPathLength);
       printf("ProcComandLine: use output_filename from argument: >>%s<<\n", argv[index]);
+      ret += 8;
     }
 
   return ret;
