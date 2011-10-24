@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <09 Sep 11 15:25:58 flechsig> 
+#  Time-stamp: <24 Oct 11 09:29:13 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -43,16 +43,9 @@ phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \
- ../data/higz_windows.dat\
- ../data/map35_lh.omx\
- ../data/map35_rh.omx\
  ../data/map70_lh.omx\
  ../data/map70_rh.omx\
- ../data/news\
- ../data/phase.dat\
- ../data/phase.hlb\
- ../data/phaseinit.com\
- ../data/phaseuser.com
+
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.
