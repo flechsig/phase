@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <24 Oct 11 14:14:55 flechsig>  */
+/*  Time-stamp: <24 Oct 11 14:45:54 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -46,7 +46,7 @@ int main(argc, argv)
     unsigned int argc;                  /* Command line argument count.   */
     char *argv[];                       /* Pointers to command line args. */
 {                                
-  int setupswitch, cmode, selected;
+  int setupswitch, cmode, selected, iord;
     char filename[255];
     
     time_t    timev;                    /* for expire option */  
@@ -106,13 +106,13 @@ int main(argc, argv)
 #endif
 
 
-    setupswitch= ProcComandLine(&PHASESet, argc, argv, &cmode, &selected); 
+    setupswitch= ProcComandLine(&PHASESet, argc, argv, &cmode, &selected, &iord); 
     switch (setupswitch)
       {
       case 3:
       case 7:
       case 15:
-    	BatchMode(&PHASESet, &Beamline, cmode, selected);
+    	BatchMode(&PHASESet, &Beamline, cmode, selected, iord);
 	exit(3);
 	break;
       }
