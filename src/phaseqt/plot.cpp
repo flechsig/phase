@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <30 Sep 11 15:19:35 flechsig> 
+//  Time-stamp: <24 Oct 11 09:44:03 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -316,6 +316,9 @@ void Plot::autoScale(struct RayType *rays, int raynumber)
   Beauty(&dzmin,  &dzmax);
   Beauty(&phimin, &phimax);
   //printf("autscale: %f, %f\n", ymin, ymax);
+#ifdef DEBUG
+  printf(DEBUG: autoScale: %lg, %lg, %lg, %lg\n", ymin, ymax, zmin, zmax);
+#endif
 } //autoScale
 
 // helper function for autoscale
