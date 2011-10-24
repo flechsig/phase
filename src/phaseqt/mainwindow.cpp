@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <16 Sep 11 15:42:47 flechsig> 
+//  Time-stamp: <24 Oct 11 11:51:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1105,7 +1105,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
   //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
   //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
 #endif
 
