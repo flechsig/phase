@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Oct 11 14:07:19 flechsig>  */
+/*   Time-stamp: <24 Oct 11 14:18:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -170,8 +170,8 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	printf("                -f, -Ffilename:   use datafile (*.phase)\n");
 	printf("                -h, -H:           show this message\n");
 	printf("                -m, -Mcalcmode:   calculation mode \n");
-	printf("                                  1: ray trace\n");
-	printf("                                  2: full ray trace\n");
+	printf("                                  1: quick ray trace\n");
+	printf("                                  2: (full) ray trace\n");
 	printf("                                  3: phase space imaging\n");
 	printf("                                  4: footprint (requires option s)\n");
 	printf("                                  5: multiple phase space imaging\n");
