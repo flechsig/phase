@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Aug 11 11:05:22 flechsig>  */
+/*   Time-stamp: <24 Oct 11 13:44:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -151,13 +151,13 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
       {
       case 'B':
       case 'b':
-	bflag =  1;
-	ret   = -8;
+	bflag  =  1;
+	ret   += -7;
 	printf("option -%c\n", c);
 	break;
       case 'F':
       case 'f':
-	ret= 5;
+	ret += 4;
 	printf("option -%c\n", c);
 	fvalue = optarg;
 	strncpy(ps->beamlinename, fvalue, MaxPathLength- 1);

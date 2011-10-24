@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <16 Sep 11 16:44:10 flechsig> 
+//  Time-stamp: <24 Oct 11 13:51:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -24,9 +24,16 @@ int main(int argc, char *argv[])
   PhaseQt myphaseQt;                   // create the object on the stack
  
   setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected);
+ 
+  cout << "main: setupswitch = " <<  setupswitch << endl;
+
   switch (setupswitch)
     {
-    case -8:
+    case -8: 
+      cout << "main: switch -8 called" << endl;
+      exit(setupswitch);  
+    case -4:
+      cout << "main: switch -4 called" << endl;
       myphaseQt.myBatchMode(cmode, selected);
       exit(3);
       break;
