@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <24 Oct 11 09:29:13 flechsig> 
+#  Time-stamp: <24 Oct 11 09:44:50 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -44,7 +44,7 @@ phaseqt_LDADD = $(libdir)/@LIBPHASE@
 # files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \
  ../data/map70_lh.omx\
- ../data/map70_rh.omx\
+ ../data/map70_rh.omx
 
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
