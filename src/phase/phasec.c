@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Oct 11 13:44:31 flechsig>  */
+/*   Time-stamp: <24 Oct 11 13:52:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -152,7 +152,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
       case 'B':
       case 'b':
 	bflag  =  1;
-	ret   += -7;
+	ret   += -9;
 	printf("option -%c\n", c);
 	break;
       case 'F':
