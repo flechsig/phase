@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Oct 11 14:18:17 flechsig>  */
+/*   Time-stamp: <24 Oct 11 14:44:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -38,10 +38,8 @@
 #include "rtrace.h"
 #include "version.h"
 
-
-void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int selected)
-/* Uwe 2.10.96 */
 /* Batchmodus */
+void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int selected, int iord)
 {
 #ifndef QTGUI
   struct PSDType     *PSDp;
@@ -65,6 +63,7 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 #endif
   BuildBeamline(bl); 
   if (cmode == -1) cmode= bl->BLOptions.CalcMod;
+  if (iord != -1)  bl->BLOptions.ifl.iord= iord;
   switch (cmode)
     {
     case 1:
@@ -129,24 +128,25 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 } /* end Batchmode */
 
 
-int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected)
+int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected, int *iord)
 /* Uwe new version 10.8.2011 using getopt */
 /* used in phaseqt                        */
 {
   char *fvalue = NULL;
   char *mvalue = NULL;
+  char *ivalue = NULL;
   char *ovalue = NULL;
   char *svalue = NULL;
   int index;
   int c;
-  int bflag =  0;
   int ret   =  1;
 
   *cmode    = -1;
   *selected = -1;
+  *iord     = -1;
   opterr    =  0;
   
-  while ((c = getopt(argc, argv, "BbF:f:HhM:m:NnO:o:S:s:V")) != -1)
+  while ((c = getopt(argc, argv, "BbF:f:Hhi:I:M:m:NnO:o:S:s:V")) != -1)
     switch (c)
       {
       case 'B':
@@ -169,6 +169,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	printf("       options: -b, -B:           batch mode (no X11)\n");
 	printf("                -f, -Ffilename:   use datafile (*.phase)\n");
 	printf("                -h, -H:           show this message\n");
+	printf("                -i, -Iord:        calculation order (0..7)\n");
 	printf("                -m, -Mcalcmode:   calculation mode \n");
 	printf("                                  1: quick ray trace\n");
 	printf("                                  2: (full) ray trace\n");
@@ -180,6 +181,12 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	printf("                -s, -Snumber:     selected element number (for footprint)\n");
 	printf("                -V:               Version\n");
 	exit(0);
+	break;
+      case 'I':
+      case 'i':
+	ivalue = optarg;
+	sscanf(ivalue, "%d", iord);
+	printf("ProcComandLine: iord: %d\n", *iord);
 	break;
       case 'M':
       case 'm':
@@ -216,6 +223,8 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	  {
 	  case 'F':
 	  case 'f':
+	  case 'I':
+	  case 'i':
 	  case 'M':
 	  case 'm':
 	  case 'O':

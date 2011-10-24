@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <24 Oct 11 14:11:29 flechsig> 
+//  Time-stamp: <24 Oct 11 14:33:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -18,23 +18,22 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-  int setupswitch, cmode, selected; 
+  int setupswitch, cmode, selected, iord; 
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
  
-  setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected);
+  setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord);
  
   cout << "main: setupswitch = " <<  setupswitch << endl;
 
   switch (setupswitch)
     {
-     
     case 3:
     case 7:
     case 15:
       cout << "main: Batchmode  called" << endl;
-      myphaseQt.myBatchMode(cmode, selected);
+      myphaseQt.myBatchMode(cmode, selected, iord);
       exit(3);
       break;
     

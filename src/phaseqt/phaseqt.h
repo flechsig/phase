@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <16 Sep 11 17:50:06 flechsig>  */
+/*  Time-stamp: <24 Oct 11 14:35:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -55,7 +55,7 @@ public:
   struct OptionsType  *myOptions();
   struct PHASEset     *myPHASEset(); 
   void myAllocRTSource() { AllocRTSource(this); }
-  void myBatchMode(int cmode, int selected) { BatchMode(this, this, cmode, selected); }
+  void myBatchMode(int cmode, int selected, int iord) { BatchMode(this, this, cmode, selected, iord); }
   void myBuildBeamline() { BuildBeamline(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
@@ -65,8 +65,8 @@ public:
   void myGetPHASE(char *name) { GetPHASE(this, name); }
   void myMakeMapandMatrix(struct ElementType *listpt) { MakeMapandMatrix(listpt, this); }
   void myMakeRTSource() { MakeRTSource(this, this);  }
-  int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected) { 
-                        return ProcComandLine(this, argc, argv, cmode, selected); }
+  int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord) { 
+    return ProcComandLine(this, argc, argv, cmode, selected, iord); }
   void myPutPHASE(char *name) { PutPHASE(this, name); }
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
   void myReAllocResult(int newtype, int dim1, int dim2)   { ReAllocResult(this, newtype, dim1, dim2); }
