@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Oct 11 12:18:34 flechsig>  */
+/*   Time-stamp: <24 Oct 11 15:09:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1088,7 +1088,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	   } /* end bl->BLOptions.SourcetoImage != 1 */	
 
 #ifdef DEBUG  
-	 printf("MakeMapandMatrix: hor. defl. done\n");
+	 printf("\nMakeMapandMatrix: hor. defl. done\n");
 #endif
 
        }  /* end horizontal deflection */
