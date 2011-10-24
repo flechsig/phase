@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Oct 11 15:09:17 flechsig>  */
+/*   Time-stamp: <24 Oct 11 17:27:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -36,207 +36,196 @@ void BuildBeamline(struct BeamlineType *bl)
    unsigned int elcounter;
    int          imodus;
    struct ElementType *listpt;      
-   /*   char    command[MaxPathLength]; */
+   
+#ifdef SEVEN_ORDER
+   MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6;
+#endif
 
 #ifdef DEBUG
   printf("debug BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 
+  printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
+  
 #ifdef SEVEN_ORDER
-   /*  stimmt das hier???? Dimensionierung von dfdwwp etc */
-   
-   double *dfdwp, *dfdlp;
-   double *dfdwwp, *dfdwlp, *dfdllp;
-   
-   dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
-   dfdlp= (double *)&(bl->ElementList[0].dfdl);
-
-   dfdwwp= (double *)&(bl->ElementList[0].dfdww);   /* UF nicht sicher ob das passt */
-   dfdwlp= (double *)&(bl->ElementList[0].dfdwl);
-   dfdllp= (double *)&(bl->ElementList[0].dfdll);
-#endif
-
-   printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
-
-#ifdef SEVEN_ORDER
-   if (bl->BLOptions.ifl.iord > 7) 
-     {
-       printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
-       printf("set iord to 7\n");
-       bl->BLOptions.ifl.iord= 7;
+  if (bl->BLOptions.ifl.iord > 7) 
+    {
+      printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+      printf("set iord to 7\n");
+      bl->BLOptions.ifl.iord= 7;
     }
-   if ((bl->BLOptions.ifl.iord > 4) && bl->BLOptions.REDUCE_maps)
-     {
-       printf("%d. order calc. not supported with REDUCE maps!\n", bl->BLOptions.ifl.iord);
-       printf("set iord to 4\n");
-       bl->BLOptions.ifl.iord= 4;
-     }
+  if ((bl->BLOptions.ifl.iord > 4) && bl->BLOptions.REDUCE_maps)
+    {
+      printf("%d. order calc. not supported with REDUCE maps!\n", bl->BLOptions.ifl.iord);
+      printf("set iord to 4\n");
+      bl->BLOptions.ifl.iord= 4;
+    }
 #else 
-   if (bl->BLOptions.ifl.iord > 4) 
-     {
-       printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
-       printf("set iord to 4\n");
-       bl->BLOptions.ifl.iord= 4;
-     }
+  if (bl->BLOptions.ifl.iord > 4) 
+    {
+      printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+      printf("set iord to 4\n");
+      bl->BLOptions.ifl.iord= 4;
+    }
 #endif
-   printf("BuildBeamline: %d order calculation\n", bl->BLOptions.ifl.iord);
-/*--------------------------------------------------------*/ 
-
-   if (bl->beamlineOK & mapOK)  
-     {   
-       printf("BuildBeamline: all beamline elements are already OK- return\n");
-       return;  /* nothing to do */
-     }
-   
-   elcounter= 1; 
-   listpt= bl->ElementList;  
-   bl->xlen0= bl->deltalambdafactor= 0.0;     /* Laenge der opt. achse */
-      
-   /* Schleife ueber alle Elemente */
-   while (elcounter<= bl->elementzahl)
-     { 
-       /*
-          printf("buildbeamline: force built\n");
-      listpt->ElementOK=0; */
-       if (listpt->ElementOK == 0)  /* element rebuild */
-	 {
-	   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-		      bl->BLOptions.REDUCE_maps);    
-	   DefGeometryC(&listpt->GDat, &listpt->geo);  
-	   MakeMapandMatrix(listpt, bl); 
-	   
+  printf("BuildBeamline: %d order calculation\n", bl->BLOptions.ifl.iord);
+  /*--------------------------------------------------------*/ 
+  
+  if (bl->beamlineOK & mapOK)  
+    {   
+      printf("BuildBeamline: all beamline elements are already OK- return\n");
+      return;  /* nothing to do */
+    }
+  
+  elcounter= 1; 
+  listpt= bl->ElementList;  
+  bl->xlen0= bl->deltalambdafactor= 0.0;     /* Laenge der opt. achse */
+  
+  /* Schleife ueber alle Elemente */
+  while (elcounter<= bl->elementzahl)
+    { 
+      /*
+	printf("buildbeamline: force built\n");
+	listpt->ElementOK=0; */
+      if (listpt->ElementOK == 0)  /* element rebuild */
+	{
+	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+		     bl->BLOptions.REDUCE_maps);    
+	  DefGeometryC(&listpt->GDat, &listpt->geo);  
+	  MakeMapandMatrix(listpt, bl); 
+	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
-	   
+	  
 #ifdef DEBUG
-	   printf("BuildBeamline: matrix of %d. element created\n", elcounter); 
+	  printf("BuildBeamline: matrix of %d. element created\n", elcounter); 
 #endif 
-	 }             /* map ist OK */
-       else
-	 {
-	   printf("debug: BuildBeamline: element %d already OK- keep matrix\n");
-	 }
-       
-       if (listpt->MDat.Art != kEOESlit)         /* slit not */
-	 {
-	   if (elcounter == 1)
-	     {
-	       printf("BuildBeamline- only one element- copy matrix\n");
-	       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
-	     }
-	   else		                   /* bline zusammenbauen */
-	     GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
-	   /* GlueLeft(A, B) A= B* A */
-	   
-	   bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
-	   printf("BuildBeamline: length of optical axis (bl->xlen0): %lf\n",
-		  bl->xlen0);
-	   SetDeltaLambda(bl, listpt);              /* resolutionfactor */
-	 }    
-       elcounter++; listpt++; 
-     } /* Schleife ueber alle Elemente fertig */
-
-   printf("Buildbeamline: extract beamline map\n");
-   extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	      &bl->BLOptions.ifl.iord); 
-   
-   /* UF JB wir brauchen hier ein dfdw fuer die beamline */
-   /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
-   /* mache das oben UF 17.11.10*/	
-   /* beamline matrix und map ist fertig (source to image) */ 
-   if (bl->BLOptions.SourcetoImage != 1)
-     {
-       imodus= 0; /* fuer det source to image ????? */
-       
+	}             /* map ist OK */
+      else
+	{
+	  printf("debug: BuildBeamline: element %d already OK- keep matrix\n");
+	}
+      
+      if (listpt->MDat.Art != kEOESlit)         /* slit not */
+	{
+	  if (elcounter == 1)
+	    {
+	      printf("BuildBeamline- only one element- copy matrix\n");
+	      memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
+	    }
+	  else		                   /* bline zusammenbauen */
+	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
+	  /* GlueLeft(A, B) A= B* A */
+	  
+	  bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
+	  printf("BuildBeamline: length of optical axis (bl->xlen0): %lf\n",
+		 bl->xlen0);
+	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
+	}    
+      elcounter++; listpt++; 
+    } /* Schleife ueber alle Elemente fertig */
+  
+  printf("Buildbeamline: extract beamline map\n");
+  extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	     &bl->BLOptions.ifl.iord); 
+  
+  /* UF JB wir brauchen hier ein dfdw fuer die beamline */
+  /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
+  /* mache das oben UF 17.11.10*/	
+  /* beamline matrix und map ist fertig (source to image) */ 
+  if (bl->BLOptions.SourcetoImage != 1)
+    {
+      imodus= 0; /* fuer det source to image ????? */
+      
 #ifdef SEVEN_ORDER
-       if (bl->BLOptions.REDUCE_maps == 0)
-	 fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-		dfdwwp, dfdwlp, dfdllp, 
-		&bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1, 
-		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
-       else
-	 {
-	   printf("7 - 4 not ready\n");
-	   fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-		  &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-	 }
+      if (bl->BLOptions.REDUCE_maps == 0)
+	fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
+	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
+	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+      else
+	{
+	  printf("7 - 4 not ready\n");
+	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	}
 #else      
-       fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-	      &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
-       
-       /* baue xlenkoeffizienten und Ruecktrafomatrix */
-       elcounter--; listpt--;     /* Zaehler auf letztes Element */
-       if (listpt->MDat.Art != kEOESlit)
-	 {
-	   memcpy(&bl->M_ItoS, &listpt->M_ItoS, sizeof(MAP70TYPE)); 
-	   memcpy(&bl->wc, &listpt->wc, sizeof(MAP7TYPE)); 
-	   memcpy(&bl->xlc, &listpt->xlc, sizeof(MAP7TYPE));
-	   memcpy(&bl->xlm, &listpt->xlm, sizeof(struct xlenmaptype));
-	   /* matrix und map des letztes elementes in bl kopiert */
-	 }
-       /* rueckwaerts */
-       while (elcounter > 1)	      /* nur bei mehreren Elementen */
-	 {				     /* Schleife von hinten */
-	   elcounter--; listpt--;
-	   if (listpt->MDat.Art != kEOESlit)
-	     {
-	       GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
-			&bl->BLOptions.ifl.iord, 1); 
-	       /*listpt->xlm bleibt gleich*/
-	       if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
-		 /* falls es ein gitter ist wird das produkt in bl gespeichert*/
-		 GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
-			   (double *)listpt->wc, (double *)listpt->xlc, 
-			   (double *)bl->M_ItoS, 
-			   &bl->BLOptions.ifl.iord);
-	       
-	       /* bei image to source werden die indiv. Matritzen geaendert! */
-	       GlueLeft((double *)bl->M_ItoS, 
-			(double *)listpt->M_ItoS);
-	     } /* end slit */
-	 }
-       
-       /**********************************************************/
-       /* map aus matrix herausholen und Determinanten berechnen */ 
-       imodus= 1;        
-       /* welcher imodus fuer determinante Bild --> Quelle ????? */
-       /* der imodus ist anders als bei fgmapidp_4!!!! */
-       
-       extractmap((double *)bl->M_ItoS, 
-		  (double *)bl->ypc1, 
-		  (double *)bl->zpc1, 
-		  (double *)bl->dypc, 
-		  (double *)bl->dzpc, 
-		  &bl->BLOptions.ifl.iord); 
-       
+      
+      /* baue xlenkoeffizienten und Ruecktrafomatrix */
+      elcounter--; listpt--;     /* Zaehler auf letztes Element */
+      if (listpt->MDat.Art != kEOESlit)
+	{
+	  memcpy(&bl->M_ItoS, &listpt->M_ItoS, sizeof(MAP70TYPE)); 
+	  memcpy(&bl->wc, &listpt->wc, sizeof(MAP7TYPE)); 
+	  memcpy(&bl->xlc, &listpt->xlc, sizeof(MAP7TYPE));
+	  memcpy(&bl->xlm, &listpt->xlm, sizeof(struct xlenmaptype));
+	  /* matrix und map des letztes elementes in bl kopiert */
+	}
+      /* rueckwaerts */
+      while (elcounter > 1)	      /* nur bei mehreren Elementen */
+	{				     /* Schleife von hinten */
+	  elcounter--; listpt--;
+	  if (listpt->MDat.Art != kEOESlit)
+	    {
+	      GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
+		       &bl->BLOptions.ifl.iord, 1); 
+	      /*listpt->xlm bleibt gleich*/
+	      if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
+		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
+		GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
+			  (double *)listpt->wc, (double *)listpt->xlc, 
+			  (double *)bl->M_ItoS, 
+			  &bl->BLOptions.ifl.iord);
+	      
+	      /* bei image to source werden die indiv. Matritzen geaendert! */
+	      GlueLeft((double *)bl->M_ItoS, 
+		       (double *)listpt->M_ItoS);
+	    } /* end slit */
+	}
+      
+      /**********************************************************/
+      /* map aus matrix herausholen und Determinanten berechnen */ 
+      imodus= 1;        
+      /* welcher imodus fuer determinante Bild --> Quelle ????? */
+      /* der imodus ist anders als bei fgmapidp_4!!!! */
+      
+      extractmap((double *)bl->M_ItoS, 
+		 (double *)bl->ypc1, 
+		 (double *)bl->zpc1, 
+		 (double *)bl->dypc, 
+		 (double *)bl->dzpc, 
+		 &bl->BLOptions.ifl.iord); 
+      
 #ifdef SEVEN_ORDER
-       if (bl->BLOptions.REDUCE_maps == 0)
-	 fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-		dfdwwp, dfdwlp, dfdllp,
-		&bl->fdetc, &bl->fdetphc,
-		&bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-		&bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
-       else
-	 {
-	   printf("7 - 4 not ready\n");
-	   fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-		  &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-	 }
+      if (bl->BLOptions.REDUCE_maps == 0)
+	fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
+	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
+	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+      else
+	{
+	  printf("7 - 4 not ready\n");
+	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	}
 #else
-       fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-	      &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
+	     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
-       
-     } /* image to source */
-   /*********** map und det fertig ***********/
-   bl->beamlineOK |= mapOK;    
-   
-   printf("BuildBeamline: whole Beamline is now OK\n"); 
-   
+      
+    } /* image to source */
+  /*********** map und det fertig ***********/
+  bl->beamlineOK |= mapOK;    
+  
+  printf("BuildBeamline: whole Beamline is now OK\n"); 
+  
 #ifdef DEBUG
-   printf("BuildBeamline:   end: beamlineOK: %X\n", bl->beamlineOK); 
+  printf("BuildBeamline:   end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 }   /* end BuildBeamline */
 
@@ -249,17 +238,9 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
   unsigned int     elcounter;
   int imodus;
   struct  ElementType *listpt;      
-  /*   char    command[MaxPathLength]; */
+  
 #ifdef SEVEN_ORDER
-   double *dfdwp, *dfdlp;
-   double *dfdwwp, *dfdwlp, *dfdllp;
-   
-   dfdwp= (double *)&(bl->ElementList[0].dfdw);   /* UF nicht sicher ob das passt */
-   dfdlp= (double *)&(bl->ElementList[0].dfdl);
-
-   dfdwwp= (double *)&(bl->ElementList[0].dfdww);
-   dfdwlp= (double *)&(bl->ElementList[0].dfdwl);
-   dfdllp= (double *)&(bl->ElementList[0].dfdll);
+   MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6;
 #endif
 
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
@@ -361,11 +342,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
-	    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-		   dfdwwp, dfdwlp, dfdllp,
-		   &bl->fdetc, &bl->fdetphc,
-		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	    fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
+	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
+	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
 	    {
 	      printf("7 - 4 not ready\n");
@@ -426,11 +407,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
-	    fdet_8(&bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc,
-		   dfdwwp, dfdwlp, dfdllp,
-		   &bl->fdetc, &bl->fdetphc,
-		   &bl->fdet1phc, &imodus, &bl->BLOptions.ifl.inorm1,
-		   &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	    fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
+	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
+	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
+	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
 	    {
 	      printf("7 - 4 not ready\n");
@@ -802,7 +783,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    printf("MakeMapandMatrix: seven order defined\n");
 
 #else
-   double *c, C[70][70];
+   double *c;
+   MAPTYPE_70X2 C;
    printf("MakeMapandMatrix: seven order not defined\n");
 #endif
 
@@ -828,10 +810,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		  &listpt->xlm, 
-                  listpt->opl6, listpt->dfdw6, listpt->dfdl6, listpt->dfdww6,
-		  listpt->dfdwl6, listpt->dfdll6, listpt->dfdwww6,
-		  listpt->opl, listpt->dfdw, listpt->dfdl,
-		  listpt->dfdww, listpt->dfdwl, listpt->dfdll, /*listpt->dfdwidlj,*/
+		  opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
+     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
      else
        {
@@ -925,10 +905,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
 		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		      &listpt->xlm, 
-		      listpt->opl6, listpt->dfdw6, listpt->dfdl6, listpt->dfdww6,
-		      listpt->dfdwl6, listpt->dfdll6, listpt->dfdwww6,
-		      listpt->opl, listpt->dfdw, listpt->dfdl,
-		      listpt->dfdww, listpt->dfdwl,listpt->dfdll, /*listpt->dfdwidlj,*/
+		      
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 else
 	   {

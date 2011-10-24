@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <24 Oct 11 14:35:34 flechsig>  */
+/*   Time-stamp: <24 Oct 11 17:18:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -467,7 +467,6 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
 #ifdef SEVEN_ORDER
   typedef double MAP70TYPE     [330][330];  
   typedef double MAP7TYPE      [8][8][8][8];
-  typedef double DFDXTYPE      [8][8][8][8][8][8];
   typedef double MAPTYPE_330X2 [330][330];
   typedef double MAPTYPE_8X4   [8][8][8][8];
   typedef double MAPTYPE_8X6   [8][8][8][8][8][8];
@@ -627,10 +626,6 @@ struct ElementType
   int ElementOK;
   MAP70TYPE M_StoI, M_ItoS;
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc; 
-#ifdef SEVEN_ORDER
-  DFDXTYPE dfdw, dfdl, dfdww, dfdwl, dfdll, dfdwidlj, opl;
-  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6;
-#endif
   struct xlenmaptype xlm; 
   struct mirrortype mir;
   struct mdatset MDat;                           
@@ -783,11 +778,18 @@ void
   elli_8(),
   ExpandFileNames(),
   extractmap(),
-  fdet_8(),
+  fdet_8(struct geometrytype *, 
+	 MAPTYPE_8X4 *, MAPTYPE_8X4 *, MAPTYPE_8X4 *, MAPTYPE_8X4 *, MAPTYPE_8X4 *, MAPTYPE_8X4 *,
+	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
+	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
+	 MAPTYPE_8X4 *, MAPTYPE_8X4 *, MAPTYPE_8X4 *,
+	 int *, int *, int *),
   fgmapidp(int *, 
 	   int *, double *, struct mirrortype *, struct geometrytype *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE),
-  fgmapidp_8(),
+  fgmapidp_8(double *, struct mirrortype *, struct geometrytype *, 
+	     MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
+	     struct xlenmaptype *, int *, int *, int *),
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, unsigned int),
   GeneratePrintDataFile(),
