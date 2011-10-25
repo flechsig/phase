@@ -2,19 +2,11 @@ c$$$ $Source$
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
-#ifdef OLD
-c-------------------------------------------------------------
-	subroutine fgmapidp_8(acc,am,g,
-     &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
-     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,dfdwidlj,
-     &             iord,imodus,iplmode)
-c--------------------------------------------------------------------
-#endif
+
 c-------------------------------------------------------------
         subroutine fgmapidp_8(acc,am,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
      &             opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
-     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,
      &             iord,imodus,iplmode)
 c--------------------------------------------------------------------
 c
