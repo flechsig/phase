@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Oct 11 17:27:45 flechsig>  */
+/*   Time-stamp: <26 Oct 11 09:53:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -33,14 +33,10 @@ extern const char *global_rundir;
 /****************************************************************/
 void BuildBeamline(struct BeamlineType *bl)  
 {
-   unsigned int elcounter;
-   int          imodus;
-   struct ElementType *listpt;      
-   
-#ifdef SEVEN_ORDER
-   MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6;
-#endif
-
+  unsigned int elcounter;
+  int          imodus;
+  struct ElementType *listpt; 
+     
 #ifdef DEBUG
   printf("debug BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
@@ -139,10 +135,11 @@ void BuildBeamline(struct BeamlineType *bl)
       
 #ifdef SEVEN_ORDER
       if (bl->BLOptions.REDUCE_maps == 0)
-	fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
-	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
-	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	fdet_8(bl->wc, bl->xlc,
+	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
+	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+	       &bl->ElementList[0].geo, 
 	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
       else
 	{
@@ -202,10 +199,11 @@ void BuildBeamline(struct BeamlineType *bl)
       
 #ifdef SEVEN_ORDER
       if (bl->BLOptions.REDUCE_maps == 0)
-	fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
-	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
-	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	fdet_8(bl->wc, bl->xlc,
+	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
+	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+	       &bl->ElementList[0].geo, 
 	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
       else
 	{
@@ -229,7 +227,7 @@ void BuildBeamline(struct BeamlineType *bl)
 #endif
 }   /* end BuildBeamline */
 
-void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)  
+void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)  
 /****************************************************************/
 /* Beamline zusammensetzen              			*/
 /* 								*/
@@ -239,10 +237,6 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
   int imodus;
   struct  ElementType *listpt;      
   
-#ifdef SEVEN_ORDER
-   MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6;
-#endif
-
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
 
 #ifdef SEVEN_ORDER
@@ -342,10 +336,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
-	    fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
-	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
-	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	   fdet_8(bl->wc, bl->xlc,
+	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
+	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+	       &bl->ElementList[0].geo, 
 	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
 	    {
@@ -407,10 +402,11 @@ void BuildBeamlineM(double lambda_local,struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
-	    fdet_8(&bl->ElementList[0].geo, &bl->wc, &bl->xlc,
-	       &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-	       opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
-	       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, 
+	    fdet_8(bl->wc, bl->xlc,
+	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
+	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+	       &bl->ElementList[0].geo, 
 	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	  else
 	    {
@@ -768,11 +764,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    /*   MAP7TYPE wctmp, xlctmp; */
 
 #ifdef SEVEN_ORDER
-   double *c, C[330][330];
+  double *c;
+  MAPTYPE_330X2 C;
+  
    /* temporary arrays for compatibility  */
-   double wc4[5][5][5][5],   xlc4[5][5][5][5],  ypc14[5][5][5][5]; 
-   double zpc14[5][5][5][5], dypc4[5][5][5][5], dzpc4[5][5][5][5];
-   double mat4[70][70];
+  MAPTYPE_5X4  wc4, xlc4, ypc14, zpc14, dypc4, dzpc4;
+  MAPTYPE_70X2 mat4;
    struct mirrortype4 {
      double a[6][6];
    } mir4;
@@ -807,12 +804,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      /*#endif*/
      if (bl->BLOptions.REDUCE_maps == 0)
        fgmapidp_8(&bl->BLOptions.epsilon, 
-		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
+		  listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		  &listpt->xlm, 
-		  opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
-     &             opl,dfdw,dfdl,dfdww,dfdwl,dfdll,
-		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+		  bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
+		  &listpt->mir, &listpt->geo,
+     		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
      else
        {
 	 printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
@@ -902,10 +899,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 #ifdef SEVEN_ORDER
 	 if (bl->BLOptions.REDUCE_maps == 0)
 	   fgmapidp_8(&bl->BLOptions.epsilon,
-		      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc,
+		      listpt->wc, listpt->xlc,
 		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		      &listpt->xlm, 
-		      
+		      &listpt->xlm,
+		      bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6, 
+		      &listpt->mir, &listpt->geo,
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 else
 	   {
