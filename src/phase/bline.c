@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <26 Oct 11 09:53:11 flechsig>  */
+/*   Time-stamp: <26 Oct 11 15:36:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -36,9 +36,10 @@ void BuildBeamline(struct BeamlineType *bl)
   unsigned int elcounter;
   int          imodus;
   struct ElementType *listpt; 
-     
+  struct TmpMapType  *ltp;              /* local pointer */
+
 #ifdef DEBUG
-  printf("debug BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
+  printf("debug: BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 
   printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
@@ -89,7 +90,7 @@ void BuildBeamline(struct BeamlineType *bl)
 		     bl->BLOptions.REDUCE_maps);    
 	  DefGeometryC(&listpt->GDat, &listpt->geo);  
 	  MakeMapandMatrix(listpt, bl); 
-	  
+	  	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
@@ -135,12 +136,22 @@ void BuildBeamline(struct BeamlineType *bl)
       
 #ifdef SEVEN_ORDER
       if (bl->BLOptions.REDUCE_maps == 0)
-	fdet_8(bl->wc, bl->xlc,
-	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
-	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
-	       &bl->ElementList[0].geo, 
-	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	{
+	  ltp=bl->tp;
+	  if (ltp == NULL)
+	    {
+	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
+	      exit(-1);
+	    }
+	  fdet_8(bl->wc, bl->xlc,
+		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		 &bl->ElementList[0].geo, 
+		 &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  XFREE(ltp);
+	  bl->tp= NULL;
+	}
       else
 	{
 	  printf("7 - 4 not ready\n");
@@ -199,12 +210,22 @@ void BuildBeamline(struct BeamlineType *bl)
       
 #ifdef SEVEN_ORDER
       if (bl->BLOptions.REDUCE_maps == 0)
-	fdet_8(bl->wc, bl->xlc,
-	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
-	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
-	       &bl->ElementList[0].geo, 
-	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	{
+	  ltp=bl->tp;
+	  if (ltp == NULL)
+	    {
+	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
+	      exit(-1);
+	    }
+	  fdet_8(bl->wc, bl->xlc,
+		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		 &bl->ElementList[0].geo, 
+		 &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  XFREE(ltp);
+	  bl->tp= NULL;
+	}
       else
 	{
 	  printf("7 - 4 not ready\n");
@@ -221,7 +242,9 @@ void BuildBeamline(struct BeamlineType *bl)
   bl->beamlineOK |= mapOK;    
   
   printf("BuildBeamline: whole Beamline is now OK\n"); 
-  
+
+
+
 #ifdef DEBUG
   printf("BuildBeamline:   end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
@@ -235,11 +258,16 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 {
   unsigned int     elcounter;
   int imodus;
-  struct  ElementType *listpt;      
+  struct  ElementType *listpt;  
+  struct TmpMapType *ltp;   /* local pointer */
+
   
    printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
 
 #ifdef SEVEN_ORDER
+
+  ltp= XMALLOC(struct TmpMapType, 1);
+  bl->tp= ltp;
    if (bl->BLOptions.ifl.iord > 7) 
      {
        printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
@@ -336,12 +364,22 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
-	   fdet_8(bl->wc, bl->xlc,
-	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
-	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
-	       &bl->ElementList[0].geo, 
-	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	    {
+	      ltp=bl->tp;
+	      if (ltp == NULL)
+		{
+		  fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
+		  exit(-1);
+		}
+	      fdet_8(bl->wc, bl->xlc,
+		     bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		     bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		     &bl->ElementList[0].geo, 
+		     &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	      XFREE(ltp);
+	      bl->tp= NULL;
+	    }
 	  else
 	    {
 	      printf("7 - 4 not ready\n");
@@ -402,12 +440,22 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
-	    fdet_8(bl->wc, bl->xlc,
-	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	       bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
-	       bl->fdetc, bl->fdetphc, bl->fdet1phc, 
-	       &bl->ElementList[0].geo, 
-	       &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	    {
+	      ltp=bl->tp;
+	      if (ltp == NULL)
+		{
+		  fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
+		  exit(-1);
+		}
+	      fdet_8(bl->wc, bl->xlc,
+		     bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		     bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		     &bl->ElementList[0].geo, 
+		     &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	      XFREE(ltp);
+	      bl->tp= NULL;
+	    }
 	  else
 	    {
 	      printf("7 - 4 not ready\n");
@@ -425,8 +473,9 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
      
       bl->beamlineOK |= elementOK; 
 
-      printf("BuildBeamline: whole Beamline is now OK\n"); 
-   }	
+      printf("BuildBeamlineM: whole Beamline is now OK\n"); 
+   }
+
 }   /* end BuildBeamlineM */
 
 
@@ -763,7 +812,11 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
   int      msiz, imodus, mdim;
    /*   MAP7TYPE wctmp, xlctmp; */
 
+  struct TmpMapType *ltp;   /* local pointer */
+ 
+
 #ifdef SEVEN_ORDER
+   
   double *c;
   MAPTYPE_330X2 C;
   
@@ -778,12 +831,22 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    } xlm4;
 
    printf("MakeMapandMatrix: seven order defined\n");
-
+   ltp= bl->tp;
+   if (ltp == NULL)
+     {
+       fprintf(stderr, "MakeMapandMatrix: allocate temporary arrays\n");
+       ltp= XMALLOC(struct TmpMapType, 1);   /* reserve memory for temporary maps  */
+       bl->tp= ltp;                          /* save pointer in beamline structure */
+     }
+   else
+     printf("MakeMapandMatrix: reusse temporay arrays\n"); 
 #else
    double *c;
    MAPTYPE_70X2 C;
    printf("MakeMapandMatrix: seven order not defined\n");
 #endif
+
+
 
    c= &C[0][0];
    if (listpt->ElementOK & elementOK) 
@@ -803,13 +866,24 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      printf(" ********use old REDUCE maps:  %d\n", bl->BLOptions.REDUCE_maps);
      /*#endif*/
      if (bl->BLOptions.REDUCE_maps == 0)
+       {
        fgmapidp_8(&bl->BLOptions.epsilon, 
 		  listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		  &listpt->xlm, 
-		  bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6,
+		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		  &listpt->mir, &listpt->geo,
      		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+     printf("\n2nd call fgmapidp_8\n\n");
+     fgmapidp_8(&bl->BLOptions.epsilon, 
+		  listpt->wc, listpt->xlc, 
+		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		  &listpt->xlm, 
+		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		  &listpt->mir, &listpt->geo,
+     		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+
+       }
      else
        {
 	 printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
@@ -902,7 +976,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      listpt->wc, listpt->xlc,
 		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		      &listpt->xlm,
-		      bl->opl6, bl->dfdw6, bl->dfdl6, bl->dfdww6, bl->dfdwl6, bl->dfdll6, bl->dfdwww6, 
+		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
 		      &listpt->mir, &listpt->geo,
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 else

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Oct 11 14:52:37 flechsig>  */
+/*   Time-stamp: <26 Oct 11 12:46:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -57,6 +57,7 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
   bl->raysout= NULL;
   bl->RTSource.SourceRays= NULL;
   bl->beamlineOK= 0;
+  bl->tp= NULL;
   ReadBLFile(ps->beamlinename, bl);
 
   if (iord != -1)  bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
@@ -361,6 +362,7 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
   bl->raysout    = NULL;
   bl->RTSource.SourceRays= NULL;
   bl->beamlineOK= 0;
+  bl->tp= NULL;
 #ifndef QTGUI
   ginitdatset(&GDefDat);           /* init defaults */
   minitdatset(&MDefDat);

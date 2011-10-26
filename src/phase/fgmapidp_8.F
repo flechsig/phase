@@ -144,7 +144,15 @@ c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
 #ifdef DEBUG
-         write(6,*)' fgmapidp: imodus = ',imodus
+         write(6,*)'=============================== '
+         write(6,*)' fgmapidp: imodus   = ',imodus
+         write(6,*)' fgmapidp: iord     = ',iord
+         write(6,*)' fgmapidp: iplmode  = ',iplmode
+         write(6,*)' fgmapidp: acc      = ',acc
+         write(6,*)' fgmapidp: am.a(0,2)= ', am.a(0,2)
+         write(6,*)' fgmapidp: g.sina   = ', g.sina
+         write(6,*)'(1) ypc1(0020)      = ',ypc1(0,0,2,0)
+         write(6,*)'=============================== '
 #endif
         if(acc.lt.1e-8)then
            write(*,*)'epsilon for Newton routine < 1e-8'
@@ -397,6 +405,13 @@ c---------------------------------------------------------------
           write(*,*)'fgmapidp: make map for source to image iord=',iord
 #endif
         endif   ! imodus
+
+#ifdef DEBUG
+         write(6,*)'====================== '
+         write(6,*)'(2) ypc1(0020): ',ypc1(0,0,2,0)
+         write(6,*)'====================== '
+         write(6,*)' '
+#endif
 
 c-------------------------------------------------------
 
