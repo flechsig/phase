@@ -4,10 +4,10 @@ c$$$ $Revision$
 c$$$ $Author$ 
 
 c-------------------------------------------------------------
-        subroutine fgmapidp_8(acc,am,g,
+        subroutine fgmapidp_8(acc,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
      &             opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
-     &             iord,imodus,iplmode)
+     &             am,g,iord,imodus,iplmode)
 c--------------------------------------------------------------------
 c
 c       this routine evaluates
