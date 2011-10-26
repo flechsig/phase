@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <26 Oct 11 15:36:01 flechsig>  */
+/*   Time-stamp: <26 Oct 11 16:34:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -867,22 +867,22 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      /*#endif*/
      if (bl->BLOptions.REDUCE_maps == 0)
        {
-       fgmapidp_8(&bl->BLOptions.epsilon, 
-		  listpt->wc, listpt->xlc, 
-		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		  &listpt->xlm, 
-		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-		  &listpt->mir, &listpt->geo,
-     		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-     printf("\n2nd call fgmapidp_8\n\n");
-     fgmapidp_8(&bl->BLOptions.epsilon, 
-		  listpt->wc, listpt->xlc, 
-		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		  &listpt->xlm, 
-		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-		  &listpt->mir, &listpt->geo,
-     		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-
+	 fgmapidp_8(&bl->BLOptions.epsilon, 
+		    listpt->wc, listpt->xlc, 
+		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		    &listpt->xlm, 
+		    ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		    &listpt->mir, &listpt->geo,
+		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	 printf("\n2nd call fgmapidp_8\n\n");
+	 fgmapidp_8(&bl->BLOptions.epsilon, 
+		    listpt->wc, listpt->xlc, 
+		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		    &listpt->xlm, 
+		    ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		    &listpt->mir, &listpt->geo,
+		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	 
        }
      else
        {
@@ -972,13 +972,23 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 
 #ifdef SEVEN_ORDER
 	 if (bl->BLOptions.REDUCE_maps == 0)
-	   fgmapidp_8(&bl->BLOptions.epsilon,
-		      listpt->wc, listpt->xlc,
-		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		      &listpt->xlm,
-		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
-		      &listpt->mir, &listpt->geo,
-		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	   {
+	     fgmapidp_8(&bl->BLOptions.epsilon,
+			listpt->wc, listpt->xlc,
+			listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+			&listpt->xlm,
+			ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
+			&listpt->mir, &listpt->geo,
+			&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	     printf("\n2nd call fgmapidp_8\n\n");
+	     fgmapidp_8(&bl->BLOptions.epsilon, 
+			listpt->wc, listpt->xlc, 
+			listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+			&listpt->xlm, 
+			ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+			&listpt->mir, &listpt->geo,
+			&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	   }
 	 else
 	   {
 	     printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
