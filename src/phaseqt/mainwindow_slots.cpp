@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <16 Sep 11 15:30:47 flechsig> 
+//  Time-stamp: <27 Oct 11 09:02:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -196,13 +196,17 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writecoeffAct")) 
     { 
       printf("writecoeffmapAct button pressed\n"); 
-
+      if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
+	  (myparent->myBeamline()->position != 0))
+	{
+	  printf("write coefficients of element %d to file\n", myparent->myBeamline()->position);
       //  sprintf(buffer, "%s", "mirror-coefficients.dat");
-      sprintf(buffer, "%s.coeff", elementList->currentItem()->text().toAscii().data());
-      printf("write coefficients to file: %s\n", buffer);
-      WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
-      statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
-    } 
+	  sprintf(buffer, "%s.coeff", elementList->currentItem()->text().toAscii().data());
+	  printf("write coefficients to file: %s\n", buffer);
+	  WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
+	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
+	} else printf(stderr, "%d: no valid position\n", myparent->myBeamline()->position); 
+    }
 
   if (!action.compare("writeRTresultAct")) 
     { 
