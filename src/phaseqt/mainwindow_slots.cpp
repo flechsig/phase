@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <27 Oct 11 09:02:07 flechsig> 
+//  Time-stamp: <28 Oct 11 16:19:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -56,13 +56,18 @@ void MainWindow::activateProc(const QString &action)
 	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
+      //QMessageBox *mmBox = new QMessageBox;
+      //mmBox->setText(tr("calculation running- be patient!"));
+      //mmBox->show();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
-		
+      //statusBar()->clearMessage();
+      statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
       myparent->myBuildBeamline();
       myparent->myRayTracec(); 
       printf("ray trace-> done\n");
+      //mmBox->close();
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }
   if (!action.compare("raytracefullAct")) 
@@ -205,7 +210,7 @@ void MainWindow::activateProc(const QString &action)
 	  printf("write coefficients to file: %s\n", buffer);
 	  WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
 	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
-	} else printf(stderr, "%d: no valid position\n", myparent->myBeamline()->position); 
+	} else fprintf(stderr, "%d: no valid position\n", myparent->myBeamline()->position); 
     }
 
   if (!action.compare("writeRTresultAct")) 
@@ -217,7 +222,10 @@ void MainWindow::activateProc(const QString &action)
     } 
   if (!action.compare("grfootprintAct")) 
     { 
-      printf("grcontourAct button pressed\n"); 
+      printf("grfootprintAct button pressed\n"); 
+      delete d_plot;
+      
+      //d_plot =  new ScatterPlot(this);
       //d_plot->showSpectrogram(true);
     } 
 
@@ -286,7 +294,7 @@ void MainWindow::activateProc(const QString &action)
     { 
       printf("configure button pressed\n");
       if (!c_window) 
-	c_window= new ConfigWindow((struct  PHASEset *) this); 
+	c_window= new ConfigWindow(myparent); 
       else 
 	c_window->configWindowBox->show();
     }

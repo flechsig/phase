@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <24 Oct 11 09:45:37 flechsig> 
+//  Time-stamp: <28 Oct 11 16:19:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -20,7 +20,6 @@
 #include <qwt_plot_panner.h>
 #include <qwt_plot_layout.h>
 #include <qwt_plot_renderer.h>
-
 #include <qwt_plot_curve.h>
 
 //#include "plot.h"
@@ -498,6 +497,14 @@ void Plot::hfill2(struct RayType *rays, int points)
   printf("debug: hfill2 end:  hmax  %f\n", h2max);
 #endif
 } // hfill2
+
+// constructor of the plot
+//int * Plot::ScatterPlot(QWidget *parent): QwtPlot(parent)
+//{
+//  int x;
+//  return &x;
+//
+//}
 
 // calculate statistics of an array of rays
 void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor)

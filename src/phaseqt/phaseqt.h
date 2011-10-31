@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <24 Oct 11 14:35:59 flechsig>  */
+/*  Time-stamp: <28 Oct 11 15:20:08 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -16,6 +16,7 @@
 #endif
 
 #include <stdio.h>
+#include <libgen.h>
 #include <string>
 #include <iostream>
 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Oct 11 11:51:33 flechsig> 
+//  Time-stamp: <28 Oct 11 13:02:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -105,7 +105,7 @@ void MainWindow::createActions()
     signalMapper = new QSignalMapper(this);
 
     raytracesimpleAct = new QAction(QIcon(":/images/quickrtrace.png"),tr("GO &Quick ray tracing"), this);
-    raytracesimpleAct->setStatusTip(tr("geometrical optics, Quick ray tracing"));
+    //raytracesimpleAct->setStatusTip(tr("geometrical optics, Quick ray tracing"));
     signalMapper->setMapping(raytracesimpleAct, QString("raytracesimpleAct"));
     connect(raytracesimpleAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <09 Sep 11 15:17:30 flechsig> 
+//  Time-stamp: <28 Oct 11 15:36:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -16,7 +16,7 @@
 
 
 // the constructor
-ConfigWindow::ConfigWindow(struct PHASEset *parent)
+ConfigWindow::ConfigWindow(PhaseQt *parent)
 {
 #ifdef DEBUG
   printf("debug: ConfigWindow constructor called, file: %s, line: %d\n", __FILE__,  __LINE__);
@@ -63,7 +63,7 @@ void ConfigWindow::selectSlot()
 {
   QListWidgetItem *item;
   int elementnumber= fileList->currentRow();
-  char *text, *cp, *fname, buffer[310], oldname[MaxPathLength], extension[10], filter[50];
+  char *text, *cp, *cp1, *fname, buffer[310], oldname[MaxPathLength], extension[10], filter[50];
 
   if (elementnumber < 0) 
     return;
@@ -73,18 +73,18 @@ void ConfigWindow::selectSlot()
   strncpy(buffer, text, 310);                 // save old entry buffer
   cp= strchr(buffer, ':');
   ++cp; 
-  ++cp;                                       // cp points now to the start of the filename
+  ++cp;                                      // cp points now to the start of the filename
+  cp1= cp;                                   // remember position in buffer;   
   if (cp != NULL) 
     {
       strncpy(oldname, cp, MaxPathLength);
       printf("selected file: >>%s<<\n", cp);
-      *cp='\0';                            // description in buffer string ends here
-      ++cp;
-      cp= strrchr(cp, '/');               // search for directory from right    
+      cp= basename(cp);
       cp= strchr(cp, '.'); 
       strncpy(extension, cp, 10);
       extension[9]= '\0';
       sprintf(filter, "Files (*%s);;(*)", extension);
+      *cp1= '\0';  // terminate buffer
     }
   else 
     return;
@@ -139,14 +139,14 @@ void ConfigWindow::fillList()
   char slist[10][310];
   // we allow 50 characters description and 20 for the filename
 
-  mkRow(slist[0], "beamline name \t: ",        myparent->beamlinename);
-  mkRow(slist[3], "optimization input \t: ",   myparent->optipckname);
-  mkRow(slist[4], "optimization results \t: ", myparent->opresname);
-  mkRow(slist[5], "minuit input \t: ",         myparent->minname);
-  mkRow(slist[1], "ray input (source) \t: ",   myparent->sourceraysname);
-  mkRow(slist[2], "ray output (image) \t: ",   myparent->imageraysname);
-  mkRow(slist[6], "matrix \t: ",               myparent->matrixname);
-  mkRow(slist[7], "mapname \t: ",              myparent->mapname);
+  mkRow(slist[0], "beamline name \t: ",        myparent->myPHASEset()->beamlinename);
+  mkRow(slist[3], "optimization input \t: ",   myparent->myPHASEset()->optipckname);
+  mkRow(slist[4], "optimization results \t: ", myparent->myPHASEset()->opresname);
+  mkRow(slist[5], "minuit input \t: ",         myparent->myPHASEset()->minname);
+  mkRow(slist[1], "ray input (source) \t: ",   myparent->myPHASEset()->sourceraysname);
+  mkRow(slist[2], "ray output (image) \t: ",   myparent->myPHASEset()->imageraysname);
+  mkRow(slist[6], "matrix \t: ",               myparent->myPHASEset()->matrixname);
+  mkRow(slist[7], "mapname \t: ",              myparent->myPHASEset()->mapname);
   
   fileList->setAlternatingRowColors(true);
   fileList->addItems(QStringList()
