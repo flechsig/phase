@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <26 Oct 11 16:34:22 flechsig>  */
+/*   Time-stamp: <31 Oct 11 16:25:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -168,9 +168,9 @@ void BuildBeamline(struct BeamlineType *bl)
       if (listpt->MDat.Art != kEOESlit)
 	{
 	  memcpy(&bl->M_ItoS, &listpt->M_ItoS, sizeof(MAP70TYPE)); 
-	  memcpy(&bl->wc, &listpt->wc, sizeof(MAP7TYPE)); 
-	  memcpy(&bl->xlc, &listpt->xlc, sizeof(MAP7TYPE));
-	  memcpy(&bl->xlm, &listpt->xlm, sizeof(struct xlenmaptype));
+	  memcpy(&bl->wc,     &listpt->wc,     sizeof(MAP7TYPE)); 
+	  memcpy(&bl->xlc,    &listpt->xlc,    sizeof(MAP7TYPE));
+	  memcpy(&bl->xlm,    &listpt->xlm,    sizeof(struct xlenmaptype));
 	  /* matrix und map des letztes elementes in bl kopiert */
 	}
       /* rueckwaerts */
@@ -242,8 +242,6 @@ void BuildBeamline(struct BeamlineType *bl)
   bl->beamlineOK |= mapOK;    
   
   printf("BuildBeamline: whole Beamline is now OK\n"); 
-
-
 
 #ifdef DEBUG
   printf("BuildBeamline:   end: beamlineOK: %X\n", bl->beamlineOK); 
@@ -568,6 +566,7 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
    }
    else 
      printf("Footprint: beamline not OK or ... - no footprint\n");
+
    printf(" ==> done\n");
 } /* end footprint */
 
@@ -809,18 +808,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 /* werte position aus bei optimierung UF 07/12                          */
 /************************************************************************/
 {
-  int      msiz, imodus, mdim;
-   /*   MAP7TYPE wctmp, xlctmp; */
-
+  int    msiz, imodus, mdim;
   struct TmpMapType *ltp;   /* local pointer */
  
-
 #ifdef SEVEN_ORDER
-   
   double *c;
   MAPTYPE_330X2 C;
   
-   /* temporary arrays for compatibility  */
+  /* temporary arrays for compatibility  */
   MAPTYPE_5X4  wc4, xlc4, ypc14, zpc14, dypc4, dzpc4;
   MAPTYPE_70X2 mat4;
    struct mirrortype4 {
@@ -845,8 +840,6 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    MAPTYPE_70X2 C;
    printf("MakeMapandMatrix: seven order not defined\n");
 #endif
-
-
 
    c= &C[0][0];
    if (listpt->ElementOK & elementOK) 
@@ -883,7 +876,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		    &listpt->mir, &listpt->geo,
 		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	 
-       }
+       } /* end 7th order in seven order mode */
      else
        {
 	 printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
@@ -900,17 +893,16 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 map4to7(&zpc14, listpt->zpc1);
 	 map4to7(&dypc4, listpt->dypc);
 	 map4to7(&dzpc4, listpt->dzpc);
-       }
+       } /* end 4th order compatibility in seven order mode */
+     
 #else
      fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
-	      &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-	      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
+		&listpt->mir, &listpt->geo, listpt->wc,   listpt->xlc, 
+		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #endif
-     
      
      if(listpt->MDat.Art == 999)
        imodus= imodus- 1000;
-     
      
 #ifdef SEVEN_ORDER
      if (bl->BLOptions.REDUCE_maps == 0)
