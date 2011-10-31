@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <28 Oct 11 16:19:59 flechsig> 
+//  Time-stamp: <31 Oct 11 14:33:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -459,8 +459,7 @@ void MainWindow::deleteElement()
   QListWidgetItem *item;
   int i;
   int pos= elementList->currentRow();
-  //  char *text;
-
+ 
 #ifdef DEBUG
   printf("deleteElement: delete element with idx %d out of %u\n", pos, myparent->myBeamline()->elementzahl);
 #endif
@@ -477,30 +476,33 @@ void MainWindow::deleteElement()
       else 
 	printf("item unvalid \n");
       
-      
       //#ifdef XXX
       printf ("widget deleted\n");
-      tmplist= XMALLOC(struct ElementType, myparent->myBeamline()->elementzahl); // alloc memory
-      memcpy(tmplist, myparent->myBeamline()->ElementList, 
-	     myparent->myBeamline()->elementzahl* sizeof(struct ElementType)); // copy contents
-      
-      if (myparent->myBeamline()->elementzahl == 0) 
-	XFREE(myparent->myBeamline()->ElementList);
-      else
-	myparent->myBeamline()->ElementList= XREALLOC(struct ElementType, myparent->myBeamline()->ElementList, 
-						      myparent->myBeamline()->elementzahl);
-      
-      /* umsortieren */
-      listpt= myparent->myBeamline()->ElementList; tmplistpt= tmplist; 
-      for (i= 1; i<= (int)myparent->myBeamline()->elementzahl; i++, listpt++)
+
+      if (myparent->myBeamline()->elementzahl > 0)
 	{
-	  if (i == pos)  tmplistpt++;  /* ueberlesen */
-	  memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
+	  tmplist= XMALLOC(struct ElementType, (myparent->myBeamline()->elementzahl + 1)); // alloc memory  of prev. length
+	  memcpy(tmplist, myparent->myBeamline()->ElementList, 
+		 (myparent->myBeamline()->elementzahl + 1)* sizeof(struct ElementType));   // copy contents of prev. length
+	}
+
+      XFREE(myparent->myBeamline()->ElementList);         // clean pointer
+
+      if (myparent->myBeamline()->elementzahl > 0) 
+	{
+	  myparent->myBeamline()->ElementList= XMALLOC(struct ElementType,  
+						       myparent->myBeamline()->elementzahl); // alloc memory of new length
+	  
+	  /* neu fuellen */
+	  listpt= myparent->myBeamline()->ElementList; tmplistpt= tmplist; 
+	  for (i= 0; i< (int)myparent->myBeamline()->elementzahl; i++, listpt++)  // in new list
+	    {
+	      if (i == pos)  tmplistpt++;  /* ueberlesen */
+	      memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
+	    }
+	  XFREE(tmplist);
 	}
       myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
-      //  WriteBLFile(PHASESet.beamlinename, bl); 
-      XFREE(tmplist);
-      //#endif
       printf("done\n");
     } 
   else
@@ -1081,12 +1083,13 @@ void MainWindow::saveas()
 // UF selection slot
 void MainWindow::selectElement()
 {
-#ifdef DEBUG
-  printf("debug: selectElement called\n");
-#endif
   QListWidgetItem *item;
   int elementnumber= elementList->currentRow();
   char *text;
+
+#ifdef DEBUG
+  printf("debug: selectElement called, selected: %d\n", elementnumber);
+#endif
   
   if (elementnumber < 0) 
     return;
