@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <31 Oct 11 15:05:26 flechsig> 
+//  Time-stamp: <31 Oct 11 15:19:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2100,9 +2100,9 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   czLabel->setText(QString(tr(buffer)));
   sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cy);  
   cyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wz);  
+  sprintf(buffer, "<FONT COLOR=blue>%9.4f</FONT>", pp->wz);  
   wzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wy);  
+  sprintf(buffer, "<FONT COLOR=blue>%9.4f</FONT>", pp->wy);  
   wyLabel->setText(QString(tr(buffer)));
   sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdz * 1e3);  
   cdzLabel->setText(QString(tr(buffer)));

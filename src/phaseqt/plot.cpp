@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <28 Oct 11 16:19:55 flechsig> 
+//  Time-stamp: <31 Oct 11 15:16:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -517,7 +517,8 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
   printf("debug: statistics called, fwhmon= %d\n", fwhmon);
 #endif
 
-  fwhmfac= 2.35;              // more accurate on request
+  //fwhmfac= 2.3548;              // more accurate on request
+  fwhmfac= 2.0* sqrt(2.0 * log(2.0));
 
   cz= cy= wz= wy= cdz= cdy= wdz= wdy= 0.0;
 
