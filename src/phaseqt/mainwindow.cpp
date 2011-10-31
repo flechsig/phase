@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <28 Oct 11 13:02:09 flechsig> 
+//  Time-stamp: <31 Oct 11 14:54:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2141,17 +2141,23 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 void MainWindow::UpdateStatus()
 {
   int elementnumber= elementList->currentRow();
+  int 
   char buffer[100];
 
   //  printf("UpdateStatus: element: %d, of %d\n", elementnumber, elementList->count());
 
   if ((elementnumber < 0) || (elementnumber > elementList->count()- 1)) 
-    elementnumber= 0;
+    elementnumber= -1;
 
-  if (myparent->myBeamline()->ElementList[elementnumber].ElementOK & elementOK) 
-    sprintf(buffer, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
-  else 
-    sprintf(buffer, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
+  if (elementnumber >= 0)
+    {
+      if (myparent->myBeamline()->ElementList[elementnumber].ElementOK & elementOK) 
+	sprintf(buffer, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
+      else 
+	sprintf(buffer, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
+    }
+  else
+    sprintf(buffer, "<b><FONT COLOR=red>OE_X</FONT></b>");
 
   elementStatLabel->setText(QString(tr(buffer)));
 
