@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <31 Oct 11 16:54:45 flechsig> 
+//  Time-stamp: <02 Nov 11 17:25:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2144,7 +2144,7 @@ void MainWindow::UpdateStatus()
   //  printf("UpdateStatus: element: %d, of %d\n", elementnumber, elementList->count());
 
   if ((elementnumber < 0) || (elementnumber > elementList->count()- 1)) 
-    elementnumber= -1;
+    elementnumber= 0;
 
   if (myparent->myBeamline()->elementzahl > 0)
     {
