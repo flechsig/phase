@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <31 Oct 11 15:19:59 flechsig> 
+//  Time-stamp: <31 Oct 11 16:54:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2133,9 +2133,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       wyLabel0->setText(QString(tr("y RMS (mm)")));
       wdzLabel0->setText(QString(tr("dz RMS (mm)")));
       wdyLabel0->setText(QString(tr("dy RMS (mm)")));
-
     }
-
 } // UpdateStatistics
 
 void MainWindow::UpdateStatus()
@@ -2176,8 +2174,34 @@ void MainWindow::UpdateStatus()
     mapStatLabel->setText(QString(tr("<b><FONT COLOR=red>maps</FONT></b>")));
 } // UpdateStatus
 
+
+int MainWindow::elementListIsEmpty()
+{
+  int rval= 0;
+  if (elementList->count() <= 0)
+    {
+      QMessageBox::warning(this, tr("No valid Elements!"),
+			   tr("add optical elements to the list!"));
+      rval= 1;
+    }
+  return rval;
+}
+
+int MainWindow::elementListNotSelected()
+{
+  int rval= 0;
+  if (elementList->currentRow() < 0)
+    {
+      QMessageBox::warning(this, tr("No valid Element!"),
+			   tr("(nothing selected)"));
+      rval= 1;
+    }
+  return rval;
+}
+
+
 /////////////////////////////////
-// end widget handling section //
+// end widget handling sctieon //
 /////////////////////////////////
 
 

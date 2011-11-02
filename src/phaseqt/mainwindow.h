@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <16 Sep 11 15:49:13 flechsig>  */
+/*  Time-stamp: <31 Oct 11 16:42:48 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -330,6 +330,9 @@ private:
     QSignalMapper *grsignalMapper;  // UF
     
     PhaseQt *myparent;
+
+    int elementListNotSelected();
+    int elementListIsEmpty();
  
 };
 

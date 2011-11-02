@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 Sep 11 12:55:25 flechsig>  */
+/*   Time-stamp: <31 Oct 11 16:03:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -887,7 +887,6 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
   printf("debug: ReAllocResult\n");
 #endif
 
-
   FreeResultMem(&bl->RESULT); 
 
   switch (newtype)
@@ -938,7 +937,7 @@ void FreeResultMem(struct RESULTType *Re)
   struct PSDType *PSDp;
 
    if (((Re->typ & PLrttype) > 0) && (Re->RESp != NULL))
-      free(Re->RESp); 
+      XFREE(Re->RESp); 
    if (((Re->typ & PLphspacetype) > 0) && (Re->RESp != NULL))
    {  
      PSDp= Re->RESp;
@@ -946,20 +945,20 @@ void FreeResultMem(struct RESULTType *Re)
 /* da der Speicher gemeinsam allociert wird teste ich nur einmal */
 /* man muss alle reservierten pointer einzeln freigeben!         */
        {  
-	 free(PSDp->y);  
-	 free(PSDp->z);  
-	 free(PSDp->psd);
-	 free(PSDp->stfd1phmaxc);
-	 free(PSDp->stinumbc)  ;
-	 free(PSDp->s1c)       ;
-	 free(PSDp->s2c)       ;
-	 free(PSDp->s3c)       ;
-	 free(PSDp->eyrec)     ;
-	 free(PSDp->ezrec)     ;
-	 free(PSDp->eyimc)     ;
-	 free(PSDp->ezimc)     ;
+	 XFREE(PSDp->y);  
+	 XFREE(PSDp->z);  
+	 XFREE(PSDp->psd);
+	 XFREE(PSDp->stfd1phmaxc);
+	 XFREE(PSDp->stinumbc)  ;
+	 XFREE(PSDp->s1c)       ;
+	 XFREE(PSDp->s2c)       ;
+	 XFREE(PSDp->s3c)       ;
+	 XFREE(PSDp->eyrec)     ;
+	 XFREE(PSDp->ezrec)     ;
+	 XFREE(PSDp->eyimc)     ;
+	 XFREE(PSDp->ezimc)     ;
        }
-     free(Re->RESp);
+     XFREE(Re->RESp);
    }
    Re->typ= 0;
 } /* end freeResultmem */

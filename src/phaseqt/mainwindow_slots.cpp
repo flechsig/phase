@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <31 Oct 11 14:33:56 flechsig> 
+//  Time-stamp: <31 Oct 11 17:02:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -46,12 +46,14 @@ void MainWindow::about()
 void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
-
+  
   if (action.isEmpty())
           return;
   
   if (!action.compare("raytracesimpleAct")) 
     { 
+      if (elementListIsEmpty())
+	return;
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
 	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
       myparent->myBeamline()->beamlineOK &= ~resultOK;
@@ -73,6 +75,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("raytracefullAct")) 
     { 
       printf("\nraytracefullAct button  pressed\n");
+      if (elementListIsEmpty())
+	return;
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
@@ -88,12 +92,17 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("footprintAct")) 
     { 
       printf("\nfootprintAct button  pressed\n");
-            
+      if (elementListIsEmpty())
+	return;
+      if (elementListNotSelected())
+	return;
+
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
+
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
       myparent->myBuildBeamline();
-      myparent->myFootprint(myparent->myBeamline()->position);
+      myparent->myFootprint((elementList->currentRow()+1));
       printf("footprint-> done\n");
       statusBar()->showMessage(tr("Footprint-> done!"), 4000);
     }
@@ -101,6 +110,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("singleRayAct")) 
     { 
       printf("singleRayAct button pressed\n");
+      if (elementListIsEmpty())
+	return;
       if (!s_ray) 
 	s_ray= new SingleRay(myparent, this); 
       else 
@@ -135,6 +146,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writemapAct")) 
     { 
       printf("writemapAct button pressed\n");
+      if (elementListIsEmpty())
+	return;
       if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
 	  (myparent->myBeamline()->position != 0))
 	{
@@ -174,6 +187,8 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writematAct")) 
     { 
       printf("writematAct button pressed\n");
+      if (elementListIsEmpty())
+	return;
       if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
 	  (myparent->myBeamline()->position != 0))
 	{
@@ -200,7 +215,9 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("writecoeffAct")) 
     { 
-      printf("writecoeffmapAct button pressed\n"); 
+      printf("writecoeffmapAct button pressed\n");
+      if (elementListIsEmpty())
+	return;
       if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
 	  (myparent->myBeamline()->position != 0))
 	{
