@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <31 Oct 11 16:25:12 flechsig>  */
+/*   Time-stamp: <02 Nov 11 17:56:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -674,20 +674,21 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 			printf("idx: %d B: %le, E: %le\n", idx, S, C);*/
 		 m++;
 	       }
-     } else
-       {
-	 m= 0;
-	 for(i= 0; i< maxord; i++)
-	   for(j= 0; j< (maxord-i); j++)
-	     for(k= 0; k< (maxord-i-j); k++)
-	       for(l= 0; l< (maxord-i-j-k); l++)
-		 {
-		   idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
-		   s1[idx]= pl_1cc[m];
-		   s2[idx]= pl_2cc[m];
-		   m++;
-		 }
-       }
+     } 
+   else
+     {
+       m= 0;
+       for(i= 0; i< maxord; i++)
+	 for(j= 0; j< (maxord-i); j++)
+	   for(k= 0; k< (maxord-i-j); k++)
+	     for(l= 0; l< (maxord-i-j-k); l++)
+	       {
+		 idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+		 s1[idx]= pl_1cc[m];
+		 s2[idx]= pl_2cc[m];
+		 m++;
+	       }
+     }
    /*   printf("GlueXlen end\n"); */
    /* die indiv. map wird nicht geaendert */
 }  /* end GlueXlen */
@@ -841,310 +842,313 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    printf("MakeMapandMatrix: seven order not defined\n");
 #endif
 
+   /***************** start **************/
+
    c= &C[0][0];
-   if (listpt->ElementOK & elementOK) 
-      printf("MakeMapandMatrix: map is alredy OK- nothing to do\n");
+   if (listpt->ElementOK & elementOK)
+     { 
+       printf("MakeMapandMatrix: map is alredy OK- nothing to do\n");
+       return;
+     }
+   
+   imodus= 1;   /* source to image zuerst */
+   
+   if (listpt->MDat.Art == 999)               /* UF was ist das? */   
+     imodus= imodus+ 1000;
+   
+#ifdef SEVEN_ORDER
+   /*#ifdef DEBUG*/
+   printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
+   printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
+   printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
+   printf(" ********use old REDUCE maps:  %d\n", bl->BLOptions.REDUCE_maps);
+   /*#endif*/
+   if (bl->BLOptions.REDUCE_maps == 0)
+     {
+       fgmapidp_8(&bl->BLOptions.epsilon, 
+		  listpt->wc, listpt->xlc, 
+		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		  &listpt->xlm, 
+		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		  &listpt->mir, &listpt->geo,
+		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+       printf("\n2nd call fgmapidp_8\n\n");
+       fgmapidp_8(&bl->BLOptions.epsilon, 
+		  listpt->wc, listpt->xlc, 
+		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		  &listpt->xlm, 
+		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		  &listpt->mir, &listpt->geo,
+		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+       
+     } /* end 7th order in seven order mode */
    else
-   {
-     imodus= 1;   /* source to image zuerst */
-     
-     if (listpt->MDat.Art == 999)
-       imodus= imodus+ 1000;
-     
-#ifdef SEVEN_ORDER
-     /*#ifdef DEBUG*/
-     printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
-     printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
-     printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
-     printf(" ********use old REDUCE maps:  %d\n", bl->BLOptions.REDUCE_maps);
-     /*#endif*/
-     if (bl->BLOptions.REDUCE_maps == 0)
-       {
-	 fgmapidp_8(&bl->BLOptions.epsilon, 
-		    listpt->wc, listpt->xlc, 
-		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		    &listpt->xlm, 
-		    ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-		    &listpt->mir, &listpt->geo,
-		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-	 printf("\n2nd call fgmapidp_8\n\n");
-	 fgmapidp_8(&bl->BLOptions.epsilon, 
-		    listpt->wc, listpt->xlc, 
-		    listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		    &listpt->xlm, 
-		    ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-		    &listpt->mir, &listpt->geo,
-		    &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-	 
-       } /* end 7th order in seven order mode */
-     else
-       {
-	 printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
-
-	 mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
-         
-	 fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
-		    &mir4, &listpt->geo, &wc4, &xlc4, 
-		    &ypc14, &zpc14, &dypc4, &dzpc4); 
-
-	 map4to7(&wc4,   listpt->wc);
-	 map4to7(&xlc4,  listpt->xlc);
-	 map4to7(&ypc14, listpt->ypc1);
-	 map4to7(&zpc14, listpt->zpc1);
-	 map4to7(&dypc4, listpt->dypc);
-	 map4to7(&dzpc4, listpt->dzpc);
-       } /* end 4th order compatibility in seven order mode */
-     
+     {
+       printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
+       
+       mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
+       
+       fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
+		  &mir4, &listpt->geo, &wc4, &xlc4, 
+		  &ypc14, &zpc14, &dypc4, &dzpc4); 
+       
+       map4to7(&wc4,   listpt->wc);
+       map4to7(&xlc4,  listpt->xlc);
+       map4to7(&ypc14, listpt->ypc1);
+       map4to7(&zpc14, listpt->zpc1);
+       map4to7(&dypc4, listpt->dypc);
+       map4to7(&dzpc4, listpt->dzpc);
+     } /* end 4th order compatibility in seven order mode */
+   
 #else
-     fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
-		&listpt->mir, &listpt->geo, listpt->wc,   listpt->xlc, 
-		listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
+   fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
+	      &listpt->mir, &listpt->geo, listpt->wc,   listpt->xlc, 
+	      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc); 
 #endif
-     
-     if(listpt->MDat.Art == 999)
-       imodus= imodus- 1000;
-     
+   
+   if(listpt->MDat.Art == 999)
+     imodus= imodus- 1000;
+   
 #ifdef SEVEN_ORDER
-     if (bl->BLOptions.REDUCE_maps == 0)
-       make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
-		     listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-     else
-       {
-	 printf("debug: MakeMapandMatrix: use reduce maps with seven order- make matrix\n");
-	 map7to4(listpt->ypc1, &ypc14);
-	 map7to4(listpt->zpc1, &zpc14);
-	 map7to4(listpt->dypc, &dypc4);
-	 map7to4(listpt->dzpc, &dzpc4);
-	 map7to4(listpt->wc,   &wc4);
-	 map7to4(listpt->xlc,  &xlc4);
-         mirror7to4(&listpt->mir, &mir4);
-         mat7to4(listpt->M_StoI, &mat4);
-
-	 xxmap70(&mat4, &ypc14, &zpc14, &dypc4, 
-		 &dzpc4, &bl->BLOptions.ifl.iord);
-
-	 pathlen0(&mir4, &listpt->geo, &bl->BLOptions.ifl.iord,
-		  &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-		  &wc4, &xlc4, &ypc14, 
-		  &zpc14, &xlm4);
-
-	 mat4to7(&mat4, listpt->M_StoI);
-	 map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
-	 map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c); 
-       }
+   if (bl->BLOptions.REDUCE_maps == 0)
+     make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
+		   listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+   else
+     {
+       printf("debug: MakeMapandMatrix: use reduce maps with seven order- make matrix\n");
+       map7to4(listpt->ypc1, &ypc14);
+       map7to4(listpt->zpc1, &zpc14);
+       map7to4(listpt->dypc, &dypc4);
+       map7to4(listpt->dzpc, &dzpc4);
+       map7to4(listpt->wc,   &wc4);
+       map7to4(listpt->xlc,  &xlc4);
+       mirror7to4(&listpt->mir, &mir4);
+       mat7to4(listpt->M_StoI, &mat4);
+       
+       xxmap70(&mat4, &ypc14, &zpc14, &dypc4, 
+	       &dzpc4, &bl->BLOptions.ifl.iord);
+       
+       pathlen0(&mir4, &listpt->geo, &bl->BLOptions.ifl.iord,
+		&bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+		&wc4, &xlc4, &ypc14, 
+		&zpc14, &xlm4);
+       
+       mat4to7(&mat4, listpt->M_StoI);
+       map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
+       map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c); 
+     }
 #else
-     /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-     xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
-	     listpt->dzpc, &bl->BLOptions.ifl.iord);
-     /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-       &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-       listpt->wc, listpt->xlc, listpt->ypc1, 
-       listpt->zpc1, &listpt->xlm);
-     */
-     /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in 
-	fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
-     pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	      &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-	      listpt->wc, listpt->xlc, listpt->ypc1, 
-	      listpt->zpc1, &listpt->xlm);
+   /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
+   xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
+	   listpt->dzpc, &bl->BLOptions.ifl.iord);
+   /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+     &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+     listpt->wc, listpt->xlc, listpt->ypc1, 
+     listpt->zpc1, &listpt->xlm);
+   */
+   /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in 
+      fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
+   pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	    &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+	    listpt->wc, listpt->xlc, listpt->ypc1, 
+	    listpt->zpc1, &listpt->xlm);
 #endif
-     
+   
 #ifdef DEBUG   
-     /*    char *fname= "matrixi.mat";
-	   writematrixfile(fname, (double *)listpt->M_StoI);*/
-     printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
-	    bl->position);  
+   /*    char *fname= "matrixi.mat";
+	 writematrixfile(fname, (double *)listpt->M_StoI);*/
+   printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
+	  bl->position);  
 #endif
-     /* image to source Rechnung bei RT und  pst */
-     if (bl->BLOptions.SourcetoImage != 1) 
-       {	
-	 imodus= 2;   
-	 if(listpt->MDat.Art==999)
-	   {imodus=imodus+1000;}; 
-	 
+   /* image to source Rechnung bei RT und  pst */
+   if (bl->BLOptions.SourcetoImage != 1) 
+     {	
+       imodus= 2;   
+       if(listpt->MDat.Art==999)
+	 {imodus=imodus+1000;}; 
+       
 #ifdef SEVEN_ORDER
-	 if (bl->BLOptions.REDUCE_maps == 0)
-	   {
-	     fgmapidp_8(&bl->BLOptions.epsilon,
-			listpt->wc, listpt->xlc,
-			listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-			&listpt->xlm,
-			ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
-			&listpt->mir, &listpt->geo,
-			&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-	     printf("\n2nd call fgmapidp_8\n\n");
-	     fgmapidp_8(&bl->BLOptions.epsilon, 
-			listpt->wc, listpt->xlc, 
-			listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-			&listpt->xlm, 
-			ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-			&listpt->mir, &listpt->geo,
-			&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-	   }
-	 else
-	   {
-	     printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
-	     mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
-	     fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
-			&mir4, &listpt->geo, &wc4, &xlc4, 
-			&ypc14, &zpc14, &dypc4, &dzpc4);
-	     map4to7(&wc4,   listpt->wc);
-	     map4to7(&xlc4,  listpt->xlc);
-	     map4to7(&ypc14, listpt->ypc1);
-	     map4to7(&zpc14, listpt->zpc1);
-	     map4to7(&dypc4, listpt->dypc);
-	     map4to7(&dzpc4, listpt->dzpc);
-	   }
-	 
+       if (bl->BLOptions.REDUCE_maps == 0)
+	 {
+	   fgmapidp_8(&bl->BLOptions.epsilon,
+		      listpt->wc, listpt->xlc,
+		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		      &listpt->xlm,
+		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
+		      &listpt->mir, &listpt->geo,
+		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	   printf("\n2nd call fgmapidp_8\n\n");
+	   fgmapidp_8(&bl->BLOptions.epsilon, 
+		      listpt->wc, listpt->xlc, 
+		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		      &listpt->xlm, 
+		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		      &listpt->mir, &listpt->geo,
+		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	 }
+       else
+	 {
+	   printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
+	   mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
+	   fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+		      &mir4, &listpt->geo, &wc4, &xlc4, 
+		      &ypc14, &zpc14, &dypc4, &dzpc4);
+	   map4to7(&wc4,   listpt->wc);
+	   map4to7(&xlc4,  listpt->xlc);
+	   map4to7(&ypc14, listpt->ypc1);
+	   map4to7(&zpc14, listpt->zpc1);
+	   map4to7(&dypc4, listpt->dypc);
+	   map4to7(&dzpc4, listpt->dzpc);
+	 }
+       
 #else
-	 fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
+       fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
 #endif
-	 
-	 if(listpt->MDat.Art==999)
-	   {imodus=imodus+1000;};
-	 
+       
+       if(listpt->MDat.Art==999)
+	 {imodus=imodus+1000;};
+       
 #ifdef SEVEN_ORDER
-	 if (bl->BLOptions.REDUCE_maps == 0)
-	   make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
-			 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-	 else
-	   {
-	     printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
-	     map7to4(listpt->ypc1, &ypc14);
-	     map7to4(listpt->zpc1, &zpc14);
-	     map7to4(listpt->dypc, &dypc4);
-	     map7to4(listpt->dzpc, &dzpc4);
-	     map7to4(listpt->wc,   &wc4);
-	     map7to4(listpt->xlc,  &xlc4);
-	     mirror7to4(&listpt->mir, &mir4);
-	     mat7to4(listpt->M_ItoS, &mat4);
-
-	     xxmap70(listpt->M_ItoS, &ypc14, &zpc14, &dypc4, 
-		     &dzpc4, &bl->BLOptions.ifl.iord);
-             
-	     pathlen0(&mir4, &listpt->geo, &bl->BLOptions.ifl.iord,
-		      &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-		      &wc4, &xlc4, &ypc14, 
-		      &zpc14, &xlm4);
-
-	     mat4to7(&mat4, listpt->M_ItoS);
-	     map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
-	     map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c);
-	     
-	   }
+       if (bl->BLOptions.REDUCE_maps == 0)
+	 make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
+		       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+       else
+	 {
+	   printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
+	   map7to4(listpt->ypc1, &ypc14);
+	   map7to4(listpt->zpc1, &zpc14);
+	   map7to4(listpt->dypc, &dypc4);
+	   map7to4(listpt->dzpc, &dzpc4);
+	   map7to4(listpt->wc,   &wc4);
+	   map7to4(listpt->xlc,  &xlc4);
+	   mirror7to4(&listpt->mir, &mir4);
+	   mat7to4(listpt->M_ItoS, &mat4);
+	   
+	   xxmap70(listpt->M_ItoS, &ypc14, &zpc14, &dypc4, 
+		   &dzpc4, &bl->BLOptions.ifl.iord);
+	   
+	   pathlen0(&mir4, &listpt->geo, &bl->BLOptions.ifl.iord,
+		    &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+		    &wc4, &xlc4, &ypc14, 
+		    &zpc14, &xlm4);
+	   
+	   mat4to7(&mat4, listpt->M_ItoS);
+	   map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
+	   map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c);
+	   
+	 }
 #else
-	 /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-	 xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
-		 listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-	 
-	 /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	   &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-	   listpt->wc, listpt->xlc, listpt->ypc1, 
-	   listpt->zpc1, &listpt->xlm); 
-	 */
-	 /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in
-	    fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
-	 pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-		  &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-		  listpt->wc, listpt->xlc, listpt->ypc1, 
-		  listpt->zpc1, &listpt->xlm); 
+       /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
+       xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
+	       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+       
+       /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+	 &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
+	 listpt->wc, listpt->xlc, listpt->ypc1, 
+	 listpt->zpc1, &listpt->xlm); 
+       */
+       /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in
+	  fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
+       pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
+		&bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
+		listpt->wc, listpt->xlc, listpt->ypc1, 
+		listpt->zpc1, &listpt->xlm); 
 #endif
-	 
-	 
+       
+       
 #ifdef DEBUG       
-	 printf("MakeMapandMatrix: image to source map and matrix created\n");  
+       printf("MakeMapandMatrix: image to source map and matrix created\n");  
 #endif
-	 /* wc,xlc, xlen ist jetzt von image to source Rechnung */ 
-       } /* end image to source */
-     
-     /* horizontale Ablenkung */
-     if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
-       {
-	 
+       /* wc,xlc, xlen ist jetzt von image to source Rechnung */ 
+     } /* end image to source */
+   
+   /* horizontale Ablenkung */
+   if ((listpt->GDat.azimut == 1) || (listpt->GDat.azimut == 3))
+     {
+       
 #ifdef SEVEN_ORDER
-	 mdim= 330;
+       mdim= 330;
 #else
-	 mdim= 70;
+       mdim= 70;
 #endif
-	 printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
-	 msiz= mdim * mdim * sizeof(double);
-	 
-	 if (bl->hormapsloaded != bl->BLOptions.ifl.iord)
-           {
+       printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
+       msiz= mdim * mdim * sizeof(double);
+       
+       if (bl->hormapsloaded != bl->BLOptions.ifl.iord)
+	 {
 #ifdef SEVEN_ORDER
-	     if (bl->BLOptions.REDUCE_maps == 0)
-	       {
-		 printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d, iord: %d\n", 
-			mdim, bl->BLOptions.ifl.iord); 
-		 MakeHorMaps(bl);     /* UF 18.8.11 does not work so far */
-	       } else
-	       {
-		 printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
-		 printf("!!!!!!!!!! fails for iord != 4\n");
-		 LoadHorMaps(bl, mdim); 
-	       }
-
+	   if (bl->BLOptions.REDUCE_maps == 0)
+	     {
+	       printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d, iord: %d\n", 
+		      mdim, bl->BLOptions.ifl.iord); 
+	       MakeHorMaps(bl);     /* UF 18.8.11 does not work so far */
+	     } else
+	     {
+	       printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
+	       printf("!!!!!!!!!! fails for iord != 4\n");
+	       LoadHorMaps(bl, mdim); 
+	     }
+	   
 #else
-	     printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
-	     printf("!!!!!!!!!! fails for iord != 4\n");
-	     LoadHorMaps(bl, mdim);    
+	   printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
+	   printf("!!!!!!!!!! fails for iord != 4\n");
+	   LoadHorMaps(bl, mdim);    
 #endif
-	     bl->hormapsloaded= bl->BLOptions.ifl.iord;
-           }            /* hormaps  present in memory */
-	 
-	 memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
-	 memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
-	 GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
-	 GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap);      
-	 /* listpt matrix Ok    */
-	 
-	 if (bl->BLOptions.SourcetoImage != 1) 
-	   {                /* wenn rueckwaerts dann zusaetzlich */
-	     memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
-	     memcpy(listpt->M_ItoS, bl->lmap, msiz); 
-	     
-	     GlueLeft((double *)listpt->M_ItoS, (double *)c); 
-	     GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap); 
-	     /* im to s matrix OK */
-	     
-	     extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
-			listpt->dypc, listpt->dzpc, 
-			&bl->BLOptions.ifl.iord); 
-	     GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
-		       (double *)listpt->wc, (double *)listpt->xlc, 
-		       (double *)bl->lmap, &bl->BLOptions.ifl.iord);
-	     GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
-		      &bl->BLOptions.ifl.iord, 0);
-	     
-	     /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
-	     /* 		    &bl->BLOptions.ifl.iplmode,  listpt->wc, listpt->xlc,  */
-	     /* 			listpt->ypc1, listpt->zpc1, &listpt->xlm);  */
-	   } else /* horizontal source to image */
-	   {
-	     
-	     extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
-			listpt->dypc, listpt->dzpc, 
-			&bl->BLOptions.ifl.iord);
-	     GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
-		       (double *)listpt->wc, (double *)listpt->xlc, 
-		       (double *)bl->lmap, &bl->BLOptions.ifl.iord);
-	     GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
-		      &bl->BLOptions.ifl.iord, 0);
-	     /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
-	     /* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
-	     /* 			  listpt->ypc1, listpt->zpc1, &listpt->xlm);    */
-	     
-	   } /* end bl->BLOptions.SourcetoImage != 1 */	
-
+	   bl->hormapsloaded= bl->BLOptions.ifl.iord;
+	 }            /* hormaps  present in memory */
+       
+       memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
+       memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
+       GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
+       GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap);      
+       /* listpt matrix Ok    */
+       
+       if (bl->BLOptions.SourcetoImage != 1) 
+	 {                /* wenn rueckwaerts dann zusaetzlich */
+	   memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
+	   memcpy(listpt->M_ItoS, bl->lmap, msiz); 
+	   
+	   GlueLeft((double *)listpt->M_ItoS, (double *)c); 
+	   GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap); 
+	   /* im to s matrix OK */
+	   
+	   extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
+		      listpt->dypc, listpt->dzpc, 
+		      &bl->BLOptions.ifl.iord); 
+	   GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
+		     (double *)listpt->wc, (double *)listpt->xlc, 
+		     (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+	   GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
+		    &bl->BLOptions.ifl.iord, 0);
+	   
+	   /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
+	   /* 		    &bl->BLOptions.ifl.iplmode,  listpt->wc, listpt->xlc,  */
+	   /* 			listpt->ypc1, listpt->zpc1, &listpt->xlm);  */
+	 } else /* horizontal source to image */
+	 {
+	   
+	   extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
+		      listpt->dypc, listpt->dzpc, 
+		      &bl->BLOptions.ifl.iord);
+	   GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
+		     (double *)listpt->wc, (double *)listpt->xlc, 
+		     (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+	   GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
+		    &bl->BLOptions.ifl.iord, 0);
+	   /*  pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord, */
+	   /* 		       &bl->BLOptions.ifl.iplmode, listpt->wc, listpt->xlc, */
+	   /* 			  listpt->ypc1, listpt->zpc1, &listpt->xlm);    */
+	   
+	 } /* end bl->BLOptions.SourcetoImage != 1 */	
+       
 #ifdef DEBUG  
-	 printf("\nMakeMapandMatrix: hor. defl. done\n");
+       printf("\nMakeMapandMatrix: hor. defl. done\n");
 #endif
-
-       }  /* end horizontal deflection */
-     listpt->ElementOK |= elementOK;
-   }
+       
+     }  /* end horizontal deflection */
+   listpt->ElementOK |= elementOK;
    /* wc,xlc,xlm sind richtungsabhaengig!! */
 } /* end MakeMapandMatrix */
 
