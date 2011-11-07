@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <31 Oct 11 17:02:59 flechsig> 
+//  Time-stamp: <07 Nov 11 15:53:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -11,8 +11,6 @@
 //
 // only the slots
 //
-
-
 
 #include <QtGui>
 
@@ -237,10 +235,11 @@ void MainWindow::activateProc(const QString &action)
       myparent->myWriteRayFile(myparent->myPHASEset()->imageraysname, &myparent->myBeamline()->RESULT.points,
 		   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
     } 
-  if (!action.compare("grfootprintAct")) 
+  if (!action.compare("grscatterAct")) 
     { 
-      printf("grfootprintAct button pressed\n"); 
-      delete d_plot;
+      printf("grscatterAct button pressed\n"); 
+      d_plot->plotstyle= PLOT_SCATTER;
+      //delete d_plot;
       
       //d_plot =  new ScatterPlot(this);
       //d_plot->showSpectrogram(true);
@@ -248,45 +247,48 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("grcontourAct")) 
     { 
+      d_plot->plotstyle= PLOT_CONTOUR;
       d_plot->showContour(false);
       d_plot->showSpectrogram(true);
     } 
 
   if (!action.compare("grcontourisoAct")) 
     { 
+      d_plot->plotstyle= PLOT_CONTOURISO;
       d_plot->showSpectrogram(true);
       d_plot->showContour(true);
     } 
   if (!action.compare("grisoAct")) 
     { 
+      d_plot->plotstyle= PLOT_ISO;
       d_plot->showSpectrogram(false);
       d_plot->showContour(true);
     } 
 
   if (!action.compare("grsourceAct")) 
     { 
-      d_plot->plotsubject= 0;
+      d_plot->plotsubject= PLOT_SOURCE ;
       //  d_plot->setTitle(tr("Source Plane"));
       //  d_plot->setphaseData("grsourceAct");
     }
 
   if (!action.compare("grimageAct")) 
     { 
-      d_plot->plotsubject= 1;
+      d_plot->plotsubject= PLOT_RESULT;
       //  d_plot->setTitle(tr("Image Plane"));
       //  d_plot->setphaseData("grimageAct");
     }
 
   if (!action.compare("grexample1Act")) 
     { 
-      d_plot->plotsubject= 2;
+      d_plot->plotsubject= PLOT_EXAMPLE1;
       //   d_plot->setTitle(tr("PhaseQt: example 1"));
       //   d_plot->setdefaultData();
     }
 
   if (!action.compare("grexample2Act")) 
     { 
-      d_plot->plotsubject= 3;
+      d_plot->plotsubject= PLOT_EXAMPLE2;
       //  d_plot->setTitle(tr("PhaseQt: example 2"));
       //   d_plot->setdefaultData2();
     }
@@ -652,57 +654,83 @@ void MainWindow::grapplyslot()
       printf("debug: grapplyslot: d_plot not defined\n");
       return;
     }
-
+  // values from manual scaling or autoscale
   sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
   sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
   sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
   sscanf(grzmaxE->text().toAscii().data(), "%lf", &d_plot->Plot::zmax);
 
-  if (d_plot->plotsubject == 0) 
-    if (myparent->myBeamline()->beamlineOK & sourceOK)
-      {
-	d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			    myparent->myBeamline()->RTSource.raynumber);
-	d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-				 myparent->myBeamline()->RTSource.raynumber, 
-				 myparent->myBeamline()->deltalambdafactor);
-	UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
-	d_plot->setTitle(tr("Source Plane"));
-	d_plot->setphaseData("grsourceAct");
-      }
-    else
-      QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
-  
-  if (d_plot->plotsubject == 1) 
-    if (myparent->myBeamline()->beamlineOK & resultOK)
-      {
-	d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			    myparent->myBeamline()->RESULT.points);
-	d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-				 myparent->myBeamline()->RESULT.points, 
-				 myparent->myBeamline()->deltalambdafactor);
-	UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
-	d_plot->setTitle(tr("Image Plane"));
-	d_plot->setphaseData("grimageAct");
-      }
-    else
-      QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
-  
-  if (d_plot->plotsubject == 2) 
+  switch (d_plot->plotsubject)
     {
+    case PLOT_SOURCE: 
+      if (myparent->myBeamline()->beamlineOK & sourceOK)
+	{
+	  d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			    myparent->myBeamline()->RTSource.raynumber);
+	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+				   myparent->myBeamline()->RTSource.raynumber, 
+				   myparent->myBeamline()->deltalambdafactor);
+	  UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
+	  d_plot->setTitle(tr("Source Plane"));
+	  if (d_plot->plotstyle <= 4)
+	    {
+	    d_plot->setphaseData("grsourceAct");
+	    d_plot->replot();
+	    }
+	  else
+	    {
+	      d_plot->scatterPlot();
+	    }
+	}
+      else
+	QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
+      break;
+
+    case PLOT_RESULT:
+      if (myparent->myBeamline()->beamlineOK & resultOK)
+	{
+	  d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+			       myparent->myBeamline()->RESULT.points);
+	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+				   myparent->myBeamline()->RESULT.points, 
+				   myparent->myBeamline()->deltalambdafactor);
+	  UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
+	  d_plot->setTitle(tr("Image Plane"));
+	  if (d_plot->plotstyle <= 4)
+	    {
+	      d_plot->setphaseData("grimageAct");
+	      d_plot->replot();
+	    }
+	  else
+	    {
+	      d_plot->scatterPlot();
+	    }
+	}
+      else
+	QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
+      break;
+      
+    case PLOT_EXAMPLE1:
       d_plot->setTitle(tr("PhaseQt: example 1"));
       d_plot->setdefaultData();
-    }
-  
-  if (d_plot->plotsubject == 3) 
-    {
+      d_plot->replot();
+      break;
+      
+    case PLOT_EXAMPLE2:
       d_plot->setTitle(tr("PhaseQt: example 2"));
       d_plot->setdefaultData2();
-    }
+      d_plot->replot();
+      break;
+      
+    default:
+      printf("MainWindow::grapplyslot: d_plot->plotsubject: %d not defined\n", d_plot->plotsubject);
+    } // end switch
+
+  //d_plot->replot();
 #ifdef DEBUG
   printf("debug: grapplyslot end with replot\n");
 #endif
-  d_plot->replot();
+  
 } // grapply
 
 // slot autscale

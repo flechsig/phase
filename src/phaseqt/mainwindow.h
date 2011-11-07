@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <31 Oct 11 16:42:48 flechsig>  */
+/*  Time-stamp: <07 Nov 11 13:45:40 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,6 +23,7 @@
 #include "singleray.h"
 #include "optiinput.h"
 #include "configwindow.h"
+#include "plot.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -37,11 +38,7 @@ class QGroupBox;
 class QPushButton;
 QT_END_NAMESPACE
 
-
-class Plot;
-
-// UF I'm not sure whether we should inherit from QtPhase
-class MainWindow : public QMainWindow//UF nein, public PhaseQt 
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -275,7 +272,7 @@ private:
     QAction *writeRTresultAct;
 
     QMenu   *plotstyleMenu;
-    QAction *grfootprintAct;
+    QAction *grscatterAct;
     QAction *grcontourAct;
     QAction *grcontourisoAct;
     QAction *grisoAct;

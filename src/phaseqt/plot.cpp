@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <31 Oct 11 15:16:58 flechsig> 
+//  Time-stamp: <07 Nov 11 16:05:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -22,10 +22,47 @@
 #include <qwt_plot_renderer.h>
 #include <qwt_plot_curve.h>
 
-//#include "plot.h"
+#include <qwt_plot.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_symbol.h>
+#include <qwt_plot_directpainter.h>
+#include <qpaintengine.h>
+
+#include "plot.h"
 #include "phaseqt.h"
 
 using namespace std;   // fuer cout z.B.
+
+class CurveData: public QwtArraySeriesData<QPointF>
+{
+public:
+    CurveData()
+    {
+    }
+
+    virtual QRectF boundingRect() const
+    {
+        if ( d_boundingRect.width() < 0.0 )
+            d_boundingRect = qwtBoundingRect( *this );
+
+        return d_boundingRect;
+    }
+
+    inline void append( const QPointF &point )
+    {
+        d_samples += point;
+    }
+
+    void clear()
+    {
+        d_samples.clear();
+        d_samples.squeeze();
+        d_boundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
+    }
+};
+
+
+
 
 class MyZoomer: public QwtPlotZoomer
 {
@@ -77,7 +114,7 @@ public:
     {
         setInterval( Qt::XAxis, QwtInterval( -2.5,  3.5 ) );
         setInterval( Qt::YAxis, QwtInterval( -2.5,  3.5 ) );
-        setInterval( Qt::ZAxis, QwtInterval(  0.0, 10.0 ) );
+        setInterval( Qt::ZAxis, QwtInterval(  0.0, 22.0 ) );
     }
 
     virtual double value(double x, double y) const
@@ -133,9 +170,16 @@ public:
 };
 
 // constructor of the plot
+// parent is a pointer to the  mainwindow object 
 Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
-  bt= (struct BeamlineType *) parent;
+
+  d_directPainter = new QwtPlotDirectPainter( this );
+  d_curve = new QwtPlotCurve( "Test Curve" );
+  d_curve->attach( this );
+  d_curve->hide();
+
+  // bt= (struct BeamlineType *) parent;
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
   
@@ -193,6 +237,31 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   //  this->p_zoomer= zoomer;
 } // end constructor
 
+void Plot::scatterPlot()
+{
+
+  printf("scatter plot not yet implemented\n");
+
+#ifdef EXPERIMENTAL
+  d_spectrogram->hide();
+  d_curve->setStyle( QwtPlotCurve::NoCurve );
+  d_curve->setSymbol( new QwtSymbol( QwtSymbol::XCross,
+        Qt::NoBrush, QPen( Qt::white ), QSize( 4, 4 ) ) );
+  setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
+  d_curve->setData( new CurveData() );
+  d_curve->show();
+  if (plotsubject == PLOT_SOURCE)
+    {
+      printf("scatterplot source, file: %s\n", __FILE__);
+    }
+  else
+    {
+      printf("scatterplot result, file: %s \n", __FILE__);
+    }
+  canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
+#endif
+} // scatterPlot
+
 // plotstyle
 void Plot::showContour(bool on)
 {
@@ -219,6 +288,7 @@ void Plot::setphaseData(const char *datatype)
   
   
   d_spectrogram->setData(new SpectrogramDataPhase(this));
+  d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
 } // setphaseData
@@ -228,6 +298,7 @@ void Plot::setdefaultData()
   delete d_spectrogram->data();
   
   d_spectrogram->setData(new SpectrogramData());
+  d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
 
@@ -239,6 +310,7 @@ void Plot::setdefaultData2()
   
   QwtRasterData *data = new SpectrogramData2();
   d_spectrogram->setData(data);
+  d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
 } // setdefaultData2
@@ -480,8 +552,11 @@ void Plot::hfill2(struct RayType *rays, int points)
   if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
   h2max= 0.0;
 
+  clearPoints();
+
   for (i=0; i< points; i++, rp++)
     {
+      appendPoint( QPointF( rp->z, rp->y ) );
       ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
       iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
       if ((ix < BINS2) && (iy < BINS2)) h2arr[ix][iy]+= 1;          // add one hit
@@ -560,5 +635,21 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
       wdy*= fwhmfac;
     }
 } // Plot::statistics
+
+void Plot::appendPoint( const QPointF &point )
+{
+    CurveData *data = static_cast<CurveData *>( d_curve->data() );
+    data->append( point );
+    d_directPainter->drawSeries( d_curve,
+			       data->size() - 1, data->size() - 1 );
+}
+
+void Plot::clearPoints()
+{
+    CurveData *data = static_cast<CurveData *>( d_curve->data() );
+    data->clear();
+
+    replot();
+}
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

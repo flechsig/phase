@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <26 Oct 11 12:47:01 flechsig> 
+//  Time-stamp: <04 Nov 11 13:12:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -118,8 +118,8 @@ PhaseQt::PhaseQt()
 #ifdef DEBUG  
   printf("debug: PhaseQt constructor called\n");
 #endif
-  initSet("default");
-  initBeamline();
+  initSet("default");   // initialize the filename structure
+  initBeamline();       // initialize the beamline structure
 } // end constructor
 
 #ifdef xxx  

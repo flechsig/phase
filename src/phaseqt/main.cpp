@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <24 Oct 11 14:33:16 flechsig> 
+//  Time-stamp: <04 Nov 11 13:06:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     }
 
   myphaseQt.mainWin = new MainWindow(&myphaseQt);     // create the mainwindow on the heap
-  myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.beamlinename);
+  myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.myPHASEset()->beamlinename);
   myphaseQt.mainWin->oldsource= myphaseQt.myBeamline()->RTSource.QuellTyp;
   myphaseQt.mainWin->UpdateElementList();
   myphaseQt.mainWin->UpdateBeamlineBox();

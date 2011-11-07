@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Oct 11 15:20:08 flechsig>  */
+/*  Time-stamp: <07 Nov 11 13:19:57 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -20,8 +20,6 @@
 #include <string>
 #include <iostream>
 
-#include "plot.h"   // UF not sure
-
 extern "C" {
   #include "cutils.h"
   #include "rtrace.h"
@@ -30,17 +28,23 @@ extern "C" {
   #include "common.h"
 }
 
-class MainWindow; // forward declaration
+class MainWindow;          // forward declaration
 
-// nach phase.h
-//#include "singleray.h"
+#define NPARS 64
+#define PLOT_SOURCE   0
+#define PLOT_RESULT   1
+#define PLOT_EXAMPLE1 2
+#define PLOT_EXAMPLE2 3
 
-# define NPARS 64
-
+#define PLOT_ISO        1
+#define PLOT_CONTOUR    2
+#define PLOT_CONTOURISO 4
+#define PLOT_SCATTER    8
+#define PLOT_LINE       16 
 
 // our class inherits the structures from c like base classes
 // !! they are considered public !!
-// we should define member functions to access/modify them
+// we should define member functions to access/modify them and not access the data directly
 class PhaseQt : public PHASEset, public BeamlineType 
 {
   //  char my_global_rundir[MaxPathLength];
@@ -52,7 +56,7 @@ public:
   void initSet(const char *);
   void printSet();
   void initBeamline();
-  struct BeamlineType *myBeamline();
+  struct BeamlineType *myBeamline();          // function to return the pointer to the data
   struct OptionsType  *myOptions();
   struct PHASEset     *myPHASEset(); 
   void myAllocRTSource() { AllocRTSource(this); }

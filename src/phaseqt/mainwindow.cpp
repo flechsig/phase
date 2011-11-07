@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <02 Nov 11 17:25:39 flechsig> 
+//  Time-stamp: <07 Nov 11 13:44:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -344,12 +344,12 @@ QWidget *MainWindow::createGraphicBox()
   connect(grautoButton,  SIGNAL(clicked()), this, SLOT(grautoscaleslot()));
 
   plotstyleMenu   = new QMenu(this);
-  grfootprintAct  = new QAction(tr("&footprint"), this);
+  grscatterAct  = new QAction(tr("&scatter"), this);
   grcontourAct    = new QAction(tr("&contour"), this);
   grcontourisoAct = new QAction(tr("contour + iso &lines"), this);
   grisoAct        = new QAction(tr("&iso lines"), this);
 
-  plotstyleMenu->addAction(grfootprintAct);
+  plotstyleMenu->addAction(grscatterAct);
   plotstyleMenu->addAction(grcontourAct);
   plotstyleMenu->addAction(grcontourisoAct);
   plotstyleMenu->addAction(grisoAct);
@@ -359,12 +359,12 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper = new QSignalMapper(this);
   connect(grsignalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
 
-  connect(grfootprintAct,  SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grscatterAct,  SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grcontourAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grcontourisoAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grisoAct,        SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  grsignalMapper->setMapping(grfootprintAct,  QString("grfootprintAct"));
+  grsignalMapper->setMapping(grscatterAct,  QString("grscatterAct"));
   grsignalMapper->setMapping(grcontourAct,    QString("grcontourAct"));
   grsignalMapper->setMapping(grcontourisoAct, QString("grcontourisoAct"));
   grsignalMapper->setMapping(grisoAct,        QString("grisoAct"));

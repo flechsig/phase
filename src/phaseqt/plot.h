@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <28 Oct 11 16:20:01 flechsig>  */
+/*  Time-stamp: <07 Nov 11 15:42:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -14,6 +14,8 @@
 #include <qwt_plot.h>
 #include <qwt_plot_spectrogram.h>
 #include <qwt_plot_zoomer.h>
+#include <qwt_plot_curve.h>
+#include <qwt_plot_directpainter.h>
 
 #define BINS2 101
 
@@ -29,6 +31,8 @@ public:
     void setdefaultData2();    // UF
     void autoScale(struct RayType *, int);
     void SetData(int n, double* dx, double* dy);
+    void appendPoint(const QPointF &);
+    void clearPoints();
 
     double ymin;
     double ymax;
@@ -48,10 +52,14 @@ public:
     void   hfill1(struct RayType *, int, const char *);
     void   hfill2(struct RayType *, int);
     void   statistics(struct RayType *, int, double);
+    void   scatterPlot();
     QwtPlotSpectrogram *d_spectrogram;
     QwtPlotZoomer      *zoomer;
+    QwtPlotDirectPainter *d_directPainter;
+    QwtPlotCurve         *d_curve;
 
     int    plotsubject;
+    int    plotstyle;
 
 public Q_SLOTS:
     void showContour(bool on);
