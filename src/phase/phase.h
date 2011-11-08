@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <26 Oct 11 10:13:23 flechsig>  */
+/*   Time-stamp: <04 Nov 11 09:39:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -659,9 +659,6 @@ struct BeamlineType
   struct RTSourceType RTSource; 
   MAP70TYPE lmap, rmap, M_StoI, M_ItoS;                          
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc;
-  /*#ifdef SEVEN_ORDER
-  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6; 
-  #endif*/
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
   struct RESULTType RESULT;
