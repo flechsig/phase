@@ -152,6 +152,7 @@ c        write(*,*)'fortran gerufen'
          write(6,*)' fgmapidp: am.a(0,2)= ', am.a(0,2)
          write(6,*)' fgmapidp: g.sina   = ', g.sina
          write(6,*)'(1) ypc1(0020)      = ',ypc1(0,0,2,0)
+         write(6,*)'(1) dzpc(0001)      = ',dzpc(0,0,0,1)
          write(6,*)'=============================== '
 #endif
         if(acc.lt.1e-8)then
@@ -270,7 +271,7 @@ c       input:  wc(y,z,dy,dz),xlc(y,z,dy,dz),
 c               ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c       output: dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
 c
-        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)  ! hier passiert was
         call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
 c------------- get path length in variable (w,l,y,z)
@@ -409,6 +410,7 @@ c---------------------------------------------------------------
 #ifdef DEBUG
          write(6,*)'====================== '
          write(6,*)'(2) ypc1(0020): ',ypc1(0,0,2,0)
+         write(6,*)'(2) dzpc(0001)      = ',dzpc(0,0,0,1)
          write(6,*)'====================== '
          write(6,*)' '
 #endif
