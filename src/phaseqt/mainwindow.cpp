@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <07 Nov 11 13:44:50 flechsig> 
+//  Time-stamp: <09 Nov 11 10:47:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -130,12 +130,12 @@ void MainWindow::createActions()
     signalMapper->setMapping(optiInputAct, QString("optiInputAct"));
     connect(optiInputAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    phasespaceAct = new QAction(tr("PO &phase space imaging"), this);
+    phasespaceAct = new QAction(tr("PO imaging"), this);
     phasespaceAct->setStatusTip(tr("physical optics, phase space imaging"));
     signalMapper->setMapping(phasespaceAct, QString("phasespaceAct"));
     connect(phasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    mphasespaceAct = new QAction(tr("PO &multiple phase space imaging"), this);
+    mphasespaceAct = new QAction(tr("PO &multiple imaging"), this);
     mphasespaceAct->setStatusTip(tr("physical optics, multiple phase space imaging"));
     signalMapper->setMapping(mphasespaceAct, QString("mphasespaceAct"));
     connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -164,6 +164,11 @@ void MainWindow::createActions()
     readFg34Act->setStatusTip(tr("Read parameter file fg34.par (for compatibility with previous phase versions)"));
     signalMapper->setMapping(readFg34Act, QString("readFg34Act"));
     connect(readFg34Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    poInitSourceAct = new QAction(tr("PO &init source"), this);
+    poInitSourceAct->setStatusTip(tr("Read Source files in physical optics mode"));
+    signalMapper->setMapping(poInitSourceAct, QString("poInitSourceAct"));
+    connect(poInitSourceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     configureAct = new QAction(tr("&Configure..."), this);
     configureAct->setStatusTip(tr("Configure auxiliary files"));
@@ -505,6 +510,7 @@ void MainWindow::createMenus()
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
     editMenu->addAction(readFg34Act);
+    editMenu->addAction(poInitSourceAct);
     editMenu->addAction(optiInputAct);
     editMenu->addSeparator();
     editMenu->addAction(configureAct);
@@ -866,7 +872,8 @@ QWidget *MainWindow::createSourceBox()
   b2lAct = new QAction(tr("Undulator BESSY II (L)"), this);
   sisAct = new QAction(tr("Undulator SLS - SIS"), this);  
   simAct = new QAction(tr("Undulator SLS - SIM"), this);  
-  sffAct = new QAction(tr("Source from file"), this);  
+  sffAct = new QAction(tr("Source from file"), this);
+  impAct = new QAction(tr("PO image plane"), this);
 
   sourceMenu->addAction(rthAct);
   sourceMenu->addAction(dipAct);
@@ -880,6 +887,8 @@ QWidget *MainWindow::createSourceBox()
   sourceMenu->addAction(simAct);  
   sourceMenu->addSeparator();
   sourceMenu->addAction(sffAct);
+  sourceMenu->addSeparator();
+  sourceMenu->addAction(impAct);
   sourceMenu->setDefaultAction(poiAct);
   sourceTypeButton->setMenu(sourceMenu);
 
@@ -893,6 +902,7 @@ QWidget *MainWindow::createSourceBox()
   connect(sisAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
   connect(simAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
   connect(sffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+  connect(impAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
   signalMapper->setMapping(rthAct, QString("rthAct"));
   signalMapper->setMapping(dipAct, QString("dipAct"));
@@ -905,7 +915,8 @@ QWidget *MainWindow::createSourceBox()
   signalMapper->setMapping(sisAct, QString("sisAct"));
   signalMapper->setMapping(simAct, QString("simAct"));
   signalMapper->setMapping(sffAct, QString("sffAct"));
-  
+  signalMapper->setMapping(impAct, QString("impAct"));
+
   sourceFileBox = new QCheckBox(tr("create Source file"));
 
   sourceTypeLayout->addWidget(sourceTypeButton);
@@ -1759,8 +1770,9 @@ void MainWindow::UpdateSourceBox()
   struct RingSourceType       *rp;
   struct HardEdgeSourceType   *hp;    
   struct FileSourceType       *fp; 
+  struct PSImageType          *psip;
   //  struct SRSourceType         *sp; 
-  //  struct PSImageType          *psip;
+  //  
   //  struct PSSourceType         *pssp; 
 
   char TextField [8][40];            /* 8 editfelder */
@@ -1879,6 +1891,32 @@ void MainWindow::UpdateSourceBox()
       S6E->setEnabled(true);
       S7E->setEnabled(true);
       S8E->setEnabled(true);
+      break;  
+ case 'I':
+      psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      sprintf(TextField[0],  "%f", psip->ymin);
+      sprintf(TextField[1],  "%f", psip->zmin);    
+      sprintf(TextField[2],  "%f", psip->ymax);  
+      sprintf(TextField[3],  "%f", psip->zmax);    
+      sprintf(TextField[4],  "%d", psip->iy);   
+      sprintf(TextField[5],  "%d", psip->iz);    
+      sprintf(TextField[6],  "%s", "");   
+      sprintf(TextField[7],  "%s", ""); 
+      sprintf(LabelField[0], "%s", "ymin (mm)");
+      sprintf(LabelField[1], "%s", "zmin (mm)");  
+      sprintf(LabelField[2], "%s", "ymax (mm)");  
+      sprintf(LabelField[3], "%s", "zmax (mm)");  
+      sprintf(LabelField[4], "%s", "y points");   
+      sprintf(LabelField[5], "%s", "z points");   
+      sprintf(LabelField[6], "%s", "");   
+      sprintf(LabelField[7], "%s", "");
+      sprintf(LabelField[8], "%s", "PO image plane");
+      S1E->setEnabled(true);
+      S2E->setEnabled(true);
+      S3E->setEnabled(true);
+      S4E->setEnabled(true);
+      S5E->setEnabled(true);
+      S6E->setEnabled(true);
       break;  
 
     case 'L':
@@ -2054,7 +2092,6 @@ void MainWindow::UpdateSourceBox()
       S3E->setEnabled(true);
       S4E->setEnabled(true);
       S5E->setEnabled(true);
-
       break;
 
     default:

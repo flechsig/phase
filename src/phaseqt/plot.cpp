@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <07 Nov 11 16:05:49 flechsig> 
+//  Time-stamp: <09 Nov 11 11:30:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -317,8 +317,18 @@ void Plot::setdefaultData2()
 
 #ifndef QT_NO_PRINTER
 
-void Plot::printPlot()
+void Plot::printPlot(QPrinter &printerp )
 {
+  QwtPlotRenderer renderer;
+
+  renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
+  renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
+  renderer.renderTo(this, printerp);
+
+
+ // printerp->setOrientation(QPrinter::Landscape);
+
+#ifdef OLD
 #if 1
     QPrinter printer;
 #else
@@ -333,9 +343,9 @@ void Plot::printPlot()
 
         renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
         renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
-
         renderer.renderTo(this, printer);
     }
+#endif
 }
 #endif
 

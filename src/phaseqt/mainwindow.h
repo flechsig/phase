@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <07 Nov 11 13:45:40 flechsig>  */
+/*  Time-stamp: <09 Nov 11 10:43:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -181,6 +181,7 @@ private:
     QAction *sisAct;
     QAction *simAct;
     QAction *sffAct;
+    QAction *impAct;
     QLineEdit *cffE;     // element box
     QLineEdit *preE;    
     QLineEdit *sucE;    
@@ -264,6 +265,7 @@ private:
     QAction *phasespaceAct;
     QAction *mphasespaceAct;
     QAction *readFg34Act;
+    QAction *poInitSourceAct;
     QAction *configureAct;
 
     QAction *writemapAct;

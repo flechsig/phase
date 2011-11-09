@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <07 Nov 11 15:42:21 flechsig>  */
+/*  Time-stamp: <09 Nov 11 11:27:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -66,7 +66,7 @@ public Q_SLOTS:
     void showSpectrogram(bool on);
 
 #ifndef QT_NO_PRINTER
-    void printPlot();
+    void printPlot(QPrinter & );
 #endif
 
 private:

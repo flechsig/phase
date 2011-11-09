@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <07 Nov 11 16:18:17 flechsig> 
+//  Time-stamp: <09 Nov 11 11:29:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -153,6 +153,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("sisAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
   if (!action.compare("simAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
   if (!action.compare("sffAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }  
+  if (!action.compare("impAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'I'; UpdateSourceBox(); }  
 
   if (!action.compare("writemapAct")) 
     { 
@@ -320,6 +321,13 @@ void MainWindow::activateProc(const QString &action)
 	} else
 	QMessageBox::warning(this, tr("readFg34Act"),
 			     tr("file fg34.par not found!"));
+    } 
+
+if (!action.compare("poInitSourceAct")) 
+    { 
+      printf("poInitSourceAct button pressed\n"); 
+      printf("no action so far\n"); 
+      
     } 
 
   if (!action.compare("configureAct")) 
@@ -1082,14 +1090,19 @@ void MainWindow::print()
 
 #ifndef QT_NO_PRINTDIALOG
   //QTextDocument *document = textEdit->document();
+  //   QPrinter printer;
+#if 1
     QPrinter printer;
+#else
+    QPrinter printer(QPrinter::HighResolution);
+#endif
 
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
     if (dlg->exec() != QDialog::Accepted)
         return;
 
     //  document->print(&printer);
-    d_plot->printPlot();
+    d_plot->printPlot( printer );
     statusBar()->showMessage(tr("Ready"), 4000);
 #endif
 } // end print()
@@ -1318,9 +1331,9 @@ void MainWindow::sourceApplyBslot()
   struct DipolSourceType      *dp;
   struct PointSourceType      *sop;
   struct RingSourceType       *rp;
-  struct HardEdgeSourceType   *hp;     
+  struct HardEdgeSourceType   *hp;  
+  struct PSImageType          *psip;
   //struct SRSourceType         *sp; 
-  //struct PSImageType          *psip;
   //struct PSSourceType         *pssp; 
 
 #ifdef DEBUG
@@ -1369,6 +1382,15 @@ void MainWindow::sourceApplyBslot()
     sscanf(S8E->text().toAscii().data(), "%d",  &hp->idz);
     myparent->myBeamline()->RTSource.raynumber=  hp->iy* hp->idy* hp->iz* hp->idz;
     break;
+  case 'I':
+    psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+    sscanf(S1E->text().toAscii().data(), "%lf", &psip->ymin);
+    sscanf(S2E->text().toAscii().data(), "%lf", &psip->zmin);
+    sscanf(S3E->text().toAscii().data(), "%lf", &psip->ymax);
+    sscanf(S4E->text().toAscii().data(), "%lf", &psip->zmax);
+    sscanf(S5E->text().toAscii().data(), "%d",  &psip->iy);
+    sscanf(S6E->text().toAscii().data(), "%d",  &psip->iz);
+    break;
     
   case 'L':
   case 'M':
@@ -1413,7 +1435,7 @@ void MainWindow::sourceApplyBslot()
   }
 
   myparent->myBeamline()->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
-  myparent->myMakeRTSource();
+  if (sou != 'I') myparent->myMakeRTSource();
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   myparent->writeBackupFile();
@@ -1422,6 +1444,7 @@ void MainWindow::sourceApplyBslot()
 // slot
 void MainWindow::undo()
 {
+  printf("undo button- no action so far\n");
   //QTextDocument *document = textEdit->document();
   //  document->undo();
 } // undo
