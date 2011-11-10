@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <09 Nov 11 11:27:14 flechsig>  */
+/*  Time-stamp: <10 Nov 11 17:20:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -51,7 +51,10 @@ public:
     int    fwhmon;
     void   hfill1(struct RayType *, int, const char *);
     void   hfill2(struct RayType *, int);
+
     void   statistics(struct RayType *, int, double);
+    void   contourPlot();
+    void   fillData();
     void   scatterPlot();
     QwtPlotSpectrogram *d_spectrogram;
     QwtPlotZoomer      *zoomer;

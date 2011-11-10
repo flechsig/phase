@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Nov 11 15:21:17 flechsig> 
+//  Time-stamp: <10 Nov 11 13:57:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -702,12 +702,14 @@ void MainWindow::grapplyslot()
       printf("debug: grapplyslot: d_plot not defined\n");
       return;
     }
+
   // values from manual scaling or autoscale
   sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
   sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
   sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
   sscanf(grzmaxE->text().toAscii().data(), "%lf", &d_plot->Plot::zmax);
 
+  // fill data, update statistics, update header
   switch (d_plot->plotsubject)
     {
     case PLOT_SOURCE: 

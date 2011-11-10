@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <09 Nov 11 11:30:17 flechsig> 
+//  Time-stamp: <10 Nov 11 17:20:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -237,16 +237,28 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   //  this->p_zoomer= zoomer;
 } // end constructor
 
+void Plot::contourPlot()
+{
+  printf("contour plot experimental\n");
+
+} // end contourPlot()
+
+void Plot::fillData()
+{
+  printf("fill data called\n");
+
+}
+
+
 void Plot::scatterPlot()
 {
+  printf("scatter plot experimental\n");
 
-  printf("scatter plot not yet implemented\n");
-
-#ifdef EXPERIMENTAL
-  d_spectrogram->hide();
+  d_spectrogram->hide();                              // hide spectrogram
+  enableAxis(QwtPlot::yRight, false);                 // switch off right axis
   d_curve->setStyle( QwtPlotCurve::NoCurve );
   d_curve->setSymbol( new QwtSymbol( QwtSymbol::XCross,
-        Qt::NoBrush, QPen( Qt::white ), QSize( 4, 4 ) ) );
+        Qt::NoBrush, QPen( Qt::white ), QSize( 3, 3 ) ) );
   setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
   d_curve->setData( new CurveData() );
   d_curve->show();
@@ -259,7 +271,7 @@ void Plot::scatterPlot()
       printf("scatterplot result, file: %s \n", __FILE__);
     }
   canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
-#endif
+
 } // scatterPlot
 
 // plotstyle
