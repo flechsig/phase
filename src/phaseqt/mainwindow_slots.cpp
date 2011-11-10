@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Nov 11 11:29:07 flechsig> 
+//  Time-stamp: <09 Nov 11 15:21:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -44,6 +44,7 @@ void MainWindow::about()
 void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
+  struct PSImageType * psip;
   
   if (action.isEmpty())
           return;
@@ -130,17 +131,28 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("phasespaceAct"))
     {     
       printf("phasespaceAct button pressed\n"); 
-#ifdef EXPERIMENTAL
-      if (CheckBLOK(Beamline.beamlineOK, 
-		  (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
-      {
-	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
-	myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-	PST(&Beamline);
-      }
-#endif
-      printf("no action so far\n"); 
+      if (elementListIsEmpty()) 
+	return;
+
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+      myparent->myBuildBeamline();
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
+          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
+	
+
+      if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
+		    (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
+	{
+	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	  myparent->myPST();
+	}
     }
+
   if (!action.compare("mphasespaceAct"))    printf("mphasespaceAct button pressed\n"); 
 
   if (!action.compare("rthAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
@@ -323,10 +335,25 @@ void MainWindow::activateProc(const QString &action)
 			     tr("file fg34.par not found!"));
     } 
 
-if (!action.compare("poInitSourceAct")) 
+  if (!action.compare("poInitSourceAct")) 
     { 
       printf("poInitSourceAct button pressed\n"); 
-      printf("no action so far\n"); 
+      printf("not tested so far\n"); 
+      
+      if ((myparent->myBeamline()->src.isrctype == 2) || 
+	  (myparent->myBeamline()->src.isrctype == 3) ||
+	  (myparent->myBeamline()->src.isrctype == 4) ||
+	  (myparent->myBeamline()->src.isrctype == 6))
+	{
+	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
+          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+#ifdef DEBUG
+	  printf("activate_proc: call src_ini(&Beamline.src)\n");
+#endif
+	}
+      else
+	printf("activate_proc: source type %d not supported!\n", 
+	       myparent->myBeamline()->src.isrctype);
       
     } 
 
@@ -1435,7 +1462,11 @@ void MainWindow::sourceApplyBslot()
   }
 
   myparent->myBeamline()->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
-  if (sou != 'I') myparent->myMakeRTSource();
+  if (sou != 'I') 
+    {
+      myparent->myMakeRTSource();
+      myparent->myBeamline()->beamlineOK |= sourceOK;
+    }
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   myparent->writeBackupFile();

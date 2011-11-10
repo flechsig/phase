@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Nov 11 10:47:57 flechsig> 
+//  Time-stamp: <09 Nov 11 15:10:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1781,8 +1781,8 @@ void MainWindow::UpdateSourceBox()
   myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK); 
         
 #ifdef DEBUG 
-    printf("debug: InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
-	   myparent->myBeamline()->RTSource.QuellTyp, myparent->myBeamline()->beamlineOK, oldsource);   
+  printf("debug: InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
+	 myparent->myBeamline()->RTSource.QuellTyp, myparent->myBeamline()->beamlineOK, oldsource);   
 #endif   
  
     if (myparent->myBeamline()->RTSource.Quellep == NULL)

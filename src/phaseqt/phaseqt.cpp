@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <04 Nov 11 13:12:55 flechsig> 
+//  Time-stamp: <10 Nov 11 08:32:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -171,7 +171,7 @@ void PhaseQt::sourceSetDefaults()
 {
   char sou;
   struct UndulatorSourceType  *up;
-  // struct UndulatorSource0Type *up0;
+  struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
   struct PointSourceType      *pp;
   struct RingSourceType       *rp;
@@ -237,6 +237,13 @@ void PhaseQt::sourceSetDefaults()
       hp->idz	= 7;   
       this->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
       break;   
+    case 'G': 
+      up0= (struct UndulatorSource0Type *)this->RTSource.Quellep; 
+      up0->sigmaez= 0.05;
+      up0->sigmaey= 0.01;
+      up0->sigmaedz= 0.05;
+      up0->sigmaedy= 0.01;
+      break;
     case 'R': 
       rp= (struct RingSourceType *)this->RTSource.Quellep;
       rp->dy= 0.1;
@@ -247,6 +254,8 @@ void PhaseQt::sourceSetDefaults()
       strncpy(fp->filename, this->sourceraysname, MaxPathLength);
       /* we may add a test if the file exists */
       break;   
+    default:
+      printf("sourceSetDefaults-> error: source %c not found\n", sou);
     }  /* end case */
 } // sourceSetDefaults
 
