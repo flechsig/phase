@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <04 Nov 11 09:39:36 flechsig>  */
+/*   Time-stamp: <09 Nov 11 11:45:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -846,7 +846,7 @@ void
   SetDefaultParameter(struct BeamlineType *),
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
   Slope(struct RayType *, double, double, double, double, int),
-    
+  src_ini(struct sources *),  
   MMatrix(),
 	        
   WriteBLFile(char *, struct BeamlineType *),

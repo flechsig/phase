@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:54:24 flechsig>  */
+/*   Time-stamp: <09 Nov 11 12:23:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -93,9 +93,10 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
 
 void get_nam(int n, 
 	     char *eyre,char *eyim,char *ezre,char *ezim,
-	     char *eyre1,char *eyim1, char *ezre1,char *ezim1)
+	     char *eyre1,char *eyim1, char *ezre1,char *ezim1, 
+	     struct BeamlineType *bl)
 {
-#include "cutils.h"
+
    
    struct geometryst *gp;
    struct rayst ra;
@@ -159,14 +160,14 @@ void get_nam(int n,
    strcat(ezre1,".DA");
    strcat(ezim1,".DA");
 
-   inttochar(Beamline.src.so4.nsource,sn);
+   inttochar(bl->src.so4.nsource,sn);
 
    strcat(eyre,sn);
    strcat(eyim,sn);
    strcat(ezre,sn);
    strcat(ezim,sn);
 
-   inttochar(Beamline.src.so4.nimage,sn);
+   inttochar(bl->src.so4.nimage,sn);
 
    strcat(eyre1,sn);
    strcat(eyim1,sn);
@@ -201,17 +202,17 @@ void MPST(struct BeamlineType *bl)
 /*   int function get_nam, function WriteMPsd; */
 
 /*   dnue=2.87e12;  */
-   dnue=1./(Beamline.src.so4.deltatime*Beamline.src.so4.nfreqtot*1.0e-15);
+   dnue=1./(bl->src.so4.deltatime*bl->src.so4.nfreqtot*1.0e-15);
 
-   Beamline.BLOptions.xlam_save=Beamline.BLOptions.lambda;
-   nue0=LIGHT_VELO/Beamline.BLOptions.xlam_save;
+   bl->BLOptions.xlam_save=bl->BLOptions.lambda;
+   nue0=LIGHT_VELO/bl->BLOptions.xlam_save;
 
-   printf(" \n test %d \n",Beamline.src.so4.iezimx);
-   printf(" main wavelength = %15le \n",Beamline.BLOptions.xlam_save);
+   printf(" \n test %d \n",bl->src.so4.iezimx);
+   printf(" main wavelength = %15le \n",bl->BLOptions.xlam_save);
    
-   ifour=Beamline.src.so4.nfreqtot;  /* 2048 */
+   ifour=bl->src.so4.nfreqtot;  /* 2048 */
    istart=1;
-   iend=Beamline.src.so4.nfreqpos;   /* 20 */
+   iend=bl->src.so4.nfreqpos;   /* 20 */
    
    printf("%5d %5d %5d \n ",ifour,istart,iend);
 
@@ -221,7 +222,7 @@ void MPST(struct BeamlineType *bl)
 	
 /* get names */
 	
-   get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1);
+       get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
 	
    strcpy(bl->src.so4.fsource4a,eyre);
    strcpy(bl->src.so4.fsource4b,eyim); 
@@ -229,23 +230,23 @@ void MPST(struct BeamlineType *bl)
    strcpy(bl->src.so4.fsource4d,ezim); 
 
 /* init source */
-   src_ini(&Beamline.src);   
+   src_ini(&bl->src);   
 
 /* set actual lambda */
 
-   Beamline.BLOptions.lambda=LIGHT_VELO/(nue0+i*dnue);
-   lambda_local=Beamline.BLOptions.lambda;
-   printf(" === calculating wavelength %d %15le nm \n",i,Beamline.BLOptions.lambda*1e6);	
+   bl->BLOptions.lambda=LIGHT_VELO/(nue0+i*dnue);
+   lambda_local=bl->BLOptions.lambda;
+   printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
 
-   BuildBeamlineM(lambda_local,&Beamline);	
+   BuildBeamlineM(lambda_local,bl);	
 
    /* do PST */
  /*  start_watch();*/
-       Beamline.BLOptions.CalcMod= 3;
+       bl->BLOptions.CalcMod= 3;
    #ifdef DEBUG
        printf("activate_proc: call MPST\n");
    #endif
-       PST(&Beamline);
+       PST(bl);
        /* UF0804  UpdateMainList(); */
    /*    stop_watch();*/
    
@@ -262,12 +263,12 @@ void MPST(struct BeamlineType *bl)
 };   
 
 
-   for (i=ifour-Beamline.src.so4.nfreqneg; i<ifour; i++)
+   for (i=ifour-bl->src.so4.nfreqneg; i<ifour; i++)
      {     
 	
 /* get names */
 
-   get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1);
+       get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
 
    strcpy(bl->src.so4.fsource4a,eyre);
    strcpy(bl->src.so4.fsource4b,eyim); 
@@ -275,25 +276,25 @@ void MPST(struct BeamlineType *bl)
    strcpy(bl->src.so4.fsource4d,ezim); 
 
 /* init source */
-   src_ini(&Beamline.src);   
+   src_ini(&bl->src);   
 
 /* get conjugate complex (already done in phase_source.F) */
 
 /* set actual lambda */
 
-   Beamline.BLOptions.lambda=LIGHT_VELO/(nue0-(ifour-i)*dnue);
-   lambda_local=Beamline.BLOptions.lambda;
-   printf(" === calculating wavelength %d %15le nm \n",i,Beamline.BLOptions.lambda*1e6);	
+   bl->BLOptions.lambda=LIGHT_VELO/(nue0-(ifour-i)*dnue);
+   lambda_local=bl->BLOptions.lambda;
+   printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
 
-   BuildBeamlineM(lambda_local,&Beamline);	
+   BuildBeamlineM(lambda_local, bl);	
 
 /* do PST */
 /*    start_watch();*/
-       Beamline.BLOptions.CalcMod= 3;
+       bl->BLOptions.CalcMod= 3;
    #ifdef DEBUG
        printf("activate_proc: call MPST\n");
    #endif
-       PST(&Beamline);
+       PST(bl);
        /*UF0804     UpdateMainList();*/
 /*       stop_watch();*/
    
@@ -323,7 +324,7 @@ void MPST(struct BeamlineType *bl)
 
    /* end loop */
 
-Beamline.BLOptions.lambda=Beamline.BLOptions.xlam_save;
+bl->BLOptions.lambda=bl->BLOptions.xlam_save;
    
 } /* end MPST */
 
