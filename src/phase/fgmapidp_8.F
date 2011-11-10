@@ -246,13 +246,6 @@ c
         imode=2
         call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
 
-c------------- replace w and l by power series in (y,z,dy,dz)
-c       input:   ypc(w,l,y,z)   &  zpc(w,l,y,z)
-c       output: ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
-c
-        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
-     &                        ypc1,zpc1,2,iord)
-
 c------------- set up eqs. 27 & 28
 c       output: eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
 c
@@ -266,13 +259,23 @@ c
         imode=1
         call subd345a(acc,eq27,eq28,wc,xlc,imode,iord)
 
+c------------- replace w and l by power series in (y,z,dy,dz)
+c       input:   ypc(w,l,y,z)   &  zpc(w,l,y,z)
+c       output: ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
+c	diese Zeile verschoben
+
+        call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
+     &                        ypc1,zpc1,2,iord)
+
 c------------- get Taylor expansion of dyp and dzp
 c       input:  wc(y,z,dy,dz),xlc(y,z,dy,dz),
 c               ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c       output: dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
 c
-        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)  ! hier passiert was
-        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord) 
+c
+c	einmal aufrufen reicht	
+c        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
 
 c------------- get path length in variable (w,l,y,z)
 c       input:  opl6(w,l,y,z,yp,zp),
