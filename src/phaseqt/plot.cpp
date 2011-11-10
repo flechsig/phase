@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 Nov 11 17:20:07 flechsig> 
+//  Time-stamp: <10 Nov 11 17:26:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -247,7 +247,44 @@ void Plot::fillData()
 {
   printf("fill data called\n");
 
-}
+  if (!d_plot)
+    {
+      printf("debug: d_plot not defined\n");
+      return;
+    }
+  
+  switch (d_plot->plotsubject)
+    {
+    case PLOT_SOURCE: 
+      if (myparent->myBeamline()->beamlineOK & sourceOK)
+	{
+	  d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			    myparent->myBeamline()->RTSource.raynumber);
+	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+				   myparent->myBeamline()->RTSource.raynumber, 
+				   myparent->myBeamline()->deltalambdafactor);
+	  UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
+	}
+      else
+	QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
+      break;
+    case PLOT_RESULT:
+      if (myparent->myBeamline()->beamlineOK & resultOK)
+	{
+	  d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+			       myparent->myBeamline()->RESULT.points);
+	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+				   myparent->myBeamline()->RESULT.points, 
+				   myparent->myBeamline()->deltalambdafactor);
+	  UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
+	}
+      else
+	QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
+      break;
+    default:
+      printf("MainWindow::grapplyslot: d_plot->plotsubject: %d not defined\n", d_plot->plotsubject);
+    }
+} // fillData
 
 
 void Plot::scatterPlot()
