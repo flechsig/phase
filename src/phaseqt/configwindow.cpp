@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <11 Nov 11 17:06:14 flechsig> 
+//  Time-stamp: <2011-11-11 22:26:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -13,7 +13,6 @@
 #include <string.h>
 #include <QtGui>
 #include "configwindow.h"
-
 
 // the constructor
 ConfigWindow::ConfigWindow(PhaseQt *parent)
@@ -63,7 +62,8 @@ void ConfigWindow::selectSlot()
 {
   QListWidgetItem *item;
   int elementnumber= fileList->currentRow();
-  char *text, *cp, *cp1, *fname, buffer[310], oldname[MaxPathLength], extension[10], filter[50];
+  char *text, *cp, *cp1, *fname, buffer[310], oldname[MaxPathLength], 
+    extension[10], filter[50];
 
   if (elementnumber < 0) 
     return;
@@ -204,5 +204,33 @@ void ConfigWindow::mkRow(char *out, const char *desc, const char *fname)
   strncpy(out, desc,  50);
   strncat(out, fname, 260);
 } // mkRow
+
+// add all files to be configured with description
+void ConfigWindow::updateList()
+{
+  int i;
+  char slist[13][310];
+  // we allow 50 characters description and 20 for the filename
+
+  mkRow(slist[0], "beamline name \t: ",        myparent->myPHASEset()->beamlinename);
+  mkRow(slist[3], "optimization input \t: ",   myparent->myPHASEset()->optipckname);
+  mkRow(slist[4], "optimization results \t: ", myparent->myPHASEset()->opresname);
+  mkRow(slist[5], "minuit input \t: ",         myparent->myPHASEset()->minname);
+  mkRow(slist[1], "ray input (source) \t: ",   myparent->myPHASEset()->sourceraysname);
+  mkRow(slist[2], "ray output (image) \t: ",   myparent->myPHASEset()->imageraysname);
+  mkRow(slist[6], "matrix \t: ",               myparent->myPHASEset()->matrixname);
+  mkRow(slist[7], "mapname \t: ",              myparent->myPHASEset()->mapname);
+  mkRow(slist[8], "so4_fsource4a \t: ",        myparent->myPHASEset()->so4_fsource4a);
+  mkRow(slist[9], "so4_fsource4b \t: ",        myparent->myPHASEset()->so4_fsource4b);
+  mkRow(slist[10], "so4_fsource4c \t: ",       myparent->myPHASEset()->so4_fsource4c);
+  mkRow(slist[11], "so4_fsource4d \t: ",       myparent->myPHASEset()->so4_fsource4d);
+  mkRow(slist[12], "so4_fsource6 \t: ",        myparent->myPHASEset()->so6_fsource6);
+  
+  for (i=1; i< 13; i++)
+    {
+      QListWidgetItem *item= fileList->item(i-1);
+      item->setText(slist[i]);
+    }
+} // updateList
 
 // end
