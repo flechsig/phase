@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <09 Nov 11 11:59:54 flechsig>  */
+/*  Time-stamp: <11 Nov 11 12:59:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -33,14 +33,17 @@ class MainWindow;          // forward declaration
 #define NPARS 64
 #define PLOT_SOURCE   0
 #define PLOT_RESULT   1
-#define PLOT_EXAMPLE1 2
-#define PLOT_EXAMPLE2 3
+#define PLOT_EXAMPLE1 11
+#define PLOT_EXAMPLE2 12
+#define PLOT_EXAMPLE3 13
 
 #define PLOT_ISO        1
 #define PLOT_CONTOUR    2
 #define PLOT_CONTOURISO 4
 #define PLOT_SCATTER    8
 #define PLOT_LINE       16 
+#define PLOT_HPROF      32
+#define PLOT_VPROF      64
 
 // our class inherits the structures from c like base classes
 // !! they are considered public !!

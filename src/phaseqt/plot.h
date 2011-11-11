@@ -1,6 +1,6 @@
-/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
+/* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <10 Nov 11 17:20:05 flechsig>  */
+/*  Time-stamp: <11 Nov 11 13:15:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -18,6 +18,7 @@
 #include <qwt_plot_directpainter.h>
 
 #define BINS2 101
+#define NPOINTS 150
 
 class Plot: public QwtPlot
 {
@@ -33,6 +34,7 @@ public:
     void SetData(int n, double* dx, double* dy);
     void appendPoint(const QPointF &);
     void clearPoints();
+    void getData();       // for test
 
     double ymin;
     double ymax;
@@ -44,8 +46,9 @@ public:
     double dzmax;
     double phimin;
     double phimax;
-    double h1arr[BINS2];   // odd number
-    double h2arr[BINS2][BINS2];   // odd number
+    double h1arr[BINS2];           // odd number
+    double h2arr[BINS2][BINS2];    // odd number
+    double xx[NPOINTS], ysin[NPOINTS], ycos[NPOINTS], *xxx, *yyy ;
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
@@ -55,11 +58,13 @@ public:
     void   statistics(struct RayType *, int, double);
     void   contourPlot();
     void   fillData();
-    void   scatterPlot();
+    void   scatterPlot(struct RayType *, int);
+    void   profilePlot(struct RayType *, int, int);
     QwtPlotSpectrogram *d_spectrogram;
     QwtPlotZoomer      *zoomer;
     QwtPlotDirectPainter *d_directPainter;
-    QwtPlotCurve         *d_curve;
+    QwtPlotCurve         *d_curve1;
+    QwtPlotCurve         *d_curve2;
 
     int    plotsubject;
     int    plotstyle;

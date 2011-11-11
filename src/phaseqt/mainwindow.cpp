@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Nov 11 15:10:16 flechsig> 
+//  Time-stamp: <11 Nov 11 13:07:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -353,13 +353,18 @@ QWidget *MainWindow::createGraphicBox()
   grcontourAct    = new QAction(tr("&contour"), this);
   grcontourisoAct = new QAction(tr("contour + iso &lines"), this);
   grisoAct        = new QAction(tr("&iso lines"), this);
+  grHorProfAct        = new QAction(tr("profile hor."), this);
+  grVerProfAct        = new QAction(tr("profile ver."), this);
 
   plotstyleMenu->addAction(grscatterAct);
   plotstyleMenu->addAction(grcontourAct);
   plotstyleMenu->addAction(grcontourisoAct);
   plotstyleMenu->addAction(grisoAct);
-  plotstyleMenu->setDefaultAction(grcontourAct);
   
+  plotstyleMenu->setDefaultAction(grcontourAct);
+  plotstyleMenu->addAction(grHorProfAct);
+  plotstyleMenu->addAction(grVerProfAct);
+
   popupButton->setMenu(plotstyleMenu);
   grsignalMapper = new QSignalMapper(this);
   connect(grsignalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
@@ -368,23 +373,29 @@ QWidget *MainWindow::createGraphicBox()
   connect(grcontourAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grcontourisoAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grisoAct,        SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grHorProfAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grVerProfAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  grsignalMapper->setMapping(grscatterAct,  QString("grscatterAct"));
+  grsignalMapper->setMapping(grscatterAct,    QString("grscatterAct"));
   grsignalMapper->setMapping(grcontourAct,    QString("grcontourAct"));
   grsignalMapper->setMapping(grcontourisoAct, QString("grcontourisoAct"));
   grsignalMapper->setMapping(grisoAct,        QString("grisoAct"));
+  grsignalMapper->setMapping(grHorProfAct,    QString("grHorProfAct"));
+  grsignalMapper->setMapping(grVerProfAct,    QString("grVerProfAct"));
   
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
   QMenu *subject = new QMenu(this);
   grsourceAct    = new QAction(tr("&source"), this);
   grimageAct     = new QAction(tr("&image"), this);
-  grexample1Act  = new QAction(tr("&example 1"), this);
-  grexample2Act  = new QAction(tr("&example 2"), this);
+  grexample1Act  = new QAction(tr("example &1"), this);
+  grexample2Act  = new QAction(tr("example &2"), this);
+  grexample3Act  = new QAction(tr("example &3"), this);
 
   subject->addAction(grsourceAct);
   subject->addAction(grimageAct);
   subject->addAction(grexample1Act);
   subject->addAction(grexample2Act);
+  subject->addAction(grexample3Act);
   subject->setDefaultAction(grimageAct);
   subjectpopupButton->setMenu(subject);
 
@@ -392,11 +403,13 @@ QWidget *MainWindow::createGraphicBox()
   connect(grimageAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grexample3Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   grsignalMapper->setMapping(grsourceAct,   QString("grsourceAct"));
   grsignalMapper->setMapping(grimageAct,    QString("grimageAct"));
   grsignalMapper->setMapping(grexample1Act, QString("grexample1Act"));
   grsignalMapper->setMapping(grexample2Act, QString("grexample2Act"));
+  grsignalMapper->setMapping(grexample3Act, QString("grexample3Act"));
  
   graphicLayout->addWidget(zminLabel, 0, 0);
   graphicLayout->addWidget(zmaxLabel, 0, 2);

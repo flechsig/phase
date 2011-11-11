@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 Nov 11 17:30:18 flechsig> 
+//  Time-stamp: <11 Nov 11 13:25:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -27,6 +27,8 @@
 #include <qwt_symbol.h>
 #include <qwt_plot_directpainter.h>
 #include <qpaintengine.h>
+
+//#include <qwt_data.h>
 
 #include "plot.h"
 #include "phaseqt.h"
@@ -173,12 +175,17 @@ public:
 // parent is a pointer to the  mainwindow object 
 Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
-
-  d_directPainter = new QwtPlotDirectPainter( this );
-  d_curve = new QwtPlotCurve( "Test Curve" );
-  d_curve->attach( this );
-  d_curve->hide();
-
+  d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
+  d_curve1 = new QwtPlotCurve( "Curve 1" );            // one curve
+  d_curve2 = new QwtPlotCurve( "Curve 1" );            // one curve
+  getData();                                           // fill sample data
+  //d_curve1->setData( new CurveData() );
+  d_curve2->setRawSamples(xx, ysin, NPOINTS);
+  d_curve1->attach( this ); 
+  d_curve2->attach( this );                      
+  d_curve1->hide();
+  d_curve2->hide();
+  xxx= NULL; yyy=NULL;
   // bt= (struct BeamlineType *) parent;
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
@@ -206,6 +213,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   enableAxis(QwtPlot::yRight);
   
   plotLayout()->setAlignCanvasToScales(true);
+
   replot();
   
   // LeftButton for the zooming
@@ -234,14 +242,61 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   zoomer->setRubberBandPen(c);
   zoomer->setTrackerPen(c);
   this->fwhmon= 1;
+
   //  this->p_zoomer= zoomer;
 } // end constructor
 
 void Plot::contourPlot()
 {
   printf("contour plot experimental\n");
-
+  d_curve1->hide();
+  d_curve2->hide();
+  d_spectrogram->show();
+  replot();
 } // end contourPlot()
+
+void Plot::profilePlot(struct RayType *rays, int points, int type)
+{
+  int i, ix, iy;
+  struct RayType *rp;
+  rp= rays;
+
+  printf("profile plot experimental\n");
+
+  if (xxx != NULL) delete xxx;
+  if (xxx != NULL) delete yyy;
+  xxx= new double[BINS2];
+  yyy= new double[BINS2];
+
+  if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
+  if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
+
+  for (ix=0; ix< BINS2; ix++)
+    {
+    yyy[ix]= 0.0;
+    xxx[i]= 0.0;
+    }
+  
+  d_curve2->hide();
+  d_spectrogram->hide();
+
+  for (i=0; i< points; i++, rp++) 
+    {
+      ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
+      iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
+      if (ix < BINS2) xxx[ix]+= 1;          // add one hit
+      if (iy < BINS2) yyy[iy]+= 1;
+    }
+
+  for (ix=0; ix< BINS2; ix++)
+    xxx[i]= (ymax-ymin) * (i- 0.5) ;
+
+
+  d_curve1->setRawSamples(xxx, yyy, points);
+  d_curve1->show();
+ 
+  replot();
+} // end profilePlot()
 
 void Plot::fillData()
 {
@@ -284,18 +339,43 @@ void Plot::fillData()
 } // fillData
 
 
-void Plot::scatterPlot()
+void Plot::scatterPlot(struct RayType *rays, int points)
 {
+  int i;
+  struct RayType *rp;
+  
   printf("scatter plot experimental\n");
 
   d_spectrogram->hide();                              // hide spectrogram
+  d_curve2->hide();
+
+  if (xxx != NULL) delete xxx;
+  if (xxx != NULL) delete yyy;
+  xxx= new double[points];
+  yyy= new double[points];
+
+  rp= rays;
+  //clearPoints();
+  for (i=0; i< points; i++, rp++) 
+    {
+      xxx[i]= rp->z;
+      yyy[i]= rp->y;
+    }
+  d_curve1->setRawSamples(xxx, yyy, points);
+
+  //  appendPoint( QPointF( rp->z, rp->y ) );
+
+  //  d_curve1->setRawSamples((const double *)rays->y, (const double *)rays->z, points);
+
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
-  d_curve->setStyle( QwtPlotCurve::NoCurve );
-  d_curve->setSymbol( new QwtSymbol( QwtSymbol::XCross,
+  d_curve1->setStyle( QwtPlotCurve::NoCurve );
+  d_curve1->setSymbol( new QwtSymbol( QwtSymbol::XCross,
         Qt::NoBrush, QPen( Qt::white ), QSize( 3, 3 ) ) );
   setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
-  d_curve->setData( new CurveData() );
-  d_curve->show();
+  //    d_curve1->setData( new CurveData() );
+  d_curve1->show();
+  //d_directPainter->drawSeries( d_curve1,
+  //   			       d_curve1->data->size() - 1, d_curve1->data->size() - 1 );
   if (plotsubject == PLOT_SOURCE)
     {
       printf("scatterplot source, file: %s\n", __FILE__);
@@ -304,7 +384,7 @@ void Plot::scatterPlot()
     {
       printf("scatterplot result, file: %s \n", __FILE__);
     }
-  canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
+  //  canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
 
 } // scatterPlot
 
@@ -608,11 +688,11 @@ void Plot::hfill2(struct RayType *rays, int points)
   if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
   h2max= 0.0;
 
-  clearPoints();
+  //  clearPoints();
 
   for (i=0; i< points; i++, rp++)
     {
-      appendPoint( QPointF( rp->z, rp->y ) );
+      //      appendPoint( QPointF( rp->z, rp->y ) );
       ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
       iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
       if ((ix < BINS2) && (iy < BINS2)) h2arr[ix][iy]+= 1;          // add one hit
@@ -694,18 +774,29 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
 
 void Plot::appendPoint( const QPointF &point )
 {
-    CurveData *data = static_cast<CurveData *>( d_curve->data() );
+    CurveData *data = static_cast<CurveData *>( d_curve1->data() );
     data->append( point );
-    d_directPainter->drawSeries( d_curve,
-			       data->size() - 1, data->size() - 1 );
+    //   d_directPainter->drawSeries( d_curve1,
+    //			       data->size() - 1, data->size() - 1 );
 }
 
 void Plot::clearPoints()
 {
-    CurveData *data = static_cast<CurveData *>( d_curve->data() );
+    CurveData *data = static_cast<CurveData *>( d_curve1->data() );
     data->clear();
 
     replot();
+}
+
+// for test plot
+void Plot::getData()
+  // produce some dummy data
+{
+  for ( int i=0; i<NPOINTS; i++ ) {
+    xx[i] = 0.1*i;
+    ysin[i] = sin(xx[i]);
+    ycos[i] = cos(xx[i]);
+  }
 }
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

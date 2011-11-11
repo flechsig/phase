@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <10 Nov 11 13:57:06 flechsig> 
+//  Time-stamp: <11 Nov 11 17:15:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -289,7 +289,13 @@ void MainWindow::activateProc(const QString &action)
       d_plot->plotstyle= PLOT_ISO;
       d_plot->showSpectrogram(false);
       d_plot->showContour(true);
-    } 
+    }
+
+ if (!action.compare("grHorProfAct")) 
+    { 
+      d_plot->plotstyle= PLOT_HPROF;
+      
+    }
 
   if (!action.compare("grsourceAct")) 
     { 
@@ -319,6 +325,13 @@ void MainWindow::activateProc(const QString &action)
       //   d_plot->setdefaultData2();
     }
 
+  if (!action.compare("grexample3Act")) 
+    { 
+      d_plot->plotsubject= PLOT_EXAMPLE3;
+      //  d_plot->setTitle(tr("PhaseQt: example 2"));
+      //   d_plot->setdefaultData2();
+    }
+
   if (!action.compare("readFg34Act")) 
     { 
       printf("readFg34Act button pressed\n"); 
@@ -329,6 +342,13 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myreadfg34_par(&myparent->myBeamline()->src, &myparent->myBeamline()->BLOptions.apr,
 		       &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
 		       &myparent->myBeamline()->BLOptions.epsilon);
+
+	  strncpy(myparent->myPHASEset()->so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
+	  strncpy(myparent->myPHASEset()->so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
+	  strncpy(myparent->myPHASEset()->so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
+	  strncpy(myparent->myPHASEset()->so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
+	  strncpy(myparent->myPHASEset()->so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
+	  // if (c_window) delete c_window;
 	  parameterUpdateAll(NPARS);
 	} else
 	QMessageBox::warning(this, tr("readFg34Act"),
@@ -709,27 +729,41 @@ void MainWindow::grapplyslot()
   sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
   sscanf(grzmaxE->text().toAscii().data(), "%lf", &d_plot->Plot::zmax);
 
+  // we do it in two steps 1st data, second style 
   // fill data, update statistics, update header
   switch (d_plot->plotsubject)
     {
     case PLOT_SOURCE: 
       if (myparent->myBeamline()->beamlineOK & sourceOK)
 	{
-	  d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			    myparent->myBeamline()->RTSource.raynumber);
 	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 				   myparent->myBeamline()->RTSource.raynumber, 
 				   myparent->myBeamline()->deltalambdafactor);
 	  UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
 	  d_plot->setTitle(tr("Source Plane"));
-	  if (d_plot->plotstyle <= 4)
+
+          switch (d_plot->plotstyle)
 	    {
-	    d_plot->setphaseData("grsourceAct");
-	    d_plot->replot();
-	    }
-	  else
-	    {
-	      d_plot->scatterPlot();
+	    case PLOT_ISO:
+	    case PLOT_CONTOUR:
+	    case PLOT_CONTOURISO:
+	  
+	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			       myparent->myBeamline()->RTSource.raynumber);
+	      d_plot->setphaseData("grsourceAct");
+	      d_plot->contourPlot();
+	      break;
+	    case PLOT_SCATTER:
+	  
+	      d_plot->scatterPlot((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			       myparent->myBeamline()->RTSource.raynumber);
+	      break;
+	    case PLOT_HPROF:
+	    case PLOT_VPROF:
+	      d_plot->profilePlot( (struct RayType *)myparent->myBeamline()->RTSource.SourceRays,
+				  myparent->myBeamline()->RESULT.points, d_plot->plotstyle);
+	      break;
+	    
 	    }
 	}
       else
@@ -739,21 +773,30 @@ void MainWindow::grapplyslot()
     case PLOT_RESULT:
       if (myparent->myBeamline()->beamlineOK & resultOK)
 	{
-	  d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points);
 	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 				   myparent->myBeamline()->RESULT.points, 
 				   myparent->myBeamline()->deltalambdafactor);
 	  UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
 	  d_plot->setTitle(tr("Image Plane"));
+
 	  if (d_plot->plotstyle <= 4)
 	    {
+	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+				   myparent->myBeamline()->RESULT.points);
 	      d_plot->setphaseData("grimageAct");
-	      d_plot->replot();
+	      d_plot->contourPlot();
 	    }
-	  else
+	  if (d_plot->plotstyle == PLOT_SCATTER)
+	  
 	    {
-	      d_plot->scatterPlot();
+	      d_plot->scatterPlot((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+				  myparent->myBeamline()->RESULT.points);
+	    }
+	  if (d_plot->plotstyle == PLOT_HPROF)
+	    {
+	      d_plot->profilePlot((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+				  myparent->myBeamline()->RESULT.points, PLOT_HPROF);
+
 	    }
 	}
       else
@@ -763,18 +806,28 @@ void MainWindow::grapplyslot()
     case PLOT_EXAMPLE1:
       d_plot->setTitle(tr("PhaseQt: example 1"));
       d_plot->setdefaultData();
-      d_plot->replot();
+      d_plot->contourPlot();
       break;
       
     case PLOT_EXAMPLE2:
       d_plot->setTitle(tr("PhaseQt: example 2"));
       d_plot->setdefaultData2();
+      d_plot->contourPlot();
+      break;
+
+    case PLOT_EXAMPLE3:
+      d_plot->setTitle(tr("PhaseQt: example 3"));
+      d_plot->d_spectrogram->hide(); 
+      d_plot->d_curve1->hide();
+      d_plot->d_curve2->show();
       d_plot->replot();
       break;
       
     default:
       printf("MainWindow::grapplyslot: d_plot->plotsubject: %d not defined\n", d_plot->plotsubject);
-    } // end switch
+    } // end switch data
+
+
 
   //d_plot->replot();
 #ifdef DEBUG

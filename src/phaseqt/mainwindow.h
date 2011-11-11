@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <09 Nov 11 10:43:44 flechsig>  */
+/*  Time-stamp: <11 Nov 11 12:59:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -278,10 +278,13 @@ private:
     QAction *grcontourAct;
     QAction *grcontourisoAct;
     QAction *grisoAct;
+    QAction *grHorProfAct;
+    QAction *grVerProfAct;
     QAction *grsourceAct;
     QAction *grimageAct;
     QAction *grexample1Act;
     QAction *grexample2Act;
+    QAction *grexample3Act;
     Plot    *d_plot;
     SingleRay *s_ray;
     OptiInput *o_input;

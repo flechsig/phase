@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <28 Oct 11 15:36:17 flechsig> 
+//  Time-stamp: <11 Nov 11 17:06:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -90,7 +90,8 @@ void ConfigWindow::selectSlot()
     return;
   
 #ifdef DEBUG
-  printf("DEBUG selectSlot:\n  description: >>%s<<, oldname: >>%s<<, extension: >>%s<<\n", buffer, oldname, extension);
+  printf("DEBUG selectSlot:\n  description: >>%s<<, oldname: >>%s<<, extension: >>%s<<\n", 
+	 buffer, oldname, extension);
 #endif
   
   QFileDialog *dialog = new QFileDialog(this);
@@ -118,12 +119,38 @@ void ConfigWindow::selectSlot()
 	    if ( !strncmp(buffer, "ray input (source)", 6) ) 
 	      strncpy(myparent->sourceraysname, fname, MaxPathLength); else
 	      if ( !strncmp(buffer, "ray output (image)", 6) )
-		strncpy(myparent->imageraysname, fname, MaxPathLength); 
-	      else
+		strncpy(myparent->imageraysname, fname, MaxPathLength); else
 		if ( !strncmp(buffer, "matrix", 4) ) 
 		  strncpy(myparent->matrixname, fname, MaxPathLength); else
 		  if ( !strncmp(buffer, "mapname", 4) ) 
 		    strncpy(myparent->mapname, fname, MaxPathLength); else
+		    if ( !strncmp(buffer, "so4_fsource4a", 13) )
+		      { 
+			strncpy(myparent->so4_fsource4a, fname, MaxPathLength);
+			strncpy(myparent->myBeamline()->src.so4.fsource4a, fname, 80);
+		      } else
+		      if ( !strncmp(buffer, "so4_fsource4b", 13) ) 
+			{
+			  strncpy(myparent->so4_fsource4b, fname, MaxPathLength);
+			  strncpy(myparent->myBeamline()->src.so4.fsource4b, fname, 80);
+			} else
+			if ( !strncmp(buffer, "so4_fsource4c", 13) )
+			  { 
+			    strncpy(myparent->so4_fsource4c, fname, MaxPathLength);
+			    strncpy(myparent->myBeamline()->src.so4.fsource4c, fname, 80);
+			  } else
+			  if ( !strncmp(buffer, "so4_fsource4d", 13) ) 
+			    {
+			      strncpy(myparent->so4_fsource4d, fname, MaxPathLength);
+			      strncpy(myparent->myBeamline()->src.so4.fsource4d, fname, 80);
+			    } else
+			    if ( !strncmp(buffer, "so6_fsource6", 3) ) 
+			      {
+				strncpy(myparent->so6_fsource6, fname, MaxPathLength); 
+				strncpy(myparent->myBeamline()->src.so6.fsource6, fname, 80);
+			      }
+			    else
+
 		    printf("selectSlot: error: no matching buffer: >>%s<<\n", buffer);
       
       // update widget
@@ -136,7 +163,7 @@ void ConfigWindow::selectSlot()
 void ConfigWindow::fillList()
 {
 
-  char slist[10][310];
+  char slist[13][310];
   // we allow 50 characters description and 20 for the filename
 
   mkRow(slist[0], "beamline name \t: ",        myparent->myPHASEset()->beamlinename);
@@ -147,6 +174,11 @@ void ConfigWindow::fillList()
   mkRow(slist[2], "ray output (image) \t: ",   myparent->myPHASEset()->imageraysname);
   mkRow(slist[6], "matrix \t: ",               myparent->myPHASEset()->matrixname);
   mkRow(slist[7], "mapname \t: ",              myparent->myPHASEset()->mapname);
+  mkRow(slist[8], "so4_fsource4a \t: ",        myparent->myPHASEset()->so4_fsource4a);
+  mkRow(slist[9], "so4_fsource4b \t: ",        myparent->myPHASEset()->so4_fsource4b);
+  mkRow(slist[10], "so4_fsource4c \t: ",       myparent->myPHASEset()->so4_fsource4c);
+  mkRow(slist[11], "so4_fsource4d \t: ",       myparent->myPHASEset()->so4_fsource4d);
+  mkRow(slist[12], "so4_fsource6 \t: ",        myparent->myPHASEset()->so6_fsource6);
   
   fileList->setAlternatingRowColors(true);
   fileList->addItems(QStringList()
@@ -158,6 +190,11 @@ void ConfigWindow::fillList()
 		     << slist[5]
 		     << slist[6]
 		     << slist[7]
+		     << slist[8]
+		     << slist[9]
+		     << slist[10]
+		     << slist[11]
+		     << slist[12]
 		     );
 } // fillList
 
