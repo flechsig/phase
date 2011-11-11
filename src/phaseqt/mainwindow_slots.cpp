@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <11 Nov 11 17:15:42 flechsig> 
+//  Time-stamp: <2011-11-11 22:37:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -348,7 +348,7 @@ void MainWindow::activateProc(const QString &action)
 	  strncpy(myparent->myPHASEset()->so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
 	  strncpy(myparent->myPHASEset()->so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
 	  strncpy(myparent->myPHASEset()->so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
-	  // if (c_window) delete c_window;
+	  if (c_window) c_window->updateList();
 	  parameterUpdateAll(NPARS);
 	} else
 	QMessageBox::warning(this, tr("readFg34Act"),
