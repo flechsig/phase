@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-11-11 22:37:00 flechsig> 
+//  Time-stamp: <2011-11-11 23:07:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -340,8 +340,8 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
 	  myparent->myreadfg34_par(&myparent->myBeamline()->src, &myparent->myBeamline()->BLOptions.apr,
-		       &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
-		       &myparent->myBeamline()->BLOptions.epsilon);
+				   &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
+				   &myparent->myBeamline()->BLOptions.epsilon);
 
 	  strncpy(myparent->myPHASEset()->so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
 	  strncpy(myparent->myPHASEset()->so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
@@ -805,7 +805,9 @@ void MainWindow::grapplyslot()
       
     case PLOT_EXAMPLE1:
       d_plot->setTitle(tr("PhaseQt: example 1"));
+      printf("aaaa1\n");
       d_plot->setdefaultData();
+      printf("aaaa2\n");
       d_plot->contourPlot();
       break;
       
