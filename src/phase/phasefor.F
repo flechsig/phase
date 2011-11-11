@@ -1931,15 +1931,19 @@ cc        include '../phase/phase_struct.for'
       read(16,*)src.isrctype
       read(16,3)dfile
       iname=clen1(dfile)
+      src.so4.fsource4a(:80)=''
       src.so4.fsource4a(:iname)=dfile(:iname)
       read(16,3)dfile
       iname=clen1(dfile)
+      src.so4.fsource4b(:80)=''
       src.so4.fsource4b(:iname)=dfile(:iname)
       read(16,3)dfile
       iname=clen1(dfile)
+      src.so4.fsource4c(:80)=''
       src.so4.fsource4c(:iname)=dfile(:iname)
       read(16,3)dfile
       iname=clen1(dfile)
+      src.so4.fsource4d(:80)=''
       src.so4.fsource4d(:iname)=dfile(:iname)
 
 c-- UF 17.11.08 start
