@@ -144,16 +144,12 @@ c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
 #ifdef DEBUG
-         write(6,*)'=============================== '
-         write(6,*)' fgmapidp: imodus   = ',imodus
-         write(6,*)' fgmapidp: iord     = ',iord
-         write(6,*)' fgmapidp: iplmode  = ',iplmode
-         write(6,*)' fgmapidp: acc      = ',acc
-         write(6,*)' fgmapidp: am.a(0,2)= ', am.a(0,2)
-         write(6,*)' fgmapidp: g.sina   = ', g.sina
-         write(6,*)'(1) ypc1(0020)      = ',ypc1(0,0,2,0)
-         write(6,*)'(1) dzpc(0001)      = ',dzpc(0,0,0,1)
-         write(6,*)'=============================== '
+c         write(6,*)'=============================== '
+c         write(6,*)' fgmapidp: imodus   = ',imodus
+c         write(6,*)' fgmapidp: iord     = ',iord
+c         write(6,*)' fgmapidp: iplmode  = ',iplmode
+c         write(6,*)' fgmapidp: acc      = ',acc
+c         write(6,*)'=============================== '
 #endif
         if(acc.lt.1e-8)then
            write(*,*)'epsilon for Newton routine < 1e-8'
@@ -411,11 +407,10 @@ c---------------------------------------------------------------
         endif   ! imodus
 
 #ifdef DEBUG
-         write(6,*)'====================== '
-         write(6,*)'(2) ypc1(0020): ',ypc1(0,0,2,0)
-         write(6,*)'(2) dzpc(0001)      = ',dzpc(0,0,0,1)
-         write(6,*)'====================== '
-         write(6,*)' '
+c         write(6,*)'====================== '
+c	 
+c         write(6,*)'====================== '
+c         write(6,*)' '
 #endif
 
 c-------------------------------------------------------
