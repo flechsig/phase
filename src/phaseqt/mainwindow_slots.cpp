@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-11-11 23:07:16 flechsig> 
+//  Time-stamp: <2011-11-13 11:24:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -145,7 +145,7 @@ void MainWindow::activateProc(const QString &action)
 	
 
       if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
-		    (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
+		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
 	{
 	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
