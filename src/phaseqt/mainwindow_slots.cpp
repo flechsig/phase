@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-11-13 11:24:11 flechsig> 
+//  Time-stamp: <2011-11-13 11:44:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -784,6 +784,7 @@ void MainWindow::grapplyslot()
 	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 				   myparent->myBeamline()->RESULT.points);
 	      d_plot->setphaseData("grimageAct");
+              printf("xxxxx\n");
 	      d_plot->contourPlot();
 	    }
 	  if (d_plot->plotstyle == PLOT_SCATTER)

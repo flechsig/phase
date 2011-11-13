@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <11 Nov 11 13:25:23 flechsig> 
+//  Time-stamp: <2011-11-13 19:56:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -141,12 +141,15 @@ public:
       po= plotobj;
 
 #ifdef DEBUG
-      printf("construct SpectrogramDataPhase: zmin %f zmax %f h2max: %f\n ", po->zmin, po->zmax,  po->h2max);
+      printf("debug: constructor SpectrogramDataPhase: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
       setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
       setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
       setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
+#ifdef DEBUG
+      printf(" ==> done\n");
+#endif
     }
   
     virtual double value(double x, double y) const
@@ -407,13 +410,14 @@ void Plot::setphaseData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
-  printf("debug: Plot::setphaseData called\n");
+  printf("debug: Plot::setphaseData called, datatype: %s\n", datatype);
 #endif  
 
-  delete d_spectrogram->data();   // clean up the old data - correct??
-  
+  //delete d_spectrogram->data();   // clean up the old data - correct??
+  //printf("delete d_spectrogram->data() ==> done\n");
   
   d_spectrogram->setData(new SpectrogramDataPhase(this));
+  printf("yyyyyy\n");
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -725,7 +729,7 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
   double fwhmfac;
 
 #ifdef DEBUG  
-  printf("debug: statistics called, fwhmon= %d\n", fwhmon);
+  printf("debug: statistics called, fwhmon= %d", fwhmon);
 #endif
 
   //fwhmfac= 2.3548;              // more accurate on request
@@ -770,6 +774,9 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
       wdz*= fwhmfac;
       wdy*= fwhmfac;
     }
+#ifdef DEBUG  
+  printf(" ==> statistics done\n");
+#endif
 } // Plot::statistics
 
 void Plot::appendPoint( const QPointF &point )
