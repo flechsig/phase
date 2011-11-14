@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <11 Nov 11 13:07:04 flechsig> 
+//  Time-stamp: <14 Nov 11 13:15:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1044,6 +1044,10 @@ void MainWindow::parameterUpdateAll(int zahl)
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
 // defaults can be set with an empty text
+// function: 
+// a) read selected item
+// b) copy contents into data structure
+// c) update the item in the list
 void MainWindow::parameterUpdate(int pos, const char *text, int init)
 {
   char buffer[MaxPathLength];
@@ -1129,8 +1133,9 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
   //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
   //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
-#ifdef DEBUG1
-  printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
+#ifdef DEBUG
+  //  printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
+  printf("debug: parameterUpdate: pos: %d, file: %s, zmin: %lf\n", pos, __FILE__, op->xi.zmin);
 #endif
 
   scanned= 1;      // set a default 
@@ -1277,21 +1282,30 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmay, inhalt[pos]);
       break;
     case 27:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
-      mysrc->so1.sigmayp*= 1e-3;
+      if (!init) 
+	{ 
+	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
+	  mysrc->so1.sigmayp*= 1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
       sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmayp*1e3, inhalt[pos]);
       break;
 
     case 28:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.ymin);
-      op->xi.ymin*= 1e-3;
+      if (!init) 
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.ymin);
+	  op->xi.ymin*= 1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
       sprintf(buffer, "%lg \t: %s", op->xi.ymin* 1e3, inhalt[pos]);
       break;
     case 29:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.ymax);
-      op->xi.ymax*= 1e-3;
+      if (!init)
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.ymax);
+	  op->xi.ymax*= 1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
       sprintf(buffer, "%lg \t: %s", op->xi.ymax* 1e3, inhalt[pos]);
       break;
@@ -1317,21 +1331,30 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmaz, inhalt[pos]);
       break;
     case 34:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
-      mysrc->so1.sigmazp*= 1e-3;
+      if (!init)
+	{
+	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
+	  mysrc->so1.sigmazp*= 1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
       sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmazp*1e3, inhalt[pos]);
       break;
 
     case 35:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.zmin);
-      op->xi.zmin*=1e-3;
+      if (!init)
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.zmin);
+	  op->xi.zmin*=1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
       sprintf(buffer, "%lg \t: %s", op->xi.zmin* 1e3, inhalt[pos]);
       break;
     case 36:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.zmax);
-      op->xi.zmax*= 1e-3;
+      if (!init) 
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.zmax);
+	  op->xi.zmax*= 1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
       sprintf(buffer, "%lg \t: %s", op->xi.zmax* 1e3, inhalt[pos]);
       break;
