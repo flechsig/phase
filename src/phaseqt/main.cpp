@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <04 Nov 11 13:06:32 flechsig> 
+//  Time-stamp: <14 Nov 11 14:05:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -36,7 +36,10 @@ int main(int argc, char *argv[])
       myphaseQt.myBatchMode(cmode, selected, iord);
       exit(3);
       break;
-    
+    case 5:          // only filename given
+      cout << "main: filename provided- do not read " << (char*) MainPickName << endl;
+      myphaseQt.initSet(myphaseQt.myPHASEset()->beamlinename);
+      break;
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);
     }

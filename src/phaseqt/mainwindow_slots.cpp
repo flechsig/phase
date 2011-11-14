@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-11-13 11:44:48 flechsig> 
+//  Time-stamp: <14 Nov 11 14:32:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -136,17 +136,19 @@ void MainWindow::activateProc(const QString &action)
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
+printf("uu\n");	
       myparent->myBuildBeamline();
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
+printf("ww\n");	
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
           myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-	
-
+printf("yy\n");	
       if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
 	{
+	  printf("zz\n");
 	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
 	  myparent->myPST();
@@ -358,7 +360,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("poInitSourceAct")) 
     { 
       printf("poInitSourceAct button pressed\n"); 
-      printf("not tested so far\n"); 
+      printf("not tested so far- !!! no test if files exists !!!\n"); 
       
       if ((myparent->myBeamline()->src.isrctype == 2) || 
 	  (myparent->myBeamline()->src.isrctype == 3) ||

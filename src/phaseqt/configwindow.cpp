@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2011-11-11 22:26:25 flechsig> 
+//  Time-stamp: <14 Nov 11 13:54:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -45,6 +45,7 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
   fillList();
 
   configWindowBox->show();
+  //  configWindowBox->setAttribute(Qt::WA_DeleteOnClose);
 } // end constructor
 
 void ConfigWindow::applySlot()

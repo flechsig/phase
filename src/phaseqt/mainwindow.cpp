@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Nov 11 13:15:09 flechsig> 
+//  Time-stamp: <14 Nov 11 14:18:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -46,9 +46,18 @@ MainWindow::MainWindow(PhaseQt *parent)
   this->o_input= NULL;
   this->c_window= NULL;
   myparent= parent;
+  setAttribute(Qt::WA_DeleteOnClose);
 } // end MainWindow
 
+// destructor
+MainWindow::~MainWindow()
+{
+  cout << "MainWindow destructor called" << endl;
+  if (c_window) c_window->configWindowBox->close();
+  if (s_ray)    s_ray->singleRayBox->close();
+  if (o_input)  o_input->optiInputBox->close();
 
+}
 /////////////////////////////////////
 // begin widget definition section //
 /////////////////////////////////////
@@ -1133,9 +1142,9 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
   //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
   //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
 
-#ifdef DEBUG
-  //  printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
-  printf("debug: parameterUpdate: pos: %d, file: %s, zmin: %lf\n", pos, __FILE__, op->xi.zmin);
+#ifdef DEBUG1
+    printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
+  //printf("debug: parameterUpdate: pos: %d, file: %s, zmin: %lf\n", pos, __FILE__, op->xi.zmin);
 #endif
 
   scanned= 1;      // set a default 
@@ -1562,6 +1571,12 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	}
     }
   myparent->myReadBLFile(oname);
+  strncpy(myparent->myPHASEset()->so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
+  strncpy(myparent->myPHASEset()->so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
+  strncpy(myparent->myPHASEset()->so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
+  strncpy(myparent->myPHASEset()->so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
+  strncpy(myparent->myPHASEset()->so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
+  if (c_window) c_window->updateList();
   myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
 
