@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Nov 11 14:18:45 flechsig> 
+//  Time-stamp: <14 Nov 11 17:16:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1829,7 +1829,7 @@ void MainWindow::UpdateSourceBox()
   char TextField [8][40];            /* 8 editfelder */
   char LabelField[9][100]; 
    
-  myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK); 
+  myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK | pstimageOK); 
         
 #ifdef DEBUG 
   printf("debug: InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
