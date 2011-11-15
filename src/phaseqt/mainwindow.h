@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <14 Nov 11 13:41:10 flechsig>  */
+/*  Time-stamp: <15 Nov 11 17:34:19 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -16,6 +16,7 @@
 #include <QKeySequence>
 #include <QListWidget>
 #include <QGroupBox>
+#include <QMessageBox>
 #include <sys/stat.h>
 
 
@@ -120,7 +121,7 @@ private:
     
     
     void UpdateElementBox(int);
-    
+    void writeSimp();
 
     QTextEdit   *textEdit;
     QListWidget *customerList;
@@ -272,6 +273,7 @@ private:
     QAction *writemapAct;
     QAction *writematAct;
     QAction *writecoeffAct;
+    QAction *writesimpAct;
     QAction *writeRTresultAct;
 
     QMenu   *plotstyleMenu;

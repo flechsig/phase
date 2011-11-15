@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <27 Oct 10 12:57:14 flechsig> 
+c$$$ Time-stamp: <15 Nov 11 15:14:09 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -24,13 +24,10 @@ c*************************** neu **************************
 
 c a trick to have the struct only in the ./phase and find it from opti 
 c if it works under vms is not yet tested
-#ifdef VMS
-        include '[-.phase]phase_struct.for'
-c        include 'phase_struct.for'
-#else
+
 cc        include '../phase/phase_struct.for'
 #include '../phase/phase_struct.F'
-#endif
+
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Nov 11 17:16:54 flechsig> 
+//  Time-stamp: <15 Nov 11 17:49:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -163,6 +163,11 @@ void MainWindow::createActions()
     writecoeffAct->setStatusTip(tr("Write file with mirror coefficients"));
     signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
     connect(writecoeffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    writesimpAct = new QAction(tr("Write simpre/simpim"), this);
+    writesimpAct->setStatusTip(tr("Write simpre/simpim file in PO mode"));
+    signalMapper->setMapping(writesimpAct, QString("writesimpAct"));
+    connect(writesimpAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     writeRTresultAct = new QAction(tr("Write &RT results "), this);
     writeRTresultAct->setStatusTip(tr("Write file with ray trace results"));
@@ -555,6 +560,7 @@ void MainWindow::createMenus()
     cmdMenu->addAction(writemapAct);
     cmdMenu->addAction(writematAct);
     cmdMenu->addAction(writecoeffAct);
+    cmdMenu->addAction(writesimpAct);
     
     viewMenu = menuBar()->addMenu(tr("&View"));
 
@@ -2286,6 +2292,65 @@ int MainWindow::elementListNotSelected()
     }
   return rval;
 }
+
+// write files simpre.dat and simpim.dat
+void MainWindow::writeSimp()
+{
+  int ret, i;
+  FILE *f1, *f2;
+#ifdef DEBUG
+  cout << "debug: writeSimp called" << endl;
+#endif
+  char simprefilename[]= "simpre.dat";
+  char simpimfilename[]= "simpim.dat";
+
+  if (fexists(simprefilename) || fexists(simpimfilename))
+    {
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(tr("file simpre.dat and/or simpim.dat exists!"));
+      msgBox->setInformativeText(tr("replace file(s)"));
+      msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel); 
+      ret= msgBox->exec();
+      delete msgBox;
+      if (ret == QMessageBox::Cancel)
+	{ 
+	  cout << "writeSimp canceled" << endl;
+	  return;
+	}
+    }
+  
+  if ((f1= fopen(simprefilename, "w+")) == NULL)
+    {
+      cout << "cant open " << simprefilename<< endl;
+      return;
+    }
+
+  if ((f2= fopen(simpimfilename, "w+")) == NULL)
+    {
+      cout << "cant open " << simpimfilename<< endl;
+      return;
+    }
+
+  // header
+  fprintf(f1, "# file simpre.dat written by phase\n");
+  fprintf(f2, "# file simpim.dat written by phase\n");
+
+
+  for (i= 0; i < 10; i++)
+    {
+      fprintf(f1, "%d\n", i);
+      fprintf(f2, "%d\n", i);
+    }
+  fprintf(f1, "# end\n");
+  fprintf(f2, "# end\n");
+  // add code to write the data
+
+  fclose(f1);
+  fclose(f2);
+
+  //  count << "return: " << ret << endl; 
+  cout << "writeSimp done" << endl; 
+} // end writeSimp
 
 
 /////////////////////////////////

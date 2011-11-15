@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Oct 11 12:46:13 flechsig>  */
+/*   Time-stamp: <14 Nov 11 16:12:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -379,7 +379,7 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
   /* PHASEgraf.c */
   /*   optistructure.fileliste= NULL;     */
 #ifdef DEBUG
-  printf("InitDataSets end\n");   
+  printf("InitDatSets end\n");   
 #endif  
 }
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <09 Nov 11 11:45:55 flechsig>  */
+/*   Time-stamp: <14 Nov 11 17:16:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -778,6 +778,7 @@ void
   BatchMode(struct PHASEset *, struct BeamlineType *, int, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
+  Check_iord(struct BeamlineType *),
   create_hormap(),
   DefGeometryC(struct gdatset *, struct geometrytype *),
   DefGeometryCM(double, struct gdatset *, struct geometrytype *),

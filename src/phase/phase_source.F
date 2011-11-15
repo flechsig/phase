@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <27 Oct 10 12:52:12 flechsig> 
+c$$$ Time-stamp: <15 Nov 11 14:52:18 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -34,12 +34,9 @@ c**************************************************************
 	implicit real*8(a-h,o-z)
 
 c a trick to have the struct only in the ./phase and find it from opti 
-#ifdef VMS
-        include '[-.phase]phase_struct.for'
-#else
-cc        include '../phase/phase_struct.F'
+
 #include '../phase/phase_struct.F'
-#endif
+
 
 c**************************************************
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:39:05 flechsig>  */
+/*   Time-stamp: <15 Nov 11 15:29:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -484,41 +484,18 @@ void hplotpsdc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
      /* keine globalen variablen mehr 			*/
      /* fuer phsptrafo */
 {
-#ifdef VMS
-  FString fstitle, fsmetaname;
 
-  printf("hplotpsdc called\n");
-  CreateFString(&fstitle, gr->titel);    
-  CreateFString(&fsmetaname,  ph->plotpsname);    /* psd sind die daten */
-  hplotpsdf(&fstitle, &fsmetaname, gr, 
-	    pd->y, pd->z, plotdata, &pd->iy, &pd->iz);   
-#else 
   printf("hplotpsdc called\n");
   hplotpsdf(gr->titel, ph->plotpsname, gr, pd->y, pd->z, plotdata, &pd->iy, 
 	    &pd->iz, strlen(gr->titel), strlen(ph->plotpsname)); 
-#endif
+
 }  /* end  hplotpsd */
 
 void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr, 
 	       struct PHASEset *ph, double *plotdata) 
      /* 27.2.97 simpson ausdrucke                       */
      /* c- fortran interface 				*/
-     /* last mod. 11.2.00 				*/
-   
 {
-#ifdef VMS
-  static FString fstitle, fsmetaname;
-
-  printf("hplotpssimc called\n");
-  CreateFString(&fstitle, gr->titel);    
-  CreateFString(&fsmetaname,  ph->plotpsname);    /* psd sind die daten */
-  hplotpssimf(&fstitle, &fsmetaname, &gr->psfile, 
-	      &bl->BLOptions.xi.ymin, &bl->BLOptions.xi.ymax,
-	      &bl->BLOptions.xi.ianzy0,
-	      &bl->BLOptions.xi.zmin, &bl->BLOptions.xi.zmax,
-	      &bl->BLOptions.xi.ianzz0,
-	      plotdata); 
-#else
   printf("hplotpssimc called\n");
   hplotpssimf(gr->titel, ph->plotpsname, &gr->psfile, 
 	      &bl->BLOptions.xi.ymin, &bl->BLOptions.xi.ymax,
@@ -527,7 +504,7 @@ void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
 	      &bl->BLOptions.xi.ianzz0,
 	      plotdata, 
 	      strlen(gr->titel),strlen(ph->plotpsname)); 
-#endif     
+    
 }  /* end  hplotpssimc */
 
 

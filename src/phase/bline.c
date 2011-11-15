@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 Nov 11 16:41:28 flechsig>  */
+/*   Time-stamp: <14 Nov 11 17:04:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -42,48 +42,26 @@ void BuildBeamline(struct BeamlineType *bl)
   printf("debug: BuildBeamline: start: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 
-  printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
-  
-#ifdef SEVEN_ORDER
-  if (bl->BLOptions.ifl.iord > 7) 
-    {
-      printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
-      printf("set iord to 7\n");
-      bl->BLOptions.ifl.iord= 7;
-    }
-  if ((bl->BLOptions.ifl.iord > 4) && bl->BLOptions.REDUCE_maps)
-    {
-      printf("%d. order calc. not supported with REDUCE maps!\n", bl->BLOptions.ifl.iord);
-      printf("set iord to 4\n");
-      bl->BLOptions.ifl.iord= 4;
-    }
-#else 
-  if (bl->BLOptions.ifl.iord > 4) 
-    {
-      printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
-      printf("set iord to 4\n");
-      bl->BLOptions.ifl.iord= 4;
-    }
-#endif
-  printf("BuildBeamline: %d order calculation\n", bl->BLOptions.ifl.iord);
+  Check_iord(bl);                                 /* check the range of iord */
+  printf("BuildBeamline: Beamline contains %d element(s), %d order calculation\n", 
+	 bl->elementzahl,  bl->BLOptions.ifl.iord);
   /*--------------------------------------------------------*/ 
-  
+  if (bl->elementzahl < 1)
+    return;
+
   if (bl->beamlineOK & mapOK)  
     {   
       printf("BuildBeamline: all beamline elements are already OK- return\n");
       return;  /* nothing to do */
     }
-  
+
+
+
+  /* 1st loop */  
   elcounter= 1; 
   listpt= bl->ElementList;  
-  bl->xlen0= bl->deltalambdafactor= 0.0;     /* Laenge der opt. achse */
-  
-  /* Schleife ueber alle Elemente */
-  while (elcounter<= bl->elementzahl)
+  while (elcounter<= bl->elementzahl)  /* Schleife ueber alle Elemente */
     { 
-      /*
-	printf("buildbeamline: force built\n");
-	listpt->ElementOK=0; */
       if (listpt->ElementOK == 0)  /* element rebuild */
 	{
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
@@ -95,30 +73,42 @@ void BuildBeamline(struct BeamlineType *bl)
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
 #ifdef DEBUG
-	  printf("BuildBeamline: matrix of %d. element created\n", elcounter); 
+	  printf("BuildBeamline: matrixes and maps of %d. element created\n", elcounter); 
 #endif 
 	}             /* map ist OK */
       else
 	{
 	  printf("debug: BuildBeamline: element %d already OK- keep matrix\n");
-	}
+	} /* end if (listpt->ElementOK == 0) */
+      elcounter++; listpt++; 
+    } /* Schleife ueber alle Elemente fertig */
       
+
+  /* 2nd generate beamline matrix */  
+  elcounter= 1; 
+  listpt= bl->ElementList;  
+  bl->xlen0= bl->deltalambdafactor= 0.0;     /* Laenge der opt. achse */
+
+  /* 1st element */
+  if (listpt->MDat.Art != kEOESlit)         /* slit not */
+    {
+      memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE));
+      bl->xlen0+= listpt->geo.r + listpt->geo.rp;
+      SetDeltaLambda(bl, listpt);              /* resolutionfactor */
+    }
+  elcounter++; listpt++;
+
+  /* folgende elemente */
+  while (elcounter<= bl->elementzahl)
+    {
       if (listpt->MDat.Art != kEOESlit)         /* slit not */
 	{
-	  if (elcounter == 1)
-	    {
-	      printf("BuildBeamline- only one element- copy matrix\n");
-	      memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
-	    }
-	  else		                   /* bline zusammenbauen */
-	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
-	  /* GlueLeft(A, B) A= B* A */
-	  
+	  GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); /* GlueLeft(A, B) A= B* A */
 	  bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
+	  SetDeltaLambda(bl, listpt); /* resolutionfactor */
 	  printf("BuildBeamline: length of optical axis (bl->xlen0): %lf\n",
 		 bl->xlen0);
-	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
-	}    
+	} /* end  (listpt->MDat.Art != kEOESlit) */  
       elcounter++; listpt++; 
     } /* Schleife ueber alle Elemente fertig */
   
@@ -130,6 +120,8 @@ void BuildBeamline(struct BeamlineType *bl)
   /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
   /* mache das oben UF 17.11.10*/	
   /* beamline matrix und map ist fertig (source to image) */ 
+
+
   if (bl->BLOptions.SourcetoImage != 1)
     {
       imodus= 0; /* fuer det source to image ????? */
@@ -143,14 +135,16 @@ void BuildBeamline(struct BeamlineType *bl)
 	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
 	      exit(-1);
 	    }
+#ifdef XXX
 	  fdet_8(bl->wc, bl->xlc,
 		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		 &bl->ElementList[0].geo, 
 		 &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
-	  XFREE(ltp);
-	  bl->tp= NULL;
+#endif
+	  /*	  XFREE(ltp); */
+	  /* bl->tp= NULL; */
 	}
       else
 	{
@@ -173,6 +167,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  memcpy(&bl->xlm,    &listpt->xlm,    sizeof(struct xlenmaptype));
 	  /* matrix und map des letztes elementes in bl kopiert */
 	}
+
       /* rueckwaerts */
       while (elcounter > 1)	      /* nur bei mehreren Elementen */
 	{				     /* Schleife von hinten */
@@ -193,7 +188,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	      GlueLeft((double *)bl->M_ItoS, 
 		       (double *)listpt->M_ItoS);
 	    } /* end slit */
-	}
+	} /* end loop */
       
       /**********************************************************/
       /* map aus matrix herausholen und Determinanten berechnen */ 
@@ -217,12 +212,16 @@ void BuildBeamline(struct BeamlineType *bl)
 	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
 	      exit(-1);
 	    }
+	  printf(" call fdet_8- derzeit auskommentiert\n"); 
+#define FDET_8
+#ifdef FDET_8
 	  fdet_8(bl->wc, bl->xlc,
 		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		 &bl->ElementList[0].geo, 
 		 &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+#endif
 	  XFREE(ltp);
 	  bl->tp= NULL;
 	}
@@ -981,14 +980,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
 		      &listpt->mir, &listpt->geo,
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
-	   printf("\n2nd call fgmapidp_8\n\n");
-	   fgmapidp_8(&bl->BLOptions.epsilon, 
-		      listpt->wc, listpt->xlc, 
-		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
-		      &listpt->xlm, 
-		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-		      &listpt->mir, &listpt->geo,
-		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	   
 	 }
        else
 	 {
@@ -2788,6 +2780,32 @@ void ReadMKos(struct mirrortype *a, char *name)
       fclose(f); 
     }
 }  /* end  ReadMKos */ 
+
+/* check the range of iord */
+void Check_iord(struct BeamlineType *bl)
+{
+#ifdef SEVEN_ORDER
+  if (bl->BLOptions.ifl.iord > 7) 
+    {
+      printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+      printf("set iord to 7\n");
+      bl->BLOptions.ifl.iord= 7;
+    }
+  if ((bl->BLOptions.ifl.iord > 4) && bl->BLOptions.REDUCE_maps)
+    {
+      printf("%d. order calc. not supported with REDUCE maps!\n", bl->BLOptions.ifl.iord);
+      printf("set iord to 4\n");
+      bl->BLOptions.ifl.iord= 4;
+    }
+#else 
+  if (bl->BLOptions.ifl.iord > 4) 
+    {
+      printf("%d. order calc. not supported!\n", bl->BLOptions.ifl.iord);
+      printf("set iord to 4\n");
+      bl->BLOptions.ifl.iord= 4;
+    }
+#endif
+} /* end Check_iord */
 
 
 /* end bline.c */
