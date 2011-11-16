@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2011-11-13 19:56:10 flechsig> 
+//  Time-stamp: <16 Nov 11 15:30:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -190,6 +190,9 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve2->hide();
   xxx= NULL; yyy=NULL;
   // bt= (struct BeamlineType *) parent;
+
+
+
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
   

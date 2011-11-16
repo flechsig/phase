@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Nov 11 17:49:38 flechsig> 
+//  Time-stamp: <16 Nov 11 17:40:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -164,7 +164,7 @@ void MainWindow::createActions()
     signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
     connect(writecoeffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    writesimpAct = new QAction(tr("Write simpre/simpim"), this);
+    writesimpAct = new QAction(tr("Write PO density cuts (real/im.)"), this);
     writesimpAct->setStatusTip(tr("Write simpre/simpim file in PO mode"));
     signalMapper->setMapping(writesimpAct, QString("writesimpAct"));
     connect(writesimpAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -440,11 +440,32 @@ QWidget *MainWindow::createGraphicBox()
   //  graphicLayout->setRowStretch(1,1);
   graphicGroup->setLayout(graphicLayout);
   
+  QGroupBox  *plotGroup  = new QGroupBox(tr("plot"));
+  QGridLayout *plotGroupLayout = new QGridLayout(plotGroup);
+
+  //a few buttons
+  QToolButton* btnLogx = new QToolButton(plotGroup);
+  btnLogx->setText("Log Scale X");
+  btnLogx->setCheckable(true);
+  //  connect(btnLogx, SIGNAL(toggled(bool)), plot, SLOT(SetLogX(bool)));
+  QToolButton* btnLogy = new QToolButton(plotGroup);
+  btnLogy->setText("Log Scale Y");
+  btnLogy->setCheckable(true);
+  //  connect(btnLogy, SIGNAL(toggled(bool)), plot, SLOT(SetLogY(bool)));
+
   d_plot = new Plot(this);
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
   d_plot->setTitle(tr("PhaseQt"));
   d_plot->plotsubject= 1;                // the default
+
+//plotGroupLayout->addWidget(label,1,1,1,1);
+  plotGroupLayout->addWidget(btnLogx,1,2,1,1);
+  plotGroupLayout->addWidget(btnLogy,1,3,1,1);
+  plotGroupLayout->addWidget(d_plot,2,1,3,3);
+  //plotGroupLayout->addWidget(label2,5,1,1,3);  
+  plotGroupLayout->setMargin(12);
+
 
   statGroup  = new QGroupBox(tr("Statistics"));
   QGridLayout *statLayout = new QGridLayout;
@@ -515,7 +536,8 @@ QWidget *MainWindow::createGraphicBox()
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(statusGroup);
   vbox->addWidget(graphicGroup);
-  vbox->addWidget(d_plot);
+  //vbox->addWidget(d_plot);
+  vbox->addWidget(plotGroup);
   vbox->addWidget(statGroup);
   vbox->addStretch(1);
   graphicBox->setLayout(vbox);
@@ -2296,11 +2318,18 @@ int MainWindow::elementListNotSelected()
 // write files simpre.dat and simpim.dat
 void MainWindow::writeSimp()
 {
-  int ret, i;
+  int ret, i, idx, idy, j, k;
   FILE *f1, *f2;
+  
+  struct PSDType    *psd; 
+
 #ifdef DEBUG
   cout << "debug: writeSimp called" << endl;
+  cout << "debug: result type: " << myparent->myBeamline()->RESULT.typ << endl;
 #endif
+
+  psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+
   char simprefilename[]= "simpre.dat";
   char simpimfilename[]= "simpim.dat";
 
@@ -2335,11 +2364,13 @@ void MainWindow::writeSimp()
   fprintf(f1, "# file simpre.dat written by phase\n");
   fprintf(f2, "# file simpim.dat written by phase\n");
 
-
-  for (i= 0; i < 10; i++)
+  // psd(i,j,k) in fortran memory model
+  for (k= 0; k < 512; k++)
     {
-      fprintf(f1, "%d\n", i);
-      fprintf(f2, "%d\n", i);
+      // idx= k + 0 * 4096+ i * (4096 * 2)
+      // idy= k + 1 * 4096+ i * (4096 * 2)
+      fprintf(f1, "%d %f\n", k, psd->simpre[i]);
+      fprintf(f2, "%d %f\n", k, psd->simpim[i]);
     }
   fprintf(f1, "# end\n");
   fprintf(f2, "# end\n");
