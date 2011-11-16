@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <09 Nov 11 12:26:57 flechsig> 
+#  Time-stamp: <16 Nov 11 16:46:39 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -17,6 +17,7 @@ phaseqt_SOURCES = \
 	optiinput.cpp optiinput.h  \
 	phaseqt.cpp phaseqt.h \
 	plot.cpp plot.h \
+	plot1d.cpp plot1d.h \
 	singleray.cpp singleray.h \
 	../phase/bline.c ../phase/cutils.c ../phase/error.c \
 	../phase/phasec.c  ../phase/rtrace.c \
