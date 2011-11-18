@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.h */
 /*  Date      : <16 Aug 11 12:20:20 flechsig>  */
-/*  Time-stamp: <2011-11-11 22:39:43 flechsig>  */
+/*  Time-stamp: <18 Nov 11 12:36:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -28,14 +28,24 @@ private slots:
     void applySlot();
     void quitSlot();
     void selectSlot();
+    void selectSlot1(const QModelIndex &index);
 
 private:
+    QSortFilterProxyModel *proxyModel;
+    QTreeView        *proxyView;
     QPushButton      *configApplyB;
     QPushButton      *configQuitB;
     QListWidget      *fileList;
     PhaseQt          *myparent;
+    
     void             fillList();
     void             mkRow(char *, const char *, const char *);
+    void             addRow(const char *, const char *);
+    //void             addRow(QAbstractItemModel *, const char *, const char *);
+    //    QAbstractItemModel *createConfigModel(QObject *);
+    //QAbstractItemModel *mymodel;
+    QStandardItemModel *createConfigModel(QObject *);
+    QStandardItemModel *mymodel;
     
 };  
 #endif

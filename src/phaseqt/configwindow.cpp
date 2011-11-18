@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <14 Nov 11 13:54:05 flechsig> 
+//  Time-stamp: <18 Nov 11 14:57:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -14,16 +14,29 @@
 #include <QtGui>
 #include "configwindow.h"
 
+using namespace std;
+
 // the constructor
 ConfigWindow::ConfigWindow(PhaseQt *parent)
 {
 #ifdef DEBUG
   printf("debug: ConfigWindow constructor called, file: %s, line: %d\n", __FILE__,  __LINE__);
 #endif
+
   configWindowBox = new QWidget();
   configWindowBox->setWindowTitle(tr("PHASE configuration"));
   QLabel *configLabel = new QLabel(tr("configure auxiliary files"));
   fileList = new QListWidget();
+
+  proxyModel = new QSortFilterProxyModel;
+  proxyModel->setDynamicSortFilter(true);
+  
+  proxyView = new QTreeView;
+  proxyView->setRootIsDecorated(false);
+  proxyView->setAlternatingRowColors(true);
+  proxyView->setModel(proxyModel);
+  proxyView->setSortingEnabled(true);
+  
   QGroupBox   *lowerButtonGroup  = new QGroupBox(tr(""));
   QHBoxLayout *lowerButtonLayout = new QHBoxLayout;
   configApplyB   = new QPushButton(tr("&Apply"));
@@ -35,19 +48,28 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(configLabel);
   vbox->addWidget(fileList);
+  vbox->addWidget(proxyView);
   vbox->addWidget(lowerButtonGroup);
   configWindowBox->setLayout(vbox);
 
   connect(configApplyB, SIGNAL(clicked()), this,  SLOT(applySlot()));
   connect(configQuitB,  SIGNAL(clicked()), this,  SLOT(quitSlot()));
   connect(fileList,     SIGNAL(itemSelectionChanged()), this, SLOT(selectSlot()));
+  
+
   myparent= parent;
+  mymodel= createConfigModel(this);
+  proxyModel->setSourceModel(mymodel);
   fillList();
+  //myIdx= model->createIndex();
+  connect(proxyView,    SIGNAL(clicked(QModelIndex)), this, SLOT(selectSlot1(QModelIndex)));
+  //connect(proxyView, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(selectSlot1()));
 
   configWindowBox->show();
   //  configWindowBox->setAttribute(Qt::WA_DeleteOnClose);
 } // end constructor
 
+// slots
 void ConfigWindow::applySlot()
 {
   printf("applySlot called\nno function so far\n");
@@ -57,6 +79,37 @@ void ConfigWindow::quitSlot()
 {
   this->configWindowBox->close();
 } // quitSlot
+
+void ConfigWindow::selectSlot1(const QModelIndex &index)
+{
+  if (!index.isValid())
+    {
+      cout << "error" << endl;
+      return;
+    }
+
+  cout << "row,column " << index.row() << "," << index.column() << endl;
+  
+
+   QStandardItem *item = mymodel->itemFromIndex(index);
+
+   if (!item) cout << "error" << endl;
+
+   //QString text = QString(item->text());
+   //  QMessageBox::warning(this, tr("xxxx"),  item->text());
+
+//mymodel->data(index, Qt::DisplayRole).toString();
+   // QString text= QString("Heinz");
+   // if (!item.isValid) cout << "error" << endl;
+   // QString text = mymodel->data(index, Qt::DisplayRole).toString();
+			//   cout << "pos: " << text.toAscii().data() << endl;
+   //int pos= QList<QTreeWidgetItem *> QTreeWidget::selectedItems();
+  //  QModelIndex idx;
+   //QString qtxt= QString(item->text());
+   //   cout << "pos: " <<   <<  endl;
+  //  idx= proxyView->currentIndex ();
+  //  cout << "row,column: " << idx.row() << " " << idx.column() << endl;
+}
 
 // does almost everything here
 void ConfigWindow::selectSlot()
@@ -160,6 +213,19 @@ void ConfigWindow::selectSlot()
     }
 } // selectSlot
 
+////////////// end slots ////////////
+
+//QAbstractItemModel *ConfigWindow::createConfigModel(QObject *parent)
+QStandardItemModel *ConfigWindow::createConfigModel(QObject *parent)
+{
+    QStandardItemModel *model = new QStandardItemModel(0, 3, parent);
+
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("File"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Filename"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("Extension"));
+    return model;
+} // end createConfigModel
+
 // add all files to be configured with description
 void ConfigWindow::fillList()
 {
@@ -197,6 +263,22 @@ void ConfigWindow::fillList()
 		     << slist[11]
 		     << slist[12]
 		     );
+  // add in reverse order
+  addRow("so6_fsource6",         myparent->myPHASEset()->so6_fsource6);
+  addRow("so4_fsource4d",        myparent->myPHASEset()->so4_fsource4d);
+  addRow("so4_fsource4c",        myparent->myPHASEset()->so4_fsource4c);
+  addRow("so4_fsource4b",        myparent->myPHASEset()->so4_fsource4b);
+  addRow("so4_fsource4a",        myparent->myPHASEset()->so4_fsource4a);
+  addRow("map name",             myparent->myPHASEset()->mapname);
+  addRow("matrix name",          myparent->myPHASEset()->matrixname);
+  addRow("ray output (image)",   myparent->myPHASEset()->imageraysname);
+  addRow("ray input (source)",   myparent->myPHASEset()->sourceraysname);
+  addRow("minuit input",         myparent->myPHASEset()->minname);
+  addRow("minuit input",         myparent->myPHASEset()->minname);
+  addRow("optimization results", myparent->myPHASEset()->opresname);
+  addRow("optimization input",   myparent->myPHASEset()->optipckname);
+  addRow("beamline name",        myparent->myPHASEset()->beamlinename);
+
 } // fillList
 
 // helper function
@@ -205,6 +287,16 @@ void ConfigWindow::mkRow(char *out, const char *desc, const char *fname)
   strncpy(out, desc,  50);
   strncat(out, fname, 260);
 } // mkRow
+
+// add a row on top
+
+void ConfigWindow::addRow(const char *desc, const char *fname)
+{
+  mymodel->insertRow(0);
+  mymodel->setData(mymodel->index(0, 0), desc);
+  mymodel->setData(mymodel->index(0, 1), fname);
+  mymodel->setData(mymodel->index(0, 2), desc);
+} // addRow
 
 // add all files to be configured with description
 void ConfigWindow::updateList()
