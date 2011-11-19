@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.h */
 /*  Date      : <16 Aug 11 12:20:20 flechsig>  */
-/*  Time-stamp: <18 Nov 11 12:36:21 flechsig>  */
+/*  Time-stamp: <2011-11-20 00:07:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -22,28 +22,20 @@ class ConfigWindow : public QWidget
 public:
     QWidget  *configWindowBox;
     ConfigWindow(PhaseQt *);
-    void             updateList();
+    void       updateList();
 
 private slots:
     void applySlot();
     void quitSlot();
-    void selectSlot();
-    void selectSlot1(const QModelIndex &index);
+    void selectSlot(const QModelIndex &index);
 
 private:
-    QSortFilterProxyModel *proxyModel;
-    QTreeView        *proxyView;
+    QTreeView        *sourceView;
     QPushButton      *configApplyB;
     QPushButton      *configQuitB;
-    QListWidget      *fileList;
     PhaseQt          *myparent;
-    
     void             fillList();
-    void             mkRow(char *, const char *, const char *);
-    void             addRow(const char *, const char *);
-    //void             addRow(QAbstractItemModel *, const char *, const char *);
-    //    QAbstractItemModel *createConfigModel(QObject *);
-    //QAbstractItemModel *mymodel;
+    void             addRow(const char *, const char *, const char *);
     QStandardItemModel *createConfigModel(QObject *);
     QStandardItemModel *mymodel;
     
