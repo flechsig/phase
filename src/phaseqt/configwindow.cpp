@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2011-11-20 00:12:03 flechsig> 
+//  Time-stamp: <2011-11-20 22:58:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -35,6 +35,8 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
   QHBoxLayout *lowerButtonLayout = new QHBoxLayout;
   configApplyB   = new QPushButton(tr("&Apply"));
   configQuitB    = new QPushButton(tr("&Quit"));
+  configDefaultB = new QPushButton(tr("&Defaults"));
+  lowerButtonLayout->addWidget(configDefaultB);
   lowerButtonLayout->addWidget(configApplyB);
   lowerButtonLayout->addWidget(configQuitB);
   lowerButtonGroup->setLayout(lowerButtonLayout);
@@ -50,9 +52,10 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
   sourceView->setModel(mymodel);    // attach dataset to view
   fillList();
 
-  connect(configApplyB, SIGNAL(clicked()), this,  SLOT(applySlot()));
-  connect(configQuitB,  SIGNAL(clicked()), this,  SLOT(quitSlot()));
-  connect(sourceView,   SIGNAL(clicked(QModelIndex)), this, SLOT(selectSlot(QModelIndex)));
+  connect(configDefaultB, SIGNAL(clicked()), this,  SLOT(defaultSlot()));
+  connect(configApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
+  connect(configQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
+  connect(sourceView,     SIGNAL(clicked(QModelIndex)), this, SLOT(selectSlot(QModelIndex)));
   
   configWindowBox->show();
  } // end constructor
@@ -64,14 +67,27 @@ void ConfigWindow::applySlot()
   cout << "debug: applySlot called" << endl;
 #endif
 
+  checkFileNames();
   myparent->writeBackupFile();
 } // applySlot
+
+// set filenames to defaults based on beamlinename
+void ConfigWindow::defaultSlot()
+{
+#ifdef DEBUG
+  cout << "debug: defaultSlot called" << endl;
+#endif
+
+  myparent->initSet(myparent->myPHASEset()->beamlinename);
+  updateList();
+} // defaultSlot
 
 void ConfigWindow::quitSlot()
 {
   this->configWindowBox->close();
 } // quitSlot
 
+// does everything
 void ConfigWindow::selectSlot(const QModelIndex &index)
 {
   char *fname, description[MaxPathLength], oldname[MaxPathLength], extension[10], filter[50];
@@ -170,7 +186,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 } // end selectslot
 ////////////// end slots ////////////
 
-//QAbstractItemModel *ConfigWindow::createConfigModel(QObject *parent)
+// create the data model
 QStandardItemModel *ConfigWindow::createConfigModel(QObject *parent)
 {
     QStandardItemModel *model = new QStandardItemModel(0, 3, parent);
@@ -200,6 +216,7 @@ void ConfigWindow::fillList()
   addRow("optimization input",   myparent->myPHASEset()->optipckname,    "pcko");
 } // fillList
 
+// helper function
 // add a row on top
 void ConfigWindow::addRow(const char *desc, const char *fname, const char *ext)
 {
@@ -209,6 +226,7 @@ void ConfigWindow::addRow(const char *desc, const char *fname, const char *ext)
   mymodel->setData(mymodel->index(0, 2), ext);
 } // addRow
 
+// updates the widget
 // add all files to be configured with description
 void ConfigWindow::updateList()
 {
@@ -225,4 +243,49 @@ void ConfigWindow::updateList()
   mymodel->setData(mymodel->index(10, 1), myparent->myPHASEset()->so4_fsource4d);
   mymodel->setData(mymodel->index(11, 1), myparent->myPHASEset()->so6_fsource6);
 } // updateList
+
+void ConfigWindow::checkFileNames()
+{
+  int i, hits, ret;
+  char name[MaxPathLength], extension[10];
+  QStandardItem *fna, *ext;
+
+  hits= 0;
+  for (i= 0; i < 12; i++ )
+    {
+      fna = mymodel->item(i, 1);
+      ext = mymodel->item(i, 2);
+      strncpy(name,      fna->text().toAscii().data(), MaxPathLength);
+      strncpy(extension, ext->text().toAscii().data(), 10);
+      ret= strcmp(name, extension);
+
+#ifdef DEBUGxx
+      cout << "ret " << ret << " " << name << " " << extension << endl;
+#endif
+
+      if (ret >= 0) ++hits;
+   }
+  cout << "hits " << hits << endl;
+
+  if (hits > 0)
+    {
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(tr("<b>Warning</b>"));
+      msgBox->setInformativeText(tr("Found %1 file(s) without default extension!").arg(hits));
+      msgBox->setStandardButtons(QMessageBox::Ignore | QMessageBox::Help);
+      msgBox->setIcon(QMessageBox::Warning);
+      
+      int ret = msgBox->exec();
+      if (ret == QMessageBox::Help) 
+	QMessageBox::information(this, tr("Help"),
+				 tr("Some of your filenames (the extensions) differ from the recommended defaults."
+				    "This is no problem in principle but there is the risk that you overwrite your "
+				    "datafiles by accident. In case of temporary output files <b>phase</b> overwrites "
+				    "them without always checking if they exist, i.e. mixing input and output files "
+				    "can cause data loss. You can press <i>Ignore</i> if you know what you are doing- "
+				    "otherwise it is recommended to go back and press <i>Defaults</i> or choose filenames "
+				    "with default extensions.")
+				 ); 
+    }
+} // end checkFileNames
 // end
