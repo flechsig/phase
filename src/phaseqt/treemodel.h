@@ -52,6 +52,7 @@ private:
     void setupModelData(const QStringList &lines, TreeItem *parent);
 
     TreeItem *rootItem;
+    QObject  *myparent;
 
 private slots:
     void selectSlot(const QModelIndex &);

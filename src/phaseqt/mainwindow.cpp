@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <22 Nov 11 12:40:31 flechsig> 
+//  Time-stamp: <22 Nov 11 17:47:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -874,14 +874,17 @@ QWidget *MainWindow::createParameterBox()
 
   QFile file(":/parameter.default");
   file.open(QIODevice::ReadOnly);
-  TreeModel *parameterModel= new TreeModel(file.readAll());
+  TreeModel *parameterModel= new TreeModel(file.readAll(), this);
   //TreeModel model(file.readAll());
   file.close();
 
   QTreeView *parameterView = new QTreeView();
   parameterView->setAlternatingRowColors(true);
   parameterView->setModel(parameterModel);
-  // parameterView->setColumnHidden(2,true);
+#ifndef DEBUG  
+  parameterView->setColumnHidden(4,true);  // dont display index
+#endif
+  connect(parameterView, SIGNAL(clicked(QModelIndex)), parameterModel, SLOT(selectSlot(QModelIndex))); 
 
   for (i= 0; i< NPARS; i++)
     {

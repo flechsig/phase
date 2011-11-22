@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <22 Nov 11 14:33:17 flechsig> 
+//  Time-stamp: <22 Nov 11 17:52:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -53,6 +53,7 @@ TreeModel::TreeModel(const QString &data, QObject *parent)
     rootData << "Variable" << "Value" << "Description" << "Default" << "Index";
     rootItem = new TreeItem(rootData);
     setupModelData(data.split(QString("\n")), rootItem);
+    myparent= parent;
 }
 
 TreeModel::~TreeModel()
@@ -199,23 +200,38 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 void TreeModel::selectSlot(const QModelIndex &index)
 {
-
-
+#ifdef DEBUG
   cout << "debug: selectSlot called: " << __FILE__  << endl;
-
-
+#endif
 
   if (!index.isValid())
     return;
 
+  QPersistentModelIndex valindex= QPersistentModelIndex(index.sibling(index.row(), 1));
+  QPersistentModelIndex idxindex= QPersistentModelIndex(index.sibling(index.row(), 4));
 
-  cout << "debug: " << __FILE__ << " row, column " << index.row() << "," << index.column() << endl;
+  if (!valindex.isValid())
+      return;
+  if (!idxindex.isValid())
+      return;
 
-
-  QVariant a= data(index, Qt::DisplayRole);
-
+  cout << "index: " << data(idxindex, Qt::DisplayRole).toString().toLocal8Bit().constData()  << 
+    " value: " << data(valindex, Qt::DisplayRole).toString().toLocal8Bit().constData() << endl;
+  
+  QVariant a= data(idxindex, Qt::DisplayRole);
   QStringList b= a.toStringList();
 
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " row, column " << index.row() << "," << index.column() << endl;
+  cout << "stringlist: "<< endl;
+
   for (int i = 0; i < b.size(); ++i)
-    cout << i << " zz " << b.at(i).toLocal8Bit().constData() << endl;
+    cout << i << " data: " << b.at(i).toLocal8Bit().constData() << endl;
+
+  // if (b.size() > 4)
+  //   cout << "index: " << b.at(4).toLocal8Bit().constData()  << " value: " << b.at(1).toLocal8Bit().constData() << endl;
+
+#endif
+
+  //myparent->parameterE->setText(data(valindex, Qt::DisplayRole).toString());
 }

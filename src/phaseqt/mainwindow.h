@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <15 Nov 11 17:34:19 flechsig>  */
+/*  Time-stamp: <22 Nov 11 17:41:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -55,6 +55,7 @@ public:
     void writeBackupFile();
     void ReadBLFileInteractive(char *);
     char oldsource;
+    QLineEdit     *parameterE;
 
 private slots:
     void appendElement();
@@ -130,7 +131,7 @@ private:
     QSignalMapper *signalMapper;  // UF
     QListWidget   *elementList;
     QListWidget   *parameterList;
-    QLineEdit     *parameterE;
+    
     QWidget       *elementBox;
     QWidget       *createOpticalElementBox(); 
     QWidget       *sourceBox;
