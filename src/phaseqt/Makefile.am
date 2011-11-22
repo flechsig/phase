@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <22 Nov 11 15:27:04 flechsig> 
+#  Time-stamp: <22 Nov 11 15:27:23 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -91,6 +91,7 @@ F77LINK = $(LINK)
 moc_%.cpp: %.h
 	@QT@/bin/moc $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
+# special
 qrc_phaseqt.cpp : parameter.default
 	@QT@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@	
 
