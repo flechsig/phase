@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <22 Nov 11 15:10:59 flechsig> 
+#  Time-stamp: <22 Nov 11 15:12:55 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -55,7 +55,8 @@ PO Integration
     id12        0       (1) print d12 on file, (0) do not print  			0	41
     ianzy0	1	Anzahl der Stuetzstellen im ersten Raster    			1	30
 
-# die folgenden parameter ohne kommentat sind noch nicht einsortiert 
+# die folgenden parameter ohne kommentar sind noch nicht einsortiert 
+# nach einsortieren- auskommentieren
 Unsorted
 ##    (epsilon) epsilon for Newton routine (1e-4)						0
 ##    (iord) calculation up to order (1..7)						1

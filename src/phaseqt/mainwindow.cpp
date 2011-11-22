@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <16 Nov 11 17:40:33 flechsig> 
+//  Time-stamp: <22 Nov 11 12:40:31 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -20,6 +20,7 @@
 
 #include "mainwindow.h"
 #include "phaseqt.h"
+#include "treemodel.h"
 
 using namespace std;
 
@@ -871,6 +872,17 @@ QWidget *MainWindow::createParameterBox()
   parameterList = new QListWidget();
   parameterList->setAlternatingRowColors(true);
 
+  QFile file(":/parameter.default");
+  file.open(QIODevice::ReadOnly);
+  TreeModel *parameterModel= new TreeModel(file.readAll());
+  //TreeModel model(file.readAll());
+  file.close();
+
+  QTreeView *parameterView = new QTreeView();
+  parameterView->setAlternatingRowColors(true);
+  parameterView->setModel(parameterModel);
+  // parameterView->setColumnHidden(2,true);
+
   for (i= 0; i< NPARS; i++)
     {
       sprintf(buffer, "%d : parameter",  i);
@@ -882,6 +894,7 @@ QWidget *MainWindow::createParameterBox()
   parameterE  = new QLineEdit;
 
   parameterLayout->addWidget(parameterList);
+  parameterLayout->addWidget(parameterView);
   parameterLayout->addWidget(parameterLabel);
   parameterLayout->addWidget(parameterE);
   //  parameterLayout->addWidget(view);

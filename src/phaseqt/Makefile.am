@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <16 Nov 11 16:46:39 flechsig> 
+#  Time-stamp: <22 Nov 11 13:28:50 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -19,6 +19,8 @@ phaseqt_SOURCES = \
 	plot.cpp plot.h \
 	plot1d.cpp plot1d.h \
 	singleray.cpp singleray.h \
+        treemodel.cpp treemodel.h \
+        treeitem.cpp treeitem.h \
 	../phase/bline.c ../phase/cutils.c ../phase/error.c \
 	../phase/phasec.c  ../phase/rtrace.c \
         ../phase/xmalloc.c   \
@@ -41,7 +43,7 @@ phaseqt_SOURCES = \
 nodist_phaseqt_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
-	qrc_phaseqt.cpp
+	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp
 
 phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
@@ -49,7 +51,6 @@ phaseqt_LDADD = $(libdir)/@LIBPHASE@
 pkgdata_DATA = ../data/coefficient-example.dat \
  ../data/map70_lh.omx\
  ../data/map70_rh.omx
-
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.
@@ -89,6 +90,9 @@ F77LINK = $(LINK)
 # This rule lets GNU make create any moc_*.cpp from the equivalent *.h
 moc_%.cpp: %.h
 	@QT@/bin/moc $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
+
+qrc_phaseqt.cpp : parameter.default
+	@QT@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@	
 
 # Adjust this line according to your resources.qrc
 qrc_%.cpp : %.qrc

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <22 Nov 11 14:32:28 flechsig> 
+//  Time-stamp: <22 Nov 11 14:33:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -40,9 +40,12 @@
 
 #include <QtGui>
 #include <iostream>
+
 #include "treeitem.h"
 #include "treemodel.h"
+
 using namespace std;
+
 TreeModel::TreeModel(const QString &data, QObject *parent)
     : QAbstractItemModel(parent)
 {
@@ -138,6 +141,7 @@ int TreeModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
+// read data from file
 void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 {
   QList<TreeItem*> parents;
