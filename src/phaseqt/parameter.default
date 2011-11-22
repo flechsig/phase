@@ -1,0 +1,124 @@
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
+#  Date      : <22 Nov 11 13:58:58 flechsig> 
+#  Time-stamp: <22 Nov 11 14:46:24 flechsig> 
+#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+#
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
+# 
+# phaseqt ressource file to configure the Parameter Box in a hierarchical order
+# the format is very strict: 
+#     <tab> or \t is the field separator
+#     # comment
+#     top level start on the left
+#     identication by 4 spaces: child item
+#     empty line new top level item
+#     entries have 5 columns
+#         C0: Variable 
+#         C1: actual Value (same as default)
+#         C2: description
+#         C3: default
+#         C4: index this is a unique number to identify the parameter (keep it when moving the parameter #             to a different category) 
+Generic		
+    epsilon	1e-4	epsilon for Newton routine	1e-4	1
+    iord	4	calculation up to order (1..7)	4	2		
+    REDUCE_maps	0	use old REDUCE maps		0	63
+
+PO 
+    iexpand
+    iplmode		
+
+PO Source
+    source 1
+        isrcz	0	source type (size/div.):(0)sigma val.,(1)hard edge, etc...	0	40
+        isrcdz 	0	source type (size/div.):(0)sigma val.,(1)hard edge, etc...	0	41
+        sigmaz
+        sigmazp
+    source 4
+    source 5
+        dipcy
+        dipcz
+        dipdisy
+        dipdisz
+    source 6
+
+PO Integration
+    ispline	0	(0) simpson integration, (1) spline integration			0	55	
+    d12_max											40 
+    id12        0       (1) print d12 on file, (0) do not print  			0	41
+    ianzy0
+
+Unsorted
+    (epsilon) epsilon for Newton routine (1e-4)        // 0
+    (iord) calculation up to order (1..7)
+    (iordsc)
+    (iexpand) expansion of pathlength (1),,
+    (iplmode) subtraction of ideal path length (1),
+    (isrctype) source type,
+    (rpin) radius of pinhole in source plane (mm),
+    (srcymin) aperture in source planeymin (mm),
+    (srcymax) aperture in source planeymax (mm),
+    (srczmin) aperture in source planezmin (mm),
+#
+    (srczmax) aperture in source planezmax (mm)// 10
+    (rpin_ap) radius in aperture plane,
+    op->apr.ymin_ap,
+    op->apr.ymax_ap,
+    op->apr.zmin_ap,
+    op->apr.zmax_ap,
+    (so5.dipcy) Dipole: Cy,
+    (so5.dipcz) Dipole: Cz,
+    (so5.dipdisy) Dipole: y-Distance (virtual) between Dipole and source plane,
+    (so5.dipdisz) Dipole: z-Distance (real) between Dipole and source plane,
+#   
+    (inorm) (1) normalize output(0) do not normalize  					20
+    (inorm1)										21
+    (inorm2) (012)									22
+    (matrel) derive matrix elements in 3 different ways (1) (for debugging)		23
+    (so1.isrcy)   source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file	24
+    (so1.isrcdy)  source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file	25
+    (so1.sigmay)  source size/div.: sigmay(mm) / sigmayp or half height/angle		26
+    (so1.sigmayp) source size/div.: sigmay(mm) / sigmayp or half height/angle		27
+    (xi.ymin) yminzu integrierender Winkelbereich in mrad				28
+    (xi.ymax) ymaxzu integrierender Winkelbereich in mrad				29
+#
+    (xi.ianzy0) Anzahl der Stuetzstellen im ersten Raster    			30
+    (so1.isrcz) source type (size/div.):(0)sigma val.,(1)hard edgeetc...	31
+    (so1.isrcdz) source type (size/div.):(0)sigma val.,(1)hard edgeetc...	32
+    (so1.sigmaz) source size/div.: sigmay(mm) / sigmayp or half height/angle	33
+    (so1.sigmazp) source size/div.: sigmay(mm) / sigmayp or half height/angle	34
+    (xi.zmin)									35
+    (xi.zmax)									36
+    (xi.ianzz0)									37
+    (ifl.ibright) (1) write 4-dim brightness to file				38
+    (ifl.ispline) (0) simpson integration(1) spline integration			39
+#
+    (xi.d12_max)						40
+    (xi.id12); (1) print d12 on file(0) do not print		41
+    (xi.ianz0_cal)						42
+    (xi.ianz0_fixed)						43
+    (xi.iamp_smooth) (0,1,2)					44
+    (xi.iord_amp)						45
+    (xi.ifm_amp)						46
+    (xi.iord_pha)						47
+    (xi.ifm_pha)						48
+    (xi.distfocy) distance to horizontal focus			49
+#
+    (xi.distfocz) distance to vertical focus 			50
+    (ifl.ipinarr) insert pinhole array in source plane		51
+    (src.pin_yl0)						52
+    (src.pin_yl)						53
+    (src.pin_zl0)						54
+    (src.pin_zl)						55
+    (so4.nfreqtot)						56
+    (so4.nfreqpos)						57
+    (so4.nfreqneg)						58
+    (so4.nsource)						59
+#
+    (so4.nimage) 			60
+    (so4.deltatime)			61
+    (so4.iconj)				62
+    (REDUCE_maps) use old REDUCE maps	63
+## end of file
