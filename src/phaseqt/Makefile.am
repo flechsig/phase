@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <22 Nov 11 13:28:50 flechsig> 
+#  Time-stamp: <22 Nov 11 15:27:04 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -55,7 +55,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.
 EXTRA_DIST = ../phase/phase_struct.F $(pkgdata_DATA) \
-	phaseqt.qrc \
+	phaseqt.qrc parameter.default \
 	images/Blue-arrow-left-32.png images/Blue-arrow-right-32.png \
 	images/down-32.png images/footprint.png \
 	images/Left-arrow-48.png images/new.png \
