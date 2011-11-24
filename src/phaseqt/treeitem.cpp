@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp
 //  Date      : <23 Nov 11 09:41:11 flechsig> 
-//  Time-stamp: <24 Nov 11 15:19:53 flechsig> 
+//  Time-stamp: <24 Nov 11 15:39:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -97,25 +97,14 @@ int TreeItem::row() const
 // set value
 void TreeItem::setValue(QString *val) 
 {
-  //  cout << __FILE__ << " setValue called, val= " << val->toLocal8Bit().constData() << endl;
-  
+#ifdef DEBUG1
+  cout << __FILE__ << " setValue called, val= " << val->toLocal8Bit().constData() << endl;
+#endif  
   if (columnCount() < 2)
     return;
-
-  //  cout << __FILE__ << " do the set" << endl;
   
   QString a= QString(*val);
   itemData.replace(1, a);
-  
-  /*
-  cout << __FILE__ << " set done " << endl;*/
-  //cout << childCount() << endl;
-  //  QVariant a= data(0); 
-  // QStringList b= a.toStringList();
-  // for (int i = 0; i < b.size(); ++i)
-  //   cout << i << " putval data: " << b.at(i).toLocal8Bit().constData() << endl;
-
-  
 } // setVal
 
 // get index
