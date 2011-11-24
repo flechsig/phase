@@ -1,3 +1,13 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.h */
+/*  Date      : <23 Nov 11 09:31:41 flechsig>  */
+/*  Time-stamp: <24 Nov 11 12:57:07 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
+
 /****************************************************************************
 **
 ** Copyright (C) 2005-2006 Trolltech ASA. All rights reserved.
@@ -28,14 +38,19 @@
 #include <QModelIndex>
 #include <QVariant>
 
+#include "phaseqt.h"
+
+
 class TreeItem;
+class QLineEdit;
+class QListWidget;
 
 class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    TreeModel(const QString &data, QObject *parent = 0);
+  TreeModel(const QString &data, QObject *parent = 0, QLineEdit *eddi = 0, QListWidget *plist = 0);
     ~TreeModel();
 
     QVariant data(const QModelIndex &index, int role) const;
@@ -47,12 +62,18 @@ public:
     QModelIndex parent(const QModelIndex &index) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    int getActualIndex();
+    void updateItemVal(QString, int);
 
 private:
     void setupModelData(const QStringList &lines, TreeItem *parent);
 
-    TreeItem *rootItem;
-    QObject  *myparent;
+    TreeItem   *rootItem;
+    TreeItem* itemList[NPARS];
+    int actualIndex;
+    QLineEdit *myeddi;
+    QListWidget *myplist;
+    
 
 private slots:
     void selectSlot(const QModelIndex &);

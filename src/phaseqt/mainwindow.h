@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <22 Nov 11 17:41:59 flechsig>  */
+/*  Time-stamp: <24 Nov 11 12:04:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -25,6 +25,7 @@
 #include "optiinput.h"
 #include "configwindow.h"
 #include "plot.h"
+#include "treemodel.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -339,6 +340,8 @@ private:
 
     int elementListNotSelected();
     int elementListIsEmpty();
+
+    TreeModel *parameterModel;
  
 };
 

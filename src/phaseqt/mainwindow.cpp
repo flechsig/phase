@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <22 Nov 11 17:47:40 flechsig> 
+//  Time-stamp: <24 Nov 11 15:25:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -872,19 +872,25 @@ QWidget *MainWindow::createParameterBox()
   parameterList = new QListWidget();
   parameterList->setAlternatingRowColors(true);
 
+  QLabel *parameterLabel  = new QLabel(tr("edit value"));
+  parameterE  = new QLineEdit;
+
   QFile file(":/parameter.default");
   file.open(QIODevice::ReadOnly);
-  TreeModel *parameterModel= new TreeModel(file.readAll(), this);
+  parameterModel= new TreeModel(file.readAll(), this, parameterE, parameterList);
   //TreeModel model(file.readAll());
   file.close();
 
   QTreeView *parameterView = new QTreeView();
   parameterView->setAlternatingRowColors(true);
   parameterView->setModel(parameterModel);
-#ifndef DEBUG  
+  parameterView->resizeColumnToContents(1);
+    parameterView->resizeColumnToContents(3);
+#ifndef DEBUG1  
   parameterView->setColumnHidden(4,true);  // dont display index
 #endif
   connect(parameterView, SIGNAL(clicked(QModelIndex)), parameterModel, SLOT(selectSlot(QModelIndex))); 
+
 
   for (i= 0; i< NPARS; i++)
     {
@@ -893,10 +899,7 @@ QWidget *MainWindow::createParameterBox()
       parameterList->insertItem(i, item);
     }
 
-  QLabel *parameterLabel  = new QLabel(tr("edit value"));
-  parameterE  = new QLineEdit;
-
-  parameterLayout->addWidget(parameterList);
+  //parameterLayout->addWidget(parameterList);
   parameterLayout->addWidget(parameterView);
   parameterLayout->addWidget(parameterLabel);
   parameterLayout->addWidget(parameterE);
@@ -1094,6 +1097,7 @@ void MainWindow::parameterUpdateAll(int zahl)
   for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
 } // parameterUpdateAll
 
+#ifdef OLD
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
 // defaults can be set with an empty text
@@ -1573,7 +1577,426 @@ case 10:
       sprintf(buffer, "%d \t: unknown parameter", pos);
     }
   item->setText(buffer);
+  
+  if (parameterModel) parameterModel->updateItemVal(QString(buffer), pos);
+
 } // end parameterUpdate
+#else
+
+// helper function for the parameterUpdateSlot
+// init=1:  does not scan the text - for initialization 
+// defaults can be set with an empty text
+// function: 
+// a) read selected item
+// b) copy contents into data structure
+// c) update the item in the list
+void MainWindow::parameterUpdate(int pos, const char *text, int init)
+{
+  char buffer[MaxPathLength];
+  int scanned;
+  QListWidgetItem *item= parameterList->item(pos);
+
+
+  // struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
+  struct OptionsType   *op = myparent->myOptions();
+  struct sources    *mysrc = &(myparent->myBeamline()->src);
+  //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
+  //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
+
+#ifdef DEBUG1
+    printf("\ndebug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
+  //printf("debug: parameterUpdate: pos: %d, file: %s, zmin: %lf\n", pos, __FILE__, op->xi.zmin);
+#endif
+
+  scanned= 1;      // set a default 
+  switch (pos)
+    {
+    case 0: 
+      if (!init) scanned= sscanf(text, "%lf", &op->epsilon);
+      if ((scanned == EOF) || (scanned == 0)) op->epsilon= 1e-4; // default
+      sprintf(buffer, "%-5lg", op->epsilon);
+      break;
+    case 1:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
+      printf("parameterUpdate: scanned_pos: %d\n", scanned);
+      if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
+	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
+      sprintf(buffer, "%d", op->ifl.iord);
+      break;
+    case 2:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iordsc);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iordsc= 4; // default
+      sprintf(buffer, "%d", op->ifl.iordsc);
+      break;
+    case 3:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iexpand);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 0;   // default
+      sprintf(buffer, "%d", op->ifl.iexpand);
+      break;
+    case 4:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.iplmode);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
+      sprintf(buffer, "%d", op->ifl.iplmode);
+      break;
+    case 5:
+      if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
+      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 0;   // default
+      sprintf(buffer, "%d", myparent->myBeamline()->src.isrctype);
+      break; 
+    case 6:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.rpin= 0;   // default
+      sprintf(buffer, "%lg", op->apr.rpin);
+      break;
+    case 7:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymin);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srcymin= 0;   // default
+      sprintf(buffer, "%lg", op->apr.srcymin);
+      break;
+    case 8:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymax);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srcymax= 0;   // default
+      sprintf(buffer, "%lg", op->apr.srcymax);
+      break;
+    case 9:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmin);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srczmin= 0;   // default
+      sprintf(buffer, "%lg",  op->apr.srczmin);
+      break;
+    case 10:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmax);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.srczmax= 0;   // default
+      sprintf(buffer, "%lg", op->apr.srczmax);
+      break;
+    case 11:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.rpin_ap= 0;   // default
+      sprintf(buffer, "%lg", op->apr.rpin_ap);
+      break;
+    case 12:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.ymin_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.ymin_ap= 0;   // default
+      sprintf(buffer, "%lg", op->apr.ymin_ap);
+      break;
+    case 13:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.ymax_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.ymax_ap= 0;   // default
+      sprintf(buffer, "%lg", op->apr.ymax_ap);
+      break;
+    case 14:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.zmin_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.zmin_ap= 0;   // default
+      sprintf(buffer, "%lg", op->apr.zmin_ap);
+      break;
+    case 15:
+      if (!init) scanned= sscanf(text, "%lg", &op->apr.zmax_ap);
+      if ((scanned == EOF) || (scanned == 0)) op->apr.zmax_ap= 0;   // default
+      sprintf(buffer, "%lg", op->apr.zmax_ap);
+      break;
+
+    case 16:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so5.dipcy);
+      break;
+    case 17:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so5.dipcz);
+      break;
+    case 18:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so5.dipdisy);
+      break;
+    case 19:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so5.dipdisz);
+      break;
+
+    case 20:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm= 0;   // default
+      sprintf(buffer, "%d", op->ifl.inorm);
+      break;
+    case 21:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm1);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm1= 0;   // default
+      sprintf(buffer, "%d", op->ifl.inorm1);
+      break;
+    case 22:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm2);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 0;   // default
+      sprintf(buffer, "%d", op->ifl.inorm2);
+      break;
+    case 23:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.matrel);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
+      sprintf(buffer, "%d", op->ifl.matrel);
+      break;
+
+    case 24:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
+      sprintf(buffer, "%d",  mysrc->so1.isrcy);
+      break;
+    case 25:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
+      sprintf(buffer, "%d", mysrc->so1.isrcdy);
+      break;
+    case 26:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so1.sigmay);
+      break;
+    case 27:
+      if (!init) 
+	{ 
+	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
+	  mysrc->so1.sigmayp*= 1e-3;
+	}
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so1.sigmayp*1e3);
+      break;
+
+    case 28:
+      if (!init) 
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.ymin);
+	  op->xi.ymin*= 1e-3;
+	}
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
+      sprintf(buffer, "%lg", op->xi.ymin* 1e3);
+      break;
+    case 29:
+      if (!init)
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.ymax);
+	  op->xi.ymax*= 1e-3;
+	}
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
+      sprintf(buffer, "%lg", op->xi.ymax* 1e3);
+      break;
+    case 30:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 0;   // default
+      sprintf(buffer, "%d", op->xi.ianzy0);
+      break;
+
+    case 31:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
+      sprintf(buffer, "%d",  mysrc->so1.isrcz);
+      break;
+    case 32:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
+      sprintf(buffer, "%d", mysrc->so1.isrcdz);
+      break;
+    case 33:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so1.sigmaz);
+      break;
+    case 34:
+      if (!init)
+	{
+	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
+	  mysrc->so1.sigmazp*= 1e-3;
+	}
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so1.sigmazp*1e3);
+      break;
+
+    case 35:
+      if (!init)
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.zmin);
+	  op->xi.zmin*=1e-3;
+	}
+      if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
+      sprintf(buffer, "%lg", op->xi.zmin* 1e3);
+      break;
+    case 36:
+      if (!init) 
+	{
+	  scanned= sscanf(text, "%lg", &op->xi.zmax);
+	  op->xi.zmax*= 1e-3;
+	}
+      if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
+      sprintf(buffer, "%lg", op->xi.zmax* 1e3);
+      break;
+    case 37:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianzz0);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 0;   // default
+      sprintf(buffer, "%d", op->xi.ianzz0);
+      break;
+
+    case 38:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.ibright);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 0;   // default
+      sprintf(buffer, "%d", op->ifl.ibright);
+      break;
+
+    case 39:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.ispline);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ispline= 0;   // default
+      sprintf(buffer, "%d", op->ifl.ispline);
+      break;
+
+    case 40:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.d12_max);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.d12_max= 0;   // default
+      sprintf(buffer, "%lg", op->xi.d12_max);
+      break;
+    case 41:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.id12);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.id12= 0;   // default
+      sprintf(buffer, "%d", op->xi.id12);
+      break;
+    case 42:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_cal);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_cal= 0;   // default
+      sprintf(buffer, "%d", op->xi.ianz0_cal);
+      break;
+    case 43:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_fixed);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_fixed= 0;   // default
+      sprintf(buffer, "%d", op->xi.ianz0_fixed);
+      break;
+    case 44:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.iamp_smooth);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.iamp_smooth= 0;   // default
+      sprintf(buffer, "%d", op->xi.iamp_smooth);
+      break;
+    case 45:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.iord_amp);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.iord_amp= 0;   // default
+      sprintf(buffer, "%d", op->xi.iord_amp);
+      break;
+    case 46:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_amp);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_amp= 0;   // default
+      sprintf(buffer, "%d", op->xi.ifm_amp);
+      break;
+      
+    case 47:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.iord_pha);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.iord_pha= 0;   // default
+      sprintf(buffer, "%d", op->xi.iord_pha);
+      break;
+      
+    case 48:
+      if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_pha);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_pha= 0;   // default
+      sprintf(buffer, "%d", op->xi.ifm_pha);
+      break;
+    case 49:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocy);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.distfocy= 0;   // default
+      sprintf(buffer, "%lg", op->xi.distfocy);
+      break;
+    case 50:
+      if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocz);
+      if ((scanned == EOF) || (scanned == 0)) op->xi.distfocz= 0;   // default
+      sprintf(buffer, "%lg", op->xi.distfocz);
+      break;
+    case 51:
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.ipinarr);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ipinarr= 0;   // default
+      sprintf(buffer, "%d", op->ifl.ipinarr);
+      break;    
+    case 52:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
+      sprintf(buffer, "%lg", mysrc->pin_yl0);
+      break;
+    case 53:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
+      sprintf(buffer, "%lg", mysrc->pin_yl);
+      break;
+    case 54:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
+      sprintf(buffer, "%lg", mysrc->pin_zl0);
+      break;
+    case 55:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
+      sprintf(buffer, "%lg", mysrc->pin_zl);
+      break;
+    case 56:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
+      sprintf(buffer, "%d", mysrc->so4.nfreqtot);
+      break;
+    case 57:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
+      sprintf(buffer, "%d", mysrc->so4.nfreqpos);
+      break;
+    case 58:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
+      sprintf(buffer, "%d", mysrc->so4.nfreqneg);
+      break;
+    case 59:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nsource);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nsource= 0;   // default
+      sprintf(buffer, "%d", mysrc->so4.nsource);
+      break;
+    case 60:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nimage);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nimage= 0;   // default
+      sprintf(buffer, "%d", mysrc->so4.nimage);
+      break;
+      
+    case 61:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so4.deltatime);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.deltatime= 0;   // default
+      sprintf(buffer, "%lg", mysrc->so4.deltatime);
+      break;
+      
+    case 62:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
+      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
+      sprintf(buffer, "%d", mysrc->so4.iconj);
+      break;
+
+    case 63:
+      if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
+      if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
+      sprintf(buffer, "%d", op->REDUCE_maps);
+      myparent->myBeamline()->hormapsloaded= 0;
+      break;
+
+#ifdef XXXTEMPLATE
+case 10:
+      if (!init) scanned= sscanf(text, "%d", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%d", );
+      break;
+
+case 10:
+      if (!init) scanned= sscanf(text, "%lg", &);
+      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
+      sprintf(buffer, "%lg", );
+      break;
+#endif
+    default:
+      sprintf(buffer, "%d \t: unknown parameter", pos);
+    }
+  //  item->setText(buffer);
+  
+  parameterModel->updateItemVal(QString(buffer), pos);
+
+} // end parameterUpdate
+
+#endif
+
 
 // interactive version checks for backupfile
 void MainWindow::ReadBLFileInteractive(char *blname)

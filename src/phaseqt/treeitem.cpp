@@ -1,3 +1,13 @@
+//  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp
+//  Date      : <23 Nov 11 09:41:11 flechsig> 
+//  Time-stamp: <24 Nov 11 15:19:53 flechsig> 
+//  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+//  $Source$ 
+//  $Date$
+//  $Revision$ 
+//  $Author$ 
+
 /****************************************************************************
 **
 ** Copyright (C) 2005-2006 Trolltech ASA. All rights reserved.
@@ -28,8 +38,11 @@
 */
 
 #include <QStringList>
+#include <iostream>
 
 #include "treeitem.h"
+
+using namespace std;
 
 TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 {
@@ -79,3 +92,56 @@ int TreeItem::row() const
 
     return 0;
 }
+
+// some special functions for our purpose
+// set value
+void TreeItem::setValue(QString *val) 
+{
+  //  cout << __FILE__ << " setValue called, val= " << val->toLocal8Bit().constData() << endl;
+  
+  if (columnCount() < 2)
+    return;
+
+  //  cout << __FILE__ << " do the set" << endl;
+  
+  QString a= QString(*val);
+  itemData.replace(1, a);
+  
+  /*
+  cout << __FILE__ << " set done " << endl;*/
+  //cout << childCount() << endl;
+  //  QVariant a= data(0); 
+  // QStringList b= a.toStringList();
+  // for (int i = 0; i < b.size(); ++i)
+  //   cout << i << " putval data: " << b.at(i).toLocal8Bit().constData() << endl;
+
+  
+} // setVal
+
+// get index
+// returns the index or -1 in case of an error
+int TreeItem::getIndex()
+{
+#ifdef DEBUG1
+  cout << "getIndex called " << endl;
+#endif
+
+  if (columnCount() < 5)
+    return -1;
+
+  return data(4).toInt();
+} // getIndex
+
+// get value
+// returns the value or -1 in case of an error
+QString TreeItem::getValue()
+{
+#ifdef DEBUG1
+  cout << "getValue called " << endl;
+#endif
+
+  if (columnCount() < 2)
+    return QString("error in getValue");
+
+  return data(1).toString();
+} // getValue

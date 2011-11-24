@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <22 Nov 11 17:52:30 flechsig> 
+//  Time-stamp: <24 Nov 11 15:19:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -46,14 +46,15 @@
 
 using namespace std;
 
-TreeModel::TreeModel(const QString &data, QObject *parent)
+TreeModel::TreeModel(const QString &data, QObject *parent, QLineEdit *eddi, QListWidget *plist)
     : QAbstractItemModel(parent)
 {
     QList<QVariant> rootData;
     rootData << "Variable" << "Value" << "Description" << "Default" << "Index";
     rootItem = new TreeItem(rootData);
     setupModelData(data.split(QString("\n")), rootItem);
-    myparent= parent;
+    myeddi= eddi;
+    myplist= plist;
 }
 
 TreeModel::~TreeModel()
@@ -163,8 +164,9 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
       }
       
       QString lineData = lines[number].mid(position).trimmed();
-      // cout << number << " -> " << lineData.toLocal8Bit().constData() << endl;
-      
+#ifdef DEBUG1
+      cout << number << " -> " << lineData.toLocal8Bit().constData() << endl;
+#endif      
       if (*lineData.toLocal8Bit().constData() != '#') // comment
 	{
 	  if (!lineData.isEmpty()) {
@@ -190,18 +192,33 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
             }
 	    
             // Append a new item to the current parent's list of children.
-            parents.last()->appendChild(new TreeItem(columnData, parents.last()));
+	    TreeItem *myItem= new TreeItem(columnData, parents.last());
+	    parents.last()->appendChild(myItem);
+
+	    int myidx= myItem->getIndex();
+	    //   QString myval= myItem->getValue();  // for debugging
+	    //   cout << "setupModelData - the index: " << myidx ;
+	    //   cout << " val " <<  myval.toLocal8Bit().constData() << endl;
+
+
+	    if (myidx > -1)
+	      {
+		itemList[myidx]= myItem;//(void *)myItem;
+		//qitemList[myidx]= myItem;//static_cast<TreeItem*>myItem;
+		//	TreeItem *xxx= itemList[myidx];
+		//	cout << "return " << xxx->getIndex() << endl;
+	      }
 	  }
 	} // end if no comment
       number++;
     } // end while
-}
+} // setupModelData()
 
 
 void TreeModel::selectSlot(const QModelIndex &index)
 {
 #ifdef DEBUG
-  cout << "debug: selectSlot called: " << __FILE__  << endl;
+  cout << "\ndebug: selectSlot called: " << __FILE__  << endl;
 #endif
 
   if (!index.isValid())
@@ -215,7 +232,10 @@ void TreeModel::selectSlot(const QModelIndex &index)
   if (!idxindex.isValid())
       return;
 
-  cout << "index: " << data(idxindex, Qt::DisplayRole).toString().toLocal8Bit().constData()  << 
+  int myidx=  data(idxindex, Qt::DisplayRole).toInt();
+  actualIndex= myidx;  // stores the index of the linear list
+  //data(idxindex, Qt::DisplayRole).toString().toLocal8Bit().constData()
+  cout << "index: " << myidx  << 
     " value: " << data(valindex, Qt::DisplayRole).toString().toLocal8Bit().constData() << endl;
   
   QVariant a= data(idxindex, Qt::DisplayRole);
@@ -226,12 +246,40 @@ void TreeModel::selectSlot(const QModelIndex &index)
   cout << "stringlist: "<< endl;
 
   for (int i = 0; i < b.size(); ++i)
-    cout << i << " data: " << b.at(i).toLocal8Bit().constData() << endl;
+    cout << i << " selectSlot data: " << b.at(i).toLocal8Bit().constData() << endl;
 
   // if (b.size() > 4)
   //   cout << "index: " << b.at(4).toLocal8Bit().constData()  << " value: " << b.at(1).toLocal8Bit().constData() << endl;
 
 #endif
 
-  //myparent->parameterE->setText(data(valindex, Qt::DisplayRole).toString());
+  myeddi->setText(data(valindex, Qt::DisplayRole).toString()); // updates the edit widget
+  // myplist->setCurrentRow(myidx); //does also selection
+  //updateItemVal(myidx);
 }
+
+void TreeModel::updateItemVal(QString val, int idx)
+{
+  
+  cout << __FILE__ << ": updateItemVal called, idx: " << idx << " val: " << val.toLocal8Bit().constData() << endl;
+
+  TreeItem *myitem=  (TreeItem *)itemList[idx];
+  
+  if (!myitem)
+    {
+      cout << __FILE__ << " error: parameter No: " << idx << " skip it" << endl;
+      return;
+    }
+
+  QString a= QString(val);  // copy constructor
+  myitem->setValue(&a);
+
+  // QModelIndex index;
+  emit layoutChanged();//dataChanged(index&, index&);
+} // end updateItem
+
+// exports private data
+int TreeModel::getActualIndex()
+{
+  return actualIndex;
+} // end getActualIndex
