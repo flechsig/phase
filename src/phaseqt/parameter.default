@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <22 Nov 11 15:55:42 flechsig> 
+#  Time-stamp: <24 Nov 11 15:43:56 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -33,7 +33,7 @@ PO Controls
     iplmode	1	subtraction of ideal path length (1)	1	4	
 
 PO Source
-    isrctype    4 	source type				4	5
+    isrctype	4	source type				4	5
     source 1	-	?description?
         isrcy	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	24
         isrcdy 	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	25
@@ -54,7 +54,7 @@ PO Source
 PO Integration
     ispline	0	(0) simpson integration, (1) spline integration			0	39	
     d12_max	0	-								0	40 
-    id12        0       (1) print d12 on file, (0) do not print  			0	41
+    id12	0       (1) print d12 on file, (0) do not print  			0	41
     ianzy0	1	Anzahl der Stuetzstellen im ersten Raster    			1	30
 
 # die folgenden parameter ohne kommentar sind noch nicht einsortiert 
