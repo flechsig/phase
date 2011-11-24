@@ -1,3 +1,13 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.h */
+/*  Date      : <24 Nov 11 08:41:02 flechsig>  */
+/*  Time-stamp: <24 Nov 11 08:41:09 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
+
 /****************************************************************************
 **
 ** Copyright (C) 2005-2006 Trolltech ASA. All rights reserved.
@@ -40,7 +50,9 @@ public:
     int columnCount() const;
     QVariant data(int column) const;
     int row() const;
+    void putValue(QString *);
     TreeItem *parent();
+
 
 private:
     QList<TreeItem*> childItems;
