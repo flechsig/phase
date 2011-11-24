@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <24 Nov 11 15:30:31 flechsig> 
+//  Time-stamp: <24 Nov 11 15:48:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -218,7 +218,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 void TreeModel::selectSlot(const QModelIndex &index)
 {
 #ifdef DEBUG
-  cout << "\ndebug: selectSlot called: " << __FILE__  << endl;
+  cout << "debug: selectSlot called: " << __FILE__  << endl;
 #endif
 
   if (!index.isValid())
@@ -241,7 +241,7 @@ void TreeModel::selectSlot(const QModelIndex &index)
   QVariant a= data(idxindex, Qt::DisplayRole);
   QStringList b= a.toStringList();
 
-#ifdef DEBUG
+#ifdef DEBUG1
   cout << "debug: " << __FILE__ << " row, column " << index.row() << "," << index.column() << endl;
   cout << "stringlist: "<< endl;
 
