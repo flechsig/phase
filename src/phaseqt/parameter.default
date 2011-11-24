@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <24 Nov 11 15:50:35 flechsig> 
+#  Time-stamp: <24 Nov 11 16:07:26 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -54,7 +54,7 @@ PO Source
 PO Integration
     ispline	0	(0) simpson integration, (1) spline integration			0	39	
     d12_max	0	-								0	40 
-    id12	0       (1) print d12 on file, (0) do not print  			0	41
+    id12	0	(1) print d12 on file, (0) do not print  			0	41
     ianzy0	1	Anzahl der Stuetzstellen im ersten Raster    			1	30
 
 # die folgenden parameter ohne kommentar sind noch nicht einsortiert 
@@ -73,10 +73,11 @@ Unsorted
 #
     (srczmax) 	-	aperture in source planezmax (mm)				-	10
     (rpin_ap) 	-	radius in aperture plane					-	11
-    op->apr.ymin_ap	-								-	12
-    op->apr.ymax_ap	-								-	13
-    op->apr.zmin_ap	-								-	14
-    op->apr.zmax_ap	-								-	15
+#
+    op.apr.ymin_ap	1	-							-	12
+    op.apr.ymax_ap	-	-							-	13
+    op.apr.zmin_ap	-	-							-	14
+    op.apr.zmax_ap	-	-							-	15
 ##    (so5.dipcy) Dipole: Cy								-	16
 ##    (so5.dipcz) Dipole: Cz								-	17
 ##    (so5.dipdisy) Dipole: y-Distance (virtual) between Dipole and source plane	-	18
@@ -85,7 +86,7 @@ Unsorted
     (inorm)	-	(1) normalize output(0) do not normalize  			-	20
     (inorm1)	-	-								-	21
     (inorm2)	-	(012)								-	22
-    (matrel) derive matrix elements in 3 different ways (1) (for debugging)		-	23
+    (matrel) 	-	derive matrix elements in 3 different ways (1) (for debugging)	-	23
 ##    (so1.isrcy)   source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file	-	24
 ##    (so1.isrcdy)  source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file	-	25
 ##    (so1.sigmay)  source size/div.: sigmay(mm) / sigmayp or half height/angle		-	26
