@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp
 //  Date      : <23 Nov 11 09:41:11 flechsig> 
-//  Time-stamp: <24 Nov 11 15:39:59 flechsig> 
+//  Time-stamp: <25 Nov 11 15:21:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -35,6 +35,7 @@
     treeitem.cpp
 
     A container for items of data supplied by the simple tree model.
+    qt example program extended by UF for phaseqt
 */
 
 #include <QStringList>
@@ -107,7 +108,7 @@ void TreeItem::setValue(QString *val)
   itemData.replace(1, a);
 } // setVal
 
-// get index
+// get index from column 4
 // returns the index or -1 in case of an error
 int TreeItem::getIndex()
 {
@@ -121,7 +122,7 @@ int TreeItem::getIndex()
   return data(4).toInt();
 } // getIndex
 
-// get value
+// get value from column 1
 // returns the value or -1 in case of an error
 QString TreeItem::getValue()
 {
@@ -134,3 +135,5 @@ QString TreeItem::getValue()
 
   return data(1).toString();
 } // getValue
+
+// end /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp
