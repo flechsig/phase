@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp
 //  Date      : <23 Nov 11 09:41:11 flechsig> 
-//  Time-stamp: <25 Nov 11 15:21:14 flechsig> 
+//  Time-stamp: <25 Nov 11 15:23:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -104,7 +104,7 @@ void TreeItem::setValue(QString *val)
   if (columnCount() < 2)
     return;
   
-  QString a= QString(*val);
+  QString a= QString(*val);   // UF dont know if I can pass the pointer or a copy
   itemData.replace(1, a);
 } // setVal
 
@@ -113,7 +113,7 @@ void TreeItem::setValue(QString *val)
 int TreeItem::getIndex()
 {
 #ifdef DEBUG1
-  cout << "getIndex called " << endl;
+  cout << __FILE__ << "getIndex called " << endl;
 #endif
 
   if (columnCount() < 5)
@@ -127,7 +127,7 @@ int TreeItem::getIndex()
 QString TreeItem::getValue()
 {
 #ifdef DEBUG1
-  cout << "getValue called " << endl;
+  cout << __FILE__ << "getValue called " << endl;
 #endif
 
   if (columnCount() < 2)

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.h */
 /*  Date      : <23 Nov 11 09:31:41 flechsig>  */
-/*  Time-stamp: <24 Nov 11 12:57:07 flechsig>  */
+/*  Time-stamp: <25 Nov 11 15:25:49 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,6 +30,8 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
+
+// extensions for phaseqt by UF
 
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
@@ -69,7 +71,7 @@ private:
     void setupModelData(const QStringList &lines, TreeItem *parent);
 
     TreeItem   *rootItem;
-    TreeItem* itemList[NPARS];
+    TreeItem* itemList[NPARS];  // UF
     int actualIndex;
     QLineEdit *myeddi;
     QListWidget *myplist;
