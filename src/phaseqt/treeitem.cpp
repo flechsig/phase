@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp
 //  Date      : <23 Nov 11 09:41:11 flechsig> 
-//  Time-stamp: <25 Nov 11 15:23:19 flechsig> 
+//  Time-stamp: <25 Nov 11 15:54:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -135,5 +135,19 @@ QString TreeItem::getValue()
 
   return data(1).toString();
 } // getValue
+
+// get default from column 3
+// returns the default value or -1 in case of an error
+QString TreeItem::getDefault()
+{
+#ifdef DEBUG1
+  cout << __FILE__ << "getDefault called " << endl;
+#endif
+
+  if (columnCount() < 4)
+    return QString("error in getDefault");
+
+  return data(3).toString();
+} // getDefault
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.cpp

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.h */
 /*  Date      : <23 Nov 11 09:31:41 flechsig>  */
-/*  Time-stamp: <25 Nov 11 15:25:49 flechsig>  */
+/*  Time-stamp: <25 Nov 11 15:47:19 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,7 +40,7 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "phaseqt.h"
+#include "phaseqt.h"    // wegen NPARS
 
 
 class TreeItem;
@@ -52,33 +52,31 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-  TreeModel(const QString &data, QObject *parent = 0, QLineEdit *eddi = 0, QListWidget *plist = 0);
-    ~TreeModel();
-
-    QVariant data(const QModelIndex &index, int role) const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const;
-    QModelIndex index(int row, int column,
-                      const QModelIndex &parent = QModelIndex()) const;
-    QModelIndex parent(const QModelIndex &index) const;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
-    int getActualIndex();
-    void updateItemVal(QString, int);
-
-private:
-    void setupModelData(const QStringList &lines, TreeItem *parent);
-
-    TreeItem   *rootItem;
-    TreeItem* itemList[NPARS];  // UF
-    int actualIndex;
-    QLineEdit *myeddi;
-    QListWidget *myplist;
-    
-
+  TreeModel(const QString &data, QObject *parent = 0, QLineEdit *eddi = 0);
+  ~TreeModel();
+  
+  QVariant data(const QModelIndex &index, int role) const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
+  QVariant headerData(int section, Qt::Orientation orientation,
+		      int role = Qt::DisplayRole) const;
+  QModelIndex index(int row, int column,
+		    const QModelIndex &parent = QModelIndex()) const;
+  QModelIndex parent(const QModelIndex &index) const;
+  int rowCount(const QModelIndex &parent = QModelIndex()) const;
+  int columnCount(const QModelIndex &parent = QModelIndex()) const;
+  int getActualIndex();
+  void updateItemVal(QString, int);
+  
+ private:
+  void setupModelData(const QStringList &lines, TreeItem *parent);
+  
+  TreeItem   *rootItem;
+  TreeItem* itemList[NPARS];  // UF
+  int actualIndex;            // UF contains the actual index
+  QLineEdit *myeddi;          // UF
+  
 private slots:
-    void selectSlot(const QModelIndex &);
+  void selectSlot(const QModelIndex &);
 };
 
 #endif

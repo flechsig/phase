@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Nov 11 15:25:19 flechsig> 
+//  Time-stamp: <25 Nov 11 16:04:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -877,7 +877,7 @@ QWidget *MainWindow::createParameterBox()
 
   QFile file(":/parameter.default");
   file.open(QIODevice::ReadOnly);
-  parameterModel= new TreeModel(file.readAll(), this, parameterE, parameterList);
+  parameterModel= new TreeModel(file.readAll(), this, parameterE);
   //TreeModel model(file.readAll());
   file.close();
 
@@ -1097,7 +1097,7 @@ void MainWindow::parameterUpdateAll(int zahl)
   for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
 } // parameterUpdateAll
 
-#ifdef OLD
+/****old
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
 // defaults can be set with an empty text
@@ -1182,7 +1182,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
     "(so4.deltatime)",
     "(so4.iconj)",
     "(REDUCE_maps) use old REDUCE maps",
-  }; /* ende der Liste */ 
+    }; // ende der Liste 
 
   // struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
   struct OptionsType   *op = myparent->myOptions();
@@ -1581,7 +1581,8 @@ case 10:
   if (parameterModel) parameterModel->updateItemVal(QString(buffer), pos);
 
 } // end parameterUpdate
-#else
+
+end old ***/
 
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
@@ -1593,22 +1594,15 @@ case 10:
 void MainWindow::parameterUpdate(int pos, const char *text, int init)
 {
   char buffer[MaxPathLength];
-  int scanned;
-  QListWidgetItem *item= parameterList->item(pos);
-
-
-  // struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
+  int scanned= 1;
+ 
   struct OptionsType   *op = myparent->myOptions();
   struct sources    *mysrc = &(myparent->myBeamline()->src);
-  //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
-  //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
-
+  
 #ifdef DEBUG1
-    printf("\ndebug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
-  //printf("debug: parameterUpdate: pos: %d, file: %s, zmin: %lf\n", pos, __FILE__, op->xi.zmin);
+  cout << __FILE__ << " debug: parameterUpdate: pos: " << pos << endl;
 #endif
 
-  scanned= 1;      // set a default 
   switch (pos)
     {
     case 0: 
@@ -1989,13 +1983,12 @@ case 10:
     default:
       sprintf(buffer, "%d \t: unknown parameter", pos);
     }
-  //  item->setText(buffer);
-  
+    
   parameterModel->updateItemVal(QString(buffer), pos);
 
 } // end parameterUpdate
 
-#endif
+
 
 
 // interactive version checks for backupfile

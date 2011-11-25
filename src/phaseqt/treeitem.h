@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treeitem.h */
 /*  Date      : <24 Nov 11 08:41:02 flechsig>  */
-/*  Time-stamp: <24 Nov 11 09:25:26 flechsig>  */
+/*  Time-stamp: <25 Nov 11 15:55:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,6 +31,8 @@
 **
 ****************************************************************************/
 
+// extensions for phaseqt by UF
+
 #ifndef TREEITEM_H
 #define TREEITEM_H
 
@@ -50,11 +52,11 @@ public:
     int columnCount() const;
     QVariant data(int column) const;
     int row() const;
-    void setValue(QString *);
-    int  getIndex();
-    QString  getValue();
+    void setValue(QString *);  // UF
+    int  getIndex();           // UF
+    QString  getValue();       // UF
+    QString  getDefault();     // UF
     TreeItem *parent();
-
 
 private:
     QList<TreeItem*> childItems;
