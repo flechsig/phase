@@ -161,12 +161,12 @@ c------------------------------------------------------
 
 c---------------- Aperture in source plane ------------
 
-c	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
-c     &		lt.apr.rpin).and.
-c     &		((ra.rf.yp.gt.apr.srcymin).and.
-c     &		 (ra.rf.yp.lt.apr.srcymax)).and.
-c     &		((ra.rf.zp.gt.apr.srczmin).and.
-c     &		(ra.rf.zp.lt.apr.srczmax)))then
+	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
+     &		lt.apr.rpin).and.
+     &		((ra.rf.yp.gt.apr.srcymin).and.
+     &		 (ra.rf.yp.lt.apr.srcymax)).and.
+     &		((ra.rf.zp.gt.apr.srczmin).and.
+     &		(ra.rf.zp.lt.apr.srczmax)))then
 
 c---------------- Aperture plane ----------------------
 c	if( (dsqrt(ra.ap.yp_ap*ra.ap.yp_ap+
@@ -196,7 +196,7 @@ c	if(iii.eq.1)then
 
 c	endif	! size of OE
 c	endif	! aperture plane
-c	endif	! source plane
+	endif	! source plane
 
 	return
         end
