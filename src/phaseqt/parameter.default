@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <29 Nov 11 09:25:30 flechsig> 
+#  Time-stamp: <29 Nov 11 09:29:31 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -119,12 +119,12 @@ PO Obsolete parameters
 ##    (iplmode) subtraction of ideal path length (1)					-	4
 ##    (isrctype) source type								-	5
 ##    (rpin) 	-	radius of pinhole in source plane (mm)				-	6
-##    (srcymin) 	-	aperture in source planeymin (mm)				-	7
-##    (srcymax) 	-	aperture in source planeymax (mm)				-	8
-##    (srczmin) 	-	aperture in source planezmin (mm)				-	9
+##    (srcymin) 	-	aperture in source planeymin (mm)			-	7
+##    (srcymax) 	-	aperture in source planeymax (mm)			-	8
+##    (srczmin) 	-	aperture in source planezmin (mm)			-	9
 #
-##    (srczmax) 	-	aperture in source planezmax (mm)				-	10
-##    (rpin_ap) 	-	radius in aperture plane					-	11
+##    (srczmax) 	-	aperture in source planezmax (mm)			-	10
+##    (rpin_ap) 	-	radius in aperture plane				-	11
 #
 ##    op.apr.ymin_ap	1	-							-	12
 ##    op.apr.ymax_ap	-	-							-	13
@@ -144,7 +144,7 @@ PO Obsolete parameters
 ##    (so1.sigmay)  source size/div.: sigmay(mm) / sigmayp or half height/angle		-	26
 ##    (so1.sigmayp) source size/div.: sigmay(mm) / sigmayp or half height/angle		-	27
 ##    (xi.ymin)	-	yminzu integrierender Winkelbereich in mrad			-	28
-##    (xi.ymax) 	-	ymaxzu integrierender Winkelbereich in mrad			-	29
+##    (xi.ymax) 	-	ymaxzu integrierender Winkelbereich in mrad		-	29
 #
 ##    (xi.ianzy0) Anzahl der Stuetzstellen im ersten Raster    			-	30
 ##    (so1.isrcz) source type (size/div.):(0)sigma val.,(1)hard edgeetc...	-	31
