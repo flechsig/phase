@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <29 Nov 11 09:29:31 flechsig> 
+#  Time-stamp: <29 Nov 11 09:39:59 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -94,7 +94,7 @@ PO Obsolete parameters
     op.apr.zmin_ap	-	-							-	14
     op.apr.zmax_ap	-	-							-	15
     matrel 	-	derive matrix elements in 3 different ways (1) (for debugging)	-	23
-    source 1	-	artificial source
+    source 1	-	hard edge or Gaussian 
         isrcy	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	24
         isrcdy 	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	25
         sigmay	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	26
@@ -103,7 +103,9 @@ PO Obsolete parameters
         isrcdz 	0	source type (size/div.):(0)sigma val.,(1)hard edgeetc...	0	32
         sigmaz 	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	33
         sigmazp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	34
-    source 5	-	dipole source
+    source 2	-	Zernike polynomials in FIT_EY_RE.PAR and FIT_EY_IM.PAR
+    source 3	-	Source from files EYRE0_500.SPL and EYIM0_500.SPL	
+    source 5	-	dipole source (analytical representation)
         dipcy	0	Dipole: Cy							0	16
         dipcz	0	Dipole: Cz							0	17
         dipdisy	0	Dipole: y-Distance (virtual) between Dipole and source plane	0	18
