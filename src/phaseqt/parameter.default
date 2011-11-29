@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <29 Nov 11 09:39:59 flechsig> 
+#  Time-stamp: <29 Nov 11 15:15:28 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -66,7 +66,7 @@ PO Integration
     d12_max		0	-							0	40 
     id12		0	print d12 on file, (0,1)				0	41	
     grid parameters   
-        ianzy0		51	y grid points				 		51	30
+        xi.ianzy0	51	y grid points				 		51	30
         xi.ymin		-1	dymin for integration (mrad)				-1	28
         xi.ymax 	1	dymax for integration (mrad)				1	29
         xi.ianzz0	51	z grid points						51	37
