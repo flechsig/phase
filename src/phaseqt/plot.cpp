@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <16 Nov 11 15:30:45 flechsig> 
+//  Time-stamp: <02 Dec 11 10:32:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -64,8 +64,6 @@ public:
 };
 
 
-
-
 class MyZoomer: public QwtPlotZoomer
 {
 public:
@@ -85,7 +83,7 @@ public:
     }
 };
 
-// UF the original data
+// UF the original 2d data
 class SpectrogramData: public QwtRasterData
 {
 public:
@@ -108,7 +106,7 @@ public:
 };
 
 
-// UF my copy with slightly changed patrameters
+// UF my copy of the 2d data with slightly changed patrameters
 class SpectrogramData2: public QwtRasterData
 {
 public:
@@ -130,7 +128,7 @@ public:
     }
 };
 
-// keeps the ray trace data
+// keeps the 2d ray trace data
 class SpectrogramDataPhase: public QwtRasterData
 {
 private:
@@ -191,8 +189,6 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   xxx= NULL; yyy=NULL;
   // bt= (struct BeamlineType *) parent;
 
-
-
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
   
@@ -252,9 +248,12 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   //  this->p_zoomer= zoomer;
 } // end constructor
 
+// do a contour plot
 void Plot::contourPlot()
 {
-  printf("contour plot experimental\n");
+#ifdef DEBUG
+  cout << "contour plot experimental" << endl;
+#endif
   d_curve1->hide();
   d_curve2->hide();
   d_spectrogram->show();
@@ -267,7 +266,10 @@ void Plot::profilePlot(struct RayType *rays, int points, int type)
   struct RayType *rp;
   rp= rays;
 
-  printf("profile plot experimental\n");
+#ifdef DEBUG
+  cout << "profile plot experimental" << endl;
+#endif
+  
 
   if (xxx != NULL) delete xxx;
   if (xxx != NULL) delete yyy;
@@ -802,11 +804,12 @@ void Plot::clearPoints()
 void Plot::getData()
   // produce some dummy data
 {
-  for ( int i=0; i<NPOINTS; i++ ) {
-    xx[i] = 0.1*i;
-    ysin[i] = sin(xx[i]);
-    ycos[i] = cos(xx[i]);
-  }
-}
+  for ( int i=0; i<NPOINTS; i++ ) 
+    {
+      xx[i] = 0.1*i;
+      ysin[i] = sin(xx[i]);
+      ycos[i] = cos(xx[i]);
+    }
+} // end getData()
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

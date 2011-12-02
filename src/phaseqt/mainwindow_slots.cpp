@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-11-24 21:58:42 flechsig> 
+//  Time-stamp: <02 Dec 11 10:35:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -25,9 +25,9 @@
 void MainWindow::about()
 {
 #ifdef SEVEN_ORDER
-  const char *onoff="on";
+  const char *onoff= "on";
 #else
-  const char *onoff="off";
+  const char *onoff= "off";
 #endif
 
    QMessageBox::about(this, tr("About PhaseQt"),
