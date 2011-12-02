@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <02 Dec 11 10:35:05 flechsig> 
+//  Time-stamp: <02 Dec 11 10:46:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -13,9 +13,12 @@
 //
 
 #include <QtGui>
+#include <cmath>                     // for abs
 
 #include "mainwindow.h"
 #include "phaseqt.h"
+
+using namespace std;   // fuer cout z.B.
 
 //////////////////////////////////////////////
 // begin slots section (callback functions) //
@@ -269,7 +272,7 @@ printf("yy\n");
       printf("writereRTsultAct button pressed\n"); 
       printf("write result to file: %s\n", myparent->myPHASEset()->imageraysname);
       myparent->myWriteRayFile(myparent->myPHASEset()->imageraysname, &myparent->myBeamline()->RESULT.points,
-		   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
+			       (struct RayType *)myparent->myBeamline()->RESULT.RESp);
     } 
   if (!action.compare("grscatterAct")) 
     { 
@@ -304,7 +307,6 @@ printf("yy\n");
  if (!action.compare("grHorProfAct")) 
     { 
       d_plot->plotstyle= PLOT_HPROF;
-      
     }
 
   if (!action.compare("grsourceAct")) 
@@ -407,7 +409,7 @@ void MainWindow::appendElement()
   int i;
   int pos= elementList->count();
   if (pos < 0) pos= 0;  // empty list 
-  if (abs(myparent->myBeamline()->elementzahl) > 1000) 
+  if (abs((int)(myparent->myBeamline()->elementzahl)) > 1000) 
     myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
@@ -545,7 +547,7 @@ void MainWindow::rBslot()
 void MainWindow::debugslot()
 {
   printf("debugslot activated\n");
-}
+} // end debugslot()
 
 //
 // UF slot delete optical element in the beamline box
@@ -943,7 +945,7 @@ void MainWindow::insertElement()
   int i;
   int pos= elementList->currentRow();
   if (pos < 0) pos= 0;  // empty list 
-  if (abs(myparent->myBeamline()->elementzahl) > 1000) myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
+  if (abs((int)(myparent->myBeamline()->elementzahl)) > 1000) myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
   printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
@@ -1437,7 +1439,7 @@ void MainWindow::sourceApplyBslot()
   //struct PSSourceType         *pssp; 
 
 #ifdef DEBUG
-  printf("sourceApplyBslot activated\n");
+  cout << "sourceApplyBslot activated" << endl;
 #endif
 
   if (myparent->myBeamline()->RTSource.Quellep == NULL )
