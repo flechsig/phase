@@ -391,7 +391,7 @@ c          write(*,*)'debug 0711 yipc(1) yipc(2)', yipc(1), yipc(2)
 #endif
 
 
-1111	format(8f15.6)
+1111	format(8d16.6)
 c        write(*,*)'xir.iisimp:',xir.iisimp
 c	do ii=1,xir.iisimp
            open(unit=10,name='simpre.dat',type='unknown',err=123)
