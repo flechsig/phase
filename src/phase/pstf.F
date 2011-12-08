@@ -391,14 +391,14 @@ c          write(*,*)'debug 0711 yipc(1) yipc(2)', yipc(1), yipc(2)
 #endif
 
 
-
+1111	format(8f15.6)
 c        write(*,*)'xir.iisimp:',xir.iisimp
 c	do ii=1,xir.iisimp
            open(unit=10,name='simpre.dat',type='unknown',err=123)
 c           do i=1,xir.isimpre(ii)
            do i=1,xir.isimpre(1)
 c              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
-              write(10,*)xir.simpre(1,1,i),xir.simpre(1,2,i),
+              write(10,1111)xir.simpre(1,1,i),xir.simpre(1,2,i),
      .             xir.simpre(2,1,i),xir.simpre(2,2,i),
      .             xir.simpre(3,1,i),xir.simpre(3,2,i),
      .             xir.simpre(4,1,i),xir.simpre(4,2,i)
@@ -408,7 +408,7 @@ c              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
 c           do i=1,xir.isimpim(ii)
            do i=1,xir.isimpim(1)
 c              write(10,*)xir.simpim(ii,1,i),xir.simpim(ii,2,i)
-              write(10,*)xir.simpim(1,1,i),xir.simpim(1,2,i),
+              write(10,1111)xir.simpim(1,1,i),xir.simpim(1,2,i),
      .             xir.simpim(2,1,i),xir.simpim(2,2,i),
      .             xir.simpim(3,1,i),xir.simpim(3,2,i),
      .             xir.simpim(4,1,i),xir.simpim(4,2,i)
@@ -423,7 +423,7 @@ c        do ii=1,xir.iisimp
 c           do i=1,xir.isintre(ii)
            do i=1,xir.isintre(1)
 c              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
-              write(10,*)xir.sintre(1,1,i),xir.sintre(1,2,i),
+              write(10,1111)xir.sintre(1,1,i),xir.sintre(1,2,i),
      .             xir.sintre(2,1,i),xir.sintre(2,2,i),
      .             xir.sintre(3,1,i),xir.sintre(3,2,i),
      .             xir.sintre(4,1,i),xir.sintre(4,2,i)
@@ -433,7 +433,7 @@ c              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
 c           do i=1,xir.isintim(ii)
            do i=1,xir.isintim(1)
 c              write(10,*)xir.sintim(ii,1,i),xir.sintim(ii,2,i)
-              write(10,*)xir.sintim(1,1,i),xir.sintim(1,2,i),
+              write(10,1111)xir.sintim(1,1,i),xir.sintim(1,2,i),
      .             xir.sintim(2,1,i),xir.sintim(2,2,i),
      .             xir.sintim(3,1,i),xir.sintim(3,2,i),
      .             xir.sintim(4,1,i),xir.sintim(4,2,i)
