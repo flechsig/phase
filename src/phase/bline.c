@@ -141,7 +141,8 @@ void BuildBeamline(struct BeamlineType *bl)
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		 &bl->ElementList[0].geo, 
-		 &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+		 &bl->BLOptions.ifl.inorm1, 
+		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 #endif
 	  /*	  XFREE(ltp); */
 	  /* bl->tp= NULL; */
@@ -212,16 +213,17 @@ void BuildBeamline(struct BeamlineType *bl)
 	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
 	      exit(-1);
 	    }
-	  printf(" call fdet_8- derzeit auskommentiert\n"); 
-#define FDET_8
-#ifdef FDET_8
+#define FDET_8 
+/* #ifdef FDET_8 */ 
 	  fdet_8(bl->wc, bl->xlc,
 		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		 &bl->ElementList[0].geo, 
-		 &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
-#endif
+		 &bl->BLOptions.ifl.inorm1, 
+		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+	  printf(" returned from fdet_8\n");
+/* #endif */
 	  XFREE(ltp);
 	  bl->tp= NULL;
 	}
@@ -373,7 +375,8 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		     bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		     &bl->ElementList[0].geo, 
-		     &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+		     &bl->BLOptions.ifl.inorm1, 
+		     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	      XFREE(ltp);
 	      bl->tp= NULL;
 	    }
@@ -449,7 +452,8 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		     bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		     &bl->ElementList[0].geo, 
-		     &bl->BLOptions.ifl.inorm1, &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+		     &bl->BLOptions.ifl.inorm1,  
+		     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	      XFREE(ltp);
 	      bl->tp= NULL;
 	    }
@@ -864,7 +868,6 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
    /*#endif*/
    if (bl->BLOptions.REDUCE_maps == 0)
      {
-       printf("aaaaaaaaaaaaaaaaa: %lf\n",listpt->dzpc[1][0][0][0]);
        fgmapidp_8(&bl->BLOptions.epsilon, 
 		  listpt->wc, listpt->xlc, 
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
