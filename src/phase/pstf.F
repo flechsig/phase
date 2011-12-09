@@ -66,17 +66,17 @@ c        record /source_results/ sr
      &       stfd1phmaxc,stinumbc,s1c,s2c,s3c,eyrec,ezrec,
      &       eyimc,ezimc
 
-        dimension ypc1(0:4,0:4,0:4,0:4),
-     &            zpc1(0:4,0:4,0:4,0:4),
-     &            dypc(0:4,0:4,0:4,0:4),
-     &            dzpc(0:4,0:4,0:4,0:4), 
-     &            wc(0:4,0:4,0:4,0:4),
-     &            xlc(0:4,0:4,0:4,0:4), 
-     &            xlen1c(0:4,0:4,0:4,0:4),  
-     &            xlen2c(0:4,0:4,0:4,0:4),  
-     &		  fdetc(0:4,0:4,0:4,0:4),        	! fdet
-     &		  fdetphc(0:4,0:4,0:4,0:4),        	! fdet
-     &		  fdet1phc(0:4,0:4,0:4,0:4)        	! fdet  
+        dimension ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7),
+     &            dypc(0:7,0:7,0:7,0:7),
+     &            dzpc(0:7,0:7,0:7,0:7), 
+     &            wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7), 
+     &            xlen1c(0:7,0:7,0:7,0:7),  
+     &            xlen2c(0:7,0:7,0:7,0:7),  
+     &		  fdetc(0:7,0:7,0:7,0:7),        	! fdet
+     &		  fdetphc(0:7,0:7,0:7,0:7),        	! fdet
+     &		  fdet1phc(0:7,0:7,0:7,0:7)        	! fdet  
 
         dimension yiplot(1024),ziplot(1024)        ! bildpunkte
         dimension yipc(1),zipc(1),psdc(1),
