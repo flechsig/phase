@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-12-10 21:46:06 flechsig> 
+//  Time-stamp: <2011-12-10 21:56:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -402,10 +402,12 @@ printf("yy\n");
 	  filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
 	  break;
 	default:
-	  printf("activate_proc: source type %d not supported!\n", 
-		 myparent->myBeamline()->src.isrctype);
+	  QMessageBox::warning(this, tr("warning src_ini"),
+			     tr("source type %1 : no files need to be read!\nreturn").
+			     arg(myparent->myBeamline()->src.isrctype));
 	  return;
 	}
+
       if ( !filesOK )
 	QMessageBox::warning(this, tr("error src_ini"),
 			     tr("source type %1 : source file(s) not found!\nreturn").
