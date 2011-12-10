@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-12-10 17:23:05 flechsig> 
+//  Time-stamp: <2011-12-10 21:46:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -48,6 +48,7 @@ void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType * psip;
+  int filesOK;
   
   if (action.isEmpty())
           return;
@@ -314,7 +315,7 @@ printf("yy\n");
       d_plot->showContour(true);
     }
 
- if (!action.compare("grHorProfAct")) 
+  if (!action.compare("grHorProfAct")) 
     { 
       d_plot->plotstyle= PLOT_HPROF;
     }
@@ -380,24 +381,41 @@ printf("yy\n");
   if (!action.compare("poInitSourceAct")) 
     { 
       printf("poInitSourceAct button pressed\n"); 
-      printf("not tested so far- !!! no test if files exists !!!\n"); 
-      
-      if ((myparent->myBeamline()->src.isrctype == 2) || 
-	  (myparent->myBeamline()->src.isrctype == 3) ||
-	  (myparent->myBeamline()->src.isrctype == 4) ||
-	  (myparent->myBeamline()->src.isrctype == 6))
+            
+      switch (myparent->myBeamline()->src.isrctype)
+	{
+	case 2:
+	  filesOK= fexists(myparent->myBeamline()->src.so2.fsource2a) & 
+	    fexists(myparent->myBeamline()->src.so2.fsource2b);
+	  break;
+	case 3:
+	  filesOK= fexists(myparent->myBeamline()->src.so3.fsource3a) & 
+	    fexists(myparent->myBeamline()->src.so3.fsource3b);
+ 	  break;
+	case 4: 
+	  filesOK= fexists(myparent->myBeamline()->src.so4.fsource4a) & 
+	    fexists(myparent->myBeamline()->src.so4.fsource4b) & 
+	    fexists(myparent->myBeamline()->src.so4.fsource4c) &
+	    fexists(myparent->myBeamline()->src.so4.fsource4d);
+	  break;
+	case 6:
+	  filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
+	  break;
+	default:
+	  printf("activate_proc: source type %d not supported!\n", 
+		 myparent->myBeamline()->src.isrctype);
+	  return;
+	}
+      if ( !filesOK )
+	QMessageBox::warning(this, tr("error src_ini"),
+			     tr("source type %1 : source file(s) not found!\nreturn").
+			     arg(myparent->myBeamline()->src.isrctype));
+      else
 	{
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
-          myparent->myBeamline()->beamlineOK |= pstsourceOK;
-#ifdef DEBUG
-	  printf("activate_proc: call src_ini(&Beamline.src)\n");
-#endif
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-      else
-	printf("activate_proc: source type %d not supported!\n", 
-	       myparent->myBeamline()->src.isrctype);
-      
-    } 
+    } // end poInitSourceAct
 
   if (!action.compare("configureAct")) 
     { 
