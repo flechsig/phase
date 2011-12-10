@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <02 Dec 11 10:46:10 flechsig> 
+//  Time-stamp: <2011-12-10 17:23:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -267,13 +267,23 @@ printf("yy\n");
     }
 
 
-  if (!action.compare("writeRTresultAct")) 
+  if (!action.compare("writeResultAct")) 
     { 
-      printf("writereRTsultAct button pressed\n"); 
-      printf("write result to file: %s\n", myparent->myPHASEset()->imageraysname);
-      myparent->myWriteRayFile(myparent->myPHASEset()->imageraysname, &myparent->myBeamline()->RESULT.points,
-			       (struct RayType *)myparent->myBeamline()->RESULT.RESp);
+      printf("writereResultAct button pressed, result type: %d\n", myparent->myBeamline()->RESULT.typ); 
+      if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0)
+	{
+	  cout << "write PO result to file " << myparent->myPHASEset()->imageraysname << endl;
+	  myparent->myWritePsd(myparent->myPHASEset()->imageraysname, 
+			       (struct PSDType *)myparent->myBeamline()->RESULT.RESp);
+	}
+      else
+	{
+	  cout << "write GO result to file " << myparent->myPHASEset()->imageraysname << endl;
+	  myparent->myWriteRayFile(myparent->myPHASEset()->imageraysname, &myparent->myBeamline()->RESULT.points,
+				   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
+	}
     } 
+
   if (!action.compare("grscatterAct")) 
     { 
       printf("grscatterAct button pressed\n"); 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <24 Nov 11 12:04:26 flechsig>  */
+/*  Time-stamp: <2011-12-10 17:05:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -276,7 +276,7 @@ private:
     QAction *writematAct;
     QAction *writecoeffAct;
     QAction *writesimpAct;
-    QAction *writeRTresultAct;
+    QAction *writeResultAct;
 
     QMenu   *plotstyleMenu;
     QAction *grscatterAct;

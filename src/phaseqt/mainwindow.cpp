@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <25 Nov 11 16:04:16 flechsig> 
+//  Time-stamp: <2011-12-10 17:28:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -150,12 +150,12 @@ void MainWindow::createActions()
     signalMapper->setMapping(mphasespaceAct, QString("mphasespaceAct"));
     connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    writemapAct = new QAction(tr("&Write Map"), this);
+    writemapAct = new QAction(tr("Write Ma&p"), this);
     writemapAct->setStatusTip(tr("Write file with transfer map"));
     signalMapper->setMapping(writemapAct, QString("writemapAct"));
     connect(writemapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    writematAct = new QAction(tr("&Write Matrix"), this);
+    writematAct = new QAction(tr("Write Matri&x"), this);
     writematAct->setStatusTip(tr("Write file with transfer matrix"));
     signalMapper->setMapping(writematAct, QString("writematAct"));
     connect(writematAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -165,15 +165,15 @@ void MainWindow::createActions()
     signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
     connect(writecoeffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    writesimpAct = new QAction(tr("Write PO density cuts (real/im.)"), this);
+    writesimpAct = new QAction(tr("Write &PO density cuts (real/im.)"), this);
     writesimpAct->setStatusTip(tr("Write simpre/simpim file in PO mode"));
     signalMapper->setMapping(writesimpAct, QString("writesimpAct"));
     connect(writesimpAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    writeRTresultAct = new QAction(tr("Write &RT results "), this);
-    writeRTresultAct->setStatusTip(tr("Write file with ray trace results"));
-    signalMapper->setMapping(writeRTresultAct, QString("writeRTresultAct"));
-    connect(writeRTresultAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    writeResultAct = new QAction(tr("Write &Results "), this);
+    writeResultAct->setStatusTip(tr("Write file with GO or PO results"));
+    signalMapper->setMapping(writeResultAct, QString("writeResultAct"));
+    connect(writeResultAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     readFg34Act = new QAction(tr("&Read file fg34.par"), this);
     readFg34Act->setStatusTip(tr("Read parameter file fg34.par (for compatibility with previous phase versions)"));
@@ -579,7 +579,7 @@ void MainWindow::createMenus()
 
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
-    cmdMenu->addAction(writeRTresultAct);
+    cmdMenu->addAction(writeResultAct);
     cmdMenu->addAction(writemapAct);
     cmdMenu->addAction(writematAct);
     cmdMenu->addAction(writecoeffAct);

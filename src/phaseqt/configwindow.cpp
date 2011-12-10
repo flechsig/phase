@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2011-11-20 22:58:54 flechsig> 
+//  Time-stamp: <2011-12-10 17:32:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -143,9 +143,9 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 	  strncpy(myparent->opresname, fname, MaxPathLength); else
 	  if ( !strncmp(description, "minuit input", 10) ) 
 	    strncpy(myparent->minname, fname, MaxPathLength); else
-	    if ( !strncmp(description, "ray input (source)", 6) ) 
+	    if ( !strncmp(description, "GO input (source)", 6) ) 
 	      strncpy(myparent->sourceraysname, fname, MaxPathLength); else
-	      if ( !strncmp(description, "ray output (image)", 6) )
+	      if ( !strncmp(description, "GO/PO output (image)", 6) )
 		strncpy(myparent->imageraysname, fname, MaxPathLength); else
 		if ( !strncmp(description, "matrix", 4) ) 
 		  strncpy(myparent->matrixname, fname, MaxPathLength); else
@@ -209,8 +209,8 @@ void ConfigWindow::fillList()
   addRow("so4_fsource4a",        myparent->myPHASEset()->so4_fsource4a,  "s4a");
   addRow("map name",             myparent->myPHASEset()->mapname,        "map");
   addRow("matrix name",          myparent->myPHASEset()->matrixname,     "omx");
-  addRow("ray output (image)",   myparent->myPHASEset()->imageraysname,  "out");
-  addRow("ray input (source)",   myparent->myPHASEset()->sourceraysname, "inp");
+  addRow("GO/PO output (image)", myparent->myPHASEset()->imageraysname,  "out");
+  addRow("GO input (source)",   myparent->myPHASEset()->sourceraysname, "inp");
   addRow("minuit input",         myparent->myPHASEset()->minname,        "minu");
   addRow("optimization results", myparent->myPHASEset()->opresname,      "opti");
   addRow("optimization input",   myparent->myPHASEset()->optipckname,    "pcko");
