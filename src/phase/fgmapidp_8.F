@@ -187,11 +187,11 @@ c
         call Tay_sqrt_6(q1,rtq1,iord)  
         call Tay_sqrt_6(q2,rtq2,iord)  
 
-        call tay_sum_6(rtq1,rtq2,opl6,iord)
-        call tay_add_6(opl6,q0,iord)
-
         call tay_sum_6(rtq1,q0,xloc1_6,iord)
         call tay_copy_6(rtq2,xloc2_6,iord)
+
+        call tay_sum_6(rtq1,rtq2,opl6,iord)
+        call tay_add_6(opl6,q0,iord)
 
 c---------- get dfdw6 and dfdl6 in seventh order
 c       dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw
@@ -278,30 +278,32 @@ c       input:  opl6(w,l,y,z,yp,zp),
 c               ypc1(y,z,dy,dz),zpc1(y,z,dy,dz)
 c       output: opl4(w,l,y,z)
 c
-        call replace_6v4v(opl6,ypc1,zpc1,opl4,iord)
+	
+        call replace_6v4v(opl6,ypc,zpc,opl4,iord)
 
-        call replace_6v4v(xloc1_6,ypc1,zpc1,xloc1_4,iord)
-        call replace_6v4v(xloc2_6,ypc1,zpc1,xloc2_4,iord)
-
+        call replace_6v4v(xloc1_6,ypc,zpc,xloc1_4,iord)
+        call replace_6v4v(xloc2_6,ypc,zpc,xloc2_4,iord)
+	
 c------------- get path length in variables (y,z,dy,dz)
 c       input:  opl4(w,l,y,z)
 c       output: opl(y,z,dy,dz)
 c
         call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
      &                          opl,opl,1,iord)
-
+    
+     
         call replace_wl_in_ypzp(xloc1_4,xloc1_4,wc,xlc,
      &                          xlm.xlen1c,xlm.xlen1c,1,iord)
         call replace_wl_in_ypzp(xloc2_4,xloc2_4,wc,xlc,
      &                          xlm.xlen2c,xlm.xlen2c,1,iord)
-
+	
 c------------- get partial derivatives in variables (w,l,y,z)
-        call replace_6v4v(dfdw6,ypc1,zpc1,dfdw4,iord)
-        call replace_6v4v(dfdl6,ypc1,zpc1,dfdl4,iord)
+        call replace_6v4v(dfdw6,ypc,zpc,dfdw4,iord)
+        call replace_6v4v(dfdl6,ypc,zpc,dfdl4,iord)
 
-        call replace_6v4v(dfdww6,ypc1,zpc1,dfdww4,iord)
-        call replace_6v4v(dfdwl6,ypc1,zpc1,dfdwl4,iord)
-        call replace_6v4v(dfdll6,ypc1,zpc1,dfdll4,iord)
+        call replace_6v4v(dfdww6,ypc,zpc,dfdww4,iord)
+        call replace_6v4v(dfdwl6,ypc,zpc,dfdwl4,iord)
+        call replace_6v4v(dfdll6,ypc,zpc,dfdll4,iord)
        
 c------------- get partial derivatives in variables (y,z,dy,dz)
         call replace_wl_in_ypzp(dfdw4,dfdw4,wc,xlc,
@@ -321,7 +323,7 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
           xlm.xlen1c(0,0,0,0)=xlm.xlen1c(0,0,0,0)-g.r
           xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
         endif
-
+	
 c------------------------------------------------------------
 
         endif   ! idrift = 0
