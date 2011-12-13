@@ -12,7 +12,7 @@ c--------------------------------------------------------
         dimension iac1(1000000,0:7),iac2(1000000,0:7),
      &            iac3(1000000,0:7),iac4(1000000,0:7)
         dimension iac1l(1000000,0:7)
-
+		
 c	zu bestimmende Konstanten festlegen (ikst)
 	do ii=0,iord
 	do ik=0,iord-ii
@@ -42,7 +42,7 @@ c	- falls n5=0 oder n6=0, d.h. Zahl der Faktoren a oder c gleich null
 c	tritt hier trotzdem jeweils der Faktor 1 auf. 
 c	Es gibt also einen Beitrag zu sum
 c--------------------------------------------------------
-       sum=0.d0
+        sum=0.d0
 
 	ianz1=0		! Kombis in 1 Spalte
 	ianz2=0		! in zweiter Spalte
@@ -106,17 +106,19 @@ c     Achtung. hier "gt"
 	    do mm1=1,n5	
 	    prod=prod*ypc1(iac1(m1,mm1),iac2(m2,mm1),
      &		            iac3(m3,mm1),iac4(m4,mm1))
+
 	    enddo
 	    do mm2=n5+1,n5+n6	
 	    prod=prod*zpc1(iac1(m1,mm2),iac2(m2,mm2),
      &                      iac3(m3,mm2),iac4(m4,mm2))
+
 	    enddo
 
 	    sum=sum+prod
 
-	  endif
+	  endif		! iflag = 1
 
-	enddo
+	enddo	! loops ueber Spaltenkombis
 	enddo
 	enddo
 	enddo
@@ -124,9 +126,9 @@ c     Achtung. hier "gt"
 200	continue	
 c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
 
-	fun4(ij,im,iu,iv)=fun4(ij,im,iu,iv)+
+	fun4(ii,ik,is,it)=fun4(ii,ik,is,it)+
      &    fun6(ij,im,iu,iv,n5,n6)*sum
-
+	
 	enddo	! loop ueber n6
 	enddo	! loop ueber n5		
 
