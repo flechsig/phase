@@ -4,13 +4,9 @@ c$$$ $Revision$
 c$$$ $Author$ 
 
 c------------------------------------------------------------------
-c	subroutine fdet_8(ypc1,zpc1,dypc,dzpc,dfdww,dfdwl,dfdll,
-c     &                    fdetc,fdetphc,fdet1phc,inorm1,inorm2,iord)
-c------------------------------------------------------------------
-c------------------------------------------------------------------
-	subroutine fdet_8(g,wc,xlc,ypc1,zpc1,dypc,dzpc,
+	subroutine fdet_8(wc,xlc,ypc1,zpc1,dypc,dzpc,
      &         opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
-     &         fdetc,fdetphc,fdet1phc,inorm1,inorm2,iord)
+     &         fdetc,fdetphc,fdet1phc,g,inorm1,inorm2,iord)
 c------------------------------------------------------------------
 	implicit real*8(a-h,o-z)
 	structure/geometryst/
@@ -31,7 +27,7 @@ c------------------------------------------------------------------
      &            f12(0:7,0:7,0:7,0:7),f34(0:7,0:7,0:7,0:7),
      &            fdetc(0:7,0:7,0:7,0:7),
      &            fdetphc(0:7,0:7,0:7,0:7),
-     &            fdetph1c(0:7,0:7,0:7,0:7)
+     &            fdet1phc(0:7,0:7,0:7,0:7)
         dimension opl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &	          dfdw6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdl6(0:7,0:7,0:7,0:7,0:7,0:7),
@@ -82,14 +78,14 @@ c	   ypc1, zpc1, dypc und dzpc sind die Fourtierkoeffizienten für Koordinaten/W
 c	   in der Quellebene entwickelt nach Koordinaten/Winkel in der Bildebene 
 c	   hier gibt es 2 Fälle:
 c	   inorm1 = 0: Normalfall, in dem die Funktionaldeterminante berechnet wird
-c	   inorm1 = 1: Fakto auf 1 gesetzt (zum Debugging)
+c	   inorm1 = 1: Faktor auf 1 gesetzt (zum Debugging)
 
 c	2) stationary phase approximation
 c	   d2F/dw**2 * d2F/dl**2 - (d2F/dw dl)**2
 c	   hier sind drei Fälle zu unterscheiden
-c	   inorm2 = 0: Normalfall, der für ein Element numerisch plausibel ist,
+c	   inorm2 = 0: Normalfall, der fuer ein Element numerisch plausibel ist,
 c		       aber mathematisch nicht bewiesen ist
-c		       wird bis auf Weiteres benutzt für Kombination von OEs 
+c		       wird bis auf Weiteres benutzt fuer Kombination von OEs 
 c	   inorm2 = 1: Faktor auf 1 gesetzt (zum debugging)
 c	   inorm2 = 2: 1/Wurzel(d2PL/dw2*d2PL/dl2)
 c	   inorm2 = 3: 1/Wurzel(d2PL/dw2*d2PL/dl2-(d2PL/dwdl)**2)
@@ -121,7 +117,7 @@ c---------------------------------------------------
 	call Tay_deri_4(ypc1,f1,3,1,iord)
 	call Tay_deri_4(zpc1,f2,4,1,iord)
 	call Tay_mult_4(f1,f2,f12,iord)
-
+	
 	call Tay_deri_4(ypc1,f1,4,1,iord)
 	call Tay_deri_4(zpc1,f2,3,1,iord)
 	call Tay_mult_4(f1,f2,f34,iord)
@@ -145,7 +141,7 @@ c---------------------------------------------------
 	fdetphc(0,0,0,0)=1.d0
 		
 	endif
-
+	
 c	bei diesem Faktor braucht man jetzt nur noch:
 c	- Taylorreihe berechnen
 c	- Absolutbetrag berechnen
@@ -181,7 +177,7 @@ c-----------------------------
 	  endif
 
 	  call Tay_sqrt_4(f1,f2,iord)
-	  call Tay_inv_4(f2,fdetph1c,iord)
+	  call Tay_inv_4(f2,fdet1phc,iord)
 	 endif
 
 c-----------------------------
@@ -191,12 +187,12 @@ c-----------------------------
 	 do j=0,iord-i
 	  do k=0,iord-i-j
 	   do l=0,iord-i-j-k
-	    fdetph1c(i,j,k,l)=0.d0
+	    fdet1phc(i,j,k,l)=0.d0
 	   enddo
 	  enddo
 	 enddo
 	enddo
-	fdetph1c(0,0,0,0)=1.d0
+	fdet1phc(0,0,0,0)=1.d0
 		
 	endif
 
@@ -219,7 +215,7 @@ c----------------------------------------------
 	if((inorm2.eq.2).or.(inorm2.eq.3))then
 c----------------------------------------------
 	  call Tay_sqrt_4(f3,f4,iord)
-	  call Tay_inv_4(f4,fdetph1c,iord)	
+	  call Tay_inv_4(f4,fdet1phc,iord)	
 	endif
 
 c-------------------------
@@ -230,7 +226,7 @@ c-------------------------
 	 do j=0,iord-i
 	  do k=0,iord-i-j
 	   do l=0,iord-i-j-k
-	    fdetph1c(i,j,k,l)=fdetph1c(i,j,k,l)*fact
+	    fdet1phc(i,j,k,l)=fdet1phc(i,j,k,l)*fact
 	   enddo
 	  enddo
 	 enddo
