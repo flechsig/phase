@@ -151,10 +151,10 @@ c         write(6,*)' fgmapidp: iplmode  = ',iplmode
 c         write(6,*)' fgmapidp: acc      = ',acc
 c         write(6,*)'=============================== '
 #endif
-        if(acc.lt.1e-8)then
-           write(*,*)'epsilon for Newton routine < 1e-8'
-           write(*,*)'put epsilon to default: 0.01'
-           acc=0.01
+        if(acc.lt.1d-12)then
+           write(*,*)'epsilon for Newton routine < 1d-12'
+           write(*,*)'put epsilon to default: 0.0001'
+           acc=0.0001d0
         endif
 
         idrift=0
