@@ -289,7 +289,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         else 
            surfmax=1.
         endif
-        if(surfmax.le.1d-15)surfmax=1. ! surfmax bestimmt
+        if(surfmax.le.1d-100)surfmax=1. ! surfmax bestimmt
     
 c---------------- OUTPUT --------------------------------
 c-----------------------------
