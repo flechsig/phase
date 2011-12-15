@@ -41,7 +41,11 @@ c
 c       Die ersten 2 indizes werden zu einem zusammengefasst,
 c       da der Kompliler maximal 7 Dimensionen verkraftet
 c
-
+c
+c	Achtung!! checken ob bei den hoeheren Ableitungen die 
+c	hoeheren Terme auch auf konsequent null gesetzt werden
+c
+c
         do i1=0,iord
         do j1=0,iord-i1
         do k=0,iord
