@@ -14,10 +14,11 @@ c       this routine evaluates
 c       - the transformation ypc1,zpc1,dypc,dzpc expanded in (y,z,dy,dz)
 c       - the intersection points wc, xlc        expanded in (y,z,dy,dz)
 c	- the path length and the derivatives opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6 
-c						 expanded in (w,l,y,z,dy,dz)c       
+c						 expanded in (w,l,y,z,yp,zp)       
 c	- the path length opl                    expanded in (y,z,dy,dz)
 c       - the derivatives dfdw, dfdl, dfdww, dfdwl, dfdll 
 c						 expanded in (y,z,dy,dz)
+c	- further derivatives dfdwidlj		 expanded in (w,l,y,z,yp,zp)
 c
 c       Variables read in this routine
 c               q0(w,l,y,z,yp,zp)
@@ -27,10 +28,6 @@ c
 c       intermediate variables:
 c               ypc(w,l,y,z)
 c               zpc(w,l,y,z)
-c
-c               opl6(w,l,y,z,yp,zp)
-c               dfdw6(w,l,y,z,yp,zp)
-c               dfdl6(w,l,y,z,yp,zp)
 c
 c               opl4(w,l,y,z)
 c               dfdw4(w,l,y,z)
@@ -44,13 +41,15 @@ c               zpc1(y,z,dy,dz)
 c               dypc(y,z,dy,dz)
 c               dzpc(y,z,dy,dz)
 c
-c               opl6(y,z,dy,dz)
-c               dfdw6(y,z,dy,dz)
-c               dfdl6(y,z,dy,dz)
-c		dfdww6(y,z,dy,dz)
-c		dfdll6(y,z,dy,dz)
-c		dfdwl6(y,z,dy,dz)
-c		dfdwww6(y,z,dy,dz)
+c               opl6(w,l,y,z,yp,zp)
+c               dfdw6(w,l,y,z,yp,zp)
+c               dfdl6(w,l,y,z,yp,zp)
+c		dfdww6(w,l,y,z,yp,zp)
+c		dfdll6(w,l,y,z,yp,zp)
+c		dfdwl6(w,l,y,z,yp,zp)
+c		dfdwww6(w,l,y,z,yp,zp)
+c
+c		dfdwidlj(w,l,y,z,yp,zp)
 c
 c               opl(y,z,dy,dz)
 c               dfdw(y,z,dy,dz)
@@ -116,6 +115,7 @@ c       dimension a(0:8,0:8)              ! mirror
      &            dfdwl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdll6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdwww6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdwidlj(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            opl4(0:7,0:7,0:7,0:7),
      &            opl(0:7,0:7,0:7,0:7),
@@ -324,6 +324,11 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
           xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
         endif
 	
+c-------- get further partial derivatives
+
+	call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
+     &  dfdwidlj,iord)
+     
 c------------------------------------------------------------
 
         endif   ! idrift = 0
