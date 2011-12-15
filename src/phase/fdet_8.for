@@ -9,6 +9,7 @@ c------------------------------------------------------------------
      &         fdetc,fdetphc,fdet1phc,g,inorm1,inorm2,iord)
 c------------------------------------------------------------------
 	implicit real*8(a-h,o-z)
+
 	structure/geometryst/
 	  real*8 sina,cosa,sinb,cosb,
      &      r,rp,xdens(0:4),xlam
@@ -34,8 +35,12 @@ c------------------------------------------------------------------
      &            dfdww6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdwl6(0:7,0:7,0:7,0:7,0:7,0:7),
      &            dfdll6(0:7,0:7,0:7,0:7,0:7,0:7),
-     &            dfdwww6(0:7,0:7,0:7,0:7,0:7,0:7)
-
+     &            dfdwww6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdwidlj(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            dfdww(0:7,0:7,0:7,0:7),
+     &            dfdwl(0:7,0:7,0:7,0:7),
+     &            dfdll(0:7,0:7,0:7,0:7)
+     
 	dimension PL0a(0:7,0:7,0:7,0:7),
      &		PLwa(0:7,0:7,0:7,0:7),PLla(0:7,0:7,0:7,0:7),
      &		PLw2a(0:7,0:7,0:7,0:7),PLl2a(0:7,0:7,0:7,0:7),
@@ -174,10 +179,24 @@ c-----------------------------
 
 	   call Tay_const_4(f34,-1.,iord)
 	   call Tay_sum_4(f12,f34,f1,iord)
+
 	  endif
 
-	  call Tay_sqrt_4(f1,f2,iord)
-	  call Tay_inv_4(f2,fdet1phc,iord)
+	  if(f1(0,0,0,0).lt.0.d0)then
+	  do i=0,iord
+	   do j=0,iord-i
+	    do k=0,iord-i-j
+	     do l=0,iord-i-j-k
+	      f1(i,j,k,l)=-f1(i,j,k,l)
+	     enddo
+	    enddo
+	   enddo
+	  enddo
+	 endif
+
+	 call Tay_sqrt_4(f1,f2,iord)
+	 call Tay_inv_4(f2,fdet1phc,iord)		
+
 	 endif
 
 c-----------------------------
@@ -199,7 +218,8 @@ c-----------------------------
 c----------------------------
 	if(inorm2.eq.2)then
 c----------------------------
-	  call Tay_mult_4(dfdww,dfdll,f3,iord)
+	  call Tay_mult_4(dfdww,dfdll,f3,iord)	  
+	  
 	endif
 
 c----------------------------
@@ -214,14 +234,30 @@ c----------------------------
 c----------------------------------------------
 	if((inorm2.eq.2).or.(inorm2.eq.3))then
 c----------------------------------------------
+
+	  if(f3(0,0,0,0).lt.0.d0)then
+	   do i=0,iord
+	    do j=0,iord-i
+	     do k=0,iord-i-j
+	      do l=0,iord-i-j-k
+	  	f3(i,j,k,l)=-f3(i,j,k,l)
+	      enddo
+	     enddo
+	    enddo
+	   enddo
+	  endif
+
 	  call Tay_sqrt_4(f3,f4,iord)
 	  call Tay_inv_4(f4,fdet1phc,iord)	
+
 	endif
 
 c-------------------------
 	if(inorm2.le.3)then
 c-------------------------
-	fact=(dsqrt(g.cosa)*dsqrt(g.cosb))/(g.r*g.rp)
+	fact=(dsqrt(dabs(g.cosa))*
+     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
+     
 	do i=0,iord
 	 do j=0,iord-i
 	  do k=0,iord-i-j
@@ -240,10 +276,11 @@ c	- Betrag bilden
 c----------------------------
 	if(inorm2.eq.4)then
 c----------------------------
-	fact=(dsqrt(g.cosa)*dsqrt(g.cosb))/(g.r*g.rp)
+	fact=(dsqrt(dabs(g.cosa))*
+     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
 
 c	wir haben schon mal in Abhängigkeit der Variablen
-c	w, l, y, z, yp, zp die Ausdrücke:
+c	w, l, y, z, yp, zp die Ausdruecke:
 c 
 c	dfdw,dfdl		!sollten null sein
 c	d2fdw2,d2fdwdl,d2fdl2
@@ -396,7 +433,7 @@ c	6	13/3		4 & 1/3
 c	7	15/3		5
 
 	endif
-
+     
 	return
 	end
 
