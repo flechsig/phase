@@ -683,7 +683,8 @@ struct optistruct
 
 struct TmpMapType
 {
-  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6; 
+  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
+  dfdww, dfdwl, dfdll, dfdwidlj; 
 };
 
 int getpickfile(struct datset *, struct BeamlineType *, char *);  
