@@ -877,6 +877,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		  &listpt->xlm, 
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		  &listpt->mir, &listpt->geo,
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #ifdef XXXX 
@@ -887,6 +888,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		  &listpt->xlm, 
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		  &listpt->mir, &listpt->geo,
 		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #endif
@@ -985,6 +987,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
 		      &listpt->xlm,
 		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
+ 		      ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		      &listpt->mir, &listpt->geo,
 		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	   
