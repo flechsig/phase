@@ -6,7 +6,9 @@ c$$$ $Author$
 c------------------------------------------------------------------
 	subroutine fdet_8(wc,xlc,ypc1,zpc1,dypc,dzpc,
      &         opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
-     &         fdetc,fdetphc,fdet1phc,g,inorm1,inorm2,iord)
+     &         dfdwidlj,dfdww,dfdwl,dfdll,
+     &         fdetc,fdetphc,fdet1phc,g,
+     &         inorm1,inorm2,iord)
 c------------------------------------------------------------------
 	implicit real*8(a-h,o-z)
 
