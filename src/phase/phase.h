@@ -9,7 +9,8 @@
 /*   $Author$  */
 
 
-#ifndef PHASE_H
+#ifndef PHASE_Htmpmapty
+
 #define PHASE_H   
 
 #define DOALLOC 1
@@ -683,8 +684,8 @@ struct optistruct
 
 struct TmpMapType
 {
-  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6,
-  dfdww, dfdwl, dfdll, dfdwidlj; 
+  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6, dfdwidlj;
+  MAPTYPE_8x4 dfdww, dfdwl, dfdll; 
 };
 
 int getpickfile(struct datset *, struct BeamlineType *, char *);  
