@@ -9,7 +9,7 @@
 /*   $Author$  */
 
 
-#ifndef PHASE_Htmpmapty
+#ifndef PHASE_H
 
 #define PHASE_H   
 
@@ -790,7 +790,8 @@ void
   extractmap(),
   fdet_8(MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
-	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
+	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
+	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
 	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
 	 struct geometrytype *, int *, int *, int *),
   fgmapidp(int *, 
@@ -800,6 +801,7 @@ void
 	     MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
 	     struct xlenmaptype *, 
 	     MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6,
+	     MAPTYPE_8X6, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
 	     struct mirrortype *, struct geometrytype *, int *, int *, int *),
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, unsigned int),
