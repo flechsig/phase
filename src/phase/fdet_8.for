@@ -406,12 +406,8 @@ c---------- next: coordinate transformation
 	call Tay_copy_4(QLw3,RLw3,iord)	! w3
 	call Tay_copy_4(QLl2,RLl2,iord)	! l2
 	call Tay_inv_4(QLl2,T4,iord)
-cccccccc UF Tay_mult_4 ???
-c	call Tay_mult(T4,QLwl,T4a,iord)	
-c	call Tay_mult(T4a,QLwl,T4b,iord)
 	call Tay_mult_4(T4,QLwl,T4a,iord)	
 	call Tay_mult_4(T4a,QLwl,T4b,iord)
-
 	call Tay_const_4(T4b,-0.25d0,iord)
 	call Tay_sum_4(T4b,QLw2,RLw2,iord)	! w2
 
