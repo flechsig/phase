@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <14 Nov 11 17:04:06 flechsig>  */
+/*   Time-stamp: <16 Dec 11 16:31:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -219,7 +219,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  fdet_8(bl->wc, bl->xlc,
 		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-	         ltp->dfdwidlj,ltp->dfdww, ltp->dfdwl, ltp->dfdll,
+	         ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll,
 		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
 		 &bl->ElementList[0].geo, 
 		 &bl->BLOptions.ifl.inorm1, 
