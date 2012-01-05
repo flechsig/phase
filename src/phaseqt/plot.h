@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <04 Jan 12 16:50:58 flechsig>  */
+/*  Time-stamp: <05 Jan 12 15:48:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,7 +30,8 @@ public:
     void setphaseData(const char *); // UF
     void setdefaultData();     // UF
     void setdefaultData2();    // UF
-    void autoScale(struct RayType *, int);
+    void autoScale();
+    void fillGoPlotArrays(struct RayType *, int);
     void SetData(int n, double* dx, double* dy);
     void appendPoint(const QPointF &);
     void clearPoints();
@@ -51,14 +52,14 @@ public:
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
-    void   hfill1(struct RayType *, double, double, int, int);
-    void   hfill2(struct RayType *, int);
+    void   hfill1(double *, double, double);
+    void   hfill2();
 
     void   statistics(struct RayType *, int, double);
     void   contourPlot();
     void   fillData();
-    void   scatterPlot(struct RayType *, int);
-    void   profilePlot(int);
+    void   scatterPlot();
+    void   profilePlot(int, int);
     QwtPlotSpectrogram *d_spectrogram;
     QwtPlotZoomer      *zoomer;
     QwtPlotDirectPainter *d_directPainter;
@@ -67,6 +68,9 @@ public:
 
     int    plotsubject;
     int    plotstyle;
+
+    double *getXdata();
+    double *getYdata();
 
 public Q_SLOTS:
     void showContour(bool on);
@@ -78,7 +82,8 @@ public Q_SLOTS:
 
 private:
     //QwtPlotSpectrogram *d_spectrogram;
-    double *x, *y;
+    double *x, *y, *xdata, *ydata, *zdata;
+    double x1, x2, y1, y2;
     int    ndata;
     int    n_array;
     void   Initailize();

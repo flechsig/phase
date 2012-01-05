@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <04 Jan 12 16:50:19 flechsig> 
+//  Time-stamp: <05 Jan 12 15:55:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -187,6 +187,9 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve1->hide();
   d_curve2->hide();
   xxx= NULL; yyy=NULL;
+  xdata= ydata= zdata = NULL;
+  plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
+  plotstyle= PLOT_CONTOUR;
   // bt= (struct BeamlineType *) parent;
 
   d_spectrogram = new QwtPlotSpectrogram();
@@ -245,6 +248,8 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   zoomer->setTrackerPen(c);
   this->fwhmon= 1;
 
+  cout << "plotsubject " << plotsubject << endl;
+
   //  this->p_zoomer= zoomer;
 } // end constructor
 
@@ -257,18 +262,32 @@ void Plot::contourPlot()
   d_curve1->hide();
   d_curve2->hide();
   d_spectrogram->show();
+  enableAxis(QwtPlot::yRight, true);                 // switch off right axis
+
+  if (plotsubject & PLOT_GO_DIV)
+    {
+      setAxisTitle(2, tr("dz (mrad)"));
+      setAxisTitle(0, tr("dy (mrad)"));
+    }
+  else
+    {
+      setAxisTitle(2, tr("z (mm)"));
+      setAxisTitle(0, tr("y (mm)"));
+    }
+  
   replot();
 } // end contourPlot()
 
-void Plot::profilePlot(int type)
+void Plot::profilePlot(int subject, int style)
 {
 #ifdef DEBUG
-  cout << "profile plot type: " << type << endl;
+  cout << "profile plot subject, style: " << subject << " ," << style << endl;
 #endif
   
   d_curve2->hide();
   d_spectrogram->hide();
-  d_curve1->setRawSamples(xxx, yyy, BINS2);
+  enableAxis(QwtPlot::yRight, false);                 // switch off right axis
+  setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
 
   /* 2b done */
   // background and line color
@@ -277,36 +296,43 @@ void Plot::profilePlot(int type)
   // deal with log scale
   
   // set labels
-  switch (type)
+  switch (style)
     {
-    case RAY_Y:
-      setAxisTitle(2, tr("y (mm)"));
-      setAxisTitle(0, tr("norm. intensity"));
+    case PLOT_VPROF:
+      if (subject & PLOT_GO_DIV)
+	{
+	  setAxisTitle(0, tr("dy (mrad)"));
+	  setAxisTitle(2, tr("norm. intensity"));
+	} 
+      else
+	{
+	  setAxisTitle(0, tr("y (mm)"));
+	  setAxisTitle(2, tr("norm. intensity"));
+	}
+      d_curve1->setRawSamples(yyy, xxx, BINS2);
       break;
-    case RAY_Z:
-      setAxisTitle(2, tr("z (mm)"));
-      setAxisTitle(0, tr("norm. intensity"));
-      break;
-    case RAY_DY:
-      setAxisTitle(2, tr("dy (mrad)"));
-      setAxisTitle(0, tr("norm. intensity"));
-      break;
-    case RAY_DZ:
-      setAxisTitle(2, tr("dz (mrad)"));
-      setAxisTitle(0, tr("norm. intensity"));
-      break;
-    case RAY_PHI:
-      setAxisTitle(2, tr("phi (rad)"));
-      setAxisTitle(0, tr("norm. intensity"));
+    case PLOT_HPROF:
+      if (subject & PLOT_GO_DIV)
+	{
+	  setAxisTitle(2, tr("dz (mrad)"));
+	  setAxisTitle(0, tr("norm. intensity"));
+	} 
+      else
+	{
+	  setAxisTitle(2, tr("z (mm)"));
+	  setAxisTitle(0, tr("norm. intensity"));
+	}
+      d_curve1->setRawSamples(xxx, yyy, BINS2);
       break;
     default:
-      cout << "error plot.cpp hfill1: unknown type: " << type << endl;
+      cout << "error plot.cpp hfill1: unknown type: " << style << endl;
     }
   
   d_curve1->show();
   
   replot();
 } // end profilePlot()
+
 
 void Plot::fillData()
 {
@@ -348,30 +374,78 @@ void Plot::fillData()
 #endif
 } // fillData
 
-
-void Plot::scatterPlot(struct RayType *rays, int points)
+// creates the temporary arrays xdata etc out of the ray structure depending on plotsubject
+void Plot::fillGoPlotArrays(struct RayType *rays, int points)
 {
   int i;
   struct RayType *rp;
-  
-  printf("scatter plot experimental\n");
 
+#ifdef DEBUG
+  cout << "debug: fillGoPlotArrays called, plotsubject: " << plotsubject << endl;
+#endif
+
+  ndata= points; // fill private var
+
+  if (xdata != NULL) delete xdata;
+  if (ydata != NULL) delete ydata;
+  if (zdata != NULL) delete zdata;
+ 
+  xdata= new double[ndata]; 
+  ydata= new double[ndata];
+  if (plotsubject & PLOT_GO_PHI) zdata= new double[ndata];
+
+  rp= rays;
+  if (plotsubject & PLOT_GO_SPA)
+    {
+      for (i= 0; i< ndata; i++, rp++)
+	{
+	  xdata[i]= rp->z;
+	  ydata[i]= rp->y;
+	}
+    }
+
+  if (plotsubject & PLOT_GO_DIV)
+    {
+      for (i= 0; i< ndata; i++, rp++)
+	{
+	  xdata[i]= rp->dz * 1e3; // mrad
+	  ydata[i]= rp->dy * 1e3;
+	}
+    }
+
+  if (plotsubject & PLOT_GO_PHI)
+    {
+      for (i= 0; i< ndata; i++, rp++)
+	{
+	  xdata[i]= rp->z;
+	  ydata[i]= rp->y;
+	  zdata[i]= rp->phi;
+	}
+    }
+} // end fillGoPlotArrays			     
+
+double *Plot::getXdata()
+{
+  return xdata;
+}
+
+double *Plot::getYdata()
+{
+  return ydata;
+}
+
+void Plot::scatterPlot()
+{
+   
+#ifdef DEBUG   
+  printf("scatter plot experimental\n");
+#endif
+ 
   d_spectrogram->hide();                              // hide spectrogram
   d_curve2->hide();
 
-  if (xxx != NULL) delete xxx;
-  if (xxx != NULL) delete yyy;
-  xxx= new double[points];
-  yyy= new double[points];
-
-  rp= rays;
-  //clearPoints();
-  for (i=0; i< points; i++, rp++) 
-    {
-      xxx[i]= rp->z;
-      yyy[i]= rp->y;
-    }
-  d_curve1->setRawSamples(xxx, yyy, points);
+  
+  d_curve1->setRawSamples(xdata, ydata, ndata);
 
   //  appendPoint( QPointF( rp->z, rp->y ) );
 
@@ -384,18 +458,23 @@ void Plot::scatterPlot(struct RayType *rays, int points)
   setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
   //    d_curve1->setData( new CurveData() );
   d_curve1->show();
-  //d_directPainter->drawSeries( d_curve1,
-  //   			       d_curve1->data->size() - 1, d_curve1->data->size() - 1 );
-  if (plotsubject == PLOT_SOURCE)
+
+if (plotsubject & PLOT_GO_DIV)
     {
-      printf("scatterplot source, file: %s\n", __FILE__);
+      setAxisTitle(2, tr("dz (mrad)"));
+      setAxisTitle(0, tr("dy (mrad)"));
     }
   else
     {
-      printf("scatterplot result, file: %s \n", __FILE__);
+      setAxisTitle(2, tr("z (mm)"));
+      setAxisTitle(0, tr("y (mm)"));
     }
-  //  canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
 
+  //d_directPainter->drawSeries( d_curve1,
+  //   			       d_curve1->data->size() - 1, d_curve1->data->size() - 1 );
+  
+  //  canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
+  replot();
 } // scatterPlot
 
 // plotstyle
@@ -424,7 +503,7 @@ void Plot::setphaseData(const char *datatype)
   //printf("delete d_spectrogram->data() ==> done\n");
   
   d_spectrogram->setData(new SpectrogramDataPhase(this));
-  printf("yyyyyy\n");
+  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -486,53 +565,35 @@ void Plot::printPlot(QPrinter &printerp )
 }
 #endif
 
-void Plot::autoScale(struct RayType *rays, int raynumber)
+void Plot::autoScale()
 {
   int i;
-  struct RayType *rp;
-
-  rp= rays;
-
+  
 #ifdef DEBUG
-  printf("debug: autoScale: raynumber: %d\n", raynumber);
+  printf("debug: autoScale called, ndata: %d\n", ndata);
 #endif
 
-  if (rays)
+  if (ndata > 0) 
     {
-      ymin  = ymax  = rp->y;
-      zmin  = zmax  = rp->z;
-      dymin = dymax = rp->dy;
-      dzmin = dzmax = rp->dz;
-      phimin= phimax= rp->phi;
-
-      for (i= 0; i < raynumber; i++, rp++)
+      ymin  = ymax  = *ydata;
+      zmin  = zmax  = *xdata;
+      for (i= 0; i < ndata; i++)
 	{
-	  ymin  = min(rp->y,   ymin);
-	  ymax  = max(rp->y,   ymax);
-	  zmin  = min(rp->z,   zmin);
-	  zmax  = max(rp->z,   zmax);
-	  dymin = min(rp->dy,  dymin);
-	  dymax = max(rp->dy,  dymax);
-	  dzmin = min(rp->dz,  dzmin);
-	  dzmax = max(rp->dz,  dzmax);
-	  phimin= min(rp->phi, phimin);
-	  phimax= max(rp->phi, phimax);
+	  ymin  = min(ydata[i], ymin);
+	  ymax  = max(ydata[i], ymax);
+	  zmin  = min(xdata[i], zmin); // ! not zdata (zdata only available for phi)
+	  zmax  = max(xdata[i], zmax); // ! not zdata
 	}
-    } else // raynumber=0
+    }
+  else
     {
       ymin  = -1; ymax  = 1;
       zmin  = -1; zmax  = 1;
-      dymin = -1; dymax = 1;
-      dzmin = -1; dzmax = 1;
-      phimin= -1; phimax= 1;
-
     }
   /* fuers Auge */
   Beauty(&ymin,   &ymax);
   Beauty(&zmin,   &zmax);
-  Beauty(&dymin,  &dymax);
-  Beauty(&dzmin,  &dzmax);
-  Beauty(&phimin, &phimax);
+  
   //printf("autscale: %f, %f\n", ymin, ymax);
 #ifdef DEBUG
   printf("DEBUG: autoScale: %lg, %lg, %lg, %lg\n", ymin, ymax, zmin, zmax);
@@ -605,15 +666,14 @@ void Plot::SetData(int n, double* data_x, double *data_y)
 } // SetData
 
 
-// fills a 1d histogram with ray data
-void Plot::hfill1(struct RayType *rays, double x1, double x2, int points, int type)
+// fills a 1d histogram with data
+void Plot::hfill1(double *dvec, double x1, double x2)
 {
   int i;
   unsigned int ix;
-  struct RayType *rp;
   
 #ifdef DEBUG
-  cout << "Plot::hfill1 called for type " << type << endl;
+  cout << "Plot::hfill1 called" << endl;
 #endif
 
   if (xxx != NULL) delete xxx;
@@ -621,7 +681,7 @@ void Plot::hfill1(struct RayType *rays, double x1, double x2, int points, int ty
   xxx= new double[BINS2];
   yyy= new double[BINS2];
 
-  if ((x2-x1) < ZERO ) x2 = x1 + 1.0;
+  if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
     
   for (ix= 0; ix< BINS2; ix++)
     {
@@ -629,58 +689,15 @@ void Plot::hfill1(struct RayType *rays, double x1, double x2, int points, int ty
       xxx[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
     }
 
-  rp= rays;
-  
-  switch (type)
+  for (i= 0; i< ndata; i++)
     {
-    case RAY_Y:
-      for (i= 0; i< points; i++, rp++)
-	{
-	  ix= (unsigned int)((rp->y- x1)/(x2- x1) * BINS2);
-	  if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1;          // add one hit
-	}
-      break;
-
-    case RAY_Z:
-      for (i= 0; i< points; i++, rp++)
-	{
-	  ix= (unsigned int)((rp->z- x1)/(x2- x1) * BINS2);
-	  if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1;          // add one hit
-	}
-      break;
-#ifdef XXX
-    case RAY_DY:
-      for (i=0; i< points; i++, rp++)
-	{
-	  ix= (unsigned int)((rp->dy- dymin)/(dymax-dymin)*100);
-	  if (ix < BINS2) h1arr[ix]+= 1;          // add one hit
-	  h2max= max(h2max, h1arr[ix]);           // save maximum
-	}
-      break;
-    case RAY_DZ:
-      for (i=0; i< points; i++, rp++)
-	{
-	  ix= (unsigned int)((rp->dz- dzmin)/(dzmax-dzmin)*100);
-	  if (ix < BINS2)  h1arr[ix]+= 1;          // add one hit
-	  h2max= max(h2max, h2arr[ix]);                         // save maximum
-	}
-      break;
-    case RAY_PHI:
-      for (i=0; i< points; i++, rp++)
-	{
-	  ix= (unsigned int)((rp->phi- phimin)/(phimax-[phimin)*100);
-	  if (ix < BINS2)  h1arr[ix]+= 1;          // add one hit
-	  h2max= max(h2max, h2arr[ix]);                         // save maximum
-			     }
-      break;
-#endif
-	default:
-	  cout << "error plot.cpp hfill1: unknown type: " << type << endl;
-	}
-    
-
-        for (ix= 0; ix< BINS2; ix++)
-         yyy[ix]*= 1.0/(points);   // density in rays /mm 
+      ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
+      if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1.0;          // add one hit
+    }  
+  
+  if (ndata)               // not if 0
+    for (ix= 0; ix< BINS2; ix++)
+      yyy[ix]*= 1.0/ndata;   // density in rays 
   
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
@@ -689,17 +706,17 @@ void Plot::hfill1(struct RayType *rays, double x1, double x2, int points, int ty
 
 
 // fills a 2d histogram with ray data
-void Plot::hfill2(struct RayType *rays, int points)
+void Plot::hfill2()
 {
   int i;
   unsigned int ix, iy;
-  struct RayType *rp;
+  
   
 #ifdef DEBUG
   cout << "Plot::hfill2 called" << endl;
 #endif
 
-  rp= rays;
+
 
   for (ix=0; ix< BINS2; ix++)
     for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]= 0.0;    // set array data to 0.0
@@ -710,11 +727,11 @@ void Plot::hfill2(struct RayType *rays, int points)
 
   //  clearPoints();
 
-  for (i=0; i< points; i++, rp++)
+  for (i= 0; i< ndata; i++)
     {
       //      appendPoint( QPointF( rp->z, rp->y ) );
-      ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
-      iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
+      ix= (unsigned int)((xdata[i]- zmin)/(zmax - zmin)*(BINS2-1));
+      iy= (unsigned int)((ydata[i]- ymin)/(ymax-ymin)*(BINS2-1));
       if ((ix < BINS2) && (iy < BINS2)) h2arr[ix][iy]+= 1;          // add one hit
       h2max= max(h2max, h2arr[ix][iy]);                         // save maximum
     }

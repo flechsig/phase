@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <05 Jan 12 08:38:54 flechsig> 
+//  Time-stamp: <05 Jan 12 16:00:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -346,10 +346,10 @@ QWidget *MainWindow::createGraphicBox()
   QGroupBox   *graphicGroup  = new QGroupBox(tr("Graphics"));
   QGridLayout *graphicLayout = new QGridLayout;
   
-  QLabel *zminLabel  = new QLabel(tr("zmin (mm)"));
-  QLabel *zmaxLabel  = new QLabel(tr("zmax (mm)"));
-  QLabel *yminLabel  = new QLabel(tr("ymin (mm)"));
-  QLabel *ymaxLabel  = new QLabel(tr("ymax (mm)"));
+  zminLabel  = new QLabel(tr("zmin (mm)"));
+  zmaxLabel  = new QLabel(tr("zmax (mm)"));
+  yminLabel  = new QLabel(tr("ymin (mm)"));
+  ymaxLabel  = new QLabel(tr("ymax (mm)"));
   
   grzminE  = new QLineEdit;
   grzmaxE  = new QLineEdit;
@@ -401,59 +401,59 @@ QWidget *MainWindow::createGraphicBox()
   
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
   QMenu *subject = new QMenu(this);
-  grPoSourceSpaAct  = new QAction(tr("PO &source"), this);
-  grPoSourceDivAct  = new QAction(tr("PO s&ource divergence"), this);
-  grPoSourcePhiAct  = new QAction(tr("PO so&urce phase"), this);
+  grGoSourceSpaAct  = new QAction(tr("GO &source"), this);
+  grGoSourceDivAct  = new QAction(tr("GO s&ource divergence"), this);
+  grGoSourcePhiAct  = new QAction(tr("GO so&urce phase"), this);
   
-  grPoResultSpaAct  = new QAction(tr("PO &result"), this);
-  grPoResultDivAct  = new QAction(tr("PO r&esult divergence"), this);
-  grPoResultPhiAct  = new QAction(tr("PO re&sult phase"), this);
+  grGoResultSpaAct  = new QAction(tr("GO &result"), this);
+  grGoResultDivAct  = new QAction(tr("GO r&esult divergence"), this);
+  grGoResultPhiAct  = new QAction(tr("GO re&sult phase"), this);
 
-  grGoResultAct  = new QAction(tr("GO resu&lt"), this);
+  grPoResultAct  = new QAction(tr("PO resu&lt"), this);
 
   grexample1Act  = new QAction(tr("example &1"), this);
   grexample2Act  = new QAction(tr("example &2"), this);
   grexample3Act  = new QAction(tr("example &3"), this);
 
-  subject->addAction(grPoSourceSpaAct);
-  subject->addAction(grPoSourceDivAct);
-  subject->addAction(grPoSourcePhiAct);
+  subject->addAction(grGoSourceSpaAct);
+  subject->addAction(grGoSourceDivAct);
+  subject->addAction(grGoSourcePhiAct);
   subject->addSeparator();
-  subject->addAction(grPoResultSpaAct);
-  subject->addAction(grPoResultDivAct);
-  subject->addAction(grPoResultPhiAct);
+  subject->addAction(grGoResultSpaAct);
+  subject->addAction(grGoResultDivAct);
+  subject->addAction(grGoResultPhiAct);
   subject->addSeparator();
-  subject->addAction(grGoResultAct);
+  subject->addAction(grPoResultAct);
   subject->addSeparator();
   subject->addAction(grexample1Act);
   subject->addAction(grexample2Act);
   subject->addAction(grexample3Act);
-  subject->setDefaultAction(grPoResultSpaAct);
+  subject->setDefaultAction(grGoResultSpaAct);
   subjectpopupButton->setMenu(subject);
 
-  connect(grPoSourceSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grPoSourceDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grPoSourcePhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourceSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourceDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourcePhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  connect(grPoResultSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grPoResultDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grPoResultPhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultPhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  connect(grGoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grexample1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample3Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  grsignalMapper->setMapping(grPoSourceSpaAct,   QString("grPoSourceSpaAct"));
-  grsignalMapper->setMapping(grPoSourceDivAct,   QString("grPoSourceDivAct"));
-  grsignalMapper->setMapping(grPoSourcePhiAct,   QString("grPoSourcePhiAct"));
+  grsignalMapper->setMapping(grGoSourceSpaAct,   QString("grGoSourceSpaAct"));
+  grsignalMapper->setMapping(grGoSourceDivAct,   QString("grGoSourceDivAct"));
+  grsignalMapper->setMapping(grGoSourcePhiAct,   QString("grGoSourcePhiAct"));
 
-  grsignalMapper->setMapping(grPoResultSpaAct,   QString("grPoResultSpaAct"));
-  grsignalMapper->setMapping(grPoResultDivAct,   QString("grPoResultDivAct"));
-  grsignalMapper->setMapping(grPoResultPhiAct,   QString("grPoResultPhiAct"));
+  grsignalMapper->setMapping(grGoResultSpaAct,   QString("grGoResultSpaAct"));
+  grsignalMapper->setMapping(grGoResultDivAct,   QString("grGoResultDivAct"));
+  grsignalMapper->setMapping(grGoResultPhiAct,   QString("grGoResultPhiAct"));
 
-  grsignalMapper->setMapping(grGoResultAct,   QString("grGoResultAct"));
+  grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
 
   grsignalMapper->setMapping(grexample1Act, QString("grexample1Act"));
   grsignalMapper->setMapping(grexample2Act, QString("grexample2Act"));
@@ -491,11 +491,11 @@ QWidget *MainWindow::createGraphicBox()
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
   d_plot->setTitle(tr("PhaseQt"));
-  d_plot->plotsubject= 1;                // the default
+  
 
 //plotGroupLayout->addWidget(label,1,1,1,1);
-  plotGroupLayout->addWidget(btnLogx,1,2,1,1);
-  plotGroupLayout->addWidget(btnLogy,1,3,1,1);
+//  plotGroupLayout->addWidget(btnLogx,1,2,1,1);
+//  plotGroupLayout->addWidget(btnLogy,1,3,1,1);
   plotGroupLayout->addWidget(d_plot,2,1,3,3);
   //plotGroupLayout->addWidget(label2,5,1,1,3);  
   plotGroupLayout->setMargin(12);
@@ -2779,6 +2779,28 @@ int MainWindow::elementListNotSelected()
     }
   return rval;
 }
+
+// change labels of Graphics input
+void MainWindow::updateGraphicsInput(int style)
+{
+     
+  if (style & PLOT_GO_DIV)
+    {   
+      zminLabel->setText(QString(tr("dzmin (mrad)"))); 
+      zmaxLabel->setText(QString(tr("dzmax (mrad)")));
+      yminLabel->setText(QString(tr("dymin (mrad)"))); 
+      ymaxLabel->setText(QString(tr("dymax (mrad)")));
+    } 
+  else
+    {
+      zminLabel->setText(QString(tr("zmin (mm)"))); 
+      zmaxLabel->setText(QString(tr("zmax (mm)")));
+      yminLabel->setText(QString(tr("ymin (mm)"))); 
+      ymaxLabel->setText(QString(tr("ymax (mm)")));
+    }
+  
+} // updateGraphicsInput
+
 
 // write files simpre.dat and simpim.dat
 void MainWindow::writeSimp()

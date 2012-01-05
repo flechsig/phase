@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2011-12-10 17:05:00 flechsig>  */
+/*  Time-stamp: <05 Jan 12 11:46:12 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -123,6 +123,7 @@ private:
     
     
     void UpdateElementBox(int);
+    void updateGraphicsInput(int);
     void writeSimp();
 
     QTextEdit   *textEdit;
@@ -285,8 +286,15 @@ private:
     QAction *grisoAct;
     QAction *grHorProfAct;
     QAction *grVerProfAct;
-    QAction *grsourceAct;
-    QAction *grimageAct;
+
+    QAction *grGoSourceSpaAct;
+    QAction *grGoSourceDivAct;
+    QAction *grGoSourcePhiAct;
+    QAction *grGoResultSpaAct;
+    QAction *grGoResultDivAct;
+    QAction *grGoResultPhiAct;
+    QAction *grPoResultAct;
+
     QAction *grexample1Act;
     QAction *grexample2Act;
     QAction *grexample3Act;
@@ -301,6 +309,11 @@ private:
     QLineEdit *grzmaxE;
     QLineEdit *gryminE;
     QLineEdit *grymaxE;
+
+    QLabel *zminLabel;
+    QLabel *zmaxLabel;
+    QLabel *yminLabel;
+    QLabel *ymaxLabel;
 
     QGroupBox   *statGroup;
     QLabel *czLabel;   

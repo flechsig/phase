@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <04 Jan 12 17:03:36 flechsig> 
+//  Time-stamp: <05 Jan 12 15:50:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -49,6 +49,10 @@ void MainWindow::activateProc(const QString &action)
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType * psip;
   int filesOK;
+
+#ifdef DEBUG
+  cout << "debug MainWindow::activateProc: plotsubject: " << d_plot->plotsubject << endl;
+#endif
   
   if (action.isEmpty())
           return;
@@ -325,20 +329,44 @@ printf("yy\n");
       d_plot->plotstyle= PLOT_VPROF;
     }
 
-  if (!action.compare("grsourceAct")) 
-    { 
-      d_plot->plotsubject= PLOT_SOURCE ;
-      //  d_plot->setTitle(tr("Source Plane"));
-      //  d_plot->setphaseData("grsourceAct");
+  if (!action.compare("grGoSourceSpaAct")) 
+    {
+      d_plot->plotsubject= PLOT_GO_SOURCE | PLOT_GO_SPA ;
+      updateGraphicsInput(d_plot->plotsubject);
     }
-
-  if (!action.compare("grimageAct")) 
-    { 
-      d_plot->plotsubject= PLOT_RESULT;
-      //  d_plot->setTitle(tr("Image Plane"));
-      //  d_plot->setphaseData("grimageAct");
+  if (!action.compare("grGoSourceDivAct")) 
+    {
+      d_plot->plotsubject= PLOT_GO_SOURCE | PLOT_GO_DIV ;
+      updateGraphicsInput(d_plot->plotsubject);
     }
-
+  if (!action.compare("grGoSourcePhiAct")) 
+    {
+      d_plot->plotsubject= PLOT_GO_SOURCE | PLOT_GO_PHI ;  
+      updateGraphicsInput(d_plot->plotsubject);
+    }
+  if (!action.compare("grGoResultSpaAct")) 
+    {
+      d_plot->plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA ;
+      updateGraphicsInput(d_plot->plotsubject);
+      // cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
+    }
+  if (!action.compare("grGoResultDivAct")) 
+    {
+      d_plot->plotsubject= PLOT_GO_RESULT | PLOT_GO_DIV ;
+      updateGraphicsInput(d_plot->plotsubject);
+    }
+  if (!action.compare("grGoResultPhiAct")) 
+    {
+      d_plot->plotsubject= PLOT_GO_RESULT | PLOT_GO_PHI ;  
+      updateGraphicsInput(d_plot->plotsubject); 
+    }
+  if (!action.compare("grPoResultAct"   )) 
+    {
+      d_plot->plotsubject= PLOT_PO_RESULT;
+      updateGraphicsInput(d_plot->plotsubject);
+    }
+  
+  
   if (!action.compare("grexample1Act")) 
     { 
       d_plot->plotsubject= PLOT_EXAMPLE1;
@@ -764,9 +792,22 @@ void MainWindow::grapplyslot()
   printf("debug: grapplyslot called\n");
 #endif
 
+  // a few tests
   if (!d_plot)
     {
-      printf("debug: grapplyslot: d_plot not defined\n");
+      printf("debug: grapplyslot: d_plot not defined file: %s\n", __FILE__);
+      return;
+    }
+
+  if ((d_plot->plotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
+    {
+      QMessageBox::warning(this, tr("grapplyslot"), tr("No GO source data available"));
+      return;
+    }
+
+  if ((d_plot->plotsubject & PLOT_GO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
+    {
+      QMessageBox::warning(this, tr("grapplyslot"), tr("No valid GO results available"));
       return;
     }
 
@@ -778,93 +819,63 @@ void MainWindow::grapplyslot()
 
   // we do it in two steps 1st data, second style 
   // fill data, update statistics, update header
-  switch (d_plot->plotsubject)
+
+  if (d_plot->plotsubject & PLOT_GO_SOURCE ) // generic for GO source
     {
-    case PLOT_SOURCE: 
-      if (myparent->myBeamline()->beamlineOK & sourceOK)
+      d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			       myparent->myBeamline()->RTSource.raynumber, 
+			       myparent->myBeamline()->deltalambdafactor);
+      UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
+      d_plot->setTitle(tr("GO Source"));
+      d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			       myparent->myBeamline()->RTSource.raynumber);
+    }
+
+  if (d_plot->plotsubject & PLOT_GO_RESULT ) // generic for GO result
+    {  
+      d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+			       myparent->myBeamline()->RESULT.points, 
+			       myparent->myBeamline()->deltalambdafactor);
+      UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
+      d_plot->setTitle(tr("GO Result"));
+      d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+			       myparent->myBeamline()->RESULT.points);
+    }
+
+  // GO statistics done, [xyz]data arrays filled
+  
+  if (d_plot->plotsubject & (PLOT_GO_SOURCE | PLOT_GO_RESULT)) // GO only
+    {
+      switch (d_plot->plotstyle)
 	{
-	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-				   myparent->myBeamline()->RTSource.raynumber, 
-				   myparent->myBeamline()->deltalambdafactor);
-	  UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
-	  d_plot->setTitle(tr("Source Plane"));
+	case PLOT_ISO:
+	case PLOT_CONTOUR:
+	case PLOT_CONTOURISO:
 	  
-          switch (d_plot->plotstyle)
-	    {
-	    case PLOT_ISO:
-	    case PLOT_CONTOUR:
-	    case PLOT_CONTOURISO:
-	      
-	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-				   myparent->myBeamline()->RTSource.raynumber);
-	      d_plot->setphaseData("grsourceAct");
-	      d_plot->contourPlot();
-	      break;
-	    case PLOT_SCATTER:
-	      d_plot->scatterPlot((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-				  myparent->myBeamline()->RTSource.raynumber);
-	      break;
-	    case PLOT_HPROF:
-	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, d_plot->zmin, d_plot->zmax,
-			     myparent->myBeamline()->RTSource.raynumber, RAY_Z);
-	      d_plot->profilePlot(RAY_Z);
-	      break;
-	    case PLOT_VPROF:
-	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, d_plot->ymin, d_plot->ymax,
-			     myparent->myBeamline()->RTSource.raynumber, RAY_Y);
-	      d_plot->profilePlot(RAY_Y);
-	      break;
-	    default:
-	      cout << "error no valid plotstyle: " << d_plot->plotstyle << endl;
-	    }
+	  d_plot->hfill2();
+	  d_plot->setphaseData("grsourceAct");
+	  d_plot->contourPlot();
+	  break;
+	case PLOT_SCATTER:
+	  d_plot->scatterPlot();
+	  break;
+	case PLOT_HPROF:
+	  d_plot->hfill1(d_plot->getXdata(), d_plot->zmin, d_plot->zmax);
+	  d_plot->profilePlot(d_plot->plotsubject, d_plot->plotstyle);
+	  break;
+	case PLOT_VPROF:
+	  d_plot->hfill1(d_plot->getYdata(), d_plot->ymin, d_plot->ymax);
+	  d_plot->profilePlot(d_plot->plotsubject, d_plot->plotstyle);
+	  break;
+	default:
+	  cout << "error no valid plotstyle: " << d_plot->plotstyle << endl;
 	}
-      else
-	QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
-      break;
-
-    case PLOT_RESULT:
-      if (myparent->myBeamline()->beamlineOK & resultOK)
-	{
-	  d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-				   myparent->myBeamline()->RESULT.points, 
-				   myparent->myBeamline()->deltalambdafactor);
-	  UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
-	  d_plot->setTitle(tr("Image Plane"));
-
-	  switch (d_plot->plotstyle)
-	    {
-	    case PLOT_ISO:
-	    case PLOT_CONTOUR:
-	    case PLOT_CONTOURISO:
-	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-				   myparent->myBeamline()->RESULT.points);
-	      d_plot->setphaseData("grimageAct");
-              printf("xxxxx\n");
-	      d_plot->contourPlot();
-	      
-	      break;
-	    case PLOT_SCATTER:
-	      d_plot->scatterPlot((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-				  myparent->myBeamline()->RESULT.points);
-	      break;
-	    case PLOT_HPROF:
-	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RESULT.RESp, d_plot->zmin, d_plot->zmax,
-			     myparent->myBeamline()->RESULT.points, RAY_Z);
-	      d_plot->profilePlot(RAY_Z);
-	      break;
-	    case PLOT_VPROF:
-	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RESULT.RESp, d_plot->ymin, d_plot->ymax,
-			     myparent->myBeamline()->RESULT.points, RAY_Y);
-	      d_plot->profilePlot(RAY_Y);
-	      break;
-	    default:
-	      cout << "error no valid plotstyle: " << d_plot->plotstyle << endl;
-	    }
-	}
-      else
-	QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
-      break;
-      
+    } // end GO only
+  
+  
+      // example plots
+  switch (d_plot->plotsubject)
+    {   
     case PLOT_EXAMPLE1:
       d_plot->setTitle(tr("PhaseQt: example 1"));
       printf("aaaa1\n");
@@ -878,7 +889,7 @@ void MainWindow::grapplyslot()
       d_plot->setdefaultData2();
       d_plot->contourPlot();
       break;
-
+      
     case PLOT_EXAMPLE3:
       d_plot->setTitle(tr("PhaseQt: example 3"));
       d_plot->d_spectrogram->hide(); 
@@ -887,11 +898,13 @@ void MainWindow::grapplyslot()
       d_plot->replot();
       break;
       
-    default:
-      printf("MainWindow::grapplyslot: d_plot->plotsubject: %d not defined\n", d_plot->plotsubject);
-    } // end switch data
-
-
+    case PLOT_PO_RESULT:
+      cout << "plot PO_RESULT not yet implemented" << endl;
+      break;
+      
+    } // end switch example data
+  
+  
 
   //d_plot->replot();
 #ifdef DEBUG
@@ -906,22 +919,45 @@ void MainWindow::grautoscaleslot()
   char buffer[10];
 
 #ifdef DEBUG
-  printf("debug: grautoscaleslot called\n");
+  printf("debug: grautoscaleslot called, plotsubject: %d\n", d_plot->plotsubject);
 #endif
 
-  if (d_plot->plotsubject == 1) 
-    if (myparent->myBeamline()->beamlineOK & resultOK)
-      d_plot->Plot::autoScale((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			      myparent->myBeamline()->RESULT.points); 
-    else
-      QMessageBox::warning(this, tr("grautoscaleslot"), tr("No results available"));
-			
-  if (d_plot->plotsubject == 0) 
-    if (myparent->myBeamline()->beamlineOK & sourceOK)
-      d_plot->Plot::autoScale((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			      myparent->myBeamline()->RTSource.raynumber);
-    else
-      QMessageBox::warning(this, tr("grautoscaleslot"), tr("No source data available"));
+
+// a few tests
+  if (!d_plot)
+    {
+      printf("debug: ggrautoscaleslot: d_plot not defined file: %s\n", __FILE__);
+      return;
+    }
+
+  if ((d_plot->plotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
+    {
+      QMessageBox::warning(this, tr("grautoscaleslot"), tr("No GO source data available"));
+      return;
+    }
+
+  if ((d_plot->plotsubject & PLOT_GO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
+    {
+      QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid GO results available"));
+      return;
+    }
+
+  if (d_plot->plotsubject & PLOT_GO_SOURCE ) // generic for GO source
+    {
+      d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			       myparent->myBeamline()->RTSource.raynumber);
+      d_plot->autoScale();
+
+    }
+
+  if (d_plot->plotsubject & PLOT_GO_RESULT ) // generic for GO result
+    { 
+      d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
+			       myparent->myBeamline()->RESULT.points);
+      d_plot->autoScale();
+    }
+  
+
   
   sprintf(buffer, "%9.3f", d_plot->Plot::ymin);
   gryminE->setText(QString(tr(buffer)));
