@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <05 Jan 12 15:48:07 flechsig>  */
+/*  Time-stamp: <05 Jan 12 16:49:45 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -27,6 +27,7 @@ class Plot: public QwtPlot
 public:
     Plot(QWidget * = NULL);
     //    int *ScatterPlot(QWidget * = NULL);
+    void example3(); // UF
     void setphaseData(const char *); // UF
     void setdefaultData();     // UF
     void setdefaultData2();    // UF
@@ -82,9 +83,9 @@ public Q_SLOTS:
 
 private:
     //QwtPlotSpectrogram *d_spectrogram;
-    double *x, *y, *xdata, *ydata, *zdata;
+    double *x, *y, *xdata, *ydata, *zdata, *h2a;
     double x1, x2, y1, y2;
-    int    ndata;
+    int    ndata, h2a_nx, h2a_ny;
     int    n_array;
     void   Initailize();
     int    SetUpArrays(int n);

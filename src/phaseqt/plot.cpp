@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <05 Jan 12 15:55:11 flechsig> 
+//  Time-stamp: <05 Jan 12 16:50:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -178,7 +178,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
   d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
   d_curve1 = new QwtPlotCurve( "Curve 1" );            // one curve
-  d_curve2 = new QwtPlotCurve( "Curve 1" );            // one curve
+  d_curve2 = new QwtPlotCurve( "Curve 2" );            // one curve
   getData();                                           // fill sample data
   //d_curve1->setData( new CurveData() );
   d_curve2->setRawSamples(xx, ysin, NPOINTS);
@@ -187,7 +187,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve1->hide();
   d_curve2->hide();
   xxx= NULL; yyy=NULL;
-  xdata= ydata= zdata = NULL;
+  xdata= ydata= zdata = h2a= NULL;
   plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
   plotstyle= PLOT_CONTOUR;
   // bt= (struct BeamlineType *) parent;
@@ -253,6 +253,12 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   //  this->p_zoomer= zoomer;
 } // end constructor
 
+void Plot::example3()
+{
+  d_curve2->setRawSamples(xx, ysin, NPOINTS);
+} // example3
+
+
 // do a contour plot
 void Plot::contourPlot()
 {
@@ -284,7 +290,7 @@ void Plot::profilePlot(int subject, int style)
   cout << "profile plot subject, style: " << subject << " ," << style << endl;
 #endif
   
-  d_curve2->hide();
+  d_curve1->hide();
   d_spectrogram->hide();
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
   setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
@@ -309,7 +315,7 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(0, tr("y (mm)"));
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
-      d_curve1->setRawSamples(yyy, xxx, BINS2);
+      d_curve2->setRawSamples(yyy, xxx, BINS2);
       break;
     case PLOT_HPROF:
       if (subject & PLOT_GO_DIV)
@@ -322,13 +328,13 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(2, tr("z (mm)"));
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
-      d_curve1->setRawSamples(xxx, yyy, BINS2);
+      d_curve2->setRawSamples(xxx, yyy, BINS2);
       break;
     default:
       cout << "error plot.cpp hfill1: unknown type: " << style << endl;
     }
   
-  d_curve1->show();
+  d_curve2->show();
   
   replot();
 } // end profilePlot()

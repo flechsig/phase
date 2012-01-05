@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <05 Jan 12 15:50:12 flechsig> 
+//  Time-stamp: <05 Jan 12 16:42:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -873,6 +873,7 @@ void MainWindow::grapplyslot()
     } // end GO only
   
   
+  
       // example plots
   switch (d_plot->plotsubject)
     {   
@@ -895,18 +896,21 @@ void MainWindow::grapplyslot()
       d_plot->d_spectrogram->hide(); 
       d_plot->d_curve1->hide();
       d_plot->d_curve2->show();
+      d_plot->example3(); // fills the data
       d_plot->replot();
       break;
       
     case PLOT_PO_RESULT:
-      cout << "plot PO_RESULT not yet implemented" << endl;
+      cout << "plot PO_RESULT experimental start " << endl;
+      d_plot->hfill2();
+      d_plot->setphaseData("grsourceAct");
+      d_plot->contourPlot();
+      cout << "plot PO_RESULT experimental end " << endl;
       break;
       
     } // end switch example data
   
-  
-
-  //d_plot->replot();
+    //d_plot->replot();
 #ifdef DEBUG
   printf("debug: grapplyslot end with replot\n");
 #endif
@@ -921,7 +925,6 @@ void MainWindow::grautoscaleslot()
 #ifdef DEBUG
   printf("debug: grautoscaleslot called, plotsubject: %d\n", d_plot->plotsubject);
 #endif
-
 
 // a few tests
   if (!d_plot)
@@ -947,7 +950,6 @@ void MainWindow::grautoscaleslot()
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 			       myparent->myBeamline()->RTSource.raynumber);
       d_plot->autoScale();
-
     }
 
   if (d_plot->plotsubject & PLOT_GO_RESULT ) // generic for GO result
@@ -956,9 +958,13 @@ void MainWindow::grautoscaleslot()
 			       myparent->myBeamline()->RESULT.points);
       d_plot->autoScale();
     }
-  
 
+  if (d_plot->plotsubject & PLOT_PO_RESULT ) // generic for PO result
+    { 
+      cout << "PLOT_PO_RESULT not yet done" << endl;
+    }
   
+  // update the widget
   sprintf(buffer, "%9.3f", d_plot->Plot::ymin);
   gryminE->setText(QString(tr(buffer)));
   sprintf(buffer, "%9.3f", d_plot->Plot::ymax);
