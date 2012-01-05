@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <04 Jan 12 14:01:51 flechsig> 
+//  Time-stamp: <05 Jan 12 08:38:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -377,6 +377,7 @@ QWidget *MainWindow::createGraphicBox()
   plotstyleMenu->addAction(grisoAct);
   
   plotstyleMenu->setDefaultAction(grcontourAct);
+  plotstyleMenu->addSeparator();
   plotstyleMenu->addAction(grHorProfAct);
   plotstyleMenu->addAction(grVerProfAct);
 
@@ -400,28 +401,60 @@ QWidget *MainWindow::createGraphicBox()
   
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
   QMenu *subject = new QMenu(this);
-  grsourceAct    = new QAction(tr("&source"), this);
-  grimageAct     = new QAction(tr("&image"), this);
+  grPoSourceSpaAct  = new QAction(tr("PO &source"), this);
+  grPoSourceDivAct  = new QAction(tr("PO s&ource divergence"), this);
+  grPoSourcePhiAct  = new QAction(tr("PO so&urce phase"), this);
+  
+  grPoResultSpaAct  = new QAction(tr("PO &result"), this);
+  grPoResultDivAct  = new QAction(tr("PO r&esult divergence"), this);
+  grPoResultPhiAct  = new QAction(tr("PO re&sult phase"), this);
+
+  grGoResultAct  = new QAction(tr("GO resu&lt"), this);
+
   grexample1Act  = new QAction(tr("example &1"), this);
   grexample2Act  = new QAction(tr("example &2"), this);
   grexample3Act  = new QAction(tr("example &3"), this);
 
-  subject->addAction(grsourceAct);
-  subject->addAction(grimageAct);
+  subject->addAction(grPoSourceSpaAct);
+  subject->addAction(grPoSourceDivAct);
+  subject->addAction(grPoSourcePhiAct);
+  subject->addSeparator();
+  subject->addAction(grPoResultSpaAct);
+  subject->addAction(grPoResultDivAct);
+  subject->addAction(grPoResultPhiAct);
+  subject->addSeparator();
+  subject->addAction(grGoResultAct);
+  subject->addSeparator();
   subject->addAction(grexample1Act);
   subject->addAction(grexample2Act);
   subject->addAction(grexample3Act);
-  subject->setDefaultAction(grimageAct);
+  subject->setDefaultAction(grPoResultSpaAct);
   subjectpopupButton->setMenu(subject);
 
-  connect(grsourceAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grimageAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSourceSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSourceDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSourcePhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
+  connect(grPoResultSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoResultDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoResultPhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
+  connect(grGoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
   connect(grexample1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample3Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  grsignalMapper->setMapping(grsourceAct,   QString("grsourceAct"));
-  grsignalMapper->setMapping(grimageAct,    QString("grimageAct"));
+  grsignalMapper->setMapping(grPoSourceSpaAct,   QString("grPoSourceSpaAct"));
+  grsignalMapper->setMapping(grPoSourceDivAct,   QString("grPoSourceDivAct"));
+  grsignalMapper->setMapping(grPoSourcePhiAct,   QString("grPoSourcePhiAct"));
+
+  grsignalMapper->setMapping(grPoResultSpaAct,   QString("grPoResultSpaAct"));
+  grsignalMapper->setMapping(grPoResultDivAct,   QString("grPoResultDivAct"));
+  grsignalMapper->setMapping(grPoResultPhiAct,   QString("grPoResultPhiAct"));
+
+  grsignalMapper->setMapping(grGoResultAct,   QString("grGoResultAct"));
+
   grsignalMapper->setMapping(grexample1Act, QString("grexample1Act"));
   grsignalMapper->setMapping(grexample2Act, QString("grexample2Act"));
   grsignalMapper->setMapping(grexample3Act, QString("grexample3Act"));
