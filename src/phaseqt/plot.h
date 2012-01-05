@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <11 Nov 11 13:15:52 flechsig>  */
+/*  Time-stamp: <04 Jan 12 16:50:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -17,7 +17,7 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_directpainter.h>
 
-#define BINS2 101
+#define BINS2   101
 #define NPOINTS 150
 
 class Plot: public QwtPlot
@@ -46,20 +46,19 @@ public:
     double dzmax;
     double phimin;
     double phimax;
-    double h1arr[BINS2];           // odd number
     double h2arr[BINS2][BINS2];    // odd number
     double xx[NPOINTS], ysin[NPOINTS], ycos[NPOINTS], *xxx, *yyy ;
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
-    void   hfill1(struct RayType *, int, const char *);
+    void   hfill1(struct RayType *, double, double, int, int);
     void   hfill2(struct RayType *, int);
 
     void   statistics(struct RayType *, int, double);
     void   contourPlot();
     void   fillData();
     void   scatterPlot(struct RayType *, int);
-    void   profilePlot(struct RayType *, int, int);
+    void   profilePlot(int);
     QwtPlotSpectrogram *d_spectrogram;
     QwtPlotZoomer      *zoomer;
     QwtPlotDirectPainter *d_directPainter;

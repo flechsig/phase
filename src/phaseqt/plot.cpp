@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <02 Dec 11 10:32:05 flechsig> 
+//  Time-stamp: <04 Jan 12 16:50:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -260,49 +260,51 @@ void Plot::contourPlot()
   replot();
 } // end contourPlot()
 
-void Plot::profilePlot(struct RayType *rays, int points, int type)
+void Plot::profilePlot(int type)
 {
-  int i, ix, iy;
-  struct RayType *rp;
-  rp= rays;
-
 #ifdef DEBUG
-  cout << "profile plot experimental" << endl;
+  cout << "profile plot type: " << type << endl;
 #endif
-  
-
-  if (xxx != NULL) delete xxx;
-  if (xxx != NULL) delete yyy;
-  xxx= new double[BINS2];
-  yyy= new double[BINS2];
-
-  if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
-  if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
-
-  for (ix=0; ix< BINS2; ix++)
-    {
-    yyy[ix]= 0.0;
-    xxx[i]= 0.0;
-    }
   
   d_curve2->hide();
   d_spectrogram->hide();
+  d_curve1->setRawSamples(xxx, yyy, BINS2);
 
-  for (i=0; i< points; i++, rp++) 
+  /* 2b done */
+  // background and line color
+  // remove color bar
+  // set zoomer
+  // deal with log scale
+  
+  // set labels
+  switch (type)
     {
-      ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
-      iy= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
-      if (ix < BINS2) xxx[ix]+= 1;          // add one hit
-      if (iy < BINS2) yyy[iy]+= 1;
+    case RAY_Y:
+      setAxisTitle(2, tr("y (mm)"));
+      setAxisTitle(0, tr("norm. intensity"));
+      break;
+    case RAY_Z:
+      setAxisTitle(2, tr("z (mm)"));
+      setAxisTitle(0, tr("norm. intensity"));
+      break;
+    case RAY_DY:
+      setAxisTitle(2, tr("dy (mrad)"));
+      setAxisTitle(0, tr("norm. intensity"));
+      break;
+    case RAY_DZ:
+      setAxisTitle(2, tr("dz (mrad)"));
+      setAxisTitle(0, tr("norm. intensity"));
+      break;
+    case RAY_PHI:
+      setAxisTitle(2, tr("phi (rad)"));
+      setAxisTitle(0, tr("norm. intensity"));
+      break;
+    default:
+      cout << "error plot.cpp hfill1: unknown type: " << type << endl;
     }
-
-  for (ix=0; ix< BINS2; ix++)
-    xxx[i]= (ymax-ymin) * (i- 0.5) ;
-
-
-  d_curve1->setRawSamples(xxx, yyy, points);
+  
   d_curve1->show();
- 
+  
   replot();
 } // end profilePlot()
 
@@ -604,43 +606,50 @@ void Plot::SetData(int n, double* data_x, double *data_y)
 
 
 // fills a 1d histogram with ray data
-void Plot::hfill1(struct RayType *rays, int points, const char *type)
+void Plot::hfill1(struct RayType *rays, double x1, double x2, int points, int type)
 {
   int i;
   unsigned int ix;
   struct RayType *rp;
   
 #ifdef DEBUG
-  cout << "Plot::hfill1 called" << endl;
+  cout << "Plot::hfill1 called for type " << type << endl;
 #endif
 
+  if (xxx != NULL) delete xxx;
+  if (yyy != NULL) delete yyy;
+  xxx= new double[BINS2];
+  yyy= new double[BINS2];
+
+  if ((x2-x1) < ZERO ) x2 = x1 + 1.0;
+    
+  for (ix= 0; ix< BINS2; ix++)
+    {
+      yyy[ix]= 0.0;
+      xxx[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
+    }
+
   rp= rays;
-
-  for (ix=0; ix< BINS2; ix++) h1arr[ix]= 0.0;    // set array data to 0.0
-
-  if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
-  if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
-  h2max= 0.0;
-  /*
+  
   switch (type)
     {
-    case "y":
-      for (i=0; i< points; i++, rp++)
+    case RAY_Y:
+      for (i= 0; i< points; i++, rp++)
 	{
-	  ix= (unsigned int)((rp->y- ymin)/(ymax-ymin)*100);
-	  if (ix < BINS2) h1arr[ix]+= 1;          // add one hit
-	  h2max= max(h2max, h1arr[ix]);           // save maximum
+	  ix= (unsigned int)((rp->y- x1)/(x2- x1) * BINS2);
+	  if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1;          // add one hit
 	}
       break;
-    case "z":
-      for (i=0; i< points; i++, rp++)
+
+    case RAY_Z:
+      for (i= 0; i< points; i++, rp++)
 	{
-	  ix= (unsigned int)((rp->z- zmin)/(zmax-zmin)*100);
-	  if (ix < BINS2) h1arr[ix]+= 1;          // add one hit
-	  h2max= max(h2max, h2arr[ix]);                         // save maximum
+	  ix= (unsigned int)((rp->z- x1)/(x2- x1) * BINS2);
+	  if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1;          // add one hit
 	}
       break;
-    case "dy":
+#ifdef XXX
+    case RAY_DY:
       for (i=0; i< points; i++, rp++)
 	{
 	  ix= (unsigned int)((rp->dy- dymin)/(dymax-dymin)*100);
@@ -648,7 +657,7 @@ void Plot::hfill1(struct RayType *rays, int points, const char *type)
 	  h2max= max(h2max, h1arr[ix]);           // save maximum
 	}
       break;
-    case "dz":
+    case RAY_DZ:
       for (i=0; i< points; i++, rp++)
 	{
 	  ix= (unsigned int)((rp->dz- dzmin)/(dzmax-dzmin)*100);
@@ -656,23 +665,25 @@ void Plot::hfill1(struct RayType *rays, int points, const char *type)
 	  h2max= max(h2max, h2arr[ix]);                         // save maximum
 	}
       break;
-    case "phi":
+    case RAY_PHI:
       for (i=0; i< points; i++, rp++)
 	{
 	  ix= (unsigned int)((rp->phi- phimin)/(phimax-[phimin)*100);
 	  if (ix < BINS2)  h1arr[ix]+= 1;          // add one hit
 	  h2max= max(h2max, h2arr[ix]);                         // save maximum
-	}
+			     }
       break;
-    }
-  */
-  // scale maximum to 10
-  if (h2max > 0.0)
-    for (ix=0; ix< BINS2; ix++)
-      h1arr[ix]*= 10.0/ h2max;
+#endif
+	default:
+	  cout << "error plot.cpp hfill1: unknown type: " << type << endl;
+	}
+    
 
+        for (ix= 0; ix< BINS2; ix++)
+         yyy[ix]*= 1.0/(points);   // density in rays /mm 
+  
 #ifdef DEBUG
-  printf("debug: hfill1 end:  hmax  %f\n", h2max);
+  printf("debug: hfill1 end\n");
 #endif
 } // hfill1
 

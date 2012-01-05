@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2011-12-10 21:56:54 flechsig> 
+//  Time-stamp: <04 Jan 12 17:03:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -318,6 +318,11 @@ printf("yy\n");
   if (!action.compare("grHorProfAct")) 
     { 
       d_plot->plotstyle= PLOT_HPROF;
+    }
+
+  if (!action.compare("grVerProfAct")) 
+    { 
+      d_plot->plotstyle= PLOT_VPROF;
     }
 
   if (!action.compare("grsourceAct")) 
@@ -783,29 +788,34 @@ void MainWindow::grapplyslot()
 				   myparent->myBeamline()->deltalambdafactor);
 	  UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
 	  d_plot->setTitle(tr("Source Plane"));
-
+	  
           switch (d_plot->plotstyle)
 	    {
 	    case PLOT_ISO:
 	    case PLOT_CONTOUR:
 	    case PLOT_CONTOURISO:
-	  
+	      
 	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			       myparent->myBeamline()->RTSource.raynumber);
+				   myparent->myBeamline()->RTSource.raynumber);
 	      d_plot->setphaseData("grsourceAct");
 	      d_plot->contourPlot();
 	      break;
 	    case PLOT_SCATTER:
-	  
 	      d_plot->scatterPlot((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			       myparent->myBeamline()->RTSource.raynumber);
+				  myparent->myBeamline()->RTSource.raynumber);
 	      break;
 	    case PLOT_HPROF:
-	    case PLOT_VPROF:
-	      d_plot->profilePlot( (struct RayType *)myparent->myBeamline()->RTSource.SourceRays,
-				  myparent->myBeamline()->RESULT.points, d_plot->plotstyle);
+	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, d_plot->zmin, d_plot->zmax,
+			     myparent->myBeamline()->RTSource.raynumber, RAY_Z);
+	      d_plot->profilePlot(RAY_Z);
 	      break;
-	    
+	    case PLOT_VPROF:
+	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, d_plot->ymin, d_plot->ymax,
+			     myparent->myBeamline()->RTSource.raynumber, RAY_Y);
+	      d_plot->profilePlot(RAY_Y);
+	      break;
+	    default:
+	      cout << "error no valid plotstyle: " << d_plot->plotstyle << endl;
 	    }
 	}
       else
@@ -821,25 +831,34 @@ void MainWindow::grapplyslot()
 	  UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
 	  d_plot->setTitle(tr("Image Plane"));
 
-	  if (d_plot->plotstyle <= 4)
+	  switch (d_plot->plotstyle)
 	    {
+	    case PLOT_ISO:
+	    case PLOT_CONTOUR:
+	    case PLOT_CONTOURISO:
 	      d_plot->Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 				   myparent->myBeamline()->RESULT.points);
 	      d_plot->setphaseData("grimageAct");
               printf("xxxxx\n");
 	      d_plot->contourPlot();
-	    }
-	  if (d_plot->plotstyle == PLOT_SCATTER)
-	  
-	    {
+	      
+	      break;
+	    case PLOT_SCATTER:
 	      d_plot->scatterPlot((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 				  myparent->myBeamline()->RESULT.points);
-	    }
-	  if (d_plot->plotstyle == PLOT_HPROF)
-	    {
-	      d_plot->profilePlot((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-				  myparent->myBeamline()->RESULT.points, PLOT_HPROF);
-
+	      break;
+	    case PLOT_HPROF:
+	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RESULT.RESp, d_plot->zmin, d_plot->zmax,
+			     myparent->myBeamline()->RESULT.points, RAY_Z);
+	      d_plot->profilePlot(RAY_Z);
+	      break;
+	    case PLOT_VPROF:
+	      d_plot->hfill1((struct RayType *)myparent->myBeamline()->RESULT.RESp, d_plot->ymin, d_plot->ymax,
+			     myparent->myBeamline()->RESULT.points, RAY_Y);
+	      d_plot->profilePlot(RAY_Y);
+	      break;
+	    default:
+	      cout << "error no valid plotstyle: " << d_plot->plotstyle << endl;
 	    }
 	}
       else

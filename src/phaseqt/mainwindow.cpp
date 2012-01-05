@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2011-12-10 17:28:08 flechsig> 
+//  Time-stamp: <04 Jan 12 14:01:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -364,12 +364,12 @@ QWidget *MainWindow::createGraphicBox()
   connect(grautoButton,  SIGNAL(clicked()), this, SLOT(grautoscaleslot()));
 
   plotstyleMenu   = new QMenu(this);
-  grscatterAct  = new QAction(tr("&scatter"), this);
+  grscatterAct    = new QAction(tr("&scatter"), this);
   grcontourAct    = new QAction(tr("&contour"), this);
   grcontourisoAct = new QAction(tr("contour + iso &lines"), this);
   grisoAct        = new QAction(tr("&iso lines"), this);
-  grHorProfAct        = new QAction(tr("profile hor."), this);
-  grVerProfAct        = new QAction(tr("profile ver."), this);
+  grHorProfAct    = new QAction(tr("profile hor."), this);
+  grVerProfAct    = new QAction(tr("profile ver."), this);
 
   plotstyleMenu->addAction(grscatterAct);
   plotstyleMenu->addAction(grcontourAct);
@@ -441,7 +441,7 @@ QWidget *MainWindow::createGraphicBox()
   //  graphicLayout->setRowStretch(1,1);
   graphicGroup->setLayout(graphicLayout);
   
-  QGroupBox  *plotGroup  = new QGroupBox(tr("plot"));
+  QGroupBox   *plotGroup  = new QGroupBox(tr("plot"));
   QGridLayout *plotGroupLayout = new QGridLayout(plotGroup);
 
   //a few buttons
@@ -543,7 +543,7 @@ QWidget *MainWindow::createGraphicBox()
   vbox->addStretch(1);
   graphicBox->setLayout(vbox);
   return graphicBox;
-} // end creagraphic box
+} // end creategraphic box
 
 // create menus with buttons
 void MainWindow::createMenus()
