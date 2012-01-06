@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <06 Jan 12 11:00:05 flechsig> 
+dnl   Time-stamp: <06 Jan 12 15:25:01 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -194,7 +194,11 @@ AC_ARG_WITH([qt],
     dnl   echo "do use qt"
     dnl check if we find the libQtGui.so there
       AC_CHECK_FILE([${qt}/lib/libQtGui.so], 
-      AC_SUBST(QT,${qt}), 
+      [     
+	AC_SUBST(QT,  [${qt}])
+	qti=${qt}
+	AC_SUBST(QTI, [${qti}])
+      ], 
       AC_MSG_ERROR(cannot find libQtGui.so))
     fi
   ],
@@ -206,6 +210,8 @@ AC_ARG_WITH([qt],
         AC_MSG_NOTICE((1) we found libQtGui.so under ${qt} - OK)
 	dnl check if we find the libQtGui.so there 
 	AC_SUBST(QT, [${qt}])
+	qti=${qt}
+	AC_SUBST(QTI, [${qti}])
     else
       AC_MSG_NOTICE((1) did not found libQtGui.so /usr/local)
       AC_MSG_NOTICE((2) search for libQtGui.so on /usr/lib)
@@ -213,6 +219,8 @@ AC_ARG_WITH([qt],
       if test -n "${qt}"; then
          AC_MSG_NOTICE([(2) we found libQtGui.so under ${qt} - OK])
          AC_SUBST(QT, [${qt}])
+	 qti=${qt}
+	 AC_SUBST(QTI, [${qti}])
       else
          AC_MSG_ERROR(cannot find any libQtGui.so)
       fi	 
@@ -231,29 +239,32 @@ AC_ARG_WITH([qwt],
       dnl   echo "do use qwt"
       AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
       [
-        AC_SUBST(QWT,[${qwt}])
-	AC_SUBST(QWTI,[${qwt}])
+        AC_SUBST(QWT, [${qwt}])
+        qwti=${qwt}
+	AC_SUBST(QWTI,[${qwti}])
       ],
       AC_MSG_ERROR(cannot find libqwt.so))
     fi
   ],
   [ dnl qwt is not given- we do a search
-    AC_MSG_NOTICE((1) search for QWT lib libqwt.so in /usr/local/qwt)
+    AC_MSG_NOTICE((1) search for QWT lib libqwt.so in /usr/local)
     dnl to avoid permission denied measages
     qwt=`find /usr/local -name libqwt.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libqwt.so||'`
     if test -n "${qwt}"; then
         AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
 	dnl check if we find the libqwt.so there 
-	AC_SUBST(QWT, [${qwt}])
-        AC_SUBST(QWTI, [${qwt}])
+	AC_SUBST(QWT,  [${qwt}])
+	qwti=${qwt}
+        AC_SUBST(QWTI, [${qwti}])
     else
-      AC_MSG_NOTICE((1) did not found libqwt.so /usr/local)
-      AC_MSG_NOTICE((2) search for libqwt.so on /usr/lib)
+      AC_MSG_NOTICE((1) did not found libqwt.so in /usr/local)
+      AC_MSG_NOTICE((2) search for libqwt.so in /usr/lib)
       qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libqwt.so||'`
       if test -n "${qwt}"; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
-         AC_SUBST(QWT, [${qwt}])
-         AC_SUBST(QWTI, [${qwt}])
+         AC_SUBST(QWT,  [${qwt}])
+	 qwti=${qwt}
+         AC_SUBST(QWTI, [${qwti}])
       else
          AC_MSG_ERROR(cannot find any libqwt.so)
       fi
@@ -447,6 +458,7 @@ echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "qt:                      : ${qt}"
+echo "qti:                     : ${qti}"
 echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
