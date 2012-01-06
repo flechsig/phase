@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <05 Jan 12 16:49:45 flechsig>  */
+/*  Time-stamp: <06 Jan 12 09:09:09 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -48,13 +48,16 @@ public:
     double dzmax;
     double phimin;
     double phimax;
-    double h2arr[BINS2][BINS2];    // odd number
+    //double h2arr[BINS2][BINS2];    // odd number
+    double *h2a;
+    int    h2a_nx, h2a_ny;
     double xx[NPOINTS], ysin[NPOINTS], ycos[NPOINTS], *xxx, *yyy ;
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
     void   hfill1(double *, double, double);
-    void   hfill2();
+    void   hfill2();  // GO
+    void   hfill2(struct PSDType *); // PO
 
     void   statistics(struct RayType *, int, double);
     void   contourPlot();
@@ -83,9 +86,9 @@ public Q_SLOTS:
 
 private:
     //QwtPlotSpectrogram *d_spectrogram;
-    double *x, *y, *xdata, *ydata, *zdata, *h2a;
+    double *x, *y, *xdata, *ydata, *zdata;
     double x1, x2, y1, y2;
-    int    ndata, h2a_nx, h2a_ny;
+    int    ndata;
     int    n_array;
     void   Initailize();
     int    SetUpArrays(int n);

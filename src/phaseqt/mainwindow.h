@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <05 Jan 12 11:46:12 flechsig>  */
+/*  Time-stamp: <06 Jan 12 09:46:34 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -47,6 +47,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(PhaseQt *parent);
     ~MainWindow();
+    int checkResultType(struct RESULTType *, int);
     void parameterUpdateAll(int);
     //  void print();
     void UpdateBeamlineBox();

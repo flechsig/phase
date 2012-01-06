@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <05 Jan 12 16:50:20 flechsig> 
+//  Time-stamp: <06 Jan 12 09:13:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -152,12 +152,11 @@ public:
   
     virtual double value(double x, double y) const
     {
-      int ix = qRound(100*(x- po->zmin)/(po->zmax - po->zmin));
-      int iy = qRound(100*(y- po->ymin)/(po->ymax - po->ymin));
-      if ( ix >= 0 && ix < BINS2 && iy >= 0 && iy < BINS2 )
-	return po->h2arr[ix][iy];  
-
-        return 1.0;
+      int ix = qRound(po->h2a_nx* (x- po->zmin)/(po->zmax - po->zmin));
+      int iy = qRound(po->h2a_ny* (y- po->ymin)/(po->ymax - po->ymin));
+      if ( ix >= 0 && ix < po->h2a_nx && iy >= 0 && iy < po->h2a_ny )
+	return po->h2a[ix+ iy* po->h2a_nx];
+      return 1.0;
     }
 };
 
@@ -342,42 +341,7 @@ void Plot::profilePlot(int subject, int style)
 
 void Plot::fillData()
 {
-  printf("fill data called\n");
-
- 
- #ifdef XXX 
-  switch (plotsubject)
-    {
-    case PLOT_SOURCE: 
-      if (myparent->myBeamline()->beamlineOK & sourceOK)
-	{
-	  Plot::hfill2((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			    myparent->myBeamline()->RTSource.raynumber);
-	  Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-				   myparent->myBeamline()->RTSource.raynumber, 
-				   myparent->myBeamline()->deltalambdafactor);
-	  myparent->UpdateStatistics(this, "Source", myparent->myBeamline()->RTSource.raynumber);
-	}
-      else
-	myparent->QMessageBox::warning(this, tr("grapplyslot"), tr("No source data available"));
-      break;
-    case PLOT_RESULT:
-      if (myparent->myBeamline()->beamlineOK & resultOK)
-	{
-	  Plot::hfill2((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points);
-	  Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-				   myparent->myBeamline()->RESULT.points, 
-				   myparent->myBeamline()->deltalambdafactor);
-	  myparent->UpdateStatistics(this, "Image", myparent->myBeamline()->RESULT.points);
-	}
-      else
-	myparent->QMessageBox::warning(this, tr("grapplyslot"), tr("No valid results available"));
-      break;
-    default:
-      printf("MainWindow::grapplyslot: plotsubject: %d not defined\n", plotsubject);
-    }
-#endif
+  printf("fill data called- is empty\n");
 } // fillData
 
 // creates the temporary arrays xdata etc out of the ray structure depending on plotsubject
@@ -442,7 +406,6 @@ double *Plot::getYdata()
 
 void Plot::scatterPlot()
 {
-   
 #ifdef DEBUG   
   printf("scatter plot experimental\n");
 #endif
@@ -465,7 +428,7 @@ void Plot::scatterPlot()
   //    d_curve1->setData( new CurveData() );
   d_curve1->show();
 
-if (plotsubject & PLOT_GO_DIV)
+  if (plotsubject & PLOT_GO_DIV)
     {
       setAxisTitle(2, tr("dz (mrad)"));
       setAxisTitle(0, tr("dy (mrad)"));
@@ -710,22 +673,23 @@ void Plot::hfill1(double *dvec, double x1, double x2)
 #endif
 } // hfill1
 
-
 // fills a 2d histogram with ray data
 void Plot::hfill2()
 {
-  int i;
+  int i, h2a_n;
   unsigned int ix, iy;
   
-  
 #ifdef DEBUG
-  cout << "Plot::hfill2 called" << endl;
+  cout << "Plot::hfill2 called (ray version)" << endl;
 #endif
 
-
-
-  for (ix=0; ix< BINS2; ix++)
-    for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]= 0.0;    // set array data to 0.0
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  //for (ix= 0; ix< h2a_nx; ix++)
+    //  for (iy= 0; iy< h2a_ny; iy++) h2arr[ix][iy]= 0.0;    // set array data to 0.0
+  for (i= 0; i< h2a_n; i++) h2a[i]= 0.0;    // set array data to 0.0
 
   if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
   if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
@@ -736,21 +700,59 @@ void Plot::hfill2()
   for (i= 0; i< ndata; i++)
     {
       //      appendPoint( QPointF( rp->z, rp->y ) );
-      ix= (unsigned int)((xdata[i]- zmin)/(zmax - zmin)*(BINS2-1));
-      iy= (unsigned int)((ydata[i]- ymin)/(ymax-ymin)*(BINS2-1));
-      if ((ix < BINS2) && (iy < BINS2)) h2arr[ix][iy]+= 1;          // add one hit
-      h2max= max(h2max, h2arr[ix][iy]);                         // save maximum
+      ix= (unsigned int)((xdata[i]- zmin)/(zmax - zmin)*(h2a_nx- 1));
+      iy= (unsigned int)((ydata[i]- ymin)/(ymax - ymin)*(h2a_ny- 1));
+      //if ((ix < h2a_nx) && (iy < h2a_ny)) h2arr[ix][iy]+= 1;          // add one hit
+      //h2max= max(h2max, h2arr[ix][iy]);                         // save maximum
+      if ((ix < h2a_nx) && (iy < h2a_ny)) h2a[ix+ iy*h2a_nx]+= 1;          // add one hit
+      h2max= max(h2max, h2a[ix+ iy*h2a_nx]);                         // save maximum
     }
 
   // scale maximum to 10
   if (h2max > 0.0)
-    for (ix=0; ix< BINS2; ix++)
-      for (iy=0; iy< BINS2; iy++) h2arr[ix][iy]*= 10.0/ h2max;
+    for (ix=0; ix< h2a_nx; ix++)
+      for (iy=0; iy< h2a_ny; iy++) h2a[ix+iy*h2a_nx]*= 10.0/ h2max;
 
 #ifdef DEBUG
   printf("debug: hfill2 end:  hmax  %f\n", h2max);
 #endif
-} // hfill2
+} // hfill2 GO
+
+// fills a 2d histogram with ray data PO version
+void Plot::hfill2(struct PSDType *rp)
+{
+  int i, h2a_n;
+  double *data;
+  
+#ifdef DEBUG
+  cout << "Plot::hfill2 called (PO version)" << endl;
+#endif
+
+  h2a_nx= rp->iz;
+  h2a_ny= rp->iy;
+  data  = rp->psd;
+
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  h2max= 0.0;
+  for (i=0; i< h2a_n; i++)
+    {
+	h2a[i]= data[i];
+	h2max= max(h2max, h2a[i]);                         // save maximum
+    }
+
+  // scale maximum to 10
+  if (h2max > 0.0)
+    for (i=0; i< h2a_n; i++)
+       h2a[i]*= 10.0/ h2max;
+
+#ifdef DEBUG
+  printf("debug: hfill2 end:  hmax  %f\n", h2max);
+#endif
+} // hfill2 PO
+
 
 // constructor of the plot
 //int * Plot::ScatterPlot(QWidget *parent): QwtPlot(parent)

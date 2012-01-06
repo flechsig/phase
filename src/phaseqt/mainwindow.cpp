@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <05 Jan 12 16:00:07 flechsig> 
+//  Time-stamp: <06 Jan 12 09:59:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -59,6 +59,21 @@ MainWindow::~MainWindow()
   if (o_input)  o_input->optiInputBox->close();
 
 }
+
+// checks the resulttype
+// if correct returns 1 otherwise 0 and messagebox with diagnostics
+int MainWindow::checkResultType(struct RESULTType *rp, int typ)
+{
+  int myret= (rp->typ == typ) ? 1 : 0;
+  
+  if (!myret)
+    QMessageBox::warning(this, tr("checkResultType"),
+			 tr("Available calculation results incompatible with selected plotsubject!<p>info: points= %1, type= %2, requested type= %3").arg(rp->points).arg(rp->typ).arg(typ));
+
+  return myret;
+} // checkResultType
+
+
 /////////////////////////////////////
 // begin widget definition section //
 /////////////////////////////////////
@@ -478,12 +493,13 @@ QWidget *MainWindow::createGraphicBox()
   QGridLayout *plotGroupLayout = new QGridLayout(plotGroup);
 
   //a few buttons
-  QToolButton* btnLogx = new QToolButton(plotGroup);
-  btnLogx->setText("Log Scale X");
-  btnLogx->setCheckable(true);
+  //QToolButton* btnLogx = new QToolButton(plotGroup);
+  // btnLogx->setText("Log Scale X");
+  //btnLogx->setCheckable(true);
   //  connect(btnLogx, SIGNAL(toggled(bool)), plot, SLOT(SetLogX(bool)));
   QToolButton* btnLogy = new QToolButton(plotGroup);
-  btnLogy->setText("Log Scale Y");
+  //btnLogy->setText("Log Scale Y");
+  btnLogy->setText("Log Scale");
   btnLogy->setCheckable(true);
   //  connect(btnLogy, SIGNAL(toggled(bool)), plot, SLOT(SetLogY(bool)));
 
@@ -2020,9 +2036,6 @@ case 10:
   parameterModel->updateItemVal(QString(buffer), pos);
 
 } // end parameterUpdate
-
-
-
 
 // interactive version checks for backupfile
 void MainWindow::ReadBLFileInteractive(char *blname)

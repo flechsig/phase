@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <05 Jan 12 16:42:33 flechsig> 
+//  Time-stamp: <06 Jan 12 10:18:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -811,6 +811,15 @@ void MainWindow::grapplyslot()
       return;
     }
 
+  if ((d_plot->plotsubject & PLOT_GO_RESULT) && 
+      !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))
+    return;
+
+  if ((d_plot->plotsubject & PLOT_PO_RESULT) && 
+      !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
+    return;
+
+    
   // values from manual scaling or autoscale
   sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
   sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
@@ -822,9 +831,9 @@ void MainWindow::grapplyslot()
 
   if (d_plot->plotsubject & PLOT_GO_SOURCE ) // generic for GO source
     {
-      d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			       myparent->myBeamline()->RTSource.raynumber, 
-			       myparent->myBeamline()->deltalambdafactor);
+      d_plot->statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
+			 myparent->myBeamline()->RTSource.raynumber, 
+			 myparent->myBeamline()->deltalambdafactor);
       UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
       d_plot->setTitle(tr("GO Source"));
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
@@ -851,7 +860,7 @@ void MainWindow::grapplyslot()
 	case PLOT_ISO:
 	case PLOT_CONTOUR:
 	case PLOT_CONTOURISO:
-	  
+	  d_plot->h2a_nx= d_plot->h2a_ny= BINS2;
 	  d_plot->hfill2();
 	  d_plot->setphaseData("grsourceAct");
 	  d_plot->contourPlot();
@@ -874,7 +883,7 @@ void MainWindow::grapplyslot()
   
   
   
-      // example plots
+      // example plots and PO
   switch (d_plot->plotsubject)
     {   
     case PLOT_EXAMPLE1:
@@ -902,9 +911,13 @@ void MainWindow::grapplyslot()
       
     case PLOT_PO_RESULT:
       cout << "plot PO_RESULT experimental start " << endl;
-      d_plot->hfill2();
+      cout << "use manual saling " << endl;
+      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
+      
+      d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
       d_plot->setphaseData("grsourceAct");
       d_plot->contourPlot();
+      
       cout << "plot PO_RESULT experimental end " << endl;
       break;
       
@@ -952,16 +965,18 @@ void MainWindow::grautoscaleslot()
       d_plot->autoScale();
     }
 
-  if (d_plot->plotsubject & PLOT_GO_RESULT ) // generic for GO result
+  if (d_plot->plotsubject & PLOT_GO_RESULT  && 
+      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))    // generic for GO result
     { 
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 			       myparent->myBeamline()->RESULT.points);
       d_plot->autoScale();
     }
 
-  if (d_plot->plotsubject & PLOT_PO_RESULT ) // generic for PO result
+  if (d_plot->plotsubject & PLOT_PO_RESULT && 
+      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
-      cout << "PLOT_PO_RESULT not yet done" << endl;
+      cout << "PLOT_PO_RESULT no autoscale available so far" << endl;
     }
   
   // update the widget
