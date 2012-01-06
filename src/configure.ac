@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <06 Jan 12 15:25:01 flechsig> 
+dnl   Time-stamp: <06 Jan 12 15:46:07 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -220,10 +220,18 @@ AC_ARG_WITH([qt],
          AC_MSG_NOTICE([(2) we found libQtGui.so under ${qt} - OK])
          AC_SUBST(QT, [${qt}])
 	 qti=${qt}
+	AC_SUBST(QTI, [${qti}])
+      else
+         AC_MSG_ERROR(cannot find any libQtGui.so)
+      fi
+      AC_MSG_NOTICE((2) search for QtGui in /usr/include)
+      qti=`find /usr/include -name QtGui -type f -print 2>/dev/null | head -1 | sed -e 's|QtGui/||'`
+      if test -n "${qti}"; then
+         AC_MSG_NOTICE([(2) we found QtGui under ${qti} - OK])
 	 AC_SUBST(QTI, [${qti}])
       else
          AC_MSG_ERROR(cannot find any libQtGui.so)
-      fi	 
+      fi
     fi
   ])
 dnl end QT
