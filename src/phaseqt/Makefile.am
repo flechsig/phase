@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2012-01-06 17:37:54 flechsig> 
+#  Time-stamp: <09 Jan 12 10:56:10 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -14,14 +14,15 @@ bin_PROGRAMS  = phaseqt
 phaseqt_SOURCES = \
 	configwindow.cpp configwindow.h \
 	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
-	optiinput.cpp optiinput.h  \
+        myzoomer.cpp myzoomer.h \
+        optiinput.cpp optiinput.h  \
 	phaseqt.cpp phaseqt.h \
 	plot.cpp plot.h \
 	plot1d.cpp plot1d.h \
 	singleray.cpp singleray.h \
         treemodel.cpp treemodel.h \
         treeitem.cpp treeitem.h \
-	../phase/bline.c ../phase/cutils.c ../phase/error.c \
+        ../phase/bline.c ../phase/cutils.c ../phase/error.c \
 	../phase/phasec.c  ../phase/rtrace.c \
         ../phase/xmalloc.c   \
 	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
