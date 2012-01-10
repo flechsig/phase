@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 Jan 12 16:45:20 flechsig> 
+//  Time-stamp: <10 Jan 12 17:13:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -902,7 +902,7 @@ void Plot::SetLog(int axisId, bool yes)
       if (axisId == QwtPlot::xBottom) x1= h1firstgt0;    
       if (axisId == QwtPlot::yLeft)   y1= h1firstgt0;
     }
-  cout << x1 << " " << x2 << " "<< y1 << " "<< y2 << endl;
+  // cout << x1 << " " << x2 << " "<< y1 << " "<< y2 << endl;
 
   setAxisScale(QwtPlot::xBottom, x1, x2, 0);   // manual scaling, automatic tics
   setAxisScale(QwtPlot::yLeft,   y1, y2, 0);   // manual scaling
