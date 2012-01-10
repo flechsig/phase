@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <06 Jan 12 09:13:33 flechsig> 
+//  Time-stamp: <10 Jan 12 16:45:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -31,6 +31,7 @@
 //#include <qwt_data.h>
 
 #include "plot.h"
+#include "myzoomer.h"
 #include "phaseqt.h"
 
 using namespace std;   // fuer cout z.B.
@@ -60,26 +61,6 @@ public:
         d_samples.clear();
         d_samples.squeeze();
         d_boundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
-    }
-};
-
-
-class MyZoomer: public QwtPlotZoomer
-{
-public:
-    MyZoomer(QwtPlotCanvas *canvas): QwtPlotZoomer(canvas)
-    {
-        setTrackerMode(AlwaysOn);
-    }
-
-    virtual QwtText trackerTextF(const QPointF &pos) const
-    {
-        QColor bg(Qt::white);
-        bg.setAlpha(200);
-
-        QwtText text = QwtPlotZoomer::trackerTextF(pos);
-        text.setBackgroundBrush( QBrush( bg ));
-        return text;
     }
 };
 
@@ -215,11 +196,12 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   
   setAxisScale(QwtPlot::yRight, zInterval.minValue(), zInterval.maxValue() );
   enableAxis(QwtPlot::yRight);
-  
+  pen_ptr= new QPen();
   plotLayout()->setAlignCanvasToScales(true);
 
   replot();
-  
+ 
+  /************ set up zoom *******************/ 
   // LeftButton for the zooming
   // MidButton for the panning
   // RightButton: zoom out by 1
@@ -245,6 +227,8 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   const QColor c(Qt::darkBlue);
   zoomer->setRubberBandPen(c);
   zoomer->setTrackerPen(c);
+
+  /************* end zoom *************/
   this->fwhmon= 1;
 
   cout << "plotsubject " << plotsubject << endl;
@@ -267,7 +251,10 @@ void Plot::contourPlot()
   d_curve1->hide();
   d_curve2->hide();
   d_spectrogram->show();
-  enableAxis(QwtPlot::yRight, true);                 // switch off right axis
+  enableAxis(QwtPlot::yRight, true);                 // switch on right axis
+
+  setAxisScale(QwtPlot::yLeft,   ymin, ymax, 0); // manual scaling
+  setAxisScale(QwtPlot::xBottom, zmin, zmax, 0); // manual scaling
 
   if (plotsubject & PLOT_GO_DIV)
     {
@@ -283,6 +270,8 @@ void Plot::contourPlot()
   replot();
 } // end contourPlot()
 
+// makes a profile plot
+// expects the vectors xxx and yyy to be filled
 void Plot::profilePlot(int subject, int style)
 {
 #ifdef DEBUG
@@ -292,7 +281,19 @@ void Plot::profilePlot(int subject, int style)
   d_curve1->hide();
   d_spectrogram->hide();
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
-  setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
+  //setCanvasBackground( QColor( 29, 100, 141 ) );      // nice blue
+  //d_curve2->SetLineColor(1);
+  //d_curve2->SetLineWidth(2);
+  //d_curve2->SetLineStyle(2);
+  //d_curve2->setColor(Qt::red);
+  //d_curve2->setWidth(2);
+  setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
+  d_curve2->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
+  pen_ptr->setColor(Qt::red);   // blue
+  pen_ptr->setWidth(2);
+  d_curve2->setPen(*pen_ptr);
+
+  //zoomer->ResetZoomBase();
 
   /* 2b done */
   // background and line color
@@ -315,6 +316,10 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
       d_curve2->setRawSamples(yyy, xxx, BINS2);
+      y1= ymin;                                     // for manual scaling
+      y2= ymax;             
+      x1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
+      x2= (h1max* 1.05);    
       break;
     case PLOT_HPROF:
       if (subject & PLOT_GO_DIV)
@@ -328,13 +333,21 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
       d_curve2->setRawSamples(xxx, yyy, BINS2);
-      break;
+      x1= zmin;           
+      x2= zmax;
+      y1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
+      y2= (h1max* 1.05); 
+      break; 
     default:
       cout << "error plot.cpp hfill1: unknown type: " << style << endl;
+      return;
     }
   
+  setAxisScale(QwtPlot::xBottom, x1, x2, 0);   // manual scaling, automatic tics
+  setAxisScale(QwtPlot::yLeft,   y1, y2, 0);   // manual scaling
+    
+  zoomer->setZoomBase(canvas());
   d_curve2->show();
-  
   replot();
 } // end profilePlot()
 
@@ -404,28 +417,35 @@ double *Plot::getYdata()
   return ydata;
 }
 
+// makes a scatter plot
 void Plot::scatterPlot()
 {
 #ifdef DEBUG   
-  printf("scatter plot experimental\n");
+  printf("debug: scatter plot\n");
 #endif
  
   d_spectrogram->hide();                              // hide spectrogram
-  d_curve2->hide();
-
-  
-  d_curve1->setRawSamples(xdata, ydata, ndata);
-
-  //  appendPoint( QPointF( rp->z, rp->y ) );
-
-  //  d_curve1->setRawSamples((const double *)rays->y, (const double *)rays->z, points);
-
+  d_curve2->hide();                                   // hide curve2
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
-  d_curve1->setStyle( QwtPlotCurve::NoCurve );
-  d_curve1->setSymbol( new QwtSymbol( QwtSymbol::XCross,
-        Qt::NoBrush, QPen( Qt::white ), QSize( 3, 3 ) ) );
-  setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
-  //    d_curve1->setData( new CurveData() );
+
+  d_curve1->setRawSamples(xdata, ydata, ndata);
+  d_curve1->setStyle( QwtPlotCurve::Dots );
+  pen_ptr->setColor(Qt::red);   // blue
+  pen_ptr->setWidth(2);
+  d_curve1->setPen(*pen_ptr);
+  setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
+
+  // d_curve1->setStyle( QwtPlotCurve::NoCurve );
+  //    d_curve1->setSymbol( new QwtSymbol( QwtSymbol::Ellipse,// QwtSymbol::XCross,
+  //        Qt::NoBrush, QPen( Qt::white ), QSize( 2, 2 ) ) );
+  // d_curve1->setSymbol( new QwtSymbol( QwtSymbol::XCross,
+  //      Qt::NoBrush, QPen( Qt::red ), QSize( 3, 3 ) ) );
+  // setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
+ 
+  setAxisScale(QwtPlot::xBottom, zmin, zmax, 0); // manual scaling
+  setAxisScale(QwtPlot::yLeft,   ymin, ymax, 0); // manual scaling
+  zoomer->setZoomBase(canvas());
+
   d_curve1->show();
 
   if (plotsubject & PLOT_GO_DIV)
@@ -438,11 +458,6 @@ void Plot::scatterPlot()
       setAxisTitle(2, tr("z (mm)"));
       setAxisTitle(0, tr("y (mm)"));
     }
-
-  //d_directPainter->drawSeries( d_curve1,
-  //   			       d_curve1->data->size() - 1, d_curve1->data->size() - 1 );
-  
-  //  canvas()->setPaintAttribute( QwtPlotCanvas::BackingStore, true );
   replot();
 } // scatterPlot
 
@@ -596,12 +611,6 @@ void Plot::Beauty(double *mi, double *ma)
    }
 } /* end Beauty */
 
-void Plot::Initailize(){
-  ndata=n_array=0;
-  x=y=0;
-  pen_ptr = new QPen();
-  //SetLineColor();
-}
 
 int Plot::SetUpArrays(int n){
   n = n<1 ? 1 : n; //overflow bin
@@ -664,9 +673,18 @@ void Plot::hfill1(double *dvec, double x1, double x2)
       if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1.0;          // add one hit
     }  
   
-  if (ndata)               // not if 0
+  h1max= 0.0; h1firstgt0= 1.0;  // ZERO
+  if (ndata)                    // not if 0
+    {
     for (ix= 0; ix< BINS2; ix++)
-      yyy[ix]*= 1.0/ndata;   // density in rays 
+      {
+	yyy[ix]*= 1.0/ndata;   // density in rays 
+	if (yyy[ix] > h1max) h1max= yyy[ix];
+	if ((yyy[ix] > ZERO) && (yyy[ix] < h1firstgt0)) h1firstgt0 = yyy[ix];
+      }
+    for (ix= 0; ix< BINS2; ix++) 
+      if (yyy[ix] < h1firstgt0 )  yyy[ix]= h1firstgt0;  // fix 0 for log scale
+    }
   
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
@@ -847,5 +865,70 @@ void Plot::getData()
       ycos[i] = cos(xx[i]);
     }
 } // end getData()
+
+// the public slot
+void Plot::SetLog(bool yes)
+{
+#ifdef DEBUG
+  cout << "debug: slot Plot::SetLog(bool stat) called with yes = " << yes << endl;
+#endif
+
+  logscaleon= yes;        // remember status
+
+  if ( !(plotstyle & (PLOT_HPROF | PLOT_VPROF)) )
+    {
+      cout << "information: This is not a profile plot - Log Scale Button ignored" << endl;
+      return;
+    }
+
+  int axisId= (plotstyle & PLOT_HPROF) ? QwtPlot::yLeft : QwtPlot::xBottom;
+  SetLog(axisId, yes);
+} // end SetLog slot
+
+// the private function
+void Plot::SetLog(int axisId, bool yes)
+{
+#ifdef DEBUG
+  cout << "debug: slot Plot::SetLog(int axisId, bool yes) called for axisId= " << axisId << endl;
+#endif
+
+  //  if (axisId == QwtPlot::xBottom) zoomer->SetLogX(yes); // sets internal var xIsLog=yes
+  //  if (axisId == QwtPlot::yLeft)   zoomer->SetLogY(yes); // sets internal var yIsLog=yes
+
+  //  zoomer->ResetZoomBase();  //needs to be done before setting Engine
+
+  if ( yes )
+    {
+      if (axisId == QwtPlot::xBottom) x1= h1firstgt0;    
+      if (axisId == QwtPlot::yLeft)   y1= h1firstgt0;
+    }
+  cout << x1 << " " << x2 << " "<< y1 << " "<< y2 << endl;
+
+  setAxisScale(QwtPlot::xBottom, x1, x2, 0);   // manual scaling, automatic tics
+  setAxisScale(QwtPlot::yLeft,   y1, y2, 0);   // manual scaling
+  zoomer->setZoomBase(canvas());
+    
+   //the old ones are deleted by in the setAxisScaleFunction() function see: 128 of file qwt_plot_axis.cpp
+  if (yes) 
+    {
+      setAxisScaleEngine(axisId, new QwtLog10ScaleEngine());
+      if (axisId == QwtPlot::xBottom) 
+	setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine());
+      else 
+	setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine());
+    }
+  else    
+    {
+      setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine());
+      setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine());
+    }
+  
+  //axisScaleEngine(QwtPlot::yLeft)->setAttribute(QwtScaleEngine::Floating);
+  //axisScaleEngine(QwtPlot::xBottom)->setAttribute(QwtScaleEngine::Floating);
+ 
+  replot();
+} // end SetLog function
+
+
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

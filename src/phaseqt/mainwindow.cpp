@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Jan 12 09:59:25 flechsig> 
+//  Time-stamp: <09 Jan 12 10:21:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -501,13 +501,14 @@ QWidget *MainWindow::createGraphicBox()
   //btnLogy->setText("Log Scale Y");
   btnLogy->setText("Log Scale");
   btnLogy->setCheckable(true);
-  //  connect(btnLogy, SIGNAL(toggled(bool)), plot, SLOT(SetLogY(bool)));
+  
 
   d_plot = new Plot(this);
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
   d_plot->setTitle(tr("PhaseQt"));
-  
+
+  connect(btnLogy, SIGNAL(toggled(bool)), d_plot, SLOT(SetLog(bool)));
 
 //plotGroupLayout->addWidget(label,1,1,1,1);
 //  plotGroupLayout->addWidget(btnLogx,1,2,1,1);

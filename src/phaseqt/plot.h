@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <06 Jan 12 09:09:09 flechsig>  */
+/*  Time-stamp: <10 Jan 12 16:45:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -16,9 +16,12 @@
 #include <qwt_plot_zoomer.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_directpainter.h>
+#include <qwt_scale_engine.h>
 
 #define BINS2   101
 #define NPOINTS 150
+
+class MyZoomer;
 
 class Plot: public QwtPlot
 {
@@ -34,9 +37,11 @@ public:
     void autoScale();
     void fillGoPlotArrays(struct RayType *, int);
     void SetData(int n, double* dx, double* dy);
+    //int  SetLineColor(int);
     void appendPoint(const QPointF &);
     void clearPoints();
     void getData();       // for test
+    Plot *plot() { return this; }
 
     double ymin;
     double ymax;
@@ -65,7 +70,8 @@ public:
     void   scatterPlot();
     void   profilePlot(int, int);
     QwtPlotSpectrogram *d_spectrogram;
-    QwtPlotZoomer      *zoomer;
+    //  QwtPlotZoomer      *zoomer;
+    MyZoomer      *zoomer;
     QwtPlotDirectPainter *d_directPainter;
     QwtPlotCurve         *d_curve1;
     QwtPlotCurve         *d_curve2;
@@ -80,6 +86,9 @@ public Q_SLOTS:
     void showContour(bool on);
     void showSpectrogram(bool on);
 
+public slots:
+    void SetLog(bool);
+
 #ifndef QT_NO_PRINTER
     void printPlot(QPrinter & );
 #endif
@@ -88,14 +97,18 @@ private:
     //QwtPlotSpectrogram *d_spectrogram;
     double *x, *y, *xdata, *ydata, *zdata;
     double x1, x2, y1, y2;
+    double h1max, h1firstgt0;
     int    ndata;
+    bool   logscaleon;
     int    n_array;
-    void   Initailize();
+    
     int    SetUpArrays(int n);
     QPen   *pen_ptr;
     void   Beauty(double *, double *);
     struct BeamlineType *bt;
     //QwtPlotZoomer *zoomer;
+
+    void SetLog(int, bool);
 };
 #endif
 // end
