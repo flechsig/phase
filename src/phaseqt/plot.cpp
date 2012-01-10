@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 Jan 12 17:13:10 flechsig> 
+//  Time-stamp: <10 Jan 12 17:13:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -891,9 +891,6 @@ void Plot::SetLog(int axisId, bool yes)
 #ifdef DEBUG
   cout << "debug: slot Plot::SetLog(int axisId, bool yes) called for axisId= " << axisId << endl;
 #endif
-
-  //  if (axisId == QwtPlot::xBottom) zoomer->SetLogX(yes); // sets internal var xIsLog=yes
-  //  if (axisId == QwtPlot::yLeft)   zoomer->SetLogY(yes); // sets internal var yIsLog=yes
 
   //  zoomer->ResetZoomBase();  //needs to be done before setting Engine
 
