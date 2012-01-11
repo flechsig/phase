@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <11 Jan 12 10:03:26 flechsig> 
+//  Time-stamp: <11 Jan 12 10:04:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -113,6 +113,7 @@ void MainWindow::createActions()
 
     quitAct = new QAction(tr("&Quit"), this);
 
+    // UF test code 11.1.2012
 #ifdef DEBUG
     printf("\nQT_VERSION: 0x%X\n\n", QT_VERSION);
 #endif
