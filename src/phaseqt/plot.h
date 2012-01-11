@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <10 Jan 12 16:45:46 flechsig>  */
+/*  Time-stamp: <11 Jan 12 08:15:16 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -15,7 +15,7 @@
 #include <qwt_plot_spectrogram.h>
 #include <qwt_plot_zoomer.h>
 #include <qwt_plot_curve.h>
-#include <qwt_plot_directpainter.h>
+//#include <qwt_plot_directpainter.h>
 #include <qwt_scale_engine.h>
 
 #define BINS2   101
@@ -72,7 +72,7 @@ public:
     QwtPlotSpectrogram *d_spectrogram;
     //  QwtPlotZoomer      *zoomer;
     MyZoomer      *zoomer;
-    QwtPlotDirectPainter *d_directPainter;
+    //QwtPlotDirectPainter *d_directPainter;
     QwtPlotCurve         *d_curve1;
     QwtPlotCurve         *d_curve2;
 

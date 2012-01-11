@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 Jan 12 17:13:32 flechsig> 
+//  Time-stamp: <11 Jan 12 08:14:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -156,7 +156,7 @@ public:
 // parent is a pointer to the  mainwindow object 
 Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
-  d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
+  //d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
   d_curve1 = new QwtPlotCurve( "Curve 1" );            // one curve
   d_curve2 = new QwtPlotCurve( "Curve 2" );            // one curve
   getData();                                           // fill sample data
