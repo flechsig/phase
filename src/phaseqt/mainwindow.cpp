@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <11 Jan 12 10:04:10 flechsig> 
+//  Time-stamp: <12 Jan 12 12:24:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -57,7 +57,6 @@ MainWindow::~MainWindow()
   if (c_window) c_window->configWindowBox->close();
   if (s_ray)    s_ray->singleRayBox->close();
   if (o_input)  o_input->optiInputBox->close();
-
 }
 
 // checks the resulttype
@@ -525,7 +524,6 @@ QWidget *MainWindow::createGraphicBox()
   //plotGroupLayout->addWidget(label2,5,1,1,3);  
   plotGroupLayout->setMargin(12);
 
-
   statGroup  = new QGroupBox(tr("Statistics"));
   QGridLayout *statLayout = new QGridLayout;
   
@@ -597,8 +595,9 @@ QWidget *MainWindow::createGraphicBox()
   vbox->addWidget(graphicGroup);
   //vbox->addWidget(d_plot);
   vbox->addWidget(plotGroup);
-  vbox->addWidget(statGroup);
   vbox->addStretch(1);
+  vbox->addWidget(statGroup);
+  //vbox->addStretch(1);
   graphicBox->setLayout(vbox);
   return graphicBox;
 } // end creategraphic box
@@ -634,7 +633,6 @@ void MainWindow::createMenus()
     calcMenu->addAction(mphasespaceAct);
     //calcMenu->addSeparator();
     //calcMenu->addAction(optiInputAct);
-
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
     cmdMenu->addAction(writeResultAct);
@@ -1098,7 +1096,7 @@ QWidget *MainWindow::createSourceBox()
   sourceParsLayout->addWidget(sourceApplyB,  3, 4);
   sourceParsLayout->addWidget(sourceDefaultB,2, 4);
 
-    sourceParsGroup->setLayout(sourceParsLayout);
+  sourceParsGroup->setLayout(sourceParsLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(sourceTypeGroup);
