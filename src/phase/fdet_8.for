@@ -1,4 +1,4 @@
-c$$$ $Source$ 
+﻿c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
@@ -42,31 +42,50 @@ c------------------------------------------------------------------
      &            dfdww(0:7,0:7,0:7,0:7),
      &            dfdwl(0:7,0:7,0:7,0:7),
      &            dfdll(0:7,0:7,0:7,0:7)
-     
-	dimension PL0a(0:7,0:7,0:7,0:7),
-     &		PLwa(0:7,0:7,0:7,0:7),PLla(0:7,0:7,0:7,0:7),
-     &		PLw2a(0:7,0:7,0:7,0:7),PLl2a(0:7,0:7,0:7,0:7),
-     &		PLwla(0:7,0:7,0:7,0:7),
-     &		PLw3a(0:7,0:7,0:7,0:7)
-	dimension PL0(0:7,0:7,0:7,0:7),
+	dimension a0(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            b0(0:7,0:7,0:7,0:7,0:7,0:7),
+     &		  c0(0:7,0:7,0:7,0:7,0:7,0:7),
+     &		  d0(0:7,0:7,0:7,0:7,0:7,0:7)
+     &		  at(0:7,0:7,0:7,0:7,0:7,0:7),
+     &		  ct(0:7,0:7,0:7,0:7,0:7,0:7),
+     &		  dt(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension T6(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            T6a(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            T6b(0:7,0:7,0:7,0:7,0:7,0:7)
+	dimension gam(0:7)
+	dimension atilde(0:7,0:7,0:7,0:7),
+     &            a0(0:7,0:7,0:7,0:7),
+     &            a02(0:7,0:7,0:7,0:7),
+     &		  a1(0:7,0:7,0:7,0:7),
+     &		  a2(0:7,0:7,0:7,0:7),
+     &		  a3(0:7,0:7,0:7,0:7),
+     &		  a4(0:7,0:7,0:7,0:7),
+     &		  a5(0:7,0:7,0:7,0:7),
+     &		  a6(0:7,0:7,0:7,0:7),
+     &		  a7(0:7,0:7,0:7,0:7),
+     &		  ab(0:7,0:7,0:7,0:7)
+	dimension btilde(0:7,0:7,0:7,0:7),
+     &            b0(0:7,0:7,0:7,0:7),
+     &		  b1(0:7,0:7,0:7,0:7),
+     &		  b2(0:7,0:7,0:7,0:7),
+     &		  b3(0:7,0:7,0:7,0:7),
+     &		  b4(0:7,0:7,0:7,0:7),
+     &		  b5(0:7,0:7,0:7,0:7),
+     &		  b6(0:7,0:7,0:7,0:7),
+     &		  b7(0:7,0:7,0:7,0:7)
+ 
+
+
+
+c----------- was brauchen wir hiervon noch???
+	dimension  PL0a(0:7,0:7,0:7,0:7,0:7,0:7),
+     &		PLwa(0:7,0:7,0:7,0:7,0:7,0:7),
+     &          PLla(0:7,0:7,0:7,0:7,0:7,0:7),PL0(0:7,0:7,0:7,0:7),
      &		PLw(0:7,0:7,0:7,0:7),PLl(0:7,0:7,0:7,0:7),
      &		PLw2(0:7,0:7,0:7,0:7),PLl2(0:7,0:7,0:7,0:7),
      &		PLwl(0:7,0:7,0:7,0:7),
      &		PLw3(0:7,0:7,0:7,0:7)
-	dimension QL0(0:7,0:7,0:7,0:7),
-     &		QLw(0:7,0:7,0:7,0:7),QLl(0:7,0:7,0:7,0:7),
-     &		QLw2(0:7,0:7,0:7,0:7),QLl2(0:7,0:7,0:7,0:7),
-     &		QLwl(0:7,0:7,0:7,0:7),
-     &		QLw3(0:7,0:7,0:7,0:7)
-	dimension RL0(0:7,0:7,0:7,0:7),
-     &		RLw(0:7,0:7,0:7,0:7),RLl(0:7,0:7,0:7,0:7),
-     &		RLw2(0:7,0:7,0:7,0:7),RLl2(0:7,0:7,0:7,0:7),
-     &		RLwl(0:7,0:7,0:7,0:7),
-     &		RLw3(0:7,0:7,0:7,0:7)
-	dimension T4(0:7,0:7,0:7,0:7),T4a(0:7,0:7,0:7,0:7),
-     &            T4b(0:7,0:7,0:7,0:7)
 
-	dimension gam(0:7)
 
 c------------------------------------------------------------------
 c	evaluate factors
@@ -282,141 +301,120 @@ c----------------------------
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
 
 c	wir haben schon mal in Abhängigkeit der Variablen
-c	w, l, y, z, yp, zp die Ausdruecke:
+c	w, l, y, z, yp, zp die folgenden Ausdruecke:
 c 
 c	dfdw,dfdl		!sollten null sein
 c	d2fdw2,d2fdwdl,d2fdl2
-c	d3fdw3
+c	d3fdw3	
+c	a0, b0, c0, d0 are functions of the six variables w, l, y, z, yp, zp 
 
-c	zunächst:
-c	- yp und zp ersetzen durch Taylorreihe in y,z,dy,dz
-c	jetzt hängen die Auddrücke ab von (w,l,y,z,dy,dz)
-
-c	rund um den kritischen Punkt (w0,l0):
-c	- w ersetzen mit w0+delta_w und l mit l0+delta_l 
-c	jetzt hängen die Auddrücke ab von (w,l,dw,dl,y,z,dy,dz) (leider 8 Variablen)
-
-c	schließlich:
-c	- w0, l0 ersetzen mit Taylorreihe in y, z, dy, dz
-c	ergibt die Ausdrücke d2fdw2 etc in den Variablen dw,dl,y,z,dy,dz
-	
-c	names as in SPIE Paper:
-c	a0, b0, c0, d0 are functions of the four variables y, z, dy, dz 
+c---------- get prefactors as of SAN Diego paper
 	   do i=0,iord
 	    do j=0,iord-i
 	     do k=0,iord-i-j
 	      do l=0,iord-i-j-k
-	PL0a(k,l,i,j)=opl6(0,0,i,j,k,l)
-	PLwa(k,l,i,j)=dfdw6(0,0,i,j,k,l)
-	PLla(k,l,i,j)=dfdl6(0,0,i,j,k,l)
-	PLw2a(k,l,i,j)=dfdww6(0,0,i,j,k,l)/2.d0
-	PLl2a(k,l,i,j)=dfdll6(0,0,i,j,k,l)/2.d0
-	PLwla(k,l,i,j)=dfdwl6(0,0,i,j,k,l)
-	PLw3a(k,l,i,j)=dfdwww6(0,0,i,j,k,l)/6.d0
+	       do m=0,iord-i-j-k-l
+	        do n=0,iord-i-j-k-l-m
+	c0(i,j,k,l,m,n)=dfdww6(i,j,k,l,m,n)/2.d0	
+	a0(i,j,k,l,m,n)=dfdll6(i,j,k,l,m,n)/2.d0	
+	b0(i,j,k,l,m,n)=dfdwl6(i,j,k,l,m,n)/2.d0			! 
+	d0(i,j,k,l,m,n)=dfdwww6(i,j,k,l,m,n)/6.d0	
+	        enddo
+	       enddo
 	      enddo
 	     enddo
 	    enddo
 	   enddo
 
-c--------- yp and zp Taylor series expansion in y,z,dy,dz	
-	ionetwo=1
+c---------- coordinate transformation in variables w and l
 
-	call replace_wl_in_ypzp(PL0a,PL0a,ypc1,zpc1,
-     &                        PL0,PL0,ionetwo,iord)
-	call replace_wl_in_ypzp(PLwa,PLwa,ypc1,zpc1,
-     &                        PLw,PLw,ionetwo,iord)
-	call replace_wl_in_ypzp(PLla,PLla,ypc1,zpc1,
-     &                        PLl,PLl,ionetwo,iord)
-	call replace_wl_in_ypzp(PLwla,PLwla,ypc1,zpc1,
-     &                        PLwl,PLwl,ionetwo,iord)
-	call replace_wl_in_ypzp(PLw2a,PLw2a,ypc1,zpc1,
-     &                        PLw2,PLw2,ionetwo,iord)
-	call replace_wl_in_ypzp(PLl2a,PLl2a,ypc1,zpc1,
-     &                        PLl2,PLl2,ionetwo,iord)
-	call replace_wl_in_ypzp(PLwla,PLwla,ypc1,zpc1,
-     &                        PLwl,PLwl,ionetwo,iord)
-	call replace_wl_in_ypzp(PLw3a,PLw3a,ypc1,zpc1,
-     &                        PLw3,PLw3,ionetwo,iord)
+	call Tay_copy_6(a0,at,iord)	! at=a0 bleibt
+	call Tay_copy_6(d0,dt,iord)	! dt=d0 bleibt
+					! bt=0
+	call Tay_inv_6(a0,T6,iord)
+	call Tay_mult_6(T6,b0,T6a,iord)	
+	call Tay_mult_6(T6a,b0,T6b,iord)
+	call Tay_const_6(T6b,-1.d0,iord)
+	call Tay_sum_6(T6b,c0,ct,iord)	! ct
 
-c---------- Prefactors
+c------------- get partial derivatives in variables (w,l,y,z,dy,dz)
+c------------- replace yp and zp with Taylor series in y,z,dy,dz
+        call replace_6v4v(at,ypc,zpc,au,iord)
+        call replace_6v4v(ct,ypc,zpc,cu,iord)
+        call replace_6v4v(dt,ypc,zpc,du,iord)
+       
+c------------- get partial derivatives in variables (y,z,dy,dz)
+c------------- replace w and l with Taylor series in y,z,dy,dz
+        call replace_wl_in_ypzp(au,au,wc,xlc,av,av,1,iord)
+        call replace_wl_in_ypzp(cu,cu,wc,xlc,cv,cv,1,iord)
+        call replace_wl_in_ypzp(du,du,wc,xlc,dv,dv,1,iord)
 
-	call Tay_mult_4(wc,wc,wwc,iord)
-	call Tay_mult_4(wc,xlc,wlc,iord)
-	call Tay_mult_4(xlc,xlc,xllc,iord)
-	call Tay_mult_4(wwc,wc,wwwc,iord)
+c--------------- evaluate  integrals
+c	av*l**2+cv*w**2+dv*w**3
+c	nomenklatur in San Diego Papier:
+c	atilde=cv 
+c       btilde=dv
+	call Tay_copy_4(av,btilde,iord)
+	call Tay_copy_4(cv,atilde,iord)
+	call Tay_abs_4(atilde,iord)
 
-	call Tay_copy_4(PL0,QL0,iord)
-	  call Tay_mult_4(PLw,wc,T4,iord)
-	call Tay_add_4(T4,QL0,iord)
-	  call Tay_mult_4(PLl,xlc,T4,iord)
-	call Tay_add_4(T4,QL0,iord)
-	  call Tay_mult_4(PLW2,wwc,T4,iord)
-	call Tay_add_4(T4,QL0,iord)
-	  call Tay_mult_4(PLl2,xllc,T4,iord)
-	call Tay_add_4(T4,QL0,iord)
-	  call Tay_mult_4(PLwl,wlc,T4,iord)
-	call Tay_add_4(T4,QL0,iord)	
-	  call Tay_mult_4(PLw3,wwwc,T4,iord)
-	call Tay_add_4(T4,QL0,iord)
-
-c----------------------
-
-	call Tay_copy_4(PLw,QLw,iord)
-	  call Tay_mult_4(PLw2,wc,T4,iord)
-	  call Tay_const_4(T4,2.d0,iord)
-	call Tay_add_4(T4,QLw,iord)
-	  call Tay_mult_4(PLwl,xlc,T4,iord)
-	call Tay_add_4(T4,QLw,iord)
-	  call Tay_mult_4(PLw3,wwc,T4,iord)
-	  call Tay_const_4(T4,3.d0,iord)
-	call Tay_add_4(T4,QLw,iord)
-
-c-----------------------
-
-	call Tay_copy_4(PLl,QLl,iord)
-	  call Tay_mult_4(PLl2,xlc,T4,iord)
-	  call Tay_const_4(T4,2.d0,iord)
-	call Tay_add_4(T4,QLl,iord)
-	  call Tay_mult_4(PLwl,wc,T4,iord)
-	call Tay_add_4(T4,QLl,iord)
-
-c-----------------------
-
-	call Tay_copy_4(PLw2,QLw2,iord)
-	  call Tay_mult_4(PLw3,wc,T4,iord)
-	  call Tay_const_4(T4,3.d0,iord)
-	call Tay_add_4(T4,QLw2,iord)
-
-c-----------------------
-
-	call Tay_copy_4(PLl2,QLl2,iord)
-
-c-----------------------
-
-	call Tay_copy_4(PLwl,QLwl,iord)
-	  call Tay_mult_4(wc,xlc,T4,iord)
-	call Tay_add_4(T4,QLwl,iord)
-
-c-----------------------
-
-	call Tay_copy_4(PLw3,QLw3,iord)
-
-c---------- next: coordinate transformation
-
-	call Tay_copy_4(QLw3,RLw3,iord)	! w3
-	call Tay_copy_4(QLl2,RLl2,iord)	! l2
-	call Tay_inv_4(QLl2,T4,iord)
-	call Tay_mult_4(T4,QLwl,T4a,iord)	
-	call Tay_mult_4(T4a,QLwl,T4b,iord)
-	call Tay_const_4(T4b,-0.25d0,iord)
-	call Tay_sum_4(T4b,QLw2,RLw2,iord)	! w2
-
-c------------------------------------------------------------------------------
 	call gamma_func(gam)
 
-c	analytische Berechnung des Integrals ist dann straight forward
-c	mit dem Resultat: f1(y,z,dy,dz)
-c
+	call atilde_exp(atilde,a0,a1,a2,a3,a4,a5,a6,a7,iord)
+	call btilde_exp(btilde,b0,b1,b2,b3,b4,b5,b6,b7,iord)
+	
+
+
+c------ first part (integration from zero to infinity,
+c       if a>0 and b>0. otherwise integration from -infinity to zero)
+	sumcos=0.d0
+	sumsin=0.d0
+
+	do k=0,nk
+
+	arg=(b**k)/faku(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
+	sumcos=sumcos+arg/3.d0
+
+	arg=(-b**k)/faku(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
+	sumsin=sumsin+arg/3.d0
+
+	enddo
+
+c-------- second part (integration from -infinity to zero)
+c       if a>0 and b>0. otherwise integration from -infinity to zero)
+	do k=0,nk
+
+	arg=((-b)**k)/faku(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
+	sumcos=sumcos+arg/3.d0
+
+	arg=((-b)**k)/faku(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
+	sumsin=sumsin+arg/3.d0
+
+	enddo
+
+	res2b=dsqrt(sumcos**2+sumsin**2)
+	if(a.lt.0.d0)then
+	xx=res2a
+	res2a=res2b
+	res2b=xx
+	endif
+
+	endif
+     
+	return
+	end
+
+c-------------------------------------------------------------------
+	subroutine atilde_exp(atilde,a0,a1,a2,a3,a4,a5,a6,a7,iord)
+c-------------------------------------------------------------------
 c	Berechnung der Exponenten:
 c
 c	k	exponent	break down in
@@ -429,9 +427,74 @@ c	4	9/3		3
 c	5	11/3		3 & 2/3
 c	6	13/3		4 & 1/3
 c	7	15/3		5
+c--------------------------------------------------------
 
+	implicit real*8(a-h,o-z)
+
+	dimension atilde(0:7,0:7,0:7,0:7),
+     &            a0(0:7,0:7,0:7,0:7),
+     &            a02(0:7,0:7,0:7,0:7),
+     &		  a1(0:7,0:7,0:7,0:7),
+     &		  a2(0:7,0:7,0:7,0:7),
+     &		  a3(0:7,0:7,0:7,0:7),
+     &		  a4(0:7,0:7,0:7,0:7),
+     &		  a5(0:7,0:7,0:7,0:7),
+     &		  a6(0:7,0:7,0:7,0:7),
+     &		  a7(0:7,0:7,0:7,0:7),
+     &		  ab(0:7,0:7,0:7,0:7)
+ 
+	call Tay_cbrt_4(atilde,ab,iord)
+	call Tay_inv_4(ab,a0,iord)		! a0=1/(1/3)
+	call Tay_mult_4(a0,a0,a02,iord)		! a02=1/(2/3)
+
+	call Tay_mult_4(a0,a02,a1,iord)	
+	call Tay_mult_4(a1,a02,a2,iord)		
+	call Tay_mult_4(a2,a02,a3,iord)	
+	call Tay_mult_4(a3,a02,a4,iord)		
+	call Tay_mult_4(a4,a02,a5,iord)
+	call Tay_mult_4(a5,a02,a6,iord)
+	call Tay_mult_4(a6,a02,a7,iord)
+
+	return
+	end
+
+c-------------------------------------------------------------------
+	subroutine btilde_exp(btilde,b0,b1,b2,b3,b4,b5,b6,b7,iord)
+c-------------------------------------------------------------------
+
+	implicit real*8(a-h,o-z)
+
+	dimension btilde(0:7,0:7,0:7,0:7),
+     &            b0(0:7,0:7,0:7,0:7),
+     &		  b1(0:7,0:7,0:7,0:7),
+     &		  b2(0:7,0:7,0:7,0:7),
+     &		  b3(0:7,0:7,0:7,0:7),
+     &		  b4(0:7,0:7,0:7,0:7),
+     &		  b5(0:7,0:7,0:7,0:7),
+     &		  b6(0:7,0:7,0:7,0:7),
+     &		  b7(0:7,0:7,0:7,0:7)
+ 
+	do i=0,iord
+	 do j=0,iord-i
+	  do k=0,iord-i-j
+	   do l=0,iord-i-j-k
+	    b0(i,j,k,l)=0.d0
+	   enddo
+	  enddo
+	 enddo
+	enddo
 	endif
-     
+	b0(0,0,0,0)=1.d0
+
+	call Tay_copy_4(btilde,b1,iord)
+
+	call Tay_mult_4(b1,b1,b2,iord)	
+	call Tay_mult_4(b2,b1,b3,iord)	
+	call Tay_mult_4(b3,b1,b4,iord)		
+	call Tay_mult_4(b4,b1,b5,iord)
+	call Tay_mult_4(b5,b1,b6,iord)
+	call Tay_mult_4(b6,b1,b7,iord)
+
 	return
 	end
 
