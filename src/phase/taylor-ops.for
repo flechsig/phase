@@ -10,6 +10,117 @@ c       zur 7. Ordnung ausser Ableitung, da man da mit
 c       8. Ordnung anfangen muss
 c
 c---------------------------------------------------------------
+c-----------------------------------------------------------------
+        subroutine Tay_abs_6(a,iord)
+c-----------------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+        dimension a(0:7,0:7,0:7,0:7,0:7,0:7)
+
+	if(a(0,0,0,0,0,0).lt.0.d0)then
+	do i=0,iord
+	 do j=0,iord-i
+	  do k=0,iord-i-j
+	   do l=0,iord-i-j-k
+	    do m=0,iord-i-j-k-l
+             do n=0,iord-i-j-k-l-m
+	     a(i,j,k,l,m,n)=-a(i,j,k,l,m,n)
+	     enddo
+            enddo
+           enddo
+          enddo
+         enddo
+        enddo
+	endif	 
+
+        return
+        end
+
+c-----------------------------------------------------------------
+        subroutine Tay_cbrt_6(a,d,iord)
+c-----------------------------------------------------------------
+c
+c	assumption: a(0,0,0,0,0,0) > 0
+c
+c-----------------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+       dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            b(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            c(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            d(0:7,0:7,0:7,0:7,0:7,0:7),
+     &            x(0:7,0:7,0:7,0:7,0:7,0:7)
+
+        call Tay_clear_6(d,iord)                ! array for results
+
+        f0=a(0,0,0,0,0,0)                       
+        cbrtf0=dabs(a(0,0,0,0,0,0))**(1.d0/3.d0) ! prefactor
+
+c------ iord = 0
+	if(iord.eq.0)then
+          d(0,0,0,0,0,0)=1.d0
+          goto 100
+	endif
+        
+c------ iord = 1
+	if(iord.ge.1)then       
+ 	  call Tay_copy_6(a,x,iord)
+          call Tay_const_6(x,1.d0/f0,iord) 
+          x(0,0,0,0,0,0)=0.d0                     ! abs(x) lt. 1, contains orders up to iord
+          d(0,0,0,0,0,0)=1.d0
+          call Tay_copy_6(x,c,iord)
+	  cc=1.d0/3.d0
+          call Tay_const_6(c,cc,iord)        
+          call Tay_add_6(c,d,iord)
+	  if(iord.eq.1)goto 100
+        endif
+
+c--------- iord gt. 1
+c          start summation,
+c          store intermediate exponentials in b
+c          collecting data in d
+c
+        if(iord.gt.1)then
+	  call Tay_copy_6(x,b,iord)
+	  do n=2,iord
+            call Tay_mult_6(x,b,c,iord)
+            call Tay_copy_6(c,b,iord)
+            call Tay_const_6(c,Tay_cbrt_fact(n),iord)
+            call Tay_add_6(c,d,iord)
+          enddo       
+	  goto 100
+        endif
+        
+100     call Tay_const_6(d,cbrtf0,iord)
+
+        return
+        end
+
+c------------------------------------------------------
+        function Tay_cbrt_fact(n)
+c------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+
+        if(n.eq.0)Tay_cbrt_fact=1.d0
+        if(n.eq.1)Tay_cbrt_fact=1.d0/3.d0
+        if(n.ge.2)then
+	r0=1.d0/3.d0
+	fact=r0
+	do m=2,n
+	fact=fact*((r0-dflotj(m-1))/dflotj(m))
+	enddo
+
+c         Tay_sqrt_fact=((-1.d0)**n*facult(2*n))/
+c     &                 ((1-2*n)*facult(n)**2*4**n)
+
+         Tay_cbrt_fact=fact
+        
+        endif
+
+        return
+        end
+
 
 c-----------------------------------------------------------------
         subroutine Tay_clear_6(c,iord)
@@ -982,6 +1093,87 @@ c------------------------------------------------------------
 c       Operations with four variables
 c------------------------------------------------------------
 c------------------------------------------------------------
+c-----------------------------------------------------------------
+        subroutine Tay_abs_4(a,iord)
+c-----------------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+        dimension a(0:7,0:7,0:7,0:7)
+
+	if(a(0,0,0,0).lt.0.d0)then
+	do i=0,iord
+	 do j=0,iord-i
+	  do k=0,iord-i-j
+	   do l=0,iord-i-j-k
+	     a(i,j,k,l)=-a(i,j,k,l)
+	     enddo
+            enddo
+           enddo
+          enddo
+	endif	 
+
+        return
+        end
+
+c-----------------------------------------------------------------
+        subroutine Tay_cbrt_4(a,d,iord)
+c-----------------------------------------------------------------
+c
+c	assumption: a(0,0,0,0) > 0
+c
+c-----------------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+       dimension a(0:7,0:7,0:7,0:7),
+     &            b(0:7,0:7,0:7,0:7),
+     &            c(0:7,0:7,0:7,0:7),
+     &            d(0:7,0:7,0:7,0:7),
+     &            x(0:7,0:7,0:7,0:7)
+
+        call Tay_clear_4(d,iord)                ! array for results
+
+        f0=a(0,0,0,0)                       
+        cbrtf0=dabs(a(0,0,0,0))**(1.d0/3.d0) ! prefactor
+
+c------ iord = 0
+	if(iord.eq.0)then
+          d(0,0,0,0)=1.d0
+          goto 100
+	endif
+        
+c------ iord = 1
+	if(iord.ge.1)then       
+ 	  call Tay_copy_4(a,x,iord)
+          call Tay_const_4(x,1.d0/f0,iord) 
+          x(0,0,0,0)=0.d0                     ! abs(x) lt. 1, contains orders up to iord
+          d(0,0,0,0)=1.d0
+          call Tay_copy_4(x,c,iord)
+	  cc=1.d0/3.d0
+          call Tay_const_4(c,cc,iord)        
+          call Tay_add_4(c,d,iord)
+	  if(iord.eq.1)goto 100
+        endif
+
+c--------- iord gt. 1
+c          start summation,
+c          store intermediate exponentials in b
+c          collecting data in d
+c
+        if(iord.gt.1)then
+	  call Tay_copy_4(x,b,iord)
+	  do n=2,iord
+            call Tay_mult_4(x,b,c,iord)
+            call Tay_copy_4(c,b,iord)
+            call Tay_const_4(c,Tay_cbrt_fact(n),iord)
+            call Tay_add_4(c,d,iord)
+          enddo       
+	  goto 100
+        endif
+        
+100     call Tay_const_4(d,cbrtf0,iord)
+
+        return
+        end
 
 c-----------------------------------------------------------------
         subroutine Tay_clear_4(c,iord)
