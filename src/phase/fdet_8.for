@@ -45,7 +45,7 @@ c------------------------------------------------------------------
 	dimension a0(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b0(0:7,0:7,0:7,0:7,0:7,0:7),
      &		  c0(0:7,0:7,0:7,0:7,0:7,0:7),
-     &		  d0(0:7,0:7,0:7,0:7,0:7,0:7)
+     &		  d0(0:7,0:7,0:7,0:7,0:7,0:7),
      &		  at(0:7,0:7,0:7,0:7,0:7,0:7),
      &		  ct(0:7,0:7,0:7,0:7,0:7,0:7),
      &		  dt(0:7,0:7,0:7,0:7,0:7,0:7)
@@ -54,7 +54,7 @@ c------------------------------------------------------------------
      &            T6b(0:7,0:7,0:7,0:7,0:7,0:7)
 	dimension gam(0:7)
 	dimension atilde(0:7,0:7,0:7,0:7),
-     &            a0(0:7,0:7,0:7,0:7),
+     &            aa0(0:7,0:7,0:7,0:7),
      &            a02(0:7,0:7,0:7,0:7),
      &		  a1(0:7,0:7,0:7,0:7),
      &		  a2(0:7,0:7,0:7,0:7),
@@ -65,7 +65,7 @@ c------------------------------------------------------------------
      &		  a7(0:7,0:7,0:7,0:7),
      &		  ab(0:7,0:7,0:7,0:7)
 	dimension btilde(0:7,0:7,0:7,0:7),
-     &            b0(0:7,0:7,0:7,0:7),
+     &            bb0(0:7,0:7,0:7,0:7),
      &		  b1(0:7,0:7,0:7,0:7),
      &		  b2(0:7,0:7,0:7,0:7),
      &		  b3(0:7,0:7,0:7,0:7),
@@ -360,10 +360,8 @@ c       btilde=dv
 
 	call gamma_func(gam)
 
-	call atilde_exp(atilde,a0,a1,a2,a3,a4,a5,a6,a7,iord)
-	call btilde_exp(btilde,b0,b1,b2,b3,b4,b5,b6,b7,iord)
-	
-
+	call atilde_exp(atilde,aa0,a1,a2,a3,a4,a5,a6,a7,iord)
+	call btilde_exp(btilde,ba0,b1,b2,b3,b4,b5,b6,b7,iord)
 
 c------ first part (integration from zero to infinity,
 c       if a>0 and b>0. otherwise integration from -infinity to zero)
@@ -372,12 +370,12 @@ c       if a>0 and b>0. otherwise integration from -infinity to zero)
 
 	do k=0,nk
 
-	arg=(b**k)/faku(k)
+	arg=(b**k)/facult(k)
 	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
 	arg=arg*gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
 	sumcos=sumcos+arg/3.d0
 
-	arg=(-b**k)/faku(k)
+	arg=(-b**k)/facult(k)
 	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
 	arg=arg*gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
 	sumsin=sumsin+arg/3.d0
@@ -388,12 +386,12 @@ c-------- second part (integration from -infinity to zero)
 c       if a>0 and b>0. otherwise integration from -infinity to zero)
 	do k=0,nk
 
-	arg=((-b)**k)/faku(k)
+	arg=((-b)**k)/facult(k)
 	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
 	arg=arg*gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
 	sumcos=sumcos+arg/3.d0
 
-	arg=((-b)**k)/faku(k)
+	arg=((-b)**k)/facult(k)
 	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
 	arg=arg*gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
 	sumsin=sumsin+arg/3.d0
@@ -483,7 +481,6 @@ c-------------------------------------------------------------------
 	  enddo
 	 enddo
 	enddo
-	endif
 	b0(0,0,0,0)=1.d0
 
 	call Tay_copy_4(btilde,b1,iord)
