@@ -140,7 +140,7 @@ void BuildBeamline(struct BeamlineType *bl)
 		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	         ltp->dfdwidlj,ltp->dfdww, ltp->dfdwl, ltp->dfdll,
-		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		 bl->fdetc, bl->fdetphc, bl->fdet1phc,bl->fdet1phca, bl->fdet1phcb, 
 		 &bl->ElementList[0].geo, 
 		 &bl->BLOptions.ifl.inorm1, 
 		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
@@ -220,7 +220,7 @@ void BuildBeamline(struct BeamlineType *bl)
 		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	         ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll,
-		 bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		 bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb,  
 		 &bl->ElementList[0].geo, 
 		 &bl->BLOptions.ifl.inorm1, 
 		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
@@ -375,8 +375,8 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	      fdet_8(bl->wc, bl->xlc,
 		     bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-	             ltp->dfdwidlj,ltp->dfdww, ltp->dfdwl, ltp->dfdll, 		    
-		     bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+	             ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 		    
+		     bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb,  
 		     &bl->ElementList[0].geo, 
 		     &bl->BLOptions.ifl.inorm1, 
 		     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
@@ -454,7 +454,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	             ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 		    
-		     bl->fdetc, bl->fdetphc, bl->fdet1phc, 
+		     bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb, 
 		     &bl->ElementList[0].geo, 
 		     &bl->BLOptions.ifl.inorm1,  
 		     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
