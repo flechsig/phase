@@ -71,12 +71,16 @@ typedef struct ComplexStruct {
                     fdetc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
                     fdetphc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
                     fdet1phc[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    fdet1phca[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
+                    fdet1phcb[MAPDIM][MAPDIM][MAPDIM][MAPDIM],
                     fdetrc[MAPDIM][MAPDIM],
-                    fdetphrc[MAPDIM][MAPDIM],fdet1phrc[MAPDIM][MAPDIM],
+                    fdetphrc[MAPDIM][MAPDIM],
+                    fdet1phrc[MAPDIM][MAPDIM],fdet1phrca[MAPDIM][MAPDIM],fdet1phrcb[MAPDIM][MAPDIM],
                     yprc1[MAPDIM][MAPDIM],zprc1[MAPDIM][MAPDIM],
                     dyprc[MAPDIM][MAPDIM],dzprc[MAPDIM][MAPDIM],
                     fdtrrc[MAPDIM],
-                    fdtphrrc[MAPDIM],fdt1phrrc[MAPDIM],
+                    fdtphrrc[MAPDIM],
+                    fdt1phrrc[MAPDIM],fdt1phrrca[MAPDIM],fdt1phrrcb[MAPDIM],
                     yprrc1[MAPDIM],zprrc1[MAPDIM],
                     dyprrc[MAPDIM],dzprrc[MAPDIM],
                     wrc[MAPDIM][MAPDIM],xlrc[MAPDIM][MAPDIM],
@@ -339,7 +343,7 @@ struct simps1 {
 /* ----------------- constants -----------------------------------*/
 
         struct  constants {
-	   double pi;
+	   double pi,gam[MAPDIM];
 	   COMPLEX sqrtm1;
         };  
 
