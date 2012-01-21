@@ -13,11 +13,11 @@ c*************************** neu **************************
      &                  xlen0,ypc1,zpc1,dypc,dzpc,
      &                  wc,xlc,
      &			yipc,zipc,psdc,stfd1phmaxc,stinumbc,
-     .			s1c,s2c,s3c,eyrec,ezrec,
+     &    		s1c,s2c,s3c,eyrec,ezrec,
      &                  eyimc,ezimc,
-     .                  m4,g,am,src,apr,
-     .                  ra,ifl,xi,xir,st,
-     .                  fdetc,fdetphc,fdet1phc)       
+     &                  m4,g,am,src,apr,
+     &                  ra,ifl,xi,xir,st,
+     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb)       
 c*************************** neu **************************  
 
         implicit none
@@ -59,7 +59,7 @@ c        record /source_results/ sr
 
         real *8 xlam_test,xlen0,
      &       wc,xlc,ypc1,zpc1,dypc,dzpc,
-     &       xlen1c,xlen2c,fdetc,fdetphc,fdet1phc,
+     &       xlen1c,xlen2c,fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb,
      &       ddisty,ddistz,yi,zi,
      &       yipc,zipc,yiplot,ziplot,yi_global,zi_global,
      &       psd2,surfmax,psdc,
@@ -76,7 +76,10 @@ c        record /source_results/ sr
      &            xlen2c(0:7,0:7,0:7,0:7),  
      &		  fdetc(0:7,0:7,0:7,0:7),        	! fdet
      &		  fdetphc(0:7,0:7,0:7,0:7),        	! fdet
-     &		  fdet1phc(0:7,0:7,0:7,0:7)        	! fdet  
+     &		  fdet1phc(0:7,0:7,0:7,0:7),       	! fdet  
+     &		  fdet1phca(0:7,0:7,0:7,0:7),        	! fdet  
+     &		  fdet1phcb(0:7,0:7,0:7,0:7)        	! fdet  
+
 
         dimension yiplot(1024),ziplot(1024)        ! bildpunkte
         dimension yipc(1),zipc(1),psdc(1),
@@ -169,6 +172,8 @@ c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
                     m4.fdetc(i,j,k,l)=fdetc(i,j,k,l)
                     m4.fdetphc(i,j,k,l)=fdetphc(i,j,k,l)
                     m4.fdet1phc(i,j,k,l)=fdet1phc(i,j,k,l)
+                    m4.fdet1phca(i,j,k,l)=fdet1phca(i,j,k,l)
+                    m4.fdet1phcb(i,j,k,l)=fdet1phcb(i,j,k,l)
                  enddo
               enddo        
            enddo
@@ -230,9 +235,10 @@ c************* save initial coordinates ****************
             st.nn1=n1
 	    st.nn2=n2
 c******* start of adaptive grid integration *************************** 
-            call adaptive_int(m4,g,am,src,apr,
+           write(6,*)'call adaptive_int'
+           call adaptive_int(m4,g,am,src,apr,
      .           cs,ra,ifl,xi,xir,st,s)  
-
+           write(6,*)'returned from adaptive_int'
             if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
                xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
