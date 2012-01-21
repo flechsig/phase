@@ -121,6 +121,8 @@ c*******************************************************
         call subm17(m4.fdetc,yi,zi,m4.fdetrc)
         call subm17(m4.fdetphc,yi,zi,m4.fdetphrc)
         call subm17(m4.fdet1phc,yi,zi,m4.fdet1phrc)
+        call subm17(m4.fdet1phca,yi,zi,m4.fdet1phrca)
+        call subm17(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
         call subm17(m4.ypc1,yi,zi,m4.yprc1)
         call subm17(m4.zpc1,yi,zi,m4.zprc1)
         call subm17(m4.dypc,yi,zi,m4.dyprc)
@@ -136,6 +138,8 @@ c*******************************************************
         call subm1(m4.fdetc,yi,zi,m4.fdetrc)
         call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
         call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
+        call subm1(m4.fdet1phca,yi,zi,m4.fdet1phrca)
+        call subm1(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
         call subm1(m4.ypc1,yi,zi,m4.yprc1)
         call subm1(m4.zpc1,yi,zi,m4.zprc1)
         call subm1(m4.dypc,yi,zi,m4.dyprc)
@@ -172,30 +176,6 @@ c---------------- first grid is equdistant, the following are not
 	dzz=0.
 	else
 	dzz=(xi.zmax-xi.zmin)/dflotj(ianzz-1)
-	endif
-
-c----------------------------------------------------------
-	if(src.isrctype.lt.4)then
-c----------------------------------------------------------
-c
-c	noch nicht getestet, vergl. mit isrctype.eq.4
-c
-c----------------------------------------------------------
-
-	do i=1,ianzz
- 	   z(i)=xi.zmin+dflotj(i-1)*dzz
-	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-     &		z(i),fwerty,fwertz,yintya,yintyp,yintza,yintzp,sr)
-           fzey(i)=cdabs(fwerty)
-	   dz(i)=dzz
-	   fmax=dmax1(fmax,cdabs(fwerty))
-	enddo
-
-	iyz=2
-	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,
-     &		xir.yzintey,xir.yzintya,xir.yzintyp,
-     &          densiyre,densiyim,xintre,xintim,iyz)
-
 	endif
 
 c-----------------------------------------------------------
@@ -330,6 +310,8 @@ c*******************************************************
         call subm27(m4.fdetrc,dzii,m4.fdtrrc)
         call subm27(m4.fdetphrc,dzii,m4.fdtphrrc)
         call subm27(m4.fdet1phrc,dzii,m4.fdt1phrrc)
+        call subm27(m4.fdet1phrca,dzii,m4.fdt1phrrca)
+        call subm27(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
         call subm27(m4.yprc1,dzii,m4.yprrc1)
         call subm27(m4.zprc1,dzii,m4.zprrc1)
         call subm27(m4.dyprc,dzii,m4.dyprrc)
@@ -345,6 +327,8 @@ c*******************************************************
         call subm2(m4.fdetrc,dzii,m4.fdtrrc)
         call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
         call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
+        call subm2(m4.fdet1phrca,dzii,m4.fdt1phrrca)
+        call subm2(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
         call subm2(m4.yprc1,dzii,m4.yprrc1)
         call subm2(m4.zprc1,dzii,m4.zprrc1)
         call subm2(m4.dyprc,dzii,m4.dyprrc)
@@ -378,34 +362,16 @@ c---------------- first grid is equdistant, the following are not
 	dyy=(xi.ymax-xi.ymin)/dflotj(ianzy-1)
 	endif
 
-c--------------------------------------------------------------
-	if(src.isrctype.lt.4)then
-c--------------------------------------------------------------
-c
-c	noch nicht getestet, vergl. mit isrctype.eq.4
-c
-c----------------------------------------------------------
-
-	do i=1,ianzy
- 	  y(i)=xi.ymin+dflotj(i-1)*dyy
- 	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-     &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
-	  fyey(i)=cdabs(fwerty)
-	  dy(i)=dyy
-	  fmax=dmax1(fmax,cdabs(fwerty))
-	enddo
-
-	iyz=1
-	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-     &		yintey,yintya,yintyp,
-     &          densiyre,densiyim,xintre,xintim,iyz)
-
-	endif
-
 c------------------------------------------------------------
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
      &                        (src.isrctype.eq.6))then
 c------------------------------------------------------------
+
+c-------------------------------------------------------------------------
+c----------- Diese Schleife parallelisieren
+c-------------------------------------------------------------------------
+        write(6,*)' start loop ueber y'
+
 	do i=1,ianzy
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
@@ -476,23 +442,23 @@ c in der phaselib benutze ich parder4
 	record /mirrortype/ am
 	record /map4/ m4
 
-      dimension p1(0:7,0:7,0:7,0:7)
-      dimension p2(0:7,0:7,0:7,0:7)
-      dimension p12(0:7,0:7,0:7,0:7)
-      dimension p3(0:7,0:7,0:7,0:7)
-      dimension p4(0:7,0:7,0:7,0:7)
-      dimension p34(0:7,0:7,0:7,0:7)
-      dimension p1234(0:7,0:7,0:7,0:7)
-      dimension p11(0:7,0:7,0:7,0:7)
-      dimension p22(0:7,0:7,0:7,0:7)
-      dimension p1122(0:7,0:7,0:7,0:7)
-      dimension p1a(0:7,0:7,0:7,0:7)
-      dimension p2a(0:7,0:7,0:7,0:7)
-      dimension p3a(0:7,0:7,0:7,0:7)
-      dimension p4a(0:7,0:7,0:7,0:7)
-      dimension p11a(0:7,0:7,0:7,0:7)
-      dimension p22a(0:7,0:7,0:7,0:7)
-      dimension p1122a(0:7,0:7,0:7,0:7)
+c      dimension p1(0:7,0:7,0:7,0:7)
+c      dimension p2(0:7,0:7,0:7,0:7)
+c      dimension p12(0:7,0:7,0:7,0:7)
+c      dimension p3(0:7,0:7,0:7,0:7)
+c      dimension p4(0:7,0:7,0:7,0:7)
+c      dimension p34(0:7,0:7,0:7,0:7)
+c      dimension p1234(0:7,0:7,0:7,0:7)
+c      dimension p11(0:7,0:7,0:7,0:7)
+c      dimension p22(0:7,0:7,0:7,0:7)
+c      dimension p1122(0:7,0:7,0:7,0:7)
+c      dimension p1a(0:7,0:7,0:7,0:7)
+c      dimension p2a(0:7,0:7,0:7,0:7)
+c      dimension p3a(0:7,0:7,0:7,0:7)
+c      dimension p4a(0:7,0:7,0:7,0:7)
+c      dimension p11a(0:7,0:7,0:7,0:7)
+c      dimension p22a(0:7,0:7,0:7,0:7)
+c      dimension p1122a(0:7,0:7,0:7,0:7)
 
 	  if(xi.distfocy.gt.1.e-10)then
 	    dyii=dyi+ra.ri.yi/xi.distfocy
@@ -517,6 +483,9 @@ c in der phaselib benutze ich parder4
 	ra.oe.w=0.
 	ra.oe.xl=0.
 
+c-------------------------------------------------------------------------
+c	diese Schleife parallelisieren
+c-------------------------------------------------------------------------
 	var0=1.
         do ii=0,ifl.iord
           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
@@ -529,7 +498,8 @@ c in der phaselib benutze ich parder4
           fd=fd+m4.fdtrrc(ii)*var0
           fdph=fdph+m4.fdtphrrc(ii)*var0
           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
-
+          fd1pha=fd1pha+m4.fdt1phrrca(ii)*var0
+          fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0
          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
 
@@ -539,283 +509,12 @@ c in der phaselib benutze ich parder4
 	fd=dabs(fd)
         fdph=dabs(fdph)
         fd1ph=dabs(fd1ph)
-	
-	goto 1111
-
-	fd1ph=0.
-	var0=1.
-        do ii=0,ifl.iord
-          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
-          var0=var0*dyii
-	enddo
-
-c	hier kommt das gleiche raus wie bei 1 wie es sein soll
-c	write(6,*)' 2 ',fd1ph
-
-c---------- new 3.6.1997
-c---------- new 1.3.2007
-c       Endkoordinaten geaendert auf Anfangskoordinaten
-
-	fd1ph=0.d0
-
-	var0=1.d0
-        do ii=0,ifl.iordsc
-	  var1=var0
-          do jj=0,ifl.iordsc-ii
-	    var2=var1
-             do kk=0,ifl.iordsc-ii-jj
-	        var3=var2
-		do ll=0,ifl.iordsc-ii-jj-kk
-         	  fd1ph=fd1ph+m4.fdet1phc(ii,jj,kk,ll)*var3
-c		  write(6,*)ii,jj,kk,ll,m4.fdet1phc(ii,jj,kk,ll)
-c		  write(6,*)fd1ph
-		  var3=var3*ra.ri.dzi
-	      	enddo
-	    var2=var2*ra.ri.dyi
-	    enddo
-	  var1=var1*ra.ri.zi
-	  enddo
-	var0=var0*ra.ri.yi
-	enddo
-
-c	    hier kommt das gleiche raus 
-c	    write(6,*)' 3 ',fd1ph
-
-1111	continue
-
-c	    matrel und ipath stehen auf null, wo gesetzt?
-c----------------------------------------------
-	if(ifl.matrel.eq.1)then
-c----------------------------------------------
-c--------- fd und fdph genauer: ---------------
-
-	delta=1.e-20
-
-	yi=ra.ri.yi
-	zi=ra.ri.zi
-	dyi=ra.ri.dyi
-	dzi=ra.ri.dzi
-
-	fd1=0.
-	fd2=0.
-
-#ifdef SEVEN_ORDER
-       call subl7(m4.ypc1,m4.zpc1,m4.dypc,m4.dzpc,m4.xmec)
-			! Berechnung der Matrixelemente xmec
-			! Indizes 1 und 2: Reihe, Spalte
-			! Indizes 3 bis 6: Koeffizienten von
-			! yp, zp, dyp, dzp
-#else
-        call subl(m4.ypc1,m4.zpc1,m4.dypc,m4.dzpc,m4.xmec)
-			! Berechnung der Matrixelemente xmec
-			! Indizes 1 und 2: Reihe, Spalte
-			! Indizes 3 bis 6: Koeffizienten von
-			! yp, zp, dyp, dzp
-#endif
-
-c----- check:
-
-       do i=1,4
-
-        do j=1,4
-        if(j.ne.i)then
-
-         do k=1,4
-         if((k.ne.i).and.(k.ne.j))then
-          do l=1,4
-          if((l.ne.i).and.(l.ne.j).and.(l.ne.k))then
-
-         call sig(i,j,k,l,isig)
-
-         do n1=0,ifl.iord
-         do n2=0,ifl.iord
-         do n3=0,ifl.iord
-         do n4=0,ifl.iord
-           p1(n1,n2,n3,n4)=m4.xmec(1,i,n1,n2,n3,n4)
-           p2(n1,n2,n3,n4)=m4.xmec(2,j,n1,n2,n3,n4)
-           p3(n1,n2,n3,n4)=m4.xmec(3,k,n1,n2,n3,n4)
-           p4(n1,n2,n3,n4)=m4.xmec(4,l,n1,n2,n3,n4)
-         enddo
-         enddo
-         enddo
-         enddo
-
-       call p_m_4(p1,p2,p12)
-       call p_m_4(p3,p4,p34)
-       call p_m_4(p12,p34,p1234)
-
-	pp1234=0.d0
-	do iii=0,ifl.iord
-	 do jjj=0,ifl.iord-iii
-	  do kkk=0,ifl.iord-iii-jjj
-	   do lll=0,ifl.iord-iii-jjj-kkk
-	   pp1234=pp1234+p1234(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   enddo
-	  enddo
-         enddo
-        enddo
-
-       	fd1=fd1+dflotj(isig)*pp1234
-
-         endif
-        enddo
-        endif
-       enddo
-       endif
-      enddo
-      enddo
-
-c----- jetzt genauer:
-
-       do i=1,4
-
-        do j=1,4
-        if(j.ne.i)then
-
-         do k=1,4
-         if((k.ne.i).and.(k.ne.j))then
-          do l=1,4
-          if((l.ne.i).and.(l.ne.j).and.(l.ne.k))then
-
-         call sig(i,j,k,l,isig)
-
-         do n1=0,ifl.iord
-         do n2=0,ifl.iord
-         do n3=0,ifl.iord
-         do n4=0,ifl.iord
-           p1(n1,n2,n3,n4)=m4.xmec(1,i,n1,n2,n3,n4)
-           p2(n1,n2,n3,n4)=m4.xmec(2,j,n1,n2,n3,n4)
-           p3(n1,n2,n3,n4)=m4.xmec(3,k,n1,n2,n3,n4)
-           p4(n1,n2,n3,n4)=m4.xmec(4,l,n1,n2,n3,n4)
-         enddo
-         enddo
-         enddo
-         enddo
-
-	pp1=0.
-	pp2=0.
-	pp3=0.
-	pp4=0.
-	do iii=0,ifl.iord
-	 do jjj=0,ifl.iord-iii
-	  do kkk=0,ifl.iord-iii-jjj
-	   do lll=0,ifl.iord-iii-jjj-kkk
-	   pp1=pp1+p1(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp2=pp2+p2(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp3=pp3+p3(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp4=pp4+p4(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-
-	   enddo
-	  enddo
-         enddo
-        enddo
-
-       	fd2=fd2+dflotj(isig)*pp1*pp2*pp3*pp4
-
-c----------------------------------------------
-
-         endif
-        enddo
-        endif
-       enddo
-       endif
-      enddo
-      enddo
-
-	ra.fd1(ra.n4)=fd1
-	ra.fd2(ra.n4)=fd2
-
-c------------------------------------------
-c------- check
-         do n1=0,ifl.iord
-         do n2=0,ifl.iord
-         do n3=0,ifl.iord
-         do n4=0,ifl.iord
-           p1(n1,n2,n3,n4)=m4.xmec(1,3,n1,n2,n3,n4)
-           p2(n1,n2,n3,n4)=m4.xmec(2,4,n1,n2,n3,n4)
-           p3(n1,n2,n3,n4)=m4.xmec(1,4,n1,n2,n3,n4)
-           p4(n1,n2,n3,n4)=m4.xmec(2,3,n1,n2,n3,n4)
-         enddo
-         enddo
-         enddo
-         enddo
-
-        call p_m_4(p1,p2,p12)
-        call p_m_4(p3,p4,p34)
-
-	pp12=0.d0
-	pp34=0.d0
-
-	do iii=0,ifl.iord
-	 do jjj=0,ifl.iord-iii
-	  do kkk=0,ifl.iord-iii-jjj
-	   do lll=0,ifl.iord-iii-jjj-kkk
-	   pp12=pp12+p12(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp34=pp34+p34(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   enddo
-	  enddo
-         enddo
-        enddo
-
-	fdph1=pp12-pp34
-
-c------- jetzt genauer:
-
-	pp1=0.
-	pp2=0.
-	pp3=0.
-	pp4=0.
-	do iii=0,ifl.iord
-	 do jjj=0,ifl.iord-iii
-	  do kkk=0,ifl.iord-iii-jjj
-	   do lll=0,ifl.iord-iii-jjj-kkk
-	   pp1=pp1+p1(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp2=pp2+p2(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp3=pp3+p3(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   pp4=pp4+p4(iii,jjj,kkk,lll)*
-     &             (yi+delta)**iii*(zi+delta)**jjj*
-     &             (dyi+delta)**kkk*(dzi+delta)**lll
-	   enddo
-	  enddo
-         enddo
-        enddo
-
-       	fdph2=pp1*pp2-pp3*pp4
-
-	ra.fdph1(ra.n4)=fdph1
-	ra.fdph2(ra.n4)=fdph2
-
-c------------------------------------------
-	endif                  ! matrel.eq.1
-c------------------------------------------
+        fd1pha=dabs(fd1pha)
+        fd1phb=dabs(fd1phb)
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
 c----------------------------------------
-
-	if(src.isrctype.lt.4)then
-	fwerty=cdabs(sr.densy*fd)
-	endif
 
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
 
@@ -843,6 +542,53 @@ c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 	 
 c---------------------------------------------------------------------
+c------ first part (integration from zero to infinity,
+c       if a>0 and b>0. otherwise integration from -infinity to zero)
+	sumcos=0.d0
+	sumsin=0.d0
+
+	do k=0,ifl.iord
+
+	arg=(b**k)/facult(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
+	sumcos=sumcos+arg/3.d0
+
+	arg=(-b**k)/facult(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
+	sumsin=sumsin+arg/3.d0
+
+	enddo
+
+c-------- second part (integration from -infinity to zero)
+c       if a>0 and b>0. otherwise integration from -infinity to zero)
+
+c---------- check ratio of a and b and choose one of two equations
+	do k=0,ifl.iord
+
+	arg=((-b)**k)/facult(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
+	sumcos=sumcos+arg/3.d0
+
+	arg=((-b)**k)/facult(k)
+	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
+	sumsin=sumsin+arg/3.d0
+
+	enddo
+
+	res2b=dsqrt(sumcos**2+sumsin**2)
+	if(a.lt.0.d0)then
+	xx=res2a
+	res2a=res2b
+	res2b=xx
+	endif
+
+c        get fd1ph
+c--------------------------------------------------------------------------
+
 
 	if(ifl.ispline.ge.0)then
                 ff=fdph*fd1ph

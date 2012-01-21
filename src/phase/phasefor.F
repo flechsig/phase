@@ -77,6 +77,56 @@ cc        include '../phase/phase_struct.for'
 	xm1=-1.
 	cs.pi=4.d0*datan(1.d0)
         cs.sqrtm1=cdsqrt(xm1)
+        call gamma_func(cs.pi,cs.gam)
+        
+        return
+        end
+
+c--------------------------------------------------------
+	subroutine gamma_func(pi,gam)
+c--------------------------------------------------------
+c
+c	Evaluation of gamma function, take only one value from table
+c	evaluate the rest from
+c	gamma(1) = 1
+c	gamma(2/3) = (2*pi)/(sqrt(3)*gamma(1/3))
+c	gamma(z+1)=z*gamma(z)
+c
+c	0	gamma(1/3) from table
+c		  gamma(2/3) = (2*pi)/(sqrt(3)*gamma(1/3))
+c	1	gamma(3/3/ = 1
+c	2	gamma(5/3) = 2/3 * gamma(2/3) 
+c	3	gamma(7/3) = 4/3 * gamma(4/3) = 4/3 * 1/3 * gamma(1/3)
+c	4	gamma(9/3) = 2 * gamma(2) = 2 * 1 * gamma(1)
+c	5	gamma(11/3)= 8/3 * gamma(8/3) = 8/3 * 5/3 *gamma(5/3) = 
+c					8/3 * 5/3 * 2/3 * gamma(2/3)
+c	6	gamma(13/3)= 10/3 * 7/3 * 4/3 * 1/3 * gamma(1/3)
+c	7	gamma(15/3)= 12/3 * 9/3 * 6/3 * gamma(1) = 4 * 3 * 2 
+
+        implicit real*8(a-h,o-z)
+
+	dimension gam(0:7)
+
+	gam(0)= 2.6789385347077476d0
+	  g23=(2*pi)/(dsqrt(3.d0)*gam(0))
+	gam(1)=1.d0
+	gam(2)=(2.d0/3.d0)*g23 
+	gam(3)=(4.d0/9.d0)*gam(0)
+	gam(4)=2.d0
+	gam(5)=(80.d0/27.d0)*g23
+	gam(6)=(280.d0/81.d0)*gam(0)
+	gam(7)=24.d0
+
+c	for checking:
+c	gam(0) = gamma(1/3) = 2.67893853470774763365569294097467764412873728E0 
+c	gam(1) = gamma(1)   = 1.d0
+c	gam(2) = gamma(5/3) = 9.02745292950933611296858685436342523680680403E-1
+c	gam(3) = gamma(7/3) = 1.19063934875899894829141908487763450850745094E0
+c	gam(4) = gamma(3)   = 2.d0
+c	gam(5) = gamma(11/3)= 4.01220130200414938354159415749485566095803944E0
+c	gam(6) = gamma(13/3)= 9.26052826812554737559992621571493506701451058E0
+c	gam(7) = gamma(5)   = 24.d0
+
 	return
 	end 
 c*********** end initconstants ****************************

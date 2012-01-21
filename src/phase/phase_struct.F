@@ -61,12 +61,16 @@ c--------------- fourth order map ---------------------------
      &              fdetc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              fdetphc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              fdet1phc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              fdet1phca(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              fdet1phcb(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              fdetrc(0:MAPDIM,0:MAPDIM),
-     &              fdetphrc(0:MAPDIM,0:MAPDIM),fdet1phrc(0:MAPDIM,0:MAPDIM),
+     &              fdetphrc(0:MAPDIM,0:MAPDIM),
+     &              fdet1phrc(0:MAPDIM,0:MAPDIM),fdet1phrca(0:MAPDIM,0:MAPDIM),fdet1phrcb(0:MAPDIM,0:MAPDIM),
      &              yprc1(0:MAPDIM,0:MAPDIM),zprc1(0:MAPDIM,0:MAPDIM),
      &              dyprc(0:MAPDIM,0:MAPDIM),dzprc(0:MAPDIM,0:MAPDIM),
      &              fdtrrc(0:MAPDIM),
-     &              fdtphrrc(0:MAPDIM),fdt1phrrc(0:MAPDIM),
+     &              fdtphrrc(0:MAPDIM),
+     &              fdt1phrrc(0:MAPDIM),fdt1phrrca(0:MAPDIM),fdt1phrrcb(0:MAPDIM),
      &              yprrc1(0:MAPDIM),zprrc1(0:MAPDIM),
      &              dyprrc(0:MAPDIM),dzprrc(0:MAPDIM),
      &              wrc(0:MAPDIM,0:MAPDIM),xlrc(0:MAPDIM,0:MAPDIM),
@@ -333,7 +337,7 @@ c	end structure
 c------------------ constants -----------------------------------
 
         structure/constants/
-	   real*8 pi
+	   real*8 pi,gam(0:7)
 	   complex*16 sqrtm1
         end structure
 

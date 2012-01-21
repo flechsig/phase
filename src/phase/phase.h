@@ -659,7 +659,7 @@ struct BeamlineType
   struct ElementType *ElementList;   
   struct RTSourceType RTSource; 
   MAP70TYPE lmap, rmap, M_StoI, M_ItoS;                          
-  MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc;
+  MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc, fdet1phca, fdet1phcb;
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
   struct RESULTType RESULT;
@@ -792,7 +792,7 @@ void
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
 	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
-	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
+	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,MAPTYPE_8X4, MAPTYPE_8X4,
 	 struct geometrytype *, int *, int *, int *),
   fgmapidp(int *, 
 	   int *, double *, struct mirrortype *, struct geometrytype *,

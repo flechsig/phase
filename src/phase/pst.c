@@ -350,8 +350,10 @@ void PST(struct BeamlineType *bl)
    PSDp= bl->RESULT.RESp; 
    psip= (struct PSImageType *)bl->RTSource.Quellep;
 
+ #ifdef DEBUG  
    printf("phase space trafo PST called\n");
    printf("  source typ: %d\n", bl->src.isrctype); 
+#endif
 
    /* gitterzahl erkennen und geometrypointer initialisieren */
    gratingnumber= 0; gratingposition= 0;
@@ -436,7 +438,7 @@ void PST(struct BeamlineType *bl)
        &m4, gp, mirp, 
        &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl, 
        &bl->BLOptions.xi, &xir, &st,
-       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc);      
+       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb);      
 
 #ifdef DEBUG
   /*  printf("pst.c: debug 0711: %f %f\n", PSDp->y[0], PSDp->y[1]); */
