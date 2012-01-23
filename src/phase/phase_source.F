@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <23 Jan 12 14:38:05 flechsig> 
+c$$$ Time-stamp: <23 Jan 12 14:40:13 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -823,7 +823,7 @@ c	maximale Dimension der Quelle 1024 x 1024
 	
 c---------------------------------------------------------------
 
-	1    write(*,*) 'src4_ini: read file: ',so4.fsource4b
+	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	INQUIRE(File=so4.fsource4b, Exist=ex)
 	if (ex) then
 	   open(unit=10,name=so4.fsource4b,type='old')
