@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <06 Jan 12 10:18:21 flechsig> 
+//  Time-stamp: <23 Jan 12 15:00:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -144,19 +144,27 @@ void MainWindow::activateProc(const QString &action)
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
-printf("uu\n");	
+#ifdef DEBUG
+      printf("DEBUG2: continue1, file: %s, line: %d\n", __FILE__, __LINE__);
+#endif	
       myparent->myBuildBeamline();
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-printf("ww\n");	
+#ifdef DEBUG
+	  printf("DEBUG2: continue2, file: %s, line: %d\n", __FILE__, __LINE__);
+#endif	
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
           myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-printf("yy\n");	
+#ifdef DEBUG      
+      printf("DEBUG2:continue3, file: %s, line: %d\n", __FILE__, __LINE__);
+#endif		
       if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
 	{
-	  printf("zz\n");
+#ifdef DEBUG
+	  printf("DEBUG2: continue4, file: %s, line: %d\n", __FILE__, __LINE__);
+#endif
 	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
 	  myparent->myPST();
