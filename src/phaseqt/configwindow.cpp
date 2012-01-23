@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <23 Jan 12 15:04:03 flechsig> 
+//  Time-stamp: <23 Jan 12 16:39:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -91,22 +91,20 @@ void ConfigWindow::quitSlot()
 void ConfigWindow::selectSlot(const QModelIndex &index)
 {
   char *fname, description[MaxPathLength], oldname[MaxPathLength], extension[10], filter[50];
+  int row;
 
   if (!index.isValid())
     return;
    
+  row= index.row();
+
 #ifdef DEBUG 
-  cout << "debug: " << __FILE__ << " row, column " << index.row() << "," << index.column() << endl;
+  cout << "debug: " << __FILE__ << " row, column " << row << "," << index.column() << endl;
 #endif  
 
-  /* keep the next 3 lines to show the priciple howto get one individual item
-  QStandardItem *item = mymodel->itemFromIndex(index); // returns the item
-  if (!item) return;
-  cout << "item: " << item->text().toAscii().data() << endl; */
-
-  QStandardItem *des = mymodel->item(index.row(), 0); // the description
-  QStandardItem *fna = mymodel->item(index.row(), 1); // the filename
-  QStandardItem *ext = mymodel->item(index.row(), 2); // the extension
+  QStandardItem *des = mymodel->item(row, 0); // the description
+  QStandardItem *fna = mymodel->item(row, 1); // the filename
+  QStandardItem *ext = mymodel->item(row, 2); // the extension
 
    if (!fna || !ext || !des) 
      return;
@@ -122,21 +120,20 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
    sprintf(filter, "Files (*.%s);;(*)", extension);
 
 #ifdef DEBUG 
-  cout << "debug: " << __FILE__ << " item: " <<  oldname << endl;
+   cout << "debug: file: " << __FILE__ << ", line: " << __LINE__ <<  " item: " <<  oldname << endl;
 #endif 
    
   QFileDialog *dialog = new QFileDialog(this);
   dialog->selectFile(oldname);
-  QString fileName = dialog->getSaveFileName(this, tr("Define File Name"), 
-					     QDir::currentPath(),
-					     tr(filter)
-					     );
+
+  QString fileName= (!strcmp(description, "input") || !strcmp(description, "fsource")) ?
+    dialog->getOpenFileName(this, tr("Define File Name"), QDir::currentPath(), tr(filter)) :
+    dialog->getSaveFileName(this, tr("Define File Name"), QDir::currentPath(), tr(filter));
+
   if (!fileName.isEmpty()) 
     {
-      //printf("description: >>%s<<\nevaluate  \n", buffer);
       fname= fileName.toAscii().data();
       // update data
-      
       if ( !strncmp(description, "optimization input", 16) ) 
 	strncpy(myparent->optipckname, fname, MaxPathLength); else
 	if ( !strncmp(description, "optimization results", 16) ) 
