@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <23 Jan 12 17:20:04 flechsig> 
+//  Time-stamp: <23 Jan 12 17:20:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -20,7 +20,7 @@ using namespace std;
 ConfigWindow::ConfigWindow(PhaseQt *parent)
 {
 #ifdef DEBUG
-  cout << "debug: ConfigWindow constructor called, file: " << __FILE__ << " line: " __LINE__ << endl;
+  cout << "debug: ConfigWindow constructor called, file: " << __FILE__ << " line: " << __LINE__ << endl;
 #endif
 
   configWindowBox = new QWidget();
