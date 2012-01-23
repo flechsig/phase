@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <23 Jan 12 14:45:02 flechsig> 
+c$$$ Time-stamp: <23 Jan 12 14:48:43 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -370,7 +370,7 @@ c------------------------------------------------------------
 c-------------------------------------------------------------------------
 c----------- Diese Schleife parallelisieren
 c-------------------------------------------------------------------------
-#ifdef DEBUG
+#ifdef DEBUG1
         write(6,*)' start loop ueber y'
 #endif
 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2011-12-10 17:32:25 flechsig> 
+//  Time-stamp: <23 Jan 12 15:04:03 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -230,16 +230,16 @@ void ConfigWindow::addRow(const char *desc, const char *fname, const char *ext)
 // add all files to be configured with description
 void ConfigWindow::updateList()
 {
-  mymodel->setData(mymodel->index(0, 1), myparent->myPHASEset()->optipckname);
-  mymodel->setData(mymodel->index(1, 1), myparent->myPHASEset()->opresname);
-  mymodel->setData(mymodel->index(2, 1), myparent->myPHASEset()->minname);
-  mymodel->setData(mymodel->index(3, 1), myparent->myPHASEset()->sourceraysname);
-  mymodel->setData(mymodel->index(4, 1), myparent->myPHASEset()->imageraysname);
-  mymodel->setData(mymodel->index(5, 1), myparent->myPHASEset()->matrixname);
-  mymodel->setData(mymodel->index(6, 1), myparent->myPHASEset()->mapname);
-  mymodel->setData(mymodel->index(7, 1), myparent->myPHASEset()->so4_fsource4a);
-  mymodel->setData(mymodel->index(8, 1), myparent->myPHASEset()->so4_fsource4b);
-  mymodel->setData(mymodel->index(9, 1), myparent->myPHASEset()->so4_fsource4c);
+  mymodel->setData(mymodel->index(0,  1), myparent->myPHASEset()->optipckname);
+  mymodel->setData(mymodel->index(1,  1), myparent->myPHASEset()->opresname);
+  mymodel->setData(mymodel->index(2,  1), myparent->myPHASEset()->minname);
+  mymodel->setData(mymodel->index(3,  1), myparent->myPHASEset()->sourceraysname);
+  mymodel->setData(mymodel->index(4,  1), myparent->myPHASEset()->imageraysname);
+  mymodel->setData(mymodel->index(5,  1), myparent->myPHASEset()->matrixname);
+  mymodel->setData(mymodel->index(6,  1), myparent->myPHASEset()->mapname);
+  mymodel->setData(mymodel->index(7,  1), myparent->myPHASEset()->so4_fsource4a);
+  mymodel->setData(mymodel->index(8,  1), myparent->myPHASEset()->so4_fsource4b);
+  mymodel->setData(mymodel->index(9,  1), myparent->myPHASEset()->so4_fsource4c);
   mymodel->setData(mymodel->index(10, 1), myparent->myPHASEset()->so4_fsource4d);
   mymodel->setData(mymodel->index(11, 1), myparent->myPHASEset()->so6_fsource6);
 } // updateList
