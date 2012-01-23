@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <12 Jan 12 12:24:10 flechsig> 
+//  Time-stamp: <2012-01-23 21:22:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2101,16 +2101,21 @@ void MainWindow::UpdateBeamlineBox()
 {
   struct OptionsType *blo;
   char   buffer[5];
+  QString qst;
    
   fileNameLabel->setText(QString(tr(myparent->myPHASEset()->beamlinename)));
 
   blo= &(myparent->myBeamline()->BLOptions);
 
-  sprintf(buffer, "%.3lf", blo->lambda* 1e6);
-  lambdaE->setText(QString(buffer));
+  //sprintf(buffer, "%.3lf", blo->lambda* 1e6);
+  //lambdaE->setText(QString(buffer));
+  qst->setNum(blo->lambda* 1e6, 'f', 3);
+  lambdaE->setText(qst);
 
-  sprintf(buffer, "%.3lf", blo->displength);
-  dislenE->setText(QString(buffer));
+  // sprintf(buffer, "%.3lf", blo->displength);
+  qst->setNum(->displength, 'f', 3);
+  //dislenE->setText(QString(buffer));
+  dislenE->setText(qst);
 
   if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
   if (blo->WithAlign) misaliBox->setChecked(true);    else misaliBox->setChecked(false);
