@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <23 Jan 12 16:39:10 flechsig> 
+//  Time-stamp: <23 Jan 12 17:20:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -20,7 +20,7 @@ using namespace std;
 ConfigWindow::ConfigWindow(PhaseQt *parent)
 {
 #ifdef DEBUG
-  printf("debug: ConfigWindow constructor called, file: %s, line: %d\n", __FILE__,  __LINE__);
+  cout << "debug: ConfigWindow constructor called, file: " << __FILE__ << " line: " __LINE__ << endl;
 #endif
 
   configWindowBox = new QWidget();
@@ -98,7 +98,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
    
   row= index.row();
 
-#ifdef DEBUG 
+#ifdef DEBUG1 
   cout << "debug: " << __FILE__ << " row, column " << row << "," << index.column() << endl;
 #endif  
 
@@ -119,16 +119,18 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
    extension[9]= '\0';                    // ensure termination
    sprintf(filter, "Files (*.%s);;(*)", extension);
 
-#ifdef DEBUG 
+#ifdef DEBUG1 
    cout << "debug: file: " << __FILE__ << ", line: " << __LINE__ <<  " item: " <<  oldname << endl;
 #endif 
    
   QFileDialog *dialog = new QFileDialog(this);
   dialog->selectFile(oldname);
 
-  QString fileName= (!strcmp(description, "input") || !strcmp(description, "fsource")) ?
-    dialog->getOpenFileName(this, tr("Define File Name"), QDir::currentPath(), tr(filter)) :
-    dialog->getSaveFileName(this, tr("Define File Name"), QDir::currentPath(), tr(filter));
+  QString selectedFilter;
+  QString fileName= ( strstr(description, "input") || strstr(description, "fsource")) ? 
+    dialog->getOpenFileName(this, tr("Define Input File"), QDir::currentPath(), tr(filter), 
+			    &selectedFilter, QFileDialog::DontConfirmOverwrite) :
+    dialog->getSaveFileName(this, tr("Define Output File"), QDir::currentPath(), tr(filter));
 
   if (!fileName.isEmpty()) 
     {
