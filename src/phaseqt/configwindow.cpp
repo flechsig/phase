@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <23 Jan 12 17:20:38 flechsig> 
+//  Time-stamp: <23 Jan 12 18:05:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -24,6 +24,8 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
 #endif
 
   configWindowBox = new QWidget();
+  
+
   configWindowBox->setWindowTitle(tr("PHASE configuration"));
   QLabel *configLabel = new QLabel(tr("configure auxiliary files"));
   
@@ -51,12 +53,16 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
   mymodel= createConfigModel(this); // create the dataset
   sourceView->setModel(mymodel);    // attach dataset to view
   fillList();
-
+  
   connect(configDefaultB, SIGNAL(clicked()), this,  SLOT(defaultSlot()));
   connect(configApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
   connect(configQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
   connect(sourceView,     SIGNAL(clicked(QModelIndex)), this, SLOT(selectSlot(QModelIndex)));
-  
+
+  configWindowBox->resize(600, 310); // show all rows with reasonable width  
+  sourceView->resizeColumnToContents(0);
+  sourceView->resizeColumnToContents(1);
+  sourceView->resizeColumnToContents(2);
   configWindowBox->show();
  } // end constructor
 
