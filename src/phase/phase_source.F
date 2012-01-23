@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <15 Nov 11 14:52:18 flechsig> 
+c$$$ Time-stamp: <23 Jan 12 14:38:05 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -775,26 +775,34 @@ cc	include 'phase_struct.for'
 c***********************************************************
 	subroutine src4_ini(so4)
 c***********************************************************
-	implicit real*8(a-h,o-z)
+c UF Jan 12 add low level tests if files exists
 
-cc	include 'phase_struct.for'
+	implicit real*8(a-h,o-z)
+	
 #include 'phase_struct.F'
 
 	record /source4/ so4
+        logical ex 
 
 c	maximale Dimension der Quelle 1024 x 1024
 	dimension xx(1048576),yy(1048576)
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4a
-	open(unit=10,name=so4.fsource4a,type='old')
-	read(10,*)so4.ieyrex,so4.ieyrey
-	do j=1,so4.ieyrey
-	do i=1,so4.ieyrex
-	k=(j-1)*so4.ieyrex+i
-	read(10,*)xx(k),yy(k),so4.zeyre(i,j)
-	enddo
-	enddo
-	close(10)
+	INQUIRE(File=so4.fsource4a, Exist=ex)
+	if (ex) then
+	   open(unit=10,name=so4.fsource4a,type='old')
+	   read(10,*)so4.ieyrex,so4.ieyrey
+	   do j=1,so4.ieyrey
+	      do i=1,so4.ieyrex
+		 k=(j-1)*so4.ieyrex+i
+		 read(10,*)xx(k),yy(k),so4.zeyre(i,j)
+	      enddo
+	   enddo
+	   close(10)
+	   write(*,*) '==> done'
+	else
+	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4a
+	endif
 
 	so4.xeyremin=xx(1)
 	so4.xeyremax=xx(k)
@@ -815,20 +823,26 @@ c	maximale Dimension der Quelle 1024 x 1024
 	
 c---------------------------------------------------------------
 
-     	write(*,*) 'src4_ini: read file: ',so4.fsource4b
-	open(unit=10,name=so4.fsource4b,type='old')
-	read(10,*)so4.ieyimx,so4.ieyimy
-	do j=1,so4.ieyimy
-	do i=1,so4.ieyimx
-	k=(j-1)*so4.ieyimx+i
-	read(10,*)xx(k),yy(k),so4.zeyim(i,j)
-c------------- 10.8.2005
-	if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
-c------------- 10.8.2005
-	enddo
-	enddo
-	close(10)
-
+	1    write(*,*) 'src4_ini: read file: ',so4.fsource4b
+	INQUIRE(File=so4.fsource4b, Exist=ex)
+	if (ex) then
+	   open(unit=10,name=so4.fsource4b,type='old')
+	   read(10,*)so4.ieyimx,so4.ieyimy
+	   do j=1,so4.ieyimy
+	      do i=1,so4.ieyimx
+		 k=(j-1)*so4.ieyimx+i
+		 read(10,*)xx(k),yy(k),so4.zeyim(i,j)
+c-------------10.8.2005
+		 if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
+c-------------10.8.2005
+	      enddo
+	   enddo
+	   close(10)
+	   write(*,*) '==> done'
+	else
+	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4b
+	endif
+	
 	so4.xeyimmin=xx(1)
 	so4.xeyimmax=xx(k)
 	so4.dxeyim=(so4.xeyimmax-so4.xeyimmin)
@@ -841,15 +855,21 @@ c------------- 10.8.2005
 c----------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4c
-	open(unit=10,name=so4.fsource4c,type='old')
-	read(10,*)so4.iezrex,so4.iezrey
-	do j=1,so4.iezrey
-	do i=1,so4.iezrex
-	k=(j-1)*so4.iezrex+i
-	read(10,*)xx(k),yy(k),so4.zezre(i,j)
-	enddo
-	enddo
-	close(10)
+	INQUIRE(File=so4.fsource4c, Exist=ex)
+	if (ex) then
+	   open(unit=10,name=so4.fsource4c,type='old')
+	   read(10,*)so4.iezrex,so4.iezrey
+	   do j=1,so4.iezrey
+	      do i=1,so4.iezrex
+		 k=(j-1)*so4.iezrex+i
+		 read(10,*)xx(k),yy(k),so4.zezre(i,j)
+	      enddo
+	   enddo
+	   close(10)
+	   write(*,*) '==> done'
+	else
+	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4c
+	endif
 
 	so4.xezremin=xx(1)
 	so4.xezremax=xx(k)
@@ -863,18 +883,24 @@ c----------------------------------------------------------
 c-----------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4d
-	open(unit=10,name=so4.fsource4d,type='old')
-	read(10,*)so4.iezimx,so4.iezimy
-	do j=1,so4.iezimy
-	do i=1,so4.iezimx
-	k=(j-1)*so4.iezimx+i
-	read(10,*)xx(k),yy(k),so4.zezim(i,j)
-c------------- 10.8.2005
-	if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
-c------------- 10.8.2005
-	enddo
-	enddo
-	close(10)
+	INQUIRE(File=so4.fsource4d, Exist=ex)
+	if (ex) then
+	   open(unit=10,name=so4.fsource4d,type='old')
+	   read(10,*)so4.iezimx,so4.iezimy
+	   do j=1,so4.iezimy
+	      do i=1,so4.iezimx
+		 k=(j-1)*so4.iezimx+i
+		 read(10,*)xx(k),yy(k),so4.zezim(i,j)
+c-------------10.8.2005
+		 if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
+c-------------10.8.2005
+	      enddo
+	   enddo
+	   close(10)
+	   write(*,*) '==> done'
+	else
+	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4d
+	endif
 
 	so4.xezimmin=xx(1)
 	so4.xezimmax=xx(k)
@@ -893,11 +919,13 @@ c*****************************************************************
 c*****************************************************************
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
 #include 'phase_struct.F'
 
 	record /source6/ so6
+	logical ex
 
+	INQUIRE(File=so6.fsource6, Exist=ex)
+	if (ex) then
 	open(unit=10,name=so6.fsource6,
      &  type='old',form='unformatted',access='sequential')
 	read(10)so6.brxmin,so6.brxmax,so6.brdx,so6.ibrx
@@ -915,7 +943,9 @@ cc	include 'phase_struct.for'
 	enddo
 	enddo
 	close(10)
-
+	else
+	   write(*,*) 'error: src6_ini: file not found: ', so6.fsource6
+	endif
 	return
 	end
 
