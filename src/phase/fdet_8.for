@@ -1,4 +1,4 @@
-﻿c$$$ $Source$ 
+c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
