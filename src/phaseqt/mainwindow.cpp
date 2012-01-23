@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2012-01-23 21:22:44 flechsig> 
+//  Time-stamp: <2012-01-23 22:54:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2109,11 +2109,11 @@ void MainWindow::UpdateBeamlineBox()
 
   //sprintf(buffer, "%.3lf", blo->lambda* 1e6);
   //lambdaE->setText(QString(buffer));
-  qst->setNum(blo->lambda* 1e6, 'f', 3);
+  qst.setNum(blo->lambda* 1e6, 'f', 3);
   lambdaE->setText(qst);
 
   // sprintf(buffer, "%.3lf", blo->displength);
-  qst->setNum(->displength, 'f', 3);
+  qst.setNum(blo->displength, 'f', 3);
   //dislenE->setText(QString(buffer));
   dislenE->setText(qst);
 
