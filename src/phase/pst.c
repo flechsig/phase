@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Nov 11 12:23:37 flechsig>  */
+/*   Time-stamp: <24 Jan 12 09:47:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -470,31 +470,31 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 
    printf("WritePsd: Write Psd to %s-[psd,eyrec,ezrec,eyimc,ezimc]\n", name);
 
-   sprintf(fname, "%s-psd", name);
+   snprintf(fname, MaxPathLength, "%s-psd", name);
    if ((f0= fopen(fname, "w+")) == NULL)
    {
        fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
    } 
 
-   sprintf(fname, "%s-eyrec", name);
+   snprintf(fname, MaxPathLength, "%s-eyrec", name);
    if ((f1= fopen(fname, "w+")) == NULL)
    {
        fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
    } 
 
-   sprintf(fname, "%s-ezrec", name);
+   snprintf(fname, MaxPathLength, "%s-ezrec", name);
    if ((f2= fopen(fname, "w+")) == NULL)
    {
        fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
    } 
 
-   sprintf(fname, "%s-eyimc", name);
+   snprintf(fname, MaxPathLength, "%s-eyimc", name);
    if ((f3= fopen(fname, "w+")) == NULL)
    {
        fprintf(stderr, "error: open file %s\n", fname); exit(-1);   
    } 
 
-   sprintf(fname, "%s-ezimc", name);
+   snprintf(fname, MaxPathLength, "%s-ezimc", name);
    if ((f4= fopen(fname, "w+")) == NULL)
    {
        fprintf(stderr, "error: open file %s\n", fname); exit(-1);   

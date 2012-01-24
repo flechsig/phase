@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <16 Dec 11 16:31:12 flechsig>  */
+/*   Time-stamp: <24 Jan 12 09:45:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -790,17 +790,17 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
     } 
 
 #ifndef QTGUI
-   sprintf(buffer, "%s/share/phase/map%d_lh.omx", global_rundir, dim);
+  snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_lh.omx", global_rundir, dim);
 #else
-   sprintf(buffer, "%s/share/phase/map%d_lh.omx", phase_home, dim);
+   snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_lh.omx", phase_home, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->lmap, dim);    
 
 #ifndef QTGUI
-   sprintf(buffer,"%s/share/phase/map%d_rh.omx", global_rundir, dim);
+   snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_rh.omx", global_rundir, dim);
 #else
-   sprintf(buffer,"%s/share/phase/map%d_rh.omx", phase_home, dim);
+   snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_rh.omx", phase_home, dim);
 #endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
@@ -1729,7 +1729,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        {
           listpt->ElementOK= 0;       /* reset OK */
 
-	  sprintf(buffer, "Element %d", elnumber);	
+	  snprintf(buffer, MaxPathLength, "Element %d", elnumber);	
 	  if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
 	    fscanf(f, " %s %[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
@@ -1738,7 +1738,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 #endif
           } else rcode= -1;
 	  
-          sprintf(buffer, "GEOMETRY %d", elnumber); 
+          snprintf(buffer, MaxPathLength, "GEOMETRY %d", elnumber); 
           if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
              pd= (double *) &listpt->GDat.theta0; 
@@ -1759,7 +1759,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     /*  printf("   geometry read\n"); */
           } else rcode= -1;  
 
-          sprintf(buffer, "MIRROR %d", elnumber);  
+          snprintf(buffer, MaxPathLength, "MIRROR %d", elnumber);  
           if (SetFilePos(f, buffer)) 
           {  /* lese ein ... */
 	    fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->MDat.Art);
@@ -2069,8 +2069,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
       x->npars  = x->xindex= x->yindex=  0;
       x->dx= x->dy= 0.0;
       x->xpoints= x->ypoints= 1;
-      sprintf(x->minuitfilename, "minuit.inp");
-      sprintf(x->resultfilename, "opti_out.dat");
+      snprintf(x->minuitfilename, MaxPathLength, "minuit.inp");
+      snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
       /*printf("%s %s\n", x->minuitfilename, x->resultfilename);*/
       return;
     }  
