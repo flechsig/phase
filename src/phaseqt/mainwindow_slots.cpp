@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <24 Jan 12 09:30:38 flechsig> 
+//  Time-stamp: <24 Jan 12 16:07:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -528,6 +528,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
 {
   double cff, alpha, beta, theta0;
   int number= elementList->currentRow();
+  QString cffstr;
 
   if (number < 0) 
     {
@@ -538,8 +539,8 @@ void MainWindow::thetaBslot()  // SetTheta from cff
 
   char *text= cffE->text().toAscii().data();          // get string from widget
   struct gdatset *gdat= &(myparent->myBeamline()->ElementList[number].GDat);
-  char  buffer[9];
-  printf("thetaBslot: text: %s\n", text);
+  
+  cout << "thetaBslot: text: " << text << endl;
 
   // !! we take other relevant data (gdat->lambda, gdat->xdens[0], gdat->inout) from dataset and not from widget
   sscanf(text, "%lf", &cff);
@@ -549,8 +550,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
       FixFocus(cff, myparent->myBeamline()->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
-      snprintf(buffer, 9, "%8.4f", theta0);  
-      thetaE->setText(QString(tr(buffer)));  // update widget
+      thetaE->setText(cffstr.setNum(theta0, 'g', 4));  // update widget
       gdat->theta0= theta0;                  // update data
     } 
   else
@@ -572,12 +572,13 @@ void MainWindow::rhoBslot()  // calculate roho
 {
   double theta, rho, source, image;
   char buffer[10];
-  
+  QString rhostr;
+    
   sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
   sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
   sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
 
-  snprintf(buffer, MaxPathLength, "%9.3f", theta); // for message box
+  snprintf(buffer, 10, "%9.3f", theta); // for message box
  
   if (theta >= 90.0)
     QMessageBox::warning(this, tr("Calculate Radius"),
@@ -585,22 +586,21 @@ void MainWindow::rhoBslot()  // calculate roho
   else
     {
       rho= 2.0* source* image* cos(theta * PI/180.0)/ (source+ image); 
-      snprintf(buffer, MaxPathLength, "%9.3f", rho);
-      rhoE->setText(QString(tr(buffer)));
+      rhoE->setText(rhostr.setNum(rho, 'g', 3));
     }
- 
-} // rhoBslot
+ } // rhoBslot
 
 void MainWindow::rBslot()
 {
   double theta, rmi, source, image;
+  QString rmistr;
   char buffer[10];
   
   sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
   sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
   sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
 
-  snprintf(buffer, MaxPathLength, "%9.3f", theta); // for message box
+  snprintf(buffer, 10, "%9.3f", theta); // for message box
 
   if (theta >= 90.0)
     QMessageBox::warning(this, tr("Calculate Radius"),
@@ -609,7 +609,7 @@ void MainWindow::rBslot()
     {
       rmi= (2.0* source* image)/ ((source+ image)* cos(theta * PI/180.0)); 
       snprintf(buffer, MaxPathLength, "%9.3f", rmi);
-      rE->setText(QString(tr(buffer)));
+      rE->setText(rmistr.setNum(rmi, 'g', 3));
     }
 } // rBslot  
 // end calc slots

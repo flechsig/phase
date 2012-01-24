@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Jan 12 09:08:00 flechsig> 
+//  Time-stamp: <24 Jan 12 16:40:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1165,6 +1165,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 {
   char buffer[MaxPathLength];
   int scanned= 1;
+  QString qst;
  
   struct OptionsType   *op = myparent->myOptions();
   struct sources    *mysrc = &(myparent->myBeamline()->src);
@@ -1178,142 +1179,142 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
     case 0: 
       if (!init) scanned= sscanf(text, "%lf", &op->epsilon);
       if ((scanned == EOF) || (scanned == 0)) op->epsilon= 1e-4; // default
-      snprintf(buffer, MaxPathLength,  "%-5lg", op->epsilon);
+      qst.setNum(op->epsilon, 'g', 5);
       break;
     case 1:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
       printf("parameterUpdate: scanned_pos: %d\n", scanned);
       if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
 	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iord);
+      qst.setNum(op->ifl.iord);
       break;
     case 2:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iordsc);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iordsc= 4; // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iordsc);
+      qst.setNum(op->ifl.iordsc); 
       break;
     case 3:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iexpand);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iexpand);
+      qst.setNum(op->ifl.iexpand);
       break;
     case 4:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iplmode);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iplmode);
+      qst.setNum(op->ifl.iplmode);
       break;
     case 5:
       if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
       if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", myparent->myBeamline()->src.isrctype);
+      qst.setNum(myparent->myBeamline()->src.isrctype);
       break; 
     case 6:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.rpin= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.rpin);
+      qst.setNum(op->apr.rpin, 'g', 4);
       break;
     case 7:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srcymin= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.srcymin);
+      qst.setNum(op->apr.srcymin, 'g', 4);
       break;
     case 8:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymax);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srcymax= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.srcymax);
+      qst.setNum(op->apr.srcymax, 'g', 4);
       break;
     case 9:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srczmin= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg",  op->apr.srczmin);
+      qst.setNum(op->apr.srczmin, 'g', 4);
       break;
     case 10:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmax);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srczmax= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.srczmax);
+      qst.setNum(op->apr.srczmax, 'g', 4);
       break;
     case 11:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.rpin_ap= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.rpin_ap);
+      qst.setNum(op->apr.rpin_ap, 'g', 4);
       break;
     case 12:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.ymin_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.ymin_ap= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.ymin_ap);
+      qst.setNum(op->apr.ymin_ap, 'g', 4);
       break;
     case 13:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.ymax_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.ymax_ap= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.ymax_ap);
+      qst.setNum(op->apr.ymax_ap, 'g', 4);
       break;
     case 14:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.zmin_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.zmin_ap= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.zmin_ap);
+      qst.setNum(op->apr.zmin_ap, 'g', 4);
       break;
     case 15:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.zmax_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.zmax_ap= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->apr.zmax_ap);
+      qst.setNum(op->apr.zmax_ap, 'g', 4);
       break;
 
     case 16:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipcy);
+      qst.setNum(mysrc->so5.dipcy, 'g', 4);
       break;
     case 17:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipcz);
+      qst.setNum(mysrc->so5.dipcz, 'g', 4);
       break;
     case 18:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipdisy);
+      qst.setNum(mysrc->so5.dipdisy, 'g', 4);
       break;
     case 19:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipdisz);
+      qst.setNum(mysrc->so5.dipdisz, 'g', 4);
       break;
 
     case 20:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.inorm);
+      qst.setNum(op->ifl.inorm);
       break;
     case 21:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm1);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm1= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.inorm1);
+      qst.setNum(op->ifl.inorm1);
       break;
     case 22:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm2);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.inorm2);
+      qst.setNum(op->ifl.inorm2);
       break;
     case 23:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.matrel);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.matrel);
+      qst.setNum(op->ifl.matrel);
       break;
 
     case 24:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
       if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d",  mysrc->so1.isrcy);
+      qst.setNum(mysrc->so1.isrcy);
       break;
     case 25:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so1.isrcdy);
+      qst.setNum(mysrc->so1.isrcdy);
       break;
     case 26:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmay);
+      qst.setNum(mysrc->so1.sigmay, 'g', 4);
       break;
     case 27:
       if (!init) 
@@ -1322,7 +1323,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  mysrc->so1.sigmayp*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmayp*1e3);
+      qst.setNum(mysrc->so1.sigmayp*1e3,  'g', 4);
       break;
 
     case 28:
@@ -1332,7 +1333,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.ymin*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.ymin* 1e3);
+      qst.setNum(op->xi.ymin* 1e3, 'g', 4);
       break;
     case 29:
       if (!init)
@@ -1341,28 +1342,28 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.ymax*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.ymax* 1e3);
+      qst.setNum(op->xi.ymax* 1e3, 'g', 4);
       break;
     case 30:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianzy0);
+      qst.setNum(op->xi.ianzy0);
       break;
 
     case 31:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
       if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d",  mysrc->so1.isrcz);
+      qst.setNum(mysrc->so1.isrcz);
       break;
     case 32:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so1.isrcdz);
+      qst.setNum(mysrc->so1.isrcdz);
       break;
     case 33:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmaz);
+      qst.setNum(mysrc->so1.sigmaz, 'g', 4);
       break;
     case 34:
       if (!init)
@@ -1371,7 +1372,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  mysrc->so1.sigmazp*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmazp*1e3);
+      qst.setNum(mysrc->so1.sigmazp*1e3, 'g', 4);
       break;
 
     case 35:
@@ -1381,7 +1382,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.zmin*=1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.zmin* 1e3);
+      qst.setNum(op->xi.zmin* 1e3, 'g', 4);
       break;
     case 36:
       if (!init) 
@@ -1390,150 +1391,150 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.zmax*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.zmax* 1e3);
+      qst.setNum(op->xi.zmax* 1e3, 'g', 4);
       break;
     case 37:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzz0);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianzz0);
+      qst.setNum(op->xi.ianzz0);
       break;
 
     case 38:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ibright);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.ibright);
+      qst.setNum(op->ifl.ibright);
       break;
 
     case 39:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ispline);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.ispline= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.ispline);
+      qst.setNum(op->ifl.ispline);
       break;
 
     case 40:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.d12_max);
       if ((scanned == EOF) || (scanned == 0)) op->xi.d12_max= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.d12_max);
+      qst.setNum(op->xi.d12_max, 'g', 4);
       break;
     case 41:
       if (!init) scanned= sscanf(text, "%d", &op->xi.id12);
       if ((scanned == EOF) || (scanned == 0)) op->xi.id12= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.id12);
+      qst.setNum(op->xi.id12);
       break;
     case 42:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_cal);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_cal= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianz0_cal);
+      qst.setNum(op->xi.ianz0_cal);
       break;
     case 43:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_fixed);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_fixed= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianz0_fixed);
+      qst.setNum(op->xi.ianz0_fixed);
       break;
     case 44:
       if (!init) scanned= sscanf(text, "%d", &op->xi.iamp_smooth);
       if ((scanned == EOF) || (scanned == 0)) op->xi.iamp_smooth= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.iamp_smooth);
+      qst.setNum(op->xi.iamp_smooth);
       break;
     case 45:
       if (!init) scanned= sscanf(text, "%d", &op->xi.iord_amp);
       if ((scanned == EOF) || (scanned == 0)) op->xi.iord_amp= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.iord_amp);
+      qst.setNum(op->xi.iord_amp);
       break;
     case 46:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_amp);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_amp= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.ifm_amp);
+      qst.setNum(op->xi.ifm_amp);
       break;
       
     case 47:
       if (!init) scanned= sscanf(text, "%d", &op->xi.iord_pha);
       if ((scanned == EOF) || (scanned == 0)) op->xi.iord_pha= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.iord_pha);
+      qst.setNum(op->xi.iord_pha);
       break;
       
     case 48:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_pha);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_pha= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->xi.ifm_pha);
+      qst.setNum(op->xi.ifm_pha);
       break;
     case 49:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocy);
       if ((scanned == EOF) || (scanned == 0)) op->xi.distfocy= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.distfocy);
+      qst.setNum(op->xi.distfocy, 'g', 4);
       break;
     case 50:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocz);
       if ((scanned == EOF) || (scanned == 0)) op->xi.distfocz= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", op->xi.distfocz);
+      qst.setNum(op->xi.distfocz, 'g', 4);
       break;
     case 51:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ipinarr);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.ipinarr= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->ifl.ipinarr);
+      qst.setNum(op->ifl.ipinarr);
       break;    
     case 52:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_yl0);
+      qst.setNum(mysrc->pin_yl0, 'g', 4);
       break;
     case 53:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_yl);
+      qst.setNum(mysrc->pin_yl, 'g', 4);
       break;
     case 54:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_zl0);
+      qst.setNum(mysrc->pin_zl0, 'g', 4);
       break;
     case 55:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_zl);
+      qst.setNum(mysrc->pin_zl, 'g', 4);
       break;
     case 56:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nfreqtot);
+      qst.setNum(mysrc->so4.nfreqtot);
       break;
     case 57:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nfreqpos);
+      qst.setNum(mysrc->so4.nfreqpos);
       break;
     case 58:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nfreqneg);
+      qst.setNum(mysrc->so4.nfreqneg);
       break;
     case 59:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nsource);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nsource= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nsource);
+      qst.setNum(mysrc->so4.nsource);
       break;
     case 60:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nimage);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nimage= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nimage);
+      qst.setNum(mysrc->so4.nimage);
       break;
       
     case 61:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so4.deltatime);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.deltatime= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so4.deltatime);
+      qst.setNum(mysrc->so4.deltatime, 'g', 4);
       break;
       
     case 62:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.iconj);
+      qst.setNum(mysrc->so4.iconj);
       break;
 
     case 63:
       if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
       if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", op->REDUCE_maps);
+      qst.setNum(op->REDUCE_maps);
       myparent->myBeamline()->hormapsloaded= 0;
       break;
 
@@ -1541,20 +1542,21 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 case 10:
       if (!init) scanned= sscanf(text, "%d", &);
       if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      snprintf(buffer, MaxPathLength,  "%d", );
+      qst.setNum( "%d", );
       break;
 
 case 10:
       if (!init) scanned= sscanf(text, "%lg", &);
       if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      snprintf(buffer, MaxPathLength,  "%lg", );
+      qst.setNum( "%lg", );
       break;
 #endif
     default:
-      snprintf(buffer, MaxPathLength,  "%d \t: unknown parameter", pos);
+      qst.setNum(pos);
+      qst.append(" undefined parameter number");
     }
     
-  parameterModel->updateItemVal(QString(buffer), pos);
+  parameterModel->updateItemVal(qst, pos);
 
 } // end parameterUpdate
 
