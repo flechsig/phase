@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <16 Aug 11 11:48:37 flechsig> 
+//  Time-stamp: <24 Jan 12 09:32:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -295,7 +295,7 @@ void OptiInput::calcIndexSlot()
   if (elpos  >= 0) elpos++;
   if (parpos >= 0) parpos++;
   index= iindex(elpos, parpos);
-  sprintf(buffer, "selection: (%d, %d) ==> index: %d", elpos, parpos, index);
+  snprintf(buffer, MaxPathLength, "selection: (%d, %d) ==> index: %d", elpos, parpos, index);
   selectionLabel->setText(tr(buffer));
 } // calcIndexSlot()
 
@@ -429,13 +429,13 @@ void OptiInput::inputUpdateSlot()
   switch (pos)
     {
     case 0: 
-      sprintf(buffer, "x : %s", inputE->text().toAscii().data());
+      snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toAscii().data());
       break;
     case 1: 
-      sprintf(buffer, "y : %s", inputE->text().toAscii().data());
+      snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toAscii().data());
       break;
     default:
-      sprintf(buffer, "%s", inputE->text().toAscii().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toAscii().data());
     };
   item->setText(buffer);
   inputList->clearSelection();

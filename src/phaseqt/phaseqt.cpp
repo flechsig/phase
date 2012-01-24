@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <10 Nov 11 08:32:14 flechsig> 
+//  Time-stamp: <24 Jan 12 09:35:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -19,28 +19,28 @@ void PhaseQt::initSet(const char *fname)
   strncpy(name, fname, MaxPathLength);
   FnameBody(name);
 
-  sprintf(matrixname,      "%s.%s", name, "omx");
-  sprintf(mapname,         "%s.%s", name, "map");
-  sprintf(sourceraysname,  "%s.%s", name, "inp"); 
-  sprintf(imageraysname,   "%s.%s", name, "out");	  
-  sprintf(intersecname,    "%s.%s", name, "isec");	  
-  sprintf(geometryname,    "%s.%s", name, "datg"); 
-  sprintf(elementname,     "%s.%s", name, "date");	  
-  sprintf(sourcepckname,   "%s.%s", name, "pcks"); 
-  sprintf(geometrypckname, "%s.%s", name, "pckg"); 
-  sprintf(elementpckname,  "%s.%s", name, "pcke"); 
-  sprintf(pssourcename,    "%s.%s", name, "pss"); 
-  sprintf(plotpsname,      "%s.%s", name, "ps");	  
-  sprintf(printpclname,    "%s.%s", name, "pcl"); 
-  sprintf(optipckname,     "%s.%s", name, "pcko"); 
-  sprintf(beamlinename,    "%s.%s", name, "phase");	  
-  sprintf(so4_fsource4a,   "%s.%s", name, "s4a");	  
-  sprintf(so4_fsource4b,   "%s.%s", name, "s4b");	  
-  sprintf(so4_fsource4c,   "%s.%s", name, "s4c");	  
-  sprintf(so4_fsource4d,   "%s.%s", name, "s4d");	  
-  sprintf(so6_fsource6,    "%s.%s", name, "s6");
-  sprintf(opresname,       "%s.%s", name, "opti");	  
-  sprintf(minname,         "%s.%s", name, "minu");
+  snprintf(matrixname,      MaxPathLength, "%s.%s", name, "omx");
+  snprintf(mapname,         MaxPathLength, "%s.%s", name, "map");
+  snprintf(sourceraysname,  MaxPathLength, "%s.%s", name, "inp"); 
+  snprintf(imageraysname,   MaxPathLength, "%s.%s", name, "out");	  
+  snprintf(intersecname,    MaxPathLength, "%s.%s", name, "isec");	  
+  snprintf(geometryname,    MaxPathLength, "%s.%s", name, "datg"); 
+  snprintf(elementname,     MaxPathLength, "%s.%s", name, "date");	  
+  snprintf(sourcepckname,   MaxPathLength, "%s.%s", name, "pcks"); 
+  snprintf(geometrypckname, MaxPathLength, "%s.%s", name, "pckg"); 
+  snprintf(elementpckname,  MaxPathLength, "%s.%s", name, "pcke"); 
+  snprintf(pssourcename,    MaxPathLength, "%s.%s", name, "pss"); 
+  snprintf(plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
+  snprintf(printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
+  snprintf(optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
+  snprintf(beamlinename,    MaxPathLength, "%s.%s", name, "phase");	  
+  snprintf(so4_fsource4a,   MaxPathLength, "%s.%s", name, "s4a");	  
+  snprintf(so4_fsource4b,   MaxPathLength, "%s.%s", name, "s4b");	  
+  snprintf(so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  
+  snprintf(so4_fsource4d,   MaxPathLength, "%s.%s", name, "s4d");	  
+  snprintf(so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
+  snprintf(opresname,       MaxPathLength, "%s.%s", name, "opti");	  
+  snprintf(minname,         MaxPathLength, "%s.%s", name, "minu");
 }
 
 // print the contents of the data for debugging

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <23 Jan 12 15:00:29 flechsig> 
+//  Time-stamp: <24 Jan 12 09:30:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -47,7 +47,7 @@ void MainWindow::about()
 void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
-  struct PSImageType * psip;
+  struct PSImageType *psip;
   int filesOK;
 
 #ifdef DEBUG
@@ -194,10 +194,10 @@ void MainWindow::activateProc(const QString &action)
 	  (myparent->myBeamline()->position != 0))
 	{
 	  printf("write map of element %d to file\n", myparent->myBeamline()->position); 
-	  sprintf(header, "beamline: %s, map of element %d, iord: %d%d", 
+	  snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d%d", 
 		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->position, 
 		  myparent->myBeamline()->BLOptions.ifl.iord,0);
-	  sprintf(buffer, "%s-%d", myparent->myPHASEset()->mapname, myparent->myBeamline()->position);
+	  snprintf(buffer, MaxPathLength, "%s-%d", myparent->myPHASEset()->mapname, myparent->myBeamline()->position);
 	  /* casting 15.12.99 ist noch nicht OK */
 	  writemapc(buffer, header, myparent->myBeamline()->BLOptions.ifl.iord, 
 		    (double *)(myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].ypc1), 
@@ -213,9 +213,9 @@ void MainWindow::activateProc(const QString &action)
       //  else wir schreiben hier immer beides
 	{ 
 	  printf("write map of beamline to file\n"); 
-	  sprintf(header, "beamline: %s, map of beamline, iord: %d", 
+	  snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
 		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
-	  sprintf(buffer, "%s-0", myparent->myPHASEset()->mapname);
+	  snprintf(buffer, MaxPathLength, "%s-0", myparent->myPHASEset()->mapname);
 	  myparent->mywritemapc(buffer,  header,  
 				myparent->myBeamline()->BLOptions.ifl.iord, 
 		    (double *) myparent->myBeamline()->ypc1, (double *) myparent->myBeamline()->zpc1, 
@@ -235,11 +235,11 @@ void MainWindow::activateProc(const QString &action)
 	  (myparent->myBeamline()->position != 0))
 	{
 	  printf("write matrix of element %d to file\n", myparent->myBeamline()->position); 
-	  sprintf(header, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, MaxPathLength, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
 		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->position, 
 		  myparent->myBeamline()->BLOptions.ifl.iord,
 		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  sprintf(buffer, "%s-%d\x00", myparent->myPHASEset()->matrixname, myparent->myBeamline()->position);
+	  snprintf(buffer, MaxPathLength, "%s-%d\x00", myparent->myPHASEset()->matrixname, myparent->myBeamline()->position);
           writematrixfile((double *)myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].M_StoI,
 			  buffer, header, strlen(buffer), strlen(header)); // add hidden length parameter 
 	} 
@@ -247,10 +247,10 @@ void MainWindow::activateProc(const QString &action)
       //  else wir schreiben hier immer beides
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
-	  sprintf(header, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, MaxPathLength, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
 		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, 
 		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  sprintf(buffer, "%s-0\x00", myparent->myPHASEset()->matrixname);
+	  snprintf(buffer, MaxPathLength, "%s-0\x00", myparent->myPHASEset()->matrixname);
 	  writematrixfile((double *)myparent->myBeamline()->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
     } 
@@ -264,8 +264,8 @@ void MainWindow::activateProc(const QString &action)
 	  (myparent->myBeamline()->position != 0))
 	{
 	  printf("write coefficients of element %d to file\n", myparent->myBeamline()->position);
-      //  sprintf(buffer, "%s", "mirror-coefficients.dat");
-	  sprintf(buffer, "%s.coeff", elementList->currentItem()->text().toAscii().data());
+      //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
+	  snprintf(buffer, MaxPathLength, "%s.coeff", elementList->currentItem()->text().toAscii().data());
 	  printf("write coefficients to file: %s\n", buffer);
 	  WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
 	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
@@ -505,7 +505,7 @@ void MainWindow::appendElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  sprintf(listpt->elementname, "%s", "New Element");
+	  snprintf(listpt->elementname, MaxPathLength, "%s", "New Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -549,7 +549,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
       FixFocus(cff, myparent->myBeamline()->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
-      sprintf(buffer, "%8.4f", theta0);  
+      snprintf(buffer, 9, "%8.4f", theta0);  
       thetaE->setText(QString(tr(buffer)));  // update widget
       gdat->theta0= theta0;                  // update data
     } 
@@ -577,7 +577,7 @@ void MainWindow::rhoBslot()  // calculate roho
   sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
   sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
 
-  sprintf(buffer, "%9.3f", theta); // for message box
+  snprintf(buffer, MaxPathLength, "%9.3f", theta); // for message box
  
   if (theta >= 90.0)
     QMessageBox::warning(this, tr("Calculate Radius"),
@@ -585,7 +585,7 @@ void MainWindow::rhoBslot()  // calculate roho
   else
     {
       rho= 2.0* source* image* cos(theta * PI/180.0)/ (source+ image); 
-      sprintf(buffer, "%9.3f", rho);
+      snprintf(buffer, MaxPathLength, "%9.3f", rho);
       rhoE->setText(QString(tr(buffer)));
     }
  
@@ -600,7 +600,7 @@ void MainWindow::rBslot()
   sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
   sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
 
-  sprintf(buffer, "%9.3f", theta); // for message box
+  snprintf(buffer, MaxPathLength, "%9.3f", theta); // for message box
 
   if (theta >= 90.0)
     QMessageBox::warning(this, tr("Calculate Radius"),
@@ -608,7 +608,7 @@ void MainWindow::rBslot()
   else
     {
       rmi= (2.0* source* image)/ ((source+ image)* cos(theta * PI/180.0)); 
-      sprintf(buffer, "%9.3f", rmi);
+      snprintf(buffer, MaxPathLength, "%9.3f", rmi);
       rE->setText(QString(tr(buffer)));
     }
 } // rBslot  
@@ -933,7 +933,7 @@ void MainWindow::grapplyslot()
   
     //d_plot->replot();
 #ifdef DEBUG
-  printf("debug: grapplyslot end with replot\n");
+  cout << "debug: grapplyslot end with replot" << endl;
 #endif
   
 } // grapply
@@ -941,16 +941,18 @@ void MainWindow::grapplyslot()
 // slot autscale
 void MainWindow::grautoscaleslot()
 {
-  char buffer[10];
+  QString yminqst, ymaxqst, zminqst, zmaxqst;
 
 #ifdef DEBUG
-  printf("debug: grautoscaleslot called, plotsubject: %d\n", d_plot->plotsubject);
+  cout << "debug: grautoscaleslot called, plotsubject: " << d_plot->plotsubject << endl;
 #endif
 
 // a few tests
   if (!d_plot)
     {
-      printf("debug: ggrautoscaleslot: d_plot not defined file: %s\n", __FILE__);
+#ifdef DEBUG
+      cout << "debug: ggrautoscaleslot: d_plot not defined file: " <<  __FILE__ << endl;
+#endif
       return;
     }
 
@@ -988,14 +990,10 @@ void MainWindow::grautoscaleslot()
     }
   
   // update the widget
-  sprintf(buffer, "%9.3f", d_plot->Plot::ymin);
-  gryminE->setText(QString(tr(buffer)));
-  sprintf(buffer, "%9.3f", d_plot->Plot::ymax);
-  grymaxE->setText(QString(tr(buffer)));
-  sprintf(buffer, "%9.3f", d_plot->Plot::zmin);
-  grzminE->setText(QString(tr(buffer)));
-  sprintf(buffer, "%9.3f", d_plot->Plot::zmax);
-  grzmaxE->setText(QString(tr(buffer)));
+  gryminE->setText(yminqst.setNum(d_plot->Plot::ymin, 'g', 4));
+  grymaxE->setText(ymaxqst.setNum(d_plot->Plot::ymax, 'g', 4));
+  grzminE->setText(zminqst.setNum(d_plot->Plot::zmin, 'g', 4));
+  grzmaxE->setText(zmaxqst.setNum(d_plot->Plot::zmax, 'g', 4));
 } // end slot autoscale
 
 // slot grating
@@ -1004,7 +1002,7 @@ void MainWindow::grslot()
   int number= elementList->currentRow();
 
 #ifdef DEBUG
-  printf("debug: grslot called\n");
+  cout << "debug: grslot called" << endl;
 #endif
 
   if (number < 0) 
@@ -1084,7 +1082,7 @@ void MainWindow::insertElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  sprintf(listpt->elementname, "%s", "New Element");
+	  snprintf(listpt->elementname, MaxPathLength, "%s", "New Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -1400,7 +1398,7 @@ void MainWindow::selectParameter()
   if (parameternumber < 0) 
     return;
 
-  strcpy(buffer, parameterList->currentItem()->text().toAscii().data());
+  strncpy(buffer, parameterList->currentItem()->text().toAscii().data(), MaxPathLength);
   ch= strchr(buffer, ':');
   if (ch != NULL) 
     {
