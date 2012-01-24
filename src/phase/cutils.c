@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <18 Aug 11 13:53:02 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:36:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -37,15 +37,22 @@ char *delversion(char *fname) /* entfernt Versionsnummer von VMS- Filenamen */
 char *PrependEnv(char* env, char *str)
 /* prepend the contents of an environment variable on a string, 
    the string will be altered!!!, if no environment variable found- 
-   the original string will be returned  */
+   the original string will be returned  
+   !! we assume the buffer of str is at least 255 char long !!
+*/
 {
    char string[255], *stp;
+   int lstr, lstp;
+
    stp= getenv(env);
-   if (stp != NULL)
+   lstp= strlen(stp); /* len without '\0' */
+   lstr= strlen(str);
+
+   if ((stp != NULL) && (lstp < 255))
      {
-       strcpy(string, stp);
-       strcat(string, str);
-       strcpy(str, string);
+       strncpy(string, stp, (255- lstp));
+       strncat(string, str, (255- lstp- 1));
+       strncpy(str, string, 255);
      }
    return str;
 } /* end PrependEnv */

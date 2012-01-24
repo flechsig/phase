@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <02 Sep 11 13:26:42 flechsig>  */
+/*   Time-stamp: <24 Jan 12 14:33:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -634,13 +634,13 @@ void activate_proc(w, tag, reason)
     break;   
         
   case kCCOptiButton: 	                /*  Opti*/  
-    sprintf(command,
+    snprintf(command, MaxPathLength,
 	    "phaseopti %s", PHASESet.optipckname);
     system(command); 
     break;  
  
   case kCCExtractButton: 	                /*  Extr*/  
-    sprintf(command,
+    snprintf(command, MaxPathLength,
 	    "phaseextract %s", PHASESet.optipckname);
     system(command); 
     break;   
@@ -704,12 +704,12 @@ void activate_proc(w, tag, reason)
 	if ((bl->position <= bl->elementzahl) && (bl->position != 0))
 	  {
 	    printf("write map of element %d to file\n", bl->position);  
-            sprintf(header, "beamline: %s, map of element %d, iord: %d", 
+            snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d", 
 		    PHASESet.beamlinename, bl->position, bl->BLOptions.ifl.iord);
 #ifdef SEVEN_ORDER
-	    sprintf(buffer, "%s-%d_7", PHASESet.mapname, bl->position);
+	    snprintf(buffer, MaxPathLength, "%s-%d_7", PHASESet.mapname, bl->position);
 #else
-	    sprintf(buffer, "%s-%d", PHASESet.mapname, bl->position);
+	    snprintf(buffer, MaxPathLength, "%s-%d", PHASESet.mapname, bl->position);
 #endif
 	    /* casting 15.12.99 ist noch nicht OK */
 	    writemapc(buffer, header, bl->BLOptions.ifl.iord, 
@@ -725,12 +725,12 @@ void activate_proc(w, tag, reason)
 	else
 	  {
 	    printf("write map of beamline to file\n");
-	    sprintf(header, "beamline: %s, map of beamline, iord: %d", 
+	    snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
 		    PHASESet.beamlinename, bl->BLOptions.ifl.iord);
 #ifdef SEVEN_ORDER
-	    sprintf(buffer, "%s-0_7", PHASESet.mapname);
+	    snprintf(buffer, MaxPathLength, "%s-0_7", PHASESet.mapname);
 #else	    
-	    sprintf(buffer, "%s-0", PHASESet.mapname);
+	    snprintf(buffer, MaxPathLength, "%s-0", PHASESet.mapname);
 #endif
 	    writemapc(buffer, header, bl->BLOptions.ifl.iord, 
 		      (double *) bl->ypc1, (double *) bl->zpc1, 
@@ -746,7 +746,7 @@ void activate_proc(w, tag, reason)
   case kCWriteMCoButton: 
     bl= &Beamline;   
      /* \n weggenommen J.B. 10.11.2003 */
-    sprintf(buffer,"%s", "mirror-coefficients.dat");
+    snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
     printf("%s\n", buffer);
     WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer); 
     break;   
@@ -894,7 +894,7 @@ void activate_proc(w, tag, reason)
   
   case kCPurge:  
     start_watch();
-    sprintf(command,
+    snprintf(command, MaxPathLength,
 	    "PHASEusercom %s", PHASESet.printpclname);
     printf("user command: %s\n", command);
     system(command); 
@@ -904,10 +904,10 @@ void activate_proc(w, tag, reason)
   case kSetupInfo:
     FetchWidget(kSetupInfo, "SetupInfo");
 #ifdef VMS
-	strcpy(buffer, ".lib]news.");
+    strncpy(buffer, ".lib]news.", MaxPathLength);
 	PrependEnv(PHASE_HOME, buffer);
 #else
-       sprintf(buffer, "%s/share/phase/news", global_rundir);
+       snprintf(buffer, MaxPathLength, "%s/share/phase/news", global_rundir);
 #endif 
     
     PrintFileInMainList(buffer);  

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <19 Aug 11 10:53:42 flechsig>  */
+/*   Time-stamp: <24 Jan 12 13:57:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -339,7 +339,7 @@ void list_proc(w, tag, list)                 /* selection callback */
       epos= (XmListGetSelectedPos(widget_array[kEBLList], &pl, &pc) 
 	 == True) ? pl[0] : 0; 
       XtFree((char *) pl);
-      sprintf(clabel, "selected element %3d", epos); 
+      snprintf(clabel, MaxPathLength, "selected element %3d", epos); 
       xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kEBLSelectedLabel], 
 		    XmNlabelString, xlabel);
@@ -391,12 +391,12 @@ void list_proc(w, tag, list)                 /* selection callback */
     {
       printf("list_proc=> element %d, position %d\n", epos, ppos);
       indx= iindex(epos, ppos);
-      sprintf(clabel, "selected element %3d;  index: ", epos);    
+      snprintf(clabel, MaxPathLength, "selected element %3d;  index: ", epos);    
       xlabel= XmStringCreateLocalized(clabel);
       set_something(widget_array[kCOptiSelectedLabel], XmNlabelString, 
 		    xlabel); 
       XmStringFree(xlabel); 
-      sprintf(clabel, "%4d", indx);  
+      snprintf(clabel, MaxPathLength, "%4d", indx);  
       set_something(widget_array[kCOptiT2], XmNvalue, clabel); 
     } 
                
@@ -504,7 +504,7 @@ void toggle_proc(w, tag, toggle)
 	      printf("toggle_proc: theta forced positive\n");  
 #endif    
 	    } 
-	sprintf(text, "%f", 
+	snprintf(text, 30, "%f", 
 		Beamline.ElementList[Beamline.position-1].GDat.theta0);
 	set_something(widget_array[kEOET4], XmNvalue, text);
       }
@@ -531,10 +531,7 @@ void help_system_proc(w, tag, reason)
     XmAnyCallbackStruct *reason; 
                         
 {                               
-#ifdef VMS
-  DXmHelpSystemDisplay(help_context, PHASE_help, "topic", (char *)tag,
-		       help_error, "Help System Error");    
-#endif
+
   /*%%%DXmHelpSystemDisplay(help_context, PHASE_help, "topic", tag,
     help_error, "Help System Error");  */
 }                    
@@ -770,17 +767,17 @@ void FileSelectionProc(Widget wi,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-       	  strcpy((char *)&PHASESet.beamlinename, fname);
+       	  strncpy((char *)&PHASESet.beamlinename, fname, MaxPathLength);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
-          strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
+          strncpy(PHASESet.pssourcename, Beamline.src.so6.fsource6, MaxPathLength);
 	  InitBLBox(PHASESet.beamlinename, &Beamline); 
 	  ExpandFileNames(&PHASESet, fname); 
 	  PutPHASE(&PHASESet, MainPickName); 
 	  break;
 	case kFLoadButton: 
-	  strcpy((char *)&PHASESet.beamlinename, fname);
+	  strncpy((char *)&PHASESet.beamlinename, fname, MaxPathLength);
 	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
-          strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
+          strncpy(PHASESet.pssourcename, Beamline.src.so6.fsource6, MaxPathLength);
 	  if ((widget_array[kESourceBox] != NULL) && 
 	      XtIsRealized(widget_array[kESourceBox])) 
 	    { 

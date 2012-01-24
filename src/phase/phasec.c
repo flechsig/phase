@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <14 Nov 11 16:12:55 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:41:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -63,7 +63,7 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
   if (iord != -1)  bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
 
 #ifndef QTGUI
-  strcpy(ps->pssourcename, bl->src.so6.fsource6);
+  strncpy(ps->pssourcename, bl->src.so6.fsource6, MaxPathLength);
 #endif
   BuildBeamline(bl); 
   if (cmode == -1) cmode= bl->BLOptions.CalcMod;
@@ -299,7 +299,7 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 	  fscanf(f,"%s\n", (char *) &x->optipckname); 
 	  if (!feof(f))    /* neu */
 	    fscanf(f,"%s\n", (char *) &x->beamlinename); 
-	  else strcpy(x->beamlinename, "SGM.PHASE"); 
+	  else strncpy(x->beamlinename, "SGM.PHASE", MaxPathLength); 
 	  if (version >= 20081119)
 	    {
 	      fscanf(f,"%s\n", (char *) &x->so4_fsource4a);     
@@ -370,7 +370,7 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
 
   ReadBLFile(x->beamlinename, bl);
 #ifndef QTGUI
-  strcpy(x->pssourcename, bl->src.so6.fsource6);  
+  strncpy(x->pssourcename, bl->src.so6.fsource6, MaxPathLength);  
 #endif
 #ifndef QTGUI
   grdatstruct.status= 0;
@@ -390,23 +390,23 @@ void InitOptiBox1(char *pickname)
 
 void InitPHASE(struct PHASEset *x)                   /* set defaults */
 {
-  strcpy(x->matrixname,      D0matrixname);
-  strcpy(x->mapname,         D0mapname);    
-  strcpy(x->sourceraysname,  D0sourceraysname);       
-  strcpy(x->imageraysname,   D0imageraysname);	   
-  strcpy(x->intersecname,    D0intersecname);
-  strcpy(x->geometryname,    D0geometryname);   
-  strcpy(x->elementname,     D0elementname);        
-  strcpy(x->sourcepckname,   D0sourcepckname);       
-  strcpy(x->elementpckname,  D0elementpckname);
-  strcpy(x->geometrypckname, D0geometrypckname); 
-  strcpy(x->pssourcename,    D0pssourcename);   
-  strcpy(x->plotpsname,      D0plotpsname);   
-  strcpy(x->printpclname,    D0printpclname);   
-  strcpy(x->optipckname,     D0optipckname);   
-  strcpy(x->beamlinename,    "SGM.PHASE"); 
-  strcpy(x->opresname,       "opti_out.dat"); 
-  strcpy(x->minname,         "minuit.inp"); 
+  strncpy(x->matrixname,      D0matrixname, MaxPathLength);
+  strncpy(x->mapname,         D0mapname, MaxPathLength);    
+  strncpy(x->sourceraysname,  D0sourceraysname, MaxPathLength);       
+  strncpy(x->imageraysname,   D0imageraysname, MaxPathLength);	   
+  strncpy(x->intersecname,    D0intersecname, MaxPathLength);
+  strncpy(x->geometryname,    D0geometryname, MaxPathLength);   
+  strncpy(x->elementname,     D0elementname, MaxPathLength);        
+  strncpy(x->sourcepckname,   D0sourcepckname, MaxPathLength);       
+  strncpy(x->elementpckname,  D0elementpckname, MaxPathLength);
+  strncpy(x->geometrypckname, D0geometrypckname, MaxPathLength); 
+  strncpy(x->pssourcename,    D0pssourcename, MaxPathLength);   
+  strncpy(x->plotpsname,      D0plotpsname, MaxPathLength);   
+  strncpy(x->printpclname,    D0printpclname, MaxPathLength);   
+  strncpy(x->optipckname,     D0optipckname, MaxPathLength);   
+  strncpy(x->beamlinename,    "SGM.PHASE", MaxPathLength); 
+  strncpy(x->opresname,       "opti_out.dat", MaxPathLength); 
+  strncpy(x->minname,         "minuit.inp", MaxPathLength); 
 }
    
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */

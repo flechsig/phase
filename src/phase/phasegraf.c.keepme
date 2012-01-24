@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <15 Nov 11 15:29:09 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:43:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -43,10 +43,10 @@ void InitGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr)
     XmString label;                         
 
     label= XmStringCreateLocalized(PHASE->plotpsname);    
-    sprintf(TextField[0], "%-8.3G", gr->zmi);    
-    sprintf(TextField[1], "%-8.3G", gr->zma);    
-    sprintf(TextField[2], "%-8.3G", gr->ymi);    
-    sprintf(TextField[3], "%-8.3G", gr->yma);    
+    snprintf(TextField[0], 20, "%-8.3G", gr->zmi);    
+    snprintf(TextField[1], 20, "%-8.3G", gr->zma);    
+    snprintf(TextField[2], 20, "%-8.3G", gr->ymi);    
+    snprintf(TextField[3], 20, "%-8.3G", gr->yma);    
     	        
     for (i= 0; i< 4; i++)
         set_something(widget_array[kCGrT1+ i], XmNvalue, TextField[i]); 
@@ -89,9 +89,9 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
   fn= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);  
-  strcpy(PHASE->plotpsname, fn); 
+  strncpy(PHASE->plotpsname, fn, MaxPathLength); 
   XtFree(fn);
-  text= XmTextGetString(widget_array[kCGrT5]); strcpy(gr->titel, text); 
+  text= XmTextGetString(widget_array[kCGrT5]); strncpy(gr->titel, text, 80); 
   get_something(widget_array[kCGrOptMenu], XmNmenuHistory, &w);  
   get_something(w, XmNlabelString, &label);  
   /*  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn))
@@ -255,7 +255,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
 #ifdef DEBUG
        printf("DEBUG: SetGrDatStruct: init\n");
 #endif
-       strcpy(gr->titel, "PHASE- graphic output"); 
+       strncpy(gr->titel, "PHASE- graphic output", 80); 
        gr->status= gr->zeilen= 0; 
        gr->ymi= gr->yma= gr->zmi= gr->zma= gr->dymi= 
        gr->dyma= gr->dzmi= gr->dzma= gr->tmi= gr->tma= 0.0;    

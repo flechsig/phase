@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Jan 12 09:47:29 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:20:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -31,19 +31,18 @@
 #include "phase.h"         
 #include "rtrace.h" 
 
-void inttochar(int n,char *sn)
+void inttochar(int n, char *sn)
 {
-   if(n==0)strcpy(sn,"0");
-   if(n==1)strcpy(sn,"1");
-   if(n==2)strcpy(sn,"2");
-   if(n==3)strcpy(sn,"3");
-   if(n==4)strcpy(sn,"4");
-   if(n==5)strcpy(sn,"5");
-   if(n==6)strcpy(sn,"6");
-   if(n==7)strcpy(sn,"7");
-   if(n==8)strcpy(sn,"8");
-   if(n==9)strcpy(sn,"9");
-        
+  if(n==0)strncpy(sn, "0", 2);
+  if(n==1)strncpy(sn, "1", 2);
+  if(n==2)strncpy(sn, "2", 2);
+  if(n==3)strncpy(sn, "3", 2);
+  if(n==4)strncpy(sn, "4", 2);
+  if(n==5)strncpy(sn, "5", 2);
+  if(n==6)strncpy(sn, "6", 2);
+  if(n==7)strncpy(sn, "7", 2);
+  if(n==8)strncpy(sn, "8", 2);
+  if(n==9)strncpy(sn, "9", 2);
 }
 
 void PSTxx(struct BeamlineType *bl) 
@@ -92,8 +91,8 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
 }  /* end writempsd */
 
 void get_nam(int n, 
-	     char *eyre,char *eyim,char *ezre,char *ezim,
-	     char *eyre1,char *eyim1, char *ezre1,char *ezim1, 
+	     char *eyre,  char *eyim, char *ezre, char *ezim,
+	     char *eyre1, char *eyim1, char *ezre1, char *ezim1, 
 	     struct BeamlineType *bl)
 {
 
@@ -105,24 +104,24 @@ void get_nam(int n,
    struct statistics st;          /* bereitet probleme (Absturz) */
    struct map4 m4;   
 
-   char s1[MaxPathLength], s2[MaxPathLength],sn[2];
+   char s1[MaxPathLength], s2[MaxPathLength], sn[2];
    
    int i, j, c;
    
-   strcpy(eyre,"EYRES");
-   strcpy(eyim,"EYIMS");
-   strcpy(ezre,"EZRES");
-   strcpy(ezim,"EZIMS");
+   strncpy(eyre, "EYRES", MaxPathLength);
+   strncpy(eyim, "EYIMS", MaxPathLength);
+   strncpy(ezre, "EZRES", MaxPathLength);
+   strncpy(ezim, "EZIMS", MaxPathLength);
 
-   strcpy(eyre1,"EYRES");
-   strcpy(eyim1,"EYIMS");
-   strcpy(ezre1,"EZRES");
-   strcpy(ezim1,"EZIMS");
+   strncpy(eyre1, "EYRES", MaxPathLength);
+   strncpy(eyim1, "EYIMS", MaxPathLength);
+   strncpy(ezre1, "EZRES", MaxPathLength);
+   strncpy(ezim1, "EZIMS", MaxPathLength);
 
-   if(n < 10000) strcpy(s1,"0");
-   if(n < 1000) strcat(s1,"0");
-   if(n < 100) strcat(s1,"0");
-   if(n < 10) strcat(s1,"0");
+   if(n < 10000) strncpy(s1, "0", 2);
+   if(n < 1000)  strcat(s1, "0");
+   if(n < 100)   strcat(s1, "0");
+   if(n < 10)    strcat(s1, "0");
 
    i=0;
    do{
@@ -160,7 +159,7 @@ void get_nam(int n,
    strcat(ezre1,".DA");
    strcat(ezim1,".DA");
 
-   inttochar(bl->src.so4.nsource,sn);
+   inttochar(bl->src.so4.nsource, sn);
 
    strcat(eyre,sn);
    strcat(eyim,sn);
@@ -224,10 +223,10 @@ void MPST(struct BeamlineType *bl)
 	
        get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
 	
-   strcpy(bl->src.so4.fsource4a,eyre);
-   strcpy(bl->src.so4.fsource4b,eyim); 
-   strcpy(bl->src.so4.fsource4c,ezre); 
-   strcpy(bl->src.so4.fsource4d,ezim); 
+       strncpy(bl->src.so4.fsource4a,eyre, 80);
+       strncpy(bl->src.so4.fsource4b,eyim, 80); 
+       strncpy(bl->src.so4.fsource4c,ezre, 80); 
+       strncpy(bl->src.so4.fsource4d,ezim, 80); 
 
 /* init source */
    src_ini(&bl->src);   
@@ -270,10 +269,10 @@ void MPST(struct BeamlineType *bl)
 
        get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
 
-   strcpy(bl->src.so4.fsource4a,eyre);
-   strcpy(bl->src.so4.fsource4b,eyim); 
-   strcpy(bl->src.so4.fsource4c,ezre); 
-   strcpy(bl->src.so4.fsource4d,ezim); 
+       strncpy(bl->src.so4.fsource4a,eyre, 80);
+   strncpy(bl->src.so4.fsource4b,eyim, 80); 
+   strncpy(bl->src.so4.fsource4c,ezre, 80); 
+   strncpy(bl->src.so4.fsource4d,ezim, 80); 
 
 /* init source */
    src_ini(&bl->src);   

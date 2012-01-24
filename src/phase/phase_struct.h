@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <26 Aug 11 15:52:07 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:27:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -149,7 +149,7 @@ typedef struct ComplexStruct {
 	   int  isrcreal,isrcimag,iactreal,iactimag;
         };  
 
-struct  source4 {
+struct source4 {
   char fsource4a[80], fsource4b[80], fsource4c[80],fsource4d[80];
   double xeyremin,xeyremax,dxeyre,
 	xeyimmin,xeyimmax,dxeyim,

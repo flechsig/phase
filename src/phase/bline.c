@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Jan 12 09:45:50 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:21:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1538,7 +1538,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 /************************************************************************/
 /* liest den datensatz vom file 					*/     
 /* PHASEset.psourcename sollte danach mit brightnessnamen initialisert  */
-/* werden: strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6)     */
+/* werden: strncpy(PHASESet.pssourcename, Beamline.src.so6.fsource6)    */
 /************************************************************************/
 {   
    FILE *f; 
@@ -1936,7 +1936,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl, buffer, &buf);
 
-	 /* UF 10.3.06 put it outside	 strcpy(phset->pssourcename, bl->src.so6.fsource6); */ 
+	 /* UF 10.3.06 put it outside	 strncpy(phset->pssourcename, bl->src.so6.fsource6); */ 
 	 /* PutPHASE(phset, MainPickName); */ 
 
        } else  rcode= -1;   /* end PSSOURCES */

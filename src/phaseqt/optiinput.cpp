@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <24 Jan 12 09:32:13 flechsig> 
+//  Time-stamp: <24 Jan 12 15:48:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -245,7 +245,7 @@ void OptiInput::applySlot()
   for (i= 0; i < 2; i++)  
     {
       inputList->setCurrentRow(i);
-      strcpy(buffer, inputList->currentItem()->text().toAscii().data());
+      strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
       if (!buffer) return; 
       subzeile= buffer; 
       k= 0; 
@@ -263,7 +263,7 @@ void OptiInput::applySlot()
   for (i= 0; i < parameterzahl; i++)  
     {
       inputList->setCurrentRow(i+2);
-      strcpy(buffer, inputList->currentItem()->text().toAscii().data());
+      strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
       if (!buffer) return;
       sscanf(buffer, "%d", &index);
       subzeile= buffer; k= 0;
@@ -464,7 +464,7 @@ void OptiInput::selectInputSlot()
   printf("selectinputSlot\n");
   if (parameternumber < 0) 
     return;
-  strcpy(buffer, inputList->currentItem()->text().toAscii().data());
+  strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
   
   ch= strchr(buffer, ':');
 

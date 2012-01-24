@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <02 Sep 11 13:36:36 flechsig>  */
+/*  Time-stamp: <24 Jan 12 15:37:31 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -97,7 +97,7 @@ void AddBLElement(struct BeamlineType *bl, char *name)
      {
        ExpandFileNames(&PHASESet, name);  
        PutPHASE(&PHASESet, MainPickName);  
-       strcpy(listpt->elementname, name);  
+       strncpy(listpt->elementname, name, MaxPathLength);  
        printf("AddBLElement: update filenames\n");
          
        printf("AddBLElement: init new element with default geometry data\n");
@@ -237,10 +237,10 @@ void InitBLBox(char *blname, struct BeamlineType *bl)
 /**/   
    /* globale paras setzen */
 /* modification: 13 Feb 98 11:29:45 flechsig einheit mm */
-   sprintf(buffer, "%5G", bl->BLOptions.lambda* 1e6);    
+   snprintf(buffer, 20, "%5G", bl->BLOptions.lambda* 1e6);    
    set_something(widget_array[kEBLT31a], XmNvalue, buffer);     
    
-   sprintf(buffer, "%5G", bl->BLOptions.displength);    
+   snprintf(buffer, 20, "%5G", bl->BLOptions.displength);    
    set_something(widget_array[kEBLT41a], XmNvalue, buffer);     
 
    bl->deltalambdafactor= -100.0;    
@@ -263,7 +263,7 @@ void GetBLBox(char *blname, struct BeamlineType *bl)
      return;*/ 
    text= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			 NULL, 0, XmOUTPUT_ALL);
-   strcpy(blname, text); XmStringFree(label); XtFree(text);
+   strncpy(blname, text, MaxPathLength); XmStringFree(label); XtFree(text);
 
    text= XmTextGetString(widget_array[kEBLT31a]);    
    sscanf(text, "%lf", &bl->BLOptions.lambda); 
@@ -315,12 +315,12 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
    XmToggleButtonSetState(widget_array[kEBLup+ ep->GDat.azimut], True, True);
    
    /* w, l, slope setzen */
-   sprintf(buffer[0], "%5G", ep->MDat.w1);    
-   sprintf(buffer[1], "%5G", ep->MDat.w2);   
-   sprintf(buffer[2], "%5G", ep->MDat.l1);   
-   sprintf(buffer[3], "%5G", ep->MDat.l2);   
-   sprintf(buffer[4], "%5G", ep->MDat.slopew);   
-   sprintf(buffer[5], "%5G", ep->MDat.slopel);   
+   snprintf(buffer[0], 20, "%5G", ep->MDat.w1);    
+   snprintf(buffer[1], 20, "%5G", ep->MDat.w2);   
+   snprintf(buffer[2], 20, "%5G", ep->MDat.l1);   
+   snprintf(buffer[3], 20, "%5G", ep->MDat.l2);   
+   snprintf(buffer[4], 20, "%5G", ep->MDat.slopew);   
+   snprintf(buffer[5], 20, "%5G", ep->MDat.slopel);   
    /* for (i= 0; i < 6; i++)
      /*     set_something(widget_array[kEBLT11+ i], XmNvalue, buffer[i]);   */
 } /* end UpdateBLBox */
@@ -439,7 +439,7 @@ void xprintf(char *text)
   char *inhalt, *neuinhalt, zeile[80];
   int maxlen, lpos, len;
     
-  sprintf(zeile,"%s", text);
+  snprintf(zeile, 80, "%s", text);
   maxlen= XmTextGetMaxLength(widget_array[kMainList]);
   lpos  = XmTextGetLastPosition(widget_array[kMainList]); 
   XmTextInsert(widget_array[kMainList], lpos, zeile);  
@@ -461,7 +461,7 @@ void UpdateMainList()
   FILE *file;
   char line[80], buffer[80];
 
-  sprintf(line, "%s;1", MainListFileName);   
+  snprintf(line, 80, "%s;1", MainListFileName);   
   if ((file= fopen(line, "r")) != NULL)	
     {
       fprintf(stderr,"\nStart output\n\n");
@@ -469,12 +469,12 @@ void UpdateMainList()
         {
 	  fgets(line, 80, file);
           /* puts(line);  */
-	  sprintf(buffer, "%s\0", line);    
+	  snprintf(buffer, 80, "%s\0", line);    
 	  fprintf(stderr,"%s", buffer);    
 	  xprintf(buffer);
 	}
       fclose(file); 
-      sprintf(line,"del/noconf %s;*", MainListFileName); 
+      snprintf(line, 80, "del/noconf %s;*", MainListFileName); 
       system(line);   
     }  /*else fprintf(stderr, "%s not found\n", MainListFileName);  */
 }
@@ -529,11 +529,11 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
   XtVaSetValues(widget_array[kCOptiMenu], XmNmenuHistory, w, NULL); 
   
   XmListDeleteAllItems(widget_array[kCOptiList2]);
-  sprintf(buffer, "x : %d %d %f", os.xindex, os.xpoints, os.dx);
+  snprintf(buffer, MaxPathLength, "x : %d %d %f", os.xindex, os.xpoints, os.dx);
   label= XmStringCreateLocalized(buffer);   
   XmListAddItem(widget_array[kCOptiList2], label, 0); 
   XmStringFree(label); 
-  sprintf(buffer, "y : %d %d %f", os.yindex, os.ypoints, os.dy);
+  snprintf(buffer, MaxPathLength, "y : %d %d %f", os.yindex, os.ypoints, os.dy);
   label= XmStringCreateLocalized(buffer);   
   XmListAddItem(widget_array[kCOptiList2], label, 0); 
   XmStringFree(label); 
@@ -555,7 +555,7 @@ void InitOptiBox(char *pickname, struct BeamlineType *bl)
 	      buffer[strlen(buffer) -1]= '\0';
 	      subzeile= strchr(buffer, ' ');
 	      if (subzeile== NULL) printf("InitOptiBox: parse error- no space found\n");  
-	      sprintf(buffer1, "%d %s", os.parindex[i], ++subzeile);
+	      snprintf(buffer1, MaxPathLength, "%d %s", os.parindex[i], ++subzeile);
 	      label= XmStringCreateLocalized(buffer1);   
 	      XmListAddItem(widget_array[kCOptiList2], label, 0); 
 	      XmStringFree(label);  
@@ -605,11 +605,11 @@ void InitOptiList2(int selpos, char *neu)
       printf("sel\n");
       i= selpos- 1;
       if (i > 1) i= 2;
-      sprintf(rbuffer, "%s", inhalt[i]);   
+      snprintf(rbuffer, 100, "%s", inhalt[i]);   
 
       str= XmStringCreateLocalized(rbuffer);  
 
-      sprintf(rbuffer, "%s", neu);   
+      snprintf(rbuffer, 100, "%s", neu);   
       set_something(widget_array[kCOptiT1], XmNvalue, rbuffer);   
       set_something(widget_array[kCOptiEditLabel], 
 		    XmNlabelString, str);    
@@ -765,109 +765,109 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 #endif
   /* Werte von Variablen auf Strings uebertragen */ 
   k= 0;
-  sprintf(pvals[k++], "%g", op->epsilon);
-  sprintf(pvals[k++], "%d", op->ifl.iord); 
-  sprintf(pvals[k++], "%d", op->ifl.iordsc); 
-  sprintf(pvals[k++], "%d", op->ifl.iexpand);  
-  sprintf(pvals[k++], "%d", op->ifl.iplmode);
-  sprintf(pvals[k++], "%d", bl->src.isrctype);
+  snprintf(pvals[k++], 21, "%g", op->epsilon);
+  snprintf(pvals[k++], 21, "%d", op->ifl.iord); 
+  snprintf(pvals[k++], 21, "%d", op->ifl.iordsc); 
+  snprintf(pvals[k++], 21, "%d", op->ifl.iexpand);  
+  snprintf(pvals[k++], 21, "%d", op->ifl.iplmode);
+  snprintf(pvals[k++], 21, "%d", bl->src.isrctype);
   
-  sprintf(pvals[k++], "%g", op->apr.rpin);
-  sprintf(pvals[k++], "%g", op->apr.srcymin);
-  sprintf(pvals[k++], "%g", op->apr.srcymax);
-  sprintf(pvals[k++], "%g", op->apr.srczmin);
-  sprintf(pvals[k++], "%g", op->apr.srczmax);
+  snprintf(pvals[k++], 21, "%g", op->apr.rpin);
+  snprintf(pvals[k++], 21, "%g", op->apr.srcymin);
+  snprintf(pvals[k++], 21, "%g", op->apr.srcymax);
+  snprintf(pvals[k++], 21, "%g", op->apr.srczmin);
+  snprintf(pvals[k++], 21, "%g", op->apr.srczmax);
   
-  sprintf(pvals[k++], "%g", op->apr.rpin_ap);
-  sprintf(pvals[k++], "%g", op->apr.ymin_ap);
-  sprintf(pvals[k++], "%g", op->apr.ymax_ap);
-  sprintf(pvals[k++], "%g", op->apr.zmin_ap);
-  sprintf(pvals[k++], "%g", op->apr.zmax_ap);
+  snprintf(pvals[k++], 21, "%g", op->apr.rpin_ap);
+  snprintf(pvals[k++], 21, "%g", op->apr.ymin_ap);
+  snprintf(pvals[k++], 21, "%g", op->apr.ymax_ap);
+  snprintf(pvals[k++], 21, "%g", op->apr.zmin_ap);
+  snprintf(pvals[k++], 21, "%g", op->apr.zmax_ap);
   
-  sprintf(pvals[k++], "%g", bl->src.so5.dipcy);
-  sprintf(pvals[k++], "%g", bl->src.so5.dipcz);
-  sprintf(pvals[k++], "%g", bl->src.so5.dipdisy);
-  sprintf(pvals[k++], "%g", bl->src.so5.dipdisz);
+  snprintf(pvals[k++], 21, "%g", bl->src.so5.dipcy);
+  snprintf(pvals[k++], 21, "%g", bl->src.so5.dipcz);
+  snprintf(pvals[k++], 21, "%g", bl->src.so5.dipdisy);
+  snprintf(pvals[k++], 21, "%g", bl->src.so5.dipdisz);
   
-/*   sprintf(pvals[k++], "%g", bl->src.so5.dipymin); */
-/*   sprintf(pvals[k++], "%g", bl->src.so5.dipymax); */
-/*   sprintf(pvals[k++], "%g", bl->src.so5.dipzmin); */
-/*   sprintf(pvals[k++], "%g", bl->src.so5.dipzmax); */
+/*   snprintf(pvals[k++], 21, "%g", bl->src.so5.dipymin); */
+/*   snprintf(pvals[k++], 21, "%g", bl->src.so5.dipymax); */
+/*   snprintf(pvals[k++], 21, "%g", bl->src.so5.dipzmin); */
+/*   snprintf(pvals[k++], 21, "%g", bl->src.so5.dipzmax); */
   
-  /*UF 10.2.00  sprintf(pvals[k++], "%d", op->ifl.igrating); */
-  sprintf(pvals[k++], "%d", op->ifl.inorm);
-  sprintf(pvals[k++], "%d", op->ifl.inorm1);
-  sprintf(pvals[k++], "%d", op->ifl.inorm2);
-  sprintf(pvals[k++], "%d", op->ifl.matrel);
+  /*UF 10.2.00  snprintf(pvals[k++], 21, "%d", op->ifl.igrating); */
+  snprintf(pvals[k++], 21, "%d", op->ifl.inorm);
+  snprintf(pvals[k++], 21, "%d", op->ifl.inorm1);
+  snprintf(pvals[k++], 21, "%d", op->ifl.inorm2);
+  snprintf(pvals[k++], 21, "%d", op->ifl.matrel);
   
-  sprintf(pvals[k++], "%d", bl->src.so1.isrcy);
-  sprintf(pvals[k++], "%d", bl->src.so1.isrcdy);
-  sprintf(pvals[k++], "%g", bl->src.so1.sigmay);
-  sprintf(pvals[k++], "%g", bl->src.so1.sigmayp * 1e3);
+  snprintf(pvals[k++], 21, "%d", bl->src.so1.isrcy);
+  snprintf(pvals[k++], 21, "%d", bl->src.so1.isrcdy);
+  snprintf(pvals[k++], 21, "%g", bl->src.so1.sigmay);
+  snprintf(pvals[k++], 21, "%g", bl->src.so1.sigmayp * 1e3);
   
-  sprintf(pvals[k++], "%g", op->xi.ymin * 1e3);
-  sprintf(pvals[k++], "%g", op->xi.ymax * 1e3);
-  /*  sprintf(pvals[k++], "%d", op->xi.inumy);  */
-  /*  sprintf(pvals[k++], "%d", op->xi.itery0); */
-  sprintf(pvals[k++], "%d", op->xi.ianzy0);
- /* sprintf(pvals[k++], "%d", op->xi.imaxy);  */
- /* sprintf(pvals[k++], "%g", op->xi.fracy);  */
- /* sprintf(pvals[k++], "%g", op->xi.frac1y); */ 
+  snprintf(pvals[k++], 21, "%g", op->xi.ymin * 1e3);
+  snprintf(pvals[k++], 21, "%g", op->xi.ymax * 1e3);
+  /*  snprintf(pvals[k++], 21, "%d", op->xi.inumy);  */
+  /*  snprintf(pvals[k++], 21, "%d", op->xi.itery0); */
+  snprintf(pvals[k++], 21, "%d", op->xi.ianzy0);
+ /* snprintf(pvals[k++], 21, "%d", op->xi.imaxy);  */
+ /* snprintf(pvals[k++], 21, "%g", op->xi.fracy);  */
+ /* snprintf(pvals[k++], 21, "%g", op->xi.frac1y); */ 
   
-  sprintf(pvals[k++], "%d", bl->src.so1.isrcz);
-  sprintf(pvals[k++], "%d", bl->src.so1.isrcdz);
-  sprintf(pvals[k++], "%g", bl->src.so1.sigmaz);
-  sprintf(pvals[k++], "%g", bl->src.so1.sigmazp * 1e3);
+  snprintf(pvals[k++], 21, "%d", bl->src.so1.isrcz);
+  snprintf(pvals[k++], 21, "%d", bl->src.so1.isrcdz);
+  snprintf(pvals[k++], 21, "%g", bl->src.so1.sigmaz);
+  snprintf(pvals[k++], 21, "%g", bl->src.so1.sigmazp * 1e3);
   
-  sprintf(pvals[k++], "%g", op->xi.zmin * 1e3);
-  sprintf(pvals[k++], "%g", op->xi.zmax * 1e3);
-  /* sprintf(pvals[k++], "%d", op->xi.inumz);  */
-  /* sprintf(pvals[k++], "%d", op->xi.iterz0); */ 
-  sprintf(pvals[k++], "%d", op->xi.ianzz0);
-  /* sprintf(pvals[k++], "%d", op->xi.imaxz);  */
-  /* sprintf(pvals[k++], "%g", op->xi.fracz);  */
-  /* sprintf(pvals[k++], "%g", op->xi.frac1z); */ 
+  snprintf(pvals[k++], 21, "%g", op->xi.zmin * 1e3);
+  snprintf(pvals[k++], 21, "%g", op->xi.zmax * 1e3);
+  /* snprintf(pvals[k++], 21, "%d", op->xi.inumz);  */
+  /* snprintf(pvals[k++], 21, "%d", op->xi.iterz0); */ 
+  snprintf(pvals[k++], 21, "%d", op->xi.ianzz0);
+  /* snprintf(pvals[k++], 21, "%d", op->xi.imaxz);  */
+  /* snprintf(pvals[k++], 21, "%g", op->xi.fracz);  */
+  /* snprintf(pvals[k++], 21, "%g", op->xi.frac1z); */ 
   
-  sprintf(pvals[k++], "%d", op->ifl.ibright); 
-  sprintf(pvals[k++], "%d", op->ifl.ispline); 
+  snprintf(pvals[k++], 21, "%d", op->ifl.ibright); 
+  snprintf(pvals[k++], 21, "%d", op->ifl.ispline); 
   
-  sprintf(pvals[k++], "%g", op->xi.d12_max);
-  sprintf(pvals[k++], "%d", op->xi.id12);
-  sprintf(pvals[k++], "%d", op->xi.ianz0_cal);
-  sprintf(pvals[k++], "%d", op->xi.ianz0_fixed);
-  sprintf(pvals[k++], "%d", op->xi.iamp_smooth);
-  sprintf(pvals[k++], "%d", op->xi.iord_amp);
-  sprintf(pvals[k++], "%d", op->xi.ifm_amp);
-/*   sprintf(pvals[k++], "%g", op->xi.amp_change); */
-  sprintf(pvals[k++], "%d", op->xi.iord_pha);
-  /* sprintf(pvals[k++], "%d", op->xi.iordap); */
+  snprintf(pvals[k++], 21, "%g", op->xi.d12_max);
+  snprintf(pvals[k++], 21, "%d", op->xi.id12);
+  snprintf(pvals[k++], 21, "%d", op->xi.ianz0_cal);
+  snprintf(pvals[k++], 21, "%d", op->xi.ianz0_fixed);
+  snprintf(pvals[k++], 21, "%d", op->xi.iamp_smooth);
+  snprintf(pvals[k++], 21, "%d", op->xi.iord_amp);
+  snprintf(pvals[k++], 21, "%d", op->xi.ifm_amp);
+/*   snprintf(pvals[k++], 21, "%g", op->xi.amp_change); */
+  snprintf(pvals[k++], 21, "%d", op->xi.iord_pha);
+  /* snprintf(pvals[k++], 21, "%d", op->xi.iordap); */
    /* modification: 29 Oct 98 14:43:25 flechsig */
 
- /*  sprintf(pvals[k++], "%g", op->xi.phase_change_1); */
-/*   sprintf(pvals[k++], "%g", op->xi.phase_change_2); */
- /*  sprintf(pvals[k++], "%d", op->xi.iphase_curv); */
-/*   sprintf(pvals[k++], "%d", op->xi.iphase_pi2); */
-  sprintf(pvals[k++], "%d", op->xi.ifm_pha);
-  /*  sprintf(pvals[k++], "%g", op->xi.dphi_min); */
+ /*  snprintf(pvals[k++], 21, "%g", op->xi.phase_change_1); */
+/*   snprintf(pvals[k++], 21, "%g", op->xi.phase_change_2); */
+ /*  snprintf(pvals[k++], 21, "%d", op->xi.iphase_curv); */
+/*   snprintf(pvals[k++], 21, "%d", op->xi.iphase_pi2); */
+  snprintf(pvals[k++], 21, "%d", op->xi.ifm_pha);
+  /*  snprintf(pvals[k++], 21, "%g", op->xi.dphi_min); */
   
-  sprintf(pvals[k++], "%g", op->xi.distfocy);
-  sprintf(pvals[k++], "%g", op->xi.distfocz);
-  sprintf(pvals[k++], "%d", op->ifl.ipinarr);
+  snprintf(pvals[k++], 21, "%g", op->xi.distfocy);
+  snprintf(pvals[k++], 21, "%g", op->xi.distfocz);
+  snprintf(pvals[k++], 21, "%d", op->ifl.ipinarr);
   
-  sprintf(pvals[k++], "%g", bl->src.pin_yl0);
-  sprintf(pvals[k++], "%g", bl->src.pin_yl);
-  sprintf(pvals[k++], "%g", bl->src.pin_zl0);
-  sprintf(pvals[k++], "%g", bl->src.pin_zl);
+  snprintf(pvals[k++], 21, "%g", bl->src.pin_yl0);
+  snprintf(pvals[k++], 21, "%g", bl->src.pin_yl);
+  snprintf(pvals[k++], 21, "%g", bl->src.pin_zl0);
+  snprintf(pvals[k++], 21, "%g", bl->src.pin_zl);
   /* 17.11.08 */
-  sprintf(pvals[k++], "%d", bl->src.so4.nfreqtot);
-  sprintf(pvals[k++], "%d", bl->src.so4.nfreqpos);
-  sprintf(pvals[k++], "%d", bl->src.so4.nfreqneg);
-  sprintf(pvals[k++], "%d", bl->src.so4.nsource);
-  sprintf(pvals[k++], "%d", bl->src.so4.nimage);
-  sprintf(pvals[k++], "%g", bl->src.so4.deltatime);
-  sprintf(pvals[k++], "%d", bl->src.so4.iconj);
+  snprintf(pvals[k++], 21, "%d", bl->src.so4.nfreqtot);
+  snprintf(pvals[k++], 21, "%d", bl->src.so4.nfreqpos);
+  snprintf(pvals[k++], 21, "%d", bl->src.so4.nfreqneg);
+  snprintf(pvals[k++], 21, "%d", bl->src.so4.nsource);
+  snprintf(pvals[k++], 21, "%d", bl->src.so4.nimage);
+  snprintf(pvals[k++], 21, "%g", bl->src.so4.deltatime);
+  snprintf(pvals[k++], 21, "%d", bl->src.so4.iconj);
 
-  sprintf(pvals[k++], "%d", op->REDUCE_maps);
+  snprintf(pvals[k++], 21, "%d", op->REDUCE_maps);
 
 #ifdef DEBUG  
   printf("InitParameterBox: parameter : %d\n", k); /* fuer debug */
@@ -875,32 +875,32 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
   /*****************************************
     ende fg34 */
   /*
-    sprintf(pvals[k++], "%19d", pop->intmod);  
-    sprintf(pvals[k++], "%19d", psp->yhard); 
-    sprintf(pvals[k++], "%19d", psp->dyhard);    
-    sprintf(pvals[k++], "%19d", psp->zhard); 
-    sprintf(pvals[k++], "%19d", psp->dzhard);    
-    sprintf(pvals[k++], "%19g", psp->sigy);    
-    sprintf(pvals[k++], "%19g", psp->sigdy    * 1e3);    
-    sprintf(pvals[k++], "%19g", psp->sigz);    
-    sprintf(pvals[k++], "%19g", psp->sigdz    * 1e3);    
-    sprintf(pvals[k++], "%19d", pop->ndyfix); 
-    sprintf(pvals[k++], "%19g", pop->dyminfix * 1e3); 
-    sprintf(pvals[k++], "%19g", pop->dymaxfix * 1e3);    
-    sprintf(pvals[k++], "%19d", pop->ndzfix); 
-    sprintf(pvals[k++], "%19g", pop->dzminfix * 1e3); 
-    sprintf(pvals[k++], "%19g", pop->dzmaxfix * 1e3);
+    snprintf(pvals[k++], 21, "%19d", pop->intmod);  
+    snprintf(pvals[k++], 21, "%19d", psp->yhard); 
+    snprintf(pvals[k++], 21, "%19d", psp->dyhard);    
+    snprintf(pvals[k++], 21, "%19d", psp->zhard); 
+    snprintf(pvals[k++], 21, "%19d", psp->dzhard);    
+    snprintf(pvals[k++], 21, "%19g", psp->sigy);    
+    snprintf(pvals[k++], 21, "%19g", psp->sigdy    * 1e3);    
+    snprintf(pvals[k++], 21, "%19g", psp->sigz);    
+    snprintf(pvals[k++], 21, "%19g", psp->sigdz    * 1e3);    
+    snprintf(pvals[k++], 21, "%19d", pop->ndyfix); 
+    snprintf(pvals[k++], 21, "%19g", pop->dyminfix * 1e3); 
+    snprintf(pvals[k++], 21, "%19g", pop->dymaxfix * 1e3);    
+    snprintf(pvals[k++], 21, "%19d", pop->ndzfix); 
+    snprintf(pvals[k++], 21, "%19g", pop->dzminfix * 1e3); 
+    snprintf(pvals[k++], 21, "%19g", pop->dzmaxfix * 1e3);
     
-    sprintf(pvals[k++], "%19d", pop->itery0);    
-    sprintf(pvals[k++], "%19d", pop->ianzy0);
-    sprintf(pvals[k++], "%19d", pop->imaxy);    
-    sprintf(pvals[k++], "%19g", pop->fracy);    
-    sprintf(pvals[k++], "%19g", pop->frac1y); 
-    sprintf(pvals[k++], "%19d", pop->iterz0); 
-    sprintf(pvals[k++], "%19d", pop->ianzz0);    
-    sprintf(pvals[k++], "%19d", pop->imaxz); 
-    sprintf(pvals[k++], "%19g", pop->fracz); 
-    sprintf(pvals[k++], "%19g", pop->frac1z);  
+    snprintf(pvals[k++], 21, "%19d", pop->itery0);    
+    snprintf(pvals[k++], 21, "%19d", pop->ianzy0);
+    snprintf(pvals[k++], 21, "%19d", pop->imaxy);    
+    snprintf(pvals[k++], 21, "%19g", pop->fracy);    
+    snprintf(pvals[k++], 21, "%19g", pop->frac1y); 
+    snprintf(pvals[k++], 21, "%19d", pop->iterz0); 
+    snprintf(pvals[k++], 21, "%19d", pop->ianzz0);    
+    snprintf(pvals[k++], 21, "%19d", pop->imaxz); 
+    snprintf(pvals[k++], 21, "%19g", pop->fracz); 
+    snprintf(pvals[k++], 21, "%19g", pop->frac1z);  
     **************************************************/
   if ((neu != NULL) && (*neu != 0)) 
     {
@@ -912,7 +912,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
       
       sscanf(neu, "%d %s", &k, &rbuffer);     
       cp = strrchr(neu, ':'); cp++; 
-      sprintf(pvals[k], "%s", cp);
+      snprintf(pvals[k], 21, "%s", cp);
       printf( "No: %d new: %s\n", k, pvals[k]);
       
       /* alle Werte wieder von den Strings uebernehmen */
@@ -1077,7 +1077,7 @@ void InitParameterBox(struct BeamlineType *bl, char *neu)
 
   for (i= 0; i < itemzahl; i++) 
     {
-      sprintf(rbuffer, "%d  %s: %s", i, inhalt[i], pvals[i]);    
+      snprintf(rbuffer, 100, "%d  %s: %s", i, inhalt[i], pvals[i]);    
       printf("%s\n", rbuffer);    /* debug */
       str[i]= XmStringCreateLocalized(rbuffer);  
     }    
@@ -1112,25 +1112,25 @@ void InitFileBox(struct PHASEset *x)
   char TextField[18][MaxPathLength];
   XmString label;  	
         
-  sprintf(TextField[0],  "%s", x->matrixname);    
-  sprintf(TextField[1],  "%s", x->mapname);    
-  sprintf(TextField[2],  "%s", x->sourceraysname);    
-  sprintf(TextField[3],  "%s", x->imageraysname);    
-  sprintf(TextField[4],  "%s", x->intersecname);    
-  sprintf(TextField[5],  "%s", x->geometryname);    
-  sprintf(TextField[6],  "%s", x->elementname);     
-  sprintf(TextField[7],  "%s", x->sourcepckname);    
-  sprintf(TextField[8],  "%s", x->geometrypckname);    
-  sprintf(TextField[9],  "%s", x->elementpckname);     
-  sprintf(TextField[10], "%s", x->pssourcename);     
-  sprintf(TextField[11], "%s", x->printpclname);     
-  sprintf(TextField[12], "%s", x->optipckname);
+  snprintf(TextField[0],  MaxPathLength, "%s", x->matrixname);    
+  snprintf(TextField[1],  MaxPathLength, "%s", x->mapname);    
+  snprintf(TextField[2],  MaxPathLength, "%s", x->sourceraysname);    
+  snprintf(TextField[3],  MaxPathLength, "%s", x->imageraysname);    
+  snprintf(TextField[4],  MaxPathLength, "%s", x->intersecname);    
+  snprintf(TextField[5],  MaxPathLength, "%s", x->geometryname);    
+  snprintf(TextField[6],  MaxPathLength, "%s", x->elementname);     
+  snprintf(TextField[7],  MaxPathLength, "%s", x->sourcepckname);    
+  snprintf(TextField[8],  MaxPathLength, "%s", x->geometrypckname);    
+  snprintf(TextField[9],  MaxPathLength, "%s", x->elementpckname);     
+  snprintf(TextField[10], MaxPathLength, "%s", x->pssourcename);     
+  snprintf(TextField[11], MaxPathLength, "%s", x->printpclname);     
+  snprintf(TextField[12], MaxPathLength, "%s", x->optipckname);
 
-  sprintf(TextField[13], "%s", x->so4_fsource4a);
-  sprintf(TextField[14], "%s", x->so4_fsource4b);
-  sprintf(TextField[15], "%s", x->so4_fsource4c);
-  sprintf(TextField[16], "%s", x->so4_fsource4d);
-  sprintf(TextField[17], "%s", x->so6_fsource6);
+  snprintf(TextField[13], MaxPathLength, "%s", x->so4_fsource4a);
+  snprintf(TextField[14], MaxPathLength, "%s", x->so4_fsource4b);
+  snprintf(TextField[15], MaxPathLength, "%s", x->so4_fsource4c);
+  snprintf(TextField[16], MaxPathLength, "%s", x->so4_fsource4d);
+  snprintf(TextField[17], MaxPathLength, "%s", x->so6_fsource6);
 
   for (i= 0; i < 18; i++)
     {	
@@ -1225,17 +1225,17 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
     {
       /* get_something(widget_array[kFFileButton1], XmNlabelString, &label);
       name= DXmCvtCStoFC(label, &bc, &status);                          
-      strcpy(puffer, name);       
+      strncpy(puffer, name);       
       XtFree(name); 
       auf beamlinename geaendert */
 
-      strcpy(puffer, x->beamlinename); 
+      strncpy(puffer, x->beamlinename, MaxPathLength); 
       
       FnameBody(puffer);
            
       for (i= 0; i < 18; i++) 
 	{
-	  strcpy(puffer1, puffer); strcat(puffer1, exfeld[i]); 
+	  strncpy(puffer1, puffer, MaxPathLength); strcat(puffer1, exfeld[i]); 
 	  label= XmStringCreateLocalized(puffer1); 
 	  set_something(widget_array[kFFileButton1+ i], 
 			XmNlabelString, label);
@@ -1243,23 +1243,23 @@ void ExpandFileNames(struct PHASEset *x, char *pfad)
       XmStringFree(label); 
     } else
       {                                     
-	strcpy(puffer, pfad);       
+	strncpy(puffer, pfad, MaxPathLength);       
 	FnameBody(puffer);
 	/* strrchr-> strchr 12.6.96 */
-	strcpy(puffer1, puffer); 
-	sprintf(x->matrixname,	  "%s%s\0", puffer1, exfeld[0]); 
-	sprintf(x->mapname, 	  "%s%s\0", puffer1, exfeld[1]);    
-	/*  sprintf(x->sourceraysname,  "%s%s\0", puffer1, exfeld[2]);  */  
-	/*  sprintf(x->imageraysname,   "%s%s\0", puffer1, exfeld[3]);  */  
-	sprintf(x->intersecname, 	  "%s%s\0", puffer1, exfeld[4]);    
-	sprintf(x->geometryname, 	  "%s%s\0", puffer1, exfeld[5]);    
-	sprintf(x->elementname, 	  "%s%s\0", puffer1, exfeld[6]);    
-	/*  sprintf(x->sourcepckname,   "%s%s\0", puffer1, exfeld[7]);  */ 
-	sprintf(x->geometrypckname, "%s%s\0", puffer1, exfeld[8]);    
-	sprintf(x->elementpckname,  "%s%s\0", puffer1, exfeld[9]);    
-	/*  sprintf(x->pssourcename, 	  "%s%s\0", puffer1, exfeld[10]); */   
-	/* sprintf(x->printpclname, 	  "%s%s\0", puffer1, exfeld[11]); */ 
-	/* sprintf(x->optipckname,     "%s%s\0", puffer1, exfeld[12]); */ 
+	strncpy(puffer1, puffer, MaxPathLength); 
+	snprintf(x->matrixname, MaxPathLength,	  "%s%s\0", puffer1, exfeld[0]); 
+	snprintf(x->mapname, MaxPathLength, 	  "%s%s\0", puffer1, exfeld[1]);    
+	/*  snprintf(x->sourceraysname,  "%s%s\0", puffer1, exfeld[2]);  */  
+	/*  snprintf(x->imageraysname,   "%s%s\0", puffer1, exfeld[3]);  */  
+	snprintf(x->intersecname, MaxPathLength, 	  "%s%s\0", puffer1, exfeld[4]);    
+	snprintf(x->geometryname, MaxPathLength, 	  "%s%s\0", puffer1, exfeld[5]);    
+	snprintf(x->elementname, MaxPathLength, 	  "%s%s\0", puffer1, exfeld[6]);    
+	/*  snprintf(x->sourcepckname,   "%s%s\0", puffer1, exfeld[7]);  */ 
+	snprintf(x->geometrypckname, MaxPathLength, "%s%s\0", puffer1, exfeld[8]);    
+	snprintf(x->elementpckname, MaxPathLength,  "%s%s\0", puffer1, exfeld[9]);    
+	/*  snprintf(x->pssourcename, 	  "%s%s\0", puffer1, exfeld[10]); */   
+	/* snprintf(x->printpclname, 	  "%s%s\0", puffer1, exfeld[11]); */ 
+	/* snprintf(x->optipckname,     "%s%s\0", puffer1, exfeld[12]); */ 
       } 
 }
 
@@ -1349,18 +1349,18 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
     case 'F':
       w= widget_array[kESFileButton];
       SetIndexField(IFeld, 8, 0, 0, 0, 0, 0, 0, 0, 0); 
-      for (i= 0; i< 8; i++) sprintf(TextField[i], "%s", "***"); 
+      for (i= 0; i< 8; i++) snprintf(TextField[i], 40, "%s", "***"); 
       break; 
     case 'D':
       w= widget_array[kESDipolSourceButton];  
       header= 1;
       SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0); 
       dp= (struct DipolSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", dp->sigy);    
-      sprintf(TextField[1], "%f", dp->sigdy);    
-      sprintf(TextField[2], "%f", dp->sigz);    
-      sprintf(TextField[3], "%f", dp->dz);    
-      sprintf(TextField[4], "%d", bl->RTSource.raynumber);   
+      snprintf(TextField[0], 40, "%f", dp->sigy);    
+      snprintf(TextField[1], 40, "%f", dp->sigdy);    
+      snprintf(TextField[2], 40, "%f", dp->sigz);    
+      snprintf(TextField[3], 40, "%f", dp->dz);    
+      snprintf(TextField[4], 40, "%d", bl->RTSource.raynumber);   
       xprintf("Dipol Source: h. div. hard edge, the rest are sigma values\n"); 
       break;    
     case 'o':
@@ -1368,11 +1368,11 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       header= 1;
       SetIndexField(IFeld, 8, 2, 4, 3, 5, 6, 0, 0, 0);
       sop= (struct PointSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", sop->sigy);    
-      sprintf(TextField[1], "%f", sop->sigdy);    
-      sprintf(TextField[2], "%f", sop->sigz);    
-      sprintf(TextField[3], "%f", sop->sigdz);    
-      sprintf(TextField[4], "%d", bl->RTSource.raynumber); 
+      snprintf(TextField[0], 40, "%f", sop->sigy);    
+      snprintf(TextField[1], 40, "%f", sop->sigdy);    
+      snprintf(TextField[2], 40, "%f", sop->sigz);    
+      snprintf(TextField[3], 40, "%f", sop->sigdz);    
+      snprintf(TextField[4], 40, "%d", bl->RTSource.raynumber); 
       xprintf("Point Source: all sigma values\n");
       break;  
   case 'R':
@@ -1380,9 +1380,9 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       header= 1;
       SetIndexField(IFeld, 8, 4, 5, 6, 0, 0, 0, 0, 0);
       rp= (struct RingSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", rp->dy);    
-      sprintf(TextField[1], "%f", rp->dz);    
-      sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
+      snprintf(TextField[0], 40, "%f", rp->dy);    
+      snprintf(TextField[1], 40, "%f", rp->dz);    
+      snprintf(TextField[2], 40, "%d", bl->RTSource.raynumber); 
       xprintf("Ring Source: half axis of the divergence ellipse, y,z are always 0\n");
       break;  
     case 'U':  
@@ -1390,18 +1390,18 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       header= 6;
       SetIndexField(IFeld, 8, 7, 8, 6, 0, 0, 0, 0, 0);
       up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", up->length);
-      sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
-      sprintf(TextField[2], "%d", bl->RTSource.raynumber);   
+      snprintf(TextField[0], 40, "%f", up->length);
+      snprintf(TextField[1], 40, "%f", bl->BLOptions.lambda* 1e6);
+      snprintf(TextField[2], 40, "%d", bl->RTSource.raynumber);   
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;     
     case 'u':  
       w= widget_array[kESundulatorSourceButton]; 
       SetIndexField(IFeld, 8, 7, 8, 6, 0, 0, 0, 0, 0);
       up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", up->length);
-      sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
-      sprintf(TextField[2], "%d", bl->RTSource.raynumber);    
+      snprintf(TextField[0], 40, "%f", up->length);
+      snprintf(TextField[1], 40, "%f", bl->BLOptions.lambda* 1e6);
+      snprintf(TextField[2], 40, "%d", bl->RTSource.raynumber);    
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;  
       
@@ -1411,10 +1411,10 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       header= 6;
       SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);
       up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", up->length);
-      sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
-      sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
-      sprintf(TextField[3], "%f", up->deltaz);  
+      snprintf(TextField[0], 40, "%f", up->length);
+      snprintf(TextField[1], 40, "%f", bl->BLOptions.lambda* 1e6);
+      snprintf(TextField[2], 40, "%d", bl->RTSource.raynumber); 
+      snprintf(TextField[3], 40, "%f", up->deltaz);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;     
     case 'M':  
@@ -1422,10 +1422,10 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       header= 6;
       SetIndexField(IFeld, 8, 7, 8, 6, 33, 0, 0, 0, 0);
       up= (struct UndulatorSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", up->length);
-      sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
-      sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
-      sprintf(TextField[3], "%f", up->deltaz);  
+      snprintf(TextField[0], 40, "%f", up->length);
+      snprintf(TextField[1], 40, "%f", bl->BLOptions.lambda* 1e6);
+      snprintf(TextField[2], 40, "%d", bl->RTSource.raynumber); 
+      snprintf(TextField[3], 40, "%f", up->deltaz);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;        
     case 'G':  
@@ -1433,14 +1433,14 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       header= 6;
       SetIndexField(IFeld, 8, 7, 8, 6, 33, 34, 35, 36, 37); 
       up0= (struct UndulatorSource0Type *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", up0->length);
-      sprintf(TextField[1], "%f", bl->BLOptions.lambda* 1e6);
-      sprintf(TextField[2], "%d", bl->RTSource.raynumber); 
-      sprintf(TextField[3], "%f", up0->deltaz);  
-      sprintf(TextField[4], "%f", up0->sigmaez);  
-      sprintf(TextField[5], "%f", up0->sigmaey);  
-      sprintf(TextField[6], "%f", up0->sigmaedz);  
-      sprintf(TextField[7], "%f", up0->sigmaedy);  
+      snprintf(TextField[0], 40, "%f", up0->length);
+      snprintf(TextField[1], 40, "%f", bl->BLOptions.lambda* 1e6);
+      snprintf(TextField[2], 40, "%d", bl->RTSource.raynumber); 
+      snprintf(TextField[3], 40, "%f", up0->deltaz);  
+      snprintf(TextField[4], 40, "%f", up0->sigmaez);  
+      snprintf(TextField[5], 40, "%f", up0->sigmaey);  
+      snprintf(TextField[6], 40, "%f", up0->sigmaedz);  
+      snprintf(TextField[7], 40, "%f", up0->sigmaedy);  
       set_something(widget_array[kEST2], XmNsensitive, False); 
       break;        
     case 'S':
@@ -1448,16 +1448,16 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       Raysout= bl->RESULT.RESp;  
       SetIndexField(IFeld, 8, 9, 13, 10, 14, 15, 16, 17, 18); 
       sp= (struct SRSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%lf", sp->y);
-      sprintf(TextField[2], "%lf", sp->z);
-      sprintf(TextField[4], "%lf", sp->dy);  
-      sprintf(TextField[6], "%lf", sp->dz);
+      snprintf(TextField[0], 40, "%lf", sp->y);
+      snprintf(TextField[2], 40, "%lf", sp->z);
+      snprintf(TextField[4], 40, "%lf", sp->dy);  
+      snprintf(TextField[6], 40, "%lf", sp->dz);
       if (Raysout != NULL)  /* noch nichts berechnet */
 	{ 
-	  sprintf(TextField[1], "%lf", Raysout->y);    
-	  sprintf(TextField[3], "%lf", Raysout->z); 
-	  sprintf(TextField[5], "%lf", Raysout->dy* 1e3);
-	  sprintf(TextField[7], "%lf", Raysout->dz* 1e3);  
+	  snprintf(TextField[1], 40, "%lf", Raysout->y);    
+	  snprintf(TextField[3], 40, "%lf", Raysout->z); 
+	  snprintf(TextField[5], 40, "%lf", Raysout->dy* 1e3);
+	  snprintf(TextField[7], 40, "%lf", Raysout->dz* 1e3);  
 	} 
       break; 
     case 'P':
@@ -1465,40 +1465,40 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
       SetIndexField(IFeld, 8, 19, 20, 21, 22, 23, 24, 25, 26);
       /*pssp= (struct PSSourceType *)bl->RTSource.Quellep;*/
       /* wird nicht benutzt */
-      sprintf(TextField[0], "%f", x->sigmay);
-      sprintf(TextField[1], "%f", x->sigmayp);
-      sprintf(TextField[2], "%f", x->ymin); 
-      sprintf(TextField[3], "%f", x->ymax); 
-      sprintf(TextField[4], "%f", x->sigmaz); 
-      sprintf(TextField[5], "%f", x->sigmazp);
-      sprintf(TextField[6], "%f", x->zmin);
-      sprintf(TextField[7], "%f", x->zmax);   
+      snprintf(TextField[0], 40, "%f", x->sigmay);
+      snprintf(TextField[1], 40, "%f", x->sigmayp);
+      snprintf(TextField[2], 40, "%f", x->ymin); 
+      snprintf(TextField[3], 40, "%f", x->ymax); 
+      snprintf(TextField[4], 40, "%f", x->sigmaz); 
+      snprintf(TextField[5], 40, "%f", x->sigmazp);
+      snprintf(TextField[6], 40, "%f", x->zmin);
+      snprintf(TextField[7], 40, "%f", x->zmax);   
       break;    
     case 'I':                          /*hard edge */
       w= widget_array[kESPhaseSpaceImageButton]; 
       SetIndexField(IFeld, 8, 27, 28, 29, 30, 31, 32, 0, 0); 
       psip= (struct PSImageType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", psip->ymin);    
-      sprintf(TextField[1], "%f", psip->ymax);    
-      sprintf(TextField[2], "%f", psip->zmin);   
-      sprintf(TextField[3], "%f", psip->zmax);   
-      sprintf(TextField[4], "%d", psip->iy);   
-      sprintf(TextField[5], "%d", psip->iz); 
-      /* sprintf(TextField[6], "%f", x->xlam_test);   */ 
+      snprintf(TextField[0], 40, "%f", psip->ymin);    
+      snprintf(TextField[1], 40, "%f", psip->ymax);    
+      snprintf(TextField[2], 40, "%f", psip->zmin);   
+      snprintf(TextField[3], 40, "%f", psip->zmax);   
+      snprintf(TextField[4], 40, "%d", psip->iy);   
+      snprintf(TextField[5], 40, "%d", psip->iz); 
+      /* snprintf(TextField[6], "%f", x->xlam_test);   */ 
       break; 
     case 'H':
     default:
       w= widget_array[kESRayTraceButton]; 
       SetIndexField(IFeld, 8, 2, 1, 3, 1, 4, 1, 5, 1); 
       hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
-      sprintf(TextField[0], "%f", hp->disty);
-      sprintf(TextField[1], "%d", hp->iy);    
-      sprintf(TextField[2], "%f", hp->distz);  
-      sprintf(TextField[3], "%d", hp->iz);    
-      sprintf(TextField[4], "%f", hp->divy);   
-      sprintf(TextField[5], "%d", hp->idy);    
-      sprintf(TextField[6], "%f", hp->divz);   
-      sprintf(TextField[7], "%d", hp->idz);    
+      snprintf(TextField[0], 40, "%f", hp->disty);
+      snprintf(TextField[1], 40, "%d", hp->iy);    
+      snprintf(TextField[2], 40, "%f", hp->distz);  
+      snprintf(TextField[3], 40, "%d", hp->iz);    
+      snprintf(TextField[4], 40, "%f", hp->divy);   
+      snprintf(TextField[5], 40, "%d", hp->idy);    
+      snprintf(TextField[6], 40, "%f", hp->divz);   
+      snprintf(TextField[7], 40, "%d", hp->idz);    
       break;   
     }
     /* set history */
@@ -1544,10 +1544,10 @@ void InitGeometryBox(struct gdatset *gx)
 				  (2.0* cos(teta)));
   cff= cos(fi- teta)/ cos(fi+ teta);    /* cos(beta)/ cos(alpha); */
 
-  sprintf(TextField[0], "%f", gx->r    );    
-  sprintf(TextField[1], "%f", gx->rp   );    
-  sprintf(TextField[2], "%f", gx->theta0);  
-  sprintf(TextField[3], "%.3f", cff);    
+  snprintf(TextField[0], 40, "%f", gx->r    );    
+  snprintf(TextField[1], 40, "%f", gx->rp   );    
+  snprintf(TextField[2], 40, "%f", gx->theta0);  
+  snprintf(TextField[3], 40, "%.3f", cff);    
 
   
     	        
@@ -1610,40 +1610,40 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   printf("InitOElementBox: initialize with typ %d\n", sw);    
 #endif 
 
-  sprintf(TextField[0], "%.2f", cff  );
-  sprintf(TextField[1], "%.1f", y->r );
-  sprintf(TextField[2], "%.1f", y->rp);
+  snprintf(TextField[0], 40, "%.2f", cff  );
+  snprintf(TextField[1], 40, "%.1f", y->r );
+  snprintf(TextField[2], 40, "%.1f", y->rp);
 
-  sprintf(TextField[3], "%.3f", y->theta0);
-  sprintf(TextField[4], "%.1f", x->r1);   
-  sprintf(TextField[5], "%.1f", x->r2);
+  snprintf(TextField[3], 40, "%.3f", y->theta0);
+  snprintf(TextField[4], 40, "%.1f", x->r1);   
+  snprintf(TextField[5], 40, "%.1f", x->r2);
 
-  sprintf(TextField[6], "%.1f", x->rmi);      
-  sprintf(TextField[7], "%.2f", x->rho);  
+  snprintf(TextField[6], 40, "%.1f", x->rmi);      
+  snprintf(TextField[7], 40, "%.2f", x->rho);  
         
-  sprintf(TextField[8], "%d",   y->inout);      	   
-  sprintf(TextField[9], "%.2f", y->xdens[1]); 
-  sprintf(TextField[10],"%.2f", y->xdens[3]);    
+  snprintf(TextField[8], 40, "%d",   y->inout);      	   
+  snprintf(TextField[9], 40, "%.2f", y->xdens[1]); 
+  snprintf(TextField[10],40, "%.2f", y->xdens[3]);    
      
-  sprintf(TextField[11], "%.2f", y->xdens[0]);    
-  sprintf(TextField[12], "%.2f", y->xdens[2]);    
-  sprintf(TextField[13], "%.2f", y->xdens[4]);
+  snprintf(TextField[11], 40, "%.2f", y->xdens[0]);    
+  snprintf(TextField[12], 40, "%.2f", y->xdens[2]);    
+  snprintf(TextField[13], 40, "%.2f", y->xdens[4]);
 
-  sprintf(TextField[14], "%.2f", x->du);    
-  sprintf(TextField[15], "%.2f", x->dw);    
-  sprintf(TextField[16], "%.2f", x->dl);
+  snprintf(TextField[14], 40, "%.2f", x->du);    
+  snprintf(TextField[15], 40, "%.2f", x->dw);    
+  snprintf(TextField[16], 40, "%.2f", x->dl);
 
-  sprintf(TextField[17], "%.2f", x->dRu * 1e3);    
-  sprintf(TextField[18], "%.2f", x->dRw * 1e3);    
-  sprintf(TextField[19], "%.2f", x->dRl * 1e3);
+  snprintf(TextField[17], 40, "%.2f", x->dRu * 1e3);    
+  snprintf(TextField[18], 40, "%.2f", x->dRw * 1e3);    
+  snprintf(TextField[19], 40, "%.2f", x->dRl * 1e3);
 
-  sprintf(TextField[20], "%.2f", x->w1);    
-  sprintf(TextField[21], "%.2f", x->w2);    
-  sprintf(TextField[22], "%.3f", x->slopew);
+  snprintf(TextField[20], 40, "%.2f", x->w1);    
+  snprintf(TextField[21], 40, "%.2f", x->w2);    
+  snprintf(TextField[22], 40, "%.3f", x->slopew);
 
-  sprintf(TextField[23], "%.2f", x->l1);    
-  sprintf(TextField[24], "%.2f", x->l2);    
-  sprintf(TextField[25], "%.3f", x->slopel);
+  snprintf(TextField[23], 40, "%.2f", x->l1);    
+  snprintf(TextField[24], 40, "%.2f", x->l2);    
+  snprintf(TextField[25], 40, "%.3f", x->slopel);
 
   for (i= 0; i < imax; i++)
     set_something(widget_array[kEOET1+ i], XmNvalue, TextField[i]);      
@@ -2069,7 +2069,7 @@ void CopyLength(int wn)
 void SetRadius(int wn)               /*berechnet Radien von Toroiden */
      /* Uwe 7.6.96 */
 {
-  char *text;     
+  char *text, buffer[255];     
   double r1, r2, alpha, r, alrad;
 
   wn= (wn== kEOEAB2) ? kEOET7: kEOET8;
@@ -2085,15 +2085,15 @@ void SetRadius(int wn)               /*berechnet Radien von Toroiden */
       alrad= alpha*  PI/180.0;   
       if (wn == kEOET7) r= (2.0* r1* r2)/ ((r1+ r2)* cos(alrad));  
       else r= 2.0* r1* r2* cos(alrad)/ (r1+ r2);          /*eigentlich rho*/
-      sprintf(text,"%.3f", r);  
-      set_something(widget_array[wn], XmNvalue, text); 
+      snprintf(buffer, 255, "%.3f", r);  
+      set_something(widget_array[wn], XmNvalue, buffer); 
     }
   XtFree(text);
 }      
 
 void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
 {
-  char *text;     
+  char *text, buffer[255];     
   double cff, alpha, beta, theta0;
   
   text= XmTextGetString(widget_array[kEOET1]); 
@@ -2103,8 +2103,8 @@ void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
       FixFocus(cff, gdat->lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
-      sprintf(text, "%.4f", theta0);  
-      set_something(widget_array[kEOET4], XmNvalue, text); 
+      snprintf(buffer, 255, "%.4f", theta0);  
+      set_something(widget_array[kEOET4], XmNvalue, buffer); 
     }
   XtFree(text);
 } /* end SetTheta */
@@ -2143,7 +2143,7 @@ void  MultiplyMatrix()
 			NULL, 0, XmOUTPUT_ALL);
 
 
-  sprintf(labfield[0], "%s", lab); 
+  snprintf(labfield[0], MaxPathLength, "%s", lab); 
   XtFree(lab); XmStringFree(label);
   printf("itemcount:%d\n", itemcount);   
   ac= 0; 
@@ -2154,7 +2154,7 @@ void  MultiplyMatrix()
 	return; */
       lab= XmStringUnparse(list[ac], NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
-      sprintf(labfield[1],"%s", lab);
+      snprintf(labfield[1], MaxPathLength, "%s", lab);
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*1. Matrix */ 
       XtFree(lab);
 
@@ -2162,14 +2162,14 @@ void  MultiplyMatrix()
 	   return;*/
       lab= XmStringUnparse(list[ac], NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
-      sprintf(labfield[2],"%s", lab);
+      snprintf(labfield[2], MaxPathLength, "%s", lab);
       printf("itemnr: %d  :: %s\n", ac++, lab );          /*2. Matrix */ 
       XtFree(lab);
       printf("mmatr: %s\n%s\n%s\n", labfield[0], labfield[1], labfield[2]);
       /*  MMatrix(labfield);  */
       while (ac < itemcount)    
         {        
-	  sprintf(copstr, "copy %s tmp.tmp", labfield[0]); 
+	  snprintf(copstr, (MaxPathLength+ 15), "copy %s tmp.tmp", labfield[0]); 
 	  system(copstr);
 
 	  /* if (!XmStringGetLtoR(list[ac], XmFONTLIST_DEFAULT_TAG, &lab))
@@ -2177,8 +2177,8 @@ void  MultiplyMatrix()
 	  lab= XmStringUnparse(list[ac], NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
 	  printf("itemnr: %d  :: %s\n", ac++, lab);   
-	  sprintf(labfield[1], "tmp.tmp");   
-	  sprintf(labfield[2],"%s", lab);   
+	  snprintf(labfield[1], MaxPathLength, "tmp.tmp");   
+	  snprintf(labfield[2], MaxPathLength, "%s", lab);   
 	  XtFree(lab); 
 	  /*  MMatrix(labfield); */ 
 	  system("delete/noconfirm tmp.tmp;*"); 
@@ -2194,32 +2194,32 @@ void SetInfoString()
 
   separator= XmStringSeparatorCreate(); 
   
-  sprintf(cstring, "PHASE: Version %s    %s", VERSION_STRING, VERSION_DATE);
+  snprintf(cstring, 255, "PHASE: Version %s    %s", VERSION_STRING, VERSION_DATE);
   SetUpInfoString= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
-  sprintf(cstring, "J. Bahrdt and U. Flechsig");
+  snprintf(cstring, 255, "J. Bahrdt and U. Flechsig");
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring);
   XmStringFree(xstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
-  sprintf(cstring, "bahrdt@exp.bessy.de");
+  snprintf(cstring, 255, "bahrdt@exp.bessy.de");
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring);
   XmStringFree(xstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
-  sprintf(cstring, "Uwe.Flechsig@psi.ch");
+  snprintf(cstring, 255, "Uwe.Flechsig@psi.ch");
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
   XmStringFree(xstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
   SetUpInfoString= XmStringConcat(SetUpInfoString, separator);
 
-  sprintf(cstring, "configured: %s", CONFIGURED);
+  snprintf(cstring, 255, "configured: %s", CONFIGURED);
   xstring= XmStringCreateLocalized(cstring);
   SetUpInfoString= XmStringConcat(SetUpInfoString, xstring); 
   XmStringFree(xstring);
@@ -2237,7 +2237,7 @@ void PrintFileInMainList(char *fname)
 
   if ((f= fopen(fname, "r")) == NULL)
     {
-      sprintf(zeile, "PrintFileInMainList: error: open file %s\n", fname);
+      snprintf(zeile, 80, "PrintFileInMainList: error: open file %s\n", fname);
       xprintf(zeile); 
     } else
       {

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <31 Aug 11 15:35:50 flechsig>  */
+/*   Time-stamp: <24 Jan 12 15:46:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -448,9 +448,9 @@ void SaveOptimizedBeamline(struct BeamlineType *bl, struct optistruct *os)
       elnumber++; listpt++;
     }
 
-  strcpy(os->optiblfilename, os->beamlinefilename);
+  strncpy(os->optiblfilename, os->beamlinefilename, MaxPathLength);
   ch= strrchr(os->optiblfilename, '.');
-  strcpy(ch, "-phaseopti.phase");
+  strncpy(ch, "-phaseopti.phase", MaxPathLength);
 #ifdef DEBUG
   printf("optimized Beamlinefile: %s\n", os->optiblfilename);
 #endif

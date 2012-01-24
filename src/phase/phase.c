@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <26 Oct 11 12:43:48 flechsig>  */
+/*  Time-stamp: <24 Jan 12 13:41:48 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -99,7 +99,7 @@ int main(argc, argv)
     
     
     set_program_name (*argv);       /* initialize program_name for errors */
-    sprintf(filename, "%s/share/phase/phase.uid", global_rundir);
+    snprintf(filename, 255, "%s/share/phase/phase.uid", global_rundir);
 
 #ifdef DEBUG
     printf("phase.main> uidfile: %s\n", filename);
@@ -202,7 +202,7 @@ int main(argc, argv)
 	SetInfoString();
 	XtManageChild(widget_array[kSetupInfo]);   
 
-	sprintf(filename, "%s/share/phase/news", global_rundir);
+	snprintf(filename, 255, "%s/share/phase/news", global_rundir);
 
 	
 	PrintFileInMainList(filename);                      /* news anzeigen */
