@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <23 Jan 12 18:05:16 flechsig> 
+//  Time-stamp: <24 Jan 12 09:10:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -25,7 +25,6 @@ ConfigWindow::ConfigWindow(PhaseQt *parent)
 
   configWindowBox = new QWidget();
   
-
   configWindowBox->setWindowTitle(tr("PHASE configuration"));
   QLabel *configLabel = new QLabel(tr("configure auxiliary files"));
   
@@ -123,7 +122,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
    description[(MaxPathLength-1)]= '\0';  // ensure termination
    oldname[(MaxPathLength-1)]= '\0';      // ensure termination
    extension[9]= '\0';                    // ensure termination
-   sprintf(filter, "Files (*.%s);;(*)", extension);
+   snprintf(filter, 50, "Files (*.%s);;(*)", extension);
 
 #ifdef DEBUG1 
    cout << "debug: file: " << __FILE__ << ", line: " << __LINE__ <<  " item: " <<  oldname << endl;
