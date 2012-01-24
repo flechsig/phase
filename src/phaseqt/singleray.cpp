@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <09 Sep 11 15:08:26 flechsig> 
+//  Time-stamp: <24 Jan 12 09:37:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -113,18 +113,18 @@ void SingleRay::applySlot()
   RayTraceSingleRayCpp(this->myparent);
 
   // the output
-  sprintf(buffer, "-> %10.3lg", rayout.y);
+  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.y);
   S6Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %10.3lg", rayout.z);
+  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.z);
   S7Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %10.3lg", rayout.dy * 1e3);
+  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.dy * 1e3);
   S8Label->setText(QString(tr(buffer)));
-  sprintf(buffer, "-> %10.3lg", rayout.dz * 1e3);
+  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.dz * 1e3);
   S9Label->setText(QString(tr(buffer)));
   if ((rayout.phi > 360) || (rayout.phi < 1e-3)) 
-    sprintf(buffer, "-> %s", "undef"); 
+    snprintf(buffer, MaxPathLength, "-> %s", "undef"); 
   else
-    sprintf(buffer, "-> %10.3lg", rayout.phi);
+    snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.phi);
 
   S10Label->setText(QString(tr(buffer)));
   //  this->parent->UpdateStatus();

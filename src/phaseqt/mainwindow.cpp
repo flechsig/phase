@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Jan 12 07:52:19 flechsig> 
+//  Time-stamp: <24 Jan 12 09:08:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -950,7 +950,7 @@ QWidget *MainWindow::createParameterBox()
 
   for (i= 0; i< NPARS; i++)
     {
-      sprintf(buffer, "%d : parameter",  i);
+      snprintf(buffer, 4, "%d : parameter",  i);
       item= new QListWidgetItem(buffer);
       parameterList->insertItem(i, item);
     }
@@ -1153,492 +1153,6 @@ void MainWindow::parameterUpdateAll(int zahl)
   for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
 } // parameterUpdateAll
 
-/****old
-// helper function for the parameterUpdateSlot
-// init=1:  does not scan the text - for initialization 
-// defaults can be set with an empty text
-// function: 
-// a) read selected item
-// b) copy contents into data structure
-// c) update the item in the list
-void MainWindow::parameterUpdate(int pos, const char *text, int init)
-{
-  char buffer[MaxPathLength];
-  int scanned;
-  QListWidgetItem *item= parameterList->item(pos);
-
-  const char *inhalt[]= {	
-    "(epsilon) epsilon for Newton routine (1e-4)",         // 0
-    "(iord) calculation up to order (1..7)", 
-    "(iordsc)", 
-    "(iexpand) expansion of pathlength (1),",
-    "(iplmode) subtraction of ideal path length (1)",
-    "(isrctype) source type",
-    "(rpin) radius of pinhole in source plane (mm)",
-    "(srcymin) aperture in source plane, ymin (mm)",
-    "(srcymax) aperture in source plane, ymax (mm)",
-    "(srczmin) aperture in source plane, zmin (mm)",
-
-    "(srczmax) aperture in source plane, zmax (mm)", // 10
-    "(rpin_ap) radius in aperture plane",
-    "op->apr.ymin_ap",
-    "op->apr.ymax_ap",
-    "op->apr.zmin_ap",
-    "op->apr.zmax_ap",
-    "(so5.dipcy) Dipole: Cy",
-    "(so5.dipcz) Dipole: Cz",
-    "(so5.dipdisy) Dipole: y-Distance (virtual) between Dipole and source plane",
-    "(so5.dipdisz) Dipole: z-Distance (real) between Dipole and source plane",
-   
-    "(inorm) (1) normalize output, (0) do not normalize",   // 20
-    "(inorm1)",
-    "(inorm2) (0, 1, 2)",
-    "(matrel) derive matrix elements in 3 different ways (1) (for debugging)",
-    "(so1.isrcy)   source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
-    "(so1.isrcdy)  source type (size/divergence):(0)sigma val.,(1)hard edge,(2)file",
-    "(so1.sigmay)  source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "(so1.sigmayp) source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "(xi.ymin) ymin, zu integrierender Winkelbereich in mrad",
-    "(xi.ymax) ymax, zu integrierender Winkelbereich in mrad",
-
-    "(xi.ianzy0) Anzahl der Stuetzstellen im ersten Raster",    // 30
-    "(so1.isrcz) source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
-    "(so1.isrcdz) source type (size/div.):(0)sigma val.,(1)hard edge, etc...",
-    "(so1.sigmaz) source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "(so1.sigmazp) source size/div.: sigmay(mm) / sigmayp or half height/angle",
-    "(xi.zmin)",
-    "(xi.zmax)",
-    "(xi.ianzz0)",
-    "(ifl.ibright) (1) write 4-dim brightness to file",
-    "(ifl.ispline) (0) simpson integration, (1) spline integration",
-
-    "(xi.d12_max)", // 40
-    "(xi.id12); (1) print d12 on file, (0) do not print",
-    "(xi.ianz0_cal)",
-    "(xi.ianz0_fixed)",
-    "(xi.iamp_smooth) (0,1,2)",
-    "(xi.iord_amp)",
-    "(xi.ifm_amp)",
-    "(xi.iord_pha)",
-    "(xi.ifm_pha)",
-    "(xi.distfocy) distance to horizontal focus",
-
-    "(xi.distfocz) distance to vertical focus", // 50
-    "(ifl.ipinarr) insert pinhole array in source plane",
-    "(src.pin_yl0)",
-    "(src.pin_yl)",
-    "(src.pin_zl0)",
-    "(src.pin_zl)",
-    "(so4.nfreqtot)",
-    "(so4.nfreqpos)",
-    "(so4.nfreqneg)",
-    "(so4.nsource)",
-
-    "(so4.nimage)", // 60
-    "(so4.deltatime)",
-    "(so4.iconj)",
-    "(REDUCE_maps) use old REDUCE maps",
-    }; // ende der Liste 
-
-  // struct OptionsType   *op = (struct OptionsType *)   &(this->BLOptions); 
-  struct OptionsType   *op = myparent->myOptions();
-  struct sources    *mysrc = &(myparent->myBeamline()->src);
-  //  struct PSOptionsType *pop= (struct PSOptionsType *) &(this->BLOptions.PSO);  
-  //  struct PSSourceType  *psp= (struct PSSourceType *)  &(this->BLOptions.PSO.PSSource);
-
-#ifdef DEBUG1
-    printf("debug: parameterUpdate: pos: %d, file: %s\n", pos, __FILE__);
-  //printf("debug: parameterUpdate: pos: %d, file: %s, zmin: %lf\n", pos, __FILE__, op->xi.zmin);
-#endif
-
-  scanned= 1;      // set a default 
-  switch (pos)
-    {
-    case 0: 
-      if (!init) scanned= sscanf(text, "%lf", &op->epsilon);
-      if ((scanned == EOF) || (scanned == 0)) op->epsilon= 1e-4; // default
-      sprintf(buffer, "%-5lg \t: %s", op->epsilon, inhalt[pos]);
-      break;
-    case 1:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
-      printf("parameterUpdate: scanned_pos: %d\n", scanned);
-      if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
-	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
-      sprintf(buffer, "%d \t: %s", op->ifl.iord, inhalt[pos]);
-      break;
-    case 2:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.iordsc);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.iordsc= 4; // default
-      sprintf(buffer, "%d \t: %s", op->ifl.iordsc, inhalt[pos]);
-      break;
-    case 3:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.iexpand);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.iexpand, inhalt[pos]);
-      break;
-    case 4:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.iplmode);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.iplmode, inhalt[pos]);
-      break;
-    case 5:
-      if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
-      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 0;   // default
-      sprintf(buffer, "%d \t: %s", myparent->myBeamline()->src.isrctype, inhalt[pos]);
-      break; 
-    case 6:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.rpin= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.rpin, inhalt[pos]);
-      break;
-    case 7:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymin);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.srcymin= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.srcymin, inhalt[pos]);
-      break;
-    case 8:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymax);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.srcymax= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.srcymax, inhalt[pos]);
-      break;
-    case 9:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmin);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.srczmin= 0;   // default
-      sprintf(buffer, "%lg \t: %s",  op->apr.srczmin, inhalt[pos]);
-      break;
-    case 10:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmax);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.srczmax= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.srczmax, inhalt[pos]);
-      break;
-    case 11:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin_ap);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.rpin_ap= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.rpin_ap, inhalt[pos]);
-      break;
-    case 12:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.ymin_ap);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.ymin_ap= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.ymin_ap, inhalt[pos]);
-      break;
-    case 13:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.ymax_ap);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.ymax_ap= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.ymax_ap, inhalt[pos]);
-      break;
-    case 14:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.zmin_ap);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.zmin_ap= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.zmin_ap, inhalt[pos]);
-      break;
-    case 15:
-      if (!init) scanned= sscanf(text, "%lg", &op->apr.zmax_ap);
-      if ((scanned == EOF) || (scanned == 0)) op->apr.zmax_ap= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->apr.zmax_ap, inhalt[pos]);
-      break;
-
-    case 16:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipcy, inhalt[pos]);
-      break;
-    case 17:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipcz, inhalt[pos]);
-      break;
-    case 18:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipdisy, inhalt[pos]);
-      break;
-    case 19:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so5.dipdisz, inhalt[pos]);
-      break;
-
-    case 20:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.inorm, inhalt[pos]);
-      break;
-    case 21:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm1);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm1= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.inorm1, inhalt[pos]);
-      break;
-    case 22:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm2);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.inorm2, inhalt[pos]);
-      break;
-    case 23:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.matrel);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.matrel, inhalt[pos]);
-      break;
-
-    case 24:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
-      sprintf(buffer, "%d \t: %s",  mysrc->so1.isrcy, inhalt[pos]);
-      break;
-    case 25:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so1.isrcdy, inhalt[pos]);
-      break;
-    case 26:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmay, inhalt[pos]);
-      break;
-    case 27:
-      if (!init) 
-	{ 
-	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
-	  mysrc->so1.sigmayp*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmayp*1e3, inhalt[pos]);
-      break;
-
-    case 28:
-      if (!init) 
-	{
-	  scanned= sscanf(text, "%lg", &op->xi.ymin);
-	  op->xi.ymin*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.ymin* 1e3, inhalt[pos]);
-      break;
-    case 29:
-      if (!init)
-	{
-	  scanned= sscanf(text, "%lg", &op->xi.ymax);
-	  op->xi.ymax*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.ymax* 1e3, inhalt[pos]);
-      break;
-    case 30:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.ianzy0, inhalt[pos]);
-      break;
-
-    case 31:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
-      sprintf(buffer, "%d \t: %s",  mysrc->so1.isrcz, inhalt[pos]);
-      break;
-    case 32:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so1.isrcdz, inhalt[pos]);
-      break;
-    case 33:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmaz, inhalt[pos]);
-      break;
-    case 34:
-      if (!init)
-	{
-	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
-	  mysrc->so1.sigmazp*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so1.sigmazp*1e3, inhalt[pos]);
-      break;
-
-    case 35:
-      if (!init)
-	{
-	  scanned= sscanf(text, "%lg", &op->xi.zmin);
-	  op->xi.zmin*=1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.zmin* 1e3, inhalt[pos]);
-      break;
-    case 36:
-      if (!init) 
-	{
-	  scanned= sscanf(text, "%lg", &op->xi.zmax);
-	  op->xi.zmax*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.zmax* 1e3, inhalt[pos]);
-      break;
-    case 37:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.ianzz0);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.ianzz0, inhalt[pos]);
-      break;
-
-    case 38:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.ibright);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.ibright, inhalt[pos]);
-      break;
-
-    case 39:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.ispline);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.ispline= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.ispline, inhalt[pos]);
-      break;
-
-    case 40:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.d12_max);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.d12_max= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.d12_max, inhalt[pos]);
-      break;
-    case 41:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.id12);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.id12= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.id12, inhalt[pos]);
-      break;
-    case 42:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_cal);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_cal= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.ianz0_cal, inhalt[pos]);
-      break;
-    case 43:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_fixed);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_fixed= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.ianz0_fixed, inhalt[pos]);
-      break;
-    case 44:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.iamp_smooth);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.iamp_smooth= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.iamp_smooth, inhalt[pos]);
-      break;
-    case 45:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.iord_amp);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.iord_amp= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.iord_amp, inhalt[pos]);
-      break;
-    case 46:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_amp);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_amp= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.ifm_amp, inhalt[pos]);
-      break;
-      
-    case 47:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.iord_pha);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.iord_pha= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.iord_pha, inhalt[pos]);
-      break;
-      
-    case 48:
-      if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_pha);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_pha= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->xi.ifm_pha, inhalt[pos]);
-      break;
-    case 49:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocy);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.distfocy= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.distfocy, inhalt[pos]);
-      break;
-    case 50:
-      if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocz);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.distfocz= 0;   // default
-      sprintf(buffer, "%lg \t: %s", op->xi.distfocz, inhalt[pos]);
-      break;
-    case 51:
-      if (!init) scanned= sscanf(text, "%d", &op->ifl.ipinarr);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.ipinarr= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->ifl.ipinarr, inhalt[pos]);
-      break;    
-    case 52:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->pin_yl0, inhalt[pos]);
-      break;
-    case 53:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->pin_yl, inhalt[pos]);
-      break;
-    case 54:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->pin_zl0, inhalt[pos]);
-      break;
-    case 55:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->pin_zl, inhalt[pos]);
-      break;
-    case 56:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqtot, inhalt[pos]);
-      break;
-    case 57:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqpos, inhalt[pos]);
-      break;
-    case 58:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so4.nfreqneg, inhalt[pos]);
-      break;
-    case 59:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nsource);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nsource= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so4.nsource, inhalt[pos]);
-      break;
-    case 60:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nimage);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nimage= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so4.nimage, inhalt[pos]);
-      break;
-      
-    case 61:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so4.deltatime);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.deltatime= 0;   // default
-      sprintf(buffer, "%lg \t: %s", mysrc->so4.deltatime, inhalt[pos]);
-      break;
-      
-    case 62:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
-      sprintf(buffer, "%d \t: %s", mysrc->so4.iconj, inhalt[pos]);
-      break;
-
-    case 63:
-      if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
-      if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
-      sprintf(buffer, "%d \t: %s", op->REDUCE_maps, inhalt[pos]);
-      myparent->myBeamline()->hormapsloaded= 0;
-      break;
-
-#ifdef XXXTEMPLATE
-case 10:
-      if (!init) scanned= sscanf(text, "%d", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d \t: %s", , inhalt[pos]);
-      break;
-
-case 10:
-      if (!init) scanned= sscanf(text, "%lg", &);
-      if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%lg \t: %s", , inhalt[pos]);
-      break;
-#endif
-    default:
-      sprintf(buffer, "%d \t: unknown parameter", pos);
-    }
-  item->setText(buffer);
-  
-  if (parameterModel) parameterModel->updateItemVal(QString(buffer), pos);
-
-} // end parameterUpdate
-
-end old ***/
 
 // helper function for the parameterUpdateSlot
 // init=1:  does not scan the text - for initialization 
@@ -1664,142 +1178,142 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
     case 0: 
       if (!init) scanned= sscanf(text, "%lf", &op->epsilon);
       if ((scanned == EOF) || (scanned == 0)) op->epsilon= 1e-4; // default
-      sprintf(buffer, "%-5lg", op->epsilon);
+      snprintf(buffer, MaxPathLength,  "%-5lg", op->epsilon);
       break;
     case 1:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
       printf("parameterUpdate: scanned_pos: %d\n", scanned);
       if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
 	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
-      sprintf(buffer, "%d", op->ifl.iord);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iord);
       break;
     case 2:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iordsc);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iordsc= 4; // default
-      sprintf(buffer, "%d", op->ifl.iordsc);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iordsc);
       break;
     case 3:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iexpand);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 0;   // default
-      sprintf(buffer, "%d", op->ifl.iexpand);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iexpand);
       break;
     case 4:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iplmode);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
-      sprintf(buffer, "%d", op->ifl.iplmode);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.iplmode);
       break;
     case 5:
       if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
       if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 0;   // default
-      sprintf(buffer, "%d", myparent->myBeamline()->src.isrctype);
+      snprintf(buffer, MaxPathLength,  "%d", myparent->myBeamline()->src.isrctype);
       break; 
     case 6:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.rpin= 0;   // default
-      sprintf(buffer, "%lg", op->apr.rpin);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.rpin);
       break;
     case 7:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srcymin= 0;   // default
-      sprintf(buffer, "%lg", op->apr.srcymin);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.srcymin);
       break;
     case 8:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srcymax);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srcymax= 0;   // default
-      sprintf(buffer, "%lg", op->apr.srcymax);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.srcymax);
       break;
     case 9:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmin);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srczmin= 0;   // default
-      sprintf(buffer, "%lg",  op->apr.srczmin);
+      snprintf(buffer, MaxPathLength,  "%lg",  op->apr.srczmin);
       break;
     case 10:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.srczmax);
       if ((scanned == EOF) || (scanned == 0)) op->apr.srczmax= 0;   // default
-      sprintf(buffer, "%lg", op->apr.srczmax);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.srczmax);
       break;
     case 11:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.rpin_ap= 0;   // default
-      sprintf(buffer, "%lg", op->apr.rpin_ap);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.rpin_ap);
       break;
     case 12:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.ymin_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.ymin_ap= 0;   // default
-      sprintf(buffer, "%lg", op->apr.ymin_ap);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.ymin_ap);
       break;
     case 13:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.ymax_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.ymax_ap= 0;   // default
-      sprintf(buffer, "%lg", op->apr.ymax_ap);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.ymax_ap);
       break;
     case 14:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.zmin_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.zmin_ap= 0;   // default
-      sprintf(buffer, "%lg", op->apr.zmin_ap);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.zmin_ap);
       break;
     case 15:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.zmax_ap);
       if ((scanned == EOF) || (scanned == 0)) op->apr.zmax_ap= 0;   // default
-      sprintf(buffer, "%lg", op->apr.zmax_ap);
+      snprintf(buffer, MaxPathLength,  "%lg", op->apr.zmax_ap);
       break;
 
     case 16:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so5.dipcy);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipcy);
       break;
     case 17:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so5.dipcz);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipcz);
       break;
     case 18:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so5.dipdisy);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipdisy);
       break;
     case 19:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so5.dipdisz);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so5.dipdisz);
       break;
 
     case 20:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm= 0;   // default
-      sprintf(buffer, "%d", op->ifl.inorm);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.inorm);
       break;
     case 21:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm1);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm1= 0;   // default
-      sprintf(buffer, "%d", op->ifl.inorm1);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.inorm1);
       break;
     case 22:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm2);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 0;   // default
-      sprintf(buffer, "%d", op->ifl.inorm2);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.inorm2);
       break;
     case 23:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.matrel);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
-      sprintf(buffer, "%d", op->ifl.matrel);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.matrel);
       break;
 
     case 24:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
       if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
-      sprintf(buffer, "%d",  mysrc->so1.isrcy);
+      snprintf(buffer, MaxPathLength,  "%d",  mysrc->so1.isrcy);
       break;
     case 25:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
-      sprintf(buffer, "%d", mysrc->so1.isrcdy);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so1.isrcdy);
       break;
     case 26:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so1.sigmay);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmay);
       break;
     case 27:
       if (!init) 
@@ -1808,7 +1322,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  mysrc->so1.sigmayp*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so1.sigmayp*1e3);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmayp*1e3);
       break;
 
     case 28:
@@ -1818,7 +1332,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.ymin*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
-      sprintf(buffer, "%lg", op->xi.ymin* 1e3);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.ymin* 1e3);
       break;
     case 29:
       if (!init)
@@ -1827,28 +1341,28 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.ymax*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
-      sprintf(buffer, "%lg", op->xi.ymax* 1e3);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.ymax* 1e3);
       break;
     case 30:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 0;   // default
-      sprintf(buffer, "%d", op->xi.ianzy0);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianzy0);
       break;
 
     case 31:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
       if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
-      sprintf(buffer, "%d",  mysrc->so1.isrcz);
+      snprintf(buffer, MaxPathLength,  "%d",  mysrc->so1.isrcz);
       break;
     case 32:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
-      sprintf(buffer, "%d", mysrc->so1.isrcdz);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so1.isrcdz);
       break;
     case 33:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so1.sigmaz);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmaz);
       break;
     case 34:
       if (!init)
@@ -1857,7 +1371,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  mysrc->so1.sigmazp*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so1.sigmazp*1e3);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so1.sigmazp*1e3);
       break;
 
     case 35:
@@ -1867,7 +1381,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.zmin*=1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
-      sprintf(buffer, "%lg", op->xi.zmin* 1e3);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.zmin* 1e3);
       break;
     case 36:
       if (!init) 
@@ -1876,150 +1390,150 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  op->xi.zmax*= 1e-3;
 	}
       if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
-      sprintf(buffer, "%lg", op->xi.zmax* 1e3);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.zmax* 1e3);
       break;
     case 37:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzz0);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 0;   // default
-      sprintf(buffer, "%d", op->xi.ianzz0);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianzz0);
       break;
 
     case 38:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ibright);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 0;   // default
-      sprintf(buffer, "%d", op->ifl.ibright);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.ibright);
       break;
 
     case 39:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ispline);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.ispline= 0;   // default
-      sprintf(buffer, "%d", op->ifl.ispline);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.ispline);
       break;
 
     case 40:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.d12_max);
       if ((scanned == EOF) || (scanned == 0)) op->xi.d12_max= 0;   // default
-      sprintf(buffer, "%lg", op->xi.d12_max);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.d12_max);
       break;
     case 41:
       if (!init) scanned= sscanf(text, "%d", &op->xi.id12);
       if ((scanned == EOF) || (scanned == 0)) op->xi.id12= 0;   // default
-      sprintf(buffer, "%d", op->xi.id12);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.id12);
       break;
     case 42:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_cal);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_cal= 0;   // default
-      sprintf(buffer, "%d", op->xi.ianz0_cal);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianz0_cal);
       break;
     case 43:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianz0_fixed);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ianz0_fixed= 0;   // default
-      sprintf(buffer, "%d", op->xi.ianz0_fixed);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.ianz0_fixed);
       break;
     case 44:
       if (!init) scanned= sscanf(text, "%d", &op->xi.iamp_smooth);
       if ((scanned == EOF) || (scanned == 0)) op->xi.iamp_smooth= 0;   // default
-      sprintf(buffer, "%d", op->xi.iamp_smooth);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.iamp_smooth);
       break;
     case 45:
       if (!init) scanned= sscanf(text, "%d", &op->xi.iord_amp);
       if ((scanned == EOF) || (scanned == 0)) op->xi.iord_amp= 0;   // default
-      sprintf(buffer, "%d", op->xi.iord_amp);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.iord_amp);
       break;
     case 46:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_amp);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_amp= 0;   // default
-      sprintf(buffer, "%d", op->xi.ifm_amp);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.ifm_amp);
       break;
       
     case 47:
       if (!init) scanned= sscanf(text, "%d", &op->xi.iord_pha);
       if ((scanned == EOF) || (scanned == 0)) op->xi.iord_pha= 0;   // default
-      sprintf(buffer, "%d", op->xi.iord_pha);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.iord_pha);
       break;
       
     case 48:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ifm_pha);
       if ((scanned == EOF) || (scanned == 0)) op->xi.ifm_pha= 0;   // default
-      sprintf(buffer, "%d", op->xi.ifm_pha);
+      snprintf(buffer, MaxPathLength,  "%d", op->xi.ifm_pha);
       break;
     case 49:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocy);
       if ((scanned == EOF) || (scanned == 0)) op->xi.distfocy= 0;   // default
-      sprintf(buffer, "%lg", op->xi.distfocy);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.distfocy);
       break;
     case 50:
       if (!init) scanned= sscanf(text, "%lg", &op->xi.distfocz);
       if ((scanned == EOF) || (scanned == 0)) op->xi.distfocz= 0;   // default
-      sprintf(buffer, "%lg", op->xi.distfocz);
+      snprintf(buffer, MaxPathLength,  "%lg", op->xi.distfocz);
       break;
     case 51:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ipinarr);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.ipinarr= 0;   // default
-      sprintf(buffer, "%d", op->ifl.ipinarr);
+      snprintf(buffer, MaxPathLength,  "%d", op->ifl.ipinarr);
       break;    
     case 52:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
-      sprintf(buffer, "%lg", mysrc->pin_yl0);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_yl0);
       break;
     case 53:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
-      sprintf(buffer, "%lg", mysrc->pin_yl);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_yl);
       break;
     case 54:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
-      sprintf(buffer, "%lg", mysrc->pin_zl0);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_zl0);
       break;
     case 55:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
-      sprintf(buffer, "%lg", mysrc->pin_zl);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->pin_zl);
       break;
     case 56:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
-      sprintf(buffer, "%d", mysrc->so4.nfreqtot);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nfreqtot);
       break;
     case 57:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
-      sprintf(buffer, "%d", mysrc->so4.nfreqpos);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nfreqpos);
       break;
     case 58:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
-      sprintf(buffer, "%d", mysrc->so4.nfreqneg);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nfreqneg);
       break;
     case 59:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nsource);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nsource= 0;   // default
-      sprintf(buffer, "%d", mysrc->so4.nsource);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nsource);
       break;
     case 60:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nimage);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nimage= 0;   // default
-      sprintf(buffer, "%d", mysrc->so4.nimage);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.nimage);
       break;
       
     case 61:
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so4.deltatime);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.deltatime= 0;   // default
-      sprintf(buffer, "%lg", mysrc->so4.deltatime);
+      snprintf(buffer, MaxPathLength,  "%lg", mysrc->so4.deltatime);
       break;
       
     case 62:
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
-      sprintf(buffer, "%d", mysrc->so4.iconj);
+      snprintf(buffer, MaxPathLength,  "%d", mysrc->so4.iconj);
       break;
 
     case 63:
       if (!init) scanned= sscanf(text, "%d", &op->REDUCE_maps);
       if ((scanned == EOF) || (scanned == 0)) op->REDUCE_maps= 0;   // default
-      sprintf(buffer, "%d", op->REDUCE_maps);
+      snprintf(buffer, MaxPathLength,  "%d", op->REDUCE_maps);
       myparent->myBeamline()->hormapsloaded= 0;
       break;
 
@@ -2027,17 +1541,17 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 case 10:
       if (!init) scanned= sscanf(text, "%d", &);
       if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%d", );
+      snprintf(buffer, MaxPathLength,  "%d", );
       break;
 
 case 10:
       if (!init) scanned= sscanf(text, "%lg", &);
       if ((scanned == EOF) || (scanned == 0)) = 0;   // default
-      sprintf(buffer, "%lg", );
+      snprintf(buffer, MaxPathLength,  "%lg", );
       break;
 #endif
     default:
-      sprintf(buffer, "%d \t: unknown parameter", pos);
+      snprintf(buffer, MaxPathLength,  "%d \t: unknown parameter", pos);
     }
     
   parameterModel->updateItemVal(QString(buffer), pos);
@@ -2071,7 +1585,7 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	      if (mtime_data < mtime_backup)
 		{
 		  QMessageBox *msgBox = new QMessageBox;
-		  sprintf(buffer, "<b>We found a newer backupfile</b>\n%s", fname);
+		  snprintf(buffer, 300, "<b>We found a newer backupfile</b>\n%s", fname);
 		  msgBox->setText(buffer);
 		  msgBox->setInformativeText("Do you want to use the backup?");
 		  msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -2094,23 +1608,18 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 } // ReadBLFileInteractive
 
 
-
 // UpdateBeamlineBox()
 // the box on the left
 void MainWindow::UpdateBeamlineBox()
 {
   struct OptionsType *blo;
-  char   buffer[50];
-   
+  QString lambdaEqst, dislenEqst;
+  
   fileNameLabel->setText(QString(tr(myparent->myPHASEset()->beamlinename)));
-
   blo= &(myparent->myBeamline()->BLOptions);
 
-  sprintf(buffer, "%.3lf", blo->lambda* 1e6);
-  lambdaE->setText(QString(buffer));
-
-  sprintf(buffer, "%.3lf", blo->displength);
-  dislenE->setText(QString(buffer));
+  lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6, 'g', 4));
+  dislenE->setText(dislenEqst.setNum(blo->displength,  'g', 4));
 
   if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
   if (blo->WithAlign) misaliBox->setChecked(true);    else misaliBox->setChecked(false);
@@ -2137,32 +1646,32 @@ void MainWindow::UpdateElementBox(int number)
   cff = cos(fi- teta)/ cos(fi+ teta);
 
   // create strings
-  sprintf(TextField[0],  "%.2f", cff);
-  sprintf(TextField[1],  "%.1f", gd->r);
-  sprintf(TextField[2],  "%.1f", gd->rp);
-  sprintf(TextField[3],  "%.3f", gd->theta0);
-  sprintf(TextField[4],  "%.1f", md->r1);   
-  sprintf(TextField[5],  "%.1f", md->r2);
-  sprintf(TextField[6],  "%.1f", md->rmi);      
-  sprintf(TextField[7],  "%.2f", md->rho);
-  sprintf(TextField[8],  "%d",   gd->inout);   // not used   	   
-  sprintf(TextField[9],  "%.2f", gd->xdens[0]); 
-  sprintf(TextField[10], "%.2f", gd->xdens[1]);    
-  sprintf(TextField[11], "%.2f", gd->xdens[2]);    
-  sprintf(TextField[12], "%.2f", gd->xdens[3]);    
-  sprintf(TextField[13], "%.2f", gd->xdens[4]);
-  sprintf(TextField[14], "%.2f", md->du);    
-  sprintf(TextField[15], "%.2f", md->dw);    
-  sprintf(TextField[16], "%.2f", md->dl);
-  sprintf(TextField[17], "%.2f", md->dRu * 1e3);    
-  sprintf(TextField[18], "%.2f", md->dRw * 1e3);    
-  sprintf(TextField[19], "%.2f", md->dRl * 1e3);
-  sprintf(TextField[20], "%.2f", md->w1);    
-  sprintf(TextField[21], "%.2f", md->w2);    
-  sprintf(TextField[22], "%.3f", md->slopew);
-  sprintf(TextField[23], "%.2f", md->l1);    
-  sprintf(TextField[24], "%.2f", md->l2);    
-  sprintf(TextField[25], "%.3f", md->slopel);
+  snprintf(TextField[0], 40,  "%.2f", cff);
+  snprintf(TextField[1], 40,  "%.1f", gd->r);
+  snprintf(TextField[2], 40,  "%.1f", gd->rp);
+  snprintf(TextField[3], 40,  "%.3f", gd->theta0);
+  snprintf(TextField[4], 40,  "%.1f", md->r1);   
+  snprintf(TextField[5], 40,  "%.1f", md->r2);
+  snprintf(TextField[6], 40,  "%.1f", md->rmi);      
+  snprintf(TextField[7], 40,  "%.2f", md->rho);
+  snprintf(TextField[8], 40,  "%d",   gd->inout);   // not used   	   
+  snprintf(TextField[9], 40,  "%.2f", gd->xdens[0]); 
+  snprintf(TextField[10], 40, "%.2f", gd->xdens[1]);    
+  snprintf(TextField[11], 40, "%.2f", gd->xdens[2]);    
+  snprintf(TextField[12], 40, "%.2f", gd->xdens[3]);    
+  snprintf(TextField[13], 40, "%.2f", gd->xdens[4]);
+  snprintf(TextField[14], 40, "%.2f", md->du);    
+  snprintf(TextField[15], 40, "%.2f", md->dw);    
+  snprintf(TextField[16], 40, "%.2f", md->dl);
+  snprintf(TextField[17], 40, "%.2f", md->dRu * 1e3);    
+  snprintf(TextField[18], 40, "%.2f", md->dRw * 1e3);    
+  snprintf(TextField[19], 40, "%.2f", md->dRl * 1e3);
+  snprintf(TextField[20], 40, "%.2f", md->w1);    
+  snprintf(TextField[21], 40, "%.2f", md->w2);    
+  snprintf(TextField[22], 40, "%.3f", md->slopew);
+  snprintf(TextField[23], 40, "%.2f", md->l1);    
+  snprintf(TextField[24], 40, "%.2f", md->l2);    
+  snprintf(TextField[25], 40, "%.3f", md->slopel);
 
   // update widgets
   cffE   ->setText(QString(tr(TextField[0])));
@@ -2377,23 +1886,23 @@ void MainWindow::UpdateSourceBox()
  
     case 'D':
       dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", dp->sigy);
-      sprintf(TextField[1],  "%f", dp->sigdy);    
-      sprintf(TextField[2],  "%f", dp->sigz);  
-      sprintf(TextField[3],  "%f", dp->dz);    
-      sprintf(TextField[4],  "%d", myparent->myBeamline()->RTSource.raynumber);   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "sigmay (mm)");
-      sprintf(LabelField[1], "%s", "sigmady (mrad)");  
-      sprintf(LabelField[2], "%s", "sigmaz (mm)");  
-      sprintf(LabelField[3], "%s", "dz hard edge (mrad)");  
-      sprintf(LabelField[4], "%s", "ray number");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "Dipol (Bending Magnet)");
+      snprintf(TextField[0],  40,  "%f", dp->sigy);
+      snprintf(TextField[1],  40,  "%f", dp->sigdy);    
+      snprintf(TextField[2],  40,  "%f", dp->sigz);  
+      snprintf(TextField[3],  40,  "%f", dp->dz);    
+      snprintf(TextField[4],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "sigmay (mm)");
+      snprintf(LabelField[1], 100, "%s", "sigmady (mrad)");  
+      snprintf(LabelField[2], 100, "%s", "sigmaz (mm)");  
+      snprintf(LabelField[3], 100, "%s", "dz hard edge (mrad)");  
+      snprintf(LabelField[4], 100, "%s", "ray number");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "Dipol (Bending Magnet)");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2402,23 +1911,23 @@ void MainWindow::UpdateSourceBox()
       break;  
     case 'G':
       up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", up0->length);
-      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      sprintf(TextField[3],  "%f", up0->deltaz);    
-      sprintf(TextField[4],  "%f", up0->sigmaey);   
-      sprintf(TextField[5],  "%f", up0->sigmaez);    
-      sprintf(TextField[6],  "%f", up0->sigmaedy);   
-      sprintf(TextField[7],  "%f", up0->sigmaedz); 
-      sprintf(LabelField[0], "%s", "length (mm)");
-      sprintf(LabelField[1], "%s", "lambda (nm)");  
-      sprintf(LabelField[2], "%s", "ray number");  
-      sprintf(LabelField[3], "%s", "deltaz (mm)");  
-      sprintf(LabelField[4], "%s", "sigmaey (mm)");   
-      sprintf(LabelField[5], "%s", "sigmaez (mm)");   
-      sprintf(LabelField[6], "%s", "sigmaedy (mrad)");   
-      sprintf(LabelField[7], "%s", "sigmaedz (mrad)");
-      sprintf(LabelField[8], "%s", "Generic undulator");
+      snprintf(TextField[0],  40,  "%f", up0->length);
+      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
+      snprintf(TextField[3],  40,  "%f", up0->deltaz);    
+      snprintf(TextField[4],  40,  "%f", up0->sigmaey);   
+      snprintf(TextField[5],  40,  "%f", up0->sigmaez);    
+      snprintf(TextField[6],  40,  "%f", up0->sigmaedy);   
+      snprintf(TextField[7],  40,  "%f", up0->sigmaedz); 
+      snprintf(LabelField[0], 100, "%s", "length (mm)");
+      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
+      snprintf(LabelField[2], 100, "%s", "ray number");  
+      snprintf(LabelField[3], 100, "%s", "deltaz (mm)");  
+      snprintf(LabelField[4], 100, "%s", "sigmaey (mm)");   
+      snprintf(LabelField[5], 100, "%s", "sigmaez (mm)");   
+      snprintf(LabelField[6], 100, "%s", "sigmaedy (mrad)");   
+      snprintf(LabelField[7], 100, "%s", "sigmaedz (mrad)");
+      snprintf(LabelField[8], 100, "%s", "Generic undulator");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2430,23 +1939,23 @@ void MainWindow::UpdateSourceBox()
       break;  
     case 'H':
       hp= (struct HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", hp->disty);
-      sprintf(TextField[1],  "%d", hp->iy);    
-      sprintf(TextField[2],  "%f", hp->distz);  
-      sprintf(TextField[3],  "%d", hp->iz);    
-      sprintf(TextField[4],  "%f", hp->divy);   
-      sprintf(TextField[5],  "%d", hp->idy);    
-      sprintf(TextField[6],  "%f", hp->divz);   
-      sprintf(TextField[7],  "%d", hp->idz); 
-      sprintf(LabelField[0], "%s", "height (mm)");
-      sprintf(LabelField[1], "%s", "-> points");  
-      sprintf(LabelField[2], "%s", "width (mm)");  
-      sprintf(LabelField[3], "%s", "-> points");  
-      sprintf(LabelField[4], "%s", "vert. div. (mrad)");   
-      sprintf(LabelField[5], "%s", "-> points");   
-      sprintf(LabelField[6], "%s", "hor. div. (mrad)");   
-      sprintf(LabelField[7], "%s", "-> points");
-      sprintf(LabelField[8], "%s", "Ray Trace hard edge");
+      snprintf(TextField[0],  40,  "%f", hp->disty);
+      snprintf(TextField[1],  40,  "%d", hp->iy);    
+      snprintf(TextField[2],  40,  "%f", hp->distz);  
+      snprintf(TextField[3],  40,  "%d", hp->iz);    
+      snprintf(TextField[4],  40,  "%f", hp->divy);   
+      snprintf(TextField[5],  40,  "%d", hp->idy);    
+      snprintf(TextField[6],  40,  "%f", hp->divz);   
+      snprintf(TextField[7],  40,  "%d", hp->idz); 
+      snprintf(LabelField[0], 100, "%s", "height (mm)");
+      snprintf(LabelField[1], 100, "%s", "-> points");  
+      snprintf(LabelField[2], 100, "%s", "width (mm)");  
+      snprintf(LabelField[3], 100, "%s", "-> points");  
+      snprintf(LabelField[4], 100, "%s", "vert. div. (mrad)");   
+      snprintf(LabelField[5], 100, "%s", "-> points");   
+      snprintf(LabelField[6], 100, "%s", "hor. div. (mrad)");   
+      snprintf(LabelField[7], 100, "%s", "-> points");
+      snprintf(LabelField[8], 100, "%s", "Ray Trace hard edge");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2458,23 +1967,23 @@ void MainWindow::UpdateSourceBox()
       break;  
  case 'I':
       psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", psip->ymin);
-      sprintf(TextField[1],  "%f", psip->zmin);    
-      sprintf(TextField[2],  "%f", psip->ymax);  
-      sprintf(TextField[3],  "%f", psip->zmax);    
-      sprintf(TextField[4],  "%d", psip->iy);   
-      sprintf(TextField[5],  "%d", psip->iz);    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "ymin (mm)");
-      sprintf(LabelField[1], "%s", "zmin (mm)");  
-      sprintf(LabelField[2], "%s", "ymax (mm)");  
-      sprintf(LabelField[3], "%s", "zmax (mm)");  
-      sprintf(LabelField[4], "%s", "y points");   
-      sprintf(LabelField[5], "%s", "z points");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "PO image plane");
+      snprintf(TextField[0],  40,  "%f", psip->ymin);
+      snprintf(TextField[1],  40,  "%f", psip->zmin);    
+      snprintf(TextField[2],  40,  "%f", psip->ymax);  
+      snprintf(TextField[3],  40,  "%f", psip->zmax);    
+      snprintf(TextField[4],  40,  "%d", psip->iy);   
+      snprintf(TextField[5],  40,  "%d", psip->iz);    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "ymin (mm)");
+      snprintf(LabelField[1], 100, "%s", "zmin (mm)");  
+      snprintf(LabelField[2], 100, "%s", "ymax (mm)");  
+      snprintf(LabelField[3], 100, "%s", "zmax (mm)");  
+      snprintf(LabelField[4], 100, "%s", "y points");   
+      snprintf(LabelField[5], 100, "%s", "z points");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "PO image plane");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2485,23 +1994,23 @@ void MainWindow::UpdateSourceBox()
 
     case 'L':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", up->length);
-      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      sprintf(TextField[3],  "%f", up->deltaz);    
-      sprintf(TextField[4],  "%s", "");   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "length (mm)");
-      sprintf(LabelField[1], "%s", "lambda (nm)");  
-      sprintf(LabelField[2], "%s", "ray number");  
-      sprintf(LabelField[3], "%s", "deltaz (mm)");  
-      sprintf(LabelField[4], "%s", "");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "SLS SIS undulator");
+      snprintf(TextField[0],  40,  "%f", up->length);
+      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
+      snprintf(TextField[3],  40,  "%f", up->deltaz);    
+      snprintf(TextField[4],  40,  "%s", "");   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "length (mm)");
+      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
+      snprintf(LabelField[2], 100, "%s", "ray number");  
+      snprintf(LabelField[3], 100, "%s", "deltaz (mm)");  
+      snprintf(LabelField[4], 100, "%s", "");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "SLS SIS undulator");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2510,23 +2019,23 @@ void MainWindow::UpdateSourceBox()
 
     case 'M':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", up->length);
-      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      sprintf(TextField[3],  "%f", up->deltaz);    
-      sprintf(TextField[4],  "%s", "");   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "length (mm)");
-      sprintf(LabelField[1], "%s", "lambda (nm)");  
-      sprintf(LabelField[2], "%s", "ray number");  
-      sprintf(LabelField[3], "%s", "deltaz (mm)");  
-      sprintf(LabelField[4], "%s", "");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "SLS SIM undulator");
+      snprintf(TextField[0],  40,  "%f", up->length);
+      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
+      snprintf(TextField[3],  40,  "%f", up->deltaz);    
+      snprintf(TextField[4],  40,  "%s", "");   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "length (mm)");
+      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
+      snprintf(LabelField[2], 100, "%s", "ray number");  
+      snprintf(LabelField[3], 100, "%s", "deltaz (mm)");  
+      snprintf(LabelField[4], 100, "%s", "");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "SLS SIM undulator");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2535,23 +2044,23 @@ void MainWindow::UpdateSourceBox()
 
     case 'o':
       sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", sop->sigy);
-      sprintf(TextField[1],  "%f", sop->sigdy);    
-      sprintf(TextField[2],  "%f", sop->sigz);  
-      sprintf(TextField[3],  "%f", sop->sigdz);    
-      sprintf(TextField[4],  "%d", myparent->myBeamline()->RTSource.raynumber);   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "sigy (mm)");
-      sprintf(LabelField[1], "%s", "sigdy (mrad)");  
-      sprintf(LabelField[2], "%s", "sigz (mm)");  
-      sprintf(LabelField[3], "%s", "sigdz (mrad)");  
-      sprintf(LabelField[4], "%s", "ray number");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "Point Source: all sigma values");
+      snprintf(TextField[0],  40,  "%f", sop->sigy);
+      snprintf(TextField[1],  40,  "%f", sop->sigdy);    
+      snprintf(TextField[2],  40,  "%f", sop->sigz);  
+      snprintf(TextField[3],  40,  "%f", sop->sigdz);    
+      snprintf(TextField[4],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "sigy (mm)");
+      snprintf(LabelField[1], 100, "%s", "sigdy (mrad)");  
+      snprintf(LabelField[2], 100, "%s", "sigz (mm)");  
+      snprintf(LabelField[3], 100, "%s", "sigdz (mrad)");  
+      snprintf(LabelField[4], 100, "%s", "ray number");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "Point Source: all sigma values");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2561,23 +2070,23 @@ void MainWindow::UpdateSourceBox()
 
  case 'R':
       rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%lf", rp->dy);
-      sprintf(TextField[1],  "%lf", rp->dz);    
-      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      sprintf(TextField[3],  "%s", "");    
-      sprintf(TextField[4],  "%s", "");   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "dy (mrad)");
-      sprintf(LabelField[1], "%s", "dz (mrad)");  
-      sprintf(LabelField[2], "%s", "ray number");  
-      sprintf(LabelField[3], "%s", "");  
-      sprintf(LabelField[4], "%s", "");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "Ring Source: half axis of the divergence ellipse, y,z are always 0");
+      snprintf(TextField[0],  40,  "%lf", rp->dy);
+      snprintf(TextField[1],  40,  "%lf", rp->dz);    
+      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
+      snprintf(TextField[3],  40,  "%s", "");    
+      snprintf(TextField[4],  40,  "%s", "");   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "dy (mrad)");
+      snprintf(LabelField[1], 100, "%s", "dz (mrad)");  
+      snprintf(LabelField[2], 100, "%s", "ray number");  
+      snprintf(LabelField[3], 100, "%s", "");  
+      snprintf(LabelField[4], 100, "%s", "");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "Ring Source: half axis of the divergence ellipse, y,z are always 0");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2585,23 +2094,23 @@ void MainWindow::UpdateSourceBox()
    
     case 'U':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", up->length);
-      sprintf(TextField[1],  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      sprintf(TextField[2],  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      sprintf(TextField[3],  "%s", "");    
-      sprintf(TextField[4],  "%s", "");   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "length (mm)");
-      sprintf(LabelField[1], "%s", "lambda (nm)");  
-      sprintf(LabelField[2], "%s", "ray number");  
-      sprintf(LabelField[3], "%s", "");  
-      sprintf(LabelField[4], "%s", "");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "Undulator");
+      snprintf(TextField[0],  40,  "%f", up->length);
+      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
+      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
+      snprintf(TextField[3],  40,  "%s", "");    
+      snprintf(TextField[4],  40,  "%s", "");   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "length (mm)");
+      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
+      snprintf(LabelField[2], 100, "%s", "ray number");  
+      snprintf(LabelField[3], 100, "%s", "");  
+      snprintf(LabelField[4], 100, "%s", "");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "Undulator");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2610,23 +2119,23 @@ void MainWindow::UpdateSourceBox()
       fp= (struct FileSourceType *)myparent->myBeamline()->RTSource.Quellep;
       printf("source from file %s\n", myparent->myPHASEset()->sourceraysname);
       strncpy(fp->filename, myparent->myPHASEset()->sourceraysname, MaxPathLength);
-      sprintf(TextField[0],  "%s", "");
-      sprintf(TextField[1],  "%s", "");    
-      sprintf(TextField[2],  "%s", "");  
-      sprintf(TextField[3],  "%s", "");    
-      sprintf(TextField[4],  "%s", "");   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "");
-      sprintf(LabelField[1], "%s", "");  
-      sprintf(LabelField[2], "%s", "");  
-      sprintf(LabelField[3], "%s", "");  
-      sprintf(LabelField[4], "%s", "");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "Source from file");
+      snprintf(TextField[0],  40,  "%s", "");
+      snprintf(TextField[1],  40,  "%s", "");    
+      snprintf(TextField[2],  40,  "%s", "");  
+      snprintf(TextField[3],  40,  "%s", "");    
+      snprintf(TextField[4],  40,  "%s", "");   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "");
+      snprintf(LabelField[1], 100, "%s", "");  
+      snprintf(LabelField[2], 100, "%s", "");  
+      snprintf(LabelField[3], 100, "%s", "");  
+      snprintf(LabelField[4], 100, "%s", "");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "Source from file");
       break;
     case 'S':
       QMessageBox::warning(this, tr("UpdateSourceBox"),
@@ -2634,23 +2143,23 @@ void MainWindow::UpdateSourceBox()
 			 .arg(sou));
       myparent->myBeamline()->RTSource.QuellTyp= 'o';
       sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      sprintf(TextField[0],  "%f", 0.1);
-      sprintf(TextField[1],  "%f", 0.1);    
-      sprintf(TextField[2],  "%f", 0.1);  
-      sprintf(TextField[3],  "%f", 0.1);    
-      sprintf(TextField[4],  "%d", 25000);   
-      sprintf(TextField[5],  "%s", "");    
-      sprintf(TextField[6],  "%s", "");   
-      sprintf(TextField[7],  "%s", ""); 
-      sprintf(LabelField[0], "%s", "sigy (mm)");
-      sprintf(LabelField[1], "%s", "sigdy (mrad)");  
-      sprintf(LabelField[2], "%s", "sigz (mm)");  
-      sprintf(LabelField[3], "%s", "sigdz (mrad)");  
-      sprintf(LabelField[4], "%s", "ray number");   
-      sprintf(LabelField[5], "%s", "");   
-      sprintf(LabelField[6], "%s", "");   
-      sprintf(LabelField[7], "%s", "");
-      sprintf(LabelField[8], "%s", "Point Source: all sigma values");
+      snprintf(TextField[0],  40,  "%f", 0.1);
+      snprintf(TextField[1],  40,  "%f", 0.1);    
+      snprintf(TextField[2],  40,  "%f", 0.1);  
+      snprintf(TextField[3],  40,  "%f", 0.1);    
+      snprintf(TextField[4],  40,  "%d", 25000);   
+      snprintf(TextField[5],  40,  "%s", "");    
+      snprintf(TextField[6],  40,  "%s", "");   
+      snprintf(TextField[7],  40,  "%s", ""); 
+      snprintf(LabelField[0], 100, "%s", "sigy (mm)");
+      snprintf(LabelField[1], 100, "%s", "sigdy (mrad)");  
+      snprintf(LabelField[2], 100, "%s", "sigz (mm)");  
+      snprintf(LabelField[3], 100, "%s", "sigdz (mrad)");  
+      snprintf(LabelField[4], 100, "%s", "ray number");   
+      snprintf(LabelField[5], 100, "%s", "");   
+      snprintf(LabelField[6], 100, "%s", "");   
+      snprintf(LabelField[7], 100, "%s", "");
+      snprintf(LabelField[8], 100, "%s", "Point Source: all sigma values");
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2695,31 +2204,31 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     (double)myparent->myBeamline()->RESULT.points/ 
     (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
   
-  sprintf(buffer, "%s Statistics", label);  
+  snprintf(buffer, 255, "%s Statistics", label);  
   statGroup->setTitle(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cz);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cz);  
   czLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cy);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cy);  
   cyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%9.4f</FONT>", pp->wz);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%9.4f</FONT>", pp->wz);  
   wzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%9.4f</FONT>", pp->wy);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%9.4f</FONT>", pp->wy);  
   wyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdz * 1e3);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdz * 1e3);  
   cdzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdy * 1e3);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdy * 1e3);  
   cdyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdz * 1e3);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdz * 1e3);  
   wdzLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdy * 1e3);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdy * 1e3);  
   wdyLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8d</FONT>", rays);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8d</FONT>", rays);  
   rayLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", trans);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", trans);  
   traLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->ry);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->ry);  
   ryLabel->setText(QString(tr(buffer)));
-  sprintf(buffer, "<FONT COLOR=blue>%8.3f</FONT>", pp->rz);  
+  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->rz);  
   rzLabel->setText(QString(tr(buffer)));
 
   if (pp->fwhmon)
@@ -2750,12 +2259,12 @@ void MainWindow::UpdateStatus()
   if (myparent->myBeamline()->elementzahl > 0)
     {
       if (myparent->myBeamline()->ElementList[elementnumber].ElementOK & elementOK) 
-	sprintf(buffer, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
+	snprintf(buffer, 100, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
       else 
-	sprintf(buffer, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
+	snprintf(buffer, 100, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
     }
   else
-    sprintf(buffer, "<b><FONT COLOR=red>OE_X</FONT></b>");
+    snprintf(buffer, 100, "<b><FONT COLOR=red>OE_X</FONT></b>");
 
   elementStatLabel->setText(QString(tr(buffer)));
 
@@ -2890,10 +2399,8 @@ void MainWindow::writeSimp()
   cout << "writeSimp done" << endl; 
 } // end writeSimp
 
-
 /////////////////////////////////
 // end widget handling sctieon //
 /////////////////////////////////
-
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
