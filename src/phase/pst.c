@@ -11,6 +11,7 @@
 
 /* UF 0804 cleaned code from X11 related routines */
 
+
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif 
@@ -30,6 +31,28 @@
   
 #include "phase.h"         
 #include "rtrace.h" 
+
+
+//TODO: maybe move this prototype to a header file
+void pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
+          double *lambda, int *iord, 
+#ifdef SEVEN_ORDER
+          MAPTYPE_8X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+#else
+          MAPTYPE_5X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+#endif
+          double *xlen0, MAP7TYPE *ypc1, MAP7TYPE *zpc1, MAP7TYPE *dypc, MAP7TYPE *dzpc,
+          MAP7TYPE *wc, MAP7TYPE *xlc,
+          double *y, double *z,
+          double *psd, double *stfd1phmaxc,
+          double *stinumbc, double *s1c,
+          double *s2c, double *s3c,
+          double *eyrec, double *ezrec,
+          double *eyimc, double *ezimc,
+          struct map4 *m4, struct geometryst *gp, struct mirrortype *mirp,
+          struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
+          struct integration *xi, struct integration_results *xir, struct statistics *st, 
+          MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb);
 
 void inttochar(int n, char *sn)
 {
@@ -339,20 +362,23 @@ void PST(struct BeamlineType *bl)
    struct mirrortype *mirp;
    struct rayst ra;
    struct source_results sr;
-   struct integration_results xir;
-   struct statistics st;          /* bereitet probleme (Absturz) */
-   struct map4 m4;   
+// STACK!  struct integration_results xir;
+struct integration_results *xirp;
+// STACK!  struct statistics st;          /* bereitet probleme (Absturz) */
+struct statistics *stp;
+// STACK!   struct map4 m4;
+struct map4 *m4p; 
    double a[6][6], *tmp;
-   int size, i, gratingnumber, elart, gratingposition;
+   int i, size, gratingnumber, elart, gratingposition;
    
-    /* UF 28.11.06 */
+   /* UF 28.11.06 */
    PSDp= bl->RESULT.RESp; 
    psip= (struct PSImageType *)bl->RTSource.Quellep;
 
  #ifdef DEBUG  
-   printf("phase space trafo PST called\n");
+   printf("pst.c: phase space trafo PST called\n");
    printf("  source typ: %d\n", bl->src.isrctype); 
-#endif
+ #endif
 
    /* gitterzahl erkennen und geometrypointer initialisieren */
    gratingnumber= 0; gratingposition= 0;
@@ -368,6 +394,7 @@ void PST(struct BeamlineType *bl)
 	   printf("grating %d recognized, position: %d\n", gratingnumber, gratingposition);
 	 }
      }
+
    /* some tests */
    if(gratingnumber > 1) 
      {
@@ -411,17 +438,31 @@ void PST(struct BeamlineType *bl)
    /* speicher reservieren fuers ergebnis 	*/
    /* ausgelagert UF 28.11.06 */
    
+ #ifdef DEBUG 
+   printf("pst.c: allocating memory for structs\n");
+ #endif
+ 
+   m4p = malloc(sizeof(struct map4));
+   xirp = malloc(sizeof(struct integration_results));
+   stp = malloc(sizeof(struct statistics));
+   if ( (!m4p) || (!xirp) || (!stp) )
+   {
+     fprintf(stderr, "out of memory -- exiting!\n");
+     exit(-1);
+   }
     
    /* map4 fuettern */
    /*   memcpy(&m4.,,sizeof());
    memcpy(&a[0][0], , sizeof(double)*36);*/
-
 #ifdef DEBUG
      /* debug */
   tmp= (double *) bl->ElementList[gratingposition].wc; 
   printf("pst.c: wc4000: %g\n", tmp[4]);
+  
+  printf("pdt.c: calling pstf(...)\n");
 #endif
   /* pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, */
+
   pstf(psip, &bl->BLOptions.PSO,
        &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, &bl->xlm.xlen1c, 
        &bl->xlm.xlen2c, 
@@ -434,28 +475,41 @@ void PST(struct BeamlineType *bl)
        PSDp->eyrec, PSDp->ezrec,
        PSDp->eyimc, PSDp->ezimc,
 /*       &m4, gp, &bl->ElementList->mir, uebergebe Strukturvariable mirp */
-       &m4, gp, mirp, 
-       &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl, 
-       &bl->BLOptions.xi, &xir, &st,
-       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb);      
+       m4p, gp, mirp, 
+       &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl,
+       &bl->BLOptions.xi, xirp, stp,
+       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb);
 
 #ifdef DEBUG
+  printf("pst.c: returning from call pstf(...)\n");
   /*  printf("pst.c: debug 0711: %f %f\n", PSDp->y[0], PSDp->y[1]); */
 #endif
 
+
    /* simpson resuslts copieren */
    printf("copy simpson results\n");
-   memcpy(PSDp->simpre, xir.simpre, sizeof(double)*0x8000);
-   memcpy(PSDp->simpim, xir.simpim, sizeof(double)*0x8000);
-   memcpy(PSDp->sintre, xir.sintre, sizeof(double)*0x8000);
-   memcpy(PSDp->sintim, xir.sintim, sizeof(double)*0x8000);
-   memcpy(PSDp->simpa,  xir.simpa,  sizeof(double)*0x8000);
-   memcpy(PSDp->simpp,  xir.simpp,  sizeof(double)*0x8000);
-   memcpy(PSDp->d12,    xir.d12,    sizeof(double)*24576);
-/*   printf("dies muss noch geaendert werden!!!\n");*/
+   memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*0x8000);
+   memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*0x8000);
+   memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*0x8000);
+   memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*0x8000);
+   memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*0x8000);
+   memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*0x8000);
+   memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*24576);
+
 
    bl->beamlineOK |= resultOK;  
-   printf("phase space trafo PST end\n"); 
+
+ #ifdef DEBUG
+  printf("pst.c: freeing allocated memory for structs\n");
+ #endif
+   free(stp);
+   free(xirp);
+   free(m4p);
+   
+ #ifdef DEBUG
+   printf("pst.c: phase space trafo PST end\n"); 
+ #endif
+ 
 } /* end PST */
 
 void WritePsd(char *name, struct PSDType *p, int ny, int nz)   
