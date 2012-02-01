@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <24 Jan 12 16:07:00 flechsig> 
+//  Time-stamp: <01 Feb 12 16:33:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -573,6 +573,11 @@ void MainWindow::rhoBslot()  // calculate roho
   double theta, rho, source, image;
   char buffer[10];
   QString rhostr;
+
+
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " rhoBslot called" << endl;
+#endif
     
   sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
   sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
@@ -592,10 +597,15 @@ void MainWindow::rhoBslot()  // calculate roho
 
 void MainWindow::rBslot()
 {
-  double theta, rmi, source, image;
+  double theta, rmi, source, image, nenner;
   QString rmistr;
   char buffer[10];
   
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " rBslot called" << endl;
+#endif
+
+
   sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
   sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
   sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
@@ -603,14 +613,15 @@ void MainWindow::rBslot()
   snprintf(buffer, 10, "%9.3f", theta); // for message box
 
   if (theta >= 90.0)
-    QMessageBox::warning(this, tr("Calculate Radius"),
-			 tr("theta %1 >= 90 deg.\ntake no action").arg(buffer));
-  else
     {
-      rmi= (2.0* source* image)/ ((source+ image)* cos(theta * PI/180.0)); 
-      snprintf(buffer, MaxPathLength, "%9.3f", rmi);
-      rE->setText(rmistr.setNum(rmi, 'g', 3));
+      QMessageBox::warning(this, tr("Calculate Radius"),
+			   tr("theta %1 >= 90 deg.\ntake no action").arg(buffer));
+      return;
     }
+  
+  nenner= (source+ image)* cos(theta * PI/180.0);
+  rmi= (fabs(nenner) > ZERO) ? (2.0* source* image)/ nenner : (nenner/fabs(nenner))/ZERO; 
+  rE->setText(rmistr.setNum(rmi, 'g', 3));
 } // rBslot  
 // end calc slots
 
