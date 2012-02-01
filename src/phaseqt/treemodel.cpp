@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <25 Nov 11 15:45:18 flechsig> 
+//  Time-stamp: <01 Feb 12 08:34:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -235,7 +235,7 @@ void TreeModel::selectSlot(const QModelIndex &index)
   actualIndex= myidx;                            // stores the index of the linear list
  
 #ifdef DEBUG 
-  cout  << __FILE__ << "index: " << myidx  << 
+  cout  << "debug: " << __FILE__ << " index: " << myidx  << 
     " value: " << data(valindex, Qt::DisplayRole).toString().toLocal8Bit().constData() << endl;
 #endif
   
