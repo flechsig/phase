@@ -49,7 +49,7 @@ void pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
           double *s2c, double *s3c,
           double *eyrec, double *ezrec,
           double *eyimc, double *ezimc,
-          struct map4 *m4, struct geometryst *gp, struct mirrortype *mirp,
+          struct geometryst *gp, struct mirrortype *mirp,
           struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
           struct integration *xi, struct integration_results *xir, struct statistics *st, 
           MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb);
@@ -366,8 +366,6 @@ void PST(struct BeamlineType *bl)
 struct integration_results *xirp;
 // STACK!  struct statistics st;          /* bereitet probleme (Absturz) */
 struct statistics *stp;
-// STACK!   struct map4 m4;
-struct map4 *m4p; 
    double a[6][6], *tmp;
    int i, size, gratingnumber, elart, gratingposition;
    
@@ -442,10 +440,9 @@ struct map4 *m4p;
    printf("pst.c: allocating memory for structs\n");
  #endif
  
-   m4p = malloc(sizeof(struct map4));
    xirp = malloc(sizeof(struct integration_results));
    stp = malloc(sizeof(struct statistics));
-   if ( (!m4p) || (!xirp) || (!stp) )
+   if ( (!xirp) || (!stp) )
    {
      fprintf(stderr, "out of memory -- exiting!\n");
      exit(-1);
@@ -475,7 +472,7 @@ struct map4 *m4p;
        PSDp->eyrec, PSDp->ezrec,
        PSDp->eyimc, PSDp->ezimc,
 /*       &m4, gp, &bl->ElementList->mir, uebergebe Strukturvariable mirp */
-       m4p, gp, mirp, 
+       gp, mirp, 
        &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl,
        &bl->BLOptions.xi, xirp, stp,
        &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb);
@@ -504,7 +501,6 @@ struct map4 *m4p;
  #endif
    free(stp);
    free(xirp);
-   free(m4p);
    
  #ifdef DEBUG
    printf("pst.c: phase space trafo PST end\n"); 
