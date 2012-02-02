@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <11 Jan 12 08:14:48 flechsig> 
+//  Time-stamp: <01 Feb 12 17:45:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -781,14 +781,15 @@ void Plot::hfill2(struct PSDType *rp)
 //}
 
 // calculate statistics of an array of rays
-void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor)
+void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor, double lambda)
 {
   int i;
   struct RayType *rp;
   double fwhmfac;
 
 #ifdef DEBUG  
-  printf("debug: statistics called, fwhmon= %d", fwhmon);
+  cout << "debug: " << __FILE__ << " statistics called, fwhmon=" << fwhmon << ", deltalambdafactor=" << deltalambdafactor << ", lambda=" << lambda << endl;
+  // printf("debug: statistics called, fwhmon= %d", fwhmon);
 #endif
 
   //fwhmfac= 2.3548;              // more accurate on request
@@ -824,7 +825,9 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
     }
 
   ry= wy* deltalambdafactor * fwhmfac;   // for resolving power we always take fwhm
+  ry= (ry > ZERO) ? lambda/ ry : 0.0;
   rz= wz* deltalambdafactor * fwhmfac;
+  rz= (rz > ZERO) ? lambda/ rz : 0.0;
 
   if (fwhmon)
     {
@@ -834,7 +837,7 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
       wdy*= fwhmfac;
     }
 #ifdef DEBUG  
-  printf(" ==> statistics done\n");
+  cout << "debug " << __FILE__ << " ==> statistics done" << endl;
 #endif
 } // Plot::statistics
 

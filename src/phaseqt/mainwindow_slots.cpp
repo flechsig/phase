@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <01 Feb 12 16:33:50 flechsig> 
+//  Time-stamp: <01 Feb 12 17:42:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -852,7 +852,8 @@ void MainWindow::grapplyslot()
     {
       d_plot->statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 			 myparent->myBeamline()->RTSource.raynumber, 
-			 myparent->myBeamline()->deltalambdafactor);
+			 myparent->myBeamline()->deltalambdafactor,
+			 myparent->myBeamline()->BLOptions.lambda);
       UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
       d_plot->setTitle(tr("GO Source"));
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
@@ -863,7 +864,8 @@ void MainWindow::grapplyslot()
     {  
       d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 			       myparent->myBeamline()->RESULT.points, 
-			       myparent->myBeamline()->deltalambdafactor);
+			       myparent->myBeamline()->deltalambdafactor,
+			       myparent->myBeamline()->BLOptions.lambda);
       UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
       d_plot->setTitle(tr("GO Result"));
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 

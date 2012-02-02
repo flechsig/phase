@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Jan 12 16:40:10 flechsig> 
+//  Time-stamp: <01 Feb 12 17:30:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2239,7 +2239,8 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       wyLabel0->setText(QString(tr("y FWHM (mm)")));
       wdzLabel0->setText(QString(tr("dz FWHM (mm)")));
       wdyLabel0->setText(QString(tr("dy FWHM (mm)")));
-    } else
+    } 
+  else
     {
       wzLabel0->setText(QString(tr("z RMS (mm)")));
       wyLabel0->setText(QString(tr("y RMS (mm)")));
