@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Jan 12 15:41:15 flechsig>  */
+/*   Time-stamp: <02 Feb 12 15:03:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -96,6 +96,8 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
       PST(bl);
       PSDp= (struct PSDType *)bl->RESULT.RESp;
       WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
+#else
+     printf("BatchMode: Phase Space Transformation not yet available in phaseqt\n");
 #endif
       break;
 
