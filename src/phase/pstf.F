@@ -15,7 +15,7 @@ c*************************** neu **************************
      &			yipc,zipc,psdc,stfd1phmaxc,stinumbc,
      &    		s1c,s2c,s3c,eyrec,ezrec,
      &                  eyimc,ezimc,
-     &                  m4,g,am,src,apr,
+     &                  g,am,src,apr,
      &                  ra,ifl,xi,xir,st,
      &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb)       
 c*************************** neu **************************  
@@ -92,22 +92,6 @@ c        record /source_results/ sr
         complex*16 psd2cy(512,512)
 	complex*16 psd2cz(512,512) 
 
-
-c        write(*,*)'pstf (FORTRAN) called'
-c        write(*,*)'show input, sum pathlen, wc, xlc'
-c      do i=0,4
-c          do j=0,4-i
-c             do k=0,4-i-j
-c                do l=0,4-i-j-k
-c                   write(*,*)'xlm',i,j,k,l,
-c     &   xlen1c(i,j,k,l)+xlen2c(i,j,k,l)
-c                   write(*,*)'wc ',wc(i,j,k,l)
-c                   write(*,*)'xlc',xlc(i,j,k,l)
-c                enddo
-c             enddo
-c          enddo
-c       enddo
-
         ra.xlam_test=xlam_test 
 
 #ifdef DEBUG
@@ -115,10 +99,6 @@ c       enddo
         write(*,*)'grating: (line density)',g.xdens(0)
         write(*,*)'xi.ymin,xi.ymax,xi.zmin,xi.zmax'
         write(*,*)'   ',xi.ymin,xi.ymax,xi.zmin,xi.zmax
-
-c        pi= 4.d0* datan(1.d0)    
-c        call readfg34_par(src,apr,ifl,xi) 
-c        ifl.iord=iord   ! Uwe
 
 c***************** phase space imaging ************************
 
@@ -139,8 +119,6 @@ c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
 #endif
         call initconstants(cs)
 
-c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
-c     von Johannes 4.2.00 imaxz entfernt
         xir.nsimp=0
         xir.iisimp=4
 	xir.isimp(1)=2
