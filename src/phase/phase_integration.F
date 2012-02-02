@@ -488,6 +488,7 @@ c      dimension p1122a(0:7,0:7,0:7,0:7)
 c-------------------------------------------------------------------------
 c	diese Schleife parallelisieren
 c-------------------------------------------------------------------------
+
 	var0=1.
         do ii=0,ifl.iord
           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
@@ -513,7 +514,7 @@ c-------------------------------------------------------------------------
         fd1ph=dabs(fd1ph)
         fd1pha=dabs(fd1pha)
         fd1phb=dabs(fd1phb)
-
+ 
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
 c----------------------------------------
@@ -777,13 +778,6 @@ c UF 12.1.2000
 	do i=2,ianz
 	x(i)=x(i-1)+dx(i-1)
 	enddo
-
-c111	format(3(3x,d12.5))
-c	open(unit=10,name='t0_phacor.dat',type='new')
-c	do i=1,ianz
-c	write(10,*)x(i),amp(i),pha(i)
-c	enddo
-c	close(10)
 
 	if(xi.ianz0_cal.eq.0)then
 	  ianz0=xi.ianz0_fixed
@@ -1553,7 +1547,6 @@ c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
         xxsave=xx
 	do ii=1,xir.iisimp
            if(xir.isimp(ii).eq.xir.nsimp)then
-c UF
               xx=xxsave
               do i=1,ianz-1
                  xx=xx+dyz(i)
