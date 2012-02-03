@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <01 Feb 12 17:42:17 flechsig> 
+//  Time-stamp: <02 Feb 12 15:08:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -127,7 +127,7 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("optiInputAct")) 
     { 
-      printf("optiInputAct button pressed %d\n", myparent->myBeamline()->elementzahl);
+      cout << "optiInputAct button pressed, elementzahl=" << myparent->myBeamline()->elementzahl << endl;
       if (!o_input) 
 	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
 			       myparent->myPHASEset()->beamlinename, myparent->myPHASEset()->optipckname, 
@@ -138,7 +138,7 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("phasespaceAct"))
     {     
-      printf("phasespaceAct button pressed\n"); 
+      cout << "phasespaceAct button pressed" << endl; 
       if (elementListIsEmpty()) 
 	return;
 

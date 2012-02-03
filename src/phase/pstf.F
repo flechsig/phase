@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <15 Nov 11 15:14:09 flechsig> 
+c$$$ Time-stamp: <02 Feb 12 16:40:43 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -91,6 +91,7 @@ c        record /source_results/ sr
         complex*16 psd2c(1024,1024)
         complex*16 psd2cy(512,512)
 	complex*16 psd2cz(512,512) 
+        character creturn
 
         ra.xlam_test=xlam_test 
 
@@ -180,6 +181,8 @@ c************* Bildpunkt generieren *******************************
 #ifdef DEBUG
 	write(*,*)'pstf: start'
 #endif
+        creturn= achar(13)    ! the CR character
+        creturn= achar(10)      ! the CR character
 	st.inumzit=0
 	st.inumyit=0
 	st.inumzan=0
@@ -213,10 +216,14 @@ c************* save initial coordinates ****************
             st.nn1=n1
 	    st.nn2=n2
 c******* start of adaptive grid integration *************************** 
+#ifdef DEBUG1
            write(6,*)'call adaptive_int'
+#endif
            call adaptive_int(m4,g,am,src,apr,
-     .           cs,ra,ifl,xi,xir,st,s)  
+     .           cs,ra,ifl,xi,xir,st,s) 
+#ifdef DEBUG1 
            write(6,*)'returned from adaptive_int'
+#endif
             if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
                xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
@@ -251,7 +258,11 @@ c------------------------------------------
             
 c******Ende der Integration ueber die Winkel ******************
          enddo                  ! raster
-         write(*,*)'finished row ',n1,' of ', iheigh
+c UF overwrite the line
+c         write(*,*)'finished row ',n1,' of ', iheigh
+c          write(*,101,ADVANCE='NO') creturn, n1, iheigh
+          write(*,101)creturn, n1, iheigh
+ 101      FORMAT(a, 'finished row: ',i7,' out of a total of ',i7)
       enddo                     ! raster
 c     restore parameter in case of error
       s.iheigh= iheigh

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <02 Feb 12 15:03:39 flechsig>  */
+/*   Time-stamp: <02 Feb 12 15:23:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -41,9 +41,7 @@
 /* Batchmodus */
 void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int selected, int iord)
 {
-#ifndef QTGUI
   struct PSDType     *PSDp;
-#endif
   struct PSImageType *psip;
 
   printf("BatchMode: datafilename  : %s\n", ps->beamlinename);
@@ -89,16 +87,16 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
     
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
-#ifndef QTGUI
+
       src_ini(&bl->src); 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       PST(bl);
       PSDp= (struct PSDType *)bl->RESULT.RESp;
       WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
-#else
-     printf("BatchMode: Phase Space Transformation not yet available in phaseqt\n");
-#endif
+
+    
+
       break;
 
     case 4:
@@ -113,17 +111,17 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
 
     case 5:
       printf("BatchMode: multiple Phase Space Imaging\n");
-#ifndef QTGUI
+
       src_ini(&bl->src); 
-#endif
+
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
-#ifndef QTGUI
+
       MPST(bl);
 
       PSDp= (struct PSDType *)bl->RESULT.RESp;
       WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
-#endif
+
       break;
 
     default: 
