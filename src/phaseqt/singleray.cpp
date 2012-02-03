@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <24 Jan 12 09:37:22 flechsig> 
+//  Time-stamp: <03 Feb 12 17:00:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -14,6 +14,8 @@
 
 #include <QtGui>
 #include "singleray.h"
+
+using namespace std;   // fuer cout z.B.
 
 // constructor
 SingleRay::SingleRay(PhaseQt *parent, QWidget *pw)
@@ -91,17 +93,17 @@ SingleRay::~SingleRay()
 
 void SingleRay::applySlot()
 {
-  char buffer[MaxPathLength];
+  QString qst;
   
 #ifdef DEBUG
-  printf("debug: applySlot called\n");
+  cout << "debug: applySlot called" << endl;
 #endif
 
-  sscanf(S1E->text().toAscii().data(), "%lf", &rayin.y);
-  sscanf(S2E->text().toAscii().data(), "%lf", &rayin.z);
-  sscanf(S3E->text().toAscii().data(), "%lf", &rayin.dy);
-  sscanf(S4E->text().toAscii().data(), "%lf", &rayin.dz);
-  sscanf(S5E->text().toAscii().data(), "%lf", &rayin.phi);
+  rayin.y  = S1E->text().toDouble();
+  rayin.z  = S2E->text().toDouble();
+  rayin.dy = S3E->text().toDouble();
+  rayin.dz = S4E->text().toDouble();
+  rayin.phi= S5E->text().toDouble();
 
   rayin.dz*= 1e-3; // into rad
   rayin.dy*= 1e-3; // into rad
@@ -113,36 +115,33 @@ void SingleRay::applySlot()
   RayTraceSingleRayCpp(this->myparent);
 
   // the output
-  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.y);
-  S6Label->setText(QString(tr(buffer)));
-  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.z);
-  S7Label->setText(QString(tr(buffer)));
-  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.dy * 1e3);
-  S8Label->setText(QString(tr(buffer)));
-  snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.dz * 1e3);
-  S9Label->setText(QString(tr(buffer)));
-  if ((rayout.phi > 360) || (rayout.phi < 1e-3)) 
-    snprintf(buffer, MaxPathLength, "-> %s", "undef"); 
-  else
-    snprintf(buffer, MaxPathLength, "-> %10.3lg", rayout.phi);
+  S6Label->setText(qst.setNum(rayout.y, 'g', 4));
+  S7Label->setText(qst.setNum(rayout.z, 'g', 4));
+  S8Label->setText(qst.setNum(rayout.dy* 1e3, 'g', 4));
+  S9Label->setText(qst.setNum(rayout.dz* 1e3, 'g', 4));
 
-  S10Label->setText(QString(tr(buffer)));
+  if ((rayout.phi > 360) || (rayout.phi < 1e-3)) 
+    qst= tr("undef"); 
+  else
+    qst.setNum(rayout.phi, 'g', 3);
+
+  S10Label->setText(qst);
   //  this->parent->UpdateStatus();
 } // end applySlot
 
 // set defaults for single ray
 void SingleRay::defaultSlot()
 {
-  S1E->setText(QString(tr("0.0")));
-  S2E->setText(QString(tr("0.0")));
-  S3E->setText(QString(tr("0.0")));
-  S4E->setText(QString(tr("0.0")));
-  S5E->setText(QString(tr("0.0")));
+  S1E->setText(QString("0.0"));
+  S2E->setText(QString("0.0"));
+  S3E->setText(QString("0.0"));
+  S4E->setText(QString("0.0"));
+  S5E->setText(QString("0.0"));
 } // end defaultSlot
 
 void SingleRay::quitSlot()
 {
-  printf("quitSlot called\n");
+  cout << "quitSlot called" << endl;
   singleRayBox->close();
 } // quitSlot
 

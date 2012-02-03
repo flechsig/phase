@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <06 Jan 12 09:46:34 flechsig>  */
+/*  Time-stamp: <03 Feb 12 09:48:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -146,6 +146,7 @@ private:
     QWidget       *graphicBox;
     QWidget       *createGraphicBox();
     QGroupBox     *groupBox1;
+    QGroupBox     *statusGroup;
     //   QtPhase       *myQtPhase;
 
     QLineEdit    *lambdaE;  // generic parameters

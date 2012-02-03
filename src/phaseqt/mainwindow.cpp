@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Feb 12 09:39:39 flechsig> 
+//  Time-stamp: <03 Feb 12 11:21:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -353,7 +353,7 @@ QWidget *MainWindow::createGraphicBox()
   graphicBox = new QWidget();
 
   // upper part
-  QGroupBox   *statusGroup  = new QGroupBox(tr("Status"));
+  statusGroup  = new QGroupBox(tr("Status"));
   QHBoxLayout *statusLayout = new QHBoxLayout;
   sourceStatLabel   = new QLabel(tr("<b><FONT COLOR=red>source</FONT></b>"));
   imageStatLabel    = new QLabel(tr("<b><FONT COLOR=red>image</FONT></b>"));
@@ -1565,7 +1565,6 @@ case 10:
 void MainWindow::ReadBLFileInteractive(char *blname)
 {
   char fname[MaxPathLength], oname[MaxPathLength];  
-  char buffer[300];      
   struct stat fstatus;
   time_t mtime_data, mtime_backup;
   
@@ -1588,9 +1587,8 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	      if (mtime_data < mtime_backup)
 		{
 		  QMessageBox *msgBox = new QMessageBox;
-		  snprintf(buffer, 300, "<b>We found a newer backupfile</b>\n%s", fname);
-		  msgBox->setText(buffer);
-		  msgBox->setInformativeText("Do you want to use the backup?");
+		  msgBox->setText(QString(tr("<b>We found a newer backupfile:</b>\n"))+ QString(fname));
+		  msgBox->setInformativeText(QString(tr("Do you want to use the backup?")));
 		  msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		  msgBox->setDefaultButton(QMessageBox::Yes);
 		  msgBox->setIcon(QMessageBox::Question);
@@ -2200,39 +2198,29 @@ void MainWindow::UpdateSourceBox()
 // update the statistics in graphic box
 void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
-  char buffer[255];
   double trans;
+  QString qst;
 
   trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
     (double)myparent->myBeamline()->RESULT.points/ 
     (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
   
-  snprintf(buffer, 255, "%s Statistics", label);  
-  statGroup->setTitle(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cz);  
-  czLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cy);  
-  cyLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%9.4f</FONT>", pp->wz);  
-  wzLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%9.4f</FONT>", pp->wy);  
-  wyLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdz * 1e3);  
-  cdzLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->cdy * 1e3);  
-  cdyLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdz * 1e3);  
-  wdzLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->wdy * 1e3);  
-  wdyLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8d</FONT>", rays);  
-  rayLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", trans);  
-  traLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->ry);  
-  ryLabel->setText(QString(tr(buffer)));
-  snprintf(buffer, 255, "<FONT COLOR=blue>%8.3f</FONT>", pp->rz);  
-  rzLabel->setText(QString(tr(buffer)));
+  statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
+  czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 3)+ "</FONT>");
+  cyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 3)+ "</FONT>");		   
+  wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>");
+  wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	
+
+  cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 3)+ "</FONT>");	
+  cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 3)+ "</FONT>");
+  wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 3)+ "</FONT>");	
+  wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 3)+ "</FONT>");
+  
+  rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
+  traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 3)+ "</FONT>");
+  
+  rzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
+  ryLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
 
   if (pp->fwhmon)
     {
@@ -2253,29 +2241,25 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 void MainWindow::UpdateStatus()
 {
   int elementnumber= elementList->currentRow();
-  char buffer[100];
-
-  //  printf("UpdateStatus: element: %d, of %d\n", elementnumber, elementList->count());
+  QString qst;
 
   if ((elementnumber < 0) || (elementnumber > elementList->count()- 1)) 
     elementnumber= 0;
 
   if (myparent->myBeamline()->elementzahl > 0)
     {
-      if (myparent->myBeamline()->ElementList[elementnumber].ElementOK & elementOK) 
-	snprintf(buffer, 100, "<b><FONT COLOR=green>OE_%d</FONT></b>", elementnumber+1); 
-      else 
-	snprintf(buffer, 100, "<b><FONT COLOR=red>OE_%d</FONT></b>", elementnumber+1); 
+      qst.setNum(elementnumber+1);
+      qst= (myparent->myBeamline()->ElementList[elementnumber].ElementOK & elementOK) ?
+	QString("<b><FONT COLOR=green>OE_")+ qst : QString("<b><FONT COLOR=red>OE_")+ qst;
     }
   else
-    snprintf(buffer, 100, "<b><FONT COLOR=red>OE_X</FONT></b>");
-
-  elementStatLabel->setText(QString(tr(buffer)));
+    qst= QString("<b><FONT COLOR=red>OE_X");
+    elementStatLabel->setText(qst+ "</FONT></b>");
 
   if (myparent->myBeamline()->beamlineOK & sourceOK) 
-    sourceStatLabel->setText(QString(tr("<b><FONT COLOR=green>source</FONT></b>"))); 
+    sourceStatLabel->setText("<b><FONT COLOR=green>"+ QString(tr("source"))+ "</FONT></b>");  // correct version
   else 
-    sourceStatLabel->setText(QString(tr("<b><FONT COLOR=red>source</FONT></b>")));
+    sourceStatLabel->setText(QString("<b><FONT COLOR=red>source</FONT></b>")); // sloppy
 
   if (myparent->myBeamline()->beamlineOK & resultOK) 
     imageStatLabel->setText(QString(tr("<b><FONT COLOR=green>image</FONT></b>"))); 
@@ -2286,6 +2270,12 @@ void MainWindow::UpdateStatus()
     mapStatLabel->setText(QString(tr("<b><FONT COLOR=green>maps</FONT></b>"))); 
   else 
     mapStatLabel->setText(QString(tr("<b><FONT COLOR=red>maps</FONT></b>")));
+
+  if (myparent->myBeamline()->BLOptions.SourcetoImage == 2)    // update header
+    statusGroup->setTitle(QString(tr("PO Status"))); 
+  else
+    statusGroup->setTitle(QString(tr("GO Status"))); 
+
 } // UpdateStatus
 
 
@@ -2316,7 +2306,6 @@ int MainWindow::elementListNotSelected()
 // change labels of Graphics input
 void MainWindow::updateGraphicsInput(int style)
 {
-     
   if (style & PLOT_GO_DIV)
     {   
       zminLabel->setText(QString(tr("dzmin (mrad)"))); 
@@ -2331,7 +2320,6 @@ void MainWindow::updateGraphicsInput(int style)
       yminLabel->setText(QString(tr("ymin (mm)"))); 
       ymaxLabel->setText(QString(tr("ymax (mm)")));
     }
-  
 } // updateGraphicsInput
 
 
