@@ -33,8 +33,6 @@ ccc   DER Common block kann raus, falls auf unterroutinen verzichtet wird ...
 ccc  Die unterroutine remap verwendet den commonblock -> rausfinden, was wirklich benoetigt wird!
 ccc  Rest raus !!!
 
-
-
 	
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 c      subroutine phadrift_propagate_fk( beam4 ,dist 
@@ -62,7 +60,7 @@ c      real*8  pi,pihalf,signum,const,a1_sav
      &       ,nz1,ny1,nz2,ny2
 
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      real*8  small, big, tmp
+c      real*8  small, big, tmp
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       real*8  pi,pihalf
@@ -84,11 +82,12 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      &       ,ey2(MaxDim,MaxDim), ez2(MaxDim,MaxDim)
     
 
-	write(*,*)'phaPropagateFresnellKirchhoff started...' 
+      write(*,*)'phaPropagateFresnellKirchhoff started...' 
+      
 
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc	
-	small = 1.0d-16
-	big   = 1.0d+16
+c	small = 1.0d-16
+c	big   = 1.0d+16
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	pi=4.d0*datan(1.d0)
@@ -122,7 +121,10 @@ c	write(*,*),dy1,' ...dy1 ',dz1,' ... dz1'
 c	write(*,*),dy2,' ...dy2 ',dz2,' ... dz2'   
    
 ccc   START PROPAGATE FK    ccc
-	do i=1,ny2
+      
+!$OMP PARALLEL DO      
+        do i=1,ny2
+c          write (*,*) i
           y2(i)=ymin2+dble(i-1)*dy2      
           do j=1,nz2
             z2(j)=zmin2+dble(j-1)*dz2    
@@ -130,26 +132,27 @@ ccc   START PROPAGATE FK    ccc
             ez2(i,j)=0.d0
             do k=1,ny1
             do l=1,nz1
-
+	    
 c    Intrinsische Wurzelfkt. dsqrt ist schneller als Entwicklung ...
 c    dsqrt benoetigt nur rund 66% der Zeit, die eine Entwicklung zur 5.Ordnung braucht !    
 
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      tmp=distance**2 + dabs(y1(k)-y2(i))**2 + dabs(z1(l)-z2(j))**2
-	if (tmp.lt.small) then
-		write(*,*) tmp,' ... small sqrtarg at (i,j,k,l) ',i,j,k,l
-c		fact=cmplx(0,0)
-	endif
+c      tmp=distance**2 + dabs(y1(k)-y2(i))**2 + dabs(z1(l)-z2(j))**2
+c	if (tmp.lt.small) then
+c		write(*,*) tmp,' ... small sqrtarg at (i,j,k,l) ',i,j,k,l
+cc		fact=cmplx(0,0)
+c	endif
 
-	if (tmp.gt.big)  then
-		write(*,*)tmp,' ...   big sqrtarg at (i,j,k,l) ',i,j,k,l
-c		fact=cmplx(0,0)
-	endif  
+c	if (tmp.gt.big)  then
+c		write(*,*)tmp,' ...   big sqrtarg at (i,j,k,l) ',i,j,k,l
+cc		fact=cmplx(0,0)
+c	endif  
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-
-      dist1=dsqrt( distance**2 + dabs(y1(k)-y2(i))**2 + dabs(z1(l)-z2(j))**2 )
-     &     - dabs(distance)
+      dist1=dsqrt(distance**2+dabs(y1(k)-y2(i))**2+dabs(z1(l)-z2(j))**2)
+c     &     - dabs(distance)
+c     (SG: can't append line or statement would be too long for F77)
+      dist1=dist1-dabs(distance)
 
 c     use correct sign for backward propagation
       if (distance.gt.0) then
@@ -162,16 +165,16 @@ c     use correct sign for backward propagation
       fact=(fact*dz1*dy1)/xlam
 
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      tmp=dsqrt(dreal(fact)**2 + dimag(fact)**2) 	
-	if (tmp.lt.small) then
-		write(*,*)fact,' ... small fact at (i,j,k,l) ',i,j,k,l
-c		fact=cmplx(0,0)
-	endif
+c      tmp=dsqrt(dreal(fact)**2 + dimag(fact)**2) 	
+c	if (tmp.lt.small) then
+c		write(*,*)fact,' ... small fact at (i,j,k,l) ',i,j,k,l
+cc		fact=cmplx(0,0)
+c	endif
 
-	if (tmp.gt.big)  then
-		write(*,*)fact,' ...   big fact at (i,j,k,l) ',i,j,k,l
-c		fact=cmplx(0,0)
-	endif
+c	if (tmp.gt.big)  then
+c		write(*,*)fact,' ...   big fact at (i,j,k,l) ',i,j,k,l
+cc		fact=cmplx(0,0)
+c	endif
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 c	write(*,*),fact,' ...fact'
