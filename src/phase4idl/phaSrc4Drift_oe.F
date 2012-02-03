@@ -301,69 +301,59 @@ c--------------------------------------------------------------------------
 
 	include 'fkoe.cmn'
 
-	integer i,j,k,l
-
-	print*,'phaPropagateFresnelKirchhoff-oe started...' 
+	print*,'phaPropagateFresnelKirchhoff-oe mp started...' 
 
 	fact0=(dz0*dy0)/xlam
         if((kmod.eq.1).or.(kmod.eq.2))then
 	  fact0=fact0*dsqrt(dcos(winkel))
 	endif
 
+c----------------------------------------------------------
+	if(kmod.eq.10)then 	!propagation between plane parallel surfaces
+	  call phadrift_propagate_fk_oe_10
+	endif
+
+	if(kmod.eq.1)then	! source to oe
+	  call phadrift_propagate_fk_oe_1
+	endif	! kmod.eq.1
+
+	if(kmod.eq.2)then
+	  call phadrift_propagate_fk_oe_2
+	endif
+
+      print*,'phaPropagateFresnelKirchhoff-oe finished...'      
+
+      return
+      end !phadrift_propagate_fk_oe 
+
+
+c----------------------------------------------------------------------------
+      subroutine phadrift_propagate_fk_oe_10
+c----------------------------------------------------------------------------
+c	kmod = 10 no optical element
+c--------------------------------------------------------------------------
+
+	include 'fkoe.cmn'
+
+	integer i,j,k,l
+
+	fact0=(dz0*dy0)/xlam
+        if((kmod.eq.1).or.(kmod.eq.2))then
+	  fact0=fact0*dsqrt(dcos(winkel))
+	endif
+!$OMP PARALLEL DO
 	do i=1,ianzy1
+c	  PRINT *, 'i = ', i
           do j=1,ianzz1
-            ey1(j,i)=0.d0
+            
+	    ey1(j,i)=0.d0
             ez1(j,i)=0.d0
             do k=1,ianzy0
               do l=1,ianzz0
-
-c----------------------------------------------------------
-	if(kmod.eq.10)then
-c--------------- propagation between plane parallel surfaces
+      
+c---- propagation between plane parallel surfaces
       dist1=dsqrt(dist**2+dabs(y0(k)-y1(i))**2+
      &          dabs(z0(l)-z1(j))**2)-dabs(dist)
-
-	endif
-
-c-------------------------------------------------------------
-	if(kmod.eq.1)then	! source to oe
-c-------------------------------------------------------------
-	xstart=-dist*dsin(winkel)-y0(k)*dcos(winkel)
-	ystart=-dist*dcos(winkel)+y0(k)*dsin(winkel)
-	zstart=z0(l)
-
-	xend=y1(i)
-	yend=-surf(j,i)
-	zend=z1(j)
-
-	dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+(zstart-zend)**2)
-     &      -dabs(dist)
-
-	endif	! kmod.eq.1
-
-c------------------------------------------------------------
-	if(kmod.eq.2)then
-c------------------------------------------------------------
-
-	xstart=y0(k)
-	ystart=-surf(l,k)
-	zstart=z0(l)
-
-	xend=dist*dsin(winkel)+y1(i)*dcos(winkel)
-	yend=-dist*dcos(winkel)+y1(i)*dsin(winkel)
-	zend=z1(j)
-
-c	write(6,*)' '
-c	write(6,*)ianzy1,ianzz1,ianzy0,ianzz0
-c	write(6,*)xstart,ystart,zstart
-c	write(6,*)xend,yend,zend	
-
-	dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+(zstart-zend)**2)
-     &      -dabs(dist)
-c	write(6,*)dist1
-
-      endif
-
 c-------------------------------------------------------------
 
       if(dist.gt.0)then
@@ -381,11 +371,121 @@ c-------------------------------------------------------------
             enddo
         enddo
       enddo
-      
-      print*,'phaPropagateFresnelKirchhoff-oe finished...'      
 
       return
-      end !phadrift_propagate_fk_oe 
+      end !phadrift_propagate_fk_oe_10
+
+c----------------------------------------------------------------------------
+      subroutine phadrift_propagate_fk_oe_1
+c----------------------------------------------------------------------------
+c	kmod = 1 propagation from source to optical element
+c--------------------------------------------------------------------------
+
+	include 'fkoe.cmn'
+
+	integer i,j,k,l
+	
+	fact0=(dz0*dy0)/xlam
+        if((kmod.eq.1).or.(kmod.eq.2))then
+	  fact0=fact0*dsqrt(dcos(winkel))
+	endif
+!$OMP PARALLEL DO
+	do i=1,ianzy1
+c	  PRINT *, 'i = ', i
+          do j=1,ianzz1
+            
+	    ey1(j,i)=0.d0
+            ez1(j,i)=0.d0
+            do k=1,ianzy0
+              do l=1,ianzz0
+
+c----! source to oe
+	xstart=-dist*dsin(winkel)-y0(k)*dcos(winkel)
+	ystart=-dist*dcos(winkel)+y0(k)*dsin(winkel)
+	zstart=z0(l)
+
+	xend=y1(i)
+	yend=-surf(j,i)
+	zend=z1(j)
+
+	dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+(zstart-zend)**2)
+     &      -dabs(dist)
+c------------------------------------------------------------
+
+      if(dist.gt.0)then
+        phase=dist1*cc
+      else
+        phase=-dist1*cc
+      endif
+
+      fact=fact0*(dcos(phase)+sqrtm1*dsin(phase))/
+     &   (dist+dist1)
+      ey1(j,i)=ey1(j,i)+ey0(l,k)*fact            
+      ez1(j,i)=ez1(j,i)+ez0(l,k)*fact            
+
+              enddo
+            enddo
+        enddo
+      enddo
+
+      return
+      end !phadrift_propagate_fk_oe_1
+
+c----------------------------------------------------------------------------
+      subroutine phadrift_propagate_fk_oe_2
+c----------------------------------------------------------------------------
+c	kmod = 2 propagation from optical element to image
+c--------------------------------------------------------------------------
+
+	include 'fkoe.cmn'
+
+	integer i,j,k,l
+
+	fact0=(dz0*dy0)/xlam
+        if((kmod.eq.1).or.(kmod.eq.2))then
+	  fact0=fact0*dsqrt(dcos(winkel))
+	endif
+!$OMP PARALLEL DO
+	do i=1,ianzy1
+c	  PRINT *, 'i = ', i
+          do j=1,ianzz1
+            
+	    ey1(j,i)=0.d0
+            ez1(j,i)=0.d0
+            do k=1,ianzy0
+              do l=1,ianzz0
+
+	xstart=y0(k)
+	ystart=-surf(l,k)
+	zstart=z0(l)
+
+	xend=dist*dsin(winkel)+y1(i)*dcos(winkel)
+	yend=-dist*dcos(winkel)+y1(i)*dsin(winkel)
+	zend=z1(j)
+
+	dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+(zstart-zend)**2)
+     &      -dabs(dist)
+c-------------------------------------------------------------
+
+      if(dist.gt.0)then
+        phase=dist1*cc
+      else
+        phase=-dist1*cc
+      endif
+
+      fact=fact0*(dcos(phase)+sqrtm1*dsin(phase))/
+     &   (dist+dist1)
+      ey1(j,i)=ey1(j,i)+ey0(l,k)*fact            
+      ez1(j,i)=ez1(j,i)+ez0(l,k)*fact            
+
+              enddo
+            enddo
+        enddo
+      enddo
+
+      return
+      end !phadrift_propagate_fk_oe_2
+
 
 c*************************************************************
       integer function clen1(str)
