@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <02 Feb 12 15:08:16 flechsig> 
+//  Time-stamp: <03 Feb 12 16:30:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -530,6 +530,10 @@ void MainWindow::thetaBslot()  // SetTheta from cff
   int number= elementList->currentRow();
   QString cffstr;
 
+#ifdef DEBUG
+  cout << "thetaBslot" << endl;
+#endif
+
   if (number < 0) 
     {
       QMessageBox::warning(this, tr("No valid dataset!"),
@@ -537,13 +541,10 @@ void MainWindow::thetaBslot()  // SetTheta from cff
       return;
     }
 
-  char *text= cffE->text().toAscii().data();          // get string from widget
   struct gdatset *gdat= &(myparent->myBeamline()->ElementList[number].GDat);
-  
-  cout << "thetaBslot: text: " << text << endl;
-
+  cff= cffE->text().toDouble();
   // !! we take other relevant data (gdat->lambda, gdat->xdens[0], gdat->inout) from dataset and not from widget
-  sscanf(text, "%lf", &cff);
+  
   if (cff != 1.0)
     {
       printf("fixfocus: %f, %lg\n", gdat->xdens[0], myparent->myBeamline()->BLOptions.lambda);
@@ -551,7 +552,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
       thetaE->setText(cffstr.setNum(theta0, 'g', 4));  // update widget
-      gdat->theta0= theta0;                  // update data
+      gdat->theta0= theta0;                            // update data
     } 
   else
     QMessageBox::warning(this, tr("Calculate theta from cff"),
@@ -571,23 +572,19 @@ void MainWindow::imageBslot()
 void MainWindow::rhoBslot()  // calculate roho
 {
   double theta, rho, source, image;
-  char buffer[10];
   QString rhostr;
-
 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " rhoBslot called" << endl;
 #endif
     
-  sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
-  sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
-  sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
+  theta=  thetaE ->text().toDouble();
+  source= sourceE->text().toDouble();
+  image=  imageE ->text().toDouble();
 
-  snprintf(buffer, 10, "%9.3f", theta); // for message box
- 
   if (theta >= 90.0)
     QMessageBox::warning(this, tr("Calculate Radius"),
-			 tr("theta %1 >= 90 deg.\ntake no action").arg(buffer));
+			 tr("theta %1 >= 90 deg.\ntake no action").arg(thetaE ->text()));
   else
     {
       rho= 2.0* source* image* cos(theta * PI/180.0)/ (source+ image); 
@@ -598,30 +595,26 @@ void MainWindow::rhoBslot()  // calculate roho
 void MainWindow::rBslot()
 {
   double theta, rmi, source, image, nenner;
-  QString rmistr;
-  char buffer[10];
-  
+  QString qst;
+ 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " rBslot called" << endl;
 #endif
 
-
-  sscanf(thetaE ->text().toAscii().data(), "%lf", &theta);  // get theta  from widget text buffer
-  sscanf(sourceE->text().toAscii().data(), "%lf", &source); // get source from widget text buffer
-  sscanf(imageE ->text().toAscii().data(), "%lf", &image);  // get image  from widget text buffer
-
-  snprintf(buffer, 10, "%9.3f", theta); // for message box
-
+  theta=  thetaE ->text().toDouble();
+  source= sourceE->text().toDouble();
+  image=  imageE ->text().toDouble();
+  
   if (theta >= 90.0)
     {
       QMessageBox::warning(this, tr("Calculate Radius"),
-			   tr("theta %1 >= 90 deg.\ntake no action").arg(buffer));
+			   tr("theta %1 >= 90 deg.\ntake no action").arg(thetaE ->text()));
       return;
     }
   
   nenner= (source+ image)* cos(theta * PI/180.0);
   rmi= (fabs(nenner) > ZERO) ? (2.0* source* image)/ nenner : (nenner/fabs(nenner))/ZERO; 
-  rE->setText(rmistr.setNum(rmi, 'g', 3));
+  rE->setText(qst.setNum(rmi, 'g', 3));
 } // rBslot  
 // end calc slots
 
@@ -697,9 +690,10 @@ void MainWindow::deleteElement()
 void MainWindow::dislenSlot()
 {
 #ifdef DEBUG
-  printf("dislenSlot called\n");
+  cout << "dislenSlot called" << endl;
 #endif
-  sscanf(dislenE->text().toAscii().data(), "%lf", &myparent->myBeamline()->BLOptions.displength);
+
+  myparent->myBeamline()->BLOptions.displength= dislenE->text().toDouble();
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   UpdateStatus();
   myparent->writeBackupFile();
@@ -715,8 +709,7 @@ void MainWindow::doubleclickElement()
 void MainWindow::elementApplyBslot()
 {
   int number= elementList->currentRow();
-  //char buffer[MaxPathLength];
-
+  
   if (number < 0) 
     {
       QMessageBox::warning(this, tr("No valid dataset!"),
@@ -734,37 +727,39 @@ void MainWindow::elementApplyBslot()
   strcpy(myparent->myBeamline()->ElementList[number].elementname, 
 	 elementList->currentItem()->text().toAscii().data()); // the name of the element
   
-  printf("elementApplyBslot activated\nfeed data from widget into dataset\n");
+  cout << "elementApplyBslot activated\nfeed data from widget into dataset" << endl;
 
 #ifdef DEBUG
   printf("elementApplyBslot activated\n");
 #endif
 
-  sscanf(preE   ->text().toAscii().data(), "%lf", &gd->r);  
-  sscanf(sucE   ->text().toAscii().data(), "%lf", &gd->rp);
-  sscanf(thetaE ->text().toAscii().data(), "%lf", &gd->theta0);       
-  sscanf(sourceE->text().toAscii().data(), "%lf", &md->r1);   
-  sscanf(imageE ->text().toAscii().data(), "%lf", &md->r2);
-  sscanf(rE     ->text().toAscii().data(), "%lf", &md->rmi);          
-  sscanf(rhoE   ->text().toAscii().data(), "%lf", &md->rho);  
-  sscanf(lineDensity->text().toAscii().data(), "%lf", &gd->xdens[0]);
-  sscanf(vls1->text().toAscii().data(), "%lf", &gd->xdens[1]);
-  sscanf(vls2->text().toAscii().data(), "%lf", &gd->xdens[2]);
-  sscanf(vls3->text().toAscii().data(), "%lf", &gd->xdens[3]);
-  sscanf(vls4->text().toAscii().data(), "%lf", &gd->xdens[4]);
+  gd->r     = preE   ->text().toDouble();
+  gd->rp    = sucE   ->text().toDouble();
+  gd->theta0= thetaE ->text().toDouble();      
+  md->r1    = sourceE->text().toDouble(); 
+  md->r2    = imageE ->text().toDouble(); 
+  md->rmi   = rE     ->text().toDouble();         
+  md->rho   = rhoE   ->text().toDouble(); 
+
+  gd->xdens[0]= lineDensity->text().toDouble(); 
+  gd->xdens[1]= vls1->text().toDouble();
+  gd->xdens[2]= vls2->text().toDouble();
+  gd->xdens[3]= vls3->text().toDouble();
+  gd->xdens[4]= vls4->text().toDouble();
   
-  sscanf(duE ->text().toAscii().data(), "%lf", &md->du);
-  sscanf(dwE ->text().toAscii().data(), "%lf", &md->dw);
-  sscanf(dlE ->text().toAscii().data(), "%lf", &md->dl);
-  sscanf(dRuE->text().toAscii().data(), "%lf", &md->dRu);
-  sscanf(dRwE->text().toAscii().data(), "%lf", &md->dRw);
-  sscanf(dRlE->text().toAscii().data(), "%lf", &md->dRl);
-  sscanf(w1E ->text().toAscii().data(), "%lf", &md->w1);
-  sscanf(w2E ->text().toAscii().data(), "%lf", &md->w2);
-  sscanf(wsE ->text().toAscii().data(), "%lf", &md->slopew);
-  sscanf(l1E ->text().toAscii().data(), "%lf", &md->l1);
-  sscanf(l2E ->text().toAscii().data(), "%lf", &md->l2);
-  sscanf(lsE ->text().toAscii().data(), "%lf", &md->slopel);
+  md->du    = duE ->text().toDouble();
+  md->dw    = dwE ->text().toDouble();
+  md->dl    = dlE ->text().toDouble();
+  md->dRu   = dRuE->text().toDouble();
+  md->dRw   = dRwE->text().toDouble();
+  md->dRl   = dRlE->text().toDouble();
+  md->w1    = w1E ->text().toDouble();
+  md->w2    = w2E ->text().toDouble();
+  md->slopew= wsE ->text().toDouble();
+  md->l1    = l1E ->text().toDouble();
+  md->l2    = l2E ->text().toDouble();
+  md->slopel= lsE ->text().toDouble();
+
   md->dRu*= 1e-3;
   md->dRw*= 1e-3;
   md->dRl*= 1e-3;
@@ -784,7 +779,7 @@ void MainWindow::elementApplyBslot()
 void MainWindow::fwhmslot()
 {
 #ifdef DEBUG
-  printf("debug: fwhmslot called\n");
+  cout << "debug: fwhmslot called" << endl;
 #endif
   d_plot->fwhmon= 1;
 } // fwhmslot
@@ -794,7 +789,7 @@ void MainWindow::fwhmslot()
 void MainWindow::goButtonslot()
 {
 #ifdef DEBUG
-  printf("debug: goButtonslot called\n");
+  cout << "debug: goButtonslot called" << endl;
 #endif
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 1;
@@ -838,12 +833,11 @@ void MainWindow::grapplyslot()
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
     return;
 
-    
   // values from manual scaling or autoscale
-  sscanf(gryminE->text().toAscii().data(), "%lf", &d_plot->Plot::ymin);
-  sscanf(grymaxE->text().toAscii().data(), "%lf", &d_plot->Plot::ymax);
-  sscanf(grzminE->text().toAscii().data(), "%lf", &d_plot->Plot::zmin);
-  sscanf(grzmaxE->text().toAscii().data(), "%lf", &d_plot->Plot::zmax);
+  d_plot->Plot::ymin= gryminE->text().toDouble();
+  d_plot->Plot::ymax= grymaxE->text().toDouble();
+  d_plot->Plot::zmin= grzminE->text().toDouble();
+  d_plot->Plot::zmax= grzmaxE->text().toDouble();
 
   // we do it in two steps 1st data, second style 
   // fill data, update statistics, update header
@@ -1113,13 +1107,13 @@ void MainWindow::insertElement()
 // slot changed  lambda
 void MainWindow::lambdaSlot()
 {
+  unsigned int i;
+
 #ifdef DEBUG
-  printf("lambdaSlot called\n");
+  cout << "lambdaSlot called" << endl;
 #endif
 
-  unsigned int i;
-  sscanf(lambdaE->text().toAscii().data(), "%lf", &myparent->myBeamline()->BLOptions.lambda);
-  myparent->myBeamline()->BLOptions.lambda*= 1e-6;
+  myparent->myBeamline()->BLOptions.lambda= lambdaE->text().toDouble()* 1e-6;
   myparent->myBeamline()->beamlineOK= 0;
   for (i=0; i< myparent->myBeamline()->elementzahl; i++) 
     myparent->myBeamline()->ElementList[i].ElementOK= 0;
@@ -1130,7 +1124,7 @@ void MainWindow::lambdaSlot()
 void MainWindow::misaliBoxslot(int newstate)
 {
 #ifdef DEBUG
-  printf("misaliBoxslot called: new state: %d\n", newstate);
+  cout << "misaliBoxslot called: new state: " << newstate << endl;
 #endif
   
   myparent->myBeamline()->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
@@ -1175,7 +1169,7 @@ void MainWindow::openBeamline()
   int rcode;
   
 #ifdef DEBUG
-  printf("Debug: slot openBeamline activated\n");
+  cout << "Debug: slot openBeamline activated" << endl;
   //  myQtPhase->myPHASEset::print();
 #endif
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
@@ -1190,7 +1184,7 @@ void MainWindow::openBeamline()
   if (!fileName.isEmpty()) 
     {
       name= fileName.toAscii().data();
-      printf("MainWindow::newBeamline: try to read file: %s\n", name);
+      cout << "MainWindow::newBeamline: try to read file: " << name << endl;
       rcode= myparent->myReadBLFile(name);
       if (rcode != -1)
 	{
@@ -1216,9 +1210,11 @@ void MainWindow::parameterUpdateSlot()
 {
   unsigned int i;
   int index;
+
 #ifdef DEBUG
-  printf("debug: parameterUpdateSlot called, file: %s\n", __FILE__);
+  cout << "debug: parameterUpdateSlot called, file: " <<  __FILE__ << endl;
 #endif
+
   index= parameterList->currentRow();      //old list model
   index= parameterModel->getActualIndex(); // treemodel
   parameterUpdate(index, parameterE->text().toAscii().data(), 0); // updates the old list
@@ -1236,7 +1232,7 @@ void MainWindow::parameterUpdateSlot()
 void MainWindow::poButtonslot()
 {
 #ifdef DEBUG
-  printf("poButtonslot called\n");
+  cout << "poButtonslot called" << endl;
 #endif
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 2;
@@ -1312,7 +1308,7 @@ void MainWindow::rright4slot()
 void MainWindow::print()
 {
 #ifdef DEBUG
-  std::cout << "debug: MainWindow::print called \n";
+  cout << "debug: MainWindow::print called" << endl;
 #endif
 
 #ifndef QT_NO_PRINTDIALOG
@@ -1383,17 +1379,15 @@ void MainWindow::selectElement()
 {
   QListWidgetItem *item;
   int elementnumber= elementList->currentRow();
-  char *text;
-
+ 
 #ifdef DEBUG
-  printf("debug: selectElement called, selected: %d\n", elementnumber);
+  cout << "debug: selectElement called, selected: " << elementnumber << endl;
 #endif
   
   if (elementnumber < 0) 
     return;
 
   item= elementList->currentItem();
-  text= item->text().toAscii().data();
   elementnumber= elementList->currentRow();
   groupBox1->setTitle(item->text());  // set text header
   UpdateElementBox(elementnumber);
@@ -1578,77 +1572,77 @@ void MainWindow::sourceApplyBslot()
     
   case 'D':
     dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &dp->sigy);
-    sscanf(S2E->text().toAscii().data(), "%lf", &dp->sigdy);
-    sscanf(S3E->text().toAscii().data(), "%lf", &dp->sigz);
-    sscanf(S4E->text().toAscii().data(), "%lf", &dp->dz);
-    sscanf(S5E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
+    dp->sigy = S1E->text().toDouble();
+    dp->sigdy= S2E->text().toDouble();
+    dp->sigz = S3E->text().toDouble();
+    dp->dz   = S4E->text().toDouble();
+    myparent->myBeamline()->RTSource.raynumber= S5E->text().toInt();
     break;
     
   case 'G':
     up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &up0->length);
-    sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
-    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
-    sscanf(S4E->text().toAscii().data(), "%lf", &up0->deltaz);
-    sscanf(S5E->text().toAscii().data(), "%lf", &up0->sigmaey);
-    sscanf(S6E->text().toAscii().data(), "%lf", &up0->sigmaez);
-    sscanf(S7E->text().toAscii().data(), "%lf", &up0->sigmaedy);
-    sscanf(S8E->text().toAscii().data(), "%lf", &up0->sigmaedz);
+    up0->length= S1E->text().toDouble();
+    lambda     = S2E->text().toDouble();
+    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
+    up0->deltaz  = S4E->text().toDouble();
+    up0->sigmaey = S5E->text().toDouble();
+    up0->sigmaez = S6E->text().toDouble();
+    up0->sigmaedy= S7E->text().toDouble();
+    up0->sigmaedz= S8E->text().toDouble();
     break;
     
   case 'H':
     hp= (struct  HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &hp->disty);
-    sscanf(S2E->text().toAscii().data(), "%d",  &hp->iy);
-    sscanf(S3E->text().toAscii().data(), "%lf", &hp->distz);
-    sscanf(S4E->text().toAscii().data(), "%d",  &hp->iz);
-    sscanf(S5E->text().toAscii().data(), "%lf", &hp->divy);
-    sscanf(S6E->text().toAscii().data(), "%d",  &hp->idy);
-    sscanf(S7E->text().toAscii().data(), "%lf", &hp->divz);
-    sscanf(S8E->text().toAscii().data(), "%d",  &hp->idz);
+    hp->disty= S1E->text().toDouble();
+    hp->iy   = S2E->text().toInt();
+    hp->distz= S3E->text().toDouble();
+    hp->iz   = S4E->text().toInt();
+    hp->divy = S5E->text().toDouble();
+    hp->idy  = S6E->text().toInt();
+    hp->divz = S7E->text().toDouble();
+    hp->idz  = S8E->text().toInt();
     myparent->myBeamline()->RTSource.raynumber=  hp->iy* hp->idy* hp->iz* hp->idz;
     break;
   case 'I':
     psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &psip->ymin);
-    sscanf(S2E->text().toAscii().data(), "%lf", &psip->zmin);
-    sscanf(S3E->text().toAscii().data(), "%lf", &psip->ymax);
-    sscanf(S4E->text().toAscii().data(), "%lf", &psip->zmax);
-    sscanf(S5E->text().toAscii().data(), "%d",  &psip->iy);
-    sscanf(S6E->text().toAscii().data(), "%d",  &psip->iz);
+    psip->ymin= S1E->text().toDouble();
+    psip->zmin= S2E->text().toDouble();
+    psip->ymax= S3E->text().toDouble();
+    psip->zmax= S4E->text().toDouble();
+    psip->iy  = S5E->text().toInt();
+    psip->iz  = S6E->text().toInt();
     break;
     
   case 'L':
   case 'M':
     up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &up->length);
-    sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
-    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
-    sscanf(S4E->text().toAscii().data(), "%lf", &up->deltaz);
+    up->length= S1E->text().toDouble();
+    lambda    = S2E->text().toDouble();
+    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
+    up->deltaz= S4E->text().toDouble();
     break;
     
   case 'o':
     sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &sop->sigy);
-    sscanf(S2E->text().toAscii().data(), "%lf", &sop->sigdy);
-    sscanf(S3E->text().toAscii().data(), "%lf", &sop->sigz);
-    sscanf(S4E->text().toAscii().data(), "%lf", &sop->sigdz);
-    sscanf(S5E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
+    sop->sigy  = S1E->text().toDouble();
+    sop->sigdy = S2E->text().toDouble();
+    sop->sigz  = S3E->text().toDouble();
+    sop->sigdz = S4E->text().toDouble();
+    myparent->myBeamline()->RTSource.raynumber= S5E->text().toInt();
     break;
     
   case 'R':
     rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &rp->dy);
-    sscanf(S2E->text().toAscii().data(), "%lf", &rp->dz);
-    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
+    rp->dy= S1E->text().toDouble();
+    rp->dz= S2E->text().toDouble();
+    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
     break;
     
   case 'U':
     up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sscanf(S1E->text().toAscii().data(), "%lf", &up->length);
-    sscanf(S2E->text().toAscii().data(), "%lf", &lambda);
-    sscanf(S3E->text().toAscii().data(), "%d",  &myparent->myBeamline()->RTSource.raynumber);
+    up->length= S1E->text().toDouble();
+    lambda    = S2E->text().toDouble();
+    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
     break;
   case 'F':
     // hier muss nichts gemacht werden
@@ -1678,7 +1672,7 @@ void MainWindow::sourceApplyBslot()
 // slot
 void MainWindow::undo()
 {
-  printf("undo button- no action so far\n");
+  cout << "undo button- no action so far" << endl;
   QMessageBox::information(this, tr("Undo Button"),
 			   tr("no action so far")
 			  );
