@@ -1,7 +1,7 @@
 <!-- -*-html-helper-*- -->
 <!--  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.qrc -->
 <!--  Date      : <31 May 11 17:03:54 flechsig>  -->
-<!--  Time-stamp: <22 Nov 11 12:17:45 flechsig>  -->
+<!--  Time-stamp: <03 Feb 12 09:35:57 flechsig>  -->
 <!--  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; -->
 
 <!--  $Source$  -->
@@ -19,6 +19,7 @@
     <file>images/rtrace.png</file>
     <file>images/quickrtrace.png</file>
     <file>images/footprint.png</file>
+    <file>images/physical-optics.png</file>
     <file>images/Blue-arrow-left-32.png</file>
     <file>images/Blue-arrow-right-32.png</file>
     <file>images/up-32.png</file>
