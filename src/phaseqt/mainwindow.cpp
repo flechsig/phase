@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <01 Feb 12 17:30:40 flechsig> 
+//  Time-stamp: <03 Feb 12 09:39:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -162,7 +162,7 @@ void MainWindow::createActions()
     signalMapper->setMapping(optiInputAct, QString("optiInputAct"));
     connect(optiInputAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    phasespaceAct = new QAction(tr("PO imaging"), this);
+    phasespaceAct = new QAction(QIcon(":/images/physical-optics.png"),tr("PO imaging"), this);
     phasespaceAct->setStatusTip(tr("physical optics, phase space imaging"));
     signalMapper->setMapping(phasespaceAct, QString("phasespaceAct"));
     connect(phasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -1130,6 +1130,7 @@ void MainWindow::createToolBars()
     editToolBar->addAction(footprintAct);
     editToolBar->addAction(raytracesimpleAct);
     editToolBar->addAction(raytracefullAct);
+    editToolBar->addAction(phasespaceAct);
 } // createToolBars
 
 
