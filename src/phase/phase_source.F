@@ -487,6 +487,8 @@ c------- end 19.1.2000 ----------------------------------
      &          	      srdenszim*factorim)
 		sr.denszim=f*(srdenszre*factorim+
      &          	      srdenszim*factorre)
+                sr.densy=srdensyre+cs.sqrtm1*srdensyim
+                sr.densz=srdenszre+cs.sqrtm1*srdenszim
 	endif
 
 	if(ifl.ispline.lt.0)then
