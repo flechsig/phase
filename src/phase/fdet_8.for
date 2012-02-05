@@ -117,20 +117,6 @@ c	   inorm2 = 4: einschließlich 3. Ordnungsterm in optischer Weglänge
 c	   inorm2 = 5: vollständige asymptotische Entwicklung bis order ord
 c
 
-c        write(6,*)'entering fdet_8'
-
-c        Übergabe ist ok
-c111       format(4i4,2d15.5)
-c        do i=0,iord
-c         do j=0,iord-i
-c          do k=0,iord-i-j
-c           do l=0,iord-i-j-k
-c            write(6,111)i,j,k,l,ypc(i,j,k,l),zpc(i,j,k,l)
-c           enddo
-c          enddo
-c         enddo
-c        enddo
-
         pi_loc=datan(1.d0)*4.d0
         
        fact=(dsqrt(dabs(g.cosa))*
@@ -318,8 +304,6 @@ c---------- coordinate transformation in variables w and l
 	call Tay_mult_6(T6a,b0,T6b,iord)
 	call Tay_const_6(T6b,-1.d0,iord)
 
-c----achtung
-c        call Tay_copy_6(c0,ct,iord)  ! ct
 	call Tay_sum_6(T6b,c0,ct,iord)	! ct
 
 c------------- get partial derivatives in variables (w,l,y,z)
