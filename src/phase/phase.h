@@ -659,7 +659,8 @@ struct BeamlineType
   struct ElementType *ElementList;   
   struct RTSourceType RTSource; 
   MAP70TYPE lmap, rmap, M_StoI, M_ItoS;                          
-  MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc, fdet1phca, fdet1phcb;
+  MAP7TYPE ypc1, zpc1, dypc, dzpc;
+  MAP7TYPE wc, xlc, fdetc, fdetphc, fdet1phc, fdet1phca, fdet1phcb;
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
   struct RESULTType RESULT;
@@ -685,7 +686,7 @@ struct optistruct
 struct TmpMapType
 {
   MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6, dfdwidlj;
-  MAPTYPE_8X4 dfdww, dfdwl, dfdll; 
+  MAPTYPE_8X4 dfdww, dfdwl, dfdll, ypc, zpc ; 
 };
 
 int getpickfile(struct datset *, struct BeamlineType *, char *);  
@@ -789,6 +790,7 @@ void
   ExpandFileNames(),
   extractmap(),
   fdet_8(MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
+         MAPTYPE_8X4, MAPTYPE_8X4, 
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
 	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
@@ -798,7 +800,8 @@ void
 	   int *, double *, struct mirrortype *, struct geometrytype *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE),
   fgmapidp_8(double *,  
-	     MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
+	     MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
+             MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
 	     struct xlenmaptype *, 
 	     MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6,
 	     MAPTYPE_8X6, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
