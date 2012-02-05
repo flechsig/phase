@@ -5,7 +5,7 @@ c$$$ $Author$
 
 c-------------------------------------------------------------
         subroutine fgmapidp_8(acc,
-     &             wc,xlc,ypc1,zpc1,dypc,dzpc,xlm,
+     &             wc,xlc,ypc1,zpc1,ypc,zpc,dypc,dzpc,xlm,
      &             opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
      &		   dfdwidlj,dfdww,dfdwl,dfdll,
      &             am,g,iord,imodus,iplmode)
@@ -422,6 +422,18 @@ c         write(6,*)' '
 #endif
 
 c-------------------------------------------------------
+c111     format(4i4,2d15.5)
+c        write(6,*)'entering fgmapidp_8'
+c        do i=0,iord
+c         do j=0,iord-i
+c          do k=0,iord-i-j
+c           do l=0,iord-i-j-k
+c            write(6,111)i,j,k,l,ypc(i,j,k,l),zpc(i,j,k,l)
+c           enddo
+c          enddo
+c         enddo
+c        enddo
+c        read(5,*)aaa
 
         return
         end

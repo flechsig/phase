@@ -4,7 +4,7 @@ c$$$ $Revision$
 c$$$ $Author$ 
 
 c------------------------------------------------------------------
-	subroutine fdet_8(wc,xlc,ypc1,zpc1,dypc,dzpc,
+	subroutine fdet_8(wc,xlc,ypc1,zpc1,ypc,zpc,dypc,dzpc,
      &         opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
      &         dfdwidlj,dfdww,dfdwl,dfdll,
      &         fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb,g,
@@ -23,6 +23,8 @@ c------------------------------------------------------------------
      &            xlc(0:7,0:7,0:7,0:7),        
      &            ypc1(0:7,0:7,0:7,0:7),
      &            zpc1(0:7,0:7,0:7,0:7),
+     &            ypc(0:7,0:7,0:7,0:7),
+     &            zpc(0:7,0:7,0:7,0:7),
      &            dypc(0:7,0:7,0:7,0:7),
      &            dzpc(0:7,0:7,0:7,0:7)
         dimension f1(0:7,0:7,0:7,0:7),f2(0:7,0:7,0:7,0:7),
@@ -114,6 +116,25 @@ c	   inorm2 = 3: 1/Wurzel(d2PL/dw2*d2PL/dl2-(d2PL/dwdl)**2)
 c	   inorm2 = 4: einschließlich 3. Ordnungsterm in optischer Weglänge
 c	   inorm2 = 5: vollständige asymptotische Entwicklung bis order ord
 c
+
+c        write(6,*)'entering fdet_8'
+
+c        Übergabe ist ok
+c111       format(4i4,2d15.5)
+c        do i=0,iord
+c         do j=0,iord-i
+c          do k=0,iord-i-j
+c           do l=0,iord-i-j-k
+c            write(6,111)i,j,k,l,ypc(i,j,k,l),zpc(i,j,k,l)
+c           enddo
+c          enddo
+c         enddo
+c        enddo
+
+        pi_loc=datan(1.d0)*4.d0
+        
+       fact=(dsqrt(dabs(g.cosa))*
+     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
 c------------------------------------------------------------------	
 c	factor 0)
 c------------------------------------------------------------------
@@ -193,26 +214,15 @@ c-----------------------------
 	   call Tay_deri_4(ypc1,f1,4,1,iord)
 	   call Tay_deri_4(zpc1,f2,3,1,iord)
 	   call Tay_mult_4(f1,f2,f34,iord)
-
 	   call Tay_const_4(f34,-1.,iord)
 	   call Tay_sum_4(f12,f34,f1,iord)
 
 	  endif
 
-	  if(f1(0,0,0,0).lt.0.d0)then
-	  do i=0,iord
-	   do j=0,iord-i
-	    do k=0,iord-i-j
-	     do l=0,iord-i-j-k
-	      f1(i,j,k,l)=-f1(i,j,k,l)
-	     enddo
-	    enddo
-	   enddo
-	  enddo
-	 endif
-
-	 call Tay_sqrt_4(f1,f2,iord)
-	 call Tay_inv_4(f2,fdet1phc,iord)		
+	  if(f1(0,0,0,0).lt.0.d0)call tay_const_4(f1,-1.d0,iord)
+          call Tay_sqrt_4(f1,f2,iord)
+          call Tay_inv_4(f2,fdet1phc,iord)		
+          call Tay_const_4(fdet1phc,fact,iord)
 
 	 endif
 
@@ -235,8 +245,7 @@ c-----------------------------
 c----------------------------
 	if(inorm2.eq.2)then
 c----------------------------
-	  call Tay_mult_4(dfdww,dfdll,f3,iord)	  
-	  
+	  call Tay_mult_4(dfdww,dfdll,f3,iord)	   
 	endif
 
 c----------------------------
@@ -251,50 +260,28 @@ c----------------------------
 c----------------------------------------------
 	if((inorm2.eq.2).or.(inorm2.eq.3))then
 c----------------------------------------------
-
 	  if(f3(0,0,0,0).lt.0.d0)then
-	   do i=0,iord
-	    do j=0,iord-i
-	     do k=0,iord-i-j
-	      do l=0,iord-i-j-k
-	  	f3(i,j,k,l)=-f3(i,j,k,l)
-	      enddo
-	     enddo
-	    enddo
-	   enddo
+          call tay_const_4(f3,-1.d0,iord)
 	  endif
-
 	  call Tay_sqrt_4(f3,f4,iord)
 	  call Tay_inv_4(f4,fdet1phc,iord)	
-
-	endif
+        endif
 
 c-------------------------
 	if(inorm2.le.3)then
 c-------------------------
-	fact=(dsqrt(dabs(g.cosa))*
-     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
-     
-	do i=0,iord
-	 do j=0,iord-i
-	  do k=0,iord-i-j
-	   do l=0,iord-i-j-k
-	    fdet1phc(i,j,k,l)=fdet1phc(i,j,k,l)*fact
-	   enddo
-	  enddo
-	 enddo
-	enddo
+        fact1=fact*pi_loc
+        call tay_const_4(fdet1phc,fact1,iord)
 	endif
 
 c	jetzt braucht man nur noch:
 c	- die Taylorreihe berechnen
 c	- Betrag bilden	
+c       das geschieht in fywert
 
 c----------------------------
 	if(inorm2.eq.4)then
 c----------------------------
-	fact=(dsqrt(dabs(g.cosa))*
-     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
 
 c	wir haben schon mal in Abhängigkeit der Variablen
 c	w, l, y, z, yp, zp die folgenden Ausdruecke:
@@ -323,7 +310,6 @@ c---------- get prefactors as of SAN Diego paper
 	   enddo
 
 c---------- coordinate transformation in variables w and l
-
 	call Tay_copy_6(a0,at,iord)	! at=a0 bleibt
 	call Tay_copy_6(d0,dt,iord)	! dt=d0 bleibt
 					! bt=0
@@ -331,6 +317,9 @@ c---------- coordinate transformation in variables w and l
 	call Tay_mult_6(T6,b0,T6a,iord)	
 	call Tay_mult_6(T6a,b0,T6b,iord)
 	call Tay_const_6(T6b,-1.d0,iord)
+
+c----achtung
+c        call Tay_copy_6(c0,ct,iord)  ! ct
 	call Tay_sum_6(T6b,c0,ct,iord)	! ct
 
 c------------- get partial derivatives in variables (w,l,y,z)
@@ -338,7 +327,7 @@ c------------- replace yp and zp
         call replace_6v4v(at,ypc,zpc,au,iord)
         call replace_6v4v(ct,ypc,zpc,cu,iord)
         call replace_6v4v(dt,ypc,zpc,du,iord)
-       
+
 c------------- get partial derivatives in variables (y,z,dy,dz)
 c------------- replace w and l with Taylor series in y,z,dy,dz
         call replace_wl_in_ypzp(au,au,wc,xlc,av,av,1,iord)
@@ -350,16 +339,28 @@ c	av*l**2+cv*w**2+dv*w**3
 c	nomenklatur in San Diego Papier:
 c	atilde=cv 
 c       btilde=dv
-	call Tay_copy_4(av,fdet1phc,iord)	! l**2 Term
+c
+c       sichern des quadratischen Terms in l 
+	call Tay_copy_4(av,f3,iord)	! l**2 Term
+        if(f3(0,0,0,0).lt.0.d0)then
+        call tay_const_4(f3,-1.d0,iord)
+        endif
+        call Tay_sqrt_4(f3,f4,iord)
+        call Tay_inv_4(f4,fdet1phc,iord) 
+
+        fact1=fact*dsqrt(pi_loc/2.d0)     
+        call tay_const_4(fdet1phc,fact1,iord)
+
+c       jetzt die w-abhängigen Terme, Achtung der Term fact steckt scon im l-abhängigen Term
 	call Tay_copy_4(dv,fdet1phca,iord)	! w**3 Term	
 	call Tay_copy_4(cv,fdet1phcb,iord)	! w**2 Term
 
-c	Berechnung des Integrals in fywert
-c	call atilde_exp(atilde,aa0,a1,a2,a3,a4,a5,a6,a7,iord)
+c	Das Integral wird erst in fywert berechnet
+c       call atilde_exp(atilde,aa0,a1,a2,a3,a4,a5,a6,a7,iord)
 c	call btilde_exp(btilde,ba0,b1,b2,b3,b4,b5,b6,b7,iord)
 
 	endif		! inorm2 = 4
-     
+
 	return
 	end
 
