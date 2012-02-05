@@ -109,10 +109,24 @@ c UF 12.1.2000
      &		(ifl.ispline.lt.0))then
 	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st)
 	endif
-	
+
+1       format(d15.5)
+        do i=0,ifl.iord
+        do j=0,ifl.iord-i
+        do k=0,ifl.iord-i-j
+        do l=0,ifl.iord-i-j-k
+c        write(6,*)i,j,k,l
+c        write(6,1)m4.fdet1phc(i,j,k,l),m4.fdet1phca(i,j,k,l),m4.fdet1phcb(i,j,k,l)
+        enddo
+        enddo
+        enddo
+        enddo
+
 c*******************************************************
 c	Erstellen eines reduzierten Konstantensatzes
 c*******************************************************
+
+        write(6,*)'hallo',m4.fdet1phcb(0,0,0,0),m4.fdet1phcb(0,0,1,0),m4.fdet1phcb(0,0,2,0)
 
 	yi=ra.ri.yi
 	zi=ra.ri.zi
@@ -153,7 +167,7 @@ c*******************************************************
         call subm1(m4.xlc,yi,zi,m4.xlrc)
 #endif
 
-
+c        write(6,*)'m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)',m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)
 c------------------------------------------------------
 
 	st.inumb(st.nn1,st.nn2)=0.
@@ -423,7 +437,7 @@ c*************************************************************
      &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
 c*************************************************************
 	implicit real*8(a-h,o-z)
-	complex*16 densy,densz,fwert,fwerty,fwertz
+	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 
 cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
@@ -477,6 +491,8 @@ c      dimension p1122a(0:7,0:7,0:7,0:7)
         fd=0.
 	fdph=0.
 	fd1ph=0.
+        fd1pha=0.d0
+        fd1phb=0.d0
 	ra.ap.yp_ap=0.
 	ra.ap.zp_ap=0.
 	ra.xlength1=0.
@@ -500,7 +516,7 @@ c-------------------------------------------------------------------------
 
           fd=fd+m4.fdtrrc(ii)*var0
           fdph=fdph+m4.fdtphrrc(ii)*var0
-          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
+          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0    
           fd1pha=fd1pha+m4.fdt1phrrca(ii)*var0
           fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0
          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
@@ -514,7 +530,7 @@ c-------------------------------------------------------------------------
         fd1ph=dabs(fd1ph)
         fd1pha=dabs(fd1pha)
         fd1phb=dabs(fd1phb)
- 
+
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
 c----------------------------------------
@@ -526,7 +542,8 @@ c	 wird nicht in phase_integration gesetzt, da hier nicht
 c	 unterschieden wird, ob ein OE oder die Summe von mehreren 
 c	 OEs berechnet wird. Reihenentwicklungen fuer die Vorfaktoren 
 c	 fuer ein OE muessen sinnvollerweise in der Routine fdet_8 
-c	 berechnet werden und in bline.c yusammengabut werden.
+c	 berechnet werden und in bline.c zusammengebaut werden.
+c        Zurzeit ist es nur für ein OE richtig implenetiert in fdet_8.
 c	 Es ist darauf zu achten, dass
 c	 - alpha, beta functions of (z,y,dz,dy)
 c	 - r, rp functions of (z,y,dz,dy)
@@ -545,68 +562,112 @@ c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 	 
 c---------------------------------------------------------------------
+
+        if(ifl.inorm2.eq.4)then
+        iord_loc=7
+c       fd1ph aus fd1pha und fd1phb berechnen
+
+        ratio0=0.1d0    ! später als Parameter übergeben
+c       fd1pha is 3rd order, fd1phb is 2nd order term in w      
+
+c        write(6,*)'hallo1',fd1pha,fd1phb
+
+        if(fd1phb.gt.1.d-10)then
+        ratio=fd1pha/fd1phb
+        else
+        write(6,*)' Achtung: quadratischer Term < 1d-10: ',fd1phb 
+        endif
+        if(ratio.le.ratio0)then
+c------  übliche Formel für 2. Ordnung
+c        write(6,*)'as usual',fdph,fd1ph,fd1phb
+         
+         fd1phcpl=(fdph*fd1ph*dsqrt(cs.pi))/dsqrt(2.d0*dabs(fd1phb))
+
+         else
+c------  neue Formel
+
 c------ first part (integration from zero to infinity,
 c       if a>0 and b>0. otherwise integration from -infinity to zero)
-	sumcos=0.d0
-	sumsin=0.d0
 
-	do k=0,ifl.iord
+c------- erster Teil
+        sumcos1=0.d0
+        sumsin1=0.d0
 
-	arg=(b**k)/facult(k)
-	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
-	sumcos=sumcos+arg/3.d0
+	do k=0,iord_loc
 
-	arg=(-b**k)/facult(k)
-	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
-	sumsin=sumsin+arg/3.d0
+c------- Realteil
+	arg=(fd1phb**k)/facult(k)
+	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*cs.pi)
+	sumcos1=sumcos1+arg/3.d0
 
-	enddo
-
-c-------- second part (integration from -infinity to zero)
-c       if a>0 and b>0. otherwise integration from -infinity to zero)
-
-c---------- check ratio of a and b and choose one of two equations
-	do k=0,ifl.iord
-
-	arg=((-b)**k)/facult(k)
-	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*pi)
-	sumcos=sumcos+arg/3.d0
-
-	arg=((-b)**k)/facult(k)
-	arg=arg*dabs(a)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*pi)
-	sumsin=sumsin+arg/3.d0
+c------- Imaginärteil
+	arg=(-fd1phb**k)/facult(k)
+	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*cs.pi)
+	sumsin1=sumsin1+arg/3.d0
 
 	enddo
 
-	res2b=dsqrt(sumcos**2+sumsin**2)
-	if(a.lt.0.d0)then
-	xx=res2a
-	res2a=res2b
-	res2b=xx
-	endif
+c------- zweiter Teil
+        sumcos2=0.d0
+        sumsin2=0.d0
 
-c        get fd1ph
+	do k=0,iord_loc
+
+c------- Realteil
+	arg=((-fd1phb)**k)/facult(k)
+	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*cs.pi)
+	sumcos2=sumcos2+arg/3.d0
+
+c------- Imaginärteil
+	arg=((-fd1phb)**k)/facult(k)
+	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
+	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*cs.pi)
+	sumsin2=sumsin2+arg/3.d0
+
+	enddo
+
+c------- Achtung fd1ph ist jetzt complexe Groesse
+
+        fd1phcpl=fd1ph*fdph
+c        write(6,*)'fd1phcpl= ',fd1phcpl
+        fd1phcpl=fd1phcpl*((sumcos1+sumcos2)+(sumsin1+sumsin2)*cs.sqrtm1)
+c        write(6,*)'fd1phcpl = ',fd1phcpl
+
+        endif  ! ratio.gt.0.1
+
+        endif  ! inorm2.eq.4
+
 c--------------------------------------------------------------------------
 
+        if(ifl.inorm2.le.3)ff=fdph*fd1ph
+        if(ifl.inorm2.ge.4)ff=fd1phcpl
+
+        write(6,*)' ff ',ff
 
 	if(ifl.ispline.ge.0)then
-                ff=fdph*fd1ph
-		sr.densyre=sr.densyre*ff
-		sr.densyim=sr.densyim*ff
-		sr.denszre=sr.denszre*ff
-		sr.denszim=sr.denszim*ff
+                sr.densy=sr.densy*ff
+                sr.densz=sr.densz*ff
+		sr.densyre=dreal(sr.densy)
+                sr.densyim=dimag(sr.densy)
+                sr.denszre=dreal(sr.densz)
+                sr.denszim=dimag(sr.densz)
+c          write(6,*)'hallo2',ff,sr.densy,sr.densz
 	endif
 
 	if(ifl.ispline.lt.0)then
-		ff=fdph*fd1ph
-		fwya=sr.eya*ff
-		fwza=sr.eza*ff
-		fwyp=sr.eyp
-		fwzp=sr.ezp
+                eycpl=sr.eya*cdexp(cs.sqrtm1*sr.eyp)
+                eycpl=eycpl*ff
+                ezcpl=sr.eza*cdexp(cs.sqrtm1*sr.ezp)
+                ezcpl=ezcpl*ff
+               write(6,*)' hier gibt es noch was zu tun '
+c               conversion of complex data in amplitude and phase
+c		fwya=cdabs(eycpl)
+c		fwza=cdabs(ezcpl)
+c		fwyp=sr.eyp
+c		fwzp=sr.ezp
 	endif
 
 c------------------------------------------------
