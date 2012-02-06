@@ -126,8 +126,6 @@ c*******************************************************
 c	Erstellen eines reduzierten Konstantensatzes
 c*******************************************************
 
-        write(6,*)'hallo',m4.fdet1phcb(0,0,0,0),m4.fdet1phcb(0,0,1,0),m4.fdet1phcb(0,0,2,0)
-
 	yi=ra.ri.yi
 	zi=ra.ri.zi
 
@@ -572,10 +570,10 @@ c       fd1pha is 3rd order, fd1phb is 2nd order term in w
 
 c        write(6,*)'hallo1',fd1pha,fd1phb
 
-        if(fd1phb.gt.1.d-10)then
+        if(fd1phb.gt.1.d-50)then
         ratio=fd1pha/fd1phb
         else
-        write(6,*)' Achtung: quadratischer Term < 1d-10: ',fd1phb 
+        write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
         endif
         if(ratio.le.ratio0)then
 c------  übliche Formel für 2. Ordnung
@@ -645,7 +643,7 @@ c--------------------------------------------------------------------------
         if(ifl.inorm2.le.3)ff=fdph*fd1ph
         if(ifl.inorm2.ge.4)ff=fd1phcpl
 
-        write(6,*)' ff ',ff
+c        if(ratio.gt.0.1)write(6,*)' ff ',ff
 
 	if(ifl.ispline.ge.0)then
                 sr.densy=sr.densy*ff
