@@ -306,6 +306,8 @@ c------------- get partial derivatives in variables (w,l,y,z)
         call replace_6v4v(dfdwl6,ypc,zpc,dfdwl4,iord)
         call replace_6v4v(dfdll6,ypc,zpc,dfdll4,iord)
        
+
+
 c------------- get partial derivatives in variables (y,z,dy,dz)
         call replace_wl_in_ypzp(dfdw4,dfdw4,wc,xlc,
      &                          dfdw,dfdw,1,iord)
@@ -421,19 +423,6 @@ c         write(6,*)'====================== '
 c         write(6,*)' '
 #endif
 
-c-------------------------------------------------------
-c111     format(4i4,2d15.5)
-c        write(6,*)'entering fgmapidp_8'
-c        do i=0,iord
-c         do j=0,iord-i
-c          do k=0,iord-i-j
-c           do l=0,iord-i-j-k
-c            write(6,111)i,j,k,l,ypc(i,j,k,l),zpc(i,j,k,l)
-c           enddo
-c          enddo
-c         enddo
-c        enddo
-c        read(5,*)aaa
 
         return
         end
