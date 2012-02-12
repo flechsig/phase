@@ -117,10 +117,16 @@ c	   inorm2 = 4: einschließlich 3. Ordnungsterm in optischer Weglänge
 c	   inorm2 = 5: vollständige asymptotische Entwicklung bis order ord
 c
 
+c---- routine wird nur gerufen wenn imodus = 2 (PO)
+        imodus=2
         pi_loc=datan(1.d0)*4.d0
         
        fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
+       fact1=fact*pi_loc
+       fact2=fact*dsqrt(pi_loc)/dsqrt(2.0d0)
+       fact3=2.d0/pi_loc
+     
 c------------------------------------------------------------------	
 c	factor 0)
 c------------------------------------------------------------------
@@ -231,7 +237,8 @@ c-----------------------------
 c----------------------------
 	if(inorm2.eq.2)then
 c----------------------------
-	  call Tay_mult_4(dfdww,dfdll,f3,iord)	   
+	  call Tay_mult_4(dfdww,dfdll,f3,iord)	  
+
 	endif
 
 c----------------------------
@@ -256,7 +263,6 @@ c----------------------------------------------
 c-------------------------
 	if(inorm2.le.3)then
 c-------------------------
-        fact1=fact*pi_loc
         call tay_const_4(fdet1phc,fact1,iord)
 	endif
 
@@ -264,6 +270,36 @@ c	jetzt braucht man nur noch:
 c	- die Taylorreihe berechnen
 c	- Betrag bilden	
 c       das geschieht in fywert
+
+c----------------------------
+        if(inorm2.eq.20)then
+c----------------------------
+c         only for debugging   
+          call tay_copy_4(dfdww,f3,iord)
+          if(f3(0,0,0,0).lt.0.d0)then
+          call tay_const_4(f3,-1.d0,iord)
+          endif
+          call Tay_sqrt_4(f3,f4,iord)
+          call Tay_inv_4(f4,fdet1phca,iord)
+          call Tay_const_4(fdet1phca,fact1,iord)       
+
+          call tay_copy_4(dfdll,f3,iord)
+          if(f3(0,0,0,0).lt.0.d0)then
+          call tay_const_4(f3,-1.d0,iord)
+          endif
+          call Tay_sqrt_4(f3,f4,iord)
+          call Tay_inv_4(f4,fdet1phcb,iord)             
+        endif
+
+c----------------------------
+        if(inorm2.eq.21)then
+c----------------------------
+c         only for debugging   
+          call tay_copy_4(dfdww,fdet1phca,iord)
+          call tay_const_4(fdet1phca,1.d0/fact1,iord)
+          call tay_copy_4(dfdll,fdet1phcb,iord)          
+          call tay_const_4(fdet1phcb,1.d0/fact1,iord)
+        endif
 
 c----------------------------
 	if(inorm2.eq.4)then
@@ -304,7 +340,8 @@ c---------- coordinate transformation in variables w and l
 	call Tay_mult_6(T6a,b0,T6b,iord)
 	call Tay_const_6(T6b,-1.d0,iord)
 
-	call Tay_sum_6(T6b,c0,ct,iord)	! ct
+       call Tay_sum_6(T6b,c0,ct,iord)  ! ct
+c       call Tay_copy_6(c0,ct,iord)  ! ct falls keine Koordinatentransformation
 
 c------------- get partial derivatives in variables (w,l,y,z)
 c------------- replace yp and zp
@@ -312,32 +349,77 @@ c------------- replace yp and zp
         call replace_6v4v(ct,ypc,zpc,cu,iord)
         call replace_6v4v(dt,ypc,zpc,du,iord)
 
+        if(imodus.eq.2)then
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        wc(n1,n2,n3,n4)
+              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         xlc(n1,n2,n3,n4)
+             enddo
+            enddo
+           enddo
+          enddo
+        endif   ! imodus
+
 c------------- get partial derivatives in variables (y,z,dy,dz)
 c------------- replace w and l with Taylor series in y,z,dy,dz
         call replace_wl_in_ypzp(au,au,wc,xlc,av,av,1,iord)
         call replace_wl_in_ypzp(cu,cu,wc,xlc,cv,cv,1,iord)
         call replace_wl_in_ypzp(du,du,wc,xlc,dv,dv,1,iord)
 
-c--------------- evaluate  integrals
-c	av*l**2+cv*w**2+dv*w**3
-c	nomenklatur in San Diego Papier:
-c	atilde=cv 
-c       btilde=dv
-c
-c       sichern des quadratischen Terms in l 
-	call Tay_copy_4(av,f3,iord)	! l**2 Term
+        if(imodus.eq.2)then
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        wc(n1,n2,n3,n4)
+              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         xlc(n1,n2,n3,n4)
+             enddo
+            enddo
+           enddo
+          enddo
+        endif   ! imodus
+
+c-------------------------------
+c       av*l**2+cv*w**2+dv*w**3
+c-------------------------------
+c---check
+1234      Format('dfdww und cv ',4i4,2d15.5)
+1235      Format('dfdll und av ',4i4,2d15.5)
+
+c    Achtung: ohne Koordinatetransfomation ist alles ok
+          do i=0,iord
+           do j=0,iord-i
+            do k=0,iord-i-j
+             do l=0,iord-i-j-k
+c            write(6,1234)i,j,k,l,dfdww(i,j,k,l),cv(i,j,k,l)*2.d0
+c            write(6,1235)i,j,k,l,dfdll(i,j,k,l),av(i,j,k,l)*2.d0
+c            write(6,*)' '
+             enddo
+            enddo
+           enddo
+          enddo
+c-------------------- end check
+
+c-------------- sichern des quadratischen Terms in l
+        call Tay_copy_4(av,f3,iord)
         if(f3(0,0,0,0).lt.0.d0)then
         call tay_const_4(f3,-1.d0,iord)
         endif
         call Tay_sqrt_4(f3,f4,iord)
         call Tay_inv_4(f4,fdet1phc,iord) 
-
-        fact1=fact*dsqrt(pi_loc/2.d0)     
-        call tay_const_4(fdet1phc,fact1,iord)
+  
+        call tay_const_4(fdet1phc,fact2,iord)
 
 c       jetzt die w-abhängigen Terme, Achtung der Term fact steckt scon im l-abhängigen Term
 	call Tay_copy_4(dv,fdet1phca,iord)	! w**3 Term	
 	call Tay_copy_4(cv,fdet1phcb,iord)	! w**2 Term
+        call tay_const_4(fdet1phcb,fact3,iord)
 
 c	Das Integral wird erst in fywert berechnet
 c       call atilde_exp(atilde,aa0,a1,a2,a3,a4,a5,a6,a7,iord)
