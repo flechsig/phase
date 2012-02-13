@@ -2,29 +2,30 @@
 
 
 c----------------------------------------------------------------
-      subroutine phadrift_get_input_special
+      subroutine phadrift_get_input_special(surffilename, nlen)
 c----------------------------------------------------------------
+        
+        include 'fkoe.cmn'        
+        
+        integer nlen
+        integer i,j
+        CHARACTER*(nlen) surffilename      
 
-        include 'fkoe.cmn'
-
-	integer clen1,i,j,iname
 
 c	pi=4.d0*datan(1.d0)
 c	pihalf=pi/2.d0
 	sqrtm1=dcmplx(0,1)
 
 c--------- get complex fields of source
-	do i=1,ianzy0
-	do j=1,ianzz0
-	  ey0(j,i)=eyre0(j,i)+sqrtm1*eyim0(j,i)
-	enddo
-	enddo
-
-	do i=1,ianzy0
-	do j=1,ianzz0
-	  ez0(j,i)=ezre0(j,i)+sqrtm1*ezim0(j,i)
-	enddo
-	enddo
+c TODO dont copy all MAXDIM**2 entries, but make sure it works even for NZ!=NY
+c   do i=1,ianzy0
+c   do j=1,ianzz0
+      do i=1,2048
+      do j=1,2048
+        ey0(i,j)= eyre0(j,i)+sqrtm1*eyim0(j,i)
+        ez0(i,j)= ezre0(j,i)+sqrtm1*ezim0(j,i)
+      enddo
+      enddo
 
 c-------- extract source grid
 	zmin0=z0(1)
@@ -54,16 +55,12 @@ c--------------- extract image grid
             z1(j)=zmin1+dble(j-1)*dz1    
 	  enddo
 
-c--------------- get surface profile files
-3       format(a80)
-c        read(10,3)dfile1
 
-c	close(10)
+c--------------- get surface profile file
 
-	iname=clen1(filenamesurf)
-	filnam1=''
-        filnam1(:iname)=filenamsurf(:iname)
-	open(unit=10,name=filnam1,type='old',readonly)
+      write(*,*) 'ffkoe: Using surface file ', surffilename
+
+	open(unit=10,name=surffilename,type='old',readonly)
 	read(10,*)ianzz,ianzy
 	do i=1,ianzy
 	do j=1,ianzz
@@ -266,12 +263,13 @@ c------- step 2
             z1(j)=z1b(j)
 	  enddo
 
- 	do i=1,ianzy0
- 	do j=1,ianzz0
-	  ey0(i,j)=ey1(i,j)
-	  ez0(i,j)=ez1(i,j)
- 	enddo
- 	enddo
+      do i=1,ianzy0
+      do j=1,ianzz0
+c       dont swap indices here as these arrays are only internally used
+        ey0(i,j)=ey1(i,j)
+        ez0(i,j)=ez1(i,j)
+      enddo
+      enddo
 
 	kmod=2
 	dist=dista
@@ -338,16 +336,14 @@ c--------------------------------------------------------------------------
 	integer i,j,k,l
 
 	fact0=(dz0*dy0)/xlam
-        if((kmod.eq.1).or.(kmod.eq.2))then
-	  fact0=fact0*dsqrt(dcos(winkel))
-	endif
+
 !$OMP PARALLEL DO
 	do i=1,ianzy1
 c	  PRINT *, 'i = ', i
           do j=1,ianzz1
             
-	    ey1(j,i)=0.d0
-            ez1(j,i)=0.d0
+	    ey1(i,j)=0.d0
+            ez1(i,j)=0.d0
             do k=1,ianzy0
               do l=1,ianzz0
       
@@ -364,8 +360,9 @@ c-------------------------------------------------------------
 
       fact=fact0*(dcos(phase)+sqrtm1*dsin(phase))/
      &   (dist+dist1)
-      ey1(j,i)=ey1(j,i)+ey0(l,k)*fact            
-      ez1(j,i)=ez1(j,i)+ez0(l,k)*fact            
+  
+                ey1(i,j)=ey1(i,j)+ey0(k,l)*fact            
+                ez1(i,j)=ez1(i,j)+ez0(k,l)*fact            
 
               enddo
             enddo
@@ -381,21 +378,20 @@ c----------------------------------------------------------------------------
 c	kmod = 1 propagation from source to optical element
 c--------------------------------------------------------------------------
 
-	include 'fkoe.cmn'
+      include 'fkoe.cmn'
 
-	integer i,j,k,l
+      integer i,j,k,l
 	
-	fact0=(dz0*dy0)/xlam
-        if((kmod.eq.1).or.(kmod.eq.2))then
-	  fact0=fact0*dsqrt(dcos(winkel))
-	endif
+      fact0=(dz0*dy0)/xlam
+      fact0=fact0*dsqrt(dcos(winkel))
+
 !$OMP PARALLEL DO
 	do i=1,ianzy1
 c	  PRINT *, 'i = ', i
           do j=1,ianzz1
             
-	    ey1(j,i)=0.d0
-            ez1(j,i)=0.d0
+	    ey1(i,j)=0.d0
+            ez1(i,j)=0.d0
             do k=1,ianzy0
               do l=1,ianzz0
 
@@ -420,8 +416,9 @@ c------------------------------------------------------------
 
       fact=fact0*(dcos(phase)+sqrtm1*dsin(phase))/
      &   (dist+dist1)
-      ey1(j,i)=ey1(j,i)+ey0(l,k)*fact            
-      ez1(j,i)=ez1(j,i)+ez0(l,k)*fact            
+
+                ey1(i,j)=ey1(i,j)+ey0(k,l)*fact            
+                ez1(i,j)=ez1(i,j)+ez0(k,l)*fact            
 
               enddo
             enddo
@@ -441,17 +438,16 @@ c--------------------------------------------------------------------------
 
 	integer i,j,k,l
 
-	fact0=(dz0*dy0)/xlam
-        if((kmod.eq.1).or.(kmod.eq.2))then
-	  fact0=fact0*dsqrt(dcos(winkel))
-	endif
+      fact0=(dz0*dy0)/xlam
+      fact0=fact0*dsqrt(dcos(winkel))
+
 !$OMP PARALLEL DO
 	do i=1,ianzy1
 c	  PRINT *, 'i = ', i
           do j=1,ianzz1
             
-	    ey1(j,i)=0.d0
-            ez1(j,i)=0.d0
+	    ey1(i,j)=0.d0
+            ez1(i,j)=0.d0
             do k=1,ianzy0
               do l=1,ianzz0
 
@@ -475,8 +471,9 @@ c-------------------------------------------------------------
 
       fact=fact0*(dcos(phase)+sqrtm1*dsin(phase))/
      &   (dist+dist1)
-      ey1(j,i)=ey1(j,i)+ey0(l,k)*fact            
-      ez1(j,i)=ez1(j,i)+ez0(l,k)*fact            
+
+                ey1(i,j)=ey1(i,j)+ey0(k,l)*fact            
+                ez1(i,j)=ez1(i,j)+ez0(k,l)*fact                  
 
               enddo
             enddo
@@ -485,24 +482,6 @@ c-------------------------------------------------------------
 
       return
       end !phadrift_propagate_fk_oe_2
-
-
-c*************************************************************
-      integer function clen1(str)
-c*************************************************************
-        character*(*) str
-        do i=1,80
-        clen1=i
-        if( (ichar(str(i:i)).eq.32).or.
-     &      (ichar(str(i:i)).eq.10).or.
-     &      (ichar(str(i:i)).eq.9) )then
-        clen1=clen1-1
-        goto 9999
-        endif
-        enddo
-9999    continue
-        return
-        end
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
@@ -520,6 +499,7 @@ c****************************************************************************
 
 c      implicit none
 
+
       real*8 INeyre(MaxDim,MaxDim), INeyim(MaxDim,MaxDim),
      &       INezre(MaxDim,MaxDim), INezim(MaxDim,MaxDim)
       real*8 INzmin, INzmax, INymin, INymax, INdist, INdista
@@ -528,14 +508,10 @@ c      implicit none
       real*8 INangle
       
       integer i, j, INnz, INny, INnz2, INny2, INmode, INstringlength
-      CHARACTER*(*) INsurffilename      
+      CHARACTER*(INstringlength) INsurffilename      
             
-
-c     some variables have to be set before calling subfunction
+c     variables in common block have to be set before calling subfunction
       kmod = INmode
-      filenamsurf = ''
-      filenamsurf(1:INstringlength) = INsurffilename(1:INstringlength)      
-
       ianzz0 = INnz
       ianzy0 = INny
       z0(1) = dble(INzmin)
@@ -556,7 +532,8 @@ c     some variables have to be set before calling subfunction
       eyre0 = INeyre
       eyim0 = INeyim
 
-      call phadrift_get_input_special
+c     due to difficult handling of dynamic strings, pass string and length explicitely
+      call phadrift_get_input_special(INsurffilename, INstringlength)
 
 c     jetzt Parameter ueberschreiben
       dist = INdist
@@ -582,10 +559,10 @@ c     jetzt Parameter ueberschreiben
 
     	do i=1,INnz
      	do j=1,INny
-        INeyre(j, i) = dreal(ey1(j,i))         
-        INeyim(j, i) = dimag(ey1(j,i))        
-        INezre(j, i) = dreal(ez1(j,i))         
-        INezim(j, i) = dimag(ez1(j,i))       
+        INeyre(i, j) = dreal(ey1(j,i))         
+        INeyim(i, j) = dimag(ey1(j,i))        
+        INezre(i, j) = dreal(ez1(j,i))         
+        INezim(i, j) = dimag(ez1(j,i))       
       enddo
  	    enddo
 

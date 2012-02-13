@@ -1,9 +1,6 @@
 
 	implicit real*8 (a-h,o-z)
       
-	character*(80)dfile1,dfile2,dfile3,dfile4,
-     &               filnam1,filnam2,filnam3,filnam4,filenamsurf
-
 	complex*16 ey0,ez0,ey1,ez1,xm1,sqrtm1,fact0,fact
 
 	common/fkoe1/eyre0(2048,2048),eyim0(2048,2048)
@@ -25,9 +22,6 @@
      &      ,ymin1b,ymax1b,zmin1b,zmax1b
      &      ,deltaz0,deltaz,deltay0,deltay
      &      ,xstart,xend,ystart,yend,zstart,zend
-
-	common/fkoe2/dfile1,dfile2,dfile3,dfile4,
-     &               filnam1,filnam2,filnam3,filnam4,filenamsurf
 
 	common/fkoe3/ianzy0,ianzz0,ianzy1,ianzz1,ianzy,ianzz,
      &               ianzy0a,ianzz0a,ianzy1a,ianzz1a,
