@@ -83,8 +83,7 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
     
 
       write(*,*)'phaPropagateFresnellKirchhoff started...' 
-      
-
+            
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc	
 c	small = 1.0d-16
 c	big   = 1.0d+16
@@ -99,10 +98,14 @@ ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
 c	write(*,*),xlam,' ... xlam'  
+
+c   copy input fields into tmp array
+c   indices need to be swapped, as FORTRAN has array index convention different from C/IDL
+c   in FORTRAN, the first index is the fast running index (column, i.e. 'Z')
 	do i=1, MaxDim
 	  do j=1, MaxDim
-	    ez1(i,j)=dcmplx( INezre(i,j) , INezim(i,j) )
-	    ey1(i,j)=dcmplx( INeyre(i,j) , INeyim(i,j) )
+	    ez1(j,i)=dcmplx( INezre(i,j) , INezim(i,j) )
+	    ey1(j,i)=dcmplx( INeyre(i,j) , INeyim(i,j) )
         enddo
 	enddo
 
@@ -185,19 +188,23 @@ c      endif
 
       ey2(i,j)=ey2(i,j)+ey1(k,l)*fact            
       ez2(i,j)=ez2(i,j)+ez1(k,l)*fact            
-      
+ 
               enddo
             enddo
         enddo
       enddo
 ccc   END PROPAGATE FK   ccc
-      
+!$OMP END PARALLEL DO
+
+    
+c   copy tmp fields to output array
+c   swapping indices again in order to convert to C standard
 	do j=1,MaxDim
 	  do i=1,MaxDim
-	    INezre(i,j)=dreal(ez2(i,j))
-	    INezim(i,j)=dimag(ez2(i,j))
-	    INeyre(i,j)=dreal(ey2(i,j))
-	    INeyim(i,j)=dimag(ey2(i,j))
+        INezre(j,i)=dreal(ez2(i,j))
+        INezim(j,i)=dimag(ez2(i,j))
+        INeyre(j,i)=dreal(ey2(i,j))
+        INeyim(j,i)=dimag(ey2(i,j))
 	  enddo
 	enddo	  
 
@@ -684,7 +691,6 @@ c---------- get prime factors of n
 
 	call DMFTCC( ny, nz,a1(1,1),b1(1,1), nz00,1,
      & 		        a1(1,1),b1(1,1), nz00,1,ifx,t,signum)
-
 
 c-------------- step 4: phadrift_remapping of a1 and b1 in z
 c Joh:	call phadrift_remap(1,1)
