@@ -32,7 +32,7 @@ c----------------------------------------------------------------
      &            xlc(0:7,0:7,0:7,0:7),
      &            ypc1(0:7,0:7,0:7,0:7),
      &            zpc1(0:7,0:7,0:7,0:7)
-        dimension dfdwidlj0(0:7,0:7,0:7,0:7,0:7,0:7,0:7)
+c        dimension dfdwidlj0(0:64,0:7,0:7,0:7,0:7,0:7,0:7)
         dimension dfdwidlj1(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension dfdwidlj(0:7,0:7,0:7,0:7,0:7,0:7)
 
@@ -46,13 +46,19 @@ c	Achtung!! checken ob bei den hoeheren Ableitungen die
 c	hoeheren Terme auch auf konsequent null gesetzt werden
 c
 c
+c============= Routine wird zur Zeit nicht gebraucht. Sie wird erst benötigt,
+c       wenn die komplette asymptotische Entwicklung realisiert wird.
+c       dfdwidlj0 frisst zuviel Speicher. Das muss man dann spaeter neu programmieren.
+
+        goto 1111
+
         do i1=0,iord
         do j1=0,iord-i1
         do k=0,iord
         do l=0,iord-k
         do m=0,iord
         do n=0,iord-m
-          dfdwidlj0(0,i1,j1,k,l,m,n)=opl6(i1,j1,k,l,m,n)
+c          dfdwidlj0(0,i1,j1,k,l,m,n)=opl6(i1,j1,k,l,m,n)
         enddo
         enddo
         enddo
@@ -71,8 +77,8 @@ c
           do l=0,iord-k
           do m=0,iord
           do n=0,iord-m
-            dfdwidlj0(index,i1,j1,k,l,m,n)=
-     &        dopl6(i1,j1,k,l,m,n)
+c            dfdwidlj0(index,i1,j1,k,l,m,n)=
+c     &        dopl6(i1,j1,k,l,m,n)
           enddo
           enddo
           enddo
@@ -94,7 +100,7 @@ c----------------- replace yp, zp
           do l=0,iord-k
           do m=0,iord
           do n=0,iord-m
-           dopl6(i1,j1,k,l,m,n)=dfdwidlj0(index,i1,j1,k,l,m,n)
+c           dopl6(i1,j1,k,l,m,n)=dfdwidlj0(index,i1,j1,k,l,m,n)
           enddo
           enddo
           enddo
@@ -110,7 +116,7 @@ c----------------- replace yp, zp
           do l=0,iord-k
           do m=0,iord
           do n=0,iord-m
-            dfdwidlj1(i,j,i1,j1,k,l)=dopl4(i1,j1,k,l)
+           dfdwidlj1(i,j,i1,j1,k,l)=dopl4(i1,j1,k,l)
           enddo
           enddo
           enddo
@@ -152,6 +158,7 @@ c----------------- replace w, l
         enddo
         enddo
 
+1111    continue
 c--------------------------------------------------------------
 
         return
