@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Jan 12 15:21:57 flechsig>  */
+/*   Time-stamp: <13 Feb 12 12:42:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -217,7 +217,7 @@ void BuildBeamline(struct BeamlineType *bl)
 #define FDET_8 
 /* #ifdef FDET_8 */ 
 	  fdet_8(bl->wc, bl->xlc,
-		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		 bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	         ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll,
 		 bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb,  
@@ -373,7 +373,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		  exit(-1);
 		}
 	      fdet_8(bl->wc, bl->xlc,
-		     bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		     bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	             ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 		    
 		     bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb,  
@@ -451,7 +451,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		  exit(-1);
 		}
 	      fdet_8(bl->wc, bl->xlc,
-		     bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+		     bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	             ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 		    
 		     bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb, 
@@ -874,7 +874,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
      {
        fgmapidp_8(&bl->BLOptions.epsilon, 
 		  listpt->wc, listpt->xlc, 
-		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		  listpt->ypc1, listpt->zpc1, ltp->ypc, ltp->zpc, listpt->dypc, listpt->dzpc,
 		  &listpt->xlm, 
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
@@ -984,7 +984,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 	 {
 	   fgmapidp_8(&bl->BLOptions.epsilon,
 		      listpt->wc, listpt->xlc,
-		      listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc,
+		      listpt->ypc1, listpt->zpc1, ltp->ypc, ltp->zpc, listpt->dypc, listpt->dzpc,
 		      &listpt->xlm,
 		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
  		      ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 

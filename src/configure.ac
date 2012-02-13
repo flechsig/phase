@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2012-01-06 17:42:23 flechsig> 
+dnl   Time-stamp: <13 Feb 12 13:44:59 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -294,10 +294,15 @@ AC_ARG_ENABLE([debug],
     if test "$enable_debug" = "yes"; then
        AC_DEFINE([DEBUG], 1, "debugging on")
        AC_MSG_NOTICE(*** produce debugging code ***)
+       F77bn=`basename $F77`
        if test "$F77" = "f77"; then
 	  FFLAGS="-DDEBUG -g -C -B111 ${FFLAGS}"
        else
-          FFLAGS="-DDEBUG -g -O0 ${FFLAGS}"
+          if test "$F77bn" = "ifort" -o "$F77bn" = "ifc"; then
+	    FFLAGS="-DDEBUG -g -O0 -check bounds ${FFLAGS}"
+	  else
+            FFLAGS="-DDEBUG -g -O0 ${FFLAGS}"
+          fi
        fi
 dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
        CFLAGS="-DDEBUG -ggdb"
