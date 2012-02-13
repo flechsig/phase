@@ -59,31 +59,21 @@
 
 #include "Constants.h"
 
-
-/*   ***  PRINTF - EXAMPLES  ***
-    int a, b, c;
-    printf("Enter the first value:");
-    scanf("%d", &a);
-    printf("Enter the second value:");
-    scanf("%d", &b);
-    c = a + b;
-    printf("%d + %d = %d\n", a, b, c);
-    return 0;
-    
-    You can print all of the normal C types with printf by using different placeholders:
-
-    * int (integer values) uses %d
-    * float (floating point values) uses %f
-    * char (single character values) uses %c
-    * character strings (arrays of characters, discussed later) use %s 
-
-You can learn more about the nuances of printf on a UNIX machine by typing man 3 printf. Any other C compiler you are using will probably come with a manual or a help file that contains a description of printf.
-// */
-
-
-
-
-
+// declare the Fortran Routine prototype
+extern void phadrift_propagate_fk_nostructs_(double *zezre, double *zezim, double *zeyre, double *zeyim,
+                                             int *nz1, double *zmin1, double *zmax1, int *ny1, double *ymin1, double *ymax1, 
+                                             int *nz2, double *zmin2, double *zmax2, int *ny2, double *ymin2, double *ymax2, 
+                                             double *dist, double *xlam);
+                                             
+                                             
+extern void phadrift_propagate_fk_oe_nostructss_(double *zezre, double *zezim, double *zeyre, double *zeyim, 
+                                                 int *nz, double *zmin, double *zmax,
+                                                 int *ny, double *ymin, double *ymax,
+                                                 double *dist, double *dista, double *xlam, double *angle, int *mode,
+                                                 const char* string, int *nlen,
+                                                 int *nz2, double *zmin2, double *zmax2,
+                                                 int *ny2, double *ymin2, double *ymax2);
+                                                 
 // ***************************************************************************
 // ************** Start of drift routines ************************************
 // ***************************************************************************
@@ -91,7 +81,7 @@ You can learn more about the nuances of printf on a UNIX machine by typing man 3
 
 // /* *** Fortran-Access ***  --- Former Propagate_1
 int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance, 
-					int *nz2, double *zmin2, double *zmax2  , 
+					int *nz2, double *zmin2, double *zmax2, 
 					int *ny2, double *ymin2, double *ymax2    )
 { 
  // Dereferencing dist, so that it won't change in the calling program  
@@ -99,26 +89,17 @@ int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance,
 
   int    nz1,ny1;
   double zmin1,zmax1,ymin1,ymax1;
-  double xlam = beam->xlam;
-
-//c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
+  double xlam = beam->xlam; 
+  
+  //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz1,&zmin1,&zmax1,&ny1,&ymin1,&ymax1);
   
- 
- /*
-  extern void phadrift_propagate_fk_(); // Declare the Fortran Routine 
-  // Call the Fortran Routine 
-  phadrift_propagate_fk_(beam4, &dist, nz2,zmin2,zmax2,  ny2,ymin2,ymax2);
-// */
-// /*
-  extern void phadrift_propagate_fk_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine 
   phadrift_propagate_fk_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
-				,&nz1,&zmin1,&zmax1,&ny1,&ymin1,&ymax1     
-				,nz2,zmin2,zmax2,ny2,ymin2,ymax2
-				,&dist, &xlam) ;
-// */
-    
+                ,&nz1,&zmin1,&zmax1,&ny1,&ymin1,&ymax1     
+                ,nz2,zmin2,zmax2,ny2,ymin2,ymax2
+                ,&dist, &xlam);
+                   
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, *nz2, *zmin2, *zmax2, *ny2, *ymin2, *ymax2);
   
@@ -133,9 +114,6 @@ int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance,
 // /* *** Fortran-Access ***  --- Former Propagate_2
 int phaPropFFTnear (struct source4 *beam, double *distance)
 { 
-   
-
-
   // Dereferencing dist, so that it won't change in the calling program  
   double dist = *distance;
 
@@ -154,7 +132,7 @@ int phaPropFFTnear (struct source4 *beam, double *distance)
   extern void phadrift_propagate_fft_near_nostructs_();  
   // Call the Fortran Routine       
   phadrift_propagate_fft_near_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim,                                         
-          &nz,&zmin,&zmax,&ny,&ymin,&ymax,&dist,&xlam) ;
+          &nz,&zmin,&zmax,&ny,&ymin,&ymax,&dist,&xlam);
 //    pha_c_adjust_src4_grid(beam);
   // Neues Grid in Struktur schreiben
 //  pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
@@ -221,23 +199,23 @@ int phaPropFkoe (struct source4 *beam, double *distance,  double *dista,
   int    nz,ny,nlen;
   double zmin,zmax,ymin,ymax;
   double xlam = beam->xlam;
-  const char* string;
+  char   *string;
 
 //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);  
 
-  //necessary to pass explicit length of C string to Fortran
-  nlen = surffilename->slen;
+  // the string passed by IDL may not be NULL terminated;
+  // it is also necessary to pass explicit length of C string to Fortran
   string = surffilename->s;
+  nlen   = surffilename->slen;
 
-  extern void phadrift_propagate_fk_oe_nostructss_(); // Declare the Fortran Routine 
   // Call the Fortran Routine       
-  phadrift_propagate_fk_oe_nostructs_( beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
-					,&nz,&zmin,&zmax
-					,&ny,&ymin,&ymax
-					,&dist, dista, &xlam, angle, mode
-          ,string, &nlen
-          ,nz2, zmin2, zmax2, ny2, ymin2, ymax2);
+  phadrift_propagate_fk_oe_nostructs_( beam->zezre,beam->zezim,beam->zeyre,beam->zeyim,
+					&nz,&zmin,&zmax,
+					&ny,&ymin,&ymax,
+					&dist, dista, &xlam, angle, mode,
+                    string, &nlen,
+                    nz2, zmin2, zmax2, ny2, ymin2, ymax2);
 
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
@@ -456,6 +434,8 @@ int  pha_c_define_src4_grid(struct source4 *src4,
       double dz=(zmax-zmin)/(nz-1);
       double dy=(ymax-ymin)/(ny-1);
 
+      //printf("C: dy=%.2f   dz=%.2f\n", dy, dz);      
+      
 //c alle nz
       src4->ieyrex=nz;
       src4->ieyimx=nz;
