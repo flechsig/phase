@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Feb 12 10:56:09 flechsig> 
+//  Time-stamp: <13 Feb 12 16:09:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -61,8 +61,10 @@ void MainWindow::activateProc(const QString &action)
     { 
       if (elementListIsEmpty())
 	return;
+
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
 	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
+
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
       //QMessageBox *mmBox = new QMessageBox;
@@ -75,7 +77,7 @@ void MainWindow::activateProc(const QString &action)
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
       myparent->myBuildBeamline();
       myparent->myRayTracec(); 
-      printf("ray trace-> done\n");
+      cout << "ray trace-> done" << endl;
       //mmBox->close();
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }
@@ -187,7 +189,9 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("writemapAct")) 
     { 
-      printf("writemapAct button pressed\n");
+#ifdef DEBUG
+      cout << "debug: writemapAct button pressed" << endl;
+#endif 
       if (elementListIsEmpty())
 	return;
       if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
@@ -637,7 +641,7 @@ void MainWindow::deleteElement()
   int pos= elementList->currentRow();
  
 #ifdef DEBUG
-  printf("deleteElement: delete element with idx %d out of %u\n", pos, myparent->myBeamline()->elementzahl);
+  printf("debug: deleteElement: delete element with idx %d out of %u\n", pos, myparent->myBeamline()->elementzahl);
 #endif
 
   if (pos >= 0)
@@ -1400,7 +1404,7 @@ void MainWindow::selectElement()
 void MainWindow::selectParameter()
 {
 #ifdef DEBUG
-  printf("debug: selectParameter called\n");
+  cout << "debug: selectParameter called" << endl;
 #endif
   char buffer[MaxPathLength], *ch;
   int parameternumber= parameterList->currentRow();
