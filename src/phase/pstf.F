@@ -213,10 +213,10 @@ c************* save initial coordinates ****************
             st.nn1=n1
 	    st.nn2=n2
 c******* start of adaptive grid integration *************************** 
-           write(6,*)'call adaptive_int'
+c           write(6,*)'call adaptive_int'
            call adaptive_int(m4,g,am,src,apr,
      .           cs,ra,ifl,xi,xir,st,s)  
-           write(6,*)'returned from adaptive_int'
+c           write(6,*)'returned from adaptive_int'
             if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
                xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
