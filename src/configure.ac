@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <14 Feb 12 08:20:05 flechsig> 
+dnl   Time-stamp: <14 Feb 12 08:24:25 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -300,7 +300,7 @@ AC_ARG_ENABLE([debug],
        else
           if test "$F77bn" = "ifort" -o "$F77bn" = "ifc"; then
 dnl	    FFLAGS="-DDEBUG -g -O0 -check bounds ${FFLAGS}"
-            FFLAGS="-DDEBUG -g -O0 -check all -debug -warn -warn nodeclarations ${FFLAGS}"
+            FFLAGS="-DDEBUG -g -O0 -check all -debug -warn all -warn nodeclarations -warn nounused ${FFLAGS}"
 	  else
             FFLAGS="-DDEBUG -g -O0 ${FFLAGS}"
           fi
