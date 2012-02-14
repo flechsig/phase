@@ -55,6 +55,7 @@ c	real*8 phase, dist,dist1
 c      real*8  pi,pihalf,signum,const,a1_sav
 	
 	
+      complex*16 eytmp, eztmp;
 	
       integer i,j,k,l
      &       ,nz1,ny1,nz2,ny2
@@ -125,16 +126,30 @@ c	write(*,*),dy2,' ...dy2 ',dz2,' ... dz2'
    
 ccc   START PROPAGATE FK    ccc
       
-!$OMP PARALLEL DO      
-        do i=1,ny2
-c          write (*,*) i
-          y2(i)=ymin2+dble(i-1)*dy2      
-          do j=1,nz2
-            z2(j)=zmin2+dble(j-1)*dz2    
-            ey2(i,j)=0.d0
-            ez2(i,j)=0.d0
-            do k=1,ny1
+c construct axis vectors first so they can be shared among threads
+c otherwise there could be conflicts if two threads access same z2(j)
+      do i=1, ny2
+        y2(i)=ymin2+dble(i-1)*dy2      
+        do j=1, nz2
+          z2(j)=zmin2+dble(j-1)*dz2            
+        enddo
+      enddo
+
+c now start actual loops to determine fields
+!$OMP PARALLEL DO 
+!$OMP& PRIVATE(i, k, l, dist1, fact, phase, eytmp, eztmp)
+        do j=1,nz2
+          do i=1,ny2
+c           private tmp variables for reduction
+            eytmp = 0.d0 
+            eztmp = 0.d0
+
+!$OMP PARALLEL DO 
+!$OMP& PRIVATE(k, dist1, fact, phase)
+!$OMP& REDUCTION(+:eytmp, eztmp)
             do l=1,nz1
+              do k=1,ny1
+        
 	    
 c    Intrinsische Wurzelfkt. dsqrt ist schneller als Entwicklung ...
 c    dsqrt benoetigt nur rund 66% der Zeit, die eine Entwicklung zur 5.Ordnung braucht !    
@@ -153,9 +168,7 @@ c	endif
 ccccc DEBUG ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       dist1=dsqrt(distance**2+dabs(y1(k)-y2(i))**2+dabs(z1(l)-z2(j))**2)
-c     &     - dabs(distance)
-c     (SG: can't append line or statement would be too long for F77)
-      dist1=dist1-dabs(distance)
+     &     - dabs(distance)
 
 c     use correct sign for backward propagation
       if (distance.gt.0) then
@@ -186,11 +199,16 @@ c     &        (k.eq.(ianzy1+1)/2))then
 c        xarg(l)=dreal(ez(l,k)*fact)
 c      endif
 
-      ey2(i,j)=ey2(i,j)+ey1(k,l)*fact            
-      ez2(i,j)=ez2(i,j)+ez1(k,l)*fact            
+                eytmp=eytmp+ey1(k,l)*fact            
+                eztmp=eytmp+ez1(k,l)*fact            
  
               enddo
             enddo
+!$OMP END PARALLEL DO
+
+          ey2(i,j) = eytmp;
+          ez2(i,j) = eztmp;
+
         enddo
       enddo
 ccc   END PROPAGATE FK   ccc

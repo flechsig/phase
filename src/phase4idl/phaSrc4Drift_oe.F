@@ -338,14 +338,14 @@ c--------------------------------------------------------------------------
 	fact0=(dz0*dy0)/xlam
 
 !$OMP PARALLEL DO
-	do i=1,ianzy1
-c	  PRINT *, 'i = ', i
-          do j=1,ianzz1
+!$OMP& PRIVATE(i, k, l, dist1, fact, phase)
+        do j=1,ianzz1
+          do i=1,ianzy1
             
-	    ey1(i,j)=0.d0
+            ey1(i,j)=0.d0
             ez1(i,j)=0.d0
-            do k=1,ianzy0
-              do l=1,ianzz0
+            do l=1,ianzz0
+              do k=1,ianzy0
       
 c---- propagation between plane parallel surfaces
       dist1=dsqrt(dist**2+dabs(y0(k)-y1(i))**2+
@@ -386,14 +386,14 @@ c--------------------------------------------------------------------------
       fact0=fact0*dsqrt(dcos(winkel))
 
 !$OMP PARALLEL DO
-	do i=1,ianzy1
-c	  PRINT *, 'i = ', i
-          do j=1,ianzz1
+!$OMP& PRIVATE(i, k, l, dist1, fact, phase)
+          do j=1,ianzz1                
+            do i=1,ianzy1
             
-	    ey1(i,j)=0.d0
+            ey1(i,j)=0.d0
             ez1(i,j)=0.d0
-            do k=1,ianzy0
-              do l=1,ianzz0
+            do l=1,ianzz0
+              do k=1,ianzy0
 
 c----! source to oe
 	xstart=-dist*dsin(winkel)-y0(k)*dcos(winkel)
@@ -442,14 +442,15 @@ c--------------------------------------------------------------------------
       fact0=fact0*dsqrt(dcos(winkel))
 
 !$OMP PARALLEL DO
-	do i=1,ianzy1
-c	  PRINT *, 'i = ', i
-          do j=1,ianzz1
+!$OMP& PRIVATE(i, k, l, dist1, fact, phase)
+        do j=1,ianzz1
+          do i=1,ianzy1
             
-	    ey1(i,j)=0.d0
+            ey1(i,j)=0.d0
             ez1(i,j)=0.d0
-            do k=1,ianzy0
-              do l=1,ianzz0
+            do l=1,ianzz0
+              do k=1,ianzy0
+              
 
 	xstart=y0(k)
 	ystart=-surf(l,k)
