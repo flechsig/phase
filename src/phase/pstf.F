@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <15 Nov 11 15:14:09 flechsig> 
+c$$$ Time-stamp: <14 Feb 12 13:17:33 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -91,7 +91,7 @@ c        record /source_results/ sr
         complex*16 psd2c(1024,1024)
         complex*16 psd2cy(512,512)
 	complex*16 psd2cz(512,512) 
-
+        
         ra.xlam_test=xlam_test 
 
 #ifdef DEBUG
@@ -251,7 +251,11 @@ c------------------------------------------
             
 c******Ende der Integration ueber die Winkel ******************
          enddo                  ! raster
-         write(*,*)'finished row ',n1,' of ', iheigh
+c         write(*,*)'finished row ',n1,' of ', iheigh
+c UF overwrite the line
+           write(6,101)achar(13), n1, iheigh
+  101      FORMAT(a, 'finished row: ',i7,' out of a total of ',i7,$)   ! the $ suppresses LF
+           
       enddo                     ! raster
 c     restore parameter in case of error
       s.iheigh= iheigh
