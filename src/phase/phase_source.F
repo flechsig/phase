@@ -375,7 +375,7 @@ c	endif	! iexpand
 	if(ifl.iplmode.eq.0)then
 	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
 	endif
-
+        
 c-----------------------------------------------
 c	ra.xlam_test wird variiert bei multiple propagation
 c	so wie es sein soll
@@ -385,11 +385,6 @@ c-----------------------------------------------
 	phase = (2.*cs.pi*xlength)/ra.xlam_test 
 	phase = (2.*cs.pi*xlength)/ra.xlam_test 
 	endif
-
-c--------------- 22.3.2006
-c       exponenten spaeter berechnen
-c	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
-c---------------------------------------------------
 
         if(ifl.ispline.lt.0)then
 	sr.eyp=phase
@@ -454,6 +449,7 @@ c------- end 19.1.2000 ----------------------------------
 
 	factorre=dcos(delphi+phase)
         factorim=dsin(delphi+phase)
+        if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
 
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
@@ -477,7 +473,7 @@ c------- end 19.1.2000 ----------------------------------
 	srdensyim=sr.densyim
 	srdenszre=sr.denszre
 	srdenszim=sr.denszim
-
+        
 	if(ifl.ispline.ge.0)then
 		sr.densyre=f*(srdensyre*factorre-
      &          	      srdensyim*factorim)
@@ -487,8 +483,8 @@ c------- end 19.1.2000 ----------------------------------
      &          	      srdenszim*factorim)
 		sr.denszim=f*(srdenszre*factorim+
      &          	      srdenszim*factorre)
-                sr.densy=srdensyre+cs.sqrtm1*srdensyim
-                sr.densz=srdenszre+cs.sqrtm1*srdenszim
+                sr.densy=(srdensyre+cs.sqrtm1*srdensyim)*factor
+                sr.densz=(srdenszre+cs.sqrtm1*srdenszim)*factor
 	endif
 
 	if(ifl.ispline.lt.0)then
