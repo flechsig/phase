@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Feb 12 11:21:55 flechsig> 
+//  Time-stamp: <16 Feb 12 09:13:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -359,9 +359,11 @@ QWidget *MainWindow::createGraphicBox()
   imageStatLabel    = new QLabel(tr("<b><FONT COLOR=red>image</FONT></b>"));
   mapStatLabel      = new QLabel(tr("<b><FONT COLOR=red>maps</FONT></b>"));
   elementStatLabel  = new QLabel(tr("<b><FONT COLOR=red>OE-X</FONT></b>"));
+  poimageStatLabel  = new QLabel(tr("<b><FONT COLOR=red>POimpl</FONT></b>"));
   statusLayout->addWidget(mapStatLabel);
   statusLayout->addWidget(elementStatLabel);
   statusLayout->addWidget(sourceStatLabel);
+  statusLayout->addWidget(poimageStatLabel);
   statusLayout->addWidget(imageStatLabel);
   statusGroup->setLayout(statusLayout);
 
@@ -1855,8 +1857,8 @@ void MainWindow::UpdateSourceBox()
   myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK | pstimageOK); 
         
 #ifdef DEBUG 
-  printf("debug: InitSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
-	 myparent->myBeamline()->RTSource.QuellTyp, myparent->myBeamline()->beamlineOK, oldsource);   
+  printf("debug: %s, UpdateSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
+	 __FILE__, myparent->myBeamline()->RTSource.QuellTyp, myparent->myBeamline()->beamlineOK, oldsource);   
 #endif   
  
     if (myparent->myBeamline()->RTSource.Quellep == NULL)
@@ -2238,6 +2240,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     }
 } // UpdateStatistics
 
+// Update the status window
 void MainWindow::UpdateStatus()
 {
   int elementnumber= elementList->currentRow();
@@ -2246,6 +2249,7 @@ void MainWindow::UpdateStatus()
   if ((elementnumber < 0) || (elementnumber > elementList->count()- 1)) 
     elementnumber= 0;
 
+  // first the common items for GO and PO
   if (myparent->myBeamline()->elementzahl > 0)
     {
       qst.setNum(elementnumber+1);
@@ -2254,12 +2258,8 @@ void MainWindow::UpdateStatus()
     }
   else
     qst= QString("<b><FONT COLOR=red>OE_X");
-    elementStatLabel->setText(qst+ "</FONT></b>");
 
-  if (myparent->myBeamline()->beamlineOK & sourceOK) 
-    sourceStatLabel->setText("<b><FONT COLOR=green>"+ QString(tr("source"))+ "</FONT></b>");  // correct version
-  else 
-    sourceStatLabel->setText(QString("<b><FONT COLOR=red>source</FONT></b>")); // sloppy
+  elementStatLabel->setText(qst+ "</FONT></b>");
 
   if (myparent->myBeamline()->beamlineOK & resultOK) 
     imageStatLabel->setText(QString(tr("<b><FONT COLOR=green>image</FONT></b>"))); 
@@ -2271,11 +2271,33 @@ void MainWindow::UpdateStatus()
   else 
     mapStatLabel->setText(QString(tr("<b><FONT COLOR=red>maps</FONT></b>")));
 
-  if (myparent->myBeamline()->BLOptions.SourcetoImage == 2)    // update header
-    statusGroup->setTitle(QString(tr("PO Status"))); 
-  else
-    statusGroup->setTitle(QString(tr("GO Status"))); 
+  // the special items for GO or PO
+  if (myparent->myBeamline()->BLOptions.SourcetoImage == 2)    // PO
+    {
+      statusGroup->setTitle(QString(tr("PO Status")));         // update header
+      poimageStatLabel->show();
 
+      if (myparent->myBeamline()->beamlineOK & pstimageOK) 
+	poimageStatLabel->setText(QString(tr("<b><FONT COLOR=green>POimpl</FONT></b>"))); 
+      else 
+	poimageStatLabel->setText(QString(tr("<b><FONT COLOR=red>POimpl</FONT></b>")));
+
+      if (myparent->myBeamline()->beamlineOK & pstsourceOK) 
+	sourceStatLabel->setText("<b><FONT COLOR=green>"+ QString(tr("POsource"))+ "</FONT></b>");  // correct version
+      else 
+	sourceStatLabel->setText(QString("<b><FONT COLOR=red>POsource</FONT></b>")); // sloppy
+
+    }
+  else   // GO
+    {
+      statusGroup->setTitle(QString(tr("GO Status"))); 
+      poimageStatLabel->hide();
+
+      if (myparent->myBeamline()->beamlineOK & sourceOK) 
+	sourceStatLabel->setText("<b><FONT COLOR=green>"+ QString(tr("source"))+ "</FONT></b>");  
+      else 
+	sourceStatLabel->setText(QString("<b><FONT COLOR=red>source</FONT></b>")); 
+    }
 } // UpdateStatus
 
 

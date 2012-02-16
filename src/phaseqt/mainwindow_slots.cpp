@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Feb 12 16:09:29 flechsig> 
+//  Time-stamp: <16 Feb 12 13:38:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -139,34 +139,30 @@ void MainWindow::activateProc(const QString &action)
     }
 
   if (!action.compare("phasespaceAct"))
-    {     
-      cout << "phasespaceAct button pressed" << endl; 
+    {   
+#ifdef DEBUG  
+      cout << "debug: " << __FILE__ << " phasespaceAct button pressed" << endl; 
+#endif
       if (elementListIsEmpty()) 
 	return;
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
-#ifdef DEBUG
-      printf("DEBUG2: continue1, file: %s, line: %d\n", __FILE__, __LINE__);
-#endif	
+
       myparent->myBuildBeamline();
+
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-#ifdef DEBUG
-	  printf("DEBUG2: continue2, file: %s, line: %d\n", __FILE__, __LINE__);
-#endif	
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
           myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-#ifdef DEBUG      
-      printf("DEBUG2:continue3, file: %s, line: %d\n", __FILE__, __LINE__);
-#endif		
+
+      if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+	sourceApplyBslot();
+			
       if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
 	{
-#ifdef DEBUG
-	  printf("DEBUG2: continue4, file: %s, line: %d\n", __FILE__, __LINE__);
-#endif
 	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
 	  myparent->myPST();
@@ -800,6 +796,7 @@ void MainWindow::goButtonslot()
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 1;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
+  statGroup->show();
   UpdateStatus();
   myparent->writeBackupFile();
 } // goButtonslot
@@ -955,9 +952,10 @@ void MainWindow::grapplyslot()
 void MainWindow::grautoscaleslot()
 {
   QString yminqst, ymaxqst, zminqst, zmaxqst;
+  struct PSImageType *psip;
 
 #ifdef DEBUG
-  cout << "debug: grautoscaleslot called, plotsubject: " << d_plot->plotsubject << endl;
+  cout << "debug: " << __FILE__ << " grautoscaleslot called, plotsubject: " << d_plot->plotsubject << endl;
 #endif
 
 // a few tests
@@ -1000,6 +998,8 @@ void MainWindow::grautoscaleslot()
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
       cout << "PLOT_PO_RESULT no autoscale available so far" << endl;
+      psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
     }
   
   // update the widget
@@ -1243,6 +1243,7 @@ void MainWindow::poButtonslot()
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 2;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
+  statGroup->hide();
   UpdateStatus();
   myparent->writeBackupFile();
 } // poButtonslot
@@ -1565,109 +1566,108 @@ void MainWindow::sourceApplyBslot()
   //struct PSSourceType         *pssp; 
 
 #ifdef DEBUG
-  cout << "sourceApplyBslot activated" << endl;
+  cout << "debug: " << __FILE__ << " sourceApplyBslot activated" << endl;
 #endif
 
   if (myparent->myBeamline()->RTSource.Quellep == NULL )
     {
-      printf("error: sourceApplyBslot: Quellep == NULL\n");
+      cout << "error: sourceApplyBslot: Quellep == NULL" << endl;
       return;
     }
     
   sou= myparent->myBeamline()->RTSource.QuellTyp;
-  switch (sou) {
-    
-  case 'D':
-    dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    dp->sigy = S1E->text().toDouble();
-    dp->sigdy= S2E->text().toDouble();
-    dp->sigz = S3E->text().toDouble();
-    dp->dz   = S4E->text().toDouble();
-    myparent->myBeamline()->RTSource.raynumber= S5E->text().toInt();
-    break;
-    
-  case 'G':
-    up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
-    up0->length= S1E->text().toDouble();
-    lambda     = S2E->text().toDouble();
-    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
-    up0->deltaz  = S4E->text().toDouble();
-    up0->sigmaey = S5E->text().toDouble();
-    up0->sigmaez = S6E->text().toDouble();
-    up0->sigmaedy= S7E->text().toDouble();
-    up0->sigmaedz= S8E->text().toDouble();
-    break;
-    
-  case 'H':
-    hp= (struct  HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    hp->disty= S1E->text().toDouble();
-    hp->iy   = S2E->text().toInt();
-    hp->distz= S3E->text().toDouble();
-    hp->iz   = S4E->text().toInt();
-    hp->divy = S5E->text().toDouble();
-    hp->idy  = S6E->text().toInt();
-    hp->divz = S7E->text().toDouble();
-    hp->idz  = S8E->text().toInt();
-    myparent->myBeamline()->RTSource.raynumber=  hp->iy* hp->idy* hp->iz* hp->idz;
-    break;
-  case 'I':
-    psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-    psip->ymin= S1E->text().toDouble();
-    psip->zmin= S2E->text().toDouble();
-    psip->ymax= S3E->text().toDouble();
-    psip->zmax= S4E->text().toDouble();
-    psip->iy  = S5E->text().toInt();
-    psip->iz  = S6E->text().toInt();
-    break;
-    
-  case 'L':
-  case 'M':
-    up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    up->length= S1E->text().toDouble();
-    lambda    = S2E->text().toDouble();
-    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
-    up->deltaz= S4E->text().toDouble();
-    break;
-    
-  case 'o':
-    sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    sop->sigy  = S1E->text().toDouble();
-    sop->sigdy = S2E->text().toDouble();
-    sop->sigz  = S3E->text().toDouble();
-    sop->sigdz = S4E->text().toDouble();
-    myparent->myBeamline()->RTSource.raynumber= S5E->text().toInt();
-    break;
-    
-  case 'R':
-    rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    rp->dy= S1E->text().toDouble();
-    rp->dz= S2E->text().toDouble();
-    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
-    break;
-    
-  case 'U':
-    up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-    up->length= S1E->text().toDouble();
-    lambda    = S2E->text().toDouble();
-    myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
-    break;
-  case 'F':
-    // hier muss nichts gemacht werden
-    break;
-    
-  default:
-    QMessageBox::warning(this, tr("sourceApplyBslot"),
-			 tr("Source type %1 not recognized.\nreport bug to uwe.flechsig@psi.ch")
-			 .arg(sou));
-    return;
-  }
-
+  switch (sou) 
+    {
+    case 'D':
+      dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      dp->sigy = S1E->text().toDouble();
+      dp->sigdy= S2E->text().toDouble();
+      dp->sigz = S3E->text().toDouble();
+      dp->dz   = S4E->text().toDouble();
+      myparent->myBeamline()->RTSource.raynumber= S5E->text().toInt();
+      break;
+    case 'G':
+      up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
+      up0->length= S1E->text().toDouble();
+      lambda     = S2E->text().toDouble();
+      myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
+      up0->deltaz  = S4E->text().toDouble();
+      up0->sigmaey = S5E->text().toDouble();
+      up0->sigmaez = S6E->text().toDouble();
+      up0->sigmaedy= S7E->text().toDouble();
+      up0->sigmaedz= S8E->text().toDouble();
+      break;
+    case 'H':
+      hp= (struct  HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      hp->disty= S1E->text().toDouble();
+      hp->iy   = S2E->text().toInt();
+      hp->distz= S3E->text().toDouble();
+      hp->iz   = S4E->text().toInt();
+      hp->divy = S5E->text().toDouble();
+      hp->idy  = S6E->text().toInt();
+      hp->divz = S7E->text().toDouble();
+      hp->idz  = S8E->text().toInt();
+      myparent->myBeamline()->RTSource.raynumber=  hp->iy* hp->idy* hp->iz* hp->idz;
+      break;
+    case 'I':
+      psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      psip->ymin= S1E->text().toDouble();
+      psip->zmin= S2E->text().toDouble();
+      psip->ymax= S3E->text().toDouble();
+      psip->zmax= S4E->text().toDouble();
+      psip->iy  = S5E->text().toInt();
+      psip->iz  = S6E->text().toInt();
+      break;
+      
+    case 'L':
+    case 'M':
+      up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      up->length= S1E->text().toDouble();
+      lambda    = S2E->text().toDouble();
+      myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
+      up->deltaz= S4E->text().toDouble();
+      break;
+      
+    case 'o':
+      sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      sop->sigy  = S1E->text().toDouble();
+      sop->sigdy = S2E->text().toDouble();
+      sop->sigz  = S3E->text().toDouble();
+      sop->sigdz = S4E->text().toDouble();
+      myparent->myBeamline()->RTSource.raynumber= S5E->text().toInt();
+      break;
+      
+    case 'R':
+      rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      rp->dy= S1E->text().toDouble();
+      rp->dz= S2E->text().toDouble();
+      myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
+      break;
+      
+    case 'U':
+      up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
+      up->length= S1E->text().toDouble();
+      lambda    = S2E->text().toDouble();
+      myparent->myBeamline()->RTSource.raynumber= S3E->text().toInt();
+      break;
+    case 'F':
+      // hier muss nichts gemacht werden
+      break;
+      
+    default:
+      QMessageBox::warning(this, tr("sourceApplyBslot"),
+			   tr("Source type %1 not recognized.\nreport bug to uwe.flechsig@psi.ch")
+			   .arg(sou));
+      return;
+    }
+  
   myparent->myBeamline()->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
   if (sou != 'I') 
     {
       myparent->myMakeRTSource();
       myparent->myBeamline()->beamlineOK |= sourceOK;
-    } else
+    } 
+  else
     {
       myparent->myBeamline()->beamlineOK |= pstimageOK;
     }

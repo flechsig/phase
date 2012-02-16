@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <01 Feb 12 17:37:54 flechsig>  */
+/*  Time-stamp: <16 Feb 12 08:47:49 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -34,7 +34,8 @@ public:
     void setphaseData(const char *); // UF
     void setdefaultData();     // UF
     void setdefaultData2();    // UF
-    void autoScale();
+    void autoScale(); // GO
+    void autoScale(double, double, double, double); // PO
     void fillGoPlotArrays(struct RayType *, int);
     void SetData(int n, double* dx, double* dy);
     //int  SetLineColor(int);

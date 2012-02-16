@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <01 Feb 12 17:45:42 flechsig> 
+//  Time-stamp: <16 Feb 12 13:49:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -246,7 +246,7 @@ void Plot::example3()
 void Plot::contourPlot()
 {
 #ifdef DEBUG
-  cout << "contour plot experimental" << endl;
+  cout << "debug: " << __FILE__ << " contour plot experimental" << endl;
 #endif
   d_curve1->hide();
   d_curve2->hide();
@@ -549,12 +549,23 @@ void Plot::printPlot(QPrinter &printerp )
 }
 #endif
 
-void Plot::autoScale()
+void Plot::autoScale(double z1, double z2, double y1, double y2)   // PO
+{
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " PO autoScale called" << endl;
+#endif
+  ymin= y1;
+  ymax= y2;
+  zmin= z1;
+  zmax= z2;
+} // end autoscale PO
+
+void Plot::autoScale()   // GO
 {
   int i;
   
 #ifdef DEBUG
-  printf("debug: autoScale called, ndata: %d\n", ndata);
+  cout << "debug: " << __FILE__ << "GO autoScale called, ndata: " << ndata << endl;
 #endif
 
   if (ndata > 0) 
@@ -732,14 +743,14 @@ void Plot::hfill2()
       for (iy=0; iy< h2a_ny; iy++) h2a[ix+iy*h2a_nx]*= 10.0/ h2max;
 
 #ifdef DEBUG
-  printf("debug: hfill2 end:  hmax  %f\n", h2max);
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
 } // hfill2 GO
 
 // fills a 2d histogram with ray data PO version
 void Plot::hfill2(struct PSDType *rp)
 {
-  int i, h2a_n;
+  int i, ix, iy, h2a_n;
   double *data;
   
 #ifdef DEBUG
@@ -748,26 +759,27 @@ void Plot::hfill2(struct PSDType *rp)
 
   h2a_nx= rp->iz;
   h2a_ny= rp->iy;
-  data  = rp->psd;
+  data  = rp->psd;   // in fortran model
 
   h2a_n= h2a_nx * h2a_ny;
   if (h2a != NULL) delete h2a;
   if (h2a_n > 0) h2a= new double[h2a_n];
   
   h2max= 0.0;
-  for (i=0; i< h2a_n; i++)
-    {
-	h2a[i]= data[i];
-	h2max= max(h2max, h2a[i]);                         // save maximum
-    }
-
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	h2a[ix + (h2a_ny- iy- 1)* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
+	h2max= max(h2max, h2a[ix + (h2a_ny- iy- 1)* h2a_nx]);     // save maximum
+      }
+  
   // scale maximum to 10
   if (h2max > 0.0)
     for (i=0; i< h2a_n; i++)
        h2a[i]*= 10.0/ h2max;
 
 #ifdef DEBUG
-  printf("debug: hfill2 end:  hmax  %f\n", h2max);
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
 } // hfill2 PO
 
