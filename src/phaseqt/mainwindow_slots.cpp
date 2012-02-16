@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <16 Feb 12 13:38:06 flechsig> 
+//  Time-stamp: <16 Feb 12 14:34:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -51,7 +51,7 @@ void MainWindow::activateProc(const QString &action)
   int filesOK;
 
 #ifdef DEBUG
-  cout << "debug MainWindow::activateProc: plotsubject: " << d_plot->plotsubject << endl;
+  cout << "debug: " << __FILE__ << " MainWindow::activateProc: plotsubject: " << d_plot->plotsubject << endl;
 #endif
   
   if (action.isEmpty())
@@ -781,9 +781,10 @@ void MainWindow::elementApplyBslot()
 void MainWindow::fwhmslot()
 {
 #ifdef DEBUG
-  cout << "debug: fwhmslot called" << endl;
+  cout << "debug: " << __FILE__ << " fwhmslot called" << endl;
 #endif
   d_plot->fwhmon= 1;
+  grapplyslot();
 } // fwhmslot
 
 
@@ -806,13 +807,13 @@ void MainWindow::goButtonslot()
 void MainWindow::grapplyslot()
 {
 #ifdef DEBUG
-  printf("debug: grapplyslot called\n");
+  cout << "debug: " << __FILE__ << " grapplyslot called" << endl;
 #endif
 
   // a few tests
   if (!d_plot)
     {
-      printf("debug: grapplyslot: d_plot not defined file: %s\n", __FILE__);
+      cout << "file: " << __FILE__ <<  "grapplyslot: d_plot not defined" << endl;
       return;
     }
 
@@ -1531,9 +1532,10 @@ void MainWindow::apslot()
 void MainWindow::sigmaslot()
 {
 #ifdef DEBUG
-  printf("debug: sigmaslot called\n");
+  cout << "debug: " << __FILE__ << " sigmaslot called" << endl;
 #endif
   d_plot->fwhmon= 0;
+  grapplyslot();
 } // sigmaslot
 
 // apply slot for source

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Jan 12 15:20:50 flechsig>  */
+/*   Time-stamp: <16 Feb 12 13:31:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -370,7 +370,7 @@ struct statistics *stp;
    int i, size, gratingnumber, elart, gratingposition;
    
    /* UF 28.11.06 */
-   PSDp= bl->RESULT.RESp; 
+   PSDp= (struct PSDType *)bl->RESULT.RESp; 
    psip= (struct PSImageType *)bl->RTSource.Quellep;
 
  #ifdef DEBUG  
