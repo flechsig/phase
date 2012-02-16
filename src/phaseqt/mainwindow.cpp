@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <16 Feb 12 09:13:16 flechsig> 
+//  Time-stamp: <16 Feb 12 16:26:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -916,11 +916,13 @@ QWidget *MainWindow::createParameterBox()
 {
   parameterBox = new QWidget();
   QListWidgetItem *item;
-  char buffer[50];
+  QString qst;
+  //char buffer[50];
+
   int i;
 
 #ifdef DEBUG
-  printf("debug: createParameterBox called\n");
+  cout << "debug: " << __FILE__ << " createParameterBox called" << endl;
 #endif
 
   // upper part
@@ -952,8 +954,11 @@ QWidget *MainWindow::createParameterBox()
 
   for (i= 0; i< NPARS; i++)
     {
-      snprintf(buffer, 4, "%d : parameter",  i);
-      item= new QListWidgetItem(buffer);
+      //snprintf(buffer, 4, "%d : parameter",  i);
+      qst.setNum(i);
+      qst+= QString(" : parameter");
+      //   item= new QListWidgetItem(buffer);
+      item= new QListWidgetItem(qst);
       parameterList->insertItem(i, item);
     }
 
@@ -1166,7 +1171,7 @@ void MainWindow::parameterUpdateAll(int zahl)
 // c) update the item in the list
 void MainWindow::parameterUpdate(int pos, const char *text, int init)
 {
-  char buffer[MaxPathLength];
+  
   int scanned= 1;
   QString qst;
  
@@ -1634,8 +1639,8 @@ void MainWindow::UpdateBeamlineBox()
 void MainWindow::UpdateElementBox(int number)
 {
   double cff, teta, fi;
-  char TextField [26][40];            /* 26 editfelder */
-
+  QString qst;
+  
   if (number < 0) return;
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
   myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
@@ -1648,61 +1653,33 @@ void MainWindow::UpdateElementBox(int number)
     asin(myparent->myBeamline()->BLOptions.lambda* gd->xdens[0]/ (2.0* cos(teta)));
   cff = cos(fi- teta)/ cos(fi+ teta);
 
-  // create strings
-  snprintf(TextField[0], 40,  "%.2f", cff);
-  snprintf(TextField[1], 40,  "%.1f", gd->r);
-  snprintf(TextField[2], 40,  "%.1f", gd->rp);
-  snprintf(TextField[3], 40,  "%.3f", gd->theta0);
-  snprintf(TextField[4], 40,  "%.1f", md->r1);   
-  snprintf(TextField[5], 40,  "%.1f", md->r2);
-  snprintf(TextField[6], 40,  "%.1f", md->rmi);      
-  snprintf(TextField[7], 40,  "%.2f", md->rho);
-  snprintf(TextField[8], 40,  "%d",   gd->inout);   // not used   	   
-  snprintf(TextField[9], 40,  "%.2f", gd->xdens[0]); 
-  snprintf(TextField[10], 40, "%.2f", gd->xdens[1]);    
-  snprintf(TextField[11], 40, "%.2f", gd->xdens[2]);    
-  snprintf(TextField[12], 40, "%.2f", gd->xdens[3]);    
-  snprintf(TextField[13], 40, "%.2f", gd->xdens[4]);
-  snprintf(TextField[14], 40, "%.2f", md->du);    
-  snprintf(TextField[15], 40, "%.2f", md->dw);    
-  snprintf(TextField[16], 40, "%.2f", md->dl);
-  snprintf(TextField[17], 40, "%.2f", md->dRu * 1e3);    
-  snprintf(TextField[18], 40, "%.2f", md->dRw * 1e3);    
-  snprintf(TextField[19], 40, "%.2f", md->dRl * 1e3);
-  snprintf(TextField[20], 40, "%.2f", md->w1);    
-  snprintf(TextField[21], 40, "%.2f", md->w2);    
-  snprintf(TextField[22], 40, "%.3f", md->slopew);
-  snprintf(TextField[23], 40, "%.2f", md->l1);    
-  snprintf(TextField[24], 40, "%.2f", md->l2);    
-  snprintf(TextField[25], 40, "%.3f", md->slopel);
-
-  // update widgets
-  cffE   ->setText(QString(tr(TextField[0])));
-  preE   ->setText(QString(tr(TextField[1])));
-  sucE   ->setText(QString(tr(TextField[2])));
-  thetaE ->setText(QString(tr(TextField[3])));
-  sourceE->setText(QString(tr(TextField[4])));
-  imageE ->setText(QString(tr(TextField[5])));
-  rE     ->setText(QString(tr(TextField[6])));
-  rhoE   ->setText(QString(tr(TextField[7])));
+   // update widgets
+  cffE   ->setText(qst.setNum(cff,        'g', 2));
+  preE   ->setText(qst.setNum(gd->r,      'g', 2));
+  sucE   ->setText(qst.setNum(gd->rp,     'g', 2));
+  thetaE ->setText(qst.setNum(gd->theta0, 'g', 3));
+  sourceE->setText(qst.setNum(md->r1,     'g', 2));
+  imageE ->setText(qst.setNum(md->r2,     'g', 2));
+  rE     ->setText(qst.setNum(md->rmi,    'g', 2));
+  rhoE   ->setText(qst.setNum(md->rho,    'g', 2));
   integerSpinBox->setValue(gd->inout);
-  lineDensity->setText(QString(tr(TextField[9])));
-  vls1->setText(QString(tr(TextField[10])));
-  vls2->setText(QString(tr(TextField[11])));
-  vls3->setText(QString(tr(TextField[12])));
-  vls4->setText(QString(tr(TextField[13])));
-  duE ->setText(QString(tr(TextField[14])));
-  dwE ->setText(QString(tr(TextField[15])));
-  dlE ->setText(QString(tr(TextField[16])));
-  dRuE->setText(QString(tr(TextField[17])));
-  dRwE->setText(QString(tr(TextField[18])));
-  dRlE->setText(QString(tr(TextField[19])));
-  w1E ->setText(QString(tr(TextField[20])));
-  w2E ->setText(QString(tr(TextField[21])));
-  wsE ->setText(QString(tr(TextField[22])));
-  l1E ->setText(QString(tr(TextField[23])));
-  l2E ->setText(QString(tr(TextField[24])));
-  lsE ->setText(QString(tr(TextField[25])));
+  lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 2));
+  vls1->setText(qst.setNum(gd->xdens[1], 'g', 2));
+  vls2->setText(qst.setNum(gd->xdens[2], 'g', 2));
+  vls3->setText(qst.setNum(gd->xdens[3], 'g', 2));
+  vls4->setText(qst.setNum(gd->xdens[4], 'g', 2));
+  duE ->setText(qst.setNum(md->du, 'g', 2));
+  dwE ->setText(qst.setNum(md->dw, 'g', 2));
+  dlE ->setText(qst.setNum(md->dl, 'g', 2));
+  dRuE->setText(qst.setNum(md->dRu * 1e3, 'g', 2));
+  dRwE->setText(qst.setNum(md->dRw * 1e3, 'g', 2));
+  dRlE->setText(qst.setNum(md->dRl * 1e3, 'g', 2));
+  w1E ->setText(qst.setNum(md->w1, 'g', 2));
+  w2E ->setText(qst.setNum(md->w2, 'g', 2));
+  wsE ->setText(qst.setNum(md->slopew, 'g', 2));
+  l1E ->setText(qst.setNum(md->l1, 'g', 2));
+  l2E ->setText(qst.setNum(md->l2, 'g', 2));
+  lsE ->setText(qst.setNum(md->slopel, 'g', 2));
 
   if (gd->iflag) nimBox->setChecked(true); else nimBox->setChecked(false);
 
@@ -1838,7 +1815,8 @@ void MainWindow::UpdateElementList()
 void MainWindow::UpdateSourceBox()
 {
   char sou;
-  
+  QString qst;
+
   struct UndulatorSourceType  *up;
   struct UndulatorSource0Type *up0;
   struct DipolSourceType      *dp;
@@ -1851,9 +1829,6 @@ void MainWindow::UpdateSourceBox()
   //  
   //  struct PSSourceType         *pssp; 
 
-  char TextField [8][40];            /* 8 editfelder */
-  char LabelField[9][100]; 
-   
   myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK | pstimageOK); 
         
 #ifdef DEBUG 
@@ -1871,41 +1846,35 @@ void MainWindow::UpdateSourceBox()
     
     if (sou != oldsource)
       {
-	printf("source changed: set defaults\n");
+	cout << "source changed: set defaults" << endl;
 	oldsource= sou;
 	myparent->sourceSetDefaults();
       }
 
-    S1E->setEnabled(false);
-    S2E->setEnabled(false);
-    S3E->setEnabled(false);
-    S4E->setEnabled(false);
-    S5E->setEnabled(false);
-    S6E->setEnabled(false);
-    S7E->setEnabled(false);
-    S8E->setEnabled(false);
+    // deactivate / clear all
+    S1E->setEnabled(false); S1Label->clear(); S1E->clear();
+    S2E->setEnabled(false); S2Label->clear(); S2E->clear();
+    S3E->setEnabled(false); S3Label->clear(); S3E->clear();
+    S4E->setEnabled(false); S4Label->clear(); S4E->clear();
+    S5E->setEnabled(false); S5Label->clear(); S5E->clear();
+    S6E->setEnabled(false); S6Label->clear(); S6E->clear();
+    S7E->setEnabled(false); S7Label->clear(); S7E->clear();
+    S8E->setEnabled(false); S8Label->clear(); S8E->clear();
 
     switch (sou) {
- 
     case 'D':
       dp= (struct DipolSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", dp->sigy);
-      snprintf(TextField[1],  40,  "%f", dp->sigdy);    
-      snprintf(TextField[2],  40,  "%f", dp->sigz);  
-      snprintf(TextField[3],  40,  "%f", dp->dz);    
-      snprintf(TextField[4],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "sigmay (mm)");
-      snprintf(LabelField[1], 100, "%s", "sigmady (mrad)");  
-      snprintf(LabelField[2], 100, "%s", "sigmaz (mm)");  
-      snprintf(LabelField[3], 100, "%s", "dz hard edge (mrad)");  
-      snprintf(LabelField[4], 100, "%s", "ray number");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "Dipol (Bending Magnet)");
+      sourceTypeLabel->setText(QString(tr("Dipol (Bending Magnet)")));
+      S1E->setText(qst.setNum(dp->sigy,  'g', 4));
+      S2E->setText(qst.setNum(dp->sigdy, 'g', 4));    
+      S3E->setText(qst.setNum(dp->sigz,  'g', 4));  
+      S4E->setText(qst.setNum(dp->dz,    'g', 4));    
+      S5E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));   
+      S1Label->setText(QString("sigmay (mm)"));
+      S2Label->setText(QString("sigmady (mrad)"));
+      S3Label->setText(QString("sigmaz (mm)"));
+      S4Label->setText(QString("dz hard edge (mrad)"));
+      S5Label->setText(QString("ray number"));
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -1914,23 +1883,25 @@ void MainWindow::UpdateSourceBox()
       break;  
     case 'G':
       up0= (struct UndulatorSource0Type *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", up0->length);
-      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      snprintf(TextField[3],  40,  "%f", up0->deltaz);    
-      snprintf(TextField[4],  40,  "%f", up0->sigmaey);   
-      snprintf(TextField[5],  40,  "%f", up0->sigmaez);    
-      snprintf(TextField[6],  40,  "%f", up0->sigmaedy);   
-      snprintf(TextField[7],  40,  "%f", up0->sigmaedz); 
-      snprintf(LabelField[0], 100, "%s", "length (mm)");
-      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
-      snprintf(LabelField[2], 100, "%s", "ray number");  
-      snprintf(LabelField[3], 100, "%s", "deltaz (mm)");  
-      snprintf(LabelField[4], 100, "%s", "sigmaey (mm)");   
-      snprintf(LabelField[5], 100, "%s", "sigmaez (mm)");   
-      snprintf(LabelField[6], 100, "%s", "sigmaedy (mrad)");   
-      snprintf(LabelField[7], 100, "%s", "sigmaedz (mrad)");
-      snprintf(LabelField[8], 100, "%s", "Generic undulator");
+      sourceTypeLabel->setText(QString(tr("Generic undulator")));
+      S1E->setText(qst.setNum(up0->length,   'g', 4));
+      S2E->setText(qst.setNum(myparent->myBeamline()->BLOptions.lambda* 1e6, 'g', 4));    
+      S3E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));  
+      S4E->setText(qst.setNum(up0->deltaz,   'g', 4));    
+      S5E->setText(qst.setNum(up0->sigmaey,  'g', 4));   
+      S6E->setText(qst.setNum(up0->sigmaez,  'g', 4));    
+      S7E->setText(qst.setNum(up0->sigmaedy, 'g', 4));   
+      S8E->setText(qst.setNum(up0->sigmaedz, 'g', 4)); 
+
+      S1Label->setText(QString("length (mm)"));
+      S2Label->setText(QString("lambda (nm)"));  
+      S3Label->setText(QString("ray number"));  
+      S4Label->setText(QString("deltaz (mm)"));  
+      S5Label->setText(QString("sigmaey (mm)"));   
+      S6Label->setText(QString("sigmaez (mm)"));   
+      S7Label->setText(QString("sigmaedy (mrad)"));   
+      S8Label->setText(QString("sigmaedz (mrad)"));
+     
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -1942,23 +1913,25 @@ void MainWindow::UpdateSourceBox()
       break;  
     case 'H':
       hp= (struct HardEdgeSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", hp->disty);
-      snprintf(TextField[1],  40,  "%d", hp->iy);    
-      snprintf(TextField[2],  40,  "%f", hp->distz);  
-      snprintf(TextField[3],  40,  "%d", hp->iz);    
-      snprintf(TextField[4],  40,  "%f", hp->divy);   
-      snprintf(TextField[5],  40,  "%d", hp->idy);    
-      snprintf(TextField[6],  40,  "%f", hp->divz);   
-      snprintf(TextField[7],  40,  "%d", hp->idz); 
-      snprintf(LabelField[0], 100, "%s", "height (mm)");
-      snprintf(LabelField[1], 100, "%s", "-> points");  
-      snprintf(LabelField[2], 100, "%s", "width (mm)");  
-      snprintf(LabelField[3], 100, "%s", "-> points");  
-      snprintf(LabelField[4], 100, "%s", "vert. div. (mrad)");   
-      snprintf(LabelField[5], 100, "%s", "-> points");   
-      snprintf(LabelField[6], 100, "%s", "hor. div. (mrad)");   
-      snprintf(LabelField[7], 100, "%s", "-> points");
-      snprintf(LabelField[8], 100, "%s", "Ray Trace hard edge");
+      sourceTypeLabel->setText(QString(tr("Ray Trace hard edge")));		   
+      S1E->setText(qst.setNum(hp->disty, 'g', 4));
+      S2E->setText(qst.setNum(hp->iy));    
+      S3E->setText(qst.setNum(hp->distz, 'g', 4));  
+      S4E->setText(qst.setNum(hp->iz));    
+      S5E->setText(qst.setNum(hp->divy,  'g', 4));   
+      S6E->setText(qst.setNum(hp->idy));    
+      S7E->setText(qst.setNum(hp->divz,  'g', 4));   
+      S8E->setText(qst.setNum(hp->idz)); 
+
+      S1Label->setText(QString("height (mm)"));
+      S2Label->setText(QString("-> points"));  
+      S3Label->setText(QString("width (mm)"));  
+      S4Label->setText(QString("-> points"));  
+      S5Label->setText(QString("vert. div. (mrad)"));   
+      S6Label->setText(QString("-> points"));   
+      S7Label->setText(QString("hor. div. (mrad)"));   
+      S8Label->setText(QString("-> points"));
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -1968,25 +1941,23 @@ void MainWindow::UpdateSourceBox()
       S7E->setEnabled(true);
       S8E->setEnabled(true);
       break;  
- case 'I':
+    case 'I':
       psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", psip->ymin);
-      snprintf(TextField[1],  40,  "%f", psip->zmin);    
-      snprintf(TextField[2],  40,  "%f", psip->ymax);  
-      snprintf(TextField[3],  40,  "%f", psip->zmax);    
-      snprintf(TextField[4],  40,  "%d", psip->iy);   
-      snprintf(TextField[5],  40,  "%d", psip->iz);    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "ymin (mm)");
-      snprintf(LabelField[1], 100, "%s", "zmin (mm)");  
-      snprintf(LabelField[2], 100, "%s", "ymax (mm)");  
-      snprintf(LabelField[3], 100, "%s", "zmax (mm)");  
-      snprintf(LabelField[4], 100, "%s", "y points");   
-      snprintf(LabelField[5], 100, "%s", "z points");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "PO image plane");
+      sourceTypeLabel->setText(QString(tr("PO image plane")));
+      S1E->setText(qst.setNum(psip->ymin, 'g', 4));
+      S2E->setText(qst.setNum(psip->zmin, 'g', 4));    
+      S3E->setText(qst.setNum(psip->ymax, 'g', 4));  
+      S4E->setText(qst.setNum(psip->zmax, 'g', 4));    
+      S5E->setText(qst.setNum(psip->iy));   
+      S6E->setText(qst.setNum(psip->iz));    
+       
+      S1Label->setText(QString("ymin (mm)"));
+      S2Label->setText(QString("zmin (mm)"));  
+      S3Label->setText(QString("ymax (mm)"));  
+      S4Label->setText(QString("zmax (mm)"));  
+      S5Label->setText(QString("y points"));   
+      S6Label->setText(QString("z points"));   
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -1997,23 +1968,17 @@ void MainWindow::UpdateSourceBox()
 
     case 'L':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", up->length);
-      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      snprintf(TextField[3],  40,  "%f", up->deltaz);    
-      snprintf(TextField[4],  40,  "%s", "");   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "length (mm)");
-      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
-      snprintf(LabelField[2], 100, "%s", "ray number");  
-      snprintf(LabelField[3], 100, "%s", "deltaz (mm)");  
-      snprintf(LabelField[4], 100, "%s", "");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "SLS SIS undulator");
+      sourceTypeLabel->setText(QString(tr("SLS SIS undulator")));
+      S1E->setText(qst.setNum(up->length, 'g', 4));
+      S2E->setText(qst.setNum(myparent->myBeamline()->BLOptions.lambda* 1e6, 'g', 4));    
+      S3E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));  
+      S4E->setText(qst.setNum(up->deltaz, 'g', 4));    
+       
+      S1Label->setText(QString("length (mm)"));
+      S2Label->setText(QString("lambda (nm)"));  
+      S3Label->setText(QString("ray number"));  
+      S4Label->setText(QString("deltaz (mm)"));  
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2022,23 +1987,17 @@ void MainWindow::UpdateSourceBox()
 
     case 'M':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", up->length);
-      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      snprintf(TextField[3],  40,  "%f", up->deltaz);    
-      snprintf(TextField[4],  40,  "%s", "");   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "length (mm)");
-      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
-      snprintf(LabelField[2], 100, "%s", "ray number");  
-      snprintf(LabelField[3], 100, "%s", "deltaz (mm)");  
-      snprintf(LabelField[4], 100, "%s", "");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "SLS SIM undulator");
+      sourceTypeLabel->setText(QString(tr("SLS SIM undulator")));
+      S1E->setText(qst.setNum(up->length, 'g', 4));
+      S2E->setText(qst.setNum(myparent->myBeamline()->BLOptions.lambda* 1e6, 'g', 4));    
+      S3E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));  
+      S4E->setText(qst.setNum(up->deltaz, 'g', 4));
+       
+      S1Label->setText(QString("length (mm)"));
+      S2Label->setText(QString("lambda (nm)"));  
+      S3Label->setText(QString("ray number"));  
+      S4Label->setText(QString("deltaz (mm)"));  
+
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2047,23 +2006,19 @@ void MainWindow::UpdateSourceBox()
 
     case 'o':
       sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", sop->sigy);
-      snprintf(TextField[1],  40,  "%f", sop->sigdy);    
-      snprintf(TextField[2],  40,  "%f", sop->sigz);  
-      snprintf(TextField[3],  40,  "%f", sop->sigdz);    
-      snprintf(TextField[4],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "sigy (mm)");
-      snprintf(LabelField[1], 100, "%s", "sigdy (mrad)");  
-      snprintf(LabelField[2], 100, "%s", "sigz (mm)");  
-      snprintf(LabelField[3], 100, "%s", "sigdz (mrad)");  
-      snprintf(LabelField[4], 100, "%s", "ray number");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "Point Source: all sigma values");
+      sourceTypeLabel->setText(QString(tr("Point Source: all sigma values")));
+      S1E->setText(qst.setNum(sop->sigy,  'g', 4));
+      S2E->setText(qst.setNum(sop->sigdy, 'g', 4));    
+      S3E->setText(qst.setNum(sop->sigz,  'g', 4));  
+      S4E->setText(qst.setNum(sop->sigdz, 'g', 4));    
+      S5E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));   
+      
+      S1Label->setText(QString("sigy (mm)"));
+      S2Label->setText(QString("sigdy (mrad)"));  
+      S3Label->setText(QString("sigz (mm)"));  
+      S4Label->setText(QString("sigdz (mrad)"));  
+      S5Label->setText(QString("ray number"));   
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2071,25 +2026,17 @@ void MainWindow::UpdateSourceBox()
       S5E->setEnabled(true);
       break;  
 
- case 'R':
+    case 'R':
       rp= (struct RingSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%lf", rp->dy);
-      snprintf(TextField[1],  40,  "%lf", rp->dz);    
-      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      snprintf(TextField[3],  40,  "%s", "");    
-      snprintf(TextField[4],  40,  "%s", "");   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "dy (mrad)");
-      snprintf(LabelField[1], 100, "%s", "dz (mrad)");  
-      snprintf(LabelField[2], 100, "%s", "ray number");  
-      snprintf(LabelField[3], 100, "%s", "");  
-      snprintf(LabelField[4], 100, "%s", "");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "Ring Source: half axis of the divergence ellipse, y,z are always 0");
+      sourceTypeLabel->setText(QString(tr("Ring Source: half axis of the divergence ellipse, y,z are always 0")));
+      S1E->setText(qst.setNum(rp->dy, 'g', 4));
+      S2E->setText(qst.setNum(rp->dz, 'g', 4));    
+      S3E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));  
+       
+      S1Label->setText(QString("dy (mrad)"));
+      S2Label->setText(QString("dz (mrad)"));  
+      S3Label->setText(QString("ray number"));  
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2097,23 +2044,15 @@ void MainWindow::UpdateSourceBox()
    
     case 'U':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", up->length);
-      snprintf(TextField[1],  40,  "%f", myparent->myBeamline()->BLOptions.lambda* 1e6);    
-      snprintf(TextField[2],  40,  "%d", myparent->myBeamline()->RTSource.raynumber);  
-      snprintf(TextField[3],  40,  "%s", "");    
-      snprintf(TextField[4],  40,  "%s", "");   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "length (mm)");
-      snprintf(LabelField[1], 100, "%s", "lambda (nm)");  
-      snprintf(LabelField[2], 100, "%s", "ray number");  
-      snprintf(LabelField[3], 100, "%s", "");  
-      snprintf(LabelField[4], 100, "%s", "");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "Undulator");
+      sourceTypeLabel->setText(QString(tr("Undulator")));
+      S1E->setText(qst.setNum(up->length, 'g', 4));
+      S2E->setText(qst.setNum(myparent->myBeamline()->BLOptions.lambda* 1e6, 'g', 4));    
+      S3E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));  
+       
+      S1Label->setText(QString("length (mm)"));
+      S2Label->setText(QString("lambda (nm)"));  
+      S3Label->setText(QString("ray number"));  
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2122,23 +2061,7 @@ void MainWindow::UpdateSourceBox()
       fp= (struct FileSourceType *)myparent->myBeamline()->RTSource.Quellep;
       printf("source from file %s\n", myparent->myPHASEset()->sourceraysname);
       strncpy(fp->filename, myparent->myPHASEset()->sourceraysname, MaxPathLength);
-      snprintf(TextField[0],  40,  "%s", "");
-      snprintf(TextField[1],  40,  "%s", "");    
-      snprintf(TextField[2],  40,  "%s", "");  
-      snprintf(TextField[3],  40,  "%s", "");    
-      snprintf(TextField[4],  40,  "%s", "");   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "");
-      snprintf(LabelField[1], 100, "%s", "");  
-      snprintf(LabelField[2], 100, "%s", "");  
-      snprintf(LabelField[3], 100, "%s", "");  
-      snprintf(LabelField[4], 100, "%s", "");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "Source from file");
+      sourceTypeLabel->setText(QString(tr("Source from file")));
       break;
     case 'S':
       QMessageBox::warning(this, tr("UpdateSourceBox"),
@@ -2146,23 +2069,18 @@ void MainWindow::UpdateSourceBox()
 			 .arg(sou));
       myparent->myBeamline()->RTSource.QuellTyp= 'o';
       sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      snprintf(TextField[0],  40,  "%f", 0.1);
-      snprintf(TextField[1],  40,  "%f", 0.1);    
-      snprintf(TextField[2],  40,  "%f", 0.1);  
-      snprintf(TextField[3],  40,  "%f", 0.1);    
-      snprintf(TextField[4],  40,  "%d", 25000);   
-      snprintf(TextField[5],  40,  "%s", "");    
-      snprintf(TextField[6],  40,  "%s", "");   
-      snprintf(TextField[7],  40,  "%s", ""); 
-      snprintf(LabelField[0], 100, "%s", "sigy (mm)");
-      snprintf(LabelField[1], 100, "%s", "sigdy (mrad)");  
-      snprintf(LabelField[2], 100, "%s", "sigz (mm)");  
-      snprintf(LabelField[3], 100, "%s", "sigdz (mrad)");  
-      snprintf(LabelField[4], 100, "%s", "ray number");   
-      snprintf(LabelField[5], 100, "%s", "");   
-      snprintf(LabelField[6], 100, "%s", "");   
-      snprintf(LabelField[7], 100, "%s", "");
-      snprintf(LabelField[8], 100, "%s", "Point Source: all sigma values");
+      sourceTypeLabel->setText(QString(tr("Point Source: all sigma values")));
+      S1E->setText(QString("0.1"));
+      S2E->setText(QString("0.1"));    
+      S3E->setText(QString("0.1"));  
+      S4E->setText(QString("25000"));     
+      
+      S1Label->setText(QString("sigy (mm)"));
+      S2Label->setText(QString("sigdy (mrad)"));  
+      S3Label->setText(QString("sigz (mm)"));  
+      S4Label->setText(QString("sigdz (mrad)"));  
+      S5Label->setText(QString("ray number"));   
+      
       S1E->setEnabled(true);
       S2E->setEnabled(true);
       S3E->setEnabled(true);
@@ -2177,24 +2095,7 @@ void MainWindow::UpdateSourceBox()
       break;
     }
 
-  // update widgets
-  S1E->setText(QString(tr(TextField[0])));
-  S2E->setText(QString(tr(TextField[1])));
-  S3E->setText(QString(tr(TextField[2])));
-  S4E->setText(QString(tr(TextField[3])));
-  S5E->setText(QString(tr(TextField[4])));
-  S6E->setText(QString(tr(TextField[5])));
-  S7E->setText(QString(tr(TextField[6])));
-  S8E->setText(QString(tr(TextField[7])));
-  S1Label->setText(QString(tr(LabelField[0])));
-  S2Label->setText(QString(tr(LabelField[1])));
-  S3Label->setText(QString(tr(LabelField[2])));
-  S4Label->setText(QString(tr(LabelField[3])));
-  S5Label->setText(QString(tr(LabelField[4])));
-  S6Label->setText(QString(tr(LabelField[5])));
-  S7Label->setText(QString(tr(LabelField[6])));
-  S8Label->setText(QString(tr(LabelField[7])));
-  sourceTypeLabel->setText(QString(tr(LabelField[8])));
+  
 } // end UpdateSourceBox
 
 // update the statistics in graphic box
