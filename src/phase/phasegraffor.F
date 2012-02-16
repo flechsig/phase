@@ -1,6 +1,6 @@
 c $$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraffor.fpp
 c $$$ Date      : <11 Nov 03 09:30:31 flechsig> 
-c $$$ Time-stamp: <15 Nov 11 15:20:10 flechsig> 
+c $$$ Time-stamp: <16 Feb 12 14:15:27 flechsig> 
 c $$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c $$$
 c $$$ $Source$ 
@@ -281,15 +281,11 @@ c postscriptfile
         ifile=s.psfile             ! merker setzen
         if(ifile.eq.1)then  
 
-#ifdef VMS
-           print*,'open postsciptfile under VMS '
-           open(unit=11,file=metaname,STATUS='UNKNOWN',
-     1          Carriagecontrol='LIST',FORM='FORMATTED',err=1111) 
-#else
+           
            print*,'open postsciptfile under UNIX '
 c           open(unit=11,file=metaname,STATUS='UNKNOWN',err=1111)
            call kuopen(11,metaname,'UNKNOWN',istat)
-#endif
+
            
            call igmeta(-11,-111) 
            print*,'generate Postscript- File: ',metaname 
@@ -336,11 +332,9 @@ c        endif
            call igmeta(0,0)
            call hdelet(0)
            call hplend()
-#ifdef VMS
-           close(11)
-#else
+
            call kuclos(11,' ',1)
-#endif
+
            ifile= 0                         ! setze schalter zurueck
            call inithplot()   
            goto 5001
