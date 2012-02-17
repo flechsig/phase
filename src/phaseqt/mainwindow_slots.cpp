@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <16 Feb 12 14:34:49 flechsig> 
+//  Time-stamp: <17 Feb 12 13:59:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -692,7 +692,7 @@ void MainWindow::deleteElement()
 void MainWindow::dislenSlot()
 {
 #ifdef DEBUG
-  cout << "dislenSlot called" << endl;
+  cout << "debug: " << __FILE__ << " dislenSlot called" << endl;
 #endif
 
   myparent->myBeamline()->BLOptions.displength= dislenE->text().toDouble();
@@ -704,7 +704,7 @@ void MainWindow::dislenSlot()
 // UF slot
 void MainWindow::doubleclickElement()
 {
-  printf("doubleclickElement: called \n");
+  cout << "doubleclickElement: called" << endl;
 } // doubleclickElement
 
 // apply slot for optical element
@@ -712,6 +712,10 @@ void MainWindow::elementApplyBslot()
 {
   int number= elementList->currentRow();
   
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " elementApplyBslot activated" << endl;
+#endif
+
   if (number < 0) 
     {
       QMessageBox::warning(this, tr("No valid dataset!"),
@@ -726,14 +730,10 @@ void MainWindow::elementApplyBslot()
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
 
-  strcpy(myparent->myBeamline()->ElementList[number].elementname, 
-	 elementList->currentItem()->text().toAscii().data()); // the name of the element
+  strncpy(myparent->myBeamline()->ElementList[number].elementname, 
+	  elementList->currentItem()->text().toAscii().data(), MaxPathLength); // the name of the element
   
-  cout << "elementApplyBslot activated\nfeed data from widget into dataset" << endl;
-
-#ifdef DEBUG
-  printf("elementApplyBslot activated\n");
-#endif
+  cout << "elementApplyBslot: feed data from widget into dataset" << endl;
 
   gd->r     = preE   ->text().toDouble();
   gd->rp    = sucE   ->text().toDouble();
@@ -768,8 +768,13 @@ void MainWindow::elementApplyBslot()
   gd->inout= integerSpinBox->value();
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
   // build the element
-  myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
-			 gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
+  if (md->Art == kEOEGeneral )
+    ReadCoefficientFile((double *)&(myparent->myBeamline()->ElementList[number].mir), 
+			myparent->myBeamline()->ElementList[number].elementname);
+  else
+    myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
+			   gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
+  
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
   myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]));
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
@@ -786,7 +791,6 @@ void MainWindow::fwhmslot()
   d_plot->fwhmon= 1;
   grapplyslot();
 } // fwhmslot
-
 
 // slot goButton
 void MainWindow::goButtonslot()
