@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <16 Feb 12 13:49:48 flechsig> 
+//  Time-stamp: <17 Feb 12 12:43:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -731,10 +731,12 @@ void Plot::hfill2()
       //      appendPoint( QPointF( rp->z, rp->y ) );
       ix= (unsigned int)((xdata[i]- zmin)/(zmax - zmin)*(h2a_nx- 1));
       iy= (unsigned int)((ydata[i]- ymin)/(ymax - ymin)*(h2a_ny- 1));
-      //if ((ix < h2a_nx) && (iy < h2a_ny)) h2arr[ix][iy]+= 1;          // add one hit
-      //h2max= max(h2max, h2arr[ix][iy]);                         // save maximum
-      if ((ix < h2a_nx) && (iy < h2a_ny)) h2a[ix+ iy*h2a_nx]+= 1;          // add one hit
-      h2max= max(h2max, h2a[ix+ iy*h2a_nx]);                         // save maximum
+      
+      if ((ix < h2a_nx) && (iy < h2a_ny)) 
+	{
+	  h2a[ix+ iy*h2a_nx]+= 1;          // add one hit
+	  h2max= max(h2max, h2a[ix+ iy*h2a_nx]);                         // save maximum
+	}
     }
 
   // scale maximum to 10
