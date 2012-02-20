@@ -237,6 +237,7 @@ c UF 12.1.2000
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
      &			xir.yzintya,xir.yzintyp,
      &          densiyre,densiyim,xintyzre,xintyzim,iyz)
+
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
@@ -247,6 +248,7 @@ c UF 12.1.2000
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
      &			xir.yzintza,xir.yzintzp,
      &          densizre,densizim,xintyzre,xintyzim,iyz)
+
         sr.xintzre=xintyzre
         sr.xintzim=xintyzim
 
@@ -520,14 +522,18 @@ c-------------------------------------------------------------------------
          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
 
+c         write(6,*)ii,m4.fdt1phrrcb(ii)
+
           var0=var0*dyii
         enddo
-	
+
 	fd=dabs(fd)
         fdph=dabs(fdph)
         fd1ph=dabs(fd1ph)
         fd1pha=dabs(fd1pha)
         fd1phb=dabs(fd1phb)
+
+c        type*,fdph
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
@@ -560,29 +566,47 @@ c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 	 
 c---------------------------------------------------------------------
-
+        if(ifl.inorm2.eq.1)ff=fdph
+        if(ifl.inorm2.eq.20)ff=fdph*fd1pha*fd1phb
+        if(ifl.inorm2.eq.21)then
+          ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
+          write(6,*)fdph,fd1pha,fd1phb 
+          endif
+        if(ifl.inorm2.eq.2)ff=fdph*fd1ph
+        if(ifl.inorm2.eq.3)ff=fdph*fd1ph
+        if(ifl.inorm2.eq.31)ff=fdph/dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph))
+c        write(6,*)fdph,fd1pha,fd1phb
         if(ifl.inorm2.eq.4)then
+
         iord_loc=7
+
 c       fd1ph aus fd1pha und fd1phb berechnen
 
-        ratio0=0.1d0    ! später als Parameter übergeben
-c       fd1pha is 3rd order, fd1phb is 2nd order term in w      
-
-c        write(6,*)'hallo1',fd1pha,fd1phb
+c=================== A C H T U N G =================================
+        ratio0=1.d50   !    ! später als Parameter übergeben
+c       fd1pha is 3rd order, fd1phb is 2nd order term in w     
 
         if(fd1phb.gt.1.d-50)then
-        ratio=fd1pha/fd1phb
+        ratio=fd1pha/(fd1phb*(cs.pi/2.d0))
         else
         write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
         endif
+
         if(ratio.le.ratio0)then
-c------  übliche Formel für 2. Ordnung
-c        write(6,*)'as usual',fdph,fd1ph,fd1phb
+c------  Formel für inorm2 = 21 (2. Ordnung Pfadlänge)
          
-         fd1phcpl=(fdph*fd1ph*dsqrt(cs.pi))/dsqrt(2.d0*dabs(fd1phb))
+         ff=fdph/dsqrt(fd1ph*fd1phb)
 
          else
-c------  neue Formel
+c         write(6,*)'neue Routine'
+c------  neue Formel, a_ww zurückrechnen
+         fd1phb=fd1phb*(cs.pi/2.d0)
+
+c---- dies Zeug nach fdet_8 schaffen
+        fd1pha=(fd1pha*2.d0*cs.pi)/ra.xlam_test
+        fd1phb=(fd1phb*2.d0*cs.pi)/ra.xlam_test
+
+c ra.xlam_test und iord_loc stimmen
 
 c------ first part (integration from zero to infinity,
 c       if a>0 and b>0. otherwise integration from -infinity to zero)
@@ -629,22 +653,21 @@ c------- Imaginärteil
 
 c------- Achtung fd1ph ist jetzt complexe Groesse
 
-        fd1phcpl=fd1ph*fdph
-c        write(6,*)'fd1phcpl= ',fd1phcpl
-        fd1phcpl=fd1phcpl*((sumcos1+sumcos2)+(sumsin1+sumsin2)*cs.sqrtm1)
-c        write(6,*)'fd1phcpl = ',fd1phcpl
-
+        ff=fdph/dsqrt(fd1ph)
+        ff=ff*((sumcos1+sumcos2)+(sumsin1+sumsin2)*cs.sqrtm1)
         endif  ! ratio.gt.0.1
 
         endif  ! inorm2.eq.4
 
 c--------------------------------------------------------------------------
 
-        if(ifl.inorm2.le.3)ff=fdph*fd1ph
-        if(ifl.inorm2.ge.4)ff=fd1phcpl
+c        if(ifl.inorm2.eq.2)write(6,*)'2 ',ff
+c        if(ifl.inorm2.eq.4)write(6,*)'4 ',ff
+c        if(ifl.inorm2.eq.20)write(6,*)'20 ',ff
+c        if(ifl.inorm2.eq.21)write(6,*)'21 ',ff
 
-c        if(ratio.gt.0.1)write(6,*)' ff ',ff
-
+c for comparison with fkoe
+        ff=ff*cdexp(cs.sqrtm1*cs.pi)
 	if(ifl.ispline.ge.0)then
                 sr.densy=sr.densy*ff
                 sr.densz=sr.densz*ff
@@ -652,7 +675,6 @@ c        if(ratio.gt.0.1)write(6,*)' ff ',ff
                 sr.densyim=dimag(sr.densy)
                 sr.denszre=dreal(sr.densz)
                 sr.denszim=dimag(sr.densz)
-c          write(6,*)'hallo2',ff,sr.densy,sr.densz
 	endif
 
 	if(ifl.ispline.lt.0)then
@@ -1604,13 +1626,14 @@ c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
 	if(iyz.eq.1)xx=xi.ymin
 	if(iyz.eq.2)xx=xi.zmin
         xxsave=xx
+
 	do ii=1,xir.iisimp
            if(xir.isimp(ii).eq.xir.nsimp)then
               xx=xxsave
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=xxxre(i)*1.0d10
+                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
               enddo
               xir.isintre(ii)=ianz-1
 c UF
@@ -1618,14 +1641,14 @@ c UF
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=xxxim(i)*1.0d10
+                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
               enddo
               xir.isintim(ii)=ianz-1
 c UF
               xx=xxsave               
-              do i=1,ianz
+              do i=1,ianz                 
                  xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=densiyzre(i)*1.0d10
+                 xir.simpre(ii,2,i)=densiyzre(i)
                  xx=xx+dyz(i)
               enddo
               xir.isimpre(ii)=ianz
@@ -1633,7 +1656,7 @@ c UF
               xx=xxsave              
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=densiyzim(i)*1.0d10
+                 xir.simpim(ii,2,i)=densiyzim(i)
                  xx=xx+dyz(i)
               enddo
               xir.isimpim(ii)=ianz

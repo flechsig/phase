@@ -393,6 +393,13 @@ c---------------------------------------------------------------
      &                          ypc1(n1,n2,n3,n4)
               zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                          zpc1(n1,n2,n3,n4)
+
+c A C H T U N G nächste beiden Zeilen checken
+              ypc(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                          ypc1(n1,n2,n3,n4)
+              zpc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                          zpc1(n1,n2,n3,n4)
+
               dypc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                          dypc(n1,n2,n3,n4)
               dzpc(n1,n2,n3,n4)=((-1)**(n2+n3))*
