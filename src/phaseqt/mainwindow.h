@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <15 Feb 12 16:49:33 flechsig>  */
+/*  Time-stamp: <17 Feb 12 14:33:08 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -58,6 +58,7 @@ public:
     void ReadBLFileInteractive(char *);
     char oldsource;
     QLineEdit     *parameterE;
+    QProgressBar  *progressBar;
 
 private slots:
     void appendElement();
@@ -358,7 +359,7 @@ private:
     int elementListIsEmpty();
 
     TreeModel *parameterModel;
- 
+    
 };
 
 

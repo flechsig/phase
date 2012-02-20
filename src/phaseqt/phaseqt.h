@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <05 Jan 12 14:51:31 flechsig>  */
+/*  Time-stamp: <17 Feb 12 13:49:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -89,6 +89,7 @@ public:
   void myPST() { PST(this); }
   void myPutPHASE(char *name) { PutPHASE(this, name); }
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
+  void myReadCoefficientFile() { }
   void myReAllocResult(int newtype, int dim1, int dim2)   { ReAllocResult(this, newtype, dim1, dim2); }
   void myRayTracec() { RayTracec(this); }
   

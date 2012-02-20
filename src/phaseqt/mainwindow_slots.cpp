@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <17 Feb 12 13:59:17 flechsig> 
+//  Time-stamp: <17 Feb 12 14:46:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -62,6 +62,7 @@ void MainWindow::activateProc(const QString &action)
       if (elementListIsEmpty())
 	return;
 
+      progressBar->setValue(0); progressBar->repaint();
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
 	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
 
@@ -75,10 +76,13 @@ void MainWindow::activateProc(const QString &action)
       //statusBar()->clearMessage();
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+      progressBar->setValue(10); progressBar->repaint();
       myparent->myBuildBeamline();
+      progressBar->setValue(70); progressBar->repaint();
       myparent->myRayTracec(); 
       cout << "ray trace-> done" << endl;
       //mmBox->close();
+      progressBar->setValue(100);
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }
   if (!action.compare("raytracefullAct")) 

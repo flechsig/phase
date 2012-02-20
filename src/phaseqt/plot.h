@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <16 Feb 12 08:47:49 flechsig>  */
+/*  Time-stamp: <17 Feb 12 12:21:47 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -18,8 +18,8 @@
 //#include <qwt_plot_directpainter.h>
 #include <qwt_scale_engine.h>
 
-#define BINS2   101
-#define NPOINTS 150
+#define BINS2   501
+#define NPOINTS 501
 
 class MyZoomer;
 
@@ -54,7 +54,6 @@ public:
     double dzmax;
     double phimin;
     double phimax;
-    //double h2arr[BINS2][BINS2];    // odd number
     double *h2a;
     int    h2a_nx, h2a_ny;
     double xx[NPOINTS], ysin[NPOINTS], ycos[NPOINTS], *xxx, *yyy ;

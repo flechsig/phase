@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <16 Feb 12 16:26:36 flechsig> 
+//  Time-stamp: <17 Feb 12 14:48:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -592,6 +592,11 @@ QWidget *MainWindow::createGraphicBox()
 
   statGroup->setLayout(statLayout);
 
+  progressBar=new QProgressBar();
+  progressBar->setMinimum(0);
+  progressBar->setMaximum(100);
+  progressBar->setValue(100);
+
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(statusGroup);
   vbox->addWidget(graphicGroup);
@@ -599,6 +604,7 @@ QWidget *MainWindow::createGraphicBox()
   vbox->addWidget(plotGroup);
   vbox->addStretch(1);
   vbox->addWidget(statGroup);
+  vbox->addWidget(progressBar);
   //vbox->addStretch(1);
   graphicBox->setLayout(vbox);
   return graphicBox;
