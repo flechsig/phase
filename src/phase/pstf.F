@@ -8,6 +8,91 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+
+        subroutine sftest(s,pso,xlam_test,iord,xlen1c,xlen2c,
+     &                  xlen0,ypc1,zpc1,dypc,dzpc,
+     &                  wc,xlc,
+     &      yipc,zipc,psdc,stfd1phmaxc,stinumbc,
+     &        s1c,s2c,s3c,eyrec,ezrec,
+     &                  eyimc,ezimc,
+     &                  m4)
+c,g,am,src,apr,
+c     &                  ra,ifl,xi,xir,st,
+c     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb)       
+
+
+        implicit none
+
+#include '../phase/phase_struct.F'
+
+        record /constants/ cs
+        record /geometryst/ g
+        record /rayst/ ra
+c        record /source_results/ sr
+        record /integration_results/ xir
+        record /control_flags/ ifl
+        record /sources/ src
+        record /integration/ xi
+        record /apertures/ apr
+        record /statistics/ st
+        record /map4/ m4          
+        record /mirrortype/ am 
+        record /psimagest/ s 
+  
+        structure/PSSourceType/
+            real *8    sigy,sigdy,sigz,sigdz
+            integer    yhard,dyhard,zhard,dzhard 
+        end structure   
+
+        structure/psoptions/
+          record /PSSourceType/ PSSource
+          real *8 dyminfix, dymaxfix, dzminfix, dzmaxfix  
+          integer intmod, ndyfix, ndzfix
+        end structure  
+        record /psoptions/ pso   
+
+        integer i,j,k,l,iord,iheigh,iwidth,
+     &       n1,n2,icheckk,ii,jj,iinumb
+
+        real *8 xlam_test,xlen0,
+     &       wc,xlc,ypc1,zpc1,dypc,dzpc,
+     &       xlen1c,xlen2c,fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb,
+     &       ddisty,ddistz,yi,zi,
+     &       yipc,zipc,yiplot,ziplot,yi_global,zi_global,
+     &       psd2,surfmax,psdc,
+     &       stfd1phmaxc,stinumbc,s1c,s2c,s3c,eyrec,ezrec,
+     &       eyimc,ezimc
+
+        dimension ypc1(0:7,0:7,0:7,0:7),
+     &            zpc1(0:7,0:7,0:7,0:7),
+     &            dypc(0:7,0:7,0:7,0:7),
+     &            dzpc(0:7,0:7,0:7,0:7), 
+     &            wc(0:7,0:7,0:7,0:7),
+     &            xlc(0:7,0:7,0:7,0:7), 
+     &            xlen1c(0:7,0:7,0:7,0:7),  
+     &            xlen2c(0:7,0:7,0:7,0:7),  
+     &      fdetc(0:7,0:7,0:7,0:7),         ! fdet
+     &      fdetphc(0:7,0:7,0:7,0:7),         ! fdet
+     &      fdet1phc(0:7,0:7,0:7,0:7),        ! fdet  
+     &      fdet1phca(0:7,0:7,0:7,0:7),         ! fdet  
+     &      fdet1phcb(0:7,0:7,0:7,0:7)          ! fdet  
+
+
+        dimension yiplot(1024),ziplot(1024)        ! bildpunkte
+        dimension yipc(1),zipc(1),psdc(1),
+     &            stfd1phmaxc(1),stinumbc(1),s1c(1),
+     &            s2c(1),s3c(1),eyrec(1),ezrec(1),
+     &            eyimc(1),ezimc(1)
+        dimension psd2(1024,1024)  !psd2 ist ergebnis   
+        
+        complex*16 psd2c(1024,1024)
+        complex*16 psd2cy(512,512)
+        complex*16 psd2cz(512,512) 
+
+        return
+        end
+
+
 c*************************** neu **************************
         subroutine pstf(s,pso,xlam_test,iord,xlen1c,xlen2c,
      &                  xlen0,ypc1,zpc1,dypc,dzpc,
@@ -35,10 +120,10 @@ c        record /source_results/ sr
         record /integration_results/ xir
         record /control_flags/ ifl
         record /sources/ src
-	record /integration/ xi
-	record /apertures/ apr
-	record /statistics/ st
-	record /map4/ m4          
+        record /integration/ xi
+        record /apertures/ apr
+        record /statistics/ st
+        record /map4/ m4          
         record /mirrortype/ am 
         record /psimagest/ s 
   
@@ -90,10 +175,25 @@ c        record /source_results/ sr
         
         complex*16 psd2c(1024,1024)
         complex*16 psd2cy(512,512)
-	complex*16 psd2cz(512,512) 
+        complex*16 psd2cz(512,512) 
         
-        ra.xlam_test=xlam_test 
+c        write(*,*)'pstf (FORTRAN) called'
+c        write(*,*)'show input, sum pathlen, wc, xlc'
+c      do i=0,4
+c          do j=0,4-i
+c             do k=0,4-i-j
+c                do l=0,4-i-j-k
+c                   write(*,*)'xlm',i,j,k,l,
+c     &   xlen1c(i,j,k,l)+xlen2c(i,j,k,l)
+c                   write(*,*)'wc ',wc(i,j,k,l)
+c                   write(*,*)'xlc',xlc(i,j,k,l)
+c                enddo
+c             enddo
+c          enddo
+c       enddo
 
+        ra.xlam_test=xlam_test 
+        
 #ifdef DEBUG
         write(*,*)'pstf called'
         write(*,*)'grating: (line density)',g.xdens(0)
@@ -118,10 +218,13 @@ c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
         write(*,*)'ra.xlam_test (mm)',ra.xlam_test
 #endif
         call initconstants(cs)
+        
+c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
+c     von Johannes 4.2.00 imaxz entfernt
 
         xir.nsimp=0
         xir.iisimp=4
-	xir.isimp(1)=2
+        xir.isimp(1)=2
         xir.isimp(2)=xi.ianzy0+1
         xir.isimp(3)=2*xi.ianzy0
         xir.isimp(4)=2*xi.ianzz0+2
@@ -159,6 +262,7 @@ c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
 #ifdef DEBUG      
         write(*,*)'phasefor.for: wc 4000',wc(4,0,0,0)
 #endif
+       
 c--------------------------------------------------
 c Schrittweiten in Bildkoordinaten bestimmen 
 c---  parameter ddisty,z Schrittweiten--------------
@@ -261,7 +365,7 @@ c     restore parameter in case of error
       s.iheigh= iheigh
       s.iwidth= iwidth
 c****** Berechnung der Intensitaetsverteilung fertig ***********
-      write(*,*)'stop intensity calculation'
+      write(*,*)'stop intensity calculation'      
 c psd2 enthaelt intensitaet
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
