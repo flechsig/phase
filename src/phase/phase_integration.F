@@ -356,6 +356,11 @@ c*******************************************************
         call subm2(m4.xlrc,dzii,m4.xlrrc)
 #endif
 
+c         do ii=0,4
+c          write(6,*)'==',m4.fdtphrrc(ii)
+c         enddo
+
+
 	ianzy=xi.ianzy0
 c UF 21.12.99	itery=xi.itery0
 	fmax=0.
@@ -522,7 +527,7 @@ c-------------------------------------------------------------------------
          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
 
-c         write(6,*)ii,m4.fdt1phrrcb(ii)
+c         write(6,*)ii,m4.fdtphrrc(ii),fdph
 
           var0=var0*dyii
         enddo
@@ -570,7 +575,7 @@ c---------------------------------------------------------------------
         if(ifl.inorm2.eq.20)ff=fdph*fd1pha*fd1phb
         if(ifl.inorm2.eq.21)then
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
-          write(6,*)fdph,fd1pha,fd1phb 
+         write(6,*)fdph,fd1pha,fd1phb 
           endif
         if(ifl.inorm2.eq.2)ff=fdph*fd1ph
         if(ifl.inorm2.eq.3)ff=fdph*fd1ph
@@ -1677,13 +1682,11 @@ c------------------------------------------------------------
 c	y(i)=dreal(fyz(i))
 	y(i)=densiyzre(i)
         enddo
-	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintre)	
 
 	do i=2,ianz
 c	y(i)=dimag(fyz(i))
 	y(i)=densiyzim(i)
 	enddo
-	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintim)	
 
 	xint=xintre+cs.sqrtm1*xintim
 
@@ -1720,103 +1723,6 @@ c----------------
 	return
 	end
 	
-
-c-------------------------------------------------------------
-
-c*****************************************************************
-      SUBROUTINE UTIL_SPLINE_INTEGRAL(X,Y,N,RESULT)
-c*****************************************************************
-c	Author: Michael Scheer
-c-----------------------------------------------------------------
-C---  CALCULATES INTERGRAL OF Y(X) VIA SPLINES
-c-----------------------------------------------------------------
-
-      IMPLICIT real*8(a-h,o-z)
-
-      dimension X(4096),Y(4096),COEF(4096)
-
-C---  SPLINE-COEFFICIENTS
-
-      CALL UTIL_SPLINE_COEF(X,Y,N,0.,0.,COEF)
-
-C--- INTEGRATION
-
-      RESULT=0.0
-      DO I=1,N-1
-      RESULT=RESULT
-     &          +(X(I+1)-X(I))*0.5D0
-     &          *(Y(I)+Y(I+1))
-      RESULT=RESULT
-     &          -(X(I+1)-X(I))**3/24.D0
-     &          *(COEF(I)+COEF(I+1))
-      ENDDO
-
-      RETURN
-      END
-
-c*******************************************************************
-      SUBROUTINE UTIL_SPLINE_COEF(X,Y,N,YP1,YPN,Y2)
-c*******************************************************************
-c	Author: Michael Scheer
-c------------------------------------------------------------------
-C--- CALCULATES SPLINE COEFFICIENTS
-C--   INPUT:
-C-       N: NUMBER OF X,Y-VALUES
-C-       X: ARRAY OF X-VALUES
-C-       Y: ARRAY OF Y-VALUES
-C-       YP1:  SECOND DERIVATIVE AT FIRST X-VALUE
-C-       YPN:  SECOND DERIVATIVE AT LAST X-VALUE
-C--   OUPUT:
-C-       Y2:   SPLINE-COEFFICIENTS
-C--   WORKINGSPACE: AA(N),BB(N),CC(N),C(N)
-c------------------------------------------------------------------
-
-      IMPLICIT real*8(a-h,o-z)
-
-      dimension X(4096),Y(4096),Y2(4096),
-     &        AA(4096),BB(4096),CC(4096),C(4096)
-
-      Y2(1)=YP1
-      Y2(N)=YPN
-
-      IF (N.LT.3) RETURN
-
-      C(1)=YP1
-      C(N)=YPN
-
-      BB(1)=1.D0
-      CC(1)=0.D0
-      CC(N)=1.D0
-
-      DO J=2,N-1
-          AA(J)=(X(J  )-X(J-1))/6.D0
-          BB(J)=(X(J+1)-X(J-1))/3.D0
-          CC(J)=(X(J+1)-X(J  ))/6.D0
-          C(J)=(Y(J+1)-Y(J  ))/(X(J+1)-X(J  ))
-     &          -(Y(J  )-Y(J-1))/(X(J  )-X(J-1))
-      ENDDO !J
-
-      DO J=2,N-1
-
-          BB(J)=BB(J)-AA(J)*CC(J-1)
-           C(J)= C(J)-AA(J)* C(J-1)
-          AA(J)=AA(J)-AA(J)*BB(J-1)
-
-          CC(J)=CC(J)/BB(J)
-           C(J)= C(J)/BB(J)
-          BB(J)=1.D0
-
-      ENDDO !J
-
-      DO J=N-1,2,-1
-         Y2(J)=C(J)-CC(J)*Y2(J+1)
-      ENDDO
-
-      RETURN
-      END
-c------------------ end UTIL_SPLINE_COEF --------------
-
-
 c------------------------------------------------------
 	subroutine guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st)
 c------------------------------------------------------
