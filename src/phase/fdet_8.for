@@ -123,7 +123,7 @@ c---- routine wird nur gerufen wenn imodus = 2 (PO)
         pi_loc=datan(1.d0)*4.d0
        fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
-       fact1=fact*0.5d0
+       fact1=fact*2.0d0
        fact2=fact*dsqrt(pi_loc)/dsqrt(2.0d0)
        fact3=2.d0/pi_loc
      
@@ -159,16 +159,6 @@ c---------------------------------------------------
 
 	call Tay_const_4(f34,-1.,iord)
 	call Tay_sum_4(f12,f34,fdetphc,iord)
-
-        do i=0,iord
-         do j=0,iord-i
-          do k=0,iord-i-j
-           do l=0,iord-i-j-k
-c        write(6,*)i,j,k,l,fdetphc(i,j,k,l)      
-           enddo
-          enddo
-         enddo
-        enddo
 
 	endif
 
@@ -302,31 +292,9 @@ c----------------------------
 c----------------------------
 c         diesen Ausdruck gegenüber inorm2 = 2 bevorzugen   
           call tay_copy_4(dfdww,fdet1phca,iord)
-
-         do i=0,iord
-           do j=0,iord-i
-            do k=0,iord-i-j
-             do l=0,iord-i-j-k
-c             write(6,*)i,j,k,l,fdet1phca(i,j,k,l),dfdww(i,j,k,l)
-             enddo
-            enddo
-           enddo
-          enddo
-
-c          call tay_const_4(fdet1phca,1.d0/fact1,iord)
+          call tay_const_4(fdet1phca,1.d0/fact1,iord)
           call tay_copy_4(dfdll,fdet1phcb,iord)          
           call tay_const_4(fdet1phcb,1.d0/fact1,iord)
-
-          do i=0,iord
-           do j=0,iord-i
-            do k=0,iord-i-j
-             do l=0,iord-i-j-k
-c             write(6,*)i,j,k,l,dfdww(i,j,k,l),fdet1phca(i,j,k,l)
-             enddo
-            enddo
-           enddo
-          enddo
-
         endif
 
 c----------------------------
@@ -334,11 +302,11 @@ c----------------------------
 c----------------------------
 c         diesen Ausdruck gegenüber inorm2 = 3 bevorzugen   
           call tay_copy_4(dfdww,fdet1phca,iord)
-          call tay_const_4(fdet1phca,1.d0/dsqrt(fact1),iord)
+          call tay_const_4(fdet1phca,1.d0/fact1,iord)
           call tay_copy_4(dfdll,fdet1phcb,iord)      
-          call tay_const_4(fdet1phcb,1.d0/dsqrt(fact1),iord)
+          call tay_const_4(fdet1phcb,1.d0/fact1,iord)
           call Tay_copy_4(dfdwl,fdet1phc,iord)
-          call tay_const_4(fdet1phc,1.d0/dsqrt(fact1),iord)
+          call tay_const_4(fdet1phc,1.d0/fact1,iord)
         endif
 
 c----------------------------

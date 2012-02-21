@@ -526,9 +526,6 @@ c-------------------------------------------------------------------------
           fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0
          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
-
-c         write(6,*)ii,m4.fdtphrrc(ii),fdph
-
           var0=var0*dyii
         enddo
 
@@ -537,8 +534,6 @@ c         write(6,*)ii,m4.fdtphrrc(ii),fdph
         fd1ph=dabs(fd1ph)
         fd1pha=dabs(fd1pha)
         fd1phb=dabs(fd1phb)
-
-c        type*,fdph
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
@@ -575,12 +570,10 @@ c---------------------------------------------------------------------
         if(ifl.inorm2.eq.20)ff=fdph*fd1pha*fd1phb
         if(ifl.inorm2.eq.21)then
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
-         write(6,*)fdph,fd1pha,fd1phb 
-          endif
+        endif
         if(ifl.inorm2.eq.2)ff=fdph*fd1ph
         if(ifl.inorm2.eq.3)ff=fdph*fd1ph
         if(ifl.inorm2.eq.31)ff=fdph/dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph))
-c        write(6,*)fdph,fd1pha,fd1phb
         if(ifl.inorm2.eq.4)then
 
         iord_loc=7

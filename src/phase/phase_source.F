@@ -288,8 +288,9 @@ c     &			ra.rf.yp/1000.,sr.densy)
 c-----  27.2.2004
 
 	if(ifl.ipinarr.eq.1)then
-	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
-	  sr.densy=sr.densy*f
+c  Achtung Übergabeparameter anpassen
+c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+c	  sr.densy=sr.densy*f
 	endif
 
 	return
@@ -319,8 +320,9 @@ c     &			sr.densy)
 c------- 27.2.2004
 
 	if(ifl.ipinarr.eq.1)then
-	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
-	  sr.densy=sr.densy*f
+c        Achtung Übergabeparaneter anpassen
+c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+c	  sr.densy=sr.densy*f
 	endif
 
 	return
@@ -464,7 +466,8 @@ c------- end 19.1.2000 ----------------------------------
 	endif	! min, max
 
 	if(ifl.ipinarr.eq.1)then
-	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+c        Achtung Übergabeparaneter anpassen
+c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 	  else
 	  f=1.0d0
 	endif
@@ -632,7 +635,8 @@ c------- end 19.1.2000 ----------------------------------
      &       (ywert*ywert)/(2.d0*so5.dipdisy) )
 
 	if(ifl.ipinarr.eq.1)then
-	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+c        Achtung Übergabeparaneter anpassen
+c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 	  else
 	  f=1.0d0
 	endif
@@ -689,7 +693,9 @@ c-------- 27.2.2004
      &		(pxwert.lt.so6.brpxmax).and.
      &	        (pywert.gt.so6.brpymin).and.
      &		(pywert.lt.so6.brpymax)  ) then
-	call source_inter_4d(so6,xwert,ywert,pxwert,pywert,sr.densy)
+
+c        Achtung Übergabeparaneter anpassen
+c	call source_inter_4d(so6,xwert,ywert,pxwert,pywert,sr.densy)
 
 	endif	! min, max
 
@@ -1172,10 +1178,11 @@ c---------  Interpolation of Ey
 	y1=so4.gridy(iy1)
 	y2=so4.gridy(iy2)
 
-	fact3=(x2-xwert)*(y2-ywert)
-	fact4=(xwert-x1)*(y2-ywert)
-	fact5=(x2-xwert)*(ywert-y1)
-	fact6=(xwert-x1)*(ywert-y1)
+        ddxy=so4.dxeyre*so4.dxeyre
+	fact3=((x2-xwert)*(y2-ywert))/ddxy
+	fact4=((xwert-x1)*(y2-ywert))/ddxy
+	fact5=((x2-xwert)*(ywert-y1))/ddxy
+	fact6=((xwert-x1)*(ywert-y1))/ddxy
 
         sr.densyre=fact3*so4.zeyre(ix1,iy1)+
      &             fact4*so4.zeyre(ix2,iy1)+
@@ -1198,7 +1205,7 @@ c---------  Interpolation of Ez, same grid as for Ey
      &             fact4*so4.zezim(ix2,iy1)+
      &	           fact5*so4.zezim(ix1,iy2)+
      &             fact6*so4.zezim(ix2,iy2)
-
+  
      	return
 	end
 
