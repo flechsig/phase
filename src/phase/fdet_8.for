@@ -268,7 +268,7 @@ c----------------------------------------------
 
 c-------------------------
 	if((inorm2.eq.2).or.(inorm2.eq.3))then
-c-------------------------
+c----------------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ---
           call tay_const_4(fdet1phc,fact1,iord)
 	endif
 
@@ -313,7 +313,7 @@ c             write(6,*)i,j,k,l,fdet1phca(i,j,k,l),dfdww(i,j,k,l)
            enddo
           enddo
 
-          call tay_const_4(fdet1phca,1.d0/fact1,iord)
+c          call tay_const_4(fdet1phca,1.d0/fact1,iord)
           call tay_copy_4(dfdll,fdet1phcb,iord)          
           call tay_const_4(fdet1phcb,1.d0/fact1,iord)
 
@@ -334,11 +334,11 @@ c----------------------------
 c----------------------------
 c         diesen Ausdruck gegenüber inorm2 = 3 bevorzugen   
           call tay_copy_4(dfdww,fdet1phca,iord)
-          call tay_const_4(fdet1phca,1.d0/fact1,iord)
+          call tay_const_4(fdet1phca,1.d0/dsqrt(fact1),iord)
           call tay_copy_4(dfdll,fdet1phcb,iord)      
-          call tay_const_4(fdet1phcb,1.d0/fact1,iord)
+          call tay_const_4(fdet1phcb,1.d0/dsqrt(fact1),iord)
           call Tay_copy_4(dfdwl,fdet1phc,iord)
-          call tay_const_4(fdet1phc,1.d0/fact1,iord)
+          call tay_const_4(fdet1phc,1.d0/dsqrt(fact1),iord)
         endif
 
 c----------------------------
