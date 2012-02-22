@@ -1349,7 +1349,7 @@ c       die Ausgangsmatrix ist compatibel mit 7 order
 
 c        implicit none
 
-        real*8  xmap70,ypc1,zpc1,dypc,dzpc,cc,p1,p2,p11,facul
+        real*8  xmap70,ypc1,zpc1,dypc,dzpc,cc,p1,p2,p11,facul,facult
         integer ispalte,iord,inum,isube1,ianz,n1,n2,n3,n4,
      &	        nn,i,izeile,l1,l2,l3,l4
 

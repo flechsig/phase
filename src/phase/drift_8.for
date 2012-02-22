@@ -1,5 +1,5 @@
 c-------------------------------------------------------------
-	subroutine drift_8(a,g,acc,wc,
+	subroutine drift_8(g,acc,wc,
      &  xlc,ypc1,zpc1,dypc,dzpc,imodus,iord)
 c-------------------------------------------------------------
 	implicit real*8(a-h,o-z)
@@ -8,8 +8,7 @@ c-------------------------------------------------------------
      &            r,rp,xdens(0:4),xlam
            integer idefl
         end structure
-        record /geometryst/ g
-        dimension a(0:8,0:8)
+        record /geometryst/g
         dimension   wc(0:7,0:7,0:7,0:7),
      &              xlc(0:7,0:7,0:7,0:7),
      &              ypc1(0:7,0:7,0:7,0:7),

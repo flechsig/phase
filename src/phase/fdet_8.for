@@ -157,7 +157,7 @@ c---------------------------------------------------
 	call Tay_deri_4(zpc1,f2,3,1,iord)
 	call Tay_mult_4(f1,f2,f34,iord)
 
-	call Tay_const_4(f34,-1.,iord)
+	call Tay_const_4(f34,-1.d0,iord)
 	call Tay_sum_4(f12,f34,fdetphc,iord)
 
 	endif
@@ -206,7 +206,7 @@ c-----------------------------
 	   call Tay_deri_4(ypc1,f1,4,1,iord)
 	   call Tay_deri_4(zpc1,f2,3,1,iord)
 	   call Tay_mult_4(f1,f2,f34,iord)
-	   call Tay_const_4(f34,-1.,iord)
+	   call Tay_const_4(f34,-1.d0,iord)
 	   call Tay_sum_4(f12,f34,f1,iord)
 	  endif
 	  if(f1(0,0,0,0).lt.0.d0)call tay_const_4(f1,-1.d0,iord)
@@ -242,7 +242,7 @@ c----------------------------
 c----------------------------
 	  call Tay_mult_4(dfdww,dfdll,f1,iord)
 	  call Tay_mult_4(dfdwl,dfdwl,f2,iord)
-	  call Tay_const_4(f2,-1.,iord)
+	  call Tay_const_4(f2,-1.d0,iord)
 	  call Tay_sum_4(f1,f2,f3,iord)
 	endif
 
