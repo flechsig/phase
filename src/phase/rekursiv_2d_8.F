@@ -113,7 +113,7 @@ c	Die innere Summe nennen wir sum
 c
 c	Die innere Summe berechnen fuer gegebene n5 und n6, 
 c	d.h. gegebene Anzahl von Faktoren
-c	n5+n6 läuft von null bis ord
+c	n5+n6 laeuft von null bis ord
 c	ACHTUNG: 
 c	- falls n5=0 oder n6=0, d.h. Zahl der Faktoren a oder c gleich null	
 c	tritt hier trotzdem jeweils der Faktor 1 auf. 
@@ -154,11 +154,11 @@ c	fuer die Spalten 1.-4. suchen
 c	bei jeder gueltigen Kombination gleich sum anpassen, damit 
 c	Kombi-Kombinationen nicht zwischengespeichert werden muessen
 c-----------------------------------------------------------
-c	ACHTUNG, es gibt immer mindesten eine gültige Spaltenkombination
+c	ACHTUNG, es gibt immer mindesten eine gueltige Spaltenkombination
 c	und zwar: (0,0,0,0)  (0,0,0,0)
 c-----------------------------------------------------------
 
-	do m1=1,ianz1	! loop über alle gültige Spaltenkombinationen
+	do m1=1,ianz1	! loop ueber alle gueltige Spaltenkombinationen
 	do m2=1,ianz2
 	do m3=1,ianz3
 	do m4=1,ianz4
@@ -234,7 +234,7 @@ c---------------------------------------------------------
 
 	endif
 
-	enddo		! loop über it
+	enddo		! loop ï¿½ber it
 	enddo		! is
 	enddo		! ik
 	enddo		! ii
@@ -250,8 +250,8 @@ c-----------------------------------------------------------
 c	BEISPIEL
 c-----------------------------------------------------------
 c	Namensgebung der gueltigen Spaltenkombination (m) 
-c	für (n5,n6)=(3,2);
-c	n5 und n6 sind unabhängig von i,k,s,t 
+c	fuer (n5,n6)=(3,2);
+c	n5 und n6 sind unabhaengig von i,k,s,t 
 c	und es kann sogar gelten n5 oder n6 > i+k+s+t
 c	
 c	n5=3
@@ -269,14 +269,14 @@ c
 c	Faktor 1	iac1(m1,1)	iac2(m2,1)	iac3(m3,1)	iac4(m4,2)
 c	Faktor 2	iac1(m1,2)	iac2(m2,2)	iac3(m3,2)	iac4(m4,2)
 c
-c	Anzahl gültiger Spaltenkombinationen 
-c	(wird wieder auf null gesetzt für jede neue Kombination (n5,n6))
+c	Anzahl gueltiger Spaltenkombinationen 
+c	(wird wieder auf null gesetzt fuer jede neue Kombination (n5,n6))ue
 c
 c	Spalte 1	Spalte 2	Spalte 3	Spalte 4
 c	ianz1		ianz2		ianz3		ianz4
 c	
 c	Wenn alle Spaltenkombinationen ermittelt sind, diese Kombinationen
-c	miteinander kombinieren und dabei prüfen, ob die Bedingungen gelten:
+c	miteinander kombinieren und dabei pruefen, ob die Bedingungen gelten:
 c	iac1(m,1)+lac2(m,1)+lac3(m,1)+lac4(m,1) .lt. i+k+s+t 
 c	iac1(m,2)+lac2(m,2)+lac3(m,2)+lac4(m,2) .lt. i+k+s+t 
 c	iac1(m,3)+lac2(m,3)+lac3(m,3)+lac4(m,3) .lt. i+k+s+t 
