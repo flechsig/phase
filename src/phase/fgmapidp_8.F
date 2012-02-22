@@ -143,7 +143,7 @@ c       imodus = 2 : ray tracing vom Bild zur Quelle
 c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
-c        write(*,*)'fortran gerufen'
+
 #ifdef DEBUG
 c         write(6,*)'=============================== '
 c         write(6,*)' fgmapidp: imodus   = ',imodus
@@ -224,12 +224,10 @@ c
         call Tay_mult_6(rtq2i,dq2l,dfdl2,iord)
         call Tay_sum_6(dfdl1,dfdl2,dfdl6,iord)
 
-c----------------------------------------------------
-       
+c---------------------------------------------------- 
         call tay_deri_6(dfdw6,dfdww6,1,1,iord)
         call tay_deri_6(dfdw6,dfdwl6,2,1,iord)
         call tay_deri_6(dfdl6,dfdll6,2,1,iord)
-
         call tay_deri_6(dfdww6,dfdwww6,1,1,iord)
 
 c-------------- solve system of linear equations
@@ -260,7 +258,6 @@ c------------- replace w and l by power series in (y,z,dy,dz)
 c       input:   ypc(w,l,y,z)   &  zpc(w,l,y,z)
 c       output: ypc1(y,z,dy,dz) & zpc1(y,z,dy,dz)
 c	diese Zeile verschoben
-
         call replace_wl_in_ypzp(ypc,zpc,wc,xlc,
      &                        ypc1,zpc1,2,iord)
 
@@ -270,18 +267,16 @@ c               ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c       output: dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
 c
         call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord) 
-c
-c	einmal aufrufen reicht	
-c        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord)
+
+c------ hier ist Berechnung für Ray Tracing zu Ende
+        if(imodus.eq.1)goto 1111
 
 c------------- get path length in variable (w,l,y,z)
 c       input:  opl6(w,l,y,z,yp,zp),
 c               ypc1(y,z,dy,dz),zpc1(y,z,dy,dz)
 c       output: opl4(w,l,y,z)
-c
-	
-        call replace_6v4v(opl6,ypc,zpc,opl4,iord)
-
+c	
+        call replace_6v4v(opl6,ypc,zpc,opl4,iord)  
         call replace_6v4v(xloc1_6,ypc,zpc,xloc1_4,iord)
         call replace_6v4v(xloc2_6,ypc,zpc,xloc2_4,iord)
 	
@@ -290,9 +285,7 @@ c       input:  opl4(w,l,y,z)
 c       output: opl(y,z,dy,dz)
 c
         call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
-     &                          opl,opl,1,iord)
-    
-     
+     &                          opl,opl,1,iord) 
         call replace_wl_in_ypzp(xloc1_4,xloc1_4,wc,xlc,
      &                          xlm.xlen1c,xlm.xlen1c,1,iord)
         call replace_wl_in_ypzp(xloc2_4,xloc2_4,wc,xlc,
@@ -306,8 +299,6 @@ c------------- get partial derivatives in variables (w,l,y,z)
         call replace_6v4v(dfdwl6,ypc,zpc,dfdwl4,iord)
         call replace_6v4v(dfdll6,ypc,zpc,dfdll4,iord)
        
-
-
 c------------- get partial derivatives in variables (y,z,dy,dz)
         call replace_wl_in_ypzp(dfdw4,dfdw4,wc,xlc,
      &                          dfdw,dfdw,1,iord)
@@ -334,12 +325,13 @@ c-------- get further partial derivatives
      
 c------------------------------------------------------------
 
+1111    continue
         endif   ! idrift = 0
 
 c------------------------------------------------------------
 
         if(idrift.eq.1)then
-          call drift_8(am,g,acc,wc,xlc,ypc1,zpc1,
+          call drift_8(g,acc,wc,xlc,ypc1,zpc1,
      &                        dypc,dzpc,imodus,iord)
 
         do i=0,iord
@@ -429,7 +421,6 @@ c
 c         write(6,*)'====================== '
 c         write(6,*)' '
 #endif
-
 
         return
         end
