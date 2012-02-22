@@ -335,6 +335,17 @@ else
    FFLAGS="-DSEVEN_ORDER ${FFLAGS}"
 fi
 
+## whether to use OpenMP multithreading 
+AC_ARG_ENABLE([OPENMP],
+    AS_HELP_STRING([--enable-OPENMP],[enables multicore parallelization of calculation-intense parts]),  
+    AC_DEFINE([OPENMP], 1, "enabled OpenMP parallelization"))
+if test "$enable_OPENMP" != "yes" ; then
+  enable_OPENMP="no"
+else   
+   FFLAGS="${FFLAGS} -openmp -mp"
+   FLIBS="${FLIBS} -liomp5 -lpthread"
+fi
+
 dnl get configure date put it into header
 configured=`date`
 AC_DEFINE_UNQUOTED(CONFIGURED, "$configured", "configuration time")
@@ -471,6 +482,7 @@ echo "debug code               : ${enable_debug}"
 echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
+echo "OpenMP:                  : ${enable_OPENMP}"
 echo "qt:                      : ${qt}"
 echo "qti:                     : ${qti}"
 echo "qwt:                     : ${qwt}"
