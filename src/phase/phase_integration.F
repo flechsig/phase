@@ -509,7 +509,7 @@ c      dimension p1122a(0:7,0:7,0:7,0:7)
 c-------------------------------------------------------------------------
 c	diese Schleife parallelisieren
 c-------------------------------------------------------------------------
-
+        
 	var0=1.
         do ii=0,ifl.iord
           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
@@ -526,6 +526,7 @@ c-------------------------------------------------------------------------
           fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0
          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+
           var0=var0*dyii
         enddo
 
@@ -571,7 +572,8 @@ c---------------------------------------------------------------------
         if(ifl.inorm2.eq.21)then
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
         endif
-        if(ifl.inorm2.eq.2)ff=fdph*fd1ph
+
+!        if(ifl.inorm2.eq.2)ff=fdph*fd1ph
         if(ifl.inorm2.eq.3)ff=fdph*fd1ph
         if(ifl.inorm2.eq.31)ff=fdph/dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph))
         if(ifl.inorm2.eq.4)then
