@@ -273,7 +273,7 @@ c------ hier ist Berechnung für Ray Tracing zu Ende
 
 c------------- get path length in variable (w,l,y,z)
 c       input:  opl6(w,l,y,z,yp,zp),
-c               ypc1(y,z,dy,dz),zpc1(y,z,dy,dz)
+c               ypc(w,l,y,z),zpc1(w,l,y,z)
 c       output: opl4(w,l,y,z)
 c	
         call replace_6v4v(opl6,ypc,zpc,opl4,iord)  
@@ -385,13 +385,6 @@ c---------------------------------------------------------------
      &                          ypc1(n1,n2,n3,n4)
               zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                          zpc1(n1,n2,n3,n4)
-
-c A C H T U N G nächste beiden Zeilen checken
-              ypc(n1,n2,n3,n4)=((-1)**(n2+n3))*
-     &                          ypc1(n1,n2,n3,n4)
-              zpc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                          zpc1(n1,n2,n3,n4)
-
               dypc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                          dypc(n1,n2,n3,n4)
               dzpc(n1,n2,n3,n4)=((-1)**(n2+n3))*
