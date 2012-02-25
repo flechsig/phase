@@ -359,9 +359,37 @@ c------------- replace yp and zp
 
 c------------- get partial derivatives in variables (y,z,dy,dz)
 c------------- replace w and l with Taylor series in y,z,dy,dz
+c------------- change signs of wc and xlc 
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        wc(n1,n2,n3,n4)
+              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         xlc(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
+
         call replace_wl_in_ypzp(au,au,wc,xlc,av,av,1,iord)
         call replace_wl_in_ypzp(cu,cu,wc,xlc,cv,cv,1,iord)
         call replace_wl_in_ypzp(du,du,wc,xlc,dv,dv,1,iord)
+
+c--------- change signs back to old values
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        wc(n1,n2,n3,n4)
+              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         xlc(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
 
 c-------------------------------
 c       av*l**2+cv*w**2+dv*w**3
@@ -383,24 +411,14 @@ c            write(6,*)' '
 c-------------------- end check
 
 c-------------- sichern des quadratischen Terms in l
-c====== Achtung: hier noch Wurzel und Kehrwert rausschmeißen
-
-c        call Tay_copy_4(av,f3,iord)
-c        if(f3(0,0,0,0).lt.0.d0)then
-c        call tay_const_4(f3,-1.d0,iord)
-c        endif
-c        call Tay_sqrt_4(f3,f4,iord)
-c        call Tay_inv_4(f4,fdet1phc,iord) 
-c  
-c        call tay_const_4(fdet1phc,fact2,iord)
-
          call Tay_copy_4(av,fdet1phc,iord)
-         call tay_const_4(fdet1phc,1.d0/fact2**2,iord)
+         call tay_const_4(fdet1phc,1.d0/fact1,iord)
 
 c       jetzt die w-abhängigen Terme, Achtung der Term fact steckt scon im l-abhängigen Term
 	call Tay_copy_4(dv,fdet1phca,iord)	! w**3 Term	
+        call tay_const_4(fdet1phca,1.d0/fact1,iord)
 	call Tay_copy_4(cv,fdet1phcb,iord)	! w**2 Term
-        call tay_const_4(fdet1phcb,fact3,iord)
+        call tay_const_4(fdet1phcb,1.d0/fact1,iord)
 
 c	Das Integral wird erst in fywert berechnet
 
