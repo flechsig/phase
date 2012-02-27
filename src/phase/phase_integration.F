@@ -538,6 +538,7 @@ c-------------------------------------------------------------------------
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
+c        write(6,*)fdph,fd1ph,fd1pha,fd1phb
 c----------------------------------------
 
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
@@ -571,11 +572,14 @@ c---------------------------------------------------------------------
         if(ifl.inorm2.eq.20)ff=fdph*fd1pha*fd1phb
         if(ifl.inorm2.eq.21)then
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
+c          write(6,*)'======',fd1pha,fd1phb
         endif
 
 !        if(ifl.inorm2.eq.2)ff=fdph*fd1ph
         if(ifl.inorm2.eq.3)ff=fdph*fd1ph
-        if(ifl.inorm2.eq.31)ff=fdph/dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph))
+        if(ifl.inorm2.eq.31)then
+          ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph)))
+        endif
         if(ifl.inorm2.eq.4)then
 
         iord_loc=7
@@ -583,30 +587,35 @@ c---------------------------------------------------------------------
 c       fd1ph aus fd1pha und fd1phb berechnen
 
 c=================== A C H T U N G =================================
-        ratio0=1.d50   !    ! später als Parameter übergeben
-c       fd1pha is 3rd order, fd1phb is 2nd order term in w     
+        ratio0=1.d-1
+
+c       später als Parameter übergeben
+
+c       fd1pha is 3rd order, 
+c       fd1phb is 2nd order term in w     
+c       fd1ph  is 2nd order term in l
 
         if(fd1phb.gt.1.d-50)then
-        ratio=fd1pha/(fd1phb*(cs.pi/2.d0))
+        ratio=fd1pha/fd1phb
         else
         write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
         endif
 
         if(ratio.le.ratio0)then
+         
 c------  Formel für inorm2 = 21 (2. Ordnung Pfadlänge)
          
-         ff=fdph/dsqrt(fd1ph*fd1phb)
-
+         ff=fdph/(ra.xlam_test*dsqrt(4.d0*fd1ph*fd1phb))
+c        write(6,*)'alte Routine',fd1phb*2.d0,fd1ph*2.d0
          else
-c         write(6,*)'neue Routine'
-c------  neue Formel, a_ww zurückrechnen
-         fd1phb=fd1phb*(cs.pi/2.d0)
-
-c---- dies Zeug nach fdet_8 schaffen
-        fd1pha=(fd1pha*2.d0*cs.pi)/ra.xlam_test
-        fd1phb=(fd1phb*2.d0*cs.pi)/ra.xlam_test
-
-c ra.xlam_test und iord_loc stimmen
+c------  neue Formel, Koeffizienten zurückrechnen:
+         fact=(dsqrt(dabs(g.cosa))*
+     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
+         fact1=fact*2.0d0   
+         fact2=fact1*((2.d0*cs.pi)/ra.xlam_test)
+         fd1ph=(fd1ph*2.d0)/(fact*cs.pi)
+         fd1pha=fd1pha*fact2
+         fd1phb=fd1phb*fact2
 
 c------ first part (integration from zero to infinity,
 c       if a>0 and b>0. otherwise integration from -infinity to zero)
@@ -654,8 +663,15 @@ c------- Imaginärteil
 c------- Achtung fd1ph ist jetzt complexe Groesse
 
         ff=fdph/dsqrt(fd1ph)
+     
+c        write(6,*)ff
+
         ff=ff*((sumcos1+sumcos2)+(sumsin1+sumsin2)*cs.sqrtm1)
         endif  ! ratio.gt.0.1
+
+c        write(6,*)sumcos1+sumcos2
+c        write(6,*)sumsin1+sumsin2
+c        write(6,*)'=====',ff
 
         endif  ! inorm2.eq.4
 
@@ -667,7 +683,7 @@ c        if(ifl.inorm2.eq.20)write(6,*)'20 ',ff
 c        if(ifl.inorm2.eq.21)write(6,*)'21 ',ff
 
 c for comparison with fkoe
-        ff=ff*cdexp(cs.sqrtm1*cs.pi)
+c        ff=ff*cdexp(cs.sqrtm1*cs.pi)
 	if(ifl.ispline.ge.0)then
                 sr.densy=sr.densy*ff
                 sr.densz=sr.densz*ff
