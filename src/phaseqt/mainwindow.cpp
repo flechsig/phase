@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <17 Feb 12 14:48:06 flechsig> 
+//  Time-stamp: <27 Feb 12 13:38:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1666,8 +1666,8 @@ void MainWindow::UpdateElementBox(int number)
   thetaE ->setText(qst.setNum(gd->theta0, 'g', 3));
   sourceE->setText(qst.setNum(md->r1,     'g', 2));
   imageE ->setText(qst.setNum(md->r2,     'g', 2));
-  rE     ->setText(qst.setNum(md->rmi,    'g', 2));
-  rhoE   ->setText(qst.setNum(md->rho,    'g', 2));
+  rE     ->setText(qst.setNum(md->rmi,    'g', 4));
+  rhoE   ->setText(qst.setNum(md->rho,    'g', 4));
   integerSpinBox->setValue(gd->inout);
   lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 2));
   vls1->setText(qst.setNum(gd->xdens[1], 'g', 2));
