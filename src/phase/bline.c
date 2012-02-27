@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <13 Feb 12 12:42:10 flechsig>  */
+/*   Time-stamp: <27 Feb 12 13:35:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1780,7 +1780,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r1, buffer, &buf);
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r2, buffer, &buf);
 	    /*	    if (version < 20110819)        */                        
-	      fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf); /* read obsolete alpha */
+	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf); /* read obsolete alpha */
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf);
 	    fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rho, buffer, &buf);
 
