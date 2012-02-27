@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <17 Feb 12 14:33:08 flechsig>  */
+/*  Time-stamp: <21 Feb 12 15:37:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -59,6 +59,7 @@ public:
     char oldsource;
     QLineEdit     *parameterE;
     QProgressBar  *progressBar;
+    QProgressDialog* progressD;
 
 private slots:
     void appendElement();

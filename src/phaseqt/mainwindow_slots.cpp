@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <17 Feb 12 14:46:43 flechsig> 
+//  Time-stamp: <22 Feb 12 09:17:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -49,6 +49,7 @@ void MainWindow::activateProc(const QString &action)
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType *psip;
   int filesOK;
+  QEventLoop q;
 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " MainWindow::activateProc: plotsubject: " << d_plot->plotsubject << endl;
@@ -62,6 +63,13 @@ void MainWindow::activateProc(const QString &action)
       if (elementListIsEmpty())
 	return;
 
+      progressD= new QProgressDialog("Calculation running...", "Break", 0, 100);
+      progressD->setWindowModality(Qt::WindowModal); // blocking of other windows
+      progressD->setMinimumDuration(1);
+      progressD->setValue(1);
+      //connect();
+      // progressD->exec();
+
       progressBar->setValue(0); progressBar->repaint();
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
 	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
@@ -73,13 +81,18 @@ void MainWindow::activateProc(const QString &action)
       //mmBox->show();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
+      progressD->setValue(25);
       //statusBar()->clearMessage();
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
       progressBar->setValue(10); progressBar->repaint();
+      myparent->buildBeamlineParallel();      // for tests so far
       myparent->myBuildBeamline();
+      
+      progressD->setValue(50);
       progressBar->setValue(70); progressBar->repaint();
       myparent->myRayTracec(); 
+      progressD->setValue(100);
       cout << "ray trace-> done" << endl;
       //mmBox->close();
       progressBar->setValue(100);
@@ -1337,6 +1350,7 @@ void MainWindow::print()
 #endif
 
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
+    
     if (dlg->exec() != QDialog::Accepted)
         return;
 

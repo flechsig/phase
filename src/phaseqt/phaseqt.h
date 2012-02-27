@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <17 Feb 12 13:49:15 flechsig>  */
+/*  Time-stamp: <23 Feb 12 22:38:32 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -19,6 +19,9 @@
 #include <libgen.h>
 #include <string>
 #include <iostream>
+#include <QImage>
+#include <QFutureWatcher>
+#include <QtCore>
 
 extern "C" {
   #include "cutils.h"
@@ -50,6 +53,8 @@ class MainWindow;          // forward declaration
 #define PLOT_HPROF      32
 #define PLOT_VPROF      64
 
+typedef QFutureWatcher <int> ElementWatcher;
+
 /*#define RAY_Y   1
 #define RAY_Z   2
 #define RAY_DY  4
@@ -66,7 +71,9 @@ public:
   PhaseQt();   // constructor
   // add here member functions to access the structs PHASEset and BeamlineType
   // wrapper funktions I call my... and define them here
-
+int myeval(const int &);
+  void buildBeamlineParallel();
+  void buildElement(struct ElementType *);
   void initSet(const char *);
   void printSet();
   void initBeamline();

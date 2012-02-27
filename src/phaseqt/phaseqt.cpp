@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <24 Jan 12 09:35:44 flechsig> 
+//  Time-stamp: <23 Feb 12 22:48:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -10,6 +10,98 @@
 
 
 #include "phaseqt.h"
+
+
+using namespace std;   // fuer cout z.B.
+
+
+// for tests  
+  int PhaseQt::myeval(const int &ii)
+  {
+    int j= ii+3;
+    return j;
+  }
+
+
+// builtBeamline using QT threads
+void PhaseQt::buildBeamlineParallel()
+{
+  unsigned int elcounter;
+  int          imodus;
+  struct ElementType *listpt; 
+  struct TmpMapType  *ltp;              /* local pointer */
+
+#ifdef DEBUG
+  cout << endl << "debug: " << __FILE__ << " buildBeamlineParallel() called, beamlineOK=" << this->beamlineOK << endl;
+#endif
+
+  Check_iord(this);                                 /* check the range of iord */
+  printf("BuildBeamline: Beamline contains %d element(s), %d order calculation\n", 
+	 this->elementzahl,  this->BLOptions.ifl.iord);
+  /*--------------------------------------------------------*/ 
+  if (this->elementzahl < 1)
+    return;
+
+  if (this->beamlineOK & mapOK)  
+    {   
+      printf("BuildBeamline: all beamline elements are already OK- return\n");
+      return;  /* nothing to do */
+    }
+  
+
+
+  /* 1st loop */  
+  elcounter= 1; 
+  listpt= this->ElementList;  
+  while (elcounter<= this->elementzahl)  /* Schleife ueber alle Elemente */
+    { 
+      if (listpt->ElementOK == 0)  /* element rebuild */
+	{
+	  //buildElement(listpt); // add to thread pool
+	  	  
+	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
+	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
+	  
+#ifdef DEBUG
+	  cout <<  "debug: " << __FILE__ << " BeamlineParallel() matrixes and maps of element "<< elcounter << " created" << endl;
+#endif 
+	}             /* map ist OK */
+      else
+	{
+#ifdef DEBUG
+	  cout <<  "debug: " << __FILE__ << " BeamlineParallel() element "<< elcounter << " already OK- keep matrix" << endl;
+#endif 
+	  
+	} /* end if (listpt->ElementOK == 0) */
+      elcounter++; listpt++; 
+    } /* Schleife ueber alle Elemente fertig */
+
+  //typedef QFutureWatcher<int> ElementWatcher;
+  
+  QVector <int> intvec(10);
+  ElementWatcher *watcher = new ElementWatcher();
+  //connect(watcher, SIGNAL(progressValueChanged(int)), progressBar, SLOT(setValue(int)));
+  //QFuture<int> result   = QtConcurrent::map(intvec, myeval);
+  //QFuture<int> result   = QtConcurrent::mapped(intvec, myeval);
+  //watcher->setFuture(result);
+
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " buildBeamlineParallel() end, beamlineOK=" << beamlineOK << endl << endl;
+#endif
+} //  end buildBeamlineParallel
+
+// this routine should be calle parallel
+void PhaseQt::buildElement(struct ElementType *listpt)
+{
+#ifdef DEBUG
+  cout <<  "debug: " << __FILE__ << " buildElement called" << endl;
+#endif
+
+  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+	     this->BLOptions.REDUCE_maps);    
+  DefGeometryC(&listpt->GDat, &listpt->geo);  
+  MakeMapandMatrix(listpt, this); 
+} //  end buildElement
 
 // initialize the c structure of filenames with a name
 // removes a possible extension
