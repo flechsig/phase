@@ -130,9 +130,10 @@ c construct axis vectors first so they can be shared among threads
 c otherwise there could be conflicts if two threads access same z2(j)
       do i=1, ny2
         y2(i)=ymin2+dble(i-1)*dy2      
-        do j=1, nz2
-          z2(j)=zmin2+dble(j-1)*dz2            
-        enddo
+      enddo
+
+      do j=1, nz2
+        z2(j)=zmin2+dble(j-1)*dz2            
       enddo
 
 c now start actual loops to determine fields
@@ -200,7 +201,7 @@ c        xarg(l)=dreal(ez(l,k)*fact)
 c      endif
 
                 eytmp=eytmp+ey1(k,l)*fact            
-                eztmp=eytmp+ez1(k,l)*fact            
+                eztmp=eztmp+ez1(k,l)*fact            
  
               enddo
             enddo
