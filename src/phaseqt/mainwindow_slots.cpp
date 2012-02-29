@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <22 Feb 12 09:17:14 flechsig> 
+//  Time-stamp: <29 Feb 12 12:21:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -570,7 +570,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
       FixFocus(cff, myparent->myBeamline()->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
-      thetaE->setText(cffstr.setNum(theta0, 'g', 4));  // update widget
+      thetaE->setText(cffstr.setNum(theta0, 'f', 4));  // update widget
       gdat->theta0= theta0;                            // update data
     } 
   else
@@ -607,7 +607,7 @@ void MainWindow::rhoBslot()  // calculate roho
   else
     {
       rho= 2.0* source* image* cos(theta * PI/180.0)/ (source+ image); 
-      rhoE->setText(rhostr.setNum(rho, 'g', 3));
+      rhoE->setText(rhostr.setNum(rho, 'g', 6));
     }
  } // rhoBslot
 
@@ -633,7 +633,7 @@ void MainWindow::rBslot()
   
   nenner= (source+ image)* cos(theta * PI/180.0);
   rmi= (fabs(nenner) > ZERO) ? (2.0* source* image)/ nenner : (nenner/fabs(nenner))/ZERO; 
-  rE->setText(qst.setNum(rmi, 'g', 3));
+  rE->setText(qst.setNum(rmi, 'g', 6));
 } // rBslot  
 // end calc slots
 

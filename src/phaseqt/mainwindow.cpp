@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <29 Feb 12 12:11:30 flechsig> 
+//  Time-stamp: <29 Feb 12 12:19:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1661,13 +1661,13 @@ void MainWindow::UpdateElementBox(int number)
 
    // update widgets
   cffE   ->setText(qst.setNum(cff,        'f', 3));
-  preE   ->setText(qst.setNum(gd->r,      'g', 4));
-  sucE   ->setText(qst.setNum(gd->rp,     'g', 4));
+  preE   ->setText(qst.setNum(gd->r,      'g', 6));
+  sucE   ->setText(qst.setNum(gd->rp,     'g', 6));
   thetaE ->setText(qst.setNum(gd->theta0, 'f', 4));
-  sourceE->setText(qst.setNum(md->r1,     'g', 4));
-  imageE ->setText(qst.setNum(md->r2,     'g', 4));
-  rE     ->setText(qst.setNum(md->rmi,    'g', 5));
-  rhoE   ->setText(qst.setNum(md->rho,    'g', 5));
+  sourceE->setText(qst.setNum(md->r1,     'g', 6));
+  imageE ->setText(qst.setNum(md->r2,     'g', 6));
+  rE     ->setText(qst.setNum(md->rmi,    'g', 6));
+  rhoE   ->setText(qst.setNum(md->rho,    'g', 6));
   integerSpinBox->setValue(gd->inout);
   lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 4));
   vls1->setText(qst.setNum(gd->xdens[1], 'g', 4));
