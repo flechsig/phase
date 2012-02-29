@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <27 Feb 12 13:38:09 flechsig> 
+//  Time-stamp: <29 Feb 12 12:11:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1660,32 +1660,32 @@ void MainWindow::UpdateElementBox(int number)
   cff = cos(fi- teta)/ cos(fi+ teta);
 
    // update widgets
-  cffE   ->setText(qst.setNum(cff,        'g', 2));
-  preE   ->setText(qst.setNum(gd->r,      'g', 2));
-  sucE   ->setText(qst.setNum(gd->rp,     'g', 2));
-  thetaE ->setText(qst.setNum(gd->theta0, 'g', 3));
-  sourceE->setText(qst.setNum(md->r1,     'g', 2));
-  imageE ->setText(qst.setNum(md->r2,     'g', 2));
-  rE     ->setText(qst.setNum(md->rmi,    'g', 4));
-  rhoE   ->setText(qst.setNum(md->rho,    'g', 4));
+  cffE   ->setText(qst.setNum(cff,        'f', 3));
+  preE   ->setText(qst.setNum(gd->r,      'g', 4));
+  sucE   ->setText(qst.setNum(gd->rp,     'g', 4));
+  thetaE ->setText(qst.setNum(gd->theta0, 'f', 4));
+  sourceE->setText(qst.setNum(md->r1,     'g', 4));
+  imageE ->setText(qst.setNum(md->r2,     'g', 4));
+  rE     ->setText(qst.setNum(md->rmi,    'g', 5));
+  rhoE   ->setText(qst.setNum(md->rho,    'g', 5));
   integerSpinBox->setValue(gd->inout);
-  lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 2));
-  vls1->setText(qst.setNum(gd->xdens[1], 'g', 2));
-  vls2->setText(qst.setNum(gd->xdens[2], 'g', 2));
-  vls3->setText(qst.setNum(gd->xdens[3], 'g', 2));
-  vls4->setText(qst.setNum(gd->xdens[4], 'g', 2));
-  duE ->setText(qst.setNum(md->du, 'g', 2));
-  dwE ->setText(qst.setNum(md->dw, 'g', 2));
-  dlE ->setText(qst.setNum(md->dl, 'g', 2));
-  dRuE->setText(qst.setNum(md->dRu * 1e3, 'g', 2));
-  dRwE->setText(qst.setNum(md->dRw * 1e3, 'g', 2));
-  dRlE->setText(qst.setNum(md->dRl * 1e3, 'g', 2));
-  w1E ->setText(qst.setNum(md->w1, 'g', 2));
-  w2E ->setText(qst.setNum(md->w2, 'g', 2));
-  wsE ->setText(qst.setNum(md->slopew, 'g', 2));
-  l1E ->setText(qst.setNum(md->l1, 'g', 2));
-  l2E ->setText(qst.setNum(md->l2, 'g', 2));
-  lsE ->setText(qst.setNum(md->slopel, 'g', 2));
+  lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 4));
+  vls1->setText(qst.setNum(gd->xdens[1], 'g', 4));
+  vls2->setText(qst.setNum(gd->xdens[2], 'g', 4));
+  vls3->setText(qst.setNum(gd->xdens[3], 'g', 4));
+  vls4->setText(qst.setNum(gd->xdens[4], 'g', 4));
+  duE ->setText(qst.setNum(md->du, 'g', 4));
+  dwE ->setText(qst.setNum(md->dw, 'g', 4));
+  dlE ->setText(qst.setNum(md->dl, 'g', 4));
+  dRuE->setText(qst.setNum(md->dRu * 1e3, 'g', 4));
+  dRwE->setText(qst.setNum(md->dRw * 1e3, 'g', 4));
+  dRlE->setText(qst.setNum(md->dRl * 1e3, 'g', 4));
+  w1E ->setText(qst.setNum(md->w1, 'g', 4));
+  w2E ->setText(qst.setNum(md->w2, 'g', 4));
+  wsE ->setText(qst.setNum(md->slopew, 'g', 4));
+  l1E ->setText(qst.setNum(md->l1, 'g', 4));
+  l2E ->setText(qst.setNum(md->l2, 'g', 4));
+  lsE ->setText(qst.setNum(md->slopel, 'g', 4));
 
   if (gd->iflag) nimBox->setChecked(true); else nimBox->setChecked(false);
 
