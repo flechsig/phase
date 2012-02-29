@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <29 Feb 12 12:25:50 flechsig> 
+//  Time-stamp: <29 Feb 12 16:04:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -34,15 +34,11 @@ MainWindow::MainWindow(PhaseQt *parent)
   createToolBars();
   createStatusBar();
   createDockWindows();
+  createProgress();
   setWindowTitle(tr("PHASE Qt"));
   resize(1400,940);
-
-  //this->myPHASEset::init("default");
-  //this->initSet("default");
-  //  this->QtPhase::print();
-  //this->myBeamline::init();                           // empty pointers
-  //this->initBeamline();
-  // this->hormapsloaded = 0;
+  // progress etc.
+  
   this->s_ray= NULL;
   this->o_input= NULL;
   this->c_window= NULL;
@@ -156,6 +152,11 @@ void MainWindow::createActions()
     singleRayAct->setStatusTip(tr("geometrical optics, single Ray trace"));
     signalMapper->setMapping(singleRayAct, QString("singleRayAct"));
     connect(singleRayAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    asynMapAct = new QAction(tr("make maps in parallel"), this);
+    asynMapAct->setStatusTip(tr("make maps in parallel"));
+    signalMapper->setMapping(asynMapAct, QString("asynMapAct"));
+    connect(asynMapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     optiInputAct = new QAction(tr("&optimization input"), this);
     optiInputAct->setStatusTip(tr("optimization input"));
@@ -592,10 +593,7 @@ QWidget *MainWindow::createGraphicBox()
 
   statGroup->setLayout(statLayout);
 
-  progressBar=new QProgressBar();
-  progressBar->setMinimum(0);
-  progressBar->setMaximum(100);
-  progressBar->setValue(100);
+  
 
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(statusGroup);
@@ -604,7 +602,7 @@ QWidget *MainWindow::createGraphicBox()
   vbox->addWidget(plotGroup);
   vbox->addStretch(1);
   vbox->addWidget(statGroup);
-  vbox->addWidget(progressBar);
+  
   //vbox->addStretch(1);
   graphicBox->setLayout(vbox);
   return graphicBox;
@@ -639,7 +637,8 @@ void MainWindow::createMenus()
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);
     calcMenu->addAction(mphasespaceAct);
-    //calcMenu->addSeparator();
+    calcMenu->addSeparator();
+    calcMenu->addAction(asynMapAct);
     //calcMenu->addAction(optiInputAct);
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
@@ -987,6 +986,47 @@ QWidget *MainWindow::createParameterBox()
   return parameterBox;
 } // end createparameter box
 
+// the progress widget
+void MainWindow::createProgress()
+{
+  myProgressDialog= new QWidget();
+  progressLabel   = new QLabel();
+  myProgressDialog->setWindowTitle(tr("Progress of asynchronous task"));
+  progressLabel->setText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount()));
+  progressPauseButton  = new QPushButton("Pause");
+  progressResumeButton = new QPushButton("Resume");
+  progressAbortButton  = new QPushButton("Abort");
+  dialogProgressBar    = new QProgressBar();
+  QGridLayout *layout  = new QGridLayout;
+  
+  layout->addWidget(progressLabel,       1, 1, 1, 3);
+  layout->addWidget(progressAbortButton, 3, 3);
+  layout->addWidget(progressPauseButton, 3, 1);
+  layout->addWidget(progressResumeButton,3, 2);
+  layout->addWidget(dialogProgressBar,   2, 1, 1, 3);
+  
+  myProgressDialog->setLayout(layout);
+
+  future  = new QFuture<void>;
+  watcher = new QFutureWatcher<void>;
+
+  //connect(myProgressDialog, SIGNAL(canceled()), watcher, SLOT(cancel()));
+  connect(watcher, SIGNAL(finished()), myProgressDialog, SLOT(reset()));
+  connect(watcher, SIGNAL(finished()), myProgressDialog, SLOT(close()));
+  connect(watcher, SIGNAL(started()),  myProgressDialog, SLOT(show()));
+  connect(watcher, SIGNAL(progressRangeChanged(int,int)), dialogProgressBar, SLOT(setRange(int,int)));
+  connect(watcher, SIGNAL(progressValueChanged(int)),     dialogProgressBar, SLOT(setValue(int)));
+  connect(progressPauseButton,  SIGNAL(clicked()), this, SLOT(pause_thread()));
+  connect(progressResumeButton, SIGNAL(clicked()), this, SLOT(resume_thread()));
+  connect(progressAbortButton,  SIGNAL(clicked()), watcher, SLOT(cancel()));
+
+  for (int i = 0; i < 1000; ++i)
+    vector.append(i);
+
+  dialogProgressBar->setMaximum(vector.size());
+
+  //myProgressDialog->show();
+} // createProgress()
 
 // the optical element box
 QWidget *MainWindow::createSourceBox()

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <21 Feb 12 15:37:24 flechsig>  */
+/*  Time-stamp: <29 Feb 12 16:00:22 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,6 +40,9 @@ class QGroupBox;
 class QPushButton;
 QT_END_NAMESPACE
 
+void my_funcv(int &);
+
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -58,8 +61,8 @@ public:
     void ReadBLFileInteractive(char *);
     char oldsource;
     QLineEdit     *parameterE;
-    QProgressBar  *progressBar;
-    QProgressDialog* progressD;
+    //QProgressBar  *progressBar;
+    //QProgressDialog* progressD;
 
 private slots:
     void appendElement();
@@ -111,6 +114,9 @@ private slots:
     void sourceApplyBslot();
     void sourceDefaultBslot();
     void debugslot();
+    void pause_thread();
+    void resume_thread();
+    void abort_thread();
 
     //void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
@@ -270,6 +276,7 @@ private:
     QAction *raytracefullAct;
     QAction *footprintAct;
     QAction *singleRayAct;
+    QAction *asynMapAct;
     QAction *optiInputAct;
     QAction *phasespaceAct;
     QAction *mphasespaceAct;
@@ -360,7 +367,17 @@ private:
     int elementListIsEmpty();
 
     TreeModel *parameterModel;
-    
+
+    QWidget      *myProgressDialog;         // ProgressDialog
+    QPushButton  *progressAbortButton;
+    QPushButton  *progressPauseButton;
+    QPushButton  *progressResumeButton;
+    QProgressBar *dialogProgressBar;
+    QLabel       *progressLabel;
+    QFuture<void>        *future;
+    QFutureWatcher<void> *watcher;
+    void createProgress();
+    QVector <int> vector;
 };
 
 

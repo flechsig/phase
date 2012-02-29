@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <29 Feb 12 12:21:34 flechsig> 
+//  Time-stamp: <29 Feb 12 15:51:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -58,20 +58,22 @@ void MainWindow::activateProc(const QString &action)
   if (action.isEmpty())
           return;
   
-  if (!action.compare("raytracesimpleAct")) 
+  if (!action.compare("asynMapAct")) 
     { 
       if (elementListIsEmpty())
 	return;
 
-      progressD= new QProgressDialog("Calculation running...", "Break", 0, 100);
-      progressD->setWindowModality(Qt::WindowModal); // blocking of other windows
-      progressD->setMinimumDuration(1);
-      progressD->setValue(1);
-      //connect();
-      // progressD->exec();
+      qDebug() << "create maps in parallel threads";
+      *future= QtConcurrent::map(vector, my_funcv);
+      watcher->setFuture(*future);
 
-      progressBar->setValue(0); progressBar->repaint();
-      printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
+      }
+ if (!action.compare("raytracesimpleAct")) 
+    { 
+      if (elementListIsEmpty())
+	return;
+
+       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
 	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
@@ -81,23 +83,24 @@ void MainWindow::activateProc(const QString &action)
       //mmBox->show();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
-      progressD->setValue(25);
+      
       //statusBar()->clearMessage();
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
-      progressBar->setValue(10); progressBar->repaint();
+      
       myparent->buildBeamlineParallel();      // for tests so far
       myparent->myBuildBeamline();
       
-      progressD->setValue(50);
-      progressBar->setValue(70); progressBar->repaint();
+     
+      
       myparent->myRayTracec(); 
-      progressD->setValue(100);
+      
       cout << "ray trace-> done" << endl;
       //mmBox->close();
-      progressBar->setValue(100);
+      
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }
+
   if (!action.compare("raytracefullAct")) 
     { 
       printf("\nraytracefullAct button  pressed\n");
@@ -1710,6 +1713,22 @@ void MainWindow::undo()
   //QTextDocument *document = textEdit->document();
   //  document->undo();
 } // undo
+
+void MainWindow::abort_thread()
+{
+  future->cancel();
+}
+
+void MainWindow::pause_thread()
+{
+  future->pause();
+}
+
+void MainWindow::resume_thread()
+{
+  future->resume();
+}
+
 
 ///////////////////////
 // end slots section //
