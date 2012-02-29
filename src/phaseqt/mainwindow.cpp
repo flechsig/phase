@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <29 Feb 12 12:19:46 flechsig> 
+//  Time-stamp: <29 Feb 12 12:25:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2100,8 +2100,6 @@ void MainWindow::UpdateSourceBox()
 			 .arg(sou));
       break;
     }
-
-  
 } // end UpdateSourceBox
 
 // update the statistics in graphic box
@@ -2115,18 +2113,18 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
-  czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 3)+ "</FONT>");
-  cyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 3)+ "</FONT>");		   
+  czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>");
+  cyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>");		   
   wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>");
   wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	
 
-  cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 3)+ "</FONT>");	
-  cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 3)+ "</FONT>");
-  wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 3)+ "</FONT>");	
-  wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 3)+ "</FONT>");
+  cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
+  cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
+  wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 4)+ "</FONT>");	
+  wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 4)+ "</FONT>");
   
   rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
-  traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 3)+ "</FONT>");
+  traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
   
   rzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
   ryLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
