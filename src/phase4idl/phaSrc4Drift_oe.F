@@ -386,7 +386,7 @@ c--------------------------------------------------------------------------
       fact0=fact0*dsqrt(dcos(winkel))
 
 !$OMP PARALLEL DO
-!$OMP& PRIVATE(i, k, l, dist1, fact, phase)
+!$OMP& PRIVATE(i, k, l, dist1, fact, phase, xstart, ystart, zstart, xend, yend, zend)
           do j=1,ianzz1                
             do i=1,ianzy1
             
@@ -442,7 +442,7 @@ c--------------------------------------------------------------------------
       fact0=fact0*dsqrt(dcos(winkel))
 
 !$OMP PARALLEL DO
-!$OMP& PRIVATE(i, k, l, dist1, fact, phase)
+!$OMP& PRIVATE(i, k, l, dist1, fact, phase, xstart, ystart, zstart, xend, yend, zend)
         do j=1,ianzz1
           do i=1,ianzy1
             
