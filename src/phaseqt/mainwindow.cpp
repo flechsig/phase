@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <29 Feb 12 16:04:26 flechsig> 
+//  Time-stamp: <01 Mar 12 13:30:31 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -153,8 +153,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(singleRayAct, QString("singleRayAct"));
     connect(singleRayAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    asynMapAct = new QAction(tr("make maps in parallel"), this);
-    asynMapAct->setStatusTip(tr("make maps in parallel"));
+    asynMapAct = new QAction(tr("make maps in parallel (test)"), this);
+    asynMapAct->setStatusTip(tr("make maps in parallel (test)"));
     signalMapper->setMapping(asynMapAct, QString("asynMapAct"));
     connect(asynMapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -593,8 +593,6 @@ QWidget *MainWindow::createGraphicBox()
 
   statGroup->setLayout(statLayout);
 
-  
-
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(statusGroup);
   vbox->addWidget(graphicGroup);
@@ -1011,8 +1009,9 @@ void MainWindow::createProgress()
   watcher = new QFutureWatcher<void>;
 
   //connect(myProgressDialog, SIGNAL(canceled()), watcher, SLOT(cancel()));
-  connect(watcher, SIGNAL(finished()), myProgressDialog, SLOT(reset()));
+  //connect(watcher, SIGNAL(finished()), myProgressDialog, SLOT(reset()));
   connect(watcher, SIGNAL(finished()), myProgressDialog, SLOT(close()));
+  connect(watcher, SIGNAL(finished()), this, SLOT(finished_thread()));
   connect(watcher, SIGNAL(started()),  myProgressDialog, SLOT(show()));
   connect(watcher, SIGNAL(progressRangeChanged(int,int)), dialogProgressBar, SLOT(setRange(int,int)));
   connect(watcher, SIGNAL(progressValueChanged(int)),     dialogProgressBar, SLOT(setValue(int)));
@@ -1020,7 +1019,7 @@ void MainWindow::createProgress()
   connect(progressResumeButton, SIGNAL(clicked()), this, SLOT(resume_thread()));
   connect(progressAbortButton,  SIGNAL(clicked()), watcher, SLOT(cancel()));
 
-  for (int i = 0; i < 1000; ++i)
+  for (int i = 0; i < 1000; ++i)          // for testing submit 1000 tasks
     vector.append(i);
 
   dialogProgressBar->setMaximum(vector.size());
@@ -1703,7 +1702,7 @@ void MainWindow::UpdateElementBox(int number)
   cffE   ->setText(qst.setNum(cff,        'f', 3));
   preE   ->setText(qst.setNum(gd->r,      'g', 6));
   sucE   ->setText(qst.setNum(gd->rp,     'g', 6));
-  thetaE ->setText(qst.setNum(gd->theta0, 'f', 4));
+  thetaE ->setText(qst.setNum(gd->theta0, 'f', 3));
   sourceE->setText(qst.setNum(md->r1,     'g', 6));
   imageE ->setText(qst.setNum(md->r2,     'g', 6));
   rE     ->setText(qst.setNum(md->rmi,    'g', 6));
