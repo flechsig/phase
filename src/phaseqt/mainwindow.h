@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <29 Feb 12 16:00:22 flechsig>  */
+/*  Time-stamp: <29 Feb 12 16:13:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -117,6 +117,7 @@ private slots:
     void pause_thread();
     void resume_thread();
     void abort_thread();
+    void finished_thread();
 
     //void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
