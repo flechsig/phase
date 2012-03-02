@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <01 Mar 12 12:09:03 flechsig> 
+//  Time-stamp: <02 Mar 12 08:39:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -14,6 +14,7 @@
 
 #include <QtGui>
 #include <cmath>                     // for abs
+#include <tr1/functional>    // for std::tr1
 
 #include "mainwindow.h"
 #include "phaseqt.h"
@@ -64,7 +65,10 @@ void MainWindow::activateProc(const QString &action)
 	return;
 
       qDebug() << "create maps in parallel threads";
-      *future= QtConcurrent::map(vector, my_funcv);
+      // *future= QtConcurrent::map(vector, my_funcv);
+      // to pass additional parameters we have to use boost or std::tr1
+      *future= QtConcurrent::map(vector, std::tr1::bind(my_funcv, 
+							std::tr1::placeholders::_1, 1000)); // one additional par 
       watcher->setFuture(*future);
 
       }

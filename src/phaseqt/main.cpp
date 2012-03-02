@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <01 Mar 12 11:57:13 flechsig> 
+//  Time-stamp: <02 Mar 12 08:17:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -18,14 +18,14 @@ using namespace std;
 
 // dummy function to test threads
 // it must be a function- no member methode
-void my_funcv(int &image)
+void my_funcv(int &image, int &parameter)
 {
   const int work = 1000 * 1000 * 40;
   volatile int v = 0;
   for (int j = 0; j < work; ++j)
     ++v;
 
-  qDebug() << "Scaling dummy image" << image << "in thread" << QThread::currentThreadId();
+  qDebug() << "Scaling dummy image" << image << " out of " << parameter << "in thread" << QThread::currentThreadId();
 }
 
 

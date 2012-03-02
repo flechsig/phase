@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <29 Feb 12 16:13:36 flechsig>  */
+/*  Time-stamp: <02 Mar 12 08:42:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,7 +40,7 @@ class QGroupBox;
 class QPushButton;
 QT_END_NAMESPACE
 
-void my_funcv(int &);
+void my_funcv(int &, int &);  // the test function for qfuture
 
 
 class MainWindow : public QMainWindow

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <01 Mar 12 13:30:31 flechsig> 
+//  Time-stamp: <01 Mar 12 13:48:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -512,7 +512,6 @@ QWidget *MainWindow::createGraphicBox()
   btnLogy->setText("Log Scale");
   btnLogy->setCheckable(true);
   
-
   d_plot = new Plot(this);
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
@@ -953,7 +952,6 @@ QWidget *MainWindow::createParameterBox()
   parameterView->setColumnHidden(4,true);  // dont display index
 #endif
   connect(parameterView, SIGNAL(clicked(QModelIndex)), parameterModel, SLOT(selectSlot(QModelIndex))); 
-
 
   for (i= 0; i< NPARS; i++)
     {
@@ -2090,7 +2088,7 @@ void MainWindow::UpdateSourceBox()
     case 'U':
       up= (struct UndulatorSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sourceTypeLabel->setText(QString(tr("Undulator")));
-      S1E->setText(qst.setNum(up->length, 'g', 4));
+      S1E->setText(qst.setNum(up->length, 'g', 6));
       S2E->setText(qst.setNum(myparent->myBeamline()->BLOptions.lambda* 1e6, 'g', 4));    
       S3E->setText(qst.setNum(myparent->myBeamline()->RTSource.raynumber));  
        
@@ -2111,7 +2109,7 @@ void MainWindow::UpdateSourceBox()
     case 'S':
       QMessageBox::warning(this, tr("UpdateSourceBox"),
 			   tr("Source type %1 is obsolete.\nenable point source with defaults")
-			 .arg(sou));
+			   .arg(sou));
       myparent->myBeamline()->RTSource.QuellTyp= 'o';
       sop= (struct PointSourceType *)myparent->myBeamline()->RTSource.Quellep;
       sourceTypeLabel->setText(QString(tr("Point Source: all sigma values")));
