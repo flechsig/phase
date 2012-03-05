@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <01 Mar 12 13:48:21 flechsig> 
+//  Time-stamp: <05 Mar 12 16:17:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -157,6 +157,11 @@ void MainWindow::createActions()
     asynMapAct->setStatusTip(tr("make maps in parallel (test)"));
     signalMapper->setMapping(asynMapAct, QString("asynMapAct"));
     connect(asynMapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    asynTestAct = new QAction(tr("asyn Test"), this);
+    asynTestAct->setStatusTip(tr("asyn Test"));
+    signalMapper->setMapping(asynTestAct, QString("asynTestAct"));
+    connect(asynTestAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     optiInputAct = new QAction(tr("&optimization input"), this);
     optiInputAct->setStatusTip(tr("optimization input"));
@@ -636,6 +641,7 @@ void MainWindow::createMenus()
     calcMenu->addAction(mphasespaceAct);
     calcMenu->addSeparator();
     calcMenu->addAction(asynMapAct);
+    calcMenu->addAction(asynTestAct);
     //calcMenu->addAction(optiInputAct);
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
@@ -849,9 +855,9 @@ QWidget *MainWindow::createOpticalElementBox()
  QLabel *duLabel  = new QLabel(tr("du (mm)"));
  QLabel *dwLabel  = new QLabel(tr("dw (mm)"));
  QLabel *dlLabel  = new QLabel(tr("dl (mm)"));
- QLabel *dRuLabel = new QLabel(tr("du (mrad)"));
- QLabel *dRwLabel = new QLabel(tr("dw (mrad)"));
- QLabel *dRlLabel = new QLabel(tr("dl (mrad)"));
+ QLabel *dRuLabel = new QLabel(tr("dRu (mrad)"));
+ QLabel *dRwLabel = new QLabel(tr("dRw (mrad)"));
+ QLabel *dRlLabel = new QLabel(tr("dRl (mrad)"));
  QLabel *w1Label  = new QLabel(tr("w1 (mm)"));
  QLabel *w2Label  = new QLabel(tr("w2 (mm)"));
  QLabel *wsLabel  = new QLabel(tr("w slope"));
@@ -2358,5 +2364,13 @@ void MainWindow::writeSimp()
 /////////////////////////////////
 // end widget handling sctieon //
 /////////////////////////////////
+
+void MainWindow::fillTaskVector(const int nr)
+{
+  vector.resize(0);
+  for (int i = 0; i < nr; ++i)          // for testing submit 1000 tasks
+    vector.append(i);
+} // fillTaskVector
+
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
