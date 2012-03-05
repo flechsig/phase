@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <02 Mar 12 08:42:29 flechsig>  */
+/*  Time-stamp: <02 Mar 12 15:41:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -51,6 +51,7 @@ public:
     MainWindow(PhaseQt *parent);
     ~MainWindow();
     int checkResultType(struct RESULTType *, int);
+    void fillTaskVector(const int);
     void parameterUpdateAll(int);
     //  void print();
     void UpdateBeamlineBox();
@@ -278,6 +279,7 @@ private:
     QAction *footprintAct;
     QAction *singleRayAct;
     QAction *asynMapAct;
+    QAction *asynTestAct;
     QAction *optiInputAct;
     QAction *phasespaceAct;
     QAction *mphasespaceAct;

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <02 Mar 12 08:39:29 flechsig> 
+//  Time-stamp: <02 Mar 12 16:26:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -14,7 +14,7 @@
 
 #include <QtGui>
 #include <cmath>                     // for abs
-#include <tr1/functional>    // for std::tr1
+#include <tr1/functional>            // for std::tr1
 
 #include "mainwindow.h"
 #include "phaseqt.h"
@@ -64,14 +64,30 @@ void MainWindow::activateProc(const QString &action)
       if (elementListIsEmpty())
 	return;
 
+      fillTaskVector(myparent->myBeamline()->elementzahl);
+      
       qDebug() << "create maps in parallel threads";
+      // *future= QtConcurrent::map(vector, my_funcv);
+      // to pass additional parameters we have to use boost or std::tr1
+      *future= QtConcurrent::map(vector, std::tr1::bind(BuildElement, 
+							std::tr1::placeholders::_1, myparent->myBeamline())); // one additional par 
+      watcher->setFuture(*future);
+      
+    }
+  
+  if (!action.compare("asynTestAct")) 
+    { 
+      fillTaskVector(1000);
+
+      qDebug() << "test asynchronous tasks with threads";
       // *future= QtConcurrent::map(vector, my_funcv);
       // to pass additional parameters we have to use boost or std::tr1
       *future= QtConcurrent::map(vector, std::tr1::bind(my_funcv, 
 							std::tr1::placeholders::_1, 1000)); // one additional par 
       watcher->setFuture(*future);
-
-      }
+      
+    }
+  
  if (!action.compare("raytracesimpleAct")) 
     { 
       if (elementListIsEmpty())
@@ -1738,6 +1754,7 @@ void MainWindow::pause_thread()
 
 void MainWindow::resume_thread()
 {
+  qDebug() << "Task resumed- wait for finsihed or  Abort";
   future->resume();
 }
 
