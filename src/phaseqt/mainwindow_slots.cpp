@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <02 Mar 12 16:26:54 flechsig> 
+//  Time-stamp: <07 Mar 12 11:30:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -811,8 +811,8 @@ void MainWindow::elementApplyBslot()
   if (md->Art == kEOEGeneral )
     ReadCoefficientFile((double *)&(myparent->myBeamline()->ElementList[number].mir), 
 			myparent->myBeamline()->ElementList[number].elementname);
-  else
-    myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
+  // we always call DefMirrorC to apply misalignment
+  myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
 			   gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
   
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
@@ -1179,6 +1179,10 @@ void MainWindow::misaliBoxslot(int newstate)
 #endif
   
   myparent->myBeamline()->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
+  myparent->myBeamline()->beamlineOK= 0;
+  for (int i=0; i< myparent->myBeamline()->elementzahl; i++) 
+    myparent->myBeamline()->ElementList[i].ElementOK= 0;
+  UpdateStatus();
 } // misaliBoxslot
 
 // slot called to read in a new beamline
