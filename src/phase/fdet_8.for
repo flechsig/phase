@@ -120,7 +120,7 @@ c	   inorm2 = 5: vollständige asymptotische Entwicklung bis order ord
 c
 
 c---- routine wird nur gerufen wenn imodus = 2 (PO)
-        pi_loc=datan(1.d0)*4.d0
+       pi_loc=datan(1.d0)*4.d0
        fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
        fact1=fact*2.0d0
@@ -146,6 +146,20 @@ c------------------------------------------------------------------
 c---------------------------------------------------
 c	factor 1) 
 c---------------------------------------------------	
+c A c H T U N G: nochmal checken
+c------------- change signs of ypc1 and zpc1
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              ypc1(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        ypc1(n1,n2,n3,n4)
+              zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        zpc1(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
 
 	if(inorm1.eq.0)then
 
@@ -177,6 +191,20 @@ c---------------------------------------------------
 		
 	endif
 	
+c------------- change signs of ypc1 and zpc1 back
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              ypc1(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        ypc1(n1,n2,n3,n4)
+              zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        zpc1(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
+
 c	bei diesem Faktor braucht man jetzt nur noch:
 c	- Taylorreihe berechnen
 c	- Absolutbetrag berechnen
@@ -377,6 +405,7 @@ c------------- change signs of wc and xlc
         call replace_wl_in_ypzp(cu,cu,wc,xlc,cv,cv,1,iord)
         call replace_wl_in_ypzp(du,du,wc,xlc,dv,dv,1,iord)
 
+c A C H T U N G nochmal checken
 c--------- change signs back to old values
           do n1=0,iord
            do n2=0,iord-n1

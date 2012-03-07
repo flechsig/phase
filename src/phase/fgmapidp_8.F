@@ -280,6 +280,16 @@ c
         call replace_6v4v(xloc1_6,ypc,zpc,xloc1_4,iord)
         call replace_6v4v(xloc2_6,ypc,zpc,xloc2_4,iord)
 	
+         do i=0,2
+         do j=0,2-i
+         do k=0,2-i-j
+         do l=0,2-i-j-k
+c            write(6,*)i,j,k,l,xloc1_4(i,j,k,l),xloc2_4(i,j,k,l)
+         enddo
+         enddo
+         enddo
+         enddo
+
 c------------- get path length in variables (y,z,dy,dz)
 c       input:  opl4(w,l,y,z)
 c       output: opl(y,z,dy,dz)
@@ -397,6 +407,11 @@ c---------------------------------------------------------------
      &                         dfdw(n1,n2,n3,n4)
               dfdl(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                         dfdl(n1,n2,n3,n4)
+              xlm.xlen1c(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         xlm.xlen1c(n1,n2,n3,n4)
+              xlm.xlen2c(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         xlm.xlen2c(n1,n2,n3,n4)
+
              enddo
             enddo
            enddo
@@ -407,13 +422,6 @@ c---------------------------------------------------------------
           write(*,*)'fgmapidp: make map for source to image iord=',iord
 #endif
         endif   ! imodus
-
-#ifdef DEBUG
-c         write(6,*)'====================== '
-c	 
-c         write(6,*)'====================== '
-c         write(6,*)' '
-#endif
 
         return
         end
