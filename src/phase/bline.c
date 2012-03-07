@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Mar 12 10:19:15 flechsig>  */
+/*   Time-stamp: <07 Mar 12 10:31:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -44,7 +44,7 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
   if (listpt->ElementOK & elementOK) return;
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-	     bl->BLOptions.REDUCE_maps);    
+	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
   DefGeometryC(&listpt->GDat, &listpt->geo);  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
   
@@ -102,7 +102,7 @@ void BuildBeamline(struct BeamlineType *bl)
       if (listpt->ElementOK == 0)  /* element rebuild */
 	{
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-		     bl->BLOptions.REDUCE_maps);    
+		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
 	  DefGeometryC(&listpt->GDat, &listpt->geo);  
 	  MakeMapandMatrix(listpt, bl); 
 	  	  
@@ -352,7 +352,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, bl->BLOptions.REDUCE_maps);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
 	      
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
@@ -2238,7 +2238,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
    this is required for the optimization and probably for idl
 */
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
-		int etype, double theta, int lREDUCE_maps)  
+		int etype, double theta, int lREDUCE_maps, int withAlign)  
 {
   double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
@@ -2528,7 +2528,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 
 
   /* misalignment */
-  if (Beamline.BLOptions.WithAlign == 1)
+  /*  if (Beamline.BLOptions.WithAlign == 1) */
+  if (withAlign == 1)
     {
 #ifdef DEBUG2
       printf("            with misalignment\n");

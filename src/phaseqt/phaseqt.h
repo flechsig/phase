@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <01 Mar 12 13:51:00 flechsig>  */
+/*  Time-stamp: <07 Mar 12 10:28:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -86,7 +86,7 @@ int myeval(const int &);
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 
-                     DefMirrorC(x, a, etype, theta, lREDUCE_maps); }
+    DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(this, name); }
   void myMakeMapandMatrix(struct ElementType *listpt) { MakeMapandMatrix(listpt, this); }
