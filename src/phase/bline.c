@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <27 Feb 12 13:35:06 flechsig>  */
+/*   Time-stamp: <07 Mar 12 10:19:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -28,6 +28,43 @@
 
 extern const char *global_rundir;
 
+/* builds one element */
+void BuildElement(int elnumber, struct BeamlineType *bl)  
+{
+  struct ElementType *listpt;
+  struct TmpMapType *ltp;
+  int imodus;
+ 
+#ifdef DEBUG
+  printf("debug: BuildElement called: elnumber: %d,  elementOK: %X\n", elnumber, 10); 
+#endif
+
+  if ((bl->elementzahl < 1) || (elnumber > bl->elementzahl)) return;
+  listpt= &bl->ElementList[elnumber];
+  if (listpt->ElementOK & elementOK) return;
+
+  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+	     bl->BLOptions.REDUCE_maps);    
+  DefGeometryC(&listpt->GDat, &listpt->geo);  
+  // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
+  
+  if (listpt->tpe == NULL) listpt->tpe= XMALLOC(struct TmpMapType, 1);
+
+  ltp= listpt->tpe;
+  imodus= 1;
+
+  fgmapidp_8(&bl->BLOptions.epsilon, 
+		  listpt->wc, listpt->xlc, 
+		  listpt->ypc1, listpt->zpc1, ltp->ypc, ltp->zpc, listpt->dypc, listpt->dzpc,
+		  &listpt->xlm, 
+		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
+		  &listpt->mir, &listpt->geo,
+		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+
+  XFREE(listpt->tpe);
+} /* BuildElement */
+
 /****************************************************************/
 /* Beamline zusammensetzen              			*/
 /****************************************************************/
@@ -51,7 +88,7 @@ void BuildBeamline(struct BeamlineType *bl)
 
   if (bl->beamlineOK & mapOK)  
     {   
-      printf("BuildBeamline: all beamline elements are already OK- return\n");
+      printf("\nBuildBeamline: all beamline elements are already OK- return\n\n");
       return;  /* nothing to do */
     }
 
@@ -78,7 +115,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	}             /* map ist OK */
       else
 	{
-	  printf("debug: BuildBeamline: element %d already OK- keep matrix\n");
+	  printf("\nBuildBeamline: element %d already OK- keep matrix\n\n");
 	} /* end if (listpt->ElementOK == 0) */
       elcounter++; listpt++; 
     } /* Schleife ueber alle Elemente fertig */
@@ -826,35 +863,37 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
   /* temporary arrays for compatibility  */
   MAPTYPE_5X4  wc4, xlc4, ypc14, zpc14, dypc4, dzpc4;
   MAPTYPE_70X2 mat4;
-   struct mirrortype4 {
-     double a[6][6];
-   } mir4;
-   struct xlenmaptype4 {
-     double xlen1c[5][5][5][5], xlen2c[5][5][5][5];
-   } xlm4;
+  struct mirrortype4 {
+    double a[6][6];
+  } mir4;
+  struct xlenmaptype4 {
+    double xlen1c[5][5][5][5], xlen2c[5][5][5][5];
+  } xlm4;
+  
+  printf("MakeMapandMatrix: seven order defined\n");
+  ltp= bl->tp;
+  /* UF Mar 2012: funktioniert nicht mit threads */
+  if (ltp == NULL)
+    {
+      fprintf(stderr, "MakeMapandMatrix: allocate temporary arrays\n");
+      ltp= XMALLOC(struct TmpMapType, 1);   /* reserve memory for temporary maps  */
+      bl->tp= ltp;                          /* save pointer in beamline structure */
+    }
+  else
+    printf("MakeMapandMatrix: reuse temporay arrays\n"); 
 
-   printf("MakeMapandMatrix: seven order defined\n");
-   ltp= bl->tp;
-   if (ltp == NULL)
-     {
-       fprintf(stderr, "MakeMapandMatrix: allocate temporary arrays\n");
-       ltp= XMALLOC(struct TmpMapType, 1);   /* reserve memory for temporary maps  */
-       bl->tp= ltp;                          /* save pointer in beamline structure */
-     }
-   else
-     printf("MakeMapandMatrix: reusse temporay arrays\n"); 
 #else
-   double *c;
-   MAPTYPE_70X2 C;
-   printf("MakeMapandMatrix: seven order not defined\n");
+  double *c;
+  MAPTYPE_70X2 C;
+  printf("MakeMapandMatrix: seven order not defined\n");
 #endif
-
+  
    /***************** start **************/
 
    c= &C[0][0];
    if (listpt->ElementOK & elementOK)
      { 
-       printf("MakeMapandMatrix: map is alredy OK- nothing to do\n");
+       printf("\nMakeMapandMatrix: map is alredy OK- return\n\n");
        return;
      }
    
@@ -2206,6 +2245,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     rpole, fipole, small, kellip, Rellip;
   int i, k, l;
   struct mirrortype mirror;
+
 #ifdef SEVEN_ORDER
   struct mirrortype4 {
     double a[6][6];
@@ -2330,8 +2370,6 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	} 
       else
 	{   
-
-    
 	  aellip= (x->r1+ x->r2)/ 2.0;
 	  bellip= sqrt(aellip* aellip- 0.25* 
 		       (x->r1* x->r1+ x->r2* x->r2- 
@@ -2419,8 +2457,6 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	} 
       else
 	{ 
-
-  
 	  aellip= (x->r1+ x->r2)/ 2.0;
 	  bellip= sqrt(aellip* aellip- 0.25* 
 		       (x->r1* x->r1+ x->r2* x->r2- 
@@ -2454,9 +2490,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("pole:                       phi = %f deg.\n", fipole);
 	  printf("                              f = %f mm\n", f);
 
-
 #ifdef SEVEN_ORDER
-	 
 	  double sina, cosa, pa, pb, pc, px0, py0, ptendel;
 	  sina=sin(alpha);
 	  cosa=cos(alpha);
@@ -2491,18 +2525,15 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
   printf("DEBUG: mirror coefficients\n");
   for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
 #endif
+
+
   /* misalignment */
-#ifndef QTGUI
   if (Beamline.BLOptions.WithAlign == 1)
-#else
-    if (1)  /* UF !!!! nur zum debuggen*/
-#endif
     {
 #ifdef DEBUG2
       printf("            with misalignment\n");
 #endif
       memcpy(&mirror, a, sizeof(struct mirrortype));
-
 
 #ifdef SEVEN_ORDER
       if (lREDUCE_maps == 0)
@@ -2524,10 +2555,12 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
 #endif
     } 
+
 #ifdef DEBUG
   else
       printf("            without misalignment\n");
 #endif
+
 #ifdef DEBUG
   printf("DEBUG: end defmirrorc\n");
 #endif

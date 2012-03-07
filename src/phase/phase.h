@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <16 Feb 12 08:27:11 flechsig>  */
+/*   Time-stamp: <02 Mar 12 16:10:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -634,6 +634,7 @@ struct ElementType
   struct geometrytype geo; 
   struct gdatset GDat;
   char elementname[MaxPathLength];
+  struct TmpMapType *tpe;
 };
 
 struct PSOptionsType                   /* 20.9.96 */
@@ -781,6 +782,7 @@ void
   BatchMode(struct PHASEset *, struct BeamlineType *, int, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
+  BuildElement(int, struct BeamlineType *),
   Check_iord(struct BeamlineType *),
   create_hormap(),
   DefGeometryC(struct gdatset *, struct geometrytype *),
@@ -788,7 +790,7 @@ void
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int),  
   elli_8(),
   ExpandFileNames(),
-  extractmap(),
+  extractamp(),
   fdet_8(MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
          MAPTYPE_8X4, MAPTYPE_8X4, 
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
