@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Mar 12 11:45:26 flechsig>  */
+/*   Time-stamp: <07 Mar 12 12:02:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2562,7 +2562,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("            without misalignment\n");
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG2
   printf("DEBUG: end defmirrorc\n");
 #endif
 } /* end defmirrorc */
