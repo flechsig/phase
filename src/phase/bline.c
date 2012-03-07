@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Mar 12 10:31:56 flechsig>  */
+/*   Time-stamp: <07 Mar 12 11:45:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2685,7 +2685,7 @@ void ReadCoefficientFile(double *dp, char *fname)
      /* UF 04 Jan 2001 */
 {
   FILE   *f;
-  int    i, j;
+  int    i, j, dim1;
   char   buffer[MaxPathLength], buf;
   double x;  
 
@@ -2695,8 +2695,18 @@ void ReadCoefficientFile(double *dp, char *fname)
   if ((f= fopen(fname, "r+")) == NULL)
     {
       fprintf(stderr, "ReadCoefficientFile: error open file %s\n", fname); 
+      fprintf(stderr, "call exit\n"); 
       exit(-1);   
     }  
+
+  /* clean up memory */
+#ifdef SEVEN_ORDER
+  dim1= 81;
+#else
+  dim1= 36;	  
+#endif
+  for (i=0; i < dim1; i++) dp[i]= 0.0;
+
 
   while (!feof(f))    
   {
