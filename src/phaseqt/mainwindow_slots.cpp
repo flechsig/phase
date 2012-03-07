@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <07 Mar 12 11:30:11 flechsig> 
+//  Time-stamp: <07 Mar 12 16:22:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1382,10 +1382,36 @@ void MainWindow::print()
         return;
 
     //  document->print(&printer);
+    //printer.setOrientation(QPrinter::Landscape);
+    //render( &printer );
     d_plot->printPlot( printer );
     statusBar()->showMessage(tr("Ready"), 4000);
 #endif
 } // end print()
+
+// slot
+void MainWindow::printMain()
+{
+#ifdef DEBUG
+  cout << "debug: MainWindow::printMain called" << endl;
+#endif
+
+  QPrinter printer(QPrinter::ScreenResolution);
+  //QPrinter printer(QPrinter::HighResolution);
+  printer.setOrientation(QPrinter::Landscape);
+  printer.setResolution((int)(printer.resolution()*1.3));
+  
+  QPrintDialog *dlg = new QPrintDialog(&printer, this);
+    
+  if (dlg->exec() != QDialog::Accepted)
+    return;
+  
+  
+  this->render( &printer );
+  
+  statusBar()->showMessage(tr("Ready"), 4000);
+
+} // end printMain()
 
 // slot
 void MainWindow::save()

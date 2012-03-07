@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <02 Mar 12 15:41:44 flechsig>  */
+/*  Time-stamp: <07 Mar 12 13:52:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -78,6 +78,7 @@ private slots:
     void openBeamline(); // UF
     void poButtonslot();
     void print();
+    void printMain();
     void save();
     void saveas();
     
@@ -268,6 +269,7 @@ private:
     QAction *saveAct;
     QAction *saveasAct;
     QAction *printAct;
+    QAction *printMainAct;
     QAction *undoAct;
     QAction *aboutAct;
     QAction *aboutQtAct;

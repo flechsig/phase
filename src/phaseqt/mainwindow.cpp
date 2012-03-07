@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <05 Mar 12 16:17:20 flechsig> 
+//  Time-stamp: <07 Mar 12 13:57:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -98,8 +98,13 @@ void MainWindow::createActions()
 
     printAct = new QAction(QIcon(":/images/print.png"), tr("&Print..."), this);
     printAct->setShortcuts(QKeySequence::Print);
-    printAct->setStatusTip(tr("Print the current beamline"));
+    printAct->setStatusTip(tr("Print the graphics output"));
     connect(printAct, SIGNAL(triggered()), this, SLOT(print()));
+
+    printMainAct = new QAction(QIcon(":/images/print.png"), tr("Print Mainwindow..."), this);
+    //printMainAct->setShortcuts(QKeySequence::PrintMain);
+    printMainAct->setStatusTip(tr("Print the PHASE Qt window"));
+    connect(printMainAct, SIGNAL(triggered()), this, SLOT(printMain()));
 
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
@@ -619,6 +624,7 @@ void MainWindow::createMenus()
     fileMenu->addAction(saveAct);
     fileMenu->addAction(saveasAct);
     fileMenu->addAction(printAct);
+    fileMenu->addAction(printMainAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 
@@ -1180,6 +1186,7 @@ void MainWindow::createToolBars()
     fileToolBar->addAction(openBeamlineAct);
     fileToolBar->addAction(saveAct);
     fileToolBar->addAction(printAct);
+    fileToolBar->addAction(printMainAct);
 
     editToolBar = addToolBar(tr("Edit"));
     //    editToolBar->addAction(undoAct);
