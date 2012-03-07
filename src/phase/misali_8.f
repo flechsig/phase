@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/project/phase/src/phase/misali_8.f
 c$$$ Date      : <07 Mar 12 11:13:47 flechsig> 
-c$$$ Time-stamp: <07 Mar 12 11:14:03 flechsig> 
+c$$$ Time-stamp: <07 Mar 12 11:15:49 flechsig> 
 
 c$$$
 c$$$ $Source$ 
@@ -29,8 +29,9 @@ c----------- rotation around w-axis
 
 c----------- translation
 
-	dz=dz+a00     ! UF not good we change input variable
-	call misali4_8(anew,anew,dw,dl,dz)
+c	dz=dz+a00     ! UF 7.3.2011 - not good we change input variable
+	dz1=dz+a00
+	call misali4_8(anew,anew,dw,dl,dz1)
 
 	return
 	end
