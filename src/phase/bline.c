@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 Mar 12 12:02:16 flechsig>  */
+/*   Time-stamp: <09 Mar 12 15:19:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -32,16 +32,33 @@ extern const char *global_rundir;
 void BuildElement(int elnumber, struct BeamlineType *bl)  
 {
   struct ElementType *listpt;
-  struct TmpMapType *ltp;
-  int imodus;
- 
+  struct TmpMapType  *ltp;
+  int imodus, mdim, msiz;
+  double *c;
+  
 #ifdef DEBUG
   printf("debug: BuildElement called: elnumber: %d,  elementOK: %X\n", elnumber, 10); 
 #endif
 
+#ifndef SEVEN_ORDER
+  printf("BuildElement works only for SEVEN_ORDER mode- return\n"); 
+  return;
+#endif
+
+  if (bl->BLOptions.REDUCE_maps != 0)
+    {
+      printf("BuildElement not available for REDUCE_maps- return\n"); 
+      return;
+    }
+
   if ((bl->elementzahl < 1) || (elnumber > bl->elementzahl)) return;
+
   listpt= &bl->ElementList[elnumber];
-  if (listpt->ElementOK & elementOK) return;
+  if (listpt->ElementOK & elementOK) 
+    {
+      printf("BuildElement %d is alredy OK- return\n", elnumber);
+      return;
+    }  
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
@@ -51,18 +68,73 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
   if (listpt->tpe == NULL) listpt->tpe= XMALLOC(struct TmpMapType, 1);
 
   ltp= listpt->tpe;
+  msiz= 330* 330* sizeof(double);
+  c= XMALLOC(double, (330 * 330));
+
   imodus= 1;
-
   fgmapidp_8(&bl->BLOptions.epsilon, 
-		  listpt->wc, listpt->xlc, 
-		  listpt->ypc1, listpt->zpc1, ltp->ypc, ltp->zpc, listpt->dypc, listpt->dzpc,
-		  &listpt->xlm, 
-		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
-		  &listpt->mir, &listpt->geo,
-		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	     listpt->wc, listpt->xlc, 
+	     listpt->ypc1, listpt->zpc1, ltp->ypc, ltp->zpc, listpt->dypc, listpt->dzpc,
+	     &listpt->xlm, 
+	     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+	     ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
+	     &listpt->mir, &listpt->geo,
+	     &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+  make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
+		listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 
+  if (listpt->GDat.azimut & 1) // horizontal
+    {
+      memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
+      memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
+      GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
+      GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap); 
+      extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
+		 listpt->dypc, listpt->dzpc, 
+		 &bl->BLOptions.ifl.iord);
+      GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
+		(double *)listpt->wc, (double *)listpt->xlc, 
+		(double *)bl->lmap, &bl->BLOptions.ifl.iord);
+      GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
+	       &bl->BLOptions.ifl.iord, 0);
+    } /* end hor */
+
+  printf("BuildElement %d source to image map and matrix created\n", elnumber); 
+  if (bl->BLOptions.SourcetoImage != 1) 
+    {	
+      imodus= 2; 
+      fgmapidp_8(&bl->BLOptions.epsilon,
+		 listpt->wc, listpt->xlc,
+		 listpt->ypc1, listpt->zpc1, ltp->ypc, ltp->zpc, listpt->dypc, listpt->dzpc,
+		 &listpt->xlm,
+		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
+		 ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
+		 &listpt->mir, &listpt->geo,
+		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+      make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
+		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
+
+      if (listpt->GDat.azimut & 1) // horizontal
+	{
+	  memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
+	  memcpy(listpt->M_ItoS, bl->lmap, msiz); 
+	  GlueLeft((double *)listpt->M_ItoS, (double *)c); 
+	  GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap);
+	  extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
+		     listpt->dypc, listpt->dzpc, 
+		     &bl->BLOptions.ifl.iord); 
+	  GlueWcXlc((double *)listpt->wc, (double *)listpt->xlc, 
+		    (double *)listpt->wc, (double *)listpt->xlc, 
+		    (double *)bl->lmap, &bl->BLOptions.ifl.iord);
+	  GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
+		   &bl->BLOptions.ifl.iord, 0);
+	} /* end hor */
+
+      printf("BuildElement %d image to source map and matrix created\n", elnumber);
+    } /* end image to source */
+  listpt->ElementOK |= elementOK;
   XFREE(listpt->tpe);
+  XFREE(c);
 } /* BuildElement */
 
 /****************************************************************/
@@ -115,7 +187,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	}             /* map ist OK */
       else
 	{
-	  printf("\nBuildBeamline: element %d already OK- keep matrix\n\n");
+	  printf("\nBuildBeamline: element %d already OK- keep matrix\n\n", elcounter);
 	} /* end if (listpt->ElementOK == 0) */
       elcounter++; listpt++; 
     } /* Schleife ueber alle Elemente fertig */
@@ -809,6 +881,7 @@ void MakeHorMaps(struct BeamlineType *bl)
   create_hormap((double *)bl->rmap, &iord, &idefl); 
   idefl= 2;                                         /*  left hand deflection (lh)  */
   create_hormap((double *)bl->lmap, &iord, &idefl); 
+  bl->hormapsloaded= bl->BLOptions.ifl.iord;
 } /* end MakeHorMaps */
 
 
