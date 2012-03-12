@@ -407,11 +407,16 @@ c---------------------------------------------------------------
      &                         dfdw(n1,n2,n3,n4)
               dfdl(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                         dfdl(n1,n2,n3,n4)
+              dfdww(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         dfdww(n1,n2,n3,n4)
+              dfdwl(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         dfdwl(n1,n2,n3,n4)
+              dfdll(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         dfdll(n1,n2,n3,n4)
               xlm.xlen1c(n1,n2,n3,n4)=((-1)**(n2+n3))*
      &                         xlm.xlen1c(n1,n2,n3,n4)
               xlm.xlen2c(n1,n2,n3,n4)=((-1)**(n2+n3))*
      &                         xlm.xlen2c(n1,n2,n3,n4)
-
              enddo
             enddo
            enddo

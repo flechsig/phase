@@ -127,6 +127,37 @@ c---- routine wird nur gerufen wenn imodus = 2 (PO)
        fact2=fact*dsqrt(pi_loc)/dsqrt(2.0d0)
        fact3=2.d0/pi_loc
      
+c------------- change signs of ypc1 and zpc1
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              ypc1(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        ypc1(n1,n2,n3,n4)
+              zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        zpc1(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
+
+      if(inorm2.eq.4)then
+c------------- change signs of wc and xlc 
+        do n1=0,iord
+         do n2=0,iord-n1
+          do n3=0,iord-n1-n2
+           do n4=0,iord-n1-n2-n3
+             wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                      wc(n1,n2,n3,n4)
+             xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                       xlc(n1,n2,n3,n4)
+           enddo
+          enddo
+         enddo
+        enddo
+
+      endif
+
 c------------------------------------------------------------------	
 c	factor 0)
 c------------------------------------------------------------------
@@ -146,31 +177,33 @@ c------------------------------------------------------------------
 c---------------------------------------------------
 c	factor 1) 
 c---------------------------------------------------	
-c A c H T U N G: nochmal checken
-c------------- change signs of ypc1 and zpc1
+	if(inorm1.eq.0)then
+
+	call Tay_deri_4(ypc1,f1,3,1,iord)
+	call Tay_deri_4(zpc1,f2,4,1,iord)
+	call Tay_deri_4(ypc1,f3,4,1,iord)
+	call Tay_deri_4(zpc1,f4,3,1,iord)
+
+c------------- change signs of f1, f2, f3, f4 
           do n1=0,iord
            do n2=0,iord-n1
             do n3=0,iord-n1-n2
              do n4=0,iord-n1-n2-n3
-              ypc1(n1,n2,n3,n4)=((-1)**(n2+n3))*
-     &                        ypc1(n1,n2,n3,n4)
-              zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                        zpc1(n1,n2,n3,n4)
+              f1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        f1(n1,n2,n3,n4)
+              f2(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        f2(n1,n2,n3,n4)
+              f3(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        f3(n1,n2,n3,n4)
+              f4(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        f4(n1,n2,n3,n4)
             enddo
            enddo
           enddo
         enddo
 
-	if(inorm1.eq.0)then
-
-	call Tay_deri_4(ypc1,f1,3,1,iord)
-	call Tay_deri_4(zpc1,f2,4,1,iord)
-	call Tay_mult_4(f1,f2,f12,iord)
-	
-	call Tay_deri_4(ypc1,f1,4,1,iord)
-	call Tay_deri_4(zpc1,f2,3,1,iord)
-	call Tay_mult_4(f1,f2,f34,iord)
-
+        call Tay_mult_4(f1,f2,f12,iord)
+        call Tay_mult_4(f3,f4,f34,iord)
 	call Tay_const_4(f34,-1.d0,iord)
 	call Tay_sum_4(f12,f34,fdetphc,iord)
 
@@ -191,20 +224,6 @@ c------------- change signs of ypc1 and zpc1
 		
 	endif
 	
-c------------- change signs of ypc1 and zpc1 back
-          do n1=0,iord
-           do n2=0,iord-n1
-            do n3=0,iord-n1-n2
-             do n4=0,iord-n1-n2-n3
-              ypc1(n1,n2,n3,n4)=((-1)**(n2+n3))*
-     &                        ypc1(n1,n2,n3,n4)
-              zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                        zpc1(n1,n2,n3,n4)
-            enddo
-           enddo
-          enddo
-        enddo
-
 c	bei diesem Faktor braucht man jetzt nur noch:
 c	- Taylorreihe berechnen
 c	- Absolutbetrag berechnen
@@ -229,11 +248,29 @@ c-----------------------------
 	  else
 	   call Tay_deri_4(ypc1,f1,3,1,iord)
 	   call Tay_deri_4(zpc1,f2,4,1,iord)
-	   call Tay_mult_4(f1,f2,f12,iord)
+	   call Tay_deri_4(ypc1,f3,4,1,iord)
+	   call Tay_deri_4(zpc1,f4,3,1,iord)
 
-	   call Tay_deri_4(ypc1,f1,4,1,iord)
-	   call Tay_deri_4(zpc1,f2,3,1,iord)
-	   call Tay_mult_4(f1,f2,f34,iord)
+c------------- change signs of f1, f2, f3, f4 
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              f1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        f1(n1,n2,n3,n4)
+              f2(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        f2(n1,n2,n3,n4)
+              f3(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        f3(n1,n2,n3,n4)
+              f4(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        f4(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
+
+           call Tay_mult_4(f1,f2,f12,iord)
+	   call Tay_mult_4(f3,f4,f34,iord)
 	   call Tay_const_4(f34,-1.d0,iord)
 	   call Tay_sum_4(f12,f34,f1,iord)
 	  endif
@@ -259,6 +296,7 @@ c-----------------------------
 		
 	endif
 
+c hier haben wir die Variablen schon in den endgueltigen Parametern y, z, dy, dz
 c----------------------------
 	if(inorm2.eq.2)then
 c----------------------------
@@ -348,7 +386,10 @@ c	dfdw,dfdl		!sollten null sein
 c	d2fdw2,d2fdwdl,d2fdl2
 c	d3fdw3	
 c	a0, b0, c0, d0 are functions of the six variables w, l, y, z, yp, zp 
-
+c
+c       in the following we use old coordinate system 
+c       as in fgmapidp_8 during map evaluation
+c
 c---------- get prefactors as of SAN Diego paper
 	   do i=0,iord
 	    do j=0,iord-i
@@ -387,38 +428,10 @@ c------------- replace yp and zp
 
 c------------- get partial derivatives in variables (y,z,dy,dz)
 c------------- replace w and l with Taylor series in y,z,dy,dz
-c------------- change signs of wc and xlc 
-          do n1=0,iord
-           do n2=0,iord-n1
-            do n3=0,iord-n1-n2
-             do n4=0,iord-n1-n2-n3
-              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                        wc(n1,n2,n3,n4)
-              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                         xlc(n1,n2,n3,n4)
-            enddo
-           enddo
-          enddo
-        enddo
 
         call replace_wl_in_ypzp(au,au,wc,xlc,av,av,1,iord)
         call replace_wl_in_ypzp(cu,cu,wc,xlc,cv,cv,1,iord)
         call replace_wl_in_ypzp(du,du,wc,xlc,dv,dv,1,iord)
-
-c A C H T U N G nochmal checken
-c--------- change signs back to old values
-          do n1=0,iord
-           do n2=0,iord-n1
-            do n3=0,iord-n1-n2
-             do n4=0,iord-n1-n2-n3
-              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                        wc(n1,n2,n3,n4)
-              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
-     &                         xlc(n1,n2,n3,n4)
-            enddo
-           enddo
-          enddo
-        enddo
 
 c-------------------------------
 c       av*l**2+cv*w**2+dv*w**3
@@ -449,9 +462,56 @@ c       jetzt die w-abhängigen Terme, Achtung der Term fact steckt scon im l-ab
 	call Tay_copy_4(cv,fdet1phcb,iord)	! w**2 Term
         call tay_const_4(fdet1phcb,1.d0/fact1,iord)
 
+c------------- change signs of results for inorm2 = 4
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              fdet1phc(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        fdet1phc(n1,n2,n3,n4)
+              fdet1phca(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        fdet1phca(n1,n2,n3,n4)
+              fdet1phcb(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        fdet1phcb(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
+
 c	Das Integral wird erst in fywert berechnet
 
 	endif		! inorm2 = 4
+
+        if(inorm2.eq.4)then
+c--------- change signs of wc, xlc back 
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              wc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        wc(n1,n2,n3,n4)
+              xlc(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                         xlc(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
+
+        endif
+
+c------------- change signs of ypc1 and zpc1 back
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              ypc1(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                        ypc1(n1,n2,n3,n4)
+              zpc1(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
+     &                        zpc1(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+        enddo
 
 	return
 	end

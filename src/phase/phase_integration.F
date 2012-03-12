@@ -524,9 +524,8 @@ c-------------------------------------------------------------------------
           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0    
           fd1pha=fd1pha+m4.fdt1phrrca(ii)*var0
           fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0
-         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
-         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
-
+          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
+          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
           var0=var0*dyii
         enddo
 
@@ -538,7 +537,6 @@ c-------------------------------------------------------------------------
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
 
-c        write(6,*)fdph,fd1ph,fd1pha,fd1phb
 c----------------------------------------
 
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
@@ -569,17 +567,16 @@ c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 	 
 c---------------------------------------------------------------------
         if(ifl.inorm2.eq.1)ff=fdph
-        if(ifl.inorm2.eq.20)ff=fdph*fd1pha*fd1phb
+        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/ra.xlam_test
+        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/ra.xlam_test
         if(ifl.inorm2.eq.21)then
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
-c          write(6,*)'======',fd1pha,fd1phb
         endif
-
-!        if(ifl.inorm2.eq.2)ff=fdph*fd1ph
-        if(ifl.inorm2.eq.3)ff=fdph*fd1ph
+        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/ra.xlam_test
         if(ifl.inorm2.eq.31)then
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph)))
         endif
+
         if(ifl.inorm2.eq.4)then
 
         iord_loc=7
@@ -588,7 +585,6 @@ c       fd1ph aus fd1pha und fd1phb berechnen
 
 c=================== A C H T U N G =================================
         ratio0=1.d-1
-
 c       später als Parameter übergeben
 
 c       fd1pha is 3rd order, 
@@ -596,7 +592,8 @@ c       fd1phb is 2nd order term in w
 c       fd1ph  is 2nd order term in l
 
         if(fd1phb.gt.1.d-50)then
-        ratio=fd1pha/fd1phb
+        ratio=dabs(fd1pha/fd1phb)
+c         write(6,*)ratio
         else
         write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
         endif
@@ -682,8 +679,6 @@ c        if(ifl.inorm2.eq.4)write(6,*)'4 ',ff
 c        if(ifl.inorm2.eq.20)write(6,*)'20 ',ff
 c        if(ifl.inorm2.eq.21)write(6,*)'21 ',ff
 
-c for comparison with fkoe
-c        ff=ff*cdexp(cs.sqrtm1*cs.pi)
 	if(ifl.ispline.ge.0)then
                 sr.densy=sr.densy*ff
                 sr.densz=sr.densz*ff
