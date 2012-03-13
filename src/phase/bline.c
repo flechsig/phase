@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 Mar 12 15:19:55 flechsig>  */
+/*   Time-stamp: <13 Mar 12 17:09:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -37,7 +37,7 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
   double *c;
   
 #ifdef DEBUG
-  printf("debug: BuildElement called: elnumber: %d,  elementOK: %X\n", elnumber, 10); 
+  printf("debug: %s BuildElement called: elnumber: %d\n", __FILE__, elnumber); 
 #endif
 
 #ifndef SEVEN_ORDER
@@ -61,7 +61,7 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
     }  
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
+	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, elnumber);    
   DefGeometryC(&listpt->GDat, &listpt->geo);  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
   
@@ -164,8 +164,6 @@ void BuildBeamline(struct BeamlineType *bl)
       return;  /* nothing to do */
     }
 
-
-
   /* 1st loop */  
   elcounter= 1; 
   listpt= bl->ElementList;  
@@ -174,7 +172,7 @@ void BuildBeamline(struct BeamlineType *bl)
       if (listpt->ElementOK == 0)  /* element rebuild */
 	{
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
+		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter- 1));    
 	  DefGeometryC(&listpt->GDat, &listpt->geo);  
 	  MakeMapandMatrix(listpt, bl); 
 	  	  
@@ -424,7 +422,8 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
          { 
             if ((listpt->ElementOK & elementOK) == 0)  /* element rebuild */
             {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign);    
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+			 bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter-1));    
 	      
 	      /* fuer dejustierung */
 	      /*     WriteMKos(&listpt->mir, "oldmkos.dat"); */
@@ -2311,7 +2310,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
    this is required for the optimization and probably for idl
 */
 void DefMirrorC(struct mdatset *x, struct mirrortype *a, 
-		int etype, double theta, int lREDUCE_maps, int withAlign)  
+		int etype, double theta, int lREDUCE_maps, int withAlign, int elindex)  
 {
   double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
@@ -2363,11 +2362,11 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOEPM:               /* plane mirror      */
     case kEOEPG:               /* plane grating     */
     case kEOEPGV:              /* plane VLS grating */
-      printf("DefMirrorC: flat shape ");
+      printf("DefMirrorC: elindex: %d flat shape ", elindex);
       break;  /* end plane */
 
     case kEOESlit:
-      printf("DefMirrorC: slit- geometry and element data are ignored - ");
+      printf("DefMirrorC: elindex: %d slit- geometry and element data are ignored - ", elindex);
       printf("fill dummy entries from toroid\n"); 
     case kEOEDrift:
       printf("DefMirrorC: drift- geometry and element data are ignored - ");
@@ -2635,7 +2634,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("            without misalignment\n");
 #endif
 
-#ifdef DEBUG2
+#ifdef DEBUG
   printf("DEBUG: end defmirrorc\n");
 #endif
 } /* end defmirrorc */

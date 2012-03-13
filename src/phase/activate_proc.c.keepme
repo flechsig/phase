@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <07 Mar 12 10:35:41 flechsig>  */
+/*   Time-stamp: <13 Mar 12 17:11:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -387,7 +387,7 @@ void activate_proc(w, tag, reason)
     bl= &Beamline;   
     if ((bl->position <= bl->elementzahl) && (bl->position != 0)) 
       {
-	bl->ElementList[(bl->position)- 1].MDat.Art= 
+	bl->ElementList[bl->position- 1].MDat.Art= 
 	i= GetOElement(&PHASESet,	/*  */
 		    &bl->ElementList[(bl->position)- 1].MDat,
 		    &bl->ElementList[(bl->position)- 1].GDat);  
@@ -398,7 +398,7 @@ void activate_proc(w, tag, reason)
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
 		   &bl->ElementList[(bl->position)- 1].mir, i, 
 		   bl->ElementList[(bl->position)- 1].GDat.theta0,
-		   bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign); 
+		   bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (bl->position- 1)); 
 	/*mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 	  PHASESet.elementpckname);*/
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 

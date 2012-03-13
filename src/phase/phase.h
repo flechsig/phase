@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <07 Mar 12 10:26:00 flechsig>  */
+/*   Time-stamp: <13 Mar 12 16:59:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -787,7 +787,7 @@ void
   create_hormap(),
   DefGeometryC(struct gdatset *, struct geometrytype *),
   DefGeometryCM(double, struct gdatset *, struct geometrytype *),
-  DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int),  
+  DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),
   ExpandFileNames(),
   extractamp(),

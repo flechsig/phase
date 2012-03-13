@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Mar 12 15:15:08 flechsig> 
+//  Time-stamp: <13 Mar 12 08:51:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -68,7 +68,7 @@ void MainWindow::activateProc(const QString &action)
       if (myparent->myBeamline()->hormapsloaded != myparent->myBeamline()->BLOptions.ifl.iord) 
 	MakeHorMaps(myparent->myBeamline());
       
-      qDebug() << "create maps in parallel threads";
+      qDebug() << __FILE__ << "asynMapAct: create maps in parallel threads";
 
       // *future= QtConcurrent::map(vector, my_funcv);
       // to pass additional parameters we have to use boost or std::tr1
