@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <13 Mar 12 17:09:41 flechsig>  */
+/*   Time-stamp: <13 Mar 12 17:22:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -29,7 +29,7 @@
 extern const char *global_rundir;
 
 /* builds one element */
-void BuildElement(int elnumber, struct BeamlineType *bl)  
+void BuildElement(int elindex, struct BeamlineType *bl)  
 {
   struct ElementType *listpt;
   struct TmpMapType  *ltp;
@@ -37,7 +37,7 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
   double *c;
   
 #ifdef DEBUG
-  printf("debug: %s BuildElement called: elnumber: %d\n", __FILE__, elnumber); 
+  printf("debug: %s BuildElement called: elindex: %d\n", __FILE__, elindex); 
 #endif
 
 #ifndef SEVEN_ORDER
@@ -51,17 +51,17 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
       return;
     }
 
-  if ((bl->elementzahl < 1) || (elnumber > bl->elementzahl)) return;
+  if ((bl->elementzahl < 1) || (elindex > bl->elementzahl)) return;
 
-  listpt= &bl->ElementList[elnumber];
+  listpt= &bl->ElementList[elindex];
   if (listpt->ElementOK & elementOK) 
     {
-      printf("BuildElement %d is alredy OK- return\n", elnumber);
+      printf("BuildElement %d is alredy OK- return\n", elindex);
       return;
     }  
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, elnumber);    
+	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, elindex);    
   DefGeometryC(&listpt->GDat, &listpt->geo);  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
   
@@ -99,7 +99,7 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
 	       &bl->BLOptions.ifl.iord, 0);
     } /* end hor */
 
-  printf("BuildElement %d source to image map and matrix created\n", elnumber); 
+  printf("BuildElement %d source to image map and matrix created\n", elindex); 
   if (bl->BLOptions.SourcetoImage != 1) 
     {	
       imodus= 2; 
@@ -130,7 +130,7 @@ void BuildElement(int elnumber, struct BeamlineType *bl)
 		   &bl->BLOptions.ifl.iord, 0);
 	} /* end hor */
 
-      printf("BuildElement %d image to source map and matrix created\n", elnumber);
+      printf("BuildElement %d image to source map and matrix created\n", elindex);
     } /* end image to source */
   listpt->ElementOK |= elementOK;
   XFREE(listpt->tpe);
@@ -2362,7 +2362,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOEPM:               /* plane mirror      */
     case kEOEPG:               /* plane grating     */
     case kEOEPGV:              /* plane VLS grating */
-      printf("DefMirrorC: elindex: %d flat shape ", elindex);
+      printf("DefMirrorC: elindex: %d flat shape\n", elindex);
       break;  /* end plane */
 
     case kEOESlit:
@@ -2635,7 +2635,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #endif
 
 #ifdef DEBUG
-  printf("DEBUG: end defmirrorc\n");
+  printf("DEBUG: DefMirrorC: elindex: %d -- done\n", elindex);
 #endif
 } /* end defmirrorc */
 
