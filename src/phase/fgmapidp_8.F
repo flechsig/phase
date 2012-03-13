@@ -424,7 +424,7 @@ c---------------------------------------------------------------
 
         else
 #ifdef DEBUG
-          write(*,*)'fgmapidp: make map for source to image iord=',iord
+          write(*,*)'fgmapidp: made map for source to image iord=',iord
 #endif
         endif   ! imodus
 
