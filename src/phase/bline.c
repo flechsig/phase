@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <13 Mar 12 17:22:21 flechsig>  */
+/*   Time-stamp: <13 Mar 12 17:46:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -51,7 +51,7 @@ void BuildElement(int elindex, struct BeamlineType *bl)
       return;
     }
 
-  if ((bl->elementzahl < 1) || (elindex > bl->elementzahl)) return;
+  if ((bl->elementzahl < 1) || (elindex >= bl->elementzahl)) return;
 
   listpt= &bl->ElementList[elindex];
   if (listpt->ElementOK & elementOK) 
@@ -98,8 +98,9 @@ void BuildElement(int elindex, struct BeamlineType *bl)
       GlueXlen(&listpt->xlm, &listpt->xlm, (double *)bl->lmap, 
 	       &bl->BLOptions.ifl.iord, 0);
     } /* end hor */
-
-  printf("BuildElement %d source to image map and matrix created\n", elindex); 
+#ifdef DEBUG
+  printf("DEBUG: BuildElement elindex: %d source to image map and matrix created\n", elindex); 
+#endif
   if (bl->BLOptions.SourcetoImage != 1) 
     {	
       imodus= 2; 
@@ -2279,8 +2280,10 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 /* modification: 19 Feb 98 11:08:59 flechsig */
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
-  printf("DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
+#ifdef DEBUG1
+  printf("debug: DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
 	 alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
+#endif
   if ((x->iflag) == 1)
     {
       radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));   
@@ -2374,7 +2377,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* l    */
     case kEOEVLSG:  
-      printf("DefMirrorC: generic toroidal shape \n");                 
+      printf("DefMirrorC: elindex: %d generic toroidal shape \n", elindex);                 
       if (fabs(rho) > small) 
 	{
 	  dp[2 * l]= 0.5/ rho;                		             /* 0,2 */
@@ -2635,7 +2638,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #endif
 
 #ifdef DEBUG
-  printf("DEBUG: DefMirrorC: elindex: %d -- done\n", elindex);
+  printf("DEBUG: DefMirrorC: elindex: %d --> done\n", elindex);
 #endif
 } /* end defmirrorc */
 
@@ -2673,8 +2676,10 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
 /* modification: 19 Feb 98 11:08:59 flechsig */
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
+#ifdef DEBUG
    printf("DefGeometryCM: alpha: %f, beta: %f, lambda= %f nm ==> correct?\n",
 	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6);
+#endif
    if ((x->iflag) == 1)
      {
 	radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));
