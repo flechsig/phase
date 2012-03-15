@@ -195,7 +195,8 @@ c-----------------------------------------------------------
        if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
      &                        (src.isrctype.eq.6))then
 c-----------------------------------------------------------
-	do i=1,ianzz
+c !$OMP PARALLEL DO PRIVATE(i, ra)
+	do i=1,ianzz    
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
@@ -311,7 +312,7 @@ c*******************************************************
 c	Erstellen eines nochmals reduzierten 
 c       Konstantensatzes
 c*******************************************************
-
+      
 	  if(xi.distfocz.gt.1.e-10)then
 	    dzii=dzi+ra.ri.zi/xi.distfocz
 	    else
@@ -393,7 +394,7 @@ c-------------------------------------------------------------------------
         write(6,*)' start loop ueber y'
 #endif
 
-	do i=1,ianzy
+        do i=1,ianzy
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	  
@@ -507,7 +508,9 @@ c      dimension p1122a(0:7,0:7,0:7,0:7)
 	ra.oe.xl=0.
 
 c-------------------------------------------------------------------------
-c	diese Schleife parallelisieren
+c JB: diese Schleife parallelisieren
+c SG: besser nicht, diese Schleife benoetigt kaum Rechenzeit
+c     und Thread-Scheduling kostet viel mehr Zeit als potentieller Gewinn
 c-------------------------------------------------------------------------
         
 	var0=1.
