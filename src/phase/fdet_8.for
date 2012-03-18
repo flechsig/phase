@@ -418,7 +418,7 @@ c---------- coordinate transformation in variables w and l
 	call Tay_const_6(T6b,-1.d0,iord)
 
         call Tay_sum_6(T6b,c0,ct,iord)  ! ct
-c       call Tay_copy_6(c0,ct,iord)  ! ct falls keine Koordinatentransformation
+c        call Tay_copy_6(c0,ct,iord)  ! ct falls keine Koordinatentransformation
 
 c------------- get partial derivatives in variables (w,l,y,z)
 c------------- replace yp and zp
@@ -436,21 +436,6 @@ c------------- replace w and l with Taylor series in y,z,dy,dz
 c-------------------------------
 c       av*l**2+cv*w**2+dv*w**3
 c-------------------------------
-c-------  Achtung: ohne Koordinatetransfomation ist alles ok
-1234      Format('dfdww und cv ',4i4,2d15.5)
-1235      Format('dfdll und av ',4i4,2d15.5)
-          do i=0,iord
-           do j=0,iord-i
-            do k=0,iord-i-j
-             do l=0,iord-i-j-k
-c            write(6,1234)i,j,k,l,dfdww(i,j,k,l),cv(i,j,k,l)*2.d0
-c            write(6,1235)i,j,k,l,dfdll(i,j,k,l),av(i,j,k,l)*2.d0
-c            write(6,*)' '
-             enddo
-            enddo
-           enddo
-          enddo
-c-------------------- end check
 
 c-------------- sichern des quadratischen Terms in l
          call Tay_copy_4(av,fdet1phc,iord)
