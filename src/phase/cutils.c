@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <24 Jan 12 15:36:35 flechsig>  */
+/*   Time-stamp: <2012-03-18 21:47:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -99,14 +99,12 @@ int CheckFileHeader(FILE *f, char *header, int *version)              /* bei Gle
   char headerbuffer[50];
   int rcode, myversion, headerfields;
   
-  fgets(headerbuffer, 50, f);
-  /* UF 10.6.11  headerfields= sscanf(headerbuffer, "%s %d\n", &headerread, &myversion); */
+  fgets(headerbuffer, 50, f);                                         /* read one line */
   headerfields= sscanf(headerbuffer, "%s %d\n", headerread, &myversion); 
   rcode= strncmp(header, headerread, strlen(header));
   if (rcode != 0)
-    fprintf(stderr,"error: fileheader: %s != %s\n", headerread, header);
-  /*  *version= myversion;*/
-
+    fprintf(stderr, "error: fileheader: %s != %s\n", headerread, header);
+ 
   *version= (headerfields == 2) ? myversion : 0;
 
 #ifdef DEBUG
@@ -114,8 +112,9 @@ int CheckFileHeader(FILE *f, char *header, int *version)              /* bei Gle
   printf("     header: %s read: %s \n", header, headerread);
   printf("     headerfields: %d, version: %d\n", headerfields, *version);
 #endif
+
   return rcode;
-}
+} /* CheckFileHeader */
 
 void CheckUser(char *logname, char *progname)   
 {    
