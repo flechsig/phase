@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Mar 12 09:02:10 flechsig>  */
+/*   Time-stamp: <19 Mar 12 09:21:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1637,6 +1637,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     use (old) REDUCE maps (up to 4th order) \n", op->REDUCE_maps);              /* new sep 2011 */
   
 /* end options section */ 
+
+   fprintf(f, "\nFILENAMES\n");
+   /*fprintf(f,"%20d     (1) RT Source to Image \n", op->SourcetoImage); */ 
+
 
    fprintf(f,"\n*** end of file ***\n");    
    fclose(f); 

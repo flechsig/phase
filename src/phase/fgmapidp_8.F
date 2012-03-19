@@ -8,7 +8,7 @@ c-------------------------------------------------------------
      &             wc,xlc,ypc1,zpc1,ypc,zpc,dypc,dzpc,xlm,
      &             opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
      &		   dfdwidlj,dfdww,dfdwl,dfdll,
-     &             am,g,iord,imodus,iplmode)
+     &             am,g,iord,imodus,iplmode,elindex)
 c--------------------------------------------------------------------
 c
 c       this routine evaluates
@@ -424,7 +424,7 @@ c---------------------------------------------------------------
 
         else
 #ifdef DEBUG
-          write(*,*)'fgmapidp: made map for source to image iord=',iord
+          write(*,*)'fgmapidp: S2Imap done  iord=',iord,' elindex=',elindex
 #endif
         endif   ! imodus
 

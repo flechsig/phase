@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <13 Mar 12 16:59:53 flechsig>  */
+/*   Time-stamp: <19 Mar 12 09:08:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -670,6 +670,7 @@ struct BeamlineType
   double deltalambdafactor, xlen0;
   struct sources src;
   struct TmpMapType *tp;
+  struct PHASEset filenames;
 };
 
 struct optistruct
