@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-03-18 22:26:26 flechsig>  */
+/*   Time-stamp: <19 Mar 12 08:44:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1701,16 +1701,22 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    
    if((rcode= CheckFileHeader(f, Fg3PickFileHeader, &version)) != 0)   
      {
-       printf("ReadBLFile: wrong file header- return\n");
+       beep(10);
+       printf("########################################################\n");
+       printf("ReadBLFile: wrong header- can not read this file- return\n");
+       printf("########################################################\n");
        fclose(f); 
        return -1;
      }
 
-   printf("ReadBLFile: file version: %d\n", version);
+   printf("ReadBLFile: file version: %d, (last version: %d)\n", version, thisversion);
 
    if(version > thisversion)   
      {
+       beep(10);
+       printf("###############################################################################\n");
        printf("ReadBLFile: can not read this file- it belongs to a newer PHASE version- return\n", version);
+       printf("###############################################################################\n");
        fclose(f); 
        return -1;
      }
