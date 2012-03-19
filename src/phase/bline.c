@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Mar 12 09:21:16 flechsig>  */
+/*   Time-stamp: <2012-03-19 21:31:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1293,6 +1293,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    struct ElementType 	       *listpt;   
    struct OptionsType          *op;    
    struct FileSourceType       *fp;
+   struct PHASEset             *pp;
 
    if ((f= fopen(fname, "w")) == NULL)
    {
@@ -1639,7 +1640,17 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /* end options section */ 
 
    fprintf(f, "\nFILENAMES\n");
-   /*fprintf(f,"%20d     (1) RT Source to Image \n", op->SourcetoImage); */ 
+   pp= (struct PHASEset *)&(bl->filenames);
+   /*
+   fprintf(f, "%s     Map name\n",             pp->mapname);
+   fprintf(f, "%s     Matrix name\n",          pp->matrixname);
+   fprintf(f, "%s     GO input\n",             pp->sourceraysname)
+   fprintf(f, "%s     PO/GO output\n",         pp->imageraysname);
+   fprintf(f, "%s     Minuit input\n",         pp->minname);
+   fprintf(f, "%s     Optimization input\n",   pp->optipckname);
+   fprintf(f, "%s     Optimization results\n", pp->opresname);
+    
+   */ 
 
 
    fprintf(f,"\n*** end of file ***\n");    
