@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Mar 12 08:53:23 flechsig>  */
+/*   Time-stamp: <19 Mar 12 09:02:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1654,7 +1654,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 /************************************************************************/
 {   
    FILE *f; 
-   int  rcode, i, version, thisversion= 20120317;
+   int  rcode, i, version, thisversion= 20120317;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -2109,13 +2109,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %d %[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
        if (version >= 20110902)
 	 fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
-       
-#ifdef DEBUG
-       /*    printf("   options read\n"); */
-#endif
-     } else rcode= -1;  /* data not found in file */     
- /* file ok */
+     } else rcode= -1;  /* end OPTIONS */     
 
+   if (version > 20120319)
+     {
+       if (SetFilePos(f, "FILENAMES"))
+	 {
+	 } else rcode= -1;  /* end FILENAMES */ 
+     } /* end FILENAMES */ 
+
+   /* all sections done */
    fclose(f);  
    return rcode;  
 }  /* end ReadBLFile */
