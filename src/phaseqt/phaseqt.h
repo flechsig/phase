@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <13 Mar 12 17:02:02 flechsig>  */
+/*  Time-stamp: <20 Mar 12 16:03:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -64,14 +64,14 @@ typedef QFutureWatcher <int> ElementWatcher;
 // our class inherits the structures from c like base classes
 // !! they are considered public !!
 // we should define member functions to access/modify them and not access the data directly
-class PhaseQt : public PHASEset, public BeamlineType 
+class PhaseQt : public BeamlineType 
 {
   //  char my_global_rundir[MaxPathLength];
 public:
   PhaseQt();   // constructor
   // add here member functions to access the structs PHASEset and BeamlineType
   // wrapper funktions I call my... and define them here
-int myeval(const int &);
+  int myeval(const int &);
   void buildBeamlineParallel();
   void buildElement(struct ElementType *);
   void initSet(const char *);
@@ -79,22 +79,22 @@ int myeval(const int &);
   void initBeamline();
   struct BeamlineType *myBeamline();          // function to return the pointer to the data
   struct OptionsType  *myOptions();
-  struct PHASEset     *myPHASEset(); 
+  
   void myAllocRTSource() { AllocRTSource(this); }
-  void myBatchMode(int cmode, int selected, int iord) { BatchMode(this, this, cmode, selected, iord); }
+  void myBatchMode(int cmode, int selected, int iord) { BatchMode(&(this->filenames), this, cmode, selected, iord); }
   void myBuildBeamline() { BuildBeamline(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 
     DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, -1); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
-  void myGetPHASE(char *name) { GetPHASE(this, name); }
+  void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt) { MakeMapandMatrix(listpt, this); }
-  void myMakeRTSource() { MakeRTSource(this, this);  }
+  void myMakeRTSource() { MakeRTSource(&(this->filenames), this);  }
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord) { 
-    return ProcComandLine(this, argc, argv, cmode, selected, iord); }
+    return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord); }
   void myPST() { PST(this); }
-  void myPutPHASE(char *name) { PutPHASE(this, name); }
+  void myPutPHASE(char *name) { PutPHASE(&(this->filenames), name); }
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
   void myReadCoefficientFile() { }
   void myReAllocResult(int newtype, int dim1, int dim2)   { ReAllocResult(this, newtype, dim1, dim2); }
