@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <02 Feb 12 15:23:30 flechsig>  */
+/*   Time-stamp: <20 Mar 12 17:41:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -33,19 +33,20 @@
 #include "phase_struct.h"
 #include "phase.h"
 #ifndef QTGUI
+
 #include "phaseX.h"
 #endif
 #include "rtrace.h"
 #include "version.h"
 
 /* Batchmodus */
-void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int selected, int iord)
+void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
 {
   struct PSDType     *PSDp;
   struct PSImageType *psip;
 
-  printf("BatchMode: datafilename  : %s\n", ps->beamlinename);
-  printf("BatchMode: resultfilename: %s\n", ps->imageraysname);
+  printf("BatchMode: datafilename  : %s\n", bl->filenames.beamlinename);
+  printf("BatchMode: resultfilename: %s\n", bl->filenames.imageraysname);
   /*  InitDataSets(&PHASESet, fname);  initialisiert auch Beamline */
   /* habe die Initialisierung hier extra */
 #ifdef LOGFILE 
@@ -56,12 +57,12 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
   bl->RTSource.SourceRays= NULL;
   bl->beamlineOK= 0;
   bl->tp= NULL;
-  ReadBLFile(ps->beamlinename, bl);
+  ReadBLFile(bl->filenames.beamlinename, bl);
 
   if (iord != -1)  bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
 
 #ifndef QTGUI
-  strncpy(ps->pssourcename, bl->src.so6.fsource6, MaxPathLength);
+  strncpy(bl->filenames.pssourcename, bl->src.so6.fsource6, MaxPathLength);
 #endif
   BuildBeamline(bl); 
   if (cmode == -1) cmode= bl->BLOptions.CalcMod;
@@ -70,18 +71,18 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
     {
     case 1:
       printf("BatchMode: Ray Tracing\n");
-      MakeRTSource(ps, bl); 
+      MakeRTSource(&(bl->filenames), bl); 
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       RayTracec(bl);
-      WriteRayFile(ps->imageraysname, &bl->RESULT.points,
+      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points,
 		   bl->RESULT.RESp);
       break;
     case 2:
       printf("BatchMode: Full Ray Tracing\n");
-      MakeRTSource(ps, bl); 
+      MakeRTSource(&(bl->filenames), bl); 
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       RayTraceFull(bl);
-      WriteRayFile(ps->imageraysname, &bl->RESULT.points,
+      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points,
 		   bl->RESULT.RESp); 
       break;
     
@@ -93,19 +94,16 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       PST(bl);
       PSDp= (struct PSDType *)bl->RESULT.RESp;
-      WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
-
-    
-
+      WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
       break;
 
     case 4:
       printf("BatchMode: Footprint at element %d\n", selected);
       bl->position= selected;
-      MakeRTSource(ps, bl);
+      MakeRTSource(&(bl->filenames), bl);
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       Footprint(bl, bl->position);
-      WriteRayFile(ps->imageraysname, &bl->RESULT.points,
+      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points,
 		   bl->RESULT.RESp);
       break;
 
@@ -120,7 +118,7 @@ void BatchMode(struct PHASEset *ps, struct BeamlineType *bl,  int cmode, int sel
       MPST(bl);
 
       PSDp= (struct PSDType *)bl->RESULT.RESp;
-      WritePsd(ps->imageraysname, PSDp, PSDp->iy, PSDp->iz);
+      WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 
       break;
 
@@ -344,7 +342,7 @@ int iindex(int el, int pos)
 } /* end iindex */
 
 
-void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpickname)   
+void InitDataSets(struct BeamlineType *bl, char *mainpickname)   
      /* initialisiert die globalen Variablen */
      /* last mod. Uwe 21.1.97 		*/
 {
@@ -352,12 +350,13 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
   CheckUser(logfilename, "Phase");                      /* user logfile  */
 #endif
 
-  if (GetPHASE(x, mainpickname) != 1)           /* filenamen */
+  if (GetPHASE(&bl->filenames, mainpickname) != 1)           /* filenamen */
     {  
-      InitPHASE(x);   				/* set default names */
-      PutPHASE(x, mainpickname);          	/* write names */   
+      InitPHASE(&bl->filenames);   				/* set default names */
+      PutPHASE(&bl->filenames, mainpickname);          	/* write names */   
     }
-  /* neu beamline pointer initialisieren 7.6.96*/
+
+    /* neu beamline pointer initialisieren 7.6.96*/
   bl->ElementList= NULL;                       /* 15.12.99 */
   bl->raysout    = NULL;
   bl->RTSource.SourceRays= NULL;
@@ -368,13 +367,13 @@ void InitDataSets(struct PHASEset *x, struct BeamlineType *bl, char *mainpicknam
   minitdatset(&MDefDat);
 #endif
 
-  ReadBLFile(x->beamlinename, bl);
+  ReadBLFile(bl->filenames.beamlinename, bl);
 #ifndef QTGUI
-  strncpy(x->pssourcename, bl->src.so6.fsource6, MaxPathLength);  
+  strncpy(bl->filenames.pssourcename, bl->src.so6.fsource6, MaxPathLength);  
 #endif
 #ifndef QTGUI
   grdatstruct.status= 0;
-  SetGrDatStruct(x->imageraysname, bl, &grdatstruct);  
+  SetGrDatStruct(bl->filenames.imageraysname, bl, &grdatstruct);  
 #endif
   /* PHASEgraf.c */
   /*   optistructure.fileliste= NULL;     */
@@ -510,16 +509,8 @@ void SetIndexField(int *field, int n,...)
 } /* end SetIndexField */
 
 
-
-
-
-
-
-
-
 #ifndef QTGUI
 void GeneratePrintDataFile(char *name)
-     /* last mod. Uwe 16.8.96 */
 {
   FILE *pdf;
   int i;
@@ -534,19 +525,23 @@ void GeneratePrintDataFile(char *name)
   fputs("\nInput Data \n", pdf);
   for (i= 0; i< 80; i++) fprintf(pdf,"*");  
 
+
   fprintf(pdf, "\n\nMain Data File (Version higher 0.902: %s\n\n", 
-	  PHASESet.beamlinename);
-  gpd(PHASESet.beamlinename, pdf);    
+	  Beamline.filenames.beamlinename);
+  gpd(Beamline.filenames.beamlinename, pdf);   
+ 
   for (i= 0; i< 80; i++) fprintf(pdf,"*");    
 
-  fprintf(pdf, "\n\nSource File: %s\n\n", PHASESet.sourcepckname);
-  gpd(PHASESet.sourcepckname, pdf);    
+  fprintf(pdf, "\n\nSource File: %s\n\n", Beamline.filenames.sourcepckname);
+  gpd(Beamline.filenames.sourcepckname, pdf);    
   for (i= 0; i< 80; i++) fprintf(pdf,"*");    
-  fprintf(pdf, "\n\nGeometry File: %s\n\n", PHASESet.geometrypckname);
-  gpd(PHASESet.geometrypckname, pdf); 
+  fprintf(pdf, "\n\nGeometry File: %s\n\n", Beamline.filenames.geometrypckname);
+  gpd(Beamline.filenames.geometrypckname, pdf); 
   for (i= 0; i< 80; i++) fprintf(pdf,"*");  
-  fprintf(pdf, "\n\n\n\nopt. Element File: %s\n\n", PHASESet.elementpckname);
-  gpd(PHASESet.elementpckname, pdf);   
+  fprintf(pdf, "\n\n\n\nopt. Element File: %s\n\n", Beamline.filenames.elementpckname);
+  gpd(Beamline.filenames.elementpckname, pdf);
+
+ 
   for (i= 0; i< 80; i++) fprintf(pdf,"*");  
   /*   fprintf(pdf, "\nParameter File: %s\n\n", PHASESet.pssourcename);
        gpd(PHASESet.pssourcename, pdf); */   
@@ -861,7 +856,9 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 	case 'F':
 	  fp= (struct FileSourceType *)bl->RTSource.Quellep;
 #ifndef QTGUI
-	  strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
+
+	  strncpy(fp->filename, Beamline.filenames.sourceraysname, MaxPathLength);
+
 #endif
 	  /* we may add a test if the file exists */
 	break;   
@@ -875,10 +872,5 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
   bl->BLOptions.ifl.iord=      x->iord;
   bl->BLOptions.epsilon=       x->epsilon;  
 }
-
-
-
-
-
 /* end of file phasec.c */     
                            

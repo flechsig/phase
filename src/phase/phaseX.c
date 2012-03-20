@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <24 Jan 12 15:37:31 flechsig>  */
+/*  Time-stamp: <20 Mar 12 17:17:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -95,8 +95,8 @@ void AddBLElement(struct BeamlineType *bl, char *name)
    {
      if (i == pos)        /* fuellen mit daten */
      {
-       ExpandFileNames(&PHASESet, name);  
-       PutPHASE(&PHASESet, MainPickName);  
+       ExpandFileNames(&Beamline.filenames, name);  
+       PutPHASE(&Beamline.filenames, MainPickName);  
        strncpy(listpt->elementname, name, MaxPathLength);  
        printf("AddBLElement: update filenames\n");
          
@@ -167,7 +167,7 @@ void DelBLElement(struct BeamlineType *bl)
          memcpy(listpt, tmplistpt++, sizeof(struct ElementType)); 
        }
        bl->beamlineOK &= ~(mapOK | resultOK);
-       WriteBLFile(PHASESet.beamlinename, bl); 
+       WriteBLFile(Beamline.filenames.beamlinename, bl); 
        free(tmplist);
    }  
 } /* end DelBLElement */
@@ -309,7 +309,7 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
        InitGeometryBox(&ep->GDat); */
    
    /* filenames updaten */
-   ExpandFileNames(&PHASESet, ep->elementname); 
+   ExpandFileNames(&Beamline.filenames, ep->elementname); 
    
    /* radio box setzen */
    XmToggleButtonSetState(widget_array[kEBLup+ ep->GDat.azimut], True, True);
@@ -1808,7 +1808,7 @@ void GetSource(struct BeamlineType *bl)
     {
     case 'F':
       printf("GetSource: source from file improved but not yet fully debugged 0908!\n");
-      MakeRTSource(&PHASESet, bl);
+      MakeRTSource(&Beamline.filenames, bl);
       break; 
     case 'H': 
       hp= (struct HardEdgeSourceType *) bl->RTSource.Quellep;	
@@ -1821,7 +1821,7 @@ void GetSource(struct BeamlineType *bl)
       sscanf(textf[6], "%lf", &hp->divz);   
       sscanf(textf[7],  "%d", &hp->idz);   
       bl->RTSource.raynumber= hp->iy* hp->idy* hp->iz* hp->idz;
-      MakeRTSource(&PHASESet, bl);    
+      MakeRTSource(&Beamline.filenames, bl);    
       break;
     case 'D':
       dp= (struct DipolSourceType *)bl->RTSource.Quellep;
@@ -1830,7 +1830,7 @@ void GetSource(struct BeamlineType *bl)
       sscanf(textf[2], "%lf", &dp->sigz);   
       sscanf(textf[3], "%lf", &dp->dz);  
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
-      MakeRTSource(&PHASESet, bl);   
+      MakeRTSource(&Beamline.filenames, bl);   
       break;
     case 'o':
       sop= (struct PointSourceType *)bl->RTSource.Quellep;
@@ -1839,14 +1839,14 @@ void GetSource(struct BeamlineType *bl)
       sscanf(textf[2], "%lf", &sop->sigz);   
       sscanf(textf[3], "%lf", &sop->sigdz);  
       sscanf(textf[4],  "%d", &bl->RTSource.raynumber);   
-      MakeRTSource(&PHASESet, bl);   
+      MakeRTSource(&Beamline.filenames, bl);   
       break;
     case 'R':
       rp= (struct RingSourceType *)bl->RTSource.Quellep;
       sscanf(textf[0], "%lf", &rp->dy);   
       sscanf(textf[1], "%lf", &rp->dz);   
       sscanf(textf[2],  "%d", &bl->RTSource.raynumber);   
-      MakeRTSource(&PHASESet, bl);   
+      MakeRTSource(&Beamline.filenames, bl);   
       break;
     case 'U':
     case 'u':
@@ -1857,7 +1857,7 @@ void GetSource(struct BeamlineType *bl)
 /*    bl->RTSource.Quelle.UndulatorSource.lambda*= 1e-6; */
       up->lambda= bl->BLOptions.lambda;
       sscanf(textf[2],  "%d", &bl->RTSource.raynumber);   
-      MakeRTSource(&PHASESet, bl);   /* */ 
+      MakeRTSource(&Beamline.filenames, bl);   /* */ 
       break;
     case 'L':
     case 'M':
@@ -1867,7 +1867,7 @@ void GetSource(struct BeamlineType *bl)
       up->lambda= bl->BLOptions.lambda;
       sscanf(textf[2], "%d", &bl->RTSource.raynumber);   
       sscanf(textf[3], "%lf", &up->deltaz);
-      MakeRTSource(&PHASESet, bl);   /* */ 
+      MakeRTSource(&Beamline.filenames, bl);   /* */ 
       break;
     case 'G':
       up0= (struct UndulatorSource0Type *) bl->RTSource.Quellep;
@@ -1880,7 +1880,7 @@ void GetSource(struct BeamlineType *bl)
       sscanf(textf[5], "%lf", &up0->sigmaey);  
       sscanf(textf[6], "%lf", &up0->sigmaedz);  
       sscanf(textf[7], "%lf", &up0->sigmaedy);   
-      MakeRTSource(&PHASESet, bl);   /* */ 
+      MakeRTSource(&Beamline.filenames, bl);   /* */ 
       break;
     case 'S':
       sp= (struct SRSourceType *)bl->RTSource.Quellep;
@@ -1891,9 +1891,9 @@ void GetSource(struct BeamlineType *bl)
       bl->RTSource.raynumber= 1;   
       /* Fg3ActDat= x;      /** hier auch rt **/
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
-      MakeRTSource(&PHASESet, bl);
+      MakeRTSource(&Beamline.filenames, bl);
       RayTraceSingleRay(bl);
-      /* putpickfile(&Fg3ActDat, bl, PHASESet.sourcepckname);   */
+      /* putpickfile(&Fg3ActDat, bl, Beamline.filenames.sourcepckname);   */
       FetchWidget(kESourceBox, "ESourceBox"); 
       InitSourceType(bl, kESSR2Button);
       InitSourceBox(&Fg3ActDat, bl);       
@@ -1923,8 +1923,8 @@ void GetSource(struct BeamlineType *bl)
       break;
     } 
   /* Fg3ActDat= x; 
-     putpickfile(&Fg3ActDat, &Beamline, PHASESet.sourcepckname);     */
-  WriteBLFile(PHASESet.beamlinename, bl); 
+     putpickfile(&Fg3ActDat, &Beamline, Beamline.filenames.sourcepckname);     */
+  WriteBLFile(Beamline.filenames.beamlinename, bl); 
   xprintf("Beamline- file updated\n");  
   for (i= 0; i< 8; i++) XtFree(textf[i]);  
 }

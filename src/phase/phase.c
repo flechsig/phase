@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.c */
 /*  Date      : <05 Oct 04 08:51:37 flechsig>  */
-/*  Time-stamp: <24 Jan 12 13:41:48 flechsig>  */
+/*  Time-stamp: <20 Mar 12 17:38:26 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -106,13 +106,17 @@ int main(argc, argv)
 #endif
 
 
+#ifdef global
     setupswitch= ProcComandLine(&PHASESet, argc, argv, &cmode, &selected, &iord); 
+#else
+    setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, &selected, &iord);
+#endif
     switch (setupswitch)
       {
       case 3:
       case 7:
       case 15:
-    	BatchMode(&PHASESet, &Beamline, cmode, selected, iord);
+	BatchMode(&Beamline, cmode, selected, iord);
 	exit(3);
 	break;
       }
@@ -191,7 +195,8 @@ int main(argc, argv)
     /* Set up Help System environment */
    
 /*****************  Aenderung gegenueber Beispiel **************************/
-    InitDataSets(&PHASESet, &Beamline, (char*) MainPickName);             /* PHASEc.c */
+
+    InitDataSets(&Beamline, (char*) MainPickName);             /* PHASEc.c */
 
     if (setupswitch)   /* option -n */
     {

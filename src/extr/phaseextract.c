@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <31 Aug 11 16:06:48 flechsig>  */
+/*   Time-stamp: <20 Mar 12 17:20:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -113,7 +113,7 @@ int main(argc, argv)
   out_struct(&Beamline, &ax0, optistructure.xindex);  
   out_struct(&Beamline, &ay0,  optistructure.yindex); 
   ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-  MakeRTSource(&PHASESet, &Beamline);      /* Quelle herstellen */
+  MakeRTSource(&Beamline.filenames, &Beamline);      /* Quelle herstellen */
 
   /* oeffnen des Ausgabefiles */
   if ((optistructure.filepointer= 

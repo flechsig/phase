@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <20 Mar 12 16:03:54 flechsig>  */
+/*  Time-stamp: <20 Mar 12 17:32:27 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -81,7 +81,7 @@ public:
   struct OptionsType  *myOptions();
   
   void myAllocRTSource() { AllocRTSource(this); }
-  void myBatchMode(int cmode, int selected, int iord) { BatchMode(&(this->filenames), this, cmode, selected, iord); }
+  void myBatchMode(int cmode, int selected, int iord) { BatchMode(this, cmode, selected, iord); }
   void myBuildBeamline() { BuildBeamline(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 

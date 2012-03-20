@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Mar 12 09:08:39 flechsig>  */
+/*   Time-stamp: <20 Mar 12 17:37:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -703,7 +703,9 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
 
 int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
 
+#ifdef global
 struct PHASEset PHASESet;  
+#endif
 struct datset Fg3ActDat, Fg3DefDat;  
 struct gdatset GActDat,   GDefDat;  
 struct mdatset MActDat,   MDefDat;  
@@ -780,7 +782,7 @@ void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
 void 	  
   
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *, struct BeamlineType *),  
-  BatchMode(struct PHASEset *, struct BeamlineType *, int, int, int),
+  BatchMode(struct BeamlineType *, int, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
   BuildElement(int, struct BeamlineType *),
@@ -824,7 +826,7 @@ void
   intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, double *, double *, double *, int *),  
   initconstants(),  
-  InitDataSets(struct PHASEset *, struct BeamlineType *, char *),   
+  InitDataSets(struct BeamlineType *, char *),   
   InitSourceType(struct BeamlineType *, int),  
                        
   InitPHASE(struct PHASEset *), 
