@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <24 Jan 12 13:57:25 flechsig>  */
+/*   Time-stamp: <20 Mar 12 17:16:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -767,17 +767,17 @@ void FileSelectionProc(Widget wi,
 	  set_something(widget_array[ActualTask], XmNlabelString, path);
 	  break;
 	case kEBLNameButton: 
-       	  strncpy((char *)&PHASESet.beamlinename, fname, MaxPathLength);
-	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
-          strncpy(PHASESet.pssourcename, Beamline.src.so6.fsource6, MaxPathLength);
-	  InitBLBox(PHASESet.beamlinename, &Beamline); 
-	  ExpandFileNames(&PHASESet, fname); 
-	  PutPHASE(&PHASESet, MainPickName); 
+       	  strncpy((char *)&Beamline.filenames.beamlinename, fname, MaxPathLength);
+	  ReadBLFile(Beamline.filenames.beamlinename, &Beamline);  
+          strncpy(Beamline.filenames.pssourcename, Beamline.src.so6.fsource6, MaxPathLength);
+	  InitBLBox(Beamline.filenames.beamlinename, &Beamline); 
+	  ExpandFileNames(&Beamline.filenames, fname); 
+	  PutPHASE(&Beamline.filenames, MainPickName); 
 	  break;
 	case kFLoadButton: 
-	  strncpy((char *)&PHASESet.beamlinename, fname, MaxPathLength);
-	  ReadBLFile(PHASESet.beamlinename, &Beamline);  
-          strncpy(PHASESet.pssourcename, Beamline.src.so6.fsource6, MaxPathLength);
+	  strncpy((char *)&Beamline.filenames.beamlinename, fname, MaxPathLength);
+	  ReadBLFile(Beamline.filenames.beamlinename, &Beamline);  
+          strncpy(Beamline.filenames.pssourcename, Beamline.src.so6.fsource6, MaxPathLength);
 	  if ((widget_array[kESourceBox] != NULL) && 
 	      XtIsRealized(widget_array[kESourceBox])) 
 	    { 
@@ -788,17 +788,17 @@ void FileSelectionProc(Widget wi,
 	  if ((widget_array[kEBLDialog] != NULL) && 
 	      XtIsRealized(widget_array[kEBLDialog])) 
 	    { 
-	      InitBLBox(PHASESet.beamlinename, &Beamline);
+	      InitBLBox(Beamline.filenames.beamlinename, &Beamline);
 	    }
  
-	  ExpandFileNames(&PHASESet, fname); 
-	  PutPHASE(&PHASESet, MainPickName); 
+	  ExpandFileNames(&Beamline.filenames, fname); 
+	  PutPHASE(&Beamline.filenames, MainPickName); 
           /* UF 0907 add auto build */
           BuildBeamline(&Beamline);
           if (Beamline.RTSource.QuellTyp != 'I') 
 	    {
 	      AllocRTSource(&Beamline);
-	      MakeRTSource(&PHASESet, &Beamline); 
+	      MakeRTSource(&Beamline.filenames, &Beamline); 
 	      printf("ready to start calculations in geometrical optics mode\n");
 	    } else
 	    {
