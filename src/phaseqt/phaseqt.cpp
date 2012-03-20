@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <13 Mar 12 17:03:06 flechsig> 
+//  Time-stamp: <20 Mar 12 16:14:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -111,56 +111,56 @@ void PhaseQt::initSet(const char *fname)
   strncpy(name, fname, MaxPathLength);
   FnameBody(name);
 
-  snprintf(matrixname,      MaxPathLength, "%s.%s", name, "omx");
-  snprintf(mapname,         MaxPathLength, "%s.%s", name, "map");
-  snprintf(sourceraysname,  MaxPathLength, "%s.%s", name, "inp"); 
-  snprintf(imageraysname,   MaxPathLength, "%s.%s", name, "out");	  
-  snprintf(intersecname,    MaxPathLength, "%s.%s", name, "isec");	  
-  snprintf(geometryname,    MaxPathLength, "%s.%s", name, "datg"); 
-  snprintf(elementname,     MaxPathLength, "%s.%s", name, "date");	  
-  snprintf(sourcepckname,   MaxPathLength, "%s.%s", name, "pcks"); 
-  snprintf(geometrypckname, MaxPathLength, "%s.%s", name, "pckg"); 
-  snprintf(elementpckname,  MaxPathLength, "%s.%s", name, "pcke"); 
-  snprintf(pssourcename,    MaxPathLength, "%s.%s", name, "pss"); 
-  snprintf(plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
-  snprintf(printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
-  snprintf(optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
-  snprintf(beamlinename,    MaxPathLength, "%s.%s", name, "phase");	  
-  snprintf(so4_fsource4a,   MaxPathLength, "%s.%s", name, "s4a");	  
-  snprintf(so4_fsource4b,   MaxPathLength, "%s.%s", name, "s4b");	  
-  snprintf(so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  
-  snprintf(so4_fsource4d,   MaxPathLength, "%s.%s", name, "s4d");	  
-  snprintf(so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
-  snprintf(opresname,       MaxPathLength, "%s.%s", name, "opti");	  
-  snprintf(minname,         MaxPathLength, "%s.%s", name, "minu");
-}
+  snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", name, "omx");
+  snprintf(this->filenames.mapname,         MaxPathLength, "%s.%s", name, "map");
+  snprintf(this->filenames.sourceraysname,  MaxPathLength, "%s.%s", name, "inp"); 
+  snprintf(this->filenames.imageraysname,   MaxPathLength, "%s.%s", name, "out");	  
+  snprintf(this->filenames.intersecname,    MaxPathLength, "%s.%s", name, "isec");	  
+  snprintf(this->filenames.geometryname,    MaxPathLength, "%s.%s", name, "datg"); 
+  snprintf(this->filenames.elementname,     MaxPathLength, "%s.%s", name, "date");	  
+  snprintf(this->filenames.sourcepckname,   MaxPathLength, "%s.%s", name, "pcks"); 
+  snprintf(this->filenames.geometrypckname, MaxPathLength, "%s.%s", name, "pckg"); 
+  snprintf(this->filenames.elementpckname,  MaxPathLength, "%s.%s", name, "pcke"); 
+  snprintf(this->filenames.pssourcename,    MaxPathLength, "%s.%s", name, "pss"); 
+  snprintf(this->filenames.plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
+  snprintf(this->filenames.printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
+  snprintf(this->filenames.optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
+  snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", name, "phase");	  
+  snprintf(this->filenames.so4_fsource4a,   MaxPathLength, "%s.%s", name, "s4a");	  
+  snprintf(this->filenames.so4_fsource4b,   MaxPathLength, "%s.%s", name, "s4b");	  
+  snprintf(this->filenames.so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  
+  snprintf(this->filenames.so4_fsource4d,   MaxPathLength, "%s.%s", name, "s4d");	  
+  snprintf(this->filenames.so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
+  snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");	  
+  snprintf(this->filenames.minname,         MaxPathLength, "%s.%s", name, "minu");
+} // initSet
 
 // print the contents of the data for debugging
 void PhaseQt::printSet()
 {
   printf("=> PhaseQt::printSet()\n");
-  printf("matrixname:      %s\n", matrixname);
-  printf("mapname:         %s\n", mapname);
-  printf("sourceraysname:  %s\n", sourceraysname ); 
-  printf("imageraysname:   %s\n", imageraysname);	  
-  printf("intersecname:    %s\n", intersecname);	  
-  printf("geometryname:    %s\n", geometryname);    
-  printf("elementname:     %s\n", elementname);  	  
-  printf("sourcepckname:   %s\n", sourcepckname);   
-  printf("geometrypckname: %s\n", geometrypckname); 
-  printf("elementpckname:  %s\n", elementpckname);  
-  printf("pssourcename:    %s\n", pssourcename);    
-  printf("plotpsname:      %s\n", plotpsname); 	  
-  printf("printpclname:    %s\n", printpclname);    
-  printf("optipckname:     %s\n", optipckname);     
-  printf("beamlinename:    %s\n", beamlinename);	  
-  printf("so4_fsource4a:   %s\n", so4_fsource4a);	  
-  printf("so4_fsource4b:   %s\n", so4_fsource4b);	  
-  printf("so4_fsource4c:   %s\n", so4_fsource4c);	  
-  printf("so4_fsource4d:   %s\n", so4_fsource4d);	  
-  printf("so6_fsource6:    %s\n", so6_fsource6);    
-  printf("opresname:       %s\n", opresname);
-  printf("minname:         %s\n", minname);
+  printf("matrixname:      %s\n", this->filenames.matrixname);
+  printf("mapname:         %s\n", this->filenames.mapname);
+  printf("sourceraysname:  %s\n", this->filenames.sourceraysname ); 
+  printf("imageraysname:   %s\n", this->filenames.imageraysname);	  
+  printf("intersecname:    %s\n", this->filenames.intersecname);	  
+  printf("geometryname:    %s\n", this->filenames.geometryname);    
+  printf("elementname:     %s\n", this->filenames.elementname);  	  
+  printf("sourcepckname:   %s\n", this->filenames.sourcepckname);   
+  printf("geometrypckname: %s\n", this->filenames.geometrypckname); 
+  printf("elementpckname:  %s\n", this->filenames.elementpckname);  
+  printf("pssourcename:    %s\n", this->filenames.pssourcename);    
+  printf("plotpsname:      %s\n", this->filenames.plotpsname); 	  
+  printf("printpclname:    %s\n", this->filenames.printpclname);    
+  printf("optipckname:     %s\n", this->filenames.optipckname);     
+  printf("beamlinename:    %s\n", this->filenames.beamlinename);	  
+  printf("so4_fsource4a:   %s\n", this->filenames.so4_fsource4a);	  
+  printf("so4_fsource4b:   %s\n", this->filenames.so4_fsource4b);	  
+  printf("so4_fsource4c:   %s\n", this->filenames.so4_fsource4c);	  
+  printf("so4_fsource4d:   %s\n", this->filenames.so4_fsource4d);	  
+  printf("so6_fsource6:    %s\n", this->filenames.so6_fsource6);    
+  printf("opresname:       %s\n", this->filenames.opresname);
+  printf("minname:         %s\n", this->filenames.minname);
   printf("<= myPHASEset::print()\n");
 }
 
@@ -185,12 +185,6 @@ struct BeamlineType *PhaseQt::myBeamline()
 {
   return (struct BeamlineType *)this;
 } // end myBeamline
-
-// returns a pointer to the PHASEset struct
-struct PHASEset *PhaseQt::myPHASEset()
-{
-  return (struct PHASEset *)this;
-} // end myPHASEset
 
 // returns a pointer to the beamline struct
 struct OptionsType *PhaseQt::myOptions()
@@ -343,7 +337,7 @@ void PhaseQt::sourceSetDefaults()
       break;
     case 'F':
       fp= (struct FileSourceType *)this->RTSource.Quellep;
-      strncpy(fp->filename, this->sourceraysname, MaxPathLength);
+      strncpy(fp->filename, this->filenames.sourceraysname, MaxPathLength);
       /* we may add a test if the file exists */
       break;   
     default:
@@ -355,7 +349,7 @@ void PhaseQt::sourceSetDefaults()
 void PhaseQt::writeBackupFile()
 {
   char buffer[MaxPathLength];
-  strncpy(buffer, this->beamlinename, (MaxPathLength-1));
+  strncpy(buffer, this->filenames.beamlinename, (MaxPathLength-1));
   strcat(buffer, "~");
   
 #ifdef DEBUG

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <07 Mar 12 13:57:34 flechsig> 
+//  Time-stamp: <20 Mar 12 16:09:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1662,11 +1662,13 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 	}
     }
   myparent->myReadBLFile(oname);
-  strncpy(myparent->myPHASEset()->so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
-  strncpy(myparent->myPHASEset()->so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
-  strncpy(myparent->myPHASEset()->so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
-  strncpy(myparent->myPHASEset()->so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
-  strncpy(myparent->myPHASEset()->so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
+
+  strncpy(myparent->myBeamline()->filenames.so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
+  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
+  strncpy(myparent->myBeamline()->filenames.so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
+  strncpy(myparent->myBeamline()->filenames.so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
+  strncpy(myparent->myBeamline()->filenames.so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
+
   if (c_window) c_window->updateList();
   myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
@@ -1678,8 +1680,9 @@ void MainWindow::UpdateBeamlineBox()
 {
   struct OptionsType *blo;
   QString lambdaEqst, dislenEqst;
-  
-  fileNameLabel->setText(QString(tr(myparent->myPHASEset()->beamlinename)));
+
+  fileNameLabel->setText(QString(tr(myparent->myBeamline()->filenames.beamlinename)));
+
   blo= &(myparent->myBeamline()->BLOptions);
 
   lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6, 'g', 4));
@@ -2115,8 +2118,8 @@ void MainWindow::UpdateSourceBox()
       break;  
     case 'F':
       fp= (struct FileSourceType *)myparent->myBeamline()->RTSource.Quellep;
-      printf("source from file %s\n", myparent->myPHASEset()->sourceraysname);
-      strncpy(fp->filename, myparent->myPHASEset()->sourceraysname, MaxPathLength);
+      cout << "source from file " << myparent->myBeamline()->filenames.sourceraysname << endl;
+      strncpy(fp->filename, myparent->myBeamline()->filenames.sourceraysname, MaxPathLength);
       sourceTypeLabel->setText(QString(tr("Source from file")));
       break;
     case 'S':

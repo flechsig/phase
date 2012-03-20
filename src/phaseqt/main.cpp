@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <02 Mar 12 08:17:35 flechsig> 
+//  Time-stamp: <20 Mar 12 16:06:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -28,7 +28,6 @@ void my_funcv(int &image, int &parameter)
   qDebug() << "Scaling dummy image" << image << " out of " << parameter << "in thread" << QThread::currentThreadId();
 }
 
-
 int main(int argc, char *argv[])
 {
   int setupswitch, cmode, selected, iord; 
@@ -53,14 +52,14 @@ int main(int argc, char *argv[])
       break;
     case 5:          // only filename given
       cout << "main: filename provided- do not read " << (char*) MainPickName << endl;
-      myphaseQt.initSet(myphaseQt.myPHASEset()->beamlinename);
+      myphaseQt.initSet(myphaseQt.myBeamline()->filenames.beamlinename);
       break;
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);
     }
 
   myphaseQt.mainWin = new MainWindow(&myphaseQt);     // create the mainwindow on the heap
-  myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.myPHASEset()->beamlinename);
+  myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.myBeamline()->filenames.beamlinename);
   myphaseQt.mainWin->oldsource= myphaseQt.myBeamline()->RTSource.QuellTyp;
   myphaseQt.mainWin->UpdateElementList();
   myphaseQt.mainWin->UpdateBeamlineBox();

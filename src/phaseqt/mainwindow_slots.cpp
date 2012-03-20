@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Mar 12 08:51:06 flechsig> 
+//  Time-stamp: <20 Mar 12 16:13:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -175,8 +175,8 @@ void MainWindow::activateProc(const QString &action)
       cout << "optiInputAct button pressed, elementzahl=" << myparent->myBeamline()->elementzahl << endl;
       if (!o_input) 
 	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
-			       myparent->myPHASEset()->beamlinename, myparent->myPHASEset()->optipckname, 
-			       myparent->myPHASEset()->opresname, myparent->myPHASEset()->minname); 
+			       myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->filenames.optipckname, 
+			       myparent->myBeamline()->filenames.opresname, myparent->myBeamline()->filenames.minname); 
       else 
 	o_input->optiInputBox->show();
     }
@@ -237,10 +237,13 @@ void MainWindow::activateProc(const QString &action)
 	  (myparent->myBeamline()->position != 0))
 	{
 	  printf("write map of element %d to file\n", myparent->myBeamline()->position); 
+
 	  snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d%d", 
-		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->position, 
+		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->position, 
 		  myparent->myBeamline()->BLOptions.ifl.iord,0);
-	  snprintf(buffer, MaxPathLength, "%s-%d", myparent->myPHASEset()->mapname, myparent->myBeamline()->position);
+	  snprintf(buffer, MaxPathLength, "%s-%d", myparent->myBeamline()->filenames.mapname, myparent->myBeamline()->position);
+
+
 	  /* casting 15.12.99 ist noch nicht OK */
 	  writemapc(buffer, header, myparent->myBeamline()->BLOptions.ifl.iord, 
 		    (double *)(myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].ypc1), 
@@ -256,16 +259,18 @@ void MainWindow::activateProc(const QString &action)
       //  else wir schreiben hier immer beides
 	{ 
 	  printf("write map of beamline to file\n"); 
+
 	  snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
-		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
-	  snprintf(buffer, MaxPathLength, "%s-0", myparent->myPHASEset()->mapname);
+		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
+	  snprintf(buffer, MaxPathLength, "%s-0", myparent->myBeamline()->filenames.mapname);
+
 	  myparent->mywritemapc(buffer,  header,  
 				myparent->myBeamline()->BLOptions.ifl.iord, 
-		    (double *) myparent->myBeamline()->ypc1, (double *) myparent->myBeamline()->zpc1, 
-		    (double *) myparent->myBeamline()->dypc, (double *) myparent->myBeamline()->dzpc,
-		    (double *) myparent->myBeamline()->wc,   (double *) myparent->myBeamline()->xlc, 
-		    (double *) myparent->myBeamline()->xlm.xlen1c, 
-		    (double *) myparent->myBeamline()->xlm.xlen2c);
+				(double *) myparent->myBeamline()->ypc1, (double *) myparent->myBeamline()->zpc1, 
+				(double *) myparent->myBeamline()->dypc, (double *) myparent->myBeamline()->dzpc,
+				(double *) myparent->myBeamline()->wc,   (double *) myparent->myBeamline()->xlc, 
+				(double *) myparent->myBeamline()->xlm.xlen1c, 
+				(double *) myparent->myBeamline()->xlm.xlen2c);
 	}
     } 
 
@@ -278,11 +283,14 @@ void MainWindow::activateProc(const QString &action)
 	  (myparent->myBeamline()->position != 0))
 	{
 	  printf("write matrix of element %d to file\n", myparent->myBeamline()->position); 
+
+
 	  snprintf(header, MaxPathLength, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
-		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->position, 
+		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->position, 
 		  myparent->myBeamline()->BLOptions.ifl.iord,
 		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-%d\x00", myparent->myPHASEset()->matrixname, myparent->myBeamline()->position);
+	  snprintf(buffer, MaxPathLength, "%s-%d\x00", myparent->myBeamline()->filenames.matrixname, myparent->myBeamline()->position);
+
           writematrixfile((double *)myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].M_StoI,
 			  buffer, header, strlen(buffer), strlen(header)); // add hidden length parameter 
 	} 
@@ -290,10 +298,12 @@ void MainWindow::activateProc(const QString &action)
       //  else wir schreiben hier immer beides
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
+
 	  snprintf(header, MaxPathLength, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
-		  myparent->myPHASEset()->beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, 
+		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, 
 		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-0\x00", myparent->myPHASEset()->matrixname);
+	  snprintf(buffer, MaxPathLength, "%s-0\x00", myparent->myBeamline()->filenames.matrixname);
+
 	  writematrixfile((double *)myparent->myBeamline()->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
     } 
@@ -330,14 +340,16 @@ void MainWindow::activateProc(const QString &action)
       printf("writereResultAct button pressed, result type: %d\n", myparent->myBeamline()->RESULT.typ); 
       if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0)
 	{
-	  cout << "write PO result to file " << myparent->myPHASEset()->imageraysname << endl;
-	  myparent->myWritePsd(myparent->myPHASEset()->imageraysname, 
+
+	  cout << "write PO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
+	  myparent->myWritePsd(myparent->myBeamline()->filenames.imageraysname, 
 			       (struct PSDType *)myparent->myBeamline()->RESULT.RESp);
 	}
       else
 	{
-	  cout << "write GO result to file " << myparent->myPHASEset()->imageraysname << endl;
-	  myparent->myWriteRayFile(myparent->myPHASEset()->imageraysname, &myparent->myBeamline()->RESULT.points,
+
+	  cout << "write GO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
+	  myparent->myWriteRayFile(myparent->myBeamline()->filenames.imageraysname, &myparent->myBeamline()->RESULT.points,
 				   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
 	}
     } 
@@ -452,11 +464,11 @@ void MainWindow::activateProc(const QString &action)
 				   &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
 				   &myparent->myBeamline()->BLOptions.epsilon);
 
-	  strncpy(myparent->myPHASEset()->so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
-	  strncpy(myparent->myPHASEset()->so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
-	  strncpy(myparent->myPHASEset()->so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
-	  strncpy(myparent->myPHASEset()->so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
-	  strncpy(myparent->myPHASEset()->so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
+	  strncpy(myparent->myBeamline()->filenames.so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
+	  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
+	  strncpy(myparent->myBeamline()->filenames.so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
+	  strncpy(myparent->myBeamline()->filenames.so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
+	  strncpy(myparent->myBeamline()->filenames.so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
 	  if (c_window) c_window->updateList();
 	  parameterUpdateAll(NPARS);
 	} else
@@ -1419,11 +1431,8 @@ void MainWindow::printMain()
 // slot
 void MainWindow::save()
 {
-  char *name= myparent->myPHASEset()->beamlinename;
-
+  char *name= myparent->myBeamline()->filenames.beamlinename;
   myparent->myWriteBLFile(name);
- 
-
   statusBar()->showMessage(tr("Saved '%1'").arg(name), 4000);
 } // end save
 
