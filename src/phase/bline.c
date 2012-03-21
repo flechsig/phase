@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Mar 12 17:14:21 flechsig>  */
+/*   Time-stamp: <21 Mar 12 10:38:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1279,7 +1279,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20110902;
+   int  i, version= 20120320;
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1305,7 +1305,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version AUG 2011\n\n");
+   fprintf(f, "This is a datafile of PHASE, file version MAR 2012\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -1668,15 +1668,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 int ReadBLFile(char *fname, struct BeamlineType *bl)  
 /************************************************************************/
 /* liest den datensatz vom file 					*/     
-/* PHASEset.psourcename sollte danach mit brightnessnamen initialisert  */
-/* werden: strncpy(PHASESet.pssourcename, Beamline.src.so6.fsource6)    */
 /************************************************************************/
 {   
    FILE *f; 
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20120317;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20120321;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -1855,11 +1853,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	       {
 		 fscanf(f, "%s %[^\n]s %c", (char *)&fp->filename, buffer, &buf);
 #ifndef QTGUI
-#ifdef global
-		 strncpy(PHASESet.sourceraysname, fp->filename, MaxPathLength);
-#else
 		 strncpy(Beamline.filenames.sourceraysname, fp->filename, MaxPathLength);
-#endif
 #endif
 	       }
 	     break;
