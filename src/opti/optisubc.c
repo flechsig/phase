@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <13 Mar 12 17:12:46 flechsig>  */
+/*   Time-stamp: <21 Mar 12 13:15:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -461,7 +461,7 @@ void buildsystem(struct BeamlineType *bl)
 	  
 	  DefGeometryC(&listpt->GDat, &listpt->geo);  
 	    
-	  MakeMapandMatrix(listpt, bl);
+	  MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1));
 	  listpt->ElementOK|= mapOK; 
 	}
       if (listpt->MDat.Art != kEOESlit)
