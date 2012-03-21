@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Mar 12 10:38:10 flechsig>  */
+/*   Time-stamp: <21 Mar 12 10:52:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1691,6 +1691,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    struct ElementType 	       *listpt;   
    struct OptionsType          *op;
    struct FileSourceType       *fp;
+   struct PHASEset             *pp;
 
    rcode= -1;   
    printf("ReadBLFile: filename: %s\n", fname);
@@ -2135,6 +2136,19 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
      {
        if (SetFilePos(f, "FILENAMES"))
 	 {
+	   pp= (struct PHASEset *)&(bl->filenames);
+	   fscanf(f, " %s %[^\n]s %c", &pp->mapname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->matrixname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->sourceraysname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->imageraysname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->minname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->optipckname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->opresname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4a, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4b, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4c, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4d, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6, buffer, &buf);
 	 } else rcode= -1;  /* end FILENAMES */ 
      } /* end FILENAMES */ 
 
