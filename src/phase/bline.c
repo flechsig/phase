@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Mar 12 11:12:03 flechsig>  */
+/*   Time-stamp: <21 Mar 12 13:07:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -79,7 +79,7 @@ void BuildElement(int elindex, struct BeamlineType *bl)
 	     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	     ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 	     &listpt->mir, &listpt->geo,
-	     &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+	     &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
   make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
 		listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 
@@ -111,7 +111,7 @@ void BuildElement(int elindex, struct BeamlineType *bl)
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
 		 ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		 &listpt->mir, &listpt->geo,
-		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
       make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 
@@ -143,7 +143,7 @@ void BuildElement(int elindex, struct BeamlineType *bl)
 /****************************************************************/
 void BuildBeamline(struct BeamlineType *bl)  
 {
-  unsigned int elcounter;
+  unsigned int elcounter, elindex;
   int          imodus;
   struct ElementType *listpt; 
   struct TmpMapType  *ltp;              /* local pointer */
@@ -166,7 +166,7 @@ void BuildBeamline(struct BeamlineType *bl)
     }
 
   /* 1st loop */  
-  elcounter= 1; 
+  elcounter= 1; elindex= 0;
   listpt= bl->ElementList;  
   while (elcounter<= bl->elementzahl)  /* Schleife ueber alle Elemente */
     { 
@@ -174,8 +174,9 @@ void BuildBeamline(struct BeamlineType *bl)
 	{
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter- 1));    
-	  DefGeometryC(&listpt->GDat, &listpt->geo);  
-	  MakeMapandMatrix(listpt, bl); 
+	  DefGeometryC(&listpt->GDat, &listpt->geo);
+            
+	  MakeMapandMatrix(listpt, bl, elindex); 
 	  	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
@@ -188,12 +189,12 @@ void BuildBeamline(struct BeamlineType *bl)
 	{
 	  printf("\nBuildBeamline: element %d already OK- keep matrix\n\n", elcounter);
 	} /* end if (listpt->ElementOK == 0) */
-      elcounter++; listpt++; 
+      elcounter++; listpt++; elindex++;
     } /* Schleife ueber alle Elemente fertig */
       
 
   /* 2nd generate beamline matrix */  
-  elcounter= 1; 
+  elcounter= 1; elindex= 0;
   listpt= bl->ElementList;  
   bl->xlen0= bl->deltalambdafactor= 0.0;     /* Laenge der opt. achse */
 
@@ -204,7 +205,7 @@ void BuildBeamline(struct BeamlineType *bl)
       bl->xlen0+= listpt->geo.r + listpt->geo.rp;
       SetDeltaLambda(bl, listpt);              /* resolutionfactor */
     }
-  elcounter++; listpt++;
+  elcounter++; listpt++; elindex++;
 
   /* folgende elemente */
   while (elcounter<= bl->elementzahl)
@@ -217,7 +218,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  printf("BuildBeamline: length of optical axis (bl->xlen0): %lf\n",
 		 bl->xlen0);
 	} /* end  (listpt->MDat.Art != kEOESlit) */  
-      elcounter++; listpt++; 
+      elcounter++; listpt++; elindex++;
     } /* Schleife ueber alle Elemente fertig */
   
   printf("Buildbeamline: extract beamline map\n");
@@ -268,7 +269,7 @@ void BuildBeamline(struct BeamlineType *bl)
 #endif
       
       /* baue xlenkoeffizienten und Ruecktrafomatrix */
-      elcounter--; listpt--;     /* Zaehler auf letztes Element */
+      elcounter--; listpt--;  elindex--;   /* Zaehler auf letztes Element */
       if (listpt->MDat.Art != kEOESlit)
 	{
 	  memcpy(&bl->M_ItoS, &listpt->M_ItoS, sizeof(MAP70TYPE)); 
@@ -281,7 +282,7 @@ void BuildBeamline(struct BeamlineType *bl)
       /* rueckwaerts */
       while (elcounter > 1)	      /* nur bei mehreren Elementen */
 	{				     /* Schleife von hinten */
-	  elcounter--; listpt--;
+	  elcounter--; listpt--; elindex--;
 	  if (listpt->MDat.Art != kEOESlit)
 	    {
 	      GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
@@ -438,7 +439,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	      
         
             /*printf("c: call MakemapandMatrix\n");*/      
-            MakeMapandMatrix(listpt, bl); 
+	       MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1)); 
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
 #ifdef DEBUG
@@ -916,7 +917,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
 } /* end LoadHorMaps */    
 
-void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
+void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsigned int elindex)
 /************************************************************************/
 /* Uwe 7.6.96 								*/
 /* umgeschrieben auf memory 24.6.96 					*/
@@ -991,7 +992,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		  &listpt->mir, &listpt->geo,
-		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
 #ifdef XXXX 
        printf("\n2nd call fgmapidp_8\n\n");
 
@@ -1002,7 +1003,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		  &listpt->mir, &listpt->geo,
-		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
 #endif
        
      } /* end 7th order in seven order mode */
@@ -1101,7 +1102,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl)
 		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
  		      ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		      &listpt->mir, &listpt->geo,
-		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
+		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
 	   
 	 }
        else
@@ -2059,12 +2060,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmaz, buffer, &buf);  
        fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
        /* source 4 */
-       if (version < 20120321)
+       if (version < 20120320)
 	 {
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
+	   strncpy(bl->filenames.so4_fsource4a, bl->src.so4.fsource4a, 80);
+	   strncpy(bl->filenames.so4_fsource4b, bl->src.so4.fsource4b, 80);
+	   strncpy(bl->filenames.so4_fsource4c, bl->src.so4.fsource4c, 80);
+	   strncpy(bl->filenames.so4_fsource4d, bl->src.so4.fsource4d, 80);
 	 }
        /* UF 17.11.08 */
        if (version >= 20081117)
@@ -2088,9 +2093,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        /* 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmin, buffer, &buf);   */
        /*          fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmax, buffer, &buf); */
        /* source 6 */
-       if (version < 20120321)
-	 fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
-       
+       if (version < 20120320)
+	 {
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
+	   strncpy(bl->filenames.so6_fsource6, bl->src.so6.fsource6, 80);
+	 }
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl, buffer, &buf);
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
@@ -2139,7 +2146,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
      } else rcode= -1;  /* end OPTIONS */     
 
-   if (version > 20120320)
+   if (version >= 20120320)
      {
        if (SetFilePos(f, "FILENAMES"))
 	 {
@@ -2155,7 +2162,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4b, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4c, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4d, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6,  buffer, &buf);
 	 } else rcode= -1;  /* end FILENAMES */ 
      } /* end FILENAMES */ 
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <20 Mar 12 17:41:06 flechsig>  */
+/*   Time-stamp: <21 Mar 12 11:28:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -280,36 +280,42 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
   else 
     {
       if(CheckFileHeader(f, MainPickFileHeader, &version) == 0)   
-	{      
-	  fscanf(f,"%s\n", (char *) &x->matrixname);     
-	  fscanf(f,"%s\n", (char *) &x->mapname);    
-	  fscanf(f,"%s\n", (char *) &x->sourceraysname);       
-	  fscanf(f,"%s\n", (char *) &x->imageraysname);	   
-	  fscanf(f,"%s\n", (char *) &x->intersecname); 
-	  fscanf(f,"%s\n", (char *) &x->geometryname);   
-	  fscanf(f,"%s\n", (char *) &x->elementname);  
-	  fscanf(f,"%s\n", (char *) &x->sourcepckname);  
-	  fscanf(f,"%s\n", (char *) &x->geometrypckname);   
-	  fscanf(f,"%s\n", (char *) &x->elementpckname);  
-	  fscanf(f,"%s\n", (char *) &x->pssourcename);   
-	  fscanf(f,"%s\n", (char *) &x->plotpsname);  
-	  fscanf(f,"%s\n", (char *) &x->printpclname); 
-	  fscanf(f,"%s\n", (char *) &x->optipckname); 
-	  if (!feof(f))    /* neu */
-	    fscanf(f,"%s\n", (char *) &x->beamlinename); 
-	  else strncpy(x->beamlinename, "SGM.PHASE", MaxPathLength); 
-	  if (version >= 20081119)
+	{     
+	  if (version > 20120320) 
 	    {
-	      fscanf(f,"%s\n", (char *) &x->so4_fsource4a);     
-	      fscanf(f,"%s\n", (char *) &x->so4_fsource4b);    
-	      fscanf(f,"%s\n", (char *) &x->so4_fsource4c);       
-	      fscanf(f,"%s\n", (char *) &x->so4_fsource4d);
-	      fscanf(f,"%s\n", (char *) &x->so6_fsource6);
-	    }
-	  if (version >= 20110814)
+	      fscanf(f,"%s\n", (char *) &x->beamlinename);
+	    } else
 	    {
-	      fscanf(f,"%s\n", (char *) &x->opresname);     
-	      fscanf(f,"%s\n", (char *) &x->minname);    
+	      fscanf(f,"%s\n", (char *) &x->matrixname);     
+	      fscanf(f,"%s\n", (char *) &x->mapname);    
+	      fscanf(f,"%s\n", (char *) &x->sourceraysname);       
+	      fscanf(f,"%s\n", (char *) &x->imageraysname);	   
+	      fscanf(f,"%s\n", (char *) &x->intersecname); 
+	      fscanf(f,"%s\n", (char *) &x->geometryname);   
+	      fscanf(f,"%s\n", (char *) &x->elementname);  
+	      fscanf(f,"%s\n", (char *) &x->sourcepckname);  
+	      fscanf(f,"%s\n", (char *) &x->geometrypckname);   
+	      fscanf(f,"%s\n", (char *) &x->elementpckname);  
+	      fscanf(f,"%s\n", (char *) &x->pssourcename);   
+	      fscanf(f,"%s\n", (char *) &x->plotpsname);  
+	      fscanf(f,"%s\n", (char *) &x->printpclname); 
+	      fscanf(f,"%s\n", (char *) &x->optipckname); 
+	      if (!feof(f))    /* neu */
+		fscanf(f,"%s\n", (char *) &x->beamlinename); 
+	      else strncpy(x->beamlinename, "SGM.PHASE", MaxPathLength); 
+	      if (version >= 20081119)
+		{
+		  fscanf(f,"%s\n", (char *) &x->so4_fsource4a);     
+		  fscanf(f,"%s\n", (char *) &x->so4_fsource4b);    
+		  fscanf(f,"%s\n", (char *) &x->so4_fsource4c);       
+		  fscanf(f,"%s\n", (char *) &x->so4_fsource4d);
+		  fscanf(f,"%s\n", (char *) &x->so6_fsource6);
+		}
+	      if (version >= 20110814)
+		{
+		  fscanf(f,"%s\n", (char *) &x->opresname);     
+		  fscanf(f,"%s\n", (char *) &x->minname);    
+		}
 	    }
 	  rcode= 1;       /* OK zurueck */
 	}
@@ -411,7 +417,7 @@ void InitPHASE(struct PHASEset *x)                   /* set defaults */
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 {                              
   FILE *f;
-  int version= 20110814;
+  int version= 20120321; /* 20110814; */
   printf("putphase: write filenames\n");
 
   if ((f= fopen(mainpickname, "w")) == NULL)
@@ -421,13 +427,14 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
     } else 
       {
 	fprintf(f,"%s %d\n", MainPickFileHeader, version);
+#ifdef before_20110814
         fprintf(f,"%s\n", x->matrixname); 
         fprintf(f,"%s\n", x->mapname);    
  	fprintf(f,"%s\n", x->sourceraysname);       
  	fprintf(f,"%s\n", x->imageraysname);	   
  	fprintf(f,"%s\n", x->intersecname);
- 	fprintf(f,"%s\n", x->geometryname);   
-        fprintf(f,"%s\n", x->elementname);  
+ 	fprintf(f,"%s\n", x->geometryname); 
+        fprintf(f,"%s\n", x->elementname); 
         fprintf(f,"%s\n", x->sourcepckname);
         fprintf(f,"%s\n", x->geometrypckname);  
         fprintf(f,"%s\n", x->elementpckname);  
@@ -435,7 +442,9 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
         fprintf(f,"%s\n", x->plotpsname);  
         fprintf(f,"%s\n", x->printpclname);   
         fprintf(f,"%s\n", x->optipckname);   
+#endif
         fprintf(f,"%s\n", x->beamlinename);
+#ifdef before_20110814
 	fprintf(f,"%s\n", x->so4_fsource4a);
 	fprintf(f,"%s\n", x->so4_fsource4b);
 	fprintf(f,"%s\n", x->so4_fsource4c);
@@ -443,6 +452,7 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 	fprintf(f,"%s\n", x->so6_fsource6);
 	fprintf(f,"%s\n", x->opresname);
 	fprintf(f,"%s\n", x->minname);
+#endif
        	fclose(f);  
       }
 }    /* end putphase */	

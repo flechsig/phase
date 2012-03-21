@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <20 Mar 12 16:13:38 flechsig> 
+//  Time-stamp: <21 Mar 12 12:59:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -831,7 +831,7 @@ void MainWindow::elementApplyBslot()
 			   gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
   
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
-  myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]));
+  myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), number);
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
   UpdateStatus();
   myparent->writeBackupFile();

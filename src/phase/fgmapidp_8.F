@@ -62,6 +62,7 @@ c
 c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
+        integer elindex
 #include '../phase/phase_struct.F'
         structure/pathlength/
             real*8 xlen1c(0:7,0:7,0:7,0:7),
