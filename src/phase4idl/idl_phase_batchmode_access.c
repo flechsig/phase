@@ -50,22 +50,22 @@ int test_batchmode_nachbildung(int *CalcMode)
 //  int  cmode    =  1;
   int selected  = -1;
   
-  strcpy(PHASESet.beamlinename , "SGM.PHASE");
-  strcpy(PHASESet.imageraysname, "SGM.RESULT");
+  strcpy(Beamline.filenames.beamlinename , "SGM.PHASE");
+  strcpy(Beamline.filenames.imageraysname, "SGM.RESULT");
   
   
   struct PSDType *PSDp;
   struct PSImageType *psip;
 
-  printf("BatchMode: datafilename  : %s\n", PHASESet.beamlinename);
-  printf("BatchMode: resultfilename: %s\n", PHASESet.imageraysname);
+  printf("BatchMode: datafilename  : %s\n", Beamline.filenames.beamlinename);
+  printf("BatchMode: resultfilename: %s\n", Beamline.filenames.imageraysname);
   
   Beamline.ElementList= NULL;                       /* 15.12.99 */
   Beamline.raysout= NULL;
   Beamline.RTSource.SourceRays= NULL;
   Beamline.beamlineOK= 0;
-  ReadBLFile(PHASESet.beamlinename, &Beamline);
-  strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
+  ReadBLFile(Beamline.filenames.beamlinename, &Beamline);
+  strcpy(Beamline.filenames.pssourcename, Beamline.src.so6.fsource6);
   BuildBeamline(&Beamline); 
 
 if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
@@ -73,27 +73,27 @@ if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
     {
     case 1:
       printf("BatchMode: Ray Tracing\n");
-      MakeRTSource(&PHASESet, &Beamline); 
+      MakeRTSource(&Beamline.filenames, &Beamline); 
  //     ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
  //     RayTracec(&Beamline);
- //     WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
+ //     WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points,
 //		   Beamline.RESULT.RESp);
       break;
     case 2:
       printf("BatchMode: Full Ray Tracing\n");
-      MakeRTSource(&PHASESet, &Beamline); 
+      MakeRTSource(&Beamline.filenames, &Beamline); 
       ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       RayTraceFull(&Beamline);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
+      WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESp); 
       break;
     case 4:
       printf("BatchMode: Footprint at element %d\n", selected);
       Beamline.position= selected;
-      MakeRTSource(&PHASESet, &Beamline);
+      MakeRTSource(&Beamline.filenames, &Beamline);
       ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       Footprint(&Beamline, Beamline.position);
-      WriteRayFile(PHASESet.imageraysname, &Beamline.RESULT.points,
+      WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points,
 		   Beamline.RESULT.RESp);
       break;
     case 3: 
@@ -103,7 +103,7 @@ if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
       ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
       PST(&Beamline);
       PSDp= (struct PSDType *)Beamline.RESULT.RESp;
-      WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+      WritePsd(Beamline.filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
       break;
     default: 
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
