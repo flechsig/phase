@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Mar 12 10:52:41 flechsig>  */
+/*   Time-stamp: <21 Mar 12 11:12:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1571,10 +1571,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20lg so1: sigmazp \n", bl->src.so1.sigmazp);
 
    /* source 4 */
+   /* UF 20.3. 2012 */
+   /*
    fprintf(f, "%s so4.a\n", bl->src.so4.fsource4a);
    fprintf(f, "%s so4.b\n", bl->src.so4.fsource4b);
    fprintf(f, "%s so4.c\n", bl->src.so4.fsource4c);
    fprintf(f, "%s so4.d\n", bl->src.so4.fsource4d);
+   */
    /* 17.11.08 */
    fprintf(f, "%20d  so4: nfreqtot   \n", bl->src.so4.nfreqtot);
    fprintf(f, "%20d  so4: nfreqpos   \n", bl->src.so4.nfreqpos);
@@ -1594,7 +1597,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /*    fprintf(f, "%20lg so5: (Dipol) dipzmin \n", bl->src.so5.dipzmin); */
 /*    fprintf(f, "%20lg so5: (Dipol) dipzmax \n", bl->src.so5.dipzmax); */
 /* source 6 */
-   fprintf(f, "%s so6\n", bl->src.so6.fsource6);
+/* UF 20.3. 2012 */
+/*   fprintf(f, "%s so6\n", bl->src.so6.fsource6);*/
 
    fprintf(f, "%20lg pin_yl0 \n", bl->src.pin_yl0);
    fprintf(f, "%20lg pin_yl  \n", bl->src.pin_yl);
@@ -2055,11 +2059,13 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmaz, buffer, &buf);  
        fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
        /* source 4 */
-       
-       fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
-       fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
-       fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
-       fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
+       if (version < 20120321)
+	 {
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
+	 }
        /* UF 17.11.08 */
        if (version >= 20081117)
 	 {
@@ -2082,7 +2088,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        /* 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmin, buffer, &buf);   */
        /*          fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmax, buffer, &buf); */
        /* source 6 */
-       fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
+       if (version < 20120321)
+	 fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
        
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl, buffer, &buf);
@@ -2132,7 +2139,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
      } else rcode= -1;  /* end OPTIONS */     
 
-   if (version > 20120319)
+   if (version > 20120320)
      {
        if (SetFilePos(f, "FILENAMES"))
 	 {
