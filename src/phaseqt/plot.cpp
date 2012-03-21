@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <17 Feb 12 12:43:44 flechsig> 
+//  Time-stamp: <21 Mar 12 17:11:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -771,8 +771,10 @@ void Plot::hfill2(struct PSDType *rp)
   for (ix=0; ix< h2a_nx; ix++)
     for (iy=0; iy< h2a_ny; iy++) 
       {
-	h2a[ix + (h2a_ny- iy- 1)* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
-	h2max= max(h2max, h2a[ix + (h2a_ny- iy- 1)* h2a_nx]);     // save maximum
+	//h2a[ix + (h2a_ny- iy- 1)* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
+	h2a[ix + iy* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
+	// h2max= max(h2max, h2a[ix + (h2a_ny- iy- 1)* h2a_nx]);     // save maximum
+	h2max= max(h2max, h2a[ix + iy* h2a_nx]);     // save maximum
       }
   
   // scale maximum to 10
