@@ -151,6 +151,7 @@ c         write(6,*)' fgmapidp: imodus   = ',imodus
 c         write(6,*)' fgmapidp: iord     = ',iord
 c         write(6,*)' fgmapidp: iplmode  = ',iplmode
 c         write(6,*)' fgmapidp: acc      = ',acc
+          write(6,*)' fgmapidp: elindex  = ',elindex
 c         write(6,*)'=============================== '
 #endif
         if(acc.lt.1d-12)then
@@ -425,9 +426,9 @@ c---------------------------------------------------------------
 
         else
 #ifdef DEBUG
-          write(*,*)'fgmapidp: S2Imap done  iord=',iord,' elindex=',elindex
+          write(*,*)' fgmapidp: elindex  = ',elindex,', S2Imap done  iord = ',iord
 #endif
-        endif   ! imodus
+        endif   ! imodus 
 
         return
         end
