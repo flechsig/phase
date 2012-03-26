@@ -337,7 +337,7 @@ c	end structure
 c------------------ constants -----------------------------------
 
         structure/constants/
-	   real*8 pi,gam(0:7)
+	   real*8 pi,gam(0:100),fs(0:100),fc(0:100)
 	   complex*16 sqrtm1
         end structure
 
