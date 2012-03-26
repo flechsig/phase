@@ -464,6 +464,8 @@ c in der phaselib benutze ich parder4
 	record /mirrortype/ am
 	record /map4/ m4
 
+        dimension bb(0:100)
+
 c      dimension p1(0:7,0:7,0:7,0:7)
 c      dimension p2(0:7,0:7,0:7,0:7)
 c      dimension p12(0:7,0:7,0:7,0:7)
@@ -562,7 +564,7 @@ c---------------------------------------------------------------------
 c	 Berechnung der Laengen r und rp
 c	 if only one OE
 
-c	 Nutzung von  xlen1c, xlenc2c
+c	 Nutzung von  xlen1c, xlen2c
 	 
 c	 call subdfpl1(g,am.a,ra,pd)       ! mirror
 c        call subdfpl1a(g,am.a,ra,pd)      ! grating
@@ -582,40 +584,53 @@ c---------------------------------------------------------------------
 
         if(ifl.inorm2.eq.4)then
 
-        iord_loc=7
-
-c       fd1ph aus fd1pha und fd1phb berechnen
-
-c=================== A C H T U N G =================================
-        ratio0=1.d-1
-c       später als Parameter übergeben
-
 c       fd1pha is 3rd order, 
 c       fd1phb is 2nd order term in w     
 c       fd1ph  is 2nd order term in l
 
-        if(fd1phb.gt.1.d-50)then
-        ratio=dabs(fd1pha/fd1phb)
-c         write(6,*)ratio
-        else
-        write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
+        if(dabs(fd1phb).lt.1.d-50)then
+          write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
+          write(6,*)'terminating program'
+          stop
         endif
 
-        if(ratio.le.ratio0)then
-         
-c------  Formel für inorm2 = 21 (2. Ordnung Pfadlänge)
-         
-         ff=fdph/(ra.xlam_test*dsqrt(4.d0*fd1ph*fd1phb))
-c        write(6,*)'alte Routine',fd1phb*2.d0,fd1ph*2.d0
-         else
+c=================== A C H T U N G =================================
+c       später als Parameter übergeben
+        nk=50
+        convlim=3.5d0   
+
 c------  neue Formel, Koeffizienten zurückrechnen:
-         fact=(dsqrt(dabs(g.cosa))*
+        fd1ph_sav=fd1ph
+        fd1phb_sav=fd1phb
+
+        fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
-         fact1=fact*2.0d0   
-         fact2=fact1*((2.d0*cs.pi)/ra.xlam_test)
-         fd1ph=(fd1ph*2.d0)/(fact*cs.pi)
-         fd1pha=fd1pha*fact2
-         fd1phb=fd1phb*fact2
+        fact1=fact*2.0d0   
+        fact2=fact1*((2.d0*cs.pi)/ra.xlam_test)
+        fd1ph=(fd1ph/fact1)*2.d0*ra.xlam_test**3
+                          ! hier steckt also der Faktor cos(beta)/r/rp/lambda drin 
+c                          ! und auch wurzel pi, damit ist auch Integration über l erledigt
+        fd1pha=fd1pha*fact2
+        fd1phb=fd1phb*fact2
+
+c       get abar and bbar
+        abar=1.d0/dabs(fd1pha)**(1.d0/3.d0)
+        bbar=fd1phb*abar**2
+
+        if(dabs(bbar).gt.convlim)then
+
+c------  Formel für inorm2 = 21 (2. Ordnung Pfadlänge)
+c         eigentlich muss man hier nicht inorm2=21 sondern inorm2=31 nehmen 
+c         aber es wurdein fdet_8 schon eine Koordinatentransformation gemacht, sodass alles ok ist
+c         Koeffizienten rückrechnen
+          fd1ph=fd1ph_sav
+          fd1phb=fd1phb_sav
+          ff=(fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+
+         else
+
+c------- neue Formel
+        goto 1111
 
 c------ first part (integration from zero to infinity,
 c       if a>0 and b>0. otherwise integration from -infinity to zero)
@@ -660,18 +675,38 @@ c------- Imaginärteil
 
 	enddo
 
+1111    continue
+c--------------------------------------------------------------------
+c       effizienterer Algorithmus
+c--------------------------------------------------------------------
+
+c       get exponentials in bbar
+        bb(0)=1.d0
+        do n=1,nk
+         bb(n)=bb(n-1)*bbar
+        enddo
+
+        sumcos=0.d0
+        sumsin=0.d0     
+
+        nmaxc=2*(nk/2)
+        nmaxs=2*((nk+1)/2)-1
+
+        do n=0,nmaxc,2
+          sumcos=sumcos+bb(n)*cs.fc(n)     
+        enddo
+        do n=1,nmaxs,2
+          sumsin=sumsin+bb(n)*cs.fs(n)     
+        enddo
+        sumcos=sumcos*abar
+        sumsin=sumsin*abar
+
 c------- Achtung fd1ph ist jetzt complexe Groesse
+c------- A C H T U N G checken
+        ff=(fdph/dsqrt(fd1ph))
+        ff=ff*(sumcos+sumsin*cs.sqrtm1)
 
-        ff=fdph/dsqrt(fd1ph)
-     
-c        write(6,*)ff
-
-        ff=ff*((sumcos1+sumcos2)+(sumsin1+sumsin2)*cs.sqrtm1)
         endif  ! ratio.gt.0.1
-
-c        write(6,*)sumcos1+sumcos2
-c        write(6,*)sumsin1+sumsin2
-c        write(6,*)'=====',ff
 
         endif  ! inorm2.eq.4
 
