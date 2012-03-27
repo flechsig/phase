@@ -596,8 +596,8 @@ c       fd1ph  is 2nd order term in l
 
 c=================== A C H T U N G =================================
 c       später als Parameter übergeben
-        nk=50
-        convlim=3.5d0   
+        nk=80
+        convlim=4.0d0   
 
 c------  neue Formel, Koeffizienten zurückrechnen:
         fd1ph_sav=fd1ph
@@ -625,7 +625,7 @@ c         aber es wurdein fdet_8 schon eine Koordinatentransformation gemacht, s
 c         Koeffizienten rückrechnen
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=(fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+          ff=cs.sqrtm1*(fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
 
          else
 
@@ -703,10 +703,10 @@ c       get exponentials in bbar
 
 c------- Achtung fd1ph ist jetzt complexe Groesse
 c------- A C H T U N G checken
-        ff=(fdph/dsqrt(fd1ph))
+        ff=(fdph/dsqrt(fd1ph))*exp(cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
 
-        endif  ! ratio.gt.0.1
+        endif  ! bbar.lt.convlim
 
         endif  ! inorm2.eq.4
 
