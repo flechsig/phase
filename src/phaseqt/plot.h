@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <17 Feb 12 12:21:47 flechsig>  */
+/*  Time-stamp: <27 Mar 12 17:02:40 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -56,7 +56,7 @@ public:
     double phimax;
     double *h2a;
     int    h2a_nx, h2a_ny;
-    double xx[NPOINTS], ysin[NPOINTS], ycos[NPOINTS], *xxx, *yyy ;
+    double xx[NPOINTS], ysin[NPOINTS], ycos[NPOINTS], *xxx, *yyy, *pox, *poy ;
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;

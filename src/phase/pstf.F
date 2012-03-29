@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <14 Feb 12 13:17:33 flechsig> 
+c$$$ Time-stamp: <29 Mar 12 16:51:32 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 
@@ -308,6 +308,9 @@ c fd1phmax nur bei quelle 4 und 5 sinnvoll ?
               stinumbc(n1+(n2-1)*s.iheigh)=1.0*st.inumb(n1,n2)
            enddo
         enddo
+
+c     UF for debugging   psdc(1)=9
+c        psdc(2)=8
 c        endif
 c
         if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then

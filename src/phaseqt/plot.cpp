@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <21 Mar 12 17:11:07 flechsig> 
+//  Time-stamp: <29 Mar 12 16:47:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -114,30 +114,36 @@ class SpectrogramDataPhase: public QwtRasterData
 {
 private:
   Plot *po;
+  double dxtotal;
+  double dytotal;
+  
 public:
     SpectrogramDataPhase(Plot *plotobj)
     {
       po= plotobj;
-
+      dxtotal= po->pox[po->h2a_nx- 1] - po->pox[0];
+      dytotal= po->poy[po->h2a_ny- 1] - po->poy[0];
+      
 #ifdef DEBUG
       printf("debug: constructor SpectrogramDataPhase: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
+      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
       setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
       setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
       setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
 #ifdef DEBUG
-      printf(" ==> done\n");
+      cout << " ==> done"  << endl;
 #endif
     }
   
     virtual double value(double x, double y) const
     {
-      int ix = qRound(po->h2a_nx* (x- po->zmin)/(po->zmax - po->zmin));
-      int iy = qRound(po->h2a_ny* (y- po->ymin)/(po->ymax - po->ymin));
+      int ix = qRound((po->h2a_nx- 1)* (x- po->pox[0])/ dxtotal);
+      int iy = qRound((po->h2a_ny- 1)* (y- po->poy[0])/ dytotal);
       if ( ix >= 0 && ix < po->h2a_nx && iy >= 0 && iy < po->h2a_ny )
 	return po->h2a[ix+ iy* po->h2a_nx];
-      return 1.0;
+      return 10.0; // temporarely
     }
 };
 
@@ -166,7 +172,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve2->attach( this );                      
   d_curve1->hide();
   d_curve2->hide();
-  xxx= NULL; yyy=NULL;
+  xxx= NULL; yyy= NULL;
   xdata= ydata= zdata = h2a= NULL;
   plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
   plotstyle= PLOT_CONTOUR;
@@ -421,7 +427,7 @@ double *Plot::getYdata()
 void Plot::scatterPlot()
 {
 #ifdef DEBUG   
-  printf("debug: scatter plot\n");
+  cout << "debug: scatter plot" << endl;
 #endif
  
   d_spectrogram->hide();                              // hide spectrogram
@@ -706,7 +712,7 @@ void Plot::hfill1(double *dvec, double x1, double x2)
 void Plot::hfill2()
 {
   int i, h2a_n;
-  unsigned int ix, iy;
+  int ix, iy;
   
 #ifdef DEBUG
   cout << "Plot::hfill2 called (ray version)" << endl;
@@ -716,8 +722,6 @@ void Plot::hfill2()
   if (h2a != NULL) delete h2a;
   if (h2a_n > 0) h2a= new double[h2a_n];
   
-  //for (ix= 0; ix< h2a_nx; ix++)
-    //  for (iy= 0; iy< h2a_ny; iy++) h2arr[ix][iy]= 0.0;    // set array data to 0.0
   for (i= 0; i< h2a_n; i++) h2a[i]= 0.0;    // set array data to 0.0
 
   if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
@@ -729,10 +733,10 @@ void Plot::hfill2()
   for (i= 0; i< ndata; i++)
     {
       //      appendPoint( QPointF( rp->z, rp->y ) );
-      ix= (unsigned int)((xdata[i]- zmin)/(zmax - zmin)*(h2a_nx- 1));
-      iy= (unsigned int)((ydata[i]- ymin)/(ymax - ymin)*(h2a_ny- 1));
+      ix= (int)((xdata[i]- zmin)/(zmax - zmin)* h2a_nx);
+      iy= (int)((ydata[i]- ymin)/(ymax - ymin)* h2a_ny);
       
-      if ((ix < h2a_nx) && (iy < h2a_ny)) 
+      if ((ix >= 0) && (ix < h2a_nx) && (iy >= 0) && (iy < h2a_ny)) 
 	{
 	  h2a[ix+ iy*h2a_nx]+= 1;          // add one hit
 	  h2max= max(h2max, h2a[ix+ iy*h2a_nx]);                         // save maximum
@@ -762,6 +766,8 @@ void Plot::hfill2(struct PSDType *rp)
   h2a_nx= rp->iz;
   h2a_ny= rp->iy;
   data  = rp->psd;   // in fortran model
+  pox = rp->z;
+  poy = rp->y;
 
   h2a_n= h2a_nx * h2a_ny;
   if (h2a != NULL) delete h2a;
@@ -772,8 +778,10 @@ void Plot::hfill2(struct PSDType *rp)
     for (iy=0; iy< h2a_ny; iy++) 
       {
 	//h2a[ix + (h2a_ny- iy- 1)* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
-	h2a[ix + iy* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
+	// data kommt im fortran modell
+	h2a[ix + iy* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren
 	// h2max= max(h2max, h2a[ix + (h2a_ny- iy- 1)* h2a_nx]);     // save maximum
+
 	h2max= max(h2max, h2a[ix + iy* h2a_nx]);     // save maximum
       }
   
@@ -782,6 +790,8 @@ void Plot::hfill2(struct PSDType *rp)
     for (i=0; i< h2a_n; i++)
        h2a[i]*= 10.0/ h2max;
 
+  //  h2a[0]= 9; // for debugging
+  //  h2a[1]= 8;
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
