@@ -141,7 +141,8 @@ c------------- change signs of ypc1 and zpc1
           enddo
         enddo
 
-      if(inorm2.eq.4)then
+       if((inorm2.eq.4 ).or.(inorm2.eq.40).or.
+     &    (inorm2.eq.41).or.(inorm2.eq.42))then
 c------------- change signs of wc and xlc 
         do n1=0,iord
          do n2=0,iord-n1
@@ -376,8 +377,8 @@ c         diesen Ausdruck gegenüber inorm2 = 3 bevorzugen
         endif
 
 c----------------------------
-	if(inorm2.eq.4)then
-c----------------------------
+        if((inorm2.eq.4 ).or.(inorm2.eq.40).or.
+     &   (inorm2.eq.41).or.(inorm2.eq.42))then
 
 c	wir haben schon mal in Abhängigkeit der Variablen
 c	w, l, y, z, yp, zp die folgenden Ausdruecke:
@@ -467,7 +468,9 @@ c	Das Integral wird erst in fywert berechnet
 
 	endif		! inorm2 = 4
 
-        if(inorm2.eq.4)then
+       if((inorm2.eq.4 ).or.(inorm2.eq.40).or.
+     &   (inorm2.eq.41).or.(inorm2.eq.42))then
+
 c--------- change signs of wc, xlc back 
           do n1=0,iord
            do n2=0,iord-n1
