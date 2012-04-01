@@ -464,7 +464,7 @@ c in der phaselib benutze ich parder4
 	record /mirrortype/ am
 	record /map4/ m4
 
-        dimension bb(0:100)
+        dimension bb(0:165)
 
 c      dimension p1(0:7,0:7,0:7,0:7)
 c      dimension p2(0:7,0:7,0:7,0:7)
@@ -534,10 +534,15 @@ c-------------------------------------------------------------------------
           var0=var0*dyii
         enddo
 
+        xwsign=1.d0
+        xlsign=1.d0
+        
 	fd=dabs(fd)
         fdph=dabs(fdph)
+        if(fd1ph.lt.0.d0)xlsign=-1.d0
         fd1ph=dabs(fd1ph)
         fd1pha=dabs(fd1pha)
+        if(fd1phb.lt.0.d0)xwsign=-1.d0
         fd1phb=dabs(fd1phb)
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
@@ -569,6 +574,11 @@ c	 Nutzung von  xlen1c, xlen2c
 c	 call subdfpl1(g,am.a,ra,pd)       ! mirror
 c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
+
+c        Varianten von inorm2 = 4
+c        inorm2 = 40: alle Terme werden mit alter Methode berechnet (convlim=1.0d-50)
+c        inorm2 = 41: Beschränkung auf neue Terme
+c        inorm2 = 42: Beschränkung auf alte Terme 
 	 
 c---------------------------------------------------------------------
         if(ifl.inorm2.eq.1)ff=fdph
@@ -582,7 +592,8 @@ c---------------------------------------------------------------------
           ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph)))
         endif
 
-        if(ifl.inorm2.eq.4)then
+        if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
+     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42))then
 
 c       fd1pha is 3rd order, 
 c       fd1phb is 2nd order term in w     
@@ -596,8 +607,9 @@ c       fd1ph  is 2nd order term in l
 
 c=================== A C H T U N G =================================
 c       später als Parameter übergeben
-        nk=80
-        convlim=4.0d0   
+        nk=165
+        convlim=5.1d0   
+        if(ifl.inorm2.eq.40)convlim=1.0d-50 
 
 c------  neue Formel, Koeffizienten zurückrechnen:
         fd1ph_sav=fd1ph
@@ -625,8 +637,10 @@ c         aber es wurdein fdet_8 schon eine Koordinatentransformation gemacht, s
 c         Koeffizienten rückrechnen
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=cs.sqrtm1*(fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+          ff=exp(xwsign*cs.sqrtm1*cs.pi*0.25d0)*exp(xlsign*cs.sqrtm1*cs.pi*0.25d0)*
+     &       (fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
 
+         if(ifl.inorm2.eq.41)ff=0.d0
          else
 
 c------- neue Formel
@@ -702,20 +716,15 @@ c       get exponentials in bbar
         sumsin=sumsin*abar
 
 c------- Achtung fd1ph ist jetzt complexe Groesse
-c------- A C H T U N G checken
-        ff=(fdph/dsqrt(fd1ph))*exp(cs.sqrtm1*cs.pi*0.25d0)
+        ff=(fdph/dsqrt(fd1ph))*exp(xlsign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
+        if(ifl.inorm2.eq.42)ff=0.d0
 
         endif  ! bbar.lt.convlim
 
         endif  ! inorm2.eq.4
 
 c--------------------------------------------------------------------------
-
-c        if(ifl.inorm2.eq.2)write(6,*)'2 ',ff
-c        if(ifl.inorm2.eq.4)write(6,*)'4 ',ff
-c        if(ifl.inorm2.eq.20)write(6,*)'20 ',ff
-c        if(ifl.inorm2.eq.21)write(6,*)'21 ',ff
 
 	if(ifl.ispline.ge.0)then
                 sr.densy=sr.densy*ff
