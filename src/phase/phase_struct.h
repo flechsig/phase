@@ -343,7 +343,7 @@ struct simps1 {
 /* ----------------- constants -----------------------------------*/
 
         struct  constants {
-	   double pi,gam[101],fs[101],fc[101];
+	   double pi,gam[166],fs[166],fc[166];
 	   COMPLEX sqrtm1;
         };  
 
