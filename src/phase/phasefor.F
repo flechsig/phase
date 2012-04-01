@@ -87,12 +87,12 @@ c--------------------------------------------------------
 c--------------------------------------------------------
         implicit real*8(a-h,o-z)
 
-        dimension gam(0:100)
-        dimension fs(0:100),fc(0:100)
+        dimension gam(0:165)
+        dimension fs(0:165),fc(0:165)
 
-        igam=98
+        igam=163
         gam(0)= 2.6789385347077476d0    ! =g13
-          g23=(2*pi)/(dsqrt(3.d0)*gam(0))
+          g23=(2.d0*pi)/(dsqrt(3.d0)*gam(0))
         gam(1)=1.d0
 
 c       ganzzhlige Argumente    
