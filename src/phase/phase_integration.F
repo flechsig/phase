@@ -534,15 +534,17 @@ c-------------------------------------------------------------------------
           var0=var0*dyii
         enddo
 
-        xwsign=1.d0
-        xlsign=1.d0
+        xw3sign=1.d0
+        xw2sign=1.d0
+        xl2sign=1.d0
         
 	fd=dabs(fd)
         fdph=dabs(fdph)
-        if(fd1ph.lt.0.d0)xlsign=-1.d0
+        if(fd1ph.lt.0.d0)xl2sign=-1.d0
         fd1ph=dabs(fd1ph)
+        if(fd1pha.lt.0.d0)xw3sign=-1.d0  
         fd1pha=dabs(fd1pha)
-        if(fd1phb.lt.0.d0)xwsign=-1.d0
+        if(fd1phb.lt.0.d0)xw2sign=-1.d0
         fd1phb=dabs(fd1phb)
 
         call psdi(g,src,apr,cs,ifl,ra,sr)
@@ -607,9 +609,18 @@ c       fd1ph  is 2nd order term in l
 
 c=================== A C H T U N G =================================
 c       später als Parameter übergeben
+c       maximale Werte sind:
         nk=165
         convlim=5.1d0   
-        if(ifl.inorm2.eq.40)convlim=1.0d-50 
+        if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
+ 
+        if(fd1pha.lt.1.d0-50)then
+          w0a=1.0d50                                   ! use only 2nd order
+          else
+          w0a=ra.oe.w-(2.d0*xw2sign*fd1phb)/(3.d0*xw3sign*fd1pha)
+        endif
+        xlenmir=160.d0  ! length of mirror in mm
+        if(dabs(w0a).gt.xlenmir/2.d0)convlim=1.0d-50  ! use only 2nd order
 
 c------  neue Formel, Koeffizienten zurückrechnen:
         fd1ph_sav=fd1ph
@@ -626,8 +637,14 @@ c                          ! und auch wurzel pi, damit ist auch Integration übe
         fd1phb=fd1phb*fact2
 
 c       get abar and bbar
-        abar=1.d0/dabs(fd1pha)**(1.d0/3.d0)
-        bbar=fd1phb*abar**2
+        abar=xw3sign/fd1pha**(1.d0/3.d0)
+        bbar=xw2sign*fd1phb*abar**2
+
+c------------- convlim anpassen (das kann man noch feiner machen)
+        if(dabs(bbar).lt.2.d0)nk=15
+        if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
+        if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
+        if(dabs(bbar).ge.4.d0)nk=165
 
         if(dabs(bbar).gt.convlim)then
 
@@ -637,10 +654,10 @@ c         aber es wurdein fdet_8 schon eine Koordinatentransformation gemacht, s
 c         Koeffizienten rückrechnen
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=exp(xwsign*cs.sqrtm1*cs.pi*0.25d0)*exp(xlsign*cs.sqrtm1*cs.pi*0.25d0)*
+          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       (fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+          if(ifl.inorm2.eq.41)ff=0.d0
 
-         if(ifl.inorm2.eq.41)ff=0.d0
          else
 
 c------- neue Formel
@@ -716,7 +733,7 @@ c       get exponentials in bbar
         sumsin=sumsin*abar
 
 c------- Achtung fd1ph ist jetzt complexe Groesse
-        ff=(fdph/dsqrt(fd1ph))*exp(xlsign*cs.sqrtm1*cs.pi*0.25d0)
+        ff=(fdph/dsqrt(fd1ph))*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.42)ff=0.d0
 
