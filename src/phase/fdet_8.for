@@ -455,7 +455,7 @@ c------------- change signs of results for inorm2 = 4
              do n4=0,iord-n1-n2-n3
               fdet1phc(n1,n2,n3,n4)=((-1)**(n2+n3))*
      &                        fdet1phc(n1,n2,n3,n4)
-              fdet1phca(n1,n2,n3,n4)=((-1)**(n2+n3))*
+              fdet1phca(n1,n2,n3,n4)=((-1)**(n2+n3+1))*
      &                        fdet1phca(n1,n2,n3,n4)
               fdet1phcb(n1,n2,n3,n4)=((-1)**(n2+n3))*
      &                        fdet1phcb(n1,n2,n3,n4)
