@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <05 Sep 11 10:34:02 flechsig> 
+#  Time-stamp: <03 Apr 12 14:31:11 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -14,6 +14,11 @@
 # i.e. to built a library for a new compiler the objects have to be cleaned
 
 COMMONSOURCES= \
+misali.F       misali_8.f \
+misali4.f      misali4_8.f \
+misali3.f      misali3_8.f \
+misali2.f      misali2_8.f \
+misali1.f      misali1_8.f \
 wdfgmapa4.for  wdfgmapb4.for   \
 wdfgmapc4.for  wdfgmapd14.for  \
 wdfgmapd34.for wdfgmapd44.for  \
