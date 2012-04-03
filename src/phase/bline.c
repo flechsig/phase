@@ -1429,11 +1429,11 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "\nElement %d\n", elnumber);
      fprintf(f, "%20s     name of elem. \n", listpt->elementname); 
      fprintf(f, "\nGEOMETRY %d\n", elnumber); 
-     fprintf(f, "%20lg     theta              \n", listpt->GDat.theta0); 
+     fprintf(f, "%20.10lg  theta              \n", listpt->GDat.theta0); 
      fprintf(f, "%20lg     source distance    \n", listpt->GDat.r);
      fprintf(f, "%20lg     image  distance    \n", listpt->GDat.rp);
      for (i= 0; i< 5; i++) 
-       fprintf(f, "%20lg     line density x[%d] \n", listpt->GDat.xdens[i], i);
+       fprintf(f, "%20.10lg  line density x[%d] \n", listpt->GDat.xdens[i], i);
      fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambda* 1e6); 
      fprintf(f, "%20lg     dlambda [nm]        \n", listpt->GDat.dlambda* 1e6); 
      fprintf(f, "%20d     dlambdaflag        \n", listpt->GDat.dlambdaflag);

@@ -608,7 +608,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
       FixFocus(cff, myparent->myBeamline()->BLOptions.lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
-      thetaE->setText(cffstr.setNum(theta0, 'f', 4));  // update widget
+      thetaE->setText(cffstr.setNum(theta0, 'f', 6));  // update widget
       gdat->theta0= theta0;                            // update data
     } 
   else

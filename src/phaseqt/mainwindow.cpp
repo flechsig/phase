@@ -1713,20 +1713,20 @@ void MainWindow::UpdateElementBox(int number)
   cff = cos(fi- teta)/ cos(fi+ teta);
 
    // update widgets
-  cffE   ->setText(qst.setNum(cff,        'f', 3));
+  cffE   ->setText(qst.setNum(cff,        'f', 6));
   preE   ->setText(qst.setNum(gd->r,      'g', 6));
   sucE   ->setText(qst.setNum(gd->rp,     'g', 6));
-  thetaE ->setText(qst.setNum(gd->theta0, 'f', 3));
+  thetaE ->setText(qst.setNum(gd->theta0, 'f', 6));
   sourceE->setText(qst.setNum(md->r1,     'g', 6));
   imageE ->setText(qst.setNum(md->r2,     'g', 6));
   rE     ->setText(qst.setNum(md->rmi,    'g', 6));
   rhoE   ->setText(qst.setNum(md->rho,    'g', 6));
   integerSpinBox->setValue(gd->inout);
-  lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 4));
-  vls1->setText(qst.setNum(gd->xdens[1], 'g', 4));
-  vls2->setText(qst.setNum(gd->xdens[2], 'g', 4));
-  vls3->setText(qst.setNum(gd->xdens[3], 'g', 4));
-  vls4->setText(qst.setNum(gd->xdens[4], 'g', 4));
+  lineDensity->setText(qst.setNum(gd->xdens[0], 'g', 10));
+  vls1->setText(qst.setNum(gd->xdens[1], 'g', 10));
+  vls2->setText(qst.setNum(gd->xdens[2], 'g', 10));
+  vls3->setText(qst.setNum(gd->xdens[3], 'g', 10));
+  vls4->setText(qst.setNum(gd->xdens[4], 'g', 10));
   duE ->setText(qst.setNum(md->du, 'g', 4));
   dwE ->setText(qst.setNum(md->dw, 'g', 4));
   dlE ->setText(qst.setNum(md->dl, 'g', 4));
