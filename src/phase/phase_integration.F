@@ -559,7 +559,7 @@ c	 unterschieden wird, ob ein OE oder die Summe von mehreren
 c	 OEs berechnet wird. Reihenentwicklungen fuer die Vorfaktoren 
 c	 fuer ein OE muessen sinnvollerweise in der Routine fdet_8 
 c	 berechnet werden und in bline.c zusammengebaut werden.
-c        Zurzeit ist es nur für ein OE richtig implenetiert in fdet_8.
+c        Zurzeit ist es nur für ein OE richtig implementiert in fdet_8.
 c	 Es ist darauf zu achten, dass
 c	 - alpha, beta functions of (z,y,dz,dy)
 c	 - r, rp functions of (z,y,dz,dy)
@@ -602,14 +602,16 @@ c       fd1phb is 2nd order term in w
 c       fd1ph  is 2nd order term in l
 
         if(dabs(fd1phb).lt.1.d-50)then
-          write(6,*)' Achtung: quadratischer Term < 1d-50: ',fd1phb 
+          write(6,*)' Attention: quadratic term < 1d-50: ',fd1phb 
           write(6,*)'terminating program'
           stop
         endif
 
 c=================== A C H T U N G =================================
-c       später als Parameter übergeben
-c       maximale Werte sind:
+c       xlenmir: Spiegellänge in mm, später als Parameter übergeben
+        xlenmir=500.d0 
+
+c       Konvergenzkriterien, maximale Werte sind:
         nk=165
         convlim=5.1d0   
         if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
@@ -619,10 +621,9 @@ c       maximale Werte sind:
           else
           w0a=ra.oe.w-(2.d0*xw2sign*fd1phb)/(3.d0*xw3sign*fd1pha)
         endif
-        xlenmir=160.d0  ! length of mirror in mm
+
         if(dabs(w0a).gt.xlenmir/2.d0)convlim=1.0d-50  ! use only 2nd order
 
-c------  neue Formel, Koeffizienten zurückrechnen:
         fd1ph_sav=fd1ph
         fd1phb_sav=fd1phb
 
@@ -631,16 +632,13 @@ c------  neue Formel, Koeffizienten zurückrechnen:
         fact1=fact*2.0d0   
         fact2=fact1*((2.d0*cs.pi)/ra.xlam_test)
         fd1ph=(fd1ph/fact1)*2.d0*ra.xlam_test**3
-                          ! hier steckt also der Faktor cos(beta)/r/rp/lambda drin 
-c                          ! und auch wurzel pi, damit ist auch Integration über l erledigt
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
 
-c       get abar and bbar
         abar=xw3sign/fd1pha**(1.d0/3.d0)
         bbar=xw2sign*fd1phb*abar**2
 
-c------------- convlim anpassen (das kann man noch feiner machen)
+c------------- get convlim (can be done on a finer grid in the future)
         if(dabs(bbar).lt.2.d0)nk=15
         if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
         if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
@@ -648,10 +646,8 @@ c------------- convlim anpassen (das kann man noch feiner machen)
 
         if(dabs(bbar).gt.convlim)then
 
-c------  Formel für inorm2 = 21 (2. Ordnung Pfadlänge)
-c         eigentlich muss man hier nicht inorm2=21 sondern inorm2=31 nehmen 
-c         aber es wurdein fdet_8 schon eine Koordinatentransformation gemacht, sodass alles ok ist
-c         Koeffizienten rückrechnen
+c------------- only quadratic terms
+
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
@@ -660,58 +656,8 @@ c         Koeffizienten rückrechnen
 
          else
 
-c------- neue Formel
-        goto 1111
+c------------- include 3rd order Term in w
 
-c------ first part (integration from zero to infinity,
-c       if a>0 and b>0. otherwise integration from -infinity to zero)
-
-c------- erster Teil
-        sumcos1=0.d0
-        sumsin1=0.d0
-
-	do k=0,iord_loc
-
-c------- Realteil
-	arg=(fd1phb**k)/facult(k)
-	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*cs.pi)
-	sumcos1=sumcos1+arg/3.d0
-
-c------- Imaginärteil
-	arg=(-fd1phb**k)/facult(k)
-	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*cs.pi)
-	sumsin1=sumsin1+arg/3.d0
-
-	enddo
-
-c------- zweiter Teil
-        sumcos2=0.d0
-        sumsin2=0.d0
-
-	do k=0,iord_loc
-
-c------- Realteil
-	arg=((-fd1phb)**k)/facult(k)
-	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dcos((dflotj(1-k)/6.d0)*cs.pi)
-	sumcos2=sumcos2+arg/3.d0
-
-c------- Imaginärteil
-	arg=((-fd1phb)**k)/facult(k)
-	arg=arg*dabs(fd1pha)**(-dflotj(2*k+1)/3.d0)
-	arg=arg*cs.gam(k)*dsin((dflotj(1-k)/6.d0)*cs.pi)
-	sumsin2=sumsin2+arg/3.d0
-
-	enddo
-
-1111    continue
-c--------------------------------------------------------------------
-c       effizienterer Algorithmus
-c--------------------------------------------------------------------
-
-c       get exponentials in bbar
         bb(0)=1.d0
         do n=1,nk
          bb(n)=bb(n-1)*bbar
@@ -732,7 +678,6 @@ c       get exponentials in bbar
         sumcos=sumcos*abar
         sumsin=sumsin*abar
 
-c------- Achtung fd1ph ist jetzt complexe Groesse
         ff=(fdph/dsqrt(fd1ph))*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.42)ff=0.d0
