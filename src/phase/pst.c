@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Feb 12 13:31:18 flechsig>  */
+/*   Time-stamp: <04 Apr 12 13:57:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -19,40 +19,14 @@
 #include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
-
 #include <math.h>
 #include <time.h>
                                             
-    
 #include "cutils.h" 
 #include "phase_struct.h"
-/*#include "fg3pck.h"  */
-                                        
-  
 #include "phase.h"         
 #include "rtrace.h" 
 
-
-//TODO: maybe move this prototype to a header file
-void pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
-          double *lambda, int *iord, 
-#ifdef SEVEN_ORDER
-          MAPTYPE_8X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
-#else
-          MAPTYPE_5X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
-#endif
-          double *xlen0, MAP7TYPE *ypc1, MAP7TYPE *zpc1, MAP7TYPE *dypc, MAP7TYPE *dzpc,
-          MAP7TYPE *wc, MAP7TYPE *xlc,
-          double *y, double *z,
-          double *psd, double *stfd1phmaxc,
-          double *stinumbc, double *s1c,
-          double *s2c, double *s3c,
-          double *eyrec, double *ezrec,
-          double *eyimc, double *ezimc,
-          struct geometryst *gp, struct mirrortype *mirp,
-          struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
-          struct integration *xi, struct integration_results *xir, struct statistics *st, 
-          MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb);
 
 void inttochar(int n, char *sn)
 {
@@ -475,7 +449,7 @@ struct statistics *stp;
        gp, mirp, 
        &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl,
        &bl->BLOptions.xi, xirp, stp,
-       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb);
+       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb, bl);
 
 #ifdef DEBUG
   printf("pst.c: returning from call pstf(...)\n");
