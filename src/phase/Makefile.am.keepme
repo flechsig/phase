@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <04 Apr 12 13:28:01 flechsig> 
+#  Time-stamp: <04 Apr 12 13:38:21 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -18,8 +18,7 @@ phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c  \
 	        cutils.c rtrace.c ctype.c \
 	        phasegraffor.F phasefor.F \
 	        phase_source.F \
-		beamline_struct.F \
-	        phase_integration.F \
+		phase_integration.F \
 	        cutils.h phase_struct.h  \
 	        phase.h rtrace.h error.h common.h version.h phaseX.h \
                 drift_8.for fgmapidp_8.F get_partial_etc.for rekursiv_2d_8.for \
@@ -41,7 +40,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
                ../data/phaseinit.com\
                ../data/phaseuser.com
 
-EXTRA_DIST = phase_struct.F $(pkgdata_DATA)
+EXTRA_DIST = phase_struct.F beamline_struct.F $(pkgdata_DATA)
 
 ## flags
 AM_CPPFLAGS = -DLINUX 
