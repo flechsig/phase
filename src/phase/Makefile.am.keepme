@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <03 Apr 12 14:45:41 flechsig> 
+#  Time-stamp: <04 Apr 12 13:28:01 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -18,6 +18,7 @@ phase_SOURCES = phase.c phasec.c activate_proc.c phasegraf.c  \
 	        cutils.c rtrace.c ctype.c \
 	        phasegraffor.F phasefor.F \
 	        phase_source.F \
+		beamline_struct.F \
 	        phase_integration.F \
 	        cutils.h phase_struct.h  \
 	        phase.h rtrace.h error.h common.h version.h phaseX.h \
