@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <21 Mar 12 14:44:33 flechsig> 
+//  Time-stamp: <04 Apr 12 16:27:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -512,6 +512,7 @@ void MainWindow::activateProc(const QString &action)
 			     arg(myparent->myBeamline()->src.isrctype));
       else
 	{
+	  cout << "call mysrc_ini" << endl;
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
