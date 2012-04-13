@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <23 Jan 12 14:40:13 flechsig> 
+c$$$ Time-stamp: <05 Apr 12 11:33:37 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -780,13 +780,17 @@ c***********************************************************
 	subroutine src4_ini(so4)
 c***********************************************************
 c UF Jan 12 add low level tests if files exists
+c UF Apr 12 add dynamic memory
 
-	implicit real*8(a-h,o-z)
+c	implicit real*8(a-h,o-z)
 	
 #include 'phase_struct.F'
 
 	record /source4/ so4
         logical ex 
+
+	real*8 , allocatable :: xxd(:), yyd(:), zzd(:,:) 
+	integer nx, ny
 
 c	maximale Dimension der Quelle 1024 x 1024
 	dimension xx(1048576),yy(1048576)
@@ -796,17 +800,26 @@ c	maximale Dimension der Quelle 1024 x 1024
 	if (ex) then
 	   open(unit=10,name=so4.fsource4a,type='old')
 	   read(10,*)so4.ieyrex,so4.ieyrey
+c remember the numbers and allocate the fields 
+	   nx=so4.ieyrex                                    
+	   ny=so4.ieyrey
+	   allocate(xxd(nx*ny), yyd(nx*ny), zzd(nx, ny))
+	  
 	   do j=1,so4.ieyrey
 	      do i=1,so4.ieyrex
 		 k=(j-1)*so4.ieyrex+i
 		 read(10,*)xx(k),yy(k),so4.zeyre(i,j)
+c                read(10,*)xxd(k),yyd(k),zzd(i,j)
 	      enddo
 	   enddo
 	   close(10)
 	   write(*,*) '==> done'
+	   
 	else
 	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4a
 	endif
+
+
 
 	so4.xeyremin=xx(1)
 	so4.xeyremax=xx(k)
@@ -915,8 +928,14 @@ c-------------10.8.2005
 	so4.dyezim=(so4.yezimmax-so4.yezimmin)
      &		/dflotj(so4.iezimy-1)
 
+c******* deallocate
+	if (allocated(xxd)) deallocate(xxd)
+	if (allocated(yyd)) deallocate(yyd)
+	if (allocated(zzd)) deallocate(zzd)
+	
 	return
 	end
+c********** src4_ini ************
 
 c*****************************************************************
 	subroutine src6_ini(so6)

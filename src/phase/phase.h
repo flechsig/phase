@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <21 Mar 12 12:50:20 flechsig>  */
+/*   Time-stamp: <04 Apr 12 13:55:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -472,8 +472,8 @@ typedef double MAPTYPE_70X2  [70][70];
 typedef double MAPTYPE_5X4   [5][5][5][5]; 
 
 #ifdef SEVEN_ORDER
-  typedef double MAP70TYPE     [330][330];  
-  typedef double MAP7TYPE      [8][8][8][8];
+  typedef double MAP70TYPE    [330][330];  
+  typedef double MAP7TYPE     [8][8][8][8];
 #else
   typedef double MAP70TYPE    [70][70];  
   typedef double MAP7TYPE     [5][5][5][5]; 
@@ -844,6 +844,28 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
+
+  pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
+          double *lambda, int *iord, 
+#ifdef SEVEN_ORDER
+          MAPTYPE_8X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+#else
+          MAPTYPE_5X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+#endif
+          double *xlen0, MAP7TYPE *ypc1, MAP7TYPE *zpc1, MAP7TYPE *dypc, MAP7TYPE *dzpc,
+          MAP7TYPE *wc, MAP7TYPE *xlc,
+          double *y, double *z,
+          double *psd, double *stfd1phmaxc,
+          double *stinumbc, double *s1c,
+          double *s2c, double *s3c,
+          double *eyrec, double *ezrec,
+          double *eyimc, double *ezimc,
+          struct geometryst *gp, struct mirrortype *mirp,
+          struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
+          struct integration *xi, struct integration_results *xir, struct statistics *st, 
+       MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb, struct BeamlineType *),
+
+
   adaptive_int(),
   PutPHASE(struct  PHASEset *, char *), 
   RayTracec(struct BeamlineType *),

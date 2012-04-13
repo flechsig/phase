@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <04 Apr 12 13:45:50 flechsig> 
+c$$$ Time-stamp: <04 Apr 12 13:50:28 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 
@@ -13,7 +13,7 @@ c*************************** neu **************************
      &                  eyimc,ezimc,
      &                  g,am,src,apr,
      &                  ra,ifl,xi,xir,st,
-     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb)       
+     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb,bl)       
 c*************************** neu **************************  
 
         implicit none
@@ -23,6 +23,7 @@ c a trick to have the struct only in the ./phase and find it from opti
 #include '../phase/phase_struct.F'
 #include '../phase/beamline_struct.F'
 
+        record /fBeamlineType/ bl
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
