@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <05 Apr 12 11:33:37 flechsig> 
+c$$$ Time-stamp: <13 Apr 12 13:14:35 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -788,39 +788,41 @@ c	implicit real*8(a-h,o-z)
 
 	record /source4/ so4
         logical ex 
-
-	real*8 , allocatable :: xxd(:), yyd(:), zzd(:,:) 
-	integer nx, ny
+	real*8 , allocatable :: xx(:), yy(:)    !, zzd(:,:) 
+	integer nx, ny, alloc_err
 
 c	maximale Dimension der Quelle 1024 x 1024
-	dimension xx(1048576),yy(1048576)
+c UF	dimension xx(1048576),yy(1048576)
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4a
 	INQUIRE(File=so4.fsource4a, Exist=ex)
-	if (ex) then
-	   open(unit=10,name=so4.fsource4a,type='old')
-	   read(10,*)so4.ieyrex,so4.ieyrey
-c remember the numbers and allocate the fields 
-	   nx=so4.ieyrex                                    
-	   ny=so4.ieyrey
-	   allocate(xxd(nx*ny), yyd(nx*ny), zzd(nx, ny))
-	  
-	   do j=1,so4.ieyrey
-	      do i=1,so4.ieyrex
-		 k=(j-1)*so4.ieyrex+i
-		 read(10,*)xx(k),yy(k),so4.zeyre(i,j)
-c                read(10,*)xxd(k),yyd(k),zzd(i,j)
-	      enddo
-	   enddo
-	   close(10)
-	   write(*,*) '==> done'
-	   
-	else
+	if (.NOT. ex) then
 	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4a
+	   write(*,*) 'exit'
+	   stop
 	endif
 
+	open(unit=10, name=so4.fsource4a, type='old')
+	read(10,*) so4.ieyrex, so4.ieyrey
 
+	nx=so4.ieyrex      ! remember the numbers and allocate the fields                               
+	ny=so4.ieyrey
 
+	allocate(xx(nx*ny), yy(nx*ny), stat=alloc_err)
+	if (alloc_err .gt. 0) then
+	   write(*,*) 'error: memory exhausted- exit'
+	   stop
+	endif
+	  
+	do j=1,so4.ieyrey
+	   do i=1,so4.ieyrex
+	      k=(j-1)*so4.ieyrex+i
+	      read(10,*)xx(k),yy(k),so4.zeyre(i,j)
+	   enddo
+	enddo
+	close(10)
+	write(*,*) '==> done'  ! so4.fsource4a
+	   
 	so4.xeyremin=xx(1)
 	so4.xeyremax=xx(k)
 	so4.dxeyre=(so4.xeyremax-so4.xeyremin)
@@ -842,24 +844,32 @@ c---------------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	INQUIRE(File=so4.fsource4b, Exist=ex)
-	if (ex) then
-	   open(unit=10,name=so4.fsource4b,type='old')
-	   read(10,*)so4.ieyimx,so4.ieyimy
-	   do j=1,so4.ieyimy
-	      do i=1,so4.ieyimx
-		 k=(j-1)*so4.ieyimx+i
-		 read(10,*)xx(k),yy(k),so4.zeyim(i,j)
-c-------------10.8.2005
-		 if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
-c-------------10.8.2005
-	      enddo
-	   enddo
-	   close(10)
-	   write(*,*) '==> done'
-	else
+	if (.NOT. ex) then
 	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4b
+	   write(*,*) 'exit'
+	   stop
 	endif
-	
+
+	open(unit=10,name=so4.fsource4b,type='old')
+	read(10,*)so4.ieyimx,so4.ieyimy
+	if ((so4.ieyimx.ne.nx).or.(so4.ieyimy.ne.ny)) then
+	   write(*,*) 'error: src4_ini: dimension error ', so4.fsource4b
+	   write(*,*) 'exit'
+	   stop
+	endif
+
+	do j=1,so4.ieyimy
+	   do i=1,so4.ieyimx
+	      k=(j-1)*so4.ieyimx+i
+	      read(10,*)xx(k),yy(k),so4.zeyim(i,j)
+c-------------10.8.2005
+	      if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
+c-------------10.8.2005
+	   enddo
+	enddo
+	close(10)
+	write(*,*) '==> done'
+		
 	so4.xeyimmin=xx(1)
 	so4.xeyimmax=xx(k)
 	so4.dxeyim=(so4.xeyimmax-so4.xeyimmin)
@@ -869,25 +879,42 @@ c-------------10.8.2005
 	so4.dyeyim=(so4.yeyimmax-so4.yeyimmin)
      &		/dflotj(so4.ieyimy-1)
 
+
+c******* deallocate, allow different grid sizes
+	if (allocated(xx)) deallocate(xx)
+	if (allocated(yy)) deallocate(yy)
+
 c----------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4c
 	INQUIRE(File=so4.fsource4c, Exist=ex)
-	if (ex) then
-	   open(unit=10,name=so4.fsource4c,type='old')
-	   read(10,*)so4.iezrex,so4.iezrey
-	   do j=1,so4.iezrey
-	      do i=1,so4.iezrex
-		 k=(j-1)*so4.iezrex+i
-		 read(10,*)xx(k),yy(k),so4.zezre(i,j)
-	      enddo
-	   enddo
-	   close(10)
-	   write(*,*) '==> done'
-	else
+	if (.NOT. ex) then
 	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4c
+	   write(*,*) 'exit'
+	   stop
 	endif
 
+	open(unit=10,name=so4.fsource4c,type='old')
+	read(10,*)so4.iezrex,so4.iezrey
+
+	nx=so4.iezrex		! remember the numbers and allocate the fields                               
+	ny=so4.iezrey
+
+	allocate(xx(nx*ny), yy(nx*ny), stat=alloc_err)
+	if (alloc_err.gt.0) then
+	   write(*,*) 'error: memory exhausted- exit'
+	   stop
+	endif
+
+	do j=1,so4.iezrey
+	   do i=1,so4.iezrex
+	      k=(j-1)*so4.iezrex+i
+	      read(10,*)xx(k),yy(k),so4.zezre(i,j)
+	   enddo
+	enddo
+	close(10)
+	write(*,*) '==> done'
+	
 	so4.xezremin=xx(1)
 	so4.xezremax=xx(k)
 	so4.dxezre=(so4.xezremax-so4.xezremin)
@@ -901,24 +928,32 @@ c-----------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4d
 	INQUIRE(File=so4.fsource4d, Exist=ex)
-	if (ex) then
-	   open(unit=10,name=so4.fsource4d,type='old')
-	   read(10,*)so4.iezimx,so4.iezimy
-	   do j=1,so4.iezimy
-	      do i=1,so4.iezimx
-		 k=(j-1)*so4.iezimx+i
-		 read(10,*)xx(k),yy(k),so4.zezim(i,j)
-c-------------10.8.2005
-		 if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
-c-------------10.8.2005
-	      enddo
-	   enddo
-	   close(10)
-	   write(*,*) '==> done'
-	else
+	if (.NOT. ex) then
 	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4d
+	   write(*,*) 'exit'
+	   stop
 	endif
 
+	open(unit=10,name=so4.fsource4d,type='old')
+	read(10,*)so4.iezimx,so4.iezimy
+	if ((so4.iezimx.ne.nx).or.(so4.iezimy.ne.ny)) then
+	   write(*,*) 'error: src4_ini: dimension error ', so4.fsource4d
+	   write(*,*) 'exit'
+	   stop
+	endif
+
+	do j=1,so4.iezimy
+	   do i=1,so4.iezimx
+	      k=(j-1)*so4.iezimx+i
+	      read(10,*)xx(k),yy(k),so4.zezim(i,j)
+c-------------10.8.2005
+	      if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
+c-------------10.8.2005
+	   enddo
+	enddo
+	close(10)
+	write(*,*) '==> done'
+	
 	so4.xezimmin=xx(1)
 	so4.xezimmax=xx(k)
 	so4.dxezim=(so4.xezimmax-so4.xezimmin)
@@ -929,9 +964,8 @@ c-------------10.8.2005
      &		/dflotj(so4.iezimy-1)
 
 c******* deallocate
-	if (allocated(xxd)) deallocate(xxd)
-	if (allocated(yyd)) deallocate(yyd)
-	if (allocated(zzd)) deallocate(zzd)
+	if (allocated(xx)) deallocate(xx)
+	if (allocated(yy)) deallocate(yy)
 	
 	return
 	end
