@@ -1,9 +1,0 @@
-;; run a test - idl macro
-;; run it: @test.idl
-b=initbeamline()
-b->read,'xxx.phase'
-b->build
-b->MakeRTSource
-;;b->RayTraceFull
-b->RayTracec
-b->WriteRayFile
