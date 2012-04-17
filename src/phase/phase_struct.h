@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <24 Jan 12 15:27:33 flechsig>  */
+/*   Time-stamp: <2012-04-17 20:53:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,11 +12,14 @@
 #ifndef __PHASE_STRUCT
 #define __PHASE_STRUCT
 
-#ifdef QTGUI
+/* #ifdef QTGUI
 #define MAX_GRIDSIZE 256
 #else
 #define MAX_GRIDSIZE 2048 
-#endif
+#endif*/
+/* UF 17.4.12 GRIDSIZE defined by configure --with-gridsize=255  (default 255) */
+
+
 /* we should put a similar section in each header file which has to be upgraded in order 
    to be independent from the calling sequence */
 #ifdef SEVEN_ORDER
@@ -155,13 +158,13 @@ struct source4 {
 	xeyimmin,xeyimmax,dxeyim,
 	yeyremin,yeyremax,dyeyre,
 	yeyimmin,yeyimmax,dyeyim,
-	zeyre[MAX_GRIDSIZE][MAX_GRIDSIZE],zeyim[MAX_GRIDSIZE][MAX_GRIDSIZE],
+	zeyre[GRIDSIZE][GRIDSIZE],zeyim[GRIDSIZE][GRIDSIZE],
 	xezremin,xezremax,dxezre,
 	xezimmin,xezimmax,dxezim,
 	yezremin,yezremax,dyezre,
 	yezimmin,yezimmax,dyezim,
-	zezre[MAX_GRIDSIZE][MAX_GRIDSIZE],zezim[MAX_GRIDSIZE][MAX_GRIDSIZE],
-        gridx[MAX_GRIDSIZE],gridy[MAX_GRIDSIZE],deltatime,
+	zezre[GRIDSIZE][GRIDSIZE],zezim[GRIDSIZE][GRIDSIZE],
+        gridx[GRIDSIZE],gridy[GRIDSIZE],deltatime,
         ampeyre,ampeyim,ampezre,ampezim
      ,xlam
           ;

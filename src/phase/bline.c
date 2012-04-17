@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Mar 12 16:02:08 flechsig>  */
+/*   Time-stamp: <2012-04-17 19:01:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -962,7 +962,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
   printf("MakeMapandMatrix: seven order not defined\n");
 #endif
   
-   /***************** start **************/
+   /***************** start ***************/
 
    c= &C[0][0];
    if (listpt->ElementOK & elementOK)

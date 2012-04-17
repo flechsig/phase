@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <21 Mar 12 15:02:34 flechsig> 
+dnl   Time-stamp: <2012-04-17 20:42:03 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -182,6 +182,23 @@ AC_ARG_WITH([cernlib],
       AC_MSG_ERROR(cannot find a CERN lib))])])
 dnl end cern lib
 
+dnl ***************** PO SOURCE MAX GRIDSIZE ***********
+AC_ARG_WITH([gridsize],
+  AS_HELP_STRING([--with-gridsize=NN],[max gridsize for PO source]),
+  dnl given action
+  [
+     echo "found  gridsize option: ${with_gridsize}"
+     gridsize=${with_gridsize}
+  ],
+dnl option is not given- we use default 255
+  [
+    gridsize=255
+  ])
+AC_SUBST(GRIDSIZE, [${gridsize}])
+AC_DEFINE_UNQUOTED(GRIDSIZE, [${gridsize}],[max size of PO source grid])
+FFLAGS="-DGRIDSIZE=${gridsize} ${FFLAGS}"
+dnl end gridsize
+	
 dnl ****************** QT **************************
 AC_ARG_WITH([qt],
   AS_HELP_STRING([--with-qt=DIR],[path to QT libraries or --without-qt]),
@@ -488,6 +505,7 @@ echo "qti:                     : ${qti}"
 echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
+echo "GRIDSIZE:                : ${gridsize}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
