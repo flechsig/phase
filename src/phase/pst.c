@@ -27,21 +27,6 @@
 #include "phase.h"         
 #include "rtrace.h" 
 
-
-void inttochar(int n, char *sn)
-{
-  if(n==0)strncpy(sn, "0", 2);
-  if(n==1)strncpy(sn, "1", 2);
-  if(n==2)strncpy(sn, "2", 2);
-  if(n==3)strncpy(sn, "3", 2);
-  if(n==4)strncpy(sn, "4", 2);
-  if(n==5)strncpy(sn, "5", 2);
-  if(n==6)strncpy(sn, "6", 2);
-  if(n==7)strncpy(sn, "7", 2);
-  if(n==8)strncpy(sn, "8", 2);
-  if(n==9)strncpy(sn, "9", 2);
-}
-
 void PSTxx(struct BeamlineType *bl) 
 {
    struct geometryst *gp;
@@ -87,241 +72,156 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
    printf("WriteMPsd: --> done\n");
 }  /* end writempsd */
 
+
 void get_nam(int n, 
-	     char *eyre,  char *eyim, char *ezre, char *ezim,
-	     char *eyre1, char *eyim1, char *ezre1, char *ezim1, 
-	     struct BeamlineType *bl)
+       char *eyre,  char *eyim, char *ezre, char *ezim,
+       char *eyre1, char *eyim1, char *ezre1, char *ezim1, 
+       struct BeamlineType *bl)
 {
+  snprintf(eyre, MaxPathLength, "EYRES%05d.DA%d", n, bl->src.so4.nsource);
+  snprintf(eyim, MaxPathLength, "EYIMS%05d.DA%d", n, bl->src.so4.nsource);
+  snprintf(ezre, MaxPathLength, "EZRES%05d.DA%d", n, bl->src.so4.nsource);
+  snprintf(ezim, MaxPathLength, "EZIMS%05d.DA%d", n, bl->src.so4.nsource);
 
-   
-   struct geometryst *gp;
-   struct rayst ra;
-   struct source_results sr;
-   struct integration_results xir;
-   struct statistics st;          /* bereitet probleme (Absturz) */
-   struct map4 m4;   
-
-   char s1[MaxPathLength], s2[MaxPathLength], sn[2];
-   
-   int i, j, c;
-   
-   strncpy(eyre, "EYRES", MaxPathLength);
-   strncpy(eyim, "EYIMS", MaxPathLength);
-   strncpy(ezre, "EZRES", MaxPathLength);
-   strncpy(ezim, "EZIMS", MaxPathLength);
-
-   strncpy(eyre1, "EYRES", MaxPathLength);
-   strncpy(eyim1, "EYIMS", MaxPathLength);
-   strncpy(ezre1, "EZRES", MaxPathLength);
-   strncpy(ezim1, "EZIMS", MaxPathLength);
-
-   if(n < 10000) strncpy(s1, "0", 2);
-   if(n < 1000)  strcat(s1, "0");
-   if(n < 100)   strcat(s1, "0");
-   if(n < 10)    strcat(s1, "0");
-
-   i=0;
-   do{
-      s2[i++]=n % 10 + '0';
-   } while ((n/= 10) > 0); 
-   s2[i]='\0';
-
-/* reverse s2 */
-   
-   for(i=0,j=strlen(s2)-1; i < j; i++, j--)
-     {c=s2[i];
-	s2[i]=s2[j];
-	s2[j]=c;
-     }
-   
-   strcat(s1,s2);
-	    
-   strcat(eyre,s1);
-   strcat(eyim,s1);
-   strcat(ezre,s1);
-   strcat(ezim,s1);
-
-   strcat(eyre1,s1);
-   strcat(eyim1,s1);
-   strcat(ezre1,s1);
-   strcat(ezim1,s1);
-
-   strcat(eyre,".DA");
-   strcat(eyim,".DA");
-   strcat(ezre,".DA");
-   strcat(ezim,".DA");
-
-   strcat(eyre1,".DA");
-   strcat(eyim1,".DA");
-   strcat(ezre1,".DA");
-   strcat(ezim1,".DA");
-
-   inttochar(bl->src.so4.nsource, sn);
-
-   strcat(eyre,sn);
-   strcat(eyim,sn);
-   strcat(ezre,sn);
-   strcat(ezim,sn);
-
-   inttochar(bl->src.so4.nimage,sn);
-
-   strcat(eyre1,sn);
-   strcat(eyim1,sn);
-   strcat(ezre1,sn);
-   strcat(ezim1,sn);
-
+  snprintf(eyre1, MaxPathLength, "EYRES%05d.DA%d", n, bl->src.so4.nimage);
+  snprintf(eyim1, MaxPathLength, "EYIMS%05d.DA%d", n, bl->src.so4.nimage);
+  snprintf(ezre1, MaxPathLength, "EZRES%05d.DA%d", n, bl->src.so4.nimage);
+  snprintf(ezim1, MaxPathLength, "EZIMS%05d.DA%d", n, bl->src.so4.nimage);
 }
 
 void MPST(struct BeamlineType *bl)
 {
-   struct PSDType *PSDp;
-   struct geometryst *gp;
-   struct rayst ra;
-   struct source_results sr;
-   struct integration_results xir;
-   struct statistics st;          /* bereitet probleme (Absturz) */
-   struct map4 m4;   
-   double a[6][6], *tmp, nue0, dnue, lambda_save, lambda_local;
-   int size, i,j, gratingnumber, elart, gratingposition, ifour, istart, iend;
+  struct PSDType *PSDp;
+  //struct geometryst *gp;
+  //struct rayst ra;
+  //struct source_results sr;
+  //struct integration_results xir;
+  //struct statistics st;          /* bereitet probleme (Absturz) */
+  //struct map4 m4;   
+  double a[6][6], *tmp, nue0, dnue, lambda_save, lambda_local;
+  int size, i,j, gratingnumber, elart, gratingposition, ifour, istart, iend;
    
-   char eyre[MaxPathLength],eyim[MaxPathLength];
-   char ezre[MaxPathLength],ezim[MaxPathLength];
-   char eyre1[MaxPathLength],eyim1[MaxPathLength];
-   char ezre1[MaxPathLength],ezim1[MaxPathLength];
-   char eyre2[MaxPathLength],eyim2[MaxPathLength];
-   char ezre2[MaxPathLength],ezim2[MaxPathLength];
+  char eyre[MaxPathLength],eyim[MaxPathLength];
+  char ezre[MaxPathLength],ezim[MaxPathLength];
+  char eyre1[MaxPathLength],eyim1[MaxPathLength];
+  char ezre1[MaxPathLength],ezim1[MaxPathLength];
+  char eyre2[MaxPathLength],eyim2[MaxPathLength];
+  char ezre2[MaxPathLength],ezim2[MaxPathLength];
 
-   /* UF 28.11.06 */
+  /* UF 28.11.06 */   
+  PSDp= bl->RESULT.RESp; 
+
+  /* e.g. dnue=2.87e12;  */
+  dnue=1./(bl->src.so4.deltatime*bl->src.so4.nfreqtot*1.0e-15);
+
+  bl->BLOptions.xlam_save=bl->BLOptions.lambda;
+  nue0=LIGHT_VELO/bl->BLOptions.xlam_save;
+
+  printf(" \n test %d \n",bl->src.so4.iezimx);
+  printf(" main wavelength = %15le \n",bl->BLOptions.xlam_save);
    
-   PSDp= bl->RESULT.RESp; 
+  ifour  = bl->src.so4.nfreqtot;   /* e.g. 2048 */
+  istart = 1;   /* 1, as we process neg. frequencies as complex conj. */
+  iend   = bl->src.so4.nfreqpos;   /* e.g. 20 */
+  
+  printf("%5d %5d %5d \n ",ifour,istart,iend);
 
-/*   int function get_nam, function WriteMPsd; */
+  /* start loop */
+  /* process frequencies larger than (equal to) nue0 */
+  for (i=istart-1; i<iend; i++)
+  {     
+    get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
 
-/*   dnue=2.87e12;  */
-   dnue=1./(bl->src.so4.deltatime*bl->src.so4.nfreqtot*1.0e-15);
+    strncpy(bl->src.so4.fsource4a, eyre, 80);
+    strncpy(bl->src.so4.fsource4b, eyim, 80); 
+    strncpy(bl->src.so4.fsource4c, ezre, 80); 
+    strncpy(bl->src.so4.fsource4d, ezim, 80); 
 
-   bl->BLOptions.xlam_save=bl->BLOptions.lambda;
-   nue0=LIGHT_VELO/bl->BLOptions.xlam_save;
+    /* init source */
+    src_ini(&bl->src);   
 
-   printf(" \n test %d \n",bl->src.so4.iezimx);
-   printf(" main wavelength = %15le \n",bl->BLOptions.xlam_save);
+    /* set actual lambda */
+    bl->BLOptions.lambda=LIGHT_VELO/(nue0+i*dnue);
+    lambda_local=bl->BLOptions.lambda;
+    printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
+
+    BuildBeamlineM(lambda_local,bl);	
+
+    /* do PST */
+    /*  start_watch();*/
+    bl->BLOptions.CalcMod= 3;
+    #ifdef DEBUG
+      printf("activate_proc: call MPST\n");
+    #endif    
+    PST(bl);
+    /* UF0804  UpdateMainList(); */
+    /* stop_watch();*/
    
-   ifour=bl->src.so4.nfreqtot;  /* 2048 */
-   istart=1;
-   iend=bl->src.so4.nfreqpos;   /* 20 */
+    /* write results to file */   
+
+    /*  UF 28.11.06    WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
+    bl->RESULT.RESUnion.PSD.iy,
+    bl->RESULT.RESUnion.PSD.iz,1); */
+    WriteMPsd(eyre1, PSDp, PSDp->iy, PSDp->iz, 1);
+    WriteMPsd(ezre1, PSDp, PSDp->iy, PSDp->iz, 2);
+    WriteMPsd(eyim1, PSDp, PSDp->iy, PSDp->iz, 3);
+    WriteMPsd(ezim1, PSDp, PSDp->iy, PSDp->iz, 4);      
+  };   
+
+  /* process frequencies smaller than nue0 */
+  for (i=ifour-bl->src.so4.nfreqneg; i<ifour; i++)
+  {     
+    get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
+
+    strncpy(bl->src.so4.fsource4a,eyre, 80);
+    strncpy(bl->src.so4.fsource4b,eyim, 80); 
+    strncpy(bl->src.so4.fsource4c,ezre, 80); 
+    strncpy(bl->src.so4.fsource4d,ezim, 80); 
+
+    /* init source */
+    src_ini(&bl->src);   
+
+    /* get conjugate complex (already done in phase_source.F) */
+    /* set actual lambda */
+    bl->BLOptions.lambda=LIGHT_VELO/(nue0-(ifour-i)*dnue);
+    lambda_local=bl->BLOptions.lambda;
+    printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
+
+    BuildBeamlineM(lambda_local, bl);	
+
+    /* do PST */
+    /*  start_watch();*/
+    bl->BLOptions.CalcMod= 3;
+    #ifdef DEBUG
+      printf("activate_proc: call MPST\n");
+    #endif
+    PST(bl);
+    /*UF0804     UpdateMainList();*/
+    /*  stop_watch();*/
    
-   printf("%5d %5d %5d \n ",ifour,istart,iend);
-
-   /* start loop */
-   for (i=istart-1; i<iend; i++)
-     {     
-	
-/* get names */
-	
-       get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
-	
-       strncpy(bl->src.so4.fsource4a,eyre, 80);
-       strncpy(bl->src.so4.fsource4b,eyim, 80); 
-       strncpy(bl->src.so4.fsource4c,ezre, 80); 
-       strncpy(bl->src.so4.fsource4d,ezim, 80); 
-
-/* init source */
-   src_ini(&bl->src);   
-
-/* set actual lambda */
-
-   bl->BLOptions.lambda=LIGHT_VELO/(nue0+i*dnue);
-   lambda_local=bl->BLOptions.lambda;
-   printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
-
-   BuildBeamlineM(lambda_local,bl);	
-
-   /* do PST */
- /*  start_watch();*/
-       bl->BLOptions.CalcMod= 3;
-   #ifdef DEBUG
-       printf("activate_proc: call MPST\n");
-   #endif
-       PST(bl);
-       /* UF0804  UpdateMainList(); */
-   /*    stop_watch();*/
-   
-/* write results to file */   
-
-       /*  UF 28.11.06    WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,1); */
-       WriteMPsd(eyre1, PSDp, PSDp->iy, PSDp->iz, 1);
-       WriteMPsd(ezre1, PSDp, PSDp->iy, PSDp->iz, 2);
-       WriteMPsd(eyim1, PSDp, PSDp->iy, PSDp->iz, 3);
-       WriteMPsd(ezim1, PSDp, PSDp->iy, PSDp->iz, 4);
-       
-};   
-
-
-   for (i=ifour-bl->src.so4.nfreqneg; i<ifour; i++)
-     {     
-	
-/* get names */
-
-       get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
-
-       strncpy(bl->src.so4.fsource4a,eyre, 80);
-   strncpy(bl->src.so4.fsource4b,eyim, 80); 
-   strncpy(bl->src.so4.fsource4c,ezre, 80); 
-   strncpy(bl->src.so4.fsource4d,ezim, 80); 
-
-/* init source */
-   src_ini(&bl->src);   
-
-/* get conjugate complex (already done in phase_source.F) */
-
-/* set actual lambda */
-
-   bl->BLOptions.lambda=LIGHT_VELO/(nue0-(ifour-i)*dnue);
-   lambda_local=bl->BLOptions.lambda;
-   printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
-
-   BuildBeamlineM(lambda_local, bl);	
-
-/* do PST */
-/*    start_watch();*/
-       bl->BLOptions.CalcMod= 3;
-   #ifdef DEBUG
-       printf("activate_proc: call MPST\n");
-   #endif
-       PST(bl);
-       /*UF0804     UpdateMainList();*/
-/*       stop_watch();*/
-   
-/* write results to file */   
-
-       WriteMPsd(eyre1, PSDp, PSDp->iy, PSDp->iz, 1);
-       WriteMPsd(ezre1, PSDp, PSDp->iy, PSDp->iz, 2);
-       WriteMPsd(eyim1, PSDp, PSDp->iy, PSDp->iz, 3);
-       WriteMPsd(ezim1, PSDp, PSDp->iy, PSDp->iz, 4);
-       /*
-
-	WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,1);
-       WriteMPsd(ezre1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,2);
+    /* write results to file */   
+    WriteMPsd(eyre1, PSDp, PSDp->iy, PSDp->iz, 1);
+    WriteMPsd(ezre1, PSDp, PSDp->iy, PSDp->iz, 2);
+    WriteMPsd(eyim1, PSDp, PSDp->iy, PSDp->iz, 3);
+    WriteMPsd(ezim1, PSDp, PSDp->iy, PSDp->iz, 4);
+    
+    /*
+    WriteMPsd(eyre1, &bl->RESULT.RESUnion.PSD, 
+    bl->RESULT.RESUnion.PSD.iy,
+    bl->RESULT.RESUnion.PSD.iz,1);
+    WriteMPsd(ezre1, &bl->RESULT.RESUnion.PSD, 
+    bl->RESULT.RESUnion.PSD.iy,
+    bl->RESULT.RESUnion.PSD.iz,2);
        WriteMPsd(eyim1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,3);
+    bl->RESULT.RESUnion.PSD.iy,
+    bl->RESULT.RESUnion.PSD.iz,3);
        WriteMPsd(ezim1, &bl->RESULT.RESUnion.PSD, 
-		bl->RESULT.RESUnion.PSD.iy,
-		bl->RESULT.RESUnion.PSD.iz,4);
-       */
-};   
+    bl->RESULT.RESUnion.PSD.iy,
+    bl->RESULT.RESUnion.PSD.iz,4);
+    */
+  }; /* end loop(s) */
 
-
-   /* end loop */
-
-bl->BLOptions.lambda=bl->BLOptions.xlam_save;
-   
+  bl->BLOptions.lambda=bl->BLOptions.xlam_save;   
 } /* end MPST */
 
 void PST(struct BeamlineType *bl) 
