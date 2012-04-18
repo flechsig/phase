@@ -152,7 +152,7 @@ c         write(6,*)' fgmapidp: iord     = ',iord
 c         write(6,*)' fgmapidp: iplmode  = ',iplmode
 c         write(6,*)' fgmapidp: acc      = ',acc
           write(6,*)' fgmapidp: elindex  = ',elindex
-          write(6,*)' fgmapidp: gridsize = ',GRIDSIZE
+c          write(6,*)' fgmapidp: gridsize = ',GRIDSIZE
 c         write(6,*)'=============================== '
 #endif
         if(acc.lt.1d-12)then
