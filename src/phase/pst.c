@@ -78,11 +78,13 @@ void get_nam(int n,
        char *eyre1, char *eyim1, char *ezre1, char *ezim1, 
        struct BeamlineType *bl)
 {
+  /* input file names */
   snprintf(eyre, MaxPathLength, "EYRES%05d.DA%d", n, bl->src.so4.nsource);
   snprintf(eyim, MaxPathLength, "EYIMS%05d.DA%d", n, bl->src.so4.nsource);
   snprintf(ezre, MaxPathLength, "EZRES%05d.DA%d", n, bl->src.so4.nsource);
   snprintf(ezim, MaxPathLength, "EZIMS%05d.DA%d", n, bl->src.so4.nsource);
 
+  /* output file names */
   snprintf(eyre1, MaxPathLength, "EYRES%05d.DA%d", n, bl->src.so4.nimage);
   snprintf(eyim1, MaxPathLength, "EYIMS%05d.DA%d", n, bl->src.so4.nimage);
   snprintf(ezre1, MaxPathLength, "EZRES%05d.DA%d", n, bl->src.so4.nimage);
@@ -145,7 +147,7 @@ void MPST(struct BeamlineType *bl)
     lambda_local=bl->BLOptions.lambda;
     printf(" === calculating wavelength %d %15le nm \n",i,bl->BLOptions.lambda*1e6);	
 
-    BuildBeamlineM(lambda_local,bl);	
+    BuildBeamlineM(lambda_local, bl);	
 
     /* do PST */
     /*  start_watch();*/

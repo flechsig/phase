@@ -213,7 +213,36 @@ void MainWindow::activateProc(const QString &action)
 	}
     }
 
-  if (!action.compare("mphasespaceAct"))    printf("mphasespaceAct button pressed\n"); 
+  if (!action.compare("mphasespaceAct")) 
+  {   
+//#ifdef DEBUG  
+      cout << "debug: " << __FILE__ << " mphasespaceAct button pressed" << endl; 
+//#endif
+      if (elementListIsEmpty()) 
+	return;
+
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+
+      myparent->myBuildBeamline();
+
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
+          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
+
+      if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+	sourceApplyBslot();
+			
+      if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
+		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
+	{
+	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	  myparent->myMPST();
+	}
+  }
 
   if (!action.compare("rthAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
   if (!action.compare("dipAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'D'; UpdateSourceBox(); }

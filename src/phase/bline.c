@@ -434,7 +434,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	      listpt->ElementOK |= elementOK; 
             }   
             
-               DefGeometryCM(lambda_local,&listpt->GDat, &listpt->geo);  
+               DefGeometryCM(lambda_local, bl->BLOptions.xlam_save, &listpt->GDat, &listpt->geo);  
 	       /*  gputpickfile(&listpt->GDat, PHASESet.geometrypckname); */
 	      
         
@@ -2724,7 +2724,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 /* elementmatrix im Fortran Speichermodell */ 
 /*                                         */
 
-void DefGeometryCM(double lambda_local, struct gdatset *x,
+void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
 		                      struct geometrytype *gout)
        /* Uwe 25.6.96                                                     */
        /* umgeschrieben - keine fileausgabe mehr                          */
@@ -2736,18 +2736,21 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
    int i;
    
    theta0= fabs(x->theta0* PI/ 180.0);
-   delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
+   //delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
+   delta= (double)(x->inout)* asin(lambda0* x->xdens[0]/(2.0* cos(theta0)));
    
    x->lambda=lambda_local;
-   printf(" \n lambda_local = %e \n",x->lambda);
+   printf(" \n lambda_local = %enm; lambda0 = %3nm\n",x->lambda, lambda0);
 
 /* FEL2005 */
+/*
 #ifndef QTGUI
    delta= (double)(x->inout)* asin(Beamline.BLOptions.xlam_save* 
 				   x->xdens[0]/(2.0* cos(theta0)));
 #else 
    printf("!!!! DefGeometryCM noch nicht auf 7. Ordnung angepasst!!!\n");
 #endif   
+*/
    alpha= (-theta0- delta);   /* eigentlich fi+ theta */
    beta = ( theta0- delta);   /* nicht eher fi- theta???*/
 /* modification: 17 Feb 98 09:33:48 flechsig */
@@ -2755,8 +2758,8 @@ void DefGeometryCM(double lambda_local, struct gdatset *x,
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
 #ifdef DEBUG
-   printf("DefGeometryCM: alpha: %f, beta: %f, lambda= %f nm ==> correct?\n",
-	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6);
+   printf("DefGeometryCM: alpha: %f, beta: %f, lambda_local= %f nm, lambda0= %f nm ==> correct?\n",
+	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6, lambda0* 1e6);
 #endif
    if ((x->iflag) == 1)
      {

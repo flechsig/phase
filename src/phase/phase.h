@@ -789,7 +789,7 @@ void
   Check_iord(struct BeamlineType *),
   create_hormap(),
   DefGeometryC(struct gdatset *, struct geometrytype *),
-  DefGeometryCM(double, struct gdatset *, struct geometrytype *),
+  DefGeometryCM(double, double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),
   ExpandFileNames(),
@@ -839,12 +839,15 @@ void
   MultiplyMatrix(), 
 /* pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
    MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), */
+
+  MPST(struct BeamlineType *), 
+
   pathlen0(),
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
-
+  
   pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
           double *lambda, int *iord, 
 #ifdef SEVEN_ORDER

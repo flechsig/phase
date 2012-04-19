@@ -91,6 +91,7 @@ public:
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt, unsigned int elindex) { MakeMapandMatrix(listpt, this, elindex); }
   void myMakeRTSource() { MakeRTSource(&(this->filenames), this);  }
+  void myMPST() { MPST(this); }
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord) { 
     return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord); }
   void myPST() { PST(this); }
