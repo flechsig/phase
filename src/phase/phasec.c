@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <21 Mar 12 11:28:02 flechsig>  */
+/*   Time-stamp: <23 Apr 12 10:23:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -882,5 +882,18 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
   bl->BLOptions.ifl.iord=      x->iord;
   bl->BLOptions.epsilon=       x->epsilon;  
 }
+
+/* 1204 initializes the pointers in source4c */
+void init_posrc(struct source4c *sp)
+{
+  sp->zeyre= NULL;
+  sp->zeyim= NULL;
+  sp->zezre= NULL;
+  sp->zezim= NULL;
+  sp->gridx= NULL;
+  sp->gridy= NULL;
+} /* end init_posrc() */
+
+
 /* end of file phasec.c */     
                            

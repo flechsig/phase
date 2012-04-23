@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <2012-04-17 20:53:05 flechsig>  */
+/*   Time-stamp: <23 Apr 12 10:17:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -172,6 +172,28 @@ struct source4 {
        iezrex,iezimx,iezrey,iezimy,
        nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
 };  
+
+/* 1204 the c version with dynamic memory */
+/* experimental */
+struct source4c {
+  double xeyremin, xeyremax, dxeyre,
+    xeyimmin,xeyimmax,dxeyim,
+    yeyremin,yeyremax,dyeyre,
+    yeyimmin,yeyimmax,dyeyim,
+    *zeyre,*zeyim,
+    xezremin,xezremax,dxezre,
+    xezimmin,xezimmax,dxezim,
+    yezremin,yezremax,dyezre,
+    yezimmin,yezimmax,dyezim,
+    *zezre,*zezim,
+    *gridx,*gridy,deltatime,
+    ampeyre,ampeyim,ampezre,ampezim,
+    xlam;
+  int  ieyrex,ieyimx,ieyrey,ieyimy,
+    iezrex,iezimx,iezrey,iezimy,
+    nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
+};  
+
    		
         struct  source5 {                 /* Dipol Quelle  */
            double dipcy,   dipcz,   dipdisy, dipdisz,

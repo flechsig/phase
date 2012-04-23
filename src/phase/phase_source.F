@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <13 Apr 12 13:14:35 flechsig> 
+c$$$ Time-stamp: <23 Apr 12 17:23:20 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -139,6 +139,9 @@ c**************************************************
 	record /source6/ so6
 	record /sources/ src
 	record /apertures/ apr
+
+c comment U.F. 20.4.2012	
+c	write(*,*) 'psdi: source type:',src.isrctype
 
 c---------------- set values to zero by default
 

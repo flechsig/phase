@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <04 Apr 12 13:55:32 flechsig>  */
+/*   Time-stamp: <23 Apr 12 10:24:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -669,6 +669,7 @@ struct BeamlineType
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
   struct sources src;
+  struct source4c posrc;   /* 120423 */
   struct TmpMapType *tp;
   struct PHASEset filenames;
 };
@@ -826,6 +827,7 @@ void
   intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, double *, double *, double *, int *),  
   initconstants(),  
+  init_posrc(struct source4c *),
   InitDataSets(struct BeamlineType *, char *),   
   InitSourceType(struct BeamlineType *, int),  
                        

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <21 Mar 12 12:57:48 flechsig>  */
+/*  Time-stamp: <23 Apr 12 15:29:10 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -29,6 +29,7 @@ extern "C" {
   #include "phase_struct.h"
   #include "phase.h"
   #include "common.h"
+  #include "posrc.h"
 }
 
 class MainWindow;          // forward declaration
@@ -105,6 +106,7 @@ public:
   void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, 
 		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
+  void myposrc_ini() { source4c_ini(this); }
   void myWriteBLFile(char *name) { WriteBLFile(name, this); }
   void mywritemapc(char *fname, char *header, int iord, 
 		   double *ypc1, double *zpc1, double *dypc,   double *dzpc,

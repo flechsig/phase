@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <04 Apr 12 13:48:32 flechsig> 
+#  Time-stamp: <23 Apr 12 15:22:10 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -34,7 +34,7 @@ phaseqt_SOURCES = \
 	../phase/taylor-ops.for \
 	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
         ../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for \
-        ../phase/pstf.F
+        ../phase/pstf.F ../phase/posrc.c ../phase/posrc.h
 
 # for all *.h and *.qrc add one *.cpp
 nodist_phaseqt_SOURCES = \
