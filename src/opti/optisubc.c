@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <21 Mar 12 13:15:53 flechsig>  */
+/*   Time-stamp: <23 Apr 12 17:56:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -10,6 +10,10 @@
 
 
 /* 31.3.99 GetRMS erweitert auf z */
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 
 #include <stdio.h>                    /* For printf and so on. */

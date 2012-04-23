@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <20 Mar 12 17:20:15 flechsig>  */
+/*   Time-stamp: <23 Apr 12 17:57:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -13,6 +13,10 @@
    zuerst die Spalten (umgekehrt wie c )
    c: a[zeilen][spalten] for: (spalten,zeilen)
 */ 
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
