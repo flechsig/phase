@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <23 Apr 12 10:24:10 flechsig>  */
+/*   Time-stamp: <2012-04-23 22:31:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -727,6 +727,7 @@ struct BeamlineType Beamline;
    FORTRAN Routinen die aus c gerufen werden muessen hier erscheinen.
 */
 #ifdef LINUX
+  #define adaptive_int   adaptive_int_ 
   #define exithplot      exithplot_ 
   #define extractmap     extractmap_
   #define hlimit         hlimit_
@@ -851,25 +852,25 @@ void
   PST(struct BeamlineType *), 
   
   pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
-          double *lambda, int *iord, 
+       double *lambda, int *iord, 
 #ifdef SEVEN_ORDER
-          MAPTYPE_8X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+       MAPTYPE_8X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
 #else
-          MAPTYPE_5X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+       MAPTYPE_5X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
 #endif
-          double *xlen0, MAP7TYPE *ypc1, MAP7TYPE *zpc1, MAP7TYPE *dypc, MAP7TYPE *dzpc,
-          MAP7TYPE *wc, MAP7TYPE *xlc,
-          double *y, double *z,
-          double *psd, double *stfd1phmaxc,
-          double *stinumbc, double *s1c,
-          double *s2c, double *s3c,
-          double *eyrec, double *ezrec,
-          double *eyimc, double *ezimc,
-          struct geometryst *gp, struct mirrortype *mirp,
-          struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
-          struct integration *xi, struct integration_results *xir, struct statistics *st, 
-       MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb, struct BeamlineType *),
-
+       double *xlen0, MAP7TYPE *ypc1, MAP7TYPE *zpc1, MAP7TYPE *dypc, MAP7TYPE *dzpc,
+       MAP7TYPE *wc, MAP7TYPE *xlc,
+       double *y, double *z,
+       double *psd, double *stfd1phmaxc,
+       double *stinumbc, double *s1c,
+       double *s2c, double *s3c,
+       double *eyrec, double *ezrec,
+       double *eyimc, double *ezimc,
+       struct geometryst *gp, struct mirrortype *mirp,
+       struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
+       struct integration *xi, struct integration_results *xir, struct statistics *st, 
+       MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb),
+  
 
   adaptive_int(),
   PutPHASE(struct  PHASEset *, char *), 

@@ -1,16 +1,12 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <04 Apr 12 13:57:40 flechsig>  */
+/*   Time-stamp: <2012-04-23 22:33:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
 /*   $Date$ */
 /*   $Revision$  */
 /*   $Author$  */
-
-
-/* UF 0804 cleaned code from X11 related routines */
-
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -26,6 +22,7 @@
 #include "phase_struct.h"
 #include "phase.h"         
 #include "rtrace.h" 
+#include "common.h"
 
 void PSTxx(struct BeamlineType *bl) 
 {
@@ -35,7 +32,7 @@ void PSTxx(struct BeamlineType *bl)
    struct integration_results xir;     /* kein problem ? */
    /* struct statistics st;               /* das ist das problem ? */
    struct map4 m4;                     /* kein problem ? */
-   double a[6][6], *tmp;
+   /* double a[6][6], *tmp;*/
    int size, i, gratingnumber, elart, gratingposition;
 
    printf("PST: dummy phase space trafo PST called\n");
@@ -231,6 +228,23 @@ void PST(struct BeamlineType *bl)
 /* Die Structur statistic macht probleme- als reine Ausgabe sollte sie 
    in c allociert werden */
 {
+  /* #define NEWCODE */
+#ifdef NEWCODE
+  struct  map4 m4;
+  struct  geometryst g;
+  struct  mirrortype am;
+  struct  sources src;
+  struct  apertures apr;
+  struct  constants cs;
+  /* struct  rayst ra; gibts ohnehin */
+  struct  control_flags ifl;
+  struct  integration xi;
+  struct  integration_results xir;
+  struct  statistics st;
+  struct  psimagest s;
+
+#endif
+
 /* leere Variablen */
    struct PSImageType *psip;
    struct PSDType *PSDp;
@@ -239,10 +253,10 @@ void PST(struct BeamlineType *bl)
    struct rayst ra;
    struct source_results sr;
 // STACK!  struct integration_results xir;
-struct integration_results *xirp;
+   struct integration_results *xirp;
 // STACK!  struct statistics st;          /* bereitet probleme (Absturz) */
-struct statistics *stp;
-   double a[6][6], *tmp;
+   struct statistics *stp;
+   //   double a[6][6];
    int i, size, gratingnumber, elart, gratingposition;
    
    /* UF 28.11.06 */
@@ -256,10 +270,9 @@ struct statistics *stp;
 
    /* gitterzahl erkennen und geometrypointer initialisieren */
    gratingnumber= 0; gratingposition= 0;
-   
    for (i= 0; i< bl->elementzahl; i++)
      {
-       gp= (struct geometryst *)&bl->ElementList[i].geo;
+       gp  = (struct geometryst *)&bl->ElementList[i].geo;
        mirp= (struct mirrortype *)&bl->ElementList[i].mir;
        if( fabs(gp->xdens[0]) > ZERO )
 	 {
@@ -278,7 +291,8 @@ struct statistics *stp;
      }
    
    elart= bl->ElementList[gratingposition].MDat.Art;
-   if((elart != kEOETG) && (elart != kEOEVLSG) && (elart != kEOEPElliG) && (elart != kEOEPG) && (elart != kEOEPGV) && (gratingnumber > 0))
+   if((elart != kEOETG) && (elart != kEOEVLSG) && (elart != kEOEPElliG) && 
+      (elart != kEOEPG) && (elart != kEOEPGV)  && (gratingnumber > 0))
      {
        fprintf(stderr, "pst.c warning: elementtype mismatch on element %d\n", gratingposition);
        fprintf(stderr, "      -> mirror with line density > 0 will be treated as grating\n");
@@ -287,78 +301,64 @@ struct statistics *stp;
    if(gratingnumber == 0)
      {
        gp= (struct geometryst *)&bl->ElementList[0].geo;
-       /*geometryst und geometrytype sind das gleiche */
        gp->xdens[0]= 0.0;
        printf ("PST: no grating- set  igrating= 0\n");
-       bl->BLOptions.ifl.igrating=0;
+       bl->BLOptions.ifl.igrating= 0;
      } 
    else 
      {
        printf ("PST: 1 grating- set  igrating= 1\n");
-       bl->BLOptions.ifl.igrating=1;
+       bl->BLOptions.ifl.igrating= 1;
      }
    
-   /*   printf("pst: Daten fure Dipolquelle werden hier eingegeben (tmp)\n");
-      src.isrctype= 5;
-   src.so5.dipcy= 0.0;
-   src.so5.dipcz= 41.64;
-   src.so5.dipdisy= 72804.0;
-   src.so5.dipdisz= 15325.0; 
-   src.so5.dipymin= -5.0;
-   src.so5.dipzmin= -10.0;
-   src.so5.dipymax= 5.0;
-   src.so5.dipzmax= 10.0; */
-
-   /* speicher reservieren fuers ergebnis 	*/
-   /* ausgelagert UF 28.11.06 */
-   
- #ifdef DEBUG 
-   printf("pst.c: allocating memory for structs\n");
- #endif
+#ifdef DEBUG 
+   printf("debug: pst.c: allocating memory for structs\n");
+#endif
  
-   xirp = malloc(sizeof(struct integration_results));
-   stp = malloc(sizeof(struct statistics));
-   if ( (!xirp) || (!stp) )
-   {
-     fprintf(stderr, "out of memory -- exiting!\n");
-     exit(-1);
-   }
+   xirp = XMALLOC(struct integration_results, 1);
+   stp  = XMALLOC(struct statistics, 1);
+
+
+#ifndef NEWCODE
     
-   /* map4 fuettern */
-   /*   memcpy(&m4.,,sizeof());
-   memcpy(&a[0][0], , sizeof(double)*36);*/
 #ifdef DEBUG
-     /* debug */
-  tmp= (double *) bl->ElementList[gratingposition].wc; 
-  printf("pst.c: wc4000: %g\n", tmp[4]);
+   printf("debug: pst.c: calling pstf(...)\n");
+#endif
   
-  printf("pdt.c: calling pstf(...)\n");
-#endif
-  /* pstf(&bl->RTSource.Quelle.PSImage, &bl->BLOptions.PSO, */
-
-  pstf(psip, &bl->BLOptions.PSO,
-       &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, &bl->xlm.xlen1c, 
-       &bl->xlm.xlen2c, 
-       &bl->xlen0, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc, 
-       &bl->wc, &bl->xlc,
-       PSDp->y, PSDp->z, 
-       PSDp->psd, PSDp->stfd1phmaxc,
+   pstf(psip,                 &bl->BLOptions.PSO,
+       &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, 
+       &bl->xlm.xlen1c,       &bl->xlm.xlen2c, 
+       &bl->xlen0,     &bl->ypc1,  
+       &bl->zpc1,      &bl->dypc, 
+       &bl->dzpc, 
+       &bl->wc,        &bl->xlc,
+       PSDp->y,        PSDp->z, 
+       PSDp->psd,      PSDp->stfd1phmaxc,
        PSDp->stinumbc, PSDp->s1c,
-       PSDp->s2c, PSDp->s3c,
-       PSDp->eyrec, PSDp->ezrec,
-       PSDp->eyimc, PSDp->ezimc,
-/*       &m4, gp, &bl->ElementList->mir, uebergebe Strukturvariable mirp */
-       gp, mirp, 
-       &bl->src, &bl->BLOptions.apr, &ra, &bl->BLOptions.ifl,
-       &bl->BLOptions.xi, xirp, stp,
-       &bl->fdetc, &bl->fdetphc, &bl->fdet1phc, &bl->fdet1phca, &bl->fdet1phcb, bl);
+       PSDp->s2c,      PSDp->s3c,
+       PSDp->eyrec,    PSDp->ezrec,
+       PSDp->eyimc,    PSDp->ezimc,
+       gp,             mirp, 
+       &bl->src,       &bl->BLOptions.apr, 
+       &ra,            &bl->BLOptions.ifl,
+       &bl->BLOptions.xi, xirp, 
+       stp,            &bl->fdetc,     
+       &bl->fdetphc,   &bl->fdet1phc, 
+       &bl->fdet1phca, &bl->fdet1phcb);
 
 #ifdef DEBUG
-  printf("pst.c: returning from call pstf(...)\n");
-  /*  printf("pst.c: debug 0711: %f %f\n", PSDp->y[0], PSDp->y[1]); */
+  printf("debug: pst.c: returning from call pstf(...)\n");
 #endif
 
+#else
+/* start experimental NEWCODE */
+  adaptive_int(&m4, &g, &am, &src, &apr, &cs, &ra, &ifl, &xi, &xir, &st, &s);
 
+#endif
+  /* end NEWCODE */
+
+#ifndef OBSOLETE
+  /* UF 1204 Abschnitt sollte entfernt werden */ 
    /* simpson resuslts copieren */
    printf("copy simpson results\n");
    memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*0x8000);
@@ -368,20 +368,15 @@ struct statistics *stp;
    memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*0x8000);
    memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*0x8000);
    memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*24576);
-
+#endif
 
    bl->beamlineOK |= resultOK;  
-
- #ifdef DEBUG
-  printf("pst.c: freeing allocated memory for structs\n");
- #endif
-   free(stp);
-   free(xirp);
+   XFREE(stp);
+   XFREE(xirp);
    
- #ifdef DEBUG
-   printf("pst.c: phase space trafo PST end\n"); 
- #endif
- 
+#ifdef DEBUG
+   printf("debug: pst.c: phase space trafo PST end\n"); 
+#endif
 } /* end PST */
 
 void WritePsd(char *name, struct PSDType *p, int ny, int nz)   

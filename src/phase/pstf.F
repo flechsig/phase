@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <04 Apr 12 13:50:28 flechsig> 
+c$$$ Time-stamp: <2012-04-23 21:38:24 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 
@@ -13,7 +13,7 @@ c*************************** neu **************************
      &                  eyimc,ezimc,
      &                  g,am,src,apr,
      &                  ra,ifl,xi,xir,st,
-     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb,bl)       
+     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb)       
 c*************************** neu **************************  
 
         implicit none
@@ -21,9 +21,7 @@ c*************************** neu **************************
 c a trick to have the struct only in the ./phase and find it from opti 
 
 #include '../phase/phase_struct.F'
-#include '../phase/beamline_struct.F'
 
-        record /fBeamlineType/ bl
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -279,8 +277,7 @@ c****** Berechnung der Intensitaetsverteilung fertig ***********
       write(*,*)'stop intensity calculation'      
 c psd2 enthaelt intensitaet
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
         if(ifl.inorm.eq.1)then
            write(*,*)'normalized output'
            surfmax=0.d0
@@ -391,6 +388,7 @@ c        write(*,*)'file fd1ph.paw und surf_s0.paw erzeugt'
 	write(*,*)'        in z ',st.inumzan,' times '
 	write(*,*)' reached maximum number of grid points'
 	write(*,*)'        in y ',st.inumyan,' times '
+
 
 #ifdef DEBUG
 c          write(*,*)'debug 0711 yipc(1) yipc(2)', yipc(1), yipc(2) 
