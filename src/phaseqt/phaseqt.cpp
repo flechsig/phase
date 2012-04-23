@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <21 Mar 12 13:01:07 flechsig> 
+//  Time-stamp: <23 Apr 12 10:37:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -177,6 +177,12 @@ void PhaseQt::initBeamline()
   RESULT.RESp        = NULL;
   localalloc         = DOALLOC;
   tp                 = NULL;
+  posrc.zeyre        = NULL;
+  posrc.zeyim        = NULL;
+  posrc.zezre        = NULL;
+  posrc.zezim        = NULL;
+  posrc.gridx        = NULL;
+  posrc.gridy        = NULL;
 } // end initBeamline
 
 
