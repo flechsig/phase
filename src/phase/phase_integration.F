@@ -1,12 +1,22 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <23 Jan 12 14:48:43 flechsig> 
+c$$$ Time-stamp: <24 Apr 12 16:52:45 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+c
+c phase_integration.F enthaelt folgende routinen:
+c adaptive_int(): Hauptroutine- wird von pst.c oder pstf.F gerufen
+c yyint()  : called from adaptive_int()
+c fywert() : called from yyint()
+c int_2d() : wird nicht genutzt??
+c phacor() : called from adaptive_int()
+c fitpar() : called from phacor()
+c simpson(): called from adaptive_int()
+c guess()  : called from adaptive_int()
 c
 c Aenderungen UF:
 c (1) file umbenannt in phase_integration_12.for
@@ -80,7 +90,6 @@ c************************************************
      &      yzint,yzintey,yzintez
 	complex*16 fzey(4096),fzez(4096)
 
-cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
@@ -95,7 +104,6 @@ cc	include 'phase_struct.for'
 	record /statistics/ st
 	record /mirrortype/ am
 	record /map4/ m4
-c UF 12.1.2000
         record /psimagest/ sp
 
 	dimension densiyre(1024),densiyim(1024),
@@ -143,7 +151,6 @@ c*******************************************************
         call subm17(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
         call subm17(m4.xlen1c,yi,zi,m4.xlen1c_r)
         call subm17(m4.xlen2c,yi,zi,m4.xlen2c_r)
-
         call subm17(m4.wc,yi,zi,m4.wrc)
         call subm17(m4.xlc,yi,zi,m4.xlrc)
 #else
@@ -160,7 +167,6 @@ c*******************************************************
         call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
         call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
         call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
-
         call subm1(m4.wc,yi,zi,m4.wrc)
         call subm1(m4.xlc,yi,zi,m4.xlrc)
 #endif
@@ -231,8 +237,7 @@ c	   	fzez(i)=fwertz
 	enddo		
 	endif
 
-c UF 12.1.2000
-      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
+        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
 
 	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
@@ -242,8 +247,7 @@ c UF 12.1.2000
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
-c UF 12.1.2000
-      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
 
 	iyz=2
 	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
@@ -287,7 +291,6 @@ c*************************************************************
 	dimension densiyre(1024),densiyim(1024),
      &            densizre(1024),densizim(1024)
 
-cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
@@ -313,11 +316,11 @@ c	Erstellen eines nochmals reduzierten
 c       Konstantensatzes
 c*******************************************************
       
-	  if(xi.distfocz.gt.1.e-10)then
-	    dzii=dzi+ra.ri.zi/xi.distfocz
-	    else
-	    dzii=dzi
-	  endif
+        if(xi.distfocz.gt.1.e-10)then
+           dzii=dzi+ra.ri.zi/xi.distfocz
+        else
+           dzii=dzi
+        endif
 
 	ra.ri.dzi=dzii
 
@@ -335,7 +338,6 @@ c*******************************************************
         call subm27(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
         call subm27(m4.xlen1c_r,dzii,m4.xlen1c_rr)
         call subm27(m4.xlen2c_r,dzii,m4.xlen2c_rr)
-
         call subm27(m4.wrc,dzii,m4.wrrc)
         call subm27(m4.xlrc,dzii,m4.xlrrc)
 #else
@@ -352,7 +354,6 @@ c*******************************************************
         call subm2(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
         call subm2(m4.xlen1c_r,dzii,m4.xlen1c_rr)
         call subm2(m4.xlen2c_r,dzii,m4.xlen2c_rr)
-
         call subm2(m4.wrc,dzii,m4.wrrc)
         call subm2(m4.xlrc,dzii,m4.xlrrc)
 #endif
@@ -363,7 +364,6 @@ c         enddo
 
 
 	ianzy=xi.ianzy0
-c UF 21.12.99	itery=xi.itery0
 	fmax=0.
 
 c*** Number of Iterations:                      itery
@@ -445,7 +445,6 @@ c*************************************************************
 	implicit real*8(a-h,o-z)
 	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 
-cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
@@ -484,11 +483,11 @@ c      dimension p11a(0:7,0:7,0:7,0:7)
 c      dimension p22a(0:7,0:7,0:7,0:7)
 c      dimension p1122a(0:7,0:7,0:7,0:7)
 
-	  if(xi.distfocy.gt.1.e-10)then
-	    dyii=dyi+ra.ri.yi/xi.distfocy
-	    else
-	    dyii=dyi
-	  endif
+        if(xi.distfocy.gt.1.e-10)then
+           dyii=dyi+ra.ri.yi/xi.distfocy
+        else
+           dyii=dyi
+        endif
 
 	ra.ri.dyi=dyii	
 
@@ -850,7 +849,6 @@ c-----------------
 
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
 #include '../phase/phase_struct.F'
 
         record /rayst/ ra
@@ -859,7 +857,6 @@ cc	include 'phase_struct.for'
 	record /integration_results/ xir
 	record /integration/ xi
         record /control_flags/ ifl
-c UF 12.1.2000
         record /psimagest/ sp
 
 	dimension dx(4096),x(4096),
@@ -1372,7 +1369,6 @@ c-----------------------------------------------------------------------
 
 	dimension densiyzre(1000),densiyzim(1000)
 
-cc        include 'phase_struct.for'
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
@@ -1762,10 +1758,9 @@ c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
-cc	include 'phase_struct.for'
+
 #include '../phase/phase_struct.F'
 
-c common simps1 ist in xir UF 21.12.99
 
       common/xlengthc/xlen1cc(0:4,0:4,0:4,0:4),
      &                 xlen1c(0:4,0:4,0:4,0:4),
@@ -1869,7 +1864,6 @@ c        xir.si1.tza(ii,jj)=sr.eza
 c        xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
 c        xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
 
-c UF 21.1.2000 leerzeichen eingefuegt
 c	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc) xir.si1.typ(ii,jj)=0.d0
 c	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc) xir.si1.tzp(ii,jj)=0.d0
 c	ende 5.11.2003
