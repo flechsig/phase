@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2012-04-23 22:31:39 flechsig>  */
+/*   Time-stamp: <27 Apr 12 16:55:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -110,7 +110,6 @@
 #define kFSaveAsButton          31             
 #define kFLoadButton            32
   
- 
 #define kFPFList                54
 #define kFPFOK                  55
 #define kFPFAdd                 56
@@ -647,7 +646,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* 24.6.96 */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, PO_dyn_arrays;
   double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
@@ -745,9 +744,9 @@ struct BeamlineType Beamline;
   #define src_ini        src_ini_
   #define create_hormap  create_hormap_
   
-
   #define fdet_8          fdet_8_
   #define fgmapidp_8      fgmapidp_8_
+  #define initconstants   initconstants_
   #define make_matrix_8   make_matrix_8_
   #define map7to4         map7to4_
   #define map4to7         map4to7_
@@ -850,6 +849,7 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
+  pstc(struct BeamlineType *, struct integration_results *, struct statistics *, struct mirrortype *, struct geometryst *),
   
   pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
        double *lambda, int *iord, 
@@ -872,7 +872,7 @@ void
        MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb),
   
 
-  adaptive_int(),
+  adaptive_int(struct map4 *, struct geometryst *, struct mirrortype *, struct sources *, struct apertures *, struct constants *, struct rayst *, struct control_flags *, struct integration *, struct integration_results *, struct statistics *, struct psimagest *),
   PutPHASE(struct  PHASEset *, char *), 
   RayTracec(struct BeamlineType *),
   RayTraceFull(struct BeamlineType *), 
