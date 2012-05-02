@@ -1,6 +1,7 @@
+#  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <08 Dec 11 08:35:00 flechsig> 
+#  Time-stamp: <02 May 12 16:47:59 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -27,6 +28,8 @@ Generic
     epsilon		1e-4	epsilon for Newton routine (double)			1e-4	0
     iord		4	calculation up to order (1..7)				4	1		
     REDUCE_maps		0	use old REDUCE maps (0,1)				0	63
+    PO_dyn_arrays	0	PO dynamic arrays  (0,1)				0	64
+#    PO_dyn_arrays	0	PO dynamic arrays	                                0	64 
 
 PO Controls
     iexpand		1	expansion of pathlength (0,1)				1	3
