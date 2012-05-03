@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <14 Sep 11 12:11:32 flechsig> 
+c$$$ Time-stamp: <25 Apr 12 14:07:36 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -65,9 +65,7 @@ c	initialisieren der Konstanten
 c	U. Flechsig 21.1.97
 c----------------------------------------------------------
 	subroutine initconstants(cs)
-ccc        include 'phase_struct.for'
-c a trick to have the struct only in the ./phase and find it from opti 
-cc        include '../phase/phase_struct.for'
+
 #include '../phase/phase_struct.F'
 
 

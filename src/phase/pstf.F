@@ -1,8 +1,11 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <2012-04-23 21:38:24 flechsig> 
+c$$$ Time-stamp: <03 May 12 15:34:27 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
+c May 2012 this routine is obsolete - 
+c has been replaced with pstc in file pst.c
+c we keep it for the moment to compare the functionality
 
 c*************************** neu **************************
         subroutine pstf(s,pso,xlam_test,iord,xlen1c,xlen2c,
@@ -19,7 +22,6 @@ c*************************** neu **************************
         implicit none
 
 c a trick to have the struct only in the ./phase and find it from opti 
-
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
@@ -264,11 +266,10 @@ c------------------------------------------
             
 c******Ende der Integration ueber die Winkel ******************
          enddo                  ! raster
-c         write(*,*)'finished row ',n1,' of ', iheigh
-c UF overwrite the line
-           write(6,101)achar(13), n1, iheigh
-  101      FORMAT(a, 'finished row: ',i7,' out of a total of ',i7,$)   ! the $ suppresses LF
-           
+         
+         write(6,101)achar(13), n1, iheigh
+ 101     FORMAT(a, 'finished row: ',i7,' out of a total of ',i7,$) ! the $ suppresses LF
+         
       enddo                     ! raster
 c     restore parameter in case of error
       s.iheigh= iheigh

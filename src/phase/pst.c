@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2012-04-23 22:33:01 flechsig>  */
+/*   Time-stamp: <03 May 12 15:51:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -228,29 +228,13 @@ void PST(struct BeamlineType *bl)
 /* Die Structur statistic macht probleme- als reine Ausgabe sollte sie 
    in c allociert werden */
 {
-  /* #define NEWCODE */
-#ifdef NEWCODE
-  struct  map4 m4;
-  struct  geometryst g;
-  struct  mirrortype am;
-  struct  sources src;
-  struct  apertures apr;
-  struct  constants cs;
-  /* struct  rayst ra; gibts ohnehin */
-  struct  control_flags ifl;
-  struct  integration xi;
-  struct  integration_results xir;
-  struct  statistics st;
-  struct  psimagest s;
-
-#endif
 
 /* leere Variablen */
    struct PSImageType *psip;
    struct PSDType *PSDp;
    struct geometryst  *gp;
    struct mirrortype *mirp;
-   struct rayst ra;
+   struct rayst ra;                         /* wird nicht genutzt */
    struct source_results sr;
 // STACK!  struct integration_results xir;
    struct integration_results *xirp;
@@ -318,47 +302,53 @@ void PST(struct BeamlineType *bl)
    xirp = XMALLOC(struct integration_results, 1);
    stp  = XMALLOC(struct statistics, 1);
 
-
-#ifndef NEWCODE
-    
+   //#define NEWCODE
+   //#ifndef NEWCODE
+   if (bl->BLOptions.PO_dyn_arrays == 0)
+     { 
+       
 #ifdef DEBUG
-   printf("debug: pst.c: calling pstf(...)\n");
+       printf("debug: pst.c: calling pstf(...)\n");
 #endif
-  
-   pstf(psip,                 &bl->BLOptions.PSO,
-       &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, 
-       &bl->xlm.xlen1c,       &bl->xlm.xlen2c, 
-       &bl->xlen0,     &bl->ypc1,  
-       &bl->zpc1,      &bl->dypc, 
-       &bl->dzpc, 
-       &bl->wc,        &bl->xlc,
-       PSDp->y,        PSDp->z, 
-       PSDp->psd,      PSDp->stfd1phmaxc,
-       PSDp->stinumbc, PSDp->s1c,
-       PSDp->s2c,      PSDp->s3c,
-       PSDp->eyrec,    PSDp->ezrec,
-       PSDp->eyimc,    PSDp->ezimc,
-       gp,             mirp, 
-       &bl->src,       &bl->BLOptions.apr, 
-       &ra,            &bl->BLOptions.ifl,
-       &bl->BLOptions.xi, xirp, 
-       stp,            &bl->fdetc,     
-       &bl->fdetphc,   &bl->fdet1phc, 
-       &bl->fdet1phca, &bl->fdet1phcb);
-
+       
+       pstf(psip,                 &bl->BLOptions.PSO,
+	    &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, 
+	    &bl->xlm.xlen1c,       &bl->xlm.xlen2c, 
+	    &bl->xlen0,     &bl->ypc1,  
+	    &bl->zpc1,      &bl->dypc, 
+	    &bl->dzpc, 
+	    &bl->wc,        &bl->xlc,
+	    PSDp->y,        PSDp->z, 
+	    PSDp->psd,      PSDp->stfd1phmaxc,
+	    PSDp->stinumbc, PSDp->s1c,
+	    PSDp->s2c,      PSDp->s3c,
+	    PSDp->eyrec,    PSDp->ezrec,
+	    PSDp->eyimc,    PSDp->ezimc,
+	    gp,             mirp, 
+	    &bl->src,       &bl->BLOptions.apr, 
+	    &ra,            &bl->BLOptions.ifl,
+	    &bl->BLOptions.xi, xirp, 
+	    stp,            &bl->fdetc,     
+	    &bl->fdetphc,   &bl->fdet1phc, 
+	    &bl->fdet1phca, &bl->fdet1phcb);
+       
 #ifdef DEBUG
-  printf("debug: pst.c: returning from call pstf(...)\n");
+       printf("debug: pst.c: returning from call pstf(...)\n");
+       printf("point 0,0= %f\n",  PSDp->psd[0]);
 #endif
-
-#else
-/* start experimental NEWCODE */
-  adaptive_int(&m4, &g, &am, &src, &apr, &cs, &ra, &ifl, &xi, &xir, &st, &s);
-
-#endif
-  /* end NEWCODE */
-
-#ifndef OBSOLETE
-  /* UF 1204 Abschnitt sollte entfernt werden */ 
+     }
+   else
+     {
+       //#else
+       /* start experimental NEWCODE */
+       printf("call pstc\n ");
+       pstc(bl, xirp, stp, mirp, gp);
+     }
+   //#endif
+   /* end NEWCODE */
+   
+#ifdef OBSOLETE
+   /* UF 1204 Abschnitt sollte entfernt werden */ 
    /* simpson resuslts copieren */
    printf("copy simpson results\n");
    memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*0x8000);
@@ -439,5 +429,173 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
    printf("WritePsd: --> done\n");
 }  /* end writepsd */
 
+/* replacement of pstf() in file pstf.F */
+/* beamline goes in, integration results and statistics goes out */
+void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct statistics *stp, struct mirrortype *am, struct geometryst *g)
+{
+
+  int i, j, k, l, iheigh, iwidth, n1, n2, npoints, iinumb;  
+  double ddisty, ddistz, yi,  zi, surfmax, *dp;
+  struct map4 *m4p;
+  struct constants cs;
+  struct rayst ra;
+  FILE *fd;
+  
+  /*struct integration_results xir;*/
+  /*struct statistics st;*/
+  
+  struct psimagest *sp;
+  // struct PSImageType *psip;
+  struct PSDType     *PSDp;
+  
+  printf("called pstc\n ");
+
+  m4p = XMALLOC(struct map4, 1);
+  
+  PSDp= (struct PSDType *)bl->RESULT.RESp;
+  sp=   (struct psimagest *)bl->RTSource.Quellep;
+  //sp=   (struct PSImageType *)bl->RTSource.Quellep;
+
+  ra.xlam_test            = bl->BLOptions.lambda;              
+  bl->BLOptions.PSO.intmod= 2;
+  initconstants(&cs);
+  xirp->nsimp   = 0;
+  xirp->iisimp  = 4;
+  xirp->isimp[0]= 2;
+  xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
+  xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
+  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
+   
+  printf("fill m4 ");
+  
+  //c------ copy stuff
+  memcpy(m4p->wc,        bl->wc,         sizeof(MAP7TYPE));
+  memcpy(m4p->xlc,       bl->xlc,        sizeof(MAP7TYPE));
+  memcpy(m4p->ypc1,      bl->ypc1,       sizeof(MAP7TYPE));
+  memcpy(m4p->zpc1,      bl->zpc1,       sizeof(MAP7TYPE));
+  memcpy(m4p->dypc,      bl->dypc,       sizeof(MAP7TYPE));
+  memcpy(m4p->dzpc,      bl->dzpc,       sizeof(MAP7TYPE));
+  memcpy(m4p->xlen1c,    bl->xlm.xlen1c, sizeof(struct xlenmaptype)/2);
+  memcpy(m4p->xlen2c,    bl->xlm.xlen2c, sizeof(struct xlenmaptype)/2);
+  memcpy(m4p->fdetc,     bl->fdetc,      sizeof(MAP7TYPE));
+  memcpy(m4p->fdetphc,   bl->fdetphc,    sizeof(MAP7TYPE));
+  memcpy(m4p->fdet1phc,  bl->fdet1phc,   sizeof(MAP7TYPE));
+  memcpy(m4p->fdet1phca, bl->fdet1phca,  sizeof(MAP7TYPE));
+  memcpy(m4p->fdet1phcb, bl->fdet1phcb,  sizeof(MAP7TYPE));
+  
+  printf(" ==> done\n");
+
+#ifdef DEBUG      
+  printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
+#endif
+
+  //c--------------------------------------------------
+  //c Schrittweiten in Bildkoordinaten bestimmen 
+  //c---  parameter ddisty,z Schrittweiten--------------
+  if (sp->iheigh == 1)
+    ddisty=0.;
+  else
+    ddisty= (sp->disty2-sp->disty1)/(double)(sp->iheigh- 1);
+  
+  if (sp->iwidth == 1)
+    ddistz= 0.;
+  else
+    ddistz= (sp->distz2-sp->distz1)/(double)(sp->iwidth- 1);
+  
+  //c---  schrittweiten im Bild bestimmt -----------------------   
+  //c      ddistz, ddisty sind berechnet
+  //c----------------------------------------------------------
+
+  //c************* Bildpunkt generieren *******************************
+#ifdef DEBUG
+  printf("pstc: start\n");
+#endif
+  stp->inumzit=0;
+  stp->inumyit=0;
+  stp->inumzan=0;
+  stp->inumyan=0;
+
+  //c merken da die parameter im fehlerfall auf 1 gesetzt werden - UF 25.4.12 warum? wird nicht genutzt
+  iheigh=sp->iheigh;
+  iwidth=sp->iwidth;
+  
+  yi= sp->disty1- ddisty;               //       ! punkt disty unter minimum
+  for (n1= 1; n1<= sp->iheigh; n1++)    //       ! y- Raster im Bild
+    {
+      yi= yi+ ddisty;                   //       ! begin bei disty1(minimum bildpunkt)
+      zi= sp->distz1-ddistz;            //       ! z- Raster im Bild
+      PSDp->y[n1-1]= yi;
+      for (n2= 1; n2<= sp->iwidth; n2++)
+	{
+	  zi= zi+ ddistz;
+	  PSDp->z[n2-1]= zi;
+	  // UF fill structure - critical falls mit thread geht das nicht!
+	  ra.ri.yi= yi; 
+	  ra.ri.zi= zi;
+	  ra.n1   = n2;
+	  ra.n2   = n1;
+	  
+	  stp->nn1= n1;  
+	  stp->nn2= n2;
+
+	  adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, &cs, &ra, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
+	  
+	  if (bl->BLOptions.ifl.ispline == -1) 
+	    {
+	      printf("ispline not yet implemented\n");
+	    }
+	  
+	  PSDp->psd[(n1-1)+(n2-1)*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
+	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
+	  
+	} /* end n2 */
+      printf("finished row: %d out of a total of %d\r", n1, iheigh);
+      fflush( stdout );
+    }
+
+  npoints= sp->iheigh * sp->iwidth; 
+  if(bl->BLOptions.ifl.inorm == 1)
+    {
+      printf("normalized output\n");
+      surfmax= 0.0;
+      for (i= 0; i < npoints; i++)
+	surfmax= (PSDp->psd[i] > surfmax) ?  PSDp->psd[i] : surfmax;
+    }
+  else 
+    surfmax=1.;
+  surfmax= (surfmax > 1e-100) ?  surfmax : 1;
+
+  iinumb=0;
+  for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i];
+
+  for (i= 0; i < npoints; i++)
+    PSDp->psd[i] /= surfmax;
+
+  printf("pstc: surfmax= %f\n", surfmax );
+  printf(" total number of grid points = %d\n", iinumb);
+  printf(" total number of complete z-iteration cycles = %d\n", stp->inumzit);
+  printf(" total number of complete y-iteration cycles = %d\n", stp->inumyit);
+  printf(" reached maximum number of grid points\n");
+  printf("        in z %d times\n", stp->inumzan);
+  printf(" reached maximum number of grid points\n");
+  printf("        in y %d times\n", stp->inumyan);
+  printf("point 0,0= %f\n",  PSDp->psd[0]);
+
+#ifdef DEBUG1
+  if ((fd= fopen("simpre.debug", "w+")) == NULL)
+   {
+       fprintf(stderr, "error: open file simpre.debug\n"); exit(-1);   
+   }
+
+  dp= (double *)&xirp->simpre[0][0][0];
+  for (i= 0; i< xirp->isimpre[0]; i++)
+    fprintf(fd, "% 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e\n", 
+	    dp[0+0*4+i*8], dp[0+1*4+i*8], dp[1+0*4+i*8], dp[1+1*4+i*8], dp[2+0*4+i*8], dp[2+1*4+i*8], dp[3+0*4+i*8], dp[3+1*4+i*8]);
+  fclose(fd);
+#endif
+
+  XFREE(m4p);
+  printf("stop intensity calculation (end pstc)\n");
+} /* end pstc */
 /* end pst.c */
 
