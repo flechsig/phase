@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <03 May 12 15:51:10 flechsig>  */
+/*   Time-stamp: <03 May 12 15:56:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -520,23 +520,23 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
   iwidth=sp->iwidth;
   
   yi= sp->disty1- ddisty;               //       ! punkt disty unter minimum
-  for (n1= 1; n1<= sp->iheigh; n1++)    //       ! y- Raster im Bild
+  for (n1= 0; n1< sp->iheigh; n1++)    //       ! y- Raster im Bild
     {
       yi= yi+ ddisty;                   //       ! begin bei disty1(minimum bildpunkt)
       zi= sp->distz1-ddistz;            //       ! z- Raster im Bild
-      PSDp->y[n1-1]= yi;
-      for (n2= 1; n2<= sp->iwidth; n2++)
+      PSDp->y[n1]= yi;
+      for (n2= 0; n2< sp->iwidth; n2++)
 	{
 	  zi= zi+ ddistz;
-	  PSDp->z[n2-1]= zi;
+	  PSDp->z[n2]= zi;
 	  // UF fill structure - critical falls mit thread geht das nicht!
 	  ra.ri.yi= yi; 
 	  ra.ri.zi= zi;
-	  ra.n1   = n2;
-	  ra.n2   = n1;
+	  ra.n1   = n2+1;
+	  ra.n2   = n1+1;
 	  
-	  stp->nn1= n1;  
-	  stp->nn2= n2;
+	  stp->nn1= n1+1;  
+	  stp->nn2= n2+1;
 
 	  adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, &cs, &ra, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
 	  
@@ -545,11 +545,11 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
 	      printf("ispline not yet implemented\n");
 	    }
 	  
-	  PSDp->psd[(n1-1)+(n2-1)*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
+	  PSDp->psd[n1+n2*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
 	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
 	  
 	} /* end n2 */
-      printf("finished row: %d out of a total of %d\r", n1, iheigh);
+      printf("finished row: %d out of a total of %d\r", (n1+1), iheigh);
       fflush( stdout );
     }
 
