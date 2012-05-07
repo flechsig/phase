@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <07 May 12 17:43:54 flechsig>  */
+/*   Time-stamp: <2012-05-07 22:02:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -392,7 +392,7 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct statistics *stp, struct mirrortype *am, struct geometryst *g)
 {
 
-  int i, j, k, l, iheigh, iwidth, n1, n2, npoints, iinumb, index, nn2, nn1;  
+  int i, j, k, l, iheigh, iwidth, n1, n2, npoints, iinumb, index, nn2, nn1, n1old;  
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
   struct map4 *m4p;
   struct constants cs;
@@ -421,97 +421,77 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
   fill_xirp(bl, xirp);
   fill_m4(bl, m4p);
 
-  
 #ifdef DEBUG      
   printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
-#endif
-
-  //c--------------------------------------------------
-  //c Schrittweiten in Bildkoordinaten bestimmen 
-  //c---  parameter ddisty,z Schrittweiten--------------
-  if (sp->iheigh == 1)
-    ddisty=0.;
-  else
-    ddisty= (sp->disty2-sp->disty1)/(double)(sp->iheigh- 1);
-  
-  if (sp->iwidth == 1)
-    ddistz= 0.;
-  else
-    ddistz= (sp->distz2-sp->distz1)/(double)(sp->iwidth- 1);
-  
-  //c---  schrittweiten im Bild bestimmt -----------------------   
-  //c      ddistz, ddisty sind berechnet
-  //c----------------------------------------------------------
-
-  //c************* Bildpunkt generieren *******************************
-#ifdef DEBUG
   printf("pstc: start\n");
 #endif
+
+  npoints= sp->iheigh * sp->iwidth;
+  n1old= 0;
+
   stp->inumzit=0;
   stp->inumyit=0;
   stp->inumzan=0;
   stp->inumyan=0;
-
-  //c merken da die parameter im fehlerfall auf 1 gesetzt werden - UF 25.4.12 warum? wird nicht genutzt
-  iheigh=sp->iheigh;
-  iwidth=sp->iwidth;
   
-  yi= sp->disty1- ddisty;               //       ! punkt disty unter minimum
-  for (n1= 0; n1< sp->iheigh; n1++)    //       ! y- Raster im Bild
+  for (index= 0; index < npoints; index++)
     {
-      yi= yi+ ddisty;                   //       ! begin bei disty1(minimum bildpunkt)
-      zi= sp->distz1-ddistz;            //       ! z- Raster im Bild
+      n2= index / sp->iheigh; 
+      n1= index % sp->iheigh; 
+
+      yi= (sp->iheigh == 1) ? sp->disty1+ n1 * (sp->disty2- sp->disty1) : 
+	sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
+      zi= (sp->iwidth == 1) ? sp->distz1+ n2 * (sp->distz2- sp->distz1) : 
+	sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
+
+      
+
+      //c merken da die parameter im fehlerfall auf 1 gesetzt werden - UF 25.4.12 warum? wird nicht genutzt
+      iheigh=sp->iheigh;
+      iwidth=sp->iwidth;
+      
       PSDp->y[n1]= yi;
-      for (n2= 0; n2< sp->iwidth; n2++)
+      PSDp->z[n2]= zi;
+
+      ra.ri.yi= yi; 
+      ra.ri.zi= zi;
+      ra.n1   = n2+1;
+      ra.n2   = n1+1;
+      
+      stp->nn1= n1+1;  
+      stp->nn2= n2+1;
+      
+      adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, &cs, &ra, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
+      
+      if (bl->BLOptions.ifl.ispline == -1) 
 	{
-#ifdef xxx
-	  index= n1+ n2* sp->iheigh;   //
-	  nn2= index / sp->iheigh; 
-	  nn1= index % sp->iheigh;
-	  yyi= sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
-	  zzi= sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
-#endif	  
-	  zi= zi+ ddistz;
-	  PSDp->z[n2]= zi;
-#ifdef xxx
-	  printf("%d: %d, %d, % f, % f, %d, %d, % f, % f\n", index,  nn1, nn2, yyi, zzi, n1, n2, yi, zi );
-#endif
-	  // UF fill structure - critical falls mit thread geht das nicht!
-	  ra.ri.yi= yi; 
-	  ra.ri.zi= zi;
-	  ra.n1   = n2+1;
-	  ra.n2   = n1+1;
-	  
-	  stp->nn1= n1+1;  
-	  stp->nn2= n2+1;
-
-	  adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, &cs, &ra, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
-	  
-	  if (bl->BLOptions.ifl.ispline == -1) 
-	    {
-	      printf("ispline not yet implemented\n");
-	    }
-	  
-	  PSDp->psd[n1+n2*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
-	  
-	} /* end n2 */
-      printf("finished row: %d out of a total of %d\r", (n1+1), iheigh);
-      fflush( stdout );
-    }
-
-  npoints= sp->iheigh * sp->iwidth; 
+	  printf("ispline not yet impemented\n");
+	  /* UF was soll gemacht werden?? 
+	     xirp->yzintey= xirp->yzintya* exp(cs.sqrtm1* xirp->yzintyp);
+	     xirp->yzintez= xirp->yzintza* exp(cs.sqrtm1* xirp->yzintzp);
+	  */
+	}
+      
+      PSDp->psd[n1+n2*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
+	pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
+      
+      if (n1 > n1old)
+	{
+	  printf("finished row: %d out of a total of %d\r", (n1+1), iheigh);
+	  fflush( stdout );
+	  n1old= n1;
+	}
+    } /* end index */
+  
   if(bl->BLOptions.ifl.inorm == 1)
     {
       printf("normalized output\n");
       norm_output(bl);
     }
-
+  
   iinumb=0;
   //for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i+1];   // fraglich
-
   
-
   printf("pstc: surfmax= %f\n", surfmax );
   printf(" total number of grid points = %d\n", iinumb);
   printf(" total number of complete z-iteration cycles = %d\n", stp->inumzit);
@@ -521,13 +501,13 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
   printf(" reached maximum number of grid points\n");
   printf("        in y %d times\n", stp->inumyan);
   printf("point 0,0= %f\n",  PSDp->psd[0]);
-
+  
 #ifdef DEBUG1
   if ((fd= fopen("simpre.debug", "w+")) == NULL)
-   {
-       fprintf(stderr, "error: open file simpre.debug\n"); exit(-1);   
-   }
-
+    {
+      fprintf(stderr, "error: open file simpre.debug\n"); exit(-1);   
+    }
+  
   dp= (double *)&xirp->simpre[0][0][0];
   for (i= 0; i< xirp->isimpre[0]; i++)
     fprintf(fd, "% 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e\n", 
@@ -548,7 +528,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4p, struct constan
   struct statistics          *stp;
   struct psimagest           *sp;
   struct rayst               *rap;
-
   int    points, n1, n2;
   double yi, zi;
 
@@ -567,27 +546,34 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4p, struct constan
   n2= index / sp->iheigh; 
   n1= index % sp->iheigh; 
 
-  yi= sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
-  zi= sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
+  yi= (sp->iheigh == 1) ? sp->disty1+ n1 * (sp->disty2- sp->disty1) : sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
+  zi= (sp->iwidth == 1) ? sp->distz1+ n2 * (sp->distz2- sp->distz1) : sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
+
+#ifdef DEBUG
   printf("Integrate point %d out of %d, %d, %d, %f, %f\n", index,  points, n1, n2, yi, zi);
+#endif
 
   rap->xlam_test= bl->BLOptions.lambda;
-  rap->ri.yi= yi; 
-  rap->ri.zi= zi;
-  rap->n1   = n2+1;          /* UF warum vertauschte nummern ????? */
-  rap->n2   = n1+1;
-  stp->nn1  = n1+1;
-  stp->nn2  = n2+1;
-  stp->inumzit= 0;
-  stp->inumyit= 0;
-  stp->inumzan= 0;
-  stp->inumyan= 0;
+  rap->ri.yi    = yi; 
+  rap->ri.zi    = zi;
+  rap->n1       = n2+1;          /* UF warum vertauschte nummern ????? */
+  rap->n2       = n1+1;
+  stp->nn1      = n1+1;
+  stp->nn2      = n2+1;
+  stp->inumzit  = 0;
+  stp->inumyit  = 0;
+  stp->inumzan  = 0;
+  stp->inumyan  = 0;
 
   adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
 
   if (bl->BLOptions.ifl.ispline == -1) 
     {
-      printf("ispline not yet implemented\n");
+      printf("ispline not yet impemented\n");
+	      /* UF was soll gemacht werden?? 
+		xirp->yzintey= xirp->yzintya* exp(cs.sqrtm1* xirp->yzintyp);
+	        xirp->yzintez= xirp->yzintza* exp(cs.sqrtm1* xirp->yzintzp);
+	      */
     }
 
   //PSDp->psd[index]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
@@ -652,7 +638,6 @@ void Test4Grating(struct BeamlineType *bl, struct mirrortype **mirp, struct geom
 void fill_m4(struct BeamlineType *bl, struct map4 *m4p)
 {
   printf("fill m4 ");
-    
   memcpy(m4p->wc,        bl->wc,         sizeof(MAP7TYPE));
   memcpy(m4p->xlc,       bl->xlc,        sizeof(MAP7TYPE));
   memcpy(m4p->ypc1,      bl->ypc1,       sizeof(MAP7TYPE));
@@ -692,11 +677,11 @@ void norm_output(struct BeamlineType *bl)
   npoints= sp->iheigh * sp->iwidth;
 
   surfmax= 0.0;
-  for (i= 0; i< npoints; i++) surfmax= (PSDp->psd[i] > surfmax) ?  PSDp->psd[i] : surfmax;
+  for (i= 0; i< npoints; i++) surfmax= (PSDp->psd[i] > surfmax) ? PSDp->psd[i] : surfmax;
   surfmax= (surfmax > 1e-100) ?  surfmax : 1;
   for (i= 0; i< npoints; i++) PSDp->psd[i] /= surfmax;
 
-  printf("normalization done\n");
+  printf("norm_output: normalization done\n");
 } /* end norm_output */
 /* end pst.c */
 

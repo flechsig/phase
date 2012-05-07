@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <03 May 12 15:34:27 flechsig> 
+c$$$ Time-stamp: <2012-05-07 21:24:55 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 c May 2012 this routine is obsolete - 
@@ -238,6 +238,7 @@ c           write(6,*)'returned from adaptive_int'
             endif
             
             if(cdabs(xir.yzintez).lt.1.e-10)icheckk=1
+
             psd2c(n1,n2)=cdabs(xir.yzintey)
             psd2cy(n1,n2)=xir.yzintey
             psd2cz(n1,n2)=xir.yzintez
