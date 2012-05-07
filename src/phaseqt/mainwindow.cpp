@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <07 May 12 14:53:06 flechsig> 
+//  Time-stamp: <07 May 12 17:19:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -43,6 +43,7 @@ MainWindow::MainWindow(PhaseQt *parent)
   this->o_input= NULL;
   this->c_window= NULL;
   this->m4p_cpp= NULL;
+  this->csp_cpp= NULL;
   myparent= parent;
   setAttribute(Qt::WA_DeleteOnClose);
 } // end MainWindow
@@ -168,6 +169,11 @@ void MainWindow::createActions()
     asynPOAct->setStatusTip(tr("make PO in parallel (test)"));
     signalMapper->setMapping(asynPOAct, QString("asynPOAct"));
     connect(asynPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    normPOAct = new QAction(tr("norm PO (test)"), this);
+    normPOAct->setStatusTip(tr("norm PO in parallel (test)"));
+    signalMapper->setMapping(normPOAct, QString("normPOAct"));
+    connect(normPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     asynTestAct = new QAction(tr("asyn Test"), this);
     asynTestAct->setStatusTip(tr("asyn Test"));
@@ -654,6 +660,7 @@ void MainWindow::createMenus()
     calcMenu->addSeparator();
     calcMenu->addAction(asynMapAct);
     calcMenu->addAction(asynPOAct);
+    calcMenu->addAction(normPOAct);
     calcMenu->addAction(asynTestAct);
     //calcMenu->addAction(optiInputAct);
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <27 Apr 12 16:55:48 flechsig>  */
+/*   Time-stamp: <07 May 12 17:10:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -812,6 +812,8 @@ void
 	     MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6,
 	     MAPTYPE_8X6, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
 	     struct mirrortype *, struct geometrytype *, int *, int *, int *, int *),
+  fill_m4(struct BeamlineType *, struct map4 *),
+  fill_xirp(struct BeamlineType *, struct integration_results *),
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, unsigned int),
   GeneratePrintDataFile(),
@@ -826,7 +828,7 @@ void
 	       struct RayType *, double *, double *, double *, int *),   
   intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, double *, double *, double *, int *),  
-  initconstants(),  
+  initconstants(struct  constants *),  
   init_posrc(struct source4c *),
   InitDataSets(struct BeamlineType *, char *),   
   InitSourceType(struct BeamlineType *, int),  
@@ -843,14 +845,14 @@ void
    MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), */
 
   MPST(struct BeamlineType *), 
-
+  norm_output(struct BeamlineType *),
   pathlen0(),
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
   pstc(struct BeamlineType *, struct integration_results *, struct statistics *, struct mirrortype *, struct geometryst *),
-  
+  pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *, struct mirrortype *, struct geometryst *),
   pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
        double *lambda, int *iord, 
 #ifdef SEVEN_ORDER
@@ -888,6 +890,7 @@ void
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
   Slope(struct RayType *, double, double, double, double, int),
   src_ini(struct sources *),  
+  Test4Grating(struct BeamlineType *, struct mirrortype **, struct geometryst **),
   MMatrix(),
 	        
   WriteBLFile(char *, struct BeamlineType *),

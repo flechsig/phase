@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <07 May 12 14:55:33 flechsig> 
+//  Time-stamp: <07 May 12 17:16:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -50,7 +50,7 @@ void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType *psip;
-  struct constants cs;
+  struct constants *csp;
   struct mirrortype *am;
   struct geometryst *g;
   struct map4 *m4p;
@@ -129,21 +129,27 @@ void MainWindow::activateProc(const QString &action)
 	  
 	  // *future= QtConcurrent::map(vector, my_funcv);
 	  // to pass additional parameters we have to use boost or std::tr1
-	  /*
-	  Test4Grating(myparent->myBeamline(), am, g);
-          initconstants(&cs);
+	  
+	  Test4Grating(myparent->myBeamline(), &am, &g);
+          
 	  if (m4p_cpp == NULL) m4p_cpp= XMALLOC(struct map4, 1);
+	  if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
+	  initconstants(csp_cpp);
 	  fill_m4(myparent->myBeamline(), m4p_cpp);
-
+	  myparent->myBeamline()->BLOptions.PSO.intmod= 2;
 	  *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
-							    m4p, &cs, am, g 
+							    m4p_cpp, csp_cpp, am, g 
 							    )); // one additional par 
-	  */
+	  
 	  watcher->setFuture(*future);
+
+	   
 	}
     }
+
+  if (!action.compare("normPOAct")) norm_output(myparent->myBeamline());
   
- if (!action.compare("raytracesimpleAct")) 
+  if (!action.compare("raytracesimpleAct")) 
     { 
       if (elementListIsEmpty())
 	return;
