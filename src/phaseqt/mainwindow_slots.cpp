@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <23 Apr 12 15:28:04 flechsig> 
+//  Time-stamp: <07 May 12 14:55:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -50,6 +50,11 @@ void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType *psip;
+  struct constants cs;
+  struct mirrortype *am;
+  struct geometryst *g;
+  struct map4 *m4p;
+
   int filesOK;
   QEventLoop q;
 
@@ -76,7 +81,6 @@ void MainWindow::activateProc(const QString &action)
       *future= QtConcurrent::map(vector, std::tr1::bind(BuildElement, 
 							std::tr1::placeholders::_1, myparent->myBeamline())); // one additional par 
       watcher->setFuture(*future);
-      
     }
   
   if (!action.compare("asynTestAct")) 
@@ -89,7 +93,54 @@ void MainWindow::activateProc(const QString &action)
       *future= QtConcurrent::map(vector, std::tr1::bind(my_funcv, 
 							std::tr1::placeholders::_1, 1000)); // one additional par 
       watcher->setFuture(*future);
+    }
+
+  if (!action.compare("asynPOAct")) 
+    { 
+#ifdef DEBUG  
+      cout << "debug: " << __FILE__ << " asynPOAct button pressed" << endl; 
+#endif
+      if (elementListIsEmpty()) 
+	return;
+
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+
+      myparent->myBuildBeamline();
+
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
+          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
+
+      if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+	sourceApplyBslot();
       
+      if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
+		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
+	{
+	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	  //myparent->myPST();
+	  fillTaskVector(psip->iy * psip->iz);
+
+	  qDebug() << "test asynchronous PO with threads " << psip->iy * psip->iz << " points";; 
+	  
+	  // *future= QtConcurrent::map(vector, my_funcv);
+	  // to pass additional parameters we have to use boost or std::tr1
+	  /*
+	  Test4Grating(myparent->myBeamline(), am, g);
+          initconstants(&cs);
+	  if (m4p_cpp == NULL) m4p_cpp= XMALLOC(struct map4, 1);
+	  fill_m4(myparent->myBeamline(), m4p_cpp);
+
+	  *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
+							    m4p, &cs, am, g 
+							    )); // one additional par 
+	  */
+	  watcher->setFuture(*future);
+	}
     }
   
  if (!action.compare("raytracesimpleAct")) 

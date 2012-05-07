@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <07 Mar 12 13:52:00 flechsig>  */
+/*  Time-stamp: <07 May 12 14:52:49 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -281,6 +281,7 @@ private:
     QAction *footprintAct;
     QAction *singleRayAct;
     QAction *asynMapAct;
+    QAction *asynPOAct;
     QAction *asynTestAct;
     QAction *optiInputAct;
     QAction *phasespaceAct;
@@ -383,6 +384,7 @@ private:
     QFutureWatcher<void> *watcher;
     void createProgress();
     QVector <int> vector;
+    struct map4 *m4p_cpp;
 };
 
 
