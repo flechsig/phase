@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2012-05-07 22:02:14 flechsig>  */
+/*   Time-stamp: <2012-05-07 22:22:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -253,7 +253,7 @@ void PST(struct BeamlineType *bl)
    printf("  source typ: %d\n", bl->src.isrctype); 
  #endif
 
-Test4Grating(bl, &mirp, &gp);
+   Test4Grating(bl, &mirp, &gp);
 
 #ifdef DEBUG 
    printf("debug: pst.c: allocating memory for structs\n");
@@ -392,7 +392,7 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct statistics *stp, struct mirrortype *am, struct geometryst *g)
 {
 
-  int i, j, k, l, iheigh, iwidth, n1, n2, npoints, iinumb, index, nn2, nn1, n1old;  
+  int i, j, k, l, iheigh, iwidth, n1, n2, npoints, iinumb, index, nn2, nn1, n1old, n2old;  
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
   struct map4 *m4p;
   struct constants cs;
@@ -427,7 +427,7 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
 #endif
 
   npoints= sp->iheigh * sp->iwidth;
-  n1old= 0;
+  n1old= n2old= 0;
 
   stp->inumzit=0;
   stp->inumyit=0;
@@ -443,8 +443,6 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
 	sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
       zi= (sp->iwidth == 1) ? sp->distz1+ n2 * (sp->distz2- sp->distz1) : 
 	sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
-
-      
 
       //c merken da die parameter im fehlerfall auf 1 gesetzt werden - UF 25.4.12 warum? wird nicht genutzt
       iheigh=sp->iheigh;
@@ -475,11 +473,11 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
       PSDp->psd[n1+n2*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
 	pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
       
-      if (n1 > n1old)
+      if (n2 > n2old)
 	{
-	  printf("finished row: %d out of a total of %d\r", (n1+1), iheigh);
+	  printf("finished row: %d out of a total of %d\r", (n2+1), iheigh);
 	  fflush( stdout );
-	  n1old= n1;
+	  n2old= n2;
 	}
     } /* end index */
   
