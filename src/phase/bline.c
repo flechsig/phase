@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-04-17 19:01:11 flechsig>  */
+/*   Time-stamp: <08 May 12 17:22:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1280,7 +1280,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20120320;
+   int  i, version= 20120507;    /* yesterday */
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1640,7 +1640,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     flag z  '' (PS Source)\n", op->PSO.PSSource.zhard);   
    fprintf(f,"%20d     flag dz '' (PS Source)\n", op->PSO.PSSource.dzhard);  
    fprintf(f,"%20d     flag <> 2 fixed grid integr.\n", op->PSO.intmod); 
-   fprintf(f,"%20d     use (old) REDUCE maps (up to 4th order) \n", op->REDUCE_maps);              /* new sep 2011 */
+   fprintf(f,"%20d     use (old) REDUCE maps (up to 4th order) \n", op->REDUCE_maps);            /* new sep 2011 */
+   fprintf(f,"%20d     pst_mode (0: pstf.F, 1: pstc, 2: pstc_with m2p)\n", op->pst_mode);        /* new May 2012 */
   
 /* end options section */ 
 
@@ -1679,7 +1680,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20120321;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20120508;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -2142,8 +2143,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.zhard, buffer, &buf);  
        fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
        fscanf(f, " %d %[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
-       if (version >= 20110902)
-	 fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
+       if (version >= 20110902) fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
+       if (version >= 20120508) fscanf(f, " %d %[^\n]s %c", &op->pst_mode, buffer, &buf);
      } else rcode= -1;  /* end OPTIONS */     
 
    if (version >= 20120320)
