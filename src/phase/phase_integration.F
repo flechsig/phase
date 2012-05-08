@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <24 Apr 12 16:52:45 flechsig> 
+c$$$ Time-stamp: <08 May 12 13:19:11 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -133,7 +133,7 @@ c        write(6,1)m4.fdet1phc(i,j,k,l),m4.fdet1phca(i,j,k,l),m4.fdet1phcb(i,j,k
 c*******************************************************
 c	Erstellen eines reduzierten Konstantensatzes
 c*******************************************************
-
+ 
 	yi=ra.ri.yi
 	zi=ra.ri.zi
 

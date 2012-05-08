@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2012-05-07 22:22:57 flechsig>  */
+/*   Time-stamp: <08 May 12 17:38:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -262,11 +262,11 @@ void PST(struct BeamlineType *bl)
    xirp = XMALLOC(struct integration_results, 1);
    stp  = XMALLOC(struct statistics, 1);
    
-   if (bl->BLOptions.PO_dyn_arrays == 0)
+   if (bl->BLOptions.pst_mode == 0)                       /* pst_mode == 0 the fortran version */
      { 
        
 #ifdef DEBUG
-       printf("debug: pst.c: calling pstf(...)\n");
+       printf("debug: %s: calling pstf(...)\n", __FILE__);
 #endif
        
        pstf(psip,                 &bl->BLOptions.PSO,
@@ -292,18 +292,15 @@ void PST(struct BeamlineType *bl)
        
 #ifdef DEBUG
        printf("debug: pst.c: returning from call pstf(...)\n");
-       printf("point 0,0= %f\n",  PSDp->psd[0]);
+       printf("point 0,0= %e\n",  PSDp->psd[0]);
 #endif
      }
-   else
+   else    // c replacement
      {
-       //#else
-       /* start experimental NEWCODE */
-       printf("call pstc\n ");
-       pstc(bl, xirp, stp, mirp, gp);
+       printf("************** call pstc ****************\n ");
+       pstc(bl, mirp, gp);
      }
-   //#endif
-   /* end NEWCODE */
+   
    
 #ifdef OBSOLETE
    /* UF 1204 Abschnitt sollte entfernt werden */ 
@@ -389,14 +386,13 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 
 /* replacement of pstf() in file pstf.F */
 /* beamline goes in, integration results and statistics goes out */
-void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct statistics *stp, struct mirrortype *am, struct geometryst *g)
+void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
 {
 
-  int i, j, k, l, iheigh, iwidth, n1, n2, npoints, iinumb, index, nn2, nn1, n1old, n2old;  
+  int i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next;  
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
   struct map4 *m4p;
   struct constants cs;
-  struct rayst ra;
   FILE *fd;
   
   /*struct integration_results xir;*/
@@ -408,79 +404,34 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
   
   printf("called pstc\n ");
 
-  m4p = XMALLOC(struct map4, 1);
+  
   
   PSDp= (struct PSDType *)bl->RESULT.RESp;
   sp=   (struct psimagest *)bl->RTSource.Quellep;
   //sp=   (struct PSImageType *)bl->RTSource.Quellep;
 
-  ra.xlam_test            = bl->BLOptions.lambda;              
+        
   bl->BLOptions.PSO.intmod= 2;
 
   initconstants(&cs);
-  fill_xirp(bl, xirp);
-  fill_m4(bl, m4p);
-
+  if (bl->BLOptions.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
+    { 
+      printf("allocate and fill m4p in pstc\n");
+      m4p = XMALLOC(struct map4, 1);
+      fill_m4(bl, m4p);
+    }
 #ifdef DEBUG      
   printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
   printf("pstc: start\n");
 #endif
 
   npoints= sp->iheigh * sp->iwidth;
-  n1old= n2old= 0;
+  next= 0;
 
-  stp->inumzit=0;
-  stp->inumyit=0;
-  stp->inumzan=0;
-  stp->inumyan=0;
-  
-  for (index= 0; index < npoints; index++)
-    {
-      n2= index / sp->iheigh; 
-      n1= index % sp->iheigh; 
+ for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs, am, g);
 
-      yi= (sp->iheigh == 1) ? sp->disty1+ n1 * (sp->disty2- sp->disty1) : 
-	sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
-      zi= (sp->iwidth == 1) ? sp->distz1+ n2 * (sp->distz2- sp->distz1) : 
-	sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
+  printf("\n");
 
-      //c merken da die parameter im fehlerfall auf 1 gesetzt werden - UF 25.4.12 warum? wird nicht genutzt
-      iheigh=sp->iheigh;
-      iwidth=sp->iwidth;
-      
-      PSDp->y[n1]= yi;
-      PSDp->z[n2]= zi;
-
-      ra.ri.yi= yi; 
-      ra.ri.zi= zi;
-      ra.n1   = n2+1;
-      ra.n2   = n1+1;
-      
-      stp->nn1= n1+1;  
-      stp->nn2= n2+1;
-      
-      adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, &cs, &ra, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
-      
-      if (bl->BLOptions.ifl.ispline == -1) 
-	{
-	  printf("ispline not yet impemented\n");
-	  /* UF was soll gemacht werden?? 
-	     xirp->yzintey= xirp->yzintya* exp(cs.sqrtm1* xirp->yzintyp);
-	     xirp->yzintez= xirp->yzintza* exp(cs.sqrtm1* xirp->yzintzp);
-	  */
-	}
-      
-      PSDp->psd[n1+n2*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-	pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
-      
-      if (n2 > n2old)
-	{
-	  printf("finished row: %d out of a total of %d\r", (n2+1), iheigh);
-	  fflush( stdout );
-	  n2old= n2;
-	}
-    } /* end index */
-  
   if(bl->BLOptions.ifl.inorm == 1)
     {
       printf("normalized output\n");
@@ -490,15 +441,7 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
   iinumb=0;
   //for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i+1];   // fraglich
   
-  printf("pstc: surfmax= %f\n", surfmax );
-  printf(" total number of grid points = %d\n", iinumb);
-  printf(" total number of complete z-iteration cycles = %d\n", stp->inumzit);
-  printf(" total number of complete y-iteration cycles = %d\n", stp->inumyit);
-  printf(" reached maximum number of grid points\n");
-  printf("        in z %d times\n", stp->inumzan);
-  printf(" reached maximum number of grid points\n");
-  printf("        in y %d times\n", stp->inumyan);
-  printf("point 0,0= %f\n",  PSDp->psd[0]);
+  printf("debug: point (0,0)= %e\n",  PSDp->psd[0]);
   
 #ifdef DEBUG1
   if ((fd= fopen("simpre.debug", "w+")) == NULL)
@@ -513,12 +456,12 @@ void pstc(struct BeamlineType *bl, struct integration_results *xirp, struct stat
   fclose(fd);
 #endif
 
-  XFREE(m4p);
+  if (bl->BLOptions.pst_mode == 1) XFREE(m4p);
   printf("stop intensity calculation (end pstc)\n");
 } /* end pstc */
 
 /* the internal wrapper function for adaptive int for index i */
-void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4p, struct constants *csp, struct mirrortype *am, struct geometryst *g)
+void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct constants *csp, struct mirrortype *am, struct geometryst *g)
 {
   struct PSImageType         *psip;
   struct PSDType             *PSDp;
@@ -526,38 +469,50 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4p, struct constan
   struct statistics          *stp;
   struct psimagest           *sp;
   struct rayst               *rap;
-  int    points, n1, n2;
+  struct map4                *m4p;
+  //struct constants *csp;
+  int    points, ny, nz;
   double yi, zi;
 
   psip = (struct PSImageType *)bl->RTSource.Quellep;
-  sp   = (struct psimagest *)bl->RTSource.Quellep;
-  PSDp = (struct PSDType *)bl->RESULT.RESp;
+  sp   = (struct psimagest *)  bl->RTSource.Quellep;
+  PSDp = (struct PSDType *)    bl->RESULT.RESp;
 
   xirp = XMALLOC(struct integration_results, 1);
   stp  = XMALLOC(struct statistics, 1);
   rap  = XMALLOC(struct rayst, 1);
-
+  if (bl->BLOptions.pst_mode == 2)                       /* pst_mode == 2 allocate a copy of m4p */
+    { 
+      m4p  = XMALLOC(struct map4, 1);
+      fill_m4(bl, m4p);
+    } 
+  else
+    m4p= m4pp;
+    
   fill_xirp(bl, xirp);
 
   points= psip->iy * psip->iz;
   
-  n2= index / sp->iheigh; 
-  n1= index % sp->iheigh; 
+  // nz= index / sp->iheigh; // fortran loop
+  // ny= index % sp->iheigh; // fortran loop
+  nz= index % sp->iwidth; // c loop
+  ny= index / sp->iwidth; // c loop
 
-  yi= (sp->iheigh == 1) ? sp->disty1+ n1 * (sp->disty2- sp->disty1) : sp->disty1+ n1 * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
-  zi= (sp->iwidth == 1) ? sp->distz1+ n2 * (sp->distz2- sp->distz1) : sp->distz1+ n2 * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
+  yi= (sp->iheigh == 1) ? sp->disty1+ ny * (sp->disty2- sp->disty1) : sp->disty1+ ny * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
+  zi= (sp->iwidth == 1) ? sp->distz1+ nz * (sp->distz2- sp->distz1) : sp->distz1+ nz * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
 
 #ifdef DEBUG
-  printf("Integrate point %d out of %d, %d, %d, %f, %f\n", index,  points, n1, n2, yi, zi);
+  printf("Integrate point %d out of %d, nz=%d, ny=%d, z=%f, y=%f\r", index,  points, nz, ny, zi, yi);
+  fflush( stdout );
 #endif
 
   rap->xlam_test= bl->BLOptions.lambda;
   rap->ri.yi    = yi; 
   rap->ri.zi    = zi;
-  rap->n1       = n2+1;          /* UF warum vertauschte nummern ????? */
-  rap->n2       = n1+1;
-  stp->nn1      = n1+1;
-  stp->nn2      = n2+1;
+  rap->n1       = nz+1;          /* UF warum vertauschte nummern ny war n1 ????? */
+  rap->n2       = ny+1;
+  stp->nn1      = ny+1;
+  stp->nn2      = nz+1;
   stp->inumzit  = 0;
   stp->inumyit  = 0;
   stp->inumzan  = 0;
@@ -574,15 +529,22 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4p, struct constan
 	      */
     }
 
+  // UF wir speichern im fortran memory model (2bchanged)
   //PSDp->psd[index]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-  PSDp->psd[n1+n2*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
+  PSDp->psd[ny+nz*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
 	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
-  PSDp->y[n1]= yi;
-  PSDp->z[n2]= zi;
+  
+  PSDp->y[ny]= yi;
+  PSDp->z[nz]= zi;
+
+  //printf("\nresult: z=%e, y=%e, psd=%e\n", zi, yi, PSDp->psd[ny+nz*sp->iheigh]);
+
 
   XFREE(xirp);
   XFREE(stp);
   XFREE(rap);
+  if (bl->BLOptions.pst_mode == 2) XFREE(m4p);
+  
 } /* end pstc_i */
 
 /* grating special- returns struct mirrortype and struct geometryst of a grating in the beamline,
@@ -635,7 +597,7 @@ void Test4Grating(struct BeamlineType *bl, struct mirrortype **mirp, struct geom
 
 void fill_m4(struct BeamlineType *bl, struct map4 *m4p)
 {
-  printf("fill m4 ");
+  // printf("fill m4 ");
   memcpy(m4p->wc,        bl->wc,         sizeof(MAP7TYPE));
   memcpy(m4p->xlc,       bl->xlc,        sizeof(MAP7TYPE));
   memcpy(m4p->ypc1,      bl->ypc1,       sizeof(MAP7TYPE));
@@ -649,7 +611,7 @@ void fill_m4(struct BeamlineType *bl, struct map4 *m4p)
   memcpy(m4p->fdet1phc,  bl->fdet1phc,   sizeof(MAP7TYPE));
   memcpy(m4p->fdet1phca, bl->fdet1phca,  sizeof(MAP7TYPE));
   memcpy(m4p->fdet1phcb, bl->fdet1phcb,  sizeof(MAP7TYPE));
-  printf(" ==> done\n");
+  // printf(" ==> done\n");
 } /* end fill_m4 */
 
 void fill_xirp(struct BeamlineType *bl, struct integration_results *xirp)

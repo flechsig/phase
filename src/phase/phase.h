@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <07 May 12 17:10:00 flechsig>  */
+/*   Time-stamp: <08 May 12 17:10:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -646,7 +646,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* 24.6.96 */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, PO_dyn_arrays;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, pst_mode;
   double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
@@ -851,7 +851,7 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
-  pstc(struct BeamlineType *, struct integration_results *, struct statistics *, struct mirrortype *, struct geometryst *),
+  pstc(struct BeamlineType *, struct mirrortype *, struct geometryst *),
   pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *, struct mirrortype *, struct geometryst *),
   pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
        double *lambda, int *iord, 
