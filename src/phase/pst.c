@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 May 12 13:13:23 flechsig>  */
+/*   Time-stamp: <09 May 12 17:05:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -259,9 +259,6 @@ void PST(struct BeamlineType *bl)
    printf("debug: pst.c: allocating memory for structs\n");
 #endif
  
-   xirp = XMALLOC(struct integration_results, 1);
-   stp  = XMALLOC(struct statistics, 1);
-   
    if (bl->BLOptions.pst_mode == 0)                       /* pst_mode == 0 the fortran version */
      { 
        
@@ -269,6 +266,9 @@ void PST(struct BeamlineType *bl)
        printf("debug: %s: calling pstf(...)\n", __FILE__);
 #endif
        
+       xirp = XMALLOC(struct integration_results, 1);
+       stp  = XMALLOC(struct statistics, 1);
+
        pstf(psip,                 &bl->BLOptions.PSO,
 	    &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, 
 	    &bl->xlm.xlen1c,       &bl->xlm.xlen2c, 
@@ -289,7 +289,19 @@ void PST(struct BeamlineType *bl)
 	    stp,            &bl->fdetc,     
 	    &bl->fdetphc,   &bl->fdet1phc, 
 	    &bl->fdet1phca, &bl->fdet1phcb);
-       
+
+       printf("copy simpson results\n");
+       memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*4008);
+       memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*4008);
+       memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*4008);
+       memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*4008);
+       memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*4008);
+       memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*4008);
+       memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*3006);
+
+       XFREE(stp);
+       XFREE(xirp);
+
 #ifdef DEBUG
        printf("debug: pst.c: returning from call pstf(...)\n");
        printf("point 0,0= %e\n",  PSDp->psd[0]);
@@ -301,24 +313,8 @@ void PST(struct BeamlineType *bl)
        pstc(bl, mirp, gp);
      }
    
-   
-#ifdef OBSOLETE
-   /* UF 1204 Abschnitt sollte entfernt werden */ 
-   /* simpson resuslts copieren */
-   printf("copy simpson results\n");
-   memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*0x8000);
-   memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*0x8000);
-   memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*0x8000);
-   memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*0x8000);
-   memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*0x8000);
-   memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*0x8000);
-   memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*24576);
-#endif
-
    bl->beamlineOK |= resultOK;  
-   XFREE(stp);
-   XFREE(xirp);
-   
+      
 #ifdef DEBUG
    printf("debug: pst.c: phase space trafo PST end\n"); 
 #endif
@@ -404,8 +400,6 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
   
   printf("called pstc\n ");
 
-  
-  
   PSDp= (struct PSDType *)bl->RESULT.RESp;
   sp=   (struct psimagest *)bl->RTSource.Quellep;
   //sp=   (struct PSImageType *)bl->RTSource.Quellep;
@@ -537,14 +531,19 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   PSDp->y[ny]= yi;
   PSDp->z[nz]= zi;
 
-  //printf("\nresult: z=%e, y=%e, psd=%e\n", zi, yi, PSDp->psd[ny+nz*sp->iheigh]);
-
+  // contains always the last point
+  memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*4008);
+  memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*4008);
+  memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*4008);
+  memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*4008);
+  memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*4008);
+  memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*4008);
+  memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*3006);
 
   XFREE(xirp);
   XFREE(stp);
   XFREE(rap);
   if (bl->BLOptions.pst_mode == 2) XFREE(m4p);
-  
 } /* end pstc_i */
 
 /* grating special- returns struct mirrortype and struct geometryst of a grating in the beamline,

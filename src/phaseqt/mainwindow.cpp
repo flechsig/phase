@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <08 May 12 17:13:33 flechsig> 
+//  Time-stamp: <09 May 12 18:00:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2328,7 +2328,6 @@ void MainWindow::writeSimp()
 {
   int ret, i, idx, idy, j, k;
   FILE *f1, *f2;
-  
   struct PSDType    *psd; 
 
 #ifdef DEBUG
@@ -2369,16 +2368,19 @@ void MainWindow::writeSimp()
     }
 
   // header
-  fprintf(f1, "# file simpre.dat written by phase\n");
-  fprintf(f2, "# file simpim.dat written by phase\n");
+  fprintf(f1, "# file simpre.dat written by phase\n#\n");
+  fprintf(f2, "# file simpim.dat written by phase\n#\n");
+  fprintf(f1, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+  fprintf(f2, "# dy, I_dzmin, I_dz_center, I_dzmax, dz, I_dy_center\n");
 
   // psd(i,j,k) in fortran memory model
-  for (k= 0; k < 512; k++)
+
+  for (k= 0; k < myparent->myBeamline()->BLOptions.xi.ianzy0; k++)
     {
-      // idx= k + 0 * 4096+ i * (4096 * 2)
+      //idx= k + 0 * 4096+ i * (4096 * 2)
       // idy= k + 1 * 4096+ i * (4096 * 2)
-      fprintf(f1, "%d %f\n", k, psd->simpre[i]);
-      fprintf(f2, "%d %f\n", k, psd->simpim[i]);
+      fprintf(f1, "% e % e % e % e % e % e\n", psd->simpre[k*8], psd->simpre[k*8+4], psd->simpre[k*8+5], psd->simpre[k*8+6], psd->simpre[k*8+3], psd->simpre[k*8+7]);
+      //fprintf(f2, "%d %f\n", k, psd->simpim[i]);
     }
   fprintf(f1, "# end\n");
   fprintf(f2, "# end\n");
@@ -2392,7 +2394,7 @@ void MainWindow::writeSimp()
 } // end writeSimp
 
 /////////////////////////////////
-// end widget handling sctieon //
+// end widget handling section //
 /////////////////////////////////
 
 void MainWindow::fillTaskVector(const int nr)

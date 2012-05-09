@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <08 May 12 17:10:13 flechsig>  */
+/*   Time-stamp: <09 May 12 16:54:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -578,8 +578,8 @@ struct RTSourceType {
 struct PSDType  {
   double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
     *eyrec, *ezrec, *eyimc, *ezimc;
-  double simpre[0x8000], simpim[0x8000], sintre[0x8000], sintim[0x8000], 
-    simpa[0x8000], simpp[0x8000], d12[24576]; 
+  double simpre[4008], simpim[4008], sintre[4008], sintim[4008], 
+    simpa[4008], simpp[4008], d12[3006]; 
   int iy, iz;
 };
 
