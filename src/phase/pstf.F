@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <2012-05-07 21:24:55 flechsig> 
+c$$$ Time-stamp: <09 May 12 13:20:35 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 c May 2012 this routine is obsolete - 
@@ -23,6 +23,8 @@ c*************************** neu **************************
 
 c a trick to have the struct only in the ./phase and find it from opti 
 #include '../phase/phase_struct.F'
+
+#define GSIZE 51
 
         record /constants/ cs
         record /geometryst/ g
@@ -82,11 +84,11 @@ c        record /source_results/ sr
      &            stfd1phmaxc(1),stinumbc(1),s1c(1),
      &            s2c(1),s3c(1),eyrec(1),ezrec(1),
      &            eyimc(1),ezimc(1)
-        dimension psd2(1024,1024)  !psd2 ist ergebnis   
+        dimension psd2(GSIZE, GSIZE)  !psd2 ist ergebnis   
         
-        complex*16 psd2c(1024,1024)
-        complex*16 psd2cy(512,512)
-        complex*16 psd2cz(512,512) 
+        complex*16 psd2c(GSIZE,GSIZE)
+        complex*16 psd2cy(GSIZE,GSIZE)
+        complex*16 psd2cz(GSIZE,GSIZE) 
         
 c        write(*,*)'pstf (FORTRAN) called'
 c        write(*,*)'show input, sum pathlen, wc, xlc'
