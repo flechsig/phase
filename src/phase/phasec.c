@@ -88,7 +88,6 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
     
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
-
       src_ini(&bl->src); 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
@@ -148,6 +147,12 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   *iord     = -1;
   opterr    =  0;
   
+  /* explicitly init ps->imageraysname to start with '\0',
+     so we later can tell whether it was set by -o option */
+  //TODO: maybe move that to where structure is initalized first time
+  ps->imageraysname[0] = '\0';
+  
+  /* parse options */
   while ((c = getopt(argc, argv, "BbF:f:Hhi:I:M:m:NnO:o:S:s:V")) != -1)
     switch (c)
       {
@@ -289,7 +294,7 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 	      fscanf(f,"%s\n", (char *) &x->matrixname);     
 	      fscanf(f,"%s\n", (char *) &x->mapname);    
 	      fscanf(f,"%s\n", (char *) &x->sourceraysname);       
-	      fscanf(f,"%s\n", (char *) &x->imageraysname);	   
+	      fscanf(f,"%s\n", (char *) &x->imageraysname);    
 	      fscanf(f,"%s\n", (char *) &x->intersecname); 
 	      fscanf(f,"%s\n", (char *) &x->geometryname);   
 	      fscanf(f,"%s\n", (char *) &x->elementname);  
@@ -411,7 +416,7 @@ void InitPHASE(struct PHASEset *x)                   /* set defaults */
   strncpy(x->optipckname,     D0optipckname, MaxPathLength);   
   strncpy(x->beamlinename,    "SGM.PHASE", MaxPathLength); 
   strncpy(x->opresname,       "opti_out.dat", MaxPathLength); 
-  strncpy(x->minname,         "minuit.inp", MaxPathLength); 
+  strncpy(x->minname,         "minuit.inp", MaxPathLength);   
 }
    
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */

@@ -482,7 +482,8 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		  fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
 		  exit(-1);
 		}
-	      fdet_8(bl->wc, bl->xlc,
+#ifdef XXX 
+        fdet_8(bl->wc, bl->xlc,
 		     bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	             ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 		    
@@ -492,6 +493,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
 	      XFREE(ltp);
 	      bl->tp= NULL;
+#endif        
 	    }
 	  else
 	    {
@@ -505,7 +507,6 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
 #endif
 
-      
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
 	  if (listpt->MDat.Art != kEOESlit)
@@ -551,6 +552,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     (double *)bl->dzpc, 
 		     &bl->BLOptions.ifl.iord); 
 
+
 #ifdef SEVEN_ORDER
 	  if (bl->BLOptions.REDUCE_maps == 0)
 	    {
@@ -560,6 +562,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		  fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
 		  exit(-1);
 		}
+      printf("(1) bl->fdet1phcb = %.4le\n", bl->fdet1phcb[0][0][0][0]);		
 	      fdet_8(bl->wc, bl->xlc,
 		     bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
 		     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
@@ -568,6 +571,8 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     &bl->ElementList[0].geo, 
 		     &bl->BLOptions.ifl.inorm1,  
 		     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+      printf("(2) bl->fdet1phcb = %.4le\n", bl->fdet1phcb[0][0][0][0]);
+
 	      XFREE(ltp);
 	      bl->tp= NULL;
 	    }
@@ -2155,7 +2160,13 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %s %[^\n]s %c", &pp->mapname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->matrixname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->sourceraysname, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->imageraysname, buffer, &buf);
+     
+     /* output name already set via cmd. line option? */       
+     if (pp->imageraysname[0] != '\0') 
+       fscanf(f, " %*s %[^\n]s %c", buffer, &buf);
+     else
+       fscanf(f, " %s %[^\n]s %c", &pp->imageraysname, buffer, &buf);
+            
 	   fscanf(f, " %s %[^\n]s %c", &pp->minname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->optipckname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->opresname, buffer, &buf);
