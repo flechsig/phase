@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <10 May 12 15:19:20 flechsig> 
+//  Time-stamp: <10 May 12 15:34:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1133,14 +1133,14 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SINTRE:
       cout << "plot PLOT_PO_SINTRE experimental start " << endl;
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
+      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 0);
       d_plot->si2by2Plot();
       break;
 
     case PLOT_PO_SINTIM:
       cout << "plot PLOT_PO_SINTIM experimental start " << endl;
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
+      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 0);
       d_plot->si2by2Plot();
       break;
       
@@ -1225,14 +1225,14 @@ void MainWindow::grautoscaleslot()
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
+      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 1);
     }
 
   if (d_plot->plotsubject & PLOT_PO_SINTIM && 
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
+      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 1);
     }
   
   // update the widget

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 May 12 15:19:46 flechsig> 
+//  Time-stamp: <10 May 12 15:40:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -299,6 +299,7 @@ void Plot::si2by2Plot()
 #endif
   d_spectrogram->hide();
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
+  mylegend->contentsWidget ()->setVisible (true);
   setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
   pen_ptr->setWidth(2);
 
