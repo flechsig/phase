@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2012-05-09 23:00:08 flechsig> 
+//  Time-stamp: <10 May 12 09:21:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -457,6 +457,10 @@ QWidget *MainWindow::createGraphicBox()
   grGoResultPhiAct  = new QAction(tr("GO re&sult phase"), this);
 
   grPoResultAct  = new QAction(tr("PO resu&lt"), this);
+  grPoSimpreAct  = new QAction(tr("PO Simpre"), this);
+  grPoSimpimAct  = new QAction(tr("PO Simpim"), this);
+  grPoSintreAct  = new QAction(tr("PO Sintre"), this);
+  grPoSintimAct  = new QAction(tr("PO Sintim"), this);
 
   grexample1Act  = new QAction(tr("example &1"), this);
   grexample2Act  = new QAction(tr("example &2"), this);
@@ -471,6 +475,10 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grGoResultPhiAct);
   subject->addSeparator();
   subject->addAction(grPoResultAct);
+  subject->addAction(grPoSimpreAct);
+  subject->addAction(grPoSimpimAct);
+  subject->addAction(grPoSintreAct);
+  subject->addAction(grPoSintimAct);
   subject->addSeparator();
   subject->addAction(grexample1Act);
   subject->addAction(grexample2Act);
@@ -487,6 +495,10 @@ QWidget *MainWindow::createGraphicBox()
   connect(grGoResultPhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSimpimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSintreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSintimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grexample1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -501,6 +513,10 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grGoResultPhiAct,   QString("grGoResultPhiAct"));
 
   grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
+  grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));
+  grsignalMapper->setMapping(grPoSintimAct,   QString("grPoSintimAct"));
+  grsignalMapper->setMapping(grPoSimpreAct,   QString("grPoSimpreAct"));
+  grsignalMapper->setMapping(grPoSimpimAct,   QString("grPoSimpimAct"));
 
   grsignalMapper->setMapping(grexample1Act, QString("grexample1Act"));
   grsignalMapper->setMapping(grexample2Act, QString("grexample2Act"));
@@ -2323,93 +2339,56 @@ void MainWindow::updateGraphicsInput(int style)
 } // updateGraphicsInput
 
 
-// write files simpre.dat and simpim.dat
+// write files si* density cuts
 void MainWindow::writeSimp()
 {
-  int ret, i, idx, idy, j, k;
+  int k, ret;
   FILE *f1, *f2, *f3, *f4, *f5, *f6;
   struct PSDType    *psd; 
   char *name= myparent->myBeamline()->filenames.imageraysname;
   char fname1[MaxPathLength], fname2[MaxPathLength], fname3[MaxPathLength], fname4[MaxPathLength], fname5[MaxPathLength], fname6[MaxPathLength];
-  char infostring[MaxPathLength];
+  char infostr[MaxPathLength];
 
 #ifdef DEBUG
   cout << "debug: writeSimp called" << endl;
   cout << "debug: result type: " << myparent->myBeamline()->RESULT.typ << endl;
-  cout << "base-filename: " << name << endl;
 #endif
 
-  snprintf(fname1, MaxPathLength, "%s-simpre", name);
-  snprintf(fname2, MaxPathLength, "%s-simpim", name);
-  snprintf(fname3, MaxPathLength, "%s-sintre", name);
-  snprintf(fname4, MaxPathLength, "%s-sintim", name);
-  snprintf(fname5, MaxPathLength, "%s-simpa",  name);
-  snprintf(fname6, MaxPathLength, "%s-simpp",  name);
-  snprintf(infostring, MaxPathLength, "files(s) %s-simpre etc. exists!",  name);
+  snprintf(fname1,  MaxPathLength, "%s-simpre", name);
+  snprintf(fname2,  MaxPathLength, "%s-simpim", name);
+  snprintf(fname3,  MaxPathLength, "%s-sintre", name);
+  snprintf(fname4,  MaxPathLength, "%s-sintim", name);
+  snprintf(fname5,  MaxPathLength, "%s-simpa",  name);
+  snprintf(fname6,  MaxPathLength, "%s-simpp",  name);
+  snprintf(infostr, MaxPathLength, "file(s) %s-si* exists!",  name);
 
   psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-
-  char simprefilename[]= "simpre.dat";
-  char simpimfilename[]= "simpim.dat";
 
   if (fexists(fname1) || fexists(fname2) || fexists(fname3) || fexists(fname4) || fexists(fname5) || fexists(fname6))
     {
       QMessageBox *msgBox = new QMessageBox;
-      msgBox->setText(tr(infostring));
+      msgBox->setText(tr(infostr));
       msgBox->setInformativeText(tr("replace file(s)"));
       msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel); 
       ret= msgBox->exec();
       delete msgBox;
-      if (ret == QMessageBox::Cancel)
-	{ 
-	  cout << "writeSimp canceled" << endl;
-	  return;
-	}
+      if (ret == QMessageBox::Cancel) { cout << "writeSimp canceled" << endl; return; }
     }
   
-  if ((f1= fopen(fname1, "w+")) == NULL)
-    {
-      cout << "can't open " << fname1 << endl;
-      return;
-    }
-
-  if ((f2= fopen(fname2, "w+")) == NULL)
-    {
-      cout << "can't open " << fname2 << endl;
-      return;
-    }
-
-  if ((f3= fopen(fname3, "w+")) == NULL)
-    {
-      cout << "can't open " << fname3 << endl;
-      return;
-    }
-
-  if ((f4= fopen(fname4, "w+")) == NULL)
-    {
-      cout << "can't open " << fname4 << endl;
-      return;
-    }
-
-  if ((f5= fopen(fname5, "w+")) == NULL)
-    {
-      cout << "can't open " << fname5 << endl;
-      return;
-    }
-
-  if ((f6= fopen(fname6, "w+")) == NULL)
-    {
-      cout << "cant open " << fname6 << endl;
-      return;
-    }
+  if ((f1= fopen(fname1, "w+")) == NULL) { cout << "can't open " << fname1 << endl; return; }
+  if ((f2= fopen(fname2, "w+")) == NULL) { cout << "can't open " << fname2 << endl; return; }
+  if ((f3= fopen(fname3, "w+")) == NULL) { cout << "can't open " << fname3 << endl; return; }
+  if ((f4= fopen(fname4, "w+")) == NULL) { cout << "can't open " << fname4 << endl; return; }
+  if ((f5= fopen(fname5, "w+")) == NULL) { cout << "can't open " << fname5 << endl; return; }
+  if ((f6= fopen(fname6, "w+")) == NULL) { cout << "can't open " << fname6 << endl; return; }
 
   // header
-  fprintf(f1, "# file simpre written by phase, IDL plotroutine: plotsimp.pro\n#\n");
-  fprintf(f2, "# file simpim written by phase, IDL plotroutine: plotsimp.pro\n#\n");
-  fprintf(f3, "# file sintre written by phase, IDL plotroutine: plotsimp.pro\n#\n");
-  fprintf(f4, "# file sintim written by phase, IDL plotroutine: plotsimp.pro\n#\n");
-  fprintf(f5, "# file simpa  written by phase, IDL plotroutine: plotsimp.pro\n#\n");
-  fprintf(f6, "# file simpp  written by phase, IDL plotroutine: plotsimp.pro\n#\n");
+  fprintf(f1, "# file simpre written by phase, IDL plotroutine: plotsi.pro\n#\n");
+  fprintf(f2, "# file simpim written by phase, IDL plotroutine: plotsi.pro\n#\n");
+  fprintf(f3, "# file sintre written by phase, IDL plotroutine: plotsi.pro\n#\n");
+  fprintf(f4, "# file sintim written by phase, IDL plotroutine: plotsi.pro\n#\n");
+  fprintf(f5, "# file simpa  written by phase, IDL plotroutine: plotsi.pro\n#\n");
+  fprintf(f6, "# file simpp  written by phase, IDL plotroutine: plotsi.pro\n#\n");
   fprintf(f1, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
   fprintf(f2, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
   fprintf(f3, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
@@ -2418,15 +2397,16 @@ void MainWindow::writeSimp()
   fprintf(f6, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
   // psd(i,j,k) in fortran memory model
 
-  for (k= 0; k < myparent->myBeamline()->BLOptions.xi.ianzy0; k++)
+  for (k= 0; k < myparent->myBeamline()->BLOptions.xi.ianzy0; k++)    // UF was passiert wenn ianzy0 != ianzz0 ??
     {
       fprintf(f1, "% e % e % e % e % e % e\n", psd->simpre[k*8], psd->simpre[k*8+4], psd->simpre[k*8+5], psd->simpre[k*8+6], psd->simpre[k*8+3], psd->simpre[k*8+7]);
       fprintf(f2, "% e % e % e % e % e % e\n", psd->simpim[k*8], psd->simpim[k*8+4], psd->simpim[k*8+5], psd->simpim[k*8+6], psd->simpim[k*8+3], psd->simpim[k*8+7]);
       fprintf(f3, "% e % e % e % e % e % e\n", psd->sintre[k*8], psd->sintre[k*8+4], psd->sintre[k*8+5], psd->sintre[k*8+6], psd->sintre[k*8+3], psd->simpre[k*8+7]);
       fprintf(f4, "% e % e % e % e % e % e\n", psd->sintim[k*8], psd->sintim[k*8+4], psd->sintim[k*8+5], psd->sintim[k*8+6], psd->sintim[k*8+3], psd->sintim[k*8+7]);
-      fprintf(f5, "% e % e % e % e % e % e\n", psd->simpa[k*8], psd->simpa[k*8+4], psd->simpa[k*8+5], psd->simpa[k*8+6], psd->simpa[k*8+3], psd->simpa[k*8+7]);
-      fprintf(f6, "% e % e % e % e % e % e\n", psd->simpp[k*8], psd->simpp[k*8+4], psd->simpp[k*8+5], psd->simpp[k*8+6], psd->simpp[k*8+3], psd->simpp[k*8+7]);     
+      fprintf(f5, "% e % e % e % e % e % e\n", psd->simpa[k*8],  psd->simpa[k*8+4],  psd->simpa[k*8+5],  psd->simpa[k*8+6],  psd->simpa[k*8+3],  psd->simpa[k*8+7]);
+      fprintf(f6, "% e % e % e % e % e % e\n", psd->simpp[k*8],  psd->simpp[k*8+4],  psd->simpp[k*8+5],  psd->simpp[k*8+6],  psd->simpp[k*8+3],  psd->simpp[k*8+7]);     
     }
+
   fprintf(f1, "# end\n");
   fprintf(f2, "# end\n");
   fprintf(f3, "# end\n");
@@ -2441,7 +2421,7 @@ void MainWindow::writeSimp()
   fclose(f5);
   fclose(f6);
 
-  cout << "writeSimp done" << endl; 
+  cout << "writeSimp done, wrote files: " << name << "-si[mpre|mpim|ntre|ntim|mpa|mpp]" << endl; 
 } // end writeSimp
 
 /////////////////////////////////

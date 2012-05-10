@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <29 Mar 12 16:47:05 flechsig> 
+//  Time-stamp: <10 May 12 15:19:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -21,18 +21,21 @@
 #include <qwt_plot_layout.h>
 #include <qwt_plot_renderer.h>
 #include <qwt_plot_curve.h>
-
+#include <qwt_plot_grid.h>
+#include <qwt_legend.h>
 #include <qwt_plot.h>
 #include <qwt_plot_canvas.h>
 #include <qwt_symbol.h>
 #include <qwt_plot_directpainter.h>
 #include <qpaintengine.h>
-
+//#include <qapplication.h>
+//#include <qpen.h>
 //#include <qwt_data.h>
 
 #include "plot.h"
 #include "myzoomer.h"
 #include "phaseqt.h"
+//#include "plotmatrix.h"
 
 using namespace std;   // fuer cout z.B.
 
@@ -163,15 +166,23 @@ public:
 Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
   //d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
-  d_curve1 = new QwtPlotCurve( "Curve 1" );            // one curve
-  d_curve2 = new QwtPlotCurve( "Curve 2" );            // one curve
+  d_curve1 = new QwtPlotCurve( "dz min" );            // one curve
+  d_curve2 = new QwtPlotCurve( "dz center" );            // one curve
+  d_curve3 = new QwtPlotCurve( "dz max" );            // one curve
+  d_curve4 = new QwtPlotCurve( "dy center" );            // one curve
   getData();                                           // fill sample data
   //d_curve1->setData( new CurveData() );
   d_curve2->setRawSamples(xx, ysin, NPOINTS);
   d_curve1->attach( this ); 
-  d_curve2->attach( this );                      
+  d_curve2->attach( this ); 
+  d_curve3->attach( this ); 
+  d_curve4->attach( this );               
   d_curve1->hide();
   d_curve2->hide();
+  d_curve3->hide();
+  d_curve4->hide();
+  mylegend= new QwtLegend();
+  c1x= c2x= c3x= c4x= c1y= c2y= c3y= c4y= NULL;
   xxx= NULL; yyy= NULL;
   xdata= ydata= zdata = h2a= NULL;
   plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
@@ -256,6 +267,9 @@ void Plot::contourPlot()
 #endif
   d_curve1->hide();
   d_curve2->hide();
+  d_curve3->hide();
+  d_curve4->hide();
+  mylegend->contentsWidget ()->setVisible (false);
   d_spectrogram->show();
   enableAxis(QwtPlot::yRight, true);                 // switch on right axis
 
@@ -275,6 +289,52 @@ void Plot::contourPlot()
   
   replot();
 } // end contourPlot()
+
+
+// six on 2 by two
+void Plot::si2by2Plot()
+{
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " si 2 x 2 experimental" << endl;
+#endif
+  d_spectrogram->hide();
+  enableAxis(QwtPlot::yRight, false);                 // switch off right axis
+  setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
+  pen_ptr->setWidth(2);
+
+  pen_ptr->setColor(Qt::blue);  // blue
+  d_curve1->setPen(*pen_ptr);
+  
+  pen_ptr->setColor(Qt::red);   // blue
+  d_curve2->setPen(*pen_ptr);
+
+  pen_ptr->setColor(Qt::green);   // blue
+  d_curve3->setPen(*pen_ptr);
+
+  pen_ptr->setColor(Qt::black); 
+  d_curve4->setPen(*pen_ptr);
+
+// values from manual scaling or autoscale
+  
+  setAxisScale(QwtPlot::yLeft,   ymin, ymax, 0); // manual scaling
+  setAxisScale(QwtPlot::xBottom, zmin, zmax, 0); // manual scaling
+  
+  setAxisTitle(2, tr("dy and dz (mrad)"));
+  setAxisTitle(0, tr("density (a.u.)"));
+  zoomer->setZoomBase(canvas());
+  insertLegend(mylegend, QwtPlot::RightLegend );
+  d_curve1->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
+  d_curve2->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
+  d_curve3->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
+  d_curve4->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
+  d_curve1->show();
+  d_curve2->show();
+  d_curve3->show();
+  d_curve4->show();
+  replot();
+} // end si2by2Plot()
+
+
 
 // makes a profile plot
 // expects the vectors xxx and yyy to be filled
@@ -660,6 +720,61 @@ void Plot::SetData(int n, double* data_x, double *data_y)
   //setRawData(x,y,ndata);
 } // SetData
 
+/* fills simpre style data */
+void Plot::hfill4(double *arr, int ndata, int autoscale)
+{
+  cout << "hfill4 called" << endl;
+  if (c1x) XFREE(c1x);
+  if (c2x) XFREE(c2x);
+  if (c3x) XFREE(c3x);
+  if (c4x) XFREE(c4x);
+  if (c1y) XFREE(c1y);
+  if (c2y) XFREE(c2y);
+  if (c3y) XFREE(c3y);
+  if (c4y) XFREE(c4y);
+
+  c1x= XMALLOC(double, ndata);
+  c4x= XMALLOC(double, ndata);
+  c1y= XMALLOC(double, ndata);
+  c2y= XMALLOC(double, ndata);
+  c3y= XMALLOC(double, ndata);
+  c4y= XMALLOC(double, ndata);
+
+  for (int k=0; k < ndata; k++) 
+    {
+      c1x[k]= arr[8*k]*1e3;
+      c4x[k]= arr[8*k+3]*1e3;
+      c1y[k]= arr[8*k+4];
+      c2y[k]= arr[8*k+5];
+      c3y[k]= arr[8*k+6];
+      c4y[k]= arr[8*k+7];
+    }
+
+  if (autoscale)
+    {
+      zmin= (c1x[0] < c4x[0]) ? c1x[0] : c4x[0]; 
+      zmax= (c1x[ndata-1] > c4x[ndata-1]) ? c1x[ndata-1] : c4x[ndata-1]; 
+      
+      ymin= ymax= c1y[0];
+      for (int k=0; k < ndata; k++) 
+	{
+	  ymin= qMin(c1y[k], ymin);
+	  ymax= qMax(c1y[k], ymax);
+	  ymin= qMin(c2y[k], ymin);
+	  ymax= qMax(c2y[k], ymax);
+	  ymin= qMin(c3y[k], ymin);
+	  ymax= qMax(c3y[k], ymax);
+	  ymin= qMin(c4y[k], ymin);
+	  ymax= qMax(c4y[k], ymax);
+	}
+    }
+
+  d_curve1->setRawSamples(c1x, c1y, ndata);
+  d_curve2->setRawSamples(c1x, c2y, ndata);
+  d_curve3->setRawSamples(c1x, c3y, ndata);
+  d_curve4->setRawSamples(c4x, c4y, ndata);
+  cout << "hfill4 done c1y[0]=" << c1y[0] << endl;
+} /* end hfill4 */
 
 // fills a 1d histogram with data
 void Plot::hfill1(double *dvec, double x1, double x2)

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <08 May 12 17:51:10 flechsig> 
+//  Time-stamp: <10 May 12 15:19:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -59,7 +59,8 @@ void MainWindow::activateProc(const QString &action)
   QEventLoop q;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " MainWindow::activateProc: plotsubject: " << d_plot->plotsubject << endl;
+  //  cout << "debug: " << __FILE__ << " MainWindow::activateProc: (old) plotsubject: " << d_plot->plotsubject << endl;
+  cout << "debug: " << __FILE__ << " MainWindow::activateProc called " << endl;
 #endif
   
   if (action.isEmpty())
@@ -517,6 +518,30 @@ void MainWindow::activateProc(const QString &action)
       d_plot->plotsubject= PLOT_PO_RESULT;
       updateGraphicsInput(d_plot->plotsubject);
     }
+
+  if (!action.compare("grPoSimpreAct")) 
+    {
+      d_plot->plotsubject= PLOT_PO_SIMPRE;
+      updateGraphicsInput(d_plot->plotsubject);
+    }
+
+  if (!action.compare("grPoSimpimAct")) 
+    {
+      d_plot->plotsubject= PLOT_PO_SIMPIM;
+      updateGraphicsInput(d_plot->plotsubject);
+    }
+
+  if (!action.compare("grPoSintreAct")) 
+    {
+      d_plot->plotsubject= PLOT_PO_SINTRE;
+      updateGraphicsInput(d_plot->plotsubject);
+    }
+
+  if (!action.compare("grPoSintimAct")) 
+    {
+      d_plot->plotsubject= PLOT_PO_SINTIM;
+      updateGraphicsInput(d_plot->plotsubject);
+    }
   
   
   if (!action.compare("grexample1Act")) 
@@ -955,8 +980,10 @@ void MainWindow::goButtonslot()
 // gr apply
 void MainWindow::grapplyslot()
 {
+  struct PSDType *psdp;
+
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " grapplyslot called" << endl;
+  cout << endl << "debug: " << __FILE__ << " grapplyslot called, plotsubject=" << d_plot->plotsubject << endl;
 #endif
 
   // a few tests
@@ -1088,6 +1115,34 @@ void MainWindow::grapplyslot()
       
       cout << "plot PO_RESULT experimental end " << endl;
       break;
+
+    case PLOT_PO_SIMPRE:
+      cout << "plot PLOT_PO_SIMPRE experimental start " << endl;
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
+      d_plot->si2by2Plot();
+      break;
+
+    case PLOT_PO_SIMPIM:
+      cout << "plot PLOT_PO_SIMPIM experimental start " << endl;
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->simpim, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
+      d_plot->si2by2Plot();
+      break;
+
+    case PLOT_PO_SINTRE:
+      cout << "plot PLOT_PO_SINTRE experimental start " << endl;
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
+      d_plot->si2by2Plot();
+      break;
+
+    case PLOT_PO_SINTIM:
+      cout << "plot PLOT_PO_SINTIM experimental start " << endl;
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
+      d_plot->si2by2Plot();
+      break;
       
     } // end switch example data
   
@@ -1103,6 +1158,7 @@ void MainWindow::grautoscaleslot()
 {
   QString yminqst, ymaxqst, zminqst, zmaxqst;
   struct PSImageType *psip;
+  struct PSDType *psdp;
 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " grautoscaleslot called, plotsubject: " << d_plot->plotsubject << endl;
@@ -1147,9 +1203,36 @@ void MainWindow::grautoscaleslot()
   if (d_plot->plotsubject & PLOT_PO_RESULT && 
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
-      cout << "PLOT_PO_RESULT no autoscale available so far" << endl;
       psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
       d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
+    }
+
+  if (d_plot->plotsubject & PLOT_PO_SIMPRE && 
+      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+    { 
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
+    }
+
+  if (d_plot->plotsubject & PLOT_PO_SIMPIM && 
+      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+    { 
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->simpim, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
+    }
+
+  if (d_plot->plotsubject & PLOT_PO_SINTRE && 
+      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+    { 
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
+    }
+
+  if (d_plot->plotsubject & PLOT_PO_SINTIM && 
+      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+    { 
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
     }
   
   // update the widget

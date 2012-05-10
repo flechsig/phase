@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <10 May 12 10:43:38 flechsig> 
+#  Time-stamp: <10 May 12 11:00:40 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -22,7 +22,6 @@ phaseqt_SOURCES = \
 	singleray.cpp singleray.h \
         treemodel.cpp treemodel.h \
         treeitem.cpp treeitem.h \
-        plotmatrix. cpp plotmatrix.h \\
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
 	../phase/phasec.c  ../phase/rtrace.c \
         ../phase/xmalloc.c   \

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <02 May 12 16:39:00 flechsig>  */
+/*  Time-stamp: <10 May 12 09:29:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -45,6 +45,11 @@ class MainWindow;          // forward declaration
 #define PLOT_EXAMPLE1 128
 #define PLOT_EXAMPLE2 256
 #define PLOT_EXAMPLE3 512
+
+#define PLOT_PO_SIMPRE   1024
+#define PLOT_PO_SIMPIM   2048
+#define PLOT_PO_SINTRE   4096
+#define PLOT_PO_SINTIM   8192
 
 #define PLOT_ISO        1
 #define PLOT_CONTOUR    2

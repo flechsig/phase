@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <27 Mar 12 17:02:40 flechsig>  */
+/*  Time-stamp: <10 May 12 15:16:42 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -63,9 +63,11 @@ public:
     void   hfill1(double *, double, double);
     void   hfill2();  // GO
     void   hfill2(struct PSDType *); // PO
+    void   hfill4(double*, int, int);
 
     void   statistics(struct RayType *, int, double, double);
     void   contourPlot();
+    void   si2by2Plot();
     void   fillData();
     void   scatterPlot();
     void   profilePlot(int, int);
@@ -75,6 +77,9 @@ public:
     //QwtPlotDirectPainter *d_directPainter;
     QwtPlotCurve         *d_curve1;
     QwtPlotCurve         *d_curve2;
+    QwtPlotCurve         *d_curve3;
+    QwtPlotCurve         *d_curve4;
+    QwtLegend            *mylegend;
 
     int    plotsubject;
     int    plotstyle;
@@ -97,6 +102,7 @@ private:
     //QwtPlotSpectrogram *d_spectrogram;
     double *x, *y, *xdata, *ydata, *zdata;
     double x1, x2, y1, y2;
+    double *c1x, *c2x, *c3x, *c4x, *c1y, *c2y, *c3y, *c4y;
     double h1max, h1firstgt0;
     int    ndata;
     bool   logscaleon;

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <20 Mar 12 17:18:34 flechsig>  */
+/*   Time-stamp: <10 May 12 08:37:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -386,7 +386,7 @@ void activate_proc(w, tag, reason)
 	  src_ini(&Beamline.src); 
           Beamline.beamlineOK |= pstsourceOK;
 #ifdef DEBUG
-	  printf("activate_proc: call src_ini(&Beamline.src)\n");
+	  printf("activate_proc: called src_ini(&Beamline.src)\n");
 #endif
 	}
       else
