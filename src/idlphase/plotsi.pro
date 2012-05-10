@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plotsimp.pro
 ;  Date      : <10 May 12 07:49:52 flechsig> 
-;  Time-stamp: <10 May 12 08:13:15 flechsig> 
+;  Time-stamp: <10 May 12 08:18:52 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -64,7 +64,7 @@ pro plotsi, filename, title=title
 ;
 ;
 ; EXAMPLE:
-;
+;   idl> plotsi, 'test.out-simpre'
 ;
 ;
 ; MODIFICATION HISTORY:
