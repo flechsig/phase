@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <23 Apr 12 17:23:20 flechsig> 
+c$$$ Time-stamp: <10 May 12 08:43:15 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -50,10 +50,12 @@ c**************************************************
 
 c comment U.F. 20.1.2000	
 	write(*,*) 'src_ini: source type:',src.isrctype
+	if(src.isrctype.lt.2.or.src.isrctype.gt.6)write(*,*)'unknown source type-> calculation will fail'
 
 	if(src.isrctype.eq.2)call src2_ini(src.so2)
 	if(src.isrctype.eq.3)call src3_ini(src.so3)
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
+	if(src.isrctype.eq.5)write(*,*)'srctype=5 is currently not implemented'
 	if(src.isrctype.eq.6)call src6_ini(src.so6)
 
 	return
