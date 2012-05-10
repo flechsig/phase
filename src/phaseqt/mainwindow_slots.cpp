@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <10 May 12 15:34:25 flechsig> 
+//  Time-stamp: <2012-05-10 19:52:52 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1099,8 +1099,11 @@ void MainWindow::grapplyslot()
       d_plot->setTitle(tr("PhaseQt: example 3"));
       d_plot->d_spectrogram->hide(); 
       d_plot->d_curve1->hide();
-      d_plot->d_curve2->show();
+      d_plot->d_curve2->hide();
       d_plot->example3(); // fills the data
+      d_plot->d_curve3->show();
+      d_plot->d_curve4->show();
+      //     d_plot->zoomer->setZoomBase(d_plot->canvas());
       d_plot->replot();
       break;
       

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 May 12 15:40:12 flechsig> 
+//  Time-stamp: <2012-05-10 21:17:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -13,7 +13,7 @@
 #include <qprinter.h>
 #include <qprintdialog.h>
 #include <qwt_color_map.h>
-#include <qwt_plot_spectrogram.h>
+#include <qwt_plot_spectrom.h>
 #include <qwt_scale_widget.h>
 #include <qwt_scale_draw.h>
 #include <qwt_plot_zoomer.h>
@@ -170,9 +170,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve2 = new QwtPlotCurve( "dz center" );            // one curve
   d_curve3 = new QwtPlotCurve( "dz max" );            // one curve
   d_curve4 = new QwtPlotCurve( "dy center" );            // one curve
-  getData();                                           // fill sample data
-  //d_curve1->setData( new CurveData() );
-  d_curve2->setRawSamples(xx, ysin, NPOINTS);
+  
   d_curve1->attach( this ); 
   d_curve2->attach( this ); 
   d_curve3->attach( this ); 
@@ -255,7 +253,9 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 
 void Plot::example3()
 {
-  d_curve2->setRawSamples(xx, ysin, NPOINTS);
+  getData();
+  d_curve3->setRawSamples(c1x, c1y, NPOINTS);
+  d_curve4->setRawSamples(c1x, c2y, NPOINTS);
 } // example3
 
 
@@ -493,6 +493,19 @@ void Plot::scatterPlot()
  
   d_spectrogram->hide();                              // hide spectrogram
   d_curve2->hide();                                   // hide curve2
+  d_curve3->hide();  
+  d_curve4->hide(); 
+  d_curve1->hide(); 
+
+  if (c1x) XFREE(c1x);
+  if (c2x) XFREE(c2x);
+  if (c3x) XFREE(c3x);
+  if (c4x) XFREE(c4x);
+  if (c1y) XFREE(c1y);
+  if (c2y) XFREE(c2y);
+  if (c3y) XFREE(c3y);
+  if (c4y) XFREE(c4y);
+
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
 
   d_curve1->setRawSamples(xdata, ydata, ndata);
@@ -741,7 +754,7 @@ void Plot::hfill4(double *arr, int ndata, int autoscale)
   c3y= XMALLOC(double, ndata);
   c4y= XMALLOC(double, ndata);
 
-  for (int k=0; k < ndata; k++) 
+  for (int k= 0; k < ndata; k++) 
     {
       c1x[k]= arr[8*k]*1e3;
       c4x[k]= arr[8*k+3]*1e3;
@@ -882,8 +895,8 @@ void Plot::hfill2(struct PSDType *rp)
   h2a_nx= rp->iz;
   h2a_ny= rp->iy;
   data  = rp->psd;   // in fortran model
-  pox = rp->z;
-  poy = rp->y;
+  pox   = rp->z;
+  poy   = rp->y;
 
   h2a_n= h2a_nx * h2a_ny;
   if (h2a != NULL) delete h2a;
@@ -1003,11 +1016,24 @@ void Plot::clearPoints()
 void Plot::getData()
   // produce some dummy data
 {
-  for ( int i=0; i<NPOINTS; i++ ) 
+  if (c1x) XFREE(c1x);
+  if (c1y) XFREE(c1y);
+  if (c2x) XFREE(c2x);
+  if (c2y) XFREE(c2y);
+  if (c3x) XFREE(c3x);
+  if (c3y) XFREE(c3y);
+  if (c4x) XFREE(c4x);
+  if (c4y) XFREE(c4y);
+
+  c1x= XMALLOC(double, NPOINTS);
+  c1y= XMALLOC(double, NPOINTS);
+  c2y= XMALLOC(double, NPOINTS);
+
+  for ( int i= 0; i< NPOINTS; i++ ) 
     {
-      xx[i] = 0.1*i;
-      ysin[i] = sin(xx[i]);
-      ycos[i] = cos(xx[i]);
+      c1x[i] = 0.1*i;
+      c1y[i] = sin(c1x[i]);
+      c2y[i] = cos(c1x[i]);
     }
 } // end getData()
 
