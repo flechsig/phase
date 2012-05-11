@@ -1,7 +1,7 @@
 <!-- -*-html-helper-*- -->
 <!--  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.qrc -->
 <!--  Date      : <31 May 11 17:03:54 flechsig>  -->
-<!--  Time-stamp: <03 Feb 12 09:35:57 flechsig>  -->
+<!--  Time-stamp: <11 May 12 14:09:53 flechsig>  -->
 <!--  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; -->
 
 <!--  $Source$  -->
@@ -26,6 +26,7 @@
     <file>images/down-32.png</file>
     <file>images/Left-arrow-48.png</file>
     <file>images/Right-arrow-48.png</file>
+    <file>images/Sunrise-icon.png</file>
     <file>parameter.default</file>
 </qresource>
 </RCC>
