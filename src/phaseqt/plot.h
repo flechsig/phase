@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <2012-05-10 19:27:44 flechsig>  */
+/*  Time-stamp: <11 May 12 13:39:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,7 +31,8 @@ public:
     Plot(QWidget * = NULL);
     //    int *ScatterPlot(QWidget * = NULL);
     void example3(); // UF
-    void setphaseData(const char *); // UF
+    void setPoData(const char *); // UF
+    void setGoData(const char *); // UF
     void setdefaultData();     // UF
     void setdefaultData2();    // UF
     void autoScale(); // GO

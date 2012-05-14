@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <10 May 12 09:17:41 flechsig>  */
+/*  Time-stamp: <14 May 12 12:35:41 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -148,6 +148,8 @@ private:
     
     QWidget       *elementBox;
     QWidget       *createOpticalElementBox(); 
+    QWidget       *plotBox;
+    QWidget       *createPlotBox(); 
     QWidget       *sourceBox;
     QWidget       *createSourceBox(); 
     QWidget       *beamlineBox;
@@ -276,6 +278,8 @@ private:
     QAction *quitAct;
 
     // UF
+    QToolButton *btnLogy;
+    QGridLayout *plotLayout;
     QAction *raytracesimpleAct;
     QAction *raytracefullAct;
     QAction *footprintAct;

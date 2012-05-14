@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2012-05-10 19:52:52 flechsig> 
+//  Time-stamp: <11 May 12 13:40:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1057,7 +1057,7 @@ void MainWindow::grapplyslot()
 	case PLOT_CONTOURISO:
 	  d_plot->h2a_nx= d_plot->h2a_ny= BINS2;
 	  d_plot->hfill2();
-	  d_plot->setphaseData("grsourceAct");
+	  d_plot->setGoData("grsourceAct");
 	  d_plot->contourPlot();
 	  break;
 	case PLOT_SCATTER:
@@ -1113,7 +1113,7 @@ void MainWindow::grapplyslot()
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
       
       d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
-      d_plot->setphaseData("grsourceAct");
+      d_plot->setPoData("grsourceAct");
       d_plot->contourPlot();
       
       cout << "plot PO_RESULT experimental end " << endl;

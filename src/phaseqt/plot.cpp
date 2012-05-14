@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2012-05-10 21:17:05 flechsig> 
+//  Time-stamp: <11 May 12 16:59:18 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -13,7 +13,7 @@
 #include <qprinter.h>
 #include <qprintdialog.h>
 #include <qwt_color_map.h>
-#include <qwt_plot_spectrom.h>
+//#include <qwt_plot_spectrom.h>
 #include <qwt_scale_widget.h>
 #include <qwt_scale_draw.h>
 #include <qwt_plot_zoomer.h>
@@ -112,23 +112,23 @@ public:
     }
 };
 
-// keeps the 2d ray trace data
-class SpectrogramDataPhase: public QwtRasterData
+// keeps the 2d PO data
+class SpectrogramDataPO: public QwtRasterData
 {
 private:
-  Plot *po;
+  Plot   *po;
   double dxtotal;
   double dytotal;
   
 public:
-    SpectrogramDataPhase(Plot *plotobj)
+    SpectrogramDataPO(Plot *plotobj)
     {
       po= plotobj;
       dxtotal= po->pox[po->h2a_nx- 1] - po->pox[0];
       dytotal= po->poy[po->h2a_ny- 1] - po->poy[0];
       
 #ifdef DEBUG
-      printf("debug: constructor SpectrogramDataPhase: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
+      printf("debug: constructor SpectrogramDataPO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
       printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
@@ -149,6 +149,43 @@ public:
       return 10.0; // temporarely
     }
 };
+
+// keeps the 2d PO data
+class SpectrogramDataGO: public QwtRasterData
+{
+private:
+  Plot   *po;
+  
+  
+public:
+    SpectrogramDataGO(Plot *plotobj)
+    {
+      po= plotobj;
+      
+      
+#ifdef DEBUG
+      printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
+      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
+#endif
+      //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
+      setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
+      setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
+      setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
+#ifdef DEBUG
+      cout << " ==> done"  << endl;
+#endif
+    }
+  
+    virtual double value(double x, double y) const
+    {
+      int ix = qRound(po->h2a_nx* (x- po->zmin)/(po->zmax - po->zmin));
+      int iy = qRound(po->h2a_ny* (y- po->ymin)/(po->ymax - po->ymin));
+      if ( ix >= 0 && ix < po->h2a_nx && iy >= 0 && iy < po->h2a_ny )
+	return po->h2a[ix+ iy* po->h2a_nx];
+      return 10.0; // temporarely
+    }
+};
+
 
 class ColorMap: public QwtLinearColorMap
 {
@@ -556,7 +593,7 @@ void Plot::showSpectrogram(bool on)
 }
 
 // UF should fill in new data
-void Plot::setphaseData(const char *datatype)
+void Plot::setGoData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
@@ -566,12 +603,30 @@ void Plot::setphaseData(const char *datatype)
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
   
-  d_spectrogram->setData(new SpectrogramDataPhase(this));
+  d_spectrogram->setData(new SpectrogramDataGO(this));
   
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
-} // setphaseData
+} // setGoData
+
+// UF should fill in new data
+void Plot::setPoData(const char *datatype)
+{
+  // struct BeamlineType *bt;
+#ifdef DEBUG
+  printf("debug: Plot::setphaseData called, datatype: %s\n", datatype);
+#endif  
+
+  //delete d_spectrogram->data();   // clean up the old data - correct??
+  //printf("delete d_spectrogram->data() ==> done\n");
+  
+  d_spectrogram->setData(new SpectrogramDataPO(this));
+  
+  d_spectrogram->show();
+  replot();
+  zoomer->setZoomBase(canvas());
+} // setPoData
 
 void Plot::setdefaultData()
 {

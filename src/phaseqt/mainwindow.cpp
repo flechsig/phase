@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <10 May 12 09:21:43 flechsig> 
+//  Time-stamp: <14 May 12 12:41:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -165,8 +165,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(asynMapAct, QString("asynMapAct"));
     connect(asynMapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    asynPOAct = new QAction(tr("make PO in parallel (test)"), this);
-    asynPOAct->setStatusTip(tr("make PO in parallel (test)"));
+    asynPOAct = new QAction(QIcon(":/images/Sunrise-icon.png"),tr("make PO in parallel (experimental)"), this);
+    asynPOAct->setStatusTip(tr("make PO in parallel (experimental)"));
     signalMapper->setMapping(asynPOAct, QString("asynPOAct"));
     connect(asynPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -343,30 +343,42 @@ QWidget *MainWindow::createBeamlineBox()
 // dock widgets
 void MainWindow::createDockWindows()
 {
+  // redefines the corners of the dockwidget to have the top widget in the center only
+  setCorner(Qt::TopLeftCorner,     Qt::LeftDockWidgetArea);
+  setCorner(Qt::BottomLeftCorner,  Qt::LeftDockWidgetArea);
+  setCorner(Qt::TopRightCorner,    Qt::RightDockWidgetArea);
+  setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+
   // the beamline box on the left
-    QDockWidget *dock = new QDockWidget(tr("Beamline Box"), this);
-    dock->setWidget(createBeamlineBox());
-    addDockWidget(Qt::LeftDockWidgetArea, dock);
-    viewMenu->addAction(dock->toggleViewAction());
+  QDockWidget *dock = new QDockWidget(tr("Beamline Box"), this);
+  dock->setWidget(createBeamlineBox());
+  addDockWidget(Qt::LeftDockWidgetArea, dock);
+  viewMenu->addAction(dock->toggleViewAction());
   
-// the source box
-    dock = new QDockWidget(tr("Source Box"), this);
-    dock->setWidget(createSourceBox());
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-    viewMenu->addAction(dock->toggleViewAction());
-
-    // the optical element box
-    dock = new QDockWidget(tr("Optical Element Box"), this);
-    dock->setWidget(createOpticalElementBox());
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-    viewMenu->addAction(dock->toggleViewAction());
-
-// the parameter box
-    dock = new QDockWidget(tr("Parameter Box"), this);
-    dock->setWidget(createParameterBox());
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    addDockWidget(Qt::LeftDockWidgetArea, dock);
-    viewMenu->addAction(dock->toggleViewAction());
+  // the source box
+  dock = new QDockWidget(tr("Source Box"), this);
+  dock->setWidget(createSourceBox());
+  addDockWidget(Qt::RightDockWidgetArea, dock);
+  viewMenu->addAction(dock->toggleViewAction());
+  
+  // the optical element box
+  dock = new QDockWidget(tr("Optical Element Box"), this);
+  dock->setWidget(createOpticalElementBox());
+  addDockWidget(Qt::RightDockWidgetArea, dock);
+  viewMenu->addAction(dock->toggleViewAction());
+  
+  // the parameter box
+  dock = new QDockWidget(tr("Parameter Box"), this);
+  dock->setWidget(createParameterBox());
+  dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+  addDockWidget(Qt::LeftDockWidgetArea, dock);
+  viewMenu->addAction(dock->toggleViewAction());
+  
+  // plot box
+  dock = new QDockWidget(tr("Plot Box"), this);
+  dock->setWidget(createPlotBox());
+  addDockWidget(Qt::TopDockWidgetArea, dock);
+  viewMenu->addAction(dock->toggleViewAction());
 } // createDockwindows
 
 
@@ -375,7 +387,7 @@ QWidget *MainWindow::createGraphicBox()
 {
   graphicBox = new QWidget();
 
-  // upper part
+  // upper part (status)
   statusGroup  = new QGroupBox(tr("Status"));
   QHBoxLayout *statusLayout = new QHBoxLayout;
   sourceStatLabel   = new QLabel(tr("<b><FONT COLOR=red>source</FONT></b>"));
@@ -390,6 +402,7 @@ QWidget *MainWindow::createGraphicBox()
   statusLayout->addWidget(imageStatLabel);
   statusGroup->setLayout(statusLayout);
 
+  // scaling area
   QGroupBox   *graphicGroup  = new QGroupBox(tr("Graphics"));
   QGridLayout *graphicLayout = new QGridLayout;
   
@@ -432,7 +445,7 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper = new QSignalMapper(this);
   connect(grsignalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
 
-  connect(grscatterAct,  SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grscatterAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grcontourAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grcontourisoAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grisoAct,        SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -486,13 +499,13 @@ QWidget *MainWindow::createGraphicBox()
   subject->setDefaultAction(grGoResultSpaAct);
   subjectpopupButton->setMenu(subject);
 
-  connect(grGoSourceSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grGoSourceDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grGoSourcePhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourceSpaAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourceDivAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourcePhiAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
-  connect(grGoResultSpaAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grGoResultDivAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
-  connect(grGoResultPhiAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultSpaAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultDivAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultPhiAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -536,34 +549,27 @@ QWidget *MainWindow::createGraphicBox()
   graphicLayout->addWidget(popupButton, 2, 1);
   //  graphicLayout->setRowStretch(1,1);
   graphicGroup->setLayout(graphicLayout);
-  
+  // end scaling area
+  /*
+  // the plot box
   QGroupBox   *plotGroup  = new QGroupBox(tr("plot"));
   QGridLayout *plotGroupLayout = new QGridLayout(plotGroup);
-
-  //a few buttons
-  //QToolButton* btnLogx = new QToolButton(plotGroup);
-  // btnLogx->setText("Log Scale X");
-  //btnLogx->setCheckable(true);
-  //  connect(btnLogx, SIGNAL(toggled(bool)), plot, SLOT(SetLogX(bool)));
   QToolButton* btnLogy = new QToolButton(plotGroup);
-  //btnLogy->setText("Log Scale Y");
   btnLogy->setText("Log Scale");
   btnLogy->setCheckable(true);
   
+  // der eigentliche plot
   d_plot = new Plot(this);
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
   d_plot->setTitle(tr("PhaseQt"));
 
   connect(btnLogy, SIGNAL(toggled(bool)), d_plot, SLOT(SetLog(bool)));
-
-//plotGroupLayout->addWidget(label,1,1,1,1);
-//  plotGroupLayout->addWidget(btnLogx,1,2,1,1);
-//  plotGroupLayout->addWidget(btnLogy,1,3,1,1);
   plotGroupLayout->addWidget(d_plot,2,1,3,3);
-  //plotGroupLayout->addWidget(label2,5,1,1,3);  
   plotGroupLayout->setMargin(12);
-
+  // end of plot box
+  */
+  // statistics
   statGroup  = new QGroupBox(tr("Statistics"));
   QGridLayout *statLayout = new QGridLayout;
   
@@ -634,7 +640,7 @@ QWidget *MainWindow::createGraphicBox()
   vbox->addWidget(statusGroup);
   vbox->addWidget(graphicGroup);
   //vbox->addWidget(d_plot);
-  vbox->addWidget(plotGroup);
+  //vbox->addWidget(plotGroup);
   vbox->addStretch(1);
   vbox->addWidget(statGroup);
   
@@ -1067,6 +1073,31 @@ void MainWindow::createProgress()
   //myProgressDialog->show();
 } // createProgress()
 
+
+// the plot box
+QWidget *MainWindow::createPlotBox()
+{
+  plotBox = new QWidget();
+  plotLayout = new QGridLayout;
+  //QToolButton *btnLogy    = new QToolButton(plotBox);  // we create this button but do not use it
+  btnLogy    = new QToolButton();  // we create this button but do not use it
+
+  btnLogy->setText("Log Scale");
+  btnLogy->setCheckable(true);
+  
+  d_plot = new Plot(plotBox);
+  d_plot->setAxisTitle(2, tr("z (mm)"));
+  d_plot->setAxisTitle(0, tr("y (mm)"));
+  d_plot->setTitle(tr("PhaseQt"));
+  connect(btnLogy, SIGNAL(toggled(bool)), d_plot, SLOT(SetLog(bool)));
+
+  //plotLayout->addWidget(btnLogy,0,0);
+  //plotLayout->addWidget(d_plot,1,0,3,3);
+  plotLayout->addWidget(d_plot,0,0);
+  plotBox->setLayout(plotLayout);
+  return plotBox;
+} // end createPlotBox
+
 // the optical element box
 QWidget *MainWindow::createSourceBox()
 {
@@ -1224,6 +1255,7 @@ void MainWindow::createToolBars()
     editToolBar->addAction(raytracesimpleAct);
     editToolBar->addAction(raytracefullAct);
     editToolBar->addAction(phasespaceAct);
+    editToolBar->addAction(asynPOAct);
 } // createToolBars
 
 
