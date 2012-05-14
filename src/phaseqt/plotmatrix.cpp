@@ -1,3 +1,13 @@
+//  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plotmatrix.cpp
+//  Date      : <14 May 12 14:01:24 flechsig> 
+//  Time-stamp: <14 May 12 14:03:07 flechsig> 
+//  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+//  $Source$ 
+//  $Date$
+//  $Revision$ 
+//  $Author$ 
+
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * Qwt Widget Library
  * Copyright (C) 1997   Josef Wilgen

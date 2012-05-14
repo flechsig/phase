@@ -1,3 +1,13 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plotmatrix.h */
+/*  Date      : <14 May 12 14:01:02 flechsig>  */
+/*  Time-stamp: <14 May 12 14:01:06 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
+
 #ifndef _PLOT_MATRIX_H_
 #define _PLOT_MATRIX_H_
 
@@ -6,11 +16,12 @@
 
 class PlotMatrix: public QFrame
 {
-    Q_OBJECT
+  // UF muss weg  Q_OBJECT
 
 public:
     PlotMatrix( int rows, int columns, QWidget * parent = NULL );
     virtual ~PlotMatrix();
+    
 
     int numRows() const;
     int numColumns() const;
