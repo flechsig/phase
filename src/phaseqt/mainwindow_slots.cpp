@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <11 May 12 13:40:33 flechsig> 
+//  Time-stamp: <21 May 12 12:57:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -15,9 +15,12 @@
 #include <QtGui>
 #include <cmath>                     // for abs
 #include <tr1/functional>            // for std::tr1
+#include <qwt_plot_grid.h>
 
 #include "mainwindow.h"
 #include "phaseqt.h"
+#include "plotmatrix.h"
+#include "plot2x2.h"
 
 using namespace std;   // fuer cout z.B.
 
@@ -59,7 +62,7 @@ void MainWindow::activateProc(const QString &action)
   QEventLoop q;
 
 #ifdef DEBUG
-  //  cout << "debug: " << __FILE__ << " MainWindow::activateProc: (old) plotsubject: " << d_plot->plotsubject << endl;
+  //  cout << "debug: " << __FILE__ << " MainWindow::activateProc: (old) mwplotsubject: " << mwplotsubject << endl;
   cout << "debug: " << __FILE__ << " MainWindow::activateProc called " << endl;
 #endif
   
@@ -445,7 +448,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("grscatterAct")) 
     { 
       printf("grscatterAct button pressed\n"); 
-      d_plot->plotstyle= PLOT_SCATTER;
+      mwplotstyle= PLOT_SCATTER;
       //delete d_plot;
       
       //d_plot =  new ScatterPlot(this);
@@ -454,113 +457,113 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("grcontourAct")) 
     { 
-      d_plot->plotstyle= PLOT_CONTOUR;
+      mwplotstyle= PLOT_CONTOUR;
       d_plot->showContour(false);
       d_plot->showSpectrogram(true);
     } 
 
   if (!action.compare("grcontourisoAct")) 
     { 
-      d_plot->plotstyle= PLOT_CONTOURISO;
+      mwplotstyle= PLOT_CONTOURISO;
       d_plot->showSpectrogram(true);
       d_plot->showContour(true);
     } 
   if (!action.compare("grisoAct")) 
     { 
-      d_plot->plotstyle= PLOT_ISO;
+      mwplotstyle= PLOT_ISO;
       d_plot->showSpectrogram(false);
       d_plot->showContour(true);
     }
 
   if (!action.compare("grHorProfAct")) 
     { 
-      d_plot->plotstyle= PLOT_HPROF;
+      mwplotstyle= PLOT_HPROF;
     }
 
   if (!action.compare("grVerProfAct")) 
     { 
-      d_plot->plotstyle= PLOT_VPROF;
+      mwplotstyle= PLOT_VPROF;
     }
 
   if (!action.compare("grGoSourceSpaAct")) 
     {
-      d_plot->plotsubject= PLOT_GO_SOURCE | PLOT_GO_SPA ;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_SPA ;
+      updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grGoSourceDivAct")) 
     {
-      d_plot->plotsubject= PLOT_GO_SOURCE | PLOT_GO_DIV ;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_DIV ;
+      updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grGoSourcePhiAct")) 
     {
-      d_plot->plotsubject= PLOT_GO_SOURCE | PLOT_GO_PHI ;  
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_PHI ;  
+      updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grGoResultSpaAct")) 
     {
-      d_plot->plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA ;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA ;
+      updateGraphicsInput(mwplotsubject);
       // cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
     }
   if (!action.compare("grGoResultDivAct")) 
     {
-      d_plot->plotsubject= PLOT_GO_RESULT | PLOT_GO_DIV ;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_GO_RESULT | PLOT_GO_DIV ;
+      updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grGoResultPhiAct")) 
     {
-      d_plot->plotsubject= PLOT_GO_RESULT | PLOT_GO_PHI ;  
-      updateGraphicsInput(d_plot->plotsubject); 
+      mwplotsubject= PLOT_GO_RESULT | PLOT_GO_PHI ;  
+      updateGraphicsInput(mwplotsubject); 
     }
   if (!action.compare("grPoResultAct"   )) 
     {
-      d_plot->plotsubject= PLOT_PO_RESULT;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_PO_RESULT;
+      updateGraphicsInput(mwplotsubject);
     }
 
   if (!action.compare("grPoSimpreAct")) 
     {
-      d_plot->plotsubject= PLOT_PO_SIMPRE;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_PO_SIMPRE;
+      updateGraphicsInput(mwplotsubject);
     }
 
   if (!action.compare("grPoSimpimAct")) 
     {
-      d_plot->plotsubject= PLOT_PO_SIMPIM;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_PO_SIMPIM;
+      updateGraphicsInput(mwplotsubject);
     }
 
   if (!action.compare("grPoSintreAct")) 
     {
-      d_plot->plotsubject= PLOT_PO_SINTRE;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_PO_SINTRE;
+      updateGraphicsInput(mwplotsubject);
     }
 
   if (!action.compare("grPoSintimAct")) 
     {
-      d_plot->plotsubject= PLOT_PO_SINTIM;
-      updateGraphicsInput(d_plot->plotsubject);
+      mwplotsubject= PLOT_PO_SINTIM;
+      updateGraphicsInput(mwplotsubject);
     }
   
   
   if (!action.compare("grexample1Act")) 
     { 
-      d_plot->plotsubject= PLOT_EXAMPLE1;
+      mwplotsubject= PLOT_EXAMPLE1;
       //   d_plot->setTitle(tr("PhaseQt: example 1"));
       //   d_plot->setdefaultData();
     }
 
   if (!action.compare("grexample2Act")) 
     { 
-      d_plot->plotsubject= PLOT_EXAMPLE2;
+      mwplotsubject= PLOT_EXAMPLE2;
       //  d_plot->setTitle(tr("PhaseQt: example 2"));
       //   d_plot->setdefaultData2();
     }
 
   if (!action.compare("grexample3Act")) 
     { 
-      d_plot->plotsubject= PLOT_EXAMPLE3;
+      mwplotsubject= PLOT_EXAMPLE3;
       //  d_plot->setTitle(tr("PhaseQt: example 2"));
       //   d_plot->setdefaultData2();
     }
@@ -983,46 +986,62 @@ void MainWindow::grapplyslot()
   struct PSDType *psdp;
 
 #ifdef DEBUG
-  cout << endl << "debug: " << __FILE__ << " grapplyslot called, plotsubject=" << d_plot->plotsubject << endl;
+  cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << mwplotsubject << endl;
 #endif
 
-  // a few tests
-  if (!d_plot)
-    {
-      cout << "file: " << __FILE__ <<  "grapplyslot: d_plot not defined" << endl;
-      return;
-    }
-
-  if ((d_plot->plotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
+  // (1) a few tests
+  
+  if ((mwplotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
     {
       QMessageBox::warning(this, tr("grapplyslot"), tr("No GO source data available"));
       return;
     }
 
-  if ((d_plot->plotsubject & PLOT_GO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
+  if ((mwplotsubject & PLOT_GO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
     {
       QMessageBox::warning(this, tr("grapplyslot"), tr("No valid GO results available"));
       return;
     }
 
-  if ((d_plot->plotsubject & PLOT_GO_RESULT) && 
+  if ((mwplotsubject & PLOT_GO_RESULT) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))
     return;
 
-  if ((d_plot->plotsubject & PLOT_PO_RESULT) && 
+  if ((mwplotsubject & PLOT_PO_RESULT) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
     return;
 
-  // values from manual scaling or autoscale
-  d_plot->Plot::ymin= gryminE->text().toDouble();
-  d_plot->Plot::ymax= grymaxE->text().toDouble();
-  d_plot->Plot::zmin= grzminE->text().toDouble();
-  d_plot->Plot::zmax= grzmaxE->text().toDouble();
+  // (2) construct/destruct objects do common tasks
+  switch (mwplotsubject)
+    {
+    case PLOT_PO_SIMPRE:
+    case PLOT_PO_SIMPIM:
+    case PLOT_PO_SINTRE:
+    case PLOT_PO_SINTIM:
+      if (d_plot) delete (d_plot); d_plot= NULL;
+      if (zone)   delete (zone);   zone= NULL;
+      zone= new Plot2x2(plotBox);
+      plotLayout->addWidget(zone, 0, 0);
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      break;
+    default: 
+      //if (d_plot) delete (d_plot); d_plot= NULL;
+      if (zone)   delete (zone);   zone= NULL;
+      if (!d_plot) d_plot= new Plot(plotBox);
+      // fill values from manual scaling or autoscale
+      d_plot->Plot::ymin= gryminE->text().toDouble();
+      d_plot->Plot::ymax= grymaxE->text().toDouble();
+      d_plot->Plot::zmin= grzminE->text().toDouble();
+      d_plot->Plot::zmax= grzmaxE->text().toDouble();
+      d_plot->setPlotStyle(mwplotstyle);
+      d_plot->setPlotSubject(mwplotsubject);
+      plotLayout->addWidget(d_plot, 0, 0);
+      break;
+    }
+  
+    // (3) fill data, update statistics, update header
 
-  // we do it in two steps 1st data, second style 
-  // fill data, update statistics, update header
-
-  if (d_plot->plotsubject & PLOT_GO_SOURCE ) // generic for GO source
+  if (mwplotsubject & PLOT_GO_SOURCE) // generic for GO source
     {
       d_plot->statistics((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 			 myparent->myBeamline()->RTSource.raynumber, 
@@ -1034,7 +1053,7 @@ void MainWindow::grapplyslot()
 			       myparent->myBeamline()->RTSource.raynumber);
     }
 
-  if (d_plot->plotsubject & PLOT_GO_RESULT ) // generic for GO result
+  if (mwplotsubject & PLOT_GO_RESULT) // generic for GO result
     {  
       d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
 			       myparent->myBeamline()->RESULT.points, 
@@ -1046,11 +1065,13 @@ void MainWindow::grapplyslot()
 			       myparent->myBeamline()->RESULT.points);
     }
 
-  // GO statistics done, [xyz]data arrays filled
+  // (4) GO statistics done, [xyz]data arrays filled
   
-  if (d_plot->plotsubject & (PLOT_GO_SOURCE | PLOT_GO_RESULT)) // GO only
+  if (mwplotsubject & (PLOT_GO_SOURCE | PLOT_GO_RESULT)) // GO only
     {
-      switch (d_plot->plotstyle)
+      //plotLayout->removeWidget(d_plot);
+      //if (plotLayout->count() > 0) plotLayout->removeWidget(btnLogy);
+      switch (mwplotstyle)
 	{
 	case PLOT_ISO:
 	case PLOT_CONTOUR:
@@ -1058,28 +1079,39 @@ void MainWindow::grapplyslot()
 	  d_plot->h2a_nx= d_plot->h2a_ny= BINS2;
 	  d_plot->hfill2();
 	  d_plot->setGoData("grsourceAct");
+	  btnLogy->hide();
 	  d_plot->contourPlot();
+	  //plotLayout->addWidget(d_plot,0,0);
 	  break;
 	case PLOT_SCATTER:
+	  btnLogy->hide();
 	  d_plot->scatterPlot();
+	  //plotLayout->addWidget(d_plot,0,0);
 	  break;
 	case PLOT_HPROF:
 	  d_plot->hfill1(d_plot->getXdata(), d_plot->zmin, d_plot->zmax);
-	  d_plot->profilePlot(d_plot->plotsubject, d_plot->plotstyle);
+	  btnLogy->show();
+	  //plotLayout->addWidget(btnLogy,0,0);
+	  //plotLayout->addWidget(d_plot,1,0,3,3);
+	  d_plot->profilePlot(mwplotsubject, mwplotstyle);
 	  break;
 	case PLOT_VPROF:
 	  d_plot->hfill1(d_plot->getYdata(), d_plot->ymin, d_plot->ymax);
-	  d_plot->profilePlot(d_plot->plotsubject, d_plot->plotstyle);
+	  btnLogy->show();
+	  //plotLayout->addWidget(btnLogy,0,0);
+	  //plotLayout->addWidget(d_plot,1,0,3,3);
+	  d_plot->profilePlot(mwplotsubject, mwplotstyle);
 	  break;
 	default:
-	  cout << "error no valid plotstyle: " << d_plot->plotstyle << endl;
+	  cout << "error no valid mwplotstyle: " << mwplotstyle << endl;
 	}
+      
     } // end GO only
+  else
+    btnLogy->hide();
   
-  
-  
-      // example plots and PO
-  switch (d_plot->plotsubject)
+  // (5) example plots and PO
+  switch (mwplotsubject)
     {   
     case PLOT_EXAMPLE1:
       d_plot->setTitle(tr("PhaseQt: example 1"));
@@ -1098,11 +1130,9 @@ void MainWindow::grapplyslot()
     case PLOT_EXAMPLE3:
       d_plot->setTitle(tr("PhaseQt: example 3"));
       d_plot->d_spectrogram->hide(); 
-      d_plot->d_curve1->hide();
-      d_plot->d_curve2->hide();
       d_plot->example3(); // fills the data
-      d_plot->d_curve3->show();
-      d_plot->d_curve4->show();
+      d_plot->d_curve1->show();
+      d_plot->d_curve2->show();
       //     d_plot->zoomer->setZoomBase(d_plot->canvas());
       d_plot->replot();
       break;
@@ -1120,31 +1150,29 @@ void MainWindow::grapplyslot()
       break;
 
     case PLOT_PO_SIMPRE:
-      cout << "plot PLOT_PO_SIMPRE experimental start " << endl;
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
-      d_plot->si2by2Plot();
+      cout << "plot PLOT_PO_SIMPRE start " << endl;
+      zone->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0);
+      //zone->setWindowTitle(QString("SIMPRE"));
+      zone->myattach();
       break;
 
     case PLOT_PO_SIMPIM:
-      cout << "plot PLOT_PO_SIMPIM experimental start " << endl;
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->simpim, myparent->myBeamline()->BLOptions.xi.ianzy0, 0);
-      d_plot->si2by2Plot();
+      cout << "plot PLOT_PO_SIMPIM start " << endl;
+      zone->hfill4(psdp->simpim, myparent->myBeamline()->BLOptions.xi.ianzy0);
+      // zone->setWindowTitle(QString("SIMPIM"));
+      zone->myattach();
       break;
 
     case PLOT_PO_SINTRE:
-      cout << "plot PLOT_PO_SINTRE experimental start " << endl;
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 0);
-      d_plot->si2by2Plot();
+      cout << "plot PLOT_PO_SINTRE start " << endl;
+      zone->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
+      zone->myattach();
       break;
 
     case PLOT_PO_SINTIM:
-      cout << "plot PLOT_PO_SINTIM experimental start " << endl;
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 0);
-      d_plot->si2by2Plot();
+      cout << "plot PLOT_PO_SINTIM start" << endl;
+      zone->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
+      zone->myattach();
       break;
       
     } // end switch example data
@@ -1161,41 +1189,42 @@ void MainWindow::grautoscaleslot()
 {
   QString yminqst, ymaxqst, zminqst, zmaxqst;
   struct PSImageType *psip;
-  struct PSDType *psdp;
+  struct PSDType     *psdp;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " grautoscaleslot called, plotsubject: " << d_plot->plotsubject << endl;
+  cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject: " << mwplotsubject << endl;
 #endif
 
 // a few tests
   if (!d_plot)
     {
-#ifdef DEBUG
-      cout << "debug: ggrautoscaleslot: d_plot not defined file: " <<  __FILE__ << endl;
-#endif
+      cout << "no autoscale required for plotsubject= " <<  mwplotsubject << " return " << endl;
       return;
     }
 
-  if ((d_plot->plotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
+  if ((mwplotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
     {
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No GO source data available"));
       return;
     }
 
-  if ((d_plot->plotsubject & PLOT_GO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
+  if ((mwplotsubject & PLOT_GO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
     {
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid GO results available"));
       return;
     }
+  // tests done 
 
-  if (d_plot->plotsubject & PLOT_GO_SOURCE ) // generic for GO source
+  d_plot->setPlotSubject(mwplotsubject);
+
+  if (mwplotsubject & PLOT_GO_SOURCE ) // generic for GO source
     {
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 			       myparent->myBeamline()->RTSource.raynumber);
       d_plot->autoScale();
     }
 
-  if (d_plot->plotsubject & PLOT_GO_RESULT  && 
+  if (mwplotsubject & PLOT_GO_RESULT  && 
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))    // generic for GO result
     { 
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
@@ -1203,40 +1232,13 @@ void MainWindow::grautoscaleslot()
       d_plot->autoScale();
     }
 
-  if (d_plot->plotsubject & PLOT_PO_RESULT && 
+  if (mwplotsubject & PLOT_PO_RESULT && 
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
       psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
       d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
     }
 
-  if (d_plot->plotsubject & PLOT_PO_SIMPRE && 
-      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
-    { 
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
-    }
-
-  if (d_plot->plotsubject & PLOT_PO_SIMPIM && 
-      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
-    { 
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->simpim, myparent->myBeamline()->BLOptions.xi.ianzy0, 1);
-    }
-
-  if (d_plot->plotsubject & PLOT_PO_SINTRE && 
-      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
-    { 
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 1);
-    }
-
-  if (d_plot->plotsubject & PLOT_PO_SINTIM && 
-      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
-    { 
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0-1, 1);
-    }
   
   // update the widget
   gryminE->setText(yminqst.setNum(d_plot->Plot::ymin, 'g', 4));

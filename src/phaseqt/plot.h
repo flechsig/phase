@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <11 May 12 13:39:18 flechsig>  */
+/*  Time-stamp: <16 May 12 15:29:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,12 +23,15 @@
 
 class MyZoomer;
 
+
 class Plot: public QwtPlot
 {
     Q_OBJECT
 
 public:
-    Plot(QWidget * = NULL);
+  Plot(QWidget * = NULL);
+  ~Plot();
+
     //    int *ScatterPlot(QWidget * = NULL);
     void example3(); // UF
     void setPoData(const char *); // UF
@@ -38,11 +41,13 @@ public:
     void autoScale(); // GO
     void autoScale(double, double, double, double); // PO
     void fillGoPlotArrays(struct RayType *, int);
-    void SetData(int n, double* dx, double* dy);
+    //void SetData(int n, double* dx, double* dy);
     //int  SetLineColor(int);
     void appendPoint(const QPointF &);
     void clearPoints();
     void getData();       // for test
+    void setPlotStyle(int);
+    void setPlotSubject(int);
     Plot *plot() { return this; }
 
     double ymin;
@@ -57,15 +62,14 @@ public:
     double phimax;
     double *h2a;
     int    h2a_nx, h2a_ny;
-    double *xxx, *yyy, *pox, *poy ;
+    double *pox, *poy ;
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
     void   hfill1(double *, double, double);
     void   hfill2();  // GO
     void   hfill2(struct PSDType *); // PO
-    void   hfill4(double*, int, int);
-
+    
     void   statistics(struct RayType *, int, double, double);
     void   contourPlot();
     void   si2by2Plot();
@@ -78,13 +82,7 @@ public:
     //QwtPlotDirectPainter *d_directPainter;
     QwtPlotCurve         *d_curve1;
     QwtPlotCurve         *d_curve2;
-    QwtPlotCurve         *d_curve3;
-    QwtPlotCurve         *d_curve4;
-    QwtLegend            *mylegend;
-
-    int    plotsubject;
-    int    plotstyle;
-
+    
     double *getXdata();
     double *getYdata();
 
@@ -101,21 +99,26 @@ public slots:
 
 private:
     //QwtPlotSpectrogram *d_spectrogram;
-    double *x, *y, *xdata, *ydata, *zdata;
+    //double *x, *y;
     double x1, x2, y1, y2;
-    double *c1x, *c2x, *c3x, *c4x, *c1y, *c2y, *c3y, *c4y;
+    double *c1x, *c1y, *c2y;
     double h1max, h1firstgt0;
     int    ndata;
     bool   logscaleon;
     int    n_array;
     
-    int    SetUpArrays(int n);
+    //int    SetUpArrays(int n);
     QPen   *pen_ptr;
     void   Beauty(double *, double *);
     struct BeamlineType *bt;
     //QwtPlotZoomer *zoomer;
 
     void SetLog(int, bool);
+
+    int    plotsubject;  // plot variable
+    int    plotstyle;    // plot variable
+
+    
 };
 #endif
 // end

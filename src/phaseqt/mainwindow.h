@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <14 May 12 12:35:41 flechsig>  */
+/*  Time-stamp: <16 May 12 09:25:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -26,6 +26,8 @@
 #include "configwindow.h"
 #include "plot.h"
 #include "treemodel.h"
+#include "plotmatrix.h"
+#include "plot2x2.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -41,7 +43,6 @@ class QPushButton;
 QT_END_NAMESPACE
 
 void my_funcv(int &, int &);  // the test function for qfuture
-
 
 class MainWindow : public QMainWindow
 {
@@ -60,6 +61,8 @@ public:
     void UpdateStatus();
     void writeBackupFile();
     void ReadBLFileInteractive(char *);
+    int getPlotSubject();
+    int getPlotStyle();
     char oldsource;
     QLineEdit     *parameterE;
     //QProgressBar  *progressBar;
@@ -327,6 +330,7 @@ private:
     SingleRay *s_ray;
     OptiInput *o_input;
     ConfigWindow *c_window;
+    Plot2x2  *zone;
 
     QPushButton *grautoButton;
     QPushButton *grapplyButton;
@@ -394,6 +398,9 @@ private:
     QVector <int> vector;
     struct map4      *m4p_cpp;
     struct constants *csp_cpp;
+
+    int    mwplotsubject;  // mainwindow variable
+    int    mwplotstyle;    // mainwindow variable
 };
 
 

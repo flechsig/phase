@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 May 12 12:41:20 flechsig> 
+//  Time-stamp: <21 May 12 10:48:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -27,6 +27,12 @@ using namespace std;
 // the constructor of the main window
 MainWindow::MainWindow(PhaseQt *parent)
 {
+  this->s_ray= NULL;
+  this->o_input= NULL;
+  this->c_window= NULL;
+  this->m4p_cpp= NULL;
+  this->csp_cpp= NULL;
+  this->zone= NULL;
   graphicBox= createGraphicBox();
   setCentralWidget(graphicBox);
   createActions();
@@ -38,12 +44,10 @@ MainWindow::MainWindow(PhaseQt *parent)
   setWindowTitle(tr("PHASE Qt"));
   resize(1400,940);
   // progress etc.
+  mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
+  mwplotstyle= PLOT_CONTOUR;
+
   
-  this->s_ray= NULL;
-  this->o_input= NULL;
-  this->c_window= NULL;
-  this->m4p_cpp= NULL;
-  this->csp_cpp= NULL;
   myparent= parent;
   setAttribute(Qt::WA_DeleteOnClose);
 } // end MainWindow
@@ -1079,21 +1083,23 @@ QWidget *MainWindow::createPlotBox()
 {
   plotBox = new QWidget();
   plotLayout = new QGridLayout;
-  //QToolButton *btnLogy    = new QToolButton(plotBox);  // we create this button but do not use it
-  btnLogy    = new QToolButton();  // we create this button but do not use it
-
-  btnLogy->setText("Log Scale");
-  btnLogy->setCheckable(true);
-  
+   
   d_plot = new Plot(plotBox);
+  //zone   = new PlotMatrix( 2  , 2 );
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
   d_plot->setTitle(tr("PhaseQt"));
+
+  btnLogy = new QToolButton();
+  btnLogy->setText("Log Scale");
+  btnLogy->setCheckable(true);
   connect(btnLogy, SIGNAL(toggled(bool)), d_plot, SLOT(SetLog(bool)));
 
-  //plotLayout->addWidget(btnLogy,0,0);
-  //plotLayout->addWidget(d_plot,1,0,3,3);
-  plotLayout->addWidget(d_plot,0,0);
+  plotLayout->addWidget(btnLogy,0,0, Qt::AlignTop);
+  plotLayout->addWidget(d_plot,1,0,3,3);
+  btnLogy->hide();
+  //plotLayout->addWidget(d_plot,0,0);
+  //plotLayout->addWidget(zone,1,0);
   plotBox->setLayout(plotLayout);
   return plotBox;
 } // end createPlotBox
@@ -2467,5 +2473,14 @@ void MainWindow::fillTaskVector(const int nr)
     vector.append(i);
 } // fillTaskVector
 
+int MainWindow::getPlotSubject()
+{
+  return mwplotsubject;
+}
+
+int MainWindow::getPlotStyle()
+{
+  return mwplotstyle;
+}
 
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

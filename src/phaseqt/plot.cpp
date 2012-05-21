@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <11 May 12 16:59:18 flechsig> 
+//  Time-stamp: <21 May 12 12:46:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -9,6 +9,8 @@
 //  $Author$ 
 
 // taken from qwt examples
+
+#include <QtGui>
 
 #include <qprinter.h>
 #include <qprintdialog.h>
@@ -35,7 +37,7 @@
 #include "plot.h"
 #include "myzoomer.h"
 #include "phaseqt.h"
-//#include "plotmatrix.h"
+#include "plotmatrix.h"
 
 using namespace std;   // fuer cout z.B.
 
@@ -89,7 +91,6 @@ public:
     }
 };
 
-
 // UF my copy of the 2d data with slightly changed patrameters
 class SpectrogramData2: public QwtRasterData
 {
@@ -129,7 +130,7 @@ public:
       
 #ifdef DEBUG
       printf("debug: constructor SpectrogramDataPO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
-      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
+      //      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
       setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
@@ -146,7 +147,7 @@ public:
       int iy = qRound((po->h2a_ny- 1)* (y- po->poy[0])/ dytotal);
       if ( ix >= 0 && ix < po->h2a_nx && iy >= 0 && iy < po->h2a_ny )
 	return po->h2a[ix+ iy* po->h2a_nx];
-      return 10.0; // temporarely
+      return 10.0; // should never happen
     }
 };
 
@@ -156,16 +157,14 @@ class SpectrogramDataGO: public QwtRasterData
 private:
   Plot   *po;
   
-  
 public:
     SpectrogramDataGO(Plot *plotobj)
     {
       po= plotobj;
       
-      
 #ifdef DEBUG
       printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
-      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
+      //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
       setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
@@ -178,11 +177,11 @@ public:
   
     virtual double value(double x, double y) const
     {
-      int ix = qRound(po->h2a_nx* (x- po->zmin)/(po->zmax - po->zmin));
-      int iy = qRound(po->h2a_ny* (y- po->ymin)/(po->ymax - po->ymin));
+      int ix = qRound((po->h2a_nx- 1)* (x- po->zmin)/(po->zmax - po->zmin));
+      int iy = qRound((po->h2a_ny- 1)* (y- po->ymin)/(po->ymax - po->ymin));
       if ( ix >= 0 && ix < po->h2a_nx && iy >= 0 && iy < po->h2a_ny )
 	return po->h2a[ix+ iy* po->h2a_nx];
-      return 10.0; // temporarely
+      return 10.0; // should never happen
     }
 };
 
@@ -205,25 +204,13 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   //d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
   d_curve1 = new QwtPlotCurve( "dz min" );            // one curve
   d_curve2 = new QwtPlotCurve( "dz center" );            // one curve
-  d_curve3 = new QwtPlotCurve( "dz max" );            // one curve
-  d_curve4 = new QwtPlotCurve( "dy center" );            // one curve
-  
   d_curve1->attach( this ); 
   d_curve2->attach( this ); 
-  d_curve3->attach( this ); 
-  d_curve4->attach( this );               
   d_curve1->hide();
   d_curve2->hide();
-  d_curve3->hide();
-  d_curve4->hide();
-  mylegend= new QwtLegend();
-  c1x= c2x= c3x= c4x= c1y= c2y= c3y= c4y= NULL;
-  xxx= NULL; yyy= NULL;
-  xdata= ydata= zdata = h2a= NULL;
-  plotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
-  plotstyle= PLOT_CONTOUR;
-  // bt= (struct BeamlineType *) parent;
-
+  
+  c1x= c1y= c2y= h2a= NULL;
+  
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
   
@@ -282,17 +269,28 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 
   /************* end zoom *************/
   this->fwhmon= 1;
-
-  cout << "plotsubject " << plotsubject << endl;
-
+#ifdef DEBUG  
+  cout << "debug: " << __FILE__ << " Plot:constructor called- plotsubject " << plotsubject << endl;
+#endif
   //  this->p_zoomer= zoomer;
 } // end constructor
+
+Plot::~Plot()
+{
+#ifdef DEBUG  
+  cout << "debug: " << __FILE__ << " Plot:destructor called" <<  endl;
+#endif
+  if (c1x) XFREE(c1x);
+  if (c1y) XFREE(c1y);
+  if (c2y) XFREE(c2y);
+  if (h2a) XFREE(h2a);
+}
 
 void Plot::example3()
 {
   getData();
-  d_curve3->setRawSamples(c1x, c1y, NPOINTS);
-  d_curve4->setRawSamples(c1x, c2y, NPOINTS);
+  d_curve1->setRawSamples(c1x, c1y, NPOINTS);
+  d_curve2->setRawSamples(c1x, c2y, NPOINTS);
 } // example3
 
 
@@ -304,9 +302,8 @@ void Plot::contourPlot()
 #endif
   d_curve1->hide();
   d_curve2->hide();
-  d_curve3->hide();
-  d_curve4->hide();
-  mylegend->contentsWidget ()->setVisible (false);
+  //SetLog(0);
+ 
   d_spectrogram->show();
   enableAxis(QwtPlot::yRight, true);                 // switch on right axis
 
@@ -326,52 +323,6 @@ void Plot::contourPlot()
   
   replot();
 } // end contourPlot()
-
-
-// six on 2 by two
-void Plot::si2by2Plot()
-{
-#ifdef DEBUG
-  cout << "debug: " << __FILE__ << " si 2 x 2 experimental" << endl;
-#endif
-  d_spectrogram->hide();
-  enableAxis(QwtPlot::yRight, false);                 // switch off right axis
-  mylegend->contentsWidget ()->setVisible (true);
-  setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
-  pen_ptr->setWidth(2);
-
-  pen_ptr->setColor(Qt::blue);  // blue
-  d_curve1->setPen(*pen_ptr);
-  
-  pen_ptr->setColor(Qt::red);   // blue
-  d_curve2->setPen(*pen_ptr);
-
-  pen_ptr->setColor(Qt::green);   // blue
-  d_curve3->setPen(*pen_ptr);
-
-  pen_ptr->setColor(Qt::black); 
-  d_curve4->setPen(*pen_ptr);
-
-// values from manual scaling or autoscale
-  
-  setAxisScale(QwtPlot::yLeft,   ymin, ymax, 0); // manual scaling
-  setAxisScale(QwtPlot::xBottom, zmin, zmax, 0); // manual scaling
-  
-  setAxisTitle(2, tr("dy and dz (mrad)"));
-  setAxisTitle(0, tr("density (a.u.)"));
-  zoomer->setZoomBase(canvas());
-  insertLegend(mylegend, QwtPlot::RightLegend );
-  d_curve1->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
-  d_curve2->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
-  d_curve3->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
-  d_curve4->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
-  d_curve1->show();
-  d_curve2->show();
-  d_curve3->show();
-  d_curve4->show();
-  replot();
-} // end si2by2Plot()
-
 
 
 // makes a profile plot
@@ -419,7 +370,7 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(0, tr("y (mm)"));
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
-      d_curve2->setRawSamples(yyy, xxx, BINS2);
+      d_curve2->setRawSamples(c2y, c1x, BINS2);
       y1= ymin;                                     // for manual scaling
       y2= ymax;             
       x1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -436,7 +387,7 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(2, tr("z (mm)"));
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
-      d_curve2->setRawSamples(xxx, yyy, BINS2);
+      d_curve2->setRawSamples(c1x, c2y, BINS2);
       x1= zmin;           
       x2= zmax;
       y1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -473,21 +424,22 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points)
 
   ndata= points; // fill private var
 
-  if (xdata != NULL) delete xdata;
-  if (ydata != NULL) delete ydata;
-  if (zdata != NULL) delete zdata;
+  if (c1x) delete c1x; c1x= NULL;
+  if (c1y) delete c1y; c1y= NULL;
+  if (c2y) delete c2y; c2y= NULL;
  
-  xdata= new double[ndata]; 
-  ydata= new double[ndata];
-  if (plotsubject & PLOT_GO_PHI) zdata= new double[ndata];
+  c1x= new double[ndata]; 
+  c1y= new double[ndata];
+
+  if (plotsubject & PLOT_GO_PHI) c2y= new double[ndata];
 
   rp= rays;
   if (plotsubject & PLOT_GO_SPA)
     {
       for (i= 0; i< ndata; i++, rp++)
 	{
-	  xdata[i]= rp->z;
-	  ydata[i]= rp->y;
+	  c1x[i]= rp->z;
+	  c1y[i]= rp->y;
 	}
     }
 
@@ -495,8 +447,8 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points)
     {
       for (i= 0; i< ndata; i++, rp++)
 	{
-	  xdata[i]= rp->dz * 1e3; // mrad
-	  ydata[i]= rp->dy * 1e3;
+	 c1x[i]= rp->dz * 1e3; // mrad
+	 c1y[i]= rp->dy * 1e3;
 	}
     }
 
@@ -504,21 +456,21 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points)
     {
       for (i= 0; i< ndata; i++, rp++)
 	{
-	  xdata[i]= rp->z;
-	  ydata[i]= rp->y;
-	  zdata[i]= rp->phi;
+	  c1x[i]= rp->z;
+	  c1y[i]= rp->y;
+	  c2y[i]= rp->phi;
 	}
     }
 } // end fillGoPlotArrays			     
 
 double *Plot::getXdata()
 {
-  return xdata;
+  return c1x;
 }
 
 double *Plot::getYdata()
 {
-  return ydata;
+  return c1y;
 }
 
 // makes a scatter plot
@@ -530,22 +482,12 @@ void Plot::scatterPlot()
  
   d_spectrogram->hide();                              // hide spectrogram
   d_curve2->hide();                                   // hide curve2
-  d_curve3->hide();  
-  d_curve4->hide(); 
   d_curve1->hide(); 
 
-  if (c1x) XFREE(c1x);
-  if (c2x) XFREE(c2x);
-  if (c3x) XFREE(c3x);
-  if (c4x) XFREE(c4x);
-  if (c1y) XFREE(c1y);
-  if (c2y) XFREE(c2y);
-  if (c3y) XFREE(c3y);
-  if (c4y) XFREE(c4y);
-
+  //SetLog(0);
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
 
-  d_curve1->setRawSamples(xdata, ydata, ndata);
+  d_curve1->setRawSamples(c1x, c1y, ndata);
   d_curve1->setStyle( QwtPlotCurve::Dots );
   pen_ptr->setColor(Qt::red);   // blue
   pen_ptr->setWidth(2);
@@ -705,14 +647,14 @@ void Plot::autoScale()   // GO
 
   if (ndata > 0) 
     {
-      ymin  = ymax  = *ydata;
-      zmin  = zmax  = *xdata;
+      ymin  = ymax  = *c1y;
+      zmin  = zmax  = *c1x;
       for (i= 0; i < ndata; i++)
 	{
-	  ymin  = min(ydata[i], ymin);
-	  ymax  = max(ydata[i], ymax);
-	  zmin  = min(xdata[i], zmin); // ! not zdata (zdata only available for phi)
-	  zmax  = max(xdata[i], zmax); // ! not zdata
+	  ymin  = min(c1y[i], ymin);
+	  ymax  = max(c1y[i], ymax);
+	  zmin  = min(c1x[i], zmin); // ! not zdata (zdata only available for phi)
+	  zmax  = max(c1x[i], zmax); // ! not zdata
 	}
     }
   else
@@ -758,94 +700,7 @@ void Plot::Beauty(double *mi, double *ma)
 } /* end Beauty */
 
 
-int Plot::SetUpArrays(int n){
-  n = n<1 ? 1 : n; //overflow bin
-  
-  if(n+1>n_array){
-    n_array = n+1;
-    if(x) delete x;
-    if(y) delete y;
-    x = new double [n_array];
-    y = new double [n_array];
-  }
-
-  return n;
-}
-
-// UF Sep 11 not used
-void Plot::SetData(int n, double* data_x, double *data_y)
-{
-  n = SetUpArrays(n);
-
-  ndata=n;
-  
-  for(int i=0; i<ndata; i++){
-    int b = i;
-    x[b] = data_x ? data_x[i]:0;
-    y[b] = data_y ? data_y[i]:0;
-    
-  }
-
-  //setRawData(x,y,ndata);
-} // SetData
-
-/* fills simpre style data */
-void Plot::hfill4(double *arr, int ndata, int autoscale)
-{
-  cout << "hfill4 called" << endl;
-  if (c1x) XFREE(c1x);
-  if (c2x) XFREE(c2x);
-  if (c3x) XFREE(c3x);
-  if (c4x) XFREE(c4x);
-  if (c1y) XFREE(c1y);
-  if (c2y) XFREE(c2y);
-  if (c3y) XFREE(c3y);
-  if (c4y) XFREE(c4y);
-
-  c1x= XMALLOC(double, ndata);
-  c4x= XMALLOC(double, ndata);
-  c1y= XMALLOC(double, ndata);
-  c2y= XMALLOC(double, ndata);
-  c3y= XMALLOC(double, ndata);
-  c4y= XMALLOC(double, ndata);
-
-  for (int k= 0; k < ndata; k++) 
-    {
-      c1x[k]= arr[8*k]*1e3;
-      c4x[k]= arr[8*k+3]*1e3;
-      c1y[k]= arr[8*k+4];
-      c2y[k]= arr[8*k+5];
-      c3y[k]= arr[8*k+6];
-      c4y[k]= arr[8*k+7];
-    }
-
-  if (autoscale)
-    {
-      zmin= (c1x[0] < c4x[0]) ? c1x[0] : c4x[0]; 
-      zmax= (c1x[ndata-1] > c4x[ndata-1]) ? c1x[ndata-1] : c4x[ndata-1]; 
-      
-      ymin= ymax= c1y[0];
-      for (int k=0; k < ndata; k++) 
-	{
-	  ymin= qMin(c1y[k], ymin);
-	  ymax= qMax(c1y[k], ymax);
-	  ymin= qMin(c2y[k], ymin);
-	  ymax= qMax(c2y[k], ymax);
-	  ymin= qMin(c3y[k], ymin);
-	  ymax= qMax(c3y[k], ymax);
-	  ymin= qMin(c4y[k], ymin);
-	  ymax= qMax(c4y[k], ymax);
-	}
-    }
-
-  d_curve1->setRawSamples(c1x, c1y, ndata);
-  d_curve2->setRawSamples(c1x, c2y, ndata);
-  d_curve3->setRawSamples(c1x, c3y, ndata);
-  d_curve4->setRawSamples(c4x, c4y, ndata);
-  cout << "hfill4 done c1y[0]=" << c1y[0] << endl;
-} /* end hfill4 */
-
-// fills a 1d histogram with data
+// fills a 1d histogram with data !! we use c2y
 void Plot::hfill1(double *dvec, double x1, double x2)
 {
   int i;
@@ -855,23 +710,23 @@ void Plot::hfill1(double *dvec, double x1, double x2)
   cout << "Plot::hfill1 called" << endl;
 #endif
 
-  if (xxx != NULL) delete xxx;
-  if (yyy != NULL) delete yyy;
-  xxx= new double[BINS2];
-  yyy= new double[BINS2];
+  if (c1x) delete c1x;
+  if (c2y) delete c2y;
+  c1x= new double[BINS2];
+  c2y= new double[BINS2];
 
   if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
     
   for (ix= 0; ix< BINS2; ix++)
     {
-      yyy[ix]= 0.0;
-      xxx[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
+      c2y[ix]= 0.0;
+      c1x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
     }
 
   for (i= 0; i< ndata; i++)
     {
       ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
-      if ((ix < BINS2) && (ix >= 0)) yyy[ix]+= 1.0;          // add one hit
+      if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
     }  
   
   h1max= 0.0; h1firstgt0= 1.0;  // ZERO
@@ -879,12 +734,12 @@ void Plot::hfill1(double *dvec, double x1, double x2)
     {
     for (ix= 0; ix< BINS2; ix++)
       {
-	yyy[ix]*= 1.0/ndata;   // density in rays 
-	if (yyy[ix] > h1max) h1max= yyy[ix];
-	if ((yyy[ix] > ZERO) && (yyy[ix] < h1firstgt0)) h1firstgt0 = yyy[ix];
+	c2y[ix]*= 1.0/ndata;   // density in rays 
+	if (c2y[ix] > h1max) h1max= c2y[ix];
+	if ((c2y[ix] > ZERO) && (c2y[ix] < h1firstgt0)) h1firstgt0 = c2y[ix];
       }
     for (ix= 0; ix< BINS2; ix++) 
-      if (yyy[ix] < h1firstgt0 )  yyy[ix]= h1firstgt0;  // fix 0 for log scale
+      if (c2y[ix] < h1firstgt0 )  c2y[ix]= h1firstgt0;  // fix 0 for log scale
     }
   
 #ifdef DEBUG
@@ -895,35 +750,38 @@ void Plot::hfill1(double *dvec, double x1, double x2)
 // fills a 2d histogram with ray data
 void Plot::hfill2()
 {
-  int i, h2a_n;
-  int ix, iy;
+  int i, ix, iy, h2a_n, idx;
+  double xm, ym;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (ray version)" << endl;
+  cout << "debug: Plot::hfill2 called (ray version)" << endl;
 #endif
 
   h2a_n= h2a_nx * h2a_ny;
-  if (h2a != NULL) delete h2a;
-  if (h2a_n > 0) h2a= new double[h2a_n];
+  if (h2a) delete h2a; 
+  if (h2a_n > 0) h2a= new double[h2a_n]; else h2a= NULL;
   
   for (i= 0; i< h2a_n; i++) h2a[i]= 0.0;    // set array data to 0.0
 
-  if ((zmax-zmin) < ZERO ) zmax = zmin + 1;
-  if ((ymax-ymin) < ZERO ) ymax = ymin + 1;  
+  if ((zmax- zmin) < ZERO ) zmax = zmin + 1;
+  if ((ymax- ymin) < ZERO ) ymax = ymin + 1;  
   h2max= 0.0;
-
-  //  clearPoints();
 
   for (i= 0; i< ndata; i++)
     {
-      //      appendPoint( QPointF( rp->z, rp->y ) );
-      ix= (int)((xdata[i]- zmin)/(zmax - zmin)* h2a_nx);
-      iy= (int)((ydata[i]- ymin)/(ymax - ymin)* h2a_ny);
+      ix= (int)((c1x[i]- zmin)/(zmax - zmin)* h2a_nx);
+      iy= (int)((c1y[i]- ymin)/(ymax - ymin)* h2a_ny);
       
       if ((ix >= 0) && (ix < h2a_nx) && (iy >= 0) && (iy < h2a_ny)) 
 	{
-	  h2a[ix+ iy*h2a_nx]+= 1;          // add one hit
-	  h2max= max(h2max, h2a[ix+ iy*h2a_nx]);                         // save maximum
+	  idx= ix+ iy* h2a_nx;
+	  h2a[idx]+= 1.0;          // add one hit
+          if (h2a[idx] > h2max) 
+	    {
+	      xm= c1x[i]; 
+	      ym= c1y[i];
+	      h2max= h2a[idx];
+	    }
 	}
     }
 
@@ -932,8 +790,11 @@ void Plot::hfill2()
     for (ix=0; ix< h2a_nx; ix++)
       for (iy=0; iy< h2a_ny; iy++) h2a[ix+iy*h2a_nx]*= 10.0/ h2max;
 
+ 
+
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
+  cout << "debug: " << __FILE__ << " hfill2 end:  h2max= " <<  h2max << ", h2a[last]= " << h2a[h2a_n-1] << endl;
+  cout << "debug: " << __FILE__ << " hfill2 end:  max @ x= " << xm << ", y= " << ym << endl;
 #endif
 } // hfill2 GO
 
@@ -1073,13 +934,8 @@ void Plot::getData()
 {
   if (c1x) XFREE(c1x);
   if (c1y) XFREE(c1y);
-  if (c2x) XFREE(c2x);
   if (c2y) XFREE(c2y);
-  if (c3x) XFREE(c3x);
-  if (c3y) XFREE(c3y);
-  if (c4x) XFREE(c4x);
-  if (c4y) XFREE(c4y);
-
+  
   c1x= XMALLOC(double, NPOINTS);
   c1y= XMALLOC(double, NPOINTS);
   c2y= XMALLOC(double, NPOINTS);
@@ -1087,7 +943,7 @@ void Plot::getData()
   for ( int i= 0; i< NPOINTS; i++ ) 
     {
       c1x[i] = 0.1*i;
-      c1y[i] = sin(c1x[i]);
+      c1y[i] = 1.1*sin(c1x[i]);
       c2y[i] = cos(c1x[i]);
     }
 } // end getData()
@@ -1152,6 +1008,14 @@ void Plot::SetLog(int axisId, bool yes)
   replot();
 } // end SetLog function
 
+void Plot::setPlotStyle(int style)
+{
+  plotstyle= style;
+}
 
+void Plot::setPlotSubject(int style)
+{
+  plotsubject= style;
+}
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plotmatrix.cpp
 //  Date      : <14 May 12 14:01:24 flechsig> 
-//  Time-stamp: <14 May 12 14:03:07 flechsig> 
+//  Time-stamp: <15 May 12 17:28:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -17,7 +17,7 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-// vim: expandtab
+// UF more or less as example but without synchronized scales
 
 #include <qlayout.h>
 #include <qpen.h>
@@ -33,9 +33,9 @@ public:
         inScaleSync( false )
     {
         isAxisEnabled[QwtPlot::xBottom] = true;
-        isAxisEnabled[QwtPlot::xTop] = false;
-        isAxisEnabled[QwtPlot::yLeft] = true;
-        isAxisEnabled[QwtPlot::yRight] = false;
+        isAxisEnabled[QwtPlot::xTop]    = false;
+        isAxisEnabled[QwtPlot::yLeft]   = true;
+        isAxisEnabled[QwtPlot::yRight]  = false;
     }
 
     bool isAxisEnabled[QwtPlot::axisCnt];
@@ -44,7 +44,7 @@ public:
 };
 
 PlotMatrix::PlotMatrix( int numRows, int numColumns, QWidget *parent ):
-    QFrame( parent )
+  QFrame( parent )
 {
     d_data = new PrivateData();
     d_data->plotWidgets.resize( numRows * numColumns );
@@ -59,8 +59,9 @@ PlotMatrix::PlotMatrix( int numRows, int numColumns, QWidget *parent ):
 
             for ( int axis = 0; axis < QwtPlot::axisCnt; axis++ )
             {
-                connect( plot->axisWidget( axis ),
-                    SIGNAL( scaleDivChanged() ), SLOT( scaleDivChanged() ) );
+	      // UF we do not want to synchronize the scaling
+	      //   connect( plot->axisWidget( axis ),
+	      //       SIGNAL( scaleDivChanged() ), SLOT( scaleDivChanged() ) );
             }
             d_data->plotWidgets[row * numColumns + col] = plot;
         }

@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <10 May 12 11:00:40 flechsig> 
+#  Time-stamp: <15 May 12 13:16:12 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -22,6 +22,8 @@ phaseqt_SOURCES = \
 	singleray.cpp singleray.h \
         treemodel.cpp treemodel.h \
         treeitem.cpp treeitem.h \
+	plotmatrix.cpp plotmatrix.h \
+        plot2x2.cpp plot2x2.h \
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
 	../phase/phasec.c  ../phase/rtrace.c \
         ../phase/xmalloc.c   \
@@ -40,7 +42,8 @@ phaseqt_SOURCES = \
 nodist_phaseqt_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
-	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp
+	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
+	moc_plotmatrix.cpp moc_plot2x2.cpp
 
 phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
