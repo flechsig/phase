@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 May 12 17:05:11 flechsig>  */
+/*   Time-stamp: <21 May 12 16:10:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -384,7 +384,6 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 /* beamline goes in, integration results and statistics goes out */
 void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
 {
-
   int i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next;  
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
   struct map4 *m4p;
