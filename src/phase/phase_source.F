@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <10 May 12 08:43:15 flechsig> 
+c$$$ Time-stamp: <23 May 12 15:56:49 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -40,20 +40,20 @@ c a trick to have the struct only in the ./phase and find it from opti
 
 c**************************************************
 
-	record /source1/ so1
-	record /source2/ so2
-	record /source3/ so3
-	record /source4/ so4
-	record /source5/ so5
-	record /source6/ so6
+c	record /source1/ so1
+c	record /source2/ so2
+c	record /source3/ so3
+c	record /source4/ so4
+c	record /source5/ so5
+c	record /source6/ so6
 	record /sources/ src
 
 c comment U.F. 20.1.2000	
 	write(*,*) 'src_ini: source type:',src.isrctype
-	if(src.isrctype.lt.2.or.src.isrctype.gt.6)write(*,*)'unknown source type-> calculation will fail'
+	if(src.isrctype.lt.4.or.src.isrctype.gt.6)write(*,*)'unknown/obsolete source type-> calculation will fail'
 
-	if(src.isrctype.eq.2)call src2_ini(src.so2)
-	if(src.isrctype.eq.3)call src3_ini(src.so3)
+c	if(src.isrctype.eq.2)call src2_ini(src.so2)
+c	if(src.isrctype.eq.3)call src3_ini(src.so3)
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
 	if(src.isrctype.eq.5)write(*,*)'srctype=5 is currently not implemented'
 	if(src.isrctype.eq.6)call src6_ini(src.so6)
@@ -134,11 +134,11 @@ c**************************************************
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
-	record /source2/ so2
-	record /source3/ so3
-	record /source4/ so4
-	record /source5/ so5
-	record /source6/ so6
+c	record /source2/ so2
+c	record /source3/ so3
+c	record /source4/ so4
+c	record /source5/ so5
+c	record /source6/ so6
 	record /sources/ src
 	record /apertures/ apr
 
@@ -192,11 +192,11 @@ c    &        (ra.oe.xl.gt.apr.xl_max) ) iii=0
 c	endif
 c	if(iii.eq.1)then
 
-	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
-	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
-	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
+c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
+c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
+c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
 	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl)
-	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
+c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
 	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
 c	endif	! size of OE
@@ -1367,12 +1367,12 @@ cc	include 'phase_struct.for'
 
 c**************************************************
 
-	record /source1/ so1
-	record /source2/ so2
-	record /source3/ so3
-	record /source4/ so4
-	record /source5/ so5
-	record /source6/ so6
+c	record /source1/ so1
+c	record /source2/ so2
+c	record /source3/ so3
+c	record /source4/ so4
+c	record /source5/ so5
+c	record /source6/ so6
 	record /sources/ src
 
 	f=1.d0
