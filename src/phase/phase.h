@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <09 May 12 16:54:48 flechsig>  */
+/*   Time-stamp: <25 May 12 15:20:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -800,7 +800,7 @@ void
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
 	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
-	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,MAPTYPE_8X4, MAPTYPE_8X4,
+	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
 	 struct geometrytype *, int *, int *, int *),
   fgmapidp(int *, 
 	   int *, double *, struct mirrortype *, struct geometrytype *,
