@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <21 May 12 15:42:17 flechsig> 
+//  Time-stamp: <23 May 12 15:38:03 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -598,6 +598,7 @@ void MainWindow::activateProc(const QString &action)
             
       switch (myparent->myBeamline()->src.isrctype)
 	{
+#ifdef OBSOLETE
 	case 2:
 	  filesOK= fexists(myparent->myBeamline()->src.so2.fsource2a) & 
 	    fexists(myparent->myBeamline()->src.so2.fsource2b);
@@ -606,6 +607,7 @@ void MainWindow::activateProc(const QString &action)
 	  filesOK= fexists(myparent->myBeamline()->src.so3.fsource3a) & 
 	    fexists(myparent->myBeamline()->src.so3.fsource3b);
  	  break;
+#endif
 	case 4: 
 	  filesOK= fexists(myparent->myBeamline()->src.so4.fsource4a) & 
 	    fexists(myparent->myBeamline()->src.so4.fsource4b) & 
