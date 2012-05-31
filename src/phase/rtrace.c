@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <31 Oct 11 16:03:14 flechsig>  */
+/*   Time-stamp: <31 May 12 08:02:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -330,6 +330,12 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
 #ifdef DEBUG
    printf("MakeRTSource start: beamlineOK: %X, raynumber: %d\n", bl->beamlineOK, bl->RTSource.raynumber);
 #endif
+
+   if (bl->RTSource.QuellTyp == 'I')
+     {
+       printf("MakeRTSource: select a GO source (you slected PO image plane) - exit\n");
+       exit(1);
+     }
 
    if (bl->localalloc == DOALLOC) 
      {
