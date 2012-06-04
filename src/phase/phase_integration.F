@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <08 May 12 13:19:11 flechsig> 
+c$$$ Time-stamp: <30 May 12 13:09:08 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -125,6 +125,7 @@ c************************************************
         do l=0,ifl.iord-i-j-k
 c        write(6,*)i,j,k,l
 c        write(6,1)m4.fdet1phc(i,j,k,l),m4.fdet1phca(i,j,k,l),m4.fdet1phcb(i,j,k,l)
+c        write(6,*)i,j,k,l,m4.xlen1c(i,j,k,l)
         enddo
         enddo
         enddo
