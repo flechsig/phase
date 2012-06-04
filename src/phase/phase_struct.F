@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <2012-04-17 20:51:39 flechsig> 
+c$$$ Time-stamp: <23 May 12 15:48:29 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -197,10 +197,10 @@ c---------------- sources -----------------------------------
         structure/sources/                 ! Sammelstruktur
         real*8 pin_yl0,pin_yl,pin_zl0,pin_zl ! changed position 17.12.2005
            record/source1/so1              ! Gauss + Hard edge
-           record/source2/so2              ! Zernike
-           record/source3/so3              ! radiale Vert. vom File
+c           record/source2/so2              ! Zernike
+c           record/source3/so3              ! radiale Vert. vom File
            record/source4/so4              ! Quelle von File
-           record/source5/so5              ! Dipol Quelle
+	   record/source5/so5	! Dipol Quelle
            record/source6/so6              ! Brightness
 	   integer isrctype
         end structure   
