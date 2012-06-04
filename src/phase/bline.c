@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Jun 12 14:52:04 flechsig>  */
+/*   Time-stamp: <04 Jun 12 16:11:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -821,24 +821,25 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 /* speichert multiplizierte koeff *s*/
 /* maps==  map * mat 							 */
 {
- iord= iord;  /* dummy */
+  int i, j, k, l, m, idx; 
 #ifdef SEVEN_ORDER
    double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
-   int i, j, k, l, m, dim= 330, idx;
+   dim= 330, maxord= 8;
 #else
    double wctmp[70], xlctmp[70], wcc[70], xlcc[70];
-   int i, j, k, l, m, dim= 70, idx;
+   dim= 70, maxord= 5;
 #endif
    
   printf("\nMultiplikationsroutine wc, xlc, input - not adopted to 7. order\n");
     
    m= 0;
-   for(i= 0; i< 5; i++)
-     for(j= 0; j< (5-i); j++)
-       for(k= 0; k< (5-i-j); k++)
-	 for(l= 0; l< (5-i-j-k); l++)
+   for(i= 0; i< maxord; i++)
+     for(j= 0; j< (maxord-i); j++)
+       for(k= 0; k< (maxord-i-j); k++)
+	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
-	     idx=i+j*5+k*25+l*125;
+	     //idx=i+j*5+k*25+l*125;
+	     idx= fidx_mX4(i, j, k, l, maxord);
 	     wctmp[m]= wc[idx];
 	     xlctmp[m]= xlc[idx];
 /*	     printf("idx: %d wc: %le, xlc: %le\n", m, wc[idx], xlc[idx]);*/
@@ -858,12 +859,13 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
      }
    /*  printf("\nMultiplikationsroutine wc, xlc, output\n");*/
   m= 0;
-   for(i= 0; i< 5; i++)
-     for(j= 0; j< (5-i); j++)
-       for(k= 0; k< (5-i-j); k++)
-	 for(l= 0; l< (5-i-j-k); l++)
+   for(i= 0; i< maxord; i++)
+     for(j= 0; j< (maxord-i); j++)
+       for(k= 0; k< (maxord-i-j); k++)
+	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
-	     idx=i+j*5+k*25+l*125;
+	     // idx=i+j*5+k*25+l*125;
+	     idx= fidx_mX4(i, j, k, l, maxord);
 	     wcs[idx]= wcc[m];
 	     xlcs[idx]= xlcc[m];
 	     /*   printf("idx: %d wc: %le, xlc: %le\n", m, wcs[idx], xlcs[idx]);*/
