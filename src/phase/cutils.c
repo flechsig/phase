@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <2012-03-18 21:47:06 flechsig>  */
+/*   Time-stamp: <29 May 12 16:23:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -171,4 +171,16 @@ int fexists(char *path)
     }  else ex= 0;
   return ex;
 }
+
+/* calculates the index of a mX4 fortran- array */
+/* i,j,k,l is the index, m the dimension        */
+int fidx_mX4(int i, int  j, int k, int l, int m)
+{
+  int idx;
+
+  idx= i+ m* (j+ m* (k+ m* l));
+  return idx;
+} /* end fidx_mX4 */
+
+
 /* end cutils.c */
