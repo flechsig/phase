@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <25 May 12 15:20:59 flechsig>  */
+/*   Time-stamp: <30 May 12 16:07:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -729,6 +729,7 @@ struct BeamlineType Beamline;
   #define adaptive_int   adaptive_int_ 
   #define exithplot      exithplot_ 
   #define extractmap     extractmap_
+  #define idnum          idnum_
   #define hlimit         hlimit_
   #define hplint         hplint_
   #define hplotdisplayf  hplotdisplayf_
@@ -824,6 +825,7 @@ void
   GlueWcXlc(double *, double *, double *, double *, double *, int *),
   gpd(), 
   GetUserName(), 
+  idnum(int *, int *, int *, int *, int *),
   intersection(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, double *, double *, double *, int *),   
   intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
