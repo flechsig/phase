@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 May 12 12:38:56 flechsig>  */
+/*   Time-stamp: <04 Jun 12 14:52:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -820,10 +820,6 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 /* multipliziert Aperturkoeff. mit tosourcematrix des folgenden elements */
 /* speichert multiplizierte koeff *s*/
 /* maps==  map * mat 							 */
-/* last modification: 27 Mar 97 08:46:29 flechsig */
-/* last modification: 25 Jun 97 20:25:56 flechsig */
-/* last modification: 04 Jul 97 11:54:41 flechsig */
-
 {
  iord= iord;  /* dummy */
 #ifdef SEVEN_ORDER
@@ -834,8 +830,8 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
    int i, j, k, l, m, dim= 70, idx;
 #endif
    
-   /*   printf("\nMultiplikationsroutine wc, xlc, input\n");
-    */
+  printf("\nMultiplikationsroutine wc, xlc, input - not adopted to 7. order\n");
+    
    m= 0;
    for(i= 0; i< 5; i++)
      for(j= 0; j< (5-i); j++)
