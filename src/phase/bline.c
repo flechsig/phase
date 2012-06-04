@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Jun 12 16:11:26 flechsig>  */
+/*   Time-stamp: <04 Jun 12 16:13:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -824,10 +824,10 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
   int i, j, k, l, m, idx; 
 #ifdef SEVEN_ORDER
    double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
-   dim= 330, maxord= 8;
+   int dim= 330, maxord= 8;
 #else
    double wctmp[70], xlctmp[70], wcc[70], xlcc[70];
-   dim= 70, maxord= 5;
+   int dim= 70, maxord= 5;
 #endif
    
   printf("\nMultiplikationsroutine wc, xlc, input - not adopted to 7. order\n");
