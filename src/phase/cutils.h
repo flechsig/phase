@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <06 Jul 11 13:14:20 flechsig>  */
+/*   Time-stamp: <29 May 12 16:23:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -32,6 +32,7 @@ void 	 beep(int);
 void	 CheckUser(char *, char *); 
 int 	 CheckFileHeader(FILE *, char *, int *);   
 FString *CreateFString(FString *, char *);
+int      fidx_mX4(int, int, int, int, int);
 int      fexists(char *); 
 double   uRandom(double), RVZ();   
    
