@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <05 Jun 12 09:39:57 flechsig>  */
+/*   Time-stamp: <05 Jun 12 12:57:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -729,39 +729,32 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 /* speichert multiplizierte map */
 /* summiert */
 /* lmap==  lmap * mat 							 */
-/* Uwe 15.8.96 								 */
-
-
 {
-  iord= iord;  /* dummy */
+  double  *c1, *c2, *s1, *s2;
+  int i, j, k, l, m, idx, row, col;
 #ifdef SEVEN_ORDER
-   double  *c1, *c2, *s1, *s2, 
-     pl_1c[330], pl_2c[330], pl_1cc[330], pl_2cc[330];
-   int i, k, dim= 330, idx, j ,l, m, maxord= 8;
+  double pl_1c[330], pl_2c[330], pl_1cc[330], pl_2cc[330];
+  int    dim= 330,  maxord= 8;
 #else
-   double *c1, *c2, *s1, *s2, 
-     pl_1c[70], pl_2c[70], pl_1cc[70], pl_2cc[70];
-   int i, k, dim= 70, idx, j ,l, m, maxord= 5;
+   double pl_1c[70], pl_2c[70], pl_1cc[70], pl_2cc[70];
+   int    dim= 70, maxord= 5;
 #endif  
  
+   /* extract variables from structure */
    c1= (double *)&xlm->xlen1c;
    c2= (double *)&xlm->xlen2c;
    s1= (double *)&xlsum->xlen1c;
    s2= (double *)&xlsum->xlen2c;
 
-   /*  memcpy(xl1tmp, c1, sizeof(xl1tmp));  alte merken */
-   /*  memcpy(xl2tmp, c2, sizeof(xl2tmp)); */
-   
-   /*   printf(
-	"\nMultiplikationsroutine pathlen input (Summe), (B)line, (E)lement\n");*/
-   /* UF hier sicher noch nicht richtig */
+   /* UF 4.6.12 maxord oder iord */
    m= 0;
    for(i= 0; i< maxord; i++)
      for(j= 0; j< (maxord-i); j++)
        for(k= 0; k< (maxord-i-j); k++)
 	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
-	     idx=i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+	     //idx=i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */ 
 	     pl_1c[m]= c1[idx];
 	     pl_2c[m]= c2[idx];
 	     /*	     S= s1[idx]+ s2[idx]; C= c1[idx]+ c2[idx];
@@ -769,14 +762,14 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 	     m++;
 	   } /* pl_*c gefuellt */
 
-   for (i= 0; i< dim; i++) 
+   for (col= 0; col< dim; col++) 
      {
-       pl_1cc[i]= pl_2cc[i]= 0.0;
-       for (k= 0; k< dim; k++) 
+       pl_1cc[col]= pl_2cc[col]= 0.0;
+       for (row= 0; row< dim; row++) 
 	 {
-	   idx= k+ i* dim;                     
-	   pl_1cc[i]+= pl_1c[k]* mat[idx];
-	   pl_2cc[i]+= pl_2c[k]* mat[idx];
+	   idx= row+ col* dim;                 /* matrix index in Fortran memory model */    
+	   pl_1cc[col]+= pl_1c[row]* mat[idx]; /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
+	   pl_2cc[col]+= pl_2c[row]* mat[idx]; /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
 	 }
      }
    /* rueckkopieren */
@@ -789,7 +782,8 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 	   for(k= 0; k< (maxord-i-j); k++)
 	     for(l= 0; l< (maxord-i-j-k); l++)
 	       {
-		 idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+		 //idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+		 idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */ 
 		 s1[idx]+= pl_1cc[m];
 		 s2[idx]+= pl_2cc[m];
 		 /*     S= s1[idx]+s2[idx]; C= c1[idx]+ c2[idx];
@@ -797,7 +791,7 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 		 m++;
 	       }
      } 
-   else
+   else  /* keine summe */
      {
        m= 0;
        for(i= 0; i< maxord; i++)
@@ -805,7 +799,8 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 	   for(k= 0; k< (maxord-i-j); k++)
 	     for(l= 0; l< (maxord-i-j-k); l++)
 	       {
-		 idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+		 //idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
+		 idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */ 
 		 s1[idx]= pl_1cc[m];
 		 s2[idx]= pl_2cc[m];
 		 m++;
@@ -831,7 +826,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
    int dim= 70, maxord= 5;
 #endif
    
-  printf("\nMultiplikationsroutine wc, xlc, input - not adopted yet tested for 7. order\n");
+  printf("\nMultiplikationsroutine wc, xlc, input - not adopted or tested for 7. order\n");
     
   /* ?? UF 4.6.2012 maxord oder iord ?? */
    m= 0;
@@ -840,8 +835,8 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
        for(k= 0; k< (maxord-i-j); k++)
 	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
-	     //idx=i+j*5+k*25+l*125;
-	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  
+	     //idx=i+j*5+k*25+l*125;              
+	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  /* ?? UF 4.6.2012 maxord oder iord ?? */
 	     wctmp[m] = wc[idx];
 	     xlctmp[m]= xlc[idx];
 /*	     printf("idx: %d wc: %le, xlc: %le\n", m, wc[idx], xlc[idx]);*/
@@ -854,9 +849,9 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
        wcc[col]= xlcc[col]= 0.0;
        for (row= 0; row< dim; row++) 
 	 {
-	   idx       = col* dim+ row;         /* matrix index in Fortran memory model */
-	   wcc[col] += wctmp[row] * mat[idx];
-	   xlcc[col]+= xlctmp[row]* mat[idx];
+	   idx       = col* dim+ row;           /* matrix index in Fortran memory model */
+	   wcc[col] += wctmp[row] * mat[idx];   /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
+	   xlcc[col]+= xlctmp[row]* mat[idx];   /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
 	 }
      }
   
@@ -867,7 +862,7 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
        for(k= 0; k< (maxord-i-j); k++)
 	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
-	     // idx=i+j*5+k*25+l*125;
+	     // idx=i+j*5+k*25+l*125;             /* ?? UF 4.6.2012 maxord oder iord ?? */ 
 	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  
 	     wcs[idx] = wcc[m];
 	     xlcs[idx]= xlcc[m];
