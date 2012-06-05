@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Jun 12 16:13:40 flechsig>  */
+/*   Time-stamp: <05 Jun 12 09:39:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -818,10 +818,11 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc, 
 	       double *mat, int *iord)
 /* multipliziert Aperturkoeff. mit tosourcematrix des folgenden elements */
-/* speichert multiplizierte koeff *s*/
+/* speichert multiplizierte koeff *s                                     */
 /* maps==  map * mat 							 */
+/* die Matrix und maps sind im Fortran Speichermodel                     */
 {
-  int i, j, k, l, m, idx; 
+  int i, j, k, l, m, idx, row, col; 
 #ifdef SEVEN_ORDER
    double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
    int dim= 330, maxord= 8;
@@ -830,8 +831,9 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
    int dim= 70, maxord= 5;
 #endif
    
-  printf("\nMultiplikationsroutine wc, xlc, input - not adopted to 7. order\n");
+  printf("\nMultiplikationsroutine wc, xlc, input - not adopted yet tested for 7. order\n");
     
+  /* ?? UF 4.6.2012 maxord oder iord ?? */
    m= 0;
    for(i= 0; i< maxord; i++)
      for(j= 0; j< (maxord-i); j++)
@@ -839,38 +841,40 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
 	     //idx=i+j*5+k*25+l*125;
-	     idx= fidx_mX4(i, j, k, l, maxord);
-	     wctmp[m]= wc[idx];
+	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  
+	     wctmp[m] = wc[idx];
 	     xlctmp[m]= xlc[idx];
 /*	     printf("idx: %d wc: %le, xlc: %le\n", m, wc[idx], xlc[idx]);*/
 	     m++;
 	   } /* wctmp gefuellt */
 
-   /*   printf("\njetzt wird multipliziert-> Ergebnis:\n\n"); */
-   for (i= 0; i< dim; i++) 
+   /* UF 4.6.2012 stimmt denn das- der Matrixindex ist hier unabhaengig von iord ?? */
+   for (col= 0; col< dim; col++) 
      {
-       wcc[i]= xlcc[i]= 0.0;
-       for (k= 0; k< dim; k++) 
+       wcc[col]= xlcc[col]= 0.0;
+       for (row= 0; row< dim; row++) 
 	 {
-	   idx=i* dim+ k;
-	   wcc[i] += wctmp[k]* mat[idx];
-	   xlcc[i]+= xlctmp[k]* mat[idx];
+	   idx       = col* dim+ row;         /* matrix index in Fortran memory model */
+	   wcc[col] += wctmp[row] * mat[idx];
+	   xlcc[col]+= xlctmp[row]* mat[idx];
 	 }
      }
-   /*  printf("\nMultiplikationsroutine wc, xlc, output\n");*/
-  m= 0;
+  
+   /* ?? UF 4.6.2012 maxord oder iord ?? */
+   m= 0;
    for(i= 0; i< maxord; i++)
      for(j= 0; j< (maxord-i); j++)
        for(k= 0; k< (maxord-i-j); k++)
 	 for(l= 0; l< (maxord-i-j-k); l++)
 	   {
 	     // idx=i+j*5+k*25+l*125;
-	     idx= fidx_mX4(i, j, k, l, maxord);
-	     wcs[idx]= wcc[m];
+	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  
+	     wcs[idx] = wcc[m];
 	     xlcs[idx]= xlcc[m];
 	     /*   printf("idx: %d wc: %le, xlc: %le\n", m, wcs[idx], xlcs[idx]);*/
 	     m++;
 	   } /* wctmp gefuellt */
+   
    /*   printf("GlueWcXlc end\n");*/
 }  /* end GlueWcXlc */
 
