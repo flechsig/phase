@@ -24,7 +24,7 @@ c*************************** neu **************************
 c a trick to have the struct only in the ./phase and find it from opti 
 #include '../phase/phase_struct.F'
 
-#define GSIZE 51
+#define GSIZE GRIDSIZE
 
         record /constants/ cs
         record /geometryst/ g
