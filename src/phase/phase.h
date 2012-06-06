@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <30 May 12 16:07:25 flechsig>  */
+/*   Time-stamp: <06 Jun 12 10:37:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -753,6 +753,7 @@ struct BeamlineType Beamline;
   #define map4to7         map4to7_
   #define mat4to7         mat4to7_
   #define mat7to4         mat7to4_
+  #define matrix_dim      matrix_dim_
   #define mirror7to4      mirror7to4_
   #define mirror4to7      mirror4to7_
   #define misali_8        misali_8_
@@ -820,7 +821,7 @@ void
   GeneratePrintDataFile(),
   getoptipickfile(struct optistruct *, char *),
   ginitdatset (struct gdatset *),
-  GlueLeft(double *, double *), 
+  GlueLeft(double *, double *, int *), 
   GlueXlen(struct xlenmaptype *, struct xlenmaptype *, double *, int *, int), 
   GlueWcXlc(double *, double *, double *, double *, double *, int *),
   gpd(), 
@@ -840,6 +841,7 @@ void
   MakeHorMaps(struct BeamlineType *),
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *, unsigned int),
   make_matrix_8(),
+  matrix_dim(int *, int *),
   minitdatset (struct mdatset *),
   misali_8(),
   MultiplyMatrix(), 
