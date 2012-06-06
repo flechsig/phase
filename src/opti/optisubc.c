@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <23 Apr 12 17:56:47 flechsig>  */
+/*   Time-stamp: <06 Jun 12 11:02:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -473,7 +473,7 @@ void buildsystem(struct BeamlineType *bl)
 	  if (elcounter == 1)
 	    memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
 	  else		                          /* bline zusammenbauen */
-	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI);  
+	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI, &bl->BLOptions.ifl.iord);  
             /* A= B* A */
       	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
 	} 
