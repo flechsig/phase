@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <29 May 12 16:23:39 flechsig>  */
+/*   Time-stamp: <06 Jun 12 17:18:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -182,5 +182,30 @@ int fidx_mX4(int i, int  j, int k, int l, int m)
   return idx;
 } /* end fidx_mX4 */
 
+void complex_in(COMPLEX *a, double re, double im)
+{
+  a->re= re;
+  a->im= im;
+} /* complex_in */
 
+/* c= a-b */
+void complex_minus(COMPLEX *a, COMPLEX *b, COMPLEX *c)
+{
+  c->re= a->re- b->re;
+  c->im= a->im- b->im;
+} /* end complex_minus */
+
+/* c= a+b */
+void complex_plus(COMPLEX *a, COMPLEX *b, COMPLEX *c)
+{
+  c->re= a->re+ b->re;
+  c->im= a->im+ b->im;
+} /* end complex_plus */
+
+/* c= a*b */
+void complex_x(COMPLEX *a, COMPLEX *b, COMPLEX *c)
+{
+  c->re= a->re* b->re- a->im* b->im;
+  c->im= a->re* b->im+ a->im* b->re;
+} /* end complex_x */
 /* end cutils.c */

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <23 Apr 12 17:33:53 flechsig>  */
+/*  Time-stamp: <06 Jun 12 17:17:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -15,10 +15,80 @@
 #endif 
 
 #include <stdio.h>
+#include <math.h>
+#include "cutils.h"
 #include "phase_struct.h"
 #include "phase.h"
 #include "posrc.h"
 #include "common.h" 
+
+
+void psdi4c(struct BeamlineType *bl, struct constants *cs, struct source_results *sr)
+/* replacement of psdi */
+/* psdi is used in phase_integration: fywert and guess */
+{
+  source4c(bl, cs, sr);
+} /* end psdi4c */
+
+void source4c(struct BeamlineType *bl, struct constants *cs, struct source_results *sr)
+/* replacement of src4 */
+{
+  double x, y, f, srdensyre, srdensyim, srdenszre, srdenszim, factorre, factorim, delphi, phase;
+  COMPLEX factor, cmplx1, cmplx2, cmplx3;
+
+#ifdef DEBUG
+  printf("debug: %s source4c called\n", __FILE__);
+#endif
+
+  factorre= cos(delphi+ phase);
+  factorim= sin(delphi+ phase);
+
+
+  source4c_inter_2d(&(bl->posrc), sr, &x, &y);
+
+  if (bl->BLOptions.ifl.ipinarr == 1)
+    {
+      //c        Achtung Übergabeparaneter anpassen
+      //c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+      printf("error: ifl.ipinarr.eq.1-> commented out, factor f undefined\n");
+    }
+  else
+    f=1.0;
+  
+  srdensyre= sr->densyre;
+  srdensyim= sr->densyim;
+  srdenszre= sr->denszre;
+  srdenszim= sr->denszim;
+    
+
+  if (bl->BLOptions.ifl.ispline >= 0)
+    {
+      sr->densyre= f* (srdensyre* factorre- srdensyim* factorim);
+      sr->densyim= f* (srdensyre* factorim+ srdensyim* factorre);
+      sr->denszre= f* (srdenszre* factorre- srdenszim* factorim);
+      sr->denszim= f* (srdenszre* factorim+ srdenszim* factorre);
+      //sr->densy  = (srdensyre+ cs->sqrtm1* srdensyim)* factor;
+      complex_in(&cmplx1, srdensyre, 0.0); 
+      complex_in(&cmplx2, srdensyim, 0.0); 
+      complex_x(&(cs->sqrtm1), &cmplx2, &cmplx3); // cs->sqrtm1* srdensyim - result in 3
+      complex_plus(&cmplx1, &cmplx3, &cmplx2); // + result in 2
+      complex_plus(&cmplx2, &factor, &(sr->densy));
+      //sr->densz  = (srdenszre+ cs->sqrtm1* srdenszim)* factor;
+      complex_in(&cmplx1, srdenszre, 0.0); 
+      complex_in(&cmplx2, srdenszim, 0.0); 
+      complex_x(&(cs->sqrtm1), &cmplx2, &cmplx3); // cs->sqrtm1* srdenszim - result in 3
+      complex_plus(&cmplx1, &cmplx3, &cmplx2); // + result in 2
+      complex_plus(&cmplx2, &factor, &(sr->densz));
+
+    } 
+  else
+    {
+      sr->eya= sr->densyre* f;
+      sr->eyp= sr->eyp+ sr->densyim;
+      sr->eza= sr->denszre* f;
+      sr->ezp= sr->ezp+ sr->denszim;
+    }
+} /* end source4c */
 
 void source4c_ini(struct BeamlineType *bl)
 {
@@ -157,10 +227,60 @@ void source4c_ini(struct BeamlineType *bl)
 #endif
 }  /* source4c_ini */
 
-
-void source4c(struct BeamlineType *bl)
+/* output source_results */
+void source4c_inter_2d(struct source4c *so4, struct source_results *sr, double *xwert, double *ywert)
 {
+  int    ix1, ix2, iy1, iy2;
+  double x1, x2, y1, y2, ddxy, fact3, fact4, fact5, fact6;
+  
+#ifdef DEBUG
+  printf("debug: %s source4c_inter_2d called\n", __FILE__);
+#endif
 
+//  fact1=cs.sqrtm1; ! UF 6.6.12 wird gar nicht genutzt
 
-} /* end source4c */
+//c---------- es wird gleiches Raster fuer Real- und
+//c---------- Imaginaerteil sowie fuer Ey und Ez vorausgesetzt
+//c---------- Aenderungen 17.3.2006
+
+//c---------  Interpolation of Ey
+
+  ix1= (*xwert- so4->xeyremin)/so4->dxeyre + 1;
+  ix2= ix1+ 1;
+  iy1= (*ywert- so4->yeyremin)/so4->dyeyre + 1;
+  iy2= iy1+ 1;
+
+  x1  = so4->gridx[ix1];
+  x2  = so4->gridx[ix2];
+  y1  = so4->gridy[iy1];
+  y2  = so4->gridy[iy2];
+  ddxy= so4->dxeyre* so4->dxeyre;
+
+  fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
+  fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
+  fact5= ((x2- *xwert)* (*ywert- y1))/ ddxy;
+  fact6= ((*xwert- x1)* (*ywert- y1))/ ddxy;
+
+  sr->densyre= fact3* so4->zeyre[ix1+ iy1* so4->ieyrey]+
+    fact4* so4->zeyre[ix2+ iy1* so4->ieyrey]+
+    fact5* so4->zeyre[ix1+ iy2* so4->ieyrey]+
+    fact6* so4->zeyre[ix2+ iy2* so4->ieyrey];
+  
+  sr->densyim= fact3* so4->zeyim[ix1+ iy1* so4->ieyrey]+
+    fact4* so4->zeyim[ix2+ iy1* so4->ieyrey]+
+    fact5* so4->zeyim[ix1+ iy2* so4->ieyrey]+
+    fact6* so4->zeyim[ix2+ iy2* so4->ieyrey];
+  
+  //c---------  Interpolation of Ez, same grid as for Ey
+
+  sr->denszre= fact3* so4->zezre[ix1+ iy1* so4->ieyrey]+
+    fact4* so4->zezre[ix2+ iy1* so4->ieyrey]+
+    fact5* so4->zezre[ix1+ iy2* so4->ieyrey]+
+    fact6* so4->zezre[ix2+ iy2* so4->ieyrey];
+  
+  sr->denszim= fact3* so4->zezim[ix1+ iy1* so4->ieyrey]+
+    fact4* so4->zezim[ix2+ iy1* so4->ieyrey]+
+    fact5* so4->zezim[ix1+ iy2* so4->ieyrey]+
+    fact6* so4->zezim[ix2+ iy2* so4->ieyrey];
+} /* end source4c_inter_2d */
 /* end */

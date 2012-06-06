@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <04 Jun 12 14:33:24 flechsig>  */
+/*   Time-stamp: <06 Jun 12 16:57:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -33,9 +33,11 @@
 
 
 /* neu eingefuegt */
-typedef struct ComplexStruct {
+/*typedef struct ComplexStruct {
 	double re,im; 
-	} COMPLEX ;
+	} COMPLEX ; 
+geht nach cutils.h
+*/
 
 /* !!!! stuct statstics die Feldgrenzen verkleinert
    run time error UF 7.1.2000 */

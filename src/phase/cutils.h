@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <29 May 12 16:23:34 flechsig>  */
+/*   Time-stamp: <06 Jun 12 17:18:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,6 +24,10 @@ typedef struct FortranString
   int length;
 } FString; 
 
+typedef struct ComplexStruct {
+	double re,im; 
+	} COMPLEX ;
+
 
 char    *delversion(char *); /* entfernt Versionsnummer von VMS- Filenamen */
 char    *FnameBody(char *);  /* holt Rumpf von VMS- - Filenamen            */
@@ -32,6 +36,10 @@ void 	 beep(int);
 void	 CheckUser(char *, char *); 
 int 	 CheckFileHeader(FILE *, char *, int *);   
 FString *CreateFString(FString *, char *);
+void     complex_in(COMPLEX *, double, double);
+void     complex_minus(COMPLEX *, COMPLEX *, COMPLEX *);
+void     complex_plus(COMPLEX *, COMPLEX *, COMPLEX *);
+void     complex_x(COMPLEX *, COMPLEX *, COMPLEX *);
 int      fidx_mX4(int, int, int, int, int);
 int      fexists(char *); 
 double   uRandom(double), RVZ();   
