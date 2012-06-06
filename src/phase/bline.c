@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <05 Jun 12 12:57:57 flechsig>  */
+/*   Time-stamp: <06 Jun 12 10:40:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -87,8 +87,8 @@ void BuildElement(int elindex, struct BeamlineType *bl)
     {
       memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
       memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
-      GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
-      GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap); 
+      GlueLeft((double *)listpt->M_StoI, (double *)c, &bl->BLOptions.ifl.iord);    /* A= C * A */  
+      GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap, &bl->BLOptions.ifl.iord); 
       extractmap(listpt->M_StoI, listpt->ypc1, listpt->zpc1, 
 		 listpt->dypc, listpt->dzpc, 
 		 &bl->BLOptions.ifl.iord);
@@ -119,8 +119,8 @@ void BuildElement(int elindex, struct BeamlineType *bl)
 	{
 	  memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
 	  memcpy(listpt->M_ItoS, bl->lmap, msiz); 
-	  GlueLeft((double *)listpt->M_ItoS, (double *)c); 
-	  GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap);
+	  GlueLeft((double *)listpt->M_ItoS, (double *)c, &bl->BLOptions.ifl.iord); 
+	  GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap, &bl->BLOptions.ifl.iord);
 	  extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
 		     listpt->dypc, listpt->dzpc, 
 		     &bl->BLOptions.ifl.iord); 
@@ -212,7 +212,7 @@ void BuildBeamline(struct BeamlineType *bl)
     {
       if (listpt->MDat.Art != kEOESlit)         /* slit not */
 	{
-	  GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); /* GlueLeft(A, B) A= B* A */
+	  GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI, &bl->BLOptions.ifl.iord); /* GlueLeft(A, B) A= B* A */
 	  bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
 	  SetDeltaLambda(bl, listpt); /* resolutionfactor */
 	  printf("BuildBeamline: length of optical axis (bl->xlen0): %lf\n",
@@ -297,7 +297,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	      
 	      /* bei image to source werden die indiv. Matritzen geaendert! */
 	      GlueLeft((double *)bl->M_ItoS, 
-		       (double *)listpt->M_ItoS);
+		       (double *)listpt->M_ItoS, &bl->BLOptions.ifl.iord);
 	    } /* end slit */
 	} /* end loop */
       
@@ -454,7 +454,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	     if (elcounter == 1)
 	       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
 	     else		                   /* bline zusammenbauen */
-	       GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI); 
+	       GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI, &bl->BLOptions.ifl.iord); 
 	     /* GlueLeft(A, B) A= B* A */
         
 	     bl->xlen0+= listpt->geo.r + listpt->geo.rp; 
@@ -535,7 +535,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 
 		/* bei image to source werden die indiv. Matritzen geaendert! */
 		  GlueLeft((double *)bl->M_ItoS, 
-			   (double *)listpt->M_ItoS);
+			   (double *)listpt->M_ItoS, &bl->BLOptions.ifl.iord);
 		} /* end slit */
 	    }
 
@@ -637,7 +637,8 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
         while (elcounter< enummer)      /* */
         {  
           listpt++; 
-	  if (listpt->MDat.Art != kEOESlit) GlueLeft((double *)matrix, (double *)listpt->M_StoI);  /* UF 13.7.11 */
+	  if (listpt->MDat.Art != kEOESlit) GlueLeft((double *)matrix, (double *)listpt->M_StoI, 
+						     &bl->BLOptions.ifl.iord);  /* UF 13.7.11 */
 	  /* matrix multiplik */
           elcounter++; 
         }
@@ -693,7 +694,7 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
 } /* end footprint */
 
 
-void GlueLeft(double *a, double *b)
+void GlueLeft(double *a, double *b, int *iord)
 /* multipliziert quadratische matritzen im fortran Speichermodell        */
 /* Die Matrix des nachfolgenden Elements wird von links aufmultipliziert */
 /* A=  B * A 								 */
@@ -703,20 +704,22 @@ void GlueLeft(double *a, double *b)
 
 #ifdef SEVEN_ORDER
    double C[330][330];
-   dim= 330;
+   int maxdim= 330;
 #else
    double C[70][70];
-   dim= 70;
+   int maxdim= 70;
 #endif
+
+   matrix_dim(iord, &dim); /* use fortran routine to determine dim */
 
    c= &C[0][0];
 
    for (spalt= 0; spalt< dim; spalt++) 
      for (zeil= 0; zeil< dim; zeil++) 
         {
-          c[spalt* dim+ zeil]= 0.0;
+          c[spalt* maxdim+ zeil]= 0.0;
           for (id= 0; id< dim; id++) 
-            c[spalt* dim+ zeil]+= b[id* dim+ zeil]* a[spalt* dim+ id];
+            c[spalt* maxdim+ zeil]+= b[id* maxdim+ zeil]* a[spalt* maxdim+ id];
         }
    memcpy(a, c, sizeof(C));
 }  /* end GlueLeft */
@@ -731,43 +734,43 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
 /* lmap==  lmap * mat 							 */
 {
   double  *c1, *c2, *s1, *s2;
-  int i, j, k, l, m, idx, row, col;
+  int i, j, k, l, m, idx, row, col, dim;
 #ifdef SEVEN_ORDER
   double pl_1c[330], pl_2c[330], pl_1cc[330], pl_2cc[330];
-  int    dim= 330,  maxord= 8;
+  int    maxdim= 330, maxord= 8;
 #else
    double pl_1c[70], pl_2c[70], pl_1cc[70], pl_2cc[70];
-   int    dim= 70, maxord= 5;
+   int    maxdim= 70, maxord= 5;
 #endif  
  
+   matrix_dim(iord, &dim); /* use fortran routine to determine dim */
+   
    /* extract variables from structure */
    c1= (double *)&xlm->xlen1c;
    c2= (double *)&xlm->xlen2c;
    s1= (double *)&xlsum->xlen1c;
    s2= (double *)&xlsum->xlen2c;
 
-   /* UF 4.6.12 maxord oder iord */
    m= 0;
-   for(i= 0; i< maxord; i++)
-     for(j= 0; j< (maxord-i); j++)
-       for(k= 0; k< (maxord-i-j); k++)
-	 for(l= 0; l< (maxord-i-j-k); l++)
+   for(i= 0; i<= *iord; i++)
+     for(j= 0; j<= (*iord-i); j++)
+       for(k= 0; k<= (*iord-i-j); k++)
+	 for(l= 0; l<= (*iord-i-j-k); l++)
 	   {
-	     //idx=i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
-	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */ 
+	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c), maxord sollte hier richtig sein */ 
 	     pl_1c[m]= c1[idx];
 	     pl_2c[m]= c2[idx];
-	     /*	     S= s1[idx]+ s2[idx]; C= c1[idx]+ c2[idx];
-	     printf("idx: %d B: %le, E: %le\n", idx, S, C); */
 	     m++;
 	   } /* pl_*c gefuellt */
+
+   //printf("%s: m= %d\n", __FILE__, m);
 
    for (col= 0; col< dim; col++) 
      {
        pl_1cc[col]= pl_2cc[col]= 0.0;
        for (row= 0; row< dim; row++) 
 	 {
-	   idx= row+ col* dim;                 /* matrix index in Fortran memory model */    
+	   idx= row+ col* maxdim;                 /* matrix index in Fortran memory model */    
 	   pl_1cc[col]+= pl_1c[row]* mat[idx]; /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
 	   pl_2cc[col]+= pl_2c[row]* mat[idx]; /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
 	 }
@@ -777,29 +780,25 @@ void GlueXlen(struct xlenmaptype *xlsum, struct xlenmaptype *xlm,
    if (summe == 1)
      {  
        m= 0;
-       for(i= 0; i< maxord; i++)
-	 for(j= 0; j< (maxord-i); j++)
-	   for(k= 0; k< (maxord-i-j); k++)
-	     for(l= 0; l< (maxord-i-j-k); l++)
+       for(i= 0; i<= *iord; i++)
+	 for(j= 0; j<= (*iord-i); j++)
+	   for(k= 0; k<= (*iord-i-j); k++)
+	     for(l= 0; l<= (*iord-i-j-k); l++)
 	       {
-		 //idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
 		 idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */ 
 		 s1[idx]+= pl_1cc[m];
 		 s2[idx]+= pl_2cc[m];
-		 /*     S= s1[idx]+s2[idx]; C= c1[idx]+ c2[idx];
-			printf("idx: %d B: %le, E: %le\n", idx, S, C);*/
 		 m++;
 	       }
      } 
    else  /* keine summe */
      {
        m= 0;
-       for(i= 0; i< maxord; i++)
-	 for(j= 0; j< (maxord-i); j++)
-	   for(k= 0; k< (maxord-i-j); k++)
-	     for(l= 0; l< (maxord-i-j-k); l++)
+       for(i= 0; i<= *iord; i++)
+	 for(j= 0; j<= (*iord-i); j++)
+	   for(k= 0; k<= (*iord-i-j); k++)
+	     for(l= 0; l<= (*iord-i-j-k); l++)
 	       {
-		 //idx= i+j*maxord+k*maxord*maxord+l*maxord*maxord*maxord;
 		 idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */ 
 		 s1[idx]= pl_1cc[m];
 		 s2[idx]= pl_2cc[m];
@@ -817,59 +816,52 @@ void GlueWcXlc(double *wcs, double *xlcs, double *wc, double *xlc,
 /* maps==  map * mat 							 */
 /* die Matrix und maps sind im Fortran Speichermodel                     */
 {
-  int i, j, k, l, m, idx, row, col; 
+  int i, j, k, l, m, idx, row, col, dim; 
 #ifdef SEVEN_ORDER
-   double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
-   int dim= 330, maxord= 8;
+  double wctmp[330], xlctmp[330], wcc[330], xlcc[330];
+  int    maxdim=330, maxord= 8;
 #else
-   double wctmp[70], xlctmp[70], wcc[70], xlcc[70];
-   int dim= 70, maxord= 5;
+  double wctmp[70], xlctmp[70], wcc[70], xlcc[70];
+  int    maxdim=70, maxord= 5;
 #endif
    
-  printf("\nMultiplikationsroutine wc, xlc, input - not adopted or tested for 7. order\n");
-    
-  /* ?? UF 4.6.2012 maxord oder iord ?? */
-   m= 0;
-   for(i= 0; i< maxord; i++)
-     for(j= 0; j< (maxord-i); j++)
-       for(k= 0; k< (maxord-i-j); k++)
-	 for(l= 0; l< (maxord-i-j-k); l++)
+  matrix_dim(iord, &dim); /* use fortran routine to determine dim */
+  
+  m= 0;
+   for(i= 0; i<= *iord; i++)
+     for(j= 0; j<= (*iord-i); j++)
+       for(k= 0; k<= (*iord-i-j); k++)
+	 for(l= 0; l<= (*iord-i-j-k); l++)
 	   {
-	     //idx=i+j*5+k*25+l*125;              
-	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  /* ?? UF 4.6.2012 maxord oder iord ?? */
+	     idx= fidx_mX4(i, j, k, l, maxord);   /* calc index in Fortan array (cutils.c) maxord should be OK UF 6.6.12 */
 	     wctmp[m] = wc[idx];
 	     xlctmp[m]= xlc[idx];
-/*	     printf("idx: %d wc: %le, xlc: %le\n", m, wc[idx], xlc[idx]);*/
 	     m++;
 	   } /* wctmp gefuellt */
 
-   /* UF 4.6.2012 stimmt denn das- der Matrixindex ist hier unabhaengig von iord ?? */
    for (col= 0; col< dim; col++) 
      {
        wcc[col]= xlcc[col]= 0.0;
        for (row= 0; row< dim; row++) 
 	 {
-	   idx       = col* dim+ row;           /* matrix index in Fortran memory model */
-	   wcc[col] += wctmp[row] * mat[idx];   /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
-	   xlcc[col]+= xlctmp[row]* mat[idx];   /* ?? UF 4.6.2012 !! matrix index unabhaengig von iord */
+	   idx       = col* maxdim+ row;           /* matrix index in Fortran memory model */
+	   wcc[col] += wctmp[row] * mat[idx];   
+	   xlcc[col]+= xlctmp[row]* mat[idx];   
 	 }
      }
   
-   /* ?? UF 4.6.2012 maxord oder iord ?? */
    m= 0;
-   for(i= 0; i< maxord; i++)
-     for(j= 0; j< (maxord-i); j++)
-       for(k= 0; k< (maxord-i-j); k++)
-	 for(l= 0; l< (maxord-i-j-k); l++)
+   for(i= 0; i<= *iord; i++)
+     for(j= 0; j<= (*iord-i); j++)
+       for(k= 0; k<= (*iord-i-j); k++)
+	 for(l= 0; l<= (*iord-i-j-k); l++)
 	   {
-	     // idx=i+j*5+k*25+l*125;             /* ?? UF 4.6.2012 maxord oder iord ?? */ 
 	     idx= fidx_mX4(i, j, k, l, maxord);   /* berechnet den index im Fortan array (cutils.c) */  
 	     wcs[idx] = wcc[m];
 	     xlcs[idx]= xlcc[m];
-	     /*   printf("idx: %d wc: %le, xlc: %le\n", m, wcs[idx], xlcs[idx]);*/
 	     m++;
-	   } /* wctmp gefuellt */
-   
+	   } 
+  
    /*   printf("GlueWcXlc end\n");*/
 }  /* end GlueWcXlc */
 
@@ -1222,8 +1214,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
        
        memcpy(c, listpt->M_StoI, msiz);         /* save  matrix A in C */
        memcpy(listpt->M_StoI, bl->lmap, msiz);  /* copy lmap nach A    */
-       GlueLeft((double *)listpt->M_StoI, (double *)c);    /* A= C * A */  
-       GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap);      
+       GlueLeft((double *)listpt->M_StoI, (double *)c, &bl->BLOptions.ifl.iord);    /* A= C * A */  
+       GlueLeft((double *)listpt->M_StoI, (double *)bl->rmap, &bl->BLOptions.ifl.iord);      
        /* listpt matrix Ok    */
        
        if (bl->BLOptions.SourcetoImage != 1) 
@@ -1231,8 +1223,8 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 	   memcpy(c, listpt->M_ItoS, msiz);  /* save matrix */
 	   memcpy(listpt->M_ItoS, bl->lmap, msiz); 
 	   
-	   GlueLeft((double *)listpt->M_ItoS, (double *)c); 
-	   GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap); 
+	   GlueLeft((double *)listpt->M_ItoS, (double *)c, &bl->BLOptions.ifl.iord); 
+	   GlueLeft((double *)listpt->M_ItoS, (double *)bl->rmap, &bl->BLOptions.ifl.iord); 
 	   /* im to s matrix OK */
 	   
 	   extractmap(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
