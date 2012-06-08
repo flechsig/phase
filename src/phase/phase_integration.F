@@ -583,6 +583,7 @@ c        inorm2 = 41: Beschränkung auf neue Terme
 c        inorm2 = 42: Beschränkung auf alte Terme 
 	 
 c---------------------------------------------------------------------
+        if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph
         if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/ra.xlam_test
         if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/ra.xlam_test
