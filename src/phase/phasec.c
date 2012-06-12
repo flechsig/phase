@@ -719,7 +719,7 @@ void ginitdatset(struct gdatset *x)
    x->rp	= 1000;
    for (i= 0; i< 5; i++) 
      x->xdens[i] = 0; 
-   x->lambda  	 = 0;  
+   x->lambdag  	 = 0;  
    x->dlambda     = 0; 
    x->dlambdaflag = 0; 
    x->inout	= 1;  
