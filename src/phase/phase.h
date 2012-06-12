@@ -504,7 +504,8 @@ struct gdatset
   double r;
   double rp; 
   double xdens[5];  
-  double lambda; 
+  //double lambda; //TODO: i think this is the same as lambdag, should be removed
+  double lambdag; 
   double dlambda;
   int    dlambdaflag;
   int    inout;                                 
