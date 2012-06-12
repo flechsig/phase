@@ -233,6 +233,7 @@ private:
     QGroupBox *gratingGroup;
     QGroupBox *vlsGroup;
     QLineEdit *lineDensity;
+    QLineEdit *lambdagE;
     QCheckBox *nimBox;
     QLineEdit *vls1;
     QLineEdit *vls2;

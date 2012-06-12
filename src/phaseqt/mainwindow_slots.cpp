@@ -919,6 +919,7 @@ void MainWindow::elementApplyBslot()
   md->rmi   = rE     ->text().toDouble();         
   md->rho   = rhoE   ->text().toDouble(); 
 
+  gd->lambdag = lambdagE->text().toDouble()*1E-6;
   gd->xdens[0]= lineDensity->text().toDouble(); 
   gd->xdens[1]= vls1->text().toDouble();
   gd->xdens[2]= vls2->text().toDouble();

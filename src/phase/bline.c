@@ -1428,7 +1428,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20lg     image  distance    \n", listpt->GDat.rp);
      for (i= 0; i< 5; i++) 
        fprintf(f, "%20.10lg  line density x[%d] \n", listpt->GDat.xdens[i], i);
-     fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambda* 1e6); 
+     fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambdag* 1e6); 
      fprintf(f, "%20lg     dlambda [nm]        \n", listpt->GDat.dlambda* 1e6); 
      fprintf(f, "%20d     dlambdaflag        \n", listpt->GDat.dlambdaflag);
      fprintf(f, "%20d     diffraction order  \n", listpt->GDat.inout);
@@ -1899,7 +1899,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
              {
                fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
              } 
-	   listpt->GDat.lambda*= 1e-6;
+	   listpt->GDat.lambdag*= 1e-6;
 	   if (version >= 20091222)
 	     {
 	       fgets(buffer, 80, f); sscanf(buffer, "%lf", &listpt->GDat.dlambda); 
@@ -2197,13 +2197,13 @@ void SetDeltaLambda(struct BeamlineType *bl, struct ElementType *listpt)
        printf(
 "   debug: line dens.: %g, dl %g, cosb %g, lambda %g mm, diffr. order: %lg\n",
 		listpt->GDat.xdens[0], bl->BLOptions.displength, 
-		listpt->geo.cosb, listpt->GDat.lambda, 
+		listpt->geo.cosb, listpt->GDat.lambdag, 
 		(double)(listpt->GDat.inout));
 #endif						
        printf("SetDeltaLambda: Delta Lambda (nm) = %lg * y [mm], ", 
 		bl->deltalambdafactor* 1e6);
        printf("Resolution = %lg / y (mm)\n",  
-	      listpt->GDat.lambda/ bl->deltalambdafactor);  
+	      listpt->GDat.lambdag/ bl->deltalambdafactor);  
        /* printf("*** end SetDeltaLambda ***\n");*/
    } 
    
@@ -2333,8 +2333,10 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   double delta, alpha, beta, theta0, trans, radius, lambda;
   int i;
 
+  printf("LAMBDA = %e\n", x->lambdag);
+  
   theta0= fabs(x->theta0* PI/ 180.0);  
-  lambda= x->lambda;
+  lambda= x->lambdag;
  
   delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
@@ -2344,7 +2346,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
     {
       fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
       fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
-      lambda= x->lambda+ x->dlambda;
+      lambda= x->lambdag+ x->dlambda;
       fprintf(stderr, "debug: lambda: %e, io: %d\n", lambda, x->inout );
       beta= (-1.0)* asin(lambda* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
     }
@@ -2363,6 +2365,9 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   printf("debug: DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
 	 alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
 #endif
+  printf("Geometry set up with alpha: %f, beta: %f, lambda= %g nm.\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
+
+
   if ((x->iflag) == 1)
     {
       radius   = (2.0* x->r* x->rp)/ ((x->r+ x->rp)* cos(theta0));   
@@ -2740,8 +2745,8 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
    //delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
    delta= (double)(x->inout)* asin(lambda0* x->xdens[0]/(2.0* cos(theta0)));
    
-   x->lambda=lambda_local;
-   printf(" \n lambda_local = %enm; lambda0 = %3nm\n",x->lambda, lambda0);
+   x->lambdag=lambda_local;
+   printf(" \n lambda_local = %enm; lambda0 = %3nm\n",x->lambdag, lambda0);
 
 /* FEL2005 */
 /*
@@ -2760,7 +2765,7 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
 /*   beta = (delta- theta0); */
 #ifdef DEBUG
    printf("DefGeometryCM: alpha: %f, beta: %f, lambda_local= %f nm, lambda0= %f nm ==> correct?\n",
-	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambda* 1e6, lambda0* 1e6);
+	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambdag* 1e6, lambda0* 1e6);
 #endif
    if ((x->iflag) == 1)
      {
@@ -2782,7 +2787,7 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
      gout->cosb= cos(beta);
      for (i= 0; i< 5; i++)    /* hier ist 5 richtig - nicht abhaengig von seven order */
          gout->x[i]= x->xdens[i];
-     gout->xlam = x->lambda* (double)(x->inout);
+     gout->xlam = x->lambdag* (double)(x->inout);
    gout->idefl= (x->theta0 > 0.0) ? 1 : -1;
 } /* end DefGeometryCM */
 

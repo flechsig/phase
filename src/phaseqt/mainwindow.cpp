@@ -784,7 +784,8 @@ QWidget *MainWindow::createOpticalElementBox()
   QLabel *imageLabel  = new QLabel(tr("Image (mm)"));
   QLabel *rLabel      = new QLabel(tr("r (mm)"));
   QLabel *rhoLabel    = new QLabel(tr("rho (mm)"));
-
+  
+  
   cffE    = new QLineEdit;
   preE    = new QLineEdit;
   sucE    = new QLineEdit;
@@ -852,6 +853,8 @@ QWidget *MainWindow::createOpticalElementBox()
 
   QLabel *orderLabel   = new QLabel(tr("Diffraction order"));
   QLabel *densityLabel = new QLabel(tr("line density (1/mm)"));
+  QLabel *lambdagLabel  = new QLabel(tr("lambda_g (nm)"));    
+  lambdagE  = new QLineEdit;
   integerSpinBox = new QSpinBox;
   integerSpinBox->setRange(-20, 20);
   integerSpinBox->setSingleStep(1);
@@ -880,13 +883,17 @@ QWidget *MainWindow::createOpticalElementBox()
   // end VLS
 
   QGroupBox *gratingGroup1 = new QGroupBox(tr("g&rating parameter"));
-  QHBoxLayout *gratingLayout1 = new QHBoxLayout;
-  gratingLayout1->addWidget(densityLabel);
-  gratingLayout1->addWidget(lineDensity);
-  gratingLayout1->addWidget(orderLabel);
-  gratingLayout1->addWidget(integerSpinBox);
-  gratingLayout1->addStretch(1);
-  gratingLayout1->addWidget(nimBox);
+//  QHBoxLayout *gratingLayout1 = new QHBoxLayout;
+  QGridLayout *gratingLayout1 = new QGridLayout;
+  
+  gratingLayout1->addWidget(lambdagLabel, 0, 0);
+  gratingLayout1->addWidget(lambdagE, 0, 1);
+  gratingLayout1->addWidget(densityLabel, 1, 0);  
+  gratingLayout1->addWidget(lineDensity, 1, 1);
+  gratingLayout1->addWidget(orderLabel, 1, 2);
+  gratingLayout1->addWidget(integerSpinBox, 1, 3);
+//  gratingLayout1->addStretch(1);
+  gratingLayout1->addWidget(nimBox, 0, 2);  
   gratingGroup1->setLayout(gratingLayout1);
 
   QVBoxLayout *gratingLayout2 = new QVBoxLayout;
@@ -1814,6 +1821,8 @@ void MainWindow::UpdateElementBox(int number)
   l2E ->setText(qst.setNum(md->l2, 'g', 4));
   lsE ->setText(qst.setNum(md->slopel, 'g', 4));
 
+  lambdagE ->setText(qst.setNum(gd->lambdag*1e6,   'f', 6));
+  
   if (gd->iflag) nimBox->setChecked(true); else nimBox->setChecked(false);
 
 #ifdef DEBUG 		      
