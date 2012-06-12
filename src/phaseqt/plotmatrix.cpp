@@ -66,7 +66,8 @@ PlotMatrix::PlotMatrix( int numRows, int numColumns, QWidget *parent ):
             d_data->plotWidgets[row * numColumns + col] = plot;
         }
     }
-
+    
+    parent->setMinimumSize(50, 50); //SG allow smaller graphic window 
     updateLayout();
 }
 
