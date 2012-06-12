@@ -2341,13 +2341,14 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
-
+  fprintf(stderr, "debug: lambda: %e, io: %d, alpha = %f, beta = %f\n", lambda, x->inout,alpha*(180.0/PI),beta*(180.0/PI) );
   if (x->dlambdaflag == 1)
     {
       fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
       fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
       lambda= x->lambdag+ x->dlambda;
-      fprintf(stderr, "debug: lambda: %e, io: %d\n", lambda, x->inout );
+      fprintf(stderr, "debug: lambda: %e, io: %d, alpha = %f, beta = %f\n", lambda, x->inout,alpha,beta );
+
       beta= (-1.0)* asin(lambda* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
     }
 
