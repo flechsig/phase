@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <13 Jun 12 08:40:52 flechsig>  */
+/*  Time-stamp: <13 Jun 12 09:34:45 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -166,7 +166,8 @@ void source4c_ini(struct BeamlineType *bl)
 /* takes integer pointer to beamline struct           */
 /* range test included                                */
 /* !! reads the input from bl->posrc and not sources! */
-void source4c_inter_2d(struct source_results *sr, double *xwert, double *ywert, int *blp)
+/* routine wird gerufen von fortran - daher underscore  */
+void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
   struct BeamlineType *bl;
   struct source4c *so4;
@@ -230,5 +231,5 @@ void source4c_inter_2d(struct source_results *sr, double *xwert, double *ywert, 
     fact4* so4->zezim[ix2+ iy1* so4->ieyrey]+
     fact5* so4->zezim[ix1+ iy2* so4->ieyrey]+
     fact6* so4->zezim[ix2+ iy2* so4->ieyrey];
-} /* end source4c_inter_2d */
+} /* end source4c_inter_2d_ */
 /* end */
