@@ -197,6 +197,8 @@ c
         call tay_sum_6(rtq1,rtq2,opl6,iord)
         call tay_add_6(opl6,q0,iord)
 
+c ok        write(6,*)'================ opl6 ',opl6(0,0,0,0,0,0)
+
 c---------- get dfdw6 and dfdl6 in seventh order
 c       dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw
 c       dfdl6=(dQ1/dl)/sqrt(Q1) + (dQ2/dl)/sqrt(Q2)
@@ -217,8 +219,13 @@ c
         call Tay_inv_6(rtq1,rtq1i,iord)
         call Tay_inv_6(rtq2,rtq2i,iord)
 
+        call Tay_const_6(rtq1i,0.5d0,iord)
+        call Tay_const_6(rtq2i,0.5d0,iord)
+
         call Tay_mult_6(rtq1i,dq1w,dfdw1,iord)
         call Tay_mult_6(rtq2i,dq2w,dfdw2,iord)
+
+        call Tay_const_6(dq0w,-1.d0,iord)
 
         call Tay_sum_6(dfdw1,dfdw2,dfdw6,iord)
         call Tay_add_6(dq0w,dfdw6,iord)
@@ -243,6 +250,15 @@ c       output:  ypc(w,l,y,z)       &  zpc(w,l,y,z)
 c
         imode=2
         call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
+
+c        write(6,*)'================ am.a(0,0)',am.a(0,0)
+c        write(6,*)'================ q0_8(1,0,0,0,0,0)',q0_8(1,0,0,0,0,0)
+c        write(6,*)'================ dq0w_8(0,0,0,0,0,0)',dq0w_8(0,0,0,0,0,0)
+c        write(6,*)'================ dq0w(0,0,0,0,0,0)',dq0w(0,0,0,0,0,0)
+c        write(6,*)'================ dfdw1(0,0,0,0,0,0) ',dfdw1(0,0,0,0,0,0)
+c        write(6,*)'================ dfdw2(0,0,0,0,0,0) ',dfdw2(0,0,0,0,0,0)
+c        write(6,*)'================ dfdw6(0,0,0,0,0,0) ',dfdw6(0,0,0,0,0,0)
+c        write(6,*)'================ ypc(0,0,0,0) ',ypc(0,0,0,0)
 
 c------------- set up eqs. 27 & 28
 c       output: eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
@@ -282,7 +298,7 @@ c
         call replace_6v4v(opl6,ypc,zpc,opl4,iord)  
         call replace_6v4v(xloc1_6,ypc,zpc,xloc1_4,iord)
         call replace_6v4v(xloc2_6,ypc,zpc,xloc2_4,iord)
-	
+
          do i=0,2
          do j=0,2-i
          do k=0,2-i-j
@@ -330,7 +346,7 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
           xlm.xlen1c(0,0,0,0)=xlm.xlen1c(0,0,0,0)-g.r
           xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
         endif
-	
+
 c-------- get further partial derivatives
 
 	call get_partial_derivatives(opl6,ypc1,zpc1,wc,xlc,
