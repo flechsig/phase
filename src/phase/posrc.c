@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <06 Jun 12 17:17:36 flechsig>  */
+/*  Time-stamp: <13 Jun 12 08:40:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -9,6 +9,7 @@
 /*  $Author$  */
 
 /* soure routines for physical optics */
+/* replaces routines in phase_source.F, only source4 is implemented so far, the reason is the extension to unlimited gridsize */
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -22,74 +23,7 @@
 #include "posrc.h"
 #include "common.h" 
 
-
-void psdi4c(struct BeamlineType *bl, struct constants *cs, struct source_results *sr)
-/* replacement of psdi */
-/* psdi is used in phase_integration: fywert and guess */
-{
-  source4c(bl, cs, sr);
-} /* end psdi4c */
-
-void source4c(struct BeamlineType *bl, struct constants *cs, struct source_results *sr)
-/* replacement of src4 */
-{
-  double x, y, f, srdensyre, srdensyim, srdenszre, srdenszim, factorre, factorim, delphi, phase;
-  COMPLEX factor, cmplx1, cmplx2, cmplx3;
-
-#ifdef DEBUG
-  printf("debug: %s source4c called\n", __FILE__);
-#endif
-
-  factorre= cos(delphi+ phase);
-  factorim= sin(delphi+ phase);
-
-
-  source4c_inter_2d(&(bl->posrc), sr, &x, &y);
-
-  if (bl->BLOptions.ifl.ipinarr == 1)
-    {
-      //c        Achtung Übergabeparaneter anpassen
-      //c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
-      printf("error: ifl.ipinarr.eq.1-> commented out, factor f undefined\n");
-    }
-  else
-    f=1.0;
-  
-  srdensyre= sr->densyre;
-  srdensyim= sr->densyim;
-  srdenszre= sr->denszre;
-  srdenszim= sr->denszim;
-    
-
-  if (bl->BLOptions.ifl.ispline >= 0)
-    {
-      sr->densyre= f* (srdensyre* factorre- srdensyim* factorim);
-      sr->densyim= f* (srdensyre* factorim+ srdensyim* factorre);
-      sr->denszre= f* (srdenszre* factorre- srdenszim* factorim);
-      sr->denszim= f* (srdenszre* factorim+ srdenszim* factorre);
-      //sr->densy  = (srdensyre+ cs->sqrtm1* srdensyim)* factor;
-      complex_in(&cmplx1, srdensyre, 0.0); 
-      complex_in(&cmplx2, srdensyim, 0.0); 
-      complex_x(&(cs->sqrtm1), &cmplx2, &cmplx3); // cs->sqrtm1* srdensyim - result in 3
-      complex_plus(&cmplx1, &cmplx3, &cmplx2); // + result in 2
-      complex_plus(&cmplx2, &factor, &(sr->densy));
-      //sr->densz  = (srdenszre+ cs->sqrtm1* srdenszim)* factor;
-      complex_in(&cmplx1, srdenszre, 0.0); 
-      complex_in(&cmplx2, srdenszim, 0.0); 
-      complex_x(&(cs->sqrtm1), &cmplx2, &cmplx3); // cs->sqrtm1* srdenszim - result in 3
-      complex_plus(&cmplx1, &cmplx3, &cmplx2); // + result in 2
-      complex_plus(&cmplx2, &factor, &(sr->densz));
-
-    } 
-  else
-    {
-      sr->eya= sr->densyre* f;
-      sr->eyp= sr->eyp+ sr->densyim;
-      sr->eza= sr->denszre* f;
-      sr->ezp= sr->ezp+ sr->denszim;
-    }
-} /* end source4c */
-
+/* reads the source files and puts the results into bl->posrc */
 void source4c_ini(struct BeamlineType *bl)
 {
   FILE *fa, *fb, *fc, *fd;
@@ -227,15 +161,29 @@ void source4c_ini(struct BeamlineType *bl)
 #endif
 }  /* source4c_ini */
 
-/* output source_results */
-void source4c_inter_2d(struct source4c *so4, struct source_results *sr, double *xwert, double *ywert)
+/* output interpolated source_results for x and y     */
+/* c replacement of source_inter_2d in phase_source.F */
+/* takes integer pointer to beamline struct           */
+/* range test included                                */
+/* !! reads the input from bl->posrc and not sources! */
+void source4c_inter_2d(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
+  struct BeamlineType *bl;
+  struct source4c *so4;
   int    ix1, ix2, iy1, iy2;
   double x1, x2, y1, y2, ddxy, fact3, fact4, fact5, fact6;
   
 #ifdef DEBUG
   printf("debug: %s source4c_inter_2d called\n", __FILE__);
 #endif
+
+  bl = (struct BeamlineType *)blp;
+  so4= (struct source4c *)&(bl->posrc);
+
+  if ((*xwert > so4->xeyremin) && (*xwert < so4->xeyremax) && 
+      (*ywert > so4->yeyremin) && (*ywert < so4->yeyremax)) 
+    return;
+
 
 //  fact1=cs.sqrtm1; ! UF 6.6.12 wird gar nicht genutzt
 
