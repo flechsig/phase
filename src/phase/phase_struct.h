@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <06 Jun 12 16:57:19 flechsig>  */
+/*   Time-stamp: <13 Jun 12 09:18:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -342,6 +342,7 @@ struct simps1 {
 	   int  matrel;
 	   int  igrating,ipinarr,ilimits;
 	   int  ipath; 
+	   int  pst_mode;
         };  
 
 /* ----------------- statistics ----------------------------------*/
