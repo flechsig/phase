@@ -456,7 +456,7 @@ c------- end 19.1.2000 ----------------------------------
 
 	factorre=dcos(delphi+phase)
         factorim=dsin(delphi+phase)
-        if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
+        if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*(delphi+phase))
 
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
