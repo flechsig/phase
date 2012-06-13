@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Jun 12 10:40:49 flechsig>  */
+/*   Time-stamp: <13 Jun 12 08:59:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -27,6 +27,16 @@
 #include "common.h" 
 
 extern const char *global_rundir;
+
+/* debugging routine to check the contents of the integer pointer */
+/* transfer bl pointer from c via fortran to c                    */
+void debug_beamline_type_c_(int *ip)
+{
+  struct BeamlineType *bl;
+  bl= (struct BeamlineType *)ip;
+  printf("%s %d position: %d\n", __FILE__, ip, bl->position);
+} /* end debug_beamline_type_c_ */
+
 
 /* builds one element */
 void BuildElement(int elindex, struct BeamlineType *bl)  
