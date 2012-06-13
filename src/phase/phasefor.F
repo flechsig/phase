@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <25 Apr 12 14:07:36 flechsig> 
+c$$$ Time-stamp: <13 Jun 12 09:03:45 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -39,6 +39,16 @@ c subroutine psdi_gh(yp,zp,dyp,dzp,dens,s0)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 c UF 0804 routine pstf ausgelagert in separate file
+
+c ****** debugging routine see also debug_beamline_type_c
+	subroutine debug_beamline_type_f(ip)
+	integer ip
+        write(*,*)'fortran: debug_beamline_type_f: pointer: ',ip   
+	call debug_beamline_type_c(ip)
+	return
+	end 
+c******** end debug_beamline_type
+
 
 c*********************************************************
 	function facult(n) 
