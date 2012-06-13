@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <13 Jun 12 09:27:02 flechsig>  */
+/*   Time-stamp: <13 Jun 12 17:10:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -474,7 +474,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   xirp = XMALLOC(struct integration_results, 1);
   stp  = XMALLOC(struct statistics, 1);
   rap  = XMALLOC(struct rayst, 1);
-  if (bl->BLOptions.ifl.pst_mode == 2)                       /* pst_mode == 2 allocate a copy of m4p */
+  if (bl->BLOptions.ifl.pst_mode >= 2)                       /* pst_mode == 2 allocate a copy of m4p */
     { 
       m4p  = XMALLOC(struct map4, 1);
       fill_m4(bl, m4p);
@@ -542,7 +542,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   XFREE(xirp);
   XFREE(stp);
   XFREE(rap);
-  if (bl->BLOptions.ifl.pst_mode == 2) XFREE(m4p);
+  if (bl->BLOptions.ifl.pst_mode >= 2) XFREE(m4p);
 } /* end pstc_i */
 
 /* grating special- returns struct mirrortype and struct geometryst of a grating in the beamline,
