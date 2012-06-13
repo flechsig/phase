@@ -1536,11 +1536,11 @@ void InitGeometryBox(struct gdatset *gx)
 
 /* modification: 13 Mar 98 08:38:13 flechsig */
   text= XmTextGetString(widget_array[kEBLT31a]);    
-  sscanf(text, "%lf", &gx->lambda); 
-  gx->lambda*= 1e-6;
+  sscanf(text, "%lf", &gx->lambdag); 
+  gx->lambdag*= 1e-6;
   XtFree(text); 
 
-  fi  = (double)(gx->inout)* asin(gx->lambda* gx->xdens[0]/
+  fi  = (double)(gx->inout)* asin(gx->lambdag* gx->xdens[0]/
 				  (2.0* cos(teta)));
   cff= cos(fi- teta)/ cos(fi+ teta);    /* cos(beta)/ cos(alpha); */
 
@@ -1583,12 +1583,12 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   /* from geometrybox */    
   teta= fabs(y->theta0* PI/ 180.0);   /* theta */
   text= XmTextGetString(widget_array[kEBLT31a]);
-  sscanf(text, "%lf", &y->lambda);
-  y->lambda*= 1e-6;
+  sscanf(text, "%lf", &y->lambdag);
+  y->lambdag*= 1e-6;
   XtFree(text);
 
   fi = (double)(y->inout)* 
-    asin(y->lambda* y->xdens[0]/ (2.0* cos(teta)));
+    asin(y->lambdag* y->xdens[0]/ (2.0* cos(teta)));
   cff= cos(fi- teta)/ cos(fi+ teta);
 
   if ((sw == kEOEDefaults) || (sw == kFFileBoxOK)) 
@@ -1946,7 +1946,7 @@ void GetGeometry(struct PHASEset *ph, struct gdatset *gp)
   cff wird hier nicht ausgelesen */
  
  /* aus rudimentaeren Gruenden */
-  gp->lambda= Beamline.BLOptions.lambda;
+  gp->lambdag= Beamline.BLOptions.lambda;
   gp->iflag= 
     (XmToggleButtonGetState(widget_array[kEGNITranslation]) == TRUE) ? 1 : 0; 
   XtFree(text);
@@ -2100,7 +2100,7 @@ void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
   sscanf(text, "%lf", &cff);
   if (cff != 1.0)
     {
-      FixFocus(cff, gdat->lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
+      FixFocus(cff, gdat->lambdag, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
       snprintf(buffer, 255, "%.4f", theta0);  
