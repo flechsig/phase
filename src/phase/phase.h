@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <11 Jun 12 16:13:20 flechsig>  */
+/*   Time-stamp: <13 Jun 12 09:16:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -647,7 +647,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* 24.6.96 */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, pst_mode;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps;
   double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
