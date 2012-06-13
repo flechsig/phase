@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <13 Jun 12 09:30:10 flechsig> 
+c$$$ Time-stamp: <13 Jun 12 09:36:29 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -461,10 +461,10 @@ c------- end 19.1.2000 ----------------------------------
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
 
-        if (ifl.pst_mode.gt.0)then
+        if (ifl.pst_mode.eq.3)then
 c UF 13.6.12
 c new code with dynamic source does also the range test 
-c	   call source4c_inter_2d(cs,xwert,ywert,sr,blp);
+	   call source4c_inter_2d(cs,xwert,ywert,sr,blp);
         else
 c original code von JB
 	   if(  ((xwert.gt.so4.xeyremin)).and.
