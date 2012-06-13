@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <23 May 12 15:56:49 flechsig> 
+c$$$ Time-stamp: <13 Jun 12 09:19:23 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -461,6 +461,12 @@ c------- end 19.1.2000 ----------------------------------
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
 
+        if (ifl.pst_mode.gt.0)then
+c UF 13.6.12
+c new code with dynamic source does also the range test 
+	call source4c_inter_2d(cs,xwert,ywert,sr,blp);
+        else
+c original code von JB
 	if(  ((xwert.gt.so4.xeyremin)).and.
      &	     ((xwert.lt.so4.xeyremax)).and.
      &	     ((ywert.gt.so4.yeyremin)).and.
@@ -469,6 +475,8 @@ c------- end 19.1.2000 ----------------------------------
 	call source_inter_2d(so4,cs,xwert,ywert,sr)
 
 	endif	! min, max
+	endif
+
 
 	if(ifl.ipinarr.eq.1)then
 c        Achtung Übergabeparaneter anpassen
