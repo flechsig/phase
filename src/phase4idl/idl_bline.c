@@ -191,7 +191,7 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
      fprintf(f, "%20lg     image  distance    \n", bl->ElementList[elnumber-1].GDat.rp);
      for (i= 0; i< 5; i++) 
        fprintf(f, "%20lg     line density x[%d] \n", bl->ElementList[elnumber-1].GDat.xdens[i], i);
-     fprintf(f, "%20lg     lambda [nm]         \n", bl->ElementList[elnumber-1].GDat.lambda* 1e6); 
+     fprintf(f, "%20lg     lambda [nm]         \n", bl->ElementList[elnumber-1].GDat.lambdag* 1e6); 
      fprintf(f, "%20d     diffraction order  \n", bl->ElementList[elnumber-1].GDat.inout);
      fprintf(f, "%20d     flag               \n", bl->ElementList[elnumber-1].GDat.iflag);   
      fprintf(f, "%20d     azimut * Pi/2      \n", bl->ElementList[elnumber-1].GDat.azimut);   
@@ -576,7 +576,7 @@ int pha4idlReadBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
              {
                fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
              } 
-	     bl->ElementList[elnumber-1].GDat.lambda*= 1e-6;
+	     bl->ElementList[elnumber-1].GDat.lambdag*= 1e-6;
              fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].GDat.inout);  
              fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].GDat.iflag);  
              fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].GDat.azimut); 
