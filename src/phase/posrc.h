@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <13 Jun 12 08:40:59 flechsig>  */
+/*  Time-stamp: <13 Jun 12 09:34:55 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -15,6 +15,6 @@
 #define POSRC_H
 
 void source4c_ini(struct BeamlineType *);
-void source4c_inter_2d(struct source_results *, double *, double *, int *);
+void source4c_inter_2d_(struct source_results *, double *, double *, int *);
 #endif 
 /* end POSRC_H */
