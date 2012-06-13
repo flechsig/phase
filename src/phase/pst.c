@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <21 May 12 16:10:07 flechsig>  */
+/*   Time-stamp: <13 Jun 12 09:27:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -259,7 +259,7 @@ void PST(struct BeamlineType *bl)
    printf("debug: pst.c: allocating memory for structs\n");
 #endif
  
-   if (bl->BLOptions.pst_mode == 0)                       /* pst_mode == 0 the fortran version */
+   if (bl->BLOptions.ifl.pst_mode == 0)                       /* pst_mode == 0 the fortran version */
      { 
        
 #ifdef DEBUG
@@ -407,7 +407,7 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
   bl->BLOptions.PSO.intmod= 2;
 
   initconstants(&cs);
-  if (bl->BLOptions.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
+  if (bl->BLOptions.ifl.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
     { 
       printf("allocate and fill m4p in pstc\n");
       m4p = XMALLOC(struct map4, 1);
@@ -449,7 +449,7 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
   fclose(fd);
 #endif
 
-  if (bl->BLOptions.pst_mode == 1) XFREE(m4p);
+  if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
   printf("stop intensity calculation (end pstc)\n");
 } /* end pstc */
 
@@ -474,7 +474,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   xirp = XMALLOC(struct integration_results, 1);
   stp  = XMALLOC(struct statistics, 1);
   rap  = XMALLOC(struct rayst, 1);
-  if (bl->BLOptions.pst_mode == 2)                       /* pst_mode == 2 allocate a copy of m4p */
+  if (bl->BLOptions.ifl.pst_mode == 2)                       /* pst_mode == 2 allocate a copy of m4p */
     { 
       m4p  = XMALLOC(struct map4, 1);
       fill_m4(bl, m4p);
@@ -542,7 +542,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   XFREE(xirp);
   XFREE(stp);
   XFREE(rap);
-  if (bl->BLOptions.pst_mode == 2) XFREE(m4p);
+  if (bl->BLOptions.ifl.pst_mode == 2) XFREE(m4p);
 } /* end pstc_i */
 
 /* grating special- returns struct mirrortype and struct geometryst of a grating in the beamline,

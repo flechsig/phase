@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <13 Jun 12 08:59:37 flechsig>  */
+/*   Time-stamp: <13 Jun 12 09:22:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1645,7 +1645,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     flag dz '' (PS Source)\n", op->PSO.PSSource.dzhard);  
    fprintf(f,"%20d     flag <> 2 fixed grid integr.\n", op->PSO.intmod); 
    fprintf(f,"%20d     use (old) REDUCE maps (up to 4th order) \n", op->REDUCE_maps);            /* new sep 2011 */
-   fprintf(f,"%20d     pst_mode (0: pstf.F, 1: pstc, 2: pstc_with m2p)\n", op->pst_mode);        /* new May 2012 */
+   fprintf(f,"%20d     pst_mode (0: pstf.F, 1: pstc, 2: pstc_with m2p)\n", op->ifl.pst_mode);        /* new May 2012 */
   
 /* end options section */ 
 
@@ -2148,7 +2148,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
        fscanf(f, " %d %[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
        if (version >= 20110902) fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
-       if (version >= 20120508) fscanf(f, " %d %[^\n]s %c", &op->pst_mode, buffer, &buf);
+       if (version >= 20120508) fscanf(f, " %d %[^\n]s %c", &op->ifl.pst_mode, buffer, &buf);
      } else rcode= -1;  /* end OPTIONS */     
 
    if (version >= 20120320)

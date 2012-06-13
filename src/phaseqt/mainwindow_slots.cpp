@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <23 May 12 15:38:03 flechsig> 
+//  Time-stamp: <13 Jun 12 09:25:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -136,8 +136,8 @@ void MainWindow::activateProc(const QString &action)
 	  
 	  Test4Grating(myparent->myBeamline(), &am, &g);
           
-	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
-	  if (myparent->myBeamline()->BLOptions.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
+	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
+	  if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
 	    
 	  if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
 	  initconstants(csp_cpp);
@@ -1667,6 +1667,7 @@ void MainWindow::selectElement()
   item= elementList->currentItem();
   groupBox1->setTitle(item->text());  // set text header
   UpdateElementBox(elementnumber);
+  debug_beamline_type_f((int *)myparent->myBeamline());
 } // selectElement
 
 // UF selection slot

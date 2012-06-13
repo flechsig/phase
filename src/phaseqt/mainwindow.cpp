@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <21 May 12 10:48:47 flechsig> 
+//  Time-stamp: <13 Jun 12 09:24:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1678,9 +1678,9 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 64:
-      if (!init) scanned= sscanf(text, "%d", &op->pst_mode);
-      if ((scanned == EOF) || (scanned == 0)) op->pst_mode= 0;   // default
-      qst.setNum(op->pst_mode);
+      if (!init) scanned= sscanf(text, "%d", &op->ifl.pst_mode);
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.pst_mode= 0;   // default
+      qst.setNum(op->ifl.pst_mode);
       break;
 
 #ifdef XXXTEMPLATE
