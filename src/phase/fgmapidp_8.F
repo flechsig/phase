@@ -191,13 +191,10 @@ c
         call Tay_sqrt_6(q1,rtq1,iord)  
         call Tay_sqrt_6(q2,rtq2,iord)  
 
-        call tay_sum_6(rtq1,q0,xloc1_6,iord)
+        call tay_copy_6(rtq1,xloc1_6,iord)
         call tay_copy_6(rtq2,xloc2_6,iord)
 
         call tay_sum_6(rtq1,rtq2,opl6,iord)
-        call tay_add_6(opl6,q0,iord)
-
-c ok        write(6,*)'================ opl6 ',opl6(0,0,0,0,0,0)
 
 c---------- get dfdw6 and dfdl6 in seventh order
 c       dfdw6=(dQ1/dw)/sqrt(Q1) + (dQ2/dw)/sqrt(Q2) + dQ0/dw
