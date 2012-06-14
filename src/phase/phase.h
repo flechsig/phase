@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <13 Jun 12 09:16:21 flechsig>  */
+/*   Time-stamp: <14 Jun 12 13:25:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -861,28 +861,30 @@ void
   PST(struct BeamlineType *), 
   pstc(struct BeamlineType *, struct mirrortype *, struct geometryst *),
   pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *, struct mirrortype *, struct geometryst *),
-  pstf(struct PSImageType *psip, struct PSOptionsType *PSO,
-       double *lambda, int *iord, 
+  pstf(struct PSImageType *, struct PSOptionsType *,
+       double *, int *, 
 #ifdef SEVEN_ORDER
-       MAPTYPE_8X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+       MAPTYPE_8X4 *, MAPTYPE_8X4 *,        
 #else
-       MAPTYPE_5X4 *xlen1c, MAPTYPE_8X4 *xlen2c,        
+       MAPTYPE_5X4 *, MAPTYPE_8X4 *,        
 #endif
-       double *xlen0, MAP7TYPE *ypc1, MAP7TYPE *zpc1, MAP7TYPE *dypc, MAP7TYPE *dzpc,
-       MAP7TYPE *wc, MAP7TYPE *xlc,
-       double *y, double *z,
-       double *psd, double *stfd1phmaxc,
-       double *stinumbc, double *s1c,
-       double *s2c, double *s3c,
-       double *eyrec, double *ezrec,
-       double *eyimc, double *ezimc,
-       struct geometryst *gp, struct mirrortype *mirp,
-       struct sources *src, struct apertures *apr, struct rayst *ra, struct control_flags *ifl,
-       struct integration *xi, struct integration_results *xir, struct statistics *st, 
-       MAP7TYPE *fdetc, MAP7TYPE *fdetphc, MAP7TYPE *fdet1phc, MAP7TYPE *fdetphca, MAP7TYPE *fdetphcb),
+       double *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *,
+       MAP7TYPE *wc, MAP7TYPE *,
+       double *y, double *,
+       double *psd, double *,
+       double *stinumbc, double *,
+       double *s2c, double *,
+       double *eyrec, double *,
+       double *eyimc, double *,
+       struct geometryst *, struct mirrortype *,
+       struct sources *, struct apertures *, struct rayst *, struct control_flags *,
+       struct integration *, struct integration_results *, struct statistics *, 
+       MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, int *),
   
 
-  adaptive_int(struct map4 *, struct geometryst *, struct mirrortype *, struct sources *, struct apertures *, struct constants *, struct rayst *, struct control_flags *, struct integration *, struct integration_results *, struct statistics *, struct psimagest *),
+  adaptive_int(struct map4 *, struct geometryst *, struct mirrortype *, struct sources *, struct apertures *, 
+	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
+	       struct integration_results *, struct statistics *, struct psimagest *, int *),
   PutPHASE(struct  PHASEset *, char *), 
   RayTracec(struct BeamlineType *),
   RayTraceFull(struct BeamlineType *), 

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <09 May 12 13:20:35 flechsig> 
+c$$$ Time-stamp: <14 Jun 12 13:07:38 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 c May 2012 this routine is obsolete - 
@@ -16,11 +16,11 @@ c*************************** neu **************************
      &                  eyimc,ezimc,
      &                  g,am,src,apr,
      &                  ra,ifl,xi,xir,st,
-     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb)       
+     &                  fdetc,fdetphc,fdet1phc,fdet1phca,fdet1phcb, blp)       
 c*************************** neu **************************  
 
         implicit none
-
+        integer blp
 c a trick to have the struct only in the ./phase and find it from opti 
 #include '../phase/phase_struct.F'
 
@@ -232,7 +232,7 @@ c************* save initial coordinates ****************
 c******* start of adaptive grid integration *************************** 
 c           write(6,*)'call adaptive_int'
            call adaptive_int(m4,g,am,src,apr,
-     .           cs,ra,ifl,xi,xir,st,s)  
+     .           cs,ra,ifl,xi,xir,st,s,blp)  
 c           write(6,*)'returned from adaptive_int'
             if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)

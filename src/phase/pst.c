@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <14 Jun 12 12:37:49 flechsig>  */
+/*   Time-stamp: <14 Jun 12 13:08:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -288,7 +288,8 @@ void PST(struct BeamlineType *bl)
 	    &bl->BLOptions.xi, xirp, 
 	    stp,            &bl->fdetc,     
 	    &bl->fdetphc,   &bl->fdet1phc, 
-	    &bl->fdet1phca, &bl->fdet1phcb);
+	    &bl->fdet1phca, &bl->fdet1phcb,
+	    (int *)bl);
 
        printf("copy simpson results\n");
        memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*4008);

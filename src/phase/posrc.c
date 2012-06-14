@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <13 Jun 12 09:34:45 flechsig>  */
+/*  Time-stamp: <14 Jun 12 15:47:40 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -174,17 +174,22 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   int    ix1, ix2, iy1, iy2;
   double x1, x2, y1, y2, ddxy, fact3, fact4, fact5, fact6;
   
-#ifdef DEBUG
-  printf("debug: %s source4c_inter_2d called\n", __FILE__);
+#ifdef DEBUG1
+  printf("debug: %s source4c_inter_2d_ called\n\n", __FILE__);
 #endif
 
   bl = (struct BeamlineType *)blp;
   so4= (struct source4c *)&(bl->posrc);
 
+#ifdef DEBUG1
+  printf("debug: %s : x= %f, y= %f, position: %d\n", __FILE__, *xwert, *ywert, bl->position);
+#endif
+
   if ((*xwert > so4->xeyremin) && (*xwert < so4->xeyremax) && 
       (*ywert > so4->yeyremin) && (*ywert < so4->yeyremax)) 
     return;
 
+  
 
 //  fact1=cs.sqrtm1; ! UF 6.6.12 wird gar nicht genutzt
 

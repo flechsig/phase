@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <13 Jun 12 09:22:36 flechsig>  */
+/*   Time-stamp: <14 Jun 12 13:37:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -34,7 +34,7 @@ void debug_beamline_type_c_(int *ip)
 {
   struct BeamlineType *bl;
   bl= (struct BeamlineType *)ip;
-  printf("%s %d position: %d\n", __FILE__, ip, bl->position);
+  printf("%s debug_beamline_type_c_: %d position: %d\n", __FILE__, ip, bl->position);
 } /* end debug_beamline_type_c_ */
 
 
