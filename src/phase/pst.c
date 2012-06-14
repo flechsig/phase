@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <13 Jun 12 17:10:38 flechsig>  */
+/*   Time-stamp: <14 Jun 12 12:37:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -259,7 +259,7 @@ void PST(struct BeamlineType *bl)
    printf("debug: pst.c: allocating memory for structs\n");
 #endif
  
-   if (bl->BLOptions.ifl.pst_mode == 0)                       /* pst_mode == 0 the fortran version */
+   if (bl->BLOptions.ifl.pst_mode <= 0)                       /* pst_mode == 0 the fortran version */
      { 
        
 #ifdef DEBUG
@@ -511,7 +511,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   stp->inumzan  = 0;
   stp->inumyan  = 0;
 
-  adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp);
+  adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
 
   if (bl->BLOptions.ifl.ispline == -1) 
     {
