@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Jun 12 15:47:40 flechsig>  */
+/*  Time-stamp: <14 Jun 12 17:45:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -27,6 +27,7 @@
 void source4c_ini(struct BeamlineType *bl)
 {
   FILE *fa, *fb, *fc, *fd;
+  struct source4c *so4;
   int i, j;
   
 #ifdef DEBUG
@@ -73,9 +74,9 @@ void source4c_ini(struct BeamlineType *bl)
   
   for (j=0; j< bl->posrc.ieyrey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.ieyrex; i++) 
-      fscanf(fa, "%f %f %f", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyre[i+ j* bl->posrc.ieyrex]);
-  
-  bl->posrc.xeyremin= bl->posrc.gridx[0];
+      fscanf(fa, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyre[i+ j* bl->posrc.ieyrex]);
+
+  bl->posrc.xeyremin= bl->posrc.gridx[0]; 
   bl->posrc.yeyremin= bl->posrc.gridy[0];
   bl->posrc.xeyremax= bl->posrc.gridx[bl->posrc.ieyrex- 1];
   bl->posrc.yeyremax= bl->posrc.gridy[bl->posrc.ieyrey- 1];
@@ -96,7 +97,7 @@ void source4c_ini(struct BeamlineType *bl)
   for (j=0; j< bl->posrc.ieyimy; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.ieyimx; i++) 
       {
-	fscanf(fb, "%f %f %f", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyim[i+ j* bl->posrc.ieyimx]);
+	fscanf(fb, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyim[i+ j* bl->posrc.ieyimx]);
 	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.ieyimx]*= -1.0;
       }
   
@@ -120,7 +121,7 @@ void source4c_ini(struct BeamlineType *bl)
   
   for (j=0; j< bl->posrc.iezrey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iezrex; i++) 
-      fscanf(fc, "%f %f %f", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zezre[i+ j* bl->posrc.iezrex]);
+      fscanf(fc, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zezre[i+ j* bl->posrc.iezrex]);
   
   bl->posrc.xezremin= bl->posrc.gridx[0];
   bl->posrc.yezremin= bl->posrc.gridy[0];
@@ -143,7 +144,7 @@ void source4c_ini(struct BeamlineType *bl)
   for (j=0; j< bl->posrc.iezimy; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iezimx; i++) 
       {
-	fscanf(fd, "%f %f %f", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zezim[i+ j* bl->posrc.iezimx]);
+	fscanf(fd, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zezim[i+ j* bl->posrc.iezimx]);
 	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iezimx]*= -1.0;
       }
   
@@ -158,6 +159,11 @@ void source4c_ini(struct BeamlineType *bl)
   
 #ifdef DEBUG
   printf("debug: source4c_ini done\n");
+  so4= (struct source4c *)&(bl->posrc);
+  printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
+	 bl->posrc.xeyremin, 0.,  bl->posrc.xeyremax,  bl->posrc.yeyremin, 0., bl->posrc.yeyremax);
+  printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
+	 so4->xeyremin, 0., so4->xeyremax,  so4->yeyremin, 0., so4->yeyremax);
 #endif
 }  /* source4c_ini */
 
@@ -183,12 +189,16 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 #ifdef DEBUG1
   printf("debug: %s : x= %f, y= %f, position: %d\n", __FILE__, *xwert, *ywert, bl->position);
+  printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
+	 so4->xeyremin, *xwert, so4->xeyremax,  so4->yeyremin, *ywert, so4->yeyremax);
 #endif
 
-  if ((*xwert > so4->xeyremin) && (*xwert < so4->xeyremax) && 
-      (*ywert > so4->yeyremin) && (*ywert < so4->yeyremax)) 
-    return;
-
+  if ((*xwert < so4->xeyremin) || (*xwert > so4->xeyremax) || 
+      (*ywert < so4->yeyremin) || (*ywert > so4->yeyremax)) 
+    {
+      //      printf("out of range: %f, %f \n", *xwert , *ywert);
+      return;
+    }
   
 
 //  fact1=cs.sqrtm1; ! UF 6.6.12 wird gar nicht genutzt
@@ -199,42 +209,48 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 //c---------  Interpolation of Ey
 
-  ix1= (*xwert- so4->xeyremin)/so4->dxeyre + 1;
+// im c- code muss die +1 weg
+
+  ix1= (int)((*xwert- so4->xeyremin)/so4->dxeyre);
   ix2= ix1+ 1;
-  iy1= (*ywert- so4->yeyremin)/so4->dyeyre + 1;
+  iy1= (int)((*ywert- so4->yeyremin)/so4->dyeyre);
   iy2= iy1+ 1;
+
 
   x1  = so4->gridx[ix1];
   x2  = so4->gridx[ix2];
   y1  = so4->gridy[iy1];
   y2  = so4->gridy[iy2];
-  ddxy= so4->dxeyre* so4->dxeyre;
+  ddxy= so4->dxeyre* so4->dxeyre;             // muesste das nicht dyeyre sein UF 14.6.12
 
   fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
   fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
   fact5= ((x2- *xwert)* (*ywert- y1))/ ddxy;
   fact6= ((*xwert- x1)* (*ywert- y1))/ ddxy;
 
-  sr->densyre= fact3* so4->zeyre[ix1+ iy1* so4->ieyrey]+
-    fact4* so4->zeyre[ix2+ iy1* so4->ieyrey]+
-    fact5* so4->zeyre[ix1+ iy2* so4->ieyrey]+
-    fact6* so4->zeyre[ix2+ iy2* so4->ieyrey];
+  sr->densyre= fact3* so4->zeyre[ix1+ iy1* so4->ieyrex]+
+    fact4* so4->zeyre[ix2+ iy1* so4->ieyrex]+
+    fact5* so4->zeyre[ix1+ iy2* so4->ieyrex]+
+    fact6* so4->zeyre[ix2+ iy2* so4->ieyrex];
   
-  sr->densyim= fact3* so4->zeyim[ix1+ iy1* so4->ieyrey]+
-    fact4* so4->zeyim[ix2+ iy1* so4->ieyrey]+
-    fact5* so4->zeyim[ix1+ iy2* so4->ieyrey]+
-    fact6* so4->zeyim[ix2+ iy2* so4->ieyrey];
+  sr->densyim= fact3* so4->zeyim[ix1+ iy1* so4->ieyrex]+
+    fact4* so4->zeyim[ix2+ iy1* so4->ieyrex]+
+    fact5* so4->zeyim[ix1+ iy2* so4->ieyrex]+
+    fact6* so4->zeyim[ix2+ iy2* so4->ieyrex];
   
   //c---------  Interpolation of Ez, same grid as for Ey
 
-  sr->denszre= fact3* so4->zezre[ix1+ iy1* so4->ieyrey]+
-    fact4* so4->zezre[ix2+ iy1* so4->ieyrey]+
-    fact5* so4->zezre[ix1+ iy2* so4->ieyrey]+
-    fact6* so4->zezre[ix2+ iy2* so4->ieyrey];
+  sr->denszre= fact3* so4->zezre[ix1+ iy1* so4->ieyrex]+
+    fact4* so4->zezre[ix2+ iy1* so4->ieyrex]+
+    fact5* so4->zezre[ix1+ iy2* so4->ieyrex]+
+    fact6* so4->zezre[ix2+ iy2* so4->ieyrex];
   
-  sr->denszim= fact3* so4->zezim[ix1+ iy1* so4->ieyrey]+
-    fact4* so4->zezim[ix2+ iy1* so4->ieyrey]+
-    fact5* so4->zezim[ix1+ iy2* so4->ieyrey]+
-    fact6* so4->zezim[ix2+ iy2* so4->ieyrey];
+  sr->denszim= fact3* so4->zezim[ix1+ iy1* so4->ieyrex]+
+    fact4* so4->zezim[ix2+ iy1* so4->ieyrex]+
+    fact5* so4->zezim[ix1+ iy2* so4->ieyrex]+
+    fact6* so4->zezim[ix2+ iy2* so4->ieyrex];
+#ifdef DEBUG1
+  printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
+#endif
 } /* end source4c_inter_2d_ */
 /* end */
