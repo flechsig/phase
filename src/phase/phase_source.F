@@ -421,6 +421,7 @@ c	has to be checked for VLS grating
 c--------------------------------------------------------
 c
 c	22.3.2006
+
 	w2=ra.oe.w*ra.oe.w
 	w3=w2*ra.oe.w
 	w4=w3*ra.oe.w
@@ -442,7 +443,7 @@ c------- signs changed 17.6.2006
 	nn=xnn
 
 	if(ifl.ispline.ge.0)then
-	  delphi=-dflotj(isig)*(xnn-dflotj(nn))*2.d0*cs.pi
+ 	  delphi=-dflotj(isig)*(xnn-dflotj(nn))*2.d0*cs.pi
 	endif
 
 	if(ifl.ispline.lt.0)then
@@ -476,7 +477,6 @@ c original code von JB
 
 	   endif		! min, max
 	endif
-
 
 	if(ifl.ipinarr.eq.1)then
 c        Achtung Übergabeparaneter anpassen
