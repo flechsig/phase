@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <30 May 12 13:09:08 flechsig> 
+c$$$ Time-stamp: <14 Jun 12 15:53:19 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -42,7 +42,8 @@ c Aenderungen von JB am 11.2.00
 c UF habe xxsave eingefuehrt !!! pruefen
 c*********************************************************
 c UF 12.1.2000
-      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,sp)
+c #define DEBUG1
+      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,sp,blp)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -84,6 +85,7 @@ c
 c************************************************
 
 	implicit real*8(a-h,o-z)
+        integer blp
 	complex*16 fwert,fwerty,fwertz,
      &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
      &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
@@ -113,9 +115,15 @@ c************************************************
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
 
+#ifdef DEBUG1
+        write(*,*),'adaptive_int called1'
+        call debug_beamline_type_f(blp)
+        write(*,*),'adaptive_int called2'
+#endif
+
 	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
-	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st)
+	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
 	endif
 
 1       format(d15.5)
@@ -208,7 +216,7 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		z(i),fwerty,fwertz,
-     &          yintya,yintyp,yintza,yintzp,sr)
+     &          yintya,yintyp,yintza,yintzp,sr,blp)
 	   if(ifl.ispline.ge.0)then
 c	   	fzey(i)=fwerty
 c	   	fzez(i)=fwertz
@@ -274,7 +282,7 @@ c-------------------- end adaptive_int ----------------------
 c*************************************************************
 	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		dzi,yintey,yintez,
-     &          yintya,yintyp,yintza,yintzp,sr)
+     &          yintya,yintyp,yintza,yintzp,sr,blp)
 c*************************************************************
 c
 c	INPUT : dzi
@@ -283,6 +291,7 @@ c
 c*************************************************************
 
 	implicit real*8(a-h,o-z)
+        integer blp
 	complex*16 fwert,fwerty,fwertz,
      &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
      &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
@@ -291,6 +300,8 @@ c*************************************************************
 
 	dimension densiyre(1024),densiyim(1024),
      &            densizre(1024),densizim(1024)
+
+
 
 #include '../phase/phase_struct.F'
 
@@ -316,7 +327,11 @@ c*******************************************************
 c	Erstellen eines nochmals reduzierten 
 c       Konstantensatzes
 c*******************************************************
-      
+#ifdef DEBUG1      
+        write(*,*),'yyint called'
+        call debug_beamline_type_f(blp)
+#endif
+
         if(xi.distfocz.gt.1.e-10)then
            dzii=dzi+ra.ri.zi/xi.distfocz
         else
@@ -325,6 +340,7 @@ c*******************************************************
 
 	ra.ri.dzi=dzii
 
+        
 #ifdef SEVEN_ORDER
         call subm27(m4.fdetrc,dzii,m4.fdtrrc)
         call subm27(m4.fdetphrc,dzii,m4.fdtphrrc)
@@ -400,7 +416,7 @@ c-------------------------------------------------------------------------
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	  
  	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr)
+     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
 
 	 densiyre(i)=sr.densyre
 	 densiyim(i)=sr.densyim
@@ -441,12 +457,14 @@ c--------------------- end yyint -------------------------
 
 c*************************************************************
  	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
+     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
 	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
+        integer blp
 
 #include '../phase/phase_struct.F'
+
 
         record /constants/ cs
         record /geometryst/ g
@@ -483,6 +501,10 @@ c      dimension p4a(0:7,0:7,0:7,0:7)
 c      dimension p11a(0:7,0:7,0:7,0:7)
 c      dimension p22a(0:7,0:7,0:7,0:7)
 c      dimension p1122a(0:7,0:7,0:7,0:7)
+#ifdef DEBUG1
+        write(*,*),'fywert called'
+        call debug_beamline_type_f(blp)
+#endif
 
         if(xi.distfocy.gt.1.e-10)then
            dyii=dyi+ra.ri.yi/xi.distfocy
@@ -547,7 +569,7 @@ c-------------------------------------------------------------------------
         if(fd1phb.lt.0.d0)xw2sign=-1.d0
         fd1phb=dabs(fd1phb)
 
-        call psdi(g,src,apr,cs,ifl,ra,sr)
+        call psdi(g,src,apr,cs,ifl,ra,sr,blp)
 
 c----------------------------------------
 
@@ -1737,7 +1759,7 @@ c----------------
 	end
 	
 c------------------------------------------------------
-	subroutine guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st)
+	subroutine guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
 c------------------------------------------------------
 c	variable grid generation for dyi and dzi:
 c	- calculate tza, tzp for central ray: yi = zi = 0
@@ -1760,6 +1782,7 @@ c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
         implicit integer(i-n)
+        integer  blp
 
 #include '../phase/phase_struct.F'
 
@@ -1858,7 +1881,7 @@ c-----------------------------------------------------------------
 
 c	print*,ii,jj,ra.rf.yp,ra.rf.zp
 
-	call psdi(g,src,apr,cs,ifl,ra,sr)
+	call psdi(g,src,apr,cs,ifl,ra,sr,blp)
 
 c	auskommentiert 5.11.2003
 c	xir.si1.tya(ii,jj)=sr.eya
