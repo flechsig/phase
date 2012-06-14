@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <20 Mar 12 16:07:11 flechsig> 
+//  Time-stamp: <14 Jun 12 11:40:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -250,8 +250,8 @@ void ConfigWindow::updateList()
 
 void ConfigWindow::checkFileNames()
 {
-  int i, hits, ret;
-  char name[MaxPathLength], extension[10];
+  int i, hits;
+  char name[MaxPathLength], extension[10], *ret;
   QStandardItem *fna, *ext;
 
   hits= 0;
@@ -261,13 +261,13 @@ void ConfigWindow::checkFileNames()
       ext = mymodel->item(i, 2);
       strncpy(name,      fna->text().toAscii().data(), MaxPathLength);
       strncpy(extension, ext->text().toAscii().data(), 10);
-      ret= strcmp(name, extension);
+      ret= strstr(name, extension);
 
-#ifdef DEBUGxx
+#ifdef DEBUG
       cout << "ret " << ret << " " << name << " " << extension << endl;
 #endif
 
-      if (ret >= 0) ++hits;
+      if (ret == NULL) ++hits;
    }
   cout << "hits " << hits << endl;
 
