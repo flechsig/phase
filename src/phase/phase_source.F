@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <13 Jun 12 17:11:29 flechsig> 
+c$$$ Time-stamp: <14 Jun 12 15:50:58 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -28,6 +28,8 @@ c	spaeter kann man evetuell mal Source 6 testen und in Betrieb nehmen
 c	sie beschreibt die vierdimensionale Brightness
 c
 c**************************************************************
+c #define DEBUG1
+
 	subroutine src_ini(src)	
 c**************************************************************
 
@@ -63,11 +65,13 @@ c	if(src.isrctype.eq.3)call src3_ini(src.so3)
 c------------------end src_ini -------------------------
 
 c**************************************************************
-        subroutine psdi(g,src,apr,cs,ifl,ra,sr)
+        subroutine psdi(g,src,apr,cs,ifl,ra,sr,blp)
 c**************************************************************
 c
 c       Berechnung der Phasenraumdichte in der Gegenstandsebene
 c
+c**************************************************************
+c       blp is the integer pointer to the beamline struct
 c**************************************************************
 c
 c	Source Type:
@@ -124,6 +128,7 @@ c
 c**************************************************************
 
 	implicit real*8(a-h,o-z)
+	integer blp
 
 cc	include 'phase_struct.for'
 #include 'phase_struct.F'
@@ -141,6 +146,11 @@ c	record /source5/ so5
 c	record /source6/ so6
 	record /sources/ src
 	record /apertures/ apr
+
+#ifdef DEBUG2
+	write(*,*),'DEBUG1: psdi called'
+        call debug_beamline_type_f(blp)
+#endif
 
 c comment U.F. 20.4.2012	
 c	write(*,*) 'psdi: source type:',src.isrctype
@@ -195,7 +205,7 @@ c	if(iii.eq.1)then
 c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
 c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
-	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl)
+	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
 	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
@@ -335,12 +345,13 @@ c	  sr.densy=sr.densy*f
 c----------------------- end src3---------------------
 
 c*****************************************************************
-	subroutine src4(cs,g,ra,so4,sr,ifl)
+	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
 c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
+	integer blp               ! the beamline pointer 
 
 cc	include 'phase_struct.for'
 #include 'phase_struct.F'
@@ -352,6 +363,10 @@ cc	include 'phase_struct.for'
 	record /control_flags/ ifl
 	record /source4/ so4
 
+#ifdef DEBUG2
+	write(*,*),'DEBUG1: src4 called'
+        call debug_beamline_type_f(blp)
+#endif
 c	iexpand sollte ausser fuer debug-Zwecke immer auf 1 gesetzt sein
 c--------- get path length
 c	if(ifl.iexpand.eq.0)then
@@ -462,10 +477,14 @@ c------- end 19.1.2000 ----------------------------------
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
 
-        if (ifl.pst_mode.gt.2)then
+        if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then
 c UF 13.6.12
 c new code with dynamic source does also the range test 
-	   call source4c_inter_2d(cs,xwert,ywert,sr,blp);
+#ifdef DEBUG2
+	   write(*,*),'DEBUG1: before c call'
+	   call debug_beamline_type_f(blp)
+#endif
+	   call source4c_inter_2d(sr,xwert,ywert,blp);
         else
 c original code von JB
 	   if(  ((xwert.gt.so4.xeyremin)).and.
