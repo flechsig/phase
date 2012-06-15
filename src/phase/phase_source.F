@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <14 Jun 12 15:50:58 flechsig> 
+c$$$ Time-stamp: <15 Jun 12 09:44:40 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -50,7 +50,7 @@ c	record /source5/ so5
 c	record /source6/ so6
 	record /sources/ src
 
-c comment U.F. 20.1.2000	
+#ifdef OLD_PO_SOURCE
 	write(*,*) 'src_ini: source type:',src.isrctype
 	if(src.isrctype.lt.4.or.src.isrctype.gt.6)write(*,*)'unknown/obsolete source type-> calculation will fail'
 
@@ -59,7 +59,9 @@ c	if(src.isrctype.eq.3)call src3_ini(src.so3)
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
 	if(src.isrctype.eq.5)write(*,*)'srctype=5 is currently not implemented'
 	if(src.isrctype.eq.6)call src6_ini(src.so6)
-
+#else
+	write(*,*) 'src_ini: obsolete routine called- send bug report'
+#endif
 	return
 	end
 c------------------end src_ini -------------------------
@@ -477,25 +479,20 @@ c------- end 19.1.2000 ----------------------------------
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
 
-        if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then
-c UF 13.6.12
-c new code with dynamic source does also the range test 
-#ifdef DEBUG2
-	   write(*,*),'DEBUG1: before c call'
-	   call debug_beamline_type_f(blp)
-#endif
-	   call source4c_inter_2d(sr,xwert,ywert,blp);
-        else
-c original code von JB
+c        if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then   ! for tests
+#ifdef OLD_PO_SOURCE
+c          original code von JB
 	   if(  ((xwert.gt.so4.xeyremin)).and.
      &	     ((xwert.lt.so4.xeyremax)).and.
      &	     ((ywert.gt.so4.yeyremin)).and.
      &	     ((ywert.lt.so4.yeyremax)))then
-
 	      call source_inter_2d(so4,cs,xwert,ywert,sr)
-
 	   endif		! min, max
-	endif
+#else
+c          new code with dynamic source does also the range test 
+	   call source4c_inter_2d(sr,xwert,ywert,blp);
+#endif
+c	endif
 
 	if(ifl.ipinarr.eq.1)then
 c        Achtung Übergabeparaneter anpassen
@@ -1263,7 +1260,7 @@ c---------  Interpolation of Ey
 	y1=so4.gridy(iy1)
 	y2=so4.gridy(iy2)
 
-        ddxy=so4.dxeyre*so4.dxeyre
+        ddxy=so4.dxeyre*so4.dxeyre              
 	fact3=((x2-xwert)*(y2-ywert))/ddxy
 	fact4=((xwert-x1)*(y2-ywert))/ddxy
 	fact5=((x2-xwert)*(ywert-y1))/ddxy

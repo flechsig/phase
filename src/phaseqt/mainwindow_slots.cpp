@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Jun 12 09:25:36 flechsig> 
+//  Time-stamp: <15 Jun 12 09:26:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -114,7 +114,11 @@ void MainWindow::activateProc(const QString &action)
 
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
+#ifdef OLD_PO_SOURCE
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
+#else
+	  myparent->myposrc_ini();
+#endif
           myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
@@ -259,8 +263,12 @@ void MainWindow::activateProc(const QString &action)
 
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
+#ifdef OLD_PO_SOURCE
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
-          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+#else
+	  myparent->myposrc_ini();
+#endif
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
       if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
@@ -290,8 +298,12 @@ void MainWindow::activateProc(const QString &action)
 
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
+#ifdef OLD_PO_SOURCE
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
-          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+#else
+	  myparent->myposrc_ini();
+#endif
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
       if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
@@ -630,10 +642,13 @@ void MainWindow::activateProc(const QString &action)
 			     arg(myparent->myBeamline()->src.isrctype));
       else
 	{
+#ifdef OLD_PO_SOURCE	  
 	  cout << "call mysrc_ini" << endl;
 	  myparent->mysrc_ini(&myparent->myBeamline()->src);
-	  cout << "call experimental myposrc_ini" << endl;
+#else
+	  cout << "call myposrc_ini" << endl;
 	  myparent->myposrc_ini();
+#endif
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
     } // end poInitSourceAct

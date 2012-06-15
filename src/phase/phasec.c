@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <23 Apr 12 10:23:34 flechsig>  */
+/*   Time-stamp: <15 Jun 12 09:54:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -88,7 +88,11 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
     
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
+#ifdef OLD_PO_SOURCE
       src_ini(&bl->src); 
+#else
+      source4c_ini(bl);
+#endif 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       PST(bl);
@@ -108,9 +112,11 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
 
     case 5:
       printf("BatchMode: multiple Phase Space Imaging\n");
-
+#ifdef OLD_PO_SOURCE
       src_ini(&bl->src); 
-
+#else
+      source4c_ini(bl);
+#endif 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <10 May 12 08:37:33 flechsig>  */
+/*   Time-stamp: <15 Jun 12 09:56:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -383,7 +383,11 @@ void activate_proc(w, tag, reason)
 	  (Beamline.src.isrctype == 4) ||
 	  (Beamline.src.isrctype == 6))
 	{
+#ifdef OLD_PO_SOURCE
 	  src_ini(&Beamline.src); 
+#else
+	  source4c_ini(&Beamline);
+#endif
           Beamline.beamlineOK |= pstsourceOK;
 #ifdef DEBUG
 	  printf("activate_proc: called src_ini(&Beamline.src)\n");

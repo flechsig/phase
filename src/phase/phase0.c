@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase0.c */
 /*   Date      : <31 Oct 03 09:07:21 flechsig>  */
-/*   Time-stamp: <20 Mar 12 17:16:00 flechsig>  */
+/*   Time-stamp: <15 Jun 12 09:55:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -803,7 +803,11 @@ void FileSelectionProc(Widget wi,
 	    } else
 	    {
 	      AllocRTSource(&Beamline);
+#ifdef OLD_PO_SOURCE
 	      src_ini(&Beamline.src); 
+#else
+	      source4c_ini(&Beamline);
+#endif
               Beamline.beamlineOK |= pstimageOK;
 	      Beamline.beamlineOK |= pstsourceOK;
 	      printf("ready to start calculations in physical optics mode\n");

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <14 Jun 12 13:08:12 flechsig>  */
+/*   Time-stamp: <15 Jun 12 09:59:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -140,7 +140,11 @@ void MPST(struct BeamlineType *bl)
     strncpy(bl->src.so4.fsource4d, ezim, 80); 
 
     /* init source */
-    src_ini(&bl->src);   
+#ifdef OLD_PO_SOURCE
+    src_ini(&bl->src);  
+#else
+    source4c_ini(bl);
+#endif 
 
     /* set actual lambda */
     bl->BLOptions.lambda=LIGHT_VELO/(nue0+i*dnue);
@@ -175,13 +179,17 @@ void MPST(struct BeamlineType *bl)
   {     
     get_nam(i+1,eyre,eyim,ezre,ezim,eyre1,eyim1,ezre1,ezim1, bl);
 
+#ifdef OLD_PO_SOURCE
     strncpy(bl->src.so4.fsource4a,eyre, 80);
     strncpy(bl->src.so4.fsource4b,eyim, 80); 
     strncpy(bl->src.so4.fsource4c,ezre, 80); 
     strncpy(bl->src.so4.fsource4d,ezim, 80); 
 
     /* init source */
-    src_ini(&bl->src);   
+    src_ini(&bl->src); 
+#else
+    source4c_ini(bl);
+#endif  
 
     /* get conjugate complex (already done in phase_source.F) */
     /* set actual lambda */
