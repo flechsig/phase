@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <08 May 12 17:40:33 flechsig> 
+dnl   Time-stamp: <15 Jun 12 10:33:25 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -184,15 +184,15 @@ dnl end cern lib
 
 dnl ***************** PO SOURCE MAX GRIDSIZE ***********
 AC_ARG_WITH([gridsize],
-  AS_HELP_STRING([--with-gridsize=NN],[max gridsize for PO source (default: 99)]),
+  AS_HELP_STRING([--with-gridsize=NN],[max gridsize for obsolete OLD_PO_SOURCE (default: 1)]),
   dnl given action
   [
      echo "found  gridsize option: ${with_gridsize}"
      gridsize=${with_gridsize}
   ],
-dnl option is not given- we use default 99
+dnl option is not given- we use default 1
   [
-    gridsize=99
+    gridsize=1
   ])
 AC_SUBST(GRIDSIZE, [${gridsize}])
 AC_DEFINE_UNQUOTED(GRIDSIZE, [${gridsize}],[max size of PO source grid])
