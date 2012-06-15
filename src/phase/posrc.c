@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Jun 12 17:45:33 flechsig>  */
+/*  Time-stamp: <15 Jun 12 09:10:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -10,6 +10,7 @@
 
 /* soure routines for physical optics */
 /* replaces routines in phase_source.F, only source4 is implemented so far, the reason is the extension to unlimited gridsize */
+/* the data is stored in bl->posrc */
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -31,9 +32,10 @@ void source4c_ini(struct BeamlineType *bl)
   int i, j;
   
 #ifdef DEBUG
-  printf("debug: source4c_ini called\n");
+  printf("debug: %s source4c_ini called\n", __FILE__);
 #endif
   
+  /* open files, return if a file is not found */ 
   if ((fa= fopen(bl->filenames.so4_fsource4a, "r")) == NULL)
     {
       printf("error: file: %s not found- return\n", bl->filenames.so4_fsource4a);
@@ -66,6 +68,7 @@ void source4c_ini(struct BeamlineType *bl)
   if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
   if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
   
+  /* y real */
   printf("read file: %s ", bl->filenames.so4_fsource4a);
   fscanf(fa, "%d %d", &bl->posrc.ieyrex, &bl->posrc.ieyrey);             /* read first line */
   bl->posrc.zeyre= XMALLOC(double, bl->posrc.ieyrex * bl->posrc.ieyrey); /* allocate */
@@ -85,6 +88,7 @@ void source4c_ini(struct BeamlineType *bl)
   fclose(fa);
   printf(" ==> done\n");
   
+  /* y imag */
   printf("read file: %s ", bl->filenames.so4_fsource4b);
   fscanf(fb, "%d %d", &bl->posrc.ieyimx, &bl->posrc.ieyimy);             /* read first line */
   if ((bl->posrc.ieyimx != bl->posrc.ieyrex) || (bl->posrc.ieyimy != bl->posrc.ieyrey))
@@ -110,6 +114,7 @@ void source4c_ini(struct BeamlineType *bl)
   fclose(fb);
   printf(" ==> done\n");
   
+  /* z real */
   printf("read file: %s ", bl->filenames.so4_fsource4c);
   fscanf(fc, "%d %d", &bl->posrc.iezrex, &bl->posrc.iezrey);             /* read first line */
   if ((bl->posrc.iezrex != bl->posrc.ieyrex) || (bl->posrc.iezrey != bl->posrc.ieyrey))
@@ -132,6 +137,7 @@ void source4c_ini(struct BeamlineType *bl)
   fclose(fc);
   printf(" ==> done\n");
   
+  /* z imag */
   printf("read file: %s ", bl->filenames.so4_fsource4d);
   fscanf(fd, "%d %d", &bl->posrc.iezimx, &bl->posrc.iezimy);             /* read first line */
   if ((bl->posrc.iezimx != bl->posrc.ieyrex) || (bl->posrc.iezimy != bl->posrc.ieyrey))
@@ -160,17 +166,15 @@ void source4c_ini(struct BeamlineType *bl)
 #ifdef DEBUG
   printf("debug: source4c_ini done\n");
   so4= (struct source4c *)&(bl->posrc);
-  printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
-	 bl->posrc.xeyremin, 0.,  bl->posrc.xeyremax,  bl->posrc.yeyremin, 0., bl->posrc.yeyremax);
-  printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
-	 so4->xeyremin, 0., so4->xeyremax,  so4->yeyremin, 0., so4->yeyremax);
+  printf("debug: limits: %e < %s < %e, %e < %s < %e\n", 
+	 so4->xeyremin, "y", so4->xeyremax,  so4->yeyremin, "z", so4->yeyremax);
 #endif
 }  /* source4c_ini */
 
 /* output interpolated source_results for x and y     */
 /* c replacement of source_inter_2d in phase_source.F */
 /* takes integer pointer to beamline struct           */
-/* range test included                                */
+/* range test is included!                            */
 /* !! reads the input from bl->posrc and not sources! */
 /* routine wird gerufen von fortran - daher underscore  */
 void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
@@ -209,19 +213,18 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 //c---------  Interpolation of Ey
 
-// im c- code muss die +1 weg
+// im c- code muss die +1 weg bei ix1 und iy1
 
   ix1= (int)((*xwert- so4->xeyremin)/so4->dxeyre);
   ix2= ix1+ 1;
   iy1= (int)((*ywert- so4->yeyremin)/so4->dyeyre);
   iy2= iy1+ 1;
 
-
   x1  = so4->gridx[ix1];
   x2  = so4->gridx[ix2];
   y1  = so4->gridy[iy1];
   y2  = so4->gridy[iy2];
-  ddxy= so4->dxeyre* so4->dxeyre;             // muesste das nicht dyeyre sein UF 14.6.12
+  ddxy= so4->dxeyre* so4->dxeyre;             // muesste das nicht so4->dxeyre* so4->dyeyre sein ??? UF 14.6.12
 
   fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
   fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
@@ -249,6 +252,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
     fact4* so4->zezim[ix2+ iy1* so4->ieyrex]+
     fact5* so4->zezim[ix1+ iy2* so4->ieyrex]+
     fact6* so4->zezim[ix2+ iy2* so4->ieyrex];
+
 #ifdef DEBUG1
   printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
 #endif
