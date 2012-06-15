@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <14 Jun 12 13:25:05 flechsig>  */
+/*   Time-stamp: <15 Jun 12 10:34:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -668,7 +668,9 @@ struct BeamlineType
   unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
-  struct sources src;
+  /* #ifdef OLD_PO_SOURCE */
+  struct sources src;   /* muss noch drin bleiben da viele parameter noch gesetzt werden koennen */
+/* #endif */
   struct source4c posrc;   /* 120423 */
   struct TmpMapType *tp;
   struct PHASEset filenames;
