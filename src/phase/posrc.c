@@ -224,8 +224,9 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   x2  = so4->gridx[ix2];
   y1  = so4->gridy[iy1];
   y2  = so4->gridy[iy2];
-  ddxy= so4->dxeyre* so4->dxeyre;             // muesste das nicht so4->dxeyre* so4->dyeyre sein ??? UF 14.6.12
-
+  ddxy= so4->dxeyre* so4->dyeyre;             // muesste das nicht so4->dxeyre* so4->dyeyre sein ??? UF 14.6.12
+                                              // stimmt, gaendert am 15.6.2012
+ 
   fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
   fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
   fact5= ((x2- *xwert)* (*ywert- y1))/ ddxy;
