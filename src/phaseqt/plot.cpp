@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <21 May 12 12:46:54 flechsig> 
+//  Time-stamp: <18 Jun 12 10:24:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -202,14 +202,14 @@ public:
 Plot::Plot(QWidget *parent): QwtPlot(parent)
 {
   //d_directPainter = new QwtPlotDirectPainter( this );  // ev nicht noetig
-  d_curve1 = new QwtPlotCurve( "dz min" );            // one curve
+  d_curve1 = new QwtPlotCurve( "dz min" );               // one curve
   d_curve2 = new QwtPlotCurve( "dz center" );            // one curve
   d_curve1->attach( this ); 
   d_curve2->attach( this ); 
   d_curve1->hide();
   d_curve2->hide();
   
-  c1x= c1y= c2y= h2a= NULL;
+  c1x= c1y= c2x= c2y= h2a= NULL;
   
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
@@ -426,6 +426,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points)
 
   if (c1x) delete c1x; c1x= NULL;
   if (c1y) delete c1y; c1y= NULL;
+  if (c2x) delete c2x; c2x= NULL;
   if (c2y) delete c2y; c2y= NULL;
  
   c1x= new double[ndata]; 
