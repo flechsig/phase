@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <19 Jun 12 08:09:24 flechsig>  */
+/*   Time-stamp: <19 Jun 12 17:19:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -613,7 +613,8 @@ void RayTracec(struct BeamlineType *bl)
 
   /*********************************************************************/
 #ifdef DEBUG
-  fprintf(stderr, "RayTracec start: beamlineOK: %X, expect: %X\n", bl->beamlineOK, (sourceOK | mapOK)); 
+  fprintf(stderr, "RayTracec start: beamlineOK: %X, expect: %X, act_ray_set: %d\n", bl->beamlineOK, (sourceOK | mapOK), 
+	  bl->BLOptions.act_ray_set); 
 #endif
  
   Re= &bl->RESULT;   
@@ -630,7 +631,7 @@ void RayTracec(struct BeamlineType *bl)
   printf("RayTracec: calculate %d ray(s) \n", Re->points);
 #endif 
   Raysin = bl->RTSource.SourceRays; 
-  Raysout= Re->RESp;    
+  Raysout= (bl->BLOptions.act_ray_set == 2) ?  &Re->RESp[Re->points] : Re->RESp;    
   
   for (i= 0; i< bl->RTSource.raynumber; i++)
     { 
@@ -643,7 +644,7 @@ void RayTracec(struct BeamlineType *bl)
       Raysin++; Raysout++;  
     }
   /*   free(raysin);      */
-  bl->beamlineOK|= resultOK; /* resultrays in memory */
+  if (bl->BLOptions.act_ray_set == bl->BLOptions.ray_sets) bl->beamlineOK |= resultOK; /* resultrays in memory */
   
 #ifdef DEBUG
   printf("RayTracec:   end: beamlineOK: %X\n", bl->beamlineOK); 

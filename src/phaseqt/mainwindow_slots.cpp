@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 Jun 12 08:05:05 flechsig> 
+//  Time-stamp: <19 Jun 12 17:46:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -58,7 +58,7 @@ void MainWindow::activateProc(const QString &action)
   struct geometryst *g;
   struct map4 *m4p;
 
-  int filesOK;
+  int filesOK, dlambdaflag_saved;
   QEventLoop q;
 
 #ifdef DEBUG
@@ -178,14 +178,25 @@ void MainWindow::activateProc(const QString &action)
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
 				myparent->myBeamline()->BLOptions.ray_sets, 0);  
       
-      for (int i= 1; i<= myparent->myBeamline()->BLOptions.ray_sets; i++)
+      myparent->myBeamline()->BLOptions.act_ray_set= 1;
+      dlambdaflag_saved= myparent->myBeamline()->BLOptions.dlambdaflag;
+      myparent->myBeamline()->BLOptions.dlambdaflag= 0;
+      myparent->buildBeamlineParallel();      // for tests so far
+      myparent->myBuildBeamline();
+      myparent->myRayTracec(); 
+
+      if (myparent->myBeamline()->BLOptions.ray_sets == 2)
 	{
-	  myparent->myBeamline()->BLOptions.act_ray_set= i;
+	  myparent->myBeamline()->BLOptions.act_ray_set= 2;
+	  myparent->myBeamline()->BLOptions.dlambdaflag= 1;
+	  myparent->myBeamline()->beamlineOK &= ~mapOK; // not good but should work
+	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  myparent->myBeamline()->ElementList[i].ElementOK= 0;
 	  myparent->buildBeamlineParallel();      // for tests so far
 	  myparent->myBuildBeamline();
 	  myparent->myRayTracec(); 
 	}
 
+      myparent->myBeamline()->BLOptions.dlambdaflag= dlambdaflag_saved;
       cout << "ray trace-> done" << endl;
       //mmBox->close();
       
