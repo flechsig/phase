@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <14 Jun 12 13:37:44 flechsig>  */
+/*   Time-stamp: <18 Jun 12 14:20:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -72,6 +72,7 @@ void BuildElement(int elindex, struct BeamlineType *bl)
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, elindex);    
+  //DefGeometryCnew(&listpt->GDat, &listpt->geo);
   DefGeometryC(&listpt->GDat, &listpt->geo);  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
   
@@ -183,11 +184,12 @@ void BuildBeamline(struct BeamlineType *bl)
       if (listpt->ElementOK == 0)  /* element rebuild */
 	{
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter- 1));    
+		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter- 1)); 
+	  //DefGeometryCnew(&listpt->GDat, &listpt->geo);
 	  DefGeometryC(&listpt->GDat, &listpt->geo);
             
 	  MakeMapandMatrix(listpt, bl, elindex); 
-	  	  
+	  printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
@@ -211,6 +213,9 @@ void BuildBeamline(struct BeamlineType *bl)
   /* 1st element */
   if (listpt->MDat.Art != kEOESlit)         /* slit not */
     {
+#ifdef DEBUG
+      printf("BuildBeamline: init beamline matrix\n"); 
+#endif 
       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE));
       bl->xlen0+= listpt->geo.r + listpt->geo.rp;
       SetDeltaLambda(bl, listpt);              /* resolutionfactor */
@@ -232,9 +237,10 @@ void BuildBeamline(struct BeamlineType *bl)
     } /* Schleife ueber alle Elemente fertig */
   
   printf("Buildbeamline: extract beamline map\n");
+  printf("2xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
   extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	     &bl->BLOptions.ifl.iord); 
-  
+  printf("3xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
   /* UF JB wir brauchen hier ein dfdw fuer die beamline */
   /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
   /* mache das oben UF 17.11.10*/	
@@ -1441,6 +1447,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambdag* 1e6); 
      fprintf(f, "%20lg     dlambda [nm]        \n", listpt->GDat.dlambda* 1e6); 
      fprintf(f, "%20d     dlambdaflag        \n", listpt->GDat.dlambdaflag);
+     
      fprintf(f, "%20d     diffraction order  \n", listpt->GDat.inout);
      fprintf(f, "%20d     flag               \n", listpt->GDat.iflag);   
      fprintf(f, "%20d     azimut * Pi/2      \n", listpt->GDat.azimut);   
@@ -1887,7 +1894,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    
    elnumber= 1;
    listpt= bl->ElementList;
-   
+   bl->BLOptions.dlambdaflag= 0; /* UF jun 2012 */
+   bl->BLOptions.dlambda= 0.0;
    while (elnumber<= bl->elementzahl) 
      {
        listpt->ElementOK= 0;       /* reset OK */
@@ -1915,6 +1923,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	       fgets(buffer, 80, f); sscanf(buffer, "%lf", &listpt->GDat.dlambda); 
 	       fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.dlambdaflag);
 	       listpt->GDat.dlambda*= 1e-6;
+	     }
+	   /* UF jun 2012 temporarely*/
+	   if (listpt->GDat.dlambdaflag > 0)
+	     {
+	       bl->BLOptions.dlambdaflag= listpt->GDat.dlambdaflag;
+	       bl->BLOptions.dlambda    = listpt->GDat.dlambda;
 	     }
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.inout);  
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.iflag);  
@@ -2186,6 +2200,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
    /* all sections done */
    fclose(f);  
+   // UF jun 2012
+   bl->BLOptions.ray_sets= (bl->BLOptions.dlambdaflag == 0) ? 1 : 2;
+   printf("ray_sets %d\n", bl->BLOptions.ray_sets);
    return rcode;  
 }  /* end ReadBLFile */
 
@@ -2336,12 +2353,89 @@ void getoptipickfile(struct optistruct *x, char *pickname)
     exit(-1); 
 }
 
+/*
+complete rewrite Jun 2012 why:
+a) use grating equation in standard form to make the code more readable
+b) extend to multiple wavelength
+grating equation: 
+m*lambda/d= m*lambda*N= sin(alpha) + sin(beta) this is eqivalent to
+m*lambda/d= 2* cos(theta)* sin(phi) with
+2*theta= alpha- beta and 2*phi= alpha+ beta
+our input is theta i.e. alpha= theta + phi and beta= phi- theta
+the angles are to the normal, beta is defined negative i.e. in grazing incident geometry typically < 0 
+the diffraction order m is positive for fabs(alpha) > fabs(beta)
+the routine takes the input variables from gdatset and writes the variables in geometrytype
+*/
+void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)  
+{
+  double theta, phi, alpha, beta, N, lambda, sign_of_down_or_right, radius, trans;
+  int i, m;
+
+  //printf("\n\ndebug: %s DefGeometryCnew called \n", __FILE__ );
+
+  /* theta is always positive we handle the directioo information separately */ 
+  /* rewrite inputs */
+  sign_of_down_or_right= (in->theta0 < 0) ? -1.0 : 1.0;
+  theta = fabs(in->theta0* PI/ 180.0);  
+  lambda= in->lambdag;
+  m     = in->inout;
+  N     = in->xdens[0];
+
+  out->r  = in->r;                   /* copy in => out */ 
+  out->rp = in->rp; 
+  for (i= 0; i< 5; i++) out->x[i]= in->xdens[i]; 
+
+  /* start calculation */
+  phi   = asin(m* lambda* N/(2.0* cos(theta)));
+  alpha = theta+ phi;   
+  beta  = phi  - theta;   
+
+  if (in->dlambdaflag == 1)            /* enable in->dlambda for different wavelength mode */
+    {
+      lambda+= in->dlambda;
+      beta   = asin(m* lambda* N- sin(alpha));
+    }
+
+  if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0)) /* test range */
+    {
+      beep(1);
+      fprintf(stderr, "!! unphysical inputs: |alpha| or |beta| > 90 deg. !!\n");    
+    }
+
+  if (in->iflag == 1)         /* handle NIM translation mode */
+    {
+      radius   = (2.0* in->r* in->rp)/ ((in->r+ in->rp)* cos(theta));   
+      trans    = radius* (1.0- cos(phi));   /* UF to be confirmed */   
+      out->r  = in->r-  trans; 
+      out->rp = in->rp- trans;    
+      printf("DefGeometryC: NIM translation enabled, trans= %lf mm\nr1= %lf mm, r2= %lf mm\n", 
+             trans, out->r, out->rp);  
+    }  
+
+  out->sina= sin(alpha);   
+  out->cosa= cos(alpha);   
+  out->sinb= sin(beta);   
+  out->cosb= cos(beta);   
+  
+  out->xlam = lambda* m;  /* UF 23.12.09 ist lambda richtig ??? oder in->lambda */
+  out->idefl= sign_of_down_or_right;  
+  //#ifdef DEBUG
+  printf("\n\ndebug: %s DefGeometryCnew \n", __FILE__ );
+  printf("  alpha: %f, beta: %f, lambda= %g nm\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
+  printf("  out->idefl= %d, out->xlam= %g nm\n", out->idefl, out->xlam* 1e6);
+  printf("  other output: %g, %g, %g, %g\n", out->sina, out->cosa, out->sinb, out->cosb);
+  //#endif
+} /* end DefGeometryCnew */ 
+
+
 void DefGeometryC(struct gdatset *x, struct geometrytype *gout)  
 /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 /* Dec 2009 provisions for multiple wavelengths */
 {
-  double delta, alpha, beta, theta0, trans, radius, lambda;
+  double delta, alpha, beta, theta0, trans, radius, lambda, lambda1, beta1;
   int i;
+ 
+  DefGeometryCnew(x, gout);  
 
   printf("LAMBDA = %e\n", x->lambdag);
   
@@ -2351,15 +2445,19 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
-  fprintf(stderr, "debug: lambda: %e, io: %d, alpha = %f, beta = %f\n", lambda, x->inout,alpha*(180.0/PI),beta*(180.0/PI) );
+  fprintf(stderr, "debug: lambda: %e, io: %d, alpha = %f, beta = %f\n", lambda, x->inout, alpha*(180.0/PI), beta*(180.0/PI) );
   if (x->dlambdaflag == 1)
     {
       fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
       fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
-      lambda= x->lambdag+ x->dlambda;
-      fprintf(stderr, "debug: lambda: %e, io: %d, alpha = %f, beta = %f\n", lambda, x->inout,alpha,beta );
+      lambda1= x->lambdag+ x->dlambda;
+      fprintf(stderr, "debug: lambda1: %e, io: %d, alpha = %f, beta = %f, theta= %f\n", lambda1, x->inout, 
+	      alpha*(180.0/PI), beta*(180.0/PI), theta0 );
 
-      beta= (-1.0)* asin(lambda* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
+      beta1= (-1.0)* asin(lambda1* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
+      fprintf(stderr, "debug: lambda1: %e, io: %d, alpha = %f, beta = %f, theta= %f, dbeta= %f\n", lambda1, x->inout, 
+	      alpha*(180.0/PI), beta1*(180.0/PI), theta0 , beta-beta1);
+      beta= beta1;
     }
 
   if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0))
@@ -2400,7 +2498,15 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   for (i= 0; i< 5; i++) 
     gout->x[i]= x->xdens[i]; 
   gout->xlam = lambda* (double)(x->inout);  /* UF 23.12.09 ist lambda richtig ??? oder x->lambda */
-  gout->idefl= (x->theta0 > 0.0) ? 1 : -1;  
+  gout->idefl= (x->theta0 > 0.0) ? 1 : -1; 
+ 
+#ifdef DEBUG
+  printf("\ndebug: %s DefGeometryC \n", __FILE__ );
+  printf("  alpha: %f, beta: %f, lambda= %g nm\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
+  printf("  gout->idefl= %d, gout->xlam= %g nm\n", gout->idefl, gout->xlam* 1e6);
+  printf("  other output: %g, %g, %g, %g\n", gout->sina, gout->cosa, gout->sinb, gout->cosb);
+#endif
+
 } /* end DefGeometryC */ 
 
 /*

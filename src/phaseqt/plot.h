@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <16 May 12 15:29:21 flechsig>  */
+/*  Time-stamp: <18 Jun 12 12:55:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,7 +40,7 @@ public:
     void setdefaultData2();    // UF
     void autoScale(); // GO
     void autoScale(double, double, double, double); // PO
-    void fillGoPlotArrays(struct RayType *, int);
+    void fillGoPlotArrays(struct RayType *, int, int);
     //void SetData(int n, double* dx, double* dy);
     //int  SetLineColor(int);
     void appendPoint(const QPointF &);
@@ -66,7 +66,7 @@ public:
     double h2max;
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
-    void   hfill1(double *, double, double);
+    void   hfill1(double *, double, double, int);
     void   hfill2();  // GO
     void   hfill2(struct PSDType *); // PO
     
@@ -74,8 +74,8 @@ public:
     void   contourPlot();
     void   si2by2Plot();
     void   fillData();
-    void   scatterPlot();
-    void   profilePlot(int, int);
+    void   scatterPlot(int);
+    void   profilePlot(int, int, int);
     QwtPlotSpectrogram *d_spectrogram;
     //  QwtPlotZoomer      *zoomer;
     MyZoomer      *zoomer;
@@ -101,7 +101,7 @@ private:
     //QwtPlotSpectrogram *d_spectrogram;
     //double *x, *y;
     double x1, x2, y1, y2;
-    double *c1x, *c1y, *c2y;
+    double *c1x, *c1y, *c2x, *c2y;
     double h1max, h1firstgt0;
     int    ndata;
     bool   logscaleon;

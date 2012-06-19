@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 Jun 12 10:34:05 flechsig>  */
+/*   Time-stamp: <19 Jun 12 07:56:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -645,10 +645,10 @@ struct PSOptionsType                   /* 20.9.96 */
   double dyminfix, dymaxfix, dzminfix, dzmaxfix;
 };     
 
-struct OptionsType                   			/* 24.6.96 */
+struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps;
-  double epsilon, lambda, xlam_save, displength;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, ray_sets, act_ray_set, dlambdaflag;
+  double epsilon, lambda, xlam_save, displength, dlambda;
   struct PSOptionsType PSO;
   struct control_flags ifl;
   struct apertures apr;
@@ -798,6 +798,7 @@ void
   debug_beamline_type_f(int *),
   debug_beamline_type_c_(int *),
   DefGeometryC(struct gdatset *, struct geometrytype *),
+  DefGeometryCnew(struct gdatset *, struct geometrytype *),
   DefGeometryCM(double, double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),
@@ -888,7 +889,7 @@ void
 	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
 	       struct integration_results *, struct statistics *, struct psimagest *, int *),
   PutPHASE(struct  PHASEset *, char *), 
-  RayTracec(struct BeamlineType *),
+/*  RayTracec(struct BeamlineType *),*/
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
   ReadCoefficientFile(double *, char *),

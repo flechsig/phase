@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <18 Jun 12 10:24:16 flechsig> 
+//  Time-stamp: <18 Jun 12 14:29:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -327,26 +327,29 @@ void Plot::contourPlot()
 
 // makes a profile plot
 // expects the vectors xxx and yyy to be filled
-void Plot::profilePlot(int subject, int style)
+void Plot::profilePlot(int subject, int style, int nsets)
 {
 #ifdef DEBUG
   cout << "profile plot subject, style: " << subject << " ," << style << endl;
 #endif
   
   d_curve1->hide();
+  d_curve2->hide();
   d_spectrogram->hide();
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
-  //setCanvasBackground( QColor( 29, 100, 141 ) );      // nice blue
-  //d_curve2->SetLineColor(1);
-  //d_curve2->SetLineWidth(2);
-  //d_curve2->SetLineStyle(2);
-  //d_curve2->setColor(Qt::red);
-  //d_curve2->setWidth(2);
   setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
-  d_curve2->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
+  d_curve1->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
   pen_ptr->setColor(Qt::red);   // blue
   pen_ptr->setWidth(2);
-  d_curve2->setPen(*pen_ptr);
+  d_curve1->setPen(*pen_ptr);
+
+  if (nsets == 2)
+    {
+      d_curve2->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
+      pen_ptr->setColor(Qt::blue);   // blue
+      pen_ptr->setWidth(2);
+      d_curve2->setPen(*pen_ptr);
+    }
 
   //zoomer->ResetZoomBase();
 
@@ -370,6 +373,7 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(0, tr("y (mm)"));
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
+      d_curve1->setRawSamples(c1y, c1x, BINS2);
       d_curve2->setRawSamples(c2y, c1x, BINS2);
       y1= ymin;                                     // for manual scaling
       y2= ymax;             
@@ -387,6 +391,7 @@ void Plot::profilePlot(int subject, int style)
 	  setAxisTitle(2, tr("z (mm)"));
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
+      d_curve1->setRawSamples(c1x, c1y, BINS2);
       d_curve2->setRawSamples(c1x, c2y, BINS2);
       x1= zmin;           
       x2= zmax;
@@ -402,7 +407,8 @@ void Plot::profilePlot(int subject, int style)
   setAxisScale(QwtPlot::yLeft,   y1, y2, 0);   // manual scaling
     
   zoomer->setZoomBase(canvas());
-  d_curve2->show();
+  d_curve1->show();
+  if (nsets == 2) d_curve2->show();
   replot();
 } // end profilePlot()
 
@@ -413,13 +419,15 @@ void Plot::fillData()
 } // fillData
 
 // creates the temporary arrays xdata etc out of the ray structure depending on plotsubject
-void Plot::fillGoPlotArrays(struct RayType *rays, int points)
+// nsets is the number of datasets in rays, default is 1
+void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
 {
   int i;
   struct RayType *rp;
 
 #ifdef DEBUG
   cout << "debug: fillGoPlotArrays called, plotsubject: " << plotsubject << endl;
+  cout << "debug: fillGoPlotArrays called, nsets: ******************** " << nsets << endl;
 #endif
 
   ndata= points; // fill private var
@@ -432,7 +440,12 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points)
   c1x= new double[ndata]; 
   c1y= new double[ndata];
 
-  if (plotsubject & PLOT_GO_PHI) c2y= new double[ndata];
+  if ((plotsubject & PLOT_GO_PHI) && (nsets == 1)) c2y= new double[ndata];
+  if (nsets == 2) 
+    {
+      c2x= new double[ndata]; 
+      c2y= new double[ndata];
+    }
 
   rp= rays;
   if (plotsubject & PLOT_GO_SPA)
@@ -441,6 +454,17 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points)
 	{
 	  c1x[i]= rp->z;
 	  c1y[i]= rp->y;
+	}
+
+      if (nsets == 2) 
+	{
+	  rp= &rays[ndata];
+	  //rp= &rays[0];
+	  for (i= 0; i< ndata; i++, rp++)
+	    {
+	      c2x[i]= rp->z;
+	      c2y[i]= rp->y+0.5;
+	    }
 	}
     }
 
@@ -475,7 +499,7 @@ double *Plot::getYdata()
 }
 
 // makes a scatter plot
-void Plot::scatterPlot()
+void Plot::scatterPlot(int nsets)
 {
 #ifdef DEBUG   
   cout << "debug: scatter plot" << endl;
@@ -507,6 +531,16 @@ void Plot::scatterPlot()
   zoomer->setZoomBase(canvas());
 
   d_curve1->show();
+
+  if (nsets == 2)
+    {
+      d_curve2->setRawSamples(c2x, c2y, ndata);
+      d_curve2->setStyle( QwtPlotCurve::Dots );
+      pen_ptr->setColor(Qt::blue);   // blue
+      pen_ptr->setWidth(2);
+      d_curve2->setPen(*pen_ptr);
+      d_curve2->show();
+    }
 
   if (plotsubject & PLOT_GO_DIV)
     {
@@ -702,47 +736,79 @@ void Plot::Beauty(double *mi, double *ma)
 
 
 // fills a 1d histogram with data !! we use c2y
-void Plot::hfill1(double *dvec, double x1, double x2)
+void Plot::hfill1(double *dvec, double x1, double x2, int nsets)
 {
   int i;
   unsigned int ix;
+  double *dp;
   
 #ifdef DEBUG
   cout << "Plot::hfill1 called" << endl;
 #endif
 
-  if (c1x) delete c1x;
-  if (c2y) delete c2y;
+  if (c1x) delete c1x; c1x= NULL;
+  if (c1y) delete c1y; c1y= NULL;
+  if (c2x) delete c2x; c2x= NULL;
+  if (c2y) delete c2y; c2y= NULL;
   c1x= new double[BINS2];
-  c2y= new double[BINS2];
+  c1y= new double[BINS2];
+  if (nsets == 2) c2y= new double[BINS2];
 
   if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
     
   for (ix= 0; ix< BINS2; ix++)
     {
-      c2y[ix]= 0.0;
+      c1y[ix]= 0.0;
       c1x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
     }
 
   for (i= 0; i< ndata; i++)
     {
       ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
-      if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
+      if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
     }  
+  
+  if (nsets == 2 )
+    {
+      for (ix= 0; ix< BINS2; ix++) c2y[ix]= 0.0;
+	
+      dp= &dvec[ndata];
+      //dp= &dvec[0];
+      for (i= 0; i< ndata; i++)
+	{
+	  ix= (unsigned int)((dp[i]- x1-0.5)/(x2- x1) * BINS2);
+	  if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
+	}  
+    }
   
   h1max= 0.0; h1firstgt0= 1.0;  // ZERO
   if (ndata)                    // not if 0
     {
     for (ix= 0; ix< BINS2; ix++)
       {
-	c2y[ix]*= 1.0/ndata;   // density in rays 
-	if (c2y[ix] > h1max) h1max= c2y[ix];
-	if ((c2y[ix] > ZERO) && (c2y[ix] < h1firstgt0)) h1firstgt0 = c2y[ix];
+	c1y[ix]*= 1.0/ndata;   // density in rays 
+	if (c1y[ix] > h1max) h1max= c1y[ix];
+	if ((c1y[ix] > ZERO) && (c1y[ix] < h1firstgt0)) h1firstgt0 = c1y[ix];
       }
     for (ix= 0; ix< BINS2; ix++) 
-      if (c2y[ix] < h1firstgt0 )  c2y[ix]= h1firstgt0;  // fix 0 for log scale
+      if (c1y[ix] < h1firstgt0 )  c1y[ix]= h1firstgt0;  // fix 0 for log scale
     }
-  
+
+  if (nsets == 2 ) // UF to be done
+    {
+      if (ndata)                    // not if 0
+	{
+	  for (ix= 0; ix< BINS2; ix++)
+	    {
+	      c2y[ix]*= 1.0/ndata;   // density in rays 
+	      if (c2y[ix] > h1max) h1max= c2y[ix];
+	      if ((c2y[ix] > ZERO) && (c2y[ix] < h1firstgt0)) h1firstgt0 = c2y[ix];
+	    }
+	  for (ix= 0; ix< BINS2; ix++) 
+	    if (c2y[ix] < h1firstgt0 )  c2y[ix]= h1firstgt0;  // fix 0 for log scale
+	}
+    }
+
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
 #endif

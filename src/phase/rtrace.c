@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <31 May 12 08:02:11 flechsig>  */
+/*   Time-stamp: <19 Jun 12 08:09:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -603,11 +603,10 @@ void RayTracec(struct BeamlineType *bl)
 /* normal RT                             */
 /* umgeschrieben auf pointer UF 28.11.06 */
 /* phaseset wird nicht mehr benutzt      */
+/* erweitert auf mehrere raysets Jun 12 */
 {
   struct RayType *Raysin, *Raysout;   
-  int i/*, iord*/;
-  /*double uu, ww, ll, xlength, xlength1, xlength2, phase;*/
-  /*struct ElementType *ds; */
+  int i, set;
   struct RESULTType *Re; 
 
   bl->beamlineOK &= ~resultOK;
@@ -621,31 +620,31 @@ void RayTracec(struct BeamlineType *bl)
   if ((bl->beamlineOK & (sourceOK | mapOK)) != (sourceOK | mapOK))
     { 
       fprintf(stderr, "RayTracec: beamline is not OK: beamlineOK: %X != %X\nwe do nothing\n", 
-	      bl->beamlineOK, (sourceOK | mapOK));       /*  exit(-1); */ 
+	      bl->beamlineOK, (sourceOK | mapOK));       
+      return;
     } 
-    else  
-      {
-	Re->points= bl->RTSource.raynumber;
-	Re->typ   = PLrttype;      
+  
+  Re->points= bl->RTSource.raynumber;
+  Re->typ   = PLrttype;      
 #ifdef DEBUG	
-	printf("RayTracec: calculate %d ray(s) \n", Re->points);
+  printf("RayTracec: calculate %d ray(s) \n", Re->points);
 #endif 
-	Raysin = bl->RTSource.SourceRays; 
-	Raysout= Re->RESp;    
-
-	for (i= 0; i< bl->RTSource.raynumber; i++)
-	  { 
-
-	    ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
-		       (double *)bl->ypc1, (double *)bl->zpc1, 
-		       (double *)bl->dypc, (double *)bl->dzpc); 
-
-	    Raysout->phi= Raysin->phi;
-	    Raysin++; Raysout++;  
-	  }
-      	/*   free(raysin);      */
-	bl->beamlineOK|= resultOK; /* resultrays in memory */
-      } /* beamline OK*/
+  Raysin = bl->RTSource.SourceRays; 
+  Raysout= Re->RESp;    
+  
+  for (i= 0; i< bl->RTSource.raynumber; i++)
+    { 
+      
+      ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
+		 (double *)bl->ypc1, (double *)bl->zpc1, 
+		 (double *)bl->dypc, (double *)bl->dzpc); 
+      
+      Raysout->phi= Raysin->phi;
+      Raysin++; Raysout++;  
+    }
+  /*   free(raysin);      */
+  bl->beamlineOK|= resultOK; /* resultrays in memory */
+  
 #ifdef DEBUG
   printf("RayTracec:   end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif

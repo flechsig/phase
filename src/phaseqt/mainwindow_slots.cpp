@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <15 Jun 12 09:26:24 flechsig> 
+//  Time-stamp: <19 Jun 12 08:05:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -163,7 +163,7 @@ void MainWindow::activateProc(const QString &action)
 	return;
 
        printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
-	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
+	      myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
@@ -175,15 +175,17 @@ void MainWindow::activateProc(const QString &action)
       
       //statusBar()->clearMessage();
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
-      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
+				myparent->myBeamline()->BLOptions.ray_sets, 0);  
       
-      myparent->buildBeamlineParallel();      // for tests so far
-      myparent->myBuildBeamline();
-      
-     
-      
-      myparent->myRayTracec(); 
-      
+      for (int i= 1; i<= myparent->myBeamline()->BLOptions.ray_sets; i++)
+	{
+	  myparent->myBeamline()->BLOptions.act_ray_set= i;
+	  myparent->buildBeamlineParallel();      // for tests so far
+	  myparent->myBuildBeamline();
+	  myparent->myRayTracec(); 
+	}
+
       cout << "ray trace-> done" << endl;
       //mmBox->close();
       
@@ -199,7 +201,8 @@ void MainWindow::activateProc(const QString &action)
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
-      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
+				myparent->myBeamline()->BLOptions.ray_sets, 0);  
 	
       myparent->myBuildBeamline();
       myparent->myRayTraceFull(); 
@@ -219,7 +222,8 @@ void MainWindow::activateProc(const QString &action)
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
 
-      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber, 0);  
+      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
+				myparent->myBeamline()->BLOptions.ray_sets, 0);  
       myparent->myBuildBeamline();
       myparent->myFootprint((elementList->currentRow()+1));
       printf("footprint-> done\n");
@@ -1069,7 +1073,7 @@ void MainWindow::grapplyslot()
       UpdateStatistics(d_plot, "Source", myparent->myBeamline()->RTSource.raynumber);
       d_plot->setTitle(tr("GO Source"));
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			       myparent->myBeamline()->RTSource.raynumber);
+			       myparent->myBeamline()->RTSource.raynumber, 1);
     }
 
   if (mwplotsubject & PLOT_GO_RESULT) // generic for GO result
@@ -1081,7 +1085,7 @@ void MainWindow::grapplyslot()
       UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
       d_plot->setTitle(tr("GO Result"));
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points);
+			       myparent->myBeamline()->RESULT.points, myparent->myBeamline()->BLOptions.ray_sets);
     }
 
   // (4) GO statistics done, [xyz]data arrays filled
@@ -1104,22 +1108,22 @@ void MainWindow::grapplyslot()
 	  break;
 	case PLOT_SCATTER:
 	  btnLogy->hide();
-	  d_plot->scatterPlot();
+	  d_plot->scatterPlot(myparent->myBeamline()->BLOptions.ray_sets);
 	  //plotLayout->addWidget(d_plot,0,0);
 	  break;
 	case PLOT_HPROF:
-	  d_plot->hfill1(d_plot->getXdata(), d_plot->zmin, d_plot->zmax);
+	  d_plot->hfill1(d_plot->getXdata(), d_plot->zmin, d_plot->zmax, myparent->myBeamline()->BLOptions.ray_sets);
 	  btnLogy->show();
 	  //plotLayout->addWidget(btnLogy,0,0);
 	  //plotLayout->addWidget(d_plot,1,0,3,3);
-	  d_plot->profilePlot(mwplotsubject, mwplotstyle);
+	  d_plot->profilePlot(mwplotsubject, mwplotstyle, myparent->myBeamline()->BLOptions.ray_sets);
 	  break;
 	case PLOT_VPROF:
-	  d_plot->hfill1(d_plot->getYdata(), d_plot->ymin, d_plot->ymax);
+	  d_plot->hfill1(d_plot->getYdata(), d_plot->ymin, d_plot->ymax, myparent->myBeamline()->BLOptions.ray_sets);
 	  btnLogy->show();
 	  //plotLayout->addWidget(btnLogy,0,0);
 	  //plotLayout->addWidget(d_plot,1,0,3,3);
-	  d_plot->profilePlot(mwplotsubject, mwplotstyle);
+	  d_plot->profilePlot(mwplotsubject, mwplotstyle, myparent->myBeamline()->BLOptions.ray_sets);
 	  break;
 	default:
 	  cout << "error no valid mwplotstyle: " << mwplotstyle << endl;
@@ -1239,7 +1243,7 @@ void MainWindow::grautoscaleslot()
   if (mwplotsubject & PLOT_GO_SOURCE ) // generic for GO source
     {
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
-			       myparent->myBeamline()->RTSource.raynumber);
+			       myparent->myBeamline()->RTSource.raynumber, 1);
       d_plot->autoScale();
     }
 
@@ -1247,7 +1251,7 @@ void MainWindow::grautoscaleslot()
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))    // generic for GO result
     { 
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points);
+			       myparent->myBeamline()->RESULT.points, 1);
       d_plot->autoScale();
     }
 
