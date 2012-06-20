@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <20 Jun 12 11:23:31 flechsig>  */
+/*   Time-stamp: <20 Jun 12 11:28:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -26,7 +26,6 @@
 #include "phase_struct.h"
 /*#include "fg3pck.h"  */
                  
-   
 #include "phase.h"         
 #include "rtrace.h"
 #include "common.h" 
