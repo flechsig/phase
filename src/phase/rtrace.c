@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <19 Jun 12 17:19:28 flechsig>  */
+/*   Time-stamp: <20 Jun 12 11:23:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -613,8 +613,8 @@ void RayTracec(struct BeamlineType *bl)
 
   /*********************************************************************/
 #ifdef DEBUG
-  fprintf(stderr, "RayTracec start: beamlineOK: %X, expect: %X, act_ray_set: %d\n", bl->beamlineOK, (sourceOK | mapOK), 
-	  bl->BLOptions.act_ray_set); 
+  fprintf(stderr, "RayTracec start: beamlineOK: %X, expect: %X, act_ray_set: %d\n", 
+	  bl->beamlineOK, (sourceOK | mapOK), bl->BLOptions.act_ray_set); 
 #endif
  
   Re= &bl->RESULT;   
@@ -626,10 +626,12 @@ void RayTracec(struct BeamlineType *bl)
     } 
   
   Re->points= bl->RTSource.raynumber;
-  Re->typ   = PLrttype;      
+  Re->typ   = PLrttype;  
+    
 #ifdef DEBUG	
   printf("RayTracec: calculate %d ray(s) \n", Re->points);
 #endif 
+
   Raysin = bl->RTSource.SourceRays; 
   Raysout= (bl->BLOptions.act_ray_set == 2) ?  &Re->RESp[Re->points] : Re->RESp;    
   
