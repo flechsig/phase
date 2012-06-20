@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2012-06-20 22:10:52 flechsig> 
+//  Time-stamp: <2012-06-21 00:03:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -161,10 +161,10 @@ void MainWindow::activateProc(const QString &action)
     { 
       if (elementListIsEmpty())
 	return;
-
-       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
-	      myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
-
+      
+      printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
+	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
+      
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
       //QMessageBox *mmBox = nebw QMessageBox;
@@ -174,7 +174,7 @@ void MainWindow::activateProc(const QString &action)
 	myparent->myMakeRTSource();
       
       //statusBar()->clearMessage();
-
+      
       cout << "********** ray_sets=" << myparent->myBeamline()->BLOptions.ray_sets << endl;
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
@@ -184,11 +184,11 @@ void MainWindow::activateProc(const QString &action)
       for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
 	if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
 	  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
-	
+      
       //myparent->buildBeamlineParallel();      // for tests so far
       myparent->myBuildBeamline();
       myparent->myRayTracec(); 
-
+      
       if (myparent->myBeamline()->BLOptions.ray_sets == 2)
 	{
 	  myparent->myBeamline()->BLOptions.act_ray_set= 2;
@@ -207,21 +207,23 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myBuildBeamline();
 	  myparent->myRayTracec(); 
 	  /* reset temporarely */
-	  myparent->myBeamline()->beamlineOK &= ~mapOK; 
+
+	  //myparent->myBeamline()->beamlineOK &= ~mapOK; 
 	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
 	    if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
 	      {
-		myparent->myBeamline()->ElementList[i].ElementOK= 0;
+		//myparent->myBeamline()->ElementList[i].ElementOK= 0;
 		myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
 	      }
-	}
 
+	}
+      
       cout << "ray trace-> done" << endl;
       //mmBox->close();
       
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
     }
-
+  
   if (!action.compare("raytracefullAct")) 
     { 
       printf("\nraytracefullAct button  pressed\n");
