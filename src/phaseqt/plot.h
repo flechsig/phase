@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <20 Jun 12 12:45:49 flechsig>  */
+/*  Time-stamp: <20 Jun 12 14:09:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -67,7 +67,7 @@ public:
     double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz;  // statistics
     int    fwhmon;
     void   hfill1(double *, double, double, int);
-    void   hfill2();  // GO
+    void   hfill2(int);  // GO
     void   hfill2(struct PSDType *); // PO
     
     void   statistics(struct RayType *, int, double, double);
@@ -83,8 +83,8 @@ public:
     QwtPlotCurve         *d_curve1;
     QwtPlotCurve         *d_curve2;
     
-    double *getXdata();
-    double *getYdata();
+    double *getXdata(int);
+    double *getYdata(int);
 
 public Q_SLOTS:
     void showContour(bool on);

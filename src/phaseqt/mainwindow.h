@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <16 May 12 09:25:46 flechsig>  */
+/*  Time-stamp: <20 Jun 12 14:58:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -76,7 +76,9 @@ private slots:
     void grautoscaleslot();
     void grapplyslot();
     void lambdaSlot();
+    void dlambdaSlot();
     void misaliBoxslot(int);
+    void dlambdaBoxslot(int);
     void newBeamline(); // UF
     void openBeamline(); // UF
     void poButtonslot();
@@ -166,12 +168,14 @@ private:
     //   QtPhase       *myQtPhase;
 
     QLineEdit    *lambdaE;  // generic parameters
+    QLineEdit    *dlambdaE;
     QLineEdit    *dislenE;
     QRadioButton *goButton;
     QRadioButton *poButton;
     QRadioButton *sigmaButton;
     QRadioButton *fwhmButton;
     QCheckBox    *misaliBox;
+    QCheckBox    *dlambdaBox;
     QLabel       *fileNameLabel;
 
     QLabel    *sourceTypeLabel;

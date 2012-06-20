@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 Jun 12 17:46:45 flechsig> 
+//  Time-stamp: <20 Jun 12 17:22:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -58,7 +58,7 @@ void MainWindow::activateProc(const QString &action)
   struct geometryst *g;
   struct map4 *m4p;
 
-  int filesOK, dlambdaflag_saved;
+  int filesOK;
   QEventLoop q;
 
 #ifdef DEBUG
@@ -167,20 +167,24 @@ void MainWindow::activateProc(const QString &action)
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
-      //QMessageBox *mmBox = new QMessageBox;
+      //QMessageBox *mmBox = nebw QMessageBox;
       //mmBox->setText(tr("calculation running- be patient!"));
       //mmBox->show();
       if (!(myparent->myBeamline()->beamlineOK & sourceOK))
 	myparent->myMakeRTSource();
       
       //statusBar()->clearMessage();
+
+      cout << "********** ray_sets=" << myparent->myBeamline()->BLOptions.ray_sets << endl;
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
 				myparent->myBeamline()->BLOptions.ray_sets, 0);  
       
       myparent->myBeamline()->BLOptions.act_ray_set= 1;
-      dlambdaflag_saved= myparent->myBeamline()->BLOptions.dlambdaflag;
-      myparent->myBeamline()->BLOptions.dlambdaflag= 0;
+      for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
+	if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
+	  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
+	
       myparent->buildBeamlineParallel();      // for tests so far
       myparent->myBuildBeamline();
       myparent->myRayTracec(); 
@@ -188,15 +192,29 @@ void MainWindow::activateProc(const QString &action)
       if (myparent->myBeamline()->BLOptions.ray_sets == 2)
 	{
 	  myparent->myBeamline()->BLOptions.act_ray_set= 2;
-	  myparent->myBeamline()->BLOptions.dlambdaflag= 1;
-	  myparent->myBeamline()->beamlineOK &= ~mapOK; // not good but should work
-	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  myparent->myBeamline()->ElementList[i].ElementOK= 0;
+	  myparent->myBeamline()->beamlineOK &= ~mapOK; 
+	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
+	    {
+	      if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
+		{
+		  myparent->myBeamline()->ElementList[i].ElementOK= 0;
+		  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 1;
+		  myparent->myBeamline()->ElementList[i].GDat.dlambda=myparent->myBeamline()->BLOptions.dlambda; 
+		}
+	    }
 	  myparent->buildBeamlineParallel();      // for tests so far
 	  myparent->myBuildBeamline();
 	  myparent->myRayTracec(); 
+	  /* reset temporarely */
+	  myparent->myBeamline()->beamlineOK &= ~mapOK; 
+	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
+	    if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
+	      {
+		myparent->myBeamline()->ElementList[i].ElementOK= 0;
+		myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
+	      }
 	}
 
-      myparent->myBeamline()->BLOptions.dlambdaflag= dlambdaflag_saved;
       cout << "ray trace-> done" << endl;
       //mmBox->close();
       
@@ -1111,7 +1129,7 @@ void MainWindow::grapplyslot()
 	case PLOT_CONTOUR:
 	case PLOT_CONTOURISO:
 	  d_plot->h2a_nx= d_plot->h2a_ny= BINS2;
-	  d_plot->hfill2();
+	  d_plot->hfill2(myparent->myBeamline()->BLOptions.ray_sets);
 	  d_plot->setGoData("grsourceAct");
 	  btnLogy->hide();
 	  d_plot->contourPlot();
@@ -1123,14 +1141,18 @@ void MainWindow::grapplyslot()
 	  //plotLayout->addWidget(d_plot,0,0);
 	  break;
 	case PLOT_HPROF:
-	  d_plot->hfill1(d_plot->getXdata(), d_plot->zmin, d_plot->zmax, myparent->myBeamline()->BLOptions.ray_sets);
+	  d_plot->hfill1(d_plot->getXdata(1), d_plot->zmin, d_plot->zmax, 1);
+	  if (myparent->myBeamline()->BLOptions.ray_sets == 2) 
+	    d_plot->hfill1(d_plot->getXdata(2), d_plot->zmin, d_plot->zmax, 2);
 	  btnLogy->show();
 	  //plotLayout->addWidget(btnLogy,0,0);
 	  //plotLayout->addWidget(d_plot,1,0,3,3);
 	  d_plot->profilePlot(mwplotsubject, mwplotstyle, myparent->myBeamline()->BLOptions.ray_sets);
 	  break;
 	case PLOT_VPROF:
-	  d_plot->hfill1(d_plot->getYdata(), d_plot->ymin, d_plot->ymax, myparent->myBeamline()->BLOptions.ray_sets);
+	  d_plot->hfill1(d_plot->getYdata(1), d_plot->ymin, d_plot->ymax, 1);
+	  if (myparent->myBeamline()->BLOptions.ray_sets == 2) 
+	    d_plot->hfill1(d_plot->getYdata(2), d_plot->ymin, d_plot->ymax, 2);
 	  btnLogy->show();
 	  //plotLayout->addWidget(btnLogy,0,0);
 	  //plotLayout->addWidget(d_plot,1,0,3,3);
@@ -1255,15 +1277,15 @@ void MainWindow::grautoscaleslot()
     {
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RTSource.SourceRays, 
 			       myparent->myBeamline()->RTSource.raynumber, 1);
-      d_plot->autoScale();
+      d_plot->autoScale(1);
     }
 
   if (mwplotsubject & PLOT_GO_RESULT  && 
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))    // generic for GO result
     { 
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points, 1);
-      d_plot->autoScale();
+			       myparent->myBeamline()->RESULT.points, myparent->myBeamline()->BLOptions.ray_sets);
+      d_plot->autoScale(myparent->myBeamline()->BLOptions.ray_sets);
     }
 
   if (mwplotsubject & PLOT_PO_RESULT && 
@@ -1398,6 +1420,18 @@ void MainWindow::lambdaSlot()
   UpdateStatus();
 } // lambdaSlot
 
+// slot changed  lambda
+void MainWindow::dlambdaSlot()
+{
+  unsigned int i;
+
+#ifdef DEBUG
+  cout << "dlambdaSlot called" << endl;
+#endif
+
+  myparent->myBeamline()->BLOptions.dlambda= dlambdaE->text().toDouble()* 1e-6;
+} // lambdaSlot
+
 // misaliBoxslot
 void MainWindow::misaliBoxslot(int newstate)
 {
@@ -1411,6 +1445,20 @@ void MainWindow::misaliBoxslot(int newstate)
     myparent->myBeamline()->ElementList[i].ElementOK= 0;
   UpdateStatus();
 } // misaliBoxslot
+
+// dlambdaBoxslot
+void MainWindow::dlambdaBoxslot(int newstate)
+{
+#ifdef DEBUG
+  cout << "dlambdaBoxslot called: new state: " << newstate << endl;
+#endif
+  
+  myparent->myBeamline()->BLOptions.dlambdaflag= (newstate == Qt::Checked) ? 1 : 0;
+  myparent->myBeamline()->BLOptions.ray_sets= myparent->myBeamline()->BLOptions.dlambdaflag+ 1;
+#ifdef DEBUG
+  cout << "debug: dlambdaBoxslot out:dlambdaflag= " <<  myparent->myBeamline()->BLOptions.dlambdaflag << " ray_sets= " << myparent->myBeamline()->BLOptions.ray_sets << endl;
+#endif
+} // dlambdaBoxslot
 
 // slot called to read in a new beamline
 void MainWindow::newBeamline()

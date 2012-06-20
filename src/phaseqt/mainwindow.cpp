@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <13 Jun 12 09:24:43 flechsig> 
+//  Time-stamp: <20 Jun 12 14:52:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -295,30 +295,38 @@ QWidget *MainWindow::createBeamlineBox()
     QGroupBox   *beamlineGenericGroup  = new QGroupBox(tr("generic parameters"));
     QGridLayout *beamlineGenericLayout = new QGridLayout;
 
-    lambdaE = new QLineEdit;
-    dislenE = new QLineEdit;
+    lambdaE  = new QLineEdit;
+    dlambdaE = new QLineEdit;
+    dislenE  = new QLineEdit;
 
-    QLabel *lambdaLabel  = new QLabel(tr("wavelength (nm)"));
+    QLabel *lambdaLabel  = new QLabel(tr("lambda (nm)"));
+    QLabel *dlambdaLabel = new QLabel(tr("dlambda (nm)"));
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
     
-    beamlineGenericLayout->addWidget(lambdaLabel, 0, 0);
-    beamlineGenericLayout->addWidget(dislenLabel, 1, 0);
-    beamlineGenericLayout->addWidget(lambdaE,     0, 1);
-    beamlineGenericLayout->addWidget(dislenE,     1, 1);
+    beamlineGenericLayout->addWidget(lambdaLabel,  0, 0);
+    beamlineGenericLayout->addWidget(lambdaE,      0, 1);
+    beamlineGenericLayout->addWidget(dlambdaLabel, 0, 2);
+    beamlineGenericLayout->addWidget(dlambdaE,     0, 3);
+    beamlineGenericLayout->addWidget(dislenLabel, 1, 0, 1, 2);
+    beamlineGenericLayout->addWidget(dislenE,     1, 3, 1, 1);
+    
     beamlineGenericGroup->setLayout(beamlineGenericLayout);
 
 // bottom part
     QGroupBox   *beamlineCalcGroup  = new QGroupBox(tr("calculation parameters"));
-    QVBoxLayout *beamlineCalcLayout = new QVBoxLayout;
+    //QVBoxLayout *beamlineCalcLayout = new QVBoxLayout;
+    QGridLayout *beamlineCalcLayout = new QGridLayout;
 
     goButton = new QRadioButton(tr("&geometrical optic (GO)"));
     poButton = new QRadioButton(tr("&physical optic (PO)"));
     goButton->setChecked(true);
-    misaliBox = new QCheckBox(tr("with misalignment"));
+    misaliBox  = new QCheckBox(tr("with misalignment"));
+    dlambdaBox = new QCheckBox(tr("delta lambda"));
 
-    beamlineCalcLayout->addWidget(goButton);
-    beamlineCalcLayout->addWidget(poButton);
-    beamlineCalcLayout->addWidget(misaliBox);
+    beamlineCalcLayout->addWidget(goButton,  0, 0);
+    beamlineCalcLayout->addWidget(poButton,  1, 0);
+    beamlineCalcLayout->addWidget(misaliBox, 2, 0);
+    beamlineCalcLayout->addWidget(dlambdaBox, 2, 1);
     beamlineCalcGroup->setLayout(beamlineCalcLayout);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -336,10 +344,12 @@ QWidget *MainWindow::createBeamlineBox()
     connect(delB, SIGNAL(pressed()), this, SLOT(deleteElement()));
     connect(elementList, SIGNAL(itemSelectionChanged()), this, SLOT(selectElement()));
     connect(lambdaE, SIGNAL(editingFinished()), this, SLOT(lambdaSlot()));
+    connect(dlambdaE, SIGNAL(editingFinished()), this, SLOT(dlambdaSlot()));
     connect(dislenE, SIGNAL(editingFinished()), this, SLOT(dislenSlot()));
     connect(goButton, SIGNAL(clicked()), this, SLOT(goButtonslot()));
     connect(poButton, SIGNAL(clicked()), this, SLOT(poButtonslot()));
     connect(misaliBox, SIGNAL(stateChanged(int)), this, SLOT(misaliBoxslot(int)));
+    connect(dlambdaBox, SIGNAL(stateChanged(int)), this, SLOT(dlambdaBoxslot(int)));
     return beamlineBox;
 } // end createbeamline box
 

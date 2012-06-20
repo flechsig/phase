@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Jun 12 14:20:33 flechsig>  */
+/*   Time-stamp: <20 Jun 12 13:03:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -189,7 +189,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  DefGeometryC(&listpt->GDat, &listpt->geo);
             
 	  MakeMapandMatrix(listpt, bl, elindex); 
-	  printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
+	  //printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
@@ -237,10 +237,10 @@ void BuildBeamline(struct BeamlineType *bl)
     } /* Schleife ueber alle Elemente fertig */
   
   printf("Buildbeamline: extract beamline map\n");
-  printf("2xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
+  //printf("2xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
   extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	     &bl->BLOptions.ifl.iord); 
-  printf("3xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
+  //printf("3xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
   /* UF JB wir brauchen hier ein dfdw fuer die beamline */
   /* hier muessen wir dfdw,dfdl vom 1. element auf die beamline variablen kopieren bzw speziellen pointer nutzen */
   /* mache das oben UF 17.11.10*/	
@@ -1928,6 +1928,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   if (listpt->GDat.dlambdaflag > 0)
 	     {
 	       bl->BLOptions.dlambdaflag= listpt->GDat.dlambdaflag;
+	       listpt->GDat.dlambdaflag= 0;
 	       bl->BLOptions.dlambda    = listpt->GDat.dlambda;
 	     }
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.inout);  
@@ -2427,7 +2428,6 @@ void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)
   //#endif
 } /* end DefGeometryCnew */ 
 
-
 void DefGeometryC(struct gdatset *x, struct geometrytype *gout)  
 /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 /* Dec 2009 provisions for multiple wavelengths */
@@ -2435,7 +2435,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   double delta, alpha, beta, theta0, trans, radius, lambda, lambda1, beta1;
   int i;
  
-  DefGeometryCnew(x, gout);  
+  //DefGeometryCnew(x, gout);  
 
   printf("LAMBDA = %e\n", x->lambdag);
   

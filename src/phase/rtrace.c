@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <20 Jun 12 11:29:17 flechsig>  */
+/*   Time-stamp: <20 Jun 12 13:31:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -632,9 +632,14 @@ void RayTracec(struct BeamlineType *bl)
 #endif 
 
   Raysin = bl->RTSource.SourceRays; 
-  Raysout= (bl->BLOptions.act_ray_set == 2) ?  &Re->RESp[Re->points] : Re->RESp;    
-  
-  for (i= 0; i< bl->RTSource.raynumber; i++)
+  Raysout= Re->RESp;    
+  if (bl->BLOptions.act_ray_set == 2) 
+    {
+      for (i= 0; i< bl->RTSource.raynumber; i++) Raysout++;
+      Raysout++;   // one more
+    }
+
+  for (i= 0; i< bl->RTSource.raynumber; i++ )
     { 
       
       ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
@@ -642,7 +647,7 @@ void RayTracec(struct BeamlineType *bl)
 		 (double *)bl->dypc, (double *)bl->dzpc); 
       
       Raysout->phi= Raysin->phi;
-      Raysin++; Raysout++;  
+      Raysin++, Raysout++;
     }
   /*   free(raysin);      */
   if (bl->BLOptions.act_ray_set == bl->BLOptions.ray_sets) bl->beamlineOK |= resultOK; /* resultrays in memory */

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <18 Jun 12 14:29:53 flechsig> 
+//  Time-stamp: <20 Jun 12 14:22:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -374,7 +374,7 @@ void Plot::profilePlot(int subject, int style, int nsets)
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
       d_curve1->setRawSamples(c1y, c1x, BINS2);
-      d_curve2->setRawSamples(c2y, c1x, BINS2);
+      if (nsets == 2) d_curve2->setRawSamples(c2y, c2x, BINS2);
       y1= ymin;                                     // for manual scaling
       y2= ymax;             
       x1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -392,7 +392,7 @@ void Plot::profilePlot(int subject, int style, int nsets)
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
       d_curve1->setRawSamples(c1x, c1y, BINS2);
-      d_curve2->setRawSamples(c1x, c2y, BINS2);
+      if (nsets == 2) d_curve2->setRawSamples(c2x, c2y, BINS2);
       x1= zmin;           
       x2= zmax;
       y1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -426,8 +426,8 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
   struct RayType *rp;
 
 #ifdef DEBUG
-  cout << "debug: fillGoPlotArrays called, plotsubject: " << plotsubject << endl;
-  cout << "debug: fillGoPlotArrays called, nsets: ******************** " << nsets << endl;
+  cout << "debug: " << __FILE__ << " fillGoPlotArrays called, plotsubject: " 
+       << plotsubject << " ray_sets=" << nsets << endl;
 #endif
 
   ndata= points; // fill private var
@@ -441,6 +441,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
   c1y= new double[ndata];
 
   if ((plotsubject & PLOT_GO_PHI) && (nsets == 1)) c2y= new double[ndata];
+
   if (nsets == 2) 
     {
       c2x= new double[ndata]; 
@@ -450,20 +451,22 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
   rp= rays;
   if (plotsubject & PLOT_GO_SPA)
     {
-      for (i= 0; i< ndata; i++, rp++)
+      i= 0;
+      while (i< ndata)
 	{
 	  c1x[i]= rp->z;
 	  c1y[i]= rp->y;
+	  i++, rp++;
 	}
-
       if (nsets == 2) 
 	{
-	  rp= &rays[ndata];
-	  //rp= &rays[0];
-	  for (i= 0; i< ndata; i++, rp++)
+	  i= 0;
+	  rp++;
+	  while (i< ndata)
 	    {
 	      c2x[i]= rp->z;
-	      c2y[i]= rp->y+0.5;
+	      c2y[i]= rp->y;
+	      i++, rp++;
 	    }
 	}
     }
@@ -488,14 +491,14 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
     }
 } // end fillGoPlotArrays			     
 
-double *Plot::getXdata()
+double *Plot::getXdata(int nr)
 {
-  return c1x;
+  if (nr != 2) return c1x; else return c2x;
 }
 
-double *Plot::getYdata()
+double *Plot::getYdata(int nr)
 {
-  return c1y;
+  if (nr != 2) return c1y; else return c2y;
 }
 
 // makes a scatter plot
@@ -672,9 +675,9 @@ void Plot::autoScale(double z1, double z2, double y1, double y2)   // PO
   zmax= z2;
 } // end autoscale PO
 
-void Plot::autoScale()   // GO
+void Plot::autoScale(int nsets)   // GO
 {
-  int i;
+ 
   
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << "GO autoScale called, ndata: " << ndata << endl;
@@ -684,12 +687,22 @@ void Plot::autoScale()   // GO
     {
       ymin  = ymax  = *c1y;
       zmin  = zmax  = *c1x;
-      for (i= 0; i < ndata; i++)
+      for (int i= 0; i < ndata; i++)
 	{
 	  ymin  = min(c1y[i], ymin);
 	  ymax  = max(c1y[i], ymax);
 	  zmin  = min(c1x[i], zmin); // ! not zdata (zdata only available for phi)
 	  zmax  = max(c1x[i], zmax); // ! not zdata
+	}
+      if (nsets == 2)
+	{
+	  for (int i= 0; i < ndata; i++)
+	    {
+	      ymin  = min(c2y[i], ymin);
+	      ymax  = max(c2y[i], ymax);
+	      zmin  = min(c2x[i], zmin); // ! not zdata (zdata only available for phi)
+	      zmax  = max(c2x[i], zmax); // ! not zdata
+	    }
 	}
     }
   else
@@ -736,7 +749,7 @@ void Plot::Beauty(double *mi, double *ma)
 
 
 // fills a 1d histogram with data !! we use c2y
-void Plot::hfill1(double *dvec, double x1, double x2, int nsets)
+void Plot::hfill1(double *dvec, double x1, double x2, int set)
 {
   int i;
   unsigned int ix;
@@ -746,55 +759,62 @@ void Plot::hfill1(double *dvec, double x1, double x2, int nsets)
   cout << "Plot::hfill1 called" << endl;
 #endif
 
-  if (c1x) delete c1x; c1x= NULL;
-  if (c1y) delete c1y; c1y= NULL;
-  if (c2x) delete c2x; c2x= NULL;
-  if (c2y) delete c2y; c2y= NULL;
-  c1x= new double[BINS2];
-  c1y= new double[BINS2];
-  if (nsets == 2) c2y= new double[BINS2];
-
   if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
-    
-  for (ix= 0; ix< BINS2; ix++)
-    {
-      c1y[ix]= 0.0;
-      c1x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
-    }
 
-  for (i= 0; i< ndata; i++)
+  if (set != 2)
     {
-      ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
-      if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
-    }  
-  
-  if (nsets == 2 )
-    {
-      for (ix= 0; ix< BINS2; ix++) c2y[ix]= 0.0;
-	
-      dp= &dvec[ndata];
-      //dp= &dvec[0];
+      if (c1x) delete c1x; c1x= NULL;
+      if (c1y) delete c1y; c1y= NULL;
+      c1x= new double[BINS2];
+      c1y= new double[BINS2];
+      for (ix= 0; ix< BINS2; ix++)
+	{
+	  c1y[ix]= 0.0;
+	  c1x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
+	}
+      
       for (i= 0; i< ndata; i++)
 	{
-	  ix= (unsigned int)((dp[i]- x1-0.5)/(x2- x1) * BINS2);
+	  ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
+	  if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
+	} 
+    }
+  else
+    {
+      if (c2x) delete c2x; c2x= NULL;
+      if (c2y) delete c2y; c2y= NULL;
+      c2x= new double[BINS2];
+      c2y= new double[BINS2];
+      for (ix= 0; ix< BINS2; ix++)
+	{
+	  c2y[ix]= 0.0;
+	  c2x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
+	}
+      
+      for (i= 0; i< ndata; i++)
+	{
+	  ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
 	  if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
-	}  
+	} 
     }
   
+ 
   h1max= 0.0; h1firstgt0= 1.0;  // ZERO
-  if (ndata)                    // not if 0
+  if (set != 2)
     {
-    for (ix= 0; ix< BINS2; ix++)
-      {
-	c1y[ix]*= 1.0/ndata;   // density in rays 
-	if (c1y[ix] > h1max) h1max= c1y[ix];
-	if ((c1y[ix] > ZERO) && (c1y[ix] < h1firstgt0)) h1firstgt0 = c1y[ix];
-      }
-    for (ix= 0; ix< BINS2; ix++) 
-      if (c1y[ix] < h1firstgt0 )  c1y[ix]= h1firstgt0;  // fix 0 for log scale
+      if (ndata)                    // not if 0
+	{
+	  for (ix= 0; ix< BINS2; ix++)
+	    {
+	      c1y[ix]*= 1.0/ndata;   // density in rays 
+	      if (c1y[ix] > h1max) h1max= c1y[ix];
+	      if ((c1y[ix] > ZERO) && (c1y[ix] < h1firstgt0)) h1firstgt0 = c1y[ix];
+	    }
+	  for (ix= 0; ix< BINS2; ix++) 
+	    if (c1y[ix] < h1firstgt0 )  c1y[ix]= h1firstgt0;  // fix 0 for log scale
+	}
     }
-
-  if (nsets == 2 ) // UF to be done
+  else
     {
       if (ndata)                    // not if 0
 	{
@@ -808,14 +828,14 @@ void Plot::hfill1(double *dvec, double x1, double x2, int nsets)
 	    if (c2y[ix] < h1firstgt0 )  c2y[ix]= h1firstgt0;  // fix 0 for log scale
 	}
     }
-
+  
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
 #endif
 } // hfill1
 
 // fills a 2d histogram with ray data
-void Plot::hfill2()
+void Plot::hfill2(int nsets)
 {
   int i, ix, iy, h2a_n, idx;
   double xm, ym;
@@ -848,6 +868,26 @@ void Plot::hfill2()
 	      xm= c1x[i]; 
 	      ym= c1y[i];
 	      h2max= h2a[idx];
+	    }
+	}
+    }
+  if (nsets == 2)
+    {
+      for (i= 0; i< ndata; i++)
+	{
+	  ix= (int)((c2x[i]- zmin)/(zmax - zmin)* h2a_nx);
+	  iy= (int)((c2y[i]- ymin)/(ymax - ymin)* h2a_ny);
+	  
+	  if ((ix >= 0) && (ix < h2a_nx) && (iy >= 0) && (iy < h2a_ny)) 
+	    {
+	      idx= ix+ iy* h2a_nx;
+	      h2a[idx]+= 1.0;          // add one hit
+	      if (h2a[idx] > h2max) 
+		{
+		  xm= c2x[i]; 
+		  ym= c2y[i];
+		  h2max= h2a[idx];
+		}
 	    }
 	}
     }
