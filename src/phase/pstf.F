@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <14 Jun 12 13:07:38 flechsig> 
+c$$$ Time-stamp: <2012-06-20 20:38:46 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 c May 2012 this routine is obsolete - 
@@ -231,8 +231,10 @@ c************* save initial coordinates ****************
 	    st.nn2=n2
 c******* start of adaptive grid integration *************************** 
 c           write(6,*)'call adaptive_int'
+
            call adaptive_int(m4,g,am,src,apr,
-     .           cs,ra,ifl,xi,xir,st,s,blp)  
+     &           cs,ra,ifl,xi,xir,st,s,blp)  
+
 c           write(6,*)'returned from adaptive_int'
             if(ifl.ispline.eq.-1)then
                xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
