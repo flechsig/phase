@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <20 Jun 12 11:28:59 flechsig>  */
+/*   Time-stamp: <20 Jun 12 11:29:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -43,8 +43,8 @@ void MakeHardEdgeSource(struct RTSourceType *y)
    x= (struct HardEdgeSourceType *)y->Quellep;
    tdy= x->divy/ 1000.0;
    tdz= x->divz/ 1000.0; 
-   ly = (x->iy == 1) ?  0.0 : (x->disty / (x->iy- 1.0)); 
-   lz = (x->iz == 1) ?  0.0 : (x->distz / (x->iz- 1.0)); 
+   ly = (x->iy == 1)  ? 0.0 : (x->disty / (x->iy- 1.0)); 
+   lz = (x->iz == 1)  ? 0.0 : (x->distz / (x->iz- 1.0)); 
    ldy= (x->idy == 1) ? 0.0 : (tdy / (x->idy- 1.0)); 
    ldz= (x->idz == 1) ? 0.0 : (tdz / (x->idz- 1.0)); 
    rnumber= 0;
