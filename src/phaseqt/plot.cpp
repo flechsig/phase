@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <20 Jun 12 14:22:47 flechsig> 
+//  Time-stamp: <2012-06-20 23:55:52 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -461,7 +461,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
       if (nsets == 2) 
 	{
 	  i= 0;
-	  rp++;
+	  //	  rp++;
 	  while (i< ndata)
 	    {
 	      c2x[i]= rp->z;
@@ -666,9 +666,11 @@ void Plot::printPlot(QPrinter &printerp )
 
 void Plot::autoScale(double z1, double z2, double y1, double y2)   // PO
 {
+
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " PO autoScale called" << endl;
 #endif
+
   ymin= y1;
   ymax= y2;
   zmin= z1;
@@ -677,10 +679,9 @@ void Plot::autoScale(double z1, double z2, double y1, double y2)   // PO
 
 void Plot::autoScale(int nsets)   // GO
 {
- 
-  
+
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << "GO autoScale called, ndata: " << ndata << endl;
+  cout << "debug: " << __FILE__ << " GO autoScale called, ndata: " << ndata << endl;
 #endif
 
   if (ndata > 0) 

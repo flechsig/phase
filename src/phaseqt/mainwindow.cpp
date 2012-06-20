@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <20 Jun 12 14:52:43 flechsig> 
+//  Time-stamp: <2012-06-20 21:37:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1770,7 +1770,7 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 void MainWindow::UpdateBeamlineBox()
 {
   struct OptionsType *blo;
-  QString lambdaEqst, dislenEqst;
+  QString lambdaEqst, dlambdaEqst, dislenEqst;
 
   fileNameLabel->setText(QString(tr(myparent->myBeamline()->filenames.beamlinename)));
 
@@ -1778,9 +1778,11 @@ void MainWindow::UpdateBeamlineBox()
 
   lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6, 'g', 4));
   dislenE->setText(dislenEqst.setNum(blo->displength,  'g', 4));
+  dlambdaE->setText(dlambdaEqst.setNum(blo->dlambda* 1e6,  'g', 4));
 
   if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
-  if (blo->WithAlign) misaliBox->setChecked(true);    else misaliBox->setChecked(false);
+  if (blo->WithAlign) misaliBox->setChecked(true);         else misaliBox->setChecked(false);
+  if (blo->dlambdaflag) dlambdaBox->setChecked(true);      else dlambdaBox->setChecked(false);
 } // end UpdateBeamlineBox
 
 // UpdateElementBox

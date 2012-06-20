@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Jun 12 13:03:54 flechsig>  */
+/*   Time-stamp: <2012-06-20 22:37:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -987,12 +987,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
      imodus= imodus+ 1000;
    
 #ifdef SEVEN_ORDER
-   /*#ifdef DEBUG*/
+#ifdef DEBUG1
    printf(" ********call fgmapidp_8: iord:    %d\n", bl->BLOptions.ifl.iord);
    printf(" ********call fgmapidp_8: iplmode: %d\n", bl->BLOptions.ifl.iplmode);
    printf(" ********call fgmapidp_8: imodus:  %d\n", imodus);
    printf(" ********use old REDUCE maps:  %d\n", bl->BLOptions.REDUCE_maps);
-   /*#endif*/
+#endif
    if (bl->BLOptions.REDUCE_maps == 0)
      {
        fgmapidp_8(&bl->BLOptions.epsilon, 
@@ -1290,7 +1290,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20120508;    /* todday */
+   int  i, version= 20120620;    /* today */
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1316,7 +1316,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version MAR 2012\n\n");
+   fprintf(f, "This is a datafile of PHASE, file version JUN 2012\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -1445,9 +1445,10 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      for (i= 0; i< 5; i++) 
        fprintf(f, "%20.10lg  line density x[%d] \n", listpt->GDat.xdens[i], i);
      fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambdag* 1e6); 
+     /* 20120620
      fprintf(f, "%20lg     dlambda [nm]        \n", listpt->GDat.dlambda* 1e6); 
      fprintf(f, "%20d     dlambdaflag        \n", listpt->GDat.dlambdaflag);
-     
+     */
      fprintf(f, "%20d     diffraction order  \n", listpt->GDat.inout);
      fprintf(f, "%20d     flag               \n", listpt->GDat.iflag);   
      fprintf(f, "%20d     azimut * Pi/2      \n", listpt->GDat.azimut);   
@@ -1505,7 +1506,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 	   op->ifl.igrating);
    fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
 	   op->ifl.ipinarr);
-   
+   fprintf(f, "%20d  GO enable delta lambda\n", op->dlambdaflag);
+   fprintf(f, "%20lg  GO delta lambda (nm)\n",  op->dlambda*1e6);
    /* end control_flags */
 
    fprintf(f,"\nAPERTURES\n"); 
@@ -1691,7 +1693,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20120508;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20120620;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -1918,19 +1920,13 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
                fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
              } 
 	   listpt->GDat.lambdag*= 1e-6;
-	   if (version >= 20091222)
+	   if ((version >= 20091222) && (version < 20120620))
 	     {
 	       fgets(buffer, 80, f); sscanf(buffer, "%lf", &listpt->GDat.dlambda); 
-	       fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.dlambdaflag);
+	       fgets(buffer, 80, f); sscanf(buffer, "%d",  &listpt->GDat.dlambdaflag);
 	       listpt->GDat.dlambda*= 1e-6;
 	     }
-	   /* UF jun 2012 temporarely*/
-	   if (listpt->GDat.dlambdaflag > 0)
-	     {
-	       bl->BLOptions.dlambdaflag= listpt->GDat.dlambdaflag;
-	       listpt->GDat.dlambdaflag= 0;
-	       bl->BLOptions.dlambda    = listpt->GDat.dlambda;
-	     }
+	   
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.inout);  
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.iflag);  
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.azimut); 
@@ -2001,6 +1997,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %d %[^\n]s %c",  &op->ifl.matrel, buffer, &buf);  
        fscanf(f, " %d %[^\n]s %c",  &op->ifl.igrating, buffer, &buf);  
        fscanf(f, " %d %[^\n]s %c",  &op->ifl.ipinarr, buffer, &buf); 
+       if (version >= 20120620)
+	 {
+	   fscanf(f, " %d %[^\n]s %c",   &op->dlambdaflag, buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c",  &op->dlambda, buffer, &buf); 
+	   op->dlambda*= 1e-6;
+	 }
      } else  rcode= -1;
    
    if (SetFilePos(f, "APERTURES"))
@@ -2220,7 +2222,7 @@ void SetDeltaLambda(struct BeamlineType *bl, struct ElementType *listpt)
        bl->deltalambdafactor= 1.0/(listpt->GDat.xdens[0]* 
 				   (double)(abs(listpt->GDat.inout)))* 
 	 (listpt->geo.cosb/ bl->BLOptions.displength); 
-#ifdef DEBUG
+#ifdef DEBUG1
        printf("\n**** SetdeltaLambda *******\n");
        printf(
 "   debug: line dens.: %g, dl %g, cosb %g, lambda %g mm, diffr. order: %lg\n",

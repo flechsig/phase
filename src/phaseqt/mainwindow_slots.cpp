@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <20 Jun 12 17:22:24 flechsig> 
+//  Time-stamp: <2012-06-20 22:10:52 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -185,7 +185,7 @@ void MainWindow::activateProc(const QString &action)
 	if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
 	  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
 	
-      myparent->buildBeamlineParallel();      // for tests so far
+      //myparent->buildBeamlineParallel();      // for tests so far
       myparent->myBuildBeamline();
       myparent->myRayTracec(); 
 
@@ -199,10 +199,11 @@ void MainWindow::activateProc(const QString &action)
 		{
 		  myparent->myBeamline()->ElementList[i].ElementOK= 0;
 		  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 1;
-		  myparent->myBeamline()->ElementList[i].GDat.dlambda=myparent->myBeamline()->BLOptions.dlambda; 
+		  myparent->myBeamline()->ElementList[i].GDat.dlambda= 
+		    myparent->myBeamline()->BLOptions.dlambda; 
 		}
 	    }
-	  myparent->buildBeamlineParallel();      // for tests so far
+	  //myparent->buildBeamlineParallel();      // for tests so far
 	  myparent->myBuildBeamline();
 	  myparent->myRayTracec(); 
 	  /* reset temporarely */
@@ -1430,6 +1431,14 @@ void MainWindow::dlambdaSlot()
 #endif
 
   myparent->myBeamline()->BLOptions.dlambda= dlambdaE->text().toDouble()* 1e-6;
+  myparent->myBeamline()->beamlineOK= 0;
+  for (i=0; i< myparent->myBeamline()->elementzahl; i++) 
+    if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT) 
+      myparent->myBeamline()->ElementList[i].ElementOK= 0;
+  UpdateStatus();
+#ifdef DEBUG
+  cout << "debug: dlambda= " << myparent->myBeamline()->BLOptions.dlambda *1e6 << " nm" << endl;
+#endif
 } // lambdaSlot
 
 // misaliBoxslot

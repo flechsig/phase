@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <20 Jun 12 13:31:36 flechsig>  */
+/*   Time-stamp: <2012-06-20 23:44:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -628,15 +628,15 @@ void RayTracec(struct BeamlineType *bl)
   Re->typ   = PLrttype;  
     
 #ifdef DEBUG	
-  printf("RayTracec: calculate %d ray(s) \n", Re->points);
+  printf("RayTracec: calculate %d ray(s), %d %d\n", Re->points, bl->RTSource.raynumber, Re->RESp);
 #endif 
 
   Raysin = bl->RTSource.SourceRays; 
-  Raysout= Re->RESp;    
+  Raysout= (struct RayType *)Re->RESp;    
   if (bl->BLOptions.act_ray_set == 2) 
     {
       for (i= 0; i< bl->RTSource.raynumber; i++) Raysout++;
-      Raysout++;   // one more
+      //Raysout++;   // one more ????
     }
 
   for (i= 0; i< bl->RTSource.raynumber; i++ )
@@ -901,12 +901,17 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 
   FreeResultMem(&bl->RESULT); 
 
+#ifdef DEBUG 
+  printf("debug: start allocating\n");
+#endif
+
   switch (newtype)
     {
     case PLrttype:
       ii= dim1;
       bl->RESULT.RESp= XMALLOC(struct RayType, ii);
       bl->RESULT.points= ii;
+      printf("allocate %d\n", ii);
       break;
     case PLphspacetype:
       iy= dim1;
@@ -940,6 +945,9 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       exit(-1);
     }
   bl->RESULT.typ= newtype;
+#ifdef DEBUG 
+  printf("\n&&&&&&&&&&&&&&&&&debug %s AllocResult %d\n", __FILE__, bl->RESULT.RESp);
+#endif
 } /* AllocResult */
 
 void FreeResultMem(struct RESULTType *Re) 
@@ -948,31 +956,42 @@ void FreeResultMem(struct RESULTType *Re)
 {
   struct PSDType *PSDp;
 
-   if (((Re->typ & PLrttype) > 0) && (Re->RESp != NULL))
-      XFREE(Re->RESp); 
-   if (((Re->typ & PLphspacetype) > 0) && (Re->RESp != NULL))
-   {  
-     PSDp= Re->RESp;
-     if (PSDp->psd != NULL)
-/* da der Speicher gemeinsam allociert wird teste ich nur einmal */
-/* man muss alle reservierten pointer einzeln freigeben!         */
-       {  
-	 XFREE(PSDp->y);  
-	 XFREE(PSDp->z);  
-	 XFREE(PSDp->psd);
-	 XFREE(PSDp->stfd1phmaxc);
-	 XFREE(PSDp->stinumbc)  ;
-	 XFREE(PSDp->s1c)       ;
-	 XFREE(PSDp->s2c)       ;
-	 XFREE(PSDp->s3c)       ;
-	 XFREE(PSDp->eyrec)     ;
-	 XFREE(PSDp->ezrec)     ;
-	 XFREE(PSDp->eyimc)     ;
-	 XFREE(PSDp->ezimc)     ;
-       }
-     XFREE(Re->RESp);
-   }
-   Re->typ= 0;
+#ifdef DEBUG  
+  printf("\n&&&&&&&&&&&&&&&&& debug:  %s FreeResultMem %d\n", __FILE__, Re->RESp); 
+#endif
+  
+  if (Re->RESp == NULL)
+    {
+      printf("FreeResultMem: Re->RESp == NULL - nothing to free- return\n");
+      return;
+    }
+
+  if (Re->typ & PLrttype) 
+    XFREE(Re->RESp); 
+
+  if (Re->typ & PLphspacetype) 
+    {  
+      PSDp= (struct PSDType *)Re->RESp;
+      if (PSDp->psd != NULL)
+	/* da der Speicher gemeinsam allociert wird teste ich nur einmal */
+	/* man muss alle reservierten pointer einzeln freigeben!         */
+	{  
+	  XFREE(PSDp->y);  
+	  XFREE(PSDp->z);  
+	  XFREE(PSDp->psd);
+	  XFREE(PSDp->stfd1phmaxc);
+	  XFREE(PSDp->stinumbc)  ;
+	  XFREE(PSDp->s1c)       ;
+	  XFREE(PSDp->s2c)       ;
+	  XFREE(PSDp->s3c)       ;
+	  XFREE(PSDp->eyrec)     ;
+	  XFREE(PSDp->ezrec)     ;
+	  XFREE(PSDp->eyimc)     ;
+	  XFREE(PSDp->ezimc)     ;
+	}
+      XFREE(Re->RESp);
+    }
+  Re->typ= 0;
 } /* end freeResultmem */
 
 /* end rtrace.c */
