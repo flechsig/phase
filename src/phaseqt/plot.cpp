@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2012-06-20 23:55:52 flechsig> 
+//  Time-stamp: <21 Jun 12 08:59:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -128,7 +128,7 @@ public:
       dxtotal= po->pox[po->h2a_nx- 1] - po->pox[0];
       dytotal= po->poy[po->h2a_ny- 1] - po->poy[0];
       
-#ifdef DEBUG
+#ifdef DEBUG1
       printf("debug: constructor SpectrogramDataPO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
       //      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
@@ -162,7 +162,7 @@ public:
     {
       po= plotobj;
       
-#ifdef DEBUG
+#ifdef DEBUG1
       printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
       //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
@@ -269,7 +269,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 
   /************* end zoom *************/
   this->fwhmon= 1;
-#ifdef DEBUG  
+#ifdef DEBUG1  
   cout << "debug: " << __FILE__ << " Plot:constructor called- plotsubject " << plotsubject << endl;
 #endif
   //  this->p_zoomer= zoomer;
@@ -716,7 +716,7 @@ void Plot::autoScale(int nsets)   // GO
   Beauty(&zmin,   &zmax);
   
   //printf("autscale: %f, %f\n", ymin, ymax);
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("DEBUG: autoScale: %lg, %lg, %lg, %lg\n", ymin, ymax, zmin, zmax);
 #endif
 } //autoScale
@@ -841,7 +841,7 @@ void Plot::hfill2(int nsets)
   int i, ix, iy, h2a_n, idx;
   double xm, ym;
   
-#ifdef DEBUG
+#ifdef DEBUG1
   cout << "debug: Plot::hfill2 called (ray version)" << endl;
 #endif
 
@@ -900,7 +900,7 @@ void Plot::hfill2(int nsets)
 
  
 
-#ifdef DEBUG
+#ifdef DEBUG1
   cout << "debug: " << __FILE__ << " hfill2 end:  h2max= " <<  h2max << ", h2a[last]= " << h2a[h2a_n-1] << endl;
   cout << "debug: " << __FILE__ << " hfill2 end:  max @ x= " << xm << ", y= " << ym << endl;
 #endif
@@ -966,7 +966,7 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
   struct RayType *rp;
   double fwhmfac;
 
-#ifdef DEBUG  
+#ifdef DEBUG1  
   cout << "debug: " << __FILE__ << " statistics called, fwhmon=" << fwhmon << ", deltalambdafactor=" << deltalambdafactor << ", lambda=" << lambda << endl;
   // printf("debug: statistics called, fwhmon= %d", fwhmon);
 #endif
@@ -1015,7 +1015,7 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
       wdz*= fwhmfac;
       wdy*= fwhmfac;
     }
-#ifdef DEBUG  
+#ifdef DEBUG1  
   cout << "debug " << __FILE__ << " ==> statistics done" << endl;
 #endif
 } // Plot::statistics

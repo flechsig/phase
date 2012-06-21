@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-06-20 22:37:54 flechsig>  */
+/*   Time-stamp: <21 Jun 12 09:08:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2447,18 +2447,14 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
-  fprintf(stderr, "debug: lambda: %e, io: %d, alpha = %f, beta = %f\n", lambda, x->inout, alpha*(180.0/PI), beta*(180.0/PI) );
+  fprintf(stderr, "debug:  lambda: %e nm, io: %d, alpha = %f, beta = %f\n", lambda*1e6, x->inout, alpha*(180.0/PI), beta*(180.0/PI) );
   if (x->dlambdaflag == 1)
     {
-      fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled    !!!!!!!!\n");
-      fprintf(stderr, "!!!!!!!! experimental feature - not debugged so far !!!!!!!!\n");
+      fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature  !!!!!!!!\n");
       lambda1= x->lambdag+ x->dlambda;
-      fprintf(stderr, "debug: lambda1: %e, io: %d, alpha = %f, beta = %f, theta= %f\n", lambda1, x->inout, 
-	      alpha*(180.0/PI), beta*(180.0/PI), theta0 );
-
       beta1= (-1.0)* asin(lambda1* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
-      fprintf(stderr, "debug: lambda1: %e, io: %d, alpha = %f, beta = %f, theta= %f, dbeta= %f\n", lambda1, x->inout, 
-	      alpha*(180.0/PI), beta1*(180.0/PI), theta0 , beta-beta1);
+      fprintf(stderr, "debug: lambda1: %e nm, io: %d, alpha = %f, beta = %f, theta= %f, dbeta= %f mrad\n", lambda1*1e6, x->inout, 
+	      alpha*(180.0/PI), beta1*(180.0/PI), theta0*(180.0/PI) , (beta-beta1)*1e3);
       beta= beta1;
     }
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <2012-06-20 23:44:56 flechsig>  */
+/*   Time-stamp: <21 Jun 12 09:13:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -628,7 +628,7 @@ void RayTracec(struct BeamlineType *bl)
   Re->typ   = PLrttype;  
     
 #ifdef DEBUG	
-  printf("RayTracec: calculate %d ray(s), %d %d\n", Re->points, bl->RTSource.raynumber, Re->RESp);
+  printf("debug: RayTracec: calculate %d ray(s), source: %d rays, pointer: %d\n", Re->points, bl->RTSource.raynumber, Re->RESp);
 #endif 
 
   Raysin = bl->RTSource.SourceRays; 
@@ -636,7 +636,7 @@ void RayTracec(struct BeamlineType *bl)
   if (bl->BLOptions.act_ray_set == 2) 
     {
       for (i= 0; i< bl->RTSource.raynumber; i++) Raysout++;
-      //Raysout++;   // one more ????
+      //Raysout++;   // one more ???? - no
     }
 
   for (i= 0; i< bl->RTSource.raynumber; i++ )
@@ -652,7 +652,7 @@ void RayTracec(struct BeamlineType *bl)
   /*   free(raysin);      */
   if (bl->BLOptions.act_ray_set == bl->BLOptions.ray_sets) bl->beamlineOK |= resultOK; /* resultrays in memory */
   
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("RayTracec:   end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 }
@@ -911,7 +911,9 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       ii= dim1;
       bl->RESULT.RESp= XMALLOC(struct RayType, ii);
       bl->RESULT.points= ii;
+#ifdef DEBUG1
       printf("allocate %d\n", ii);
+#endif
       break;
     case PLphspacetype:
       iy= dim1;
@@ -945,7 +947,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       exit(-1);
     }
   bl->RESULT.typ= newtype;
-#ifdef DEBUG 
+#ifdef DEBUG1 
   printf("\n&&&&&&&&&&&&&&&&&debug %s AllocResult %d\n", __FILE__, bl->RESULT.RESp);
 #endif
 } /* AllocResult */
@@ -956,7 +958,7 @@ void FreeResultMem(struct RESULTType *Re)
 {
   struct PSDType *PSDp;
 
-#ifdef DEBUG  
+#ifdef DEBUG1  
   printf("\n&&&&&&&&&&&&&&&&& debug:  %s FreeResultMem %d\n", __FILE__, Re->RESp); 
 #endif
   
@@ -966,8 +968,7 @@ void FreeResultMem(struct RESULTType *Re)
       return;
     }
 
-  if (Re->typ & PLrttype) 
-    XFREE(Re->RESp); 
+  if (Re->typ & PLrttype) XFREE(Re->RESp); 
 
   if (Re->typ & PLphspacetype) 
     {  
