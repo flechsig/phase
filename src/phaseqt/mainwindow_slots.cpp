@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2012-06-21 00:03:43 flechsig> 
+//  Time-stamp: <21 Jun 12 08:25:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -206,13 +206,13 @@ void MainWindow::activateProc(const QString &action)
 	  //myparent->buildBeamlineParallel();      // for tests so far
 	  myparent->myBuildBeamline();
 	  myparent->myRayTracec(); 
-	  /* reset temporarely */
-
-	  //myparent->myBeamline()->beamlineOK &= ~mapOK; 
+	  /* reset for the next calculation */
+	  cout << "multiple wavelength calculation: we have to reset some GO status bits" << endl; 
+	  myparent->myBeamline()->beamlineOK &= ~mapOK; 
 	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
 	    if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
 	      {
-		//myparent->myBeamline()->ElementList[i].ElementOK= 0;
+		myparent->myBeamline()->ElementList[i].ElementOK= 0;
 		myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
 	      }
 
