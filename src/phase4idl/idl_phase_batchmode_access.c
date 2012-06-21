@@ -84,7 +84,7 @@ if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
       MakeRTSource(&Beamline.filenames, &Beamline); 
       ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       RayTraceFull(&Beamline);
-      WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points,
+      WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points1,
 		   Beamline.RESULT.RESp); 
       break;
     case 4:
@@ -93,7 +93,7 @@ if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
       MakeRTSource(&Beamline.filenames, &Beamline);
       ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
       Footprint(&Beamline, Beamline.position);
-      WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points,
+      WriteRayFile(Beamline.filenames.imageraysname, &Beamline.RESULT.points1,
 		   Beamline.RESULT.RESp);
       break;
     case 3: 

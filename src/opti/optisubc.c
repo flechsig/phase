@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <06 Jun 12 11:02:41 flechsig>  */
+/*   Time-stamp: <21 Jun 12 13:41:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -554,7 +554,7 @@ void GetRMS(struct BeamlineType *bl, char *ch, double *chi)
   int    i, n;
   struct RayType *rays;
 
-  n   = bl->RESULT.points;
+  n   = bl->RESULT.points1;
   rays= (struct RayType *)bl->RESULT.RESp;
   EX= EX2= 0.0;
   if (n > 0)
@@ -654,7 +654,7 @@ void FullRTOpti(double *chi, struct BeamlineType *bl)
   printf("************ FullRTOpti ************\n");
   ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
   RayTraceFull(&Beamline);
-  transmittance= (double)Beamline.RESULT.points/
+  transmittance= (double)Beamline.RESULT.points1/
     (double)Beamline.RTSource.raynumber;
   *chi= 1.0- transmittance;
 } /* end FullRTOpti */

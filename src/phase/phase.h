@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Jun 12 07:56:14 flechsig>  */
+/*   Time-stamp: <21 Jun 12 16:43:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -64,6 +64,8 @@
 #define PLsimpph            0x8000000   /*  */
 #define PLd12              0x10000000   /*  */
 
+#define PLRaySet1                   1
+#define PLRaySet2                   2
 #define HORMAPFILENAMEBASE	"/lib/map"
 
 /*******************  fileheader *******************************/
@@ -586,7 +588,8 @@ struct PSDType  {
 
 struct RESULTType {
   void *RESp;         
-  int points, typ; };       
+  int  typ, points1, points2, dim1; 
+};       
 
 
 struct datset 
@@ -647,7 +650,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, ray_sets, act_ray_set, dlambdaflag;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, ray_sets, act_ray_set, dlambdaflag, plrayset;
   double epsilon, lambda, xlam_save, displength, dlambda;
   struct PSOptionsType PSO;
   struct control_flags ifl;

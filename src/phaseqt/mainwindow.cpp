@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2012-06-20 21:37:00 flechsig> 
+//  Time-stamp: <21 Jun 12 16:16:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -69,7 +69,7 @@ int MainWindow::checkResultType(struct RESULTType *rp, int typ)
   
   if (!myret)
     QMessageBox::warning(this, tr("checkResultType"),
-			 tr("Available calculation results incompatible with selected plotsubject!<p>info: points= %1, type= %2, requested type= %3").arg(rp->points).arg(rp->typ).arg(typ));
+			 tr("Available calculation results incompatible with selected plotsubject!<p>info: points1= %1, type= %2, requested type= %3").arg(rp->points1).arg(rp->typ).arg(typ));
 
   return myret;
 } // checkResultType
@@ -300,7 +300,7 @@ QWidget *MainWindow::createBeamlineBox()
     dislenE  = new QLineEdit;
 
     QLabel *lambdaLabel  = new QLabel(tr("lambda (nm)"));
-    QLabel *dlambdaLabel = new QLabel(tr("dlambda (nm)"));
+    QLabel *dlambdaLabel = new QLabel(tr("dla (nm)"));
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
     
     beamlineGenericLayout->addWidget(lambdaLabel,  0, 0);
@@ -320,13 +320,17 @@ QWidget *MainWindow::createBeamlineBox()
     goButton = new QRadioButton(tr("&geometrical optic (GO)"));
     poButton = new QRadioButton(tr("&physical optic (PO)"));
     goButton->setChecked(true);
-    misaliBox  = new QCheckBox(tr("with misalignment"));
-    dlambdaBox = new QCheckBox(tr("delta lambda"));
+    misaliBox   = new QCheckBox(tr("with misalignment"));
+    dlambdaBox  = new QCheckBox(tr("dla mode"));
+    dlambdaBox1 = new QCheckBox(tr("la"));
+    dlambdaBox2 = new QCheckBox(tr("la+dla"));
 
     beamlineCalcLayout->addWidget(goButton,  0, 0);
     beamlineCalcLayout->addWidget(poButton,  1, 0);
     beamlineCalcLayout->addWidget(misaliBox, 2, 0);
-    beamlineCalcLayout->addWidget(dlambdaBox, 2, 1);
+    beamlineCalcLayout->addWidget(dlambdaBox, 0, 1);
+    beamlineCalcLayout->addWidget(dlambdaBox1, 1, 1);
+    beamlineCalcLayout->addWidget(dlambdaBox2, 2, 1);
     beamlineCalcGroup->setLayout(beamlineCalcLayout);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -350,6 +354,8 @@ QWidget *MainWindow::createBeamlineBox()
     connect(poButton, SIGNAL(clicked()), this, SLOT(poButtonslot()));
     connect(misaliBox, SIGNAL(stateChanged(int)), this, SLOT(misaliBoxslot(int)));
     connect(dlambdaBox, SIGNAL(stateChanged(int)), this, SLOT(dlambdaBoxslot(int)));
+    connect(dlambdaBox1, SIGNAL(stateChanged(int)), this, SLOT(dlambdaBox1slot(int)));
+    connect(dlambdaBox2, SIGNAL(stateChanged(int)), this, SLOT(dlambdaBox2slot(int)));
     return beamlineBox;
 } // end createbeamline box
 
@@ -1782,7 +1788,23 @@ void MainWindow::UpdateBeamlineBox()
 
   if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
   if (blo->WithAlign) misaliBox->setChecked(true);         else misaliBox->setChecked(false);
-  if (blo->dlambdaflag) dlambdaBox->setChecked(true);      else dlambdaBox->setChecked(false);
+  
+  if (blo->dlambdaflag) 
+    {
+      dlambdaBox->setChecked(true); 
+      dlambdaBox1->setEnabled(true);
+      dlambdaBox2->setEnabled(true);
+      dlambdaE->setEnabled(true);
+    }
+  else 
+    {
+      dlambdaBox->setChecked(false);
+      dlambdaBox1->setEnabled(false);
+      dlambdaBox2->setEnabled(false);
+      dlambdaE->setEnabled(false);
+    }
+  if (blo->plrayset & PLRaySet1) dlambdaBox1->setChecked(true); else dlambdaBox1->setChecked(false);
+  if (blo->plrayset & PLRaySet2) dlambdaBox2->setChecked(true); else dlambdaBox2->setChecked(false);
 } // end UpdateBeamlineBox
 
 // UpdateElementBox
@@ -1794,6 +1816,7 @@ void MainWindow::UpdateElementBox(int number)
   QString qst;
   
   if (number < 0) return;
+
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
   myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
 
@@ -2257,7 +2280,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   QString qst;
 
   trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
-    (double)myparent->myBeamline()->RESULT.points/ 
+    (double)myparent->myBeamline()->RESULT.points1/ 
     (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));

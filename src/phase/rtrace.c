@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <21 Jun 12 09:13:36 flechsig>  */
+/*   Time-stamp: <21 Jun 12 16:42:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -466,7 +466,7 @@ void RayTraceSingleRay(struct BeamlineType *bl)
 	      bl->beamlineOK);       /*  exit(-1); */ 
     } else  
       {
-	Re->points= 1;
+	Re->points1= 1;
 	Re->typ= PLrttype; 
 	raylen= phase= 0.0;
 	memcpy(&Tmpsource, bl->RTSource.SourceRays, sizeof(struct RayType));
@@ -624,11 +624,11 @@ void RayTracec(struct BeamlineType *bl)
       return;
     } 
   
-  Re->points= bl->RTSource.raynumber;
+  Re->points1= bl->RTSource.raynumber;
   Re->typ   = PLrttype;  
     
 #ifdef DEBUG	
-  printf("debug: RayTracec: calculate %d ray(s), source: %d rays, pointer: %d\n", Re->points, bl->RTSource.raynumber, Re->RESp);
+  printf("debug: RayTracec: calculate %d ray(s), source: %d rays, pointer: %d\n", Re->points1, bl->RTSource.raynumber, Re->RESp);
 #endif 
 
   Raysin = bl->RTSource.SourceRays; 
@@ -667,7 +667,7 @@ void RayTraceFull(struct BeamlineType *bl)
 /********************************************************/
 {
    struct RayType *Raysin, *Raysout, *tmpsource, *tmpresult;   
-   int i, lost, zahl, elnumber;
+   int i, lost, zahl, elnumber, mypoints;
    unsigned int elcounter;
    double uu, ww, ll, xlength, xlength1, xlength2, dphase, slopelen;
    struct ElementType *ds; 
@@ -681,26 +681,26 @@ void RayTraceFull(struct BeamlineType *bl)
    { 
      fprintf(stderr, "rtrace.c: beamline is not OK: beamlineOK: %X\n", 
 	     bl->beamlineOK); 
-                  /*  exit(-1); */ 
-   } else  
-     {
-       Re->points= zahl= bl->RTSource.raynumber;
-             
-       tmpsource= XMALLOC(struct RayType, Re->points);
-       tmpresult= XMALLOC(struct RayType, Re->points);
-           
-       printf("RayTraceFull: start with \t\t%d ray(s) \t= 100 %s \n", 
-	      zahl, "%"); 
-       memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
-	      sizeof(struct RayType));
-       
-       elcounter= 0;
+     return;
+   } 
 
-     while ((elcounter < bl->elementzahl) && (zahl > 1))
+   mypoints= zahl= bl->RTSource.raynumber;
+   
+   tmpsource= XMALLOC(struct RayType, mypoints);
+   tmpresult= XMALLOC(struct RayType, mypoints);
+   
+   printf("RayTraceFull: start with \t\t%d ray(s) \t= 100 %s \n", 
+	  zahl, "%"); 
+   memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
+	  sizeof(struct RayType));
+   
+   elcounter= 0;
+   
+   while ((elcounter < bl->elementzahl) && (zahl > 1))
      {
        lost= 0;
        elnumber= (bl->BLOptions.SourcetoImage == 1) ?
-	      elcounter+ 1 : bl->elementzahl- elcounter; 
+	 elcounter+ 1 : bl->elementzahl- elcounter; 
        ds= &(bl->ElementList[elnumber-1]); 
        Raysin= tmpsource; Raysout= tmpresult;  
        
@@ -712,7 +712,7 @@ void RayTraceFull(struct BeamlineType *bl)
 	       ww= Raysin->y; ll= Raysin->z;
 	       if (OnElement(&ds->MDat, ww, ll))
 		 memcpy(Raysout++, Raysin, sizeof(struct RayType));
-		   else lost++; 
+	       else lost++; 
 	       Raysin++; 
 	     } /* schleife ueber alle rays */
 	 }
@@ -722,27 +722,27 @@ void RayTraceFull(struct BeamlineType *bl)
 	     ds->GDat.rp : ds->GDat.r; 
 	   for (i= 0; i< zahl; i++)
 	     { 
-
-
+	       
+	       
 	       intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			    &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
-
-  
+	       
+	       
 	       if (OnElement(&ds->MDat, ww, ll))
 		 {
-
+		   
 		   ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
 			      (double *)ds->ypc1, (double *)ds->zpc1, 
 			      (double *)ds->dypc, (double *)ds->dzpc);  
 		   Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, slopelen,  
-		             ds->geo.cosb, ds->GDat.azimut);
+			 ds->geo.cosb, ds->GDat.azimut);
 		   pathlen1(&ds->xlm, Raysin, &bl->BLOptions.ifl.iord, 
 			    &xlength1, &xlength2, &xlength);  
-		
+		   
 		   /* calculate phase */
 		   dphase= (bl->BLOptions.lambda > 0) ? 
 		     ((xlength/ bl->BLOptions.lambda)* 2.0* PI) : (2.0* PI);
-
+		   
 		   Raysout->phi= Raysin->phi+ dphase;
 		   
 		   Raysout++;  
@@ -757,15 +757,25 @@ void RayTraceFull(struct BeamlineType *bl)
        memcpy(tmpsource, tmpresult, zahl* sizeof(struct RayType));  
        elcounter++;
      } /* schleife ueber elemente */
-     free(tmpsource); 
-     Re->points= zahl;
-
-     if (zahl > 0) bl->beamlineOK |= resultOK; 
-     memcpy(Re->RESp, tmpresult, zahl* sizeof(struct RayType)); 
-
-     free(tmpresult);
-     /* resultrays in memory */
-   } /* beamline OK*/
+   free(tmpsource); 
+   
+   if (bl->BLOptions.act_ray_set == 1)
+     {
+       Re->points1= zahl;
+       memcpy(Re->RESp, tmpresult, zahl* sizeof(struct RayType));
+     }
+   else
+     {
+       Re->points2= zahl;
+       memcpy((struct RayType *)&Re->RESp[Re->points2], tmpresult, zahl* sizeof(struct RayType));
+     }
+   
+   if ((zahl > 0) && (bl->BLOptions.act_ray_set == bl->BLOptions.ray_sets)) bl->beamlineOK |= resultOK; 
+    
+   
+   free(tmpresult);
+   /* resultrays in memory */
+   
    /* printf("RayTraceFull: ==> done\n"); */
 }  /* end raytracefull */
 
@@ -893,7 +903,7 @@ void AllocRTSource(struct BeamlineType *bl)
 void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 {
   struct PSDType *PSDp;
-  int ii, iy, iz;                   /* to make the code clearer */
+  int ii, iy, iz, type;                   /* to make the code clearer */
 
 #ifdef DEBUG 
   printf("debug: ReAllocResult\n");
@@ -905,13 +915,15 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
   printf("debug: start allocating\n");
 #endif
 
-  switch (newtype)
+  type = newtype & ~3; // strip off last bits
+  
+  switch (type)
     {
     case PLrttype:
-      ii= dim1;
+      ii= (newtype & 3) ? 2 * dim1 : dim1;
       bl->RESULT.RESp= XMALLOC(struct RayType, ii);
-      bl->RESULT.points= ii;
-#ifdef DEBUG1
+      bl->RESULT.dim1= dim1;
+#ifdef DEBUG
       printf("allocate %d\n", ii);
 #endif
       break;

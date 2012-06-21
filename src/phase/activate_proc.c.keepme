@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <15 Jun 12 09:56:16 flechsig>  */
+/*   Time-stamp: <21 Jun 12 13:40:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -921,10 +921,10 @@ snprintf(command, MaxPathLength,
 	  }
 	else 
 #ifdef global
-	  WriteRayFile(PHASESet.imageraysname, &bl->RESULT.points,
+	  WriteRayFile(PHASESet.imageraysname, &bl->RESULT.points1,
 		       (struct RayType *)bl->RESULT.RESp);
 #else
-	WriteRayFile(Beamline.filenames.imageraysname, &bl->RESULT.points,
+	WriteRayFile(Beamline.filenames.imageraysname, &bl->RESULT.points1,
 		       (struct RayType *)bl->RESULT.RESp);
 #endif 
       } 

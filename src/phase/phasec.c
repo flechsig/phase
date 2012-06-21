@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Jun 12 07:57:56 flechsig>  */
+/*   Time-stamp: <21 Jun 12 13:35:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -74,7 +74,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
       MakeRTSource(&(bl->filenames), bl); 
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       RayTracec(bl);
-      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points,
+      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points1,
 		   bl->RESULT.RESp);
       break;
     case 2:
@@ -82,7 +82,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
       MakeRTSource(&(bl->filenames), bl); 
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       RayTraceFull(bl);
-      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points,
+      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points1,
 		   bl->RESULT.RESp); 
       break;
     
@@ -106,7 +106,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
       MakeRTSource(&(bl->filenames), bl);
       ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
       Footprint(bl, bl->position);
-      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points,
+      WriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points1,
 		   bl->RESULT.RESp);
       break;
 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <23 Apr 12 17:57:40 flechsig>  */
+/*   Time-stamp: <21 Jun 12 13:42:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -242,7 +242,7 @@ void GetResults(struct BeamlineType *bl, double *rfwhm, double *yfwhm, double *z
     {
       *rpy= *rpz= 0.0; 
     }
-  *trans= (double)bl->RESULT.points/
+  *trans= (double)bl->RESULT.points1/
     (double)bl->RTSource.raynumber;
   *trans= 1.0- *trans;
 }

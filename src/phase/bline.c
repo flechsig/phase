@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Jun 12 09:08:30 flechsig>  */
+/*   Time-stamp: <21 Jun 12 17:02:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -213,7 +213,7 @@ void BuildBeamline(struct BeamlineType *bl)
   /* 1st element */
   if (listpt->MDat.Art != kEOESlit)         /* slit not */
     {
-#ifdef DEBUG
+#ifdef DEBUG1
       printf("BuildBeamline: init beamline matrix\n"); 
 #endif 
       memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE));
@@ -235,8 +235,9 @@ void BuildBeamline(struct BeamlineType *bl)
 	} /* end  (listpt->MDat.Art != kEOESlit) */  
       elcounter++; listpt++; elindex++;
     } /* Schleife ueber alle Elemente fertig */
-  
+ #ifdef DEBUG1 
   printf("Buildbeamline: extract beamline map\n");
+#endif
   //printf("2xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	
   extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	     &bl->BLOptions.ifl.iord); 
@@ -368,11 +369,11 @@ void BuildBeamline(struct BeamlineType *bl)
     } /* image to source */
   /*********** map und det fertig ***********/
   bl->beamlineOK |= mapOK;    
-  
+#ifdef DEBUG1  
   printf("BuildBeamline: whole Beamline is now OK\n"); 
-
-#ifdef DEBUG
-  printf("BuildBeamline:   end: beamlineOK: %X\n", bl->beamlineOK); 
+#endif
+#ifdef DEBUG1
+  printf("BuildBeamline: end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
 }   /* end BuildBeamline */
 
@@ -458,7 +459,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	       MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1)); 
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
-#ifdef DEBUG
+#ifdef DEBUG1
             printf("BuildBeamline: matrix of %d. element created\n", 
 		   elcounter); 
 #endif 
@@ -608,8 +609,9 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
       bl->beamlineOK |= mapOK;    
      
       bl->beamlineOK |= elementOK; 
-
-      printf("BuildBeamlineM: whole Beamline is now OK\n"); 
+#ifdef DEBUG1
+      printf("BuildBeamlineM: whole Beamline is now OK\n");
+#endif 
    }
 
 }   /* end BuildBeamlineM */
@@ -667,9 +669,9 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
       }
       Re= &bl->RESULT;   
       
-      Re->points= bl->RTSource.raynumber;
+      Re->points1= bl->RTSource.raynumber;
       Re->typ= PLrttype; 
-      Re->RESp= XREALLOC(struct RayType, Re->RESp, Re->points);
+      Re->RESp= XREALLOC(struct RayType, Re->RESp, Re->points1);
       
                     
       Raysin= bl->RTSource.SourceRays; foot= Re->RESp;  
@@ -1508,7 +1510,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 	   op->ifl.ipinarr);
    fprintf(f, "%20d  GO enable delta lambda\n", op->dlambdaflag);
    fprintf(f, "%20lg  GO delta lambda (nm)\n",  op->dlambda*1e6);
-   /* end control_flags */
+   fprintf(f, "%20d  GO enable ray_set1\n", op->plrayset);
+      /* end control_flags */
 
    fprintf(f,"\nAPERTURES\n"); 
    fprintf(f, "%20lg radius of pinhole in source plane (mm)\n", op->apr.rpin);
@@ -2002,6 +2005,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %d %[^\n]s %c",   &op->dlambdaflag, buffer, &buf);  
 	   fscanf(f, " %lf %[^\n]s %c",  &op->dlambda, buffer, &buf); 
 	   op->dlambda*= 1e-6;
+	   fscanf(f, " %d %[^\n]s %c",   &op->plrayset, buffer, &buf); 
 	 }
      } else  rcode= -1;
    
@@ -2368,13 +2372,16 @@ our input is theta i.e. alpha= theta + phi and beta= phi- theta
 the angles are to the normal, beta is defined negative i.e. in grazing incident geometry typically < 0 
 the diffraction order m is positive for fabs(alpha) > fabs(beta)
 the routine takes the input variables from gdatset and writes the variables in geometrytype
+!! in der alten version ist alpha immer < 0 !!
+!! we keep the sign konvention by multiplying the sa and ab with -1 !!
 */
 void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)  
 {
   double theta, phi, alpha, beta, N, lambda, sign_of_down_or_right, radius, trans;
   int i, m;
-
-  //printf("\n\ndebug: %s DefGeometryCnew called \n", __FILE__ );
+#ifdef DEBUG
+  printf("debug: %s DefGeometryCnew called \n", __FILE__ );
+#endif
 
   /* theta is always positive we handle the directioo information separately */ 
   /* rewrite inputs */
@@ -2415,19 +2422,19 @@ void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)
              trans, out->r, out->rp);  
     }  
 
-  out->sina= sin(alpha);   
+  out->sina= (-1.0)* sin(alpha);   // keep old sign definition
   out->cosa= cos(alpha);   
-  out->sinb= sin(beta);   
+  out->sinb= (-1.0)* sin(beta);    // keep old sign definition
   out->cosb= cos(beta);   
   
   out->xlam = lambda* m;  /* UF 23.12.09 ist lambda richtig ??? oder in->lambda */
   out->idefl= sign_of_down_or_right;  
-  //#ifdef DEBUG
-  printf("\n\ndebug: %s DefGeometryCnew \n", __FILE__ );
+#ifdef DEBUG
+  printf("\ndebug: %s DefGeometryCnew \n", __FILE__ );
   printf("  alpha: %f, beta: %f, lambda= %g nm\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
   printf("  out->idefl= %d, out->xlam= %g nm\n", out->idefl, out->xlam* 1e6);
   printf("  other output: %g, %g, %g, %g\n", out->sina, out->cosa, out->sinb, out->cosb);
-  //#endif
+#endif
 } /* end DefGeometryCnew */ 
 
 void DefGeometryC(struct gdatset *x, struct geometrytype *gout)  
@@ -2502,7 +2509,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   printf("\ndebug: %s DefGeometryC \n", __FILE__ );
   printf("  alpha: %f, beta: %f, lambda= %g nm\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
   printf("  gout->idefl= %d, gout->xlam= %g nm\n", gout->idefl, gout->xlam* 1e6);
-  printf("  other output: %g, %g, %g, %g\n", gout->sina, gout->cosa, gout->sinb, gout->cosb);
+  printf("  other output: sa=%g, ca=%g, sb=%g, cb=%g\n", gout->sina, gout->cosa, gout->sinb, gout->cosb);
 #endif
 
 } /* end DefGeometryC */ 
@@ -3040,7 +3047,7 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
        }
        fclose(f);
        *zahl= rz;
-       Re->points= rz;
+       Re->points1= rz;
        printf("read %d rays from file %s --> done\n", i, name);  
 
     }

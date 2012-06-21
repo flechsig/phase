@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <21 Jun 12 08:27:54 flechsig> 
+//  Time-stamp: <21 Jun 12 17:01:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -177,11 +177,10 @@ void MainWindow::activateProc(const QString &action)
       
       cout << "********** ray_sets=" << myparent->myBeamline()->BLOptions.ray_sets << endl;
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);		
-      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
-				myparent->myBeamline()->BLOptions.ray_sets, 0);  
+      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.plrayset), myparent->myBeamline()->RTSource.raynumber, 0);  
       
       myparent->myBeamline()->BLOptions.act_ray_set= 1;
-      for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
+      for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  // calculate primary wavelength
 	if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
 	  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
       
@@ -215,10 +214,10 @@ void MainWindow::activateProc(const QString &action)
 		myparent->myBeamline()->ElementList[i].ElementOK= 0;
 		myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
 	      }
-
 	}
-      
-      cout << "ray trace-> done" << endl;
+#ifdef DEBUG      
+      cout << "debug: ray trace-> done" << endl;
+#endif
       //mmBox->close();
       
       statusBar()->showMessage(tr("Quick ray trace-> done!"), 4000);
@@ -227,17 +226,56 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("raytracefullAct")) 
     { 
       printf("\nraytracefullAct button  pressed\n");
-      if (elementListIsEmpty())
-	return;
+
+      if (elementListIsEmpty())	return;
+
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(myparent->myBeamline()->beamlineOK & sourceOK))
-	myparent->myMakeRTSource();
-      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
-				myparent->myBeamline()->BLOptions.ray_sets, 0);  
-	
+
+      if (!(myparent->myBeamline()->beamlineOK & sourceOK)) myparent->myMakeRTSource();
+
+      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.plrayset), myparent->myBeamline()->RTSource.raynumber, 0);
+      
+      
+
+      myparent->myBeamline()->BLOptions.act_ray_set= 1;
+      for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  // calculate primary wavelength
+	if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
+	  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
+
       myparent->myBuildBeamline();
       myparent->myRayTraceFull(); 
+
+if (myparent->myBeamline()->BLOptions.ray_sets == 2)
+	{
+	  myparent->myBeamline()->BLOptions.act_ray_set= 2;
+	  myparent->myBeamline()->beamlineOK &= ~mapOK; 
+	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
+	    {
+	      if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
+		{
+		  myparent->myBeamline()->ElementList[i].ElementOK= 0;
+		  myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 1;
+		  myparent->myBeamline()->ElementList[i].GDat.dlambda= 
+		    myparent->myBeamline()->BLOptions.dlambda; 
+		}
+	    }
+	  //myparent->buildBeamlineParallel();      // for tests so far
+	  myparent->myBuildBeamline();
+	  myparent->myRayTraceFull(); 
+	  /* reset for the next calculation */
+	  cout << "multiple wavelength calculation: we have to reset some GO status bits!" << endl; 
+	  myparent->myBeamline()->beamlineOK &= ~mapOK; 
+	  for (int i= 0; i < myparent->myBeamline()->elementzahl; i++)  
+	    if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT)
+	      {
+		myparent->myBeamline()->ElementList[i].ElementOK= 0;
+		myparent->myBeamline()->ElementList[i].GDat.dlambdaflag= 0;
+	      }
+	}
+
+
+
       printf("full ray trace-> done\n");
       statusBar()->showMessage(tr("full ray trace-> done!"), 4000);
 
@@ -258,7 +296,7 @@ void MainWindow::activateProc(const QString &action)
 				myparent->myBeamline()->BLOptions.ray_sets, 0);  
       myparent->myBuildBeamline();
       myparent->myFootprint((elementList->currentRow()+1));
-      printf("footprint-> done\n");
+      cout << "footprint-> done" << endl;
       statusBar()->showMessage(tr("Footprint-> done!"), 4000);
     }
 
@@ -489,7 +527,7 @@ void MainWindow::activateProc(const QString &action)
 	{
 
 	  cout << "write GO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
-	  myparent->myWriteRayFile(myparent->myBeamline()->filenames.imageraysname, &myparent->myBeamline()->RESULT.points,
+	  myparent->myWriteRayFile(myparent->myBeamline()->filenames.imageraysname, &myparent->myBeamline()->RESULT.points1,
 				   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
 	}
     } 
@@ -1111,13 +1149,13 @@ void MainWindow::grapplyslot()
   if (mwplotsubject & PLOT_GO_RESULT) // generic for GO result
     {  
       d_plot->Plot::statistics((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points, 
+			       myparent->myBeamline()->RESULT.points1, 
 			       myparent->myBeamline()->deltalambdafactor,
 			       myparent->myBeamline()->BLOptions.lambda);
-      UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points);
+      UpdateStatistics(d_plot, "Image", myparent->myBeamline()->RESULT.points1);
       d_plot->setTitle(tr("GO Result"));
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points, myparent->myBeamline()->BLOptions.ray_sets);
+			       myparent->myBeamline()->RESULT.points1, myparent->myBeamline()->BLOptions.ray_sets);
     }
 
   // (4) GO statistics done, [xyz]data arrays filled
@@ -1287,7 +1325,7 @@ void MainWindow::grautoscaleslot()
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))    // generic for GO result
     { 
       d_plot->fillGoPlotArrays((struct RayType *)myparent->myBeamline()->RESULT.RESp, 
-			       myparent->myBeamline()->RESULT.points, myparent->myBeamline()->BLOptions.ray_sets);
+			       myparent->myBeamline()->RESULT.points1, myparent->myBeamline()->BLOptions.ray_sets);
       d_plot->autoScale(myparent->myBeamline()->BLOptions.ray_sets);
     }
 
@@ -1327,7 +1365,8 @@ void MainWindow::grslot()
   else
     myparent->myBeamline()->ElementList[number].MDat.Art &= ~(GRATINGBIT); 
 
-  UpdateElementBox(number);
+  
+UpdateElementBox(number);
 } // grslot
 
 // slot grating vls
@@ -1466,10 +1505,31 @@ void MainWindow::dlambdaBoxslot(int newstate)
   
   myparent->myBeamline()->BLOptions.dlambdaflag= (newstate == Qt::Checked) ? 1 : 0;
   myparent->myBeamline()->BLOptions.ray_sets= myparent->myBeamline()->BLOptions.dlambdaflag+ 1;
+  UpdateBeamlineBox();
 #ifdef DEBUG
   cout << "debug: dlambdaBoxslot out:dlambdaflag= " <<  myparent->myBeamline()->BLOptions.dlambdaflag << " ray_sets= " << myparent->myBeamline()->BLOptions.ray_sets << endl;
 #endif
 } // dlambdaBoxslot
+
+// dlambdaBoxslot
+void MainWindow::dlambdaBox1slot(int newstate)
+{
+  myparent->myBeamline()->BLOptions.plrayset= (newstate == Qt::Checked) ? 
+    myparent->myBeamline()->BLOptions.plrayset | PLRaySet1 : myparent->myBeamline()->BLOptions.plrayset & PLRaySet2;
+#ifdef DEBUG
+  cout << "debug: dlambdaBox1slot out:= plrayset" <<  myparent->myBeamline()->BLOptions.plrayset <<  endl;
+#endif
+} // dlambdaBox1slot
+
+// dlambdaBoxslot
+void MainWindow::dlambdaBox2slot(int newstate)
+{
+  myparent->myBeamline()->BLOptions.plrayset= (newstate == Qt::Checked) ? 
+    myparent->myBeamline()->BLOptions.plrayset | PLRaySet2 : myparent->myBeamline()->BLOptions.plrayset & PLRaySet1;
+#ifdef DEBUG
+  cout << "debug: dlambdaBox2slot out:= plrayset" <<  myparent->myBeamline()->BLOptions.plrayset <<  endl;
+#endif
+} // dlambdaBox2slot
 
 // slot called to read in a new beamline
 void MainWindow::newBeamline()
@@ -1491,7 +1551,8 @@ void MainWindow::newBeamline()
   XFREE(myparent->myBeamline()->RTSource.SourceRays);
   myparent->myBeamline()->elementzahl = 0; 
   XFREE(myparent->myBeamline()->ElementList);                     /* clean up memory of elements  */
-  myparent->myBeamline()->RESULT.points= 0;
+  myparent->myBeamline()->RESULT.points1= 0;
+  myparent->myBeamline()->RESULT.points2= 0;
   FreeResultMem(&myparent->myBeamline()->RESULT);
   myparent->myBeamline()->BLOptions.lambda= 3.1e-6;                /* 400 ev */
   myparent->myBeamline()->BLOptions.displength= 5000;
