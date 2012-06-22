@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Jun 12 10:02:43 flechsig>  */
+/*   Time-stamp: <22 Jun 12 15:29:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2373,15 +2373,15 @@ the routine takes the input variables from gdatset and writes the variables in g
 !! in der alten version ist alpha immer < 0 !!
 !! we keep the sign konvention by multiplying the sa and ab with -1 !!
 */
-void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)  
+void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out)  
 {
-  double theta, phi, alpha, beta, N, lambda, sign_of_down_or_right, radius, trans;
+  double theta, phi, alpha, beta, beta1, N, lambda, lambda1, sign_of_down_or_right, radius, trans;
   int i, m;
 #ifdef DEBUG
-  printf("debug: %s DefGeometryCnew called \n", __FILE__ );
+  printf("debug: %s DefGeometryC_UF called \n", __FILE__ );
 #endif
 
-  /* theta is always positive we handle the directioo information separately */ 
+  /* theta is always positive we handle the direction information separately */ 
   /* rewrite inputs */
   sign_of_down_or_right= (in->theta0 < 0) ? -1.0 : 1.0;
   theta = fabs(in->theta0* PI/ 180.0);  
@@ -2400,8 +2400,14 @@ void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)
 
   if (in->dlambdaflag == 1)            /* enable in->dlambda for different wavelength mode */
     {
-      lambda+= in->dlambda;
-      beta   = asin(m* lambda* N- sin(alpha));
+      fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature  !!!!!!!!\n");
+      lambda1 = lambda+ in->dlambda;
+      beta1   = asin(m* lambda1* N- sin(alpha));
+      fprintf(stderr, "debug: lambda1= %e nm, m= %d, alpha = %f, beta = %f, theta= %f, dbeta= %f mrad\n", 
+	      lambda1*1e6, m, 
+	      alpha* 180.0/PI, beta1* 180.0/PI, theta* 180.0/PI , (beta-beta1)*1e3);
+      //beta= beta1;      // Variante 1 ist nicht ganz OK - richtung passt nicht
+      lambda= lambda1;    // Variante 2 funktioniert
     }
 
   if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0)) /* test range */
@@ -2416,7 +2422,7 @@ void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)
       trans    = radius* (1.0- cos(phi));   /* UF to be confirmed */   
       out->r  = in->r-  trans; 
       out->rp = in->rp- trans;    
-      printf("DefGeometryC: NIM translation enabled, trans= %lf mm\nr1= %lf mm, r2= %lf mm\n", 
+      printf("DefGeometryC_UF: NIM translation enabled, trans= %lf mm\nr1= %lf mm, r2= %lf mm\n", 
              trans, out->r, out->rp);  
     }  
 
@@ -2428,14 +2434,15 @@ void DefGeometryCnew(struct gdatset *in, struct geometrytype *out)
   out->xlam = lambda* m;  /* UF 23.12.09 ist lambda richtig ??? oder in->lambda */
   out->idefl= sign_of_down_or_right;  
 #ifdef DEBUG
-  printf("\ndebug: %s DefGeometryCnew \n", __FILE__ );
-  printf("  alpha: %f, beta: %f, lambda= %g nm\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
+  printf("\n@@@@@@@@@@ debug: %s DefGeometryC_UF \n", __FILE__ );
+  printf("  alpha: %f, beta: %f, lambda= %g nm, m= %d\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6, m);
   printf("  out->idefl= %d, out->xlam= %g nm\n", out->idefl, out->xlam* 1e6);
-  printf("  other output: %g, %g, %g, %g\n", out->sina, out->cosa, out->sinb, out->cosb);
+  printf("  other output: sa=%g, ca=%g, sb=%g, cb=%g, x[0]=%g\n", out->sina, out->cosa, out->sinb, out->cosb, out->x[0]);
+  
 #endif
-} /* end DefGeometryCnew */ 
+} /* end DefGeometryC_UF */ 
 
-void DefGeometryC(struct gdatset *x, struct geometrytype *gout)  
+void DefGeometryC_JB(struct gdatset *x, struct geometrytype *gout)  
 /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 /* Dec 2009 provisions for multiple wavelengths */
 {
@@ -2452,13 +2459,15 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
-  fprintf(stderr, "debug:  lambda: %e nm, io: %d, alpha = %f, beta = %f\n", lambda*1e6, x->inout, alpha*(180.0/PI), beta*(180.0/PI) );
+  fprintf(stderr, "debug: DefGeometryC_JB lambda: %e nm, io: %d, alpha = %f, beta = %f\n", lambda*1e6, x->inout, 
+	  alpha*(180.0/PI), beta*(180.0/PI) );
   if (x->dlambdaflag == 1)
     {
       fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature  !!!!!!!!\n");
       lambda1= x->lambdag+ x->dlambda;
       beta1= (-1.0)* asin(lambda1* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
-      fprintf(stderr, "debug: lambda1: %e nm, io: %d, alpha = %f, beta = %f, theta= %f, dbeta= %f mrad\n", lambda1*1e6, x->inout, 
+      fprintf(stderr, "debug: lambda1: %e nm, io: %d, alpha = %f, beta = %f, theta= %f, dbeta= %f mrad\n", 
+	      lambda1*1e6, x->inout, 
 	      alpha*(180.0/PI), beta1*(180.0/PI), theta0*(180.0/PI) , (beta-beta1)*1e3);
       beta= beta1;
     }
@@ -2474,7 +2483,7 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
 #ifdef DEBUG1
-  printf("debug: DefGeometryC: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
+  printf("debug: DefGeometryC_JB: alpha: %f, beta: %f, lambda= %g nm ==> correct?\n", 
 	 alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
 #endif
   printf("Geometry set up with alpha: %f, beta: %f, lambda= %g nm.\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
@@ -2504,13 +2513,13 @@ void DefGeometryC(struct gdatset *x, struct geometrytype *gout)
   gout->idefl= (x->theta0 > 0.0) ? 1 : -1; 
  
 #ifdef DEBUG
-  printf("\ndebug: %s DefGeometryC \n", __FILE__ );
+  printf("\ndebug: %s DefGeometryC_JB \n", __FILE__ );
   printf("  alpha: %f, beta: %f, lambda= %g nm\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6);
   printf("  gout->idefl= %d, gout->xlam= %g nm\n", gout->idefl, gout->xlam* 1e6);
-  printf("  other output: sa=%g, ca=%g, sb=%g, cb=%g\n", gout->sina, gout->cosa, gout->sinb, gout->cosb);
+  printf("  other output: sa=%g, ca=%g, sb=%g, cb=%g, x[0]=%g\n", gout->sina, gout->cosa, gout->sinb, gout->cosb, gout->x[0]);
 #endif
 
-} /* end DefGeometryC */ 
+} /* end DefGeometryC_JB */ 
 
 /*
    UF 11/07 I take out the read coefficients file functionality - 
@@ -3160,6 +3169,7 @@ void UpdateFlags(struct BeamlineType *bl, int run)
       {
 	dlflagold= bl->ElementList[i].GDat.dlambdaflag;
 	statusold= bl->ElementList[i].ElementOK;
+	// bl->ElementList[i].GDat.lambdag= bl->BLOptions.lambda; // temporaer fix of sebastians change
 	if (rayset & PLRaySet2)  /* 2nd run or turned grating */ 
 	  {
 	    bl->ElementList[i].GDat.dlambda= bl->BLOptions.dlambda;
