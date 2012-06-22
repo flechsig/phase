@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <21 Jun 12 16:42:47 flechsig>  */
+/*   Time-stamp: <22 Jun 12 13:30:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -628,17 +628,21 @@ void RayTracec(struct BeamlineType *bl)
   Re->typ   = PLrttype;  
     
 #ifdef DEBUG	
-  printf("debug: RayTracec: calculate %d ray(s), source: %d rays, pointer: %d\n", Re->points1, bl->RTSource.raynumber, Re->RESp);
+  printf("debug: RayTracec: calculate %d ray(s), source: %d rays\n", Re->points1, bl->RTSource.raynumber);
 #endif 
 
   Raysin = bl->RTSource.SourceRays; 
-  Raysout= (struct RayType *)Re->RESp;    
-  if (bl->BLOptions.act_ray_set == 2) 
-    {
-      for (i= 0; i< bl->RTSource.raynumber; i++) Raysout++;
-      //Raysout++;   // one more ???? - no
-    }
+  Raysout= (struct RayType *)Re->RESp; 
 
+  if (bl->BLOptions.act_ray_set == 2)
+     {
+       Re->points2= bl->RTSource.raynumber;
+       for (i= 0; i < Re->dim1; i++) Raysout++;
+     }
+   else
+     Re->points1= bl->RTSource.raynumber;
+     
+   
   for (i= 0; i< bl->RTSource.raynumber; i++ )
     { 
       
@@ -650,7 +654,7 @@ void RayTracec(struct BeamlineType *bl)
       Raysin++, Raysout++;
     }
   /*   free(raysin);      */
-  if (bl->BLOptions.act_ray_set == bl->BLOptions.ray_sets) bl->beamlineOK |= resultOK; /* resultrays in memory */
+  bl->beamlineOK |= resultOK; /* resultrays in memory */
   
 #ifdef DEBUG1
   printf("RayTracec:   end: beamlineOK: %X\n", bl->beamlineOK); 
@@ -672,8 +676,8 @@ void RayTraceFull(struct BeamlineType *bl)
    double uu, ww, ll, xlength, xlength1, xlength2, dphase, slopelen;
    struct ElementType *ds; 
    struct RESULTType *Re; 
-
-/*********************************************************************/
+   /*********************************************************************/
+   
    bl->beamlineOK &= ~resultOK;
    fprintf(stderr, "RayTraceFull: beamlineOK: %X, iord=%d\n", bl->beamlineOK, bl->BLOptions.ifl.iord); 
    Re= &bl->RESULT;
@@ -689,8 +693,7 @@ void RayTraceFull(struct BeamlineType *bl)
    tmpsource= XMALLOC(struct RayType, mypoints);
    tmpresult= XMALLOC(struct RayType, mypoints);
    
-   printf("RayTraceFull: start with \t\t%d ray(s) \t= 100 %s \n", 
-	  zahl, "%"); 
+   printf("RayTraceFull: start with \t\t%d ray(s) \t= 100 %s \n", zahl, "%"); 
    memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
 	  sizeof(struct RayType));
    
@@ -757,30 +760,33 @@ void RayTraceFull(struct BeamlineType *bl)
        memcpy(tmpsource, tmpresult, zahl* sizeof(struct RayType));  
        elcounter++;
      } /* schleife ueber elemente */
-   free(tmpsource); 
+   XFREE(tmpsource); 
    
-   if (bl->BLOptions.act_ray_set == 1)
+   if (bl->BLOptions.act_ray_set == 2)
      {
-       Re->points1= zahl;
-       memcpy(Re->RESp, tmpresult, zahl* sizeof(struct RayType));
+       Re->points2= zahl;
+       Raysout= Re->RESp;
+       for (i= 0; i < Re->dim1; i++) Raysout++;
+       memcpy(Raysout, tmpresult, zahl* sizeof(struct RayType));
+       printf("RayTraceFull: second set ==> done\n");
      }
    else
      {
-       Re->points2= zahl;
-       memcpy((struct RayType *)&Re->RESp[Re->points2], tmpresult, zahl* sizeof(struct RayType));
+        Re->points1= zahl;
+	memcpy(Re->RESp, tmpresult, zahl* sizeof(struct RayType));
+	printf("RayTraceFull: first set ==> done\n");
      }
    
-   if ((zahl > 0) && (bl->BLOptions.act_ray_set == bl->BLOptions.ray_sets)) bl->beamlineOK |= resultOK; 
+   if (zahl > 0) bl->beamlineOK |= resultOK; 
     
-   
-   free(tmpresult);
+   XFREE(tmpresult);
    /* resultrays in memory */
    
    /* printf("RayTraceFull: ==> done\n"); */
 }  /* end raytracefull */
 
 void Slope(struct RayType *ray, double slopew, double slopel, double xlen, 
-double cosb, int azimut)
+	   double cosb, int azimut)
 /* simuliert slope errors durch Winkelaenderung am Strahl 	*/
 /* slope gegeben in arcsec- rms 				*/
 /* Uwe 1.7.96 */

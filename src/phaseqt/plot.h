@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <20 Jun 12 14:09:54 flechsig>  */
+/*  Time-stamp: <22 Jun 12 11:19:41 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -38,9 +38,9 @@ public:
     void setGoData(const char *); // UF
     void setdefaultData();     // UF
     void setdefaultData2();    // UF
-    void autoScale(int); // GO
+    void autoScale(); // GO
     void autoScale(double, double, double, double); // PO
-    void fillGoPlotArrays(struct RayType *, int, int);
+    void fillGoPlotArrays(struct RayType *, int, int, int);
     //void SetData(int n, double* dx, double* dy);
     //int  SetLineColor(int);
     void appendPoint(const QPointF &);
@@ -103,7 +103,7 @@ private:
     double x1, x2, y1, y2;
     double *c1x, *c1y, *c2x, *c2y;
     double h1max, h1firstgt0;
-    int    ndata;
+    int    ndata1, ndata2;
     bool   logscaleon;
     int    n_array;
     

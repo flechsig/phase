@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <21 Jun 12 16:16:45 flechsig> 
+//  Time-stamp: <22 Jun 12 11:41:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -65,8 +65,9 @@ MainWindow::~MainWindow()
 // if correct returns 1 otherwise 0 and messagebox with diagnostics
 int MainWindow::checkResultType(struct RESULTType *rp, int typ)
 {
-  int myret= (rp->typ == typ) ? 1 : 0;
-  
+  //  int myret= (rp->typ == typ) ? 1 : 0;
+  int myret= (rp->typ & typ) ? 1 : 0;
+
   if (!myret)
     QMessageBox::warning(this, tr("checkResultType"),
 			 tr("Available calculation results incompatible with selected plotsubject!<p>info: points1= %1, type= %2, requested type= %3").arg(rp->points1).arg(rp->typ).arg(typ));
@@ -1782,8 +1783,8 @@ void MainWindow::UpdateBeamlineBox()
 
   blo= &(myparent->myBeamline()->BLOptions);
 
-  lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6, 'g', 4));
-  dislenE->setText(dislenEqst.setNum(blo->displength,  'g', 4));
+  lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6,     'g', 4));
+  dislenE->setText(dislenEqst.setNum(blo->displength,      'g', 4));
   dlambdaE->setText(dlambdaEqst.setNum(blo->dlambda* 1e6,  'g', 4));
 
   if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
@@ -1798,6 +1799,7 @@ void MainWindow::UpdateBeamlineBox()
     }
   else 
     {
+      blo->plrayset= PLRaySet1;           /* force rayset 1 */
       dlambdaBox->setChecked(false);
       dlambdaBox1->setEnabled(false);
       dlambdaBox2->setEnabled(false);

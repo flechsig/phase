@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <21 Jun 12 08:59:24 flechsig> 
+//  Time-stamp: <22 Jun 12 12:33:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -327,7 +327,7 @@ void Plot::contourPlot()
 
 // makes a profile plot
 // expects the vectors xxx and yyy to be filled
-void Plot::profilePlot(int subject, int style, int nsets)
+void Plot::profilePlot(int subject, int style, int settype)
 {
 #ifdef DEBUG
   cout << "profile plot subject, style: " << subject << " ," << style << endl;
@@ -343,7 +343,7 @@ void Plot::profilePlot(int subject, int style, int nsets)
   pen_ptr->setWidth(2);
   d_curve1->setPen(*pen_ptr);
 
-  if (nsets == 2)
+  if (settype == 3)
     {
       d_curve2->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
       pen_ptr->setColor(Qt::blue);   // blue
@@ -374,7 +374,7 @@ void Plot::profilePlot(int subject, int style, int nsets)
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
       d_curve1->setRawSamples(c1y, c1x, BINS2);
-      if (nsets == 2) d_curve2->setRawSamples(c2y, c2x, BINS2);
+      if (settype == 3) d_curve2->setRawSamples(c2y, c2x, BINS2);
       y1= ymin;                                     // for manual scaling
       y2= ymax;             
       x1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -392,7 +392,7 @@ void Plot::profilePlot(int subject, int style, int nsets)
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
       d_curve1->setRawSamples(c1x, c1y, BINS2);
-      if (nsets == 2) d_curve2->setRawSamples(c2x, c2y, BINS2);
+      if (settype == 3) d_curve2->setRawSamples(c2x, c2y, BINS2);
       x1= zmin;           
       x2= zmax;
       y1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -408,7 +408,7 @@ void Plot::profilePlot(int subject, int style, int nsets)
     
   zoomer->setZoomBase(canvas());
   d_curve1->show();
-  if (nsets == 2) d_curve2->show();
+  if (settype == 3) d_curve2->show();
   replot();
 } // end profilePlot()
 
@@ -419,50 +419,51 @@ void Plot::fillData()
 } // fillData
 
 // creates the temporary arrays xdata etc out of the ray structure depending on plotsubject
-// nsets is the number of datasets in rays, default is 1
-void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
+// settype indicates the number of datasets in rays, 1,2 means one, 3 means two
+void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int settype)
 {
   int i;
   struct RayType *rp;
 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " fillGoPlotArrays called, plotsubject: " 
-       << plotsubject << " ray_sets=" << nsets << endl;
+       << plotsubject << " ray_set_type=" << settype << endl;
 #endif
 
-  ndata= points; // fill private var
+  ndata1= points1; // fill private var
+  ndata2= (settype == 3) ? points2 : 0;
 
   if (c1x) delete c1x; c1x= NULL;
   if (c1y) delete c1y; c1y= NULL;
   if (c2x) delete c2x; c2x= NULL;
   if (c2y) delete c2y; c2y= NULL;
  
-  c1x= new double[ndata]; 
-  c1y= new double[ndata];
+  c1x= new double[ndata1]; 
+  c1y= new double[ndata1];
 
-  if ((plotsubject & PLOT_GO_PHI) && (nsets == 1)) c2y= new double[ndata];
+  if ((plotsubject & PLOT_GO_PHI) && (settype < 3)) c2y= new double[ndata1];
 
-  if (nsets == 2) 
+  if (settype == 3) 
     {
-      c2x= new double[ndata]; 
-      c2y= new double[ndata];
+      c2x= new double[ndata2]; 
+      c2y= new double[ndata2];
     }
 
   rp= rays;
   if (plotsubject & PLOT_GO_SPA)
     {
       i= 0;
-      while (i< ndata)
+      while (i< ndata1)
 	{
 	  c1x[i]= rp->z;
 	  c1y[i]= rp->y;
 	  i++, rp++;
 	}
-      if (nsets == 2) 
+      if (settype == 3) 
 	{
 	  i= 0;
 	  //	  rp++;
-	  while (i< ndata)
+	  while (i< ndata2)
 	    {
 	      c2x[i]= rp->z;
 	      c2y[i]= rp->y;
@@ -473,7 +474,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
 
   if (plotsubject & PLOT_GO_DIV)
     {
-      for (i= 0; i< ndata; i++, rp++)
+      for (i= 0; i< ndata1; i++, rp++)
 	{
 	 c1x[i]= rp->dz * 1e3; // mrad
 	 c1y[i]= rp->dy * 1e3;
@@ -482,7 +483,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points, int nsets)
 
   if (plotsubject & PLOT_GO_PHI)
     {
-      for (i= 0; i< ndata; i++, rp++)
+      for (i= 0; i< ndata1; i++, rp++)
 	{
 	  c1x[i]= rp->z;
 	  c1y[i]= rp->y;
@@ -502,7 +503,7 @@ double *Plot::getYdata(int nr)
 }
 
 // makes a scatter plot
-void Plot::scatterPlot(int nsets)
+void Plot::scatterPlot(int settype)
 {
 #ifdef DEBUG   
   cout << "debug: scatter plot" << endl;
@@ -515,7 +516,7 @@ void Plot::scatterPlot(int nsets)
   //SetLog(0);
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
 
-  d_curve1->setRawSamples(c1x, c1y, ndata);
+  d_curve1->setRawSamples(c1x, c1y, ndata1);
   d_curve1->setStyle( QwtPlotCurve::Dots );
   pen_ptr->setColor(Qt::red);   // blue
   pen_ptr->setWidth(2);
@@ -535,9 +536,9 @@ void Plot::scatterPlot(int nsets)
 
   d_curve1->show();
 
-  if (nsets == 2)
+  if (settype == 3)
     {
-      d_curve2->setRawSamples(c2x, c2y, ndata);
+      d_curve2->setRawSamples(c2x, c2y, ndata2);
       d_curve2->setStyle( QwtPlotCurve::Dots );
       pen_ptr->setColor(Qt::blue);   // blue
       pen_ptr->setWidth(2);
@@ -677,40 +678,37 @@ void Plot::autoScale(double z1, double z2, double y1, double y2)   // PO
   zmax= z2;
 } // end autoscale PO
 
-void Plot::autoScale(int nsets)   // GO
+void Plot::autoScale()   // GO
 {
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " GO autoScale called, ndata: " << ndata << endl;
+  cout << "debug: " << __FILE__ << " GO autoScale called, ndata1= " << ndata1 << ", ndata2= " << ndata2 << endl;
 #endif
 
-  if (ndata > 0) 
+  ymin  = -1; ymax  = 1;
+  zmin  = -1; zmax  = 1;
+
+  if ((ndata1 > 0) || (ndata2 > 0)) 
     {
       ymin  = ymax  = *c1y;
       zmin  = zmax  = *c1x;
-      for (int i= 0; i < ndata; i++)
+      for (int i= 0; i < ndata1; i++)
 	{
 	  ymin  = min(c1y[i], ymin);
 	  ymax  = max(c1y[i], ymax);
 	  zmin  = min(c1x[i], zmin); // ! not zdata (zdata only available for phi)
 	  zmax  = max(c1x[i], zmax); // ! not zdata
 	}
-      if (nsets == 2)
+      
+      for (int i= 0; i < ndata2; i++)
 	{
-	  for (int i= 0; i < ndata; i++)
-	    {
-	      ymin  = min(c2y[i], ymin);
-	      ymax  = max(c2y[i], ymax);
-	      zmin  = min(c2x[i], zmin); // ! not zdata (zdata only available for phi)
-	      zmax  = max(c2x[i], zmax); // ! not zdata
-	    }
+	  ymin  = min(c2y[i], ymin);
+	  ymax  = max(c2y[i], ymax);
+	  zmin  = min(c2x[i], zmin); // ! not zdata (zdata only available for phi)
+	  zmax  = max(c2x[i], zmax); // ! not zdata
 	}
     }
-  else
-    {
-      ymin  = -1; ymax  = 1;
-      zmin  = -1; zmax  = 1;
-    }
+   
   /* fuers Auge */
   Beauty(&ymin,   &ymax);
   Beauty(&zmin,   &zmax);
@@ -749,21 +747,23 @@ void Plot::Beauty(double *mi, double *ma)
 } /* end Beauty */
 
 
-// fills a 1d histogram with data !! we use c2y
+// fills a 1d histogram with data !
 void Plot::hfill1(double *dvec, double x1, double x2, int set)
 {
   int i;
   unsigned int ix;
-  double *dp;
+  double *dp, *buffer;
   
 #ifdef DEBUG
-  cout << "Plot::hfill1 called" << endl;
+  cout << "Plot::hfill1 called set=" << set << endl;
 #endif
 
   if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
 
-  if (set != 2)
+  if (set == FIRST)
     {
+      buffer= new double[ndata1];
+      memcpy(buffer, dvec, sizeof(double)*ndata1);
       if (c1x) delete c1x; c1x= NULL;
       if (c1y) delete c1y; c1y= NULL;
       c1x= new double[BINS2];
@@ -774,14 +774,16 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	  c1x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
 	}
       
-      for (i= 0; i< ndata; i++)
+      for (i= 0; i< ndata1; i++)
 	{
-	  ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
+	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
 	  if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
 	} 
     }
-  else
+  else  /* 2nd */
     {
+      buffer= new double[ndata2];
+      memcpy(buffer, dvec, sizeof(double)*ndata2);
       if (c2x) delete c2x; c2x= NULL;
       if (c2y) delete c2y; c2y= NULL;
       c2x= new double[BINS2];
@@ -792,22 +794,22 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	  c2x[ix]= x1 + ix * (x2- x1)/ BINS2;   // x achse
 	}
       
-      for (i= 0; i< ndata; i++)
+      for (i= 0; i< ndata2; i++)
 	{
-	  ix= (unsigned int)((dvec[i]- x1)/(x2- x1) * BINS2);
+	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
 	  if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
 	} 
     }
   
  
   h1max= 0.0; h1firstgt0= 1.0;  // ZERO
-  if (set != 2)
+  if (set == FIRST)
     {
-      if (ndata)                    // not if 0
+      if (ndata1)                    // not if 0
 	{
 	  for (ix= 0; ix< BINS2; ix++)
 	    {
-	      c1y[ix]*= 1.0/ndata;   // density in rays 
+	      c1y[ix]*= 1.0/ndata1;   // density in rays 
 	      if (c1y[ix] > h1max) h1max= c1y[ix];
 	      if ((c1y[ix] > ZERO) && (c1y[ix] < h1firstgt0)) h1firstgt0 = c1y[ix];
 	    }
@@ -817,11 +819,11 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
     }
   else
     {
-      if (ndata)                    // not if 0
+      if (ndata2)                    // not if 0
 	{
 	  for (ix= 0; ix< BINS2; ix++)
 	    {
-	      c2y[ix]*= 1.0/ndata;   // density in rays 
+	      c2y[ix]*= 1.0/ndata2;   // density in rays 
 	      if (c2y[ix] > h1max) h1max= c2y[ix];
 	      if ((c2y[ix] > ZERO) && (c2y[ix] < h1firstgt0)) h1firstgt0 = c2y[ix];
 	    }
@@ -830,13 +832,14 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	}
     }
   
+  delete buffer;
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
 #endif
 } // hfill1
 
 // fills a 2d histogram with ray data
-void Plot::hfill2(int nsets)
+void Plot::hfill2(int settype)
 {
   int i, ix, iy, h2a_n, idx;
   double xm, ym;
@@ -855,7 +858,7 @@ void Plot::hfill2(int nsets)
   if ((ymax- ymin) < ZERO ) ymax = ymin + 1;  
   h2max= 0.0;
 
-  for (i= 0; i< ndata; i++)
+  for (i= 0; i< ndata1; i++)
     {
       ix= (int)((c1x[i]- zmin)/(zmax - zmin)* h2a_nx);
       iy= (int)((c1y[i]- ymin)/(ymax - ymin)* h2a_ny);
@@ -872,9 +875,9 @@ void Plot::hfill2(int nsets)
 	    }
 	}
     }
-  if (nsets == 2)
+  if (settype == 3)
     {
-      for (i= 0; i< ndata; i++)
+      for (i= 0; i< ndata2; i++)
 	{
 	  ix= (int)((c2x[i]- zmin)/(zmax - zmin)* h2a_nx);
 	  iy= (int)((c2y[i]- ymin)/(ymax - ymin)* h2a_ny);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <21 Jun 12 17:02:11 flechsig>  */
+/*   Time-stamp: <22 Jun 12 10:02:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2207,9 +2207,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
    /* all sections done */
    fclose(f);  
-   // UF jun 2012
-   bl->BLOptions.ray_sets= (bl->BLOptions.dlambdaflag == 0) ? 1 : 2;
-   printf("ray_sets %d\n", bl->BLOptions.ray_sets);
+   
    return rcode;  
 }  /* end ReadBLFile */
 
@@ -3147,6 +3145,42 @@ void Check_iord(struct BeamlineType *bl)
 #endif
 } /* end Check_iord */
 
+
+/* updates the status and the deltalamba flag depending on mode */ 
+void UpdateFlags(struct BeamlineType *bl, int run)
+{
+  int i, dlflagold, statusold, rayset;
+
+  bl->BLOptions.act_ray_set= run;
+  rayset= bl->BLOptions.plrayset;
+  if ((run == FIRST) && (rayset == 3)) rayset= PLRaySet1; /* use PLRaySet1 if two runs required */
+
+  for (i= 0; i < bl->elementzahl; i++)  /* scan all elements */
+    if (bl->ElementList[i].MDat.Art & GRATINGBIT)
+      {
+	dlflagold= bl->ElementList[i].GDat.dlambdaflag;
+	statusold= bl->ElementList[i].ElementOK;
+	if (rayset & PLRaySet2)  /* 2nd run or turned grating */ 
+	  {
+	    bl->ElementList[i].GDat.dlambda= bl->BLOptions.dlambda;
+	    if (dlflagold != 1)  /* flag must be changed */
+	      {
+		bl->ElementList[i].GDat.dlambdaflag= 1;
+		bl->ElementList[i].ElementOK= 0;
+		bl->beamlineOK &= ~mapOK;
+	      }
+	  }
+	else /* PLRaySet1 */
+	  {
+	    if (dlflagold != 0)  /* flag must be changed */
+	      {
+		bl->ElementList[i].GDat.dlambdaflag= 0;
+		bl->ElementList[i].ElementOK= 0;
+		bl->beamlineOK &= ~mapOK;
+	      }
+	  }
+      }
+} /*  UpdateFlags */
 
 /* end bline.c */
 

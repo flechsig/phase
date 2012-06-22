@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <21 Jun 12 16:43:03 flechsig>  */
+/*   Time-stamp: <22 Jun 12 09:44:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,6 +12,9 @@
 #ifndef PHASE_H
 
 #define PHASE_H   
+
+#define FIRST  1
+#define SECOND 2
 
 #define DOALLOC 1
 #define NOALLOC 0
@@ -650,7 +653,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, ray_sets, act_ray_set, dlambdaflag, plrayset;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, act_ray_set, dlambdaflag, plrayset;
   double epsilon, lambda, xlam_save, displength, dlambda;
   struct PSOptionsType PSO;
   struct control_flags ifl;
@@ -908,7 +911,7 @@ void
   src_ini(struct sources *),  
   Test4Grating(struct BeamlineType *, struct mirrortype **, struct geometryst **),
   MMatrix(),
-	        
+  UpdateFlags(struct BeamlineType *, int),	        
   WriteBLFile(char *, struct BeamlineType *),
   WriteMKos(struct mirrortype *, char *),
   writemapc(char *, char *, int, double *, double *, double *, double *,
