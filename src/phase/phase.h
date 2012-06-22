@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <22 Jun 12 09:44:24 flechsig>  */
+/*   Time-stamp: <22 Jun 12 15:14:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,6 +12,9 @@
 #ifndef PHASE_H
 
 #define PHASE_H   
+
+#define DefGeometryC DefGeometryC_UF
+//#define DefGeometryC DefGeometryC_JB
 
 #define FIRST  1
 #define SECOND 2
@@ -803,8 +806,8 @@ void
   create_hormap(),
   debug_beamline_type_f(int *),
   debug_beamline_type_c_(int *),
-  DefGeometryC(struct gdatset *, struct geometrytype *),
-  DefGeometryCnew(struct gdatset *, struct geometrytype *),
+  DefGeometryC_JB(struct gdatset *, struct geometrytype *),
+  DefGeometryC_UF(struct gdatset *, struct geometrytype *),
   DefGeometryCM(double, double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),
