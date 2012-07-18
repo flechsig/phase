@@ -86,6 +86,7 @@ private slots:
     void poButtonslot();
     void print();
     void printMain();
+    void screenshotMain();
     void save();
     void saveas();
     
@@ -284,6 +285,7 @@ private:
     QAction *saveasAct;
     QAction *printAct;
     QAction *printMainAct;
+    QAction *screenshotAct;
     QAction *undoAct;
     QAction *aboutAct;
     QAction *aboutQtAct;

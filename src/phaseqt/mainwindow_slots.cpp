@@ -1707,12 +1707,33 @@ void MainWindow::printMain()
   if (dlg->exec() != QDialog::Accepted)
     return;
   
-  
   this->render( &printer );
   
   statusBar()->showMessage(tr("Ready"), 4000);
+} // end printMain()
+
+// slot
+void MainWindow::screenshotMain()
+{
+#ifdef DEBUG
+  cout << "debug: MainWindow::screenshotMain called" << endl;
+#endif
+
+  QString format = "png";
+  QPixmap pixmap = QPixmap::grabWindow(this->winId());
+ 
+  QString initialPath = QDir::currentPath() + tr("/screenshot.") + format;
+
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
+                                initialPath,
+                                tr("%1 Files (*.%2);;All Files (*)")
+                                .arg(format.toUpper())
+                                .arg(format));
+  if (!fileName.isEmpty())
+    pixmap.save(fileName, format.toAscii().constData());
 
 } // end printMain()
+
 
 // slot
 void MainWindow::save()

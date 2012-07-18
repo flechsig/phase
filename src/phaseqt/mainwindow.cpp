@@ -113,6 +113,10 @@ void MainWindow::createActions()
     printMainAct->setStatusTip(tr("Print the PHASE Qt window"));
     connect(printMainAct, SIGNAL(triggered()), this, SLOT(printMain()));
 
+    screenshotAct = new QAction(QIcon(":/images/print.png"), tr("Screenshot Mainwindow..."), this);
+    screenshotAct->setStatusTip(tr("Create a screenshot of PHASE Qt window"));
+    connect(screenshotAct, SIGNAL(triggered()), this, SLOT(screenshotMain()));
+
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
     undoAct->setStatusTip(tr("Undo the last editing action"));
@@ -680,6 +684,7 @@ void MainWindow::createMenus()
     fileMenu->addAction(saveasAct);
     fileMenu->addAction(printAct);
     fileMenu->addAction(printMainAct);
+    fileMenu->addAction(screenshotAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 
@@ -1278,6 +1283,7 @@ void MainWindow::createToolBars()
     fileToolBar->addAction(saveAct);
     fileToolBar->addAction(printAct);
     fileToolBar->addAction(printMainAct);
+    fileToolBar->addAction(screenshotAct);
 
     editToolBar = addToolBar(tr("Edit"));
     //    editToolBar->addAction(undoAct);
