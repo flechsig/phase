@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Jul 12 14:03:32 flechsig>  */
+/*   Time-stamp: <19 Jul 12 14:50:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1508,8 +1508,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 	   op->ifl.igrating);
    fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
 	   op->ifl.ipinarr);
-   fprintf(f, "%20d  GO enable delta lambda\n", op->dlambdaflag);
-   fprintf(f, "%20lg  GO delta lambda (nm)\n",  op->dlambda*1e6);
+   fprintf(f, "%20d  enable delta lambda\n", op->dlambdaflag);
+   fprintf(f, "%20lg  delta lambda (nm)\n",  op->dlambda*1e6);
    fprintf(f, "%20d  GO enable ray_set1\n", op->plrayset);
       /* end control_flags */
 
