@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 Jul 12 10:14:46 flechsig> 
+//  Time-stamp: <19 Jul 12 13:40:31 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -959,7 +959,7 @@ void MainWindow::elementApplyBslot()
   md->rmi   = rE     ->text().toDouble();         
   md->rho   = rhoE   ->text().toDouble(); 
 
-  gd->lambdag = lambdagE->text().toDouble()*1E-6;
+  //  gd->lambdag = lambdagE->text().toDouble()*1E-6;
   gd->xdens[0]= lineDensity->text().toDouble(); 
   gd->xdens[1]= vls1->text().toDouble();
   gd->xdens[2]= vls2->text().toDouble();
@@ -1025,7 +1025,7 @@ void MainWindow::goButtonslot()
       dlambdaBox1->setEnabled(true);
       dlambdaBox2->setEnabled(true);
     }
-
+  dislenE->setEnabled(true);
   UpdateStatus();
   myparent->writeBackupFile();
 } // goButtonslot
@@ -1603,6 +1603,7 @@ void MainWindow::poButtonslot()
   statGroup->hide();
   dlambdaBox1->setEnabled(false);
   dlambdaBox2->setEnabled(false);
+  dislenE->setEnabled(false);
   UpdateStatus();
   myparent->writeBackupFile();
 } // poButtonslot

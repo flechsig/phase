@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <22 Jun 12 15:14:31 flechsig>  */
+/*   Time-stamp: <19 Jul 12 13:38:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -513,9 +513,9 @@ struct gdatset
   double rp; 
   double xdens[5];  
   //double lambda; //TODO: i think this is the same as lambdag, should be removed
-  double lambdag; 
-  double dlambda;
-  int    dlambdaflag;
+  //double lambdag; 
+  //double dlambda;
+  //int    el_dlambdaflag;
   int    inout;                                 
   int    iflag; 
   int    azimut;     /* vertikal 0; nach links 1; nach unten 2 */
@@ -806,8 +806,8 @@ void
   create_hormap(),
   debug_beamline_type_f(int *),
   debug_beamline_type_c_(int *),
-  DefGeometryC_JB(struct gdatset *, struct geometrytype *),
-  DefGeometryC_UF(struct gdatset *, struct geometrytype *),
+  DefGeometryC_JB(struct gdatset *, struct geometrytype *, struct OptionsType *),
+  DefGeometryC_UF(struct gdatset *, struct geometrytype *, struct OptionsType *),
   DefGeometryCM(double, double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),

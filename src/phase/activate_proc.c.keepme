@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <21 Jun 12 13:40:18 flechsig>  */
+/*   Time-stamp: <19 Jul 12 13:35:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -475,7 +475,7 @@ void activate_proc(w, tag, reason)
 	/*mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 	  PHASESet.elementpckname);*/
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
-		     &bl->ElementList[(bl->position)- 1].geo); 
+		     &bl->ElementList[(bl->position)- 1].geo, &bl->BLOptions); 
 	/*gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
 	  PHASESet.geometrypckname);  */ 
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);   
@@ -490,7 +490,7 @@ void activate_proc(w, tag, reason)
     break;  
 
   case kEOEDefaults: 
-    InitOElementBox(&MDefDat, &GDefDat, widget_num); 
+    InitOElementBox(&MDefDat, &GDefDat, widget_num, 22.22); 
     break; 
 
   case kEOECancel: 
@@ -513,7 +513,7 @@ void activate_proc(w, tag, reason)
 		    &bl->ElementList[(bl->position)- 1].GDat);
 #endif
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
-		     &bl->ElementList[(bl->position)- 1].geo);  
+		     &bl->ElementList[(bl->position)- 1].geo, &bl->BLOptions);  
 	/*	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
 	  PHASESet.geometrypckname); */
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);  

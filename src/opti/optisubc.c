@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <21 Jun 12 13:41:56 flechsig>  */
+/*   Time-stamp: <19 Jul 12 13:47:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -153,7 +153,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->rp= *z;
 	  break;
 	case 3:                                    /* E (eV) */
-	  bl->BLOptions.lambda= gdat->lambdag= 
+	  bl->BLOptions.lambda= 
 	    (*z > 0.0) ? (1240.0e-6/ *z) : 0.0;
 	  break;  
 	case 4:                               
@@ -178,7 +178,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->xdens[ipos- 6]= *z;   
 	  break;  
 	case 11:        	           /* m lambda in nm */ 
-	  bl->BLOptions.lambda=gdat->lambdag= *z * 1e-6;   
+	  bl->BLOptions.lambda= *z * 1e-6;   
 	  break;
 	case 12:  /* theta CLRCM bei BESSY I dy= 44.2 mm, Planspiegel in r2 */
 	          /* L= 6500 mm */
@@ -202,7 +202,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  break;
 	case 15:       /* cff constant */
 	  fprintf(stderr, "in_struct: cff %g\n", *z);
-	  FixFocus(*z, gdat->lambdag, gdat->xdens[0], gdat->inout, 
+	  FixFocus(*z, bl->BLOptions.lambda, gdat->xdens[0], gdat->inout, 
 		   &alpha, &beta);
 	  gdat->theta0= fabs(alpha- beta)* 90.0/ PI;  /* 0.5 * (a-b) */
 	  if (gdat->azimut > 1) gdat->theta0= -fabs(gdat->theta0);
@@ -211,14 +211,14 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	case 16:       /* Energiescan mit cff constant */
 	  /* berechne cff aus alten werten */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
-	  fi  = (double)(gdat->inout)* asin(gdat->lambdag* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  cff= cos(fi- teta)/ cos(fi+ teta); 
-	  bl->BLOptions.lambda= gdat->lambdag= 
+	  bl->BLOptions.lambda=  
 	    (*z > 0.0) ? (1240.0e-6/ *z) : 0.0;
 	  fprintf(stderr, 
 		  "\n in_struct: energy %g, NB: cff= const = %g\n", *z, cff);
-	  FixFocus(cff, gdat->lambdag, gdat->xdens[0], gdat->inout, 
+	  FixFocus(cff, bl->BLOptions.lambda, gdat->xdens[0], gdat->inout, 
 		   &alpha, &beta);
 	  gdat->theta0= fabs(beta- alpha)* 90.0/ PI;  /* 0.5 * (a-b) */
 	  if (gdat->azimut > 1) gdat->theta0= -fabs(gdat->theta0);
@@ -243,7 +243,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	case 19: /* STXM special S1-S2 spectrometer length */
 	  mdat= &listpt->MDat;
 	  teta= fabs(gdat->theta0* PI/ 180.0);
-	  fi  = (double)(gdat->inout)* asin(gdat->lambdag* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  cl= mdat->rmi;  /* old radius */  
 	  /* new grating radius assuming keep rowland conditions */
@@ -403,14 +403,14 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	break;	
 	case 15:       /* cff constant */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
-	  fi  = (double)(gdat->inout)* asin(gdat->lambdag* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  *z= cos(fi- teta)/ cos(fi+ teta);    /* cos(beta)/ cos(alpha); */
 	  printf("outstruct_15: cff= %f,??? theta= %f rad, phi= %f rad\n", *z, teta, fi);
 	  break;
 	case 16:       /* Energiescan mit cff constant */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
-	  fi  = (double)(gdat->inout)* asin(gdat->lambdag* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  cff= cos(fi- teta)/ cos(fi+ teta);   /* cos(beta)/ cos(alpha); */
 	  *z= (bl->BLOptions.lambda > 0.0) ? 
@@ -463,7 +463,7 @@ void buildsystem(struct BeamlineType *bl)
 	      listpt->ElementOK |= elementOK; 
 	    }
 	  
-	  DefGeometryC(&listpt->GDat, &listpt->geo);  
+	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
 	    
 	  MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1));
 	  listpt->ElementOK|= mapOK; 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <21 Jun 12 13:33:16 flechsig> 
+//  Time-stamp: <19 Jul 12 11:33:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -99,7 +99,7 @@ void PhaseQt::buildElement(struct ElementType *listpt)
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 	     this->BLOptions.REDUCE_maps, this->BLOptions.WithAlign, -1);    
-  DefGeometryC(&listpt->GDat, &listpt->geo);  
+  DefGeometryC(&listpt->GDat, &listpt->geo, &(this->BLOptions));  
   MakeMapandMatrix(listpt, this, 99); // I guess it is not used UF
 } //  end buildElement
 

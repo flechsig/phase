@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <21 Jun 12 13:35:37 flechsig>  */
+/*   Time-stamp: <19 Jul 12 11:44:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -725,9 +725,9 @@ void ginitdatset(struct gdatset *x)
    x->rp	= 1000;
    for (i= 0; i< 5; i++) 
      x->xdens[i] = 0; 
-   x->lambdag  	 = 0;  
-   x->dlambda     = 0; 
-   x->dlambdaflag = 0; 
+   //x->lambdag  	 = 0;  
+   //x->dlambda     = 0; 
+   //x->dlambdaflag = 0; 
    x->inout	= 1;  
    x->iflag	= 0; 
    x->azimut    = 0;

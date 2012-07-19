@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/phaseX.c */
 /*  Date      : <07 Apr 08 14:16:18 flechsig>  */
-/*  Time-stamp: <20 Mar 12 17:17:06 flechsig>  */
+/*  Time-stamp: <19 Jul 12 13:38:03 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -302,7 +302,7 @@ void  UpdateBLBox(struct BeamlineType *bl, int pos)
 
    if ((widget_array[kEOElementBox] != NULL) &&
        XtIsRealized(widget_array[kEOElementBox]))		
-       InitOElementBox(&ep->MDat, &ep->GDat, ep->MDat.Art);   
+     InitOElementBox(&ep->MDat, &ep->GDat, ep->MDat.Art, 33.33);   
    
    /*  if ((widget_array[kEGeometryBox] != NULL) &&
        XtIsRealized(widget_array[kEGeometryBox]))
@@ -1520,54 +1520,11 @@ void InitSourceBox(struct datset *x, struct BeamlineType *bl)
 
 void InitGeometryBox(struct gdatset *gx) 
      /* obsolete FEB 04 */ 
-/* modification: 20 Feb 98 09:23:35 flechsig */
-/* modification: 13 Mar 98 08:40:42 flechsig */
 {
-  int i;
-  double cff, teta, fi;
-  char TextField[4][40], *text;
-  XmString label;	
-  char LabelField1 [5][20] =	{ "Prec. [mm]", "Succ. [mm]", 
-				  "theta [deg]", "cff (PGM)",
-                                  "geometry", 
-  };
-
-  teta= fabs(gx->theta0* PI/ 180.0);   /* theta */
-
-/* modification: 13 Mar 98 08:38:13 flechsig */
-  text= XmTextGetString(widget_array[kEBLT31a]);    
-  sscanf(text, "%lf", &gx->lambdag); 
-  gx->lambdag*= 1e-6;
-  XtFree(text); 
-
-  fi  = (double)(gx->inout)* asin(gx->lambdag* gx->xdens[0]/
-				  (2.0* cos(teta)));
-  cff= cos(fi- teta)/ cos(fi+ teta);    /* cos(beta)/ cos(alpha); */
-
-  snprintf(TextField[0], 40, "%f", gx->r    );    
-  snprintf(TextField[1], 40, "%f", gx->rp   );    
-  snprintf(TextField[2], 40, "%f", gx->theta0);  
-  snprintf(TextField[3], 40, "%.3f", cff);    
-
-  
-    	        
-    for (i= 0; i< 4; i++)
-    {	
-          set_something(widget_array[kEGT1+ i], XmNvalue, TextField[i]);  
-
-	  /*    label= XmStringCreateLocalized(LabelField1[i]);
-
-		set_something(widget_array[kEGT1Label+ i], XmNlabelString, label);  */
-     }     
-
-  /*  label= XmStringCreateLocalized(LabelField1[4]);
-
-  set_something(widget_array[kEGInputLabel], XmNlabelString, label); 	
-  XmStringFree(label); */
-  XmToggleButtonSetState(widget_array[kEGNITranslation], gx->iflag == 1, FALSE);   
+    
 } /* end InitGeometryBox */
 
-void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)  
+void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw, double lambda)  
 /* sw wird mit art initialisiert */    
 /* wird von activate_proc mit der widget- nummer der Taste aufgerufen */
 /* setzt auch default werte */
@@ -1583,12 +1540,12 @@ void InitOElementBox(struct mdatset *x, struct gdatset *y, int sw)
   /* from geometrybox */    
   teta= fabs(y->theta0* PI/ 180.0);   /* theta */
   text= XmTextGetString(widget_array[kEBLT31a]);
-  sscanf(text, "%lf", &y->lambdag);
-  y->lambdag*= 1e-6;
+  sscanf(text, "%lf", &lambda);
+  lambda*= 1e-6;
   XtFree(text);
 
   fi = (double)(y->inout)* 
-    asin(y->lambdag* y->xdens[0]/ (2.0* cos(teta)));
+    asin(lambda* y->xdens[0]/ (2.0* cos(teta)));
   cff= cos(fi- teta)/ cos(fi+ teta);
 
   if ((sw == kEOEDefaults) || (sw == kFFileBoxOK)) 
@@ -1946,7 +1903,7 @@ void GetGeometry(struct PHASEset *ph, struct gdatset *gp)
   cff wird hier nicht ausgelesen */
  
  /* aus rudimentaeren Gruenden */
-  gp->lambdag= Beamline.BLOptions.lambda;
+ // gp->lambdag= Beamline.BLOptions.lambda;
   gp->iflag= 
     (XmToggleButtonGetState(widget_array[kEGNITranslation]) == TRUE) ? 1 : 0; 
   XtFree(text);
@@ -2091,7 +2048,7 @@ void SetRadius(int wn)               /*berechnet Radien von Toroiden */
   XtFree(text);
 }      
 
-void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
+void SetTheta(struct gdatset *gdat, double lambda)          /* setzt theta aus cff */
 {
   char *text, buffer[255];     
   double cff, alpha, beta, theta0;
@@ -2100,7 +2057,7 @@ void SetTheta(struct gdatset *gdat)          /* setzt theta aus cff */
   sscanf(text, "%lf", &cff);
   if (cff != 1.0)
     {
-      FixFocus(cff, gdat->lambdag, gdat->xdens[0], gdat->inout, &alpha, &beta);
+      FixFocus(cff, lambda, gdat->xdens[0], gdat->inout, &alpha, &beta);
       theta0= (alpha- beta)* 90.0/ PI;
       if (gdat->azimut > 1) theta0= -fabs(theta0);
       snprintf(buffer, 255, "%.4f", theta0);  

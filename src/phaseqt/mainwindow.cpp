@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 Jul 12 10:08:34 flechsig> 
+//  Time-stamp: <19 Jul 12 13:59:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -312,8 +312,8 @@ QWidget *MainWindow::createBeamlineBox()
     beamlineGenericLayout->addWidget(lambdaE,      0, 1);
     beamlineGenericLayout->addWidget(dlambdaLabel, 0, 2);
     beamlineGenericLayout->addWidget(dlambdaE,     0, 3);
-    beamlineGenericLayout->addWidget(dislenLabel, 1, 0, 1, 2);
-    beamlineGenericLayout->addWidget(dislenE,     1, 3, 1, 1);
+    beamlineGenericLayout->addWidget(dislenLabel,  1, 0, 1, 2);
+    beamlineGenericLayout->addWidget(dislenE,      1, 3, 1, 1);
     
     beamlineGenericGroup->setLayout(beamlineGenericLayout);
 
@@ -908,12 +908,13 @@ QWidget *MainWindow::createOpticalElementBox()
 //  QHBoxLayout *gratingLayout1 = new QHBoxLayout;
   QGridLayout *gratingLayout1 = new QGridLayout;
   
-  gratingLayout1->addWidget(lambdagLabel, 0, 0);
-  gratingLayout1->addWidget(lambdagE, 0, 1);
-  gratingLayout1->addWidget(densityLabel, 1, 0);  
-  gratingLayout1->addWidget(lineDensity, 1, 1);
-  gratingLayout1->addWidget(orderLabel, 1, 2);
-  gratingLayout1->addWidget(integerSpinBox, 1, 3);
+  //gratingLayout1->addWidget(lambdagLabel, 0, 0);
+  //gratingLayout1->addWidget(lambdagE, 0, 1);
+  //lambdagE->setEnabled(false);  // UF should go away
+  gratingLayout1->addWidget(densityLabel, 0, 0);  
+  gratingLayout1->addWidget(lineDensity,  0, 1);
+  gratingLayout1->addWidget(orderLabel,   0, 3);
+  gratingLayout1->addWidget(integerSpinBox, 0, 4);
 //  gratingLayout1->addStretch(1);
   gratingLayout1->addWidget(nimBox, 0, 2);  
   gratingGroup1->setLayout(gratingLayout1);
@@ -1871,7 +1872,7 @@ void MainWindow::UpdateElementBox(int number)
   l2E ->setText(qst.setNum(md->l2, 'g', 4));
   lsE ->setText(qst.setNum(md->slopel, 'g', 4));
 
-  lambdagE ->setText(qst.setNum(gd->lambdag*1e6,   'f', 6));
+  //  lambdagE ->setText(qst.setNum(gd->lambdag*1e6,   'f', 6));
   
   if (gd->iflag) nimBox->setChecked(true); else nimBox->setChecked(false);
 

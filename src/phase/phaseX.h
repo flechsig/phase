@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phaseX.h */
 /*  Date      : <01 Apr 08 14:43:24 flechsig>  */
-/*  Time-stamp: <07 Apr 08 14:25:38 flechsig>  */
+/*  Time-stamp: <19 Jul 12 13:33:38 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -57,7 +57,7 @@ void InitBLBox(char *, struct BeamlineType *);
 void InitGeometryBox(struct gdatset *); 
 void InitGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *);
 void inithplotc(int);
-void InitOElementBox(struct mdatset *, struct gdatset *, int); 
+void InitOElementBox(struct mdatset *, struct gdatset *, int, double); 
 void InitOptiBox(char *, struct BeamlineType *);
 void InitOptiList2(int, char *);
 void InitParameterBox(struct BeamlineType *, char *); 

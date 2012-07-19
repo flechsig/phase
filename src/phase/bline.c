@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Jun 12 16:14:14 flechsig>  */
+/*   Time-stamp: <19 Jul 12 14:03:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -73,7 +73,7 @@ void BuildElement(int elindex, struct BeamlineType *bl)
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, elindex);    
   //DefGeometryCnew(&listpt->GDat, &listpt->geo);
-  DefGeometryC(&listpt->GDat, &listpt->geo);  
+  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
   
   if (listpt->tpe == NULL) listpt->tpe= XMALLOC(struct TmpMapType, 1);
@@ -186,7 +186,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter- 1)); 
 	  //DefGeometryCnew(&listpt->GDat, &listpt->geo);
-	  DefGeometryC(&listpt->GDat, &listpt->geo);
+	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);
             
 	  MakeMapandMatrix(listpt, bl, elindex); 
 	  //printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
@@ -1292,7 +1292,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20120620;    /* today */
+   int  i, version= 20120719;    /* today */
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1318,7 +1318,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version JUN 2012\n\n");
+   fprintf(f, "This is a datafile of PHASE, file version JUL 2012\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -1446,7 +1446,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20lg     image  distance    \n", listpt->GDat.rp);
      for (i= 0; i< 5; i++) 
        fprintf(f, "%20.10lg  line density x[%d] \n", listpt->GDat.xdens[i], i);
-     fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambdag* 1e6); 
+     /* 20120719 fprintf(f, "%20lg     lambda [nm]         \n", listpt->GDat.lambdag* 1e6); */
      /* 20120620
      fprintf(f, "%20lg     dlambda [nm]        \n", listpt->GDat.dlambda* 1e6); 
      fprintf(f, "%20d     dlambdaflag        \n", listpt->GDat.dlambdaflag);
@@ -1696,7 +1696,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20120620;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20120719;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -1918,16 +1918,18 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
 	   pd= (double *) &listpt->GDat.theta0; 
-	   for (i= 0; i < 9; i++, pd++) /* !!Fehleranfaellig !! */
+	   for (i= 0; i < 8; i++, pd++) /* !!Fehleranfaellig !! */
              {
                fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
              } 
-	   listpt->GDat.lambdag*= 1e-6;
+
+	   if (version < 20120719) fgets(buffer, 80, f);        /* skip lambdag */
+	   
 	   if ((version >= 20091222) && (version < 20120620))
 	     {
-	       fgets(buffer, 80, f); sscanf(buffer, "%lf", &listpt->GDat.dlambda); 
-	       fgets(buffer, 80, f); sscanf(buffer, "%d",  &listpt->GDat.dlambdaflag);
-	       listpt->GDat.dlambda*= 1e-6;
+	       fgets(buffer, 80, f); //sscanf(buffer, "%lf", &listpt->GDat.dlambda); 
+	       fgets(buffer, 80, f); //sscanf(buffer, "%d",  &listpt->GDat.dlambdaflag);
+	       //listpt->GDat.dlambda*= 1e-6;
 	     }
 	   
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->GDat.inout);  
@@ -2229,13 +2231,13 @@ void SetDeltaLambda(struct BeamlineType *bl, struct ElementType *listpt)
        printf(
 "   debug: line dens.: %g, dl %g, cosb %g, lambda %g mm, diffr. order: %lg\n",
 		listpt->GDat.xdens[0], bl->BLOptions.displength, 
-		listpt->geo.cosb, listpt->GDat.lambdag, 
+		listpt->geo.cosb, bl->BLOptions.lambda, 
 		(double)(listpt->GDat.inout));
 #endif						
        printf("SetDeltaLambda: Delta Lambda (nm) = %lg * y [mm], ", 
 		bl->deltalambdafactor* 1e6);
        printf("Resolution = %lg / y (mm)\n",  
-	      listpt->GDat.lambdag/ bl->deltalambdafactor);  
+	      bl->BLOptions.lambda/ bl->deltalambdafactor);  
        /* printf("*** end SetDeltaLambda ***\n");*/
    } 
    
@@ -2373,19 +2375,19 @@ the routine takes the input variables from gdatset and writes the variables in g
 !! in der alten version ist alpha immer < 0 !!
 !! we keep the sign konvention by multiplying the sa and ab with -1 !!
 */
-void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out)  
+void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out, struct OptionsType *blo)  
 {
-  double theta, phi, alpha, beta, beta1, N, lambda, lambda1, sign_of_down_or_right, radius, trans;
+  double theta, phi, alpha, beta, beta1, N, lambda, lambda4geometry, sign_of_down_or_right, radius, trans;
   int i, m;
 #ifdef DEBUG
-  printf("debug: %s DefGeometryC_UF called \n", __FILE__ );
+  printf("\n@@@@@@@@@@ debug: %s DefGeometryC_UF called\n", __FILE__ );
 #endif
 
   /* theta is always positive we handle the direction information separately */ 
   /* rewrite inputs */
   sign_of_down_or_right= (in->theta0 < 0) ? -1.0 : 1.0;
   theta = fabs(in->theta0* PI/ 180.0);  
-  lambda= in->lambdag;
+  lambda= lambda4geometry= blo->lambda;
   m     = in->inout;
   N     = in->xdens[0];
 
@@ -2394,20 +2396,21 @@ void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out)
   for (i= 0; i< 5; i++) out->x[i]= in->xdens[i]; 
 
   /* start calculation */
-  phi   = asin(m* lambda* N/(2.0* cos(theta)));
+  phi   = asin(m* lambda4geometry* N/(2.0* cos(theta)));
   alpha = theta+ phi;   
   beta  = phi  - theta;   
 
-  if (in->dlambdaflag == 1)            /* enable in->dlambda for different wavelength mode */
+  if (blo->dlambdaflag == 1)            /* enable in->dlambda for different wavelength mode */
     {
-      fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature  !!!!!!!!\n");
-      lambda1 = lambda+ in->dlambda;
-      beta1   = asin(m* lambda1* N- sin(alpha));
+      fprintf(stdout, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature !!!!!!!!\n");
+      //lambda1 = lambda+ in->dlambda;
+      /*beta1   = asin(m* lambda1* N- sin(alpha));
       fprintf(stderr, "debug: lambda1= %e nm, m= %d, alpha = %f, beta = %f, theta= %f, dbeta= %f mrad\n", 
 	      lambda1*1e6, m, 
-	      alpha* 180.0/PI, beta1* 180.0/PI, theta* 180.0/PI , (beta-beta1)*1e3);
+	      alpha* 180.0/PI, beta1* 180.0/PI, theta* 180.0/PI , (beta-beta1)* 1e3);*/
       //beta= beta1;      // Variante 1 ist nicht ganz OK - richtung passt nicht
-      lambda= lambda1;    // Variante 2 funktioniert
+      lambda= lambda4geometry+ blo->dlambda;    // Variante 2 funktioniert
+      fprintf(stdout, "  lambda= %g nm (lambda + delta lambda)\n", lambda* 1e6);
     }
 
   if ((fabs(alpha) > PI/2.0) || (fabs(beta) > PI/2.0)) /* test range */
@@ -2434,15 +2437,17 @@ void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out)
   out->xlam = lambda* m;  /* UF 23.12.09 ist lambda richtig ??? oder in->lambda */
   out->idefl= sign_of_down_or_right;  
 #ifdef DEBUG
-  printf("\n@@@@@@@@@@ debug: %s DefGeometryC_UF \n", __FILE__ );
-  printf("  alpha: %f, beta: %f, lambda= %g nm, m= %d\n", alpha* 180.0/ PI, beta* 180.0/ PI, lambda* 1e6, m);
-  printf("  out->idefl= %d, out->xlam= %g nm\n", out->idefl, out->xlam* 1e6);
-  printf("  other output: sa=%g, ca=%g, sb=%g, cb=%g, x[0]=%g\n", out->sina, out->cosa, out->sinb, out->cosb, out->x[0]);
-  
+  printf("@@@@@@@@@@ debug: %s DefGeometryC_UF output\n", __FILE__ );
+  printf("  alpha: %f, beta: %f, m= %d, lambda= %g nm (lambda for grating geometry)\n", 
+	 alpha* 180.0/ PI, beta* 180.0/ PI, m, lambda4geometry* 1e6);
+  printf("  out->idefl= %d, out->xlam= %g nm (lambda for tracking * m)\n", out->idefl, out->xlam* 1e6);
+  printf("  other output: sa= %g, ca= %g, sb= %g, cb= %g, x[0]= %g\n", out->sina, out->cosa, out->sinb, out->cosb, out->x[0]);
+  printf("@@@@@@@@@@ debug: %s DefGeometryC_UF finished\n\n", __FILE__ );
 #endif
 } /* end DefGeometryC_UF */ 
 
-void DefGeometryC_JB(struct gdatset *x, struct geometrytype *gout)  
+/* obsolete routine but keep this routine in the code for refererence */
+void DefGeometryC_JB(struct gdatset *x, struct geometrytype *gout, struct OptionsType *blo)  
 /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha, beta */
 /* Dec 2009 provisions for multiple wavelengths */
 {
@@ -2451,20 +2456,20 @@ void DefGeometryC_JB(struct gdatset *x, struct geometrytype *gout)
  
   //DefGeometryCnew(x, gout);  
 
-  printf("LAMBDA = %e\n", x->lambdag);
+  printf("LAMBDA = %e\n", blo->lambda);
   
   theta0= fabs(x->theta0* PI/ 180.0);  
-  lambda= x->lambdag;
+  lambda= blo->lambda;
  
   delta= (double)(x->inout)* asin(lambda* x->xdens[0]/(2.0* cos(theta0)));
   alpha= (-theta0- delta);   /* eigentlich fi+ theta */
   beta = ( theta0- delta);   /* nicht eher fi- theta???*/
   fprintf(stderr, "debug: DefGeometryC_JB lambda: %e nm, io: %d, alpha = %f, beta = %f\n", lambda*1e6, x->inout, 
 	  alpha*(180.0/PI), beta*(180.0/PI) );
-  if (x->dlambdaflag == 1)
+  if (blo->dlambdaflag == 1)
     {
-      fprintf(stderr, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature  !!!!!!!!\n");
-      lambda1= x->lambdag+ x->dlambda;
+      fprintf(stdout, "!!!!!!!! multiple wavelength calculation enabled  - experimental feature  !!!!!!!!\n");
+      lambda1= blo->lambda+ blo->dlambda;
       beta1= (-1.0)* asin(lambda1* x->xdens[0]+ sin(alpha)); /* 2b confirmed UF 23.12.09 */
       fprintf(stderr, "debug: lambda1: %e nm, io: %d, alpha = %f, beta = %f, theta= %f, dbeta= %f mrad\n", 
 	      lambda1*1e6, x->inout, 
@@ -2866,6 +2871,7 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
        /* datenstruktur soll gleich sin und cosinus werte enthalten       */
       /* modification: 19 Feb 98 11:07:44 flechsig Vorzeichenfehler alpha,
        *      beta */
+/* UF 19.7.2012 routine ist obsolete */
 {
    double delta, alpha, beta, theta0, trans, radius;
    int i;
@@ -2874,8 +2880,8 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
    //delta= (double)(x->inout)* asin(x->lambda* x->xdens[0]/(2.0* cos(theta0)));
    delta= (double)(x->inout)* asin(lambda0* x->xdens[0]/(2.0* cos(theta0)));
    
-   x->lambdag=lambda_local;
-   printf(" \n lambda_local = %enm; lambda0 = %3nm\n",x->lambdag, lambda0);
+   //blo->lambdag=lambda_local;
+   //printf(" \n lambda_local = %enm; lambda0 = %3nm\n",blo->lambda, lambda0);
 
 /* FEL2005 */
 /*
@@ -2893,8 +2899,8 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
 /*   alpha= (theta0+ delta); */
 /*   beta = (delta- theta0); */
 #ifdef DEBUG
-   printf("DefGeometryCM: alpha: %f, beta: %f, lambda_local= %f nm, lambda0= %f nm ==> correct?\n",
-	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambdag* 1e6, lambda0* 1e6);
+   //   printf("DefGeometryCM: alpha: %f, beta: %f, lambda_local= %f nm, lambda0= %f nm ==> correct?\n",
+   //	             alpha* 180.0/ PI, beta* 180.0/ PI, x->lambdag* 1e6, lambda0* 1e6);
 #endif
    if ((x->iflag) == 1)
      {
@@ -2916,7 +2922,7 @@ void DefGeometryCM(double lambda_local, double lambda0, struct gdatset *x,
      gout->cosb= cos(beta);
      for (i= 0; i< 5; i++)    /* hier ist 5 richtig - nicht abhaengig von seven order */
          gout->x[i]= x->xdens[i];
-     gout->xlam = x->lambdag* (double)(x->inout);
+     //     gout->xlam = x->lambdag* (double)(x->inout);
    gout->idefl= (x->theta0 > 0.0) ? 1 : -1;
 } /* end DefGeometryCM */
 
@@ -3155,41 +3161,49 @@ void Check_iord(struct BeamlineType *bl)
 } /* end Check_iord */
 
 
-/* updates the status and the deltalamba flag depending on mode */ 
+/* updates the status and the deltalamba flag depending on ray trace mode */ 
 void UpdateFlags(struct BeamlineType *bl, int run)
 {
-  int i, dlflagold, statusold, rayset;
+  int i, dlflagold, statusold, rayset, first_run_of_2, change_status;
+  
+#ifdef DEBUG
+  printf("debug: %s UpdateFlags called\n", __FILE__);
+#endif
 
   bl->BLOptions.act_ray_set= run;
   rayset= bl->BLOptions.plrayset;
-  if ((run == FIRST) && (rayset == 3)) rayset= PLRaySet1; /* use PLRaySet1 if two runs required */
 
-  for (i= 0; i < bl->elementzahl; i++)  /* scan all elements */
-    if (bl->ElementList[i].MDat.Art & GRATINGBIT)
-      {
-	dlflagold= bl->ElementList[i].GDat.dlambdaflag;
-	statusold= bl->ElementList[i].ElementOK;
-	// bl->ElementList[i].GDat.lambdag= bl->BLOptions.lambda; // temporaer fix of sebastians change
-	if (rayset & PLRaySet2)  /* 2nd run or turned grating */ 
+  first_run_of_2= ((run == FIRST) && (rayset == 3)) ? 1 : 0;
+  change_status = 0;
+
+  if ( first_run_of_2 )
+    {
+      for (i= 0; i < bl->elementzahl; i++)  /* scan all elements */
+	if (bl->ElementList[i].MDat.Art & GRATINGBIT) 
 	  {
-	    bl->ElementList[i].GDat.dlambda= bl->BLOptions.dlambda;
-	    if (dlflagold != 1)  /* flag must be changed */
+	    if (bl->BLOptions.dlambdaflag != 0) change_status= 1;
+	      	    
+	    if ( change_status )  /* flag must be changed */
 	      {
-		bl->ElementList[i].GDat.dlambdaflag= 1;
+		bl->BLOptions.dlambdaflag= 0;
 		bl->ElementList[i].ElementOK= 0;
 		bl->beamlineOK &= ~mapOK;
 	      }
 	  }
-	else /* PLRaySet1 */
+    } /* end first_run_of_2 */
+  
+  if (run == SECOND) 
+    {
+      bl->BLOptions.dlambdaflag= 1;         // reset
+      for (i= 0; i < bl->elementzahl; i++)  /* scan all elements */
+	if (bl->ElementList[i].MDat.Art & GRATINGBIT) 
 	  {
-	    if (dlflagold != 0)  /* flag must be changed */
-	      {
-		bl->ElementList[i].GDat.dlambdaflag= 0;
-		bl->ElementList[i].ElementOK= 0;
-		bl->beamlineOK &= ~mapOK;
-	      }
+	    bl->ElementList[i].ElementOK= 0;
+	    bl->beamlineOK &= ~mapOK;
 	  }
-      }
+	  
+    } /* end second run */
+
 } /*  UpdateFlags */
 
 /* end bline.c */
