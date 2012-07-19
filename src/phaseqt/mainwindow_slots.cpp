@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <22 Jun 12 12:38:52 flechsig> 
+//  Time-stamp: <19 Jul 12 10:14:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1019,6 +1019,13 @@ void MainWindow::goButtonslot()
   myparent->myBeamline()->BLOptions.SourcetoImage= 1;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   statGroup->show();
+  
+  if ( myparent->myBeamline()->BLOptions.dlambdaflag )
+    {
+      dlambdaBox1->setEnabled(true);
+      dlambdaBox2->setEnabled(true);
+    }
+
   UpdateStatus();
   myparent->writeBackupFile();
 } // goButtonslot
@@ -1594,6 +1601,8 @@ void MainWindow::poButtonslot()
   myparent->myBeamline()->BLOptions.SourcetoImage= 2;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   statGroup->hide();
+  dlambdaBox1->setEnabled(false);
+  dlambdaBox2->setEnabled(false);
   UpdateStatus();
   myparent->writeBackupFile();
 } // poButtonslot
