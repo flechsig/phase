@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <22 Jun 12 11:41:22 flechsig> 
+//  Time-stamp: <19 Jul 12 10:08:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1799,8 +1799,15 @@ void MainWindow::UpdateBeamlineBox()
   if (blo->dlambdaflag) 
     {
       dlambdaBox->setChecked(true); 
-      dlambdaBox1->setEnabled(true);
-      dlambdaBox2->setEnabled(true);
+      if (blo->SourcetoImage == 1) 
+	{
+	  dlambdaBox1->setEnabled(true);
+	  dlambdaBox2->setEnabled(true);
+	} else
+	{
+	  dlambdaBox1->setEnabled(false);
+	  dlambdaBox2->setEnabled(false);
+	}
       dlambdaE->setEnabled(true);
     }
   else 
