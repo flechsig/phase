@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <20 Jul 12 15:47:41 flechsig>  */
+/*   Time-stamp: <20 Jul 12 15:52:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -185,7 +185,7 @@ struct source4c {
     ampeyre,ampeyim,ampezre,ampezim,
     xlam;
   int iex, iey,
-      nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
+    nsource,nimage,nfreqtot,nfreqpos,nfreqneg,iconj;
 };  
 
    		
