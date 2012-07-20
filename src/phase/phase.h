@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Jul 12 13:38:25 flechsig>  */
+/*   Time-stamp: <20 Jul 12 15:54:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -468,6 +468,7 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
   char so4_fsource4c[MaxPathLength];
   char so4_fsource4d[MaxPathLength];
   char so6_fsource6[MaxPathLength];
+  char so7_fsource7[MaxPathLength];
   char opresname[MaxPathLength];
   char minname[MaxPathLength];
 };                                                                   
