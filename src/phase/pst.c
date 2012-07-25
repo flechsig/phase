@@ -299,15 +299,18 @@ void PST(struct BeamlineType *bl)
 	    &bl->fdet1phca, &bl->fdet1phcb,
 	    (int *)bl);
 
-       printf("copy simpson results\n");
-       memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*4008);
-       memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*4008);
-       memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*4008);
-       memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*4008);
-       memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*4008);
-       memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*4008);
-       memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*3006);
 
+       printf("copy simpson results [s1]\n");      
+       
+       memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+       memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+       memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+       memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+       memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+       memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+       //TODO: check if MAX_INTEGRATION_SIZE is appropriate for d12 as well
+       memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
+       
        XFREE(stp);
        XFREE(xirp);
 
@@ -412,7 +415,6 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
   sp=   (struct psimagest *)bl->RTSource.Quellep;
   //sp=   (struct PSImageType *)bl->RTSource.Quellep;
 
-        
   bl->BLOptions.PSO.intmod= 2;
 
   initconstants(&cs);
@@ -429,6 +431,7 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
 
   npoints= sp->iheigh * sp->iwidth;
   next= 0;
+
 
  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs, am, g);
 
@@ -450,7 +453,7 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
     {
       fprintf(stderr, "error: open file simpre.debug\n"); exit(-1);   
     }
-  
+
   dp= (double *)&xirp->simpre[0][0][0];
   for (i= 0; i< xirp->isimpre[0]; i++)
     fprintf(fd, "% 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e % 8.4e\n", 
@@ -503,10 +506,10 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   yi= (sp->iheigh == 1) ? sp->disty1+ ny * (sp->disty2- sp->disty1) : sp->disty1+ ny * (sp->disty2- sp->disty1)/ (double)(sp->iheigh- 1);
   zi= (sp->iwidth == 1) ? sp->distz1+ nz * (sp->distz2- sp->distz1) : sp->distz1+ nz * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
 
-#ifdef DEBUG
+//#ifdef DEBUG
   printf("Integrate point %d out of %d, nz=%d, ny=%d, z=%f, y=%f\r", index,  points, nz, ny, zi, yi);
   fflush( stdout );
-#endif
+//#endif
 
   rap->xlam_test= bl->BLOptions.lambda;
   rap->ri.yi    = yi; 
@@ -520,8 +523,15 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   stp->inumzan  = 0;
   stp->inumyan  = 0;
 
+  // check whether static integration grid is large enough 
+  if ((bl->BLOptions.xi.ianzy0 > MAX_INTEGRATION_SIZE) || (bl->BLOptions.xi.ianzz0 >MAX_INTEGRATION_SIZE))
+  {
+    printf("ERROR: Integration parameter xi.ianzy0 or xi.ianzz0 is larger than maximum %d!\n", MAX_INTEGRATION_SIZE);
+    exit(-1);
+  }
+  
   adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
-
+  
   if (bl->BLOptions.ifl.ispline == -1) 
     {
       printf("ispline not yet impemented\n");
@@ -540,14 +550,16 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   PSDp->z[nz]= zi;
 
   // contains always the last point
-  memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*4008);
-  memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*4008);
-  memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*4008);
-  memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*4008);
-  memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*4008);
-  memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*4008);
-  memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*3006);
-
+  printf("copy simpson results\n");      
+  memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);       
+  memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+  memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+  memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+  memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+  memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+  //TODO: check if MAX_INTEGRATION_SIZE is appropriate for d12 as well
+  memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
+  
   XFREE(xirp);
   XFREE(stp);
   XFREE(rap);

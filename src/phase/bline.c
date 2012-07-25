@@ -2443,6 +2443,13 @@ void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out, struct Option
   printf("  out->idefl= %d, out->xlam= %g nm (lambda for tracking * m)\n", out->idefl, out->xlam* 1e6);
   printf("  other output: sa= %g, ca= %g, sb= %g, cb= %g, x[0]= %g\n", out->sina, out->cosa, out->sinb, out->cosb, out->x[0]);
   printf("@@@@@@@@@@ debug: %s DefGeometryC_UF finished\n\n", __FILE__ );
+#else // user asked that these parameters be printed out  
+  printf("Geometry definition (angles in deg.):\n");
+  printf("  alpha: %f, beta: %f, m= %d\n", 
+   alpha* 180.0/ PI, beta* 180.0/ PI, m);
+  printf("  lambda= %g nm (lambda for grating geometry)\n", lambda4geometry* 1e6);
+  printf("  out->xlam= %g nm (lambda for tracking * m)\n", out->xlam* 1e6);    
+  printf("  out->idefl= %d\n", out->idefl);
 #endif
 } /* end DefGeometryC_UF */ 
 

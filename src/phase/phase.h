@@ -588,8 +588,8 @@ struct RTSourceType {
 struct PSDType  {
   double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
     *eyrec, *ezrec, *eyimc, *ezimc;
-  double simpre[4008], simpim[4008], sintre[4008], sintim[4008], 
-    simpa[4008], simpp[4008], d12[3006]; 
+  double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
+    simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4], d12[MAX_INTEGRATION_SIZE*2*3];
   int iy, iz;
 };
 

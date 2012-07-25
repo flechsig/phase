@@ -17,6 +17,9 @@ c	variable structures for PHASE
 c
 c------------------------------------------------------------
 
+c remember to change phase_struct.h as well
+#define MAX_INTEGRATION_SIZE 4096 
+
 c#ifdef QTGUI
 c#define MAX_GRIDSIZE 256
 c#else
@@ -283,15 +286,15 @@ c------------------ results from sources ------------------------
      &       xintyre,xintyim,xintzre,xintzim
         end structure
 c----------------- U. F. 21.12.99 -------------------------------
-c common simps 	
-	structure/simps1/
-	   real*8 fya1(501),fyp1(501),fza1(501),fzp1(501)
-	   real*8 fya2(501),fyp2(501),fza2(501),fzp2(501)
-	   real*8 z1,z2
+c common simps  
+       structure/simps1/
+       real*8 fya1(MAX_INTEGRATION_SIZE),fyp1(MAX_INTEGRATION_SIZE),fza1(MAX_INTEGRATION_SIZE),fzp1(MAX_INTEGRATION_SIZE)
+       real*8 fya2(MAX_INTEGRATION_SIZE),fyp2(MAX_INTEGRATION_SIZE),fza2(MAX_INTEGRATION_SIZE),fzp2(MAX_INTEGRATION_SIZE)
+       real*8 z1,z2
 c           real*8 tya(256,256),tza(256,256)
 c           real*8 typ(256,256),tzp(256,256)
            integer ianz0_save(301,301)
-     	   integer iiheigh,iiwidth,jmult
+         integer iiheigh,iiwidth,jmult
         end structure
 c------------------ results from integration --------------------
 
@@ -299,12 +302,12 @@ c------------------ results from integration --------------------
 	   complex*16 yzintey,yzintez
 	   real*8 yzintya,yzintyp,yzintza,yzintzp
 	   integer isimp(100),iisimp,nsimp
-           real*8 sintre(4,2,501),sintim(4,2,501)
-           real*8 simpa(4,2,501),simpp(4,2,501)
-           real*8 simpre(4,2,501),simpim(4,2,501)
+           real*8 sintre(4,2,MAX_INTEGRATION_SIZE),sintim(4,2,MAX_INTEGRATION_SIZE)
+           real*8 simpa(4,2,MAX_INTEGRATION_SIZE),simpp(4,2,MAX_INTEGRATION_SIZE)
+           real*8 simpre(4,2,MAX_INTEGRATION_SIZE),simpim(4,2,MAX_INTEGRATION_SIZE)
 	   integer isintre(4),isintim(4),isimpa(4),isimpp(4)
 	   integer isimpre(4),isimpim(4)
-           real*8 d12(2,3,501),ianzd12(3)
+           real*8 d12(2,3,MAX_INTEGRATION_SIZE),ianzd12(3)
 	   record/simps1/si1                  ! UF 21.12.99
 	end structure
 

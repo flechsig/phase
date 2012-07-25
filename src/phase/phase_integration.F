@@ -109,8 +109,8 @@ c************************************************
 	record /map4/ m4
         record /psimagest/ sp
 
-	dimension densiyre(1024),densiyim(1024),
-     &            densizre(1024),densizim(1024)
+	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
+     &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
 
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
@@ -299,8 +299,8 @@ c*************************************************************
      &      yint,yintey,yintez
 	complex*16 fyey(4096),fyez(4096)
 
-	dimension densiyre(1024),densiyim(1024),
-     &            densizre(1024),densizim(1024)
+	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
+     &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
 
 
 
@@ -1392,7 +1392,7 @@ c-----------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	dimension densiyzre(1000),densiyzim(1000)
+	dimension densiyzre(MAX_INTEGRATION_SIZE),densiyzim(MAX_INTEGRATION_SIZE)
 
 #include '../phase/phase_struct.F'
 

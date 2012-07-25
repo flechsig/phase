@@ -12,6 +12,9 @@
 #ifndef __PHASE_STRUCT
 #define __PHASE_STRUCT
 
+// maximum gridsize for simpson's integration (phase_integration.F)
+#define MAX_INTEGRATION_SIZE 4096 //remember to change phase_struct.F as well
+
 /* #ifdef QTGUI
 #define MAX_GRIDSIZE 256
 #else
@@ -302,12 +305,13 @@ struct  sources {                            /* Sammelstruktur         */
 	   xintyre,xintyim,xintzre,xintzim;
         };  
 /* ----------------- U. F. 21.12.99 ----------------------------- */
+// this struct seems to be obsolete and probably can be removed
 struct simps1 {
-  double fya1[501],fyp1[501],fza1[501],fzp1[501];
-  double fya2[501],fyp2[501],fza2[501],fzp2[501];
+  double fya1[MAX_INTEGRATION_SIZE],fyp1[MAX_INTEGRATION_SIZE],fza1[MAX_INTEGRATION_SIZE],fzp1[MAX_INTEGRATION_SIZE];
+  double fya2[MAX_INTEGRATION_SIZE],fyp2[MAX_INTEGRATION_SIZE],fza2[MAX_INTEGRATION_SIZE],fzp2[MAX_INTEGRATION_SIZE];
   double z1,z2;
-/*  double tya[301][301],tza[301][301];
-  double typ[301][301],tzp[301][301]; */
+//  double tya[301][301],tza[301][301];
+//  double typ[301][301],tzp[301][301];
   int ianz0_save[301][301];
   int iiheigh,iiwidth,jmult;
 };
@@ -317,12 +321,12 @@ struct simps1 {
 	   COMPLEX yzintey,yzintez;
 	   double yzintya,yzintyp,yzintza,yzintzp;
 	   int  isimp[100],iisimp,nsimp;
-	   double sintre[4][2][501],sintim[4][2][501];
-	   double simpa[4][2][501],simpp[4][2][501];
-	   double simpre[4][2][501],simpim[4][2][501];
+	   double sintre[4][2][MAX_INTEGRATION_SIZE],sintim[4][2][MAX_INTEGRATION_SIZE];
+	   double simpa[4][2][MAX_INTEGRATION_SIZE],simpp[4][2][MAX_INTEGRATION_SIZE];
+	   double simpre[4][2][MAX_INTEGRATION_SIZE],simpim[4][2][MAX_INTEGRATION_SIZE];
 	   int  isintre[4],isintim[4],isimpa[4],isimpp[4];
 	   int  isimpre[4],isimpim[4];
-	   double d12[2][3][501],ianzd12[3];
+	   double d12[2][3][MAX_INTEGRATION_SIZE],ianzd12[3]; //SG: is MAX_INTEGRATION_SIZE correct here?
 	   struct simps1 si1;            /* UF 21.12.99 */
 	};  
 
