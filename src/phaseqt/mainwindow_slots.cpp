@@ -1544,6 +1544,22 @@ void MainWindow::openBeamline()
   //  int result;
   //myparent->myBeamline()->QtPhase::print();
 
+  #warning unresolved spurious bug
+  //TODO: SG found spurious bug: on pc7753, if the string in variable filename 
+  // has the length 56, toAscii().data() points to a C-string of the length 57
+  // and this filename will then not be found;
+  // this is either a bug in QT on pc7753 or some buffer overwrite in PhaseQT;
+  // for now, I'll just check that the lengths match and leave a note
+  // QString str56 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  name= fileName.toAscii().data();
+  if (strlen(name) != fileName.length())
+  {
+    cerr << "ERROR: Conversation error of fileName string in " << __FILE__ << '.' << endl;
+    cerr << "Please report the bug and use a filename with a different length for now." << endl;
+    exit(-1);
+  }
+  
+  
   if (!fileName.isEmpty()) 
     {
       name= fileName.toAscii().data();
@@ -1562,7 +1578,7 @@ void MainWindow::openBeamline()
 	} 
       else
 	QMessageBox::information(this, tr("Phase: newBeamline"),
-				 tr("Cannot load %1.\n wrong file type!").arg(fileName));
+				 tr("Cannot load %1.\n Wrong file type or file not found!").arg(fileName));
     }
   //myparent->myBeamline()->myPHASEset::print();
   UpdateStatus();
