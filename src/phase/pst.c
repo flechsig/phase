@@ -550,7 +550,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   PSDp->z[nz]= zi;
 
   // contains always the last point
-  printf("copy simpson results\n");      
   memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);       
   memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
   memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
