@@ -540,12 +540,34 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 	        xirp->yzintez= xirp->yzintza* exp(cs.sqrtm1* xirp->yzintzp);
 	      */
     }
+  
 
   // UF wir speichern im fortran memory model (2bchanged)
   //PSDp->psd[index]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
   PSDp->psd[ny+nz*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
 	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
+
   
+  // debug output of first point
+#ifdef DEBUG  
+  if ((ny==0) || (nz==0))
+  {
+    printf("\n");
+    fflush(stdout);
+    printf("DEBUG output of first point:\n");
+    printf("yzintey = %g + I*%g\n", xirp->yzintey.re, xirp->yzintey.im);
+    printf("yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
+    printf("psd = %g\n", PSDp->psd[ny+nz*sp->iheigh]);
+  }
+#endif 
+
+  // SG: added code to fill field components into PSDp, is this the right place?
+  PSDp->eyrec[ny+nz*sp->iheigh] = xirp->yzintey.re;
+  PSDp->eyimc[ny+nz*sp->iheigh] = xirp->yzintey.im;
+  PSDp->ezrec[ny+nz*sp->iheigh] = xirp->yzintez.re;   
+  PSDp->ezimc[ny+nz*sp->iheigh] = xirp->yzintez.im;
+      
+  // axes
   PSDp->y[ny]= yi;
   PSDp->z[nz]= zi;
 
