@@ -1233,6 +1233,7 @@ QWidget *MainWindow::createSourceBox()
 
   sourceApplyB   = new QPushButton(tr("Apply"));
   sourceDefaultB = new QPushButton(tr("Defaults"));
+  sourceAutoGuessB = new QPushButton(tr("Autorange"));
 
   sourceParsLayout->addWidget(S1Label,0,0);
   sourceParsLayout->addWidget(S3Label,1,0);
@@ -1252,9 +1253,10 @@ QWidget *MainWindow::createSourceBox()
   sourceParsLayout->addWidget(S7E,3,1);
   sourceParsLayout->addWidget(S8E,3,3);
 
-  sourceParsLayout->addWidget(sourceApplyB,  3, 4);
-  sourceParsLayout->addWidget(sourceDefaultB,2, 4);
-
+  sourceParsLayout->addWidget(sourceApplyB,     3, 4);
+  sourceParsLayout->addWidget(sourceDefaultB,   2, 4);
+  sourceParsLayout->addWidget(sourceAutoGuessB,  0, 4);
+  
   sourceParsGroup->setLayout(sourceParsLayout);
 
   QVBoxLayout *vbox = new QVBoxLayout;
@@ -1264,6 +1266,7 @@ QWidget *MainWindow::createSourceBox()
   sourceBox->setLayout(vbox);
   connect(sourceApplyB,   SIGNAL(clicked()), this, SLOT(sourceApplyBslot()));
   connect(sourceDefaultB, SIGNAL(clicked()), this, SLOT(sourceDefaultBslot()));
+  connect(sourceAutoGuessB, SIGNAL(clicked()), this, SLOT(sourceAutoGuessBslot()));
 
  return sourceBox;
 } // end createsource box
@@ -2053,6 +2056,7 @@ void MainWindow::UpdateSourceBox()
     S6E->setEnabled(false); S6Label->clear(); S6E->clear();
     S7E->setEnabled(false); S7Label->clear(); S7E->clear();
     S8E->setEnabled(false); S8Label->clear(); S8E->clear();
+    sourceAutoGuessB->setEnabled(false);    
 
     switch (sou) {
     case 'D':
@@ -2157,6 +2161,8 @@ void MainWindow::UpdateSourceBox()
       S4E->setEnabled(true);
       S5E->setEnabled(true);
       S6E->setEnabled(true);
+      
+      sourceAutoGuessB->setEnabled(true);
       break;  
 
     case 'L':

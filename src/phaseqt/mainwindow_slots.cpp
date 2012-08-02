@@ -2097,6 +2097,60 @@ void MainWindow::sourceApplyBslot()
   myparent->writeBackupFile();
 } //sourceApplyBslot
 
+// AutoGuess button slot for source (OE image plane only)
+void MainWindow::sourceAutoGuessBslot()
+{
+  struct PSImageType *psip;
+  
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " sourceAutoGuessBslot activated" << endl;
+#endif
+
+  if (elementListIsEmpty()) 
+    return;
+
+  // check beamline status
+  myparent->myBeamline()->beamlineOK &= ~resultOK;
+  UpdateStatus();
+
+ 
+  myparent->myBuildBeamline();
+
+  if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+  {
+#ifdef OLD_PO_SOURCE
+    myparent->mysrc_ini(&myparent->myBeamline()->src); 
+#else
+    myparent->myposrc_ini();
+#endif
+    myparent->myBeamline()->beamlineOK |= pstsourceOK;
+  }
+
+  if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+    sourceApplyBslot();
+      
+  if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
+    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
+  {
+    psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+    myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+    
+    // get guessed values for range
+    myparent->myFindIntRange(psip); // was: myparent->myPST();
+  }
+  
+  // update GUI  
+  S1E->setText(QString().setNum(psip->ymin, 'g', 4));
+  S2E->setText(QString().setNum(psip->zmin, 'g', 4));    
+  S3E->setText(QString().setNum(psip->ymax, 'g', 4));  
+  S4E->setText(QString().setNum(psip->zmax, 'g', 4));   
+
+  UpdateStatus();
+  myparent->writeBackupFile();
+} // sourceApplyBslot
+
+
+
 // slot
 void MainWindow::undo()
 {

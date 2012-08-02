@@ -118,11 +118,12 @@ private slots:
     void imageBslot();
     void rBslot();
     void rhoBslot();
-    void elementApplyBslot();
+    void elementApplyBslot();    
     void sigmaslot();
     void fwhmslot();
     void sourceApplyBslot();
     void sourceDefaultBslot();
+    void sourceAutoGuessBslot();
     void debugslot();
     void pause_thread();
     void resume_thread();
@@ -203,6 +204,7 @@ private:
     QLineEdit *S8E;
     QPushButton *sourceApplyB;
     QPushButton *sourceDefaultB;
+    QPushButton *sourceAutoGuessB;
     QAction *rthAct;
     QAction *dipAct;
     QAction *poiAct;

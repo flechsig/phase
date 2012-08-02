@@ -101,6 +101,7 @@ public:
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord) { 
     return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord); }
   void myPST() { PST(this); }
+  void myFindIntRange(struct PSImageType *res_psip) { FindIntRange(this, res_psip); }  
   void myPutPHASE(char *name) { PutPHASE(&(this->filenames), name); }
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
   void myReadCoefficientFile() { }

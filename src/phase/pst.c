@@ -685,3 +685,32 @@ void norm_output(struct BeamlineType *bl)
 } /* end norm_output */
 /* end pst.c */
 
+//TODO: should go into separate source code file
+void FindIntRange(struct BeamlineType *bl, struct PSImageType *psip)
+{
+  struct PSImageType backup_psip; 
+  
+  #ifdef DEBUG  
+  printf("DEBUG: enter [%s]:FindIntRange()\n", __FILE__);
+  #endif 
+
+  // backup input struct in case we can't obtain reasonable results
+  memcpy(&backup_psip, psip, sizeof(struct PSImageType));
+  
+  // use only one gridpoint for test procedure
+  psip->iy = psip->iz = 1;
+  
+  // call PhaseSpaceTransformation to obtain Simpson's results
+  // TODO: check whether we need complete PST or some part of it will suffice
+  PST(bl);
+  
+  //TODO: determine these numbers by PST'ing and comparing Simpson's results
+  psip->ymin = -0.2;
+  psip->ymax = +0.2;
+  psip->zmin = -0.4;
+  psip->zmax = +0.4;
+  
+  //restoring nr. of points
+  psip->iy = backup_psip.iy;
+  psip->iz = backup_psip.iz;
+}

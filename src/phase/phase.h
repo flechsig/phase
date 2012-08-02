@@ -865,6 +865,8 @@ void
 /* pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
    MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), */
 
+  FindIntRange(struct BeamlineType *, struct PSImageType *),
+
   MPST(struct BeamlineType *), 
   norm_output(struct BeamlineType *),
   pathlen0(),
