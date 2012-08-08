@@ -2100,50 +2100,59 @@ void MainWindow::sourceApplyBslot()
 // AutoGuess button slot for source (OE image plane only)
 void MainWindow::sourceAutoGuessBslot()
 {
+  struct BeamlineType *bl;
   struct PSImageType *psip;
   
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " sourceAutoGuessBslot activated" << endl;
 #endif
 
+  bl = myparent->myBeamline();
+
   if (elementListIsEmpty()) 
     return;
 
   // check beamline status
-  myparent->myBeamline()->beamlineOK &= ~resultOK;
+  bl->beamlineOK &= ~resultOK;
   UpdateStatus();
 
  
   myparent->myBuildBeamline();
 
-  if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+  if (!(bl->beamlineOK & pstsourceOK))
   {
 #ifdef OLD_PO_SOURCE
-    myparent->mysrc_ini(&myparent->myBeamline()->src); 
+    myparent->mysrc_ini(&bl->src); 
 #else
     myparent->myposrc_ini();
 #endif
-    myparent->myBeamline()->beamlineOK |= pstsourceOK;
+    bl->beamlineOK |= pstsourceOK;
   }
 
-  if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+  if (!(bl->beamlineOK & pstimageOK)) 
     sourceApplyBslot();
       
-  if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
+  if (CheckBLOK(bl->beamlineOK, 
     (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
   {
-    psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+    psip = (struct PSImageType *)bl->RTSource.Quellep;
     myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
     
     // get guessed values for range
-    myparent->myFindIntRange(psip); // was: myparent->myPST();
+    myparent->myFindIntRange();
   }
   
   // update GUI  
-  S1E->setText(QString().setNum(psip->ymin, 'g', 4));
+/*  S1E->setText(QString().setNum(psip->ymin, 'g', 4));
   S2E->setText(QString().setNum(psip->zmin, 'g', 4));    
   S3E->setText(QString().setNum(psip->ymax, 'g', 4));  
-  S4E->setText(QString().setNum(psip->zmax, 'g', 4));   
+  S4E->setText(QString().setNum(psip->zmax, 'g', 4));  */
+   
+  parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.ymin*1e3, 'g', 4), 28);
+  parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.ymax*1e3, 'g', 4), 29);
+  parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.zmin*1e3, 'g', 4), 35);
+  parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.zmax*1e3, 'g', 4), 36);
+    
 
   UpdateStatus();
   myparent->writeBackupFile();
