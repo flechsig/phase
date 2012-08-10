@@ -272,7 +272,6 @@ struct  sources {                            /* Sammelstruktur         */
 		struct opt_el oe;
 		struct aperture ap;
 		double xlength1,xlength2;
-		double xlam_test;
 		double fd[4096],fdph[4096],fd1ph[256][256];
 		double fd1[4096],fd2[4096];
 		double fdph1[4096],fdph2[4096];

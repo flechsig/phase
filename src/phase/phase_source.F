@@ -396,8 +396,11 @@ c	else
 
 c	endif	! iexpand
 
+c       Propagatioswellenlaenge steht in g.xlam
+
 	if(ifl.iplmode.eq.0)then
-	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
+c	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
+        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/g.xlam 
 	endif
         
 c-----------------------------------------------
@@ -406,8 +409,9 @@ c	so wie es sein soll
 c-----------------------------------------------
 
 	if(ifl.iplmode.eq.1)then
-	phase = (2.*cs.pi*xlength)/ra.xlam_test 
-	phase = (2.*cs.pi*xlength)/ra.xlam_test 
+c	phase = (2.*cs.pi*xlength)/ra.xlam_test 
+	phase = (2.*cs.pi*xlength)/g.xlam 
+c        write(6,*)'============= xlam_test ',ra.xlam_test
 	endif
 
         if(ifl.ispline.lt.0)then
@@ -578,11 +582,13 @@ c	else
 c	endif	! iexpand
 
 	if(ifl.iplmode.eq.0)then
-	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
+c	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
+        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/g.xlam 
 	endif
 
 	if(ifl.iplmode.eq.1)then
-	phase = (2.*cs.pi*xlength)/ra.xlam_test 
+c	phase = (2.*cs.pi*xlength)/ra.xlam_test 
+        phase = (2.*cs.pi*xlength)/g.xlam
 	endif
 
 	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
@@ -592,7 +598,7 @@ c	endif	! iexpand
 	endif
 
 c-------------- end path length
-	 
+
 c-------------- grating 
 	if((ifl.igrating.eq.1).and.(g.xdens(0).gt.1.d-10))then
 	grdist=1.d0/g.xdens(0)
@@ -659,7 +665,8 @@ c------- end 19.1.2000 ----------------------------------
 	xwert=ra.rf.zp	! units are mm
 	ywert=ra.rf.yp          
 
-	PhiSrc=((2.d0*cs.pi)/ra.xlam_test)*
+c	PhiSrc=((2.d0*cs.pi)/ra.xlam_test)*
+        PhiSrc=((2.d0*cs.pi)/g.xlam)*
      &     ( (xwert*xwert)/(2.d0*so5.dipdisz) +
      &       (ywert*ywert)/(2.d0*so5.dipdisy) )
 

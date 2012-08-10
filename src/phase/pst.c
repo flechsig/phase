@@ -511,7 +511,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   fflush( stdout );
 //#endif
 
-  rap->xlam_test= bl->BLOptions.lambda;
+//  rap->xlam_test= bl->BLOptions.lambda;
   rap->ri.yi    = yi; 
   rap->ri.zi    = zi;
   rap->n1       = nz+1;          /* UF warum vertauschte nummern ny war n1 ????? */
@@ -529,7 +529,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     printf("ERROR: Integration parameter xi.ianzy0 or xi.ianzz0 is larger than maximum %d!\n", MAX_INTEGRATION_SIZE);
     exit(-1);
   }
-  
+    
   adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
   
   if (bl->BLOptions.ifl.ispline == -1) 

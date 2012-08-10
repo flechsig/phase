@@ -255,7 +255,6 @@ c---------------- rays  --------------------------------------
 		record/opt_el/oe
 		record/aperture/ap
 		real*8 xlength1,xlength2
-		real*8 xlam_test
                 real*8 fd(4096),fdph(4096),fd1ph(256,256)
 		real*8 fd1(4096),fd2(4096)
 		real*8 fdph1(4096),fdph2(4096)

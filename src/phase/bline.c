@@ -2518,7 +2518,8 @@ void DefGeometryC_JB(struct gdatset *x, struct geometrytype *gout, struct Option
   gout->sina= sin(alpha);   
   gout->cosa= cos(alpha);   
   gout->sinb= sin(beta);   
-  gout->cosb= cos(beta);   
+  gout->cosb= cos(beta); 
+  
   for (i= 0; i< 5; i++) 
     gout->x[i]= x->xdens[i]; 
   gout->xlam = lambda* (double)(x->inout);  /* UF 23.12.09 ist lambda richtig ??? oder x->lambda */
