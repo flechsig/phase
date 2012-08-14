@@ -1509,7 +1509,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
 	   op->ifl.ipinarr);
    fprintf(f, "%20d  enable delta lambda\n", op->dlambdaflag);
-   fprintf(f, "%20lg  delta lambda (nm)\n",  op->dlambda*1e6);
+   fprintf(f, "%20.12lg  delta lambda (nm)\n",  op->dlambda*1e6);
    fprintf(f, "%20d  GO enable ray_set1\n", op->plrayset);
       /* end control_flags */
 
@@ -1630,7 +1630,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    
    fprintf(f,"%20lg     epsilon\n", op->epsilon);     
    fprintf(f,"%20d     flag calculation modus\n", op->CalcMod);    
-   fprintf(f,"%20lg     lambda [nm]\n", op->lambda* 1e6);  
+   fprintf(f,"%20.12lg     lambda [nm]\n", op->lambda* 1e6);  
    fprintf(f,"%20lg     dispersive length\n", op->displength); 
    fprintf(f,"%20lg     * y = dlambda\n", bl->deltalambdafactor);
    /* new feb 04 */

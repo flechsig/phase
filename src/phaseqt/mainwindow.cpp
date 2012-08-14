@@ -1793,9 +1793,9 @@ void MainWindow::UpdateBeamlineBox()
 
   blo= &(myparent->myBeamline()->BLOptions);
 
-  lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6,     'g', 4));
-  dislenE->setText(dislenEqst.setNum(blo->displength,      'g', 4));
-  dlambdaE->setText(dlambdaEqst.setNum(blo->dlambda* 1e6,  'g', 4));
+  lambdaE->setText(lambdaEqst.setNum(blo->lambda* 1e6,     'g', 12));
+  dislenE->setText(dislenEqst.setNum(blo->displength,      'g', 12));
+  dlambdaE->setText(dlambdaEqst.setNum(blo->dlambda* 1e6,  'g', 12));
 
   if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
   if (blo->WithAlign) misaliBox->setChecked(true);         else misaliBox->setChecked(false);
