@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <19 Jul 12 11:33:17 flechsig> 
+//  Time-stamp: <24 Aug 12 16:11:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -131,6 +131,7 @@ void PhaseQt::initSet(const char *fname)
   snprintf(this->filenames.so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  
   snprintf(this->filenames.so4_fsource4d,   MaxPathLength, "%s.%s", name, "s4d");	  
   snprintf(this->filenames.so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
+  snprintf(this->filenames.so7_fsource7,    MaxPathLength, "%s.%s", name, "s7");
   snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");	  
   snprintf(this->filenames.minname,         MaxPathLength, "%s.%s", name, "minu");
 } // initSet
@@ -158,7 +159,8 @@ void PhaseQt::printSet()
   printf("so4_fsource4b:   %s\n", this->filenames.so4_fsource4b);	  
   printf("so4_fsource4c:   %s\n", this->filenames.so4_fsource4c);	  
   printf("so4_fsource4d:   %s\n", this->filenames.so4_fsource4d);	  
-  printf("so6_fsource6:    %s\n", this->filenames.so6_fsource6);    
+  printf("so6_fsource6:    %s\n", this->filenames.so6_fsource6);
+  printf("so7_fsource7:    %s\n", this->filenames.so7_fsource7); 
   printf("opresname:       %s\n", this->filenames.opresname);
   printf("minname:         %s\n", this->filenames.minname);
   printf("<= myPHASEset::print()\n");
