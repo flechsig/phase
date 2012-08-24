@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 Jul 12 13:40:31 flechsig> 
+//  Time-stamp: <24 Aug 12 15:24:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -538,6 +538,16 @@ void MainWindow::activateProc(const QString &action)
       mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_PHI ;  
       updateGraphicsInput(mwplotsubject);
     }
+  if (!action.compare("grGoSourceHpsAct")) 
+    {
+      mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_HPS ;  
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grGoSourceVpsAct")) 
+    {
+      mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_VPS ;  
+      updateGraphicsInput(mwplotsubject);
+    }
   if (!action.compare("grGoResultSpaAct")) 
     {
       mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA ;
@@ -553,6 +563,16 @@ void MainWindow::activateProc(const QString &action)
     {
       mwplotsubject= PLOT_GO_RESULT | PLOT_GO_PHI ;  
       updateGraphicsInput(mwplotsubject); 
+    }
+  if (!action.compare("grGoResultHpsAct")) 
+    {
+      mwplotsubject= PLOT_GO_RESULT | PLOT_GO_HPS ;  
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grGoResultVpsAct")) 
+    {
+      mwplotsubject= PLOT_GO_RESULT | PLOT_GO_VPS ;  
+      updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grPoResultAct"   )) 
     {

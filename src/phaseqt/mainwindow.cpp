@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Aug 12 15:05:33 flechsig> 
+//  Time-stamp: <24 Aug 12 15:53:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -564,7 +564,7 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grGoResultDivAct,   QString("grGoResultDivAct"));
   grsignalMapper->setMapping(grGoResultPhiAct,   QString("grGoResultPhiAct"));
   grsignalMapper->setMapping(grGoResultHpsAct,   QString("grGoResultHpsAct"));
-  grsignalMapper->setMapping(grGoResultHpsAct,   QString("grGoResultHpsAct"));
+  grsignalMapper->setMapping(grGoResultVpsAct,   QString("grGoResultVpsAct"));
 
   grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
   grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <22 Jun 12 12:33:11 flechsig> 
+//  Time-stamp: <24 Aug 12 15:44:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -316,10 +316,22 @@ void Plot::contourPlot()
       setAxisTitle(0, tr("dy (mrad)"));
     }
   else
-    {
-      setAxisTitle(2, tr("z (mm)"));
-      setAxisTitle(0, tr("y (mm)"));
-    }
+    if (plotsubject & PLOT_GO_HPS)
+      {
+	setAxisTitle(2, tr("z (mm)"));
+	setAxisTitle(0, tr("dz (mrad)"));
+      }
+    else
+      if (plotsubject & PLOT_GO_VPS)
+	{
+	  setAxisTitle(2, tr("y (mm)"));
+	  setAxisTitle(0, tr("dy (mrad)"));
+	}
+      else    // default
+	{
+	  setAxisTitle(2, tr("z (mm)"));
+	  setAxisTitle(0, tr("y (mm)"));
+	}
   
   replot();
 } // end contourPlot()
@@ -333,6 +345,12 @@ void Plot::profilePlot(int subject, int style, int settype)
   cout << "profile plot subject, style: " << subject << " ," << style << endl;
 #endif
   
+  if (plotsubject & (PLOT_GO_HPS | PLOT_GO_VPS))
+    {
+      cout << "profile plots not available for phase space - return" << endl;
+      return;
+    }
+
   d_curve1->hide();
   d_curve2->hide();
   d_spectrogram->hide();
@@ -490,6 +508,25 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
 	  c2y[i]= rp->phi;
 	}
     }
+
+  if (plotsubject & PLOT_GO_HPS)
+    {
+      for (i= 0; i< ndata1; i++, rp++)
+	{
+	  c1x[i]= rp->z;
+	  c1y[i]= rp->dz * 1e3;
+	}
+    }
+
+  if (plotsubject & PLOT_GO_VPS)
+    {
+      for (i= 0; i< ndata1; i++, rp++)
+	{
+	  c1x[i]= rp->y;
+	  c1y[i]= rp->dy * 1e3;
+	}
+    }
+
 } // end fillGoPlotArrays			     
 
 double *Plot::getXdata(int nr)
@@ -552,10 +589,22 @@ void Plot::scatterPlot(int settype)
       setAxisTitle(0, tr("dy (mrad)"));
     }
   else
-    {
-      setAxisTitle(2, tr("z (mm)"));
-      setAxisTitle(0, tr("y (mm)"));
-    }
+    if (plotsubject & PLOT_GO_HPS)
+      {
+	setAxisTitle(2, tr("z (mm)"));
+	setAxisTitle(0, tr("dz (mrad)"));
+      }
+    else
+      if (plotsubject & PLOT_GO_VPS)
+      {
+	setAxisTitle(2, tr("y (mm)"));
+	setAxisTitle(0, tr("dy (mrad)"));
+      }
+      else    // default
+	{    
+	  setAxisTitle(2, tr("z (mm)"));
+	  setAxisTitle(0, tr("y (mm)"));
+	}
   replot();
 } // scatterPlot
 
