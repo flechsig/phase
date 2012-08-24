@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Aug 12 15:03:21 flechsig> 
+//  Time-stamp: <24 Aug 12 15:05:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -495,7 +495,7 @@ QWidget *MainWindow::createGraphicBox()
   grGoResultSpaAct  = new QAction(tr("GO &result"), this);
   grGoResultDivAct  = new QAction(tr("GO r&esult divergence"), this);
   grGoResultPhiAct  = new QAction(tr("GO re&sult phase"), this);
-  grGoResultHpsAct  = new QAction(tr("GO re&sult &z PhSp"), this);
+  grGoResultHpsAct  = new QAction(tr("GO result &z PhSp"), this);
   grGoResultVpsAct  = new QAction(tr("G&O result  y PhSp"), this);
 
   grPoResultAct  = new QAction(tr("PO resu&lt"), this);
