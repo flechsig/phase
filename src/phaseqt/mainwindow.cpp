@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 Jul 12 13:59:53 flechsig> 
+//  Time-stamp: <24 Aug 12 15:03:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -485,14 +485,18 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grVerProfAct,    QString("grVerProfAct"));
   
   QPushButton *subjectpopupButton = new QPushButton(tr("&PlotSubject"));
-  QMenu *subject = new QMenu(this);
+  QMenu *subject    = new QMenu(this);
   grGoSourceSpaAct  = new QAction(tr("GO &source"), this);
   grGoSourceDivAct  = new QAction(tr("GO s&ource divergence"), this);
   grGoSourcePhiAct  = new QAction(tr("GO so&urce phase"), this);
+  grGoSourceHpsAct  = new QAction(tr("GO sour&ce z PhSp"), this);
+  grGoSourceVpsAct  = new QAction(tr("GO source &y PhSp"), this);
   
   grGoResultSpaAct  = new QAction(tr("GO &result"), this);
   grGoResultDivAct  = new QAction(tr("GO r&esult divergence"), this);
   grGoResultPhiAct  = new QAction(tr("GO re&sult phase"), this);
+  grGoResultHpsAct  = new QAction(tr("GO re&sult &z PhSp"), this);
+  grGoResultVpsAct  = new QAction(tr("G&O result  y PhSp"), this);
 
   grPoResultAct  = new QAction(tr("PO resu&lt"), this);
   grPoSimpreAct  = new QAction(tr("PO Simpre"), this);
@@ -507,10 +511,14 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grGoSourceSpaAct);
   subject->addAction(grGoSourceDivAct);
   subject->addAction(grGoSourcePhiAct);
+  subject->addAction(grGoSourceHpsAct);
+  subject->addAction(grGoSourceVpsAct);
   subject->addSeparator();
   subject->addAction(grGoResultSpaAct);
   subject->addAction(grGoResultDivAct);
   subject->addAction(grGoResultPhiAct);
+  subject->addAction(grGoResultHpsAct);
+  subject->addAction(grGoResultVpsAct);
   subject->addSeparator();
   subject->addAction(grPoResultAct);
   subject->addAction(grPoSimpreAct);
@@ -527,10 +535,14 @@ QWidget *MainWindow::createGraphicBox()
   connect(grGoSourceSpaAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grGoSourceDivAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grGoSourcePhiAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourceHpsAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoSourceVpsAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grGoResultSpaAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grGoResultDivAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grGoResultPhiAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultHpsAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grGoResultVpsAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -545,10 +557,14 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grGoSourceSpaAct,   QString("grGoSourceSpaAct"));
   grsignalMapper->setMapping(grGoSourceDivAct,   QString("grGoSourceDivAct"));
   grsignalMapper->setMapping(grGoSourcePhiAct,   QString("grGoSourcePhiAct"));
+  grsignalMapper->setMapping(grGoSourceHpsAct,   QString("grGoSourceHpsAct"));
+  grsignalMapper->setMapping(grGoSourceVpsAct,   QString("grGoSourceVpsAct"));
 
   grsignalMapper->setMapping(grGoResultSpaAct,   QString("grGoResultSpaAct"));
   grsignalMapper->setMapping(grGoResultDivAct,   QString("grGoResultDivAct"));
   grsignalMapper->setMapping(grGoResultPhiAct,   QString("grGoResultPhiAct"));
+  grsignalMapper->setMapping(grGoResultHpsAct,   QString("grGoResultHpsAct"));
+  grsignalMapper->setMapping(grGoResultHpsAct,   QString("grGoResultHpsAct"));
 
   grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
   grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));
