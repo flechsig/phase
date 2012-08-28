@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <24 Aug 12 15:24:27 flechsig> 
+//  Time-stamp: <28 Aug 12 12:21:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -651,7 +651,7 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("poInitSourceAct")) 
     { 
-      printf("poInitSourceAct button pressed\n"); 
+      cout << "poInitSourceAct button pressed: source_type= " << myparent->myBeamline()->src.isrctype << endl; 
             
       switch (myparent->myBeamline()->src.isrctype)
 	{
@@ -674,6 +674,9 @@ void MainWindow::activateProc(const QString &action)
 	case 6:
 	  filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
 	  break;
+	case 7:
+	  filesOK= fexists(myparent->myBeamline()->filenames.so7_fsource7);
+	  break;
 	default:
 	  QMessageBox::warning(this, tr("warning src_ini"),
 			     tr("source type %1 : no files need to be read!\nreturn").
@@ -687,13 +690,26 @@ void MainWindow::activateProc(const QString &action)
 			     arg(myparent->myBeamline()->src.isrctype));
       else
 	{
+
+	  
+
+	  if (myparent->myBeamline()->src.isrctype == 7)
+	    {
+	      cout << "read hdf5 (experimental)" << endl;
+	      myparent->mysource7c_ini();
+	    }
+	  else
+	    {
+	      
 #ifdef OLD_PO_SOURCE	  
-	  cout << "call mysrc_ini" << endl;
-	  myparent->mysrc_ini(&myparent->myBeamline()->src);
+	      cout << "call mysrc_ini" << endl;
+	      myparent->mysrc_ini(&myparent->myBeamline()->src);
 #else
-	  cout << "call myposrc_ini" << endl;
-	  myparent->myposrc_ini();
+	      
+	      cout << "call myposrc_ini" << endl;
+	      myparent->myposrc_ini();
 #endif
+	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
     } // end poInitSourceAct

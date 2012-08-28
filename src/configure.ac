@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <15 Jun 12 10:33:25 flechsig> 
+dnl   Time-stamp: <28 Aug 12 15:00:46 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -305,6 +305,63 @@ AC_ARG_WITH([qwt],
   ])
 dnl end QWT
 
+dnl ****************** HDF5 **************************
+AC_ARG_WITH([hdf5],
+  AS_HELP_STRING([--with-hdf5=DIR],[path to HDF5 libraries or --without-hdf5]),
+  [ echo "found hdf5 option: ${with_hdf5}"
+    hdf5=${with_hdf5}
+    if test "${hdf5}" = "no"; then
+       echo "do not use hdf5"
+    else
+      dnl   echo "do use hdf5"
+      AC_CHECK_FILE([${hdf5}/lib/libhdf5.so], 
+      [
+        AC_SUBST(HDF5, [${hdf5}])
+        hdf5i=${hdf5}
+	AC_SUBST(HDF5I,[${hdf5i}])
+	AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+      ],
+      AC_MSG_ERROR(cannot find libhdf5.so))
+    fi
+  ],
+  [ dnl hdf5 is not given- we do a search
+    AC_MSG_NOTICE((1) search for HDF5 lib libhdf5.so in /usr/local)
+    dnl to avoid permission denied measages
+    hdf5=`find /usr/local -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
+    if test -n "${hdf5}"; then
+        AC_MSG_NOTICE((1) we found libhdf5.so under ${hdf5} - OK)
+	dnl check if we find the libhdf5.so there 
+	AC_SUBST(HDF5,  [${hdf5}])
+	hdf5i=${hdf5}
+        AC_SUBST(HDF5I, [${hdf5i}])
+	AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+    else
+      AC_MSG_NOTICE((1) did not found libhdf5.so in /usr/local)
+      AC_MSG_NOTICE((2) search for libhdf5.so in /usr/lib)
+      hdf5=`find /usr/lib -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
+      if test -n "${hdf5}"; then
+         AC_MSG_NOTICE([(2) we found libhdf5.so under ${hdf5} - OK])
+         AC_SUBST(HDF5,  [${hdf5}])
+	 hdf5i=${hdf5}
+         AC_SUBST(HDF5I, [${hdf5i}])
+	 AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+      else
+         AC_MSG_ERROR(cannot find any libhdf5.so)
+      fi
+      AC_MSG_NOTICE((2) search for hdf5.h on /usr/include)	 
+      hdf5i=`find /usr/include -name hdf5.h -print 2>/dev/null | head -1 | sed -e 's|/hdf5.h||'`
+      if test -n "${hdf5i}"; then
+         AC_MSG_NOTICE([(2) we found hdf5.h under ${hdf5i} - OK])
+         AC_SUBST(HDF5I, [${hdf5i}])
+	 AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+      else
+         AC_MSG_ERROR(cannot find any hdf5.h)
+      fi
+    fi
+  ])
+dnl end HDF5
+
+
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
   AS_HELP_STRING([--enable-debug],[debugging code, static linking]),
@@ -506,6 +563,7 @@ echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
 echo "GRIDSIZE:                : ${gridsize}"
+echo "hdf5:                    : ${hdf5}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "

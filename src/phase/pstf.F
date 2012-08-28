@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <2012-06-20 20:38:46 flechsig> 
+c$$$ Time-stamp: <28 Aug 12 15:21:43 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 c May 2012 this routine is obsolete - 
@@ -105,7 +105,7 @@ c             enddo
 c          enddo
 c       enddo
 
-        ra.xlam_test=xlam_test 
+ccc UF 28.8.12        ra.xlam_test=xlam_test 
         
 #ifdef DEBUG
         write(*,*)'pstf called'
@@ -128,7 +128,7 @@ c***************** phase space imaging ************************
 	write(*,*)'*** maximum ',s.distz2     
 	write(*,*)'*** number of grid points',s.iwidth         
 c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
-        write(*,*)'ra.xlam_test (mm)',ra.xlam_test
+cc UF 28.8.12        write(*,*)'ra.xlam_test (mm)',ra.xlam_test
 #endif
         call initconstants(cs)
         

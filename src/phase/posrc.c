@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <20 Jul 12 15:50:52 flechsig>  */
+/*  Time-stamp: <28 Aug 12 16:31:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,7 +23,82 @@
 #include "phase_struct.h"
 #include "phase.h"
 #include "posrc.h"
-#include "common.h" 
+#include "common.h"
+
+#ifdef HAVE_HDF5
+   #include "hdf5.h"
+#endif 
+
+/* reads the source files and puts the results into bl->posrc */
+void source7c_ini(struct BeamlineType *bl)
+{
+#ifdef HAVE_HDF5
+  FILE *fa, *fb, *fc, *fd;
+  struct source4c *so4;
+  int i, j, iexx, ieyy, y_size, z_size, t_size, iyz, rank;
+  hid_t       file_id, e_dataset_id, y_dataset_id, z_dataset_id, t_dataset_id;  /* identifiers */
+  herr_t      status;
+  hsize_t     *current_dims, *max_dims;
+  double *y, *z, *t, *a;
+
+#ifdef DEBUG
+  printf("debug: %s source7c_ini called\n", __FILE__);
+#endif
+
+  /* Open an existing file. */
+  file_id = H5Fopen(bl->filenames.so7_fsource7, H5F_ACC_RDWR, H5P_DEFAULT);
+
+  /* Open an existing dataset. */
+  e_dataset_id = H5Dopen(file_id, "/e_field", H5P_DEFAULT);
+
+  printf("id= %d (should be > 0)\n",  e_dataset_id);
+
+  y_dataset_id = H5Dopen(file_id, "/y_vec",   H5P_DEFAULT);
+  z_dataset_id = H5Dopen(file_id, "/z_vec",   H5P_DEFAULT);
+  t_dataset_id = H5Dopen(file_id, "/t_vec",   H5P_DEFAULT);
+
+  rank= H5Sget_simple_extent_dims(e_dataset_id, NULL, NULL);
+  printf("rank= %d\n", rank);
+#ifdef xxx
+  z_size= current_dims[3];
+  y_size= current_dims[2];
+  t_size= current_dims[0];
+  //  y_size  = H5Tget_size(y_dataset_id);
+
+  // z_size  = H5Tget_size(z_dataset_id);
+  // t_size  = H5Tget_size(t_dataset_id);
+
+  printf("file: %s, z_size= %d, y_size= %d, t_size= %d\n", __FILE__,  z_size, y_size, t_size);
+
+  y= XMALLOC(double, y_size);
+  z= XMALLOC(double, z_size);
+  t= XMALLOC(double, t_size);
+  iyz= y_size* z_size *4 * t_size;
+  a= XMALLOC(double, iyz);
+  /*
+  status = H5Dread(e_dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, a); 
+  status = H5Dread(z_dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, z);
+  status = H5Dread(y_dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, y);
+  status = H5Dread(t_dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, t);*/
+
+  /* Close the dataset. */
+  status = H5Dclose(e_dataset_id);
+  status = H5Dclose(y_dataset_id);
+  status = H5Dclose(z_dataset_id);
+  status = H5Dclose(t_dataset_id);
+#endif
+  /* Close the file. */
+   status = H5Fclose(file_id);
+
+#else
+   printf("compiled without hdf5 support\n", __FILE__);
+#endif
+
+#ifdef DEBUG
+  printf("debug: %s source7c_ini done\n", __FILE__);
+#endif
+}
+
 
 /* reads the source files and puts the results into bl->posrc */
 void source4c_ini(struct BeamlineType *bl)
