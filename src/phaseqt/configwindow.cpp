@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <20 Jul 12 16:01:57 flechsig> 
+//  Time-stamp: <28 Aug 12 11:19:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -208,7 +208,7 @@ QStandardItemModel *ConfigWindow::createConfigModel(QObject *parent)
 void ConfigWindow::fillList()
 {
   // add in reverse order
-  addRow("so7_fsource7",         myparent->myBeamline()->filenames.so7_fsource7,   "s7");
+  addRow("so7_fsource7",         myparent->myBeamline()->filenames.so7_fsource7,   "h5");
   addRow("so6_fsource6",         myparent->myBeamline()->filenames.so6_fsource6,   "s6");
   addRow("so4_fsource4d",        myparent->myBeamline()->filenames.so4_fsource4d,  "s4d");
   addRow("so4_fsource4c",        myparent->myBeamline()->filenames.so4_fsource4c,  "s4c");
