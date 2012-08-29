@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <13 Jun 12 09:03:45 flechsig> 
+c$$$ Time-stamp: <2012-08-29 22:44:19 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -137,6 +137,7 @@ c       1/3-Argumente
         return
         end
 
+#ifdef PHASELIB
 c*************************** neu **************************
  	subroutine fgmapidp_4(iord,imodus,acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc)       
@@ -243,6 +244,7 @@ c       write(*,*)'end fgmapidp'
 	return
         end
 c-------- end fgmapidp()-----------------------------------
+#endif
 
 c**************************************************************
 	subroutine intersection(a,wc,xlc,rin,uu,ww,xll,iord)   
@@ -351,7 +353,7 @@ c        write(*,*)'intersection end'
 	end
 c*************** end intersection ****************************
                           
-                          
+#ifdef PHASELIB                          
 c*************************************************************
 	subroutine pathlen0(am,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
 c*************************************************************
@@ -561,6 +563,7 @@ c       write(*,*)'end pathlen0'
        return
        end
 c************ end pathlen0 ***********************************
+#endif
 
 c*************************************************************
 	subroutine pathlen1(xlm,rin,iord,
@@ -801,7 +804,8 @@ c******* extractmap ************************************
 
       return
       end
-        
+ 
+       
 c********************************************************** 
 	subroutine reduce_1_drift(imodus,iord,a,g,acc,wc,
      &	xlc,ypc1,zpc1,dypc,dzpc)    
@@ -904,7 +908,8 @@ c----------------------------------------------------------
  
         return
 	end
-		    
+
+#ifdef PHASELIB		    
 c********************************************************** 
 	subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c********************************************************** 
@@ -1080,6 +1085,7 @@ c        write(*,*)'end reduce_1'
 	return
 	end
 c ***************** end reduce_1 **************************
+#endif
 
 c********************************************************** 
 	subroutine transponiere (a,g)   
@@ -1343,7 +1349,7 @@ c----------------------------------------------------------
         end
 c*********** end geometrdp.for ***************************     
 
-
+#ifdef PHASELIB
 c**********************************************************
 	subroutine xxmap70(xmap70,ypc1,zpc1,dypc,dzpc,iord)
 c**********************************************************
@@ -1617,8 +1623,9 @@ c*************************************************************
       return
       end
 c**** end xxmap70 ******************************
+#endif
 
-
+#ifdef PHASELIB
 c*********************************************************
         subroutine fdet_4(imodus,iord,fdetc,fdetphc,fdet1phc,
      &			ypc1,zpc1,dypc,dzpc)
@@ -1902,6 +1909,7 @@ c      enddo
       return
       end
 c********** end fdet **************************************
+#endif
 
 c**********************************************************
       subroutine sig(i,j,k,l,isig)

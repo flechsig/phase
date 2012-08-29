@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <15 Jun 12 09:44:40 flechsig> 
+c$$$ Time-stamp: <2012-08-29 22:54:14 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -275,6 +275,7 @@ cc	include 'phase_struct.for'
 	end
 c-------------------- end src1 -------------------------------
 
+#ifdef PHASELIB
 c*****************************************************************
 	subroutine src2(cs,g,ra,so2,sr,ifl)
 c*****************************************************************
@@ -313,6 +314,7 @@ c	  sr.densy=sr.densy*f
 	return
 	end
 c----------------------- end src2---------------------
+#endif
 
 c*****************************************************************
 	subroutine src3(cs,g,ra,so3,sr,ifl)
@@ -1041,7 +1043,7 @@ c*****************************************************************
 	endif
 	return
 	end
-
+#ifdef PHASELIB
 c********************************************************
 	subroutine source_zernike(so2,cs,xwert,ywert,carg)
 c********************************************************
@@ -1125,6 +1127,7 @@ c---------------------------------------------------------
 
       return
       end
+#endif
 
 
 c********************************************************

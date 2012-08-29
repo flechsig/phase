@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <28 Aug 12 12:13:36 flechsig>  */
+/*   Time-stamp: <2012-08-29 22:51:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -252,7 +252,7 @@ void BuildBeamline(struct BeamlineType *bl)
     {
       imodus= 0; /* fuer det source to image ????? */
       
-#ifdef SEVEN_ORDER
+
       if (bl->BLOptions.REDUCE_maps == 0)
 	{
 	  ltp=bl->tp;
@@ -277,13 +277,16 @@ void BuildBeamline(struct BeamlineType *bl)
       else
 	{
 	  printf("7 - 4 not ready\n");
+#ifdef PHASELIB
 	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#else
+       printf("phaselib not enabled - exit\n");
+       exit(-1);
+#endif 
+
 	}
-#else      
-      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-	     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-#endif
+
       
       /* baue xlenkoeffizienten und Ruecktrafomatrix */
       elcounter--; listpt--;  elindex--;   /* Zaehler auf letztes Element */
@@ -331,7 +334,7 @@ void BuildBeamline(struct BeamlineType *bl)
 		 (double *)bl->dzpc, 
 		 &bl->BLOptions.ifl.iord); 
       
-#ifdef SEVEN_ORDER
+
       if (bl->BLOptions.REDUCE_maps == 0)
 	{
 	  ltp=bl->tp;
@@ -358,13 +361,15 @@ void BuildBeamline(struct BeamlineType *bl)
       else
 	{
 	  printf("7 - 4 not ready\n");
+#ifdef PHASELIB
 	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-	}
 #else
-      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-	     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    printf("phaselib not enabled - exit\n");
+	    exit(-1);
 #endif
+	}
+
       
     } /* image to source */
   /*********** map und det fertig ***********/
@@ -490,7 +495,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	{
 	  imodus= 0; /* fuer det source to image ????? */
 
-#ifdef SEVEN_ORDER
+
 	  if (bl->BLOptions.REDUCE_maps == 0)
 	    {
 	      ltp=bl->tp;
@@ -515,14 +520,16 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	  else
 	    {
 	      printf("7 - 4 not ready\n");
+#ifdef PHASELIB
 	      fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		     &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+#else
+	    printf("phaselib not enabled - exit\n");
+	    exit(-1);
+#endif
 	    }
 	   
-#else
-	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-#endif
+
 
                      /* baue xlenkoeffizienten und Ruecktrafomatrix */
 	  elcounter--; listpt--;     /* Zaehler auf letztes Element */
@@ -570,7 +577,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		     &bl->BLOptions.ifl.iord); 
 
 
-#ifdef SEVEN_ORDER
+
 	  if (bl->BLOptions.REDUCE_maps == 0)
 	    {
 	      ltp=bl->tp;
@@ -596,13 +603,15 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	  else
 	    {
 	      printf("7 - 4 not ready\n");
+#ifdef PHASELIB
 	    fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
 		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-	    }
 #else
-	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-	       &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
+	    printf("phaselib not enabled - exit\n");
+	    exit(-1);
 #endif
+	    }
+
 
      	} /* image to source */
       /*********** map und det fertig ***********/
@@ -1024,11 +1033,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
        printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
        
        mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
-       
+#ifdef PHASELIB       
        fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon,        /* in phasefor.F */
 		  &mir4, &listpt->geo, &wc4, &xlc4, 
 		  &ypc14, &zpc14, &dypc4, &dzpc4); 
-       
+#else
+       printf("phaselib not enabled - exit\n");
+       exit(-1);
+#endif       
        map4to7(&wc4,   listpt->wc);
        map4to7(&xlc4,  listpt->xlc);
        map4to7(&ypc14, listpt->ypc1);
@@ -1046,7 +1058,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
    if(listpt->MDat.Art == 999)
      imodus= imodus- 1000;
    
-#ifdef SEVEN_ORDER
+
    if (bl->BLOptions.REDUCE_maps == 0)
      make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
 		   listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
@@ -1061,7 +1073,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
        map7to4(listpt->xlc,  &xlc4);
        mirror7to4(&listpt->mir, &mir4);
        mat7to4(listpt->M_StoI, &mat4);
-       
+ #ifdef PHASELIB      
        xxmap70(&mat4, &ypc14, &zpc14, &dypc4, 
 	       &dzpc4, &bl->BLOptions.ifl.iord);
        
@@ -1069,27 +1081,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 		&bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
 		&wc4, &xlc4, &ypc14, 
 		&zpc14, &xlm4);
-       
+#else
+       printf("phaselib not enabled - exit\n");
+       exit(-1);
+#endif      
        mat4to7(&mat4, listpt->M_StoI);
        map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
        map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c); 
      }
-#else
-   /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-   xxmap70(listpt->M_StoI, listpt->ypc1, listpt->zpc1, listpt->dypc, 
-	   listpt->dzpc, &bl->BLOptions.ifl.iord);
-   /*	pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-     &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-     listpt->wc, listpt->xlc, listpt->ypc1, 
-     listpt->zpc1, &listpt->xlm);
-   */
-   /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in 
-      fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
-   pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	    &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-	    listpt->wc, listpt->xlc, listpt->ypc1, 
-	    listpt->zpc1, &listpt->xlm);
-#endif
    
 #ifdef DEBUG   
    /*    char *fname= "matrixi.mat";
@@ -1104,7 +1103,6 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
        if(listpt->MDat.Art==999)
 	 {imodus=imodus+1000;}; 
        
-#ifdef SEVEN_ORDER
        if (bl->BLOptions.REDUCE_maps == 0)
 	 {
 	   fgmapidp_8(&bl->BLOptions.epsilon,
@@ -1121,9 +1119,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 	 {
 	   printf("debug: MakeMapandMatrix: use reduce maps with seven order\n");
 	   mirror7to4(&listpt->mir, &mir4);         /* copy mirror coefficients */
+#ifdef PHASELIB
 	   fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
 		      &mir4, &listpt->geo, &wc4, &xlc4, 
 		      &ypc14, &zpc14, &dypc4, &dzpc4);
+#else
+       printf("phaselib not enabled - exit\n");
+       exit(-1);
+#endif 
 	   map4to7(&wc4,   listpt->wc);
 	   map4to7(&xlc4,  listpt->xlc);
 	   map4to7(&ypc14, listpt->ypc1);
@@ -1132,16 +1135,12 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 	   map4to7(&dzpc4, listpt->dzpc);
 	 }
        
-#else
-       fgmapidp_4(&bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.epsilon, 
-		  &listpt->mir, &listpt->geo, listpt->wc, listpt->xlc, 
-		  listpt->ypc1, listpt->zpc1, listpt->dypc, listpt->dzpc);
-#endif
+
        
        if(listpt->MDat.Art==999)
 	 {imodus=imodus+1000;};
        
-#ifdef SEVEN_ORDER
+
        if (bl->BLOptions.REDUCE_maps == 0)
 	 make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
 		       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
@@ -1156,7 +1155,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 	   map7to4(listpt->xlc,  &xlc4);
 	   mirror7to4(&listpt->mir, &mir4);
 	   mat7to4(listpt->M_ItoS, &mat4);
-	   
+#ifdef PHASELIB	   
 	   xxmap70(listpt->M_ItoS, &ypc14, &zpc14, &dypc4, 
 		   &dzpc4, &bl->BLOptions.ifl.iord);
 	   
@@ -1164,29 +1163,15 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 		    &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
 		    &wc4, &xlc4, &ypc14, 
 		    &zpc14, &xlm4);
-	   
+#else
+       printf("phaselib not enabled - exit\n");
+       exit(-1);
+#endif 	   
 	   mat4to7(&mat4, listpt->M_ItoS);
 	   map4to7(&xlm4.xlen1c, &listpt->xlm.xlen1c); 
 	   map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c);
 	   
 	 }
-#else
-       /* bei SEVENORDER wird matrix mit make_matrix_8 berechnet */
-       xxmap70(listpt->M_ItoS, listpt->ypc1, listpt->zpc1, 
-	       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
-       
-       /*	    pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-	 &bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage, 
-	 listpt->wc, listpt->xlc, listpt->ypc1, 
-	 listpt->zpc1, &listpt->xlm); 
-       */
-       /* bei SEVENORDER werden Koeffizienten xlen1c und xlen2c bereits in
-	  fgmapidp_8 berechnet, pathlen0 ist damit ueberfluessig */
-       pathlen0(&listpt->mir, &listpt->geo, &bl->BLOptions.ifl.iord,
-		&bl->BLOptions.ifl.iplmode, &bl->BLOptions.SourcetoImage,
-		listpt->wc, listpt->xlc, listpt->ypc1, 
-		listpt->zpc1, &listpt->xlm); 
-#endif
        
        
 #ifdef DEBUG       
@@ -1209,7 +1194,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
        
        if (bl->hormapsloaded != bl->BLOptions.ifl.iord)
 	 {
-#ifdef SEVEN_ORDER
+
 	   if (bl->BLOptions.REDUCE_maps == 0)
 	     {
 	       printf("MakeMapandMatrix: create horizontal transformation matrixes of dim %d, iord: %d\n", 
@@ -1219,14 +1204,14 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 	     {
 	       printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
 	       printf("!!!!!!!!!! fails for iord != 4\n");
+#ifdef PHASELIB
 	       LoadHorMaps(bl, mdim); 
+#else
+       printf("phaselib not enabled - exit\n");
+       exit(-1);
+#endif 
 	     }
 	   
-#else
-	   printf("MakeMapandMatrix: load horizontal transformation matrixes of dim %d\n", mdim); 
-	   printf("!!!!!!!!!! fails for iord != 4\n");
-	   LoadHorMaps(bl, mdim);    
-#endif
 	   bl->hormapsloaded= bl->BLOptions.ifl.iord;
 	 }            /* hormaps  present in memory */
        
@@ -2840,7 +2825,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #endif
       memcpy(&mirror, a, sizeof(struct mirrortype));
 
-#ifdef SEVEN_ORDER
+
       if (lREDUCE_maps == 0)
 	misali_8(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
       else
@@ -2848,12 +2833,14 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 	  printf("Defmirroc, 7order with 4th order misalignment\n");
 	  mirror7to4(&mirror, &mir41);
           mirror7to4(&mirror, &mir42);
+#ifdef PHASELIB
 	  misali_4(&mir41, &mir42, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
+#else
+	  printf("error: phaselib not enabled- exit\n");
+	  exit(-1);
+#endif
 	  mirror4to7(&mir42, a);
 	}
-#else
-      misali_4(&mirror, a, &x->dRu, &x->dRl, &x->dRw, &x->dw, &x->dl, &x->du);
-#endif
 
 #ifdef DEBUG2
       printf("DEBUG: mirror coefficients with misalignment\n");

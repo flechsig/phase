@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <28 Aug 12 15:00:46 flechsig> 
+dnl   Time-stamp: <2012-08-29 21:49:20 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -397,16 +397,19 @@ AC_ARG_ENABLE([EXPIRE],
     AS_HELP_STRING(--enable-EXPIRE=YYYYMMDD,expiring date of the code),
     AC_DEFINE_UNQUOTED([EXPIRE], $enableval, "expiring date"))
 
-## phase with power series up to eighth order (iord= 1 ...7) Nov. 2010
+## phase with REDUCE code in phaselib - replaces --enable-SEVEN
 ## default (iord= 1..4)
-AC_ARG_ENABLE([SEVEN],
-    AS_HELP_STRING([--enable-SEVEN],[max. order of power series 7, default: 4]),
-    AC_DEFINE([SEVEN_ORDER], 1, "expansion up to 7th order"))
-if test "$enable_SEVEN" != "yes" ; then
-   enable_SEVEN="no"
+AC_ARG_ENABLE([PHASELIB],
+    AS_HELP_STRING([--enable-PHASELIB],[activate old reduce code]),
+    AC_DEFINE([PHASELIB], 1, "phaselib reduce code"))
+AC_DEFINE([SEVEN_ORDER], 1, "expansion up to 7th order")
+enable_SEVEN="yes"
+if test "$enable_PHASELIB" != "yes" ; then
+   enable_PHASELIB="no"
+   FFLAGS="-DSEVEN_ORDER ${FFLAGS}"	
 else 
 ### AC_DEFINE adds the defines to configure.h - configure.h can not be used for fortran
-   FFLAGS="-DSEVEN_ORDER ${FFLAGS}"
+   FFLAGS="-DPHASELIB -DSEVEN_ORDER ${FFLAGS}"
 fi
 
 ## whether to use OpenMP multithreading 
@@ -513,8 +516,9 @@ AC_MSG_NOTICE(search if library ${LIBPHASE} is installed)
 AC_CHECK_FILE(["${prefixlib}/${LIBPHASE}"], 
    [have_libphase="yes"], [have_libphase="no"])
 dnl Linkeroption to build "lphase4idl"
-AC_SUBST([LINK_LIBPHASE], "-L${prefixlib} -${libphaselinkname}")
-
+if test "$enable_PHASELIB" == "yes" ; then
+   AC_SUBST([LINK_LIBPHASE], "-L${prefixlib} -${libphaselinkname}")
+fi
 dnl IDL
 dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
@@ -551,6 +555,7 @@ echo "===================================================================="
 echo "summary: "
 echo "fortran compiler         : ${F77}"
 echo "phaselib                 : ${LIBPHASE}"
+echo "enable_phaselib          : ${enable_PHASELIB}"
 dnl echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
 echo "debug code               : ${enable_debug}"
 echo "cernlib:                 : ${cernlib}"

@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <28 Aug 12 15:08:35 flechsig> 
+#  Time-stamp: <2012-08-29 22:16:29 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -36,7 +36,9 @@ phaseqt_SOURCES = \
 	../phase/taylor-ops.for \
 	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
         ../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for \
-        ../phase/pstf.F ../phase/posrc.c ../phase/posrc.h
+        ../phase/pstf.F ../phase/posrc.c ../phase/posrc.h \
+	../phaselib/misali_8.f ../phaselib/misali4_8.f \
+        ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
 
 # for all *.h and *.qrc add one *.cpp
 nodist_phaseqt_SOURCES = \
@@ -45,7 +47,8 @@ nodist_phaseqt_SOURCES = \
 	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
 	moc_plotmatrix.cpp moc_plot2x2.cpp
 
-phaseqt_LDADD = $(libdir)/@LIBPHASE@
+## UF 28.8.2012 take this out for phaseqt
+#phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \
