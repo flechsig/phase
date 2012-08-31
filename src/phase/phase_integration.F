@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2012-06-20 20:37:11 flechsig> 
+c$$$ Time-stamp: <31 Aug 12 10:52:52 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -209,7 +209,7 @@ c---------------- first grid is equdistant, the following are not
 c-----------------------------------------------------------
 
        if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &                        (src.isrctype.eq.6))then
+     &     (src.isrctype.eq.6).or.(src.isrctype.eq.7))then
 c-----------------------------------------------------------
 c !$OMP PARALLEL DO PRIVATE(i, ra)
 	do i=1,ianzz    
@@ -225,8 +225,7 @@ c	   	fzez(i)=fwertz
 	   densiyim(i)=sr.xintyim
 	   densizre(i)=sr.xintzre
 	   densizim(i)=sr.xintzim
-	   
-	   endif
+           endif
 	   if(ifl.ispline.lt.0)then
 	 	fya(i)=yintya
 	 	fza(i)=yintza
@@ -402,7 +401,7 @@ c---------------- first grid is equdistant, the following are not
 
 c------------------------------------------------------------
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &                        (src.isrctype.eq.6))then
+     &     (src.isrctype.eq.6).or.(src.isrctype.eq.7))then
 c------------------------------------------------------------
 
 c-------------------------------------------------------------------------
@@ -574,7 +573,7 @@ c-------------------------------------------------------------------------
 
 c----------------------------------------
 
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
+	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.(src.isrctype.eq.7))then
 
 c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
 c	 wird nicht in phase_integration gesetzt, da hier nicht 

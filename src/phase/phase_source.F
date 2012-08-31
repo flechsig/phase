@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <2012-08-29 22:54:14 flechsig> 
+c$$$ Time-stamp: <31 Aug 12 10:54:52 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -119,6 +119,10 @@ c	isrctype = 6 ; Brightness Representation
 c
 c			--->  OUTPUT : densy 	 
 c
+c       isrctype = 7 ; identical to isrctype = 4 but:
+c                      data from hdf5 file       
+c
+c
 c       Optical Path Length:
 c       --------------------
 c
@@ -155,7 +159,7 @@ c	record /source6/ so6
 #endif
 
 c comment U.F. 20.4.2012	
-c	write(*,*) 'psdi: source type:',src.isrctype
+c	write(*,*) 'UF psdi: source type:',src.isrctype
 
 c---------------- set values to zero by default
 
@@ -208,6 +212,7 @@ c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
 c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
 	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
+	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
 	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
