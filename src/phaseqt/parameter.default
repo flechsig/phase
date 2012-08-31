@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <10 May 12 15:27:35 flechsig> 
+#  Time-stamp: <31 Aug 12 08:58:56 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -27,7 +27,7 @@
 Generic		
     epsilon		1e-4	epsilon for Newton routine (double)			1e-4	0
     iord		4	calculation up to order (1..7)				4	1		
-    REDUCE_maps		0	use old REDUCE maps (0,1)				0	63
+#    REDUCE_maps		0	use old REDUCE maps (0,1)				0	63
     pst_mode	        0	pstf, pstc, pstc_m4p  (0,1,2)				0	64
 #    PO_dyn_arrays	0	PO dynamic arrays	                                0	64 
 
@@ -36,7 +36,7 @@ PO Controls
     iplmode		1	subtraction of ideal path length (0,1)			1	4	
 
 PO Source
-    isrctype		4	source type (1..6)					4	5
+    isrctype		4	source type (1..7)					4	5
     source 4		-	E- field from files (filenames see Edit/Configure)	
        so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
        xi.distfocy	0	distance of image plane to horizontal focus		0.	49
