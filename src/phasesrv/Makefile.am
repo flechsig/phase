@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <14 Sep 12 16:25:29 flechsig> 
+#  Time-stamp: <14 Sep 12 16:29:07 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -11,7 +11,7 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phasesrv 
-phaseqt_SOURCES = \
+phasesrv_SOURCES = \
 	configwindow.cpp configwindow.h \
 	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
         myzoomer.cpp myzoomer.h \
@@ -41,14 +41,14 @@ phaseqt_SOURCES = \
         ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
 
 # for all *.h and *.qrc add one *.cpp
-nodist_phaseqt_SOURCES = \
+nodist_phasesrv_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
 	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
 	moc_plotmatrix.cpp moc_plot2x2.cpp
 
-## UF 28.8.2012 take this out for phaseqt
-#phaseqt_LDADD = $(libdir)/@LIBPHASE@
+## UF 28.8.2012 take this out for phasesrv
+#phasesrv_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \
@@ -95,13 +95,7 @@ F77LINK = $(LINK)
 moc_%.cpp: %.h
 	@QT@/bin/moc $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
-# special
-qrc_phaseqt.cpp : parameter.default
-	@QT@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@	
 
-# Adjust this line according to your resources.qrc
-qrc_%.cpp : %.qrc
-	@QT@/bin/rcc -name $(bin_PROGRAMS) $< -o $@
 
 # This line ensures that generated moc_*.cpp and resources.cpp files are
 # deleted when we make clean.
