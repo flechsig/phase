@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <14 Sep 12 16:29:07 flechsig> 
+#  Time-stamp: <14 Sep 12 17:20:09 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -12,18 +12,7 @@
 
 bin_PROGRAMS  = phasesrv 
 phasesrv_SOURCES = \
-	configwindow.cpp configwindow.h \
-	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
-        myzoomer.cpp myzoomer.h \
-        optiinput.cpp optiinput.h  \
-	phaseqt.cpp phaseqt.h \
-	plot.cpp plot.h \
-	plot1d.cpp plot1d.h \
-	singleray.cpp singleray.h \
-        treemodel.cpp treemodel.h \
-        treeitem.cpp treeitem.h \
-	plotmatrix.cpp plotmatrix.h \
-        plot2x2.cpp plot2x2.h \
+        phasesrv.c       phasesrv.h \
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
 	../phase/phasec.c  ../phase/rtrace.c \
         ../phase/xmalloc.c   \
@@ -40,12 +29,37 @@ phasesrv_SOURCES = \
 	../phaselib/misali_8.f ../phaselib/misali4_8.f \
         ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
 
-# for all *.h and *.qrc add one *.cpp
-nodist_phasesrv_SOURCES = \
-	moc_configwindow.cpp moc_mainwindow.cpp \
-	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
-	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
-	moc_plotmatrix.cpp moc_plot2x2.cpp
+
+##dummy_DATA = \
+##	configwindow.cpp configwindow.h \
+##	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
+##        myzoomer.cpp myzoomer.h \
+##        optiinput.cpp optiinput.h  \
+##	phaseqt.cpp phaseqt.h \
+##	plot.cpp plot.h \
+##	plot1d.cpp plot1d.h \
+##	singleray.cpp singleray.h \
+##        treemodel.cpp treemodel.h \
+##        treeitem.cpp treeitem.h \
+##	plotmatrix.cpp plotmatrix.h \
+##        plot2x2.cpp plot2x2.h \
+##        ../phase/bline.c ../phase/cutils.c ../phase/error.c \
+##	../phase/phasec.c  ../phase/rtrace.c \
+##        ../phase/xmalloc.c   \
+##	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
+##	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
+##	../phase/q0_q1_q2_8.for ../phase/rekursiv_2d_8.for \
+##	../phase/phasefor.F  \
+##	../phase/get_partial_etc.for ../phase/replace_6v4v.for \
+##	../phase/replace_wl_in_u.for ../phase/replace_wl_in_ypzp.for \
+##	../phase/taylor-ops.for \
+##	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
+##        ../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for \
+##        ../phase/pstf.F ../phase/posrc.c ../phase/posrc.h \
+##	../phaselib/misali_8.f ../phaselib/misali4_8.f \
+##        ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
+
+
 
 ## UF 28.8.2012 take this out for phasesrv
 #phasesrv_LDADD = $(libdir)/@LIBPHASE@
@@ -68,32 +82,19 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 	README
 
 ## flags
-AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+AM_CPPFLAGS = -DLINUX 
 AM_CXXFLAGS   =  -I. \
-	-I@QT@/mkspecs/linux-g++ \
-	-I@QT@/include/QtCore \
-	-I@QT@/include/QtGui -I@QT@/include \
-        -I@QTI@ \
-	-I@QWT@/include \
-	-I@QWTI@/ \
-	-I../phase 
+		-I../phase -W
 
 ###-pipe -g -D_REENTRANT -Wall -W 
 #####-I@QT@/mkspecs/linux-g++       
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
-AM_LDFLAGS =  -Wl,-rpath,@QT@/lib \
-	-L@QT@/lib -lQtGui -lQtCore \
-	-L@QWT@/lib -lqwt -L@HDF5@/lib -lhdf5 \
+AM_LDFLAGS =  -L@HDF5@/lib -lhdf5 \
 	@FLIBS@  @CFORLIB@
 
 ##we always use the c linker
 F77LINK = $(LINK)
-
-
-# This rule lets GNU make create any moc_*.cpp from the equivalent *.h
-moc_%.cpp: %.h
-	@QT@/bin/moc $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 
 
