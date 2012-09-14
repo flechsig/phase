@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2012-08-29 22:16:29 flechsig> 
+#  Time-stamp: <14 Sep 12 16:25:29 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -10,7 +10,7 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = phaseqt 
+bin_PROGRAMS  = phasesrv 
 phaseqt_SOURCES = \
 	configwindow.cpp configwindow.h \
 	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
