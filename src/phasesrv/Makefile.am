@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2012-09-19 05:42:59 flechsig> 
+#  Time-stamp: <2012-09-19 13:32:23 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -14,7 +14,7 @@ bin_PROGRAMS  = phasesrv
 phasesrv_SOURCES = \
         phasesrv.c       phasesrv.h \
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
-	../phase/phasec.c  ../phase/rtrace.c \
+        ../phase/phasec.c ../phase/rtrace.c \
         ../phase/xmalloc.c ../phase/xstrdup.c  \
 	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
@@ -82,9 +82,9 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 	README
 
 ## flags
-AM_CPPFLAGS = -DLINUX 
+AM_CPPFLAGS = -DLINUX -DNOGUI
 AM_CXXFLAGS   =  -I. \
-		-I../phase -W
+		-I../phase -W 
 
 ###-pipe -g -D_REENTRANT -Wall -W 
 #####-I@QT@/mkspecs/linux-g++       

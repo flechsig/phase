@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <14 Sep 12 17:17:20 flechsig>  */
+/*  Time-stamp: <2012-09-19 14:23:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -25,6 +25,8 @@ int main(unsigned int argc, char *argv[])
 {
   int setupswitch, cmode, selected, iord;
   struct BeamlineType Beamline;
+
+  Beamline.localalloc= DOALLOC;
 
   printf("phasesrv start\n");
 

@@ -1,12 +1,12 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <19 Jul 12 11:44:44 flechsig>  */
+/*   Time-stamp: <2012-09-19 13:59:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
 /*   $Date$ */
 /*   $Revision$  */
-/*   $Author$  */
+/*   $Author$  */ 
 
 #ifdef HAVE_CONFIG_H
   #include <config.h>
@@ -19,6 +19,10 @@
 #include <ctype.h>
 #include <stdarg.h> 
 #include <unistd.h>
+
+#ifdef NOGUI
+#define QTGUI
+#endif
 
 #ifndef QTGUI
 #include <Xm/Text.h>                                                  
@@ -377,7 +381,7 @@ void InitDataSets(struct BeamlineType *bl, char *mainpickname)
   bl->ElementList= NULL;                       /* 15.12.99 */
   bl->raysout    = NULL;
   bl->RTSource.SourceRays= NULL;
-  bl->beamlineOK= 0;
+  bl->beamlineOK= 0; 
   bl->tp= NULL;
 #ifndef QTGUI
   ginitdatset(&GDefDat);           /* init defaults */
