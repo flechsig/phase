@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-08-29 22:51:06 flechsig>  */
+/*   Time-stamp: <2012-09-19 05:38:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -921,19 +921,10 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
       exit(-1);
     } 
 
-#ifndef QTGUI
-  snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_lh.omx", global_rundir, dim);
-#else
    snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_lh.omx", phase_home, dim);
-#endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->lmap, dim);    
-
-#ifndef QTGUI
-   snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_rh.omx", global_rundir, dim);
-#else
    snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_rh.omx", phase_home, dim);
-#endif
    printf("read hor. matrix: %s\n", buffer);
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
 } /* end LoadHorMaps */    
