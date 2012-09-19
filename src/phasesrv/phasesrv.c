@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2012-09-19 14:23:36 flechsig>  */
+/*  Time-stamp: <2012-09-19 14:30:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -25,13 +25,13 @@ int main(unsigned int argc, char *argv[])
 {
   int setupswitch, cmode, selected, iord;
   struct BeamlineType Beamline;
-
+  
   Beamline.localalloc= DOALLOC;
-
+  
   printf("phasesrv start\n");
-
+  
   setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, &selected, &iord);
-
+  
   switch (setupswitch)
     {
     case 3:
@@ -42,7 +42,7 @@ int main(unsigned int argc, char *argv[])
       exit(3);
       break;
     case 5:          // only filename given
-      printf("main: filename provided- do not read %s\n", (char*) MainPickName); //<< (char*) MainPickName << endl;
+      printf("main: filename provided- do not read %s\n", (char*) MainPickName); 
       printf("not implemented so far - usage: phasesrv -h\nexit()\n");
       exit(3);
       //myphaseQt.initSet(myphaseQt.myBeamline()->filenames.beamlinename);
@@ -51,9 +51,6 @@ int main(unsigned int argc, char *argv[])
       printf("\nusage: phasesrv -h\n\n");
       //myphaseQt.myGetPHASE((char*) MainPickName);
     }
-
-
-
 
   printf("phasesrv done\n");
 }
