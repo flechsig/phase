@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2012-09-21 06:18:48 flechsig>  */
+/*  Time-stamp: <2012-09-21 06:20:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -42,7 +42,6 @@ int main(unsigned int argc, char *argv[])
     case 15:
       printf("main: Batchmode  called (switch= %d)\n", setupswitch);
       BatchMode(&Beamline, cmode, selected, iord);
-      exit(3);
       break;
     default:
       printf("\nusage: phasesrv -h\n\n");
