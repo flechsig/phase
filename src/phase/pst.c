@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <15 Jun 12 09:59:40 flechsig>  */
+/*   Time-stamp: <27 Sep 12 16:53:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -269,7 +269,7 @@ void PST(struct BeamlineType *bl)
  
    if (bl->BLOptions.ifl.pst_mode <= 0)                       /* pst_mode == 0 the fortran version */
      { 
-       
+#ifdef OBSOLETE       
 #ifdef DEBUG
        printf("debug: %s: calling pstf(...)\n", __FILE__);
 #endif
@@ -317,6 +317,14 @@ void PST(struct BeamlineType *bl)
 #ifdef DEBUG
        printf("debug: pst.c: returning from call pstf(...)\n");
        printf("point 0,0= %e\n",  PSDp->psd[0]);
+#endif
+#else   /* not obsolete */
+       printf("%s: pst_mode == %d, you try to call obsolete function pstf()\n", __FILE__, bl->BLOptions.ifl.pst_mode);
+       printf("%s: this phase version has been compiled without compiler option OBSOLETE\n");
+       bl->BLOptions.ifl.pst_mode= 2;
+       printf("%s: switch to compatibility mode -> set pst_mode= %d\n", bl->BLOptions.ifl.pst_mode);
+       printf("************** call pstc ****************\n ");
+       pstc(bl, mirp, gp);
 #endif
      }
    else    // c replacement
