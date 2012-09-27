@@ -1,13 +1,14 @@
+dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
 #  Date      : <27 Sep 12 17:51:19 flechsig> 
-#  Time-stamp: <27 Sep 12 17:51:33 flechsig> 
+#  Time-stamp: <27 Sep 12 17:52:06 flechsig> 
 
 #  $Source$ 
 #  $Date$
 #  $Revision$ 
 #  $Author$ 
 
-dnl ####################### -*- Mode: M4 -*- ###########################
+
 dnl mdl_have_root.m4 -- 
 dnl 
 dnl Copyright (C) 1999, 2000 Matthew D. Langston <langston@SLAC.Stanford.EDU>
