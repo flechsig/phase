@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <14 Sep 12 16:26:53 flechsig> 
+dnl   Time-stamp: <28 Sep 12 10:07:36 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -30,6 +30,10 @@ AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_CC
 AC_PROG_CXX
+
+dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
+MDL_HAVE_ROOT
+
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
@@ -569,6 +573,7 @@ echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
 echo "GRIDSIZE:                : ${gridsize}"
 echo "hdf5:                    : ${hdf5}"
+echo "root:                    : ${have_root}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "

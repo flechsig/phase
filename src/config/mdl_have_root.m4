@@ -1,7 +1,7 @@
 dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
 #  Date      : <27 Sep 12 17:51:19 flechsig> 
-#  Time-stamp: <27 Sep 12 17:52:06 flechsig> 
+#  Time-stamp: <28 Sep 12 10:05:32 flechsig> 
 
 #  $Source$ 
 #  $Date$
@@ -63,8 +63,12 @@ AC_DEFUN([MDL_HAVE_ROOT],
 
 dnl Allow the user to specify the top of the ROOT installation
 dnl directory.
-    AC_HELP_STRING([--with-rootsys], [top of the ROOT installation directory], rootsys_help_string)
-    AC_ARG_WITH(rootsys, $rootsys_help_string, user_rootsys=$withval, user_rootsys="none")
+dnl uf thats wrong  AC_HELP_STRING([--with-rootsys], [top of the ROOT installation directory], rootsys_help_string)
+dnl uf    AC_ARG_WITH(rootsys, $rootsys_help_string, user_rootsys=$withval, user_rootsys="none")
+dnl uf replacement
+    AC_ARG_WITH([rootsys], 
+		AC_HELP_STRING([--with-rootsys], [top of the ROOT installation directory]), 
+	[user_rootsys=$withval], [user_rootsys="none"])
 
     if test ! x"$user_rootsys" = xnone; then
       rootsys="$user_rootsys"
@@ -87,7 +91,8 @@ dnl eval "mdl_root_version=\`echo .q | root -b -n -l -q | $mdl_root_version_pars
     mdl_cxx_version=`$CXX --version | sed -ne 's/[^0-9.]*//g' -ne 's/.*/gcc-c++-&/p'`
     mdl_rootsys_search_list="/usr/local/root"
     for mdl_path in /usr/local/root/*; do
-        eval "mdl_path=\`echo $mdl_path | grep '[0-9]\+\(\.[0-9]\+\)\{2\}'\`/$mdl_cxx_version"
+
+### UF makes problems        eval "mdl_path=\`echo $mdl_path | grep '[0-9]\+\(\.[0-9]\+\)\{2\}'\`/$mdl_cxx_version"
         if test -d "$mdl_path"; then
             mdl_rootsys_search_list="$mdl_path $mdl_rootsys_search_list"
         fi

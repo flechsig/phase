@@ -1,7 +1,7 @@
 dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_dl.m4
 #  Date      : <27 Sep 12 17:53:36 flechsig> 
-#  Time-stamp: <27 Sep 12 17:53:54 flechsig> 
+#  Time-stamp: <27 Sep 12 17:54:19 flechsig> 
 
 
 #  $Source$ 
@@ -38,7 +38,7 @@ dnl
 dnl Determine the appropriate libraries for dlopen, et. al., and set the
 dnl output variable LIBADD_DL to these libraries.
 dnl
-AC_DEFUN(MDL_DL,
+AC_DEFUN([MDL_DL],
 [
   test_dlerror=no
   LIBADD_DL=
