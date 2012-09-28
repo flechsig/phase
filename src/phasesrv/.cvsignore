@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/.cvsignore
 #  Date      : <31 May 11 17:07:00 flechsig> 
-#  Time-stamp: <25 Nov 11 15:15:54 flechsig> 
+#  Time-stamp: <28 Sep 12 10:30:31 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -9,7 +9,7 @@
 #  $Revision$ 
 #  $Author$ 
 
-phaseqt
+phasesrv
 moc*
 qrc*
 Makefile
