@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <03 Oct 12 23:32:10 flechsig> 
+#  Time-stamp: <2012-10-03 23:40:59 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -83,7 +83,7 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DNOGUI
-AM_CXXFLAGS   =  -I. \
+AM_CFLAGS   =  -I. \
 		-I@HDF5@/include \
 		-I@HDF5I@ \
 		-I../phase -W 

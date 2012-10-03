@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <03 Oct 12 23:30:35 flechsig> 
+#  Time-stamp: <2012-10-03 23:45:00 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -76,9 +76,9 @@ AM_CXXFLAGS   =  -I. \
         -I@QTI@ \
 	-I@QWT@/include \
 	-I@QWTI@/ \
-        -I@HDFI@ \
-        -I@HDF5@/include \
 	-I../phase 
+
+AM_CFLAGS = -I@HDFI@ -I@HDF5@/include 
 
 ###-pipe -g -D_REENTRANT -Wall -W 
 #####-I@QT@/mkspecs/linux-g++       
