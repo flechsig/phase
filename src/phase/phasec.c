@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2012-09-19 13:59:39 flechsig>  */
+/*   Time-stamp: <2012-09-21 06:31:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -20,6 +20,7 @@
 #include <stdarg.h> 
 #include <unistd.h>
 
+/* workaround */
 #ifdef NOGUI
 #define QTGUI
 #endif

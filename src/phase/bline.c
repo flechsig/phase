@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-09-19 05:38:41 flechsig>  */
+/*   Time-stamp: <2012-09-21 06:29:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -19,6 +19,11 @@
 #include <stdlib.h> 	      	    	    	/* needed for fopen     */  
 #include <string.h>                           
 #include <math.h> 
+
+/* workaround */
+#ifdef NOGUI
+#define QTGUI
+#endif
 
 #include "cutils.h"   
 #include "phase_struct.h"
