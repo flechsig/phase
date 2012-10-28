@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <21 Jun 12 13:42:37 flechsig>  */
+/*   Time-stamp: <2012-10-28 14:39:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -15,7 +15,8 @@
 */ 
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+/*  #include <config.h> */
+   #include "../phase/config.h"
 #endif 
 
 #include <stdio.h>                    /* For printf and so on. */
