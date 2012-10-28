@@ -1,7 +1,7 @@
 dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
 #  Date      : <27 Sep 12 17:51:19 flechsig> 
-#  Time-stamp: <28 Sep 12 10:05:32 flechsig> 
+#  Time-stamp: <2012-10-28 14:53:46 flechsig> 
 
 #  $Source$ 
 #  $Date$
@@ -49,7 +49,7 @@ AC_DEFUN([MDL_HAVE_ROOT],
   AC_REQUIRE([AC_PROG_CXX])
   AC_REQUIRE([MDL_DL])
   AC_REQUIRE([MDL_GX_LIBS])
-  AC_CACHE_CHECK([for ROOT], mdl_cv_have_root,
+  AC_CACHE_CHECK([for ROOT], [mdl_cv_have_root],
   [
     # Be pessimistic at first.
     mdl_cv_have_root=no
