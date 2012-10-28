@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.h */
 /*  Date      : <04 Jan 08 14:04:24 flechsig>  */
-/*  Time-stamp: <02 Sep 11 17:35:40 flechsig>  */
+/*  Time-stamp: <2012-10-28 22:32:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,7 +31,9 @@ void GetResults(struct BeamlineType *, double *, double *, double *,
 		double *, double *, double *);
 
 /****** globale vars */
+#indef __cplusplus
 struct optistruct optistructure;                      /* globale Variablen */  
+#endif
 
 /********* FORTRAN calls ******************************************/
 /* in der CERN lib fuer LINUX werden werden FORTRAN Symbole mit einem 
