@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.h */
 /*  Date      : <04 Jan 08 14:04:24 flechsig>  */
-/*  Time-stamp: <2012-10-28 22:32:33 flechsig>  */
+/*  Time-stamp: <2012-10-28 22:35:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,7 +31,7 @@ void GetResults(struct BeamlineType *, double *, double *, double *,
 		double *, double *, double *);
 
 /****** globale vars */
-#indef __cplusplus
+#ifndef __cplusplus
 struct optistruct optistructure;                      /* globale Variablen */  
 #endif
 
