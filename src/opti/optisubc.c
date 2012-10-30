@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <19 Jul 12 13:47:12 flechsig>  */
+/*   Time-stamp: <30 Oct 12 14:21:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -454,19 +454,13 @@ void buildsystem(struct BeamlineType *bl)
   while (elcounter<= bl->elementzahl)
     { 
       bl->position=elcounter;         /* parameter fuer MakeMapandMatrix */
-      if ((listpt->ElementOK & mapOK) == 0)       /* map must be rebuild */
+      if ((listpt->ElementOK & mapOK & elementOK) == 0)       /* map must be rebuild */
 	{ 
-	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
-	    {
-	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 			 bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter-1));    
-	      listpt->ElementOK |= elementOK; 
-	    }
-	  
 	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
-	    
 	  MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1));
-	  listpt->ElementOK|= mapOK; 
+	  listpt->ElementOK|= (mapOK | elementOK); 
 	}
       if (listpt->MDat.Art != kEOESlit)
 	{
@@ -582,6 +576,7 @@ void GetRMS(struct BeamlineType *bl, char *ch, double *chi)
 	  for (i= 0; i< n; i++)
 	    {
 	      tmp= rays[i].y * rays[i].y + rays[i].z * rays[i].z;
+              printf( "%d %e %e\n", i, rays[i].y, rays[i].z);
 	      EX += sqrt(tmp);
 	      EX2+= tmp;
 	    }
@@ -592,8 +587,9 @@ void GetRMS(struct BeamlineType *bl, char *ch, double *chi)
       rms= sqrt(EX2- (EX * EX));
     } else rms= 0.0;
 #ifdef DEBUG 
-  fprintf(stderr, "%c->rms= %g, EX= %g, EX2= %g\n", *ch, rms, EX, EX2);
+  fprintf(stderr, "%c->rms= %g, EX= %g, EX2= %g, n= %d\n", *ch, rms, EX, EX2, n);
 #endif
+exit (-1);
   *chi= rms;
 } /* end GetRMS */
 
