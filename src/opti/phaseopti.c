@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/phaseopti.c */
 /*   Date      : <29 Oct 03 11:52:44 flechsig>  */
-/*   Time-stamp: <24 Jan 12 15:46:56 flechsig>  */
+/*   Time-stamp: <30 Oct 12 14:52:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -315,7 +315,7 @@ Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
    printf("optimization results in file:                 %s\n",  optistructure.resultfilename);
    printf("optimized beamline (phase input) in file:     %s\n",  optistructure.optiblfilename);
    printf("chi with original parameter set               %g\n",  chistart);
-   printf("(last) chi with parameter from minuit input:  %g\n",  optistructure.chistart);
+   printf("chi with parameter from minuit input:         %g\n",  optistructure.chistart);
    printf("(last) chi of optimized parameters:           %g\n",  optistructure.chistop);
    printf("(last) number of optimization calls:          %d\n",  optistructure.fcncall);
    exit(1); 
