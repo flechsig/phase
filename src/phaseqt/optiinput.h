@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.h */
 /*  Date      : <29 Jul 11 13:56:13 flechsig>  */
-/*  Time-stamp: <16 Aug 11 09:41:04 flechsig>  */
+/*  Time-stamp: <31 Oct 12 17:39:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -64,6 +64,8 @@ private:
     QLabel      *templateLabel;
     QLineEdit   *inputE;
     void fillElementList();
+    void fillInputs();
+    QMenu *optTargetMenu;
     QAction *focusAct;
     QAction *focusvAct;
     QAction *focushAct;

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <24 Jan 12 15:48:21 flechsig> 
+//  Time-stamp: <31 Oct 12 17:38:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -14,6 +14,8 @@
 
 #include <QtGui>
 #include "optiinput.h"
+
+using namespace std;
 
 // constructor
 //OptiInput::OptiInput(struct )
@@ -36,7 +38,7 @@ OptiInput::OptiInput(struct ElementType *list, unsigned int elementnumber,
   QHBoxLayout *targetLayout = new QHBoxLayout;
 
   QPushButton *optTargetButton = new QPushButton(tr("&optimization target"));
-  QMenu *optTargetMenu = new QMenu(this);
+  optTargetMenu = new QMenu(this);
   focusAct   = new QAction(tr("&Focus"), this);
   focusvAct  = new QAction(tr("Focus &vertical"), this);
   focushAct  = new QAction(tr("Focus &horizontal"), this);
@@ -189,6 +191,7 @@ OptiInput::OptiInput(struct ElementType *list, unsigned int elementnumber,
   myopresname= opresname;
 
   fillElementList();
+  fillInputs();
   optiInputBox->show();
   
   printf("OptiInput: constructor finished\n");
@@ -479,7 +482,7 @@ void OptiInput::selectInputSlot()
     case 0:  templateLabel->setText(QString(tr("template x: => index nx dx"))); break;
     case 1:  templateLabel->setText(QString(tr("template y: => index ny dy"))); break;
     default: 
-      templateLabel->setText(QString(tr("template => pindex 'name' p0 dp pmin pmax"))); 
+      templateLabel->setText(QString(tr("template => pindex 'name' p0 dp [pmin] [pmax]"))); 
       inputE->setText(buffer);
     }
 } // selectInputSlot()
@@ -514,7 +517,7 @@ void OptiInput::fillElementList()
   
   list= mylist;
   
-  printf("fillElementList with %d eleemnts\n", myelementnumber);
+  printf("fillElementList with %d elements\n", myelementnumber);
   
   for (ui= 0; ui < myelementnumber; ui++, list++)
     {
@@ -523,5 +526,82 @@ void OptiInput::fillElementList()
       optielementList->addItem(item);
     }
   
-}
+} // end fillElementList
+
+
+void OptiInput::fillInputs()
+{
+  struct optistruct os;
+  FILE *minfile;
+  char buffer[MaxPathLength], cmt[MaxPathLength];
+  QListWidgetItem *item;
+  int i, no, version;
+  double vstart, step, min, max;
+
+  cout << __FILE__ << " fillInputs called" << endl; 
+
+  getoptipickfile(&os, this->myoptipckname);
+
+  switch (os.methode)   /* set history */
+    {
+    case OptiY:     focusvActSlot();  break;
+    case OptiZ:     focushActSlot();  break;
+    case OptiRpY:   rpowervActSlot(); break;
+    case OptiRpZ:   rpowerhActSlot(); break;
+    case OptiFocus: focusSActSlot();  break;
+    case OptiTrans: transActSlot();   break;
+    case OptiCost:  costActSlot();    break;
+    case OptiR:     focusActSlot();   break;
+    default:        focusActSlot();   break;
+    }
+
+  item= inputList->item(0);
+  snprintf(buffer, MaxPathLength, "x : %d %d %g", os.xindex, os.xpoints, os.dx);
+  item->setText(buffer);
+  item= inputList->item(1);
+  snprintf(buffer, MaxPathLength, "y : %d %d %g", os.yindex, os.ypoints, os.dy);
+  item->setText(buffer);
+
+  // clear the rest of the list
+ 
+  while (inputList->count() > 2)
+    {
+      item= inputList->takeItem(inputList->count()-1);
+      if (item) 
+	delete item;
+    }
+
+  // parse minfile
+  if ((minfile= fopen(this->myminname, "r")) == NULL)
+    {
+      fprintf(stderr, "can't open file >>%s<< use defaults\n", this->myminname); 
+      return;
+    }
+
+  if( CheckFileHeader(minfile, "SET", &version) != 0) return;    // SET TITLE
+  if (fgets(buffer, MaxPathLength, minfile) == NULL) return;    // any title
+  if (fgets(buffer, MaxPathLength, minfile) == NULL) return;    // PARAMETERS
+  if (strncmp(buffer, "PARAMETERS", 10) != 0) return;
+  
+  for (i= 0; i < os.npars; i++)
+    {
+      vstart= step= min= max= 0.0;
+      if (fgets(buffer, MaxPathLength, minfile) == NULL) return;
+      sscanf(buffer, "%d %s %lf %lf %lf %lf", 
+	      &no, cmt, &vstart, &step, &min, &max);
+
+      item= new QListWidgetItem("pindex 'name' p0 dp pmin pmax");
+      if (fabs(min- max) < ZERO) 
+	snprintf(buffer, MaxPathLength, "%d %s %g %g", os.parindex[i], cmt, vstart, step);
+      else
+	snprintf(buffer, MaxPathLength, "%d %s %g %g %g %g" , os.parindex[i], cmt, vstart, step, min, max);
+
+      item->setText(buffer);
+      inputList->insertItem(inputList->count(), item);
+    }
+  fclose(minfile);
+} // fillInputs
+
+
+
 // end
