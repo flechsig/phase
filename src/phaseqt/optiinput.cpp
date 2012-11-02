@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <31 Oct 12 17:38:50 flechsig> 
+//  Time-stamp: <02 Nov 12 16:17:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -210,7 +210,7 @@ void OptiInput::applySlot()
   FILE *oppickfile, *minfile;
   char buffer[MaxPathLength];
   char *subzeile;
-  int i, k, index, methode, parameterzahl, version= 20110729;
+  int i, k, index, methode, parameterzahl, version= 20121102; //version= 20110729;
   
   printf("applySlot called\n");
 
@@ -232,57 +232,34 @@ void OptiInput::applySlot()
       fprintf(stderr, "error: open file >>%s<<\n", this->myoptipckname); 
       exit(-1);   
     }    
-  if ((minfile= fopen(this->myminname, "w+")) == NULL)
-    {
-      fprintf(stderr, "error: open file >>%s<<\n", this->myminname); 
-      exit(-1);
-    }
-
+  
   fprintf(oppickfile, "%s %d\n", OptiPickFileHeader, version);
-  fprintf(oppickfile, "%20d    Optimization methode\n", methode);
-  fprintf(oppickfile, "%s\n%s\n%s\n", 
-	   this->mybeamlinename, this->myminname, this->myopresname);
-  fprintf(minfile,                                     
-	  "SET TITLE\nFit with program \"PHASE\"\nPARAMETERS\n");
+  fprintf(oppickfile, "%d    Optimization methode\n", methode);
+  fprintf(oppickfile, "%s    beamline filename (input)\n",     this->mybeamlinename);
+  fprintf(oppickfile, "%s    optimization results (output)\n", this->myopresname);
+  fprintf(oppickfile, "# scan parameter\n");
+  fprintf(oppickfile, "# axis : index number delta\n");
 
   for (i= 0; i < 2; i++)  
     {
-      inputList->setCurrentRow(i);
-      strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
-      if (!buffer) return; 
-      subzeile= buffer; 
-      k= 0; 
-      while ((isdigit(*subzeile) == 0) && (k < 10)) 
-	{++subzeile; ++k;}  
-      if (k < 10) 
-	fprintf(oppickfile, "%s\n", subzeile); 
-      else     
-	fprintf(oppickfile, "0 0 0.0\n"); 
+      strncpy(buffer, inputList->item(i)->text().toAscii().data(), MaxPathLength);
+      fprintf(oppickfile, "%s\n", buffer);
     }
   
   parameterzahl= inputList->count()- 2;
-  fprintf(oppickfile, "%d\n", parameterzahl);
-  
+  fprintf(oppickfile, "%d   parameter number\n", parameterzahl);
+  fprintf(oppickfile, "# parameter list\n");
+  fprintf(oppickfile, "# index 'name' start step [min] [max]\n");
   for (i= 0; i < parameterzahl; i++)  
     {
       inputList->setCurrentRow(i+2);
       strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
-      if (!buffer) return;
-      sscanf(buffer, "%d", &index);
-      subzeile= buffer; k= 0;
-      while ((*subzeile != ' ') && (k < 10)) 
-	{++subzeile; ++k;}                      /* remove index */
-      ++subzeile; 
-      if (k < 10) 
-	fprintf(minfile, "%d %s\n", i+ 1, subzeile);  
-      else     
-	fprintf(minfile, "99 'error!'\n");  
-      fprintf(oppickfile, "%d\n", index);      /* index in pickfile */
+      fprintf(oppickfile, "%s\n", buffer);  
     }
-  fprintf(minfile, "\nMIGRAD\nRETURN\n");
+  fprintf(oppickfile, "# end\n");
   fclose(oppickfile); 
-  fclose(minfile);
-  printf("GetOptiBox: wrote files:\n  %s\n  %s\n", this->myoptipckname, this->myminname);
+ 
+  printf("GetOptiBox: wrote file:\n  %s\n", this->myoptipckname);
 } // end applySlot
 
 
@@ -462,25 +439,18 @@ void OptiInput::selectElementSlot()
 
 void OptiInput::selectInputSlot()
 {
-  char buffer[MaxPathLength], *ch;
+  char buffer[MaxPathLength];
   int parameternumber= inputList->currentRow();
   printf("selectinputSlot\n");
   if (parameternumber < 0) 
     return;
   strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
+  if (buffer != NULL) inputE->setText(buffer);
   
-  ch= strchr(buffer, ':');
-
-  if (ch != NULL) 
-    {
-      ++ch; ++ch;  // skip : and space
-      inputE->setText(ch);
-    }
-
   switch (parameternumber)
     {
-    case 0:  templateLabel->setText(QString(tr("template x: => index nx dx"))); break;
-    case 1:  templateLabel->setText(QString(tr("template y: => index ny dy"))); break;
+    case 0:  templateLabel->setText(QString(tr("template => x: index nx dx"))); break;
+    case 1:  templateLabel->setText(QString(tr("template => y: index ny dy"))); break;
     default: 
       templateLabel->setText(QString(tr("template => pindex 'name' p0 dp [pmin] [pmax]"))); 
       inputE->setText(buffer);
@@ -571,17 +541,7 @@ void OptiInput::fillInputs()
 	delete item;
     }
 
-  // parse minfile
-  if ((minfile= fopen(this->myminname, "r")) == NULL)
-    {
-      fprintf(stderr, "can't open file >>%s<< use defaults\n", this->myminname); 
-      return;
-    }
-
-  if( CheckFileHeader(minfile, "SET", &version) != 0) return;    // SET TITLE
-  if (fgets(buffer, MaxPathLength, minfile) == NULL) return;    // any title
-  if (fgets(buffer, MaxPathLength, minfile) == NULL) return;    // PARAMETERS
-  if (strncmp(buffer, "PARAMETERS", 10) != 0) return;
+  
   
   for (i= 0; i < os.npars; i++)
     {

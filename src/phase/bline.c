@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-09-21 06:29:44 flechsig>  */
+/*   Time-stamp: <02 Nov 12 16:47:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2264,6 +2264,87 @@ int SetFilePos(FILE *f, char *s)
 
 
 void getoptipickfile(struct optistruct *x, char *pickname)    
+/* rewrite Nov 2012 - give up compatibility */
+{                              
+  FILE *f;
+  int ii, *indexlist, version, index;
+  char buffer[MaxPathLength], buf;
+ 
+  if ((f= fopen(pickname, "r")) == NULL)
+    {
+      fprintf(stderr, "no file: %s - init optistruct with defaults\n", 
+	      pickname);
+      x->methode= OptiR;
+      x->npars  = x->xindex= x->yindex=  0;
+      x->dx= x->dy= 0.0;
+      x->xpoints= x->ypoints= 1;
+      snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
+      /*printf("%s %s\n", x->minuitfilename, x->resultfilename);*/
+      return;
+    }  
+  if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
+    {
+      printf("getoptipickfile: file version: %d\n", version);
+      if (version < 20121102)
+	{
+	  printf("error: obsolete file type- no automatic update available\n");
+	  printf("delete %s or update manually- exit()\n", pickname);
+	} 
+      fscanf(f, "%d %[^\n]s %c", &x->methode, buffer, &buf);
+      fscanf(f, "%s %[^\n]s %c", (char *)&x->beamlinefilename, buffer, &buf); 
+      fscanf(f, "%s %[^\n]s %c", (char *)&x->resultfilename, buffer, &buf);
+      fscanf(f, "%s %[^\n]s %c", buffer, &buf);
+      fscanf(f, "%s %[^\n]s %c", buffer, &buf);
+      fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
+      fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
+      fscanf(f, "%d\n", &x->npars); 
+      
+      x->parindex= XMALLOC(int, x->npars);
+      x->start=    XMALLOC(double, x->npars);
+      x->step=     XMALLOC(double, x->npars);
+      x->min=      XMALLOC(double, x->npars);
+      x->max=      XMALLOC(double, x->npars);
+
+      indexlist= x->parindex;  
+      for (ii= 0; ii< x->npars; ii++, indexlist++)
+	fscanf(f, "%d\n", indexlist);  
+      fclose(f); 
+      /* compatibility section */
+      if (version < 20110729)   /* here we changed the index to allow 7 order */
+	{
+	  beep(1);
+	  fprintf(stderr, "obsolete file version: %d\nwe try to do an automatic upgrade - but check the index carefully!\n", version);
+	  indexlist= x->parindex;  
+	  for (ii= 0; ii< x->npars; ii++, indexlist++)
+	    {
+	      if (*indexlist & 0x80) /* index of typ mtyp */
+		{
+		  index= *indexlist & 0x7f;
+		  if (index < 36)  /* direct coefficient index */ 
+		    {
+#ifdef SEVEN_ORDER
+		      beep(1);
+		      fprintf(stderr, "unresolvable index error: index_number: %d, index: %d\n", ii, *indexlist); 
+		      fprintf(stderr, "you run the SEVEN_ORDER version of the program and try to optimize a mirror coefficient \n");
+		      fprintf(stderr, "which has been defined with an old 4th order version\n");
+		      fprintf(stderr, "the file has to be updated manually- exit\n");
+		      exit(-1);
+#endif
+
+		    }
+		  else
+		    {
+		      *indexlist+= 45;
+		    }
+		}
+	    }
+	}
+    }
+  else 
+    exit(-1); 
+}
+
+void getoptipickfile_obsolete(struct optistruct *x, char *pickname)    
 /* modification: 17.12.2007 flechsig */
 {                              
   FILE *f;
