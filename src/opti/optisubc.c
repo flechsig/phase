@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <30 Oct 12 14:31:28 flechsig>  */
+/*   Time-stamp: <2012-11-03 19:31:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -50,44 +50,6 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
       mdat= &listpt->MDat; 
       switch (ipos)
 	{  
-#ifdef PRIOR_JUL2011
-	  /* UF 29.7.2011 um die optimierung fuer 7. ordnung tauglich zu machen muesste ich hier den bereich von 36 auf 81 schieben */
-	case 36:			/* r */
-	  mdat->rmi= *z;
-	  break;
-	case 37:			/* rp */
-	  mdat->rho= *z;
-	  break;
-	case 38:			/* 2w */
-	  mdat->w1= -0.5* *z;
-	  mdat->w2=  0.5* *z;
-	  break;
-	case 39:			/* 2l */
-	  mdat->l1= -0.5* *z;
-	  mdat->l2=  0.5* *z;
-	  break;
-	case 40:			/* slopew */
-	  mdat->slopew= *z;
-	  break;
-	case 41:			/* slopel */
-	  mdat->slopel= *z;
-	  break;
-	case 42:			/* rowland slits */
-	  /*  listpt->ElementOK |= mapOK | elementOK; */
-	  bl->ElementList[elnumber- 1].ElementOK &= (~mapOK); 
-	  bl->ElementList[elnumber- 1].ElementOK &= (~elementOK);
-	  bl->ElementList[elnumber+ 1].ElementOK &= (~mapOK); 
-	  bl->ElementList[elnumber+ 1].ElementOK &= (~elementOK);
-
-	  bl->ElementList[elnumber- 1].MDat.l1= -0.5* *z;
-	  bl->ElementList[elnumber- 1].MDat.l2=  0.5* *z;
-	  bl->ElementList[elnumber+ 1].MDat.l1= -0.5* *z;
-	  bl->ElementList[elnumber+ 1].MDat.l2=  0.5* *z;
-	  bl->ElementList[elnumber+ 1].MDat.w1= -0.5* *z;
-	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
-	  printf("insert rowland slits: %f\n", *z);
-	  break;
-#else      /* new version compatible to seven order */ 
 	case 81:			/* r */
 	  mdat->rmi= *z;
 	  break;
@@ -123,7 +85,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
 	  printf("insert rowland slits: %f\n", *z);
 	  break;
-#endif
+
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
@@ -294,30 +256,6 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
       mdat= &listpt->MDat; 
       switch (ipos)
 	{ 
-#ifdef PRIOR_JUL2011 
-	case 36:			/* r = 36 */
-	  *z= mdat->rmi;    
-	  break;  
-	case 37:			/* rp = 37 */
-	  *z= mdat->rho;  
-	  break;
-	case 38:			/* 2w */
-	  *z=  mdat->w2- mdat->w1;
-	  break;
-	case 39:			/* 2l */
-	  *z=  mdat->l2- mdat->l1;
-	  break;
-	case 40:			/* slopew */
-	  *z= mdat->slopew;
-	  break;
-	case 41:			/* slopel */
-	  *z= mdat->slopel;
-	  break;
-	case 42:			/* rowland slits */
-	  *z= bl->ElementList[elnumber- 1].MDat.l2- 
-	    bl->ElementList[elnumber- 1].MDat.l1;
-	  break;
-#else
 	case 81:			/* r = 36 */
 	  *z= mdat->rmi;    
 	  break;  
@@ -340,7 +278,7 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  *z= bl->ElementList[elnumber- 1].MDat.l2- 
 	    bl->ElementList[elnumber- 1].MDat.l1;
 	  break;
-#endif
+
 	default: 
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
@@ -444,11 +382,9 @@ void buildsystem(struct BeamlineType *bl)
 {
   int     elcounter, i, mdim;
   struct  ElementType *listpt;    
-#ifdef SEVEN_ORDER
+
   mdim= 330;
-#else
-  mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
-#endif
+
   elcounter= 1; 
   listpt= bl->ElementList; 
   while (elcounter<= bl->elementzahl)
