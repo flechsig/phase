@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-03 17:51:28 flechsig>  */
+/*   Time-stamp: <2012-11-03 17:57:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2268,7 +2268,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 {                              
   FILE *f;
   int i, *indexlist, version, index, l;
-  char buffer[MaxPathLength], *buf;
+  char buffer[MaxPathLength], buffer1[MaxPathLength], *buf;
 
   /* fill optistruct with defaults and clean up */
   x->methode= OptiR;
@@ -2327,7 +2327,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
       if (fgets(buf, l, f) == NULL) return; 
       x->min[i]= x->max[i]= 0.0;
       sscanf(buf, "%d %s %lg %lg %lg %lg", 
-	     &x->parindex[i], &x->parnames[i * 50], &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
+	     &x->parindex[i], buffer1, &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
+      strncpy(&x->parnames[i* 50], buffer1, 50);  /* use two step to avoid buffer overflow */
     }
 
   fclose(f); 
