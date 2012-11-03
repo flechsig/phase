@@ -1,7 +1,7 @@
 dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
 #  Date      : <27 Sep 12 17:51:19 flechsig> 
-#  Time-stamp: <2012-10-28 14:53:46 flechsig> 
+#  Time-stamp: <2012-11-04 00:33:23 flechsig> 
 
 #  $Source$ 
 #  $Date$
@@ -110,6 +110,10 @@ dnl The existence of the `rootcint' program is a requirement.
 
     done
 
+
+
+
+
     if test ! x"$ROOTCINT" = xno; then
 
 dnl The `root-config' script is handy if it is available.  This script
@@ -177,20 +181,7 @@ EOF
 
         LIBS="$ac_save_LIBS"
         CPPFLAGS="$ac_save_CPPFLAGS"
-
-        if test x"$mdl_cv_have_root" = xyes; then
-
-            ROOTSYS=$MDL_ROOTSYS
-            AC_SUBST(ROOTSYS)
-
-            # Inform all of the Makefiles where to find rootcint.
-            ROOTCINT='export ROOTSYS=$(ROOTSYS); $(ROOTSYS)/bin/rootcint'
-            AC_SUBST(ROOTCINT)
-
-            AC_SUBST(ROOT_CFLAGS)
-            AC_SUBST(ROOT_LIBS)
-            AC_SUBST(ROOT_GLIBS)
-        fi
+dnl UF move section to end
         rm -f conftest*
     fi
 
@@ -203,4 +194,19 @@ EOF
 
     have_root=$mdl_cv_have_root
   ])
+dnl uf moved section
+   if test x"$mdl_cv_have_root" = xyes; then
+
+            ROOTSYS=$MDL_ROOTSYS
+            AC_SUBST(ROOTSYS)
+
+            # Inform all of the Makefiles where to find rootcint.
+            ROOTCINT='export ROOTSYS=$(ROOTSYS); $(ROOTSYS)/bin/rootcint'
+            AC_SUBST(ROOTCINT)
+
+            AC_SUBST(ROOT_CFLAGS)
+            AC_SUBST(ROOT_LIBS)
+            AC_SUBST(ROOT_GLIBS)
+        fi
+     
 ])
