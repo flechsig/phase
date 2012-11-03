@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-03 18:49:39 flechsig>  */
+/*   Time-stamp: <2012-11-03 19:10:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2330,7 +2330,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
 	     &x->parindex[i], buffer1, &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
       strncpy(&x->parnames[i* 50], buffer1, 50);  /* use two step to avoid buffer overflow */
       x->parnames[i* 50 + 49]= '\0'; /* make sure string  ends with \0 */
-      printf("@@@@@@@@@@@@ buffer: %s\nbuffer1: %s\nparnames: %s\nparnames[%d]: %s\n", buffer, buffer1, x->parnames, i, &x->parnames[i*50]);
+      /*     printf("@@@@@@@@@@@@ buffer: %s\nbuffer1: %s\nparnames: %s\nparnames[%d]: %s\n", buffer, buffer1, x->parnames, i, &x->parnames[i*50]);*/
     }
 
   fclose(f); 
