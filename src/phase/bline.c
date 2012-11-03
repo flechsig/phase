@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-03 17:47:47 flechsig>  */
+/*   Time-stamp: <2012-11-03 17:51:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2320,14 +2320,14 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   x->step=     XMALLOC(double, x->npars);
   x->min=      XMALLOC(double, x->npars);
   x->max=      XMALLOC(double, x->npars);
-  x->parnames= (char **)XMALLOC(char, x->npars * 50);
+  x->parnames= XMALLOC(char, x->npars * 50);
        
   for (i= 0; i< x->npars; i++)
     {
       if (fgets(buf, l, f) == NULL) return; 
       x->min[i]= x->max[i]= 0.0;
       sscanf(buf, "%d %s %lg %lg %lg %lg", 
-	     &x->parindex[i], &x->parnames[i], &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
+	     &x->parindex[i], &x->parnames[i * 50], &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
     }
 
   fclose(f); 

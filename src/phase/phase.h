@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2012-11-03 17:42:08 flechsig>  */
+/*   Time-stamp: <2012-11-03 17:50:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -696,7 +696,7 @@ struct optistruct
     minuitfilename[MaxPathLength],  
     resultfilename[MaxPathLength],
     optiblfilename[MaxPathLength], 
-    **parnames;    
+    *parnames;    
   FILE 	 *filepointer;
 };  
 
