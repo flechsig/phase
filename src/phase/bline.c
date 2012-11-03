@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Nov 12 16:47:16 flechsig>  */
+/*   Time-stamp: <2012-11-03 17:39:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2262,87 +2262,76 @@ int SetFilePos(FILE *f, char *s)
   return rcode;
 } /* end SetFilePos */
 
-
+/* reads the optimization file into the optistruct */
+/* complete rewrite Nov 2012 - give up compatibility */
 void getoptipickfile(struct optistruct *x, char *pickname)    
-/* rewrite Nov 2012 - give up compatibility */
 {                              
   FILE *f;
-  int ii, *indexlist, version, index;
-  char buffer[MaxPathLength], buf;
- 
+  int ii, *indexlist, version, index, l;
+  char buffer[MaxPathLength], *buf;
+
+  /* fill optistruct with defaults and clean up */
+  x->methode= OptiR;
+  x->npars  = x->xindex= x->yindex=  0;
+  x->dx= x->dy= 0.0;
+  x->xpoints= x->ypoints= 1;
+  snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
+  if (start != NULL) XFREE(start);
+  if (step  != NULL) XFREE(step);
+  if (min   != NULL) XFREE(min);
+  if (max   != NULL) XFREE(max);
+  if (parindex != NULL) XFREE(parindex);
+  if (parnames != NULL) XFREE(parnames);
+
   if ((f= fopen(pickname, "r")) == NULL)
     {
-      fprintf(stderr, "no file: %s - init optistruct with defaults\n", 
-	      pickname);
-      x->methode= OptiR;
-      x->npars  = x->xindex= x->yindex=  0;
-      x->dx= x->dy= 0.0;
-      x->xpoints= x->ypoints= 1;
-      snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
-      /*printf("%s %s\n", x->minuitfilename, x->resultfilename);*/
+      fprintf(stderr, "no file: %s - init optistruct with defaults\n", pickname);
       return;
     }  
-  if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
+
+  if( CheckFileHeader(f, OptiPickFileHeader, &version) != 0)
     {
-      printf("getoptipickfile: file version: %d\n", version);
-      if (version < 20121102)
-	{
-	  printf("error: obsolete file type- no automatic update available\n");
-	  printf("delete %s or update manually- exit()\n", pickname);
-	} 
-      fscanf(f, "%d %[^\n]s %c", &x->methode, buffer, &buf);
-      fscanf(f, "%s %[^\n]s %c", (char *)&x->beamlinefilename, buffer, &buf); 
-      fscanf(f, "%s %[^\n]s %c", (char *)&x->resultfilename, buffer, &buf);
-      fscanf(f, "%s %[^\n]s %c", buffer, &buf);
-      fscanf(f, "%s %[^\n]s %c", buffer, &buf);
-      fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
-      fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
-      fscanf(f, "%d\n", &x->npars); 
-      
-      x->parindex= XMALLOC(int, x->npars);
-      x->start=    XMALLOC(double, x->npars);
-      x->step=     XMALLOC(double, x->npars);
-      x->min=      XMALLOC(double, x->npars);
-      x->max=      XMALLOC(double, x->npars);
-
-      indexlist= x->parindex;  
-      for (ii= 0; ii< x->npars; ii++, indexlist++)
-	fscanf(f, "%d\n", indexlist);  
-      fclose(f); 
-      /* compatibility section */
-      if (version < 20110729)   /* here we changed the index to allow 7 order */
-	{
-	  beep(1);
-	  fprintf(stderr, "obsolete file version: %d\nwe try to do an automatic upgrade - but check the index carefully!\n", version);
-	  indexlist= x->parindex;  
-	  for (ii= 0; ii< x->npars; ii++, indexlist++)
-	    {
-	      if (*indexlist & 0x80) /* index of typ mtyp */
-		{
-		  index= *indexlist & 0x7f;
-		  if (index < 36)  /* direct coefficient index */ 
-		    {
-#ifdef SEVEN_ORDER
-		      beep(1);
-		      fprintf(stderr, "unresolvable index error: index_number: %d, index: %d\n", ii, *indexlist); 
-		      fprintf(stderr, "you run the SEVEN_ORDER version of the program and try to optimize a mirror coefficient \n");
-		      fprintf(stderr, "which has been defined with an old 4th order version\n");
-		      fprintf(stderr, "the file has to be updated manually- exit\n");
-		      exit(-1);
-#endif
-
-		    }
-		  else
-		    {
-		      *indexlist+= 45;
-		    }
-		}
-	    }
-	}
+      fprintf(stderr, "error: file: %s has not the right file header (required is: %s)- exit()\n", pickname, OptiPickFileHeader);
+      exit(-1);
     }
-  else 
-    exit(-1); 
-}
+
+  printf("getoptipickfile: file version: %d\n", version);
+  if (version < 20121102)
+    {
+      printf("error: obsolete file version- no automatic update available\n");
+      printf("delete %s or update manually- exit()\n", pickname);
+      exit(-1);
+    } 
+  
+  l= MaxPathLength;   buf= buffer; /* to save space in the code */
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%d", &x->methode);
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%s", (char *)&x->beamlinefilename); 
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%s", (char *)&x->resultfilename);
+  if (fgets(buf, l, f) == NULL) return;
+  if (fgets(buf, l, f) == NULL) return;
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "x : %d %d %lf", &x->xindex, &x->xpoints, &x->dx); 
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "y : %d %d %lf", &x->yindex, &x->ypoints, &x->dy);
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%d", &x->npars);  
+  if (fgets(buf, l, f) == NULL) return;
+  if (fgets(buf, l, f) == NULL) return;
+    
+  x->parindex= XMALLOC(int,    x->npars);  /* allocate fresh memory */
+  x->start=    XMALLOC(double, x->npars);
+  x->step=     XMALLOC(double, x->npars);
+  x->min=      XMALLOC(double, x->npars);
+  x->max=      XMALLOC(double, x->npars);
+  x->parnames= XMALLOC(char, x->npars * 50);
+       
+  for (ii= 0; ii< x->npars; ii++)
+    {
+      if (fgets(buf, l, f) == NULL) return; 
+      x->min[i]= x->max[i]= 0.0;
+      sscanf(buf, "%d %s %lg %lg %lg %lg", 
+	     &x->parindex[i], &x->parnames[i], &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
+    }
+
+  fclose(f); 
+} /* end getoptipickfile */
 
 void getoptipickfile_obsolete(struct optistruct *x, char *pickname)    
 /* modification: 17.12.2007 flechsig */
