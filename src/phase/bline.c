@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-03 18:02:21 flechsig>  */
+/*   Time-stamp: <2012-11-03 18:02:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2344,8 +2344,7 @@ void getoptipickfile_obsolete(struct optistruct *x, char *pickname)
  
   if ((f= fopen(pickname, "r")) == NULL)
     {
-      fprintf(stderr, "no file: %s - init optistruct with defaults\n", 
-	      pickname);
+      fprintf(stderr, "no file: %s - init optistruct with defaults\n", pickname);
       x->methode= OptiR;
       x->npars  = x->xindex= x->yindex=  0;
       x->dx= x->dy= 0.0;
