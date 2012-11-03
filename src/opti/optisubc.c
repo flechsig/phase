@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <2012-11-03 19:31:04 flechsig>  */
+/*   Time-stamp: <2012-11-03 19:31:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -14,7 +14,6 @@
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif 
-
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
