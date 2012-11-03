@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-03 17:57:43 flechsig>  */
+/*   Time-stamp: <2012-11-03 18:02:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2332,6 +2332,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
     }
 
   fclose(f); 
+  printf("getoptipickfile finished, %d parameter(s) to optimize\n", x->npars);
 } /* end getoptipickfile */
 
 void getoptipickfile_obsolete(struct optistruct *x, char *pickname)    
