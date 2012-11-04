@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <2012-11-03 19:31:48 flechsig>  */
+/*   Time-stamp: <2012-11-04 15:13:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,9 +24,52 @@
 #include "../phase/phase_struct.h"
 #include "../phase/phase.h"
 #include "../phase/rtrace.h"
-#include "phaseopti.h"     
+#include "optisub.h"     
 
-   
+
+/* abgespecktes (schnelles) buildbeamline  */
+/* baut beamline und extrahiert map        */
+void buildsystem(struct BeamlineType *bl) 
+{
+  int     elcounter, i, mdim;
+  struct  ElementType *listpt;    
+
+  mdim= 330;
+
+  elcounter= 1; 
+  listpt= bl->ElementList; 
+  while (elcounter<= bl->elementzahl)
+    { 
+      bl->position=elcounter;         /* parameter fuer MakeMapandMatrix */
+      if ((listpt->ElementOK & mapOK & elementOK) == 0)       /* map must be rebuild */
+	{ 
+	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
+			 bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter-1));    
+	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
+	  MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1));
+	  listpt->ElementOK|= (mapOK | elementOK); 
+	}
+      if (listpt->MDat.Art != kEOESlit)
+	{
+	  if (elcounter == 1)
+	    memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
+	  else		                          /* bline zusammenbauen */
+	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI, &bl->BLOptions.ifl.iord);  
+            /* A= B* A */
+      	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
+	} 
+      elcounter++; listpt++; 
+    } /* Schleife ueber alle Elemente fertig */
+ 
+  extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	     &bl->BLOptions.ifl.iord); 
+   bl->beamlineOK |= mapOK;
+  /* bline ist fertig, map ist erzeugt */
+} /* end buildsystem */
+
+/*                                                           */
+/* change one value in beamline structure addressed by index */
+/*                                                           */   
 void in_struct(struct BeamlineType* bl, double *z, int index)
 {
   int elnumber, mtype, ipos;  
@@ -235,6 +278,9 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
     }
 } /* end in_struct */
 
+/*                                                              */
+/* returns one value from beamline structure addressed by index */
+/*                                                              */  
 double out_struct(struct BeamlineType  *bl, double *z, int index)    
 {
   int elnumber, mtype, ipos;
@@ -371,49 +417,8 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  }          
       }
   return *z;
-}     /* end outstruct */
+}     /* end out_struct */
 
-void buildsystem(struct BeamlineType *bl) 
-
-/* abgespecktes (schnelles) buildbeamline  */
-/* baut beamline und extrahiert map        */
-
-{
-  int     elcounter, i, mdim;
-  struct  ElementType *listpt;    
-
-  mdim= 330;
-
-  elcounter= 1; 
-  listpt= bl->ElementList; 
-  while (elcounter<= bl->elementzahl)
-    { 
-      bl->position=elcounter;         /* parameter fuer MakeMapandMatrix */
-      if ((listpt->ElementOK & mapOK & elementOK) == 0)       /* map must be rebuild */
-	{ 
-	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-			 bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter-1));    
-	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
-	  MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1));
-	  listpt->ElementOK|= (mapOK | elementOK); 
-	}
-      if (listpt->MDat.Art != kEOESlit)
-	{
-	  if (elcounter == 1)
-	    memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
-	  else		                          /* bline zusammenbauen */
-	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI, &bl->BLOptions.ifl.iord);  
-            /* A= B* A */
-      	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
-	} 
-      elcounter++; listpt++; 
-    } /* Schleife ueber alle Elemente fertig */
- 
-  extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	     &bl->BLOptions.ifl.iord); 
-   bl->beamlineOK |= mapOK;
-  /* bline ist fertig, map ist erzeugt */
-} /* end buildsystem */
 
 void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
 {
@@ -595,7 +600,7 @@ void FullRTOpti(double *chi, struct BeamlineType *bl)
 void RTOpti(double *chi, struct BeamlineType *bl, char *ch)
 {
   printf("************ RTOpti with target: %c ***********\n", *ch);
-  RayTracec(&Beamline);
-  GetFWHM(&Beamline, ch, chi);
+  RayTracec(bl);
+  GetFWHM(bl, ch, chi);
 } /* end RTOpti */
 /* end optisubc.c */
