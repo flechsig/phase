@@ -1,0 +1,40 @@
+/*          Der Index     
+
+!!! JUL 2011 anederung des index fuer 7 order !!! 
+
+     index= (elnumber << 8) & ((mtype & 1) << 7) & (ipos & 0x7f);    
+     oder
+     elnumber= index >> 8;       oberes byte
+     mtype   = index & 0x80;     128 wenn Spiegel
+     ipos    = index & 0x7f;
+     index == 0 : theta in grad;
+     index == 1 : CL mit eingangsarm variabel
+     index == 2 : CL mit austrittsarm variabel
+     index == 3 : energy in ev (1240 / m * lambda) 
+     index == 4 : Quellabstand
+     index == 5 : Bildabstand
+     index == 6 : linien/mm
+     index == 7,8,9,10 : variable lieniendicht
+     index == 11 : lambda   
+     index == 12 : theta am CLRCM bei BESSY I dy= 43 mm   
+     index == 13 : clvar mit festem r1   
+     index == 14 : sgm-vodar theta r2 ist fest (nicht universell!! )
+     index == 15 : cff constant
+     index == 16 : Energiescan mit cff constant
+     index == 17 : cl r2 fest
+     index == 18 : STXM special M1- S1
+     index == 19 : STXM special S1-S2
+
+
+     index == 128: elementparameter
+     index == 256: elementnummer
+     index= 128+ i+ 6j
+     index= 128+ 36 : r
+     index= 128+ 37 : rho
+     index= 128+ 38 : 2w
+     index= 128+ 39 : 2l
+     index= 128+ 40 : slopew
+     index= 128+ 41 : slopel
+     index= 128+ 42 : STXM slits
+     
+*/

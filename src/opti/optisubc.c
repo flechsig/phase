@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <2012-11-04 15:13:47 flechsig>  */
+/*   Time-stamp: <2012-11-04 15:18:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,7 +24,7 @@
 #include "../phase/phase_struct.h"
 #include "../phase/phase.h"
 #include "../phase/rtrace.h"
-#include "optisub.h"     
+#include "../opti/optisub.h"     
 
 
 /* abgespecktes (schnelles) buildbeamline  */
@@ -588,10 +588,10 @@ void FullRTOpti(double *chi, struct BeamlineType *bl)
   double transmittance;
   
   printf("************ FullRTOpti ************\n");
-  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-  RayTraceFull(&Beamline);
-  transmittance= (double)Beamline.RESULT.points1/
-    (double)Beamline.RTSource.raynumber;
+  ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
+  RayTraceFull(bl);
+  transmittance= (double)bl->RESULT.points1/
+    (double)bl->RTSource.raynumber;
   *chi= 1.0- transmittance;
 } /* end FullRTOpti */
 
