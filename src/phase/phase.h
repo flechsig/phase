@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2012-11-03 17:50:14 flechsig>  */
+/*   Time-stamp: <2012-11-04 15:11:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -724,7 +724,7 @@ struct PHASEset PHASESet;
 struct datset Fg3ActDat, Fg3DefDat;  
 struct gdatset GActDat,   GDefDat;  
 struct mdatset MActDat,   MDefDat;  
-struct BeamlineType Beamline;
+/*struct BeamlineType Beamline;*/
 #endif
 
 /*struct optistruct optistructure; */ 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <2012-10-28 14:39:32 flechsig>  */
+/*   Time-stamp: <2012-11-04 16:37:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -54,7 +54,10 @@
      index= 128+ 1: r
      index= 128+ 11: rho
 */
-  
+
+// global vars
+struct BeamlineType Beamline;
+struct optistruct optistructure;                      /* globale Variablen */  
 const char *global_rundir;
 
 /* Prototype */
