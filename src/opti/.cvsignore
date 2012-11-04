@@ -3,5 +3,6 @@ Makefile
 *.cpp
 .*
 phaseopti
-opt_root_example
+opti_root_example
+stamp-h3
 
