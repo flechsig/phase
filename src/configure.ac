@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <28 Sep 12 14:22:15 flechsig> 
+dnl   Time-stamp: <2012-11-04 17:50:44 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -151,40 +151,6 @@ AM_CONDITIONAL([WANT_ABSOFT],   [test x"$wantabsoft"   = xtrue])
 AM_CONDITIONAL([WANT_PORTLAND], [test x"$wantportland" = xtrue])  
 dnl end fortran specials
 
-dnl ****************** CERN **************************
-dnl check for cernlib 
-cernliblist="-lpawlib -lpacklib -lgraflib -lgrafX11 -lpacklib -lmathlib -lkernlib"
-AC_ARG_WITH([cernlib],
-  AS_HELP_STRING([--with-cernlib=DIR],[path to CERN libraries or --without-cernlib]),
-  dnl option given action
-  [ echo "found cernlib option: ${with_cernlib}"
-    cernlib=${with_cernlib}
-    if test "${cernlib}" = "no"; then
-       echo "do not use cernlib"
-    else
-    dnl   echo "do use cernlib"
-    dnl check if we find the libpacklib.a there
-    AC_CHECK_FILE([${cernlib}/libpacklib.a], 
-      AC_SUBST(CERNLIBS,["-L${cernlib} ${cernliblist}"]), 
-      AC_MSG_ERROR(cannot find a CERN lib))
-      fi
-  ],
-  [ dnl cernlib is not given- we do a search
-    dnl we search for paw and expect the cernlib there
-    AC_MSG_NOTICE(search for CERN lib by searching for paw)
-    dnl call a script which determines the absolute path of a 
-    dnl program without symbolic links
-    cernlib=`bin/apps_home.sh paw | sed -e 's/bin/lib/'`
-    AC_MSG_NOTICE((1) we search the CERN lib at ${cernlib})
-    dnl check if we find the libpacklib.a there 
-    AC_CHECK_FILE([${cernlib}/libpacklib.a], 
-    AC_SUBST(CERNLIBS,["-L${cernlib} ${cernliblist}"]), 
-    [ cernlib=`echo ${cernlib} | sed -e 's|lib|apps/cern/2003/lib|'`
-      AC_MSG_NOTICE((2) we search the CERN lib at ${cernlib})
-      AC_CHECK_FILE([${cernlib}/libpacklib.a], 
-      AC_SUBST(CERNLIBS,["-L${cernlib} ${cernliblist}"]), 
-      AC_MSG_ERROR(cannot find a CERN lib))])])
-dnl end cern lib
 
 dnl ***************** PO SOURCE MAX GRIDSIZE ***********
 AC_ARG_WITH([gridsize],
@@ -529,10 +495,10 @@ dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
 dnl output files 
 AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
-          opti/Makefile extr/Makefile gui/Makefile \
+          opti/Makefile extr/Makefile  \
 	  phaselib/Makefile phaseidl/Makefile \
 	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile phasesrv/Makefile opti_root/Makefile ])
+	  idlphase/Makefile phasesrv/Makefile ])
 AC_OUTPUT
 
 dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
@@ -562,7 +528,6 @@ echo "phaselib                 : ${LIBPHASE}"
 echo "enable_phaselib          : ${enable_PHASELIB}"
 dnl echo "LINK_LIBPHASE   : ${LINK_LIBPHASE} "
 echo "debug code               : ${enable_debug}"
-echo "cernlib:                 : ${cernlib}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "OpenMP:                  : ${enable_OPENMP}"
