@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <2012-11-04 16:37:51 flechsig>  */
+/*   Time-stamp: <2012-11-04 18:13:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -28,7 +28,8 @@
 #include "../phase/cutils.h"  
 #include "../phase/phase_struct.h"
 #include "../phase/phase.h"
-#include "../opti/phaseopti.h" 
+#include "../opti/optisubc.h" 
+#include "cost.h"
 
 /*          Der Index     
 
@@ -184,9 +185,7 @@ int main(argc, argv)
 		printf("OptiFocus (methode %d) not used in phaseextract\n", optistructure.methode);
 		break;
 	      case OptiCost:
-		Get_dydz_fromSource(&Beamline, &dy, &dz);
-		costfor(&rfwhm, &Beamline.ypc1, &Beamline.zpc1, &Beamline.dypc, 
-			&Beamline.dzpc, &dy, &dz, &Beamline.deltalambdafactor);
+		rfwhm= cost(&Beamline);
 		yfwhm= zfwhm= rpy= rpz= transmittance= 0.0;
 		break;
 	      default:
