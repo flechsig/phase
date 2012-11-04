@@ -3,4 +3,5 @@ Makefile
 *.cpp
 .*
 phaseopti
-phaseoptilib
+opt_root_example
+
