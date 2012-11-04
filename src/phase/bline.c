@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-03 19:10:49 flechsig>  */
+/*   Time-stamp: <2012-11-04 16:40:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1858,7 +1858,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	       {
 		 fscanf(f, "%s %[^\n]s %c", (char *)&fp->filename, buffer, &buf);
 #ifndef QTGUI
-		 strncpy(Beamline.filenames.sourceraysname, fp->filename, MaxPathLength);
+		 strncpy(bl->filenames.sourceraysname, fp->filename, MaxPathLength);
 #endif
 	       }
 	     break;
