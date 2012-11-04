@@ -5,4 +5,6 @@ Makefile
 phaseopti
 opti_root_example
 stamp-h3
+*.f90
+*.mod
 
