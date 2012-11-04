@@ -1,6 +1,5 @@
 Makefile.in
 Makefile
-*.cpp
 .*
 phaseopti
 opti_root_example

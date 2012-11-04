@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <2012-11-04 15:18:09 flechsig>  */
+/*   Time-stamp: <2012-11-04 17:41:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,7 +24,7 @@
 #include "../phase/phase_struct.h"
 #include "../phase/phase.h"
 #include "../phase/rtrace.h"
-#include "../opti/optisub.h"     
+#include "../opti/optisubc.h"     
 
 
 /* abgespecktes (schnelles) buildbeamline  */
