@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2012-11-04 22:40:30 flechsig> 
+#  Time-stamp: <2012-11-04 22:41:18 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -52,5 +52,5 @@ AM_LDFLAGS = @MOTIFLIBS@ $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -ln
 ## we use the c linker also for fortran
 F77LINK = $(LINK)
 
-CLEANFILES = *.f90 *.moc
+CLEANFILES = *.f90 *.mod
 # end
