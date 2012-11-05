@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <2012-11-04 18:13:27 flechsig>  */
+/*   Time-stamp: <05 Nov 12 16:57:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -204,7 +204,15 @@ int main(argc, argv)
       ay+= optistructure.dy;  
        
     }
-  free(optistructure.parindex);
+  
+// clean up
+  if (optistructure.start != NULL)    XFREE(optistructure.start);
+  if (optistructure.step  != NULL)    XFREE(optistructure.step);
+  if (optistructure.min   != NULL)    XFREE(optistructure.min);
+  if (optistructure.max   != NULL)    XFREE(optistructure.max);
+  if (optistructure.parindex != NULL) XFREE(optistructure.parindex);
+  if (optistructure.parnames != NULL) XFREE(optistructure.parnames);
+
   fprintf(optistructure.filepointer,
 	  "################################# end ###################################\n");
   fclose(optistructure.filepointer);
@@ -248,6 +256,8 @@ void GetResults(struct BeamlineType *bl, double *rfwhm, double *yfwhm, double *z
   *trans= (double)bl->RESULT.points1/
     (double)bl->RTSource.raynumber;
   *trans= 1.0- *trans;
+
+   
 }
 
 /* end main */

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <05 Nov 12 10:13:41 flechsig> 
+//  Time-stamp: <05 Nov 12 16:51:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -32,7 +32,6 @@ OptiInput::OptiInput(struct ElementType *list, unsigned int elementnumber,
   
   filesLayout->addWidget(outputfileLabel); 
   
-
   QGroupBox   *targetGroup  = new QGroupBox(tr("Target"));
   QHBoxLayout *targetLayout = new QHBoxLayout;
 
@@ -501,13 +500,11 @@ void OptiInput::fillElementList()
 void OptiInput::fillInputs()
 {
   struct optistruct os;
-  FILE *minfile;
-  char buffer[MaxPathLength], cmt[MaxPathLength];
+  char buffer[MaxPathLength];
   QListWidgetItem *item;
   int i, no, version;
-  double vstart, step, min, max;
-
-  cout << __FILE__ << " fillInputs called" << endl; 
+  
+  cout << __FILE__ << " fillInputs called- read file: " << this->myoptipckname << endl; 
 
   getoptipickfile(&os, this->myoptipckname);
 
@@ -540,25 +537,26 @@ void OptiInput::fillInputs()
 	delete item;
     }
 
-  
-  
   for (i= 0; i < os.npars; i++)
     {
-      vstart= step= min= max= 0.0;
-      if (fgets(buffer, MaxPathLength, minfile) == NULL) return;
-      sscanf(buffer, "%d %s %lf %lf %lf %lf", 
-	      &no, cmt, &vstart, &step, &min, &max);
-
       item= new QListWidgetItem("pindex 'name' p0 dp pmin pmax");
-      if (fabs(min- max) < ZERO) 
-	snprintf(buffer, MaxPathLength, "%d %s %g %g", os.parindex[i], cmt, vstart, step);
+      if (fabs(os.min[i]- os.max[i]) < ZERO) 
+	snprintf(buffer, MaxPathLength, "%d %s %g %g", os.parindex[i], &os.parnames[i * 50], os.start[i], os.step[i]);
       else
-	snprintf(buffer, MaxPathLength, "%d %s %g %g %g %g" , os.parindex[i], cmt, vstart, step, min, max);
+	snprintf(buffer, MaxPathLength, "%d %s %g %g", os.parindex[i], &os.parnames[i * 50], os.start[i], os.step[i], os.min[i], os.max[i]);
 
       item->setText(buffer);
       inputList->insertItem(inputList->count(), item);
     }
-  fclose(minfile);
+
+  // clean up
+  if (os.start != NULL)    XFREE(os.start);
+  if (os.step  != NULL)    XFREE(os.step);
+  if (os.min   != NULL)    XFREE(os.min);
+  if (os.max   != NULL)    XFREE(os.max);
+  if (os.parindex != NULL) XFREE(os.parindex);
+  if (os.parnames != NULL) XFREE(os.parnames);
+  
 } // fillInputs
 
 

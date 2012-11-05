@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti_root/opti_root.cpp
 //  Date      : <28 Sep 12 14:29:13 flechsig> 
-//  Time-stamp: <2012-11-04 17:01:46 flechsig> 
+//  Time-stamp: <05 Nov 12 16:55:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -257,6 +257,15 @@ int main(int argc, char *argv[])
   printf("(last) chi with parameter from minuit input:  %g\n",  os->chistart);
   printf("(last) chi of optimized parameters:           %g\n",  os->chistop);
   printf("(last) number of optimization calls:          %d\n",  os->fcncall);
+
+  // clean up memory
+  if (os->start != NULL)    XFREE(os->start);
+  if (os->step  != NULL)    XFREE(os->step);
+  if (os->min   != NULL)    XFREE(os->min);
+  if (os->max   != NULL)    XFREE(os->max);
+  if (os->parindex != NULL) XFREE(os->parindex);
+  if (os->parnames != NULL) XFREE(os->parnames);
+
   exit(1); 
 }
 // end main

@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <05 Nov 12 09:59:17 flechsig>  */
+/*   Time-stamp: <05 Nov 12 16:52:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2266,6 +2266,7 @@ int SetFilePos(FILE *f, char *s)
 
 /* reads the optimization file into the optistruct */
 /* complete rewrite Nov 2012 - give up compatibility */
+/* !!! it allocates the optistruct - you must clean it afterwards */
 void getoptipickfile(struct optistruct *x, char *pickname)    
 {                              
   FILE *f;
@@ -2278,13 +2279,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   x->dx= x->dy= 0.0;
   x->xpoints= x->ypoints= 1;
   snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
-  if (x->start != NULL) XFREE(x->start);
-  if (x->step  != NULL) XFREE(x->step);
-  if (x->min   != NULL) XFREE(x->min);
-  if (x->max   != NULL) XFREE(x->max);
-  if (x->parindex != NULL) XFREE(x->parindex);
-  if (x->parnames != NULL) XFREE(x->parnames);
-
+  
   if ((f= fopen(pickname, "r")) == NULL)
     {
       fprintf(stderr, "no file: %s - init optistruct with defaults\n", pickname);
