@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <05 Nov 12 16:51:21 flechsig> 
+//  Time-stamp: <05 Nov 12 17:00:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -550,12 +550,12 @@ void OptiInput::fillInputs()
     }
 
   // clean up
-  if (os.start != NULL)    XFREE(os.start);
-  if (os.step  != NULL)    XFREE(os.step);
-  if (os.min   != NULL)    XFREE(os.min);
-  if (os.max   != NULL)    XFREE(os.max);
-  if (os.parindex != NULL) XFREE(os.parindex);
-  if (os.parnames != NULL) XFREE(os.parnames);
+  XFREE(os.start);
+  XFREE(os.step);
+  XFREE(os.min);
+  XFREE(os.max);
+  XFREE(os.parindex);
+  XFREE(os.parnames);
   
 } // fillInputs
 

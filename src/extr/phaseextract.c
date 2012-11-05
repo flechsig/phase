@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <05 Nov 12 16:57:14 flechsig>  */
+/*   Time-stamp: <05 Nov 12 17:02:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -25,11 +25,12 @@
 #include <math.h>
 #include <time.h>
 
-#include "../phase/cutils.h"  
-#include "../phase/phase_struct.h"
-#include "../phase/phase.h"
+#include "cutils.h"  
+#include "phase_struct.h"
+#include "phase.h"
 #include "../opti/optisubc.h" 
 #include "cost.h"
+#include "common.h"
 
 /*          Der Index     
 
@@ -206,12 +207,12 @@ int main(argc, argv)
     }
   
 // clean up
-  if (optistructure.start != NULL)    XFREE(optistructure.start);
-  if (optistructure.step  != NULL)    XFREE(optistructure.step);
-  if (optistructure.min   != NULL)    XFREE(optistructure.min);
-  if (optistructure.max   != NULL)    XFREE(optistructure.max);
-  if (optistructure.parindex != NULL) XFREE(optistructure.parindex);
-  if (optistructure.parnames != NULL) XFREE(optistructure.parnames);
+  XFREE(optistructure.start);
+  XFREE(optistructure.step);
+  XFREE(optistructure.min);
+  XFREE(optistructure.max);
+  XFREE(optistructure.parindex);
+  XFREE(optistructure.parnames);
 
   fprintf(optistructure.filepointer,
 	  "################################# end ###################################\n");
