@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <05 Nov 12 17:58:03 flechsig>  */
+/*   Time-stamp: <05 Nov 12 18:17:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -87,13 +87,7 @@
 
 
 /*  */
-#define kFPFList                54
-#define kFPFOK                  55
-#define kFPFAdd                 56
-#define kFPFDel                 57
-#define kFPFCancel              58
-#define kSetupInfo              59  
-#define	kEditMenu		60 
+
 #define kESRayTraceButton       61
 #define kESPhaseSpaceButton     62 
 #define kESFileButton           63
@@ -133,10 +127,7 @@
 #define        kEOElement                 156   
 
 
-#define        kEOEOK	        	  186 
-#define        kEOEApply    		  187 
-#define        kEOEDefaults         	  188 
-#define        kEOECancel           	  189  
+
 
 #define        kEOOptMenu	          192
 #define        kEOEAB2                    193     /*! noch opt. Element  */
@@ -157,15 +148,7 @@
 #define     kCGrT3               229
 #define     kCGrT4               230   
        
-#define     kCGrT2Label          236   
-#define     kCGrT4Label          237   
-#define     kCGrT5Label          238  
-#define     kCGrPSFileButton     239 
-#define     kCGrPSFile           240 
-#define     kCGrOK               241
-#define     kCGrApply            242
-#define     kCGrDefaults         243
-#define     kCGrCancel           244 
+
 
 
 #define     kCGrOptMenu          250  
@@ -190,14 +173,7 @@
 #define kSucAB                   362
 #define kMisalignmentButton      363
 
-#define kCOptiRButton            380
-#define kCOptiYButton            381
-#define kCOptiZButton            382
-#define kCOptiTransButton        383
-#define kCOptiFocusButton        384
-#define kCOptiCostButton         385
-#define kCOptiRpYButton          386
-#define kCOptiRpZButton          387
+
 
 
 #define kEOEDrift                999
