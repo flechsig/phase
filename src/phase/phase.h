@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <05 Nov 12 10:01:11 flechsig>  */
+/*   Time-stamp: <05 Nov 12 17:58:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -85,39 +85,8 @@
 #define PSPlotFileHeader	"PSPlotFileType"   
 #define RayFileHeader		"RayFileType"  
 
-#define	kMainList		1 
-#define	kMenuBar		2   
-#define	kFilePDMe		3
-#define	kEditPDMe		4       
-#define	kCommandPDMe		5   
-#define	k_options_pdme		6                
-#define	k_help_pdme		7     
-#define	k_options_menu		8   
-#define	k_create_options	9 
-#define	kNyi			10   
-#define	kFileMenu		11
-#define	kFPrint			12  
-#define kFFile                  13
-#define kFileSelectionDialog    14   
-#define kFileSelectionOk        15   
-#define kFileSelectionCancel    16 
-#define kFFileBox		17    
-#define kFFileBoxLabel		18 
-#define kFFileBoxOK	        19  
-#define kFFileBoxCancel         20          
-#define kFFileLabel1            21  
-#define kFFileLabel2            22  
-#define kFFileLabel3            23  
-#define kFFileLabel4            24  
-#define kFFileLabel5            25 
-#define kFFileLabel6            26 
-#define kFFileLabel7            27      
-#define kFFileLabel8            28 
-#define kFFileLabel9            29 
-#define kFFileLabel10           30             
-#define kFSaveAsButton          31             
-#define kFLoadButton            32
-  
+
+/*  */
 #define kFPFList                54
 #define kFPFOK                  55
 #define kFPFAdd                 56
@@ -144,105 +113,25 @@
 #define kInfoMenuEntry          77 
 #define kEOEElli                78
 #define kEOEPElli               79
+  
 
-#define	kCommandMenu		80                       
-#define	kCProductMatrixButton	81  
-#define kCMatrixRTButton	82     
-#define	kCMatrixPSButton        83  
-#define kCCRayTraceButton       84  
-#define	kCCPTButton             85    
-#define	kCCMPTButton            1085    
-#define	kCCSR1Button            86
-#define	kCCSR2Button            87  
-#define kCPurge			88  
-#define kDirCommand   	 	89   
-#define kGraphicCommand  	90 
-#define kCCOptiButton 	  	91       
-#define kCCExtractButton 	92       
-#define kCWriteMapButton        93
-#define kCMatrixReadButton      94    
-
-#define kCCSRDialog             95             /*!single Ray Result  */ 
-#define kCCOptiDialog           96   
-#define kCWriteResultButton     97
-#define kEParameterInitButton   98
 #define kEOESlit                99
 
-#define kCCGlueBox              100  
-#define kCCGResultButton        101   
-#define kCCGList                102   
-#define kCCGOK                  103   
-#define kCCGAdd                 104   
-#define kCCGDel                 105   
-#define kCCGCancel              106    
-#define kESundulatorSourceButton 107      /* low beta */
+#define kESundulatorSourceButton 107      
 #define kESUndulatorSISButton   108 
 #define kESUndulatorSIMButton   109 
 #define kESUndulatorButton      110
 
-#define	k_help_overview		119
-#define	k_help_about		120
-#define	k_help_onhelp		121
-#define	k_help_sensitive	122
-#define	k_help_menu		123    
-                                 
-#define kESourceBox         	131 
-#define kESourceMenuButton      132   
-#define kEST1                   133 
-#define kEST2                   134 
-#define kEST3                   135 
-#define kEST4                   136 
-#define kEST5                   137 
-#define kEST6                   138 
-#define kEST7                   139 
-#define kEST8                   140 
-#define kESOK	        	141 
-#define kESApply    		142 
-#define kESDefaults         	143 
-#define kESCancel           	144  
-#define kESFile                 145   
-#define kESOptMenu              146   
 
-#define kEST1Label              148  
-#define kEST2Label              149
-#define kEST3Label              150  
-#define kEST4Label              151  
-#define kEST5Label              152  
-#define kEST6Label              153  
-#define kEST7Label              154  
-#define kEST8Label              155  
+#define kESourceMenuButton      132   
+
+
+#define kESDefaults         	143 
 
 /******************** opt. Element     Box **********************************/  
 
-#define        kEOElement                 156      
-#define        kEOET1                     157 
-#define        kEOET2                     158 
-#define        kEOET3                     159 
-#define        kEOET4                     160 
-#define        kEOET5                     161 
-#define        kEOET6                     162 
-#define        kEOET7                     163 
-#define        kEOET8                     164 
-#define        kEOET9                     165
-#define        kEOET10                    166
-#define        kEOET11                    167
-#define        kEOET12                    168  
-#define        kEOET13                    169
-#define        kEOET14                    170
+#define        kEOElement                 156   
 
-#define    kEOET15                171
-#define    kEOET16                172
-#define    kEOET17                173
-#define    kEOET18                174
-#define    kEOET19                175
-#define    kEOET20                176
-#define    kEOET21                177
-#define    kEOET22                178
-#define    kEOET23                179
-#define    kEOET24                180
-#define    kEOET25                181
-#define    kEOET26                182
-#define    kEOElementBox          183
 
 #define        kEOEOK	        	  186 
 #define        kEOEApply    		  187 
@@ -258,30 +147,7 @@
 
 
 
-/************************Geometry Box ***********************/      
-#define kEGT1                     197 
-#define kEGT2                     198 
-#define kEGT3                     199 
-#define kEGT4                     200 
-#define kEGNITranslation          201 
-#define kEGT3Button               202 
-#define kEGT7                     203 
-#define kEGT8                     204 
-#define kEGOK	        	  205 
-#define kEGApply    		  206 
-#define kEGDefaults         	  207 
-#define kEGCancel           	  208  
-#define kEGInputLabel         	  209
- 
-#define kEGeometryBox         	  211  
-#define kEGT1Label                212  
-#define kEGT2Label                213  
-#define kEGT3Label                214  
-#define kEGT4Label                215  
-#define kEGT5Label                216  
-#define kEGT6Label                217  
-#define kEGT7Label                218  
-#define kEGT8Label                219  
+
 
 /************************ Graphic Box ***********************/  
 #define     kCGrBox		 225
@@ -307,59 +173,7 @@
 
 #define     kFFileBoxExpand      270
 
-/************************OPti Dialog ***********************/
-                 
-#define kCOptiResultButton      	  271   
-#define kCOptiList                        272   
-#define kCOptiList2                       273   
-#define kCOptiAdd                         274   
-#define kCOptiDel                         275  
-#define kCOptiOK                          276  
-#define kCOptiCancel                      277   
-#define kCOptiMinuitButton   		  278  
-#define kCOptiSelectedLabel 		  279
-#define kCOptiList1                       280   
-#define kCOptiEditLabel                   281   
-#define kCOptiT1                          282   
-#define kCOptiT2            		  283 
-#define kCOptiAdd1          		  284
-#define kCOptiDel1           		  285 
-#define kCOptiAddOK          		  286 
 
-#define kEBLButton          		299 
-#define kEBLDialog          		300  
-#define kEBLNameButton      	        301   
-#define kEBLList                        302   
-#define kEBLList2                       303   
-#define kEBLAdd                         304   
-#define kEBLDel                         305  
-#define kEBLOK                          306  
-#define kEBLCancel                      307   
-#define kEBLApply	   		308  
-#define kEBLSelectedLabel 		309
-#define kEBLList1                       310   
-#define kEBLEditLabel                   311   
-#define kEBLT1                          312   
-#define kEBLT2            		313 
-#define kEBLAdd1          		314
-#define kEBLDel1           		315 
-#define kEBLAddOK          		316 
-
-#define kEBLup			 320  
-#define	kEBLleft		 321  
-#define kEBLdown		 322  
-#define kEBLright		 323        
-#define kEBLstoim                324
-#define kEBLimtos                325  
-
-#define kEBLT11		 	 330        
-#define kEBLT12		 	 331 
-#define kEBLT21		 	 332 
-#define kEBLT22		 	 333 
-#define kEBLT31		 	 334 
-#define kEBLT41		 	 335 
-#define kEBLT31a		 336 
-#define kEBLT41a		 337    
 
 #define kEOEGeneral              350
 #define kEOECone                 351
@@ -367,6 +181,7 @@
 #define kEOEPM                   353
 #define kEOEPG                   354
 #define kEOEPGV                  355
+
 
 #define kCWriteMCoButton         358
 #define kESRingSourceButton      359
@@ -384,26 +199,6 @@
 #define kCOptiRpYButton          386
 #define kCOptiRpZButton          387
 
-#define kCOptiMenu               390
-
-#define kFFileButton1            401
-#define kFFileButton2           402  
-#define kFFileButton3           403  
-#define kFFileButton4           404  
-#define kFFileButton5           405  
-#define kFFileButton6           406 
-#define kFFileButton7           407 
-#define kFFileButton8           408 
-#define kFFileButton9           409   
-#define kFFileButton10          410    
-#define kFFileButton11          411    
-#define kFFileButton12          412    
-#define kFFileButton13          413
-#define kFFileButton14          414    
-#define kFFileButton15          415    
-#define kFFileButton16          416    
-#define kFFileButton17          417
-#define kFFileButton18          418
 
 #define kEOEDrift                999
 
@@ -442,7 +237,7 @@
 #define D0printpclname          "test.pcl"   
 #define D0optipckname           "test.pcko"   
 
-#define PHASE_help  		"$PHASE_HOME/lib/phase.hlb"
+#define PHASE_help  		"$PHASE_HOME/lib/phase.hlb" 
 
 /********************** Strukturen **************************************/
            
