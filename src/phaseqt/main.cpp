@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <20 Mar 12 16:06:02 flechsig> 
+//  Time-stamp: <05 Nov 12 17:33:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -34,6 +34,23 @@ int main(int argc, char *argv[])
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
+
+#ifdef EXPIRE
+  cout << "  The program expires " << EXPIRE << endl;
+  time(&timev);
+  local_time= localtime(&timev);
+  /* debug       printf("%d %d %d\n\n", local_time->tm_year, local_time->tm_mon, local_time->tm_mday); */
+  
+  if (  local_time->tm_mday + 
+	(local_time->tm_mon  + 1) * 100 + 
+	(local_time->tm_year + 1900) * 10000 > EXPIRE )
+    {
+      cout << endl << "Program PHASE expired..., terminating\n Please, contact Johannes Bahrdt" << endl << endl;
+      exit(1);
+    } 
+  
+#endif
+
  
   setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord);
 
