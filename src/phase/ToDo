@@ -1,8 +1,0 @@
-kannst Du die Dimensionen fuer das Grid in der Bildebene noch
-        vergroessern (z.B.501:501). Momentan stuerzt das Programm bei
-        Row 128 ab.
-
-        Wenn ich den toroidal mirror auswaehle, und diffraction order auf
-        1 setze, werden Winkel alpha und beta berechnet wie beim Gitter.
-        Um Fehlbedienungen zu vermeiden, sollte die diffraction  order
-        beim toroidal mirror ohne Einfluss bleiben.  
