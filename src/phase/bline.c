@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2012-11-04 16:40:44 flechsig>  */
+/*   Time-stamp: <05 Nov 12 09:59:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1273,7 +1273,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20120828;    /* today */
+   int  i, version= 20121105;    /* today */
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1649,7 +1649,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%s     Matrix name\n",          pp->matrixname);
    fprintf(f, "%s     GO input\n",             pp->sourceraysname);
    fprintf(f, "%s     PO/GO output\n",         pp->imageraysname);
-   fprintf(f, "%s     Minuit input\n",         pp->minname);
+   /*fprintf(f, "%s     Minuit input (obsolete)\n",         pp->minname); 20121105 */
    fprintf(f, "%s     Optimization input\n",   pp->optipckname);
    fprintf(f, "%s     Optimization results\n", pp->opresname);
    fprintf(f, "%s     so4_fsource4a\n",        pp->so4_fsource4a);
@@ -1678,7 +1678,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20120828;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20121105;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -2164,14 +2164,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %s %[^\n]s %c", &pp->mapname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->matrixname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->sourceraysname, buffer, &buf);
-     
-     /* output name already set via cmd. line option? */       
-     if (pp->imageraysname[0] != '\0') 
-       fscanf(f, " %*s %[^\n]s %c", buffer, &buf);
-     else
-       fscanf(f, " %s %[^\n]s %c", &pp->imageraysname, buffer, &buf);
-            
-	   fscanf(f, " %s %[^\n]s %c", &pp->minname, buffer, &buf);
+	   
+	   /* output name already set via cmd. line option? */       
+	   if (pp->imageraysname[0] != '\0') 
+	     fscanf(f, " %*s %[^\n]s %c", buffer, &buf);
+	   else
+	     fscanf(f, " %s %[^\n]s %c", &pp->imageraysname, buffer, &buf);
+	   if (version < 20121105) 
+	     fgets(buffer, MaxPathLength, f);  /* dummy */
+	   /*  fscanf(f, " %s %[^\n]s %c", &pp->minname, buffer, &buf); */
+	   
 	   fscanf(f, " %s %[^\n]s %c", &pp->optipckname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->opresname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4a, buffer, &buf);
@@ -2181,16 +2183,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6,  buffer, &buf);
 	   if (version >= 20120828)
 	     fscanf(f, " %s %[^\n]s %c", &pp->so7_fsource7,  buffer, &buf);
-
+	   
 	   strncpy(bl->src.so4.fsource4a, bl->filenames.so4_fsource4a, 80);
 	   strncpy(bl->src.so4.fsource4b, bl->filenames.so4_fsource4b, 80);
 	   strncpy(bl->src.so4.fsource4c, bl->filenames.so4_fsource4c, 80);
 	   strncpy(bl->src.so4.fsource4d, bl->filenames.so4_fsource4d, 80);
 	   strncpy(bl->src.so6.fsource6,  bl->filenames.so6_fsource6,  80);
-
+	   
 	 } else rcode= -1;  /* end FILENAMES */ 
      } /* end FILENAMES */ 
-
+   
    /* all sections done */
    fclose(f);  
    
