@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <28 Aug 12 12:21:00 flechsig> 
+//  Time-stamp: <05 Nov 12 10:10:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -268,7 +268,7 @@ void MainWindow::activateProc(const QString &action)
       if (!o_input) 
 	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
 			       myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->filenames.optipckname, 
-			       myparent->myBeamline()->filenames.opresname, myparent->myBeamline()->filenames.minname); 
+			       myparent->myBeamline()->filenames.opresname); 
       else 
 	o_input->optiInputBox->show();
     }

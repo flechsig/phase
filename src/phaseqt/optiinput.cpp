@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <02 Nov 12 16:17:17 flechsig> 
+//  Time-stamp: <05 Nov 12 10:13:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -20,8 +20,7 @@ using namespace std;
 // constructor
 //OptiInput::OptiInput(struct )
 OptiInput::OptiInput(struct ElementType *list, unsigned int elementnumber, 
-		     char *beamlinename, char *optipckname, char *opresname, 
-		     char *minname)
+		     char *beamlinename, char *optipckname, char *opresname)
 {
   printf("OptiInput constructor called\n");
   optiInputBox = new QWidget();
@@ -30,9 +29,9 @@ OptiInput::OptiInput(struct ElementType *list, unsigned int elementnumber,
   QVBoxLayout *filesLayout  = new QVBoxLayout;
 
   outputfileLabel= new QLabel(tr("Optimization output file: opti_out.dat"));
-  minuitfileLabel= new QLabel(tr("Minuit input file: minuit.inp"));
+  
   filesLayout->addWidget(outputfileLabel); 
-  filesLayout->addWidget(minuitfileLabel);
+  
 
   QGroupBox   *targetGroup  = new QGroupBox(tr("Target"));
   QHBoxLayout *targetLayout = new QHBoxLayout;
@@ -186,7 +185,7 @@ OptiInput::OptiInput(struct ElementType *list, unsigned int elementnumber,
   mylist= list;
   myelementnumber= elementnumber;
   myoptipckname  = optipckname;
-  myminname= minname;
+  
   mybeamlinename= beamlinename;
   myopresname= opresname;
 

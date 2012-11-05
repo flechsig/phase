@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2012-09-21 06:31:04 flechsig>  */
+/*   Time-stamp: <05 Nov 12 10:19:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -329,8 +329,8 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 		}
 	      if (version >= 20110814)
 		{
-		  fscanf(f,"%s\n", (char *) &x->opresname);     
-		  fscanf(f,"%s\n", (char *) &x->minname);    
+		  fscanf(f,"%s\n", (char *) &x->opresname); 
+		     
 		}
 	    }
 	  rcode= 1;       /* OK zurueck */
@@ -427,13 +427,13 @@ void InitPHASE(struct PHASEset *x)                   /* set defaults */
   strncpy(x->optipckname,     D0optipckname, MaxPathLength);   
   strncpy(x->beamlinename,    "SGM.PHASE", MaxPathLength); 
   strncpy(x->opresname,       "opti_out.dat", MaxPathLength); 
-  strncpy(x->minname,         "minuit.inp", MaxPathLength);   
+  //  strncpy(x->minname,         "minuit.inp", MaxPathLength);   
 }
    
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 {                              
   FILE *f;
-  int version= 20120321; /* 20110814; */
+  int version= 20121105; /* 20110814; */
   printf("putphase: write filenames\n");
 
   if ((f= fopen(mainpickname, "w")) == NULL)
@@ -467,7 +467,7 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 	fprintf(f,"%s\n", x->so4_fsource4d);
 	fprintf(f,"%s\n", x->so6_fsource6);
 	fprintf(f,"%s\n", x->opresname);
-	fprintf(f,"%s\n", x->minname);
+	//fprintf(f,"%s\n", x->minname);
 #endif
        	fclose(f);  
       }

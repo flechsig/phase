@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <28 Aug 12 11:19:16 flechsig> 
+//  Time-stamp: <05 Nov 12 10:07:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -145,8 +145,8 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 	strncpy(myparent->myBeamline()->filenames.optipckname, fname, MaxPathLength); else
 	if ( !strncmp(description, "optimization results", 16) ) 
 	  strncpy(myparent->myBeamline()->filenames.opresname, fname, MaxPathLength); else
-	  if ( !strncmp(description, "minuit input", 10) ) 
-	    strncpy(myparent->myBeamline()->filenames.minname, fname, MaxPathLength); else
+	  //if ( !strncmp(description, "minuit input", 10) ) 
+	  //  strncpy(myparent->myBeamline()->filenames.minname, fname, MaxPathLength); else
 	    if ( !strncmp(description, "GO input (source)", 6) ) 
 	      strncpy(myparent->myBeamline()->filenames.sourceraysname, fname, MaxPathLength); else
 	      if ( !strncmp(description, "GO/PO output (image)", 6) )
@@ -218,7 +218,7 @@ void ConfigWindow::fillList()
   addRow("matrix name",          myparent->myBeamline()->filenames.matrixname,     "omx");
   addRow("GO/PO output (image)", myparent->myBeamline()->filenames.imageraysname,  "out");
   addRow("GO input (source)",    myparent->myBeamline()->filenames.sourceraysname, "inp");
-  addRow("minuit input",         myparent->myBeamline()->filenames.minname,        "minu");
+  //  addRow("minuit input",         myparent->myBeamline()->filenames.minname,        "minu");
   addRow("optimization results", myparent->myBeamline()->filenames.opresname,      "opti");
   addRow("optimization input",   myparent->myBeamline()->filenames.optipckname,    "pcko");
 } // fillList
@@ -239,17 +239,17 @@ void ConfigWindow::updateList()
 {
   mymodel->setData(mymodel->index(0,  1), myparent->myBeamline()->filenames.optipckname);
   mymodel->setData(mymodel->index(1,  1), myparent->myBeamline()->filenames.opresname);
-  mymodel->setData(mymodel->index(2,  1), myparent->myBeamline()->filenames.minname);
-  mymodel->setData(mymodel->index(3,  1), myparent->myBeamline()->filenames.sourceraysname);
-  mymodel->setData(mymodel->index(4,  1), myparent->myBeamline()->filenames.imageraysname);
-  mymodel->setData(mymodel->index(5,  1), myparent->myBeamline()->filenames.matrixname);
-  mymodel->setData(mymodel->index(6,  1), myparent->myBeamline()->filenames.mapname);
-  mymodel->setData(mymodel->index(7,  1), myparent->myBeamline()->filenames.so4_fsource4a);
-  mymodel->setData(mymodel->index(8,  1), myparent->myBeamline()->filenames.so4_fsource4b);
-  mymodel->setData(mymodel->index(9,  1), myparent->myBeamline()->filenames.so4_fsource4c);
-  mymodel->setData(mymodel->index(10, 1), myparent->myBeamline()->filenames.so4_fsource4d);
-  mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so6_fsource6);
-  mymodel->setData(mymodel->index(12, 1), myparent->myBeamline()->filenames.so7_fsource7);
+  //mymodel->setData(mymodel->index(2,  1), myparent->myBeamline()->filenames.minname);
+  mymodel->setData(mymodel->index(2,  1), myparent->myBeamline()->filenames.sourceraysname);
+  mymodel->setData(mymodel->index(3,  1), myparent->myBeamline()->filenames.imageraysname);
+  mymodel->setData(mymodel->index(4,  1), myparent->myBeamline()->filenames.matrixname);
+  mymodel->setData(mymodel->index(5,  1), myparent->myBeamline()->filenames.mapname);
+  mymodel->setData(mymodel->index(6,  1), myparent->myBeamline()->filenames.so4_fsource4a);
+  mymodel->setData(mymodel->index(7,  1), myparent->myBeamline()->filenames.so4_fsource4b);
+  mymodel->setData(mymodel->index(8,  1), myparent->myBeamline()->filenames.so4_fsource4c);
+  mymodel->setData(mymodel->index(9,  1), myparent->myBeamline()->filenames.so4_fsource4d);
+  mymodel->setData(mymodel->index(10, 1), myparent->myBeamline()->filenames.so6_fsource6);
+  mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so7_fsource7);
 } // updateList
 
 void ConfigWindow::checkFileNames()

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.h */
 /*  Date      : <29 Jul 11 13:56:13 flechsig>  */
-/*  Time-stamp: <31 Oct 12 17:39:13 flechsig>  */
+/*  Time-stamp: <05 Nov 12 10:13:38 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,7 +23,7 @@ public:
     QWidget     *optiInputBox;
     //    OptiInput(struct BeamlineType *);
     //OptiInput(QtPhase*);
-    OptiInput(struct ElementType *, unsigned int, char*, char*, char*, char*);
+    OptiInput(struct ElementType *, unsigned int, char*, char*, char*);
 
 private slots:
     void appendLine();
@@ -48,7 +48,7 @@ private:
     struct BeamlineType  *myparent;
     struct ElementType *mylist;
     unsigned int myelementnumber;
-    char *myminname;
+    
     char *mybeamlinename;
     char *myopresname;
     char *myoptipckname;
