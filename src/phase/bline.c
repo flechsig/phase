@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <05 Nov 12 17:05:45 flechsig>  */
+/*   Time-stamp: <06 Nov 12 17:31:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2433,7 +2433,7 @@ void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out, struct Option
 {
   double theta, phi, alpha, beta, beta1, N, lambda, lambda4geometry, sign_of_down_or_right, radius, trans;
   int i, m;
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("\n@@@@@@@@@@ debug: %s DefGeometryC_UF called\n", __FILE__ );
 #endif
 
@@ -2490,7 +2490,7 @@ void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out, struct Option
   
   out->xlam = lambda* m;  /* UF 23.12.09 ist lambda richtig ??? oder in->lambda */
   out->idefl= sign_of_down_or_right;  
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("@@@@@@@@@@ debug: %s DefGeometryC_UF output\n", __FILE__ );
   printf("  alpha: %f, beta: %f, m= %d, lambda= %g nm (lambda for grating geometry)\n", 
 	 alpha* 180.0/ PI, beta* 180.0/ PI, m, lambda4geometry* 1e6);
