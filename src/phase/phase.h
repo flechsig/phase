@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <05 Nov 12 18:17:05 flechsig>  */
+/*   Time-stamp: <06 Nov 12 17:56:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -78,14 +78,9 @@
 
 #define MainPickFileHeader	"MainPickFileType"        
 #define Fg3PickFileHeader	"Fg3PickFileType"        /* auch in f*pck.h */
-#define GeometryPickFileHeader	"GeometryPickFileType"   /* auch in g*pck.h */
-#define MirrorPickFileHeader	"MirrorPickFileType"     /* auch in m*pck.h */
 #define OptiPickFileHeader	"OptiPickFileType"       /* auch in ph*ti.h */
 #define RTPlotFileHeader	"RTPlotFileType" 
-#define PSPlotFileHeader	"PSPlotFileType"   
 #define RayFileHeader		"RayFileType"  
-
-
 /*  */
 
 #define kESRayTraceButton       61
@@ -107,55 +102,20 @@
 #define kInfoMenuEntry          77 
 #define kEOEElli                78
 #define kEOEPElli               79
-  
-
 #define kEOESlit                99
-
 #define kESundulatorSourceButton 107      
 #define kESUndulatorSISButton   108 
 #define kESUndulatorSIMButton   109 
 #define kESUndulatorButton      110
-
-
 #define kESourceMenuButton      132   
-
-
 #define kESDefaults         	143 
-
-/******************** opt. Element     Box **********************************/  
-
 #define        kEOElement                 156   
-
-
-
-
 #define        kEOOptMenu	          192
 #define        kEOEAB2                    193     /*! noch opt. Element  */
 #define        kEOEAB4                    194                             
 
 #define        kEOEInputLabel         	  195 
 #define        kEOElementButton      	  196  
-
-
-
-
-
-/************************ Graphic Box ***********************/  
-#define     kCGrBox		 225
-#define     kCGrT5               226
-#define     kCGrT1               227
-#define     kCGrT2               228
-#define     kCGrT3               229
-#define     kCGrT4               230   
-       
-
-
-
-#define     kCGrOptMenu          250  
-#define     kCGrOptMenu1         251    
-
-#define     kFFileBoxExpand      270
-
 
 
 #define kEOEGeneral              350
@@ -165,18 +125,13 @@
 #define kEOEPG                   354
 #define kEOEPGV                  355
 
-
 #define kCWriteMCoButton         358
 #define kESRingSourceButton      359
 #define kESPointSourceButton     360
 #define kPreAB                   361
 #define kSucAB                   362
 #define kMisalignmentButton      363
-
-
-
-
-#define kEOEDrift                999
+#define kEOEDrift                999   //
 
 
 /* optimization methodes, I do not want to use the defines of the buttons twice */
@@ -189,10 +144,7 @@
 #define OptiRpY     6
 #define OptiRpZ     7 
 
-/******************** end defines uil **********************************/
 
-#define k_max_widget            2000  		/* geaendert von 50 */
-#define MAX_WIDGETS (k_max_widget + 1)
 #define MaxPathLength           255         
 #define MainPickName 		"phase.pck"
 
@@ -213,7 +165,6 @@
 #define D0printpclname          "test.pcl"   
 #define D0optipckname           "test.pcko"   
 
-#define PHASE_help  		"$PHASE_HOME/lib/phase.hlb" 
 
 /********************** Strukturen **************************************/
            
@@ -321,16 +272,7 @@ struct xlenmaptype {
 #endif
 };
 
-struct optistruct_xx
-/* modification: 24 Oct 97 15:38:40 flechsig */
-
-{
-  char resultfile[MaxPathLength];
-  int elementzahl;
-  char *fileliste;
-  struct mirrortype *mirz;
-  struct geometrytype *geoz;
-};      
+  
 
 struct RayType { double y, z, dy, dz, phi; };  
 
@@ -369,7 +311,6 @@ struct RESULTType {
   int  typ, points1, points2, dim1; 
 };       
 
-
 struct datset 
 {
   int itrans;     
@@ -402,7 +343,7 @@ struct datset
   double sigmay, sigmayp, ymin, ymax, sigmaz, sigmazp, zmin, zmax; 
   double epsilon, fracy, frac1y, fracz, frac1z;
   struct RayType SR2out;    
-}; 
+  }; 
 
 struct ElementType   
 {
@@ -481,27 +422,6 @@ int getpickfile(struct datset *, struct BeamlineType *, char *);
 
 void putpickfile(struct datset *, struct BeamlineType *, char *),    
   initdatset (struct datset *, struct BeamlineType *);    
-
-
-/******************** globale Variable *****************************/
-
-#ifndef QTGUI
-
-int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
-
-#ifdef global
-struct PHASEset PHASESet;  
-#endif
-struct datset Fg3ActDat, Fg3DefDat;  
-struct gdatset GActDat,   GDefDat;  
-struct mdatset MActDat,   MDefDat;  
-/*struct BeamlineType Beamline;*/
-#endif
-
-/*struct optistruct optistructure; */ 
-
-/*double map35[35][35];  */
-/*int pawc[200000]; */
 
 /********* FORTRAN calls ******************************************/
 /* in der CERN lib fuer LINUX werden werden FORTRAN Symbole mit einem 
