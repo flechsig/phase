@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <07 Nov 12 09:22:33 flechsig> 
+dnl   Time-stamp: <07 Nov 12 11:05:13 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -274,6 +274,9 @@ AC_ARG_WITH([qwt],
     fi
   ])
 dnl end QWT
+
+dnl Check for HDF5 support
+dnl          AX_LIB_HDF5()
 
 dnl ****************** HDF5 **************************
 AC_ARG_WITH([hdf5],
