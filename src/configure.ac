@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <07 Nov 12 11:05:13 flechsig> 
+dnl   Time-stamp: <07 Nov 12 16:00:41 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -277,6 +277,8 @@ dnl end QWT
 
 dnl Check for HDF5 support
 dnl          AX_LIB_HDF5()
+echo "HDF5 support:  $with_hdf5"
+
 
 dnl ****************** HDF5 **************************
 AC_ARG_WITH([hdf5],
@@ -353,8 +355,9 @@ dnl	    FFLAGS="-DDEBUG -g -O0 -check bounds ${FFLAGS}"
           fi
        fi
 dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
-       CFLAGS="-DDEBUG -ggdb"
-       CXXFLAGS="-DDEBUG -ggdb"
+       CFLAGS="-DDEBUG -ggdb -static"
+       CXXFLAGS="-DDEBUG -ggdb -static"
+       LDFLAGS="-static"
        libextension="a"
     fi,
     [AC_MSG_NOTICE(***** produce production code *****)
@@ -450,7 +453,7 @@ AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
           opti/Makefile extr/Makefile  \
 	  phaselib/Makefile phaseidl/Makefile \
 	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile phasesrv/Makefile ])
+	  idlphase/Makefile phasesrv/Makefile source7/Makefile])
 AC_OUTPUT
 
 dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
