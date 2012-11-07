@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <2012-11-04 17:53:05 flechsig> 
+##  Time-stamp: <07 Nov 12 13:47:14 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -22,7 +22,7 @@ EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
 bin_SCRIPTS = bin/create-coefficients.pl bin/phaseinit.csh  \
 	      bin/phaseinit.sh           bin/scale-wave-output.pl
 
-SUBDIRS = phaseqt phasesrv extr opti 
+SUBDIRS = phaseqt phasesrv extr opti source7
 
 ## gui phase4idl idlphase phaselib phaseidl
 
