@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <07 Nov 12 16:54:28 flechsig> 
+dnl   Time-stamp: <07 Nov 12 16:59:08 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -359,9 +359,9 @@ dnl	    FFLAGS="-DDEBUG -g -O0 -check bounds ${FFLAGS}"
           fi
        fi
 dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
-       CFLAGS="-DDEBUG -ggdb -static"
-       CXXFLAGS="-DDEBUG -ggdb -static"
-       LDFLAGS="-static"
+       CFLAGS="-DDEBUG -ggdb"             # -static
+       CXXFLAGS="-DDEBUG -ggdb"
+       ####LDFLAGS="-static"
        libextension="a"
     fi,
     [AC_MSG_NOTICE(***** produce production code *****)
