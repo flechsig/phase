@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <07 Nov 12 16:00:41 flechsig> 
+dnl   Time-stamp: <07 Nov 12 16:54:28 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -30,6 +30,7 @@ AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_CC
 AC_PROG_CXX
+
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
@@ -275,9 +276,10 @@ AC_ARG_WITH([qwt],
   ])
 dnl end QWT
 
-dnl Check for HDF5 support
-dnl          AX_LIB_HDF5()
-echo "HDF5 support:  $with_hdf5"
+dnl Check for HDF5 support (does not work with the current autoconf version)
+dnl           AX_LIB_HDF5()
+dnl echo "HDF5 support:  $with_hdf5"
+
 
 
 dnl ****************** HDF5 **************************
@@ -289,12 +291,12 @@ AC_ARG_WITH([hdf5],
        echo "do not use hdf5"
     else
       dnl   echo "do use hdf5"
-      AC_CHECK_FILE([${hdf5}/lib/libhdf5.so], 
+      AC_CHECK_FILE([${hdf5}/lib/libhdf5.so],
       [
         AC_SUBST(HDF5, [${hdf5}])
         hdf5i=${hdf5}
-	AC_SUBST(HDF5I,[${hdf5i}])
-	AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+        AC_SUBST(HDF5I,[${hdf5i}])
+        AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
       ],
       AC_MSG_ERROR(cannot find libhdf5.so))
     fi
@@ -305,11 +307,11 @@ AC_ARG_WITH([hdf5],
     hdf5=`find /usr/local -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
     if test -n "${hdf5}"; then
         AC_MSG_NOTICE((1) we found libhdf5.so under ${hdf5} - OK)
-	dnl check if we find the libhdf5.so there 
-	AC_SUBST(HDF5,  [${hdf5}])
-	hdf5i=${hdf5}
+        dnl check if we find the libhdf5.so there
+        AC_SUBST(HDF5,  [${hdf5}])
+        hdf5i=${hdf5}
         AC_SUBST(HDF5I, [${hdf5i}])
-	AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+        AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
     else
       AC_MSG_NOTICE((1) did not found libhdf5.so in /usr/local)
       AC_MSG_NOTICE((2) search for libhdf5.so in /usr/lib)
@@ -317,24 +319,26 @@ AC_ARG_WITH([hdf5],
       if test -n "${hdf5}"; then
          AC_MSG_NOTICE([(2) we found libhdf5.so under ${hdf5} - OK])
          AC_SUBST(HDF5,  [${hdf5}])
-	 hdf5i=${hdf5}
+         hdf5i=${hdf5}
          AC_SUBST(HDF5I, [${hdf5i}])
-	 AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+         AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
       else
          AC_MSG_ERROR(cannot find any libhdf5.so)
       fi
-      AC_MSG_NOTICE((2) search for hdf5.h on /usr/include)	 
+      AC_MSG_NOTICE((2) search for hdf5.h on /usr/include)
       hdf5i=`find /usr/include -name hdf5.h -print 2>/dev/null | head -1 | sed -e 's|/hdf5.h||'`
       if test -n "${hdf5i}"; then
          AC_MSG_NOTICE([(2) we found hdf5.h under ${hdf5i} - OK])
          AC_SUBST(HDF5I, [${hdf5i}])
-	 AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
+         AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
       else
          AC_MSG_ERROR(cannot find any hdf5.h)
       fi
     fi
   ])
 dnl end HDF5
+
+
 
 
 dnl deal with the debugger 
