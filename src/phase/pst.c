@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <08 Nov 12 17:00:02 flechsig>  */
+/*   Time-stamp: <08 Nov 12 17:00:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -532,7 +532,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   stp->inumyan  = 0;
 
   // check whether static integration grid is large enough 
-  if ((bl->BLOptions.xi.ianzy0 > MAX_INTEGRATION_SIZE) || (bl->BLOptions.xi.ianzz0 >MAX_INTEGRATION_SIZE))
+  if ((bl->BLOptions.xi.ianzy0 > MAX_INTEGRATION_SIZE) || (bl->BLOptions.xi.ianzz0 > MAX_INTEGRATION_SIZE))
   {
     printf("ERROR: Integration parameter xi.ianzy0 or xi.ianzz0 is larger than maximum %d!\n", MAX_INTEGRATION_SIZE);
     exit(-1);
