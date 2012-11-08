@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <27 Sep 12 16:53:11 flechsig>  */
+/*   Time-stamp: <08 Nov 12 17:00:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -496,7 +496,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   rap  = XMALLOC(struct rayst, 1);
   if (bl->BLOptions.ifl.pst_mode >= 2)                       /* pst_mode == 2 allocate a copy of m4p */
     { 
-      m4p  = XMALLOC(struct map4, 1);
+      m4p= XMALLOC(struct map4, 1);
       fill_m4(bl, m4p);
     } 
   else
