@@ -54,8 +54,8 @@ ORIGINALPHASExSOURCES   = \
 ## original phase flags
 ORIGINALPHASExAMxCPPFLAGS = -DLINUX 
 
-ORIGINALPHASExAMxLDFLAGS = -shared @MOTIFLIBS@ $(X_LIBS) -lm -lc -lnsl\
-	     @FLIBS@ @CERNLIBS@ @CFORLIB@ @LINK_LIBPHASE@
+ORIGINALPHASExAMxLDFLAGS = -shared  $(X_LIBS) -lm -lc -lnsl\
+	     @FLIBS@ @CFORLIB@ @LINK_LIBPHASE@
 
 #######################################################################
 

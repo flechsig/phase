@@ -13,6 +13,7 @@
 #include <math.h>                                                 
 #include <ctype.h>
 #include <stdarg.h> 
+#ifdef OBSOLETE
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                /*FileBox*/     
 #include <Xm/List.h>   
@@ -20,7 +21,7 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>  
-
+#endif
 #include "cutils.h"   
 #include "phase_struct.h"
 /*#include "fg3pck.h"   
@@ -31,8 +32,8 @@
 #include "rtrace.h"
 #include "version.h"
 
-
-
+/* UF 26.11.12 */
+#include "idl_phase_batchmode_access.h"
 
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,7 @@
 #include <stdarg.h> 
 #include <string.h>
 
-// /*                                          
+ /*                                          
 #include <Xm/Text.h>                                                  
 #include <Xm/FileSB.h>                //FileBox
 #include <Xm/List.h>   
@@ -34,7 +34,7 @@
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>  
 
-// */
+ */
 
 #include <cutils.h>
 #include <phase_struct.h>

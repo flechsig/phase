@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phase4idl.c */
 /*  Date      : <31 Aug 11 16:29:52 flechsig>  */
-/*  Time-stamp: <31 Aug 11 16:30:01 flechsig>  */
+/*  Time-stamp: <2012-11-26 18:21:45 flechsig>  */
 
 
 /*  $Source$  */
@@ -35,16 +35,7 @@
 #include <stdarg.h> 
 #include <string.h>
 
-// /*                                          
-#include <Xm/Text.h>                                                  
-#include <Xm/FileSB.h>                //FileBox
-#include <Xm/List.h>   
-#include <Xm/ToggleB.h>   
-#include <Mrm/MrmAppl.h>  
-#include <X11/Xlib.h>      
-#include <X11/Xutil.h>  
 
-// */
 
 #include <cutils.h>
 #include <phase_struct.h>
