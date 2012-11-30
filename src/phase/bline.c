@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 Nov 12 15:31:23 flechsig>  */
+/*   Time-stamp: <30 Nov 12 12:24:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -313,7 +313,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	      GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
 		       &bl->BLOptions.ifl.iord, 1); 
 	      /*listpt->xlm bleibt gleich*/
-	      if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
+	      if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG) || (listpt->MDat.Art & GRATINGBIT))         /* UF 30.11.12 */
 		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			  (double *)listpt->wc, (double *)listpt->xlc, 
@@ -555,7 +555,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 		  GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
 			   &bl->BLOptions.ifl.iord, 1); 
 		  /*listpt->xlm bleibt gleich*/
-		  if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG))
+		  if ((listpt->MDat.Art == kEOETG) || (listpt->MDat.Art == kEOEVLSG) || (listpt->MDat.Art & GRATINGBIT))  /* UF 30.11.12 */
 		/* falls es ein gitter ist wird das produkt in bl gespeichert*/
 		    GlueWcXlc((double *)bl->wc, (double *)bl->xlc, 
 			      (double *)listpt->wc, (double *)listpt->xlc, 
