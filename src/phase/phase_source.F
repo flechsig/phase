@@ -407,7 +407,7 @@ c       Propagatioswellenlaenge steht in g.xlam
 
 	if(ifl.iplmode.eq.0)then
 c	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
-        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/g.xlam 
+        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/dabs(g.xlam) 
 	endif
         
 c-----------------------------------------------
@@ -417,7 +417,7 @@ c-----------------------------------------------
 
 	if(ifl.iplmode.eq.1)then
 c	phase = (2.*cs.pi*xlength)/ra.xlam_test 
-	phase = (2.*cs.pi*xlength)/g.xlam 
+	phase = (2.*cs.pi*xlength)/dabs(g.xlam) 
 c        write(6,*)'============= xlam_test ',ra.xlam_test
 	endif
 
@@ -590,12 +590,12 @@ c	endif	! iexpand
 
 	if(ifl.iplmode.eq.0)then
 c	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
-        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/g.xlam 
+        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/dabs(g.xlam) 
 	endif
 
 	if(ifl.iplmode.eq.1)then
 c	phase = (2.*cs.pi*xlength)/ra.xlam_test 
-        phase = (2.*cs.pi*xlength)/g.xlam
+        phase = (2.*cs.pi*xlength)/dabs(g.xlam)
 	endif
 
 	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
