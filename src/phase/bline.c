@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <30 Nov 12 12:24:26 flechsig>  */
+/*   Time-stamp: <03 Dec 12 08:24:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -44,7 +44,7 @@ void debug_beamline_type_c_(int *ip)
 
 
 /* builds one element */
-void BuildElement(int elindex, struct BeamlineType *bl)  
+void BuildElement(unsigned int elindex, struct BeamlineType *bl)  
 {
   struct ElementType *listpt;
   struct TmpMapType  *ltp;
@@ -1188,7 +1188,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
        printf("MakeMapandMatrix: horizontal deflection, mdim: %d\n", mdim); 
        msiz= mdim * mdim * sizeof(double);
        
-       if (bl->hormapsloaded != bl->BLOptions.ifl.iord)
+       if ((int)bl->hormapsloaded != bl->BLOptions.ifl.iord)
 	 {
 
 	   if (bl->BLOptions.REDUCE_maps == 0)
