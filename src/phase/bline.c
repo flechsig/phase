@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <03 Dec 12 08:24:38 flechsig>  */
+/*   Time-stamp: <03 Dec 12 08:34:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3228,7 +3228,8 @@ void Check_iord(struct BeamlineType *bl)
 /* updates the status and the deltalamba flag depending on ray trace mode */ 
 void UpdateFlags(struct BeamlineType *bl, int run)
 {
-  int i, dlflagold, statusold, rayset, first_run_of_2, change_status;
+  int dlflagold, statusold, rayset, first_run_of_2, change_status;
+  unsigned int i;
   
 #ifdef DEBUG
   printf("debug: %s UpdateFlags called\n", __FILE__);
