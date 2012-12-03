@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <06 Nov 12 17:57:21 flechsig>  */
+/*   Time-stamp: <03 Dec 12 08:24:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -492,7 +492,7 @@ void
   BatchMode(struct BeamlineType *, int, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
-  BuildElement(int, struct BeamlineType *),
+  BuildElement(unsigned int, struct BeamlineType *),
   Check_iord(struct BeamlineType *),
   create_hormap(),
   debug_beamline_type_f(int *),
