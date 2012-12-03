@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <29 Aug 12 11:23:31 flechsig>  */
+/*  Time-stamp: <03 Dec 12 08:28:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -240,7 +240,7 @@ void source4c_ini(struct BeamlineType *bl)
   if ((iexx != bl->posrc.iex) || (ieyy != bl->posrc.iey))
     {
       printf("error with file dimensions- exit\n");
-      exit;
+      exit(0);
     }
   bl->posrc.zeyim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   
@@ -260,7 +260,7 @@ void source4c_ini(struct BeamlineType *bl)
   if ((iexx != bl->posrc.iex) || (ieyy != bl->posrc.iey))
     {
       printf("error with file dimensions- exit\n");
-      exit;
+      exit(0);
     }
   bl->posrc.zezre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   
@@ -277,7 +277,7 @@ void source4c_ini(struct BeamlineType *bl)
   if ((iexx != bl->posrc.iex) || (ieyy != bl->posrc.iey))
     {
       printf("error with file dimensions- exit\n");
-      exit;
+      exit(0);
     }
   bl->posrc.zezim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   
