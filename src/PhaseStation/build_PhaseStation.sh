@@ -1,17 +1,46 @@
 #! /bin/sh
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/PhaseStation/build_PhaseStation.sh
+#  Date      : <11 Jan 13 13:38:17 flechsig> 
+#  Time-stamp: <11 Jan 13 13:49:44 flechsig> 
+#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
-# copy this file to mybuild_PhaseStation.sh and adjust the varibales
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
 
+# copy this file to mybuild_PhaseStation.sh and adjust the variables
+
+#################################
+# configuration
+#################################
 # define variables (to be adjusted)
-result_dir=/scratch1/myphasestation-result
-build_dir=/scratch1/myphasestation
-
-shared_libs=/scratch1/myphasestation/usr/lib64
+result_dir=/scratch1/myphasestation-result          # place for the iso image
+build_dir=/scratch1/myphasestation                  # place for the distribution
+shared_libs=${build_dir}/usr/lib64                  # additional shared libs go there
+# mount a distribution dvd if available
 # mount -o loop /scratch2/openSUSE-12.2-DVD-x86_64.iso /mnt
 # cp -a /usr/share/doc/packages/kiwi/examples/suse-12.2/suse-live-iso/* .
-rm -rf /scratch1/myphasestation/*
-rm -rf /scratch1/myphasestation-result
-kiwi --prepare /scratch1/PhaseStation --root /scratch1/myphasestation --force-new-root
+
+
+#######################################
+# end configuration - start main script
+#######################################
+#
+# a) clean up
+#
+echo clean up ${result_dir} and ${build_dir}
+rm -rf ${result_dir}/*
+rm -rf ${build_dir}
+#
+# b) run kiwi
+#
+echo run kiwi --prepare
+kiwi --prepare `pwd` --root ${build_dir} --force-new-root
+#
+# c) adjust installation
+#
+echo adjust installation
 # my modifications
 cp /usr/local/bin/phase* /scratch1/myphasestation/usr/local/bin
 cp /usr/local/hdf5/lib/libhdf5.so.7 /scratch1/myphasestation/usr/lib64
