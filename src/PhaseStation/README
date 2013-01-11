@@ -1,7 +1,7 @@
 # -*-sh-*-   emacs hint
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/PhaseStation/README
 #  Date      : <11 Jan 13 13:34:22 flechsig> 
-#  Time-stamp: <11 Jan 13 13:34:47 flechsig> 
+#  Time-stamp: <11 Jan 13 13:36:29 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -13,8 +13,8 @@
 Introduction
 ============
 
-PhasesStation is a bootable iso image containing phase and basic linux distribution. The iso image can be burned onto a cd, copied to a usb stick, run in a virtual machine or boote from a boot manager like grub.
-To produce the iso image we the kiwi tool. With Kiwi it is possible to make a custom linux distribution. Kiwi is based on OpenSuse but the package can also be used on other rpm based distributions. As an alternative option and for testing it is possible to use the online tool SuseStudio. The difficulties for phase are the requirement of packages which are not available as rpms like the fortran compiler, hdf5, root... In principle we can make rpms from these packages but also the rpms must be maintained. We follow a simplified approach and clone an existing Suse linux installation with phase. We take only the absolute minimum of packages into our distribution and copy the additonal shared libs into a common plase (/usr/local/lib).
+PhasesStation is a bootable iso image containing phase and basic linux distribution. The iso image can be burned onto a cd, copied to a usb stick, run in a virtual machine or boot from a boot manager like grub.
+To produce the iso image we the kiwi tool. With Kiwi it is possible to make a custom linux distribution. Kiwi is based on OpenSuse but the package can also be used on other rpm based distributions. As an alternative option and for testing it is possible to use the online tool SuseStudio. The difficulties for phase are the requirement of packages which are not available as rpms like the fortran compiler, hdf5, root... In principle we can make rpms from these packages but also the rpms must be maintained. We follow a simplified approach and clone an existing Suse linux installation with phase. We take only the absolute minimum of packages into our distribution and copy the additional shared libs into a common place (/usr/local/lib).
 
 BUILD
 =====
