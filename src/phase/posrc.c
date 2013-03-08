@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <03 Dec 12 08:28:07 flechsig>  */
+/*  Time-stamp: <08 Mar 13 17:12:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -28,6 +28,139 @@
 #ifdef HAVE_HDF5
    #include "hdf5.h"
 #endif 
+
+/* reads the h5 output  file from genesis and puts the results into bl->posrc */
+void source8c_ini(struct BeamlineType *bl)
+{
+#ifdef HAVE_HDF5
+
+  struct source4c *so4;
+  int t_size, rank, slicecount, rows, cols, it, i, j;
+  hid_t  file_id, e_dataset_id, e_dataspace_id, wavelength_dataset_id, gridsize_dataset_id, slicecount_dataset_id;  /* identifiers */
+  herr_t      status;
+  hsize_t     current_dims[4];
+  double wavelength, gridsize, *field;
+
+#ifdef DEBUG
+  printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", __FILE__, bl->filenames.so7_fsource7);
+#endif
+
+  /* Open an existing file. */
+  file_id = H5Fopen(bl->filenames.so7_fsource7, H5F_ACC_RDONLY, H5P_DEFAULT);
+
+  /* Open an existing dataset. */
+  e_dataset_id          = H5Dopen(file_id, "slice000001/field", H5P_DEFAULT);
+  wavelength_dataset_id = H5Dopen(file_id, "wavelength",  H5P_DEFAULT);
+  gridsize_dataset_id   = H5Dopen(file_id, "gridsize",    H5P_DEFAULT);
+  slicecount_dataset_id = H5Dopen(file_id, "slicecount",  H5P_DEFAULT);
+
+  e_dataspace_id= H5Dget_space(e_dataset_id);
+  
+  rank= H5Sget_simple_extent_dims(e_dataspace_id, current_dims, NULL);
+
+  t_size= current_dims[0];
+  
+  printf("file: %s, rank= %d, array_values= %d\n", __FILE__,  rank, t_size);
+
+  field= XMALLOC(double, t_size);
+
+  status = H5Dread(e_dataset_id,          H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field); 
+  status = H5Dread(wavelength_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, &wavelength);
+  status = H5Dread(gridsize_dataset_id,   H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, &gridsize);
+  status = H5Dread(slicecount_dataset_id, H5T_NATIVE_INT,    H5S_ALL, H5S_ALL, H5P_DEFAULT, &slicecount);
+
+/* Close the dataset. */
+  status = H5Dclose(e_dataset_id);
+  status = H5Dclose(wavelength_dataset_id);
+  status = H5Dclose(gridsize_dataset_id);
+  status = H5Dclose(slicecount_dataset_id);
+
+  /* Close the file. */
+  status = H5Fclose(file_id);
+
+  rows= cols= sqrt(t_size / 2);
+
+#ifdef DEBUG
+  printf("debug: first value= %lg, wavelength= %lg m, gridsize= %lg m, slicecount= %d, gridpoints= %d x %d\n", *field, wavelength, gridsize, slicecount, rows, cols);
+#endif
+
+   /* the rest is a copy of functionality from source4c_ini */
+  
+  if (bl->posrc.zeyre != NULL) XFREE(bl->posrc.zeyre);                   /* free memory */
+  if (bl->posrc.zeyim != NULL) XFREE(bl->posrc.zeyim);   
+  if (bl->posrc.zezre != NULL) XFREE(bl->posrc.zezre);
+  if (bl->posrc.zezim != NULL) XFREE(bl->posrc.zezim);
+  if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
+  if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
+  
+  bl->posrc.iex= cols; 
+  bl->posrc.iey= rows;
+  
+  /* y real */
+  bl->posrc.zeyre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey);       /* allocate */
+  bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
+  bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
+
+  it= 0;          /* so far - read only first slice */
+
+  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< bl->posrc.iex; i++) 
+      {
+	bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+	bl->posrc.gridy[j]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2] * 0.0;   /* lin hor only */
+      }
+
+  bl->posrc.xemin= bl->posrc.gridx[0]; 
+  bl->posrc.yemin= bl->posrc.gridy[0];
+  bl->posrc.xemax= bl->posrc.gridx[bl->posrc.iex- 1];
+  bl->posrc.yemax= bl->posrc.gridy[bl->posrc.iey- 1];
+  bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
+  bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
+
+  /* y imag */    
+  bl->posrc.zeyim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
+
+  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< bl->posrc.iex; i++) 
+      {
+	bl->posrc.zeyim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2] * 0.0;   /* lin hor only */;
+	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.iex]*= -1.0;
+      }
+
+  /* z real */
+  bl->posrc.zezre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
+  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< bl->posrc.iex; i++) 
+      bl->posrc.zezre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2];
+   
+  /* z imag */
+  bl->posrc.zezim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
+
+  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< bl->posrc.iex; i++) 
+      {
+	bl->posrc.zezim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2];
+	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iex]*= -1.0;
+      }
+
+  
+  XFREE(field);
+
+#ifdef DEBUG
+  so4= (struct source4c *)&(bl->posrc);
+  printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
+	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
+#endif
+
+#else
+   printf("compiled without hdf5 support\n", __FILE__);
+#endif
+
+#ifdef DEBUG
+   printf("debug: %s source8c_ini done (input from GENESIS linear horizontal polarisation), wavelength= %lg nm\n", __FILE__, wavelength * 1e9);
+#endif
+}
 
 /* reads the source files and puts the results into bl->posrc */
 void source7c_ini(struct BeamlineType *bl)
