@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <05 Nov 12 10:10:53 flechsig> 
+//  Time-stamp: <08 Mar 13 08:33:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -675,6 +675,7 @@ void MainWindow::activateProc(const QString &action)
 	  filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
 	  break;
 	case 7:
+	case 8:  
 	  filesOK= fexists(myparent->myBeamline()->filenames.so7_fsource7);
 	  break;
 	default:
@@ -688,19 +689,20 @@ void MainWindow::activateProc(const QString &action)
 	QMessageBox::warning(this, tr("error src_ini"),
 			     tr("source type %1 : source file(s) not found!\nreturn").
 			     arg(myparent->myBeamline()->src.isrctype));
-      else
+      else /* files are OK */
 	{
-
-	  
-
-	  if (myparent->myBeamline()->src.isrctype == 7)
+	  switch (myparent->myBeamline()->src.isrctype)
 	    {
+	    case 7:
 	      cout << "read hdf5 (experimental)" << endl;
 	      myparent->mysource7c_ini();
-	    }
-	  else
-	    {
-	      
+	      break;
+	    case 8:
+	      cout << "read hdf5 from GENESIS (experimental)" << endl;
+	      myparent->mysource8c_ini();
+	      break;
+	    default:
+	  
 #ifdef OLD_PO_SOURCE	  
 	      cout << "call mysrc_ini" << endl;
 	      myparent->mysrc_ini(&myparent->myBeamline()->src);
@@ -709,9 +711,9 @@ void MainWindow::activateProc(const QString &action)
 	      cout << "call myposrc_ini" << endl;
 	      myparent->myposrc_ini();
 #endif
-	    }
+	    } /* end switch */
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
-	}
+	} /* end files are OK */
     } // end poInitSourceAct
 
   if (!action.compare("configureAct")) 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Aug 12 12:21:02 flechsig>  */
+/*  Time-stamp: <08 Mar 13 08:35:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -117,6 +117,7 @@ public:
   void mysrc_ini(struct sources *src) { src_ini(src); }
   void myposrc_ini() { source4c_ini(this); }
   void mysource7c_ini() { source7c_ini(this); }
+  void mysource8c_ini() { source8c_ini(this); }
   void myUpdateFlags(int run) { UpdateFlags(this, run); }
   void myWriteBLFile(char *name) { WriteBLFile(name, this); }
   void mywritemapc(char *fname, char *header, int iord, 
