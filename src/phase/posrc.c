@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <08 Mar 13 17:12:02 flechsig>  */
+/*  Time-stamp: <11 Mar 13 12:53:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -108,7 +108,7 @@ void source8c_ini(struct BeamlineType *bl)
       {
 	bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
 	bl->posrc.gridy[j]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
-	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2] * 0.0;   /* lin hor only */
+	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2];/* * 0.0;   /* lin hor only */
       }
 
   bl->posrc.xemin= bl->posrc.gridx[0]; 
@@ -124,7 +124,7 @@ void source8c_ini(struct BeamlineType *bl)
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
-	bl->posrc.zeyim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2] * 0.0;   /* lin hor only */;
+	bl->posrc.zeyim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2];/*????? * 0.0;   /* lin hor only */;
 	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.iex]*= -1.0;
       }
 
