@@ -1,11 +1,11 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <11 Mar 13 12:53:44 flechsig>  */
+/*  Time-stamp: <11 Mar 13 17:03:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
 /*  $Date$ */
-/*  $Revision$  */
+/*  $Revision$  */ 
 /*  $Author$  */
 
 /* soure routines for physical optics */
@@ -47,33 +47,30 @@ void source8c_ini(struct BeamlineType *bl)
 
   /* Open an existing file. */
   file_id = H5Fopen(bl->filenames.so7_fsource7, H5F_ACC_RDONLY, H5P_DEFAULT);
-
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: file %s not found - exit\n", bl->filenames.so7_fsource7);
+      exit(-1);
+    }
+  
+  if ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0) || 
+      (hasDataset(file_id, "gridsize") < 0) || (hasDataset(file_id, "slicecount") < 0))
+    {
+      fprintf(stderr, "hdf5 error in file %s: the file %s is not a GENESIS hdf5 output- exit\n", 
+	      __FILE__, bl->filenames.so7_fsource7);
+      exit(-1);
+    }
+  
   /* Open an existing dataset. */
-  e_dataset_id          = H5Dopen(file_id, "slice000001/field", H5P_DEFAULT);
-  wavelength_dataset_id = H5Dopen(file_id, "wavelength",  H5P_DEFAULT);
-  gridsize_dataset_id   = H5Dopen(file_id, "gridsize",    H5P_DEFAULT);
-  slicecount_dataset_id = H5Dopen(file_id, "slicecount",  H5P_DEFAULT);
+  readDataDouble(file_id, "wavelength", &wavelength, 1);
+  readDataDouble(file_id, "gridsize",   &gridsize,   1);
+  readDataInt   (file_id, "slicecount", &slicecount, 1);
+  t_size= getDatasetSize(file_id, "slice000001/field");
 
-  e_dataspace_id= H5Dget_space(e_dataset_id);
-  
-  rank= H5Sget_simple_extent_dims(e_dataspace_id, current_dims, NULL);
-
-  t_size= current_dims[0];
-  
-  printf("file: %s, rank= %d, array_values= %d\n", __FILE__,  rank, t_size);
+  printf("file: %s, array_values= %d\n", __FILE__, t_size);
 
   field= XMALLOC(double, t_size);
-
-  status = H5Dread(e_dataset_id,          H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field); 
-  status = H5Dread(wavelength_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, &wavelength);
-  status = H5Dread(gridsize_dataset_id,   H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, &gridsize);
-  status = H5Dread(slicecount_dataset_id, H5T_NATIVE_INT,    H5S_ALL, H5S_ALL, H5P_DEFAULT, &slicecount);
-
-/* Close the dataset. */
-  status = H5Dclose(e_dataset_id);
-  status = H5Dclose(wavelength_dataset_id);
-  status = H5Dclose(gridsize_dataset_id);
-  status = H5Dclose(slicecount_dataset_id);
+  readDataDouble(file_id, "slice000001/field", field, t_size);
 
   /* Close the file. */
   status = H5Fclose(file_id);
@@ -108,7 +105,7 @@ void source8c_ini(struct BeamlineType *bl)
       {
 	bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
 	bl->posrc.gridy[j]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
-	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2];/* * 0.0;   /* lin hor only */
+	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2] * 1e-12;/* * 0.0;   /* lin hor only */
       }
 
   bl->posrc.xemin= bl->posrc.gridx[0]; 
@@ -124,7 +121,7 @@ void source8c_ini(struct BeamlineType *bl)
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
-	bl->posrc.zeyim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2];/*????? * 0.0;   /* lin hor only */;
+	bl->posrc.zeyim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2]* 1e-12;/*????? * 0.0;   /* lin hor only */;
 	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.iex]*= -1.0;
       }
 
@@ -132,7 +129,7 @@ void source8c_ini(struct BeamlineType *bl)
   bl->posrc.zezre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
-      bl->posrc.zezre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2];
+      bl->posrc.zezre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2]* 1e-12;
    
   /* z imag */
   bl->posrc.zezim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
@@ -140,7 +137,7 @@ void source8c_ini(struct BeamlineType *bl)
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
-	bl->posrc.zezim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2];
+	bl->posrc.zezim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2]* 1e-12;
 	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iex]*= -1.0;
       }
 
@@ -181,6 +178,20 @@ void source7c_ini(struct BeamlineType *bl)
 
   /* Open an existing file. */
   file_id = H5Fopen(bl->filenames.so7_fsource7, H5F_ACC_RDONLY, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: file %s not found - exit\n", bl->filenames.so7_fsource7);
+      exit(-1);
+    }
+
+  if ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0) || 
+      (hasDataset(file_id, "z_vec") < 0)   || (hasDataset(file_id, "t_vec") < 0))
+    {
+      fprintf(stderr, "hdf5 error in file %s: the file %s has not the expected datasets- exit\n", 
+	      __FILE__, bl->filenames.so7_fsource7);
+      exit(-1);
+    }
+
 
   /* Open an existing dataset. */
   e_dataset_id = H5Dopen(file_id, "e_field", H5P_DEFAULT);
@@ -517,5 +528,85 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 #ifdef DEBUG1
   printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
 #endif
+
 } /* end source4c_inter_2d_ */
+
+
+#ifdef HAVE_HDF5
+
+  /* some hdf5 helper routines adapted by UF from Sven Reiches c++ routines */
+
+void readDataDouble(hid_t fid, char *name, double *data, int size)
+{
+  hsize_t dims[1];
+  hid_t   dataspace_id, dataset_id;
+
+  dims[0]= size;
+  dataspace_id= H5Screate_simple(1, dims, NULL);
+  if ((dataset_id= H5Dopen(fid, name, H5P_DEFAULT)) < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
+      exit(-1);
+    }
+  H5Dread(dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+  H5Dclose(dataset_id);     
+  H5Sclose(dataspace_id);
+  return;
+}
+
+void readDataInt(hid_t fid, char *name, int *data, int size)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+
+  dims[0]=size;
+  dataspace_id= H5Screate_simple(1, dims, NULL);
+  dataset_id = H5Dopen(fid, name, H5P_DEFAULT);
+  if (dataset_id < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
+      exit(-1);
+    }
+  H5Dread(dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+  H5Dclose(dataset_id);     
+  H5Sclose(dataspace_id);
+  return;
+}
+
+int getDatasetSize(hid_t fid, char *name)
+{
+
+  hsize_t dims[1], maxdims[1];
+  hid_t   dataspace_id, dataset_id;
+
+  dataset_id= H5Dopen(fid, name, H5P_DEFAULT);
+  if (dataset_id < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
+      exit(-1);
+    }
+
+  dataspace_id= H5Dget_space(dataset_id);
+  H5Sget_simple_extent_dims(dataspace_id, dims, maxdims);
+  H5Dclose(dataset_id);     
+  H5Sclose(dataspace_id);
+  return dims[0];
+}
+
+int hasDataset(hid_t fid, char *name)
+{
+  hid_t  dataset_id;
+  int myreturn;
+
+  myreturn= -1;
+  dataset_id= (H5Dopen2(fid, name, H5P_DEFAULT));
+  if (dataset_id >= 0)
+    {
+      myreturn= 1;
+      H5Dclose(dataset_id); 
+    } //else fprintf(stderr, "error: did not found dataset %s\n", name);
+  return myreturn;
+}
+
+#endif
 /* end */
