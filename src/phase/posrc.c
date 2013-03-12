@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-03-12 10:49:39 flechsig>  */
+/*  Time-stamp: <12 Mar 13 16:14:37 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -44,18 +44,16 @@ void source8c_ini(struct BeamlineType *bl)
   printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", 
 	 __FILE__, bl->filenames.so7_fsource7);
 #endif
+  /* check file type */
+  if ( check_hdf5_type(bl->filenames.so7_fsource7, 8, 1) )
+    {
+      fprintf(stderr, "exit\n");
+      exit(-1);
+    }
 
   /* Open an existing file. */
   file_id = myH5Fopen(bl->filenames.so7_fsource7);
     
-  if ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0) || 
-      (hasDataset(file_id, "gridsize") < 0)          || (hasDataset(file_id, "slicecount") < 0))
-    {
-      fprintf(stderr, "hdf5 error in file %s: the file %s is not a GENESIS hdf5 output- exit\n", 
-	      __FILE__, bl->filenames.so7_fsource7);
-      exit(-1);
-    }
-  
   /* Open an existing dataset. */
   readDataDouble(file_id, "wavelength", &wavelength, 1);
   readDataDouble(file_id, "gridsize",   &gridsize,   1);
@@ -82,38 +80,22 @@ void source8c_ini(struct BeamlineType *bl)
   
   it= 0;          /* so far - read only first slice */
 
-  /* yreal and grid */
+  /* grid */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
 	bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
 	bl->posrc.gridy[j]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
-	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2] * 1e-12;/* * 0.0;   /* lin hor only */
       }
 
   posrc_fill_min_max(bl);
+ 
+  /* ich fuelle ey und ez mit den gleichen Werten - vermutlich nicht richtig */
+  posrc_fill8(bl, bl->posrc.zeyre, field, 0);
+  posrc_fill8(bl, bl->posrc.zeyim, field, 1);
+  posrc_fill8(bl, bl->posrc.zezre, field, 0);
+  posrc_fill8(bl, bl->posrc.zezim, field, 1);
   
-  /* y imag */    
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	bl->posrc.zeyim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2]* 1e-12;/*????? * 0.0;   /* lin hor only */;
-	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.iex]*= -1.0;
-      }
-
-  /* z real */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      bl->posrc.zezre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2]* 1e-12;
-   
-  /* z imag */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	bl->posrc.zezim[i+ j* bl->posrc.iex]= field[1 + (i + j * cols)* 2]* 1e-12;
-	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iex]*= -1.0;
-      }
-
   XFREE(field);
 
 #ifdef DEBUG
@@ -143,23 +125,21 @@ void source7c_ini(struct BeamlineType *bl)
     y_dataspace_id, z_dataspace_id, t_dataspace_id, e_dataspace_id;  /* identifiers */
   herr_t      status;
   hsize_t     current_dims[4];
-  double *y, *z, *t, *a;
+  double *y, *z, *t, *field;
 
 #ifdef DEBUG
   printf("debug: %s source7c_ini called- read hdf5 file: %s\n", __FILE__, bl->filenames.so7_fsource7);
 #endif
 
-  /* Open an existing file. */
-  file_id = myH5Fopen(bl->filenames.so7_fsource7);
-
-  if ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0) || 
-      (hasDataset(file_id, "z_vec") < 0)   || (hasDataset(file_id, "t_vec") < 0))
+/* check file type */
+  if ( check_hdf5_type(bl->filenames.so7_fsource7, 7, 1) )
     {
-      fprintf(stderr, "hdf5 error in file %s: the file %s has not the expected datasets- exit\n", 
-	      __FILE__, bl->filenames.so7_fsource7);
+      fprintf(stderr, "exit\n");
       exit(-1);
     }
 
+  /* Open an existing file. */
+  file_id = myH5Fopen(bl->filenames.so7_fsource7);
 
   /* Open an existing dataset. */
   e_dataset_id = H5Dopen(file_id, "e_field", H5P_DEFAULT);
@@ -174,20 +154,20 @@ void source7c_ini(struct BeamlineType *bl)
 
   rank= H5Sget_simple_extent_dims(e_dataspace_id, current_dims, NULL);
   
-  cols= current_dims[3];
-  rows= current_dims[2];
+  cols  = current_dims[3];
+  rows  = current_dims[2];
   t_size= current_dims[0];
   
   printf("file: %s, rank= %d, z_size= %d, y_size= %d, t_size= %d\n", __FILE__,  rank, cols, rows, t_size);
 
   array_items= cols* rows *4 * t_size;
  
-  y= XMALLOC(double, rows);
-  z= XMALLOC(double, cols);
-  t= XMALLOC(double, t_size);
-  a= XMALLOC(double, array_items);
+  y    = XMALLOC(double, rows);
+  z    = XMALLOC(double, cols);
+  t    = XMALLOC(double, t_size);
+  field= XMALLOC(double, array_items);
   
-  status = H5Dread(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, a); 
+  status = H5Dread(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field); 
   status = H5Dread(z_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, z);
   status = H5Dread(y_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, y);
   status = H5Dread(t_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, t);
@@ -206,42 +186,25 @@ void source7c_ini(struct BeamlineType *bl)
 
   it= 0;          /* so far - read only first slice */
 
-  /* yreal and grid */
+  /* grid */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
 	bl->posrc.gridx[i]= z[i];
 	bl->posrc.gridy[j]= y[j];
-	bl->posrc.zeyre[i+ j* bl->posrc.iex]= a[i + j* cols + 0 * (rows * cols) + it * (rows * cols * 4)];
       }
 
   posrc_fill_min_max(bl);
 
-  /* y imag */    
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	bl->posrc.zeyim[i+ j* bl->posrc.iex]= a[i + j* cols + 1 * (rows * cols) + it * (rows * cols * 4)];
-	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.iex]*= -1.0;
-      }
-
-  /* z real */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      bl->posrc.zezre[i+ j* bl->posrc.iex]= a[i + j* cols + 2 * (rows * cols) + it * (rows * cols * 4)];
-   
-  /* z imag */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	bl->posrc.zezim[i+ j* bl->posrc.iex]= a[i + j* cols + 3 * (rows * cols) + it * (rows * cols * 4)];
-	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iex]*= -1.0;
-      }
+  posrc_fill7(bl, bl->posrc.zeyre, field, 0, it, 0);
+  posrc_fill7(bl, bl->posrc.zeyim, field, 1, it, 1);
+  posrc_fill7(bl, bl->posrc.zezre, field, 2, it, 0);
+  posrc_fill7(bl, bl->posrc.zezim, field, 3, it, 1);
 
   XFREE(y);
   XFREE(z);
   XFREE(t);
-  XFREE(a);
+  XFREE(field);
 
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
@@ -264,107 +227,44 @@ void source4c_ini(struct BeamlineType *bl)
 {
   FILE *fa, *fb, *fc, *fd;
   struct source4c *so4;
-  int i, j, iexx, ieyy, rows, cols;
+  int i, j, rows, cols;
   
 #ifdef DEBUG
   printf("debug: %s source4c_ini called\n", __FILE__);
 #endif
   
   /* open files, return if a file is not found */ 
-  if ((fa= fopen(bl->filenames.so4_fsource4a, "r")) == NULL)
-    {
-      printf("error: file: %s not found- return\n", bl->filenames.so4_fsource4a);
-      return;
-    }
-  
-  if ((fb= fopen(bl->filenames.so4_fsource4b, "r")) == NULL)
-    {
-      printf("error: file: %s not found- return\n", bl->filenames.so4_fsource4b);
-      return;
-    }
-  
-  if ((fc= fopen(bl->filenames.so4_fsource4c, "r")) == NULL)
-    {
-      printf("error: file: %s not found- return\n", bl->filenames.so4_fsource4c);
-      return;
-    }
-  
-  if ((fd= fopen(bl->filenames.so4_fsource4d, "r")) == NULL)
-    {
-      printf("error: file: %s not found- return\n", bl->filenames.so4_fsource4d);
-      return;
-    }
+  if ((fa= posrc_fopen(bl->filenames.so4_fsource4a)) == NULL) return;
+  if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) return;
+  if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) return;
+  if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) return;
   /* all files open */
   
  /* y real */
   printf("read file: %s ", bl->filenames.so4_fsource4a);
-  fscanf(fa, "%d %d", &cols, &rows);                   /* read first line */
-
-  reallocate_posrc(bl, rows, cols);
-
-  /* y real and grid */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      fscanf(fa, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyre[i+ j* bl->posrc.iex]);
-  fclose(fa);
-  printf(" ==> done\n");
-
-  posrc_fill_min_max(bl);
+  fscanf(fa, "%d %d", &cols, &rows);                   /* read first line        */
+  reallocate_posrc(bl, rows, cols);                    /* reserve memory         */
+  posrc_fill4(bl, bl->posrc.zeyre, fa, 0);             /* fill array, close file */
+  posrc_fill_min_max(bl);                              /* fill min max etc.      */
   
   /* y imag */
   printf("read file: %s ", bl->filenames.so4_fsource4b);
-  fscanf(fb, "%d %d", &iexx, &ieyy);                                    /* read first line */
-  if ((iexx != bl->posrc.iex) || (ieyy != bl->posrc.iey))
-    {
-      printf("error with file dimensions- exit\n");
-      exit(0);
-    }
-  
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	fscanf(fb, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyim[i+ j* bl->posrc.iex]);
-	if (bl->posrc.iconj == 1) bl->posrc.zeyim[i+ j* bl->posrc.iex]*= -1.0;
-      }
-  
-  fclose(fb);
-  printf(" ==> done\n");
+  fscanf(fb, "%d %d", &cols, &rows);                   /* read first line */
+  check_file_consistency(bl, rows, cols);
+  posrc_fill4(bl, bl->posrc.zeyim, fb, 1);         /* fill array, close file */
   
   /* z real */
   printf("read file: %s ", bl->filenames.so4_fsource4c);
-  fscanf(fc, "%d %d", &iexx, &ieyy);             /* read first line */
-  if ((iexx != bl->posrc.iex) || (ieyy != bl->posrc.iey))
-    {
-      printf("error with file dimensions- exit\n");
-      exit(0);
-    }
-  
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      fscanf(fc, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zezre[i+ j* bl->posrc.iex]);
-  
-  fclose(fc);
-  printf(" ==> done\n");
+  fscanf(fc, "%d %d", &cols, &rows);                   /* read first line */
+  check_file_consistency(bl, rows, cols);
+  posrc_fill4(bl, bl->posrc.zezre, fc, 0);         /* fill array, close file */
   
   /* z imag */
   printf("read file: %s ", bl->filenames.so4_fsource4d);
-  fscanf(fd, "%d %d", &iexx, &ieyy);             /* read first line */
-  if ((iexx != bl->posrc.iex) || (ieyy != bl->posrc.iey))
-    {
-      printf("error with file dimensions- exit\n");
-      exit(0);
-    }
-  
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	fscanf(fd, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zezim[i+ j* bl->posrc.iex]);
-	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iex]*= -1.0;
-      }
-  
-  fclose(fd);
-  printf(" ==> done\n");
-  
+  fscanf(fd, "%d %d", &cols, &rows);                   /* read first line */
+  check_file_consistency(bl, rows, cols);
+  posrc_fill4(bl, bl->posrc.zezim, fd, 1);         /* fill array, close file */
+    
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
   printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
@@ -538,6 +438,7 @@ int hasDataset(hid_t fid, char *name)
   return myreturn;
 }
 
+/* H5Fopen wrapper with error handling */
 hid_t myH5Fopen(char *name)
 {
   hid_t file_id;
@@ -550,6 +451,38 @@ hid_t myH5Fopen(char *name)
     }
   return file_id;
 } /* myH5Fopen */
+
+/* returns true if type has been detected */
+int check_hdf5_type(char *name, int type, int verbose)
+{
+  int ret;
+  hid_t file_id;
+
+  file_id= myH5Fopen(name);
+
+  switch (type)
+    {
+    case 7:
+      ret= ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0)
+	    || (hasDataset(file_id, "z_vec") < 0) || (hasDataset(file_id, "t_vec") < 0));
+      if (verbose) printf("file %s => hdf5 file from phase (source7)\n", name); 
+      else printf("file %s => not a hdf5 file from phase (source7)\n", name);
+      break;
+    case 8:
+      ret= ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0)
+	    || (hasDataset(file_id, "gridsize") < 0) || (hasDataset(file_id, "slicecount") < 0));
+      if (verbose) printf("file %s => hdf5 file from GENESIS\n", name); 
+      else printf("file %s => not a hdf5 file from GENESIS\n", name);
+      break;
+    default:
+      fprintf(stderr, "error: %s -- unknown hdf5 type: %d -- exit\n",  __FILE__, type);
+      exit(-1);
+    }
+
+  H5Fclose(file_id);
+  return ret;
+}  /* check_hdf5_type */
+
 
 #endif
 
@@ -586,5 +519,80 @@ void posrc_fill_min_max(struct BeamlineType *bl)
   bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
   bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
 } /* posrc_fill_min_max */
+
+
+void check_file_consistency(struct BeamlineType *bl, int rows, int cols)
+{
+  if ((cols != bl->posrc.iex) || (rows != bl->posrc.iey))
+    {
+      fprintf(stderr, "error: inconsistent file dimensions- exit\n");
+      exit(0);
+    }
+} /* check_file_consistency */
+
+
+void posrc_fill4(struct BeamlineType *bl, double *a,  FILE *f, int imag)
+{
+  int i, j;
+  double val;
+
+  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< bl->posrc.iex; i++) 
+      {
+	fscanf(f, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &val);
+	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	a[i+ j* bl->posrc.iex]= val;
+      }
+
+  fclose(f);
+  printf(" ==> done\n");
+} /* posrc_fill4 */
+
+void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, int it, int imag)
+{
+  int i, j, rows, cols;
+  double val;
+
+  rows= bl->posrc.iey;
+  cols= bl->posrc.iex;
+
+  for (j=0; j< rows; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< cols; i++) 
+      {
+	val= field[i + j* cols + offset * (rows * cols) + it * (rows * cols * 4)];
+	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	a[i+ j* cols]= val;
+      }
+} /* posrc_fill7 */
+
+/* genesis data are a linear array of real and imag numbers- use imag as offset */
+void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
+{
+  int i, j, rows, cols;
+  double val;
+
+  rows= bl->posrc.iey;
+  cols= bl->posrc.iex;
+
+  for (j=0; j< rows; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< cols; i++) 
+      {
+	val= field[imag + (i + j * cols)* 2];
+	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	a[i+ j* cols]= val * 1e-12;   /* temporaer Svens Werte sind recht gross */
+      }
+} /* posrc_fill8 */
+
+
+/* local fopen wrapper */
+FILE *posrc_fopen(char *name)
+{
+  FILE *fa;
+
+  fa= fopen(name, "r");
+  if (fa == NULL) fprintf(stderr, "error: file: %s not found- return\n", name);
+
+  return fa;
+} /* posrc_fopen */
 
 /* end */

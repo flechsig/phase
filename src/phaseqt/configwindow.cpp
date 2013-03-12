@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <05 Nov 12 10:56:06 flechsig> 
+//  Time-stamp: <12 Mar 13 16:37:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -180,8 +180,8 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 				strncpy(myparent->myBeamline()->filenames.so6_fsource6, fname, MaxPathLength); 
 				strncpy(myparent->myBeamline()->src.so6.fsource6, fname, 80);
 			      } else
-			      if ( !strncmp(description, "so7_fsource7", 3) ) 
-				strncpy(myparent->myBeamline()->filenames.so7_fsource7, fname, MaxPathLength); 
+			      if ( !strncmp(description, "so7_hdf5", 3) ) 
+				strncpy(myparent->myBeamline()->filenames.so7_hdf5, fname, MaxPathLength); 
       			      else
 				cout << "selectSlot: error: no matching description: >>" 
 				     << description << "<<" << endl;
@@ -208,7 +208,7 @@ QStandardItemModel *ConfigWindow::createConfigModel(QObject *parent)
 void ConfigWindow::fillList()
 {
   // add in reverse order
-  addRow("so7_fsource7",         myparent->myBeamline()->filenames.so7_fsource7,   "h5");
+  addRow("so7_hdf5",             myparent->myBeamline()->filenames.so7_hdf5,   "h5");
   addRow("so6_fsource6",         myparent->myBeamline()->filenames.so6_fsource6,   "s6");
   addRow("so4_fsource4d",        myparent->myBeamline()->filenames.so4_fsource4d,  "s4d");
   addRow("so4_fsource4c",        myparent->myBeamline()->filenames.so4_fsource4c,  "s4c");
@@ -249,7 +249,7 @@ void ConfigWindow::updateList()
   mymodel->setData(mymodel->index(8,  1), myparent->myBeamline()->filenames.so4_fsource4c);
   mymodel->setData(mymodel->index(9,  1), myparent->myBeamline()->filenames.so4_fsource4d);
   mymodel->setData(mymodel->index(10, 1), myparent->myBeamline()->filenames.so6_fsource6);
-  mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so7_fsource7);
+  mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so7_hdf5);
 } // updateList
 
 void ConfigWindow::checkFileNames()

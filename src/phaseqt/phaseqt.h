@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <08 Mar 13 08:35:14 flechsig>  */
+/*  Time-stamp: <12 Mar 13 16:26:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -92,6 +92,7 @@ public:
   void myAllocRTSource() { AllocRTSource(this); }
   void myBatchMode(int cmode, int selected, int iord) { BatchMode(this, cmode, selected, iord); }
   void myBuildBeamline() { BuildBeamline(this); }
+  int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb);}
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 

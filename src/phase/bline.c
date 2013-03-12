@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <03 Dec 12 08:34:20 flechsig>  */
+/*   Time-stamp: <12 Mar 13 16:39:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1657,7 +1657,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%s     so4_fsource4c\n",        pp->so4_fsource4c);
    fprintf(f, "%s     so4_fsource4d\n",        pp->so4_fsource4d);
    fprintf(f, "%s     so6_fsource6\n",         pp->so6_fsource6);
-   fprintf(f, "%s     so7_fsource7\n",         pp->so7_fsource7);
+   fprintf(f, "%s     so7_hdf5\n",             pp->so7_hdf5);
     
    /* end FILENAMES section */
 
@@ -2182,7 +2182,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4d, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6,  buffer, &buf);
 	   if (version >= 20120828)
-	     fscanf(f, " %s %[^\n]s %c", &pp->so7_fsource7,  buffer, &buf);
+	     fscanf(f, " %s %[^\n]s %c", &pp->so7_hdf5,  buffer, &buf);
 	   
 	   strncpy(bl->src.so4.fsource4a, bl->filenames.so4_fsource4a, 80);
 	   strncpy(bl->src.so4.fsource4b, bl->filenames.so4_fsource4b, 80);
