@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <11 Mar 13 17:03:11 flechsig>  */
+/*  Time-stamp: <2013-03-12 10:49:39 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -29,32 +29,27 @@
    #include "hdf5.h"
 #endif 
 
-/* reads the h5 output  file from genesis and puts the results into bl->posrc */
+/* reads the h5 output  file from GENESIS and puts the results into bl->posrc */
 void source8c_ini(struct BeamlineType *bl)
 {
 #ifdef HAVE_HDF5
 
   struct source4c *so4;
-  int t_size, rank, slicecount, rows, cols, it, i, j;
-  hid_t  file_id, e_dataset_id, e_dataspace_id, wavelength_dataset_id, gridsize_dataset_id, slicecount_dataset_id;  /* identifiers */
-  herr_t      status;
-  hsize_t     current_dims[4];
+  int    t_size, slicecount, rows, cols, it, i, j;
+  hid_t  file_id;                         /* identifiers */
+  herr_t status;
   double wavelength, gridsize, *field;
 
 #ifdef DEBUG
-  printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", __FILE__, bl->filenames.so7_fsource7);
+  printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", 
+	 __FILE__, bl->filenames.so7_fsource7);
 #endif
 
   /* Open an existing file. */
-  file_id = H5Fopen(bl->filenames.so7_fsource7, H5F_ACC_RDONLY, H5P_DEFAULT);
-  if (file_id < 0)
-    {
-      fprintf(stderr, "error: file %s not found - exit\n", bl->filenames.so7_fsource7);
-      exit(-1);
-    }
-  
+  file_id = myH5Fopen(bl->filenames.so7_fsource7);
+    
   if ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0) || 
-      (hasDataset(file_id, "gridsize") < 0) || (hasDataset(file_id, "slicecount") < 0))
+      (hasDataset(file_id, "gridsize") < 0)          || (hasDataset(file_id, "slicecount") < 0))
     {
       fprintf(stderr, "hdf5 error in file %s: the file %s is not a GENESIS hdf5 output- exit\n", 
 	      __FILE__, bl->filenames.so7_fsource7);
@@ -73,33 +68,21 @@ void source8c_ini(struct BeamlineType *bl)
   readDataDouble(file_id, "slice000001/field", field, t_size);
 
   /* Close the file. */
-  status = H5Fclose(file_id);
+  H5Fclose(file_id);
 
   rows= cols= sqrt(t_size / 2);
 
 #ifdef DEBUG
-  printf("debug: first value= %lg, wavelength= %lg m, gridsize= %lg m, slicecount= %d, gridpoints= %d x %d\n", *field, wavelength, gridsize, slicecount, rows, cols);
+  printf("debug: first value= %lg, wavelength= %lg m, gridsize= %lg m, slicecount= %d, gridpoints= %d x %d\n", 
+	 *field, wavelength, gridsize, slicecount, rows, cols);
 #endif
 
    /* the rest is a copy of functionality from source4c_ini */
+  reallocate_posrc(bl, rows, cols);
   
-  if (bl->posrc.zeyre != NULL) XFREE(bl->posrc.zeyre);                   /* free memory */
-  if (bl->posrc.zeyim != NULL) XFREE(bl->posrc.zeyim);   
-  if (bl->posrc.zezre != NULL) XFREE(bl->posrc.zezre);
-  if (bl->posrc.zezim != NULL) XFREE(bl->posrc.zezim);
-  if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
-  if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
-  
-  bl->posrc.iex= cols; 
-  bl->posrc.iey= rows;
-  
-  /* y real */
-  bl->posrc.zeyre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey);       /* allocate */
-  bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
-  bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
-
   it= 0;          /* so far - read only first slice */
 
+  /* yreal and grid */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
@@ -108,16 +91,9 @@ void source8c_ini(struct BeamlineType *bl)
 	bl->posrc.zeyre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2] * 1e-12;/* * 0.0;   /* lin hor only */
       }
 
-  bl->posrc.xemin= bl->posrc.gridx[0]; 
-  bl->posrc.yemin= bl->posrc.gridy[0];
-  bl->posrc.xemax= bl->posrc.gridx[bl->posrc.iex- 1];
-  bl->posrc.yemax= bl->posrc.gridy[bl->posrc.iey- 1];
-  bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
-  bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
-
+  posrc_fill_min_max(bl);
+  
   /* y imag */    
-  bl->posrc.zeyim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
-
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
@@ -126,14 +102,11 @@ void source8c_ini(struct BeamlineType *bl)
       }
 
   /* z real */
-  bl->posrc.zezre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       bl->posrc.zezre[i+ j* bl->posrc.iex]= field[(i + j * cols)* 2]* 1e-12;
    
   /* z imag */
-  bl->posrc.zezim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
-
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
@@ -141,7 +114,6 @@ void source8c_ini(struct BeamlineType *bl)
 	if (bl->posrc.iconj == 1) bl->posrc.zezim[i+ j* bl->posrc.iex]*= -1.0;
       }
 
-  
   XFREE(field);
 
 #ifdef DEBUG
@@ -150,14 +122,15 @@ void source8c_ini(struct BeamlineType *bl)
 	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
 #endif
 
-#else
+#else         /* no hdf5 */
    printf("compiled without hdf5 support\n", __FILE__);
 #endif
 
 #ifdef DEBUG
-   printf("debug: %s source8c_ini done (input from GENESIS linear horizontal polarisation), wavelength= %lg nm\n", __FILE__, wavelength * 1e9);
+   printf("debug: %s source8c_ini done (input from GENESIS linear horizontal polarisation), wavelength= %lg nm\n", 
+	  __FILE__, wavelength * 1e9);
 #endif
-}
+}  /* source8c_ini */
 
 /* reads the source files and puts the results into bl->posrc */
 void source7c_ini(struct BeamlineType *bl)
@@ -177,12 +150,7 @@ void source7c_ini(struct BeamlineType *bl)
 #endif
 
   /* Open an existing file. */
-  file_id = H5Fopen(bl->filenames.so7_fsource7, H5F_ACC_RDONLY, H5P_DEFAULT);
-  if (file_id < 0)
-    {
-      fprintf(stderr, "error: file %s not found - exit\n", bl->filenames.so7_fsource7);
-      exit(-1);
-    }
+  file_id = myH5Fopen(bl->filenames.so7_fsource7);
 
   if ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0) || 
       (hasDataset(file_id, "z_vec") < 0)   || (hasDataset(file_id, "t_vec") < 0))
@@ -234,24 +202,11 @@ void source7c_ini(struct BeamlineType *bl)
   status = H5Fclose(file_id);
   
   /* the rest is a copy of functionality from source4c_ini */
-  
-  if (bl->posrc.zeyre != NULL) XFREE(bl->posrc.zeyre);                   /* free memory */
-  if (bl->posrc.zeyim != NULL) XFREE(bl->posrc.zeyim);   
-  if (bl->posrc.zezre != NULL) XFREE(bl->posrc.zezre);
-  if (bl->posrc.zezim != NULL) XFREE(bl->posrc.zezim);
-  if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
-  if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
-  
-  bl->posrc.iex= cols; 
-  bl->posrc.iey= rows;
-  
-  /* y real */
-  bl->posrc.zeyre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey);       /* allocate */
-  bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
-  bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
+  reallocate_posrc(bl, rows, cols);
 
   it= 0;          /* so far - read only first slice */
 
+  /* yreal and grid */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
@@ -260,16 +215,9 @@ void source7c_ini(struct BeamlineType *bl)
 	bl->posrc.zeyre[i+ j* bl->posrc.iex]= a[i + j* cols + 0 * (rows * cols) + it * (rows * cols * 4)];
       }
 
-  bl->posrc.xemin= bl->posrc.gridx[0]; 
-  bl->posrc.yemin= bl->posrc.gridy[0];
-  bl->posrc.xemax= bl->posrc.gridx[bl->posrc.iex- 1];
-  bl->posrc.yemax= bl->posrc.gridy[bl->posrc.iey- 1];
-  bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
-  bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
+  posrc_fill_min_max(bl);
 
   /* y imag */    
-  bl->posrc.zeyim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
-
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
@@ -278,14 +226,11 @@ void source7c_ini(struct BeamlineType *bl)
       }
 
   /* z real */
-  bl->posrc.zezre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       bl->posrc.zezre[i+ j* bl->posrc.iex]= a[i + j* cols + 2 * (rows * cols) + it * (rows * cols * 4)];
    
   /* z imag */
-  bl->posrc.zezim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
-
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
@@ -319,7 +264,7 @@ void source4c_ini(struct BeamlineType *bl)
 {
   FILE *fa, *fb, *fc, *fd;
   struct source4c *so4;
-  int i, j, iexx, ieyy;
+  int i, j, iexx, ieyy, rows, cols;
   
 #ifdef DEBUG
   printf("debug: %s source4c_ini called\n", __FILE__);
@@ -351,32 +296,20 @@ void source4c_ini(struct BeamlineType *bl)
     }
   /* all files open */
   
-  if (bl->posrc.zeyre != NULL) XFREE(bl->posrc.zeyre);                   /* free memory */
-  if (bl->posrc.zeyim != NULL) XFREE(bl->posrc.zeyim);   
-  if (bl->posrc.zezre != NULL) XFREE(bl->posrc.zezre);
-  if (bl->posrc.zezim != NULL) XFREE(bl->posrc.zezim);
-  if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
-  if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
-  
-  /* y real */
+ /* y real */
   printf("read file: %s ", bl->filenames.so4_fsource4a);
-  fscanf(fa, "%d %d", &bl->posrc.iex, &bl->posrc.iey);                   /* read first line */
-  bl->posrc.zeyre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey);       /* allocate */
-  bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
-  bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
-  
+  fscanf(fa, "%d %d", &cols, &rows);                   /* read first line */
+
+  reallocate_posrc(bl, rows, cols);
+
+  /* y real and grid */
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       fscanf(fa, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &bl->posrc.zeyre[i+ j* bl->posrc.iex]);
-
-  bl->posrc.xemin= bl->posrc.gridx[0]; 
-  bl->posrc.yemin= bl->posrc.gridy[0];
-  bl->posrc.xemax= bl->posrc.gridx[bl->posrc.iex- 1];
-  bl->posrc.yemax= bl->posrc.gridy[bl->posrc.iey- 1];
-  bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
-  bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
   fclose(fa);
   printf(" ==> done\n");
+
+  posrc_fill_min_max(bl);
   
   /* y imag */
   printf("read file: %s ", bl->filenames.so4_fsource4b);
@@ -386,7 +319,6 @@ void source4c_ini(struct BeamlineType *bl)
       printf("error with file dimensions- exit\n");
       exit(0);
     }
-  bl->posrc.zeyim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
@@ -406,7 +338,6 @@ void source4c_ini(struct BeamlineType *bl)
       printf("error with file dimensions- exit\n");
       exit(0);
     }
-  bl->posrc.zezre= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
@@ -423,7 +354,6 @@ void source4c_ini(struct BeamlineType *bl)
       printf("error with file dimensions- exit\n");
       exit(0);
     }
-  bl->posrc.zezim= XMALLOC(double, bl->posrc.iex * bl->posrc.iey); /* allocate */
   
   for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< bl->posrc.iex; i++) 
@@ -608,5 +538,53 @@ int hasDataset(hid_t fid, char *name)
   return myreturn;
 }
 
+hid_t myH5Fopen(char *name)
+{
+  hid_t file_id;
+
+  file_id = H5Fopen(name, H5F_ACC_RDONLY, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: file %s not found or not a hdf5 file- exit\n", name);
+      exit(-1);
+    }
+  return file_id;
+} /* myH5Fopen */
+
 #endif
+
+void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
+{
+  int twodsize;
+
+  if (bl->posrc.zeyre != NULL) XFREE(bl->posrc.zeyre);                   /* free memory */
+  if (bl->posrc.zeyim != NULL) XFREE(bl->posrc.zeyim);   
+  if (bl->posrc.zezre != NULL) XFREE(bl->posrc.zezre);
+  if (bl->posrc.zezim != NULL) XFREE(bl->posrc.zezim);
+  if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
+  if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
+
+  bl->posrc.iex= cols; 
+  bl->posrc.iey= rows;
+  twodsize= rows* cols;
+
+  bl->posrc.zeyre= XMALLOC(double, twodsize);       /* allocate */
+  bl->posrc.zeyim= XMALLOC(double, twodsize);
+  bl->posrc.zezre= XMALLOC(double, twodsize); 
+  bl->posrc.zezim= XMALLOC(double, twodsize); 
+  bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
+  bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
+
+} /* end reallocate_posrc */
+
+void posrc_fill_min_max(struct BeamlineType *bl)
+{
+  bl->posrc.xemin= bl->posrc.gridx[0]; 
+  bl->posrc.yemin= bl->posrc.gridy[0];
+  bl->posrc.xemax= bl->posrc.gridx[bl->posrc.iex- 1];
+  bl->posrc.yemax= bl->posrc.gridy[bl->posrc.iey- 1];
+  bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
+  bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
+} /* posrc_fill_min_max */
+
 /* end */
