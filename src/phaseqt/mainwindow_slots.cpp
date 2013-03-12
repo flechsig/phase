@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Mar 13 16:35:42 flechsig> 
+//  Time-stamp: <12 Mar 13 16:43:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -675,7 +675,6 @@ void MainWindow::activateProc(const QString &action)
 	  filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
 	  break;
 	case 7:
-	case 8:  
 	  filesOK= fexists(myparent->myBeamline()->filenames.so7_hdf5);
 	  break;
 	default:
@@ -694,7 +693,6 @@ void MainWindow::activateProc(const QString &action)
 	  switch (myparent->myBeamline()->src.isrctype)
 	    {
 	    case 7:
-	    case 8:
 	      if ( myparent->mycheck_hdf5_type(myparent->myBeamline()->filenames.so7_hdf5, 7, 1) )
 	      {
 		cout << "read hdf5 (experimental)" << endl;
