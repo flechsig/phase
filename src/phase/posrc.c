@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <12 Mar 13 16:14:37 flechsig>  */
+/*  Time-stamp: <12 Mar 13 17:06:34 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -42,17 +42,17 @@ void source8c_ini(struct BeamlineType *bl)
 
 #ifdef DEBUG
   printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", 
-	 __FILE__, bl->filenames.so7_fsource7);
+	 __FILE__, bl->filenames.so7_hdf5);
 #endif
   /* check file type */
-  if ( check_hdf5_type(bl->filenames.so7_fsource7, 8, 1) )
+  if ( !check_hdf5_type(bl->filenames.so7_hdf5, 8, 1) )
     {
       fprintf(stderr, "exit\n");
       exit(-1);
     }
 
   /* Open an existing file. */
-  file_id = myH5Fopen(bl->filenames.so7_fsource7);
+  file_id = myH5Fopen(bl->filenames.so7_hdf5);
     
   /* Open an existing dataset. */
   readDataDouble(file_id, "wavelength", &wavelength, 1);
@@ -128,18 +128,18 @@ void source7c_ini(struct BeamlineType *bl)
   double *y, *z, *t, *field;
 
 #ifdef DEBUG
-  printf("debug: %s source7c_ini called- read hdf5 file: %s\n", __FILE__, bl->filenames.so7_fsource7);
+  printf("debug: %s source7c_ini called- read hdf5 file: %s\n", __FILE__, bl->filenames.so7_hdf5);
 #endif
 
 /* check file type */
-  if ( check_hdf5_type(bl->filenames.so7_fsource7, 7, 1) )
+  if ( !check_hdf5_type(bl->filenames.so7_hdf5, 7, 1) )
     {
       fprintf(stderr, "exit\n");
       exit(-1);
     }
 
   /* Open an existing file. */
-  file_id = myH5Fopen(bl->filenames.so7_fsource7);
+  file_id = myH5Fopen(bl->filenames.so7_hdf5);
 
   /* Open an existing dataset. */
   e_dataset_id = H5Dopen(file_id, "e_field", H5P_DEFAULT);
@@ -455,24 +455,34 @@ hid_t myH5Fopen(char *name)
 /* returns true if type has been detected */
 int check_hdf5_type(char *name, int type, int verbose)
 {
-  int ret;
+  int ret, error;
   hid_t file_id;
+
+#ifdef DEBUG
+  printf("debug: file %s => check type of file %s\n", __FILE__, name);
+#endif
 
   file_id= myH5Fopen(name);
 
   switch (type)
     {
     case 7:
-      ret= ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0)
+      error= ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0)
 	    || (hasDataset(file_id, "z_vec") < 0) || (hasDataset(file_id, "t_vec") < 0));
-      if (verbose) printf("file %s => hdf5 file from phase (source7)\n", name); 
-      else printf("file %s => not a hdf5 file from phase (source7)\n", name);
+      if (verbose) 
+	{
+	  if (!error) printf("file %s => hdf5 file from phase (source7)\n", name); 
+	  else printf("file %s => not a hdf5 file from phase (source7)\n", name);
+	}
       break;
     case 8:
-      ret= ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0)
+      error= ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0)
 	    || (hasDataset(file_id, "gridsize") < 0) || (hasDataset(file_id, "slicecount") < 0));
-      if (verbose) printf("file %s => hdf5 file from GENESIS\n", name); 
-      else printf("file %s => not a hdf5 file from GENESIS\n", name);
+      if (verbose) 
+	{
+	  if (!error) printf("file %s => hdf5 file from GENESIS\n", name); 
+	  else printf("file %s => not a hdf5 file from GENESIS\n", name);
+	}
       break;
     default:
       fprintf(stderr, "error: %s -- unknown hdf5 type: %d -- exit\n",  __FILE__, type);
@@ -480,6 +490,12 @@ int check_hdf5_type(char *name, int type, int verbose)
     }
 
   H5Fclose(file_id);
+
+  ret= !error;
+#ifdef DEBUG
+  printf("debug: file %s check type of file returns %d\n", __FILE__, ret);
+#endif
+
   return ret;
 }  /* check_hdf5_type */
 
