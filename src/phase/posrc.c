@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Mar 13 12:37:26 flechsig>  */
+/*  Time-stamp: <14 Mar 13 16:11:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -106,12 +106,11 @@ void source8c_ini(struct BeamlineType *bl)
   
   it= 0;          /* so far - read only first slice */
 
-  /* grid */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
+  /* grid - genesis has a symetric grid*/
+  for (i=0; i< rows; i++) 
       {
 	bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
-	bl->posrc.gridy[j]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+	bl->posrc.gridy[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
       }
 
   posrc_fill_min_max(bl);
@@ -146,10 +145,9 @@ void source7c_ini(struct BeamlineType *bl)
 #ifdef HAVE_HDF5
   
   struct source4c *so4;
-  int i, j, t_size,  rank, cols, rows, it, array_items;
-  hid_t       file_id, e_dataset_id, y_dataset_id, z_dataset_id, t_dataset_id, 
+  int i, t_size,  rank, cols, rows, it, array_items;
+  hid_t  file_id, e_dataset_id, y_dataset_id, z_dataset_id, t_dataset_id, 
     y_dataspace_id, z_dataspace_id, t_dataspace_id, e_dataspace_id;  /* identifiers */
-  herr_t      status;
   hsize_t     current_dims[4];
   double *y, *z, *t, *field;
 
@@ -166,46 +164,38 @@ void source7c_ini(struct BeamlineType *bl)
 
   /* Open an existing file. */
   file_id = myH5Fopen(bl->filenames.so7_hdf5);
-
-  /* Open an existing dataset. */
-  e_dataset_id = H5Dopen(file_id, "e_field", H5P_DEFAULT);
-  y_dataset_id = H5Dopen(file_id, "y_vec",   H5P_DEFAULT);
-  z_dataset_id = H5Dopen(file_id, "z_vec",   H5P_DEFAULT);
-  t_dataset_id = H5Dopen(file_id, "t_vec",   H5P_DEFAULT);
-
-  e_dataspace_id= H5Dget_space(e_dataset_id);
-  y_dataspace_id= H5Dget_space(y_dataset_id);
-  z_dataspace_id= H5Dget_space(z_dataset_id);
-  t_dataspace_id= H5Dget_space(t_dataset_id);
-
-  rank= H5Sget_simple_extent_dims(e_dataspace_id, current_dims, NULL);
   
+  cols  = getDatasetSize(file_id, "z_vec");
+  rows  = getDatasetSize(file_id, "y_vec");
+  t_size= getDatasetSize(file_id, "t_vec");
+
+  /* for e_field we may test the dimensions or assume it is Ok as we do */
+  /* we should keep this comment as example */
+  /*
+  e_dataset_id  = H5Dopen(file_id, "e_field", H5P_DEFAULT);
+  e_dataspace_id= H5Dget_space(e_dataset_id);
+  rank= H5Sget_simple_extent_dims(e_dataspace_id, current_dims, NULL);
   cols  = current_dims[3];
   rows  = current_dims[2];
   t_size= current_dims[0];
-  
-  printf("file: %s, rank= %d, z_size= %d, y_size= %d, t_size= %d\n", __FILE__,  rank, cols, rows, t_size);
+  ...
+  H5Dread(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
+  status = H5Dclose(e_dataset_id);
+  */
 
   array_items= cols* rows *4 * t_size;
- 
   y    = XMALLOC(double, rows);
   z    = XMALLOC(double, cols);
   t    = XMALLOC(double, t_size);
   field= XMALLOC(double, array_items);
+
+  readDataDouble(file_id, "y_vec", y, rows);
+  readDataDouble(file_id, "z_vec", z, cols);
+  readDataDouble(file_id, "t_vec", t, t_size);
+  readDataDouble(file_id, "e_field", field, array_items);
   
-  status = H5Dread(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field); 
-  status = H5Dread(z_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, z);
-  status = H5Dread(y_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, y);
-  status = H5Dread(t_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, t);
-
-  /* Close the dataset. */
-  status = H5Dclose(e_dataset_id);
-  status = H5Dclose(y_dataset_id);
-  status = H5Dclose(z_dataset_id);
-  status = H5Dclose(t_dataset_id);
-
   /* Close the file. */
-  status = H5Fclose(file_id);
+  H5Fclose(file_id);
   
   /* the rest is a copy of functionality from source4c_ini */
   reallocate_posrc(bl, rows, cols);
@@ -213,12 +203,8 @@ void source7c_ini(struct BeamlineType *bl)
   it= 0;          /* so far - read only first slice */
 
   /* grid */
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
-    for (i=0; i< bl->posrc.iex; i++) 
-      {
-	bl->posrc.gridx[i]= z[i];
-	bl->posrc.gridy[j]= y[j];
-      }
+  for (i=0; i< bl->posrc.iey; i++) bl->posrc.gridy[i]= y[i];
+  for (i=0; i< bl->posrc.iex; i++) bl->posrc.gridx[i]= z[i];
 
   posrc_fill_min_max(bl);
 

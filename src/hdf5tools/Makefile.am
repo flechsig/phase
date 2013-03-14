@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <07 Nov 12 16:03:46 flechsig> 
+#  Time-stamp: <14 Mar 13 16:19:21 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -10,11 +10,12 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = source7
+bin_PROGRAMS  = source7 source8
 source7_SOURCES = source7.c ../phase/error.c \
-	../phase/xmalloc.c ../phase/xstrdup.c  
-	
+	../phase/xmalloc.c ../phase/xstrdup.c
 
+source8_SOURCES = source8.c ../phase/error.c \
+	../phase/xmalloc.c ../phase/xstrdup.c  
 
 ##dummy_DATA = \
 ##	configwindow.cpp configwindow.h \
