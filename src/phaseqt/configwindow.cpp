@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <12 Mar 13 16:37:53 flechsig> 
+//  Time-stamp: <14 Mar 13 12:45:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -132,7 +132,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
   dialog->selectFile(oldname);
 
   QString selectedFilter;
-  QString fileName= ( strstr(description, "input") || strstr(description, "fsource")) ? 
+  QString fileName= ( strstr(description, "input") || strstr(description, "fsource") || strstr(description, "so7_")) ? 
     dialog->getOpenFileName(this, tr("Define Input File"), QDir::currentPath(), tr(filter), 
 			    &selectedFilter, QFileDialog::DontConfirmOverwrite) :
     dialog->getSaveFileName(this, tr("Define Output File"), QDir::currentPath(), tr(filter));
