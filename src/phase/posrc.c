@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <12 Mar 13 17:06:34 flechsig>  */
+/*  Time-stamp: <14 Mar 13 11:46:53 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -423,12 +423,13 @@ int getDatasetSize(hid_t fid, char *name)
   return dims[0];
 }
 
+/* returns 1 if dataset found else 0 */
 int hasDataset(hid_t fid, char *name)
 {
   hid_t  dataset_id;
-  int myreturn;
+  int    myreturn;
 
-  myreturn= -1;
+  myreturn= 0;
   dataset_id= (H5Dopen2(fid, name, H5P_DEFAULT));
   if (dataset_id >= 0)
     {
@@ -453,36 +454,38 @@ hid_t myH5Fopen(char *name)
 } /* myH5Fopen */
 
 /* returns true if type has been detected */
+/* type=7: phase_hdf5, type=8: GENESIS */
 int check_hdf5_type(char *name, int type, int verbose)
 {
-  int ret, error;
+  int myreturn;
   hid_t file_id;
 
 #ifdef DEBUG
   printf("debug: file %s => check type of file %s\n", __FILE__, name);
 #endif
 
+  myreturn= 0;
+
   file_id= myH5Fopen(name);
 
   switch (type)
     {
     case 7:
-      error= ((hasDataset(file_id, "e_field") < 0) || (hasDataset(file_id, "y_vec") < 0)
-	    || (hasDataset(file_id, "z_vec") < 0) || (hasDataset(file_id, "t_vec") < 0));
-      if (verbose) 
-	{
-	  if (!error) printf("file %s => hdf5 file from phase (source7)\n", name); 
-	  else printf("file %s => not a hdf5 file from phase (source7)\n", name);
-	}
+      if ( !hasDataset(file_id, "e_field") ) break;
+      if ( !hasDataset(file_id, "y_vec")   ) break;
+      if ( !hasDataset(file_id, "z_vec")   ) break;
+      if ( !hasDataset(file_id, "t_vec")   ) break;
+      if (verbose) printf("file %s => hdf5 file from phase (source7)\n", name); 
+      myreturn= 1;
       break;
+
     case 8:
-      error= ((hasDataset(file_id, "slice000001/field") < 0) || (hasDataset(file_id, "wavelength") < 0)
-	    || (hasDataset(file_id, "gridsize") < 0) || (hasDataset(file_id, "slicecount") < 0));
-      if (verbose) 
-	{
-	  if (!error) printf("file %s => hdf5 file from GENESIS\n", name); 
-	  else printf("file %s => not a hdf5 file from GENESIS\n", name);
-	}
+      if ( !hasDataset(file_id, "slice000001/field") ) break;
+      if ( !hasDataset(file_id, "wavelength")        ) break;
+      if ( !hasDataset(file_id, "gridsize")          ) break;
+      if ( !hasDataset(file_id, "slicecount")	     ) break;
+      if (verbose) printf("file %s => hdf5 file from GENESIS\n", name); 
+      myreturn= 1;	
       break;
     default:
       fprintf(stderr, "error: %s -- unknown hdf5 type: %d -- exit\n",  __FILE__, type);
@@ -491,16 +494,17 @@ int check_hdf5_type(char *name, int type, int verbose)
 
   H5Fclose(file_id);
 
-  ret= !error;
+  if ( verbose && (myreturn == 0)) printf("file %s has not the expected type (expected: %d)\n", name, type);
+
 #ifdef DEBUG
-  printf("debug: file %s check type of file returns %d\n", __FILE__, ret);
+  printf("debug: file %s check type of file returns %d\n", __FILE__, myreturn);
 #endif
 
-  return ret;
+  return myreturn;
 }  /* check_hdf5_type */
 
 
-#endif
+#endif         /* end hdf5 */
 
 void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
 {
