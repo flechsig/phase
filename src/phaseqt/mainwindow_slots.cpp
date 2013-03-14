@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Mar 13 17:03:28 flechsig> 
+//  Time-stamp: <14 Mar 13 12:33:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -690,37 +690,19 @@ void MainWindow::activateProc(const QString &action)
 			     arg(myparent->myBeamline()->src.isrctype));
       else /* files are OK */
 	{
-	  switch (myparent->myBeamline()->src.isrctype)
-	    {
-	    case 7:
-	      if ( myparent->mycheck_hdf5_type(myparent->myBeamline()->filenames.so7_hdf5, 7, 1) )
-	      {
-		cout << "read hdf5 (experimental)" << endl;
-		myparent->mysource7c_ini();
-	      } 
-	      else
-		{
-		  cout << endl << "ignore previous errors - we try another file type" << endl;
-		  cout << "read hdf5 from GENESIS (experimental)" << endl;
-		  myparent->mysource8c_ini();
-		}
-	      break;
-	    
-	    default:
-	  
 #ifdef OLD_PO_SOURCE	  
-	      cout << "call mysrc_ini" << endl;
-	      myparent->mysrc_ini(&myparent->myBeamline()->src);
+	  cout << "call mysrc_ini" << endl;
+	  myparent->mysrc_ini(&myparent->myBeamline()->src);
 #else
-	      
-	      cout << "call myposrc_ini" << endl;
-	      myparent->myposrc_ini();
+	  
+	  cout << "call myposrc_ini" << endl;
+	  myparent->myposrc_ini();
 #endif
-	    } /* end switch */
+	  
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	} /* end files are OK */
     } // end poInitSourceAct
-
+  
   if (!action.compare("configureAct")) 
     { 
       printf("configure button pressed\n");

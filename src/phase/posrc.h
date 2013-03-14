@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <12 Mar 13 15:59:50 flechsig>  */
+/*  Time-stamp: <14 Mar 13 12:29:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -24,8 +24,9 @@ void posrc_fill7(struct BeamlineType *, double *, double *, int, int, int);
 void posrc_fill8(struct BeamlineType *, double *, double *, int);
 void posrc_fill_min_max(struct BeamlineType *);
 FILE *posrc_fopen(char *);
+void posrc_ini(struct BeamlineType *);
 void reallocate_posrc(struct BeamlineType *, int, int);
-void source4c_ini(struct BeamlineType *);
+int  source4c_ini(struct BeamlineType *);
 void source7c_ini(struct BeamlineType *);
 void source8c_ini(struct BeamlineType *);
 void source4c_inter_2d_(struct source_results *, double *, double *, int *);

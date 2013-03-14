@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Mar 13 11:46:53 flechsig>  */
+/*  Time-stamp: <14 Mar 13 12:37:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -29,10 +29,36 @@
    #include "hdf5.h"
 #endif 
 
+
+/* initializes the source depending on type */
+void posrc_ini(struct BeamlineType *bl)
+{
+  int type;
+
+  type= bl->src.isrctype;
+  
+  if ( type == 4 )
+    {
+      if ( !source4c_ini(bl) )
+	{
+	  fprintf(stderr, "error: source4c_ini - exit\n");
+	  exit(-1);
+	}
+    }
+  if ( type == 7 )
+    {
+      if ( check_hdf5_type(bl->filenames.so7_hdf5, 7, 1) ) 
+	source7c_ini(bl);
+      else 
+	source8c_ini(bl);
+    }
+} /* posrc_ini */
+
+
 /* reads the h5 output  file from GENESIS and puts the results into bl->posrc */
 void source8c_ini(struct BeamlineType *bl)
 {
-#ifdef HAVE_HDF5
+ #ifdef HAVE_HDF5
 
   struct source4c *so4;
   int    t_size, slicecount, rows, cols, it, i, j;
@@ -223,21 +249,23 @@ void source7c_ini(struct BeamlineType *bl)
 
 
 /* reads the source files and puts the results into bl->posrc */
-void source4c_ini(struct BeamlineType *bl)
+/* returns 0 if error else 1 */
+int source4c_ini(struct BeamlineType *bl)
 {
   FILE *fa, *fb, *fc, *fd;
   struct source4c *so4;
-  int i, j, rows, cols;
+  int i, j, rows, cols, myreturn;
   
 #ifdef DEBUG
   printf("debug: %s source4c_ini called\n", __FILE__);
 #endif
   
+  myreturn= 0;
   /* open files, return if a file is not found */ 
-  if ((fa= posrc_fopen(bl->filenames.so4_fsource4a)) == NULL) return;
-  if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) return;
-  if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) return;
-  if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) return;
+  if ((fa= posrc_fopen(bl->filenames.so4_fsource4a)) == NULL) return myreturn;
+  if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) return myreturn;
+  if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) return myreturn;
+  if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) return myreturn;
   /* all files open */
   
  /* y real */
@@ -271,6 +299,8 @@ void source4c_ini(struct BeamlineType *bl)
 	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
   printf("debug: source4c_ini done\n");
 #endif
+  myreturn= 1;      /* if we reach this point it is OK */ 
+  return myreturn;
 }  /* source4c_ini */
 
 /* output interpolated source_results for x and y     */
