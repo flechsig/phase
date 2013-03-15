@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Mar 13 16:11:59 flechsig>  */
+/*  Time-stamp: <15 Mar 13 10:34:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -615,7 +615,7 @@ void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
       {
 	val= field[imag + (i + j * cols)* 2];
 	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
-	a[i+ j* cols]= val * 1e-12;   /* temporaer Svens Werte sind recht gross */
+	a[i+ j* cols]= val;/* * 1e-12;   /* temporaer Svens Werte sind recht gross */
       }
 } /* posrc_fill8 */
 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <15 Mar 13 08:31:24 flechsig>  */
+/*  Time-stamp: <15 Mar 13 09:12:12 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -45,10 +45,10 @@ void writeDataDouble(hid_t, char *, double *, int);
 
 int main(int argc, char **argv)
 {
-  double *y, *z, *t, *a;
+  double *y, *z, *t, *a, *b, mydouble;
   char   *default_argv[6] = {t0, eyrefile, eyimfile, ezrefile, ezimfile, outputfile};
   char   **myargv, *myoutputfile;
-  int    myargc, cols, rows, no_time_slices, array_items, ifile, it;
+  int    myargc, cols, rows, no_time_slices, array_items, array_items2, ifile, it, myint, col, row;
 
   hid_t       file_id, e_dataset_id, e_dataspace_id, 
     y_dataset_id, y_dataspace_id, z_dataset_id, z_dataspace_id, 
@@ -64,10 +64,10 @@ int main(int argc, char **argv)
       myargv= (char **)default_argv; 
       myargc = 6; 
       printf("**********************************************************************************************************\n");
-      printf("usage: source7 list_of_slices outputfile\n");
+      printf("usage: source9 list_of_slices outputfile\n");
       printf("separator is a <space>\n");
       printf("one slice itself is the following list: time_as_double eyrealfilename eyimagfilename ezrealfilename ezimagfilename\n");
-      printf("example: source7 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
+      printf("example: source9 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
       printf("if the command line is to long use xargs\n");
       printf("**********************************************************************************************************\n");
       printf("we now make one hdf5 file as an example\n");
@@ -86,11 +86,12 @@ int main(int argc, char **argv)
 
   /* reserve memory */
   array_items= rows * cols * 4 * no_time_slices;
+  array_items2= array_items / 2;
   y= XMALLOC(double, rows);
   z= XMALLOC(double, cols);
   t= XMALLOC(double, no_time_slices);
   a= XMALLOC(double, array_items);
-
+  b= XMALLOC(double, array_items2);
   /* loop to get data into memory */
 
   for (it= 0; it< no_time_slices; it++)            /* loop over time slices */
@@ -101,6 +102,13 @@ int main(int argc, char **argv)
 	read_file(myargv[1+ ifile + it*5], it, ifile, y, z, a);
     }
 
+for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      {
+	b[   (col + row * cols) * 2]= a[col+ row* cols];
+	b[1+ (col + row * cols) * 2]= a[col+ row* cols + (rows * cols)];
+      }
+
   myoutputfile= myargv[myargc-1];
   printf("create hdf5 file %s\n", myoutputfile);
 
@@ -110,48 +118,15 @@ int main(int argc, char **argv)
   /* specifies that if the file already exists, 
      the current contents will be deleted so that the application can rewrite the file with new data. */
   file_id = H5Fcreate(myoutputfile, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-  
-  /* Create the data space for the dataset. */
-  /* hdf5 uses c memory model last listed dimension is the fastest */
-  e_dims[3] = cols; 
-  e_dims[2] = rows;
-  e_dims[1] = 4;              // eyre, eyim, ezre, ezim
-  e_dims[0] = no_time_slices; // 
 
-  y_dims[0] = rows; 
-  z_dims[0] = cols; 
-  t_dims[0] = no_time_slices; 
+  mydouble= 1e-10; writeDataDouble(file_id, "wavelength", &mydouble, 1);
+  myint   = 1;     writeDataInt   (file_id, "slicecount", &myint,    1);
+  mydouble= (y[1]-y[0]) * 1e-3;
+  writeDataDouble(file_id, "gridsize", &mydouble, 1);
+  H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  //H5Gclose(file_id);
+  writeDataDouble(file_id, "slice000001/field", b, array_items2);
 
-  e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
-  y_dataspace_id = H5Screate_simple(1, y_dims, NULL);
-  z_dataspace_id = H5Screate_simple(1, z_dims, NULL);
-  t_dataspace_id = H5Screate_simple(1, t_dims, NULL);
-
-   /* Create the dataset. */
-  e_dataset_id = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  y_dataset_id = H5Dcreate(file_id, "/y_vec",   H5T_NATIVE_DOUBLE, y_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  z_dataset_id = H5Dcreate(file_id, "/z_vec",   H5T_NATIVE_DOUBLE, z_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  t_dataset_id = H5Dcreate(file_id, "/t_vec",   H5T_NATIVE_DOUBLE, t_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-
-  /* Write the dataset. */
-  status = H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, a); 
-  status = H5Dwrite(y_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, y);
-  status = H5Dwrite(z_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, z);
-  status = H5Dwrite(t_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, t);
-  
-  
-  /* End access to the dataset and release resources used by it. */
-  status = H5Dclose(e_dataset_id);
-  status = H5Dclose(y_dataset_id);
-  status = H5Dclose(z_dataset_id);
-  status = H5Dclose(t_dataset_id);
-  
-  /* Terminate access to the data space. */ 
-  status = H5Sclose(e_dataspace_id);
-  status = H5Sclose(y_dataspace_id);
-  status = H5Sclose(z_dataspace_id);
-  status = H5Sclose(t_dataspace_id);
-  
   /* Close the file. */
   status = H5Fclose(file_id);
 
@@ -159,6 +134,7 @@ int main(int argc, char **argv)
   XFREE(z);
   XFREE(t);
   XFREE(a);
+  XFREE(b);
   
   printf("file: %s done\n", __FILE__);
   
