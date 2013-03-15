@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 18:10:55 flechsig>  */
+/*  Time-stamp: <15 Mar 13 18:17:08 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -529,11 +529,11 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   int slicecount= 1, col, row, cols, rows, fieldsize;
   double wavelength, gridsize, *field;
 
-  if (!(bl->beamlineOK & resultOK)) 
+  /* if (!(bl->beamlineOK & resultOK)) 
     {
       printf("no results- return\n");
       return;
-    }
+      }*/
 
   snprintf(fname, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
   chp= strstr(fname, ".h5");
@@ -583,11 +583,11 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   int no_time_slices= 1, col, row, cols, rows, fieldsize, it;
   double  *field, t_vec= 0.5;
 
-  if (!(bl->beamlineOK & resultOK)) 
+  /*  if (!(bl->beamlineOK & resultOK)) 
     {
       printf("no results- return\n");
       return;
-    }
+      } */
 
   snprintf(fname, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
   chp= strstr(fname, ".h5");

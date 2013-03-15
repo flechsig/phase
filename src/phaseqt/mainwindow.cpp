@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Mar 13 13:56:39 flechsig> 
+//  Time-stamp: <15 Mar 13 16:03:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -228,6 +228,16 @@ void MainWindow::createActions()
     writeResultAct->setStatusTip(tr("Write file with GO or PO results"));
     signalMapper->setMapping(writeResultAct, QString("writeResultAct"));
     connect(writeResultAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    writeResultPh5Act = new QAction(tr("Write R&esults (phase_hdf5)"), this);
+    writeResultPh5Act->setStatusTip(tr("Write PO results in phase_hdf5 format"));
+    signalMapper->setMapping(writeResultPh5Act, QString("writeResultPh5Act"));
+    connect(writeResultPh5Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    writeResultGh5Act = new QAction(tr("Write Re&sults (genesis_hdf5)"), this);
+    writeResultGh5Act->setStatusTip(tr("Write PO results in genesis_hdf5 format"));
+    signalMapper->setMapping(writeResultGh5Act, QString("writeResultGh5Act"));
+    connect(writeResultGh5Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     readFg34Act = new QAction(tr("&Read file fg34.par"), this);
     readFg34Act->setStatusTip(tr("Read parameter file fg34.par (for compatibility with previous phase versions)"));
@@ -730,6 +740,8 @@ void MainWindow::createMenus()
 
     cmdMenu = menuBar()->addMenu(tr("C&ommands"));
     cmdMenu->addAction(writeResultAct);
+    cmdMenu->addAction(writeResultPh5Act);
+    cmdMenu->addAction(writeResultGh5Act);
     cmdMenu->addAction(writemapAct);
     cmdMenu->addAction(writematAct);
     cmdMenu->addAction(writecoeffAct);

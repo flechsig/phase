@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <14 Mar 13 12:28:53 flechsig>  */
+/*  Time-stamp: <15 Mar 13 16:33:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -128,6 +128,8 @@ public:
 			     ypc1, zpc1, dypc,   dzpc,
 			     wc,   xlc,  xlen1c, xlen2c); }
   void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz); }
+  void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this); }
+  void my_write_phase_hdf5_file() { write_phase_hdf5_file(this); }
   void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();
   void writeBackupFile();

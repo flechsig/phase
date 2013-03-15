@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <15 Mar 13 12:47:21 flechsig>  */
+/*  Time-stamp: <15 Mar 13 18:15:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -84,8 +84,6 @@ int main(int argc, char **argv)
 	  a[i+ j* cols + k * (rows * cols) + it * (rows * cols * 4)]= b[k1 + (i + j * cols)* 2];
 	}   
   
-
-
   myoutputfile= outputfile;         /*myargv[myargc-1];*/
   printf("create hdf5 file %s\n", myoutputfile);
 

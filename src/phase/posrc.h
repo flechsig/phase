@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 12:08:34 flechsig>  */
+/*  Time-stamp: <15 Mar 13 17:06:39 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -38,6 +38,10 @@ void  readDataInt(hid_t, char *, int *, int);
 int   getDatasetSize(hid_t, char *);
 int   hasDataset(hid_t, char *);
 hid_t myH5Fopen(char *);
+void  writeDataDouble(hid_t, char *, double *, int);
+void  writeDataInt(hid_t, char *, int *, int);
+void  write_genesis_hdf5_file(struct BeamlineType *);
+void  write_phase_hdf5_file(struct BeamlineType *);
 #endif
 
 #endif 
