@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <27 Sep 12 16:39:42 flechsig> 
+//  Time-stamp: <15 Mar 13 13:56:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -637,10 +637,10 @@ QWidget *MainWindow::createGraphicBox()
   cyLabel0   = new QLabel(tr("y center (mm)"));
   wzLabel0   = new QLabel(tr("z FWHM (mm)"));
   wyLabel0   = new QLabel(tr("y FWHM (mm)"));
-  cdzLabel0  = new QLabel(tr("dz center (mm)"));
-  cdyLabel0  = new QLabel(tr("dy center (mm)"));
-  wdzLabel0  = new QLabel(tr("dz FWHM (mm)"));
-  wdyLabel0  = new QLabel(tr("dy FWHM (mm)"));
+  cdzLabel0  = new QLabel(tr("dz center (mrad)"));
+  cdyLabel0  = new QLabel(tr("dy center (mrad)"));
+  wdzLabel0  = new QLabel(tr("dz FWHM (mrad)"));
+  wdyLabel0  = new QLabel(tr("dy FWHM (mrad)"));
   rayLabel0  = new QLabel(tr("rays"));
   traLabel0  = new QLabel(tr("transmittance"));
   ryLabel0   = new QLabel(tr("y E/dE FWHM"));
