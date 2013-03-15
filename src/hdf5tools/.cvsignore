@@ -1,8 +1,11 @@
+# -*-sh-*-
 Makefile.in
 Makefile
 .*
-source7
-opti_root_example
+genesis2phase_hdf5
+wave2genesis_hdf5
+wave2phase_hdf5
+*.h5
 stamp-h3
 *.f90
 *.mod

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <07 Nov 12 13:44:24 flechsig>  */
+/*  Time-stamp: <15 Mar 13 12:41:47 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,7 +30,7 @@ b) store the e_field in a matrix of rank 4
 #define eyimfile   "/afs/psi.ch/project/phase/data/EZIM_GB_5000.DAT" 
 #define ezrefile   "/afs/psi.ch/project/phase/data/EZRE_GB_5000.DAT" 
 #define ezimfile   "/afs/psi.ch/project/phase/data/EZIM_GB_5000.DAT" 
-#define outputfile "source7.h5"
+#define outputfile "EZRE_GB_5000.h5"
 
 /* prototypes */
 void get_rows_and_cols(char *, int*, int*);
@@ -57,10 +57,10 @@ int main(int argc, char **argv)
       myargv= (char **)default_argv; 
       myargc = 6; 
       printf("**********************************************************************************************************\n");
-      printf("usage: source7 list_of_slices outputfile\n");
+      printf("usage: wave2phase_hdf5 list_of_slices outputfile\n");
       printf("separator is a <space>\n");
       printf("one slice itself is the following list: time_as_double eyrealfilename eyimagfilename ezrealfilename ezimagfilename\n");
-      printf("example: source7 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
+      printf("example: wave2phase_hdf5 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
       printf("if the command line is to long use xargs\n");
       printf("**********************************************************************************************************\n");
       printf("we now make one hdf5 file as an example\n");

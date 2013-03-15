@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <15 Mar 13 09:12:12 flechsig>  */
+/*  Time-stamp: <15 Mar 13 12:45:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -14,33 +14,22 @@
 #include "hdf5.h"
 #include "common.h"
 
-/*
-define a hdf5 data structure of phase source data
-a) store 3 vectors: z_vec, y_vec, t_vec
-b) store the e_field in a matrix of rank 4
-   - the origin is in the lower left corner
-   - dimension 4 is the horizontal z-coordinate and the fastest
-   - demension 3 the vertical (y- coordinate)
-   - dimension 2 the eyre, eyim, ezre, ezim 
-   - dimension 1 the time coordinate
-*/
-
-/* create a genesis file from wave files */
+/* create a genesis file from wave files  */
+/* preliminary version for debugging only */
 
 #define t0         "0.5"
-  
 #define eyrefile   "/afs/psi.ch/project/phase/data/EZRE_GB_5000.DAT"  
 #define eyimfile   "/afs/psi.ch/project/phase/data/EZIM_GB_5000.DAT" 
 #define ezrefile   "/afs/psi.ch/project/phase/data/EZRE_GB_5000.DAT" 
 #define ezimfile   "/afs/psi.ch/project/phase/data/EZIM_GB_5000.DAT" 
-#define outputfile "source9.h5"
+#define outputfile "EZRE_GB_5000_genesis_hdf5.h5"
 
 /* prototypes */
-void get_rows_and_cols(char *, int*, int*);
-void read_file(char *, int, int, double *, double *, double *);
+void  get_rows_and_cols(char *, int*, int*);
+void  read_file(char *, int, int, double *, double *, double *);
 hid_t myH5Fopen(char *);
-void writeDataInt(hid_t, char *, int *, int);
-void writeDataDouble(hid_t, char *, double *, int);
+void  writeDataInt(hid_t, char *, int *, int);
+void  writeDataDouble(hid_t, char *, double *, int);
 
 
 int main(int argc, char **argv)
@@ -49,8 +38,7 @@ int main(int argc, char **argv)
   char   *default_argv[6] = {t0, eyrefile, eyimfile, ezrefile, ezimfile, outputfile};
   char   **myargv, *myoutputfile;
   int    myargc, cols, rows, no_time_slices, array_items, array_items2, ifile, it, myint, col, row;
-
-  hid_t       file_id, e_dataset_id, e_dataspace_id, 
+  hid_t  file_id, e_dataset_id, e_dataspace_id, 
     y_dataset_id, y_dataspace_id, z_dataset_id, z_dataspace_id, 
     t_dataset_id, t_dataspace_id;  /* identifiers */
   hsize_t     e_dims[4], y_dims[1], z_dims[1], t_dims[1];

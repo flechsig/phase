@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <14 Mar 13 17:01:17 flechsig>  */
+/*  Time-stamp: <15 Mar 13 12:47:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -25,9 +25,12 @@ b) store the e_field in a matrix of rank 4
    - dimension 1 the time coordinate
 */
 
+/* preliminary version for debugging only */
+
+
 #define t0         "0.5"
 #define genesisfile  "/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5"  
-#define outputfile   "source8.h5"
+#define outputfile   "SwissFEL.out.dfl.phase_hdf5.h5"
 
 /* prototypes */
 hid_t myH5Fopen(char *);
