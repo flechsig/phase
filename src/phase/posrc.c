@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 18:17:08 flechsig>  */
+/*  Time-stamp: <15 Mar 13 18:26:34 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -524,7 +524,7 @@ int check_hdf5_type(char *name, int type, int verbose)
 
 void write_genesis_hdf5_file(struct BeamlineType *bl)
 {
-  char fname[MaxPathLength], *chp;
+  char fname[MaxPathLength], buffer[MaxPathLength], *chp;
   hid_t file_id;
   int slicecount= 1, col, row, cols, rows, fieldsize;
   double wavelength, gridsize, *field;
@@ -535,10 +535,10 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
       return;
       }*/
 
-  snprintf(fname, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
-  chp= strstr(fname, ".h5");
-  if (chp) *chp= '\0';                                                        /* strip off h5 */
-  snprintf(fname, MaxPathLength, "%s-out.h5", fname);
+  snprintf(buffer, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
+  chp= strstr(buffer, ".h5");
+  if (chp) *chp= '\0';                                                       /* strip off h5 */
+  snprintf(fname, MaxPathLength, "%s-out.h5", buffer);
   
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
@@ -577,7 +577,7 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
 
 void write_phase_hdf5_file(struct BeamlineType *bl)
 {
-  char fname[MaxPathLength], *chp;
+  char fname[MaxPathLength], buffer[MaxPathLength], *chp;
   hid_t file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
   int no_time_slices= 1, col, row, cols, rows, fieldsize, it;
@@ -588,11 +588,11 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
       printf("no results- return\n");
       return;
       } */
-
-  snprintf(fname, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
-  chp= strstr(fname, ".h5");
-  if (chp) *chp= '\0';                                                        /* strip off h5 */
-  snprintf(fname, MaxPathLength, "%s-out.h5", fname);
+  
+  snprintf(buffer, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
+  chp= strstr(buffer, ".h5");
+  if (chp) *chp= '\0';                                                       /* strip off h5 */
+  snprintf(fname, MaxPathLength, "%s-out.h5", buffer);
   
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
