@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 12:17:06 flechsig>  */
+/*  Time-stamp: <15 Mar 13 12:18:27 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -28,7 +28,6 @@
 #ifdef HAVE_HDF5
    #include "hdf5.h"
 #endif 
-
 
 /* initializes the source depending on type */
 void posrc_ini(struct BeamlineType *bl)
