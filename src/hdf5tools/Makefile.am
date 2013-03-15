@@ -1,23 +1,24 @@
-#  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
-#  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <15 Mar 13 08:33:39 flechsig> 
-#  Author    : Uwe Flechsig, flechsig@psi.ch
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/Makefile.am
+#  Date      : <15 Mar 13 12:33:54 flechsig> 
+#  Time-stamp: <15 Mar 13 12:33:55 flechsig> 
+#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
 #  $Date$
 #  $Revision$ 
 #  $Author$ 
 
+
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = source7 source8 source9
-source7_SOURCES = source7.c ../phase/error.c \
+bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5
+wave2phase_hdf5_SOURCES = wave2phase_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c
 
-source8_SOURCES = source8.c ../phase/error.c \
+genesis2phase_hdf5_SOURCES = genesis2phase_hdf5 ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c 
 
-source9_SOURCES = source9.c ../phase/error.c \
+wave2genesis_hdf5_SOURCES = wave2genesis_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c  
 
 ##dummy_DATA = \
