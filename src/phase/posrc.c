@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 10:34:29 flechsig>  */
+/*  Time-stamp: <15 Mar 13 12:17:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -63,13 +63,13 @@ void source8c_ini(struct BeamlineType *bl)
   struct source4c *so4;
   int    t_size, slicecount, rows, cols, it, i, j;
   hid_t  file_id;                         /* identifiers */
-  herr_t status;
   double wavelength, gridsize, *field;
 
 #ifdef DEBUG
   printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", 
 	 __FILE__, bl->filenames.so7_hdf5);
 #endif
+
   /* check file type */
   if ( !check_hdf5_type(bl->filenames.so7_hdf5, 8, 1) )
     {
@@ -90,6 +90,9 @@ void source8c_ini(struct BeamlineType *bl)
 
   field= XMALLOC(double, t_size);
   readDataDouble(file_id, "slice000001/field", field, t_size);
+
+  if ( slicecount > 1 ) 
+    printf("file contains multiple (%d) slices- we use only #1\n", slicecount );
 
   /* Close the file. */
   H5Fclose(file_id);
@@ -115,11 +118,12 @@ void source8c_ini(struct BeamlineType *bl)
 
   posrc_fill_min_max(bl);
  
-  /* ich fuelle ey und ez mit den gleichen Werten - vermutlich nicht richtig */
-  posrc_fill8(bl, bl->posrc.zeyre, field, 0);
-  posrc_fill8(bl, bl->posrc.zeyim, field, 1);
-  posrc_fill8(bl, bl->posrc.zezre, field, 0);
-  posrc_fill8(bl, bl->posrc.zezim, field, 1);
+  /*  */
+  printf("!! linear horizontal polarization is hardcoded !!, file: %s\n", __FILE__);
+  posrc_fill8(bl, bl->posrc.zeyre, field, 0, 0.0);          /* lin hor- scale= 0.0 */
+  posrc_fill8(bl, bl->posrc.zeyim, field, 1, 0.0);          /* lin hor- scale= 0.0 */
+  posrc_fill8(bl, bl->posrc.zezre, field, 0, 1.0);
+  posrc_fill8(bl, bl->posrc.zezim, field, 1, 1.0);
   
   XFREE(field);
 
@@ -602,7 +606,7 @@ void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset,
 } /* posrc_fill7 */
 
 /* genesis data are a linear array of real and imag numbers- use imag as offset */
-void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
+void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag, double scale)
 {
   int i, j, rows, cols;
   double val;
@@ -615,7 +619,7 @@ void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
       {
 	val= field[imag + (i + j * cols)* 2];
 	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
-	a[i+ j* cols]= val;/* * 1e-12;   /* temporaer Svens Werte sind recht gross */
+	a[i+ j* cols]= val * scale;
       }
 } /* posrc_fill8 */
 
