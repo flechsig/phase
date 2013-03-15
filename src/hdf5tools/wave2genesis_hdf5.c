@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <15 Mar 13 12:45:15 flechsig>  */
+/*  Time-stamp: <15 Mar 13 17:30:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 	read_file(myargv[1+ ifile + it*5], it, ifile, y, z, a);
     }
 
-for (col= 0; col < cols; col++)   // in the file the rows are fast
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
 	b[   (col + row * cols) * 2]= a[col+ row* cols];

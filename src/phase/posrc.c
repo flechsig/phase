@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 12:18:27 flechsig>  */
+/*  Time-stamp: <15 Mar 13 18:10:55 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -521,6 +521,148 @@ int check_hdf5_type(char *name, int type, int verbose)
 
   return myreturn;
 }  /* check_hdf5_type */
+
+void write_genesis_hdf5_file(struct BeamlineType *bl)
+{
+  char fname[MaxPathLength], *chp;
+  hid_t file_id;
+  int slicecount= 1, col, row, cols, rows, fieldsize;
+  double wavelength, gridsize, *field;
+
+  if (!(bl->beamlineOK & resultOK)) 
+    {
+      printf("no results- return\n");
+      return;
+    }
+
+  snprintf(fname, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
+  chp= strstr(fname, ".h5");
+  if (chp) *chp= '\0';                                                        /* strip off h5 */
+  snprintf(fname, MaxPathLength, "%s-out.h5", fname);
+  
+  /* Create a new file using default properties. */
+  /* specifies that if the file already exists, 
+     the current contents will be deleted so that the application can rewrite the file with new data. */
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      exit(-1);
+    }
+
+  rows= bl->posrc.iey;
+  cols= bl->posrc.iex;
+  fieldsize= rows*cols*2;
+
+  field= XMALLOC(double, fieldsize);
+
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      {
+	field[   (col + row * cols) * 2]= bl->posrc.zezre[col+ row* cols];
+	field[1+ (col + row * cols) * 2]= bl->posrc.zezim[col+ row* cols];
+      }
+
+  wavelength= bl->BLOptions.lambda* 1e-3;
+  gridsize  = (bl->posrc.gridx[1]- bl->posrc.gridx[0])* 1e-3;
+
+  H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  writeDataInt   (file_id, "slicecount", &slicecount, 1);
+  writeDataDouble(file_id, "wavelength", &wavelength, 1);
+  writeDataDouble(file_id, "gridsize",   &gridsize,   1);
+  writeDataDouble(file_id, "slice000001/field", field, fieldsize);
+  H5Fclose(file_id);
+  XFREE(field);
+}  /* write_genesis_hdf5_file */
+
+void write_phase_hdf5_file(struct BeamlineType *bl)
+{
+  char fname[MaxPathLength], *chp;
+  hid_t file_id, e_dataspace_id, e_dataset_id;
+  hsize_t e_dims[4];
+  int no_time_slices= 1, col, row, cols, rows, fieldsize, it;
+  double  *field, t_vec= 0.5;
+
+  if (!(bl->beamlineOK & resultOK)) 
+    {
+      printf("no results- return\n");
+      return;
+    }
+
+  snprintf(fname, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
+  chp= strstr(fname, ".h5");
+  if (chp) *chp= '\0';                                                        /* strip off h5 */
+  snprintf(fname, MaxPathLength, "%s-out.h5", fname);
+  
+  /* Create a new file using default properties. */
+  /* specifies that if the file already exists, 
+     the current contents will be deleted so that the application can rewrite the file with new data. */
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      exit(-1);
+    }
+
+  rows= bl->posrc.iey;
+  cols= bl->posrc.iex;
+
+  e_dims[3] = cols; 
+  e_dims[2] = rows;
+  e_dims[1] = 4;              // eyre, eyim, ezre, ezim
+  e_dims[0] = no_time_slices;              // no_time_slices
+
+  fieldsize= rows*cols * 4 * no_time_slices;
+
+  field= XMALLOC(double, fieldsize);
+  it= 0;
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      {
+	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zeyre[col+ row* cols];
+	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zeyim[col+ row* cols];
+	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zezre[col+ row* cols];
+	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zezim[col+ row* cols];
+      }
+
+    
+  writeDataDouble(file_id, "/z_vec", bl->posrc.gridx, cols);
+  writeDataDouble(file_id, "/y_vec", bl->posrc.gridy, rows);
+  writeDataDouble(file_id, "/t_vec",   &t_vec,   1);
+
+  e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
+  e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
+  H5Dclose(e_dataset_id);
+  H5Sclose(e_dataspace_id);
+  XFREE(field);
+  H5Fclose(file_id);
+}  /* write_phase_hdf5_file */
+
+void writeDataDouble(hid_t fid, char *name, double *data, int size)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+  dims[0]=size;
+  dataspace_id=H5Screate_simple(1,dims,NULL);
+  dataset_id=H5Dcreate(fid,name,H5T_NATIVE_DOUBLE,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+  H5Dwrite(dataset_id,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+}
+
+void writeDataInt(hid_t fid, char *name, int *data, int size)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+  dims[0]=size;
+  dataspace_id=H5Screate_simple(1,dims,NULL);
+  dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+  H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+}
+
 
 
 #endif         /* end hdf5 */
