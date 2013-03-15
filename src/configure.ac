@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <07 Nov 12 16:59:08 flechsig> 
+dnl   Time-stamp: <15 Mar 13 12:34:45 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -457,7 +457,7 @@ AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
           opti/Makefile extr/Makefile  \
 	  phaselib/Makefile phaseidl/Makefile \
 	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile phasesrv/Makefile source7/Makefile])
+	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
 AC_OUTPUT
 
 dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
