@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <12 Mar 13 16:39:55 flechsig>  */
+/*   Time-stamp: <18 Mar 13 08:33:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1273,7 +1273,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20121105;    /* today */
+   int  i, version= 20130318;    /* today */
    unsigned int elnumber;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
@@ -1299,7 +1299,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version NOV 2012\n\n");
+   fprintf(f, "This is a datafile of PHASE, file version MAR 2013\n\n");
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
@@ -1657,8 +1657,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%s     so4_fsource4c\n",        pp->so4_fsource4c);
    fprintf(f, "%s     so4_fsource4d\n",        pp->so4_fsource4d);
    fprintf(f, "%s     so6_fsource6\n",         pp->so6_fsource6);
-   fprintf(f, "%s     so7_hdf5\n",             pp->so7_hdf5);
-    
+   fprintf(f, "%s     so7 (hdf5 input)\n",     pp->so7_hdf5);
+   fprintf(f, "%s     hdf5 output\n",          pp->hdf5_out); 
    /* end FILENAMES section */
 
    fprintf(f,"\n*** end of file ***\n");    
@@ -1678,7 +1678,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20121105;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20130318;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
@@ -2183,6 +2183,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6,  buffer, &buf);
 	   if (version >= 20120828)
 	     fscanf(f, " %s %[^\n]s %c", &pp->so7_hdf5,  buffer, &buf);
+	   if (version >= 20130318)
+	     fscanf(f, " %s %[^\n]s %c", &pp->hdf5_out,  buffer, &buf);
 	   
 	   strncpy(bl->src.so4.fsource4a, bl->filenames.so4_fsource4a, 80);
 	   strncpy(bl->src.so4.fsource4b, bl->filenames.so4_fsource4b, 80);

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Mar 13 16:03:13 flechsig> 
+//  Time-stamp: <18 Mar 13 09:19:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2577,4 +2577,27 @@ int MainWindow::getPlotStyle()
   return mwplotstyle;
 }
 
+// returns 0 if check canceled 
+int MainWindow::FileExistCheckOK(char *name)
+{
+  int  ret;
+  char infostr[MaxPathLength];
+  
+  if (fexists(name))
+    {
+      snprintf(infostr, MaxPathLength, "file %s exists!",  name);
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(tr(infostr));
+      msgBox->setInformativeText(tr("replace file"));
+      msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel); 
+      ret= msgBox->exec();
+      delete msgBox;
+      if (ret == QMessageBox::Cancel) 
+	{ 
+	  cout << "FileExistCheckOK canceled" << endl; 
+	  return 0; 
+	}
+    } // file does not exist or can be overwritten
+  return 1;
+}
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <15 Mar 13 18:14:54 flechsig> 
+//  Time-stamp: <18 Mar 13 09:18:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -456,25 +456,25 @@ void MainWindow::activateProc(const QString &action)
 	} else fprintf(stderr, "%d: no valid position\n", myparent->myBeamline()->position); 
     }
 
-
   if (!action.compare("writesimpAct")) 
     { 
       printf("writesimpAct button pressed\n");
       writeSimp();
     }
 
-  if (!action.compare("writeResultPh5Act")) 
+  if (!action.compare("writeResultPh5Act"))  // phase hdf5
     { 
       cout << "writeResultPh5Act experimental feature" << endl;
-      if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) myparent->my_write_phase_hdf5_file();
+      if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
+	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
     }
 
-  if (!action.compare("writeResultGh5Act")) 
+  if (!action.compare("writeResultGh5Act")) // genesis hdf5
     { 
       cout << "writeResultGh5Act experimental feature" << endl;
-      if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) myparent->my_write_genesis_hdf5_file();
+      if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
+	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) myparent->my_write_genesis_hdf5_file();
     }
-
 
   if (!action.compare("writeResultAct")) 
     { 
@@ -1067,7 +1067,6 @@ void MainWindow::goButtonslot()
   myparent->writeBackupFile();
 } // goButtonslot
 
-
 // gr apply
 void MainWindow::grapplyslot()
 {
@@ -1364,8 +1363,7 @@ void MainWindow::grslot()
   else
     myparent->myBeamline()->ElementList[number].MDat.Art &= ~(GRATINGBIT); 
 
-  
-UpdateElementBox(number);
+  UpdateElementBox(number);
 } // grslot
 
 // slot grating vls
@@ -1797,7 +1795,6 @@ void MainWindow::screenshotMain()
 
 } // end printMain()
 
-
 // slot
 void MainWindow::save()
 {
@@ -2194,8 +2191,6 @@ void MainWindow::sourceAutoGuessBslot()
   UpdateStatus();
   myparent->writeBackupFile();
 } // sourceApplyBslot
-
-
 
 // slot
 void MainWindow::undo()

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Mar 13 18:26:34 flechsig>  */
+/*  Time-stamp: <18 Mar 13 08:49:35 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -524,9 +524,8 @@ int check_hdf5_type(char *name, int type, int verbose)
 
 void write_genesis_hdf5_file(struct BeamlineType *bl)
 {
-  char fname[MaxPathLength], buffer[MaxPathLength], *chp;
-  hid_t file_id;
-  int slicecount= 1, col, row, cols, rows, fieldsize;
+  hid_t  file_id;
+  int    slicecount= 1, col, row, cols, rows, fieldsize;
   double wavelength, gridsize, *field;
 
   /* if (!(bl->beamlineOK & resultOK)) 
@@ -535,18 +534,14 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
       return;
       }*/
 
-  snprintf(buffer, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
-  chp= strstr(buffer, ".h5");
-  if (chp) *chp= '\0';                                                       /* strip off h5 */
-  snprintf(fname, MaxPathLength, "%s-out.h5", buffer);
   
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
      the current contents will be deleted so that the application can rewrite the file with new data. */
-  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  file_id= H5Fcreate(bl->filenames.hdf5_out, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
   if (file_id < 0)
     {
-      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      fprintf(stderr, "error: can't open %s - exit\n", bl->filenames.hdf5_out);
       exit(-1);
     }
 
@@ -577,10 +572,9 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
 
 void write_phase_hdf5_file(struct BeamlineType *bl)
 {
-  char fname[MaxPathLength], buffer[MaxPathLength], *chp;
-  hid_t file_id, e_dataspace_id, e_dataset_id;
+  hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
-  int no_time_slices= 1, col, row, cols, rows, fieldsize, it;
+  int     no_time_slices= 1, col, row, cols, rows, fieldsize, it;
   double  *field, t_vec= 0.5;
 
   /*  if (!(bl->beamlineOK & resultOK)) 
@@ -589,18 +583,14 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
       return;
       } */
   
-  snprintf(buffer, MaxPathLength, "%s", bl->filenames.so7_hdf5);   /* copy */
-  chp= strstr(buffer, ".h5");
-  if (chp) *chp= '\0';                                                       /* strip off h5 */
-  snprintf(fname, MaxPathLength, "%s-out.h5", buffer);
-  
+ 
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
      the current contents will be deleted so that the application can rewrite the file with new data. */
-  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  file_id= H5Fcreate(bl->filenames.hdf5_out, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
   if (file_id < 0)
     {
-      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      fprintf(stderr, "error: can't open %s - exit\n", bl->filenames.hdf5_out);
       exit(-1);
     }
 

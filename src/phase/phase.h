@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <12 Mar 13 16:38:47 flechsig>  */
+/*   Time-stamp: <18 Mar 13 08:05:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -192,7 +192,7 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
   char so6_fsource6[MaxPathLength];
   char so7_hdf5[MaxPathLength];
   char opresname[MaxPathLength];
-  /*  char minname[MaxPathLength]; */
+  char hdf5_out[MaxPathLength]; 
 };                                                                   
 
 typedef double MAPTYPE_330X2 [330][330];
