@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <18 Mar 13 09:18:04 flechsig> 
+//  Time-stamp: <18 Mar 13 09:28:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -464,14 +464,14 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("writeResultPh5Act"))  // phase hdf5
     { 
-      cout << "writeResultPh5Act experimental feature" << endl;
+      cout << "write PHASE output in phase_hdf5 format - experimental feature" << endl;
       if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
 	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
     }
 
   if (!action.compare("writeResultGh5Act")) // genesis hdf5
     { 
-      cout << "writeResultGh5Act experimental feature" << endl;
+      cout << "write PHASE output in genesis_hdf5 format - experimental feature" << endl;
       if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
 	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) myparent->my_write_genesis_hdf5_file();
     }

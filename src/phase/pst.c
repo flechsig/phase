@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <08 Nov 12 17:00:46 flechsig>  */
+/*   Time-stamp: <18 Mar 13 10:28:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -396,7 +396,7 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 	 fprintf(f3, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyimc[i+ j* ny]);  
 	 fprintf(f4, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezimc[i+ j* ny]);  
        }
-   fclose(f0); fclose(f1); fclose(f2); fclose(f3);fclose(f4);  
+   fclose(f0); fclose(f1); fclose(f2); fclose(f3); fclose(f4);  
    printf("WritePsd: --> done\n");
 }  /* end writepsd */
 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Mar 13 08:49:35 flechsig>  */
+/*  Time-stamp: <18 Mar 13 10:35:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -522,11 +522,42 @@ int check_hdf5_type(char *name, int type, int verbose)
   return myreturn;
 }  /* check_hdf5_type */
 
+/* add phase psd to hdf5 file- linear array in c memory model */ 
+void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
+{
+  int row, rows, col, cols, fieldsize;
+  double *field;
+  struct PSDType *p;
+
+#ifdef DEBUG
+  printf("add_phase_psd_to_hdf5 called\n");
+#endif
+
+  p= (struct PSDType *)bl->RESULT.RESp;
+
+  rows= p->iy;
+  cols= p->iz;
+  fieldsize= rows*cols*2;
+
+  field= XMALLOC(double, fieldsize);
+
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      field[col + row * cols]= p->psd[row + col * rows]; /* psd comes in fortran model */
+
+  H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  writeDataDouble(file_id, "/phase_psd/z", p->z, cols);
+  writeDataDouble(file_id, "/phase_psd/y", p->y, rows);
+  writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize);
+  XFREE(field);
+}  /* end add_phase_psd_to_hdf5 */
+
 void write_genesis_hdf5_file(struct BeamlineType *bl)
 {
   hid_t  file_id;
   int    slicecount= 1, col, row, cols, rows, fieldsize;
   double wavelength, gridsize, *field;
+  struct PSDType *p;
 
   /* if (!(bl->beamlineOK & resultOK)) 
     {
@@ -545,8 +576,9 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
       exit(-1);
     }
 
-  rows= bl->posrc.iey;
-  cols= bl->posrc.iex;
+  p= (struct PSDType *)bl->RESULT.RESp;
+  rows= p->iy;
+  cols= p->iz;
   fieldsize= rows*cols*2;
 
   field= XMALLOC(double, fieldsize);
@@ -554,20 +586,24 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
-	field[   (col + row * cols) * 2]= bl->posrc.zezre[col+ row* cols];
-	field[1+ (col + row * cols) * 2]= bl->posrc.zezim[col+ row* cols];
+	field[   (col + row * cols) * 2]= p->ezrec[row+ col* rows];  // fortran memory
+	field[1+ (col + row * cols) * 2]= p->ezimc[row+ col* rows];
       }
 
   wavelength= bl->BLOptions.lambda* 1e-3;
-  gridsize  = (bl->posrc.gridx[1]- bl->posrc.gridx[0])* 1e-3;
+  gridsize  = (p->z[1]- p->z[0])* 1e-3;
 
   H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   writeDataInt   (file_id, "slicecount", &slicecount, 1);
   writeDataDouble(file_id, "wavelength", &wavelength, 1);
   writeDataDouble(file_id, "gridsize",   &gridsize,   1);
   writeDataDouble(file_id, "slice000001/field", field, fieldsize);
+
+  add_phase_psd_to_hdf5(file_id, bl);
+
   H5Fclose(file_id);
   XFREE(field);
+  printf("wrote genesis_hdf5 file: %s\n", bl->filenames.hdf5_out);
 }  /* write_genesis_hdf5_file */
 
 void write_phase_hdf5_file(struct BeamlineType *bl)
@@ -576,6 +612,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   hsize_t e_dims[4];
   int     no_time_slices= 1, col, row, cols, rows, fieldsize, it;
   double  *field, t_vec= 0.5;
+  struct PSDType *p;
 
   /*  if (!(bl->beamlineOK & resultOK)) 
     {
@@ -594,8 +631,9 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
       exit(-1);
     }
 
-  rows= bl->posrc.iey;
-  cols= bl->posrc.iex;
+  p= (struct PSDType *)bl->RESULT.RESp;
+  rows= p->iy;
+  cols= p->iz;
 
   e_dims[3] = cols; 
   e_dims[2] = rows;
@@ -609,16 +647,15 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
-	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zeyre[col+ row* cols];
-	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zeyim[col+ row* cols];
-	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zezre[col+ row* cols];
-	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= bl->posrc.zezim[col+ row* cols];
+	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= p->eyrec[row+ col* rows];
+	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= p->eyimc[row+ col* rows];
+	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= p->ezrec[row+ col* rows];
+	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows];
       }
 
-    
-  writeDataDouble(file_id, "/z_vec", bl->posrc.gridx, cols);
-  writeDataDouble(file_id, "/y_vec", bl->posrc.gridy, rows);
-  writeDataDouble(file_id, "/t_vec",   &t_vec,   1);
+  writeDataDouble(file_id, "/z_vec", p->z, cols);
+  writeDataDouble(file_id, "/y_vec", p->y, rows);
+  writeDataDouble(file_id, "/t_vec", &t_vec, 1);
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
@@ -626,7 +663,11 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
+
+  add_phase_psd_to_hdf5(file_id, bl);
+
   H5Fclose(file_id);
+  printf("wrote phase_hdf5 file: %s\n", bl->filenames.hdf5_out);
 }  /* write_phase_hdf5_file */
 
 void writeDataDouble(hid_t fid, char *name, double *data, int size)
@@ -653,9 +694,7 @@ void writeDataInt(hid_t fid, char *name, int *data, int size)
   H5Sclose(dataspace_id);
 }
 
-
-
-#endif         /* end hdf5 */
+#endif         /* ******************** end hdf5 ***********************/
 
 void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
 {
