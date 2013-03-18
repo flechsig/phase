@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Mar 13 10:35:05 flechsig>  */
+/*  Time-stamp: <18 Mar 13 15:36:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -490,19 +490,20 @@ int check_hdf5_type(char *name, int type, int verbose)
   switch (type)
     {
     case 7:
-      if ( !hasDataset(file_id, "e_field") ) break;
-      if ( !hasDataset(file_id, "y_vec")   ) break;
-      if ( !hasDataset(file_id, "z_vec")   ) break;
-      if ( !hasDataset(file_id, "t_vec")   ) break;
+      if ( H5Lexists(file_id, "/e_field", H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/y_vec",   H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/z_vec",   H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/t_vec",   H5P_DEFAULT) < 1) break;
       if (verbose) printf("file %s => hdf5 file from phase (source7)\n", name); 
       myreturn= 1;
       break;
 
     case 8:
-      if ( !hasDataset(file_id, "slice000001/field") ) break;
-      if ( !hasDataset(file_id, "wavelength")        ) break;
-      if ( !hasDataset(file_id, "gridsize")          ) break;
-      if ( !hasDataset(file_id, "slicecount")	     ) break;
+      if ( H5Lexists(file_id, "/slice000001",       H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/slice000001/field", H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/wavelength",        H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/gridsize",          H5P_DEFAULT) < 1) break;
+      if ( H5Lexists(file_id, "/slicecount",        H5P_DEFAULT) < 1) break;
       if (verbose) printf("file %s => hdf5 file from GENESIS\n", name); 
       myreturn= 1;	
       break;
