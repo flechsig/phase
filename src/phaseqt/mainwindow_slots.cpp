@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <18 Mar 13 09:28:10 flechsig> 
+//  Time-stamp: <20 Mar 13 09:07:37 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1026,7 +1026,7 @@ void MainWindow::elementApplyBslot()
     ReadCoefficientFile((double *)&(myparent->myBeamline()->ElementList[number].mir), 
 			myparent->myBeamline()->ElementList[number].elementname);
   // we always call DefMirrorC to apply misalignment
-  myparent->myDefMirrorC(md,   &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
+  myparent->myDefMirrorC(md, &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
 			   gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
   
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
