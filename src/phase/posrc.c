@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-03-20 14:41:15 flechsig>  */
+/*  Time-stamp: <2013-03-20 14:43:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -562,7 +562,7 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 /* add description attribute */
 void add_desc(hid_t dataset_id, char *content)
 {
-  add_string_attribute_d(hid_t dataset_id, "description", char *content);
+  add_string_attribute_d(dataset_id, "description", content);
 }  /* add_desc */
 
 
