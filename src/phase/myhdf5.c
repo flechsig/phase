@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <20 Mar 13 16:55:54 flechsig>  */
+/*  Time-stamp: <20 Mar 13 17:06:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -36,7 +36,7 @@ void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
 {
   hid_t group_id;
   
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("add attribute %s to group %s, content= %s\n", aname, gname, content);
 #endif
 
@@ -50,7 +50,7 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 {
   hid_t attr_id, dataspace_id, type_id;
   
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("add attribute %s to dataset_id %d, content= %s\n", aname, dataset_id, content);
 #endif
 
