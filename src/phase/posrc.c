@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Mar 13 15:36:02 flechsig>  */
+/*  Time-stamp: <20 Mar 13 13:40:12 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -17,6 +17,7 @@
 #endif 
 
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 #include "cutils.h"
@@ -442,7 +443,7 @@ int getDatasetSize(hid_t fid, char *name)
   return dims[0];
 }
 
-/* returns 1 if dataset found else 0 */
+/* returns 1 if dataset found else 0  obsolete */
 int hasDataset(hid_t fid, char *name)
 {
   hid_t  dataset_id;
@@ -523,10 +524,53 @@ int check_hdf5_type(char *name, int type, int verbose)
   return myreturn;
 }  /* check_hdf5_type */
 
+/* add variable length string attribute to any group in a open file  */
+/* parameter file_id, group_name, attribute_name, content */
+void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
+{
+  hid_t group_id;
+  
+#ifdef DEBUG
+  printf("add attribute %s to group %s, content= %s\n", aname, gname, content);
+#endif
+
+  group_id = H5Gopen(fid, gname, H5P_DEFAULT );
+  add_string_attribute_d(group_id, gname, content);
+  H5Gclose(group_id);
+} /* add_attribute */
+
+/* add a string attribute to a open dataset     */
+void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
+{
+  hid_t attr_id, dataspace_id, type_id;
+  
+#ifdef DEBUG
+  printf("add attribute %s to dataset_id %d, content= %s\n", aname, dataset_id, content);
+#endif
+
+  type_id= H5Tcopy (H5T_C_S1);
+  //H5Tset_size(type_id, H5T_VARIABLE); does not work
+  H5Tset_size(type_id, strlen(content)+1); 
+  dataspace_id= H5Screate(H5S_SCALAR);
+  attr_id= H5Acreate (dataset_id, aname, type_id, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
+  H5Awrite(attr_id, type_id, content); 
+  H5Aclose(attr_id);
+  H5Tclose(type_id);
+  H5Sclose(dataspace_id);
+} /* add_string_attribute_d */
+
+/* add description attribute */
+void add_desc(hid_t dataset_id, char *content)
+{
+  add_string_attribute_d(hid_t dataset_id, "description", char *content);
+}  /* add_desc */
+
+
 /* add phase psd to hdf5 file- linear array in c memory model */ 
 void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 {
   int row, rows, col, cols, fieldsize;
+  hid_t group_id;
   double *field;
   struct PSDType *p;
 
@@ -546,16 +590,21 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
     for (row= 0; row < rows; row++)
       field[col + row * cols]= p->psd[row + col * rows]; /* psd comes in fortran model */
 
-  H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  group_id= H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   writeDataDouble(file_id, "/phase_psd/z", p->z, cols);
   writeDataDouble(file_id, "/phase_psd/y", p->y, rows);
   writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize);
+  //add_string_attribute_d(group_id, "unit", "mm");
+  //add_string_attribute(file_id, "/phase_psd/y", "unit", "mm");
+  //add_string_attribute(file_id, "/phase_psd/z", "unit", "mm");
+  //add_string_attribute(file_id, "/phase_psd/psd", "format", "c_style 2d array");
   XFREE(field);
+  H5Gclose(group_id);
 }  /* end add_phase_psd_to_hdf5 */
 
 void write_genesis_hdf5_file(struct BeamlineType *bl)
 {
-  hid_t  file_id;
+  hid_t  file_id, group_id;
   int    slicecount= 1, col, row, cols, rows, fieldsize;
   double wavelength, gridsize, *field;
   struct PSDType *p;
@@ -594,13 +643,17 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   wavelength= bl->BLOptions.lambda* 1e-3;
   gridsize  = (p->z[1]- p->z[0])* 1e-3;
 
-  H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   writeDataInt   (file_id, "slicecount", &slicecount, 1);
   writeDataDouble(file_id, "wavelength", &wavelength, 1);
   writeDataDouble(file_id, "gridsize",   &gridsize,   1);
   writeDataDouble(file_id, "slice000001/field", field, fieldsize);
-
   add_phase_psd_to_hdf5(file_id, bl);
+  H5Gclose(group_id);
+  // add_string_attribute(file_id, "/", "file_type", "genesis_hdf5");
+  //add_string_attribute(file_id, "/wavelength", "unit", "m");
+  //add_string_attribute(file_id, "/gridsize", "unit", "m");
+  //add_string_attribute(file_id, "/slice000001/field", "format", "c_style 1d array (real, imag)");
 
   H5Fclose(file_id);
   XFREE(field);
@@ -661,12 +714,15 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
+  add_string_attribute_d(e_dataset_id, "unit", "mm");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
-
   add_phase_psd_to_hdf5(file_id, bl);
-
+  //add_string_attribute(file_id, "/", "file_type", "phase_hdf5");
+  //add_string_attribute(file_id, "/z_vec", "unit", "mm");
+  //add_string_attribute(file_id, "/y_vec", "unit", "mm");
+  //add_string_attribute(file_id, "/e_field", "format", "c_style 4d array");
   H5Fclose(file_id);
   printf("wrote phase_hdf5 file: %s\n", bl->filenames.hdf5_out);
 }  /* write_phase_hdf5_file */
