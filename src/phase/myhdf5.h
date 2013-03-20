@@ -1,12 +1,13 @@
-/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
-/*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <20 Mar 13 16:46:34 flechsig>  */
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myhdf5.h */
+/*  Date      : <20 Mar 13 16:46:54 flechsig>  */
+/*  Time-stamp: <20 Mar 13 16:46:55 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
 /*  $Date$ */
 /*  $Revision$  */
 /*  $Author$  */
+
 
 /* hdf5 helper routines */
 
