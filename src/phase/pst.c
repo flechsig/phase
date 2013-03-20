@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <18 Mar 13 10:28:52 flechsig>  */
+/*   Time-stamp: <20 Mar 13 17:01:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -599,7 +599,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
    sets bl->BLOptions.ifl.igrating */
 void Test4Grating(struct BeamlineType *bl, struct mirrortype **mirp, struct geometryst **gp)
 {
-  int i, elart, gratingnumber, gratingposition;
+  int elart, gratingnumber, gratingposition;
+  unsigned int i;
   
   /* gitterzahl erkennen und geometrypointer initialisieren */
    gratingnumber= gratingposition= 0;
