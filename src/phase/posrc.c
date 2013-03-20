@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <20 Mar 13 13:40:12 flechsig>  */
+/*  Time-stamp: <2013-03-20 14:33:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -727,7 +727,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   printf("wrote phase_hdf5 file: %s\n", bl->filenames.hdf5_out);
 }  /* write_phase_hdf5_file */
 
-void writeDataDouble(hid_t fid, char *name, double *data, int size)
+void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc)
 {
   hsize_t dims[1];
   hid_t dataspace_id, dataset_id;
@@ -735,11 +735,12 @@ void writeDataDouble(hid_t fid, char *name, double *data, int size)
   dataspace_id=H5Screate_simple(1,dims,NULL);
   dataset_id=H5Dcreate(fid,name,H5T_NATIVE_DOUBLE,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
   H5Dwrite(dataset_id,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  if (desc) add_desc(dataset_id, desc);
   H5Dclose(dataset_id);
   H5Sclose(dataspace_id);
 }
 
-void writeDataInt(hid_t fid, char *name, int *data, int size)
+void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc)
 {
   hsize_t dims[1];
   hid_t dataspace_id, dataset_id;
@@ -747,6 +748,7 @@ void writeDataInt(hid_t fid, char *name, int *data, int size)
   dataspace_id=H5Screate_simple(1,dims,NULL);
   dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
   H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  if (desc) add_desc(dataset_id, desc);
   H5Dclose(dataset_id);
   H5Sclose(dataspace_id);
 }
