@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-03-20 14:43:46 flechsig>  */
+/*  Time-stamp: <20 Mar 13 16:51:03 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -28,6 +28,7 @@
 
 #ifdef HAVE_HDF5
    #include "hdf5.h"
+   #include "myhdf5.h"
 #endif 
 
 /* initializes the source depending on type */
@@ -384,94 +385,6 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 #ifdef HAVE_HDF5
 
-  /* some hdf5 helper routines adapted by UF from Sven Reiches c++ routines */
-
-void readDataDouble(hid_t fid, char *name, double *data, int size)
-{
-  hsize_t dims[1];
-  hid_t   dataspace_id, dataset_id;
-
-  dims[0]= size;
-  dataspace_id= H5Screate_simple(1, dims, NULL);
-  if ((dataset_id= H5Dopen(fid, name, H5P_DEFAULT)) < 0)
-    {
-      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
-      exit(-1);
-    }
-  H5Dread(dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
-  H5Dclose(dataset_id);     
-  H5Sclose(dataspace_id);
-  return;
-}
-
-void readDataInt(hid_t fid, char *name, int *data, int size)
-{
-  hsize_t dims[1];
-  hid_t dataspace_id, dataset_id;
-
-  dims[0]=size;
-  dataspace_id= H5Screate_simple(1, dims, NULL);
-  dataset_id = H5Dopen(fid, name, H5P_DEFAULT);
-  if (dataset_id < 0)
-    {
-      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
-      exit(-1);
-    }
-  H5Dread(dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
-  H5Dclose(dataset_id);     
-  H5Sclose(dataspace_id);
-  return;
-}
-
-int getDatasetSize(hid_t fid, char *name)
-{
-
-  hsize_t dims[1], maxdims[1];
-  hid_t   dataspace_id, dataset_id;
-
-  dataset_id= H5Dopen(fid, name, H5P_DEFAULT);
-  if (dataset_id < 0)
-    {
-      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
-      exit(-1);
-    }
-
-  dataspace_id= H5Dget_space(dataset_id);
-  H5Sget_simple_extent_dims(dataspace_id, dims, maxdims);
-  H5Dclose(dataset_id);     
-  H5Sclose(dataspace_id);
-  return dims[0];
-}
-
-/* returns 1 if dataset found else 0  obsolete */
-int hasDataset(hid_t fid, char *name)
-{
-  hid_t  dataset_id;
-  int    myreturn;
-
-  myreturn= 0;
-  dataset_id= (H5Dopen2(fid, name, H5P_DEFAULT));
-  if (dataset_id >= 0)
-    {
-      myreturn= 1;
-      H5Dclose(dataset_id); 
-    } //else fprintf(stderr, "error: did not found dataset %s\n", name);
-  return myreturn;
-}
-
-/* H5Fopen wrapper with error handling */
-hid_t myH5Fopen(char *name)
-{
-  hid_t file_id;
-
-  file_id = H5Fopen(name, H5F_ACC_RDONLY, H5P_DEFAULT);
-  if (file_id < 0)
-    {
-      fprintf(stderr, "error: file %s not found or not a hdf5 file- exit\n", name);
-      exit(-1);
-    }
-  return file_id;
-} /* myH5Fopen */
 
 /* returns true if type has been detected */
 /* type=7: phase_hdf5, type=8: GENESIS */
@@ -524,48 +437,6 @@ int check_hdf5_type(char *name, int type, int verbose)
   return myreturn;
 }  /* check_hdf5_type */
 
-/* add variable length string attribute to any group in a open file  */
-/* parameter file_id, group_name, attribute_name, content */
-void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
-{
-  hid_t group_id;
-  
-#ifdef DEBUG
-  printf("add attribute %s to group %s, content= %s\n", aname, gname, content);
-#endif
-
-  group_id = H5Gopen(fid, gname, H5P_DEFAULT );
-  add_string_attribute_d(group_id, gname, content);
-  H5Gclose(group_id);
-} /* add_attribute */
-
-/* add a string attribute to a open dataset     */
-void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
-{
-  hid_t attr_id, dataspace_id, type_id;
-  
-#ifdef DEBUG
-  printf("add attribute %s to dataset_id %d, content= %s\n", aname, dataset_id, content);
-#endif
-
-  type_id= H5Tcopy (H5T_C_S1);
-  //H5Tset_size(type_id, H5T_VARIABLE); does not work
-  H5Tset_size(type_id, strlen(content)+1); 
-  dataspace_id= H5Screate(H5S_SCALAR);
-  attr_id= H5Acreate (dataset_id, aname, type_id, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
-  H5Awrite(attr_id, type_id, content); 
-  H5Aclose(attr_id);
-  H5Tclose(type_id);
-  H5Sclose(dataspace_id);
-} /* add_string_attribute_d */
-
-/* add description attribute */
-void add_desc(hid_t dataset_id, char *content)
-{
-  add_string_attribute_d(dataset_id, "description", content);
-}  /* add_desc */
-
-
 /* add phase psd to hdf5 file- linear array in c memory model */ 
 void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 {
@@ -591,13 +462,10 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
       field[col + row * cols]= p->psd[row + col * rows]; /* psd comes in fortran model */
 
   group_id= H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  writeDataDouble(file_id, "/phase_psd/z", p->z, cols, NULL);
-  writeDataDouble(file_id, "/phase_psd/y", p->y, rows, NULL);
-  writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize, NULL);
-  //add_string_attribute_d(group_id, "unit", "mm");
-  //add_string_attribute(file_id, "/phase_psd/y", "unit", "mm");
-  //add_string_attribute(file_id, "/phase_psd/z", "unit", "mm");
-  //add_string_attribute(file_id, "/phase_psd/psd", "format", "c_style 2d array");
+  writeDataDouble(file_id, "/phase_psd/z", p->z, cols, "z (horizontal) vector in mm");
+  writeDataDouble(file_id, "/phase_psd/y", p->y, rows, "y (vertical)   vector in mm");
+  writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize, "intensity as c_style linear array");
+  add_desc(group_id, "phase intensity output");
   XFREE(field);
   H5Gclose(group_id);
 }  /* end add_phase_psd_to_hdf5 */
@@ -644,17 +512,14 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   gridsize  = (p->z[1]- p->z[0])* 1e-3;
 
   group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  writeDataInt   (file_id, "slicecount", &slicecount, 1, NULL);
-  writeDataDouble(file_id, "wavelength", &wavelength, 1, NULL);
-  writeDataDouble(file_id, "gridsize",   &gridsize,   1, NULL);
-  writeDataDouble(file_id, "slice000001/field", field, fieldsize, NULL);
+  writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices");
+  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
+  writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
+  writeDataDouble(file_id, "slice000001/field", field, fieldsize, "electrical field as c_style list (real,imag), (real, imag),...");
   add_phase_psd_to_hdf5(file_id, bl);
+  add_desc(group_id, "first time slice");
   H5Gclose(group_id);
-  // add_string_attribute(file_id, "/", "file_type", "genesis_hdf5");
-  //add_string_attribute(file_id, "/wavelength", "unit", "m");
-  //add_string_attribute(file_id, "/gridsize", "unit", "m");
-  //add_string_attribute(file_id, "/slice000001/field", "format", "c_style 1d array (real, imag)");
-
+  add_string_attribute_f(file_id, "/", "file_type", "genesis_hdf5");
   H5Fclose(file_id);
   XFREE(field);
   printf("wrote genesis_hdf5 file: %s\n", bl->filenames.hdf5_out);
@@ -707,51 +572,23 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
 	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows];
       }
 
-  writeDataDouble(file_id, "/z_vec", p->z, cols, NULL);
-  writeDataDouble(file_id, "/y_vec", p->y, rows, NULL);
-  writeDataDouble(file_id, "/t_vec", &t_vec, 1, NULL);
+  writeDataDouble(file_id, "/z_vec", p->z, cols, "z vector in mm");
+  writeDataDouble(file_id, "/y_vec", p->y, rows, "y vector in mm");
+  writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
   add_string_attribute_d(e_dataset_id, "unit", "mm");
+  add_desc(e_dataset_id, "electrical field as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
   add_phase_psd_to_hdf5(file_id, bl);
-  //add_string_attribute(file_id, "/", "file_type", "phase_hdf5");
-  //add_string_attribute(file_id, "/z_vec", "unit", "mm");
-  //add_string_attribute(file_id, "/y_vec", "unit", "mm");
-  //add_string_attribute(file_id, "/e_field", "format", "c_style 4d array");
+  add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
   H5Fclose(file_id);
   printf("wrote phase_hdf5 file: %s\n", bl->filenames.hdf5_out);
 }  /* write_phase_hdf5_file */
-
-void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc)
-{
-  hsize_t dims[1];
-  hid_t dataspace_id, dataset_id;
-  dims[0]=size;
-  dataspace_id=H5Screate_simple(1,dims,NULL);
-  dataset_id=H5Dcreate(fid,name,H5T_NATIVE_DOUBLE,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-  H5Dwrite(dataset_id,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
-  if (desc) add_desc(dataset_id, desc);
-  H5Dclose(dataset_id);
-  H5Sclose(dataspace_id);
-}
-
-void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc)
-{
-  hsize_t dims[1];
-  hid_t dataspace_id, dataset_id;
-  dims[0]=size;
-  dataspace_id=H5Screate_simple(1,dims,NULL);
-  dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
-  H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
-  if (desc) add_desc(dataset_id, desc);
-  H5Dclose(dataset_id);
-  H5Sclose(dataspace_id);
-}
 
 #endif         /* ******************** end hdf5 ***********************/
 
