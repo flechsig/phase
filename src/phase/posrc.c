@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-03-20 14:33:52 flechsig>  */
+/*  Time-stamp: <2013-03-20 14:41:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -591,9 +591,9 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
       field[col + row * cols]= p->psd[row + col * rows]; /* psd comes in fortran model */
 
   group_id= H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  writeDataDouble(file_id, "/phase_psd/z", p->z, cols);
-  writeDataDouble(file_id, "/phase_psd/y", p->y, rows);
-  writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize);
+  writeDataDouble(file_id, "/phase_psd/z", p->z, cols, NULL);
+  writeDataDouble(file_id, "/phase_psd/y", p->y, rows, NULL);
+  writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize, NULL);
   //add_string_attribute_d(group_id, "unit", "mm");
   //add_string_attribute(file_id, "/phase_psd/y", "unit", "mm");
   //add_string_attribute(file_id, "/phase_psd/z", "unit", "mm");
@@ -644,10 +644,10 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   gridsize  = (p->z[1]- p->z[0])* 1e-3;
 
   group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  writeDataInt   (file_id, "slicecount", &slicecount, 1);
-  writeDataDouble(file_id, "wavelength", &wavelength, 1);
-  writeDataDouble(file_id, "gridsize",   &gridsize,   1);
-  writeDataDouble(file_id, "slice000001/field", field, fieldsize);
+  writeDataInt   (file_id, "slicecount", &slicecount, 1, NULL);
+  writeDataDouble(file_id, "wavelength", &wavelength, 1, NULL);
+  writeDataDouble(file_id, "gridsize",   &gridsize,   1, NULL);
+  writeDataDouble(file_id, "slice000001/field", field, fieldsize, NULL);
   add_phase_psd_to_hdf5(file_id, bl);
   H5Gclose(group_id);
   // add_string_attribute(file_id, "/", "file_type", "genesis_hdf5");
@@ -707,9 +707,9 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
 	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows];
       }
 
-  writeDataDouble(file_id, "/z_vec", p->z, cols);
-  writeDataDouble(file_id, "/y_vec", p->y, rows);
-  writeDataDouble(file_id, "/t_vec", &t_vec, 1);
+  writeDataDouble(file_id, "/z_vec", p->z, cols, NULL);
+  writeDataDouble(file_id, "/y_vec", p->y, rows, NULL);
+  writeDataDouble(file_id, "/t_vec", &t_vec, 1, NULL);
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
