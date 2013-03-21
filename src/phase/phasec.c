@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <05 Nov 12 10:19:48 flechsig>  */
+/*   Time-stamp: <21 Mar 13 17:22:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -45,7 +45,7 @@
 #include "version.h"
 
 /* Batchmodus */
-void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
+void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int threads)
 {
   struct PSDType     *PSDp;
   struct PSImageType *psip;
@@ -132,6 +132,16 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
 
       break;
 
+    case 6: 
+      printf("BatchMode: Phase Space Transformation in multiple threads (experimental)\n");
+      source4c_ini(bl);
+      psip = (struct PSImageType *)bl->RTSource.Quellep;
+      ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
+      pst_thread(bl, threads);
+      PSDp= (struct PSDType *)bl->RESULT.RESp;
+      WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+      break;
+
     default: 
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
     }
@@ -140,7 +150,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord)
 } /* end Batchmode */
 
 
-int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected, int *iord)
+int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads)
 /* Uwe new version 10.8.2011 using getopt */
 /* used in phaseqt                        */
 {
@@ -157,6 +167,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   *selected = -1;
   *iord     = -1;
   opterr    =  0;
+  *numthreads= 4;
   
   /* explicitly init ps->imageraysname to start with '\0',
      so we later can tell whether it was set by -o option */
@@ -164,7 +175,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   ps->imageraysname[0] = '\0';
   
   /* parse options */
-  while ((c = getopt(argc, argv, "BbF:f:Hhi:I:M:m:NnO:o:S:s:V")) != -1)
+  while ((c = getopt(argc, argv, "BbF:f:Hhi:I:M:m:NnO:o:S:s:T:t:V")) != -1)
     switch (c)
       {
       case 'B':
@@ -194,9 +205,11 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	printf("                                  3: phase space imaging\n");
 	printf("                                  4: footprint (requires option s)\n");
 	printf("                                  5: multiple phase space imaging\n");
+	printf("                                  6: phase space imaging using multiple threads\n");
 	printf("                -n, -N:           no startup- info (X11)\n");
 	printf("                -o, -Oresultfile: filename\n");
 	printf("                -s, -Snumber:     selected element number (for footprint)\n");
+	printf("                -t, -Tnumber:     number of threads (default=4)\n");
 	printf("                -V:               Version\n");
 	exit(0);
 	break;
@@ -231,6 +244,12 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	sscanf(svalue, "%d", selected);
 	printf("ProcComandLine: selected element: %d\n", *selected);
 	break;
+      case 'T':
+      case 't':
+	svalue = optarg;
+	sscanf(svalue, "%d", selected);
+	printf("ProcComandLine: selected element: %d\n", *selected);
+	break;
       case 'V':
 	printf("option -%c\n", c);
 	printf("Version: %s\n", VERSION);
@@ -249,6 +268,8 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	  case 'o':
 	  case 'S':
 	  case 's':
+	  case 'T':
+	  case 't':
 	    fprintf (stderr, "Option -%c requires an argument.\n", optopt);
 	    break;
 	  default:

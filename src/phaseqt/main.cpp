@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <05 Nov 12 17:33:02 flechsig> 
+//  Time-stamp: <21 Mar 13 17:25:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -30,7 +30,7 @@ void my_funcv(int &image, int &parameter)
 
 int main(int argc, char *argv[])
 {
-  int setupswitch, cmode, selected, iord; 
+  int setupswitch, cmode, selected, iord, numthreads; 
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 #endif
 
  
-  setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord);
+  setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord, &numthreads);
 
 #ifdef DEBUG 
   cout << "debug: file: " << __FILE__ << " setupswitch = " <<  setupswitch << endl;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     case 7:
     case 15:
       cout << "main: Batchmode  called" << endl;
-      myphaseQt.myBatchMode(cmode, selected, iord);
+      myphaseQt.myBatchMode(cmode, selected, iord, numthreads);
       exit(3);
       break;
     case 5:          // only filename given
