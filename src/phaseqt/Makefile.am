@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <21 Mar 13 15:16:09 flechsig> 
+#  Time-stamp: <2013-03-23 21:13:42 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -25,7 +25,8 @@ phaseqt_SOURCES = \
 	plotmatrix.cpp plotmatrix.h \
         plot2x2.cpp plot2x2.h \
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
-	../phase/phasec.c  ../phase/rtrace.c ../phase/myhdf5.c ../phase/myhdf5.h \
+	../phase/phasec.c  ../phase/OptiIntParam.c \
+        ../phase/rtrace.c ../phase/myhdf5.c ../phase/myhdf5.h \
         ../phase/xmalloc.c ../phase/pst_thread.c ../phase/pst_thread.h   \
 	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \

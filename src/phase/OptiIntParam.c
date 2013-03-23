@@ -1,3 +1,20 @@
+/*   $Source$  */
+/*   $Date$ */
+/*   $Revision$  */
+/*   $Author$  */
+
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif 
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+#include "cutils.h"
+#include "phase_struct.h"
+#include "phase.h"
+
 void FindIntRange(struct BeamlineType *bl)
 {
 //  int fr_mat[2][2]; // matrix for utilisation results
