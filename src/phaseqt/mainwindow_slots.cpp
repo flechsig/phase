@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <20 Mar 13 09:07:37 flechsig> 
+//  Time-stamp: <2013-03-23 21:52:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1361,7 +1361,11 @@ void MainWindow::grslot()
   if (gratingGroup->isChecked() == true)
     myparent->myBeamline()->ElementList[number].MDat.Art |= GRATINGBIT; 
   else
-    myparent->myBeamline()->ElementList[number].MDat.Art &= ~(GRATINGBIT); 
+    {
+      myparent->myBeamline()->ElementList[number].MDat.Art &= ~(GRATINGBIT); 
+      myparent->myBeamline()->ElementList[number].GDat.xdens[0]= 0;
+      myparent->myBeamline()->ElementList[number].GDat.inout= 1;
+    }
 
   UpdateElementBox(number);
 } // grslot
@@ -1372,7 +1376,7 @@ void MainWindow::grvlsslot()
   int number= elementList->currentRow();
 
 #ifdef DEBUG
-  printf("debug: grvlsslot called\n");
+  cout << "debug: grvlsslot called" << endl;
 #endif
 
   if (number < 0) 
@@ -1385,8 +1389,12 @@ void MainWindow::grvlsslot()
   if (vlsGroup->isChecked() == true)
     myparent->myBeamline()->ElementList[number].MDat.Art |= VLSBIT ; 
   else
-    myparent->myBeamline()->ElementList[number].MDat.Art &= ~(VLSBIT) ;
- 
+    {
+      myparent->myBeamline()->ElementList[number].MDat.Art &= ~(VLSBIT);
+      for (int i= 1; i< 5; i++)   //reset any vls coeff
+	myparent->myBeamline()->ElementList[number].GDat.xdens[i]= 0;
+    }
+
   UpdateElementBox(number);
 } // end grvlsslot
 
