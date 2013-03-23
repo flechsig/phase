@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <21 Mar 13 17:26:47 flechsig>  */
+/*  Time-stamp: <2013-03-23 22:47:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -90,7 +90,7 @@ public:
   struct OptionsType  *myOptions();
   
   void myAllocRTSource() { AllocRTSource(this); }
-  void myBatchMode(int cmode, int selected, int iord, int numthreads) { BatchMode(this, cmode, selected, iord, numthreads); }
+  void myBatchMode(int cmode, int selected, int iord, int numthreads, int format) { BatchMode(this, cmode, selected, iord, numthreads, format); }
   void myBuildBeamline() { BuildBeamline(this); }
   int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb);}
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
@@ -102,8 +102,8 @@ public:
   void myMakeMapandMatrix(struct ElementType *listpt, unsigned int elindex) { MakeMapandMatrix(listpt, this, elindex); }
   void myMakeRTSource() { MakeRTSource(&(this->filenames), this);  }
   void myMPST() { MPST(this); }
-  int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads) { 
-    return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord, numthreads); }
+  int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads, int *format) { 
+    return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord, numthreads, format); }
   void myPST() { PST(this); }
   void myFindIntRange() { FindIntRange(this); }  
   void myPutPHASE(char *name) { PutPHASE(&(this->filenames), name); }

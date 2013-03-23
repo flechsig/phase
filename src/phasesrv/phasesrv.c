@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <21 Mar 13 17:17:05 flechsig>  */
+/*  Time-stamp: <2013-03-23 22:42:30 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,14 +23,15 @@
 
 int main(unsigned int argc, char *argv[])
 {
-  int setupswitch, cmode, selected, iord, numthreads;
+  int setupswitch, cmode, selected, iord, numthreads, format;
   struct BeamlineType Beamline;
   
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */
   
   printf("phasesrv start\n");
   
-  setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, &selected, &iord, &numthreads);
+  setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
+			      &selected, &iord, &numthreads, &format);
   
   switch (setupswitch)
     {
@@ -41,7 +42,7 @@ int main(unsigned int argc, char *argv[])
     case 13: // ohne -b
     case 15:
       printf("main: Batchmode  called (switch= %d)\n", setupswitch);
-      BatchMode(&Beamline, cmode, selected, iord, numthreads);
+      BatchMode(&Beamline, cmode, selected, iord, numthreads, format);
       break;
     default:
       printf("\nusage: phasesrv -h\n\n");
