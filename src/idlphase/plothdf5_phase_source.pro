@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 13:27:46 flechsig> 
+;  Time-stamp: <25 Mar 13 13:38:46 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -74,46 +74,71 @@ pro plothdf5_phase_source, fname, png=png
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 
 file_id     = H5F_OPEN(fname)
-dataset_id1 = H5D_OPEN(file_id, 'slice000001/field')
-dataset_id2 = H5D_OPEN(file_id, 'gridsize')
-field0      = H5D_READ(dataset_id1)
-gridsize    = H5D_READ(dataset_id2)
+dataset_id1 = H5D_OPEN(file_id, '/z_vec')
+dataset_id2 = H5D_OPEN(file_id, '/y_vec')
+dataset_id3 = H5D_OPEN(file_id, '/t_vec')
+dataset_id4 = H5D_OPEN(file_id, '/e_field')
+z_vec       = H5D_READ(dataset_id1)
+y_vec       = H5D_READ(dataset_id2)
+t_vec       = H5D_READ(dataset_id3)
+field       = H5D_READ(dataset_id4)
 
 h5d_close, dataset_id1
 h5d_close, dataset_id2
+h5d_close, dataset_id3
+h5d_close, dataset_id4
 h5f_close, file_id
 
-len   = n_elements(field0)/2
+nz   = n_elements(z_vec)
+ny   = n_elements(y_vec)
+nt   = n_elements(t_vec)
 size  = fix(sqrt(len))
-field2= reform(field0, 2, size, size)
+field1= reform(field,nt,4,nz,ny)
 
-print, 'size= ', size, ' gridsize= ', gridsize
 
-real= reform(field2[0,*,*], size, size)
-imag= reform(field2[1,*,*], size, size)
 
-amp  = sqrt(real^2+imag^2)
-phase= atan(imag,real)
+yreal= reform(field1[0,0,*,*], nz, ny)
+yimag= reform(field1[0,1,*,*], nz, ny) 
+zreal= reform(field1[0,2,*,*], nz, ny)
+zimag= reform(field1[0,3,*,*], nz, ny)
 
-x0= dindgen(size)- size/2
-x = x0* gridsize[0]* 1e3
-y = x * 1.0
+yamp  = sqrt(yreal^2+imag^2)
+yphase= atan(yimag,real)
+zamp  = sqrt(zreal^2+imag^2)
+zphase= atan(zimag,real)
+
 
 window,0
-mycontour,real, x, y, title='real', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-real.png'
+mycontour,yreal, z_vec, y_vec, title='real', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yreal.png'
 
 window,1
-mycontour,imag,x,y,title='imag', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-imag.png'
+mycontour,yimag,z_vec,y_vec,title='imag', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yimag.png'
 
 window,2
-mycontour,amp, x, y, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-ampl.png'
+mycontour,yamp, z_vec, y_vec, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yampl.png'
 
 window,3
-mycontour,phase, x, y, title='phase', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-phas.png'
+mycontour,yphase, z_vec, y_vec, title='phase', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yphas.png'
+
+window,4
+mycontour,zreal, z_vec, y_vec, title='real', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yreal.png'
+
+window,5
+mycontour,zimag,z_vec,y_vec,title='imag', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yimag.png'
+
+window,6
+mycontour,zamp, z_vec, y_vec, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yampl.png'
+
+window,7
+mycontour,zphase, z_vec, y_vec, title='phase', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(png) then spng,'phase-yphas.png'
 
 return
 end
