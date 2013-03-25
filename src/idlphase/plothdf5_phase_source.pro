@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 13:47:26 flechsig> 
+;  Time-stamp: <25 Mar 13 13:53:34 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -71,7 +71,7 @@ pro plothdf5_phase_source, fname, png=png
 ;    25.3.13 UF
 ;-
 
-if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/test_5000_out.h5'                   
+if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/test_5000.h5'                   
 
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, '/z_vec')
