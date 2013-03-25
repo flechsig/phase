@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <20 Mar 13 16:51:03 flechsig>  */
+/*  Time-stamp: <25 Mar 13 17:42:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -453,7 +453,7 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 
   rows= p->iy;
   cols= p->iz;
-  fieldsize= rows*cols*2;
+  fieldsize= rows* cols;
 
   field= XMALLOC(double, fieldsize);
 
