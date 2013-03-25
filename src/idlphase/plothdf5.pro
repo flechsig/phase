@@ -1,5 +1,78 @@
-;;-*-idlwave-*-
-fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
+;  Date      : <25 Mar 13 10:51:13 flechsig> 
+;  Time-stamp: <25 Mar 13 10:58:49 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+pro plothdf5, fname, png=png
+;+
+; NAME:
+;   plothdf5
+;
+;
+; PURPOSE:
+;   plot a hdf5 file of type phase_hdf5 or genesis_hdf5
+;
+;
+; CATEGORY:
+;   phase_plot
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;   png: save png files
+;
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;
+;
+;
+; MODIFICATION HISTORY:
+;    25.3.13 UF
+;-
+
+if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, 'slice000001/field')
 dataset_id2 = H5D_OPEN(file_id, 'gridsize')
@@ -34,16 +107,21 @@ y = x*1.0
 ;zone,2,2
 ;window,0
 mycontour,real, x, y, title='real', xtitle='z (mm)', ytitle='y (mm)'
-spng,'genesis-real.png'
+if keyword_set(png) then spng,'genesis-real.png'
 
 ;window,1
 mycontour,imag,x,y,title='imag', xtitle='z (mm)', ytitle='y (mm)'
-spng,'genesis-imag.png'
+if keyword_set(png) then spng,'genesis-imag.png'
 
 ;window,2
 mycontour,amp, x, y, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
-spng,'genesis-ampl.png'
+if keyword_set(png) then spng,'genesis-ampl.png'
 
 ;window,3
 mycontour,phase, x, y, title='phase', xtitle='z (mm)', ytitle='y (mm)'
-spng,'genesis-phas.png'
+if keyword_set(png) then spng,'genesis-phas.png'
+
+
+return
+end
+;; end
