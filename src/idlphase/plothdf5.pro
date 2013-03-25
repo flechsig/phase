@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 10:58:49 flechsig> 
+;  Time-stamp: <25 Mar 13 11:53:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5, fname, png=png
+pro plothdf5, fname, genesis=genesis, png=png, psd=psd
 ;+
 ; NAME:
 ;   plothdf5
@@ -28,7 +28,7 @@ pro plothdf5, fname, png=png
 ;
 ;
 ; INPUTS:
-;
+;   fname: filename
 ;
 ;
 ; OPTIONAL INPUTS:
@@ -36,7 +36,9 @@ pro plothdf5, fname, png=png
 ;
 ;
 ; KEYWORD PARAMETERS:
+;   genesis: genesis_hdf5 default: phase_hdf5
 ;   png: save png files
+;   pst: psd plot (phase intensity output) 
 ;
 ;
 ; OUTPUTS:
@@ -95,32 +97,25 @@ imag= reform(field2[1,*,*], size, size)
 amp  = sqrt(real^2+imag^2)
 phase= atan(imag,real)
 
-print, 'real(0,0)= ',  real[0,0]  
-print, 'imag(0,0)= ',  imag[0,0] 
-print, 'real(10,0)= ', real[10,0] 
-;;real[30,10]= 1e15
-
 x0= dindgen(size)- size/2
 x = x0* gridsize[0]* 1e3
-y = x*1.0
+y = x * 1.0
 
-;zone,2,2
-;window,0
+window,0
 mycontour,real, x, y, title='real', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-real.png'
 
-;window,1
+window,1
 mycontour,imag,x,y,title='imag', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-imag.png'
 
-;window,2
+window,2
 mycontour,amp, x, y, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-ampl.png'
 
-;window,3
+window,3
 mycontour,phase, x, y, title='phase', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-phas.png'
-
 
 return
 end

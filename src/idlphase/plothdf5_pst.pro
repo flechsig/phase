@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 13:48:19 flechsig> 
+;  Time-stamp: <25 Mar 13 17:47:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -71,7 +71,7 @@ pro plothdf5_pst, fname, png=png
 ;    25.3.13 UF
 ;-
 
-if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/test_5000_out.h5'
+if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/aramis12_0.1nm_po_out.h5'
 
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, '/phase_psd/z')
@@ -86,7 +86,10 @@ h5d_close, dataset_id2
 h5d_close, dataset_id3
 h5f_close, file_id
 
+help, field0, y_vec, z_vec
 field1= reform(field0, n_elements(z_vec), n_elements(y_vec))
+help, field0, field1, y_vec, z_vec
+print,field1
 
 mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'pst.png'
