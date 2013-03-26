@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 08:47:00 flechsig> 
+;  Time-stamp: <26 Mar 13 08:59:48 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -95,8 +95,6 @@ nt   = n_elements(t_vec)
 
 field1= reform(field,nz,ny,4,nt)
 field2= reform(field1[*,*,*,0],nz,ny,4)
-
-
 
 yreal= reform(field2[*,*,0], nz, ny)
 yimag= reform(field2[*,*,1], nz, ny) 

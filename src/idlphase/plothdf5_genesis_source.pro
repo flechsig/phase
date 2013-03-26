@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 08:44:30 flechsig> 
+;  Time-stamp: <26 Mar 13 09:02:49 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -73,7 +73,7 @@ pro plothdf5_genesis_source, fname, png=png, limit=limit
 ;-
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
-if n_elements(limit) eq 0 then limit= 1
+if n_elements(limit) eq 0 then limit= 100
 
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, 'slice000001/field')

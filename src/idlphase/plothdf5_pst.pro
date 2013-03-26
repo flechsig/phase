@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 17:47:23 flechsig> 
+;  Time-stamp: <26 Mar 13 09:00:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -89,7 +89,7 @@ h5f_close, file_id
 help, field0, y_vec, z_vec
 field1= reform(field0, n_elements(z_vec), n_elements(y_vec))
 help, field0, field1, y_vec, z_vec
-print,field1
+;print,field1
 
 mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'pst.png'
