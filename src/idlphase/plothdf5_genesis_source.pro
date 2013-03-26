@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 13:51:57 flechsig> 
+;  Time-stamp: <26 Mar 13 08:44:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_genesis_source, fname, png=png
+pro plothdf5_genesis_source, fname, png=png, limit=limit
 ;+
 ; NAME:
 ;   plothdf5_genesis_source
@@ -36,7 +36,8 @@ pro plothdf5_genesis_source, fname, png=png
 ;
 ;
 ; KEYWORD PARAMETERS:
-;   png: save png files
+;   limit: limit the number of plots to limit
+;   png:   save png files
 ;
 ;
 ; OUTPUTS:
@@ -72,6 +73,7 @@ pro plothdf5_genesis_source, fname, png=png
 ;-
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+if n_elements(limit) eq 0 then limit= 1
 
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, 'slice000001/field')
@@ -102,14 +104,17 @@ y = x * 1.0
 window,0
 mycontour,real, x, y, title='real', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-real.png'
+if limit lt 2 then return
 
 window,1
 mycontour,imag,x,y,title='imag', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-imag.png'
+if limit lt 3 then return
 
 window,2
 mycontour,amp, x, y, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'genesis-ampl.png'
+if limit lt 4 then return
 
 window,3
 mycontour,phase, x, y, title='phase', xtitle='z (mm)', ytitle='y (mm)'

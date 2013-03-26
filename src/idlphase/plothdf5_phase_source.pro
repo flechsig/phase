@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <25 Mar 13 17:36:07 flechsig> 
+;  Time-stamp: <26 Mar 13 08:47:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_phase_source, fname, png=png
+pro plothdf5_phase_source, fname, png=png, limit=limit
 ;+
 ; NAME:
 ;   plothdf5_genesis_source
@@ -112,31 +112,38 @@ zphase= atan(zimag,zreal)
 window,0
 mycontour,yreal, z_vec, y_vec, title='y_real', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yreal.png'
+if limit eq 1 then return
 
 ;return
 window,1
 mycontour,yimag,z_vec,y_vec,title='y_imag', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yimag.png'
+if limit eq 2 then return
 
 window,2
 mycontour,yamp, z_vec, y_vec, title='y_amplitude', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yampl.png'
+if limit eq 3 then return
 
 window,3
 mycontour,yphase, z_vec, y_vec, title='y_phase', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yphas.png'
+if limit eq 4 then return
 
 window,4
 mycontour,zreal, z_vec, y_vec, title='z_real', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zreal.png'
+if limit eq 5 then return
 
 window,5
 mycontour,zimag,z_vec,y_vec,title='z_imag', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zimag.png'
+if limit eq 6 then return
 
 window,6
 mycontour,zamp, z_vec, y_vec, title='z_amplitude', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zampl.png'
+if limit eq 7 then return
 
 window,7
 mycontour,zphase, z_vec, y_vec, title='z_phase', xtitle='z (mm)', ytitle='y (mm)'
