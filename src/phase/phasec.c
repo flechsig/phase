@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Mar 13 09:37:52 flechsig>  */
+/*   Time-stamp: <26 Mar 13 10:40:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -18,6 +18,7 @@
 #include <math.h>                                                 
 #include <ctype.h>
 #include <stdarg.h> 
+#include <time.h>
 #include <unistd.h>
 
 /* workaround */
@@ -49,7 +50,9 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
 {
   struct PSDType     *PSDp;
   struct PSImageType *psip;
+  time_t start, end;
 
+  start= time(NULL);
   printf("BatchMode: datafilename  : %s\n", bl->filenames.beamlinename);
   printf("BatchMode: resultfilename: %s\n", bl->filenames.imageraysname);
   /*  InitDataSets(&PHASESet, fname);  initialisiert auch Beamline */
@@ -96,7 +99,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
 #ifdef OLD_PO_SOURCE
       src_ini(&bl->src); 
 #else
-      source4c_ini(bl);
+      posrc_ini(bl);
 #endif 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
@@ -134,21 +137,18 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
 #ifdef OLD_PO_SOURCE
       src_ini(&bl->src); 
 #else
-      source4c_ini(bl);
+      posrc_ini(bl);
 #endif 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
-
       MPST(bl);
-
       PSDp= (struct PSDType *)bl->RESULT.RESp;
       WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
-
       break;
 
     case 6: 
       printf("BatchMode: Phase Space Transformation in multiple threads (experimental)\n");
-      source4c_ini(bl);
+      posrc_ini(bl);
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       pst_thread(bl, threads);
@@ -173,7 +173,9 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
     default: 
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
     }
+  end= time(NULL);
   beep(5);
+  printf("running time (s) = %d\n", (end-start));
   printf("BatchMode: program end\n");
 } /* end Batchmode */
 
@@ -386,10 +388,7 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 		  fscanf(f,"%s\n", (char *) &x->so6_fsource6);
 		}
 	      if (version >= 20110814)
-		{
-		  fscanf(f,"%s\n", (char *) &x->opresname); 
-		     
-		}
+		fscanf(f,"%s\n", (char *) &x->opresname); 
 	    }
 	  rcode= 1;       /* OK zurueck */
 	}
