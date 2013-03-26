@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Mar 13 10:40:52 flechsig>  */
+/*   Time-stamp: <26 Mar 13 10:53:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -51,6 +51,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
   struct PSDType     *PSDp;
   struct PSImageType *psip;
   time_t start, end;
+  int    threadinfo= 1;
 
   start= time(NULL);
   printf("BatchMode: datafilename  : %s\n", bl->filenames.beamlinename);
@@ -152,6 +153,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       pst_thread(bl, threads);
+      threadinfo= threads;
       PSDp= (struct PSDType *)bl->RESULT.RESp;
       switch (format)
 	{
@@ -175,7 +177,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
     }
   end= time(NULL);
   beep(5);
-  printf("running time (s) = %d\n", (end-start));
+  printf("running time with %d threads (s) = %d\n", threadinfo, (end- start));
   printf("BatchMode: program end\n");
 } /* end Batchmode */
 
