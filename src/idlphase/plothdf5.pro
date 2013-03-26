@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 08:25:45 flechsig> 
+;  Time-stamp: <26 Mar 13 08:26:56 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -81,12 +81,12 @@ if keyword_set(psd) then begin
 endif
 
 if keyword_set(phase) then begin
-     plothdf5_genesis_source, fname, png=png
+     plothdf5_phase_source, fname, png=png
      return
  endif
  
 if keyword_set(genesis) then begin
-     plothdf5_phase_source, fname, png=png
+     plothdf5_genesis_source, fname, png=png
      return
 endif
 
