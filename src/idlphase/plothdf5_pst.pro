@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 09:00:15 flechsig> 
+;  Time-stamp: <26 Mar 13 15:12:26 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -37,7 +37,8 @@ pro plothdf5_pst, fname, png=png
 ;
 ; KEYWORD PARAMETERS:
 ;   png: save png files
-;
+;   shade_surf: plot style (default contour)
+;   surface   : plot style (default contour)
 ;
 ; OUTPUTS:
 ;
@@ -72,6 +73,7 @@ pro plothdf5_pst, fname, png=png
 ;-
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/aramis12_0.1nm_po_out.h5'
+;;if n_elements(surface) eq 0 then style=0 else style=1 
 
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, '/phase_psd/z')
@@ -91,7 +93,16 @@ field1= reform(field0, n_elements(z_vec), n_elements(y_vec))
 help, field0, field1, y_vec, z_vec
 ;print,field1
 
-mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
+if keyword_set(surface) then begin 
+    surface,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)' 
+endif else begin
+    if keyword_set(shade_surf) then begin
+        shade_surf, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
+    endif else begin
+        mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
+    endelse
+endelse
+
 if keyword_set(png) then spng,'pst.png'
 
 return
