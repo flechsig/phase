@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.h */
 /*  Date      : <21 Mar 13 15:05:12 flechsig>  */
-/*  Time-stamp: <21 Mar 13 17:15:08 flechsig>  */
+/*  Time-stamp: <26 Mar 13 11:30:08 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -10,8 +10,6 @@
 
 #ifndef PST_THREAD_H
 #define PST_THREAD_H
-
-#define NUMTHREADS 4
 
 struct ThreadData
 {
