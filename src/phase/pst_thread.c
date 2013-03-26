@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <26 Mar 13 11:36:50 flechsig>  */
+/*  Time-stamp: <26 Mar 13 11:37:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -65,7 +65,6 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
     
   printf("\nthreads done, npoints= %d\n", npoints);
   bl->beamlineOK |= resultOK;
-  
   
   XFREE(thread);  /* braucht es das ? */
   XFREE(data);
