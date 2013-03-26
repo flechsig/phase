@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <26 Mar 13 10:53:44 flechsig>  */
+/*   Time-stamp: <26 Mar 13 11:10:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -246,7 +246,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	printf("                                  2: phase_hdf5\n");
 	printf("                                  3: genesis_hdf5\n"); 
 	printf("                -s, -Snumber:     selected element number (for footprint)\n");
-	printf("                -t, -Tnumber:     number of threads (default=4)\n");
+	printf("                -t, -Tnumber:     number of threads or tasks (default=4)\n");
 	printf("                -V:               Version\n");
 	exit(0);
 	break;

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <26 Mar 13 10:47:21 flechsig>  */
+/*  Time-stamp: <26 Mar 13 11:06:22 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -21,6 +21,8 @@
 #include "pst_thread.h"
 #include "common.h"
 
+/* we split the number of ponts in the pst into numthreads threads or tasks */
+/* for speed it may help to allow more threads than cores */ 
 void pst_thread(struct BeamlineType *bl, int numthreads)
 {
   pthread_t *thread;
@@ -35,10 +37,9 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   printf("debug: pst_thread file: %s, line: %d called\n", __FILE__, __LINE__);
 #endif
 
-  sp=   (struct psimagest *)bl->RTSource.Quellep;
+  sp= (struct psimagest *)bl->RTSource.Quellep;
   npoints= sp->iheigh * sp->iwidth;
 
-  
   /*
     this has the effect of rounding up the number of tasks
     per thread, which is useful in case ARRAYSIZE does not
@@ -56,19 +57,13 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   /* the last thread must not go past the end of the array */
   data[numthreads-1].stop= npoints;
   
-  /* Launch Threads */
   for (i=0; i<numthreads; i++) 
-    {
-      pthread_create(&thread[i], NULL, pst_it, &data[i]);
-    }
-  
-  /* Wait for Threads to Finish */
-  for (i=0; i<numthreads; i++) 
-    {
-      pthread_join(thread[i], NULL);
-    }
-  
-  printf("threads done, npoints= %d\n", npoints);
+    pthread_create(&thread[i], NULL, pst_it, &data[i]); /* Launch Threads */
+    
+  for (i= 0; i< numthreads; i++) 
+    pthread_join(thread[i], NULL);          /* Wait for Threads to Finish */
+    
+  printf("\nthreads done, npoints= %d\n", npoints);
   bl->beamlineOK |= resultOK;
 
   XFREE(data);
@@ -80,7 +75,7 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   
 } /* end pst_thread */
 
-/* thread wrapper for pst_i */
+/* thread wrapper for pst_i with only one parameter */
 void *pst_it(struct ThreadData *td)
 {
   int index;
@@ -108,10 +103,11 @@ void *pst_it(struct ThreadData *td)
 
     Test4Grating(bl, &am, &g);
 
-
   for (index= td->start; index < td->stop; index++) 
     {
+#ifdef DEBUG1
       printf("calc: %d\n", index);
+#endif
       pstc_i(index, bl, m4p, &cs, am, g);
     }
 
