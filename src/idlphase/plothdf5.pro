@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 08:23:00 flechsig> 
+;  Time-stamp: <26 Mar 13 08:24:21 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -92,7 +92,7 @@ if keyword_set(genesis) then begin
      return
 endif
 
-print,'error: you have to select a keyword'
+print,'error: you have to select a keyword (/genesis, /phase, /pst)'
 return
 end
 ;; end
