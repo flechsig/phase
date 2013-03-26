@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <21 Mar 13 17:15:35 flechsig>  */
+/*  Time-stamp: <26 Mar 13 10:47:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -23,15 +23,13 @@
 
 void pst_thread(struct BeamlineType *bl, int numthreads)
 {
-  pthread_t *thread;//[NUMTHREADS];
-  struct ThreadData *data;//[NUMTHREADS];
+  pthread_t *thread;
+  struct ThreadData *data;
   struct psimagest *sp;
   int i, tasksPerThread, npoints;
 
-  numthreads= NUMTHREADS;
-
   thread= XMALLOC(pthread_t, numthreads);
-  data= XMALLOC(struct ThreadData, numthreads);
+  data  = XMALLOC(struct ThreadData, numthreads);
 
 #ifdef DEBUG
   printf("debug: pst_thread file: %s, line: %d called\n", __FILE__, __LINE__);
