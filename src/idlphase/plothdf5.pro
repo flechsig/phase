@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 08:26:56 flechsig> 
+;  Time-stamp: <26 Mar 13 08:29:45 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -25,7 +25,7 @@ pro plothdf5, fname, genesis=genesis, phase=phase, png=png, psd=psd
 ;
 ;
 ; CALLING SEQUENCE:
-;
+;   plothdf5, filename, [/genesis] [/phase] [/pst] [,/png]
 ;
 ;
 ; INPUTS:
@@ -39,8 +39,8 @@ pro plothdf5, fname, genesis=genesis, phase=phase, png=png, psd=psd
 ; KEYWORD PARAMETERS:
 ;   genesis: genesis_hdf5 default: phase_hdf5
 ;   phase:   phase hdf5
-;   png: save png files
-;   pst: psd plot (phase intensity output) 
+;   png:     save png files
+;   pst:     psd plot (phase intensity output) 
 ;
 ;
 ; OUTPUTS:
@@ -68,7 +68,7 @@ pro plothdf5, fname, genesis=genesis, phase=phase, png=png, psd=psd
 ;
 ;
 ; EXAMPLE:
-;
+;   plothdf5, 'filename.h5', /genesis
 ;
 ;
 ; MODIFICATION HISTORY:
