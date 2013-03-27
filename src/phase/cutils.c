@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <2012-09-21 06:30:48 flechsig>  */
+/*   Time-stamp: <26 Mar 13 13:51:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -24,7 +24,6 @@
 #endif
 
 #include "cutils.h"
-
 
 void beep(int n)
 {

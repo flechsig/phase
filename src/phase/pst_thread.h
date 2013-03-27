@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.h */
 /*  Date      : <21 Mar 13 15:05:12 flechsig>  */
-/*  Time-stamp: <26 Mar 13 11:30:08 flechsig>  */
+/*  Time-stamp: <27 Mar 13 14:49:38 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -13,7 +13,7 @@
 
 struct ThreadData
 {
-  int start, stop;
+  int start, stop, thread_no;
   struct BeamlineType *bl;
 };
 
