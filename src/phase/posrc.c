@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <25 Mar 13 17:42:56 flechsig>  */
+/*  Time-stamp: <27 Mar 13 13:57:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,6 +30,14 @@
    #include "hdf5.h"
    #include "myhdf5.h"
 #endif 
+
+
+/* initializes the pointers with NULL */
+void posrc_construct(struct BeamlineType *bl)
+{
+  bl->posrc.zeyre= bl->posrc.zeyim= bl->posrc.zezre= 
+    bl->posrc.zezim= bl->posrc.gridx= bl->posrc.gridy= NULL;
+} /* end posrc_construct */
 
 /* initializes the source depending on type */
 void posrc_ini(struct BeamlineType *bl)
