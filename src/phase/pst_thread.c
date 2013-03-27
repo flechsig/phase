@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <27 Mar 13 14:55:01 flechsig>  */
+/*  Time-stamp: <27 Mar 13 14:58:35 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -111,7 +111,7 @@ void *pst_it(struct ThreadData *td)
       pstc_i(index, bl, m4p, &cs, am, g);
     }
 
-  //XFREE(m4p);
+  if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
   return NULL;
 } /* pst_it */
 
