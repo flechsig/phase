@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <26 Mar 13 11:37:58 flechsig>  */
+/*  Time-stamp: <27 Mar 13 14:55:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -50,9 +50,10 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   /* Divide work for threads, prepare parameters */
   for (i=0; i<numthreads; i++) 
     {
-      data[i].start=i*tasksPerThread;
-      data[i].stop=(i+1)*tasksPerThread;
-      data[i].bl=bl;
+      data[i].start    =  i    * tasksPerThread;
+      data[i].stop     = (i+ 1)* tasksPerThread;
+      data[i].bl       = bl;
+      data[i].thread_no= i;
     }
   /* the last thread must not go past the end of the array */
   data[numthreads-1].stop= npoints;
@@ -85,8 +86,8 @@ void *pst_it(struct ThreadData *td)
   struct geometryst *g;
 
 #ifdef DEBUG
-  printf("debug: pst_it file: %s, line: %d done\n", __FILE__, __LINE__);
-  printf("debug: calculate from index %d to %d\n", td->start, td->stop);
+  printf("debug: pst_it file: %s, line: %d\n", __FILE__, __LINE__);
+  printf("debug: calculate from index %d to %d in thread %d\n", td->start, td->stop, td->thread_no);
 #endif
 
   bl= td->bl;
