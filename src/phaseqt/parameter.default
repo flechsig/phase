@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <27 Sep 12 16:38:20 flechsig> 
+#  Time-stamp: <28 Mar 13 12:28:34 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -37,7 +37,7 @@ PO Controls
 
 PO Source
     isrctype		4	source type (1..7)					4	5
-    source 4		-	E- field from files (filenames see Edit/Configure)	
+    source 4 & 7	-	E- field from files (filenames see Edit/Configure)	
        so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
        xi.distfocy	0	distance of image plane to horizontal focus		0.	49
        xi.distfocz	0	distance of image plane to vertical focus		0.	50
@@ -66,8 +66,6 @@ PO Apertures
 
 PO Integration
     ispline		0	0: simpson integration, 1: spline integration (0,1)	0	39
-    d12_max		0	-							0	40 
-    id12		0	print d12 on file, (0,1)				0	41	
     grid parameters   
         xi.ianzy0	51	y grid points						51	30
         xi.ymin		-1	dymin for integration (mrad)				-1	28
@@ -76,6 +74,8 @@ PO Integration
         xi.zmin		-1	dzmin for integration (mrad)				-1	35
         xi.zmax		1	dzmax for integration (mrad)				1	36
     phase reconstruction during integration
+        d12_max		0	-							0	40 
+        id12		0	print d12 on file, (0,1)				0	41
         xi.ianz0_cal	-	-							-	42
         xi.ianz0_fixed	-	-							-	43
         xi.iamp_smooth	-	(0,1,2)							-	44
