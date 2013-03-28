@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <28 Mar 13 09:55:14 flechsig> 
+dnl   Time-stamp: <28 Mar 13 11:26:57 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -91,7 +91,7 @@ case "$F77bn" in
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       if test "$machine" = "x86_64"; then   
 # UF 27.3.13 -nogen does not work	 AC_SUBST([FFLAGS],"-132 -O0 -nogen -interfaces")  # opti. fails on 64 bit -noalign ??
-      AC_SUBST([FFLAGS],"-132 -O0 -nogen -interfaces")  # opti. fails on 64 bit -noalign ??
+      AC_SUBST([FFLAGS],"-132 -O0 -nogen-interfaces")  # opti. fails on 64 bit -noalign ??
 dnl UF cforlib="-lintlc"
 dnl UF to be modified and tested 
          AC_CHECK_LIB(intlc,put_any_routine_from_intlc)
