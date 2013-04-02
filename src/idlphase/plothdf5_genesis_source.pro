@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 09:02:49 flechsig> 
+;  Time-stamp: <28 Mar 13 16:41:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_genesis_source, fname, png=png, limit=limit
+pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag=imag, phase=phase, amp=amp
 ;+
 ; NAME:
 ;   plothdf5_genesis_source

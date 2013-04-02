@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <26 Mar 13 10:01:04 flechsig>  */
+/*   Time-stamp: <28 Mar 13 14:31:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -483,7 +483,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct rayst               *rap;
   struct map4                *m4p;
   //struct constants *csp;
-  int    points, ny, nz;
+  int    points, ny, nz, nzhalf;
   double yi, zi;
 
   psip = (struct PSImageType *)bl->RTSource.Quellep;
@@ -557,11 +557,13 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   
   // debug output of first point
 #ifdef DEBUG  
-  if ((ny==0) || (nz==0))
+  nzhalf= sp->iwidth/2;       /* better to print the center point */
+  /*   if ((ny==0) || (nz==0)) */
+  if ( nz== nzhalf )
   {
     printf("\n");
     fflush(stdout);
-    printf("DEBUG output of first point:\n");
+    printf("DEBUG output of central point in z, yindex= %d:\n", ny);
     printf("yzintey = %g + I*%g\n", xirp->yzintey.re, xirp->yzintey.im);
     printf("yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
     printf("psd = %g\n", PSDp->psd[ny+nz*sp->iheigh]);
