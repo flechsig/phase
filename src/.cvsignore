@@ -27,6 +27,8 @@ COPYING
 INSTALL
 .in
 m4
+# personal host specific configure scripts
+configure.merlin
 
 
 
