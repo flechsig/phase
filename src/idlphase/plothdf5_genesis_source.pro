@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <28 Mar 13 16:41:39 flechsig> 
+;  Time-stamp: <03 Apr 13 09:51:29 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag=imag, phase=phase, amp=amp
+pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag=imag, phase=phase, amp=amp, verbose=verbose
 ;+
 ; NAME:
 ;   plothdf5_genesis_source
@@ -87,9 +87,18 @@ h5f_close, file_id
 
 len   = n_elements(field0)/2
 size  = fix(sqrt(len))
+size2 = size*size
+print, 'size= ', size, ' gridsize= ', gridsize
+print, 'len= ',  len, ' size^2= ', size2
+
+if (size2 ne len) then begin
+    print, 'genesis works assumes a quadratic grid- return'
+    return
+endif
+
 field2= reform(field0, 2, size, size)
 
-print, 'size= ', size, ' gridsize= ', gridsize
+
 
 real= reform(field2[0,*,*], size, size)
 imag= reform(field2[1,*,*], size, size)
