@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <27 Mar 13 14:09:59 flechsig>  */
+/*   Time-stamp: <03 Apr 13 09:24:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -114,10 +114,10 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
 	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	  break;
 	case 2:
-	  write_phase_hdf5_file();
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
 	case 3:
-	  write_genesis_hdf5_file();
+	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
@@ -165,10 +165,10 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
 	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	  break;
 	case 2:
-	  write_phase_hdf5_file();
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
 	case 3:
-	  write_genesis_hdf5_file();
+	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);

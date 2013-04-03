@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <27 Mar 13 13:57:44 flechsig>  */
+/*  Time-stamp: <03 Apr 13 09:22:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -478,7 +478,7 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
   H5Gclose(group_id);
 }  /* end add_phase_psd_to_hdf5 */
 
-void write_genesis_hdf5_file(struct BeamlineType *bl)
+void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
 {
   hid_t  file_id, group_id;
   int    slicecount= 1, col, row, cols, rows, fieldsize;
@@ -495,10 +495,10 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
      the current contents will be deleted so that the application can rewrite the file with new data. */
-  file_id= H5Fcreate(bl->filenames.hdf5_out, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
   if (file_id < 0)
     {
-      fprintf(stderr, "error: can't open %s - exit\n", bl->filenames.hdf5_out);
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
       exit(-1);
     }
 
@@ -530,10 +530,10 @@ void write_genesis_hdf5_file(struct BeamlineType *bl)
   add_string_attribute_f(file_id, "/", "file_type", "genesis_hdf5");
   H5Fclose(file_id);
   XFREE(field);
-  printf("wrote genesis_hdf5 file: %s\n", bl->filenames.hdf5_out);
+  printf("wrote genesis_hdf5 file: %s\n", fname);
 }  /* write_genesis_hdf5_file */
 
-void write_phase_hdf5_file(struct BeamlineType *bl)
+void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
 {
   hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
@@ -551,10 +551,10 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
      the current contents will be deleted so that the application can rewrite the file with new data. */
-  file_id= H5Fcreate(bl->filenames.hdf5_out, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
   if (file_id < 0)
     {
-      fprintf(stderr, "error: can't open %s - exit\n", bl->filenames.hdf5_out);
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
       exit(-1);
     }
 
@@ -595,7 +595,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl)
   add_phase_psd_to_hdf5(file_id, bl);
   add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
   H5Fclose(file_id);
-  printf("wrote phase_hdf5 file: %s\n", bl->filenames.hdf5_out);
+  printf("wrote phase_hdf5 file: %s\n", fname);
 }  /* write_phase_hdf5_file */
 
 #endif         /* ******************** end hdf5 ***********************/
