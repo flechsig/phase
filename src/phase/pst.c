@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <28 Mar 13 14:31:02 flechsig>  */
+/*   Time-stamp: <03 Apr 13 10:39:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -688,7 +688,7 @@ void norm_output(struct BeamlineType *bl)
 
   surfmax= 0.0;
   for (i= 0; i< npoints; i++) surfmax= (PSDp->psd[i] > surfmax) ? PSDp->psd[i] : surfmax;
-  surfmax= (surfmax > 1e-100) ?  surfmax : 1;
+  surfmax= (fabs(surfmax) > ZERO) ? surfmax : 1;
   for (i= 0; i< npoints; i++) PSDp->psd[i] /= surfmax;
 
   printf("norm_output: normalization done, max= %e\n", surfmax);
