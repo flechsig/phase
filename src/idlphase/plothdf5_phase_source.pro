@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 09:03:04 flechsig> 
+;  Time-stamp: <03 Apr 13 10:28:32 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_phase_source, fname, png=png, limit=limit
+pro plothdf5_phase_source, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yphase, yamp=yamp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp
 ;+
 ; NAME:
 ;   plothdf5_genesis_source
@@ -73,6 +73,7 @@ pro plothdf5_phase_source, fname, png=png, limit=limit
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/EZRE_GB_5000.h5'                   
 if n_elements(limit) eq 0 then limit= 100
+if n_elements(nr)    eq 0 then nr=1+2+4+8+16+32+64+128
 
 file_id     = H5F_OPEN(fname)
 dataset_id1 = H5D_OPEN(file_id, '/z_vec')
@@ -108,45 +109,64 @@ yphase= atan(yimag,yreal)
 zamp  = sqrt(zreal^2+zimag^2)
 zphase= atan(zimag,zreal)
 
+print, 'nr= ',nr
+
+if ((nr and 1) gt 0) then begin
 window,0
-mycontour,yreal, z_vec, y_vec, title='y_real', xtitle='z (mm)', ytitle='y (mm)'
+mycontour, yreal, z_vec, y_vec, title='y_real', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yreal.png'
 if limit eq 1 then return
+endif 
 
 ;return
+if ((nr and 2) gt 0) then begin
+print, 'call 2'
 window,1
 mycontour,yimag,z_vec,y_vec,title='y_imag', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yimag.png'
 if limit eq 2 then return
+endif 
 
+if ((nr and 4) gt 0) then begin
 window,2
 mycontour,yamp, z_vec, y_vec, title='y_amplitude', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yampl.png'
 if limit eq 3 then return
+endif
 
+if ((nr and 8) gt 0) then begin
 window,3
 mycontour,yphase, z_vec, y_vec, title='y_phase', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-yphas.png'
 if limit eq 4 then return
+endif
 
+if ((nr and 16) gt 0) then begin
 window,4
 mycontour,zreal, z_vec, y_vec, title='z_real', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zreal.png'
 if limit eq 5 then return
+endif
 
+if ((nr and 32) gt 0) then begin
 window,5
 mycontour,zimag,z_vec,y_vec,title='z_imag', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zimag.png'
 if limit eq 6 then return
+endif
 
+if ((nr and 64) gt 0) then begin
 window,6
 mycontour,zamp, z_vec, y_vec, title='z_amplitude', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zampl.png'
 if limit eq 7 then return
+endif
 
+if ((nr and 128) gt 0) then begin
 window,7
 mycontour,zphase, z_vec, y_vec, title='z_phase', xtitle='z (mm)', ytitle='y (mm)'
 if keyword_set(png) then spng,'phase-zphas.png'
+endif
 
 return
 end
