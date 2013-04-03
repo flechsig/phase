@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <03 Apr 13 09:22:14 flechsig>  */
+/*  Time-stamp: <03 Apr 13 10:03:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -505,6 +505,17 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   p= (struct PSDType *)bl->RESULT.RESp;
   rows= p->iy;
   cols= p->iz;
+
+  if (rows != cols)
+    {
+      fprintf(stderr, "error: genesis file format assumes a quadratic grid\n");
+      fprintf(stderr, "       current grid: %d x %d\n", rows, cols);
+      fprintf(stderr, "       we create a phase_hdf5 instead");
+      H5Fclose(file_id);
+      write_phase_hdf5_file(bl, fname);
+      return;
+    }
+
   fieldsize= rows*cols*2;
 
   field= XMALLOC(double, fieldsize);
