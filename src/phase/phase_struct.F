@@ -19,6 +19,8 @@ c------------------------------------------------------------
 
 c remember to change phase_struct.h as well
 #define MAX_INTEGRATION_SIZE 4096 
+#define SMALL_PHA 1.0d-15
+#define SMALL 1.0d-300 
 
 c#ifdef QTGUI
 c#define MAX_GRIDSIZE 256

@@ -14,7 +14,7 @@
 
 // maximum gridsize for simpson's integration (phase_integration.F)
 #define MAX_INTEGRATION_SIZE 4096 //remember to change phase_struct.F as well
-
+#define SMALL_PHA 1.0d-15
 /* #ifdef QTGUI
 #define MAX_GRIDSIZE 256
 #else

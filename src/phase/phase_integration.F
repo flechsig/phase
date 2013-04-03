@@ -332,7 +332,7 @@ c*******************************************************
         call debug_beamline_type_f(blp)
 #endif
 
-        if(xi.distfocz.gt.1.e-10)then
+        if(dabs(xi.distfocz).gt.1.e-10)then
            dzii=dzi+ra.ri.zi/xi.distfocz
         else
            dzii=dzi
@@ -506,7 +506,7 @@ c      dimension p1122a(0:7,0:7,0:7,0:7)
         call debug_beamline_type_f(blp)
 #endif
 
-        if(xi.distfocy.gt.1.e-10)then
+        if(dabs(xi.distfocy).gt.1.e-10)then
            dyii=dyi+ra.ri.yi/xi.distfocy
         else
            dyii=dyi
@@ -900,8 +900,7 @@ c-----------------
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
 	dimension coef(1024),coef1(1024),xx(1024)
 
-	small_loc=1.d-15
-	small_loc1=1.d-10
+	SMALL_PHA1=SMALL_PHA*1.0d5
 	iii=0
 
 	x(1)=0.d0
@@ -1212,7 +1211,7 @@ c----------- now, correct phase
 30	continue
 	pha_new(i+2)=pha_new(i+2)+2.d0*cs.pi
 	dd1=dabs(pha_new(i+2)-pha_guess) 
-	if(dabs(dabs(dd1)-dabs(dd)).gt.small_loc1)then
+	if(dabs(dabs(dd1)-dabs(dd)).gt.SMALL_PHA1)then
 	if(dabs(dd1).lt.dabs(dd))then
 		dd=dd1
 		goto 30
@@ -1257,7 +1256,7 @@ c----------- now,correct phase
 31	continue
 	pha_new(i-2)=pha_new(i-2)+2.d0*cs.pi
 	dd1=dabs(pha_new(i-2)-pha_guess) 
-	if(dabs(dabs(dd1)-dabs(dd)).gt.small_loc1)then
+	if(dabs(dabs(dd1)-dabs(dd)).gt.SMALL_PHA1)then
 	if(dabs(dd1).lt.dabs(dd))then
 		dd=dd1
 		goto 31
@@ -1436,7 +1435,6 @@ c---------------------------------------------------------
 c---------------------------------------------------------
 
 	if(ianz.ge.2)then
-	small_loc=1.0d-15
 	xint=0.d0
 
 	x(1)=0.d0
@@ -1575,7 +1573,7 @@ c-------------------------------------------------
 	endif
 c------------------------
 	xinta=cdabs(xint)
-	if(xinta.gt.small_loc)then
+	if(xinta.gt.SMALL_PHA)then
 		xintp=dimag(cdlog(xint/xinta))
 	  else
 		xintp=0.d0
@@ -1835,7 +1833,6 @@ c---------------------------------------------------------------------
 
 	dimension dyi_loc(1001),dzi_loc(1001)
 
-	small_loc=1.0d-15
 c-----------------------------------------------------------------
 	yi_loc=ra.ri.yi
 	zi_loc=ra.ri.zi
@@ -1887,19 +1884,7 @@ c-----------------------------------------------------------------
 	ra.rf.yp=yp
 	ra.rf.zp=zp
 
-c	print*,ii,jj,ra.rf.yp,ra.rf.zp
-
 	call psdi(g,src,apr,cs,ifl,ra,sr,blp)
-
-c	auskommentiert 5.11.2003
-c	xir.si1.tya(ii,jj)=sr.eya
-c        xir.si1.tza(ii,jj)=sr.eza
-c        xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
-c        xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
-
-c	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc) xir.si1.typ(ii,jj)=0.d0
-c	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc) xir.si1.tzp(ii,jj)=0.d0
-c	ende 5.11.2003
  
 	enddo
 	enddo
