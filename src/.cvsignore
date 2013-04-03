@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/.cvsignore
 #   Date      : <04 Feb 04 09:37:50 flechsig> 
-#   Time-stamp: <14 Sep 11 10:50:24 flechsig> 
+#   Time-stamp: <03 Apr 13 09:08:42 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -28,7 +28,7 @@ INSTALL
 .in
 m4
 # personal host specific configure scripts
-configure.merlin
+*merlin*
 
 
 
