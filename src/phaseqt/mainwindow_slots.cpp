@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2013-04-04 12:07:23 flechsig> 
+//  Time-stamp: <2013-04-05 01:05:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -177,7 +177,7 @@ void MainWindow::activateProc(const QString &action)
       cout << "********** plrayset=" << myparent->myBeamline()->BLOptions.plrayset << endl;
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);
 		
-      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.plrayset), 
+      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.dlambdaflag), 
 				myparent->myBeamline()->RTSource.raynumber, 0);  
       
       myparent->myUpdateFlags(FIRST);
@@ -186,7 +186,7 @@ void MainWindow::activateProc(const QString &action)
       myparent->myBuildBeamline();
       myparent->myRayTracec(); 
       
-      if (myparent->myBeamline()->BLOptions.plrayset == 3)  /* double wavelength calculation */
+      if (myparent->myBeamline()->BLOptions.need_another_run)  /* double wavelength calculation */
 	{
 	  myparent->myUpdateFlags(SECOND);
 	  
@@ -204,7 +204,7 @@ void MainWindow::activateProc(const QString &action)
   
   if (!action.compare("raytracefullAct")) 
     { 
-      printf("\nraytracefullAct button  pressed\n");
+      cout << endl << "raytracefullAct button  pressed" << endl;
 
       if (elementListIsEmpty())	return;
 
@@ -213,14 +213,14 @@ void MainWindow::activateProc(const QString &action)
 
       if (!(myparent->myBeamline()->beamlineOK & sourceOK)) myparent->myMakeRTSource();
 
-      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.plrayset), 
+      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.dlambdaflag), 
 				myparent->myBeamline()->RTSource.raynumber, 0);
       
       myparent->myUpdateFlags(FIRST);
       myparent->myBuildBeamline();
       myparent->myRayTraceFull(); 
 
-      if (myparent->myBeamline()->BLOptions.plrayset == 3)  /* double wavelength calculation */
+      if (myparent->myBeamline()->BLOptions.need_another_run)  /* double wavelength calculation */
 	{
 	  myparent->myUpdateFlags(SECOND);
 	  myparent->myBuildBeamline();
@@ -1178,8 +1178,9 @@ void MainWindow::grapplyslot()
 	  //plotLayout->addWidget(d_plot,0,0);
 	  break;
 	case PLOT_HPROF:
-	  d_plot->hfill1(d_plot->getXdata(FIRST), d_plot->zmin, d_plot->zmax, FIRST);
-	  if (myparent->myBeamline()->BLOptions.plrayset == 3) 
+	  if (myparent->myBeamline()->BLOptions.plrayset & PLRaySet1)
+	    d_plot->hfill1(d_plot->getXdata(FIRST), d_plot->zmin, d_plot->zmax, FIRST);
+	  if (myparent->myBeamline()->BLOptions.plrayset & PLRaySet2) 
 	    d_plot->hfill1(d_plot->getXdata(SECOND), d_plot->zmin, d_plot->zmax, SECOND);
 	  btnLogy->show();
 	  //plotLayout->addWidget(btnLogy,0,0);
@@ -1187,8 +1188,9 @@ void MainWindow::grapplyslot()
 	  d_plot->profilePlot(mwplotsubject, mwplotstyle, myparent->myBeamline()->BLOptions.plrayset);
 	  break;
 	case PLOT_VPROF:
-	  d_plot->hfill1(d_plot->getYdata(FIRST), d_plot->ymin, d_plot->ymax, FIRST);
-	  if (myparent->myBeamline()->BLOptions.plrayset == 3) 
+	  if (myparent->myBeamline()->BLOptions.plrayset & PLRaySet1)
+	    d_plot->hfill1(d_plot->getYdata(FIRST), d_plot->ymin, d_plot->ymax, FIRST);
+	  if (myparent->myBeamline()->BLOptions.plrayset & PLRaySet2) 
 	    d_plot->hfill1(d_plot->getYdata(SECOND), d_plot->ymin, d_plot->ymax, SECOND);
 	  btnLogy->show();
 	  //plotLayout->addWidget(btnLogy,0,0);
@@ -1509,6 +1511,11 @@ void MainWindow::dlambdaBoxslot(int newstate)
 #endif
   
   myparent->myBeamline()->BLOptions.dlambdaflag= (newstate == Qt::Checked) ? 1 : 0;
+  myparent->myBeamline()->beamlineOK= 0;
+  for (int i=0; i< myparent->myBeamline()->elementzahl; i++) 
+    if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT) 
+      myparent->myBeamline()->ElementList[i].ElementOK= 0;
+  UpdateStatus();
   UpdateBeamlineBox();
 
 #ifdef DEBUG

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <2013-04-04 17:50:24 flechsig>  */
+/*   Time-stamp: <2013-04-04 23:25:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -909,7 +909,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
   int ii, iy, iz, type;                   /* to make the code clearer */
 
 #ifdef DEBUG 
-  printf("debug: ReAllocResult\n");
+  printf("debug: ReAllocResult, newtype= %d\n", newtype);
 #endif
 
   FreeResultMem(&bl->RESULT); 
@@ -918,12 +918,12 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
   printf("debug: start allocating\n");
 #endif
 
-  type = newtype & ~3; // strip off last bits
+  type = newtype & ~1; // strip off last bit
   
   switch (type)
     {
     case PLrttype:
-      ii= (newtype & 3) ? 2 * dim1 : dim1;
+      ii= (newtype & 1) ? 2 * dim1 : dim1;   /* deltalambda mode */
       bl->RESULT.RESp= XMALLOC(struct RayType, ii);
       bl->RESULT.dim1= dim1;
 #ifdef DEBUG

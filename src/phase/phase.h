@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <03 Apr 13 10:37:44 flechsig>  */
+/*   Time-stamp: <2013-04-05 00:21:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -367,7 +367,7 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, act_ray_set, dlambdaflag, plrayset;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, act_ray_set, dlambdaflag, plrayset, need_another_run;
   double epsilon, lambda, xlam_save, displength, dlambda;
   struct PSOptionsType PSO;
   struct control_flags ifl;

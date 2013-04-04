@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2013-04-04 12:19:35 flechsig>  */
+/*   Time-stamp: <2013-04-05 00:21:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3230,25 +3230,24 @@ void Check_iord(struct BeamlineType *bl)
 /* updates the status and the deltalamba flag depending on ray trace mode */ 
 void UpdateFlags(struct BeamlineType *bl, int run)
 {
-  int dlflagold, statusold, rayset, first_run_of_2, change_status;
+  int dlflagold, statusold, change_status;
   unsigned int i;
   
 #ifdef DEBUG
   printf("debug: %s UpdateFlags called\n", __FILE__);
 #endif
 
-  bl->BLOptions.act_ray_set= run;
-  rayset= bl->BLOptions.plrayset;
-
-  first_run_of_2= ((run == FIRST) && (rayset == 3)) ? 1 : 0;
+  bl->BLOptions.act_ray_set= run;  /* pass the run to rtrace.c */
+  
+  bl->BLOptions.need_another_run= ((run == FIRST) && (bl->BLOptions.dlambdaflag)) ? 1 : 0;  /* 2 sets ? */
   change_status = 0;
 
-  if ( first_run_of_2 )
+  if ( bl->BLOptions.need_another_run )
     {
       for (i= 0; i < bl->elementzahl; i++)  /* scan all elements */
 	if (bl->ElementList[i].MDat.Art & GRATINGBIT) 
 	  {
-	    if (bl->BLOptions.dlambdaflag != 0) change_status= 1;
+	    if (bl->BLOptions.dlambdaflag) change_status= 1;
 	      	    
 	    if ( change_status )  /* flag must be changed */
 	      {
