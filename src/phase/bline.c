@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Mar 13 08:33:59 flechsig>  */
+/*   Time-stamp: <2013-04-04 12:19:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3268,9 +3268,7 @@ void UpdateFlags(struct BeamlineType *bl, int run)
 	    bl->ElementList[i].ElementOK= 0;
 	    bl->beamlineOK &= ~mapOK;
 	  }
-	  
     } /* end second run */
-
 } /*  UpdateFlags */
 
 /* end bline.c */

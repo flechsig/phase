@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <22 Jun 12 13:30:06 flechsig>  */
+/*   Time-stamp: <2013-04-04 17:50:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -679,8 +679,10 @@ void RayTraceFull(struct BeamlineType *bl)
    /*********************************************************************/
    
    bl->beamlineOK &= ~resultOK;
-   fprintf(stderr, "RayTraceFull: beamlineOK: %X, iord=%d\n", bl->beamlineOK, bl->BLOptions.ifl.iord); 
+   fprintf(stderr, "RayTraceFull: beamlineOK: %X, iord=%d\n", 
+	   bl->beamlineOK, bl->BLOptions.ifl.iord); 
    Re= &bl->RESULT;
+
    if ((bl->beamlineOK & (sourceOK | mapOK)) == 0)
    { 
      fprintf(stderr, "rtrace.c: beamline is not OK: beamlineOK: %X\n", 
@@ -694,8 +696,7 @@ void RayTraceFull(struct BeamlineType *bl)
    tmpresult= XMALLOC(struct RayType, mypoints);
    
    printf("RayTraceFull: start with \t\t%d ray(s) \t= 100 %s \n", zahl, "%"); 
-   memcpy(tmpsource, bl->RTSource.SourceRays, zahl* 
-	  sizeof(struct RayType));
+   memcpy(tmpsource, bl->RTSource.SourceRays, zahl* sizeof(struct RayType));
    
    elcounter= 0;
    
@@ -725,15 +726,11 @@ void RayTraceFull(struct BeamlineType *bl)
 	     ds->GDat.rp : ds->GDat.r; 
 	   for (i= 0; i< zahl; i++)
 	     { 
-	       
-	       
 	       intersection(&ds->mir, ds->wc, ds->xlc, Raysin, 
 			    &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
 	       
-	       
 	       if (OnElement(&ds->MDat, ww, ll))
 		 {
-		   
 		   ray_tracef(Raysin, Raysout, &bl->BLOptions.ifl.iord, 
 			      (double *)ds->ypc1, (double *)ds->zpc1, 
 			      (double *)ds->dypc, (double *)ds->dzpc);  
@@ -766,7 +763,7 @@ void RayTraceFull(struct BeamlineType *bl)
      {
        Re->points2= zahl;
        Raysout= Re->RESp;
-       for (i= 0; i < Re->dim1; i++) Raysout++;
+       for (i= 0; i < Re->dim1; i++) Raysout++; /* copy after dim1 */
        memcpy(Raysout, tmpresult, zahl* sizeof(struct RayType));
        printf("RayTraceFull: second set ==> done\n");
      }

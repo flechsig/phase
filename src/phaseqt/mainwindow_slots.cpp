@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2013-03-23 21:52:19 flechsig> 
+//  Time-stamp: <2013-04-04 12:07:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1510,28 +1510,37 @@ void MainWindow::dlambdaBoxslot(int newstate)
   
   myparent->myBeamline()->BLOptions.dlambdaflag= (newstate == Qt::Checked) ? 1 : 0;
   UpdateBeamlineBox();
+
 #ifdef DEBUG
-  cout << "debug: dlambdaBoxslot out:dlambdaflag= " <<  myparent->myBeamline()->BLOptions.dlambdaflag <<  endl;
+  cout << "debug: dlambdaBoxslot out:dlambdaflag= " <<  
+    myparent->myBeamline()->BLOptions.dlambdaflag <<  endl;
 #endif
 } // dlambdaBoxslot
 
-// dlambdaBoxslot
+// dlambdaBox1slot
+// set and reset a bit in plrayset
 void MainWindow::dlambdaBox1slot(int newstate)
 {
   myparent->myBeamline()->BLOptions.plrayset= (newstate == Qt::Checked) ? 
-    myparent->myBeamline()->BLOptions.plrayset | PLRaySet1 : myparent->myBeamline()->BLOptions.plrayset & PLRaySet2;
+    myparent->myBeamline()->BLOptions.plrayset | PLRaySet1 : 
+    myparent->myBeamline()->BLOptions.plrayset & PLRaySet2;
+
 #ifdef DEBUG
-  cout << "debug: dlambdaBox1slot out:= plrayset" <<  myparent->myBeamline()->BLOptions.plrayset <<  endl;
+  cout << "debug: dlambdaBox1slot out:= plrayset" <<  
+    myparent->myBeamline()->BLOptions.plrayset <<  endl;
 #endif
 } // dlambdaBox1slot
 
-// dlambdaBoxslot
+// dlambdaBox2slot
 void MainWindow::dlambdaBox2slot(int newstate)
 {
   myparent->myBeamline()->BLOptions.plrayset= (newstate == Qt::Checked) ? 
-    myparent->myBeamline()->BLOptions.plrayset | PLRaySet2 : myparent->myBeamline()->BLOptions.plrayset & PLRaySet1;
+    myparent->myBeamline()->BLOptions.plrayset | PLRaySet2 : 
+    myparent->myBeamline()->BLOptions.plrayset & PLRaySet1;
+
 #ifdef DEBUG
-  cout << "debug: dlambdaBox2slot out:= plrayset" <<  myparent->myBeamline()->BLOptions.plrayset <<  endl;
+  cout << "debug: dlambdaBox2slot out:= plrayset" <<  
+    myparent->myBeamline()->BLOptions.plrayset <<  endl;
 #endif
 } // dlambdaBox2slot
 
@@ -1541,7 +1550,7 @@ void MainWindow::newBeamline()
   // int rcode;
   const char *name= "new_beamline.phase";
 
-  if ( fexists((char *)name)) 
+  if ( fexists((char *)name) ) 
     QMessageBox::warning(this, tr("Phase: newBeamline"),
 			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
   

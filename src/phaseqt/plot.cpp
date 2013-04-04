@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <24 Aug 12 15:44:02 flechsig> 
+//  Time-stamp: <2013-04-04 17:35:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -354,14 +354,19 @@ void Plot::profilePlot(int subject, int style, int settype)
   d_curve1->hide();
   d_curve2->hide();
   d_spectrogram->hide();
+
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
   setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
-  d_curve1->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
-  pen_ptr->setColor(Qt::red);   // blue
-  pen_ptr->setWidth(2);
-  d_curve1->setPen(*pen_ptr);
+  
+  if (settype & PLRaySet1)
+    {
+      d_curve1->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
+      pen_ptr->setColor(Qt::red);   
+      pen_ptr->setWidth(2);
+      d_curve1->setPen(*pen_ptr);
+    }
 
-  if (settype == 3)
+  if (settype & PLRaySet2)
     {
       d_curve2->setStyle( QwtPlotCurve::Steps ); //Steps Sicks
       pen_ptr->setColor(Qt::blue);   // blue
@@ -391,8 +396,8 @@ void Plot::profilePlot(int subject, int style, int settype)
 	  setAxisTitle(0, tr("y (mm)"));
 	  setAxisTitle(2, tr("norm. intensity"));
 	}
-      d_curve1->setRawSamples(c1y, c1x, BINS2);
-      if (settype == 3) d_curve2->setRawSamples(c2y, c2x, BINS2);
+      if (settype & PLRaySet1) d_curve1->setRawSamples(c1y, c1x, BINS2);
+      if (settype & PLRaySet2) d_curve2->setRawSamples(c2y, c2x, BINS2);
       y1= ymin;                                     // for manual scaling
       y2= ymax;             
       x1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -409,8 +414,8 @@ void Plot::profilePlot(int subject, int style, int settype)
 	  setAxisTitle(2, tr("z (mm)"));
 	  setAxisTitle(0, tr("norm. intensity"));
 	}
-      d_curve1->setRawSamples(c1x, c1y, BINS2);
-      if (settype == 3) d_curve2->setRawSamples(c2x, c2y, BINS2);
+      if (settype & PLRaySet1) d_curve1->setRawSamples(c1x, c1y, BINS2);
+      if (settype & PLRaySet2) d_curve2->setRawSamples(c2x, c2y, BINS2);
       x1= zmin;           
       x2= zmax;
       y1= ( logscaleon ) ? h1firstgt0 : -(h1max* 0.05); 
@@ -425,8 +430,8 @@ void Plot::profilePlot(int subject, int style, int settype)
   setAxisScale(QwtPlot::yLeft,   y1, y2, 0);   // manual scaling
     
   zoomer->setZoomBase(canvas());
-  d_curve1->show();
-  if (settype == 3) d_curve2->show();
+  if (settype & PLRaySet1) d_curve1->show();
+  if (settype & PLRaySet2) d_curve2->show();
   replot();
 } // end profilePlot()
 
@@ -449,7 +454,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
 #endif
 
   ndata1= points1; // fill private var
-  ndata2= (settype == 3) ? points2 : 0;
+  ndata2= (settype & PLRaySet2) ? points2 : 0;
 
   if (c1x) delete c1x; c1x= NULL;
   if (c1y) delete c1y; c1y= NULL;
@@ -461,7 +466,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
 
   if ((plotsubject & PLOT_GO_PHI) && (settype < 3)) c2y= new double[ndata1];
 
-  if (settype == 3) 
+  if (settype & PLRaySet2) 
     {
       c2x= new double[ndata2]; 
       c2y= new double[ndata2];
@@ -477,7 +482,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
 	  c1y[i]= rp->y;
 	  i++, rp++;
 	}
-      if (settype == 3) 
+      if (settype & PLRaySet2) 
 	{
 	  i= 0;
 	  //	  rp++;
@@ -526,7 +531,6 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
 	  c1y[i]= rp->dy * 1e3;
 	}
     }
-
 } // end fillGoPlotArrays			     
 
 double *Plot::getXdata(int nr)
@@ -552,32 +556,26 @@ void Plot::scatterPlot(int settype)
 
   //SetLog(0);
   enableAxis(QwtPlot::yRight, false);                 // switch off right axis
-
-  d_curve1->setRawSamples(c1x, c1y, ndata1);
-  d_curve1->setStyle( QwtPlotCurve::Dots );
-  pen_ptr->setColor(Qt::red);   // blue
-  pen_ptr->setWidth(2);
-  d_curve1->setPen(*pen_ptr);
   setCanvasBackground( QColor( 250, 240, 210 ) ); // helles braun in RGB
-
-  // d_curve1->setStyle( QwtPlotCurve::NoCurve );
-  //    d_curve1->setSymbol( new QwtSymbol( QwtSymbol::Ellipse,// QwtSymbol::XCross,
-  //        Qt::NoBrush, QPen( Qt::white ), QSize( 2, 2 ) ) );
-  // d_curve1->setSymbol( new QwtSymbol( QwtSymbol::XCross,
-  //      Qt::NoBrush, QPen( Qt::red ), QSize( 3, 3 ) ) );
-  // setCanvasBackground( QColor( 29, 100, 141 ) ); // nice blue
- 
   setAxisScale(QwtPlot::xBottom, zmin, zmax, 0); // manual scaling
   setAxisScale(QwtPlot::yLeft,   ymin, ymax, 0); // manual scaling
   zoomer->setZoomBase(canvas());
 
-  d_curve1->show();
+  if (settype & PLRaySet1)
+    {
+      d_curve1->setRawSamples(c1x, c1y, ndata1);
+      d_curve1->setStyle( QwtPlotCurve::Dots );
+      pen_ptr->setColor(Qt::red);   
+      pen_ptr->setWidth(2);
+      d_curve1->setPen(*pen_ptr);
+      d_curve1->show();
+    }
 
-  if (settype == 3)
+  if (settype & PLRaySet2)
     {
       d_curve2->setRawSamples(c2x, c2y, ndata2);
       d_curve2->setStyle( QwtPlotCurve::Dots );
-      pen_ptr->setColor(Qt::blue);   // blue
+      pen_ptr->setColor(Qt::blue);   
       pen_ptr->setWidth(2);
       d_curve2->setPen(*pen_ptr);
       d_curve2->show();
@@ -666,7 +664,6 @@ void Plot::setdefaultData()
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
-
 } // setdefaultData
 
 void Plot::setdefaultData2()
@@ -850,7 +847,6 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	} 
     }
   
- 
   h1max= 0.0; h1firstgt0= 1.0;  // ZERO
   if (set == FIRST)
     {
@@ -924,7 +920,7 @@ void Plot::hfill2(int settype)
 	    }
 	}
     }
-  if (settype == 3)
+  if (settype & PLRaySet2)
     {
       for (i= 0; i< ndata2; i++)
 	{
