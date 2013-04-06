@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2013-04-04 17:35:50 flechsig> 
+//  Time-stamp: <2013-04-05 10:06:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -903,23 +903,27 @@ void Plot::hfill2(int settype)
   if ((ymax- ymin) < ZERO ) ymax = ymin + 1;  
   h2max= 0.0;
 
-  for (i= 0; i< ndata1; i++)
+  if (settype & PLRaySet1)
     {
-      ix= (int)((c1x[i]- zmin)/(zmax - zmin)* h2a_nx);
-      iy= (int)((c1y[i]- ymin)/(ymax - ymin)* h2a_ny);
-      
-      if ((ix >= 0) && (ix < h2a_nx) && (iy >= 0) && (iy < h2a_ny)) 
+      for (i= 0; i< ndata1; i++)
 	{
-	  idx= ix+ iy* h2a_nx;
-	  h2a[idx]+= 1.0;          // add one hit
-          if (h2a[idx] > h2max) 
+	  ix= (int)((c1x[i]- zmin)/(zmax - zmin)* h2a_nx);
+	  iy= (int)((c1y[i]- ymin)/(ymax - ymin)* h2a_ny);
+	  
+	  if ((ix >= 0) && (ix < h2a_nx) && (iy >= 0) && (iy < h2a_ny)) 
 	    {
-	      xm= c1x[i]; 
-	      ym= c1y[i];
-	      h2max= h2a[idx];
+	      idx= ix+ iy* h2a_nx;
+	      h2a[idx]+= 1.0;          // add one hit
+	      if (h2a[idx] > h2max) 
+		{
+		  xm= c1x[i]; 
+		  ym= c1y[i];
+		  h2max= h2a[idx];
+		}
 	    }
 	}
     }
+
   if (settype & PLRaySet2)
     {
       for (i= 0; i< ndata2; i++)
@@ -945,8 +949,6 @@ void Plot::hfill2(int settype)
   if (h2max > 0.0)
     for (ix=0; ix< h2a_nx; ix++)
       for (iy=0; iy< h2a_ny; iy++) h2a[ix+iy*h2a_nx]*= 10.0/ h2max;
-
- 
 
 #ifdef DEBUG1
   cout << "debug: " << __FILE__ << " hfill2 end:  h2max= " <<  h2max << ", h2a[last]= " << h2a[h2a_n-1] << endl;
