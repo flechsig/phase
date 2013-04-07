@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <03 Apr 13 10:03:07 flechsig>  */
+/*  Time-stamp: <2013-04-07 18:16:19 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -142,14 +142,15 @@ void source8c_ini(struct BeamlineType *bl)
 	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
 #endif
 
-#else         /* no hdf5 */
-   printf("compiled without hdf5 support\n", __FILE__);
-#endif
-
 #ifdef DEBUG
    printf("debug: %s source8c_ini done (input from GENESIS linear horizontal polarisation), wavelength= %lg nm\n", 
 	  __FILE__, wavelength * 1e9);
 #endif
+
+#else         /* no hdf5 */
+   printf("compiled without hdf5 support\n", __FILE__);
+#endif
+
 }  /* source8c_ini */
 
 /* reads the source files and puts the results into bl->posrc */

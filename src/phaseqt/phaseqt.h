@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <03 Apr 13 09:26:29 flechsig>  */
+/*  Time-stamp: <2013-04-07 18:06:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -92,7 +92,9 @@ public:
   void myAllocRTSource() { AllocRTSource(this); }
   void myBatchMode(int cmode, int selected, int iord, int numthreads, int format) { BatchMode(this, cmode, selected, iord, numthreads, format); }
   void myBuildBeamline() { BuildBeamline(this); }
+#ifdef HAVE_HDF5
   int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb);}
+#endif
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 
@@ -128,8 +130,10 @@ public:
 			     ypc1, zpc1, dypc,   dzpc,
 			     wc,   xlc,  xlen1c, xlen2c); }
   void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz); }
+#ifdef HAVE_HDF5
   void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out); }
   void my_write_phase_hdf5_file() { write_phase_hdf5_file(this, this->filenames.hdf5_out); }
+#endif
   void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();
   void writeBackupFile();
