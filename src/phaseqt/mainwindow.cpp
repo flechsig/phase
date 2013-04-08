@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <18 Mar 13 09:19:15 flechsig> 
+//  Time-stamp: <08 Apr 13 10:52:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -328,7 +328,7 @@ QWidget *MainWindow::createBeamlineBox()
     beamlineGenericGroup->setLayout(beamlineGenericLayout);
 
 // bottom part
-    QGroupBox   *beamlineCalcGroup  = new QGroupBox(tr("calculation parameters"));
+    QGroupBox   *beamlineCalcGroup  = new QGroupBox(tr("calculation and display options"));
     //QVBoxLayout *beamlineCalcLayout = new QVBoxLayout;
     QGridLayout *beamlineCalcLayout = new QGridLayout;
 
