@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2013-04-07 18:10:30 flechsig> 
+//  Time-stamp: <09 Apr 13 11:39:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -500,6 +500,8 @@ void MainWindow::activateProc(const QString &action)
 	  cout << "write GO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
 	  myparent->myWriteRayFile(myparent->myBeamline()->filenames.imageraysname, &myparent->myBeamline()->RESULT.points1,
 				   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
+	  if (myparent->myBeamline()->BLOptions.dlambdaflag) 
+	    cout << "!! wrote only the rayset for lambda. lambda + dlambda is not implemented so far !!" << endl;
 	}
     } 
 
