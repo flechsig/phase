@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Apr 13 16:56:29 flechsig>  */
+/*   Time-stamp: <09 Apr 13 17:11:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -261,7 +261,7 @@ void PST(struct BeamlineType *bl)
    printf("  source typ: %d\n", bl->src.isrctype); 
  #endif
 
-   Test4Grating(bl, &mirp, &gp);
+   Test4Grating(bl); /* not in threads */
 
 #ifdef DEBUG 
    printf("debug: pst.c: allocating memory for structs\n");
@@ -440,7 +440,7 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
   npoints= sp->iheigh * sp->iwidth;
   next= 0;
 
-  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs, am, g);
+  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs);
 
   printf("\n");
 
@@ -473,7 +473,7 @@ void pstc(struct BeamlineType *bl, struct mirrortype *am, struct geometryst *g)
 } /* end pstc */
 
 /* the internal wrapper function for adaptive int for index i */
-void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct constants *csp, struct mirrortype *am, struct geometryst *g)
+void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct constants *csp)
 {
   struct PSImageType         *psip;
   struct PSDType             *PSDp;
@@ -482,13 +482,17 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct psimagest           *sp;
   struct rayst               *rap;
   struct map4                *m4p;
+  struct mirrortype          *am;
+  struct geometrytype        *g;
   //struct constants *csp;
   int    points, ny, nz, nzhalf;
   double yi, zi;
 
-  psip = (struct PSImageType *)bl->RTSource.Quellep;
-  sp   = (struct psimagest *)  bl->RTSource.Quellep;
-  PSDp = (struct PSDType *)    bl->RESULT.RESp;
+  psip = (struct PSImageType *) bl->RTSource.Quellep;
+  sp   = (struct psimagest *)   bl->RTSource.Quellep;
+  PSDp = (struct PSDType *)     bl->RESULT.RESp;
+  g    = (struct mirrortype *)  &bl->ElementList[bl->gratingpos].mir;
+  am   = (struct geometrytype *)&bl->ElementList[bl->gratingpos].geo;
 
   xirp = XMALLOC(struct integration_results, 1);
   stp  = XMALLOC(struct statistics, 1);
@@ -602,26 +606,20 @@ void Test4Grating(struct BeamlineType *bl)
 {
   int elart, gratingnumber, gratingposition;
   unsigned int i;
-  
+    
 #ifdef DEBUG
   fprintf(stderr, "Test4Grating called- not thread safe\m");   
 #endif
 
   /* gitterzahl erkennen und geometrypointer initialisieren */
    gratingnumber= gratingposition= 0;
-   *gp  = (struct geometryst *)&bl->ElementList[0].geo;
-   *mirp= (struct mirrortype *)&bl->ElementList[0].mir;
-                               // UF not thread safe
-
+   
    for (i= 0; i< bl->elementzahl; i++)
      {
        if( fabs(bl->ElementList[i].geo.x[0]) > ZERO )
 	 {
 	   gratingnumber++;
 	   gratingposition= i;
-	   *gp  = (struct geometryst *)&bl->ElementList[i].geo;
-	   *mirp= (struct mirrortype *)&bl->ElementList[i].mir;
-	   bl->BLOptions.ifl.igrating= 1;
 	   printf("grating %d recognized, position: %d\n", gratingnumber, gratingposition);
 	 }
      }

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Apr 13 11:39:58 flechsig> 
+//  Time-stamp: <09 Apr 13 17:14:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -54,8 +54,8 @@ void MainWindow::activateProc(const QString &action)
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType *psip;
   struct constants *csp;
-  struct mirrortype *am;
-  struct geometryst *g;
+  //struct mirrortype *am;
+  //struct geometryst *g;
   struct map4 *m4p;
 
   int filesOK;
@@ -138,7 +138,7 @@ void MainWindow::activateProc(const QString &action)
 	  // *future= QtConcurrent::map(vector, my_funcv);
 	  // to pass additional parameters we have to use boost or std::tr1
 	  
-	  Test4Grating(myparent->myBeamline(), &am, &g);
+	  Test4Grating(myparent->myBeamline());
           
 	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
 	  if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
@@ -148,7 +148,7 @@ void MainWindow::activateProc(const QString &action)
 	 
 	  myparent->myBeamline()->BLOptions.PSO.intmod= 2;
 	  *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
-							    m4p_cpp, csp_cpp, am, g 
+							    m4p_cpp, csp_cpp
 							    )); // one additional par 
 	  
 	  watcher->setFuture(*future);

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <09 Apr 13 16:14:41 flechsig>  */
+/*  Time-stamp: <09 Apr 13 16:59:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -29,7 +29,7 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   struct ThreadData *data;
   struct psimagest *sp;
   int i, tasksPerThread, npoints;
-
+  
   thread= XMALLOC(pthread_t, numthreads);
   data  = XMALLOC(struct ThreadData, numthreads);
 
@@ -39,6 +39,8 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
 
   sp= (struct psimagest *)bl->RTSource.Quellep;
   npoints= sp->iheigh * sp->iwidth;
+  bl->BLOptions.PSO.intmod= 2;   
+  Test4Grating(bl);          
 
   /*
     this has the effect of rounding up the number of tasks
@@ -91,7 +93,7 @@ void *pst_it(struct ThreadData *td)
 #endif
 
   bl= td->bl;
-  //bl->BLOptions.PSO.intmod= 2;
+  
   initconstants(&cs);
   if (bl->BLOptions.ifl.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
     { 
@@ -100,14 +102,12 @@ void *pst_it(struct ThreadData *td)
       fill_m4(bl, m4p);
     }
 
-  Test4Grating(bl, &am, &g);
-
   for (index= td->start; index < td->stop; index++) 
     {
 #ifdef DEBUG1
       printf("calc: %d\n", index);
 #endif
-      pstc_i(index, bl, m4p, &cs, am, g);
+      pstc_i(index, bl, m4p, &cs);
     }
 
   if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
