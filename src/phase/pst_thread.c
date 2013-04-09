@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <27 Mar 13 14:58:35 flechsig>  */
+/*  Time-stamp: <09 Apr 13 16:05:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -50,7 +50,7 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   /* Divide work for threads, prepare parameters */
   for (i=0; i<numthreads; i++) 
     {
-      data[i].start    =  i    * tasksPerThread;
+      data[i].start    = i     * tasksPerThread;
       data[i].stop     = (i+ 1)* tasksPerThread;
       data[i].bl       = bl;
       data[i].thread_no= i;
@@ -91,8 +91,7 @@ void *pst_it(struct ThreadData *td)
 #endif
 
   bl= td->bl;
-  bl->BLOptions.PSO.intmod= 2;
-
+ 
   initconstants(&cs);
   if (bl->BLOptions.ifl.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
     { 
@@ -101,7 +100,7 @@ void *pst_it(struct ThreadData *td)
       fill_m4(bl, m4p);
     }
 
-    Test4Grating(bl, &am, &g);
+  Test4Grating(bl, &am, &g);
 
   for (index= td->start; index < td->stop; index++) 
     {
