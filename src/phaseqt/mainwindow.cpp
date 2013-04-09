@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <08 Apr 13 10:52:35 flechsig> 
+//  Time-stamp: <09 Apr 13 11:49:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1825,7 +1825,18 @@ void MainWindow::UpdateBeamlineBox()
   dislenE->setText(dislenEqst.setNum(blo->displength,      'g', 12));
   dlambdaE->setText(dlambdaEqst.setNum(blo->dlambda* 1e6,  'g', 12));
 
-  if (blo->SourcetoImage == 1) goButton->setChecked(true); else poButton->setChecked(true);
+  if (blo->SourcetoImage == 1) 
+    {
+      goButton->setChecked(true); 
+      dislenE->setEnabled(true);
+    }
+  else 
+    {
+      poButton->setChecked(true);
+      dislenE->setEnabled(false);
+      statGroup->hide();
+    }
+
   if (blo->WithAlign) misaliBox->setChecked(true);         else misaliBox->setChecked(false);
   
   if (blo->dlambdaflag) 
