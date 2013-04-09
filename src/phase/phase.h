@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2013-04-05 00:21:56 flechsig>  */
+/*   Time-stamp: <09 Apr 13 16:57:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -385,7 +385,7 @@ struct BeamlineType
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
   struct RESULTType RESULT;
-  unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc; 
+  unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc, gratingpos; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
   /* #ifdef OLD_PO_SOURCE */
@@ -606,7 +606,7 @@ void
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
   Slope(struct RayType *, double, double, double, double, int),
   src_ini(struct sources *),  
-  Test4Grating(struct BeamlineType *, struct mirrortype **, struct geometryst **),
+  Test4Grating(struct BeamlineType *),
   MMatrix(),
   UpdateFlags(struct BeamlineType *, int),	        
   WriteBLFile(char *, struct BeamlineType *),
