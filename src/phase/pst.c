@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Apr 13 17:27:39 flechsig>  */
+/*   Time-stamp: <09 Apr 13 17:39:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -482,8 +482,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct psimagest           *sp;
   struct rayst               *rap;
   struct map4                *m4p;
-  struct mirrortype          *am;
-  struct geometrytype        *g;
+  
   //struct constants *csp;
   int    points, ny, nz, nzhalf;
   double yi, zi;
@@ -491,9 +490,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   psip = (struct PSImageType *) bl->RTSource.Quellep;
   sp   = (struct psimagest *)   bl->RTSource.Quellep;
   PSDp = (struct PSDType *)     bl->RESULT.RESp;
-  g    = (struct mirrortype *)  &bl->ElementList[bl->gratingpos].mir;
-  am   = (struct geometrytype *)&bl->ElementList[bl->gratingpos].geo;
-
+    
   xirp = XMALLOC(struct integration_results, 1);
   stp  = XMALLOC(struct statistics, 1);
   rap  = XMALLOC(struct rayst, 1);
@@ -541,7 +538,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     exit(-1);
   }
     
-  adaptive_int(m4p, g, am, &bl->src, &bl->BLOptions.apr, csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
+  adaptive_int(m4p, &bl->ElementList[bl->gratingpos].geo, &bl->ElementList[bl->gratingpos].mir, &bl->src, &bl->BLOptions.apr, 
+	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
   
   if (bl->BLOptions.ifl.ispline == -1) 
     {
