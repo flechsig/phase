@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Apr 13 16:27:19 flechsig>  */
+/*   Time-stamp: <09 Apr 13 16:56:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -596,22 +596,22 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   if (bl->BLOptions.ifl.pst_mode >= 2) XFREE(m4p);
 } /* end pstc_i */
 
-/* grating special- returns struct mirrortype and struct geometryst of a grating in the beamline,
-   sets bl->BLOptions.ifl.igrating */
-void Test4Grating(struct BeamlineType *bl, struct mirrortype **mirp, struct geometryst **gp)
+/* grating special- sets bl->BLOptions.ifl.igrating and bl->gratingpos
+   do not call it inside threads                          */
+void Test4Grating(struct BeamlineType *bl)
 {
   int elart, gratingnumber, gratingposition;
   unsigned int i;
   
 #ifdef DEBUG
-  fprintf(stderr, "Test4Grating called- not thread safe\m");
+  fprintf(stderr, "Test4Grating called- not thread safe\m");   
 #endif
 
   /* gitterzahl erkennen und geometrypointer initialisieren */
    gratingnumber= gratingposition= 0;
    *gp  = (struct geometryst *)&bl->ElementList[0].geo;
    *mirp= (struct mirrortype *)&bl->ElementList[0].mir;
-   bl->BLOptions.ifl.igrating= 0;                             // UF not thread safe
+                               // UF not thread safe
 
    for (i= 0; i< bl->elementzahl; i++)
      {
@@ -633,6 +633,9 @@ void Test4Grating(struct BeamlineType *bl, struct mirrortype **mirp, struct geom
        fprintf(stderr, "exit\n");
        exit(-1);
      }
+
+   bl->BLOptions.ifl.igrating= (gratingnumber > 0) ? 1 : 0;
+   bl->gratingpos= gratingposition;
    
    elart= bl->ElementList[gratingposition].MDat.Art;
    if((elart != kEOETG) && (elart != kEOEVLSG) && (elart != kEOEPElliG) && 
