@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <09 Apr 13 16:11:37 flechsig>  */
+/*  Time-stamp: <09 Apr 13 16:14:41 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -91,7 +91,7 @@ void *pst_it(struct ThreadData *td)
 #endif
 
   bl= td->bl;
- bl->BLOptions.PSO.intmod= 2;
+  //bl->BLOptions.PSO.intmod= 2;
   initconstants(&cs);
   if (bl->BLOptions.ifl.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
     { 
