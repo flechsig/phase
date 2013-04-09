@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Apr 13 17:11:33 flechsig>  */
+/*   Time-stamp: <09 Apr 13 17:27:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -608,7 +608,7 @@ void Test4Grating(struct BeamlineType *bl)
   unsigned int i;
     
 #ifdef DEBUG
-  fprintf(stderr, "Test4Grating called- not thread safe\m");   
+  fprintf(stderr, "Test4Grating called- not thread safe\n");   
 #endif
 
   /* gitterzahl erkennen und geometrypointer initialisieren */
