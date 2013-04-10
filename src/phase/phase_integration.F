@@ -184,8 +184,8 @@ c*******************************************************
 c        write(6,*)'m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)',m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)
 c------------------------------------------------------
 
-	st.inumb(st.nn1,st.nn2)=0.
-	fmax=0.
+	st.inumb(st.nn1,st.nn2)=0.d0
+	fmax=0.d0
 
 	ianzz=xi.ianzz0
 c gestrichen UF 21.12.99 iterz=xi.iterz0
@@ -201,7 +201,7 @@ c---------------- START ---------------------------------------
 c---------------- first grid is equdistant, the following are not
 
 	if(ianzz.eq.1)then
-	dzz=0.
+	dzz=0.d0
 	else
 	dzz=(xi.zmax-xi.zmin)/dflotj(ianzz-1)
 	endif
@@ -381,7 +381,7 @@ c         enddo
 
 
 	ianzy=xi.ianzy0
-	fmax=0.
+	fmax=0.d0
 
 c*** Number of Iterations:                      itery
 c*** Integrationsgrenzen:                       ymin, ymax
@@ -394,7 +394,7 @@ c---------------- START ---------------------------------------
 c---------------- first grid is equdistant, the following are not
 
 	if(ianzy.eq.1)then
-	dyy=0.
+	dyy=0.d0
 	else
 	dyy=(xi.ymax-xi.ymin)/dflotj(ianzy-1)
 	endif
@@ -514,22 +514,22 @@ c      dimension p1122a(0:7,0:7,0:7,0:7)
 
 	ra.ri.dyi=dyii	
 
-	ra.rf.yp=0.
-	ra.rf.zp=0.
-	ra.rf.dyp=0.
-	ra.rf.dzp=0.
-        fd=0.
-	fdph=0.
-	fd1ph=0.
+	ra.rf.yp=0.d0
+	ra.rf.zp=0.d0
+	ra.rf.dyp=0.d0
+	ra.rf.dzp=0.d0
+        fd=0.d0
+	fdph=0.d0
+	fd1ph=0.d0
         fd1pha=0.d0
         fd1phb=0.d0
-	ra.ap.yp_ap=0.
-	ra.ap.zp_ap=0.
-	ra.xlength1=0.
-	ra.xlength2=0.
+	ra.ap.yp_ap=0.d0
+	ra.ap.zp_ap=0.d0
+	ra.xlength1=0.d0
+	ra.xlength2=0.d0
 
-	ra.oe.w=0.
-	ra.oe.xl=0.
+	ra.oe.w=0.d0
+	ra.oe.xl=0.d0
 
 c-------------------------------------------------------------------------
 c JB: diese Schleife parallelisieren
@@ -763,14 +763,14 @@ c**************************************************************
         dimension f(4096,4096),fz(4096)
 
         do i=1,ny
-	 fz(i)=0.5*(f(i,1)+f(i,nz))
+	 fz(i)=0.5d0*(f(i,1)+f(i,nz))
          do j=2,nz-1
           fz(i)=fz(i)+f(i,j)
          enddo
 	 fz(i)=fz(i)*dz
 	enddo
 
-	xint=0.5*(fz(1)+fz(ny))
+	xint=0.5d0*(fz(1)+fz(ny))
 	do i=2,ny-1
          xint=xint+fz(i)
 	enddo
@@ -1494,7 +1494,7 @@ c------------ order of expansion of amplitude ---------
 	if(iordap_loc.eq.0)then
 		a=0.d0
 		b=0.d0
-		c=0.5*(y1+y2)
+		c=0.5d0*(y1+y2)
 	endif
 
 	if(iordap_loc.eq.1)then
@@ -1521,7 +1521,7 @@ c-------------------------------------------------
 	      else
 		a=0.d0
 		b=0.d0
-		c=0.5*(y1+y2)
+		c=0.5d0*(y1+y2)
 	endif
 
 	e1=x1*xk_loc
@@ -1653,8 +1653,8 @@ c	xxx(i)=xint
 c	enddo
 c	endif
 
-	xintre=0.
-	xintim=0.
+	xintre=0.d0
+	xintim=0.d0
 	if(ianz.ge.2)then
 	do i=1,ianz
 	xintre=xintre+densiyzre(i)
@@ -1717,7 +1717,7 @@ c------------------------------------------------------------
 
 	if(ifl.ispline.eq.1)then
 
-	x(i)=0.
+	x(i)=0.d0
 	do i=2,ianz
 	x(i)=x(i-1)+dyz(i)
 c	y(i)=dreal(fyz(i))
