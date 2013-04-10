@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <10 Apr 13 10:45:51 flechsig>  */
+/*  Time-stamp: <10 Apr 13 13:55:53 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -78,23 +78,24 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
 } /* end pst_thread */
 
 /* thread wrapper for pst_i with only one parameter */
-void *pst_it(struct ThreadData *td)
+// void *pst_it(struct ThreadData *td)
+void *pst_it(void *arg)
 {
-  int index;
+  int    index;
   struct BeamlineType *bl;
   struct map4 *m4p;
   struct constants cs;
-  struct mirrortype *am;
-  struct geometryst *g;
-
+  struct ThreadData *td;
+  
 #ifdef DEBUG
   printf("debug: pst_it file: %s, line: %d\n", __FILE__, __LINE__);
   printf("debug: calculate from index %d to %d in thread %d\n", td->start, td->stop, td->thread_no);
 #endif
 
+  td= (struct ThreadData *)arg;                     /* to avoid warning */
   bl= td->bl;
-  
   initconstants(&cs);
+
   if (bl->BLOptions.ifl.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
     { 
       printf("allocate and fill m4p in pstc\n");

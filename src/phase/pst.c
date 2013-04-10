@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <10 Apr 13 10:59:02 flechsig>  */
+/*   Time-stamp: <10 Apr 13 13:48:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -269,7 +269,8 @@ void PST(struct BeamlineType *bl)
  
    if (bl->BLOptions.ifl.pst_mode <= 0)                       /* pst_mode == 0 the fortran version */
      { 
-#ifdef OBSOLETE       
+#ifdef OBSOLETE  
+     
 #ifdef DEBUG
        printf("debug: %s: calling pstf(...)\n", __FILE__);
 #endif
@@ -318,13 +319,11 @@ void PST(struct BeamlineType *bl)
        printf("debug: pst.c: returning from call pstf(...)\n");
        printf("point 0,0= %e\n",  PSDp->psd[0]);
 #endif
-#else   /* not obsolete */
+
+#else   /* obsolete not defined */
        printf("%s: pst_mode == %d, you try to call obsolete function pstf()\n", __FILE__, bl->BLOptions.ifl.pst_mode);
-       printf("%s: this phase version has been compiled without compiler option OBSOLETE\n");
-       bl->BLOptions.ifl.pst_mode= 2;
-       printf("%s: switch to compatibility mode -> set pst_mode= %d\n", bl->BLOptions.ifl.pst_mode);
-       printf("************** call pstc ****************\n ");
-       pstc(bl, mirp, gp);
+       printf("%s: this phase version has been compiled without compiler option OBSOLETE - exit\n");
+       exit(-1);
 #endif
      }
    else    // c replacement
@@ -538,13 +537,13 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     exit(-1);
   }
 
-  if ((bl->gratingpos < 0) || (bl->gratingpos >= bl->elementzahl))
+  if (bl->gratingpos >= bl->elementzahl)
   {
     printf("ERROR: gratingpos= %d is out of range (0..%d)\n", bl->gratingpos, bl->elementzahl);
     exit(-1);
   }
     
-  adaptive_int(m4p, &bl->ElementList[bl->gratingpos].geo, &bl->ElementList[bl->gratingpos].mir, &bl->src, &bl->BLOptions.apr, 
+  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->ElementList[bl->gratingpos].mir, &bl->src, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
   
   if (bl->BLOptions.ifl.ispline == -1) 
