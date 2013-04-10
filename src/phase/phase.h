@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <09 Apr 13 17:00:31 flechsig>  */
+/*   Time-stamp: <10 Apr 13 15:09:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -565,7 +565,7 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
-  pstc(struct BeamlineType *, struct mirrortype *, struct geometryst *),
+  pstc(struct BeamlineType *),
   pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *),
   pstf(struct PSImageType *, struct PSOptionsType *,
        double *, int *, 
