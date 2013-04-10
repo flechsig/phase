@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <09 Apr 13 16:59:00 flechsig>  */
+/*  Time-stamp: <10 Apr 13 10:45:51 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -25,9 +25,9 @@
 /* for speed it may help to allow more threads than cores */ 
 void pst_thread(struct BeamlineType *bl, int numthreads)
 {
-  pthread_t *thread;
+  pthread_t         *thread;
   struct ThreadData *data;
-  struct psimagest *sp;
+  struct psimagest  *sp;
   int i, tasksPerThread, npoints;
   
   thread= XMALLOC(pthread_t, numthreads);

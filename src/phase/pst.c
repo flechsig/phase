@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <09 Apr 13 17:39:58 flechsig>  */
+/*   Time-stamp: <10 Apr 13 10:59:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -535,6 +535,12 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   if ((bl->BLOptions.xi.ianzy0 > MAX_INTEGRATION_SIZE) || (bl->BLOptions.xi.ianzz0 > MAX_INTEGRATION_SIZE))
   {
     printf("ERROR: Integration parameter xi.ianzy0 or xi.ianzz0 is larger than maximum %d!\n", MAX_INTEGRATION_SIZE);
+    exit(-1);
+  }
+
+  if ((bl->gratingpos < 0) || (bl->gratingpos >= bl->elementzahl))
+  {
+    printf("ERROR: gratingpos= %d is out of range (0..%d)\n", bl->gratingpos, bl->elementzahl);
     exit(-1);
   }
     
