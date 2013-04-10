@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <10 Apr 13 13:55:53 flechsig>  */
+/*  Time-stamp: <10 Apr 13 14:00:45 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -87,12 +87,13 @@ void *pst_it(void *arg)
   struct constants cs;
   struct ThreadData *td;
   
+  td= (struct ThreadData *)arg;                     /* to avoid warning */
+
 #ifdef DEBUG
   printf("debug: pst_it file: %s, line: %d\n", __FILE__, __LINE__);
   printf("debug: calculate from index %d to %d in thread %d\n", td->start, td->stop, td->thread_no);
 #endif
 
-  td= (struct ThreadData *)arg;                     /* to avoid warning */
   bl= td->bl;
   initconstants(&cs);
 
