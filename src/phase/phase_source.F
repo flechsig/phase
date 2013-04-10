@@ -301,7 +301,7 @@ c	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)/1000.).
 c     &			ge.(0.9*so2.fscale))then
 	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)).
      &			ge.(0.9*so2.fscale))then
-     	sr.densy=0.
+     	sr.densy=0.d0
 	else
 c	    call source_zernike(so2,cs,ra.rf.zp/1000.,
 c     &			ra.rf.yp/1000.,sr.densy)
@@ -1089,9 +1089,9 @@ c------------------- get rn, rnl -----------------
 
 c------------------ calculation -------------------------
 
-	sign=-1.
+	sign=-1.d0
 
-      carg=0.
+      carg=0.d0
 
       if(so2.iflagl.eq.1)then
       do n1=0,so2.iordzern
@@ -1164,7 +1164,7 @@ c    ********	    interpolate ********
 	 goto 100
 	 endif
 	enddo
-        valreal=0.
+        valreal=0.d0
 100	continue
 
 	endif
@@ -1182,7 +1182,7 @@ c    ********	    interpolate ********
 	 goto 101
 	 endif
 	enddo
-        valimag=0.
+        valimag=0.d0
 101	continue
 
 	endif
@@ -1202,7 +1202,7 @@ c    ********	    interpolate ********
 	 goto 102
 	 endif
 	enddo
-        valreal=0.
+        valreal=0.d0
 102	continue
 
 	endif
@@ -1220,14 +1220,14 @@ c    ********	    interpolate ********
 	 goto 103
 	 endif
 	enddo
-        valimag=0.
+        valimag=0.d0
 103	continue
 
 	endif
 
 c--------------------------------------------------------
 
-	sign=-1.
+	sign=-1.d0
 
         carg=(valreal+sign*cs.sqrtm1*valimag)
 
