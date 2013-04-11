@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 15:12:26 flechsig> 
+;  Time-stamp: <11 Apr 13 17:10:56 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -102,6 +102,21 @@ endif else begin
         mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
     endelse
 endelse
+
+if keyword_set(cut) then begin
+    size0= size(field1)
+    size1= size0[1]/2
+    zpro0= field1[*,size1]
+    zprof= zpro0/max(zpro0)
+    plot, z_vec, zprof, xtitle='z (mm)', ytitle='intensity', title='hor profile'
+    zfit= gaussfit(z_vec, zprof, fit, nterms=4)
+    help, zrof, fit
+    sigma= fit[2]
+    print, 'FWHM= ',2.35*sigma
+    print, 'fit: ', fit
+ oplot, z_vec, zfit, color=2 
+endif
+
 
 if keyword_set(png) then spng,'pst.png'
 
