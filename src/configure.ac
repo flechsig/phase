@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <10 Apr 13 12:05:16 flechsig> 
+dnl   Time-stamp: <12 Apr 13 08:31:17 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -377,6 +377,16 @@ AC_ARG_ENABLE([EXPIRE],
     AS_HELP_STRING(--enable-EXPIRE=YYYYMMDD,expiring date of the code),
     AC_DEFINE_UNQUOTED([EXPIRE], $enableval, "expiring date"))
 
+dnl enable f2c replacement to save stack
+AC_ARG_ENABLE([F2C],
+   AS_HELP_STRING([--enable-F2C],[activate f2c code to lower stack consumption]),
+   AC_DEFINE([F2C], 1, "enabled F2C"))
+if test "$enable_F2C" != "yes" ; then
+  enable_F2C="no"
+else  
+  FFLAGS="-DF2C ${FFLAGS}"
+fi
+
 ## phase with REDUCE code in phaselib - replaces --enable-SEVEN
 ## default (iord= 1..4)
 AC_ARG_ENABLE([PHASELIB],
@@ -498,6 +508,7 @@ echo "CPPFLAGS:                : ${CPPFLAGS}"
 echo "GRIDSIZE:                : ${gridsize}"
 echo "hdf5:                    : ${hdf5}"
 echo "root:                    : ${have_root}"
+echo "f2c:                     : ${enable_F2C}"
 
 dnl., TORSTEN, einige Dinge um configure zu verstehen ...
 dnl., echo " "
