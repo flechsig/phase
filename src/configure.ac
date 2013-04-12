@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <12 Apr 13 08:31:17 flechsig> 
+dnl   Time-stamp: <12 Apr 13 10:01:31 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -337,9 +337,6 @@ AC_ARG_WITH([hdf5],
     fi
   ])
 dnl end HDF5
-
-
-
 
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
