@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-04-07 18:16:19 flechsig>  */
+/*  Time-stamp: <12 Apr 13 14:55:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -45,6 +45,12 @@ void posrc_ini(struct BeamlineType *bl)
   int type;
 
   type= bl->src.isrctype;
+
+  if (( type != 4 ) && ( type != 7 ))
+    {
+      fprintf(stderr, "error: source type %d not supported- exit\n", type);
+      exit(-1);
+    }
   
   if ( type == 4 )
     {
