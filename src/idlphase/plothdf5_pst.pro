@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <11 Apr 13 17:10:56 flechsig> 
+;  Time-stamp: <11 Apr 13 17:14:31 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -108,7 +108,7 @@ if keyword_set(cut) then begin
     size1= size0[1]/2
     zpro0= field1[*,size1]
     zprof= zpro0/max(zpro0)
-    plot, z_vec, zprof, xtitle='z (mm)', ytitle='intensity', title='hor profile'
+    plot, z_vec, zprof, xtitle='z (mm)', ytitle='intensity', title='normalized horizontal profile at the center'
     zfit= gaussfit(z_vec, zprof, fit, nterms=4)
     help, zrof, fit
     sigma= fit[2]
