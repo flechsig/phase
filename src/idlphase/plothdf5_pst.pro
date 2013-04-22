@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <11 Apr 13 17:14:31 flechsig> 
+;  Time-stamp: <22 Apr 13 15:21:20 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -93,8 +93,11 @@ field1= reform(field0, n_elements(z_vec), n_elements(y_vec))
 help, field0, field1, y_vec, z_vec
 ;print,field1
 
+if keyword_set(norm) then field1= field1/max(field1)
+
+
 if keyword_set(surface) then begin 
-    surface,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)' 
+    surface,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', charsize=3
 endif else begin
     if keyword_set(shade_surf) then begin
         shade_surf, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
