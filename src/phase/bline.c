@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2013-04-05 00:21:50 flechsig>  */
+/*   Time-stamp: <25 Apr 13 11:03:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -19,6 +19,7 @@
 #include <stdlib.h> 	      	    	    	/* needed for fopen     */  
 #include <string.h>                           
 #include <math.h> 
+#include <time.h>
 
 /* workaround */
 #ifdef NOGUI
@@ -1275,6 +1276,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    FILE *f;
    int  i, version= 20130318;    /* today */
    unsigned int elnumber;
+   time_t ltime;
    struct UndulatorSourceType  *up;
    struct UndulatorSource0Type *up0;
    struct DipolSourceType      *dp;
@@ -1294,12 +1296,17 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
       fprintf(stderr, "fatal Error: write %s\n", fname);
       exit(-1);
    } 
+
+   time(&ltime); 
+   
 #ifdef DEBUG   
    printf("WriteBLFile: write data to %s ", fname);
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version MAR 2013\n\n");
+   fprintf(f, "This is a datafile of PHASE, file version APR 2013\n");
+   fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
+
    fprintf(f, "SOURCE\n");
 
    switch(bl->RTSource.QuellTyp)
