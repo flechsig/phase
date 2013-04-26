@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/Makefile.am
 #  Date      : <15 Mar 13 12:33:54 flechsig> 
-#  Time-stamp: <15 Mar 13 12:39:52 flechsig> 
+#  Time-stamp: <26 Apr 13 08:40:41 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -11,7 +11,7 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5
+bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5 genesis_hdf5_2wave
 
 wave2phase_hdf5_SOURCES = wave2phase_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c
@@ -21,6 +21,9 @@ genesis2phase_hdf5_SOURCES = genesis2phase_hdf5.c ../phase/error.c \
 
 wave2genesis_hdf5_SOURCES = wave2genesis_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c  
+
+genesis_hdf5_2wave_SOURCES = genesis_hdf5_2wave.c ../phase/error.c \
+	../phase/xmalloc.c ../phase/xstrdup.c
 
 ##dummy_DATA = \
 ##	configwindow.cpp configwindow.h \

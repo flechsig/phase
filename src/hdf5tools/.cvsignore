@@ -1,10 +1,21 @@
 # -*-sh-*-
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/.cvsignore
+#  Date      : <26 Apr 13 10:55:20 flechsig> 
+#  Time-stamp: <26 Apr 13 10:55:32 flechsig> 
+#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
+
 Makefile.in
 Makefile
 .*
 genesis2phase_hdf5
 wave2genesis_hdf5
 wave2phase_hdf5
+genesis_hdf5_2wave
 *.h5
 stamp-h3
 *.f90
