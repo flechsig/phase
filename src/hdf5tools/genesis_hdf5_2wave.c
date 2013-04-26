@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <26 Apr 13 09:31:49 flechsig>  */
+/*  Time-stamp: <26 Apr 13 12:39:48 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,7 +40,7 @@ b) store the e_field in a matrix of rank 4
 /* prototypes */
 hid_t myH5Fopen(char *);
 void readDataDouble(hid_t, char *, double *, int);
-
+int getDatasetSize(hid_t, char *);
 
 int main(int argc, char **argv)
 {
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
   FILE   *fa, *fb, *fc, *fd;
   
   char   **myargv, *myoutputfile, *fnames[4] = {eyrefile, eyimfile, ezrefile, ezimfile};
-  int    myargc, cols, rows, no_time_slices, array_items, ifile, it, i, j, k, k1, row, col;
+  int    myargc, cols, rows, no_time_slices, array_items, array_items_w, ifile, it, i, j, k, k1, row, col;
 
   hid_t       file_id, fid, e_dataset_id, e_dataspace_id, 
     y_dataset_id, y_dataspace_id, z_dataset_id, z_dataspace_id, 
@@ -56,24 +56,29 @@ int main(int argc, char **argv)
   hsize_t     e_dims[4], y_dims[1], z_dims[1], t_dims[1];
   herr_t      status;
 
+  fid= myH5Fopen(genesisfile);
+  array_items= getDatasetSize(fid, "slice000001/field"); 
+  b= XMALLOC(double, array_items);
+  readDataDouble(fid, "slice000001/field", b, array_items);
+  readDataDouble(fid, "gridsize",   &gridsize,   1);
+  H5Fclose(fid);
+
+  /* hdf5 done */
+
+  rows= cols = (int)sqrt(array_items/2);
   
-  rows= cols= 99;
-  rows= cols= 151;
   no_time_slices= 1;                 /* from number of arguments */
   printf("debug: %s: no_time_slices= %d\n", __FILE__, no_time_slices);
 
   /* reserve memory */
-  array_items= rows * cols * 4 * no_time_slices;
+  array_items_w= rows * cols * 4 * no_time_slices;
   y= XMALLOC(double, rows);
   z= XMALLOC(double, cols);
   t= XMALLOC(double, no_time_slices);
-  a= XMALLOC(double, array_items);
-  b= XMALLOC(double, array_items);
+  a= XMALLOC(double, array_items_w);
   
-  fid= myH5Fopen(genesisfile);
-  readDataDouble(fid, "slice000001/field", b, array_items);
-  readDataDouble(fid, "gridsize",   &gridsize,   1);
-  H5Fclose(fid);
+  
+  
 
   printf("gridsize: %f\n", gridsize);
   for (i=0; i< rows; i++) 
@@ -199,3 +204,23 @@ hid_t myH5Fopen(char *name)
     }
   return file_id;
 } /* myH5Fopen */
+
+
+int getDatasetSize(hid_t fid, char *name)
+{
+  hsize_t dims[1], maxdims[1];
+  hid_t   dataspace_id, dataset_id;
+
+  dataset_id= H5Dopen(fid, name, H5P_DEFAULT);
+  if (dataset_id < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
+      exit(-1);
+    }
+
+  dataspace_id= H5Dget_space(dataset_id);
+  H5Sget_simple_extent_dims(dataspace_id, dims, maxdims);
+  H5Dclose(dataset_id);     
+  H5Sclose(dataspace_id);
+  return dims[0];
+}  /* getDatasetSize */
