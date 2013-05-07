@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <15 Jun 12 17:25:11 flechsig> 
+c$$$ Time-stamp: <25 Apr 13 13:50:48 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -216,10 +216,10 @@ c---------------- integration --------------------------------
 		real*8 distfocy,distfocz
 		integer ianzy0
 		integer ianzz0
-		real*8 ymin,ymax
-		real*8 zmin,zmax
-		real*8 phase_change_1,phase_change_2,d12_max
-		real*8 amp_change
+		real*8  ymin, ymax
+		real*8  zmin, zmax
+		real*8  phase_change_1,phase_change_2,d12_max
+		real*8  amp_change
 		integer iamp_smooth,iord_amp,iord_pha
 		integer iphase_curv,iphase_pi2,ifm_amp,ifm_pha
 		integer id12,ianz0_cal,ianz0_fixed
