@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <10 Apr 13 10:38:33 flechsig> 
+//  Time-stamp: <07 May 13 14:39:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1663,15 +1663,29 @@ void MainWindow::parameterUpdateSlot()
   cout << "debug: parameterUpdateSlot called, file: " <<  __FILE__ << endl;
 #endif
 
-  index= parameterList->currentRow();      //old list model
+  index= parameterList->currentRow();      // old list model
   index= parameterModel->getActualIndex(); // treemodel
   parameterUpdate(index, parameterE->text().toAscii().data(), 0); // updates the old list
   parameterModel->updateItemVal(parameterE->text(), parameterModel->getActualIndex());
-
-  myparent->myBeamline()->beamlineOK &= ~mapOK;
+  
   myparent->myBeamline()->beamlineOK &= ~resultOK;
-  for (i=0; i< myparent->myBeamline()->elementzahl; i++) 
-    myparent->myBeamline()->ElementList[i].ElementOK= 0;
+  // UF keep map if I only change the grid => quick fix
+  // UF should be done better
+  switch (index)
+    {
+    case 28:  // grid
+    case 29:  // grid
+    case 30:  // grid
+    case 35:  // grid
+    case 36:  // grid
+    case 37:  // grid
+      cout << "parameterUpdateSlot: keep maps" << endl;
+      break;
+    default:
+      myparent->myBeamline()->beamlineOK &= ~mapOK;
+      for (i=0; i< myparent->myBeamline()->elementzahl; i++) 
+	myparent->myBeamline()->ElementList[i].ElementOK= 0;
+    }
   UpdateStatus();
   myparent->writeBackupFile();
 } // end parameterUpdateSlot
