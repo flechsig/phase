@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <01 Feb 12 08:39:14 flechsig> 
+//  Time-stamp: <07 May 13 14:25:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -250,7 +250,7 @@ void TreeModel::selectSlot(const QModelIndex &index)
 #endif
 
   myeddi->setText(data(valindex, Qt::DisplayRole).toString()); // updates the edit widget
-}
+} // end selectSlot
 
 // change the value of an item with index idx
 void TreeModel::updateItemVal(QString val, int idx)
