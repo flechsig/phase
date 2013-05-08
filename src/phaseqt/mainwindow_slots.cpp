@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <07 May 13 14:39:21 flechsig> 
+//  Time-stamp: <08 May 13 09:41:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1670,7 +1670,7 @@ void MainWindow::parameterUpdateSlot()
   
   myparent->myBeamline()->beamlineOK &= ~resultOK;
   // UF keep map if I only change the grid => quick fix
-  // UF should be done better
+  // UF should be extended to all options
   switch (index)
     {
     case 28:  // grid
