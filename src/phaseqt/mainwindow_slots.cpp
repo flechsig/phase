@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <08 May 13 09:41:23 flechsig> 
+//  Time-stamp: <08 May 13 12:44:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1668,20 +1668,30 @@ void MainWindow::parameterUpdateSlot()
   parameterUpdate(index, parameterE->text().toAscii().data(), 0); // updates the old list
   parameterModel->updateItemVal(parameterE->text(), parameterModel->getActualIndex());
   
-  myparent->myBeamline()->beamlineOK &= ~resultOK;
-  // UF keep map if I only change the grid => quick fix
-  // UF should be extended to all options
+  myparent->myBeamline()->beamlineOK &= ~resultOK;  // any change needs new calculation
+  // UF should be extended to handle all options individually
   switch (index)
     {
+    case 0:  // epsilon
+    case 1:  // iord
+    case 63: // old maps
+      myparent->myBeamline()->beamlineOK &= ~mapOK;          // rebuild global map
+      for (i=0; i< myparent->myBeamline()->elementzahl; i++) 
+	myparent->myBeamline()->ElementList[i].ElementOK= 0; // rebuild all element maps
+      break;
+    case 20:  // inorm
+    case 21:  // inorm1
+    case 22:  // inorm2
     case 28:  // grid
     case 29:  // grid
     case 30:  // grid
     case 35:  // grid
     case 36:  // grid
     case 37:  // grid
+    case 64:  // pstmode
       cout << "parameterUpdateSlot: keep maps" << endl;
       break;
-    default:
+    default:  // rebuild maps
       myparent->myBeamline()->beamlineOK &= ~mapOK;
       for (i=0; i< myparent->myBeamline()->elementzahl; i++) 
 	myparent->myBeamline()->ElementList[i].ElementOK= 0;
