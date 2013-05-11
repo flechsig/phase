@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <12 Apr 13 10:01:31 flechsig> 
+dnl   Time-stamp: <2013-05-11 20:31:15 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -278,7 +278,7 @@ dnl end QWT
 
 dnl Check for HDF5 support (does not work with the current autoconf version)
 dnl           AX_LIB_HDF5()
-dnl echo "HDF5 support:  $with_hdf5"
+dnl echo "Uwe HDF5 support:  $with_hdf5"
 
 
 
@@ -306,6 +306,9 @@ AC_ARG_WITH([hdf5],
     dnl to avoid permission denied measages
     hdf5=`find /usr/local -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
     if test -n "${hdf5}"; then
+        dnl deal with lib64
+        echo xxxxx $hdf5
+        hdf5=`echo $hdf5 | sed -e 's|/lib64/libhdf5.so||'`
         AC_MSG_NOTICE((1) we found libhdf5.so under ${hdf5} - OK)
         dnl check if we find the libhdf5.so there
         AC_SUBST(HDF5,  [${hdf5}])
