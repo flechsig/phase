@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2013-05-12 23:11:21 flechsig> 
+dnl   Time-stamp: <2013-05-12 23:25:37 flechsig> 
 dnl   Author    : Uwe Flechsig, uwe.flechsig@psi.ch
 
 dnl   $Source$ 
@@ -466,11 +466,18 @@ dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
 dnl output files 
-AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
-          opti/Makefile extr/Makefile  \
-	  phaselib/Makefile phaseidl/Makefile \
-	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
+AC_CONFIG_FILES([Makefile                 
+ 		 extr/Makefile
+		 hdf5tools/Makefile
+		 idlphase/Makefile
+		 misalignment/Makefile
+		 opti/Makefile
+dnl		 phase/Makefile
+		 phase4idl/Makefile
+		 phaseidl/Makefile
+ 		 phaselib/Makefile 
+                 phaseqt/Makefile 
+                 phasesrv/Makefile])
 AC_OUTPUT
 
 dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
