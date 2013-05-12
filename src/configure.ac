@@ -1,18 +1,17 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2013-05-11 20:31:15 flechsig> 
-dnl   Author    : Uwe Flechsig, flechsig@psi.ch
+dnl   Time-stamp: <2013-05-12 23:01:39 flechsig> 
+dnl   Author    : Uwe Flechsig, uwe.flechsig@psi.ch
 
 dnl   $Source$ 
 dnl   $Date$
 dnl   $Revision$ 
 dnl   $Author$ 
  
-dnl we need autoconf 2.57 for bootstrapping
-AC_PREREQ(2.59)
+AC_PREREQ([2.69])
 AC_INIT([phase],[1.21],[uwe.flechsig@psi.ch])
-AC_CONFIG_SRCDIR(phase/phasec.c)
-AC_REVISION($Revision$)
+AC_CONFIG_SRCDIR([phase/bline.c])
+AC_REVISION([$Revision$])
 AC_CONFIG_AUX_DIR(config)
 
 AM_INIT_AUTOMAKE
