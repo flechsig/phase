@@ -1,41 +1,42 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2013-05-12 23:35:04 flechsig> 
-dnl   Author    : Uwe Flechsig, uwe.flechsig@psi.ch
+dnl   Time-stamp: <12 Apr 13 10:01:31 flechsig> 
+dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
 dnl   $Date$
 dnl   $Revision$ 
 dnl   $Author$ 
-
-dnl AC_PREREQ([2.69]) # autoscan
-AC_PREREQ([2.57]) # manual
+ 
+dnl we need autoconf 2.57 for bootstrapping
+AC_PREREQ(2.59)
 AC_INIT([phase],[1.21],[uwe.flechsig@psi.ch])
-AC_CONFIG_SRCDIR([phase/bline.c])
-AC_REVISION([$Revision$])
-AC_CONFIG_AUX_DIR([config])      # not in scan
+AC_CONFIG_SRCDIR(phase/phasec.c)
+AC_REVISION($Revision$)
+AC_CONFIG_AUX_DIR(config)
 
 AM_INIT_AUTOMAKE
+dnl obsolete AM_CONFIG_HEADER(phase/config.h)
+AC_CONFIG_HEADERS([phase/config.h])
 
-dnl AC_CONFIG_HEADERS([phase/config.h]) # manual 
-AC_CONFIG_HEADERS([config.h])           # autoscan
-
+dnl uf Aug 2011
 dnl AC_CONFIG_MACRO_DIR([m4])
+
 dnl maintainer option i.e. make does not bootstrap
 ##AM_MAINTAINER_MODE
 
 dnl Checks for programs.
-AC_PROG_CXX
 AC_PROG_AWK
+AC_PROG_YACC
 AC_PROG_CC
-AC_PROG_CPP
-AC_PROG_INSTALL
-AC_PROG_LN_S
-dnl UF AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+AC_PROG_CXX
+
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
+
+AC_PROG_INSTALL
+AC_PROG_LN_S
 
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
@@ -277,7 +278,7 @@ dnl end QWT
 
 dnl Check for HDF5 support (does not work with the current autoconf version)
 dnl           AX_LIB_HDF5()
-dnl echo "Uwe HDF5 support:  $with_hdf5"
+dnl echo "HDF5 support:  $with_hdf5"
 
 
 
@@ -305,9 +306,6 @@ AC_ARG_WITH([hdf5],
     dnl to avoid permission denied measages
     hdf5=`find /usr/local -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
     if test -n "${hdf5}"; then
-        dnl deal with lib64
-        echo xxxxx $hdf5
-        hdf5=`echo $hdf5 | sed -e 's|/lib64/libhdf5.so||'`
         AC_MSG_NOTICE((1) we found libhdf5.so under ${hdf5} - OK)
         dnl check if we find the libhdf5.so there
         AC_SUBST(HDF5,  [${hdf5}])
@@ -462,18 +460,11 @@ dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
 dnl output files 
-AC_CONFIG_FILES([Makefile                 
- 		 extr/Makefile
-		 hdf5tools/Makefile
-		 idlphase/Makefile
-		 misalignment/Makefile
-		 opti/Makefile
-dnl		 phase/Makefile
-		 phase4idl/Makefile
-		 phaseidl/Makefile
- 		 phaselib/Makefile 
-                 phaseqt/Makefile 
-                 phasesrv/Makefile])
+AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
+          opti/Makefile extr/Makefile  \
+	  phaselib/Makefile phaseidl/Makefile \
+	  misalignment/Makefile phase4idl/Makefile \
+	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
 AC_OUTPUT
 
 dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
