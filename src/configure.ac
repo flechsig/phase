@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <12 Apr 13 10:01:31 flechsig> 
+dnl   Time-stamp: <13 May 13 00:04:32 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -8,16 +8,16 @@ dnl   $Date$
 dnl   $Revision$ 
 dnl   $Author$ 
  
-dnl we need autoconf 2.57 for bootstrapping
-AC_PREREQ(2.59)
+AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
 AC_INIT([phase],[1.21],[uwe.flechsig@psi.ch])
-AC_CONFIG_SRCDIR(phase/phasec.c)
-AC_REVISION($Revision$)
-AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_SRCDIR([phase/bline.c])
+AC_REVISION([$Revision$]) # no autoscan
+AC_CONFIG_AUX_DIR([config]) # no autoscan
 
-AM_INIT_AUTOMAKE
-dnl obsolete AM_CONFIG_HEADER(phase/config.h)
-AC_CONFIG_HEADERS([phase/config.h])
+AM_INIT_AUTOMAKE # no autoscan
+
+dnl AC_CONFIG_HEADERS([phase/config.h]) # autoscan AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 dnl uf Aug 2011
 dnl AC_CONFIG_MACRO_DIR([m4])
@@ -26,17 +26,25 @@ dnl maintainer option i.e. make does not bootstrap
 ##AM_MAINTAINER_MODE
 
 dnl Checks for programs.
-AC_PROG_AWK
-AC_PROG_YACC
-AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+
+
+
 
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
 
-AC_PROG_INSTALL
-AC_PROG_LN_S
+
+
 
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
