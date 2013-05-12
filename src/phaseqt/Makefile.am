@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2013-03-23 21:13:42 flechsig> 
+#  Time-stamp: <2013-05-11 21:09:42 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -86,8 +86,8 @@ AM_CFLAGS = -I@HDF5I@ -I@HDF5@/include
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
 AM_LDFLAGS =  -Wl,-rpath,@QT@/lib \
-	-L@QT@/lib -lQtGui -lQtCore \
-	-L@QWT@/lib -lqwt -L@HDF5@/lib -lhdf5 \
+	-L@QT@/lib -lQtGui -lQtCore -lQtSvg \
+	-L@QWT@/lib -lqwt -L@HDF5@/lib64 -lhdf5  \
 	@FLIBS@  @CFORLIB@
 
 ##we always use the c linker
