@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2013-05-12 23:30:53 flechsig> 
+dnl   Time-stamp: <2013-05-12 23:32:52 flechsig> 
 dnl   Author    : Uwe Flechsig, uwe.flechsig@psi.ch
 
 dnl   $Source$ 
@@ -9,7 +9,7 @@ dnl   $Revision$
 dnl   $Author$ 
 
 dnl AC_PREREQ([2.69]) # autoscan
-AC_PREREQ([2.59]) # manual
+AC_PREREQ([2.57]) # manual
 AC_INIT([phase],[1.21],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
 AC_REVISION([$Revision$])
@@ -34,13 +34,8 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
-
-
-
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
-
-
 
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
