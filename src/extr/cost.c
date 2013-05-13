@@ -1,6 +1,6 @@
  // File      : /import/home/flechsig/phase/src/opti_root/cost.cpp
  // Date      : <2012-11-04 12:01:05 flechsig> 
- // Time-stamp: <2012-11-04 18:07:42 flechsig> 
+ // Time-stamp: <13 May 13 14:34:54 flechsig> 
  // Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  // $Source$ 
@@ -12,7 +12,7 @@
 // the function expects the beamline pointer and should return a double value > 0.0
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif
 
 
