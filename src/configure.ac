@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 May 13 00:04:32 flechsig> 
+dnl   Time-stamp: <13 May 13 10:21:26 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -35,16 +35,13 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
-
-
-
-
-
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
 
-
-
+# Checks for libraries.
+if test x"${have_root}" = "xyes"; then
+   AC_CHECK_LIB([Minuit], [TMinuit::mnparm])
+fi
 
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
@@ -468,11 +465,25 @@ dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
 dnl output files 
-AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
-          opti/Makefile extr/Makefile  \
-	  phaselib/Makefile phaseidl/Makefile \
-	  misalignment/Makefile phase4idl/Makefile \
-	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
+dnl AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
+dnl          opti/Makefile extr/Makefile  \
+dnl	  phaselib/Makefile phaseidl/Makefile \
+dnl	  misalignment/Makefile phase4idl/Makefile \
+dnl	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
+
+AC_CONFIG_FILES([Makefile
+                 baselib/Makefile
+                 extr/Makefile
+                 hdf5tools/Makefile
+                 idlphase/Makefile
+                 misalignment/Makefile
+                 opti/Makefile
+                 phase4idl/Makefile
+                 phaseidl/Makefile
+                 phaselib/Makefile
+                 phaseqt/Makefile
+                 phasesrv/Makefile])
+
 AC_OUTPUT
 
 dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
