@@ -1,6 +1,6 @@
  // File      : /import/home/flechsig/phase/src/opti_root/cost.cpp
  // Date      : <2012-11-04 12:01:05 flechsig> 
- // Time-stamp: <13 May 13 14:34:54 flechsig> 
+ // Time-stamp: <13 May 13 14:39:55 flechsig> 
  // Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  // $Source$ 
@@ -20,14 +20,12 @@
 #include <stdio.h>
 
 
-#include "cutils.h"
-#include "phase_struct.h"
-#include "phase.h"
-#include "common.h"
-#include "rtrace.h"
+#include "../phase/cutils.h"
+#include "../phase/common.h"
+#include "../phase/phase_struct.h"
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"
 #include "../opti/optisubc.h"
-
-
 #include "cost.h"
 
 

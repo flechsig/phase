@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <13 May 13 14:31:34 flechsig>  */
+/*   Time-stamp: <13 May 13 14:39:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -15,7 +15,6 @@
 */ 
 
 #ifdef HAVE_CONFIG_H
-/*  #include <config.h> */
    #include "config.h"
 #endif 
 
@@ -25,12 +24,13 @@
 #include <math.h>
 #include <time.h>
 
-#include "cutils.h"  
-#include "phase_struct.h"
-#include "phase.h"
+#include "../phase/cutils.h"  
+#include "../phase/common.h"
+#include "../phase/phase_struct.h"
+#include "../phase/phase.h"
 #include "../opti/optisubc.h" 
 #include "cost.h"
-#include "common.h"
+
 
 /*          Der Index     
 
