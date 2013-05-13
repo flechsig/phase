@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <10 Apr 13 14:00:45 flechsig>  */
+/*  Time-stamp: <13 May 13 14:20:47 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -9,7 +9,7 @@
 /*  $Author$  */
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif 
 
 #include <stdio.h> 

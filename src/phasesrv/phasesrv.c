@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2013-03-23 22:42:30 flechsig>  */
+/*  Time-stamp: <13 May 13 14:32:22 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -9,7 +9,7 @@
 /*  $Author$  */
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif 
 
 #include <stdio.h>

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti_root/opti_root.cpp
 //  Date      : <28 Sep 12 14:29:13 flechsig> 
-//  Time-stamp: <05 Nov 12 17:00:28 flechsig> 
+//  Time-stamp: <13 May 13 14:31:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -51,7 +51,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif
 
 // required otherwise global vars from phase.h are in

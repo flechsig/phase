@@ -2,7 +2,7 @@
 #define SIC_COMMON_H 1
 
 #if HAVE_CONFIG_H
-#  include <config.h>
+#  include "config.h"
 #endif
 
 #include <stdio.h>
