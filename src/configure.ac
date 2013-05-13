@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 May 13 10:21:26 flechsig> 
+dnl   Time-stamp: <13 May 13 16:37:52 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -433,23 +433,6 @@ AC_MSG_NOTICE(***** prefix: $prefix ****************** )
 prefixlib=${prefix}/lib
 AC_DEFINE_UNQUOTED(PREFIX, "$prefix", "the installation prefix")
 
-
-dnl Checks for header files.
-AC_PATH_X
-AC_PATH_XTRA
-AC_HEADER_STDC
-AC_CHECK_HEADERS(strings.h unistd.h)
-
-dnl Checks for typedefs, structures, and compiler characteristics.
-AC_STRUCT_TM
-dnl UF Aug 2011 AC_C_CONST test makes problems with c++
-dnl AC_C_CONST it is obsolete
-dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
-dnl UF makes also problem on Scientific linux 5- add test i686
-if test "$machine" != "x86_64" -a "$machine" != "i686"; then 
-   AC_TYPE_SIZE_T
-fi
-
 dnl ************ PHASELIB *******************************
 dnl check if a phaselib is installed
 AC_SUBST([LIBPHASE], "${libphasename}.${libextension}")
@@ -470,6 +453,34 @@ dnl          opti/Makefile extr/Makefile  \
 dnl	  phaselib/Makefile phaseidl/Makefile \
 dnl	  misalignment/Makefile phase4idl/Makefile \
 dnl	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
+
+
+dnl Checks for header files.
+AC_PATH_X        # autoscan
+AC_PATH_XTRA     # UF 13.5.13 ??
+AC_HEADER_STDC   # autoscan
+AC_CHECK_HEADERS([stdint.h stdlib.h string.h strings.h unistd.h]) # autoscan
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL # autoscan
+AC_C_CONST        # autoscan
+AC_C_INLINE       # autoscan
+AC_TYPE_SIZE_T    # autoscan
+AC_STRUCT_TM      # autoscan
+AC_C_VOLATILE     # autoscan
+
+dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
+dnl UF makes also problem on Scientific linux 5- add test i686
+dnl old if test "$machine" != "x86_64" -a "$machine" != "i686"; then 
+dnl old    AC_TYPE_SIZE_T
+dnl old fi
+
+# Checks for library functions.
+AC_FUNC_ERROR_AT_LINE # autoscan
+AC_FUNC_MALLOC        # autoscan
+AC_FUNC_REALLOC       # autoscan
+AC_FUNC_STAT          # autoscan
+AC_CHECK_FUNCS([bzero memset pow sqrt strchr strrchr strstr]) # autoscan
 
 AC_CONFIG_FILES([Makefile
                  baselib/Makefile
