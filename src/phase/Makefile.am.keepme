@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <13 May 13 10:16:23 flechsig> 
+#  Time-stamp: <13 May 13 16:48:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -49,8 +49,8 @@ EXTRA_DIST = phase_struct.F beamline_struct.F $(pkgdata_DATA)
 AM_CPPFLAGS = -DLINUX 
 
 ## UF 22.9.2011 -lXm -lMrm sind schon in motiflibs???
-AM_LDFLAGS = @MOTIFLIBS@ $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl -L@HDF5@/lib -lhdf5 \
-	     @FLIBS@ @CERNLIBS@ @CFORLIB@
+## UF AM_LDFLAGS = @MOTIFLIBS@ $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl -L@HDF5@/lib -lhdf5 \
+## UF	     @FLIBS@ @CERNLIBS@ @CFORLIB@
 
 ## we use the c linker also for fortran
 F77LINK = $(LINK)
