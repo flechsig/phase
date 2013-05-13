@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <21 Jun 12 13:41:00 flechsig>  */
+/*   Time-stamp: <13 May 13 14:21:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -9,7 +9,7 @@
 /*   $Author$  */
  
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif 
 
 #include <stdio.h>  

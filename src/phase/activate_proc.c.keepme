@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <19 Jul 12 13:35:41 flechsig>  */
+/*   Time-stamp: <13 May 13 14:24:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,7 +12,7 @@
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
                                       
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif 
 
 #include <stdio.h> 

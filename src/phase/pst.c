@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <10 Apr 13 15:08:27 flechsig>  */
+/*   Time-stamp: <13 May 13 14:19:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,7 +12,7 @@
 /* setenv MALLOC_CHECK_ 2 */
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
 #endif 
 
 #include <stdio.h> 
