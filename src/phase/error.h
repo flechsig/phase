@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/error.h */
 /*  Date      : <26 Oct 04 13:48:42 flechsig>  */
-/*  Time-stamp: <26 Oct 04 13:48:47 flechsig>  */
+/*  Time-stamp: <2013-05-13 12:22:44 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -11,7 +11,7 @@
 #ifndef SIC_ERROR_H
 #define SIC_ERROR_H 1
 
-#include <common.h>
+#include "common.h"
 
 BEGIN_C_DECLS
 
