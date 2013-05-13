@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/error.c */
 /*  Date      : <26 Oct 04 13:49:18 flechsig>  */
-/*  Time-stamp: <10 Jun 11 15:03:24 flechsig>  */
+/*  Time-stamp: <2013-05-13 12:24:54 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -9,10 +9,9 @@
 /*  $Author$  */
 
 #if HAVE_CONFIG_H
-#  include <config.h>
+#include "config.h"
 #endif
 
-#include "common.h"
 #include "error.h"
 
 static void error (int exit_status, const char *mode, 
