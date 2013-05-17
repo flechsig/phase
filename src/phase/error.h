@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/error.h */
 /*  Date      : <26 Oct 04 13:48:42 flechsig>  */
-/*  Time-stamp: <2013-05-13 12:22:44 flechsig>  */
+/*  Time-stamp: <2013-05-17 21:43:04 flechsig>  */
 /*  Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*  $Source$  */
@@ -15,8 +15,8 @@
 
 BEGIN_C_DECLS
 
-extern const char *program_name;
-extern void set_program_name (const char *argv0);
+//extern const char *program_name;
+//extern void set_program_name (const char *argv0);
 
 extern void sic_info         (const char *message);
 extern void sic_warning      (const char *message);
