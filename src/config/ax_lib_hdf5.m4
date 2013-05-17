@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_lib_hdf5.m4
 #  Date      : <07 Nov 12 16:38:55 flechsig> 
-#  Time-stamp: <07 Nov 12 16:44:28 flechsig> 
+#  Time-stamp: <14 May 13 12:32:52 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -86,9 +86,10 @@
 
 AC_DEFUN([AX_LIB_HDF5], [
 
-# UF AC_REQUIRE([AC_PROG_SED])
+AC_REQUIRE([AC_PROG_SED])
 AC_REQUIRE([AC_PROG_AWK])
 # UF AC_REQUIRE([AC_PROG_GREP])
+GREP=grep   # UF fix for old versions of autoconf
 
 dnl Check first argument is one of the recognized values.
 dnl Fail eagerly if is incorrect as this simplifies case statements below.

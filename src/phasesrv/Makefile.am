@@ -1,12 +1,13 @@
-#  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
-#  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <21 Mar 13 15:16:22 flechsig> 
-#  Author    : Uwe Flechsig, flechsig@psi.ch
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
+#  Date      : <17 May 13 17:36:23 flechsig> 
+#  Time-stamp: <17 May 13 17:37:14 flechsig> 
+#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
 #  $Date$
 #  $Revision$ 
 #  $Author$ 
+
 
 # this is the makefile template to built phase with automake/ autoconfig
 
@@ -83,16 +84,16 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DNOGUI
-AM_CFLAGS   =  -I. \
-		-I@HDF5@/include \
-		-I@HDF5I@ \
-		-I../phase -W 
+AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W 
 
+##-I@HDF5@/include \
+##		-I@HDF5I@ \
 ###-pipe -g -D_REENTRANT -Wall -W 
 #####-I@QT@/mkspecs/linux-g++       
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
-AM_LDFLAGS = -L@HDF5@/lib -lhdf5 @FLIBS@   
+
+AM_LDFLAGS =  @HDF5_LDFLAGS@ @FLIBS@   ##-L@HDF5@/lib -lhdf5
 
 ##we always use the c linker
 F77LINK = $(LINK)

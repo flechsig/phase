@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <15 Mar 13 12:36:29 flechsig> 
+##  Time-stamp: <17 May 13 17:11:48 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -24,6 +24,8 @@ bin_SCRIPTS = bin/create-coefficients.pl bin/phaseinit.csh  \
 
 SUBDIRS = phaseqt phasesrv extr opti hdf5tools 
 
+
+ACLOCAL_AMFLAGS = -I config
 
 ## gui phase4idl idlphase phaselib phaseidl
 

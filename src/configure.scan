@@ -50,8 +50,6 @@ AC_CHECK_LIB([kernlib], [main])
 AC_CHECK_LIB([m], [main])
 # FIXME: Replace `main' with a function in `-lmathlib':
 AC_CHECK_LIB([mathlib], [main])
-# FIXME: Replace `main' with a function in `-lnsl':
-AC_CHECK_LIB([nsl], [main])
 # FIXME: Replace `main' with a function in `-lpacklib':
 AC_CHECK_LIB([packlib], [main])
 # FIXME: Replace `main' with a function in `-lpawlib':
@@ -88,7 +86,6 @@ AC_CONFIG_FILES([Makefile
                  idlphase/Makefile
                  misalignment/Makefile
                  opti/Makefile
-                 phase/Makefile
                  phase4idl/Makefile
                  phaseidl/Makefile
                  phaselib/Makefile

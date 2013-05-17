@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 May 13 16:37:52 flechsig> 
+dnl   Time-stamp: <17 May 13 17:19:55 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -13,6 +13,7 @@ AC_INIT([phase],[1.21],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
 AC_REVISION([$Revision$]) # no autoscan
 AC_CONFIG_AUX_DIR([config]) # no autoscan
+AC_CONFIG_MACRO_DIR([config])
 
 AM_INIT_AUTOMAKE # no autoscan
 
@@ -28,6 +29,7 @@ dnl maintainer option i.e. make does not bootstrap
 dnl Checks for programs.
 AC_PROG_CXX
 AC_PROG_AWK
+AC_PROG_YACC
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
@@ -282,66 +284,10 @@ AC_ARG_WITH([qwt],
 dnl end QWT
 
 dnl Check for HDF5 support (does not work with the current autoconf version)
-dnl           AX_LIB_HDF5()
-dnl echo "HDF5 support:  $with_hdf5"
-
-
-
-dnl ****************** HDF5 **************************
-AC_ARG_WITH([hdf5],
-  AS_HELP_STRING([--with-hdf5=DIR],[path to HDF5 libraries or --without-hdf5]),
-  [ echo "found hdf5 option: ${with_hdf5}"
-    hdf5=${with_hdf5}
-    if test "${hdf5}" = "no"; then
-       echo "do not use hdf5"
-    else
-      dnl   echo "do use hdf5"
-      AC_CHECK_FILE([${hdf5}/lib/libhdf5.so],
-      [
-        AC_SUBST(HDF5, [${hdf5}])
-        hdf5i=${hdf5}
-        AC_SUBST(HDF5I,[${hdf5i}])
-        AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
-      ],
-      AC_MSG_ERROR(cannot find libhdf5.so))
-    fi
-  ],
-  [ dnl hdf5 is not given- we do a search
-    AC_MSG_NOTICE((1) search for HDF5 lib libhdf5.so in /usr/local)
-    dnl to avoid permission denied measages
-    hdf5=`find /usr/local -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
-    if test -n "${hdf5}"; then
-        AC_MSG_NOTICE((1) we found libhdf5.so under ${hdf5} - OK)
-        dnl check if we find the libhdf5.so there
-        AC_SUBST(HDF5,  [${hdf5}])
-        hdf5i=${hdf5}
-        AC_SUBST(HDF5I, [${hdf5i}])
-        AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
-    else
-      AC_MSG_NOTICE((1) did not found libhdf5.so in /usr/local)
-      AC_MSG_NOTICE((2) search for libhdf5.so in /usr/lib)
-      hdf5=`find /usr/lib -name libhdf5.so -print 2>/dev/null | head -1 | sed -e 's|/lib/libhdf5.so||'`
-      if test -n "${hdf5}"; then
-         AC_MSG_NOTICE([(2) we found libhdf5.so under ${hdf5} - OK])
-         AC_SUBST(HDF5,  [${hdf5}])
-         hdf5i=${hdf5}
-         AC_SUBST(HDF5I, [${hdf5i}])
-         AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
-      else
-         AC_MSG_ERROR(cannot find any libhdf5.so)
-      fi
-      AC_MSG_NOTICE((2) search for hdf5.h on /usr/include)
-      hdf5i=`find /usr/include -name hdf5.h -print 2>/dev/null | head -1 | sed -e 's|/hdf5.h||'`
-      if test -n "${hdf5i}"; then
-         AC_MSG_NOTICE([(2) we found hdf5.h under ${hdf5i} - OK])
-         AC_SUBST(HDF5I, [${hdf5i}])
-         AC_DEFINE(HAVE_HDF5,"yes","hdf5 sopport enabled")
-      else
-         AC_MSG_ERROR(cannot find any hdf5.h)
-      fi
-    fi
-  ])
-dnl end HDF5
+echo "new hdf5 test"
+           AX_LIB_HDF5()
+echo "HDF5 support:  $with_hdf5"
+echo "end new hdf5 test"
 
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
@@ -447,13 +393,35 @@ dnl IDL
 dnl idldir=${prefix}/idl"
 dnl AC_DEFINE_UNQUOTED(IDLDIR, "${prefix}/idl", "xxx")
 
-dnl output files 
-dnl AC_CONFIG_FILES([Makefile phase/Makefile  phaseqt/Makefile \
-dnl          opti/Makefile extr/Makefile  \
-dnl	  phaselib/Makefile phaseidl/Makefile \
-dnl	  misalignment/Makefile phase4idl/Makefile \
-dnl	  idlphase/Makefile phasesrv/Makefile hdf5tools/Makefile])
-
+# Checks for libraries.
+# FIXME: Replace `main' with a function in `-lMinuit':
+dnl AC_CHECK_LIB([Minuit], [main])
+# FIXME: Replace `main' with a function in `-lQtCore':
+dnl AC_CHECK_LIB([QtCore], [main])
+# FIXME: Replace `main' with a function in `-lQtGui':
+dnl AC_CHECK_LIB([QtGui], [main])
+# FIXME: Replace `main' with a function in `-lQtSvg':
+dnl AC_CHECK_LIB([QtSvg], [main])
+# FIXME: Replace `main' with a function in `-lX11':
+dnl AC_CHECK_LIB([X11], [main])
+# FIXME: Replace `main' with a function in `-lXext':
+dnl AC_CHECK_LIB([Xext], [main])
+# FIXME: Replace `main' with a function in `-lXm':
+dnl AC_CHECK_LIB([Xm], [main])
+# FIXME: Replace `main' with a function in `-lXp':
+dnl AC_CHECK_LIB([Xp], [main])
+# FIXME: Replace `main' with a function in `-lXt':
+dnl AC_CHECK_LIB([Xt], [main])
+# FIXME: Replace `main' with a function in `-lc':
+dnl AC_CHECK_LIB([c], [main])
+# FIXME: Replace `main' with a function in `-lhdf5':
+dnl AC_CHECK_LIB([hdf5], [main])
+# FIXME: Replace `main' with a function in `-lm':
+dnl AC_CHECK_LIB([m], [main])
+# FIXME: Replace `main' with a function in `-lqwt':
+dnl AC_CHECK_LIB([qwt], [main])
+# FIXME: Replace `main' with a function in `-lz':
+dnl AC_CHECK_LIB([z], [main])
 
 dnl Checks for header files.
 AC_PATH_X        # autoscan
@@ -466,14 +434,12 @@ AC_HEADER_STDBOOL # autoscan
 AC_C_CONST        # autoscan
 AC_C_INLINE       # autoscan
 AC_TYPE_SIZE_T    # autoscan
+dnl AC_TYPE_INT32_T   # autoscan64
+dnl AC_TYPE_SSIZE_T   # autoscan64
+dnl AC_TYPE_UINT16_T  # autoscan64
+dnl AC_TYPE_UINT32_T  # autoscan64
 AC_STRUCT_TM      # autoscan
 AC_C_VOLATILE     # autoscan
-
-dnl UF 2.12.07 take this test out makes problems on 64bit Suse 10.3
-dnl UF makes also problem on Scientific linux 5- add test i686
-dnl old if test "$machine" != "x86_64" -a "$machine" != "i686"; then 
-dnl old    AC_TYPE_SIZE_T
-dnl old fi
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE # autoscan
@@ -497,7 +463,6 @@ AC_CONFIG_FILES([Makefile
 
 AC_OUTPUT
 
-dnl UF 31.8.11 take out something baselib/Makefile tmplib/Makefile
 dnl print some messages
 echo ""
 echo "===================================================================="
@@ -533,19 +498,8 @@ echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
 echo "GRIDSIZE:                : ${gridsize}"
-echo "hdf5:                    : ${hdf5}"
+echo "hdf5:                    : ${with_hdf5}"
 echo "root:                    : ${have_root}"
 echo "f2c:                     : ${enable_F2C}"
-
-dnl., TORSTEN, einige Dinge um configure zu verstehen ...
-dnl., echo " "
-dnl., echo " ttttttttttssssssssssssssssssttttttttttttttttttttt"
-dnl., echo " "
-dnl., echo " LIBPHASE      : ${LIBPHASE} "
-dnl., echo " LINK_LIBPHASE : ${LINK_LIBPHASE} "
-dnl., echo " FLIBS         : ${FLIBS} "
-dnl., echo " "
-dnl., echo " ttttttttttssssssssssssssssssttttttttttttttttttttt"
-
 echo " "
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac

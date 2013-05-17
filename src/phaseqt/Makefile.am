@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2013-05-11 21:09:42 flechsig> 
+#  Time-stamp: <17 May 13 17:33:30 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -70,7 +70,7 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
-AM_CXXFLAGS   =  -I. \
+AM_CXXFLAGS   =  \
 	-I@QT@/mkspecs/linux-g++ \
 	-I@QT@/include/QtCore \
 	-I@QT@/include/QtGui -I@QT@/include \
@@ -79,7 +79,7 @@ AM_CXXFLAGS   =  -I. \
 	-I@QWTI@/ \
 	-I../phase 
 
-AM_CFLAGS = -I@HDF5I@ -I@HDF5@/include 
+AM_CFLAGS = @HDF5_CFLAGS@ 
 
 ###-pipe -g -D_REENTRANT -Wall -W 
 #####-I@QT@/mkspecs/linux-g++       
@@ -87,7 +87,7 @@ AM_CFLAGS = -I@HDF5I@ -I@HDF5@/include
 #####	     @FLIBS@    @CFORLIB@
 AM_LDFLAGS =  -Wl,-rpath,@QT@/lib \
 	-L@QT@/lib -lQtGui -lQtCore -lQtSvg \
-	-L@QWT@/lib -lqwt -L@HDF5@/lib64 -lhdf5  \
+	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
 	@FLIBS@  @CFORLIB@
 
 ##we always use the c linker
