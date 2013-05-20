@@ -26,6 +26,14 @@ c	imode = 2: use 2D Newton Raphson
      &            iac3(1000000,0:7),iac4(1000000,0:7)
         dimension iac1l(1000000,0:7)
 
+c integers: (4 byte) 8e6 * 5 = 4e7 = 160 Mb
+c reals:    (8 byte) 2*8^6+2*8^4+2*8^2=2*(8^6+8^4+8^2)=532608= 4.3 Mb
+
+#ifdef DEBUG       
+c UF 20.5.13
+        write(*,*)'debug: rekursiv_2d_8.F subd345a called'
+#endif
+
 	if(imode.eq.1)then
 c--------- get ypca(0,0,0,0)
 	call newton_1D(acc,eq1c,eq2c,ypca,zpca,iord)
@@ -49,6 +57,9 @@ c--------------------------------------------------------
 	do n5=0,iord
 	do n6=0,iord-n5
 
+#ifdef DEBUG
+	   write(*,*)'debug: loop n5,n6', n5,n6
+#endif
 	if(n5-1.ge.0)then
 	a1=a1+
      &          eq1c(0,0,0,0,n5,n6)*
@@ -61,6 +72,8 @@ c--------------------------------------------------------
      &          dflotj(n5)*
      &          exp_special(zpca(0,0,0,0),n6)
 	endif
+
+
 
 c---------------------------------------------------------
 
@@ -81,6 +94,10 @@ c---------------------------------------------------------
 
 	enddo
 	enddo
+
+#ifdef DEBUG
+	   write(*,*)'end loop n5,n6', n5,n6
+#endif
 
 c--------------------------------------------------------
 c	Ende Vorfaktoren
@@ -174,6 +191,11 @@ c-----------------------------------------------------------
      &       ge.ii+ik+is+it)iflag=0
 	  enddo
 
+#ifdef DEBUG
+c	   write(*,*)'trace 1'
+#endif
+
+
 	  if(iflag.eq.1)then
 
 	    prod=1.d0
@@ -196,6 +218,11 @@ c-----------------------------------------------------------
 	enddo
 	enddo
 
+#ifdef DEBUG
+c	   write(*,*)'trace 2'
+#endif
+
+
 200	continue	
 c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
 
@@ -210,6 +237,10 @@ c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
 	enddo	! m
 	enddo	! u
 	enddo	! v
+
+#ifdef DEBUG
+	write(*,*)'trace 3'
+#endif
 
 c---------------------------------------------------------
 c	jetz sind die Konstanten c1(i,k,s,t) und c2(i,k,s,t) bekannt
@@ -234,13 +265,23 @@ c---------------------------------------------------------
 
 	endif
 
+#ifdef DEBUG
+	   write(*,*)'trace 4, it,is,ik,ii',it,is,ik,ii
+#endif
+
 	enddo		! loop �ber it
 	enddo		! is
 	enddo		! ik
 	enddo		! ii
 
+#ifdef DEBUG       
+c UF 20.5.13
+        write(*,*)'debug: rekursiv_2d_8.F subd345a end'
+#endif
+
 	return
 	end
+c-----  end  subd345a -----
 
 c-----------------------------------------------------------
 	subroutine spaltenkombi(n5,n6,ii,ij,ianz1l,iac1l)
