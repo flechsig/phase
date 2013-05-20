@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <17 May 13 17:33:30 flechsig> 
+#  Time-stamp: <2013-05-20 20:24:42 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -30,7 +30,7 @@ phaseqt_SOURCES = \
         ../phase/xmalloc.c ../phase/pst_thread.c ../phase/pst_thread.h   \
 	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
-	../phase/q0_q1_q2_8.for ../phase/rekursiv_2d_8.for \
+	../phase/q0_q1_q2_8.for ../phase/rekursiv_2d_8.F \
 	../phase/phasefor.F  \
 	../phase/get_partial_etc.for ../phase/replace_6v4v.for \
 	../phase/replace_wl_in_u.for ../phase/replace_wl_in_ypzp.for \
