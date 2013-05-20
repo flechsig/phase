@@ -246,7 +246,12 @@ c       input:   dfdw6(w,l,y,z,yp,zp) & dfdl6(w,l,y,z,yp,zp)
 c       output:  ypc(w,l,y,z)       &  zpc(w,l,y,z)
 c
         imode=2
+#ifdef DEBUG       
+c UF 20.5.13
+        write(*,*)'debug: fgmapidp_8: call subd345a'
         call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
+        write(*,*)'debug: fgmapidp_8: back from subd345a'
+#endif
 
 c        write(6,*)'================ am.a(0,0)',am.a(0,0)
 c        write(6,*)'================ q0_8(1,0,0,0,0,0)',q0_8(1,0,0,0,0,0)
