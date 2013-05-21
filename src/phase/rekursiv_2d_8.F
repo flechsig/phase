@@ -26,8 +26,6 @@ c	imode = 2: use 2D Newton Raphson
      &            iac3(1000000,0:7),iac4(1000000,0:7)
         dimension iac1l(1000000,0:7)
 
-c integers: (4 byte) 8e6 * 5 = 4e7 = 160 Mb
-c reals:    (8 byte) 2*8^6+2*8^4+2*8^2=2*(8^6+8^4+8^2)=532608= 4.3 Mb
 
 #ifdef DEBUG       
 c UF 20.5.13
