@@ -21,10 +21,10 @@ c	imode = 2: use 2D Newton Raphson
         dimension eq2c(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension ypca(0:7,0:7,0:7,0:7)
         dimension zpca(0:7,0:7,0:7,0:7)
-        dimension ia(0:7,0:7),ic(0:7,0:7)
+c        dimension ia(0:7,0:7),ic(0:7,0:7)
         dimension iac1(1000000,0:7),iac2(1000000,0:7),
      &            iac3(1000000,0:7),iac4(1000000,0:7)
-        dimension iac1l(1000000,0:7)
+c        dimension iac1l(1000000,0:7)
 
 
 #ifdef DEBUG       
@@ -329,13 +329,13 @@ c------------------------------------------------------------------------
 
         implicit real*8 (a-h,o-z)
 
-        dimension eq1c(0:7,0:7,0:7,0:7,0:7,0:7)
-        dimension eq2c(0:7,0:7,0:7,0:7,0:7,0:7)
-        dimension ypca(0:7,0:7,0:7,0:7)
-        dimension zpca(0:7,0:7,0:7,0:7)
-        dimension ia(0:7,0:7),ic(0:7,0:7)
-        dimension iac1(1000000,0:7),iac2(1000000,0:7),
-     &            iac3(1000000,0:7),iac4(1000000,0:7)
+c        dimension eq1c(0:7,0:7,0:7,0:7,0:7,0:7)
+c        dimension eq2c(0:7,0:7,0:7,0:7,0:7,0:7)
+c        dimension ypca(0:7,0:7,0:7,0:7)
+c        dimension zpca(0:7,0:7,0:7,0:7)
+c        dimension ia(0:7,0:7),ic(0:7,0:7)
+c        dimension iac1(1000000,0:7),iac2(1000000,0:7),
+c     &            iac3(1000000,0:7),iac4(1000000,0:7)
         dimension iac1l(1000000,0:7)
 
         if(ij.lt.0)then
