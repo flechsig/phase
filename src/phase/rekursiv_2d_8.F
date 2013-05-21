@@ -236,7 +236,7 @@ c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
 	enddo	! u
 	enddo	! v
 
-#ifdef DEBUG
+#ifdef DEBUG3
 	write(*,*)'trace 3'
 #endif
 
@@ -264,7 +264,7 @@ c---------------------------------------------------------
 	endif
 
 #ifdef DEBUG
-	   write(*,*)'trace 4, it,is,ik,ii',it,is,ik,ii
+	   write(*,*)'debug: trace 4, it,is,ik,ii',it,is,ik,ii
 #endif
 
 	enddo		! loop �ber it
