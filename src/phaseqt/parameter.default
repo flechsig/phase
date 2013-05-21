@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <28 Mar 13 12:28:34 flechsig> 
+#  Time-stamp: <21 May 13 11:16:22 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -39,8 +39,8 @@ PO Source
     isrctype		4	source type (1..7)					4	5
     source 4 & 7	-	E- field from files (filenames see Edit/Configure)	
        so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
-       xi.distfocy	0	distance of image plane to horizontal focus		0.	49
-       xi.distfocz	0	distance of image plane to vertical focus		0.	50
+       xi.distfocy	0	distance of image plane to vertical focus		0.	49
+       xi.distfocz	0	distance of image plane to horizontal focus		0.	50
     source 6		-	brightness from file (filename see Edit/Configure)
        ifl.ibright	1	write 4-dim brightness to file (0,1)			1	38	
 
