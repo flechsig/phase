@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2013-05-21 21:24:27 flechsig> 
+dnl   Time-stamp: <2013-05-21 21:25:28 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -158,7 +158,6 @@ AM_CONDITIONAL([WANT_IFC],      [test x"$wantifc"      = xtrue])
 AM_CONDITIONAL([WANT_ABSOFT],   [test x"$wantabsoft"   = xtrue])
 AM_CONDITIONAL([WANT_PORTLAND], [test x"$wantportland" = xtrue])  
 dnl end fortran specials
-
 
 dnl ***************** PO SOURCE MAX GRIDSIZE ***********
 AC_ARG_WITH([gridsize],
