@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <21 May 13 14:26:39 flechsig> 
+dnl   Time-stamp: <2013-05-21 21:24:27 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -178,6 +178,11 @@ FFLAGS="-DGRIDSIZE=${gridsize} ${FFLAGS}"
 dnl end gridsize
 	
 dnl ****************** QT **************************
+echo "new qt test"
+AX_HAVE_QT
+echo "have qt:" ${have_qt}
+echo "end new qt test"
+
 AC_ARG_WITH([qt],
   AS_HELP_STRING([--with-qt=DIR],[path to QT libraries or --without-qt]),
   dnl given action
@@ -349,6 +354,11 @@ else
 fi
 
 ## whether to use OpenMP multithreading 
+echo "new openmp test"
+##dnl AX_OPENMP
+##echo "AX_OPENMP result: " ${have_openmp}
+##echo "end new openmp test"
+
 AC_ARG_ENABLE([OPENMP],
     AS_HELP_STRING([--enable-OPENMP],[enables multicore parallelization of calculation-intense parts]),  
     AC_DEFINE([OPENMP], 1, "enabled OpenMP parallelization"))
