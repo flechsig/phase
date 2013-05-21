@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <17 May 13 17:19:55 flechsig> 
+dnl   Time-stamp: <21 May 13 10:38:49 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -283,11 +283,8 @@ AC_ARG_WITH([qwt],
   ])
 dnl end QWT
 
-dnl Check for HDF5 support (does not work with the current autoconf version)
-echo "new hdf5 test"
-           AX_LIB_HDF5()
-echo "HDF5 support:  $with_hdf5"
-echo "end new hdf5 test"
+dnl Check for HDF5 support
+AX_LIB_HDF5
 
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
