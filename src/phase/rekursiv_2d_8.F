@@ -191,8 +191,8 @@ c-----------------------------------------------------------
      &       ge.ii+ik+is+it)iflag=0
 	  enddo
 
-#ifdef DEBUG
-c	   write(*,*)'trace 1'
+#ifdef DEBUG1
+	   write(*,*)'trace 1'
 #endif
 
 
@@ -218,8 +218,8 @@ c	   write(*,*)'trace 1'
 	enddo
 	enddo
 
-#ifdef DEBUG
-c	   write(*,*)'trace 2'
+#ifdef DEBUG2
+	   write(*,*)'trace 2'
 #endif
 
 
