@@ -3,6 +3,9 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+
+#define DEBUG1 
+
 c---------------------------------------------------------------
 c
 c	Spiegelkoordinaten bis 8. Ordnung
@@ -17,6 +20,8 @@ c	imode = 2: use 2D Newton Raphson
 
         implicit real*8 (a-h,o-z)
 
+	integer ianz1max  
+
         dimension eq1c(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension eq2c(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension ypca(0:7,0:7,0:7,0:7)
@@ -27,10 +32,11 @@ c        dimension ia(0:7,0:7),ic(0:7,0:7)
 c        dimension iac1l(1000000,0:7)
 
 
-#ifdef DEBUG       
+#ifdef DEBUG1       
 c UF 20.5.13
         write(*,*)'debug: rekursiv_2d_8.F subd345a called'
 #endif
+	ianz1max=0
 
 	if(imode.eq.1)then
 c--------- get ypca(0,0,0,0)
@@ -55,7 +61,7 @@ c--------------------------------------------------------
 	do n5=0,iord
 	do n6=0,iord-n5
 
-#ifdef DEBUG
+#ifdef DEBUG1
 	   write(*,*)'debug: loop n5,n6', n5,n6
 #endif
 	if(n5-1.ge.0)then
@@ -93,7 +99,7 @@ c---------------------------------------------------------
 	enddo
 	enddo
 
-#ifdef DEBUG
+#ifdef DEBUG1
 	   write(*,*)'end loop n5,n6', n5,n6
 #endif
 
@@ -153,7 +159,11 @@ c--------------------------------------------------------
 
 c--------- erste Spalte
 	call spaltenkombi(n5,n6,ii,ij,ianz1,iac1)
-
+#ifdef DEBUG1
+	if(ianz1.gt.ianz1max)then 
+	   ianz1max=ianz1
+	endif 
+#endif
 c--------- zweite Spalte
 	call spaltenkombi(n5,n6,ik,im,ianz2,iac2)
 
@@ -189,7 +199,7 @@ c-----------------------------------------------------------
      &       ge.ii+ik+is+it)iflag=0
 	  enddo
 
-#ifdef DEBUG1
+#ifdef DEBUG2
 	   write(*,*)'trace 1'
 #endif
 
@@ -263,7 +273,7 @@ c---------------------------------------------------------
 
 	endif
 
-#ifdef DEBUG
+#ifdef DEBUG1
 	   write(*,*)'debug: trace 4, it,is,ik,ii',it,is,ik,ii
 #endif
 
@@ -272,9 +282,9 @@ c---------------------------------------------------------
 	enddo		! ik
 	enddo		! ii
 
-#ifdef DEBUG       
+#ifdef DEBUG1       
 c UF 20.5.13
-        write(*,*)'debug: rekursiv_2d_8.F subd345a end'
+        write(*,*)'debug: rekursiv_2d_8.F subd345a end ianz1max=',ianz1max
 #endif
 
 	return
@@ -436,6 +446,10 @@ c     &            iac3(1000000,0:7),iac4(1000000,0:7)
 102	  enddo
 101	  enddo
 100	  enddo
+
+#ifdef DEBUG2
+	  write(*,*)'debug end spaltenkombi, index ianz1l= ', ianz1l
+#endif
 
        return
        end
