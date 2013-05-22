@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2013-05-20 20:24:42 flechsig> 
+#  Time-stamp: <22 May 13 10:40:20 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -32,8 +32,8 @@ phaseqt_SOURCES = \
 	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
 	../phase/q0_q1_q2_8.for ../phase/rekursiv_2d_8.F \
 	../phase/phasefor.F  \
-	../phase/get_partial_etc.for ../phase/replace_6v4v.for \
-	../phase/replace_wl_in_u.for ../phase/replace_wl_in_ypzp.for \
+	../phase/get_partial_etc.for ../phase/replace_6v4v.F \
+	../phase/replace_wl_in_u.F ../phase/replace_wl_in_ypzp.F \
 	../phase/taylor-ops.for \
 	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
         ../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for \
