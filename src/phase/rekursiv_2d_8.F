@@ -25,12 +25,14 @@ c	imode = 2: use 2D Newton Raphson
         implicit real*8 (a-h,o-z)
 
 	integer ianz1max  
+        integer iac1,iac2,iac3,iac4
 
         dimension eq1c(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension eq2c(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension ypca(0:7,0:7,0:7,0:7)
         dimension zpca(0:7,0:7,0:7,0:7)
 c        dimension ia(0:7,0:7),ic(0:7,0:7)
+       
         dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
      &            iac3(IADIM,0:7),iac4(IADIM,0:7)
 c        dimension iac1l(IADIM,0:7)
@@ -350,6 +352,7 @@ c        dimension zpca(0:7,0:7,0:7,0:7)
 c        dimension ia(0:7,0:7),ic(0:7,0:7)
 c        dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
 c     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
+        integer   iac1l
         dimension iac1l(IADIM1,0:7)
 
         if(ij.lt.0)then
