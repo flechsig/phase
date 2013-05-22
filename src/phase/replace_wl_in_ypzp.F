@@ -3,6 +3,8 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+#define IADIM  0:1716
+
 c--------------------------------------------------------
 	subroutine replace_wl_in_ypzp(ypc,zpc,wc,xlc,
      &                        ypc1,zpc1,ionetwo,iord)
@@ -19,10 +21,10 @@ c--------------------------------------------------------
         dimension xlc(0:7,0:7,0:7,0:7)
         dimension ypc1(0:7,0:7,0:7,0:7)
         dimension zpc1(0:7,0:7,0:7,0:7)
-        dimension ia(0:7,0:7),ic(0:7,0:7)
-        dimension iac1(1000000,0:7),iac2(1000000,0:7),
-     &            iac3(1000000,0:7),iac4(1000000,0:7)
-        dimension iac1l(1000000,0:7)
+c uf        dimension ia(0:7,0:7),ic(0:7,0:7)
+        dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
+     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
+c uf        dimension iac1l(IADIM,0:7)
 
 c	zu bestimmende Konstanten festlegen (ikst)
 	do ii=0,iord              ! y

@@ -4,8 +4,8 @@ c$$$ $Revision$
 c$$$ $Author$ 
 
 #define DEBUG1 
-cc#define IADIM  0:1716
-#define IADIM 1000000
+#define IADIM  0:1716
+cc#define IADIM 1000000
 ccc max ianzl1 is  1716, 
 
 c---------------------------------------------------------------
