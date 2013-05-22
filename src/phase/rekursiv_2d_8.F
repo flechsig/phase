@@ -5,8 +5,8 @@ c$$$ $Author$
 
 
 #define DEBUG1
-c#define IADIM  1717  
-#define IADIM 1000000 
+#define IADIM  2000 
+c#define IADIM 1000000 
 ccc max ianzl1 is  1716, i.e. field dim is 1717
 
 c---------------------------------------------------------------
