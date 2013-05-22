@@ -3,8 +3,9 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
-#define DEBUG1
-#define IADIM  0:1716
+#define DEBUG1 
+cc#define IADIM  0:1716
+#define IADIM 1000000
 ccc max ianzl1 is  1716, 
 
 c---------------------------------------------------------------
@@ -15,6 +16,7 @@ c	hier rekursive Loesung der Gleichungssysteme
 c
 c--------------------------------------------------------
 	subroutine subd345a(acc,eq1c,eq2c,ypca,zpca,imode,iord)
+c UF	subroutine subd345a(acc,eq1c,ypca,zpca,imode,iord)
 c--------------------------------------------------------
 c	imode = 1: use 1D Newton Raphson
 c	imode = 2: use 2D Newton Raphson
@@ -34,12 +36,12 @@ c        dimension ia(0:7,0:7),ic(0:7,0:7)
      &            iac3(IADIM,0:7),iac4(IADIM,0:7)
 c        dimension iac1l(IADIM,0:7)
 
-
-#ifdef DEBUG1       
 c UF 20.5.13
+#ifdef DEBUG1       
         write(*,*)'debug: rekursiv_2d_8.F subd345a called'
 #endif
 	ianz1max=0
+c end UF
 
 	if(imode.eq.1)then
 c--------- get ypca(0,0,0,0)
@@ -64,9 +66,12 @@ c--------------------------------------------------------
 	do n5=0,iord
 	do n6=0,iord-n5
 
+c UF
 #ifdef DEBUG1
 	   write(*,*)'debug: loop n5,n6', n5,n6
 #endif
+c end uf
+
 	if(n5-1.ge.0)then
 	a1=a1+
      &          eq1c(0,0,0,0,n5,n6)*
@@ -102,9 +107,11 @@ c---------------------------------------------------------
 	enddo
 	enddo
 
+c uf
 #ifdef DEBUG1
 	   write(*,*)'end loop n5,n6', n5,n6
 #endif
+c end uf
 
 c--------------------------------------------------------
 c	Ende Vorfaktoren
@@ -162,11 +169,15 @@ c--------------------------------------------------------
 
 c--------- erste Spalte
 	call spaltenkombi(n5,n6,ii,ij,ianz1,iac1)
+
+c uf
 #ifdef DEBUG1
 	if(ianz1.gt.ianz1max)then 
 	   ianz1max=ianz1
 	endif 
 #endif
+c end uf
+
 c--------- zweite Spalte
 	call spaltenkombi(n5,n6,ik,im,ianz2,iac2)
 
@@ -202,10 +213,11 @@ c-----------------------------------------------------------
      &       ge.ii+ik+is+it)iflag=0
 	  enddo
 
+c uf
 #ifdef DEBUG2
 	   write(*,*)'trace 1'
 #endif
-
+c end uf
 
 	  if(iflag.eq.1)then
 
@@ -229,10 +241,11 @@ c-----------------------------------------------------------
 	enddo
 	enddo
 
+c uf
 #ifdef DEBUG2
 	   write(*,*)'trace 2'
 #endif
-
+c end uf
 
 200	continue	
 c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
@@ -249,9 +262,11 @@ c------------------- innere Summe sum(n5,n6) ist jetzt bekannt
 	enddo	! u
 	enddo	! v
 
+c uf
 #ifdef DEBUG3
 	write(*,*)'trace 3'
 #endif
+c end uf
 
 c---------------------------------------------------------
 c	jetz sind die Konstanten c1(i,k,s,t) und c2(i,k,s,t) bekannt
@@ -276,19 +291,21 @@ c---------------------------------------------------------
 
 	endif
 
+c uf
 #ifdef DEBUG1
 	   write(*,*)'debug: trace 4, it,is,ik,ii',it,is,ik,ii
 #endif
+c end uf
 
 	enddo		! loop �ber it
 	enddo		! is
 	enddo		! ik
 	enddo		! ii
-
+c uf
 #ifdef DEBUG1       
-c UF 20.5.13
         write(*,*)'debug: rekursiv_2d_8.F subd345a end ianz1max=',ianz1max
 #endif
+c end uf
 
 	return
 	end
@@ -451,9 +468,11 @@ c     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
 101	  enddo
 100	  enddo
 
+c uf
 #ifdef DEBUG2
 	  write(*,*)'debug end spaltenkombi, index ianz1l= ', ianz1l
 #endif
+c end uf
 
        return
        end
