@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2013-05-21 21:25:28 flechsig> 
+dnl   Time-stamp: <22 May 13 08:06:13 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -177,10 +177,10 @@ FFLAGS="-DGRIDSIZE=${gridsize} ${FFLAGS}"
 dnl end gridsize
 	
 dnl ****************** QT **************************
-echo "new qt test"
+echo "new qt test using AX_HAVE_QT"
 AX_HAVE_QT
 echo "have qt:" ${have_qt}
-echo "end new qt test"
+echo "end new qt test (results not used so far)"
 
 AC_ARG_WITH([qt],
   AS_HELP_STRING([--with-qt=DIR],[path to QT libraries or --without-qt]),
