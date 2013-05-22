@@ -5,6 +5,7 @@ c$$$ $Author$
 
 #define DEBUG1
 #define IADIM "0:1716"
+#define IADIM1 1000000
 ccc max ianzl1 is  1716, 
 
 c---------------------------------------------------------------
@@ -350,7 +351,7 @@ c        dimension ia(0:7,0:7),ic(0:7,0:7)
 c        dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
 c     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
         integer   iac1l
-        dimension iac1l(IADIM,0:7)
+        dimension iac1l(IADIM1,0:7)
 
         if(ij.lt.0)then
           idelta=ii
