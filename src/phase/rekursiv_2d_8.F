@@ -6,7 +6,7 @@ c$$$ $Author$
 
 #define DEBUG1
 #define IADIM  10
-#define IADIM1 10
+
 c#define IADIM 1000000 
 ccc max ianzl1 is  1716, i.e. field dim is 1717
 
@@ -33,9 +33,9 @@ c	imode = 2: use 2D Newton Raphson
         dimension zpca(0:7,0:7,0:7,0:7)
 c        dimension ia(0:7,0:7),ic(0:7,0:7)
        
-        dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
-     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
-c        dimension iac1l(IADIM,0:7)
+        dimension iac1(1717,0:7),iac2(1717,0:7),
+     &            iac3(1717,0:7),iac4(1717,0:7)
+c        dimension iac1l(1717,0:7)
 
 
 #ifdef DEBUG1       
@@ -350,10 +350,10 @@ c        dimension eq2c(0:7,0:7,0:7,0:7,0:7,0:7)
 c        dimension ypca(0:7,0:7,0:7,0:7)
 c        dimension zpca(0:7,0:7,0:7,0:7)
 c        dimension ia(0:7,0:7),ic(0:7,0:7)
-c        dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
-c     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
+c        dimension iac1(1717,0:7),iac2(1717,0:7),
+c     &            iac3(1717,0:7),iac4(1717,0:7)
         integer   iac1l
-        dimension iac1l(IADIM1,0:7)
+        dimension iac1l(1717,0:7)
 
         if(ij.lt.0)then
           idelta=ii
