@@ -30,6 +30,12 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   struct psimagest  *sp;
   int i, tasksPerThread, npoints;
   
+  if (numthreads < 1)
+    {
+      fprintf(stderr, "error: number of threads= %d < 1, -- exit\n", numthreads);
+      exit(-1);
+    }
+
   thread= XMALLOC(pthread_t, numthreads);
   data  = XMALLOC(struct ThreadData, numthreads);
 
@@ -63,10 +69,10 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   for (i=0; i<numthreads; i++) 
     pthread_create(&thread[i], NULL, pst_it, &data[i]); /* Launch Threads */
   
-  printf("\nthreads created- wait until finished\n");
+  printf("\nthreads created- wait until finished\n\n");
   
   for (i= 0; i< numthreads; i++) 
-    pthread_join(thread[i], NULL);          /* Wait for Threads to Finish */
+     pthread_join(thread[i], NULL);          /* Wait for Threads to Finish */
     
   printf("\nthreads done, npoints= %d\n", npoints);
   bl->beamlineOK |= resultOK;
@@ -108,7 +114,7 @@ void *pst_it(void *arg)
 
   for (index= td->start; index < td->stop; index++) 
     {
-#ifdef DEBUG1
+#ifdef DEBUG
       printf("calc: %d\n", index);
 #endif
       pstc_i(index, bl, m4p, &cs);
