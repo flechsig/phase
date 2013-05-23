@@ -62,7 +62,9 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   
   for (i=0; i<numthreads; i++) 
     pthread_create(&thread[i], NULL, pst_it, &data[i]); /* Launch Threads */
-    
+  
+  printf("\nthreads created- wait until finished\n");
+  
   for (i= 0; i< numthreads; i++) 
     pthread_join(thread[i], NULL);          /* Wait for Threads to Finish */
     
