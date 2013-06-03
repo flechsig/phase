@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2013-05-13 12:33:10 flechsig>  */
+/*   Time-stamp: <03 Jun 13 11:49:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -181,7 +181,7 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
     }
   end= time(NULL);
   beep(5);
-  printf("running time with %d threads (s) = %d\n", threadinfo, (end- start));
+  printf("running time with %d threads (s) = %d or %f h\n", threadinfo, (end- start), (end- start)/3600.);
   printf("BatchMode: program end\n");
 } /* end Batchmode */
 
