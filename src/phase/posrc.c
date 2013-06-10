@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <13 May 13 14:23:57 flechsig>  */
+/*  Time-stamp: <2013-06-10 22:13:22 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -484,6 +484,75 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
   XFREE(field);
   H5Gclose(group_id);
 }  /* end add_phase_psd_to_hdf5 */
+
+void read_hdf5_file(struct BeamlineType *bl, char *fname)
+{
+  hid_t  file_id, group_id;
+  int    slicecount= 1, col, row, cols, rows, fieldsize;
+  double wavelength, gridsize, *field;
+  struct PSDType *p;
+
+  printf("read_hdf5_file not yet ready- return\n");
+  return;
+
+  /* if (!(bl->beamlineOK & resultOK)) 
+    {
+      printf("no results- return\n");
+      return;
+      }*/
+
+  
+  /* Create a new file using default properties. */
+  /* specifies that if the file already exists, 
+     the current contents will be deleted so that the application can rewrite the file with new data. */
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      exit(-1);
+    }
+
+  p= (struct PSDType *)bl->RESULT.RESp;
+  rows= p->iy;
+  cols= p->iz;
+
+  if (rows != cols)
+    {
+      fprintf(stderr, "error: genesis file format assumes a quadratic grid\n");
+      fprintf(stderr, "       current grid: %d x %d\n", rows, cols);
+      fprintf(stderr, "       we create a phase_hdf5 instead");
+      H5Fclose(file_id);
+      write_phase_hdf5_file(bl, fname);
+      return;
+    }
+
+  fieldsize= rows*cols*2;
+
+  field= XMALLOC(double, fieldsize);
+
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      {
+	field[   (col + row * cols) * 2]= p->ezrec[row+ col* rows];  // fortran memory
+	field[1+ (col + row * cols) * 2]= p->ezimc[row+ col* rows];
+      }
+
+  wavelength= bl->BLOptions.lambda* 1e-3;
+  gridsize  = (p->z[1]- p->z[0])* 1e-3;
+
+  group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices");
+  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
+  writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
+  writeDataDouble(file_id, "slice000001/field", field, fieldsize, "electrical field as c_style list (real,imag), (real, imag),...");
+  add_phase_psd_to_hdf5(file_id, bl);
+  add_desc(group_id, "first time slice");
+  H5Gclose(group_id);
+  add_string_attribute_f(file_id, "/", "file_type", "genesis_hdf5");
+  H5Fclose(file_id);
+  XFREE(field);
+  printf("wrote genesis_hdf5 file: %s\n", fname);
+}  /* read_hdf5_file */
 
 void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
 {

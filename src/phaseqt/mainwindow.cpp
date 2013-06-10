@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Apr 13 11:49:50 flechsig> 
+//  Time-stamp: <2013-06-10 21:51:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -238,6 +238,11 @@ void MainWindow::createActions()
     writeResultGh5Act->setStatusTip(tr("Write PO results in genesis_hdf5 format"));
     signalMapper->setMapping(writeResultGh5Act, QString("writeResultGh5Act"));
     connect(writeResultGh5Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    readResulth5Act = new QAction(tr("Rea&d hdf5 Results"), this);
+    readResulth5Act->setStatusTip(tr("Read PO results from hdf5 (result) file"));
+    signalMapper->setMapping(readResulth5Act, QString("readResulth5Act"));
+    connect(readResulth5Act, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     readFg34Act = new QAction(tr("&Read file fg34.par"), this);
     readFg34Act->setStatusTip(tr("Read parameter file fg34.par (for compatibility with previous phase versions)"));

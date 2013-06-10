@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <13 May 13 14:17:40 flechsig>  */
+/*  Time-stamp: <2013-06-10 22:00:55 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -132,6 +132,7 @@ public:
 			     wc,   xlc,  xlen1c, xlen2c); }
   void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz); }
 #ifdef HAVE_HDF5
+  void my_read_hdf5_file() { read_hdf5_file(this, this->filenames.hdf5_out); }
   void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out); }
   void my_write_phase_hdf5_file() { write_phase_hdf5_file(this, this->filenames.hdf5_out); }
 #endif
