@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Jun 13 16:13:03 flechsig> 
+;  Time-stamp: <12 Jun 13 16:14:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -110,7 +110,7 @@ endelse
 if keyword_set(cut) then begin
     size0= size(field1)
     ycenteridx = size0[1]/2
-    zcenteridx = size0[3]/2
+    zcenteridx = size0[2]/2
     zpro0= field1[*, ycenteridx]
     ypro0= field1[zcenteridx, *]
     zprof= zpro0/max(zpro0)
