@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <22 Apr 13 15:21:20 flechsig> 
+;  Time-stamp: <12 Jun 13 12:23:33 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -108,16 +108,33 @@ endelse
 
 if keyword_set(cut) then begin
     size0= size(field1)
-    size1= size0[1]/2
-    zpro0= field1[*,size1]
+    ycenteridx = size0[1]/2
+    zcenteridx = size0[0]/2
+    zpro0= field1[*, ycenteridx]
+    ypro0= field1[zcenteridx, *]
     zprof= zpro0/max(zpro0)
-    plot, z_vec, zprof, xtitle='z (mm)', ytitle='intensity', title='normalized horizontal profile at the center'
-    zfit= gaussfit(z_vec, zprof, fit, nterms=4)
-    help, zrof, fit
-    sigma= fit[2]
-    print, 'FWHM= ',2.35*sigma
-    print, 'fit: ', fit
- oplot, z_vec, zfit, color=2 
+    yprof= ypro0/max(ypro0)
+
+    min=min(z_vec,y_vec)
+    max=max(z_vec,y_vec)
+
+    plot, [min, max], [0,1], xtitle='pos (mm)', ytitle='intensity', title='normalized profiles at the center',/nodata
+    oplot, z_vec, zprof, color=1
+    oplot, y_vec, yprof, color=2
+
+    zfit= gaussfit(z_vec, zprof, fitz, nterms=4)
+    yfit= gaussfit(y_vec, yprof, fity, nterms=4)
+;    help, zrof, fitz
+    sigmaz= fitz[2]
+    sigmay= fity[2]
+    print, 'z FWHM= ',2.35*sigmaz
+    print, 'z fit: ', fitz
+    print, 'y FWHM= ',2.35*sigmay
+    print, 'y fit: ', fity
+
+    oplot, z_vec, zfit, color=3 
+    oplot, y_vec, yfit, color=4 
+    legend, ['hor cut','vert cut','hor fit','vert fit'], color=[1,2,3,4],linestyle=[0,0,0,0],thick=[2,2,2,2]
 endif
 
 
