@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Jun 13 16:14:22 flechsig> 
+;  Time-stamp: <12 Jun 13 16:19:08 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -130,9 +130,9 @@ if keyword_set(cut) then begin
 ;    help, zrof, fitz
     sigmaz= fitz[2]
     sigmay= fity[2]
-    print, 'z FWHM= ',2.35*sigmaz
+    print, 'z FWHM= ',2.35*sigmaz*1e3,' mum'
     print, 'z fit: ', fitz
-    print, 'y FWHM= ',2.35*sigmay
+    print, 'y FWHM= ',2.35*sigmay*1e3,' mum'
     print, 'y fit: ', fity
 
     oplot, z_vec, zfit, color=3, thick=2 
