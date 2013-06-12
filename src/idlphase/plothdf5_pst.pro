@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Jun 13 12:23:33 flechsig> 
+;  Time-stamp: <12 Jun 13 16:13:03 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm, arr=arr
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -90,7 +90,8 @@ h5f_close, file_id
 
 help, field0, y_vec, z_vec
 field1= reform(field0, n_elements(z_vec), n_elements(y_vec))
-help, field0, field1, y_vec, z_vec
+arr=field1
+help, field0, field1, y_vec, z_vec, arr
 ;print,field1
 
 if keyword_set(norm) then field1= field1/max(field1)
@@ -109,19 +110,21 @@ endelse
 if keyword_set(cut) then begin
     size0= size(field1)
     ycenteridx = size0[1]/2
-    zcenteridx = size0[0]/2
+    zcenteridx = size0[3]/2
     zpro0= field1[*, ycenteridx]
     ypro0= field1[zcenteridx, *]
     zprof= zpro0/max(zpro0)
     yprof= ypro0/max(ypro0)
-
-    min=min(z_vec,y_vec)
-    max=max(z_vec,y_vec)
-
-    plot, [min, max], [0,1], xtitle='pos (mm)', ytitle='intensity', title='normalized profiles at the center',/nodata
-    oplot, z_vec, zprof, color=1
-    oplot, y_vec, yprof, color=2
-
+;help, y_vec
+    min=min([min(z_vec),min(y_vec)])
+    max=max([max(z_vec),max(y_vec)])
+;help, y_vec
+;print,'start plot'
+    plot, [min, max], [0,1.1], xtitle='pos (mm)', ytitle='intensity', title='normalized profiles at the center',/nodata
+    oplot, z_vec, zprof, color=1, thick=2
+    oplot, y_vec, yprof, color=2, thick=2
+;help, y_vec
+;print,'start fit'
     zfit= gaussfit(z_vec, zprof, fitz, nterms=4)
     yfit= gaussfit(y_vec, yprof, fity, nterms=4)
 ;    help, zrof, fitz
@@ -132,8 +135,8 @@ if keyword_set(cut) then begin
     print, 'y FWHM= ',2.35*sigmay
     print, 'y fit: ', fity
 
-    oplot, z_vec, zfit, color=3 
-    oplot, y_vec, yfit, color=4 
+    oplot, z_vec, zfit, color=3, thick=2 
+    oplot, y_vec, yfit, color=4, thick=2 
     legend, ['hor cut','vert cut','hor fit','vert fit'], color=[1,2,3,4],linestyle=[0,0,0,0],thick=[2,2,2,2]
 endif
 
