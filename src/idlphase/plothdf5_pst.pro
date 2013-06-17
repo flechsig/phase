@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Jun 13 16:19:08 flechsig> 
+;  Time-stamp: <12 Jun 13 16:20:17 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -115,7 +115,7 @@ if keyword_set(cut) then begin
     ypro0= field1[zcenteridx, *]
     zprof= zpro0/max(zpro0)
     yprof= ypro0/max(ypro0)
-;help, y_vec
+help, y_vec, ycenteridx
     min=min([min(z_vec),min(y_vec)])
     max=max([max(z_vec),max(y_vec)])
 ;help, y_vec
