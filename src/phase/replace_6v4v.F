@@ -15,10 +15,10 @@ c--------------------------------------------------------
         dimension fun4(0:7,0:7,0:7,0:7)
         dimension ypc1(0:7,0:7,0:7,0:7)
         dimension zpc1(0:7,0:7,0:7,0:7)
-        dimension ia(0:7,0:7),ic(0:7,0:7)
+c UF        dimension ia(0:7,0:7),ic(0:7,0:7)
         dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
      &            iac3(IADIM,0:7),iac4(IADIM,0:7)
-        dimension iac1l(IADIM,0:7)
+c UF        dimension iac1l(IADIM,0:7)
 		
 c	zu bestimmende Konstanten festlegen (ikst)
 	do ii=0,iord
