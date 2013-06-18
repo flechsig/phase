@@ -3,6 +3,8 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+
+#define IADIM  0:1716
 c--------------------------------------------------------
 	subroutine replace_6v4v(fun6,ypc1,zpc1,fun4,iord)
 c--------------------------------------------------------
@@ -14,9 +16,9 @@ c--------------------------------------------------------
         dimension ypc1(0:7,0:7,0:7,0:7)
         dimension zpc1(0:7,0:7,0:7,0:7)
         dimension ia(0:7,0:7),ic(0:7,0:7)
-        dimension iac1(1000000,0:7),iac2(1000000,0:7),
-     &            iac3(1000000,0:7),iac4(1000000,0:7)
-        dimension iac1l(1000000,0:7)
+        dimension iac1(IADIM,0:7),iac2(IADIM,0:7),
+     &            iac3(IADIM,0:7),iac4(IADIM,0:7)
+        dimension iac1l(IADIM,0:7)
 		
 c	zu bestimmende Konstanten festlegen (ikst)
 	do ii=0,iord
