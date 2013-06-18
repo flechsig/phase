@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-06-10 23:11:47 flechsig>  */
+/*  Time-stamp: <18 Jun 13 14:02:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -492,17 +492,20 @@ void read_hdf5_file(struct BeamlineType *bl, char *fname)
   double wavelength, gridsize, *field;
   struct PSDType *p;
 
-  printf("read_hdf5_file not yet ready- return\n");
-  return;
+#ifdef DEBUG  
+  printf("debug: read_hdf5_file called! file: %s\n", __FILE__);
+#endif 
+  
 
   hdf5type= check_hdf5_type(fname, 7, 1) ? 7 : 8;
 
  /* Open an existing file. */
   file_id = myH5Fopen(fname);
-  if ( hdf5type == 7) 
+  if ( hdf5type == 7)       /* phase */
     {
       cols  = getDatasetSize(file_id, "z_vec");
       rows  = getDatasetSize(file_id, "y_vec");
+      printf("rows= %d, cols= %d\n", rows, cols);
     }
   else 
     {
@@ -511,13 +514,27 @@ void read_hdf5_file(struct BeamlineType *bl, char *fname)
       rows= cols= sqrt(t_size / 2);
     }
 
+  ReAllocResult(bl, PLphspacetype, rows, cols);
+
+  fieldsize= rows* cols;
+
+  field= XMALLOC(double, fieldsize);
   p= (struct PSDType *)bl->RESULT.RESp;
-  
-  //  add_phase_psd_to_hdf5(file_id, bl);
-  
+
+  readDataDouble(file_id, "/phase_psd/psd", field, fieldsize);
+  readDataDouble(file_id, "/phase_psd/z", p->z, cols);
+  readDataDouble(file_id, "/phase_psd/y", p->y, rows);
   H5Fclose(file_id);
+
+  p->iy= rows;
+  p->iz= cols;
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      p->psd[row + col * rows]= field[col + row * cols];                        /* psd comes in fortran model */
   
-  printf("read hdf5 file: %s\n", fname);
+  XFREE(field);
+
+  printf("read hdf5 file: %s => done\n", fname);
 }  /* read_hdf5_file */
 
 void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
