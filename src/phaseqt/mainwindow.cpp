@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <18 Jun 13 11:03:32 flechsig> 
+//  Time-stamp: <18 Jun 13 11:49:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2598,6 +2598,8 @@ int MainWindow::getPlotStyle()
 // returns 0 if check canceled 
 int MainWindow::FileExistCheckOK(char *name)
 {
+  // QFile file(name);
+  
   int  ret;
   char infostr[MaxPathLength];
   
@@ -2617,5 +2619,21 @@ int MainWindow::FileExistCheckOK(char *name)
 	}
     } // file does not exist or can be overwritten
   return 1;
-}
+} // FileExistCheckOK 
+
+// returns 0 if not found variante read
+int MainWindow::FileExistCheckOK(char *name, char *read)
+{
+  QFile file(name);
+  if (!file.open(QFile::ReadOnly))
+    {
+        QMessageBox::warning(this, tr("PHASE Qt"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(name)
+                             .arg(file.errorString()));
+        return 0;
+    }
+
+  return 1;
+} // FileExistCheckOK variante read
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
