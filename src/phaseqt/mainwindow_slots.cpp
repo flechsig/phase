@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2013-06-10 22:02:13 flechsig> 
+//  Time-stamp: <18 Jun 13 11:31:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -484,12 +484,12 @@ void MainWindow::activateProc(const QString &action)
 #endif
     }
 
-if (!action.compare("readResulth5Act")) // hdf5
+  if (!action.compare("readResulth5Act")) // hdf5
     { 
-      cout << "read PHASE output in genesis_hdf5 format - experimental feature" << endl;
+      cout << "read PHASE output in hdf5 format - experimental feature" << endl;
 #ifdef HAVE_HDF5
       if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
-	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) 
+	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out, "read") ) 
 	myparent->my_read_hdf5_file();
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
