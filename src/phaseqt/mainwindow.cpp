@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <18 Jun 13 11:02:04 flechsig> 
+//  Time-stamp: <18 Jun 13 11:03:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -751,8 +751,8 @@ void MainWindow::createMenus()
     cmdMenu->addAction(writematAct);
     cmdMenu->addAction(writecoeffAct);
     cmdMenu->addAction(writesimpAct);
-    cmdMenu->->addSeparator();
-    cmdMenu->addAction(readResultAct);
+    cmdMenu->addSeparator();
+    cmdMenu->addAction(readResulth5Act);
     
     viewMenu = menuBar()->addMenu(tr("&View"));
 
