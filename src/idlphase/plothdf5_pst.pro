@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Jun 13 16:20:17 flechsig> 
+;  Time-stamp: <20 Jun 13 13:51:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm, arr=arr
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm, arr=arr, _extra=extra
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -98,12 +98,12 @@ if keyword_set(norm) then field1= field1/max(field1)
 
 
 if keyword_set(surface) then begin 
-    surface,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', charsize=3
+    surface,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', charsize=3, _extra=extra
 endif else begin
     if keyword_set(shade_surf) then begin
-        shade_surf, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
+        shade_surf, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', _extra=extra
     endif else begin
-        mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)'
+        mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', _extra=extra
     endelse
 endelse
 
@@ -120,7 +120,7 @@ help, y_vec, ycenteridx
     max=max([max(z_vec),max(y_vec)])
 ;help, y_vec
 ;print,'start plot'
-    plot, [min, max], [0,1.1], xtitle='pos (mm)', ytitle='intensity', title='normalized profiles at the center',/nodata
+    plot, [min, max], [0,1.1], xtitle='pos (mm)', ytitle='intensity', title='normalized profiles at the center',/nodata, _extra=extra
     oplot, z_vec, zprof, color=1, thick=2
     oplot, y_vec, yprof, color=2, thick=2
 ;help, y_vec
