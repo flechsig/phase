@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Jun 13 13:51:42 flechsig> 
+;  Time-stamp: <20 Jun 13 14:12:20 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm, arr=arr, _extra=extra
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm, arr=arr, xvec=xvec, yvec=yvec, _extra=extra
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -91,6 +91,9 @@ h5f_close, file_id
 help, field0, y_vec, z_vec
 field1= reform(field0, n_elements(z_vec), n_elements(y_vec))
 arr=field1
+xvec=z_vec
+yvec=y_vec
+
 help, field0, field1, y_vec, z_vec, arr
 ;print,field1
 
