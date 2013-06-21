@@ -3,6 +3,7 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+c UF sind in den dimensions eventuell Schreibfehler
       subroutine subl7(ypc1,zpc1,dypc,dzpc,xmec)
       implicit real*8(a-h,o-z)
       dimension yp1c(0:7,0:7,0:7,0:7),
