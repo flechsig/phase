@@ -4,10 +4,13 @@ c$$$ $Revision$
 c$$$ $Author$ 
 
 c UF sind in den dimensions eventuell Schreibfehler
+c UF 22.6.13 correct it
       subroutine subl7(ypc1,zpc1,dypc,dzpc,xmec)
-      implicit real*8(a-h,o-z)
-      dimension yp1c(0:7,0:7,0:7,0:7),
-     &          zp1c(0:7,0:7,0:7,0:7),
+c      implicit real*8(a-h,o-z)
+c      dimension yp1c(0:7,0:7,0:7,0:7),
+c     &          zp1c(0:7,0:7,0:7,0:7),
+      dimension ypc1(0:7,0:7,0:7,0:7),
+     &          zpc1(0:7,0:7,0:7,0:7),
      &          dypc(0:7,0:7,0:7,0:7),
      &          dzpc(0:7,0:7,0:7,0:7),
      &          xmec(1:4,1:4,0:7,0:7,0:7,0:7)
