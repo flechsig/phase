@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <18 Jun 13 14:04:21 flechsig> 
+//  Time-stamp: <24 Jun 13 15:33:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1624,7 +1624,7 @@ void MainWindow::openBeamline()
   //  int result;
   //myparent->myBeamline()->QtPhase::print();
 
-  #warning unresolved spurious bug
+  //#warning unresolved spurious bug
   //TODO: SG found spurious bug: on pc7753, if the string in variable filename 
   // has the length 56, toAscii().data() points to a C-string of the length 57
   // and this filename will then not be found;
@@ -1638,7 +1638,6 @@ void MainWindow::openBeamline()
     cerr << "Please report the bug and use a filename with a different length for now." << endl;
     exit(-1);
   }
-  
   
   if (!fileName.isEmpty()) 
     {
