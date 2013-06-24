@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Jun 13 10:45:06 flechsig>  */
+/*   Time-stamp: <24 Jun 13 15:09:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -267,62 +267,8 @@ void PST(struct BeamlineType *bl)
  
    if (bl->BLOptions.ifl.pst_mode <= 0)                       /* pst_mode == 0 the fortran version */
      { 
-#ifdef OBSOLETE  
-     
-#ifdef DEBUG
-       printf("debug: %s: calling pstf(...)\n", __FILE__);
-#endif
-       
-       xirp = XMALLOC(struct integration_results, 1);
-       stp  = XMALLOC(struct statistics, 1);
-
-       pstf(psip,                 &bl->BLOptions.PSO,
-	    &bl->BLOptions.lambda, &bl->BLOptions.ifl.iord, 
-	    &bl->xlm.xlen1c,       &bl->xlm.xlen2c, 
-	    &bl->xlen0,     &bl->ypc1,  
-	    &bl->zpc1,      &bl->dypc, 
-	    &bl->dzpc, 
-	    &bl->wc,        &bl->xlc,
-	    PSDp->y,        PSDp->z, 
-	    PSDp->psd,      PSDp->stfd1phmaxc,
-	    PSDp->stinumbc, PSDp->s1c,
-	    PSDp->s2c,      PSDp->s3c,
-	    PSDp->eyrec,    PSDp->ezrec,
-	    PSDp->eyimc,    PSDp->ezimc,
-	    gp,             mirp, 
-	    &bl->src,       &bl->BLOptions.apr, 
-	    &ra,            &bl->BLOptions.ifl,
-	    &bl->BLOptions.xi, xirp, 
-	    stp,            &bl->fdetc,     
-	    &bl->fdetphc,   &bl->fdet1phc, 
-	    &bl->fdet1phca, &bl->fdet1phcb,
-	    (int *)bl);
-
-
-       printf("copy simpson results [s1]\n");      
-       
-       memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-       memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-       memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-       memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-       memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-       memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-       //TODO: check if MAX_INTEGRATION_SIZE is appropriate for d12 as well
-       memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
-       
-       XFREE(stp);
-       XFREE(xirp);
-
-#ifdef DEBUG
-       printf("debug: pst.c: returning from call pstf(...)\n");
-       printf("point 0,0= %e\n",  PSDp->psd[0]);
-#endif
-
-#else   /* obsolete not defined */
        printf("%s: pst_mode == %d, you try to call obsolete function pstf()\n", __FILE__, bl->BLOptions.ifl.pst_mode);
-       printf("%s: this phase version has been compiled without compiler option OBSOLETE - exit\n");
        exit(-1);
-#endif
      }
    else    // c replacement
      {
