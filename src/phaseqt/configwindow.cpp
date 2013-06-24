@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <18 Mar 13 08:50:46 flechsig> 
+//  Time-stamp: <24 Jun 13 17:32:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -178,7 +178,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 			    if ( !strncmp(description, "so6_fsource6", 3) ) 
 			      {
 				strncpy(myparent->myBeamline()->filenames.so6_fsource6, fname, MaxPathLength); 
-				strncpy(myparent->myBeamline()->src.so6.fsource6, fname, 80);
+				// strncpy(myparent->myBeamline()->src.so6.fsource6, fname, 80);
 			      } else
 			      if ( !strncmp(description, "so7", 3) ) 
 				strncpy(myparent->myBeamline()->filenames.so7_hdf5, fname, MaxPathLength); 

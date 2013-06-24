@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <18 Jun 13 11:49:22 flechsig> 
+//  Time-stamp: <24 Jun 13 17:38:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1461,24 +1461,24 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 16:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
-      qst.setNum(mysrc->so5.dipcy, 'g', 4);
+      //      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcy);
+      //      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcy= 0;   // default
+      //      qst.setNum(mysrc->so5.dipcy, 'g', 4);
       break;
     case 17:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
-      qst.setNum(mysrc->so5.dipcz, 'g', 4);
+      //      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipcz);
+      //      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipcz= 0;   // default
+      //      qst.setNum(mysrc->so5.dipcz, 'g', 4);
       break;
     case 18:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
-      qst.setNum(mysrc->so5.dipdisy, 'g', 4);
+      //      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisy);
+      //      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisy= 0;   // default
+      //      qst.setNum(mysrc->so5.dipdisy, 'g', 4);
       break;
     case 19:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
-      qst.setNum(mysrc->so5.dipdisz, 'g', 4);
+      //      if (!init) scanned= sscanf(text, "%lg", &mysrc->so5.dipdisz);
+      //      if ((scanned == EOF) || (scanned == 0)) mysrc->so5.dipdisz= 0;   // default
+      //      qst.setNum(mysrc->so5.dipdisz, 'g', 4);
       break;
 
     case 20:
@@ -1503,28 +1503,28 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 24:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
-      qst.setNum(mysrc->so1.isrcy);
+      //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
+      //if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
+      //qst.setNum(mysrc->so1.isrcy);
       break;
     case 25:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
-      qst.setNum(mysrc->so1.isrcdy);
+      //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
+      //qst.setNum(mysrc->so1.isrcdy);
       break;
     case 26:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
-      qst.setNum(mysrc->so1.sigmay, 'g', 4);
+      //if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
+      //qst.setNum(mysrc->so1.sigmay, 'g', 4);
       break;
     case 27:
-      if (!init) 
-	{ 
-	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
-	  mysrc->so1.sigmayp*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
-      qst.setNum(mysrc->so1.sigmayp*1e3,  'g', 4);
+      //if (!init) 
+	//{ 
+	  //scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
+	  //mysrc->so1.sigmayp*= 1e-3;
+	  //	}
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
+      //qst.setNum(mysrc->so1.sigmayp*1e3,  'g', 4);
       break;
 
     case 28:
@@ -1552,28 +1552,28 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 31:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
-      qst.setNum(mysrc->so1.isrcz);
+      //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcz);
+      //if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcz= 0;   // default
+      //qst.setNum(mysrc->so1.isrcz);
       break;
     case 32:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
-      qst.setNum(mysrc->so1.isrcdz);
+      //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdz);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdz= 0;   // default
+      //qst.setNum(mysrc->so1.isrcdz);
       break;
     case 33:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
-      qst.setNum(mysrc->so1.sigmaz, 'g', 4);
+      //if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmaz);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmaz= 0;   // default
+      //qst.setNum(mysrc->so1.sigmaz, 'g', 4);
       break;
     case 34:
-      if (!init)
-	{
-	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
-	  mysrc->so1.sigmazp*= 1e-3;
-	}
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
-      qst.setNum(mysrc->so1.sigmazp*1e3, 'g', 4);
+      //if (!init)
+      //	{
+      //	  scanned= sscanf(text, "%lg", &mysrc->so1.sigmazp);
+      //	  mysrc->so1.sigmazp*= 1e-3;
+      //	}
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmazp= 0;   // default
+      //qst.setNum(mysrc->so1.sigmazp*1e3, 'g', 4);
       break;
 
     case 35:

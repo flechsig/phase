@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <24 Jun 13 15:54:17 flechsig> 
+#  Time-stamp: <24 Jun 13 18:15:46 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -36,10 +36,10 @@ phaseqt_SOURCES = \
 	../phase/replace_wl_in_u.F ../phase/replace_wl_in_ypzp.F \
 	../phase/taylor-ops.for \
 	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
-        ../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for \
-        ../phase/posrc.c ../phase/posrc.h \
-	../phaselib/misali_8.f ../phaselib/misali4_8.f \
-        ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
+	../phase/posrc.c ../phase/posrc.h 
+##../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for 
+##	../phaselib/misali_8.f ../phaselib/misali4_8.f 
+##        ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
 
 # for all *.h and *.qrc add one *.cpp
 nodist_phaseqt_SOURCES = \
@@ -49,7 +49,8 @@ nodist_phaseqt_SOURCES = \
 	moc_plotmatrix.cpp moc_plot2x2.cpp
 
 ## UF 28.8.2012 take this out for phaseqt
-#phaseqt_LDADD = $(libdir)/@LIBPHASE@
+## UF 22.6.2013 take new version in again
+phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \

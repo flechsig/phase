@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <20 Jul 12 15:52:09 flechsig>  */
+/*   Time-stamp: <24 Jun 13 17:28:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -216,12 +216,12 @@ struct source4c {
 struct  sources {                            /* Sammelstruktur         */
   double pin_yl0, pin_yl, pin_zl0, pin_zl;   /* changed position 17.12.2005 */
 
-  struct source1 so1;                        /* Gauss + Hard edge      */
+  /* struct source1 so1;                        /* Gauss + Hard edge      */
   /* struct source2 so2;                     /* Zernike                */
   /* struct source3 so3;                     /* radiale Vert. vom File */
   struct source4 so4;                        /* Quelle von File        */
-  struct source5 so5;                        /* Dipol Quelle           */
-  struct source6 so6;                        /* Brightness             */
+  /* struct source5 so5;                        /* Dipol Quelle           */
+  /* struct source6 so6;                        /* Brightness             */
   
   int  isrctype;
 };     
