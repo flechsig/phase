@@ -1,6 +1,6 @@
-c$$$ File      : ~/phase/src/phase/phase_integration.F
+c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <24 Jun 13 14:46:28 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 15:00:52 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -303,8 +303,6 @@ c*************************************************************
 
 	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
      &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
-
-
 
 #include '../phase/phase_struct.F'
 
@@ -761,32 +759,6 @@ c--------------- ist zu checken
 	end
 c---------------------- end fywert -----------------------
 
-c**************************************************************
-	subroutine int_2d(f,xint,dy,dz,ny,nz)
-c**************************************************************
-
-	implicit real*8(a-h,o-z)
-
-        dimension f(4096,4096),fz(4096)
-
-        do i=1,ny
-	 fz(i)=0.5d0*(f(i,1)+f(i,nz))
-         do j=2,nz-1
-          fz(i)=fz(i)+f(i,j)
-         enddo
-	 fz(i)=fz(i)*dz
-	enddo
-
-	xint=0.5d0*(fz(1)+fz(ny))
-	do i=2,ny-1
-         xint=xint+fz(i)
-	enddo
-
-	xint=xint*dy
-
-	return
-	end
-c------------------------- end int_2d ----------------------
 
 c***********************************************************
 c UF 12.1.2000
