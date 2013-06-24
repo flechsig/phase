@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <13 May 13 14:32:22 flechsig>  */
+/*  Time-stamp: <24 Jun 13 10:23:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -35,7 +35,7 @@ int main(unsigned int argc, char *argv[])
   
   switch (setupswitch)
     {
-    case 1:  //ohne -b
+    case 1:  // ohne -b
     case 3:
     case 5:  // option -b braucht ist optional
     case 7:
