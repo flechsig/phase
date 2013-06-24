@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Jun 13 15:09:14 flechsig>  */
+/*   Time-stamp: <24 Jun 13 15:10:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -261,10 +261,6 @@ void PST(struct BeamlineType *bl)
 
    Test4Grating(bl); /* not in threads */
 
-#ifdef DEBUG 
-   printf("debug: pst.c: allocating memory for structs\n");
-#endif
- 
    if (bl->BLOptions.ifl.pst_mode <= 0)                       /* pst_mode == 0 the fortran version */
      { 
        printf("%s: pst_mode == %d, you try to call obsolete function pstf()\n", __FILE__, bl->BLOptions.ifl.pst_mode);
