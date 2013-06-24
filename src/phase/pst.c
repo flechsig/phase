@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <13 May 13 14:19:20 flechsig>  */
+/*   Time-stamp: <24 Jun 13 10:45:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -437,7 +437,7 @@ void pstc(struct BeamlineType *bl)
   npoints= sp->iheigh * sp->iwidth;
   next= 0;
 
-  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs);
+  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 
   printf("\n");
 
