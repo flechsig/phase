@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <03 Apr 12 14:31:11 flechsig> 
+#  Time-stamp: <24 Jun 13 16:07:32 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -13,7 +13,7 @@
 # installed libraries can coexists but- we keep only one set of object files!
 # i.e. to built a library for a new compiler the objects have to be cleaned
 
-COMMONSOURCES= \
+OLDCOMMONSOURCES= \
 misali.F       misali_8.f \
 misali4.f      misali4_8.f \
 misali3.f      misali3_8.f \
@@ -60,6 +60,14 @@ dfpl1_uf.F  dfpl2_uf.F dfpl1a.F \
 ../phase4idl/ATnT_port3_driftroutines/port/d1mach.f \
 ../phase4idl/ATnT_port3_driftroutines/port/i1mach.f \
 ../phase4idl/ATnT_port3_driftroutines/port/s88fmt.f 
+
+COMMONSOURCES= \
+misali_8.f \
+misali4_8.f \
+misali3_8.f \
+misali2_8.f \
+misali1_8.f 
+
 
 ## funktioniert so nicht UF -- routinen muss man einzeln dazulinken 
 ## oder im include den relativen pfad angeben startend von phaselib
