@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <2012-08-29 22:44:19 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 15:45:50 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1981,7 +1981,8 @@ cc        include '../phase/phase_struct.for'
       character*80 dfile
       character*1 dummy
       integer iname,clen1
-      real *8 epsilon
+      real *8 epsilon,dummy8
+      
 
  1    format(1a1)	
  3    format(a80)
@@ -2023,7 +2024,7 @@ c-- UF 17.11.08 end
 c-- UF 17.11.08 start
       read(16,3)dfile
       iname=clen1(dfile)
-      src.so6.fsource6(:iname)=dfile(:iname)
+c      src.so6.fsource6(:iname)=dfile(:iname)
 c-- UF 17.11.08 end
 
 c--------pinhole in source plane	
@@ -2036,12 +2037,12 @@ c--------pinhole in aperture plane
       read(16,*)apr.ymin_ap,apr.ymax_ap
       read(16,*)apr.zmin_ap,apr.zmax_ap
 
-      read(16,*)src.so5.dipcy
-      read(16,*)src.so5.dipcz
-      read(16,*)src.so5.dipdisy
-      read(16,*)src.so5.dipdisz
-      read(16,*)src.so5.dipymin,src.so5.dipymax
-      read(16,*)src.so5.dipzmin,src.so5.dipzmax
+      read(16,*)dummy8 ! src.so5.dipcy
+      read(16,*)dummy8 ! src.so5.dipcz
+      read(16,*)dummy8 ! src.so5.dipdisy
+      read(16,*)dummy8 ! src.so5.dipdisz
+      read(16,*)dummy8 ! src.so5.dipymin,src.so5.dipymax
+      read(16,*)dummy8 ! src.so5.dipzmin,src.so5.dipzmax
 
       read(16,*)ifl.igrating
       read(16,*)ifl.inorm
@@ -2049,9 +2050,9 @@ c--------pinhole in aperture plane
       read(16,*)ifl.inorm2
       read(16,*)ifl.matrel
 
-      read(16,*)src.so1.isrcy,src.so1.isrcdy
-      read(16,*)src.so1.sigmay,src.so1.sigmayp
-      src.so1.sigmayp=src.so1.sigmayp/1000. ! mrad -> rad
+      read(16,*)dummy8 ! src.so1.isrcy,src.so1.isrcdy
+      read(16,*)dummy8 ! src.so1.sigmay,src.so1.sigmayp
+c      src.so1.sigmayp=src.so1.sigmayp/1000. ! mrad -> rad
       read(16,*)xi.ymin,xi.ymax ! mrad -> rad
       xi.ymin=xi.ymin/1000.
       xi.ymax=xi.ymax/1000.
@@ -2062,9 +2063,9 @@ c      read(16,*)xi.imaxy
 c      read(16,*)xi.fracy
 c      read(16,*)xi.frac1y
 
-      read(16,*)src.so1.isrcz,src.so1.isrcdz
-      read(16,*)src.so1.sigmaz,src.so1.sigmazp
-      src.so1.sigmazp=src.so1.sigmazp/1000. ! mrad -> rad
+      read(16,*)dummy8 !src.so1.isrcz,src.so1.isrcdz
+      read(16,*)dummy8 !src.so1.sigmaz,src.so1.sigmazp
+c      src.so1.sigmazp=src.so1.sigmazp/1000. ! mrad -> rad
       read(16,*)xi.zmin,xi.zmax ! mrad -> rad
       xi.zmin=xi.zmin/1000.		
       xi.zmax=xi.zmax/1000.

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Jun 13 15:10:53 flechsig>  */
+/*   Time-stamp: <24 Jun 13 15:13:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -235,24 +235,8 @@ void MPST(struct BeamlineType *bl)
 } /* end MPST */
 
 void PST(struct BeamlineType *bl) 
-/* Phasenraumtransformation interface zur Fortran Routine 	*/
-/* Die Structur statistic macht probleme- als reine Ausgabe sollte sie 
-   in c allociert werden */
+/* Phasenraumtransformation interface zur Fortran Routine (obsolete) */
 {
-
-/* leere Variablen */
-   struct PSImageType *psip;
-   struct PSDType *PSDp;
-   struct rayst ra;                         /* wird nicht genutzt */
-   struct source_results sr;
-// STACK!  struct integration_results xir;
-   struct integration_results *xirp;
-// STACK!  struct statistics st;          /* bereitet probleme (Absturz) */
-   struct statistics *stp;
-   
-   /* UF 28.11.06 */
-   PSDp= (struct PSDType *)bl->RESULT.RESp; 
-   psip= (struct PSImageType *)bl->RTSource.Quellep;
 
  #ifdef DEBUG  
    printf("pst.c: phase space trafo PST called\n");
@@ -343,11 +327,11 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
 /* beamline goes in, integration results and statistics goes out */
 void pstc(struct BeamlineType *bl)
 {
-  int i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next;  
+  int    i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next;  
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
   struct map4 *m4p;
   struct constants cs;
-  FILE *fd;
+  FILE   *fd;
   
   /*struct integration_results xir;*/
   /*struct statistics st;*/

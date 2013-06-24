@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <31 Aug 12 10:54:52 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 15:49:52 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -52,13 +52,13 @@ c	record /source6/ so6
 
 #ifdef OLD_PO_SOURCE
 	write(*,*) 'src_ini: source type:',src.isrctype
-	if(src.isrctype.lt.4.or.src.isrctype.gt.6)write(*,*)'unknown/obsolete source type-> calculation will fail'
+	if(src.isrctype.lt.4.or.src.isrctype.gt.4)write(*,*)'unknown/obsolete source type-> calculation will fail'
 
 c	if(src.isrctype.eq.2)call src2_ini(src.so2)
 c	if(src.isrctype.eq.3)call src3_ini(src.so3)
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
-	if(src.isrctype.eq.5)write(*,*)'srctype=5 is currently not implemented'
-	if(src.isrctype.eq.6)call src6_ini(src.so6)
+c	if(src.isrctype.eq.5)write(*,*)'srctype=5 is currently not implemented'
+c	if(src.isrctype.eq.6)call src6_ini(src.so6)
 #else
 	write(*,*) 'src_ini: obsolete routine called- send bug report'
 #endif
@@ -214,7 +214,7 @@ c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
 	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
-	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
+c	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
 c	endif	! size of OE
 c	endif	! aperture plane
@@ -224,6 +224,8 @@ c	endif	! aperture plane
         end
 c---------------------- end psdi ------------------------------
 
+
+#ifdef OBSOLETE
 c*****************************************************************
 	subroutine src1(cs,g,ra,so1,sr,ifl)
 c*****************************************************************
@@ -279,6 +281,7 @@ cc	include 'phase_struct.for'
 	return
 	end
 c-------------------- end src1 -------------------------------
+#endif
 
 #ifdef PHASELIB
 c*****************************************************************

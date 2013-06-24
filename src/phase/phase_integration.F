@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <24 Jun 13 15:00:52 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 15:52:51 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -429,7 +429,7 @@ c-------------------------------------------------------------------------
 	 densizim(i)=sr.denszim
 
 	  if(ifl.ibright.eq.1)then
-	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
+c UF	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
 	  endif
 
 	dy(i)=dyy
