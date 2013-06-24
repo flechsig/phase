@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Jun 13 18:10:53 flechsig> 
+#  Time-stamp: <24 Jun 13 18:21:21 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -69,8 +69,8 @@ misali2_8.f \
 misali1_8.f \
 wdfgmapm17.for \
 wdfgmapm27.for \
-wdfgmapl7.for 
-
+wdfgmapl7.for \
+q0_q1_q2_8.for 
 
 ## funktioniert so nicht UF -- routinen muss man einzeln dazulinken 
 ## oder im include den relativen pfad angeben startend von phaselib
