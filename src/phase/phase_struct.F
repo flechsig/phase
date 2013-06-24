@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <25 Apr 13 13:50:48 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 12:08:40 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -60,7 +60,8 @@ c--------------- fourth order map ---------------------------
      &              xlen3c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              xlen4c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              xlen5c(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
-     &              ypc_ap(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),zpc_ap(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              ypc_ap(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
+     &              zpc_ap(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              ypc_ap_r(0:MAPDIM,0:MAPDIM),zpc_ap_r(0:MAPDIM,0:MAPDIM),
      &              ypc_ap_rr(0:MAPDIM),zpc_ap_rr(0:MAPDIM),
      &              fdetc(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
@@ -70,7 +71,8 @@ c--------------- fourth order map ---------------------------
      &              fdet1phcb(0:MAPDIM,0:MAPDIM,0:MAPDIM,0:MAPDIM),
      &              fdetrc(0:MAPDIM,0:MAPDIM),
      &              fdetphrc(0:MAPDIM,0:MAPDIM),
-     &              fdet1phrc(0:MAPDIM,0:MAPDIM),fdet1phrca(0:MAPDIM,0:MAPDIM),fdet1phrcb(0:MAPDIM,0:MAPDIM),
+     &              fdet1phrc(0:MAPDIM,0:MAPDIM),fdet1phrca(0:MAPDIM,0:MAPDIM),
+     &              fdet1phrcb(0:MAPDIM,0:MAPDIM),
      &              yprc1(0:MAPDIM,0:MAPDIM),zprc1(0:MAPDIM,0:MAPDIM),
      &              dyprc(0:MAPDIM,0:MAPDIM),dzprc(0:MAPDIM,0:MAPDIM),
      &              fdtrrc(0:MAPDIM),
