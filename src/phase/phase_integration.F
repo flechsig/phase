@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <31 Aug 12 10:52:52 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 10:17:45 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -42,7 +42,7 @@ c Aenderungen von JB am 11.2.00
 c UF habe xxsave eingefuehrt !!! pruefen
 c*********************************************************
 c UF 12.1.2000
-c #define DEBUG1
+#define DEBUG1
       subroutine adaptive_int(m4,g,am,src,apr,cs,ra,
      &                       ifl,xi,xir,st,sp,blp)
 c*********************************************************
