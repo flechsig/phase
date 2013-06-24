@@ -2,6 +2,7 @@ c$$$ $Source$
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
       subroutine misali3_8(a,anew,drw)
       implicit real*8(a-h,o-z)
       dimension a(0:8,0:8),anew(0:8,0:8)
