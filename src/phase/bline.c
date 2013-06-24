@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2013-05-13 12:30:36 flechsig>  */
+/*   Time-stamp: <24 Jun 13 17:42:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1274,7 +1274,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20130425;    /* today */
+   int  i, version= 20130624;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1304,7 +1304,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version APR 2013\n");
+   fprintf(f, "This is a datafile of PHASE, file version JUN 2013\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1685,7 +1685,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    char * line = NULL;
    size_t len = 0;
    ssize_t read;
-   int  rcode, i, version, thisversion= 20130425;   /* das aktuelle Datum */
+   int  rcode, i, version, thisversion= 20130624;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd; 
