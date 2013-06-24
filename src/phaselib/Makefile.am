@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Jun 13 16:07:32 flechsig> 
+#  Time-stamp: <24 Jun 13 16:15:57 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -62,7 +62,7 @@ dfpl1_uf.F  dfpl2_uf.F dfpl1a.F \
 ../phase4idl/ATnT_port3_driftroutines/port/s88fmt.f 
 
 COMMONSOURCES= \
-misali_8.f \
+misali_8.f  \
 misali4_8.f \
 misali3_8.f \
 misali2_8.f \
