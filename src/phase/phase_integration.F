@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <24 Jun 13 10:20:10 flechsig> 
+c$$$ Time-stamp: <24 Jun 13 10:20:53 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -416,7 +416,7 @@ c-------------------------------------------------------------------------
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	 
 #ifdef DEBUG1
-        write(6,*)' call fywert'
+        write(6,*)' call fywert, i=', i
 #endif
  
  	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
