@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <13 May 13 14:20:47 flechsig>  */
+/*  Time-stamp: <24 Jun 13 10:32:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -21,7 +21,7 @@
 #include "pst_thread.h"
 #include "common.h"
 
-/* we split the number of ponts in the pst into numthreads threads or tasks */
+/* we split the number of points in the pst into numthreads threads or tasks */
 /* for speed it may help to allow more threads than cores */ 
 void pst_thread(struct BeamlineType *bl, int numthreads)
 {
