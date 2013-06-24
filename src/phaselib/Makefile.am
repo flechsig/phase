@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Jun 13 16:15:57 flechsig> 
+#  Time-stamp: <24 Jun 13 18:10:53 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -66,7 +66,10 @@ misali_8.f  \
 misali4_8.f \
 misali3_8.f \
 misali2_8.f \
-misali1_8.f 
+misali1_8.f \
+wdfgmapm17.for \
+wdfgmapm27.for \
+wdfgmapl7.for 
 
 
 ## funktioniert so nicht UF -- routinen muss man einzeln dazulinken 
