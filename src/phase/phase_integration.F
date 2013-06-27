@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <24 Jun 13 15:52:51 flechsig> 
+c$$$ Time-stamp: <2013-06-27 21:38:09 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -130,6 +130,7 @@ c************************************************
 c	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
 	endif
 
+#ifdef DEBUG1
 1       format(d15.5)
         do i=0,ifl.iord
         do j=0,ifl.iord-i
@@ -142,6 +143,7 @@ c        write(6,*)i,j,k,l,m4.xlen1c(i,j,k,l),m4.xlen2c(i,j,k,l)
         enddo
         enddo
         enddo
+#endif
 
 c*******************************************************
 c	Erstellen eines reduzierten Konstantensatzes
