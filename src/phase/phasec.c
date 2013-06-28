@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <03 Jun 13 11:49:01 flechsig>  */
+/*   Time-stamp: <28 Jun 13 16:50:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -67,6 +67,9 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
   bl->RTSource.SourceRays= NULL;
   bl->beamlineOK= 0;
   bl->tp= NULL;
+  bl->RTSource.Quellep= NULL;
+  bl->RTSource.QuellTyp= '0';
+
   ReadBLFile(bl->filenames.beamlinename, bl);
 
   if (iord != -1)  bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
