@@ -37,9 +37,9 @@ c        dimension ia(0:7,0:7),ic(0:7,0:7)
 c        dimension iac1l(IADIM,0:7)
 
 c UF 20.5.13
-#ifdef DEBUG1       
-        write(*,*)'debug: rekursiv_2d_8.F subd345a called'
-#endif
+c#ifdef DEBUG1       
+c        write(*,*)'debug: rekursiv_2d_8.F subd345a called'
+c#endif
 	ianz1max=0
 c end UF
 
@@ -67,9 +67,9 @@ c--------------------------------------------------------
 	do n6=0,iord-n5
 
 c UF
-#ifdef DEBUG1
-	   write(*,*)'debug: loop n5,n6', n5,n6
-#endif
+c#ifdef DEBUG1
+c	   write(*,*)'debug: loop n5,n6', n5,n6
+c#endif
 c end uf
 
 	if(n5-1.ge.0)then
@@ -108,9 +108,9 @@ c---------------------------------------------------------
 	enddo
 
 c uf
-#ifdef DEBUG1
-	   write(*,*)'end loop n5,n6', n5,n6
-#endif
+c#ifdef DEBUG1
+c	   write(*,*)'end loop n5,n6', n5,n6
+c#endif
 c end uf
 
 c--------------------------------------------------------
@@ -292,9 +292,9 @@ c---------------------------------------------------------
 	endif
 
 c uf
-#ifdef DEBUG1
-	   write(*,*)'debug: trace 4, it,is,ik,ii',it,is,ik,ii
-#endif
+c#ifdef DEBUG1
+c	   write(*,*)'debug: trace 4, it,is,ik,ii',it,is,ik,ii
+c#endif
 c end uf
 
 	enddo		! loop �ber it
@@ -302,9 +302,9 @@ c end uf
 	enddo		! ik
 	enddo		! ii
 c uf
-#ifdef DEBUG1       
-        write(*,*)'debug: rekursiv_2d_8.F subd345a end ianz1max=',ianz1max
-#endif
+c#ifdef DEBUG1       
+c        write(*,*)'debug: rekursiv_2d_8.F subd345a end ianz1max=',ianz1max
+c#endif
 c end uf
 
 	return

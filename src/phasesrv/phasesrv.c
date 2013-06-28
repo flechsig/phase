@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <24 Jun 13 10:23:59 flechsig>  */
+/*  Time-stamp: <2013-06-28 20:37:03 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -32,7 +32,11 @@ int main(unsigned int argc, char *argv[])
   
   setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
 			      &selected, &iord, &numthreads, &format);
-  
+
+#ifdef DEBUG 
+  strncpy(&Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1);  /* for debugging */
+#endif 
+
   switch (setupswitch)
     {
     case 1:  // ohne -b
@@ -46,7 +50,6 @@ int main(unsigned int argc, char *argv[])
       break;
     default:
       printf("\nusage: phasesrv -h\n\n");
-      //myphaseQt.myGetPHASE((char*) MainPickName);
     }
 
   printf("phasesrv done (switch= %d)\n", setupswitch);

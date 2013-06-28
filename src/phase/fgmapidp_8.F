@@ -246,12 +246,16 @@ c       input:   dfdw6(w,l,y,z,yp,zp) & dfdl6(w,l,y,z,yp,zp)
 c       output:  ypc(w,l,y,z)       &  zpc(w,l,y,z)
 c
         imode=2
-#ifdef DEBUG       
+c#ifdef DEBUG       
 c UF 20.5.13
-        write(*,*)'debug: fgmapidp_8: call subd345a'
+c        write(*,*)'debug: fgmapidp_8: call subd345a'
+c#endif
+
         call subd345a(acc,dfdw6,dfdl6,ypc,zpc,imode,iord)
-        write(*,*)'debug: fgmapidp_8: back from subd345a'
-#endif
+
+c#ifdef DEBUG
+c        write(*,*)'debug: fgmapidp_8: back from subd345a'
+c#endif
 
 c        write(6,*)'================ am.a(0,0)',am.a(0,0)
 c        write(6,*)'================ q0_8(1,0,0,0,0,0)',q0_8(1,0,0,0,0,0)
@@ -402,9 +406,9 @@ c-----------------------------------------------------------------
 c---------------------------------------------------------------
 
         if(imodus.eq.2)then
-#ifdef DEBUG
-          write(*,*)'fgmapidp: make map for image to source iord=',iord
-#endif
+c#ifdef DEBUG
+c          write(*,*)'fgmapidp: make map for image to source iord=',iord
+c#endif
           call transponiere_8(am,g)    ! bild zur quelle
           g.xdens(1)=-g.xdens(1)
           g.xdens(3)=-g.xdens(3)
@@ -444,9 +448,9 @@ c---------------------------------------------------------------
           enddo
 
         else
-#ifdef DEBUG
-          write(*,*)' fgmapidp: S2Imap done  iord = ',iord
-#endif
+c#ifdef DEBUG
+c          write(*,*)' fgmapidp: S2Imap done  iord = ',iord
+c#endif
         endif   ! imodus 
 
         return

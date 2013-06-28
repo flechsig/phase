@@ -121,7 +121,7 @@ c	   inorm2 = 5: vollständige asymptotische Entwicklung bis order ord
 c
 
 
-	write(*,*)'fdet_8 called'
+c	write(*,*)'fdet_8 called'
 
 
 c---- routine wird nur gerufen wenn imodus = 2 (PO)
