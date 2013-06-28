@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <18 Mar 13 08:12:27 flechsig> 
+//  Time-stamp: <2013-06-28 19:56:14 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -93,6 +93,7 @@ void PhaseQt::buildBeamlineParallel()
 // this routine should be calle parallel
 void PhaseQt::buildElement(struct ElementType *listpt)
 {
+  int number= 99;
 #ifdef DEBUG
   cout <<  "debug: " << __FILE__ << " buildElement called" << endl;
 #endif
@@ -100,7 +101,7 @@ void PhaseQt::buildElement(struct ElementType *listpt)
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 	     this->BLOptions.REDUCE_maps, this->BLOptions.WithAlign, -1);    
   DefGeometryC(&listpt->GDat, &listpt->geo, &(this->BLOptions));  
-  MakeMapandMatrix(listpt, this, 99); // I guess it is not used UF
+  MakeMapandMatrix(listpt, this, &number); // I guess it is not used UF
 } //  end buildElement
 
 // initialize the c structure of filenames with a name
