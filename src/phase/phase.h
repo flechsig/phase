@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <25 Jun 13 16:54:42 flechsig>  */
+/*   Time-stamp: <28 Jun 13 18:06:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -523,7 +523,7 @@ void
 	     struct xlenmaptype *, 
 	     MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6,
 	     MAPTYPE_8X6, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
-	     struct mirrortype *, struct geometrytype *, int *, int *, int *, int *),
+	     struct mirrortype *, struct geometrytype *, int *, int *, int *),
   fill_m4(struct BeamlineType *, struct map4 *),
   fill_xirp(struct BeamlineType *, struct integration_results *),
   FixFocus(double, double, double, int, double *, double *),
@@ -549,7 +549,7 @@ void
   InitPHASE(struct PHASEset *), 
   LoadHorMaps(struct BeamlineType *, int), 
   MakeHorMaps(struct BeamlineType *),
-  MakeMapandMatrix(struct ElementType *, struct BeamlineType *, unsigned int),
+  MakeMapandMatrix(struct ElementType *, struct BeamlineType *, int *),
   make_matrix_8(),
   matrix_dim(int *, int *),
   minitdatset (struct mdatset *),

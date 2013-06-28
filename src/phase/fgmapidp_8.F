@@ -8,7 +8,7 @@ c-------------------------------------------------------------
      &             wc,xlc,ypc1,zpc1,ypc,zpc,dypc,dzpc,xlm,
      &             opl6,dfdw6,dfdl6,dfdww6,dfdwl6,dfdll6,dfdwww6,
      &		   dfdwidlj,dfdww,dfdwl,dfdll,
-     &             am,g,iord,imodus,iplmode,elindex)
+     &             am,g,iord,imodus,iplmode)
 c--------------------------------------------------------------------
 c
 c       this routine evaluates
@@ -62,7 +62,7 @@ c
 c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        integer elindex
+c        integer elindex
 #include '../phase/phase_struct.F'
         structure/pathlength/
             real*8 xlen1c(0:7,0:7,0:7,0:7),
@@ -146,12 +146,12 @@ c
 c----------------------------------------------------------
 
 #ifdef DEBUG
-c         write(6,*)'=============================== '
-c         write(6,*)' fgmapidp: imodus   = ',imodus
-c         write(6,*)' fgmapidp: iord     = ',iord
-c         write(6,*)' fgmapidp: iplmode  = ',iplmode
-c         write(6,*)' fgmapidp: acc      = ',acc
-          write(6,*)' fgmapidp: elindex  = ',elindex
+c         write(*,*)'=============================== '
+c         write(*,*)' fgmapidp: imodus   = ',imodus
+c         write(*,*)' fgmapidp: iord     = ',iord
+c         write(*,*)' fgmapidp: iplmode  = ',iplmode
+c         write(*,*)' fgmapidp: acc      = ',acc
+c          write(*,*)' fgmapidp: ielindex  = ',ielindex
 c          write(6,*)' fgmapidp: gridsize = ',GRIDSIZE
 c         write(6,*)'=============================== '
 #endif
@@ -445,7 +445,7 @@ c---------------------------------------------------------------
 
         else
 #ifdef DEBUG
-          write(*,*)' fgmapidp: elindex  = ',elindex,', S2Imap done  iord = ',iord
+          write(*,*)' fgmapidp: S2Imap done  iord = ',iord
 #endif
         endif   ! imodus 
 

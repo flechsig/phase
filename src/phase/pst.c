@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <26 Jun 13 12:13:36 flechsig>  */
+/*   Time-stamp: <28 Jun 13 17:43:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -156,9 +156,9 @@ void MPST(struct BeamlineType *bl)
     /* do PST */
     /*  start_watch();*/
     bl->BLOptions.CalcMod= 3;
-    #ifdef DEBUG
+#ifdef DEBUG
       printf("activate_proc: call MPST\n");
-    #endif    
+#endif    
     PST(bl);
     /* UF0804  UpdateMainList(); */
     /* stop_watch();*/
@@ -372,6 +372,7 @@ void pstc(struct BeamlineType *bl)
 #endif
       
     }
+
 #ifdef DEBUG      
   printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
   printf("pstc: start\n");

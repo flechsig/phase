@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <24 Jun 13 18:00:54 flechsig>  */
+/*   Time-stamp: <28 Jun 13 18:05:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -96,7 +96,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 	     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 	     ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 	     &listpt->mir, &listpt->geo,
-	     &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
+	     &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
   make_matrix_8(listpt->M_StoI, listpt->ypc1, listpt->zpc1,
 		listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 
@@ -128,7 +128,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
 		 ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		 &listpt->mir, &listpt->geo,
-		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
+		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
       make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
 		    listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
 
@@ -160,7 +160,8 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 /****************************************************************/
 void BuildBeamline(struct BeamlineType *bl)  
 {
-  unsigned int elcounter, elindex;
+  unsigned int elcounter;
+  static int elindex;            /* must be kept */
   int          imodus;
   struct ElementType *listpt; 
   struct TmpMapType  *ltp;              /* local pointer */
@@ -194,7 +195,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  //DefGeometryCnew(&listpt->GDat, &listpt->geo);
 	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);
             
-	  MakeMapandMatrix(listpt, bl, elindex); 
+	  MakeMapandMatrix(listpt, bl, &elindex); 
 	  //printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
@@ -935,7 +936,7 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
    readmatrixfilec(buffer, (double *)bl->rmap, dim); 
 } /* end LoadHorMaps */    
 
-void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsigned int elindex)
+void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, int *elindex)
 /************************************************************************/
 /* Uwe 7.6.96 								*/
 /* umgeschrieben auf memory 24.6.96 					*/
@@ -1010,7 +1011,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		  &listpt->mir, &listpt->geo,
-		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
+		  &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #ifdef XXXX 
        printf("\n2nd call fgmapidp_8\n\n");
 
@@ -1021,7 +1022,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 		  ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
 		  ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		  &listpt->mir, &listpt->geo,
-		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
+		 &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 #endif
        
      } /* end 7th order in seven order mode */
@@ -1109,7 +1110,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, unsig
 		      ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6, 
  		      ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll, 
 		      &listpt->mir, &listpt->geo,
-		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode, &elindex);
+		      &bl->BLOptions.ifl.iord, &imodus, &bl->BLOptions.ifl.iplmode);
 	   
 	 }
        else
