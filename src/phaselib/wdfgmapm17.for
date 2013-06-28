@@ -3,6 +3,9 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+c UF 25.6.13 diese Routine ist nicht thread safe- sie veraendert die input parameter
+c p1c und p1rc
+
       subroutine subm17(p1c,y,z,p1rc)
       implicit real*8(a-h,o-z)
       dimension   p1c(0:7,0:7,0:7,0:7)

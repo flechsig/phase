@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Jun 13 15:13:44 flechsig>  */
+/*   Time-stamp: <26 Jun 13 12:13:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -239,8 +239,8 @@ void PST(struct BeamlineType *bl)
 {
 
  #ifdef DEBUG  
-   printf("pst.c: phase space trafo PST called\n");
-   printf("  source typ: %d\n", bl->src.isrctype); 
+   printf("debug: pst.c: phase space trafo PST called");
+   printf("debug:   source typ: %d\n", bl->src.isrctype); 
  #endif
 
    Test4Grating(bl); /* not in threads */
@@ -332,6 +332,9 @@ void pstc(struct BeamlineType *bl)
   struct map4 *m4p;
   struct constants cs;
   FILE   *fd;
+  void   *vv, *vv1;
+  size_t n;
+
   
   /*struct integration_results xir;*/
   /*struct statistics st;*/
@@ -352,8 +355,22 @@ void pstc(struct BeamlineType *bl)
   if (bl->BLOptions.ifl.pst_mode == 1)                       /* pst_mode == 1 pst with external mp4 */
     { 
       printf("allocate and fill m4p in pstc\n");
+#ifdef DEBUG2
+      m4p = XMALLOC(struct map4, 2);
+      fill_m4(bl, m4p);
+      vv= (void *)m4p;
+      n= sizeof(struct map4);
+      vv1= vv + n;
+      printf("**************** m4p filled twice for debugging **************** %d %d %d\n", vv1, vv, n);
+      memcpy(vv1, vv, n);
+      printf("check_2_m4 after fill\n");
+      check_2_m4_(m4p);
+      
+#else
       m4p = XMALLOC(struct map4, 1);
       fill_m4(bl, m4p);
+#endif
+      
     }
 #ifdef DEBUG      
   printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
@@ -467,8 +484,18 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     exit(-1);
   }
     
+#ifdef DEBUG2
+  printf("check_2_m4 before adaptive_int\n");
+  check_2_m4_(m4p);
+#endif
+
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->ElementList[bl->gratingpos].mir, &bl->src, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
+
+#ifdef DEBUG2
+  printf("check_2_m4 after adaptive_int\n");
+  check_2_m4_(m4p);
+#endif
   
   if (bl->BLOptions.ifl.ispline == -1) 
     {
@@ -624,4 +651,34 @@ void norm_output(struct BeamlineType *bl)
 
   printf("norm_output: normalization done, max= %e\n", surfmax);
 } /* end norm_output */
+
+/* debug routine to check if m4 has been modified                              */
+/* for OK: *m4 is expected to contain two identical copies of map4 in sequence */
+void check_2_m4_(struct map4 *m4)
+{
+  size_t n;
+  void   *in, *out;
+  int    match;
+  double *a, *b;
+
+  n= sizeof(struct map4);
+  in= (void *)m4;
+  out= in + n;
+  match= memcmp(in, out, n);
+  a= (double *)in;
+  b= (double *)out;
+
+  printf("check_2_m4: in: %f, out: %f, %d %d\n", *a, *b, in, out);
+  if (match == 0) 
+    printf("map4 test OK\n");
+  else
+    {
+      printf("map4 test failed- exit\n");
+      exit(-1);
+    }
+} /* end check_2_m4 */
+
+
 /* end pst.c */
+
+

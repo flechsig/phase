@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <24 Jun 13 17:40:03 flechsig> 
+//  Time-stamp: <26 Jun 13 12:15:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -140,9 +140,21 @@ void MainWindow::activateProc(const QString &action)
 	  
 	  myparent->myTest4Grating();
           
+#ifdef DEBUG2
+	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
+	  if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) 
+	    {
+	      fill_m4(myparent->myBeamline(), m4p_cpp);
+	      cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
+	      size_t n= sizeof(struct map4);
+	      short *vp= (short *)m4p_cpp;
+	      std::copy(vp, vp+ n, vp);
+	    }
+#else
 	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
 	  if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
-	    
+#endif
+	  
 	  if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
 	  initconstants(csp_cpp);
 	 
