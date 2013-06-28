@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-27 21:38:09 flechsig> 
+c$$$ Time-stamp: <2013-06-27 22:02:27 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -330,7 +330,7 @@ c*******************************************************
 c	Erstellen eines nochmals reduzierten 
 c       Konstantensatzes
 c*******************************************************
-#ifdef DEBUG1      
+#ifdef DEBUG      
         write(*,*),'yyint called'
         call debug_beamline_type_f(blp)
 #endif
@@ -410,7 +410,7 @@ c------------------------------------------------------------
 c-------------------------------------------------------------------------
 c----------- Diese Schleife parallelisieren
 c-------------------------------------------------------------------------
-#ifdef DEBUG1
+#ifdef DEBUG
         write(6,*)' start loop ueber y'
 #endif
 
@@ -418,7 +418,7 @@ c-------------------------------------------------------------------------
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	 
-#ifdef DEBUG1
+#ifdef DEBUG
         write(6,*)' call fywert, i=', i
 #endif
  

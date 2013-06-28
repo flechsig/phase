@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2013-06-10 22:00:55 flechsig>  */
+/*  Time-stamp: <2013-06-28 19:48:37 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -101,7 +101,7 @@ public:
     DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, -1); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
-  void myMakeMapandMatrix(struct ElementType *listpt, unsigned int elindex) { MakeMapandMatrix(listpt, this, elindex); }
+  void myMakeMapandMatrix(struct ElementType *listpt, int *elindex) { MakeMapandMatrix(listpt, this, *elindex); }
   void myMakeRTSource() { MakeRTSource(&(this->filenames), this);  }
   void myMPST() { MPST(this); }
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads, int *format) { 
