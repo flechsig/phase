@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <24 Jun 13 15:49:52 flechsig> 
+c$$$ Time-stamp: <2013-06-28 22:33:34 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -374,6 +374,8 @@ cc	include 'phase_struct.for'
 	record /source_results/ sr 
 	record /control_flags/ ifl
 	record /source4/ so4
+
+	phase= 0.0                  ! give a default
 
 #ifdef DEBUG2
 	write(*,*),'DEBUG1: src4 called'

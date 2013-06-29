@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <28 Jun 13 17:43:56 flechsig>  */
+/*   Time-stamp: <2013-06-28 22:21:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -374,7 +374,7 @@ void pstc(struct BeamlineType *bl)
     }
 
 #ifdef DEBUG      
-  printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
+  //  printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
   printf("pstc: start\n");
 #endif
 
@@ -631,6 +631,8 @@ void fill_xirp(struct BeamlineType *bl, struct integration_results *xirp)
   xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
   xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
   xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
+  xirp->si1.iiheigh= 0;
+  xirp->si1.iiwidth= 0;
 } /* end fill_xirp */
 
 void norm_output(struct BeamlineType *bl)

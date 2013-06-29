@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-27 22:02:27 flechsig> 
+c$$$ Time-stamp: <2013-06-28 22:10:05 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -116,11 +116,11 @@ c************************************************
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
 
-#ifdef DEBUG1
-        write(*,*),'adaptive_int called1'
-        call debug_beamline_type_f(blp)
-        write(*,*),'adaptive_int called2'
-#endif
+c#ifdef DEBUG1
+c       write(*,*),'adaptive_int called1'
+c        call debug_beamline_type_f(blp)
+c        write(*,*),'adaptive_int called2'
+c#endif
 
 	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
@@ -330,10 +330,10 @@ c*******************************************************
 c	Erstellen eines nochmals reduzierten 
 c       Konstantensatzes
 c*******************************************************
-#ifdef DEBUG      
-        write(*,*),'yyint called'
-        call debug_beamline_type_f(blp)
-#endif
+c#ifdef DEBUG      
+c       write(*,*),'yyint called'
+c      call debug_beamline_type_f(blp)
+c#endif
 
         if(dabs(xi.distfocz).gt.1.e-10)then
            dzii=dzi+ra.ri.zi/xi.distfocz
@@ -410,17 +410,17 @@ c------------------------------------------------------------
 c-------------------------------------------------------------------------
 c----------- Diese Schleife parallelisieren
 c-------------------------------------------------------------------------
-#ifdef DEBUG
-        write(6,*)' start loop ueber y'
-#endif
+c#ifdef DEBUG
+c        write(6,*)' start loop ueber y'
+c#endif
 
         do i=1,ianzy
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
 	 
-#ifdef DEBUG
-        write(6,*)' call fywert, i=', i
-#endif
+c#ifdef DEBUG
+c        write(6,*)' call fywert, i=', i
+c#endif
  
  	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
      &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
