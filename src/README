@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <13 Nov 12 10:54:06 flechsig> 
+ Time-stamp: <2013-06-29 09:51:20 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -13,6 +13,10 @@ variety of systems. While this is very nice for making usable
 binaries, it can be a pain when trying to debug a program. For that
 reason, compilation of shared libraries can be turned off by
 specifying the `--disable-shared' option to `configure'.
+
+Debugging
+=========
+valgrind --log-file=valgrind.log phasesrv
 
 Installation
 ============
