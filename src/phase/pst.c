@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2013-06-28 22:21:14 flechsig>  */
+/*   Time-stamp: <2013-06-29 10:02:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -240,7 +240,7 @@ void PST(struct BeamlineType *bl)
 
  #ifdef DEBUG  
    printf("debug: pst.c: phase space trafo PST called");
-   printf("debug:   source typ: %d\n", bl->src.isrctype); 
+   printf(" debug:   source typ: %d\n", bl->src.isrctype); 
  #endif
 
    Test4Grating(bl); /* not in threads */

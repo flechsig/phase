@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <2013-06-29 09:51:20 flechsig> 
+ Time-stamp: <2013-06-29 10:00:34 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -16,7 +16,7 @@ specifying the `--disable-shared' option to `configure'.
 
 Debugging
 =========
-valgrind --log-file=valgrind.log phasesrv
+valgrind --log-file=valgrind.log --max-stackframe=81234567 --main-stacksize=812345678 phasesrv
 
 Installation
 ============
