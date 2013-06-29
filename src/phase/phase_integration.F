@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-28 22:10:05 flechsig> 
+c$$$ Time-stamp: <2013-06-29 10:54:48 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -87,10 +87,12 @@ c************************************************
 
 	implicit real*8(a-h,o-z)
         integer blp
-	complex*16 fwert,fwerty,fwertz,
-     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-     &      yzint,yzintey,yzintez
+c UF 28.6.13	complex*16 fwert,fwerty,fwertz,
+c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+c     &      yzint,yzintey,yzintez
+        complex*16 fwerty,fwertz
+     
 	complex*16 fzey(4096),fzez(4096)
 
 #include '../phase/phase_struct.F'
@@ -297,10 +299,12 @@ c*************************************************************
 
 	implicit real*8(a-h,o-z)
         integer blp
-	complex*16 fwert,fwerty,fwertz,
-     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-     &      yint,yintey,yintez
+	complex*16 
+c UF 28.6.13     &      fwert,fwerty,fwertz,
+c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+c     &      yint,yintey,yintez
+     &       yintey,yintez
 	complex*16 fyey(4096),fyez(4096)
 
 	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
@@ -467,7 +471,8 @@ c*************************************************************
      &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
-	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
+c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
+        complex*16 fwerty,fwertz,ff,eycpl,ezcpl
         integer blp
 
 #include '../phase/phase_struct.F'
@@ -569,6 +574,7 @@ c-------------------------------------------------------------------------
         
 	fd=dabs(fd)
         fdph=dabs(fdph)
+c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on uninitialised value(s)
         if(fd1ph.lt.0.d0)xl2sign=-1.d0
         fd1ph=dabs(fd1ph)
         if(fd1pha.lt.0.d0)xw3sign=-1.d0  
@@ -866,10 +872,10 @@ c-----------------
 
         record /rayst/ ra
         record /constants/ cs
-	record /statistics/ st
+c UF	record /statistics/ st
 	record /integration_results/ xir
 	record /integration/ xi
-        record /control_flags/ ifl
+c UF        record /control_flags/ ifl
         record /psimagest/ sp
 
 	dimension dx(4096),x(4096),
@@ -879,7 +885,8 @@ c-----------------
 
 
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
-	dimension coef(1024),coef1(1024),xx(1024)
+c UF	dimension coef(1024),coef1(1024),xx(1024)
+        dimension coef(1024),xx(1024)
 
 	SMALL_PHA1=SMALL_PHA*1.0d5
 	iii=0
@@ -1276,7 +1283,7 @@ c------------------------------------------------------
 
 	parameter(number=210)
 
-	dimension work(number)
+c UF	dimension work(number)
 	dimension x(1024),y(1024)
 	dimension xx(number,1024)
 	dimension b(number),a(number,number)
@@ -1384,17 +1391,18 @@ c-----------------------------------------------------------------------
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
-	record /statistics/ st
+c UF	record /statistics/ st
         record /integration_results/ xir
         record /integration/ xi
         record /control_flags/ ifl
 
-	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
+c UF	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
+        complex*16 xint,xxx(4096)
 	dimension xxxre(4096),xxxim(4096)
 
 	real*4 fyza_loc(4096),fyzp_loc(4096)
 	real*4 x_loc(4096),dyz_loc(4096)
-	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
+C UF	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
 
 c	dimension fyza_loc(4096),fyzp_loc(4096)
 c	dimension x_loc(4096),dyz_loc(4096)
