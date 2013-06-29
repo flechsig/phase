@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-29 11:24:53 flechsig> 
+c$$$ Time-stamp: <2013-06-29 19:39:17 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -573,6 +573,7 @@ c-------------------------------------------------------------------------
 
           fd=fd+m4.fdtrrc(ii)*var0
           fdph=fdph+m4.fdtphrrc(ii)*var0
+c UF 28.6.13 uninitialized memory determins fd1ph- probably m4.fdtphrrc
           fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0    
           fd1pha=fd1pha+m4.fdt1phrrca(ii)*var0
           fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0

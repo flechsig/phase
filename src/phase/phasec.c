@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <28 Jun 13 17:12:51 flechsig>  */
+/*   Time-stamp: <2013-06-29 19:09:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -26,22 +26,10 @@
 #define QTGUI
 #endif
 
-#ifndef QTGUI
-#include <Xm/Text.h>                                                  
-#include <Xm/FileSB.h>                /*FileBox*/     
-#include <Xm/List.h>   
-#include <Xm/ToggleB.h>   
-#include <Mrm/MrmAppl.h>  
-#include <X11/Xlib.h>      
-#include <X11/Xutil.h>  
-#endif
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "phase.h"
-#ifndef QTGUI
-
-#include "phaseX.h"
-#endif
+#include "common.h"
 #include "rtrace.h"
 #include "version.h"
 
@@ -185,6 +173,14 @@ void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int 
     default: 
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
     }
+  /* clean up memory */
+  XFREE(bl->ElementList);
+  XFREE(bl->raysout);
+  XFREE(bl->RESULT.RESp);
+  XFREE(bl->RTSource.SourceRays);
+  XFREE(bl->tp);
+  XFREE(bl->RTSource.Quellep);
+
   end= time(NULL);
   beep(5);
   printf("running time with %d threads (s) = %d or %f h\n", threadinfo, (end- start), (end- start)/3600.);
