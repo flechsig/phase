@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <24 Jun 13 17:38:21 flechsig> 
+//  Time-stamp: <2013-06-29 12:01:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2596,12 +2596,14 @@ int MainWindow::getPlotStyle()
 }
 
 // returns 0 if check canceled 
-int MainWindow::FileExistCheckOK(char *name)
+//int MainWindow::FileExistCheckOK(char *name)
+int MainWindow::FileExistCheckOK(std::string name1)
 {
   // QFile file(name);
   
   int  ret;
   char infostr[MaxPathLength];
+  char *name= (char *)name1.c_str();
   
   if (fexists(name))
     {
@@ -2622,8 +2624,10 @@ int MainWindow::FileExistCheckOK(char *name)
 } // FileExistCheckOK 
 
 // returns 0 if not found variante read
-int MainWindow::FileExistCheckOK(char *name, char *read)
+//int MainWindow::FileExistCheckOK(char *name, char *read)
+int MainWindow::FileExistCheckOK(std::string name1, std::string read)
 {
+  char *name= (char *)name1.c_str();
   QFile file(name);
   if (!file.open(QFile::ReadOnly))
     {

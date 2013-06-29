@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <13 May 13 14:30:51 flechsig>  */
+/*   Time-stamp: <2013-06-29 11:36:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -45,8 +45,11 @@ void buildsystem(struct BeamlineType *bl)
 	{ 
 	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 			 bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter-1));    
-	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
-	  MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1));
+	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions); 
+	  --elcounter;
+	  MakeMapandMatrix(listpt, bl, &elcounter);
+	  ++elcounter;
+
 	  listpt->ElementOK|= (mapOK | elementOK); 
 	}
       if (listpt->MDat.Art != kEOESlit)

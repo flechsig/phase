@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-29 11:00:21 flechsig> 
+c$$$ Time-stamp: <2013-06-29 11:24:53 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -43,7 +43,8 @@ c UF habe xxsave eingefuehrt !!! pruefen
 c*********************************************************
 c UF 12.1.2000
 c #define DEBUG1
-      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,
+c uf      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,
+         subroutine adaptive_int(m4,g,src,apr,cs,ra,
      &                       ifl,xi,xir,st,sp,blp)
 c*********************************************************
 c	22.4.1999
@@ -107,7 +108,7 @@ c     &      yzint,yzintey,yzintez
 	record /integration/ xi
 	record /apertures/ apr
 	record /statistics/ st
-	record /mirrortype/ am
+c uf	record /mirrortype/ am
 	record /map4/ m4
         record /psimagest/ sp
 
@@ -222,7 +223,8 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
 	do i=1,ianzz    
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
-	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
+c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
+	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,st,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 	   if(ifl.ispline.ge.0)then
@@ -289,7 +291,8 @@ c------------------------------------------------------------
 c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
+c UF	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
+       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,st,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 c*************************************************************
@@ -307,7 +310,8 @@ c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
 c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
 c     &      yint,yintey,yintez
      &       yintey,yintez
-	complex*16 fyey(4096),fyez(4096)
+c UF	complex*16 fyey(4096),fyez(4096)
+        complex*16 fyey(4096)
 
 	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
      &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
@@ -322,10 +326,10 @@ c     &      yint,yintey,yintez
         record /sources/ src
 	record /integration/ xi
 	record /integration_results/ xir
-        record /source6/ so6
+c UF 28.6.13        record /source6/ so6
 	record /apertures/ apr
 	record /statistics/ st
-	record /mirrortype/ am
+c uf	record /mirrortype/ am
 	record /map4/ m4
 
 	dimension y(4096),dy(4096)
@@ -428,17 +432,19 @@ c#ifdef DEBUG
 c        write(6,*)' call fywert, i=', i
 c#endif
  
- 	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
+c uf	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
+c     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
+ 	  call fywert(m4,g,src,xi,apr,cs,ra,ifl,
+     &		y(i),fyey(i),sr,blp)
 
 	 densiyre(i)=sr.densyre
 	 densiyim(i)=sr.densyim
 	 densizre(i)=sr.denszre
 	 densizim(i)=sr.denszim
 
-	  if(ifl.ibright.eq.1)then
+c UF	  if(ifl.ibright.eq.1)then
 c UF	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
-	  endif
+c UF	  endif
 
 	dy(i)=dyy
 	enddo
@@ -471,12 +477,15 @@ c--------------------- end yyint -------------------------
 
 
 c*************************************************************
- 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
+c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
+c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
+c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
+ 	subroutine fywert(m4,g,src,xi,apr,cs,ra,ifl,
+     &		          dyi,fwerty,sr,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
 c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
-        complex*16 fwerty,fwertz,ff,eycpl,ezcpl
+        complex*16 fwerty,ff,eycpl,ezcpl
         integer blp
 
 #include '../phase/phase_struct.F'
@@ -489,13 +498,13 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
         record /control_flags/ ifl
         record /sources/ src
 	record /integration/ xi
-	record /integration_results/ xir
+c uf	record /integration_results/ xir
 	record /apertures /apr
-	record /statistics/ st
-        record /parder/ pd                          !!! UF 5.9.2011 
+c uf	record /statistics/ st
+c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
-	record /mirrortype/ am
+c uf	record /mirrortype/ am
 	record /map4/ m4
 
         dimension bb(0:165)

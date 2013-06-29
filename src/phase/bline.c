@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <28 Jun 13 18:05:33 flechsig>  */
+/*   Time-stamp: <2013-06-29 11:33:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -467,8 +467,10 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	       /*  gputpickfile(&listpt->GDat, PHASESet.geometrypckname); */
 	      
         
-            /*printf("c: call MakemapandMatrix\n");*/      
-	       MakeMapandMatrix(listpt, bl, (unsigned int)(elcounter-1)); 
+            /*printf("c: call MakemapandMatrix\n");*/  
+               --elcounter;    
+	       MakeMapandMatrix(listpt, bl, &elcounter); 
+	       ++elcounter;
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
 #ifdef DEBUG1

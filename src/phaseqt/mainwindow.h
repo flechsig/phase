@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <18 Jun 13 11:20:22 flechsig>  */
+/*  Time-stamp: <2013-06-29 11:58:39 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -61,8 +61,10 @@ public:
     void UpdateStatus();
     void writeBackupFile();
     void ReadBLFileInteractive(char *);
-    int FileExistCheckOK(char *);
-    int FileExistCheckOK(char *, char *);
+    //   int FileExistCheckOK(char *);
+    int FileExistCheckOK(std::string);
+    //    int FileExistCheckOK(char *, char *);
+    int FileExistCheckOK(std::string, std::string);
     int getPlotSubject();
     int getPlotStyle();
     char oldsource;

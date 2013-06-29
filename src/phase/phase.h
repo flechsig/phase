@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <28 Jun 13 18:06:28 flechsig>  */
+/*   Time-stamp: <2013-06-29 11:34:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -572,7 +572,7 @@ void
   pstf(struct PSImageType *, struct PSOptionsType *,
        double *, int *, 
 #ifdef SEVEN_ORDER
-       MAPTYPE_8X4 *, MAPTYPE_8X4 *,        
+       MAPTYPE_8X4 *, MAPTYPE_8X4 *,         
 #else
        MAPTYPE_5X4 *, MAPTYPE_8X4 *,        
 #endif
@@ -590,7 +590,7 @@ void
        MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, int *),
   
 
-  adaptive_int(struct map4 *, struct geometryst *, struct mirrortype *, struct sources *, struct apertures *, 
+  adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
 	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
 	       struct integration_results *, struct statistics *, struct psimagest *, int *),
   PutPHASE(struct  PHASEset *, char *), 
