@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-29 10:54:48 flechsig> 
+c$$$ Time-stamp: <2013-06-29 11:00:21 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -256,7 +256,8 @@ c	   	fzez(i)=fwertz
         if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
 
 	iyz=2
-	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
+c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
+       call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
      &			xir.yzintya,xir.yzintyp,
      &          densiyre,densiyim,xintyzre,xintyzim,iyz)
 
@@ -266,7 +267,8 @@ c	   	fzez(i)=fwertz
         if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
 
 	iyz=2
-	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
+c	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
+       call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
      &			xir.yzintza,xir.yzintzp,
      &          densizre,densizim,xintyzre,xintyzim,iyz)
 
@@ -442,14 +444,16 @@ c UF	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
 	enddo
 
 	iyz=1
-	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
+c UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
+        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
      &		yintey,yintya,yintyp,densiyre,densiyim,
      &          xintyzre,xintyzim,iyz)
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
 	iyz=1
-	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
+c UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
+        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
      &		yintez,yintza,yintzp,densizre,densizim,
      &          xintyzre,xintyzim,iyz)
         sr.xintzre=xintyzre
@@ -1340,7 +1344,9 @@ c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b)
 c--------------------end fitpar ----------------
 
 c******************************************************************
-	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
+c UF	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
+c take out unused fyz
+       subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyza,fyzp,xint,
      &                      xinta,xintp,densiyzre,densiyzim,
      &                      xintre,xintim,iyz)
 c******************************************************************
