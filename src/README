@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <01 Jul 13 08:10:07 flechsig> 
+ Time-stamp: <01 Jul 13 08:11:38 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -16,8 +16,10 @@ specifying the `--disable-shared' option to `configure'.
 
 Debugging
 =========
-[] is optional
-valgrind --log-file=valgrind.log --max-stackframe=81234567 --main-stacksize=812345678 --track-origins=yes phasesrv [-b -m6 -oout.h5 -O2 test_5000.phase]
+
+valgrind --log-file=valgrind.log --max-stackframe=81234567 --main-stacksize=812345678 --track-origins=yes phasesrv -b -m6 -oout.h5 -O2 test_5000.phase
+
+remark: -b -m6 -oout.h5 -O2 test_5000.phase is optional (more or less default)
 
 Installation
 ============
