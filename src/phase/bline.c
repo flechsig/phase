@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:18:23 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:29:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2114,6 +2114,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        /* source 4 */
        if (version < 20120320)
 	 {
+	   for (i= 0; i < 4; i++) fgets(buffer, MaxPathLength, f); /* skip 4 lines */
+	   /*
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
@@ -2122,6 +2124,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   strncpy(bl->filenames.so4_fsource4b, bl->src.so4.fsource4b, 80);
 	   strncpy(bl->filenames.so4_fsource4c, bl->src.so4.fsource4c, 80);
 	   strncpy(bl->filenames.so4_fsource4d, bl->src.so4.fsource4d, 80);
+	   */
 	 }
        /* UF 17.11.08 */
        if (version >= 20081117)
