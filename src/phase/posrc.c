@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Jun 13 14:02:46 flechsig>  */
+/*  Time-stamp: <02 Jul 13 09:52:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,7 +30,6 @@
    #include "hdf5.h"
    #include "myhdf5.h"
 #endif 
-
 
 /* initializes the pointers with NULL */
 void posrc_construct(struct BeamlineType *bl)
