@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:15:21 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:18:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1769,7 +1769,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
      {
        beep(10);
        printf("###############################################################################\n");
-       printf("ReadBLFile: can not read this file- it belongs to a newer PHASE version- return\n", version);
+       printf("ReadBLFile: can not read this file- it belongs to a newer PHASE version- return\n");
        printf("###############################################################################\n");
        fclose(f); 
        return -1;
