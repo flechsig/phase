@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Jul 13 10:15:38 flechsig>  */
+/*  Time-stamp: <02 Jul 13 10:16:16 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -487,7 +487,7 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 
 void read_hdf5_file(struct BeamlineType *bl, char *fname)
 {
-  hid_t  file_id, group_id;
+  hid_t  file_id;   /* , group_id */
   int    col, row, cols, rows, fieldsize, hdf5type, t_size;  /* slicecount= 1, */
   double  gridsize, *field;  /* wavelength, gridsize, */
   struct PSDType *p;
