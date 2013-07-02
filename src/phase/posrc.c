@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Jul 13 09:52:56 flechsig>  */
+/*  Time-stamp: <02 Jul 13 10:10:57 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -75,7 +75,7 @@ void source8c_ini(struct BeamlineType *bl)
  #ifdef HAVE_HDF5
 
   struct source4c *so4;
-  int    t_size, slicecount, rows, cols, it, i, j;
+  int    t_size, slicecount, rows, cols, i;
   hid_t  file_id;                         /* identifiers */
   double wavelength, gridsize, *field;
 
@@ -164,10 +164,11 @@ void source7c_ini(struct BeamlineType *bl)
 #ifdef HAVE_HDF5
   
   struct source4c *so4;
-  int i, t_size,  rank, cols, rows, it, array_items;
-  hid_t  file_id, e_dataset_id, y_dataset_id, z_dataset_id, t_dataset_id, 
-    y_dataspace_id, z_dataspace_id, t_dataspace_id, e_dataspace_id;  /* identifiers */
-  hsize_t     current_dims[4];
+  int i, t_size,  cols, rows, it, array_items;
+  hid_t  file_id;  /* identifiers */
+  /* , e_dataset_id, y_dataset_id, z_dataset_id, t_dataset_id, 
+     y_dataspace_id, z_dataspace_id, t_dataspace_id, e_dataspace_id */
+  /* hsize_t     current_dims[4]; */
   double *y, *z, *t, *field;
 
 #ifdef DEBUG
