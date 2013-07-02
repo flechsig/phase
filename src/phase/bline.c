@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 08:44:14 flechsig>  */
+/*   Time-stamp: <02 Jul 13 08:48:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -166,7 +166,9 @@ void BuildBeamline(struct BeamlineType *bl)
 {
   unsigned int elcounter;
   static int elindex;            /* must be kept */
+#ifdef PHASELIB
   int          imodus;
+#endif
   struct ElementType *listpt; 
   struct TmpMapType  *ltp;              /* local pointer */
 
@@ -261,8 +263,9 @@ void BuildBeamline(struct BeamlineType *bl)
 
   if (bl->BLOptions.SourcetoImage != 1)
     {
+#ifdef PHASELIB
       imodus= 0; /* fuer det source to image ????? */
-      
+#endif      
 
       if (bl->BLOptions.REDUCE_maps == 0)
 	{
@@ -334,7 +337,9 @@ void BuildBeamline(struct BeamlineType *bl)
       
       /**********************************************************/
       /* map aus matrix herausholen und Determinanten berechnen */ 
-      imodus= 1;        
+#ifdef PHASELIB
+      imodus= 1;       
+#endif 
       /* welcher imodus fuer determinante Bild --> Quelle ????? */
       /* der imodus ist anders als bei fgmapidp_4!!!! */
       
