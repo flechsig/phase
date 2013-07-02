@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 08:26:22 flechsig>  */
+/*   Time-stamp: <02 Jul 13 08:31:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -40,7 +40,10 @@ void debug_beamline_type_c_(int *ip)
 {
   struct BeamlineType *bl;
   bl= (struct BeamlineType *)ip;
-  printf("%s debug_beamline_type_c_: %d position: %d\n", __FILE__, (int)ip, bl->position);
+#ifdef DEBUG
+  /* this code produces a warning which must be igrnored- we want to print the pointer on purpose */
+  printf("%s debug_beamline_type_c_: %d position: %d\n", __FILE__, ip, bl->position);
+#endif
 } /* end debug_beamline_type_c_ */
 
 
