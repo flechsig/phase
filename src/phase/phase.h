@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <02 Jul 13 08:57:02 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:14:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -557,6 +557,7 @@ void
   mat7to4(),
   matrix_dim(int *, int *),
   minitdatset (struct mdatset *),
+  mirror4to7(),
   mirror7to4(),
   misali_8(),
   MultiplyMatrix(), 
