@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:10:25 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:12:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2326,7 +2326,7 @@ int SetFilePos(FILE *f, char *s)
 void getoptipickfile(struct optistruct *x, char *pickname)    
 {                              
   FILE *f;
-  int i, *indexlist, version, index, l;
+  int i, version, l;
   char buffer[MaxPathLength], buffer1[MaxPathLength], *buf;
 
   /* fill optistruct with defaults and clean up */
