@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:43:25 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:48:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1730,12 +1730,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    printf("ReadBLFile: filename: %s\n", fname);
 
    /* initialisiere Strings */
-
+   /* so4 is obsolete 
    i= sizeof(bl->src.so4.fsource4a);
    memset(&bl->src.so4.fsource4a, 0, i);
    memset(&bl->src.so4.fsource4b, 0, i);
    memset(&bl->src.so4.fsource4c, 0, i);
-   memset(&bl->src.so4.fsource4d, 0, i);
+   memset(&bl->src.so4.fsource4d, 0, i); */
    /*   memset(&bl->src.so6.fsource6,  0, i); */
   
    if ((f= fopen(fname, "r")) == NULL) 
@@ -2244,10 +2244,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   if (version >= 20130318)
 	     fscanf(f, " %s %[^\n]s %c", pp->hdf5_out,  buffer, &buf);
 	   
+	   /* UF 32.7.13 so4 is obsolete */
+	   /*
 	   strncpy(bl->src.so4.fsource4a, bl->filenames.so4_fsource4a, 80);
 	   strncpy(bl->src.so4.fsource4b, bl->filenames.so4_fsource4b, 80);
 	   strncpy(bl->src.so4.fsource4c, bl->filenames.so4_fsource4c, 80);
-	   strncpy(bl->src.so4.fsource4d, bl->filenames.so4_fsource4d, 80);
+	   strncpy(bl->src.so4.fsource4d, bl->filenames.so4_fsource4d, 80); */
 	   /*	   strncpy(bl->src.so6.fsource6,  bl->filenames.so6_fsource6,  80); */
 	   
 	 } else rcode= -1;  /* end FILENAMES */ 
