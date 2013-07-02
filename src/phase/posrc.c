@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Jul 13 10:11:56 flechsig>  */
+/*  Time-stamp: <02 Jul 13 10:12:57 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -260,7 +260,7 @@ int source4c_ini(struct BeamlineType *bl)
 {
   FILE *fa, *fb, *fc, *fd;
   struct source4c *so4;
-  int i, j, rows, cols, myreturn;
+  int rows, cols, myreturn;
   
 #ifdef DEBUG
   printf("debug: %s source4c_ini called\n", __FILE__);
