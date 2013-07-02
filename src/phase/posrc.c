@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Jul 13 10:10:57 flechsig>  */
+/*  Time-stamp: <02 Jul 13 10:11:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -121,7 +121,7 @@ void source8c_ini(struct BeamlineType *bl)
    /* the rest is a copy of functionality from source4c_ini */
   reallocate_posrc(bl, rows, cols);
   
-  it= 0;          /* so far - read only first slice */
+  /*  it= 0;     */     /* so far - read only first slice */
 
   /* grid - genesis has a symetric grid*/
   for (i=0; i< rows; i++) 
