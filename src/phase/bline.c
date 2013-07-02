@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:38:17 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:39:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2218,8 +2218,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        if (SetFilePos(f, "FILENAMES"))
 	 {
 	   pp= (struct PHASEset *)&(bl->filenames);
-	   fgets(buffer, MaxPathLength, f); sscanf(buffer, " %s", &pp->mapname);
-	   /* fscanf(f, " %s %[^\n]s %c", &pp->mapname, buffer, &buf); */
+	   /*fgets(buffer, MaxPathLength, f); sscanf(buffer, " %s", &pp->mapname);*/
+	   fscanf(f, " %s %[^\n]s %c", pp->mapname, buffer, &buf); 
 	   fscanf(f, " %s %[^\n]s %c", &pp->matrixname, buffer, &buf);
 	   fscanf(f, " %s %[^\n]s %c", &pp->sourceraysname, buffer, &buf);
 	   
