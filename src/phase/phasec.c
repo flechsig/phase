@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2013-06-29 19:09:34 flechsig>  */
+/*   Time-stamp: <02 Jul 13 08:19:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -31,6 +31,7 @@
 #include "phase.h"
 #include "common.h"
 #include "rtrace.h"
+#include "posrc.h"
 #include "version.h"
 
 /* Batchmodus */
