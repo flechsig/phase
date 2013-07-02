@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:13:09 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:15:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2487,7 +2487,7 @@ the routine takes the input variables from gdatset and writes the variables in g
 */
 void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out, struct OptionsType *blo)  
 {
-  double theta, phi, alpha, beta, beta1, N, lambda, lambda4geometry, sign_of_down_or_right, radius, trans;
+  double theta, phi, alpha, beta, N, lambda, lambda4geometry, sign_of_down_or_right, radius, trans;
   int i, m;
 #ifdef DEBUG1
   printf("\n@@@@@@@@@@ debug: %s DefGeometryC_UF called\n", __FILE__ );
