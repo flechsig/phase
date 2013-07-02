@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <02 Jul 13 08:22:21 flechsig>  */
+/*   Time-stamp: <02 Jul 13 08:41:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -506,7 +506,7 @@ void
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),
   ExpandFileNames(),
-  extractamp(),
+  extractmap(),
   fdet_8(MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
          MAPTYPE_8X4, MAPTYPE_8X4, 
 	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
