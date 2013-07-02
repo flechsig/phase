@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:41:25 flechsig>  */
+/*   Time-stamp: <02 Jul 13 09:42:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2227,18 +2227,18 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   if (pp->imageraysname[0] != '\0') 
 	     fscanf(f, " %*s %[^\n]s %c", buffer, &buf);
 	   else
-	     fscanf(f, " %s %[^\n]s %c", &pp->imageraysname, buffer, &buf);
+	     fscanf(f, " %s %[^\n]s %c", pp->imageraysname, buffer, &buf);
 	   if (version < 20121105) 
 	     fscanf(f, " %s %[^\n]s %c", buffer, buffer, &buf);
 	   /*  fscanf(f, " %s %[^\n]s %c", &pp->minname, buffer, &buf); */
 	   
-	   fscanf(f, " %s %[^\n]s %c", &pp->optipckname, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->opresname, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4a, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4b, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4c, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->so4_fsource4d, buffer, &buf);
-	   fscanf(f, " %s %[^\n]s %c", &pp->so6_fsource6,  buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->optipckname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->opresname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4a, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4b, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4c, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4d, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so6_fsource6,  buffer, &buf);
 	   if (version >= 20120828)
 	     fscanf(f, " %s %[^\n]s %c", &pp->so7_hdf5,  buffer, &buf);
 	   if (version >= 20130318)
