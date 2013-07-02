@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 08:38:44 flechsig>  */
+/*   Time-stamp: <02 Jul 13 08:44:14 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -53,7 +53,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 {
   struct ElementType *listpt;
   struct TmpMapType  *ltp;
-  int imodus, mdim, msiz;
+  int imodus, msiz;
   double *c;
   
 #ifdef DEBUG
