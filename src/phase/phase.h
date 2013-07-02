@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <02 Jul 13 08:56:07 flechsig>  */
+/*   Time-stamp: <02 Jul 13 08:57:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -551,8 +551,10 @@ void
   MakeHorMaps(struct BeamlineType *),
   MakeMapandMatrix(struct ElementType *, struct BeamlineType *, int *),
   make_matrix_8(),
-//  map4to7(),
-//  map7to4(),
+  map4to7(),
+  map7to4(),
+  mat4to7(),
+  mat7to4(),
   matrix_dim(int *, int *),
   minitdatset (struct mdatset *),
   mirror7to4(),
