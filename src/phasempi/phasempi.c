@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <03 Jul 13 14:01:28 flechsig>  */
+/*  Time-stamp: <03 Jul 13 15:07:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -16,6 +16,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "mpi.h"
+
 #include "cutils.h" 
 #include "phase_struct.h"
 #include "phase.h"
@@ -27,6 +29,9 @@ int main(int argc, char *argv[])
   int setupswitch, cmode, selected, iord, numthreads, format;
   struct BeamlineType Beamline;
   
+  MPI_Init(&argc, &argv);
+
+
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
   
   printf("phasempi start\n");
@@ -54,6 +59,9 @@ int main(int argc, char *argv[])
     }
 
   printf("phasempi done (switch= %d)\n", setupswitch);
+
+  MPI_Finalize();
+
   exit(0);
 }
 /* end */
