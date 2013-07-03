@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <03 Jul 13 15:38:56 flechsig> 
+dnl   Time-stamp: <03 Jul 13 15:41:18 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -25,7 +25,7 @@ dnl AC_CONFIG_MACRO_DIR([m4])
 
 dnl maintainer option i.e. make does not bootstrap
 ##AM_MAINTAINER_MODE
-q
+
 dnl Checks for programs.
 AC_PROG_CXX
 AC_PROG_AWK
