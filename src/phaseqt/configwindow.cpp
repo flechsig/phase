@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <24 Jun 13 17:32:20 flechsig> 
+//  Time-stamp: <03 Jul 13 14:31:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -158,22 +158,22 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 		    if ( !strncmp(description, "so4_fsource4a", 13) )
 		      { 
 			strncpy(myparent->myBeamline()->filenames.so4_fsource4a, fname, MaxPathLength);
-			strncpy(myparent->myBeamline()->src.so4.fsource4a, fname, 80);
+			//strncpy(myparent->myBeamline()->src.so4.fsource4a, fname, 80);
 		      } else
 		      if ( !strncmp(description, "so4_fsource4b", 13) ) 
 			{
 			  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, fname, MaxPathLength);
-			  strncpy(myparent->myBeamline()->src.so4.fsource4b, fname, 80);
+			  //strncpy(myparent->myBeamline()->src.so4.fsource4b, fname, 80);
 			} else
 			if ( !strncmp(description, "so4_fsource4c", 13) )
 			  { 
 			    strncpy(myparent->myBeamline()->filenames.so4_fsource4c, fname, MaxPathLength);
-			    strncpy(myparent->myBeamline()->src.so4.fsource4c, fname, 80);
+			    //strncpy(myparent->myBeamline()->src.so4.fsource4c, fname, 80);
 			  } else
 			  if ( !strncmp(description, "so4_fsource4d", 13) ) 
 			    {
 			      strncpy(myparent->myBeamline()->filenames.so4_fsource4d, fname, MaxPathLength);
-			      strncpy(myparent->myBeamline()->src.so4.fsource4d, fname, 80);
+			      //strncpy(myparent->myBeamline()->src.so4.fsource4d, fname, 80);
 			    } else
 			    if ( !strncmp(description, "so6_fsource6", 3) ) 
 			      {

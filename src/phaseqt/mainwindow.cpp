@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2013-06-29 12:01:32 flechsig> 
+//  Time-stamp: <03 Jul 13 14:36:01 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1694,42 +1694,42 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
       qst.setNum(mysrc->pin_zl, 'g', 4);
       break;
-    case 56:
+    case 56: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqtot= 0;   // default
-      qst.setNum(mysrc->so4.nfreqtot);
+      qst.setNum(mysrc->so4.nfreqtot); */
       break;
-    case 57:
+    case 57: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqpos);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqpos= 0;   // default
-      qst.setNum(mysrc->so4.nfreqpos);
+      qst.setNum(mysrc->so4.nfreqpos); */
       break;
-    case 58:
+    case 58: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqneg);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nfreqneg= 0;   // default
-      qst.setNum(mysrc->so4.nfreqneg);
+      qst.setNum(mysrc->so4.nfreqneg); */
       break;
-    case 59:
+    case 59: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nsource);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nsource= 0;   // default
-      qst.setNum(mysrc->so4.nsource);
+      qst.setNum(mysrc->so4.nsource); */
       break;
-    case 60:
+    case 60: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nimage);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.nimage= 0;   // default
-      qst.setNum(mysrc->so4.nimage);
+      qst.setNum(mysrc->so4.nimage); */
       break;
       
-    case 61:
+    case 61: /*
       if (!init) scanned= sscanf(text, "%lg", &mysrc->so4.deltatime);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.deltatime= 0;   // default
-      qst.setNum(mysrc->so4.deltatime, 'g', 4);
+      qst.setNum(mysrc->so4.deltatime, 'g', 4); */
       break;
       
-    case 62:
+    case 62: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
       if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
-      qst.setNum(mysrc->so4.iconj);
+      qst.setNum(mysrc->so4.iconj); */
       break;
 
     case 63:
