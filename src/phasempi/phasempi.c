@@ -26,40 +26,48 @@
 
 int main(int argc, char *argv[])
 {
-  int setupswitch, cmode, selected, iord, numthreads, format, numprocs, myid;
-  struct BeamlineType Beamline;
+  int numprocs, myid, numtasks, taskid;
+  
+  numtasks= 5;
+
   
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-  Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
-  
+ 
   printf("phasempi start, numprocs= %d, myid= %d\n", numprocs, myid);
   
-  setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
-			      &selected, &iord, &numthreads, &format);
-
-#ifdef DEBUG 
-  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1);  /* for debugging */
-#endif 
-
-  switch (setupswitch)
+  
+  while (1)
     {
-    case 1:  // ohne -b
-    case 3:
-    case 5:  // option -b braucht ist optional
-    case 7:
-    case 13: // ohne -b
-    case 15:
-      printf("main: Batchmode  called (switch= %d)\n", setupswitch);
-      BatchMode(&Beamline, cmode, selected, iord, numthreads, format);
-      break;
-    default:
-      printf("\nusage: phasesrv -h\n\n");
-    }
+      if (myid == 0)
+	{
+	  printf("myid == 0\n");
+	  if ( numtasks )
+	    {
+	      /* submit a new task */
+	      MPI_Bcast();
+	      --numtask;
+	    }
+	  else
+	    {
+	      printf("myid == 0 --> all tasks done\n");
+	      break;
+	    }
+	}
+      else   /* myid != 0 */
+      	{
+	  printf("myid= %d, solve task %d\n", myid, taskid);
+	  MPI_Reduce();
+	} /* fi myid == 0 */
 
-  printf("phasempi done (switch= %d)\n", setupswitch);
+    } /* while */
+ 
+  
+ 
+
+  printf("phasempi done\n");
 
   MPI_Finalize();
 
