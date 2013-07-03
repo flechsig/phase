@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	    {
 	      /* submit a new task */
 	      // MPI_Bcast();
-	      --numtask;
+	      --numtasks;
 	    }
 	  else
 	    {
