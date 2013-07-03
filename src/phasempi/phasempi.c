@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <03 Jul 13 13:55:39 flechsig>  */
+/*  Time-stamp: <03 Jul 13 14:01:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -20,7 +20,7 @@
 #include "phase_struct.h"
 #include "phase.h"
 #include "rtrace.h"
-#include "phasesrv.h"
+#include "phasempi.h"
 
 int main(int argc, char *argv[])
 {
