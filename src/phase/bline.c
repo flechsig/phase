@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:48:07 flechsig>  */
+/*   Time-stamp: <03 Jul 13 14:15:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1291,7 +1291,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20130624;    /* today */
+   int  i, version= 20130703;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1321,7 +1321,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version JUN 2013\n");
+   fprintf(f, "This is a datafile of PHASE, file version JUL 2013\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1603,7 +1603,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%s so4.c\n", bl->src.so4.fsource4c);
    fprintf(f, "%s so4.d\n", bl->src.so4.fsource4d);
    */
-   /* 17.11.08 */
+   /* 17.11.08, 3.7.2013 */
+   /*
    fprintf(f, "%20d  so4: nfreqtot   \n", bl->src.so4.nfreqtot);
    fprintf(f, "%20d  so4: nfreqpos   \n", bl->src.so4.nfreqpos);
    fprintf(f, "%20d  so4: nfreqneg   \n", bl->src.so4.nfreqneg);
@@ -1611,6 +1612,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20d  so4: nimage     \n", bl->src.so4.nimage);
    fprintf(f, "%20lg so4: deltatime  \n", bl->src.so4.deltatime);
    fprintf(f, "%20d  so4: iconj      \n", bl->src.so4.iconj);
+   */
 
    /* source 5 */
    /* 24.6.13
@@ -1707,7 +1709,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20130624;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20130703;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[MaxPathLength], buf;  
    double *pd, dummy_d; 
@@ -2127,8 +2129,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   */
 	 }
        /* UF 17.11.08 */
-       if (version >= 20081117)
+       if ((version >= 20081117) && (version < 20130703))
 	 {
+	   for (i= 0; i < 7; i++) fgets(buffer, MaxPathLength, f); /* skip 7 lines */
+	   /*
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqtot,  buffer, &buf);
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqpos,  buffer, &buf);
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqneg,  buffer, &buf);
@@ -2136,6 +2140,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nimage,    buffer, &buf);
 	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so4.deltatime, buffer, &buf);
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.iconj,     buffer, &buf);
+	   */
 	 }
        
        /* source 5 */
