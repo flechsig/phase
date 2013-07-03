@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	  if ( numtasks )
 	    {
 	      /* submit a new task */
-	      MPI_Bcast();
+	      // MPI_Bcast();
 	      --numtask;
 	    }
 	  else
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
       else   /* myid != 0 */
       	{
 	  printf("myid= %d, solve task %d\n", myid, taskid);
-	  MPI_Reduce();
+	  //MPI_Reduce();
 	} /* fi myid == 0 */
 
     } /* while */
