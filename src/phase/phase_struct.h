@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <02 Jul 13 09:05:44 flechsig>  */
+/*   Time-stamp: <03 Jul 13 14:07:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -219,7 +219,7 @@ struct  sources {                            /* Sammelstruktur         */
   /* struct source1 so1;     */                   /* Gauss + Hard edge      */
   /* struct source2 so2;     */                /* Zernike                */
   /* struct source3 so3;     */                /* radiale Vert. vom File */
-   struct source4 so4;                        /* Quelle von File        */
+  /* struct source4 so4;     */                   /* Quelle von File        */
   /* struct source5 so5;     */                   /* Dipol Quelle           */
   /* struct source6 so6;     */                   /* Brightness             */
   

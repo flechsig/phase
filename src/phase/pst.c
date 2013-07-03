@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2013-06-29 11:28:22 flechsig>  */
+/*   Time-stamp: <03 Jul 13 14:24:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -73,6 +73,7 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
 }  /* end writempsd */
 
 
+#ifdef OBSOLETE
 void get_nam(int n, 
        char *eyre,  char *eyim, char *ezre, char *ezim,
        char *eyre1, char *eyim1, char *ezre1, char *ezim1, 
@@ -90,9 +91,11 @@ void get_nam(int n,
   snprintf(ezre1, MaxPathLength, "EZRES%05d.DA%d", n, bl->src.so4.nimage);
   snprintf(ezim1, MaxPathLength, "EZIMS%05d.DA%d", n, bl->src.so4.nimage);
 }
+#endif
 
 void MPST(struct BeamlineType *bl)
 {
+#ifdef OBSOLETE
   struct PSDType *PSDp;
   //struct geometryst *gp;
   //struct rayst ra;
@@ -232,6 +235,7 @@ void MPST(struct BeamlineType *bl)
   }; /* end loop(s) */
 
   bl->BLOptions.lambda=bl->BLOptions.xlam_save;   
+#endif
 } /* end MPST */
 
 void PST(struct BeamlineType *bl) 

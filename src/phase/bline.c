@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <03 Jul 13 14:15:32 flechsig>  */
+/*   Time-stamp: <03 Jul 13 14:19:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2094,6 +2094,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        /* source 1 */
        if (version < 20130624)
 	 {
+	   for (i= 0; i < 8; i++) fgets(buffer, MaxPathLength, f); /* skip 8 lines */
 	   /*
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcy, buffer, &buf);
 	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcdy, buffer, &buf);
@@ -2104,14 +2105,6 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmaz, buffer, &buf);  
 	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
 	   */
-	   fscanf(f, " %d %[^\n]s %c",  &dummy_i, buffer, &buf);
-	   fscanf(f, " %d %[^\n]s %c",  &dummy_i, buffer, &buf);
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);  
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf); 
-	   fscanf(f, " %d %[^\n]s %c",  &dummy_i, buffer, &buf);
-	   fscanf(f, " %d %[^\n]s %c",  &dummy_i, buffer, &buf);
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);  
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);
 	 }
        /* source 4 */
        if (version < 20120320)
@@ -2146,13 +2139,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        /* source 5 */
        if (version < 20130624)
 	 {
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);  
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);  
-	   fscanf(f, " %lf %[^\n]s %c", &dummy_d, buffer, &buf);
+	   for (i= 0; i < 4; i++) fgets(buffer, MaxPathLength, f); /* skip 4 lines */
 	   /*
-	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcy, buffer, &buf);  
-	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcz, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcy,   buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcz,   buffer, &buf);
 	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipdisy, buffer, &buf);  
 	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipdisz, buffer, &buf);
 	   */
@@ -2164,16 +2154,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        /* source 6 */
        if (version < 20120320)
 	 {
-	   fscanf(f, " %s %[^\n]s %c", buffer, buffer, &buf);
+	   fgets(buffer, MaxPathLength, f);
 	   /*
 	   fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
 	   strncpy(bl->filenames.so6_fsource6, bl->src.so6.fsource6, 80);
 	   */
 	 }
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
-       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl,  buffer, &buf);
        fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
-       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl,  buffer, &buf);
        
        /* UF 10.3.06 put it outside	 strncpy(phset->pssourcename, bl->src.so6.fsource6); */ 
        /* PutPHASE(phset, MainPickName); */ 

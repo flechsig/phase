@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2013-06-28 19:54:01 flechsig> 
+//  Time-stamp: <03 Jul 13 14:38:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -681,11 +681,12 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myreadfg34_par(&myparent->myBeamline()->src, &myparent->myBeamline()->BLOptions.apr,
 				   &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
 				   &myparent->myBeamline()->BLOptions.epsilon);
-
+	  /*
 	  strncpy(myparent->myBeamline()->filenames.so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
 	  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
 	  strncpy(myparent->myBeamline()->filenames.so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
 	  strncpy(myparent->myBeamline()->filenames.so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
+	  */
 	  //strncpy(myparent->myBeamline()->filenames.so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
 	  if (c_window) c_window->updateList();
 	  parameterUpdateAll(NPARS);
@@ -711,10 +712,11 @@ void MainWindow::activateProc(const QString &action)
  	  break;
 #endif
 	case 4: 
+	  /*
 	  filesOK= fexists(myparent->myBeamline()->src.so4.fsource4a) & 
 	    fexists(myparent->myBeamline()->src.so4.fsource4b) & 
 	    fexists(myparent->myBeamline()->src.so4.fsource4c) &
-	    fexists(myparent->myBeamline()->src.so4.fsource4d);
+	    fexists(myparent->myBeamline()->src.so4.fsource4d); */
 	  break;
 	case 6:
 	  //filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);

@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <2013-06-28 22:33:34 flechsig> 
+c$$$ Time-stamp: <03 Jul 13 14:52:09 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -211,8 +211,10 @@ c	if(iii.eq.1)then
 c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
 c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
-	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
-	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
+	if(src.isrctype.eq.4)call src4(cs,g,ra,sr,ifl,blp)
+	if(src.isrctype.eq.7)call src4(cs,g,ra,sr,ifl,blp)
+c uf2.7.13	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
+c uf2.7.13	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
 c	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
@@ -357,7 +359,8 @@ c	  sr.densy=sr.densy*f
 c----------------------- end src3---------------------
 
 c*****************************************************************
-	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
+c UF 2.7.13	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
+        subroutine src4(cs,g,ra,sr,ifl,blp)
 c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
@@ -373,7 +376,7 @@ cc	include 'phase_struct.for'
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
-	record /source4/ so4
+c UF 2.7.13	record /source4/ so4
 
 	phase= 0.0                  ! give a default
 
