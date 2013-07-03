@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <25 Jun 13 09:33:34 flechsig> 
+dnl   Time-stamp: <03 Jul 13 13:53:54 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -466,6 +466,7 @@ AC_CONFIG_FILES([Makefile
                  phaseidl/Makefile
                  phaselib/Makefile
                  phaseqt/Makefile
+		 phasempi/Makefile
                  phasesrv/Makefile])
 
 AC_OUTPUT
