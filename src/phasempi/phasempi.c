@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "mpi.h"
+#include <mpi.h>
 
 #include "cutils.h" 
 #include "phase_struct.h"
@@ -26,15 +26,16 @@
 
 int main(int argc, char *argv[])
 {
-  int setupswitch, cmode, selected, iord, numthreads, format;
+  int setupswitch, cmode, selected, iord, numthreads, format, numprocs, myid;
   struct BeamlineType Beamline;
   
   MPI_Init(&argc, &argv);
-
+  MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+  MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
   
-  printf("phasempi start\n");
+  printf("phasempi start, numprocs= %d, myid= %d\n", numprocs, myid);
   
   setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
 			      &selected, &iord, &numthreads, &format);

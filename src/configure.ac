@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <03 Jul 13 15:41:18 flechsig> 
+dnl   Time-stamp: <03 Jul 13 15:57:18 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -31,23 +31,24 @@ AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_YACC
 dnl AC_PROG_CC
-dnl includes mpi
-     #If --with-mpi=auto is used, try to find MPI, but use standard C compiler if it is not found.
-     # If --with-mpi=yes is used, try to find MPI and fail if it isn't found.
-     # If --with-mpi=no is used, use a standard C compiler instead.
-     AC_ARG_WITH(mpi, [AS_HELP_STRING([--with-mpi],
-         [compile with MPI (parallelization) support. If none is found,
-         MPI is not used. Default: auto])
-     ],,[with_mpi=auto])
-     #
-     AX_PROG_CC_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
-       use_mpi=no
-       if test x"$with_mpi" = xyes; then
-         AC_MSG_FAILURE([MPI compiler requested, but couldn't use MPI.])
-       else
-         AC_MSG_WARN([No MPI compiler found, won't use MPI.])
-       fi
-     ])
+dnl includes mpi (replacement of AC_PROG_CC)
+#If --with-mpi=auto is used, try to find MPI, but use standard C compiler if it is not found.
+# If --with-mpi=yes is used, try to find MPI and fail if it isn't found.
+# If --with-mpi=no is used, use a standard C compiler instead.
+AC_ARG_WITH(mpi, 
+  [AS_HELP_STRING([--with-mpi],
+     [compile with MPI (parallelization) support. If none is found,
+      MPI is not used. Default: auto])
+  ],,[with_mpi=auto])
+#
+AX_PROG_CC_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
+  use_mpi=no
+  if test x"$with_mpi" = xyes; then
+     AC_MSG_FAILURE([MPI compiler requested, but couldn't use MPI.])
+  else
+     AC_MSG_WARN([No MPI compiler found, won't use MPI.])
+  fi
+])
 
 
 AC_PROG_CPP
