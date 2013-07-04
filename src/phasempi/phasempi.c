@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2013-07-04 23:04:29 flechsig>  */
+/*  Time-stamp: <2013-07-04 23:12:20 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
   int        size, size_save, rank, numtasks, taskid, sender, index, ny, nz;
   MPI_Status status;
-  double     starttime, endtime, duration, result[4];
+  double     starttime, endtime, duration, result[6];
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
   struct PSDType     *PSDp;
@@ -134,6 +134,8 @@ int main(int argc, char *argv[])
 	      result[1]= PSDp->eyimc[ny+nz*sp->iheigh];
 	      result[2]= PSDp->ezrec[ny+nz*sp->iheigh];
 	      result[3]= PSDp->ezimc[ny+nz*sp->iheigh]; 
+	      result[4]= PSDp->y[ny];
+	      result[5]= PSDp->z[nz];
 	      /* send result */
 	    }
 	  else
