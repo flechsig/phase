@@ -26,48 +26,74 @@
 
 int main(int argc, char *argv[])
 {
-  int numprocs, myid, numtasks, taskid;
+  int size, size_save, rank, numtasks, taskid, sender;
+  MPI_Status status;
   
-  numtasks= 5;
+  numtasks= 15;
 
   
   MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
-  MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-
+  MPI_Comm_size(MPI_COMM_WORLD, &size); // the number of involved cores
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank); // the if of the core
+  size_save= size;                      // remember the size
  
-  printf("phasempi start, numprocs= %d, myid= %d\n", numprocs, myid);
-  
-  
-  while (1)
+  printf("%d: phasempi start, size= %d, rank= %d, tasks= %d\n", rank, size, rank, numtasks);
+
+  if  (size <= 1)
     {
-      if (myid == 0)
+      fprintf(stderr, "size= %d, no slaves available- exit", size);
+      MPI_Finalize();
+      exit(0);
+    }
+
+  taskid= numtasks;
+  while (1)  // main loop
+    {
+      if (rank == 0)   // master
 	{
-	  printf("myid == 0\n");
-	  if ( numtasks )
+	  printf("master ->");
+	  MPI_Recv(&sender, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // get sender
+	  if (sender <= 0) 
 	    {
-	      /* submit a new task */
-	      // MPI_Bcast();
-	      --numtasks;
+	      printf("one slave said good bye\n");
+	      size--; // a slave said good bye
 	    }
-	  else
+          if (size <= 1) 
 	    {
-	      printf("myid == 0 --> all tasks done\n");
-	      break;
+	      printf(" ==> all slaves said good bye\n");
+	      break;   // only the master is left- end the loop
+	    }
+
+	  if ( taskid )  // tasks left submit a new task
+	    {
+	      MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid
+	      printf(" submit task %d to %d\n", taskid, sender);
+	      --taskid;
+	    }
+	  else  // no tasks left
+	    {
+	      //taskid = -1;
+	      MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid = -1 to slave
 	    }
 	}
-      else   /* myid != 0 */
+      else   /* rank != 0 (slave) */
       	{
-	  printf("myid= %d, solve task %d\n", myid, taskid);
-	  //MPI_Reduce();
-	} /* fi myid == 0 */
+	  MPI_Send(&rank,   1, MPI_INT, 0, 0, MPI_COMM_WORLD);  // send id to master to get new task
+	  MPI_Recv(&taskid, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // receive task
+	  if ( taskid > 0 )
+	    printf("rank= %d, solve task %d\n", rank, taskid);
+	  else
+	    {
+	      printf("rank= %d, received task %d => say good bye\n", rank, taskid);
+              //taskid= -1;
+	      MPI_Send(&taskid,   1, MPI_INT, 0, 0, MPI_COMM_WORLD);  // send id to master to get new task
+	      break;                   // slave: escape from loop - close slave 
+	    }
+	} /* fi rank == 0 */
 
     } /* while */
  
-  
- 
-
-  printf("phasempi done\n");
+  printf("%d: phasempi done\n", rank);
 
   MPI_Finalize();
 
