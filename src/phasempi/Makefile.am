@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <03 Jul 13 13:52:28 flechsig> 
+#  Time-stamp: <2013-07-04 22:18:48 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -16,7 +16,7 @@ phasempi_SOURCES = \
         phasempi.c       phasempi.h \
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
         ../phase/phasec.c ../phase/rtrace.c ../phase/myhdf5.c ../phase/myhdf5.h \
-        ../phase/xmalloc.c ../phase/xstrdup.c  ../phase/pst_mpi.c ../phase/pst_mpi.h ../phase/pst_thread.c ../phase/thread.h\
+        ../phase/xmalloc.c ../phase/xstrdup.c  ../phase/pst_thread.c ../phase/thread.h\
 	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
 	../phase/rekursiv_2d_8.F \

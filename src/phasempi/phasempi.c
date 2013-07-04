@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <03 Jul 13 15:07:44 flechsig>  */
+/*  Time-stamp: <2013-07-04 22:23:50 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -27,15 +27,13 @@
 
 int main(int argc, char *argv[])
 {
-  int        size, size_save, rank, numtasks, taskid, sender;
+  int        size, size_save, rank, numtasks, taskid, sender, index;
   MPI_Status status;
   double     starttime, endtime, duration;
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
   struct PSDType     *PSDp;
-  struct MpiData     *mdata= NULL;
- 
-  
+    
   numtasks= 5;
 
   MPI_Init(&argc, &argv);
@@ -79,7 +77,7 @@ int main(int argc, char *argv[])
   posrc_ini(bl);
   psip = (struct PSImageType *)bl->RTSource.Quellep;
   ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
-  numtasks= pst_mpi(bl, mdata);
+  numtasks= psip->iy * psip->iz;
  
   PSDp= (struct PSDType *)bl->RESULT.RESp;
   //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
@@ -126,7 +124,8 @@ int main(int argc, char *argv[])
 	  if ( taskid > 0 )
 	    {
 	      printf("rank= %d, solve task %d\n", rank, taskid);
-	      pst_impi(mdata, taskid);
+	      index= taskid- 1;
+	      pstc_ii(index, bl);
 	    }
 	  else
 	    {
