@@ -1,4 +1,4 @@
-/*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
+/*  File      : /afs/psi.ch/project/phase/src/phase/pst_mpi.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
 /*  Time-stamp: <24 Jun 13 10:32:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
@@ -13,93 +13,62 @@
 #endif 
 
 #include <stdio.h> 
-#include <pthread.h>
+
 
 #include "cutils.h" 
 #include "phase_struct.h"
 #include "phase.h"
-#include "pst_thread.h"
+#include "pst_mpi.h"
 #include "common.h"
 
-/* we split the number of points in the pst into numthreads threads or tasks */
-/* for speed it may help to allow more threads than cores */ 
-void pst_thread(struct BeamlineType *bl, int numthreads)
+/* we split the number of points in the pst into tasks */
+int pst_mpi(struct BeamlineType *bl, struct MpiData *data)
 {
-  pthread_t         *thread;
-  struct ThreadData *data;
   struct psimagest  *sp;
-  int i, tasksPerThread, npoints;
+  int i, npoints;
   
-  if (numthreads < 1)
-    {
-      fprintf(stderr, "error: number of threads= %d < 1, -- exit\n", numthreads);
-      exit(-1);
-    }
-
-  thread= XMALLOC(pthread_t, numthreads);
-  data  = XMALLOC(struct ThreadData, numthreads);
-
 #ifdef DEBUG
-  printf("debug: pst_thread file: %s, line: %d called\n", __FILE__, __LINE__);
+  printf("debug: pst_mpi file: %s, line: %d called\n", __FILE__, __LINE__);
 #endif
 
   sp= (struct psimagest *)bl->RTSource.Quellep;
   npoints= sp->iheigh * sp->iwidth;
   bl->BLOptions.PSO.intmod= 2;   
-  Test4Grating(bl);          
-
-  /*
-    this has the effect of rounding up the number of tasks
-    per thread, which is useful in case ARRAYSIZE does not
-    divide evenly by NUMTHREADS.
-  */
-  tasksPerThread=(npoints+ numthreads-1)/numthreads;
-  
-  /* Divide work for threads, prepare parameters */
-  for (i=0; i<numthreads; i++) 
+  Test4Grating(bl);     
+     
+  data= XMALLOC(struct MpiData, npoints);
+ 
+  /* Divide work for mpis, prepare parameters */
+  for (i=0; i < npoints; i++) 
     {
-      data[i].start    = i     * tasksPerThread;
-      data[i].stop     = (i+ 1)* tasksPerThread;
-      data[i].bl       = bl;
-      data[i].thread_no= i;
+      data[i].bl    = bl;
+      data[i].mpi_no= i;
     }
-  /* the last thread must not go past the end of the array */
-  data[numthreads-1].stop= npoints;
-  
-  for (i=0; i<numthreads; i++) 
-    pthread_create(&thread[i], NULL, pst_it, &data[i]); /* Launch Threads */
-  
-  printf("\nthreads created- wait until finished\n\n");
-  
-  for (i= 0; i< numthreads; i++) 
-     pthread_join(thread[i], NULL);          /* Wait for Threads to Finish */
-    
-  printf("\nthreads done, npoints= %d\n", npoints);
+   
+  printf("\nmpis done, npoints= %d\n", npoints);
   bl->beamlineOK |= resultOK;
   
-  XFREE(thread);  /* braucht es das ? */
-  XFREE(data);
-  
 #ifdef DEBUG
-  printf("debug: pst_thread file: %s, line: %d done\n", __FILE__, __LINE__);
+  printf("debug: pst_mpi file: %s, line: %d done\n", __FILE__, __LINE__);
 #endif
-} /* end pst_thread */
+  return npoints;
+} /* end pst_mpi */
 
-/* thread wrapper for pst_i with only one parameter */
-// void *pst_it(struct ThreadData *td)
-void *pst_it(void *arg)
+/* mpi wrapper for pst_i with only one parameter */
+// void *pst_it(struct MpiData *td)
+void pst_impi(struct MpiData *arg, int iindex)
 {
   int    index;
   struct BeamlineType *bl;
   struct map4 *m4p;
   struct constants cs;
-  struct ThreadData *td;
+  struct MpiData *td;
   
-  td= (struct ThreadData *)arg;                     /* to avoid warning */
+  td= (struct MpiData *)arg;                     /* to avoid warning */
 
 #ifdef DEBUG
   printf("debug: pst_it file: %s, line: %d\n", __FILE__, __LINE__);
-  printf("debug: calculate from index %d to %d in thread %d\n", td->start, td->stop, td->thread_no);
+  printf("debug: calculate index  %d\n", td->mpi_no);
 #endif
 
   bl= td->bl;
@@ -112,16 +81,11 @@ void *pst_it(void *arg)
       fill_m4(bl, m4p);
     }
 
-  for (index= td->start; index < td->stop; index++) 
-    {
-#ifdef DEBUG
-      printf("calc: %d\n", index);
-#endif
-      pstc_i(index, bl, m4p, &cs);
-    }
-
+  index= td->mpi_no;
+  pstc_i(index, bl, m4p, &cs);
+  
   if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
   return NULL;
-} /* pst_it */
+} /* pst_impi */
 
-/* end pst_thread.c */
+/* end pst_mpi.c */

@@ -13,12 +13,12 @@
 
 struct MpiData
 {
-  int index;
+  int    mpi_no;
   struct BeamlineType *bl;
 };
 
-void *pst_impi(void *);
-void  pst_mpi(struct BeamlineType *, int);
+void pst_impi(struct MpiData *, int);
+int  pst_mpi(struct BeamlineType *, struct MpiData *);
 
 #endif
 /* end pst_mpi.h */
