@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <03 Jul 13 14:24:01 flechsig>  */
+/*   Time-stamp: <2013-07-04 22:13:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -416,6 +416,27 @@ void pstc(struct BeamlineType *bl)
   if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
   printf("stop intensity calculation (end pstc)\n");
 } /* end pstc */
+
+/* wrapper for pstc_i */
+void pstc_ii(int index, struct BeamlineType *bl)
+{
+  struct map4 *m4p;
+  struct constants cs;
+
+  bl->BLOptions.PSO.intmod= 2;
+  initconstants(&cs);
+
+  if (bl->BLOptions.ifl.pst_mode == 1) /* pst_mode == 1 pst with external mp4 */
+    { 
+      printf("allocate and fill m4p in pstc\n");
+      m4p = XMALLOC(struct map4, 1);
+      fill_m4(bl, m4p);
+    }
+
+  pstc_i(index, bl, m4p, &cs);
+
+  if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
+} /* end pstc_ii */
 
 /* the internal wrapper function for adaptive int for index i */
 void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct constants *csp)
