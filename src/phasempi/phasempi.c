@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2013-07-04 23:12:20 flechsig>  */
+/*  Time-stamp: <2013-07-04 23:21:41 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -137,6 +137,7 @@ int main(int argc, char *argv[])
 	      result[4]= PSDp->y[ny];
 	      result[5]= PSDp->z[nz];
 	      /* send result */
+	      //	      MPI_Send(&result, 6, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);
 	    }
 	  else
 	    {
