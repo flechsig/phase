@@ -16,7 +16,7 @@ phasempi_SOURCES = \
         phasempi.c       phasempi.h \
         ../phase/bline.c ../phase/cutils.c ../phase/error.c \
         ../phase/phasec.c ../phase/rtrace.c ../phase/myhdf5.c ../phase/myhdf5.h \
-        ../phase/xmalloc.c ../phase/xstrdup.c  ../phase/pst_mpi.c ../phase/pst_mpi.h \
+        ../phase/xmalloc.c ../phase/xstrdup.c  ../phase/pst_mpi.c ../phase/pst_mpi.h ../phase/pst_thread.c ../phase/thread.h\
 	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
 	../phase/rekursiv_2d_8.F \
