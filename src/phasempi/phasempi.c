@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2013-07-04 22:23:50 flechsig>  */
+/*  Time-stamp: <2013-07-04 23:04:29 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -27,13 +27,13 @@
 
 int main(int argc, char *argv[])
 {
-  int        size, size_save, rank, numtasks, taskid, sender, index;
+  int        size, size_save, rank, numtasks, taskid, sender, index, ny, nz;
   MPI_Status status;
-  double     starttime, endtime, duration;
+  double     starttime, endtime, duration, result[4];
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
   struct PSDType     *PSDp;
-    
+      
   numtasks= 5;
 
   MPI_Init(&argc, &argv);
@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
   posrc_construct(bl);
   posrc_ini(bl);
   psip = (struct PSImageType *)bl->RTSource.Quellep;
+
   ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
   numtasks= psip->iy * psip->iz;
  
@@ -126,6 +127,14 @@ int main(int argc, char *argv[])
 	      printf("rank= %d, solve task %d\n", rank, taskid);
 	      index= taskid- 1;
 	      pstc_ii(index, bl);
+	      /* handle results */
+	      nz= index % psip->iwidth; // c loop
+	      ny= index / psip->iwidth; // c loop
+	      result[0]= PSDp->eyrec[ny+nz*sp->iheigh];
+	      result[1]= PSDp->eyimc[ny+nz*sp->iheigh];
+	      result[2]= PSDp->ezrec[ny+nz*sp->iheigh];
+	      result[3]= PSDp->ezimc[ny+nz*sp->iheigh]; 
+	      /* send result */
 	    }
 	  else
 	    {
