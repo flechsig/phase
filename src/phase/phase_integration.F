@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2013-06-29 19:39:17 flechsig> 
+c$$$ Time-stamp: <05 Jul 13 16:38:29 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -155,7 +155,7 @@ c*******************************************************
 	yi=ra.ri.yi
 	zi=ra.ri.zi
 
-#ifdef SEVEN_ORDER
+c#ifdef SEVEN_ORDER
         call subm17(m4.fdetc,yi,zi,m4.fdetrc)
         call subm17(m4.fdetphc,yi,zi,m4.fdetphrc)
         call subm17(m4.fdet1phc,yi,zi,m4.fdet1phrc)
@@ -171,23 +171,23 @@ c*******************************************************
         call subm17(m4.xlen2c,yi,zi,m4.xlen2c_r)
         call subm17(m4.wc,yi,zi,m4.wrc)
         call subm17(m4.xlc,yi,zi,m4.xlrc)
-#else
-        call subm1(m4.fdetc,yi,zi,m4.fdetrc)
-        call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
-        call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
-        call subm1(m4.fdet1phca,yi,zi,m4.fdet1phrca)
-        call subm1(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
-        call subm1(m4.ypc1,yi,zi,m4.yprc1)
-        call subm1(m4.zpc1,yi,zi,m4.zprc1)
-        call subm1(m4.dypc,yi,zi,m4.dyprc)
-        call subm1(m4.dzpc,yi,zi,m4.dzprc)
-        call subm1(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
-        call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
-        call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
-        call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
-        call subm1(m4.wc,yi,zi,m4.wrc)
-        call subm1(m4.xlc,yi,zi,m4.xlrc)
-#endif
+c#else
+c        call subm1(m4.fdetc,yi,zi,m4.fdetrc)
+c        call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
+c        call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
+c        call subm1(m4.fdet1phca,yi,zi,m4.fdet1phrca)
+c        call subm1(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
+c        call subm1(m4.ypc1,yi,zi,m4.yprc1)
+c        call subm1(m4.zpc1,yi,zi,m4.zprc1)
+c        call subm1(m4.dypc,yi,zi,m4.dyprc)
+c        call subm1(m4.dzpc,yi,zi,m4.dzprc)
+c        call subm1(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
+c        call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
+c        call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
+c        call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
+c        call subm1(m4.wc,yi,zi,m4.wrc)
+c        call subm1(m4.xlc,yi,zi,m4.xlrc)
+c#endif
 
 c        write(6,*)'m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)',m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)
 c------------------------------------------------------
@@ -354,7 +354,7 @@ c#endif
 	ra.ri.dzi=dzii
 
         
-#ifdef SEVEN_ORDER
+c#ifdef SEVEN_ORDER
         call subm27(m4.fdetrc,dzii,m4.fdtrrc)
         call subm27(m4.fdetphrc,dzii,m4.fdtphrrc)
         call subm27(m4.fdet1phrc,dzii,m4.fdt1phrrc)
@@ -370,23 +370,23 @@ c#endif
         call subm27(m4.xlen2c_r,dzii,m4.xlen2c_rr)
         call subm27(m4.wrc,dzii,m4.wrrc)
         call subm27(m4.xlrc,dzii,m4.xlrrc)
-#else
-        call subm2(m4.fdetrc,dzii,m4.fdtrrc)
-        call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
-        call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
-        call subm2(m4.fdet1phrca,dzii,m4.fdt1phrrca)
-        call subm2(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
-        call subm2(m4.yprc1,dzii,m4.yprrc1)
-        call subm2(m4.zprc1,dzii,m4.zprrc1)
-        call subm2(m4.dyprc,dzii,m4.dyprrc)
-        call subm2(m4.dzprc,dzii,m4.dzprrc)
-        call subm2(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
-        call subm2(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
-        call subm2(m4.xlen1c_r,dzii,m4.xlen1c_rr)
-        call subm2(m4.xlen2c_r,dzii,m4.xlen2c_rr)
-        call subm2(m4.wrc,dzii,m4.wrrc)
-        call subm2(m4.xlrc,dzii,m4.xlrrc)
-#endif
+c#else
+c        call subm2(m4.fdetrc,dzii,m4.fdtrrc)
+c       call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
+c        call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
+c        call subm2(m4.fdet1phrca,dzii,m4.fdt1phrrca)
+c        call subm2(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
+c        call subm2(m4.yprc1,dzii,m4.yprrc1)
+c        call subm2(m4.zprc1,dzii,m4.zprrc1)
+c        call subm2(m4.dyprc,dzii,m4.dyprrc)
+c        call subm2(m4.dzprc,dzii,m4.dzprrc)
+c        call subm2(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
+c        call subm2(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
+c        call subm2(m4.xlen1c_r,dzii,m4.xlen1c_rr)
+c        call subm2(m4.xlen2c_r,dzii,m4.xlen2c_rr)
+c        call subm2(m4.wrc,dzii,m4.wrrc)
+c        call subm2(m4.xlrc,dzii,m4.xlrrc)
+c#endif
 
 c         do ii=0,4
 c          write(6,*)'==',m4.fdtphrrc(ii)
