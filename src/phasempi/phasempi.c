@@ -89,19 +89,19 @@ int main(int argc, char *argv[])
  
   printf("%d >>>>>>>>>>>>>\n\n\n", rank);
 
-  numtasks= 5;  // for debugging
+  numtasks= 2;  // for debugging
   /* mpi */
   taskid= numtasks;
   while (1)  // main loop
     {
       if (rank == 0)   // master
 	{
-	  printf("master -> wait for slave\n");
+	  printf("\n\nmaster -> wait for slave\n");
 	  MPI_Recv(&results, N_RESULTS, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // get sender
 	  resultid= (int)results[0];
 	  sender  = status.MPI_TAG;
 	  printf("master -> resultid= %d\n", resultid );
-	  if ( resultid ) /* at the beginning all hosts have resultid == 0 */    
+	  if ( resultid > 0) /* at the beginning all hosts have resultid == 0, at the end it is negative */    
 	     {
 	       printf("master -> save result with id= %d\n", resultid);
 	       index=  abs(resultid- 1);
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 	  else  /* received task 0 */
 	    {
 	      printf("rank= %d, received task %d => say good bye\n", rank, taskid);
-              results[0] *= -1.0;       /* negative first index terminates master */
+              results[0]= -1.0;       /* negative first index terminates master */
 	      MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);  // send id to master to get new task
 	      printf("rank= %d, results sent, index= %f\n", rank,  results[0]);
 	      break;                   // slave: escape from loop - close slave 
