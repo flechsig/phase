@@ -56,10 +56,12 @@ int main(int argc, char *argv[])
   /* build beamline on each host */
   bl= &Beamline;
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
+
 #ifdef DEBUG 
   strncpy(Beamline.filenames.beamlinename, "/gpfs/home/flechsig/phase/data/test_5000.phase", MaxPathLength- 1);  /* for debugging */
   strncpy(Beamline.filenames.imageraysname, "/gpfs/home/flechsig/phase/data/test_5000.phase.h5", MaxPathLength- 1);
 #endif
+
   bl->ElementList= NULL;                       /* 15.12.99 */
   bl->raysout= NULL;
   bl->RESULT.RESp= NULL;
@@ -89,7 +91,7 @@ int main(int argc, char *argv[])
  
   //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
 
-  numtasks= 2;  // for debugging
+  //numtasks= 2;  // for debugging
   /* mpi */
   taskid= numtasks;
   while (1)  // main loop
@@ -115,14 +117,14 @@ int main(int argc, char *argv[])
 	       PSDp->psd[ny+nz*psip->iy]  = results[5]; 
 	       PSDp->y[ny]		  = results[6];
 	       PSDp->z[nz]		  = results[7];
-	       printf("master -> save result with id= %d saved\n\n", resultid);
+	       //printf("master -> save result with id= %d saved\n", resultid);
 	     } else 
 	    printf("master -> nothing to save\n");
 
 	  if ( resultid < 0 ) 
 	    {
 	      size--; // a slave said good bye
-	      printf("master -> slave %d said good bye, %d processor(s) left\n", sender, size);
+	      printf("master -> received good bye from slave %d, %d processor(s) left\n", sender, size);
 	    }
 	  else
 	    {
@@ -135,13 +137,13 @@ int main(int argc, char *argv[])
 	      else  // no tasks left
 		{
 		  //taskid = -1;
-		  printf("master ->  submit task %d (stop) to %d\n", taskid, sender);
+		  printf("master -> submit task %d (stop) to %d\n", taskid, sender);
 		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid = -1 to slave
 		}
 	    } /* end sender < 0 */
 	  if (size <= 1) 
 	    {
-	      printf("master ->  ==> all slaves said good bye\n");
+	      printf("master ==> all slaves said good bye\n");
 	      break;   // only the master is left- end the loop
 	    }
 	}
@@ -188,7 +190,7 @@ int main(int argc, char *argv[])
     {
       write_phase_hdf5_file(bl, bl->filenames.imageraysname);
       duration= endtime- starttime;
-      printf("elapsed time= %f s = %f h with %d processors\n", duration, duration/3600., size_save );
+      printf("%d: elapsed time= %f s = %f h with %d processors\n", rank, duration, duration/3600., size_save );
     }
 
   exit(0);
