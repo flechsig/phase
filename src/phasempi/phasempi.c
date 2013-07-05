@@ -90,23 +90,39 @@ int main(int argc, char *argv[])
   Test4Grating(bl);
  
   //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
-
   //numtasks= 2;  // for debugging
+
   /* mpi */
   taskid= numtasks;
-  while (1)  // main loop
+  while (1)  /* the main loop executed on each host */
     {
-      if (rank == 0)   // master
+      if (rank == 0)   /* master special */
 	{
+
+#ifdef DEBUG
 	  printf("\nmaster -> wait for slave\n");
-	  MPI_Recv(&results, N_RESULTS, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // get sender
-	  resultid= (int)results[0];
-	  sender  = status.MPI_TAG;
+#endif
+
+	  /* get sender_id  from slave in the status tag, and results */
+          /* the first item in the results is the resultid= taskid    */
+	  /* if resultid is positive the array is stored              */
+          /* resultid negative means the slave terminated             */
+	  MPI_Recv(&results, N_RESULTS, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
+	  resultid= (int)results[0];                /* integer number */
+	  sender  = status.MPI_TAG;                 /* slave id       */
+
+#ifdef DEBUG
 	  printf("master -> resultid= %d\n", resultid );
-	  if ( resultid > 0) /* at the beginning all hosts have resultid == 0, at the end it is negative */    
+#endif
+
+	  if ( resultid > 0 ) /* store the result */    
 	     {
+
+#ifdef DEBUG
 	       printf("master -> save result with id= %d\n", resultid);
-	       index=  abs(resultid- 1);
+#endif
+
+	       index=  resultid- 1;  /* index starts from 0, the tasks from 1 */
 	       nz= index % psip->iz; // c loop
 	       ny= index / psip->iz; // c loop
 	     
@@ -118,45 +134,70 @@ int main(int argc, char *argv[])
 	       PSDp->y[ny]		  = results[6];
 	       PSDp->z[nz]		  = results[7];
 	       //printf("master -> save result with id= %d saved\n", resultid);
-	     } else 
-	    printf("master -> nothing to save\n");
+	     } 
 
-	  if ( resultid < 0 ) 
+#ifdef DEBUG
+	  else 
+	    printf("master -> nothing to save\n");
+#endif
+
+	  if ( resultid < 0 )     /* a slave said good bye */
 	    {
-	      size--; // a slave said good bye
+	      size--; /* the number of hosts */
+
+#ifdef DEBUG
 	      printf("master -> received good bye from slave %d, %d processor(s) left\n", sender, size);
+#endif
+
 	    }
-	  else
+	  else  /* resultid == 0 or positive */
 	    {
-	      if ( taskid )  // tasks left submit a new task
+	      if ( taskid )  /* tasks left, submit a new task */
 		{
-		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid
+		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  /* send taskid to slave "sender" */
+
+#ifdef DEBUG
 		  printf("master -> submit task %d to %d\n", taskid, sender);
+#endif
+
 		  --taskid;
 		}
-	      else  // no tasks left
+	      else  /* no tasks left */
 		{
-		  //taskid = -1;
+		  
+#ifdef DEBUG
 		  printf("master -> submit task %d (stop) to %d\n", taskid, sender);
-		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid = -1 to slave
+#endif
+
+		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  /* send taskid = 0 to slave */
 		}
 	    } /* end sender < 0 */
-	  if (size <= 1) 
+
+	  if (size <= 1)   /* only master left over */
 	    {
+
+#ifdef DEBUG
 	      printf("master ==> all slaves said good bye\n");
-	      break;   // only the master is left- end the loop
+#endif
+
+	      break;   /* end the loop on master */
 	    }
 	}
       else   /* rank != 0 (slave) */
       	{
-	  MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);      // send id to master in tag to get new task
-	  MPI_Recv(&taskid, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // receive task
+	  /* the slave sends its id in rank and the results of any previous calculation in results */
+	  MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);      
+	  MPI_Recv(&taskid, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);  // receive new task
 	  if ( taskid > 0 )
 	    {
+
+#ifdef DEBUG
 	      printf("%d: solve task %d\n", rank, taskid);
-	      index= taskid- 1;
-	      pstc_ii(index, bl);             // the integration
-	      /* handle results */
+#endif
+
+	      index= taskid- 1;               /* index counts from 0 */
+	      pstc_ii(index, bl);             /* do the integration for an index */
+	      /* handle results which are in the beamline struct */
 	      nz= index % psip->iz; // c loop
 	      ny= index / psip->iz; // c loop
 	      results[0]= (double)taskid;                 // first is taskid
@@ -167,21 +208,35 @@ int main(int argc, char *argv[])
 	      results[5]= PSDp->psd[ny+nz*psip->iy];
 	      results[6]= PSDp->y[ny];
 	      results[7]= PSDp->z[nz];
+
+#ifdef DEBUG
 	      printf("%d: solve task %d done\n", rank, taskid);
+#endif
+
 	      /* result is sent in the next call */
 	    }
 	  else  /* received task 0 */
 	    {
+
+#ifdef DEBUG
 	      printf("%d: received task %d => say good bye\n", rank, taskid);
+#endif
+
               results[0]= -1.0;       /* negative first index terminates master */
-	      MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);  // send id to master to get new task
+	      MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);  /* acknowledge termination */
+
+#ifdef DEBUG
 	      printf("%d: results sent, index= %f\n", rank,  results[0]);
+#endif
 	      break;                   // slave: escape from loop - close slave 
 	    }
 	} /* fi rank == 0 */
-    } /* while */
- 
+    } /* while main loop */
+
+#ifdef DEBUG 
   printf("%d: phasempi done\n", rank);
+#endif
+
   endtime= MPI_Wtime();
  
   MPI_Finalize();
