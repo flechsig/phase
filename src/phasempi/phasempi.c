@@ -25,26 +25,27 @@
 #include "phasempi.h"
 #include "common.h"
 
+#define  N_RESULTS 8 
+
 int main(int argc, char *argv[])
 {
-  int        size, size_save, rank, numtasks, taskid, sender, index, ny, nz;
+  int        i, size, size_save, rank, numtasks, taskid, sender, index, ny, nz, resultid;
   MPI_Status status;
-  double     starttime, endtime, duration, result[6];
+  double     starttime, endtime, duration, results[N_RESULTS];
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
   struct PSDType     *PSDp;
       
-  numtasks= 5;
-
   MPI_Init(&argc, &argv);
   starttime= MPI_Wtime();
   MPI_Comm_size(MPI_COMM_WORLD, &size); // the number of involved cores
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); // the if of the core
   size_save= size;                      // remember the size
- 
+  for (i= 0; i < N_RESULTS; i++) results[i]= 0.0;  // initialize result
+  numtasks= 5;
   printf("%d: phasempi start, size= %d, rank= %d, tasks= %d\n", rank, size, rank, numtasks);
 
-  if  (size <= 1)
+  if  (size <= 1)     // abort if no slaves available
     {
       fprintf(stderr, "size= %d, no slaves available- exit\n\n", size);
       MPI_Finalize();
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
     }
 
   /* phase copy from batchmode */
+  /* build beamline on each host */
   bl= &Beamline;
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
 #ifdef DEBUG 
@@ -83,67 +85,95 @@ int main(int argc, char *argv[])
   PSDp= (struct PSDType *)bl->RESULT.RESp;
   //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
   /* end phase */
- numtasks= 5;
+  Test4Grating(bl);
+ 
+  printf("%d >>>>>>>>>>>>>\n\n\n", rank);
+
+  numtasks= 5;  // for debugging
   /* mpi */
   taskid= numtasks;
   while (1)  // main loop
     {
       if (rank == 0)   // master
 	{
-	  printf("master -> ");
-	  MPI_Recv(&sender, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // get sender
-	  if (sender < 0) 
+	  printf("master -> wait for slave\n");
+	  MPI_Recv(&results, N_RESULTS, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // get sender
+	  resultid= (int)results[0];
+	  sender  = status.MPI_TAG;
+	  printf("master -> resultid= %d\n", resultid );
+	  if ( resultid ) /* at the beginning all hosts have resultid == 0 */    
+	     {
+	       printf("master -> save result with id= %d\n", resultid);
+	       index=  abs(resultid- 1);
+	       nz= index % psip->iz; // c loop
+	       ny= index / psip->iz; // c loop
+	     
+	       PSDp->eyrec[ny+nz*psip->iy]= results[1];
+	       PSDp->eyimc[ny+nz*psip->iy]= results[2];
+	       PSDp->ezrec[ny+nz*psip->iy]= results[3];
+	       PSDp->ezimc[ny+nz*psip->iy]= results[4]; 
+	       PSDp->psd[ny+nz*psip->iy]  = results[5]; 
+	       PSDp->y[ny]		  = results[6];
+	       PSDp->z[nz]		  = results[7];
+	       printf("master -> save result with id= %d saved\n\n", resultid);
+	     } else 
+	    printf("master -> nothing to save\n");
+
+	  if ( resultid < 0 ) 
 	    {
 	      size--; // a slave said good bye
-	      printf("slave %d said good bye, %d processor(s) left\n", status.MPI_TAG, size);
+	      printf("master -> slave %d said good bye, %d processor(s) left\n", sender, size);
 	    }
 	  else
 	    {
 	      if ( taskid )  // tasks left submit a new task
 		{
 		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid
-		  printf(" submit task %d to %d\n", taskid, sender);
+		  printf("master -> submit task %d to %d\n", taskid, sender);
 		  --taskid;
 		}
 	      else  // no tasks left
 		{
 		  //taskid = -1;
-		  printf(" submit task %d (stop) to %d\n", taskid, sender);
+		  printf("master ->  submit task %d (stop) to %d\n", taskid, sender);
 		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  // send taskid = -1 to slave
 		}
 	    } /* end sender < 0 */
 	  if (size <= 1) 
 	    {
-	      printf(" ==> all slaves said good bye\n");
+	      printf("master ->  ==> all slaves said good bye\n");
 	      break;   // only the master is left- end the loop
 	    }
 	}
       else   /* rank != 0 (slave) */
       	{
-	  MPI_Send(&rank,   1, MPI_INT, 0, rank, MPI_COMM_WORLD);  // send id to master to get new task
+	  MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);      // send id to master in tag to get new task
 	  MPI_Recv(&taskid, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // receive task
 	  if ( taskid > 0 )
 	    {
 	      printf("rank= %d, solve task %d\n", rank, taskid);
 	      index= taskid- 1;
-	      pstc_ii(index, bl);
+	      pstc_ii(index, bl);             // the integration
 	      /* handle results */
-	      nz= index % psip->iwidth; // c loop
-	      ny= index / psip->iwidth; // c loop
-	      result[0]= PSDp->eyrec[ny+nz*sp->iheigh];
-	      result[1]= PSDp->eyimc[ny+nz*sp->iheigh];
-	      result[2]= PSDp->ezrec[ny+nz*sp->iheigh];
-	      result[3]= PSDp->ezimc[ny+nz*sp->iheigh]; 
-	      result[4]= PSDp->y[ny];
-	      result[5]= PSDp->z[nz];
-	      /* send result */
-	      //	      MPI_Send(&result, 6, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);
+	      nz= index % psip->iz; // c loop
+	      ny= index / psip->iz; // c loop
+	      results[0]= (double)taskid;                 // first is taskid
+	      results[1]= PSDp->eyrec[ny+nz*psip->iy];
+	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
+	      results[3]= PSDp->ezrec[ny+nz*psip->iy];
+	      results[4]= PSDp->ezimc[ny+nz*psip->iy]; 
+	      results[5]= PSDp->psd[ny+nz*psip->iy];
+	      results[6]= PSDp->y[ny];
+	      results[7]= PSDp->z[nz];
+	      printf("rank= %d, solve task %d done\n", rank, taskid);
+	      /* result is sent in the next call */
 	    }
-	  else
+	  else  /* received task 0 */
 	    {
 	      printf("rank= %d, received task %d => say good bye\n", rank, taskid);
-              taskid= -1;
-	      MPI_Send(&taskid, 1, MPI_INT, 0, rank, MPI_COMM_WORLD);  // send id to master to get new task
+              results[0] *= -1.0;       /* negative first index terminates master */
+	      MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);  // send id to master to get new task
+	      printf("rank= %d, results sent, index= %f\n", rank,  results[0]);
 	      break;                   // slave: escape from loop - close slave 
 	    }
 	} /* fi rank == 0 */
@@ -154,14 +184,13 @@ int main(int argc, char *argv[])
  
   MPI_Finalize();
  
-  if (rank == 0)
+  if (rank == 0)        /* master only */
     {
       write_phase_hdf5_file(bl, bl->filenames.imageraysname);
       duration= endtime- starttime;
       printf("elapsed time= %f s = %f h with %d processors\n", duration, duration/3600., size_save );
     }
 
-  XFREE(mdata);
   exit(0);
 }
 /* end */
