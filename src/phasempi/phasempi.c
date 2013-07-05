@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
   /* end phase */
   Test4Grating(bl);
  
-  printf("%d >>>>>>>>>>>>>\n\n\n", rank);
+  //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
 
   numtasks= 2;  // for debugging
   /* mpi */
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     {
       if (rank == 0)   // master
 	{
-	  printf("\n\nmaster -> wait for slave\n");
+	  printf("\nmaster -> wait for slave\n");
 	  MPI_Recv(&results, N_RESULTS, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // get sender
 	  resultid= (int)results[0];
 	  sender  = status.MPI_TAG;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
 	  MPI_Recv(&taskid, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // receive task
 	  if ( taskid > 0 )
 	    {
-	      printf("rank= %d, solve task %d\n", rank, taskid);
+	      printf("%d: solve task %d\n", rank, taskid);
 	      index= taskid- 1;
 	      pstc_ii(index, bl);             // the integration
 	      /* handle results */
@@ -165,15 +165,15 @@ int main(int argc, char *argv[])
 	      results[5]= PSDp->psd[ny+nz*psip->iy];
 	      results[6]= PSDp->y[ny];
 	      results[7]= PSDp->z[nz];
-	      printf("rank= %d, solve task %d done\n", rank, taskid);
+	      printf("%d: solve task %d done\n", rank, taskid);
 	      /* result is sent in the next call */
 	    }
 	  else  /* received task 0 */
 	    {
-	      printf("rank= %d, received task %d => say good bye\n", rank, taskid);
+	      printf("%d: received task %d => say good bye\n", rank, taskid);
               results[0]= -1.0;       /* negative first index terminates master */
 	      MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);  // send id to master to get new task
-	      printf("rank= %d, results sent, index= %f\n", rank,  results[0]);
+	      printf("%d: results sent, index= %f\n", rank,  results[0]);
 	      break;                   // slave: escape from loop - close slave 
 	    }
 	} /* fi rank == 0 */
