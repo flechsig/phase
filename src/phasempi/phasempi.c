@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <2013-07-04 23:21:41 flechsig>  */
+/*  Time-stamp: <08 Jul 13 12:27:41 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -25,11 +25,11 @@
 #include "phasempi.h"
 #include "common.h"
 
-#define  N_RESULTS 8 
-
+ 
 int main(int argc, char *argv[])
 {
   int        i, size, size_save, rank, numtasks, taskid, sender, index, ny, nz, resultid;
+  int        setupswitch, cmode, selected, iord, numthreads, format;
   MPI_Status status;
   double     starttime, endtime, duration, results[N_RESULTS];
   struct BeamlineType Beamline, *bl;
@@ -41,9 +41,19 @@ int main(int argc, char *argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size); // the number of involved cores
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); // the if of the core
   size_save= size;                      // remember the size
+
   for (i= 0; i < N_RESULTS; i++) results[i]= 0.0;  // initialize result
-  numtasks= 5;
-  printf("%d: phasempi start, size= %d, rank= %d, tasks= %d\n", rank, size, rank, numtasks);
+
+  printf("%d: phasempi start, size= %d, rank= %d\n", rank, size, rank);
+
+  setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
+			      &selected, &iord, &numthreads, &format);
+  /* ignore parameters: selected, numthreads */
+
+#ifdef DEBUG 
+  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1);  /* for debugging */
+#endif
+
 
   if  (size <= 1)     // abort if no slaves available
     {
@@ -75,6 +85,10 @@ int main(int argc, char *argv[])
   bl->BLOptions.ifl.pst_mode= 2;
 
   ReadBLFile(bl->filenames.beamlinename, bl);
+
+  if (iord !=  -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
+  if (cmode == -1) cmode= bl->BLOptions.CalcMod;
+
   BuildBeamline(bl);
 
   posrc_construct(bl);
@@ -243,11 +257,34 @@ int main(int argc, char *argv[])
  
   if (rank == 0)        /* master only */
     {
-      write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+      switch (format)
+	{
+	case 1:
+	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  break;
+	case 2:
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+	  break;
+	case 3:
+	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
+	  break;
+	default:
+	  printf("error: %d output format not defined- use default\n", format);
+	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	}
+      
       duration= endtime- starttime;
       printf("%d: elapsed time= %f s = %f h with %d processors\n", rank, duration, duration/3600., size_save );
     }
 
+  /* clean up memory */
+  XFREE(bl->ElementList);
+  XFREE(bl->raysout);
+  XFREE(bl->RESULT.RESp);
+  XFREE(bl->RTSource.SourceRays);
+  XFREE(bl->tp);
+  XFREE(bl->RTSource.Quellep);
+  
   exit(0);
 }
 /* end */
