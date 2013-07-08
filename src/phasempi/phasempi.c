@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <08 Jul 13 17:36:14 flechsig>  */
+/*  Time-stamp: <08 Jul 13 17:43:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
 
   setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
 			      &selected, &iord, &numthreads, &format);
-  /* ignore parameters: selected, numthreads */
+  /* ignore parameters: cmode, selected, numthreads and also setupswitch */
+  /* we evaluaete the filenames, iord and format */
 
 #ifdef DEBUG 
   strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1);  /* for debugging */
@@ -86,8 +87,7 @@ int main(int argc, char *argv[])
 
   ReadBLFile(bl->filenames.beamlinename, bl);
 
-  if (iord  != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
-  if (cmode == -1) cmode= bl->BLOptions.CalcMod;
+  if (iord  != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord if provided */
 
   BuildBeamline(bl);
 
