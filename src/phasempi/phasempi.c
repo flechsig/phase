@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <08 Jul 13 12:27:41 flechsig>  */
+/*  Time-stamp: <08 Jul 13 17:36:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
   ReadBLFile(bl->filenames.beamlinename, bl);
 
-  if (iord !=  -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
+  if (iord  != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
   if (cmode == -1) cmode= bl->BLOptions.CalcMod;
 
   BuildBeamline(bl);
