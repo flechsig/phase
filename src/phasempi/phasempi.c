@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <08 Jul 13 17:43:02 flechsig>  */
+/*  Time-stamp: <09 Jul 13 14:51:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -69,8 +69,10 @@ int main(int argc, char *argv[])
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
 
 #ifdef DEBUG 
-  strncpy(Beamline.filenames.beamlinename, "/gpfs/home/flechsig/phase/data/test_5000.phase", MaxPathLength- 1);  /* for debugging */
+  /*
+  strncpy(Beamline.filenames.beamlinename, "/gpfs/home/flechsig/phase/data/test_5000.phase", MaxPathLength- 1);  
   strncpy(Beamline.filenames.imageraysname, "/gpfs/home/flechsig/phase/data/test_5000.phase.h5", MaxPathLength- 1);
+  */
 #endif
 
   bl->ElementList= NULL;                       /* 15.12.99 */
