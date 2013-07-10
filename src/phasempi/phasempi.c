@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <09 Jul 13 14:51:00 flechsig>  */
+/*  Time-stamp: <10 Jul 13 10:45:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   /* we evaluaete the filenames, iord and format */
 
 #ifdef DEBUG 
-  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1);  /* for debugging */
+  /*  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1); */ /* for debugging */
 #endif
 
 
