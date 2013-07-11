@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <11 Jul 13 08:23:16 flechsig> 
+;  Time-stamp: <11 Jul 13 10:28:12 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,19 +11,20 @@
 
 
 
-pro crl, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yphase, $
-                           yamp=yamp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp
+pro crl, areal=areal, aimag=aimag, breal=breal, bimag=bimag, bamp=bamp, bphase=bphase, crlamp=crlamp, crlphase=crlphase, $
+         radius=radius, thickness=thickness, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
 ;+
 ; NAME:
-;   plothdf5_phase_source
+;   crl
 ;
 ;
 ; PURPOSE:
-;   plot a hdf5 file of type phase_hdf5, plot the source or/and export fields
+;   calculate the electric field after a parabolic compound refractive
+;   (Be) lense, (thin lense approximation), units (m) and (rad) 
 ;
 ;
 ; CATEGORY:
-;   phase_plot
+;   phase_calc
 ;
 ;
 ; CALLING SEQUENCE:
@@ -31,7 +32,7 @@ pro crl, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yp
 ;
 ;
 ; INPUTS:
-;   fname: filename
+;   
 ;
 ;
 ; OPTIONAL INPUTS:
@@ -39,8 +40,9 @@ pro crl, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yp
 ;
 ;
 ; KEYWORD PARAMETERS:
-;   png: save png files
-;
+;   radius:     the lense radius in m
+;   thickness:  the thickness of the lense on axis
+;   wavelength: the wavelength in m
 ;
 ; OUTPUTS:
 ;
@@ -59,7 +61,7 @@ pro crl, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yp
 ;
 ;
 ; RESTRICTIONS:
-;
+;   material properties hard coded - only Be so far
 ;
 ;
 ; PROCEDURE:
@@ -71,105 +73,61 @@ pro crl, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yp
 ;
 ;
 ; MODIFICATION HISTORY:
-;    25.3.13 UF
+;    11.7.13 UF
 ;-
 
-if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/EZRE_GB_5000.h5'                   
-if n_elements(limit) eq 0 then limit= 100
-if n_elements(nr)    eq 0 then nr=1+2+4+8+16+32+64+128
+;;; UF I do not use the complex numbers functionality in idl
+;;; UF I follow the the reference follath:2013f
 
-file_id     = H5F_OPEN(fname)
-dataset_id1 = H5D_OPEN(file_id, '/z_vec')
-dataset_id2 = H5D_OPEN(file_id, '/y_vec')
-dataset_id3 = H5D_OPEN(file_id, '/t_vec')
-dataset_id4 = H5D_OPEN(file_id, '/e_field')
-z_vec       = H5D_READ(dataset_id1)
-y_vec       = H5D_READ(dataset_id2)
-t_vec       = H5D_READ(dataset_id3)
-field       = H5D_READ(dataset_id4)
+if n_elements(radius)     eq 0 then radius    = 1e-3   ;; default radius 1 mm
+if n_elements(thickness)  eq 0 then thickness = 1e-4   ;; default radius 100 mum
+if n_elements(wavelength) eq 0 then wavelength= 1e-10  ;; default 12.4 keV
+if n_elements(areal) eq 0 then print, usage & return
+if n_elements(aimag) eq 0 then print, usage & return
+if n_elements(z_vec) eq 0 then print, usage & return
+if n_elements(y_vec) eq 0 then print, usage & return
 
-h5d_close, dataset_id1
-h5d_close, dataset_id2
-h5d_close, dataset_id3
-h5d_close, dataset_id4
-h5f_close, file_id
+usage= 'usage: crl, areal=areal, aimag=aimag, [breal=breal, bimag=bimag, bamp=bamp, bphase=bphase, crlamp=crlamp, crlphase=crlphase, $
+         radius=radius, thickness=thickness, wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
 
-nz   = n_elements(z_vec)
-ny   = n_elements(y_vec)
-nt   = n_elements(t_vec)
+;; optical constants of Be - can be extended to other materials
+rene        = 1.39e15   ;; 1/m^2
+mu3kev      = 39.1e2    ;; 1/m
+mu12p4kev   = 0.4e2     ;; 1/m
+delta3kev   = 3.8e-5    ;;
+delta12p4kev= 2.21e-6   ;;
 
-field1= reform(field,nz,ny,4,nt)
-field2= reform(field1[*,*,*,0],nz,ny,4)
+;; interpolate mu and delta 
+kev  = 1e3* 1240e-9/wavelength   ;; photon energy in keV
+mu   = mu3kev+    ((mu12p4kev- mu3kev)/(12.4- 3.0))       * (kev- 3.0)
+delta= delta3kev+ ((delta12p4kev- delta3kev)/(12.4- 3.0)) * (kev- 3.0)
 
-yreal= reform(field2[*,*,0], nz, ny)
-yimag= reform(field2[*,*,1], nz, ny) 
-zreal= reform(field2[*,*,2], nz, ny)
-zimag= reform(field2[*,*,3], nz, ny)
-help,field,field1,field2,yreal
+nz= n_elements(z_vec)
+ny= n_elements(y_vec)
 
-yamp  = sqrt(yreal^2+yimag^2)
-yphase= atan(yimag,yreal)
-zamp  = sqrt(zreal^2+zimag^2)
-zphase= atan(zimag,zreal)
+crlamp  = dblarr(nz, ny) ;; amplitude
+crlphase= dblarr(nz, ny) ;; complex phase
+for i=0, nz-1 do begin
+    for j=0, ny-1 do begin
+        rr= sqrt(z_vec[i]^2 + z_vec[j]^2) ;; the radial distance 
+        f4= exp(-mu*rr^2/(2.0*radius))    ;; factor 4 
+        f3= (-1.0)*rene*wavelength*rr^2/radius ;; the phase of the complex number
+        f2= exp(-mu*d/2.0)                ;; neglectable for normalized flux
+        crlamp[i,j]= f4*f2
+        crlphase[i,j]= f3
+    endfor
+endfor
 
-print, 'nr= ',nr
+;; we have now the factors for amplitude and phase for the crl
+;; and calculater amplitude and phase of the input and output
+aamp  = sqrt(areal^2+aimag^2)
+aphase= atan(aimag,areal)
+bamp  = aamp* crlamp
+bphase= aphase+ crlphase
 
-if ((nr and 1) gt 0) then begin
-window,0
-mycontour, yreal, z_vec, y_vec, title='y_real', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-yreal.png'
-if limit eq 1 then return
-endif 
-
-;return
-if ((nr and 2) gt 0) then begin
-print, 'call 2'
-window,1
-mycontour,yimag,z_vec,y_vec,title='y_imag', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-yimag.png'
-if limit eq 2 then return
-endif 
-
-if ((nr and 4) gt 0) then begin
-window,2
-mycontour,yamp, z_vec, y_vec, title='y_amplitude', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-yampl.png'
-if limit eq 3 then return
-endif
-
-if ((nr and 8) gt 0) then begin
-window,3
-mycontour,yphase, z_vec, y_vec, title='y_phase', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-yphas.png'
-if limit eq 4 then return
-endif
-
-if ((nr and 16) gt 0) then begin
-window,4
-mycontour,zreal, z_vec, y_vec, title='z_real', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-zreal.png'
-if limit eq 5 then return
-endif
-
-if ((nr and 32) gt 0) then begin
-window,5
-mycontour,zimag,z_vec,y_vec,title='z_imag', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-zimag.png'
-if limit eq 6 then return
-endif
-
-if ((nr and 64) gt 0) then begin
-window,6
-mycontour,zamp, z_vec, y_vec, title='z_amplitude', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-zampl.png'
-if limit eq 7 then return
-endif
-
-if ((nr and 128) gt 0) then begin
-window,7
-mycontour,zphase, z_vec, y_vec, title='z_phase', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'phase-zphas.png'
-endif
+;; go back to real and imag description
+breal= bamp* cos(bphase)
+bimag= bamp* sin(bphase)
 
 return
 end
