@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <11 Jul 13 15:22:30 flechsig> 
+;  Time-stamp: <11 Jul 13 16:43:24 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -134,7 +134,7 @@ crlamp  = dblarr(nz, ny) ;; amplitude
 crlphase= dblarr(nz, ny) ;; complex phase
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        rr= sqrt(z_vec[i]^2 + z_vec[j]^2)          ;; the radial distance 
+        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)          ;; the radial distance 
         if rr lt maxr then begin                   ;; inside the aperture
             f4= exp(-mu*rr^2/(2.0*radius))         ;; factor 4
             f3= (-1.0)*rene*wavelength*rr^2/radius ;; the phase of the complex number
