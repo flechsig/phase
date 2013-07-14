@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-07-14 18:09:16 flechsig> 
+;  Time-stamp: <2013-07-14 18:25:59 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -116,12 +116,6 @@ if n_elements(y_vec) eq 0 then print, usage
 
 print, 'drift start calculation'
 
-;; interpolate mu and delta - should be improved
-kev  = 1e-3* 1240e-9/wavelength     ;; photon energy in keV
-
-
-
-
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 
@@ -133,7 +127,7 @@ for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         rr= sqrt(z_vec[i]^2 + y_vec[j]^2)          ;; the radial distance 
         if rr lt maxr then begin                   ;; inside the aperture
-            f4= k/(2.0*drift) * rr^2        ;; factor 4
+            phase= k/(2.0*drift) * rr^2            ;; 
             
             ;; print,'f4=',f4,' f2=', f2, ' f24', f4*f2
         endif else begin
@@ -141,7 +135,7 @@ for i=0, nz-1 do begin
             f3= 0.0
             f2= 0.0
         endelse
-        driftarr[i,j]  = complex(1.0, f4, /double)  ;; nicht richtig
+        driftarr[i,j]  = complex(cos(phase), sin(phase), /double)  ;;
      endfor
 endfor
 
