@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-07-14 18:25:59 flechsig> 
+;  Time-stamp: <2013-07-14 18:28:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -141,7 +141,7 @@ endfor
 
 field0= acomp* driftarr
 field1= fft(driftarr, -1, /center, dimension=2, /double)
-scale = complex(,, /double)
+scale = complex(1.0/(wavelength*drift),sin(k*drift), /double)
 
 bcomp= scale* driftarr* field1
 ;; calculate amplitude and phase of the input field and output field
