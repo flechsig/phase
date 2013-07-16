@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-07-14 17:23:31 flechsig> 
+;  Time-stamp: <16 Jul 13 10:25:40 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -109,9 +109,10 @@ if n_elements(acomp) ne 0 then begin
   areal= real_part(acomp)
   aimag= imaginary(acomp)
 endif else begin
-  if n_elements(areal) eq 0 then print, usage 
-  if n_elements(aimag) eq 0 then print, usage
+;  if n_elements(areal) eq 0 then print, usage 
+;  if n_elements(aimag) eq 0 then print, usage
 endelse 
+
 if n_elements(z_vec) eq 0 then print, usage 
 if n_elements(y_vec) eq 0 then print, usage 
 
