@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <16 Jul 13 13:57:08 flechsig> 
+;  Time-stamp: <16 Jul 13 13:57:38 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -153,7 +153,7 @@ bimag= imaginary(bcomp)
 bamp  = sqrt(breal^2+bimag^2)
 bphase= atan(bimag,breal)
 
-if n_elements(plot) ne 0 mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
+if n_elements(plot) ne 0 then mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
 
 print,'drift end'
 return
