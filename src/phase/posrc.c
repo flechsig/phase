@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-07-16 21:33:49 flechsig>  */
+/*  Time-stamp: <2013-07-16 22:43:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -498,7 +498,6 @@ void read_hdf5_file(struct BeamlineType *bl, char *fname)
   printf("debug: read_hdf5_file called! file: %s\n", __FILE__);
 #endif 
   
-
   hdf5type= check_hdf5_type(fname, 7, 1) ? 7 : 8;
 
  /* Open an existing file. */
