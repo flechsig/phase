@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <16 Jul 13 15:00:43 flechsig>  */
+/*  Time-stamp: <16 Jul 13 15:45:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -98,8 +98,8 @@ void *pst_it(void *arg)
   td= (struct ThreadData *)arg;                     /* to avoid warning */
 
 #ifdef DEBUG
-  printf("debug: pst_it file: %s, line: %d\n", __FILE__, __LINE__);
-  printf("debug: calculate from index %d to %d in thread %d\n", td->start, td->stop, td->thread_no);
+  printf("debug: pst_it file: %s, line: %d", __FILE__, __LINE__);
+  printf(" calc. from index %d to %d in thread %d\n", td->start, td->stop, td->thread_no);
 #endif
 
   bl= td->bl;
