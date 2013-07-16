@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-07-14 18:28:39 flechsig> 
+;  Time-stamp: <16 Jul 13 13:57:08 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,9 +11,9 @@
 
 
 
-pro drift, acomp=acomp, areal=areal, aimag=aimag, apfac=apfac, bcomp=bcomp, breal=breal, bimag=bimag, $
-         bamp=bamp, bphase=bphase, driftamp=driftamp, driftphase=driftphase, $
-         radius=radius, thickness=thickness, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
+pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
+           bamp=bamp, bphase=bphase, drift=drift, plot=plot, $
+           wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
 ;+
 ; NAME:
 ;   drift
@@ -32,7 +32,7 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, apfac=apfac, bcomp=bcomp, brea
 ;
 ;
 ; INPUTS:
-;   drift distance dx in m
+;   
 ;
 ;
 ; OPTIONAL INPUTS:
@@ -44,16 +44,13 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, apfac=apfac, bcomp=bcomp, brea
 ;               areal, aimag are ignored
 ;   areal:      input field, real part (required)
 ;   aimag:      input field, imag. part (required)
-;   apfac:      aperture factor, max. ap.= apfac* radius, default= 1.0
 ;   bcomp:      output field, idl complex array
 ;   bamp:       output field, amplitude
 ;   bphase:     output field, phase
 ;   breal:      output field, real part
 ;   bimag:      output field, imag part
-;   driftamp:     drift amplitude factor
-;   driftphase:   drift phase factor
-;   radius:     the lens radius in m
-;   thickness:  the thickness of the lens on axis in m
+;   drift:      drift distance in m
+;   plot:       make contour plot of amplitude
 ;   wavelength: the wavelength in m
 ;   y_vec:      vertical input vector (required) in m
 ;   z_vec:      horizontal input vector (required) in m
@@ -89,71 +86,74 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, apfac=apfac, bcomp=bcomp, brea
 ;    11.7.13 UF
 ;-
 
-;;; UF I do not use the complex numbers functionality in idl
 ;;; UF I follow the the reference follath:2013f
 
-u1= 'usage: drift, areal=areal, aimag=aimag, [apfac=apfac,] [breal=breal,] [bimag=bimag,] [bamp=bamp,] [bphase=bphase,] [driftamp=driftamp,]'
-u2= ' [driftphase=driftphase,] [radius=radius,] [thickness=thickness,] [wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
+u1= 'usage: drift, [acomp=acomp,][areal=areal,][aimag=aimag,][apfac=apfac,][breal=breal,][bimag=bimag,][bamp=bamp,][bphase=bphase,]'
+u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
 usage= u1+u2
 
 print, 'drift called'
 
-if n_elements(apfac)      eq 0 then apfac     = 1.0    ;; aperture factor
-if n_elements(radius)     eq 0 then radius    = 5e-4   ;; default radius    0.5 mm
-if n_elements(thickness)  eq 0 then thickness = 2e-5   ;; default thickness 20 mum
+if n_elements(drift)      eq 0 then drift     = 100.   ;; default thickness 20 mum
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  ;; default 12.4 keV
-
-if n_elements(acomp) ne 0 then begin
-  areal= real_part(acomp)
-  aimag= imaginary(acomp)
-endif else begin
-  if n_elements(areal) eq 0 then print, usage 
-  if n_elements(aimag) eq 0 then print, usage
-  acomp= complex(areal, aimag, /double)
-endelse 
-if n_elements(z_vec) eq 0 then print, usage 
-if n_elements(y_vec) eq 0 then print, usage 
+if n_elements(z_vec) eq 0 then begin 
+    print, usage & return 
+endif
+if n_elements(y_vec) eq 0 then begin 
+    print, usage & return 
+endif
+if n_elements(acomp) eq 0 and (n_elements(areal) eq 0 or n_elements(aimag) eq 0) then begin 
+    print, usage & return 
+endif
+if n_elements(acomp) eq 0 then acomp= complex(areal, aimag, /double)
 
 print, 'drift start calculation'
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
+zz= z_vec[nz-1]- z_vec[0] ;; total length
+yy= y_vec[ny-1]- y_vec[0] ;; total length
 
 ;; determine factors for amplitude and phase for the drift
-driftarr  = dcomplexarr(nz, ny) ;; amplitude
-k= 2* !dpi/wavelength
+driftarr= dcomplexarr(nz, ny) ;; make a complex array
+scale   = dcomplexarr(nz, ny) ;; make a complex array
+k       = 2* !dpi/wavelength
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)          ;; the radial distance 
-        if rr lt maxr then begin                   ;; inside the aperture
-            phase= k/(2.0*drift) * rr^2            ;; 
-            
-            ;; print,'f4=',f4,' f2=', f2, ' f24', f4*f2
-        endif else begin
-            f4= 0.0   
-            f3= 0.0
-            f2= 0.0
-        endelse
-        driftarr[i,j]  = complex(cos(phase), sin(phase), /double)  ;;
-     endfor
+        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)      ;; the radial distance 
+        phase= k/(2.0*drift) * rr^2            ;; 
+        driftarr[i,j]= complex(cos(phase), sin(phase), /double)  ;;
+    endfor
 endfor
 
-field0= acomp* driftarr
-field1= fft(driftarr, -1, /center, dimension=2, /double)
-scale = complex(1.0/(wavelength*drift),sin(k*drift), /double)
+field0= acomp* driftarr  ;; the inner part of the fft
 
-bcomp= scale* driftarr* field1
-;; calculate amplitude and phase of the input field and output field
-bamp  = aamp* driftamp
-bphase= aphase+ driftphase
+field1= fft(field0, -1, /center, /double)                 ;; forward 2d fft, centered output
+
+u= (dindgen(nz)/(nz) - 0.5 )* (drift*wavelength)/zz * nz  ;; define the vectors in the image plane
+v= (dindgen(ny)/(ny) - 0.5 )* (drift*wavelength)/yy * ny  ;; define the vectors in the image plane
+
+for i=0, nz-1 do begin
+    for j=0, ny-1 do begin
+        rr= sqrt(u[i]^2 + v[j]^2)      ;; the radial distance 
+        phase= k/(2.0*drift) * rr^2            ;; 
+        scale[i,j]= complex(cos(phase), sin(phase), /double)  ;;
+    endfor
+endfor
+
+scale1=complex(1., sin(k*drift), /double)
+scale2=complex(0., (wavelength*drift), /double)
+
+bcomp= field1* scale* scale1/ scale2
 
 ;; calculate real and imag description
 breal= real_part(bcomp)
 bimag= imaginary(bcomp)
 bamp  = sqrt(breal^2+bimag^2)
-bphase= atan2(bimag,breal)
+bphase= atan(bimag,breal)
 
+if n_elements(plot) ne 0 mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
 
 print,'drift end'
 return
