@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <03 Jul 13 14:19:59 flechsig>  */
+/*   Time-stamp: <2013-07-16 21:01:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -40,11 +40,8 @@ void debug_beamline_type_c_(int *ip)
 {
   struct BeamlineType *bl;
   bl= (struct BeamlineType *)ip;
-#ifdef DEBUG
-#warning UF: ignore the following -Wformat warning - we print the pointer on purpose
-  /* this code produces a warning which must be igrnored- we want to print the pointer on purpose */
-  printf("%s debug_beamline_type_c_: %d position: %d\n", __FILE__, ip, bl->position);
-#endif
+
+  printf("%s debug_beamline_type_c_: %p position: %d\n", __FILE__, ip, bl->position);
 } /* end debug_beamline_type_c_ */
 
 
