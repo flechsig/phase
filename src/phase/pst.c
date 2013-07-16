@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Jul 13 15:23:19 flechsig>  */
+/*   Time-stamp: <16 Jul 13 15:28:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -696,7 +696,7 @@ void check_2_m4_(struct map4 *m4)
   a= (double *)in;
   b= (double *)out;
 
-  printf("check_2_m4: in: %f, out: %f, %d %d\n", *a, *b, in, out);
+  printf("check_2_m4: in: %f, out: %f, %d %d\n", *a, *b, (int)in, (int)out);
   if (match == 0) 
     printf("map4 test OK\n");
   else
