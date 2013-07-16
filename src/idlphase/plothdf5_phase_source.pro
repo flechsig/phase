@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <03 Apr 13 10:28:32 flechsig> 
+;  Time-stamp: <11 Jul 13 08:17:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,14 +9,15 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_phase_source, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yphase, yamp=yamp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp
+pro plothdf5_phase_source, fname, nr=nr, png=png, limit=limit, yreal=yreal, yimag=yimag, yphase=yphase, $
+                           yamp=yamp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp
 ;+
 ; NAME:
-;   plothdf5_genesis_source
+;   plothdf5_phase_source
 ;
 ;
 ; PURPOSE:
-;   plot a hdf5 file of type phase_hdf5, plot the source 
+;   plot a hdf5 file of type phase_hdf5, plot the source or/and export fields
 ;
 ;
 ; CATEGORY:
