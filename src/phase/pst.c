@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2013-07-04 22:13:10 flechsig>  */
+/*   Time-stamp: <16 Jul 13 15:23:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -481,7 +481,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   zi= (sp->iwidth == 1) ? sp->distz1+ nz * (sp->distz2- sp->distz1) : sp->distz1+ nz * (sp->distz2- sp->distz1)/ (double)(sp->iwidth- 1);
 
 //#ifdef DEBUG
-  printf("Integrate point %d out of %d, nz=%d, ny=%d, z=%f, y=%f\r", index,  points, nz, ny, zi, yi);
+  printf("Integrate point %5d out of %5d, nz=%3d, ny=%3d, z=%10.6f, y=%10.6f\r", index,  points, nz, ny, zi, yi);
   fflush( stdout );
 //#endif
 
