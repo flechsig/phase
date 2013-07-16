@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <16 Jul 13 13:57:38 flechsig> 
+;  Time-stamp: <16 Jul 13 14:32:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -13,7 +13,7 @@
 
 pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
            bamp=bamp, bphase=bphase, drift=drift, plot=plot, $
-           wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
+           wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
 ;+
 ; NAME:
 ;   drift
@@ -52,6 +52,8 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bima
 ;   drift:      drift distance in m
 ;   plot:       make contour plot of amplitude
 ;   wavelength: the wavelength in m
+;   u:          the horizontal output vector
+;   v:          the vertical output vector
 ;   y_vec:      vertical input vector (required) in m
 ;   z_vec:      horizontal input vector (required) in m
 ;
