@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <24 Jun 13 10:32:23 flechsig>  */
+/*  Time-stamp: <16 Jul 13 15:00:43 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -114,7 +114,7 @@ void *pst_it(void *arg)
 
   for (index= td->start; index < td->stop; index++) 
     {
-#ifdef DEBUG
+#ifdef DEBUG1
       printf("calc: %d\n", index);
 #endif
       pstc_i(index, bl, m4p, &cs);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <08 Jul 13 12:24:55 flechsig>  */
+/*   Time-stamp: <16 Jul 13 14:57:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -35,7 +35,7 @@
 #include "version.h"
 
 /* Batchmodus */
-void BatchMode(struct BeamlineType *bl,  int cmode, int selected, int iord, int threads, int format)
+void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int threads, int format)
 {
   struct PSDType     *PSDp;
   struct PSImageType *psip;
