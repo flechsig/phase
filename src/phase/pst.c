@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Jul 13 15:30:17 flechsig>  */
+/*   Time-stamp: <16 Jul 13 15:38:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -547,9 +547,9 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   {
     printf("\n");
     fflush(stdout);
-    printf("DEBUG output of central point in z, yindex= %d:\n", ny);
-    printf("yzintey = %g + I*%g\n", xirp->yzintey.re, xirp->yzintey.im);
-    printf("yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
+    printf("DEBUG z[%d], yindex= %d:", nz, ny);
+    printf(" yzintey = %g + I*%g; ", xirp->yzintey.re, xirp->yzintey.im);
+    printf("yzintez = %g + I*%g;", xirp->yzintez.re, xirp->yzintez.im);
     printf("psd = %g\n", PSDp->psd[ny+nz*sp->iheigh]);
   }
 #endif 
