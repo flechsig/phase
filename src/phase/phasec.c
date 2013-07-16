@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <16 Jul 13 16:14:52 flechsig>  */
+/*   Time-stamp: <2013-07-16 21:25:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -63,13 +63,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
   bl->BLOptions.ifl.pst_mode= 2;
 
   ReadBLFile(bl->filenames.beamlinename, bl);
-
-  if (iord != -1)  bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
-
-#ifndef QTGUI
-  /*  strncpy(bl->filenames.pssourcename, bl->src.so6.fsource6, MaxPathLength); */
-#endif
-
+  if (iord != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
   BuildBeamline(bl); 
   if (cmode == -1) cmode= bl->BLOptions.CalcMod;
   

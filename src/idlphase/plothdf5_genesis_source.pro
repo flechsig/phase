@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <03 Apr 13 09:51:29 flechsig> 
+;  Time-stamp: <2013-07-16 21:17:50 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,8 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag=imag, phase=phase, amp=amp, verbose=verbose
+pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag=imag, $
+                             phase=phase, amp=amp, verbose=verbose
 ;+
 ; NAME:
 ;   plothdf5_genesis_source
@@ -98,21 +99,19 @@ endif
 
 field2= reform(field0, 2, size, size)
 
-
-
 real= reform(field2[0,*,*], size, size)
 imag= reform(field2[1,*,*], size, size)
 
-amp  = sqrt(real^2+imag^2)
-phase= atan(imag,real)
+amp  = sqrt(real^2 + imag^2)
+phase= atan(imag, real)
 
 x0= dindgen(size)- size/2
 x = x0* gridsize[0]* 1e3
 y = x * 1.0
 
-window,0
+window, 0
 mycontour,real, x, y, title='real', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-real.png'
+if keyword_set(png) then spng, 'genesis-real.png'
 if limit lt 2 then return
 
 window,1

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Jul 13 10:18:15 flechsig>  */
+/*  Time-stamp: <2013-07-16 21:33:49 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -60,6 +60,7 @@ void posrc_ini(struct BeamlineType *bl)
 	  exit(-1);
 	}
     }
+
   if ( type == 7 )
     {
       if ( check_hdf5_type(bl->filenames.so7_hdf5, 7, 1) ) 
@@ -401,9 +402,8 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 #ifdef HAVE_HDF5
 
-
 /* returns true if type has been detected */
-/* type=7: phase_hdf5, type=8: GENESIS */
+/* type=7: phase_hdf5, type=8: GENESIS    */
 int check_hdf5_type(char *name, int type, int verbose)
 {
   int myreturn;
@@ -437,6 +437,7 @@ int check_hdf5_type(char *name, int type, int verbose)
       if (verbose) printf("file %s => hdf5 file from GENESIS\n", name); 
       myreturn= 1;	
       break;
+
     default:
       fprintf(stderr, "error: %s -- unknown hdf5 type: %d -- exit\n",  __FILE__, type);
       exit(-1);

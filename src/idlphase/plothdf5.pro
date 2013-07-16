@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <26 Mar 13 15:16:31 flechsig> 
+;  Time-stamp: <2013-07-16 21:17:50 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -41,7 +41,7 @@ pro plothdf5, fname, genesis=genesis, phase=phase, png=png, psd=psd, limit=limit
 ;   limit:   limit the number of plots to limit
 ;   phase:   phase hdf5
 ;   png:     save png files
-;   pst:     psd plot (phase intensity output) 
+;   psd:     psd plot (phase intensity output) 
 ;
 ;
 ; OUTPUTS:
@@ -91,7 +91,8 @@ if keyword_set(genesis) then begin
     return
 endif
 
-print,'error: you have to select a keyword (/genesis, /phase, /psd)'
+print, 'error: you have to select a keyword (/genesis, /phase, /psd)'
+
 return
 end
 ;; end

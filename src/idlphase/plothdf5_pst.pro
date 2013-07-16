@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Jun 13 14:12:20 flechsig> 
+;  Time-stamp: <2013-07-16 21:21:56 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,8 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, norm=norm, arr=arr, xvec=xvec, yvec=yvec, _extra=extra
+pro plothdf5_pst, fname, png=png, surface=surface, shade_surf=shade_surf, cut=cut, $
+                  norm=norm, arr=arr, xvec=xvec, yvec=yvec, _extra=extra
 ;+
 ; NAME:
 ;   plothdf5_pst
@@ -99,12 +100,13 @@ help, field0, field1, y_vec, z_vec, arr
 
 if keyword_set(norm) then field1= field1/max(field1)
 
-
 if keyword_set(surface) then begin 
-    surface,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', charsize=3, _extra=extra
+    surface, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', $
+             charsize=3, _extra=extra
 endif else begin
     if keyword_set(shade_surf) then begin
-        shade_surf, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', _extra=extra
+        shade_surf, field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', $
+                    ytitle='y (mm)', _extra=extra
     endif else begin
         mycontour,field1, z_vec, y_vec, title='intensity', xtitle='z (mm)', ytitle='y (mm)', _extra=extra
     endelse
@@ -118,12 +120,13 @@ if keyword_set(cut) then begin
     ypro0= field1[zcenteridx, *]
     zprof= zpro0/max(zpro0)
     yprof= ypro0/max(ypro0)
-help, y_vec, ycenteridx
+    help, y_vec, ycenteridx
     min=min([min(z_vec),min(y_vec)])
     max=max([max(z_vec),max(y_vec)])
 ;help, y_vec
 ;print,'start plot'
-    plot, [min, max], [0,1.1], xtitle='pos (mm)', ytitle='intensity', title='normalized profiles at the center',/nodata, _extra=extra
+    plot, [min, max], [0,1.1], xtitle='pos (mm)', ytitle='intensity', $
+          title='normalized profiles at the center',/nodata, _extra=extra
     oplot, z_vec, zprof, color=1, thick=2
     oplot, y_vec, yprof, color=2, thick=2
 ;help, y_vec
@@ -133,18 +136,18 @@ help, y_vec, ycenteridx
 ;    help, zrof, fitz
     sigmaz= fitz[2]
     sigmay= fity[2]
-    print, 'z FWHM= ',2.35*sigmaz*1e3,' mum'
+    print, 'z FWHM= ', 2.35*sigmaz*1e3,' mum'
     print, 'z fit: ', fitz
-    print, 'y FWHM= ',2.35*sigmay*1e3,' mum'
+    print, 'y FWHM= ', 2.35*sigmay*1e3,' mum'
     print, 'y fit: ', fity
 
     oplot, z_vec, zfit, color=3, thick=2 
     oplot, y_vec, yfit, color=4, thick=2 
-    legend, ['hor cut','vert cut','hor fit','vert fit'], color=[1,2,3,4],linestyle=[0,0,0,0],thick=[2,2,2,2]
+    legend, ['hor cut','vert cut','hor fit','vert fit'], color=[1,2,3,4], $
+            linestyle=[0,0,0,0], thick=[2,2,2,2]
 endif
 
-
-if keyword_set(png) then spng,'pst.png'
+if keyword_set(png) then spng, 'pst.png'
 
 return
 end
