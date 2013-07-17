@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <11 Jul 13 08:17:04 flechsig> 
+;  Time-stamp: <17 Jul 13 16:56:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -76,20 +76,11 @@ if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/EZRE_GB_500
 if n_elements(limit) eq 0 then limit= 100
 if n_elements(nr)    eq 0 then nr=1+2+4+8+16+32+64+128
 
-file_id     = H5F_OPEN(fname)
-dataset_id1 = H5D_OPEN(file_id, '/z_vec')
-dataset_id2 = H5D_OPEN(file_id, '/y_vec')
-dataset_id3 = H5D_OPEN(file_id, '/t_vec')
-dataset_id4 = H5D_OPEN(file_id, '/e_field')
-z_vec       = H5D_READ(dataset_id1)
-y_vec       = H5D_READ(dataset_id2)
-t_vec       = H5D_READ(dataset_id3)
-field       = H5D_READ(dataset_id4)
-
-h5d_close, dataset_id1
-h5d_close, dataset_id2
-h5d_close, dataset_id3
-h5d_close, dataset_id4
+file_id= H5F_OPEN(fname)
+z_vec = h5_read_dataset(file_id, '/z_vec')
+y_vec = h5_read_dataset(file_id, '/y_vec')
+t_vec = h5_read_dataset(file_id, '/t_vec')
+field = h5_read_dataset(file_id, '/e_field')
 h5f_close, file_id
 
 nz   = n_elements(z_vec)

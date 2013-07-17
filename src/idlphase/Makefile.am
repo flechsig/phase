@@ -23,9 +23,28 @@ idl_SCRIPTS = \
 
 ## all idl scripts with a doc header
 idl_with_doc_header = \
-	      read_extr_out.pro \
-            read_int_file.pro \
-            read_opti_out.pro 
+	check_hdf5_type.pro \
+	crl.pro \
+	crl_test.idl \
+	drift.pro \
+	drift_crl_test.idl \
+        h5_read_dataset.pro \
+        h5_write_genesis.pro \
+        h5_write_phase.pro \
+	plot2d.pro \
+	plotdivergence.pro  \
+	plotfootprint.pro  \
+	plotfootprint_simple.pro  \
+	plothdf5_genesis_source.pro  \
+	plothdf5_phase_source.pro  \
+	plothdf5.pro  \
+	plothdf5_pst.pro  \
+	plotphase.pro  \
+	plotsi.pro  \
+	read_extr_out.pro \
+        read_int_file.pro \
+        read_opti_out.pro \
+        tag_exist.pro
 
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
@@ -54,7 +73,7 @@ idl_DATA  = help.html \
 
 
 ###
-help.html: $(idl_with_doc_header)
+help.html: $(idl_with_doc_header) 
 	./updateidlphasehelp.csh	
 
 ## phase_structures_256.pro \

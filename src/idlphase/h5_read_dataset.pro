@@ -1,6 +1,6 @@
  ;; File      : /home/flechsig/phase/src/phaseidl/read_hdf5_dataset.pro
  ;; Date      : <2013-07-16 22:18:34 flechsig> 
- ;; Time-stamp: <2013-07-16 22:24:39 flechsig> 
+ ;; Time-stamp: <17 Jul 13 16:53:04 flechsig> 
  ;; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ;; $Source$ 
@@ -8,10 +8,10 @@
  ;; $Revision$ 
  ;; $Author$ 
 
-function read_hdf5_dataset(file_id, name)
+function h5_read_dataset, file_id, name
 ;+
 ; NAME:
-;   read_hdf5_dataset
+;   h5_read_dataset
 ;
 ;
 ; PURPOSE:
@@ -19,7 +19,7 @@ function read_hdf5_dataset(file_id, name)
 ;
 ;
 ; CATEGORY:
-;
+;   hdf5
 ;
 ;
 ; CALLING SEQUENCE:
@@ -67,7 +67,7 @@ function read_hdf5_dataset(file_id, name)
 ;
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF 2013
 ;-
 
   dataset_id = H5D_OPEN(file_id, name)
