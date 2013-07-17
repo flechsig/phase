@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <03 Jul 13 15:57:18 flechsig> 
+dnl   Time-stamp: <17 Jul 13 11:35:37 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -483,8 +483,7 @@ AC_CONFIG_FILES([Makefile
                  misalignment/Makefile
                  opti/Makefile
                  phase4idl/Makefile
-                 phaseidl/Makefile
-                 phaselib/Makefile
+		 phaselib/Makefile
                  phaseqt/Makefile
 		 phasempi/Makefile
                  phasesrv/Makefile])
