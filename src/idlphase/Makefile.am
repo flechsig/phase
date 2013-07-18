@@ -23,12 +23,14 @@ idl_SCRIPTS = \
 
 ## all idl scripts with a doc header
 idl_with_doc_header = \
-	check_hdf5_type.pro \
 	crl.pro \
 	crl_test.idl \
 	drift.pro \
 	drift_crl_test.idl \
+	h5_check_type.pro \
         h5_read_dataset.pro \
+	h5_read_genesis.pro \
+	h5_read_phase.pro \
         h5_test.pro \
         h5_write_genesis.pro \
         h5_write_phase.pro \

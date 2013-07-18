@@ -1,6 +1,6 @@
  ;; File      : /home/flechsig/phase/src/phaseidl/check_hdf5_type.pro
  ;; Date      : <2013-07-16 21:39:39 flechsig> 
- ;; Time-stamp: <17 Jul 13 16:33:29 flechsig> 
+ ;; Time-stamp: <18 Jul 13 11:48:26 flechsig> 
  ;; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ;; $Source$ 
@@ -10,10 +10,10 @@
 
 
 
-function check_hdf5_type, fname, type, verbose=verbose
+function h5_check_type, fname, type, verbose=verbose
 ;+
 ; NAME:
-;   check_hdf5_type
+;   h5_check_type
 ;
 ;
 ; PURPOSE:
