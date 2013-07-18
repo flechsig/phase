@@ -1,6 +1,6 @@
  ;; File      : /home/flechsig/phase/src/phaseidl/read_hdf5_dataset.pro
  ;; Date      : <2013-07-16 22:18:34 flechsig> 
- ;; Time-stamp: <17 Jul 13 16:53:04 flechsig> 
+ ;; Time-stamp: <18 Jul 13 11:37:25 flechsig> 
  ;; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ;; $Source$ 
@@ -15,7 +15,7 @@ function h5_read_dataset, file_id, name
 ;
 ;
 ; PURPOSE:
-;   read a named dataset from an open hdf5 file
+;   low level routine to read a named dataset from an open hdf5 file
 ;
 ;
 ; CATEGORY:

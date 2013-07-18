@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 11:24:26 flechsig> 
+;  Time-stamp: <18 Jul 13 11:31:55 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -21,7 +21,7 @@ pro h5_write_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ;
 ; CATEGORY:
-;   phase_plot
+;   hdf5
 ;
 ;
 ; CALLING SEQUENCE:
@@ -37,8 +37,6 @@ pro h5_write_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ;
 ; KEYWORD PARAMETERS:
-;   limit: limit the number of plots to limit
-;   png:   save png files
 ;
 ;
 ; OUTPUTS:
@@ -99,9 +97,7 @@ for i=0, nz-1 do begin
     endfor
 endfor 
 
-
 datatype_double_id = H5T_IDL_CREATE(lambda)
-
 
 w_dataspace_id = H5S_create_simple(1)
 g_dataspace_id = H5S_create_simple(1)
@@ -128,7 +124,6 @@ H5S_CLOSE, f_dataspace_id
 H5G_CLOSE, group_id
 
 h5f_close, file_id
-
 
 return
 end

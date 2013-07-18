@@ -1,13 +1,13 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 10:21:07 flechsig> 
+;  Time-stamp: <18 Jul 13 17:37:28 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
 ;  $Date$
 ;  $Revision$ 
-;  $Author$ 
+;  $Author$ \
 
 pro h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, yreal=yreal, yimag=yimag,$
                    zphase=zphase, zamp=zamp, yphase=yphase, yamp=yamp, $
@@ -80,6 +80,8 @@ pro h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, yr
 ;    25.3.13 UF
 ;-
 
+
+
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/EZRE_GB_5000.h5' 
 
 file_id= H5F_OPEN(fname)
@@ -112,6 +114,8 @@ ycomp= complex(yreal, yimag, /double)
 
 zcomp= dcomplexarr(nz, ny)
 zcomp= complex(zreal, zimag, /double)
+
+print, 'h5_read_phase done'
 
 return
 end

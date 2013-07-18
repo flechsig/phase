@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emf_stat.pro
 ;  Date      : <18 Jul 13 17:34:57 flechsig> 
-;  Time-stamp: <18 Jul 13 17:37:26 flechsig> 
+;  Time-stamp: <18 Jul 13 17:41:06 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -15,9 +15,7 @@ pro emf_stat, field, z_vec=z_vec, y_vec=y_vec
 ;
 ;
 ; PURPOSE:
-;   print statistics of a field (does a 2d gaussfit to determine fwhmcase of
-
-endcase
+;   print statistics of a field (does a 2d gaussfit to determine fwhm
 ;
 ;
 ; CATEGORY:
