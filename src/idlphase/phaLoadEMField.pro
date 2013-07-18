@@ -1,4 +1,4 @@
-;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaLoadEMField.pro
+;  File      : phase/src/idlphase/phaLoadEMField.pro
 
 ;  $Source$ 
 ;  $Date$
