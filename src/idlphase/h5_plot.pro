@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 16:09:36 flechsig> 
+;  Time-stamp: <18 Jul 13 16:17:17 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro h5_plot, fname,  
+pro h5_plot, fname  
 ;+
 ; NAME:
 ;   h5_plot
@@ -84,21 +84,15 @@ if h5_test(fname) eq 0 then begin
     return
 endif
 
-h5type= h5_check_type(fname, verbose=verbose)
+h5_read, fname, zamp=zamp, z_vec=z_vec, y_vec=y_vec
+mycontour, zamp, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='Ez intensity'
 
-if (n_elements(verbose) ne 0) then print, 'h5_read: h5type=', h5type
-
-case h5type of
-    7: h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp, $
-      ycomp=ycomp, yreal=yreal, yimag=yimag, yphase=yphase, yamp=yamp, $
-      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose 
-    8: h5_read_genesis, fname, comp=zcomp,  real=zreal, imag=zimag, phase=zphase, amp=zamp, $
-      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose
-    else: print, 'no valid hdf5 file'
-endcase
-
-print, 'h5_read done'
-
+stat= gauss2dfit(zamp, z_vec, y_vec)
+print, 'result of gauss2dfit:', stat
+print, 'z fwhm=',stat[2]
+print, 'y fwhm=',stat[3]
+print, 'z0    =',stat[4]
+print, 'y0    =',stat[5]
 return
 end
 ;; end
