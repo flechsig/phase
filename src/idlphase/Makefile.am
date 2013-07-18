@@ -29,6 +29,7 @@ idl_with_doc_header = \
 	drift.pro \
 	drift_crl_test.idl \
         h5_read_dataset.pro \
+        h5_test.pro \
         h5_write_genesis.pro \
         h5_write_phase.pro \
 	plot2d.pro \
