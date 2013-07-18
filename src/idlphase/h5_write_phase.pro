@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <17 Jul 13 16:58:20 flechsig> 
+;  Time-stamp: <18 Jul 13 10:56:21 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,15 +9,15 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag=imag, $
-                             phase=phase, amp=amp, verbose=verbose
+pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, zreal=zreal, zimag=zimag, y_vec=y_vec, z_vec=z_vec, $
+                              verbose=verbose
 ;+
 ; NAME:
-;   plothdf5_genesis_source
+;   h5_write_phase
 ;
 ;
 ; PURPOSE:
-;   plot a hdf5 file of type genesis_hdf5, plot the source 
+;   write phase hdf5
 ;
 ;
 ; CATEGORY:
@@ -73,55 +73,61 @@ pro plothdf5_genesis_source, fname, png=png, limit=limit, nr=nr, real=real, imag
 ;    25.3.13 UF
 ;-
 
-if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
-if n_elements(limit) eq 0 then limit= 100
+if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/myphase.h5'
 
-file_id = H5F_OPEN(fname)
-field0  = h5_read_dataset(file_id, 'slice000001/field')
-gridsize= h5_read_dataset(file_id, 'gridsize')
-h5f_close, file_id
-
-len   = n_elements(field0)/2
-size  = fix(sqrt(len))
-size2 = size*size
-print, 'size= ', size, ' gridsize= ', gridsize
-print, 'len= ',  len, ' size^2= ', size2
-
-if (size2 ne len) then begin
-    print, 'genesis works assumes a quadratic grid- return'
-    return
+if n_elements(ycomp) ne 0 then begin
+    yreal= real_part(ycomp)
+    yimag= imaginary(ycomp)
 endif
 
-field2= reform(field0, 2, size, size)
+if n_elements(zcomp) ne 0 then begin
+    zreal= real_part(zcomp)
+    zimag= imaginary(zcomp)
+endif
 
-real= reform(field2[0,*,*], size, size)
-imag= reform(field2[1,*,*], size, size)
+file_id = H5F_CREATE(fname)
 
-amp  = sqrt(real^2 + imag^2)
-phase= atan(imag, real)
+lambda= double(1.0)
+t_vec= lambda
 
-x0= dindgen(size)- size/2
-x = x0* gridsize[0]* 1e3
-y = x * 1.0
+nz= n_elements(z_vec)
+ny= n_elements(y_vec)
+nt= n_elements(t_vec)
+a = dblarr(nz,ny,4,nt)
 
-window, 0
-mycontour,real, x, y, title='real', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng, 'genesis-real.png'
-if limit lt 2 then return
+a[*,*,0,0]= yreal
+a[*,*,1,0]= yimag
+a[*,*,2,0]= zreal
+a[*,*,3,0]= zimag
 
-window,1
-mycontour,imag,x,y,title='imag', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-imag.png'
-if limit lt 3 then return
+datatype_double_id = H5T_IDL_CREATE(lambda);
 
-window,2
-mycontour,amp, x, y, title='amplitude', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-ampl.png'
-if limit lt 4 then return
+e_dataspace_id = H5S_create_simple(4)
+y_dataspace_id = H5S_create_simple(1)
+z_dataspace_id = H5S_create_simple(1)
+t_dataspace_id = H5S_create_simple(1)
 
-window,3
-mycontour,phase, x, y, title='phase', xtitle='z (mm)', ytitle='y (mm)'
-if keyword_set(png) then spng,'genesis-phas.png'
+e_dataset_id = H5D_CREATE(file_id, '/e_field', datatype_double_id, e_dataspace_id);
+y_dataset_id = H5D_CREATE(file_id, '/y_vec',   datatype_double_id, y_dataspace_id);
+z_dataset_id = H5D_CREATE(file_id, '/z_vec',   datatype_double_id, z_dataspace_id);
+t_dataset_id = H5D_CREATE(file_id, '/t_vec',   datatype_double_id, t_dataspace_id);
+
+H5D_WRITE, e_dataset_id, a
+H5D_WRITE, y_dataset_id, y_vec
+H5D_WRITE, z_dataset_id, z_vec
+H5D_WRITE, t_dataset_id, t_vec
+
+H5D_CLOSE,e_dataset_id
+H5D_CLOSE,y_dataset_id
+H5D_CLOSE,z_dataset_id
+H5D_CLOSE,t_dataset_id 
+
+H5S_CLOSE, e_dataspace_id
+H5S_CLOSE, y_dataspace_id
+H5S_CLOSE, z_dataspace_id
+H5S_CLOSE, t_dataspace_id
+
+h5f_close, file_id
 
 return
 end
