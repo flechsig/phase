@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 09:57:58 flechsig> 
+;  Time-stamp: <18 Jul 13 10:10:11 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -17,7 +17,8 @@ pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ;
 ; PURPOSE:
-;   read genesis source
+;   read genesis source, Genesis calculates an EM field on a centered,
+;   equidistant, quadratic grid, the output is one field - no polarization 
 ;
 ;
 ; CATEGORY:
@@ -37,7 +38,15 @@ pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ;
 ; KEYWORD PARAMETERS:
-;
+;   amp:        amplitude (2d)
+;   comp:       complex field (2d)
+;   imag:       imaginary part (2d)
+;   phase:      phase: (2d)
+;   real:       real part (2d)
+;   verbose:    verbose
+;   wavelength; wavelength
+;   y:          vertical vector
+;   z:          horizontal vector 
 ;
 ; OUTPUTS:
 ;
@@ -64,8 +73,8 @@ pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ;
 ; EXAMPLE:
-;
-;
+;   idl> h5_read_genesis,'abc.h5', amp=a, z=z, y=y
+;   idl> mycontour, a ,z, y
 ;
 ; MODIFICATION HISTORY:
 ;    25.3.13 UF
@@ -82,6 +91,7 @@ h5f_close, file_id
 len   = n_elements(field0)/2
 size  = fix(sqrt(len))
 size2 = size*size
+print, 'read GENESIS file -- units: (m)'
 print, 'size      = ', size, ' gridsize= ', gridsize
 print, 'len       = ',  len, ' size^2  = ', size2
 print, 'wavelenth = ',  wavelength
