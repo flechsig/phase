@@ -1,3 +1,8 @@
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
 
 
 ;; filename:  phaLoadEMField.pro
