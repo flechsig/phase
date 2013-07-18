@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 10:10:35 flechsig> 
+;  Time-stamp: <18 Jul 13 15:59:44 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,7 +10,7 @@
 ;  $Author$ 
 
 pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
-                     phase=phase, amp=amp, z=z, y=y, wavelength=wavelength, verbose=verbose
+                     phase=phase, amp=amp, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose
 ;+
 ; NAME:
 ;   h5_read_genesis
@@ -113,8 +113,8 @@ comp= dcomplexarr(size, size)
 comp= complex(real, imag, /double)
 
 x0= dindgen(size)- size/2
-z = x0* gridsize[0]
-y = z * 1.0
+z_vec = x0* gridsize[0]
+y_vec = z_vec * 1.0
 
 return
 end
