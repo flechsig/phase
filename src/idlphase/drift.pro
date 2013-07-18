@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <16 Jul 13 14:32:22 flechsig> 
+;  Time-stamp: <18 Jul 13 17:11:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -133,8 +133,20 @@ field0= acomp* driftarr  ;; the inner part of the fft
 
 field1= fft(field0, -1, /center, /double)                 ;; forward 2d fft, centered output
 
-u= (dindgen(nz)/(nz) - 0.5 )* (drift*wavelength)/zz * nz  ;; define the vectors in the image plane
-v= (dindgen(ny)/(ny) - 0.5 )* (drift*wavelength)/yy * ny  ;; define the vectors in the image plane
+u0= dindgen(nz)/nz - 0.5
+v0= dindgen(ny)/ny - 0.5
+uscale= (drift*wavelength)/zz * nz
+vscale= (drift*wavelength)/yy * ny
+u=u0*uscale[0]
+v=v0*vscale[0]
+
+
+
+;;u= (dindgen(nz)/(nz) - 0.5 )* (drift*wavelength)/zz * nz  ;; define the vectors in the image plane
+;v= (dindgen(ny)/(ny) - 0.5 )* (drift*wavelength)/yy * ny  ;; define the vectors in the image plane
+;help, u, v, zz, nz, uscale, u0
+;help,ny,nz
+;print,ny,nz
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
