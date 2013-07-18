@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <18 Jul 13 17:11:39 flechsig> 
+;  Time-stamp: <18 Jul 13 17:18:21 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -137,14 +137,14 @@ u0= dindgen(nz)/nz - 0.5
 v0= dindgen(ny)/ny - 0.5
 uscale= (drift*wavelength)/zz * nz
 vscale= (drift*wavelength)/yy * ny
-u=u0*uscale[0]
-v=v0*vscale[0]
+u= u0*uscale[0]
+v= v0*vscale[0]
 
 
 
 ;;u= (dindgen(nz)/(nz) - 0.5 )* (drift*wavelength)/zz * nz  ;; define the vectors in the image plane
 ;v= (dindgen(ny)/(ny) - 0.5 )* (drift*wavelength)/yy * ny  ;; define the vectors in the image plane
-;help, u, v, zz, nz, uscale, u0
+help, u, v, zz, nz, uscale, u0
 ;help,ny,nz
 ;print,ny,nz
 
@@ -159,7 +159,9 @@ endfor
 scale1=complex(1., sin(k*drift), /double)
 scale2=complex(0., (wavelength*drift), /double)
 
-bcomp= field1* scale* scale1/ scale2
+help, scale1, scale2, scale, field1
+
+bcomp= field1* scale* scale1[0]/ scale2[0]
 
 ;; calculate real and imag description
 breal= real_part(bcomp)
@@ -167,6 +169,7 @@ bimag= imaginary(bcomp)
 bamp  = sqrt(breal^2+bimag^2)
 bphase= atan(bimag,breal)
 
+help, bamp, u, v
 if n_elements(plot) ne 0 then mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
 
 print,'drift end'
