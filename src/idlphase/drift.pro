@@ -166,8 +166,8 @@ bcomp= field1* scale* scale1[0]/ scale2[0]
 ;; calculate real and imag description
 breal= real_part(bcomp)
 bimag= imaginary(bcomp)
-bamp  = sqrt(breal^2+bimag^2)
-bphase= atan(bimag,breal)
+bamp  = abs(bcomp)
+bphase= atan(bcomp,/phase)
 
 help, bamp, u, v
 if n_elements(plot) ne 0 then mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
