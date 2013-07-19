@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 10:56:21 flechsig> 
+;  Time-stamp: <19 Jul 13 11:31:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,15 +9,16 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, zreal=zreal, zimag=zimag, y_vec=y_vec, z_vec=z_vec, $
-                              verbose=verbose
+pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, zreal=zreal, $
+                    zimag=zimag, y_vec=y_vec, z_vec=z_vec, $
+                    verbose=verbose
 ;+
 ; NAME:
 ;   h5_write_phase
 ;
 ;
 ; PURPOSE:
-;   write phase hdf5
+;   write phase hdf5 phase format
 ;
 ;
 ; CATEGORY:
@@ -37,8 +38,6 @@ pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, z
 ;
 ;
 ; KEYWORD PARAMETERS:
-;   limit: limit the number of plots to limit
-;   png:   save png files
 ;
 ;
 ; OUTPUTS:
@@ -100,12 +99,15 @@ a[*,*,1,0]= yimag
 a[*,*,2,0]= zreal
 a[*,*,3,0]= zimag
 
+esize=[ny, nz, 4, nt]
+;help, esize
+
 datatype_double_id = H5T_IDL_CREATE(lambda);
 
-e_dataspace_id = H5S_create_simple(4)
-y_dataspace_id = H5S_create_simple(1)
-z_dataspace_id = H5S_create_simple(1)
-t_dataspace_id = H5S_create_simple(1)
+e_dataspace_id = H5S_create_simple(esize)
+y_dataspace_id = H5S_create_simple(ny)
+z_dataspace_id = H5S_create_simple(nz)
+t_dataspace_id = H5S_create_simple(nt)
 
 e_dataset_id = H5D_CREATE(file_id, '/e_field', datatype_double_id, e_dataspace_id);
 y_dataset_id = H5D_CREATE(file_id, '/y_vec',   datatype_double_id, y_dataspace_id);
@@ -115,7 +117,7 @@ t_dataset_id = H5D_CREATE(file_id, '/t_vec',   datatype_double_id, t_dataspace_i
 H5D_WRITE, e_dataset_id, a
 H5D_WRITE, y_dataset_id, y_vec
 H5D_WRITE, z_dataset_id, z_vec
-H5D_WRITE, t_dataset_id, t_vec
+;H5D_WRITE, t_dataset_id, t_vec
 
 H5D_CLOSE,e_dataset_id
 H5D_CLOSE,y_dataset_id

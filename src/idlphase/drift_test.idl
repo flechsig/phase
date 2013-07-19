@@ -1,7 +1,7 @@
 ; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <18 Jul 13 17:30:55 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -75,7 +75,7 @@
 
 fname1='/afs/psi.ch/project/phase/data/aramis12_0.1nm_po_source_60m.h5'
 fname0='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
-fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
+fname ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
 
 window,0
 print, ' '
@@ -94,19 +94,10 @@ print, 'start'
 
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 
-
-
 print, 'call drift'
-drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1, /plot
+drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, $
+  bcomp=bcomp, bamp=bamp, u=u1, v=v1, /plot
 
+emf_statistics, zcomp, z_vec=z_vec, y_vec=y_vec
 
-stat= dblarr(7)
-fit= gauss2dfit(bamp, stat, u1, v1)
-print, 'result of gauss2dfit in (m):', stat
-print, 'z fwhm=',stat[2], ' m'
-print, 'y fwhm=',stat[3], ' m'
-print, 'z0    =',stat[4], ' m'
-print, 'y0    =',stat[5], ' m'
-
-;;h5_write_phase, 'tmp.h5', z_vec=u1, y_vec=v1, ycomp=bcomp, zcomp=bcomp;;, wavelength=wavelength
-;;h5_plot, 'tmp.h5'
+h5_write_genesis,'drift_out.h5', comp=zcomp, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec 

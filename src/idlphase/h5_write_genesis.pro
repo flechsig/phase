@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <19 Jul 13 11:04:38 flechsig> 
+;  Time-stamp: <19 Jul 13 11:34:21 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -86,11 +86,11 @@ gridsize= double(y_vec[1]- y_vec[0])
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
+fsize= nz*ny*2
+field = dblarr(fsize)
+k= 0L
 
-field = dblarr(nz*ny*2)
-k= 0l
-
-help, nz, ny, k, field, real, imag, gridsize
+help, nz, ny, k, field, real, imag, gridsize, lambda
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
        field[k]  = real[i,j]
@@ -103,7 +103,7 @@ datatype_double_id = H5T_IDL_CREATE(lambda)
 
 w_dataspace_id = H5S_create_simple(1)
 g_dataspace_id = H5S_create_simple(1)
-f_dataspace_id = H5S_create_simple(1)
+f_dataspace_id = H5S_create_simple(fsize)
 
 group_id = H5G_CREATE(file_id, 'slice000001');
 
@@ -112,7 +112,7 @@ g_dataset_id = H5D_CREATE(file_id,  'gridsize',    datatype_double_id, g_dataspa
 f_dataset_id = H5D_CREATE(group_id, 'field',       datatype_double_id, f_dataspace_id);
 
 H5D_WRITE, w_dataset_id, lambda
-H5D_WRITE, w_dataset_id, gridsize
+H5D_WRITE, g_dataset_id, gridsize
 H5D_WRITE, f_dataset_id, field
 
 H5D_CLOSE, w_dataset_id 
@@ -126,6 +126,8 @@ H5S_CLOSE, f_dataspace_id
 H5G_CLOSE, group_id
 
 h5f_close, file_id
+
+print, 'wrote genesis file: ', fname
 
 return
 end
