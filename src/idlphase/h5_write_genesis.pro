@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 11:31:55 flechsig> 
+;  Time-stamp: <19 Jul 13 11:04:38 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,14 +10,14 @@
 ;  $Author$ 
 
 pro h5_write_genesis, fname, comp=comp, real=real, imag=imag, $
-                             y_vec=y_vec, z_vec=z_vec, wavelength=wavelength, verbose=verbose
+                      y_vec=y_vec, z_vec=z_vec, wavelength=wavelength, verbose=verbose
 ;+
 ; NAME:
 ;  h5_write_genesis
 ;
 ;
 ; PURPOSE:
-;   write genesis
+;   write genesis hdf5 file
 ;
 ;
 ; CATEGORY:
@@ -72,6 +72,7 @@ pro h5_write_genesis, fname, comp=comp, real=real, imag=imag, $
 ;-
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/mygenesis.h5'
+if n_elements(wavelength) eq 0 then wavelength=1e-10
 
 if n_elements(comp) ne 0 then begin
     real= real_part(comp)
@@ -81,14 +82,15 @@ endif
 file_id = H5F_CREATE(fname)
 
 lambda  = double(wavelength)
-gridzize= double(y_vec[1]- y_vec[0])
+gridsize= double(y_vec[1]- y_vec[0])
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 
 field = dblarr(nz*ny*2)
+k= 0l
 
-k= 0
+help, nz, ny, k, field, real, imag, gridsize
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
        field[k]  = real[i,j]
