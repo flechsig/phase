@@ -28,7 +28,7 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bima
 ;
 ;
 ; CALLING SEQUENCE:
-;
+;   drift, acomp=acomp
 ;
 ;
 ; INPUTS:
