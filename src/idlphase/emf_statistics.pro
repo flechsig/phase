@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emf_stat.pro
 ;  Date      : <18 Jul 13 17:34:57 flechsig> 
-;  Time-stamp: <19 Jul 13 09:52:06 flechsig> 
+;  Time-stamp: <19 Jul 13 09:52:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -74,8 +74,8 @@ pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm
 
 ms= size(field)
 
-if n_elements(z_vec) eq 0 the z_vec=dindgen(ms[1])
-if n_elements(y_vec) eq 0 the y_vec=dindgen(ms[2])
+if n_elements(z_vec) eq 0 then z_vec=dindgen(ms[1])
+if n_elements(y_vec) eq 0 then y_vec=dindgen(ms[2])
 
 stat= dblarr(7)
 fit= gauss2dfit(field, stat, z_vec, y_vec)
