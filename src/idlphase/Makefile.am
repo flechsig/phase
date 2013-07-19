@@ -28,7 +28,7 @@ idl_with_doc_header = \
 	drift.pro \
 	drift_crl_test.idl \
         drift_test.idl \
-        emf_stat.pro \
+        emf_statistics.pro \
 	h5_check_type.pro \
         h5_plot.pro \
 	h5_read.pro \

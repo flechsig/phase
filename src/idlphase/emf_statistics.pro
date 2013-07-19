@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emf_stat.pro
 ;  Date      : <18 Jul 13 17:34:57 flechsig> 
-;  Time-stamp: <19 Jul 13 09:52:39 flechsig> 
+;  Time-stamp: <19 Jul 13 09:56:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -15,7 +15,8 @@ pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm
 ;
 ;
 ; PURPOSE:
-;   print statistics of a field (does a 2d gaussfit to determine fwhm)
+;   print statistics of a field (does a 2d gaussfit to determine
+;   fwhm), export fwhm if requested
 ;
 ;
 ; CATEGORY:
@@ -23,7 +24,7 @@ pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm
 ;
 ;
 ; CALLING SEQUENCE:
-;
+;    emf_statistics, field
 ;
 ;
 ; INPUTS:
@@ -45,20 +46,6 @@ pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm
 ;
 ;
 ; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
 ;
 ; PROCEDURE:
 ;

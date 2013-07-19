@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <19 Jul 13 11:31:37 flechsig> 
+;  Time-stamp: <19 Jul 13 11:34:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -131,6 +131,7 @@ H5S_CLOSE, t_dataspace_id
 
 h5f_close, file_id
 
+print, 'wrote phase file: ', fname
 return
 end
 ;; end

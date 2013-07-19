@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2013-07-16 22:43:14 flechsig>  */
+/*  Time-stamp: <19 Jul 13 11:39:03 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -594,7 +594,8 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices");
   writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
   writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
-  writeDataDouble(file_id, "slice000001/field", field, fieldsize, "electrical field as c_style list (real,imag), (real, imag),...");
+  writeDataDouble(file_id, "slice000001/field", field, fieldsize, 
+		  "electrical field as c_style list (real,imag), (real, imag),...");
   add_phase_psd_to_hdf5(file_id, bl);
   add_desc(group_id, "first time slice");
   H5Gclose(group_id);
