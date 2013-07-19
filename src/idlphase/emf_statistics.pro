@@ -73,8 +73,8 @@ ymax= max(y_vec)
 print, '====================='
 print, 'emf_statistics'
 print, '====================='
-print, 'z fwhm=',stat[2], ' m'
-print, 'y fwhm=',stat[3], ' m'
+print, 'z fwhm=',stat[2]*2.35, ' m'
+print, 'y fwhm=',stat[3]*2.35, ' m'
 print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax=', zmin, zmax
