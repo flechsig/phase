@@ -64,8 +64,11 @@ ms= size(field)
 if n_elements(z_vec) eq 0 then z_vec=dindgen(ms[1])
 if n_elements(y_vec) eq 0 then y_vec=dindgen(ms[2])
 
+;field_n =dindgen(ms[1],ms[2])
+field_n=field/max(field)
+
 stat= dblarr(7)
-fit= gauss2dfit(field, stat, z_vec, y_vec)
+fit= gauss2dfit(field_n, stat, z_vec, y_vec)
 zmin= min(z_vec)
 zmax= max(z_vec)
 ymin= min(y_vec)

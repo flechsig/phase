@@ -11,16 +11,17 @@
 
 
 
-pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
+pro driftfrauenhofer, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
            bamp=bamp, bphase=bphase, drift=drift, plot=plot, $
            wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
 ;+
 ; NAME:
-;   drift
+;   driftfrauenhofer
 ;
 ;
 ; PURPOSE:
 ;   calculate the electric field after some distance in vacuum
+;   Frauenhofer approximation
 ;
 ;
 ; CATEGORY:
@@ -29,7 +30,6 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bima
 ;
 ; CALLING SEQUENCE:
 ;   drift, acomp=acomp, z_vec=z_vec, y_vec=y_vec
-;
 ;
 ; INPUTS:
 ;   
@@ -86,9 +86,6 @@ pro drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bima
 ;
 ; MODIFICATION HISTORY:
 ;    11.7.13 UF
-;    22.7.13 RF, added scaling for area and corrected 
-;                scale1=complex(cos(k*drift), sin(k*drift), /double)
-
 ;-
 
 ;;; UF I follow the the reference follath:2013f
@@ -97,7 +94,7 @@ u1= 'usage: drift, [acomp=acomp,][areal=areal,][aimag=aimag,][apfac=apfac,][brea
 u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
 usage= u1+u2
 
-print, 'drift called'
+print, 'driftfresnel called'
 
 if n_elements(drift)      eq 0 then drift     = 100.   ;; default thickness 20 mum
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  ;; default 12.4 keV
@@ -116,46 +113,33 @@ print, 'drift start calculation'
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
-zz= z_vec[nz-1]- z_vec[0] ;; total length
-yy= y_vec[ny-1]- y_vec[0] ;; total length
+zz= z_vec[nz-1]- z_vec[0]                                      ;; total length
+yy= y_vec[ny-1]- y_vec[0]                                      ;; total length
 
 ;; determine factors for amplitude and phase for the drift
-driftarr= dcomplexarr(nz, ny) ;; make a complex array
 scale   = dcomplexarr(nz, ny) ;; make a complex array
 k       = 2* !dpi/wavelength
 
-for i=0, nz-1 do begin
-    for j=0, ny-1 do begin
-        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)      ;; the radial distance 
-        phase= k/(2.0*drift) * rr^2            ;; 
-        driftarr[i,j]= complex(cos(phase), sin(phase), /double)  ;;
-    endfor
-endfor
+field0= acomp                                                 ;; the inner part of the fft
 
-field0= acomp* driftarr  ;; the inner part of the fft
+field1= fft(field0, -1, /center, /double)                      ;; forward 2d fft, centered output
 
-field1= fft(field0, -1, /center, /double)                 ;; forward 2d fft, centered output
-
-u0= dindgen(nz)/nz - 0.5
+u0= dindgen(nz)/nz - 0.5                                       ;; define the vectors in the image plane
 v0= dindgen(ny)/ny - 0.5
 uscale= (drift*wavelength)/zz * nz
 vscale= (drift*wavelength)/yy * ny
 u= u0*uscale[0]
 v= v0*vscale[0]
 
-
-
-;;u= (dindgen(nz)/(nz) - 0.5 )* (drift*wavelength)/zz * nz  ;; define the vectors in the image plane
-;v= (dindgen(ny)/(ny) - 0.5 )* (drift*wavelength)/yy * ny  ;; define the vectors in the image plane
 help, u, v, zz, nz, uscale, u0
+
 ;help,ny,nz
 ;print,ny,nz
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        rr= sqrt(u[i]^2 + v[j]^2)      ;; the radial distance 
-        phase= k/(2.0*drift) * rr^2            ;; 
-        scale[i,j]= complex(cos(phase), sin(phase), /double)  ;;
+        phase= k * (u[i]^2 + v[j]^2) / (2.0*drift)             
+        scale[i,j]= complex(cos(phase), sin(phase), /double)   
     endfor
 endfor
 
@@ -164,7 +148,7 @@ scale2=complex(0., (wavelength*drift), /double)
 
 help, scale1, scale2, scale, field1
 
-bcomp= zz*yy*field1* scale* scale1[0]/ scale2[0]
+bcomp= zz * yy * field1 * scale * scale1[0]/ scale2[0]
 
 ;; calculate real and imag description
 breal= real_part(bcomp)

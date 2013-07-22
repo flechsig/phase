@@ -70,6 +70,13 @@
 ; MODIFICATION HISTORY:
 ;    11.7.13 UF
 ;-
+; comments.
+;   21.7.2013
+;    - gauss2dfit does not converge
+;    fname0: FWHM z = 20 um, y = 24 um
+;    fname1:          80 um      84 um
+;    fname :          28.2       37.6 um
+;
 
 
 
@@ -77,27 +84,63 @@ fname1='/afs/psi.ch/project/phase/data/aramis12_0.1nm_po_source_60m.h5'
 fname0='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 fname ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
 
-window,0
-print, ' '
-print, 'plot original file'
-h5_plot, fname0
+;window,0, RETAIN=2
+;print, ' '
+;print, 'plot original file'
+;h5_plot, fname0
 
-window,1
-print, ' '
-print, 'plot propagation with phase to 60 m'
-h5_plot, fname1
+;window,1, RETAIN=2
+;print, ' '
+;print, 'plot propagation with phase to 60 m'
+;h5_plot, fname1
 
-window,2
-print, ' '
-print, 'plot drift to 60 m'
-print, 'start'
+;window,2, RETAIN=2
+;print, ' '
+;print, 'plot drift to 60 m'
+;print, 'start'
+;------------------- Propagation with phase ------------------------
+
+h5_read, fname1, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
+F1=abs(zcomp)
+emf_statistics, F1, z_vec=z_vec, y_vec=y_vec
+
+window,0, RETAIN=2
+mycontour,F1,z_vec,y_vec, xtitle='z  ', ytitle='y ', title='Phase'
+
+;........... plot 1dim-projection 
+f=total(F1,1)
+f=f/max(f)
+window,2, RETAIN=2
+plot, z_vec, f,YRANGE=[0,1]
+
+
+;------------------- Propagation with fourier ------------------------
 
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 
 print, 'call drift'
-drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, $
-  bcomp=bcomp, bamp=bamp, u=u1, v=v1, /plot
+;drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1
+driftfresnel, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1
+;driftfrauenhofer, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1
 
-emf_statistics, zcomp, z_vec=z_vec, y_vec=y_vec
+emf_statistics, bamp, z_vec=u1, y_vec=v1
 
-h5_write_genesis,'drift_out.h5', comp=zcomp, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec 
+;........... plot 1dim-projection 
+g=total(bamp,1)
+g=g/max(g)
+oplot, u1, g, color=3
+
+;........... plot 2dim-distribution with same scale as above 
+
+window,1, RETAIN=2
+mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation', xrange=[-0.3,0.3], yrange=[-0.3,0.3]
+
+;h5_write_genesis,'drift_out.h5', comp=zcomp, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec 
+
+
+
+
+
+
+
+
