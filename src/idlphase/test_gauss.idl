@@ -1,0 +1,108 @@
+; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test routine for crl
+
+;+ 
+; NAME:
+;   drift_test
+;
+;
+; PURPOSE:
+;   test script for crl 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @
+;
+;
+; MODIFICATION HISTORY:
+;-
+; comments.
+Nz=401
+
+wavelength=1.0e-6
+bamp =dindgen(Nz,Nz)
+
+sourcedist =0
+
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.005, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=5e-5 $
+           , wavelength=wavelength
+
+  window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
+  bamp = abs(bcomp)
+  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (amplitude)'
+
+
+ if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
+ if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
+ if (sourcedist ne 0) then  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
+
+driftfreespace , drift=0.1 , z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop
+propamp=abs(prop)
+propphase = atan(prop,/phase)
+
+ window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
+ mycontour, propamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='propagate (amp)'
+
+ window,3, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
+ mycontour, propphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='propagate (phase)'
+
+
+driftfreespace , drift=-0.1 , z_vec=z_vec, y_vec=y_vec, acomp=prop, wavelength=wavelength, bcomp=back
+ backamp=abs(back)
+ emf_statistics, backamp, y_vec=y_vec, z_vec=z_vec
+ window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
+ mycontour, backamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='backpropagate (amp)'

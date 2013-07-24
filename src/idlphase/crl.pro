@@ -132,6 +132,10 @@ delta= delta3kev+ ((delta12p4kev- delta3kev)/(12.4- 3.0)) * (kev- 3.0)
 if mu    lt 0.0 then mu= 0.0        ;; avoid overflow
 if delta lt 0.0 then delta= 0.0     ;; avoid overflow
 
+mu   =mu12p4kev         ;; hard for 1 A
+delta=delta12p4kev
+
+
 maxr= apfac*radius       ;; define a maximum radius
 
 print,'photon energy=',kev,', mu=', mu, ', delta=',delta,', aperture=', 2.0*maxr 

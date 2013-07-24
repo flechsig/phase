@@ -117,17 +117,19 @@ zamp  = sqrt(zreal^2+zimag^2)
 zphase= atan(zimag,zreal)
 
 print, 'start'
-window,1
+window,1, RETAIN=2
 mycontour,zamp, z_vec, y_vec, title='z_amplitude', xtitle='z (mm)', ytitle='y (mm)'
 
-window,2
+window,2, RETAIN=2
 mycontour,zphase, z_vec, y_vec, title='z_phase', xtitle='z (mm)', ytitle='y (mm)'
+
 
 zv= z_vec*1e-3
 yv= y_vec*1e-3
 
 print, 'call crl'
 crl, z_vec=zv, y_vec=yv, areal=zreal, aimag=zimag, bamp=bamp, bphase=bphase, crlamp=crlamp, crlphase=crlphase, wavelength=2e-10, apfac=0.5
+
 
 window,3
 mycontour, bamp, z_vec, y_vec, title='bamp', xtitle='z (mm)', ytitle='y (mm)'

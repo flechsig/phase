@@ -78,7 +78,12 @@
 ;    fname :          28.2       37.6 um
 ;
 
-
+;--------- Get Screen size in pixel -----------
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
 
 fname1='/afs/psi.ch/project/phase/data/aramis12_0.1nm_po_source_60m.h5'
 fname0='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
@@ -98,42 +103,82 @@ fname ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
 ;print, ' '
 ;print, 'plot drift to 60 m'
 ;print, 'start'
-;------------------- Propagation with phase ------------------------
 
+print, '---------------------Quellfile -----------------------'
+h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
+bamp   =abs(zcomp)
+bphase=atan(zcomp,/phase)
+
+window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='original (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+
+window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Original (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+s=total(bamp,1)
+s=s/max(s)
+
+
+
+print, '------------- Propagated with PHASE -----------------------'
 h5_read, fname1, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 F1=abs(zcomp)
+F2=atan(zcomp,/phase)
 emf_statistics, F1, z_vec=z_vec, y_vec=y_vec
 
-window,0, RETAIN=2
-mycontour,F1,z_vec,y_vec, xtitle='z  ', ytitle='y ', title='Phase'
+window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy
+mycontour,F1,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Phase (amp)'
 
-;........... plot 1dim-projection 
+window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-2*wy
+mycontour,F2,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Phase (phase)'
+
+;  1dim-projection 
 f=total(F1,1)
 f=f/max(f)
-window,2, RETAIN=2
-plot, z_vec, f,YRANGE=[0,1]
 
 
-;------------------- Propagation with fourier ------------------------
+
+drift=60.0
+
+print, '------------- Propagated with Fourier  -----------------------'
 
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 
-print, 'call drift'
-;drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1
-driftfresnel, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1
-;driftfrauenhofer, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, drift=60.,wavelength=wavelength, bcomp=bcomp, bamp=bamp, u=u1, v=v1
+driftfreespace  , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase
 
-emf_statistics, bamp, z_vec=u1, y_vec=v1
+;emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec
 
-;........... plot 1dim-projection 
+window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+
+window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+; 1dim-projection 
 g=total(bamp,1)
 g=g/max(g)
-oplot, u1, g, color=3
 
-;........... plot 2dim-distribution with same scale as above 
 
-window,1, RETAIN=2
-mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation', xrange=[-0.3,0.3], yrange=[-0.3,0.3]
+
+
+print, '------------- Propagated with Fresnel  -----------------------'
+
+h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
+
+driftfresnel     , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase, u=u1, v=v1
+
+window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
+mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+
+window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
+mycontour, bphase,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+;  1dim-projection 
+h=total(bamp,1)
+h=h/max(h)
+
 
 ;h5_write_genesis,'drift_out.h5', comp=zcomp, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec 
 
@@ -141,6 +186,10 @@ mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier
 
 
 
-
+window,10, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx, YPOS=0
+plot, z_vec, f,YRANGE=[0,1]
+oplot, z_vec, g, color=3
+oplot, u1 , h, color=2
+oplot, z_vec, s, color=4
 
 
