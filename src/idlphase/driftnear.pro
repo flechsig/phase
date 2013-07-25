@@ -11,12 +11,12 @@
 
 
 
-pro driftfreespace, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
+pro driftnear, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
            bamp=bamp, bphase=bphase, drift=drift, plot=plot, $
            wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
 ;+
 ; NAME:
-;   driftfresnel
+;   driftnear 
 ;
 ;
 ; PURPOSE:
@@ -29,7 +29,7 @@ pro driftfreespace, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=br
 ;
 ;
 ; CALLING SEQUENCE:
-;   driftfreespace, acomp=acomp, z_vec=z_vec, y_vec=y_vec, drift = drift
+;   driftnear, acomp=acomp, z_vec=z_vec, y_vec=y_vec, drift = drift
 ;
 ;
 ; INPUTS:
@@ -82,7 +82,6 @@ pro driftfreespace, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=br
 ;
 ;
 ; EXAMPLE:
-;   driftfreespace, areal=zreal, aimag=zimag, breal=z1real, bimag=z1imag, y_vec=y_vec, z_vec=z_vec
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -91,11 +90,11 @@ pro driftfreespace, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=br
 
 ;;; 
 
-u1= 'usage: driftfreespace, [acomp=acomp,][areal=areal,][aimag=aimag,][breal=breal,][bimag=bimag,][bamp=bamp,][bphase=bphase,]'
+u1= 'usage: driftnear, [acomp=acomp,][areal=areal,][aimag=aimag,][breal=breal,][bimag=bimag,][bamp=bamp,][bphase=bphase,]'
 u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
 usage= u1+u2
 
-print, 'driftfreespace called'
+print, 'driftnear called'
 
 if n_elements(drift)      eq 0 then drift     = 1.   
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
@@ -112,7 +111,7 @@ if n_elements(acomp) eq 0 then acomp= complex(areal, aimag, /double)
 
 
 
-print, 'driftfreespace start calculation'
+print, 'driftnear start calculation'
 
 Nz= n_elements(z_vec)
 Ny= n_elements(y_vec)
@@ -156,13 +155,13 @@ endif
 propagator = dcomplexarr(nz, ny)  
 for i=0, Nz-1 do begin
     for j=0, Ny-1 do begin
-         arg = 1 -  (u[i]*wavelength)^2 -  (v[j]*wavelength)^2
+         arg = 1 - (u[i]*wavelength)^2 -  (v[j]*wavelength)^2
          IF (arg>0) THEN BEGIN
            arg            = sqrt(arg)
            phase          = k * drift* arg     
            propagator[i,j]= complex(cos(phase), sin(phase), /double)
          ENDIF ELSE BEGIN
-           print,'driftfreespace.pro: sqrt of neg. argument, evanescent waves ',arg, ' i = ',i, 'j = ',j
+           print,'driftnear.pro: sqrt of neg. argument, evanescent waves ',arg, ' i = ',i, 'j = ',j
            arg            = sqrt(-1.0*arg)
            phase          = -1.0 * k * drift* arg  
            if phase le -40 then phase = -40   
@@ -197,7 +196,7 @@ v=y_vec
 
 ;if n_elements(plot) ne 0 then mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
 
-print,'driftfreespace end'
+print,'driftnear end'
 return
 end
 ;; end
