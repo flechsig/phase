@@ -40,15 +40,15 @@ pro gaussbeam, dist=dist, bcomp=bcomp, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=s
 ;
 ; KEYWORD PARAMETERS:
 ;   bcomp:        field, idl complex array,
-;   sigmaz:       rms horizontal    in m
-;   sigmay        rms vert.         in m
-;   w0            waist             in m
-;   dist          distance to waist in m
-;   Nz            points hor.
-;   Ny            points vert
-;   wavelength    the wavelength in m
+;   sigmaz:       rms horizontal              in m
+;   sigmay        rms vert.                   in m
+;   w0            waist                       in m
+;   z             distance to waist           in m
+;   wavelength    the wavelength              in m
 ;   y_vec:        vertical   position vector  in m
 ;   z_vec:        horizontal position vector  in m
+;   Nz            points hor.
+;   Ny            points vert
 ; 
 ; OUTPUTS:
 ;   see keyword parameters
@@ -78,8 +78,21 @@ pro gaussbeam, dist=dist, bcomp=bcomp, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=s
 ;
 ; MODIFICATION HISTORY:
 ;    23.7.13 RF
-;-
-
+;
+; lambda= 1 um, in  0 m   sigma(Efield) = W0 / sqrt(2) => FWHM = 16.6 um         sigma(intensity)  = w0/2 = 5e-6,
+;
+;  gaussbeam, dist=0, Nz=100,sizez=0.0002, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=10e-6 , wavelength=1e-6
+;
+;
+;  lambda= 1 um, in 20 m  w  = 0.636 m 
+;            sigma(Efield)= W / sqrt(2) => FWHM =  1.056 m
+; 
+;  gaussbeam, dist=20, Nz=100,sizez=5, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=10e-6 , wavelength=1e-6
+;
+; lambda = 1.24 A     w=27.7 um
+;
+;  gaussbeam, dist=0, Nz=200,sizez=0.0002, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=1.24e-10
+;
 ;;; 
 
 u1= 'usage: gaussbeam, [bcomp=bcomp,][sigmaz=sigmaz,][sigmaz=sigmaz,][Nz=Nz,][Ny=Ny,]'
@@ -95,50 +108,51 @@ if n_elements(w0        ) eq 0 then w0        = 1e-5
 if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
 if n_elements(dist      ) eq 0 then dist      = 0
- 
 
+bcomp  = dcomplexarr(Nz, Ny) 
+z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
+y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
+
+ 
 print, 'wavelength = ',wavelength
 print, 'Nz     = ', Nz      , ' Ny     = ', Ny
 print, 'sizez  = ', sizez   , ' sizey  = ', sizey
 print, 'w0     = ', w0      , ' dist   = ', dist
+
+k   = !dpi * 2    / wavelength   
+z0  = !dpi * w0^2 / wavelength
+w   = w0 * sqrt(1+ (dist/z0)^2)
+w2  = w^2
+eta = atan(dist/z0)
+Ri  = dist / (dist^2 + z0^2)                                         ;; Ri  = 1/R;
+
+
 print, 'z0     = ',!dpi * w0^2/wavelength
-z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
-y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
-bcomp  = dcomplexarr(Nz, Ny) 
-
-q0    = complex(0, -1* !dpi * w0^2 / wavelength)            ;; 1/q0 = i lambda / (pi w0^2)
-q     = q0 + dist
-qi    = 1/q
-
-print, ' q0 = ', q0
-print, ' q  = ',q
-print, ' qi = ',qi
-
-qireal = REAL_PART(qi)
-qiimag = Imaginary(qi)
-
-w2 = wavelength / ( !dpi * qiimag)
-
-print,' w2 = ',w2, '     w = ',sqrt(w2)
-
+print, 'w      = ',w   ,'    w2 = ', w2
+print, 'eta    = ',eta ,'    Ri = ', Ri 
+ 
 for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
-    rho  =  z_vec[i]^2 + y_vec[j]^2 
-    arg1 = -1*  rho / w2
+    rho2  =  z_vec[i]^2 + y_vec[j]^2 
+    arg1  = -1 *  rho2 / w2    
     if (arg1 le -40) then arg1 = -40                             ;;  -80 immer noch ok
-    
-    arg2 = !dpi * rho * qireal / wavelength                    ;; R  = 1/qireal;
-    phas2 = complex(cos(arg2), sin(arg2),/double)    
- 
-    bcomp[i,j]= exp(arg1) * phas2 / q
+    arg2  = -0.5 *k * rho2 * Ri   - k*dist + eta                    
+    phas2 = complex(cos(arg2), sin(arg2),/double)     
+
+    bcomp[i,j]= phas2 * exp(arg1) * w0 / w
+;    print, i, ' ', j,' ',bcomp[i,j] , ' ' ,'arg1=', arg1, ' phas2= ',phas2
   endfor
 endfor
 
 
 if n_elements(plot) ne 0 then begin
   bamp = abs(bcomp)
-  window, RETAIN=2
- contour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam'
+  window,20,  RETAIN=2
+  contour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam'
+
+  bamp = atan(bcomp,/phase)
+  window,21, RETAIN=2
+  contour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam'
 endif
  
 print,'gaussbeam end'

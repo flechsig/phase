@@ -104,7 +104,7 @@ fname ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
 ;print, 'plot drift to 60 m'
 ;print, 'start'
 
-print, '---------------------Quellfile -----------------------'
+print, '---------------------Quellfile ---------------------------------'
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 bamp   =abs(zcomp)
 bphase=atan(zcomp,/phase)
@@ -118,13 +118,14 @@ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=
 s=total(bamp,1)
 s=s/max(s)
 
+emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec             ;; 46 um FWHM    -> Intensity = 13.8 um (rms)
 
 
-print, '------------- Propagated with PHASE -----------------------'
+print, '------------- Propagated with PHASE ------------------------------'
 h5_read, fname1, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 F1=abs(zcomp)
 F2=atan(zcomp,/phase)
-emf_statistics, F1, z_vec=z_vec, y_vec=y_vec
+emf_statistics, F1, z_vec=z_vec, y_vec=y_vec                 ;;  166 um FWHM -> Intensity = 50 um (rms)
 
 window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy
 mycontour,F1,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Phase (amp)'
@@ -137,14 +138,13 @@ f=total(F1,1)
 f=f/max(f)
 
 
-
-drift=10.0
+drift=60.0
 
 print, '------------- Propagated with Fourier  -----------------------'
 
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 
-driftfreespace ,plot=1 , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase
+driftnear ,plot=1 , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase
 
 ;emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec
 
@@ -169,11 +169,11 @@ h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 driftfresnel     , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase, u=u1, v=v1
 
 window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
-mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
 
 window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
-mycontour, bphase,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+mycontour, bphase,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 ;  1dim-projection 
 h=total(bamp,1)

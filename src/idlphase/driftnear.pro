@@ -11,9 +11,9 @@
 
 
 
-pro driftnear, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
-           bamp=bamp, bphase=bphase, drift=drift, plot=plot, $
-           wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
+pro driftnear, drift=drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag $
+           ,bamp=bamp, bphase=bphase, plot=plot $
+           ,wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
 ;+
 ; NAME:
 ;   driftnear 
@@ -96,7 +96,10 @@ usage= u1+u2
 
 print, 'driftnear called'
 
-if n_elements(drift)      eq 0 then drift     = 1.   
+if n_elements(drift)      eq 0 then begin
+  print, usage & return  
+endif
+
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
 if n_elements(z_vec) eq 0 then begin 
     print, usage & return 
@@ -111,7 +114,7 @@ if n_elements(acomp) eq 0 then acomp= complex(areal, aimag, /double)
 
 
 
-print, 'driftnear start calculation'
+print, 'driftnear start calculation  ---  drift=',drift
 
 Nz= n_elements(z_vec)
 Ny= n_elements(y_vec)
@@ -120,12 +123,10 @@ yy= y_vec[ny-1]- y_vec[0]                                      ;; total width
 k = 2* !dpi/wavelength                                         ;; wavevector
 
 print, 'z_vec[0] = ',z_vec[0]*1e3, ' z_vec[Nz-1] ', z_vec[nz-1]*1e3, ' mm^2 '
-print, 'width = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
-print, 'Nz    = ',   Nz  , ' Ny = ', Ny
+print, 'width    = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
+print, 'Nz       = ',   Nz  , ' Ny = ', Ny
 ;;------------------------- FT of Source field -- exp(-i ...) ----------
   
-
-E0ft = dcomplexarr(Nz, Ny) 
 
 E0ft= fft(acomp, -1, /center, /double)        ;; Fourier transform of source Field E0, forward 2d fft, centered output
                                               ;; at positions -(Nz/2-1)/(zz),... -1/(zz) , 0 ,  1/(zz), 2/(zz),... (Nz/2-1)/(zz),
@@ -139,15 +140,18 @@ v = v * (Ny-1)/yy
 ;print, u
 
 if n_elements(plot) ne 0 then begin
-  amp = dcomplexarr(Nz, Ny) 
 
   amp = abs(E0ft)
   window,10, RETAIN=2, XSIZE=500, YSIZE=400 ,XPOS=0, YPOS=770
-  mycontour, amp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, amplitude'
+  mycontour, amp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)' $
+            , title='Fourier transform of input field, amplitude'   
+;;            ,xrange=[-1.0e5,1.0e5],yrange=[-1.0e5,1.0e5]
 
   amp= atan(E0ft,/phase)
   window,11, RETAIN=2, XSIZE=500, YSIZE=400 ,XPOS=500, YPOS=770
-  mycontour, amp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, phase'
+  mycontour, amp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', $
+            title='Fourier transform of input field, phase' 
+;;            ,xrange=[-1.0e5,1.0e5],yrange=[-1.0e5,1.0e5]
 endif
 
 ;;--------------- Propagator for driftspace --------------------------

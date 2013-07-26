@@ -11,9 +11,9 @@
 
 
 
-pro crl, acomp=acomp, areal=areal, aimag=aimag, apfac=apfac, bcomp=bcomp, breal=breal, bimag=bimag, $
-         bamp=bamp, bphase=bphase, crlamp=crlamp, crlphase=crlphase, $
-         radius=radius, thickness=thickness, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
+pro crl, acomp=acomp, bcomp=bcomp, crlcomp=crlcomp, crlamp=crlamp, crlphase=crlphase, $
+         radius=radius,  apfac=apfac, thickness=thickness, wavelength=wavelength,$
+         y_vec=y_vec, z_vec=z_vec
 ;+
 ; NAME:
 ;   crl
@@ -42,15 +42,9 @@ pro crl, acomp=acomp, areal=areal, aimag=aimag, apfac=apfac, bcomp=bcomp, breal=
 ;
 ; KEYWORD PARAMETERS:
 ;   acomp:      input field, idl complex array, if given parameters
-;               areal, aimag are ignored
-;   areal:      input field, real part (required)
-;   aimag:      input field, imag. part (required)
-;   apfac:      aperture factor, max. ap.= apfac* radius, default= 1.0
 ;   bcomp:      output field, idl complex array
-;   bamp:       output field, amplitude
-;   bphase:     output field, phase
-;   breal:      output field, real part
-;   bimag:      output field, imag part
+;   crlcomp:    Propagator of CRL, idl complex array
+;   apfac:      aperture factor, max. ap.= apfac* radius, default= 1.0
 ;   crlamp:     crl amplitude factor
 ;   crlphase:   crl phase factor
 ;   radius:     the lens radius in m
@@ -105,16 +99,11 @@ if n_elements(radius)     eq 0 then radius    = 5e-4   ;; default radius    0.5 
 if n_elements(thickness)  eq 0 then thickness = 2e-5   ;; default thickness 20 mum
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  ;; default 12.4 keV
 
-if n_elements(acomp) ne 0 then begin
-  areal= real_part(acomp)
-  aimag= imaginary(acomp)
-endif else begin
-;  if n_elements(areal) eq 0 then print, usage 
-;  if n_elements(aimag) eq 0 then print, usage
-endelse 
 
 if n_elements(z_vec) eq 0 then print, usage 
 if n_elements(y_vec) eq 0 then print, usage 
+if n_elements(acomp) eq 0 then print, usage
+
 
 print, 'crl start calculation'
 
@@ -143,37 +132,42 @@ print,'photon energy=',kev,', mu=', mu, ', delta=',delta,', aperture=', 2.0*maxr
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 
-;; determine factors for amplitude and phase for the crl
-crlamp  = dblarr(nz, ny) ;; amplitude
-crlphase= dblarr(nz, ny) ;; complex phase
+;; determine lens-propagator for the crl
+
+crlcomp = dcomplexarr(nz, ny) ;; make a complex array
+crlamp  = dblarr(nz, ny)      ;; make real array for amplitude
+crlphase= dblarr(nz, ny)      ;; make real array for phase
+
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)          ;; the radial distance 
-        if rr lt maxr then begin                   ;; inside the aperture
-            f4= exp(-mu*rr^2/(2.0*radius))         ;; factor 4
-            f3= (-1.0)*rene*wavelength*rr^2/radius ;; the phase of the complex number
-            f2= exp(-mu*thickness/2.0)             ;; neglectable for normalized flux
-            ;; print,'f4=',f4,' f2=', f2, ' f24', f4*f2
+
+        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)           ;; the radial distance 
+
+        if rr lt maxr then begin                    ;; inside the aperture
+            f0= exp(-mu*thickness/2.0)              ;; absorption  in the central part of the lens 
+            f1= exp   (-0.5*mu        *rr^2/radius) ;; absorption  of the curved  part of the lens, 
+            f2= (-1.0)*rene*wavelength*rr^2/radius  ;; phase shift in the curved  part of the lens
         endif else begin
             f4= 0.0   
             f3= 0.0
             f2= 0.0
         endelse
-        crlamp[i,j]  = f4*f2
-        crlphase[i,j]= f3
+
+        ;; print,'f0=',f0,' f1=', f1, ' f2', f2
+        crlcomp[i,j] = complex(cos(f2), sin(f2),/double)
+       crlcomp[i,j] = crlcomp[i,j]* f0 * f1      
+
     endfor
 endfor
 
 ;; calculate amplitude and phase of the input field and output field
-aamp  = sqrt(areal^2+aimag^2)
-aphase= atan(aimag, areal)
-bamp  = aamp* crlamp
-bphase= aphase+ crlphase
 
-;; calculate real and imag description
-breal= bamp* cos(bphase)
-bimag= bamp* sin(bphase)
-bcomp= complex(breal, bimag, /double)
+bcomp = acomp * crlcomp
+
+;; calculate  phase and ampliude of crl-propagator 
+
+crlamp   = abs(crlcomp)
+crlphase=atan(crlcomp,/phase)
 
 print,'crl end'
 return
