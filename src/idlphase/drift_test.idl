@@ -10,7 +10,7 @@
 ;  $Author$ 
 
 
-;; test routine for crl
+;; test the routines for wavefield propagation
 
 ;+ 
 ; NAME:
@@ -110,22 +110,30 @@ bamp   =abs(zcomp)
 bphase=atan(zcomp,/phase)
 
 window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='original (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source file Sven (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
 
 window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
-mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Original (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source file Sven (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
 s=total(bamp,1)
 s=s/max(s)
 
-emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec             ;; 46 um FWHM    -> Intensity = 13.8 um (rms)
+
+print, '---- -Amplitude  ---'
+emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec            
+print, '---- Intensity ---'
+intensity=bamp^2
+
+emf_statistics, intensity, z_vec=z_vec, y_vec=y_vec       
 
 
 print, '------------- Propagated with PHASE ------------------------------'
 h5_read, fname1, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 F1=abs(zcomp)
 F2=atan(zcomp,/phase)
-emf_statistics, F1, z_vec=z_vec, y_vec=y_vec                 ;;  166 um FWHM -> Intensity = 50 um (rms)
+emf_statistics, F1, z_vec=z_vec, y_vec=y_vec                
 
 window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy
 mycontour,F1,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Phase (amp)'
@@ -137,8 +145,13 @@ mycontour,F2,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Phas
 f=total(F1,1)
 f=f/max(f)
 
+print, '---- Intensity ---'
+intensity=F1^2
+emf_statistics, intensity, z_vec=z_vec, y_vec=y_vec        ;; 
 
 drift=60.0
+
+
 
 print, '------------- Propagated with Fourier  -----------------------'
 
@@ -146,7 +159,13 @@ h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 
 driftnear ,plot=1 , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase
 
-;emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec
+print, '---- -Amplitude  ---'
+emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec             
+
+print, '---- Intensity ---'
+intensity=bamp^2
+emf_statistics, intensity, z_vec=z_vec, y_vec=y_vec       
+
 
 window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
 mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
@@ -159,7 +178,10 @@ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=
 g=total(bamp,1)
 g=g/max(g)
 
+ a= n_elements(z_vec)
 
+print,a
+print,z_vec
 
 
 print, '------------- Propagated with Fresnel  -----------------------'
@@ -175,6 +197,14 @@ mycontour, bamp,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel
 window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
 mycontour, bphase,u1*1e3,v1*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
+print, '---- -Amplitude  ---'
+emf_statistics, bamp, z_vec=u1, y_vec=v1             
+
+print, '---- Intensity ---'
+intensity=bamp^2
+emf_statistics, intensity, z_vec=u1, y_vec=v1    
+
+
 ;  1dim-projection 
 h=total(bamp,1)
 h=h/max(h)
@@ -187,7 +217,7 @@ h=h/max(h)
 
 
 window,10, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx, YPOS=0
-plot, z_vec, f,YRANGE=[0,1]
+plot, z_vec, f,YRANGE=[0,1], xtitle='width (mm) ', ytitle='Norm. Amplitude'
 oplot, z_vec, g, color=3
 oplot, u1 , h, color=2
 oplot, z_vec, s, color=4

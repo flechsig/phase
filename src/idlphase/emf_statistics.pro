@@ -8,7 +8,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm
+pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig = zsig
 ;+
 ; NAME:
 ;   emf_statistics
@@ -37,8 +37,10 @@ pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm
 ;
 ; KEYWORD PARAMETERS:
 ;   yfwhm: vertical fwhm (output)
+;   ysig : vertical rms (output)
 ;   y_vec: vertical vector
 ;   zfwhm: horizontal fwhm (output)
+;   zsig : horizontal rms (output)
 ;   z_vec: horizontal vector
 ;
 ; OUTPUTS:
@@ -76,8 +78,8 @@ ymax= max(y_vec)
 print, '====================='
 print, 'emf_statistics'
 print, '====================='
-print, 'z fwhm=',stat[2]*2.35, ' m'
-print, 'y fwhm=',stat[3]*2.35, ' m'
+print, 'z fwhm=',stat[2]*2.35, ' m, rms = ',stat[2], ' m'
+print, 'y fwhm=',stat[3]*2.35, ' m, rms = ',stat[3], ' m'
 print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax=', zmin, zmax

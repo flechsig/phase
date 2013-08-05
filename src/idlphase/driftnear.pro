@@ -118,8 +118,8 @@ print, 'driftnear start calculation  ---  drift=',drift
 
 Nz= n_elements(z_vec)
 Ny= n_elements(y_vec)
-zz= z_vec[nz-1]- z_vec[0]                                      ;; total width
-yy= y_vec[ny-1]- y_vec[0]                                      ;; total width
+zz= z_vec[Nz-1]- z_vec[0]                                      ;; total width
+yy= y_vec[Ny-1]- y_vec[0]                                      ;; total width
 k = 2* !dpi/wavelength                                         ;; wavevector
 
 print, 'z_vec[0] = ',z_vec[0]*1e3, ' z_vec[Nz-1] ', z_vec[nz-1]*1e3, ' mm^2 '
@@ -133,9 +133,9 @@ E0ft= fft(acomp, -1, /center, /double)        ;; Fourier transform of source Fie
   
     
 u = (dindgen(Nz)/(Nz-1) - 0.5)                ;; runs from -0.5..0.. 0.5 
-v = (dindgen(Ny)/(Ny-1) - 0.5)                ;; for even and odd Ny, Nz 
+v = (dindgen(Ny)/(Ny-1) - 0.5)                ;; for even and odd values of Ny, Nz 
 
-u = u * (Nz-1)/zz                             ; ok with odd number elements
+u = u * (Nz-1)/zz                             ;; ok with odd number of elements
 v = v * (Ny-1)/yy
 ;print, u
 

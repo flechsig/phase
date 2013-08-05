@@ -74,38 +74,107 @@
 bamp =dindgen(Nz,Nz)
 
 wavelength =1e-10
-Nz         = 201
+Nz         = 151
 sourcedist = 0
-drift      = 20
+drift      = 120
 ;
 ; Parameters for XFEL-beam 
 ;
-gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0002, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+
+ title = string(sourcedist)
+ title = 'gaussbeam at '+ title + ' m'
+
   window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
   bamp = abs(bcomp)
-;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
-  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (amplitude)'
-
-
+  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
  if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
- if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
- if (sourcedist ne 0) then  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
+ if (sourcedist ne 0) then  bphase = atan(bcomp,/phase)
+ if (sourcedist ne 0) then  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
 
-driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp,$
-           wavelength=wavelength, bcomp=prop, plot=1
+
+  print, '------------- Amplitude -----------------'
+  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+
+  print, '------------- Intensity -----------------'
+  Intensity = bamp^2
+  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+  
+
+
+
+
+ print, '------------- Propagated gauss beam -----------------'
+
+driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop, $
+            plot=0
            
-propamp=abs(prop)
-propphase = atan(prop,/phase)
+ propamp   = abs(prop)
+ propphase = atan(prop,/phase)
+
+ title = string(drift)
+ title = 'propagate to '+ title + ' m'
 
  window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
- mycontour, propamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='propagate (amp)'
+ mycontour, propamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+ title = title + ' (phase)'
 
  window,3, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
- mycontour, propphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='propagate (phase)'
+ mycontour, propphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
 
 
-driftnear , drift=-1*drift , z_vec=z_vec, y_vec=y_vec, acomp=prop, wavelength=wavelength, bcomp=back
- backamp=abs(back)
+  print, '------------- Amplitude -----------------'
+  emf_statistics, propamp, y_vec=y_vec, z_vec=z_vec
+
+  print, '------------- Intensity -----------------'
+  Intensity = propamp^2
+  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+  
+
+
+
+
+
+
+;driftnear , drift=-1*drift , z_vec=z_vec, y_vec=y_vec, acomp=prop, wavelength=wavelength, bcomp=back
+; backamp=abs(back)
 ; emf_statistics, backamp, y_vec=y_vec, z_vec=z_vec
- window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
- mycontour, backamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='backpropagate (amp)'
+; window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
+; mycontour, backamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='backpropagate (amp)'
+
+
+
+
+
+
+
+
+ print, '------------- Analytical gauss beam -----------------'
+
+sourcedist = drift
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+
+ title = string(sourcedist)
+ title = 'gaussbeam at '+ title + ' m'
+
+ bamp = abs(bcomp)
+
+ window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
+ mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+ title = title + ' (phase)'
+
+ bphase = atan(bcomp,/phase)
+ window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
+ mycontour, propphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+
+
+ print, '------------- Amplitude -----------------'
+  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+
+  print, '------------- Intensity -----------------'
+  Intensity = bamp^2
+  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+  
+
+
+
