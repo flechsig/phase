@@ -76,7 +76,7 @@ bamp =dindgen(Nz,Nz)
 wavelength =1e-10
 Nz         = 151
 sourcedist = 0
-drift      = 120
+drift      = 60
 ;
 ; Parameters for XFEL-beam 
 ;
@@ -150,22 +150,22 @@ driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavel
 
 
  print, '------------- Analytical gauss beam -----------------'
+print,'------------------------------------------drift = ',drift
 
-sourcedist = drift
-gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+gaussbeam, dist=drift, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
 
- title = string(sourcedist)
- title = 'gaussbeam at '+ title + ' m'
+
+ title = 'gaussbeam at '+ string(drift) + ' m'
 
  bamp = abs(bcomp)
 
- window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
+ window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
  title = title + ' (phase)'
 
- bphase = atan(bcomp,/phase)
- window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
- mycontour, propphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+ bphase =atan(bcomp,/phase)
+ window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
+ mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
 
 
  print, '------------- Amplitude -----------------'
