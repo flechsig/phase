@@ -88,9 +88,9 @@ gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=
   window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
   bamp = abs(bcomp)
   mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
- if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
- if (sourcedist ne 0) then  bphase = atan(bcomp,/phase)
- if (sourcedist ne 0) then  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
+  if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
+  if (sourcedist ne 0) then  bphase = atan(bcomp,/phase)
+  if (sourcedist ne 0) then  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
 
 
   print, '------------- Amplitude -----------------'
@@ -106,8 +106,8 @@ gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=
 
  print, '------------- Propagated gauss beam -----------------'
 
-driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop, $
-            plot=0
+driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;; , $
+;            plot=0
            
  propamp   = abs(prop)
  propphase = atan(prop,/phase)
@@ -133,9 +133,6 @@ driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavel
 
 
 
-
-
-
 ;driftnear , drift=-1*drift , z_vec=z_vec, y_vec=y_vec, acomp=prop, wavelength=wavelength, bcomp=back
 ; backamp=abs(back)
 ; emf_statistics, backamp, y_vec=y_vec, z_vec=z_vec
@@ -149,7 +146,7 @@ driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavel
 
 
 
- print, '------------- Analytical gauss beam -----------------'
+print, '------------- Analytical gauss beam -----------------'
 print,'------------------------------------------drift = ',drift
 
 gaussbeam, dist=drift, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength

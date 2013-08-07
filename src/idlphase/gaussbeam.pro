@@ -136,7 +136,7 @@ for i=0, Nz-1 do begin
     rho2  =  z_vec[i]^2 + y_vec[j]^2 
     arg1  = -1 *  rho2 / w2    
     if (arg1 le -40) then arg1 = -40                             ;;  -80 immer noch ok
-    arg2  = -0.5 *k * rho2 * Ri   - k*dist + eta                    
+    arg2  = 0.5 *k * rho2 * Ri  + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
     phas2 = complex(cos(arg2), sin(arg2),/double)     
 
     bcomp[i,j]= phas2 * exp(arg1) * w0 / w

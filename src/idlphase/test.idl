@@ -1,9 +1,144 @@
-;; run a test - idl macro
-;; run it: @test.idl
-b=initbeamline()
-b->read,'xxx.phase'
-b->build
-b->MakeRTSource
-;;b->RayTraceFull
-b->RayTracec
-b->WriteRayFile
+; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test routine for crl
+
+;+ 
+; NAME:
+;   drift_test
+;
+;
+; PURPOSE:
+;   test script for crl 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @
+;
+;
+; MODIFICATION HISTORY:
+;-
+; comments.
+
+device, Get_Screen_size=size
+ScreenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
+
+bamp =dindgen(Nz,Nz)
+
+a=1
+wavelength =double(a)
+wavelength=wavelength/1e10
+ 
+Nz         = 101
+sourcedist = 0
+drift      = 40
+sizez      = 0.0004
+w0=27.7e-6 
+;w0=60e-6 
+
+print, FORMAT = '("lambda=   ",E20.14)',wavelength
+print, FORMAT = '("drift =   ",E20.14)',drift
+
+;
+; Parameters for XFEL-beam 
+;
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=w0, wavelength=wavelength
+
+
+driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;;, plot=0
+           
+ propamp   = abs(prop)
+ propphase = atan(prop,/phase)
+
+ title = string(drift)
+ title = 'propagate to '+ title + ' m'
+
+ window,2, RETAIN=2 ,  XSIZE=400, YSIZE=300 ,XPOS=screenx-400, YPOS=Screeny-300
+ mycontour, propamp,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
+ title = title + ' (phase)'
+
+ window,3, RETAIN=2 , XSIZE=400, YSIZE=300,XPOS=screenx - 800, YPOS=Screeny-300
+ mycontour, propphase,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
+
+
+;  print, '------------- Amplitude -----------------'
+;  emf_statistics, propamp, y_vec=y_vec, z_vec=z_vec
+
+;  print, '------------- Intensity -----------------'
+;  Intensity = propamp^2
+;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+  
+gaussbeam, dist=drift, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=w0 , wavelength=wavelength
+
+ bamp   = abs(bcomp)
+ bphase = atan(bcomp,/phase)
+
+ title = string(drift)
+ title = 'gaussbeam at '+ title + ' m'
+
+ window,4, RETAIN=2 ,  XSIZE=400, YSIZE=300 ,XPOS=screenx-400, YPOS=Screeny-600
+ mycontour, bamp,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
+ title = title + ' (phase)'
+
+ window,5, RETAIN=2 , XSIZE=400, YSIZE=300,XPOS=screenx - 800, YPOS=Screeny-600
+ mycontour, bphase,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
+
+ window,20, retain=2 ,  XSIZE=600, YSIZE=200,XPOS=0, YPOS=0
+ plot,z_vec, bphase(50,*) 
+ oplot,z_vec, propphase(50,*),color=2
+
+

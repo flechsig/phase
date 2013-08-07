@@ -94,7 +94,7 @@ u1= 'usage: driftnear, [acomp=acomp,][areal=areal,][aimag=aimag,][breal=breal,][
 u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
 usage= u1+u2
 
-print, 'driftnear called'
+print, '------------------ driftnear called ----------------------------'
 
 if n_elements(drift)      eq 0 then begin
   print, usage & return  
@@ -115,7 +115,7 @@ if n_elements(acomp) eq 0 then acomp= complex(areal, aimag, /double)
 
 
 print, 'driftnear start calculation  ---  drift=',drift
-
+ppi = 2.0 * !dpi 
 Nz= n_elements(z_vec)
 Ny= n_elements(y_vec)
 zz= z_vec[Nz-1]- z_vec[0]                                      ;; total width
@@ -130,6 +130,11 @@ print, 'Nz       = ',   Nz  , ' Ny = ', Ny
 
 E0ft= fft(acomp, -1, /center, /double)        ;; Fourier transform of source Field E0, forward 2d fft, centered output
                                               ;; at positions -(Nz/2-1)/(zz),... -1/(zz) , 0 ,  1/(zz), 2/(zz),... (Nz/2-1)/(zz),
+print, '---------------- M0 --'
+aamp  = dcomplexarr(Nz, Ny) 
+aphas = dcomplexarr(Nz, Ny) 
+aamp  = abs (E0ft)
+aphas = atan(E0ft,/phase)
   
     
 u = (dindgen(Nz)/(Nz-1) - 0.5)                ;; runs from -0.5..0.. 0.5 
@@ -137,33 +142,32 @@ v = (dindgen(Ny)/(Ny-1) - 0.5)                ;; for even and odd values of Ny, 
 
 u = u * (Nz-1)/zz                             ;; ok with odd number of elements
 v = v * (Ny-1)/yy
-;print, u
 
 if n_elements(plot) ne 0 then begin
 
-  amp = abs(E0ft)
-  window,10, RETAIN=2, XSIZE=500, YSIZE=400 ,XPOS=0, YPOS=770
-  mycontour, amp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)' $
-            , title='Fourier transform of input field, amplitude'   
-;;            ,xrange=[-1.0e5,1.0e5],yrange=[-1.0e5,1.0e5]
+  window,10, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=400, YPOS=850
+  mycontour, aamp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, amplitude'   
 
-  amp= atan(E0ft,/phase)
-  window,11, RETAIN=2, XSIZE=500, YSIZE=400 ,XPOS=500, YPOS=770
-  mycontour, amp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', $
-            title='Fourier transform of input field, phase' 
-;;            ,xrange=[-1.0e5,1.0e5],yrange=[-1.0e5,1.0e5]
+  window,11, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=0, YPOS=850
+  mycontour, aphas ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, phase' 
+path       = dindgen(Nz,Ny)
+
 endif
 
-;;--------------- Propagator for driftspace --------------------------
+print, '--------------- Propagator for driftspace --------------------------'
 
-propagator = dcomplexarr(nz, ny)  
+phase      = dindgen(Nz,Ny)
+propagator = dcomplexarr(nz, ny) 
+p0         = drift  MOD wavelength
+
 for i=0, Nz-1 do begin
     for j=0, Ny-1 do begin
-         arg = 1 - (u[i]*wavelength)^2 -  (v[j]*wavelength)^2
+         arg = 1.0 - (u[i]*wavelength)^2 -  (v[j]*wavelength)^2
          IF (arg>0) THEN BEGIN
            arg            = sqrt(arg)
-           phase          = k * drift* arg     
-           propagator[i,j]= complex(cos(phase), sin(phase), /double)
+           phase[i,j]     = ((drift *(arg - 1.0) ) MOD wavelength ) * k + P0  * k 
+;;         phase[i,j]     = k * drift* arg   
+           propagator[i,j]= complex(cos(phase[i,j]), sin(phase[i,j]), /double)
          ENDIF ELSE BEGIN
            print,'driftnear.pro: sqrt of neg. argument, evanescent waves ',arg, ' i = ',i, 'j = ',j
            arg            = sqrt(-1.0*arg)
@@ -174,21 +178,78 @@ for i=0, Nz-1 do begin
     endfor
 endfor
 
-
 if n_elements(plot) ne 0 then begin
- amp= atan(propagator,/phase)
- window,12, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=0, YPOS=330 
- mycontour, amp,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Phase of Propagator'
+
+   M=Nz/2
+
+   print,'++++ M=', M, ' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+
+   hilf = path[M,M] 
+
+   print, FORMAT = '("u     =   ",E20.14)',u[M]
+   print, FORMAT = '("v     =   ",E20.14)',v[M]
+   print, FORMAT = '("drift =   ",E20.14)',drift
+   print, FORMAT = '("lambda=   ",E20.14)',wavelength
+   print, FORMAT = '("p0    =   ",E20.14)',p0
+   ;print, FORMAT = '("cos   =   ",f)',cos(p0)
+   ;print, FORMAT = '("sin   =   ",f)',sin(p0)
+   print, FORMAT = '("PATH  =   ",E20.14)',path[M,M]
+   print, FORMAT = '("phase =   ",E20.14)',phase[M,M]
+   print, FORMAT = '("2pi   =   ",E20.14)',ppi
+   print, FORMAT = '("cos   =   ",f)',cos(phase[M,M])
+   print, FORMAT = '("sin   =   ",f)',sin(phase[M,M])
+   print, FORMAT = '("hilf  =   ",E20.14)',hilf
+   print, FORMAT = '("cos   =   ",f)', cos(hilf*ppi)
+   print, FORMAT = '("sin   =   ",f)', sin(hilf*ppi)
+
+   print, FORMAT = '("Propag=   ",2F)',propagator[M,M]
+   print, FORMAT = '("propph=   ",F)',atan(propagator[M,M],/phase)
 endif
 
-;Eft = dcomplexarr(nz, ny) 
+
+print, '---------------- Modify Field -------------------------------------'
+
+Eft = dcomplexarr(nz, ny) 
+
 Eft = E0ft * propagator
 
-;;---------------  Inverse FT to get output field ----- exp(+i ...) -----
+
+
+if n_elements(plot) ne 0 then begin
+
+ amp= atan(E0ft,/phase)
+ window,12, RETAIN=2, XSIZE=400, YSIZE=300, XPOS=0, YPOS=550 
+ mycontour, amp,u, v, xtitle='v_z (1/m)', ytitle='v_y (1/m)', title='Phase of input field'
+
+ propphas= atan(propagator,/phase)
+ window,13, RETAIN=2, XSIZE=400, YSIZE=300, XPOS=0, YPOS=250 
+ mycontour, propphas,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Phase of Propagator'
+
+ amp= atan(Eft,/phase)
+ window,14, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=0
+ mycontour, amp,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Phase before FFT-1'
+
+ dummy = (aphas + propphas ) +ppi
+; dummy = dummy MOD ppi
+ window,15, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=400, YPOS=0
+ mycontour, dummy,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Add Phase before FFT-1'
+
+  
+ window,16, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=400, YPOS=250
+;; plot , v, phase[*,0] mod ppi  ;; , yrange=[-4,8]
+ plot, v, path [*,50], color = 2
+;; oplot, v, phase [*,*], color = 3
+  
+ print, 'Path : Min =', min(path), 'Max = ', max(path), 'Dif= ', max(path)-min(path)
+ window,17, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=400, YPOS=550
+ mycontour, path,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Path '
+  
+endif
+
+print, '---------------  Inverse FT to get output field ----- exp(+i ...) -----'
 
 bcomp= fft(Eft, 1, /center, /double)                          
 
-;;------------- calculate real and imag description -------------------- 
 
 breal = real_part(bcomp)
 bimag = imaginary(bcomp)
@@ -200,7 +261,7 @@ v=y_vec
 
 ;if n_elements(plot) ne 0 then mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
 
-print,'driftnear end'
+print,'---------------- driftnear end ----------------------------------'
 return
 end
 ;; end
