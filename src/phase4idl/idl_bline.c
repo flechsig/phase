@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/idl_bline.c */
 /*  Date      : <31 Aug 11 16:16:00 flechsig>  */
-/*  Time-stamp: <2012-11-26 18:21:06 flechsig>  */
+/*  Time-stamp: <12 Aug 13 17:33:34 flechsig>  */
 
 /*  $Source$  */
 /*  $Date$ */
@@ -17,12 +17,12 @@
 #include <math.h> 
 
 
-#include "cutils.h"   
-#include "phase_struct.h"
+#include "../phase/cutils.h"   
+#include "../phase/phase_struct.h"
   
-#include "phase.h"
-#include "rtrace.h"                 
-#include "common.h" 
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"                 
+#include "../phase/common.h" 
 
 #include <idl_export.h>
 
@@ -312,6 +312,7 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
    fprintf(f, "\nPSSOURCES\n"); 
    fprintf(f, "%20d  source type \n", bl->src.isrctype);
    // source 1 //
+
    fprintf(f, "%20d  so1: isrcy   \n", bl->src.so1.isrcy);
    fprintf(f, "%20d  so1: isrcdy  \n", bl->src.so1.isrcdy);
    
