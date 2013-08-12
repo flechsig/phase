@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phase4idl.c */
 /*  Date      : <31 Aug 11 16:29:52 flechsig>  */
-/*  Time-stamp: <2012-11-26 18:21:45 flechsig>  */
+/*  Time-stamp: <12 Aug 13 17:52:47 flechsig>  */
 
 
 /*  $Source$  */
@@ -37,12 +37,12 @@
 
 
 
-#include <cutils.h>
-#include <phase_struct.h>
+#include "../phase/cutils.h"
+#include "../phase/phase_struct.h"
   
-#include <phase.h>
-#include <rtrace.h>
-#include <version.h>
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"
+#include "../phase/version.h"
 
 #include <idl_export.h>
 

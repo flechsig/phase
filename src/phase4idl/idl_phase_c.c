@@ -35,17 +35,17 @@
 #include <X11/Xutil.h>  
 
  */
+#include "../phase/cutils.h"
+#include "../phase/phase_struct.h"
 
-#include <cutils.h>
-#include <phase_struct.h>
 /*
 #include <fg3pck.h>
 #include <mirrorpck.h>
 #include <geometrypck.h>   
 */
-#include <phase.h>
-#include <rtrace.h>
-#include <version.h>
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"
+#include "../phase/version.h"
 
 
 #include "phase4idl.h"
