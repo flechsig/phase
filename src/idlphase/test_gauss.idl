@@ -74,13 +74,15 @@
 bamp =dindgen(Nz,Nz)
 
 wavelength =1e-10
-Nz         = 151
+Nz         =201
 sourcedist = 0
 drift      = 60
+sizez      = 0.0006
 ;
 ; Parameters for XFEL-beam 
 ;
-gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+;gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
 
  title = string(sourcedist)
  title = 'gaussbeam at '+ title + ' m'
@@ -104,7 +106,7 @@ gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=
 
 
 
- print, '------------- Propagated gauss beam -----------------'
+ print, '------------- Propagated beam -----------------'
 
 driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;; , $
 ;            plot=0
@@ -165,13 +167,18 @@ gaussbeam, dist=drift, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp
  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
 
 
- print, '------------- Amplitude -----------------'
-  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
-
-  print, '------------- Intensity -----------------'
-  Intensity = bamp^2
-  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+; print, '------------- Amplitude -----------------'
+;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+;
+;
+;  print, '------------- Intensity -----------------'
+;  Intensity = bamp^2
+;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
   
 
-
-
+window,10,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=0, YPOS=800
+; plot, z_vec,bamp[*,(Nz-1)/2]
+ plot, z_vec,propamp[*,(Nz-1)/2], color = 2
+ 
+period = drift /sizez * wavelength
+print, ' Diffraction pattern with period ', period,' m (', period*1e6,' um)'

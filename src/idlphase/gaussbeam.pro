@@ -11,7 +11,7 @@
 ;
 ;
 ;
-pro gaussbeam, dist=dist, bcomp=bcomp, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, plot=plot
+pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot
 ;+
 ; NAME:
 ;  gaussbeam  
@@ -135,7 +135,7 @@ for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
     rho2  =  z_vec[i]^2 + y_vec[j]^2 
     arg1  = -1 *  rho2 / w2    
-    if (arg1 le -40) then arg1 = -40                             ;;  -80 immer noch ok
+    if (arg1 le -40) then arg1 = -40                             ;;  -40 bisher -80 immer noch ok
     arg2  = 0.5 *k * rho2 * Ri  + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
     phas2 = complex(cos(arg2), sin(arg2),/double)     
 

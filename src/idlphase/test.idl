@@ -83,10 +83,10 @@ a=1
 wavelength =double(a)
 wavelength=wavelength/1e10
  
-Nz         = 101
+Nz         = 201
 sourcedist = 0
-drift      = 40
-sizez      = 0.0004
+drift      = 60
+sizez      = 0.0006
 w0=27.7e-6 
 ;w0=60e-6 
 
@@ -98,8 +98,12 @@ print, FORMAT = '("drift =   ",E20.14)',drift
 ;
 gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=w0, wavelength=wavelength
 
+ samp = abs(bcomp)
+ window,1, RETAIN=2 ,  XSIZE=400, YSIZE=300 ,XPOS=screenx-400, YPOS=Screeny-950
+ mycontour, samp,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title='Source (amplitude)
 
-driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;;, plot=0
+
+driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop , plot=0
            
  propamp   = abs(prop)
  propphase = atan(prop,/phase)
@@ -114,13 +118,6 @@ driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavel
  window,3, RETAIN=2 , XSIZE=400, YSIZE=300,XPOS=screenx - 800, YPOS=Screeny-300
  mycontour, propphase,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
 
-
-;  print, '------------- Amplitude -----------------'
-;  emf_statistics, propamp, y_vec=y_vec, z_vec=z_vec
-
-;  print, '------------- Intensity -----------------'
-;  Intensity = propamp^2
-;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
   
 gaussbeam, dist=drift, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=w0 , wavelength=wavelength
 
@@ -130,15 +127,15 @@ gaussbeam, dist=drift, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp 
  title = string(drift)
  title = 'gaussbeam at '+ title + ' m'
 
- window,4, RETAIN=2 ,  XSIZE=400, YSIZE=300 ,XPOS=screenx-400, YPOS=Screeny-600
+ window,4, RETAIN=2 ,  XSIZE=400, YSIZE=300 ,XPOS=screenx-400, YPOS=Screeny-650
  mycontour, bamp,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
  title = title + ' (phase)'
 
- window,5, RETAIN=2 , XSIZE=400, YSIZE=300,XPOS=screenx - 800, YPOS=Screeny-600
+ window,5, RETAIN=2 , XSIZE=400, YSIZE=300,XPOS=screenx - 800, YPOS=Screeny-650
  mycontour, bphase,z_vec,y_vec, xtitle='z (m)', ytitle='y (m)', title=title
 
- window,20, retain=2 ,  XSIZE=600, YSIZE=200,XPOS=0, YPOS=0
- plot,z_vec, bphase(50,*) 
- oplot,z_vec, propphase(50,*),color=2
+ window,20, retain=2 ,  XSIZE=600, YSIZE=200,XPOS=screenx - 800, YPOS=Screeny-900
+ plot,z_vec, bphase((Nz-1)/2,*) 
+ oplot,z_vec, propphase((Nz-1)/2,*),color=2
 
 

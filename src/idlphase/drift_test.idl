@@ -104,29 +104,30 @@ fname ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
 ;print, 'plot drift to 60 m'
 ;print, 'start'
 
+
 print, '---------------------Quellfile ---------------------------------'
-h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
-bamp   =abs(zcomp)
-bphase=atan(zcomp,/phase)
+
+;gaussbeam, dist=0, Nz=151,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=Quelle , w0=27.7e-6 , wavelength=wavelength
+h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=Quelle
+bamp   =abs(Quelle)
+bphase=atan(Quelle,/phase)
 
 window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source file Sven (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source file  (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
 
-window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
-mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source file Sven (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+;window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+;mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source file  (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 
 s=total(bamp,1)
 s=s/max(s)
-
-
-print, '---- -Amplitude  ---'
-emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec            
-print, '---- Intensity ---'
-intensity=bamp^2
-
-emf_statistics, intensity, z_vec=z_vec, y_vec=y_vec       
+;print, '---
+- -Amplitude  ---'
+;emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec            
+;print, '---- Intensity ---'
+;intensity=bamp^2
+;emf_statistics, intensity, z_vec=z_vec, y_vec=y_vec       
 
 
 print, '------------- Propagated with PHASE ------------------------------'
@@ -155,9 +156,9 @@ drift=60.0
 
 print, '------------- Propagated with Fourier  -----------------------'
 
-h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
+;h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=Quelle
 
-driftnear ,plot=1 , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=zcomp, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase
+driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=Quelle, wavelength=wavelength, bcomp=bcomp, bamp=bamp, bphase=bphase
 
 print, '---- -Amplitude  ---'
 emf_statistics, bamp, z_vec=z_vec, y_vec=y_vec             
@@ -171,8 +172,8 @@ window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy
 mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
 
-window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
-mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+;window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+;mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 ; 1dim-projection 
 g=total(bamp,1)
