@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/idl_bline.c */
 /*  Date      : <31 Aug 11 16:16:00 flechsig>  */
-/*  Time-stamp: <12 Aug 13 17:33:34 flechsig>  */
+/*  Time-stamp: <12 Aug 13 17:49:41 flechsig>  */
 
 /*  $Source$  */
 /*  $Date$ */
@@ -71,7 +71,8 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
 
 
    fprintf(f, "SOURCE\n");
-// /*
+// 
+/*
    switch( bl->SourceType )
      {
      case 'I': 
@@ -159,7 +160,8 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
      default:
        fprintf(f, "%20c    *** Error: Unknown Source ***\n", bl->SourceType);
    }
-// */
+// 
+*/
    fprintf(f,"%20d    number of points\n", bl->raynumber); 
    // end source section // 
 //---------------------------------------------------------------------// 
@@ -220,7 +222,8 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
    }
 // */
 
-// /*
+// 
+/*
 //   op= (struct OptionsType *) &(bl->BLOptions);
 
    fprintf(f, "\nCONTROL_FLAGS\n");
@@ -382,7 +385,8 @@ int pha4idlWriteBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
   
 // end options section // 
 
-// */
+// 
+*/
    fprintf(f,"\n*** end of file ***\n");
    fclose(f); 
 #ifdef DEBUG
@@ -408,395 +412,12 @@ int pha4idlReadBLFile(IDL_STRING *name, struct pha4idlBeamlineFile *bl)
    char *fname = name->s;
    //char *tmpchar;
 
-   printf("ReadBLFile: filename: %s\n", fname);
-
-   if ((f= fopen(fname, "r")) == NULL) 
-   {
-     fprintf(stderr, "File %s not found- defaults used!\n", fname);
-     bl->NumElements= 0;
-   }
-   else 
-   {   
-     if((rcode= CheckFileHeader(f, Fg3PickFileHeader, &version)) == 0)   
-     {
-       printf("ReadBLFile: file version: %d\n", version);
-
-// ******************* read SOURCES *************************************************************
-// /*
-       if (SetFilePos(f, "SOURCE"))
-       { 
-         fscanf(f, " %c %[^\n]s %c", &bl->SourceType, buffer, &buf); 
-         printf("source type: %c >> %s\n", bl->SourceType, buffer);
- //        AllocRTSource(bl);
-         switch(bl->SourceType)
-	   {
-// /*
-	   case 'I':
-//             psip= (struct PSImageType *)bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->PSImage.ymin, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->PSImage.ymax, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->PSImage.zmin, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->PSImage.zmax, buffer, &buf);    
-             fscanf(f, " %d %[^\n]s %c",  &bl->PSImage.iy  , buffer, &buf);  
-	     fscanf(f, " %d %[^\n]s %c",  &bl->PSImage.iz  , buffer, &buf);  
-           break;
-	   case 'U': 
-	   case 'u':
-//	     up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.length, buffer, &buf);
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.lambda, buffer, &buf);  
-
-	     printf("%20lf    Undulator length     (mm)\n", bl->UndulatorSrc.length);
-	     printf("%20lf    Undulator wavelength (nm)\n", bl->UndulatorSrc.lambda); 
-	     bl->UndulatorSrc.lambda*= 1e-6;                      // intern in mm //
-	   break;
-	   case 'L': 
-	   case 'M':
-//	     up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.length, buffer, &buf);
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.lambda, buffer, &buf);  
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.deltaz, buffer, &buf);  
-	     printf("%20lf    Undulator length     (mm)\n", bl->UndulatorSrc.length);
-	     printf("%20lf    Undulator wavelength (nm)\n", bl->UndulatorSrc.lambda); 
-	     printf("%20lf    Undulator SLS offset (mm)\n", bl->UndulatorSrc.deltaz);  
-	     bl->UndulatorSrc.lambda*= 1e-6;                      // intern in mm //
-	   break;
-	   case 'G':
-//	     up0= (struct UndulatorSource0Type *) bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.length, buffer, &buf);
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.lambda, buffer, &buf);  
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.deltaz, buffer, &buf);  
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.sigmaez, buffer, &buf);  
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.sigmaey, buffer, &buf);  
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.sigmaedz, buffer, &buf);  
-	     fscanf(f, " %lf %[^\n]s %c", &bl->UndulatorSrc.sigmaedy, buffer, &buf);  
-	     printf("%20lf    Undulator length     (mm)\n", bl->UndulatorSrc.length);
-	     printf("%20lf    Undulator wavelength (nm)\n", bl->UndulatorSrc.lambda); 
-	     printf("%20lf    Undulator SLS offset (mm)\n", bl->UndulatorSrc.deltaz);  
-	     printf("%20lf    hor. e-beam size (mm)\n", bl->UndulatorSrc.sigmaez);  
-	     printf("%20lf    vert. e-beam size (mm)\n", bl->UndulatorSrc.sigmaey);  
-	     printf("%20lf    hor. e-beam divergence (mrad)\n", bl->UndulatorSrc.sigmaedz);  
-	     printf("%20lf    vert. e-beam divergence (mrad)\n", bl->UndulatorSrc.sigmaedy);  
-	     bl->UndulatorSrc.lambda*= 1e-6;                      // intern in mm //
-	   break;   
-	 case 'H': 
-//	   hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->HardEdgeSrc.disty, buffer, &buf);  
-	     fscanf(f, " %d  %[^\n]s %c", &bl->HardEdgeSrc.iy   , buffer, &buf);   
-             fscanf(f, " %lf %[^\n]s %c", &bl->HardEdgeSrc.distz, buffer, &buf);  
-	     fscanf(f, " %d  %[^\n]s %c", &bl->HardEdgeSrc.iz   , buffer, &buf);   
-             fscanf(f, " %lf %[^\n]s %c", &bl->HardEdgeSrc.divy , buffer, &buf);  
-	     fscanf(f, " %d  %[^\n]s %c", &bl->HardEdgeSrc.idy  , buffer, &buf);   
-             fscanf(f, " %lf %[^\n]s %c", &bl->HardEdgeSrc.divz , buffer, &buf);  
-	     fscanf(f, " %d  %[^\n]s %c", &bl->HardEdgeSrc.idz  , buffer, &buf);   
-	   break;
-           case 'D':
-//	     dp= (struct DipolSourceType *)bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->DipolSrc.sigy , buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->DipolSrc.sigdy, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->DipolSrc.sigz, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->DipolSrc.dz, buffer, &buf);  
-           break; 
-	   case 'o': 
-//            sop= (struct PointSourceType *)bl->RTSource.Quellep; 
-             fscanf(f, " %lf %[^\n]s %c", &bl->PointSrc.sigy , buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->PointSrc.sigdy, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->PointSrc.sigz , buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->PointSrc.sigdz, buffer, &buf);  
-           break; 
-	   case 'R': 
-//             rp= (struct RingSourceType *)bl->RTSource.Quellep; 
-	     fscanf(f, " %lf %[^\n]s %c", &bl->RingSrc.dy, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->RingSrc.dz, buffer, &buf);  
-           break; 
-           case 'S': 
-//             sp= (struct SRSourceType *)bl->RTSource.Quellep;
-             fscanf(f, " %lf %[^\n]s %c", &bl->SRSrc.y,  buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->SRSrc.dy, buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->SRSrc.z,  buffer, &buf);  
-             fscanf(f, " %lf %[^\n]s %c", &bl->SRSrc.dz, buffer, &buf);    
-           break;  
-           case 'F':
-	     break;
-           default: 
-	     fprintf(stderr, "error: unknown source type!\n");// exit(-1); //
-	 }
-// */
-         fscanf(f, " %d %[^\n]s %c", &bl->raynumber, buffer, &buf);
-      	 printf("source read- rays: %d\n", bl->raynumber);
-
-       } else rcode= -1; // source data not found in file //
-// */
-// ******************* read SOURCES *************************************************************
-
-
-// ******************* opt.ELEMENTS *************************************************************
-       if (SetFilePos(f, "ELEMENTS")) 
-	 {                      
-         fscanf(f, " %d %[^\n]s %c", &bl->NumElements, buffer, &buf); 
-    printf("Elementzahl: %i : \n", bl->NumElements );
-	 }
-       else { rcode= -1; }  //  data not found in file //     
-
-// bl->NumElements=0;
-
-         if (bl->NumElements < 0) {  printf("negative number of BeamlineElements \n"); exit(-1); }
-         if (bl->NumElements > MaximumOptElements)
-                                  {  printf("to many elements in Beamlinefile \n");    exit(-1); }
-         if (bl->NumElements == 0) {  printf("No optical element in Beamlinefile \n");  exit(-1); }
-
-       elnumber = 1;
-
-       while (elnumber<= bl->NumElements) 
-       {
-           printf("Reading opt. element #%i \n", elnumber );
-
-          bl->ElementList[elnumber-1].ElementOK= 0;       //  reset OK //
-
-	  sprintf(buffer, "Element %d", elnumber);	
-	  if (SetFilePos(f, buffer)) 
-          {  //  lese ein ... //
-             fscanf(f, " %s %[^\n]s %c", &bl->ElementList[elnumber-1].elementname, buffer, &buf);
-#ifdef DEBUG 
-	     //     printf("   Name read: %s\n", bl->ElementList[elnumber].elementname); //
-#endif
-          } else rcode= -1;
-
-          sprintf(buffer, "GEOMETRY %d", elnumber); 
-          if (SetFilePos(f, buffer)) 
-          {  //  lese ein ... //
-             pd= (double *) &bl->ElementList[elnumber-1].GDat.theta0; 
-             for (i= 0; i < 8; i++, pd++) //  !!Fehleranfaellig !! //
-             {
-               fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
-             } 
-	     //bl->ElementList[elnumber-1].GDat.lambdag*= 1e-6;
-             fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].GDat.inout);  
-             fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].GDat.iflag);  
-             fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].GDat.azimut); 
-	     //   printf("   geometry read\n"); //
-          } else rcode= -1;  
-
-          sprintf(buffer, "MIRROR %d", elnumber);  
-          if (SetFilePos(f, buffer)) 
-          {  //  lese ein ... //
-	    fgets(buffer, 80, f); sscanf(buffer, "%d", &bl->ElementList[elnumber-1].MDat.Art);
-            //  fscanf(f, " %d %[^\n]s %c", &bl->ElementList[elnumber].Art, buffer, &buf);//
-	    if (bl->ElementList[elnumber-1].MDat.Art == kEOEGeneral)   
-	      {
-		//  read the coefficients once - is required for optimization if only 
-//		   particular coefficients should be optimized //
-		printf("ReadBLFile->read general coefficient file\n");
-		ReadCoefficientFile((double *)&bl->ElementList[elnumber-1].mir, bl->ElementList[elnumber-1].elementname);
-	      } 
-	    pd= (double *) &bl->ElementList[elnumber-1].MDat.r1;                 
-	    for (i= 0; i < 5; i++, pd++) 
-	      {
-		fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
-	      }
-	    fscanf(f, " %d %[^\n]s %c",  &bl->ElementList[elnumber-1].MDat.iflagmi, buffer, &buf); 
-	    fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.w1, buffer, &buf); 
-	    fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.w2, buffer, &buf); 
-	    fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.l1, buffer, &buf); 
-	    fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.l2, buffer, &buf); 
-	    fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.slopew, buffer, &buf); 
-	    fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.slopel, buffer, &buf); 
-	    if (version >= 20040217)
-	      {
-		fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.du, buffer, &buf);
-		fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.dw, buffer, &buf);
-		fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.dl, buffer, &buf);
-		fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.dRu, buffer, &buf);
-		fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.dRw, buffer, &buf);
-		fscanf(f, " %lf %[^\n]s %c", &bl->ElementList[elnumber-1].MDat.dRl, buffer, &buf);
-	      }
-#ifdef DEBUG
-	    //   printf("   mirror read\n"); //
-#endif
-	    printf("Elementtype: %d, name: %s\n", bl->ElementList[elnumber-1].MDat.Art, bl->ElementList[elnumber-1].elementname);
-          } else { rcode= -1; }
-          elnumber++; //listpt++;
-       } 
-// **********************************************************************************************
-// */
-
-// /*
-// **********************************************************************************************
-       if (SetFilePos(f, "CONTROL_FLAGS"))
-         { 
-//           op= (struct OptionsType *) &(bl->BLOptions); 
-           fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.iord, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.iordsc, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.iexpand, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.iplmode, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.ibright, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.ispline, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.inorm, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.inorm1, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.inorm2, buffer, &buf); 
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.matrel, buffer, &buf);  
-	   fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.igrating, buffer, &buf);  
-           fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.ifl.ipinarr, buffer, &buf); 
-         } else  rcode= -1;
-// **********************************************************************************************
-// */
-
-// /*
-// **********************************************************************************************
-       if (SetFilePos(f, "APERTURES"))
-         { 
-//          op= (struct OptionsType *) &(bl->BLOptions); 
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.rpin, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.srcymin, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.srcymax, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.srczmin, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.srczmax, buffer, &buf);
-
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.rpin_ap, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.ymin_ap, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.ymax_ap, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.zmin_ap, buffer, &buf);
-           fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.apr.zmax_ap, buffer, &buf);
-         } else  rcode= -1;
-// **********************************************************************************************
-// */
-
-// /*
-// **********************************************************************************************
-       if (SetFilePos(f, "INTEGRATION"))
-       { 
-//         op= (struct OptionsType *) &(bl->BLOptions); 
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.distfocy, buffer, &buf);
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.distfocz, buffer, &buf);
-	 //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.itery0, buffer, &buf); //
-	 fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.ianzy0, buffer, &buf);
-	 //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.imaxy, buffer, &buf); //
-	 //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.inumy, buffer, &buf); //
-
-	 //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iterz0, buffer, &buf); //
-	 fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.ianzz0, buffer, &buf);
-	 //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.imaxz, buffer, &buf); //
-	 //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.inumz, buffer, &buf); //
-       
-	 fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.ymin, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.ymax, buffer, &buf);
-	 //  fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.fracy, buffer, &buf);  // 
-         //  fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.frac1y, buffer, &buf); // 
-	 
-	 fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.zmin, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.zmax, buffer, &buf);
-	//  fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.fracz, buffer, &buf);  //
-        //  fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.frac1z, buffer, &buf); //
-
-//      fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.phase_change_1, buffer, &buf);   //
-//      fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.phase_change_2, buffer, &buf);   //
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.d12_max, buffer, &buf);
-//  	 fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.amp_change, buffer, &buf);   //
-	 //  fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.xi.dphi_min, buffer, &buf); //
-
-         fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iamp_smooth, buffer, &buf);
-         fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iord_amp, buffer, &buf);
-         fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iord_pha, buffer, &buf);
-         //  fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iordap, buffer, &buf); //
-//           fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iphase_curv, buffer, &buf); //
-//           fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.iphase_pi2, buffer, &buf); //
-         fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.ifm_amp, buffer, &buf);
-         fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.ifm_pha, buffer, &buf);
-         fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.id12, buffer, &buf);
-	 if (!feof(f))
-	   { //  voruebergehend //
-	     fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.ianz0_cal, buffer, &buf);
-	     fscanf(f, " %d %[^\n]s %c", &bl->BLOptions.xi.ianz0_fixed, buffer, &buf);
-	   }
-       } else  rcode= -1;
-// **********************************************************************************************
-// */
-
-// /*
-// **********************************************************************************************
-       if (SetFilePos(f, "PSSOURCES"))
-       { 
-	 fscanf(f, " %d %[^\n]s %c", &bl->src.isrctype, buffer, &buf); 
-	 //  source 1 //
-	 fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcy, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcdy, buffer, &buf);
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmay, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmayp, buffer, &buf); 
-	 fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcz, buffer, &buf);
-	 fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcdz, buffer, &buf);
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmaz, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
-	 //  source 4 //
-	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
-	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
-	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
-	 fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
-	 //  source 5 //
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcy, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcz, buffer, &buf);
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipdisy, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipdisz, buffer, &buf);
-//  	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipymin, buffer, &buf);   //
-//           fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipymax, buffer, &buf); //
-//  	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmin, buffer, &buf);   //
-//           fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmax, buffer, &buf); //
-	 //  source 6 //
-	 fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
-
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl, buffer, &buf);
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
-	 fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl, buffer, &buf);
-
-	 //  UF 10.3.06 put it outside	 strcpy(phset->pssourcename, bl->src.so6.fsource6); // 
-	 //  PutPHASE(phset, MainPickName); // 
-       } else  rcode= -1;   //  end PSSOURCES //
-// **********************************************************************************************
-// */
-
-// /* &bl->BLOptions
-// **********************************************************************************************
-       if (SetFilePos(f, "OPTIONS"))
-       { 
-//         op= (struct OptionsType *) &(bl->BLOptions); 
-	 fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.SourcetoImage, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.epsilon, buffer, &buf);   
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.CalcMod, buffer, &buf);
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.lambda, buffer, &buf); 
-	 bl->BLOptions.lambda*= 1e-6;
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.displength, buffer, &buf); 
-         fscanf(f, " %lf %[^\n]s %c", &bl->deltalambdafactor, buffer, &buf); 
-	 if (version >= 20040217)
-	   fscanf(f, " %d %[^\n]s %c",&bl->BLOptions.WithAlign, buffer, &buf);
-	 //  printf("ReadBLFile: file version: %d, WithAlign: %d\n", version, bl->BLOptions.WithAlign);//
- 
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.ndyfix, buffer, &buf);  
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.ndzfix, buffer, &buf);    
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.dyminfix, buffer, &buf);   
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.dymaxfix, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.dzminfix, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.dzmaxfix, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.PSSource.sigy, buffer, &buf);   
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.PSSource.sigdy, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.PSSource.sigz, buffer, &buf);  
-         fscanf(f, " %lf %[^\n]s %c", &bl->BLOptions.PSO.PSSource.sigdz, buffer, &buf); 
-
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.PSSource.yhard, buffer, &buf);  
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.PSSource.dyhard, buffer, &buf);
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.PSSource.zhard, buffer, &buf);  
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.PSSource.dzhard, buffer, &buf); 
-         fscanf(f, " %d %[^\n]s %c",  &bl->BLOptions.PSO.intmod, buffer, &buf); 
-#ifdef DEBUG
-	 //     printf("   options read\n"); //
-#endif
-       } else rcode= -1;  //  data not found in file //   
-// */
-     } //  file ok //
-// */
-     fclose(f);  
-   }
+   printf("pha4idlReadBLFile: filename: %s\n", fname);
    
-// */   
+   
+   fprintf(stderr, "routine not implemented!\n");
+   // 2bdone add a call to the actual routine
+   
    return rcode;  
 }  //  end ReadBLFile //
 
