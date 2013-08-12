@@ -1,0 +1,131 @@
+; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test routine for crl
+
+;+ 
+; NAME:
+;   drift_test
+;
+;
+; PURPOSE:
+;   test script for crl 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @
+;
+;
+; MODIFICATION HISTORY:
+;-
+; comments.
+
+
+wavelength = 1e-10
+Nz         = 2000
+drift      = 19.9
+sizez      = 0.001
+dz         = 0.00004
+dy         = 0.00008
+Ny         = 200
+sizey      = sizez
+;
+; Parameters for XFEL-beam 
+;
+;gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+slit,       bcomp=Quelle, dz=dz, dy=dy, sizez=sizez,  Nz=Nz, Ny=Ny, sizey=sizey, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec
+
+ title = 'slit  '
+
+  window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
+  bamp = abs(Quelle)
+  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+
+
+
+
+
+ print, '------------- Propagated beam -----------------'
+
+driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=Quelle, wavelength=wavelength, bcomp=prop ,filter=1
+           
+ propamp   = abs(prop)
+ propphase = atan(prop,/phase)
+
+ title = 'propagate to '+ string(drift) + ' m'
+
+ window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
+ mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+
+  
+Pz =  drift  * wavelength / dz 
+Az =  drift  * wavelength / sizez
+
+Py =  drift  * wavelength / dy 
+Ay =  drift  * wavelength / sizey
+print, 'drift      = ', drift
+
+Sz = sizez / Nz
+Sy = sizey / Ny
+
+print, 'sampling intervall of source '
+print, 'Sz           =',Sz*1e3, ' mm, Sy = ', sy*1e3,' mm'  
+print, 'wavelength   = ',wavelength 
+print, 'drift        = ',drift
+print, 'period due to  slitsize Pz = ', Pz*1e6,' um  Period due to aperturesize ',Az*1e6, ' um'
+print, 'period due to  slitsize Py = ', Py*1e6,' um  Period due to aperturesize ',Ay*1e6, ' um'
+
+window,4,retain=2,XSIZE=500, YSIZE=200,XPOS=1300, YPOS=230
+plot  , z_vec*1e3, propamp[*,Ny/2],/ylog,  xtitle='(mm)' ;;,xrange=[0.1,0.11],psym=4
+oplot , y_vec*1e3, propamp[Nz/2,*], color=3

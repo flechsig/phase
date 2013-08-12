@@ -104,6 +104,7 @@ if n_elements(acomp) eq 0 then acomp= complex(areal, aimag, /double)
 
 if n_elements(filter) eq 0 then filter=0
 
+if n_elements(plot) eq 0 then plot=0
 
 
 print, 'driftHuygens start calculation  ---  drift=',drift
@@ -151,13 +152,16 @@ help, u,v, bcomp, acomp, kernel
 bcomp = CONVOL( Kernel, acomp)
 ;bcomp = CONVOL( acomp, Kernel)
 
-help, u,v, bcomp, acomp, kernel
+if (plot ne 0) then begin
+ help, u,v, bcomp, acomp, kernel
 
-; plot only relativ phase, otherwise mycontour crashes.
-
+ ;; plot only relativ phase, otherwise mycontour crashes.
+ 
  phase = phase - ppi * drift / wavelength
  window,21, RETAIN=2, XSIZE=400, YSIZE=300, XPOS=0, YPOS=1000 
  mycontour, phase, u*1e3, v*1e3, xtitle='  u (mm)', ytitle='v (mm)', title='Relative Phase of Kernel'
+
+endif
 
 print,'---------------- driftHuygens end ----------------------------------'
 return
