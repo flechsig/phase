@@ -22,15 +22,15 @@
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>  
 #endif
-#include "cutils.h"   
-#include "phase_struct.h"
+#include "../phase/cutils.h"   
+#include "../phase/phase_struct.h"
 /*#include "fg3pck.h"   
 #include "mirrorpck.h"                 
 #include "geometrypck.h" 
 */  
-#include "phase.h"
-#include "rtrace.h"
-#include "version.h"
+#include "../phase/phase.h"
+#include "../phase/rtrace.h"
+#include "../phase/version.h"
 
 /* UF 26.11.12 */
 #include "idl_phase_batchmode_access.h"
@@ -66,7 +66,7 @@ int test_batchmode_nachbildung(int *CalcMode)
   Beamline.RTSource.SourceRays= NULL;
   Beamline.beamlineOK= 0;
   ReadBLFile(Beamline.filenames.beamlinename, &Beamline);
-  strcpy(Beamline.filenames.pssourcename, Beamline.src.so6.fsource6);
+  //UF  strcpy(Beamline.filenames.pssourcename, Beamline.src.so6.fsource6);
   BuildBeamline(&Beamline); 
 
 if (cmode == -1) cmode= Beamline.BLOptions.CalcMod;
