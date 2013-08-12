@@ -81,8 +81,8 @@ sizez      = 0.0006
 ;
 ; Parameters for XFEL-beam 
 ;
-;gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
-slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+;slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
 
  title = string(sourcedist)
  title = 'gaussbeam at '+ title + ' m'
@@ -105,17 +105,15 @@ slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, 
 
 
 
-
  print, '------------- Propagated beam -----------------'
 
-driftnear , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;; , $
+driftFourier , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;; , $
 ;            plot=0
            
  propamp   = abs(prop)
  propphase = atan(prop,/phase)
 
- title = string(drift)
- title = 'propagate to '+ title + ' m'
+ title = 'propagate to '+ string(drift)+ ' m'
 
  window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
  mycontour, propamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
@@ -158,27 +156,37 @@ gaussbeam, dist=drift, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp
 
  bamp = abs(bcomp)
 
- window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
- mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
- title = title + ' (phase)'
-
- bphase =atan(bcomp,/phase)
- window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
- mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
-
-
+; window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
+; mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+; title = title + ' (phase)'
+; 
+; bphase =atan(bcomp,/phase)
+;  window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
+;  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+; 
+; 
+; 
 ; print, '------------- Amplitude -----------------'
 ;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
-;
-;
-;  print, '------------- Intensity -----------------'
+; 
+; 
+; print, '------------- Intensity -----------------'
 ;  Intensity = bamp^2
 ;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
-  
 
-window,10,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=0, YPOS=800
-; plot, z_vec,bamp[*,(Nz-1)/2]
- plot, z_vec,propamp[*,(Nz-1)/2], color = 2
- 
-period = drift /sizez * wavelength
-print, ' Diffraction pattern with period ', period,' m (', period*1e6,' um)'
+;printf, '-------------- Projection of Intensity ------'
+
+  vsum = total(Intensity,2)  
+;  window,12,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=600, YPOS=800
+;
+;  plot, z_vec, vsum / max(vsum)
+;  result=dindgen(6)
+;  z=gaussfit(z_vec, vsum,result,NTERMS=5 )
+;  print, ' rms = ',result[2]
+;
+;
+;window,11,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=0, YPOS=800
+; plot, z_vec,propamp[*,(Nz-1)/2], color = 2
+ ;
+;period = drift /sizez * wavelength
+;print, ' Diffraction pattern with period ', period,' m (', period*1e6,' um)'

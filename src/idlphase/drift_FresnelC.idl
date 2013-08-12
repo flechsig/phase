@@ -74,7 +74,7 @@
 
 wavelength = 1e-10
 Nz         = 100
-drift      = 100
+drift      = 2
 sizez      = 0.0001
 dz         = 0.00004
 dy         = 0.00008

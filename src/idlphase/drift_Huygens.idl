@@ -73,14 +73,14 @@
 e
 
 wavelength = 1e-10
-Nz         = 100
+Nz         = 200
 Ny         = Nz
-sizez      = 0.0001
-sizey      = sizez
 dz         = 0.00004
 dy         = 0.00008
-drift      = 2
-Nu=300
+sizez      = 0.0001
+sizey      = sizez
+drift      = 100
+Nu=4000
 Nv=Nu
 
 ; slit,       bcomp=Quelle, dz=0.00004, dy=0.00008, sizez=0.0001,  Nz=100, Ny=100, sizey=0.0001, wavelength=1e-10, z_vec=z_vec, y_vec=y_vec
