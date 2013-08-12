@@ -156,23 +156,23 @@ gaussbeam, dist=drift, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp
 
  bamp = abs(bcomp)
 
-; window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
-; mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
-; title = title + ' (phase)'
-; 
-; bphase =atan(bcomp,/phase)
-;  window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
-;  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
-; 
-; 
-; 
-; print, '------------- Amplitude -----------------'
-;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
-; 
-; 
-; print, '------------- Intensity -----------------'
-;  Intensity = bamp^2
-;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
+mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+title = title + ' (phase)'
+
+bphase =atan(bcomp,/phase)
+ window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
+ mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+ 
+ 
+ 
+ print, '------------- Amplitude -----------------'
+  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+ 
+ 
+ print, '------------- Intensity -----------------'
+  Intensity = bamp^2
+  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
 
 ;printf, '-------------- Projection of Intensity ------'
 
