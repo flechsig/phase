@@ -42,7 +42,7 @@ defsysv, '!phaseidllib',!phalib
 defsysv, '!phase4idllib',!phalib
 
 ; Initialize Phase-Structures and defines
-phainit_defines, verbose=verbose
+phainit_defines,    verbose=verbose
 phainit_structures, verbose=verbose
 
 END

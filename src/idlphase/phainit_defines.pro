@@ -1,6 +1,17 @@
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phainit_defines.pro
+;  Date      : <14 Aug 13 11:23:04 flechsig> 
+;  Time-stamp: <14 Aug 13 11:23:57 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
 
 
-pro phainit_defines
+pro phainit_defines, verbose=verbose
+
+if n_elements(verbose) ne 0 then print, 'phainit_defines called'
 
 ; defsysv, '!phalib', 'libphase4idl.so'		
 ; numbers are first defined in <phase.h>, see also <phasec.c>

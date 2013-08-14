@@ -1,6 +1,18 @@
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phainit_structures.pro
+;  Date      : <14 Aug 13 11:24:26 flechsig> 
+;  Time-stamp: <14 Aug 13 11:24:47 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
 ; phase structures...
 
-PRO phainit_structures
+PRO phainit_structures, verbose=verbose
+
+if n_elements(verbose) ne 0 then print, 'phainit_defines called'
 
 MaxPathLength=long(255)
 MaximumOptElements=long(64)
