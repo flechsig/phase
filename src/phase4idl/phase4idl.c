@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phase4idl.c */
 /*  Date      : <31 Aug 11 16:29:52 flechsig>  */
-/*  Time-stamp: <12 Aug 13 17:52:47 flechsig>  */
+/*  Time-stamp: <14 Aug 13 12:11:52 flechsig>  */
 
 
 /*  $Source$  */
@@ -27,6 +27,7 @@
   #include <config.h>
 #endif
 
+#define DEBUG
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -242,8 +243,12 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
   double waist=*w0;  // Dereferencing w0, so that w0 won't change in the calling program
   double distance=*deltax;  // Same ...
 
-  beam->xlam=*xlambda;
-  
+#ifdef DEBUG
+  fprintf(stderr, "debug: phaSrcWFGauss called, file=%s\n", __FILE__);
+#endif
+
+  beam->xlam=*xlambda; 
+
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, *ianzz, *zmin, *zmax, *ianzy, *ymin, *ymax);
 // /*  
@@ -254,7 +259,9 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
 	  			,&waist, &distance, xlambda
 	  			,ez0, ey0, dphi_zy);
 // */
+
   pha_c_adjust_src4_grid(beam);
+
 
   return (0);
 }
@@ -418,9 +425,13 @@ int pha_c_extract_src4_grid(struct source4 *src4,
 // ***************************************************************************
 int  pha_c_define_src4_grid(struct source4 *src4,
                             int nz, double zmin, double zmax,
-				    int ny, double ymin, double ymax)
+			    int ny, double ymin, double ymax)
 //c% Routine definiert die in src4-Structs redundanten Grid-Parameter
 {
+
+#ifdef DEBUG
+  fprintf(stderr, "debug: pha_c_define_src4_grid called, file=%s\n", __FILE__);
+#endif
 //c      
       double dz=(zmax-zmin)/(nz-1);
       double dy=(ymax-ymin)/(ny-1);
@@ -488,6 +499,11 @@ int pha_c_adjust_src4_grid(struct source4 *src4)
 
 	double zmin,zmax,ymin,ymax;
 	int    nz,ny;
+
+#ifdef DEBUG
+  fprintf(stderr, "debug: pha_c_adjust_src4_grid called, file=%s\n", __FILE__);
+#endif
+
 
 	pha_c_extract_src4_grid(src4,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
 
