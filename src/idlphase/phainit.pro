@@ -3,7 +3,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-PRO phainit
+PRO phainit, verbose=verbose
 ;+
 ; NAME:
 ;   phainit
@@ -12,15 +12,20 @@ PRO phainit
 ;   Initialize the IDL Phase environment.
 ;
 ; CATEGORY:
-;   	pro : phase init
+;   pro : phase init
 ;
 ; CALLING SEQUENCE:
-;		phainit
+;   phainit
+;
+; KEYWORD PARAMETERS:
+;   verbose: verbose
 ;
 ; MODIFICATION HISTORY:
-;      March 28, 2008, TL, added help
+;   March 28, 2008, TL, added help
+;   Aug 2013, UF add verbose
 ;-
 
+if n_elements(verbose) ne 0 then print, 'phainit called'
 
 defsysv, '!phalib', exist=exist  ;; check if  defined
 
@@ -37,8 +42,8 @@ defsysv, '!phaseidllib',!phalib
 defsysv, '!phase4idllib',!phalib
 
 ; Initialize Phase-Structures and defines
-phainit_defines
-phainit_structures
+phainit_defines, verbose=verbose
+phainit_structures, verbose=verbose
 
 END
 
