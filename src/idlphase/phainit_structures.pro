@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phainit_structures.pro
 ;  Date      : <14 Aug 13 11:24:26 flechsig> 
-;  Time-stamp: <14 Aug 13 11:24:47 flechsig> 
+;  Time-stamp: <14 Aug 13 12:27:40 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -78,6 +78,16 @@ dummy_source4 =  { source4 ,                                                $
 	nfreqpos:intzero ,nfreqneg:intzero , iconj:intzero $
 };source4
 
+dummy_source4c = { source4c , $
+                   xemin:dblzero, xemax:dblzero, dx:dblzero, yemin:dblzero, yemax:dblzero, dy:dblzero, $
+                   zeyre:ptr_new(), zeyim:ptr_new(), $
+                   zezre:ptr_new(), zezim:ptr_new(), $
+                   gridx:ptr_new(), gridy:ptr_new(), deltatime:dblzero, $
+                   ampeyre:dblzero, ampeyim:dblzero, ampezre:dblzero, ampezim:dblzero, $
+                   xlam:dblzero, $
+                   iex:intzero, iey:intzero, $
+                   nsource:intzero, nimage:intzero, nfreqtot:intzero, nfreqpos:intzero, nfreqneg:intzero, iconj:intzero $
+                 } ;; source4c
 
 dummy_source5 = {  source5 ,  $;                 /* Dipol Quelle  */
            dipcy:dblzero ,   dipcz:dblzero ,   dipdisy:dblzero , dipdisz:dblzero ,$
