@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/phaBLIinit.pro
 ;  Date      : <06 Mar 06 16:23:25 flechsig> 
-;  Time-stamp: <10 Mar 06 17:25:46 flechsig> 
+;  Time-stamp: <16 Aug 13 08:44:16 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -35,7 +35,7 @@ function phaBLInitstatic,verbose=verbose
 ;
 ;
 ; KEYWORD PARAMETERS:
-;   no
+;   verbose: verbose
 ;
 ;
 ; OUTPUTS:
