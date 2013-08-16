@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phainit_structures.pro
 ;  Date      : <14 Aug 13 11:24:26 flechsig> 
-;  Time-stamp: <14 Aug 13 12:35:47 flechsig> 
+;  Time-stamp: <16 Aug 13 17:03:51 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -55,6 +55,27 @@ dummy_source3 = { source3 , $
    	  xsrcimag:dblarr(1024),ysrcimag:dblarr(1024), $
 	  isrcreal:intzero,isrcimag:intzero,iactreal:intzero,iactimag:intzero $
 };source3  
+
+dummy_source4idl =  { source4idl ,                                                $
+        xeyremin:dblzero , xeyremax:dblzero , dxeyre:dblzero ,$
+	xeyimmin:dblzero , xeyimmax:dblzero , dxeyim:dblzero ,$
+	yeyremin:dblzero , yeyremax:dblzero , dyeyre:dblzero ,$
+	yeyimmin:dblzero , yeyimmax:dblzero , dyeyim:dblzero ,$
+	zeyre:dblarr(!phaMaxArraySize,!phaMaxArraySize) , zeyim:dblarr(!phaMaxArraySize,!phaMaxArraySize) ,$
+	xezremin:dblzero , xezremax:dblzero , dxezre:dblzero , $
+	xezimmin:dblzero , xezimmax:dblzero , dxezim:dblzero , $
+	yezremin:dblzero , yezremax:dblzero , dyezre:dblzero , $
+	yezimmin:dblzero , yezimmax:dblzero , dyezim:dblzero , $
+	zezre:dblarr(!phaMaxArraySize,!phaMaxArraySize) , zezim:dblarr(!phaMaxArraySize,!phaMaxArraySize) ,$
+	gridx:dblarr(!phaMaxArraySize)     , gridy:dblarr(!phaMaxArraySize), deltatime:dblzero, $
+      ampeyre:dblzero , ampeyim:dblzero , $
+      ampezre:dblzero , ampezim:dblzero , $
+      xlam:dblzero , $
+      ieyrex:intzero , ieyimx:intzero , ieyrey:intzero , ieyimy:intzero , $
+      iezrex:intzero , iezimx:intzero , iezrey:intzero , iezimy:intzero , $
+      nsource:intzero, nimage:intzero, nfreqtot:intzero, $
+	nfreqpos:intzero ,nfreqneg:intzero , iconj:intzero $
+};source4
 
 dummy_source4 =  { source4 ,                                                $
         fsource4a:bytarr(80),fsource4b:bytarr(80), $
