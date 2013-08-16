@@ -9,6 +9,12 @@ cc #define 1024 256
 cc Big1024 is for internal temporary fields
 cc #define Big1024 1024
 
+c UF revision 1.7
+c date: 2013/08/16 07:33:21;  author: flechsig;  state: Exp;  lines: +2 -8
+c no change- checked that the routine is completely independent of the phase c-
+c code, the field dimensions come from the include file with hardcoded static
+c defined fields
+
 cc TL 29.01.2009
 #include "pha4idlFORTRANdefines.h.f"
 cc#define MaxDim 1024
