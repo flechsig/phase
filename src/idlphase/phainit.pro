@@ -38,8 +38,8 @@ if (exist eq 0) then begin            ; defaults if not defined
 endif
 
 ; !phalib aliase
-defsysv, '!phaseidllib',!phalib
-defsysv, '!phase4idllib',!phalib
+defsysv, '!phaseidllib',  !phalib
+defsysv, '!phase4idllib', !phalib
 
 ; Initialize Phase-Structures and defines
 phainit_defines,    verbose=verbose
