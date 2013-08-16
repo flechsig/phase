@@ -1,3 +1,7 @@
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
 ;+
 ; NAME:
 ;	beispiel
@@ -5,7 +9,8 @@
 function phaSrcWFGauss, ianzz, zmin, zmax, $
 			ianzy, ymin, ymax, $
                         w0  , deltax, xlam, $
-                        ez0, ey0, dphi_zy
+                        ez0, ey0, dphi_zy, $
+                        verbose=verbose
 ;+
 ; NAME:
 ;	phaSrcWFGauss
@@ -50,7 +55,7 @@ function phaSrcWFGauss, ianzz, zmin, zmax, $
 ;			(eg struct beamline.src.so4)
 ;
 ; KEYWORDS:
-;	None.
+;	verbose: verbose
 ;
 ; SIDE EFFECTS:
 ;
@@ -58,12 +63,15 @@ function phaSrcWFGauss, ianzz, zmin, zmax, $
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
-;
+;      Aug 13 UF add verbose
 ;-
 
 
 
 ;e.g.... "IDL> beam0=phaSrcWFGauss(128, -1, 1,128, -1, 1, 0.2 , 0 , 20, 1,0,0) "
+
+
+if n_elements(verbose) ne 0 then print, 'phaSrcWFGauss called'
 
 np=n_params()
 IF np NE 12 THEN BEGIN 
@@ -93,20 +101,22 @@ ez0=double(ez0)
 ey0=double(ey0)
 dphi_zy=double(dphi_zy)
 
-source= {source4}
+source= {source4c}
+;; uf source= {source4}
 
 result = 1
 
 print, '***'
 print, 'phaSrcWFGauss started...'
 
-result = call_external(!phalib,'phaSrcWFGauss',$
+;; uf result = call_external(!phalib,'phaSrcWFGauss',$
+result = call_external(!phalib,'phaSrcWFGaussc',$
 			 source,  $
                          ianzz, zmin, zmax, $
 			 ianzy, ymin, ymax, $
 		         w0,  deltax, xlam, $
                          ez0, ey0, dphi_zy, $
-                       /I_VALUE,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+                         /I_VALUE,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
 print, 'phaSrcWFGauss finished...'
 print, '***'
