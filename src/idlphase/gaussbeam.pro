@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <18 Jul 13 17:18:21 flechsig> 
+;  Time-stamp: <16 Aug 13 08:33:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,8 @@
 ;
 ;
 ;
-pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot
+pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
+               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot
 ;+
 ; NAME:
 ;  gaussbeam  
