@@ -8,9 +8,9 @@
 
 function phaSrcWFGauss, ianzz, zmin, zmax, $
 			ianzy, ymin, ymax, $
-                        w0  , deltax, xlam, $
+                        w0, deltax, xlam, $
                         ez0, ey0, dphi_zy, $
-                        verbose=verbose
+                        verbose=verbose, dataformat=dataformat
 ;+
 ; NAME:
 ;	phaSrcWFGauss
@@ -50,6 +50,10 @@ function phaSrcWFGauss, ianzz, zmin, zmax, $
 ;	ey0		scaling paramter for Ey
 ;	dphi_zy		phase beetwen Ez and Ey [rad]
 ;
+; KEYWORD PARAMETERS:
+;   verbose:    verbose
+;   dataformat: format of output data, 'source4c' or 'source4' (default)
+;
 ; OUTPUTS:
 ;     	src4struct	struct source4 
 ;			(eg struct beamline.src.so4)
@@ -63,15 +67,15 @@ function phaSrcWFGauss, ianzz, zmin, zmax, $
 ;
 ; MODIFICATION HISTORY:
 ;      March 28, 2008, TL, added help
-;      Aug 13 UF add verbose
+;      Aug 13 UF add verbose, add dataformat
 ;-
 
 
 
 ;e.g.... "IDL> beam0=phaSrcWFGauss(128, -1, 1,128, -1, 1, 0.2 , 0 , 20, 1,0,0) "
 
-
-if n_elements(verbose) ne 0 then print, 'phaSrcWFGauss called'
+if n_elements(dataformat) eq 0 then dataformat='source4' else dataformat='source4c'
+if n_elements(verbose) ne 0 then print, 'phaSrcWFGauss called, dataformat= ', dataformat
 
 np=n_params()
 IF np NE 12 THEN BEGIN 
@@ -101,22 +105,33 @@ ez0=double(ez0)
 ey0=double(ey0)
 dphi_zy=double(dphi_zy)
 
-source= {source4c}
-;; uf source= {source4}
-
 result = 1
 
 print, '***'
 print, 'phaSrcWFGauss started...'
 
-;; uf result = call_external(!phalib,'phaSrcWFGauss',$
-result = call_external(!phalib,'phaSrcWFGaussc',$
+if dataformat eq 'source4' then ;; torstens version with source4
+begin     
+    source= {source4}
+    result = call_external(!phalib,'phaSrcWFGauss',$
+                           source,  $
+                           ianzz, zmin, zmax, $
+                           ianzy, ymin, ymax, $
+                           w0,  deltax, xlam, $
+                           ez0, ey0, dphi_zy, $
+                           /I_VALUE,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+
+endif else ;; UF version with source 4c
+begin
+    source= {source4c}
+    result = call_external(!phalib,'phaSrcWFGaussc',$
 			 source,  $
                          ianzz, zmin, zmax, $
 			 ianzy, ymin, ymax, $
 		         w0,  deltax, xlam, $
                          ez0, ey0, dphi_zy, $
                          /I_VALUE,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
+endelse
 
 print, 'phaSrcWFGauss finished...'
 print, '***'
@@ -124,18 +139,14 @@ print, '***'
 return, source
 END
 
-
-
-
-
 function phaSrcWFGauss_zpolar, ianzz, zmin, zmax, $
-			ianzy, ymin, ymax, $
-                        w0  , deltax, xlam
+                               ianzy, ymin, ymax, $
+                               w0  , deltax, xlam, verbose=verbose, dataformat=dataformat
 
 return, phaSrcWFGauss(ianzz, zmin, zmax, $
-			ianzy, ymin, ymax, $
-                        w0  , deltax, xlam, $
-                        1,0,0)
+                      ianzy, ymin, ymax, $
+                      w0, deltax, xlam, $
+                      1, 0, 0, verbose=verbose, dataformat=dataformat)
 END
 
 
@@ -143,11 +154,11 @@ END
 
 function phaSrcWFGauss_ypolar, ianzz, zmin, zmax, $
 			ianzy, ymin, ymax, $
-                        w0  , deltax, xlam
+                        w0  , deltax, xlam, verbose=verbose, dataformat=dataformat
 
 return, phaSrcWFGauss(ianzz, zmin, zmax, $
 			ianzy, ymin, ymax, $
-                        w0  , deltax, xlam, $
-                        0,1,0)
+                        w0, deltax, xlam, $
+                        0, 1, 0, verbose=verbose, dataformat=dataformat)
 END
 
