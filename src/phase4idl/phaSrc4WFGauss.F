@@ -1,13 +1,7 @@
-
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
-
-
-c quick fix UF 11.3.08
-c #define 1024m 1024
-
 
 cc TL 26.3.08 fixed the dimension problem
 cc 1024 is the Dimension of the fieldsw in the src4-structure
