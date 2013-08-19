@@ -13,6 +13,30 @@
 
 
 #######################################################################
+PORTLIBxSOURCES = ../phase4idl/ATnT_port3_driftroutines/drift_routines_02.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_03.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_04.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_05.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_06.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_07.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_08.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_09.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_10.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_12.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_13.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_14.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_15.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_16.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_17.f \
+../phase4idl/ATnT_port3_driftroutines/drift_routines_18_no_machine_consts.f \
+../phase4idl/ATnT_port3_driftroutines/port/s1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/s2mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/s3mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/r1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/d1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/i1mach.f \
+../phase4idl/ATnT_port3_driftroutines/port/s88fmt.f
+
 ORIGINALPHASExSOURCES   = \
         ../phase/phasec.c \
 	  ../phase/activate_proc.c \
@@ -62,15 +86,16 @@ ORIGINALPHASExAMxLDFLAGS = -shared  $(X_LIBS) -lm -lc -lnsl\
 lib_LTLIBRARIES = libphase4idl.la
 
 libphase4idl_la_SOURCES   = \
-               idl_phase_batchmode_access.c \
-               idl_phase_c.c \
-               idl_bline.c \
-               phase4idl.c \
-               phaSrc4Drift.F \
-               phaSrc4WFGauss.F \
-               phaSrc4Tools.F \
-               phase4idl.h \
-               phaSrc4Drift_oe.F
+		phase4idl.c \
+		phaSrc4Drift.F \
+		phaSrc4WFGauss.F \
+		phaSrc4Tools.F \
+		phase4idl.h \
+		phaSrc4Drift_oe.F $(PORTLIBxSOURCES)
+
+##     idl_phase_batchmode_access.c \
+##               idl_phase_c.c \
+ ##              idl_bline.c \
 ##                \
 ##               $(ORIGINALPHASExSOURCES)
 
