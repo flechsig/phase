@@ -40,7 +40,6 @@ endif
 ; !phalib aliase
 defsysv, '!phaseidllib',  !phalib
 defsysv, '!phase4idllib', !phalib
-defsysv, '!phaseidl', phaseidl
 
 ; Initialize Phase-Structures and defines
 phainit_defines,    verbose=verbose
