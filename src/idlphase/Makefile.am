@@ -79,8 +79,11 @@ idl_DATA  = help.html \
 	read_opti_out.pro \
         examples.pro \
 	ezre_gb_12.dat \
-	ezim_gb_12.dat
-
+	ezim_gb_12.dat \
+	test_5000.out-ezrec \
+	test_5000.out-ezimc \
+	test_5000.out-eyrec \
+	test_5000.out-eyimc 	
 
 ###
 help.html: $(idl_with_doc_header) 

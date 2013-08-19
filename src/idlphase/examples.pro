@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
 ;  Date      : <19 Aug 13 10:30:00 flechsig> 
-;  Time-stamp: <19 Aug 13 15:04:20 flechsig> 
+;  Time-stamp: <19 Aug 13 15:34:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -12,9 +12,11 @@ pro testbeamload
 
 beam={source4}
 
-phaLoadEzReal,beam,'ezre_gb_8000.dat'
+phaseidl= getenv('PHASE_HOME')+'/idl'
 
-phaLoadEzImag,beam,'ezim_gb_8000.dat'
+phaLoadEzReal,beam, phaseidl+'/ezre_gb_12.dat'
+
+phaLoadEzImag,beam, phaseidl+'/ezim_gb_12.dat'
 
 phaIntensitySurface,beam,'TestBeamLoad'
 
@@ -25,13 +27,16 @@ END
 pro testreadresults
 
 beam={source4}
-name='SGM.RESULT'
 
-LoadEzReal,beam,name+'-ezrec'
-LoadEzImag,beam,name+'-ezimc'
+phaseidl= getenv('PHASE_HOME')+'/idl'
+;;name='SGM.RESULT'
+name='test_5000.out'
 
-LoadEyReal,beam,name+'-eyrec'
-LoadEyImag,beam,name+'-eyimc'
+LoadEzReal,beam,phaseidl+name+'-ezrec'
+LoadEzImag,beam,phaseidl+name+'-ezimc'
+
+LoadEyReal,beam,phaseidl+name+'-eyrec'
+LoadEyImag,beam,phaseidl+name+'-eyimc'
 
 phaIntensitySurface,beam,'TestBeamLoad'
 
