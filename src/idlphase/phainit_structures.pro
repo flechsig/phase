@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phainit_structures.pro
 ;  Date      : <14 Aug 13 11:24:26 flechsig> 
-;  Time-stamp: <16 Aug 13 17:03:51 flechsig> 
+;  Time-stamp: <19 Aug 13 10:06:52 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -12,13 +12,12 @@
 
 PRO phainit_structures, verbose=verbose
 
-if n_elements(verbose) ne 0 then print, 'phainit_defines called'
+if n_elements(verbose) ne 0 then print, 'phainit_structures called'
 
 MaxPathLength=long(255)
 MaximumOptElements=long(64)
 
-;;; UF 13.8.13 this is critical and obsolete - it will likely not fit to the actual c-version
-defsysv, '!phaMaxArraySize', 2048 
+defsysv, '!phaMaxArraySize', 2048
  
 intzero=long(0)
 dblzero=double(0)

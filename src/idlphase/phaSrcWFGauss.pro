@@ -110,8 +110,7 @@ result = 1
 print, '***'
 print, 'phaSrcWFGauss started...'
 
-if dataformat eq 'source4' then ;; torstens version with source4
-begin     
+if dataformat eq 'source4' then begin ;; torstens version with source4
     source= {source4}
     result = call_external(!phalib,'phaSrcWFGauss',$
                            source,  $
@@ -121,10 +120,9 @@ begin
                            ez0, ey0, dphi_zy, $
                            /I_VALUE,/CDECL,/AUTO_GLUE,/IGNORE_EXISTING_GLUE)
 
-endif else ;; UF version with source 4c
-begin
+endif else begin   ;; UF version with source 4c
     source= {source4c}
-    result = call_external(!phalib,'phaSrcWFGaussc',$
+    result = call_external(!phalib,'phaSrcWFGauss_source4c',$
 			 source,  $
                          ianzz, zmin, zmax, $
 			 ianzy, ymin, ymax, $

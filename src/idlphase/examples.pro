@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
 ;  Date      : <19 Aug 13 10:30:00 flechsig> 
-;  Time-stamp: <19 Aug 13 10:32:26 flechsig> 
+;  Time-stamp: <19 Aug 13 15:04:20 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -12,9 +12,9 @@ pro testbeamload
 
 beam={source4}
 
-LoadEzReal,beam,'ezre_gb_8000.dat'
+phaLoadEzReal,beam,'ezre_gb_8000.dat'
 
-LoadEzImag,beam,'ezim_gb_8000.dat'
+phaLoadEzImag,beam,'ezim_gb_8000.dat'
 
 phaIntensitySurface,beam,'TestBeamLoad'
 
@@ -117,7 +117,8 @@ phaIntensitySurface,beam,'Gauss-Source 193x67'
 ;  Change number of gridpoints (don't change borders) , because FFT works fastest 
 ;  with a number of gridpoints, which is a product of small prime-factors, eg.: 128=2^7
 ;                 nz, ny 
- phaModGrid,beam,128,128
+;; UF  phaModGrid,beam,128,128
+phaModGridPoints,beam,128,128
 
 print,'phaModGrid ...'
 phaIntensitySurface,beam,'Gauss-Source 128x128'
@@ -191,14 +192,16 @@ phaIntensitySurface,beam,'Gauss-Source '
 
 ;  Now let the beam propagate through a rectangular-slit (2x4) in the center of the beamline 
 ;                     nz1 , nz2 , ny1 , ny2
- phaModSizeCut, beam, 127 , 129 , 126 , 130
+;;UF  phaModSizeCut, beam, 127 , 129 , 126 , 130
+phaModGridSizeCut, beam, 127 , 129 , 126 , 130
 
-print,'phaModSizeCut ...'
+print,'phaModGridSizeCut ...'
 phaIntensitySurface,beam,'rectangular Slit '
 
 ;  For further calculations, we add a rim of zeros, so that we obtain a 256x256-field (after the slit)
 ;                  new:  nz ,ny             
- phaModSizeAddZeros,beam,256,256
+;;UF phaModSizeAddZeros,beam,256,256
+phaModGridSizeAddZeros,beam,256,256
 
 print,'phaModSizeAddZeros ...'
 ;phaIntensityshade_Surf,beam,'Slit with ZEROS'

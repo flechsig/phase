@@ -1,12 +1,14 @@
-//  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/pha4idl.compile_all.idl
-//  Date      : <19 Aug 13 14:47:08 flechsig> 
-//  Time-stamp: <19 Aug 13 14:47:12 flechsig> 
-//  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/pha4idl.compile_all.idl
+;  Date      : <19 Aug 13 14:48:05 flechsig> 
+;  Time-stamp: <19 Aug 13 15:00:28 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
 
 ; Compiles all of the *.pro files included into the phase4idl project at the moment
 
@@ -43,16 +45,21 @@
 .compile phaExamples.pro
 .compile examples.pro
 
+;;;; UF 18.8.13
+;;;; remove the following functionality
+;;;; I do not know what it is good for
+;;;; we do not want to change the working directory
+;;;; I put the comile step into phainit
 
 ; Init phase Variables
-phainit
+phainit, /verbose
 
 ; set current working directory
-OLDDIR = GETENV('OLD_CALLDIR')
-CD, OLDDIR
-CD, CURRENT=NEWDIR
-print, 'Current working directory is: ' + NEWDIR
-
+;OLDDIR = GETENV('OLD_CALLDIR')
+;CD, OLDDIR
+;CD, CURRENT=NEWDIR
+;print, 'Current working directory is: ' + NEWDIR
+;;;; end UF
 
 
 
