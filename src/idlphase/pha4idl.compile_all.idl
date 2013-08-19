@@ -1,3 +1,13 @@
+//  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/pha4idl.compile_all.idl
+//  Date      : <19 Aug 13 14:47:08 flechsig> 
+//  Time-stamp: <19 Aug 13 14:47:12 flechsig> 
+//  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+//  $Source$ 
+//  $Date$
+//  $Revision$ 
+//  $Author$ 
+
 ; Compiles all of the *.pro files included into the phase4idl project at the moment
 
 ;;; Used C-Structures and defines;;;;;;;;;;;;;;;;;;;;;;;;;
