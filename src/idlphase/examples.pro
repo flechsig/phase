@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
 ;  Date      : <19 Aug 13 10:30:00 flechsig> 
-;  Time-stamp: <19 Aug 13 15:34:09 flechsig> 
+;  Time-stamp: <19 Aug 13 17:04:06 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -8,7 +8,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro testbeamload
+pro testbeamload  ;; UF tested Aug 19 2013
 
 beam={source4}
 
@@ -24,19 +24,19 @@ END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro testreadresults
+pro testreadresults ;; UF tested Aug 19 2013
 
 beam={source4}
 
-phaseidl= getenv('PHASE_HOME')+'/idl'
+phaseidl= getenv('PHASE_HOME')+'/idl/'
 ;;name='SGM.RESULT'
 name='test_5000.out'
 
-LoadEzReal,beam,phaseidl+name+'-ezrec'
-LoadEzImag,beam,phaseidl+name+'-ezimc'
+phaLoadEzReal,beam,phaseidl+name+'-ezrec'
+phaLoadEzImag,beam,phaseidl+name+'-ezimc'
 
-LoadEyReal,beam,phaseidl+name+'-eyrec'
-LoadEyImag,beam,phaseidl+name+'-eyimc'
+phaLoadEyReal,beam,phaseidl+name+'-eyrec'
+phaLoadEyImag,beam,phaseidl+name+'-eyimc'
 
 phaIntensitySurface,beam,'TestBeamLoad'
 
@@ -89,6 +89,25 @@ phaIntensitySurface,beam,'FFTnear - 2000mm'
 print,'phaModSizeCut ...'
 phaIntensitySurface,beam,'Slit (64x4)'
 
+;; UF get the following error
+;; Changing number of grid-points ...
+;; debug: after ISTKIN
+;; debug: call DCSPIN
+;; ERROR    4 IN
+;;      D   C   S   P   I   N       -
+;;1STACK DUMP
+;;0STORAGE PARAMETERS
+;; LOGICAL                1 STORAGE UNITS
+;; INTEGER                1 STORAGE UNITS
+;; REAL                   1 STORAGE UNITS
+;; DOUBLE PRECISION       2 STORAGE UNITS
+;; COMPLEX                2 STORAGE UNITS
+;;0STACK STATISTICS
+;; STACK SIZE              24576
+;; MAXIMUM STACK USED         10
+;; CURRENT STACK USED         10
+;; NUMBER OF ALLOCATIONS       0
+;;0END OF STACK DUMP
 
 
 
