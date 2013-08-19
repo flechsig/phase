@@ -43,12 +43,14 @@ c     &	,zeyre(256,256),zeyim(256,256)
 c      real*8 zezre(1024,1024),zezim(1024,1024)
 c     &	,zeyre(1024,1024),zeyim(1024,1024)
 
-c      write(*,*)'Changing number of grid-points ...'
+      write(*,*)'Changing number of grid-points ...'
 
 c	call ISTKIN(NumberOfItems,Type) Type: 4 = double
 c	call ISTKIN(6144,4)
 	call ISTKIN(6*MaxDim,4)
     
+
+	write(*,*)'debug: after ISTKIN'
 c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	
 	dz1=(zmax-zmin)/(nz1-1)
@@ -84,7 +86,9 @@ c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 #else
 		data_in(1:nz1) = zezre(1:nz1,k)
 		zezre(:,k)= 0.d0
+		write(*,*)'debug: call DCSPIN'
 		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
+		write(*,*)'debug: after DCSPIN'
 		zezre(1:nz2,k)=data_out(1:nz2)
 		
 		data_in(1:nz1) = zezim(1:nz1,k)

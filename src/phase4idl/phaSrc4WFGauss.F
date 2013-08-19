@@ -17,7 +17,7 @@ c defined fields
 
 cc TL 29.01.2009
 #include "pha4idlFORTRANdefines.h.f"
-cc#define MaxDim 1024
+cc#define 2048 1024
 
 
 c
@@ -53,10 +53,11 @@ c
 	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
      &	      ,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
 
-	
-cc	write(*,*)'***'
-cc	write(*,*)'phaSrcWFGauss started...'
-	write(*,*) MaxDim
+#ifdef DEBUG	
+	write(*,*)'***'
+	write(*,*)'phaSrcWFGauss started...'
+	write(*,*)'max gridsize= ', MaxDim
+#endif
 	
 c in C:      call pha_define_src4_grid(gb,ianzz,zmin,zmax,ianzy,ymin,ymax)
 	

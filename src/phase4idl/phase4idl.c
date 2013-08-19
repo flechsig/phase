@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phase4idl.c */
 /*  Date      : <31 Aug 11 16:29:52 flechsig>  */
-/*  Time-stamp: <14 Aug 13 12:11:52 flechsig>  */
+/*  Time-stamp: <19 Aug 13 14:27:17 flechsig>  */
 
 
 /*  $Source$  */
@@ -15,19 +15,15 @@
 /* This file contains the wrapper routines called by IDL */
 
 // *** Functions require Autoglue  *** //
-//Function has to be called from IDL with  "/Autoglue" option...
+// Function has to be called from IDL with  "/Autoglue" option...
 // IDL-Call:
 // result = call_external('$phaselib','function_name',$
 //			 var1,var2,..., $
 //                       /I_VALUE,/UNLOAD,/AUTO_GLUE,/IGNORE_EXISTING_GLUE,/CDECL)
 
-
-
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif
-
-#define DEBUG
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,42 +32,23 @@
 #include <stdarg.h> 
 #include <string.h>
 
-
-
-#include "../phase/cutils.h"
-#include "../phase/phase_struct.h"
-  
-#include "../phase/phase.h"
-#include "../phase/rtrace.h"
-#include "../phase/version.h"
+#include "source4x.h"
 
 #include <idl_export.h>
 
 #include "phase4idl.h"
-
 #include "Constants.h"
 
 // declare the Fortran Routine prototype
-extern void phadrift_propagate_fk_nostructs_(double *zezre, double *zezim, double *zeyre, double *zeyim,
-                                             int *nz1, double *zmin1, double *zmax1, int *ny1, double *ymin1, double *ymax1, 
-                                             int *nz2, double *zmin2, double *zmax2, int *ny2, double *ymin2, double *ymax2, 
-                                             double *dist, double *xlam);
+/* UF are now in the header file */
                                              
                                              
-extern void phadrift_propagate_fk_oe_nostructss_(double *zezre, double *zezim, double *zeyre, double *zeyim, 
-                                                 int *nz, double *zmin, double *zmax,
-                                                 int *ny, double *ymin, double *ymax,
-                                                 double *dist, double *dista, double *xlam, double *angle, int *mode,
-                                                 const char* string, int *nlen,
-                                                 int *nz2, double *zmin2, double *zmax2,
-                                                 int *ny2, double *ymin2, double *ymax2);
-                                                 
 // ***************************************************************************
 // ************** Start of drift routines ************************************
 // ***************************************************************************
 // See phaSrc4Drift.f
 
-// /* *** Fortran-Access ***  --- Former Propagate_1
+//  *** Fortran-Access ***  --- Former Propagate_1
 int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance, 
 					int *nz2, double *zmin2, double *zmax2, 
 					int *ny2, double *ymin2, double *ymax2    )
@@ -88,30 +65,27 @@ int phaPropWFFresnelKirchhoff ( struct source4 *beam , double *distance,
   
   // Call the Fortran Routine 
   phadrift_propagate_fk_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
-                ,&nz1,&zmin1,&zmax1,&ny1,&ymin1,&ymax1     
-                ,nz2,zmin2,zmax2,ny2,ymin2,ymax2
-                ,&dist, &xlam);
+				   ,&nz1,&zmin1,&zmax1,&ny1,&ymin1,&ymax1     
+				   ,nz2,zmin2,zmax2,ny2,ymin2,ymax2
+				   ,&dist, &xlam);
                    
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, *nz2, *zmin2, *zmax2, *ny2, *ymin2, *ymax2);
   
   return (0);
 }
-// */
+// 
 // ***************************************************************************
 
 // ***************************************************************************
 
 // ***************************************************************************
-// /* *** Fortran-Access ***  --- Former Propagate_2
+//  *** Fortran-Access ***  --- Former Propagate_2
 int phaPropFFTnear (struct source4 *beam, double *distance)
 { 
   // Dereferencing dist, so that it won't change in the calling program  
   double dist = *distance;
-
-  int i,j;
-
-
+  int    i, j;
   int    nz,ny;
   double zmin,zmax,ymin,ymax;
   double xlam = beam->xlam;
@@ -119,33 +93,27 @@ int phaPropFFTnear (struct source4 *beam, double *distance)
 //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
 
-
-// /*  // Declare the Fortran Routine
-  extern void phadrift_propagate_fft_near_nostructs_();  
   // Call the Fortran Routine       
   phadrift_propagate_fft_near_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim,                                         
-          &nz,&zmin,&zmax,&ny,&ymin,&ymax,&dist,&xlam);
-//    pha_c_adjust_src4_grid(beam);
-  // Neues Grid in Struktur schreiben
-//  pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
+					 &nz,&zmin,&zmax,&ny,&ymin,&ymax,&dist,&xlam);
+// pha_c_adjust_src4_grid(beam);
+// Neues Grid in Struktur schreiben
+// pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
 
   return (0);
 }
-// */
+// 
 // ***************************************************************************
 
 // ***************************************************************************
 
 // ***************************************************************************
-// /* *** Fortran-Access ***  --- Former Propagate_3
+//  *** Fortran-Access ***  --- Former Propagate_3
 int phaPropFFTfar (struct source4 *beam, double *distance)
 { 
   // Dereferencing dist, so that it won't change in the calling program  
   double dist = *distance;
-   
-
-
-  int    nz,ny;
+  int    nz, ny;
   double zmin,zmax,ymin,ymax;
   double xlam = beam->xlam;
 
@@ -153,20 +121,17 @@ int phaPropFFTfar (struct source4 *beam, double *distance)
 //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz,&zmin,&zmax,&ny,&ymin,&ymax);
   
- /*  
-  extern void phadrift_propagate_fft_far_(); // Declare the Fortran Routine 
   // Call the Fortran Routine       
-  phadrift_propagate_fft_far_(beam, &dist);
-// */
-
-// /*  
-  extern void phadrift_propagate_fft_far_nostructs_(); // Declare the Fortran Routine 
+  //  phadrift_propagate_fft_far_(beam, &dist);
+// 
+  
+  
   // Call the Fortran Routine       
   phadrift_propagate_fft_far_nostructs_( beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
 					,&nz,&zmin,&zmax
 					,&ny,&ymin,&ymax
-					,&dist, &xlam ) ;
-// */
+					,&dist, &xlam );
+// 
   
   // Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, nz, zmin, zmax, ny, ymin, ymax);
@@ -179,7 +144,7 @@ int phaPropFFTfar (struct source4 *beam, double *distance)
 
 
 // ***************************************************************************
-// /* *** Fortran-Access ***  
+//  *** Fortran-Access ***  
 int phaPropFkoe (struct source4 *beam, double *distance,  double *dista, 
                     double* angle, int *mode, IDL_STRING* surffilename,
                     int *nz2, double *zmin2, double *zmax2, 
@@ -203,9 +168,9 @@ int phaPropFkoe (struct source4 *beam, double *distance,  double *dista,
 
   // Call the Fortran Routine       
   phadrift_propagate_fk_oe_nostructs_( beam->zezre,beam->zezim,beam->zeyre,beam->zeyim,
-					&nz,&zmin,&zmax,
-					&ny,&ymin,&ymax,
-					&dist, dista, &xlam, angle, mode,
+				       &nz,&zmin,&zmax,
+				       &ny,&ymin,&ymax,
+				       &dist, dista, &xlam, angle, mode,
                     string, &nlen,
                     nz2, zmin2, zmax2, ny2, ymin2, ymax2);
 
@@ -221,14 +186,34 @@ int phaPropFkoe (struct source4 *beam, double *distance,  double *dista,
 // ***************************************************************************
 
 
-
-
-
-
-
 // ***************************************************************************
 // ************** Start of pha Src Initializations ***************************
 // ***************************************************************************
+
+/* UF the source4c version (Aug 2013 not yet working) */
+int phaSrcWFGauss_source4c(struct source4c *beam, int *ianzz, double *zmin, double *zmax,
+			   int *ianzy, double *ymin, double *ymax,
+			   double *w0, double *deltax, double *xlambda,
+			   double *ez0,double *ey0, double *dphi_zy)
+{
+  int i,j;
+  double waist=    *w0;      // Dereferencing w0, so that w0 won't change in the calling program
+  double distance= *deltax;  // Same ...
+
+  beam->xlam= *xlambda;
+
+
+#ifdef DEBUG
+  fprintf(stderr, "debug: phaSrcWFGaussc called, (source4c), file=%s\n", __FILE__);
+#endif
+
+  //  pha_c_define_src4_grid_source4c(beam, *ianzz, *zmin, *zmax, *ianzy, *ymin, *ymax);
+
+  //phasesrcwfgauss_nostructs_(ianzz, zmin, zmax, ianzy, ymin, ymax, &waist, &distance, xlambda);
+
+
+  return (0);
+} 
 
 // See phaSrc4WFGauss.f
 int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
@@ -240,8 +225,8 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
 
   int i,j;
   
-  double waist=*w0;  // Dereferencing w0, so that w0 won't change in the calling program
-  double distance=*deltax;  // Same ...
+  double waist=    *w0;       // Dereferencing w0, so that w0 won't change in the calling program
+  double distance= *deltax;   // Same ...
 
 #ifdef DEBUG
   fprintf(stderr, "debug: phaSrcWFGauss called, file=%s\n", __FILE__);
@@ -250,18 +235,20 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
   beam->xlam=*xlambda; 
 
   // Neues Grid in Struktur schreiben
+
   pha_c_define_src4_grid(beam, *ianzz, *zmin, *zmax, *ianzy, *ymin, *ymax);
-// /*  
-  extern void phasesrcwfgauss_nostructs_(); // Declare The Fortran Routine 
-  phasesrcwfgauss_nostructs_(    beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
+
+#ifdef DEBUG
+  fprintf(stderr, "debug: call phasesrcwfgauss_nostructs_, file=%s\n", __FILE__);
+#endif
+  
+  phasesrcwfgauss_nostructs_(beam->zezre, beam->zezim, beam->zeyre, beam->zeyim
 //				,zezre,zezim,zeyre,zeyim
-				,ianzz,zmin,zmax,ianzy,ymin,ymax
+				,ianzz, zmin, zmax, ianzy, ymin, ymax
 	  			,&waist, &distance, xlambda
 	  			,ez0, ey0, dphi_zy);
-// */
-
+  
   pha_c_adjust_src4_grid(beam);
-
 
   return (0);
 }
@@ -278,7 +265,7 @@ int phaSrcWFGauss (struct source4 *beam, int *ianzz, double *zmin, double *zmax,
 // ************* START of pha Src4 Tools *************************************
 // ***************************************************************************
 // See phaSrc4Tools.f
-// /* *** Fortran-Access ***  
+//  *** Fortran-Access ***  
 int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 {
   int  nz1,ny1;
@@ -292,19 +279,11 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
   printf("zmin = %.2f  zmax = %.2f\n", zmin, zmax);
   printf("ymin = %.2f  ymax = %.2f\n", ymin, ymax);
 
- /*
-  extern void pha_src4_addzeros_(); // Declare the Fortran Routine 
-  // Call the Fortran Routine 
-  pha_src4_addzeros_(beam4, nz2, ny2);
-// */
- 
-// /*
-  extern void pha_src4_addzeros_nostructs_(); // Declare the Fortran Routine 
   // Call the Fortran Routine 
   pha_src4_addzeros_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                         , &nz1,nz2,&zmin,&zmax
                         , &ny1,ny2,&ymin,&ymax) ;
-// */
+// 
 
   // Neues Grid in Struktur schreiben
 //c in C:call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
@@ -312,13 +291,13 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 
   return (0);
 }
-// */
+// 
 // ***************************************************************************
 
 // ***************************************************************************
 
 // ***************************************************************************
-// /* *** Fortran-Access ***  
+//  *** Fortran-Access ***  
 int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int *nymax)
 { 
   int  nz,ny;
@@ -336,13 +315,13 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
   pha_src4_cut_(beam, nzmin,nzmax,nymin,nymax);
 // */
 
-// /*  
-  extern void pha_src4_cut_nostructs_(); // Declare the Fortran Routine 
+//   
+  
   // Call the Fortran Routine   
   pha_src4_cut_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                          , &nz,&zmin,&zmax,nzmin,nzmax
                          , &ny,&ymin,&ymax,nymin,nymax) ;
-// */
+// 
 
 //  nz und ny wurden in Fortran mit den neuen Werten belegt
   // Neues Grid in Struktur schreiben
@@ -357,16 +336,12 @@ int phaModSizeCut (struct source4 *beam, int *nzmin, int *nzmax, int *nymin, int
 // ***************************************************************************
 
 // ***************************************************************************
-// /* *** Fortran-Access ***  
+// *** Fortran-Access ***  
 int phaModGrid (struct source4 *beam, int *nz2in, int *ny2in)
 { 
-// /*
-
-  int MaxDim = MaximumFieldDimension;
-
+  int    MaxDim = MaximumFieldDimension;
   double zmin,zmax,ymin,ymax;
-  
-  int iz,iy,ny1,ny2,nz1,nz2;
+  int    iz,iy,ny1,ny2,nz1,nz2;
   
   nz2=*nz2in;
   ny2=*ny2in;
@@ -380,22 +355,23 @@ int phaModGrid (struct source4 *beam, int *nz2in, int *ny2in)
   if(nz2>MaxDim) return 1;
   if(ny2>MaxDim) return 1;
 
-// /*  
-  // Felder auf neuem Grid interpolieren
-  extern void pha_src4_modgrid_nostructs_(); // Declare the Fortran Routine 
-// /*  // Call the Fortran Routine 
+//   
+// Felder auf neuem Grid interpolieren
+  
+//   
+// Call the Fortran Routine 
   pha_src4_modgrid_nostructs_(beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
-                    ,&nz1,&nz2 ,&zmin,&zmax
-                    ,&ny1,&ny2 ,&ymin,&ymax) ;
-// */
-// /*
-  // Neues Grid in Struktur schreiben
+			      ,&nz1, &nz2 ,&zmin, &zmax
+			      ,&ny1, &ny2 ,&ymin, &ymax) ;
+// 
+// 
+// Neues Grid in Struktur schreiben
   pha_c_define_src4_grid(beam, nz2, zmin, zmax, ny2, ymin, ymax);
 
 
   return (0);
 } // END : phaModGrid_cwrap
-// */
+// 
 // ***************************************************************************
 
 // ***************************************************************************
@@ -403,9 +379,9 @@ int phaModGrid (struct source4 *beam, int *nz2in, int *ny2in)
 // ***************************************************************************
 int pha_c_extract_src4_grid(struct source4 *src4,
                             int *nz, double *zmin, double *zmax,
-				    int *ny, double *ymin, double *ymax)
+			    int *ny, double *ymin, double *ymax)
+{
 //c% Routine liest Grid-Daten aus source4-Struktur aus
-{	
 //c  Definiere Referenzen explizit, um flexibler zu bleiben ...
 //c
 //c Lese aus Referenzsturkturen
@@ -421,6 +397,35 @@ int pha_c_extract_src4_grid(struct source4 *src4,
 // ***************************************************************************
 
 // ***************************************************************************
+// UF source4c version
+int  pha_c_define_src4_gridc(struct source4c *src4,
+                            int nz, double zmin, double zmax,
+			    int ny, double ymin, double ymax)
+//c% Routine definiert die in src4-Structs redundanten Grid-Parameter
+{
+  double dy, dz;
+
+ #ifdef DEBUG
+  fprintf(stderr, "debug: pha_c_define_src4_gridc called, (source4c), file=%s\n", __FILE__);
+#endif
+     
+  dz=(zmax-zmin)/(nz-1);
+  dy=(ymax-ymin)/(ny-1);
+  
+  printf("C: dy=%.2f   dz=%.2f\n", dy, dz);      
+  
+  src4->iex= nz;
+  src4->iey= ny;
+  src4->dx=  dz;
+  src4->dy=  dy;
+  src4->xemin=zmin;
+  src4->yemin=ymin;
+  src4->xemax=zmax;
+  src4->yemax=ymax;
+  
+  return 0;
+} //      end !define_src4_gridc
+
 
 // ***************************************************************************
 int  pha_c_define_src4_grid(struct source4 *src4,
@@ -428,15 +433,16 @@ int  pha_c_define_src4_grid(struct source4 *src4,
 			    int ny, double ymin, double ymax)
 //c% Routine definiert die in src4-Structs redundanten Grid-Parameter
 {
+  double dy, dz;
 
 #ifdef DEBUG
   fprintf(stderr, "debug: pha_c_define_src4_grid called, file=%s\n", __FILE__);
 #endif
 //c      
-      double dz=(zmax-zmin)/(nz-1);
-      double dy=(ymax-ymin)/(ny-1);
+      dz=(zmax-zmin)/(nz-1);
+      dy=(ymax-ymin)/(ny-1);
 
-      //printf("C: dy=%.2f   dz=%.2f\n", dy, dz);      
+      printf("C: dy=%.2f   dz=%.2f\n", dy, dz);      
       
 //c alle nz
       src4->ieyrex=nz;
@@ -478,6 +484,10 @@ int  pha_c_define_src4_grid(struct source4 *src4,
       src4->yeyimmax=ymax;
       src4->yezremax=ymax;
       src4->yezimmax=ymax;
+
+#ifdef DEBUG
+  fprintf(stderr, "debug: pha_c_define_src4_grid end, file=%s\n", __FILE__);
+#endif
 
       return 0;
 } //      end !define_src4_grid
