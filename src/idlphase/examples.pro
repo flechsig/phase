@@ -1,3 +1,12 @@
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
+;  Date      : <19 Aug 13 10:30:00 flechsig> 
+;  Time-stamp: <19 Aug 13 10:30:03 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
 
 pro testbeamload
 
