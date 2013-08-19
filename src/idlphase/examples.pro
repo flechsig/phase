@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
 ;  Date      : <19 Aug 13 10:30:00 flechsig> 
-;  Time-stamp: <19 Aug 13 10:30:03 flechsig> 
+;  Time-stamp: <19 Aug 13 10:32:26 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -53,7 +53,7 @@ phainit
 
 ;  New Gaussian-Beam with 193x67 Points
 ;   ( nz , zmin , zmax , ny , ymin,ymax, waist, dist , lambda, ez0, ey0, dphi_zy)
- beam=phaSrcWFGauss( 193, -1, 1, 67 ,0,3, 0.2 , 0 , 20,1,0,0)
+ beam=phaSrcWFGauss( 193, -1, 1, 67, 0, 3, 0.2, 0, 20, 1, 0, 0)
 
 print,'phaSrcWFGauss ...'
 phaIntensitySurface,beam,'Gauss-Source 193x67'
@@ -62,7 +62,8 @@ phaIntensitySurface,beam,'Gauss-Source 193x67'
 ;  Change number of gridpoints (don't change borders) , because FFT works fastest 
 ;  with a number of gridpoints, which is a product of small prime-factors, eg.: 128=2^7
 ;                 nz, ny 
- phaModGrid,beam,128,128
+;; UF 20.8.13 function not found phaModGrid,beam,128,128
+phaModGridPoints,beam,128,128
 
 print,'phaModGrid ...'
 phaIntensitySurface,beam,'Gauss-Source 128x128'
