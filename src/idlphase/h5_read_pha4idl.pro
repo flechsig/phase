@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Aug 13 10:54:33 flechsig> 
+;  Time-stamp: <20 Aug 13 10:59:05 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -98,6 +98,9 @@ yamp  = sqrt(yreal^2+yimag^2)
 yphase= atan(yimag,yreal)
 zamp  = sqrt(zreal^2+zimag^2)
 zphase= atan(zimag,zreal)
+
+nz   = n_elements(z_vec)
+ny   = n_elements(y_vec)
 
 ycomp= dcomplexarr(nz, ny)
 ycomp= complex(yreal, yimag, /double)
