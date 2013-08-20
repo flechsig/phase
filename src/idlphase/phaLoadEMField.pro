@@ -13,8 +13,8 @@ function phaLoadEMField, MainFileName, lambda, _EXTRA = e
 ;	phaLoadEMField
 ;
 ; PURPOSE:
-;       Loads phasestyle EMFields and creates 
-;         a src4 beam structure from it,
+;       Loads phasestyle EMFields from files with standard extensions and creates 
+;       a src4 beam structure from it,
 ;       sets wavelength in struct,
 ;       optionally scales dimensions of field
 ;
@@ -47,6 +47,7 @@ function phaLoadEMField, MainFileName, lambda, _EXTRA = e
 ;
 ; MODIFICATION HISTORY:
 ;      Nov. 1, 2009, SG, initial version
+;      Aug 2013 UF, add to help
 ;
 ;-
 
