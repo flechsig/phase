@@ -1,3 +1,13 @@
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phabeamload.pro
+;  Date      : <20 Aug 13 08:56:02 flechsig> 
+;  Time-stamp: <20 Aug 13 08:56:06 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
 ; Loads an Array into mysrc4-Beam-Structure
 
 function phasrc4load,ianzz,zmin,zmax,ianzy,ymin,ymax,xlam,ezre,ezim,eyre,eyim
