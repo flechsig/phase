@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
 ;  Date      : <19 Aug 13 10:30:00 flechsig> 
-;  Time-stamp: <19 Aug 13 17:04:06 flechsig> 
+;  Time-stamp: <20 Aug 13 08:35:43 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -247,3 +247,33 @@ print,''
 print,'----------------------------------------------end-of-EXAMPLE1-'
 END ;example2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; example from wiki
+PRO interference 
+
+phainit
+
+!P.Multi=[0,2,3]
+DEVICE, SET_CHARACTER_SIZE=[14, 14]
+
+; New Gaussian-Beam with 64x64 Points
+; ( nz , zmin , zmax , ny , ymin,ymax, waist, dist , lambda, ez0, ey0, dphi_zy)
+beam=phaSrcWFGauss( 64, -1, 1, 64 ,-1, 1, 0.6 , 0 , 632.8, 0, 1, 0)
+
+phaIntensitySurface,beam,'Gauss source '
+phaDrawIntensity, beam, 'Gauss source '
+
+mask = BYTARR(64, 64)
+mask[28, 0:63] = 1
+mask[35, 0:63] = 1
+
+phaModApplyMask, beam, mask
+phaIntensitySurface,beam,'Double slit applied'
+phaDrawIntensity, beam, 'Double slit applied'
+
+phaPropFFTfar, beam,  1500
+
+phaIntensitySurface,beam,'Propagated 1500mm '
+phaDrawIntensity, beam, 'Propagated 1500mm '
+
+END
