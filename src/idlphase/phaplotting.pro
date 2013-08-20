@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <20 Aug 13 09:22:01 flechsig> 
+;  Time-stamp: <20 Aug 13 09:28:03 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -251,7 +251,7 @@ end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-pro phaDrawVecField, bl, pol
+pro phaDrawVecField, beam, pol
 ;+
 ; NAME:
 ;	phaDrawVecField
@@ -265,10 +265,10 @@ pro phaDrawVecField, bl, pol
 ;	      pro : pha4idl - 
 ;
 ; CALLING SEQUENCE:
-;	      phaDrawVecField, bl
+;	      phaDrawVecField, beam
 ;
 ; INPUTS:
-;     	bl:	pha4idl beamline structure (see phainit_structures.pro)
+;     	beam:	pha4idl beamline structure (see phainit_structures.pro)
 ;       pol: choose y-polarized part if (pol EQ 0), z-polarized otherwise
 ;	
 ;	
@@ -285,24 +285,27 @@ pro phaDrawVecField, bl, pol
 ;       Imaginary and real array is assumed to be of the same size.
 ; 
 ; MODIFICATION HISTORY:
-;     
+;   UF Aug 2013 make polarization optimal  
 ;
 ;-
+
+
+if n_elements(pol) eq 0 then pol = 0
 
 zerofield = 0
 
 ; choose y-or z-polarized part
 IF (pol EQ 0) THEN BEGIN
-  fieldRe = bl.zeyre
-  fieldIm = bl.zeyim
-  nx = bl.ieyrex
-  ny = bl.ieyrey
+  fieldRe = beam.zeyre
+  fieldIm = beam.zeyim
+  nx = beam.ieyrex
+  ny = beam.ieyrey
   title = "Y polarized"
 ENDIF ELSE BEGIN
-  fieldRe = bl.zezre
-  fieldIm = bl.zezim  
-  nx = bl.iezrex
-  ny = bl.iezrey
+  fieldRe = beam.zezre
+  fieldIm = beam.zezim  
+  nx = beam.iezrex
+  ny = beam.iezrey
   title = "Z polarized"
 ENDELSE
 
@@ -313,8 +316,8 @@ THEN BEGIN
   zerofield = 1
 ENDIF
 
-y=get_pha_src4_axis_y(bl)
-z=get_pha_src4_axis_z(bl)
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
 
 
 ; TODO: y, z Labeling vertauscht durch mich, sonst Widerspruch zu Fresnel-Kirchhoff-Propagation
