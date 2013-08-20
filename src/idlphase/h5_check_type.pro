@@ -1,6 +1,6 @@
  ;; File      : /home/flechsig/phase/src/phaseidl/check_hdf5_type.pro
  ;; Date      : <2013-07-16 21:39:39 flechsig> 
- ;; Time-stamp: <18 Jul 13 12:15:10 flechsig> 
+ ;; Time-stamp: <20 Aug 13 10:33:46 flechsig> 
  ;; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ;; $Source$ 
@@ -17,7 +17,9 @@ function h5_check_type, fname, verbose=verbose
 ;
 ;
 ; PURPOSE:
-;   detect the type of a hdf file type=7: phase_hdf5, type=8: GENESIS, returns true if type has been detected
+;   detect the type of a hdf file type=7: phase_hdf5, type=8: GENESIS,
+;   type=9: phase4idl
+;   returns true if type has been detected
 ;
 ;
 ; CATEGORY:
@@ -77,6 +79,18 @@ function h5_check_type, fname, verbose=verbose
   myreturn*= tag_exist(fstructure, 'slicecount') 
   if myreturn ne 0 then begin    
       if (n_elements(verbose) ne 0) then print, 'h5_check_type: file ', fname, ' => hdf5 file from GENESIS (source7)'
+      return, myreturn
+  endif 
+
+;; test phase4idl type
+  myreturn= 9
+  myreturn*= tag_exist(fstructure, 'data')       
+                                ;myreturn*= tag_exist(fstructure, 'slice000001/field') 
+  myreturn*= tag_exist(fstructure, 'delta')        
+  myreturn*= tag_exist(fstructure, 'lambda')          
+  myreturn*= tag_exist(fstructure, 'origin') 
+  if myreturn ne 0 then begin    
+      if (n_elements(verbose) ne 0) then print, 'h5_check_type: file ', fname, ' => hdf5 file from phase4idl (source7)'
       return, myreturn
   endif 
 
