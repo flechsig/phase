@@ -1,6 +1,6 @@
  ;; File      : /home/flechsig/phase/src/phaseidl/check_hdf5_type.pro
  ;; Date      : <2013-07-16 21:39:39 flechsig> 
- ;; Time-stamp: <20 Aug 13 10:33:46 flechsig> 
+ ;; Time-stamp: <20 Aug 13 10:34:23 flechsig> 
  ;; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ;; $Source$ 
@@ -85,7 +85,6 @@ function h5_check_type, fname, verbose=verbose
 ;; test phase4idl type
   myreturn= 9
   myreturn*= tag_exist(fstructure, 'data')       
-                                ;myreturn*= tag_exist(fstructure, 'slice000001/field') 
   myreturn*= tag_exist(fstructure, 'delta')        
   myreturn*= tag_exist(fstructure, 'lambda')          
   myreturn*= tag_exist(fstructure, 'origin') 
