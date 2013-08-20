@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Aug 13 10:51:15 flechsig> 
+;  Time-stamp: <20 Aug 13 10:54:33 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -84,7 +84,7 @@ pro h5_read_pha4idl, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, 
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/uf-gauss.h5' 
 
-beam= phaLoadEMFieldHDF5, fname
+beam= phaLoadEMFieldHDF5(fname)
 
 y_vec=get_pha_src4_axis_y(beam)
 z_vec=get_pha_src4_axis_z(beam)
