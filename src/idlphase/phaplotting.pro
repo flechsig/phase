@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <20 Aug 13 09:18:46 flechsig> 
+;  Time-stamp: <20 Aug 13 09:22:01 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -379,13 +379,14 @@ if KEYWORD_SET(CO) then colors=CO $
 ; TODO: y, z Labeling vertauscht durch mich, sonst Widerspruch zu Fresnel-Kirchhoff-Propagation
 if KEYWORD_SET(LOG) then $
   contour, alog((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL $
-  else $
-    contour, ((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL, NLEVELS=colors
+else $
+  contour, ((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL, NLEVELS=colors
 
 end
 
 
 ;; UF routine phaDrawPhase is missing
+pro phaDrawPhase, beam, name
 ;+
 ; NAME:
 ; phaDrawPhase
@@ -421,3 +422,8 @@ end
 ;       SG: 09/24/2012 -- initial version
 ;
 ;-
+
+print, 'phaplotting.pro: phaDrawPhase not yet implemented'
+
+return
+end
