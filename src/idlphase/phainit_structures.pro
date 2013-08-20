@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phainit_structures.pro
 ;  Date      : <14 Aug 13 11:24:26 flechsig> 
-;  Time-stamp: <20 Aug 13 08:18:46 flechsig> 
+;  Time-stamp: <20 Aug 13 08:29:49 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -17,8 +17,8 @@ if n_elements(verbose) ne 0 then print, 'phainit_structures called'
 MaxPathLength=long(255)
 MaximumOptElements=long(64)
 
-;;defsysv, '!phaMaxArraySize', 2048
-defsysv, '!phaMaxArraySize', 512
+defsysv, '!phaMaxArraySize', 2048
+;;defsysv, '!phaMaxArraySize', 512
  
 intzero=long(0)
 dblzero=double(0)
