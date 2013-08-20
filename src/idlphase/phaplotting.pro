@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <20 Aug 13 08:40:13 flechsig> 
+;  Time-stamp: <20 Aug 13 08:45:01 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -79,9 +79,9 @@ if KEYWORD_SET(AX) then ax=30+AX else ax=30;
 if KEYWORD_SET(AZ) then az=30+AZ else az=30;
 
 if KEYWORD_SET(SHADE) then $
-  shade_surf,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax $ 
+  shade_surf,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, AX=az, AZ=ax $ 
 else $
-  surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax
+  surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, AX=az, AZ=ax
 
 
 ;surface,((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)),z,y,title=name, AX=az, AZ=ax
@@ -378,7 +378,7 @@ if KEYWORD_SET(CO) then colors=CO $
 
 ; TODO: y, z Labeling vertauscht durch mich, sonst Widerspruch zu Fresnel-Kirchhoff-Propagation
 if KEYWORD_SET(LOG) then $
-contour, alog((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL $
+  contour, alog((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL $
   else $
     contour, ((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL, NLEVELS=colors
 
