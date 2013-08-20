@@ -1,3 +1,12 @@
+/*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/pha_Src4Tools.c */
+/*  Date      : <20 Aug 13 09:39:36 flechsig>  */
+/*  Time-stamp: <20 Aug 13 09:39:37 flechsig>  */
+/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+
+/*  $Source$  */
+/*  $Date$ */
+/*  $Revision$  */
+/*  $Author$  */
 
 
 // pha_Src4Tools.c
