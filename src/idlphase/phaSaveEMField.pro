@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaSaveEMField.pro
 ;  Date      : <20 Aug 13 09:05:44 flechsig> 
-;  Time-stamp: <20 Aug 13 09:05:46 flechsig> 
+;  Time-stamp: <20 Aug 13 09:11:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -259,7 +259,7 @@ PRO phaSaveEMFieldHDF5, beam, FileName, ziplevel = ZIP
 if KEYWORD_SET(ZIP) then ziplevel=ZIP $
   else ziplevel=0;
 
-print, 'Saving fields to file', FileName, ' with compression=', ziplevel;
+print, 'Saving fields to file ', FileName, ' with compression=', ziplevel;
 
 fid = h5F_create(FileName);
 
