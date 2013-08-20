@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <20 Aug 13 09:28:03 flechsig> 
+;  Time-stamp: <20 Aug 13 09:29:55 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -425,6 +425,8 @@ pro phaDrawPhase, beam, name
 ;       SG: 09/24/2012 -- initial version
 ;
 ;-
+
+;; UF the SG version is lost?
 
 print, 'phaplotting.pro: phaDrawPhase not yet implemented'
 
