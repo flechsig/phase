@@ -261,15 +261,17 @@ END
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-function phaLoadEMFieldHDF5, FileName
+function phaLoadEMFieldHDF5, FileName, verbose=verbose
 ;+
 ; NAME:
 ;	phaLoadEMFieldHDF5
 ;
 ; PURPOSE:
-;       Loads phasestyle EMFields from a HDF5 file 
+;       Loads phasestyle EMFields from a  HDF5 file 
 ;       and creates a src4 beam structure from it,
-;       sets wavelength, origin and dx,dy in struct,
+;       sets wavelength, origin and dx,dy in struct, 
+;       so far GENESIS, PHASE and PHA4IDL hdf5 type is supported, if
+;       no file name is provided- a dialog is shown 
 ;       
 ; CATEGORY:
 ;	pro : pha4idl - create src4
@@ -284,7 +286,7 @@ function phaLoadEMFieldHDF5, FileName
 ;     	beam		filled source4 struct
 ;
 ; KEYWORDS:
-;	None.
+;	verbose: verbose
 ;
 ; SIDE EFFECTS:
 ;
@@ -293,13 +295,33 @@ function phaLoadEMFieldHDF5, FileName
 ;
 ; MODIFICATION HISTORY:
 ;      March. 23, 2011, SG, initial version
+;      Aug 2013, UF add genesis and phase-type hdf5 files with
+;      automatic detection
 ;
 ;-
+;;beam={source4};
+
+if n_elements(FileName) eq 0 then FileName= DIALOG_PICKFILE(default_extension='h5')
+
+print, "loading HDF5 file ", FileName
+
+;; use generic routine
+h5_read, FileName, beam=beam, verbose=verbose
+
+return, beam
+END
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; UF Aug 2013 add prefix basic to original routine
+;; the original routine is extended to other hdf5 types with automatic
+;; type detection
+function basicphaLoadEMFieldHDF5, FileName
 beam={source4};
 
-fid = H5F_OPEN(FileName);
+;; print, "debug: loading HDF5 file ", FileName
 
-print, "loading HDF5 file", FileName
+fid = H5F_OPEN(FileName);
 
 ; read wavelength
 dataset = H5D_OPEN(fid, 'lambda');
@@ -400,7 +422,4 @@ H5F_CLOSE, fid;
 
 return, beam
 END
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;
