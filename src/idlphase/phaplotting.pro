@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <20 Aug 13 08:45:01 flechsig> 
+;  Time-stamp: <20 Aug 13 09:18:46 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -383,3 +383,41 @@ if KEYWORD_SET(LOG) then $
     contour, ((beam.zezre^2+beam.zezim^2+beam.zeyre^2+beam.zeyim^2)(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name, /FILL, NLEVELS=colors
 
 end
+
+
+;; UF routine phaDrawPhase is missing
+;+
+; NAME:
+; phaDrawPhase
+;
+; PURPOSE:
+;       Draws two-dimensional shaded contour plot of the field points's phases.
+;       The Y-polarized part of the field is drawn by default, unless /ZPOL option is used.
+;
+; CATEGORY:
+;       pro : pha4plotting - field visualization
+;
+; CALLING SEQUENCE:
+;       phaDrawPhase, beam
+;
+; INPUTS:
+;       beam: pha4idl beam source4 structure (see phainit_structures.pro)
+;       name: title of the plot
+;       [optional]: COLORS=N: use N shades for plot
+;       [optional]: /ZPOL: use Z-polarized part instead of the Y-polarized one
+;
+; OUTPUTS:
+;       None.
+;
+; KEYWORDS:
+;       None.
+;
+; SIDE EFFECTS:
+;       None.
+;
+; RESTRICTIONS: 
+;
+; MODIFICATION HISTORY:
+;       SG: 09/24/2012 -- initial version
+;
+;-
