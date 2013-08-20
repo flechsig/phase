@@ -289,6 +289,7 @@ function phaLoadEMFieldHDF5, FileName
 ; SIDE EFFECTS:
 ;
 ; RESTRICTIONS:
+;   UF Aug 2013 does not work yest with genesis, and UF phase hdf5 versions
 ;
 ; MODIFICATION HISTORY:
 ;      March. 23, 2011, SG, initial version
