@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/source4x.h */
 /*  Date      : <16 Aug 13 10:05:33 flechsig>  */
-/*  Time-stamp: <20 Aug 13 08:19:54 flechsig>  */
+/*  Time-stamp: <20 Aug 13 08:30:30 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -14,8 +14,8 @@
 #ifndef SOURCE4X_H
 #define SOURCE4X_H
 
-/*#define IDLGRID 2048*/
-#define IDLGRID 512
+#define IDLGRID 2048
+
 
 struct source4idl {
   /*  char fsource4a[80], fsource4b[80], fsource4c[80],fsource4d[80]; */
