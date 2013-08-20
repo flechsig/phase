@@ -1,3 +1,13 @@
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
+;  Date      : <20 Aug 13 08:40:08 flechsig> 
+;  Time-stamp: <20 Aug 13 08:40:13 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
 ; Phase 3D-Surface-Plot
 ;
 ;
