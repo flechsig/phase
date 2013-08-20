@@ -39,6 +39,7 @@ idl_with_doc_header = \
         h5_test.pro \
         h5_write_genesis.pro \
         h5_write_phase.pro \
+        phaPutEMField.pro \
 	plot2d.pro \
 	plotdivergence.pro  \
 	plotfootprint.pro  \

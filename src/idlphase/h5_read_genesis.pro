@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Jul 13 15:59:44 flechsig> 
+;  Time-stamp: <20 Aug 13 12:44:01 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,7 +10,7 @@
 ;  $Author$ 
 
 pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
-                     phase=phase, amp=amp, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose
+                     phase=phase, amp=amp, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose
 ;+
 ; NAME:
 ;   h5_read_genesis
@@ -39,6 +39,7 @@ pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ; KEYWORD PARAMETERS:
 ;   amp:        amplitude (2d)
+;   beam:       beam structure (source4)
 ;   comp:       complex field (2d)
 ;   imag:       imaginary part (2d)
 ;   phase:      phase: (2d)
@@ -115,6 +116,31 @@ comp= complex(real, imag, /double)
 x0= dindgen(size)- size/2
 z_vec = x0* gridsize[0]
 y_vec = z_vec * 1.0
+
+if KEYWORD_SET(beam) ne 0 then begin
+    print, 'fill beam structure'
+    beam={source4}  
+    beam.iezrex   = long(NZ)
+    beam.iezrey   = long(NY)
+    beam.ieyrex   = long(NZ)
+    beam.ieyrey   = long(NY)
+    beam.iezimx   = long(NZ)
+    beam.iezimy   = long(NY)
+    beam.ieyimx   = long(NZ)
+    beam.ieyimy   = long(NY)
+
+    beam.zezre(0:NY-1, 0:NZ-1)= zreal
+    beam.zeyre(0:NY-1, 0:NZ-1)= yreal
+    beam.zezim(0:NY-1, 0:NZ-1)= zimag
+    beam.zeyim(0:NY-1, 0:NZ-1)= yimag
+
+    beam.xezremin= min(z_vec)
+    beam.xezremax= max(z_vec)
+    beam.yezremin= min(y_vec)
+    beam.yezremax= max(y_vec)
+
+    beam.xlam= wavelength
+endif
 
 return
 end

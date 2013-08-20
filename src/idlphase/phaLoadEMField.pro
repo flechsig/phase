@@ -299,9 +299,9 @@ function phaLoadEMFieldHDF5, FileName, verbose=verbose
 ;      automatic detection
 ;
 ;-
-;;beam={source4};
+beam={source4}; 
 
-if n_elements(FileName) eq 0 then FileName= DIALOG_PICKFILE(default_extension='h5')
+if n_elements(FileName) eq 0 then FileName= DIALOG_PICKFILE(filter='*.h5')
 
 print, "loading HDF5 file ", FileName
 
@@ -316,7 +316,7 @@ END
 ;; UF Aug 2013 add prefix basic to original routine
 ;; the original routine is extended to other hdf5 types with automatic
 ;; type detection
-function basicphaLoadEMFieldHDF5, FileName
+function basicphaLoadEMFieldHDF5, FileName, verbose=verbose
 beam={source4};
 
 ;; print, "debug: loading HDF5 file ", FileName

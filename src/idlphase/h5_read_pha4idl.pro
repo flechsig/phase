@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Aug 13 10:59:05 flechsig> 
+;  Time-stamp: <20 Aug 13 12:06:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,8 +10,8 @@
 ;  $Author$ \
 
 pro h5_read_pha4idl, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, yreal=yreal, yimag=yimag,$
-                   zphase=zphase, zamp=zamp, yphase=yphase, yamp=yamp, $
-                   z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose
+                     zphase=zphase, zamp=zamp, yphase=yphase, yamp=yamp, $
+                     z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose
 ;+
 ; NAME:
 ;   h5_read_pha4idl
@@ -39,6 +39,7 @@ pro h5_read_pha4idl, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, 
 ;
 ; KEYWORD PARAMETERS:
 ;   [yz]amp:    amplitude (2d)
+;   beam:       beam structure (source4)
 ;   [yz]comp:   complex field (2d)
 ;   [yz]imag:   imaginary part (2d)
 ;   [yz]phase:  phase: (2d)
@@ -80,11 +81,9 @@ pro h5_read_pha4idl, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, 
 ;    25.8.13 UF
 ;-
 
-
-
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/uf-gauss.h5' 
 
-beam= phaLoadEMFieldHDF5(fname)
+beam= basicphaLoadEMFieldHDF5(fname) ;; call the low level routine
 
 y_vec=get_pha_src4_axis_y(beam)
 z_vec=get_pha_src4_axis_z(beam)

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phase4idl.c */
 /*  Date      : <31 Aug 11 16:29:52 flechsig>  */
-/*  Time-stamp: <19 Aug 13 14:27:17 flechsig>  */
+/*  Time-stamp: <20 Aug 13 10:07:52 flechsig>  */
 
 
 /*  $Source$  */
@@ -288,6 +288,10 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
   // Neues Grid in Struktur schreiben
 //c in C:call pha_define_src4_grid(src4,nz2,zmin,zmax,ny2,ymin,ymax)
   pha_c_define_src4_grid(beam, *nz2, zmin, zmax, *ny2, ymin, ymax);
+ 
+#ifdef DEBUG 
+  printf("debug: end phaModSizeAddZeros, file=%s\n", __FILE__);
+#endif
 
   return (0);
 }

@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/examples.pro
 ;  Date      : <19 Aug 13 10:30:00 flechsig> 
-;  Time-stamp: <20 Aug 13 08:35:43 flechsig> 
+;  Time-stamp: <20 Aug 13 08:52:29 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -276,4 +276,15 @@ phaPropFFTfar, beam,  1500
 phaIntensitySurface,beam,'Propagated 1500mm '
 phaDrawIntensity, beam, 'Propagated 1500mm '
 
+END
+
+;; from wiki
+PRO gauss
+;; UF not needed phainit
+!P.Multi=[0,2,1]
+
+beam=phaSrcWFGauss( 256, -1, 1, 256 ,-1, 1, 0.6 , 0 , 632.8, 0, 1, 0)
+
+phaIntensitySurface, beam, 'Source'
+phaDrawIntensity, beam, 'Source '
 END

@@ -1,3 +1,13 @@
+c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/phaSrc4Drift_oe.F
+c$$$ Date      : <20 Aug 13 09:44:16 flechsig> 
+c$$$ Time-stamp: <20 Aug 13 09:44:21 flechsig> 
+c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 #include "pha4idlFORTRANdefines.h.f"
 
 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase4idl/pha_Src4Tools.c */
 /*  Date      : <20 Aug 13 09:39:36 flechsig>  */
-/*  Time-stamp: <20 Aug 13 09:39:37 flechsig>  */
+/*  Time-stamp: <20 Aug 13 09:44:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -34,7 +34,7 @@
 
 
 
-// /* *** Fortran-Access ***  
+//  *** Fortran-Access ***  
 int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 {
   int MaxDim = MaximumFieldDimension;
@@ -45,15 +45,8 @@ int phaModSizeAddZeros (struct source4 *beam, int *nz2, int *ny2)
 //c in c:call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
   pha_c_extract_src4_grid(beam,&nz1,&zmin,&zmax,&ny1,&ymin,&ymax);
 
- /*
-  extern void pha_src4_addzeros_(); // Declare the Fortran Routine 
-  // Call the Fortran Routine 
-  pha_src4_addzeros_(beam4, nz2, ny2);
-// */
  
-// /*
-  extern void pha_src4_addzeros_nostructs_(); // Declare the Fortran Routine 
-  // Call the Fortran Routine 
+// Call the Fortran Routine 
   pha_src4_addzeros_nostructs_( &MaxDim
                         , beam->zezre,beam->zezim,beam->zeyre,beam->zeyim
                         , &nz1,nz2,&zmin,&zmax
