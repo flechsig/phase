@@ -11,10 +11,9 @@
 
 
 
-pro driftFourier, drift=drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag $
-           ,bamp=bamp, bphase=bphase, plot=plot, filter=filter $
-           ,wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
-;+
+pro propfourier, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
+                 , plot=plot, wavelength=wavelength , filter=filter 
+
 ; NAME:
 ;   driftnear 
 ;
@@ -91,55 +90,40 @@ pro driftFourier, drift=drift, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcom
 
 ;;; 
 
-u1= 'usage: driftFourier, [acomp=acomp,][areal=areal,][aimag=aimag,][breal=breal,][bimag=bimag,][bamp=bamp,][bphase=bphase,]'
-u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
+u1= 'usage: propfourier, field=field, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec, drift = drift'
+u2= ' [filter=filter,] [plot=plot]'
 usage= u1+u2
 
-print, '------------------ driftFourier called ----------------------------'
+print, '------------------ propfourier called ----------------------------'
 
-if n_elements(drift)      eq 0 then begin
-  print, usage & return  
-endif
-
+if n_elements(drift)      eq 0 then begin print, usage & return & endif
+if n_elements(z_vec)      eq 0 then begin print, usage & return & endif
+if n_elements(y_vec)      eq 0 then begin print, usage & return & endif
+if n_elements(field)      eq 0 then begin print, usage & return & endif
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
-if n_elements(z_vec) eq 0 then begin 
-    print, usage & return 
-endif
-if n_elements(y_vec) eq 0 then begin 
-    print, usage & return 
-endif
-if n_elements(acomp) eq 0 and (n_elements(areal) eq 0 or n_elements(aimag) eq 0) then begin 
-    print, usage & return 
-endif
-if n_elements(acomp) eq 0 then acomp= complex(areal, aimag, /double)
-
-if n_elements(filter) eq 0 then filter=0
+if n_elements(filter)     eq 0 then filter=0
+if n_elements(plot  )     eq 0 then plot=0
 
 
-print, 'driftFourier start calculation  ---  drift=',drift
+print, '------------------ propfourier start calculation  ---  drift=',drift
 
 ppi = 2.0 * !dpi 
-Nz= n_elements(z_vec)
-Ny= n_elements(y_vec)
-zz= z_vec[Nz-1]- z_vec[0]                                      ;; total width
-yy= y_vec[Ny-1]- y_vec[0]                                      ;; total width
-k = 2* !dpi/wavelength                                         ;; wavevector
+Nz  = n_elements(z_vec)
+Ny  = n_elements(y_vec)
+zz  = z_vec[Nz-1]- z_vec[0]                                    ;; total width
+yy  = y_vec[Ny-1]- y_vec[0]                                    ;; total width
+k   = 2* !dpi/wavelength                                       ;; wavevector
 
 print, 'z_vec[0] = ',z_vec[0]*1e3, ' z_vec[Nz-1] ', z_vec[nz-1]*1e3, ' mm^2 '
 print, 'width    = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
 print, 'Nz       = ',   Nz  , ' Ny = ', Ny
-print, 'filter   = ', filter
-;;------------------------- FT of Source field -- exp(-i ...) ----------
+print, 'filter   = ', filter, ' plot = ',plot
+;;------------------------ FT of Source field -- exp(-i ...) ----------
+
 E0ft = dcomplexarr(Nz, Ny) 
  
-
-E0ft= fft(acomp, -1, /center, /double)        ;; Fourier transform of source Field E0, forward 2d fft, centered output
+E0ft= fft(field, -1, /center, /double)        ;; Fourier transform of source Field E0, forward 2d fft, centered output
                                               ;; at positions -(Nz/2-1)/(zz),... -1/(zz) , 0 ,  1/(zz), 2/(zz),... (Nz/2-1)/(zz),
-print, '---------------- M0 --'
-aamp  = dindgen(Nz, Ny) 
-aphas = dindgen(Nz, Ny) 
-aamp  = abs (E0ft)
-aphas = atan(E0ft,/phase)
     
 u = (dindgen(Nz)/(Nz-1) - 0.5)                ;; runs from -0.5..0.. 0.5 
 v = (dindgen(Ny)/(Ny-1) - 0.5)                ;; for even and odd values of Ny, Nz 
@@ -147,7 +131,11 @@ u = u * (Nz-1)/zz                             ;; ok with odd number of elements
 v = v * (Ny-1)/yy
 print, ' u: ', min(u),' ... ', max(u)
 
-if n_elements(plot) ne 0 then begin
+if (plot ne 0) then begin
+   aamp  = dindgen(Nz, Ny) 
+   aphas = dindgen(Nz, Ny) 
+   aamp  = abs (E0ft)
+   aphas = atan(E0ft,/phase)
    M=Nz/2
    N=Ny/2
 
@@ -176,8 +164,8 @@ for i=0, Nz-1 do begin
          arg = 1.0 - (u[i]*wavelength)^2 -  (v[j]*wavelength)^2
          IF (arg>0) THEN BEGIN
            arg            = sqrt(arg)
-;;           phase[i,j]    = ((drift *(arg - 1.0) ) MOD wavelength ) * k + P0  * k 
-             phase[i,j]    = k * drift* arg   
+          phase[i,j]    = ((drift *(arg - 1.0) ) MOD wavelength ) * k + P0  * k 
+;;              phase[i,j]    = k * drift* arg   
           propagator[i,j]= complex( cos(phase[i,j]), sin(phase[i,j]), /double)
          ENDIF ELSE BEGIN  
            print,'driftnear.pro: sqrt of neg. argument, evanescent waves ',arg, ' i = ',i, 'j = ',j
@@ -197,7 +185,7 @@ Eft = E0ft * propagator
 
 
 
-if n_elements(plot) ne 0 then begin
+if (plot ne 0) then begin
 
  amp= abs(propagator)
  window,13, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=550
@@ -247,7 +235,7 @@ if filter ne 0 then begin
 endif
 
 
-if n_elements(plot) ne 0 then begin
+if (plot ne 0) then begin
  amp= abs(Eft)
  window,17, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=250
  plot, u,  amp[*,N],xtitle='  u_z (1/m)', title='Amplitude before FFT-1', xrange=[0,8e5],psym=4  
@@ -257,19 +245,10 @@ endif
 
 print, '---------------  Inverse FT to get output field ----- exp(+i ...) -----'
 
-bcomp= fft(Eft, 1, /center, /double)                          
+field= fft(Eft, 1, /center, /double)                          
 
 
-breal = real_part(bcomp)
-bimag = imaginary(bcomp)
-bamp  = abs      (bcomp)
-bphase= atan     (bcomp,/phase)
 
-u=z_vec
-v=y_vec
-
-;if n_elements(plot) ne 0 then mycontour, bamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title='drift'
-
-print,'---------------- driftFourier end ----------------------------------'
+print,'---------------- propfourier end ----------------------------------'
 return
 end

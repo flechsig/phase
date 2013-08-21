@@ -80,10 +80,6 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ; MODIFICATION HISTORY:
 ;    23.7.13 RF
 ;
-; lambda= 1 um, in  0 m   sigma(Efield) = W0 / sqrt(2) => FWHM = 16.6 um         sigma(intensity)  = w0/2 = 5e-6,
-;
-;  gaussbeam, dist=0, Nz=100,sizez=0.0002, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=10e-6 , wavelength=1e-6
-;
 ;
 ;  lambda= 1 um, in 20 m  w  = 0.636 m 
 ;            sigma(Efield)= W / sqrt(2) => FWHM =  1.056 m
@@ -96,7 +92,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ;;; 
 
-u1= 'usage: gaussbeam, [bcomp=bcomp,][sigmaz=sigmaz,][sigmaz=sigmaz,][Nz=Nz,][Ny=Ny,]'
+u1= 'usage: gaussbeam,[dist=dist,][bcomp=bcomp,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
 u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot]'
 usage= u1+u2
 
@@ -136,12 +132,10 @@ for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
     rho2  =  z_vec[i]^2 + y_vec[j]^2 
     arg1  = -1 *  rho2 / w2    
-    if (arg1 le -40) then arg1 = -40                             ;;  -40 bisher -80 immer noch ok
+    if (arg1 le -40) then arg1 = -40                              ;;  -40, but -80 is still ok
     arg2  = 0.5 *k * rho2 * Ri  + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
     phas2 = complex(cos(arg2), sin(arg2),/double)     
-
     bcomp[i,j]= phas2 * exp(arg1) * w0 / w
-;    print, i, ' ', j,' ',bcomp[i,j] , ' ' ,'arg1=', arg1, ' phas2= ',phas2
   endfor
 endfor
 

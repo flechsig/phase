@@ -70,29 +70,30 @@
 ; MODIFICATION HISTORY:
 ;-
 ; comments.
-e
 
-wavelength = 1e-10
-Nz         = 200
+wavelength = double(1e-10)
+Nz         = 1001
 Ny         = Nz
 dz         = 0.00004
 dy         = 0.00008
-sizez      = 0.0001
+sizez      = 0.0003
 sizey      = sizez
-drift      = 100
-Nu=4000
-Nv=Nu
+drift      = 0.02
+Nu         = 200
+Nv         = Nu
+Npi        = 16
+plot       = 0
+sourcedist = 0
 
-; slit,       bcomp=Quelle, dz=0.00004, dy=0.00008, sizez=0.0001,  Nz=100, Ny=100, sizey=0.0001, wavelength=1e-10, z_vec=z_vec, y_vec=y_vec
-; driftFresnelC , drift=2, z_vec=z_vec, y_vec=y_vec, acomp=Quelle, wavelength=1e-10, bcomp=prop ,Nu=300, Nv=300,  u=u, v=v
-; Parameters for XFEL-beam 
-;
-;gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
-slit,       bcomp=Quelle, dz=dz, dy=dy, sizez=sizez,  Nz=Nz, Ny=Ny, sizey=sizey, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec
- title = 'slit  '
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=27.7e-6 , wavelength=wavelength
+
+; slit,  bcomp=field, dz=dz, dy=dy, sizez=sizez,  Nz=Nz, Ny=Ny, sizey=sizey, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec
+
+
+  title = 'slit  '
 
   window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
-  bamp = abs(Quelle)
+  bamp = abs(field)
   mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
 
@@ -100,16 +101,17 @@ slit,       bcomp=Quelle, dz=dz, dy=dy, sizez=sizez,  Nz=Nz, Ny=Ny, sizey=sizey,
 
 
  print, '------------- Propagated beam -----------------'
+;propHuygens,  drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength,Nu=Nu, Nv=Nv
+ propFourier , drift=2, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 
-driftHuygens, drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=Quelle, wavelength=wavelength, bcomp=prop ,Nu=Nu, Nv=Nv, sizeu=sizeu, sizev=sizev, u=u, v=v, plot=plot
-
- propamp   = abs(prop)
- propphase = atan(prop,/phase)
+ propamp   = abs(field)
+ propphase = atan(field,/phase)
 
  title = 'propagate to '+ string(drift) + ' m'
 
  window,1, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
- mycontour, propamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+ mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title;; , xrange=[-0.05,0.05], yrange=[-0.05,0.05]
+
 
   
 Pz =  drift  * wavelength / dz 
@@ -130,5 +132,5 @@ print, 'period due to  slitsize Pz = ', Pz*1e6,' um  Period due to aperturesize 
 print, 'period due to  slitsize Py = ', Py*1e6,' um  Period due to aperturesize ',Ay*1e6, ' um'
 
 window,4,retain=2,XSIZE=500, YSIZE=200,XPOS=1400, YPOS=100
-plot  ,u*1e3, propamp[*,Ny/2],/ylog,  xtitle='(mm)' ;;,xrange=[0.1,0.11],psym=4
-oplot ,v*1e3, propamp[Nz/2,*], color=3
+plot  ,z_vec*1e3, propamp[*,Ny/2],  xtitle='(mm)'     ;;,xrange=[0.1,0.11],psym=4
+oplot ,y_vec*1e3, propamp[Nz/2,*], color=3
