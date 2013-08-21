@@ -86,12 +86,12 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-Nz         = 1000
+Nz         = 3000
+sizez      = double( 0.04   )
 wavelength = double( 6.0e-7 )
 waist      = double( 1e-3   )
 sourcedist = double( 10.0   )
 drift      = double( 1.0    )
-sizez      = double( 0.01   )
 
 Nu=300
 Nv=Nu
@@ -119,7 +119,7 @@ field=ap_field
 
     propamp1   = abs(field)
     dum        = size(propamp1) & sizek= dum[2]
-    title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+    title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
 
     window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-3*wy 
     mycontour, propamp1,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
@@ -136,7 +136,7 @@ drift = 2
 
     propamp2  = abs(field)
     dum       = size(propamp2) & sizek= dum[2]
-    title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+    title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
 
     window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
     mycontour, propamp2,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
@@ -152,7 +152,7 @@ drift = 5
 
     propamp3  = abs(field)
     dum       = size(propamp3) & sizek= dum[2]
-   title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+   title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
 
     window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx,YPOS=screeny-3*wy 
     mycontour, propamp3,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
@@ -160,3 +160,19 @@ drift = 5
     window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx,YPOS=screeny-4*wy 
     plot, z_vec*1e3 ,ap[*,sizea/2];; ,xrange=[-0.1,0.1]
     oplot, z_vec*1e3 ,propamp3[*,sizek/2] ,color=2
+
+drift = 20 
+
+ field = ap_field
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+
+    propamp4  = abs(field)
+    dum       = size(propamp3) & sizek= dum[2]
+   title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
+
+    window,9, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-4*wx,YPOS=screeny-3*wy 
+    mycontour, propamp4,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
+
+    window,10, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-4*wx,YPOS=screeny-4*wy 
+    plot, z_vec*1e3 ,ap[*,sizea/2];; ,xrange=[-0.1,0.1]
+    oplot, z_vec*1e3 ,propamp4[*,sizek/2] ,color=2
