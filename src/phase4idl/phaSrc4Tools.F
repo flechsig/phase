@@ -3,6 +3,15 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+c UF stack problem- example in doc: (default is 500 double values)
+c    COMMON /CSTAK/DSTAK(1500)
+c DOUBLE PRECISION DSTAK
+c .
+c .
+c CALL ISTKIN(1500, 4)
+c end uf
+
+
 #include "pha4idlFORTRANdefines.h.f"
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
@@ -12,63 +21,69 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 	implicit none
 	
-	common/cstak/dstak(6144)
+c UF	common/cstak/dstak(6144)
 c 	6144=6*1024
-c	common/cstak/dstak(6*MaxDim)
+c	common/cstak/dstak(6*MaxDim)  | UF das geht nicht- man muss feste Werte eintragen 
+	common/cstak/dstak
 
-	integer k,nz2,ny2,nz1,ny1
+	integer k,nz2,ny2,nz1,ny1,k1
 	real*8  dz1,dz2,dy1,dy2,ymax,ymin,zmax,zmin
      &	 ,z1(MaxDim),z2(MaxDim),y1(MaxDim),y2(MaxDim)
      &	 ,data_in(MaxDim),data_out(MaxDim)
 c     &	 ,dstak(6144)
-     &	 ,dstak
+     &	 ,dstak(12288)
      
            
 c      real*8 zezre(256,256),zezim(256,256)
 c     &	,zeyre(256,256),zeyim(256,256)
      
-      real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
+	real*8 zezre(MaxDim,MaxDim),zezim(MaxDim,MaxDim)
      &	,zeyre(MaxDim,MaxDim),zeyim(MaxDim,MaxDim)
 
 
 c      real*8 zezre(1024,1024),zezim(1024,1024)
 c     &	,zeyre(1024,1024),zeyim(1024,1024)
-
-      write(*,*)'Changing number of grid-points ...'
+	write(*,*)'debug: pha_src4_modgrid_nostructs called ...'
+	write(*,*)'Changing number of grid-points ...'
 
 c	call ISTKIN(NumberOfItems,Type) Type: 4 = double
 c	call ISTKIN(6144,4)
-	call ISTKIN(6*MaxDim,4)
+c	call ISTKIN(6*MaxDim,4)                    | UF das sollte gehen
+	call ISTKIN(12288,4)
     
 
 	write(*,*)'debug: after ISTKIN'
 c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 	
 	dz1=(zmax-zmin)/(nz1-1)
-      dy1=(ymax-ymin)/(ny1-1)
-      do k=1,MaxDim	
-	z1(k)=0.d0
-	y1(k)=0.d0
-	z2(k)=0.d0
-	y2(k)=0.d0
-      enddo
-
-	do k=1,nz1
-		z1(k)=zmin + dble(k-1)*dz1
+	dy1=(ymax-ymin)/(ny1-1)
+	do k=1,MaxDim	
+	   z1(k)=0.d0
+	   y1(k)=0.d0
+	   z2(k)=0.d0
+	   y2(k)=0.d0
 	enddo
+	
+	do k=1,nz1
+	   z1(k)=zmin + dble(k-1)*dz1
+c	   write(*,*)'debug: z1(k): ', k, z1(k)
+	enddo
+
 	do k=1,ny1
-		y1(k)=ymin + dble(k-1)*dy1
+	   y1(k)=ymin + dble(k-1)*dy1
 	enddo
 
 
 	dz2=(zmax-zmin)/(nz2-1)
-      dy2=(ymax-ymin)/(ny2-1)
+	dy2=(ymax-ymin)/(ny2-1)
 	
 	do k=1,nz2
-		z2(k)=zmin + dble(k-1)*dz2
+	   z2(k)=zmin + dble(k-1)*dz2
+c	   write(*,*)'debug: z2(k): ', k, z2(k)
 	enddo
+
 	do k=1,ny2
-		y2(k)=ymin + dble(k-1)*dy2
+	   y2(k)=ymin + dble(k-1)*dy2
 	enddo
 
 	do k=1,ny1  ! Interpoliere alle Vektoren in z-Richtung
@@ -77,8 +92,18 @@ c in C:	call pha_extract_src4_grid(src4,nz1,zmin,zmax,ny1,ymin,ymax)
 #else
 		data_in(1:nz1) = zezre(1:nz1,k)
 		zezre(:,k)= 0.d0
-		write(*,*)'debug: call DCSPIN'
+		do k1=1,nz1
+		   write(*,*)'debug: data_in(k): ', k1, data_in(k1)
+		enddo
+		write(*,*)'debug: call DCSPIN', nz1, nz2, z1(1), z2(1)
+c UF dcspin needs 6*MaxDim double precision stack
+c error 4 means: for some J, XX(J) does not lie inside the interval
+c [X(1), X(N)]
+c Usage: CALL CSPIN (X, Y, N, XX, YY, NN)
+c X, Y are vectors, N the number of data
 		call DCSPIN(z1,data_in,nz1,z2,data_out,nz2)
+c uf		k1=127
+c uf		call DCSPIN(z1,data_in,nz1,z2,data_out,k1)
 		write(*,*)'debug: after DCSPIN'
 		zezre(1:nz2,k)=data_out(1:nz2)
 		

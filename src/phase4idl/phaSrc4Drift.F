@@ -288,9 +288,12 @@ c------------------------------------------------------------------------
      &       , INnz, INny
      &       , iyz,nflag,nz,ny
 
+c UF die Feldgrenze muss mit festem Wert deklariert werden- es geht keine Rechnung mit Preprozessor!!! 
+
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
-     &       ,dstak(2*MaxDim*MaxDim+16)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
+c UF     &       ,dstak(2*MaxDim*MaxDim+16)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
+     &       ,dstak(8388624)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
      &       ,t(4096)          ! 2*n=2*1024
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
