@@ -1,0 +1,138 @@
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <2013-07-16 22:44:35 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test routine for crl
+
+;+ 
+; NAME:
+;   crl_test
+;
+;
+; PURPOSE:
+;   test script for crl 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @crl_test.idl
+;
+;
+; MODIFICATION HISTORY:
+;    11.7.13 UF
+;-
+;
+; cd /home/scratch/phase/src/idlphase 
+;
+;-------------------- R e a d  I n p u t   F i l e s ---------------------------
+;--------- Get Screen size in pixel -----------
+;
+!P.POSITION=[0.1, 0.1, 0.9,0.9]
+
+print, !P.CHARSIZE
+
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
+
+
+Nz         = 201
+wavelength = 1e-10
+sourcedist = 0
+waist      = 27.7e-6 
+
+Nu=300
+sizeu=0.001
+Nv=Nu
+sizev=sizeu
+
+
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=Quelle, w0=waist ,  wavelength=wavelength
+
+drift = 120
+
+ 
+driftHuygens, drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=Quelle, wavelength=wavelength, bcomp=beforeCRL ,Nu=Nu, Nv=Nv,  u=u, v=v
+
+ propamp   = abs(beforeCRL)
+ propphase = atan(beforeCRL,/phase)
+
+ title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+ window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
+ mycontour, propamp,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+ window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
+ mycontour, propphase,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
+z_vec=u
+y_vec=v
+
+crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,apfac=12, acomp=beforeCRL, bcomp=field, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
+
+     window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
+     mycontour, crlamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+     window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+     mycontour, crlphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+driftHuygens, drift=11.8, z_vec=z_vec, y_vec=y_vec, acomp=field, wavelength=wavelength, bcomp=bcomp ,Nu=1000, Nv=1000,  u=u, v=v
+
+ bamp=abs(bcomp)&bamp=bamp/max(bamp)
+ window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
+ mycontour, bamp  ,u*1e3,v*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Amplitude',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+ window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2wx,YPOS=screeny-4*wy 
+ plot, z_vec*1e3, bamp[*,Nu/2]
+
+
