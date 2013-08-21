@@ -1,0 +1,16 @@
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/pha4idl.compile_all.idl
+;  Date      : <19 Aug 13 14:48:05 flechsig> 
+;  Time-stamp: <21 Aug 13 08:52:30 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; wrapper for pha4idl.compile_all.idl
+;; call it with : @pha4idlstart.idl
+
+@pha4idl.compile_all.idl
