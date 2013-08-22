@@ -24,7 +24,7 @@ idl_SCRIPTS = \
 ## all idl scripts with a doc header
 idl_with_doc_header = \
 	crl.pro \
-	crl_test.idl \
+	test_crl.idl \
 	drift.pro \
 	drift_crl_test.idl \
         drift_test.idl \
@@ -50,6 +50,11 @@ idl_with_doc_header = \
 	plothdf5_pst.pro  \
 	plotphase.pro  \
 	plotsi.pro  \
+	poisson_spot_1A.idl \
+	poisson_spot_vis.idl \
+	propfourier.pro \
+	propfresnel.pro \
+	prophuygens.pro \
 	read_extr_out.pro \
         read_int_file.pro \
         read_opti_out.pro \
