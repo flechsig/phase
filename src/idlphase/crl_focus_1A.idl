@@ -1,0 +1,188 @@
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <2013-07-16 22:44:35 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+;; test routine for crl
+
+;+ 
+; NAME:
+;   crl_focus_1A.idl
+;
+;
+; PURPOSE:
+;   plot beam size as function of distgance from CRL.  
+;   determines smallest spot and the corresponding distance
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @crl_focus_1A.idl
+;
+;
+; MODIFICATION HISTORY:
+;    11.7.2013 UF
+;    22.8.2013 RF  renamed from crl_rolf.idl to  crl_focus_1A.idl
+;
+; cd /home/scratch/phase/src/idlphase 
+;
+;-------------------- R e a d  I n p u t   F i l e s ---------------------------
+;--------- Get Screen size in pixel -----------
+;
+!P.POSITION=[0.1, 0.1, 0.9,0.9]
+
+print, !P.CHARSIZE
+
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
+
+
+Nz         = 101
+wavelength = 1e-10
+sourcedist = 120
+waist      = 27.7e-6 
+
+;fname0='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+;
+;h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
+;
+;     bamp   =abs(zcomp)
+;     bphase=atan(zcomp,/phase)
+; 
+;     window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+;     mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (amp)  ',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3];
+;
+;     window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+;     mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=waist ,  wavelength=wavelength
+;h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=bcomp
+
+
+  window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+  bamp = abs(bcomp)
+  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (amplitude)'
+
+
+ if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+ if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
+ if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
+
+drift = 0
+print, 'call drift', drift, ' m'
+driftnear , drift=drift , z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=bcomp
+
+propamp   = abs(bcomp)
+propphase = atan(bcomp,/phase)
+
+title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+ window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
+ mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
+ window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
+ mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
+
+
+
+print, 'call crl'
+
+
+crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=bcomp, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
+
+     window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
+     mycontour, crlamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+     window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+     mycontour, crlphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+imagedist = 11.0
+
+stat= dblarr(7)
+Npts=35
+
+result= dblarr(3,Npts)
+
+
+for i = 0, (Npts-1) do begin& imagedist=11+i*1.0/20& print,'imagdist = ', imagedist &field=bcomp&propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength&bamp=abs(field)&bamp=bamp/max(bamp)&  fit= gauss2dfit(bamp, stat, z_vec, y_vec) &   result(0,i)= imagedist &   result(1,i) = stat(2) &   result(2,i) = stat(3)&endfor
+
+
+title = 'image size (amplitude), source dist = ' + string(drift,FORMAT="(f6.1)") + ' m' + ' waist = '+ string(waist*1e6,FORMAT="(f5.1)")+ ' um'
+ window, 20,retain=2
+ plot,   result(0,*), result(1,*)*1e6, xtitle='distance from CRL (m) ', ytitle='rms (um)', title=title, charsize=2
+ oplot,  result(0,*), result(2,*)*1e6, color=2
+
+
+; plot the image with the smallest cross section
+ print, ' minimum cross section ',  min( result(1,*))
+ drift =  result(0,!c)                                             ;; System variable !c contains subscript of minimum, see help for function MIN
+ print, ' at distance ', drift , 'm'
+
+ field=bcomp
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+ 
+ bamp=abs(field)
+ bamp=bamp/max(bamp)
+ bamp=bamp^2
+ fit= gauss2dfit(bamp, stat, z_vec, y_vec)
+
+ title = 'smallest spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6,FORMAT="(f4.2)")+ ' um (rms)'
+
+ window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
+ mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Intensity: '+title,xrange=[-0.03,0.03] ,yrange=[-0.03,0.03]
+
+ bphase = atan(field,/PHASE)
+
+ window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= title,xrange=[-0.03,0.03] ,yrange=[-0.03,0.03]
+
+
+
+
+
