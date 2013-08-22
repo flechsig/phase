@@ -30,8 +30,7 @@ c	common/cstak/dstak(6*MaxDim)  | UF das geht nicht- man muss feste Werte eintra
 	real*8  dz1,dz2,dy1,dy2,ymax,ymin,zmax,zmin
      &	 ,z1(MaxDim),z2(MaxDim),y1(MaxDim),y2(MaxDim)
      &	 ,data_in(MaxDim),data_out(MaxDim)
-c     &	 ,dstak(6144)
-     &	 ,dstak(12288)
+     &	 ,dstak(STACK4SPLINE)
      
            
 c      real*8 zezre(256,256),zezim(256,256)
@@ -49,7 +48,7 @@ c     &	,zeyre(1024,1024),zeyim(1024,1024)
 c	call ISTKIN(NumberOfItems,Type) Type: 4 = double
 c	call ISTKIN(6144,4)
 c	call ISTKIN(6*MaxDim,4)                    | UF das sollte gehen
-	call ISTKIN(12288,4)
+	call ISTKIN(STACK4SPLINE,4)
     
 
 	write(*,*)'debug: after ISTKIN'

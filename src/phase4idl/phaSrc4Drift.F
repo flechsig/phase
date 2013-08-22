@@ -235,16 +235,6 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 
 
 
-
-
-
-
-
-
-
-
-
-
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc77
 	subroutine phadrift_propagate_fft_near_nostructs(
      &						 INezre,INezim,INeyre,INeyim
@@ -293,7 +283,7 @@ c UF die Feldgrenze muss mit festem Wert deklariert werden- es geht keine Rechnu
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
 c UF     &       ,dstak(2*MaxDim*MaxDim+16)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
-     &       ,dstak(8388624)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
+     &       ,dstak(STACK4FFT)   !=2*n*nns+16=2*1024*1024+16=2*MaxDim*MaxDim+16
      &       ,t(4096)          ! 2*n=2*1024
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
@@ -327,6 +317,10 @@ c------------ allocate storage
 	write(*,*)'phaPropagateFFTnear started...'
 	write(*,*)'xlam[nm] = ', INxlam 
 	write(*,*)'dist = ', dist
+
+c------------ allocate storage UF
+	call istkin(STACK4FFT,4)	! (2*n*nns+16, itype=double)
+
 	
 	distance=dble(dist)
 	write(*,*)'distance = ', distance
@@ -551,8 +545,8 @@ c------------------------------------------------------------------------
 
       real*8  pi,pihalf,signum,const,a1_sav
      &       ,alpha,dalpha,beta,dbeta
-     &       ,dstak(2*MaxDim*MaxDim+16)
-     &       ,t(2*BigMaxDim)
+     &       ,dstak(STACK4FFT)
+     &       ,t(BIGMAXDIM2)
      &       ,y_1_min,y_1_max,z_1_min,z_1_max
      &       ,dist,distance
      &       ,width,ycenter,zcenter
@@ -618,7 +612,7 @@ c	a1/2 Real Fields ... b1/2 Complex Parts
 	enddo
 
 c------------ allocate storage
-	call istkin(2*MaxDim*MaxDim+16,4)	! (2*n*nns+16, itype=double)
+	call istkin(STACK4FFT,4)	! (2*n*nns+16, itype=double)
 
 c-----	get new grid points
 c
