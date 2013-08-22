@@ -1,0 +1,174 @@
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <2013-07-16 22:44:35 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+;
+; 
+; NAME:
+;   poisson_spot_vis.idl
+;
+;
+; PURPOSE:
+;   calculates poisson spot in various distances from circular opaque aperture
+;
+;
+; CATEGORY:
+;   
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;  
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @poisson_Spot_vis.idl
+;
+;
+; MODIFICATION HISTORY:
+;    20.8.2013 RF
+;-
+;
+; Directory /home/scratch/phase/src/idlphase 
+;
+; Get Screen size in pixel -----------
+
+!P.POSITION=[0.1, 0.1, 0.9,0.9]
+
+print, !P.CHARSIZE
+
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx     =ScreenX/4
+Wy     =ScreenY/4
+
+
+Nz         = 3000
+sizez      = double( 0.04   )
+wavelength = double( 6.0e-7 )
+waist      = double( 1e-3   )
+sourcedist = double( 10.0   )
+drift      = double( 1.0    )
+
+Nu=300
+Nv=Nu
+
+gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=field, w0=waist ,  wavelength=wavelength
+
+     Qamp   = abs(field)
+     title = ' Quelle '
+     window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+     mycontour, Qamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
+
+ aperture , field=field, z_vec=z_vec, y_vec=y_vec, type = 20, P1 = -1.5e-3, P2=0;;, plot = 0, N=Nz, size=sizez 
+
+     ap = abs(field)
+     dum  = size(ap) & sizea= dum[2]
+     window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
+     mycontour, ap,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='after aperture';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
+
+ ap_field = field
+ 
+;prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=Nu, Nv=Nv, Npi=1, plot=0
+
+field=ap_field
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+
+    propamp1   = abs(field)
+    dum        = size(propamp1) & sizek= dum[2]
+    title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
+
+    window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-3*wy 
+    mycontour, propamp1,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
+
+    window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-4*wy 
+ 
+    plot, z_vec*1e3 ,ap[*,sizea/2];; ,xrange=[-0.1,0.1]
+    oplot, z_vec*1e3 ,propamp1[*,sizek/2] ,color=2
+
+drift = 2 
+
+ field = ap_field
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+
+    propamp2  = abs(field)
+    dum       = size(propamp2) & sizek= dum[2]
+    title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
+
+    window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+    mycontour, propamp2,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
+
+    window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
+    plot, z_vec*1e3 ,ap[*,sizea/2];; ,xrange=[-0.1,0.1]
+    oplot, z_vec*1e3 ,propamp2[*,sizek/2] ,color=2
+
+drift = 5 
+
+ field = ap_field
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+
+    propamp3  = abs(field)
+    dum       = size(propamp3) & sizek= dum[2]
+   title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
+
+    window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx,YPOS=screeny-3*wy 
+    mycontour, propamp3,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
+
+    window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx,YPOS=screeny-4*wy 
+    plot, z_vec*1e3 ,ap[*,sizea/2];; ,xrange=[-0.1,0.1]
+    oplot, z_vec*1e3 ,propamp3[*,sizek/2] ,color=2
+
+drift = 20 
+
+ field = ap_field
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+
+    propamp4  = abs(field)
+    dum       = size(propamp3) & sizek= dum[2]
+   title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + ' m'
+
+    window,9, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-4*wx,YPOS=screeny-3*wy 
+    mycontour, propamp4,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)';;,xrange=[-0.1,0.1] ,yrange=[-0.1,0.1]
+
+    window,10, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-4*wx,YPOS=screeny-4*wy 
+    plot, z_vec*1e3 ,ap[*,sizea/2];; ,xrange=[-0.1,0.1]
+    oplot, z_vec*1e3 ,propamp4[*,sizek/2] ,color=2
