@@ -85,17 +85,20 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-Nz         = 101
+Nz         = 151
 wavelength = 1e-10
-sourcedist = 120
+sourcedist = 0
 waist      = 27.7e-6 
 
-;fname0='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+stat       = dblarr(7)
+
 ;
 ;h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=zcomp
 ;
 ;     bamp   =abs(zcomp)
 ;     bphase=atan(zcomp,/phase)
+;    emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
 ; 
 ;     window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
 ;     mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (amp)  ',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3];
@@ -103,39 +106,47 @@ waist      = 27.7e-6
 ;     window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
 ;     mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
-gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=waist ,  wavelength=wavelength
-;h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=bcomp
 
 
+  gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist ,  wavelength=wavelength
+;   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+
+  bamp = abs(field)
+  bamp = bamp/max(bamp)
+  fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
+
+  title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + ' um^2'
   window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-  bamp = abs(bcomp)
-  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
-  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (amplitude)'
-
-
+    mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
  if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
  if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
  if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
 
-drift = 0
-print, 'call drift', drift, ' m'
-driftnear , drift=drift , z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=bcomp
 
-propamp   = abs(bcomp)
-propphase = atan(bcomp,/phase)
+ drift = 120
+ print, 'call drift', drift, ' m'
+ 
+; propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+ prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
 
-title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+  propphase = atan(field,/phase)
+  propamp   = abs(field)  
+  propamp   = propamp/max(propamp)
+
+  fit  = gauss2dfit(propamp, stat, z_vec, y_vec) 
+
+ title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)")+ ' um^2'
+
  window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
  mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
  window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
  mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
 
 
-
 print, 'call crl'
 
 
-crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=bcomp, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
+crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
 
      window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
      mycontour, crlamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
@@ -144,11 +155,11 @@ crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=bcomp, crlamp=cr
 
 imagedist = 11.0
 
-stat= dblarr(7)
 Npts=35
 
 result= dblarr(3,Npts)
 
+bcomp = field
 
 for i = 0, (Npts-1) do begin& imagedist=11+i*1.0/20& print,'imagdist = ', imagedist &field=bcomp&propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength&bamp=abs(field)&bamp=bamp/max(bamp)&  fit= gauss2dfit(bamp, stat, z_vec, y_vec) &   result(0,i)= imagedist &   result(1,i) = stat(2) &   result(2,i) = stat(3)&endfor
 
@@ -181,6 +192,7 @@ title = 'image size (amplitude), source dist = ' + string(drift,FORMAT="(f6.1)")
 
  window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
  mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= title,xrange=[-0.03,0.03] ,yrange=[-0.03,0.03]
+
 
 
 
