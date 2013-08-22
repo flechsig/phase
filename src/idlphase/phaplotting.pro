@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <20 Aug 13 09:29:55 flechsig> 
+;  Time-stamp: <22 Aug 13 14:12:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -389,7 +389,7 @@ end
 
 
 ;; UF routine phaDrawPhase is missing
-pro phaDrawPhase, beam, name
+pro phaDrawPhase, beam, name, zpol=zpol
 ;+
 ; NAME:
 ; phaDrawPhase
@@ -429,6 +429,15 @@ pro phaDrawPhase, beam, name
 ;; UF the SG version is lost?
 
 print, 'phaplotting.pro: phaDrawPhase not yet implemented'
+
+y=get_pha_src4_axis_y(beam)
+z=get_pha_src4_axis_z(beam)
+
+if n_elements(zpol) eq 0 then f= complex(beam.zeyre, beam.zeyim) else f= complex(beam.zezre, beam.zezim)
+
+phase= atan(f, /phase)
+
+mycontour, (f(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name
 
 return
 end
