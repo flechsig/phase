@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phaplotting.pro
 ;  Date      : <20 Aug 13 08:40:08 flechsig> 
-;  Time-stamp: <22 Aug 13 14:13:28 flechsig> 
+;  Time-stamp: <22 Aug 13 14:13:45 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -437,7 +437,7 @@ if n_elements(zpol) eq 0 then f= complex(beam.zeyre, beam.zeyim) else f= complex
 
 phase= atan(f, /phase)
 
-mycontour, (f(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name
+mycontour, (phase(0:beam.iezrex-1,0:beam.iezrey-1)), z, y, title=name
 
 return
 end
