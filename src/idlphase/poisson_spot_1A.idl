@@ -84,9 +84,9 @@ Wy     =ScreenY/4
 
 
 Nz         = 1000
-wavelength = 1e-10
+wavelength = 1d-10
 sourcedist = 0
-waist      = 27.7e-6 
+waist      = 27.7d-6 
 sizez      = 0.001
 
 drift = 1

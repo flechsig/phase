@@ -108,8 +108,8 @@ stat       = dblarr(7)
 
 
 
-  gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist ,  wavelength=wavelength
-;   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+;  gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist ,  wavelength=wavelength
+   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
   bamp = abs(field)
   bamp = bamp/max(bamp)
@@ -161,7 +161,19 @@ result= dblarr(3,Npts)
 
 bcomp = field
 
-for i = 0, (Npts-1) do begin& imagedist=11+i*1.0/20& print,'imagdist = ', imagedist &field=bcomp&propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength&bamp=abs(field)&bamp=bamp/max(bamp)&  fit= gauss2dfit(bamp, stat, z_vec, y_vec) &   result(0,i)= imagedist &   result(1,i) = stat(2) &   result(2,i) = stat(3)&endfor
+for i = 0, (Npts-1) do begin & $
+ imagedist=11+i*1.0/20 & $
+ print,'imagdist = ', imagedist &  $ 
+ field=bcomp & $
+ propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength  & $
+ bamp=abs(field) & $ 
+ bamp=bamp/max(bamp) & $
+ fit= gauss2dfit(bamp, stat, z_vec, y_vec) $ & 
+   result(0,i)= imagedist $ & 
+ result(1,i) = stat(2) & $
+ result(2,i) = stat(3) & $ 
+ endfor
+   
 
 
 title = 'image size (amplitude), source dist = ' + string(drift,FORMAT="(f6.1)") + ' m' + ' waist = '+ string(waist*1e6,FORMAT="(f5.1)")+ ' um'
