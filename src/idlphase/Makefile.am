@@ -24,6 +24,7 @@ idl_SCRIPTS = \
 ## all idl scripts with a doc header
 idl_with_doc_header = \
 	crl.pro \
+        crl_focus_1A.idl \
 	test_crl.idl \
 	drift.pro \
 	drift_crl_test.idl \
@@ -63,6 +64,7 @@ idl_with_doc_header = \
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
 	$(idl_with_doc_header) \
+        crl_focus_1A.idl \
 	MeinSpieglein.coeff \
 	pha4idl.compile_all.idl \
 	phaBatchmode.pro \

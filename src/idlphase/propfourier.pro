@@ -14,6 +14,7 @@
 pro propfourier, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
                  , plot=plot, wavelength=wavelength , filter=filter 
 
+;+,
 ; NAME:
 ;   driftnear 
 ;
@@ -85,6 +86,8 @@ pro propfourier, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 ;            RF, renamed to driftfourier.pro
 ; 
 ;
+;-, 
+
 u1= 'usage: propfourier, field=field, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec, drift = drift'
 u2= ' [filter=filter,] [plot=plot]'
 usage= u1+u2

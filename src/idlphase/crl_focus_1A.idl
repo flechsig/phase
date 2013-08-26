@@ -108,8 +108,8 @@ stat       = dblarr(7)
 
 
 
-;  gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist ,  wavelength=wavelength
-   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+  gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist ,  wavelength=wavelength
+;   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
   bamp = abs(field)
   bamp = bamp/max(bamp)
