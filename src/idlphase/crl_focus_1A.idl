@@ -169,7 +169,7 @@ for i = 0, (Npts-1) do begin & $
  bamp=abs(field) & $ 
  bamp=bamp/max(bamp) & $
  fit= gauss2dfit(bamp, stat, z_vec, y_vec) $ & 
-   result(0,i)= imagedist $ & 
+ result(0,i)= imagedist &  $
  result(1,i) = stat(2) & $
  result(2,i) = stat(3) & $ 
  endfor
