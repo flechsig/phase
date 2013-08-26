@@ -122,7 +122,7 @@ print, 'u:   min = ', min(u)      ,'   max         = ', max(u)
 
 print, '--------------- FT of Source field ------------------ exp(-i ...)'
 
-E0ft = dcomplexarr(Nz, Ny) 
+;E0ft = dcomplexarr(Nz, Ny) 
  
 E0ft = fft(field, -1, /center, /double)       ;; Fourier transform of source Field E0, forward 2d fft, centered output
                                               ;; at positions -(Nz/2-1)/(zz),... -1/(zz) , 0 ,  1/(zz), 2/(zz),... (Nz/2-1)/(zz),    
@@ -176,7 +176,7 @@ endfor
 
 print, '--------------- Propagate in Fourier space -----------------------'
 
-Eft = dcomplexarr(nz, ny) 
+;Eft = dcomplexarr(nz, ny) 
 Eft = E0ft * propagator
 
 

@@ -97,7 +97,7 @@ Nv=Nu
 gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=field, w0=waist ,  wavelength=wavelength
 
  Qamp   = abs(field)
- title = ' Source  with waist ' + string(waist*1e3) + ,  ' mm'
+ title = ' Source  with waist ' + string(waist*1e3) +  ' mm'
  window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-1*wy 
    mycontour, Qamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
 
