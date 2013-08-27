@@ -71,92 +71,41 @@
 ;-
 ; comments.
 
-bamp =dindgen(Nz,Nz)
+print, !P.CHARSIZE
 
-wavelength =1d-10
-Nz         =401
-sourcedist = 0
-drift      = 60d0
-sizez      = 0.0006
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=320
+Wy=200
 
-sizeu=0.001
-sizev=sizeu
+
+
 
 ;
-; Parameters for XFEL-beam 
-;
-gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
-;slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
+fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+stat       = dblarr(7)
 
-source = bcomp
-z_source = z_vec
-y_source = y_vec
+h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
- title = string(sourcedist)
- title = 'gaussbeam at '+ title + ' m'
-
-  window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
-  bamp = abs(source)
-  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
-  if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
-  if (sourcedist ne 0) then  bphase = atan(source,/phase)
-  if (sourcedist ne 0) then  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
+  bamp   = abs(field)
+  bz     = z_vec
+  by     = y_vec
+  window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+  mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (amp)  ',xrange=[-0.03,0.03] ,yrange=[-0.03,0.03];
 
 
-;  print, '------------- Amplitude -----------------'
-;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero = 300, Ninter = 6
 
-;  print, '------------- Intensity -----------------'
-  Intensity = bamp^2
-;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+  iamp   =abs(field)
+
+  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
+  mycontour, iamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (amp)  ',xrange=[-0.03,0.03] ,yrange=[-0.03,0.03];
+
+  window,3, RETAIN=2
+
+  sb = size(bamp)
+  plot, bz, bamp[*,sb[2]/2], psym=4
   
-
-
-
- print, '------------- Propagated beam -----------------'
-
-print, z_Vec
-field= bcomp
-
-propfresnel, drift=drift/3 , z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-propfresnel, drift=drift/3 , z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-propfresnel, drift=drift/3 , z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-
- propamp   = abs(field)
- window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
- mycontour, propamp,z_vec*1e3,y_vec*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=' propagated '+ string(drift) ;; , xrange = [-0.3,0.3], yrange = [-0.3,0.3]
-
-
-;propfresnel, drift=drift/2 , z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-
-; propamp   = abs(field)
-; window,3, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
-; mycontour, propamp,z_vec*1e3,y_vec*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
-
- bphase =atan(field,/phase)
- window,4, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
- mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', xrange = [-0.3,0.3], yrange = [-0.3,0.3]
-
-
-
-
-
-print, '------------- Analytical gauss beam -------------drift = ',drift
-
-
-gaussbeam, dist=drift, Nz=201,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
-
-
- title = 'gaussbeam at '+ string(drift) + ' m'
-
- bamp = abs(bcomp)
-
-window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
-mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
-title = title + ' (phase)'
-
- bphase =atan(bcomp,/phase)
- window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
- mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
- 
- 
+  si = size(iamp)
+  oplot, z_vec, iamp[*,si[2]/2+1], color=2

@@ -182,7 +182,6 @@ print, '--------------- Propagate in Fourier space -----------------------'
 ;Eft = dcomplexarr(nz, ny) 
 Eft = E0ft * propagator
 
-
 if (plot ne 0) then begin
 
  amp= abs(propagator)
@@ -244,6 +243,10 @@ endif
 
 
 print, '--------------- Inverse FT to get output field ------ exp(+i ...)'
+
+E0ft      =0  ;; free memory
+propagator=0  ;; free memory
+phase     =0  ;; free memory
 
 field= fft(Eft, 1, /center, /double)                          
 

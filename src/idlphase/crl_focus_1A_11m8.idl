@@ -86,8 +86,8 @@ Wy=ScreenY/4
 
 
 Nz         = 151
-Nzero      = 300
-N          = 6                 ;; interpolation
+Nzero      = 301
+Ninter     = 5                 ;; interpolation
 wavelength = 1d-10
 sourcedist = 0
 waist      = 27.7d-6 
@@ -114,45 +114,9 @@ stat       = dblarr(7)
 
   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
-;---------------------------------------------- Zero padding of field ------
+  resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero =Nzero, Ninter = Ninter
 
-  dz= z_vec[1]-z_vec[0]
-  dy= y_vec[1]-y_vec[0]
-  s          = size(field,/DIM)                       ;; s gives the dimensions of field
-  Null       = dcomplexarr(NZero,NZero)               ;; make larger, zero padded array
-  z0         = (NZero-s[0])/2
-  y0         = (Nzero-s[1])/2
-  ze         = (NZero+s[0])/2
-  ye         = (NZero+s[1])/2
-  Null[z0,y0]= field                                 ;; put field in the middle of the larger array
-  field      = Null
-  
-
-  Null    = dindgen(NZero)*0.0                                    ;; extend z_vec to new values, assume constant stepwidth
-  Null[z0]= z_vec
-  z_vec   = Null
-  for i=0,  (z0-1)    do z_vec[i]= z_vec[z0]   - ( z0 -  i  )*dz
-  for i=ze, (Nzero-1) do z_vec[i]= z_vec[ze-1] + ( i  - ze+1)*dz
-
-  Null    = dindgen(NZero)*0.0                                  ;; extend y_vec to new values, assume constant stepwid
-  Null[y0]= y_vec
-  y_vec   = Null
-  for i=0,  (y0-1)    do y_vec[i]= y_vec[y0]   - ( y0 -  i  )*dy
-  for i=ye, (Nzero-1) do y_vec[i]= y_vec[ye-1] + ( i  - ye+1)*dy
-
-
-;-----------------------------------------------  interpolate
- 
-  s     = size(field,/DIM)                       ;; s gives the dimensions of field
-  print, 'Dim of zero padded array = ',s
-
- x=dindgen(N*(S[0]) +1) / N 
- y=dindgen(N*(S[1]) +1) / N 
- field=interpolate(field,x,y,/GRID)
-
- 
- z_vec=interpolate(z_vec,x,/GRID)
- y_vec=interpolate(y_vec,y,/GRID)
+ ; ------------------------------------------------ Done ---
   bamp = abs(field)
   bamp = bamp/max(bamp)
 ;  fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
@@ -165,6 +129,7 @@ stat       = dblarr(7)
  if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
 drift = 120
  print, 'call drift', drift, ' m'
+
  
 propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 ;  prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=900, Nv=900, Npi=0, plot=0
@@ -193,13 +158,16 @@ crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=cr
      window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
      mycontour, crlphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
-bcomp = field
 
-; plot the image with the smallest cross section
+bamp     =0
+crlamp   =0
+crlphase =0
+propamp  =0
+propphase=0
  
  drift =  11.8                                           ;; System variable !c contains subscript of minimum, see help for function MIN
+crl = field
 
- field=bcomp
  propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
  
  bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
@@ -210,10 +178,10 @@ bcomp = field
  window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
  mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Intensity: '+title, xrange=[-0.005,0.005] ,yrange=[-0.005,0.005]
 
- bphase = atan(field,/PHASE)
+; bphase = atan(field,/PHASE)
 
- window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
- mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= title,xrange=[-0.01,0.01] ,yrange=[-0.01,0.01]
+; window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
+; mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= title,xrange=[-0.01,0.01] ,yrange=[-0.01,0.01]
 
 
 
