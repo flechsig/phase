@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <16 Aug 13 08:33:00 flechsig> 
+;  Time-stamp: <27 Aug 13 10:27:51 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -50,6 +50,8 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;   z_vec:        horizontal position vector  in m
 ;   Nz            points hor.
 ;   Ny            points vert
+;   sizey:        height (m), default = sizez
+;   sizez:        width (m)
 ; 
 ; OUTPUTS:
 ;   see keyword parameters
@@ -111,10 +113,10 @@ z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
 y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
 
  
-print, 'wavelength = ',wavelength
+print, 'wavelength (m) = ',wavelength
 print, 'Nz     = ', Nz      , ' Ny     = ', Ny
-print, 'sizez  = ', sizez   , ' sizey  = ', sizey
-print, 'w0     = ', w0      , ' dist   = ', dist
+print, 'sizez (m) = ', sizez   , ' sizey (m) = ', sizey
+print, 'w0 (m)    = ', w0      , ' dist  (m) = ', dist
 
 k   = !dpi * 2    / wavelength   
 z0  = !dpi * w0^2 / wavelength
@@ -124,17 +126,17 @@ eta = atan(dist/z0)
 Ri  = dist / (dist^2 + z0^2)                                         ;; Ri  = 1/R;
 
 
-print, 'z0     = ',!dpi * w0^2/wavelength
-print, 'w      = ',w   ,'    w2 = ', w2
-print, 'eta    = ',eta ,'    Ri = ', Ri 
+print, 'z0 (m)    = ', !dpi * w0^2/wavelength
+print, 'w (m)     = ', w   ,'    w2 (m^2) = ', w2
+print, 'eta (rad) = ', eta ,'    Ri (1/m) = ', Ri 
  
 for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
     rho2  =  z_vec[i]^2 + y_vec[j]^2 
     arg1  = -1 *  rho2 / w2    
     if (arg1 le -40) then arg1 = -40                              ;;  -40, but -80 is still ok
-    arg2  = 0.5 *k * rho2 * Ri  + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
-    phas2 = complex(cos(arg2), sin(arg2),/double)     
+    arg2  = 0.5 * k * rho2 * Ri + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
+    phas2 = complex(cos(arg2), sin(arg2), /double)     
     bcomp[i,j]= phas2 * exp(arg1) * w0 / w
   endfor
 endfor
@@ -143,11 +145,11 @@ endfor
 if n_elements(plot) ne 0 then begin
   bamp = abs(bcomp)
   window,20,  RETAIN=2
-  contour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam'
+  mycontour, bamp, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam amplitude'
 
   bamp = atan(bcomp,/phase)
   window,21, RETAIN=2
-  contour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam'
+  mycontour, bamp, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
 endif
  
 print,'gaussbeam end'
