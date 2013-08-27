@@ -123,8 +123,8 @@ print, '--------------- FT of Source field ------------------ exp(-i ...)'
 
 newfield = fft(modfield, -1, /center, /double)                      ;; forward 2d fft, centered output
 
-u0       = dindgen(nz)/nz - 0.5                                     ;; define the vectors in the image plane
-v0       = dindgen(ny)/ny - 0.5   
+u0       = dindgen(nz)/(nz-1) - 0.5                                     ;; define the vectors in the image plane
+v0       = dindgen(ny)/(ny-1) - 0.5   
 uscale   = (drift*wavelength)/zz * nz
 vscale   = (drift*wavelength)/yy * ny
 u        = u0*uscale
@@ -136,6 +136,7 @@ y0       = y_vec[0]
 
 print, ' z0 = ',z0
 print, ' y0 = ',y0
+print, u0
 ;;-------------------- Multiply new field with phase factor ----------------
 
 scale   = dcomplexarr(nz, ny)                                    ;; make a complex array
