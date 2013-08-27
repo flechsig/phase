@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 14:24:43 flechsig> 
+;  Time-stamp: <27 Aug 13 14:37:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -81,6 +81,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ; MODIFICATION HISTORY:
 ;    23.7.13 RF
+;    27.8.13 UF minor extension
 ;
 ;
 ;  lambda= 1 um, in 20 m  w  = 0.636 m 
@@ -139,18 +140,21 @@ for i=0, Nz-1 do begin
   endfor
 endfor
 
-;; plot
+;; plot using mycontour
 if n_elements(plot) ne 0 then begin
   bamp = abs(bcomp)
   window,20,  RETAIN=2
-  mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam amplitude'
+  stat = dblarr(7)
+  fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
+  title= 'gaussbeam amplitude '+  'size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)") + ' um^2 rms'
+  mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
   pha = atan(bcomp, /phase)
   if max(pha)- min(pha) gt 1e-10 then begin
       window,21, RETAIN=2
       mycontour, pha, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
   endif else begin
-      print, 'phase is zero- no plot'
+      print, 'phase(z,y) is zero- no phase plot'
       device,window_state=window_list
       if window_list[21] gt 0 then wdelete, 21
   endelse
