@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 16:59:00 flechsig> 
+;  Time-stamp: <27 Aug 13 17:02:26 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -147,7 +147,7 @@ print, 'call crl'
 crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
 
 window,5, RETAIN=2, XSIZE=wx, YSIZE=wy , XPOS=screenx-wx, YPOS=screeny-3*wy 
-mycontour, crlamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)', xrange=[-0.3,0.3], yrange=[-0.3,0.3], zrange[0.9, 1.0]
+mycontour, crlamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)', xrange=[-0.3,0.3], yrange=[-0.3,0.3], zrange=[0.9, 1.0]
 
 rp
      
