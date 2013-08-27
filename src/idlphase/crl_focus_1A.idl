@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-07-16 22:44:35 flechsig> 
+;  Time-stamp: <27 Aug 13 16:59:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -86,6 +86,7 @@ Wy=ScreenY/4
 
 
 Nz         = 151
+Nz         = 551
 wavelength = 1e-10
 sourcedist = 0
 waist      = 27.7e-6 
@@ -106,105 +107,116 @@ stat       = dblarr(7)
 ;     window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
 ;     mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
-
-
-  gaussbeam, dist=sourcedist, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist ,  wavelength=wavelength
+gaussbeam, dist=sourcedist, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist,  wavelength=wavelength
 ;   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
-  bamp = abs(field)
-  bamp = bamp/max(bamp)
-  fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
+bamp = abs(field)
+bamp = bamp/max(bamp)
+fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
 
-  title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + ' um^2'
-  window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-    mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
- if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
- if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
- if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
+title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + textoidl(' \mum^2')
+window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
 
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
- drift = 120
- print, 'call drift', drift, ' m'
+if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
+if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
+
+drift = 120
+print, 'call drift', drift, ' m'
  
-; propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
- prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
+propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+; prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
 
-  propphase = atan(field,/phase)
-  propamp   = abs(field)  
-  propamp   = propamp/max(propamp)
+propphase = atan(field,/phase)
+propamp   = abs(field)  
+propamp   = propamp/max(propamp)
 
-  fit  = gauss2dfit(propamp, stat, z_vec, y_vec) 
+fit  = gauss2dfit(propamp, stat, z_vec, y_vec) 
+title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)")+ textoidl(' \mum^2')
 
- title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)")+ ' um^2'
+window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy 
+mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
 
- window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
- mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
- window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
- mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
+window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-2*wy 
+mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
 
-
+;;;;;;;;;;;;;;;;;;;;; crl ;;;;;;;;;;;;;;;;;;;;;;;;
 print, 'call crl'
-
-
 crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
 
-     window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
-     mycontour, crlamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
-     window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
-     mycontour, crlphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+window,5, RETAIN=2, XSIZE=wx, YSIZE=wy , XPOS=screenx-wx, YPOS=screeny-3*wy 
+mycontour, crlamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)', xrange=[-0.3,0.3], yrange=[-0.3,0.3], zrange[0.9, 1.0]
+
+rp
+     
+window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-3*wy 
+mycontour, crlphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)' ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 imagedist = 11.0
 
 Npts=35
 
-result= dblarr(3,Npts)
+result= dblarr(3, Npts)
 
-bcomp = field
+bcomp = field   ;; save field
 
+;; loop to find focus
 for i = 0, (Npts-1) do begin & $
- imagedist=11+i*1.0/20 & $
- print,'imagdist = ', imagedist &  $ 
- field=bcomp & $
- propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength  & $
- bamp=abs(field) & $ 
- bamp=bamp/max(bamp) & $
- fit= gauss2dfit(bamp, stat, z_vec, y_vec)  & $
- result(0,i)= imagedist &  $
- result(1,i) = stat(2) & $
- result(2,i) = stat(3) & $ 
- endfor
+  imagedist= 11+ i* 1.0/20 & $
+  print, 'imagdist = ', imagedist &  $ 
+  field= bcomp & $
+  propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength  & $
+  bamp= abs(field) & $ 
+  bamp= bamp/max(bamp) & $
+  fit= gauss2dfit(bamp, stat, z_vec, y_vec)  & $
+  result(0,i) = imagedist &  $
+  result(1,i) = stat(2) & $
+  result(2,i) = stat(3) & $ 
+endfor
+print, '************************'
+print, 'loop done - print result'
+print, '************************'
    
+title = 'image size (amplitude), source dist = ' + string(drift,FORMAT="(f6.1)") + ' m' + ' waist = '+ string(waist*1e6,FORMAT="(f5.1)")+ textoidl(' \mum')
+window, 20, retain=2
+plot,   result(0,*), result(1,*)*1e6, xtitle='distance from CRL (m) ', ytitle=textoidl('rms (\mum)'), title=title, charsize=2, /nodata
+oplot,  result(0,*), result(1,*)*1e6, color=1
+oplot,  result(0,*), result(2,*)*1e6, color=2
+legend, ['horizontal','vertical'], linestyle=[0,0], color=[1,2]
 
-
-title = 'image size (amplitude), source dist = ' + string(drift,FORMAT="(f6.1)") + ' m' + ' waist = '+ string(waist*1e6,FORMAT="(f5.1)")+ ' um'
- window, 20,retain=2
- plot,   result(0,*), result(1,*)*1e6, xtitle='distance from CRL (m) ', ytitle='rms (um)', title=title, charsize=2
- oplot,  result(0,*), result(2,*)*1e6, color=2
-
+print, '***************************'
+print, 'calculate and print minimum'
+print, '***************************'
 
 ; plot the image with the smallest cross section
- print, ' minimum cross section ',  min( result(1,*))
- drift =  result(0,!c)                                             ;; System variable !c contains subscript of minimum, see help for function MIN
- print, ' at distance ', drift , 'm'
+print, ' minimum cross section (m) rms: ',  min(result(1,*)), ', FWHM: ', 2.35*min(result(1,*))
+drift =  result(0, !c) ;; System variable !c contains subscript of minimum, see help for function MIN
+print, ' at distance ', drift , ' m'
 
- field=bcomp
- propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
- 
- bamp=abs(field)
- bamp=bamp/max(bamp)
- bamp=bamp^2
- fit= gauss2dfit(bamp, stat, z_vec, y_vec)
+field=bcomp
+propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 
- title = 'smallest spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6,FORMAT="(f4.2)")+ ' um (rms)'
+bamp= abs(field)
+bamp= bamp/max(bamp)
+;;bamp= bamp^2                     ;;; was soll das???
+fit = gauss2dfit(bamp, stat, z_vec, y_vec)
 
- window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
- mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Intensity: '+title,xrange=[-0.03,0.03] ,yrange=[-0.03,0.03]
+title = 'smallest spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
 
- bphase = atan(field,/PHASE)
+mima= 10.   ; for xrange
 
- window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
- mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= title,xrange=[-0.03,0.03] ,yrange=[-0.03,0.03]
+window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
+mycontour, bamp  ,z_vec*1e6, y_vec*1e6, xtitle=textoidl('z (\mum)'), ytitle=textoidl('y (\mum)'), title= 'Intensity: '+title, xrange=[-mima,mima] ,yrange=[-mima,mima]
 
+bphase = atan(field,/PHASE)
+
+window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-4*wy 
+mycontour, bphase, z_vec*1e6, y_vec*1e6, xtitle=textoidl('z (\mum)'), ytitle=textoidl('y (\mum)'), title= title, xrange=[-mima,mima] ,yrange=[-mima,mima]
+
+print, 'spatial resolution (mm) = ', (z_vec[1]-z_vec[0])*1e3
+;; end
 
 
 
