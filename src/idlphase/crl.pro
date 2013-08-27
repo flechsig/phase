@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <16 Jul 13 10:25:40 flechsig> 
+;  Time-stamp: <27 Aug 13 16:49:50 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -151,7 +151,7 @@ for i=0, nz-1 do begin
         endelse
 
         ;; print,'f0=',f0,' f1=', f1, ' f2', f2
-        crlcomp[i,j] = complex(cos(f2), sin(f2),/double)
+        crlcomp[i,j] = complex(cos(f2), sin(f2), /double)
         crlcomp[i,j] = crlcomp[i,j]* f0 * f1      
 
     endfor
@@ -164,10 +164,10 @@ field = field * crlcomp
 ;; calculate  phase and ampliude of crl-propagator 
   print, ' calculate crlamp '
   crlamp  = dblarr(nz, ny)      ;; make real array for amplitude
-  crlamp   = abs(crlcomp)
+  crlamp  = abs(crlcomp)
   print, ' calculate crlphase '
-   crlphase= dblarr(nz, ny)      ;; make real array for phase
-  crlphase=atan(crlcomp,/phase)
+  crlphase= dblarr(nz, ny)      ;; make real array for phase
+  crlphase= atan(crlcomp, /phase)
 
 print,'crl end'
 return
