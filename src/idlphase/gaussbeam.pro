@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 10:27:51 flechsig> 
+;  Time-stamp: <27 Aug 13 10:33:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -147,9 +147,11 @@ if n_elements(plot) ne 0 then begin
   window,20,  RETAIN=2
   mycontour, bamp, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam amplitude'
 
-  bamp = atan(bcomp,/phase)
-  window,21, RETAIN=2
-  mycontour, bamp, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
+  pha = atan(bcomp, /phase)
+  if max(pha)- min(pha) gt 1e-10 then begin
+      window,21, RETAIN=2
+      mycontour, pha, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
+  endif else print, 'phase is zero- no plot'
 endif
  
 print,'gaussbeam end'
