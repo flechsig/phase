@@ -84,6 +84,7 @@ idl_DATA  = help.html \
 	phainit_structures.pro \
         phaLoadEMField.pro \
 	phaSaveEMField.pro \
+	propfourier.pro \
 	read_extr_out.pro \
 	read_int_file.pro \
 	read_opti_out.pro \

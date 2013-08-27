@@ -74,15 +74,13 @@
 bamp =dindgen(Nz,Nz)
 
 wavelength =1e-10
-Nz         =201
+Nz         =401
 sourcedist = 0
 drift      = 60
 sizez      = 0.0006
 
 sizeu=0.001
 sizev=sizeu
-Nu = 500
-Nv=Nu
 
 ;
 ; Parameters for XFEL-beam 
@@ -90,71 +88,69 @@ Nv=Nu
 gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
 ;slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
 
+source = bcomp
+z_source = z_vec
+y_source = y_vec
+
  title = string(sourcedist)
  title = 'gaussbeam at '+ title + ' m'
 
   window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
-  bamp = abs(bcomp)
+  bamp = abs(source)
   mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
   if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
-  if (sourcedist ne 0) then  bphase = atan(bcomp,/phase)
+  if (sourcedist ne 0) then  bphase = atan(source,/phase)
   if (sourcedist ne 0) then  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
 
 
-  print, '------------- Amplitude -----------------'
-  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+;  print, '------------- Amplitude -----------------'
+;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
 
-  print, '------------- Intensity -----------------'
+;  print, '------------- Intensity -----------------'
   Intensity = bamp^2
-  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
   
 
 
 
  print, '------------- Propagated beam -----------------'
 
-;driftFourier , drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength, bcomp=prop ;; , $
 
-driftHuygens, drift=drift, z_vec=z_vec, y_vec=y_vec, acomp=bcomp, wavelength=wavelength $
-    , bcomp=prop ,Nu=Nu, Nv=Nv , sizeu=sizeu, sizev=sizev, u=u, v=v
-           
+prop= source
+propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+;prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop , Nu=200, Nv=200
+;propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+
+ z_prop = z_vec
+ y_prop = y_vec
+ 
  propamp   = abs(prop)
  propphase = atan(prop,/phase)
 
  title = 'propagate to '+ string(drift)+ ' m'
 
  window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
- mycontour, propamp,u*1e3,v*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+ mycontour, propamp,z_vec*1e3,y_vec*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
  title = title + ' (phase)'
 
  window,3, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
- mycontour, propphase,u*1e3,v*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+ mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
 
 
-  print, '------------- Amplitude -----------------'
-  emf_statistics, propamp, z_vec=u, y_vec=v
+;  print, '------------- Amplitude -----------------'
+;  emf_statistics, propamp, z_vec=z_prop, y_vec=y_prop
 
-  print, '------------- Intensity -----------------'
-  Intensity = propamp^2
-  emf_statistics, Intensity, z_vec=u, y_vec=v
-  
-
-;driftnear , drift=-1*drift , z_vec=z_vec, y_vec=y_vec, acomp=prop, wavelength=wavelength, bcomp=back
-; backamp=abs(back)
-; emf_statistics, backamp, y_vec=y_vec, z_vec=z_vec
-; window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
-; mycontour, backamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='backpropagate (amp)'
+;  print, '------------- Intensity -----------------'
+  PropInt = propamp^2
+;  emf_statistics, PropInt, z_vec=z_prop, y_vec=y_prop
+ 
 
 
 
 
 
+print, '------------- Analytical gauss beam -------------drift = ',drift
 
-
-
-print, '------------- Analytical gauss beam -----------------'
-print,'------------------------------------------drift = ',drift
-; gaussbeam, dist=60, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
 
 gaussbeam, dist=drift, Nz=201,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
 
@@ -173,27 +169,24 @@ title = title + ' (phase)'
  
  
  
- print, '------------- Amplitude -----------------'
-  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
+; print, '------------- Amplitude -----------------'
+;  emf_statistics, bamp, y_vec=y_vec, z_vec=z_vec
  
  
- print, '------------- Intensity -----------------'
+; print, '------------- Intensity -----------------'
   Intensity = bamp^2
-  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
+;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
 
- print, '-------------- Projection of Intensity ------'
 
-  vsum = total(Intensity,2)  
   window,12,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=600, YPOS=800
 
   result=dindgen(6)
   z=gaussfit(z_vec, vsum,result,NTERMS=5 )
   print, ' rms = ',result[2]
-  plot, z_vec, vsum / max(vsum), title='Proj. Intens, rms ='+string(result[2]*1e6) + ' um'
-
-
-window,11,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=0, YPOS=800
- plot, u,propamp[*,(Nv-1)/2], color = 2
+  s1=size(PropInt)
+  s2= size(Intensity)
+  plot, z_vec, Intensity[s2[1]/2,*],  color = 0
+  oplot , z_prop, PropInt[s1[1]/2,*], color = 3
 
 period = drift /sizez * wavelength
 print, ' Diffraction pattern with period ', period,' m (', period*1e6,' um)'

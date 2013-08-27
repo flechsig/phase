@@ -86,16 +86,18 @@ pro  prophuygens, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 
 ;;; 
 
-u1= 'usage: driftHuygens, [drift=drift,], [field=field,]'
+u1= 'usage: prophuygens, Nu=Nu, Nv=Nv [,drift=drift,], [field=field,]'
 u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec,[plot=plot,]'
 usage= u1+u2
 
-print, '------------------ driftHuygens called ----------------------------'
+print, '------------------ prophuygens called ----------------------------'
 
 if n_elements(drift)      eq 0 then begin print, usage & return & endif
 if n_elements(z_vec)      eq 0 then begin print, usage & return & endif
 if n_elements(y_vec)      eq 0 then begin print, usage & return & endif
 if n_elements(field)      eq 0 then begin print, usage & return & endif
+if n_elements(Nu)         eq 0 then begin print, usage & return & endif
+if n_elements(Nv)         eq 0 then begin print, usage & return & endif
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
 if n_elements(filter)     eq 0 then filter=0
 if n_elements(plot  )     eq 0 then plot=0
