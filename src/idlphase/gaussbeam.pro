@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 10:33:30 flechsig> 
+;  Time-stamp: <27 Aug 13 10:38:19 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -112,11 +112,10 @@ bcomp  = dcomplexarr(Nz, Ny)
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
 y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
 
- 
 print, 'wavelength (m) = ',wavelength
-print, 'Nz     = ', Nz      , ' Ny     = ', Ny
-print, 'sizez (m) = ', sizez   , ' sizey (m) = ', sizey
-print, 'w0 (m)    = ', w0      , ' dist  (m) = ', dist
+print, 'Nz     = ', Nz      , ', Ny     = ', Ny
+print, 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey
+print, 'w0    (m) = ', w0      , ', dist  (m) = ', dist
 
 k   = !dpi * 2    / wavelength   
 z0  = !dpi * w0^2 / wavelength
@@ -125,10 +124,9 @@ w2  = w^2
 eta = atan(dist/z0)
 Ri  = dist / (dist^2 + z0^2)                                         ;; Ri  = 1/R;
 
-
-print, 'z0 (m)    = ', !dpi * w0^2/wavelength
-print, 'w (m)     = ', w   ,'    w2 (m^2) = ', w2
-print, 'eta (rad) = ', eta ,'    Ri (1/m) = ', Ri 
+print, 'z0    (m) = ', !dpi * w0^2/wavelength
+print, 'w     (m) = ', w   ,', w2 (m^2) = ', w2
+print, 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri 
  
 for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
@@ -141,7 +139,7 @@ for i=0, Nz-1 do begin
   endfor
 endfor
 
-
+;; plot
 if n_elements(plot) ne 0 then begin
   bamp = abs(bcomp)
   window,20,  RETAIN=2
@@ -152,7 +150,7 @@ if n_elements(plot) ne 0 then begin
       window,21, RETAIN=2
       mycontour, pha, z_vec, y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
   endif else print, 'phase is zero- no plot'
-endif
+endif ;; plot
  
 print,'gaussbeam end'
 return
