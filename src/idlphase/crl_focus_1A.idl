@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 17:02:26 flechsig> 
+;  Time-stamp: <27 Aug 13 17:26:11 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -108,7 +108,20 @@ stat       = dblarr(7)
 ;     mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 gaussbeam, dist=sourcedist, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist,  wavelength=wavelength
-;   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+;; field from file
+;h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+;;
+;; file with zero padding
+;h5_read, fname0, z_vec=z_vec1, y_vec=y_vec1, wavelength=wavelength, zcomp=field1
+;field= dcomplexarr(Nz, Nz) ;; assume quadratic grid
+;z_vec= dblarr(Nz)
+;y_vec= dblarr(Nz)
+;nz1= n_elements(z_vec1)
+;z_vec[0:nz1-1]= z_vec1[0:nz1-1]
+;y_vec[0:nz1-1]= y_vec1[0:nz1-1]
+;field[0:nz1-1,0:nz1-1]= field1[0:nz1-1,0:nz1-1]
+;; end zero padding
+;; end file
 
 bamp = abs(field)
 bamp = bamp/max(bamp)
@@ -117,7 +130,7 @@ fit  = gauss2dfit(bamp, stat, z_vec, y_vec)
 title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + textoidl(' \mum^2')
 window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
 
-mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
 if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
 if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
@@ -133,7 +146,7 @@ propphase = atan(field,/phase)
 propamp   = abs(field)  
 propamp   = propamp/max(propamp)
 
-fit  = gauss2dfit(propamp, stat, z_vec, y_vec) 
+fit   = gauss2dfit(propamp, stat, z_vec, y_vec) 
 title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)")+ textoidl(' \mum^2')
 
 window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy 
