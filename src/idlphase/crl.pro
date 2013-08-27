@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 16:49:50 flechsig> 
+;  Time-stamp: <27 Aug 13 16:50:07 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -126,7 +126,7 @@ delta = delta12p4kev
 if (mu    lt 0.0) then mu   = 0.0     ;; avoid overflow
 if (delta lt 0.0) then delta= 0.0     ;; avoid overflow
 
-print,'photon energy=',kev,', mu=', mu, ', delta=',delta,', aperture=', 2.0*maxr 
+print,'photon energy=', kev,', mu=', mu, ', delta=', delta,', aperture=', 2.0*maxr 
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
