@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 14:37:39 flechsig> 
+;  Time-stamp: <27 Aug 13 14:48:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -143,10 +143,10 @@ endfor
 ;; plot using mycontour
 if n_elements(plot) ne 0 then begin
   bamp = abs(bcomp)
-  window,20,  RETAIN=2
+  window, 20, RETAIN=2
   stat = dblarr(7)
   fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
-  title= 'gaussbeam amplitude '+  'size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)") + ' um^2 rms'
+  title= 'gaussbeam amplitude '+  'size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
   mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
   pha = atan(bcomp, /phase)
