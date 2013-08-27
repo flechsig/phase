@@ -1,7 +1,17 @@
+#  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
+#  Date      : <27 Aug 13 09:09:38 flechsig> 
+#  Time-stamp: <27 Aug 13 09:09:49 flechsig> 
+#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+#  $Source$ 
+#  $Date$
+#  $Revision$ 
+#  $Author$ 
+
 dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
 #  Date      : <27 Sep 12 17:51:19 flechsig> 
-#  Time-stamp: <2012-11-04 00:33:23 flechsig> 
+#  Time-stamp: <27 Aug 13 09:09:36 flechsig> 
 
 #  $Source$ 
 #  $Date$
@@ -48,7 +58,7 @@ AC_DEFUN([MDL_HAVE_ROOT],
 [
   AC_REQUIRE([AC_PROG_CXX])
   AC_REQUIRE([MDL_DL])
-  AC_REQUIRE([MDL_GX_LIBS])
+dnl UF make problems- we do not need graphics libs in root  AC_REQUIRE([MDL_GX_LIBS])
   AC_CACHE_CHECK([for ROOT], [mdl_cv_have_root],
   [
     # Be pessimistic at first.
