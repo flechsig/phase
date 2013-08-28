@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Aug 13 12:44:01 flechsig> 
+;  Time-stamp: <28 Aug 13 10:46:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -83,11 +83,15 @@ pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 
-file_id = H5F_OPEN(fname)
-field0  = h5_read_dataset(file_id, 'slice000001/field')
-gridsize= h5_read_dataset(file_id, 'gridsize')
-wavelength= h5_read_dataset(file_id, 'wavelength')
+file_id   = H5F_OPEN(fname)
+field0    = h5_read_dataset(file_id, 'slice000001/field')
+gridsize  = h5_read_dataset(file_id, 'gridsize')
+lambda    = h5_read_dataset(file_id, 'wavelength')
 h5f_close, file_id
+
+
+wavelength= lambda[0] ;; wavelength should be a scalar
+;; help, wavelength, lambda
 
 len   = n_elements(field0)/2
 size  = fix(sqrt(len))
