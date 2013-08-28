@@ -1,7 +1,7 @@
-; -*-idlwave-*-
+;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Time-stamp: <28 Aug 13 08:33:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,17 +9,16 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-
 ;; test routine for crl
 
 ;+ 
 ; NAME:
-;   drift_test
+;   crl_focus_1A.idl
 ;
 ;
 ; PURPOSE:
-;   test script for crl 
-;
+;   plot beam size as function of distgance from CRL.  
+;   determines smallest spot and the corresponding distance
 ;
 ; CATEGORY:
 ;   phase_calc
@@ -58,54 +57,71 @@
 ; RESTRICTIONS:
 ;   material properties hard coded - only Be so far
 ;
-;
 ; PROCEDURE:
 ;
 ;
 ;
 ; EXAMPLE:
-;   @
+;   @crl_focus_1A.idl
 ;
 ;
 ; MODIFICATION HISTORY:
-;-
-; comments.
+;    11.7.2013 UF
+;    22.8.2013 RF  renamed from crl_rolf.idl to  crl_focus_1A.idl
+;
+; cd /home/scratch/phase/src/idlphase 
+;
+;-------------------- R e a d  I n p u t   F i l e s ---------------------------
+;--------- Get Screen size in pixel -----------
+;
+!P.POSITION=[0.1, 0.1, 0.9,0.9]
 
 print, !P.CHARSIZE
 
 device, Get_Screen_size=size
 screenX=size[0]
 ScreenY=size[1]
-Wx=320
-Wy=200
+Wx=ScreenX/4
+Wy=ScreenY/4
 
 
+Nz         = 151
+Nz         = 100
+;Nz         = 551
+wavelength = 1e-10
+sourcedist = 0
+waist      = 27.7e-6 
 
-
-;
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
 
-h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+gaussbeam, dist=sourcedist, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist,  wavelength=wavelength
 
-  bamp   = abs(field)
-  bz     = z_vec
-  by     = y_vec
-  window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-  mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (amp)  ',xrange=[-0.03,0.03] ,yrange=[-0.03,0.03];
+help, z_vec
 
+source =field
 
-resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero = 300, Ninter = 6
+   title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + textoidl(' \mum^2')
+   window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+;   mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
-  iamp   =abs(field)
+drift = 120
+print, 'call drift', drift, ' m'
+ 
+ help, z_vec
 
-  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
-  mycontour, iamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (amp)  ',xrange=[-0.03,0.03] ,yrange=[-0.03,0.03];
+propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength,plot=1
+; prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
 
-  window,3, RETAIN=2
+   propphase = atan(field,/phase)
+   propamp   = abs(field)  
+   propamp   = propamp/max(propamp)
 
-  sb = size(bamp)
-  plot, bz, bamp[*,sb[2]/2], psym=4
-  
-  si = size(iamp)
-  oplot, z_vec, iamp[*,si[2]/2+1], color=2
+   title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6, FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)")+ textoidl(' \mum^2')
+
+   window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy 
+   mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
+
+   window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-2*wy 
+   mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
+

@@ -94,10 +94,10 @@ usage= u1+u2
 
 print, '------------------ propfourier called ----------------------------'
 
-if n_elements(drift)      eq 0 then begin print, usage & return & endif
-if n_elements(z_vec)      eq 0 then begin print, usage & return & endif
-if n_elements(y_vec)      eq 0 then begin print, usage & return & endif
-if n_elements(field)      eq 0 then begin print, usage & return & endif
+if n_elements(drift)      eq 0 then begin print,'drift missing: '+ usage & return & endif
+if n_elements(z_vec)      eq 0 then begin print,'z_vec missing: '+ usage & return & endif
+if n_elements(y_vec)      eq 0 then begin print,'y_vec missing: '+ usage & return & endif
+if n_elements(field)      eq 0 then begin print,'field missing: '+ usage & return & endif
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
 if n_elements(filter)     eq 0 then filter=0
 if n_elements(plot  )     eq 0 then plot=0
@@ -139,14 +139,14 @@ if (plot ne 0) then begin
   N=Ny/2
 
   window,10, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=0, YPOS=850
-;   mycontour, aamp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, amplitude'   
-    plot , u, aamp[*,N], xtitle='  v_z (1/m)',  title='Fourier transform of input field, amplitude' , xrange=[0,8e5],psym=4  
-    oplot, u, aamp[*,N]  
+   mycontour, aamp ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, amplitude'   
+;    plot , u, aamp[*,N], xtitle='  v_z (1/m)',  title='Fourier transform of input field, amplitude' , xrange=[0,8e5],psym=4  
+;    oplot, u, aamp[*,N]  
 
   window,11, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=400, YPOS=850
-;   mycontour, aphas ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, phase' 
-    plot , u, aphas[*,N], xtitle='  v_z (1/m)',  title='Fourier transform of input field, phas', xrange=[0,8e5],psym=4     
-    oplot, u, aphas[*,N]
+   mycontour, aphas ,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Fourier transform of input field, phase' 
+ ;   plot , u, aphas[*,N], xtitle='  v_z (1/m)',  title='Fourier transform of input field, phas', xrange=[0,8e5],psym=4     
+;    oplot, u, aphas[*,N]
 
   path       = dindgen(Nz,Ny)
 
@@ -184,34 +184,14 @@ Eft = E0ft * propagator
 
 if (plot ne 0) then begin
 
- amp= abs(propagator)
- window,13, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=550
-   plot, u,  amp[*,N]     ,xtitle='  u_z (1/m)', title='Amplitude of Propagator' ;;, xrange=[0,8e5],psym=4  
+; amp= abs(propagator)
+; amp=amp/max(amp)
+; window,15, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=550
+;  mycontour, amp,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Amplitude of Propagator'
 
  propphas= atan(propagator,/phase)
  window,14, RETAIN=2, XSIZE=400, YSIZE=300, XPOS=400, YPOS=550 
-;  mycontour, propphas,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Phase of Propagator'
-   plot, u,  propphas[*,N],xtitle='  u_z (1/m)', title='Phase of Propagator';; , xrange=[0,8e5],psym=4  
-
-
- if (filter  ne 0) then begin
-   amp= abs(Eft)
-   window,15, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=250
-     plot, u,  amp[*,N],xtitle='  u_z (1/m)', title='Amplitude before filtering', xrange=[0,8e5],psym=4  
- endif
- 
- amp= atan(Eft,/phase)
- window,16, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=400, YPOS=250
-   plot, u,  amp[*,N],xtitle='  u_z (1/m)', title='Phase before FFT-1' ;;, xrange=[0,8e4],psym=4  
-
-; window,16, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=400, YPOS=250
-; plot , v, phase[*,(Nz-1)/2 ] mod ppi  ;; , yrange=[-4,8]
-;; plot, v, path [*,50], color = 2
-;; oplot, v, phase [*,*], color = 3
-;  
-; print, 'Path : Min =', min(path), 'Max = ', max(path), 'Dif= ', max(path)-min(path)
-; window,17, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=400, YPOS=550
-; plot,u, path[100,*], xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Path '
+  mycontour, propphas,u, v, xtitle='  v_z (1/m)', ytitle='v_y (1/m)', title='Phase of Propagator'
   
 endif
 

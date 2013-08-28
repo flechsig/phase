@@ -166,7 +166,7 @@ crlphase =0
 propamp  =0
 propphase=0
  
- drift =  11.8                                           ;; System variable !c contains subscript of minimum, see help for function MIN
+ drift =  11.75                                          ;; System variable !c contains subscript of minimum, see help for function MIN
 crl = field
 
  propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
