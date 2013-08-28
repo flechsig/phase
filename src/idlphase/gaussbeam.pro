@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 14:48:00 flechsig> 
+;  Time-stamp: <28 Aug 13 08:14:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -82,7 +82,8 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ; MODIFICATION HISTORY:
 ;    23.7.13 RF
 ;    27.8.13 UF minor extension
-;
+;-
+
 ;
 ;  lambda= 1 um, in 20 m  w  = 0.636 m 
 ;            sigma(Efield)= W / sqrt(2) => FWHM =  1.056 m
