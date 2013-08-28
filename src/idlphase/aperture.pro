@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <16 Jul 13 10:25:40 flechsig> 
+;  Time-stamp: <28 Aug 13 17:09:18 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -14,7 +14,7 @@
 pro aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  plot=plot, N=N, size = size
 ;+
 ; NAME:
-;   apetture
+;   aperture
 ;
 ;
 ; PURPOSE:
