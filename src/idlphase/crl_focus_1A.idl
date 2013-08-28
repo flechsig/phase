@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 17:00:38 flechsig> 
+;  Time-stamp: <28 Aug 13 17:05:24 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -90,7 +90,7 @@ if n_elements(wavelength) eq 0 then wavelength = 1e-10
 if n_elements(sourcedist) eq 0 then sourcedist = 0
 if n_elements(waist)      eq 0 then waist      = 27.7e-6 
 if n_elements(drift)      eq 0 then drift      = 120.
-if n_elements(focusdist)  eq 0 then focusdist  = 11.7
+if n_elements(focusdist)  eq 0 then focusdist  = 11.715
 if n_elements(nimages)    eq 0 then nimages    = 35          ;; number of foci to try around focusdist +/- 0.5 depth
 if n_elements(depth)      eq 0 then depth      = 1.          ;; depth for focus search
 
