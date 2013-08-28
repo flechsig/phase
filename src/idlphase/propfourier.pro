@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 08:15:52 flechsig> 
+;  Time-stamp: <28 Aug 13 08:17:47 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -16,7 +16,7 @@ pro propfourier, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 
 ;+,
 ; NAME:
-;   driftnear 
+;   propfourier 
 ;
 ;
 ; PURPOSE:
