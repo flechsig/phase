@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 08:14:15 flechsig> 
+;  Time-stamp: <28 Aug 13 12:08:49 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -19,8 +19,11 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ;
 ; PURPOSE:
-; Creates gaussian beam  
-;  currently only a 2dim gaussian distribution (in the waist)
+;  Creates gaussian beam  
+;  currently only a 2dim gaussian distribution (in the waist), UF
+;  (2b_confirmed) for the intensity distribution we have w=2*sigma
+;  with sigma= sigma_x = sigma_y the variance of a 2d Gaussian and
+;  sigma_r= sqrt(2) * sigma ???
 ;
 ;
 ; CATEGORY:
@@ -28,7 +31,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ;
 ; CALLING SEQUENCE:
-;   
+;   gaussbeam, ...
 ;
 ;
 ; INPUTS:
@@ -121,33 +124,42 @@ print, 'w0    (m) = ', w0      , ', dist  (m) = ', dist
 
 k   = !dpi * 2    / wavelength   
 z0  = !dpi * w0^2 / wavelength
-w   = w0 * sqrt(1+ (dist/z0)^2)
+w   = w0 * sqrt(1d0+ (dist/z0)^2)
 w2  = w^2
 eta = atan(dist/z0)
 Ri  = dist / (dist^2 + z0^2)                                         ;; Ri  = 1/R;
 
-print, 'z0    (m) = ', !dpi * w0^2/wavelength
+print, 'z0    (m) = ', z0
 print, 'w     (m) = ', w   ,', w2 (m^2) = ', w2
 print, 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri 
- 
+
+truncation= 0 
 for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
     rho2  =  z_vec[i]^2 + y_vec[j]^2 
     arg1  = -1 *  rho2 / w2    
-    if (arg1 le -40) then arg1 = -40                              ;;  -40, but -80 is still ok
+    if (arg1 le -40) then begin 
+        arg1 = -40                        ;;  -40, but -80 is still ok
+        truncation= 1
+    endif
     arg2  = 0.5 * k * rho2 * Ri + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
     phas2 = complex(cos(arg2), sin(arg2), /double)     
     bcomp[i,j]= phas2 * exp(arg1) * w0 / w
   endfor
 endfor
 
+if truncation gt 0 then print, '!! warning -- some points are truncated !!'  
+
 ;; plot using mycontour
 if n_elements(plot) ne 0 then begin
   bamp = abs(bcomp)
   window, 20, RETAIN=2
   stat = dblarr(7)
-  fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
-  title= 'gaussbeam amplitude '+  'size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
+  fit   = gauss2dfit(bamp,    stat, z_vec, y_vec) 
+  fit2  = gauss2dfit(bamp^2, stat2, z_vec, y_vec) 
+  print, 'gaussfit amplitude: rms_z, rms_y (m)= ', stat(2),  stat(3)
+  print, 'gaussfit intensity: rms_z, rms_y (m)= ', stat2(2), stat2(3)
+  title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
   mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
   pha = atan(bcomp, /phase)
