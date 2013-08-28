@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 08:33:54 flechsig> 
+;  Time-stamp: <28 Aug 13 12:19:31 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -85,11 +85,10 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-Nz         = 151
-Nz         = 551
-wavelength = 1e-10
-sourcedist = 0
-waist      = 27.7e-6 
+if n_elements(Nz) eq 0         then Nz         = 151
+if n_elements(wavelength) eq 0 then wavelength = 1e-10
+if n_elements(sourcedist) eq 0 then sourcedist = 0
+if n_elements(waist)      eq 0 then waist      = 27.7e-6 
 
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
@@ -150,8 +149,6 @@ crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=cr
 
 window,5, RETAIN=2, XSIZE=wx, YSIZE=wy , XPOS=screenx-wx, YPOS=screeny-3*wy 
 mycontour, crlamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)', xrange=[-0.3,0.3], yrange=[-0.3,0.3], zrange=[0.9, 1.0]
-
-rp
      
 window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-3*wy 
 mycontour, crlphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)' ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
@@ -182,8 +179,8 @@ print, 'loop done - print result'
 print, '************************'
    
 title = 'image size (amplitude), source dist = ' + string(drift,FORMAT="(f6.1)") + ' m' + ' waist = '+ string(waist*1e6,FORMAT="(f5.1)")+ textoidl(' \mum')
-window, 20, retain=2
-plot,   result(0,*), result(1,*)*1e6, xtitle='distance from CRL (m) ', ytitle=textoidl('rms (\mum)'), title=title, charsize=2, /nodata
+window, 20, retain=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-3*wx, YPOS=screeny-4*wy 
+plot,   result(0,*), result(1,*)*1e6, xtitle='distance from CRL (m) ', ytitle=textoidl('rms (\mum)'), title=title,  /nodata ;;charsize=2
 oplot,  result(0,*), result(1,*)*1e6, color=1
 oplot,  result(0,*), result(2,*)*1e6, color=2
 legend, ['horizontal','vertical'], linestyle=[0,0], color=[1,2]
@@ -193,7 +190,7 @@ print, 'calculate and print minimum'
 print, '***************************'
 
 ; plot the image with the smallest cross section
-print, ' minimum cross section (m) rms: ',  min(result(1,*)), ', FWHM: ', 2.35*min(result(1,*))
+print, ' minimum amplitude cross section (m) rms: ',  min(result(1,*)), ', FWHM: ', 2.35*min(result(1,*))
 drift =  result(0, !c) ;; System variable !c contains subscript of minimum, see help for function MIN
 print, ' at distance ', drift , ' m'
 
@@ -202,7 +199,7 @@ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wav
 
 bamp= abs(field)
 bamp= bamp/max(bamp)
-;;bamp= bamp^2                     ;;; was soll das???
+bamp= bamp^2                     ;;; UF was soll das - intensity is ampl^2
 fit = gauss2dfit(bamp, stat, z_vec, y_vec)
 
 title = 'smallest spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
