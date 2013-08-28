@@ -23,6 +23,7 @@ idl_SCRIPTS = \
 
 ## all idl scripts with a doc header
 idl_with_doc_header = \
+	aperture.pro \
 	crl.pro \
         crl_focus_1A.idl \
 	test_crl.idl \
