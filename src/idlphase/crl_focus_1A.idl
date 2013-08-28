@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 12:19:31 flechsig> 
+;  Time-stamp: <28 Aug 13 13:57:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -85,10 +85,11 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-if n_elements(Nz) eq 0         then Nz         = 151
+if n_elements(Nz)         eq 0 then Nz         = 151
 if n_elements(wavelength) eq 0 then wavelength = 1e-10
 if n_elements(sourcedist) eq 0 then sourcedist = 0
 if n_elements(waist)      eq 0 then waist      = 27.7e-6 
+if n_elements(drift)      eq 0 then drift      = 120.
 
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
@@ -124,7 +125,7 @@ if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-
 if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
 if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
 
-drift = 120
+
 print, 'call drift', drift, ' m'
  
 propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
@@ -191,23 +192,23 @@ print, '***************************'
 
 ; plot the image with the smallest cross section
 print, ' minimum amplitude cross section (m) rms: ',  min(result(1,*)), ', FWHM: ', 2.35*min(result(1,*))
-drift =  result(0, !c) ;; System variable !c contains subscript of minimum, see help for function MIN
-print, ' at distance ', drift , ' m'
+drift1 =  result(0, !c) ;; System variable !c contains subscript of minimum, see help for function MIN
+print, ' at distance ', drift1 , ' m'
 
 field=bcomp
-propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+propfourier , drift=drift1, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 
 bamp= abs(field)
 bamp= bamp/max(bamp)
-bamp= bamp^2                     ;;; UF was soll das - intensity is ampl^2
-fit = gauss2dfit(bamp, stat, z_vec, y_vec)
+bamp2= bamp^2                     ;;; UF was soll das - intensity is ampl^2
+fit = gauss2dfit(bamp2, stat, z_vec, y_vec)
 
-title = 'smallest spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
+title = 'smallest spot at ' + string(drift1,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
 
 mima= 10.   ; for xrange
 
-window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
-mycontour, bamp  ,z_vec*1e6, y_vec*1e6, xtitle=textoidl('z (\mum)'), ytitle=textoidl('y (\mum)'), title= 'Intensity: '+title, xrange=[-mima,mima] ,yrange=[-mima,mima]
+window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-4*wy 
+mycontour, bamp2  ,z_vec*1e6, y_vec*1e6, xtitle=textoidl('z (\mum)'), ytitle=textoidl('y (\mum)'), title= 'Intensity: '+title, xrange=[-mima,mima] ,yrange=[-mima,mima]
 
 bphase = atan(field,/PHASE)
 
