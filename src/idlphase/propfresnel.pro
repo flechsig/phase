@@ -13,7 +13,7 @@
 
 pro propfresnel, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
                  , plot=plot, wavelength=wavelength           
-;           u=u, v=v
+;
 ;+
 ; NAME:
 ;   propfresnel
@@ -96,7 +96,17 @@ if n_elements(field)      eq 0 then begin print, usage & return & endif
 if n_elements(wavelength) eq 0 then wavelength= 1d-10  
 if n_elements(plot  )     eq 0 then plot=0
 
-print, '------------------ propfresnel start caculation -----------------'
+;------------------------- I want wavelength to be a scalar ---------------
+dum=size(wavelength)
+if (dum[0] gt 0) then begin
+  if (dum[1] eq 0) then begin
+   print, 'wavelength not defined ',dum
+   return
+  endif
+ print, 'wavelength of type array, dim =',dum[0],' convert to scalar.'
+ wavelength = wavelength[0]
+endif
+
 
 k  = 2* !dpi/wavelength
 
@@ -125,18 +135,17 @@ newfield = fft(modfield, -1, /center, /double)                      ;; forward 2
 
 u0       = dindgen(nz)/(nz-1) - 0.5                                     ;; define the vectors in the image plane
 v0       = dindgen(ny)/(ny-1) - 0.5   
-uscale   = (drift*wavelength)/zz * nz
-vscale   = (drift*wavelength)/yy * ny
+uscale   = (drift*wavelength)/zz * nz                                    ;; why is uscale,vscale of type array[1] ?
+vscale   = (drift*wavelength)/yy * ny                                    ;;-> wavelength comes as array[1], solved
 u        = u0*uscale
 v        = v0*vscale
-
 z0       = z_vec[0]
 y0       = y_vec[0]
 
 
-print, ' z0 = ',z0
-print, ' y0 = ',y0
-print, u0
+print, ' z0 = ',z0, ' y0 = ',y0
+print, ' nz = ',nz, ' ny = ',ny
+
 ;;-------------------- Multiply new field with phase factor ----------------
 
 scale   = dcomplexarr(nz, ny)                                    ;; make a complex array
@@ -148,13 +157,11 @@ for i=0, nz-1 do begin
     endfor
 endfor
 
-scale1 = complex(cos(k*drift), sin(k*drift)      , /double)
-scale2 = complex(0.0         , (wavelength*drift), /double)
-
+scale1 = complex(cos(k*drift), sin(k*drift)      , /double)             ;; why is this of type array[1] ?
+scale2 = complex(0.0         , (wavelength*drift), /double)             ;; -> wavelength comes as array[1] -> k is array[1]
 field  = zz * yy * newfield * scale  * scale1/ scale2
 z_vec  = u
 y_vec  = v
-
 
 print, '------------------ propfresnel end ----------------------------'
 

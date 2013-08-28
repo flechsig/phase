@@ -216,8 +216,6 @@ if (plot ne 0) then begin
 endif
 
 
-
-
 if (filter ne 0) then begin
 
  f =  HANNING(Nz,Ny,alpha=0.5,/double)

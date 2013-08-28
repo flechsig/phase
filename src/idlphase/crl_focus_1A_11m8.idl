@@ -114,7 +114,7 @@ stat       = dblarr(7)
 
   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
-  resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero =Nzero, Ninter = Ninter
+ resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero =Nzero, Ninter = Ninter
 
  ; ------------------------------------------------ Done ---
   bamp = abs(field)
@@ -131,7 +131,8 @@ drift = 120
  print, 'call drift', drift, ' m'
 
  
-propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+;propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 ;  prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=900, Nv=900, Npi=0, plot=0
 
   propphase = atan(field,/phase)
@@ -169,6 +170,7 @@ propphase=0
 crl = field
 
  propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+; propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
  
  bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
 ; fit= gauss2dfit(bamp, stat, z_vec, y_vec)
