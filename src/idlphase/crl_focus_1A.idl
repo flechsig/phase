@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 14:31:54 flechsig> 
+;  Time-stamp: <28 Aug 13 16:58:58 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -90,6 +90,9 @@ if n_elements(wavelength) eq 0 then wavelength = 1e-10
 if n_elements(sourcedist) eq 0 then sourcedist = 0
 if n_elements(waist)      eq 0 then waist      = 27.7e-6 
 if n_elements(drift)      eq 0 then drift      = 120.
+if n_elements(focusdist)  eq 0 then focusdist  = 11.7
+if n_elements(nimages)    eq 0 then nimages    = 35          ;; number of foci to try around focusdist +/- 0.5 depth
+if n_elements(depth)      eq 0 then depth      = 1.          ;; depth for focus search
 
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
@@ -154,23 +157,19 @@ mycontour, crlamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', titl
 window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-3*wy 
 mycontour, crlphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)' ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
-imagedist = 11.0
-
-Npts=35
-
-result= dblarr(3, Npts)
+result= dblarr(3, Nimages)
 
 bcomp = field   ;; save field
 
 ;; loop to find focus
-for i = 0, (Npts-1) do begin & $
-  imagedist= 11+ i* 1.0/20 & $
+for i = 0, (Nimages-1) do begin & $
+  imagedist= focusdist+ depth* (i/(nimages-1.0)- 0.5) & $
   print, 'imagdist = ', imagedist &  $ 
   field= bcomp & $
   propfourier , drift=imagedist, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength  & $
   bamp= abs(field) & $ 
   bamp= bamp/max(bamp) & $
-  fit= gauss2dfit(bamp, stat, z_vec, y_vec)  & $
+  fit = gauss2dfit(bamp, stat, z_vec, y_vec)  & $
   result(0,i) = imagedist &  $
   result(1,i) = stat(2) & $
   result(2,i) = stat(3) & $ 
@@ -198,10 +197,10 @@ print, ' at distance ', drift1 , ' m'
 field=bcomp
 propfourier , drift=drift1, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 
-bamp= abs(field)
-bamp= bamp/max(bamp)
+bamp = abs(field)
+bamp = bamp/max(bamp)
 bamp2= bamp^2                     ;;; UF was soll das - intensity is ampl^2
-fit = gauss2dfit(bamp2, stat, z_vec, y_vec)
+fit  = gauss2dfit(bamp2, stat, z_vec, y_vec)
 
 title = 'smallest spot at ' + string(drift1,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
 
