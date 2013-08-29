@@ -27,6 +27,7 @@ idl_with_doc_header = \
 	crl.pro \
         crl_focus_1A.idl \
 	test_crl.idl \
+	double_slit.idl \
 	drift.pro \
 	drift_crl_test.idl \
         drift_test.idl \
