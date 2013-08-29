@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 17:10:51 flechsig> 
+;  Time-stamp: <29 Aug 13 13:52:53 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 
 
 
-pro aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  plot=plot, N=N, size = size
+pro aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  plot=plot, N=N, size=size
 ;+
 ; NAME:
 ;   aperture
@@ -22,7 +22,9 @@ pro aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  p
 ;   acts as an aperture, or generates wavefield with amplitude according to 'type'
 ;
 ;
-;   type 1 : rectangular   P1 = hsize, P2 = vsize
+;   type 1  : rectangular   P1 = hsize, P2 = vsize
+;   type 10 : double slit vertical,    P1 = hsize, P2= hsep
+;   type 11 : double slit horizontal,  P1 = vsize, P2= vsep
 ;   type 20 : circular     P1 = Radius
 ;                          Radius > 0: central circular part is transparent
 ;                          Radius < 0: central circular part is oblique
@@ -128,9 +130,22 @@ for i=0, nz-1 do begin
   
         case type of
 
-            1 : begin                                     ;; rectangular 
-                 if (  (abs(z_vec[i]) le P1) and (abs(y_vec[j]) le P2) ) then T[i,j]= double(1.0)
-                end
+            1 : begin                                  ;; rectangular 
+                if (  (abs(z_vec[i]) le P1) and (abs(y_vec[j]) le P2) ) then T[i,j]= double(1.0)
+            end
+
+            10 : begin                                 ;; double slit vertical
+                halfsep= 0.5* P2
+                halfsiz= 0.5* P1
+                if ( (abs(z_vec[i]) le (halfsep+halfsiz)) and (abs(z_vec[i]) ge (halfsep-halfsiz)) ) then T[i,j]= double(1.0)
+            end
+
+            11 : begin                                 ;; double slit horizontal 
+                halfsep= 0.5* P2
+                halfsiz= 0.5* P1
+                if ( (abs(y_vec[j]) le (halfsep+halfsiz)) and (abs(y_vec[j]) ge (halfsep-halfsiz))) then T[i,j]= double(1.0)
+            end
+
 
            20 : begin                                     ;; circular 
                   rr= (z_vec[i]^2 + y_vec[j]^2)           
