@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 11:08:19 flechsig> 
+;  Time-stamp: <29 Aug 13 11:11:34 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -111,7 +111,10 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     print, 'example: HeNe Laser '
     print, 'wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2'
     print, '**********************************************************'
-    gaussbeam, dist=10.,wavelength=633.e-9, w0=1e-3,sizez=1e-2,/plot
+    gaussbeam, dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2, /plot
+    print, '**********************************************************'
+    print, 'end example'
+    print, '**********************************************************'
     return
 endif  ;; end example
 
