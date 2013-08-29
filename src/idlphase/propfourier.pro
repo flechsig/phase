@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 14:43:59 flechsig> 
+;  Time-stamp: <29 Aug 13 16:24:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -25,12 +25,12 @@ pro propfourier, drift=drift, example=example, y_vec=y_vec, z_vec=z_vec, field=f
 ;
 ;
 ; CATEGORY:
-;   phase_calc, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
-;                  , plot=plot, wavelength=wavelength , filter=filter 
+;   phase_calc 
 ;
 ;
 ; CALLING SEQUENCE:
-;   drift
+;   propfourier, field=field, y_vec=y_vec, z_vec=z_vec, drift=drift  $
+;                [,/plot][,wavelength=wavelength][,filter=filter][,/example]
 ;
 ;
 ; INPUTS:
@@ -38,7 +38,7 @@ pro propfourier, drift=drift, example=example, y_vec=y_vec, z_vec=z_vec, field=f
 ;
 ;
 ; OPTIONAL INPUTS:
-;
+;   no
 ;
 ;
 ; KEYWORD PARAMETERS:
@@ -68,7 +68,8 @@ pro propfourier, drift=drift, example=example, y_vec=y_vec, z_vec=z_vec, field=f
 ;
 ;
 ; SIDE EFFECTS:
-;    idl 7.1 does not work correctly- gives unsymmetric results
+;    idl 7.1 does not work correctly- gives unsymmetric results, works
+;    with idl 8.1 (reason: keyword /center in fft)
 ;
 ;
 ; RESTRICTIONS:
@@ -79,7 +80,8 @@ pro propfourier, drift=drift, example=example, y_vec=y_vec, z_vec=z_vec, field=f
 ;
 ;
 ; EXAMPLE:
-;
+;   idl> propfourier, field=field, y_vec=y_vec, z_vec=z_vec, $
+;   drift=10., wavelength=wavelength 
 ;
 ; MODIFICATION HISTORY:
 ;    23.7.13 RF
@@ -107,8 +109,6 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     print, '**********************************************************'
     return
 endif  ;; end example
-
-
 
 if n_elements(drift)      eq 0 then begin print,'drift missing: '+ usage & return & endif
 if n_elements(z_vec)      eq 0 then begin print,'z_vec missing: '+ usage & return & endif
@@ -232,7 +232,7 @@ endif
 if (plot ne 0) then begin
  amp= abs(Eft)
  window,17, RETAIN=2, XSIZE=400, YSIZE=300,XPOS=0, YPOS=250
- plot, u,  amp[*,N],xtitle='  u_z (1/m)', title='Amplitude before FFT-1', xrange=[0,8e5],psym=4  
+ plot, u,  amp[*,N], xtitle='  u_z (1/m)', title='Amplitude before FFT-1', xrange=[0,8e5],psym=4  
 endif
 
 
