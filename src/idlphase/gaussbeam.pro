@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 16:14:19 flechsig> 
+;  Time-stamp: <29 Aug 13 16:57:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -123,7 +123,7 @@ if n_elements(w0        ) eq 0 then w0        = 1e-5
 if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
 if n_elements(dist      ) eq 0 then dist      = 0
-if n_elements(bcomp     ) ne 0 then print, 'obsolete keyword: bcomp- use keyword: field intead!' & return
+if n_elements(bcomp     ) ne 0 then begin & print, 'obsolete keyword: bcomp- use keyword: field intead!' & return & endif
 
 field  = dcomplexarr(Nz, Ny) 
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
@@ -165,7 +165,7 @@ if truncation gt 0 then print, '!! warning -- some outside points are truncated 
 ;; plot using mycontour
 if n_elements(plot) ne 0 then begin
   bamp = abs(field)
-  window, 20, RETAIN=2
+  window, 20
   stat = dblarr(7)
   fit   = gauss2dfit(bamp,    stat, z_vec, y_vec) 
   fit2  = gauss2dfit(bamp^2, stat2, z_vec, y_vec) 
@@ -176,7 +176,7 @@ if n_elements(plot) ne 0 then begin
 
   pha = atan(field, /phase)
   if max(pha)- min(pha) gt 1e-10 then begin
-      window,21, RETAIN=2
+      window,21
       mycontour, pha, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
   endif else begin
       print, 'phase(z,y) is zero- no phase plot'
