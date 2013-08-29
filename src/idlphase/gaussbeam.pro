@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 12:08:49 flechsig> 
+;  Time-stamp: <29 Aug 13 11:08:19 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -12,7 +12,7 @@
 ;
 ;
 pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
-               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot
+               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example
 ;+
 ; NAME:
 ;  gaussbeam  
@@ -44,6 +44,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ; KEYWORD PARAMETERS:
 ;   bcomp:        field, idl complex array,
+;   example:      example calculation plus plot
 ;   sigmaz:       rms horizontal              in m
 ;   sigmay        rms vert.                   in m
 ;   w0            waist                       in m
@@ -104,6 +105,17 @@ u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot]'
 usage= u1+u2
 
 print, 'gaussbeam called'
+
+IF KEYWORD_SET(EXAMPLE) THEN BEGIN
+    print, '**********************************************************'
+    print, 'example: HeNe Laser '
+    print, 'wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2'
+    print, '**********************************************************'
+    gaussbeam, dist=10.,wavelength=633.e-9, w0=1e-3,sizez=1e-2,/plot
+    return
+endif  ;; end example
+
+
 
 if n_elements(Nz        ) eq 0 then Nz        = 100  
 if n_elements(Ny        ) eq 0 then Ny        = Nz  
@@ -173,6 +185,8 @@ if n_elements(plot) ne 0 then begin
   endelse
 endif ;; plot
  
+
+
 print,'gaussbeam end'
 return
 end
