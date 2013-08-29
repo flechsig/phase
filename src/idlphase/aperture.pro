@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 13:52:53 flechsig> 
+;  Time-stamp: <29 Aug 13 14:40:31 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 
 
 
-pro aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  plot=plot, N=N, size=size
+pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  plot=plot, N=N, size=size
 ;+
 ; NAME:
 ;   aperture
@@ -48,6 +48,7 @@ pro aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  p
 ;
 ; KEYWORD PARAMETERS:
 ;   field:      input field, idl complex array, 
+;   example:    vertical double slit
 ;   y_vec:      vertical input vector (required) in m
 ;   z_vec:      horizontal input vector (required) in m
 ;   type :      type of aperture
@@ -93,6 +94,17 @@ u2= ' '
 usage= u1+u2
 
 print, 'aperture called'
+
+IF KEYWORD_SET(EXAMPLE) THEN BEGIN
+    print, '**********************************************************'
+    print, 'example: double slit '
+    print, '**********************************************************'
+    aperture , field=field, y_vec=y_vec, z_vec=z_vec, type=10,p1=2e-3, p2=5e-3,N=51, size=2e-2
+    print, '**********************************************************'
+    print, 'end example'
+    print, '**********************************************************'
+    return
+endif  ;; end example
 
 
 

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 17:06:36 flechsig> 
+;  Time-stamp: <29 Aug 13 14:43:59 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 
 
 
-pro propfourier, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
+pro propfourier, drift=drift, example=example, y_vec=y_vec, z_vec=z_vec, field=field $
                  , plot=plot, wavelength=wavelength , filter=filter 
 
 ;+,
@@ -42,6 +42,7 @@ pro propfourier, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 ;
 ;
 ; KEYWORD PARAMETERS:
+;   example:    plot example
 ;   field     : input field (required),
 ;                idl complex array, 
 ;               will be overwritten to give results.
@@ -93,6 +94,21 @@ u2= ' [filter=filter,] [plot=plot]'
 usage= u1+u2
 
 print, '------------------ propfourier called ----------------------------'
+
+IF KEYWORD_SET(EXAMPLE) THEN BEGIN
+    print, '**********************************************************'
+    print, 'example: '
+    print, '**********************************************************'
+    gaussbeam, dist=0, Nz=11, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=27e-6,  wavelength=1e-10
+    propfourier , drift=100, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength, /plot
+    print, '**********************************************************'
+    print, 'in case the image is unsymmetric your idl version has a problem'
+    print, 'end example'
+    print, '**********************************************************'
+    return
+endif  ;; end example
+
+
 
 if n_elements(drift)      eq 0 then begin print,'drift missing: '+ usage & return & endif
 if n_elements(z_vec)      eq 0 then begin print,'z_vec missing: '+ usage & return & endif
