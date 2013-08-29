@@ -1,0 +1,82 @@
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/double_slit.idl
+;  Date      : <29 Aug 13 15:35:45 flechsig> 
+;  Time-stamp: <29 Aug 13 15:37:26 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+;+
+; NAME:
+;   double_slit
+;
+;
+; PURPOSE:
+;   example for double slit
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+;
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;
+;
+;
+; MODIFICATION HISTORY:
+;  UF Aug 2013
+;-
+
+wavelength=633e-9
+
+gaussbeam, field=field, z_vec=z_vec, y_vec=y_vec, dist=10., wavelength=wavelength, w0=1e-3, sizez=1e-2
+mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after 10 m', xtitle=' z (mm)', ytitle='y (mm)'
+
+aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=10, p1= 1e-4, p2= 1e-3, /plot 
+mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after slit', xtitle=' z (mm)', ytitle='y (mm)'
+
+propfourier,field=field, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, drift=1 
+mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after 1 m drift', xtitle=' z (mm)', ytitle='y (mm)'
