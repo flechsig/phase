@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 11:35:41 flechsig> 
+;  Time-stamp: <29 Aug 13 11:40:56 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -44,7 +44,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ; KEYWORD PARAMETERS:
 ;   bcomp:        field, idl complex array,
-;   example:      example calculation plus plot
+;   example:      example calculation plus plot (HeNe laser in 10 m)
 ;   sigmaz:       rms horizontal              in m
 ;   sigmay        rms vert.                   in m
 ;   w0            waist                       in m
@@ -172,7 +172,7 @@ if n_elements(plot) ne 0 then begin
   fit2  = gauss2dfit(bamp^2, stat2, z_vec, y_vec) 
   print, 'gaussfit amplitude: rms_z, rms_y (m)= ', stat(2),  stat(3)
   print, 'gaussfit intensity: rms_z, rms_y (m)= ', stat2(2), stat2(3)
-  title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
+  title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' + string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
   mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
   pha = atan(bcomp, /phase)
@@ -186,8 +186,6 @@ if n_elements(plot) ne 0 then begin
   endelse
 endif ;; plot
  
-
-
 print,'gaussbeam end'
 return
 end
