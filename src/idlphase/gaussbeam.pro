@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 11:48:38 flechsig> 
+;  Time-stamp: <29 Aug 13 15:17:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -12,7 +12,7 @@
 ;
 ;
 pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
-               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example
+               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example, field=field
 ;+
 ; NAME:
 ;  gaussbeam  
@@ -43,7 +43,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ;
 ; KEYWORD PARAMETERS:
-;   bcomp:        field, idl complex array,
+;   field:        field, idl complex array,
 ;   example:      example calculation plus plot (HeNe laser in 10 m)
 ;   w0            waist                       in m
 ;   dist:         distance to waist           in m
@@ -90,15 +90,15 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;  lambda= 1 um, in 20 m  w  = 0.636 m 
 ;            sigma(Efield)= W / sqrt(2) => FWHM =  1.056 m
 ; 
-;  gaussbeam, dist=20, Nz=100,sizez=5, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=10e-6 , wavelength=1e-6
+;  gaussbeam, dist=20, Nz=100,sizez=5, z_vec=z_vec, y_vec=y_vec, field=field , w0=10e-6 , wavelength=1e-6
 ;
 ; lambda = 1.24 A     w=27.7 um
 ;
-;  gaussbeam, dist=0, Nz=200,sizez=0.0002, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=1.24e-10
+;  gaussbeam, dist=0, Nz=200,sizez=0.0002, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 , wavelength=1.24e-10
 ;
 ;;; 
 
-u1= 'usage: gaussbeam,[dist=dist,][bcomp=bcomp,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
+u1= 'usage: gaussbeam,[dist=dist,][field=field,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
 u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot]'
 usage= u1+u2
 
@@ -123,8 +123,9 @@ if n_elements(w0        ) eq 0 then w0        = 1e-5
 if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
 if n_elements(dist      ) eq 0 then dist      = 0
+if n_elements(bcomp     ) ne 0 then print, 'obsolete keyword: bcomp- use keword: field'
 
-bcomp  = dcomplexarr(Nz, Ny) 
+field  = dcomplexarr(Nz, Ny) 
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
 y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
 
@@ -155,7 +156,7 @@ for i=0, Nz-1 do begin
     endif
     arg2  = 0.5 * k * rho2 * Ri + k*dist - eta                    ;; For notation of Siegman multiply by -1                    
     phas2 = complex(cos(arg2), sin(arg2), /double)     
-    bcomp[i,j]= phas2 * exp(arg1) * w0 / w
+    field[i,j]= phas2 * exp(arg1) * w0 / w
   endfor
 endfor
 
@@ -163,7 +164,7 @@ if truncation gt 0 then print, '!! warning -- some outside points are truncated 
 
 ;; plot using mycontour
 if n_elements(plot) ne 0 then begin
-  bamp = abs(bcomp)
+  bamp = abs(field)
   window, 20, RETAIN=2
   stat = dblarr(7)
   fit   = gauss2dfit(bamp,    stat, z_vec, y_vec) 
@@ -173,7 +174,7 @@ if n_elements(plot) ne 0 then begin
   title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' + string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
   mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
-  pha = atan(bcomp, /phase)
+  pha = atan(field, /phase)
   if max(pha)- min(pha) gt 1e-10 then begin
       window,21, RETAIN=2
       mycontour, pha, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
