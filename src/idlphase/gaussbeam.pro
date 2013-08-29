@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 15:56:48 flechsig> 
+;  Time-stamp: <29 Aug 13 15:58:36 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -123,7 +123,7 @@ if n_elements(w0        ) eq 0 then w0        = 1e-5
 if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
 if n_elements(dist      ) eq 0 then dist      = 0
-if n_elements(bcomp     ) ne 0 then print, 'obsolete keyword: bcomp- use keyword: field intead!' & return
+if n_elements(bcomp     ) ne 0 then print, 'obsolete keyword: bcomp- use keyword: field intead!'
 
 field  = dcomplexarr(Nz, Ny) 
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/double_slit.idl
 ;  Date      : <29 Aug 13 15:35:45 flechsig> 
-;  Time-stamp: <29 Aug 13 15:37:26 flechsig> 
+;  Time-stamp: <29 Aug 13 15:54:14 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -15,7 +15,8 @@
 ;
 ;
 ; PURPOSE:
-;   example for double slit
+;   example for double slit experiment, gaussian beam plus double slit
+;   plus propagation
 ;
 ;
 ; CATEGORY:
@@ -70,13 +71,29 @@
 ;  UF Aug 2013
 ;-
 
-wavelength=633e-9
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
 
-gaussbeam, field=field, z_vec=z_vec, y_vec=y_vec, dist=10., wavelength=wavelength, w0=1e-3, sizez=1e-2
-mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after 10 m', xtitle=' z (mm)', ytitle='y (mm)'
+if n_elements(wavelength) eq 0 then wavelength=633e-9      ;; HeNe laser
+if n_elements(w0)         eq 0 then w0= 1e-3               ;; waist
+if n_elements(dist0)      eq 0 then dist0=10.              ;; dist source to slit
+if n_elements(dist1)      eq 0 then dist1=1.               ;; dist slit to screen
 
-aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=10, p1= 1e-4, p2= 1e-3, /plot 
-mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after slit', xtitle=' z (mm)', ytitle='y (mm)'
+window,1, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy
+gaussbeam, field=field, z_vec=z_vec, y_vec=y_vec, dist=dist0, wavelength=wavelength, w0=w0, sizez=1e-2
+title= 'gaussbeam intensity after ' + string(dist0,FORMAT="(f6.1)") + ' m'
+mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)'
 
-propfourier,field=field, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, drift=1 
-mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after 1 m drift', xtitle=' z (mm)', ytitle='y (mm)'
+window,2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy
+aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=10, p1= 1e-4, p2= 1e-3 
+mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after slit', xtitle='z (mm)', ytitle='y (mm)'
+
+window,3, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy
+propfourier,field=field, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, drift=dist1
+title= 'intensity after a drift of ' + string(dist1,FORMAT="(f6.1)") + ' m'
+mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)'
+
+; end
