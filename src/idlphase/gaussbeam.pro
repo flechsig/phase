@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 11:40:56 flechsig> 
+;  Time-stamp: <29 Aug 13 11:48:38 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -45,16 +45,14 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ; KEYWORD PARAMETERS:
 ;   bcomp:        field, idl complex array,
 ;   example:      example calculation plus plot (HeNe laser in 10 m)
-;   sigmaz:       rms horizontal              in m
-;   sigmay        rms vert.                   in m
 ;   w0            waist                       in m
-;   z             distance to waist           in m
+;   dist:         distance to waist           in m
 ;   wavelength    the wavelength              in m
 ;   y_vec:        vertical   position vector  in m
 ;   z_vec:        horizontal position vector  in m
 ;   Nz            points hor.
-;   Ny            points vert
-;   sizey:        height (m), default = sizez
+;   Ny            points vert, default = Nz
+;   sizey:        height (m),  default = sizez
 ;   sizez:        width (m)
 ; 
 ; OUTPUTS:
