@@ -118,6 +118,8 @@ if n_elements(wavelength) eq 0 then wavelength= 1e-10
 if n_elements(filter)     eq 0 then filter=0
 if n_elements(plot  )     eq 0 then plot=0
 
+drift      = double(drift)
+wavelength = double(wavelength)
 
 print, '--------------- propfourier start calculation  --- drift=',drift
 

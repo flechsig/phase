@@ -122,8 +122,14 @@ if n_elements(wavelength) eq 0 then wavelength= 1e-10
 if n_elements(w0        ) eq 0 then w0        = 1e-5  
 if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
-if n_elements(dist      ) eq 0 then dist      = 0
+if n_elements(dist      ) eq 0 then dist      = 0.0
 if n_elements(bcomp     ) ne 0 then begin & print, 'obsolete keyword: bcomp- use keyword: field intead!' & return & endif
+
+dist       = double(dist)
+wavelength = double(wavelength)
+sizey      = double(sizey)
+sizez      = double(sizez)
+w0         = double(w0)
 
 field  = dcomplexarr(Nz, Ny) 
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez

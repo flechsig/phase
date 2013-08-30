@@ -89,10 +89,10 @@ usage = u1+u2
 
 print, '------------------ propfresnel called ----------------------------'
 
-if n_elements(drift)      eq 0 then begin print, usage & return & endif
-if n_elements(z_vec)      eq 0 then begin print, usage & return & endif
-if n_elements(y_vec)      eq 0 then begin print, usage & return & endif
-if n_elements(field)      eq 0 then begin print, usage & return & endif
+if n_elements(drift)      eq 0 then begin print,'drift missing: '+ usage & return & endif
+if n_elements(z_vec)      eq 0 then begin print,'z_vec missing: '+ usage & return & endif
+if n_elements(y_vec)      eq 0 then begin print,'y_vec missing: '+ usage & return & endif
+if n_elements(field)      eq 0 then begin print,'field missing: '+ usage & return & endif
 if n_elements(wavelength) eq 0 then wavelength= 1d-10  
 if n_elements(plot  )     eq 0 then plot=0
 

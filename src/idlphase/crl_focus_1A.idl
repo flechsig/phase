@@ -85,7 +85,7 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-if n_elements(Nz)         eq 0 then Nz         = 151
+if n_elements(Nz)         eq 0 then Nz         = 9
 if n_elements(wavelength) eq 0 then wavelength = 1e-10
 if n_elements(sourcedist) eq 0 then sourcedist = 0
 if n_elements(waist)      eq 0 then waist      = 27.7e-6 
@@ -109,6 +109,7 @@ stat       = dblarr(7)
 ;
 ;     window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
 ;     mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Source (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+;gaussbeam, dist=0, Nz=21, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=27.7e-6 ,  wavelength=1e-10
 
 gaussbeam, dist=sourcedist, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=waist,  wavelength=wavelength
 ;; field from file

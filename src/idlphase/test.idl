@@ -86,32 +86,42 @@ Wy=ScreenY/4
 
 
 Nz         = 151
-Nz         = 100
-;Nz         = 551
-wavelength = 1e-10
+Nz         = 151
+wavelength = 1d-10
 sourcedist = 0
-waist      = 27.7e-6 
+waist      = 27.7d-6 
 
+drift=400
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
 
-gaussbeam, dist=sourcedist, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, bcomp=field , w0=waist,  wavelength=wavelength
+gaussbeam, dist=drift, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=waist,  wavelength=wavelength
+
 
 help, z_vec
 
-source =field
-
+source = field
+bamp=abs(field)
    title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + textoidl(' \mum^2')
    window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-;   mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+   mycontour, bamp, z_vec, y_vec, xtitle='z (m)', ytitle='y (m)', title=title
 
-drift = 120
+sphase = atan(field,/PHASE)
+sz     = z_vec
+   window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+   mycontour, sphase, z_vec, y_vec, xtitle='z (m)', ytitle='y (m)', title=title
+
+
+gaussbeam, dist=0, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=waist,  wavelength=wavelength
+   
 print, 'call drift', drift, ' m'
+print,string(drift, format='(%"test.idl drift= %18.14g m")')
  
- help, z_vec
+ help, z_vec, drift
 
-propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength,plot=1
+propfourier, drift=drift/2, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 ; prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
+; propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
 
    propphase = atan(field,/phase)
    propamp   = abs(field)  
@@ -124,4 +134,34 @@ propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wav
 
    window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-2*wy 
    mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
+
+
+propfourier, drift=drift/2, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+; prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
+; propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
+
+   propphase = atan(field,/phase)
+   propamp   = abs(field)  
+   propamp   = propamp/max(propamp)
+
+   title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6, FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)")+ textoidl(' \mum^2')
+
+   window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-3*wy 
+   mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
+
+   window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-3*wy 
+   mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
+
+
+   window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-4*wy 
+ 
+   sp = size(propphase)
+   plot,sz, sphase(*,Nz/2)
+   oplot,z_vec, propphase(*,sp[2]/2), color=2
+
+
+
+
+
+
 
