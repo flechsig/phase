@@ -1,0 +1,27 @@
+;; -*-idlwave-*-
+
+if n_elements(Nz)          eq 0 then Nz         = 151
+if n_elements(wavelength)  eq 0 then wavelength = 1e-10
+if n_elements(rms)         eq 0 then rms        = 25.2e-6  ;;; 1e-10m, 25.2e-6 m; 1.1e-6 rad
+;;; 7e-10m, 43.5e-6m; 6.4e-6 rad
+if n_elements(waist)      eq 0 then waist      = 27.7e-6
+if n_elements(sourcedist) eq 0 then sourcedist = 65
+
+;;1A gaussbeam, dist=sourcedist, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=20e-6,  wavelength=wavelength, /plot
+
+wavelength=7e-10
+gaussbeam, dist=sourcedist, Nz=Nz, sizez= 3e-3, z_vec=z_vec, y_vec=y_vec, field=field , w0=24.5e-6,  wavelength=wavelength, /plot
+
+
+;; for 1e-10 nm
+sigr= 25.2e-6
+sigt= 1.1e-6
+sigr65=sqrt(sigr^2+(65.*sigt)^2)
+sigzy65= sigr65/sqrt(2.)
+print, '1A: sigzy65=', sigzy65
+;; to get the same sigma at 65 m with gaussbeam we should use waist=20e-6
+sigr= 43.5e-6
+sigt= 6.4e-6
+sigr65=sqrt(sigr^2+(65.*sigt)^2)
+sigzy65= sigr65/sqrt(2.)
+print, '7A: sigzy65=', sigzy65
