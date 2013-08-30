@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 15:18:50 flechsig> 
+;  Time-stamp: <30 Aug 13 09:16:47 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -22,13 +22,17 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ;   acts as an aperture, or generates wavefield with amplitude according to 'type'
 ;
 ;
-;   type 1  : rectangular   P1 = hsize, P2 = vsize
-;   type 10 : double slit vertical,    P1 = hsize, P2= hsep
-;   type 11 : double slit horizontal,  P1 = vsize, P2= vsep
+;   type 1  : rectangular              P1 = hsize, P2 = vsize
+;   type 2  : vertical slit            P1 = hsize
+;   type 3  : horizontal slit          P1 = vsize
+;   type 12 : double slit vertical,    P1 = hsize, P2= hsep
+;   type 13 : double slit horizontal,  P1 = vsize, P2= vsep
 ;   type 20 : circular     P1 = Radius
 ;                          Radius > 0: central circular part is transparent
 ;                          Radius < 0: central circular part is oblique
 ;   type 21 : annular      P1 = Outer radius, P2 = inner radius
+;   type 32 : vertical mirror          P1 = length, P2 = grazing angle (rad)
+;   type 33 : horizontalal mirror      P1 = length, P2 = grazing angle (rad)
 ;
 ; CATEGORY:
 ;   phase_calc
@@ -49,6 +53,8 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ; KEYWORD PARAMETERS:
 ;   field:      input field, idl complex array, 
 ;   example:    vertical double slit
+;   P1:         generic parameter (depends on type)
+;   P2:         generic parameter (depends on type)
 ;   y_vec:      vertical input vector (required) in m
 ;   z_vec:      horizontal input vector (required) in m
 ;   type :      type of aperture
@@ -86,6 +92,7 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ;
 ; MODIFICATION HISTORY:
 ;    14.8.13 RF
+;    Aug 13 UF add some types
 ;-
 
 
@@ -99,7 +106,7 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     print, '**********************************************************'
     print, 'example: double slit '
     print, '**********************************************************'
-    aperture , field=field, y_vec=y_vec, z_vec=z_vec, type=10,p1=2e-3, p2=5e-3,N=51, size=2e-2, /plot
+    aperture , field=field, y_vec=y_vec, z_vec=z_vec, type=10,p1=2e-3, p2=5e-3, N=51, size=2e-2, /plot
     print, '**********************************************************'
     print, 'end example'
     print, '**********************************************************'
@@ -145,37 +152,57 @@ for i=0, nz-1 do begin
             1 : begin                                  ;; rectangular 
                 if (  (abs(z_vec[i]) le P1) and (abs(y_vec[j]) le P2) ) then T[i,j]= double(1.0)
             end
-
-            10 : begin                                 ;; double slit vertical
+            
+            2 : begin                                 ;; vertical slit
+                if  (abs(z_vec[i]) le P1) then T[i,j]= double(1.0)
+            end
+            
+            3 : begin                               ;; horizontal slit
+                if  (abs(y_vec[j]) le P1) then T[i,j]= double(1.0)
+            end
+            
+            12 : begin                         ;; double slit vertical
                 halfsep= 0.5* P2
                 halfsiz= 0.5* P1
                 if ( (abs(z_vec[i]) le (halfsep+halfsiz)) and (abs(z_vec[i]) ge (halfsep-halfsiz)) ) then T[i,j]= double(1.0)
             end
-
-            11 : begin                                 ;; double slit horizontal 
+            
+            13 : begin                      ;; double slit horizontal 
                 halfsep= 0.5* P2
                 halfsiz= 0.5* P1
                 if ( (abs(y_vec[j]) le (halfsep+halfsiz)) and (abs(y_vec[j]) ge (halfsep-halfsiz))) then T[i,j]= double(1.0)
             end
-
-
-           20 : begin                                     ;; circular 
-                  rr= (z_vec[i]^2 + y_vec[j]^2)           
-                  if ((P1 ge 0) and (rr le P1^2)) then T[i,j]=double(1.0)
-                  if ((P1 le 0) and (rr ge P1^2)) then T[i,j]=double(1.0)
-                 end
-
-           21 : begin                                      ;; annular
-                  rr= (z_vec[i]^2 + y_vec[j]^2)           
-                  if ((rr le P1^2) and (rr ge P2^2)) then T[i,j]=double(1.0)                 
+            
+            
+            20 : begin                                    ;; circular 
+                rr= (z_vec[i]^2 + y_vec[j]^2)           
+                if ((P1 ge 0) and (rr le P1^2)) then T[i,j]=double(1.0)
+                if ((P1 le 0) and (rr ge P1^2)) then T[i,j]=double(1.0)
+            end
+            
+            21 : begin                                      ;; annular
+                rr= (z_vec[i]^2 + y_vec[j]^2)           
+                if ((rr le P1^2) and (rr ge P2^2)) then T[i,j]=double(1.0)                 
 ;                  if (rr le P1^2) then T[i,j]=double(1.0)
-                end
+            end
+            
+            32: begin                             ;; vertical mirror (assuming l= infinite)
+                ap= P1 * sin(P2)
+                print, 'aperture size (mm)= ', ap*1e3
+                if  (abs(y_vec[j]) le ap) then T[i,j]= double(1.0)
+            end
 
-         else : begin
-                 print, ' type ', type, ' not defined'
-                 exit         
-                end   
-         endcase
+            33: begin                             ;; horizontal mirror (assuming l= infinite)
+                ap= P1 * sin(P2)
+                print, 'aperture size (mm)= ', ap*1e3
+                if  (abs(z_vec[i]) le ap) then T[i,j]= double(1.0)
+            end
+            
+            else : begin
+                print, ' type ', type, ' not defined'
+                return         
+            end   
+        endcase
         
     endfor
 endfor

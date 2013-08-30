@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/double_slit.idl
 ;  Date      : <29 Aug 13 15:35:45 flechsig> 
-;  Time-stamp: <29 Aug 13 16:42:38 flechsig> 
+;  Time-stamp: <30 Aug 13 09:27:33 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -81,19 +81,29 @@ if n_elements(wavelength) eq 0 then wavelength=633e-9       ;; HeNe laser
 if n_elements(w0)         eq 0 then w0=    1e-3             ;; waist
 if n_elements(dist0)      eq 0 then dist0= 10.              ;; dist source to slit
 if n_elements(dist1)      eq 0 then dist1= 1.               ;; dist slit to screen
+if n_elements(sep)        eq 0 then sep  = 1e-3             ;; slit separation
+if n_elements(width)      eq 0 then width= 1e-4             ;; slit width
+if n_elements(type)       eq 0 then type = 12               ;; slit type
+if n_elements(fname)      eq 0 then fname = 'dslit'         ;; filename.png
 
 window,1, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy
 gaussbeam, field=field, z_vec=z_vec, y_vec=y_vec, dist=dist0, wavelength=wavelength, w0=w0, sizez=1e-2
 title= 'gaussbeam intensity after ' + string(dist0,FORMAT="(f6.1)") + ' m'
 mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)'
+filename= fname+'-0.png'
+spng, filename
 
 window,2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy
-aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=10, p1= 1e-4, p2= 1e-3 
+aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=type, p1=width, p2=sep
 mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title='intensity after slit', xtitle='z (mm)', ytitle='y (mm)'
+filename= fname+'-1.png'
+spng, filename
 
 window,3, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy
 propfourier,field=field, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, drift=dist1
 title= 'intensity after a drift of ' + string(dist1,FORMAT="(f6.1)") + ' m'
 mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)'
+filename= fname+'-2.png'
+spng, filename
 
 ; end
