@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-09-01 23:02:30 flechsig> 
+;  Time-stamp: <2013-09-01 23:14:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -104,19 +104,19 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     print, '**********************************************************'
     print, 'example: double slit '
     print, '**********************************************************'
-    aperture , field=field, y_vec=y_vec, z_vec=z_vec, type=10,p1=2e-3, p2=5e-3, N=51, size=2e-2, /plot
+    aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=10, p1=2e-3, p2=5e-3, N=51, size=2e-2, /plot
     print, '**********************************************************'
     print, 'end example'
     print, '**********************************************************'
     return
 endif  ;; end example
 
-if (n_elements(N) ne 0) and (n_elements(size) ne 0)   then begin
+if (n_elements(N) ne 0) and (n_elements(size) ne 0) then begin ;; source
   print, 'create field, N = ', N, 'pts   size = ', size
-  create = 1
-  z_vec=(dindgen(N) - N/2) * size / N                          
-  y_vec=(dindgen(N) - N/2) * size / N                          
-  field = dcomplexarr(N,N) + dcomplex(1.0,0.0)
+  create= 1
+  z_vec= (dindgen(N) - N/2) * size / N                          
+  y_vec= (dindgen(N) - N/2) * size / N                          
+  field= dcomplexarr(N,N) + dcomplex(1.0,0.0)
   help, z_vec, v_vec, field
 endif
 
@@ -128,7 +128,6 @@ if n_elements(plot ) eq 0 then plot=0
 if n_elements(P2 )   eq 0 then P2=1
 
 print, 'type = ', type
-
 help, field, z_vec, y_vec
 
 nz= n_elements(z_vec)
@@ -141,7 +140,7 @@ help, T
 
 p1half= 0.5 * p1
 p2half= 0.5 * p2
-ap= P1 * sin(P2)
+ap    = P1 * sin(P2)
 aphalf= 0.5 * ap
 
 for i=0, nz-1 do begin
@@ -150,7 +149,7 @@ for i=0, nz-1 do begin
         case type of
 
             1 : begin                                  ;; rectangular 
-               if (  (abs(z_vec[i]) le P1half) and (abs(y_vec[j]) le P2half) ) then T[i,j]= double(1.0)
+               if ((abs(z_vec[i]) le P1half) and (abs(y_vec[j]) le P2half)) then T[i,j]= double(1.0)
             end
             
             2 : begin                                 ;; vertical slit
@@ -162,7 +161,7 @@ for i=0, nz-1 do begin
             end
             
             12 : begin                         ;; double slit vertical
-               if ( (abs(z_vec[i]) le (p2half+p1half)) and (abs(z_vec[i]) ge (p2half-p1half)) ) $
+               if ((abs(z_vec[i]) le (p2half+p1half)) and (abs(z_vec[i]) ge (p2half-p1half))) $
                then T[i,j]= double(1.0)
             end
             
