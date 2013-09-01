@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-09-01 23:00:28 flechsig> 
+;  Time-stamp: <2013-09-01 23:02:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -203,8 +203,8 @@ endfor
 if n_elements(ap) then print, 'aperture size (mm)= ', ap*1e3
 
 if (plot ne 0) then begin
-     window,20, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=0,YPOS=0
-     mycontour, T,z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', $
+     window, 20, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=0, YPOS=0
+     mycontour, T, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', $
                 title='Transmission Aperture' + string(type) ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 endif
 
