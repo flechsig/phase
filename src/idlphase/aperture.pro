@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <30 Aug 13 15:50:35 flechsig> 
+;  Time-stamp: <2013-09-01 23:00:28 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,9 +9,8 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-
-
-pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, P1=P1, P2=P2,  plot=plot, N=N, size=size
+pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, $
+              P1=P1, P2=P2,  plot=plot, N=N, size=size
 ;+
 ; NAME:
 ;   aperture
@@ -95,7 +94,6 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ;    Aug 13 UF add some types
 ;-
 
-
 u1= 'usage: aperture field=field,y_vec=y_vec, z_vec=z_vec,type = type, [P1=P1,] [P2=P2,] '
 u2= ' '
 usage= u1+u2
@@ -113,8 +111,6 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     return
 endif  ;; end example
 
-
-
 if (n_elements(N) ne 0) and (n_elements(size) ne 0)   then begin
   print, 'create field, N = ', N, 'pts   size = ', size
   create = 1
@@ -130,7 +126,6 @@ if n_elements(field) eq 0 then print, usage
 if n_elements(type ) eq 0 then print, usage
 if n_elements(plot ) eq 0 then plot=0
 if n_elements(P2 )   eq 0 then P2=1
-
 
 print, 'type = ', type
 
@@ -155,50 +150,50 @@ for i=0, nz-1 do begin
         case type of
 
             1 : begin                                  ;; rectangular 
-                if (  (abs(z_vec[i]) le P1half) and (abs(y_vec[j]) le P2half) ) then T[i,j]= double(1.0)
+               if (  (abs(z_vec[i]) le P1half) and (abs(y_vec[j]) le P2half) ) then T[i,j]= double(1.0)
             end
             
             2 : begin                                 ;; vertical slit
-                if  (abs(z_vec[i]) le P1half) then T[i,j]= double(1.0)
+               if  (abs(z_vec[i]) le P1half) then T[i,j]= double(1.0)
             end
             
             3 : begin                               ;; horizontal slit
-                if  (abs(y_vec[j]) le P1half) then T[i,j]= double(1.0)
+               if  (abs(y_vec[j]) le P1half) then T[i,j]= double(1.0)
             end
             
             12 : begin                         ;; double slit vertical
-                if ( (abs(z_vec[i]) le (p2half+p1half)) and (abs(z_vec[i]) ge (p2half-p1half)) ) then T[i,j]= double(1.0)
+               if ( (abs(z_vec[i]) le (p2half+p1half)) and (abs(z_vec[i]) ge (p2half-p1half)) ) $
+               then T[i,j]= double(1.0)
             end
             
-            13 : begin                      ;; double slit horizontal 
-                if ( (abs(y_vec[j]) le (p2half+p1half)) and (abs(y_vec[j]) ge (p2half-p1half))) then T[i,j]= double(1.0)
+            13: begin                      ;; double slit horizontal 
+               if ( (abs(y_vec[j]) le (p2half+p1half)) and (abs(y_vec[j]) ge (p2half-p1half))) $
+               then T[i,j]= double(1.0)
             end
             
-            
-            20 : begin                                    ;; circular 
-                rr= (z_vec[i]^2 + y_vec[j]^2)           
-                if ((P1 ge 0) and (rr le P1^2)) then T[i,j]=double(1.0)
-                if ((P1 le 0) and (rr ge P1^2)) then T[i,j]=double(1.0)
+            20: begin                                    ;; circular 
+               rr= (z_vec[i]^2 + y_vec[j]^2)           
+               if ((P1 ge 0) and (rr le P1^2)) then T[i,j]= double(1.0)
+               if ((P1 le 0) and (rr ge P1^2)) then T[i,j]= double(1.0)
             end
             
-            21 : begin                                      ;; annular
-                rr= (z_vec[i]^2 + y_vec[j]^2)           
-                if ((rr le P1^2) and (rr ge P2^2)) then T[i,j]=double(1.0)                 
+            21: begin                                      ;; annular
+               rr= (z_vec[i]^2 + y_vec[j]^2)           
+               if ((rr le P1^2) and (rr ge P2^2)) then T[i,j]= double(1.0)                 
 ;                  if (rr le P1^2) then T[i,j]=double(1.0)
             end
             
             32: begin                             ;; vertical mirror (assuming l= infinite)
-                
-                if  (abs(y_vec[j]) le aphalf) then T[i,j]= double(1.0)
+               if  (abs(y_vec[j]) le aphalf) then T[i,j]= double(1.0)
             end
 
             33: begin                             ;; horizontal mirror (assuming l= infinite)
-                if  (abs(z_vec[i]) le aphalf) then T[i,j]= double(1.0)
+               if  (abs(z_vec[i]) le aphalf) then T[i,j]= double(1.0)
             end
             
             else : begin
-                print, ' type ', type, ' not defined'
-                return         
+               print, ' type ', type, ' not defined'
+               return         
             end   
         endcase
         
@@ -209,7 +204,8 @@ if n_elements(ap) then print, 'aperture size (mm)= ', ap*1e3
 
 if (plot ne 0) then begin
      window,20, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=0,YPOS=0
-     mycontour, T,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Transmission Aperture' + string(type) ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+     mycontour, T,z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', $
+                title='Transmission Aperture' + string(type) ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 endif
 
 field = field * T 
