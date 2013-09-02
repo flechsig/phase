@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 16:57:37 flechsig> 
+;  Time-stamp: <02 Sep 13 12:01:33 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -116,7 +116,7 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     return
 endif  ;; end example
 
-if n_elements(Nz        ) eq 0 then Nz        = 100  
+if n_elements(Nz        ) eq 0 then Nz        = 151  
 if n_elements(Ny        ) eq 0 then Ny        = Nz  
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
 if n_elements(w0        ) eq 0 then w0        = 1e-5  
