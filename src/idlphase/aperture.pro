@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <2013-09-01 23:14:22 flechsig> 
+;  Time-stamp: <02 Sep 13 10:37:46 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -104,7 +104,7 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     print, '**********************************************************'
     print, 'example: double slit '
     print, '**********************************************************'
-    aperture, field=field, y_vec=y_vec, z_vec=z_vec, type=10, p1=2e-3, p2=5e-3, N=51, size=2e-2, /plot
+    aperture , field=field, y_vec=y_vec, z_vec=z_vec, type=12, p1=2e-3, p2=5e-3, N=51, size=2e-2, /plot
     print, '**********************************************************'
     print, 'end example'
     print, '**********************************************************'
