@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 15:55:02 flechsig> 
+;  Time-stamp: <30 Aug 13 13:47:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -93,6 +93,7 @@ if n_elements(drift)      eq 0 then drift      = 120.
 if n_elements(focusdist)  eq 0 then focusdist  = 11.715
 if n_elements(nimages)    eq 0 then nimages    = 35          ;; number of foci to try around focusdist +/- 0.5 depth
 if n_elements(depth)      eq 0 then depth      = 1.          ;; depth for focus search
+if n_elements(filename)   eq 0 then filename   = 'crl_focus_1A'
 
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
@@ -124,6 +125,8 @@ title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(
 window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
 
 mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+name= filename+'-1.png'
+spng, name
 
 if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
 if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
@@ -144,9 +147,13 @@ title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2
 
 window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy 
 mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
+name= filename+'-3.png'
+spng, name
 
 window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-2*wy 
 mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
+name= filename+'-4.png'
+spng, name
 
 ;;;;;;;;;;;;;;;;;;;;; crl ;;;;;;;;;;;;;;;;;;;;;;;;
 print, 'call crl'
@@ -154,9 +161,13 @@ crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=cr
 
 window,5, RETAIN=2, XSIZE=wx, YSIZE=wy , XPOS=screenx-wx, YPOS=screeny-3*wy 
 mycontour, crlamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)', xrange=[-0.3,0.3], yrange=[-0.3,0.3], zrange=[0.9, 1.0]
+name= filename+'-5.png'
+spng, name
      
 window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-3*wy 
 mycontour, crlphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)' ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+name= filename+'-6.png'
+spng, name
 
 result= dblarr(3, Nimages)
 
@@ -185,6 +196,8 @@ plot,   result(0,*), result(1,*)*1e6, xtitle='distance from CRL (m) ', ytitle=te
 oplot,  result(0,*), result(1,*)*1e6, color=1
 oplot,  result(0,*), result(2,*)*1e6, color=2
 legend, ['horizontal','vertical'], linestyle=[0,0], color=[1,2]
+name= filename+'-20.png'
+spng, name
 
 print, '***************************'
 print, 'calculate and print minimum'
@@ -209,11 +222,15 @@ mima= 10.   ; for xrange
 
 window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-4*wy 
 mycontour, bamp2  ,z_vec*1e6, y_vec*1e6, xtitle=textoidl('z (\mum)'), ytitle=textoidl('y (\mum)'), title= 'Intensity: '+title, xrange=[-mima,mima] ,yrange=[-mima,mima]
+name= filename+'-7.png'
+spng, name
 
 bphase = atan(field,/PHASE)
 
 window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-4*wy 
 mycontour, bphase, z_vec*1e6, y_vec*1e6, xtitle=textoidl('z (\mum)'), ytitle=textoidl('y (\mum)'), title= title, xrange=[-mima,mima] ,yrange=[-mima,mima]
+name= filename+'-8.png'
+spng, name
 
 print, 'spatial resolution (mm) = ', (z_vec[1]-z_vec[0])*1e3
 ;; end
