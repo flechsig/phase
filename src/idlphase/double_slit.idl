@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/double_slit.idl
 ;  Date      : <29 Aug 13 15:35:45 flechsig> 
-;  Time-stamp: <30 Aug 13 09:27:33 flechsig> 
+;  Time-stamp: <02 Sep 13 12:18:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -85,9 +85,10 @@ if n_elements(sep)        eq 0 then sep  = 1e-3             ;; slit separation
 if n_elements(width)      eq 0 then width= 1e-4             ;; slit width
 if n_elements(type)       eq 0 then type = 12               ;; slit type
 if n_elements(fname)      eq 0 then fname = 'dslit'         ;; filename.png
+if n_elements(nz)         eq 0 then nz=    100              ;; 100
 
 window,1, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy
-gaussbeam, field=field, z_vec=z_vec, y_vec=y_vec, dist=dist0, wavelength=wavelength, w0=w0, sizez=1e-2
+gaussbeam, field=field, z_vec=z_vec, y_vec=y_vec, dist=dist0, wavelength=wavelength, w0=w0, sizez=1e-2, Nz=Nz
 title= 'gaussbeam intensity after ' + string(dist0,FORMAT="(f6.1)") + ' m'
 mycontour, abs(field)^2, z_vec*1e3, y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)'
 filename= fname+'-0.png'
