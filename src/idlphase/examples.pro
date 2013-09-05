@@ -67,10 +67,13 @@ phaIntensitySurface,beam,'Gauss-Source 193x67'
 ;  Change number of gridpoints (don't change borders) , because FFT works fastest 
 ;  with a number of gridpoints, which is a product of small prime-factors, eg.: 128=2^7
 ;                 nz, ny 
+
+; phaModGrid,beam,128,128
+
 ;; UF 20.8.13 function not found phaModGrid,beam,128,128
 phaModGridPoints,beam,128,128
 
-print,'phaModGrid ...'
+; print,'phaModGrid ...'
 phaIntensitySurface,beam,'Gauss-Source 128x128'
 
 
