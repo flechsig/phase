@@ -30,26 +30,28 @@ dnl Checks for programs.
 AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_YACC
-dnl AC_PROG_CC
+
+# Probleme mit mpicc, daher mpi auskommentiert am 5.9.2013 Johannes
+AC_PROG_CC
 dnl includes mpi (replacement of AC_PROG_CC)
 #If --with-mpi=auto is used, try to find MPI, but use standard C compiler if it is not found.
 # If --with-mpi=yes is used, try to find MPI and fail if it isn't found.
 # If --with-mpi=no is used, use a standard C compiler instead.
-AC_ARG_WITH(mpi, 
-  [AS_HELP_STRING([--with-mpi],
-     [compile with MPI (parallelization) support. If none is found,
-      MPI is not used. Default: auto])
-  ],,[with_mpi=auto])
+#AC_ARG_WITH(mpi, 
+#  [AS_HELP_STRING([--with-mpi],
+#     [compile with MPI (parallelization) support. If none is found,
+#      MPI is not used. Default: auto])
+#  ],,[with_mpi=auto])
 #
-AX_PROG_CC_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
-  use_mpi=no
-  if test x"$with_mpi" = xyes; then
-     AC_MSG_FAILURE([MPI compiler requested, but couldn't use MPI.])
-  else
-     AC_MSG_WARN([No MPI compiler found, won't use MPI.])
-  fi
-])
-
+#AX_PROG_CC_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
+#  use_mpi=no
+#  if test x"$with_mpi" = xyes; then
+#     AC_MSG_FAILURE([MPI compiler requested, but couldn't use MPI.])
+#  else
+#     AC_MSG_WARN([No MPI compiler found, won't use MPI.])
+#  fi
+#])
+# Ende der Aenderungen vom 5.9.2013
 
 AC_PROG_CPP
 AC_PROG_INSTALL
@@ -470,8 +472,9 @@ AC_C_VOLATILE     # autoscan
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE # autoscan
-AC_FUNC_MALLOC        # autoscan
-AC_FUNC_REALLOC       # autoscan
+# removed these chks because they produce sophisticated errors, JB, 5.9.2013
+# AC_FUNC_MALLOC        # autoscan
+# AC_FUNC_REALLOC       # autoscan
 AC_FUNC_STAT          # autoscan
 AC_CHECK_FUNCS([bzero memset pow sqrt strchr strrchr strstr]) # autoscan
 
