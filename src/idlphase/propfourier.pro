@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 16:25:27 flechsig> 
+;  Time-stamp: <09 Sep 13 09:25:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -178,14 +178,14 @@ p0         = drift  MOD wavelength
 
 for i=0, Nz-1 do begin
     for j=0, Ny-1 do begin
-         arg = 1.0 - (u[i]*wavelength)^2 -  (v[j]*wavelength)^2
+         arg = 1.0 - (u[i]*wavelength)^2 - (v[j]*wavelength)^2
          IF (arg>0) THEN BEGIN
-           arg            = sqrt(arg)
+           arg           = sqrt(arg)
            phase[i,j]    = ((drift *(arg - 1.0) ) MOD wavelength ) * k + P0  * k   ;; numerically more accurate than next line
 ;;         phase[i,j]    = k * drift* arg                                          ;; Phase according text book
            propagator[i,j]= complex( cos(phase[i,j]), sin(phase[i,j]), /double)
          ENDIF ELSE BEGIN  
-           print,'driftnear.pro: sqrt of neg. argument, evanescent waves ',arg, ' i = ',i, 'j = ',j
+           print,'driftnear.pro: sqrt of neg. argument, evanescent waves ', arg, ' i = ',i, 'j = ',j
            arg            = sqrt(-1.0*arg)
            phase          = -1.0 * k * drift* arg  
            if (phase le -40) then phase = -40   
