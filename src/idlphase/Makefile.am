@@ -70,6 +70,7 @@ idl_DATA  = help.html \
         crl_focus_1A.idl \
 	MeinSpieglein.coeff \
         mirror_test.idl \
+        mirror_test_kb.idl \
 	pha4idl.compile_all.idl \
 	phaBatchmode.pro \
 	phaBeamline.pro \

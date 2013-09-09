@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mirror_test.idl
 ;  Date      : <30 Aug 13 15:05:02 flechsig> 
-;  Time-stamp: <30 Aug 13 16:44:39 flechsig> 
+;  Time-stamp: <03 Sep 13 15:37:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -20,7 +20,6 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-
 if n_elements(Nz)          eq 0 then Nz         = 151
 if n_elements(wavelength)  eq 0 then wavelength = 1e-10
 if n_elements(rms)         eq 0 then rms        = 25.2e-6  ;;; 1e-10m, 25.2e-6 m; 1.1e-6 rad
@@ -28,6 +27,7 @@ if n_elements(rms)         eq 0 then rms        = 25.2e-6  ;;; 1e-10m, 25.2e-6 m
 if n_elements(waist)      eq 0 then waist      = 27.7e-6
 if n_elements(sourcedist) eq 0 then sourcedist = 65
 if n_elements(w)          eq 0 then w = 0.4
+if n_elements(filename)   eq 0 then filename   = 'mirror_1A_04m'
 
 stat       = dblarr(7) 
 
@@ -53,11 +53,14 @@ fit  = gauss2dfit(bamp2, stat, z_vec, y_vec)
 window, 21, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy
 title = 'source intensity, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
 mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
+name= filename+'-1.png'
+spng, name
 
 window, 11, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-1*wy
 title = 'source phase'
 mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
-
+name= filename+'-2.png'
+spng, name
 
 ;; for 1e-10 nm
 sigr= 25.2e-6
@@ -86,15 +89,18 @@ fit  = gauss2dfit(bamp2, stat, z_vec, y_vec)
 print,'rms (mm)=',stat[2]*1e3
 
 window, 22, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy
-title = 'intensity after mirror, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
+title = 'intensity after 2nd mirror, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
 mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
+name= filename+'-3.png'
+spng, name
 
 window, 12, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-2*wy
-title = 'phase after mirror'
+title = 'phase after 2nd mirror'
 mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
+name= filename+'-4.png'
+spng, name
 
-
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=240.
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=50.
 bamp = abs(field)
 bamp = bamp/max(bamp)
 bamp2= bamp^2
@@ -105,7 +111,11 @@ print,'rms (mm)=',stat[2]*1e3
 window, 23, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy
 title = 'intensity at screen, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
 mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
+name= filename+'-5.png'
+spng, name
 
 window, 13, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-3*wy
 title = 'phase at screen'
 mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
+name= filename+'-6.png'
+spng, name
