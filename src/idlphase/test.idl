@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <28 Aug 13 08:33:54 flechsig> 
+;  Time-stamp: <29 Aug 13 15:55:02 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -84,84 +84,44 @@ ScreenY=size[1]
 Wx=ScreenX/4
 Wy=ScreenY/4
 
+Nzero      = 0
+Ninter     = 0                ;; interpolation
 
-Nz         = 151
-Nz         = 151
-wavelength = 1d-10
-sourcedist = 0
-waist      = 27.7d-6 
 
-drift=400
+ Nz         = 151
+ wavelength = double(1d-10)
+ sourcedist = 0
+ drift      = 120.
+ focusdist  = 11.715
+ nimages    = 11          ;; number of foci to try around focusdist +/- 0.5 depth
+ depth      = 1.          ;; depth for focus search
+
+
+ waist      = double(27.7e-6) 
+ crldist   = double(120.0)
+ focusdist = double(2.5)
+ depth     = double(0.5)
+
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
 stat       = dblarr(7)
 
-gaussbeam, dist=drift, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=waist,  wavelength=wavelength
+
+h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+drift = 120 
+propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+crl, z_vec=z_vec, y_vec=y_vec, radius=(223.3e-6/17) ,size=500e-6, field=field,  wavelength=wavelength
+
+;bcomp = field   ;; save field
+;field=bcomp
+drift=2.6
 
 
-help, z_vec
+ propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength 
 
-source = field
-bamp=abs(field)
-   title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + textoidl(' \mum^2')
-   window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-   mycontour, bamp, z_vec, y_vec, xtitle='z (m)', ytitle='y (m)', title=title
+ bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
 
-sphase = atan(field,/PHASE)
-sz     = z_vec
-   window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
-   mycontour, sphase, z_vec, y_vec, xtitle='z (m)', ytitle='y (m)', title=title
-
-
-gaussbeam, dist=0, Nz=Nz, sizez= 6e-4, z_vec=z_vec, y_vec=y_vec, field=field , w0=waist,  wavelength=wavelength
-   
-print, 'call drift', drift, ' m'
-print,string(drift, format='(%"test.idl drift= %18.14g m")')
+ width=0.04
  
- help, z_vec, drift
-
-propfourier, drift=drift/2, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
-; prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
-; propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
-
-   propphase = atan(field,/phase)
-   propamp   = abs(field)  
-   propamp   = propamp/max(propamp)
-
-   title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6, FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)")+ textoidl(' \mum^2')
-
-   window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-2*wy 
-   mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
-
-   window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-2*wy 
-   mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
-
-
-propfourier, drift=drift/2, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
-; prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=200, Nv=200, Npi=0, plot=0
-; propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
-
-   propphase = atan(field,/phase)
-   propamp   = abs(field)  
-   propamp   = propamp/max(propamp)
-
-   title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6, FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6, FORMAT="(f6.1)")+ textoidl(' \mum^2')
-
-   window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=screeny-3*wy 
-   mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
-
-   window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-3*wy 
-   mycontour, propphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
-
-
-   window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx, YPOS=screeny-4*wy 
- 
-   sp = size(propphase)
-   plot,sz, sphase(*,Nz/2)
-   oplot,z_vec, propphase(*,sp[2]/2), color=2
-
-
-
-
-
-
-
+ title = 'smallest spot at ' + string(drift1,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
+ window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
+ mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)';;, title= 'Intensity: '+title, xrange=[-width/2,width/2] ,yrange=[-width/2,width/2]

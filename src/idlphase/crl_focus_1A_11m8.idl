@@ -87,7 +87,8 @@ Wy=ScreenY/4
 
 Nz         = 151
 Nzero      = 301
-Ninter     = 5                 ;; interpolation
+Nzero      = 0
+Ninter     = 0                ;; interpolation
 wavelength = 1d-10
 sourcedist = 0
 waist      = 27.7d-6 
@@ -114,26 +115,26 @@ stat       = dblarr(7)
 
   h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
 
+wavelength=double(1.1e-10)
+
+
  resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero =Nzero, Ninter = Ninter
 
- ; ------------------------------------------------ Done ---
   bamp = abs(field)
   bamp = bamp/max(bamp)
 ;  fit  = gauss2dfit(bamp, stat, z_vec, y_vec) 
 
   title= 'Source '+  string(sourcedist,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)") + ' um^2'
   window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
-    mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
- if (sourcedist ne 0) then  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
- if (sourcedist ne 0) then  bamp = atan(bcomp,/phase)
- if (sourcedist ne 0) then  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='Source: Gaussbeam (phase)'
-drift = 120
- print, 'call drift', drift, ' m'
+  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 
+
+drift = 120
  
-;propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
  propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+
 ;  prophuygens, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, Nu=900, Nv=900, Npi=0, plot=0
+;  propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
 
   propphase = atan(field,/phase)
   propamp   = abs(field)  
@@ -142,22 +143,15 @@ drift = 120
 ;  fit  = gauss2dfit(propamp, stat, z_vec, y_vec) 
 
  title = 'Prop. to ' +  string(drift,FORMAT="(f6.1)") + 'm size='+  string(stat(2)*1e6,FORMAT="(f6.1)")+ ' x ' +string(stat(3)*1e6,FORMAT="(f6.1)")+ ' um^2'
-
  window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
  mycontour, propamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title+ ' (amp)'
- window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
- mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title + ' (phase)'
 
+crl, z_vec=z_vec, y_vec=y_vec, radius=(223.3e-6/17) ,size=500e-6, field=field,  wavelength=wavelength
 
-print, 'call crl'
-
-
-crl, z_vec=z_vec, y_vec=y_vec, radius=48e-6 ,size=500e-6, field=field, crlamp=crlamp, crlphase=crlphase, wavelength=wavelength
-
-     window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
-     mycontour, crlamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
-     window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
-     mycontour, crlphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+;      window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
+;      mycontour, crlamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+;     window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+;     mycontour, crlphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='CRL (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 
 bamp     =0
@@ -165,23 +159,23 @@ crlamp   =0
 crlphase =0
 propamp  =0
 propphase=0
- 
- drift =  11.75                                          ;; System variable !c contains subscript of minimum, see help for function MIN
-crl = field
+drift = 2.6                                    ;; System variable !c contains subscript of minimum, see help for function MIN
 
- propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
-; propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+;resize, z_vec=z_vec, y_vec=y_vec,field=field, Nzero =0, Ninter = 2
+
+; propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
+  propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
  
  bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
-; fit= gauss2dfit(bamp, stat, z_vec, y_vec)
+ title = 'Spot at ' + string(drift,FORMAT="(f5.1)") + ' m'
 
- title = 'smallest spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6,FORMAT="(f4.2)")+ ' um (rms)'
-
+ width=0.04
  window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
- mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Intensity: '+title, xrange=[-0.005,0.005] ,yrange=[-0.005,0.005]
+ mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Intensity: '+title;;, xrange=[-width/2,width/2] ,yrange=[-width/2,width/2]
 
+; fit= gauss2dfit(bamp, stat, z_vec, y_vec)
+; title = 'Spot at ' + string(drift,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6,FORMAT="(f4.2)")+ ' um (rms)'
 ; bphase = atan(field,/PHASE)
-
 ; window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
 ; mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= title,xrange=[-0.01,0.01] ,yrange=[-0.01,0.01]
 
@@ -191,6 +185,7 @@ crl = field
 
 
 
+writefield, field=bamp, z_vec=z_vec, y_vec=y_vec, filename='spot_'+ string(drift,FORMAT="(f4.1)") + '.dat', zmin=-4e-6, zmax = 4e-6, ymin=-4e-6, ymax=4e-6
 
 
 

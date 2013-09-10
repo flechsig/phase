@@ -120,13 +120,15 @@ kev   = 1e-3* 1240e-9/wavelength     ;; photon energy in keV
 mu    = mu3kev+    ((mu12p4kev- mu3kev)/(12.4- 3.0))       * (kev- 3.0)
 delta = delta3kev+ ((delta12p4kev- delta3kev)/(12.4- 3.0)) * (kev- 3.0)
 
+;delta = rene  * wavelength*wavelength /(!dpi*2.0)
+
 mu    = mu12p4kev         ;; hard for 1 A
-delta = delta12p4kev
+;delta = delta12p4kev
 
 if (mu    lt 0.0) then mu   = 0.0     ;; avoid overflow
 if (delta lt 0.0) then delta= 0.0     ;; avoid overflow
 
-print,'photon energy=', kev,', mu=', mu, ', delta=', delta,', aperture=', 2.0*maxr 
+print,'photon energy=', kev,', mu=', mu, ', delta=', delta,' radius = ',radius,' aperture=', 2.0*maxr 
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
@@ -162,13 +164,21 @@ endfor
 field = field * crlcomp
 
 ;; calculate  phase and ampliude of crl-propagator 
+
+if n_elements(crlamp) ne 0 then begin
   print, ' calculate crlamp '
   crlamp  = dblarr(nz, ny)      ;; make real array for amplitude
   crlamp  = abs(crlcomp)
+endif
+
+if n_elements(crlphase) ne 0 then begin
+
   print, ' calculate crlphase '
   crlphase= dblarr(nz, ny)      ;; make real array for phase
   crlphase= atan(crlcomp, /phase)
 
+endif
+ 
 print,'crl end'
 return
 end
