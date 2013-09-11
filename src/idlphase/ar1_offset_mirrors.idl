@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mirror_test.idl
 ;  Date      : <30 Aug 13 15:05:02 flechsig> 
-;  Time-stamp: <11 Sep 13 11:37:57 flechsig> 
+;  Time-stamp: <11 Sep 13 13:52:17 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -20,7 +20,7 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 if n_elements(wavelength) eq 0 then wavelength = 4e-10
-if n_elements(w)          eq 0 then w = 0.6
+if n_elements(w)          eq 0 then w = 0.2
 if n_elements(filename)   eq 0 then filename   = 'mirror'
 
 if  wavelength lt 2e-10 then fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'  else fname0 ='/afs/psi.ch/project/phase/data/SwissFEL_3keV.out.dfl.h5'
@@ -30,6 +30,8 @@ if  wavelength lt 0.0 then fname0     ='/afs/psi.ch/project/phase/data/SwissFEL_
 stat       = dblarr(7) 
 
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field, /verbose
+
+
 
 bamp = abs(field)
 bamp = bamp/max(bamp)
@@ -49,7 +51,10 @@ mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', titl
 name= filename+'-2.png'
 spng, name
 
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=65.
+resize, z_vec=z_vec, y_vec=y_vec, field=field, Nzero=301
+
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=65., wavelength=wavelength
+;propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=65., wavelength=wavelength
 
 bamp = abs(field)
 bamp = bamp/max(bamp)
@@ -71,11 +76,12 @@ name= filename+'-4.png'
 spng, name
 
 ;two mirrors
-aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=w, p2=3e-3
+aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=w, p2=3e-3, /verbose
 
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=10.
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=10., wavelength=wavelength
+;propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=10., wavelength=wavelength
 
-aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=w, p2=3e-3
+aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=w, p2=3e-3, /verbose
 
 
 bamp = abs(field)
@@ -97,9 +103,11 @@ mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', titl
 name= filename+'-6.png'
 spng, name
 
+resize, z_vec=z_vec, y_vec=y_vec, field=field, Nzero=401
 
 ;; to the screen
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=50.
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=50.,wavelength=wavelength
+;;propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=10., wavelength=wavelength
 
 bamp = abs(field)
 bamp = bamp/max(bamp)
