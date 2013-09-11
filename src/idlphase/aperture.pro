@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <02 Sep 13 10:37:46 flechsig> 
+;  Time-stamp: <11 Sep 13 13:17:08 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,7 +10,7 @@
 ;  $Author$ 
 
 pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, $
-              P1=P1, P2=P2,  plot=plot, N=N, size=size
+              P1=P1, P2=P2,  plot=plot, N=N, size=size, verbose=verbose
 ;+
 ; NAME:
 ;   aperture
@@ -138,9 +138,56 @@ T  = dblarr(nz, ny)* 0.0
 
 help, T
 
+if n_elements(verbose) ne 0 then begin
+    case type of
+
+            1 : begin                                  ;; rectangular 
+               print, 'rectangular aperture'
+            end
+            
+            2 : begin                                 ;; vertical slit
+              print, 'vertical slit'
+            end
+            
+            3 : begin                               ;; horizontal slit
+               
+            end
+            
+            12 : begin                         ;; double slit vertical
+               
+            end
+            
+            13: begin                      ;; double slit horizontal 
+             
+            end
+            
+            20: begin                                    ;; circular 
+              
+            end
+            
+            21: begin                                      ;; annular
+            
+            end
+            
+            32: begin                             ;; vertical mirror (assuming l= infinite)
+              print, 'mirror vertical'
+            end
+
+            33: begin                             ;; horizontal mirror (assuming l= infinite)
+              print, 'mirror horizontal'
+            end
+            
+            else : begin
+               print, ' type ', type, ' not defined'
+               return         
+            end   
+        endcase
+    endif
+
+
 p1half= 0.5 * p1
 p2half= 0.5 * p2
-ap    = P1 * sin(P2)
+ap    = P1  * sin(P2)
 aphalf= 0.5 * ap
 
 for i=0, nz-1 do begin
