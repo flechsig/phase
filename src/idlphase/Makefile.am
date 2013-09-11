@@ -29,6 +29,7 @@ idl_with_doc_header = \
 	test_crl.idl \
 	double_slit.idl \
 	drift.pro \
+	driftfrauenhofer.pro \
 	drift_crl_test.idl \
         drift_test.idl \
         emf_statistics.pro \
