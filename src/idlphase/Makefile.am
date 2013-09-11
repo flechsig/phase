@@ -63,6 +63,7 @@ idl_with_doc_header = \
 	read_extr_out.pro \
         read_int_file.pro \
         read_opti_out.pro \
+        resize.pro \
         tag_exist.pro
 
 ## everything 2b installed in idldir
