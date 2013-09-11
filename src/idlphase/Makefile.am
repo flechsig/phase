@@ -89,6 +89,7 @@ idl_DATA  = help.html \
         phaLoadEMField.pro \
 	phaSaveEMField.pro \
 	propfourier.pro \
+        propagation_test.idl \
 	read_extr_out.pro \
 	read_int_file.pro \
 	read_opti_out.pro \
