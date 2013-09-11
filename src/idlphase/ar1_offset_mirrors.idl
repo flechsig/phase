@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mirror_test.idl
 ;  Date      : <30 Aug 13 15:05:02 flechsig> 
-;  Time-stamp: <11 Sep 13 11:20:44 flechsig> 
+;  Time-stamp: <11 Sep 13 11:37:57 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -25,9 +25,11 @@ if n_elements(filename)   eq 0 then filename   = 'mirror'
 
 if  wavelength lt 2e-10 then fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'  else fname0 ='/afs/psi.ch/project/phase/data/SwissFEL_3keV.out.dfl.h5'
 
+if  wavelength lt 0.0 then fname0     ='/afs/psi.ch/project/phase/data/SwissFEL_3keV.out.dfl.harm3.h5'
+
 stat       = dblarr(7) 
 
-h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
+h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field, /verbose
 
 bamp = abs(field)
 bamp = bamp/max(bamp)
