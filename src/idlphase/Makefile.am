@@ -68,6 +68,7 @@ idl_with_doc_header = \
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
 	$(idl_with_doc_header) \
+        ar1_offset_mirrors.idl \
         crl_focus_1A.idl \
 	MeinSpieglein.coeff \
         mirror_test.idl \
