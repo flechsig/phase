@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emfield.idl
 ;  Date      : <12 Sep 13 14:40:40 flechsig> 
-;  Time-stamp: <12 Sep 13 15:09:50 flechsig> 
+;  Time-stamp: <12 Sep 13 15:15:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -43,7 +43,7 @@ function emfield, field=field, y_vec=y_vec, z_vec=z_vec, wavelength=wavelength
 ;
 ;
 ; OUTPUTS:
-;
+;   a named structure
 ;
 ;
 ; OPTIONAL OUTPUTS:
@@ -67,8 +67,9 @@ function emfield, field=field, y_vec=y_vec, z_vec=z_vec, wavelength=wavelength
 ;
 ;
 ; EXAMPLE:
-;
-;
+;   IDL> emf= emfield(z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength)
+;   IDL> help, emf, /struct
+;   IDL> mycontour, abs(emf.field)
 ;
 ; MODIFICATION HISTORY:
 ;     UF 9/2013
