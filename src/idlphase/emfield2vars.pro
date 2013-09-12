@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emfield.idl
 ;  Date      : <12 Sep 13 14:40:40 flechsig> 
-;  Time-stamp: <12 Sep 13 15:29:16 flechsig> 
+;  Time-stamp: <12 Sep 13 15:32:01 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-procedure emfield2vars, emf, field=field, y_vec=y_vec, z_vec=z_vec, wavelength=wavelength
+pro emfield2vars, emf, field=field, y_vec=y_vec, z_vec=z_vec, wavelength=wavelength
 ;+
 ; NAME:
 ;   emfield2vars
