@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <12 Sep 13 11:40:57 flechsig> 
+;  Time-stamp: <12 Sep 13 13:53:41 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -110,9 +110,8 @@ if (Nzero ne 0) then begin
         zshift     = (NZero-s[0])/2             ;; the index to shift 
         yshift     = (Nzero-s[1])/2             ;; the index to shift
         Null[0,0]  = field                      ;; copy original field  
-        if n_elements(nocenter) eq 0 then shift(Null, zshift, yshift) ;; shift the field to the center
-        field      = Null
-
+        if n_elements(nocenter) eq 0 then field= shift(Null, zshift, yshift) else field= Null ;shift the field to the center
+       
 ;; now the vectors
         z0 = z_vec[0]                           ;; the start value
         y0 = y_vec[0]                           ;; the start value
