@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mirror_test.idl
 ;  Date      : <30 Aug 13 15:05:02 flechsig> 
-;  Time-stamp: <03 Sep 13 15:37:37 flechsig> 
+;  Time-stamp: <11 Sep 13 14:19:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -21,13 +21,13 @@ Wy=ScreenY/4
 
 
 if n_elements(Nz)          eq 0 then Nz         = 151
-if n_elements(wavelength)  eq 0 then wavelength = 1e-10
+if n_elements(wavelength)  eq 0 then wavelength = 7e-10
 if n_elements(rms)         eq 0 then rms        = 25.2e-6  ;;; 1e-10m, 25.2e-6 m; 1.1e-6 rad
 ;;; 7e-10m, 43.5e-6m; 6.4e-6 rad
 if n_elements(waist)      eq 0 then waist      = 27.7e-6
-if n_elements(sourcedist) eq 0 then sourcedist = 65
-if n_elements(w)          eq 0 then w = 0.4
-if n_elements(filename)   eq 0 then filename   = 'mirror_1A_04m'
+if n_elements(sourcedist) eq 0 then sourcedist = 65.
+if n_elements(w)          eq 0 then w = 0.7
+if n_elements(filename)   eq 0 then filename   = 'mirror_7A_07m' ;;'mirror_1A_04m'
 
 stat       = dblarr(7) 
 
@@ -78,7 +78,7 @@ print, '7A: sigzy65=', sigzy65
 ;aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=0.65, p2=3e-3
 aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=w, p2=3e-3
 ;two mirrors
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=10.
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=10., wavelength=wavelength
 aperture, field=field, z_vec=z_vec, y_vec=y_vec, type=33, p1=w, p2=3e-3
 
 bamp = abs(field)
@@ -100,7 +100,7 @@ mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', titl
 name= filename+'-4.png'
 spng, name
 
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=50.
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=50., wavelength=wavelength
 bamp = abs(field)
 bamp = bamp/max(bamp)
 bamp2= bamp^2
