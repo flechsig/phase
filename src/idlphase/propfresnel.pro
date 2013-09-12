@@ -80,7 +80,9 @@ pro propfresnel, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 ;    11.7.2013 UF
 ;    27.8.2013 RF renamed to propfourier 
 ;                 opererates on input field
-
+;    12.9.2013 RF sign change when calculateing the  origin
+;              RF width zz, yy corrected for N/(N-1)
+;
 ;;; UF I follow the the reference follath:2013f
 
 u1    = 'usage: propfresnel, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
@@ -112,8 +114,8 @@ k  = 2* !dpi/wavelength
 
 nz = n_elements(z_vec)
 ny = n_elements(y_vec)
-zz = z_vec[nz-1]- z_vec[0]                                      ;; total width
-yy = y_vec[ny-1]- y_vec[0]                                      ;; total width
+zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)                      ;; total width, 12.9.2013: corrected for nz/(nz-1)
+yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      ;; total height,     -"-
 
 print, 'width = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
 print, 'drift = ', drift
@@ -152,7 +154,7 @@ scale   = dcomplexarr(nz, ny)                                    ;; make a compl
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         phase = (u[i]^2 + v[j]^2) * k/(2.0*drift)             
-        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin
+        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin  12.9.2013: changed sign from - to +
         scale[i,j]= complex(cos(phase), sin(phase), /double)   
     endfor
 endfor
