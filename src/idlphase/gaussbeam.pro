@@ -12,7 +12,8 @@
 ;
 ;
 pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
-               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example, field=field
+               z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example, field=field,$
+               z_off=z_off, y_off = y_off
 ;+
 ; NAME:
 ;  gaussbeam  
@@ -99,7 +100,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;;; 
 
 u1= 'usage: gaussbeam,[dist=dist,][field=field,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
-u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot]'
+u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot], [z_off=z_off], [y_off=y_off]'
 usage= u1+u2
 
 print, 'gaussbeam called'
@@ -124,6 +125,8 @@ if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
 if n_elements(dist      ) eq 0 then dist      = 0.0
 if n_elements(bcomp     ) ne 0 then begin & print, 'obsolete keyword: bcomp- use keyword: field intead!' & return & endif
+if n_elements(z_off      ) eq 0 then z_off      = 0.0
+if n_elements(y_off      ) eq 0 then y_off      = 0.0
 
 dist       = double(dist)
 wavelength = double(wavelength)
@@ -132,12 +135,13 @@ sizez      = double(sizez)
 w0         = double(w0)
 
 field  = dcomplexarr(Nz, Ny) 
-z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez
-y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
+z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez 
+y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey 
 
 print, 'wavelength (m) = ',wavelength
 print, 'Nz     = ', Nz      , ', Ny     = ', Ny
 print, 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey
+print, 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off
 print, 'w0    (m) = ', w0      , ', dist  (m) = ', dist
 
 k   = !dpi * 2    / wavelength     ;; wave number
@@ -154,7 +158,7 @@ print, 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri
 truncation= 0 
 for i=0, Nz-1 do begin
   for j=0, Ny-1 do begin
-    rho2  =  z_vec[i]^2 + y_vec[j]^2 
+    rho2  =  (z_vec[i]-z_off)^2 + (y_vec[j]-y_off)^2 
     arg1  = -1 *  rho2 / w2               ;; the intensity factor as function of aperture
     if (arg1 le -40) then begin 
         arg1 = -40                        ;;  -40, but -80 is still ok

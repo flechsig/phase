@@ -1,0 +1,161 @@
+; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test the routines for wavefield propagation
+
+;+ 
+; NAME:
+;   drift_test
+;
+;
+; PURPOSE:
+;   test script for crl 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @crl_test.idl
+;
+;
+; MODIFICATION HISTORY:
+;    11.7.13 UF
+;-
+; comments.
+;   21.7.2013
+;    - gauss2dfit does not converge
+;    fname0: FWHM z = 20 um, y = 24 um
+;    fname1:          80 um      84 um
+;    fname :          28.2       37.6 um
+;
+
+;--------- Get Screen size in pixel -----------
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
+
+drift = 60
+Nz=301
+z_off=0.0001
+y_off=0.00005
+print, '---------------------Gaussbeam in distance dist ---------------------------------'
+
+gaussbeam, dist=drift, Nz=Nz,sizez=0.0006,  z_off=z_off, y_off=y_off, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 ,wavelength=wavelength
+
+bamp  = abs (field)
+bphase= atan(field,/phase)
+sz    = z_vec & sy = y_vec
+s     = total(bamp,2)
+s     = s/max(s)
+
+ window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+ mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam  (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+ window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
+
+
+
+print, '------------- Propagate  with Fresnel  -----------------------'
+
+
+gaussbeam  , dist =0, Nz=Nz,sizez=0.0006,  z_off=z_off, y_off=y_off, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 , wavelength=wavelength
+propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
+
+bamp   = abs(field)
+bphase = atan(field,/phase)
+
+h      = total(bamp,2)           ;  1dim-projection 
+h      = h/max(h)
+hz     = z_vec & hy = y_vec
+
+  window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
+  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+  window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
+  mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
+
+print, '------------- Propagated with Fourier  -----------------------'
+
+gaussbeam, dist=0, Nz=Nz,sizez=0.0006,  z_off=z_off, y_off=y_off, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 , wavelength=wavelength
+propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
+
+bamp = abs(field)
+bphase = atan(field,/phase)
+
+; 1dim-projection 
+g=total(bamp,2)
+g=g/max(g)
+gz = z_vec & gy = y_vec
+
+ window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
+ mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+
+ window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fourier propagation (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
+
+
+window,10, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx, YPOS=0
+plot , gz, g,YRANGE=[0,1], xtitle='width (mm) ', ytitle='Norm. Amplitude'
+oplot, hz, h, color=2
+oplot, sz, s, color=4
+
+
