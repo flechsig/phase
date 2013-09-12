@@ -33,6 +33,7 @@ idl_with_doc_header = \
 	drift_crl_test.idl \
         drift_test.idl \
         emf_statistics.pro \
+        emfield.pro \
         gaussbeam.pro \
 	h5_check_type.pro \
         h5_plot.pro \
