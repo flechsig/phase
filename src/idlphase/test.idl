@@ -103,25 +103,35 @@ Ninter     = 0                ;; interpolation
  depth     = double(0.5)
 
 fname0     ='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+fname0     ='/afs/psi.ch/project/phase/data/SwissFEL_3keV.out.dfl.h5'
+fname0     ='/afs/psi.ch/project/phase/data/SwissFEL_3keV.out.dfl.harm3.h5'
 stat       = dblarr(7)
 
 
 h5_read, fname0, z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, zcomp=field
-drift = 120 
+
+ bamp = abs(field)
+ width=0.2
+ window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+ mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title= 'Amp Source', xrange=[-width/2,width/2] ,yrange=[-width/2,width/2]
+
+ z=z_vec & y = y_vec & f = field
+
+drift = 60 
+
 propfourier , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength
-crl, z_vec=z_vec, y_vec=y_vec, radius=(223.3e-6/17) ,size=500e-6, field=field,  wavelength=wavelength
+bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
+width=0.8
+title = 'fourier ' + string(drift1,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
+window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy 
+mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', xrange=[-width/2,width/2] ,yrange=[-width/2,width/2]
 
-;bcomp = field   ;; save field
-;field=bcomp
-drift=2.6
+ z_vec =z &  y_vec = y &  field = f
 
+propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength 
 
- propfresnel , drift=drift, z_vec=z_vec, y_vec=y_vec, field=field, wavelength=wavelength 
-
- bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
-
- width=0.04
- 
- title = 'smallest spot at ' + string(drift1,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
- window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
- mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)';;, title= 'Intensity: '+title, xrange=[-width/2,width/2] ,yrange=[-width/2,width/2]
+bamp=abs(field)& bamp=bamp/max(bamp)& bamp=bamp^2
+width=0.8
+title = 'fresnel ' + string(drift1,FORMAT="(f5.1)") + ' m, size = '+ string(stat[2]*1e6, FORMAT="(f4.2)")+ textoidl(' \mum (rms)')
+window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-4*wy 
+mycontour, bamp  ,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', xrange=[-width/2,width/2] ,yrange=[-width/2,width/2]

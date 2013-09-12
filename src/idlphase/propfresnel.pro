@@ -152,7 +152,7 @@ scale   = dcomplexarr(nz, ny)                                    ;; make a compl
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         phase = (u[i]^2 + v[j]^2) * k/(2.0*drift)             
-        phase = phase - (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin
+        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin
         scale[i,j]= complex(cos(phase), sin(phase), /double)   
     endfor
 endfor

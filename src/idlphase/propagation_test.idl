@@ -20,20 +20,15 @@ Wx=ScreenX/4
 Wy=ScreenY/4
 
 
-if n_elements(Nz)          eq 0 then Nz         = 151
-if n_elements(wavelength)  eq 0 then wavelength = 1e-10
-if n_elements(rms)         eq 0 then rms        = 25.2e-6  ;;; 1e-10m, 25.2e-6 m; 1.1e-6 rad
-;;; 7e-10m, 43.5e-6m; 6.4e-6 rad
-if n_elements(waist)      eq 0 then waist      = 27.7e-6
-if n_elements(sourcedist) eq 0 then sourcedist = 65.
-if n_elements(drift)      eq 0 then drift      = 10.
-if n_elements(filename)   eq 0 then filename   = 'propagation_test'
-
+Nz         = 201
+wavelength = 1d-10
+rms        = 25.2d-6  ;;; 1e-10m, 25.2e-6 m; 1.1e-6 rad
+waist      = 27.7d-6
+sourcedist = 65.0d0
+drift      = 10.0d0
+filename   = 'propagation_test'
 stat       = dblarr(7) 
-
-if wavelength gt 6e-10 then begin sizez= 3e-3 & waist=24.5e-6 & endif $
-else begin sizez=6e-4 & waist=20e-6 & endelse 
-
+sizez      = 5d-4
 ;; source
 gaussbeam, dist=sourcedist, Nz=Nz, sizez=sizez, z_vec=z_vec, y_vec=y_vec, field=field , w0=waist,  wavelength=wavelength
 
@@ -43,26 +38,20 @@ bamp2  = bamp^2
 bphase = atan(field, /PHASE)
 fit    = gauss2dfit(bamp2, stat, z_vec, y_vec)
 
-window, 21, XSIZE=wx, YSIZE=wy , XPOS=screenx-2*wx, YPOS=screeny-1*wy
+window, 21, RETAIN=2, XSIZE=wx, YSIZE=wy , XPOS=screenx-2*wx, YPOS=screeny-1*wy
 title = 'source intensity, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
 mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
 name= filename+'-1.png'
 spng, name
 
-window, 11, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-1*wy
+window, 11, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-1*wy
 title = 'source phase'
 mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
 name= filename+'-2.png'
 spng, name
 
-;; save source
-field0= field   
-zv0   = z_vec
-yv0   = y_vec
 
-;; propfourier
-propfourier, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
-
+propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, plot=1
 bamp = abs(field)
 bamp = bamp/max(bamp)
 bamp2= bamp^2
@@ -70,22 +59,19 @@ bphase = atan(field, /PHASE)
 fit  = gauss2dfit(bamp2, stat, z_vec, y_vec)
 print,'rms (mm)=',stat[2]*1e3
 
-window, 22, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy
-title = 'propfourier intensity at screen, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
+window, 23, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy
+title = 'fresnel intensity at screen, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
 mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
-name= filename+'-3.png'
+name= filename+'-5.png'
 spng, name
 
-window, 12, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-2*wy
-title = 'propfourier phase at screen'
-mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
-name= filename+'-4.png'
+window, 13, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-3*wy
+title = 'phase at screen'
+mycontour, bphase, xtitle='z (mm) ', ytitle='y (mm)', title=title
+name= filename+'-6.png'
 spng, name
 
-;; fresnel
-field= field0
-z_vec= zv0
-y_vec= yv0
+
 
 propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
 bamp = abs(field)
@@ -95,46 +81,14 @@ bphase = atan(field, /PHASE)
 fit  = gauss2dfit(bamp2, stat, z_vec, y_vec)
 print,'rms (mm)=',stat[2]*1e3
 
-window, 23, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy
+window, 24, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy
 title = 'fresnel intensity at screen, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
 mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
 name= filename+'-5.png'
 spng, name
 
-window, 13, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-3*wy
+window, 14, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-4*wy
 title = 'phase at screen'
 mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
 name= filename+'-6.png'
-spng, name
-
-;; fraunhofer
-field= field0
-bcomp= field0
-z_vec= zv0
-y_vec= yv0
-u=zv0
-v=zv0
-
-driftfrauenhofer, acomp=field, bcomp=bcomp, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength, u=u, v=v
-field=bcomp
-z_vec=u
-y_vec=v
-
-bamp = abs(field)
-bamp = bamp/max(bamp)
-bamp2= bamp^2
-bphase = atan(field, /PHASE)
-fit  = gauss2dfit(bamp2, stat, z_vec, y_vec)
-print,'rms (mm)=',stat[2]*1e3
-
-window, 24, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-4*wy
-title = 'fraunhofer intensity at screen, size = '+ string(stat[2]*1e3, FORMAT="(f4.2)")+ ' x ' + string(stat[3]*1e3, FORMAT="(f4.2)") + textoidl(' mm (rms)')
-mycontour, bamp2, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
-name= filename+'-7.png'
-spng, name
-
-window, 14, XSIZE=wx, YSIZE=wy ,XPOS=screenx-1*wx,YPOS=screeny-4*wy
-title = 'phase at screen'
-mycontour, bphase, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title=title
-name= filename+'-8.png'
 spng, name
