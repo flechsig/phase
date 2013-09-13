@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <12 Sep 13 13:53:41 flechsig> 
+;  Time-stamp: <13 Sep 13 10:52:34 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -22,6 +22,14 @@ pro resize,  y_vec=y_vec, z_vec=z_vec, field=field, Ninter=Ninter, Nzero=Nzero, 
 ;   Zero pad  to size to Nzero
 ;   keep pattern centered
 ;   we assume equidistant stepzize, and a quadratic image (nx=ny)
+;   hint for fast idl fft: N should be built from prime factors 2,3,5,
+;   to avoid special treatment of the Nyquist frequency odd N
+;   are recommended good examples:
+;   3,    9,  27,  81,  243, 729, 2187 
+;   5,   25, 125, 625, 3125
+;   15,  75, 375, 1875
+;   45, 135, 405, 1215
+;   225
 ;
 ; CATEGORY:
 ;   phase_calc
