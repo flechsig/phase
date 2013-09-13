@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <13 Sep 13 10:52:34 flechsig> 
+;  Time-stamp: <13 Sep 13 11:02:58 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -30,6 +30,8 @@ pro resize,  y_vec=y_vec, z_vec=z_vec, field=field, Ninter=Ninter, Nzero=Nzero, 
 ;   15,  75, 375, 1875
 ;   45, 135, 405, 1215
 ;   225
+;   if N= 3^k3 + 5^k5 then time = a*(3*k3+5*k5) i.e. 243=>15, 225=>16
+;   i.e. 243 is faster than 225
 ;
 ; CATEGORY:
 ;   phase_calc
