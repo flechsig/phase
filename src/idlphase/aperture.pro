@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <03 Oct 13 17:11:42 flechsig> 
+;  Time-stamp: <03 Oct 13 17:18:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -133,7 +133,7 @@ help, field, z_vec, y_vec
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 
-print,' P1=' , P1, ' P2= ' ,P2
+;;print,' P1=' , P1, ' P2= ' ,P2
 T  = dblarr(nz, ny)* 0.0 
 
 help, T
