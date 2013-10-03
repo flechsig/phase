@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <11 Sep 13 13:17:08 flechsig> 
+;  Time-stamp: <03 Oct 13 17:11:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -22,8 +22,8 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ;
 ;
 ;   type 1  : rectangular              P1 = hsize, P2 = vsize
-;   type 2  : vertical slit            P1 = hsize
-;   type 3  : horizontal slit          P1 = vsize
+;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
+;   type 3  : horizontal slit          P1 = vsize, P2 = vpos (default= 0)
 ;   type 12 : double slit vertical,    P1 = hsize, P2= hsep
 ;   type 13 : double slit horizontal,  P1 = vsize, P2= vsep
 ;   type 20 : circular     P1 = Radius
@@ -125,7 +125,7 @@ if n_elements(y_vec) eq 0 then print, usage
 if n_elements(field) eq 0 then print, usage
 if n_elements(type ) eq 0 then print, usage
 if n_elements(plot ) eq 0 then plot=0
-if n_elements(P2 )   eq 0 then P2=1
+;;if n_elements(P2 )   eq 0 then P2=P1
 
 print, 'type = ', type
 help, field, z_vec, y_vec
@@ -138,57 +138,63 @@ T  = dblarr(nz, ny)* 0.0
 
 help, T
 
-if n_elements(verbose) ne 0 then begin
-    case type of
-
-            1 : begin                                  ;; rectangular 
-               print, 'rectangular aperture'
-            end
+;; call case twice for speed
+case type of
+    1 : begin                                  ;; rectangular 
+        if n_elements(P2) eq 0 then P2= P1
+        p1half= 0.5 * p1
+        p2half= 0.5 * p2
+        if n_elements(verbose) ne 0 then print, 'rectangular aperture (h x v): ', P1, P2
+    end
             
-            2 : begin                                 ;; vertical slit
-              print, 'vertical slit'
-            end
+    2 : begin                                 ;; vertical slit
+        if n_elements(P2) eq 0 then P2= 0.0
+        p1half= 0.5 * p1
+        if n_elements(verbose) ne 0 then print, 'vertical slit (hwidth, hpos): ', P1, P2
+    end
             
-            3 : begin                               ;; horizontal slit
-               
-            end
+    3 : begin                               ;; horizontal slit
+        if n_elements(P2) eq 0 then P2= 0.0  
+        p1half= 0.5 * p1
+        if n_elements(verbose) ne 0 then print, 'horizontal slit (vwidth, vpos): ', P1, P2
+    end
+    
+    12 : begin                         ;; double slit vertical
+        if n_elements(P2) eq 0 then P2= P1
+        p1half= 0.5 * p1
+        p2half= 0.5 * p2
+    end
             
-            12 : begin                         ;; double slit vertical
-               
-            end
-            
-            13: begin                      ;; double slit horizontal 
-             
-            end
-            
-            20: begin                                    ;; circular 
-              
-            end
-            
-            21: begin                                      ;; annular
-            
-            end
-            
-            32: begin                             ;; vertical mirror (assuming l= infinite)
-              print, 'mirror vertical'
-            end
-
-            33: begin                             ;; horizontal mirror (assuming l= infinite)
-              print, 'mirror horizontal'
-            end
-            
-            else : begin
-               print, ' type ', type, ' not defined'
-               return         
-            end   
-        endcase
-    endif
-
-
-p1half= 0.5 * p1
-p2half= 0.5 * p2
-ap    = P1  * sin(P2)
-aphalf= 0.5 * ap
+    13: begin                      ;; double slit horizontal 
+        if n_elements(P2) eq 0 then P2= P1 
+    end
+    
+    20: begin                                    ;; circular 
+        
+    end
+    
+    21: begin                                      ;; annular
+      if n_elements(P2) eq 0 then P2= P1  
+    end
+    
+    32: begin                ;; vertical mirror (assuming l= infinite)
+        ap    = P1  * sin(P2)
+        aphalf= 0.5 * ap
+        print, 'mirror vertical (w, theta_g): ', P1, P2, ' rad, ap= ', ap
+    end
+    
+    33: begin              ;; horizontal mirror (assuming l= infinite)
+        ap    = P1  * sin(P2)
+        aphalf= 0.5 * ap
+        print, 'mirror horizontal (w, theta_g): ', P1, P2, ' rad, ap= ', ap
+    end
+    
+    else : begin
+        print, ' type ', type, ' not defined'
+        return         
+    end   
+endcase
+    
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
@@ -200,11 +206,11 @@ for i=0, nz-1 do begin
             end
             
             2 : begin                                 ;; vertical slit
-               if  (abs(z_vec[i]) le P1half) then T[i,j]= double(1.0)
+               if (abs(z_vec[i]- P2) le P1half) then T[i,j]= double(1.0)
             end
             
             3 : begin                               ;; horizontal slit
-               if  (abs(y_vec[j]) le P1half) then T[i,j]= double(1.0)
+               if  (abs(y_vec[j]- P2) le P1half) then T[i,j]= double(1.0)
             end
             
             12 : begin                         ;; double slit vertical
