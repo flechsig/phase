@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <04 Oct 13 15:33:04 flechsig> 
+;  Time-stamp: <04 Oct 13 15:39:05 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -198,8 +198,12 @@ if n_elements(plot) ne 0 then begin
   endelse
 endif ;; plot
 
-emf= create_struct('field', field, 'y_vec', y_vec, 'z_vec', z_vec, 'wavelength', wavelength, NAME='emfield')
- 
-print,'gaussbeam end'
+if use_struct eq 1 then begin
+    emf= create_struct('field', field, 'y_vec', y_vec, 'z_vec', z_vec, 'wavelength', wavelength, NAME='emfield')
+    print, 'fill emfield structure'
+    help, emf, /struct
+endif
+
+print, 'gaussbeam end'
 return
 end
