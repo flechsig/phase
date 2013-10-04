@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <04 Oct 13 15:39:05 flechsig> 
+;  Time-stamp: <04 Oct 13 15:41:46 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -32,7 +32,7 @@ pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bc
 ;
 ;
 ; CALLING SEQUENCE:
-;   gaussbeam, ...
+;   gaussbeam, [emf,][dist=dist,]...
 ;
 ;
 ; INPUTS:
@@ -40,7 +40,6 @@ pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bc
 ;
 ;
 ; OPTIONAL INPUTS:
-;   emf: emfield structure
 ;
 ;
 ; KEYWORD PARAMETERS:
@@ -61,7 +60,7 @@ pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bc
 ;
 ;
 ; OPTIONAL OUTPUTS:
-;
+;   emf: emfield structure 
 ;
 ;
 ; COMMON BLOCKS:
@@ -102,7 +101,7 @@ pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bc
 use_struct= (n_params() gt 0) ?  1 : 0
 
 
-u1= 'usage: gaussbeam,[dist=dist,][field=field,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
+u1= 'usage: gaussbeam,[emf,][dist=dist,][field=field,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
 u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot], [z_off=z_off], [y_off=y_off]'
 usage= u1+u2
 
