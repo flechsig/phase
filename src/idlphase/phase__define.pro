@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 Oct 13 18:01:54 flechsig> 
+;  Time-stamp: <04 Oct 13 18:05:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -70,6 +70,7 @@ pro phase::aperture,  _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;
 ;-
+emf=emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
 aperture, emf, _EXTRA=extra
 *self.field= emf.field
 *self.z_vec= emf.z_vec
@@ -341,6 +342,9 @@ pro phase::propfourier, _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;
 ;-
+
+emf=emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
+
 propfourier, emf, _EXTRA=extra
 
 *self.field= emf.field
