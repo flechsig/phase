@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <03 Oct 13 17:18:23 flechsig> 
+;  Time-stamp: <04 Oct 13 15:52:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -9,7 +9,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, $
+pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, $
               P1=P1, P2=P2,  plot=plot, N=N, size=size, verbose=verbose
 ;+
 ; NAME:
@@ -46,7 +46,7 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ;
 ;
 ; OPTIONAL INPUTS:
-;
+;   emf: emfield structure 
 ;
 ;
 ; KEYWORD PARAMETERS:
@@ -94,7 +94,9 @@ pro aperture, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type,
 ;    Aug 13 UF add some types
 ;-
 
-u1= 'usage: aperture field=field,y_vec=y_vec, z_vec=z_vec,type = type, [P1=P1,] [P2=P2,] '
+use_struct= (n_params() gt 0) ?  1 : 0
+
+u1= 'usage: aperture, [emf,][field=field, y_vec=y_vec, z_vec=z_vec,] type=type, [P1=P1,] [P2=P2,] '
 u2= ' '
 usage= u1+u2
 
@@ -116,16 +118,22 @@ if (n_elements(N) ne 0) and (n_elements(size) ne 0) then begin ;; source
   create= 1
   z_vec= (dindgen(N) - N/2) * size / N                          
   y_vec= (dindgen(N) - N/2) * size / N                          
-  field= dcomplexarr(N,N) + dcomplex(1.0,0.0)
+  field= dcomplexarr(N, N) + dcomplex(1.0, 0.0)
   help, z_vec, v_vec, field
 endif
 
-if n_elements(z_vec) eq 0 then print, usage 
-if n_elements(y_vec) eq 0 then print, usage 
-if n_elements(field) eq 0 then print, usage
+if use_struct eq 0 then begin
+    if n_elements(z_vec) eq 0 then print, usage 
+    if n_elements(y_vec) eq 0 then print, usage 
+    if n_elements(field) eq 0 then print, usage
+endif else begin
+    z_vec= emf.z_vec
+    y_vec= emf.y_vec
+    field= emf.field
+endelse
+
 if n_elements(type ) eq 0 then print, usage
 if n_elements(plot ) eq 0 then plot=0
-;;if n_elements(P2 )   eq 0 then P2=P1
 
 print, 'type = ', type
 help, field, z_vec, y_vec
@@ -261,7 +269,14 @@ if (plot ne 0) then begin
 endif
 
 field = field * T 
- 
+
+if use_struct eq 1 then begin
+    emf.field= field
+    emf.y_vec= y_vec
+    emf.z_vec= z_vec
+    print, 'fill emfield structure'
+endif
+
 print, 'aperture end'
 return
 end
