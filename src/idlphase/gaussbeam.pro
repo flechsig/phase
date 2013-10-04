@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <02 Sep 13 12:01:33 flechsig> 
+;  Time-stamp: <04 Oct 13 15:33:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 ;
 ;
 ;
-pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
+pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
                z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example, field=field,$
                z_off=z_off, y_off = y_off
 ;+
@@ -40,7 +40,7 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ;
 ; OPTIONAL INPUTS:
-;
+;   emf: emfield structure
 ;
 ;
 ; KEYWORD PARAMETERS:
@@ -99,6 +99,9 @@ pro gaussbeam, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=b
 ;
 ;;; 
 
+use_struct= (n_params() gt 0) ?  1 : 0
+
+
 u1= 'usage: gaussbeam,[dist=dist,][field=field,][w0=w0,][sizez=sizez,][sizey=sizey,][Nz=Nz,][Ny=Ny,]'
 u2= '[wavelength=wavelength,] [y_vec=y_vec], [z_vec=z_vec], [plot=plot], [z_off=z_off], [y_off=y_off]'
 usage= u1+u2
@@ -117,7 +120,7 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     return
 endif  ;; end example
 
-if n_elements(Nz        ) eq 0 then Nz        = 151  
+if n_elements(Nz        ) eq 0 then Nz        = 243  ;; 3^5
 if n_elements(Ny        ) eq 0 then Ny        = Nz  
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
 if n_elements(w0        ) eq 0 then w0        = 1e-5  
@@ -125,8 +128,8 @@ if n_elements(sizez     ) eq 0 then sizez     = 1e-3
 if n_elements(sizey     ) eq 0 then sizey     = sizez
 if n_elements(dist      ) eq 0 then dist      = 0.0
 if n_elements(bcomp     ) ne 0 then begin & print, 'obsolete keyword: bcomp- use keyword: field intead!' & return & endif
-if n_elements(z_off      ) eq 0 then z_off      = 0.0
-if n_elements(y_off      ) eq 0 then y_off      = 0.0
+if n_elements(z_off     ) eq 0 then z_off     = 0.0
+if n_elements(y_off     ) eq 0 then y_off     = 0.0
 
 dist       = double(dist)
 wavelength = double(wavelength)
@@ -138,7 +141,7 @@ field  = dcomplexarr(Nz, Ny)
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez 
 y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey 
 
-print, 'wavelength (m) = ',wavelength
+print, 'wavelength (m) = ', wavelength
 print, 'Nz     = ', Nz      , ', Ny     = ', Ny
 print, 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey
 print, 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off
@@ -194,6 +197,8 @@ if n_elements(plot) ne 0 then begin
       if window_list[21] gt 0 then wdelete, 21
   endelse
 endif ;; plot
+
+emf= create_struct('field', field, 'y_vec', y_vec, 'z_vec', z_vec, 'wavelength', wavelength, NAME='emfield')
  
 print,'gaussbeam end'
 return
