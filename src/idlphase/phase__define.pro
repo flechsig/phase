@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 Oct 13 17:53:43 flechsig> 
+;  Time-stamp: <04 Oct 13 17:56:19 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -210,6 +210,71 @@ pro phase::plotphase, _EXTRA=extra
 title= self.name+ ' phase'
 mycontour, atan(*self.field, phase), *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
 return 
+end
+
+pro phase::setTitle, title
+;+
+; NAME:
+;   phase::setTitle
+;
+;
+; PURPOSE:
+;
+;
+;
+; CATEGORY:
+;
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+;
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;
+;
+;
+; MODIFICATION HISTORY:
+;
+;-
+self.title=title
+return
 end
 
 
