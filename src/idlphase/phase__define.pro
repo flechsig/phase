@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 Oct 13 17:56:19 flechsig> 
+;  Time-stamp: <04 Oct 13 18:01:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -8,6 +8,74 @@
 ;  $Revision$ 
 ;  $Author$ 
 
+
+pro phase::aperture,  _EXTRA=extra
+;+
+; NAME:
+;   phase::aperture
+;
+;
+; PURPOSE:
+;
+;
+;
+; CATEGORY:
+;
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+;
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;
+;
+;
+; MODIFICATION HISTORY:
+;
+;-
+aperture, emf, _EXTRA=extra
+*self.field= emf.field
+*self.z_vec= emf.z_vec
+*self.y_vec= emf.y_vec
+return
+end
 
 pro phase::gaussbeam, _EXTRA=extra
 ;+
@@ -211,6 +279,77 @@ title= self.name+ ' phase'
 mycontour, atan(*self.field, phase), *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
 return 
 end
+
+pro phase::propfourier, _EXTRA=extra
+;+
+; NAME:
+;   phase::propfourier
+;
+;
+; PURPOSE:
+;
+;
+;
+; CATEGORY:
+;
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+;
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;
+;
+;
+; MODIFICATION HISTORY:
+;
+;-
+propfourier, emf, _EXTRA=extra
+
+*self.field= emf.field
+*self.z_vec= emf.z_vec
+*self.y_vec= emf.y_vec
+return
+end
+
+
 
 pro phase::setTitle, title
 ;+
