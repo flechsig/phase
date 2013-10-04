@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <09 Sep 13 09:25:42 flechsig> 
+;  Time-stamp: <04 Oct 13 16:07:21 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 
 
 
-pro propfourier, drift=drift, example=example, field=field, y_vec=y_vec, z_vec=z_vec, $
+pro propfourier, emf, drift=drift, example=example, field=field, y_vec=y_vec, z_vec=z_vec, $
                  plot=plot, wavelength=wavelength , filter=filter 
 
 ;+,
@@ -29,7 +29,7 @@ pro propfourier, drift=drift, example=example, field=field, y_vec=y_vec, z_vec=z
 ;
 ;
 ; CALLING SEQUENCE:
-;   propfourier, field=field, y_vec=y_vec, z_vec=z_vec, drift=drift  $
+;   propfourier, [emf,][field=field, y_vec=y_vec, z_vec=z_vec,] drift=drift  $
 ;                [,/plot][,wavelength=wavelength][,filter=filter][,/example]
 ;
 ;
@@ -38,7 +38,7 @@ pro propfourier, drift=drift, example=example, field=field, y_vec=y_vec, z_vec=z
 ;
 ;
 ; OPTIONAL INPUTS:
-;   no
+;   emf: emfield structure
 ;
 ;
 ; KEYWORD PARAMETERS:
@@ -91,7 +91,9 @@ pro propfourier, drift=drift, example=example, field=field, y_vec=y_vec, z_vec=z
 ;
 ;- 
 
-u1= 'usage: propfourier, field=field, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec, drift = drift'
+use_struct= (n_params() gt 0) ?  1 : 0
+
+u1= 'usage: propfourier, [emf,][field=field, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec,] drift = drift'
 u2= ' [filter=filter,] [plot=plot]'
 usage= u1+u2
 
@@ -111,10 +113,18 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
 endif  ;; end example
 
 if n_elements(drift)      eq 0 then begin print,'drift missing: '+ usage & return & endif
-if n_elements(z_vec)      eq 0 then begin print,'z_vec missing: '+ usage & return & endif
-if n_elements(y_vec)      eq 0 then begin print,'y_vec missing: '+ usage & return & endif
-if n_elements(field)      eq 0 then begin print,'field missing: '+ usage & return & endif
-if n_elements(wavelength) eq 0 then wavelength= 1e-10  
+if use_struct eq 0 then begin
+    if n_elements(z_vec)      eq 0 then begin print,'z_vec missing: '+ usage & return & endif
+    if n_elements(y_vec)      eq 0 then begin print,'y_vec missing: '+ usage & return & endif
+    if n_elements(field)      eq 0 then begin print,'field missing: '+ usage & return & endif
+    if n_elements(wavelength) eq 0 then begin print,'wavelength missing: '+ usage & return & endif 
+endif else begin
+    z_vec=      emf.z_vec
+    y_vec=      emf.y_vec
+    field=      emf.field
+    wavelength= emf.wavelength
+endelse
+
 if n_elements(filter)     eq 0 then filter=0
 if n_elements(plot  )     eq 0 then plot=0
 
@@ -244,7 +254,15 @@ E0ft      =0  ;; free memory
 propagator=0  ;; free memory
 phase     =0  ;; free memory
 
-field= fft(Eft, 1, /center, /double)                          
+field= fft(Eft, 1, /center, /double)     
+
+if use_struct eq 1 then begin
+    emf.field= field
+    emf.y_vec= y_vec
+    emf.z_vec= z_vec
+    emf.wavelength= wavelength
+    print, 'fill emfield structure'
+endif                     
 
 print, '--------------- propfourier end ----------------------------------'
 return
