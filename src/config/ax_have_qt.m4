@@ -326,10 +326,12 @@ EOF
       fi
     ])dnl AC_CACHE_VAL ax_cv_qt_test_result
     AC_MSG_RESULT([$ax_cv_qt_test_result])
+dnl UF replase AC_MSG_ERROR by AC_MSG_WARN
     if test x"$ax_cv_qt_test_result" = "xfailure"; then
-      AC_MSG_ERROR([Failed to find matching components of a complete
+       AC_MSG_WARN([Failed to find matching components of a complete
                   Qt installation. Try using more options,
-                  see ./configure --help.])
+                  see ./configure --help.
+		  UF: you may ignore warning in case you have multiple Qt installations.])
     fi
 
     rm -f ax_qt_test.h moc_ax_qt_test.$ac_ext moc_ax_qt_test.o \
