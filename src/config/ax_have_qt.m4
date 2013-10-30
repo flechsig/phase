@@ -163,6 +163,13 @@ AC_DEFUN([AX_HAVE_QT],
                      sed s@$ax_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
       fi
       ax_qt_LIBS="-L$ax_qt_lib_dir -l$ax_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+#UF
+      echo "**** uwe ****, ax_qt_lib=" $ax_qt_lib
+      if test x"$ax_qt_lib" = x; then
+          ax_qt_lib=NO
+          have_qt=no
+      fi
+#end uf
     else
       # Use cached value or do search, starting with suggestions from
       # the command line
