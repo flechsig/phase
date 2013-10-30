@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.h */
 /*  Date      : <29 Jul 11 13:56:13 flechsig>  */
-/*  Time-stamp: <05 Nov 12 10:13:38 flechsig>  */
+/*  Time-stamp: <30 Oct 13 13:46:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -11,7 +11,11 @@
 #ifndef OPTIINPUT_H
 #define OPTIINPUT_H
 
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
 
 #include "phaseqt.h"
 

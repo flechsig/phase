@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <30 Oct 13 12:24:31 flechsig> 
+#  Time-stamp: <30 Oct 13 12:28:58 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -79,6 +79,7 @@ AM_CXXFLAGS   =  -fPIC \
 	@QT_CXXFLAGS@/QtGui \
 	@QT_CXXFLAGS@/QtWidgets \
 	@QT_CXXFLAGS@/QtPrintSupport \
+	@QT_CXXFLAGS@/QtConcurrent \
 	-I@QWT@/include \
 	-I@QWTI@/ \
 	-I../phase 

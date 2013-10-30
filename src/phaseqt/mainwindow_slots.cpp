@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <03 Jul 13 14:38:11 flechsig> 
+//  Time-stamp: <30 Oct 13 13:45:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -12,7 +12,17 @@
 // only the slots
 //
 
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
+
+#if (QT_VERSION > 0x050000)
+#include <QtConcurrent>
+#include <QPrintDialog>
+#endif
+
 #include <cmath>                     // for abs
 #include <tr1/functional>            // for std::tr1
 #include <qwt_plot_grid.h>
@@ -461,7 +471,7 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  printf("write coefficients of element %d to file\n", myparent->myBeamline()->position);
       //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
-	  snprintf(buffer, MaxPathLength, "%s.coeff", elementList->currentItem()->text().toAscii().data());
+	  snprintf(buffer, MaxPathLength, "%s.coeff", elementList->currentItem()->text().toLatin1().data());
 	  printf("write coefficients to file: %s\n", buffer);
 	  WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
 	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
@@ -1019,7 +1029,7 @@ void MainWindow::elementApplyBslot()
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
 
   strncpy(myparent->myBeamline()->ElementList[number].elementname, 
-	  elementList->currentItem()->text().toAscii().data(), MaxPathLength); // the name of the element
+	  elementList->currentItem()->text().toLatin1().data(), MaxPathLength); // the name of the element
   
   cout << "elementApplyBslot: feed data from widget into dataset" << endl;
 
@@ -1640,12 +1650,12 @@ void MainWindow::openBeamline()
 
   //#warning unresolved spurious bug
   //TODO: SG found spurious bug: on pc7753, if the string in variable filename 
-  // has the length 56, toAscii().data() points to a C-string of the length 57
+  // has the length 56, toLatin1().data() points to a C-string of the length 57
   // and this filename will then not be found;
   // this is either a bug in QT on pc7753 or some buffer overwrite in PhaseQT;
   // for now, I'll just check that the lengths match and leave a note
   // QString str56 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  name= fileName.toAscii().data();
+  name= fileName.toLatin1().data();
   if (strlen(name) != fileName.length())
   {
     cerr << "ERROR: Conversation error of fileName string in " << __FILE__ << '.' << endl;
@@ -1655,7 +1665,7 @@ void MainWindow::openBeamline()
   
   if (!fileName.isEmpty()) 
     {
-      name= fileName.toAscii().data();
+      name= fileName.toLatin1().data();
       cout << "MainWindow::newBeamline: try to read file: " << name << endl;
       rcode= myparent->myReadBLFile(name);
       if (rcode != -1)
@@ -1689,7 +1699,7 @@ void MainWindow::parameterUpdateSlot()
 
   index= parameterList->currentRow();      // old list model
   index= parameterModel->getActualIndex(); // treemodel
-  parameterUpdate(index, parameterE->text().toAscii().data(), 0); // updates the old list
+  parameterUpdate(index, parameterE->text().toLatin1().data(), 0); // updates the old list
   parameterModel->updateItemVal(parameterE->text(), parameterModel->getActualIndex());
   
   myparent->myBeamline()->beamlineOK &= ~resultOK;  // any change needs new calculation
@@ -1873,7 +1883,7 @@ void MainWindow::screenshotMain()
                                 .arg(format.toUpper())
                                 .arg(format));
   if (!fileName.isEmpty())
-    pixmap.save(fileName, format.toAscii().constData());
+    pixmap.save(fileName, format.toLatin1().constData());
 
 } // end printMain()
 
@@ -1895,7 +1905,7 @@ void MainWindow::saveas()
     if (fileName.isEmpty())
         return;
 
-    name= fileName.toAscii().data();
+    name= fileName.toLatin1().data();
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -1949,7 +1959,7 @@ void MainWindow::selectParameter()
   if (parameternumber < 0) 
     return;
 
-  strncpy(buffer, parameterList->currentItem()->text().toAscii().data(), MaxPathLength);
+  strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength);
   ch= strchr(buffer, ':');
   if (ch != NULL) 
     {

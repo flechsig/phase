@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.h */
 /*  Date      : <23 Nov 11 09:31:41 flechsig>  */
-/*  Time-stamp: <25 Nov 11 15:47:19 flechsig>  */
+/*  Time-stamp: <30 Oct 13 13:51:49 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -39,6 +39,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <QLineEdit>
 
 #include "phaseqt.h"    // wegen NPARS
 

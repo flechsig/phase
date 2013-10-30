@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <22 Jun 12 11:19:41 flechsig>  */
+/*  Time-stamp: <30 Oct 13 12:17:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -10,6 +10,10 @@
 
 #ifndef PLOT_H
 #define PLOT_H
+
+#if (QT_VERSION > 0x050000)
+#include <QPrinter>
+#endif
 
 #include <qwt_plot.h>
 #include <qwt_plot_spectrogram.h>

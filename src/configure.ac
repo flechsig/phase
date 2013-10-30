@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <30 Oct 13 10:27:39 flechsig> 
+dnl   Time-stamp: <30 Oct 13 11:04:52 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -468,6 +468,7 @@ echo "debug code               : ${enable_debug}"
 echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "OpenMP:                  : ${enable_OPENMP}"
+echo "Qt:                      : ${have_qt}"
 echo "QT_DIR:                  : ${QT_DIR}"
 echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <05 Nov 12 17:00:50 flechsig> 
+//  Time-stamp: <30 Oct 13 13:47:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -11,8 +11,12 @@
 //
 // the optimization input box
 //
-
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
+
 #include "optiinput.h"
 
 using namespace std;
@@ -212,7 +216,7 @@ void OptiInput::applySlot()
   
   printf("applySlot called\n");
 
-  char *text= targetLabel->text().toAscii().data();
+  char *text= targetLabel->text().toLatin1().data();
   if (strcmp(text, "use cost.F") == 0) methode= OptiCost; else
     if (strcmp(text, "Focus special") == 0) methode= OptiFocus; else
       if (strcmp(text, "Transmittance") == 0) methode= OptiTrans; else
@@ -240,7 +244,7 @@ void OptiInput::applySlot()
 
   for (i= 0; i < 2; i++)  
     {
-      strncpy(buffer, inputList->item(i)->text().toAscii().data(), MaxPathLength);
+      strncpy(buffer, inputList->item(i)->text().toLatin1().data(), MaxPathLength);
       fprintf(oppickfile, "%s\n", buffer);
     }
   
@@ -251,7 +255,7 @@ void OptiInput::applySlot()
   for (i= 0; i < parameterzahl; i++)  
     {
       inputList->setCurrentRow(i+2);
-      strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
+      strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength);
       fprintf(oppickfile, "%s\n", buffer);  
     }
   fprintf(oppickfile, "# end\n");
@@ -407,13 +411,13 @@ void OptiInput::inputUpdateSlot()
   switch (pos)
     {
     case 0: 
-      snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toAscii().data());
+      snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toLatin1().data());
       break;
     case 1: 
-      snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toAscii().data());
+      snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toLatin1().data());
       break;
     default:
-      snprintf(buffer, MaxPathLength, "%s", inputE->text().toAscii().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());
     };
   item->setText(buffer);
   inputList->clearSelection();
@@ -442,7 +446,7 @@ void OptiInput::selectInputSlot()
   printf("selectinputSlot\n");
   if (parameternumber < 0) 
     return;
-  strncpy(buffer, inputList->currentItem()->text().toAscii().data(), MaxPathLength);
+  strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength);
   if (buffer != NULL) inputE->setText(buffer);
   
   switch (parameternumber)

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/singleray.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <09 Sep 11 14:59:15 flechsig>  */
+/*  Time-stamp: <30 Oct 13 13:49:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -15,7 +15,11 @@
 #ifndef SINGLERAY_H
 #define SINGLERAY_H
 
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
 
 #include "phaseqt.h"
 

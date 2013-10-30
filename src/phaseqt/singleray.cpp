@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <03 Feb 12 17:00:42 flechsig> 
+//  Time-stamp: <30 Oct 13 13:48:31 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -11,8 +11,12 @@
 //
 // implementation of the SingleRay class (SingleRay widget)
 //
-
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
+
 #include "singleray.h"
 
 using namespace std;   // fuer cout z.B.

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2013-04-05 10:06:34 flechsig> 
+//  Time-stamp: <30 Oct 13 12:01:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -9,10 +9,14 @@
 //  $Author$ 
 
 // taken from qwt examples
-
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
 
 #include <qprinter.h>
+
 #include <qprintdialog.h>
 #include <qwt_color_map.h>
 //#include <qwt_plot_spectrom.h>

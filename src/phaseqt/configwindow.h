@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.h */
 /*  Date      : <16 Aug 11 12:20:20 flechsig>  */
-/*  Time-stamp: <2011-11-20 20:22:24 flechsig>  */
+/*  Time-stamp: <30 Oct 13 14:04:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -11,7 +11,14 @@
 #ifndef CONFIGWINDOW_H
 #define CONFIGWINDOW_H
 
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
+
+#include <QTreeView>
+#include <QPushButton>
 
 #include "phaseqt.h"
 
