@@ -158,7 +158,8 @@ AC_DEFUN([AX_HAVE_QT],
       ax_qt_lib_dir="$with_Qt_dir/lib"
       # Only search for the lib if the user did not define one already
       if test x"$ax_qt_lib" = x; then
-        ax_qt_lib="`ls $ax_qt_lib_dir/libqt* | sed -n 1p |
+ # UF       ax_qt_lib="`ls $ax_qt_lib_dir/libqt* | sed -n 1p |
+          ax_qt_lib="`ls $ax_qt_lib_dir/libQt* | sed -n 1p |
                      sed s@$ax_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
       fi
       ax_qt_LIBS="-L$ax_qt_lib_dir -l$ax_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
