@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/singleray.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <30 Oct 13 13:49:18 flechsig>  */
+/*  Time-stamp: <30 Oct 13 14:20:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -20,6 +20,10 @@
 #else
 #include <QtWidgets>
 #endif
+
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include "phaseqt.h"
 

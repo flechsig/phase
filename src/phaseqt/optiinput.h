@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.h */
 /*  Date      : <29 Jul 11 13:56:13 flechsig>  */
-/*  Time-stamp: <30 Oct 13 13:46:23 flechsig>  */
+/*  Time-stamp: <30 Oct 13 14:16:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -16,6 +16,10 @@
 #else
 #include <QtWidgets>
 #endif
+
+#include <QPushButton>
+#include <QListWidget>
+#include <QLabel>
 
 #include "phaseqt.h"
 
