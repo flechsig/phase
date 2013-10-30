@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <30 Oct 13 10:57:43 flechsig> 
+#  Time-stamp: <30 Oct 13 12:24:31 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -72,11 +72,13 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 ## flags
 AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 ###-I@QT_DIR@/mkspecs/linux-g++ 
-  
-AM_CXXFLAGS   =  \
+### -fPIC  
+AM_CXXFLAGS   =  -fPIC \
 	@QT_CXXFLAGS@ \
 	@QT_CXXFLAGS@/QtCore \
 	@QT_CXXFLAGS@/QtGui \
+	@QT_CXXFLAGS@/QtWidgets \
+	@QT_CXXFLAGS@/QtPrintSupport \
 	-I@QWT@/include \
 	-I@QWTI@/ \
 	-I../phase 
@@ -98,7 +100,8 @@ F77LINK = $(LINK)
 
 # This rule lets GNU make create any moc_*.cpp from the equivalent *.h
 moc_%.cpp: %.h
-	@QT_MOC@ $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
+	@QT_MOC@ $< -o $@
+####	@QT_MOC@ $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 # special
 qrc_phaseqt.cpp : parameter.default
