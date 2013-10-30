@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <24 Jun 13 18:23:58 flechsig> 
+#  Time-stamp: <30 Oct 13 10:57:43 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -71,11 +71,12 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+###-I@QT_DIR@/mkspecs/linux-g++ 
+  
 AM_CXXFLAGS   =  \
-	-I@QT@/mkspecs/linux-g++ \
-	-I@QT@/include/QtCore \
-	-I@QT@/include/QtGui -I@QT@/include \
-        -I@QTI@ \
+	@QT_CXXFLAGS@ \
+	@QT_CXXFLAGS@/QtCore \
+	@QT_CXXFLAGS@/QtGui \
 	-I@QWT@/include \
 	-I@QWTI@/ \
 	-I../phase 
@@ -83,33 +84,33 @@ AM_CXXFLAGS   =  \
 AM_CFLAGS = @HDF5_CFLAGS@ 
 
 ###-pipe -g -D_REENTRANT -Wall -W 
-#####-I@QT@/mkspecs/linux-g++       
+#####-I@QT_DIR@/mkspecs/linux-g++       
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
-AM_LDFLAGS =  -Wl,-rpath,@QT@/lib \
-	-L@QT@/lib -lQtGui -lQtCore -lQtSvg \
+#### -L@QT_DIR@/lib -lQtGui -lQtCore -lQtSvg 
+AM_LDFLAGS =  -Wl,-rpath,@QT_DIR@/lib \
+	@QT_LIBS@ \
 	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
 	@FLIBS@  @CFORLIB@
 
 ##we always use the c linker
 F77LINK = $(LINK)
 
-
 # This rule lets GNU make create any moc_*.cpp from the equivalent *.h
 moc_%.cpp: %.h
-	@QT@/bin/moc $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
+	@QT_MOC@ $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 # special
 qrc_phaseqt.cpp : parameter.default
-	@QT@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@	
+	@QT_DIR@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@	
 
 # Adjust this line according to your resources.qrc
 qrc_%.cpp : %.qrc
-	@QT@/bin/rcc -name $(bin_PROGRAMS) $< -o $@
+	@QT_DIR@/bin/rcc -name $(bin_PROGRAMS) $< -o $@
 
 # This line ensures that generated moc_*.cpp and resources.cpp files are
 # deleted when we make clean.
-##CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) 
+## CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) 
 ## CLEANFILES is a variable called from target clean: rm -f $CLEANFILES
 CLEANFILES = moc_*.cpp qrc_*.cpp *.f90 *.mod
 # end
