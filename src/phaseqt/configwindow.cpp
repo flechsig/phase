@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <03 Jul 13 14:31:27 flechsig> 
+//  Time-stamp: <30 Oct 13 11:50:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -11,7 +11,11 @@
 // the configure window
 
 #include <string.h>
+#if (QT_VERSION < 0x050000)
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
 #include "configwindow.h"
 
 using namespace std;
@@ -115,9 +119,10 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
      return;
 
    //    QMessageBox::warning(this, tr("item"),  item1->text());
-   strncpy(description, des->text().toAscii().data(), MaxPathLength);
-   strncpy(oldname,     fna->text().toAscii().data(), MaxPathLength);
-   strncpy(extension,   ext->text().toAscii().data(), 10);
+
+   strncpy(description, des->text().toLatin1().data(), MaxPathLength);
+   strncpy(oldname,     fna->text().toLatin1().data(), MaxPathLength);
+   strncpy(extension,   ext->text().toLatin1().data(), 10);
 
    description[(MaxPathLength-1)]= '\0';  // ensure termination
    oldname[(MaxPathLength-1)]= '\0';      // ensure termination
@@ -139,7 +144,10 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 
   if (!fileName.isEmpty()) 
     {
-      fname= fileName.toAscii().data();
+
+      fname= fileName.toLatin1().data();
+
+
       // update data
       if ( !strncmp(description, "optimization input", 16) ) 
 	strncpy(myparent->myBeamline()->filenames.optipckname, fname, MaxPathLength); else
@@ -271,8 +279,10 @@ void ConfigWindow::checkFileNames()
     {
       fna = mymodel->item(i, 1);
       ext = mymodel->item(i, 2);
-      strncpy(name,      fna->text().toAscii().data(), MaxPathLength);
-      strncpy(extension, ext->text().toAscii().data(), 10);
+
+      strncpy(name,      fna->text().toLatin1().data(), MaxPathLength);
+      strncpy(extension, ext->text().toLatin1().data(), 10);
+
       ret= strstr(name, extension);
 
 #ifdef DEBUG
