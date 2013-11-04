@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 Oct 13 18:05:23 flechsig> 
+;  Time-stamp: <04 Nov 13 10:35:40 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -78,6 +78,74 @@ aperture, emf, _EXTRA=extra
 return
 end
 
+
+pro phase::emfield2vars, _EXTRA=extra
+;+
+; NAME:
+;   phase::emfield2vars
+;
+;
+; PURPOSE:
+;
+;
+;
+; CATEGORY:
+;
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+;
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;
+;
+;
+; MODIFICATION HISTORY:
+;
+;-
+emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
+emfield2vars, emf, _EXTRA=extra
+return
+end
+; end emfield2vars
+
 pro phase::gaussbeam, _EXTRA=extra
 ;+
 ; NAME:
@@ -147,8 +215,9 @@ self.z_vec= ptr_new(emf.z_vec)
 self.y_vec= ptr_new(emf.y_vec)
 return 
 end
+;; end gaussbeam
 
-pro phase::plotintensity, _EXTRA=extra
+pro phase::plotintensity, window=window, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::plotintensity
@@ -213,8 +282,9 @@ title= self.name+ ' intensity'
 mycontour, abs(*self.field)^2, *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity'
 return 
 end
+; end plotintensity
 
-pro phase::plotphase, _EXTRA=extra
+pro phase::plotphase, window=window, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::plotphase
@@ -277,7 +347,7 @@ pro phase::plotphase, _EXTRA=extra
 ;-
 
 title= self.name+ ' phase'
-mycontour, atan(*self.field, phase), *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
+mycontour, atan(*self.field, /phase), *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
 return 
 end
 
