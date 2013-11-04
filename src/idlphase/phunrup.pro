@@ -1,3 +1,14 @@
+ ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phunrup.pro
+ ; Date      : <04 Nov 13 17:30:23 flechsig> 
+ ; Time-stamp: <04 Nov 13 17:30:32 flechsig> 
+ ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+ ; $Source$ 
+ ; $Date$
+ ; $Revision$ 
+ ; $Author$ 
+
+function phunwrap, ph, tolerance=tol0, maxval=maxval0
 ;+
 ; NAME:
 ;   PHUNWRAP
@@ -81,7 +92,7 @@
 ; are included unchanged.
 ;-
 
-function phunwrap, ph, tolerance=tol0, maxval=maxval0
+
 
   common phunwrap_common, idlver
   if n_elements(idlver) EQ 0 then begin
