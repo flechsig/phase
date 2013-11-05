@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/initphase.pro
 ;  Date      : <04 Oct 13 16:34:58 flechsig> 
-;  Time-stamp: <05 Nov 13 16:44:14 flechsig> 
+;  Time-stamp: <05 Nov 13 16:45:41 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -15,13 +15,13 @@ function initphase
 ;   initphase
 ;
 ; PURPOSE:
-;   generate a new phase object
+;   generate a new phase object, destroy the object with obj_destroy, reference
 ;
 ; CATEGORY:
 ;   PHASE
 ;
 ; CALLING SEQUENCE:
-;   emf=initphase()
+;   reference= initphase()
 ;
 ; INPUTS:
 ;   no
@@ -35,7 +35,7 @@ function initphase
 ; EXAMPLE:
 ;   IDL> emf=initphase()
 ;
-;; MODIFICATION HISTORY:
+; MODIFICATION HISTORY:
 ;   U. Flechsig 4. 10. 13
 ;-
 
