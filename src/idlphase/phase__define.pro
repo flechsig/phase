@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Nov 13 09:27:09 flechsig> 
+;  Time-stamp: <06 Nov 13 10:14:12 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -113,6 +113,83 @@ crl, field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wa
 return 
 end
 ;; end crl
+
+pro phase::h5_read, fname, vertical=vertical, _EXTRA=extra
+;+
+; NAME:
+;   phase::h5_read
+;
+; PURPOSE:
+;   read hdf5 input 
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->h5_read, fname
+;
+; INPUTS:
+;   filename
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   vertical: use vertical polarization, default is horizontal
+;
+; EXAMPLE:
+;   idl> emf->h5_read, 'input.h5'
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+if n_elements(vertical) ne 0 then $
+  h5_read, fname, ycomp=field, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec, _EXTRA=extra $
+else $
+  h5_read, fname, zcomp=field, wavelength=wavelength, z_vec=z_vec, y_vec=y_vec, _EXTRA=extra 
+
+self.wavelength= wavelength
+self.field= ptr_new(field)
+self.z_vec= ptr_new(z_vec)
+self.y_vec= ptr_new(y_vec)
+
+return
+end ;; h5_read
+
+pro phase::h5_write, fname,  _EXTRA=extra
+;+
+; NAME:
+;   phase::h5_write
+;
+; PURPOSE:
+;   write hdf5 output - in the moment we use GENESIS format only
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->h5_write, fname
+;
+; INPUTS:
+;   filename
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;
+; EXAMPLE:
+;   idl> emf->h5_write, 'output.h5'
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+
+return
+end ;; h5_read
 
 pro phase::gaussbeam, _EXTRA=extra
 ;+
@@ -648,6 +725,40 @@ self.wavelength= lambda
 return
 end ;; setwavelength
 
+pro phase::statistics, _EXTRA=extra
+;+
+; NAME:
+;   phase::statistics
+;
+; PURPOSE:
+;   print statistics of a field (does a 2d gaussfit to determine
+;   fwhm), export fwhm if requested   
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->statistics
+;
+; INPUTS:
+;   no
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; EXAMPLE:
+;   idl> emf->statistics
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
+emf_statistics, emf, _EXTRA=extra
+return
+end ;; statistics
 
 ;; the phase object
 pro phase__define
