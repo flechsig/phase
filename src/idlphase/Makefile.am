@@ -49,6 +49,7 @@ idl_with_doc_header = \
         initphase.pro \
         phaPutEMField.pro \
         phase__define.pro \
+	phunwrap.pro \
 	plot2d.pro \
 	plotdivergence.pro  \
 	plotfootprint.pro  \
@@ -68,7 +69,8 @@ idl_with_doc_header = \
         read_int_file.pro \
         read_opti_out.pro \
         resize.pro \
-        tag_exist.pro
+        tag_exist.pro \
+	unwrap_phase.pro
 
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
