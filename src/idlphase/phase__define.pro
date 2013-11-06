@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 Nov 13 10:35:40 flechsig> 
+;  Time-stamp: <06 Nov 13 09:27:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -14,198 +14,151 @@ pro phase::aperture,  _EXTRA=extra
 ; NAME:
 ;   phase::aperture
 ;
-;
 ; PURPOSE:
+;   acts as an aperture, or generates wavefield with amplitude according to 'type'
 ;
-;
+;   type 1  : rectangular              P1 = hsize, P2 = vsize
+;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
+;   type 3  : horizontal slit          P1 = vsize, P2 = vpos (default= 0)
+;   type 12 : double slit vertical,    P1 = hsize, P2= hsep
+;   type 13 : double slit horizontal,  P1 = vsize, P2= vsep
+;   type 20 : circular     P1 = Radius
+;                          Radius > 0: central circular part is transparent
+;                          Radius < 0: central circular part is oblique
+;   type 21 : annular      P1 = Outer radius, P2 = inner radius
+;   type 32 : vertical mirror          P1 = length, P2 = grazing angle (rad)
+;   type 33 : horizontalal mirror      P1 = length, P2 = grazing angle (rad)
 ;
 ; CATEGORY:
-;
-;
+;   phase
 ;
 ; CALLING SEQUENCE:
 ;
-;
-;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
+;   field:      input field, idl complex array, 
+;   example:    vertical double slit
+;   P1:         generic parameter (depends on type)
+;   P2:         generic parameter (depends on type)
+;   y_vec:      vertical input vector (required) in m
+;   z_vec:      horizontal input vector (required) in m
+;   type :      type of aperture
 ;
-;
+;   N, size :   if N and size are defined, a wavefield with amplitude
+;                according to the aperture type is generated.
 ;
 ; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
+;   no
 ;
 ; EXAMPLE:
-;
-;
+;   idl> emf->aperture, type=1, p1=1e-4, p2=5e-5, N=243, size=1e-3
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF NOV 2013
 ;-
-emf=emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
+emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
 aperture, emf, _EXTRA=extra
 *self.field= emf.field
 *self.z_vec= emf.z_vec
 *self.y_vec= emf.y_vec
 return
-end
+end ;; aperture
 
-
-pro phase::emfield2vars, _EXTRA=extra
+pro phase::crl, _EXTRA=extra
 ;+
 ; NAME:
-;   phase::emfield2vars
-;
+;   phase::crl
 ;
 ; PURPOSE:
-;
-;
+;   calculate the electric field after a parabolic compound refractive
+;   (Be) lense, (thin lens approximation), units (m) and (rad)
 ;
 ; CATEGORY:
-;
-;
+;   Phase
 ;
 ; CALLING SEQUENCE:
-;
-;
+;   phase->crl
 ;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
+;   field     : input field, idl complex array, 
+;               idl complex array, 
+;               will be overwritten to give results.
+;   y_vec     : vertical input vector   (required) in m
+;   z_vec     : horizontal input vector (required) in m
+;   wavelength: the wavelength                     in m
 ;
-;
+;   radius    : the lens radius                    in m
+;   thickness : the thickness of the lens on axis  in m
+;   size      : Aperture (diameter) of lense       in m
+;   crlamp:     OUTPUT crl amplitude factor
+;   crlphase:   OUTPUT crl phase factor
 ;
 ; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
+;   no
 ;
 ; PROCEDURE:
 ;
-;
-;
 ; EXAMPLE:
-;
-;
+;   idl> emf->crl
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF Nov 2013
 ;-
-emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
-emfield2vars, emf, _EXTRA=extra
-return
+crl, field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength, _EXTRA=extra
+return 
 end
-; end emfield2vars
+;; end crl
 
 pro phase::gaussbeam, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::gaussbeam
 ;
-;
 ; PURPOSE:
-;
-;
+;   generate gaussian beam
+;   currently only a 2dim gaussian distribution (in the waist), UF
+;   (2b_confirmed) for the intensity distribution we have w=2*sigma
+;   with sigma= sigma_x = sigma_y the variance of a 2d Gaussian and
+;   sigma_r= sqrt(2) * sigma ???
 ;
 ; CATEGORY:
-;
-;
+;   Phase
 ;
 ; CALLING SEQUENCE:
 ;   phase->gaussbeam
 ;
-;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
-;
-;
+;   field:        field, idl complex array,
+;   example:      example calculation plus plot (HeNe laser in 10 m)
+;   w0            waist                       in m
+;   dist:         distance to waist           in m
+;   wavelength    the wavelength              in m
+;   y_vec:        vertical   position vector  in m
+;   z_vec:        horizontal position vector  in m
+;   Nz            points hor.
+;   Ny            points vert, default = Nz
+;   sizey:        height (m),  default = sizez
+;   sizez:        width (m);
 ;
 ; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
+;   no
 ;
 ; PROCEDURE:
-;
-;
+;   fills the object using gaussbeam.pro
 ;
 ; EXAMPLE:
-;
-;
+;   idl> emf->gaussbeam, dist=0, Nz=243, sizez=0.0002, w0=27.7e-6 , wavelength=1.24e-10
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF Nov 2013
 ;-
 self.name = 'Gaussbeam'
 gaussbeam, emf, _EXTRA=extra
@@ -217,69 +170,303 @@ return
 end
 ;; end gaussbeam
 
+function phase::getamplitude
+;+
+; NAME:
+;   phase::getamplitude
+;
+; PURPOSE:
+;   export amplitude
+;
+;; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getamplitude()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the amplitude
+;
+; EXAMPLE:
+;  idl> amplitude= emf->getamplitude()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+amp= abs(*self.field)
+
+return, amp
+end ;; amplitude
+
+function phase::getfield
+;+
+; NAME:
+;   phase::getfield
+;
+; PURPOSE:
+;   export field
+;
+;; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getfield()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the complex field
+;
+; EXAMPLE:
+;  idl> field= emf->getfield()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+field= *self.field
+
+return, field
+end ;; field
+
+
+function phase::getintensity, _EXTRA=extra
+;+
+; NAME:
+;   phase::getintensity
+;
+; PURPOSE:
+;   export intensity
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getintensity()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the intensity
+;
+; EXAMPLE:
+;  idl> int= getyintensity()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+intensity= abs(*self.field)^2
+
+return, intensity
+end ;; intensity
+
+function phase::getname
+;+
+; NAME:
+;   phase::getname
+;
+; PURPOSE:
+;   export name
+;
+;; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getname()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the name
+;
+; EXAMPLE:
+;  idl> name= emf->getname()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+name= *self.name
+
+return, name
+end ;; name
+
+function phase::getphase, phunwrap=phunwrap, phase_unwrap=phase_unwrap, _EXTRA=extra
+;+
+; NAME:
+;   phase::getphase
+;
+; PURPOSE:
+;   export phase, optional with unwrapping
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   phase= phase::getphase([/phunwrap][/phase_unwrap])
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   /phase_unwrap: unwrap using phase_unwrap.pro
+;   /phunwrap    : unwrap using phunwrap.pro
+;
+; OUTPUTS:
+;   the phase
+;
+; EXAMPLE:
+;   idl> phase= emf->phunwrap()
+;
+;; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+phase0= atan(*self.field, /phase)
+phase= phase0
+if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0, _EXTRA=extra)
+if n_elements(phase_unwrap) ne 0 then phase=phunwrap(phase0, _EXTRA=extra)
+
+return, phase
+end ;; getphase
+
+function phase::getwavelength
+;+
+; NAME:
+;   phase::getwavelength
+;
+; PURPOSE:
+;   export wavelength
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getwavelength()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the wavelength
+;
+; EXAMPLE:
+;  idl> wavelength= emf->getwavelength()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+wl= *self.wavelength
+
+return, wl
+end ;; wavelength
+
+function phase::gety_vec
+;+
+; NAME:
+;   phase::gety_vec
+;
+; PURPOSE:
+;   export vertical vector
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= phase::gety_vec() 
+;
+; INPUTS:
+;   no
+;
+; OUTPUTS:
+;   the vertical vector
+;
+; EXAMPLE:
+;  idl> y= emf->gety_vec()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+y= *self.y_vec
+return, y
+end ;; y_vec
+
+function phase::getz_vec
+;+
+; NAME:
+;   phase::getz_vec
+;
+; PURPOSE:
+;   export horizontal vector
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   z= getz_vec() 
+;
+; INPUTS:
+;   no
+;
+; OUTPUTS:
+;   the hor. vector
+;
+; EXAMPLE:
+;  idl> z= emf->getz_vec()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+z= *self.z_vec
+return, z
+end ;; z
+
 pro phase::plotintensity, window=window, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::plotintensity
 ;
-;
 ; PURPOSE:
-;
-;
+;   plot intensity
 ;
 ; CATEGORY:
-;
-;
+;   phase
 ;
 ; CALLING SEQUENCE:
-;
-;
+;   emf->plotintensity
 ;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
-;
-;
-;
-; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
-;
+;   
 ; EXAMPLE:
-;
-;
+;   idl> emf->plotintensity
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF Nov 2013
 ;-
 title= self.name+ ' intensity'
-mycontour, abs(*self.field)^2, *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity'
+mycontour, abs(*self.field)^2, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity'
 return 
 end
 ; end plotintensity
@@ -289,128 +476,100 @@ pro phase::plotphase, window=window, _EXTRA=extra
 ; NAME:
 ;   phase::plotphase
 ;
-;
 ; PURPOSE:
-;
-;
+;   plot the phase
 ;
 ; CATEGORY:
-;
-;
+;   phase
 ;
 ; CALLING SEQUENCE:
-;
-;
+;   emf->plotphase
 ;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
 ;
-;
-;
-; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
-;
 ; EXAMPLE:
-;
-;
+;   idl> emf->plotphase
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF Nov 2013
 ;-
 
 title= self.name+ ' phase'
-mycontour, atan(*self.field, /phase), *self.z_vec*1e3, *self.y_vec*1e3, title=title, xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
+myphase= self->getphase(_EXTRA=extra)
+mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
 return 
-end
+end ;; plotphase
+
+pro phase::propfresnel, _EXTRA=extra
+;+
+; NAME:
+;   phase::propfresnel
+;
+; PURPOSE:
+;   propagate field using the fourier propagator (it does two FFTs)
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->propfresnel
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;  idl> emf->propfresnel
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+propfresnel, field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, $
+  wavelength=self.wavelength, _EXTRA=extra
+
+return
+end ;; propfresnel
 
 pro phase::propfourier, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::propfourier
 ;
-;
 ; PURPOSE:
-;
-;
+;   propagate field using the fourier propagator (it does two FFTs)
 ;
 ; CATEGORY:
-;
-;
+;   phase
 ;
 ; CALLING SEQUENCE:
-;
-;
+;   emf->propfourier
 ;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
 ;
-;
-;
 ; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
+;   no
 ;
 ; PROCEDURE:
 ;
-;
-;
 ; EXAMPLE:
-;
-;
+;  idl> emf->propfourier
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF Nov 2013
 ;-
 
 emf=emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
@@ -421,74 +580,73 @@ propfourier, emf, _EXTRA=extra
 *self.z_vec= emf.z_vec
 *self.y_vec= emf.y_vec
 return
-end
+end ;; propfourier
 
-
-
-pro phase::setTitle, title
+pro phase::setName, title
 ;+
 ; NAME:
-;   phase::setTitle
-;
+;   phase::setName
 ;
 ; PURPOSE:
-;
-;
+;   set the name in the datastructure
 ;
 ; CATEGORY:
-;
-;
+;   phase
 ;
 ; CALLING SEQUENCE:
-;
-;
+;   emf->setname, name
 ;
 ; INPUTS:
-;
-;
+;   the name as string
 ;
 ; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
-;
-;
-;
-; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
+;   no
 ;
 ; EXAMPLE:
-;
-;
+;   idl> emf->setname, 'new title'
 ;
 ; MODIFICATION HISTORY:
-;
+;   UF Nov 2013
 ;-
-self.title=title
+self.name= title
 return
-end
+end ;; setname
+
+pro phase::setWavelength, lambda
+;+
+; NAME:
+;   phase::setWavelength
+;
+; PURPOSE:
+;   set the wavelength in the datastructure
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->setwavelength, name
+;
+; INPUTS:
+;   the wavelength as double
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; EXAMPLE:
+;   idl> emf->setwavelength, 1e-10
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+self.wavelength= lambda
+return
+end ;; setwavelength
 
 
 ;; the phase object
@@ -504,59 +662,26 @@ pro phase__define
 ;   indirectly by the IDL OBJ_NEW() function.  It defines the data
 ;   structures used for the PHASE class.
 ;
-;
 ; CATEGORY:
 ;   PHASE
-;
 ;
 ; CALLING SEQUENCE:
 ;   Result = OBJ_NEW('PHASE')
 ;
-;
 ; INPUTS:
-;
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   no
 ;
 ; KEYWORD PARAMETERS:
-;
-;
+;   no
 ;
 ; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
+;   no
 ;
 ; EXAMPLE:
-;
-;
 ;
 ; MODIFICATION HISTORY:
 ;  UF 4. 10. 13
 ;-
-
 
 phase = $
   {phase, $
@@ -569,3 +694,4 @@ phase = $
 end
 ;; end
 
+;; end file

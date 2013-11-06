@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <04 Oct 13 15:52:42 flechsig> 
+;  Time-stamp: <05 Nov 13 17:53:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -15,11 +15,8 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ; NAME:
 ;   aperture
 ;
-;
 ; PURPOSE:
-;
 ;   acts as an aperture, or generates wavefield with amplitude according to 'type'
-;
 ;
 ;   type 1  : rectangular              P1 = hsize, P2 = vsize
 ;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
@@ -47,7 +44,6 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;
 ; OPTIONAL INPUTS:
 ;   emf: emfield structure 
-;
 ;
 ; KEYWORD PARAMETERS:
 ;   field:      input field, idl complex array, 

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Aug 13 16:50:07 flechsig> 
+;  Time-stamp: <06 Nov 13 09:14:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -86,7 +86,6 @@ pro crl, field=field, crlamp=crlamp, crlphase=crlphase, $
 ;    22.8.2013 RF: remove complex field, operate on complex input field
 ;-
 
-;;; UF I do not use the complex numbers functionality in idl
 ;;; UF I follow the the reference follath:2013f
 
 u1= 'usage: crl, field=field, y_vec=y_vec, z_vec=z_vec [, size = size][, radius=radius] [, thickness=thickness] '
