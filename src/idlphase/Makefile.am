@@ -97,12 +97,8 @@ idl_DATA  = help.html \
 	phainit_structures.pro \
         phaLoadEMField.pro \
 	phaSaveEMField.pro \
-	propfourier.pro \
-        propagation_test.idl \
-	read_extr_out.pro \
-	read_int_file.pro \
-	read_opti_out.pro \
-        examples.pro \
+	propagation_test.idl \
+	examples.pro \
 	ezre_gb_12.dat \
 	ezim_gb_12.dat \
 	test_5000.out-ezrec \
