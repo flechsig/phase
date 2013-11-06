@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Nov 13 10:14:12 flechsig> 
+;  Time-stamp: <06 Nov 13 10:53:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -186,7 +186,8 @@ pro phase::h5_write, fname,  _EXTRA=extra
 ;   UF Nov 2013
 ;-
 
-h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
+  z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 
 return
 end ;; h5_read
@@ -379,12 +380,12 @@ function phase::getname
 ; MODIFICATION HISTORY:
 ;   UF 4.11.13
 ;-
-name= *self.name
+name= self.name
 
 return, name
 end ;; name
 
-function phase::getphase, phunwrap=phunwrap, phase_unwrap=phase_unwrap, _EXTRA=extra
+function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::getphase
@@ -396,14 +397,14 @@ function phase::getphase, phunwrap=phunwrap, phase_unwrap=phase_unwrap, _EXTRA=e
 ;   phase
 ;
 ; CALLING SEQUENCE:
-;   phase= phase::getphase([/phunwrap][/phase_unwrap])
+;   phase= phase::getphase([/phunwrap][/unwrap_phase])
 ;
 ; INPUTS:
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;   /phase_unwrap: unwrap using phase_unwrap.pro
 ;   /phunwrap    : unwrap using phunwrap.pro
+;   /unwrap_phase: unwrap using unwrap_phase.pro
 ;
 ; OUTPUTS:
 ;   the phase
@@ -416,8 +417,8 @@ function phase::getphase, phunwrap=phunwrap, phase_unwrap=phase_unwrap, _EXTRA=e
 ;-
 phase0= atan(*self.field, /phase)
 phase= phase0
-if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0, _EXTRA=extra)
-if n_elements(phase_unwrap) ne 0 then phase=phunwrap(phase0, _EXTRA=extra)
+if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0)
+if n_elements(unwrap_phase) ne 0 then phase=unwrap_phase(phase0)
 
 return, phase
 end ;; getphase
