@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Nov 13 10:53:04 flechsig> 
+;  Time-stamp: <07 Nov 13 18:27:51 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -516,6 +516,114 @@ function phase::getz_vec
 z= *self.z_vec
 return, z
 end ;; z
+
+pro phase::lens, fz=fz, fy=fy
+;+
+; NAME:
+;   phase::lens
+;
+; PURPOSE:
+;   calculate the electric field after a thin lens
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->lens
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   fy: vertical focal length
+;   fz: horizontal focal length
+; 
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->lens
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+if n_elements(fy) eq 0 then fy= 1e200
+if n_elements(fz) eq 0 then fz= 1e200
+print, 'thin lens with focal length (fy, fz): ', fy, fz
+
+nz= n_elements(*self.z_vec)
+ny= n_elements(*self.y_vec)
+
+lcomp = dcomplexarr(nz, ny) ;; make a complex array
+
+for i=0, nz-1 do begin
+    for j=0, ny-1 do begin
+        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy)           
+        lcomp[i,j] = complex(cos(f1), sin(f1), /double)
+    endfor
+endfor
+*self.field*= lcomp
+return 
+end
+;; end lens
+
+pro phase::mirror, rl=rl, rw=rw, thetag=thetag, azimut=azimut
+;+
+; NAME:
+;   phase::mirror
+;
+; PURPOSE:
+;   calculate the electric field after a thin mirror
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->mirror
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
+;   rl:     short radius
+;   rw:     long radius
+;   thetag: grazing angle in rad   
+; 
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->mirror
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+if n_elements(rw)     eq 0 then rw= 0.0
+if n_elements(rl)     eq 0 then rl= 0.0
+if n_elements(azimut) eq 0 then azimut= 0.0
+if n_elements(thetag) eq 0 then thetag= !dpi/2.0
+print, 'mirror with radius (rw,rl): ', rw, rl
+
+nz= n_elements(*self.z_vec)
+ny= n_elements(*self.y_vec)
+
+lcomp = dcomplexarr(nz, ny) ;; make a complex array
+
+for i=0, nz-1 do begin
+    for j=0, ny-1 do begin
+        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy)           
+        lcomp[i,j] = complex(cos(f1), sin(f1), /double)
+    endfor
+endfor
+*self.field*= lcomp
+return 
+end
+;; end mirror
 
 pro phase::plotintensity, window=window, _EXTRA=extra
 ;+
