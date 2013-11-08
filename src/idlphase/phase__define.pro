@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <08 Nov 13 07:57:16 flechsig> 
+;  Time-stamp: <08 Nov 13 08:38:12 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -559,7 +559,8 @@ lcomp = dcomplexarr(nz, ny) ;; make a complex array
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy)           
+        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy) 
+        f1 *= (-2)* !dpi/ self.wavelength
         lcomp[i,j] = complex(cos(f1), sin(f1), /double)
     endfor
 endfor
@@ -568,7 +569,7 @@ return
 end
 ;; end lens
 
-pro phase::mirror, rl=rl, rw=rw, thetag=thetag, azimut=azimut
+pro phase::mirror, hw=hw, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w
 ;+
 ; NAME:
 ;   phase::mirror
@@ -587,9 +588,11 @@ pro phase::mirror, rl=rl, rw=rw, thetag=thetag, azimut=azimut
 ;
 ; KEYWORD PARAMETERS:
 ;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
+;   hw:     the height error of the mirror as a vector of the mirror coordinate w
 ;   rl:     short radius
 ;   rw:     long radius
 ;   thetag: grazing angle in rad   
+;   w     : the mirror coordinate
 ; 
 ; OUTPUTS:
 ;   no
@@ -604,7 +607,7 @@ pro phase::mirror, rl=rl, rw=rw, thetag=thetag, azimut=azimut
 ;-
 if n_elements(rw)     eq 0 then rw= 0.0
 if n_elements(rl)     eq 0 then rl= 0.0
-if n_elements(azimut) eq 0 then azimut= 0.0
+if n_elements(azimut) eq 0 then azimut= 0.0 else print, 'azimut not yet implemented!'
 if n_elements(thetag) eq 0 then thetag= !dpi/2.0
 
 if (abs(rw)- 1d-200)   lt 0.0 then rw= 1d200
@@ -623,11 +626,36 @@ lcomp = dcomplexarr(nz, ny) ;; make a complex array
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy)           
+        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy)    
+        f1*= (-2)* !dpi/ self.wavelength
         lcomp[i,j] = complex(cos(f1), sin(f1), /double)
     endfor
 endfor
 *self.field*= lcomp
+
+;; deal with error
+if n_elements(hw) ne 0 then begin
+    if n_elements(w) eq 0 then error, 'we need als the mirror coordinate'
+    print, 'deal with height error'
+    hw1= hw* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
+    w1 = w * sin(thetag) ;; the projection of the mirror
+    hw2= interpol(hw1, w1, *self.y_vec)
+    for i=0, nz-1 do begin
+        for j=0, ny-1 do begin
+
+            if (*self.y_vec[j] > min(w1)) and (*self.y_vec[j] < max(w1)) then begin
+                f1= hw2[j]    
+                f1*= (-4)* !dpi/ self.wavelength
+                lcomp[i,j] = complex(cos(f1), sin(f1), /double)
+            endif
+            else lcomp[i,j]= complex(0.0, 0.0, /double)
+            
+        endfor
+    endfor
+
+    *self.field*= lcomp
+end
+
 return 
 end
 ;; end mirror
