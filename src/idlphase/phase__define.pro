@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <08 Nov 13 08:38:12 flechsig> 
+;  Time-stamp: <08 Nov 13 09:11:27 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -548,19 +548,29 @@ pro phase::lens, fz=fz, fy=fy
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
 ;-
-if n_elements(fy) eq 0 then fy= 1e200
-if n_elements(fz) eq 0 then fz= 1e200
+if n_elements(fy) eq 0 then fy= 1d200
+if n_elements(fz) eq 0 then fz= 1d200
 print, 'thin lens with focal length (fy, fz): ', fy, fz
 
-nz= n_elements(*self.z_vec)
-ny= n_elements(*self.y_vec)
+myz_vec= *self.z_vec
+myy_vec= *self.y_vec
+nz= n_elements(myz_vec)
+ny= n_elements(myy_vec)
+
+;; do not knwo why we need local vars
+help, myz_vec, myy_vec, *self.z_vec, *self.y_vec
+
+;nz= n_elements(*self.z_vec)
+;ny= n_elements(*self.y_vec)
+
+print, 'ny, nz, lambda ', ny, nz, self.wavelength
 
 lcomp = dcomplexarr(nz, ny) ;; make a complex array
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy) 
-        f1 *= (-2)* !dpi/ self.wavelength
+        f1= myz_vec[i]^2/(2.0*fz) + myy_vec[j]^2/(2.0*fy) 
+        f1 *= (-2.0)* !dpi/ self.wavelength
         lcomp[i,j] = complex(cos(f1), sin(f1), /double)
     endfor
 endfor
@@ -619,14 +629,16 @@ fw= 2.0/ (rw* sin(thetag))
 
 print, 'mirror with radius (rw,rl): ', rw, rl
 
-nz= n_elements(*self.z_vec)
-ny= n_elements(*self.y_vec)
+myz_vec= *self.z_vec
+myy_vec= *self.y_vec
+nz= n_elements(myz_vec)
+ny= n_elements(myy_vec)
 
 lcomp = dcomplexarr(nz, ny) ;; make a complex array
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        f1= *self.z_vec[i]^2/(2.0*fz) + *self.y_vec[j]^2/(2.0*fy)    
+        f1= myz_vec[i]^2/(2.0*fz) + myy_vec[j]^2/(2.0*fy)    
         f1*= (-2)* !dpi/ self.wavelength
         lcomp[i,j] = complex(cos(f1), sin(f1), /double)
     endfor
@@ -635,26 +647,27 @@ endfor
 
 ;; deal with error
 if n_elements(hw) ne 0 then begin
-    if n_elements(w) eq 0 then error, 'we need als the mirror coordinate'
+    if n_elements(w) eq 0 then message, 'we need als the mirror coordinate'
     print, 'deal with height error'
     hw1= hw* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
     w1 = w * sin(thetag) ;; the projection of the mirror
-    hw2= interpol(hw1, w1, *self.y_vec)
+    hw2= interpol(hw1, w1, myy_vec)
     for i=0, nz-1 do begin
         for j=0, ny-1 do begin
 
-            if (*self.y_vec[j] > min(w1)) and (*self.y_vec[j] < max(w1)) then begin
+            if (myy_vec[j] > min(w1)) and (myy_vec[j] < max(w1)) then begin
                 f1= hw2[j]    
                 f1*= (-4)* !dpi/ self.wavelength
                 lcomp[i,j] = complex(cos(f1), sin(f1), /double)
-            endif
-            else lcomp[i,j]= complex(0.0, 0.0, /double)
-            
+            endif else begin
+                lcomp[i,j]= complex(0.0, 0.0, /double)
+            endelse
         endfor
     endfor
 
     *self.field*= lcomp
-end
+
+endif
 
 return 
 end
