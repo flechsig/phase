@@ -1,13 +1,12 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Nov 13 18:27:51 flechsig> 
+;  Time-stamp: <08 Nov 13 07:57:16 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
 ;  $Date$
 ;  $Revision$ 
 ;  $Author$ 
-
 
 pro phase::aperture,  _EXTRA=extra
 ;+
@@ -73,7 +72,7 @@ pro phase::crl, _EXTRA=extra
 ;
 ; PURPOSE:
 ;   calculate the electric field after a parabolic compound refractive
-;   (Be) lense, (thin lens approximation), units (m) and (rad)
+;   (Be) lens, (thin lens approximation), units (m) and (rad)
 ;
 ; CATEGORY:
 ;   Phase
@@ -94,7 +93,7 @@ pro phase::crl, _EXTRA=extra
 ;
 ;   radius    : the lens radius                    in m
 ;   thickness : the thickness of the lens on axis  in m
-;   size      : Aperture (diameter) of lense       in m
+;   size      : Aperture (diameter) of lens        in m
 ;   crlamp:     OUTPUT crl amplitude factor
 ;   crlphase:   OUTPUT crl phase factor
 ;
@@ -607,6 +606,14 @@ if n_elements(rw)     eq 0 then rw= 0.0
 if n_elements(rl)     eq 0 then rl= 0.0
 if n_elements(azimut) eq 0 then azimut= 0.0
 if n_elements(thetag) eq 0 then thetag= !dpi/2.0
+
+if (abs(rw)- 1d-200)   lt 0.0 then rw= 1d200
+if (abs(rl)- 1d-200)   lt 0.0 then rl= 1d200
+if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
+
+fl= 2.0* sin(thetag)/rl
+fw= 2.0/ (rw* sin(thetag))
+
 print, 'mirror with radius (rw,rl): ', rw, rl
 
 nz= n_elements(*self.z_vec)
