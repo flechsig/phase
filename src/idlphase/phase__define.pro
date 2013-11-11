@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <08 Nov 13 09:11:27 flechsig> 
+;  Time-stamp: <11 Nov 13 16:26:51 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -281,6 +281,39 @@ amp= abs(*self.field)
 return, amp
 end ;; amplitude
 
+function phase::getemf
+;+
+; NAME:
+;   phase::getemf
+;
+; PURPOSE:
+;   export emf struct
+;
+;; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getemf()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the emf struct
+;
+; EXAMPLE:
+;  idl> field= emf->getemf()
+;
+; MODIFICATION HISTORY:
+;   UF 4.11.13
+;-
+emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
+return, emf
+end ;; emf
+
 function phase::getfield
 ;+
 ; NAME:
@@ -416,9 +449,11 @@ function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, _EXTRA=e
 ;-
 phase0= atan(*self.field, /phase)
 phase= phase0
+help,phase
 if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0)
 if n_elements(unwrap_phase) ne 0 then phase=unwrap_phase(phase0)
 
+help, phase
 return, phase
 end ;; getphase
 
@@ -638,7 +673,7 @@ lcomp = dcomplexarr(nz, ny) ;; make a complex array
 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        f1= myz_vec[i]^2/(2.0*fz) + myy_vec[j]^2/(2.0*fy)    
+        f1= myz_vec[i]^2/(2.0*fl) + myy_vec[j]^2/(2.0*fw)    
         f1*= (-2)* !dpi/ self.wavelength
         lcomp[i,j] = complex(cos(f1), sin(f1), /double)
     endfor
@@ -913,6 +948,7 @@ pro phase::statistics, _EXTRA=extra
 ;   UF Nov 2013
 ;-
 emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
+;;help,emf
 emf_statistics, emf, _EXTRA=extra
 return
 end ;; statistics
