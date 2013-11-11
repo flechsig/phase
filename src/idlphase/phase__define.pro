@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <11 Nov 13 16:26:51 flechsig> 
+;  Time-stamp: <11 Nov 13 17:06:07 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -659,10 +659,11 @@ if (abs(rw)- 1d-200)   lt 0.0 then rw= 1d200
 if (abs(rl)- 1d-200)   lt 0.0 then rl= 1d200
 if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
 
-fl= 2.0* sin(thetag)/rl
-fw= 2.0/ (rw* sin(thetag))
+fl= rl/(2.0* sin(thetag))
+fw= rw* sin(thetag)/ 2.0
 
 print, 'mirror with radius (rw,rl): ', rw, rl
+print, 'mirror with focus  (fw,fl): ', fw, fl
 
 myz_vec= *self.z_vec
 myy_vec= *self.y_vec
@@ -682,6 +683,7 @@ endfor
 
 ;; deal with error
 if n_elements(hw) ne 0 then begin
+    print, 'mirror with height error'
     if n_elements(w) eq 0 then message, 'we need als the mirror coordinate'
     print, 'deal with height error'
     hw1= hw* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt

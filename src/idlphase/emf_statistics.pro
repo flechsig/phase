@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emf_stat.pro
 ;  Date      : <18 Jul 13 17:34:57 flechsig> 
-;  Time-stamp: <19 Jul 13 09:56:00 flechsig> 
+;  Time-stamp: <11 Nov 13 15:31:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -8,7 +8,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig = zsig
+pro emf_statistics, fields, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig= zsig
 ;+
 ; NAME:
 ;   emf_statistics
@@ -22,59 +22,44 @@ pro emf_statistics, field, z_vec=z_vec, y_vec=y_vec, yfwhm=yfwhm, zfwhm=zfwhm, y
 ; CATEGORY:
 ;   emf
 ;
-;
 ; CALLING SEQUENCE:
 ;    emf_statistics, field
 ;
-;
 ; INPUTS:
-;   the field
-;
-;
-; OPTIONAL INPUTS:
-;
-;
+;   the field strct
 ;
 ; KEYWORD PARAMETERS:
 ;   yfwhm: vertical fwhm (output)
 ;   ysig : vertical rms (output)
-;   y_vec: vertical vector
 ;   zfwhm: horizontal fwhm (output)
 ;   zsig : horizontal rms (output)
-;   z_vec: horizontal vector
 ;
 ; OUTPUTS:
-;
-;
 ;
 ; OPTIONAL OUTPUTS:
 ;
 ; PROCEDURE:
 ;
-;
-;
 ; EXAMPLE:
 ;  idl> emf_stat, amp, y_vec=y, z_vec=z
-;
 ;
 ; MODIFICATION HISTORY:
 ;   UF Jul 2013
 ;-
 
-ms= size(field)
+ms= size(fields.field)
 
-if n_elements(z_vec) eq 0 then z_vec=dindgen(ms[1])
-if n_elements(y_vec) eq 0 then y_vec=dindgen(ms[2])
+
 
 ;field_n =dindgen(ms[1],ms[2])
-field_n=field/max(field)
+field_n= fields.field/max(fields.field)
 
 stat= dblarr(7)
-fit= gauss2dfit(field_n, stat, z_vec, y_vec)
-zmin= min(z_vec)
-zmax= max(z_vec)
-ymin= min(y_vec)
-ymax= max(y_vec)
+fit= gauss2dfit(field_n, stat, fields.z_vec, fields.y_vec)
+zmin= min(fields.z_vec)
+zmax= max(fields.z_vec)
+ymin= min(fields.y_vec)
+ymax= max(fields.y_vec)
 print, '====================='
 print, 'emf_statistics'
 print, '====================='
@@ -84,8 +69,8 @@ print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax=', zmin, zmax
 print, 'ymin, ymax=', ymin, ymax
+print, '====================='
 print, 'result of gauss2dfit in (m):', stat
-help, field, y_vec, z_vec
 print, '====================='
 return
 end

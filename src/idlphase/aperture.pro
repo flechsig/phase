@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <05 Nov 13 17:53:42 flechsig> 
+;  Time-stamp: <06 Nov 13 12:32:19 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,7 +10,7 @@
 ;  $Author$ 
 
 pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=type, $
-              P1=P1, P2=P2,  plot=plot, N=N, size=size, verbose=verbose
+              P1=P1, P2=P2, P3=P3, P4=P4, plot=plot, N=N, size=size, verbose=verbose
 ;+
 ; NAME:
 ;   aperture
@@ -18,7 +18,7 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ; PURPOSE:
 ;   acts as an aperture, or generates wavefield with amplitude according to 'type'
 ;
-;   type 1  : rectangular              P1 = hsize, P2 = vsize
+;   type 1  : rectangular              P1 = hsize, P2 = vsize, P3= hpos, P4= vpos
 ;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
 ;   type 3  : horizontal slit          P1 = vsize, P2 = vpos (default= 0)
 ;   type 12 : double slit vertical,    P1 = hsize, P2= hsep
@@ -29,18 +29,17 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;   type 21 : annular      P1 = Outer radius, P2 = inner radius
 ;   type 32 : vertical mirror          P1 = length, P2 = grazing angle (rad)
 ;   type 33 : horizontalal mirror      P1 = length, P2 = grazing angle (rad)
+;   type 40 : diamond                  P1= width, P2= hpos, P3= vpos
+;   type 50 : triangle                 P1= width, P2= hpos, P3= vpos
 ;
 ; CATEGORY:
 ;   phase_calc
 ;
-;
 ; CALLING SEQUENCE:
-;
 ;
 ;
 ; INPUTS:
 ;   see keyword parameters
-;
 ;
 ; OPTIONAL INPUTS:
 ;   emf: emfield structure 
@@ -50,6 +49,8 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;   example:    vertical double slit
 ;   P1:         generic parameter (depends on type)
 ;   P2:         generic parameter (depends on type)
+;   P3:         generic parameter (depends on type)
+;   P4:         generic parameter (depends on type)
 ;   y_vec:      vertical input vector (required) in m
 ;   z_vec:      horizontal input vector (required) in m
 ;   type :      type of aperture
@@ -59,26 +60,8 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ; OUTPUTS:
 ;   see keyword parameters
 ;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;   no
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
 ; PROCEDURE:
 ;   
-;
-;
 ; EXAMPLE:
 ;
 ;  generates circular source with diam. 10 um.   The field size is 80 um, with 80 points
@@ -146,6 +129,8 @@ help, T
 case type of
     1 : begin                                  ;; rectangular 
         if n_elements(P2) eq 0 then P2= P1
+        if n_elements(P3) eq 0 then h0= 0.0 else h0= P3
+        if n_elements(P4) eq 0 then v0= 0.0 else v0= P4
         p1half= 0.5 * p1
         p2half= 0.5 * p2
         if n_elements(verbose) ne 0 then print, 'rectangular aperture (h x v): ', P1, P2
@@ -192,6 +177,21 @@ case type of
         aphalf= 0.5 * ap
         print, 'mirror horizontal (w, theta_g): ', P1, P2, ' rad, ap= ', ap
     end
+
+    40: begin
+        const= P1/sqrt(2.0)
+        if n_elements(P2) eq 0 then h0= 0.0 else h0= P2
+        if n_elements(P3) eq 0 then v0= 0.0 else v0= P3
+        print, 'diamond width= ', P1 
+    end
+
+    50: begin
+        m= sqrt(3.0)
+        const= P1/4.0* sqrt(3.0)
+        if n_elements(P2) eq 0 then h0= 0.0 else h0= P2
+        if n_elements(P3) eq 0 then v0= 0.0 else v0= P3
+        print, 'triangle width= ', P1 
+        end
     
     else : begin
         print, ' type ', type, ' not defined'
@@ -206,7 +206,7 @@ for i=0, nz-1 do begin
         case type of
 
             1 : begin                                  ;; rectangular 
-               if ((abs(z_vec[i]) le P1half) and (abs(y_vec[j]) le P2half)) then T[i,j]= double(1.0)
+               if ((abs(z_vec[i]- h0) le P1half) and (abs(y_vec[j]- v0) le P2half)) then T[i,j]= double(10.0)
             end
             
             2 : begin                                 ;; vertical slit
@@ -245,6 +245,21 @@ for i=0, nz-1 do begin
 
             33: begin                             ;; horizontal mirror (assuming l= infinite)
                if  (abs(z_vec[i]) le aphalf) then T[i,j]= double(1.0)
+           end
+
+           40: begin                             ;; diamond (Karo)
+               if (y_vec[j]-v0 le z_vec[i]-h0 + const) and $
+                 (y_vec[j]-v0 le (-1.0)*(z_vec[i]-h0) + const)  and $
+                 (y_vec[j]-v0 ge z_vec[i]-h0 - const)  and $
+                 (y_vec[j]-v0 ge (-1.0)*(z_vec[i]-h0) - const) $
+                 then T[i,j]= double(1.0)
+           end
+
+           50: begin                             ;; triangle
+               if (y_vec[j]-v0 le m*(z_vec[i]-h0) + const) and $
+                 (y_vec[j]-v0 le (-1.0)*m*(z_vec[i]-h0) + const)  and $
+                 (y_vec[j]-v0 ge ((-1.0)* const) )  $
+                 then T[i,j]= double(1.0)
             end
             
             else : begin
