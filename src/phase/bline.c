@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <11 Nov 13 16:43:05 flechsig>  */
+/*   Time-stamp: <11 Nov 13 16:44:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2558,7 +2558,7 @@ void DefGeometryC_UF(struct gdatset *in, struct geometrytype *out, struct Option
   printf("  lambda= %g nm (lambda for grating geometry)\n", lambda4geometry* 1e6);
   printf("  out->xlam= %g nm (lambda for tracking * m)\n", out->xlam* 1e6);    
   printf("  out->idefl= %d\n", out->idefl);
-  printf("  grazing angle alpha_g in mrad= %g\n", 1e3*(PI-alpha));
+  printf("  grazing angle alpha_g in mrad= %g\n", 1e3*(0.5*PI-alpha));
 #endif
 } /* end DefGeometryC_UF */ 
 
