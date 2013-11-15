@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <11 Nov 13 17:06:07 flechsig> 
+;  Time-stamp: <15 Nov 13 13:24:48 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -659,7 +659,7 @@ if (abs(rw)- 1d-200)   lt 0.0 then rw= 1d200
 if (abs(rl)- 1d-200)   lt 0.0 then rl= 1d200
 if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
 
-fl= rl/(2.0* sin(thetag))
+fl= rl/(2.0* sin(thetag))  ;; brennweiten
 fw= rw* sin(thetag)/ 2.0
 
 print, 'mirror with radius (rw,rl): ', rw, rl
@@ -672,14 +672,40 @@ ny= n_elements(myy_vec)
 
 lcomp = dcomplexarr(nz, ny) ;; make a complex array
 
+case azimut of
+  0 : begin
+      print, 'vertical up deflecting mirror'
+  end
+  90 : begin
+      print, 'horizontal left deflecting mirror'
+      ff= fw
+      fw= fl
+      fl= ff
+  end
+  180 : begin
+      print, 'vertical down deflecting mirror'
+  end
+  270 : begin
+      print, 'horzontal right deflecting mirror'
+      ff= fw
+      fw= fl
+      fl= ff
+  end
+  else : begin
+    print, 'no valid azimut= ', azimut,', allowed are: 0 90 180 270'
+    return
+  end
+endcase
+
 for i=0, nz-1 do begin
-    for j=0, ny-1 do begin
-        f1= myz_vec[i]^2/(2.0*fl) + myy_vec[j]^2/(2.0*fw)    
-        f1*= (-2)* !dpi/ self.wavelength
-        lcomp[i,j] = complex(cos(f1), sin(f1), /double)
-    endfor
+  for j=0, ny-1 do begin
+    f1 = myz_vec[i]^2/(2.0*fl) + myy_vec[j]^2/(2.0*fw) ;; phase   
+    f1*= (-2)* !dpi/ self.wavelength                   ;; k
+    lcomp[i,j]= complex(cos(f1), sin(f1), /double)
+  endfor
 endfor
-*self.field*= lcomp
+
+*self.field*= lcomp   ;; factor
 
 ;; deal with error
 if n_elements(hw) ne 0 then begin
@@ -709,6 +735,101 @@ endif
 return 
 end
 ;; end mirror
+
+pro phase::mirrorg, u=u, w=w, l=l, thetag=thetag, azimut=azimut, 
+;+
+; NAME:
+;   phase::mirrorg
+;
+; PURPOSE:
+;   calculate the electric field after a generic mirror defined by a height profile u(w,l)
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->mirrorg
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
+;   hw:     the height error of the mirror as a vector of the mirror coordinate w
+;   rl:     short radius
+;   rw:     long radius
+;   thetag: grazing angle in rad   
+;   w     : the mirror coordinate
+; 
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->mirrorg
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+if n_elements(azimut) eq 0 then azimut= 0.0 else print, 'azimut not yet implemented!'
+if n_elements(thetag) eq 0 then thetag= !dpi/2.0
+if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
+
+myz_vec= *self.z_vec
+myy_vec= *self.y_vec
+nz= n_elements(myz_vec)
+ny= n_elements(myy_vec)
+
+lcomp = dcomplexarr(nz, ny) ;; make a complex array
+
+case azimut of
+  0 : begin
+      print, 'vertical up deflecting mirror'
+      wm= myy_vec/ sin(thetag)
+      lm= myz_vec
+  end
+  90 : begin
+      print, 'horizontal left deflecting mirror'
+      wm= (-1.0) * myz_vec /sin(thetag)
+      lm= myy_vec
+  end
+  180 : begin
+      print, 'vertical down deflecting mirror'
+      wm= (-1.0) * myy_vec/ sin(thetag)
+      lm= (-1.0) * myz_vec
+  end
+  270 : begin
+      print, 'horzontal right deflecting mirror'
+      wm= myz_vec /sin(thetag)
+      lm= (-1.0) * myy_vec
+  end
+  else : begin
+    print, 'no valid azimut= ', azimut,', allowed are: 0 90 180 270'
+    return
+end
+endcase
+
+; we calculated the coordinate wm, lm on the mirror as function of y_vec, z_vec, azimut and thetag 
+; now we calculate the 2d height matrix um
+
+um= interp2d(u, w, l, wm, lm, /grid)  
+
+for i=0, nz-1 do begin
+  for j=0, ny-1 do begin
+    f1 = um[i,j] * sin(thetag)    ;; 2d interpolator
+    f1*= 2.0* (-2)* !dpi/ self.wavelength                   ;; k
+    lcomp[i,j]= complex(cos(f1), sin(f1), /double)
+  endfor
+endfor
+
+*self.field*= lcomp   ;; factor
+
+return 
+end
+;; end mirrorg
+
 
 pro phase::plotintensity, window=window, _EXTRA=extra
 ;+
