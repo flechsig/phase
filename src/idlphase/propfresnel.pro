@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <18 Jul 13 17:18:21 flechsig> 
+;  Time-stamp: <21 Nov 13 12:23:40 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -18,27 +18,21 @@ pro propfresnel, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 ; NAME:
 ;   propfresnel
 ;
-;
 ; PURPOSE:
 ;   calculate the electric field after some distance in vacuum
-;   Fresnel approximation with one Fouriertransform
-;
+;   Fresnel approximation with one Fouriertransform, the grid changes: 
+;   \Delta z_1= \frac{\lambda  x}{\Delta z_0 M and 
+;   \Delta y_1= \frac{\lambda  x}{\Delta y_0 N
+;   assuming drift= x and number of gridpoints M, N
 ;
 ; CATEGORY:
 ;   phase_calc
 ;
-;
 ; CALLING SEQUENCE:
 ;  
-;
-;
 ; INPUTS:
 ;   
-;
-;
 ; OPTIONAL INPUTS:
-;
-;
 ;
 ; KEYWORD PARAMETERS:
 ;   field:      input field, idl complex array,
@@ -52,28 +46,13 @@ pro propfresnel, drift=drift, y_vec=y_vec, z_vec=z_vec, field=field $
 ; OUTPUTS:
 ;   see keyword parameters
 ;
-;
 ; OPTIONAL OUTPUTS:
-;
-;
 ;
 ; COMMON BLOCKS:
 ;   no
 ;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-; PROCEDURE:
-;   
-;
-;
 ; EXAMPLE:
-;   
+;   idl> 
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -101,14 +80,13 @@ if n_elements(plot  )     eq 0 then plot=0
 ;------------------------- I want wavelength to be a scalar ---------------
 dum=size(wavelength)
 if (dum[0] gt 0) then begin
-  if (dum[1] eq 0) then begin
-   print, 'wavelength not defined ',dum
-   return
-  endif
- print, 'wavelength of type array, dim =',dum[0],' convert to scalar.'
- wavelength = wavelength[0]
+   if (dum[1] eq 0) then begin
+      print, 'wavelength not defined ', dum
+      return
+   endif
+   print, 'wavelength of type array, dim =',dum[0],' convert to scalar.'
+   wavelength = wavelength[0]
 endif
-
 
 k  = 2* !dpi/wavelength
 
