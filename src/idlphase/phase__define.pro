@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Dec 13 14:22:29 flechsig> 
+;  Time-stamp: <06 Dec 13 15:20:47 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -830,6 +830,37 @@ return
 end
 ;; end mirrorg
 
+pro phase::plotamplitude, window=window, _EXTRA=extra
+;+
+; NAME:
+;   phase::plotamplitude
+;
+; PURPOSE:
+;   plot amplitude
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->plotamplitude
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   
+; EXAMPLE:
+;   idl> emf->plotamplitude
+;
+; MODIFICATION HISTORY:
+;   UF Dec 2013
+;-
+title= self.name+ ' amplitude'
+mycontour, abs(*self.field), *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='amplitude'
+return 
+end
+; end plotamplitude
 
 pro phase::plotintensity, window=window, _EXTRA=extra
 ;+
@@ -951,6 +982,7 @@ pro phase::propfourier, _EXTRA=extra
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;   drift: propagation distance in m   
 ;
 ; OUTPUTS:
 ;   no
@@ -1040,14 +1072,14 @@ self.wavelength= lambda
 return
 end ;; setwavelength
 
-pro phase::statistics, _EXTRA=extra
+pro phase::statistics, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig
 ;+
 ; NAME:
 ;   phase::statistics
 ;
 ; PURPOSE:
 ;   print statistics of a field (does a 2d gaussfit to determine
-;   fwhm), export fwhm if requested   
+;   fwhm and sigma), export fwhm or sigma if requested   
 ;
 ; CATEGORY:
 ;   phase
@@ -1062,7 +1094,11 @@ pro phase::statistics, _EXTRA=extra
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;   no
+;   amplitude: statistics of field - default is intensity field^2
+;   yfwhm:     vertical fwhm (output)
+;   ysig :     vertical rms (output)
+;   zfwhm:     horizontal fwhm (output)
+;   zsig :     horizontal rms (output)
 ;
 ; EXAMPLE:
 ;   idl> emf->statistics
@@ -1070,9 +1106,39 @@ pro phase::statistics, _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
 ;-
-emf= emfield(field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wavelength)
-;;help,emf
-emf_statistics, emf, _EXTRA=extra
+
+if n_elements(amplitude) eq 0 then begin
+    title= 'intensity statistics'
+    myfield= self->getintensity()
+endif else begin 
+    title= 'amplitude statistics'
+    myfield= self->getamplitude() 
+endelse
+z_vec= self->getz_vec()
+y_vec= self->gety_vec()
+
+field_n= myfield/max(myfield)
+
+stat= dblarr(7)
+fit = gauss2dfit(field_n, stat, z_vec, y_vec)
+zmin= min(z_vec)
+zmax= max(z_vec)
+ymin= min(y_vec)
+ymax= max(y_vec)
+
+print, '====================='
+print, title
+print, '====================='
+print, 'z fwhm=',stat[2]*2.35, ' m, rms = ',stat[2], ' m'
+print, 'y fwhm=',stat[3]*2.35, ' m, rms = ',stat[3], ' m'
+print, 'z0    =',stat[4], ' m'
+print, 'y0    =',stat[5], ' m'
+print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
+print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
+print, '====================='
+print, 'result of gauss2dfit in (m):', stat
+print, '====================='
+
 return
 end ;; statistics
 

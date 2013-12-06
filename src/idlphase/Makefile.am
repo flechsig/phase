@@ -32,7 +32,6 @@ idl_with_doc_header = \
 	driftfrauenhofer.pro \
 	drift_crl_test.idl \
         drift_test.idl \
-        emf_statistics.pro \
         emfield.pro \
 	emfield2vars.pro \
         gaussbeam.pro \
