@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/emf_stat.pro
 ;  Date      : <18 Jul 13 17:34:57 flechsig> 
-;  Time-stamp: <06 Dec 13 14:19:46 flechsig> 
+;  Time-stamp: <06 Dec 13 14:23:53 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -65,8 +65,8 @@ print, 'z fwhm=',stat[2]*2.35, ' m, rms = ',stat[2], ' m'
 print, 'y fwhm=',stat[3]*2.35, ' m, rms = ',stat[3], ' m'
 print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
-print, 'zmin, zmax (m) =', zmin, zmax, 'nz=', n_elements(fields.z_vec)
-print, 'ymin, ymax (m) =', ymin, ymax, 'ny=', n_elements(fields.y_vec)
+print, 'zmin, zmax (m) =', zmin, zmax, ' nz=', n_elements(fields.z_vec)
+print, 'ymin, ymax (m) =', ymin, ymax, ' ny=', n_elements(fields.y_vec)
 print, '====================='
 print, 'result of gauss2dfit in (m):', stat
 print, '====================='
