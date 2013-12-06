@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <15 Nov 13 13:24:48 flechsig> 
+;  Time-stamp: <06 Dec 13 14:22:29 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -736,7 +736,7 @@ return
 end
 ;; end mirror
 
-pro phase::mirrorg, u=u, w=w, l=l, thetag=thetag, azimut=azimut, 
+pro phase::mirrorg, u=u, w=w, l=l, thetag=thetag, azimut=azimut 
 ;+
 ; NAME:
 ;   phase::mirrorg
