@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <06 Nov 13 12:32:19 flechsig> 
+;  Time-stamp: <09 Dec 13 17:08:48 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -31,6 +31,8 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;   type 33 : horizontalal mirror      P1 = length, P2 = grazing angle (rad)
 ;   type 40 : diamond                  P1= width, P2= hpos, P3= vpos
 ;   type 50 : triangle                 P1= width, P2= hpos, P3= vpos
+;   type 62 : transmission grating ruled vertical,   P1= pitch, P2= duty cycle (opening/pitch) 
+;   type 63 : transmission grating ruled horizontal, P1= pitch, P2= duty cycle (opening/pitch)
 ;
 ; CATEGORY:
 ;   phase_calc
@@ -191,7 +193,20 @@ case type of
         if n_elements(P2) eq 0 then h0= 0.0 else h0= P2
         if n_elements(P3) eq 0 then v0= 0.0 else v0= P3
         print, 'triangle width= ', P1 
-        end
+    end
+
+    62: begin
+        if n_elements(P2) eq 0 then P2= 0.5
+        print, 'vertcally ruled grating, pitch= ', P1, ' duty cycle= ', P2 
+        tr= p1 * p2
+    end
+
+    63: begin
+        if n_elements(P2) eq 0 then P2= 0.5
+        print, 'horizontally ruled grating, pitch= ', P1, ' duty cycle= ', P2 
+        tr= p1 * p2
+    end
+
     
     else : begin
         print, ' type ', type, ' not defined'
@@ -260,9 +275,18 @@ for i=0, nz-1 do begin
                  (y_vec[j]-v0 le (-1.0)*m*(z_vec[i]-h0) + const)  and $
                  (y_vec[j]-v0 ge ((-1.0)* const) )  $
                  then T[i,j]= double(1.0)
-            end
-            
-            else : begin
+           end
+
+           62 : begin                                 ;; vertical slit
+               if (abs(z_vec[i])/P1- floor(abs(z_vec[i])/P1)) le tr) then T[i,j]= double(1.0)
+           end
+           
+           63 : begin                               ;; horizontal slit
+               if  (abs(y_vec[j])/P1- floor(abs(y_vec[j])/P1)) le tr) then T[i,j]= double(1.0)
+           end
+           
+           
+           else : begin
                print, ' type ', type, ' not defined'
                return         
             end   
