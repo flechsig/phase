@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Dec 13 15:20:47 flechsig> 
+;  Time-stamp: <10 Dec 13 11:14:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -349,7 +349,7 @@ return, field
 end ;; field
 
 
-function phase::getintensity, _EXTRA=extra
+function phase::getintensity
 ;+
 ; NAME:
 ;   phase::getintensity
@@ -448,10 +448,11 @@ function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, _EXTRA=e
 ;   UF 4.11.13
 ;-
 phase0= atan(*self.field, /phase)
+;;phase= phase0
+help,phase0
+if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0) else $
+if n_elements(unwrap_phase) ne 0 then phase=unwrap_phase(phase0) else $
 phase= phase0
-help,phase
-if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0)
-if n_elements(unwrap_phase) ne 0 then phase=unwrap_phase(phase0)
 
 help, phase
 return, phase
@@ -486,7 +487,7 @@ function phase::getwavelength
 ; MODIFICATION HISTORY:
 ;   UF 4.11.13
 ;-
-wl= *self.wavelength
+wl= self.wavelength
 
 return, wl
 end ;; wavelength
@@ -1116,6 +1117,7 @@ endif else begin
 endelse
 z_vec= self->getz_vec()
 y_vec= self->gety_vec()
+lambda= self->getwavelength()
 
 field_n= myfield/max(myfield)
 
@@ -1135,6 +1137,7 @@ print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
 print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
+print, 'wavelength (nm)=', lambda*1e9
 print, '====================='
 print, 'result of gauss2dfit in (m):', stat
 print, '====================='
