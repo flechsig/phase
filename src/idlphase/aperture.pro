@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <10 Dec 13 17:02:59 flechsig> 
+;  Time-stamp: <11 Dec 13 16:17:11 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -297,25 +297,19 @@ for i=0, nz-1 do begin
            end
 
            62 : begin                                 ;; vertical grating
-               if (abs(z_vec[i])/P1- floor( abs(z_vec[i])/P1) le P2/2.0) or $
-                  (abs(z_vec[i])/P1- floor( abs(z_vec[i])/P1) ge (1.0-P2/2.0)) then T[i,j]= double(1.0)
+               if ((abs(z_vec[i])+ 0.5* P2)/P1- floor((abs(z_vec[i])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= double(1.0)
            end
            
            63 : begin                               ;; horizontal slit
-               if (abs(y_vec[j])/P1- floor(abs(y_vec[j])/P1) le P2/2.0) or $
-                  (abs(y_vec[j])/P1- floor(abs(y_vec[j])/P1) ge (1.0-P2/2.0)) then T[i,j]= double(1.0)
+               if ((abs(y_vec[j])+ 0.5* P2)/P1- floor((abs(y_vec[j])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= double(1.0)
            end
            
            72 : begin                                 ;; vertical slit
-               if ( abs(z_vec[i])/P1- floor( abs(z_vec[i])/P1 ) le P2/2.0) or $
-                  ( abs(z_vec[i])/P1- floor( abs(z_vec[i])/P1 ) ge (1.0-P2/2.0)) then $
-                 T[i,j]= dcomplex(cos(P3), sin(P3))
+               if ((abs(z_vec[i])+ 0.5* P2)/P1- floor((abs(z_vec[i])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= dcomplex(cos(P3), sin(P3))
            end
            
            73 : begin                               ;; horizontal slit
-               if  (abs(y_vec[j])/P1- floor(abs(y_vec[j])/P1) le P2/2.0) or $ 
-                   (abs(y_vec[j])/P1- floor(abs(y_vec[j])/P1) ge (1.0-P2/2.0)) then $
-                 T[i,j]= dcomplex(cos(P3), sin(P3))
+               if ((abs(y_vec[j])+ 0.5* P2)/P1- floor((abs(y_vec[j])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= dcomplex(cos(P3), sin(P3))
            end
            
            else : begin
