@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <10 Dec 13 11:14:23 flechsig> 
+;  Time-stamp: <12 Dec 13 12:14:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -14,7 +14,7 @@ pro phase::aperture,  _EXTRA=extra
 ;   phase::aperture
 ;
 ; PURPOSE:
-;   acts as an aperture, or generates wavefield with amplitude according to 'type'
+;   acts as an aperture, or generates wavefield with amplitude according to 'type', calls internally the routine aperture.pro- see docs there for updated features
 ;
 ;   type 1  : rectangular              P1 = hsize, P2 = vsize
 ;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
@@ -458,6 +458,52 @@ help, phase
 return, phase
 end ;; getphase
 
+function phase::getprofile, amplitude=amplitude, y=y, z=z
+;+
+; NAME:
+;   phase::getprofile
+;
+; PURPOSE:
+;   export phase, optional with unwrapping
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   phase= phase::getprofile([/phunwrap][/unwrap_phase])
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;     z: the horizontal profile
+;
+; OUTPUTS:
+;   the phase
+;
+; EXAMPLE:
+;   idl> zprof= emf->getprofile(/z)
+;
+;; MODIFICATION HISTORY:
+;   UF 4.12.13
+;-
+if n_elements(amplitude) ne 0 then field = self->getamplitude() else field= self->getintensity()
+help,field
+s= size(field)
+nz= s[1]
+ny= s[2]
+m= max(field, mindex)
+mz= mindex mod ny 
+my= mindex / ny
+
+print, nz, ny, mz, my, m, mindex
+
+if n_elements(z) ne 0 then prof= reform(field[*,my])
+if n_elements(y) ne 0 then prof= reform(field[mz,*])
+
+return, prof
+end ;; getprofile
+
 function phase::getwavelength
 ;+
 ; NAME:
@@ -856,6 +902,9 @@ pro phase::plotamplitude, window=window, _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;   UF Dec 2013
 ;-
+
+if n_elements(window) ne 0 then window, window
+
 title= self.name+ ' amplitude'
 mycontour, abs(*self.field), *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
   xtitle='z (mm)', ytitle='y (mm)', ztitle='amplitude'
@@ -888,6 +937,7 @@ pro phase::plotintensity, window=window, _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
 ;-
+if n_elements(window) ne 0 then window, window
 title= self.name+ ' intensity'
 mycontour, abs(*self.field)^2, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
   xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity'
@@ -920,13 +970,69 @@ pro phase::plotphase, window=window, _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
 ;-
-
+if n_elements(window) ne 0 then window, window
 title= self.name+ ' phase'
-myphase= self->getphase(_EXTRA=extra)
+myphase= self->getprofile(_EXTRA=extra)
 mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
   xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
 return 
 end ;; plotphase
+
+pro phase::plotprofile, window=window, _EXTRA=extra
+;+
+; NAME:
+;   phase::plotprofile
+;
+; PURPOSE:
+;   plot the profiles
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->plotprofile
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;
+; EXAMPLE:
+;   idl> emf->plotprofile
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+if n_elements(window) ne 0 then window, window
+
+title= self.name+ ' phase'
+zp= self->getprofile(/z, _EXTRA=extra)
+yp= self->getprofile(/y, _EXTRA=extra)
+y = self->gety_vec()
+z = self->getz_vec()
+
+miy= min(y)
+miz= min(z)
+miyp= min(yp)
+mizp= min(zp)
+may= max(y)
+maz= max(z)
+mayp= max(yp)
+mazp= max(zp)
+
+miyz = min(miy, miz)* 1e3
+mayz = max(may, maz)* 1e3
+miyzp= min(miyp,mizp)
+mayzp= max(mayp,mazp)
+
+plot, [miyz, mayz], [miyzp, mayzp], title=title, $
+  xtitle='[z,y] (mm)', ytitle='intensity', /nodata
+oplot, z*1e3, zp, color=1
+oplot, y*1e3, yp, color=2
+legend, ['z','y'], color=[1,2], linestyle=[0,0]
+return 
+end ;; plotrofile
 
 pro phase::propfresnel, _EXTRA=extra
 ;+

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <31 Oct 13 16:08:06 flechsig> 
+;  Time-stamp: <10 Dec 13 10:01:29 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 ;
 ;
 ;
-pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
+pro gaussbeam, emf, dist=dist, drift=drift, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bcomp=bcomp, $
                z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, plot=plot, example=example, $
                field=field, z_off=z_off, y_off=y_off
 ;+
@@ -47,6 +47,7 @@ pro gaussbeam, emf, dist=dist, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey, bc
 ;   example:      example calculation plus plot (HeNe laser in 10 m)
 ;   w0            waist                       in m
 ;   dist:         distance to waist           in m
+;   drift:        distance to waist           in m synonym for dist, overwrites dist if both defined
 ;   wavelength    the wavelength              in m
 ;   y_vec:        vertical   position vector  in m
 ;   z_vec:        horizontal position vector  in m
@@ -118,7 +119,7 @@ IF KEYWORD_SET(EXAMPLE) THEN BEGIN
     print, '**********************************************************'
     return
 endif  ;; end example
-
+if n_elements(drift     ) ne 0 then dist      = drift
 if n_elements(Nz        ) eq 0 then Nz        = 243  ;; 3^5
 if n_elements(Ny        ) eq 0 then Ny        = Nz  
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  
