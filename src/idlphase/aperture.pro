@@ -21,6 +21,7 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;   type 1  : rectangular              P1 = hsize, P2 = vsize, P3= hpos, P4= vpos
 ;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
 ;   type 3  : horizontal slit          P1 = vsize, P2 = vpos (default= 0)
+;   type 4  : vertical slit with LCLS like cylinders   P1 = hsize, P2 = limits,  P3=Radius of cylinders.  RF 18.12.2013
 ;   type 12 : double slit vertical,    P1 = hsize, P2= hsep
 ;   type 13 : double slit horizontal,  P1 = vsize, P2= vsep
 ;   type 20 : circular     P1 = Radius
@@ -77,6 +78,7 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ; MODIFICATION HISTORY:
 ;    14.8.13 RF
 ;    Aug 13 UF add some types
+;    Dec 18 RF add LCLS-like slits
 ;-
 
 use_struct= (n_params() gt 0) ?  1 : 0
@@ -153,7 +155,29 @@ case type of
         p1half= 0.5 * p1
         if n_elements(verbose) ne 0 then print, 'horizontal slit (vwidth, vpos): ', P1, P2
     end
-    
+
+    4 : begin                         ;; cylindrical LCLS slit
+
+        mu3kev      = 39.1e2    ;; 1/m         optical constants of Be - can be extended to other materials
+        mu12p4kev   = 0.4e2     ;; 1/m
+        rene        = 1.39e15   ;; 1/m^2
+        mu          = mu12p4kev         ;; hard for 1 A       
+        wavelength  = 1d-10     ;; how to get wavelength out of field??
+        
+        p1half      = 0.5 * p1
+
+        if n_elements(P3) eq 0 then begin 
+          print, 'usage aperture  ... P3=Radius' 
+          return
+        endif 
+        
+        if n_elements(P2) eq 0 then begin 
+          p2half = p1half + p3
+        endif else begin
+          p2half= 0.5 * p2        
+        endelse
+    end
+   
     12 : begin                         ;; double slit vertical
         if n_elements(P2) eq 0 then P2= P1
         p1half= 0.5 * p1
@@ -273,6 +297,21 @@ for i=0, nz-1 do begin
                if  (abs(y_vec[j]- P2) le P1half) then T[i,j]= double(1.0)
             end
             
+            4 : begin
+                pos = abs(z_vec[i]) 
+                if   ( pos le p1half) then begin T[i,j]= double(1.0)   ; inside  P1: T=1      
+                endif else begin
+                  if ( pos ge p2half) then begin T[i,j]= double(0.0)   ; outside P2: T=0      
+                endif else begin
+                  d     = 2*sqrt(P3^2 - ( P3- (pos - p1half) )^2 )                  
+                  f0    = exp(-mu*d/2.0)                                  ;; absorption 
+                  f2    = (-1.0) * rene * wavelength * d                  ;; phase shift
+                  T[i,j]= f0*complex(cos(f2), sin(f2), /double)
+                  endelse
+                endelse
+               
+               end   
+
             12 : begin                         ;; double slit vertical
                if ((abs(z_vec[i]) le (p2half+p1half)) and (abs(z_vec[i]) ge (p2half-p1half))) $
                then T[i,j]= double(1.0)
@@ -325,6 +364,7 @@ for i=0, nz-1 do begin
            63 : begin                               ;; horizontal slit
                if ((abs(y_vec[j])+ 0.5* P2)/P1- floor((abs(y_vec[j])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= double(1.0)
            end
+           
            
            72 : begin                                 ;; vertical slit
                if ((abs(z_vec[i])+ 0.5* P2)/P1- floor((abs(z_vec[i])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= dcomplex(cos(P3), sin(P3))

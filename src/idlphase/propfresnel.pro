@@ -109,14 +109,14 @@ endfor
 
 modfield = field * driftarr                                       
 
-print, '--------------- FT of Source field ------------------ exp(-i ...)'
+; print, '--------------- FT of Source field ------------------ exp(-i ...)'
 
-newfield = fft(modfield, -1, /center, /double)                      ;; forward 2d fft, centered output
+newfield = fft(modfield, -1, /center, /double)                   ;; forward 2d fft, centered output           
 
-u0       = dindgen(nz)/(nz-1) - 0.5                                     ;; define the vectors in the image plane
+u0       = dindgen(nz)/(nz-1) - 0.5                              ;; define the vectors in the image plane     
 v0       = dindgen(ny)/(ny-1) - 0.5   
-uscale   = (drift*wavelength)/zz * nz                                    ;; why is uscale,vscale of type array[1] ?
-vscale   = (drift*wavelength)/yy * ny                                    ;;-> wavelength comes as array[1], solved
+uscale   = (drift*wavelength)/zz * nz                            ;; why is uscale,vscale of type array[1] ?   
+vscale   = (drift*wavelength)/yy * ny                            ;;-> wavelength comes as array[1], solved    
 u        = u0*uscale
 v        = v0*vscale
 z0       = z_vec[0]
@@ -137,8 +137,8 @@ for i=0, nz-1 do begin
     endfor
 endfor
 
-scale1 = complex(cos(k*drift), sin(k*drift)      , /double)             ;; why is this of type array[1] ?
-scale2 = complex(0.0         , (wavelength*drift), /double)             ;; -> wavelength comes as array[1] -> k is array[1]
+scale1 = complex(cos(k*drift), sin(k*drift)      , /double)      ;; why is this of type array[1] ?
+scale2 = complex(0.0         , (wavelength*drift), /double)      ;; -> wavelength comes as array[1] -> k is array[1]
 field  = zz * yy * newfield * scale  * scale1/ scale2
 z_vec  = u
 y_vec  = v
