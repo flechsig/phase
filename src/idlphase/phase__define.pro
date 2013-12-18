@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <12 Dec 13 12:14:04 flechsig> 
+;  Time-stamp: <16 Dec 13 09:53:28 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -667,7 +667,7 @@ pro phase::mirror, hw=hw, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w
 ;   phase::mirror
 ;
 ; PURPOSE:
-;   calculate the electric field after a thin mirror
+;   calculate the electric field after a "thin" mirror
 ;
 ; CATEGORY:
 ;   Phase
@@ -876,6 +876,65 @@ endfor
 return 
 end
 ;; end mirrorg
+
+pro phase::mirrorp, thetag=thetag, azimut=azimut 
+;+
+; NAME:
+;   phase::mirrorp
+;
+; PURPOSE:
+;   calculate the electric field after a "thin" flat mirror defined as phase shifter
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->mirrorp
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
+;   thetag: grazing angle in rad   
+;   w     : the mirror coordinate
+; 
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->mirrorp
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+if n_elements(azimut) eq 0 then azimut= 0.0 else print, 'azimut not yet implemented!'
+if n_elements(thetag) eq 0 then thetag= !dpi/2.0
+if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
+
+myz_vec= *self.z_vec
+myy_vec= *self.y_vec
+nz= n_elements(myz_vec)
+ny= n_elements(myy_vec)
+k = 2.0*!dpi/ self.wavelength
+
+lcomp = dcomplexarr(nz, ny) ;; make a complex array
+
+for i=0, nz-1 do begin
+  for j=0, ny-1 do begin
+      f1= -2.0* k * thetag * myy_vec[j]
+      lcomp[i,j]= complex(cos(f1), sin(f1), /double)
+  endfor
+endfor
+
+*self.field*= lcomp   ;; factor
+
+return 
+end
+;; end mirrorp
 
 pro phase::plotamplitude, window=window, _EXTRA=extra
 ;+

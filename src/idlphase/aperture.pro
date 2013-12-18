@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <11 Dec 13 16:17:11 flechsig> 
+;  Time-stamp: <17 Dec 13 13:39:56 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -35,6 +35,8 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;   type 63 : transmission grating ruled horizontal, P1= pitch, P2= duty cycle (opening/pitch), center transparent
 ;   type 72 : phase grating ruled vertical,   P1= pitch, P2= duty cycle (opening/pitch), P3= phase_shift (rad), center transparent
 ;   type 73 : phase grating ruled horizontal, P1= pitch, P2= duty cycle (opening/pitch), P3= phase_shift (rad), center transparent
+;   type 82 : vertical   slit with round blades, P1 = vsize, P2 = hpos (default= 0), P3= edge radius
+;   type 83 : horizontal slit with round blades, P1 = vsize, P2 = hpos (default= 0), P3= edge radius
 ;
 ; CATEGORY:
 ;   phase_calc
@@ -227,6 +229,26 @@ case type of
       
     end
 
+    82 : begin                               ;; vertical slit
+        if n_elements(P2) eq 0 then P2= 0.0 
+        if n_elements(P3) eq 0 then P3= 1e-2 
+        p1half= 0.5 * p1
+        k= 2.0*!dpi/emf.wavelength
+        T*= dcomplex(1.0, 0.0)
+        help, T
+        if n_elements(verbose) ne 0 then print, 'vertical slit with round edges (vwidth, vpos, edge_radius): ', P1, P2, P3
+    end
+
+    83 : begin                               ;; horizontal slit
+        if n_elements(P2) eq 0 then P2= 0.0 
+        if n_elements(P3) eq 0 then P3= 1e-2 
+        p1half= 0.5 * p1
+        k= 2.0*!dpi/emf.wavelength
+        T*= dcomplex(1.0, 0.0)
+        help, T
+        if n_elements(verbose) ne 0 then print, 'horizontal slit with round edges (vwidth, vpos, edge_radius): ', P1, P2, P3
+    end
+
     else : begin
         print, ' type ', type, ' not defined'
         return         
@@ -312,6 +334,36 @@ for i=0, nz-1 do begin
                if ((abs(y_vec[j])+ 0.5* P2)/P1- floor((abs(y_vec[j])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= dcomplex(cos(P3), sin(P3))
            end
            
+           83 : begin                               ;; horizontal slit round edge
+               amp= 0.0
+               pha= 0.0
+               if  (abs(y_vec[j]- P2) le P1half) then begin   ;; inside transparent
+                   amp= 1.0
+                   pha= 0.0
+                   if i eq 0 then print, 'yinn=', y_vec[j]
+               endif else begin
+                   if  (abs(y_vec[j]- P2)- P3 le P1half) then begin
+                       ;;             erst mal ausfuehrlich und ohne p2 (zentrierter schlitz)
+                       amp= 1.0
+                       ;; dy/dx (y)= +/- x/sqrt(r^2-x^2) 
+                       y0_betrag= p1half+p3            ;; halbe Breite + radius 
+                       yy= abs(y_vec[j])- p1half       ;; immer > 0
+                       if yy gt 1e-12 then begin
+                           xx= -1.0* sqrt(p3^2- (p3-yy)^2) ;; x immer negativ
+                           dydx= -1.0* xx/sqrt(p3^2-xx^2)        ;; positiv for y < 0
+                           thetag= atan(dydx)       ;; positiv fuer y < 0
+                           if thetag gt (20e-3 * !dpi) then amp= 1e-2 ;; reflectivity - to be improved
+                           if y_vec[j] gt 0.0 then thetag*= -1.0 
+                       endif else thetag= 0.0
+                       
+                       pha= 2.0* k * thetag
+                       if i eq 0 then print, 'yout=', y_vec[j], ' amp, theta, yy', amp, thetag, yy
+                   endif 
+                   ;; if i eq 0 then print, 'yganzout=', y_vec[j]
+               endelse
+               T[i,j]= dcomplex(amp*cos(pha), amp*sin(pha))
+           end
+
            else : begin
                print, ' type ', type, ' not defined'
                return         
