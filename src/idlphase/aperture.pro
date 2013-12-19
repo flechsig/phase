@@ -129,8 +129,8 @@ nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 
 ;;print,' P1=' , P1, ' P2= ' ,P2
-T  = dblarr(nz, ny)* 0.0 
-
+; T  = dblarr(nz, ny)* 0.0 
+T  = dcomplexarr(nz, ny)
 help, T
 
 ;; call case twice for speed
@@ -158,11 +158,14 @@ case type of
 
     4 : begin                         ;; cylindrical LCLS slit
 
-        mu3kev      = 39.1e2    ;; 1/m         optical constants of Be - can be extended to other materials
-        mu12p4kev   = 0.4e2     ;; 1/m
-        rene        = 1.39e15   ;; 1/m^2
-        mu          = mu12p4kev         ;; hard for 1 A       
+        rene        = 1.39e15   ;; 1/m^2  Be
+        mu3kev      = 39.1e2    ;; 1/m    Be       optical constants of Be - can be extended to other materials
+        mu12p4kev   = 0.4e2     ;; 1/m    Be
+
+        rene        = 1.8e15    ;; 1/m^2  B4C above  2 keV
+        mu12p4kev   = 1.33e2    ;; 1/m    B4C 1.33@12.4 keV
         
+        mu          = mu12p4kev         ;; hard for 1 A       
         p1half      = 0.5 * p1
 
         if n_elements(P3) eq 0 then begin 
@@ -305,7 +308,7 @@ for i=0, nz-1 do begin
                   d     = 2*sqrt(P3^2 - ( P3- (pos - p1half) )^2 )                  
                   f0    = exp(-mu*d/2.0)                                  ;; absorption 
                   f2    = (-1.0) * rene * emf.wavelength * d                  ;; phase shift
-                  T[i,j]= f0*complex(cos(f2), sin(f2), /double)
+                  T[i,j]= complex(f0*cos(f2), f0*sin(f2), /double)
                   endelse
                 endelse
                
@@ -416,8 +419,12 @@ if n_elements(ap) then print, 'aperture size (mm)= ', ap*1e3
 
 if (plot ne 0) then begin
      window, 20, RETAIN=2, XSIZE=400, YSIZE=300 ,XPOS=0, YPOS=0
-     mycontour, T, z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', $
+     mycontour, abs(T), z_vec*1e3, y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', $
                 title='Transmission Aperture' + string(type) ;;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+      window, 21, RETAIN=2, XSIZE=400, YSIZE=200 ,XPOS=0, YPOS=400
+      plot,z_vec,abs(T[*,10]) 
+      ;;print,abs(T[*,10])
 endif
 
 field = field * T 
