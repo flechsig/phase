@@ -129,8 +129,8 @@ nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 
 ;;print,' P1=' , P1, ' P2= ' ,P2
-; T  = dblarr(nz, ny)* 0.0 
-T  = dcomplexarr(nz, ny)
+
+T  = dblarr(nz, ny)* 0.0 
 help, T
 
 ;; call case twice for speed
@@ -157,6 +157,8 @@ case type of
     end
 
     4 : begin                         ;; cylindrical LCLS slit
+        T*= dcomplex(1.0, 0.0)
+        help, T
 
         rene        = 1.39e15   ;; 1/m^2  Be
         mu3kev      = 39.1e2    ;; 1/m    Be       optical constants of Be - can be extended to other materials
