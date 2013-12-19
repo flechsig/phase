@@ -162,7 +162,6 @@ case type of
         mu12p4kev   = 0.4e2     ;; 1/m
         rene        = 1.39e15   ;; 1/m^2
         mu          = mu12p4kev         ;; hard for 1 A       
-        wavelength  = 1d-10     ;; how to get wavelength out of field??
         
         p1half      = 0.5 * p1
 
@@ -305,7 +304,7 @@ for i=0, nz-1 do begin
                 endif else begin
                   d     = 2*sqrt(P3^2 - ( P3- (pos - p1half) )^2 )                  
                   f0    = exp(-mu*d/2.0)                                  ;; absorption 
-                  f2    = (-1.0) * rene * wavelength * d                  ;; phase shift
+                  f2    = (-1.0) * rene * emf.wavelength * d                  ;; phase shift
                   T[i,j]= f0*complex(cos(f2), sin(f2), /double)
                   endelse
                 endelse
