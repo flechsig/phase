@@ -64,9 +64,11 @@ idl_with_doc_header = \
 	propfourier.pro \
 	propfresnel.pro \
 	prophuygens.pro \
+	readhenke.pro \
 	read_extr_out.pro \
         read_int_file.pro \
         read_opti_out.pro \
+	reflec.pro \
         resize.pro \
         tag_exist.pro \
 	unwrap_phase.pro
