@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <11 Nov 13 16:44:52 flechsig>  */
+/*   Time-stamp: <06 Jan 14 15:01:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2706,9 +2706,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOESlit:
       printf("DefMirrorC: elindex: %d slit- geometry and element data are ignored - ", elindex);
       printf("fill dummy entries from toroid\n"); 
+    case kEOEFresnel:
+      printf("DefMirrorC: elindex: %d PO Fresnel- geometry and element data are ignored - ", elindex);
+      printf("fill dummy entries from toroid\n"); 
     case kEOEDrift:
       printf("DefMirrorC: drift- geometry and element data are ignored - ");
       printf("fill dummy entries from toroid\n"); 
+
     case kEOETM:                          /* index a(i,j) */
     case kEOETG:                          /* = i+ j* l    */
     case kEOEVLSG:  

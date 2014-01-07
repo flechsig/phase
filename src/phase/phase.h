@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2013-07-04 22:00:56 flechsig>  */
+/*   Time-stamp: <06 Jan 14 14:48:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -104,6 +104,8 @@
 #define kEOEElli                78
 #define kEOEPElli               79
 #define kEOESlit                99
+#define kEOEFresnel             100
+
 #define kESundulatorSourceButton 107      
 #define kESUndulatorSISButton   108 
 #define kESUndulatorSIMButton   109 

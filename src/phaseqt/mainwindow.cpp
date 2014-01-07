@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Jul 13 14:36:01 flechsig> 
+//  Time-stamp: <06 Jan 14 16:53:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -174,10 +174,15 @@ void MainWindow::createActions()
     signalMapper->setMapping(asynMapAct, QString("asynMapAct"));
     connect(asynMapAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    asynPOAct = new QAction(QIcon(":/images/Sunrise-icon.png"),tr("make PO in parallel (experimental)"), this);
-    asynPOAct->setStatusTip(tr("make PO in parallel (experimental)"));
+    asynPOAct = new QAction(QIcon(":/images/Sunrise-icon.png"),tr("PO parallel"), this);
+    asynPOAct->setStatusTip(tr("PO parallel (asynchron)"));
     signalMapper->setMapping(asynPOAct, QString("asynPOAct"));
     connect(asynPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    fresnelAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fresnel"), this);
+    fresnelAct->setStatusTip(tr("Fresnel Propagation"));
+    signalMapper->setMapping(fresnelAct, QString("fresnelAct"));
+    connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     normPOAct = new QAction(tr("norm PO (test)"), this);
     normPOAct->setStatusTip(tr("norm PO in parallel (test)"));
@@ -735,10 +740,11 @@ void MainWindow::createMenus()
     
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);
+    calcMenu->addAction(asynPOAct);
     calcMenu->addAction(mphasespaceAct);
+    calcMenu->addAction(fresnelAct);
     calcMenu->addSeparator();
     calcMenu->addAction(asynMapAct);
-    calcMenu->addAction(asynPOAct);
     calcMenu->addAction(normPOAct);
     calcMenu->addAction(asynTestAct);
     //calcMenu->addAction(optiInputAct);
@@ -799,6 +805,7 @@ QWidget *MainWindow::createOpticalElementBox()
   coAct = new QAction(tr("&conical"), this);
   geAct = new QAction(tr("&generic"), this); 
   apAct = new QAction(tr("&Aperture/Slit"), this); 
+  frAct = new QAction(tr("PO drift (&Fresnel)"), this);
   shapeMenu->addAction(pmAct);
   shapeMenu->addAction(toAct);
   shapeMenu->addAction(peAct);
@@ -808,6 +815,8 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(geAct);
   shapeMenu->addSeparator();
   shapeMenu->addAction(apAct);
+  shapeMenu->addSeparator();
+  shapeMenu->addAction(frAct);
   shapeMenu->setDefaultAction(toAct);
   shapeButton->setMenu(shapeMenu);
 
@@ -818,6 +827,7 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(coAct, SIGNAL(triggered()), this, SLOT(coslot()));
   connect(geAct, SIGNAL(triggered()), this, SLOT(geslot()));
   connect(apAct, SIGNAL(triggered()), this, SLOT(apslot()));
+  connect(frAct, SIGNAL(triggered()), this, SLOT(frslot()));
 
   shapeLabel = new QLabel(tr("unknown")); // return value of menu
 
@@ -1331,6 +1341,7 @@ void MainWindow::createToolBars()
     editToolBar->addAction(raytracefullAct);
     editToolBar->addAction(phasespaceAct);
     editToolBar->addAction(asynPOAct);
+    editToolBar->addAction(fresnelAct);
 } // createToolBars
 
 
@@ -2006,6 +2017,9 @@ void MainWindow::UpdateElementBox(int number)
       shapeLabel->setText(QString(tr("generic"))); break;
     case kEOESlit:
       shapeLabel->setText(QString(tr("Aperture/Slit"))); 
+      break;
+    case kEOEFresnel:
+      shapeLabel->setText(QString(tr("PO drift (Fresnel)"))); 
       break;
     default: 
       shapeLabel->setText(QString(tr("unknown")));

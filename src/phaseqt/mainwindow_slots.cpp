@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <30 Oct 13 13:45:20 flechsig> 
+//  Time-stamp: <06 Jan 14 17:16:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -273,6 +273,14 @@ void MainWindow::activateProc(const QString &action)
       statusBar()->showMessage(tr("Footprint-> done!"), 4000);
     }
 
+  if (!action.compare("fresnelAct")) 
+    { 
+#ifdef DEBUG
+      cout << "debug: fresnelAct button pressed" << endl;
+#endif
+      myparent->mydrift_fresnel();
+    }
+  
   if (!action.compare("singleRayAct")) 
     { 
       printf("singleRayAct button pressed\n");
@@ -2068,6 +2076,21 @@ void MainWindow::apslot()
       return;
     }
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOESlit;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu fresnel slot
+void MainWindow::frslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  cout << "Fresnel slot not yet ready!" << endl;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEFresnel;
   UpdateElementBox(number); 
 }
 // end slots shapeMenu

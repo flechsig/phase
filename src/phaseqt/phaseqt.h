@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2013-06-28 19:52:11 flechsig>  */
+/*  Time-stamp: <06 Jan 14 17:31:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -30,6 +30,7 @@ extern "C" {
   #include "phase.h"
   #include "common.h"
   #include "posrc.h"
+  #include "myfftw3.h"
 }
 
 class MainWindow;          // forward declaration
@@ -99,6 +100,7 @@ public:
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 
     DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, -1); }
+  void mydrift_fresnel() { drift_fresnel(this); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt, int *elindex) { MakeMapandMatrix(listpt, this, elindex); }

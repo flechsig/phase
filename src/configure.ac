@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <30 Oct 13 11:04:52 flechsig> 
+dnl   Time-stamp: <06 Jan 14 13:53:28 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -258,6 +258,10 @@ dnl end QWT
 dnl Check for HDF5 support
 AX_LIB_HDF5
 
+dnl Check for FFTW3 (FFT)
+dnl AX_CHECK_FFTW3
+ACX_FFTW3
+
 dnl deal with the debugger 
 AC_ARG_ENABLE([debug],
   AS_HELP_STRING([--enable-debug],[debugging code, static linking]),
@@ -478,5 +482,6 @@ echo "hdf5:                    : ${with_hdf5}"
 echo "root:                    : ${have_root}"
 echo "f2c:                     : ${enable_F2C}"
 echo "MPI:                     : ${use_mpi}"
+echo "FFTW3:                   : ${acx_fftw3_ok}"
 echo " "
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
