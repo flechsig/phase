@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <20 Dec 13 11:30:53 flechsig> 
+ ; Time-stamp: <07 Jan 14 09:03:12 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -69,7 +69,7 @@ k     = 2.0 * !dpi/ lambda
 beta  = r0/(2.0*!dpi) * lambda^2 * f2
 rho   = 1.0
 delta = (2.0*!dpi) * r0 * rho /k^2
-ref   =   ;; UF not yet ready
+ref   = en^2  ;; UF not yet ready
 
 if n_elements(plot) ne 0 then begin
     plot, [20, 40000], [0, max(ref)*1.1], /nodata, xtitle='E (eV)', $
