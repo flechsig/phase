@@ -24,6 +24,7 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose
 ;
 ; INPUTS:
 ;   element: element as chemical formula (String, case sensitive)
+;   theta  : Grazing incidence angle
 ;
 ; OPTIONAL INPUTS:
 ;   no
@@ -43,7 +44,8 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose
 ;   calls readmaterial
 ;
 ; EXAMPLE:
-;   idl> reflec, 'Au', en, theta=!pi/4.0, /verbose, /plot
+;   idl> en=dindgen(100)*10+30 
+;   idl> reflec, 'Au', en, theta=0.023,r,/plot
 ;
 ; MODIFICATION HISTORY:
 ;  UF 19.12.13
@@ -90,6 +92,7 @@ if n_elements(plot) ne 0 then begin
     plot, [20, 40000], [0, max(Rs)*1.1], /nodata, xtitle='E (eV)', $
       ytitle='reflectivity', title=element, /xlog 
     oplot, en, Rs, color=1
+    oplot, en, Rp, color=2
 endif
 
 r = Rs
