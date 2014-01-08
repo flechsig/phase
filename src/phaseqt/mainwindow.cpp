@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Jan 14 16:53:06 flechsig> 
+//  Time-stamp: <07 Jan 14 12:18:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -179,8 +179,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(asynPOAct, QString("asynPOAct"));
     connect(asynPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    fresnelAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fresnel"), this);
-    fresnelAct->setStatusTip(tr("Fresnel Propagation"));
+    fresnelAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fresnel (exp)"), this);
+    fresnelAct->setStatusTip(tr("Fresnel Propagation (exp)"));
     signalMapper->setMapping(fresnelAct, QString("fresnelAct"));
     connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -805,7 +805,7 @@ QWidget *MainWindow::createOpticalElementBox()
   coAct = new QAction(tr("&conical"), this);
   geAct = new QAction(tr("&generic"), this); 
   apAct = new QAction(tr("&Aperture/Slit"), this); 
-  frAct = new QAction(tr("PO drift (&Fresnel)"), this);
+  frAct = new QAction(tr("PO drift (&Fresnel) (exp)"), this);
   shapeMenu->addAction(pmAct);
   shapeMenu->addAction(toAct);
   shapeMenu->addAction(peAct);
