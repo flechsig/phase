@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <08 Jan 14 17:46:08 flechsig> 
+//  Time-stamp: <09 Jan 14 15:52:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -279,6 +279,14 @@ void MainWindow::activateProc(const QString &action)
       cout << "debug: fresnelAct button pressed" << endl;
 #endif
       myparent->mydrift_fresnel();
+    }
+
+if (!action.compare("fourierAct")) 
+    { 
+#ifdef DEBUG
+      cout << "debug: fourierAct button pressed" << endl;
+#endif
+      myparent->mydrift_fourier();
     }
   
   if (!action.compare("singleRayAct")) 
@@ -1308,9 +1316,9 @@ void MainWindow::grapplyslot()
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
       cout << "not yet implemented" << endl;
 
-      //d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
-      //d_plot->setPoData("grsourceAct");
-      //d_plot->contourPlot();
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc));
+      d_plot->setPoData("PO source");
+      d_plot->contourPlot();
       
       cout << "plot PO_SOURCE experimental end " << endl;
       break;
@@ -1356,6 +1364,7 @@ void MainWindow::grautoscaleslot()
   QString yminqst, ymaxqst, zminqst, zmaxqst;
   struct PSImageType *psip;
   struct PSDType     *psdp;
+  struct source4c    *srcp;
 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject: " << mwplotsubject << endl;
@@ -1406,10 +1415,17 @@ void MainWindow::grautoscaleslot()
       // UF 8.1.14 psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
       // UF 8.1.14 d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->autoScale(d_plot->minv(psdp->z, psdp->iz), d_plot->maxv(psdp->z, psdp->iz), 
-			d_plot->minv(psdp->y, psdp->iy), d_plot->maxv(psdp->y, psdp->iy));
+      //d_plot->autoScale(d_plot->minv(psdp->z, psdp->iz), d_plot->maxv(psdp->z, psdp->iz), 
+      //d_plot->minv(psdp->y, psdp->iy), d_plot->maxv(psdp->y, psdp->iy));
+      d_plot->autoScale(psdp->z[0], psdp->z[psdp->iz-1], psdp->y[0], psdp->y[psdp->iy-1]);
     }
 
+  if (mwplotsubject & PLOT_PO_SOURCE) // generic for PO source
+    { 
+      cout << "autoscale: PO source experimental" << endl;
+      srcp= (struct source4c *)&(myparent->myBeamline()->posrc);
+      d_plot->autoScale(srcp->gridx[0], srcp->gridx[srcp->iex - 1], srcp->gridy[0], srcp->gridy[srcp->iey - 1]);
+    }
   
   // update the widget
   gryminE->setText(yminqst.setNum(d_plot->Plot::ymin, 'g', 4));

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <08 Jan 14 17:35:24 flechsig> 
+//  Time-stamp: <09 Jan 14 09:37:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1004,6 +1004,50 @@ void Plot::hfill2(struct PSDType *rp)
 #endif
 } // hfill2 PO
 
+// fills a 2d histogram with PO source
+void Plot::hfill2(struct source4c *rp)
+{
+  int i, ix, iy, h2a_n, idxf, idxc;
+    
+#ifdef DEBUG
+  cout << "Plot::hfill2 called (PO source version)" << endl;
+#endif
+
+  h2a_nx= rp->iex;
+  h2a_ny= rp->iey;
+  //data  = rp->zeyre; //
+  pox   = rp->gridx;
+  poy   = rp->gridy;
+
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  h2max= 0.0;
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	idxf= iy + ix* h2a_ny;
+	idxc= ix + iy* h2a_nx;
+	// data kommt im fortran modell
+	h2a[idxc]= pow(rp->zeyre[idxf], 2.0)+ pow(rp->zeyim[idxf], 2.0)+ 
+	  pow(rp->zezre[idxf], 2.0)+ pow(rp->zezim[idxf], 2.0);
+	
+	h2max= max(h2max, h2a[idxc]);     // save maximum
+      }
+  
+  // scale maximum to 10
+  if (h2max > 0.0)
+    for (i=0; i< h2a_n; i++)
+      h2a[i]*= 10.0/ h2max;
+  
+  //  h2a[0]= 9; // for debugging
+  //  h2a[1]= 8;
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
+#endif
+} // hfill2 PO source
+
 
 // constructor of the plot
 //int * Plot::ScatterPlot(QWidget *parent): QwtPlot(parent)
@@ -1189,7 +1233,7 @@ double Plot::maxv(double *vec, int len)
 
   for (i= 0; i< len; i++) val= max(vec[i], val);
   return val;
-} // minv
+} // maxv
 
 // minimum of a vector
 double Plot::minv(double *vec, int len)

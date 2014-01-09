@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <08 Jan 14 16:45:12 flechsig> 
+//  Time-stamp: <09 Jan 14 15:52:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -183,6 +183,11 @@ void MainWindow::createActions()
     fresnelAct->setStatusTip(tr("Fresnel Propagation (exp)"));
     signalMapper->setMapping(fresnelAct, QString("fresnelAct"));
     connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    fourierAct = new QAction(QIcon(":/images/Blue-darrow-32.png"),tr("PO Fourier (exp)"), this);
+    fourierAct->setStatusTip(tr("Fourier Propagation (exp)"));
+    signalMapper->setMapping(fourierAct, QString("fourierAct"));
+    connect(fourierAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     normPOAct = new QAction(tr("norm PO (test)"), this);
     normPOAct->setStatusTip(tr("norm PO in parallel (test)"));
@@ -748,6 +753,7 @@ void MainWindow::createMenus()
     calcMenu->addAction(asynPOAct);
     calcMenu->addAction(mphasespaceAct);
     calcMenu->addAction(fresnelAct);
+    calcMenu->addAction(fourierAct);
     calcMenu->addSeparator();
     calcMenu->addAction(asynMapAct);
     calcMenu->addAction(normPOAct);
@@ -1347,6 +1353,7 @@ void MainWindow::createToolBars()
     editToolBar->addAction(phasespaceAct);
     editToolBar->addAction(asynPOAct);
     editToolBar->addAction(fresnelAct);
+    editToolBar->addAction(fourierAct);
 } // createToolBars
 
 

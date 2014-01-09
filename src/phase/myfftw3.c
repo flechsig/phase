@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <08 Jan 14 16:38:11 flechsig>  */
+ /* Time-stamp: <09 Jan 14 15:01:18 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -13,6 +13,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 #include "cutils.h" 
@@ -20,11 +21,11 @@
 #include "phase.h"
 #include "myfftw3.h"
 
-/* free space propagation with Fresnel propagator */
-void drift_fresnel(struct BeamlineType *bl)
+/* free space propagation with Transfer function propagator */
+void drift_fourier(struct BeamlineType *bl)
 {
-  int    row, col, rows, cols, idxc, idxf;
-  double driftlen, cresult[2];
+ int    row, col, rows, cols, idxc, idxf;
+ double driftlen, ampf, phaf, amp, pha, k, dz0, dy0, arg, p0;
   struct ElementType *el;
   struct source4c *so4;
   struct PSDType  *psd;
@@ -40,21 +41,26 @@ void drift_fresnel(struct BeamlineType *bl)
 
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
-  fftw_plan    p;
+  fftw_plan    p1, p2;
 #endif
 
   //el= &(bl->ElementList[bl->position]); // oder -1
   el= &(bl->ElementList[0]);
   driftlen= el->GDat.r+ el->GDat.rp;
+  k= 2.0 * PI/ bl->BLOptions.lambda;
+  p0 = driftlen / bl->BLOptions.lambda;
+  dz0= so4->dx;
+  dy0= so4->dy;
 
-  printf("drift_fresnel called, drift= %f mm, file= %s\n", driftlen, __FILE__);
+  printf("drift_fourier called, drift= %f mm, file= %s\n", driftlen, __FILE__);
 
 #ifdef HAVE_FFTW3
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
-  // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
- 
+  //p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
+  p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
+  p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
+
  printf("fftw3 fill arrays for Ez\n");
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
@@ -65,8 +71,41 @@ void drift_fresnel(struct BeamlineType *bl)
 	in[idxc][1]= so4->zezim[idxf];
       }
   
-  printf("fftw3 execute Ez\n");
-  fftw_execute(p);
+  printf("fftw3 forward execute Ez\n");
+  fftw_execute(p1);
+  fftshift(out, rows, cols);
+
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
+	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
+
+	arg= 1.0- pow((so4->gridx[col]*bl->BLOptions.lambda), 2.0)- pow((so4->gridy[row]*bl->BLOptions.lambda), 2.0);
+	if (arg > 0.0) 
+	  {
+	    arg= sqrt(arg);
+	    //pha= ((driftlen *(arg - 1.0) ) % bl->BLOptions.lambda ) * k + p0  * k; // more accurate
+	    pha= k * driftlen* arg;  // textbook
+	  }
+	else
+	  {
+	    printf("evanescent waves\n");
+	    arg= sqrt(-1.0*arg);
+	    pha= -1.0 * k * driftlen* arg;
+	  }
+
+	amp= ampf;
+	pha= pha+ phaf;
+	in[idxc][0]= amp* cos(pha);
+	in[idxc][1]= amp* sin(pha);
+      } // end forward
+
+  printf("fftw3 backward execute Ez\n");
+  fftw_execute(p2);
+  fftshift(out, rows, cols);
 
   printf("fftw3 export result Ez\n");
   for (row= 0; row < rows; row++)
@@ -78,6 +117,8 @@ void drift_fresnel(struct BeamlineType *bl)
 	psd->ezimc[idxf]= out[idxc][1];
       }
 
+  /***************** done with ez ****************************/
+
   printf("fftw3 fill arrays for Ey\n");
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
@@ -88,8 +129,40 @@ void drift_fresnel(struct BeamlineType *bl)
 	in[idxc][1]= so4->zeyim[idxf];
       }
   
-  printf("fftw3 execute Ey\n");
-  fftw_execute(p);
+  printf("fftw3 forward execute Ey\n");
+  fftw_execute(p1);
+  fftshift(out, rows, cols);
+
+for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
+	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
+
+	arg= 1.0- pow((so4->gridx[col]*bl->BLOptions.lambda), 2.0)- pow((so4->gridy[row]*bl->BLOptions.lambda), 2.0);
+	if (arg > 0.0) 
+	  {
+	    arg= sqrt(arg);
+	    //pha= ((driftlen *(arg - 1.0) ) % bl->BLOptions.lambda ) * k + p0  * k; // more accurate
+	    pha= k * driftlen* arg;  // textbook
+	  }
+	else
+	  {
+	    printf("evanescent waves\n");
+	    arg= sqrt(-1.0*arg);
+	    pha= -1.0 * k * driftlen* arg;
+	  }
+	amp= ampf;
+	pha= pha+ phaf;
+	in[idxc][0]= amp* cos(pha);
+	in[idxc][1]= amp* sin(pha);
+      } // end forward
+
+ printf("fftw3 backward execute Ey\n");
+  fftw_execute(p2);
+  fftshift(out, rows, cols);
 
   printf("fftw3 export result Ey\n");
   for (row= 0; row < rows; row++)
@@ -114,6 +187,128 @@ void drift_fresnel(struct BeamlineType *bl)
 	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
       }
 
+  fftw_destroy_plan(p1);
+  fftw_destroy_plan(p2);
+  fftw_free(in); 
+  fftw_free(out);
+#else
+  printf("fftw3 not available- skip calculation\n");
+#endif
+
+  printf("drift_fourier end\n");
+} /* drift fourier */
+
+/* free space propagation with Fresnel propagator */
+void drift_fresnel(struct BeamlineType *bl)
+{
+  int    row, col, rows, cols, idxc, idxf;
+  double driftlen, ampf, phaf, amp0, pha0, amp, pha, k, dz0, dy0;
+  struct ElementType *el;
+  struct source4c *so4;
+  struct PSDType  *psd;
+  
+  so4= (struct source4c *)&(bl->posrc);
+  cols= so4->iex;
+  rows= so4->iey;
+
+  ReAllocResult(bl, PLphspacetype, rows, cols);
+  psd= (struct PSDType *)bl->RESULT.RESp;
+  psd->iy= rows;
+  psd->iz= cols;
+
+#ifdef HAVE_FFTW3
+  fftw_complex *in, *out;
+  fftw_plan    p;
+#endif
+
+  //el= &(bl->ElementList[bl->position]); // oder -1
+  el= &(bl->ElementList[0]);
+  driftlen= el->GDat.r+ el->GDat.rp;
+  k= 2.0 * PI/ bl->BLOptions.lambda;
+  dz0= so4->dx;
+  dy0= so4->dy;
+
+  printf("drift_fresnel called, drift= %f mm, file= %s\n", driftlen, __FILE__);
+
+#ifdef HAVE_FFTW3
+  in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
+  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
+  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
+  // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
+ 
+ printf("fftw3 fill arrays for Ez\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	in[idxc][0]= so4->zezre[idxf];
+	in[idxc][1]= so4->zezim[idxf];
+      }
+  
+  printf("fftw3 execute Ez\n");
+  fftw_execute(p);
+  fftshift(out, rows, cols);
+
+  printf("fftw3 export result Ez\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
+	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
+	amp0= sqrt(pow(so4->zezre[idxf], 2.0)+ pow(so4->zezim[idxf],2.0)); // source amplitude
+	pha0= atan2(so4->zezim[idxf], so4->zezre[idxf]);                   // source phase
+	amp= ampf * amp0/ (bl->BLOptions.lambda* driftlen);
+	pha= k*driftlen- PI/2.0+ phaf + pha0 + k/(2.0*driftlen)*(pow((col*dz0),2.0)+ pow((row*dy0),2.0));
+	psd->ezrec[idxf]= amp* cos(pha);
+	psd->ezimc[idxf]= amp* sin(pha);
+      }
+
+  printf("fftw3 fill arrays for Ey\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	in[idxc][0]= so4->zeyre[idxf];
+	in[idxc][1]= so4->zeyim[idxf];
+      }
+  
+  printf("fftw3 execute Ey\n");
+  fftw_execute(p);
+  fftshift(out, rows, cols);
+
+  printf("fftw3 export result Ey\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
+	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
+	amp0= sqrt(pow(so4->zeyre[idxf], 2.0)+ pow(so4->zeyim[idxf],2.0)); // source amplitude
+	pha0= atan2(so4->zeyim[idxf], so4->zeyre[idxf]);                   // source phase
+	amp= ampf * amp0/ (bl->BLOptions.lambda* driftlen);
+	pha= k*driftlen- PI/2.0+ phaf + pha0 + k/(2.0*driftlen)*(pow((col*dz0),2.0)+ pow((row*dy0),2.0));
+	psd->eyrec[idxf]= amp* cos(pha);
+	psd->eyimc[idxf]= amp* sin(pha);
+      }
+  
+  printf("fftw3 fill vectors\n");
+  for (row= 0; row < rows; row++) psd->y[row]= bl->BLOptions.lambda*driftlen*so4->gridy[row]/(rows*pow((dy0/rows),2.0));
+  for (col= 0; col < cols; col++) psd->z[col]= bl->BLOptions.lambda*driftlen*so4->gridx[col]/(cols*pow((dz0/cols),2.0));
+
+  printf("fftw3 fill psd\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxf= col* rows+ row;
+	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
+	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
+      }
+
   fftw_destroy_plan(p);
   fftw_free(in); 
   fftw_free(out);
@@ -124,5 +319,33 @@ void drift_fresnel(struct BeamlineType *bl)
   printf("drift_fresnel end\n");
 } /* end drift_fresnel */
 
+#ifdef HAVE_FFTW3
+/* shift frequencies to center */
+/* to be checked whether it works for even and odd */
+void fftshift(fftw_complex *arr0, int rows, int cols)
+{
+  fftw_complex *arr1;
+  size_t arrsize;
+  int row, col, nrow, ncol, row2, col2;
+  
+  arrsize= sizeof(fftw_complex) * rows * cols;
+  arr1= (fftw_complex*) fftw_malloc(arrsize);
+  memcpy(arr1, arr0, arrsize); // save initial array
+
+  row2= rows / 2;
+  col2= cols / 2;
+
+  for (row=0; row< rows; row++)
+    for (col=0; col< cols; col++)
+      {
+	ncol= (col+ col2) % cols;
+	nrow= (row+ row2) % rows;
+	arr0[ncol+nrow*cols][0]= arr1[col+row*cols][0];
+	arr0[ncol+nrow*cols][1]= arr1[col+row*cols][1];
+      }
+  
+  fftw_free(arr1);
+} /* end fftshift */
+#endif
 
 /* end */
