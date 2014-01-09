@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Jan 14 15:52:07 flechsig> 
+//  Time-stamp: <09 Jan 14 16:06:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -185,6 +185,7 @@ void MainWindow::createActions()
     connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     fourierAct = new QAction(QIcon(":/images/Blue-darrow-32.png"),tr("PO Fourier (exp)"), this);
+    //fourierAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fourier (exp)"), this);
     fourierAct->setStatusTip(tr("Fourier Propagation (exp)"));
     signalMapper->setMapping(fourierAct, QString("fourierAct"));
     connect(fourierAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
