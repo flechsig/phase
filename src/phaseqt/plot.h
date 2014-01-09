@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <30 Oct 13 14:18:11 flechsig>  */
+/*  Time-stamp: <08 Jan 14 17:38:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -53,7 +53,9 @@ public:
     void setPlotStyle(int);
     void setPlotSubject(int);
     Plot *plot() { return this; }
-
+    double maxv(double *, int);
+    double minv(double *, int);
+    
     double ymin;
     double ymax;
     double zmin;
@@ -114,6 +116,7 @@ private:
     //int    SetUpArrays(int n);
     QPen   *pen_ptr;
     void   Beauty(double *, double *);
+    
     struct BeamlineType *bt;
     //QwtPlotZoomer *zoomer;
 

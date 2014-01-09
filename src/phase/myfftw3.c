@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <07 Jan 14 17:17:24 flechsig>  */
+ /* Time-stamp: <08 Jan 14 16:38:11 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -13,21 +13,30 @@
 #endif
 
 #include <stdio.h>
+#include <math.h>
 
 #include "cutils.h" 
 #include "phase_struct.h"
 #include "phase.h"
 #include "myfftw3.h"
 
-
 /* free space propagation with Fresnel propagator */
 void drift_fresnel(struct BeamlineType *bl)
 {
+  int    row, col, rows, cols, idxc, idxf;
   double driftlen, cresult[2];
   struct ElementType *el;
-  int row, col, rows, cols, idx ;
+  struct source4c *so4;
+  struct PSDType  *psd;
+  
+  so4= (struct source4c *)&(bl->posrc);
+  cols= so4->iex;
+  rows= so4->iey;
 
-  rows= cols= 9999;
+  ReAllocResult(bl, PLphspacetype, rows, cols);
+  psd= (struct PSDType *)bl->RESULT.RESp;
+  psd->iy= rows;
+  psd->iz= cols;
 
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
@@ -43,25 +52,66 @@ void drift_fresnel(struct BeamlineType *bl)
 #ifdef HAVE_FFTW3
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-  printf("fftw3 fill arrays\n");
+  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
+  // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
+ 
+ printf("fftw3 fill arrays for Ez\n");
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
       {
-	idx= row* cols+ col;
-	in[idx][0]= 1;
-	in[idx][1]= 1;
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	in[idxc][0]= so4->zezre[idxf];
+	in[idxc][1]= so4->zezim[idxf];
       }
   
-  printf("fftw3 execute\n");
+  printf("fftw3 execute Ez\n");
   fftw_execute(p);
-  printf("fftw3 export result (dummy)\n");
+
+  printf("fftw3 export result Ez\n");
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
       {
-	idx= row* cols+ col;
-	cresult[0]= out[idx][0];
-	cresult[1]= out[idx][1];
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	psd->ezrec[idxf]= out[idxc][0];
+	psd->ezimc[idxf]= out[idxc][1];
+      }
+
+  printf("fftw3 fill arrays for Ey\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	in[idxc][0]= so4->zeyre[idxf];
+	in[idxc][1]= so4->zeyim[idxf];
+      }
+  
+  printf("fftw3 execute Ey\n");
+  fftw_execute(p);
+
+  printf("fftw3 export result Ey\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	psd->eyrec[idxf]= out[idxc][0];
+	psd->eyimc[idxf]= out[idxc][1];
+      }
+  
+  printf("fftw3 fill vectors\n");
+  for (row= 0; row < rows; row++) psd->y[row]= so4->gridy[row];
+  for (col= 0; col < cols; col++) psd->z[col]= so4->gridx[col];
+
+  printf("fftw3 fill psd\n");
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxf= col* rows+ row;
+	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
+	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
       }
 
   fftw_destroy_plan(p);

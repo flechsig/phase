@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <06 Jan 14 17:16:55 flechsig> 
+//  Time-stamp: <08 Jan 14 17:46:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -635,6 +635,11 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("grGoResultVpsAct")) 
     {
       mwplotsubject= PLOT_GO_RESULT | PLOT_GO_VPS ;  
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoSourceAct"   )) 
+    {
+      mwplotsubject= PLOT_PO_SOURCE;
       updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grPoResultAct"   )) 
@@ -1297,6 +1302,19 @@ void MainWindow::grapplyslot()
       cout << "plot PO_RESULT experimental end " << endl;
       break;
 
+      case PLOT_PO_SOURCE:
+      cout << "plot PO_SOURCE experimental start " << endl;
+      cout << "use manual saling " << endl;
+      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
+      cout << "not yet implemented" << endl;
+
+      //d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
+      //d_plot->setPoData("grsourceAct");
+      //d_plot->contourPlot();
+      
+      cout << "plot PO_SOURCE experimental end " << endl;
+      break;
+
     case PLOT_PO_SIMPRE:
       cout << "plot PLOT_PO_SIMPRE start " << endl;
       zone->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0);
@@ -1385,8 +1403,11 @@ void MainWindow::grautoscaleslot()
   if (mwplotsubject & PLOT_PO_RESULT && 
       checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
-      psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-      d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
+      // UF 8.1.14 psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      // UF 8.1.14 d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->autoScale(d_plot->minv(psdp->z, psdp->iz), d_plot->maxv(psdp->z, psdp->iz), 
+			d_plot->minv(psdp->y, psdp->iy), d_plot->maxv(psdp->y, psdp->iy));
     }
 
   

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <30 Oct 13 12:01:16 flechsig> 
+//  Time-stamp: <08 Jan 14 17:35:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1179,5 +1179,27 @@ void Plot::setPlotSubject(int style)
 {
   plotsubject= style;
 }
+
+// maximum of a vector
+double Plot::maxv(double *vec, int len)
+{
+  int i;
+  double val;
+  val= vec[0];
+
+  for (i= 0; i< len; i++) val= max(vec[i], val);
+  return val;
+} // minv
+
+// minimum of a vector
+double Plot::minv(double *vec, int len)
+{
+  int i;
+  double val;
+  val= vec[0];
+
+  for (i= 0; i< len; i++) val= min(vec[i], val);
+  return val;
+} // minv
 
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

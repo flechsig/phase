@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <07 Jan 14 12:18:54 flechsig> 
+//  Time-stamp: <08 Jan 14 16:45:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -518,6 +518,7 @@ QWidget *MainWindow::createGraphicBox()
   grGoResultHpsAct  = new QAction(tr("GO result &z PhSp"), this);
   grGoResultVpsAct  = new QAction(tr("G&O result  y PhSp"), this);
 
+  grPoSourceAct  = new QAction(tr("PO sourc&e"), this);
   grPoResultAct  = new QAction(tr("PO resu&lt"), this);
   grPoSimpreAct  = new QAction(tr("PO Simpre"), this);
   grPoSimpimAct  = new QAction(tr("PO Simpim"), this);
@@ -539,6 +540,8 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grGoResultPhiAct);
   subject->addAction(grGoResultHpsAct);
   subject->addAction(grGoResultVpsAct);
+  subject->addSeparator();
+  subject->addAction(grPoSourceAct);
   subject->addSeparator();
   subject->addAction(grPoResultAct);
   subject->addAction(grPoSimpreAct);
@@ -564,6 +567,7 @@ QWidget *MainWindow::createGraphicBox()
   connect(grGoResultHpsAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grGoResultVpsAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
+  connect(grPoSourceAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -586,6 +590,7 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grGoResultHpsAct,   QString("grGoResultHpsAct"));
   grsignalMapper->setMapping(grGoResultVpsAct,   QString("grGoResultVpsAct"));
 
+  grsignalMapper->setMapping(grPoSourceAct,   QString("grPoSourceAct"));
   grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
   grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));
   grsignalMapper->setMapping(grPoSintimAct,   QString("grPoSintimAct"));

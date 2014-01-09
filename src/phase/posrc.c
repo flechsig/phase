@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <19 Jul 13 11:39:03 flechsig>  */
+/*  Time-stamp: <08 Jan 14 16:57:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -71,10 +71,10 @@ void posrc_ini(struct BeamlineType *bl)
 } /* posrc_ini */
 
 
-/* reads the h5 output  file from GENESIS and puts the results into bl->posrc */
+/* reads the h5 output file from GENESIS and puts the results into bl->posrc */
 void source8c_ini(struct BeamlineType *bl)
 {
- #ifdef HAVE_HDF5
+#ifdef HAVE_HDF5
 
   struct source4c *so4;
   int    t_size, slicecount, rows, cols, i;
@@ -247,7 +247,7 @@ void source7c_ini(struct BeamlineType *bl)
 #endif
 
 #else
-   printf("compiled without hdf5 support\n", __FILE__);
+  printf("compiled without hdf5 support\n", __FILE__);
 #endif
 
 #ifdef DEBUG
