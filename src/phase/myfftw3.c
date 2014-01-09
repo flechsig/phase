@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <09 Jan 14 15:01:18 flechsig>  */
+ /* Time-stamp: <09 Jan 14 16:20:55 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -24,40 +24,42 @@
 /* free space propagation with Transfer function propagator */
 void drift_fourier(struct BeamlineType *bl)
 {
- int    row, col, rows, cols, idxc, idxf;
- double driftlen, ampf, phaf, amp, pha, k, dz0, dy0, arg, p0;
+  int    row, col, rows, cols, idxc, idxf;
+  double driftlen, ampf, phaf, amp, pha, k, dz0, dy0, arg, p0, lambda;
   struct ElementType *el;
   struct source4c *so4;
   struct PSDType  *psd;
-  
-  so4= (struct source4c *)&(bl->posrc);
-  cols= so4->iex;
-  rows= so4->iey;
-
-  ReAllocResult(bl, PLphspacetype, rows, cols);
-  psd= (struct PSDType *)bl->RESULT.RESp;
-  psd->iy= rows;
-  psd->iz= cols;
 
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
   fftw_plan    p1, p2;
 #endif
 
-  //el= &(bl->ElementList[bl->position]); // oder -1
+  so4= (struct source4c *)&(bl->posrc);
+  cols= so4->iex;
+  rows= so4->iey;
+  
+  ReAllocResult(bl, PLphspacetype, rows, cols);
+  psd= (struct PSDType *)bl->RESULT.RESp;
+  psd->iy= rows;
+  psd->iz= cols;
+  
+//el= &(bl->ElementList[bl->position]); // oder -1
   el= &(bl->ElementList[0]);
   driftlen= el->GDat.r+ el->GDat.rp;
-  k= 2.0 * PI/ bl->BLOptions.lambda;
-  p0 = driftlen / bl->BLOptions.lambda;
+  lambda= bl->BLOptions.lambda;
+  k= 2.0 * PI/ lambda;
+  p0 = driftlen / lambda;
   dz0= so4->dx;
   dy0= so4->dy;
-
+  
   printf("drift_fourier called, drift= %f mm, file= %s\n", driftlen, __FILE__);
 
 #ifdef HAVE_FFTW3
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  //p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
+  //p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
+  //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_ESTIMATE); /* fast init */
   p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
   p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
 
@@ -105,7 +107,7 @@ void drift_fourier(struct BeamlineType *bl)
 
   printf("fftw3 backward execute Ez\n");
   fftw_execute(p2);
-  fftshift(out, rows, cols);
+  //fftshift(out, rows, cols);
 
   printf("fftw3 export result Ez\n");
   for (row= 0; row < rows; row++)
@@ -162,7 +164,7 @@ for (row= 0; row < rows; row++)
 
  printf("fftw3 backward execute Ey\n");
   fftw_execute(p2);
-  fftshift(out, rows, cols);
+  //fftshift(out, rows, cols);
 
   printf("fftw3 export result Ey\n");
   for (row= 0; row < rows; row++)
