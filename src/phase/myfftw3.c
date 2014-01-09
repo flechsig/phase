@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <09 Jan 14 16:20:55 flechsig>  */
+ /* Time-stamp: <09 Jan 14 16:31:37 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -58,10 +58,10 @@ void drift_fourier(struct BeamlineType *bl)
 #ifdef HAVE_FFTW3
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  //p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
-  //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_ESTIMATE); /* fast init */
-  p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
-  p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
+  p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_ESTIMATE); /* fast init */
+  p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_ESTIMATE); /* fast init */
+  //p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_MEASURE); /* needs longer but ev. faster execution */
+  //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
 
  printf("fftw3 fill arrays for Ez\n");
   for (row= 0; row < rows; row++)
@@ -85,7 +85,7 @@ void drift_fourier(struct BeamlineType *bl)
 	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
 
-	arg= 1.0- pow((so4->gridx[col]*bl->BLOptions.lambda), 2.0)- pow((so4->gridy[row]*bl->BLOptions.lambda), 2.0);
+	arg= 1.0- pow((so4->gridx[col]* lambda), 2.0)- pow((so4->gridy[row]* lambda), 2.0);
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
@@ -95,7 +95,7 @@ void drift_fourier(struct BeamlineType *bl)
 	else
 	  {
 	    printf("evanescent waves\n");
-	    arg= sqrt(-1.0*arg);
+	    arg= sqrt(-1.0* arg);
 	    pha= -1.0 * k * driftlen* arg;
 	  }
 
@@ -135,7 +135,7 @@ void drift_fourier(struct BeamlineType *bl)
   fftw_execute(p1);
   fftshift(out, rows, cols);
 
-for (row= 0; row < rows; row++)
+  for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
       {
 	idxc= row* cols+ col;
@@ -143,7 +143,7 @@ for (row= 0; row < rows; row++)
 	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
 
-	arg= 1.0- pow((so4->gridx[col]*bl->BLOptions.lambda), 2.0)- pow((so4->gridy[row]*bl->BLOptions.lambda), 2.0);
+	arg= 1.0- pow((so4->gridx[col]* lambda), 2.0)- pow((so4->gridy[row]* lambda), 2.0);
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
@@ -153,7 +153,7 @@ for (row= 0; row < rows; row++)
 	else
 	  {
 	    printf("evanescent waves\n");
-	    arg= sqrt(-1.0*arg);
+	    arg= sqrt(-1.0* arg);
 	    pha= -1.0 * k * driftlen* arg;
 	  }
 	amp= ampf;
@@ -162,7 +162,7 @@ for (row= 0; row < rows; row++)
 	in[idxc][1]= amp* sin(pha);
       } // end forward
 
- printf("fftw3 backward execute Ey\n");
+  printf("fftw3 backward execute Ey\n");
   fftw_execute(p2);
   //fftshift(out, rows, cols);
 
