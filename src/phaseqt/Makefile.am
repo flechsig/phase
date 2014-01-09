@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <09 Jan 14 15:47:08 flechsig> 
+#  Time-stamp: <09 Jan 14 15:55:40 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -62,7 +62,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 # I also have a resources.qrc I need to include. The png is used in myapp.
 EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) \
 	phaseqt.qrc parameter.default \
-	images/Blue-darrow-32.png
+	images/Blue-darrow-32.png \
 	images/Blue-arrow-left-32.png images/Blue-arrow-right-32.png \
 	images/down-32.png images/footprint.png \
 	images/Left-arrow-48.png images/new.png \
