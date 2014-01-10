@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 Jan 14 16:06:41 flechsig> 
+//  Time-stamp: <10 Jan 14 12:15:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -827,8 +827,8 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(geAct);
   shapeMenu->addSeparator();
   shapeMenu->addAction(apAct);
-  shapeMenu->addSeparator();
-  shapeMenu->addAction(frAct);
+  //shapeMenu->addSeparator();
+  //shapeMenu->addAction(frAct);
   shapeMenu->setDefaultAction(toAct);
   shapeButton->setMenu(shapeMenu);
 
