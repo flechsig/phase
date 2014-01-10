@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <07 Jan 14 09:03:12 flechsig> 
+ ; Time-stamp: <10 Jan 14 16:47:02 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -8,7 +8,7 @@
  ; $Revision$ 
  ; $Author$ 
 
-pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose
+pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose, _extra=extra
 ;+
 ; NAME:
 ;   reflec
@@ -30,8 +30,8 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;   plot: do a plot
-;   theta: angle to normal in rad
+;   plot:    do a plot
+;   theta:   angle to normal in rad
 ;   verbose: print filename
 ;
 ; OPTIONAL OUTPUTS:
@@ -45,13 +45,13 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose
 ;
 ; EXAMPLE:
 ;   idl> en=dindgen(100)*10+30 
-;   idl> reflec, 'Au', en, theta=0.023,r,/plot
+;   idl> reflec, 'Au', en, theta=0.023, r, /plot
 ;
 ; MODIFICATION HISTORY:
 ;  UF 19.12.13
 ;-
 
-usage= 'usage: reflec, element'
+usage= 'usage: reflec, 'Au', en, theta=0.023, r, /plot'
 
 
 if n_elements(element) eq 0 then begin
@@ -88,20 +88,22 @@ ts    = (  2 * sin(theta)      ) / (      sin(theta) + wu)   ; transmiss. coeff.
 rp    = (n^2 * sin(theta) - wu ) / ( n^2 *sin(theta) + wu)   ; reflection coeff. p-pol
 tp    = (2*n * sin(theta)      ) / ( n^2 *sin(theta) + wu)   ; transmiss. coeff. s-pol
 
-
-
 Rs    =  abs(rs)^2                                            ; reflectance s-pol   
 Rp    =  abs(rp)^2                                            ; reflectance p-pol.  
 Ts    =  abs( 2*  wu / (      sin(theta) + wu))^2             ; transmitance s-pol        
 Tp    =  abs( 2*n*wu / (n^2 * sin(theta) + wu))^2             ; transmitance p-pol  
 
 if n_elements(plot) ne 0 then begin
- title = element + '   GI-angle = '+ string(theta,FORMAT="(f8.6)") + ' rad'
+   thetag= theta*180./!pi 
+   title = element + '   GI-angle = '+ string(theta, FORMAT="(f8.6)") + ' rad ('+ string(thetag, FORMAT="(f6.2)")+' deg.)'
  
-   plot , [20, 40000], [0, max(Rs)*1.1], /nodata, xtitle='E (eV)', $
-      ytitle='reflectivity', title=title, /xlog 
-    oplot, en, Rs, color=1
-    oplot, en, Rp, color=2
+   plot , [20, 40000], [1e-3, max(Rs)*1.1], /nodata, xtitle='E (eV)', $
+      ytitle='reflectivity', title=title, /xlog, _extra=extra 
+
+   oplot, en, Rs, color=1
+   oplot, en, Rp, color=2
+
+   legend, ['Rs', 'Rp'], color=[1,2], linestyle=[0,0], /right
 endif
 
 r = Rs
