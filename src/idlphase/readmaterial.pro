@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <20 Dec 13 10:44:26 flechsig> 
+ ; Time-stamp: <10 Jan 14 16:21:42 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -11,7 +11,7 @@
 pro readmaterial, element, Z, A , rho, plot=plot, verbose=verbose
 ;+
 ; NAME:
-;   readhenke
+;   readmaterial
 ;
 ; PURPOSE:
 ;   read material parameter  
