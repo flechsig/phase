@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <09 Jan 14 16:31:37 flechsig>  */
+ /* Time-stamp: <10 Jan 14 16:12:52 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -20,12 +20,15 @@
 #include "phase_struct.h"
 #include "phase.h"
 #include "myfftw3.h"
+#include "common.h"
 
 /* free space propagation with Transfer function propagator */
+/* the drift distance is s1+s2 of the first element         */
+/* process ez and ey in sequence                            */
 void drift_fourier(struct BeamlineType *bl)
 {
   int    row, col, rows, cols, idxc, idxf;
-  double driftlen, ampf, phaf, amp, pha, k, dz0, dy0, arg, p0, lambda;
+  double driftlen, ampf, phaf, amp, pha, k, dz0, dy0, arg, p0, lambda, *u, *v;
   struct ElementType *el;
   struct source4c *so4;
   struct PSDType  *psd;
@@ -38,7 +41,10 @@ void drift_fourier(struct BeamlineType *bl)
   so4= (struct source4c *)&(bl->posrc);
   cols= so4->iex;
   rows= so4->iey;
-  
+
+  u= XMALLOC(double, cols);  /* frequency vector */
+  v= XMALLOC(double, rows);  /* frequency vector */
+
   ReAllocResult(bl, PLphspacetype, rows, cols);
   psd= (struct PSDType *)bl->RESULT.RESp;
   psd->iy= rows;
@@ -47,11 +53,14 @@ void drift_fourier(struct BeamlineType *bl)
 //el= &(bl->ElementList[bl->position]); // oder -1
   el= &(bl->ElementList[0]);
   driftlen= el->GDat.r+ el->GDat.rp;
-  lambda= bl->BLOptions.lambda;
+  lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
   p0 = driftlen / lambda;
   dz0= so4->dx;
   dy0= so4->dy;
+
+  for (col= 0; col < cols; col++) u[col]= (col /(cols- 1.0)- 0.5) *  (cols- 1.0)/ (so4->gridx[cols-1]- so4->gridx[0]);
+  for (row= 0; row < rows; row++) v[row]= (row /(rows- 1.0)- 0.5) *  (rows- 1.0)/ (so4->gridy[rows-1]- so4->gridy[0]);
   
   printf("drift_fourier called, drift= %f mm, file= %s\n", driftlen, __FILE__);
 
@@ -63,16 +72,9 @@ void drift_fourier(struct BeamlineType *bl)
   //p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_MEASURE); /* needs longer but ev. faster execution */
   //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
 
- printf("fftw3 fill arrays for Ez\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	in[idxc][0]= so4->zezre[idxf];
-	in[idxc][1]= so4->zezim[idxf];
-      }
-  
+  printf("fftw3 fill arrays for Ez\n");
+  fill_fftw(in, so4->zezre, so4->zezim, rows, cols);
+ 
   printf("fftw3 forward execute Ez\n");
   fftw_execute(p1);
   fftshift(out, rows, cols);
@@ -85,7 +87,7 @@ void drift_fourier(struct BeamlineType *bl)
 	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
 
-	arg= 1.0- pow((so4->gridx[col]* lambda), 2.0)- pow((so4->gridy[row]* lambda), 2.0);
+	arg= 1.0- pow((u[col]* lambda), 2.0)- pow((v[row]* lambda), 2.0);
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
@@ -110,27 +112,13 @@ void drift_fourier(struct BeamlineType *bl)
   //fftshift(out, rows, cols);
 
   printf("fftw3 export result Ez\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	psd->ezrec[idxf]= out[idxc][0];
-	psd->ezimc[idxf]= out[idxc][1];
-      }
+  get_fftw(out, psd->ezrec, psd->ezimc, rows, cols);
 
   /***************** done with ez ****************************/
 
   printf("fftw3 fill arrays for Ey\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	in[idxc][0]= so4->zeyre[idxf];
-	in[idxc][1]= so4->zeyim[idxf];
-      }
-  
+  fill_fftw(in, so4->zeyre, so4->zeyim, rows, cols);
+    
   printf("fftw3 forward execute Ey\n");
   fftw_execute(p1);
   fftshift(out, rows, cols);
@@ -143,7 +131,7 @@ void drift_fourier(struct BeamlineType *bl)
 	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
 
-	arg= 1.0- pow((so4->gridx[col]* lambda), 2.0)- pow((so4->gridy[row]* lambda), 2.0);
+	arg= 1.0- pow((u[col]* lambda), 2.0)- pow((v[row]* lambda), 2.0);
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
@@ -167,28 +155,15 @@ void drift_fourier(struct BeamlineType *bl)
   //fftshift(out, rows, cols);
 
   printf("fftw3 export result Ey\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	psd->eyrec[idxf]= out[idxc][0];
-	psd->eyimc[idxf]= out[idxc][1];
-      }
-  
+  get_fftw(out, psd->eyrec, psd->eyimc, rows, cols);
+    
   printf("fftw3 fill vectors\n");
   for (row= 0; row < rows; row++) psd->y[row]= so4->gridy[row];
   for (col= 0; col < cols; col++) psd->z[col]= so4->gridx[col];
 
   printf("fftw3 fill psd\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxf= col* rows+ row;
-	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
-	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
-      }
-
+  psdfields2intensity(psd, rows, cols);
+  
   fftw_destroy_plan(p1);
   fftw_destroy_plan(p2);
   fftw_free(in); 
@@ -196,7 +171,8 @@ void drift_fourier(struct BeamlineType *bl)
 #else
   printf("fftw3 not available- skip calculation\n");
 #endif
-
+  XFREE(u);
+  XFREE(v);
   printf("drift_fourier end\n");
 } /* drift fourier */
 
@@ -238,16 +214,9 @@ void drift_fresnel(struct BeamlineType *bl)
   p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
   // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
  
- printf("fftw3 fill arrays for Ez\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	in[idxc][0]= so4->zezre[idxf];
-	in[idxc][1]= so4->zezim[idxf];
-      }
-  
+  printf("fftw3 fill arrays for Ez\n");
+  fill_fftw(in, so4->zezre, so4->zezim, rows, cols);
+    
   printf("fftw3 execute Ez\n");
   fftw_execute(p);
   fftshift(out, rows, cols);
@@ -269,14 +238,7 @@ void drift_fresnel(struct BeamlineType *bl)
       }
 
   printf("fftw3 fill arrays for Ey\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	in[idxc][0]= so4->zeyre[idxf];
-	in[idxc][1]= so4->zeyim[idxf];
-      }
+  fill_fftw(in, so4->zeyre, so4->zeyim, rows, cols);
   
   printf("fftw3 execute Ey\n");
   fftw_execute(p);
@@ -288,7 +250,7 @@ void drift_fresnel(struct BeamlineType *bl)
       {
 	idxc= row* cols+ col;
 	idxf= col* rows+ row;
-	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
+	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1], 2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
 	amp0= sqrt(pow(so4->zeyre[idxf], 2.0)+ pow(so4->zeyim[idxf],2.0)); // source amplitude
 	pha0= atan2(so4->zeyim[idxf], so4->zeyre[idxf]);                   // source phase
@@ -299,18 +261,12 @@ void drift_fresnel(struct BeamlineType *bl)
       }
   
   printf("fftw3 fill vectors\n");
-  for (row= 0; row < rows; row++) psd->y[row]= bl->BLOptions.lambda*driftlen*so4->gridy[row]/(rows*pow((dy0/rows),2.0));
-  for (col= 0; col < cols; col++) psd->z[col]= bl->BLOptions.lambda*driftlen*so4->gridx[col]/(cols*pow((dz0/cols),2.0));
+  for (row= 0; row < rows; row++) psd->y[row]= bl->BLOptions.lambda*driftlen*so4->gridy[row]/(rows* pow((dy0/rows), 2.0));
+  for (col= 0; col < cols; col++) psd->z[col]= bl->BLOptions.lambda*driftlen*so4->gridx[col]/(cols* pow((dz0/cols), 2.0));
 
   printf("fftw3 fill psd\n");
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxf= col* rows+ row;
-	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
-	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
-      }
-
+  psdfields2intensity(psd, rows, cols);
+  
   fftw_destroy_plan(p);
   fftw_free(in); 
   fftw_free(out);
@@ -321,8 +277,13 @@ void drift_fresnel(struct BeamlineType *bl)
   printf("drift_fresnel end\n");
 } /* end drift_fresnel */
 
+/****************************
+  start with helper functions 
+*****************************/
+
 #ifdef HAVE_FFTW3
-/* shift frequencies to center */
+
+/* shift frequencies to center                     */
 /* to be checked whether it works for even and odd */
 void fftshift(fftw_complex *arr0, int rows, int cols)
 {
@@ -332,7 +293,7 @@ void fftshift(fftw_complex *arr0, int rows, int cols)
   
   arrsize= sizeof(fftw_complex) * rows * cols;
   arr1= (fftw_complex*) fftw_malloc(arrsize);
-  memcpy(arr1, arr0, arrsize); // save initial array
+  memcpy(arr1, arr0, arrsize);                            /* save initial array */
 
   row2= rows / 2;
   col2= cols / 2;
@@ -348,6 +309,50 @@ void fftshift(fftw_complex *arr0, int rows, int cols)
   
   fftw_free(arr1);
 } /* end fftshift */
+
+/* helper function */
+void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
+{
+  int row, col, idxf, idxc;
+
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	in[idxc][0]= re[idxf];
+	in[idxc][1]= im[idxf];
+      }
+} /* end fill_fftw */
+
+void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols)
+{
+  int row, col, idxf, idxc;
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	re[idxf]= out[idxc][0];
+	im[idxf]= out[idxc][1];
+      }
+} /* end get_fftw */
+
+/* helper function                         */
+/* fills psd from fields inside psd struct */
+void psdfields2intensity(struct PSDType *psd, int rows, int cols)
+{
+  int row, col, idxf;
+  
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxf= col* rows+ row;
+	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
+	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
+      }
+} /* psdfields2intensity */
+
 #endif
 
 /* end */

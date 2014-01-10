@@ -65,6 +65,7 @@ idl_with_doc_header = \
 	propfresnel.pro \
 	prophuygens.pro \
 	readhenke.pro \
+        readmaterial.pro \
 	read_extr_out.pro \
         read_int_file.pro \
         read_opti_out.pro \
