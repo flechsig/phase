@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <10 Jan 14 16:47:02 flechsig> 
+ ; Time-stamp: <10 Jan 14 16:51:03 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -24,20 +24,17 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose, _extra=ext
 ;
 ; INPUTS:
 ;   element: element as chemical formula (String, case sensitive)
-;   theta  : Grazing incidence angle
 ;
 ; OPTIONAL INPUTS:
 ;   no
 ;
 ; KEYWORD PARAMETERS:
 ;   plot:    do a plot
-;   theta:   angle to normal in rad
+;   theta:   Grazing incidence angle
 ;   verbose: print filename
 ;
 ; OPTIONAL OUTPUTS:
-;   energy: photon energy in eV
-;   f1: f1
-;   f2: f2;
+;   rs: reflectivity rs
 ;
 ; PROCEDURE:
 ;   calls readhenke
@@ -51,7 +48,7 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose, _extra=ext
 ;  UF 19.12.13
 ;-
 
-usage= 'usage: reflec, 'Au', en, theta=0.023, r, /plot'
+usage= 'usage: reflec, ''Au'', en, theta=0.023, r, /plot'
 
 
 if n_elements(element) eq 0 then begin
