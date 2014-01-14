@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <10 Jan 14 12:15:40 flechsig> 
+//  Time-stamp: <2014-01-14 18:23:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -17,6 +17,7 @@
 // 4) widget handling
 
 #include <QtGui>
+#include <QDesktopWidget>
 
 #include "mainwindow.h"
 #include "phaseqt.h"
@@ -27,6 +28,10 @@ using namespace std;
 // the constructor of the main window
 MainWindow::MainWindow(PhaseQt *parent)
 {
+  QDesktopWidget dw;
+  int x= dw.width();
+  int y= dw.height();
+
   this->s_ray= NULL;
   this->o_input= NULL;
   this->c_window= NULL;
@@ -42,7 +47,9 @@ MainWindow::MainWindow(PhaseQt *parent)
   createDockWindows();
   createProgress();
   setWindowTitle(tr("PHASE Qt"));
-  resize(1400,940);
+  x= (x > 1400) ? 1400 : x; // avoid overfill on laptops
+  y= (y > 940)  ?  940 : y; 
+  resize(x, y); 
   // progress etc.
   mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
   mwplotstyle= PLOT_CONTOUR;
