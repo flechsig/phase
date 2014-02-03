@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <10 Jan 14 16:51:03 flechsig> 
+ ; Time-stamp: <03 Feb 14 16:06:17 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -8,7 +8,7 @@
  ; $Revision$ 
  ; $Author$ 
 
-pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose, _extra=extra
+pro reflec, element, en, r, theta=theta, plot=plot, verbose=verbose, _extra=extra
 ;+
 ; NAME:
 ;   reflec
@@ -49,7 +49,6 @@ pro reflec, element, en, r, theta= theta, plot=plot, verbose=verbose, _extra=ext
 ;-
 
 usage= 'usage: reflec, ''Au'', en, theta=0.023, r, /plot'
-
 
 if n_elements(element) eq 0 then begin
     print, usage 
