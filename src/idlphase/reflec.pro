@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <03 Feb 14 16:06:17 flechsig> 
+ ; Time-stamp: <03 Feb 14 16:08:50 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -30,7 +30,7 @@ pro reflec, element, en, r, theta=theta, plot=plot, verbose=verbose, _extra=extr
 ;
 ; KEYWORD PARAMETERS:
 ;   plot:    do a plot
-;   theta:   Grazing incidence angle
+;   theta:   Grazing incidence angle (rad)
 ;   verbose: print filename
 ;
 ; OPTIONAL OUTPUTS:
@@ -48,7 +48,7 @@ pro reflec, element, en, r, theta=theta, plot=plot, verbose=verbose, _extra=extr
 ;  UF 19.12.13
 ;-
 
-usage= 'usage: reflec, ''Au'', en, theta=0.023, r, /plot'
+usage= 'usage: reflec, ''Au'', en, theta=4e-3, r, /plot'
 
 if n_elements(element) eq 0 then begin
     print, usage 
