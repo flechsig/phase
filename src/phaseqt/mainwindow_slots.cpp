@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Jan 14 15:52:07 flechsig> 
+//  Time-stamp: <04 Feb 14 12:18:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -743,11 +743,11 @@ if (!action.compare("fourierAct"))
  	  break;
 #endif
 	case 4: 
-	  /*
-	  filesOK= fexists(myparent->myBeamline()->src.so4.fsource4a) & 
-	    fexists(myparent->myBeamline()->src.so4.fsource4b) & 
-	    fexists(myparent->myBeamline()->src.so4.fsource4c) &
-	    fexists(myparent->myBeamline()->src.so4.fsource4d); */
+	  filesOK= 
+	    fexists(myparent->myBeamline()->filenames.so4_fsource4a) & 
+	    fexists(myparent->myBeamline()->filenames.so4_fsource4b) & 
+	    fexists(myparent->myBeamline()->filenames.so4_fsource4c) &
+	    fexists(myparent->myBeamline()->filenames.so4_fsource4d); 
 	  break;
 	case 6:
 	  //filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
