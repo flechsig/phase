@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/readhenke.pro
  ; Date      : <20 Dec 13 09:57:10 flechsig> 
- ; Time-stamp: <03 Feb 14 16:20:08 flechsig> 
+ ; Time-stamp: <03 Feb 14 16:23:28 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -30,6 +30,7 @@ pro reflec, element, en, r, theta=theta, plot=plot, verbose=verbose, rp=rp, _ext
 ;
 ; KEYWORD PARAMETERS:
 ;   plot:    do a plot
+;   rp:      reflectivity rp
 ;   theta:   Grazing incidence angle (rad)
 ;   verbose: print filename
 ;
@@ -42,7 +43,7 @@ pro reflec, element, en, r, theta=theta, plot=plot, verbose=verbose, rp=rp, _ext
 ;
 ; EXAMPLE:
 ;   idl> en=dindgen(100)*10+30 
-;   idl> reflec, 'Au', en, theta=0.023, r, /plot
+;   idl> reflec, 'Au', en, r, theta=4e-3, /plot
 ;
 ; MODIFICATION HISTORY:
 ;  UF 19.12.13
