@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <28 Aug 13 10:46:30 flechsig> 
+;  Time-stamp: <05 Feb 14 14:51:41 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -97,9 +97,9 @@ len   = n_elements(field0)/2
 size  = fix(sqrt(len))
 size2 = size*size
 print, 'read GENESIS file -- units: (m)'
-print, 'size      = ', size, ' gridsize= ', gridsize
-print, 'len       = ',  len, ' size^2  = ', size2
-print, 'wavelenth = ',  wavelength
+print, 'size       = ', size, ' gridsize= ', gridsize
+print, 'len        = ',  len, ' size^2  = ', size2
+print, 'wavelength = ',  wavelength
 
 if (size2 ne len) then begin
     print, 'genesis works assumes a quadratic grid- return'
