@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <16 Dec 13 09:53:28 flechsig> 
+;  Time-stamp: <05 Feb 14 15:27:16 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -450,9 +450,18 @@ function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, _EXTRA=e
 phase0= atan(*self.field, /phase)
 ;;phase= phase0
 help,phase0
-if n_elements(phunwrap)     ne 0 then phase=phunwrap(phase0) else $
-if n_elements(unwrap_phase) ne 0 then phase=unwrap_phase(phase0) else $
-phase= phase0
+if n_elements(phunwrap) ne 0 then begin
+    print, 'call phunwrap' 
+    phase=phunwrap(phase0) 
+endif else begin
+    if n_elements(unwrap_phase) ne 0 then BEGIN
+        print, 'call UNWRAP_PHASE' 
+        phase=unwrap_phase(phase0) 
+    endif else begin
+       print, 'copy phase0 to phase' 
+       phase= phase0
+   endelse
+endelse
 
 help, phase
 return, phase
@@ -1031,7 +1040,7 @@ pro phase::plotphase, window=window, _EXTRA=extra
 ;-
 if n_elements(window) ne 0 then window, window
 title= self.name+ ' phase'
-myphase= self->getprofile(_EXTRA=extra)
+myphase= self->getphase(_EXTRA=extra)
 mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
   xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
 return 
@@ -1065,7 +1074,7 @@ pro phase::plotprofile, window=window, _EXTRA=extra
 
 if n_elements(window) ne 0 then window, window
 
-title= self.name+ ' phase'
+title= self.name+ ' profile'
 zp= self->getprofile(/z, _EXTRA=extra)
 yp= self->getprofile(/y, _EXTRA=extra)
 y = self->gety_vec()
@@ -1091,7 +1100,7 @@ oplot, z*1e3, zp, color=1
 oplot, y*1e3, yp, color=2
 legend, ['z','y'], color=[1,2], linestyle=[0,0]
 return 
-end ;; plotrofile
+end ;; plotprofile
 
 pro phase::propfresnel, _EXTRA=extra
 ;+
