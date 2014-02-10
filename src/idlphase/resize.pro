@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <13 Sep 13 11:02:58 flechsig> 
+;  Time-stamp: <07 Feb 14 17:15:56 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 
 
 
-pro resize,  y_vec=y_vec, z_vec=z_vec, field=field, Ninter=Ninter, Nzero=Nzero, nocenter=nocenter     
+pro resize, y_vec=y_vec, z_vec=z_vec, field=field, Ninter=Ninter, Nzero=Nzero, nocenter=nocenter     
 ;          
 ;+
 ; NAME:

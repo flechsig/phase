@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <05 Feb 14 15:27:16 flechsig> 
+;  Time-stamp: <07 Feb 14 17:15:55 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1180,6 +1180,123 @@ propfourier, emf, _EXTRA=extra
 *self.y_vec= emf.y_vec
 return
 end ;; propfourier
+
+pro phase::resize, newsize=newsize, nocenter=nocenter, newy_vec=newy_vec, newz_vec=newz_vec, interpolate=interpolate
+;+
+; NAME:
+;   phase::resize
+;
+; PURPOSE:
+;   resize the field and grid we assume an equidistant quadratic grid. The default is zero padding 
+;   to newsize and keep the spatial resolution. Interpolate keeps the area and interpolates to newsize. 
+;   Providing vectors forces the field to be interpolated and zero padded. The routine modifies the 
+;   vectors and fields.
+;   The method functions and calling parameters are different from resize.pro!
+;
+;   hint for fast idl fft: N should be built from prime factors 2,3,5,
+;   to avoid special treatment of the Nyquist frequency odd N
+;   are recommended good examples:
+;   3,    9,  27,  81,  243, 729, 2187 
+;   5,   25, 125, 625, 3125
+;   15,  75, 375, 1875
+;   45, 135, 405, 1215
+;   225
+;   if N= 3^k3 + 5^k5 then time = a*(3*k3+5*k5) i.e. 243=>15, 225=>16
+;   i.e. 243 is faster than 225
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->resize
+;
+; INPUTS:
+;   no
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   interpolate: inerpolate, default is zero padding
+;   newsize:     new quadratic gridzize 
+;   nocenter:    zeropadding without centering 
+;   newy_vec:       new y_vector
+;   newz_vec:       new z_vector
+;
+; EXAMPLE:
+;   idl> emf->resize
+;
+; MODIFICATION HISTORY:
+;   27.8.2013 RF 
+;   UF Feb 2014 
+;-
+
+;;if n_elements(ne)  eq 0 then begin
+
+z_vec= self->getz_vec()
+y_vec= self->gety_vec()
+field= self->getfield()
+size = size(field)
+if (size[1] ge size[2]) then sizeField = size[1] else sizeField = size[2]
+
+if n_elements(newsize) ne 0 then begin
+    if newsize le sizeField  then begin
+        print, 'error: newsize < oldsize'
+        return
+    endif
+endif
+
+if n_elements(newy_vec) ne 0 then begin
+    print, 'error: vector input not yet supported'
+    return
+endif
+
+if n_elements(newz_vec) ne 0 then begin
+    print, 'error: vector input not yet supported'
+    return
+endif
+
+if n_elements(interpolate) eq 0 then begin  ;; zero padding
+    print, '----------------- Zero padding of field ------'
+    print, 'old= ',sizeField,' new=', newsize
+    Null       = dcomplexarr(newsize, newsize)  ;; make a quadratic array filled with 0
+    s          = size(field, /DIM)  ;; s gives the dimensions of field
+    zshift     = (newsize-s[0])/2     ;; the index to shift 
+    yshift     = (newsize-s[1])/2     ;; the index to shift
+    Null[0,0]  = field              ;; copy original field  
+    if n_elements(nocenter) eq 0 then field= shift(Null, zshift, yshift) else field= Null ;shift the field to the center
+;; now the vectors
+    z0 = z_vec[0]                           ;; the start value
+    y0 = y_vec[0]                           ;; the start value
+    dz = z_vec[1] - z0                      ;; stepsize
+    dy = y_vec[1] - y0                      ;; stepsize
+    if n_elements(nocenter) eq 0 then begin ;; center
+            z_vec= (dindgen(newsize)- zshift) * dz + z0
+            y_vec= (dindgen(newsize)- yshift) * dy + y0 
+        endif else begin
+            z_vec= dindgen(newsize) * dz + z0
+            y_vec= dindgen(newsize) * dy + y0
+        endelse
+
+endif else begin   ;; end zero padding - begin interpolate
+    print, '-----------------interpolate-----------'
+    print, 'old= ',sizeField,' new=', newsize
+    field= interpolate(field, z_vec, y_vec, /GRID)
+    z0 = z_vec[0]                           ;; the start value
+    y0 = y_vec[0]                           ;; the start value
+    dz = z_vec[1] - z0                      ;; stepsize
+    dy = y_vec[1] - y0                      ;; stepsize
+    z_vec= dindgen(newsize) * dz + z0
+    y_vec= dindgen(newsize) * dy + y0
+endelse ;; end interpolate
+
+ptr_free, self.field, self.z_vec, self.y_vec   ;; clean up pointers
+self.field= ptr_new(field)
+self.z_vec= ptr_new(z_vec)
+self.y_vec= ptr_new(y_vec)
+
+return
+end ;; resize
 
 pro phase::setName, title
 ;+
