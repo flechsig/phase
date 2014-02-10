@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <10 Feb 14 12:02:24 flechsig> 
+c$$$ Time-stamp: <10 Feb 14 16:09:10 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -847,6 +847,13 @@ c	implicit real*8(a-h,o-z)
 c	maximale Dimension der Quelle 1024 x 1024
 c UF	dimension xx(1048576),yy(1048576)
 
+	write(*,*) 'src4_ini: filenames hardcoded test_5000.s4a,s4b,s4c,s4d'
+	so4.fsource4a='test_5000.s4a'
+	so4.fsource4b='test_5000.s4b'
+	so4.fsource4c='test_5000.s4c'
+	so4.fsource4d='test_5000.s4d'
+
+
 	write(*,*) 'src4_ini: read file: ',so4.fsource4a
 	INQUIRE(File=so4.fsource4a, Exist=ex)
 	if (.NOT. ex) then
@@ -855,12 +862,14 @@ c UF	dimension xx(1048576),yy(1048576)
 	   stop
 	endif
 
+	write(*,*) 'src4_ini: open'
 	open(unit=10, name=so4.fsource4a, type='old')
+	write(*,*) 'src4_ini: read1'
 	read(10,*) so4.ieyrex, so4.ieyrey
-
+	write(*,*) 'src4_ini: after read1'
 	nx=so4.ieyrex      ! remember the numbers and allocate the fields                               
 	ny=so4.ieyrey
-
+	write(*,*) 'src4_ini: allocate', nx, ny
 	allocate(xx(nx*ny), yy(nx*ny), stat=alloc_err)
 	if (alloc_err .gt. 0) then
 	   write(*,*) 'error: memory exhausted- exit'
