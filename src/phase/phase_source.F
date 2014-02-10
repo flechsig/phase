@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <03 Jul 13 14:52:09 flechsig> 
+c$$$ Time-stamp: <10 Feb 14 12:02:24 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -376,8 +376,10 @@ cc	include 'phase_struct.for'
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
+#ifdef OLD_PO_SOURCE
 c UF 2.7.13	record /source4/ so4
-
+	record /source4/ so4
+#endif
 	phase= 0.0                  ! give a default
 
 #ifdef DEBUG2

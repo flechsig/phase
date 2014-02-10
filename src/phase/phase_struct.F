@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <2013-07-16 20:57:09 flechsig> 
+c$$$ Time-stamp: <10 Feb 14 12:02:26 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -219,7 +219,9 @@ c---------------- sources -----------------------------------
 c           record/source1/so1              ! Gauss + Hard edge
 c           record/source2/so2              ! Zernike
 c           record/source3/so3              ! radiale Vert. vom File
-c           record/source4/so4              ! Quelle von File
+#ifdef OLD_PO_SOURCE
+           record/source4/so4              ! Quelle von File
+#endif
 c	   record/source5/so5	           ! Dipol Quelle
 c           record/source6/so6              ! Brightness
 	   integer isrctype
