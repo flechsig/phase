@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <10 Dec 13 10:01:29 flechsig> 
+;  Time-stamp: <11 Feb 14 18:05:02 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -73,7 +73,7 @@ pro gaussbeam, emf, dist=dist, drift=drift, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, si
 ;
 ;
 ; RESTRICTIONS:
-;
+;   UF 10.2.14 I think the sign of the phase is wrong with drift > 0 the phase in the center is minimum- should be maximum or???
 ;
 ; PROCEDURE:
 ;   
