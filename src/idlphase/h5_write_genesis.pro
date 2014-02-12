@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Feb 14 16:28:03 flechsig> 
+;  Time-stamp: <12 Feb 14 16:32:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -83,6 +83,7 @@ file_id = H5F_CREATE(fname)
 
 lambda  = double(wavelength)
 gridsize= double(y_vec[1]- y_vec[0])
+slicecount= double(1.0)
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
@@ -113,7 +114,7 @@ w_dataset_id = H5D_CREATE(file_id,  'wavelength',  datatype_double_id, w_dataspa
 g_dataset_id = H5D_CREATE(file_id,  'gridsize',    datatype_double_id, g_dataspace_id);
 f_dataset_id = H5D_CREATE(group_id, 'field',       datatype_double_id, f_dataspace_id);
 
-H5D_WRITE, u_dataset_id, lambda
+H5D_WRITE, u_dataset_id, slicecount   ;; not sure if it is double
 H5D_WRITE, w_dataset_id, lambda
 H5D_WRITE, g_dataset_id, gridsize
 H5D_WRITE, f_dataset_id, field
