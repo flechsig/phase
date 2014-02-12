@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <19 Jul 13 11:34:21 flechsig> 
+;  Time-stamp: <12 Feb 14 16:28:03 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -101,24 +101,29 @@ endfor
 
 datatype_double_id = H5T_IDL_CREATE(lambda)
 
+u_dataspace_id = H5S_create_simple(1)
 w_dataspace_id = H5S_create_simple(1)
 g_dataspace_id = H5S_create_simple(1)
 f_dataspace_id = H5S_create_simple(fsize)
 
 group_id = H5G_CREATE(file_id, 'slice000001');
 
+u_dataset_id = H5D_CREATE(file_id,  'slicecount',  datatype_double_id, u_dataspace_id);
 w_dataset_id = H5D_CREATE(file_id,  'wavelength',  datatype_double_id, w_dataspace_id);
 g_dataset_id = H5D_CREATE(file_id,  'gridsize',    datatype_double_id, g_dataspace_id);
 f_dataset_id = H5D_CREATE(group_id, 'field',       datatype_double_id, f_dataspace_id);
 
+H5D_WRITE, u_dataset_id, lambda
 H5D_WRITE, w_dataset_id, lambda
 H5D_WRITE, g_dataset_id, gridsize
 H5D_WRITE, f_dataset_id, field
 
+H5D_CLOSE, u_dataset_id
 H5D_CLOSE, w_dataset_id 
 H5D_CLOSE, g_dataset_id
 H5D_CLOSE, f_dataset_id 
 
+H5S_CLOSE, u_dataspace_id
 H5S_CLOSE, w_dataspace_id
 H5S_CLOSE, g_dataspace_id
 H5S_CLOSE, f_dataspace_id
