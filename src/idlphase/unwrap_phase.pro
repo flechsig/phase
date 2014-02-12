@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/unwrap_phase.pro
  ; Date      : <04 Nov 13 17:14:36 flechsig> 
- ; Time-stamp: <06 Nov 13 09:34:15 flechsig> 
+ ; Time-stamp: <12 Feb 14 12:20:48 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -62,6 +62,8 @@ FUNCTION unwrap_phase, data
 ;       Germany, Sep. 1999
 ;-
 
+;print, 'unwrap_phase called'
+;help, data
 
 decision = size(data)
 IF decision[0] GT 2 THEN BEGIN
@@ -70,6 +72,7 @@ IF decision[0] GT 2 THEN BEGIN
 ENDIF 
 IF decision[0] EQ 2 THEN BEGIN
     result = unwrap_phase_2d(data)
+;;    help, result
     return, result
 ENDIF ELSE BEGIN
     ;; find the phase jump locations
@@ -85,6 +88,7 @@ ENDIF ELSE BEGIN
               -2*!DPI*jumps[jumpindex[count]]
         ENDFOR
     ENDIF
+;;    help, result
     return, result
 ENDELSE
 END
