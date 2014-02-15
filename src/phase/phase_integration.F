@@ -634,18 +634,13 @@ c        inorm2 = 42: Beschränkung auf alte Terme
 c---------------------------------------------------------------------
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph*fd1ph
-c        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/ra.xlam_test
         if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/g.xlam
-c        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/ra.xlam_test
         if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/g.xlam
         if(ifl.inorm2.eq.21)then
-c          ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb)))
           ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb)))
         endif
-c        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/ra.xlam_test
         if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
         if(ifl.inorm2.eq.31)then
-c          ff=fdph/(ra.xlam_test*dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph)))
           ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph)))
         endif
 
@@ -685,10 +680,10 @@ c       Konvergenzkriterien, maximale Werte sind:
         fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
         fact1=fact*2.0d0   
-c        fact2=fact1*((2.d0*cs.pi)/ra.xlam_test)
         fact2=fact1*((2.d0*cs.pi)/g.xlam)
-c        fd1ph=(fd1ph/fact1)*2.d0*ra.xlam_test**3
         fd1ph=(fd1ph/fact1)*2.d0*g.xlam**3
+        tl=((ra.xlength1*ra.xlength2)/(g.r*g.rp))**2
+        fd1ph=fd1ph*tl ! thick lens correction
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
 
@@ -709,7 +704,6 @@ c------------- only quadratic terms
           fd1phb=fd1phb_sav
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
-c     &       (fdph/(ra.xlam_test*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
          if(ifl.inorm2.eq.41)ff=0.d0
 
          else
