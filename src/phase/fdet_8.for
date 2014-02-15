@@ -128,10 +128,15 @@ c---- routine wird nur gerufen wenn imodus = 2 (PO)
        pi_loc=datan(1.d0)*4.d0
        fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
-       fact1=fact*2.0d0
+
+c--------------- modifiziert entsprechend Born und Mandel
+c      fact1=fact*2.0d0
+       fact1=fact
        fact2=fact*dsqrt(pi_loc)/dsqrt(2.0d0)
        fact3=2.d0/pi_loc
-     
+       fact4=1.d0/((g.r+g.rp)*g.xlam) 
+       fact5=1.d0/g.xlam    
+
 c------------- change signs of ypc1 and zpc1
           do n1=0,iord
            do n2=0,iord-n1
@@ -283,7 +288,7 @@ c------------- change signs of f1, f2, f3, f4
 	  if(f1(0,0,0,0).lt.0.d0)call tay_const_4(f1,-1.d0,iord)
           call Tay_sqrt_4(f1,f2,iord)
           call Tay_inv_4(f2,fdet1phc,iord)		
-          call Tay_const_4(fdet1phc,fact,iord)
+          call Tay_const_4(fdet1phc,fact5,iord)
 	 endif
 
 c-----------------------------
@@ -298,7 +303,7 @@ c-----------------------------
 	  enddo
 	 enddo
 	enddo
-	fdet1phc(0,0,0,0)=1.d0
+	fdet1phc(0,0,0,0)=fact4
 		
 	endif
 
