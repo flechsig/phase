@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <2013-06-28 21:47:24 flechsig> 
+//  Time-stamp: <2014-02-16 17:12:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -217,18 +217,22 @@ PhaseQt::PhaseQt()
 #ifdef DEBUG  
   printf("debug: PhaseQt constructor called\n");
 #endif
+  ActualTask= 0;
+  mainWin= NULL:
+
   initSet("default");   // initialize the filename structure
   initBeamline();       // initialize the beamline structure
 } // end constructor
 
+/*
 #ifdef xxx  
-  Beamline.localalloc= DOALLOC;       /* init should go somwhere else */
+  Beamline.localalloc= DOALLOC;       // init should go somwhere else 
 
 #ifdef EXPIRE
        printf(" defined expire date: %d\n", EXPIRE);
        time(&timev);
        local_time= localtime(&timev);
-       /* debug       printf("%d %d %d\n\n", local_time->tm_year, local_time->tm_mon, local_time->tm_mday); */
+       // debug       printf("%d %d %d\n\n", local_time->tm_year, local_time->tm_mon, local_time->tm_mday); 
 
        if (  local_time->tm_mday + 
 	    (local_time->tm_mon  + 1) * 100 + 
@@ -238,7 +242,7 @@ PhaseQt::PhaseQt()
 	   exit(1);
 	 } else printf("  The program is not expired!\n");
 
-       /*       already_expired(); */
+       //       already_expired(); 
 #else
     printf(" The program does not expire!\n\n");
 #endif
@@ -248,7 +252,7 @@ PhaseQt::PhaseQt()
 #else
     printf(" PHASE version > Nov: 2010: SEVEN_ORDER undefined\n\n");
 #endif
-/* Mar 10: get the data directory at runtime from ENV variable again, not at compile time*/
+// Mar 10: get the data directory at runtime from ENV variable again, not at compile time
     if ((global_rundir = getenv(PHASE_HOME)) == NULL)
     {
       printf("\nphase.c: needed environment variable %s not defined -- exiting\n", PHASE_HOME);
@@ -258,12 +262,12 @@ PhaseQt::PhaseQt()
     
     
     
-    //  InitDataSets(&PHASESet, (char*) MainPickName);             /* PHASEc.c */
+    //  InitDataSets(&PHASESet, (char*) MainPickName);             /* PHASEc.c 
 
-}
+//}
 
 #endif
-
+*/
 
 // rewrite of initdatsets
 void PhaseQt::sourceSetDefaults()
@@ -362,7 +366,9 @@ void PhaseQt::sourceSetDefaults()
 void PhaseQt::writeBackupFile()
 {
   char buffer[MaxPathLength];
+
   strncpy(buffer, this->filenames.beamlinename, (MaxPathLength-1));
+  buffer[MaxPathLength-2]= '\0';
   strcat(buffer, "~");
   
 #ifdef DEBUG

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2014-02-16 15:15:36 flechsig> 
+//  Time-stamp: <2014-02-16 16:31:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2005,6 +2005,7 @@ void MainWindow::selectParameter()
     return;
 
   strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength);
+  buffer[MaxPathLength- 1]= '\0';   // ensure termination
   ch= strchr(buffer, ':');
   if (ch != NULL) 
     {

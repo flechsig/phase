@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2014-01-14 18:23:33 flechsig> 
+//  Time-stamp: <2014-02-16 16:52:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1810,8 +1810,10 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 #endif
 
   strncpy(fname, blname, (MaxPathLength - 1));
+  fname[MaxPathLength - 2]= '\0';   // ensure termination
   strncpy(oname, blname, (MaxPathLength - 1));
-  strcat(fname, "~");
+  oname[MaxPathLength - 2]= '\0';   // ensure termination
+  strcat(fname, "~");               // append ~
 
   if (fexists(fname))
     {
@@ -2526,7 +2528,7 @@ void MainWindow::updateGraphicsInput(int style)
 // write files si* density cuts
 void MainWindow::writeSimp()
 {
-  int k, ret;
+  int k, ret, fileerror;
   FILE *f1, *f2, *f3, *f4, *f5, *f6;
   struct PSDType    *psd; 
   char *name= myparent->myBeamline()->filenames.imageraysname;
@@ -2558,54 +2560,57 @@ void MainWindow::writeSimp()
       delete msgBox;
       if (ret == QMessageBox::Cancel) { cout << "writeSimp canceled" << endl; return; }
     }
-  
-  if ((f1= fopen(fname1, "w+")) == NULL) { cout << "can't open " << fname1 << endl; return; }
-  if ((f2= fopen(fname2, "w+")) == NULL) { cout << "can't open " << fname2 << endl; return; }
-  if ((f3= fopen(fname3, "w+")) == NULL) { cout << "can't open " << fname3 << endl; return; }
-  if ((f4= fopen(fname4, "w+")) == NULL) { cout << "can't open " << fname4 << endl; return; }
-  if ((f5= fopen(fname5, "w+")) == NULL) { cout << "can't open " << fname5 << endl; return; }
-  if ((f6= fopen(fname6, "w+")) == NULL) { cout << "can't open " << fname6 << endl; return; }
 
-  // header
-  fprintf(f1, "# file simpre written by phase, IDL plotroutine: plotsi.pro\n#\n");
-  fprintf(f2, "# file simpim written by phase, IDL plotroutine: plotsi.pro\n#\n");
-  fprintf(f3, "# file sintre written by phase, IDL plotroutine: plotsi.pro\n#\n");
-  fprintf(f4, "# file sintim written by phase, IDL plotroutine: plotsi.pro\n#\n");
-  fprintf(f5, "# file simpa  written by phase, IDL plotroutine: plotsi.pro\n#\n");
-  fprintf(f6, "# file simpp  written by phase, IDL plotroutine: plotsi.pro\n#\n");
-  fprintf(f1, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
-  fprintf(f2, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
-  fprintf(f3, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
-  fprintf(f4, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
-  fprintf(f5, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
-  fprintf(f6, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
-  // psd(i,j,k) in fortran memory model
+  fileerror= 0;
+  if ((f1= fopen(fname1, "w+")) == NULL) { cout << "can't open " << fname1 << endl; ++fileerror; }
+  if ((f2= fopen(fname2, "w+")) == NULL) { cout << "can't open " << fname2 << endl; ++fileerror; }
+  if ((f3= fopen(fname3, "w+")) == NULL) { cout << "can't open " << fname3 << endl; ++fileerror; }
+  if ((f4= fopen(fname4, "w+")) == NULL) { cout << "can't open " << fname4 << endl; ++fileerror; }
+  if ((f5= fopen(fname5, "w+")) == NULL) { cout << "can't open " << fname5 << endl; ++fileerror; }
+  if ((f6= fopen(fname6, "w+")) == NULL) { cout << "can't open " << fname6 << endl; ++fileerror; }
 
-  for (k= 0; k < myparent->myBeamline()->BLOptions.xi.ianzy0; k++)    // UF was passiert wenn ianzy0 != ianzz0 ??
+  if ( fileerror==0 )
     {
-      fprintf(f1, "% e % e % e % e % e % e\n", psd->simpre[k*8], psd->simpre[k*8+4], psd->simpre[k*8+5], psd->simpre[k*8+6], psd->simpre[k*8+3], psd->simpre[k*8+7]);
-      fprintf(f2, "% e % e % e % e % e % e\n", psd->simpim[k*8], psd->simpim[k*8+4], psd->simpim[k*8+5], psd->simpim[k*8+6], psd->simpim[k*8+3], psd->simpim[k*8+7]);
-      fprintf(f3, "% e % e % e % e % e % e\n", psd->sintre[k*8], psd->sintre[k*8+4], psd->sintre[k*8+5], psd->sintre[k*8+6], psd->sintre[k*8+3], psd->simpre[k*8+7]);
-      fprintf(f4, "% e % e % e % e % e % e\n", psd->sintim[k*8], psd->sintim[k*8+4], psd->sintim[k*8+5], psd->sintim[k*8+6], psd->sintim[k*8+3], psd->sintim[k*8+7]);
-      fprintf(f5, "% e % e % e % e % e % e\n", psd->simpa[k*8],  psd->simpa[k*8+4],  psd->simpa[k*8+5],  psd->simpa[k*8+6],  psd->simpa[k*8+3],  psd->simpa[k*8+7]);
-      fprintf(f6, "% e % e % e % e % e % e\n", psd->simpp[k*8],  psd->simpp[k*8+4],  psd->simpp[k*8+5],  psd->simpp[k*8+6],  psd->simpp[k*8+3],  psd->simpp[k*8+7]);     
-    }
-
-  fprintf(f1, "# end\n");
-  fprintf(f2, "# end\n");
-  fprintf(f3, "# end\n");
-  fprintf(f4, "# end\n");
-  fprintf(f5, "# end\n");
-  fprintf(f6, "# end\n");
-  
-  fclose(f1);
-  fclose(f2);
-  fclose(f3);
-  fclose(f4);
-  fclose(f5);
-  fclose(f6);
-
-  cout << "writeSimp done, wrote files: " << name << "-si[mpre|mpim|ntre|ntim|mpa|mpp]" << endl; 
+  // header
+      fprintf(f1, "# file simpre written by phase, IDL plotroutine: plotsi.pro\n#\n");
+      fprintf(f2, "# file simpim written by phase, IDL plotroutine: plotsi.pro\n#\n");
+      fprintf(f3, "# file sintre written by phase, IDL plotroutine: plotsi.pro\n#\n");
+      fprintf(f4, "# file sintim written by phase, IDL plotroutine: plotsi.pro\n#\n");
+      fprintf(f5, "# file simpa  written by phase, IDL plotroutine: plotsi.pro\n#\n");
+      fprintf(f6, "# file simpp  written by phase, IDL plotroutine: plotsi.pro\n#\n");
+      fprintf(f1, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+      fprintf(f2, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+      fprintf(f3, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+      fprintf(f4, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+      fprintf(f5, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+      fprintf(f6, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
+      // psd(i,j,k) in fortran memory model
+      
+      for (k= 0; k < myparent->myBeamline()->BLOptions.xi.ianzy0; k++)    // UF was passiert wenn ianzy0 != ianzz0 ??
+	{
+	  fprintf(f1, "% e % e % e % e % e % e\n", psd->simpre[k*8], psd->simpre[k*8+4], psd->simpre[k*8+5], psd->simpre[k*8+6], psd->simpre[k*8+3], psd->simpre[k*8+7]);
+	  fprintf(f2, "% e % e % e % e % e % e\n", psd->simpim[k*8], psd->simpim[k*8+4], psd->simpim[k*8+5], psd->simpim[k*8+6], psd->simpim[k*8+3], psd->simpim[k*8+7]);
+	  fprintf(f3, "% e % e % e % e % e % e\n", psd->sintre[k*8], psd->sintre[k*8+4], psd->sintre[k*8+5], psd->sintre[k*8+6], psd->sintre[k*8+3], psd->simpre[k*8+7]);
+	  fprintf(f4, "% e % e % e % e % e % e\n", psd->sintim[k*8], psd->sintim[k*8+4], psd->sintim[k*8+5], psd->sintim[k*8+6], psd->sintim[k*8+3], psd->sintim[k*8+7]);
+	  fprintf(f5, "% e % e % e % e % e % e\n", psd->simpa[k*8],  psd->simpa[k*8+4],  psd->simpa[k*8+5],  psd->simpa[k*8+6],  psd->simpa[k*8+3],  psd->simpa[k*8+7]);
+	  fprintf(f6, "% e % e % e % e % e % e\n", psd->simpp[k*8],  psd->simpp[k*8+4],  psd->simpp[k*8+5],  psd->simpp[k*8+6],  psd->simpp[k*8+3],  psd->simpp[k*8+7]);     
+	}
+      
+      fprintf(f1, "# end\n");
+      fprintf(f2, "# end\n");
+      fprintf(f3, "# end\n");
+      fprintf(f4, "# end\n");
+      fprintf(f5, "# end\n");
+      fprintf(f6, "# end\n");
+      cout << "writeSimp done, wrote files: " << name << "-si[mpre|mpim|ntre|ntim|mpa|mpp]" << endl; 
+    } // fileerror == 0
+      
+  if (f1) fclose(f1);
+  if (f2) fclose(f2);
+  if (f3) fclose(f3);
+  if (f4) fclose(f4);
+  if (f5) fclose(f5);
+  if (f6) fclose(f6);
 } // end writeSimp
 
 /////////////////////////////////

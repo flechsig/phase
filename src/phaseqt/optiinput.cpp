@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <30 Oct 13 13:47:50 flechsig> 
+//  Time-stamp: <2014-02-16 16:57:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -489,7 +489,7 @@ void OptiInput::fillElementList()
   
   list= mylist;
   
-  printf("fillElementList with %d elements\n", myelementnumber);
+  cout << "fillElementList with " << myelementnumber << " elements" << endl;
   
   for (ui= 0; ui < myelementnumber; ui++, list++)
     {

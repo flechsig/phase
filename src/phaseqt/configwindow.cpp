@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <30 Oct 13 11:50:16 flechsig> 
+//  Time-stamp: <2014-02-16 16:23:01 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -282,14 +282,16 @@ void ConfigWindow::checkFileNames()
 
       strncpy(name,      fna->text().toLatin1().data(), MaxPathLength);
       strncpy(extension, ext->text().toLatin1().data(), 10);
+      name[MaxPathLength- 1]= '\0';  // ensure termination
+      extension[9]= '\0';            // ensure termination
 
       ret= strstr(name, extension);
 
-#ifdef DEBUG
-      cout << "ret " << ret << " " << name << " " << extension << endl;
-#endif
-
       if (ret == NULL) ++hits;
+#ifdef DEBUG
+      else
+	cout << "ret " << ret << " " << name << " " << extension << endl;
+#endif
    }
   cout << "hits " << hits << endl;
 

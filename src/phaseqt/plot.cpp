@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <09 Jan 14 09:37:47 flechsig> 
+//  Time-stamp: <2014-02-16 17:27:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -802,7 +802,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 {
   int i;
   unsigned int ix;
-  double *dp, *buffer;
+  double *dp, *buffer, *buffer2;
   
 #ifdef DEBUG
   cout << "Plot::hfill1 called set=" << set << endl;
@@ -829,11 +829,12 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
 	  if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
 	} 
+      delete buffer[];
     }
   else  /* 2nd */
     {
-      buffer= new double[ndata2];
-      memcpy(buffer, dvec, sizeof(double)*ndata2);
+      buffer2= new double[ndata2];
+      memcpy(buffer2, dvec, sizeof(double)*ndata2);
       if (c2x) delete c2x; c2x= NULL;
       if (c2y) delete c2y; c2y= NULL;
       c2x= new double[BINS2];
@@ -846,9 +847,10 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       
       for (i= 0; i< ndata2; i++)
 	{
-	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
+	  ix= (unsigned int)((buffer2[i]- x1)/(x2- x1) * BINS2);
 	  if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
 	} 
+      delete buffer2[];
     }
   
   h1max= 0.0; h1firstgt0= 1.0;  // ZERO
@@ -881,7 +883,8 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	}
     }
   
-  delete buffer;
+  
+
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
 #endif
