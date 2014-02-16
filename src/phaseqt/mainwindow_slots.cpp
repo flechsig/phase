@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <04 Feb 14 12:18:57 flechsig> 
+//  Time-stamp: <2014-02-16 15:15:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1314,7 +1314,7 @@ void MainWindow::grapplyslot()
       cout << "plot PO_SOURCE experimental start " << endl;
       cout << "use manual saling " << endl;
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
-      cout << "not yet implemented" << endl;
+      cout << "not yet fully implemented/tested" << endl;
 
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc));
       d_plot->setPoData("PO source");
