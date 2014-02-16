@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2014-02-16 16:52:42 flechsig> 
+//  Time-stamp: <2014-02-16 20:23:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2569,7 +2569,7 @@ void MainWindow::writeSimp()
   if ((f5= fopen(fname5, "w+")) == NULL) { cout << "can't open " << fname5 << endl; ++fileerror; }
   if ((f6= fopen(fname6, "w+")) == NULL) { cout << "can't open " << fname6 << endl; ++fileerror; }
 
-  if ( fileerror==0 )
+  if ( fileerror == 0 )
     {
   // header
       fprintf(f1, "# file simpre written by phase, IDL plotroutine: plotsi.pro\n#\n");
