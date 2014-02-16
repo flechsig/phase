@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <08 Jan 14 16:57:23 flechsig>  */
+/*  Time-stamp: <2014-02-16 20:02:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -271,9 +271,24 @@ int source4c_ini(struct BeamlineType *bl)
   myreturn= 0;
   /* open files, return if a file is not found */ 
   if ((fa= posrc_fopen(bl->filenames.so4_fsource4a)) == NULL) return myreturn;
-  if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) return myreturn;
-  if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) return myreturn;
-  if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) return myreturn;
+  if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) 
+    {
+      fclose(fa);
+      return myreturn;
+    }
+  if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) 
+    {
+      fclose(fa);
+      fclose(fb);
+      return myreturn;
+    }
+  if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) 
+    {
+      fclose(fa);
+      fclose(fb);
+      fclose(fc);
+      return myreturn;
+    }
   /* all files open */
   
  /* y real */
@@ -332,7 +347,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   so4= (struct source4c *)&(bl->posrc);
 
 #ifdef DEBUG1
-  printf("debug: %s : x= %f, y= %f, position: %d\n", __FILE__, *xwert, *ywert, bl->position);
+  printf("debug: %s : x= %f, y= %f, position: %u\n", __FILE__, *xwert, *ywert, bl->position);
   printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
 	 so4->xemin, *xwert, so4->xemax,  so4->yemin, *ywert, so4->yemax);
 #endif

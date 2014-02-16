@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Jul 13 15:41:28 flechsig>  */
+/*   Time-stamp: <2014-02-16 19:57:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -365,7 +365,7 @@ void pstc(struct BeamlineType *bl)
       vv= (void *)m4p;
       n= sizeof(struct map4);
       vv1= vv + n;
-      printf("**************** m4p filled twice for debugging **************** %d %d %d\n", vv1, vv, n);
+      printf("**************** m4p filled twice for debugging **************** %d %d %d\n", (int)vv1, (int)vv, (int)n);
       memcpy(vv1, vv, n);
       printf("check_2_m4 after fill\n");
       check_2_m4_(m4p);
@@ -431,7 +431,7 @@ void pstc_ii(int index, struct BeamlineType *bl)
       printf("allocate and fill m4p in pstc\n");
       m4p = XMALLOC(struct map4, 1);
       fill_m4(bl, m4p);
-    }
+    } else m4p= NULL;
 
   pstc_i(index, bl, m4p, &cs);
 
@@ -506,7 +506,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 
   if (bl->gratingpos >= bl->elementzahl)
   {
-    printf("ERROR: gratingpos= %d is out of range (0..%d)\n", bl->gratingpos, bl->elementzahl);
+    printf("ERROR: gratingpos= %u is out of range (0..%u)\n", bl->gratingpos, bl->elementzahl);
     exit(-1);
   }
     

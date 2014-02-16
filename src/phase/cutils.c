@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <2013-05-13 12:32:25 flechsig>  */
+/*   Time-stamp: <2014-02-16 19:01:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -55,8 +55,11 @@ char *PrependEnv(char* env, char *str)
    if ((stp != NULL) && (lstp < 255))
      {
        strncpy(string, stp, (255- lstp));
+       string[254]= '\0';
        strncat(string, str, (255- lstp- 1));
+       string[254]= '\0';
        strncpy(str, string, 255);
+       str[254]= '\0';
      }
    return str;
 } /* end PrependEnv */
@@ -104,7 +107,7 @@ int CheckFileHeader(FILE *f, char *header, int *version)              /* bei Gle
   int rcode, myversion, headerfields;
   
   fgets(headerbuffer, 50, f);                                         /* read one line */
-  headerfields= sscanf(headerbuffer, "%s %d\n", headerread, &myversion); 
+  headerfields= sscanf(headerbuffer, "%49s %d\n", headerread, &myversion); 
   rcode= strncmp(header, headerread, strlen(header));
   if (rcode != 0)
     fprintf(stderr, "error: fileheader: %s != %s\n", headerread, header);

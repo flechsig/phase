@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2013-07-16 21:25:33 flechsig>  */
+/*   Time-stamp: <2014-02-16 19:06:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -363,36 +363,36 @@ int GetPHASE(struct PHASEset *x, char *mainpickname)
 	{     
 	  if (version > 20120320) 
 	    {
-	      fscanf(f,"%s\n", (char *) &x->beamlinename);
+	      fscanf(f,"%254s\n", (char *) &x->beamlinename);
 	    } else
 	    {
-	      fscanf(f,"%s\n", (char *) &x->matrixname);     
-	      fscanf(f,"%s\n", (char *) &x->mapname);    
-	      fscanf(f,"%s\n", (char *) &x->sourceraysname);       
-	      fscanf(f,"%s\n", (char *) &x->imageraysname);    
-	      fscanf(f,"%s\n", (char *) &x->intersecname); 
-	      fscanf(f,"%s\n", (char *) &x->geometryname);   
-	      fscanf(f,"%s\n", (char *) &x->elementname);  
-	      fscanf(f,"%s\n", (char *) &x->sourcepckname);  
-	      fscanf(f,"%s\n", (char *) &x->geometrypckname);   
-	      fscanf(f,"%s\n", (char *) &x->elementpckname);  
-	      fscanf(f,"%s\n", (char *) &x->pssourcename);   
-	      fscanf(f,"%s\n", (char *) &x->plotpsname);  
-	      fscanf(f,"%s\n", (char *) &x->printpclname); 
-	      fscanf(f,"%s\n", (char *) &x->optipckname); 
+	      fscanf(f,"%254s\n", (char *) &x->matrixname);     
+	      fscanf(f,"%254s\n", (char *) &x->mapname);    
+	      fscanf(f,"%254s\n", (char *) &x->sourceraysname);       
+	      fscanf(f,"%254s\n", (char *) &x->imageraysname);    
+	      fscanf(f,"%254s\n", (char *) &x->intersecname); 
+	      fscanf(f,"%254s\n", (char *) &x->geometryname);   
+	      fscanf(f,"%254s\n", (char *) &x->elementname);  
+	      fscanf(f,"%254s\n", (char *) &x->sourcepckname);  
+	      fscanf(f,"%254s\n", (char *) &x->geometrypckname);   
+	      fscanf(f,"%254s\n", (char *) &x->elementpckname);  
+	      fscanf(f,"%254s\n", (char *) &x->pssourcename);   
+	      fscanf(f,"%254s\n", (char *) &x->plotpsname);  
+	      fscanf(f,"%254s\n", (char *) &x->printpclname); 
+	      fscanf(f,"%254s\n", (char *) &x->optipckname); 
 	      if (!feof(f))    /* neu */
-		fscanf(f,"%s\n", (char *) &x->beamlinename); 
+		fscanf(f,"%254s\n", (char *) &x->beamlinename); 
 	      else strncpy(x->beamlinename, "SGM.PHASE", MaxPathLength); 
 	      if (version >= 20081119)
 		{
-		  fscanf(f,"%s\n", (char *) &x->so4_fsource4a);     
-		  fscanf(f,"%s\n", (char *) &x->so4_fsource4b);    
-		  fscanf(f,"%s\n", (char *) &x->so4_fsource4c);       
-		  fscanf(f,"%s\n", (char *) &x->so4_fsource4d);
-		  fscanf(f,"%s\n", (char *) &x->so6_fsource6);
+		  fscanf(f,"%254s\n", (char *) &x->so4_fsource4a);     
+		  fscanf(f,"%254s\n", (char *) &x->so4_fsource4b);    
+		  fscanf(f,"%254s\n", (char *) &x->so4_fsource4c);       
+		  fscanf(f,"%254s\n", (char *) &x->so4_fsource4d);
+		  fscanf(f,"%254s\n", (char *) &x->so6_fsource6);
 		}
 	      if (version >= 20110814)
-		fscanf(f,"%s\n", (char *) &x->opresname); 
+		fscanf(f,"%254s\n", (char *) &x->opresname); 
 	    }
 	  rcode= 1;       /* OK zurueck */
 	}

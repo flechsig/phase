@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-02-16 17:30:00 flechsig> 
+//  Time-stamp: <2014-02-16 20:09:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -29,7 +29,8 @@ Plot2x2::Plot2x2(QWidget *parent): PlotMatrix(2, 2, parent)
   d_curve4 = new QwtPlotCurve( "sintim" );
 
   c1x= c4x= c1y= c2y= c3y= c4y= NULL;
-  z1min= z1max= z4min= z4max= ymin= ymax= 0.0;
+  z1min= z1max= z4min= z4max= 0.0;
+  for (int i=0; i< 4; i++) ymin[i]= ymax[i]= 0.0;
   cout << "Plot2x2 contructor called" << endl;
 } // end constructor
 
