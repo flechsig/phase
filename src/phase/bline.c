@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2014-02-16 18:50:00 flechsig>  */
+/*   Time-stamp: <06 Jan 14 15:01:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -41,7 +41,7 @@ void debug_beamline_type_c_(int *ip)
   struct BeamlineType *bl;
   bl= (struct BeamlineType *)ip;
 
-  printf("%s debug_beamline_type_c_: %p position: %u\n", __FILE__, ip, bl->position);
+  printf("%s debug_beamline_type_c_: %p position: %d\n", __FILE__, ip, bl->position);
 } /* end debug_beamline_type_c_ */
 
 
@@ -54,7 +54,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   double *c;
   
 #ifdef DEBUG
-  printf("debug: %s BuildElement called: elindex: %u\n", __FILE__, elindex); 
+  printf("debug: %s BuildElement called: elindex: %d\n", __FILE__, elindex); 
 #endif
 
 #ifndef SEVEN_ORDER
@@ -73,7 +73,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   listpt= &bl->ElementList[elindex];
   if (listpt->ElementOK & elementOK) 
     {
-      printf("BuildElement %u is alredy OK- return\n", elindex);
+      printf("BuildElement %d is alredy OK- return\n", elindex);
       return;
     }  
 
@@ -117,7 +117,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 	       &bl->BLOptions.ifl.iord, 0);
     } /* end hor */
 #ifdef DEBUG
-  printf("DEBUG: BuildElement elindex: %u source to image map and matrix created\n", elindex); 
+  printf("DEBUG: BuildElement elindex: %d source to image map and matrix created\n", elindex); 
 #endif
   if (bl->BLOptions.SourcetoImage != 1) 
     {	
@@ -149,7 +149,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 		   &bl->BLOptions.ifl.iord, 0);
 	} /* end hor */
 
-      printf("BuildElement %u image to source map and matrix created\n", elindex);
+      printf("BuildElement %d image to source map and matrix created\n", elindex);
     } /* end image to source */
   listpt->ElementOK |= elementOK;
   XFREE(listpt->tpe);
@@ -174,7 +174,7 @@ void BuildBeamline(struct BeamlineType *bl)
 #endif
 
   Check_iord(bl);                                 /* check the range of iord */
-  printf("BuildBeamline: Beamline contains %u element(s), %d order calculation\n", 
+  printf("BuildBeamline: Beamline contains %d element(s), %d order calculation\n", 
 	 bl->elementzahl,  bl->BLOptions.ifl.iord);
   /*--------------------------------------------------------*/ 
   if (bl->elementzahl < 1)
@@ -204,12 +204,12 @@ void BuildBeamline(struct BeamlineType *bl)
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
 #ifdef DEBUG
-	  printf("BuildBeamline: matrixes and maps of %u. element created\n", elcounter); 
+	  printf("BuildBeamline: matrixes and maps of %d. element created\n", elcounter); 
 #endif 
 	}             /* map ist OK */
       else
 	{
-	  printf("\nBuildBeamline: element %u already OK- keep matrix\n\n", elcounter);
+	  printf("\nBuildBeamline: element %d already OK- keep matrix\n\n", elcounter);
 	} /* end if (listpt->ElementOK == 0) */
       elcounter++; listpt++; elindex++;
     } /* Schleife ueber alle Elemente fertig */
@@ -409,7 +409,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
   struct TmpMapType *ltp;   /* local pointer */
 
   
-   printf("BuildBeamline: Beamline contains %u element(s)\n", bl->elementzahl);
+   printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
 
 #ifdef SEVEN_ORDER
 
@@ -482,7 +482,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
 #ifdef DEBUG1
-            printf("BuildBeamline: matrix of %u. element created\n", 
+            printf("BuildBeamline: matrix of %d. element created\n", 
 		   elcounter); 
 #endif 
 	    listpt->ElementOK|= mapOK; 
@@ -672,7 +672,7 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
    if (/*((bl->beamlineOK & (sourceOK | mapOK)) == (sourceOK | mapOK)) &&*/
        (enummer <= bl->elementzahl) && (enummer > 0))    
    {
-      printf("Footprint: at element %u ", enummer); 
+      printf("Footprint: at element %d ", enummer); 
       msiz= dim* dim* sizeof(double); 
       matrix= (double *)xmalloc(msiz);
        
@@ -1104,7 +1104,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, int *
 #ifdef DEBUG   
    /*    char *fname= "matrixi.mat";
 	 writematrixfile(fname, (double *)listpt->M_StoI);*/
-   printf("MakeMapandMatrix: element %u (if opti) source to image map and matrix created\n",
+   printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
 	  bl->position);  
 #endif
    /* image to source Rechnung bei RT und  pst */
@@ -1435,14 +1435,14 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
    fprintf(f, "\nData of optical Elements\n"); 
    fprintf(f, "ELEMENTS\n");
-   fprintf(f, "%20u   number of elements \n\n"     , bl->elementzahl);  
+   fprintf(f, "%20d   number of elements \n\n"     , bl->elementzahl);  
 
    elnumber= 1;
    while (elnumber<= bl->elementzahl) 
    {
-     fprintf(f, "\nElement %u\n", elnumber);
+     fprintf(f, "\nElement %d\n", elnumber);
      fprintf(f, "%20s     name of elem. \n", listpt->elementname); 
-     fprintf(f, "\nGEOMETRY %u\n", elnumber); 
+     fprintf(f, "\nGEOMETRY %d\n", elnumber); 
      fprintf(f, "%20.10lg  theta              \n", listpt->GDat.theta0); 
      fprintf(f, "%20lg     source distance    \n", listpt->GDat.r);
      fprintf(f, "%20lg     image  distance    \n", listpt->GDat.rp);
@@ -1458,7 +1458,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20d     azimut * Pi/2      \n", listpt->GDat.azimut);   
  /* end geometry section */  	  
 
-     fprintf(f, "\nMIRROR %u  \n", elnumber);  
+     fprintf(f, "\nMIRROR %d  \n", elnumber);  
      fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
@@ -1645,7 +1645,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    /* new feb 04 */
    fprintf(f,"%20d     with alignment\n", op->WithAlign);
 /* new jul 09 */
-   fprintf(f,"%20u     footprint at element\n", bl->position);
+   fprintf(f,"%20d     footprint at element\n", bl->position);
 
    fprintf(f,"%20d     dy integr. points (PS fixed grid)\n", op->PSO.ndyfix);  
    fprintf(f,"%20d     dz integr. points (PS fixed grid)\n", op->PSO.ndzfix); 
@@ -1776,7 +1776,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
    if (SetFilePos(f, "SOURCE"))
      { 
-       fscanf(f, " %c %MaxPathLength[^\n]s %c", &bl->RTSource.QuellTyp, buffer, &buf); 
+       fscanf(f, " %c %[^\n]s %c", &bl->RTSource.QuellTyp, buffer, &buf); 
        printf("source type: %c >> %s\n", bl->RTSource.QuellTyp, buffer);
        AllocRTSource(bl);         /* reserves memory for source parameter */
        switch(bl->RTSource.QuellTyp)
@@ -1786,8 +1786,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
 	     /*up= (struct UndulatorSourceType *)
 	       &(bl->RTSource.Quelle.UndulatorSource); */
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up->length, buffer, &buf);
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up->lambda, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &up->length, buffer, &buf);
+	     fscanf(f, " %lf %[^\n]s %c", &up->lambda, buffer, &buf);  
 	     
 	     printf("%20lf    Undulator length     (mm)\n", up->length);
 	     printf("%20lf    Undulator wavelength (nm)\n", up->lambda); 
@@ -1799,9 +1799,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     up= (struct UndulatorSourceType *) bl->RTSource.Quellep;
              /*up= (struct UndulatorSourceType *) 
 	       &(bl->RTSource.Quelle.UndulatorSource);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up->length, buffer, &buf);
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up->lambda, buffer, &buf);  
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up->deltaz, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &up->length, buffer, &buf);
+	     fscanf(f, " %lf %[^\n]s %c", &up->lambda, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &up->deltaz, buffer, &buf);  
 	     printf("%20lf    Undulator length     (mm)\n", up->length);
 	     printf("%20lf    Undulator wavelength (nm)\n", up->lambda); 
 	     printf("%20lf    Undulator SLS offset (mm)\n", up->deltaz);  
@@ -1811,13 +1811,13 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     up0= (struct UndulatorSource0Type *) bl->RTSource.Quellep;
              /*up0= (struct UndulatorSource0Type *) 
 	       &(bl->RTSource.Quelle.UndulatorSource0);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->length, buffer, &buf);
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->lambda, buffer, &buf);  
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->deltaz, buffer, &buf);  
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->sigmaez, buffer, &buf);  
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->sigmaey, buffer, &buf);  
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->sigmaedz, buffer, &buf);  
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &up0->sigmaedy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &up0->length, buffer, &buf);
+	     fscanf(f, " %lf %[^\n]s %c", &up0->lambda, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &up0->deltaz, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &up0->sigmaez, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &up0->sigmaey, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &up0->sigmaedz, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &up0->sigmaedy, buffer, &buf);  
 	     printf("%20lf    Undulator length     (mm)\n", up0->length);
 	     printf("%20lf    Undulator wavelength (nm)\n", up0->lambda); 
 	     printf("%20lf    Undulator SLS offset (mm)\n", up0->deltaz);  
@@ -1831,60 +1831,60 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
 	     /*hp= (struct HardEdgeSourceType *) 
 	       &(bl->RTSource.Quelle.HardEdgeSource);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &hp->disty, buffer, &buf);  
-	     fscanf(f, " %d  %MaxPathLength[^\n]s %c", &hp->iy   , buffer, &buf);   
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &hp->distz, buffer, &buf);  
-	     fscanf(f, " %d  %MaxPathLength[^\n]s %c", &hp->iz   , buffer, &buf);   
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &hp->divy , buffer, &buf);  
-	     fscanf(f, " %d  %MaxPathLength[^\n]s %c", &hp->idy  , buffer, &buf);   
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &hp->divz , buffer, &buf);  
-	     fscanf(f, " %d  %MaxPathLength[^\n]s %c", &hp->idz  , buffer, &buf);   
+             fscanf(f, " %lf %[^\n]s %c", &hp->disty, buffer, &buf);  
+	     fscanf(f, " %d  %[^\n]s %c", &hp->iy   , buffer, &buf);   
+             fscanf(f, " %lf %[^\n]s %c", &hp->distz, buffer, &buf);  
+	     fscanf(f, " %d  %[^\n]s %c", &hp->iz   , buffer, &buf);   
+             fscanf(f, " %lf %[^\n]s %c", &hp->divy , buffer, &buf);  
+	     fscanf(f, " %d  %[^\n]s %c", &hp->idy  , buffer, &buf);   
+             fscanf(f, " %lf %[^\n]s %c", &hp->divz , buffer, &buf);  
+	     fscanf(f, " %d  %[^\n]s %c", &hp->idz  , buffer, &buf);   
 	     break;   
            case 'D': 
 	     dp= (struct DipolSourceType *)bl->RTSource.Quellep;
              /*dp= (struct DipolSourceType *) &(bl->RTSource.Quelle.DipolSource);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &dp->sigy , buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &dp->sigdy, buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &dp->sigz, buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &dp->dz, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &dp->sigy , buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &dp->sigdy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &dp->sigz, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &dp->dz, buffer, &buf);  
 	     break; 
 	   case 'o': 
              sop= (struct PointSourceType *)bl->RTSource.Quellep; 
 	     /*&(bl->RTSource.Quelle.PointSource);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sop->sigy , buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sop->sigdy, buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sop->sigz , buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sop->sigdz, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigy , buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigdy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigz , buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sop->sigdz, buffer, &buf);  
 	     break; 
 	   case 'R': 
              rp= (struct RingSourceType *)bl->RTSource.Quellep; 
 	     /*&(bl->RTSource.Quelle.PointSource);*/
-	     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &rp->dy, buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &rp->dz, buffer, &buf);  
+	     fscanf(f, " %lf %[^\n]s %c", &rp->dy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &rp->dz, buffer, &buf);  
 	     break; 
            case 'S': 
              sp= (struct SRSourceType *)bl->RTSource.Quellep;
 	     /* &(bl->RTSource.Quelle.SRSource);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sp->y,  buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sp->dy, buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sp->z,  buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &sp->dz, buffer, &buf);    
+             fscanf(f, " %lf %[^\n]s %c", &sp->y,  buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sp->dy, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sp->z,  buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &sp->dz, buffer, &buf);    
 	     break;  
            case 'I':
              psip= (struct PSImageType *)bl->RTSource.Quellep;
 	     /* &(bl->RTSource.Quelle.PSImage);*/
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &psip->ymin,  buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &psip->ymax, buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &psip->zmin,  buffer, &buf);  
-             fscanf(f, " %lf %MaxPathLength[^\n]s %c", &psip->zmax, buffer, &buf);    
-             fscanf(f, " %d %MaxPathLength[^\n]s %c", &psip->iy, buffer, &buf);  
-	     fscanf(f, " %d %MaxPathLength[^\n]s %c", &psip->iz, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &psip->ymin,  buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &psip->ymax, buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &psip->zmin,  buffer, &buf);  
+             fscanf(f, " %lf %[^\n]s %c", &psip->zmax, buffer, &buf);    
+             fscanf(f, " %d %[^\n]s %c", &psip->iy, buffer, &buf);  
+	     fscanf(f, " %d %[^\n]s %c", &psip->iz, buffer, &buf);  
 	     break;
 	   case 'F':
 	     fp= (struct FileSourceType *)bl->RTSource.Quellep;
 	     if (version >= 20090804)
 	       {
-		 fscanf(f, "%MaxPathLengths %MaxPathLength[^\n]s %c", (char *)&fp->filename, buffer, &buf);
+		 fscanf(f, "%s %[^\n]s %c", (char *)&fp->filename, buffer, &buf);
 #ifndef QTGUI
 		 strncpy(bl->filenames.sourceraysname, fp->filename, MaxPathLength);
 #endif
@@ -1893,7 +1893,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
            default: 
 	     fprintf(stderr, "error: unknown source type!\n"); /* exit(-1); */
 	   }
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &bl->RTSource.raynumber, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &bl->RTSource.raynumber, buffer, &buf);
        printf("source read- rays: %d\n", bl->RTSource.raynumber);
        
      } else rcode= -1;  /* source data not found in file */ 
@@ -1901,7 +1901,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*---------------------------------------------------------------------*/ 
    
    if (SetFilePos(f, "ELEMENTS"))                       
-     fscanf(f, " %u %MaxPathLength[^\n]s %c", &bl->elementzahl, buffer, &buf); 
+     fscanf(f, " %d %[^\n]s %c", &bl->elementzahl, buffer, &buf); 
    else rcode= -1;                      /* data not found in file */     
    
    if (bl->elementzahl > 0)   	    /* allociere memory */
@@ -1915,16 +1915,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
      {
        listpt->ElementOK= 0;       /* reset OK */
        
-       snprintf(buffer, MaxPathLength, "Element %u", elnumber);	
+       snprintf(buffer, MaxPathLength, "Element %d", elnumber);	
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
 #ifdef DEBUG1 
 	   printf("   Name read: %s\n", listpt->elementname); 
 #endif
 	 } else rcode= -1;
        
-       snprintf(buffer, MaxPathLength, "GEOMETRY %u", elnumber); 
+       snprintf(buffer, MaxPathLength, "GEOMETRY %d", elnumber); 
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
 	   pd= (double *) &listpt->GDat.theta0; 
@@ -1948,11 +1948,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   /*  printf("   geometry read\n"); */
 	 } else rcode= -1;  
        
-       snprintf(buffer, MaxPathLength, "MIRROR %u", elnumber);  
+       snprintf(buffer, MaxPathLength, "MIRROR %d", elnumber);  
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->MDat.Art);
-	   /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &listpt->Art, buffer, &buf);*/
+	   /* fscanf(f, " %d %[^\n]s %c", &listpt->Art, buffer, &buf);*/
 	   if (listpt->MDat.Art == kEOEGeneral)   
 	     {
 	       /* read the coefficients once - is required for optimization if only 
@@ -1966,28 +1966,28 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 		{
 		fgets(buffer, 80, f); sscanf(buffer, "%lf", pd);    
 		} */
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.r1, buffer, &buf);
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.r2, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r1, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.r2, buffer, &buf);
 	   /*	    if (version < 20110819)        */                        
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.rmi, buffer, &buf); /* read obsolete alpha */
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.rmi, buffer, &buf);
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.rho, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf); /* read obsolete alpha */
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rmi, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.rho, buffer, &buf);
 	   
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c", &listpt->MDat.iflagmi, buffer, &buf); 
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.w1, buffer, &buf); 
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.w2, buffer, &buf); 
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.l1, buffer, &buf); 
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.l2, buffer, &buf); 
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.slopew, buffer, &buf); 
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.slopel, buffer, &buf); 
+	   fscanf(f, " %d %[^\n]s %c", &listpt->MDat.iflagmi, buffer, &buf); 
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w1, buffer, &buf); 
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.w2, buffer, &buf); 
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l1, buffer, &buf); 
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.l2, buffer, &buf); 
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopew, buffer, &buf); 
+	   fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.slopel, buffer, &buf); 
 	   if (version >= 20040217)
 	     {
-	       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.du, buffer, &buf);
-	       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.dw, buffer, &buf);
-	       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.dl, buffer, &buf);
-	       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.dRu, buffer, &buf);
-	       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
-	       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
+	       fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.du, buffer, &buf);
+	       fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dw, buffer, &buf);
+	       fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dl, buffer, &buf);
+	       fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRu, buffer, &buf);
+	       fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
+	       fscanf(f, " %lf %[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
 	     }
 #ifdef DEBUG1
 	   printf("   mirror read\n"); 
@@ -2000,107 +2000,107 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    if (SetFilePos(f, "CONTROL_FLAGS"))
      { 
        op= (struct OptionsType *) &(bl->BLOptions); 
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.iord, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.iordsc, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.iexpand, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.iplmode, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.ibright, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.ispline, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.inorm, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.inorm1, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.inorm2, buffer, &buf); 
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.matrel, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.igrating, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c",  &op->ifl.ipinarr, buffer, &buf); 
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.iord, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.iordsc, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.iexpand, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.iplmode, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.ibright, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.ispline, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.inorm, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.inorm1, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.inorm2, buffer, &buf); 
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.matrel, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.igrating, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c",  &op->ifl.ipinarr, buffer, &buf); 
        if (version >= 20120620)
 	 {
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",   &op->dlambdaflag, buffer, &buf);  
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c",  &op->dlambda, buffer, &buf); 
+	   fscanf(f, " %d %[^\n]s %c",   &op->dlambdaflag, buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c",  &op->dlambda, buffer, &buf); 
 	   op->dlambda*= 1e-6;
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",   &op->plrayset, buffer, &buf); 
+	   fscanf(f, " %d %[^\n]s %c",   &op->plrayset, buffer, &buf); 
 	 }
      } else  rcode= -1;
    
    if (SetFilePos(f, "APERTURES"))
      { 
        op= (struct OptionsType *) &(bl->BLOptions); 
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.rpin, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.srcymin, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.srcymax, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.srczmin, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.srczmax, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.rpin, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.srcymin, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.srcymax, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.srczmin, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.srczmax, buffer, &buf);
        
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.rpin_ap, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.ymin_ap, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.ymax_ap, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.zmin_ap, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->apr.zmax_ap, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.rpin_ap, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.ymin_ap, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.ymax_ap, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.zmin_ap, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->apr.zmax_ap, buffer, &buf);
      } else  rcode= -1;
    
    if (SetFilePos(f, "INTEGRATION"))
      { 
        op= (struct OptionsType *) &(bl->BLOptions); 
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.distfocy, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.distfocz, buffer, &buf);
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.itery0, buffer, &buf); */
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.ianzy0, buffer, &buf);
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.imaxy, buffer, &buf); */
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.inumy, buffer, &buf); */
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.distfocy, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.distfocz, buffer, &buf);
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.itery0, buffer, &buf); */
+       fscanf(f, " %d %[^\n]s %c", &op->xi.ianzy0, buffer, &buf);
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.imaxy, buffer, &buf); */
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.inumy, buffer, &buf); */
        
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iterz0, buffer, &buf); */
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.ianzz0, buffer, &buf);
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.imaxz, buffer, &buf); */
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.inumz, buffer, &buf); */
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.iterz0, buffer, &buf); */
+       fscanf(f, " %d %[^\n]s %c", &op->xi.ianzz0, buffer, &buf);
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.imaxz, buffer, &buf); */
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.inumz, buffer, &buf); */
        
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.ymin, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.ymax, buffer, &buf);
-       /* fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.fracy, buffer, &buf);  */ 
-       /* fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.frac1y, buffer, &buf); */ 
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.ymin, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.ymax, buffer, &buf);
+       /* fscanf(f, " %lf %[^\n]s %c", &op->xi.fracy, buffer, &buf);  */ 
+       /* fscanf(f, " %lf %[^\n]s %c", &op->xi.frac1y, buffer, &buf); */ 
        
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.zmin, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.zmax, buffer, &buf);
-       /* fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.fracz, buffer, &buf);  */
-       /* fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.frac1z, buffer, &buf); */
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.zmin, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.zmax, buffer, &buf);
+       /* fscanf(f, " %lf %[^\n]s %c", &op->xi.fracz, buffer, &buf);  */
+       /* fscanf(f, " %lf %[^\n]s %c", &op->xi.frac1z, buffer, &buf); */
        
-       /*     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.phase_change_1, buffer, &buf);   */
-       /*     fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.phase_change_2, buffer, &buf);   */
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.d12_max, buffer, &buf);
-       /* 	 fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.amp_change, buffer, &buf);   */
-       /* fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->xi.dphi_min, buffer, &buf); */
+       /*     fscanf(f, " %lf %[^\n]s %c", &op->xi.phase_change_1, buffer, &buf);   */
+       /*     fscanf(f, " %lf %[^\n]s %c", &op->xi.phase_change_2, buffer, &buf);   */
+       fscanf(f, " %lf %[^\n]s %c", &op->xi.d12_max, buffer, &buf);
+       /* 	 fscanf(f, " %lf %[^\n]s %c", &op->xi.amp_change, buffer, &buf);   */
+       /* fscanf(f, " %lf %[^\n]s %c", &op->xi.dphi_min, buffer, &buf); */
        
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iamp_smooth, buffer, &buf);
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iord_amp, buffer, &buf);
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iord_pha, buffer, &buf);
-       /* fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iordap, buffer, &buf); */
-       /*          fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iphase_curv, buffer, &buf); */
-       /*          fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.iphase_pi2, buffer, &buf); */
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.ifm_amp, buffer, &buf);
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.ifm_pha, buffer, &buf);
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.id12, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->xi.iamp_smooth, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->xi.iord_amp, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->xi.iord_pha, buffer, &buf);
+       /* fscanf(f, " %d %[^\n]s %c", &op->xi.iordap, buffer, &buf); */
+       /*          fscanf(f, " %d %[^\n]s %c", &op->xi.iphase_curv, buffer, &buf); */
+       /*          fscanf(f, " %d %[^\n]s %c", &op->xi.iphase_pi2, buffer, &buf); */
+       fscanf(f, " %d %[^\n]s %c", &op->xi.ifm_amp, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->xi.ifm_pha, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->xi.id12, buffer, &buf);
        if (!feof(f))
 	 { /* voruebergehend */
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.ianz0_cal, buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->xi.ianz0_fixed, buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c", &op->xi.ianz0_cal, buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c", &op->xi.ianz0_fixed, buffer, &buf);
 	 }
      } else  rcode= -1;
    
    if (SetFilePos(f, "PSSOURCES"))
      { 
        
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &bl->src.isrctype, buffer, &buf); 
+       fscanf(f, " %d %[^\n]s %c", &bl->src.isrctype, buffer, &buf); 
        /* source 1 */
        if (version < 20130624)
 	 {
 	   for (i= 0; i < 8; i++) fgets(buffer, MaxPathLength, f); /* skip 8 lines */
 	   /*
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so1.isrcy, buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so1.isrcdy, buffer, &buf);
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so1.sigmay, buffer, &buf);  
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so1.sigmayp, buffer, &buf); 
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so1.isrcz, buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so1.isrcdz, buffer, &buf);
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so1.sigmaz, buffer, &buf);  
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcy, buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcdy, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmay, buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmayp, buffer, &buf); 
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcz, buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so1.isrcdz, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmaz, buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
 	   */
 	 }
        /* source 4 */
@@ -2108,10 +2108,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 {
 	   for (i= 0; i < 4; i++) fgets(buffer, MaxPathLength, f); /* skip 4 lines */
 	   /*
-	   fscanf(f, " %s %MaxPathLength[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
-	   fscanf(f, " %s %MaxPathLength[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
-	   fscanf(f, " %s %MaxPathLength[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
-	   fscanf(f, " %s %MaxPathLength[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4a, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4b, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4c, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so4.fsource4d, buffer, &buf);
 	   strncpy(bl->filenames.so4_fsource4a, bl->src.so4.fsource4a, 80);
 	   strncpy(bl->filenames.so4_fsource4b, bl->src.so4.fsource4b, 80);
 	   strncpy(bl->filenames.so4_fsource4c, bl->src.so4.fsource4c, 80);
@@ -2123,13 +2123,13 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 {
 	   for (i= 0; i < 7; i++) fgets(buffer, MaxPathLength, f); /* skip 7 lines */
 	   /*
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so4.nfreqtot,  buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so4.nfreqpos,  buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so4.nfreqneg,  buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so4.nsource,   buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so4.nimage,    buffer, &buf);
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so4.deltatime, buffer, &buf);
-	   fscanf(f, " %d %MaxPathLength[^\n]s %c",  &bl->src.so4.iconj,     buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqtot,  buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqpos,  buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nfreqneg,  buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nsource,   buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.nimage,    buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so4.deltatime, buffer, &buf);
+	   fscanf(f, " %d %[^\n]s %c",  &bl->src.so4.iconj,     buffer, &buf);
 	   */
 	 }
        
@@ -2138,29 +2138,29 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 {
 	   for (i= 0; i < 4; i++) fgets(buffer, MaxPathLength, f); /* skip 4 lines */
 	   /*
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipcy,   buffer, &buf);  
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipcz,   buffer, &buf);
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipdisy, buffer, &buf);  
-	   fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipdisz, buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcy,   buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipcz,   buffer, &buf);
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipdisy, buffer, &buf);  
+	   fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipdisz, buffer, &buf);
 	   */
 	 }
-       /* 	 fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipymin, buffer, &buf);   */
-       /*          fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipymax, buffer, &buf); */
-       /* 	 fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipzmin, buffer, &buf);   */
-       /*          fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.so5.dipzmax, buffer, &buf); */
+       /* 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipymin, buffer, &buf);   */
+       /*          fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipymax, buffer, &buf); */
+       /* 	 fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmin, buffer, &buf);   */
+       /*          fscanf(f, " %lf %[^\n]s %c", &bl->src.so5.dipzmax, buffer, &buf); */
        /* source 6 */
        if (version < 20120320)
 	 {
 	   fgets(buffer, MaxPathLength, f);
 	   /*
-	   fscanf(f, " %s %MaxPathLength[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", &bl->src.so6.fsource6, buffer, &buf);
 	   strncpy(bl->filenames.so6_fsource6, bl->src.so6.fsource6, 80);
 	   */
 	 }
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.pin_yl,  buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->src.pin_zl,  buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_yl,  buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &bl->src.pin_zl,  buffer, &buf);
        
        /* UF 10.3.06 put it outside	 strncpy(phset->pssourcename, bl->src.so6.fsource6); */ 
        /* PutPHASE(phset, MainPickName); */ 
@@ -2170,39 +2170,39 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    if (SetFilePos(f, "OPTIONS"))
      { 
        op= (struct OptionsType *) &(bl->BLOptions); 
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->SourcetoImage, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->epsilon, buffer, &buf);   
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->CalcMod, buffer, &buf);
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->lambda, buffer, &buf); 
+       fscanf(f, " %d %[^\n]s %c", &op->SourcetoImage, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->epsilon, buffer, &buf);   
+       fscanf(f, " %d %[^\n]s %c", &op->CalcMod, buffer, &buf);
+       fscanf(f, " %lf %[^\n]s %c", &op->lambda, buffer, &buf); 
        op->lambda*= 1e-6;
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->displength, buffer, &buf); 
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &bl->deltalambdafactor, buffer, &buf); 
+       fscanf(f, " %lf %[^\n]s %c", &op->displength, buffer, &buf); 
+       fscanf(f, " %lf %[^\n]s %c", &bl->deltalambdafactor, buffer, &buf); 
        if (version >= 20040217)
-	 fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->WithAlign, buffer, &buf);
+	 fscanf(f, " %d %[^\n]s %c", &op->WithAlign, buffer, &buf);
        if (version >= 20090722)
-	 fscanf(f, " %u %MaxPathLength[^\n]s %c", &bl->position, buffer, &buf);
+	 fscanf(f, " %d %[^\n]s %c", &bl->position, buffer, &buf);
        else 
 	 bl->position=1;
        
        
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.ndyfix, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.ndzfix, buffer, &buf);    
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.dyminfix, buffer, &buf);   
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.dymaxfix, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.dzminfix, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.dzmaxfix, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.PSSource.sigy, buffer, &buf);   
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.PSSource.sigdy, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.PSSource.sigz, buffer, &buf);  
-       fscanf(f, " %lf %MaxPathLength[^\n]s %c", &op->PSO.PSSource.sigdz, buffer, &buf); 
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.ndyfix, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.ndzfix, buffer, &buf);    
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.dyminfix, buffer, &buf);   
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.dymaxfix, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.dzminfix, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.dzmaxfix, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.PSSource.sigy, buffer, &buf);   
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.PSSource.sigdy, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.PSSource.sigz, buffer, &buf);  
+       fscanf(f, " %lf %[^\n]s %c", &op->PSO.PSSource.sigdz, buffer, &buf); 
        
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.PSSource.yhard, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.PSSource.dyhard, buffer, &buf);
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.PSSource.zhard, buffer, &buf);  
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
-       fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
-       if (version >= 20110902) fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
-       if (version >= 20120508) fscanf(f, " %d %MaxPathLength[^\n]s %c", &op->ifl.pst_mode, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.yhard, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.dyhard, buffer, &buf);
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.zhard, buffer, &buf);  
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
+       fscanf(f, " %d %[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
+       if (version >= 20110902) fscanf(f, " %d %[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
+       if (version >= 20120508) fscanf(f, " %d %[^\n]s %c", &op->ifl.pst_mode, buffer, &buf);
      } else rcode= -1;  /* end OPTIONS */     
 
    if (version >= 20120320)
@@ -2211,30 +2211,30 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 {
 	   pp= (struct PHASEset *)&(bl->filenames);
 	   /*fgets(buffer, MaxPathLength, f); sscanf(buffer, " %s", &pp->mapname);*/
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->mapname, buffer, &buf); 
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->matrixname, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->sourceraysname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->mapname, buffer, &buf); 
+	   fscanf(f, " %s %[^\n]s %c", pp->matrixname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->sourceraysname, buffer, &buf);
 	   
 	   /* output name already set via cmd. line option? */       
 	   if (pp->imageraysname[0] != '\0') 
-	     fscanf(f, "%MaxPathLength[^\n]s %c", buffer, &buf);
+	     fscanf(f, " %*s %[^\n]s %c", buffer, &buf);
 	   else
-	     fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->imageraysname, buffer, &buf);
+	     fscanf(f, " %s %[^\n]s %c", pp->imageraysname, buffer, &buf);
 	   if (version < 20121105) 
-	     fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", buffer, buffer, &buf);
-	   /*  fscanf(f, " %s %MaxPathLength[^\n]s %c", &pp->minname, buffer, &buf); */
+	     fscanf(f, " %s %[^\n]s %c", buffer, buffer, &buf);
+	   /*  fscanf(f, " %s %[^\n]s %c", &pp->minname, buffer, &buf); */
 	   
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->optipckname, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->opresname, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->so4_fsource4a, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->so4_fsource4b, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->so4_fsource4c, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->so4_fsource4d, buffer, &buf);
-	   fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->so6_fsource6,  buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->optipckname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->opresname, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4a, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4b, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4c, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so4_fsource4d, buffer, &buf);
+	   fscanf(f, " %s %[^\n]s %c", pp->so6_fsource6,  buffer, &buf);
 	   if (version >= 20120828)
-	     fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->so7_hdf5,  buffer, &buf);
+	     fscanf(f, " %s %[^\n]s %c", pp->so7_hdf5,  buffer, &buf);
 	   if (version >= 20130318)
-	     fscanf(f, " %MaxPathLengths %MaxPathLength[^\n]s %c", pp->hdf5_out,  buffer, &buf);
+	     fscanf(f, " %s %[^\n]s %c", pp->hdf5_out,  buffer, &buf);
 	   
 	   /* UF 32.7.13 so4 is obsolete */
 	   /*
@@ -2356,8 +2356,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   
   l= MaxPathLength;   buf= buffer; /* to save space in the code */
   if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%d", &x->methode);
-  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%MaxPathLengths", (char *)&x->beamlinefilename); 
-  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%MaxPathLengths", (char *)&x->resultfilename);
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%s", (char *)&x->beamlinefilename); 
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%s", (char *)&x->resultfilename);
   if (fgets(buf, l, f) == NULL) return;
   if (fgets(buf, l, f) == NULL) return;
   if (fgets(buf, l, f) == NULL) return; sscanf(buf, "x : %d %d %lf", &x->xindex, &x->xpoints, &x->dx); 
@@ -2377,7 +2377,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
     {
       if (fgets(buf, l, f) == NULL) return; 
       x->min[i]= x->max[i]= 0.0;
-      sscanf(buf, "%d %MaxPathLengths %lg %lg %lg %lg", 
+      sscanf(buf, "%d %s %lg %lg %lg %lg", 
 	     &x->parindex[i], buffer1, &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
       strncpy(&x->parnames[i* 50], buffer1, 50);  /* use two step to avoid buffer overflow */
       x->parnames[i* 50 + 49]= '\0'; /* make sure string  ends with \0 */
@@ -2412,7 +2412,7 @@ void getoptipickfile_obsolete(struct optistruct *x, char *pickname)
       printf("getoptipickfile: file version: %d\n", version);
       if (version >= 20071217)
 	{
-	  fscanf(f, " %d %MaxPathLength[^\n]s %c", &x->methode, buffer, &buf);
+	  fscanf(f, " %d %[^\n]s %c", &x->methode, buffer, &buf);
 	} 
       else
 	{
@@ -2420,9 +2420,9 @@ void getoptipickfile_obsolete(struct optistruct *x, char *pickname)
 	  printf("getoptipickfile: no methode defined- use default: %d\n", 
 		 x->methode); 
 	}
-      fscanf(f, "%MaxPathLengths\n", (char *)&x->beamlinefilename); 
-      fscanf(f, "%MaxPathLengths\n", (char *)&x->minuitfilename); 
-      fscanf(f, "%MaxPathLengths\n", (char *)&x->resultfilename); 
+      fscanf(f, "%s\n", (char *)&x->beamlinefilename); 
+      fscanf(f, "%s\n", (char *)&x->minuitfilename); 
+      fscanf(f, "%s\n", (char *)&x->resultfilename); 
       fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
       fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
       fscanf(f, "%d\n", &x->npars); 
@@ -3133,7 +3133,7 @@ void ReadCoefficientFile(double *dp, char *fname)
   while (!feof(f))    
   {
     /*   fgets(buffer, 99, f); */
-    fscanf(f, " %MaxPathLength[^\n]s %c", buffer, &buf); 
+    fscanf(f, " %[^\n]s %c", buffer, &buf); 
 #ifdef DEBUG  
     printf("read: %s\n", buffer); 
 #endif 
