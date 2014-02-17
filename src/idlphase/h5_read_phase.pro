@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Aug 13 12:44:38 flechsig> 
+;  Time-stamp: <2014-02-17 21:45:07 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -137,6 +137,9 @@ if n_elements(beam) ne 0 then begin
 
     beam.xlam= 1234.5
 endif 
+
+print, 'wavelength not found in file- set it to default 1e-10'
+wavelength=1e-10
 
 print, 'h5_read_phase done'
 
