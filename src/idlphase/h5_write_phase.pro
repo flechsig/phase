@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <2014-02-17 21:19:10 flechsig> 
+;  Time-stamp: <2014-02-17 21:23:39 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -71,6 +71,8 @@ pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, z
 ; MODIFICATION HISTORY:
 ;    25.3.13 UF
 ;-
+
+print, 'h5_write_phase called'
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/myphase.h5'
 
