@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <2014-02-17 20:54:59 flechsig> 
+;  Time-stamp: <2014-02-17 21:14:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -201,14 +201,17 @@ if sgenesis gt 0 then $
 h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
   z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 
-if sphase gt 0 then $
-   h5_write_phase, fname, comp=*self.field, wavelength=self.wavelength, $
+if sphase gt 0 then begin
+   write, '!! save field to zcomp !!'
+   h5_write_phase, fname, zcomp=*self.field, wavelength=self.wavelength, $
   z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+endif
 
-if spha4idl gt 0 then $
-   h5_write_pha4idl, fname, comp=*self.field, wavelength=self.wavelength, $
-  z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
-
+if spha4idl gt 0 then begin
+   write, '!! save field to zcomp !!'
+   h5_write_pha4idl, fname, zcomp=*self.field, wavelength=self.wavelength, $
+                     z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+endif
 return
 end ;; h5_read
 
