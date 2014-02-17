@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <2014-02-17 20:52:51 flechsig> 
+;  Time-stamp: <2014-02-17 20:54:59 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -190,7 +190,9 @@ pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, _EXT
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
 ;-
-sgenesis= sphase= spha4idl= 0
+sgenesis= 0
+sphase  = 0
+spha4idl= 0
 if (n_elements(phase) eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
 if (n_elements(phase) ne 0 ) then sphase= 1
 if (n_elements(pha4idl) ne 0) then spha4idl= 1
