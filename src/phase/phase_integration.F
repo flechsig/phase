@@ -632,6 +632,7 @@ c        inorm2 = 41: Beschränkung auf neue Terme
 c        inorm2 = 42: Beschränkung auf alte Terme 
 	 
 c---------------------------------------------------------------------
+
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph*fd1ph
         if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/g.xlam
@@ -658,8 +659,13 @@ c       fd1ph  is 2nd order term in l
         endif
 
 c=================== A C H T U N G =================================
-c       xlenmir: Spiegellänge in mm, später als Parameter übergeben
-        xlenmir=500.d0 
+c       Spiegellänge in mm schätzen
+c       xi.ymin,xi.ymax,xi.zmin,xi.zmax at this point in rad
+c  folgenden Ausdruck nur einmal berechnen
+        divmax=dmax1(dabs(xi.ymin),dabs(xi.ymax),
+     &               dabs(xi.zmin),dabs(xi.zmax))
+        xlenmir=2.d0*g.rp*(dtan(divmax)/g.cosb)
+c        write(6,*)' xlenmir === ',xlenmir
 
 c       Konvergenzkriterien, maximale Werte sind:
         nk=165
