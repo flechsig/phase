@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <17 Feb 14 17:10:21 flechsig> 
+;  Time-stamp: <2014-02-17 20:52:51 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -14,7 +14,9 @@ pro phase::aperture,  _EXTRA=extra
 ;   phase::aperture
 ;
 ; PURPOSE:
-;   acts as an aperture, or generates wavefield with amplitude according to 'type', calls internally the routine aperture.pro- see docs there for updated features
+;   acts as an aperture, or generates wavefield with amplitude
+;   according to 'type', 
+;   calls internally the routine aperture.pro- see docs there for updated features
 ;
 ;   type 1  : rectangular              P1 = hsize, P2 = vsize
 ;   type 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
@@ -156,13 +158,14 @@ self.y_vec= ptr_new(y_vec)
 return
 end ;; h5_read
 
-pro phase::h5_write, fname,  _EXTRA=extra
+pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::h5_write
 ;
 ; PURPOSE:
-;   write hdf5 output - in the moment we use GENESIS format only
+;   write hdf5 output - default is GENESIS format, undefined format
+;                       with multiple format switches 
 ;
 ; CATEGORY:
 ;   phase
@@ -177,6 +180,9 @@ pro phase::h5_write, fname,  _EXTRA=extra
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;    /genesis: genesis format
+;    /phase:   phase format
+;    /pha4idl: pha4idl format
 ;
 ; EXAMPLE:
 ;   idl> emf->h5_write, 'output.h5'
@@ -184,8 +190,21 @@ pro phase::h5_write, fname,  _EXTRA=extra
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
 ;-
+sgenesis= sphase= spha4idl= 0
+if (n_elements(phase) eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
+if (n_elements(phase) ne 0 ) then sphase= 1
+if (n_elements(pha4idl) ne 0) then spha4idl= 1
 
+if sgenesis gt 0 then $
 h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
+  z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+
+if sphase gt 0 then $
+   h5_write_phase, fname, comp=*self.field, wavelength=self.wavelength, $
+  z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+
+if spha4idl gt 0 then $
+   h5_write_pha4idl, fname, comp=*self.field, wavelength=self.wavelength, $
   z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 
 return
