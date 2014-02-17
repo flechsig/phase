@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <20 Aug 13 10:21:58 flechsig> 
+;  Time-stamp: <2014-02-17 21:19:10 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -10,7 +10,7 @@
 ;  $Author$ 
 
 pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, zreal=zreal, $
-                    zimag=zimag, y_vec=y_vec, z_vec=z_vec, $
+                    zimag=zimag, y_vec=y_vec, z_vec=z_vec, wavelength=wavelength, $
                     verbose=verbose
 ;+
 ; NAME:
