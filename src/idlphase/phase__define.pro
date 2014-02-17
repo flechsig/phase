@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <12 Feb 14 12:10:26 flechsig> 
+;  Time-stamp: <17 Feb 14 17:10:21 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1411,6 +1411,40 @@ self.y_vec= ptr_new(y_vec)
 return
 end ;; resize
 
+pro phase::setField, field
+;+
+; NAME:
+;   phase::setField
+;
+; PURPOSE:
+;   set the Field in the datastructure
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->setfield, field 
+;
+; INPUTS:
+;   the field as as DCOMPLEX array
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; EXAMPLE:
+;   idl> 
+;   idl> emf->setfield, field
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+self.field= ptr_new(field)
+return
+end ;; setfield
+
 pro phase::setName, title
 ;+
 ; NAME:
@@ -1476,6 +1510,74 @@ pro phase::setWavelength, lambda
 self.wavelength= lambda
 return
 end ;; setwavelength
+
+pro phase::sety_vec, y_vec
+;+
+; NAME:
+;   phase::sety_vec
+;
+; PURPOSE:
+;   set the y_vec in the datastructure
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->sety_vec, y_vec
+;
+; INPUTS:
+;   the field as as DCOMPLEX array
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; EXAMPLE:
+;   idl> 
+;   idl> emf->sety_vec, y_vec
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+self.y_vec= ptr_new(y_vec)
+return
+end ;; sety_vec
+
+pro phase::setz_vec, z_vec
+;+
+; NAME:
+;   phase::setz_vec
+;
+; PURPOSE:
+;   set the z_vec in the datastructure
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->setz_vec, z_vec
+;
+; INPUTS:
+;   the field as as DCOMPLEX array
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; EXAMPLE:
+;   idl> 
+;   idl> emf->setz_vec, z_vec
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+self.z_vec= ptr_new(z_vec)
+return
+end ;; setz_vec
 
 pro phase::statistics, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig
 ;+
