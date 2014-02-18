@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 17:15:51 flechsig>  */
+/*  Time-stamp: <18 Feb 14 17:18:37 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -431,8 +431,10 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 #ifdef DEBUG1
   if (fabs(sr->denszim) > 2.0)
     {
-    printf("debug: %e, %e, %e, %e, %e, %e %e\n", *xwert, *ywert, sr->densyre, sr->densyim, sr->denszre, sr->denszim, ddxy);
-    printf("debug: %e, %e, %e, %e, %e, %e %d\n", *xwert, *ywert, fact3, fact4, fact5, fact6, iy1);
+      printf("debug: %e, %e, %e, %e, %e, %e %e\n", 
+	     *xwert, *ywert, sr->densyre, sr->densyim, sr->denszre, sr->denszim, ddxy);
+      printf("debug: %e, %e, %e, %e, %e, %e %d\n", 
+	     *xwert, *ywert, fact3, fact4, fact5, fact6, iy1);
     }
   //printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
 #endif
