@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <10 Jan 14 16:12:52 flechsig>  */
+ /* Time-stamp: <18 Feb 14 11:38:51 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -206,7 +206,7 @@ void drift_fresnel(struct BeamlineType *bl)
   dz0= so4->dx;
   dy0= so4->dy;
 
-  printf("drift_fresnel called, drift= %f mm, file= %s\n", driftlen, __FILE__);
+  printf("drift_fresnel called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
 
 #ifdef HAVE_FFTW3
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
