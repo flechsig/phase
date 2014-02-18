@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 17:19:48 flechsig>  */
+/*  Time-stamp: <18 Feb 14 17:21:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -377,12 +377,8 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   iy2= iy1+ 1;
 
   /* exclude index overrun */
-  if ((ix2 >= so4->iex) || (iy2 >= so4->iey))
-    {
-      // printf("index %d or %d out of range\n", ix2, iy2);
-      return;           /* UF 18.2.14 */
-    }
-
+  if ((ix2 >= so4->iex) || (iy2 >= so4->iey)) return; /* UF 18.2.14 */
+    
   x1  = so4->gridx[ix1];
   x2  = so4->gridx[ix2];
   y1  = so4->gridy[iy1];
