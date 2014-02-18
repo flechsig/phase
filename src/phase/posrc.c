@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 17:21:26 flechsig>  */
+/*  Time-stamp: <18 Feb 14 17:32:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -386,8 +386,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
        
   ddxy= so4->dx* so4->dy;     
 
-  /* exclude devide by zero */
-  if (fabs(ddxy) < 1e-20) 
+  if (fabs(ddxy) < 1e-20)        /* exclude devide by zero */
     {
       printf("error source4c_inter_2d_, file: %s, - exit\n", __FILE__);
       printf("debug x= %f y= %f ddxy= %f\n", *xwert, *ywert, ddxy);
@@ -421,17 +420,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
     fact5* so4->zezim[ix1+ iy2* so4->iex]+
     fact6* so4->zezim[ix2+ iy2* so4->iex];
 
-  //sr->densyre= sr->denszre= sr->densyim= sr->denszim= 1.0;
-  //sr->denszre= sr->denszim= 1.0;
-
 #ifdef DEBUG1
-  if (fabs(sr->denszim) > 2.0)
-    {
-      printf("debug: %e, %e, %e, %e, %e, %e %e\n", 
-	     *xwert, *ywert, sr->densyre, sr->densyim, sr->denszre, sr->denszim, ddxy);
-      printf("debug: %e, %e, %e, %e, %e, %e %d\n", 
-	     *xwert, *ywert, fact3, fact4, fact5, fact6, iy1);
-    }
   //printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
 #endif
 
