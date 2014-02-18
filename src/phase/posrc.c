@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 17:18:37 flechsig>  */
+/*  Time-stamp: <18 Feb 14 17:19:48 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -370,7 +370,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 //c---------  Interpolation of Ey
 
 // im c- code muss die +1 weg bei ix1 und iy1
-
+// erlaubter index= 0...(N-1) 
   ix1= (int)((*xwert- so4->xemin)/so4->dx);
   ix2= ix1+ 1;
   iy1= (int)((*ywert- so4->yemin)/so4->dy);
