@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <2014-02-17 21:45:07 flechsig> 
+;  Time-stamp: <18 Feb 14 08:08:12 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -88,7 +88,11 @@ z_vec = h5_read_dataset(file_id, '/z_vec')
 y_vec = h5_read_dataset(file_id, '/y_vec')
 t_vec = h5_read_dataset(file_id, '/t_vec')
 field = h5_read_dataset(file_id, '/e_field')
+lambda= h5_read_dataset(file_id, '/wavelength')
+
 h5f_close, file_id
+
+wavelength= lambda[0] ;; wavelength should be a scalar
 
 nz   = n_elements(z_vec)
 ny   = n_elements(y_vec)
@@ -135,11 +139,8 @@ if n_elements(beam) ne 0 then begin
     beam.yezremin= min(y_vec)
     beam.yezremax= max(y_vec)
 
-    beam.xlam= 1234.5
+    beam.xlam= wavelength
 endif 
-
-print, 'wavelength not found in file- set it to default 1e-10'
-wavelength=1e-10
 
 print, 'h5_read_phase done'
 
