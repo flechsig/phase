@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 17:14:00 flechsig>  */
+/*  Time-stamp: <18 Feb 14 17:15:51 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -396,7 +396,8 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
       printf("error source4c_inter_2d_, file: %s, - exit\n", __FILE__);
       printf("debug x= %f y= %f ddxy= %f\n", *xwert, *ywert, ddxy);
       exit(-1);
-    }                                      
+    }   
+                                   
   fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
   fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
   fact5= ((x2- *xwert)* (*ywert- y1))/ ddxy;
