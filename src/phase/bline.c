@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Jan 14 15:01:11 flechsig>  */
+/*   Time-stamp: <18 Feb 14 10:48:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -41,7 +41,7 @@ void debug_beamline_type_c_(int *ip)
   struct BeamlineType *bl;
   bl= (struct BeamlineType *)ip;
 
-  printf("%s debug_beamline_type_c_: %p position: %d\n", __FILE__, ip, bl->position);
+  printf("%s debug_beamline_type_c_: %p position: %u\n", __FILE__, ip, bl->position);
 } /* end debug_beamline_type_c_ */
 
 
@@ -54,7 +54,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   double *c;
   
 #ifdef DEBUG
-  printf("debug: %s BuildElement called: elindex: %d\n", __FILE__, elindex); 
+  printf("debug: %s BuildElement called: elindex: %u\n", __FILE__, elindex); 
 #endif
 
 #ifndef SEVEN_ORDER
@@ -73,7 +73,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   listpt= &bl->ElementList[elindex];
   if (listpt->ElementOK & elementOK) 
     {
-      printf("BuildElement %d is alredy OK- return\n", elindex);
+      printf("BuildElement %u is alredy OK- return\n", elindex);
       return;
     }  
 
@@ -117,7 +117,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 	       &bl->BLOptions.ifl.iord, 0);
     } /* end hor */
 #ifdef DEBUG
-  printf("DEBUG: BuildElement elindex: %d source to image map and matrix created\n", elindex); 
+  printf("DEBUG: BuildElement elindex: %u source to image map and matrix created\n", elindex); 
 #endif
   if (bl->BLOptions.SourcetoImage != 1) 
     {	
@@ -149,7 +149,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 		   &bl->BLOptions.ifl.iord, 0);
 	} /* end hor */
 
-      printf("BuildElement %d image to source map and matrix created\n", elindex);
+      printf("BuildElement %u image to source map and matrix created\n", elindex);
     } /* end image to source */
   listpt->ElementOK |= elementOK;
   XFREE(listpt->tpe);
@@ -174,7 +174,7 @@ void BuildBeamline(struct BeamlineType *bl)
 #endif
 
   Check_iord(bl);                                 /* check the range of iord */
-  printf("BuildBeamline: Beamline contains %d element(s), %d order calculation\n", 
+  printf("BuildBeamline: Beamline contains %u element(s), %d order calculation\n", 
 	 bl->elementzahl,  bl->BLOptions.ifl.iord);
   /*--------------------------------------------------------*/ 
   if (bl->elementzahl < 1)
@@ -204,12 +204,12 @@ void BuildBeamline(struct BeamlineType *bl)
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
 #ifdef DEBUG
-	  printf("BuildBeamline: matrixes and maps of %d. element created\n", elcounter); 
+	  printf("BuildBeamline: matrixes and maps of %u. element created\n", elcounter); 
 #endif 
 	}             /* map ist OK */
       else
 	{
-	  printf("\nBuildBeamline: element %d already OK- keep matrix\n\n", elcounter);
+	  printf("\nBuildBeamline: element %u already OK- keep matrix\n\n", elcounter);
 	} /* end if (listpt->ElementOK == 0) */
       elcounter++; listpt++; elindex++;
     } /* Schleife ueber alle Elemente fertig */
@@ -409,7 +409,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
   struct TmpMapType *ltp;   /* local pointer */
 
   
-   printf("BuildBeamline: Beamline contains %d element(s)\n", bl->elementzahl);
+   printf("BuildBeamline: Beamline contains %u element(s)\n", bl->elementzahl);
 
 #ifdef SEVEN_ORDER
 
@@ -482,7 +482,7 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	    /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
 	    /* wc,xlc,xlm sind richtungsabhaengig !!*/
 #ifdef DEBUG1
-            printf("BuildBeamline: matrix of %d. element created\n", 
+            printf("BuildBeamline: matrix of %u. element created\n", 
 		   elcounter); 
 #endif 
 	    listpt->ElementOK|= mapOK; 
@@ -672,7 +672,7 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
    if (/*((bl->beamlineOK & (sourceOK | mapOK)) == (sourceOK | mapOK)) &&*/
        (enummer <= bl->elementzahl) && (enummer > 0))    
    {
-      printf("Footprint: at element %d ", enummer); 
+      printf("Footprint: at element %u ", enummer); 
       msiz= dim* dim* sizeof(double); 
       matrix= (double *)xmalloc(msiz);
        
@@ -1104,7 +1104,7 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, int *
 #ifdef DEBUG   
    /*    char *fname= "matrixi.mat";
 	 writematrixfile(fname, (double *)listpt->M_StoI);*/
-   printf("MakeMapandMatrix: element %d (if opti) source to image map and matrix created\n",
+   printf("MakeMapandMatrix: element %u (if opti) source to image map and matrix created\n",
 	  bl->position);  
 #endif
    /* image to source Rechnung bei RT und  pst */
@@ -1435,14 +1435,14 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
    fprintf(f, "\nData of optical Elements\n"); 
    fprintf(f, "ELEMENTS\n");
-   fprintf(f, "%20d   number of elements \n\n"     , bl->elementzahl);  
+   fprintf(f, "%20u   number of elements \n\n"     , bl->elementzahl);  
 
    elnumber= 1;
    while (elnumber<= bl->elementzahl) 
    {
-     fprintf(f, "\nElement %d\n", elnumber);
+     fprintf(f, "\nElement %u\n", elnumber);
      fprintf(f, "%20s     name of elem. \n", listpt->elementname); 
-     fprintf(f, "\nGEOMETRY %d\n", elnumber); 
+     fprintf(f, "\nGEOMETRY %u\n", elnumber); 
      fprintf(f, "%20.10lg  theta              \n", listpt->GDat.theta0); 
      fprintf(f, "%20lg     source distance    \n", listpt->GDat.r);
      fprintf(f, "%20lg     image  distance    \n", listpt->GDat.rp);
@@ -1458,7 +1458,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20d     azimut * Pi/2      \n", listpt->GDat.azimut);   
  /* end geometry section */  	  
 
-     fprintf(f, "\nMIRROR %d  \n", elnumber);  
+     fprintf(f, "\nMIRROR %u  \n", elnumber);  
      fprintf(f, "%20d     element type\n", listpt->MDat.Art);   
      fprintf(f, "%20lg     source distance (ARC)\n", listpt->MDat.r1);     
      fprintf(f, "%20lg     image  distance (ARC)\n", listpt->MDat.r2);
@@ -1645,7 +1645,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    /* new feb 04 */
    fprintf(f,"%20d     with alignment\n", op->WithAlign);
 /* new jul 09 */
-   fprintf(f,"%20d     footprint at element\n", bl->position);
+   fprintf(f,"%20u     footprint at element\n", bl->position);
 
    fprintf(f,"%20d     dy integr. points (PS fixed grid)\n", op->PSO.ndyfix);  
    fprintf(f,"%20d     dz integr. points (PS fixed grid)\n", op->PSO.ndzfix); 
