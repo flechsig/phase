@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <10 Feb 14 16:09:10 flechsig> 
+c$$$ Time-stamp: <18 Feb 14 15:20:34 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -1293,7 +1293,7 @@ c---------  Interpolation of Ey
 	x2=so4.gridx(ix2)
 	y1=so4.gridy(iy1)
 	y2=so4.gridy(iy2)
-
+c /* UF 18.2.14 */
         ddxy=so4.dxeyre*so4.dxeyre              
 	fact3=((x2-xwert)*(y2-ywert))/ddxy
 	fact4=((xwert-x1)*(y2-ywert))/ddxy
