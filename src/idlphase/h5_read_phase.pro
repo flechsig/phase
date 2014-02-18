@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 08:08:12 flechsig> 
+;  Time-stamp: <18 Feb 14 08:44:01 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -93,6 +93,8 @@ lambda= h5_read_dataset(file_id, '/wavelength')
 h5f_close, file_id
 
 wavelength= lambda[0] ;; wavelength should be a scalar
+y_vec*= 1e-3  ;; phase grid in mm
+z_vec*= 1e-3  ;; phase grid in mm
 
 nz   = n_elements(z_vec)
 ny   = n_elements(y_vec)

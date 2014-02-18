@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 08:04:23 flechsig> 
+;  Time-stamp: <18 Feb 14 08:42:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -92,6 +92,9 @@ file_id = H5F_CREATE(fname)
 
 lambda= double(1.0)
 t_vec= lambda
+
+y_vec*= 1e3  ;; phase grid in mm
+z_vec*= 1e3  ;; phase grid in mm
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)

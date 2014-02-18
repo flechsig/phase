@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2014-02-16 20:02:59 flechsig>  */
+/*  Time-stamp: <18 Feb 14 08:37:22 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -603,7 +603,7 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
       }
 
   wavelength= bl->BLOptions.lambda* 1e-3;
-  gridsize  = (p->z[1]- p->z[0])* 1e-3;
+  gridsize  = (p->z[1]- p->z[0])* 1e-3;        // mm to m
 
   group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices");
