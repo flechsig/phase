@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Feb 14 11:07:07 flechsig>  */
+/*   Time-stamp: <18 Feb 14 11:25:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1885,7 +1885,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     fp= (struct FileSourceType *)bl->RTSource.Quellep;
 	     if (version >= 20090804)
 	       {
-		 fscanf(f, "%s %255[^\n]s %c", (char *)&fp->filename, buffer, &buf);
+		 fscanf(f, "%255s %255[^\n]s %c", (char *)&fp->filename, buffer, &buf);
 #ifndef QTGUI
 		 strncpy(bl->filenames.sourceraysname, fp->filename, MaxPathLength);
 #endif
@@ -1902,7 +1902,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*---------------------------------------------------------------------*/ 
    
    if (SetFilePos(f, "ELEMENTS"))                       
-     fscanf(f, " %d %255[^\n]s %c", &bl->elementzahl, buffer, &buf); 
+     fscanf(f, " %u %255[^\n]s %c", &bl->elementzahl, buffer, &buf); 
    else rcode= -1;                      /* data not found in file */     
    
    if (bl->elementzahl > 0)   	    /* allociere memory */
@@ -1916,16 +1916,16 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
      {
        listpt->ElementOK= 0;       /* reset OK */
        
-       snprintf(buffer, MaxPathLength, "Element %d", elnumber);	
+       snprintf(buffer, MaxPathLength, "Element %u", elnumber);	
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
-	   fscanf(f, " %s %255[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
+	   fscanf(f, " %255s %255[^\n]s %c", (char *)&listpt->elementname, buffer, &buf);
 #ifdef DEBUG1 
 	   printf("   Name read: %s\n", listpt->elementname); 
 #endif
 	 } else rcode= -1;
        
-       snprintf(buffer, MaxPathLength, "GEOMETRY %d", elnumber); 
+       snprintf(buffer, MaxPathLength, "GEOMETRY %u", elnumber); 
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
 	   pd= (double *) &listpt->GDat.theta0; 
@@ -1949,7 +1949,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   /*  printf("   geometry read\n"); */
 	 } else rcode= -1;  
        
-       snprintf(buffer, MaxPathLength, "MIRROR %d", elnumber);  
+       snprintf(buffer, MaxPathLength, "MIRROR %u", elnumber);  
        if (SetFilePos(f, buffer)) 
 	 {  /* lese ein ... */
 	   fgets(buffer, 80, f); sscanf(buffer, "%d", &listpt->MDat.Art);
@@ -2181,7 +2181,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        if (version >= 20040217)
 	 fscanf(f, " %d %255[^\n]s %c", &op->WithAlign, buffer, &buf);
        if (version >= 20090722)
-	 fscanf(f, " %d %255[^\n]s %c", &bl->position, buffer, &buf);
+	 fscanf(f, " %u %255[^\n]s %c", &bl->position, buffer, &buf);
        else 
 	 bl->position=1;
        
@@ -2212,30 +2212,30 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 {
 	   pp= (struct PHASEset *)&(bl->filenames);
 	   /*fgets(buffer, MaxPathLength, f); sscanf(buffer, " %s", &pp->mapname);*/
-	   fscanf(f, " %s %255[^\n]s %c", pp->mapname, buffer, &buf); 
-	   fscanf(f, " %s %255[^\n]s %c", pp->matrixname, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->sourceraysname, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->mapname, buffer, &buf); 
+	   fscanf(f, " %254s %255[^\n]s %c", pp->matrixname, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->sourceraysname, buffer, &buf);
 	   
 	   /* output name already set via cmd. line option? */       
 	   if (pp->imageraysname[0] != '\0') 
 	     fscanf(f, " %*s %255[^\n]s %c", buffer, &buf);
 	   else
-	     fscanf(f, " %s %255[^\n]s %c", pp->imageraysname, buffer, &buf);
+	     fscanf(f, " %254s %255[^\n]s %c", pp->imageraysname, buffer, &buf);
 	   if (version < 20121105) 
-	     fscanf(f, " %s %255[^\n]s %c", buffer, buffer, &buf);
+	     fscanf(f, " %254s %255[^\n]s %c", buffer, buffer, &buf);
 	   /*  fscanf(f, " %s %255[^\n]s %c", &pp->minname, buffer, &buf); */
 	   
-	   fscanf(f, " %s %255[^\n]s %c", pp->optipckname, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->opresname, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->so4_fsource4a, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->so4_fsource4b, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->so4_fsource4c, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->so4_fsource4d, buffer, &buf);
-	   fscanf(f, " %s %255[^\n]s %c", pp->so6_fsource6,  buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->optipckname, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->opresname, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->so4_fsource4a, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->so4_fsource4b, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->so4_fsource4c, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->so4_fsource4d, buffer, &buf);
+	   fscanf(f, " %254s %255[^\n]s %c", pp->so6_fsource6,  buffer, &buf);
 	   if (version >= 20120828)
-	     fscanf(f, " %s %255[^\n]s %c", pp->so7_hdf5,  buffer, &buf);
+	     fscanf(f, " %254s %255[^\n]s %c", pp->so7_hdf5,  buffer, &buf);
 	   if (version >= 20130318)
-	     fscanf(f, " %s %255[^\n]s %c", pp->hdf5_out,  buffer, &buf);
+	     fscanf(f, " %254s %255[^\n]s %c", pp->hdf5_out,  buffer, &buf);
 	   
 	   /* UF 32.7.13 so4 is obsolete */
 	   /*
@@ -2357,8 +2357,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   
   l= MaxPathLength;   buf= buffer; /* to save space in the code */
   if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%d", &x->methode);
-  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%s", (char *)&x->beamlinefilename); 
-  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%s", (char *)&x->resultfilename);
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%254s", (char *)&x->beamlinefilename); 
+  if (fgets(buf, l, f) == NULL) return; sscanf(buf, "%254s", (char *)&x->resultfilename);
   if (fgets(buf, l, f) == NULL) return;
   if (fgets(buf, l, f) == NULL) return;
   if (fgets(buf, l, f) == NULL) return; sscanf(buf, "x : %d %d %lf", &x->xindex, &x->xpoints, &x->dx); 
@@ -2378,7 +2378,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
     {
       if (fgets(buf, l, f) == NULL) return; 
       x->min[i]= x->max[i]= 0.0;
-      sscanf(buf, "%d %s %lg %lg %lg %lg", 
+      sscanf(buf, "%d %254s %lg %lg %lg %lg", 
 	     &x->parindex[i], buffer1, &x->start[i], &x->step[i],  &x->min[i],  &x->max[i]); 
       strncpy(&x->parnames[i* 50], buffer1, 50);  /* use two step to avoid buffer overflow */
       x->parnames[i* 50 + 49]= '\0'; /* make sure string  ends with \0 */
@@ -2413,7 +2413,7 @@ void getoptipickfile_obsolete(struct optistruct *x, char *pickname)
       printf("getoptipickfile: file version: %d\n", version);
       if (version >= 20071217)
 	{
-	  fscanf(f, " %d %[^\n]s %c", &x->methode, buffer, &buf);
+	  fscanf(f, " %d %254[^\n]s %c", &x->methode, buffer, &buf);
 	} 
       else
 	{
@@ -2421,9 +2421,9 @@ void getoptipickfile_obsolete(struct optistruct *x, char *pickname)
 	  printf("getoptipickfile: no methode defined- use default: %d\n", 
 		 x->methode); 
 	}
-      fscanf(f, "%s\n", (char *)&x->beamlinefilename); 
-      fscanf(f, "%s\n", (char *)&x->minuitfilename); 
-      fscanf(f, "%s\n", (char *)&x->resultfilename); 
+      fscanf(f, "%254s\n", (char *)&x->beamlinefilename); 
+      fscanf(f, "%254s\n", (char *)&x->minuitfilename); 
+      fscanf(f, "%254s\n", (char *)&x->resultfilename); 
       fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
       fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
       fscanf(f, "%d\n", &x->npars); 
@@ -3134,9 +3134,9 @@ void ReadCoefficientFile(double *dp, char *fname)
   while (!feof(f))    
   {
     /*   fgets(buffer, 99, f); */
-    fscanf(f, " %[^\n]s %c", buffer, &buf); 
+    fscanf(f, " %254[^\n]s %c", buffer, &buf); 
 #ifdef DEBUG  
-    printf("read: %s\n", buffer); 
+    printf("read: %254s\n", buffer); 
 #endif 
     if (buffer[0] != '#')             /* skip comments */
       {
