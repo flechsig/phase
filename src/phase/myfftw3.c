@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <18 Feb 14 11:38:51 flechsig>  */
+ /* Time-stamp: <18 Feb 14 11:50:35 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -229,8 +229,8 @@ void drift_fresnel(struct BeamlineType *bl)
 	idxf= col* rows+ row;
 	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
-	amp0= sqrt(pow(so4->zezre[idxf], 2.0)+ pow(so4->zezim[idxf],2.0)); // source amplitude
-	pha0= atan2(so4->zezim[idxf], so4->zezre[idxf]);                   // source phase
+	amp0= sqrt(pow(so4->zezre[idxc], 2.0)+ pow(so4->zezim[idxc],2.0)); // source amplitude
+	pha0= atan2(so4->zezim[idxc], so4->zezre[idxc]);                   // source phase
 	amp= ampf * amp0/ (bl->BLOptions.lambda* driftlen);
 	pha= k*driftlen- PI/2.0+ phaf + pha0 + k/(2.0*driftlen)*(pow((col*dz0),2.0)+ pow((row*dy0),2.0));
 	psd->ezrec[idxf]= amp* cos(pha);
@@ -252,8 +252,8 @@ void drift_fresnel(struct BeamlineType *bl)
 	idxf= col* rows+ row;
 	ampf= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1], 2.0)); // fft amplitude
 	phaf= atan2(out[idxc][1], out[idxc][0]);                   // fft phase
-	amp0= sqrt(pow(so4->zeyre[idxf], 2.0)+ pow(so4->zeyim[idxf],2.0)); // source amplitude
-	pha0= atan2(so4->zeyim[idxf], so4->zeyre[idxf]);                   // source phase
+	amp0= sqrt(pow(so4->zeyre[idxc], 2.0)+ pow(so4->zeyim[idxc],2.0)); // source amplitude
+	pha0= atan2(so4->zeyim[idxc], so4->zeyre[idxc]);                   // source phase
 	amp= ampf * amp0/ (bl->BLOptions.lambda* driftlen);
 	pha= k*driftlen- PI/2.0+ phaf + pha0 + k/(2.0*driftlen)*(pow((col*dz0),2.0)+ pow((row*dy0),2.0));
 	psd->eyrec[idxf]= amp* cos(pha);
@@ -310,18 +310,18 @@ void fftshift(fftw_complex *arr0, int rows, int cols)
   fftw_free(arr1);
 } /* end fftshift */
 
-/* helper function */
+/* helper function               */
+/* source4c is in c memory model */
 void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
 {
-  int row, col, idxf, idxc;
+  int row, col, idxc;
 
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
       {
 	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	in[idxc][0]= re[idxf];
-	in[idxc][1]= im[idxf];
+	in[idxc][0]= re[idxc];
+	in[idxc][1]= im[idxc];
       }
 } /* end fill_fftw */
 
