@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 12:28:11 flechsig>  */
+/*  Time-stamp: <18 Feb 14 17:14:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -355,7 +355,8 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   if ((*xwert < so4->xemin) || (*xwert > so4->xemax) || 
       (*ywert < so4->yemin) || (*ywert > so4->yemax)) 
     {
-      //      printf("out of range: %f, %f \n", *xwert , *ywert);
+      //printf("out of range: %f, %f \n", *xwert , *ywert);
+      //sr->densyre= sr->denszre= sr->densyim= sr->denszim= 0.0;
       return;
     }
   
@@ -375,12 +376,27 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   iy1= (int)((*ywert- so4->yemin)/so4->dy);
   iy2= iy1+ 1;
 
+  /* exclude index overrun */
+  if ((ix2 >= so4->iex) || (iy2 >= so4->iey))
+    {
+      // printf("index %d or %d out of range\n", ix2, iy2);
+      return;           /* UF 18.2.14 */
+    }
+
   x1  = so4->gridx[ix1];
   x2  = so4->gridx[ix2];
   y1  = so4->gridy[iy1];
   y2  = so4->gridy[iy2];
-  ddxy= so4->dx* so4->dy;         
-                                             
+       
+  ddxy= so4->dx* so4->dy;     
+
+  /* exclude devide by zero */
+  if (fabs(ddxy) < 1e-20) 
+    {
+      printf("error source4c_inter_2d_, file: %s, - exit\n", __FILE__);
+      printf("debug x= %f y= %f ddxy= %f\n", *xwert, *ywert, ddxy);
+      exit(-1);
+    }                                      
   fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
   fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
   fact5= ((x2- *xwert)* (*ywert- y1))/ ddxy;
@@ -408,8 +424,16 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
     fact5* so4->zezim[ix1+ iy2* so4->iex]+
     fact6* so4->zezim[ix2+ iy2* so4->iex];
 
+  //sr->densyre= sr->denszre= sr->densyim= sr->denszim= 1.0;
+  //sr->denszre= sr->denszim= 1.0;
+
 #ifdef DEBUG1
-  printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
+  if (fabs(sr->denszim) > 2.0)
+    {
+    printf("debug: %e, %e, %e, %e, %e, %e %e\n", *xwert, *ywert, sr->densyre, sr->densyim, sr->denszre, sr->denszim, ddxy);
+    printf("debug: %e, %e, %e, %e, %e, %e %d\n", *xwert, *ywert, fact3, fact4, fact5, fact6, iy1);
+    }
+  //printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
 #endif
 
 } /* end source4c_inter_2d_ */
