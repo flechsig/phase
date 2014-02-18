@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-02-16 20:13:04 flechsig> 
+//  Time-stamp: <18 Feb 14 10:09:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1009,10 +1009,11 @@ void Plot::hfill2(struct PSDType *rp)
 #endif
 } // hfill2 PO
 
-// fills a 2d histogram with PO source
+// fills a 2d histogram with PO source 
+// !! source4c uses c memory model 
 void Plot::hfill2(struct source4c *rp)
 {
-  int i, ix, iy, h2a_n, idxf, idxc;
+  int i, ix, iy, h2a_n, idxc; //, idxf;
     
 #ifdef DEBUG
   cout << "Plot::hfill2 called (PO source version)" << endl;
@@ -1032,11 +1033,11 @@ void Plot::hfill2(struct source4c *rp)
   for (ix=0; ix< h2a_nx; ix++)
     for (iy=0; iy< h2a_ny; iy++) 
       {
-	idxf= iy + ix* h2a_ny;
+	//	idxf= iy + ix* h2a_ny;
 	idxc= ix + iy* h2a_nx;
-	// data kommt im fortran modell
-	h2a[idxc]= pow(rp->zeyre[idxf], 2.0)+ pow(rp->zeyim[idxf], 2.0)+ 
-	  pow(rp->zezre[idxf], 2.0)+ pow(rp->zezim[idxf], 2.0);
+	// data kommt im c memory  model
+	h2a[idxc]= pow(rp->zeyre[idxc], 2.0)+ pow(rp->zeyim[idxc], 2.0)+ 
+	  pow(rp->zezre[idxc], 2.0)+ pow(rp->zezim[idxc], 2.0);
 	
 	h2max= max(h2max, h2a[idxc]);     // save maximum
       }

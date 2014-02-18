@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <12 Feb 14 16:32:09 flechsig> 
+;  Time-stamp: <18 Feb 14 10:23:45 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -82,11 +82,19 @@ endif
 file_id = H5F_CREATE(fname)
 
 lambda  = double(wavelength)
-gridsize= double(y_vec[1]- y_vec[0])
+gridsizey= double(y_vec[1]- y_vec[0])
+gridsizez= double(z_vec[1]- z_vec[0])
+gridsize= gridsizey 
 slicecount= double(1.0)
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
+
+if (ny ne nz) or (abs(gridsizey- gridsizez) gt 0.0) then begin
+    print, 'error: GENESIS hdf5 files needs a quadratic grid- return'
+    return
+endif
+
 fsize= nz*ny*2
 field = dblarr(fsize)
 k= 0L

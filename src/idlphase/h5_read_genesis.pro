@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 08:44:11 flechsig> 
+;  Time-stamp: <18 Feb 14 10:24:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -103,7 +103,7 @@ print, 'len        = ',  len, ' size^2  = ', size2
 print, 'wavelength = ',  wavelength
 
 if (size2 ne len) then begin
-    print, 'error: genesis works assumes a quadratic grid- return'
+    print, 'error: GENESIS  assumes a quadratic grid- return'
     return
 endif
 

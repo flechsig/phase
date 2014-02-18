@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <2014-02-17 21:36:49 flechsig> 
+;  Time-stamp: <18 Feb 14 08:48:11 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -198,22 +198,22 @@ if (n_elements(phase) ne 0 ) then sphase= 1
 if (n_elements(pha4idl) ne 0) then spha4idl= 1
 
 if sgenesis gt 0 then $
-h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
+  h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
   z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 
 if sphase gt 0 then begin
-   print, '!! save field to zcomp AND ycomp !!'
-   h5_write_phase, fname, zcomp=*self.field, ycomp=*self.field, wavelength=self.wavelength, $
-  z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+    print, '!! save field to zcomp AND ycomp !!'
+    h5_write_phase, fname, zcomp=*self.field, ycomp=*self.field, wavelength=self.wavelength, $
+      z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 endif
 
 if spha4idl gt 0 then begin
-   print, '!! save field to zcomp !!'
-   h5_write_pha4idl, fname, zcomp=*self.field, wavelength=self.wavelength, $
-                     z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
+    print, '!! save field to zcomp !!'
+    h5_write_pha4idl, fname, zcomp=*self.field, wavelength=self.wavelength, $
+      z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 endif
 return
-end ;; h5_read
+end ;; h5_write
 
 pro phase::gaussbeam, dist=dist, drift=drift, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, sizey=sizey,  $
                wavelength=wavelength, plot=plot, example=example, $

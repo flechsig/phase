@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 08:42:37 flechsig> 
+;  Time-stamp: <18 Feb 14 09:40:48 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -93,8 +93,8 @@ file_id = H5F_CREATE(fname)
 lambda= double(1.0)
 t_vec= lambda
 
-y_vec*= 1e3  ;; phase grid in mm
-z_vec*= 1e3  ;; phase grid in mm
+y_vec_mm= y_vec* 1e3  ;; phase grid in mm
+z_vec_mm= z_vec* 1e3  ;; phase grid in mm
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
@@ -124,15 +124,15 @@ t_dataset_id = H5D_CREATE(file_id, '/t_vec',      datatype_double_id, t_dataspac
 w_dataset_id = H5D_CREATE(file_id, '/wavelength', datatype_double_id, w_dataspace_id);
 
 H5D_WRITE, e_dataset_id, a
-H5D_WRITE, y_dataset_id, y_vec
-H5D_WRITE, z_dataset_id, z_vec
+H5D_WRITE, y_dataset_id, y_vec_mm
+H5D_WRITE, z_dataset_id, z_vec_mm
 ;H5D_WRITE, t_dataset_id, t_vec
 H5D_WRITE, w_dataset_id, lambda
 
-H5D_CLOSE,e_dataset_id
-H5D_CLOSE,y_dataset_id
-H5D_CLOSE,z_dataset_id
-H5D_CLOSE,t_dataset_id 
+H5D_CLOSE, e_dataset_id
+H5D_CLOSE, y_dataset_id
+H5D_CLOSE, z_dataset_id
+H5D_CLOSE, t_dataset_id 
 H5D_CLOSE, w_dataset_id
 
 H5S_CLOSE, e_dataspace_id

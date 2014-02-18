@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <10 Feb 14 11:52:56 flechsig>  */
+/*   Time-stamp: <18 Feb 14 10:02:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -192,6 +192,7 @@ struct source4 {
 };  
 
 /* 1204 the c version with dynamic memory */
+/* this struct uses the c memory model    */
 struct source4c {
   double xemin, xemax, dx, yemin, yemax, dy, 
     *zeyre, *zeyim,
