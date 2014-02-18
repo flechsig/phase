@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 08:37:22 flechsig>  */
+/*  Time-stamp: <18 Feb 14 12:28:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -273,23 +273,23 @@ int source4c_ini(struct BeamlineType *bl)
   if ((fa= posrc_fopen(bl->filenames.so4_fsource4a)) == NULL) return myreturn;
   if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) 
     {
-      fclose(fa);
+      fclose(fa);               /* clean up- avoid memory leak */
       return myreturn;
     }
   if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) 
     {
-      fclose(fa);
-      fclose(fb);
+      fclose(fa);       /* clean up- avoid memory leak */
+      fclose(fb);       /* clean up- avoid memory leak */
       return myreturn;
     }
   if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) 
     {
-      fclose(fa);
-      fclose(fb);
-      fclose(fc);
+      fclose(fa);    /* clean up- avoid memory leak */
+      fclose(fb);    /* clean up- avoid memory leak */
+      fclose(fc);    /* clean up- avoid memory leak */
       return myreturn;
     }
-  /* all files open */
+  /* if we reach this point- all files are open */
   
  /* y real */
   printf("read file: %s ", bl->filenames.so4_fsource4a);
@@ -737,7 +737,7 @@ void posrc_fill4(struct BeamlineType *bl, double *a,  FILE *f, int imag)
   int i, j;
   double val;
 
-  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in fortran memory model */
+  for (j=0; j< bl->posrc.iey; j++)                 /* fill matrix in c memory model */
     for (i=0; i< bl->posrc.iex; i++) 
       {
 	fscanf(f, "%lf %lf %lf", &bl->posrc.gridx[i], &bl->posrc.gridy[j], &val);
@@ -757,7 +757,7 @@ void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset,
   rows= bl->posrc.iey;
   cols= bl->posrc.iex;
 
-  for (j=0; j< rows; j++)                 /* fill matrix in fortran memory model */
+  for (j=0; j< rows; j++)                 /* fill matrix in c memory model */
     for (i=0; i< cols; i++) 
       {
 	val= field[i + j* cols + offset * (rows * cols) + it * (rows * cols * 4)];
