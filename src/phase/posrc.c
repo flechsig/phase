@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <18 Feb 14 17:32:02 flechsig>  */
+/*  Time-stamp: <19 Feb 14 09:47:38 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -332,6 +332,7 @@ int source4c_ini(struct BeamlineType *bl)
 /* range test is included!                            */
 /* !! reads the input from bl->posrc and not sources! */
 /* routine wird gerufen von fortran - daher underscore  */
+/* principle: weighted average over 4 adjacent points */
 void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
   struct BeamlineType *bl;
@@ -421,6 +422,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
     fact6* so4->zezim[ix2+ iy2* so4->iex];
 
 #ifdef DEBUG1
+  printf("debug: factsum: %lf\n", fact3+fact4+fact5+fact6);
   //printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
 #endif
 
