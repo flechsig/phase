@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <30 Oct 13 13:48:31 flechsig> 
+//  Time-stamp: <20 Feb 14 11:44:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -243,9 +243,12 @@ void SingleRay::RayTraceSingleRayCpp(PhaseQt *bl)
 	      slopelen= (bl->BLOptions.SourcetoImage == 1) ? 
 		ds->GDat.rp : ds->GDat.r; 
 	      
-	      Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, 
-		    slopelen, ds->geo.cosb, ds->GDat.azimut); 
-	      
+	      if (bl->BLOptions.WithAlign == 1)
+		{
+		  printf("include Slope error: ew= %lf, el= %lf\n", ds->MDat.slopew, ds->MDat.slopel);
+		  Slope(Raysout, ds->MDat.slopew, ds->MDat.slopel, 
+			slopelen, ds->geo.cosb, ds->GDat.azimut); 
+		}
 	    }
 	  /* calculate phase */
 	  dphase= (bl->BLOptions.lambda > 0) ? 
