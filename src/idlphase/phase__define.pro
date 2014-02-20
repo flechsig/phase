@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Feb 14 08:48:11 flechsig> 
+;  Time-stamp: <20 Feb 14 09:00:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1029,7 +1029,10 @@ pro phase::mirrorp, thetag=thetag, azimut=azimut
 ;   phase::mirrorp
 ;
 ; PURPOSE:
-;   calculate the electric field after a "thin" flat mirror defined as phase shifter
+;   calculate the electric field after a "thin" flat mirror defined as phase shifter, 
+;   this simple approach does only work in limitd cases where the phase shift is only 
+;   a few k (long wavelength and/or small angle), it must fail when the relative phase
+;   shift between points approaches 2 pi
 ;
 ; CATEGORY:
 ;   Phase
@@ -1081,6 +1084,75 @@ endfor
 return 
 end
 ;; end mirrorp
+
+pro phase::mirrort, thetag=thetag, azimut=azimut 
+;+
+; NAME:
+;   phase::mirrort
+;
+; PURPOSE:
+;   calculate the electric field after a "thin" flat mirror defined as phase shifter, 
+;   the method uses the transfer function approach- first fft to angular spectrum, 
+;   second apply angular shift, third fft back to spatial distribution  
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->mirrorp
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
+;   thetag: grazing angle in rad   
+;   w     : the mirror coordinate
+; 
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->mirrort
+;
+; MODIFICATION HISTORY:
+;   UF Feb 2014
+;-
+
+if n_elements(azimut) eq 0 then azimut= 0.0 else print, 'azimut not yet implemented!'
+if n_elements(thetag) eq 0 then thetag= !dpi/2.0
+if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
+
+myz_vec= *self.z_vec
+myy_vec= *self.y_vec
+myfield= *self.field
+nz= n_elements(myz_vec)
+ny= n_elements(myy_vec)
+k = 2.0*!dpi/ self.wavelength
+twopi= 2.0 * !dpi
+zz  = myz_vec[Nz-1]- myz_vec[0]                                    ;; total width
+yy  = myy_vec[Ny-1]- myy_vec[0]                                    ;; total width
+u = (dindgen(Nz)/(Nz-1) - 0.5)                ;; runs from -0.5..0.. 0.5 
+v = (dindgen(Ny)/(Ny-1) - 0.5)                ;; for even and odd values of Ny, Nz 
+u = u * (Nz-1)/zz                             ;; ok with odd number of elements
+v = v * (Ny-1)/yy
+
+E0ft = fft(myfield, -1, /center, /double)
+
+szi= 30
+syi= 50
+
+sarr= shift(e0ft,szi,syi)
+
+myf1= fft(sarr, 1, /center, /double)     
+
+*self.field= myf1   ;; factor
+
+return 
+end
+;; end mirrort
 
 pro phase::plotamplitude, window=window, _EXTRA=extra
 ;+
