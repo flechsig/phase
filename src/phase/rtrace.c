@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <2014-02-16 19:49:37 flechsig>  */
+/*   Time-stamp: <20 Feb 14 12:29:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -792,9 +792,15 @@ void Slope(struct RayType *ray, double slopew, double slopel, double xlen,
 {
    double wsl, lsl;
 
+   //   printf("debug: call to slope: %f, %f, %f, %f, %f, %f\n", ray->y, ray->z, ray->dy, ray->dz, slopew, slopel);
+
+
    wsl= gauss(slopew)* PI/ 324000.0;	/* 2* PI/(3600.* 180.);       */
    lsl= gauss(slopel)* PI/ 324000.0;    /* 2- da doppelter winkel     */
    /* fallunterscheidung notwendig */
+
+   //  printf("wsl= %f, lsl= %f\n", wsl, lsl);
+
    if ((azimut == 1) || (azimut == 3))  /* horizontale Ablenkung */
    {
      ray->y+= xlen * lsl* cosb;         /* naehere tan(wsl) durch wsl */
@@ -809,6 +815,7 @@ void Slope(struct RayType *ray, double slopew, double slopel, double xlen,
        ray->dy+= wsl; 
        ray->dz+= lsl * cosb; 
      }
+   //  printf("debug: return from slope: %f, %f, %f, %f\n", ray->y, ray->z, ray->dy, ray->dz);
 } /* end slope */
 
 
