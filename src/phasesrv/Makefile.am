@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <24 Jun 13 18:24:18 flechsig> 
+#  Time-stamp: <21 Feb 14 16:22:00 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -25,8 +25,8 @@ phasesrv_SOURCES = \
 	../phase/replace_wl_in_u.F ../phase/replace_wl_in_ypzp.F \
 	../phase/taylor-ops.for \
 	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
-        ../phase/posrc.c ../phase/posrc.h
-
+        ../phase/posrc.c ../phase/posrc.h \
+	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h
 
 ##dummy_DATA = \
 ##	configwindow.cpp configwindow.h \

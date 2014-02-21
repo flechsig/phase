@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <19 Feb 14 09:47:38 flechsig>  */
+/*  Time-stamp: <21 Feb 14 16:33:31 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -26,6 +26,7 @@
 #include "posrc.h"
 #include "rtrace.h"
 #include "common.h"
+#include "spa_3rd_order.h"
 
 #ifdef HAVE_HDF5
    #include "hdf5.h"
@@ -43,6 +44,11 @@ void posrc_construct(struct BeamlineType *bl)
 void posrc_ini(struct BeamlineType *bl)
 {
   int type;
+
+  if (bl->spa3table == NULL) spa3TableInit(bl);
+#ifdef DEBUG
+  spa3TableTest(bl);
+#endif
 
   type= bl->src.isrctype;
 
