@@ -1,6 +1,7 @@
 #_Spa3TableType 20140222
 # N=  20001
 # dx= 1e-3
+# file: ${PHASE_HOME}/share/phase/spa3table.tab
 # equidistant table 0...(N-1)*dx
 # \int_{-inf}^{inf}cos(x^3)*cos(b*x^2) dx, \int_{-inf}^{inf}cos(x^3)*sin(b*x^2) dx
 # (any number of comment lines may follow)
