@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/spa_3rd_order.c */
  /* Date      : <21 Feb 14 14:33:47 flechsig>  */
- /* Time-stamp: <21 Feb 14 18:06:49 flechsig>  */
+ /* Time-stamp: <24 Feb 14 15:25:25 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -47,8 +47,8 @@ void spa_3rd_order_(double *x, double *y1, double *y2, int *bli)
 
   bl= (struct BeamlineType *)bli;
   
-  yt1= &bl->spa3table[0];
-  yt2= &bl->spa3table[NSPA3RDORDER];
+  yt1= &bl->spa3table.tab[0];
+  yt2= &bl->spa3table.tab[bl->spa3table.datapoints];
 
   if ((*x < 0) || (*x > 20))
     {
@@ -59,7 +59,7 @@ void spa_3rd_order_(double *x, double *y1, double *y2, int *bli)
 
   idx= (unsigned int) (*x/1e-3);
   
-  if (idx < (NSPA3RDORDER-1))
+  if (idx < (bl->spa3table.datapoints-1))
     {
       weight= *x * 1e3 - (double)idx;                                /* (*x- idx* 1e-3)/ 1e-3; */
       *y1= weight* yt1[idx] + (1.0- weight)* yt1[idx+1];
@@ -67,17 +67,17 @@ void spa_3rd_order_(double *x, double *y1, double *y2, int *bli)
       //printf("weight: %f, idx= %d\n", weight, idx);
     } else
     {
-      *y1= yt1[NSPA3RDORDER-1];
-      *y2= yt2[NSPA3RDORDER-1];
+      *y1= yt1[bl->spa3table.datapoints- 1];
+      *y2= yt2[bl->spa3table.datapoints- 1];
     }
 } /* end spa_3rd_order_ */
 
 void spa3TableInit(struct BeamlineType *bl)
 {
-  double *yt1, *yt2;
-  FILE *f;
-  int i;
-  char buffer[MaxPathLength], *phase_home, *fname, *ch;
+  double *yt1, *yt2, dx;
+  FILE   *f;
+  int    i, version, datapoints;
+  char   buffer[MaxPathLength], *phase_home, *ch;
 
   if ((phase_home = getenv(PHASE_HOME)) == NULL)
     {
@@ -87,32 +87,47 @@ void spa3TableInit(struct BeamlineType *bl)
 
   snprintf(buffer, (MaxPathLength-1), "%s/share/phase/spa3table.tab", phase_home);
   printf("read sp3table: %s\n", buffer);
-
-  bl->spa3table= XMALLOC(double, 2* NSPA3RDORDER);
-  yt1= bl->spa3table;
-  yt2= &bl->spa3table[NSPA3RDORDER];
-
-  fname= buffer;
-  if ((f= fopen(fname, "r")) == NULL)
-   {
-      fprintf(stderr, "fatal Error: read %s\n", fname);
-      exit(-1);
-   } 
   
-  /* hier kommt das einlesen */
-  for (i= 0; i < NSPA3RDORDER; i++) 
+  if ((f= fopen(buffer, "r")) == NULL)
+    {
+      fprintf(stderr, "fatal Error: read %s\n", buffer);
+      exit(-1);
+    } 
+  
+  if( CheckFileHeader(f, (Spa3FileHeader), &version) != 0)
+    {
+      fprintf(stderr, "error: file: %s has not the right file header (required is: %s)- exit()\n", buffer, Spa3FileHeader);
+      exit(-1);
+    }
+  
+  fgets(buffer, MaxPathLength, f); sscanf(buffer, "# N= %d",   &bl->spa3table.datapoints);
+  fgets(buffer, MaxPathLength, f); sscanf(buffer, "# dx= %le", &bl->spa3table.dx);
+  
+  bl->spa3table.tab= XMALLOC(double, 2* bl->spa3table.datapoints);
+  yt1= bl->spa3table.tab;
+  yt2= &bl->spa3table.tab[bl->spa3table.datapoints];
+
+  i= 0;    /* hier kommt das einlesen */
+  while ((i < bl->spa3table.datapoints) && !feof(f)) 
     {
       fgets(buffer, MaxPathLength, f);
-      sscanf(buffer, "%le %le", &yt1[i], &yt2[i]);
+      if (*buffer != '#')
+	{
+	  sscanf(buffer, "%le %le", &yt1[i], &yt2[i]);
+	  i++;
+	}
     }
 
+  if (i != bl->spa3table.datapoints) printf("!! warning: inconsistent table !!\n");
+  printf("spa3TableInit->read: %d points out of %d, dx= %g\n", i, bl->spa3table.datapoints, bl->spa3table.dx);
+ 
   fclose(f);
 } /* spa3TableInit */
 
 /* free pointer */
 void spa3TableFree(struct BeamlineType *bl)
 {
-  XFREE(bl->spa3table);
+  XFREE(bl->spa3table.tab);
 } /* end spa3TableFree */
 
 /* test for debugging */

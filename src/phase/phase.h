@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <21 Feb 14 15:38:54 flechsig>  */
+/*   Time-stamp: <24 Feb 14 15:01:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -310,6 +310,12 @@ struct PSDType  {
 struct RESULTType {
   void *RESp;         
   int  typ, points1, points2, dim1; 
+};  
+
+struct Spa3TableType {
+  int    datapoints;
+  double dx;
+  double *tab;
 };       
 
 struct datset 
@@ -397,7 +403,7 @@ struct BeamlineType
   struct source4c posrc;   /* 120423 */
   struct TmpMapType *tp;
   struct PHASEset filenames;
-  double *spa3table;
+  struct Spa3TableType spa3table;
 };
 
 /* mod 20121102 */
