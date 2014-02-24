@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/spa_3rd_order.c */
  /* Date      : <21 Feb 14 14:33:47 flechsig>  */
- /* Time-stamp: <24 Feb 14 15:25:25 flechsig>  */
+ /* Time-stamp: <24 Feb 14 15:32:49 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -37,7 +37,7 @@ Bereich der b-Werte ist: 0 bis 20, Abstand der Datenpunkte 0.001 (also 20.001 Da
 /* underscore for fortran call        */
 void spa_3rd_order_(double *x, double *y1, double *y2, int *bli)
 {
-  double *yt1, *yt2, weight;
+  double *yt1, *yt2, weight, max;
   unsigned int idx;
   struct BeamlineType *bl;
 
@@ -49,15 +49,15 @@ void spa_3rd_order_(double *x, double *y1, double *y2, int *bli)
   
   yt1= &bl->spa3table.tab[0];
   yt2= &bl->spa3table.tab[bl->spa3table.datapoints];
-
-  if ((*x < 0) || (*x > 20))
+  max= bl->spa3table.datapoints* bl->spa3table.dx;
+  if ((*x < 0) || (*x > max))
     {
-      *y1= *y2= 0;
-      printf("warning: %f out of range (0...20)- return, file: %s\n", *x, __FILE__);
+      *y1= *y2= 0;          /* return defined output */
+      printf("warning: %f out of range (0...%g)- return, file: %s\n", *x, max, __FILE__);
       return;           /* oder besser exit ?? */
     }
 
-  idx= (unsigned int) (*x/1e-3);
+  idx= (bl->spa3table.dx > 0) ? (unsigned int)(*x/bl->spa3table.dx) : 0;
   
   if (idx < (bl->spa3table.datapoints-1))
     {
