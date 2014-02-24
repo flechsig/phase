@@ -668,10 +668,14 @@ c  folgenden Ausdruck nur einmal berechnen
 c        write(6,*)' xlenmir === ',xlenmir
 
 c       Konvergenzkriterien, maximale Werte sind:
-        nk=165
-        convlim=5.1d0   
-        if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
+c        nk=165
+c        convlim=5.1d0   
  
+        small_fd1ph=1.d-50
+
+        if(ifl.inorm2.eq.4)convlim=19.999d0
+        if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
+
         if(fd1pha.lt.1.d0-50)then
           w0a=1.0d50                                   ! use only 2nd order
           else
@@ -696,13 +700,15 @@ c       Konvergenzkriterien, maximale Werte sind:
         abar=xw3sign/fd1pha**(1.d0/3.d0)
         bbar=xw2sign*fd1phb*abar**2
 
-c------------- get convlim (can be done on a finer grid in the future)
-        if(dabs(bbar).lt.2.d0)nk=15
-        if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
-        if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
-        if(dabs(bbar).ge.4.d0)nk=165
+c        if(dabs(bbar).gt.19.d0)write(6,*)bbar
 
-        if(dabs(bbar).gt.convlim)then
+c------------- get convlim (can be done on a finer grid in the future)
+c        if(dabs(bbar).lt.2.d0)nk=15
+c        if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
+c        if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
+c        if(dabs(bbar).ge.4.d0)nk=165
+c
+         if(dabs(bbar).gt.convlim)then
 
 c------------- only quadratic terms
 
@@ -711,35 +717,51 @@ c------------- only quadratic terms
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
          if(ifl.inorm2.eq.41)ff=0.d0
+         if(fd1ph.lt.small_fd1ph)ff=0.d0
 
          else
 
 c------------- include 3rd order Term in w
+c        bb(0)=1.d0
+c        do n=1,nk
+c         bb(n)=bb(n-1)*bbar
+c        enddo
+c
+c        sumcos=0.d0
+c        sumsin=0.d0     
+c
+c        nmaxc=2*(nk/2)
+c       nmaxs=2*((nk+1)/2)-1
+c
+c        do n=0,nmaxc,2
+c          sumcos=sumcos+bb(n)*cs.fc(n)     
+c        enddo
+c        do n=1,nmaxs,2
+c          sumsin=sumsin+bb(n)*cs.fs(n)     
+c        enddo
 
-        bb(0)=1.d0
-        do n=1,nk
-         bb(n)=bb(n-1)*bbar
-        enddo
+c-------------- kommen tatsaechlich die gleichen werte raus 
+c       write(6,*)' bbar ',bbar
+c        write(6,*)' sumcos,sumsin ',sumcos,sumsin
+        if(bbar.lt.0.d0)then
+          bbar1=-bbar
+          else
+          bbar1=bbar
+        endif
+        call spa_3rd_order(bbar1,ssin,scos,blp)
+        if(bbar.lt.0.d0)ssin=-ssin
+c        write(6,*)' scos, ssin ',scos,ssin
 
-        sumcos=0.d0
-        sumsin=0.d0     
+c        sumcos=sumcos*abar
+c        sumsin=sumsin*abar
 
-        nmaxc=2*(nk/2)
-        nmaxs=2*((nk+1)/2)-1
-
-        do n=0,nmaxc,2
-          sumcos=sumcos+bb(n)*cs.fc(n)     
-        enddo
-        do n=1,nmaxs,2
-          sumsin=sumsin+bb(n)*cs.fs(n)     
-        enddo
-        sumcos=sumcos*abar
-        sumsin=sumsin*abar
+        sumcos=scos*abar
+        sumsin=ssin*abar
 
         ff=(fdph/dsqrt(fd1ph))*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.42)ff=0.d0
-
+        if(fd1ph.lt.small_fd1ph)ff=0.d0
         endif  ! bbar.lt.convlim
 
         endif  ! inorm2.eq.4
