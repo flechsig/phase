@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2014-02-16 16:31:30 flechsig> 
+//  Time-stamp: <25 Feb 14 15:26:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1306,11 +1306,11 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
       d_plot->setPoData("grsourceAct");
       d_plot->contourPlot();
-      
+      UpdateStatistics(d_plot, "PO Result", 0);
       cout << "plot PO_RESULT experimental end " << endl;
       break;
 
-      case PLOT_PO_SOURCE:
+    case PLOT_PO_SOURCE:
       cout << "plot PO_SOURCE experimental start " << endl;
       cout << "use manual saling " << endl;
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
@@ -1319,7 +1319,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc));
       d_plot->setPoData("PO source");
       d_plot->contourPlot();
-      
+      UpdateStatistics(d_plot, "PO Source", 0);
       cout << "plot PO_SOURCE experimental end " << endl;
       break;
 
@@ -1779,16 +1779,17 @@ void MainWindow::parameterUpdateSlot()
   myparent->writeBackupFile();
 } // end parameterUpdateSlot
 
-// slot goButton
+// slot poButton
 void MainWindow::poButtonslot()
 {
 #ifdef DEBUG
-  cout << "poButtonslot called" << endl;
+  cout << "debug: poButtonslot called" << endl;
 #endif
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 2;
   myparent->myBeamline()->beamlineOK &= ~resultOK;
-  statGroup->hide();
+  // statGroup->hide();
+  statGroup->show();
   dlambdaBox1->setEnabled(false);
   dlambdaBox2->setEnabled(false);
   dislenE->setEnabled(false);

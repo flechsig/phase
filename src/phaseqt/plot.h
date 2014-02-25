@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <09 Jan 14 09:26:38 flechsig>  */
+/*  Time-stamp: <25 Feb 14 14:34:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -76,8 +76,8 @@ public:
     void   hfill2(int);  // GO
     void   hfill2(struct PSDType *);  // PO result
     void   hfill2(struct source4c *); // PO source
-    
-    void   statistics(struct RayType *, int, double, double);
+    void   statistics();              // PO type
+    void   statistics(struct RayType *, int, double, double);  // raytype
     void   contourPlot();
     void   si2by2Plot();
     void   fillData();

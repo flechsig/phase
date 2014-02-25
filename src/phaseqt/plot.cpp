@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <18 Feb 14 10:09:41 flechsig> 
+//  Time-stamp: <25 Feb 14 15:25:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -885,8 +885,6 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 	}
     }
   
-  
-
 #ifdef DEBUG
   printf("debug: hfill1 end\n");
 #endif
@@ -997,10 +995,14 @@ void Plot::hfill2(struct PSDType *rp)
 	h2max= max(h2max, h2a[ix + iy* h2a_nx]);     // save maximum
       }
   
+  statistics();
+
   // scale maximum to 10
   if (h2max > 0.0)
     for (i=0; i< h2a_n; i++)
        h2a[i]*= 10.0/ h2max;
+
+  
 
   //  h2a[0]= 9; // for debugging
   //  h2a[1]= 8;
@@ -1013,7 +1015,7 @@ void Plot::hfill2(struct PSDType *rp)
 // !! source4c uses c memory model 
 void Plot::hfill2(struct source4c *rp)
 {
-  int i, ix, iy, h2a_n, idxc; //, idxf;
+  int i, ix, iy, h2a_n, idxc; 
     
 #ifdef DEBUG
   cout << "Plot::hfill2 called (PO source version)" << endl;
@@ -1033,15 +1035,14 @@ void Plot::hfill2(struct source4c *rp)
   for (ix=0; ix< h2a_nx; ix++)
     for (iy=0; iy< h2a_ny; iy++) 
       {
-	//	idxf= iy + ix* h2a_ny;
-	idxc= ix + iy* h2a_nx;
-	// data kommt im c memory  model
+	idxc= ix + iy* h2a_nx;            // data kommt im c memory  model
 	h2a[idxc]= pow(rp->zeyre[idxc], 2.0)+ pow(rp->zeyim[idxc], 2.0)+ 
 	  pow(rp->zezre[idxc], 2.0)+ pow(rp->zezim[idxc], 2.0);
-	
 	h2max= max(h2max, h2a[idxc]);     // save maximum
       }
   
+statistics();
+
   // scale maximum to 10
   if (h2max > 0.0)
     for (i=0; i< h2a_n; i++)
@@ -1049,6 +1050,9 @@ void Plot::hfill2(struct source4c *rp)
   
   //  h2a[0]= 9; // for debugging
   //  h2a[1]= 8;
+
+  
+
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
@@ -1063,7 +1067,61 @@ void Plot::hfill2(struct source4c *rp)
 //
 //}
 
-// calculate statistics of an array of rays
+// Plot::statistics po type
+void Plot::statistics()
+{
+  double fwhmfac;
+  int idxc, ix, iy, h2a_n;
+
+#ifdef DEBUG
+  cout << "debug: Plot::statistics (PO) called" << endl;
+#endif
+
+  fwhmfac= 2.0* sqrt(2.0 * log(2.0));
+  cz= cy= wz= wy= cdz= cdy= wdz= wdy= ry= rz= 0.0;
+  h2a_n= h2a_nx * h2a_ny;
+
+  // we expect to have filled pox, poy, h2a, h2a_nx, h2a_ny
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	idxc= ix + iy* h2a_nx;            // data kommt im c memory  model
+	cz += pox[ix]* h2a[idxc];
+	cy += poy[iy]* h2a[idxc];
+        wz += pow((pox[ix]* h2a[idxc]), 2);
+	wy += pow((poy[iy]* h2a[idxc]), 2);
+      }
+
+  if (h2a_n > 0)
+    {
+      cz/= (double)h2a_n;
+      cy/= (double)h2a_n;
+      wz = 1.0/(double)h2a_n * sqrt(wz - pow(cz,2));
+      wz = 1.0/(double)h2a_n * sqrt(wy - pow(cy,2));
+    }
+  //for (i=0; i< points; i++, rp++)
+  //   {
+  //     cz += rp->z;
+  //     cy += rp->y;
+  //     cdz+= rp->dz;
+  //     cdy+= rp->dy;
+  //    wz += rp->z * rp->z;
+  //    wy += rp->y * rp->y;
+  //   wdz+= rp->dz* rp->dz;
+  //    wdy+= rp->dy* rp->dy;
+  //  }
+
+  if (fwhmon)
+    {
+      wz *= fwhmfac;
+      wy *= fwhmfac;
+      wdz*= fwhmfac;
+      wdy*= fwhmfac;
+    }
+
+} // Plot::statistics po type
+
+// calculate statistics of an array of rays, raytype
 void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor, double lambda)
 {
   int i;
@@ -1071,7 +1129,8 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
   double fwhmfac;
 
 #ifdef DEBUG1  
-  cout << "debug: " << __FILE__ << " statistics called, fwhmon=" << fwhmon << ", deltalambdafactor=" << deltalambdafactor << ", lambda=" << lambda << endl;
+  cout << "debug: " << __FILE__ << " statistics called, fwhmon=" << fwhmon << ", deltalambdafactor=" 
+       << deltalambdafactor << ", lambda=" << lambda << endl;
   // printf("debug: statistics called, fwhmon= %d", fwhmon);
 #endif
 

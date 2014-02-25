@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2014-02-16 20:23:26 flechsig> 
+//  Time-stamp: <25 Feb 14 15:17:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2377,15 +2377,18 @@ void MainWindow::UpdateSourceBox()
     }
 } // end UpdateSourceBox
 
-// update the statistics in graphic box
+// update the statistics in graphic box, ray version
 void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double trans;
   QString qst;
 
-  trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
-    (double)myparent->myBeamline()->RESULT.points1/ 
-    (double)myparent->myBeamline()->RTSource.raynumber : -1.0;
+  if (rays > 0)   // po version
+    trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
+	(double)myparent->myBeamline()->RESULT.points1/ 
+	(double)myparent->myBeamline()->RTSource.raynumber : -1.0;
+  else
+    trans= 0.0;
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
   czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>");
