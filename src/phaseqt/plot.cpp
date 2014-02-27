@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <25 Feb 14 15:25:56 flechsig> 
+//  Time-stamp: <27 Feb 14 16:05:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1070,7 +1070,7 @@ statistics();
 // Plot::statistics po type
 void Plot::statistics()
 {
-  double fwhmfac;
+  double fwhmfac, tt;
   int idxc, ix, iy, h2a_n;
 
 #ifdef DEBUG
@@ -1078,7 +1078,7 @@ void Plot::statistics()
 #endif
 
   fwhmfac= 2.0* sqrt(2.0 * log(2.0));
-  cz= cy= wz= wy= cdz= cdy= wdz= wdy= ry= rz= 0.0;
+  cz= cy= wz= wy= cdz= cdy= wdz= wdy= ry= rz= tt= 0.0;
   h2a_n= h2a_nx * h2a_ny;
 
   // we expect to have filled pox, poy, h2a, h2a_nx, h2a_ny
@@ -1086,31 +1086,26 @@ void Plot::statistics()
     for (iy=0; iy< h2a_ny; iy++) 
       {
 	idxc= ix + iy* h2a_nx;            // data kommt im c memory  model
+	tt += h2a[idxc];                  // total
 	cz += pox[ix]* h2a[idxc];
 	cy += poy[iy]* h2a[idxc];
-        wz += pow((pox[ix]* h2a[idxc]), 2);
-	wy += pow((poy[iy]* h2a[idxc]), 2);
+        wz += h2a[idxc]* pow(pox[ix], 2);
+	wy += h2a[idxc]* pow(poy[iy], 2);
       }
 
-  if (h2a_n > 0)
+  if (fabs(tt) > ZERO)
     {
-      cz/= (double)h2a_n;
-      cy/= (double)h2a_n;
-      wz = 1.0/(double)h2a_n * sqrt(wz - pow(cz,2));
-      wz = 1.0/(double)h2a_n * sqrt(wy - pow(cy,2));
+      cz/= tt;
+      cy/= tt;
+      wz = sqrt(wz/tt - pow(cz,2));
+      wy = sqrt(wy/tt - pow(cy,2));
     }
-  //for (i=0; i< points; i++, rp++)
-  //   {
-  //     cz += rp->z;
-  //     cy += rp->y;
-  //     cdz+= rp->dz;
-  //     cdy+= rp->dy;
-  //    wz += rp->z * rp->z;
-  //    wy += rp->y * rp->y;
-  //   wdz+= rp->dz* rp->dz;
-  //    wdy+= rp->dy* rp->dy;
-  //  }
 
+  if (cz < 1e-3) cz= 0.0;
+  if (cy < 1e-3) cy= 0.0;
+  if (wz < 1e-3) wz= 0.0;
+  if (wy < 1e-3) wy= 0.0;
+  
   if (fwhmon)
     {
       wz *= fwhmfac;

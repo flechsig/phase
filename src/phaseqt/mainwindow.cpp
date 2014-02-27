@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <25 Feb 14 15:17:58 flechsig> 
+//  Time-stamp: <27 Feb 14 16:22:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -191,9 +191,9 @@ void MainWindow::createActions()
     signalMapper->setMapping(fresnelAct, QString("fresnelAct"));
     connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    fourierAct = new QAction(QIcon(":/images/Blue-darrow-32.png"),tr("PO Fourier (exp)"), this);
+    fourierAct = new QAction(QIcon(":/images/Blue-darrow-32.png"),tr("PO Fourier"), this);
     //fourierAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fourier (exp)"), this);
-    fourierAct->setStatusTip(tr("Fourier Propagation (exp)"));
+    fourierAct->setStatusTip(tr("Fourier Propagation"));
     signalMapper->setMapping(fourierAct, QString("fourierAct"));
     connect(fourierAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -2382,6 +2382,10 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double trans;
   QString qst;
+
+#ifdef DEBUG
+  cout << "debug: UpdateStatistics called" << endl;
+#endif
 
   if (rays > 0)   // po version
     trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
