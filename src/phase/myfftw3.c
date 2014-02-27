@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <18 Feb 14 11:50:35 flechsig>  */
+ /* Time-stamp: <27 Feb 14 17:11:31 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -261,8 +261,8 @@ void drift_fresnel(struct BeamlineType *bl)
       }
   
   printf("fftw3 fill vectors\n");
-  for (row= 0; row < rows; row++) psd->y[row]= bl->BLOptions.lambda*driftlen*so4->gridy[row]/(rows* pow((dy0/rows), 2.0));
-  for (col= 0; col < cols; col++) psd->z[col]= bl->BLOptions.lambda*driftlen*so4->gridx[col]/(cols* pow((dz0/cols), 2.0));
+  for (row= 0; row < rows; row++) psd->y[row]= bl->BLOptions.lambda*driftlen*so4->gridy[row]/(rows* pow(dy0, 2.0));
+  for (col= 0; col < cols; col++) psd->z[col]= bl->BLOptions.lambda*driftlen*so4->gridx[col]/(cols* pow(dz0, 2.0));
 
   printf("fftw3 fill psd\n");
   psdfields2intensity(psd, rows, cols);
