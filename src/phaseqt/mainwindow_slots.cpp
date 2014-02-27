@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <25 Feb 14 15:26:58 flechsig> 
+//  Time-stamp: <27 Feb 14 16:54:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -278,7 +278,17 @@ void MainWindow::activateProc(const QString &action)
 #ifdef DEBUG
       cout << "debug: fresnelAct button pressed" << endl;
 #endif
+      if (elementListIsEmpty()) return;
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->myposrc_ini();
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
       myparent->mydrift_fresnel();
+      myparent->myBeamline()->beamlineOK |= resultOK;
+      UpdateStatus();
     }
 
 if (!action.compare("fourierAct")) 
@@ -286,7 +296,18 @@ if (!action.compare("fourierAct"))
 #ifdef DEBUG
       cout << "debug: fourierAct button pressed" << endl;
 #endif
+
+      if (elementListIsEmpty()) return;
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->myposrc_ini();
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
       myparent->mydrift_fourier();
+      myparent->myBeamline()->beamlineOK |= resultOK;
+      UpdateStatus();
     }
   
   if (!action.compare("singleRayAct")) 
