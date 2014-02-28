@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <27 Feb 14 16:22:32 flechsig> 
+//  Time-stamp: <28 Feb 14 15:09:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1874,7 +1874,7 @@ void MainWindow::UpdateBeamlineBox()
     {
       poButton->setChecked(true);
       dislenE->setEnabled(false);
-      statGroup->hide();
+      // statGroup->hide();
     }
 
   if (blo->WithAlign) misaliBox->setChecked(true);         else misaliBox->setChecked(false);
@@ -2377,22 +2377,23 @@ void MainWindow::UpdateSourceBox()
     }
 } // end UpdateSourceBox
 
-// update the statistics in graphic box, ray version
+// update the statistics in graphic box, ray version if rays > 0
 void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double trans;
   QString qst;
+  int     po;
 
 #ifdef DEBUG
   cout << "debug: UpdateStatistics called" << endl;
 #endif
 
-  if (rays > 0)   // po version
-    trans= (myparent->myBeamline()->RTSource.raynumber > 0) ? 
-	(double)myparent->myBeamline()->RESULT.points1/ 
-	(double)myparent->myBeamline()->RTSource.raynumber : -1.0;
-  else
-    trans= 0.0;
+  po= (rays == 0) ? 1 : 0;
+
+  trans= po ? 0 : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 
+		   (double)myparent->myBeamline()->RESULT.points1/ 
+		   (double)myparent->myBeamline()->RTSource.raynumber : -1.0);
+  
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
   czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>");
@@ -2400,16 +2401,30 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>");
   wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	
 
-  cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
-  cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
-  wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 4)+ "</FONT>");	
-  wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 4)+ "</FONT>");
-  
-  rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
-  traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
-  
-  rzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
-  ryLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
+  if ( !po )
+    {
+      cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
+      cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
+      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 4)+ "</FONT>");	
+      wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 4)+ "</FONT>");
+      
+      rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
+      traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
+      
+      rzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
+      ryLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
+    }
+  else // in po mode we do not print the undefined values 
+    {
+      cdzLabel->setText("");	
+      cdyLabel->setText("");
+      wdzLabel->setText("");	
+      wdyLabel->setText("");
+      rayLabel->setText("");
+      traLabel->setText("");
+      rzLabel->setText("");    
+      ryLabel->setText("");
+    }
 
   if (pp->fwhmon)
     {
@@ -2424,6 +2439,13 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       wyLabel0->setText(QString(tr("y RMS (mm)")));
       wdzLabel0->setText(QString(tr("dz RMS (mm)")));
       wdyLabel0->setText(QString(tr("dy RMS (mm)")));
+    }
+
+  if (po) 
+    {
+      wdzLabel0->setText(QString(tr("maximimum")));
+      wdyLabel0->setText(QString(tr("")));
+      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max, 'g', 4)+ "</FONT>");
     }
 } // UpdateStatistics
 

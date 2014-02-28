@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <27 Feb 14 16:54:08 flechsig> 
+//  Time-stamp: <28 Feb 14 16:30:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -72,8 +72,7 @@ void MainWindow::activateProc(const QString &action)
   QEventLoop q;
 
 #ifdef DEBUG
-  //  cout << "debug: " << __FILE__ << " MainWindow::activateProc: (old) mwplotsubject: " << mwplotsubject << endl;
-  cout << "debug: " << __FILE__ << " MainWindow::activateProc called " << endl;
+  cout << "debug: " << __FILE__ << " MainWindow::activateProc called with action: " << qPrintable(action) << endl;
 #endif
   
   if (action.isEmpty())
@@ -249,14 +248,14 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myRayTraceFull();
 	}
 
-      printf("full ray trace-> done\n");
+      cout << "full ray trace-> done" << endl;
       statusBar()->showMessage(tr("full ray trace-> done!"), 4000);
 
     } /* full ray trace */
 
   if (!action.compare("footprintAct")) 
     { 
-      printf("\nfootprintAct button  pressed\n");
+      cout << "footprintAct button  pressed" << endl;
       if (elementListIsEmpty())
 	return;
       if (elementListNotSelected())
@@ -312,7 +311,7 @@ if (!action.compare("fourierAct"))
   
   if (!action.compare("singleRayAct")) 
     { 
-      printf("singleRayAct button pressed\n");
+      cout << "singleRayAct button pressed" << endl;
       if (elementListIsEmpty())
 	return;
       if (!s_ray) 
@@ -424,7 +423,7 @@ if (!action.compare("fourierAct"))
       if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
 	  (myparent->myBeamline()->position != 0))
 	{
-	  printf("write map of element %d to file\n", myparent->myBeamline()->position); 
+	  cout << "write map of element " << myparent->myBeamline()->position << " to file" << endl;
 
 	  snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d%d", 
 		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->position, 
@@ -446,7 +445,7 @@ if (!action.compare("fourierAct"))
       
       //  else wir schreiben hier immer beides
 	{ 
-	  printf("write map of beamline to file\n"); 
+	  cout << "write map of beamline to file" << endl; 
 
 	  snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
 		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
@@ -464,7 +463,7 @@ if (!action.compare("fourierAct"))
 
   if (!action.compare("writematAct")) 
     { 
-      printf("writematAct button pressed\n");
+      cout << "writematAct button pressed" << endl;
       if (elementListIsEmpty())
 	return;
       if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
@@ -598,6 +597,7 @@ if (!action.compare("fourierAct"))
       d_plot->showSpectrogram(true);
       d_plot->showContour(true);
     } 
+
   if (!action.compare("grisoAct")) 
     { 
       mwplotstyle= PLOT_ISO;
@@ -1164,6 +1164,12 @@ void MainWindow::grapplyslot()
 #endif
 
   // (1) a few tests
+
+  if ((mwplotsubject & PLOT_PO_SOURCE) && !(myparent->myBeamline()->beamlineOK & pstsourceOK))
+    {
+      QMessageBox::warning(this, tr("grapplyslot"), tr("No valid PO source available"));
+      return;
+    }
   
   if ((mwplotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
     {
@@ -1409,6 +1415,13 @@ void MainWindow::grautoscaleslot()
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid GO results available"));
       return;
     }
+
+  if ((mwplotsubject & PLOT_PO_SOURCE) && !(myparent->myBeamline()->beamlineOK & pstsourceOK))
+    {
+      QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid PO source available"));
+      return;
+    }
+
   // tests done 
 
   d_plot->setPlotSubject(mwplotsubject);
