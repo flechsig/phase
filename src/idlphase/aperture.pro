@@ -290,7 +290,7 @@ for i=0, nz-1 do begin
         case type of
 
             1 : begin                                  ;; rectangular 
-               if ((abs(z_vec[i]- h0) le P1half) and (abs(y_vec[j]- v0) le P2half)) then T[i,j]= double(10.0)
+               if ((abs(z_vec[i]- h0) le P1half) and (abs(y_vec[j]- v0) le P2half)) then T[i,j]= double(1.0)
             end
             
             2 : begin                                 ;; vertical slit
@@ -438,7 +438,7 @@ if use_struct eq 1 then begin
     print, 'fill emfield structure'
 endif
 
-print, 'aperture end'
+print, 'aperture End'
 return
 end
 ;; end
