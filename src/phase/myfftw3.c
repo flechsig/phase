@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <28 Feb 14 17:09:52 flechsig>  */
+ /* Time-stamp: <2014-03-02 18:56:35 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -55,12 +55,15 @@ void drift_fourier(struct BeamlineType *bl)
   driftlen= el->GDat.r+ el->GDat.rp;
   lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
-  p0 = driftlen / lambda;
+  p0 = driftlen/ lambda;
   dz0= so4->dx;
   dy0= so4->dy;
 
-  for (col= 0; col < cols; col++) u[col]= (col /(cols- 1.0)- 0.5) *  (cols- 1.0)/ (so4->gridx[cols-1]- so4->gridx[0]);
-  for (row= 0; row < rows; row++) v[row]= (row /(rows- 1.0)- 0.5) *  (rows- 1.0)/ (so4->gridy[rows-1]- so4->gridy[0]);
+  // fill frequency vectors
+  for (col= 0; col< cols; col++) 
+    u[col]= (col/ (cols- 1.0)- 0.5)* (cols- 1.0)/ (so4->gridx[cols-1]- so4->gridx[0]);
+  for (row= 0; row< rows; row++) 
+    v[row]= (row/ (rows- 1.0)- 0.5)* (rows- 1.0)/ (so4->gridy[rows-1]- so4->gridy[0]);
   
   printf("drift_fourier called, drift= %f mm, file= %s\n", driftlen, __FILE__);
 
@@ -73,6 +76,8 @@ void drift_fourier(struct BeamlineType *bl)
   //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
 
   printf("fftw3 fill arrays for Ez\n");
+
+  //  drift_fourier_sub(in, so4->zezre, so4->zezim, rows, cols);
   fill_fftw(in, so4->zezre, so4->zezim, rows, cols);
  
   printf("fftw3 forward execute Ez\n");
@@ -175,6 +180,49 @@ void drift_fourier(struct BeamlineType *bl)
   XFREE(v);
   printf("drift_fourier end\n");
 } /* drift fourier */
+
+/* one polarization     */
+/* re0, im0 -> re1, im1 */
+void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw_plan *p2p, 
+		       double *re0, double *im0, double *re1, double *im1, int rows, int cols, 
+		       double *u, double *v, double lambda, double k, double driftlen)
+{
+  int    row, col, idxc;
+  double ampf, phaf, arg;
+
+  fill_fftw(in, re0, im0, rows, cols);
+  fftw_execute(*p1p);                    // forward fft
+  fftshift(out, rows, cols);             // center
+
+  for (row= 0; row< rows; row++)         // apply drift in frequency space
+    for (col= 0; col< cols; col++)
+      {
+	idxc= row* cols+ col;
+	ampf= sqrt(pow(out[idxc][0], 2)+ pow(out[idxc][1], 2)); // fft amplitude output
+	phaf= atan2(out[idxc][1], out[idxc][0]);                // fft phase output
+	arg= 1.0- pow((u[col]* lambda), 2)- pow((v[row]* lambda), 2); // driftlen
+	if (arg > 0.0) 
+	  {
+	    arg= sqrt(arg);
+	    //pha= ((driftlen *(arg - 1.0) ) % bl->BLOptions.lambda ) * k + p0  * k; // more accurate
+	    pha= k* driftlen* arg;  // textbook
+	  }
+	else
+	  {
+	    printf("evanescent waves\n");
+	    arg= sqrt(-1.0* arg);
+	    pha= -1.0 * k * driftlen* arg;
+	  } // end evanescent wave test
+	amp= ampf;
+	pha= pha+ phaf;
+	in[idxc][0]= amp* cos(pha);   // fill input fields again
+	in[idxc][1]= amp* sin(pha);   // fill input fields again
+      } // end forward
+  // end for loops
+
+  fftw_execute(*p2p); // backward fft
+  get_fftw(out, re1, im1, rows, cols);
+} /* drift_fourier_sub */
 
 /* free space propagation with Fresnel propagator              */
 /* UF 28.2.14 fehlt denke ich noch eine phasen faktor nach fft */
