@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <28 Feb 14 15:09:10 flechsig> 
+//  Time-stamp: <03 Mar 14 09:09:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2401,7 +2401,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>");
   wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	
 
-  if ( !po )
+  if ( !po )  // go
     {
       cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
       cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
@@ -2444,8 +2444,9 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   if (po) 
     {
       wdzLabel0->setText(QString(tr("maximimum")));
-      wdyLabel0->setText(QString(tr("")));
+      wdyLabel0->setText(QString(tr("total")));
       wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max, 'g', 4)+ "</FONT>");
+      wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");
     }
 } // UpdateStatistics
 
