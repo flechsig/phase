@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <27 Feb 14 16:05:36 flechsig> 
+//  Time-stamp: <03 Mar 14 09:10:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1070,7 +1070,7 @@ statistics();
 // Plot::statistics po type
 void Plot::statistics()
 {
-  double fwhmfac, tt;
+  double fwhmfac;
   int idxc, ix, iy, h2a_n;
 
 #ifdef DEBUG
