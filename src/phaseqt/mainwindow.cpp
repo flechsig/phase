@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Mar 14 17:41:46 flechsig> 
+//  Time-stamp: <03 Mar 14 17:51:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2430,15 +2430,15 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     {
       wzLabel0->setText(QString(tr("z FWHM (mm)")));
       wyLabel0->setText(QString(tr("y FWHM (mm)")));
-      wdzLabel0->setText(QString(tr("dz FWHM (mm)")));
-      wdyLabel0->setText(QString(tr("dy FWHM (mm)")));
+      wdzLabel0->setText(QString(tr("dz FWHM (mrad)")));
+      wdyLabel0->setText(QString(tr("dy FWHM (mrad)")));
     } 
   else
     {
       wzLabel0->setText(QString(tr("z RMS (mm)")));
       wyLabel0->setText(QString(tr("y RMS (mm)")));
-      wdzLabel0->setText(QString(tr("dz RMS (mm)")));
-      wdyLabel0->setText(QString(tr("dy RMS (mm)")));
+      wdzLabel0->setText(QString(tr("dz RMS (mrad)")));
+      wdyLabel0->setText(QString(tr("dy RMS (mrad)")));
     }
 
   if (po) 
@@ -2453,8 +2453,8 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     }
   else
     {
-      wdzLabel0->setStatusTip(tr("??"));
-      wdyLabel0->setStatusTip(tr("??"));
+      wdzLabel0->setStatusTip(tr("horizontal divergence"));
+      wdyLabel0->setStatusTip(tr("vertical divergence"));
     }
 } // UpdateStatistics
 
