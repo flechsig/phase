@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <03 Mar 14 12:06:22 flechsig>  */
+ /* Time-stamp: <03 Mar 14 17:24:08 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -109,7 +109,9 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 		       double *u, double *v, double lambda, double k, double driftlen, double p0)
 {
   int    row, col, idxc;
-  double amp0, pha0, arg, amp1, pha1;
+  double amp0, pha0, arg, amp1, pha1, fftwscale;
+
+  fftwscale= 1.0/ (rows * cols);
 
   fill_fftw(in, re0, im0, rows, cols);
 
@@ -120,10 +122,15 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
   fftw_execute(*p1p);                    // forward fft
   fftshift(out, rows, cols);             // center
 
+  // UF Mar 14 soweit ich fftw getestet habe muss nur 1 x scaliert werden (hin oder rueck) 
+  // testprogramm fftw2 - scaliere den output- testergebnis ist korrekt
+
   for (row= 0; row< rows; row++)         // apply drift in frequency space
     for (col= 0; col< cols; col++)
       {
 	idxc= row* cols+ col;
+	//out[idxc][0]*= fftwscale;       // fftw output is not normalized
+	//out[idxc][1]*= fftwscale;       // fftw output is not normalized
 	amp0= sqrt(pow(out[idxc][0], 2)+ pow(out[idxc][1], 2));       // fft amplitude output
 	pha0= atan2(out[idxc][1], out[idxc][0]);                      // fft phase output
 	arg= 1.0- pow((u[col]* lambda), 2)- pow((v[row]* lambda), 2); // driftlen
@@ -151,7 +158,8 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 #endif  
 
   fftw_execute(*p2p); // backward fft
-  get_fftw(out, re1, im1, rows, cols);
+  
+  get_fftw(out, re1, im1, rows, cols, fftwscale);
 } /* drift_fourier_sub */
 
 /* free space propagation with Fresnel propagator              */
@@ -227,7 +235,9 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 		      double lambda, double k, double driftlen, double p0)
 {
   int row, col, idxc, idxf;
-  double amp0, pha0, amp1, pha1, pha2, pha;
+  double amp0, pha0, amp1, pha1, pha2, pha, fftwscale;
+
+  fftwscale= 1.0/ (rows * cols);
 
 printf("fftw3 fill arrays \n");
   // we  fill "in" manually 
@@ -254,7 +264,9 @@ printf("fftw3 fill arrays \n");
       {
 	idxc= row* cols+ col;
 	idxf= col* rows+ row;
-	amp0= sqrt(pow(out[idxc][0], 2.0)+ pow(out[idxc][1],2));              // fft amplitude
+	out[idxc][0]*= fftwscale;       // fftw output is not normalized
+	out[idxc][1]*= fftwscale;       // fftw output is not normalized
+	amp0= sqrt(pow(out[idxc][0], 2)+ pow(out[idxc][1], 2));              // fft amplitude
 	pha0= atan2(out[idxc][1], out[idxc][0]);                              // fft phase
 
 	pha1= k* (pow(v1[row], 2) + pow(u1[col], 2))/ (2.0* driftlen);  // fresnel phase
@@ -317,7 +329,7 @@ void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
       }
 } /* end fill_fftw */
 
-void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols)
+void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, double scale)
 {
   int row, col, idxf, idxc;
   for (row= 0; row < rows; row++)
@@ -325,8 +337,8 @@ void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols)
       {
 	idxc= row* cols+ col;
 	idxf= col* rows+ row;
-	re[idxf]= out[idxc][0];
-	im[idxf]= out[idxc][1];
+	re[idxf]= out[idxc][0]* scale;
+	im[idxf]= out[idxc][1]* scale;
       }
 } /* end get_fftw */
 
