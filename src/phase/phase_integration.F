@@ -485,7 +485,7 @@ c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
 c*************************************************************
 	implicit real*8(a-h,o-z)
 c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
-        complex*16 fwerty,ff,eycpl,ezcpl
+        complex*16 fwerty,ff,ff1,eycpl,ezcpl
         integer blp
 
 #include '../phase/phase_struct.F'
@@ -600,7 +600,8 @@ c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on
 
 c----------------------------------------
 
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.(src.isrctype.eq.7))then
+	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
+     &     (src.isrctype.eq.7))then
 
 c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
 c	 wird nicht in phase_integration gesetzt, da hier nicht 
@@ -627,9 +628,11 @@ c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 
 c        Varianten von inorm2 = 4
-c        inorm2 = 40: alle Terme werden mit alter Methode berechnet (convlim=1.0d-50)
-c        inorm2 = 41: Beschränkung auf neue Terme
-c        inorm2 = 42: Beschränkung auf alte Terme 
+c        inorm2 = 40: alle Terme quadratisch berechnet (convlim=1.0d-50)
+c        inorm2 = 41: Berücksichtigung nur der Terme, die kubischen Beitrag haben
+c        inorm2 = 42: Berücksichtigung nur der quadratischen Terme 
+c        inorm2 = 43: Isabelles Formeln, komplett
+c        inorm2 = 44: Isabelles Formeln, aber beschränkt auf quadratische Terme
 	 
 c---------------------------------------------------------------------
 
@@ -640,13 +643,28 @@ c---------------------------------------------------------------------
         if(ifl.inorm2.eq.21)then
           ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb)))
         endif
+
         if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
+
+c------------------ nur quadratische Terme 
         if(ifl.inorm2.eq.31)then
-          ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb-fd1ph*fd1ph)))
+          arg=fd1pha*fd1phb-fd1ph*fd1ph
+          ff=fdph/(g.xlam*dsqrt(dabs(arg)))
+          ff1=1.d0
+          if(fd1pha+fd1phb.lt.0.d0)then
+           if(arg.ge.0.d0)then
+            ff1=-1.d0
+            else
+            ff1=cs.sqrtm1
+           endif
+          endif
+          ff=ff*ff1
         endif
+c------------------ Ende quadratische Terme
 
         if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
-     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42))then
+     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
+     &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44))then
 
 c       fd1pha is 3rd order, 
 c       fd1phb is 2nd order term in w     
@@ -666,15 +684,14 @@ c  folgenden Ausdruck nur einmal berechnen
      &               dabs(xi.zmin),dabs(xi.zmax))
         xlenmir=2.d0*g.rp*(dtan(divmax)/g.cosb)
 c        write(6,*)' xlenmir === ',xlenmir
-
-c       Konvergenzkriterien, maximale Werte sind:
-c        nk=165
-c        convlim=5.1d0   
  
         small_fd1ph=1.d-50
 
-        if(ifl.inorm2.eq.4)convlim=19.999d0
+        if((ifl.inorm2.eq.4).or.
+     &     (ifl.inorm2.eq.41))convlim=19.9d0
         if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
+        if((ifl.inorm2.eq.43).or.
+     &     (ifl.inorm2.eq.44))convlim=5.1d0
 
         if(fd1pha.lt.1.d0-50)then
           w0a=1.0d50                                   ! use only 2nd order
@@ -691,58 +708,36 @@ c        convlim=5.1d0
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
         fact1=fact*2.0d0   
         fact2=fact1*((2.d0*cs.pi)/g.xlam)
+c hier muss eigentlich ein Faktor 4 stehen?
         fd1ph=(fd1ph/fact1)*2.d0*g.xlam**3
         tl=((ra.xlength1*ra.xlength2)/(g.r*g.rp))**2
-        fd1ph=fd1ph*tl ! thick lens correction
+c        fd1ph=fd1ph*tl ! thick lens correction
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
-
+  
         abar=xw3sign/fd1pha**(1.d0/3.d0)
         bbar=xw2sign*fd1phb*abar**2
 
-c        if(dabs(bbar).gt.19.d0)write(6,*)bbar
-
-c------------- get convlim (can be done on a finer grid in the future)
-c        if(dabs(bbar).lt.2.d0)nk=15
-c        if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
-c        if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
-c        if(dabs(bbar).ge.4.d0)nk=165
-c
+c----------------------------------------------------------------------------      
+        if((ifl.inorm2.eq.4).or.
+     &     (ifl.inorm2.ne.40).or.
+     &     (ifl.inorm2.ne.41).or.
+     &     (ifl.inorm2.ne.42))then
+c-----------------------------------    
+ 
          if(dabs(bbar).gt.convlim)then
 
 c------------- only quadratic terms
-
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &     (fdph/(g.xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
          if(ifl.inorm2.eq.41)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
 
          else
 
-c------------- include 3rd order Term in w
-c        bb(0)=1.d0
-c        do n=1,nk
-c         bb(n)=bb(n-1)*bbar
-c        enddo
-c
-c        sumcos=0.d0
-c        sumsin=0.d0     
-c
-c        nmaxc=2*(nk/2)
-c       nmaxs=2*((nk+1)/2)-1
-c
-c        do n=0,nmaxc,2
-c          sumcos=sumcos+bb(n)*cs.fc(n)     
-c        enddo
-c        do n=1,nmaxs,2
-c          sumsin=sumsin+bb(n)*cs.fs(n)     
-c        enddo
-
-c-------------- kommen tatsaechlich die gleichen werte raus 
-c       write(6,*)' bbar ',bbar
-c        write(6,*)' sumcos,sumsin ',sumcos,sumsin
         if(bbar.lt.0.d0)then
           bbar1=-bbar
           else
@@ -750,22 +745,93 @@ c        write(6,*)' sumcos,sumsin ',sumcos,sumsin
         endif
         call spa_3rd_order(bbar1,ssin,scos,blp)
         if(bbar.lt.0.d0)ssin=-ssin
-c        write(6,*)' scos, ssin ',scos,ssin
-
-c        sumcos=sumcos*abar
-c        sumsin=sumsin*abar
-
         sumcos=scos*abar
         sumsin=ssin*abar
-
-        ff=(fdph/dsqrt(fd1ph))*exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
+ 
+        ff=(fdph/dsqrt(fd1ph))*
+     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.42)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
-        endif  ! bbar.lt.convlim
+c--------------------------------
+        endif ! inorm2.eq. 4, 40, 41, 42
+c---------------------------------------------------------------------------
+        endif
 
-        endif  ! inorm2.eq.4
+c---------------------------------------------------------------------------
+         if((ifl.inorm2.eq.43).or.
+     &      (ifl.inorm2.eq.44))then
+c--------------------------------
+c       Konvergenzkriterien in diesem Modus, maximale Werte sind:
+c       nk=165, convlim=5.1d0   
+c------------- get nk
+        if(dabs(bbar).lt.2.d0)nk=15
+        if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
+        if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
+        if(dabs(bbar).ge.4.d0)nk=165
+        if(dabs(bbar).gt.convlim)then
 
+c------------- only quadratic terms
+          fd1ph=fd1ph_sav
+          fd1phb=fd1phb_sav
+          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &       exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+         if(ifl.inorm2.eq.44)ff=0.d0
+         if(fd1ph.lt.small_fd1ph)ff=0.d0
+
+         else
+c------------- include 3rd order Term in w
+        bb(0)=1.d0
+        do n=1,nk
+         bb(n)=bb(n-1)*bbar
+        enddo
+
+        sumcos=0.d0
+        sumsin=0.d0     
+
+        nmaxc=2*(nk/2)
+        nmaxs=2*((nk+1)/2)-1
+
+        do n=0,nmaxc,2
+          sumcos=sumcos+bb(n)*cs.fc(n)     
+        enddo
+        do n=1,nmaxs,2
+          sumsin=sumsin+bb(n)*cs.fs(n)     
+        enddo
+
+        sumcos=sumcos*abar
+        sumsin=sumsin*abar
+
+c-- test
+c  es kommt das gleiche raus!
+c        if(bbar.lt.0.d0)then
+c          bbar1=-bbar
+c          else
+c          bbar1=bbar
+c        endif
+c        call spa_3rd_order(bbar1,ssin,scos,blp)
+c        if(bbar.lt.0.d0)ssin=-ssin
+c        scos=scos*abar
+c        ssin=ssin*abar        
+c        write(6,*)' cos ',sumcos,scos
+c        write(6,*)' sin ',sumsin,ssin
+c--- test 
+c        sumcos=scos*abar
+c        sumsin=ssin*abar
+
+        ff=(fdph/dsqrt(fd1ph))*
+     &      exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
+        ff=ff*(sumcos+sumsin*cs.sqrtm1)
+        if(ifl.inorm2.eq.44)ff=0.d0
+        if(fd1ph.lt.small_fd1ph)ff=0.d0
+c---------------------------------------------------------------------------
+        endif   ! inorm2.eq.43,44
+c---------------------------------------------------------------------------
+        endif
+
+c---------------------------------------
+        endif  ! inorm2.eq.4 or 44
 c--------------------------------------------------------------------------
 
 	if(ifl.ispline.ge.0)then
@@ -792,7 +858,7 @@ c		fwzp=sr.ezp
 
 c------------------------------------------------
 
-	endif
+	endif   ! isrctype.eq.4 or 5 or 7
 
 c--------------- ist zu checken
 	if(src.isrctype.eq.6)then
