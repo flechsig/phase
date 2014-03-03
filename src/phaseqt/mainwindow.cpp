@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Mar 14 09:09:29 flechsig> 
+//  Time-stamp: <03 Mar 14 17:41:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2444,9 +2444,17 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   if (po) 
     {
       wdzLabel0->setText(QString(tr("maximimum")));
+      wdyLabel0->setStatusTip(tr("intensity maximum"));
       wdyLabel0->setText(QString(tr("total")));
+      wdyLabel0->setStatusTip(tr("intensity integral"));
+      //wdyLabel->setStatusTip(tr("intensity integral xx"));
       wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max, 'g', 4)+ "</FONT>");
       wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");
+    }
+  else
+    {
+      wdzLabel0->setStatusTip(tr("??"));
+      wdyLabel0->setStatusTip(tr("??"));
     }
 } // UpdateStatistics
 
