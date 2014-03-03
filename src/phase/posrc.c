@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <24 Feb 14 14:58:11 flechsig>  */
+/*  Time-stamp: <03 Mar 14 10:05:17 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -152,7 +152,7 @@ void source8c_ini(struct BeamlineType *bl)
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
   printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
-	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
+	 so4->xemin, "z", so4->xemax,  so4->yemin, "y", so4->yemax);
 #endif
 
 #ifdef DEBUG
