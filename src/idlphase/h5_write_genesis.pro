@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 10:23:45 flechsig> 
+;  Time-stamp: <03 Mar 14 16:00:06 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -100,8 +100,8 @@ field = dblarr(fsize)
 k= 0L
 
 help, nz, ny, k, field, real, imag, gridsize, lambda
-for i=0, nz-1 do begin
-    for j=0, ny-1 do begin
+for j=0, ny-1 do begin
+    for i=0, nz-1 do begin
        field[k]  = real[i,j]
        field[k+1]= imag[i,j]
        k+= 2
