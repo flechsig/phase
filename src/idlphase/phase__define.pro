@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <03 Mar 14 13:43:33 flechsig> 
+;  Time-stamp: <04 Mar 14 14:02:48 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -8,7 +8,7 @@
 ;  $Revision$ 
 ;  $Author$ 
 
-pro phase::aperture,  _EXTRA=extra
+pro phase::aperture, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::aperture
