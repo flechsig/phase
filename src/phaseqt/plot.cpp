@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <03 Mar 14 09:10:44 flechsig> 
+//  Time-stamp: <05 Mar 14 19:22:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1010,6 +1010,51 @@ void Plot::hfill2(struct PSDType *rp)
   cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
 } // hfill2 PO
+
+// fills a 2d histogram with ray data PO phase version
+void Plot::hfill2(struct PSDType *rp, double *re, double *im)
+{
+  int i, ix, iy, h2a_n, idf, idc;
+  
+  
+#ifdef DEBUG
+  cout << "Plot::hfill2 called (PO phase version)" << endl;
+#endif
+
+  h2a_nx= rp->iz;
+  h2a_ny= rp->iy;
+  pox   = rp->z;
+  poy   = rp->y;
+
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  h2max= 0.0;
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	idc= ix + iy* h2a_nx;
+	idf= iy + ix* h2a_ny;
+	h2a[idc]= 5.0* (atan2(im[idf],re[idf])/PI + 1.0); 
+      }
+  
+  //statistics();
+
+  // scale 
+  // if (h2max > 0.0)
+  //  for (i=0; i< h2a_n; i++)
+  //     h2a[i]*= 10.0/ h2max;
+
+  
+
+  //  h2a[0]= 9; // for debugging
+  //  h2a[1]= 8;
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
+#endif
+} // hfill2 PO_phase
+
 
 // fills a 2d histogram with PO source 
 // !! source4c uses c memory model 

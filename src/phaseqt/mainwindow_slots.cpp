@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <05 Mar 14 19:04:10 flechsig> 
+//  Time-stamp: <05 Mar 14 19:26:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -671,7 +671,7 @@ if (!action.compare("fourierAct"))
       mwplotsubject= PLOT_PO_SOURCE;
       updateGraphicsInput(mwplotsubject);
     }
-  if (!action.compare("grPoResultAct"   )) 
+  if (!action.compare("grPoResultAct")) 
     {
       mwplotsubject= PLOT_PO_RESULT;
       updateGraphicsInput(mwplotsubject);
@@ -1355,7 +1355,7 @@ void MainWindow::grapplyslot()
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
       d_plot->hfill2(psdp, psdp->ezrec, psdp->ezimc);
-      d_plot->setPoData("phase ez");
+      d_plot->setPoData("phase Ez");
       d_plot->contourPlot();
       //UpdateStatistics(d_plot, "PO Result phase", 0);
       cout << "plot PO_RESULT experimental end " << endl;
@@ -1367,7 +1367,7 @@ void MainWindow::grapplyslot()
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
       psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
       d_plot->hfill2(psdp, psdp->eyrec, psdp->eyimc);
-      d_plot->setPoData("phase ez");
+      d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
       //UpdateStatistics(d_plot, "PO Result phase", 0);
       cout << "plot PO_RESULT experimental end " << endl;
