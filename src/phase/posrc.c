@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <03 Mar 14 10:05:17 flechsig>  */
+/*  Time-stamp: <05 Mar 14 15:46:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -133,10 +133,10 @@ void source8c_ini(struct BeamlineType *bl)
 
   /* grid - genesis has a symetric grid*/
   for (i=0; i< rows; i++) 
-      {
-	bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
-	bl->posrc.gridy[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
-      }
+    {
+      bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+      bl->posrc.gridy[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+    }
 
   posrc_fill_min_max(bl);
  
@@ -645,7 +645,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
   int     no_time_slices= 1, col, row, cols, rows, fieldsize, it;
-  double  *field, t_vec= 0.5;
+  double  wavelength, *field, t_vec= 0.5;
   struct PSDType *p;
 
   /*  if (!(bl->beamlineOK & resultOK)) 
@@ -675,6 +675,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   e_dims[0] = no_time_slices;              // no_time_slices
 
   fieldsize= rows*cols * 4 * no_time_slices;
+  wavelength= bl->BLOptions.lambda* 1e-3;
 
   field= XMALLOC(double, fieldsize);
   it= 0;
@@ -690,6 +691,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   writeDataDouble(file_id, "/z_vec", p->z, cols, "z vector in mm");
   writeDataDouble(file_id, "/y_vec", p->y, rows, "y vector in mm");
   writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
+  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
