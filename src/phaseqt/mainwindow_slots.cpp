@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <05 Mar 14 16:25:30 flechsig> 
+//  Time-stamp: <05 Mar 14 19:04:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -677,9 +677,15 @@ if (!action.compare("fourierAct"))
       updateGraphicsInput(mwplotsubject);
     }
 
-  if (!action.compare("grPoResultPAct")) 
+  if (!action.compare("grPoResultPZAct")) 
     {
-      mwplotsubject= PLOT_PO_RESULT_PHASE;
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_PHASE_Z);
+      updateGraphicsInput(mwplotsubject);
+    }
+
+  if (!action.compare("grPoResultPYAct")) 
+    {
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_PHASE_Y);
       updateGraphicsInput(mwplotsubject);
     }
 
@@ -1193,7 +1199,7 @@ void MainWindow::grapplyslot()
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))
     return;
 
-  if ((mwplotsubject & (PLOT_PO_RESULT | PLOT_PO_RESULT_PHASE)) && 
+  if ((mwplotsubject & PLOT_PO_RESULT) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
     return;
 
@@ -1343,13 +1349,25 @@ void MainWindow::grapplyslot()
       cout << "plot PO_RESULT experimental end " << endl;
       break;
 
-    case PLOT_PO_RESULT_PHASE:
+    case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
       cout << "!!! no tests !!! program may die if no PO data available! " << endl;
-      
-      d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
-      d_plot->setPoData("grsourceAct");
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill2(psdp, psdp->ezrec, psdp->ezimc);
+      d_plot->setPoData("phase ez");
+      d_plot->contourPlot();
+      //UpdateStatistics(d_plot, "PO Result phase", 0);
+      cout << "plot PO_RESULT experimental end " << endl;
+      break;
+
+    case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y):
+      cout << "plot PO_RESULT_PHASE experimental start " << endl;
+      cout << "use manual saling " << endl;
+      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
+      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      d_plot->hfill2(psdp, psdp->eyrec, psdp->eyimc);
+      d_plot->setPoData("phase ez");
       d_plot->contourPlot();
       //UpdateStatistics(d_plot, "PO Result phase", 0);
       cout << "plot PO_RESULT experimental end " << endl;
