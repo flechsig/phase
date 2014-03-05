@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Mar 14 17:51:49 flechsig> 
+//  Time-stamp: <05 Mar 14 16:15:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -533,6 +533,7 @@ QWidget *MainWindow::createGraphicBox()
 
   grPoSourceAct  = new QAction(tr("PO sourc&e"), this);
   grPoResultAct  = new QAction(tr("PO resu&lt"), this);
+  grPoResultPAct = new QAction(tr("PO result phase"), this);
   grPoSimpreAct  = new QAction(tr("PO Simpre"), this);
   grPoSimpimAct  = new QAction(tr("PO Simpim"), this);
   grPoSintreAct  = new QAction(tr("PO Sintre"), this);
@@ -557,6 +558,7 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grPoSourceAct);
   subject->addSeparator();
   subject->addAction(grPoResultAct);
+  subject->addAction(grPoResultPAct);
   subject->addAction(grPoSimpreAct);
   subject->addAction(grPoSimpimAct);
   subject->addAction(grPoSintreAct);
@@ -582,6 +584,7 @@ QWidget *MainWindow::createGraphicBox()
 
   connect(grPoSourceAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoResultPAct,  SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSintreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -605,6 +608,7 @@ QWidget *MainWindow::createGraphicBox()
 
   grsignalMapper->setMapping(grPoSourceAct,   QString("grPoSourceAct"));
   grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
+  grsignalMapper->setMapping(grPoResultPAct,  QString("grPoResultPAct"));
   grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));
   grsignalMapper->setMapping(grPoSintimAct,   QString("grPoSintimAct"));
   grsignalMapper->setMapping(grPoSimpreAct,   QString("grPoSimpreAct"));

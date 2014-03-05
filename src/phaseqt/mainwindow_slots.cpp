@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <28 Feb 14 16:30:20 flechsig> 
+//  Time-stamp: <05 Mar 14 16:25:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -677,6 +677,12 @@ if (!action.compare("fourierAct"))
       updateGraphicsInput(mwplotsubject);
     }
 
+  if (!action.compare("grPoResultPAct")) 
+    {
+      mwplotsubject= PLOT_PO_RESULT_PHASE;
+      updateGraphicsInput(mwplotsubject);
+    }
+
   if (!action.compare("grPoSimpreAct")) 
     {
       mwplotsubject= PLOT_PO_SIMPRE;
@@ -1187,7 +1193,7 @@ void MainWindow::grapplyslot()
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))
     return;
 
-  if ((mwplotsubject & PLOT_PO_RESULT) && 
+  if ((mwplotsubject & (PLOT_PO_RESULT | PLOT_PO_RESULT_PHASE)) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
     return;
 
@@ -1334,6 +1340,18 @@ void MainWindow::grapplyslot()
       d_plot->setPoData("grsourceAct");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
+      cout << "plot PO_RESULT experimental end " << endl;
+      break;
+
+    case PLOT_PO_RESULT_PHASE:
+      cout << "plot PO_RESULT_PHASE experimental start " << endl;
+      cout << "use manual saling " << endl;
+      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
+      
+      d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
+      d_plot->setPoData("grsourceAct");
+      d_plot->contourPlot();
+      //UpdateStatistics(d_plot, "PO Result phase", 0);
       cout << "plot PO_RESULT experimental end " << endl;
       break;
 

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <04 Oct 13 16:07:21 flechsig> 
+;  Time-stamp: <04 Mar 14 14:04:04 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -184,7 +184,7 @@ print, '--------------- Propagator for free space ------------------------'
 
 phase      = dindgen(Nz,Ny)
 propagator = dcomplexarr(nz, ny) 
-p0         = drift  MOD wavelength
+p0         = drift MOD wavelength
 
 for i=0, Nz-1 do begin
     for j=0, Ny-1 do begin

@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <05 Mar 14 11:27:19 flechsig>  */
+ /* Time-stamp: <05 Mar 14 12:22:43 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -235,7 +235,7 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 		      double lambda, double k, double driftlen, double p0)
 {
   int row, col, idxc, idxf;
-  double amp0, pha0, amp1, pha1, pha2, pha, fftwscale;
+  double amp0, pha0, amp1, pha1, pha2, amp, pha, fftwscale;
 
   fftwscale= 1.0/ (rows * cols);
 
@@ -247,7 +247,7 @@ printf("fftw3 fill arrays \n");
 	idxc = row* cols+ col;
 	pha0 = atan2(im0[idxc], re0[idxc]);                               // source  phase
         amp0 = sqrt(pow(re0[idxc], 2)+ pow(im0[idxc], 2));                // source  amplitude
-	pha1= k* (pow(v0[row], 2) + pow(u0[col], 2))/ (2.0* driftlen);    // fresnel phase
+	pha1 = k* (pow(v0[row], 2) + pow(u0[col], 2))/ (2.0* driftlen);   // fresnel phase
 	
 	pha  = pha1+ pha0; 
 	in[idxc][0]= amp0* cos(pha);
@@ -264,19 +264,21 @@ printf("fftw3 fill arrays \n");
       {
 	idxc= row* cols+ col;
 	idxf= col* rows+ row;
-	out[idxc][0]*= fftwscale;       // fftw output is not normalized
-	out[idxc][1]*= fftwscale;       // fftw output is not normalized
+		out[idxc][0]*= fftwscale;       // fftw output is not normalized
+		out[idxc][1]*= fftwscale;       // fftw output is not normalized
 	amp0= sqrt(pow(out[idxc][0], 2)+ pow(out[idxc][1], 2));              // fft amplitude
-	pha0= atan2(out[idxc][1], out[idxc][0]);                              // fft phase
-
-	pha1= k* (pow(v1[row], 2) + pow(u1[col], 2))/ (2.0* driftlen);  // fresnel phase
-        pha2= (v1[row]* v0[0] + u1[col]* u0[0]) * k/ driftlen;
+	pha0= atan2(out[idxc][1], out[idxc][0]);                             // fft phase
+	amp1= k/(driftlen* 2 * PI);
+	pha1= -0.5* PI;
+	//	pha1= k* (pow(v1[row], 2) + pow(u1[col], 2))/ (2.0* driftlen);  // fresnel phase
+        //pha2= (v1[row]* v0[0] + u1[col]* u0[0]) * k/ driftlen;
+	pha2= k* driftlen;
 	pha= pha0 + pha1 + pha2;
-	
+	amp= amp0 * amp1;
 	//amp= ampf * amp0/ (bl->BLOptions.lambda* driftlen);
 	//pha= k*driftlen- PI/2.0+ phaf + pha0 + k/(2.0*driftlen)*(pow((col*dz0),2.0)+ pow((row*dy0),2.0));
-	re1[idxf]= amp0* cos(pha);
-	im1[idxf]= amp0* sin(pha);
+	re1[idxf]= amp* cos(pha);
+	im1[idxf]= amp* sin(pha);
       }
 
 } // drift_fresnel_sub
