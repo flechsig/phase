@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <03 Mar 14 17:24:08 flechsig>  */
+ /* Time-stamp: <05 Mar 14 11:27:19 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -55,7 +55,7 @@ void drift_fourier(struct BeamlineType *bl)
   driftlen= el->GDat.r+ el->GDat.rp;
   lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
-  p0 = driftlen/ lambda;
+  p0 = fmod(driftlen, lambda);          // phase rest
   totz= so4->xemax- so4->xemin;
   toty= so4->yemax- so4->yemin;
 
@@ -137,8 +137,8 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
-	    //pha= ((driftlen *(arg - 1.0) ) % bl->BLOptions.lambda ) * k + p0  * k; // more accurate
-	    pha1= k* driftlen* arg;  // textbook
+	    pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
+	    //pha1= k* driftlen* arg;  // textbook
 	  }
 	else
 	  {
