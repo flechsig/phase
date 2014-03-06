@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Mar 14 16:09:42 flechsig> 
+;  Time-stamp: <06 Mar 14 16:26:28 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -158,7 +158,7 @@ self.y_vec= ptr_new(y_vec)
 return
 end ;; h5_read
 
-pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, delta=delta, _EXTRA=extra
+pro phase::h5_write, fname, genesis=genesis, phase=phase, pha4idl=pha4idl, delta=delta, yscale=yscale, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::h5_write
@@ -180,10 +180,11 @@ pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, delt
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;    /delta:   phase shift between Ez and Ey (phase format only), default= 0
+;    delta:    phase shift between Ez and Ey (phase format only), default= pi/6
 ;    /genesis: genesis format
 ;    /phase:   phase format
 ;    /pha4idl: pha4idl format
+;    yscale:   scale of y amplitude (default= 0.9)
 ;
 ; EXAMPLE:
 ;   idl> emf->h5_write, 'output.h5'
@@ -197,7 +198,8 @@ spha4idl= 0
 if (n_elements(phase) eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
 if (n_elements(phase) ne 0 ) then sphase= 1
 if (n_elements(pha4idl) ne 0) then spha4idl= 1
-if (n_elements(delta) eq 0)   then delta= 0.0
+if (n_elements(delta) eq 0)   then delta= !dpi/6.
+if (n_elements(yscale) eq 0)  then yscale= 0.9
 
 if sgenesis gt 0 then $
   h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
@@ -206,12 +208,13 @@ if sgenesis gt 0 then $
 if sphase gt 0 then begin
     if (abs(delta) gt 0.0) then begin
         amp= abs(*self.field)
-        pha= atan(*self.field,/phase)
+        pha= atan(*self.field, /phase)
         pha+= delta
-        *self.field= complex(amp*cos(pha), amp*sin(pha)) 
+        amp*= yscale
+        ycomp= complex(amp*cos(pha), amp*sin(pha)) 
     endif 
-    print, '!! save field to zcomp AND ycomp!!, delta=', delta
-    h5_write_phase, fname, zcomp=*self.field, ycomp=*self.field, wavelength=self.wavelength, $
+    print, '!! save field to zcomp AND ycomp!!, delta=', delta, ' yscale=', yscale
+    h5_write_phase, fname, zcomp=*self.field, ycomp=ycomp, wavelength=self.wavelength, $
       z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 endif
 
@@ -548,7 +551,7 @@ name= self.name
 return, name
 end ;; name
 
-function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
+function pase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::getphase
@@ -579,8 +582,6 @@ function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw,
 ;; MODIFICATION HISTORY:
 ;   UF 4.11.13
 ;-
-
-
 
 if keyword_set(raw) then begin
     phi= atan(*self.field, /phase)
