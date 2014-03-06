@@ -120,17 +120,16 @@ bphase = atan(field,/phase)
 
 a=initphase()
 a->gaussbeam  , dist =0,sizez=0.0006 , w0=27.7e-6 , wavelength=wavelength,Nz=301
-
 a->propfresnel, drift=drift
  
 xvec=a->getz_vec()
 yvec=a->gety_vec()
 oamp=a->getintensity()
-ophas=a->getphase()
+;ophas=a->getphase()
  
   window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
   mycontour, oamp,xvec*1e3,yvec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel object (Int)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
-  window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
-  mycontour, ophas,xvec*1e3,yvec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel object. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+;  window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+;  mycontour, ophas,xvec*1e3,yvec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel object. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
