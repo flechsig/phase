@@ -71,24 +71,31 @@
 ;-
 ; comments.
 
-bamp =dindgen(Nz,Nz)
 
 wavelength =1e-10
 Nz         =401
 sourcedist = 0
 drift      = 60
 sizez      = 0.0006
+bamp =dindgen(Nz,Nz)
 
 sizeu=0.001
 sizev=sizeu
 
+ fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+ h5_read, fname, zamp=zamp, zphase=zphase, z_vec=z_vec, y_vec=y_vec
+ field= zamp * zphase 
+
+;
+;
+;
 ;
 ; Parameters for XFEL-beam 
 ;
-gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+ gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, field=field, w0=27.7e-6 , wavelength=wavelength
 ;slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
 
-source = bcomp
+source = field
 z_source = z_vec
 y_source = y_vec
 
@@ -117,23 +124,24 @@ y_source = y_vec
 
 
 prop= source
-propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+propfresnel, drift=20, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+propfresnel, drift=20, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+propfresnel, drift=20, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
 ;prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop , Nu=200, Nv=200
 ;propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
 
  z_prop = z_vec
- y_prop = y_vec
- 
+ y_prop = y_vec 
  propamp   = abs(prop)
  propphase = atan(prop,/phase)
 
  title = 'propagate to '+ string(drift)+ ' m'
 
- window,2, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
+ window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
  mycontour, propamp,z_vec*1e3,y_vec*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
  title = title + ' (phase)'
 
- window,3, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
+ window,5, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
  mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
 
 
@@ -152,18 +160,18 @@ propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, fiel
 print, '------------- Analytical gauss beam -------------drift = ',drift
 
 
-gaussbeam, dist=drift, Nz=201,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, bcomp=bcomp , w0=27.7e-6 , wavelength=wavelength
+gaussbeam, dist=drift, Nz=201,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 , wavelength=wavelength
 
 
  title = 'gaussbeam at '+ string(drift) + ' m'
 
- bamp = abs(bcomp)
+ bamp = abs(field)
 
 window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
 mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
 title = title + ' (phase)'
 
- bphase =atan(bcomp,/phase)
+ bphase =atan(field,/phase)
  window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
  mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
  
@@ -178,15 +186,15 @@ title = title + ' (phase)'
 ;  emf_statistics, Intensity, y_vec=y_vec, z_vec=z_vec
 
 
-  window,12,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=600, YPOS=800
+;   window,12,RETAIN=2,  XSIZE=600, YSIZE=400,XPOS=600, YPOS=800
 
-  result=dindgen(6)
-  z=gaussfit(z_vec, vsum,result,NTERMS=5 )
-  print, ' rms = ',result[2]
-  s1=size(PropInt)
-  s2= size(Intensity)
-  plot, z_vec, Intensity[s2[1]/2,*],  color = 0
+;   result=dindgen(6)
+;   z=gaussfit(z_vec, vsum,result,NTERMS=5 )
+;   print, ' rms = ',result[2]
+;   s1=size(PropInt)
+;   s2= size(Intensity)
+;   plot, z_vec, Intensity[s2[1]/2,*],  color = 0
   oplot , z_prop, PropInt[s1[1]/2,*], color = 3
-
-period = drift /sizez * wavelength
-print, ' Diffraction pattern with period ', period,' m (', period*1e6,' um)'
+; 
+; period = drift /sizez * wavelength
+; print, ' Diffraction pattern with period ', period,' m (', period*1e6,' um)'
