@@ -1,0 +1,165 @@
+; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test routine for crl
+
+;+ 
+; NAME:
+;   drift_test
+;
+;
+; PURPOSE:
+;   test script for crl 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @
+;
+;
+; MODIFICATION HISTORY:
+;-
+; comments.
+
+
+wavelength =1e-10
+Nz         =401
+sourcedist = 0
+drift      = 60
+sizez      = 0.0006
+bamp =dindgen(Nz,Nz)
+
+sizeu=0.001
+sizev=sizeu
+
+ fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
+ h5_read, fname, zamp=zamp, zphase=zphase, z_vec=z_vec, y_vec=y_vec
+ field= zamp * zphase 
+
+; gaussbeam, dist=sourcedist, Nz=Nz,sizez=sizez, z_vec=z_vec, y_vec=y_vec, field=field, w0=27.7e-6 , wavelength=wavelength
+; slit,       bcomp=bcomp, sizez=0.0001,sizey= 0.0002, Nz=Nz, Ny=Ny, sizez=sizez, wavelength=wavelength, y_vec=y_vec, z_vec=z_vec
+
+source   = field
+z_source = z_vec
+y_source = y_vec
+
+ title = string(sourcedist)
+ title = 'gaussbeam at '+ title + ' m'
+
+  window,0, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=1400, YPOS=770
+  bamp = abs(source)
+  mycontour, bamp,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title=title
+  if (sourcedist ne 0) then  window,1, RETAIN=2, XSIZE=500, YSIZE=400, XPOS=900, YPOS=770
+  if (sourcedist ne 0) then  bphase = atan(source,/phase)
+  if (sourcedist ne 0) then  mycontour, bphase,z_vec,y_vec, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam (phase)'
+
+
+
+
+ print, '------------- Propagate beam 3 times to final distance-----------------'
+
+
+ field = source
+ z_vec = z_source 
+ y_vec = y_source 
+ 
+ propfresnel, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field 
+ propfresnel, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field  
+ propfresnel, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field  
+; prophuygens, drift=60, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field , Nu=200, Nv=200
+; propfourier, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+; propfourier, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+; propfourier, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+
+ propamp   = abs(field)
+ propphase = atan(field,/phase)
+
+ title = 'propagate 3 times  to ' + string(drift)+ ' m'
+
+ window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
+ mycontour, propamp,z_vec*1e3,y_vec*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+ title = title + ' (phase)'
+
+ window,5, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
+ mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+
+
+
+print, '------------- direct propagation to 60 m -------------drift = ',drift
+
+ field = source
+ z_vec = z_source 
+ y_vec = y_source 
+ propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+;prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop , Nu=200, Nv=200
+;propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+
+ bamp   = abs(field)
+ bphase = atan(field,/phase)
+
+
+
+ title = 'propagate directly to  ' + string(drift)+ ' m'
+
+ bamp = abs(field)
+
+window,6, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=0
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+title = title + ' (phase)'
+
+ bphase =atan(field,/phase)
+ window,7, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=0
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+ 
+ 
+ 
