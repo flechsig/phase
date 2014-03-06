@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Mar 14 17:27:52 flechsig> 
+//  Time-stamp: <06 Mar 14 17:32:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -197,8 +197,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(fourierAct, QString("fourierAct"));
     connect(fourierAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    copyPOAct = new QAction(tr("copy PO"), this);
-    copyPOAct->setStatusTip(tr("copy PO source to image"));
+    copyPOAct = new QAction(tr("copy PO (exp)"), this);
+    copyPOAct->setStatusTip(tr("copy PO source to image (exp)"));
     signalMapper->setMapping(copyPOAct, QString("copyPOAct"));
     connect(copyPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
