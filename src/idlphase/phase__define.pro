@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 Mar 14 14:02:48 flechsig> 
+;  Time-stamp: <06 Mar 14 16:07:00 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -158,13 +158,13 @@ self.y_vec= ptr_new(y_vec)
 return
 end ;; h5_read
 
-pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, _EXTRA=extra
+pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, delta=delta, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::h5_write
 ;
 ; PURPOSE:
-;   write hdf5 output - default is GENESIS format, undefined format
+;   write hdf5 output - default is GENESIS format
 ;                       with multiple format switches 
 ;
 ; CATEGORY:
@@ -180,6 +180,7 @@ pro phase::h5_write, fname,  genesis=genesis, phase=phase, pha4idl=pha4idl, _EXT
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;    /delta:   phase shift between Ez and Ey (phase format only), default= 0
 ;    /genesis: genesis format
 ;    /phase:   phase format
 ;    /pha4idl: pha4idl format
@@ -196,13 +197,20 @@ spha4idl= 0
 if (n_elements(phase) eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
 if (n_elements(phase) ne 0 ) then sphase= 1
 if (n_elements(pha4idl) ne 0) then spha4idl= 1
+if (n_elements(delta) eq 0)   then delta= 0.0
 
 if sgenesis gt 0 then $
   h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
   z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 
 if sphase gt 0 then begin
-    print, '!! save field to zcomp AND ycomp !!'
+    if (abs(delta) gt 0.0) then begin
+        amp= abs(*self.field)
+        pha= atan(*self.field,/phase)
+        pha+= delta
+        *self.field= complex(amp*cos(pha), amp*sin(pha)) 
+    endif 
+    print, '!! save field to zcomp AND ycomp!!, delta=', delta
     h5_write_phase, fname, zcomp=*self.field, ycomp=*self.field, wavelength=self.wavelength, $
       z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 endif
@@ -1217,7 +1225,7 @@ pro phase::plotintensity, window=window, _EXTRA=extra
 if n_elements(window) ne 0 then window, window
 title= self.name+ ' intensity'
 mycontour, abs(*self.field)^2, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
-  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity'
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity', _EXTRA=extra 
 return 
 end
 ; end plotintensity
