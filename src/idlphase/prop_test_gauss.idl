@@ -85,7 +85,7 @@ ScreenY=size[1]
 Wx=ScreenX/4
 Wy=ScreenY/4
 
-drift = 100
+drift = 50
 Nz=301
 print, '---------------------Gaussbeam in distance dist ---------------------------------'
 
@@ -98,10 +98,10 @@ s     = total(bamp,1)
 s     = s/max(s)
 
  window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
- mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam  (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+ mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam  (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
  window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
- mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 
 
@@ -122,10 +122,10 @@ h      = h/max(h)
 hz     = z_vec & hy = y_vec
 
   window,7, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
-  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (amp)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (amp)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
 
   window,8, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
-  mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+  mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
 
 
 

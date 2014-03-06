@@ -1,0 +1,136 @@
+; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <19 Jul 13 11:33:23 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test the routines for wavefield propagation
+
+;+ 
+; NAME:
+;   drift_test
+;
+;
+; PURPOSE:
+;   compares propfresnel.pro when called directly or call over object.
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;   material properties hard coded - only Be so far
+;
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @crl_test.idl
+;
+;
+; MODIFICATION HISTORY:
+;    11.7.13 UF
+;-
+; comments.
+
+;--------- Get Screen size in pixel -----------
+device, Get_Screen_size=size
+screenX=size[0]
+ScreenY=size[1]
+Wx=ScreenX/4
+Wy=ScreenY/4
+
+drift = 100
+Nz=301
+print, '---------------------Gaussbeam in distance dist ---------------------------------'
+
+gaussbeam, dist=drift, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 , wavelength=wavelength
+
+bamp  = abs (field)
+bamp=bamp*bamp                           ;; calc intensity
+bphase= atan(field,/phase)
+sz    = z_vec & sy = y_vec
+s     = total(bamp,1)
+s     = s/max(s)
+
+ window,1, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy 
+ mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam  (Int)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+ window,2, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-1*wy 
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Gauss beam (phase)';;,xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
+
+
+
+print, '------------- Propagate  with Fresnel  -----------------------'
+
+gaussbeam  , dist =0, Nz=Nz,sizez=0.0006, z_vec=z_vec, y_vec=y_vec, field=field , w0=27.7e-6 , wavelength=wavelength
+propfresnel, field=field, z_vec=z_vec, y_vec=y_vec, drift=drift, wavelength=wavelength
+
+bamp   = abs(field)
+bamp=bamp*bamp                            ;; calc intensity
+bphase = atan(field,/phase)
+
+  window,3, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-2*wy 
+  mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (Int)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+  window,4, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-2*wy 
+  mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel approx. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
+
+a=initphase()
+a->gaussbeam  , dist =0,sizez=0.0006 , w0=27.7e-6 , wavelength=wavelength,Nz=301
+
+a->propfresnel, drift=drift
+ 
+xvec=a->getz_vec()
+yvec=a->gety_vec()
+oamp=a->getintensity()
+ophas=a->getphase()
+ 
+  window,5, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-3*wy 
+  mycontour, oamp,xvec*1e3,yvec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel object (Int)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3] 
+
+  window,6, RETAIN=2, XSIZE=wx, YSIZE=wy ,XPOS=screenx-2*wx,YPOS=screeny-3*wy 
+  mycontour, ophas,xvec*1e3,yvec*1e3, xtitle='z (mm) ', ytitle='y (mm)', title='Fresnel object. (phase)',xrange=[-0.3,0.3] ,yrange=[-0.3,0.3]
+
