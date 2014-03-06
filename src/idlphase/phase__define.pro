@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Mar 14 16:07:00 flechsig> 
+;  Time-stamp: <06 Mar 14 16:09:42 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1192,7 +1192,7 @@ if n_elements(window) ne 0 then window, window
 
 title= self.name+ ' amplitude'
 mycontour, abs(*self.field), *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
-  xtitle='z (mm)', ytitle='y (mm)', ztitle='amplitude'
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='amplitude', _EXTRA=extra
 return 
 end
 ; end plotamplitude
@@ -1259,7 +1259,7 @@ if n_elements(window) ne 0 then window, window
 title= self.name+ ' phase'
 myphase= self->getphase(_EXTRA=extra)
 mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
-  xtitle='z (mm)', ytitle='y (mm)', ztitle='phase'
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='phase', _EXTRA=extra
 return 
 end ;; plotphase
 

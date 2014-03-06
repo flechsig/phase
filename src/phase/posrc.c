@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <05 Mar 14 15:46:54 flechsig>  */
+/*  Time-stamp: <06 Mar 14 12:20:47 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -127,7 +127,7 @@ void source8c_ini(struct BeamlineType *bl)
 #endif
 
    /* the rest is a copy of functionality from source4c_ini */
-  reallocate_posrc(bl, rows, cols);
+  reallocate_posrc(bl, rows, cols); /* allocate plus init   */
   
   /*  it= 0;     */     /* so far - read only first slice */
 
@@ -142,10 +142,8 @@ void source8c_ini(struct BeamlineType *bl)
  
   /*  */
   printf("!! linear horizontal polarization is hardcoded !!, file: %s\n", __FILE__);
-  posrc_fill8(bl, bl->posrc.zeyre, field, 0, 0.0);          /* lin hor- scale= 0.0 */
-  posrc_fill8(bl, bl->posrc.zeyim, field, 1, 0.0);          /* lin hor- scale= 0.0 */
-  posrc_fill8(bl, bl->posrc.zezre, field, 0, 1.0);
-  posrc_fill8(bl, bl->posrc.zezim, field, 1, 1.0);
+  posrc_fill8(bl, bl->posrc.zezre, field, 0);
+  posrc_fill8(bl, bl->posrc.zezim, field, 1);
   
   XFREE(field);
 
@@ -731,6 +729,10 @@ void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
   bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
   bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
 
+  memset(bl->posrc.zeyre, 0, sizeof(double)* twodsize); /* set to 0.0 */
+  memset(bl->posrc.zezre, 0, sizeof(double)* twodsize);
+  memset(bl->posrc.zeyim, 0, sizeof(double)* twodsize);
+  memset(bl->posrc.zezim, 0, sizeof(double)* twodsize);
 } /* end reallocate_posrc */
 
 void posrc_fill_min_max(struct BeamlineType *bl)
@@ -789,7 +791,7 @@ void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset,
 } /* posrc_fill7 */
 
 /* genesis data are a linear array of real and imag numbers- use imag as offset */
-void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag, double scale)
+void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
 {
   int i, j, rows, cols;
   double val;
@@ -802,7 +804,7 @@ void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag, do
       {
 	val= field[imag + (i + j * cols)* 2];
 	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
-	a[i+ j* cols]= val * scale;
+	a[i+ j* cols]= val;
       }
 } /* posrc_fill8 */
 
