@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <05 Mar 14 12:22:43 flechsig>  */
+ /* Time-stamp: <06 Mar 14 17:16:51 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -178,6 +178,7 @@ void drift_fresnel(struct BeamlineType *bl)
   rows= so4->iey;
 
   ReAllocResult(bl, PLphspacetype, rows, cols);
+  
   psd= (struct PSDType *)bl->RESULT.RESp;
   psd->iy= rows;
   psd->iz= cols;
