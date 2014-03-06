@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <05 Mar 14 19:22:38 flechsig> 
+//  Time-stamp: <06 Mar 14 11:45:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -233,7 +233,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 
   // A color bar on the right axis
   QwtScaleWidget *rightAxis = axisWidget(QwtPlot::yRight);
-  rightAxis->setTitle("Intensity");
+  rightAxis->setTitle("Intensity etc.");
   rightAxis->setColorBarEnabled(true);
   rightAxis->setColorMap( zInterval, new ColorMap());
   
@@ -963,14 +963,14 @@ void Plot::hfill2(int settype)
 #endif
 } // hfill2 GO
 
-// fills a 2d histogram with ray data PO version
+// fills a 2d histogram PO result data PO version
 void Plot::hfill2(struct PSDType *rp)
 {
   int i, ix, iy, h2a_n;
   double *data;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO version)" << endl;
+  cout << "Plot::hfill2 called (POR version)" << endl;
 #endif
 
   h2a_nx= rp->iz;
@@ -1002,23 +1002,21 @@ void Plot::hfill2(struct PSDType *rp)
     for (i=0; i< h2a_n; i++)
        h2a[i]*= 10.0/ h2max;
 
-  
-
-  //  h2a[0]= 9; // for debugging
+   //  h2a[0]= 9; // for debugging
   //  h2a[1]= 8;
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
 } // hfill2 PO
 
-// fills a 2d histogram with ray data PO phase version
-void Plot::hfill2(struct PSDType *rp, double *re, double *im)
+// fills a 2d histogram with ray data PO field version
+void Plot::hfill2(struct PSDType *rp, int type)
 {
   int i, ix, iy, h2a_n, idf, idc;
-  
+  double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO phase version)" << endl;
+  cout << "Plot::hfill2 called (PO field version (PORF))" << endl;
 #endif
 
   h2a_nx= rp->iz;
@@ -1030,28 +1028,51 @@ void Plot::hfill2(struct PSDType *rp, double *re, double *im)
   if (h2a != NULL) delete h2a;
   if (h2a_n > 0) h2a= new double[h2a_n];
   
-  h2max= 0.0;
+  h2max= -1e300;
+  h2min=  1e300;
+
   for (ix=0; ix< h2a_nx; ix++)
     for (iy=0; iy< h2a_ny; iy++) 
       {
 	idc= ix + iy* h2a_nx;
 	idf= iy + ix* h2a_ny;
-	h2a[idc]= 5.0* (atan2(im[idf],re[idf])/PI + 1.0); 
-      }
+	double az2= pow(rp->ezrec[idf], 2) + pow(rp->ezimc[idf], 2);
+	double ay2= pow(rp->eyrec[idf], 2) + pow(rp->eyimc[idf], 2);
+	double phz= atan2(rp->ezimc[idf], rp->ezrec[idf]);
+	double phy= atan2(rp->eyimc[idf], rp->eyrec[idf]);
+	//double pz0= rp->ezimc[idf]/rp->ezrec[idf];
+	double delta= phz- phy; // sign according Born Wolf p. 30
+	
+	switch (type)
+	  {
+	  case PLOT_PO_S1:
+	    h2a[idc]= az2- ay2; 
+	    break;
+	  case PLOT_PO_S2:
+	    h2a[idc]= 2.0* sqrt(az2)* sqrt(ay2)* cos(delta); 
+	    break;
+	  case PLOT_PO_S3:
+	    h2a[idc]= 2.0* sqrt(az2)* sqrt(ay2)* sin(delta); 
+	    break;
+	  case PLOT_PO_PHASE_Z:
+	    h2a[idc]= phz; 
+	    break;
+	  case PLOT_PO_PHASE_Y:
+	    h2a[idc]= phy; 
+	    break;
+	  }
+	h2max= max(h2max, h2a[idc]);
+	h2min= min(h2min, h2a[idc]);
+      } // end for
   
-  //statistics();
-
-  // scale 
-  // if (h2max > 0.0)
-  //  for (i=0; i< h2a_n; i++)
-  //     h2a[i]*= 10.0/ h2max;
-
+  // scale range into 0 to 10
+  h2range= h2max- h2min;
+  if (h2range > 0.0)
+    for (i=0; i< h2a_n; i++)
+      h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
-
-  //  h2a[0]= 9; // for debugging
-  //  h2a[1]= 8;
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
 #endif
 } // hfill2 PO_phase
 
@@ -1102,6 +1123,72 @@ statistics();
   cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
 #endif
 } // hfill2 PO source
+
+// fills a 2d histogram with PO source field version
+// !! source4c uses c memory model 
+void Plot::hfill2(struct source4c *rp, int type)
+{
+  int i, ix, iy, h2a_n, idc; 
+  double h2range;
+    
+#ifdef DEBUG
+  cout << "Plot::hfill2 called (PO source field version (POSF))" << endl;
+#endif
+
+  h2a_nx= rp->iex;
+  h2a_ny= rp->iey;
+  pox   = rp->gridx;
+  poy   = rp->gridy;
+
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  h2max= -1e300;
+  h2min=  1e300;
+  
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	idc= ix + iy* h2a_nx;
+	double az2= pow(rp->zezre[idc], 2) + pow(rp->zezim[idc], 2);
+	double ay2= pow(rp->zeyre[idc], 2) + pow(rp->zeyim[idc], 2);
+	double phz= atan2(rp->zezim[idc], rp->zezre[idc]);
+	double phy= atan2(rp->zeyim[idc], rp->zeyre[idc]);
+	double delta= phz- phy; // sign according Born Wolf p. 30
+	
+	switch (type)
+	  {
+	  case PLOT_PO_S1:
+	    h2a[idc]= az2- ay2; 
+	    break;
+	  case PLOT_PO_S2:
+	    h2a[idc]= 2.0* sqrt(az2)* sqrt(ay2)* cos(delta); 
+	    break;
+	  case PLOT_PO_S3:
+	    h2a[idc]= 2.0* sqrt(az2)* sqrt(ay2)* sin(delta); 
+	    break;
+	  case PLOT_PO_PHASE_Z:
+	    h2a[idc]= phz; 
+	    break;
+	  case PLOT_PO_PHASE_Y:
+	    h2a[idc]= phy; 
+	    break;
+	  }
+	h2max= max(h2max, h2a[idc]);
+	h2min= min(h2min, h2a[idc]);
+      } // end for
+  
+  // scale range into 0 to 10
+  h2range= h2max- h2min;
+  if (h2range > 0.0)
+    for (i=0; i< h2a_n; i++)
+      h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
+  
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " hfill2 POSF end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+#endif
+} // hfill2 PO source field
 
 
 // constructor of the plot

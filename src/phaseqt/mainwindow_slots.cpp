@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <05 Mar 14 19:26:43 flechsig> 
+//  Time-stamp: <06 Mar 14 11:30:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -671,12 +671,51 @@ if (!action.compare("fourierAct"))
       mwplotsubject= PLOT_PO_SOURCE;
       updateGraphicsInput(mwplotsubject);
     }
+  if (!action.compare("grPoSourceS1Act")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_S1);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoSourceS2Act")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_S2);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoSourceS3Act")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_S3);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoSourcePZAct")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoSourcePYAct")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y);
+      updateGraphicsInput(mwplotsubject);
+    }
   if (!action.compare("grPoResultAct")) 
     {
       mwplotsubject= PLOT_PO_RESULT;
       updateGraphicsInput(mwplotsubject);
     }
-
+  if (!action.compare("grPoResultS1Act")) 
+    {
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_S1);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoResultS2Act")) 
+    {
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_S2);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoResultS3Act")) 
+    {
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_S3);
+      updateGraphicsInput(mwplotsubject);
+    }
   if (!action.compare("grPoResultPZAct")) 
     {
       mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_PHASE_Z);
@@ -1170,10 +1209,14 @@ void MainWindow::goButtonslot()
 void MainWindow::grapplyslot()
 {
   struct PSDType *psdp;
+  struct BeamlineType *bl;
 
 #ifdef DEBUG
   cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << mwplotsubject << endl;
 #endif
+
+  bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
+  psdp= (struct PSDType *)bl->RESULT.RESp;
 
   // (1) a few tests
 
@@ -1340,50 +1383,100 @@ void MainWindow::grapplyslot()
     case PLOT_PO_RESULT:
       cout << "plot PO_RESULT experimental start " << endl;
       cout << "use manual saling " << endl;
-      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
-      
-      d_plot->hfill2((struct PSDType *)myparent->myBeamline()->RESULT.RESp);
-      d_plot->setPoData("grsourceAct");
+      d_plot->hfill2(psdp);
+      d_plot->setPoData("PO result S0");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
       cout << "plot PO_RESULT experimental end " << endl;
       break;
 
+    case (PLOT_PO_RESULT | PLOT_PO_S1):
+      cout << "plot PO_S1 experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2(psdp, PLOT_PO_S1);
+      d_plot->setPoData("PO result S1");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_RESULT | PLOT_PO_S2):
+      cout << "plot PO_S2 experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2(psdp, PLOT_PO_S2);
+      d_plot->setPoData("PO result S2");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_RESULT | PLOT_PO_S3):
+      cout << "plot PO_S3 experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2(psdp, PLOT_PO_S3);
+      d_plot->setPoData("PO result S3");
+      d_plot->contourPlot();
+      break;
+
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
-      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill2(psdp, psdp->ezrec, psdp->ezimc);
+      d_plot->hfill2(psdp, PLOT_PO_PHASE_Z);
       d_plot->setPoData("phase Ez");
       d_plot->contourPlot();
-      //UpdateStatistics(d_plot, "PO Result phase", 0);
-      cout << "plot PO_RESULT experimental end " << endl;
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
-      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      d_plot->hfill2(psdp, psdp->eyrec, psdp->eyimc);
+      d_plot->hfill2(psdp, PLOT_PO_PHASE_Y);
       d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
-      //UpdateStatistics(d_plot, "PO Result phase", 0);
-      cout << "plot PO_RESULT experimental end " << endl;
       break;
 
     case PLOT_PO_SOURCE:
       cout << "plot PO_SOURCE experimental start " << endl;
       cout << "use manual saling " << endl;
-      cout << "!!! no tests !!! program may die if no PO data available! " << endl;
-      cout << "not yet fully implemented/tested" << endl;
-
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc));
       d_plot->setPoData("PO source");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
-      cout << "plot PO_SOURCE experimental end " << endl;
+      break;
+
+    case (PLOT_PO_SOURCE | PLOT_PO_S1):
+      cout << "plot source PO_S1 experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S1);
+      d_plot->setPoData("PO source S1");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_SOURCE | PLOT_PO_S2):
+      cout << "plot source PO_S2 experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S2);
+      d_plot->setPoData("PO source S2");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_SOURCE | PLOT_PO_S3):
+      cout << "plot source PO_S3 experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S3);
+      d_plot->setPoData("PO source S3");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z):
+      cout << "plot source PO_PHASE_Z experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_PHASE_Z);
+      d_plot->setPoData("PO source PHASE Z");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y):
+      cout << "plot source PO_PHASE_Y experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_PHASE_Y);
+      d_plot->setPoData("PO source PHASE Y");
+      d_plot->contourPlot();
       break;
 
     case PLOT_PO_SIMPRE:
@@ -1430,7 +1523,7 @@ void MainWindow::grautoscaleslot()
   struct source4c    *srcp;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject: " << mwplotsubject << endl;
+  cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject: 0x" << hex << mwplotsubject << endl;
 #endif
 
 // a few tests

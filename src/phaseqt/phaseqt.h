@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <05 Mar 14 19:16:25 flechsig>  */
+/*  Time-stamp: <06 Mar 14 08:05:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -36,22 +36,22 @@ extern "C" {
 class MainWindow;          // forward declaration
 
 #define NPARS 65
-#define PLOT_GO_SOURCE   1
-#define PLOT_GO_RESULT   2
-#define PLOT_GO_SPA      4
-#define PLOT_GO_DIV      8
-#define PLOT_GO_PHI      16
-#define PLOT_PO_RESULT   32
-#define PLOT_PO_SOURCE   64
+#define PLOT_GO_SOURCE   0x1
+#define PLOT_GO_RESULT   0x2
+#define PLOT_GO_SPA      0x4
+#define PLOT_GO_DIV      0x8
+#define PLOT_GO_PHI      0x10
+#define PLOT_PO_RESULT   0x20
+#define PLOT_PO_SOURCE   0x40
 
-#define PLOT_EXAMPLE1 128
-#define PLOT_EXAMPLE2 256
-#define PLOT_EXAMPLE3 512
+#define PLOT_EXAMPLE1 0x80
+#define PLOT_EXAMPLE2 0x100
+#define PLOT_EXAMPLE3 0x200
 
-#define PLOT_PO_SIMPRE   1024
-#define PLOT_PO_SIMPIM   2048
-#define PLOT_PO_SINTRE   4096
-#define PLOT_PO_SINTIM   8192  // 0x2000
+#define PLOT_PO_SIMPRE   0x400
+#define PLOT_PO_SIMPIM   0x800
+#define PLOT_PO_SINTRE   0x1000
+#define PLOT_PO_SINTIM   0x2000
 
 #define PLOT_GO_HPS      0x4000
 #define PLOT_GO_VPS      0x8000
@@ -59,7 +59,9 @@ class MainWindow;          // forward declaration
 #define PLOT_PO_PHASE_Z 0x10000
 #define PLOT_PO_PHASE_Y 0x20000
 
-#define PLOT_PO_SOURCE_PHASE 0x40000
+#define PLOT_PO_S1 0x40000
+#define PLOT_PO_S2 0x80000
+#define PLOT_PO_S3 0x100000
 
 #define PLOT_ISO        1
 #define PLOT_CONTOUR    2
