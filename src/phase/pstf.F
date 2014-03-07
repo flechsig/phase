@@ -233,7 +233,7 @@ c******* start of adaptive grid integration ***************************
 c           write(6,*)'call adaptive_int'
 
            call adaptive_int(m4,g,am,src,apr,
-     &           cs,ra,ifl,xi,xir,st,s,blp)  
+     &           cs,ra,ifl,xi,xir,s,blp)  
 
 c           write(6,*)'returned from adaptive_int'
             if(ifl.ispline.eq.-1)then
