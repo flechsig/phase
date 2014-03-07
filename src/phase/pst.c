@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2014-02-16 19:57:43 flechsig>  */
+/*   Time-stamp: <07 Mar 14 14:47:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -471,6 +471,13 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   fill_xirp(bl, xirp);
 
   points= psip->iy * psip->iz;
+
+  // UF Mar 2014 add check
+  if ((psip->iy > 255) || (psip->iz > 255)) 
+    {
+      fprintf(stderr, "error in file %s gridsize beyond (255 x 255) limit - exit\n", __FILE__);
+      exit(-1);
+    }
   
   // nz= index / sp->iheigh; // fortran loop
   // ny= index % sp->iheigh; // fortran loop
@@ -706,7 +713,59 @@ void check_2_m4_(struct map4 *m4)
     }
 } /* end check_2_m4 */
 
+void copySrc2Psd(struct BeamlineType *bl)
+{
+#ifdef DEBUG  
+  printf("debug: file: %s, copy PO source fields to output fields (experimental)\n", __FILE__); 
+#endif
 
+  //void MainWindow::copyPoIn2Out()
+
+  struct source4c *so4;
+  struct PSDType  *psd;
+  int    row, col, rows, cols, idxf;
+  size_t size;
+
+  if (!(bl->beamlineOK & pstsourceOK))
+    {
+      posrc_ini();
+      bl->beamlineOK |= pstsourceOK;
+    }
+  
+  so4= (struct source4c *)&(bl->posrc);
+  psd= (struct PSDType  *)bl->RESULT.RESp;
+  
+  cols= so4->iex;
+  rows= so4->iey;
+  size= sizeof(double)* rows * cols;
+
+  ReAllocResult(bl, PLphspacetype, rows, cols);
+
+  printf("start copy fields\n");
+  memcpy(psd->eyrec, so4->zeyre, size);
+  memcpy(psd->ezrec, so4->zezre, size);
+  memcpy(psd->eyimc, so4->zeyim, size);
+  memcpy(psd->ezimc, so4->zezim, size);
+
+  //  cout << "start copy vectors" << endl;
+  memcpy(psd->z, so4->gridx, sizeof(double)* cols);
+  memcpy(psd->y, so4->gridy, sizeof(double)* rows);
+
+  //bl->beamlineOK |= resultOK;
+  printf("memcpy done\n");
+
+  // psdfields2intensity(struct PSDType *psd, int rows, int cols)
+  for (row=0; row< rows; row++ )
+    for (col=0; col< cols; col++ )
+      {
+	idxf= col + row* rows;
+	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
+	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
+      }
+
+  psd->iy= cols;
+  psd->iz= rows;
+} // end copySrc2Psd()
 /* end pst.c */
 
 
