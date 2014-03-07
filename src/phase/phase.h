@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <24 Feb 14 15:01:01 flechsig>  */
+/*   Time-stamp: <15 May 07 13:46:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,38 +8,23 @@
 /*   $Revision$  */
 /*   $Author$  */
 
-
 #ifndef PHASE_H
-
 #define PHASE_H   
-
-#define DefGeometryC DefGeometryC_UF
-//#define DefGeometryC DefGeometryC_JB
-
-#define FIRST  1
-#define SECOND 2
 
 #define DOALLOC 1
 #define NOALLOC 0
 
-/*#define ZERO            1e-30    */        /* a small number, 3.4.13 for double it can be as low as 1.7e-308 */
-#define ZERO            2e-308           /* a small number, 3.4.13 for double it can be as low as 1.7e-308 */
-#define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */   
-#define PI 3.141592653589793238462643383279502884197169399375105820974944592   /* double precision */
-           
-#define NEWARTBIT          1024             /* bit for new type of optical element in Art */
-#define GRATINGBIT         4096             /* grating bit */
-#define VLSBIT             8192             /* VLS bit */
+/* dont show a watch (work around static variables) */
+#define NOWATCH     
 
-/* #define LOGFILE              compile with logfile: logfilename  */
+#define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */    
+/* #define LOGFILE             /* compile with logfile: logfilename  */
 #define PHASE_HOME      "PHASE_HOME"     /* name of environment */
 #define sourceOK   	1
 #define mapOK      	2                /* werden und verknuepft */ 
 #define resultOK   	4
 #define elementOK  	8
-/* #define geometryOK 	16  */           /* no longer used */
-#define pstsourceOK     32
-#define pstimageOK      64  
+#define geometryOK 	16             
 
 #define RTMod   		1        /* CalcMod */
 #define PSMod      		2        /* werden und verknuepft */ 
@@ -70,20 +55,74 @@
 #define PLsimpam            0x4000000   /*  */
 #define PLsimpph            0x8000000   /*  */
 #define PLd12              0x10000000   /*  */
-
-#define PLRaySet1                   1
-#define PLRaySet2                   2
-#define HORMAPFILENAMEBASE	"/lib/map"
-
+#ifdef VMS
+  #define HORMAPFILENAMEBASE	"PHASE$LIB:MAP"        
+#else
+  #define HORMAPFILENAMEBASE	"/lib/map"
+#endif
 /*******************  fileheader *******************************/
 
 #define MainPickFileHeader	"MainPickFileType"        
 #define Fg3PickFileHeader	"Fg3PickFileType"        /* auch in f*pck.h */
+#define GeometryPickFileHeader	"GeometryPickFileType"   /* auch in g*pck.h */
+#define MirrorPickFileHeader	"MirrorPickFileType"     /* auch in m*pck.h */
 #define OptiPickFileHeader	"OptiPickFileType"       /* auch in ph*ti.h */
 #define RTPlotFileHeader	"RTPlotFileType" 
+#define PSPlotFileHeader	"PSPlotFileType"   
 #define RayFileHeader		"RayFileType"  
-/*  */
 
+#define	kMainList		1 
+#define	kMenuBar		2   
+#define	kFilePDMe		3
+#define	kEditPDMe		4       
+#define	kCommandPDMe		5   
+#define	k_options_pdme		6                
+#define	k_help_pdme		7     
+#define	k_options_menu		8   
+#define	k_create_options	9 
+#define	kNyi			10   
+#define	kFileMenu		11
+#define	kFPrint			12  
+#define kFFile                  13
+#define kFileSelectionDialog    14   
+#define kFileSelectionOk        15   
+#define kFileSelectionCancel    16 
+#define kFFileBox		17    
+#define kFFileBoxLabel		18 
+#define kFFileBoxOK	        19  
+#define kFFileBoxCancel         20          
+#define kFFileLabel1            21  
+#define kFFileLabel2            22  
+#define kFFileLabel3            23  
+#define kFFileLabel4            24  
+#define kFFileLabel5            25 
+#define kFFileLabel6            26 
+#define kFFileLabel7            27      
+#define kFFileLabel8            28 
+#define kFFileLabel9            29 
+#define kFFileLabel10           30             
+#define kFSaveAsButton          31             
+
+#define kFFileButton1           41  
+#define kFFileButton2           42  
+#define kFFileButton3           43  
+#define kFFileButton4           44  
+#define kFFileButton5           45  
+#define kFFileButton6           46 
+#define kFFileButton7           47 
+#define kFFileButton8           48 
+#define kFFileButton9           49   
+#define kFFileButton10          50    
+#define kFFileButton11          51    
+#define kFFileButton12          52    
+#define kFFileButton13          53   
+#define kFPFList                54
+#define kFPFOK                  55
+#define kFPFAdd                 56
+#define kFPFDel                 57
+#define kFPFCancel              58
+#define kSetupInfo              59  
+#define	kEditMenu		60 
 #define kESRayTraceButton       61
 #define kESPhaseSpaceButton     62 
 #define kESFileButton           63
@@ -103,16 +142,111 @@
 #define kInfoMenuEntry          77 
 #define kEOEElli                78
 #define kEOEPElli               79
-#define kEOESlit                99
-#define kEOEFresnel             100
 
-#define kESundulatorSourceButton 107      
+#define	kCommandMenu		80                       
+#define	kCProductMatrixButton	81  
+#define kCMatrixRTButton	82     
+#define	kCMatrixPSButton        83  
+#define kCCRayTraceButton       84  
+#define	kCCPTButton             85    
+#define	kCCMPTButton            1085    
+#define	kCCSR1Button            86
+#define	kCCSR2Button            87  
+#define kCPurge			88  
+#define kDirCommand   	 	89   
+#define kGraphicCommand  	90 
+#define kCCOptiButton 	  	91       
+#define kCCExtractButton 	92       
+#define kCWriteMapButton        93
+#define kCMatrixReadButton      94    
+
+#define kCCSRDialog             95             /*!single Ray Result  */ 
+#define kCCOptiDialog           96   
+#define kCWriteResultButton     97
+#define kEParameterInitButton   98
+#define kEOESlit                99
+
+#define kCCGlueBox              100  
+#define kCCGResultButton        101   
+#define kCCGList                102   
+#define kCCGOK                  103   
+#define kCCGAdd                 104   
+#define kCCGDel                 105   
+#define kCCGCancel              106    
+#define kESundulatorSourceButton 107      /* low beta */
 #define kESUndulatorSISButton   108 
 #define kESUndulatorSIMButton   109 
 #define kESUndulatorButton      110
+
+#define	k_help_overview		119
+#define	k_help_about		120
+#define	k_help_onhelp		121
+#define	k_help_sensitive	122
+#define	k_help_menu		123    
+                                 
+#define kESourceBox         	131 
 #define kESourceMenuButton      132   
+#define kEST1                   133 
+#define kEST2                   134 
+#define kEST3                   135 
+#define kEST4                   136 
+#define kEST5                   137 
+#define kEST6                   138 
+#define kEST7                   139 
+#define kEST8                   140 
+#define kESOK	        	141 
+#define kESApply    		142 
 #define kESDefaults         	143 
-#define        kEOElement                 156   
+#define kESCancel           	144  
+#define kESFile                 145   
+#define kESOptMenu              146   
+
+#define kEST1Label              148  
+#define kEST2Label              149
+#define kEST3Label              150  
+#define kEST4Label              151  
+#define kEST5Label              152  
+#define kEST6Label              153  
+#define kEST7Label              154  
+#define kEST8Label              155  
+
+/******************** opt. Element     Box **********************************/  
+
+#define        kEOElement                 156      
+#define        kEOET1                     157 
+#define        kEOET2                     158 
+#define        kEOET3                     159 
+#define        kEOET4                     160 
+#define        kEOET5                     161 
+#define        kEOET6                     162 
+#define        kEOET7                     163 
+#define        kEOET8                     164 
+#define        kEOET9                     165
+#define        kEOET10                    166
+#define        kEOET11                    167
+#define        kEOET12                    168  
+#define        kEOET13                    169
+#define        kEOET14                    170
+
+#define    kEOET15                171
+#define    kEOET16                172
+#define    kEOET17                173
+#define    kEOET18                174
+#define    kEOET19                175
+#define    kEOET20                176
+#define    kEOET21                177
+#define    kEOET22                178
+#define    kEOET23                179
+#define    kEOET24                180
+#define    kEOET25                181
+#define    kEOET26                182
+#define    kEOElementBox          183
+
+#define        kEOEOK	        	  186 
+#define        kEOEApply    		  187 
+#define        kEOEDefaults         	  188 
+#define        kEOECancel           	  189  
+
 #define        kEOOptMenu	          192
 #define        kEOEAB2                    193     /*! noch opt. Element  */
 #define        kEOEAB4                    194                             
@@ -120,6 +254,110 @@
 #define        kEOEInputLabel         	  195 
 #define        kEOElementButton      	  196  
 
+
+
+/************************Geometry Box ***********************/      
+#define kEGT1                     197 
+#define kEGT2                     198 
+#define kEGT3                     199 
+#define kEGT4                     200 
+#define kEGNITranslation          201 
+#define kEGT3Button               202 
+#define kEGT7                     203 
+#define kEGT8                     204 
+#define kEGOK	        	  205 
+#define kEGApply    		  206 
+#define kEGDefaults         	  207 
+#define kEGCancel           	  208  
+#define kEGInputLabel         	  209
+ 
+#define kEGeometryBox         	  211  
+#define kEGT1Label                212  
+#define kEGT2Label                213  
+#define kEGT3Label                214  
+#define kEGT4Label                215  
+#define kEGT5Label                216  
+#define kEGT6Label                217  
+#define kEGT7Label                218  
+#define kEGT8Label                219  
+
+/************************ Graphic Box ***********************/  
+#define     kCGrBox		 225
+#define     kCGrT5               226
+#define     kCGrT1               227
+#define     kCGrT2               228
+#define     kCGrT3               229
+#define     kCGrT4               230   
+       
+#define     kCGrT2Label          236   
+#define     kCGrT4Label          237   
+#define     kCGrT5Label          238  
+#define     kCGrPSFileButton     239 
+#define     kCGrPSFile           240 
+#define     kCGrOK               241
+#define     kCGrApply            242
+#define     kCGrDefaults         243
+#define     kCGrCancel           244 
+
+
+#define     kCGrOptMenu          250  
+#define     kCGrOptMenu1         251    
+
+#define     kFFileBoxExpand      270
+
+/************************OPti Dialog ***********************/
+                 
+#define kCOptiResultButton      	  271   
+#define kCOptiList                        272   
+#define kCOptiList2                       273   
+#define kCOptiAdd                         274   
+#define kCOptiDel                         275  
+#define kCOptiOK                          276  
+#define kCOptiCancel                      277   
+#define kCOptiMinuitButton   		  278  
+#define kCOptiSelectedLabel 		  279
+#define kCOptiList1                       280   
+#define kCOptiEditLabel                   281   
+#define kCOptiT1                          282   
+#define kCOptiT2            		  283 
+#define kCOptiAdd1          		  284
+#define kCOptiDel1           		  285 
+#define kCOptiAddOK          		  286 
+
+#define kEBLButton          		299 
+#define kEBLDialog          		300  
+#define kEBLNameButton      	        301   
+#define kEBLList                        302   
+#define kEBLList2                       303   
+#define kEBLAdd                         304   
+#define kEBLDel                         305  
+#define kEBLOK                          306  
+#define kEBLCancel                      307   
+#define kEBLApply	   		308  
+#define kEBLSelectedLabel 		309
+#define kEBLList1                       310   
+#define kEBLEditLabel                   311   
+#define kEBLT1                          312   
+#define kEBLT2            		313 
+#define kEBLAdd1          		314
+#define kEBLDel1           		315 
+#define kEBLAddOK          		316 
+
+#define kEBLup			 320  
+#define	kEBLleft		 321  
+#define kEBLdown		 322  
+#define kEBLright		 323        
+#define kEBLstoim                324
+#define kEBLimtos                325  
+
+#define kEBLT11		 	 330        
+#define kEBLT12		 	 331 
+#define kEBLT21		 	 332 
+#define kEBLT22		 	 333 
+#define kEBLT31		 	 334 
+#define kEBLT41		 	 335 
+#define kEBLT31a		 336 
+#define kEBLT41a		 337    
 
 #define kEOEGeneral              350
 #define kEOECone                 351
@@ -129,30 +367,28 @@
 #define kEOEPGV                  355
 
 #define kCWriteMCoButton         358
-#define kESRingSourceButton      359
+
 #define kESPointSourceButton     360
 #define kPreAB                   361
 #define kSucAB                   362
 #define kMisalignmentButton      363
-#define kEOEDrift                999   //
+
+#define kEOEDrift               999
 
 
-/* optimization methodes, I do not want to use the defines of the buttons twice */
-#define OptiR       0
-#define OptiY       1
-#define OptiZ       2
-#define OptiTrans   3
-#define OptiFocus   4
-#define OptiCost    5
-#define OptiRpY     6
-#define OptiRpZ     7 
 
 
+/******************** end defines uil **********************************/
+
+#define k_max_widget            2000  		/* geaendert von 50 */
+#define MAX_WIDGETS (k_max_widget + 1)
 #define MaxPathLength           255         
 #define MainPickName 		"phase.pck"
-
-#define	MainListFileName        "MainListFileName"
-
+#ifdef VMS
+  #define	MainListFileName        "PHASE$disk:PHASElist.pck"
+#else
+  #define	MainListFileName        "MainListFileName"
+#endif
 #define D0matrixname		"test.omx"     
 #define D0mapname		"test.map"     
 #define D0sourceraysname 	"test.inp"     
@@ -167,8 +403,11 @@
 #define D0plotpsname            "pmeta.ps"
 #define D0printpclname          "test.pcl"   
 #define D0optipckname           "test.pcko"   
-
-
+#ifdef VMS
+  #define PHASE_help  		"PHASE$lib:PHASE.hlb"
+#else
+  #define PHASE_help  		"$PHASE_HOME/lib/phase.hlb"
+#endif
 /********************** Strukturen **************************************/
            
 struct PHASEset                       /* Datensatz in MainPickName 	*/
@@ -187,30 +426,12 @@ struct PHASEset                       /* Datensatz in MainPickName 	*/
   char plotpsname[MaxPathLength]; 
   char printpclname[MaxPathLength];   
   char optipckname[MaxPathLength];   
-  char beamlinename[MaxPathLength];
-  char so4_fsource4a[MaxPathLength];
-  char so4_fsource4b[MaxPathLength];
-  char so4_fsource4c[MaxPathLength];
-  char so4_fsource4d[MaxPathLength];
-  char so6_fsource6[MaxPathLength];
-  char so7_hdf5[MaxPathLength];
-  char opresname[MaxPathLength];
-  char hdf5_out[MaxPathLength]; 
+  char beamlinename[MaxPathLength];   
+
 };                                                                   
 
-typedef double MAPTYPE_330X2 [330][330];
-typedef double MAPTYPE_8X4   [8][8][8][8];
-typedef double MAPTYPE_8X6   [8][8][8][8][8][8];
-typedef double MAPTYPE_70X2  [70][70];  
-typedef double MAPTYPE_5X4   [5][5][5][5]; 
-
-#ifdef SEVEN_ORDER
-  typedef double MAP70TYPE    [330][330];  
-  typedef double MAP7TYPE     [8][8][8][8];
-#else
-  typedef double MAP70TYPE    [70][70];  
-  typedef double MAP7TYPE     [5][5][5][5]; 
-#endif
+typedef double MAP70TYPE [70][70];  
+typedef double MAP7TYPE [5][5][5][5];    
 
 typedef struct grdatstructtype {
   double ymi,yma,zmi,zma,dymi,dyma,dzmi,dzma,tmi,tma;
@@ -219,69 +440,38 @@ typedef struct grdatstructtype {
 } GRDATSTRUCTTYPE;  
 
 struct mirrortype {
-#ifdef SEVEN_ORDER
-  double a[9][9];
-#else
   double a[6][6];
-#endif
 };
 
 /* in phase_struct.h ist die analoge structur geometryst */
 struct geometrytype {
   double sina, cosa, sinb, cosb, r, rp, x[5], xlam;
   int idefl;
-}; 
+  }; 
 
-struct gdatset 
-{
-  double theta0;
-  double r;
-  double rp; 
-  double xdens[5];  
-  //double lambda; //TODO: i think this is the same as lambdag, should be removed
-  //double lambdag; 
-  //double dlambda;
-  //int    el_dlambdaflag;
-  int    inout;                                 
-  int    iflag; 
-  int    azimut;     /* vertikal 0; nach links 1; nach unten 2 */
-}; 
-
-struct grating
-{
-    double alpha, beta, lambda, n[5], r, rho;
-    int    order;
-};
-
-struct mdatset 
-{
-  double r1;
-  double r2;
-  /*double alpha; */       
-  double rmi;        
-  double rho;  
-  int    iflagmi;
-  double w1, w2, l1, l2;
-  double slopew, slopel;
-  double du, dw, dl, dRu, dRw, dRl;
-  int Art;   /* UF 9.7.04 */
-};  
 
 struct xlenmaptype {
-#ifdef SEVEN_ORDER
-  MAPTYPE_8X4 xlen1c, xlen2c;
-#else
-  MAPTYPE_5X4 xlen1c, xlen2c;
-#endif
+  MAP7TYPE xlen1c, xlen2c;
 };
 
+struct optistruct_xx
+/* modification: 24 Oct 97 15:38:40 flechsig */
+
+{
+  char resultfile[MaxPathLength];
+  int elementzahl;
+  char *fileliste;
+  struct mirrortype *mirz;
+  struct geometrytype *geoz;
+};      
+
 struct RayType { double y, z, dy, dz, phi; };  
+/*23.11.98  deltaz neu UF */
 struct UndulatorSourceType { double length, lambda, sigvert, sighor, deltaz;};  
 struct UndulatorSource0Type { double length, lambda, sigvert, sighor, deltaz,
    sigmaez, sigmaey, sigmaedz, sigmaedy; };  
 struct DipolSourceType     { double sigy, sigdy, sigz, dz; }; 
-struct PointSourceType     { double sigy, sigdy, sigz, sigdz; };
-struct RingSourceType      { double dy, dz; }; 
+struct PointSourceType     { double sigy, sigdy, sigz, sigdz; }; 
 struct SRSourceType        { double y, z, dy, dz; };   
 struct HardEdgeSourceType  { double disty, distz, divy, divz;
   int    iy, iz, idy, idz; };  
@@ -289,34 +479,39 @@ struct PSImageType         { double ymin, ymax, zmin, zmax;
   int    iy, iz; };         
 struct PSSourceType       { double sigy, sigdy, sigz, sigdz;
   int    yhard, dyhard, zhard, dzhard; };         
-struct FileSourceType { char filename[MaxPathLength]; };
+struct FileSourceType { char *filename; };
     
 struct RTSourceType {
-  void *Quellep;          
+  /*  union               	{ 
+    struct HardEdgeSourceType  HardEdgeSource; 
+    struct UndulatorSourceType UndulatorSource;
+    struct UndulatorSource0Type UndulatorSource0;
+    struct DipolSourceType     DipolSource;     
+    struct SRSourceType        SRSource;
+    struct PSImageType         PSImage;
+    struct PointSourceType     PointSource;
+    struct FileSourceType      FileSource;
+    } Quelle; */
+  void *Quellep;           /* UF 24.11.06 */
   struct RayType *SourceRays;          
-  int QuellTyp_old, modified, raynumber; 
-  char QuellTyp;
-};       
+  int QuellTyp, QuellTyp_old, modified, raynumber; };       
 
 struct PSDType  {
   double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
     *eyrec, *ezrec, *eyimc, *ezimc;
-  double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
-    sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
-    simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4], d12[MAX_INTEGRATION_SIZE*2*3];
+  double simpre[0x8000], simpim[0x8000], sintre[0x8000], sintim[0x8000], 
+    simpa[0x8000], simpp[0x8000], d12[24576]; 
   int iy, iz;
 };
 
 struct RESULTType {
-  void *RESp;         
-  int  typ, points1, points2, dim1; 
-};  
+  /*  union               	{ 
+    struct RayType *Rays;  
+    struct PSDType PSD; 
+    } RESUnion; */
+  void *RESp;          /* UF 24.11.06 */
+  int points, typ; };       
 
-struct Spa3TableType {
-  int    datapoints;
-  double dx;
-  double *tab;
-};       
 
 struct datset 
 {
@@ -350,12 +545,12 @@ struct datset
   double sigmay, sigmayp, ymin, ymax, sigmaz, sigmazp, zmin, zmax; 
   double epsilon, fracy, frac1y, fracz, frac1z;
   struct RayType SR2out;    
-  }; 
+}; 
 
 struct ElementType   
 {
   int ElementOK;
-  MAP70TYPE M_StoI, M_ItoS;
+  MAP70TYPE matrix, MtoSource;
   MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc; 
   struct xlenmaptype xlm; 
   struct mirrortype mir;
@@ -363,7 +558,6 @@ struct ElementType
   struct geometrytype geo; 
   struct gdatset GDat;
   char elementname[MaxPathLength];
-  struct TmpMapType *tpe;
 };
 
 struct PSOptionsType                   /* 20.9.96 */
@@ -374,10 +568,10 @@ struct PSOptionsType                   /* 20.9.96 */
   double dyminfix, dymaxfix, dzminfix, dzmaxfix;
 };     
 
-struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda */
+struct OptionsType                   			/* 24.6.96 */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, act_ray_set, dlambdaflag, plrayset, need_another_run;
-  double epsilon, lambda, xlam_save, displength, dlambda;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign;
+  double epsilon, lambda, xlam_save, displength;
   struct PSOptionsType PSO;
   struct control_flags ifl;
   struct apertures apr;
@@ -388,48 +582,83 @@ struct BeamlineType
 {
   struct ElementType *ElementList;   
   struct RTSourceType RTSource; 
-  MAP70TYPE lmap, rmap, M_StoI, M_ItoS;                          
-  MAP7TYPE ypc1, zpc1, dypc, dzpc;
-  MAP7TYPE wc, xlc, fdetc, fdetphc, fdet1phc, fdet1phca, fdet1phcb;
+  MAP70TYPE map70, lmap, rmap, MtoSource;                          
+  MAP7TYPE ypc1, zpc1, dypc, dzpc, wc, xlc, fdetc, fdetphc, fdet1phc;
   struct xlenmaptype xlm; 
   struct RayType *raysout; 
   struct RESULTType RESULT;
-  unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc, gratingpos; 
+  unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
-  /* #ifdef OLD_PO_SOURCE */
-  struct sources src;   /* muss noch drin bleiben da viele parameter noch gesetzt werden koennen */
-/* #endif */
-  struct source4c posrc;   /* 120423 */
-  struct TmpMapType *tp;
-  struct PHASEset filenames;
-  struct Spa3TableType spa3table;
+  struct sources src;
 };
 
-/* mod 20121102 */
-struct optistruct
-{
-  double dx, dy, chistart, chistop, *start, *step, *min, *max;
-  int elementzahl, xpoints, ypoints, npars, 
-    xindex, yindex, *parindex, methode, fcncall;   
-  char beamlinefilename[MaxPathLength], 
-    minuitfilename[MaxPathLength],  
-    resultfilename[MaxPathLength],
-    optiblfilename[MaxPathLength], 
-    *parnames;    
-  FILE 	 *filepointer;
-};  
 
-struct TmpMapType
-{
-  MAPTYPE_8X6 opl6, dfdw6, dfdl6, dfdww6, dfdwl6, dfdll6, dfdwww6, dfdwidlj;
-  MAPTYPE_8X4 dfdww, dfdwl, dfdll, ypc, zpc ; 
-};
-
-int getpickfile(struct datset *, struct BeamlineType *, char *);  
+int	getpickfile(struct datset *, struct BeamlineType *, char *);  
 
 void putpickfile(struct datset *, struct BeamlineType *, char *),    
   initdatset (struct datset *, struct BeamlineType *);    
+
+
+/******************** globale Variable *****************************/
+
+Widget
+toplevel_widget,            	/* Root widget ID of our application. */
+  main_window_widget,		/* Root widget ID of main MRM fetch   */
+  widget_array[MAX_WIDGETS],	/* Place to keep all other widget IDs */
+  main_help_widget,		/* Primary help widget		      */
+  help_widget[MAX_WIDGETS],	/* Array of help widgets	      */
+  help_array[MAX_WIDGETS],	/* Array of help widgets for Toolkit  */
+  print_widget,			/* Print widget			      */
+  color_widget;    		/* Color Mix widget		      */
+
+
+MrmHierarchy s_MrmHierarchy;	         /* MRM database hierarchy ID */     
+MrmType      dummy_class;	    /* %%%*dumm...and class variable. */   
+Opaque       help_context;         	/* Global help system context */  
+
+                                                                             
+long status;        			/* fuer Stringumwandlung   */
+long bc;      
+
+static Cursor watch = 0;
+static Screen	*the_screen;		/* Pointer to screen data  */  
+static Display	*the_display;		/* Pointer to display data */  
+static XColor    savecolor;   
+static int help_num = 0;                /* make sure they start zero */   
+static int low_num  = 0;
+static XmString latin_create;		/* Variables for */
+static XmString latin_dismiss;	  	/* compound strings. */
+static XmString latin_space;
+static XmString latin_zero;
+/* #ifdef VMS */
+/*  static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
+/*  {"PHASE$prg:PHASE.uid"};	/* uid Namen eintragen*/
+                                /* There is only one UID file for */
+                                /* this application. */
+/* #else */
+/* static char *db_filename_vec[] =	/* Mrm.heirachy file list. */     
+/*  {"phase.uid"};	*/
+/* #endif */
+
+char *db_filename_vec[1];
+
+static int db_filename_num = 1;
+/*
+(sizeof db_filename_vec / sizeof db_filename_vec [0]); */
+                                                                 
+double PI;
+int ActualTask;         		/* haelt aktuelle Aufgabe fest */    
+
+struct PHASEset PHASESet;  
+struct datset Fg3ActDat, Fg3DefDat;  
+struct gdatset GActDat,   GDefDat;  
+struct mdatset MActDat,   MDefDat;  
+struct BeamlineType Beamline;
+/*struct optistruct optistructure; */ 
+GRDATSTRUCTTYPE grdatstruct;  
+/*double map35[35][35];  */
+/*int pawc[200000]; */
 
 /********* FORTRAN calls ******************************************/
 /* in der CERN lib fuer LINUX werden werden FORTRAN Symbole mit einem 
@@ -440,202 +669,204 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
    FORTRAN Routinen die aus c gerufen werden muessen hier erscheinen.
 */
 #ifdef LINUX
-  #define adaptive_int   adaptive_int_ 
-  #define debug_beamline_type_f debug_beamline_type_f_
   #define exithplot      exithplot_ 
   #define extractmap     extractmap_
-  #define idnum          idnum_
+  #define fdet           fdet_
+  #define fgmapidp       fgmapidp_
   #define hlimit         hlimit_
   #define hplint         hplint_
   #define hplotdisplayf  hplotdisplayf_
   #define hplotpsdf      hplotpsdf_
   #define hplotpssimf    hplotpssimf_
   #define inithplot      inithplot_
-  
+  #define intersection   intersection_
   #define pathlen0       pathlen0_
   #define pathlen1       pathlen1_
   #define pstf           pstf_ 
   #define readfg34_par   readfg34_par_
   #define readmatrixfile readmatrixfile_
   #define src_ini        src_ini_
-  #define create_hormap  create_hormap_
-  
-  #define fdet_8          fdet_8_
-  #define fgmapidp_8      fgmapidp_8_
-  #define initconstants   initconstants_
-  #define make_matrix_8   make_matrix_8_
-  #define map7to4         map7to4_
-  #define map4to7         map4to7_
-  #define mat4to7         mat4to7_
-  #define mat7to4         mat7to4_
-  #define matrix_dim      matrix_dim_
-  #define mirror7to4      mirror7to4_
-  #define mirror4to7      mirror4to7_
-  #define misali_8        misali_8_
-  #define elli_8          elli_8_
-
-  #define fdet_4         fdet_4_
-  #define fgmapidp_4     fgmapidp_4_
-  #define intersection   intersection_
-  #define misali_4       misali_4_
-  #define writematrixfile writematrixfile_
   #define xxmap70        xxmap70_ 
-
+  #define misali         misali_
 /*  #define already_expired already_expired_ */
 #endif
 /************************* Prototypen *****************************/
 
 int	  
+  GetGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *, int),
   getgrfiletype(char *), 
   GetOElement(),  GetPHASE(struct  PHASEset *, char *),
   iindex(int, int), 
   OnElement(struct mdatset *, double, double), 
   ReadBLFile(char *, struct BeamlineType *), 
-  SetFilePos(FILE *, char *),
-  CheckBLOK(int, int, char*);   
-int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *, int *); 
+  SetFilePos(FILE *, char *);   
  
-void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
- 
-void check_2_m4_(struct map4 *);
-	
-void 	  
-  
+void    *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
+ 	
+void 	ActivateFileSelection(int, char *), 
+  activate_proc(),  
+  AddBLElement(struct BeamlineType *, char *),
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *, struct BeamlineType *),  
-  BatchMode(struct BeamlineType *, int, int, int, int, int),
+  BatchMode(char *, int, int),
   Beauty(double *, double *), 
   BuildBeamline(struct BeamlineType *),
-  BuildElement(unsigned int, struct BeamlineType *),
-  Check_iord(struct BeamlineType *),
-  create_hormap(),
-  debug_beamline_type_f(int *),
-  debug_beamline_type_c_(int *),
-  DefGeometryC_JB(struct gdatset *, struct geometrytype *, struct OptionsType *),
-  DefGeometryC_UF(struct gdatset *, struct geometrytype *, struct OptionsType *),
-  DefGeometryCM(double, double, struct gdatset *, struct geometrytype *),
-  DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
-  elli_8(),
-  ExpandFileNames(),
-  extractmap(),
-  fdet_8(MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
-         MAPTYPE_8X4, MAPTYPE_8X4, 
-	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
-	 MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, 
-	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
-	 MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
-	 struct geometrytype *, int *, int *, int *),
+  DefGeometryC(struct gdatset *, struct geometrytype *),  
+  DefMirrorC(struct mdatset *, struct mirrortype *, int, char *),  
+  DelBLElement(struct BeamlineType *bl),  
+  exithplot(), 
+  ExpandFileNames(),  
+  FetchWidget(int, char *),   
   fgmapidp(int *, 
 	   int *, double *, struct mirrortype *, struct geometrytype *,
 	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE),
-  fgmapidp_8(double *,  
-	     MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
-             MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
-	     struct xlenmaptype *, 
-	     MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6,
-	     MAPTYPE_8X6, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
-	     struct mirrortype *, struct geometrytype *, int *, int *, int *),
-  fill_m4(struct BeamlineType *, struct map4 *),
-  fill_xirp(struct BeamlineType *, struct integration_results *),
   FixFocus(double, double, double, int, double *, double *),
-  Footprint(struct BeamlineType *, unsigned int),
+  Footprint(struct BeamlineType *, int),
   GeneratePrintDataFile(),
-  getoptipickfile(struct optistruct *, char *),
-  ginitdatset (struct gdatset *),
-  GlueLeft(double *, double *, int *), 
+  GetBLBox(char *, struct BeamlineType *),  
+  
+  GetOptiBox(struct PHASEset *), 
+  GetGeometry(), 
+  GetSlope(struct ElementType *), 
+  GetSource(struct BeamlineType *), 
+  GlueLeft(double *, double *), 
   GlueXlen(struct xlenmaptype *, struct xlenmaptype *, double *, int *, int), 
   GlueWcXlc(double *, double *, double *, double *, double *, int *),
   gpd(), 
   GetUserName(), 
-  idnum(int *, int *, int *, int *, int *),
+  hplint(int *), 
+  hplotdisplay(struct BeamlineType *, GRDATSTRUCTTYPE *, 
+	       struct PHASEset *, struct RayType *), 
+
+  hlimit(int *),
+  hplotpsdc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
+	    struct PHASEset *, struct PSDType *, double *),
+  hplotpssimc(struct BeamlineType *, GRDATSTRUCTTYPE *, 
+	      struct PHASEset *, double *), 
+  
+  InitBLBox(char *, struct BeamlineType *), 
   intersection(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
-	       struct RayType *, double *, double *, double *, int *),   
-  intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
-	       struct RayType *, double *, double *, double *, int *),  
-  initconstants(struct  constants *),  
-  init_posrc(struct source4c *),
-  InitDataSets(struct BeamlineType *, char *),   
+	       struct RayType *, int *,double *, double *, double *),   
+  init_application(),  
+  initconstants(),  
+  InitDataSets(struct PHASEset *, char *),   
+  InitFileBox(struct PHASEset *),  
+  inithplotc(int),
+  InitOElementBox(struct mdatset *, struct gdatset *, int), 
+  InitOptiBox(char *, struct BeamlineType *),
+  InitOptiList2(int, char *),
+  InitParameterBox(struct BeamlineType *, char *), 
+  InitSourceBox(struct datset *, struct BeamlineType *),
   InitSourceType(struct BeamlineType *, int),  
-                       
+  InitGeometryBox(struct gdatset *), 
+  InitGrafBox(struct PHASEset *, GRDATSTRUCTTYPE *),                     
   InitPHASE(struct PHASEset *), 
   LoadHorMaps(struct BeamlineType *, int), 
-  MakeHorMaps(struct BeamlineType *),
-  MakeMapandMatrix(struct ElementType *, struct BeamlineType *, int *),
-  make_matrix_8(),
-  map4to7(),
-  map7to4(),
-  mat4to7(),
-  mat7to4(),
-  matrix_dim(int *, int *),
-  minitdatset (struct mdatset *),
-  mirror4to7(),
-  mirror7to4(),
-  misali_8(),
+  MakeMapandMatrix(struct ElementType *, struct BeamlineType *),
   MultiplyMatrix(), 
-/* pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
-   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), */
-
-  FindIntRange(struct BeamlineType *),
-
-  MPST(struct BeamlineType *), 
-  norm_output(struct BeamlineType *),
-  pathlen0(),
+  pathlen0(struct mirrortype *, struct geometrytype *, int *, int *, int *,
+	   MAP7TYPE, MAP7TYPE, MAP7TYPE, MAP7TYPE, struct xlenmaptype *), 
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
-     
+  PrintFileInMainList(char *),    
   PST(struct BeamlineType *), 
-  pstc(struct BeamlineType *),
-  pstc_ii(int, struct BeamlineType *),
-  pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *),
-  pstf(struct PSImageType *, struct PSOptionsType *,
-       double *, int *, 
-#ifdef SEVEN_ORDER
-       MAPTYPE_8X4 *, MAPTYPE_8X4 *,         
-#else
-       MAPTYPE_5X4 *, MAPTYPE_8X4 *,        
-#endif
-       double *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *,
-       MAP7TYPE *wc, MAP7TYPE *,
-       double *y, double *,
-       double *psd, double *,
-       double *stinumbc, double *,
-       double *s2c, double *,
-       double *eyrec, double *,
-       double *eyimc, double *,
-       struct geometryst *, struct mirrortype *,
-       struct sources *, struct apertures *, struct rayst *, struct control_flags *,
-       struct integration *, struct integration_results *, struct statistics *, 
-       MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, int *),
-  
-
-  adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
-	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
-	       struct integration_results *, struct statistics *, struct psimagest *, int *),
+  adaptive_int(),
   PutPHASE(struct  PHASEset *, char *), 
-/*  RayTracec(struct BeamlineType *),*/
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
   ReadCoefficientFile(double *, char *),
-  readfg34_par(struct sources *, struct apertures *,
-	       struct control_flags *,  struct integration *,
-	       double *),
   ReadpsFile(char *, struct RESULTType *),
   ReadRayFile(char *, int *, struct RESULTType *), 
-  readmatrixfilec(char *, double *, int),
   SetDefaultParameter(struct BeamlineType *),
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
+  SetInfoString(),
+  SetOElementBoxSensitivity(int),
   Slope(struct RayType *, double, double, double, double, int),
-  src_ini(struct sources *),  
-  Test4Grating(struct BeamlineType *),
+  UpdateBLBox(struct BeamlineType *, int),  
+  UpdateFilenames(struct PHASEset *),
   MMatrix(),
-  UpdateFlags(struct BeamlineType *, int),	        
+	        
+  xprintf(char *),
+  UpdateMainList(),  
   WriteBLFile(char *, struct BeamlineType *),
-  WriteMKos(struct mirrortype *, char *),
-  writemapc(char *, char *, int, double *, double *, double *, double *,
-	    double *, double *, double *, double *),
-/* writematrixfile(char *, int, char *, int, double *),  */
-  writematrixfile(double *, char *, char *, int, int),
+  writemapc(char *, int, double *, double *, double *, double *,
+	    double *, double *, double *, double *),  
   WritePsd(char *, struct PSDType *, int, int),     
-  
-  SetIndexField(int *, int,...);
+  get_something(),
+  set_something(),                         
+  SetIndexField(int *, int,...),  
+  SetRadius(int),
 	      
+  s_error(),  
+  start_watch(), 
+  stop_watch(),
+  help_error(),
+  create_help(),
+  tracking_help(), 
+  sens_help_proc(), 
+  help_system_proc(),
+  create_proc(),
+  create_print(),
+  activate_print(),
+  create_color(),
+  ok_color_proc(),
+  apply_color_proc(),
+  cancel_color_proc(),
+  xmstring_append(),
+  exit_proc(),
+  list_proc(),
+  toggle_proc(),
+  SelectionProc(Widget, int *, XmSelectionBoxCallbackStruct *), 
+  FileSelectionProc(Widget, int *,        /*callback der Fileselection*/ 
+		    XmFileSelectionBoxCallbackStruct *); 
+
+extern void inithplot(),    
+#ifdef VMS
+  hplotdisplayf(GRDATSTRUCTTYPE *,
+		struct RayType *, double*, double*, FString *, FString *);  
+#else 
+  hplotdisplayf();
+#endif
+/* The names and addresses of things that Mrm has to bind.  The names do
+ * not have to be in alphabetical command.  */
+
+/* wird auf dem Laptop benoetigt */
+
+#ifdef CADDR_T
+/* #define caddr_t "char *" */
+   typedef XtPointer caddr_t;
+#endif
+
+static MrmRegisterArg reglist[] = {
+  {"activate_proc",     (caddr_t) activate_proc}, 
+  {"create_proc",       (caddr_t) create_proc}, 
+  {"exit_proc",         (caddr_t) exit_proc},   
+  {"list_proc",         (caddr_t) list_proc},   
+  {"sens_help_proc",    (caddr_t) sens_help_proc},
+  {"help_system_proc",  (caddr_t) help_system_proc},
+  {"cancel_color_proc", (caddr_t) cancel_color_proc},
+  {"apply_color_proc",  (caddr_t) apply_color_proc},
+  {"ok_color_proc",     (caddr_t) ok_color_proc},
+  {"FileSelectionProc", (caddr_t) FileSelectionProc},
+  {"SelectionProc", 	  (caddr_t) SelectionProc},   
+  {"toggle_proc", 	  (caddr_t) toggle_proc}
+};
+
+static int reglist_num = (sizeof reglist / sizeof reglist [0]);
+static font_unit = 400;
+
+/*
+ * OS transfer point.  The main routine does all the one-time setup and
+ * then calls XtMainLoop. 
+ */
+
+static String fallback[] =  {
+  "PHASE.title	: PHASE (fallback)",                      
+  "PHASE.x		: 15",
+  "PHASE.y		: 40",
+  "*fontlist :-Adobe-Times-medium-R-Normal--*-180-*-*-P-*-ISO8859-1=normal,-Adobe-Times-medium-o-Normal--*-180-*-*-P-*-ISO8859-1=italic,-Adobe-Times-medium-R-Normal--*-180-*-*-P-*-ISO8859-7=greek,-Adobe-Times-Bold-R-Normal--*-180-*-*-P-*-ISO8859-1=bold", 
+  "*MainList.rows	: 5",
+  "*MainList.columns : 60",  
+  (char *) NULL};
+
+
 #endif  /* PHASE_H */      

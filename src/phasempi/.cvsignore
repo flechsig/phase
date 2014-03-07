@@ -1,6 +1,0 @@
-# -*-sh-*-
-phasempimodule 
-.deps
-.libs
-Makefile
-Makefile.in

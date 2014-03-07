@@ -1,0 +1,155 @@
+# Datei: USERDISK_3:[FLECHSIG.PHASE.PHASEFOR.LIB]MAKEFILE.
+# Datum: 19.JUL.1994
+# Stand: 17-JAN-1997                                           
+# Autor: FLECHSIG, BESSY Berlin
+#########################################################################
+# Makefile for the PHASE LIB 
+#
+# make commands for different systems
+#
+# for DEC VAX   with VMS "make vax"
+# for DEC Alpha with VMS "make axp"
+# remove *.obj, *.exe    "make clear"
+#########################################################################
+.phony: all makewhat    
+MAKE= make/noveri         # no debug messages
+#
+#######          extensions                                    ##########
+#######          additional extension on AXP systems        #############
+ALPH		= _axp            
+#######                    basic extension               ################
+EXE		= exe
+OBJ             = obj
+LIB		= olb      
+#########################################################################
+#               debugging        
+DEBUG		= no           # comment out for debugging (DEBUG = # no)    
+OPTIMIZE        = # no         # comment for debugging 
+#########        flags                                    ###############
+CFLAGS	 	= /$(DEBUG)debug/$(OPTIMIZE)OPTIMIZE/OBJECT=     
+FFLAGS   	= /$(DEBUG)debug/$(OPTIMIZE)OPTIMIZE/OBJECT= 
+UILFLAGS	= /motif/output=
+LINKFLAGS	= /$(DEBUG)debug/executable=  
+###### system dependent flags                          ################## 
+CFLAGSVAX 	= $(CFLAGS)
+CFLAGSAXP	= /STANDARD=VAXC$(CFLAGS)  
+FFLAGSVAX 	= $(FFLAGS)
+FFLAGSAXP	= /ALIGNMENT=COMMONS=MULTILANGUAGE$(FFLAGS)    
+#########################################################################
+#               variables 
+LIBNAME		= phaselib
+
+DESTDIR		= userdisk_3:[flechsig.phas.lib]    # anpassen !
+# 
+PROGRAM		= $(DESTDIR)$(LIBNAME).$(LIB)
+
+#########################################################################
+OBJECTSVAX 	= wdfgmapa4.$(OBJ),wdfgmapb4.$(OBJ),-
+wdfgmapc4.$(OBJ),wdfgmapd14.$(OBJ),-
+wdfgmapd34.$(OBJ),wdfgmapd44.$(OBJ),-
+wdfgmapd54.$(OBJ),wdfgmape14.$(OBJ),-
+wdfgmape24.$(OBJ),wdfgmapf4.$(OBJ),-
+wdfgmapg4.$(OBJ),wdfgmaph4.$(OBJ),-
+wdfgmapi4.$(OBJ),wdfgmapk14.$(OBJ),-
+wdfgmapk24.$(OBJ),wdfgmapl4.$(OBJ),-
+wdfgmapm14.$(OBJ),wdfgmapm24.$(OBJ),-
+lengthab4.$(OBJ),lengtha4.$(OBJ),-
+lengthb4.$(OBJ),lengthc4.$(OBJ),-
+lengthd400.$(OBJ),lengthd401.$(OBJ),-
+lengthd402.$(OBJ),lengthd410.$(OBJ),-
+lengthd411.$(OBJ),lengthd412.$(OBJ),-
+lengthd42.$(OBJ),lengthd43.$(OBJ),-
+dfpl1_uf.$(OBJ),dfpl2_uf.$(OBJ),p_m_4.$(OBJ),-
+zernike_nl_60.$(OBJ),zernike_n_60.$(OBJ)
+#phlib.$(OBJ)
+
+OBJECTSAXP 	= wdfgmapa4.$(OBJ)$(ALPH),wdfgmapb4.$(OBJ)$(ALPH),-
+wdfgmapc4.$(OBJ)$(ALPH),wdfgmapd14.$(OBJ)$(ALPH),-
+wdfgmapc4.$(OBJ)$(ALPH),wdfgmapd14.$(OBJ)$(ALPH),-
+wdfgmapd34.$(OBJ)$(ALPH),wdfgmapd44.$(OBJ)$(ALPH),-
+wdfgmapd54.$(OBJ)$(ALPH),wdfgmape14.$(OBJ)$(ALPH),-
+wdfgmape24.$(OBJ)$(ALPH),wdfgmapf4.$(OBJ)$(ALPH),-
+wdfgmapg4.$(OBJ)$(ALPH),wdfgmaph4.$(OBJ)$(ALPH),-
+wdfgmapi4.$(OBJ)$(ALPH),wdfgmapk14.$(OBJ)$(ALPH),-
+wdfgmapk24.$(OBJ)$(ALPH),wdfgmapl4.$(OBJ)$(ALPH),-
+wdfgmapm14.$(OBJ)$(ALPH),wdfgmapm24.$(OBJ)$(ALPH),-
+lengthab4.$(OBJ)$(ALPH),lengtha4.$(OBJ)$(ALPH),-
+lengthb4.$(OBJ)$(ALPH),lengthc4.$(OBJ)$(ALPH),-
+lengthd400.$(OBJ)$(ALPH),lengthd401.$(OBJ)$(ALPH),-
+lengthd402.$(OBJ)$(ALPH),lengthd410.$(OBJ)$(ALPH),-
+lengthd411.$(OBJ)$(ALPH),lengthd412.$(OBJ)$(ALPH),-
+lengthd42.$(OBJ)$(ALPH),lengthd43.$(OBJ)$(ALPH),-
+dfpl1_uf.$(OBJ)$(ALPH),dfpl2_uf.$(OBJ)$(ALPH),-
+p_m_4.$(OBJ)$(ALPH),-
+zernike_nl_60.$(OBJ)$(ALPH),zernike_n_60.$(OBJ)$(ALPH)
+#,-
+#phlib.$(OBJ)$(ALPH)
+
+#########################################################################
+#                            targets                                    # 
+all: makewhat
+
+makewhat: 
+        arch_name = f$getsyi("ARCH_NAME")
+	if arch_name .eqs. "Alpha"
+	then 
+		write sys$output "Making PHASELIB for AXP..." 
+		$(MAKE) $(PROGRAM)$(ALPH) 
+	else
+		write sys$output "Making PHASELIB for VAX..."  
+		$(MAKE) $(PROGRAM)  
+	endif
+
+##############################################################################
+#
+# Dependencies section
+# for vax
+$(PROGRAM): $(OBJECTSVAX)
+	lib/create $(PROGRAM) $(OBJECTSVAX)     
+
+
+# for axp
+$(PROGRAM)$(ALPH): $(OBJECTSAXP)   
+	lib/create $(PROGRAM)$(ALPH) $(OBJECTSAXP)  
+
+
+##########################################################################
+*.$(OBJ) : *.c 
+	cc $(CFLAGSVAX)$@ $< 
+
+*.$(OBJ)$(ALPH) : *.c 
+	cc $(CFLAGSAXP)$@ $< 
+
+*.$(OBJ) : *.for 
+	fortran $(FFLAGSVAX)$@ $<   
+
+*.$(OBJ)$(ALPH): *.for 
+	fortran $(FFLAGSAXP)$@ $<   
+##########################################################################
+clear:
+	write sys$output "delete objects and olb..."  
+	arch_name = f$getsyi("ARCH_NAME")
+	if arch_name .eqs. "Alpha"
+	then 
+		del/nocon *.$(OBJ)$(ALPH);*,$(PROGRAM)$(ALPH);*
+	else
+		del/nocon *.$(OBJ);*,$(PROGRAM);*   
+	endif
+############################################################################
+#
+# make phaselib for different systems
+#
+
+# DEC VAX systems with VMS 
+vax:
+	write sys$output "Making PHASELIB for VAX..."  
+        $(MAKE) $(PROGRAM)   
+
+# DEC Alpha systems with VMS                                    
+alpha: axp
+axp:
+	write sys$output "Making PHASELIB for AXP..." 
+        $(MAKE) $(PROGRAM)$(ALPH)   
+
+
+####################      end makefile       ###############################

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <06 Jun 12 17:18:04 flechsig>  */
+/*   Time-stamp: <08 Apr 04 15:05:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -16,18 +16,19 @@
 
 #define		FASTNULL		1.0e-15
 
-                                              /* linux */
-#define 	logfilename 		"/tmp/phaseuser.log" 
-typedef struct FortranString
-{   
-  char *string;
-  int length;
-} FString; 
+#ifdef VMS
+   #define 	logfilename 		"golden\"name password\"::userdisk_3:\
+					 [flechsig.PHAS]PHASEuser.log"   
 
-typedef struct ComplexStruct {
-	double re,im; 
-	} COMPLEX ;
-
+   typedef struct dsc$descriptor_s FString;         /* FORTRAN- String */
+#else                                               /* linux */
+   #define 	logfilename 		"/tmp/phaseuser.log" 
+   typedef struct FortranString
+   {   
+     char *string;
+     int length;
+   } FString; 
+#endif                                              /*  VMS  */
 
 char    *delversion(char *); /* entfernt Versionsnummer von VMS- Filenamen */
 char    *FnameBody(char *);  /* holt Rumpf von VMS- - Filenamen            */
@@ -35,13 +36,7 @@ char    *PrependEnv(char* , char *);
 void 	 beep(int); 
 void	 CheckUser(char *, char *); 
 int 	 CheckFileHeader(FILE *, char *, int *);   
-FString *CreateFString(FString *, char *);
-void     complex_in(COMPLEX *, double, double);
-void     complex_minus(COMPLEX *, COMPLEX *, COMPLEX *);
-void     complex_plus(COMPLEX *, COMPLEX *, COMPLEX *);
-void     complex_x(COMPLEX *, COMPLEX *, COMPLEX *);
-int      fidx_mX4(int, int, int, int, int);
-int      fexists(char *); 
+FString *CreateFString(FString *, char *); 
 double   uRandom(double), RVZ();   
    
 #endif  /*  CUTILS_H */     

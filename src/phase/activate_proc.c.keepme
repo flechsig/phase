@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/activate_proc.c */
 /*   Date      : <10 Feb 04 16:32:30 flechsig>  */
-/*   Time-stamp: <13 May 13 14:24:20 flechsig>  */
+/*   Time-stamp: <29 Nov 06 10:40:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -12,27 +12,27 @@
 /* 23.11.98 SIS, SIM undulator eingefuegt UF */     
                                       
 #ifdef HAVE_CONFIG_H
-  #include "config.h"
+  #include <config.h>
 #endif 
 
-#include <stdio.h> 
-#include <string.h>  
+#include <stdio.h>   
 #include <Xm/Text.h>  
 #include <Xm/List.h>       
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h> 
+#ifdef VMS 
+  #include <processes.h>                       
+  #include <descrip.h> 
+  #include <DXm/DECspecific.h>    
+#endif     
 #include "cutils.h"     
 #include "phase_struct.h"
-/*#include "fg3pck.h" */
-
-
-#include "phase.h" 
-#include "phaseX.h"      
+#include "fg3pck.h" 
+#include "mirrorpck.h"  
+#include "geometrypck.h" 
+#include "phase.h"       
 #include "rtrace.h"    
-
-extern const char *global_rundir;
-
 
 void activate_proc(w, tag, reason)
      Widget		w;
@@ -42,19 +42,17 @@ void activate_proc(w, tag, reason)
   int		widget_num = *tag; 	 /* Convert tag to widget number. */
   int		i, value, *itemlist[10]; /* for del gluebox */
   XmString	topic;    
-  char 	command[MaxPathLength], buffer[MaxPathLength], header[MaxPathLength];
+  char 	command[MaxPathLength], buffer[MaxPathLength];
   extern GRDATSTRUCTTYPE grdatstruct; 
+#ifdef VMS
+  FString Fname;    
+#endif
   struct BeamlineType *bl;
   struct PSDType *PSDp;
   struct PSImageType *psip;  
-  struct FileSourceType    *fp;
   void *vo;
-  time_t    time1, time2;
 
-#ifdef DEBUG
-  printf("activate_proc: widget_num %d\n", widget_num); 
-  printf("activate_proc: Beamline.localalloc %d\n", Beamline.localalloc); 
-#endif   
+  printf(" widget_num ",widget_num);     
 
   switch (widget_num) {
 
@@ -75,12 +73,8 @@ void activate_proc(w, tag, reason)
   case kFPrint:                                    /* File Menu */
     FetchWidget(kFPFBox, "FPrintFileBox"); 
     XtManageChild(widget_array[kFPFBox]);   
-    break;  
+    break;      
 
-  case kFLoadButton:                                    /* Load File */
-    ActivateFileSelection(widget_num, "*.phase");   
-    break;  
-    
   case kFPFOK:
     create_print();
     XtUnmanageChild(widget_array[kFPFBox]);  
@@ -103,60 +97,55 @@ void activate_proc(w, tag, reason)
   
   case kFFile:                                     /* File File */
     FetchWidget(kFFileBox, "FFileBox"); 
-#ifdef global
-    InitFileBox(&PHASESet); 
-#else
-    InitFileBox(&Beamline.filenames);
-#endif
-
-
+    InitFileBox(&PHASESet);  
     XtManageChild(widget_array[kFFileBox]);   
     break;   
             
   case kFFileBoxOK:
-#ifdef global
-    UpdateFilenames(&PHASESet); /* copy filenames from widgets into phaseset */
-/* fprintf(STDERR, "!!! length restriction 80 in filenames source4 and source6 !!!\n"); */
-    strncpy(Beamline.src.so4.fsource4a, PHASESet.so4_fsource4a, 80);
-    strncpy(Beamline.src.so4.fsource4b, PHASESet.so4_fsource4b, 80);
-    strncpy(Beamline.src.so4.fsource4c, PHASESet.so4_fsource4c, 80);
-    strncpy(Beamline.src.so4.fsource4d, PHASESet.so4_fsource4d, 80);
-    strncpy(Beamline.src.so6.fsource6,  PHASESet.so6_fsource6,  80);
-    PutPHASE(&PHASESet, MainPickName);
-#else
-    UpdateFilenames(&Beamline.filenames); /* copy filenames from widgets into phaseset */
+    UpdateFilenames(&PHASESet);
+    strcpy(buffer, PHASESet.pssourcename);
+    /* BL sourcefiles ueberbuegeln !! Reihenfolge ist wichtig (buffer) */
+    PutPHASE(&PHASESet, MainPickName);  
 
-    /* fprintf(STDERR, "!!! length restriction 80 in filenames source4 and source6 !!!\n"); */
-    strncpy(Beamline.src.so4.fsource4a, Beamline.filenames.so4_fsource4a, 80);
-    strncpy(Beamline.src.so4.fsource4b, Beamline.filenames.so4_fsource4b, 80);
-    strncpy(Beamline.src.so4.fsource4c, Beamline.filenames.so4_fsource4c, 80);
-    strncpy(Beamline.src.so4.fsource4d, Beamline.filenames.so4_fsource4d, 80);
-    strncpy(Beamline.src.so6.fsource6,  Beamline.filenames.so6_fsource6,  80);
-
-    PutPHASE(&Beamline.filenames, MainPickName);
-#endif
- 
-    if (Beamline.RTSource.QuellTyp == 'F') 
+    /*  20. 10.97  InitDataSets(&PHASESet, (char *)MainPickName);*/
+/* Sourcefilenames mit ueberbuegeln */
+    FnameBody(buffer);
+    /*    i= sizeof(Beamline.src.so4.fsource4a); */
+    i=80; /* sonst zu gefaehrlich U.F. 6.1.00 */
+    memset(&Beamline.src.so4.fsource4a, 0, i);
+    memset(&Beamline.src.so4.fsource4b, 0, i);
+    memset(&Beamline.src.so4.fsource4c, 0, i);
+    memset(&Beamline.src.so4.fsource4d, 0, i);
+    memset(&Beamline.src.so6.fsource6,  0, i);
+    if(Beamline.BLOptions.ifl.ispline != -1)
       {
-	fp= (struct FileSourceType *)Beamline.RTSource.Quellep;
-#ifdef global
-	strncpy(fp->filename, PHASESet.sourceraysname, MaxPathLength);
-#else
-	strncpy(fp->filename, Beamline.filenames.sourceraysname, MaxPathLength);
-#endif
+	sprintf(Beamline.src.so4.fsource4a, "%s.eyre", buffer);
+	sprintf(Beamline.src.so4.fsource4b, "%s.eyim", buffer);
+	sprintf(Beamline.src.so4.fsource4c, "%s.ezre", buffer);
+	sprintf(Beamline.src.so4.fsource4d, "%s.ezim", buffer);
       }
-#ifdef global
+    else
+      {
+	sprintf(Beamline.src.so4.fsource4a, "%s.yamp", buffer);
+	sprintf(Beamline.src.so4.fsource4b, "%s.ypha", buffer);
+	sprintf(Beamline.src.so4.fsource4c, "%s.zamp", buffer);
+	sprintf(Beamline.src.so4.fsource4d, "%s.zpha", buffer);
+      }
+    sprintf(Beamline.src.so6.fsource6, "%s.brig", buffer);
     WriteBLFile(PHASESet.beamlinename, &Beamline);   
-#else
-    WriteBLFile(Beamline.filenames.beamlinename, &Beamline);
-#endif    
+
+    /*    if ((widget_array[kESourceBox] != NULL) && 
+	XtIsRealized(widget_array[kESourceBox])) 
+      InitSourceBox(&Fg3ActDat, &Beamline, widget_num);   
+    if ((widget_array[kEOElementBox] != NULL) &&
+	XtIsRealized(widget_array[kEOElementBox]))		
+      InitOElementBox(&MActDat, &GActDat, widget_num); 
+    if ((widget_array[kEGeometryBox] != NULL) &&
+	XtIsRealized(widget_array[kEGeometryBox]))
+      InitGeometryBox(&GActDat);*/
     if ((widget_array[kCCOptiDialog] != NULL) &&
 	XtIsRealized(widget_array[kCCOptiDialog]))
-#ifdef global
       InitOptiBox(PHASESet.optipckname, &Beamline); 
-#else
-    InitOptiBox(Beamline.filenames.optipckname, &Beamline); 
-#endif
     XtUnmanageChild(widget_array[kFFileBox]); 
     break; 
  
@@ -165,11 +154,7 @@ void activate_proc(w, tag, reason)
     break;   
 
   case kFFileBoxExpand:
-#ifdef global
-    ExpandFileNames(&PHASESet, ""); 
-#else
-    ExpandFileNames(&Beamline.filenames, ""); 
-#endif 
+    ExpandFileNames(&PHASESet, "");  
     break;   
 
   case kFFileButton1:
@@ -222,16 +207,7 @@ void activate_proc(w, tag, reason)
 
   case kFFileButton13: 
     ActivateFileSelection(widget_num, "*.pcko");  
-    break;
-
- case kFFileButton14:
- case kFFileButton15:
- case kFFileButton16:
- case kFFileButton17:
- case kFFileButton18:
-    ActivateFileSelection(widget_num, "*.*");  
-    break;
-   
+    break;   
     
   case kFSaveAsButton: 
     ActivateFileSelection(widget_num, "*.phase");  
@@ -248,7 +224,6 @@ void activate_proc(w, tag, reason)
   case kESRayTraceButton:                        /* Edit- Source- Pdme */
   case kESDipolSourceButton:
   case kESPointSourceButton:
-  case kESRingSourceButton:
   case kESUndulatorSourceButton:
   case kESundulatorSourceButton:
   case kESUndulatorSISButton:
@@ -288,25 +263,8 @@ void activate_proc(w, tag, reason)
 	readfg34_par(&Beamline.src, &Beamline.BLOptions.apr,
 		     &Beamline.BLOptions.ifl, &Beamline.BLOptions.xi,
 		     &Beamline.BLOptions.epsilon); 
-#ifdef global
-	strncpy(PHASESet.so4_fsource4a, Beamline.src.so4.fsource4a, 80);
-        strncpy(PHASESet.so4_fsource4b, Beamline.src.so4.fsource4b, 80);
-        strncpy(PHASESet.so4_fsource4c, Beamline.src.so4.fsource4c, 80);
-	strncpy(PHASESet.so4_fsource4d, Beamline.src.so4.fsource4d, 80);
-	strncpy(PHASESet.so6_fsource6,  Beamline.src.so6.fsource6,  80);
-	        
+	strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
 	PutPHASE(&PHASESet, MainPickName);  
-#else
-	strncpy(Beamline.filenames.so4_fsource4a, Beamline.src.so4.fsource4a, 80);
-        strncpy(Beamline.filenames.so4_fsource4b, Beamline.src.so4.fsource4b, 80);
-        strncpy(Beamline.filenames.so4_fsource4c, Beamline.src.so4.fsource4c, 80);
-	strncpy(Beamline.filenames.so4_fsource4d, Beamline.src.so4.fsource4d, 80);
-	strncpy(Beamline.filenames.so6_fsource6,  Beamline.src.so6.fsource6,  80);
-	        
-	PutPHASE(&Beamline.filenames, MainPickName);  
-
-#endif
-
 	Beamline.beamlineOK= 0;
 	printf("---> OK\n");
       } else
@@ -315,23 +273,14 @@ void activate_proc(w, tag, reason)
 
   case kEOptiButton:
     FetchWidget(kCCOptiDialog, "CCOptiDialog");  
-#ifdef global
     InitOptiBox(PHASESet.optipckname, &Beamline);   
-#else
-    InitOptiBox(Beamline.filenames.optipckname, &Beamline);
-#endif
-
-
     XtManageChild(widget_array[kCCOptiDialog]); 
     break;   
 
   case kEBLButton:
-    FetchWidget(kEBLDialog, "EBLDialog"); 
-#ifdef global 
+    FetchWidget(kEBLDialog, "EBLDialog");  
     ReadBLFile(PHASESet.beamlinename, &Beamline); 
-#else
-    ReadBLFile(Beamline.filenames.beamlinename, &Beamline); 
-#endif
+    strcpy(PHASESet.pssourcename, Beamline.src.so6.fsource6);
     if ((widget_array[kESourceBox] != NULL) && 
 	XtIsRealized(widget_array[kESourceBox])) 
       {  
@@ -339,11 +288,7 @@ void activate_proc(w, tag, reason)
         AllocRTSource(&Beamline);
 	InitSourceBox(&Fg3ActDat, &Beamline); 
       }
-#ifdef global 
     InitBLBox(PHASESet.beamlinename, &Beamline);   
-#else
-    InitBLBox(Beamline.filenames.beamlinename, &Beamline); 
-#endif
     XtManageChild(widget_array[kEBLDialog]); 
     break;   
 
@@ -383,14 +328,9 @@ void activate_proc(w, tag, reason)
 	  (Beamline.src.isrctype == 4) ||
 	  (Beamline.src.isrctype == 6))
 	{
-#ifdef OLD_PO_SOURCE
 	  src_ini(&Beamline.src); 
-#else
-	  source4c_ini(&Beamline);
-#endif
-          Beamline.beamlineOK |= pstsourceOK;
 #ifdef DEBUG
-	  printf("activate_proc: called src_ini(&Beamline.src)\n");
+	  printf("activate_proc: call src_ini(&Beamline.src)\n");
 #endif
 	}
       else
@@ -407,20 +347,9 @@ void activate_proc(w, tag, reason)
   case kESOK:                                    /* Source Box */ 
     XtUnmanageChild(widget_array[kESourceBox]);
   case kESApply:
-    start_watch(); 
-    GetSource(&Beamline); 
+    start_watch(); GetSource(&Beamline); 
     Beamline.beamlineOK &= (~resultOK); 
-    if (Beamline.RTSource.QuellTyp == 'I')
-      {
-	Beamline.beamlineOK |= pstimageOK;
-        Beamline.beamlineOK &= (~sourceOK); 
-      } 
-    else 
-      {
-	Beamline.beamlineOK &= (~pstimageOK);
-        Beamline.beamlineOK |= sourceOK; 
-      } 
-
+    Beamline.beamlineOK |= sourceOK; 
     stop_watch(); 
     break;  
 
@@ -452,32 +381,21 @@ void activate_proc(w, tag, reason)
     bl= &Beamline;   
     if ((bl->position <= bl->elementzahl) && (bl->position != 0)) 
       {
-#ifdef global
-	bl->ElementList[bl->position- 1].MDat.Art= 
+	bl->ElementList[(bl->position)- 1].MDat.Art= 
 	i= GetOElement(&PHASESet,	/*  */
 		    &bl->ElementList[(bl->position)- 1].MDat,
 		    &bl->ElementList[(bl->position)- 1].GDat);  
-#else
-	bl->ElementList[bl->position- 1].MDat.Art= 
-	i= GetOElement(&Beamline.filenames,	/*  */
-		    &bl->ElementList[(bl->position)- 1].MDat,
-		    &bl->ElementList[(bl->position)- 1].GDat);
-#endif
-
 	printf("activate_proc: returned etype= %d\n" ,i);
-	if (i == kEOEGeneral)
-	  ReadCoefficientFile((double *)&bl->ElementList[(bl->position)- 1].mir, 
-			      bl->ElementList[(bl->position)- 1].elementname);
+
       	DefMirrorC(&bl->ElementList[(bl->position)- 1].MDat, 
-		   &bl->ElementList[(bl->position)- 1].mir, i, 
-		   bl->ElementList[(bl->position)- 1].GDat.theta0,
-		   bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (bl->position- 1)); 
-	/*mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
-	  PHASESet.elementpckname);*/
+		   &bl->ElementList[(bl->position)- 1].mir, i,
+		   bl->ElementList[(bl->position)- 1].elementname); 
+	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
+		     PHASESet.elementpckname);
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
-		     &bl->ElementList[(bl->position)- 1].geo, &bl->BLOptions); 
-	/*gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
-	  PHASESet.geometrypckname);  */ 
+		     &bl->ElementList[(bl->position)- 1].geo); 
+	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
+		     PHASESet.geometrypckname);   
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);   
                              
 	bl->ElementList[(bl->position)- 1].ElementOK |= elementOK;
@@ -490,7 +408,7 @@ void activate_proc(w, tag, reason)
     break;  
 
   case kEOEDefaults: 
-    InitOElementBox(&MDefDat, &GDefDat, widget_num, 22.22); 
+    InitOElementBox(&MDefDat, &GDefDat, widget_num); 
     break; 
 
   case kEOECancel: 
@@ -505,19 +423,14 @@ void activate_proc(w, tag, reason)
     if ((bl->position <= bl->elementzahl) && (bl->position != 0)) 
       {
 	printf("update geometry\n");
-#ifdef global
 	GetGeometry(&PHASESet, 
 		    &bl->ElementList[(bl->position)- 1].GDat);
-#else
-	GetGeometry(&Beamline.filenames, 
-		    &bl->ElementList[(bl->position)- 1].GDat);
-#endif
 	DefGeometryC(&bl->ElementList[(bl->position)- 1].GDat, 
-		     &bl->ElementList[(bl->position)- 1].geo, &bl->BLOptions);  
-	/*	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
-	  PHASESet.geometrypckname); */
+		     &bl->ElementList[(bl->position)- 1].geo);  
+	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat, 
+		     PHASESet.geometrypckname); 
 	SetDeltaLambda(bl, &bl->ElementList[(bl->position)- 1]);  
-	/*	bl->ElementList[(bl->position)- 1].ElementOK |= geometryOK; */
+	bl->ElementList[(bl->position)- 1].ElementOK |= geometryOK; 
 	bl->ElementList[(bl->position)- 1].ElementOK |= elementOK; 
 	bl->ElementList[(bl->position)- 1].ElementOK &= (~mapOK);  
 	bl->beamlineOK &= (~mapOK); /* ausschalten */    
@@ -555,18 +468,10 @@ void activate_proc(w, tag, reason)
   case kEBLApply:    
     /* get...*/
     start_watch(); 
-    time(&time1);
-#ifdef global
     GetBLBox(PHASESet.beamlinename, &Beamline);
     WriteBLFile(PHASESet.beamlinename, &Beamline); 
-#else
-    GetBLBox(Beamline.filenames.beamlinename, &Beamline);
-    WriteBLFile(Beamline.filenames.beamlinename, &Beamline);
-#endif
     BuildBeamline(&Beamline);
     stop_watch(); 
-    time(&time2);
-    printf("time: %d\n",time2-time1);
     break; 
   case kEBLAddOK:
  /* modification: 23 Oct 97 08:30:55 flechsig */
@@ -577,23 +482,13 @@ void activate_proc(w, tag, reason)
 	GetSlope(&bl->ElementList[(bl->position)- 1]);  
 	printf("aperture and slope in dataset\n");
 	/* speichern der daten */
-#ifdef global
 	ExpandFileNames(&PHASESet, 
 			&bl->ElementList[(bl->position)- 1].elementname);
-	/*	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
+	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
 		     PHASESet.elementpckname); 
 	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat,
-	PHASESet.geometrypckname);*/
+		     PHASESet.geometrypckname);
 	WriteBLFile(PHASESet.beamlinename, bl); 
-#else
-	ExpandFileNames(&Beamline.filenames, 
-			&bl->ElementList[(bl->position)- 1].elementname);
-	/*	mputpickfile(&bl->ElementList[(bl->position)- 1].MDat, 
-		     PHASESet.elementpckname); 
-	gputpickfile(&bl->ElementList[(bl->position)- 1].GDat,
-	PHASESet.geometrypckname);*/
-	WriteBLFile(Beamline.filenames.beamlinename, bl); 
-#endif
       }
     else 
       fprintf(stderr, "activate_proc: no beamline element selected\n");
@@ -635,23 +530,20 @@ void activate_proc(w, tag, reason)
     start_watch();     
               
     bl= &Beamline; 
-#ifdef global
     printf("activate_proc: read matrix from file: %s\n", 
 	   PHASESet.matrixname); 
-
-    readmatrixfile(PHASESet.matrixname, bl->M_StoI, 
-		   &Beamline.BLOptions.ifl.iord, strlen(PHASESet.matrixname));
+#ifdef VMS
+    CreateFString(&Fname, PHASESet.matrixname);
+    readmatrixfile(&Fname, bl->map70, &Beamline.BLOptions.ifl.iord);  
+    CreateFString(&Fname, PHASESet.intersecname);  
+    /*   readintersection(&Fname, bl->wc, bl->xlc, &iord);       */
 #else
-    printf("activate_proc: read matrix from file: %s\n", 
-	   Beamline.filenames.matrixname); 
-
-    readmatrixfile(Beamline.filenames.matrixname, bl->M_StoI, 
-		   &Beamline.BLOptions.ifl.iord, strlen(Beamline.filenames.matrixname));
-
+    readmatrixfile(PHASESet.matrixname, bl->map70, 
+		   &Beamline.BLOptions.ifl.iord, strlen(PHASESet.matrixname));
 #endif
     printf("activate_proc: read matrix ende, hardcoded: iord= %d\n", 
 	   Beamline.BLOptions.ifl.iord);    
-    extractmap(bl->M_StoI, 
+    extractmap(bl->map70, 
 	       bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	       &Beamline.BLOptions.ifl.iord); 
     bl->beamlineOK |= mapOK; 
@@ -659,21 +551,27 @@ void activate_proc(w, tag, reason)
     break;      
 
   case kCCRayTraceButton:                          /*  Ray Trace */  
-    start_watch(); 
-    time(&time1);
+    start_watch();  
     Beamline.BLOptions.CalcMod= 1;
     Fg3ActDat.imodus= 1; Fg3ActDat.itrans= 0;
-    if (CheckBLOK(Beamline.beamlineOK, 
-		  (sourceOK | mapOK), "act_pr: ") > 0)
-      {
-	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	RayTracec(&Beamline); 
-        printf("ray trace-> done\n");
-      }     
+    
+    if ((Beamline.beamlineOK & (sourceOK | mapOK)) != 
+	(sourceOK | mapOK))
+      { 
+	fprintf(stderr, 
+		"act_pr: beamline is not OK: beamlineOK: %X\n", 
+		Beamline.beamlineOK); 
+	if ((Beamline.beamlineOK & sourceOK) == 0)
+	  fprintf(stderr, "source not OK\n");
+
+	/*  exit(-1); */ 
+      } else
+	{
+	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+	  RayTracec(&PHASESet, &Beamline); 
+	}     
     UpdateMainList();  
-    stop_watch();   
-    time(&time2);
-    printf("time: %d\n", time2-time1);
+    stop_watch();    
     break;  
  
   case kCCPTButton:                              /*  Phase Trafo */  
@@ -682,77 +580,76 @@ void activate_proc(w, tag, reason)
 #ifdef DEBUG
     printf("activate_proc: call PST\n");
 #endif
-    if (CheckBLOK(Beamline.beamlineOK, 
-		  (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
+    if (Beamline.RTSource.QuellTyp == 'I')
       {
 	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
 	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
 	PST(&Beamline);
+      }  
+    else 
+      {
+	fprintf(stderr, 
+		"acticate_proc: error: no phase space image defined ");
+	fprintf(stderr, "(in source menu)\n");
       }
-    
     UpdateMainList();
     stop_watch();    
     break;   
 
   case kCCMPTButton:                              /*  Phase Trafo */  
-    if (CheckBLOK(Beamline.beamlineOK, 
-		  (pstsourceOK | mapOK | pstimageOK), "act_pr: ") > 0)
+if (Beamline.RTSource.QuellTyp == 'I')
       {
 	psip = (struct PSImageType *)Beamline.RTSource.Quellep;
 	ReAllocResult(&Beamline, PLphspacetype, psip->iy, psip->iz);
-	MPST(&Beamline);
-      } 
+	MPST(&Beamline); 
+      }  
+    else 
+      {
+	fprintf(stderr, 
+		"acticate_proc: error: no phase space image defined ");
+	fprintf(stderr, "(in source menu)\n");
+      }
+       
     break;   
      
   case kCCSR1Button:                          /*  footprint */  
-    start_watch();
-    if (CheckBLOK(Beamline.beamlineOK, 
-		  (sourceOK | mapOK), "act_pr: ") > 0)
-      {
-	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	Footprint(&Beamline, Beamline.position);
-      }
+    start_watch(); 
+    ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+    Footprint(&Beamline, Beamline.position);
     stop_watch();    
     break; 
   
   case kCCSR2Button:                          /*  full Ray Trace */  
-    start_watch(); 
-    time(&time1);
+    start_watch();  
     Beamline.BLOptions.CalcMod= 2;
-
-    if (CheckBLOK(Beamline.beamlineOK, 
-		  (sourceOK | mapOK), "act_pr: ") > 0)
-      {
-	printf("activate_proc: full ray trace\n");   
-	ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
-	RayTraceFull(&Beamline); 
-	printf("full ray trace-> done\n");    
-	Beamline.beamlineOK |= resultOK;
-      }
+    if ((Beamline.beamlineOK & (sourceOK | mapOK)) != 
+	(sourceOK | mapOK))
+      { 
+	fprintf(stderr, 
+		"act_pr: beamline is not OK: beamlineOK: %X\n", 
+		Beamline.beamlineOK); 
+	if ((Beamline.beamlineOK & sourceOK) == 0)
+	  fprintf(stderr, "source not OK\n");
+      } else  
+	{
+	  printf("activate_proc: full ray trace\n");   
+	  ReAllocResult(&Beamline, PLrttype, Beamline.RTSource.raynumber, 0);
+	  RayTraceFull(&Beamline); 
+	  printf("full ray trace-> done\n");    
+	  Beamline.beamlineOK|= resultOK;
+	}
     stop_watch();  
-    time(&time2);
-    printf("time: %d\n",time2-time1);
     break;   
         
   case kCCOptiButton: 	                /*  Opti*/  
-#ifdef global
-    snprintf(command, MaxPathLength,
-	    "phaseopti %s", PHASESet.optipckname);
-#else
-    snprintf(command, MaxPathLength,
-	    "phaseopti %s", Beamline.filenames.optipckname);
-#endif
+    sprintf(command,
+	    "PHASEopti %s", PHASESet.optipckname);
     system(command); 
     break;  
  
-  case kCCExtractButton: 	                /*  Extr*/ 
-#ifdef global
-snprintf(command, MaxPathLength,
-	    "phaseextract %s", PHASESet.optipckname);
-#else 
-    snprintf(command, MaxPathLength,
-	    "phaseextract %s", Beamline.filenames.optipckname);
-#endif
+  case kCCExtractButton: 	                /*  Extr*/  
+    sprintf(command,
+	    "PHASEextract %s", PHASESet.optipckname);
     system(command); 
     break;   
 
@@ -792,11 +689,7 @@ snprintf(command, MaxPathLength,
     break;       
 
   case kCOptiOK:                       /* optibox */
-#ifdef global
     GetOptiBox(&PHASESet);  
-#else
-    GetOptiBox(&Beamline.filenames);
-#endif
   case kCOptiCancel:    
     XtUnmanageChild(widget_array[kCCOptiDialog]); 
     break;
@@ -813,35 +706,14 @@ snprintf(command, MaxPathLength,
     break;   
 
   case kCWriteMapButton: 
-    bl= &Beamline;  
-    if (CheckBLOK(bl->beamlineOK, mapOK, "act_pr: ") > 0)
+    bl= &Beamline;   
+    if ((bl->beamlineOK & mapOK) != 0)
       {
 	if ((bl->position <= bl->elementzahl) && (bl->position != 0))
 	  {
-	    printf("write map of element %d to file\n", bl->position); 
-#ifdef global 
-            snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d", 
-		    PHASESet.beamlinename, bl->position, bl->BLOptions.ifl.iord);
-#ifdef SEVEN_ORDER
-	    snprintf(buffer, MaxPathLength, "%s-%d_7", PHASESet.mapname, bl->position);
-#else
-	    snprintf(buffer, MaxPathLength, "%s-%d", PHASESet.mapname, bl->position);
-#endif
-
-#else
-	    snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d", 
-		    Beamline.filenames.beamlinename, bl->position, bl->BLOptions.ifl.iord);
-#ifdef SEVEN_ORDER
-	    snprintf(buffer, MaxPathLength, "%s-%d_7", Beamline.filenames.mapname, bl->position);
-#else
-	    snprintf(buffer, MaxPathLength, "%s-%d", Beamline.filenames.mapname, bl->position);
-#endif
-
-
-#endif
-
+	    printf("write map of element %d to file\n", bl->position);  
 	    /* casting 15.12.99 ist noch nicht OK */
-	    writemapc(buffer, header, bl->BLOptions.ifl.iord, 
+	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
 		      (double *)(bl->ElementList[bl->position- 1].ypc1), 
 		      (double *) bl->ElementList[bl->position- 1].zpc1, 
 		      (double *) bl->ElementList[bl->position- 1].dypc, 
@@ -853,32 +725,8 @@ snprintf(command, MaxPathLength,
 	  } 
 	else
 	  {
-	    printf("write map of beamline to file\n");
-#ifdef global
-	    snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
-		    PHASESet.beamlinename, bl->BLOptions.ifl.iord);
-#ifdef SEVEN_ORDER
-	    snprintf(buffer, MaxPathLength, "%s-0_7", PHASESet.mapname);
-#else	    
-	    snprintf(buffer, MaxPathLength, "%s-0", PHASESet.mapname);
-#endif
-
-#else
-
-	    snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
-		    Beamline.filenames.beamlinename, bl->BLOptions.ifl.iord);
-#ifdef SEVEN_ORDER
-	    snprintf(buffer, MaxPathLength, "%s-0_7", Beamline.filenames.mapname);
-#else	    
-	    snprintf(buffer, MaxPathLength, "%s-0", Beamline.filenames.mapname);
-#endif
-
-
-
-
-#endif
-
-	    writemapc(buffer, header, bl->BLOptions.ifl.iord, 
+	    printf("write map of beamline to file\n");         
+	    writemapc(PHASESet.mapname, bl->BLOptions.ifl.iord, 
 		      (double *) bl->ypc1, (double *) bl->zpc1, 
 		      (double *) bl->dypc, (double *) bl->dzpc,
 		      (double *) bl->wc,   (double *) bl->xlc, 
@@ -886,13 +734,16 @@ snprintf(command, MaxPathLength,
 		      (double *) bl->xlm.xlen2c);
   
 	  }
-      }  
+      } else 
+	fprintf(stderr, 
+		"activateproc: beamline is not OK: beamlineOK: 0x%X\n", 
+		bl->beamlineOK); 
     break;   
 
   case kCWriteMCoButton: 
     bl= &Beamline;   
      /* \n weggenommen J.B. 10.11.2003 */
-    snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
+    sprintf(buffer,"%s", "mirror-coefficients.dat");
     printf("%s\n", buffer);
     WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer); 
     break;   
@@ -900,7 +751,7 @@ snprintf(command, MaxPathLength,
 
   case kCWriteResultButton: 
     bl= &Beamline;   
-    if (CheckBLOK(Beamline.beamlineOK, resultOK, "act_pr: ") > 0)
+    if ((bl->beamlineOK & resultOK) > 0) 
       {
 
 	/*  WriteRayFile(PHASESet.imageraysname, &bl->RTSource.raynumber, 
@@ -908,26 +759,18 @@ snprintf(command, MaxPathLength,
 	if ((bl->RESULT.typ & PLphspacetype) > 0)
 	  {
 #ifdef DEBUG
-	    printf("activate_proc: callWritePsd\n");
+	    printf("activate_proc: call WritePsd\n");
 #endif
 	    PSDp= (struct PSDType *)Beamline.RESULT.RESp;
-
-#ifdef global
-	    WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);
-#else
-	     WritePsd(Beamline.filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
-#endif
-
+	    WritePsd(PHASESet.imageraysname, PSDp, PSDp->iy, PSDp->iz);   
 	  }
 	else 
-#ifdef global
-	  WriteRayFile(PHASESet.imageraysname, &bl->RESULT.points1,
-		       (struct RayType *)bl->RESULT.RESp);
-#else
-	WriteRayFile(Beamline.filenames.imageraysname, &bl->RESULT.points1,
-		       (struct RayType *)bl->RESULT.RESp);
-#endif 
-      } 
+	  WriteRayFile(PHASESet.imageraysname, &bl->RESULT.points,
+		       bl->RESULT.RESp); 
+      } else 
+	fprintf(stderr, 
+		"activateproc: result is not OK: beamlineOK: 0x%X\n", 
+		bl->beamlineOK); 
     break;   
 
           
@@ -935,11 +778,7 @@ snprintf(command, MaxPathLength,
   case kGraphicCommand:                          /* Commands */  
     start_watch();
     FetchWidget(kCGrBox, "CGrafBox"); 
-#ifdef global
     InitGrafBox(&PHASESet, &grdatstruct);  
-#else
-    InitGrafBox(&Beamline.filenames, &grdatstruct);  
-#endif 
     XtManageChild(widget_array[kCGrBox]); 
     xprintf("PHASEgraf started! \n");      
     stop_watch(); 
@@ -951,113 +790,79 @@ snprintf(command, MaxPathLength,
 
   case kCGrOK: 
     XtUnmanageChild(widget_array[kCGrBox]); 
-  case kCGrApply: 
-#ifdef global   
+  case kCGrApply:    
     if (GetGrafBox(&PHASESet, &grdatstruct, 
 		   Beamline.RESULT.typ) != -1)
-#else
-      if (GetGrafBox(&Beamline.filenames, &grdatstruct, 
-		   Beamline.RESULT.typ) != -1)
-#endif
-
       { 
 #ifdef DEBUG
 	printf("activate_proc: grafic start\n");  
 #endif
-#ifdef global
 	vo= SetGrDatStruct(PHASESet.imageraysname, &Beamline,
 			   &grdatstruct);
-#else
-		vo= SetGrDatStruct(Beamline.filenames.imageraysname, &Beamline,
-			   &grdatstruct);
-#endif
-
-	if ((grdatstruct.status & PLrttype) > 0)
-#ifdef global 
+	if ((grdatstruct.status & PLrttype) > 0) 
 	  hplotdisplay(&Beamline, &grdatstruct, &PHASESet, 
 		       (struct RayType *) vo); 
-#else
-	hplotdisplay(&Beamline, &grdatstruct, &Beamline.filenames, 
-		       (struct RayType *) vo);
-#endif
 
 	if ((grdatstruct.status & PLphspacetype) > 0) /* Phase Space */
 	  {
 	    if ((grdatstruct.status - PLphspacetype) == 0)
-#ifdef global
 	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->psd);
-#else
-	    hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->psd);
-
-
-#endif
 	    if ((grdatstruct.status & PLfd1phmax) > 0) 
-#ifdef global
 	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->stfd1phmaxc);
-#else
-	    hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
-			(struct PSDType *)vo, 
-			(double *)((struct PSDType *)vo)->stfd1phmaxc);
-#endif
-
-
-
 	    if ((grdatstruct.status & PLinumb) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->stinumbc); 
 	    if ((grdatstruct.status & PLS1) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->s1c);
 	    if ((grdatstruct.status & PLS2) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->s2c);
 	    if ((grdatstruct.status & PLS3) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->s3c);
 	    if ((grdatstruct.status & PLEyreal) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->eyrec);
 	    if ((grdatstruct.status & PLEzreal) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->ezrec);
 	    if ((grdatstruct.status & PLEyimag) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->eyimc);
 	    if ((grdatstruct.status & PLEzimag) > 0) 
-	      hplotpsdc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpsdc(&Beamline, &grdatstruct, &PHASESet, 
 			(struct PSDType *)vo, 
 			(double *)((struct PSDType *)vo)->ezimc);
 
 	    if ((grdatstruct.status & PLsimpre) > 0) 
-	      hplotpssimc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
 			  (double *)((struct PSDType *)vo)->simpre);
 	    if ((grdatstruct.status & PLsimpim) > 0) 
-	      hplotpssimc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
 			  (double *)((struct PSDType *)vo)->simpim);
 	    if ((grdatstruct.status & PLsintre) > 0) 
-	      hplotpssimc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
 			  (double *)((struct PSDType *)vo)->sintre);
 	    if ((grdatstruct.status & PLsintim) > 0) 
-	      hplotpssimc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
 			  (double *)((struct PSDType *)vo)->sintim);
 	    if ((grdatstruct.status & PLsimpam) > 0) 
-	      hplotpssimc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
 			  (double *)((struct PSDType *)vo)->simpa);
 	    if ((grdatstruct.status & PLsimpph) > 0) 
-	      hplotpssimc(&Beamline, &grdatstruct, &Beamline.filenames, 
+	      hplotpssimc(&Beamline, &grdatstruct, &PHASESet, 
 			  (double *)((struct PSDType *)vo)->simpp);
 
 	  } /* end plotinhaltmenue phasespace */
@@ -1065,31 +870,17 @@ snprintf(command, MaxPathLength,
     break;
 
   case kCGrDefaults:
-#ifdef global
     if (GetGrafBox(&PHASESet, &grdatstruct, 
 		   Beamline.RESULT.typ) != -1)  /* st. initialisiert */
       {
 	vo= SetGrDatStruct(PHASESet.imageraysname, &Beamline, 
 			   &grdatstruct);  
-
-#else
-	if (GetGrafBox(&Beamline.filenames, &grdatstruct, 
-		   Beamline.RESULT.typ) != -1)  /* st. initialisiert */
-      {
-	vo= SetGrDatStruct(Beamline.filenames.imageraysname, &Beamline, 
-			   &grdatstruct);  
-#endif
-
 	if ((grdatstruct.status & PLrttype) > 0)   
 	  AutoScale((struct RayType *)vo, &grdatstruct, &Beamline);  
-	else
+	else 
 	  AutoScalePS((struct PSDType *)vo, &grdatstruct);  
-#ifdef global
-	  InitGrafBox(&PHASESet, &grdatstruct);   
-#else
-	  InitGrafBox(&Beamline.filenames, &grdatstruct); 
-#endif
 
+	InitGrafBox(&PHASESet, &grdatstruct);   
       } else printf("error getgrafbox\n");
     break;
 	
@@ -1098,24 +889,14 @@ snprintf(command, MaxPathLength,
     break;
 
   case kDirCommand:                            /* Druck */    
-#ifdef global
     GeneratePrintDataFile(PHASESet.printpclname);
-#else
-    GeneratePrintDataFile(Beamline.filenames.printpclname);
-#endif
-
     xprintf("PCL- File generated!");
     break;   
   
   case kCPurge:  
     start_watch();
-#ifdef global
-    snprintf(command, MaxPathLength,
+    sprintf(command,
 	    "PHASEusercom %s", PHASESet.printpclname);
-#else
-    snprintf(command, MaxPathLength,
-	    "PHASEusercom %s", Beamline.filenames.printpclname);
-#endif
     printf("user command: %s\n", command);
     system(command); 
     xprintf("user finished!");
@@ -1124,10 +905,10 @@ snprintf(command, MaxPathLength,
   case kSetupInfo:
     FetchWidget(kSetupInfo, "SetupInfo");
 #ifdef VMS
-    strncpy(buffer, ".lib]news.", MaxPathLength);
+	strcpy(buffer, ".lib]news.");
 	PrependEnv(PHASE_HOME, buffer);
 #else
-       snprintf(buffer, MaxPathLength, "%s/share/phase/news", global_rundir);
+       sprintf(buffer, "%s/share/phase/news", PREFIX);
 #endif 
     
     PrintFileInMainList(buffer);  

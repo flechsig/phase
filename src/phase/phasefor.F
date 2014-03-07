@@ -1,19 +1,24 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <03 Jul 13 14:42:22 flechsig> 
+c$$$ Time-stamp: <08 Apr 04 15:51:57 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phasefor.for
+c Date      : <06 Jan 00 13:18:08 flechsig> 
+c Time-stamp: <06 Feb 04 08:50:29 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 c einige routinen aus fgmap3dpp
 c function   facult(nn) 
 c subroutine fgmapidp(iord,imodus,acc,a,g,wc,xlc,ypc1,zpc1,dypc,dzpc)       
 c subroutine intersection(a,wc,xlc,rin,iord,uu,ww,xll) 
-c subroutine pathlen0(am,g,iord,iplmode,wc,xlc,ypc1,zpc1,xlm)     
+c subroutine pathlen0(a,g,iord,iplmode,wc,xlc,ypc1,zpc1,xlm)     
 c subroutine pathlen1(xlm,rin,iord,
 c     &               xlength1,xlength2,xlength)
 c subroutine readmatrixfile35(fname,xmap35)  
@@ -22,15 +27,15 @@ c subroutine extractmap35(xmap35,ypc1,zpc1,dypc,dzpc,iord)
 c subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c subroutine reduce_1_drift(iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)
 c subroutine transponiere (a,g)   
-c subroutine transponiere_8 (am,g)
 c subroutine ray_tracef(rin, rout, iord,ypc1,zpc1,dypc,dzpc)       
 c subroutine writemap(mapname,iord,ypc1,zpc1,dypc,dzpc)  
 c subroutine xxmap35(xmap35,ypc1,zpc1,dypc,dzpc)  
 c subroutine geometrd(gname, g)  
 c subroutine mirror4d(ename, a)
+c subroutine pstf()
 c subroutine adaptive_int_old(yzint,s0)
 c subroutine int_2d(f,dy,ny,dz,nz,xint)	
-c subroutine fdet_4(iord,fdetc,ypc1,zpc1,dypc,dzpc)      
+c subroutine fdet(iord,fdetc,ypc1,zpc1,dypc,dzpc)      
 c subroutine sig(i,j,k,l,isig)   
 c subroutine simpson(ianz,dyz,fyz,xint)   
 c subroutine psdi(dens,phase) 
@@ -38,46 +43,479 @@ c subroutine fywert()
 c subroutine psdi_gh(yp,zp,dyp,dzp,dens,s0)  
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-c UF 0804 routine pstf ausgelagert in separate file
 
-c ****** debugging routine see also debug_beamline_type_c
-	subroutine debug_beamline_type_f(ip)
-	integer ip
-        write(*,*)'fortran: debug_beamline_type_f: pointer: ',ip   
-	call debug_beamline_type_c(ip)
-	return
-	end 
-c******** end debug_beamline_type
+c*************************** neu **************************
+        subroutine pstf(s,pso,xlam_test,iord,xlen1c,xlen2c,
+     &                  xlen0,ypc1,zpc1,dypc,dzpc,
+     &                  wc,xlc,
+     &			yipc,zipc,psdc,stfd1phmaxc,stinumbc,
+     .			s1c,s2c,s3c,eyrec,ezrec,
+     &                  eyimc,ezimc,
+     .                  m4,g,a,src,apr,
+     .                  ra,ifl,xi,xir,st,
+     .                  fdetc,fdetphc,fdet1phc)       
+c*************************** neu **************************  
+
+        implicit none
+
+c a trick to have the struct only in the ./phase and find it from opti 
+c if it works under vms is not yet tested
+#ifdef VMS
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+        include '../phase/phase_struct.for'
+#endif
+        record /constants/ cs
+        record /geometryst/ g
+        record /rayst/ ra
+c        record /source_results/ sr
+        record /integration_results/ xir
+        record /control_flags/ ifl
+        record /sources/ src
+	record /integration/ xi
+	record /apertures/ apr
+	record /statistics/ st
+	record /map4/ m4          
+        
+        record /psimagest/ s 
+  
+        structure/PSSourceType/
+            real *8    sigy,sigdy,sigz,sigdz
+            integer    yhard,dyhard,zhard,dzhard 
+        end structure   
+
+        structure/psoptions/
+          record /PSSourceType/ PSSource
+          real *8 dyminfix, dymaxfix, dzminfix, dzmaxfix  
+          integer intmod, ndyfix, ndzfix
+        end structure  
+        record /psoptions/ pso   
+
+        integer i,j,k,l,iord,iheigh,iwidth,
+     &       n1,n2,icheckk,ii,jj,iinumb
+
+        real *8 xlam_test,xlen0,a(0:5,0:5),
+     &       wc,xlc,ypc1,zpc1,dypc,dzpc,
+     &       xlen1c,xlen2c,fdetc,fdetphc,fdet1phc,
+     &       ddisty,ddistz,yi,zi,
+     &       yipc,zipc,yiplot,ziplot,yi_global,zi_global,
+     &       psd2,surfmax,psdc,
+     &       stfd1phmaxc,stinumbc,s1c,s2c,s3c,eyrec,ezrec,
+     &       eyimc,ezimc
+
+        dimension ypc1(0:4,0:4,0:4,0:4),
+     &            zpc1(0:4,0:4,0:4,0:4),
+     &            dypc(0:4,0:4,0:4,0:4),
+     &            dzpc(0:4,0:4,0:4,0:4), 
+     &            wc(0:4,0:4,0:4,0:4),
+     &            xlc(0:4,0:4,0:4,0:4), 
+     &            xlen1c(0:4,0:4,0:4,0:4),  
+     &            xlen2c(0:4,0:4,0:4,0:4),  
+     &		  fdetc(0:4,0:4,0:4,0:4),        	! fdet
+     &		  fdetphc(0:4,0:4,0:4,0:4),        	! fdet
+     &		  fdet1phc(0:4,0:4,0:4,0:4)        	! fdet  
+
+        dimension yiplot(1024),ziplot(1024)        ! bildpunkte
+        dimension yipc(1),zipc(1),psdc(1),
+     &            stfd1phmaxc(1),stinumbc(1),s1c(1),
+     &            s2c(1),s3c(1),eyrec(1),ezrec(1),
+     &            eyimc(1),ezimc(1)
+        dimension psd2(1024,1024)  !psd2 ist ergebnis   
+        
+        complex*16 psd2c(1024,1024)
+        complex*16 psd2cy(512,512)
+	complex*16 psd2cz(512,512) 
 
 
+c        write(*,*)'pstf (FORTRAN) called'
+c        write(*,*)'show input, sum pathlen, wc, xlc'
+c      do i=0,4
+c          do j=0,4-i
+c             do k=0,4-i-j
+c                do l=0,4-i-j-k
+c                   write(*,*)'xlm',i,j,k,l,
+c     &   xlen1c(i,j,k,l)+xlen2c(i,j,k,l)
+c                   write(*,*)'wc ',wc(i,j,k,l)
+c                   write(*,*)'xlc',xlc(i,j,k,l)
+c                enddo
+c             enddo
+c          enddo
+c       enddo
+
+        ra.xlam_test=xlam_test 
+
+#ifdef DEBUG
+        write(*,*)'pstf called'
+        write(*,*)'grating: (line density)',g.xdens(0)
+        write(*,*)'xi.ymin,xi.ymax,xi.zmin,xi.zmax'
+        write(*,*)'   ',xi.ymin,xi.ymax,xi.zmin,xi.zmax
+
+c        pi= 4.d0* datan(1.d0)    
+c        call readfg34_par(src,apr,ifl,xi) 
+c        ifl.iord=iord   ! Uwe
+
+c***************** phase space imaging ************************
+
+	pso.intmod=2
+        write(*,*)'pstf: intmod fixed'
+	write(*,*)'*** integration method',pso.intmod
+	write(*,*)'test_wavelength (mm), xl0 (mm)',xlam_test,xlen0  
+        write(*,*)' image dimension in y-direction (mm),' 
+	write(*,*)'*** minimum ',s.disty1
+	write(*,*)'*** maximum ',s.disty2
+	write(*,*)'*** number of grid points',s.iheigh
+        write(*,*)' image dimensions in z-direction (mm),' 
+	write(*,*)'*** minimum ',s.distz1
+	write(*,*)'*** maximum ',s.distz2     
+	write(*,*)'*** number of grid points',s.iwidth         
+c        write(*,*)' winkelgrid und punktgrid maximal 1024^2'
+        write(*,*)'ra.xlam_test (mm)',ra.xlam_test
+#endif
+        call initconstants(cs)
+
+c     von Johannes 24 Mar 97 09:23:31 flechsig ir --> xir
+c     von Johannes 4.2.00 imaxz entfernt
+        xir.nsimp=0
+        xir.iisimp=4
+	xir.isimp(1)=2
+        xir.isimp(2)=xi.ianzy0+1
+        xir.isimp(3)=2*xi.ianzy0
+        xir.isimp(4)=2*xi.ianzz0+2
+
+
+c------ copy stuff
+	do i=0,iord
+           do j=0,iord-i
+              do k=0,iord-i-j
+                 do l=0,iord-i-j-k
+                    
+                    m4.wc(i,j,k,l)=wc(i,j,k,l)
+                    m4.xlc(i,j,k,l)=xlc(i,j,k,l)
+                    m4.ypc1(i,j,k,l)=ypc1(i,j,k,l)
+                    m4.zpc1(i,j,k,l)=zpc1(i,j,k,l)
+c     m4.dyp1c(i,j,k,l)=dyp1c(i,j,k,l)
+c     m4.dzp1c(i,j,k,l)=dzp1c(i,j,k,l)
+                    m4.dypc(i,j,k,l)=dypc(i,j,k,l)
+                    m4.dzpc(i,j,k,l)=dzpc(i,j,k,l)
+c     m4.xlen1cc(i,j,k,l)=xlen1cc(i,j,k,l)
+                    m4.xlen1c(i,j,k,l)=xlen1c(i,j,k,l)
+c     m4.xlen2cc(i,j,k,l)=xlen2cc(i,j,k,l)
+                    m4.xlen2c(i,j,k,l)=xlen2c(i,j,k,l)
+c     m4.ypc_ap(i,j,k,l)=ypc_ap(i,j,k,l)
+c     m4.zpc_ap(i,j,k,l)=zpc_ap(i,j,k,l)
+                    m4.fdetc(i,j,k,l)=fdetc(i,j,k,l)
+                    m4.fdetphc(i,j,k,l)=fdetphc(i,j,k,l)
+                    m4.fdet1phc(i,j,k,l)=fdet1phc(i,j,k,l)
+                 enddo
+              enddo        
+           enddo
+	enddo        
+        write(*,*)'phasefor.for: wc 4000',wc(4,0,0,0)
+
+c--------------------------------------------------
+c Schrittweiten in Bildkoordinaten bestimmen 
+c---  parameter ddisty,z Schrittweiten--------------
+       	if(s.iheigh.eq.1)then
+           ddisty=0.
+	else
+           ddisty=(s.disty2-s.disty1)/floatj(s.iheigh-1)
+	endif
+	if(s.iwidth.eq.1)then
+           ddistz=0.
+	else
+           ddistz=(s.distz2-s.distz1)/floatj(s.iwidth-1)
+	endif
+c---  schrittweiten im Bild bestimmt -----------------------   
+c      ddistz, ddisty sind berechnet
+c----------------------------------------------------------
+
+c************* Bildpunkt generieren *******************************
+
+	write(*,*)'pstf: start'
+
+	st.inumzit=0
+	st.inumyit=0
+	st.inumzan=0
+	st.inumyan=0
+c merken da die parameter im fehlerfall auf 1 gesetzt werden
+        iheigh=s.iheigh
+        iwidth=s.iwidth
+
+        yi=s.disty1-ddisty       ! punkt disty unter minimum
+        do n1=1,s.iheigh         ! y- Raster im Bild
+          yi=yi+ddisty           ! begin bei disty1(minimum bildpunkt)
+	  yiplot(n1)=yi          ! bildpunkt merken
+          yipc(n1)=yi
+          zi=s.distz1-ddistz     ! z- Raster im Bild
+          do n2=1,s.iwidth
+            zi=zi+ddistz
+	    ziplot(n2)=zi        ! plotkoord. generiert + gespeichert
+            zipc(n2)=zi   
+c************* save initial coordinates ****************
+	    yi_global=yi	
+	    zi_global=zi
+
+            ra.ri.yi=yi
+            ra.ri.zi=zi
+	    ra.n1=n2
+	    ra.n2=n1
+
+            st.nn1=n1
+	    st.nn2=n2
+c******* start of adaptive grid integration *************************** 
+            call adaptive_int(m4,g,a,src,apr,
+     .           cs,ra,ifl,xi,xir,st,s)  
+
+            if(ifl.ispline.eq.-1)then
+               xir.yzintey=xir.yzintya*exp(cs.sqrtm1*xir.yzintyp)
+               xir.yzintez=xir.yzintza*exp(cs.sqrtm1*xir.yzintzp)
+            endif
+            
+            if(cdabs(xir.yzintez).lt.1.e-10)icheckk=1
+            psd2c(n1,n2)=cdabs(xir.yzintey)
+            psd2cy(n1,n2)=xir.yzintey
+            psd2cz(n1,n2)=xir.yzintez
+            
+c-------------intensity:
+            
+            if(src.isrctype.eq.1)then
+               psd2(n1,n2)=cdabs(xir.yzintey)
+            endif
+            
+            if((src.isrctype.ge.2).and.(src.isrctype.lt.4))then
+               psd2(n1,n2)=cdabs(xir.yzintey)**2
+            endif
+            
+            if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
+               psd2(n1,n2)=
+     &              (cdabs(xir.yzintey))**2+(cdabs(xir.yzintez))**2
+            endif
+            
+            if(src.isrctype.eq.6)then
+c-----------------changed 23.4.1996 ------
+c     psd2(n1,n2)=cdabs(xir.yzintey)
+               psd2(n1,n2)=dreal(xir.yzintey)
+            endif	
+c------------------------------------------
+            
+c******Ende der Integration ueber die Winkel ******************
+         enddo                  ! raster
+         write(*,*)'finished row ',n1,' of ', iheigh
+      enddo                     ! raster
+c     restore parameter in case of error
+      s.iheigh= iheigh
+      s.iwidth= iwidth
+c****** Berechnung der Intensitaetsverteilung fertig ***********
+      write(*,*)'stop intensity calculation'
+c psd2 enthaelt intensitaet
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        if(ifl.inorm.eq.1)then
+           write(*,*)'normalized output'
+           surfmax=0.d0
+           do n1=1,s.iheigh
+              do n2=1,s.iwidth
+                 surfmax=dmax1(surfmax,dabs(psd2(n1,n2)))
+              enddo
+           enddo
+        else 
+           surfmax=1.
+        endif
+        if(surfmax.le.1d-15)surfmax=1. ! surfmax bestimmt
+    
+c---------------- OUTPUT --------------------------------
+c-----------------------------
+c	if(src.isrctype.lt.4)then
+c dies macht er jetzt immer, die bedeutung von psdc aendert sich
+c fd1phmax nur bei quelle 4 und 5 sinnvoll ?
+        iinumb=0
+        do n1=1,s.iheigh
+           do n2=1,s.iwidth
+              iinumb=iinumb+st.inumb(n1,n2)
+              psdc(n1+(n2-1)*s.iheigh)=psd2(n1,n2)/surfmax 
+              stfd1phmaxc(n1+(n2-1)*s.iheigh)=st.fd1phmax(n1,n2)
+              stinumbc(n1+(n2-1)*s.iheigh)=1.0*st.inumb(n1,n2)
+           enddo
+        enddo
+c        endif
+c
+        if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
+           do n1=1,s.iheigh
+              do n2=1,s.iwidth
+                 s1c(n1+(n2-1)*s.iheigh)=((cdabs(psd2cz(n1,n2)))**2 -
+     &              (cdabs(psd2cy(n1,n2)))**2 )/surfmax
+                 s2c(n1+(n2-1)*s.iheigh)=2.0*dreal(psd2cz(n1,n2)* 
+     &                dconjg(psd2cy(n1,n2)))/surfmax
+                 s3c(n1+(n2-1)*s.iheigh)=2.0*dimag(psd2cz(n1,n2)* 
+     &                dconjg(psd2cy(n1,n2)))/surfmax
+                 eyrec(n1+(n2-1)*s.iheigh)=dreal(psd2cy(n1,n2))/surfmax
+                 eyimc(n1+(n2-1)*s.iheigh)=dimag(psd2cy(n1,n2))/surfmax
+                 ezrec(n1+(n2-1)*s.iheigh)=dreal(psd2cz(n1,n2))/surfmax
+                 ezimc(n1+(n2-1)*s.iheigh)=dimag(psd2cz(n1,n2))/surfmax
+              enddo
+           enddo
+        endif
+
+        if(src.isrctype.eq.6)then
+           if(ifl.ibright.eq.1)then
+              if( (src.so6.iabrx.le.51).and.
+     &             (src.so6.iabry.le.51).and.
+     &             (src.so6.iabrpx.le.51).and.
+     &             (src.so6.iabrpy.le.51) )then
+c     write 4-dim brightness
+
+                 open(unit=10,name='BR_RE_BIN_IMAGE.DAT',err=557,
+     &                type='new',form='unformatted',access='sequential')
+                 write(10)src.so6.abrxmin,src.so6.abrxmax,
+     &                src.so6.abrdx,src.so6.iabrx
+                 write(10)src.so6.abrymin,src.so6.abrymax,
+     &                src.so6.abrdy,src.so6.iabry
+                 write(10)src.so6.abrpxmin,src.so6.abrpxmax,
+     &                src.so6.abrdpx,src.so6.iabrpx
+                 write(10)src.so6.abrpymin,src.so6.abrpymax,
+     &                src.so6.abrdpy,src.so6.iabrpy
+                 do i=1,src.so6.iabrx
+                    do ii=1,src.so6.iabry
+                       do j=1,src.so6.iabrpx
+                          do jj=1,src.so6.iabrpy
+                             write(10)src.so6.abr(i,ii,j,jj)
+                          enddo
+                       enddo
+                    enddo
+                 enddo
+                 close(10)
+
+              endif
+           endif
+        endif
+        goto 600
+ 557    write(*,*)'pstf: error open BR_RE_BIN_IMAGE.DAT '
+ 600    continue
+c-------------- file schreiben  ------------------------
+c        open(unit=15,file='fd1ph.paw',status='new')     !surf.paw <<x 
+c	open(unit=16,file='surf_s0.paw',status='new')     !surf.paw <<x 
+c 	write(15,*)s.iwidth,s.iheigh 
+c        write(16,*)s.iwidth,s.iheigh 
+c        do n1=1,s.iheigh
+c	 do n2=1,s.iwidth
+c           write(15,*)st.fd1phmax(n1,n2)      !statistik
+c           write(16,*)ziplot(n2),yiplot(n1),
+c     &          psd2(n1,n2)/surfmax
+c      	 enddo
+c	enddo
+c	close(15)
+c        close(16)
+c        write(*,*)'file fd1ph.paw und surf_s0.paw erzeugt'  
+	
+        write(*,*)'pstf: surfmax= ',surfmax 
+	write(*,*)' total number of grid points = ',iinumb
+	write(*,*)' total number of complete'
+        write(*,*)'        z-iteration cycles = ',st.inumzit
+	write(*,*)' total number of complete'
+        write(*,*)'        y-iteration cycles = ',st.inumyit
+	write(*,*)' reached maximum number of grid points'
+	write(*,*)'        in z ',st.inumzan,' times '
+	write(*,*)' reached maximum number of grid points'
+	write(*,*)'        in y ',st.inumyan,' times '
+
+c        write(*,*)'xir.iisimp:',xir.iisimp
+c	do ii=1,xir.iisimp
+           open(unit=10,name='simpre.dat',type='unknown',err=123)
+c           do i=1,xir.isimpre(ii)
+           do i=1,xir.isimpre(1)
+c              write(10,*)xir.simpre(ii,1,i),xir.simpre(ii,2,i)
+              write(10,*)xir.simpre(1,1,i),xir.simpre(1,2,i),
+     .             xir.simpre(2,1,i),xir.simpre(2,2,i),
+     .             xir.simpre(3,1,i),xir.simpre(3,2,i),
+     .             xir.simpre(4,1,i),xir.simpre(4,2,i)
+           enddo
+           close(10)
+           open(unit=10,name='simpim.dat',type='unknown',err=123)
+c           do i=1,xir.isimpim(ii)
+           do i=1,xir.isimpim(1)
+c              write(10,*)xir.simpim(ii,1,i),xir.simpim(ii,2,i)
+              write(10,*)xir.simpim(1,1,i),xir.simpim(1,2,i),
+     .             xir.simpim(2,1,i),xir.simpim(2,2,i),
+     .             xir.simpim(3,1,i),xir.simpim(3,2,i),
+     .             xir.simpim(4,1,i),xir.simpim(4,2,i)
+
+           enddo
+           close(10)
+c	enddo
+        write(*,*)'simpre.dat + simpim.dat erzeugt'
+
+c        do ii=1,xir.iisimp
+           open(unit=10,name='sintre.dat',type='unknown',err=123)
+c           do i=1,xir.isintre(ii)
+           do i=1,xir.isintre(1)
+c              write(10,*)xir.sintre(ii,1,i),xir.sintre(ii,2,i)
+              write(10,*)xir.sintre(1,1,i),xir.sintre(1,2,i),
+     .             xir.sintre(2,1,i),xir.sintre(2,2,i),
+     .             xir.sintre(3,1,i),xir.sintre(3,2,i),
+     .             xir.sintre(4,1,i),xir.sintre(4,2,i)
+           enddo
+           close(10)
+           open(unit=10,name='sintim.dat',type='unknown',err=123)
+c           do i=1,xir.isintim(ii)
+           do i=1,xir.isintim(1)
+c              write(10,*)xir.sintim(ii,1,i),xir.sintim(ii,2,i)
+              write(10,*)xir.sintim(1,1,i),xir.sintim(1,2,i),
+     .             xir.sintim(2,1,i),xir.sintim(2,2,i),
+     .             xir.sintim(3,1,i),xir.sintim(3,2,i),
+     .             xir.sintim(4,1,i),xir.sintim(4,2,i)
+           enddo
+           close(10)
+c        enddo
+        write(*,*)'sintre.dat + sintim.dat erzeugt'
+       goto 200
+ 123   write(*,*)'pstf: error open files'
+ 200    continue
+
+c        open(unit=10,name='d12.dat',type='new')
+        open(unit=10,name='d12.dat',err=555,type='unknown')
+        do i=1,xi.ianzz0
+           write(10,*)xir.d12(1,3,i),xir.d12(2,3,i)
+        enddo
+        close(10)
+        write(*,*)'pstf: d12.dat generated'
+        return
+ 555    write(*,*)'pstf: error open d12.dat '
+        return
+        end
+c**** end pstf() ******************************************    
+ 
 c*********************************************************
-	function facult(n) 
+	function facult(nn) 
 c*********************************************************
-        integer n,i
+        integer nn,i
 	real*8 facult
 
-	if(n.eq.0)facult=1.d0
-        if(n.eq.1)facult=1.d0
-        if(n.ge.2)then
-	   facult=1.d0
-	   do i=2,n
-	      facult=facult*dflotj(i)
-	   enddo
-        endif
-	
+	facult=1.
+	if(nn.gt.1)then
+	  do i=1,nn
+	     facult=facult*float(i)
+	  enddo
+	endif
 	return
 	end 
 c*********** end facult()*********************************   
-
 
 c**********************************************************
 c	initialisieren der Konstanten
 c	U. Flechsig 21.1.97
 c----------------------------------------------------------
 	subroutine initconstants(cs)
-
-#include '../phase/phase_struct.F'
-
+ccc        include 'phase_struct.for'
+c a trick to have the struct only in the ./phase and find it from opti 
+c if it works under vms is not yet tested
+#ifdef VMS
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+        include '../phase/phase_struct.for'
+#endif
 
         complex*16 xm1
 	record /constants/ cs
@@ -85,67 +523,17 @@ c----------------------------------------------------------
 	xm1=-1.
 	cs.pi=4.d0*datan(1.d0)
         cs.sqrtm1=cdsqrt(xm1)
-        call gamma_func(cs.pi,cs.gam,cs.fs,cs.fc)
-        
-        return
-        end
+	return
+	end 
+c*********** end initconstants ****************************
 
-c--------------------------------------------------------
-        subroutine gamma_func(pi,gam,fs,fc)
-c--------------------------------------------------------
-        implicit real*8(a-h,o-z)
-
-        dimension gam(0:165)
-        dimension fs(0:165),fc(0:165)
-
-        igam=163
-        gam(0)= 2.6789385347077476d0    ! =g13
-          g23=(2.d0*pi)/(dsqrt(3.d0)*gam(0))
-        gam(1)=1.d0
-
-c       ganzzhlige Argumente    
-        do i=4,igam,3
-          j=2*((i-1)/3)+1
-          gam(i)=gam(i-3)*dflotj((j-1)*(j-2))
-        enddo
-
-c       2/3-Argumente   
-        gam(2)=(2.d0/3.d0)*g23
-        do i=5,igam+1,3
-          j=2*((i+1)/3)-1
-          gam(i)=gam(i-3)*
-     &      (dflotj(j-1)+2.d0/3.d0)*
-     &      (dflotj(j-2)+2.d0/3.d0)
-        enddo
-
-c       1/3-Argumente   
-        do i=3,igam+2,3
-          j=2*(i/3)
-          gam(i)=gam(i-3)*
-     &      (dflotj(j-1)+1.d0/3.d0)*
-     &      (dflotj(j-2)+1.d0/3.d0)
-        enddo
-
-        do i=0,igam+2
-          fs(i)=-((2.d0*gam(i))/(3.d0*facult(i)))*
-     &      dsin(((1.d0-dflotj(i))/6.d0)*pi)
-          fc(i)=((2.d0*gam(i))/(3.d0*facult(i)))*
-     &      dcos(((1.d0-dflotj(i))/6.d0)*pi)
-
-        enddo
-
-        return
-        end
-
-#ifdef PHASELIB
 c*************************** neu **************************
- 	subroutine fgmapidp_4(iord,imodus,acc,a,g,
+ 	subroutine fgmapidp(iord,imodus,acc,a,g,
      &             wc,xlc,ypc1,zpc1,dypc,dzpc)       
 c*************************** neu **************************  
 c       acc ist epsilon
 c 10.10.96 umbenannt und iord eingefuegt
-c 2.9.11 umbenannt in _4
-c 4th order routine only
+
  	implicit real*8(a-h,o-z) 
         integer iord
        	structure/geometryst/
@@ -154,7 +542,6 @@ c 4th order routine only
 	   integer idefl   
         end structure   
         record /geometryst/ g   
-
         dimension a(0:5,0:5)              ! mirror     
 
         dimension wc(0:4,0:4,0:4,0:4),
@@ -173,9 +560,9 @@ c       imodus = 5 : Beamline Optimierung
 c
 c----------------------------------------------------------
 c        write(*,*)'fortran gerufen'
-#ifdef DEBUG
-	 write(*,*)' fgmapidp_4: imodus = ',imodus 
-#endif
+
+	 write(6,*)' imodus = ',imodus
+
 	 idrift=0
          if(imodus.ge.1000)then
            imodus=imodus-1000
@@ -184,14 +571,10 @@ c        write(*,*)'fortran gerufen'
 
 c        write(*,*)'for: fgmapidp called'
 	if(imodus.eq.2)then
-#ifdef DEBUG
           write(*,*)'fgmapidp: make map for image to source iord=',iord 
-#endif
           call transponiere(a,g)    ! bild zur quelle
         else 
-#ifdef DEBUG
           write(*,*)'fgmapidp: make map for source to image iord=',iord 
-#endif
 	endif 
 c------------------------------------------------------- 
         if(idrift.eq.0)then
@@ -226,7 +609,7 @@ c-------------------------------------------------------
 	  enddo
 	endif
 
-c	write(6,*)g.cosa,g.cosb,g.sina,g.sinb
+	write(6,*)g.cosa,g.cosb,g.sina,g.sinb
 
 c        write(*,*)'fgmapidp (wc, xlc results):'
 c       do i=0,4
@@ -244,27 +627,19 @@ c       write(*,*)'end fgmapidp'
 	return
         end
 c-------- end fgmapidp()-----------------------------------
-#endif
 
 c**************************************************************
-	subroutine intersection(a,wc,xlc,rin,uu,ww,xll,iord)   
+	subroutine intersection(a,wc,xlc,rin,iord,
+     &  			uu,ww,xll)   
 c
 c 	intersection returns uu,ww,xll
-c       UF 2.9.11 merge in intersection_8 
-c       i.e. works for SEVEN_ORDER and 4th order
 c**************************************************************
 	implicit real*8(a-h,o-z)
 
+        dimension a(0:5,0:5)         ! mirror
 	real*8 yi_global,zi_global,dyi_global,dzi_global,rin(4)
-#ifdef SEVEN_ORDER
-        dimension a(0:8,0:8)         ! mirror
-	dimension wc(0:7,0:7,0:7,0:7),
-     &            xlc(0:7,0:7,0:7,0:7)
-#else
-	dimension a(0:5,0:5)	! mirror
-	dimension wc(0:4,0:4,0:4,0:4),
+        dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4)
-#endif
 
 	yi_global=rin(1) 
         zi_global=rin(2) 
@@ -353,17 +728,16 @@ c        write(*,*)'intersection end'
 	end
 c*************** end intersection ****************************
                           
-#ifdef PHASELIB                          
 c*************************************************************
-	subroutine pathlen0(am,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
+	subroutine pathlen0(a,g,iord,iplmode,isti,wc,xlc,ypc1,zpc1,xlm)
 c*************************************************************
 c	(ini = 0 : calculate the transformation coefficients)
 c*************************************************************
 c	Berechnung der Transformationskoeffizienten der 
 c	Pfadlaenge fuer ein opt. Element
 c-------------------------------------------------------------
-c       input: am: mirrortype
-c	       g : geometrytype
+c       input: a: mirrortype
+c	       g: geometrytype
 c	iplmode = 0 : do not subtract r and rp from path length
 c		      in analytical code
 c	iplmode = 1 : subtract r and rp from path length
@@ -372,21 +746,13 @@ c	isti    = 1  : Tarnsformation von Quelle zum Bild
 c	isti    != 1 : Tarnsformation von Bild zur Quelle
 c	       wc,xlc,ypc1,zpc1: Entwicklungskoeffizienten
 c       return: xlm: xlen1c, xlen2c (Koeffizientenstruktur)   
-c       4th order routine only
 c**************************************************************
 c	J. Bahrdt  xx.xx.9x
 c	Stand:     30.1.97	UF
-c       Anpassungen wegen seven_order compatibility
-c       die Eingansmaps sind immer 4th order
-c       wir definieren die typen hier fuer 4rd order und nehmen nicht die 
-c       typen aus phase_struct
+c last modification: 26 Jun 97 08:29:17 flechsig
 c**************************************************************
-         implicit none
-c        implicit real*8(a-h,o-z)
-c #include '../phase/phase_struct.F'
-         real *8 dql1, dql2, dpl0, dsqrl, dsqrpl2, dsqrpl1  
-         real *8 xlen1cc, xlen2cc
-	 real *8 wc,xlc,ypc1,zpc1
+	implicit none        
+
 c---------- Typen ---------------------------------------------
        	
 	structure/geometryst/
@@ -395,20 +761,16 @@ c---------- Typen ---------------------------------------------
 	   integer idefl   
         end structure 
 	
-        structure/xlenmap4/                 ! Entw. Koeffizienten
+	structure/xlenmap/                 ! Entw. Koeffizienten
 	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
      &  	  xlen2c(0:4,0:4,0:4,0:4)
-	end structure   
-
-  	structure/mirrortype4/	! Entw. Koeffizienten
-	   real*8 a(0:5,0:5)
-       	end structure 
+	end structure      
 
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4),
      &            ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4)  
-    
+     
         dimension dpl0(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dsqrl(0:4,0:4,0:4,0:4,0:4,0:4),
      &		  dsqrpl2(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -420,28 +782,31 @@ c---------- Typen ---------------------------------------------
 
 c--------- Variablen ------------------------------------------   
 
-	record /xlenmap4/ xlm     
+	record /xlenmap/ xlm     
         record /geometryst/ g 
-	record /mirrortype4/ am
 
-	integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
+        integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
 
+	real*8 a(0:5,0:5),                     ! mirrortype
+     &         wc,xlc,ypc1,zpc1
+        real*8 dpl0,dsqrl,dql1,dql2,           ! locale vars
+     &         xlen1cc,xlen2cc,dsqrpl1,dsqrpl2
+
+	 
 c*****************************************************************
 #ifdef DEBUG
        write(*,*) 'pathlen0: iplmode=',iplmode
 #endif
 
       if (iplmode.eq.0)then
-#ifdef DEBUG
+
         write(*,*) 'pathlen0: do not subtract r and rp from path length' 
-#endif
+
 	if(isti.eq.1)then
-	  call lsubb(am.a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,
-     &               -g.idefl,dql1,dql2)
+	  call lsubb(a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,-g.idefl,dql1,dql2)
 	endif
 	if(isti.ne.1)then
-	  call lsubb(am.a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,
-     &                g.idefl,dql1,dql2) 
+	  call lsubb(a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,dql1,dql2) 
 	endif
 	
         do n1=0,iord
@@ -507,12 +872,10 @@ c----------------------------------
        endif 	! iplmode = 0
 c----------------------------------
        if (iplmode.eq.1)then
-#ifdef DEBUG
 	write(*,*)'pathlen0: subtract r and rp from path length'
-#endif
-	if(isti.eq.1)call lsubab(am.a,g.sinb,g.cosb,g.sina,g.cosa,
+	if(isti.eq.1)call lsubab(a,g.sinb,g.cosb,g.sina,g.cosa,
      &              g.rp,g.r,-g.idefl,dsqrpl1,dsqrpl2)
-	if(isti.ne.1)call lsubab(am.a,g.sina,g.cosa,g.sinb,g.cosb,
+	if(isti.ne.1)call lsubab(a,g.sina,g.cosa,g.sinb,g.cosb,
      &              g.r,g.rp,g.idefl,dsqrpl1,dsqrpl2)
 	do n1=0,iord
          do n2=0,iord
@@ -538,7 +901,6 @@ c----------------------------------
 	enddo
        endif	! iplmode = 1
 c----------------------------------
-
        call lsubc(wc,xlc,xlen1cc,xlm.xlen1c)
        call lsubd00(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)
        call lsubd01(wc,xlc,ypc1,zpc1,xlen2cc,xlm.xlen2c)
@@ -562,8 +924,8 @@ c       write(*,*)'end pathlen0'
        
        return
        end
-c************ end pathlen0 ***********************************
-#endif
+c************ end pathlen0 ********************************
+
 
 c*************************************************************
 	subroutine pathlen1(xlm,rin,iord,
@@ -578,27 +940,25 @@ c**************************************************************
 c	J. Bahrdt  xx.xx.9x
 c	Stand:     18.10.96	UF
 c**************************************************************
+	implicit none        
 
-        implicit real*8(a-h,o-z)
-        integer iord,i,j,k,l
-
-#include '../phase/phase_struct.F'      
-	
 c---------- Typen ---------------------------------------------
-c       	structure/raytype/                 ! ein Phasenraumpunkt
-c	   real*8 y,z,dy,dz
-c	end structure
-c
-c	structure/xlenmap/                 ! Entw. Koeffizienten
-c	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
-c     &  	  xlen2c(0:4,0:4,0:4,0:4)
-c	end structure
+       	structure/raytype/                 ! ein Phasenraumpunkt
+	   real*8 y,z,dy,dz
+	end structure
+
+	structure/xlenmap/                 ! Entw. Koeffizienten
+	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
+     &  	  xlen2c(0:4,0:4,0:4,0:4)
+	end structure
 c--------- Variablen ------------------------------------------   
 
-	record /ray_i/ rin
+	record /raytype/ rin
 	record /xlenmap/ xlm     
 
-       	dimension yi(0:7),zi(0:7),dyi(0:7),dzi(0:7)
+       	real*8  yi(0:4),zi(0:4),dyi(0:4),dzi(0:4),
+     &          xlength,xlength1,xlength2
+	integer iord,i,j,k,l
        
 c*****************************************************************
 
@@ -607,10 +967,10 @@ c*****************************************************************
 	dyi(0)=1.d0
 	dzi(0)=1.d0
 	do i=1,iord
-	   yi(i)=yi(i-1)*rin.yi
-	   zi(i)=zi(i-1)*rin.zi
-	   dyi(i)=dyi(i-1)*rin.dyi
-	   dzi(i)=dzi(i-1)*rin.dzi
+	   yi(i)=yi(i-1)*rin.y
+	   zi(i)=zi(i-1)*rin.z
+	   dyi(i)=dyi(i-1)*rin.dy
+	   dzi(i)=dzi(i-1)*rin.dz
 	enddo
 c--------------------------------------------------
         xlength1=0.d0
@@ -631,24 +991,27 @@ c--------------------------------------------------
         
 	return
 	end
-c************ end pathlen1 ********************************                          
+c************ end pathlen1 ********************************
+                          
+
                           
 c******* read matrixfile ************************************ 
-	subroutine readmatrixfile(fname, xmap70, iord)  
+	subroutine readmatrixfile(fname,xmap70,iord)  
+c------------------------------------------------------------
+c       located in fgmap3dpp.for,phasefor.for      
 c************************************************************    
         implicit none
 
         character*255  	fname
         real*8 xmap70
-        integer i, j, idim, ii, jj, iord
-
-#ifdef SEVEN_ORDER
-	dimension xmap70(330,330)
-        idim=330
-#else
+        integer i,j,idim,ii,jj,iord
         dimension xmap70(70,70)
-        idim=70
-#endif        
+        
+        if(iord.eq.4)then
+          idim=70
+        else
+          idim=35
+        endif
 
         open(unit=10,file=fname,status='old',err=556) 
 	do i=1,idim
@@ -663,44 +1026,6 @@ c************************************************************
         return
         end
 c******* read matrixfile ************************************ 
-
-
-c******* write matrixfile *********************************** 
-        subroutine writematrixfile(xmap70, fname, header)  
-c************************************************************    
-        implicit none
-
-        character*(*) fname, header 
-        real*8 xmap70
-        integer i, j, idim, iord
-#ifdef SEVEN_ORDER
-	dimension xmap70(330,330)
-        idim=330
-	write(*,*)'writematrixfile: write matrix [330][330] to file >>',
-     &            fname, '<<' 
-#else
-        dimension xmap70(70,70)
-        idim=70
-        write(*,*)'writematrixfile: write matrix [70][70] to file >>', 
-     &            fname, '<<'
-#endif        
-c	write(*,*)'writematrixfile: write header>>', header , '<<'
-	write(*,*)''
-
-	open(unit=10,file=fname,status='unknown',err=557)
-	write(10,*)header
-	do i=1,idim
-	   do j=1,idim
-	      write(10,*)i,j,xmap70(i,j)
-	   enddo
-	enddo
-	close(10)     
-	
-        return
- 557    write(*,*)'writematrixfile: error open ', fname
-        return
-        end
-c******* write matrixfile ************************************ 
 
 c****************************************************************
  	subroutine readintersection(fname,wc,xlc,iord) 
@@ -731,39 +1056,32 @@ c********* end readintersection() ***************************************
 
 c*************************************************************** 
 	subroutine extractmap(xmap70,ypc1,zpc1,dypc,dzpc,iord)  
+c       Uwe 12.2.97 umgeschrieben auf universelle map
 c---------------------------------------------------------------      
-	implicit real*8(a-h,o-z)
+c	implicit real*8(a-h,o-z)    
+        implicit none
 
+        real*8  xmap70,ypc1,zpc1,dypc,dzpc
         integer iord,iy,iz,idy,idz,i,j,k,l,nn
-#ifdef SEVEN_ORDER
-        dimension xmap70(330,330),
-     &            ypc1(0:7,0:7,0:7,0:7),
-     &            zpc1(0:7,0:7,0:7,0:7),
-     &            dypc(0:7,0:7,0:7,0:7),
-     &            dzpc(0:7,0:7,0:7,0:7)
-#else
+
         dimension xmap70(70,70),
      &            ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)
-#endif
 
-c        if(iord.eq.4)then
-c         iy=36
-c         iz=16
-c         idy=6
-c         idz=2
-c        else 
-c	   if(iord.eq.3)then
-c	      iy=21
-c	      iz=11
-c	      idy=5
-c	      idz=2
-c	   else
-          call idnum(iord,idz,idy,iz,iy)
-c	   endif
-c        endif   
+
+        if(iord.eq.4)then
+         iy=36
+         iz=16
+         idy=6
+         idz=2
+        else            ! iord=3
+         iy=21
+         iz=11
+         idy=5
+         idz=2
+        endif   
 
         nn=0
         do i=0,iord
@@ -784,28 +1102,7 @@ c        endif
         end
 c******* extractmap ************************************     
 
-      subroutine idnum(iord,idz,idy,iz,iy)
 
-      idz=2
-      idy=2+iord
-      
-      n=0
-      do i=0,iord
-      do j=0,iord-i
-      do k=0,iord-i-j
-      do l=0,iord-i-j-k
-      n=n+1
-      if((i.eq.0).and.(j.eq.1).and.(k.eq.0).and.(l.eq.0))iz=n
-      if((i.eq.1).and.(j.eq.0).and.(k.eq.0).and.(l.eq.0))iy=n
-      enddo
-      enddo
-      enddo
-      enddo
-
-      return
-      end
- 
-       
 c********************************************************** 
 	subroutine reduce_1_drift(imodus,iord,a,g,acc,wc,
      &	xlc,ypc1,zpc1,dypc,dzpc)    
@@ -814,15 +1111,13 @@ c**********************************************************
 c       mirror a und geometry g gehen herein
 c       map7 und map8 gehen heraus
 c 	wird von fgmapidp genutzt
-c       4th order only
 c----------------------------------------------------------
         structure/geometryst/
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
         end structure
-        record /geometryst/ g 
-
+        record /geometryst/ g  
         dimension a(0:5,0:5)
 
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -857,19 +1152,14 @@ c----------------------------------------------------------
      &              dqe(0:4,0:4,0:4,0:4)
         dimension   dyic(0:4,0:4,0:4,0:4),
      &              dzic(0:4,0:4,0:4,0:4)
-
-
         dimension   wc(0:4,0:4,0:4,0:4),
      &              xlc(0:4,0:4,0:4,0:4),
      &              ypc1(0:4,0:4,0:4,0:4),
-     &              zpc1(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4)
+        dimension   dyp1c(0:4,0:4,0:4,0:4),
+     &              dzp1c(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)
-
-
-        dimension   dyp1c(0:4,0:4,0:4,0:4),
-     &              dzp1c(0:4,0:4,0:4,0:4)
-     
         dimension dqk(0:4,0:4,0:4,0:4)
         dimension dyp2c(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
@@ -908,8 +1198,7 @@ c----------------------------------------------------------
  
         return
 	end
-
-#ifdef PHASELIB		    
+		    
 c********************************************************** 
 	subroutine reduce_1(imodus,iord,a,g,acc,wc,xlc,ypc1,zpc1,dypc,dzpc)    
 c********************************************************** 
@@ -917,7 +1206,6 @@ c**********************************************************
 c       mirror a und geometry g gehen herein
 c       map7 und map8 gehen heraus
 c 	wird von fgmapidp genutzt
-c       4rd order routine only!
 c----------------------------------------------------------
         structure/geometryst/
            real*8 sina,cosa,sinb,cosb,
@@ -925,8 +1213,8 @@ c----------------------------------------------------------
 	   integer idefl   
         end structure
         record /geometryst/ g  
-
         dimension a(0:5,0:5)
+
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq2(0:4,0:4,0:4,0:4,0:4,0:4),
      &              dq3(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -959,18 +1247,14 @@ c----------------------------------------------------------
      &              dqe(0:4,0:4,0:4,0:4)
         dimension   dyic(0:4,0:4,0:4,0:4),
      &              dzic(0:4,0:4,0:4,0:4)
-
-
         dimension   wc(0:4,0:4,0:4,0:4),
      &              xlc(0:4,0:4,0:4,0:4),
      &              ypc1(0:4,0:4,0:4,0:4),
-     &              zpc1(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4)
+        dimension   dyp1c(0:4,0:4,0:4,0:4),
+     &              dzp1c(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)
-
-        dimension   dyp1c(0:4,0:4,0:4,0:4),
-     &              dzp1c(0:4,0:4,0:4,0:4)
-     
         dimension dqk(0:4,0:4,0:4,0:4)
         dimension dyp2c(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
@@ -979,13 +1263,6 @@ c----------------- initialisieren -----------------
 #ifdef DEBUG
         write(*,*)'reduce_1: epsilon:',acc
 #endif
-        if(acc.lt.1e-8)then
-           write(*,*)'reduce_1: epsilon < 1e-8'
-           write(*,*)'reduce_1: put epsilon to default'
-           acc=0.01
-           write(*,*)'reduce_1: (new) epsilon:',acc
-        endif
-
         fak(0)=1.d0
 	fak(1)=1.d0
 	fak(2)=2.d0
@@ -1085,7 +1362,6 @@ c        write(*,*)'end reduce_1'
 	return
 	end
 c ***************** end reduce_1 **************************
-#endif
 
 c********************************************************** 
 	subroutine transponiere (a,g)   
@@ -1095,7 +1371,7 @@ c	koeffizienten fuer Rechnung      Bild-> Quelle
 c
 c	ACHTUNG: Vorzeichen von xdens(1) und xdens(3)
 c	werden lokal in reduce_1 umgedreht
-c       4th order routine only
+c
 c********************************************************** 
 	implicit real*8(a-h,o-z)    
 	structure/geometryst/
@@ -1104,9 +1380,7 @@ c**********************************************************
 	   integer idefl   
         end structure
         record /geometryst/ g  
-
-	dimension a(0:5,0:5)
-    
+        dimension a(0:5,0:5)    
 
         do i=0,5
           do j=0,5
@@ -1128,72 +1402,19 @@ c**********************************************************
         end
 c******* end transponiere  ********************************** 
 
-c********************************************************** 
-	subroutine transponiere_8(am,g)   
-c
-c	wird gerufen von fgmapidp_8
-c
-c----------------------------------------------------------
-c       "transponiert" die Geometriedaten und Spiegel- 
-c	koeffizienten fuer Rechnung      Bild-> Quelle
-c
-c	ACHTUNG: Vorzeichen von xdens(1) und xdens(3)
-c	werden lokal in reduce_1 umgedreht
-c
-c********************************************************** 
-	implicit real*8(a-h,o-z)
-#include '../phase/phase_struct.F'
-c	structure/geometryst/
-c           real*8 sina,cosa,sinb,cosb,
-c     &            r,rp,xdens(0:4),xlam  
-c	   integer idefl   
-c        end structure
-        record /geometryst/ g  
-        record /mirrortype/ am  
-c        dimension a(0:5,0:5)    
-
-        do i=0,8
-          do j=0,8
-              am.a(i,j)=((-1)**(i+j)) * am.a(i,j)
-          enddo
-        enddo  
-
-	xxx=g.rp
-	g.rp=g.r
-	g.r=xxx
-	g.xlam=-g.xlam
-	xxx=g.cosa
-	g.cosa=g.cosb
-	g.cosb=xxx
-	xxx=g.sina
-	g.sina=-g.sinb
-	g.sinb=-xxx
-	return
-        end
-c******* end transponiere_8  ********************************** 
-
 c*********************************************************
 	subroutine ray_tracef(rin, rout, iord,
      &                        ypc1,zpc1,dypc,dzpc)       
 c*********************************************************
         IMPLICIT REAL*8(A-H,O-Z)
 
-#ifdef SEVEN_ORDER
-        dimension ypc1(0:7,0:7,0:7,0:7),
-     &            zpc1(0:7,0:7,0:7,0:7),
-     &            dypc(0:7,0:7,0:7,0:7),
-     &            dzpc(0:7,0:7,0:7,0:7)
-#else
         dimension ypc1(0:4,0:4,0:4,0:4),
      &            zpc1(0:4,0:4,0:4,0:4),
      &            dypc(0:4,0:4,0:4,0:4),
      &            dzpc(0:4,0:4,0:4,0:4)
-#endif       
-c UF we use 5 dim rays with phase- but we can also use the 4 dim arrays since the phase is alculated elsewhere           
-c        real*8 rin(4), rout(4)
-	real*8 rin(5), rout(5)
+                  
+        real*8 rin(4), rout(4)
 
-c	write(*,*)'ray_tracef: iord= ',iord
          yp=0.
          zp=0.
          dyp=0.
@@ -1237,21 +1458,14 @@ c****** end rtracef ********************************************
 
 c****************************************************************
  	subroutine writemap(mapname,iord,ypc1,zpc1,dypc,dzpc)  
-c UF 6.6.2011 hier werden MAP7TYPE arrays uebergeben
 c****************************************************************
         implicit real*8(a-h,o-z)  
         character*255 mapname
-#ifdef SEVEN_ORDER
-	dimension   ypc1(0:7,0:7,0:7,0:7),
-     &              zpc1(0:7,0:7,0:7,0:7),
-     &              dypc(0:7,0:7,0:7,0:7),
-     &              dzpc(0:7,0:7,0:7,0:7) 
-#else
         dimension   ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
      &              dzpc(0:4,0:4,0:4,0:4)   
-#endif
+
 	open(unit=10,file=mapname,status='new',err=559)
         write(*,*)'****write transformation map to: ',mapname  
 	write(10,*)'writemap: ypc, zpc, dypc, dzpc'
@@ -1349,39 +1563,287 @@ c----------------------------------------------------------
         end
 c*********** end geometrdp.for ***************************     
 
-#ifdef PHASELIB
 c**********************************************************
-	subroutine xxmap70(xmap70,ypc1,zpc1,dypc,dzpc,iord)
+      subroutine xxmap35(xmap35,ypc1,zpc1,dypc,dzpc)  
 c**********************************************************
-c       Berechnung der vollstaendigen 70x70 Matrix
-c       zur Transformation 4. Ordnung
+c     Berechnung der vollstaendigen 35x35 Matrix
+c     zur Transformation 3. Ordnung
 c**********************************************************
-c       die maps muessen immer fuer 4th order sein
-c       die Ausgangsmatrix ist compatibel mit 7 order
-
-c        implicit none
-
-        real*8  xmap70,ypc1,zpc1,dypc,dzpc,cc,p1,p2,p11,facul,facult
-        integer ispalte,iord,inum,isube1,ianz,n1,n2,n3,n4,
-     &	        nn,i,izeile,l1,l2,l3,l4
+	implicit real*8(a-h,o-z)
 
       	dimension   ypc1(0:4,0:4,0:4,0:4),
      &              zpc1(0:4,0:4,0:4,0:4),
      &              dypc(0:4,0:4,0:4,0:4),
-     &              dzpc(0:4,0:4,0:4,0:4) 
+     &              dzpc(0:4,0:4,0:4,0:4),   
+     & 		    xmap35(35,35)
+ccccccccccccccccccc alt cccccccccccccccccccccccccccccc
+c        common/map7/wc(0:4,0:4,0:4,0:4),
+c     &              xlc(0:4,0:4,0:4,0:4),
+c        common/map8/dyp1c(0:4,0:4,0:4,0:4),
+c     &              dzp1c(0:4,0:4,0:4,0:4), 
+c        common/map35/   
+cccccccccccccccccccccccccccccccccccccccccccccccccccccc
+      dimension cc(0:4,0:4,0:4,0:4,35)
+      dimension p1(0:4,0:4,0:4,0:4)
+      dimension p2(0:4,0:4,0:4,0:4)
+      dimension p11(0:4,0:4,0:4,0:4)
+      dimension ispalte(0:4,0:4,0:4,0:4)
+      dimension facul(0:4,0:4,0:4,0:4)	
 
- 
-        dimension xmap70(70,70)
+      write(*,*)'iord=3fest'
+      iord=3
+      inum=35
+      isube1=1
+     
+      ianz=0
+      do n1=0,iord
+       do n2=0,iord-n1
+        do n3=0,iord-n1-n2
+         do n4=0,iord-n1-n2-n3
+          facul(n1,n2,n3,n4)=
+     &           facult(n1)*facult(n2)*facult(n3)*facult(n4)	
+          ianz=ianz+1
+          ispalte(n1,n2,n3,n4)=ianz
+         enddo
+        enddo
+       enddo
+      enddo
 
-	dimension cc(0:4,0:4,0:4,0:4,70)
-	dimension p1(0:4,0:4,0:4,0:4)
-	dimension p2(0:4,0:4,0:4,0:4)
-	dimension p11(0:4,0:4,0:4,0:4)
-	dimension ispalte(0:4,0:4,0:4,0:4)
-	dimension facul(0:4,0:4,0:4,0:4)	
-	
-	inum=70
-        
+c***************************************************************
+c             Potenzen von dzp
+c***************************************************************
+
+      do n1=0,iord
+       do n2=0,iord-n1
+        do n3=0,iord-n1-n2
+         do n4=0,iord-n1-n2-n3
+          cc(0,0,0,1,ispalte(n1,n2,n3,n4))=dzpc(n1,n2,n3,n4)
+         enddo
+        enddo
+       enddo
+      enddo
+
+      do l4=2,iord
+       do n1=0,iord
+        do n2=0,iord-n1
+         do n3=0,iord-n1-n2
+          do n4=0,iord-n1-n2-n3
+           p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &          cc(0,0,0,1,ispalte(n1,n2,n3,n4))
+           p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &          cc(0,0,0,l4-1,ispalte(n1,n2,n3,n4))
+          enddo
+         enddo
+        enddo
+       enddo
+       call sube1(p1,p2,p11)
+       do n1=0,iord
+        do n2=0,iord-n1
+         do n3=0,iord-n1-n2
+          do n4=0,iord-n1-n2-n3
+           cc(0,0,0,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
+          enddo
+         enddo
+        enddo
+       enddo
+      enddo
+
+c***********************************************************
+c        Potenzen von dyp und dzp
+c***********************************************************
+      do n1=0,iord
+       do n2=0,iord-n1
+        do n3=0,iord-n1-n2
+         do n4=0,iord-n1-n2-n3
+          cc(0,0,1,0,ispalte(n1,n2,n3,n4))=dypc(n1,n2,n3,n4)
+         enddo
+        enddo
+       enddo
+      enddo
+
+      do l3=1,iord
+       do l4=0,iord-l3
+        if((l3+l4).gt.1)then
+         do n1=0,iord
+          do n2=0,iord-n1
+           do n3=0,iord-n1-n2
+            do n4=0,iord-n1-n2-n3
+             p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &           cc(0,0,1,0,ispalte(n1,n2,n3,n4))
+             p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &           cc(0,0,l3-1,l4,ispalte(n1,n2,n3,n4))
+            enddo
+           enddo
+          enddo
+         enddo
+         call sube1(p1,p2,p11)
+         do n1=0,iord
+          do n2=0,iord-n1
+           do n3=0,iord-n1-n2
+            do n4=0,iord-n1-n2-n3
+             cc(0,0,l3,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
+            enddo
+           enddo
+          enddo
+         enddo
+        endif
+       enddo
+      enddo
+
+c***********************************************************
+c        Potenzen von zp, dyp und dzp
+c***********************************************************
+
+      do n1=0,iord
+       do n2=0,iord-n1
+        do n3=0,iord-n1-n2
+         do n4=0,iord-n1-n2-n3
+          cc(0,1,0,0,ispalte(n1,n2,n3,n4))=zpc1(n1,n2,n3,n4)
+         enddo
+        enddo
+       enddo
+      enddo
+
+      do l2=1,iord
+       do l3=0,iord-l2
+        do l4=0,iord-l2-l3
+         if((l2+l3+l4).gt.1)then
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &          cc(0,1,0,0,ispalte(n1,n2,n3,n4))
+              p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &          cc(0,l2-1,l3,l4,ispalte(n1,n2,n3,n4))
+             enddo
+            enddo
+           enddo
+          enddo
+          call sube1(p1,p2,p11)
+          do n1=0,iord
+           do n2=0,iord-n1
+            do n3=0,iord-n1-n2
+             do n4=0,iord-n1-n2-n3
+              cc(0,l2,l3,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
+             enddo
+            enddo
+           enddo
+          enddo
+         endif
+        enddo
+       enddo
+      enddo
+
+c***********************************************************
+c        Potenzen von yp, zp, dyp und dzp
+c***********************************************************
+      do n1=0,iord
+       do n2=0,iord-n1
+        do n3=0,iord-n1-n2
+         do n4=0,iord-n1-n2-n3
+          cc(1,0,0,0,ispalte(n1,n2,n3,n4))=ypc1(n1,n2,n3,n4)
+         enddo
+        enddo
+       enddo
+      enddo
+
+      do l1=1,iord
+       do l2=0,iord-l1
+        do l3=0,iord-l1-l2
+         do l4=0,iord-l1-l2-l3
+          if((l1+l2+l3+l4).gt.1)then
+           do n1=0,iord
+            do n2=0,iord-n1
+             do n3=0,iord-n1-n2
+              do n4=0,iord-n1-n2-n3
+               p1(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &                 cc(1,0,0,0,ispalte(n1,n2,n3,n4))
+               p2(n1,n2,n3,n4)=facul(n1,n2,n3,n4)*
+     &                 cc(l1-1,l2,l3,l4,ispalte(n1,n2,n3,n4))
+              enddo
+             enddo
+            enddo
+           enddo
+           call sube1(p1,p2,p11)
+           do n1=0,iord
+            do n2=0,iord-n1
+             do n3=0,iord-n1-n2
+              do n4=0,iord-n1-n2-n3
+               cc(l1,l2,l3,l4,ispalte(n1,n2,n3,n4))=p11(n1,n2,n3,n4)
+              enddo
+             enddo
+            enddo
+           enddo
+          endif
+         enddo
+        enddo
+       enddo
+      enddo
+
+c*************************************************************
+
+      izeile=1
+      xmap35(izeile,1)=1.
+      do i=2,inum
+        xmap35(izeile,i)=0.
+      enddo
+
+      do l1=0,iord                ! Zeilennummerierung
+       do l2=0,iord-l1
+        do l3=0,iord-l1-l2
+         do l4=0,iord-l1-l2-l3
+          if((l1+l2+l3+l4).gt.0)then
+           izeile=izeile+1
+           do nn=1,35                 ! Spaltennummerierung
+            xmap35(izeile,nn)=cc(l1,l2,l3,l4,nn)
+           enddo
+          endif
+         enddo
+        enddo
+       enddo
+      enddo
+      return
+      end
+c**** end xxmap35() ***************************************     
+
+
+c**********************************************************
+      subroutine xxmap70(xmap70,ypc1,zpc1,dypc,dzpc,iord)
+c**********************************************************
+c     Berechnung der vollstaendigen 70x70 Matrix
+c     zur Transformation 4. Ordnung
+c**********************************************************
+c	implicit real*8(a-h,o-z)
+c     Uwe 12.2.97
+
+        implicit none
+
+        real*8 xmap70,ypc1,zpc1,dypc,dzpc,cc,p1,p2,p11,facul,
+     .         facult
+        integer ispalte,iord,inum,isube1,ianz,n1,n2,n3,n4,
+     .          nn,i,izeile,l1,l2,l3,l4
+
+      	dimension   ypc1(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4),
+     &              dypc(0:4,0:4,0:4,0:4),
+     &              dzpc(0:4,0:4,0:4,0:4),   
+     & 		    xmap70(70,70)
+
+      dimension cc(0:4,0:4,0:4,0:4,70)
+      dimension p1(0:4,0:4,0:4,0:4)
+      dimension p2(0:4,0:4,0:4,0:4)
+      dimension p11(0:4,0:4,0:4,0:4)
+      dimension ispalte(0:4,0:4,0:4,0:4)
+      dimension facul(0:4,0:4,0:4,0:4)	
+
+c einziger Unterschied xxmap70, xxmap35
+      if(iord.eq.4)then
+       inum=70
+      else
+       inum=35
+      endif
+      
       isube1=1
       ianz=0
       do n1=0,iord
@@ -1623,11 +2085,10 @@ c*************************************************************
       return
       end
 c**** end xxmap70 ******************************
-#endif
 
-#ifdef PHASELIB
+
 c*********************************************************
-        subroutine fdet_4(imodus,iord,fdetc,fdetphc,fdet1phc,
+        subroutine fdet(imodus,iord,fdetc,fdetphc,fdet1phc,
      &			ypc1,zpc1,dypc,dzpc)
 c	Stand 29.1.97
 c*********************************************************
@@ -1909,7 +2370,6 @@ c      enddo
       return
       end
 c********** end fdet **************************************
-#endif
 
 c**********************************************************
       subroutine sig(i,j,k,l,isig)
@@ -1965,16 +2425,20 @@ c******* end sig  *****************************************
 
 c*********readfg34_par ******************************
       subroutine readfg34_par(src,apr,ifl,xi,epsilon) 
-#ifdef OBSOLETE
 c liest ein Parameterfile von Johannes, Button im edit- menu
 c add epsilon feb 04 
 
       implicit none
 ccc      include 'phase_struct.for'
 c a trick to have the struct only in the ./phase and find it from opti 
-cc        include '../phase/phase_struct.for'
-#include '../phase/phase_struct.F'
-
+c if it works under vms is not yet tested
+#ifdef VMS
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
+        include '../phase/phase_struct.for'
+#endif
+      
       record /control_flags/ ifl
       record /sources/ src
       record /integration/ xi
@@ -1982,8 +2446,7 @@ cc        include '../phase/phase_struct.for'
       character*80 dfile
       character*1 dummy
       integer iname,clen1
-      real *8 epsilon,dummy8
-      
+      real *8 epsilon
 
  1    format(1a1)	
  3    format(a80)
@@ -1997,36 +2460,28 @@ cc        include '../phase/phase_struct.for'
       read(16,*)src.isrctype
       read(16,3)dfile
       iname=clen1(dfile)
-      src.so4.fsource4a(:80)=''
       src.so4.fsource4a(:iname)=dfile(:iname)
       read(16,3)dfile
       iname=clen1(dfile)
-      src.so4.fsource4b(:80)=''
       src.so4.fsource4b(:iname)=dfile(:iname)
       read(16,3)dfile
       iname=clen1(dfile)
-      src.so4.fsource4c(:80)=''
       src.so4.fsource4c(:iname)=dfile(:iname)
       read(16,3)dfile
       iname=clen1(dfile)
-      src.so4.fsource4d(:80)=''
       src.so4.fsource4d(:iname)=dfile(:iname)
 
-c-- UF 17.11.08 start
       read(16,*)src.so4.nfreqtot
       read(16,*)src.so4.nfreqpos,src.so4.nfreqneg
       read(16,*)src.so4.nsource,src.so4.nimage
       read(16,*)src.so4.deltatime
       read(16,*)src.so4.iconj
-c-- UF 17.11.08 end
 
       write(6,*)src.so4.nfreqtot
 
-c-- UF 17.11.08 start
       read(16,3)dfile
       iname=clen1(dfile)
-c      src.so6.fsource6(:iname)=dfile(:iname)
-c-- UF 17.11.08 end
+      src.so6.fsource6(:iname)=dfile(:iname)
 
 c--------pinhole in source plane	
       read(16,*)apr.rpin
@@ -2038,12 +2493,12 @@ c--------pinhole in aperture plane
       read(16,*)apr.ymin_ap,apr.ymax_ap
       read(16,*)apr.zmin_ap,apr.zmax_ap
 
-      read(16,*)dummy8 ! src.so5.dipcy
-      read(16,*)dummy8 ! src.so5.dipcz
-      read(16,*)dummy8 ! src.so5.dipdisy
-      read(16,*)dummy8 ! src.so5.dipdisz
-      read(16,*)dummy8 ! src.so5.dipymin,src.so5.dipymax
-      read(16,*)dummy8 ! src.so5.dipzmin,src.so5.dipzmax
+      read(16,*)src.so5.dipcy
+      read(16,*)src.so5.dipcz
+      read(16,*)src.so5.dipdisy
+      read(16,*)src.so5.dipdisz
+      read(16,*)src.so5.dipymin,src.so5.dipymax
+      read(16,*)src.so5.dipzmin,src.so5.dipzmax
 
       read(16,*)ifl.igrating
       read(16,*)ifl.inorm
@@ -2051,9 +2506,9 @@ c--------pinhole in aperture plane
       read(16,*)ifl.inorm2
       read(16,*)ifl.matrel
 
-      read(16,*)dummy8 ! src.so1.isrcy,src.so1.isrcdy
-      read(16,*)dummy8 ! src.so1.sigmay,src.so1.sigmayp
-c      src.so1.sigmayp=src.so1.sigmayp/1000. ! mrad -> rad
+      read(16,*)src.so1.isrcy,src.so1.isrcdy
+      read(16,*)src.so1.sigmay,src.so1.sigmayp
+      src.so1.sigmayp=src.so1.sigmayp/1000. ! mrad -> rad
       read(16,*)xi.ymin,xi.ymax ! mrad -> rad
       xi.ymin=xi.ymin/1000.
       xi.ymax=xi.ymax/1000.
@@ -2064,9 +2519,9 @@ c      read(16,*)xi.imaxy
 c      read(16,*)xi.fracy
 c      read(16,*)xi.frac1y
 
-      read(16,*)dummy8 !src.so1.isrcz,src.so1.isrcdz
-      read(16,*)dummy8 !src.so1.sigmaz,src.so1.sigmazp
-c      src.so1.sigmazp=src.so1.sigmazp/1000. ! mrad -> rad
+      read(16,*)src.so1.isrcz,src.so1.isrcdz
+      read(16,*)src.so1.sigmaz,src.so1.sigmazp
+      src.so1.sigmazp=src.so1.sigmazp/1000. ! mrad -> rad
       read(16,*)xi.zmin,xi.zmax ! mrad -> rad
       xi.zmin=xi.zmin/1000.		
       xi.zmax=xi.zmax/1000.
@@ -2104,7 +2559,6 @@ c      read(16,*)xi.dphi_min
       close(16)
       return
  777  write(*,*)'readfg34_par: error open file fg34.par '
-#endif
       return
       end
 c**** end readfg34_par *************************************
@@ -2128,364 +2582,6 @@ c*************************************************************
       end
   
 c * end clen1 
-c-----------------------------------------------------------------------------------
-c aus create_hor_defl_file.for von JB
-	subroutine create_hormap(xmap7, iord, idefl)
-c UF 12.7.2011 create subroutine
-c UF we create the matrix for maximum iord
-c-----------------------------------------------------------------------------------
-	implicit none
-	integer iord, idefl, i, j, k, l, idim
-	
-        real *8 ypc1, zpc1, dypc, dzpc, xmap7
-#ifdef SEVEN_ORDER
-        dimension ypc1(0:7,0:7,0:7,0:7),
-     &            zpc1(0:7,0:7,0:7,0:7),
-     &            dypc(0:7,0:7,0:7,0:7),
-     &            dzpc(0:7,0:7,0:7,0:7),
-     &            xmap7(330,330)
-	
-#else
-	dimension ypc1(0:4,0:4,0:4,0:4),
-     &            zpc1(0:4,0:4,0:4,0:4),
-     &            dypc(0:4,0:4,0:4,0:4),
-     &            dzpc(0:4,0:4,0:4,0:4),
-     &            xmap7(70,70)
-	
-#endif
-       	do i=0,iord
-	   do j=0,iord
-	      do k=0,iord
-		 do l=0,iord
-		    if((i+j+k+l).le.iord)then
-		       ypc1(i,j,k,l)=0.
-		       zpc1(i,j,k,l)=0.
-		       dypc(i,j,k,l)=0.
-		       dzpc(i,j,k,l)=0.
-		    endif
-		 enddo
-	      enddo        
-	   enddo
-	enddo        
 
-c---------- rh deflection 
-
-        if(idefl.eq.1)then
-	   ypc1(0,1,0,0)=1.
-	   zpc1(1,0,0,0)=-1.
-	   dypc(0,0,0,1)=1.
-	   dzpc(0,0,1,0)=-1.
-	endif
-
-c---------- lh deflection
-        if(idefl.eq.2)then
-	   ypc1(0,1,0,0)=-1.
-	   zpc1(1,0,0,0)=1.
-	   dypc(0,0,0,1)=-1.
-	   dzpc(0,0,1,0)=1.
-	endif
-
-#ifdef SEVEN_ORDER            
-	idim=330
-	call make_matrix_8(xmap7,ypc1,zpc1,dypc,dzpc,iord)
-#else
-	idim=70 
-        call make_hor_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
-#endif
-	write(*,*)'create_hormap: made matrix of dimension: ',idim
-
-
-#ifdef DEBUGFILES
-	
-c------------ write transformation matrix to file or keep it in memory
-	if(idefl.eq.1)then
-	   write(*,*)' writing transformation matrix to mapn.OUT1'
-	   open(unit=10,name='mapn.out1',type='unknown')
-	endif
-	if(idefl.eq.2)then
-	   write(*,*)' writing transformation matrix to mapn.OUT2'
-	   open(unit=10,name='mapn.out2',type='unknown')
-	endif
-c special for comparison- remove it later
-c	idim=70
-	do i=1,idim
-	   do j=1,idim
-	      write(10,*)i,j,xmap7(i,j)
-	   enddo
-	enddo
-	close(10)
-
-#endif
-
-	return
-	end
-c end create_hormap
- 
-c helper routines for hormaps
-c UF renamed from make_matrix to make_hor_matrix
-c------------------------------------------------------
-	subroutine make_hor_matrix(xmap7,ypca,zpca,dypca,dzpca,iord,idim)
-c------------------------------------------------------
-	implicit real*8(a-h,o-z)
-
-	dimension ypca(0:7,0:7,0:7,0:7),
-     &            zpca(0:7,0:7,0:7,0:7),
-     &            dypca(0:7,0:7,0:7,0:7),
-     &            dzpca(0:7,0:7,0:7,0:7)
-
-	dimension xmap7(1:330,1:330)
-
-	dimension cc(0:7,0:7,0:7,0:7,330)
-	dimension cc0(0:7,0:7,0:7,0:7)
-	dimension cc1(0:7,0:7,0:7,0:7)
-
-c----------------------------------------------------
-c
-c	Bedeutung der Indizes
-c	i: Zeilen
-c	j: Spalten
-c	k: y
-c	l: z
-c	m: dy
-c	n: dz
-c
-c--------------- get dimension of square matrix
-	call matrix_dim(iord,idim)
-c-------------- get cc row vectors
-
-	do k=0,iord
-	 if(k.eq.0)then
-
-	 do l=0,iord-k
-	  if((k.eq.0).and.(l.eq.0))then
-
-	  do m=0,iord-k-l
-	   if((k.eq.0).and.(l.eq.0).and.(m.eq.0))then
-
-	   do n=0,iord-k-l-m
-	    if((k.eq.0).and.(l.eq.0).and.
-     &         (m.eq.0).and.(n.eq.0))then
-	 	call Tay_fill_4(cc0,0.d0,iord)	! fuelle Arbeitsvektor mit Nullen
-	 	    cc0(0,0,0,0)=1.d0           ! ausser erstem Element
-		call Tay_copy_vm_4(cc0,cc,k,l,m,n,iord)	! und kopiere ihn in die erste Zeile		
-	       else
-		call Tay_mult_4(cc0,dzpca,cc1,iord)
-
-		call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord)	! copy in naechste Zeile
-		call Tay_copy_4(cc1,cc0,iord)		    ! und aufheben fuer naechste Multiplikation
-		
-	   endif	! n-Schleife nur einmal durchlaufen
-	   enddo	! und cc(0,0,0,n,idim) berechnen
-	
-	   else
-
-	    do n=0,iord-k-l-m
-	     call Tay_copy_mv_4(cc,cc0,k,l,m-1,n,iord)
-	     call Tay_mult_4(cc0,dypca,cc1,iord)
-	     call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord)
-	     call Tay_copy_4(cc1,cc0,iord)		
-	    enddo
-	   endif
-
-	   enddo	! m-loop nur einmal durchlaufen
-
-	   else
-
-	    do m=0,iord-k-l
-	     do n=0,iord-k-l-m
-	      call Tay_copy_mv_4(cc,cc0,k,l-1,m,n,iord)
-	      call Tay_mult_4(cc0,zpca,cc1,iord)
-	      call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord)
-	      call Tay_copy_4(cc1,cc0,iord)		
-	     enddo
-	    enddo
-	   endif
-
-	  enddo		! l-loop nur einmal durchlaufen
-
-	  else
-	   do l=0,iord-k
-	    do m=0,iord-k-l
-	     do n=0,iord-k-l-m
-	      call Tay_copy_mv_4(cc,cc0,k-1,l,m,n,iord)
-	      call Tay_mult_4(cc0,ypca,cc1,iord)
-	      call Tay_copy_vm_4(cc1,cc,k,l,m,n,iord) 
-	      call Tay_copy_4(cc1,cc0,iord)		
-	     enddo
-	    enddo
-	   enddo
-	  endif
-
-	 enddo		! loop over k
-
-c------------------------------------------------------
-
-      ii=0
-      do k=0,iord
-       do l=0,iord-k
-	  do m=0,iord-k-l
-	   do n=0,iord-k-l-m   
-
-         ii=ii+1      
-         do j=1,idim
-         xmap7(ii,j)=cc(k,l,m,n,j)
-         enddo
-   
-         enddo
-        enddo
-       enddo
-      enddo
-	
-	return
-	end
-
-#ifdef OBSOLETE
-c UF duplicate function in make_matrix_8
-c---------------------------------------------------
-        subroutine matrix_dim(iord,idim)
-c---------------------------------------------------
-        implicit none
-        integer iord, idim
-        idim=0
-
-        do i=0,iord
-         do j=0,iord-i
-          do k=0,iord-i-j
-           do l=0,iord-i-j-k
-            idim=idim+1
-           enddo
-          enddo
-         enddo
-        enddo
-
-        return
-        end
-#endif
-c end helper routines for hormaps
-
-c copys a SEVEN_ORDER mirror array into a 4th order one
-	subroutine mirror7to4(a7,a4)
-        implicit none
-
-	structure/mirrortype4/	! Entw. Koeffizienten
-	   real*8 a(0:5,0:5)
-       	end structure
-
-	structure/mirrortype7/	! Entw. Koeffizienten
-	   real*8 a(0:8,0:8)
-       	end structure
-
-	integer i, j
-	record /mirrortype4/ a4
-	record /mirrortype7/ a7
-
-	do i=0,5
-	   do j=0,5
-	      a4.a(i,j)=a7.a(i,j)
-	   enddo
-	enddo
-	return
-        end
-
-
-c copys a 4th into SEVEN_ORDER mirror array 
-	subroutine mirror4to7(a4,a7)
-        implicit none
-
-	structure/mirrortype4/	! Entw. Koeffizienten
-	   real*8 a(0:5,0:5)
-       	end structure
-
-	structure/mirrortype7/	! Entw. Koeffizienten
-	   real*8 a(0:8,0:8)
-       	end structure
-
-	integer i, j
-	record /mirrortype4/ a4
-	record /mirrortype7/ a7
-
-	do i=0,5
-	   do j=0,5
-	      a7.a(i,j)=a4.a(i,j)
-	   enddo
-	enddo
-	return
-        end
-
-c copys a SEVEN_ORDER map array into a 4th order one
-	subroutine map7to4(m7,m4)
-        implicit none
-	dimension m4(0:4,0:4,0:4,0:4) ! map
-        dimension m7(0:7,0:7,0:7,0:7) ! map
-        integer i, j, k, l
-	real *8 m4,m7
-	
-	do i=0,4
-	   do j=0,4
-	      do k=0,4
-		 do l=0,4
-		    m4(i,j,k,l)=m7(i,j,k,l)
-		 enddo
-	      enddo
-	   enddo
-	enddo
-	return
-	end
-c end map7to4
-
-c copys a 4th order map onto a SEVEN_ORDER one
-	subroutine map4to7(m4,m7)
-        implicit none
-	dimension m4(0:4,0:4,0:4,0:4) ! map
-        dimension m7(0:7,0:7,0:7,0:7) ! map
-        integer i, j, k, l
-        real *8 m4, m7
-	
-	do i=0,4
-	   do j=0,4
-	      do k=0,4
-		 do l=0,4
-		    m7(i,j,k,l)=m4(i,j,k,l)
-		 enddo
-	      enddo
-	   enddo
-	enddo
-	return
-	end
-c map4to7
-
-c copys a 4th order matrix onto a SEVEN_ORDER one
-	subroutine mat4to7(m4,m7)
-        implicit none
-	dimension m4(70,70)   ! map
-        dimension m7(330,330) ! map
-        integer i, j
-        real *8 m4, m7
-	
-	do i=1,70
-	   do j=1,70
-	      m7(i,j)=m4(i,j)
-	   enddo
-	enddo
-	return
-	end
-c 
-
-c copys a 4th order matrix onto a SEVEN_ORDER one
-	subroutine mat7to4(m7,m4)
-        implicit none
-	dimension m4(70,70)   ! map
-        dimension m7(330,330) ! map
-        integer i, j
-        real *8 m4, m7
-	
-	do i=1,70
-	   do j=1,70
-	      m4(i,j)=m7(i,j)
-	   enddo
-	enddo
-	return
-	end
-c 	
 c*** end phasefor ***********************************************
                 

@@ -1,0 +1,29 @@
+ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/INSTALL.linux
+ Date      : <27 Oct 03 14:42:31 flechsig> 
+ Time-stamp: <27 Oct 03 14:52:16 flechsig> 
+ Author    : Uwe Flechsig, flechsig@psi.ch
+
+ $Source$ 
+ $Date$
+ $Revision$ 
+ $Author$ 
+
+HowTo install phase at linux
+
+1) (hard)link or copy or rename some files with a special version to general names
+
+ln Makefile.linux Makefile
+ln phase_struct_10.h phase_struct.h
+ln phase_struct_10.for phase_struct.for
+ln phase_source_11.for phase_source.for
+ln phase_integration_12.for phase_integration.for 
+
+2) check/modify  path and compiler options in the Makefile
+
+3) build the program 
+
+make
+
+4) install the program (to install to /usr/local/ I need root privileges) 
+
+su -c 'make install'

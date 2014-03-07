@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasegraf.c */
 /*   Date      : <29 Mar 04 10:58:14 flechsig>  */
-/*   Time-stamp: <13 May 13 14:21:44 flechsig>  */
+/*   Time-stamp: <28 Nov 06 15:17:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,10 +8,6 @@
 /*   $Revision$  */
 /*   $Author$  */
  
-#ifdef HAVE_CONFIG_H
-  #include "config.h"
-#endif 
-
 #include <stdio.h>  
 #include <stdlib.h>                                                       
 #include <string.h>   
@@ -21,14 +17,16 @@
 #include <Mrm/MrmAppl.h>  
 #include <X11/Xlib.h>      
 #include <X11/Xutil.h>
-
+#ifdef VMS 
+  #include <DXm/DECspecific.h>   
+  #include <descrip.h>                      /* for FORTRAN- String */     
+#endif
 #include "cutils.h"
 #include "phase_struct.h"
-/*#include "fg3pck.h"  */
-  
-   
-#include "phase.h" 
-#include "phaseX.h"  
+#include "fg3pck.h"  
+#include "mirrorpck.h"  
+#include "geometrypck.h"   
+#include "phase.h"   
 #include "rtrace.h"
 #include "common.h"
  
@@ -43,10 +41,10 @@ void InitGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr)
     XmString label;                         
 
     label= XmStringCreateLocalized(PHASE->plotpsname);    
-    snprintf(TextField[0], 20, "%-8.3G", gr->zmi);    
-    snprintf(TextField[1], 20, "%-8.3G", gr->zma);    
-    snprintf(TextField[2], 20, "%-8.3G", gr->ymi);    
-    snprintf(TextField[3], 20, "%-8.3G", gr->yma);    
+    sprintf(TextField[0], "%-8.3G", gr->zmi);    
+    sprintf(TextField[1], "%-8.3G", gr->zma);    
+    sprintf(TextField[2], "%-8.3G", gr->ymi);    
+    sprintf(TextField[3], "%-8.3G", gr->yma);    
     	        
     for (i= 0; i< 4; i++)
         set_something(widget_array[kCGrT1+ i], XmNvalue, TextField[i]); 
@@ -89,9 +87,9 @@ int GetGrafBox(struct PHASEset *PHASE, GRDATSTRUCTTYPE *gr, int resultstatus)
   fn= XmStringUnparse(label, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
 			NULL, 0, XmOUTPUT_ALL);
   XmStringFree(label);  
-  strncpy(PHASE->plotpsname, fn, MaxPathLength); 
+  strcpy(PHASE->plotpsname, fn); 
   XtFree(fn);
-  text= XmTextGetString(widget_array[kCGrT5]); strncpy(gr->titel, text, 80); 
+  text= XmTextGetString(widget_array[kCGrT5]); strcpy(gr->titel, text); 
   get_something(widget_array[kCGrOptMenu], XmNmenuHistory, &w);  
   get_something(w, XmNlabelString, &label);  
   /*  if (!XmStringGetLtoR(label, XmFONTLIST_DEFAULT_TAG, &fn))
@@ -255,7 +253,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
 #ifdef DEBUG
        printf("DEBUG: SetGrDatStruct: init\n");
 #endif
-       strncpy(gr->titel, "PHASE- graphic output", 80); 
+       strcpy(gr->titel, "PHASE- graphic output"); 
        gr->status= gr->zeilen= 0; 
        gr->ymi= gr->yma= gr->zmi= gr->zma= gr->dymi= 
        gr->dyma= gr->dzmi= gr->dzma= gr->tmi= gr->tma= 0.0;    
@@ -298,7 +296,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
           {
              printf("SetGrDatStruct: plot result (rt)\n");
              vo= bl->RESULT.RESp;  
-             gr->zeilen= bl->RESULT.points1;  
+             gr->zeilen= bl->RESULT.points;  
              fehler= 0;
           }    
       } /* end rttype */
@@ -308,7 +306,7 @@ void *SetGrDatStruct(char *fname, struct BeamlineType *bl,
       {
           printf("SetGrDatStruct: plot result (phasesp)\n");
           vo= bl->RESULT.RESp;  
-          gr->zeilen= bl->RESULT.points1;  
+          gr->zeilen= bl->RESULT.points;  
           fehler= 0;
       }           
       if (fehler == 1) gr->status= 0; 
@@ -484,18 +482,41 @@ void hplotpsdc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
      /* keine globalen variablen mehr 			*/
      /* fuer phsptrafo */
 {
+#ifdef VMS
+  FString fstitle, fsmetaname;
 
+  printf("hplotpsdc called\n");
+  CreateFString(&fstitle, gr->titel);    
+  CreateFString(&fsmetaname,  ph->plotpsname);    /* psd sind die daten */
+  hplotpsdf(&fstitle, &fsmetaname, gr, 
+	    pd->y, pd->z, plotdata, &pd->iy, &pd->iz);   
+#else 
   printf("hplotpsdc called\n");
   hplotpsdf(gr->titel, ph->plotpsname, gr, pd->y, pd->z, plotdata, &pd->iy, 
 	    &pd->iz, strlen(gr->titel), strlen(ph->plotpsname)); 
-
+#endif
 }  /* end  hplotpsd */
 
 void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr, 
 	       struct PHASEset *ph, double *plotdata) 
      /* 27.2.97 simpson ausdrucke                       */
      /* c- fortran interface 				*/
+     /* last mod. 11.2.00 				*/
+   
 {
+#ifdef VMS
+  static FString fstitle, fsmetaname;
+
+  printf("hplotpssimc called\n");
+  CreateFString(&fstitle, gr->titel);    
+  CreateFString(&fsmetaname,  ph->plotpsname);    /* psd sind die daten */
+  hplotpssimf(&fstitle, &fsmetaname, &gr->psfile, 
+	      &bl->BLOptions.xi.ymin, &bl->BLOptions.xi.ymax,
+	      &bl->BLOptions.xi.ianzy0,
+	      &bl->BLOptions.xi.zmin, &bl->BLOptions.xi.zmax,
+	      &bl->BLOptions.xi.ianzz0,
+	      plotdata); 
+#else
   printf("hplotpssimc called\n");
   hplotpssimf(gr->titel, ph->plotpsname, &gr->psfile, 
 	      &bl->BLOptions.xi.ymin, &bl->BLOptions.xi.ymax,
@@ -504,9 +525,45 @@ void hplotpssimc(struct BeamlineType *bl, GRDATSTRUCTTYPE *gr,
 	      &bl->BLOptions.xi.ianzz0,
 	      plotdata, 
 	      strlen(gr->titel),strlen(ph->plotpsname)); 
-    
+#endif     
 }  /* end  hplotpssimc */
 
+void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)   
+/* wird von SetGrDatSruct gerufen 				*/
+/* Parameter: filename, number of rays, vektor mit rays         */
+/* last mod. Uwe 8.8.96 					*/ 
+{
+    FILE *f;
+    int i, rz;
+    double *dp;
+    struct RayType *Rp;
+    
+    printf("  ReadRayFile called \n"); 
+    if ((f= fopen(name, "r")) == NULL)
+    {
+       fprintf(stderr, "error: open file %s\n", name); exit(-1);   
+    } else
+    {  					/* 12.3.96 filesystemAenderung */
+       fscanf(f, "%d %d\n", &rz, &i);
+       Re->RESp= XREALLOC(struct RayType, Re->RESp, rz);
+       
+       Re->typ= PLrttype; 
+       Rp= Re->RESp;
+
+       for (i= 0; i< rz; i++)
+       {
+           fscanf(f, "%lf %lf %lf %lf %lf\n", 
+		&Rp[i].y, &Rp[i].z, &Rp[i].dy, &Rp[i].dz, &Rp[i].phi);   
+       /*    printf("%lf %lf %lf %lf\n", 
+		Rp[i].y, Rp[i].z, Rp[i].dy, Rp[i].dz);    */
+       }
+       fclose(f);
+       *zahl= rz;
+       Re->points= rz;
+       printf("read %d rays from file %s --> done\n", i, name);  
+
+    }
+}  /* end ReadRayFile */
 
 void ReadpsFile(char *name, struct RESULTType *Re)   
 /* wird von SetGrDatSruct gerufen 				*/
@@ -531,6 +588,7 @@ void ReadpsFile(char *name, struct RESULTType *Re)
        p->z  = XREALLOC(double, p->z, p->iz);  
        p->psd= XREALLOC(double, p->psd, p->iy* p->iz); 
          
+
        printf("memory reserved\n");
        Re->typ= PLphspacetype;  
   

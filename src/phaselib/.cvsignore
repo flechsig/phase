@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/.cvsignore
 #   Date      : <04 Feb 04 09:37:50 flechsig> 
-#   Time-stamp: <25 Jan 08 09:37:50 flechsig> 
+#   Time-stamp: <04 Feb 04 10:01:32 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -12,11 +12,5 @@
 *.lo
 Makefile.in
 Makefile
-work.pc
-work.pcl
 .libs
-*.la
-*.cpp
-*.int
-*.loT
-*.s
+libphase.la

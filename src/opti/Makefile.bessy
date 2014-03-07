@@ -1,0 +1,167 @@
+# File      : /home/vms/flechsig/vms/phas/opti/makefile
+# Date      : <16 Oct 97 13:49:07 flechsig> 
+# Time-stamp: <29 Oct 03 12:11:38 flechsig> 
+# Author    : Uwe Flechsig, flechsig@exp.bessy.de
+#
+# Datei: USERDISK_3:[FLECHSIG.PHASE.OPTI]MAKEFILE.
+# Datum: 19.JUL.1994
+# Stand: 23-APR-1996                                           
+# Autor: FLECHSIG, BESSY Berlin
+#########################################################################
+# Makefile for the PHASE OPTIMIZATION 
+#
+# make commands for different systems
+#
+# for DEC VAX   with VMS "make vax"
+# for DEC Alpha with VMS "make axp"
+# remove *.obj, *.exe    "make clear"
+#########################################################################
+.phony: all makewhat    
+MAKE= make/noveri         # no debug messages
+DEFS= DEFINE=VMS
+PP  = CC/PREPROCESS_ONLY/$(DEFS)
+#
+#######          extensions                                    ##########
+#######          additional extension on AXP systems        #############
+ALPH		= _axp            
+#######                    basic extension               ################
+EXE		= exe
+OBJ             = obj
+LIB		= olb      
+#########################################################################
+#               debugging        
+DEBUG		= no           # comment out for debugging (DEBUG = # no)    
+OPTIMIZE	= #no
+#########        flags                                    ###############
+CFLAGS	 	= /$(DEBUG)debug/$(OPTIMIZE)OPTIMIZE/OBJECT=     
+FFLAGS   	= /$(DEBUG)debug/$(OPTIMIZE)OPTIMIZE/OBJECT= 
+UILFLAGS	= /motif/output=
+LINKFLAGS	= /$(DEBUG)debug/executable=  
+###### system dependent flags                          ################## 
+CFLAGSVAX 	= $(CFLAGS)
+CFLAGSAXP	= /STANDARD=VAXC$(CFLAGS)  
+FFLAGSVAX 	= $(FFLAGS)
+FFLAGSAXP	= /ALIGNMENT=COMMONS=MULTILANGUAGE$(FFLAGS)    
+#########################################################################
+#               variables 
+PROGRAM		= phaseopti  
+DESTDIR		= opti$prg:  
+# 
+PROGRAM		= $(DESTDIR)$(PROGRAM).$(EXE)
+#########################################################################
+OLIB		= phase$prg:phaseoptilib.$(LIB)
+#
+PHOLIAXP	= userdisk_3:[flechsig.phas.phasec]cutils.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]activate_proc.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]phasec.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]bline.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]phasefor.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]rtrace.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]PHASEgraf.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]geometrypck.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]initdatset.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]mirrorpck.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]PHASEgraffor.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasec]pst.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasefor.ph7]phase_integration_10.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.phasefor.ph7]phase_source_10.$(OBJ)$(ALPH),-
+userdisk_3:[flechsig.phas.opti]treiber.$(OBJ)$(ALPH),-
+optisubc.$(OBJ)$(ALPH),-
+USERDISK_3:[FLECHSIG.PHAS.PHASEC]PHASE0.$(OBJ)$(ALPH)
+#########################################################################
+LIBS	 	= cern_root:[pro.lib]MATHLIB.$(LIB)/LIB,-
+cern_root:[pro.lib]PACKLIB.$(LIB)/LIB,-
+cern_root:[pro.lib]graflib.$(LIB)/lib,-
+cern_root:[pro.lib]grafx11.$(LIB)/lib,-  
+cern_root:[pro.lib]PACKLIB.$(LIB)/LIB,-
+cern_root:[pro.lib]KERNLIB.$(LIB)/LIB
+####           system dependent libs ####################################
+LIBSVAX		= $(LIBS),-
+userdisk_3:[flechsig.phas.phasefor.lib]phaselib.$(LIB)/lib,- 
+userdisk_3:[flechsig.phas.phasec]cutils.$(OBJ),- 
+batchdisk:xliblink/opt  
+
+LIBSAXP	 	= $(OLIB)$(ALPH)/lib,-
+$(LIBS),-
+userdisk_3:[flechsig.phas.phasefor.lib]phaselib.$(LIB)$(ALPH)/lib,- 
+batchdisk:xliblink_axp.opt/opt   
+#########################################################################
+OBJECTSVAX 	= phaseopti.$(OBJ),cost.$(OBJ)         
+OBJECTSAXP 	= phaseopti.$(OBJ)$(ALPH),cost.$(OBJ)$(ALPH)
+#########################################################################
+#                            targets                                    # 
+all: makewhat
+
+makewhat: 
+        arch_name = f$getsyi("ARCH_NAME")
+	if arch_name .eqs. "Alpha"
+	then 
+		write sys$output "Making PHASEOPTI for AXP..." 
+		$(MAKE) $(PROGRAM)$(ALPH)   
+	else
+		write sys$output "Making PHASEOPTI for VAX..."  
+		$(MAKE) $(PROGRAM)   
+	endif
+
+##############################################################################
+#
+# Dependencies section
+# for vax
+$(PROGRAM): $(OBJECTSVAX)
+	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+
+# for axp
+$(PROGRAM)$(ALPH): $(OBJECTSAXP) $(OLIB)$(ALPH)   
+	link$(LINKFLAGS)$(PROGRAM)$(ALPH) $(OBJECTSAXP),$(LIBSAXP)  
+##########################################################################
+$(OLIB)$(ALPH): $(PHOLIAXP)
+	lib/create $(OLIB)$(ALPH) $(PHOLIAXP)
+
+*.$(OBJ) : *.c 
+	cc $(CFLAGSVAX)$@ $< 
+
+*.$(OBJ)$(ALPH) : *.c 
+	cc $(CFLAGSAXP)$@ $< 
+
+*.$(OBJ) : *.for 
+	fortran $(FFLAGSVAX)$@ $<   
+
+*.$(OBJ)$(ALPH): *.for 
+	fortran $(FFLAGSAXP)$@ $< 
+
+*.$(OBJ) : *.i 
+	fortran $(FFLAGSVAX)$@ $<   
+
+*.$(OBJ)$(ALPH): *.i 
+	fortran $(FFLAGSAXP)$@ $< 
+
+#preprocessor
+*.i : *.fpp
+	$(PP) $<  
+##########################################################################
+clear:
+	write sys$output "delete objects and exe..."  
+	arch_name = f$getsyi("ARCH_NAME")
+	if arch_name .eqs. "Alpha"
+	then 
+		del/nocon *.$(OBJ)$(ALPH);*,$(PROGRAM)$(ALPH);*
+	else
+		del/nocon *.$(OBJ);*,$(PROGRAM);*   
+	endif
+############################################################################
+#
+# make phase for different systems
+#
+
+# DEC VAX systems with VMS 
+vax:
+	write sys$output "Making PHASEOPTI for VAX..."  
+        $(MAKE) $(PROGRAM)   
+
+# DEC Alpha systems with VMS 
+alpha: axp
+axp:
+	write sys$output "Making PHASEOPTI for AXP..." 
+        $(MAKE) $(PROGRAM)$(ALPH)   
+####################      end makefile       ###############################
+# /home/vms/flechsig/vms/phas/opti.dir/makefile

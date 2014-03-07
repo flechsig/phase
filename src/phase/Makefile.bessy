@@ -1,0 +1,175 @@
+# File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.bessy
+# Date      : <15 Oct 99 11:36:53 flechsig> 
+# Time-stamp: <17 Feb 04 09:16:27 flechsig> 
+# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+# 
+# Makefile for Alpha and VAX @ BESSY
+#########################################################################
+# history:
+# 15 Oct 99 : installation paths changed 
+# 09 Jan 01 : preprocessor step for fortran fpp files
+#
+#########################################################################
+# Makefile for the PHASE user API 
+#
+# make commands for different systems
+#
+# for DEC VAX   with VMS "make vax"
+# for DEC Alpha with VMS "make axp"
+# remove *.obj, *.exe    "make clear"
+#########################################################################
+.phony: all makewhat    
+MAKE= make/noveri         # no debug messages
+DEFS= DEFINE=VMS
+PP  = CC/PREPROCESS_ONLY/$(DEFS)
+#
+#######          extensions                                    ##########
+#######          additional extension on AXP systems        #############
+ALPH		= _axp            
+#######                    basic extension               ################
+EXE		= exe
+OBJ             = obj
+LIB		= olb      
+#########################################################################
+#               debugging      
+DEBUG		= no           # comment out for debugging (DEBUG = # no)    
+OPTIMIZE	= no           # comment  for debugging (OPTIMIZE =   no)    
+DEFS            = VMS  
+#########        flags                                    ###############
+CFLAGS	 	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/DEF=$(DEFS)/OBJECT=     
+FFLAGS   	= /$(DEBUG)DEBUG/$(OPTIMIZE)OPTIMIZE/OBJECT= 
+UILFLAGS	= /motif/output=
+LINKFLAGS	= /$(DEBUG)debug/executable=  
+###### system dependent flags                          ################## 
+CFLAGSVAX 	= $(CFLAGS)
+CFLAGSAXP	= /WARNINGS/STANDARD=VAXC$(CFLAGS) 
+FFLAGSVAX 	= $(FFLAGS)
+FFLAGSAXP	= /ALIGNMENT=COMMONS=MULTILANGUAGE$(FFLAGS)    
+#########################################################################
+#               variables 
+PROGRAM		= phase  
+DESTDIR		= phase$prg:  
+# 
+PROGRAM		= $(DESTDIR)$(PROGRAM).$(EXE)
+#########################################################################
+LIBS	 	= cern_root:[pro.lib]MATHLIB/LIB,-
+PACKLIB/LIB,-
+graflib/lib,-
+grafx11/lib,-  
+PACKLIB/LIB,- 
+KERNLIB/LIB
+####           system dependent libs ####################################
+LIBSVAX		= $(LIBS),-
+phase$lib:phaselib.$(LIB)/lib,-    
+batchdisk:xliblink/opt   
+
+LIBSAXP		= $(LIBS),-
+phase$lib:phaselib.$(LIB)$(ALPH)/lib,-   
+batchdisk:xliblink_axp/opt   
+#########################################################################
+OBJECTSVAX 	= phase.$(OBJ),phase0.$(OBJ),phasec.$(OBJ),-
+activate_proc.$(OBJ),PHASEgraf.$(OBJ),initdatset.$(OBJ),-
+geometrypck.$(OBJ),bline.$(OBJ),-
+mirrorpck.$(OBJ),PHASEgraffor.$(OBJ),-
+cutils.$(OBJ),rtrace.$(OBJ),phasefor.$(OBJ),pst.$(OBJ),-
+phase_source.$(OBJ),phase_integration.$(OBJ)
+#fg3pck.$(OBJ)$(ALPH)
+
+OBJECTSAXP 	= phase.$(OBJ)$(ALPH),phase0.$(OBJ)$(ALPH),-
+phasec.$(OBJ)$(ALPH),-
+activate_proc.$(OBJ)$(ALPH),PHASEgraf.$(OBJ)$(ALPH),-
+initdatset.$(OBJ)$(ALPH),geometrypck.$(OBJ)$(ALPH),bline.$(OBJ)$(ALPH),-
+mirrorpck.$(OBJ)$(ALPH),PHASEgraffor.$(OBJ)$(ALPH),-
+cutils.$(OBJ)$(ALPH),rtrace.$(OBJ)$(ALPH),phasefor.$(OBJ)$(ALPH),-
+pst.$(OBJ)$(ALPH),-
+phase_source.$(OBJ)$(ALPH),phase_integration.$(OBJ)$(ALPH),-
+error.$(OBJ)$(ALPH),xmalloc.$(OBJ)$(ALPH),xstrdup.$(OBJ)$(ALPH),-
+misali.$(OBJ)$(ALPH),misali1.$(OBJ)$(ALPH),misali2.$(OBJ)$(ALPH),-
+misali3.$(OBJ)$(ALPH),misali4.$(OBJ)$(ALPH)
+########################################################################
+PHASEHS   	= PHASE.h,fg3pck.h,mirrorpck.h,geometrypck.h,phasegraf.h,-
+cutils.h
+
+PHASEUILS	= PHASE.uil,geometrybox.uil,mirrorbox.uil,-
+grafbox.uil,filemenu.uil,commandsmenu.uil,-
+PHASEvalue.uil,editmenu.uil,sourcebox.uil,-
+helpmenu.uil,optibox.uil
+#########################################################################
+#                            targets                                    # 
+all: makewhat
+
+makewhat: 
+        arch_name = f$getsyi("ARCH_NAME")
+	if arch_name .eqs. "Alpha"
+	then 
+		write sys$output "Making PHASE for AXP..." 
+		$(MAKE) $(PROGRAM)$(ALPH)   
+	else
+		write sys$output "Making PHASE for VAX..."  
+		$(MAKE) $(PROGRAM)   
+	endif
+
+##############################################################################
+#
+# Dependencies section
+# for vax
+$(PROGRAM): $(OBJECTSVAX)
+	link$(LINKFLAGS)$(PROGRAM) $(OBJECTSVAX),$(LIBSVAX)  
+	copy news. phase$lib:*
+
+# for axp
+$(PROGRAM)$(ALPH): $(OBJECTSAXP)   
+	link$(LINKFLAGS)$(PROGRAM)$(ALPH) $(OBJECTSAXP),$(LIBSAXP)
+	copy news. phase$lib:*
+
+$(DESTDIR)PHASE.uid : $(PHASEUILS)
+        define/user/nolog uil$include decw$include 
+	uil$(UILFLAGS)$(DESTDIR)PHASE.uid PHASE.uil 
+##########################################################################
+*.$(OBJ) : *.c 
+	cc $(CFLAGSVAX)$@ $< 
+
+*.$(OBJ)$(ALPH) : *.c 
+	cc $(CFLAGSAXP)$@ $< 
+
+*.$(OBJ) : *.for 
+	fortran $(FFLAGSVAX)$@ $<   
+
+*.$(OBJ)$(ALPH): *.for 
+	fortran $(FFLAGSAXP)$@ $<   
+
+*.$(OBJ) : *.i 
+	fortran $(FFLAGSVAX)$@ $<   
+
+*.$(OBJ)$(ALPH): *.i 
+	fortran $(FFLAGSAXP)$@ $<  
+
+#preprocessor
+*.i : *.f
+	$(PP) $<
+##########################################################################
+clear:
+	write sys$output "delete objects and exe..."  
+	arch_name = f$getsyi("ARCH_NAME")
+	if arch_name .eqs. "Alpha"
+	then 
+		del/nocon *.$(OBJ)$(ALPH);*,$(PROGRAM)$(ALPH);*
+	else
+		del/nocon *.$(OBJ);*,$(PROGRAM);*   
+	endif
+############################################################################
+#
+# make phase for different systems
+#
+
+# DEC VAX systems with VMS 
+vax:
+	write sys$output "Making PHASE for VAX..."  
+        $(MAKE) $(PROGRAM)   
+
+# DEC Alpha systems with VMS 
+alpha: axp
+axp:
+	write sys$output "Making PHASE for AXP..." 
+        $(MAKE) $(PROGRAM)$(ALPH)   
+####################      end makefile       ###############################

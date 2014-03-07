@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <2013-06-29 11:36:11 flechsig>  */
+/*   Time-stamp: <29 Nov 06 14:13:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -11,68 +11,81 @@
 
 /* 31.3.99 GetRMS erweitert auf z */
 
-#ifdef HAVE_CONFIG_H
-  #include "config.h"
-#endif 
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h>	    	      /* needed for fopen      */
 #include <string.h>
 #include <math.h>
+#include <Xm/Text.h>                  /* fileBox               */
+#include <Xm/List.h>   
+#include <Mrm/MrmAppl.h> 
+#include <X11/Xlib.h>      
+#include <X11/Xutil.h>      
+/* DEC specific */
+#ifdef VMS
+  #include <descrip.h>                  /* for FORTRAN- String   */ 
+  #include <DXm/DXmHelpB.h>      
+  #include <DXm/DXmPrint.h>      
+  #include <DXm/DXmColor.h>   
+  #include <DXm/DECspecific.h>  
+  #include <sys$library/DECw$Cursor.h>
+#endif
 
-#include "../phase/cutils.h"  
-#include "../phase/phase_struct.h"
-#include "../phase/phase.h"
-#include "../phase/rtrace.h"
-#include "../opti/optisubc.h"     
+#ifdef VMS
+  #include "[-.phase]cutils.h"  
+  #include "[-.phase]phase_struct.h"
+  #include "[-.phase]fg3pck.h"   
+  #include "[-.phase]mirrorpck.h"                 
+  #include "[-.phase]geometrypck.h"   
+  #include "[-.phase]PHASE.h"
+#else
+  #include "../phase/cutils.h"  
+  #include "../phase/phase_struct.h"
+  #include "../phase/fg3pck.h"   
+  #include "../phase/mirrorpck.h"                 
+  #include "../phase/geometrypck.h"   
+  #include "../phase/phase.h"
+#endif
+
+#include "phaseopti.h"     
 
 
-/* abgespecktes (schnelles) buildbeamline  */
-/* baut beamline und extrahiert map        */
-void buildsystem(struct BeamlineType *bl) 
-{
-  int     elcounter, i, mdim;
-  struct  ElementType *listpt;    
-
-  mdim= 330;
-
-  elcounter= 1; 
-  listpt= bl->ElementList; 
-  while (elcounter<= bl->elementzahl)
-    { 
-      bl->position=elcounter;         /* parameter fuer MakeMapandMatrix */
-      if ((listpt->ElementOK & mapOK & elementOK) == 0)       /* map must be rebuild */
-	{ 
-	  DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
-			 bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter-1));    
-	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions); 
-	  --elcounter;
-	  MakeMapandMatrix(listpt, bl, &elcounter);
-	  ++elcounter;
-
-	  listpt->ElementOK|= (mapOK | elementOK); 
-	}
-      if (listpt->MDat.Art != kEOESlit)
-	{
-	  if (elcounter == 1)
-	    memcpy(&bl->M_StoI, &listpt->M_StoI, sizeof(MAP70TYPE)); 
-	  else		                          /* bline zusammenbauen */
-	    GlueLeft((double *)bl->M_StoI, (double *)listpt->M_StoI, &bl->BLOptions.ifl.iord);  
-            /* A= B* A */
-      	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
-	} 
-      elcounter++; listpt++; 
-    } /* Schleife ueber alle Elemente fertig */
+   
+void getoptipickfile(struct optistruct *x, char *pickname)    
+/* modification: 24 Oct 97 14:04:37 flechsig */
+{                              
+  FILE *f;
+  int ii, *indexlist, version;
  
-  extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-	     &bl->BLOptions.ifl.iord); 
-   bl->beamlineOK |= mapOK;
-  /* bline ist fertig, map ist erzeugt */
-} /* end buildsystem */
-
-/*                                                           */
-/* change one value in beamline structure addressed by index */
-/*                                                           */   
+  if ((f= fopen(pickname, "r")) == NULL)
+    {
+      fprintf(stderr,"Error: read %s\n", pickname);
+      exit(-1);
+    }  
+  if( CheckFileHeader(f, OptiPickFileHeader, &version) == 0) 
+    {
+      fscanf(f, "%s\n", &x->beamlinefilename); 
+      fscanf(f, "%s\n", &x->minuitfilename); 
+      fscanf(f, "%s\n", &x->resultfilename); 
+      fscanf(f, "%d %d %lf\n", &x->xindex, &x->xpoints, &x->dx);  
+      fscanf(f, "%d %d %lf\n", &x->yindex, &x->ypoints, &x->dy);  
+      fscanf(f, "%d\n", &x->npars); 
+      
+      x->parindex= (int *) malloc(x->npars * sizeof(int));
+      if (x->parindex == NULL)
+   	{	
+	  fprintf(stderr, "malloc error \n"); exit(-1);  
+   	}         /* speicher allocieren */
+      
+      indexlist= x->parindex;  
+      for (ii= 0; ii< x->npars; ii++, indexlist++)
+	fscanf(f, "%d\n", indexlist);  
+      fclose(f); 
+    }
+  else 
+    exit(-1); 
+}
+   
 void in_struct(struct BeamlineType* bl, double *z, int index)
 {
   int elnumber, mtype, ipos;  
@@ -95,27 +108,27 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
       mdat= &listpt->MDat; 
       switch (ipos)
 	{  
-	case 81:			/* r */
+	case 36:			/* r */
 	  mdat->rmi= *z;
 	  break;
-	case 82:			/* rp */
+	case 37:			/* rp */
 	  mdat->rho= *z;
 	  break;
-	case 83:			/* 2w */
+	case 38:			/* 2w */
 	  mdat->w1= -0.5* *z;
 	  mdat->w2=  0.5* *z;
 	  break;
-	case 84:			/* 2l */
+	case 39:			/* 2l */
 	  mdat->l1= -0.5* *z;
 	  mdat->l2=  0.5* *z;
 	  break;
-	case 85:			/* slopew */
+	case 40:			/* slopew */
 	  mdat->slopew= *z;
 	  break;
-	case 86:			/* slopel */
+	case 41:			/* slopel */
 	  mdat->slopel= *z;
 	  break;
-	case 87:			/* rowland slits */
+	case 42:			/* rowland slits */
 	  /*  listpt->ElementOK |= mapOK | elementOK; */
 	  bl->ElementList[elnumber- 1].ElementOK &= (~mapOK); 
 	  bl->ElementList[elnumber- 1].ElementOK &= (~elementOK);
@@ -130,7 +143,6 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  bl->ElementList[elnumber+ 1].MDat.w2=  0.5* *z;
 	  printf("insert rowland slits: %f\n", *z);
 	  break;
-
 	default:
 	  /*direktes beschreiben einzelner matrixelemente */
 	  xd= (double *)&listpt->mir;       /******** in mirrortype */
@@ -143,7 +155,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
   else  /* gdat */
     {
       gdat= &listpt->GDat;
-      /*   listpt->ElementOK &= (~geometryOK); */
+      listpt->ElementOK &= (~geometryOK); 
       switch (ipos)
 	{
 	case 0:                 	/* theta */
@@ -160,7 +172,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->rp= *z;
 	  break;
 	case 3:                                    /* E (eV) */
-	  bl->BLOptions.lambda= 
+	  bl->BLOptions.lambda= gdat->lambda= 
 	    (*z > 0.0) ? (1240.0e-6/ *z) : 0.0;
 	  break;  
 	case 4:                               
@@ -185,7 +197,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  gdat->xdens[ipos- 6]= *z;   
 	  break;  
 	case 11:        	           /* m lambda in nm */ 
-	  bl->BLOptions.lambda= *z * 1e-6;   
+	  bl->BLOptions.lambda=gdat->lambda= *z * 1e-6;   
 	  break;
 	case 12:  /* theta CLRCM bei BESSY I dy= 44.2 mm, Planspiegel in r2 */
 	          /* L= 6500 mm */
@@ -209,7 +221,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  break;
 	case 15:       /* cff constant */
 	  fprintf(stderr, "in_struct: cff %g\n", *z);
-	  FixFocus(*z, bl->BLOptions.lambda, gdat->xdens[0], gdat->inout, 
+	  FixFocus(*z, gdat->lambda, gdat->xdens[0], gdat->inout, 
 		   &alpha, &beta);
 	  gdat->theta0= fabs(alpha- beta)* 90.0/ PI;  /* 0.5 * (a-b) */
 	  if (gdat->azimut > 1) gdat->theta0= -fabs(gdat->theta0);
@@ -218,14 +230,14 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	case 16:       /* Energiescan mit cff constant */
 	  /* berechne cff aus alten werten */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
-	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  cff= cos(fi- teta)/ cos(fi+ teta); 
-	  bl->BLOptions.lambda=  
+	  bl->BLOptions.lambda= gdat->lambda= 
 	    (*z > 0.0) ? (1240.0e-6/ *z) : 0.0;
 	  fprintf(stderr, 
 		  "\n in_struct: energy %g, NB: cff= const = %g\n", *z, cff);
-	  FixFocus(cff, bl->BLOptions.lambda, gdat->xdens[0], gdat->inout, 
+	  FixFocus(cff, gdat->lambda, gdat->xdens[0], gdat->inout, 
 		   &alpha, &beta);
 	  gdat->theta0= fabs(beta- alpha)* 90.0/ PI;  /* 0.5 * (a-b) */
 	  if (gdat->azimut > 1) gdat->theta0= -fabs(gdat->theta0);
@@ -250,7 +262,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	case 19: /* STXM special S1-S2 spectrometer length */
 	  mdat= &listpt->MDat;
 	  teta= fabs(gdat->theta0* PI/ 180.0);
-	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  cl= mdat->rmi;  /* old radius */  
 	  /* new grating radius assuming keep rowland conditions */
@@ -271,7 +283,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 		 bl->ElementList[elnumber- 2].MDat.rmi,
 		 bl->ElementList[elnumber- 2].MDat.rho, cl);
 	  bl->ElementList[elnumber- 2].ElementOK &= (~elementOK);
-	  /* bl->ElementList[elnumber- 2].ElementOK &= (~geometryOK); */
+	  bl->ElementList[elnumber- 2].ElementOK &= (~geometryOK); 
 	  bl->ElementList[elnumber- 2].ElementOK &= (~mapOK);
 	  break;
 	default:
@@ -281,9 +293,6 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
     }
 } /* end in_struct */
 
-/*                                                              */
-/* returns one value from beamline structure addressed by index */
-/*                                                              */  
 double out_struct(struct BeamlineType  *bl, double *z, int index)    
 {
   int elnumber, mtype, ipos;
@@ -303,26 +312,26 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
     {
       mdat= &listpt->MDat; 
       switch (ipos)
-	{ 
-	case 81:			/* r = 36 */
+	{  
+	case 36:			/* r = 36 */
 	  *z= mdat->rmi;    
 	  break;  
-	case 82:			/* rp = 37 */
+	case 37:			/* rp = 37 */
 	  *z= mdat->rho;  
 	  break;
-	case 83:			/* 2w */
+	case 38:			/* 2w */
 	  *z=  mdat->w2- mdat->w1;
 	  break;
-	case 84:			/* 2l */
+	case 39:			/* 2l */
 	  *z=  mdat->l2- mdat->l1;
 	  break;
-	case 85:			/* slopew */
+	case 40:			/* slopew */
 	  *z= mdat->slopew;
 	  break;
-	case 86:			/* slopel */
+	case 41:			/* slopel */
 	  *z= mdat->slopel;
 	  break;
-	case 87:			/* rowland slits */
+	case 42:			/* rowland slits */
 	  *z= bl->ElementList[elnumber- 1].MDat.l2- 
 	    bl->ElementList[elnumber- 1].MDat.l1;
 	  break;
@@ -389,19 +398,19 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	break;	
 	case 15:       /* cff constant */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
-	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  *z= cos(fi- teta)/ cos(fi+ teta);    /* cos(beta)/ cos(alpha); */
-	  printf("outstruct_15: cff= %f,??? theta= %f rad, phi= %f rad\n", *z, teta, fi);
+	  printf("outstruct: cff= %f?????\n", *z);
 	  break;
 	case 16:       /* Energiescan mit cff constant */
 	  teta= fabs(gdat->theta0* PI/ 180.0);   /* theta */
-	  fi  = (double)(gdat->inout)* asin(bl->BLOptions.lambda* gdat->xdens[0]/
+	  fi  = (double)(gdat->inout)* asin(gdat->lambda* gdat->xdens[0]/
 					    (2.0* cos(teta)));
 	  cff= cos(fi- teta)/ cos(fi+ teta);   /* cos(beta)/ cos(alpha); */
 	  *z= (bl->BLOptions.lambda > 0.0) ? 
 	    (1240.0e-6/ bl->BLOptions.lambda) : 0.0;
-	  printf("outstruct_16: cff= %f ??? theta= %f rad, phi= %f rad\n", cff, teta, fi);
+	  printf("outstruct: cff= %f ?????\n", cff);
 	  break;
 	  /*	case 17: siehe weiter oben */
 	case 18: /* STXM special M1- S1 */
@@ -420,8 +429,54 @@ double out_struct(struct BeamlineType  *bl, double *z, int index)
 	  }          
       }
   return *z;
-}     /* end out_struct */
+}     /* end outstruct */
 
+void buildsystem(struct BeamlineType *bl) 
+
+/* durch abgespecktes (schnelles) buildbeamline ersetzt */
+/* baut beamline und extrahiert map                     */
+
+{
+  int     elcounter, i, mdim;
+  struct  ElementType *listpt;    
+
+  mdim= (bl->BLOptions.ifl.iord == 4) ? 70 : 35;
+  elcounter= 1; 
+  listpt= bl->ElementList; 
+  while (elcounter<= bl->elementzahl)
+    { 
+      if ((listpt->ElementOK & mapOK) == 0)       /* map must be rebuild */
+	{ 
+	  if ((listpt->ElementOK & elementOK) == 0)   /* element rebuild */
+	    {
+	      DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, 
+			 listpt->elementname);    
+	      listpt->ElementOK |= elementOK; 
+	    }
+	  if ((listpt->ElementOK & geometryOK) == 0) /* geometry rebuild */
+	    {
+	      DefGeometryC(&listpt->GDat, &listpt->geo);  
+	      listpt->ElementOK |= geometryOK; 
+	    }                          /* Elementdaten sind ok jetzt map */ 
+	  MakeMapandMatrix(listpt, bl);
+	  listpt->ElementOK|= mapOK; 
+	}
+      if (listpt->MDat.Art != kEOESlit)
+	{
+	  if (elcounter == 1)
+	    memcpy(&bl->map70, &listpt->matrix, sizeof(MAP70TYPE)); 
+	  else		                          /* bline zusammenbauen */
+	    GlueLeft((double *)bl->map70, (double *)listpt->matrix);  
+            /* A= B* A */
+      	  SetDeltaLambda(bl, listpt);              /* resolutionfactor */
+	} 
+      elcounter++; listpt++; 
+    } /* Schleife ueber alle Elemente fertig */
+ 
+  extractmap(bl->map70, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+	     &bl->BLOptions.ifl.iord);    
+  /* bline ist fertig, map ist erzeugt */
+} /* end buildsystem */
 
 void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
 {
@@ -429,7 +484,6 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
   struct DipolSourceType     *ds;
   struct UndulatorSourceType *us; 
   struct SRSourceType        *sp; 
-  struct PointSourceType     *ps;
   double h, beugung; 
   
   switch (bl->RTSource.QuellTyp)
@@ -448,8 +502,8 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       break; 
     case 'D':
       ds= (struct DipolSourceType *) bl->RTSource.Quellep; 
-      *dy= ds->sigdy/ 1000.0;  
-      *dz= ds->dz/ 1000.0; 
+      *dy= ds->sigdy/ 2000.0;  /* 2000 da totale Divergenz angegeben */
+      *dz= ds->dz/ 2000.0; 
       printf("Get_dydz_fromSource: dipol source \n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break; 
@@ -460,13 +514,6 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
       printf("Get_dydz_fromSource: single ray\n");
       printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
       break;
-    case 'o':   /* point source */
-      ps= (struct PointSourceType *)bl->RTSource.Quellep;
-      *dy= ps->sigdy/ 1000.0;
-      *dz= ps->sigdz/ 1000.0;
-      printf("Get_dydz_fromSource: point source\n");
-      printf("Get_dydz_fromSource: dy= %g, dz= %g (rad)\n", *dy, *dz);
-      break;
     default:
       hs= (struct HardEdgeSourceType *) bl->RTSource.Quellep;
       printf("Get_dydz_fromSource: default dy=dz= 0.001 rad\n");
@@ -475,135 +522,49 @@ void Get_dydz_fromSource(struct BeamlineType *bl, double *dy, double *dz)
     }
 } /* end Get_dydz_fromSource */
 
-/* GetRMS wrapper */
-void GetFWHM(struct BeamlineType *bl, char *ch, double *chi)
+/* 31.3.99 erweitert auf z*/
+double GetRMS(struct BeamlineType *bl, char ch)
 {
-  GetRMS(bl, ch, chi);
-  *chi*= 2.35;
-}
-
-/* 31.3.99  erweitert auf z  */
-/* 13.12.07 erweitert  auf r */
-/*  3.1.08 fun -> proc       */
-void GetRMS(struct BeamlineType *bl, char *ch, double *chi)
-{
-  double EX, EX2, rms, tmp;
-  int    i, n;
+  double EX, EX2, rms;
+  int i, n;
   struct RayType *rays;
 
-  n   = bl->RESULT.points1;
+  n   = bl->RESULT.points;
   rays= (struct RayType *)bl->RESULT.RESp;
   EX= EX2= 0.0;
   if (n > 0)
     {
-      switch (*ch)
+      if (ch == 'z')
 	{
-	case 'z':
 	  for (i= 0; i< n; i++)
 	    {
 	      /*   EX += bl->RESULT.RESUnion.Rays[i].z;
-		   EX2+= bl->RESULT.RESUnion.Rays[i].z* 
-		   bl->RESULT.RESUnion.Rays[i].z;*/
+	      EX2+= bl->RESULT.RESUnion.Rays[i].z* 
+	      bl->RESULT.RESUnion.Rays[i].z;*/
 	      EX += rays[i].z;
 	      EX2+= rays[i].z* rays[i].z;
 	    }
-	  break;
-	case 'y':
+	}
+      else             /* y */
+	{
 	  for (i= 0; i< n; i++)
 	    {
 	      EX += rays[i].y;
 	      EX2+= rays[i].y * rays[i].y;
 	    }
-	  break;
-	default: /* r */
-	  for (i= 0; i< n; i++)
-	    {
-	      tmp= rays[i].y * rays[i].y + rays[i].z * rays[i].z;
-	      EX += sqrt(tmp);
-	      EX2+= tmp;
-	    }
-	  break;
 	}
       EX  /= (double) n;
       EX2 /= (double) n;
       rms= sqrt(EX2- (EX * EX));
     } else rms= 0.0;
-
-#ifdef DEBUG 
-  fprintf(stderr, "%c->rms= %g, EX= %g, EX2= %g, n= %d\n", *ch, rms, EX, EX2, n);
-#endif
-
-  *chi= rms;
+  fprintf(stderr, "%c- rms= %f, EX= %f, EX2= %f\n", ch, rms, EX, EX2);
+  return rms;
 } /* end GetRMS */
 
-/*
-   calculates the focussize depending on the divergence 
-   (for optimization of the spot size)
-   UF 11.12.07 add averaging with mirrored input i.e. do not only 
-   optimize the top right ray also the bottom right, bottom left 
-   and top left 
-*/
 
-void FocusSize(double *chi, struct BeamlineType *bl, 
-	       double *dyin, double *dzin)
-{
-  
-  struct RayType Rayin[4], Rayout[4];
-  int i;
-  double yout, zout;
+/* dummy routinen aus phase.c um linker Fehler abzufangen */
 
-  Rayin[0].y= Rayin[0].z= Rayin[1].y= Rayin[1].z= 
-    Rayin[2].y= Rayin[2].z= Rayin[3].y= Rayin[3].z= 0.0;
 
-/* empiric value optimization with 2 sigma gives better result */  
 
-  *dyin*= 2;    
-  *dzin*= 2; 
 
-  Rayin[0].dy= Rayin[1].dy=  *dyin;
-  Rayin[2].dy= Rayin[3].dy= -*dyin;
-  Rayin[0].dz= Rayin[3].dz= -*dzin;
-  Rayin[1].dz= Rayin[2].dz=  *dzin;
-
-  yout= zout= *chi=0.0;
-
-  for (i= 0; i< 4; i++)
-    {    
-      ray_tracef(&Rayin[i], &Rayout[i], &bl->BLOptions.ifl.iord, 
-		 (double *)bl->ypc1, (double *)bl->zpc1, 
-		 (double *)bl->dypc, (double *)bl->dzpc);
-    
-      yout+= fabs(Rayout[i].y);
-      zout+= fabs(Rayout[i].z);
-      *chi+= sqrt(yout * yout + zout * zout);
-    }
-  
-  *chi *= 0.25;
-} /* end FocusSize */
-
-/*
-   calculates the focussize depending on the divergence 
-   (for optimization of the spot size)
-*/
-
-void FullRTOpti(double *chi, struct BeamlineType *bl)
-{
-  double transmittance;
-  
-  printf("************ FullRTOpti ************\n");
-  ReAllocResult(bl, PLrttype, bl->RTSource.raynumber, 0);
-  RayTraceFull(bl);
-  transmittance= (double)bl->RESULT.points1/
-    (double)bl->RTSource.raynumber;
-  *chi= 1.0- transmittance;
-} /* end FullRTOpti */
-
-/* do a normal ray trace */
-/* ch goes to GetRMS     */
-void RTOpti(double *chi, struct BeamlineType *bl, char *ch)
-{
-  printf("************ RTOpti with target: %c ***********\n", *ch);
-  RayTracec(bl);
-  GetFWHM(bl, ch, chi);
-} /* end RTOpti */
 /* end optisubc.c */

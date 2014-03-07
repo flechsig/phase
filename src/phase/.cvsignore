@@ -1,7 +1,7 @@
 #   -*-sh-*-
 #   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/.cvsignore
 #   Date      : <04 Feb 04 09:37:50 flechsig> 
-#   Time-stamp: <2013-05-17 21:57:00 flechsig> 
+#   Time-stamp: <17 Feb 04 09:43:40 flechsig> 
 #   Author    : Uwe Flechsig, flechsig@psi.ch
 
 #   $Source$ 
@@ -9,8 +9,13 @@
 #   $Revision$ 
 #   $Author$ 
 #
+Makefile
+Makefile.in
 .*
+phase
 *.cpp
+config.h.in
+config.h
 stamp-h1
 stamp-h.in
 phase.pck
@@ -18,7 +23,5 @@ mis
 mold.dat
 mnew.dat
 last.kumac
-work.pc
-work.pcl
 
 

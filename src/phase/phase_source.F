@@ -1,14 +1,7 @@
-c$$$ File      : phase_source.F
-c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <18 Feb 14 15:20:34 flechsig> 
-c$$$ Author    : Johannes Bahrdt
-c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-c$$$
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
-c
+c File      : /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for
+c Date      : <20 Jan 00 10:23:01 flechsig> 
+c Time-stamp: <06 Feb 04 09:07:31 flechsig> 
+c Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c--------------------------------------------------------------------------
 c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
 c differences to phase_source_10.for from 19 Jan 2000
@@ -20,60 +13,54 @@ c   src3_ini structurvariablen eingefuegt
 c
 c	Input files are expected to be in mm
 c	rather than in m 27.2.2004
-c !!! preprocessor directives must start at line 0
-c
-c	!!!!!  ACHTUNG. es wird nur die Source 4 verwendet !!!!! JB 20.5.2011
-c
-c	spaeter kann man evetuell mal Source 6 testen und in Betrieb nehmen
-c	sie beschreibt die vierdimensionale Brightness
 c
 c**************************************************************
-c #define DEBUG1
-
 	subroutine src_ini(src)	
 c**************************************************************
 
 	implicit real*8(a-h,o-z)
 
 c a trick to have the struct only in the ./phase and find it from opti 
+#ifdef VMS
+c not yet tested
+        include '[-.phase]phase_struct.for'
+c        include 'phase_struct.for'
+#else
 
-#include '../phase/phase_struct.F'
-
+        include '../phase/phase_struct.for'
+#endif
+cc	include 'phase_struct.for'
 
 c**************************************************
 
-c	record /source1/ so1
-c	record /source2/ so2
-c	record /source3/ so3
-c	record /source4/ so4
-c	record /source5/ so5
-c	record /source6/ so6
+	record /source1/ so1
+	record /source2/ so2
+	record /source3/ so3
+	record /source4/ so4
+	record /source5/ so5
+	record /source6/ so6
 	record /sources/ src
 
-#ifdef OLD_PO_SOURCE
+c comment U.F. 20.1.2000	
 	write(*,*) 'src_ini: source type:',src.isrctype
-	if(src.isrctype.lt.4.or.src.isrctype.gt.4)write(*,*)'unknown/obsolete source type-> calculation will fail'
 
-c	if(src.isrctype.eq.2)call src2_ini(src.so2)
-c	if(src.isrctype.eq.3)call src3_ini(src.so3)
+	if(src.isrctype.eq.2)call src2_ini(src.so2)
+
+	if(src.isrctype.eq.3)call src3_ini(src.so3)
+
 	if(src.isrctype.eq.4)call src4_ini(src.so4)
-c	if(src.isrctype.eq.5)write(*,*)'srctype=5 is currently not implemented'
-c	if(src.isrctype.eq.6)call src6_ini(src.so6)
-#else
-	write(*,*) 'src_ini: obsolete routine called- send bug report'
-#endif
+
+	if(src.isrctype.eq.6)call src6_ini(src.so6)
+
 	return
 	end
-c------------------end src_ini -------------------------
 
 c**************************************************************
-        subroutine psdi(g,src,apr,cs,ifl,ra,sr,blp)
+        subroutine psdi(g,src,apr,cs,ifl,ra,sr)
 c**************************************************************
 c
 c       Berechnung der Phasenraumdichte in der Gegenstandsebene
 c
-c**************************************************************
-c       blp is the integer pointer to the beamline struct
 c**************************************************************
 c
 c	Source Type:
@@ -119,10 +106,6 @@ c	isrctype = 6 ; Brightness Representation
 c
 c			--->  OUTPUT : densy 	 
 c
-c       isrctype = 7 ; identical to isrctype = 4 but:
-c                      data from hdf5 file       
-c
-c
 c       Optical Path Length:
 c       --------------------
 c
@@ -134,10 +117,9 @@ c
 c**************************************************************
 
 	implicit real*8(a-h,o-z)
-	integer blp
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
+
 c**************************************************
 
 	record /constants/ cs
@@ -145,21 +127,13 @@ c**************************************************
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
-c	record /source2/ so2
-c	record /source3/ so3
-c	record /source4/ so4
-c	record /source5/ so5
-c	record /source6/ so6
+	record /source2/ so2
+	record /source3/ so3
+	record /source4/ so4
+	record /source5/ so5
+	record /source6/ so6
 	record /sources/ src
 	record /apertures/ apr
-
-#ifdef DEBUG2
-	write(*,*),'DEBUG1: psdi called'
-        call debug_beamline_type_f(blp)
-#endif
-
-c comment U.F. 20.4.2012	
-c	write(*,*) 'UF psdi: source type:',src.isrctype
 
 c---------------- set values to zero by default
 
@@ -182,12 +156,12 @@ c------------------------------------------------------
 
 c---------------- Aperture in source plane ------------
 
-	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
-     &		lt.apr.rpin).and.
-     &		((ra.rf.yp.gt.apr.srcymin).and.
-     &		 (ra.rf.yp.lt.apr.srcymax)).and.
-     &		((ra.rf.zp.gt.apr.srczmin).and.
-     &		(ra.rf.zp.lt.apr.srczmax)))then
+c	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
+c     &		lt.apr.rpin).and.
+c     &		((ra.rf.yp.gt.apr.srcymin).and.
+c     &		 (ra.rf.yp.lt.apr.srcymax)).and.
+c     &		((ra.rf.zp.gt.apr.srczmin).and.
+c     &		(ra.rf.zp.lt.apr.srczmax)))then
 
 c---------------- Aperture plane ----------------------
 c	if( (dsqrt(ra.ap.yp_ap*ra.ap.yp_ap+
@@ -208,26 +182,20 @@ c    &        (ra.oe.xl.gt.apr.xl_max) ) iii=0
 c	endif
 c	if(iii.eq.1)then
 
-c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
-c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
-c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
-	if(src.isrctype.eq.4)call src4(cs,g,ra,sr,ifl,blp)
-	if(src.isrctype.eq.7)call src4(cs,g,ra,sr,ifl,blp)
-c uf2.7.13	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
-c uf2.7.13	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
-c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
-c	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
+	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
+	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
+	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
+	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl)
+	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
+	if(src.isrctype.eq.6)call src6(cs,g,ra,src.so6,sr,ifl)
 
 c	endif	! size of OE
 c	endif	! aperture plane
-	endif	! source plane
+c	endif	! source plane
 
 	return
         end
-c---------------------- end psdi ------------------------------
 
-
-#ifdef OBSOLETE
 c*****************************************************************
 	subroutine src1(cs,g,ra,so1,sr,ifl)
 c*****************************************************************
@@ -235,8 +203,7 @@ c	returns complex*16 densy
 c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -282,18 +249,15 @@ cc	include 'phase_struct.for'
 
 	return
 	end
-c-------------------- end src1 -------------------------------
-#endif
 
-#ifdef PHASELIB
 c*****************************************************************
 	subroutine src2(cs,g,ra,so2,sr,ifl)
 c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
+
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
@@ -306,7 +270,7 @@ c	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)/1000.).
 c     &			ge.(0.9*so2.fscale))then
 	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp)).
      &			ge.(0.9*so2.fscale))then
-     	sr.densy=0.d0
+     	sr.densy=0.
 	else
 c	    call source_zernike(so2,cs,ra.rf.zp/1000.,
 c     &			ra.rf.yp/1000.,sr.densy)
@@ -316,15 +280,12 @@ c     &			ra.rf.yp/1000.,sr.densy)
 c-----  27.2.2004
 
 	if(ifl.ipinarr.eq.1)then
-c  Achtung Übergabeparameter anpassen
-c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
-c	  sr.densy=sr.densy*f
+	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+	  sr.densy=sr.densy*f
 	endif
 
 	return
 	end
-c----------------------- end src2---------------------
-#endif
 
 c*****************************************************************
 	subroutine src3(cs,g,ra,so3,sr,ifl)
@@ -332,8 +293,8 @@ c*****************************************************************
 c	returns complex*16 densy
 c-------------------------------
 	implicit real*8(a-h,o-z)
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
+
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
@@ -349,87 +310,69 @@ c     &			sr.densy)
 c------- 27.2.2004
 
 	if(ifl.ipinarr.eq.1)then
-c        Achtung Übergabeparaneter anpassen
-c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
-c	  sr.densy=sr.densy*f
+	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+	  sr.densy=sr.densy*f
 	endif
 
 	return
 	end
-c----------------------- end src3---------------------
 
 c*****************************************************************
-c UF 2.7.13	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
-        subroutine src4(cs,g,ra,sr,ifl,blp)
+	subroutine src4(cs,g,ra,so4,sr,ifl)
 c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
-	integer blp               ! the beamline pointer 
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
-#ifdef OLD_PO_SOURCE
-c UF 2.7.13	record /source4/ so4
 	record /source4/ so4
-#endif
-	phase= 0.0                  ! give a default
 
-#ifdef DEBUG2
-	write(*,*),'DEBUG1: src4 called'
-        call debug_beamline_type_f(blp)
-#endif
-c	iexpand sollte ausser fuer debug-Zwecke immer auf 1 gesetzt sein
 c--------- get path length
-c	if(ifl.iexpand.eq.0)then
-c
-c	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
-c	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
-c	zzi=ra.ri.zi
-c
-c	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
-c	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
-c	zzp=ra.rf.zp
-c
-c	call intersection(am.a,wc,xlc,rin,uu,ww,xll,iord)
-c
-c	xlength=dsqrt(
-c    &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+(zzi-xll)*(zzi-xll))
-c	ra.xlength1=xlength
-c	xlength=xlength+
-c     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+(zzp-xll)*(zzp-xll))
-c	ra.xlength2=xlength-ra.xlength1
-c
-c	else
+	if(ifl.iexpand.eq.0)then
+
+	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
+	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
+	zzi=ra.ri.zi
+
+	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
+	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
+	zzp=ra.rf.zp
+
+	call intersection(uu,ww,xll)
+
+	xlength=dsqrt(
+     &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+(zzi-xll)*(zzi-xll))
+	ra.xlength1=xlength
+	xlength=xlength+
+     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+(zzp-xll)*(zzp-xll))
+	ra.xlength2=xlength-ra.xlength1
+
+	else
 
 	xlength=ra.xlength1+ra.xlength2
 
-c	endif	! iexpand
-
-c       Propagatioswellenlaenge steht in g.xlam
+	endif	! iexpand
 
 	if(ifl.iplmode.eq.0)then
-c	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
-        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/dabs(g.xlam) 
+	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
 	endif
-        
-c-----------------------------------------------
-c	ra.xlam_test wird variiert bei multiple propagation
-c	so wie es sein soll
-c-----------------------------------------------
 
 	if(ifl.iplmode.eq.1)then
-c	phase = (2.*cs.pi*xlength)/ra.xlam_test 
-	phase = (2.*cs.pi*xlength)/dabs(g.xlam) 
-c        write(6,*)'============= xlam_test ',ra.xlam_test
+	phase = (2.*cs.pi*xlength)/ra.xlam_test 
+	phase = (2.*cs.pi*xlength)/ra.xlam_test 
 	endif
+
+c--------------- 22.3.2006
+c       exponenten spaeter berechnen
+c	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
+c---------------------------------------------------
 
         if(ifl.ispline.lt.0)then
 	sr.eyp=phase
@@ -452,6 +395,27 @@ c********* Ablenkung nach unten : idefl < 0
 	if (g.xlam.ge.0)isig=1
 	if (g.xlam.lt.0)isig=-1
 
+c------- old (before 19.1.2000) -----------------------------
+c	grdist=1.d0/g.xdens(0)
+c	xx=dmod(ra.oe.w,grdist)
+c	xx=xx+grdist
+c	xx=dmod(xx,grdist)
+c
+c	if(ifl.ispline.ge.0)then
+c------- changed sign to minus at 19.1.2000
+c	  delphi=-dflotj(isig)*(xx/grdist)*2.d0*cs.pi
+c	  factor=factor*exp(cs.sqrtm1*delphi)
+c	endif
+c
+c	if(ifl.ispline.lt.0)then
+c-------  neu 20.6.1997
+c	  delphi=-dflotj(isig)*(ra.oe.w/grdist)*2.d0*cs.pi
+c-------  end neu 20.6.1997
+c	  sr.eyp=sr.eyp+delphi
+c	  sr.ezp=sr.ezp+delphi
+c	endif
+c--------------------------------------------------------
+
 c------- new 19.1.2000 ----------------------------------
 c	has been checked for non VLS grating 
 c		(ifl.ispline = 0 and = -1)
@@ -459,7 +423,6 @@ c	has to be checked for VLS grating
 c--------------------------------------------------------
 c
 c	22.3.2006
-
 	w2=ra.oe.w*ra.oe.w
 	w3=w2*ra.oe.w
 	w4=w3*ra.oe.w
@@ -481,7 +444,7 @@ c------- signs changed 17.6.2006
 	nn=xnn
 
 	if(ifl.ispline.ge.0)then
- 	  delphi=-dflotj(isig)*(xnn-dflotj(nn))*2.d0*cs.pi
+	  delphi=-dflotj(isig)*(xnn-dflotj(nn))*2.d0*cs.pi
 	endif
 
 	if(ifl.ispline.lt.0)then
@@ -495,29 +458,25 @@ c------- end 19.1.2000 ----------------------------------
 
 	factorre=dcos(delphi+phase)
         factorim=dsin(delphi+phase)
-        if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*(delphi+phase))
 
+c-------- 27.2.2004
+c       xwert=ra.rf.zp/1000.	! mm --> m
+c	ywert=ra.rf.yp/1000.	! mm --> m
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
+c------- 27.2.2004
 
-c        if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then   ! for tests
-#ifdef OLD_PO_SOURCE
-c          original code von JB
-	   if(  ((xwert.gt.so4.xeyremin)).and.
+	if(  ((xwert.gt.so4.xeyremin)).and.
      &	     ((xwert.lt.so4.xeyremax)).and.
      &	     ((ywert.gt.so4.yeyremin)).and.
      &	     ((ywert.lt.so4.yeyremax)))then
-	      call source_inter_2d(so4,cs,xwert,ywert,sr)
-	   endif		! min, max
-#else
-c          new code with dynamic source does also the range test 
-	   call source4c_inter_2d(sr,xwert,ywert,blp);
-#endif
-c	endif
+
+	call source_inter_2d(so4,cs,xwert,ywert,sr)
+
+	endif	! min, max
 
 	if(ifl.ipinarr.eq.1)then
-c        Achtung Übergabeparaneter anpassen
-c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 	  else
 	  f=1.0d0
 	endif
@@ -526,7 +485,7 @@ c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 	srdensyim=sr.densyim
 	srdenszre=sr.denszre
 	srdenszim=sr.denszim
-        
+
 	if(ifl.ispline.ge.0)then
 		sr.densyre=f*(srdensyre*factorre-
      &          	      srdensyim*factorim)
@@ -536,8 +495,6 @@ c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
      &          	      srdenszim*factorim)
 		sr.denszim=f*(srdenszre*factorim+
      &          	      srdenszim*factorre)
-                sr.densy=(srdensyre+cs.sqrtm1*srdensyim)*factor
-                sr.densz=(srdenszre+cs.sqrtm1*srdenszim)*factor
 	endif
 
 	if(ifl.ispline.lt.0)then
@@ -549,19 +506,17 @@ c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 
 	return
 	end
-c----------------------- end src4---------------------
 
 c*****************************************************************
 	subroutine src5(cs,g,ra,so5,sr,ifl)
-
 c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
+
 	record /constants/ cs
 	record /geometryst/ g
 	record /rayst/ ra 
@@ -570,42 +525,40 @@ cc	include 'phase_struct.for'
 	record /source5/ so5
 
 c------------- get path length 
-c
-c	if(ifl.iexpand.eq.0)then
-c
-c	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
-c	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
-c	zzi=ra.ri.zi
-c
-c	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
-c	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
-c	zzp=ra.rf.zp
-c
-c	call intersection(uu,ww,xll)
-c
-c	xlength=dsqrt(
-c     &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+
-c     &  (zzi-xll)*(zzi-xll))
-c	ra.xlength1=xlength
-c	xlength=xlength+
-c     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+
-c     &  (zzp-xll)*(zzp-xll))
-c	ra.xlength2=xlength-ra.xlength1
-c
-c	else
+
+	if(ifl.iexpand.eq.0)then
+
+	xxi=g.rp*g.cosb+dflotj(g.idefl)*ra.ri.yi*g.sinb
+	yyi=g.rp*g.sinb-dflotj(g.idefl)*ra.ri.yi*g.cosb
+	zzi=ra.ri.zi
+
+	xxp=g.r*g.cosa-dflotj(g.idefl)*ra.rf.yp*g.sina
+	yyp=g.r*g.sina+dflotj(g.idefl)*ra.rf.yp*g.cosa
+	zzp=ra.rf.zp
+
+	call intersection(uu,ww,xll)
+
+	xlength=dsqrt(
+     &  (xxi-uu)*(xxi-uu)+(yyi-ww)*(yyi-ww)+
+     &  (zzi-xll)*(zzi-xll))
+	ra.xlength1=xlength
+	xlength=xlength+
+     &  dsqrt((xxp-uu)*(xxp-uu)+(yyp-ww)*(yyp-ww)+
+     &  (zzp-xll)*(zzp-xll))
+	ra.xlength2=xlength-ra.xlength1
+
+	else
 
 	xlength=ra.xlength1+ra.xlength2
 
-c	endif	! iexpand
+	endif	! iexpand
 
 	if(ifl.iplmode.eq.0)then
-c	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
-        phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/dabs(g.xlam) 
+	phase = ((2.*cs.pi)*(xlength-g.r-g.rp))/ra.xlam_test 
 	endif
 
 	if(ifl.iplmode.eq.1)then
-c	phase = (2.*cs.pi*xlength)/ra.xlam_test 
-        phase = (2.*cs.pi*xlength)/dabs(g.xlam)
+	phase = (2.*cs.pi*xlength)/ra.xlam_test 
 	endif
 
 	if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*phase)
@@ -615,7 +568,7 @@ c	phase = (2.*cs.pi*xlength)/ra.xlam_test
 	endif
 
 c-------------- end path length
-
+	 
 c-------------- grating 
 	if((ifl.igrating.eq.1).and.(g.xdens(0).gt.1.d-10))then
 	grdist=1.d0/g.xdens(0)
@@ -682,14 +635,12 @@ c------- end 19.1.2000 ----------------------------------
 	xwert=ra.rf.zp	! units are mm
 	ywert=ra.rf.yp          
 
-c	PhiSrc=((2.d0*cs.pi)/ra.xlam_test)*
-        PhiSrc=((2.d0*cs.pi)/g.xlam)*
+	PhiSrc=((2.d0*cs.pi)/ra.xlam_test)*
      &     ( (xwert*xwert)/(2.d0*so5.dipdisz) +
      &       (ywert*ywert)/(2.d0*so5.dipdisy) )
 
 	if(ifl.ipinarr.eq.1)then
-c        Achtung Übergabeparaneter anpassen
-c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
+	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 	  else
 	  f=1.0d0
 	endif
@@ -709,7 +660,6 @@ c	  call pin_arr(src,ra.rf.yp,ra.rf.zp,f)
 
 	return
 	end
-c----------------------- end src5---------------------
 
 c*****************************************************************
 	subroutine src6(cs,g,ra,so6,sr,ifl)
@@ -719,8 +669,7 @@ c	result is real part of complex variable
 c----------------------------------------------
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /constants/ cs
 	record /geometryst/ g
@@ -746,23 +695,20 @@ c-------- 27.2.2004
      &		(pxwert.lt.so6.brpxmax).and.
      &	        (pywert.gt.so6.brpymin).and.
      &		(pywert.lt.so6.brpymax)  ) then
-
-c        Achtung Übergabeparaneter anpassen
-c	call source_inter_4d(so6,xwert,ywert,pxwert,pywert,sr.densy)
+	call source_inter_4d(so6,xwert,ywert,pxwert,pywert,sr.densy)
 
 	endif	! min, max
 
 	return
 	end
-c----------------------- end src6 ---------------------
 
 c***********************************************************
 	subroutine src2_ini(so2)
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
+
 	record /source2/ so2
 
 	open(unit=10,name=so2.fsource2a,type='old')
@@ -805,8 +751,7 @@ c***********************************************************
 c***********************************************************
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /source3/ so3
 
@@ -832,59 +777,25 @@ cc	include 'phase_struct.for'
 c***********************************************************
 	subroutine src4_ini(so4)
 c***********************************************************
-c UF Jan 12 add low level tests if files exists
-c UF Apr 12 add dynamic memory
+	implicit real*8(a-h,o-z)
 
-c	implicit real*8(a-h,o-z)
-	
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /source4/ so4
-        logical ex 
-	real*8 , allocatable :: xx(:), yy(:)    !, zzd(:,:) 
-	integer nx, ny, alloc_err
 
-c	maximale Dimension der Quelle 1024 x 1024
-c UF	dimension xx(1048576),yy(1048576)
-
-	write(*,*) 'src4_ini: filenames hardcoded test_5000.s4a,s4b,s4c,s4d'
-	so4.fsource4a='test_5000.s4a'
-	so4.fsource4b='test_5000.s4b'
-	so4.fsource4c='test_5000.s4c'
-	so4.fsource4d='test_5000.s4d'
-
+	dimension xx(400000),yy(400000)
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4a
-	INQUIRE(File=so4.fsource4a, Exist=ex)
-	if (.NOT. ex) then
-	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4a
-	   write(*,*) 'exit'
-	   stop
-	endif
-
-	write(*,*) 'src4_ini: open'
-	open(unit=10, name=so4.fsource4a, type='old')
-	write(*,*) 'src4_ini: read1'
-	read(10,*) so4.ieyrex, so4.ieyrey
-	write(*,*) 'src4_ini: after read1'
-	nx=so4.ieyrex      ! remember the numbers and allocate the fields                               
-	ny=so4.ieyrey
-	write(*,*) 'src4_ini: allocate', nx, ny
-	allocate(xx(nx*ny), yy(nx*ny), stat=alloc_err)
-	if (alloc_err .gt. 0) then
-	   write(*,*) 'error: memory exhausted- exit'
-	   stop
-	endif
-	  
+	open(unit=10,name=so4.fsource4a,type='old')
+	read(10,*)so4.ieyrex,so4.ieyrey
 	do j=1,so4.ieyrey
-	   do i=1,so4.ieyrex
-	      k=(j-1)*so4.ieyrex+i
-	      read(10,*)xx(k),yy(k),so4.zeyre(i,j)
-	   enddo
+	do i=1,so4.ieyrex
+	k=(j-1)*so4.ieyrex+i
+	read(10,*)xx(k),yy(k),so4.zeyre(i,j)
+	enddo
 	enddo
 	close(10)
-	write(*,*) '==> done'  ! so4.fsource4a
-	   
+
 	so4.xeyremin=xx(1)
 	so4.xeyremax=xx(k)
 	so4.dxeyre=(so4.xeyremax-so4.xeyremin)
@@ -901,37 +812,21 @@ c UF	dimension xx(1048576),yy(1048576)
 	do j=1,so4.ieyrey
 	  so4.gridy(j)=yy((j-1)*so4.ieyrex+1)
 	enddo
-	
-c---------------------------------------------------------------
 
-	write(*,*) 'src4_ini: read file: ',so4.fsource4b
-	INQUIRE(File=so4.fsource4b, Exist=ex)
-	if (.NOT. ex) then
-	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4b
-	   write(*,*) 'exit'
-	   stop
-	endif
-
+     	write(*,*) 'src4_ini: read file: ',so4.fsource4b
 	open(unit=10,name=so4.fsource4b,type='old')
 	read(10,*)so4.ieyimx,so4.ieyimy
-	if ((so4.ieyimx.ne.nx).or.(so4.ieyimy.ne.ny)) then
-	   write(*,*) 'error: src4_ini: dimension error ', so4.fsource4b
-	   write(*,*) 'exit'
-	   stop
-	endif
-
 	do j=1,so4.ieyimy
-	   do i=1,so4.ieyimx
-	      k=(j-1)*so4.ieyimx+i
-	      read(10,*)xx(k),yy(k),so4.zeyim(i,j)
-c-------------10.8.2005
-	      if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
-c-------------10.8.2005
-	   enddo
+	do i=1,so4.ieyimx
+	k=(j-1)*so4.ieyimx+i
+	read(10,*)xx(k),yy(k),so4.zeyim(i,j)
+c------------- 10.8.2005
+	if((so4.iconj).eq.1)so4.zeyim(i,j)=-so4.zeyim(i,j)
+c------------- 10.8.2005
+	enddo
 	enddo
 	close(10)
-	write(*,*) '==> done'
-		
+
 	so4.xeyimmin=xx(1)
 	so4.xeyimmax=xx(k)
 	so4.dxeyim=(so4.xeyimmax-so4.xeyimmin)
@@ -941,42 +836,19 @@ c-------------10.8.2005
 	so4.dyeyim=(so4.yeyimmax-so4.yeyimmin)
      &		/dflotj(so4.ieyimy-1)
 
-
-c******* deallocate, allow different grid sizes
-	if (allocated(xx)) deallocate(xx)
-	if (allocated(yy)) deallocate(yy)
-
 c----------------------------------------------------------
 
 	write(*,*) 'src4_ini: read file: ',so4.fsource4c
-	INQUIRE(File=so4.fsource4c, Exist=ex)
-	if (.NOT. ex) then
-	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4c
-	   write(*,*) 'exit'
-	   stop
-	endif
-
 	open(unit=10,name=so4.fsource4c,type='old')
 	read(10,*)so4.iezrex,so4.iezrey
-
-	nx=so4.iezrex		! remember the numbers and allocate the fields                               
-	ny=so4.iezrey
-
-	allocate(xx(nx*ny), yy(nx*ny), stat=alloc_err)
-	if (alloc_err.gt.0) then
-	   write(*,*) 'error: memory exhausted- exit'
-	   stop
-	endif
-
 	do j=1,so4.iezrey
-	   do i=1,so4.iezrex
-	      k=(j-1)*so4.iezrex+i
-	      read(10,*)xx(k),yy(k),so4.zezre(i,j)
-	   enddo
+	do i=1,so4.iezrex
+	k=(j-1)*so4.iezrex+i
+	read(10,*)xx(k),yy(k),so4.zezre(i,j)
+	enddo
 	enddo
 	close(10)
-	write(*,*) '==> done'
-	
+
 	so4.xezremin=xx(1)
 	so4.xezremax=xx(k)
 	so4.dxezre=(so4.xezremax-so4.xezremin)
@@ -986,36 +858,20 @@ c----------------------------------------------------------
 	so4.dyezre=(so4.yezremax-so4.yezremin)
      &		/dflotj(so4.iezrey-1)
 
-c-----------------------------------------------------------
-
 	write(*,*) 'src4_ini: read file: ',so4.fsource4d
-	INQUIRE(File=so4.fsource4d, Exist=ex)
-	if (.NOT. ex) then
-	   write(*,*) 'error: src4_ini: file not found: ', so4.fsource4d
-	   write(*,*) 'exit'
-	   stop
-	endif
-
 	open(unit=10,name=so4.fsource4d,type='old')
 	read(10,*)so4.iezimx,so4.iezimy
-	if ((so4.iezimx.ne.nx).or.(so4.iezimy.ne.ny)) then
-	   write(*,*) 'error: src4_ini: dimension error ', so4.fsource4d
-	   write(*,*) 'exit'
-	   stop
-	endif
-
 	do j=1,so4.iezimy
-	   do i=1,so4.iezimx
-	      k=(j-1)*so4.iezimx+i
-	      read(10,*)xx(k),yy(k),so4.zezim(i,j)
-c-------------10.8.2005
-	      if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
-c-------------10.8.2005
-	   enddo
+	do i=1,so4.iezimx
+	k=(j-1)*so4.iezimx+i
+	read(10,*)xx(k),yy(k),so4.zezim(i,j)
+c------------- 10.8.2005
+	if((so4.iconj).eq.1)so4.zezim(i,j)=-so4.zezim(i,j)
+c------------- 10.8.2005
+	enddo
 	enddo
 	close(10)
-	write(*,*) '==> done'
-	
+
 	so4.xezimmin=xx(1)
 	so4.xezimmax=xx(k)
 	so4.dxezim=(so4.xezimmax-so4.xezimmin)
@@ -1025,26 +881,18 @@ c-------------10.8.2005
 	so4.dyezim=(so4.yezimmax-so4.yezimmin)
      &		/dflotj(so4.iezimy-1)
 
-c******* deallocate
-	if (allocated(xx)) deallocate(xx)
-	if (allocated(yy)) deallocate(yy)
-	
 	return
 	end
-c********** src4_ini ************
 
 c*****************************************************************
 	subroutine src6_ini(so6)
 c*****************************************************************
 	implicit real*8(a-h,o-z)
 
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /source6/ so6
-	logical ex
 
-	INQUIRE(File=so6.fsource6, Exist=ex)
-	if (ex) then
 	open(unit=10,name=so6.fsource6,
      &  type='old',form='unformatted',access='sequential')
 	read(10)so6.brxmin,so6.brxmax,so6.brdx,so6.ibrx
@@ -1062,20 +910,17 @@ c*****************************************************************
 	enddo
 	enddo
 	close(10)
-	else
-	   write(*,*) 'error: src6_ini: file not found: ', so6.fsource6
-	endif
+
 	return
 	end
-#ifdef PHASELIB
+
 c********************************************************
 	subroutine source_zernike(so2,cs,xwert,ywert,carg)
 c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	complex*16 carg
 
@@ -1108,9 +953,9 @@ c------------------- get rn, rnl -----------------
 
 c------------------ calculation -------------------------
 
-	sign=-1.d0
+	sign=-1.
 
-      carg=0.d0
+      carg=0.
 
       if(so2.iflagl.eq.1)then
       do n1=0,so2.iordzern
@@ -1151,7 +996,6 @@ c---------------------------------------------------------
 
       return
       end
-#endif
 
 
 c********************************************************
@@ -1160,8 +1004,7 @@ c********************************************************
 
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /source3/ so3
 	record /constants/ cs
@@ -1183,7 +1026,7 @@ c    ********	    interpolate ********
 	 goto 100
 	 endif
 	enddo
-        valreal=0.d0
+        valreal=0.
 100	continue
 
 	endif
@@ -1201,7 +1044,7 @@ c    ********	    interpolate ********
 	 goto 101
 	 endif
 	enddo
-        valimag=0.d0
+        valimag=0.
 101	continue
 
 	endif
@@ -1221,7 +1064,7 @@ c    ********	    interpolate ********
 	 goto 102
 	 endif
 	enddo
-        valreal=0.d0
+        valreal=0.
 102	continue
 
 	endif
@@ -1239,14 +1082,14 @@ c    ********	    interpolate ********
 	 goto 103
 	 endif
 	enddo
-        valimag=0.d0
+        valimag=0.
 103	continue
 
 	endif
 
 c--------------------------------------------------------
 
-	sign=-1.d0
+	sign=-1.
 
         carg=(valreal+sign*cs.sqrtm1*valimag)
 
@@ -1264,8 +1107,7 @@ c			 dimag(XXX)=phase
 c
 c-----------------------------------------------------------
 	implicit real*8(a-h,o-z)
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /source4/ so4
 	record /constants/ cs
@@ -1289,16 +1131,42 @@ c---------  Interpolation of Ey
 	iy1=(ywert-so4.yeyremin)/so4.dyeyre + 1
 	iy2=iy1+1
 
+c--------------------- 22.3.2006
+c	x1=so4.xeyremin+dflotj(ix1-1)*so4.dxeyre
+c	x2=x1+so4.dxeyre
+c	y1=so4.yeyremin+dflotj(iy1-1)*so4.dyeyre
+c	y2=y1+so4.dyeyre
 	x1=so4.gridx(ix1)
 	x2=so4.gridx(ix2)
 	y1=so4.gridy(iy1)
 	y2=so4.gridy(iy2)
-c /* UF 18.2.14 */
-        ddxy=so4.dxeyre*so4.dxeyre              
-	fact3=((x2-xwert)*(y2-ywert))/ddxy
-	fact4=((xwert-x1)*(y2-ywert))/ddxy
-	fact5=((x2-xwert)*(ywert-y1))/ddxy
-	fact6=((xwert-x1)*(ywert-y1))/ddxy
+c-----------22.3.2006 ----------------------------
+
+c	amp1=so4.zeyre(ix1,iy1) + sign*cs.sqrtm1*so4.zeyim(ix1,iy1)
+c	amp2=so4.zeyre(ix2,iy1) + sign*cs.sqrtm1*so4.zeyim(ix2,iy1)
+c	amp3=so4.zeyre(ix1,iy2) + sign*cs.sqrtm1*so4.zeyim(ix1,iy2)
+c	amp4=so4.zeyre(ix2,iy2) + sign*cs.sqrtm1*so4.zeyim(ix2,iy2)
+
+cc	amp1=so4.zeyre(ix1,iy1) + fact1*so4.zeyim(ix1,iy1)
+cc	amp2=so4.zeyre(ix2,iy1) + fact1*so4.zeyim(ix2,iy1)
+cc	amp3=so4.zeyre(ix1,iy2) + fact1*so4.zeyim(ix1,iy2)
+cc	amp4=so4.zeyre(ix2,iy2) + fact1*so4.zeyim(ix2,iy2)
+
+
+	fact2=1./((x2-x1)*(y2-y1))
+	fact3=(x2-xwert)*(y2-ywert)
+	fact4=(xwert-x1)*(y2-ywert)
+	fact5=(x2-xwert)*(ywert-y1)
+	fact6=(xwert-x1)*(ywert-y1)
+
+c	cargy=(1./((x2-x1)*(y2-y1)))*     (
+c     &       amp1*(x2-xwert)*(y2-ywert) +	
+c     &       amp2*(xwert-x1)*(y2-ywert) +	
+c     &       amp3*(x2-xwert)*(ywert-y1) +	
+c     &       amp4*(xwert-x1)*(ywert-y1)  )	
+
+cc	cargy=fact2*(
+cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
 
         sr.densyre=fact3*so4.zeyre(ix1,iy1)+
      &             fact4*so4.zeyre(ix2,iy1)+
@@ -1312,6 +1180,35 @@ c /* UF 18.2.14 */
 
 c---------  Interpolation of Ez, same grid as for Ey
 
+c	ix1=(xwert-so4.xezremin)/so4.dxezre + 1
+c	ix2=ix1+1
+c	iy1=(ywert-so4.yezremin)/so4.dyezre + 1
+c	iy2=iy1+1
+
+c	x1=so4.xezremin+dflotj(ix1-1)*so4.dxezre
+c	x2=x1+so4.dxezre
+c	y1=so4.yezremin+dflotj(iy1-1)*so4.dyezre
+c	y2=y1+so4.dyezre
+
+c	amp1=so4.zezre(ix1,iy1) + sign*cs.sqrtm1*so4.zezim(ix1,iy1)
+c	amp2=so4.zezre(ix2,iy1) + sign*cs.sqrtm1*so4.zezim(ix2,iy1)
+c	amp3=so4.zezre(ix1,iy2) + sign*cs.sqrtm1*so4.zezim(ix1,iy2)
+c	amp4=so4.zezre(ix2,iy2) + sign*cs.sqrtm1*so4.zezim(ix2,iy2)
+
+cc	amp1=so4.zezre(ix1,iy1) + fact1*so4.zezim(ix1,iy1)
+cc	amp2=so4.zezre(ix2,iy1) + fact1*so4.zezim(ix2,iy1)
+cc	amp3=so4.zezre(ix1,iy2) + fact1*so4.zezim(ix1,iy2)
+cc	amp4=so4.zezre(ix2,iy2) + fact1*so4.zezim(ix2,iy2)
+
+c	cargz=(1./((x2-x1)*(y2-y1)))*     (
+c     &       amp1*(x2-xwert)*(y2-ywert) +	
+c     &       amp2*(xwert-x1)*(y2-ywert) +	
+c     &       amp3*(x2-xwert)*(ywert-y1) +	
+c     &       amp4*(xwert-x1)*(ywert-y1)  )	
+
+cc	cargz=fact2*(
+cc     &       amp1*fact3+amp2*fact4+amp3*fact5+amp4*fact6)
+
         sr.denszre=fact3*so4.zezre(ix1,iy1)+
      &             fact4*so4.zezre(ix2,iy1)+
      &	           fact5*so4.zezre(ix1,iy2)+
@@ -1321,7 +1218,7 @@ c---------  Interpolation of Ez, same grid as for Ey
      &             fact4*so4.zezim(ix2,iy1)+
      &	           fact5*so4.zezim(ix1,iy2)+
      &             fact6*so4.zezim(ix2,iy2)
-  
+
      	return
 	end
 
@@ -1332,8 +1229,7 @@ c**********************************************************
 
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 	record /source6/ so6
 	record /geometryst/ g
@@ -1420,17 +1316,16 @@ c-----------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
+	include 'phase_struct.for'
 
 c**************************************************
 
-c	record /source1/ so1
-c	record /source2/ so2
-c	record /source3/ so3
-c	record /source4/ so4
-c	record /source5/ so5
-c	record /source6/ so6
+	record /source1/ so1
+	record /source2/ so2
+	record /source3/ so3
+	record /source4/ so4
+	record /source5/ so5
+	record /source6/ so6
 	record /sources/ src
 
 	f=1.d0
@@ -1446,7 +1341,4 @@ c	record /source6/ so6
 	return
 	end
 
-
-
-c end
- 
+c /home/pss060/sls/flechsig/phase/src/phase/phase_source_11.for

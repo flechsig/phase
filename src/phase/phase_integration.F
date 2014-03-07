@@ -1,22 +1,7 @@
-c$$$ File      : ~/phase/src/phase/phase_inegration.F
-c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <05 Jul 13 16:38:29 flechsig> 
-c$$$ Author    : J.B. + modification Uwe Flechsig
-c$$$
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
-c
-c phase_integration.F enthaelt folgende routinen:
-c adaptive_int(): Hauptroutine- wird von pst.c oder pstf.F gerufen
-c yyint()  : called from adaptive_int()
-c fywert() : called from yyint()
-c int_2d() : wird nicht genutzt??
-c phacor() : called from adaptive_int()
-c fitpar() : called from phacor()
-c simpson(): called from adaptive_int()
-c guess()  : called from adaptive_int()
+c File      : ~/phase/src/phase/phase_integration_12.for
+c Date      : <21 Dec 99 14:37:34 flechsig> 
+c Time-stamp: <14 Mar 06 08:24:07 flechsig> 
+c Author    : J.B. + modification Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
 c
 c Aenderungen UF:
 c (1) file umbenannt in phase_integration_12.for
@@ -42,10 +27,7 @@ c Aenderungen von JB am 11.2.00
 c UF habe xxsave eingefuehrt !!! pruefen
 c*********************************************************
 c UF 12.1.2000
-c #define DEBUG1
-c uf      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,
-         subroutine adaptive_int(m4,g,src,apr,cs,ra,
-     &                       ifl,xi,xir,st,sp,blp)
+      subroutine adaptive_int(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st,sp)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -58,46 +40,17 @@ c	adaptive integration rausschmeissen
 c	nur eine Iteration
 c	falls spaeter adaptive Integration implementiert we rden soll,
 c	muss dies auf andere Weise als bisher geschehen.
-cc
-c	ACHTUNG. Umstellen auf 8 Ordnung Spiegelentwicklung
-c	erfolgt ueber Link-Flag SEVEN_ORDER,
-c	die Struktur m4 und die Variablen in der Struktur m4 
-c	haben zwar noch alte Namen, haben aber gegebenenfalls 
-c	hoehere Dimensionen
-c	JB 20.5.2011
-c
-c	ifl.iord ist ueberall eingesetzt (keine Hartverdrahtung der Ordnung)
-c	phacor nicht getestet
-c	turbo simpson nicht getestet 
-c	      JB 20.5.2011
-c
-c	Skalierungsfaktoren angepasst (neue Definition etc)
-c	      JB 20.5.2011
-c
-c	dimension von a rausgeworfen, wird jetzt direkt in
-c	phase_struct.h/F gesetzt
-c	dimension pij..() in fywert ueberall hochgesetzt
-c		  JB 20.5.2011
-c
-c	zu den vielen Parametern:
-c	   ifl.ipath   = 0 ausser fuer Debug-Zwecke
-c	   ifl.matrel  = 0 --------- " ------------
-c	   ifl.iexpand = 0 --------- " ------------
 c
 c************************************************
 
 	implicit real*8(a-h,o-z)
-        integer blp
-c UF 28.6.13	complex*16 fwert,fwerty,fwertz,
-c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-c     &      yzint,yzintey,yzintez
-        complex*16 fwerty,fwertz
-     
+	complex*16 fwert,fwerty,fwertz,
+     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+     &      yzint,yzintey,yzintez
 	complex*16 fzey(4096),fzez(4096)
 
-#include '../phase/phase_struct.F'
-
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -108,92 +61,59 @@ c     &      yzint,yzintey,yzintez
 	record /integration/ xi
 	record /apertures/ apr
 	record /statistics/ st
-c uf	record /mirrortype/ am
 	record /map4/ m4
+c UF 12.1.2000
         record /psimagest/ sp
 
-	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
-     &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
+	dimension densiyre(1000),densiyim(1000),
+     &            densizre(1000),densizim(1000)
+
+c	common/simps1/fya1(501),fyp1(501),fza1(501),fzp1(501),
+c     &                fya2(501),fyp2(501),fza2(501),fzp2(501),
+c     &		z1,z2,
+c     &		tya(301,301),tza(301,301),
+c     &		typ(301,301),tzp(301,301),
+c     &		ianz0_save(301,301),
+c     &		iiheigh,iiwidth,
+c     &		jmult
+
+	dimension a(0:5,0:5)
 
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
 
-c#ifdef DEBUG1
-c       write(*,*),'adaptive_int called1'
-c        call debug_beamline_type_f(blp)
-c        write(*,*),'adaptive_int called2'
-c#endif
-
 	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
-           write(*,*)'************************************'
-           write(*,*)'call to guess removed U.F. 22.6.13  '
-           write(*,*)'************************************'
-c	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
+	call guess(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
 	endif
-
-#ifdef DEBUG1
-1       format(d15.5)
-        do i=0,ifl.iord
-        do j=0,ifl.iord-i
-        do k=0,ifl.iord-i-j
-        do l=0,ifl.iord-i-j-k
-c        write(6,*)i,j,k,l
-c        write(6,1)m4.fdet1phc(i,j,k,l),m4.fdet1phca(i,j,k,l),m4.fdet1phcb(i,j,k,l)
-c        write(6,*)i,j,k,l,m4.xlen1c(i,j,k,l),m4.xlen2c(i,j,k,l)
-        enddo
-        enddo
-        enddo
-        enddo
-#endif
-
+	
 c*******************************************************
 c	Erstellen eines reduzierten Konstantensatzes
 c*******************************************************
- 
+
 	yi=ra.ri.yi
 	zi=ra.ri.zi
 
-c#ifdef SEVEN_ORDER
-        call subm17(m4.fdetc,yi,zi,m4.fdetrc)
-        call subm17(m4.fdetphc,yi,zi,m4.fdetphrc)
-        call subm17(m4.fdet1phc,yi,zi,m4.fdet1phrc)
-        call subm17(m4.fdet1phca,yi,zi,m4.fdet1phrca)
-        call subm17(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
-        call subm17(m4.ypc1,yi,zi,m4.yprc1)
-        call subm17(m4.zpc1,yi,zi,m4.zprc1)
-        call subm17(m4.dypc,yi,zi,m4.dyprc)
-        call subm17(m4.dzpc,yi,zi,m4.dzprc)
-        call subm17(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
-        call subm17(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
-        call subm17(m4.xlen1c,yi,zi,m4.xlen1c_r)
-        call subm17(m4.xlen2c,yi,zi,m4.xlen2c_r)
-        call subm17(m4.wc,yi,zi,m4.wrc)
-        call subm17(m4.xlc,yi,zi,m4.xlrc)
-c#else
-c        call subm1(m4.fdetc,yi,zi,m4.fdetrc)
-c        call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
-c        call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
-c        call subm1(m4.fdet1phca,yi,zi,m4.fdet1phrca)
-c        call subm1(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
-c        call subm1(m4.ypc1,yi,zi,m4.yprc1)
-c        call subm1(m4.zpc1,yi,zi,m4.zprc1)
-c        call subm1(m4.dypc,yi,zi,m4.dyprc)
-c        call subm1(m4.dzpc,yi,zi,m4.dzprc)
-c        call subm1(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
-c        call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
-c        call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
-c        call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
-c        call subm1(m4.wc,yi,zi,m4.wrc)
-c        call subm1(m4.xlc,yi,zi,m4.xlrc)
-c#endif
+        call subm1(m4.fdetc,yi,zi,m4.fdetrc)
+        call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
+        call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
+        call subm1(m4.ypc1,yi,zi,m4.yprc1)
+        call subm1(m4.zpc1,yi,zi,m4.zprc1)
+        call subm1(m4.dypc,yi,zi,m4.dyprc)
+        call subm1(m4.dzpc,yi,zi,m4.dzprc)
+        call subm1(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
+        call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
+        call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
+        call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
 
-c        write(6,*)'m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)',m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)
+        call subm1(m4.wc,yi,zi,m4.wrc)
+        call subm1(m4.xlc,yi,zi,m4.xlrc)
+
 c------------------------------------------------------
 
-	st.inumb(st.nn1,st.nn2)=0.d0
-	fmax=0.d0
+	st.inumb(st.nn1,st.nn2)=0.
+	fmax=0.
 
 	ianzz=xi.ianzz0
 c gestrichen UF 21.12.99 iterz=xi.iterz0
@@ -209,24 +129,46 @@ c---------------- START ---------------------------------------
 c---------------- first grid is equdistant, the following are not
 
 	if(ianzz.eq.1)then
-	dzz=0.d0
+	dzz=0.
 	else
 	dzz=(xi.zmax-xi.zmin)/dflotj(ianzz-1)
+	endif
+
+c----------------------------------------------------------
+	if(src.isrctype.lt.4)then
+c----------------------------------------------------------
+c
+c	noch nicht getestet, vergl. mit isrctype.eq.4
+c
+c----------------------------------------------------------
+
+	do i=1,ianzz
+ 	   z(i)=xi.zmin+dflotj(i-1)*dzz
+	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+     &		z(i),fwerty,fwertz,yintya,yintyp,yintza,yintzp,sr)
+           fzey(i)=cdabs(fwerty)
+	   dz(i)=dzz
+	   fmax=dmax1(fmax,cdabs(fwerty))
+	enddo
+
+	iyz=2
+	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,
+     &		xir.yzintey,xir.yzintya,xir.yzintyp,
+     &          densiyre,densiyim,xintre,xintim,iyz)
+
 	endif
 
 c-----------------------------------------------------------
 
        if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &     (src.isrctype.eq.6).or.(src.isrctype.eq.7))then
+     &                        (src.isrctype.eq.6))then
 c-----------------------------------------------------------
-c !$OMP PARALLEL DO PRIVATE(i, ra)
-	do i=1,ianzz    
+	do i=1,ianzz
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
-c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,st,
+	   call yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		z(i),fwerty,fwertz,
-     &          yintya,yintyp,yintza,yintzp,sr,blp)
+     &          yintya,yintyp,yintza,yintzp,sr)
 	   if(ifl.ispline.ge.0)then
 c	   	fzey(i)=fwerty
 c	   	fzez(i)=fwertz
@@ -234,7 +176,8 @@ c	   	fzez(i)=fwertz
 	   densiyim(i)=sr.xintyim
 	   densizre(i)=sr.xintzre
 	   densizim(i)=sr.xintzim
-           endif
+	   
+	   endif
 	   if(ifl.ispline.lt.0)then
 	 	fya(i)=yintya
 	 	fza(i)=yintza
@@ -255,25 +198,23 @@ c	   	fzez(i)=fwertz
 	enddo		
 	endif
 
-        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
+c UF 12.1.2000
+      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
 
 	iyz=2
-c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
-       call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
+	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
      &			xir.yzintya,xir.yzintyp,
      &          densiyre,densiyim,xintyzre,xintyzim,iyz)
-
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
-        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+c UF 12.1.2000
+      if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
 
 	iyz=2
-c	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
-       call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
+	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
      &			xir.yzintza,xir.yzintzp,
      &          densizre,densizim,xintyzre,xintyzim,iyz)
-
         sr.xintzre=xintyzre
         sr.xintzim=xintyzim
 
@@ -288,13 +229,11 @@ c------------------------------------------------------------
 
 	return
 	end
-c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-c UF	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,st,
+	subroutine yyint(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
      &		dzi,yintey,yintez,
-     &          yintya,yintyp,yintza,yintzp,sr,blp)
+     &          yintya,yintyp,yintza,yintzp,sr)
 c*************************************************************
 c
 c	INPUT : dzi
@@ -303,21 +242,17 @@ c
 c*************************************************************
 
 	implicit real*8(a-h,o-z)
-        integer blp
-	complex*16 
-c UF 28.6.13     &      fwert,fwerty,fwertz,
-c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-c     &      yint,yintey,yintez
-     &       yintey,yintez
-c UF	complex*16 fyey(4096),fyez(4096)
-        complex*16 fyey(4096)
+	complex*16 fwert,fwerty,fwertz,
+     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
+     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
+     &      yint,yintey,yintez
+	complex*16 fyey(4096),fyez(4096)
 
-	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
-     &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
+	dimension a(0:5,0:5)
+	dimension densiyre(1000),densiyim(1000),
+     &            densizre(1000),densizim(1000)
 
-#include '../phase/phase_struct.F'
-
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -326,10 +261,9 @@ c UF	complex*16 fyey(4096),fyez(4096)
         record /sources/ src
 	record /integration/ xi
 	record /integration_results/ xir
-c UF 28.6.13        record /source6/ so6
+        record /source6/ so6
 	record /apertures/ apr
 	record /statistics/ st
-c uf	record /mirrortype/ am
 	record /map4/ m4
 
 	dimension y(4096),dy(4096)
@@ -340,61 +274,48 @@ c*******************************************************
 c	Erstellen eines nochmals reduzierten 
 c       Konstantensatzes
 c*******************************************************
-c#ifdef DEBUG      
-c       write(*,*),'yyint called'
-c      call debug_beamline_type_f(blp)
-c#endif
 
-        if(dabs(xi.distfocz).gt.1.e-10)then
-           dzii=dzi+ra.ri.zi/xi.distfocz
-        else
-           dzii=dzi
-        endif
+c------------ changed 16.8.1996 ----------
+	  if(xi.distfocz.gt.1.e-10)then
+	    dzii=dzi+ra.ri.zi/xi.distfocz
+	    else
+	    dzii=dzi
+	  endif
+c-----------------------------------------
 
 	ra.ri.dzi=dzii
 
-        
-c#ifdef SEVEN_ORDER
-        call subm27(m4.fdetrc,dzii,m4.fdtrrc)
-        call subm27(m4.fdetphrc,dzii,m4.fdtphrrc)
-        call subm27(m4.fdet1phrc,dzii,m4.fdt1phrrc)
-        call subm27(m4.fdet1phrca,dzii,m4.fdt1phrrca)
-        call subm27(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
-        call subm27(m4.yprc1,dzii,m4.yprrc1)
-        call subm27(m4.zprc1,dzii,m4.zprrc1)
-        call subm27(m4.dyprc,dzii,m4.dyprrc)
-        call subm27(m4.dzprc,dzii,m4.dzprrc)
-        call subm27(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
-        call subm27(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
-        call subm27(m4.xlen1c_r,dzii,m4.xlen1c_rr)
-        call subm27(m4.xlen2c_r,dzii,m4.xlen2c_rr)
-        call subm27(m4.wrc,dzii,m4.wrrc)
-        call subm27(m4.xlrc,dzii,m4.xlrrc)
-c#else
-c        call subm2(m4.fdetrc,dzii,m4.fdtrrc)
-c       call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
-c        call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
-c        call subm2(m4.fdet1phrca,dzii,m4.fdt1phrrca)
-c        call subm2(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
-c        call subm2(m4.yprc1,dzii,m4.yprrc1)
-c        call subm2(m4.zprc1,dzii,m4.zprrc1)
-c        call subm2(m4.dyprc,dzii,m4.dyprrc)
-c        call subm2(m4.dzprc,dzii,m4.dzprrc)
-c        call subm2(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
-c        call subm2(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
-c        call subm2(m4.xlen1c_r,dzii,m4.xlen1c_rr)
-c        call subm2(m4.xlen2c_r,dzii,m4.xlen2c_rr)
-c        call subm2(m4.wrc,dzii,m4.wrrc)
-c        call subm2(m4.xlrc,dzii,m4.xlrrc)
-c#endif
+        call subm2(m4.fdetrc,dzii,m4.fdtrrc)
+        call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
+        call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
+        call subm2(m4.yprc1,dzii,m4.yprrc1)
+        call subm2(m4.zprc1,dzii,m4.zprrc1)
+        call subm2(m4.dyprc,dzii,m4.dyprrc)
+        call subm2(m4.dzprc,dzii,m4.dzprrc)
+        call subm2(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
+        call subm2(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
+        call subm2(m4.xlen1c_r,dzii,m4.xlen1c_rr)
+        call subm2(m4.xlen2c_r,dzii,m4.xlen2c_rr)
 
-c         do ii=0,4
-c          write(6,*)'==',m4.fdtphrrc(ii)
-c         enddo
+        call subm2(m4.wrc,dzii,m4.wrrc)
+        call subm2(m4.xlrc,dzii,m4.xlrrc)
 
+c        call subm2(m4.fdetrc,dzi,m4.fdtrrc)
+c        call subm2(m4.fdetphrc,dzi,m4.fdtphrrc)
+c        call subm2(m4.fdet1phrc,dzi,m4.fdt1phrrc)
+c        call subm2(m4.yprc1,dzi,m4.yprrc1)
+c        call subm2(m4.zprc1,dzi,m4.zprrc1)
+c        call subm2(m4.dyprc,dzi,m4.dyprrc)
+c        call subm2(m4.dzprc,dzi,m4.dzprrc)
+c
+c        call subm2(m4.wrc,dzi,m4.wrrc)
+c        call subm2(m4.xlrc,dzi,m4.xlrrc)
+
+c------------ end of changes 16.8.1996
 
 	ianzy=xi.ianzy0
-	fmax=0.d0
+c UF 21.12.99	itery=xi.itery0
+	fmax=0.
 
 c*** Number of Iterations:                      itery
 c*** Integrationsgrenzen:                       ymin, ymax
@@ -407,59 +328,86 @@ c---------------- START ---------------------------------------
 c---------------- first grid is equdistant, the following are not
 
 	if(ianzy.eq.1)then
-	dyy=0.d0
+	dyy=0.
 	else
 	dyy=(xi.ymax-xi.ymin)/dflotj(ianzy-1)
 	endif
 
+c--------------------------------------------------------------
+	if(src.isrctype.lt.4)then
+c--------------------------------------------------------------
+c
+c	noch nicht getestet, vergl. mit isrctype.eq.4
+c
+c----------------------------------------------------------
+
+	do i=1,ianzy
+ 	  y(i)=xi.ymin+dflotj(i-1)*dyy
+ 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+     &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
+	  fyey(i)=cdabs(fwerty)
+	  dy(i)=dyy
+	  fmax=dmax1(fmax,cdabs(fwerty))
+	enddo
+
+	iyz=1
+	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
+     &		yintey,yintya,yintyp,
+     &          densiyre,densiyim,xintre,xintim,iyz)
+
+	endif
+
 c------------------------------------------------------------
 	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &     (src.isrctype.eq.6).or.(src.isrctype.eq.7))then
+     &                        (src.isrctype.eq.6))then
 c------------------------------------------------------------
-
-c-------------------------------------------------------------------------
-c----------- Diese Schleife parallelisieren
-c-------------------------------------------------------------------------
-c#ifdef DEBUG
-c        write(6,*)' start loop ueber y'
-c#endif
-
-        do i=1,ianzy
+	do i=1,ianzy
 	  ra.n4=i
  	  y(i)=xi.ymin+dflotj(i-1)*dyy
-	 
-c#ifdef DEBUG
-c        write(6,*)' call fywert, i=', i
-c#endif
- 
-c uf	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-c     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
- 	  call fywert(m4,g,src,xi,apr,cs,ra,ifl,
-     &		y(i),fyey(i),sr,blp)
+	  
+c---------------- 22.3.2006 ------------------
+c 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+c     &		y(i),fwerty,fwertz,fwya,fwyp,fwza,fwzp)
+ 	  call fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr)
+c---------------- 22.3.2006
 
 	 densiyre(i)=sr.densyre
 	 densiyim(i)=sr.densyim
 	 densizre(i)=sr.denszre
 	 densizim(i)=sr.denszim
 
-c UF	  if(ifl.ibright.eq.1)then
-c UF	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
-c UF	  endif
+	  if(ifl.ibright.eq.1)then
+	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
+	  endif
+	  
+c------------------ 22.3.2006
+c	  fyey(i)=fwerty
+c	  fyez(i)=fwertz
+c	  if(ifl.ispline.lt.0)then
+c	   fya(i)=fwya
+c	   fza(i)=fwza
+c	   fyp(i)=fwyp
+c	   fzp(i)=fwzp
+c	  endif
+c
+c	  diese Zeile braucht richtig lange, darum weg damit
+c	  fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
+c
+c---------------22.3.2006
 
 	dy(i)=dyy
 	enddo
 
 	iyz=1
-c UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
+	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
      &		yintey,yintya,yintyp,densiyre,densiyim,
      &          xintyzre,xintyzim,iyz)
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
 	iyz=1
-c UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
-        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
+	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
      &		yintez,yintza,yintzp,densizre,densizim,
      &          xintyzre,xintyzim,iyz)
         sr.xintzre=xintyzre
@@ -473,24 +421,17 @@ c---------------------------------------------------------
 
 	return
 	end
-c--------------------- end yyint -------------------------
-
 
 c*************************************************************
-c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
-c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
- 	subroutine fywert(m4,g,src,xi,apr,cs,ra,ifl,
-     &		          dyi,fwerty,sr,blp)
+ 	subroutine fywert(m4,g,a,src,xi,xir,apr,cs,ra,ifl,st,
+     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr)
 c*************************************************************
 	implicit real*8(a-h,o-z)
-c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
-        complex*16 fwerty,ff,ff1,eycpl,ezcpl
-        integer blp
+	complex*16 densy,densz,fwert,fwerty,fwertz
 
-#include '../phase/phase_struct.F'
+	dimension a(0:5,0:5)
 
-
+	include 'phase_struct.for'
         record /constants/ cs
         record /geometryst/ g
         record /rayst/ ra
@@ -498,367 +439,467 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
         record /control_flags/ ifl
         record /sources/ src
 	record /integration/ xi
-c uf	record /integration_results/ xir
+	record /integration_results/ xir
 	record /apertures /apr
-c uf	record /statistics/ st
-c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
-c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
-c in der phaselib benutze ich parder4 
-c uf	record /mirrortype/ am
+	record /statistics/ st
+        record /parder/ pd
 	record /map4/ m4
 
-        dimension bb(0:165)
+      dimension p1(0:4,0:4,0:4,0:4)
+      dimension p2(0:4,0:4,0:4,0:4)
+      dimension p12(0:4,0:4,0:4,0:4)
+      dimension p3(0:4,0:4,0:4,0:4)
+      dimension p4(0:4,0:4,0:4,0:4)
+      dimension p34(0:4,0:4,0:4,0:4)
+      dimension p1234(0:4,0:4,0:4,0:4)
+      dimension p11(0:4,0:4,0:4,0:4)
+      dimension p22(0:4,0:4,0:4,0:4)
+      dimension p1122(0:4,0:4,0:4,0:4)
+      dimension p1a(0:4,0:4,0:4,0:4)
+      dimension p2a(0:4,0:4,0:4,0:4)
+      dimension p3a(0:4,0:4,0:4,0:4)
+      dimension p4a(0:4,0:4,0:4,0:4)
+      dimension p11a(0:4,0:4,0:4,0:4)
+      dimension p22a(0:4,0:4,0:4,0:4)
+      dimension p1122a(0:4,0:4,0:4,0:4)
 
-c      dimension p1(0:7,0:7,0:7,0:7)
-c      dimension p2(0:7,0:7,0:7,0:7)
-c      dimension p12(0:7,0:7,0:7,0:7)
-c      dimension p3(0:7,0:7,0:7,0:7)
-c      dimension p4(0:7,0:7,0:7,0:7)
-c      dimension p34(0:7,0:7,0:7,0:7)
-c      dimension p1234(0:7,0:7,0:7,0:7)
-c      dimension p11(0:7,0:7,0:7,0:7)
-c      dimension p22(0:7,0:7,0:7,0:7)
-c      dimension p1122(0:7,0:7,0:7,0:7)
-c      dimension p1a(0:7,0:7,0:7,0:7)
-c      dimension p2a(0:7,0:7,0:7,0:7)
-c      dimension p3a(0:7,0:7,0:7,0:7)
-c      dimension p4a(0:7,0:7,0:7,0:7)
-c      dimension p11a(0:7,0:7,0:7,0:7)
-c      dimension p22a(0:7,0:7,0:7,0:7)
-c      dimension p1122a(0:7,0:7,0:7,0:7)
-#ifdef DEBUG1
-        write(*,*),'fywert called'
-        call debug_beamline_type_f(blp)
-#endif
-
-        if(dabs(xi.distfocy).gt.1.e-10)then
-           dyii=dyi+ra.ri.yi/xi.distfocy
-        else
-           dyii=dyi
-        endif
+	  if(xi.distfocy.gt.1.e-10)then
+	    dyii=dyi+ra.ri.yi/xi.distfocy
+	    else
+	    dyii=dyi
+	  endif
 
 	ra.ri.dyi=dyii	
 
-	ra.rf.yp=0.d0
-	ra.rf.zp=0.d0
-	ra.rf.dyp=0.d0
-	ra.rf.dzp=0.d0
-        fd=0.d0
-	fdph=0.d0
-	fd1ph=0.d0
-        fd1pha=0.d0
-        fd1phb=0.d0
-	ra.ap.yp_ap=0.d0
-	ra.ap.zp_ap=0.d0
-	ra.xlength1=0.d0
-	ra.xlength2=0.d0
+	ra.rf.yp=0.
+	ra.rf.zp=0.
+	ra.rf.dyp=0.
+	ra.rf.dzp=0.
+        fd=0.
+	fdph=0.
+	fd1ph=0.
+	ra.ap.yp_ap=0.
+	ra.ap.zp_ap=0.
+	ra.xlength1=0.
+	ra.xlength2=0.
 
-	ra.oe.w=0.d0
-	ra.oe.xl=0.d0
+	ra.oe.w=0.
+	ra.oe.xl=0.
 
-c-------------------------------------------------------------------------
-c JB: diese Schleife parallelisieren
-c SG: besser nicht, diese Schleife benoetigt kaum Rechenzeit
-c     und Thread-Scheduling kostet viel mehr Zeit als potentieller Gewinn
-c-------------------------------------------------------------------------
-        
 	var0=1.
         do ii=0,ifl.iord
           ra.rf.yp=ra.rf.yp+m4.yprrc1(ii)*var0
           ra.rf.zp=ra.rf.zp+m4.zprrc1(ii)*var0
           ra.rf.dyp=ra.rf.dyp+m4.dyprrc(ii)*var0
           ra.rf.dzp=ra.rf.dzp+m4.dzprrc(ii)*var0
+c          ra.ap.yp_ap=ra.ap.yp_ap+m4.ypc_ap_rr(ii)*var0
+c          ra.ap.zp_ap=ra.ap.zp_ap+m4.ypc_ap_rr(ii)*var0
 	  ra.xlength1=ra.xlength1+m4.xlen1c_rr(ii)*var0
 	  ra.xlength2=ra.xlength2+m4.xlen2c_rr(ii)*var0
 
           fd=fd+m4.fdtrrc(ii)*var0
           fdph=fdph+m4.fdtphrrc(ii)*var0
-c UF 28.6.13 uninitialized memory determins fd1ph- probably m4.fdtphrrc
-          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0    
-          fd1pha=fd1pha+m4.fdt1phrrca(ii)*var0
-          fd1phb=fd1phb+m4.fdt1phrrcb(ii)*var0
-          ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
-          ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
+
+         ra.oe.w=ra.oe.w+m4.wrrc(ii)*var0
+         ra.oe.xl=ra.oe.xl+m4.xlrrc(ii)*var0
+
           var0=var0*dyii
         enddo
 
-        xw3sign=1.d0
-        xw2sign=1.d0
-        xl2sign=1.d0
-        
-	fd=dabs(fd)
-        fdph=dabs(fdph)
-c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on uninitialised value(s)
-        if(fd1ph.lt.0.d0)xl2sign=-1.d0
-        fd1ph=dabs(fd1ph)
-        if(fd1pha.lt.0.d0)xw3sign=-1.d0  
-        fd1pha=dabs(fd1pha)
-        if(fd1phb.lt.0.d0)xw2sign=-1.d0
-        fd1phb=dabs(fd1phb)
+c	write(6,*)' 1 ',fd1ph
 
-        call psdi(g,src,apr,cs,ifl,ra,sr,blp)
+	goto 1111
+
+	fd1ph=0.
+	var0=1.
+        do ii=0,ifl.iord
+          fd1ph=fd1ph+m4.fdt1phrrc(ii)*var0
+          var0=var0*dyii
+	enddo
+
+c	hier kommt das gleiche raus wie bei 1 wie es sein soll
+c	write(6,*)' 2 ',fd1ph
+
+c---------- new 3.6.1997
+c---------- new 1.3.2007
+c       Endkoordinaten geaendert auf Anfangskoordinaten
+
+	fd1ph=0.d0
+
+	var0=1.d0
+        do ii=0,ifl.iordsc
+	  var1=var0
+          do jj=0,ifl.iordsc-ii
+	    var2=var1
+             do kk=0,ifl.iordsc-ii-jj
+	        var3=var2
+		do ll=0,ifl.iordsc-ii-jj-kk
+         	  fd1ph=fd1ph+m4.fdet1phc(ii,jj,kk,ll)*var3
+c		  write(6,*)ii,jj,kk,ll,m4.fdet1phc(ii,jj,kk,ll)
+c		  write(6,*)fd1ph
+		  var3=var3*ra.ri.dzi
+	      	enddo
+	    var2=var2*ra.ri.dyi
+	    enddo
+	  var1=var1*ra.ri.zi
+	  enddo
+	var0=var0*ra.ri.yi
+	enddo
+
+c	    hier kommt das gleiche raus 
+c	    write(6,*)' 3 ',fd1ph
+
+1111	continue
+c---------- end new 3.6.1997
+
+c	    beide Variablen stehen auf null
+c	    write(6,*)'  ifl.ipath ',ifl.ipath
+c	    write(6,*)'  ifl.matrel ',ifl.matrel
+
+c----------new 28.4.
+	if(ifl.ipath.eq.0)fd1ph=1.d0/dsqrt(dabs(fd1ph))
+	if((ifl.ipath.eq.1).or.(ifl.ipath.eq.2))then
+	  fd1ph=1.d0
+	  fd=1.d0
+	  fdph=1.d0
+	endif
+c--------- end new
+
+c----------------------------------------------
+	if(ifl.matrel.eq.1)then
+c----------------------------------------------
+c--------- fd und fdph genauer: ---------------
+
+	delta=1.e-20
+
+	yi=ra.ri.yi
+	zi=ra.ri.zi
+	dyi=ra.ri.dyi
+	dzi=ra.ri.dzi
+
+	fd1=0.
+	fd2=0.
+
+        call subl(m4.ypc1,m4.zpc1,m4.dypc,m4.dzpc,m4.xmec)
+			! Berechnung der Matrixelemente xmec
+			! Indizes 1 und 2: Reihe, Spalte
+			! Indizes 3 bis 6: Koeffizienten von
+			! yp, zp, dyp, dzp
+
+c----- check:
+
+       do i=1,4
+
+        do j=1,4
+        if(j.ne.i)then
+
+         do k=1,4
+         if((k.ne.i).and.(k.ne.j))then
+          do l=1,4
+          if((l.ne.i).and.(l.ne.j).and.(l.ne.k))then
+
+         call sig(i,j,k,l,isig)
+
+         do n1=0,ifl.iord
+         do n2=0,ifl.iord
+         do n3=0,ifl.iord
+         do n4=0,ifl.iord
+           p1(n1,n2,n3,n4)=m4.xmec(1,i,n1,n2,n3,n4)
+           p2(n1,n2,n3,n4)=m4.xmec(2,j,n1,n2,n3,n4)
+           p3(n1,n2,n3,n4)=m4.xmec(3,k,n1,n2,n3,n4)
+           p4(n1,n2,n3,n4)=m4.xmec(4,l,n1,n2,n3,n4)
+         enddo
+         enddo
+         enddo
+         enddo
+
+       call p_m_4(p1,p2,p12)
+       call p_m_4(p3,p4,p34)
+       call p_m_4(p12,p34,p1234)
+
+	pp1234=0.d0
+	do iii=0,ifl.iord
+	 do jjj=0,ifl.iord-iii
+	  do kkk=0,ifl.iord-iii-jjj
+	   do lll=0,ifl.iord-iii-jjj-kkk
+	   pp1234=pp1234+p1234(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   enddo
+	  enddo
+         enddo
+        enddo
+
+       	fd1=fd1+dflotj(isig)*pp1234
+
+         endif
+        enddo
+        endif
+       enddo
+       endif
+      enddo
+      enddo
+
+c----- jetzt genauer:
+
+       do i=1,4
+
+        do j=1,4
+        if(j.ne.i)then
+
+         do k=1,4
+         if((k.ne.i).and.(k.ne.j))then
+          do l=1,4
+          if((l.ne.i).and.(l.ne.j).and.(l.ne.k))then
+
+         call sig(i,j,k,l,isig)
+
+         do n1=0,ifl.iord
+         do n2=0,ifl.iord
+         do n3=0,ifl.iord
+         do n4=0,ifl.iord
+           p1(n1,n2,n3,n4)=m4.xmec(1,i,n1,n2,n3,n4)
+           p2(n1,n2,n3,n4)=m4.xmec(2,j,n1,n2,n3,n4)
+           p3(n1,n2,n3,n4)=m4.xmec(3,k,n1,n2,n3,n4)
+           p4(n1,n2,n3,n4)=m4.xmec(4,l,n1,n2,n3,n4)
+         enddo
+         enddo
+         enddo
+         enddo
+
+	pp1=0.
+	pp2=0.
+	pp3=0.
+	pp4=0.
+	do iii=0,ifl.iord
+	 do jjj=0,ifl.iord-iii
+	  do kkk=0,ifl.iord-iii-jjj
+	   do lll=0,ifl.iord-iii-jjj-kkk
+	   pp1=pp1+p1(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp2=pp2+p2(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp3=pp3+p3(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp4=pp4+p4(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+
+	   enddo
+	  enddo
+         enddo
+        enddo
+
+       	fd2=fd2+dflotj(isig)*pp1*pp2*pp3*pp4
+
+c----------------------------------------------
+
+         endif
+        enddo
+        endif
+       enddo
+       endif
+      enddo
+      enddo
+
+	ra.fd1(ra.n4)=fd1
+	ra.fd2(ra.n4)=fd2
+
+c------------------------------------------
+c------- check
+         do n1=0,ifl.iord
+         do n2=0,ifl.iord
+         do n3=0,ifl.iord
+         do n4=0,ifl.iord
+           p1(n1,n2,n3,n4)=m4.xmec(1,3,n1,n2,n3,n4)
+           p2(n1,n2,n3,n4)=m4.xmec(2,4,n1,n2,n3,n4)
+           p3(n1,n2,n3,n4)=m4.xmec(1,4,n1,n2,n3,n4)
+           p4(n1,n2,n3,n4)=m4.xmec(2,3,n1,n2,n3,n4)
+         enddo
+         enddo
+         enddo
+         enddo
+
+        call p_m_4(p1,p2,p12)
+        call p_m_4(p3,p4,p34)
+
+	pp12=0.d0
+	pp34=0.d0
+
+	do iii=0,ifl.iord
+	 do jjj=0,ifl.iord-iii
+	  do kkk=0,ifl.iord-iii-jjj
+	   do lll=0,ifl.iord-iii-jjj-kkk
+	   pp12=pp12+p12(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp34=pp34+p34(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   enddo
+	  enddo
+         enddo
+        enddo
+
+	fdph1=pp12-pp34
+
+c------- jetzt genauer:
+
+	pp1=0.
+	pp2=0.
+	pp3=0.
+	pp4=0.
+	do iii=0,ifl.iord
+	 do jjj=0,ifl.iord-iii
+	  do kkk=0,ifl.iord-iii-jjj
+	   do lll=0,ifl.iord-iii-jjj-kkk
+	   pp1=pp1+p1(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp2=pp2+p2(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp3=pp3+p3(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   pp4=pp4+p4(iii,jjj,kkk,lll)*
+     &             (yi+delta)**iii*(zi+delta)**jjj*
+     &             (dyi+delta)**kkk*(dzi+delta)**lll
+	   enddo
+	  enddo
+         enddo
+        enddo
+
+       	fdph2=pp1*pp2-pp3*pp4
+
+	ra.fdph1(ra.n4)=fdph1
+	ra.fdph2(ra.n4)=fdph2
+
+c------------------------------------------
+	endif                  ! matrel.eq.1
+c------------------------------------------
+
+c--------- brauchen wir nicht 22.3.2006
+c	ra.fd(ra.n4)=fd
+c	ra.fdph(ra.n4)=fdph
+c	if((ra.n3.le.201).and.(ra.n4.le.201))then
+c	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
+c	endif
+c--------------------------------------------
 
 c----------------------------------------
 
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &     (src.isrctype.eq.7))then
+        call psdi(g,src,apr,cs,ifl,ra,sr)
 
-c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
-c	 wird nicht in phase_integration gesetzt, da hier nicht 
-c	 unterschieden wird, ob ein OE oder die Summe von mehreren 
-c	 OEs berechnet wird. Reihenentwicklungen fuer die Vorfaktoren 
-c	 fuer ein OE muessen sinnvollerweise in der Routine fdet_8 
-c	 berechnet werden und in bline.c zusammengebaut werden.
-c        Zurzeit ist es nur für ein OE richtig implementiert in fdet_8.
-c	 Es ist darauf zu achten, dass
-c	 - alpha, beta functions of (z,y,dz,dy)
-c	 - r, rp functions of (z,y,dz,dy)
-c	 von den Startkoordinaten abhaengen
-c	 Das wird spaeter mit der Implementierung der hoeheren
-c	 Ordnungen der asymptotischen Entwicklung noch mal nachgeholt
-c	 (fuer ein optisches Element)
-c---------------------------------------------------------------------
-c	 Berechnung der Laengen r und rp
-c	 if only one OE
+c----------------------------------------
 
-c	 Nutzung von  xlen1c, xlen2c
-	 
-c	 call subdfpl1(g,am.a,ra,pd)       ! mirror
-c        call subdfpl1a(g,am.a,ra,pd)      ! grating
-c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
+	if(src.isrctype.lt.4)then
+	fwerty=cdabs(sr.densy*abs(fd))
+	endif
 
-c        Varianten von inorm2 = 4
-c        inorm2 = 40: alle Terme quadratisch berechnet (convlim=1.0d-50)
-c        inorm2 = 41: Berücksichtigung nur der Terme, die kubischen Beitrag haben
-c        inorm2 = 42: Berücksichtigung nur der quadratischen Terme 
-c        inorm2 = 43: Isabelles Formeln, komplett
-c        inorm2 = 44: Isabelles Formeln, aber beschränkt auf quadratische Terme
-	 
-c---------------------------------------------------------------------
+	if((src.isrctype.eq.4).or.(src.isrctype.eq.5))then
 
-        if(ifl.inorm2.eq.0)ff=fdph*fd1ph
-        if(ifl.inorm2.eq.1)ff=fdph*fd1ph
-        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/g.xlam
-        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/g.xlam
-        if(ifl.inorm2.eq.21)then
-          ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb)))
-        endif
+	if(ifl.inorm1.eq.1)fdph=1.d0
 
-        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
+	if(ifl.inorm1.eq.0)then
+	  fdph=dabs(fdph)
+c------------ 13.3.2007
+	  fd1ph=1.d0/sqrt(fdph)
+c------------------------------
+	endif
 
-c------------------ nur quadratische Terme 
-        if(ifl.inorm2.eq.31)then
-          arg=fd1pha*fd1phb-fd1ph*fd1ph
-          ff=fdph/(g.xlam*dsqrt(dabs(arg)))
-          ff1=1.d0
-          if(fd1pha+fd1phb.lt.0.d0)then
-           if(arg.ge.0.d0)then
-            ff1=-1.d0
-            else
-            ff1=cs.sqrtm1
-           endif
-          endif
-          ff=ff*ff1
-        endif
-c------------------ Ende quadratische Terme
+        if(ifl.inorm2.eq.1)then
+	  fd1ph=1.d0
+	  if((ra.n3.le.201).and.(ra.n4.le.201))then
+	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
+	  endif
+	endif
 
-        if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
-     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
-     &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44))then
+	if((ifl.inorm2.eq.2).or.(ifl.inorm2.eq.3))then
+	  if(ifl.igrating.eq.0)call subdfpl1(g,a,ra,pd)	      ! mirror
+	  if(ifl.igrating.eq.1)call subdfpl1a(g,a,ra,pd)      ! grating
+	  call subdfpl2(g,a,ra,pd)
+	endif
 
-c       fd1pha is 3rd order, 
-c       fd1phb is 2nd order term in w     
-c       fd1ph  is 2nd order term in l
+        if(ifl.inorm2.eq.2)then
+	  fd1ph=dsqrt(dabs(pd.pl1w2+pd.pl2w2))*
+     &        dsqrt(dabs(pd.pl1l2+pd.pl2l2))
+c-------- 10.3.2007
+c-------- das ist noch nicht ganz richtig, da das
+c         cosb mit den Startkoordinaten variiert
+          fd1ph=sqrt(g.cosa*g.cosb)/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
+	  if((ra.n3.le.201).and.(ra.n4.le.201))then
+	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
+	  endif
+	endif
 
-        if(dabs(fd1phb).lt.1.d-50)then
-          write(6,*)' Attention: quadratic term < 1d-50: ',fd1phb 
-          write(6,*)'terminating program'
-          stop
-        endif
+	if(ifl.inorm2.eq.3)then
+	  fd1ph=dsqrt(dabs(  
+     &      (pd.pl1w2+pd.pl2w2) * (pd.pl1l2+pd.pl2l2) -
+     &      (pd.pl1w1l1+pd.pl2w1l1) * (pd.pl1w1l1+pd.pl2w1l1)
+     &               )    )
+c-------- 10.3.2007
+c-------- das ist noch nicht ganz richtig, da das
+c         cosb mit den Startkoordinaten variiert
+     	  fd1ph=sqrt(g.cosa*g.cosb)/(fd1ph*dsqrt(pd.arg1)*dsqrt(pd.arg2))
+	  if((ra.n3.le.201).and.(ra.n4.le.201))then
+	  ra.fd1ph(ra.n3,ra.n4)=fd1ph
+	  endif
+	endif
 
-c=================== A C H T U N G =================================
-c       Spiegellänge in mm schätzen
-c       xi.ymin,xi.ymax,xi.zmin,xi.zmax at this point in rad
-c  folgenden Ausdruck nur einmal berechnen
-        divmax=dmax1(dabs(xi.ymin),dabs(xi.ymax),
-     &               dabs(xi.zmin),dabs(xi.zmax))
-        xlenmir=2.d0*g.rp*(dtan(divmax)/g.cosb)
-c        write(6,*)' xlenmir === ',xlenmir
- 
-        small_fd1ph=1.d-50
+c	if(ifl.ispline.ge.0)then
+c		fwerty=fwerty*fd1ph
+c		fwertz=fwertz*fd1ph
+c	endif
 
-        if((ifl.inorm2.eq.4).or.
-     &     (ifl.inorm2.eq.41))convlim=19.9d0
-        if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
-        if((ifl.inorm2.eq.43).or.
-     &     (ifl.inorm2.eq.44))convlim=5.1d0
+c	if(ifl.ispline.lt.0)then
+c		fwya=fwya*fd1ph
+c		fwza=fwza*fd1ph
+c	endif
 
-        if(fd1pha.lt.1.d0-50)then
-          w0a=1.0d50                                   ! use only 2nd order
-          else
-          w0a=ra.oe.w-(2.d0*xw2sign*fd1phb)/(3.d0*xw3sign*fd1pha)
-        endif
+c--------------- brauchen wir nicht 22.3.2006
+c	st.fd1phmax(ra.n1,ra.n2)=
+c     &        dmax1(fd1ph,st.fd1phmax(ra.n1,ra.n2))
+c-------------------------------------------------
 
-        if(dabs(w0a).gt.xlenmir/2.d0)convlim=1.0d-50  ! use only 2nd order
+c--------- den folgenden Block hierher verschoben, damit 
+c          die Variable inorm2 auch wirken kann
+c          24.1.2007
 
-        fd1ph_sav=fd1ph
-        fd1phb_sav=fd1phb
-
-        fact=(dsqrt(dabs(g.cosa))*
-     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
-        fact1=fact*2.0d0   
-        fact2=fact1*((2.d0*cs.pi)/g.xlam)
-c hier muss eigentlich ein Faktor 4 stehen?
-        fd1ph=(fd1ph/fact1)*2.d0*g.xlam**3
-        tl=((ra.xlength1*ra.xlength2)/(g.r*g.rp))**2
-c        fd1ph=fd1ph*tl ! thick lens correction
-        fd1pha=fd1pha*fact2
-        fd1phb=fd1phb*fact2
-  
-        abar=xw3sign/fd1pha**(1.d0/3.d0)
-        bbar=xw2sign*fd1phb*abar**2
-
-c----------------------------------------------------------------------------      
-        if((ifl.inorm2.eq.4).or.
-     &     (ifl.inorm2.ne.40).or.
-     &     (ifl.inorm2.ne.41).or.
-     &     (ifl.inorm2.ne.42))then
-c-----------------------------------    
- 
-         if(dabs(bbar).gt.convlim)then
-
-c------------- only quadratic terms
-          fd1ph=fd1ph_sav
-          fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &     (fdph/(g.xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
-         if(ifl.inorm2.eq.41)ff=0.d0
-         if(fd1ph.lt.small_fd1ph)ff=0.d0
-
-         else
-
-        if(bbar.lt.0.d0)then
-          bbar1=-bbar
-          else
-          bbar1=bbar
-        endif
-        call spa_3rd_order(bbar1,ssin,scos,blp)
-        if(bbar.lt.0.d0)ssin=-ssin
-        sumcos=scos*abar
-        sumsin=ssin*abar
- 
-        ff=(fdph/dsqrt(fd1ph))*
-     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
-        ff=ff*(sumcos+sumsin*cs.sqrtm1)
-        if(ifl.inorm2.eq.42)ff=0.d0
-        if(fd1ph.lt.small_fd1ph)ff=0.d0
-c--------------------------------
-        endif ! inorm2.eq. 4, 40, 41, 42
-c---------------------------------------------------------------------------
-        endif
-
-c---------------------------------------------------------------------------
-         if((ifl.inorm2.eq.43).or.
-     &      (ifl.inorm2.eq.44))then
-c--------------------------------
-c       Konvergenzkriterien in diesem Modus, maximale Werte sind:
-c       nk=165, convlim=5.1d0   
-c------------- get nk
-        if(dabs(bbar).lt.2.d0)nk=15
-        if((dabs(bbar).ge.2.d0).and.(dabs(bbar).lt.3.d0))nk=60
-        if((dabs(bbar).ge.3.d0).and.(dabs(bbar).lt.4.d0))nk=100
-        if(dabs(bbar).ge.4.d0)nk=165
-        if(dabs(bbar).gt.convlim)then
-
-c------------- only quadratic terms
-          fd1ph=fd1ph_sav
-          fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
-         if(ifl.inorm2.eq.44)ff=0.d0
-         if(fd1ph.lt.small_fd1ph)ff=0.d0
-
-         else
-c------------- include 3rd order Term in w
-        bb(0)=1.d0
-        do n=1,nk
-         bb(n)=bb(n-1)*bbar
-        enddo
-
-        sumcos=0.d0
-        sumsin=0.d0     
-
-        nmaxc=2*(nk/2)
-        nmaxs=2*((nk+1)/2)-1
-
-        do n=0,nmaxc,2
-          sumcos=sumcos+bb(n)*cs.fc(n)     
-        enddo
-        do n=1,nmaxs,2
-          sumsin=sumsin+bb(n)*cs.fs(n)     
-        enddo
-
-        sumcos=sumcos*abar
-        sumsin=sumsin*abar
-
-c-- test
-c  es kommt das gleiche raus!
-c        if(bbar.lt.0.d0)then
-c          bbar1=-bbar
-c          else
-c          bbar1=bbar
-c        endif
-c        call spa_3rd_order(bbar1,ssin,scos,blp)
-c        if(bbar.lt.0.d0)ssin=-ssin
-c        scos=scos*abar
-c        ssin=ssin*abar        
-c        write(6,*)' cos ',sumcos,scos
-c        write(6,*)' sin ',sumsin,ssin
-c--- test 
-c        sumcos=scos*abar
-c        sumsin=ssin*abar
-
-        ff=(fdph/dsqrt(fd1ph))*
-     &      exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
-        ff=ff*(sumcos+sumsin*cs.sqrtm1)
-        if(ifl.inorm2.eq.44)ff=0.d0
-        if(fd1ph.lt.small_fd1ph)ff=0.d0
-c---------------------------------------------------------------------------
-        endif   ! inorm2.eq.43,44
-c---------------------------------------------------------------------------
-        endif
-
-c---------------------------------------
-        endif  ! inorm2.eq.4 or 44
-c--------------------------------------------------------------------------
+c	write(6,*)ra.oe.w,ra.oe.xl
+c	write(6,*)fdph,fd1ph,sqrt(pd.arg1),sqrt(pd.arg2)
+c	write(6,*)fdph,fd1ph
+c        call subdfpl1(g,a,ra,pd)      ! mirror
+c        call subdfpl1a(g,a,ra,pd)      ! grating
+c	write(6,*)' laengen ',sqrt(pd.arg1),sqrt(pd.arg2)
+c	write(6,*)' w, l ',ra.oe.w,ra.oe.xl
+c	write(6,*)' '
 
 	if(ifl.ispline.ge.0)then
-                sr.densy=sr.densy*ff
-                sr.densz=sr.densz*ff
-		sr.densyre=dreal(sr.densy)
-                sr.densyim=dimag(sr.densy)
-                sr.denszre=dreal(sr.densz)
-                sr.denszim=dimag(sr.densz)
+                ff=fdph*fd1ph
+c		fwerty=sr.densy*ff
+c		fwertz=sr.densz*ff
+		sr.densyre=sr.densyre*ff
+		sr.densyim=sr.densyim*ff
+		sr.denszre=sr.denszre*ff
+		sr.denszim=sr.denszim*ff
 	endif
 
 	if(ifl.ispline.lt.0)then
-                eycpl=sr.eya*cdexp(cs.sqrtm1*sr.eyp)
-                eycpl=eycpl*ff
-                ezcpl=sr.eza*cdexp(cs.sqrtm1*sr.ezp)
-                ezcpl=ezcpl*ff
-               write(6,*)' hier gibt es noch was zu tun '
-c               conversion of complex data in amplitude and phase
-c		fwya=cdabs(eycpl)
-c		fwza=cdabs(ezcpl)
-c		fwyp=sr.eyp
-c		fwzp=sr.ezp
+		ff=fdph*fd1ph
+		fwya=sr.eya*ff
+		fwza=sr.eza*ff
+		fwyp=sr.eyp
+		fwzp=sr.ezp
 	endif
 
 c------------------------------------------------
 
-	endif   ! isrctype.eq.4 or 5 or 7
+	endif
 
 c--------------- ist zu checken
 	if(src.isrctype.eq.6)then
@@ -867,8 +908,33 @@ c--------------- ist zu checken
 
 	return
 	end
-c---------------------- end fywert -----------------------
 
+
+c**************************************************************
+	subroutine int_2d(f,xint,dy,dz,ny,nz)
+c**************************************************************
+
+	implicit real*8(a-h,o-z)
+
+        dimension f(4096,4096),fz(4096)
+
+        do i=1,ny
+	 fz(i)=0.5*(f(i,1)+f(i,nz))
+         do j=2,nz-1
+          fz(i)=fz(i)+f(i,j)
+         enddo
+	 fz(i)=fz(i)*dz
+	enddo
+
+	xint=0.5*(fz(1)+fz(ny))
+	do i=2,ny-1
+         xint=xint+fz(i)
+	enddo
+
+	xint=xint*dy
+
+	return
+	end
 
 c***********************************************************
 c UF 12.1.2000
@@ -970,14 +1036,14 @@ c-----------------
 
 	implicit real*8(a-h,o-z)
 
-#include '../phase/phase_struct.F'
-
+	include 'phase_struct.for'
         record /rayst/ ra
         record /constants/ cs
-c UF	record /statistics/ st
+	record /statistics/ st
 	record /integration_results/ xir
 	record /integration/ xi
-c UF        record /control_flags/ ifl
+        record /control_flags/ ifl
+c UF 12.1.2000
         record /psimagest/ sp
 
 	dimension dx(4096),x(4096),
@@ -987,16 +1053,23 @@ c UF        record /control_flags/ ifl
 
 
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
-c UF	dimension coef(1024),coef1(1024),xx(1024)
-        dimension coef(1024),xx(1024)
+	dimension coef(1024),coef1(1024),xx(100)
 
-	SMALL_PHA1=SMALL_PHA*1.0d5
+	small_loc=1.d-15
+	small_loc1=1.d-10
 	iii=0
 
 	x(1)=0.d0
 	do i=2,ianz
 	x(i)=x(i-1)+dx(i-1)
 	enddo
+
+c111	format(3(3x,d12.5))
+c	open(unit=10,name='t0_phacor.dat',type='new')
+c	do i=1,ianz
+c	write(10,*)x(i),amp(i),pha(i)
+c	enddo
+c	close(10)
 
 	if(xi.ianz0_cal.eq.0)then
 	  ianz0=xi.ianz0_fixed
@@ -1037,12 +1110,7 @@ c-------- Scan from left to right
 	s=x3*x3-x1*x1
 
 	b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
-
 	a=(y3-y1-b*(x3-x1)) / s
-
-c UF 27.5.11 hier steigt es aus
-c The shapes of the array expressions do not conform
-
 	c=y1-a*x1*x1-b*x1
 
 	pha_guess=a*x(i+3)*x(i+3)+b*x(i+3)+c
@@ -1301,7 +1369,7 @@ c----------- now, correct phase
 30	continue
 	pha_new(i+2)=pha_new(i+2)+2.d0*cs.pi
 	dd1=dabs(pha_new(i+2)-pha_guess) 
-	if(dabs(dabs(dd1)-dabs(dd)).gt.SMALL_PHA1)then
+	if(dabs(dabs(dd1)-dabs(dd)).gt.small_loc1)then
 	if(dabs(dd1).lt.dabs(dd))then
 		dd=dd1
 		goto 30
@@ -1346,7 +1414,7 @@ c----------- now,correct phase
 31	continue
 	pha_new(i-2)=pha_new(i-2)+2.d0*cs.pi
 	dd1=dabs(pha_new(i-2)-pha_guess) 
-	if(dabs(dabs(dd1)-dabs(dd)).gt.SMALL_PHA1)then
+	if(dabs(dabs(dd1)-dabs(dd)).gt.small_loc1)then
 	if(dabs(dd1).lt.dabs(dd))then
 		dd=dd1
 		goto 31
@@ -1369,7 +1437,6 @@ c	close(10)
 
 	return
 	end
-c--------------------------- end phacor ---------------
 
 c******************************************************************
 	subroutine fitpar(ianz,x,y,iiord,c)
@@ -1385,7 +1452,7 @@ c------------------------------------------------------
 
 	parameter(number=210)
 
-c UF	dimension work(number)
+	dimension work(number)
 	dimension x(1024),y(1024)
 	dimension xx(number,1024)
 	dimension b(number),a(number,number)
@@ -1439,12 +1506,9 @@ c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b)
 
 	return
 	end
-c--------------------end fitpar ----------------
 
 c******************************************************************
-c UF	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
-c take out unused fyz
-       subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyza,fyzp,xint,
+	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
      &                      xinta,xintp,densiyzre,densiyzim,
      &                      xintre,xintim,iyz)
 c******************************************************************
@@ -1490,23 +1554,21 @@ c-----------------------------------------------------------------------
 
 	implicit real*8(a-h,o-z)
 
-	dimension densiyzre(MAX_INTEGRATION_SIZE),densiyzim(MAX_INTEGRATION_SIZE)
+	dimension densiyzre(1000),densiyzim(1000)
 
-#include '../phase/phase_struct.F'
-
+        include 'phase_struct.for'
         record /constants/ cs
-c UF	record /statistics/ st
+	record /statistics/ st
         record /integration_results/ xir
         record /integration/ xi
         record /control_flags/ ifl
 
-c UF	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
-        complex*16 xint,xxx(4096)
+	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
 	dimension xxxre(4096),xxxim(4096)
 
 	real*4 fyza_loc(4096),fyzp_loc(4096)
 	real*4 x_loc(4096),dyz_loc(4096)
-C UF	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
+	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
 
 c	dimension fyza_loc(4096),fyzp_loc(4096)
 c	dimension x_loc(4096),dyz_loc(4096)
@@ -1528,6 +1590,7 @@ c---------------------------------------------------------
 c---------------------------------------------------------
 
 	if(ianz.ge.2)then
+	small_loc=1.0d-15
 	xint=0.d0
 
 	x(1)=0.d0
@@ -1587,7 +1650,7 @@ c------------ order of expansion of amplitude ---------
 	if(iordap_loc.eq.0)then
 		a=0.d0
 		b=0.d0
-		c=0.5d0*(y1+y2)
+		c=0.5*(y1+y2)
 	endif
 
 	if(iordap_loc.eq.1)then
@@ -1614,7 +1677,7 @@ c-------------------------------------------------
 	      else
 		a=0.d0
 		b=0.d0
-		c=0.5d0*(y1+y2)
+		c=0.5*(y1+y2)
 	endif
 
 	e1=x1*xk_loc
@@ -1666,7 +1729,7 @@ c-------------------------------------------------
 	endif
 c------------------------
 	xinta=cdabs(xint)
-	if(xinta.gt.SMALL_PHA)then
+	if(xinta.gt.small_loc)then
 		xintp=dimag(cdlog(xint/xinta))
 	  else
 		xintp=0.d0
@@ -1746,8 +1809,8 @@ c	xxx(i)=xint
 c	enddo
 c	endif
 
-	xintre=0.d0
-	xintim=0.d0
+	xintre=0.
+	xintim=0.
 	if(ianz.ge.2)then
 	do i=1,ianz
 	xintre=xintre+densiyzre(i)
@@ -1765,14 +1828,14 @@ c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
 	if(iyz.eq.1)xx=xi.ymin
 	if(iyz.eq.2)xx=xi.zmin
         xxsave=xx
-
 	do ii=1,xir.iisimp
            if(xir.isimp(ii).eq.xir.nsimp)then
+c UF
               xx=xxsave
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
+                 xir.sintre(ii,2,i)=xxxre(i)*1.0d10
               enddo
               xir.isintre(ii)=ianz-1
 c UF
@@ -1780,14 +1843,14 @@ c UF
               do i=1,ianz-1
                  xx=xx+dyz(i)
                  xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+                 xir.sintim(ii,2,i)=xxxim(i)*1.0d10
               enddo
               xir.isintim(ii)=ianz-1
 c UF
               xx=xxsave               
-              do i=1,ianz                 
+              do i=1,ianz
                  xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=densiyzre(i)
+                 xir.simpre(ii,2,i)=densiyzre(i)*1.0d10
                  xx=xx+dyz(i)
               enddo
               xir.isimpre(ii)=ianz
@@ -1795,7 +1858,7 @@ c UF
               xx=xxsave              
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=densiyzim(i)
+                 xir.simpim(ii,2,i)=densiyzim(i)*1.0d10
                  xx=xx+dyz(i)
               enddo
               xir.isimpim(ii)=ianz
@@ -1810,17 +1873,19 @@ c------------------------------------------------------------
 
 	if(ifl.ispline.eq.1)then
 
-	x(i)=0.d0
+	x(i)=0.
 	do i=2,ianz
 	x(i)=x(i-1)+dyz(i)
 c	y(i)=dreal(fyz(i))
 	y(i)=densiyzre(i)
         enddo
+	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintre)	
 
 	do i=2,ianz
 c	y(i)=dimag(fyz(i))
 	y(i)=densiyzim(i)
 	enddo
+	call UTIL_SPLINE_INTEGRAL(X,Y,ianz,xintim)	
 
 	xint=xintre+cs.sqrtm1*xintim
 
@@ -1857,7 +1922,242 @@ c----------------
 	return
 	end
 	
+
+c-------------------------------------------------------------
+
+c*****************************************************************
+      SUBROUTINE UTIL_SPLINE_INTEGRAL(X,Y,N,RESULT)
+c*****************************************************************
+c	Author: Michael Scheer
+c-----------------------------------------------------------------
+C---  CALCULATES INTERGRAL OF Y(X) VIA SPLINES
+c-----------------------------------------------------------------
+
+      IMPLICIT real*8(a-h,o-z)
+
+      dimension X(4096),Y(4096),COEF(4096)
+
+C---  SPLINE-COEFFICIENTS
+
+      CALL UTIL_SPLINE_COEF(X,Y,N,0.,0.,COEF)
+
+C--- INTEGRATION
+
+      RESULT=0.0
+      DO I=1,N-1
+      RESULT=RESULT
+     &          +(X(I+1)-X(I))*0.5D0
+     &          *(Y(I)+Y(I+1))
+      RESULT=RESULT
+     &          -(X(I+1)-X(I))**3/24.D0
+     &          *(COEF(I)+COEF(I+1))
+      ENDDO
+
+      RETURN
+      END
+
+c*******************************************************************
+      SUBROUTINE UTIL_SPLINE_COEF(X,Y,N,YP1,YPN,Y2)
+c*******************************************************************
+c	Author: Michael Scheer
+c------------------------------------------------------------------
+C--- CALCULATES SPLINE COEFFICIENTS
+C--   INPUT:
+C-       N: NUMBER OF X,Y-VALUES
+C-       X: ARRAY OF X-VALUES
+C-       Y: ARRAY OF Y-VALUES
+C-       YP1:  SECOND DERIVATIVE AT FIRST X-VALUE
+C-       YPN:  SECOND DERIVATIVE AT LAST X-VALUE
+C--   OUPUT:
+C-       Y2:   SPLINE-COEFFICIENTS
+C--   WORKINGSPACE: AA(N),BB(N),CC(N),C(N)
+c------------------------------------------------------------------
+
+      IMPLICIT real*8(a-h,o-z)
+
+      dimension X(4096),Y(4096),Y2(4096),
+     &        AA(4096),BB(4096),CC(4096),C(4096)
+
+      Y2(1)=YP1
+      Y2(N)=YPN
+
+      IF (N.LT.3) RETURN
+
+      C(1)=YP1
+      C(N)=YPN
+
+      BB(1)=1.D0
+      CC(1)=0.D0
+      CC(N)=1.D0
+
+      DO J=2,N-1
+          AA(J)=(X(J  )-X(J-1))/6.D0
+          BB(J)=(X(J+1)-X(J-1))/3.D0
+          CC(J)=(X(J+1)-X(J  ))/6.D0
+          C(J)=(Y(J+1)-Y(J  ))/(X(J+1)-X(J  ))
+     &          -(Y(J  )-Y(J-1))/(X(J  )-X(J-1))
+      ENDDO !J
+
+      DO J=2,N-1
+
+          BB(J)=BB(J)-AA(J)*CC(J-1)
+           C(J)= C(J)-AA(J)* C(J-1)
+          AA(J)=AA(J)-AA(J)*BB(J-1)
+
+          CC(J)=CC(J)/BB(J)
+           C(J)= C(J)/BB(J)
+          BB(J)=1.D0
+
+      ENDDO !J
+
+      DO J=N-1,2,-1
+         Y2(J)=C(J)-CC(J)*Y2(J+1)
+      ENDDO
+
+      RETURN
+      END
+
+
+
 c------------------------------------------------------
-c	subroutine guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
+	subroutine guess(m4,g,a,src,apr,cs,ra,ifl,xi,xir,st)
 c------------------------------------------------------
-c routine ausgelagert in separate file guess.F
+c	variable grid generation for dyi and dzi:
+c	- calculate tza, tzp for central ray: yi = zi = 0
+c	  with ymin ymax zmin zmax ianz etc like in 
+c	  parameter file
+c	- befor first call of subroutine guess
+c	  determine distfocy and distfocz:
+
+c	  dyi_loc=dyi_loc+yi_loc/xi.distfocy
+c	  dzi_loc=dzi_loc+zi_loc/xi.distfocz
+
+c	- adapt grid in size and location accordingly
+c	  and get new ymin, ymax, zmin, zmax
+c	- grid for yi + dyi etc
+c
+c
+c	Routine gelegentlich rausschmeissen
+c
+c---------------------------------------------------------------------
+
+        implicit real*8(a-h,o-z)
+        implicit integer(i-n)
+	include 'phase_struct.for'
+
+c common simps1 ist in xir UF 21.12.99
+
+      common/xlengthc/xlen1cc(0:4,0:4,0:4,0:4),
+     &                 xlen1c(0:4,0:4,0:4,0:4),
+     &                 xlen1c_r(0:4,0:4),
+     &                 xlen1c_rr(0:4),xlength1
+
+      common/xlengthd/xlen2cc(0:4,0:4,0:4,0:4),
+     &                 xlen2c(0:4,0:4,0:4,0:4),
+     &                 xlen2c_r(0:4,0:4),
+     &                 xlen2c_rr(0:4),xlength2
+
+        common/map7/wc(0:4,0:4,0:4,0:4),
+     &              xlc(0:4,0:4,0:4,0:4),
+     &              ypc1(0:4,0:4,0:4,0:4),
+     &              zpc1(0:4,0:4,0:4,0:4)
+
+   	common/geometry/sina,cosa,sinb,cosb,
+     &                  r,rp,xdens(0:4),xlam,idefl
+        common/orders/iord,iexpand
+
+        record /constants/ cs
+        record /geometryst/ g
+        record /rayst/ ra
+        record /source_results/ sr
+        record /integration_results/ xir
+        record /control_flags/ ifl
+        record /sources/ src
+        record /integration/ xi
+        record /source1/ so1
+        record /source2/ so2
+        record /source3/ so3
+        record /source4/ so4
+        record /source5/ so5
+        record /source6/ so6
+        record /apertures/ apr
+        record /statistics/ st
+        record /map4/ m4
+
+	dimension dyi_loc(1001),dzi_loc(1001)
+
+	small_loc=1.0d-15
+c-----------------------------------------------------------------
+	yi_loc=ra.ri.yi
+	zi_loc=ra.ri.zi
+
+	ianzy_loc=xi.ianzy0
+	ianzz_loc=xi.ianzz0
+        dyy=(xi.ymax-xi.ymin)/dflotj(ianzy_loc-1)
+        dzz=(xi.zmax-xi.zmin)/dflotj(ianzz_loc-1)
+
+	do ii=1,ianzy_loc
+	do jj=1,ianzz_loc
+
+	dyi_loc(ii)=xi.ymin+dflotj(ii-1)*dyy
+	dzi_loc(jj)=xi.zmin+dflotj(jj-1)*dzz
+
+	if(abs(xi.distfocy).gt.1.e-12)then
+	dyi_loc(ii)=dyi_loc(ii)+yi_loc/xi.distfocy
+	endif
+	if(abs(xi.distfocy).gt.1.e-12)then
+	dzi_loc(jj)=dzi_loc(jj)+zi_loc/xi.distfocy
+	endif
+
+        yp=0.d0
+	zp=0.d0
+        xxlength=0.d0
+
+          var0=1.
+        do i=0,iord
+          var1=var0
+        do j=0,iord-i
+          var2=var1
+        do k=0,iord-i-j
+          var3=var2
+        do l=0,iord-i-j-k
+
+         yp=yp+ypc1(i,j,k,l)*var3
+         zp=zp+zpc1(i,j,k,l)*var3
+         xxlength=xxlength+
+     &           (xlen1c(i,j,k,l)+xlen2c(i,j,k,l))*var3
+          var3=var3*dzi_loc(jj)
+        enddo
+          var2=var2*dyi_loc(ii)
+        enddo
+          var1=var1*zi_loc
+        enddo
+          var0=var0*yi_loc
+        enddo
+    
+	ra.rf.yp=yp
+	ra.rf.zp=zp
+
+c	print*,ii,jj,ra.rf.yp,ra.rf.zp
+
+	call psdi(g,src,apr,cs,ifl,ra,sr)
+
+c	auskommentiert 5.11.2003
+c	xir.si1.tya(ii,jj)=sr.eya
+c        xir.si1.tza(ii,jj)=sr.eza
+c        xir.si1.typ(ii,jj)=sr.eyp+xxlength/ra.xlam_test
+c        xir.si1.tzp(ii,jj)=sr.ezp+xxlength/ra.xlam_test
+
+c UF 21.1.2000 leerzeichen eingefuegt
+c	if(dabs(xir.si1.tya(ii,jj)).lt.small_loc) xir.si1.typ(ii,jj)=0.d0
+c	if(dabs(xir.si1.tza(ii,jj)).lt.small_loc) xir.si1.tzp(ii,jj)=0.d0
+c	ende 5.11.2003
+ 
+	enddo
+	enddo
+
+	return
+	end
+
+
+

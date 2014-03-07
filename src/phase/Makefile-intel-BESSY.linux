@@ -1,0 +1,143 @@
+# File      : /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
+# Date      : <04 Nov 99 16:48:19 flechsig> 
+# Time-stamp: <21 May 01 15:31:15 flechsig> 
+# Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+#########################################################################
+# Makefile PHASE on LINUX 
+#########################################################################
+SHELL = /bin/sh 
+
+DEBUG	    = -DDEBUG
+DEFS        = -DLINUX $(DEBUG) -DCADDR_T  -DHAVE_CONFIG_H # caddr_t im Headerfile
+CC          = gcc -v
+PP          = g77 -E -o
+
+FOR         = /home/bahrdt/intel/compiler70/ia32/bin/ifc
+#FOR	     = /opt/intel_8/bin/ifort
+
+YACC        = bison -y
+INSTALL     = /home/bahrdt/phas/phase -c
+INSTALLDATA = /home/bahrdt/phas/phase -c -m 644
+CDEBUG      = -gdwarf
+FDEBUG      = -g -C -B111 
+MAKE        = make
+
+srcdir      = .
+INSTPATH    = /home/bahrdt/phas/phase
+BUILDPATH   = /home/bahrdt/phas/phase
+
+LINUX_C	= -I/usr/X11R6/include -D_POSIX_SOURCE -DNOLOCK 
+
+CFLAGS  = $(CDEBUG) -I. -I$(srcdir)  $(LINUX_C)  $(DEFS) -c 
+FFLAGS  = -c -vms -w95 -132
+#FFLAGS   = -c -check all -fpe0  -fpstkchk -mp -traceback -vms -w95 -132 -save \
+#-check all
+LDFLAGS = -L/usr/X11R6/lib -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl 
+
+.phony: all makewhat    
+#########################################################################
+PROGRAM		= phase
+#########################################################################
+LIBS    = share/phase/libphase.a \
+-L/opt/cern/pro/lib \
+-lpacklib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib \
+/home/bahrdt/intel/compiler70/ia32/lib/libcxa.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libcxa.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libCEPCF90.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libIEPCF90.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libintrins.a \
+/home/bahrdt/intel/compiler70/ia32/lib/libF90.a \
+/lib/libpthread.so.0 \
+/usr/lib/libg2c.a \
+/usr/X11R6/lib/libX11.so.6 
+
+#/opt/intel_new/compiler70/ia32/lib/libcxa.a \
+#/opt/intel_new/compiler70/ia32/lib/libCEPCF90.a \
+#/opt/intel_new/compiler70/ia32/lib/libIEPCF90.a \
+#/opt/intel_new/compiler70/ia32/lib/libintrins.a \
+#/opt/intel_new/compiler70/ia32/lib/libF90.a \
+#########################################################################
+OBJECTC = phase.o phase0.o phasec.o \
+	  activate_proc.o phasegraf.o initdatset.o \
+	  geometrypck.o bline.o \
+	  mirrorpck.o pst.o \
+	  cutils.o rtrace.o xmalloc.o error.o xstrdup.o
+OBJECTF = phasegraffor.o phasefor.o \
+	  phase_source.o \
+	  phase_integration.o \
+	  misali.o misali1.o misali2.o misali3.o misali4.o expired.o \
+	  dfpl1a.o
+########################################################################
+PHASEHS = phase.h fg3pck.h mirrorpck.h geometrypck.h \
+	  cutils.h phase_struct.h rtrace.h version.h
+AUX     = Makefile.linux Makefile.bessy Makefile.psicl0 Makefile.pc2346 \
+          Makefile.egcs.pc2038 \
+          phase_struct.for news coefficient-example.dat
+SRCC    = phase.c phase0.c phasec.c \
+	  activate_proc.c phasegraf.c initdatset.c \
+	  geometrypck.c bline.c \
+	  mirrorpck.c pst.c \
+	  cutils.c rtrace.c xmalloc.c error.c xstrdup.c
+SRCF    = phasegraffor.F phasefor.F \
+	  phase_source.F \
+	  phase_integration.F \
+	  misali.F misali1.f misali2.f misali3.f misali4.f expired.f \
+	  dfpl1a.f
+SRCS    = $(PHASEHS) $(SRCC) $(SRCF)
+#########################################################################
+#                            targets                                    # 
+all: 	
+	@echo "Making $(PROGRAM) for LINUX..." 
+	$(MAKE) $(PROGRAM)   
+##############################################################################
+# Dependencies section
+$(PROGRAM): $(OBJECTC) $(OBJECTF)
+	$(FOR) -o $@  $(OBJECTC) $(OBJECTF) $(LDFLAGS) $(LIBS)
+##########################################################################
+%.o : %.c $(PHASEHS)
+	$(CC) $(CFLAGS) -o $@ $< 
+
+%.o : %.f phase_struct.for 
+	$(FOR) $(FFLAGS) $<   
+
+# %.o : %.f
+#	$(FOR) $(FFLAGS) $<   
+
+#mit preprocessor
+%.f: %.F
+	$(PP) $@ $<
+
+##########################################################################
+install: all
+	$(INSTALL) $(PROGRAM) $(INSTPATH)/bin/$(PROGRAM)
+	$(INSTALL) news $(INSTPATH)/lib/news
+	$(INSTALL) coefficient-example.dat $(INSTPATH)/lib/coefficient-example.dat
+
+clear:
+	@echo "delete objects and exe..."  
+	rm *.o $(PROGRAM)
+
+TAGS:   $(SRCS)
+	etags $(SRCS)
+     
+clean:
+	rm -f *.o  core
+     
+distclean: clean
+	rm -f TAGS  config.status
+
+dist: $(SRCS) $(AUX)
+	echo phase-`sed \
+	-e '/VERSION_STRING/!d' \
+	-e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+	-e 'q' \
+	version.h` > .fname
+	-rm -rf `cat .fname`
+	mkdir `cat .fname`
+	ln $(SRCS) $(AUX) `cat .fname`
+	-rm -rf `cat .fname`.fname
+	tar -czhf `cat .fname`.tgz `cat .fname`
+	-rm -Rf `cat .fname`
+	ln `cat .fname`.tgz $(BUILDPATH)/release
+###################      end makefile       ###############################
+#end /home/pss060/sls/flechsig/phase/src/phase/Makefile.linux
