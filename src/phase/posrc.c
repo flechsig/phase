@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <06 Mar 14 12:20:47 flechsig>  */
+/*  Time-stamp: <07 Mar 14 16:29:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -54,7 +54,7 @@ void posrc_ini(struct BeamlineType *bl)
 
   if (( type != 4 ) && ( type != 7 ))
     {
-      fprintf(stderr, "error: source type %d not supported- exit\n", type);
+      fprintf(stderr, "error: source type %d not supported- exit file: %s\n", type, __FILE__);
       exit(-1);
     }
   
@@ -616,8 +616,8 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
-	field[   (col + row * cols) * 2]= p->ezrec[row+ col* rows];  // fortran memory
-	field[1+ (col + row * cols) * 2]= p->ezimc[row+ col* rows];
+	field[   (col + row * cols) * 2]= p->ezrec[row+ col* rows]*1e3;  // fortran memory
+	field[1+ (col + row * cols) * 2]= p->ezimc[row+ col* rows]*1e3;  // genesis in m^2 intensity normalization
       }
 
   wavelength= bl->BLOptions.lambda* 1e-3;
@@ -628,7 +628,7 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
   writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
   writeDataDouble(file_id, "slice000001/field", field, fieldsize, 
-		  "electrical field as c_style list (real,imag), (real, imag),...");
+		  "electrical field in (V/m^2) as c_style list (real,imag), (real, imag),...");
   add_phase_psd_to_hdf5(file_id, bl);
   add_desc(group_id, "first time slice");
   H5Gclose(group_id);
@@ -695,7 +695,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
   add_string_attribute_d(e_dataset_id, "unit", "mm");
-  add_desc(e_dataset_id, "electrical field as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
+  add_desc(e_dataset_id, "electrical field in (V/mm^2) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
@@ -804,7 +804,8 @@ void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
       {
 	val= field[imag + (i + j * cols)* 2];
 	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
-	a[i+ j* cols]= val;
+	a[i+ j* cols]= val * 1e-3;  // genesis data are per m^2 !!! intensity normalization !!!
+	// intensity is field ^2 therefore it is not 1e-6 but 1e-3
       }
 } /* posrc_fill8 */
 

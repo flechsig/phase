@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Mar 14 17:32:15 flechsig> 
+//  Time-stamp: <07 Mar 14 16:39:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2491,12 +2491,12 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 
   if (po) 
     {
-      wdzLabel0->setText(QString(tr("maximimum")));
-      wdyLabel0->setStatusTip(tr("intensity maximum"));
-      wdyLabel0->setText(QString(tr("total")));
+      wdzLabel0->setText(QString(tr("max (W/m^2)")));
+      wdzLabel0->setStatusTip(tr("maximum of intensity (W/m^2)"));
+      wdyLabel0->setText(QString(tr("total (W)")));
       wdyLabel0->setStatusTip(tr("intensity integral"));
       //wdyLabel->setStatusTip(tr("intensity integral xx"));
-      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max, 'g', 4)+ "</FONT>");
+      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6, 'g', 4)+ "</FONT>");  // give out value per m^2
       wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");
     }
   else
@@ -2765,44 +2765,4 @@ int MainWindow::FileExistCheckOK(std::string name1, std::string read)
 
   return 1;
 } // FileExistCheckOK variante read
-
-void MainWindow::copyPoIn2Out()
-{
-  struct source4c *so4;
-  struct PSDType  *psd;
-  struct BeamlineType *bl;
-  int    rows, cols;
-  size_t size;
-
-#ifdef DEBUG  
-  cout << "debug: " << __FILE__ << " copy PO source fields to output fields (experimental)" << endl; 
-#endif
-
-  if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
-    {
-      myparent->myposrc_ini();
-      myparent->myBeamline()->beamlineOK |= pstsourceOK;
-    }
-  
-  so4= (struct source4c *)&myparent->myBeamline()->posrc;
-  psd= (struct PSDType  *)&myparent->myBeamline()->RESULT.RESp;
-  bl = (struct BeamlineType *)myparent->myBeamline();
-  cols= so4->iex;
-  rows= so4->iey;
-  size= sizeof(double)* rows * cols;
-
-  ReAllocResult(bl, PLphspacetype, rows, cols);
-
-  cout << "start copy fields" << endl;
-  memcpy(psd->eyrec, so4->zeyre, size);
-  memcpy(psd->ezrec, so4->zezre, size);
-  memcpy(psd->eyimc, so4->zeyim, size);
-  memcpy(psd->ezimc, so4->zezim, size);
-
-  cout << "start copy vectors" << endl;
-  memcpy(psd->z, so4->gridx, sizeof(double)* cols);
-  memcpy(psd->y, so4->gridy, sizeof(double)* rows);
-
-  myparent->myBeamline()->beamlineOK |= resultOK;
-} // end MainWindow::copyPoIn2Out
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

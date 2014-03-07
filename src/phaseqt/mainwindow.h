@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <06 Mar 14 16:55:56 flechsig>  */
+/*  Time-stamp: <07 Mar 14 13:27:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -140,7 +140,6 @@ private slots:
     void UpdateStatistics(Plot *, const char *, int);
     
 private:
-    void copyPoIn2Out();
     void createActions();
     void createMenus();
     void createToolBars();

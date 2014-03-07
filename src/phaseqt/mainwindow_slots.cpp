@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <06 Mar 14 16:55:56 flechsig> 
+//  Time-stamp: <07 Mar 14 13:39:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -176,7 +176,7 @@ void MainWindow::activateProc(const QString &action)
 	}
     }
 
-  if (!action.compare("copyPOAct")) copyPoIn2Out();
+  if (!action.compare("copyPOAct")) myparent->mycopySrc2Psd();
 
   if (!action.compare("normPOAct")) norm_output(myparent->myBeamline());
   

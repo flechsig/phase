@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <06 Mar 14 08:05:00 flechsig>  */
+/*  Time-stamp: <07 Mar 14 13:36:27 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -104,6 +104,7 @@ public:
 #ifdef HAVE_HDF5
   int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb);}
 #endif
+  void mycopySrc2Psd() { copySrc2Psd(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 

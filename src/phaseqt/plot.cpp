@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <06 Mar 14 11:45:41 flechsig> 
+//  Time-stamp: <07 Mar 14 16:38:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1202,7 +1202,7 @@ void Plot::hfill2(struct source4c *rp, int type)
 // Plot::statistics po type
 void Plot::statistics()
 {
-  double fwhmfac;
+  double fwhmfac, binsize;
   int idxc, ix, iy, h2a_n;
 
 #ifdef DEBUG
@@ -1232,6 +1232,10 @@ void Plot::statistics()
       wz = sqrt(wz/tt - pow(cz,2));
       wy = sqrt(wy/tt - pow(cy,2));
     }
+
+  binsize= (pox[1]- pox[0]) * (poy[1]- poy[0]);
+  tt *= binsize;   // value normalized to m^2
+  cout << "statistics: binsize= " << binsize << " mm^2, tt=" << tt << endl;
 
   if (cz < 1e-3) cz= 0.0;
   if (cy < 1e-3) cy= 0.0;

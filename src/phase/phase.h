@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <24 Feb 14 15:01:01 flechsig>  */
+/*   Time-stamp: <07 Mar 14 13:34:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -508,6 +508,7 @@ void
   BuildElement(unsigned int, struct BeamlineType *),
   Check_iord(struct BeamlineType *),
   create_hormap(),
+  copySrc2Psd(struct BeamlineType *),
   debug_beamline_type_f(int *),
   debug_beamline_type_c_(int *),
   DefGeometryC_JB(struct gdatset *, struct geometrytype *, struct OptionsType *),
