@@ -551,7 +551,7 @@ name= self.name
 return, name
 end ;; name
 
-function pase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
+function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::getphase
