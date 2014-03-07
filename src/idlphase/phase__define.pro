@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 13:18:25 flechsig> 
+;  Time-stamp: <07 Mar 14 13:21:05 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1741,7 +1741,7 @@ ymax= max(y_vec)
 area= (zmax-zmin)*(ymax-ymin)
 
 mymax= max(myfield)                   ;; photons/m^2
-if area gt 0.0 then mytot= total(myfield, /double)/ area  ;; sum of all bins/ area
+if (area gt 0.0) then mytot= total(myfield, /double)/ area else mytot= 0.0  ;; sum of all bins/ area
 
 field_n= myfield/mymax                ;; normalized
 stat= dblarr(7)
@@ -1764,7 +1764,7 @@ print, '========================================================================
 print, 'result of gauss2dfit in (m):', stat
 print, '=============================================================================='
 
-total=mytotal
+total=mytot
 max= mymax
 return
 end ;; statistics
