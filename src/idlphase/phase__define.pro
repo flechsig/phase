@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 09:20:47 flechsig> 
+;  Time-stamp: <07 Mar 14 13:18:25 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1684,7 +1684,7 @@ self.z_vec= ptr_new(z_vec)
 return
 end ;; setz_vec
 
-pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig
+pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig, max=max, total=total
 ;+
 ; NAME:
 ;   phase::statistics
@@ -1707,6 +1707,8 @@ pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, y
 ;
 ; KEYWORD PARAMETERS:
 ;   amplitude: statistics of field - default is intensity field^2
+;   max:       maximum output
+;   total:     integral output
 ;   yfwhm:     vertical fwhm (output)
 ;   ysig :     vertical rms (output)
 ;   zfwhm:     horizontal fwhm (output)
@@ -1732,17 +1734,19 @@ if n_elements(comment) ne 0 then title+= ' => '+comment
 z_vec= self->getz_vec()
 y_vec= self->gety_vec()
 lambda= self->getwavelength()
-mymax= max(myfield)
-mytot= total(myfield, /double)
-
-field_n= myfield/mymax
-
-stat= dblarr(7)
-fit = gauss2dfit(field_n, stat, z_vec, y_vec)
 zmin= min(z_vec)
 zmax= max(z_vec)
 ymin= min(y_vec)
 ymax= max(y_vec)
+area= (zmax-zmin)*(ymax-ymin)
+
+mymax= max(myfield)                   ;; photons/m^2
+if area gt 0.0 then mytot= total(myfield, /double)/ area  ;; sum of all bins/ area
+
+field_n= myfield/mymax                ;; normalized
+stat= dblarr(7)
+fit = gauss2dfit(field_n, stat, z_vec, y_vec)
+
 
 print, '=============================================================================='
 print, title
@@ -1754,12 +1758,14 @@ print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
 print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
-print, 'max intensity  =', mymax
-print, 'tot intensity  =', mytot
+print, 'max intensity  (1/m^2) =', mymax
+print, 'total intensity        =', mytot
 print, '=============================================================================='
 print, 'result of gauss2dfit in (m):', stat
 print, '=============================================================================='
 
+total=mytotal
+max= mymax
 return
 end ;; statistics
 
