@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 13:21:05 flechsig> 
+;  Time-stamp: <07 Mar 14 16:45:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1738,10 +1738,11 @@ zmin= min(z_vec)
 zmax= max(z_vec)
 ymin= min(y_vec)
 ymax= max(y_vec)
-area= (zmax-zmin)*(ymax-ymin)
+binsize= (z_vec[1]- z_vec[0])*(y_vec[1]- y_vec[0])
 
-mymax= max(myfield)                   ;; photons/m^2
-if (area gt 0.0) then mytot= total(myfield, /double)/ area else mytot= 0.0  ;; sum of all bins/ area
+mymax= max(myfield)                     ;; photons/m^2
+mysum= total(myfield, /double)
+mytot= total(myfield, /double) * binsize   ;; sum of all bins*binsize
 
 field_n= myfield/mymax                ;; normalized
 stat= dblarr(7)
@@ -1758,8 +1759,9 @@ print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
 print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
-print, 'max intensity  (1/m^2) =', mymax
-print, 'total intensity        =', mytot
+print, 'max intensity (W/m^2) = ', mymax
+print, 'total intensity (W)   = ', mytot
+;;print, 'debug: mysum, binsize=', mysum, binsize
 print, '=============================================================================='
 print, 'result of gauss2dfit in (m):', stat
 print, '=============================================================================='
