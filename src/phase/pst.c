@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <07 Mar 14 14:47:44 flechsig>  */
+/*   Time-stamp: <07 Mar 14 17:08:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -723,9 +723,8 @@ void copySrc2Psd(struct BeamlineType *bl)
 
   struct source4c *so4;
   struct PSDType  *psd;
-  int    row, col, rows, cols, idxf;
-  size_t size;
-
+  int    row, col, rows, cols, idxf, idxc;
+  
   if (!(bl->beamlineOK & pstsourceOK))
     {
       posrc_ini();
@@ -737,16 +736,11 @@ void copySrc2Psd(struct BeamlineType *bl)
   
   cols= so4->iex;
   rows= so4->iey;
-  size= sizeof(double)* rows * cols;
-
+  
   ReAllocResult(bl, PLphspacetype, rows, cols);
 
   printf("start copy fields\n");
-  memcpy(psd->eyrec, so4->zeyre, size);
-  memcpy(psd->ezrec, so4->zezre, size);
-  memcpy(psd->eyimc, so4->zeyim, size);
-  memcpy(psd->ezimc, so4->zezim, size);
-
+  
   //  cout << "start copy vectors" << endl;
   memcpy(psd->z, so4->gridx, sizeof(double)* cols);
   memcpy(psd->y, so4->gridy, sizeof(double)* rows);
@@ -758,7 +752,13 @@ void copySrc2Psd(struct BeamlineType *bl)
   for (row=0; row< rows; row++ )
     for (col=0; col< cols; col++ )
       {
-	idxf= col + row* rows;
+	idxf= row + col* rows;
+	idxc= col + row* cols;
+	psd->eyrec[idxf]=so4->zeyre[idxc];
+	psd->ezrec[idxf]=so4->zezre[idxc];
+	psd->eyimc[idxf]=so4->zeyim[idxc];
+	psd->ezimc[idxf]=so4->zezim[idxc];
+
 	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
 	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
       }
