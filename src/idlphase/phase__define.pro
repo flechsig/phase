@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 09:17:49 flechsig> 
+;  Time-stamp: <07 Mar 14 09:19:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1744,9 +1744,9 @@ zmax= max(z_vec)
 ymin= min(y_vec)
 ymax= max(y_vec)
 
-print, '====================='
+print, '=============================================================================='
 print, title
-print, '====================='
+print, '=============================================================================='
 print, 'z fwhm=',stat[2]*2.35, ' m, rms = ',stat[2], ' m'
 print, 'y fwhm=',stat[3]*2.35, ' m, rms = ',stat[3], ' m'
 print, 'z0    =',stat[4], ' m'
