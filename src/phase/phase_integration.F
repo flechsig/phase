@@ -192,8 +192,8 @@ c#endif
 c        write(6,*)'m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)',m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)
 c------------------------------------------------------
 
-	st.inumb(st.nn1,st.nn2)=0.d0
-	fmax=0.d0
+c	st.inumb(st.nn1,st.nn2)=0.d0
+c	fmax=0.d0
 
 	ianzz=xi.ianzz0
 c gestrichen UF 21.12.99 iterz=xi.iterz0
@@ -224,7 +224,7 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,st,
+	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 	   if(ifl.ispline.ge.0)then
@@ -241,7 +241,7 @@ c	   	fzez(i)=fwertz
 	 	fyp(i)=yintyp
 	 	fzp(i)=yintzp
 	   endif
-	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
+c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 	   dz(i)=dzz
 	enddo
 
@@ -292,7 +292,7 @@ c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
 c UF	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,st,
+       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 c*************************************************************
@@ -469,7 +469,7 @@ c---------------------------------------------------------
 	endif
 c---------------------------------------------------------
 
-	st.inumb(st.nn1,st.nn2)=st.inumb(st.nn1,st.nn2)+ianzy
+c	st.inumb(st.nn1,st.nn2)=st.inumb(st.nn1,st.nn2)+ianzy
 
 	return
 	end
@@ -582,6 +582,12 @@ c UF 28.6.13 uninitialized memory determins fd1ph- probably m4.fdtphrrc
           var0=var0*dyii
         enddo
 
+c--------------- Vorzeichen checken
+c        write(6,*)' yp, zp ',ra.rf.yp,ra.rf.zp
+c        write(6,*)' dyp, dzp ',ra.rf.dyp,ra.rf.dzp
+c        write(6,*)' xlength1, xlength2 ',ra.xlength1,ra.xlength2
+c        write(6,*)' w, l ',ra.oe.w,ra.oe.xl
+
         xw3sign=1.d0
         xw2sign=1.d0
         xl2sign=1.d0
@@ -628,12 +634,14 @@ c        call subdfpl1a(g,am.a,ra,pd)      ! grating
 c	 fd1ph=dabs(fd1ph*g.cosa*g.cosb)/(dsqrt(pd.qrg1)*dsqrt(pd.arg2))
 
 c        Varianten von inorm2 = 4
+c        inorm2 = 4: Berechnung mit Loolup Table alle Terme
+c        inorm2 = 41: Berechnung mit Loolup Table aber beschränkt auf quadratische Terme
+c        inorm2 = 42: Berechnung mit Loolup Table aber beschränkt auf kubische Terme 
 c        inorm2 = 40: alle Terme quadratisch berechnet (convlim=1.0d-50)
-c        inorm2 = 41: Berücksichtigung nur der Terme, die kubischen Beitrag haben
-c        inorm2 = 42: Berücksichtigung nur der quadratischen Terme 
 c        inorm2 = 43: Isabelles Formeln, komplett
 c        inorm2 = 44: Isabelles Formeln, aber beschränkt auf quadratische Terme
-	 
+c        inorm2 = 45: Isabelles Formeln, aber beschränkt auf kubische Terme
+
 c---------------------------------------------------------------------
 
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
@@ -664,7 +672,8 @@ c------------------ Ende quadratische Terme
 
         if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
      &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
-     &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44))then
+     &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44).or.
+     &     (ifl.inorm2.eq.45))then
 
 c       fd1pha is 3rd order, 
 c       fd1phb is 2nd order term in w     
@@ -676,10 +685,7 @@ c       fd1ph  is 2nd order term in l
           stop
         endif
 
-c=================== A C H T U N G =================================
-c       Spiegellänge in mm schätzen
-c       xi.ymin,xi.ymax,xi.zmin,xi.zmax at this point in rad
-c  folgenden Ausdruck nur einmal berechnen
+c  folgenden Ausdruck nur einmal berechnen, auslagern
         divmax=dmax1(dabs(xi.ymin),dabs(xi.ymax),
      &               dabs(xi.zmin),dabs(xi.zmax))
         xlenmir=2.d0*g.rp*(dtan(divmax)/g.cosb)
@@ -688,33 +694,34 @@ c        write(6,*)' xlenmir === ',xlenmir
         small_fd1ph=1.d-50
 
         if((ifl.inorm2.eq.4).or.
-     &     (ifl.inorm2.eq.41))convlim=19.9d0
+     &     (ifl.inorm2.eq.40).or.
+     &     (ifl.inorm2.eq.41).or.
+     &     (ifl.inorm2.eq.42))convlim=19.1d0
         if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
         if((ifl.inorm2.eq.43).or.
-     &     (ifl.inorm2.eq.44))convlim=5.1d0
+     &     (ifl.inorm2.eq.44).or.
+     &     (ifl.inorm2.eq.45))convlim=5.1d0
 
-        if(fd1pha.lt.1.d0-50)then
-          w0a=1.0d50                                   ! use only 2nd order
-          else
-          w0a=ra.oe.w-(2.d0*xw2sign*fd1phb)/(3.d0*xw3sign*fd1pha)
-        endif
-
-        if(dabs(w0a).gt.xlenmir/2.d0)convlim=1.0d-50  ! use only 2nd order
+        if(fd1pha.lt.1.d0-50)convlim=1.0d-50           ! use only 2nd order
+        w0a=dabs(fd1phb/fd1pha)
+        if(w0a.lt.xlenmir/2.d0)convlim=1.0d-50         ! use only 2nd order
 
         fd1ph_sav=fd1ph
         fd1phb_sav=fd1phb
 
-        fact=(dsqrt(dabs(g.cosa))*
-     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
-        fact1=fact*2.0d0   
+        fact1=(dsqrt(dabs(g.cosa))*
+     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp) 
         fact2=fact1*((2.d0*cs.pi)/g.xlam)
-c hier muss eigentlich ein Faktor 4 stehen?
         fd1ph=(fd1ph/fact1)*2.d0*g.xlam**3
         tl=((ra.xlength1*ra.xlength2)/(g.r*g.rp))**2
 c        fd1ph=fd1ph*tl ! thick lens correction
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
   
+c        write(6,*)' w ',ra.oe.w,fd1pha*xw3sign,fd1phb*xw2sign
+c        write(6,*)' yp,zp ',ra.rf.yp,ra.rf.zp    
+c        write(6,*)'  '     
+
         abar=xw3sign/fd1pha**(1.d0/3.d0)
         bbar=xw2sign*fd1phb*abar**2
 
@@ -733,7 +740,7 @@ c------------- only quadratic terms
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &     (fdph/(g.xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
-         if(ifl.inorm2.eq.41)ff=0.d0
+         if(ifl.inorm2.eq.42)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
 
          else
@@ -751,8 +758,9 @@ c------------- only quadratic terms
         ff=(fdph/dsqrt(fd1ph))*
      &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
-        if(ifl.inorm2.eq.42)ff=0.d0
+        if(ifl.inorm2.eq.41)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
+
 c--------------------------------
         endif ! inorm2.eq. 4, 40, 41, 42
 c---------------------------------------------------------------------------
@@ -760,7 +768,8 @@ c---------------------------------------------------------------------------
 
 c---------------------------------------------------------------------------
          if((ifl.inorm2.eq.43).or.
-     &      (ifl.inorm2.eq.44))then
+     &      (ifl.inorm2.eq.44).or.
+     &      (ifl.inorm2.eq.45))then
 c--------------------------------
 c       Konvergenzkriterien in diesem Modus, maximale Werte sind:
 c       nk=165, convlim=5.1d0   
@@ -777,7 +786,7 @@ c------------- only quadratic terms
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
-         if(ifl.inorm2.eq.44)ff=0.d0
+         if(ifl.inorm2.eq.45)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
 
          else
@@ -826,7 +835,7 @@ c        sumsin=ssin*abar
         if(ifl.inorm2.eq.44)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
 c---------------------------------------------------------------------------
-        endif   ! inorm2.eq.43,44
+        endif   ! inorm2.eq.43,44, 45
 c---------------------------------------------------------------------------
         endif
 
