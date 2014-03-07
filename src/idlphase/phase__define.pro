@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Mar 14 16:34:42 flechsig> 
+;  Time-stamp: <07 Mar 14 09:13:49 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1684,7 +1684,7 @@ self.z_vec= ptr_new(z_vec)
 return
 end ;; setz_vec
 
-pro phase::statistics, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig
+pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig
 ;+
 ; NAME:
 ;   phase::statistics
@@ -1703,7 +1703,7 @@ pro phase::statistics, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig,
 ;   no
 ;
 ; OPTIONAL INPUTS:
-;   no
+;   comment
 ;
 ; KEYWORD PARAMETERS:
 ;   amplitude: statistics of field - default is intensity field^2
@@ -1726,6 +1726,9 @@ endif else begin
     title= 'amplitude statistics'
     myfield= self->getamplitude() 
 endelse
+
+if n_elements(comment) ne 0 then title+= comment
+
 z_vec= self->getz_vec()
 y_vec= self->gety_vec()
 lambda= self->getwavelength()
