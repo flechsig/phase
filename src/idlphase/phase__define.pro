@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 09:19:30 flechsig> 
+;  Time-stamp: <07 Mar 14 09:20:47 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1756,9 +1756,9 @@ print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
 print, 'max intensity  =', mymax
 print, 'tot intensity  =', mytot
-print, '====================='
+print, '=============================================================================='
 print, 'result of gauss2dfit in (m):', stat
-print, '====================='
+print, '=============================================================================='
 
 return
 end ;; statistics
