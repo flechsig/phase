@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 09:13:49 flechsig> 
+;  Time-stamp: <07 Mar 14 09:17:49 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1727,7 +1727,7 @@ endif else begin
     myfield= self->getamplitude() 
 endelse
 
-if n_elements(comment) ne 0 then title+= comment
+if n_elements(comment) ne 0 then title+= ' => '+comment
 
 z_vec= self->getz_vec()
 y_vec= self->gety_vec()
