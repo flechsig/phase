@@ -107,7 +107,6 @@ c     &      yzint,yzintey,yzintez
         record /sources/ src
 	record /integration/ xi
 	record /apertures/ apr
-	record /statistics/ st
 c uf	record /mirrortype/ am
 	record /map4/ m4
         record /psimagest/ sp
@@ -328,7 +327,6 @@ c UF	complex*16 fyey(4096),fyez(4096)
 	record /integration_results/ xir
 c UF 28.6.13        record /source6/ so6
 	record /apertures/ apr
-	record /statistics/ st
 c uf	record /mirrortype/ am
 	record /map4/ m4
 
@@ -500,7 +498,6 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 	record /integration/ xi
 c uf	record /integration_results/ xir
 	record /apertures /apr
-c uf	record /statistics/ st
 c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
@@ -704,7 +701,12 @@ c        write(6,*)' xlenmir === ',xlenmir
 
         if(fd1pha.lt.1.d0-50)convlim=1.0d-50           ! use only 2nd order
         w0a=dabs(fd1phb/fd1pha)
-        if(w0a.lt.xlenmir/2.d0)convlim=1.0d-50         ! use only 2nd order
+   
+        if(w0a.lt.xlenmir/2.d0)then    
+          redu=0.5d0                                   ! do not count contributions from
+          else                                         ! the critical points twice
+          redu=1.d0
+        endif                                            
 
         fd1ph_sav=fd1ph
         fd1phb_sav=fd1phb
@@ -717,10 +719,6 @@ c        write(6,*)' xlenmir === ',xlenmir
 c        fd1ph=fd1ph*tl ! thick lens correction
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
-  
-c        write(6,*)' w ',ra.oe.w,fd1pha*xw3sign,fd1phb*xw2sign
-c        write(6,*)' yp,zp ',ra.rf.yp,ra.rf.zp    
-c        write(6,*)'  '     
 
         abar=xw3sign/fd1pha**(1.d0/3.d0)
         bbar=xw2sign*fd1phb*abar**2
@@ -757,9 +755,13 @@ c------------- only quadratic terms
  
         ff=(fdph/dsqrt(fd1ph))*
      &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
-        ff=ff*(sumcos+sumsin*cs.sqrtm1)
+        ff=redu*ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.41)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
+
+c         write(6,*)ra.oe.w,fd1pha,fd1phb
+c         write(6,*)ra.rf.yp,ra.rf.zp
+c         write(6,*)' '
 
 c--------------------------------
         endif ! inorm2.eq. 4, 40, 41, 42
@@ -983,7 +985,6 @@ c-----------------
 
         record /rayst/ ra
         record /constants/ cs
-c UF	record /statistics/ st
 	record /integration_results/ xir
 	record /integration/ xi
 c UF        record /control_flags/ ifl
@@ -1504,7 +1505,6 @@ c-----------------------------------------------------------------------
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
-c UF	record /statistics/ st
         record /integration_results/ xir
         record /integration/ xi
         record /control_flags/ ifl
