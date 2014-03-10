@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <10 Mar 14 14:47:10 flechsig>  */
+/*   Time-stamp: <10 Mar 14 17:45:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -532,7 +532,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   check_2_m4_(m4p);
 #endif
 
-  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
+  adaptive_int(m4p, &bl->src, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
 
 #ifdef DEBUG2

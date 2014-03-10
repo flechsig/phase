@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/spa_3rd_order.c */
  /* Date      : <21 Feb 14 14:33:47 flechsig>  */
- /* Time-stamp: <24 Feb 14 15:32:49 flechsig>  */
+ /* Time-stamp: <10 Mar 14 17:52:58 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -76,7 +76,8 @@ void spa3TableInit(struct BeamlineType *bl)
 {
   double *yt1, *yt2, dx;
   FILE   *f;
-  int    i, version, datapoints;
+  int    version;
+  unsigned int i, datapoints;
   char   buffer[MaxPathLength], *phase_home, *ch;
 
   if ((phase_home = getenv(PHASE_HOME)) == NULL)

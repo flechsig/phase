@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <10 Mar 14 12:33:39 flechsig>  */
+/*   Time-stamp: <10 Mar 14 17:47:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -136,17 +136,9 @@ struct  parder {
     dfdwidlj[MAPDIM][MAPDIM][MAPDIM][MAPDIM][MAPDIM][MAPDIM];
 };    
 
-/* -------------- geometry -----------------------------------*/
-
-struct  geometryst {
-  double sina,cosa,sinb,cosb,
-    r,rp,xdens[5],xlam;
-  int  idefl;   
-};    
-
 struct  psimagest {               /* Bilddimensionen */
   double  disty1,disty2,distz1,distz2;                
-  int  iheigh,iwidth;   
+  int     iheigh,iwidth;   
 };   
 
 /* --------------- sources -----------------------------------*/

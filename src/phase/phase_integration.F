@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Mar 14 14:48:08 flechsig> 
+c$$$ Time-stamp: <10 Mar 14 17:56:53 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -37,14 +37,9 @@ c (6) neuer Aufrufparameter s in adaptive_int und phacor
 c      wird zum Ruecksprung benutzt
 c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
-c von J.B. am 20.12.99
-c Aenderungen von JB am 11.2.00
-c UF habe xxsave eingefuehrt !!! pruefen
+c UF 10. Mar 2014 removed geometryst
 c*********************************************************
-c UF 12.1.2000
-c #define DEBUG1
-c uf      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,
-         subroutine adaptive_int(m4,g,src,apr,cs,ra,
+         subroutine adaptive_int(m4,src,apr,cs,ra,
      &                       ifl,xi,xir,sp,blp)
 c*********************************************************
 c	22.4.1999
@@ -99,7 +94,7 @@ c     &      yzint,yzintey,yzintez
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
-        record /geometryst/ g
+c        record /geometryst/ g
         record /rayst/ ra
         record /source_results/ sr
         record /integration_results/ xir
@@ -290,8 +285,7 @@ c------------------------------------------------------------
 c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-c UF	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
+       subroutine yyint(m4,src,xi,xir,apr,cs,ra,ifl,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 c*************************************************************
@@ -318,7 +312,7 @@ c UF	complex*16 fyey(4096),fyez(4096)
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
-        record /geometryst/ g
+c        record /geometryst/ g
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
@@ -430,9 +424,7 @@ c#ifdef DEBUG
 c        write(6,*)' call fywert, i=', i
 c#endif
  
-c uf	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-c     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
- 	  call fywert(m4,g,src,xi,apr,cs,ra,ifl,
+ 	  call fywert(m4,src,xi,apr,cs,ra,ifl,
      &		y(i),fyey(i),sr,blp)
 
 	 densiyre(i)=sr.densyre
@@ -478,7 +470,7 @@ c*************************************************************
 c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
 c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
 c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
- 	subroutine fywert(m4,g,src,xi,apr,cs,ra,ifl,
+ 	subroutine fywert(m4,src,xi,apr,cs,ra,ifl,
      &		          dyi,fwerty,sr,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
@@ -490,7 +482,7 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 
 
         record /constants/ cs
-        record /geometryst/ g
+c UF mar 14        record /geometryst/ g
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
@@ -652,18 +644,18 @@ c UF neue routine
 
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph*fd1ph
-        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/g.xlam
-        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/g.xlam
+        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/xlam
+        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/xlam
         if(ifl.inorm2.eq.21)then
-          ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb)))
+          ff=fdph/(xlam*dsqrt(dabs(fd1pha*fd1phb)))
         endif
 
-        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
+        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/xlam
 
 c------------------ only quadratic terms, no diagonalization 
         if(ifl.inorm2.eq.31)then
           arg=fd1pha*fd1phb-fd1ph*fd1ph
-          ff=fdph/(g.xlam*dsqrt(dabs(arg)))
+          ff=fdph/(xlam*dsqrt(dabs(arg)))
 c   Mandel & Wolf (different from Focke?)
           ff1=cs.sqrtm1
           if(fd1pha+fd1phb.lt.0.d0)then
@@ -695,7 +687,7 @@ c       fd1ph  is 2nd order term in l
 c  folgenden Ausdruck nur einmal berechnen, auslagern
         divmax=dmax1(dabs(xi.ymin),dabs(xi.ymax),
      &               dabs(xi.zmin),dabs(xi.zmax))
-        xlenmir=2.d0*g.rp*(dtan(divmax)/g.cosb)
+        xlenmir=2.d0*rp*(dtan(divmax)/cosb)
 c        write(6,*)' xlenmir === ',xlenmir
  
         small_fd1ph=1.d-50
@@ -721,11 +713,11 @@ c        write(6,*)' xlenmir === ',xlenmir
         fd1ph_sav=fd1ph
         fd1phb_sav=fd1phb
 
-        fact1=(dsqrt(dabs(g.cosa))*
-     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp) 
-        fact2=fact1*((2.d0*cs.pi)/g.xlam)
-        fd1ph=(fd1ph/fact1)*2.d0*g.xlam**3
-        tl=((ra.xlength1*ra.xlength2)/(g.r*g.rp))**2
+        fact1=(dsqrt(dabs(cosa))*
+     &        dsqrt(dabs(cosb)))/(r*rp) 
+        fact2=fact1*((2.d0*cs.pi)/xlam)
+        fd1ph=(fd1ph/fact1)*2.d0*xlam**3
+        tl=((ra.xlength1*ra.xlength2)/(r*rp))**2
 c        fd1ph=fd1ph*tl ! thick lens correction
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
@@ -747,7 +739,7 @@ c------------- only quadratic terms
           fd1phb=fd1phb_sav
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &     (fdph/(g.xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
+     &     (fdph/(xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
          if(ifl.inorm2.eq.42)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
 
@@ -797,7 +789,7 @@ c------------- only quadratic terms
           fd1phb=fd1phb_sav
           ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+     &       (fdph/(xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
          if(ifl.inorm2.eq.45)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
 

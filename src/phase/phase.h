@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Mar 14 14:32:20 flechsig>  */
+/*   Time-stamp: <10 Mar 14 17:51:07 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -313,7 +313,7 @@ struct RESULTType {
 };  
 
 struct Spa3TableType {
-  int    datapoints;
+  unsigned int datapoints;
   double dx;
   double *tab;
 };       
@@ -584,15 +584,11 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
-  
-  
-  
- 
-  adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
-	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
+  adaptive_int(struct map4 *, struct sources *, struct apertures *, 
+	       struct constants *, struct rayst *, struct control_flags *, 
+	       struct integration *, 
 	       struct integration_results *, struct psimagest *, int *),
   PutPHASE(struct  PHASEset *, char *), 
-/*  RayTracec(struct BeamlineType *),*/
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),
   ReadCoefficientFile(double *, char *),
