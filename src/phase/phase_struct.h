@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <18 Feb 14 10:02:46 flechsig>  */
+/*   Time-stamp: <10 Mar 14 12:11:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -286,7 +286,8 @@ struct  rayst {
   struct opt_el oe;
   struct aperture ap;
   double xlength1,xlength2;
-  double fd[4096],fdph[4096],fd1ph[256][256];
+  //  UF JB Mar 2014 double fd[4096],fdph[4096],fd1ph[256][256];
+  double fd[4096],fdph[4096];
   double fd1[4096],fd2[4096];
   double fdph1[4096],fdph2[4096];
   int  n1,n2,n3,n4;
