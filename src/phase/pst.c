@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <10 Mar 14 18:11:27 flechsig>  */
+/*   Time-stamp: <10 Mar 14 18:22:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -789,6 +789,7 @@ void getgeostr_(int *blp, double *sina, double *cosa, double *sinb, double *cosb
   bl= (struct BeamlineType *)blp;
   el= &(bl->ElementList[(unsigned)bl->gratingpos]);
 
+  //printf("debug: getgeostr_ called, grating position index= %d\n", bl->gratingpos);
 #ifdef DEBUG
   printf("debug: getgeostr_ called, grating position index= %d\n", bl->gratingpos);
 #endif
