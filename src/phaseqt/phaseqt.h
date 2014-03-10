@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <07 Mar 14 13:36:27 flechsig>  */
+/*  Time-stamp: <10 Mar 14 11:57:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -59,9 +59,10 @@ class MainWindow;          // forward declaration
 #define PLOT_PO_PHASE_Z 0x10000
 #define PLOT_PO_PHASE_Y 0x20000
 
-#define PLOT_PO_S1 0x40000
-#define PLOT_PO_S2 0x80000
-#define PLOT_PO_S3 0x100000
+#define PLOT_PO_S0 0x40000
+#define PLOT_PO_S1 0x80000
+#define PLOT_PO_S2 0x100000
+#define PLOT_PO_S3 0x200000
 
 #define PLOT_ISO        1
 #define PLOT_CONTOUR    2
@@ -142,7 +143,7 @@ public:
                    writemapc(fname, header, iord, 
 			     ypc1, zpc1, dypc,   dzpc,
 			     wc,   xlc,  xlen1c, xlen2c); }
-  void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz); }
+  void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz, this); }
 #ifdef HAVE_HDF5
   void my_read_hdf5_file() { read_hdf5_file(this, this->filenames.hdf5_out); }
   void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out); }

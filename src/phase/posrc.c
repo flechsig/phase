@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <07 Mar 14 16:29:05 flechsig>  */
+/*  Time-stamp: <10 Mar 14 11:45:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -490,9 +490,9 @@ int check_hdf5_type(char *name, int type, int verbose)
 /* add phase psd to hdf5 file- linear array in c memory model */ 
 void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 {
-  int row, rows, col, cols, fieldsize;
+  int row, rows, col, cols, fieldsize, idxf;
   hid_t group_id;
-  double *field;
+  double *field, scale;
   struct PSDType *p;
 
 #ifdef DEBUG
@@ -500,6 +500,13 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 #endif
 
   p= (struct PSDType *)bl->RESULT.RESp;
+  scale= 1.0;
+  if (bl->BLOptions.ifl.inorm == 1)
+    {
+      printf("normalized intensity output\n");
+      scale= getIntensityMax(p);
+      scale= (fabs(scale) > 0.0) ? 1.0/scale : 1.0;
+    }
 
   rows= p->iy;
   cols= p->iz;
@@ -509,7 +516,11 @@ void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
 
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
-      field[col + row * cols]= p->psd[row + col * rows]; /* psd comes in fortran model */
+      {
+	idxf= row + col * rows;
+	field[col + row * cols]= (pow(p->eyrec[idxf], 2)+ pow(p->eyimc[idxf], 2)+ 
+				  pow(p->ezrec[idxf], 2) + pow(p->ezimc[idxf], 2)) * scale;
+      }
 
   group_id= H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   writeDataDouble(file_id, "/phase_psd/z", p->z, cols, "z (horizontal) vector in mm");
@@ -562,10 +573,7 @@ void read_hdf5_file(struct BeamlineType *bl, char *fname)
 
   p->iy= rows;
   p->iz= cols;
-  for (col= 0; col < cols; col++)   // in the file the rows are fast
-    for (row= 0; row < rows; row++)
-      p->psd[row + col * rows]= field[col + row * cols];                        /* psd comes in fortran model */
-  
+    
   XFREE(field);
 
   printf("read hdf5 file: %s => done\n", fname);

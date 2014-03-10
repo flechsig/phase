@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <20 Feb 14 12:29:50 flechsig>  */
+/*   Time-stamp: <10 Mar 14 12:03:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -949,12 +949,12 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       /* PSDp->y  = XMALLOC(double, psip->iy); */
       PSDp->y          = XMALLOC(double, iy);
       PSDp->z          = XMALLOC(double, iz);
-      PSDp->psd        = XMALLOC(double, ii);
-      PSDp->stfd1phmaxc= XMALLOC(double, ii);
-      PSDp->stinumbc=    XMALLOC(double, ii);
-      PSDp->s1c=         XMALLOC(double, ii);
-      PSDp->s2c=         XMALLOC(double, ii);
-      PSDp->s3c=         XMALLOC(double, ii);
+      //PSDp->psd        = XMALLOC(double, ii);
+      //      PSDp->stfd1phmaxc= XMALLOC(double, ii);
+      //PSDp->stinumbc=    XMALLOC(double, ii);
+      //PSDp->s1c=         XMALLOC(double, ii);
+      //PSDp->s2c=         XMALLOC(double, ii);
+      //PSDp->s3c=         XMALLOC(double, ii);
       PSDp->eyrec=       XMALLOC(double, ii);
       PSDp->ezrec=       XMALLOC(double, ii);
       PSDp->eyimc=       XMALLOC(double, ii);
@@ -995,18 +995,18 @@ void FreeResultMem(struct RESULTType *Re)
   if (Re->typ & PLphspacetype) 
     {  
       PSDp= (struct PSDType *)Re->RESp;
-      if (PSDp->psd != NULL)
+      if (PSDp->eyrec != NULL)
 	/* da der Speicher gemeinsam allociert wird teste ich nur einmal */
 	/* man muss alle reservierten pointer einzeln freigeben!         */
 	{  
 	  XFREE(PSDp->y);  
 	  XFREE(PSDp->z);  
-	  XFREE(PSDp->psd);
-	  XFREE(PSDp->stfd1phmaxc);
-	  XFREE(PSDp->stinumbc)  ;
-	  XFREE(PSDp->s1c)       ;
-	  XFREE(PSDp->s2c)       ;
-	  XFREE(PSDp->s3c)       ;
+	  //XFREE(PSDp->psd);
+	  //XFREE(PSDp->stfd1phmaxc);
+	  //XFREE(PSDp->stinumbc)  ;
+	  //XFREE(PSDp->s1c)       ;
+	  //XFREE(PSDp->s2c)       ;
+	  //XFREE(PSDp->s3c)       ;
 	  XFREE(PSDp->eyrec)     ;
 	  XFREE(PSDp->ezrec)     ;
 	  XFREE(PSDp->eyimc)     ;

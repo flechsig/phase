@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <07 Mar 14 13:34:24 flechsig>  */
+/*   Time-stamp: <10 Mar 14 12:00:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -299,7 +299,7 @@ struct RTSourceType {
 };       
 
 struct PSDType  {
-  double *y, *z, *psd, *stfd1phmaxc, *stinumbc, *s1c, *s2c, *s3c, 
+  double *y, *z, //*stfd1phmaxc, *stinumbc,  //*psd, *s1c, *s2c, *s3c, 
     *eyrec, *ezrec, *eyimc, *ezimc;
   double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
     sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
@@ -498,6 +498,7 @@ int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *,
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  
 void check_2_m4_(struct map4 *);
+double getIntensityMax(struct PSDType *);
 	
 void 	  
   
@@ -578,7 +579,7 @@ void
   FindIntRange(struct BeamlineType *),
 
   MPST(struct BeamlineType *), 
-  norm_output(struct BeamlineType *),
+  
   pathlen0(),
   pathlen1(struct xlenmaptype *, struct RayType *, int *, 
 	   double *, double *, double *), 
@@ -635,7 +636,7 @@ void
 	    double *, double *, double *, double *),
 /* writematrixfile(char *, int, char *, int, double *),  */
   writematrixfile(double *, char *, char *, int, int),
-  WritePsd(char *, struct PSDType *, int, int),     
+  WritePsd(char *, struct PSDType *, int, int, struct BeamlineType *),     
   
   SetIndexField(int *, int,...);
 	      

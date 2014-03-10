@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <07 Mar 14 17:08:44 flechsig>  */
+/*   Time-stamp: <10 Mar 14 11:56:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -267,16 +267,24 @@ void PST(struct BeamlineType *bl)
 #endif
 } /* end PST */
 
-void WritePsd(char *name, struct PSDType *p, int ny, int nz)   
+void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType *bl)   
 /* schreibt phasenraumdichte auf ein file 	*/
-/* Uwe 2.8.96 					*/
-/* last mod. 7.8.96 				*/   
+/* UF umgeschrieben auf felder Mar 2014 */
 {
-   FILE *f0,*f1,*f2,*f3,*f4;
-   int i, j, dim;
+   FILE *f0, *f1, *f2, *f3, *f4;
+   int i, j, dim, idxf;
+   double s0, scale;
    char fname[MaxPathLength];
 
    printf("WritePsd: Write Psd to %s-[psd,eyrec,ezrec,eyimc,ezimc]\n", name);
+
+   scale= 1.0;
+   if (bl->BLOptions.ifl.inorm == 1)
+     {
+       printf("normalized intensity output\n");
+       scale= getIntensityMax(p);
+       scale= (fabs(scale) > 0.0) ? 1.0/scale : 1.0;
+     }
 
    snprintf(fname, MaxPathLength, "%s-psd", name);
    if ((f0= fopen(fname, "w+")) == NULL)
@@ -317,11 +325,15 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz)
      for (j= 0; j< nz; j++) 
        /* psd ist fortran format */
        {
-	 fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->psd[i+ j* ny]);  
-	 fprintf(f1, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyrec[i+ j* ny]);  
-	 fprintf(f2, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezrec[i+ j* ny]);  
-	 fprintf(f3, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyimc[i+ j* ny]);  
-	 fprintf(f4, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezimc[i+ j* ny]);  
+	 idxf= i+ j* ny;
+	 s0= pow(p->eyrec[idxf], 2)+ pow(p->eyimc[idxf], 2)+ 
+	   pow(p->ezrec[idxf], 2) + pow(p->ezimc[idxf], 2);
+	 // fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], p->psd[i+ j* ny]); 
+	 fprintf(f0, "%15le %15le %15le\n", p->z[j], p->y[i], s0* scale); 
+	 fprintf(f1, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyrec[idxf]);  
+	 fprintf(f2, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezrec[idxf]);  
+	 fprintf(f3, "%15le %15le %15le\n", p->z[j], p->y[i], p->eyimc[idxf]);  
+	 fprintf(f4, "%15le %15le %15le\n", p->z[j], p->y[i], p->ezimc[idxf]);  
        }
    fclose(f0); fclose(f1); fclose(f2); fclose(f3); fclose(f4);  
    printf("WritePsd: --> done\n");
@@ -389,16 +401,12 @@ void pstc(struct BeamlineType *bl)
 
   printf("\n");
 
-  if(bl->BLOptions.ifl.inorm == 1)
-    {
-      printf("normalized output\n");
-      norm_output(bl);
-    }
+  
   
   iinumb=0;
   //for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i+1];   // fraglich
   
-  printf("debug: point (0,0)= %e\n",  PSDp->psd[0]);
+
   
 #ifdef DEBUG1
   if ((fd= fopen("simpre.debug", "w+")) == NULL)
@@ -542,8 +550,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 
   // UF wir speichern im fortran memory model (2bchanged)
   //PSDp->psd[index]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-  PSDp->psd[ny+nz*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
+  //  PSDp->psd[ny+nz*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
+  //	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
 
   
   // debug output of first point
@@ -556,8 +564,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     fflush(stdout);
     printf("DEBUG z[%d], y[%d]:", nz, ny);
     printf(" yzintey = %g + I*%g;", xirp->yzintey.re, xirp->yzintey.im);
-    printf(" yzintez = %g + I*%g;", xirp->yzintez.re, xirp->yzintez.im);
-    printf(" psd = %g\n", PSDp->psd[ny+nz*sp->iheigh]);
+    printf(" yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
+    //    printf(" psd = %g\n", PSDp->psd[ny+nz*sp->iheigh]);
   }
 #endif 
 
@@ -667,25 +675,27 @@ void fill_xirp(struct BeamlineType *bl, struct integration_results *xirp)
   xirp->si1.iiwidth= 0;
 } /* end fill_xirp */
 
-void norm_output(struct BeamlineType *bl)
+/*  */
+//void norm_output(struct BeamlineType *bl)
+double getIntensityMax(struct PSDType *p)
 {
   double surfmax;
-  int i, npoints;
-  struct PSDType   *PSDp;
-  struct psimagest *sp;
-
-  PSDp = (struct PSDType *)bl->RESULT.RESp;
-  sp   = (struct psimagest *)bl->RTSource.Quellep;
-
-  npoints= sp->iheigh * sp->iwidth;
-
-  surfmax= 0.0;
-  for (i= 0; i< npoints; i++) surfmax= (PSDp->psd[i] > surfmax) ? PSDp->psd[i] : surfmax;
-  surfmax= (fabs(surfmax) > ZERO) ? surfmax : 1;
-  for (i= 0; i< npoints; i++) PSDp->psd[i] /= surfmax;
+  int row, rows, col, cols, idxf;
+  
+  rows= p->iy;
+  cols= p->iz;
+  surfmax= -1e300;
+  for (col= 0; col < cols; col++)   // in the file the rows are fast
+    for (row= 0; row < rows; row++)
+      {
+	idxf= row + col * rows;
+	surfmax= max((pow(p->eyrec[idxf], 2)+ pow(p->eyimc[idxf], 2)+ 
+		      pow(p->ezrec[idxf], 2) + pow(p->ezimc[idxf], 2)), (surfmax));
+      }
 
   printf("norm_output: normalization done, max= %e\n", surfmax);
-} /* end norm_output */
+  return surfmax;
+} /* end  getIntensityMax */
 
 /* debug routine to check if m4 has been modified                              */
 /* for OK: *m4 is expected to contain two identical copies of map4 in sequence */
@@ -712,6 +722,7 @@ void check_2_m4_(struct map4 *m4)
       exit(-1);
     }
 } /* end check_2_m4 */
+
 
 void copySrc2Psd(struct BeamlineType *bl)
 {
@@ -759,8 +770,8 @@ void copySrc2Psd(struct BeamlineType *bl)
 	psd->eyimc[idxf]=so4->zeyim[idxc];
 	psd->ezimc[idxf]=so4->zezim[idxc];
 
-	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
-	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
+	//	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
+	//  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
       }
 
   psd->iy= cols;

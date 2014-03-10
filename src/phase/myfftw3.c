@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <06 Mar 14 17:16:51 flechsig>  */
+ /* Time-stamp: <10 Mar 14 10:34:04 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -88,7 +88,7 @@ void drift_fourier(struct BeamlineType *bl)
   drift_fourier_sub(in, out, &p1, &p2, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
 		    rows, cols, u, v, lambda, k, driftlen, p0);
 
-  psdfields2intensity(psd, rows, cols);
+  
   
   fftw_destroy_plan(p1);
   fftw_destroy_plan(p2);
@@ -216,7 +216,7 @@ void drift_fresnel(struct BeamlineType *bl)
   drift_fresnel_sub(in, out, &p, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
 		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
 
-  psdfields2intensity(psd, rows, cols);
+  
   
   fftw_destroy_plan(p);
   fftw_free(in); 
@@ -345,20 +345,7 @@ void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, dou
       }
 } /* end get_fftw */
 
-/* helper function                         */
-/* fills psd from fields inside psd struct */
-void psdfields2intensity(struct PSDType *psd, int rows, int cols)
-{
-  int row, col, idxf;
-  
-  for (row= 0; row < rows; row++)
-    for (col= 0; col < cols; col++)
-      {
-	idxf= col* rows+ row;
-	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
-	  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
-      }
-} /* psdfields2intensity */
+
 
 #endif
 

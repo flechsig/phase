@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <07 Mar 14 16:38:07 flechsig> 
+//  Time-stamp: <10 Mar 14 10:11:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -963,53 +963,8 @@ void Plot::hfill2(int settype)
 #endif
 } // hfill2 GO
 
-// fills a 2d histogram PO result data PO version
-void Plot::hfill2(struct PSDType *rp)
-{
-  int i, ix, iy, h2a_n;
-  double *data;
-  
-#ifdef DEBUG
-  cout << "Plot::hfill2 called (POR version)" << endl;
-#endif
 
-  h2a_nx= rp->iz;
-  h2a_ny= rp->iy;
-  data  = rp->psd;   // in fortran model
-  pox   = rp->z;
-  poy   = rp->y;
-
-  h2a_n= h2a_nx * h2a_ny;
-  if (h2a != NULL) delete h2a;
-  if (h2a_n > 0) h2a= new double[h2a_n];
-  
-  h2max= 0.0;
-  for (ix=0; ix< h2a_nx; ix++)
-    for (iy=0; iy< h2a_ny; iy++) 
-      {
-	//h2a[ix + (h2a_ny- iy- 1)* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren und vertikal spiegeln
-	// data kommt im fortran modell
-	h2a[ix + iy* h2a_nx]= data[iy + ix* h2a_ny]; // fortran feld auf c umsortieren
-	// h2max= max(h2max, h2a[ix + (h2a_ny- iy- 1)* h2a_nx]);     // save maximum
-
-	h2max= max(h2max, h2a[ix + iy* h2a_nx]);     // save maximum
-      }
-  
-  statistics();
-
-  // scale maximum to 10
-  if (h2max > 0.0)
-    for (i=0; i< h2a_n; i++)
-       h2a[i]*= 10.0/ h2max;
-
-   //  h2a[0]= 9; // for debugging
-  //  h2a[1]= 8;
-#ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
-#endif
-} // hfill2 PO
-
-// fills a 2d histogram with ray data PO field version
+// fills a 2d histogram, PO field version
 void Plot::hfill2(struct PSDType *rp, int type)
 {
   int i, ix, iy, h2a_n, idf, idc;
@@ -1045,6 +1000,9 @@ void Plot::hfill2(struct PSDType *rp, int type)
 	
 	switch (type)
 	  {
+	  case PLOT_PO_S0:
+	    h2a[idc]= az2+ ay2; 
+	    break;
 	  case PLOT_PO_S1:
 	    h2a[idc]= az2- ay2; 
 	    break;
@@ -1065,6 +1023,8 @@ void Plot::hfill2(struct PSDType *rp, int type)
 	h2min= min(h2min, h2a[idc]);
       } // end for
   
+  statistics();
+
   // scale range into 0 to 10
   h2range= h2max- h2min;
   if (h2range > 0.0)
@@ -1076,53 +1036,6 @@ void Plot::hfill2(struct PSDType *rp, int type)
 #endif
 } // hfill2 PO_phase
 
-
-// fills a 2d histogram with PO source 
-// !! source4c uses c memory model 
-void Plot::hfill2(struct source4c *rp)
-{
-  int i, ix, iy, h2a_n, idxc; 
-    
-#ifdef DEBUG
-  cout << "Plot::hfill2 called (PO source version)" << endl;
-#endif
-
-  h2a_nx= rp->iex;
-  h2a_ny= rp->iey;
-  //data  = rp->zeyre; //
-  pox   = rp->gridx;
-  poy   = rp->gridy;
-
-  h2a_n= h2a_nx * h2a_ny;
-  if (h2a != NULL) delete h2a;
-  if (h2a_n > 0) h2a= new double[h2a_n];
-  
-  h2max= 0.0;
-  for (ix=0; ix< h2a_nx; ix++)
-    for (iy=0; iy< h2a_ny; iy++) 
-      {
-	idxc= ix + iy* h2a_nx;            // data kommt im c memory  model
-	h2a[idxc]= pow(rp->zeyre[idxc], 2.0)+ pow(rp->zeyim[idxc], 2.0)+ 
-	  pow(rp->zezre[idxc], 2.0)+ pow(rp->zezim[idxc], 2.0);
-	h2max= max(h2max, h2a[idxc]);     // save maximum
-      }
-  
-statistics();
-
-  // scale maximum to 10
-  if (h2max > 0.0)
-    for (i=0; i< h2a_n; i++)
-      h2a[i]*= 10.0/ h2max;
-  
-  //  h2a[0]= 9; // for debugging
-  //  h2a[1]= 8;
-
-  
-
-#ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmax=" <<  h2max << endl;
-#endif
-} // hfill2 PO source
 
 // fills a 2d histogram with PO source field version
 // !! source4c uses c memory model 
@@ -1159,6 +1072,9 @@ void Plot::hfill2(struct source4c *rp, int type)
 	
 	switch (type)
 	  {
+	  case PLOT_PO_S0:
+	    h2a[idc]= az2+ ay2; 
+	    break;
 	  case PLOT_PO_S1:
 	    h2a[idc]= az2- ay2; 
 	    break;
@@ -1179,6 +1095,8 @@ void Plot::hfill2(struct source4c *rp, int type)
 	h2min= min(h2min, h2a[idc]);
       } // end for
   
+  statistics();
+
   // scale range into 0 to 10
   h2range= h2max- h2min;
   if (h2range > 0.0)

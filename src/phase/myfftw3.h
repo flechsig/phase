@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.h */
  /* Date      : <06 Jan 14 14:10:12 flechsig>  */
- /* Time-stamp: <03 Mar 14 16:31:27 flechsig>  */
+ /* Time-stamp: <10 Mar 14 10:34:02 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -29,7 +29,7 @@ void drift_fresnel_sub(fftw_complex *, fftw_complex *, fftw_plan *,
 void fftshift(fftw_complex *, int, int);
 void fill_fftw(fftw_complex *, double *, double *, int, int);
 void get_fftw(fftw_complex *, double *, double *, int, int, double);
-void psdfields2intensity(struct PSDType *, int, int);
+
 #endif
 #endif
 /* end file */

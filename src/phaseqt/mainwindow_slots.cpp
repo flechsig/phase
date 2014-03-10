@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <07 Mar 14 13:39:39 flechsig> 
+//  Time-stamp: <10 Mar 14 11:51:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -178,7 +178,7 @@ void MainWindow::activateProc(const QString &action)
 
   if (!action.compare("copyPOAct")) myparent->mycopySrc2Psd();
 
-  if (!action.compare("normPOAct")) norm_output(myparent->myBeamline());
+  if (!action.compare("normPOAct")) cout << "normPOAct no longer used- we scale the outputs depending on inorm" << endl;
   
   if (!action.compare("raytracesimpleAct")) 
     { 
@@ -557,10 +557,10 @@ if (!action.compare("fourierAct"))
 
   if (!action.compare("writeResultAct")) 
     { 
-      printf("writereResultAct button pressed, result type: %d\n", myparent->myBeamline()->RESULT.typ); 
+      cout << "writereResultAct button pressed, result type: " <<  
+	myparent->myBeamline()->RESULT.typ << endl; 
       if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0)
 	{
-
 	  cout << "write PO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
 	  myparent->myWritePsd(myparent->myBeamline()->filenames.imageraysname, 
 			       (struct PSDType *)myparent->myBeamline()->RESULT.RESp);
@@ -670,7 +670,7 @@ if (!action.compare("fourierAct"))
     }
   if (!action.compare("grPoSourceAct"   )) 
     {
-      mwplotsubject= PLOT_PO_SOURCE;
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_S0);
       updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grPoSourceS1Act")) 
@@ -700,7 +700,7 @@ if (!action.compare("fourierAct"))
     }
   if (!action.compare("grPoResultAct")) 
     {
-      mwplotsubject= PLOT_PO_RESULT;
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_S0);
       updateGraphicsInput(mwplotsubject);
     }
   if (!action.compare("grPoResultS1Act")) 
@@ -1382,10 +1382,10 @@ void MainWindow::grapplyslot()
       d_plot->replot();
       break;
       
-    case PLOT_PO_RESULT:
+    case (PLOT_PO_RESULT | PLOT_PO_S0):
       cout << "plot PO_RESULT experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp);
+      d_plot->hfill2(psdp, PLOT_PO_S0);
       d_plot->setPoData("PO result S0");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1432,10 +1432,10 @@ void MainWindow::grapplyslot()
       d_plot->contourPlot();
       break;
 
-    case PLOT_PO_SOURCE:
+    case (PLOT_PO_SOURCE | PLOT_PO_S0):
       cout << "plot PO_SOURCE experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc));
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S0);
       d_plot->setPoData("PO source");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);

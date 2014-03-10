@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2014-02-16 19:06:58 flechsig>  */
+/*   Time-stamp: <10 Mar 14 11:59:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -101,7 +101,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
       switch (format)
 	{
 	case 1:
-	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	  break;
 	case 2:
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
@@ -111,7 +111,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
-	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	}
       break;
 
@@ -137,7 +137,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       MPST(bl);
       PSDp= (struct PSDType *)bl->RESULT.RESp;
-      WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+      WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
       break;
 
     case 6: 
@@ -152,7 +152,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
       switch (format)
 	{
 	case 1:
-	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	  break;
 	case 2:
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
@@ -162,7 +162,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
-	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	}
       break;
 
