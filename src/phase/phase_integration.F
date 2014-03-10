@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Mar 14 12:25:07 flechsig> 
+c$$$ Time-stamp: <10 Mar 14 14:48:08 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -646,6 +646,9 @@ c        inorm2 = 44: Isabelles Formeln, aber beschränkt auf quadratische Terme
 c        inorm2 = 45: Isabelles Formeln, aber beschränkt auf kubische Terme
 
 c---------------------------------------------------------------------
+             
+c UF neue routine           
+        call getgeostr(blp, sina, cosa, sinb, cosb, r, rp, xlam)
 
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph*fd1ph

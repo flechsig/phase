@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <10 Mar 14 12:21:15 flechsig>  */
+/*   Time-stamp: <10 Mar 14 14:47:10 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -23,7 +23,8 @@
                                             
 #include "cutils.h" 
 #include "phase_struct.h"
-#include "phase.h"         
+#include "phase.h"   
+#include "pst.h"      
 #include "rtrace.h" 
 #include "common.h"
 
@@ -724,7 +725,6 @@ void check_2_m4_(struct map4 *m4)
     }
 } /* end check_2_m4 */
 
-
 void copySrc2Psd(struct BeamlineType *bl)
 {
 #ifdef DEBUG  
@@ -778,6 +778,24 @@ void copySrc2Psd(struct BeamlineType *bl)
   psd->iy= cols;
   psd->iz= rows;
 } // end copySrc2Psd()
+
+/* export geometrystruct of grating to fortran */
+void getgeostr_(int *blp, double *sina, double *cosa, double *sinb, double *cosb, double *r, double *rp, double *xlam)
+{
+  struct BeamlineType *bl;
+  struct ElementType  *el;
+
+  bl= (struct BeamlineType *)blp;
+  el= &(bl->ElementList[(unsigned)bl->gratingpos- 1]); 
+
+  *sina= el->geo.sina;
+  *cosa= el->geo.cosa;
+  *sinb= el->geo.sinb;
+  *cosb= el->geo.cosb;
+  *r   = el->geo.r;
+  *rp  = el->geo.rp;
+  *xlam= el->geo.xlam;
+} /* getgeostr_ */
 /* end pst.c */
 
 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <10 Mar 14 11:57:18 flechsig>  */
+/*  Time-stamp: <10 Mar 14 14:24:07 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -31,6 +31,7 @@ extern "C" {
   #include "common.h"
   #include "posrc.h"
   #include "myfftw3.h"
+  #include "pst.h"
 }
 
 class MainWindow;          // forward declaration

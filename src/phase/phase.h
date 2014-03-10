@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Mar 14 12:32:18 flechsig>  */
+/*   Time-stamp: <10 Mar 14 14:32:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -497,8 +497,8 @@ int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *,
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
  
-void check_2_m4_(struct map4 *);
-double getIntensityMax(struct PSDType *);
+
+
 	
 void 	  
   
@@ -509,7 +509,6 @@ void
   BuildElement(unsigned int, struct BeamlineType *),
   Check_iord(struct BeamlineType *),
   create_hormap(),
-  copySrc2Psd(struct BeamlineType *),
   debug_beamline_type_f(int *),
   debug_beamline_type_c_(int *),
   DefGeometryC_JB(struct gdatset *, struct geometrytype *, struct OptionsType *),
@@ -536,8 +535,8 @@ void
 	     MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6, MAPTYPE_8X6,
 	     MAPTYPE_8X6, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, 
 	     struct mirrortype *, struct geometrytype *, int *, int *, int *),
-  fill_m4(struct BeamlineType *, struct map4 *),
-  fill_xirp(struct BeamlineType *, struct integration_results *),
+  
+  
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, unsigned int),
   GeneratePrintDataFile(),
@@ -585,9 +584,9 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
-  pstc(struct BeamlineType *),
-  pstc_ii(int, struct BeamlineType *),
-  pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *),
+  
+  
+  
  
   adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
 	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
@@ -607,7 +606,7 @@ void
   SetDeltaLambda(struct BeamlineType *, struct ElementType *),
   Slope(struct RayType *, double, double, double, double, int),
   src_ini(struct sources *),  
-  Test4Grating(struct BeamlineType *),
+  
   MMatrix(),
   UpdateFlags(struct BeamlineType *, int),	        
   WriteBLFile(char *, struct BeamlineType *),
@@ -616,7 +615,7 @@ void
 	    double *, double *, double *, double *),
 /* writematrixfile(char *, int, char *, int, double *),  */
   writematrixfile(double *, char *, char *, int, int),
-  WritePsd(char *, struct PSDType *, int, int, struct BeamlineType *),     
+       
   
   SetIndexField(int *, int,...);
 	      
