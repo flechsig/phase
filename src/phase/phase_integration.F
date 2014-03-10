@@ -592,12 +592,18 @@ c        write(6,*)' w, l ',ra.oe.w,ra.oe.xl
 	fd=dabs(fd)
         fdph=dabs(fdph)
 c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on uninitialised value(s)
+
+       if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
+     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
+     &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44).or.
+     &     (ifl.inorm2.eq.45))then
         if(fd1ph.lt.0.d0)xl2sign=-1.d0
         fd1ph=dabs(fd1ph)
         if(fd1pha.lt.0.d0)xw3sign=-1.d0  
         fd1pha=dabs(fd1pha)
         if(fd1phb.lt.0.d0)xw2sign=-1.d0
         fd1phb=dabs(fd1phb)
+        endif
 
         call psdi(g,src,apr,cs,ifl,ra,sr,blp)
 
@@ -651,16 +657,17 @@ c---------------------------------------------------------------------
 
         if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
 
-c------------------ nur quadratische Terme 
+c------------------ only quadratic terms, no diagonalization 
         if(ifl.inorm2.eq.31)then
           arg=fd1pha*fd1phb-fd1ph*fd1ph
           ff=fdph/(g.xlam*dsqrt(dabs(arg)))
-          ff1=1.d0
+c   Mandel & Wolf (different from Focke?)
+          ff1=cs.sqrtm1
           if(fd1pha+fd1phb.lt.0.d0)then
            if(arg.ge.0.d0)then
-            ff1=-1.d0
+            ff1=-ff1
             else
-            ff1=cs.sqrtm1
+            ff1=-ff1*cs.sqrtm1
            endif
           endif
           ff=ff*ff1
