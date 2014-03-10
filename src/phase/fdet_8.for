@@ -129,8 +129,6 @@ c---- routine wird nur gerufen wenn imodus = 2 (PO)
        fact=(dsqrt(dabs(g.cosa))*
      &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
 
-c--------------- modifiziert entsprechend Born und Mandel
-c      fact1=fact*2.0d0
        fact1=fact
        fact2=fact*dsqrt(pi_loc)/dsqrt(2.0d0)
        fact3=2.d0/pi_loc
@@ -152,7 +150,10 @@ c------------- change signs of ypc1 and zpc1
         enddo
 
        if((inorm2.eq.4 ).or.(inorm2.eq.40).or.
-     &    (inorm2.eq.41).or.(inorm2.eq.42))then
+     &    (inorm2.eq.41).or.(inorm2.eq.42).or.
+     &    (inorm2.eq.43).or.(inorm2.eq.44).or.
+     &    (inorm2.eq.45))then
+
 c------------- change signs of wc and xlc 
         do n1=0,iord
          do n2=0,iord-n1
@@ -383,12 +384,15 @@ c         diesen Ausdruck gegenüber inorm2 = 3 bevorzugen
           call tay_copy_4(dfdll,fdet1phcb,iord)      
           call tay_const_4(fdet1phcb,1.d0/fact1,iord)
           call Tay_copy_4(dfdwl,fdet1phc,iord)
-          call tay_const_4(fdet1phc,1.d0/fact1,iord)
+          call tay_const_4(fdet1phc,2.d0/fact1,iord)
+
         endif
 
 c----------------------------
         if((inorm2.eq.4 ).or.(inorm2.eq.40).or.
-     &   (inorm2.eq.41).or.(inorm2.eq.42))then
+     &     (inorm2.eq.41).or.(inorm2.eq.42).or.
+     &     (inorm2.eq.43).or.(inorm2.eq.44).or.
+     &     (inorm2.eq.45))then
 
 c	wir haben schon mal in Abhängigkeit der Variablen
 c	w, l, y, z, yp, zp die folgenden Ausdruecke:
@@ -479,7 +483,9 @@ c	Das Integral wird erst in fywert berechnet
 	endif		! inorm2 = 4
 
        if((inorm2.eq.4 ).or.(inorm2.eq.40).or.
-     &   (inorm2.eq.41).or.(inorm2.eq.42))then
+     &    (inorm2.eq.41).or.(inorm2.eq.42).or.
+     &    (inorm2.eq.43).or.(inorm2.eq.44).or.
+     &    (inorm2.eq.45))then
 
 c--------- change signs of wc, xlc back 
           do n1=0,iord
