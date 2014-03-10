@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <10 Mar 14 12:11:56 flechsig> 
+c$$$ Time-stamp: <10 Mar 14 12:33:55 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -341,21 +341,7 @@ c------------------ flags ---------------------------------------
            integer pst_mode
         end structure
 
-c------------------ statistics ----------------------------------
-c /* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
-c so wars bei Johannes - verkleinere felder
 
-c	structure/statistics/
-c	   real*8 fd1phmax(512,512)
-c	   integer nn1,nn2,inumb(1100,1100)
-c	   integer inumzit,inumyit,inumzan,inumyan
-c	end structure
-
-	structure/statistics/
-        real*8 fd1phmax(128,128)
-        integer nn1,nn2,inumb(256,256)
-	   integer inumzit,inumyit,inumzan,inumyan
-	end structure
 
 c------------------ constants -----------------------------------
 

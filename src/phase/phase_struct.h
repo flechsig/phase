@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <10 Mar 14 12:11:53 flechsig>  */
+/*   Time-stamp: <10 Mar 14 12:33:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -353,25 +353,6 @@ struct  control_flags {
   int  igrating,ipinarr,ilimits;
   int  ipath; 
   int  pst_mode;
-};  
-
-/* ----------------- statistics ----------------------------------*/
-/* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
-/*
-  #ifdef VMS
-*/
-/* so wars bei Johannes, ich verkleinere die feldgrenzen
-   struct  statistics {
-   double fd1phmax[512][512];
-   int  nn1,nn2,inumb[1100][1100];
-   int  inumzit,inumyit,inumzan,inumyan;
-   };  
-*/
-
-struct  statistics {
-  double fd1phmax[128][128];
-  int  nn1,nn2,inumb[256][256];
-  int  inumzit,inumyit,inumzan,inumyan;
 };  
 
 /* ----------------- constants -----------------------------------*/

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Mar 14 12:00:11 flechsig>  */
+/*   Time-stamp: <10 Mar 14 12:32:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -454,7 +454,7 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
   
   #define pathlen0       pathlen0_
   #define pathlen1       pathlen1_
-  #define pstf           pstf_ 
+  
   #define readfg34_par   readfg34_par_
   #define readmatrixfile readmatrixfile_
   #define src_ini        src_ini_
@@ -588,30 +588,10 @@ void
   pstc(struct BeamlineType *),
   pstc_ii(int, struct BeamlineType *),
   pstc_i(int, struct BeamlineType *, struct map4 *, struct constants *),
-  pstf(struct PSImageType *, struct PSOptionsType *,
-       double *, int *, 
-#ifdef SEVEN_ORDER
-       MAPTYPE_8X4 *, MAPTYPE_8X4 *,         
-#else
-       MAPTYPE_5X4 *, MAPTYPE_8X4 *,        
-#endif
-       double *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *,
-       MAP7TYPE *wc, MAP7TYPE *,
-       double *y, double *,
-       double *psd, double *,
-       double *stinumbc, double *,
-       double *s2c, double *,
-       double *eyrec, double *,
-       double *eyimc, double *,
-       struct geometryst *, struct mirrortype *,
-       struct sources *, struct apertures *, struct rayst *, struct control_flags *,
-       struct integration *, struct integration_results *, struct statistics *, 
-       MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, MAP7TYPE *, int *),
-  
-
+ 
   adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
 	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
-	       struct integration_results *, struct statistics *, struct psimagest *, int *),
+	       struct integration_results *, struct psimagest *, int *),
   PutPHASE(struct  PHASEset *, char *), 
 /*  RayTracec(struct BeamlineType *),*/
   RayTraceFull(struct BeamlineType *), 
