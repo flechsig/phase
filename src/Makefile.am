@@ -1,6 +1,6 @@
 ##  File      : /afs/psi.ch/user/f/flechsig/c/gnubuild-test/Makefile.am
 ##  Date      : <02 Dec 03 15:46:24 flechsig> 
-##  Time-stamp: <20 Aug 13 08:22:19 flechsig> 
+##  Time-stamp: <11 Mar 14 09:54:33 flechsig> 
 ##  Author    : Uwe Flechsig, flechsig@psi.ch
 
 ##  $Source$ 
@@ -22,8 +22,9 @@ EXTRA_DIST = BUGS ChangeLog.O bin/apps_home.sh configure
 bin_SCRIPTS = bin/create-coefficients.pl bin/phaseinit.csh  \
 	      bin/phaseinit.sh           bin/scale-wave-output.pl
 
-SUBDIRS = phaseqt phasesrv extr opti hdf5tools phase4idl idlphase
+## UF Mar 2014 SUBDIRS = phaseqt phasesrv extr opti hdf5tools phase4idl idlphase
 
+SUBDIRS = phaseqt phasesrv extr opti hdf5tools idlphase
 
 ACLOCAL_AMFLAGS = -I config
 
