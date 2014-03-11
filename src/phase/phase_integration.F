@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Mar 14 17:56:53 flechsig> 
+c$$$ Time-stamp: <11 Mar 14 10:15:58 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -218,7 +218,7 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
+	   call yyint(m4,src,xi,xir,apr,cs,ra,ifl,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 	   if(ifl.ispline.ge.0)then
