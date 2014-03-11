@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <11 Mar 14 09:45:47 flechsig> 
+c$$$ Time-stamp: <11 Mar 14 09:47:07 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -148,7 +148,7 @@ c--------------- geometry -----------------------------------
 
          structure/geometryst/
             real*8 sina,cosa,sinb,cosb,
-      &            r,rp,xdens(0:4),xlam
+     &            r,rp,xdens(0:4),xlam
           integer idefl
          end structure
 
