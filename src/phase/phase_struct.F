@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <10 Mar 14 17:47:02 flechsig> 
+c$$$ Time-stamp: <11 Mar 14 09:45:47 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -143,6 +143,15 @@ c spezielle Version fuer 4. order fuer die benutzung in der phaselib
            real*8  disty1,disty2,distz1,distz2                
 	   integer iheigh,iwidth   
         end structure 
+
+c--------------- geometry -----------------------------------
+
+         structure/geometryst/
+            real*8 sina,cosa,sinb,cosb,
+      &            r,rp,xdens(0:4),xlam
+          integer idefl
+         end structure
+
 
 c---------------- sources -----------------------------------
 
