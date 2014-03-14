@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <05 Jul 13 16:38:29 flechsig> 
+c$$$ Time-stamp: <10 Mar 14 17:56:53 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -37,13 +37,8 @@ c (6) neuer Aufrufparameter s in adaptive_int und phacor
 c      wird zum Ruecksprung benutzt
 c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
-c von J.B. am 20.12.99
-c Aenderungen von JB am 11.2.00
-c UF habe xxsave eingefuehrt !!! pruefen
+c UF 10. Mar 2014 removed geometryst
 c*********************************************************
-c UF 12.1.2000
-c #define DEBUG1
-c uf      subroutine adaptive_int(m4,g,am,src,apr,cs,ra,
          subroutine adaptive_int(m4,g,src,apr,cs,ra,
      &                       ifl,xi,xir,st,sp,blp)
 c*********************************************************
@@ -111,8 +106,10 @@ c uf	record /mirrortype/ am
 	record /map4/ m4
         record /psimagest/ sp
 
-	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
-     &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
+	dimension densiyre(MAX_INTEGRATION_SIZE),
+     &            densiyim(MAX_INTEGRATION_SIZE),
+     &            densizre(MAX_INTEGRATION_SIZE),
+     &            densizim(MAX_INTEGRATION_SIZE)
 
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
@@ -254,8 +251,9 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 	enddo		
 	endif
 
-        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
-
+       if(ifl.ispline.eq.-1)then
+          call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
+       endif
 	iyz=2
 c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
        call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
@@ -265,8 +263,9 @@ c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
-        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
-
+        if(ifl.ispline.eq.-1)then
+          call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+        endif
 	iyz=2
 c	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
        call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
@@ -290,7 +289,6 @@ c------------------------------------------------------------
 c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-c UF	subroutine yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
        subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
@@ -327,6 +325,7 @@ c UF	complex*16 fyey(4096),fyez(4096)
 	record /integration_results/ xir
 c UF 28.6.13        record /source6/ so6
 	record /apertures/ apr
+        record / statistics/ st
 c uf	record /mirrortype/ am
 	record /map4/ m4
 
@@ -430,8 +429,6 @@ c#ifdef DEBUG
 c        write(6,*)' call fywert, i=', i
 c#endif
  
-c uf	  call fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-c     &		y(i),fyey(i),fyez(i),fya(i),fyp(i),fza(i),fzp(i),sr,blp)
  	  call fywert(m4,g,src,xi,apr,cs,ra,ifl,
      &		y(i),fyey(i),sr,blp)
 
@@ -498,6 +495,7 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 	record /integration/ xi
 c uf	record /integration_results/ xir
 	record /apertures /apr
+        record /statistics/ st
 c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
@@ -592,12 +590,18 @@ c        write(6,*)' w, l ',ra.oe.w,ra.oe.xl
 	fd=dabs(fd)
         fdph=dabs(fdph)
 c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on uninitialised value(s)
+
+       if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
+     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
+     &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44).or.
+     &     (ifl.inorm2.eq.45))then
         if(fd1ph.lt.0.d0)xl2sign=-1.d0
         fd1ph=dabs(fd1ph)
         if(fd1pha.lt.0.d0)xw3sign=-1.d0  
         fd1pha=dabs(fd1pha)
         if(fd1phb.lt.0.d0)xw2sign=-1.d0
         fd1phb=dabs(fd1phb)
+        endif
 
         call psdi(g,src,apr,cs,ifl,ra,sr,blp)
 
@@ -640,6 +644,9 @@ c        inorm2 = 44: Isabelles Formeln, aber beschränkt auf quadratische Terme
 c        inorm2 = 45: Isabelles Formeln, aber beschränkt auf kubische Terme
 
 c---------------------------------------------------------------------
+             
+c UF neue routine           
+c        call getgeostr(blp, sina, cosa, sinb, cosb, r, rp, xlam)
 
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph*fd1ph
@@ -651,24 +658,67 @@ c---------------------------------------------------------------------
 
         if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
 
-c------------------ nur quadratische Terme 
+c------------------ only quadratic terms, no diagonalization 
+c   Mandel & Wolf (different from Focke?)
         if(ifl.inorm2.eq.31)then
           arg=fd1pha*fd1phb-fd1ph*fd1ph
+          spur=fd1pha+fd1phb
           ff=fdph/(g.xlam*dsqrt(dabs(arg)))
-          ff1=1.d0
-          if(fd1pha+fd1phb.lt.0.d0)then
-           if(arg.ge.0.d0)then
-            ff1=-1.d0
-            else
-            ff1=cs.sqrtm1
-           endif
-          endif
+          if((arg.gt.0.d0).and.(spur.gt.0.d0))ff1=cs.sqrtm1
+          if((arg.gt.0.d0).and.(spur.lt.0.d0))ff1=-cs.sqrtm1
+          if(arg.lt.0.d0)ff1=1.d0
           ff=ff*ff1
-        endif
-c------------------ Ende quadratische Terme
+         endif
 
-        if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
-     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
+c--------- Variante 2, with diagonalization, gleiches Ergebnis wie Variante 1
+          if(ifl.inorm2.eq.32)then
+          ax=fd1pha
+          bx=fd1phb
+          cx=fd1ph
+          at=ax
+          bt=bx-cx**2/ax
+          asig=1.d0
+          bsig=1.d0
+          if(at.lt.0.d0)asig=-1.d0
+          if(bt.lt.0.d0)bsig=-1.d0
+          ff=cdexp(asig*cs.sqrtm1*cs.pi*0.25d0)*
+     &       cdexp(bsig*cs.sqrtm1*cs.pi*0.25d0)*
+     &     (fdph/(g.xlam*dsqrt(dabs(at))*dsqrt(dabs(bt))))      
+          endif
+
+c--------- Variante 3, liefert wie erwartet gleiche Ergebnisse wie Variante 2
+          if(ifl.inorm2.eq.33)then
+          ax=fd1pha
+          bx=fd1phb
+          cx=fd1ph
+          bt=bx
+          at=ax-cx**2/bx
+          asig=1.d0
+          bsig=1.d0
+          if(at.lt.0.d0)asig=-1.d0
+          if(bt.lt.0.d0)bsig=-1.d0
+          ff=cdexp(asig*cs.sqrtm1*cs.pi*0.25d0)*
+     &       cdexp(bsig*cs.sqrtm1*cs.pi*0.25d0)*
+     &     (fdph/(g.xlam*dsqrt(dabs(at))*dsqrt(dabs(bt))))            
+        endif
+
+c------------------ only quadratic terms, diagonalization version 1 & 2
+        if((ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42))then
+
+          ff=fdph/(g.xlam*dsqrt(dabs(fd1pha)*dabs(fd1phb)))
+          ff=ff*cdexp(xw3sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &          cdexp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)
+  
+c        write(6,*)' '
+c        write(6,*)xw3sign*fd1pha,xw2sign*fd1phb
+c        write(6,*)cdabs(ff)
+
+        endif
+
+c-------------- further values of inorm2
+
+        if((ifl.inorm2.eq.4 ).or.
+     &     (ifl.inorm2.eq.40).or.(ifl.inorm2.eq.41).or.
      &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44).or.
      &     (ifl.inorm2.eq.45))then
 
@@ -690,11 +740,9 @@ c        write(6,*)' xlenmir === ',xlenmir
  
         small_fd1ph=1.d-50
 
-        if((ifl.inorm2.eq.4).or.
-     &     (ifl.inorm2.eq.40).or.
-     &     (ifl.inorm2.eq.41).or.
-     &     (ifl.inorm2.eq.42))convlim=19.1d0
-        if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
+        if(ifl.inorm2.eq.4)convlim=19.1d0
+        if((ifl.inorm2.eq.40).or.
+     &     (ifl.inorm2.eq.41))convlim=1.0d-50           ! use only 2nd order
         if((ifl.inorm2.eq.43).or.
      &     (ifl.inorm2.eq.44).or.
      &     (ifl.inorm2.eq.45))convlim=5.1d0
@@ -735,11 +783,14 @@ c-----------------------------------
 c------------- only quadratic terms
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
+          ff=cdexp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &     cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &     (fdph/(g.xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
-         if(ifl.inorm2.eq.42)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
+  
+c        write(6,*)' '
+c        write(6,*)fd1phb,fd1ph
+c        write(6,*)cdabs(ff)
 
          else
 
@@ -754,9 +805,8 @@ c------------- only quadratic terms
         sumsin=ssin*abar
  
         ff=(fdph/dsqrt(fd1ph))*
-     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
+     &     cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=redu*ff*(sumcos+sumsin*cs.sqrtm1)
-        if(ifl.inorm2.eq.41)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
 
 c         write(6,*)ra.oe.w,fd1pha,fd1phb
@@ -785,8 +835,8 @@ c------------- get nk
 c------------- only quadratic terms
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
+          ff=cdexp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &       cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
      &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
          if(ifl.inorm2.eq.45)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
@@ -832,7 +882,7 @@ c        sumcos=scos*abar
 c        sumsin=ssin*abar
 
         ff=(fdph/dsqrt(fd1ph))*
-     &      exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
+     &      cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.44)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
