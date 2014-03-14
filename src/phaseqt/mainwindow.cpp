@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <07 Mar 14 16:58:26 flechsig> 
+//  Time-stamp: <14 Mar 14 16:43:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1894,7 +1894,9 @@ void MainWindow::ReadBLFileInteractive(char *blname)
   strncpy(myparent->myBeamline()->filenames.so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);*/
 
   if (c_window) c_window->updateList();
-  myparent->myWriteBLFile(blname);  // to reset the time
+  // UF Mar 2014 not good since it changes the content of the file
+  //myparent->myWriteBLFile(blname);  // to reset the time
+  //myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
 
 
