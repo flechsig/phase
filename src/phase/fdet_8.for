@@ -120,7 +120,6 @@ c	   inorm2 = 4: einschließlich 3. Ordnungsterm in optischer Weglänge
 c	   inorm2 = 5: vollständige asymptotische Entwicklung bis order ord
 c
 
-
 c	write(*,*)'fdet_8 called'
 
 
@@ -376,7 +375,8 @@ c         diesen Ausdruck gegenüber inorm2 = 2 bevorzugen
         endif
 
 c----------------------------
-        if(inorm2.eq.31)then
+        if((inorm2.eq.31).or.(inorm2.eq.32).or.
+     &     (inorm2.eq.33))then
 c----------------------------
 c         diesen Ausdruck gegenüber inorm2 = 3 bevorzugen   
           call tay_copy_4(dfdww,fdet1phca,iord)
@@ -385,7 +385,6 @@ c         diesen Ausdruck gegenüber inorm2 = 3 bevorzugen
           call tay_const_4(fdet1phcb,1.d0/fact1,iord)
           call Tay_copy_4(dfdwl,fdet1phc,iord)
           call tay_const_4(fdet1phc,2.d0/fact1,iord)
-
         endif
 
 c----------------------------
@@ -405,35 +404,57 @@ c
 c       in the following we use old coordinate system 
 c       as in fgmapidp_8 during map evaluation
 c
-c---------- get prefactors as of SAN Diego paper
-	   do i=0,iord
-	    do j=0,iord-i
-	     do k=0,iord-i-j
-	      do l=0,iord-i-j-k
-	       do m=0,iord-i-j-k-l
-	        do n=0,iord-i-j-k-l-m
-	c0(i,j,k,l,m,n)=dfdww6(i,j,k,l,m,n)/2.d0	
-	a0(i,j,k,l,m,n)=dfdll6(i,j,k,l,m,n)/2.d0	
-	b0(i,j,k,l,m,n)=dfdwl6(i,j,k,l,m,n)/2.d0			! 
-	d0(i,j,k,l,m,n)=dfdwww6(i,j,k,l,m,n)/6.d0	
-	        enddo
-	       enddo
-	      enddo
-	     enddo
-	    enddo
-	   enddo
 
 c---------- coordinate transformation in variables w and l
-	call Tay_copy_6(a0,at,iord)	! at=a0 bleibt
-	call Tay_copy_6(d0,dt,iord)	! dt=d0 bleibt
-					! bt=0
+
+c---------------------------------------------------------------------------
+c---------- including 3rd order terms in PL, alt, nur noch zum testen
+c---------------------------------------------------------------------------
+         if((inorm2.eq.4 ).or.
+     &     (inorm2.eq.40).or.(inorm2.eq.41).or.
+     &     (inorm2.eq.43).or.(inorm2.eq.44).or.
+     &     (inorm2.eq.45))then
+
+c---------- get prefactors as of SAN Diego paper
+           do i=0,iord
+            do j=0,iord-i
+             do k=0,iord-i-j
+              do l=0,iord-i-j-k
+               do m=0,iord-i-j-k-l
+                do n=0,iord-i-j-k-l-m
+        c0(i,j,k,l,m,n)=dfdww6(i,j,k,l,m,n)/2.d0        
+        a0(i,j,k,l,m,n)=dfdll6(i,j,k,l,m,n)/2.d0        
+        b0(i,j,k,l,m,n)=dfdwl6(i,j,k,l,m,n)/2.d0                        ! 
+        d0(i,j,k,l,m,n)=dfdwww6(i,j,k,l,m,n)/6.d0       
+                enddo
+               enddo
+              enddo
+             enddo
+            enddo
+           enddo
+
+
+       call Tay_copy_6(d0,dt,iord)     
+
+        if(inorm2.ne.41)then
+c       Variante 1
+	call Tay_copy_6(a0,at,iord)						
 	call Tay_inv_6(a0,T6,iord)
 	call Tay_mult_6(T6,b0,T6a,iord)	
 	call Tay_mult_6(T6a,b0,T6b,iord)
 	call Tay_const_6(T6b,-1.d0,iord)
+        call Tay_sum_6(T6b,c0,ct,iord) 
 
-        call Tay_sum_6(T6b,c0,ct,iord)  ! ct
-c        call Tay_copy_6(c0,ct,iord)  ! ct falls keine Koordinatentransformation
+        else
+c       Variante 2, liefert schlechtere Ergebnisse als Variante 1
+        call Tay_copy_6(c0,ct,iord)                                                
+        call Tay_inv_6(c0,T6,iord)
+        call Tay_mult_6(T6,b0,T6a,iord) 
+        call Tay_mult_6(T6a,b0,T6b,iord)
+        call Tay_const_6(T6b,-1.d0,iord)
+        call Tay_sum_6(T6b,a0,at,iord)  
+ 
+        endif
 
 c------------- get partial derivatives in variables (w,l,y,z)
 c------------- replace yp and zp
@@ -443,23 +464,20 @@ c------------- replace yp and zp
 
 c------------- get partial derivatives in variables (y,z,dy,dz)
 c------------- replace w and l with Taylor series in y,z,dy,dz
-
         call replace_wl_in_ypzp(au,au,wc,xlc,av,av,1,iord)
         call replace_wl_in_ypzp(cu,cu,wc,xlc,cv,cv,1,iord)
         call replace_wl_in_ypzp(du,du,wc,xlc,dv,dv,1,iord)
 
-c-------------------------------
-c       av*l**2+cv*w**2+dv*w**3
-c-------------------------------
+c------------- av*l**2+cv*w**2+dv*w**3
 
 c-------------- sichern des quadratischen Terms in l
-         call Tay_copy_4(av,fdet1phc,iord)
-         call tay_const_4(fdet1phc,1.d0/fact1,iord)
+        call Tay_copy_4(av,fdet1phc,iord)
+        call tay_const_4(fdet1phc,1.d0/fact1,iord)
 
-c       jetzt die w-abhängigen Terme, Achtung der Term fact steckt scon im l-abhängigen Term
-	call Tay_copy_4(dv,fdet1phca,iord)	! w**3 Term	
+c-------------- jetzt die w-abhängigen Terme
+        call Tay_copy_4(dv,fdet1phca,iord)      ! w**3 Term     
         call tay_const_4(fdet1phca,1.d0/fact1,iord)
-	call Tay_copy_4(cv,fdet1phcb,iord)	! w**2 Term
+        call Tay_copy_4(cv,fdet1phcb,iord)      ! w**2 Term
         call tay_const_4(fdet1phcb,1.d0/fact1,iord)
 
 c------------- change signs of results for inorm2 = 4
@@ -473,12 +491,16 @@ c------------- change signs of results for inorm2 = 4
      &                        fdet1phca(n1,n2,n3,n4)
               fdet1phcb(n1,n2,n3,n4)=((-1)**(n2+n3))*
      &                        fdet1phcb(n1,n2,n3,n4)
+
+c            if(n1+n2+n3+n4.le.2)write(6,*)n1,n2,n3,n4,fdet1phc(n1,n2,n3,n4)
+c            if(n1+n2+n3+n4.le.2)write(6,*)n1,n2,n3,n4,fdet1phcb(n1,n2,n3,n4)
+
             enddo
            enddo
           enddo
         enddo
 
-c	Das Integral wird erst in fywert berechnet
+        endif
 
 	endif		! inorm2 = 4
 

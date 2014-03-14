@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <11 Mar 14 10:20:31 flechsig>  */
+/*   Time-stamp: <14 Mar 14 15:03:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -453,7 +453,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct PSImageType         *psip;
   struct PSDType             *PSDp;
   struct integration_results *xirp;
-  // struct statistics          *stp;
+  struct statistics          *stp;
   struct psimagest           *sp;
   struct rayst               *rap;
   struct map4                *m4p;
@@ -467,7 +467,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   PSDp = (struct PSDType *)     bl->RESULT.RESp;
     
   xirp = XMALLOC(struct integration_results, 1);
-  //stp  = XMALLOC(struct statistics, 1);
+  stp  = XMALLOC(struct statistics, 1);
   rap  = XMALLOC(struct rayst, 1);
   if (bl->BLOptions.ifl.pst_mode >= 2)                       /* pst_mode == 2 allocate a copy of m4p */
     { 
@@ -506,13 +506,12 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   rap->ri.zi    = zi;
   rap->n1       = nz+1;          /* UF warum vertauschte nummern ny war n1 ????? */
   rap->n2       = ny+1;
-
-  /*  stp->nn1      = ny+1;
+  stp->nn1      = ny+1;
   stp->nn2      = nz+1;
   stp->inumzit  = 0;
   stp->inumyit  = 0;
   stp->inumzan  = 0;
-  stp->inumyan  = 0;*/
+  stp->inumyan  = 0;
 
   // check whether static integration grid is large enough 
   if ((bl->BLOptions.xi.ianzy0 > MAX_INTEGRATION_SIZE) || (bl->BLOptions.xi.ianzz0 > MAX_INTEGRATION_SIZE))
@@ -532,8 +531,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   check_2_m4_(m4p);
 #endif
 
-  adaptive_int(m4p, &bl->src, &bl->BLOptions.apr, 
-	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
+  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
+	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
 
 #ifdef DEBUG2
   printf("check_2_m4 after adaptive_int\n");
@@ -592,7 +591,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
   
   XFREE(xirp);
-  //  XFREE(stp);
+  XFREE(stp);
   XFREE(rap);
   if (bl->BLOptions.ifl.pst_mode >= 2) XFREE(m4p);
 } /* end pstc_i */

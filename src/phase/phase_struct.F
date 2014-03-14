@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <11 Mar 14 09:47:07 flechsig> 
+c$$$ Time-stamp: <14 Mar 14 14:31:10 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -8,6 +8,7 @@ c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
 
+c UF revert from 1.39
 c !!!! stuct statstics die Feldgrenzen halbiert da sonst
 c run time error UF 7.1.2000 */
 
@@ -138,20 +139,18 @@ c spezielle Version fuer 4. order fuer die benutzung in der phaselib
      &   dfdwidlj(0:4,0:4,0:4,0:4,0:4,0:4)
         end structure  
 
+c--------------- geometry -----------------------------------
+
+        structure/geometryst/
+           real*8 sina,cosa,sinb,cosb,
+     &            r,rp,xdens(0:4),xlam
+	   integer idefl   
+        end structure  
 
         structure/psimagest/               ! Bilddimensionen 
            real*8  disty1,disty2,distz1,distz2                
 	   integer iheigh,iwidth   
         end structure 
-
-c--------------- geometry -----------------------------------
-
-         structure/geometryst/
-            real*8 sina,cosa,sinb,cosb,
-     &            r,rp,xdens(0:4),xlam
-          integer idefl
-         end structure
-
 
 c---------------- sources -----------------------------------
 
@@ -276,8 +275,7 @@ c---------------- rays  --------------------------------------
 		record/opt_el/oe
 		record/aperture/ap
 		real*8 xlength1,xlength2
-c UF JB Mar 2014                real*8 fd(4096),fdph(4096),fd1ph(256,256)
-                real*8 fd(4096),fdph(4096)
+                real*8 fd(4096),fdph(4096),fd1ph(256,256)
 		real*8 fd1(4096),fd2(4096)
 		real*8 fdph1(4096),fdph2(4096)
 		integer n1,n2,n3,n4
@@ -343,7 +341,21 @@ c------------------ flags ---------------------------------------
            integer pst_mode
         end structure
 
+c------------------ statistics ----------------------------------
+c /* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
+c so wars bei Johannes - verkleinere felder
 
+c	structure/statistics/
+c	   real*8 fd1phmax(512,512)
+c	   integer nn1,nn2,inumb(1100,1100)
+c	   integer inumzit,inumyit,inumzan,inumyan
+c	end structure
+
+	structure/statistics/
+        real*8 fd1phmax(128,128)
+        integer nn1,nn2,inumb(256,256)
+	   integer inumzit,inumyit,inumzan,inumyan
+	end structure
 
 c------------------ constants -----------------------------------
 

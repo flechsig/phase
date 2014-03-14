@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <10 Mar 14 17:51:07 flechsig>  */
+/*   Time-stamp: <14 Mar 14 15:35:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -584,10 +584,14 @@ void
 	   double *, double *, double *), 
      
   PST(struct BeamlineType *), 
-  adaptive_int(struct map4 *, struct sources *, struct apertures *, 
-	       struct constants *, struct rayst *, struct control_flags *, 
-	       struct integration *, 
-	       struct integration_results *, struct psimagest *, int *),
+  
+  
+// keep this
+  adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
+	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
+	       struct integration_results *, struct statistics *, struct psimagest *, int *),
+//
+
   PutPHASE(struct  PHASEset *, char *), 
   RayTraceFull(struct BeamlineType *), 
   RayTraceSingleRay(struct BeamlineType *),

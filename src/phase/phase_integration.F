@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <11 Mar 14 10:15:58 flechsig> 
+c$$$ Time-stamp: <10 Mar 14 17:56:53 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -39,8 +39,8 @@ c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
 c UF 10. Mar 2014 removed geometryst
 c*********************************************************
-         subroutine adaptive_int(m4,src,apr,cs,ra,
-     &                       ifl,xi,xir,sp,blp)
+         subroutine adaptive_int(m4,g,src,apr,cs,ra,
+     &                       ifl,xi,xir,st,sp,blp)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -94,7 +94,7 @@ c     &      yzint,yzintey,yzintez
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
-c        record /geometryst/ g
+        record /geometryst/ g
         record /rayst/ ra
         record /source_results/ sr
         record /integration_results/ xir
@@ -106,8 +106,10 @@ c uf	record /mirrortype/ am
 	record /map4/ m4
         record /psimagest/ sp
 
-	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
-     &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
+	dimension densiyre(MAX_INTEGRATION_SIZE),
+     &            densiyim(MAX_INTEGRATION_SIZE),
+     &            densizre(MAX_INTEGRATION_SIZE),
+     &            densizim(MAX_INTEGRATION_SIZE)
 
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
@@ -218,7 +220,7 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-	   call yyint(m4,src,xi,xir,apr,cs,ra,ifl,
+	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 	   if(ifl.ispline.ge.0)then
@@ -249,8 +251,9 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 	enddo		
 	endif
 
-        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
-
+       if(ifl.ispline.eq.-1)then
+          call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
+       endif
 	iyz=2
 c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
        call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
@@ -260,8 +263,9 @@ c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
 
-        if(ifl.ispline.eq.-1)call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
-
+        if(ifl.ispline.eq.-1)then
+          call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+        endif
 	iyz=2
 c	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
        call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
@@ -285,7 +289,7 @@ c------------------------------------------------------------
 c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-       subroutine yyint(m4,src,xi,xir,apr,cs,ra,ifl,
+       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 c*************************************************************
@@ -312,7 +316,7 @@ c UF	complex*16 fyey(4096),fyez(4096)
 #include '../phase/phase_struct.F'
 
         record /constants/ cs
-c        record /geometryst/ g
+        record /geometryst/ g
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
@@ -321,6 +325,7 @@ c        record /geometryst/ g
 	record /integration_results/ xir
 c UF 28.6.13        record /source6/ so6
 	record /apertures/ apr
+        record / statistics/ st
 c uf	record /mirrortype/ am
 	record /map4/ m4
 
@@ -424,7 +429,7 @@ c#ifdef DEBUG
 c        write(6,*)' call fywert, i=', i
 c#endif
  
- 	  call fywert(m4,src,xi,apr,cs,ra,ifl,
+ 	  call fywert(m4,g,src,xi,apr,cs,ra,ifl,
      &		y(i),fyey(i),sr,blp)
 
 	 densiyre(i)=sr.densyre
@@ -470,7 +475,7 @@ c*************************************************************
 c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
 c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
 c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
- 	subroutine fywert(m4,src,xi,apr,cs,ra,ifl,
+ 	subroutine fywert(m4,g,src,xi,apr,cs,ra,ifl,
      &		          dyi,fwerty,sr,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
@@ -482,7 +487,7 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 
 
         record /constants/ cs
-c UF mar 14        record /geometryst/ g
+        record /geometryst/ g
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
@@ -490,6 +495,7 @@ c UF mar 14        record /geometryst/ g
 	record /integration/ xi
 c uf	record /integration_results/ xir
 	record /apertures /apr
+        record /statistics/ st
 c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
@@ -640,37 +646,79 @@ c        inorm2 = 45: Isabelles Formeln, aber beschränkt auf kubische Terme
 c---------------------------------------------------------------------
              
 c UF neue routine           
-        call getgeostr(blp, sina, cosa, sinb, cosb, r, rp, xlam)
+c        call getgeostr(blp, sina, cosa, sinb, cosb, r, rp, xlam)
 
         if(ifl.inorm2.eq.0)ff=fdph*fd1ph
         if(ifl.inorm2.eq.1)ff=fdph*fd1ph
-        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/xlam
-        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/xlam
+        if(ifl.inorm2.eq.2)ff=(fdph*fd1ph)/g.xlam
+        if(ifl.inorm2.eq.20)ff=(fdph*fd1pha*fd1phb)/g.xlam
         if(ifl.inorm2.eq.21)then
-          ff=fdph/(xlam*dsqrt(dabs(fd1pha*fd1phb)))
+          ff=fdph/(g.xlam*dsqrt(dabs(fd1pha*fd1phb)))
         endif
 
-        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/xlam
+        if(ifl.inorm2.eq.3)ff=(fdph*fd1ph)/g.xlam
 
 c------------------ only quadratic terms, no diagonalization 
+c   Mandel & Wolf (different from Focke?)
         if(ifl.inorm2.eq.31)then
           arg=fd1pha*fd1phb-fd1ph*fd1ph
-          ff=fdph/(xlam*dsqrt(dabs(arg)))
-c   Mandel & Wolf (different from Focke?)
-          ff1=cs.sqrtm1
-          if(fd1pha+fd1phb.lt.0.d0)then
-           if(arg.ge.0.d0)then
-            ff1=-ff1
-            else
-            ff1=-ff1*cs.sqrtm1
-           endif
-          endif
+          spur=fd1pha+fd1phb
+          ff=fdph/(g.xlam*dsqrt(dabs(arg)))
+          if((arg.gt.0.d0).and.(spur.gt.0.d0))ff1=cs.sqrtm1
+          if((arg.gt.0.d0).and.(spur.lt.0.d0))ff1=-cs.sqrtm1
+          if(arg.lt.0.d0)ff1=1.d0
           ff=ff*ff1
-        endif
-c------------------ Ende quadratische Terme
+         endif
 
-        if((ifl.inorm2.eq.4 ).or.(ifl.inorm2.eq.40).or.
-     &     (ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42).or.
+c--------- Variante 2, with diagonalization, gleiches Ergebnis wie Variante 1
+          if(ifl.inorm2.eq.32)then
+          ax=fd1pha
+          bx=fd1phb
+          cx=fd1ph
+          at=ax
+          bt=bx-cx**2/ax
+          asig=1.d0
+          bsig=1.d0
+          if(at.lt.0.d0)asig=-1.d0
+          if(bt.lt.0.d0)bsig=-1.d0
+          ff=cdexp(asig*cs.sqrtm1*cs.pi*0.25d0)*
+     &       cdexp(bsig*cs.sqrtm1*cs.pi*0.25d0)*
+     &     (fdph/(g.xlam*dsqrt(dabs(at))*dsqrt(dabs(bt))))      
+          endif
+
+c--------- Variante 3, liefert wie erwartet gleiche Ergebnisse wie Variante 2
+          if(ifl.inorm2.eq.33)then
+          ax=fd1pha
+          bx=fd1phb
+          cx=fd1ph
+          bt=bx
+          at=ax-cx**2/bx
+          asig=1.d0
+          bsig=1.d0
+          if(at.lt.0.d0)asig=-1.d0
+          if(bt.lt.0.d0)bsig=-1.d0
+          ff=cdexp(asig*cs.sqrtm1*cs.pi*0.25d0)*
+     &       cdexp(bsig*cs.sqrtm1*cs.pi*0.25d0)*
+     &     (fdph/(g.xlam*dsqrt(dabs(at))*dsqrt(dabs(bt))))            
+        endif
+
+c------------------ only quadratic terms, diagonalization version 1 & 2
+        if((ifl.inorm2.eq.41).or.(ifl.inorm2.eq.42))then
+
+          ff=fdph/(g.xlam*dsqrt(dabs(fd1pha)*dabs(fd1phb)))
+          ff=ff*cdexp(xw3sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &          cdexp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)
+  
+c        write(6,*)' '
+c        write(6,*)xw3sign*fd1pha,xw2sign*fd1phb
+c        write(6,*)cdabs(ff)
+
+        endif
+
+c-------------- further values of inorm2
+
+        if((ifl.inorm2.eq.4 ).or.
+     &     (ifl.inorm2.eq.40).or.(ifl.inorm2.eq.41).or.
      &     (ifl.inorm2.eq.43).or.(ifl.inorm2.eq.44).or.
      &     (ifl.inorm2.eq.45))then
 
@@ -687,16 +735,14 @@ c       fd1ph  is 2nd order term in l
 c  folgenden Ausdruck nur einmal berechnen, auslagern
         divmax=dmax1(dabs(xi.ymin),dabs(xi.ymax),
      &               dabs(xi.zmin),dabs(xi.zmax))
-        xlenmir=2.d0*rp*(dtan(divmax)/cosb)
+        xlenmir=2.d0*g.rp*(dtan(divmax)/g.cosb)
 c        write(6,*)' xlenmir === ',xlenmir
  
         small_fd1ph=1.d-50
 
-        if((ifl.inorm2.eq.4).or.
-     &     (ifl.inorm2.eq.40).or.
-     &     (ifl.inorm2.eq.41).or.
-     &     (ifl.inorm2.eq.42))convlim=19.1d0
-        if(ifl.inorm2.eq.40)convlim=1.0d-50           ! use only 2nd order
+        if(ifl.inorm2.eq.4)convlim=19.1d0
+        if((ifl.inorm2.eq.40).or.
+     &     (ifl.inorm2.eq.41))convlim=1.0d-50           ! use only 2nd order
         if((ifl.inorm2.eq.43).or.
      &     (ifl.inorm2.eq.44).or.
      &     (ifl.inorm2.eq.45))convlim=5.1d0
@@ -713,11 +759,11 @@ c        write(6,*)' xlenmir === ',xlenmir
         fd1ph_sav=fd1ph
         fd1phb_sav=fd1phb
 
-        fact1=(dsqrt(dabs(cosa))*
-     &        dsqrt(dabs(cosb)))/(r*rp) 
-        fact2=fact1*((2.d0*cs.pi)/xlam)
-        fd1ph=(fd1ph/fact1)*2.d0*xlam**3
-        tl=((ra.xlength1*ra.xlength2)/(r*rp))**2
+        fact1=(dsqrt(dabs(g.cosa))*
+     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp) 
+        fact2=fact1*((2.d0*cs.pi)/g.xlam)
+        fd1ph=(fd1ph/fact1)*2.d0*g.xlam**3
+        tl=((ra.xlength1*ra.xlength2)/(g.r*g.rp))**2
 c        fd1ph=fd1ph*tl ! thick lens correction
         fd1pha=fd1pha*fact2
         fd1phb=fd1phb*fact2
@@ -737,11 +783,14 @@ c-----------------------------------
 c------------- only quadratic terms
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &     (fdph/(xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
-         if(ifl.inorm2.eq.42)ff=0.d0
+          ff=cdexp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &     cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &     (fdph/(g.xlam*dsqrt(dabs(2.d0*fd1ph*2.d0*fd1phb))))
          if(fd1ph.lt.small_fd1ph)ff=0.d0
+  
+c        write(6,*)' '
+c        write(6,*)fd1phb,fd1ph
+c        write(6,*)cdabs(ff)
 
          else
 
@@ -756,9 +805,8 @@ c------------- only quadratic terms
         sumsin=ssin*abar
  
         ff=(fdph/dsqrt(fd1ph))*
-     &     exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
+     &     cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=redu*ff*(sumcos+sumsin*cs.sqrtm1)
-        if(ifl.inorm2.eq.41)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0
 
 c         write(6,*)ra.oe.w,fd1pha,fd1phb
@@ -787,9 +835,9 @@ c------------- get nk
 c------------- only quadratic terms
           fd1ph=fd1ph_sav
           fd1phb=fd1phb_sav
-          ff=exp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
-     &       (fdph/(xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
+          ff=cdexp(xw2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &       cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)*
+     &       (fdph/(g.xlam*dsqrt(dabs(fd1ph*fd1phb))))/2.d0
          if(ifl.inorm2.eq.45)ff=0.d0
          if(fd1ph.lt.small_fd1ph)ff=0.d0
 
@@ -834,7 +882,7 @@ c        sumcos=scos*abar
 c        sumsin=ssin*abar
 
         ff=(fdph/dsqrt(fd1ph))*
-     &      exp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
+     &      cdexp(xl2sign*cs.sqrtm1*cs.pi*0.25d0)
         ff=ff*(sumcos+sumsin*cs.sqrtm1)
         if(ifl.inorm2.eq.44)ff=0.d0
         if(fd1ph.lt.small_fd1ph)ff=0.d0

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <11 Mar 14 09:43:10 flechsig>  */
+/*   Time-stamp: <14 Mar 14 14:31:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -8,7 +8,7 @@
 /*   $Revision$  */
 /*   $Author$  */
 
-
+/* revert from 1.41 */
 #ifndef __PHASE_STRUCT
 #define __PHASE_STRUCT
 
@@ -136,17 +136,17 @@ struct  parder {
     dfdwidlj[MAPDIM][MAPDIM][MAPDIM][MAPDIM][MAPDIM][MAPDIM];
 };    
 
+/* -------------- geometry -----------------------------------*/
+
+struct  geometryst {
+  double sina,cosa,sinb,cosb,
+    r,rp,xdens[5],xlam;
+  int  idefl;   
+};    
+
 struct  psimagest {               /* Bilddimensionen */
   double  disty1,disty2,distz1,distz2;                
-  int     iheigh,iwidth;   
-};  
-
-/* -------------- geometry -----------------------------------*/            
-                                                                             
-struct  geometryst {                                                        
-  double sina,cosa,sinb,cosb,                                               
-    r,rp,xdens[5],xlam;                                                     
-  int  idefl;                                                               
+  int  iheigh,iwidth;   
 };   
 
 /* --------------- sources -----------------------------------*/
@@ -286,8 +286,7 @@ struct  rayst {
   struct opt_el oe;
   struct aperture ap;
   double xlength1,xlength2;
-  //  UF JB Mar 2014 double fd[4096],fdph[4096],fd1ph[256][256];
-  double fd[4096],fdph[4096];
+  double fd[4096],fdph[4096],fd1ph[256][256];
   double fd1[4096],fd2[4096];
   double fdph1[4096],fdph2[4096];
   int  n1,n2,n3,n4;
@@ -353,6 +352,25 @@ struct  control_flags {
   int  igrating,ipinarr,ilimits;
   int  ipath; 
   int  pst_mode;
+};  
+
+/* ----------------- statistics ----------------------------------*/
+/* 23.12.99 diese Structur ist zu gross - run time error auf PC   */
+/*
+  #ifdef VMS
+*/
+/* so wars bei Johannes, ich verkleinere die feldgrenzen
+   struct  statistics {
+   double fd1phmax[512][512];
+   int  nn1,nn2,inumb[1100][1100];
+   int  inumzit,inumyit,inumzan,inumyan;
+   };  
+*/
+
+struct  statistics {
+  double fd1phmax[128][128];
+  int  nn1,nn2,inumb[256][256];
+  int  inumzit,inumyit,inumzan,inumyan;
 };  
 
 /* ----------------- constants -----------------------------------*/
