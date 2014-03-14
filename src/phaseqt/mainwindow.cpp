@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Mar 14 16:43:00 flechsig> 
+//  Time-stamp: <14 Mar 14 16:50:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1895,7 +1895,8 @@ void MainWindow::ReadBLFileInteractive(char *blname)
 
   if (c_window) c_window->updateList();
   // UF Mar 2014 not good since it changes the content of the file
-  //myparent->myWriteBLFile(blname);  // to reset the time
+  // why I wanted to change the time ?? take it out again
+  // //myparent->myWriteBLFile(blname);  // to reset the time
   //myparent->myWriteBLFile(blname);  // to reset the time
 } // ReadBLFileInteractive
 
