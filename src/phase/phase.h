@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <14 Mar 14 15:35:57 flechsig>  */
+/*   Time-stamp: <17 Mar 14 12:31:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -496,7 +496,7 @@ int
 int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *, int *); 
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
- 
+void StackTest(); 
 
 
 	

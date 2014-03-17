@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <26 Mar 13 13:51:40 flechsig> 
+//  Time-stamp: <17 Mar 14 12:32:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
       exit(1);
     } 
 #endif
+  
+  StackTest();
 
   setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord, &numthreads, &format);
 

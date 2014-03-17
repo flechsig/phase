@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <14 Mar 14 15:22:51 flechsig>  */
+/*   Time-stamp: <17 Mar 14 14:24:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -20,6 +20,9 @@
 #include <stdarg.h> 
 #include <time.h>
 #include <unistd.h>
+
+#include <sys/time.h>                /* for stacktest */
+#include <sys/resource.h>            /* for stacktest */
 
 /* workaround */
 #ifdef NOGUI
@@ -970,6 +973,16 @@ void init_posrc(struct source4c *sp)
   sp->gridx= NULL;
   sp->gridy= NULL;
 } /* end init_posrc() */
+
+void StackTest()
+{
+  struct rlimit rls;
+    
+  getrlimit(RLIMIT_STACK, &rls);
+ 
+  printf("StackTest- limits: rlim_cur: %f Mb, rlim_max: %d byte\n", rls.rlim_cur * 1e-6, rls.rlim_max);
+
+} /* end stacktest */
 
 
 /* end of file phasec.c */     
