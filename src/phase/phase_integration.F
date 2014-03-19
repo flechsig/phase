@@ -1563,8 +1563,13 @@ c UF	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
         complex*16 xint,xxx(4096)
 	dimension xxxre(4096),xxxim(4096)
 
-	real*4 fyza_loc(4096),fyzp_loc(4096)
-	real*4 x_loc(4096),dyz_loc(4096)
+	real*8 fyza_loc(4096),fyzp_loc(4096)
+
+	real*8 x_loc(MAX_INTEGRATION_SIZE),dyz_loc(MAX_INTEGRATION_SIZE) 
+        real*8 COEF(MAX_INTEGRATION_SIZE),WORK1(MAX_INTEGRATION_SIZE),
+     &       WORK2(MAX_INTEGRATION_SIZE),WORK3(MAX_INTEGRATION_SIZE),
+     &       WORK4(MAX_INTEGRATION_SIZE)
+         
 C UF	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
 
 c	dimension fyza_loc(4096),fyzp_loc(4096)
@@ -1797,14 +1802,6 @@ c---------------------------------------------------------
 	if(ifl.ispline.eq.0)then
 c---------------------------------------------------------
 
-c	xint=0.
-c	if(ianz.ge.2)then
-c	do i=1,ianz-1
-c	xint=xint+0.5*dyz(i)*(fyz(i+1)+fyz(i))
-c	xxx(i)=xint
-c	enddo
-c	endif
-
 	xintre=0.d0
 	xintim=0.d0
 	if(ianz.ge.2)then
@@ -1862,44 +1859,56 @@ c UF
            endif
 	enddo
 c-------------------
-
       endif                     ! ispline.eq.0
 
 c------------------------------------------------------------
+	if((ifl.ispline.eq.1).or.(ifl.ispline.eq.2))then
+c------- spline integtration von Michael
 
-	if(ifl.ispline.eq.1)then
+         x_loc(1)=0.d0
+         do i=2,ianz
+         x_loc(i)=x_loc(i-1)+dyz(1)
+         enddo
 
-	x(i)=0.d0
-	do i=2,ianz
-	x(i)=x(i-1)+dyz(i)
-c	y(i)=dreal(fyz(i))
-	y(i)=densiyzre(i)
-        enddo
+         call UTIL_SPLINE_INTEGRAL(x_loc,densiyzre,xintre,
+     &          COEF,WORK1,WORK2,WORK3,WORK4,ianz,ifl.ispline)
 
-	do i=2,ianz
-c	y(i)=dimag(fyz(i))
-	y(i)=densiyzim(i)
-	enddo
-
-	xint=xintre+cs.sqrtm1*xintim
+         call UTIL_SPLINE_INTEGRAL(x_loc,densiyzim,xintim,
+     &          COEF,WORK1,WORK2,WORK3,WORK4,ianz,ifl.ispline)
 
 c----------- output
 c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
-	if(iyz.eq.1)xx=xi.ymin
-	if(iyz.eq.2)xx=xi.zmin
+        if(iyz.eq.1)xx=xi.ymin
+        if(iyz.eq.2)xx=xi.zmin
         xxsave=xx
-	do ii=1,xir.iisimp
+
+        do ii=1,xir.iisimp
            if(xir.isimp(ii).eq.xir.nsimp)then
-c UF
               xx=xxsave
-              do i=1,ianz
+              do i=1,ianz-1
+                 xx=xx+dyz(i)
+                 xir.sintre(ii,1,i)=xx
+                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
+              enddo
+              xir.isintre(ii)=ianz-1
+c UF
+              xx=xxsave               
+              do i=1,ianz-1
+                 xx=xx+dyz(i)
+                 xir.sintim(ii,1,i)=xx
+                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+              enddo
+              xir.isintim(ii)=ianz-1
+c UF
+              xx=xxsave               
+              do i=1,ianz                 
                  xir.simpre(ii,1,i)=xx
                  xir.simpre(ii,2,i)=densiyzre(i)
                  xx=xx+dyz(i)
               enddo
               xir.isimpre(ii)=ianz
 c UF
-              xx=xxsave
+              xx=xxsave              
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
                  xir.simpim(ii,2,i)=densiyzim(i)
@@ -1908,15 +1917,318 @@ c UF
               xir.isimpim(ii)=ianz
               
            endif
-      enddo
-c----------------
+        enddo
 
-	endif
+c----------------
+	endif    ! ispline.eq.1
 
 	return
 	end
 	
-c------------------------------------------------------
-c	subroutine guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
-c------------------------------------------------------
-c routine ausgelagert in separate file guess.F
+*CMZ : 00.00/15 12/10/2013  12.22.24  by  Michael Scheer
+*CMZ : 00.00/07 02/05/2008  13.10.35  by  Michael Scheer
+*CMZ : 00.00/02 17/08/2004  09.47.26  by  Michael Scheer
+*CMZ : 00.00/00 10/01/95  15.25.29  by  Michael Scheer
+*-- Author :
+      SUBROUTINE UTIL_SPLINE_INTEGRAL(X,Y,resul,
+     &       COEF,WORK1,WORK2,WORK3,WORK4,N,ispline2)
+
+C---  CALCULATES INTERGRAL OF Y(X) VIA SPLINES
+
+      IMPLICIT NONE
+
+      INTEGER I,N,ispline2
+      REAL*8 X(*),Y(*),resul
+      REAL*8 COEF(*),WORK1(*),WORK2(*),WORK3(*),WORK4(*)
+
+C---  SPLINE-COEFFICIENTS
+
+      CALL UTIL_SPLINE_COEF(X,Y,9999.0d0,9999.0d0,COEF,
+     &     WORK1,WORK2,WORK3,WORK4,N,ispline2)
+
+C--- INTEGRATION
+
+      resul=0.0D0
+
+      DO I=1,N-1
+
+      resul=resul
+     &          +(X(I+1)-X(I))*0.5D0
+     &          *(Y(I)+Y(I+1))
+     &          -(X(I+1)-X(I))**3/24.D0
+     &          *(COEF(I)+COEF(I+1))
+
+      ENDDO
+
+      RETURN
+      END
+
+
+*CMZ : 00.00/15 03/09/2012  09.27.48  by  Michael scheer
+*CMZ : 00.00/07 12/10/2009  12.17.45  by  Michael Scheer
+*CMZ : 00.00/02 14/04/2003  12.46.09  by  Michael Scheer
+*CMZ : 00.00/00 10/01/95  15.27.48  by  Michael Scheer
+*-- Author :
+      SUBROUTINE UTIL_SPLINE_COEF(X,Y,YP1,YPN,Y2,AA,BB,CC,C,N,ispline2)
+
+C--- CALCULATES SPLINE COEFFICIENTS
+
+C--   INPUT:
+
+C-       N: NUMBER OF X,Y-VALUES
+C-       X: ARRAY OF X-VALUES
+C-       Y: ARRAY OF Y-VALUES
+C-       YP1:  SECOND DERIVATIVE AT FIRST X-VALUE
+C-       YPN:  SECOND DERIVATIVE AT LAST X-VALUE
+
+C--   OUPUT:
+
+C-       Y2:   SPLINE-COEFFICIENTS
+
+C--   WORKINGSPACE: AA(N),BB(N),CC(N),C(N)
+
+
+      IMPLICIT NONE
+
+      INTEGER N,J,ispline2
+      REAL*8  X(*),Y(*),Y2(*),AA(*),BB(*),CC(*),C(*)
+
+      REAL*8 YP1,YPN
+
+      double precision xx(3),yy(3),a(3),yp(3),xopt,yopt
+      INTEGER ifail
+
+c     save
+
+      IF (N.LT.3) then
+        if (abs(yp1).eq.9999.0d0) then
+          y2(1)=0.0d0
+        else
+          y2(1)=yp1
+        endif
+        if (abs(ypn).eq.9999.0d0) then
+          y2(n)=0.0d0
+        else
+          y2(n)=ypn
+        endif
+        RETURN
+      endif
+
+      if (abs(yp1).eq.9999.0d0) then
+        xx=x(1:3)
+        yy=y(1:3)
+        call UTIL_PARABEL(xx,yy,A,YP,XOPT,yopt,IFAIL,ispline2)
+        if (ifail.eq.0) then
+          y2(1)=2.0d0*a(3)
+        else
+          y2(1)=0.0d0
+        endif
+      else
+        Y2(1)=YP1
+      endif
+
+      if (abs(ypn).eq.9999.0d0) then
+        xx=x(n-2:n)
+        yy=y(n-2:n)
+        call UTIL_PARABEL(xx,yy,A,YP,XOPT,yopt,IFAIL,ispline2)
+        if (ifail.eq.0) then
+          y2(n)=2.0d0*a(3)
+        else
+          y2(N)=0.0d0
+        endif
+      else
+        Y2(N)=YPN
+      endif
+
+      C(1)=Y2(1)
+      C(N)=y2(n)
+
+      BB(1)=1.D0
+      CC(1)=0.D0
+      CC(N)=1.D0
+
+      DO J=2,N-1
+        if(x(j+1).eq.x(j)) then
+          write(6,*)
+          write(6,*)'*** Error in util_spline_coef: 
+     & Intervall of zero length'
+          write(6,*)'j, x(j), x(j+1):',j,x(j),x(j+1)
+          write(6,*)
+          stop
+        endif
+          AA(J)=(X(J  )-X(J-1))/6.D0
+          BB(J)=(X(J+1)-X(J-1))/3.D0
+          CC(J)=(X(J+1)-X(J  ))/6.D0
+          C(J)=(Y(J+1)-Y(J  ))/(X(J+1)-X(J  ))
+     &          -(Y(J  )-Y(J-1))/(X(J  )-X(J-1))
+      ENDDO !J
+
+      DO J=2,N-1
+
+          BB(J)=BB(J)-AA(J)*CC(J-1)
+           C(J)= C(J)-AA(J)* C(J-1)
+C          AA(J)=AA(J)-AA(J)*BB(J-1)
+
+          CC(J)=CC(J)/BB(J)
+           C(J)= C(J)/BB(J)
+          BB(J)=1.D0
+
+      ENDDO !J
+
+      DO J=N-1,2,-1
+         Y2(J)=C(J)-CC(J)*Y2(J+1)
+      ENDDO
+
+      RETURN
+      END
+*CMZ : 00.00/15 03/09/2012  09.27.13  by  Michael Scheer
+*CMZ : 00.00/07 22/03/2010  15.28.00  by  Michael Scheer
+*CMZ : 00.00/02 26/03/97  10.23.11  by  Michael Scheer
+*CMZ : 00.00/00 10/01/95  15.27.40  by  Michael Scheer
+*-- Author :
+      SUBROUTINE UTIL_PARABEL(Xin,Yin,A,YP,XOPT,yopt,IFAIL,ispline2)
+
+C--- CALCULATES A(1),A(2),A(3), THE DERIVATIVES YP(X(1)),YP(X(2)),YP(X(3)),
+C    AND THE EXTREMUM (XOPT,A(XOPT)) OF PARABOLA Y=A1+A2*X+A3*X**2
+C    FROM COORDINATES OF THE THREE POINTS (X(1),Y(1)),(X(2),Y(2)),(X(3),Y(3))
+C
+
+      IMPLICIT NONE
+
+      INTEGER IFAIL,ispline2
+
+      REAL*8 A(3),X(3),Y(3),DXM,DXP,x0,a1,a2,dxm2,dxp2,dxmax,dymax,
+     &  xin(3),yin(3)
+      REAL*8 DET,YP(3),XOPT,yopt,a22,fm,fp,f0
+
+c      save
+
+      IFAIL=0
+
+c calculate f=a0+a1*(x-x0)+a2*(x-x0)**2
+c  = a0 + a1*x - a0*x0 + a2*x**2 - 2*a2*x*x0 + a2*x0**2
+c  = a0 + (a2*x0 -a0)*x0 + (a1 - 2*a2*x0 )*x+ a2*x**2
+
+c change system: (x0,s0)->(0,0), i.e.
+c calculate f=a1*dx+a2*dx**2
+c  df/dx=a1+2*a2*dx_max =! 0, dx_max=-a1/2/a2
+
+      x=xin
+      y=yin
+
+c nur rufen, falls x-Werte nicht monoton steigen
+      if(ispline2.eq.2)call util_sort_func(3,x,y)
+
+      x0=x(2)
+      f0=y(2)
+
+      fm=y(1)-f0
+      fp=y(3)-f0
+
+      dxm=x(1)-x0
+      dxp=x(3)-x0
+
+c fm=a1*dxm+a2*dxm**2
+c fp=a1*dxp+a2*dxp**2
+
+c (dxm dxm2) (a1) = (y(1))
+c (dxp dxp2) (a2) = (y(3))
+
+      dxm2=dxm*dxm
+      dxp2=dxp*dxp
+
+      det=dxm*dxp2-dxp*dxm2
+
+      if (det.ne.0.0d0) then
+        a1=(fm*dxp2-fp*dxm2)/det
+        a2=(fp*dxm-fm*dxp)/det
+      else
+        ifail=1
+        return
+      endif
+
+      if (a2.ne.0.0d0) then
+        dxmax=-a1/(2.0d0*a2)
+        dymax=(a1+a2*dxmax)*dxmax
+        xopt=x0+dxmax
+        yopt=f0+dymax
+      endif
+
+c calculate f=f0+a1*dx+a2*dx**2
+c = a1*x - a1*x0 + a2*x**2 + a2*x0**2 - 2*a2*x*x0
+c  f = f0 + (a2*x0 -a1)*x0 + (a1 - 2*a2*x0 )*x+ a2*x**2
+
+      a22=2.0d0*a2
+
+      a(1)=f0 + (a2*x0 -a1)*x0
+      a(2)=a1 - a22*x0
+      a(3)=a2
+
+c calculate yp=a1+2*a2*dx
+
+      yp(1)=a1+a22*dxm
+      yp(2)=a1
+      yp(3)=a1+a22*dxp
+
+      RETURN
+      END
+*CMZ : 00.00/15 05/01/2012  13.52.39  by  Michael Scheer
+*CMZ : 00.00/00 11/01/95  11.41.04  by  Michael Scheer
+*-- Author :
+      SUBROUTINE UTIL_SORT_FUNC(N,RA,YA)
+
+C--- HEAPSORT ROUTINE; SEE NUMERICAL RECIPES 8.2 S 231
+C--- ARRAY YA IS FUNCTION OF RA AND SORTED ACCORDINGLY
+
+      IMPLICIT NONE
+
+      INTEGER N,L,IR,I,J
+
+      REAL*8 RA(N),RRA
+      REAL*8 YA(N),YYA
+
+      if (n.lt.2) return
+
+      L=N/2+1
+      IR=N
+10    CONTINUE
+        IF(L.GT.1)THEN
+          L=L-1
+          RRA=RA(L)
+          YYA=YA(L)
+        ELSE
+          RRA=RA(IR)
+          YYA=YA(IR)
+          RA(IR)=RA(1)
+          YA(IR)=YA(1)
+          IR=IR-1
+          IF(IR.EQ.1)THEN
+            RA(1)=RRA
+            YA(1)=YYA
+            RETURN
+          ENDIF
+        ENDIF
+        I=L
+        J=L+L
+20      IF(J.LE.IR)THEN
+          IF(J.LT.IR)THEN
+            IF(RA(J).LT.RA(J+1))J=J+1
+          ENDIF
+          IF(RRA.LT.RA(J))THEN
+            RA(I)=RA(J)
+            YA(I)=YA(J)
+            I=J
+            J=J+J
+          ELSE
+            J=IR+1
+          ENDIF
+        GO TO 20
+        ENDIF
+        RA(I)=RRA
+        YA(I)=YYA
+      GO TO 10
+      END
+
+
+
+
