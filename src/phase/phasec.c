@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2014-03-20 12:59:00 flechsig>  */
+/*   Time-stamp: <2014-03-20 13:17:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -988,7 +988,8 @@ void StackTest()
     {
       printf("!! warning !! --  stacksize is likely too low to run phase !!\n");
       printf("in case of \"Segmentation fault\" increase stacksize to at least 100Mb\n");
-      printf("example tcsh > limit stacksize 100Mb\n");
+      printf("example for tcsh > limit stacksize 100Mb\n");
+      printf("example for bash > ulimit -s 100Mb \n");
     }
 } /* end stacktest */
 
