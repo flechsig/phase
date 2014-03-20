@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <21 May 13 11:16:22 flechsig> 
+#  Time-stamp: <20 Mar 14 17:09:13 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -59,10 +59,10 @@ PO Apertures
     srczmin 		-100	aperture in source plane zmin (mm)			-100	9
     srczmax 		100	aperture in source plane zmax (mm)			100	10
     ifl.ipinarr		0	add pinhole array in source plane (0,1)			0	51
-    src.pin_yl0		1.	1st parameter for pinhole array in y (double)		1.	52
-    src.pin_yl		1.	2nd parameter for pinhole array in y (double)		1.	53
-    src.pin_zl0		1.	1st parameter for pinhole array in z (double)		1.	54
-    src.pin_zl		1.	2nd parameter for pinhole array in z (double)		1.	55
+#    src.pin_yl0		1.	1st parameter for pinhole array in y (double)		1.	52
+#    src.pin_yl		1.	2nd parameter for pinhole array in y (double)		1.	53
+#    src.pin_zl0		1.	1st parameter for pinhole array in z (double)		1.	54
+#    src.pin_zl		1.	2nd parameter for pinhole array in z (double)		1.	55
 
 PO Integration
     ispline		0	0: simpson integration, 1: spline integration (0,1)	0	39
