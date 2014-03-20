@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2014-03-20 13:29:47 flechsig>  */
+/*   Time-stamp: <20 Mar 14 17:38:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -453,14 +453,11 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct PSImageType         *psip;
   struct PSDType             *PSDp;
   struct integration_results *xirp;
-  // struct statistics          *stp;
   struct psimagest           *sp;
   struct rayst               *rap;
   struct map4                *m4p;
 
-  
-  
-  //struct constants *csp;
+ //struct constants *csp;
   int    points, ny, nz, nzhalf;
   double yi, zi;
 
@@ -469,7 +466,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   PSDp = (struct PSDType *)     bl->RESULT.RESp;
     
   xirp = XMALLOC(struct integration_results, 1);
-  //stp  = XMALLOC(struct statistics, 1);
   rap  = XMALLOC(struct rayst, 1);
   if (bl->BLOptions.ifl.pst_mode >= 2)                       /* pst_mode == 2 allocate a copy of m4p */
     { 
@@ -508,14 +504,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   rap->ri.zi    = zi;
   rap->n1       = nz+1;          /* UF warum vertauschte nummern ny war n1 ????? */
   rap->n2       = ny+1;
-  /*
-  stp->nn1      = ny+1;
-  stp->nn2      = nz+1;
-  stp->inumzit  = 0;
-  stp->inumyit  = 0;
-  stp->inumzan  = 0;
-  stp->inumyan  = 0;
-  */
+  
   // check whether static integration grid is large enough 
   if ((bl->BLOptions.xi.ianzy0 > MAX_INTEGRATION_SIZE) || (bl->BLOptions.xi.ianzz0 > MAX_INTEGRATION_SIZE))
   {
@@ -534,11 +523,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   check_2_m4_(m4p);
 #endif
 
-  /*
-  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
-	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
-
-  */
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
 
@@ -556,13 +540,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 	      */
     }
   
-
-  // UF wir speichern im fortran memory model (2bchanged)
-  //PSDp->psd[index]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-  //  PSDp->psd[ny+nz*sp->iheigh]= pow(xirp->yzintey.re, 2.0)+ pow(xirp->yzintey.im, 2.0)+ 
-  //	    pow(xirp->yzintez.re, 2.0)+ pow(xirp->yzintez.im, 2.0);
-
-  
   // debug output of first point
 #ifdef DEBUG  
   nzhalf= sp->iwidth/2;       /* better to print the center point */
@@ -574,7 +551,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     printf("DEBUG z[%d], y[%d]:", nz, ny);
     printf(" yzintey = %g + I*%g;", xirp->yzintey.re, xirp->yzintey.im);
     printf(" yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
-    //    printf(" psd = %g\n", PSDp->psd[ny+nz*sp->iheigh]);
   }
 #endif 
 
@@ -599,7 +575,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
   
   XFREE(xirp);
-  //XFREE(stp);
   XFREE(rap);
   if (bl->BLOptions.ifl.pst_mode >= 2) XFREE(m4p);
 } /* end pstc_i */
@@ -685,7 +660,6 @@ void fill_xirp(struct BeamlineType *bl, struct integration_results *xirp)
 } /* end fill_xirp */
 
 /*  */
-//void norm_output(struct BeamlineType *bl)
 double getIntensityMax(struct PSDType *p)
 {
   double surfmax;
@@ -734,16 +708,14 @@ void check_2_m4_(struct map4 *m4)
 
 void copySrc2Psd(struct BeamlineType *bl)
 {
-#ifdef DEBUG  
-  printf("debug: file: %s, copy PO source fields to output fields (experimental)\n", __FILE__); 
-#endif
-
-  //void MainWindow::copyPoIn2Out()
-
   struct source4c *so4;
   struct PSDType  *psd;
   int    row, col, rows, cols, idxf, idxc;
   
+#ifdef DEBUG  
+  printf("debug: file: %s, copy PO source fields to output fields (experimental)\n", __FILE__); 
+#endif
+
   if (!(bl->beamlineOK & pstsourceOK))
     {
       posrc_ini();
@@ -758,7 +730,7 @@ void copySrc2Psd(struct BeamlineType *bl)
   
   ReAllocResult(bl, PLphspacetype, rows, cols);
 
-  printf("start copy fields\n");
+  printf("copySrc2Psd: start copy fields\n");
   
   //  cout << "start copy vectors" << endl;
   memcpy(psd->z, so4->gridx, sizeof(double)* cols);
@@ -777,9 +749,6 @@ void copySrc2Psd(struct BeamlineType *bl)
 	psd->ezrec[idxf]=so4->zezre[idxc];
 	psd->eyimc[idxf]=so4->zeyim[idxc];
 	psd->ezimc[idxf]=so4->zezim[idxc];
-
-	//	psd->psd[idxf]= pow(psd->eyrec[idxf], 2.0)+ pow(psd->eyimc[idxf], 2.0)+ 
-	//  pow(psd->ezrec[idxf], 2.0)+ pow(psd->ezimc[idxf], 2.0);
       }
 
   psd->iy= cols;
@@ -792,11 +761,9 @@ void getgeostr_(int *blp, double *sina, double *cosa, double *sinb, double *cosb
   struct BeamlineType *bl;
   struct ElementType  *el;
 
-
   bl= (struct BeamlineType *)blp;
   el= &(bl->ElementList[(unsigned)bl->gratingpos]);
-
-  //printf("debug: getgeostr_ called, grating position index= %d\n", bl->gratingpos);
+  
 #ifdef DEBUG1
   printf("debug: getgeostr_ called, grating position index= %d\n", bl->gratingpos);
 #endif
