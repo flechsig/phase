@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2014-03-20 13:42:51 flechsig> 
+c$$$ Time-stamp: <20 Mar 14 17:25:08 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -37,7 +37,7 @@ c (6) neuer Aufrufparameter s in adaptive_int und phacor
 c      wird zum Ruecksprung benutzt
 c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
-c UF 10. Mar 2014 removed geometryst
+c UF 20. Mar 2014 removed statistics 
 c*********************************************************
          subroutine adaptive_int(m4,g,src,apr,cs,ra,
      &                       ifl,xi,xir,sp,blp)
@@ -1579,7 +1579,8 @@ c	dimension xxr(4096),ffyza(4096),ffyzp(4096)
 	dimension partre_int(4096),partim_int(4096)
 
 	dimension dyz(4096)
-	dimension x(4096),y(4096)
+c uf	dimension x(4096),y(4096)
+        dimension x(4096)
 	dimension fyza(4096),fyzp(4096)
 
 	dphi_loc_min=1.e-2
