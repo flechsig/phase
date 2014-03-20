@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <14 Mar 14 14:31:37 flechsig>  */
+/*   Time-stamp: <2014-03-20 14:52:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -367,12 +367,13 @@ struct  control_flags {
    };  
 */
 
+/*
 struct  statistics {
   double fd1phmax[128][128];
   int  nn1,nn2,inumb[256][256];
   int  inumzit,inumyit,inumzan,inumyan;
 };  
-
+*/
 /* ----------------- constants -----------------------------------*/
 
 struct  constants {

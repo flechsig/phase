@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <14 Mar 14 14:31:10 flechsig> 
+c$$$ Time-stamp: <2014-03-20 14:52:35 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -351,11 +351,11 @@ c	   integer nn1,nn2,inumb(1100,1100)
 c	   integer inumzit,inumyit,inumzan,inumyan
 c	end structure
 
-	structure/statistics/
-        real*8 fd1phmax(128,128)
-        integer nn1,nn2,inumb(256,256)
-	   integer inumzit,inumyit,inumzan,inumyan
-	end structure
+c	structure/statistics/
+c        real*8 fd1phmax(128,128)
+c        integer nn1,nn2,inumb(256,256)
+c	   integer inumzit,inumyit,inumzan,inumyan
+c	end structure
 
 c------------------ constants -----------------------------------
 
