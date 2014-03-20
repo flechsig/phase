@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2014-03-20 13:05:48 flechsig>  */
+/*   Time-stamp: <2014-03-20 13:29:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -453,10 +453,12 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct PSImageType         *psip;
   struct PSDType             *PSDp;
   struct integration_results *xirp;
-  struct statistics          *stp;
+  // struct statistics          *stp;
   struct psimagest           *sp;
   struct rayst               *rap;
   struct map4                *m4p;
+
+  
   
   //struct constants *csp;
   int    points, ny, nz, nzhalf;
@@ -532,8 +534,13 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   check_2_m4_(m4p);
 #endif
 
+  /*
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, stp, sp, (int *)bl);
+
+  */
+  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
+	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
 
 #ifdef DEBUG2
   printf("check_2_m4 after adaptive_int\n");

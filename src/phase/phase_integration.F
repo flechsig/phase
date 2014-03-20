@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Mar 14 17:56:53 flechsig> 
+c$$$ Time-stamp: <2014-03-20 13:33:13 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -40,7 +40,7 @@ c------------------------------------------------------------------
 c UF 10. Mar 2014 removed geometryst
 c*********************************************************
          subroutine adaptive_int(m4,g,src,apr,cs,ra,
-     &                       ifl,xi,xir,st,sp,blp)
+     &                       ifl,xi,xir,sp,blp)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:

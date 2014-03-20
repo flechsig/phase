@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <17 Mar 14 12:31:48 flechsig>  */
+/*   Time-stamp: <2014-03-20 13:31:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -587,9 +587,12 @@ void
   
   
 // keep this
+/*  adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
+	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
+	       struct integration_results *, struct statistics *, struct psimagest *, int *), */
   adaptive_int(struct map4 *, struct geometryst *, struct sources *, struct apertures *, 
 	       struct constants *, struct rayst *, struct control_flags *, struct integration *, 
-	       struct integration_results *, struct statistics *, struct psimagest *, int *),
+	       struct integration_results *, struct psimagest *, int *),
 //
 
   PutPHASE(struct  PHASEset *, char *), 
