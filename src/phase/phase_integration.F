@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_inegration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <2014-03-20 13:33:13 flechsig> 
+c$$$ Time-stamp: <2014-03-20 13:42:51 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -325,7 +325,7 @@ c UF	complex*16 fyey(4096),fyez(4096)
 	record /integration_results/ xir
 c UF 28.6.13        record /source6/ so6
 	record /apertures/ apr
-        record / statistics/ st
+c uf        record / statistics/ st
 c uf	record /mirrortype/ am
 	record /map4/ m4
 
@@ -495,7 +495,7 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
 	record /integration/ xi
 c uf	record /integration_results/ xir
 	record /apertures /apr
-        record /statistics/ st
+c uf        record /statistics/ st
 c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
