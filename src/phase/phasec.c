@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2014-03-20 12:32:14 flechsig>  */
+/*   Time-stamp: <2014-03-20 12:35:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -983,7 +983,7 @@ void StackTest()
  
   printf("StackTest- limits: rlim_cur: %f Mb, rlim_max: %d byte\n", 
 	 rls.rlim_cur* 1e-6, rls.rlim_max);
-  if ((double)rls.rlim_cur > mywarning)
+  if ((double)rls.rlim_cur < mywarning)
     printf("!! warning !! --  stacksize is likely too low to run phase !!\n");
 
 } /* end stacktest */
