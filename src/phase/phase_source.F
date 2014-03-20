@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <18 Feb 14 15:20:34 flechsig> 
+c$$$ Time-stamp: <2014-03-20 15:19:49 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -1434,7 +1434,7 @@ c	record /source6/ so6
 	record /sources/ src
 
 	f=1.d0
-
+#ifdef XXX
 	yy=dmod(dabs(y),src.pin_yl0)
 	zz=dmod(dabs(z),src.pin_zl0)
 
@@ -1442,7 +1442,7 @@ c	record /source6/ so6
      &      (yy.le.(0.5d0*src.pin_yl0+0.5d0*src.pin_yl)) ) f=0.d0	
 	if( (zz.ge.(0.5d0*src.pin_zl0-0.5d0*src.pin_zl)) .and. 
      &      (zz.le.(0.5d0*src.pin_zl0+0.5d0*src.pin_zl)) ) f=0.d0	
-
+#endif
 	return
 	end
 

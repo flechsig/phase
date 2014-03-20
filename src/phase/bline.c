@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <18 Feb 14 11:25:07 flechsig>  */
+/*   Time-stamp: <2014-03-20 15:15:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1288,7 +1288,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20130703;    /* today */
+   int  i, version= 20140320;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1626,11 +1626,12 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /* UF 20.3. 2012 */
 /*   fprintf(f, "%s so6\n", bl->src.so6.fsource6);*/
 
+/* UF remove 20.3.14
    fprintf(f, "%20lg pin_yl0 \n", bl->src.pin_yl0);
    fprintf(f, "%20lg pin_yl  \n", bl->src.pin_yl);
    fprintf(f, "%20lg pin_zl0 \n", bl->src.pin_zl0);
    fprintf(f, "%20lg pin_zl  \n", bl->src.pin_zl);
-
+*/
 /* end PSSOURCES */
 /* ende neu */
   
@@ -1706,7 +1707,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20130703;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20140320;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -2158,11 +2159,12 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   strncpy(bl->filenames.so6_fsource6, bl->src.so6.fsource6, 80);
 	   */
 	 }
+       /* out 20.3.14
        fscanf(f, " %lf %255[^\n]s %c", &bl->src.pin_yl0, buffer, &buf);  
        fscanf(f, " %lf %255[^\n]s %c", &bl->src.pin_yl,  buffer, &buf);
        fscanf(f, " %lf %255[^\n]s %c", &bl->src.pin_zl0, buffer, &buf);  
        fscanf(f, " %lf %255[^\n]s %c", &bl->src.pin_zl,  buffer, &buf);
-       
+       */  
        /* UF 10.3.06 put it outside	 strncpy(phset->pssourcename, bl->src.so6.fsource6); */ 
        /* PutPHASE(phset, MainPickName); */ 
        

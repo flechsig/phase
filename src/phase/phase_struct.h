@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <2014-03-20 14:52:33 flechsig>  */
+/*   Time-stamp: <2014-03-20 15:07:23 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -226,7 +226,7 @@ struct  source6 {
 };  
 
 struct  sources {                            /* Sammelstruktur         */
-  double pin_yl0, pin_yl, pin_zl0, pin_zl;   /* changed position 17.12.2005 */
+  //  double pin_yl0, pin_yl, pin_zl0, pin_zl;   /* changed position 17.12.2005 */
   
   /* struct source1 so1;     */                   /* Gauss + Hard edge      */
   /* struct source2 so2;     */                /* Zernike                */

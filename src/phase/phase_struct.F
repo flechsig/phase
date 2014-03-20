@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <2014-03-20 14:52:35 flechsig> 
+c$$$ Time-stamp: <2014-03-20 15:07:26 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -216,7 +216,7 @@ c---------------- sources -----------------------------------
 	end structure
 
         structure/sources/                 ! Sammelstruktur
-        real*8 pin_yl0,pin_yl,pin_zl0,pin_zl ! changed position 17.12.2005
+c        real*8 pin_yl0,pin_yl,pin_zl0,pin_zl ! changed position 17.12.2005
 c           record/source1/so1              ! Gauss + Hard edge
 c           record/source2/so2              ! Zernike
 c           record/source3/so3              ! radiale Vert. vom File
