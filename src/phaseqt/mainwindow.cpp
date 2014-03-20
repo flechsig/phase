@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Mar 14 16:50:23 flechsig> 
+//  Time-stamp: <2014-03-20 15:02:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1754,24 +1754,24 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       qst.setNum(op->ifl.ipinarr);
       break;    
     case 52:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
-      qst.setNum(mysrc->pin_yl0, 'g', 4);
+      //      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl0);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl0= 0;   // default
+      //qst.setNum(mysrc->pin_yl0, 'g', 4);
       break;
     case 53:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
-      qst.setNum(mysrc->pin_yl, 'g', 4);
+      //if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_yl);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->pin_yl= 0;   // default
+      //qst.setNum(mysrc->pin_yl, 'g', 4);
       break;
     case 54:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
-      qst.setNum(mysrc->pin_zl0, 'g', 4);
+      //if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl0);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl0= 0;   // default
+      //qst.setNum(mysrc->pin_zl0, 'g', 4);
       break;
     case 55:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
-      qst.setNum(mysrc->pin_zl, 'g', 4);
+      //if (!init) scanned= sscanf(text, "%lg", &mysrc->pin_zl);
+      //if ((scanned == EOF) || (scanned == 0)) mysrc->pin_zl= 0;   // default
+      //qst.setNum(mysrc->pin_zl, 'g', 4);
       break;
     case 56: /*
       if (!init) scanned= sscanf(text, "%d", &mysrc->so4.nfreqtot);
