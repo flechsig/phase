@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <10 Mar 14 10:34:04 flechsig>  */
+ /* Time-stamp: <24 Mar 14 10:50:17 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -88,8 +88,6 @@ void drift_fourier(struct BeamlineType *bl)
   drift_fourier_sub(in, out, &p1, &p2, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
 		    rows, cols, u, v, lambda, k, driftlen, p0);
 
-  
-  
   fftw_destroy_plan(p1);
   fftw_destroy_plan(p2);
   fftw_free(in); 
