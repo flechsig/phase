@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <24 Feb 14 14:57:22 flechsig> 
+//  Time-stamp: <24 Mar 14 15:26:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -106,36 +106,35 @@ void PhaseQt::buildElement(struct ElementType *listpt)
 
 // initialize the c structure of filenames with a name
 // removes a possible extension
-void PhaseQt::initSet(const char *fname)
+void PhaseQt::initSet(const char *fname, const int all)
 {
   char name[MaxPathLength];
   strncpy(name, fname, MaxPathLength);
   FnameBody(name);
 
-  snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", name, "omx");
-  snprintf(this->filenames.mapname,         MaxPathLength, "%s.%s", name, "map");
+  if (all) snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", name, "omx");
+  if (all) snprintf(this->filenames.mapname,         MaxPathLength, "%s.%s", name, "map");
   snprintf(this->filenames.sourceraysname,  MaxPathLength, "%s.%s", name, "inp"); 
-  snprintf(this->filenames.imageraysname,   MaxPathLength, "%s.%s", name, "out");	  
-  snprintf(this->filenames.intersecname,    MaxPathLength, "%s.%s", name, "isec");	  
-  snprintf(this->filenames.geometryname,    MaxPathLength, "%s.%s", name, "datg"); 
-  snprintf(this->filenames.elementname,     MaxPathLength, "%s.%s", name, "date");	  
-  snprintf(this->filenames.sourcepckname,   MaxPathLength, "%s.%s", name, "pcks"); 
-  snprintf(this->filenames.geometrypckname, MaxPathLength, "%s.%s", name, "pckg"); 
-  snprintf(this->filenames.elementpckname,  MaxPathLength, "%s.%s", name, "pcke"); 
+  if (all) snprintf(this->filenames.imageraysname,   MaxPathLength, "%s.%s", name, "out");	  
+  if (all) snprintf(this->filenames.intersecname,    MaxPathLength, "%s.%s", name, "isec");	  
+  if (all) snprintf(this->filenames.geometryname,    MaxPathLength, "%s.%s", name, "datg"); 
+  if (all) snprintf(this->filenames.elementname,     MaxPathLength, "%s.%s", name, "date");	  
+  if (all) snprintf(this->filenames.sourcepckname,   MaxPathLength, "%s.%s", name, "pcks"); 
+  if (all) snprintf(this->filenames.geometrypckname, MaxPathLength, "%s.%s", name, "pckg"); 
+  if (all) snprintf(this->filenames.elementpckname,  MaxPathLength, "%s.%s", name, "pcke"); 
   snprintf(this->filenames.pssourcename,    MaxPathLength, "%s.%s", name, "pss"); 
-  snprintf(this->filenames.plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
-  snprintf(this->filenames.printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
-  snprintf(this->filenames.optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
-  snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", name, "phase");	  
+  if (all) snprintf(this->filenames.plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
+  if (all) snprintf(this->filenames.printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
+  if (all) snprintf(this->filenames.optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
+  if (all) snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", name, "phase");	  
   snprintf(this->filenames.so4_fsource4a,   MaxPathLength, "%s.%s", name, "s4a");	  
   snprintf(this->filenames.so4_fsource4b,   MaxPathLength, "%s.%s", name, "s4b");	  
   snprintf(this->filenames.so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  
   snprintf(this->filenames.so4_fsource4d,   MaxPathLength, "%s.%s", name, "s4d");	  
   snprintf(this->filenames.so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
   snprintf(this->filenames.so7_hdf5,        MaxPathLength, "%s.%s", name, "h5");
-  snprintf(this->filenames.hdf5_out,        MaxPathLength, "%s_out.%s", name, "h5");
-  snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");	  
-  
+  if (all) snprintf(this->filenames.hdf5_out,        MaxPathLength, "%s_out.%s", name, "h5");
+  if (all) snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");	  
 } // initSet
 
 // print the contents of the data for debugging
@@ -221,7 +220,7 @@ PhaseQt::PhaseQt()
   ActualTask= 0;
   mainWin= NULL;
 
-  initSet("default");   // initialize the filename structure
+  initSet("default", INIT_ALL);   // initialize the filename structure
   initBeamline();       // initialize the beamline structure
 } // end constructor
 
