@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <10 Mar 14 14:24:07 flechsig>  */
+/*  Time-stamp: <24 Mar 14 12:33:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -73,6 +73,8 @@ class MainWindow;          // forward declaration
 #define PLOT_HPROF      32
 #define PLOT_VPROF      64
 
+#define INIT_ALL        1
+
 typedef QFutureWatcher <int> ElementWatcher;
 
 /*#define RAY_Y   1
@@ -94,7 +96,7 @@ public:
   int myeval(const int &);
   void buildBeamlineParallel();
   void buildElement(struct ElementType *);
-  void initSet(const char *);
+  void initSet(const char *, const int);
   void printSet();
   void initBeamline();
   struct BeamlineType *myBeamline();          // function to return the pointer to the data

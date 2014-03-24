@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2014-02-16 16:23:01 flechsig> 
+//  Time-stamp: <24 Mar 14 12:34:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -87,7 +87,7 @@ void ConfigWindow::defaultSlot()
   cout << "debug: defaultSlot called" << endl;
 #endif
 
-  myparent->initSet(myparent->myBeamline()->filenames.beamlinename);
+  myparent->initSet(myparent->myBeamline()->filenames.beamlinename, INIT_ALL);
   updateList();
 } // defaultSlot
 

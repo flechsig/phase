@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <10 Mar 14 11:51:00 flechsig> 
+//  Time-stamp: <24 Mar 14 12:36:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1818,7 +1818,7 @@ void MainWindow::newBeamline()
   
   myparent->myBeamline()->beamlineOK= 0;
   //myparent->myBeamline()->myPHASEset::init(name);
-  myparent->initSet(name);
+  myparent->initSet(name, INIT_ALL);
   myparent->myPutPHASE((char*) MainPickName);
   myparent->myBeamline()->RTSource.QuellTyp = 'H';                /* set default Quelltyp   */
   myparent->myAllocRTSource();                          /* reserves source memory */
@@ -1881,7 +1881,7 @@ void MainWindow::openBeamline()
       if (rcode != -1)
 	{
 	  //myparent->myBeamline()->myPHASEset::init(name);
-	  myparent->initSet(name);
+	  myparent->initSet(name, INIT_ALL);
 	  UpdateElementList();
 	  UpdateBeamlineBox();
 	  UpdateSourceBox();
@@ -2113,8 +2113,12 @@ void MainWindow::saveas()
     QString fileName = QFileDialog::getSaveFileName(this,
                         tr("Choose a file name"), ".",
                         tr("PHASE (*.phase)"));
-    if (fileName.isEmpty())
-        return;
+  
+  if (fileName.isEmpty()) return;
+
+#ifdef DEBUG
+    cout << "debug: saveas() called" << endl;
+#endif
 
     name= fileName.toLatin1().data();
 
@@ -2127,7 +2131,7 @@ void MainWindow::saveas()
         return;
     }
     //myparent->myBeamline()->myPHASEset::init(name);
-    myparent->initSet(name);
+    myparent->initSet(name, !INIT_ALL);   // 0 means not all
     myparent->myPutPHASE((char*) MainPickName);
     myparent->myWriteBLFile(name);
     UpdateBeamlineBox();
