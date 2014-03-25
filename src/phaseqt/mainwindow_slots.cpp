@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <24 Mar 14 16:08:18 flechsig> 
+//  Time-stamp: <25 Mar 14 11:16:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2061,18 +2061,37 @@ void MainWindow::printMain()
   cout << "debug: MainWindow::printMain called" << endl;
 #endif
 
-  QPrinter printer(QPrinter::ScreenResolution);
-  //QPrinter printer(QPrinter::HighResolution);
+  QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
   printer.setOrientation(QPrinter::Landscape);
-  printer.setResolution((int)(printer.resolution()*1.3));
+  printer.setPaperSize(QPrinter::A4);
+
+  int myresolution= printer.resolution();
+  if ( myresolution > 300 )
+    {
+      cout << "resolution = " << myresolution << " dpi" << endl;
+      myresolution= 600;
+      cout << "for space/time reasons we restrict the resolution to " << myresolution << " dpi" << endl;
+    }
   
+  printer.setResolution(myresolution);
+
   QPrintDialog *dlg = new QPrintDialog(&printer, this);
     
   if (dlg->exec() != QDialog::Accepted)
     return;
   
-  this->render( &printer );
+  QPainter painter;
+  painter.begin(&printer);
+  double xscale = printer.pageRect().width()/double(this->width());
+  double yscale = printer.pageRect().height()/double(this->height());
+  double scale = qMin(xscale, yscale);
+  painter.translate(printer.paperRect().x() + printer.pageRect().width()/2,
+		    printer.paperRect().y() + printer.pageRect().height()/2);
+  painter.scale(scale, scale);
+  painter.translate(-width()/2, -height()/2);
   
+  this->render( &painter );
+   
   statusBar()->showMessage(tr("Ready"), 4000);
 } // end printMain()
 
@@ -2085,7 +2104,7 @@ void MainWindow::screenshotMain()
 
   repaint();  // force an update outside the main loop, 
               // otherwise the area under the file menu is empty
-
+  
   QString format = "png";
   QPixmap pixmap = QPixmap::grabWindow(this->winId());
   QString initialPath = QDir::currentPath() + tr("/screenshot.") + format;

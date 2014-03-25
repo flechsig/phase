@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2014-03-20 15:02:30 flechsig> 
+//  Time-stamp: <25 Mar 14 11:23:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -110,7 +110,7 @@ void MainWindow::createActions()
     saveasAct->setStatusTip(tr("Save the current beamline in new file"));
     connect(saveasAct, SIGNAL(triggered()), this, SLOT(saveas()));
 
-    printAct = new QAction(QIcon(":/images/print.png"), tr("&Print..."), this);
+    printAct = new QAction(QIcon(":/images/print.png"), tr("&Print Plotwindow..."), this);
     printAct->setShortcuts(QKeySequence::Print);
     printAct->setStatusTip(tr("Print the graphics output"));
     connect(printAct, SIGNAL(triggered()), this, SLOT(print()));
