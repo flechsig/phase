@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Mar 14 16:45:30 flechsig> 
+;  Time-stamp: <25 Mar 14 16:21:05 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -213,7 +213,11 @@ if sphase gt 0 then begin
         amp*= yscale
         ycomp= complex(amp*cos(pha), amp*sin(pha)) 
     endif 
-    print, '!! save field to zcomp AND ycomp!!, delta=', delta, ', yscale=', yscale
+    print, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+    print, '!! we save the field to zcomp AND ycomp !!'
+    print, '!! use parameters delta and yscale      !!'
+    print, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+    print, 'current: delta=', delta, ', yscale=', yscale
     h5_write_phase, fname, zcomp=*self.field, ycomp=ycomp, wavelength=self.wavelength, $
       z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 endif
