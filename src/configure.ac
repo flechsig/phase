@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <06 Jan 14 13:53:28 flechsig> 
+dnl   Time-stamp: <25 Mar 14 16:34:13 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -9,7 +9,7 @@ dnl   $Revision$
 dnl   $Author$ 
  
 AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
-AC_INIT([phase],[1.21],[uwe.flechsig@psi.ch])
+AC_INIT([phase],[1.22],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
 AC_REVISION([$Revision$]) # no autoscan
 AC_CONFIG_AUX_DIR([config]) # no autoscan
