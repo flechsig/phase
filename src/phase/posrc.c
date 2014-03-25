@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Mar 14 15:19:35 flechsig>  */
+/*  Time-stamp: <25 Mar 14 15:20:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -636,7 +636,7 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
   writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
   writeDataDouble(file_id, "slice000001/field", field, fieldsize, 
-		  "electrical field in (V/m^2) as c_style list (real,imag), (real, imag),...");
+		  "electrical field in (V/m) as c_style list (real,imag), (real, imag),...");
   add_phase_psd_to_hdf5(file_id, bl);
   add_desc(group_id, "first time slice");
   H5Gclose(group_id);
@@ -703,7 +703,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
   add_string_attribute_d(e_dataset_id, "unit", "mm");
-  add_desc(e_dataset_id, "electrical field in (V/mm^2) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
+  add_desc(e_dataset_id, "electrical field in (V/mm) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
