@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <25 Mar 14 11:23:27 flechsig> 
+//  Time-stamp: <25 Mar 14 14:54:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -186,8 +186,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(asynPOAct, QString("asynPOAct"));
     connect(asynPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    fresnelAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fresnel (exp)"), this);
-    fresnelAct->setStatusTip(tr("Fresnel Propagation (exp)"));
+    fresnelAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fresnel"), this);
+    fresnelAct->setStatusTip(tr("Fresnel Propagation"));
     signalMapper->setMapping(fresnelAct, QString("fresnelAct"));
     connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
