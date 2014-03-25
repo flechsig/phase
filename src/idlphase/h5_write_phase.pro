@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 09:40:48 flechsig> 
+;  Time-stamp: <25 Mar 14 15:54:51 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -18,7 +18,7 @@ pro h5_write_phase, fname, ycomp=ycomp, zcomp=zcomp, yreal=yreal, yimag=yimag, z
 ;
 ;
 ; PURPOSE:
-;   write phase hdf5 phase format
+;   write phase hdf5 phase format, input units m
 ;
 ;
 ; CATEGORY:
@@ -101,10 +101,10 @@ ny= n_elements(y_vec)
 nt= n_elements(t_vec)
 a = dblarr(nz,ny,4,nt)
 
-a[*,*,0,0]= yreal
-a[*,*,1,0]= yimag
-a[*,*,2,0]= zreal
-a[*,*,3,0]= zimag
+a[*,*,0,0]= yreal*1e-3
+a[*,*,1,0]= yimag*1e-3
+a[*,*,2,0]= zreal*1e-3
+a[*,*,3,0]= zimag*1e-3
 
 esize=[ny, nz, 4, nt]
 ;help, esize
