@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <25 Mar 14 11:16:07 flechsig> 
+//  Time-stamp: <26 Mar 14 15:53:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -698,6 +698,18 @@ if (!action.compare("fourierAct"))
       mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y);
       updateGraphicsInput(mwplotsubject);
     }
+
+  if (!action.compare("grPoSourcePZUAct")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z | PLOT_UNWRAP);
+      updateGraphicsInput(mwplotsubject);
+    }
+  if (!action.compare("grPoSourcePYUAct")) 
+    {
+      mwplotsubject= (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y | PLOT_UNWRAP);
+      updateGraphicsInput(mwplotsubject);
+    }
+
   if (!action.compare("grPoResultAct")) 
     {
       mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_S0);
@@ -727,6 +739,18 @@ if (!action.compare("fourierAct"))
   if (!action.compare("grPoResultPYAct")) 
     {
       mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_PHASE_Y);
+      updateGraphicsInput(mwplotsubject);
+    }
+
+  if (!action.compare("grPoResultPZUAct")) 
+    {
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_PHASE_Z | PLOT_UNWRAP);
+      updateGraphicsInput(mwplotsubject);
+    }
+
+  if (!action.compare("grPoResultPYUAct")) 
+    {
+      mwplotsubject= (PLOT_PO_RESULT | PLOT_PO_PHASE_Y | PLOT_UNWRAP);
       updateGraphicsInput(mwplotsubject);
     }
 
@@ -1424,10 +1448,26 @@ void MainWindow::grapplyslot()
       d_plot->contourPlot();
       break;
 
+    case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z | PLOT_UNWRAP):
+      cout << "plot PO_RESULT_PHASE plus unwrap experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2(psdp, (PLOT_PO_PHASE_Z | PLOT_UNWRAP));
+      d_plot->setPoData("phase Ez");
+      d_plot->contourPlot();
+      break;
+
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
       d_plot->hfill2(psdp, PLOT_PO_PHASE_Y);
+      d_plot->setPoData("phase Ey");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y | PLOT_UNWRAP):
+      cout << "plot PO_RESULT_PHASE experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2(psdp, (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
       d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
       break;
@@ -1480,6 +1520,25 @@ void MainWindow::grapplyslot()
       d_plot->setPoData("PO source PHASE Y");
       d_plot->contourPlot();
       break;
+
+
+    case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z  | PLOT_UNWRAP):
+      cout << "plot source PO_PHASE_Z experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), (PLOT_PO_PHASE_Z  | PLOT_UNWRAP));
+      d_plot->setPoData("PO source PHASE Z");
+      d_plot->contourPlot();
+      break;
+
+    case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y | PLOT_UNWRAP):
+      cout << "plot source PO_PHASE_Y experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
+      d_plot->setPoData("PO source PHASE Y");
+      d_plot->contourPlot();
+      break;
+
+
 
     case PLOT_PO_SIMPRE:
       cout << "plot PLOT_PO_SIMPRE start " << endl;

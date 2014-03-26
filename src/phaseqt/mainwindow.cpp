@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <26 Mar 14 09:11:04 flechsig> 
+//  Time-stamp: <26 Mar 14 15:48:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -545,13 +545,17 @@ QWidget *MainWindow::createGraphicBox()
   grPoSourceS2Act= new QAction(tr("PO source S2"), this);
   grPoSourceS3Act= new QAction(tr("PO source S3"), this);
   grPoSourcePZAct= new QAction(tr("PO source phase Ez"), this);
-  grPoSourcePYAct= new QAction(tr("PO source phase Ey"), this);
+  grPoSourcePYAct=  new QAction(tr("PO source phase Ey"), this);
+  grPoSourcePZUAct= new QAction(tr("PO sou pha_unwr Ez"), this);
+  grPoSourcePYUAct= new QAction(tr("PO sou pha_unwr Ey"), this);
   grPoResultAct  = new QAction(tr("PO resu&lt (S0)"), this);
   grPoResultS1Act= new QAction(tr("PO result S&1"), this);
   grPoResultS2Act= new QAction(tr("PO result S&2"), this);
   grPoResultS3Act= new QAction(tr("PO result S&3"), this);
   grPoResultPZAct= new QAction(tr("PO result phase Ez"), this);
-  grPoResultPYAct= new QAction(tr("PO result phase Ey"), this);
+  grPoResultPYAct=  new QAction(tr("PO result phase Ey"), this);
+  grPoResultPZUAct= new QAction(tr("PO res pha_unwr Ez"), this);
+  grPoResultPYUAct= new QAction(tr("PO res pha_unwr Ey"), this);
   grPoSimpreAct  = new QAction(tr("PO Simpre"), this);
   grPoSimpimAct  = new QAction(tr("PO Simpim"), this);
   grPoSintreAct  = new QAction(tr("PO Sintre"), this);
@@ -579,6 +583,8 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grPoSourceS3Act);
   subject->addAction(grPoSourcePZAct);
   subject->addAction(grPoSourcePYAct);
+  subject->addAction(grPoSourcePZUAct);
+  subject->addAction(grPoSourcePYUAct);
   subject->addSeparator();
   subject->addAction(grPoResultAct);
   subject->addAction(grPoResultS1Act);
@@ -586,6 +592,8 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grPoResultS3Act);
   subject->addAction(grPoResultPZAct);
   subject->addAction(grPoResultPYAct);
+  subject->addAction(grPoResultPZUAct);
+  subject->addAction(grPoResultPYUAct);
   subject->addSeparator();
   subject->addAction(grPoSimpreAct);
   subject->addAction(grPoSimpimAct);
@@ -616,12 +624,18 @@ QWidget *MainWindow::createGraphicBox()
   connect(grPoSourceS3Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSourcePZAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSourcePYAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
+  connect(grPoSourcePZUAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoSourcePYUAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+
   connect(grPoResultAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultS1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultS2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultS3Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultPZAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultPYAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoResultPZUAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoResultPYUAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSintreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -650,12 +664,17 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grPoSourcePZAct, QString("grPoSourcePZAct"));
   grsignalMapper->setMapping(grPoSourcePYAct, QString("grPoSourcePYAct"));
 
+  grsignalMapper->setMapping(grPoSourcePZUAct, QString("grPoSourcePZUAct"));
+  grsignalMapper->setMapping(grPoSourcePYUAct, QString("grPoSourcePYUAct"));
+
   grsignalMapper->setMapping(grPoResultAct,   QString("grPoResultAct"));
   grsignalMapper->setMapping(grPoResultS1Act, QString("grPoResultS1Act"));
   grsignalMapper->setMapping(grPoResultS2Act, QString("grPoResultS2Act"));
   grsignalMapper->setMapping(grPoResultS3Act, QString("grPoResultS3Act"));
   grsignalMapper->setMapping(grPoResultPZAct, QString("grPoResultPZAct"));
   grsignalMapper->setMapping(grPoResultPYAct, QString("grPoResultPYAct"));
+  grsignalMapper->setMapping(grPoResultPZUAct, QString("grPoResultPZUAct"));
+  grsignalMapper->setMapping(grPoResultPYUAct, QString("grPoResultPYUAct"));
   grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));
   grsignalMapper->setMapping(grPoSintimAct,   QString("grPoSintimAct"));
   grsignalMapper->setMapping(grPoSimpreAct,   QString("grPoSimpreAct"));

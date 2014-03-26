@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <07 Mar 14 13:27:56 flechsig>  */
+/*  Time-stamp: <26 Mar 14 15:44:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -352,13 +352,18 @@ private:
     QAction *grPoSourceS2Act;
     QAction *grPoSourceS3Act;
     QAction *grPoSourcePZAct;
+    
     QAction *grPoSourcePYAct;
+    QAction *grPoSourcePZUAct;
+    QAction *grPoSourcePYUAct;
     QAction *grPoResultAct;
     QAction *grPoResultS1Act;
     QAction *grPoResultS2Act;
     QAction *grPoResultS3Act;
     QAction *grPoResultPZAct;
     QAction *grPoResultPYAct;
+    QAction *grPoResultPZUAct;
+    QAction *grPoResultPYUAct;
     QAction *grPoSimpreAct;
     QAction *grPoSimpimAct;
     QAction *grPoSintreAct;
