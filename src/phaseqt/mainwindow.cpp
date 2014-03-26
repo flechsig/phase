@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <25 Mar 14 14:54:13 flechsig> 
+//  Time-stamp: <26 Mar 14 09:11:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -197,8 +197,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(fourierAct, QString("fourierAct"));
     connect(fourierAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    copyPOAct = new QAction(tr("copy PO (exp)"), this);
-    copyPOAct->setStatusTip(tr("copy PO source to image (exp)"));
+    copyPOAct = new QAction(tr("copy PO"), this);
+    copyPOAct->setStatusTip(tr("copy PO source fields to image fields"));
     signalMapper->setMapping(copyPOAct, QString("copyPOAct"));
     connect(copyPOAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -345,7 +345,11 @@ QWidget *MainWindow::createBeamlineBox()
     QLabel *lambdaLabel  = new QLabel(tr("lambda (nm)"));
     QLabel *dlambdaLabel = new QLabel(tr("dla (nm)"));
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
-    
+
+    lambdaLabel->setStatusTip(tr("wavelength lambda"));
+    dlambdaLabel->setStatusTip(tr("GO: delta lambda for dla mode = on"));
+    dislenLabel->setStatusTip(tr("GO: effective dispersion length, typically distance between grating (SGM) or FM (PGM) and exit slit, required to calculate the resolving power"));
+
     beamlineGenericLayout->addWidget(lambdaLabel,  0, 0);
     beamlineGenericLayout->addWidget(lambdaE,      0, 1);
     beamlineGenericLayout->addWidget(dlambdaLabel, 0, 2);
@@ -1427,7 +1431,7 @@ void MainWindow::createToolBars()
 void MainWindow::parameterUpdateAll(int zahl)
 {
 #ifdef DEBUG
-  printf("debug: parameterUpdateAll: zahl: %d\n", zahl);
+  cout << "debug: parameterUpdateAll: number: " << zahl << endl;
 #endif
   int i;
   for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
@@ -1463,7 +1467,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
     case 1:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iord);
-      printf("parameterUpdate: scanned_pos: %d\n", scanned);
+      // printf("parameterUpdate: scanned_pos: %d\n", scanned);
       if ((scanned == EOF) || (scanned == 0) || (op->ifl.iord < 1) || 
 	  (op->ifl.iord > 7)) op->ifl.iord= 4;             // set default
       qst.setNum(op->ifl.iord);

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <07 May 13 14:25:32 flechsig> 
+//  Time-stamp: <26 Mar 14 08:19:01 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -256,14 +256,16 @@ void TreeModel::selectSlot(const QModelIndex &index)
 void TreeModel::updateItemVal(QString val, int idx)
 {
 #ifdef DEBUG1  
-  cout << __FILE__ << ": updateItemVal called, idx: " << idx << " val: " << val.toLocal8Bit().constData() << endl;
+  cout << __FILE__ << ": updateItemVal called, idx: " << idx << " val: " 
+       << val.toLocal8Bit().constData() << endl;
 #endif
 
   TreeItem *myitem=  (TreeItem *)itemList[idx];   // get item from indexlist
   
   if (!myitem)                // important to test if item defined
     {
-      cout << __FILE__ << " error: parameter No: " << idx << " skip it" << endl;
+      cout << __FILE__ << " warning: updateItemVal: parameter No: " << idx 
+	   << " not defined-- skip it" << endl;
       return;
     }
 

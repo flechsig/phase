@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <20 Mar 14 17:09:13 flechsig> 
+#  Time-stamp: <26 Mar 14 08:40:41 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -35,34 +35,19 @@ PO Controls
     iexpand		1	expansion of pathlength (0,1)				1	3
     iplmode		1	subtraction of ideal path length (0,1)			1	4	
 
+PO Scaling factors
+    inorm		0	normalize output (0,1) 					0	20
+    inorm1		0	0: use functional determinant, 1: use factor= 1 (0,1) 	0	21
+    inorm2		40	handling of stationary phase approximation (0,1,2,..)	40	22
+
 PO Source
-    isrctype		4	source type (1..7)					4	5
+    isrctype		7	source type (4,7), 7: hdf5				7	5
     source 4 & 7	-	E- field from files (filenames see Edit/Configure)	
        so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
        xi.distfocy	0	distance of image plane to vertical focus		0.	49
        xi.distfocz	0	distance of image plane to horizontal focus		0.	50
     source 6		-	brightness from file (filename see Edit/Configure)
        ifl.ibright	1	write 4-dim brightness to file (0,1)			1	38	
-
-PO time dependent
-    so4.nfreqtot	2048	total number of frequency slices 			2048	56
-    so4.nfreqpos	40	used number of pos. frequencies				40	57
-    so4.nfreqneg	40	used number of neg. slices				40	58
-    so4.nsource		1	identification number of input files			1	59
-    so4.nimage		2	identification number of output files			2	60
-    so4.deltatime	1	time delay between two time slices in fs		1	61
-
-PO Apertures
-    rpin 		100	radius of pinhole in source plane (mm)			100	6    
-    srcymin 		-100	aperture in source plane ymin (mm)			-100	7
-    srcymax 		100	aperture in source plane ymax (mm)			100	8
-    srczmin 		-100	aperture in source plane zmin (mm)			-100	9
-    srczmax 		100	aperture in source plane zmax (mm)			100	10
-    ifl.ipinarr		0	add pinhole array in source plane (0,1)			0	51
-#    src.pin_yl0		1.	1st parameter for pinhole array in y (double)		1.	52
-#    src.pin_yl		1.	2nd parameter for pinhole array in y (double)		1.	53
-#    src.pin_zl0		1.	1st parameter for pinhole array in z (double)		1.	54
-#    src.pin_zl		1.	2nd parameter for pinhole array in z (double)		1.	55
 
 PO Integration
     ispline		0	0: simpson integration, 1: spline integration (0,1)	0	39
@@ -83,11 +68,22 @@ PO Integration
         xi.ifm_amp	-	-							-	46
         xi.iord_pha	-	-							-	47
         xi.ifm_pha	-	-							-	48
-    
-PO Scaling factors
-    inorm		0	normalize output (0,1) 					0	20
-    inorm1		0	0: use functional determinant, 1: use factor= 1 (0,1) 	0	21
-    inorm2		1	handling of stationary phase approximation (0,1,2) 	1	22
+
+PO time dependent
+    so4.nfreqtot	2048	total number of frequency slices 			2048	56
+    so4.nfreqpos	40	used number of pos. frequencies				40	57
+    so4.nfreqneg	40	used number of neg. slices				40	58
+    so4.nsource		1	identification number of input files			1	59
+    so4.nimage		2	identification number of output files			2	60
+    so4.deltatime	1	time delay between two time slices in fs		1	61
+
+PO Apertures
+    rpin 		100	radius of pinhole in source plane (mm)			100	6    
+    srcymin 		-100	aperture in source plane ymin (mm)			-100	7
+    srcymax 		100	aperture in source plane ymax (mm)			100	8
+    srczmin 		-100	aperture in source plane zmin (mm)			-100	9
+    srczmax 		100	aperture in source plane zmax (mm)			100	10
+    ifl.ipinarr		0	add pinhole array in source plane (0,1)			0	51
 
 PO Obsolete parameters
     iordsc		-	iordsc							-	2
@@ -96,6 +92,10 @@ PO Obsolete parameters
     op.apr.ymax_ap	-	-							-	13
     op.apr.zmin_ap	-	-							-	14
     op.apr.zmax_ap	-	-							-	15
+    src.pin_yl0		1.	1st parameter for pinhole array in y (double)		1.	52
+    src.pin_yl		1.	2nd parameter for pinhole array in y (double)		1.	53
+    src.pin_zl0		1.	1st parameter for pinhole array in z (double)		1.	54
+    src.pin_zl		1.	2nd parameter for pinhole array in z (double)		1.	55
     matrel 	-	derive matrix elements in 3 different ways (1) (for debugging)	-	23
     source 1	-	hard edge or Gaussian 
         isrcy	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	24

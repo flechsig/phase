@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <20 Mar 14 17:38:03 flechsig>  */
+/*   Time-stamp: <26 Mar 14 09:09:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -713,7 +713,7 @@ void copySrc2Psd(struct BeamlineType *bl)
   int    row, col, rows, cols, idxf, idxc;
   
 #ifdef DEBUG  
-  printf("debug: file: %s, copy PO source fields to output fields (experimental)\n", __FILE__); 
+  printf("debug: file: %s, copy PO source fields to output fields\n", __FILE__); 
 #endif
 
   if (!(bl->beamlineOK & pstsourceOK))
@@ -723,12 +723,11 @@ void copySrc2Psd(struct BeamlineType *bl)
     }
   
   so4= (struct source4c *)&(bl->posrc);
-  psd= (struct PSDType  *)bl->RESULT.RESp;
-  
   cols= so4->iex;
   rows= so4->iey;
   
   ReAllocResult(bl, PLphspacetype, rows, cols);
+  psd= (struct PSDType  *)bl->RESULT.RESp;
 
   printf("copySrc2Psd: start copy fields\n");
   
