@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <10 Mar 14 10:11:12 flechsig> 
+//  Time-stamp: <26 Mar 14 15:36:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -42,6 +42,7 @@
 #include "myzoomer.h"
 #include "phaseqt.h"
 #include "plotmatrix.h"
+#include "unwrap_phase.h"
 
 using namespace std;   // fuer cout z.B.
 
@@ -1015,13 +1016,32 @@ void Plot::hfill2(struct PSDType *rp, int type)
 	  case PLOT_PO_PHASE_Z:
 	    h2a[idc]= phz; 
 	    break;
+	  case (PLOT_PO_PHASE_Z | PLOT_UNWRAP):
+	    h2a[idc]= phz; 
+	    break;
 	  case PLOT_PO_PHASE_Y:
+	    h2a[idc]= phy; 
+	    break;
+	  case (PLOT_PO_PHASE_Y | PLOT_UNWRAP):
 	    h2a[idc]= phy; 
 	    break;
 	  }
 	h2max= max(h2max, h2a[idc]);
 	h2min= min(h2min, h2a[idc]);
       } // end for
+
+  if (type & PLOT_UNWRAP)
+    {
+      cout << "call unwrap_phase" << endl;
+      unwrap_phase(h2a, h2a_nx, h2a_ny);
+      h2max= -1e300;
+      h2min=  1e300;
+      for (i=0; i< h2a_n; i++)
+	{
+	  h2max= max(h2max, h2a[i]);
+	  h2min= min(h2min, h2a[i]);
+	}
+    }
   
   statistics();
 
