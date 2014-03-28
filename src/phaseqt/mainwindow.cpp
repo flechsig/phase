@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <26 Mar 14 15:48:23 flechsig> 
+//  Time-stamp: <28 Mar 14 17:26:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -190,6 +190,11 @@ void MainWindow::createActions()
     fresnelAct->setStatusTip(tr("Fresnel Propagation"));
     signalMapper->setMapping(fresnelAct, QString("fresnelAct"));
     connect(fresnelAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    fraunhAct = new QAction(QIcon(":/images/Blue-arrows-right-32.png"),tr("PO Fraunhofer"), this);
+    fraunhAct->setStatusTip(tr("Fraunhofer Propagation"));
+    signalMapper->setMapping(fraunhAct, QString("fraunhAct"));
+    connect(fraunhAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     fourierAct = new QAction(QIcon(":/images/Blue-darrow-32.png"),tr("PO Fourier"), this);
     //fourierAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fourier (exp)"), this);
@@ -830,6 +835,7 @@ void MainWindow::createMenus()
     calcMenu->addAction(phasespaceAct);
     calcMenu->addAction(asynPOAct);
     calcMenu->addAction(mphasespaceAct);
+    calcMenu->addAction(fraunhAct);
     calcMenu->addAction(fresnelAct);
     calcMenu->addAction(fourierAct);
     calcMenu->addAction(copyPOAct);

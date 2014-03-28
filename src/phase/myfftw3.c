@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <25 Mar 14 14:47:47 flechsig>  */
+ /* Time-stamp: <28 Mar 14 17:16:17 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -276,6 +276,74 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 	im1[idxf]= amp* sin(pha);
       }
 } // drift_fresnel_sub
+
+/* free space propagation with Fraunhofer propagator              */
+/* UF 28.2.14 fehlt denke ich noch eine phasen faktor nach fft */
+/* debugged, scaling der image plane ist korrekt               */
+void drift_fraunhofer(struct BeamlineType *bl)
+{
+  int    row, col, rows, cols;
+  double driftlen, lambda, k, dz0, dy0, p0;
+  struct ElementType *el;
+  struct source4c *so4;
+  struct PSDType  *psd;
+  
+  so4= (struct source4c *)&(bl->posrc);
+  cols= so4->iex;
+  rows= so4->iey;
+
+  ReAllocResult(bl, PLphspacetype, rows, cols);
+  
+  psd= (struct PSDType *)bl->RESULT.RESp;
+  psd->iy= rows;
+  psd->iz= cols;
+
+#ifdef HAVE_FFTW3
+  fftw_complex *in, *out;
+  fftw_plan    p;
+#endif
+
+  //el= &(bl->ElementList[bl->position]); // oder -1
+  el= &(bl->ElementList[0]);
+  driftlen= el->GDat.r+ el->GDat.rp;
+  lambda  = bl->BLOptions.lambda;
+  k= 2.0 * PI/ lambda;
+  p0 = driftlen/ lambda;
+  dy0= so4->dy;
+  dz0= so4->dx;
+
+  printf("drift_fraunhofer called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
+
+  printf("!!!!!!!!!!!!! drift_fraunhofer called not yet working !!!!!!!!!!!!!!!!!!!\n");
+
+#ifdef HAVE_FFTW3
+  in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
+  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
+  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
+  // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
+ 
+  printf("fftw3 fill vectors\n"); // scaling verified UF 28.2.14
+  for (row= 0; row < rows; row++) psd->y[row]= lambda* driftlen* so4->gridy[row]/(rows* pow(dy0, 2));
+  for (col= 0; col < cols; col++) psd->z[col]= lambda* driftlen* so4->gridx[col]/(cols* pow(dz0, 2));
+
+  // z polarization
+  drift_fresnel_sub(in, out, &p, so4->zezre, so4->zezim, psd->ezrec, psd->ezimc,
+		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
+  // y polarization
+  drift_fresnel_sub(in, out, &p, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
+		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
+
+  fftw_destroy_plan(p);
+  fftw_free(in); 
+  fftw_free(out);
+#else
+  printf("fftw3 not available- skip calculation\n");
+#endif
+
+  printf("drift_fraunhofer end\n");
+} /* end drift_fraunhofer */
+
+
 
 /****************************
   start with helper functions 

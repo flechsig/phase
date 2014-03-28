@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <26 Mar 14 15:53:10 flechsig> 
+//  Time-stamp: <28 Mar 14 17:11:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -291,6 +291,26 @@ void MainWindow::activateProc(const QString &action)
       myparent->myBeamline()->beamlineOK |= resultOK;
       UpdateStatus();
     }
+
+  if (!action.compare("fraunhAct")) 
+    { 
+#ifdef DEBUG
+      cout << "debug: fraunhAct button pressed" << endl;
+#endif
+      if (elementListIsEmpty()) return;
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->myposrc_ini();
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
+      myparent->mydrift_fraunhofer();
+      myparent->myBeamline()->beamlineOK |= resultOK;
+      UpdateStatus();
+    }
+
+
 
 if (!action.compare("fourierAct")) 
     { 

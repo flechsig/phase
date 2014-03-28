@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <26 Mar 14 12:34:07 flechsig>  */
+/*  Time-stamp: <28 Mar 14 17:12:03 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -116,6 +116,7 @@ public:
 		     int etype, double theta, int lREDUCE_maps) { 
     DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, -1); }
   void mydrift_fresnel() { drift_fresnel(this); }
+  void mydrift_fraunhofer() { drift_fraunhofer(this); }
   void mydrift_fourier() { drift_fourier(this); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
