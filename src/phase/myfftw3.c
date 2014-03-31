@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <31 Mar 14 17:26:38 flechsig>  */
+ /* Time-stamp: <31 Mar 14 17:28:54 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -313,7 +313,7 @@ void drift_fraunhofer(struct BeamlineType *bl)
 
   printf("drift_fraunhofer called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
 
-  printf("!!!!!!!!!!!!! drift_fraunhofer called not yet working !!!!!!!!!!!!!!!!!!!\n");
+  printf("!!!!!!!!!!!!! drift_fraunhofer called not yet tested/debugged !!!!!!!!!!!!!!!!!!!\n");
 
 #ifdef HAVE_FFTW3
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
