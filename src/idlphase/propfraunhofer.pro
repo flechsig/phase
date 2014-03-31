@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <31 Mar 14 16:10:02 flechsig> 
+;  Time-stamp: <31 Mar 14 17:06:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -97,21 +97,10 @@ yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      ;; total height
 
 print, 'width = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
 print, 'drift = ', drift
-;;------------------------ Multipy input field with phase factor -------
-
-driftarr= dcomplexarr(nz, ny)                                    ;; make a complex array
-for i=0, nz-1 do begin
-    for j=0, ny-1 do begin
-        phase= k*(z_vec[i]^2 + y_vec[j]^2)/(2.0*drift)         
-        driftarr[i,j]= complex(cos(phase), sin(phase), /double)
-    endfor
-endfor
-
-modfield = field * driftarr                                       
 
 ; print, '--------------- FT of Source field ------------------ exp(-i ...)'
 
-newfield = fft(modfield, -1, /center, /double)                   ;; forward 2d fft, centered output           
+newfield = fft(field, -1, /center, /double)                   ;; forward 2d fft, centered output           
 
 u0       = dindgen(nz)/(nz-1) - 0.5                              ;; define the vectors in the image plane     
 v0       = dindgen(ny)/(ny-1) - 0.5   
@@ -132,7 +121,7 @@ scale   = dcomplexarr(nz, ny)                                    ;; make a compl
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         phase = (u[i]^2 + v[j]^2) * k/(2.0*drift)             
-        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin  12.9.2013: changed sign from - to +
+;; UF??        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin  12.9.2013: changed sign from - to +
         scale[i,j]= complex(cos(phase), sin(phase), /double)   
     endfor
 endfor
