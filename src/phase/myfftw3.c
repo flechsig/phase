@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <28 Mar 14 17:16:17 flechsig>  */
+ /* Time-stamp: <31 Mar 14 17:26:38 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -277,8 +277,7 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
       }
 } // drift_fresnel_sub
 
-/* free space propagation with Fraunhofer propagator              */
-/* UF 28.2.14 fehlt denke ich noch eine phasen faktor nach fft */
+/* free space propagation with Fraunhofer propagator           */
 /* debugged, scaling der image plane ist korrekt               */
 void drift_fraunhofer(struct BeamlineType *bl)
 {
@@ -327,10 +326,10 @@ void drift_fraunhofer(struct BeamlineType *bl)
   for (col= 0; col < cols; col++) psd->z[col]= lambda* driftlen* so4->gridx[col]/(cols* pow(dz0, 2));
 
   // z polarization
-  drift_fresnel_sub(in, out, &p, so4->zezre, so4->zezim, psd->ezrec, psd->ezimc,
+  drift_fraunhofer_sub(in, out, &p, so4->zezre, so4->zezim, psd->ezrec, psd->ezimc,
 		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
   // y polarization
-  drift_fresnel_sub(in, out, &p, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
+  drift_fraunhofer_sub(in, out, &p, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
 		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
 
   fftw_destroy_plan(p);
@@ -343,6 +342,46 @@ void drift_fraunhofer(struct BeamlineType *bl)
   printf("drift_fraunhofer end\n");
 } /* end drift_fraunhofer */
 
+/* one polarization     */
+/* re0, im0 -> re1, im1 */
+void drift_fraunhofer_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, 
+		      double *re0, double *im0, double *re1, double *im1, int rows, int cols, 
+		      double *u0, double *v0, double *u1, double *v1, 
+		      double lambda, double k, double driftlen, double p0)
+{
+  int row, col, idxc, idxf;
+  double amp0, pha0, amp1, pha1, pha2, pha3, pha4, amp, pha, fftwscale, yy, zz;
+  
+  fftwscale= 1.0/ (rows * cols);
+  fill_fftw(in, re0, im0, rows, cols);
+
+  zz= (u0[cols-1]- u0[0]) * cols / (cols-1);
+  yy= (v0[rows-1]- v0[0]) * rows / (rows-1);
+
+  printf("fftw3 execute FFT\n");
+  fftw_execute(*p1p);
+  fftshift(out, rows, cols);
+  
+  printf("fftw3 export result\n");
+  amp1= 1/(driftlen* lambda);  // scale2_b
+  pha1= -0.5* PI;              // scale2_a
+  pha2= k* driftlen;  
+  
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)
+      {
+	idxc= row* cols+ col;
+	idxf= col* rows+ row;
+	amp0= sqrt(pow(out[idxc][0], 2)+ pow(out[idxc][1], 2));              // fft amplitude
+	pha0= atan2(out[idxc][1], out[idxc][0]);                             // fft phase
+	pha3= k* (pow(v1[row], 2) + pow(u1[col], 2))/ (2.0* driftlen);
+	pha4= (v1[row]* v0[0] + u1[col]* u0[0]) * k/ driftlen;
+	pha = pha0 + pha1 + pha2 + pha3 +pha4;
+	amp = amp0 * amp1* fftwscale * yy * zz;
+	re1[idxf]= amp* cos(pha);
+	im1[idxf]= amp* sin(pha);
+      }
+} // drift_fraunhofer_sub
 
 
 /****************************
