@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <01 Apr 14 09:14:16 flechsig> 
+#  Time-stamp: <01 Apr 14 09:36:01 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -19,7 +19,7 @@ fkoempi_SOURCES  = fkoempi.c
 
 
 # files installed under data
-pkgdata_DATA = 
+pkgdata_DATA = fkoempi.par
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.
