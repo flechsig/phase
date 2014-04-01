@@ -9,7 +9,7 @@
 #  $Revision$ 
 #  $Author$ 
 
-fkoe_mpi
+fkoempi
 Makefile
 Makefile.in
 config.h

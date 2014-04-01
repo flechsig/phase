@@ -23,7 +23,7 @@
 
 #define MAXDIM 2048
 
-#define PARFNAME    "fkoe.par"
+#define PARFNAME    "fkoempi.par"
 
 #define BASEOFNAME   "fout"
 
