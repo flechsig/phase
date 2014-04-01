@@ -1,3 +1,12 @@
+c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
+c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
+c$$$ Time-stamp: <01 Apr 14 09:29:50 flechsig> 
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
       include 'spa-check.cmn'
       
       write(6,*)' create Gaussian beam           (1)'
