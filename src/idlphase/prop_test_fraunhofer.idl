@@ -106,7 +106,7 @@ y_source = y_vec
 
 
 
- print, '------------- Propagate beam 3 times to final distance-----------------'
+print, '------------- direct propagation to 60 m -------------drift = ',drift
 
 
  field = source
@@ -114,7 +114,7 @@ y_source = y_vec
  y_vec = y_source 
 ; propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
 ; prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field , Nu=200, Nv=200
-;  propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+; propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
   propfraunhofer, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
 
  bamp   = abs(field)
