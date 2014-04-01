@@ -1,0 +1,38 @@
+
+	implicit real*8 (a-h,o-z)
+      
+	character*(80)dfile1,dfile2,dfile3,dfile4,
+     &               filnam1,filnam2,filnam3,filnam4
+
+	complex*16 ey0,ez0,ey1,ez1,xm1,sqrtm1,fact0,fact
+
+	common/fkoe1/eyre0(1024,1024),eyim0(1024,1024)
+     &      ,ezre0(1024,1024),ezim0(1024,1024)
+     &      ,eyre1(1024,1024),eyim1(1024,1024)
+     &      ,ezre1(1024,1024),ezim1(1024,1024)
+     &      ,y0(1024),z0(1024),y(1024),z(1024),y1(1024),z1(1024)
+     &      ,y0a(1024),y0b(1024),z0a(1024),z0b(1024)
+     &      ,y1a(1024),y1b(1024),z1a(1024),z1b(1024)
+     &      ,dy0,dz0,dy,dz,dy1,dz1,dy0a,dy0b,dz0a,dz0b
+     &      ,dy1a,dy1b,dz1a,dz1b
+     &      ,dist,dista,cc,pi,pihalf,xlam,winkel,phase
+     &      ,surf(1024,1024)
+     &      ,ymin0,ymax0,zmin0,zmax0,ymin,ymax,zmin,zmax
+     &      ,ymin1,ymax1,zmin1,zmax1
+     &      ,ymin0a,ymax0a,zmin0a,zmax0a
+     &      ,ymin1a,ymax1a,zmin1a,zmax1a
+     &      ,ymin0b,ymax0b,zmin0b,zmax0b
+     &      ,ymin1b,ymax1b,zmin1b,zmax1b
+     &      ,deltaz0,deltaz,deltay0,deltay
+     &      ,xstart,xend,ystart,yend,zstart,zend
+
+	common/fkoe2/dfile1,dfile2,dfile3,dfile4,
+     &               filnam1,filnam2,filnam3,filnam4
+
+	common/fkoe3/ianzy0,ianzz0,ianzy1,ianzz1,ianzy,ianzz,
+     &               ianzy0a,ianzz0a,ianzy1a,ianzz1a,
+     &               ianzy0b,ianzz0b,ianzy1b,ianzz1b,kmod,irrpmod
+      
+	common/fkoe4/ey0(1024,1024),ez0(1024,1024),
+     &     ey1(1024,1024),ez1(1024,1024),xm1,sqrtm1,fact0,fact
+

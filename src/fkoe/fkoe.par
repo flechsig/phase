@@ -1,0 +1,14 @@
+eyre_gb.s4a     ! source file real part
+eyim_gb.s4b	! source file imaginary part
+ezre_gb.s4c     ! source file real part
+ezim_gb.s4d	! source file imaginary part
+3 		! (1) src to oe, (2) oe to image, (3) source to image along OE, (10) free space
+10000,500	! dist, dista
+0		! (0) take fixed distances, (<>0) variable distances
+88.		! angle to the surface normal
+10.		! wavelength in nm
+-0.01	0.02	! ymin1, ymax1	image grid
+101		! ianzy1
+-0.00000001 0.00000001 -0.01	0.01	! zmin1, zmax1
+3                      51		! ianzzz1
+surf.dat	! surface file name
