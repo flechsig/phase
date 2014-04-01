@@ -686,3 +686,4 @@ void slave_propagate_2(double angle)
     
       printf("S[%d]: done\n", rank);   
 }
+/* end */
