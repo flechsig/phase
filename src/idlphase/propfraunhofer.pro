@@ -121,7 +121,8 @@ scale   = dcomplexarr(nz, ny)                                    ;; make a compl
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         phase = (u[i]^2 + v[j]^2) * k/(2.0*drift)             
-;; UF??        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin  12.9.2013: changed sign from - to +
+;; the following line centers the phase. This is because the idl-summation runs from 0 to nz-1.
+        phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        ;; set origin  12.9.2013: changed sign from - to +
         scale[i,j]= complex(cos(phase), sin(phase), /double)   
     endfor
 endfor

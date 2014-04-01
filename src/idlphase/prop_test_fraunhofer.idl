@@ -112,30 +112,26 @@ y_source = y_vec
  field = source
  z_vec = z_source 
  y_vec = y_source 
+; propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+; prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field , Nu=200, Nv=200
+;  propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+  propfraunhofer, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
+
+ bamp   = abs(field)
+ bphase = atan(field,/phase)
+ title = 'Fraunhofer directly to  ' + string(drift)+ ' m'
+
+ bamp = abs(field)
+
+window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=400
+mycontour, bamp,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+title = title + ' (phase)'
+
+ bphase =atan(field,/phase)
+ window,5, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=400
+ mycontour, bphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
+
  
-; propfraunhofer, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field 
-; propfraunhofer, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field  
-; propfraunhofer, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field  
- propfresnel, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field 
- propfresnel, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field  
- propfresnel, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field  
-; prophuygens, drift=60, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field , Nu=200, Nv=200
-; propfourier, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-; propfourier, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-; propfourier, drift=drift/3.0, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-
- propamp   = abs(field)
- propphase = atan(field,/phase)
-
- title = 'propagate 3 times  to ' + string(drift)+ ' m'
-
- window,4, RETAIN=2 , XSIZE=500, YSIZE=400,XPOS=1400, YPOS=330
- mycontour, propamp,z_vec*1e3,y_vec*1e3 , xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
- title = title + ' (phase)'
-
- window,5, RETAIN=2, XSIZE=500, YSIZE=400,XPOS=900, YPOS=330
- mycontour, propphase,z_vec*1e3,y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title, xrange = [-0.3,0.3], yrange = [-0.3,0.3]
-
 
 
 print, '------------- direct propagation to 60 m -------------drift = ',drift
@@ -143,17 +139,13 @@ print, '------------- direct propagation to 60 m -------------drift = ',drift
  field = source
  z_vec = z_source 
  y_vec = y_source 
-; propfraunhofer, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
  propfresnel, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=field
-; prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop , Nu=200, Nv=200
-; propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
+;prophuygens, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop , Nu=200, Nv=200
+;propfourier, drift=drift, z_vec=z_vec, y_vec=y_vec,  wavelength=wavelength, field=prop 
 
  bamp   = abs(field)
  bphase = atan(field,/phase)
-
-
-
- title = 'propagate directly to  ' + string(drift)+ ' m'
+ title = 'Fresnel directly to  ' + string(drift)+ ' m'
 
  bamp = abs(field)
 
