@@ -17,7 +17,6 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <math.h>
-// UF
 #include <stdlib.h>
 
 
