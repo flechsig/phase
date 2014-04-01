@@ -106,7 +106,7 @@ y_source = y_vec
 
 
 
-print, '------------- direct propagation to 60 m -------------drift = ',drift
+print, '------------- direct propagation  -------------drift = ',drift
 
 
  field = source
@@ -134,7 +134,7 @@ title = title + ' (phase)'
  
 
 
-print, '------------- direct propagation to 60 m -------------drift = ',drift
+print, '------------- direct propagation  -------------drift = ',drift
 
  field = source
  z_vec = z_source 
