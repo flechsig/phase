@@ -25,8 +25,8 @@ phasempi_SOURCES = \
 	../phase/replace_wl_in_u.F ../phase/replace_wl_in_ypzp.F \
 	../phase/taylor-ops.for \
 	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
-  -      ../phase/posrc.c ../phase/posrc.h
-
+  -      ../phase/posrc.c ../phase/posrc.h \
+	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h
 
 ##dummy_DATA = \
 ##	configwindow.cpp configwindow.h \
