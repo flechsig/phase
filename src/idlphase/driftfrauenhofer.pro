@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <18 Jul 13 17:18:21 flechsig> 
+;  Time-stamp: <31 Mar 14 16:05:55 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -12,7 +12,7 @@
 
 
 pro driftfrauenhofer, acomp=acomp, areal=areal, aimag=aimag, bcomp=bcomp, breal=breal, bimag=bimag, $
-           bamp=bamp, bphase=bphase, drift=drift, plot=plot, $
+           bamp=bamp, bphase=bphase, drift=drift, plot=plot, field=field, $
            wavelength=wavelength, y_vec=y_vec, z_vec=z_vec, u=u, v=v
 ;+
 ; NAME:
@@ -95,7 +95,7 @@ u1= 'usage: drift, [acomp=acomp,][areal=areal,][aimag=aimag,][apfac=apfac,][brea
 u2= '[wavelength=wavelength,] y_vec=y_vec, z_vec=z_vec'
 usage= u1+u2
 
-print, 'driftfresnel called'
+print, 'driftfraunhofer called'
 
 if n_elements(drift)      eq 0 then drift     = 100.   
 if n_elements(wavelength) eq 0 then wavelength= 1e-10  

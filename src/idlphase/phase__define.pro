@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <25 Mar 14 16:21:05 flechsig> 
+;  Time-stamp: <31 Mar 14 16:07:59 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1324,13 +1324,50 @@ legend, ['z','y'], color=[1,2], linestyle=[0,0]
 return 
 end ;; plotprofile
 
+pro phase::propfraunhofer, _EXTRA=extra
+;+
+; NAME:
+;   phase::propfraunhofer
+;
+; PURPOSE:
+;   propagate field using the fraunhofer approximation (1 FFT)
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->propfraunhofer
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;  idl> emf->propfraunhofer
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+propfrauenhofer, field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, $
+  wavelength=self.wavelength, _EXTRA=extra
+
+return 
+end ;;propfraunhofer  
+
 pro phase::propfresnel, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::propfresnel
 ;
 ; PURPOSE:
-;   propagate field using the fourier propagator (it does two FFTs)
+;   propagate field using the fresnel propagator (it does one FFTs)
 ;
 ; CATEGORY:
 ;   phase
