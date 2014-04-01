@@ -360,7 +360,7 @@ void build_dest_axis(const struct extends *e, int ny, int nz, double sy[], doubl
       sz[i] = e->z_min + i*dz;
     }
   }
-}
+}   /* build_dest_axis */
 
 
 /************************************************************************
@@ -425,7 +425,7 @@ void master_propagate(int nslaves)
     }
              
   free(lines);
-}
+} /*  master_propagate */
 
 
 /************************************************************************
@@ -504,7 +504,7 @@ void slave_propagate_10()
     } while(j != -1);
     
       printf("S[%d]: done\n", rank);   
-}
+}  /* end slave_propagate_10 */
 
 /************************************************************************
  receive tasks from Master thread and send result (a line) back to Master
@@ -594,7 +594,7 @@ void slave_propagate_1(double angle)
     } while(j != -1);
     
       printf("S[%d]: done\n", rank);   
-}
+} /* end slave_propagate_1 */
 
 /************************************************************************
  receive tasks from Master thread and send result (a line) back to Master
@@ -685,5 +685,5 @@ void slave_propagate_2(double angle)
     } while(j != -1);
     
       printf("S[%d]: done\n", rank);   
-}
-/* end */
+} /* end slave_propagate_2 */
+/* end file */
