@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 	       PSDp->eyimc[ny+nz*psip->iy]= results[2];
 	       PSDp->ezrec[ny+nz*psip->iy]= results[3];
 	       PSDp->ezimc[ny+nz*psip->iy]= results[4]; 
-	       PSDp->psd[ny+nz*psip->iy]  = results[5]; 
+	       /* PSDp->psd[ny+nz*psip->iy]  = results[5]; */
 	       PSDp->y[ny]		  = results[6];
 	       PSDp->z[nz]		  = results[7];
 	       //printf("master -> save result with id= %d saved\n", resultid);
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
 	      results[3]= PSDp->ezrec[ny+nz*psip->iy];
 	      results[4]= PSDp->ezimc[ny+nz*psip->iy]; 
-	      results[5]= PSDp->psd[ny+nz*psip->iy];
+	      /*	      results[5]= PSDp->psd[ny+nz*psip->iy];*/
 	      results[6]= PSDp->y[ny];
 	      results[7]= PSDp->z[nz];
 
