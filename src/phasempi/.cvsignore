@@ -1,5 +1,6 @@
 # -*-sh-*-
-phasempimodule 
+phasempimodule
+phasempi 
 .deps
 .libs
 Makefile
