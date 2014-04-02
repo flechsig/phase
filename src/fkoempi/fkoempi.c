@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
     break;      
         
     case 3:
+      fprintf(stderr, "mode 3 not yet supported\n");
       exit(-2); // not yet 
       //slave_load_surface(surffilename, &ny1, &nz1, sy1, sz1);      
       
