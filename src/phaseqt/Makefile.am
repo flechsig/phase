@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <24 Apr 14 12:29:08 flechsig> 
+#  Time-stamp: <24 Apr 14 17:31:20 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -100,7 +100,7 @@ AM_CFLAGS = @HDF5_CFLAGS@
 #### -L@QT_DIR@/lib -lQtGui -lQtCore -lQtSvg 
 ## -lQt5Concurrent
 AM_LDFLAGS =  -Wl,-rpath,@QT_DIR@/lib \
-	@QT_LIBS@   \
+	@QT_LIBS@  -lQtGui -lQtCore -lQtSvg \
 	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
 	@FLIBS@  @FFTW3_LIBS@ @CFORLIB@
 
