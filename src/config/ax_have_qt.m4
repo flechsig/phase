@@ -1,12 +1,15 @@
- # File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_have_qt.m4
- # Date      : <24 Apr 14 12:17:49 flechsig> 
- # Time-stamp: <24 Apr 14 12:17:52 flechsig> 
- # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+# File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_have_qt.m4
+# Date      : <24 Apr 14 12:17:49 flechsig> 
+# Time-stamp: <24 Apr 14 12:27:58 flechsig> 
+# Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
- # $Source$ 
- # $Date$
- # $Revision$ 
- # $Author$ 
+# $Source$ 
+# $Date$
+# $Revision$ 
+# $Author$ 
+#
+# UF add variable QT_RCC
+#
 # ===========================================================================
 #        http://www.gnu.org/software/autoconf-archive/ax_have_qt.html
 # ===========================================================================
@@ -50,6 +53,7 @@
 #     QT_LRELEASE
 #     QT_LUPDATE
 #     QT_DIR
+# UF  QT_RCC
 #
 #   which respectively contain an "-I" flag pointing to the Qt include
 #   directory (and "-DQT_THREAD_SUPPORT" when LIB is "qt-mt"), link flags
@@ -121,7 +125,7 @@ AC_DEFUN([AX_HAVE_QT],
                              [Qt header files are in DIR]))
   AC_ARG_WITH([Qt-bin-dir],
               AS_HELP_STRING([--with-Qt-bin-dir=DIR],
-                             [Qt utilities such as moc and uic are in DIR]))
+                             [Qt utilities such as moc, rcc and uic are in DIR]))
   AC_ARG_WITH([Qt-lib-dir],
               AS_HELP_STRING([--with-Qt-lib-dir=DIR],
                              [The Qt library is in DIR]))
@@ -227,6 +231,7 @@ AC_DEFUN([AX_HAVE_QT],
           QT_UIC=
         fi
       QT_MOC="$ax_qt_dir/bin/moc"
+      QT_RCC="$ax_qt_dir/bin/rcc"
       QT_LRELEASE="$ax_qt_dir/bin/lrelease"
       QT_LUPDATE="$ax_qt_dir/bin/lupdate"
     else
@@ -239,12 +244,14 @@ AC_DEFUN([AX_HAVE_QT],
           QT_UIC=
         fi
         QT_MOC="$ax_qt_bin_dir/moc"
+        QT_RCC="$ax_qt_bin_dir/rcc"
         QT_LRELEASE="$ax_qt_bin_dir/lrelease"
         QT_LUPDATE="$ax_qt_bin_dir/lupdate"
       else
       # Last possibility is that they are in $PATH
         QT_UIC="`which uic`"
         QT_MOC="`which moc`"
+	QT_RCC="`which rcc`"
         QT_LRELEASE="`which lrelease`"
         QT_LUPDATE="`which lupdate`"
       fi
@@ -256,6 +263,7 @@ AC_DEFUN([AX_HAVE_QT],
     QT_LIBS=$QT_LIBS
     QT_UIC=$QT_UIC
     QT_MOC=$QT_MOC
+    QT_RCC=$QT_RCC
     QT_LRELEASE=$QT_LRELEASE
     QT_LUPDATE=$QT_LUPDATE])
   else
@@ -265,6 +273,7 @@ AC_DEFUN([AX_HAVE_QT],
     QT_LIBS=
     QT_UIC=
     QT_MOC=
+    QT_RCC=
     QT_LRELEASE=
     QT_LUPDATE=
     AC_MSG_RESULT($have_qt)
@@ -274,6 +283,7 @@ AC_DEFUN([AX_HAVE_QT],
   AC_SUBST(QT_LIBS)
   AC_SUBST(QT_UIC)
   AC_SUBST(QT_MOC)
+  AC_SUBST(QT_RCC)
   AC_SUBST(QT_LRELEASE)
   AC_SUBST(QT_LUPDATE)
 
