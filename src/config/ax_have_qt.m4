@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_have_qt.m4
 # Date      : <24 Apr 14 12:17:49 flechsig> 
-# Time-stamp: <24 Apr 14 14:21:21 flechsig> 
+# Time-stamp: <24 Apr 14 14:22:31 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -9,6 +9,7 @@
 # $Author$ 
 #
 # UF add variable QT_RCC
+# UF replace search libqt* with libQt*
 #
 # ===========================================================================
 #        http://www.gnu.org/software/autoconf-archive/ax_have_qt.html
