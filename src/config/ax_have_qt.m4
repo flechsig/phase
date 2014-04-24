@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_have_qt.m4
 # Date      : <24 Apr 14 12:17:49 flechsig> 
-# Time-stamp: <24 Apr 14 14:04:37 flechsig> 
+# Time-stamp: <24 Apr 14 14:21:21 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -411,8 +411,8 @@ AC_DEFUN([AX_PATH_QT_DIRECT],
   # That would be $ax_qt_include_dir stripped from its last element:
   ax_possible_qt_dir=`dirname $ax_qt_include_dir`
   if (test -x $ax_possible_qt_dir/bin/moc) &&
-     ((ls $ax_possible_qt_dir/lib/libqt* > /dev/null 2>/dev/null) ||
-      (ls $ax_possible_qt_dir/lib64/libqt* > /dev/null 2>/dev/null)); then
+     ((ls $ax_possible_qt_dir/lib/libQt* > /dev/null 2>/dev/null) ||
+      (ls $ax_possible_qt_dir/lib64/libQt* > /dev/null 2>/dev/null)); then
     # Then the rest is a piece of cake
     ax_qt_dir=$ax_possible_qt_dir
     ax_qt_bin_dir="$ax_qt_dir/bin"
@@ -427,7 +427,7 @@ AC_DEFUN([AX_PATH_QT_DIRECT],
     fi
     # Only look for lib if the user did not supply it already
     if test x"$ax_qt_lib" = xNO; then
-      ax_qt_lib="`ls $ax_qt_lib_dir/libqt* | sed -n 1p |
+      ax_qt_lib="`ls $ax_qt_lib_dir/libQt* | sed -n 1p |
                    sed s@$ax_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
     fi
     ax_qt_LIBS="-L$ax_qt_lib_dir -l$ax_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
@@ -439,9 +439,10 @@ AC_DEFUN([AX_PATH_QT_DIRECT],
       ax_qt_lib_dir="$with_Qt_lib_dir"
       # Only look for lib if the user did not supply it already
       if test x"$ax_qt_lib" = xNO; then
-        ax_qt_lib="`ls $ax_qt_lib_dir/libqt* | sed -n 1p |
+        ax_qt_lib="`ls $ax_qt_lib_dir/libQt* | sed -n 1p |
                      sed s@$ax_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
       fi
+      echo "UF ax_qt_lib => ", $ax_qt_lib
       ax_qt_LIBS="-L$ax_qt_lib_dir -l$ax_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
     else
       # Normally, when there is no traditional Trolltech installation,
@@ -512,9 +513,9 @@ AC_DEFUN([AX_PATH_QT_DIRECT],
               `ls -dr /opt/qt* 2>/dev/null`
             "
             for ax_dir in $ax_dir_list; do
-              if ls $ax_dir/libqt* >/dev/null 2>/dev/null; then
+              if ls $ax_dir/libQt* >/dev/null 2>/dev/null; then
                 # Gamble that it's the first one...
-                ax_qt_lib="`ls $ax_dir/libqt* | sed -n 1p |
+                ax_qt_lib="`ls $ax_dir/libQt* | sed -n 1p |
                             sed s@$ax_dir/lib@@ | sed s/[[.]].*//`"
                 ax_qt_lib_dir="$ax_dir"
                 break
