@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_have_qt.m4
 # Date      : <24 Apr 14 12:17:49 flechsig> 
-# Time-stamp: <24 Apr 14 12:27:58 flechsig> 
+# Time-stamp: <24 Apr 14 14:04:37 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -181,6 +181,8 @@ AC_DEFUN([AX_HAVE_QT],
       if test x"$ax_qt_lib" = x; then
           ax_qt_lib=NO
           have_qt=no
+# overwrite
+	  ax_qt_LIBS="-L$ax_qt_lib_dir $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
       fi
 #end uf
     else
