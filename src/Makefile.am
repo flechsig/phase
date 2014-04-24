@@ -24,7 +24,7 @@ bin_SCRIPTS = bin/create-coefficients.pl bin/phaseinit.csh  \
 
 ## UF Mar 2014 SUBDIRS = phaseqt phasesrv extr opti hdf5tools phase4idl idlphase
 
-SUBDIRS = phaseqt phasesrv extr opti hdf5tools idlphase fkoe
+SUBDIRS = phaseqt phasesrv extr hdf5tools idlphase fkoe opti
 
 ACLOCAL_AMFLAGS = -I config
 

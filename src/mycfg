@@ -5,6 +5,18 @@
 ### ./configure --prefix=$HOME/cvs --with-motif=$HOME/openmotiflibs
 
 
-./configure --prefix=$PHASE_HOME --with-motif=$OPENMOTIF_PATH
+##./configure --prefix=$PHASE_HOME --with-motif=$OPENMOTIF_PATH
+
+
+
+source /opt/intel/bin/ifortvars.sh intel64
+
+./configure --enable-debug --with-Qt-dir=/usr/local/Trolltech/Qt-4.8.5/ --with-fftw3=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.3.2
+
+
+
+./configure --enable-debug --with-Qt-dir=/usr/local/Trolltech/Qt-4.8.5/ --with-fftw3=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.3.2 --prefix=/home/wcgrizolli/phase
+
+
 
 
