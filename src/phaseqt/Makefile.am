@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <28 Mar 14 17:27:35 flechsig> 
+#  Time-stamp: <24 Apr 14 12:29:08 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -113,12 +113,18 @@ moc_%.cpp: %.h
 ####	@QT_MOC@ $(AM_CPPFLAGS) $(AM_CXXFLAGS) $< -o $@
 
 # special
+# does not work with --with-Qt-bin-dir=DIR
 qrc_phaseqt.cpp : parameter.default
-	@QT_DIR@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@	
+	@QT_RCC@ -name $(bin_PROGRAMS) phaseqt.qrc -o $@
+#	@QT_DIR@/bin/rcc -name $(bin_PROGRAMS) phaseqt.qrc -o $@
+#	@QT_RCC@ -name $(bin_PROGRAMS) phaseqt.qrc -o $@
 
 # Adjust this line according to your resources.qrc
 qrc_%.cpp : %.qrc
-	@QT_DIR@/bin/rcc -name $(bin_PROGRAMS) $< -o $@
+	@QT_RCC@ -name $(bin_PROGRAMS) $< -o $@
+#	@QT_DIR@/bin/rcc -name $(bin_PROGRAMS) $< -o $@
+#	@QT_RCC@ -name $(bin_PROGRAMS) $< -o $@
+
 
 # This line ensures that generated moc_*.cpp and resources.cpp files are
 # deleted when we make clean.
