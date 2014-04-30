@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <28 Mar 14 17:11:10 flechsig> 
+//  Time-stamp: <30 Apr 14 11:08:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -168,10 +168,13 @@ void MainWindow::activateProc(const QString &action)
 	  initconstants(csp_cpp);
 	 
 	  myparent->myBeamline()->BLOptions.PSO.intmod= 2;
+
 	  *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
 							    m4p_cpp, csp_cpp
 							    )); // one additional par 
+	
 	  
+
 	  watcher->setFuture(*future);
 	}
     }

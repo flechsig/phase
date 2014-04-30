@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <28 Mar 14 17:26:53 flechsig> 
+//  Time-stamp: <30 Apr 14 11:23:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -26,11 +26,18 @@
 using namespace std;
 
 // the constructor of the main window
-MainWindow::MainWindow(PhaseQt *parent)
+MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
 {
   QDesktopWidget dw;
   int x= dw.width();
   int y= dw.height();
+
+  setmyMaxThreads(QThread::idealThreadCount());  // must be called before createProgress()
+  if ((numthreads > 0) && (numthreads < QThread::idealThreadCount()))
+    {
+      setmyMaxThreads(numthreads);
+      QThreadPool::globalInstance()->setMaxThreadCount(numthreads);
+    }
 
   this->s_ray= NULL;
   this->o_input= NULL;
@@ -53,8 +60,6 @@ MainWindow::MainWindow(PhaseQt *parent)
   // progress etc.
   mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
   mwplotstyle= PLOT_CONTOUR;
-
-  
   myparent= parent;
   setAttribute(Qt::WA_DeleteOnClose);
 } // end MainWindow
@@ -1211,18 +1216,20 @@ void MainWindow::createProgress()
   myProgressDialog= new QWidget();
   progressLabel   = new QLabel();
   myProgressDialog->setWindowTitle(tr("Progress of asynchronous task"));
-  progressLabel->setText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount()));
+  progressLabel->setText(QString("Progressing using %1 out of %2 thread(s)...")
+			 .arg(getmyMaxThreads())
+			 .arg(QThread::idealThreadCount()));
   progressPauseButton  = new QPushButton("Pause");
   progressResumeButton = new QPushButton("Resume");
   progressAbortButton  = new QPushButton("Abort");
   dialogProgressBar    = new QProgressBar();
   QGridLayout *layout  = new QGridLayout;
   
-  layout->addWidget(progressLabel,       1, 1, 1, 3);
-  layout->addWidget(progressAbortButton, 3, 3);
-  layout->addWidget(progressPauseButton, 3, 1);
-  layout->addWidget(progressResumeButton,3, 2);
-  layout->addWidget(dialogProgressBar,   2, 1, 1, 3);
+  layout->addWidget(progressLabel,        1, 1, 1, 3);
+  layout->addWidget(progressAbortButton,  3, 3);
+  layout->addWidget(progressPauseButton,  3, 1);
+  layout->addWidget(progressResumeButton, 3, 2);
+  layout->addWidget(dialogProgressBar,    2, 1, 1, 3);
   
   myProgressDialog->setLayout(layout);
 
@@ -2797,4 +2804,15 @@ int MainWindow::FileExistCheckOK(std::string name1, std::string read)
 
   return 1;
 } // FileExistCheckOK variante read
+
+int MainWindow::getmyMaxThreads()
+{
+  return myMaxThreads;
+}
+
+void MainWindow::setmyMaxThreads(int max)
+{
+  myMaxThreads= max;
+}
+
 // /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp

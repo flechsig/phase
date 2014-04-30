@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Mar 14 17:07:25 flechsig>  */
+/*  Time-stamp: <30 Apr 14 11:00:16 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(PhaseQt *parent);
+  MainWindow(PhaseQt *parent, const int);
     ~MainWindow();
     int checkResultType(struct RESULTType *, int);
     void fillTaskVector(const int);
@@ -68,6 +68,9 @@ public:
     int getPlotSubject();
     int getPlotStyle();
     char oldsource;
+    
+    int  getmyMaxThreads();
+    void  setmyMaxThreads(int);
     QLineEdit     *parameterE;
     //QProgressBar  *progressBar;
     //QProgressDialog* progressD;
@@ -447,6 +450,7 @@ private:
 
     int    mwplotsubject;  // mainwindow variable
     int    mwplotstyle;    // mainwindow variable
+    int    myMaxThreads;
 };
 
 

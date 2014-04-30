@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <24 Mar 14 10:19:51 flechsig>  */
+/*   Time-stamp: <30 Apr 14 11:25:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -149,6 +149,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
       posrc_ini(bl);
       psip = (struct PSImageType *)bl->RTSource.Quellep;
       ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
+      if (threads < 1) threads= 4;   /* set some default */
       pst_thread(bl, threads);
       threadinfo= threads;
       PSDp= (struct PSDType *)bl->RESULT.RESp;
@@ -187,8 +188,8 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 } /* end Batchmode */
 
 
-int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads, int *format)
-/* Uwe new version 10.8.2011 using getopt */
+int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int *selected, int *iord, 
+		   int *numthreads, int *format)
 /* used in phaseqt                        */
 {
   char *fvalue = NULL;
@@ -204,7 +205,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   *selected = -1;
   *iord     = -1;
   opterr    =  0;
-  *numthreads= 4;
+  *numthreads= -1;
   *format    = 1; 
   
   /* explicitly init ps->imageraysname to start with '\0',
@@ -251,7 +252,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 	printf("                                  2: phase_hdf5\n");
 	printf("                                  3: genesis_hdf5\n"); 
 	printf("                -s, -Snumber:     selected element number (for footprint)\n");
-	printf("                -t, -Tnumber:     number of threads or tasks (default=4)\n");
+	printf("                -t, -Tnumber:     number of threads or tasks (default=4), in Qt: maxThreads\n");
 	printf("                -V:               Version\n");
 	exit(0);
 	break;
