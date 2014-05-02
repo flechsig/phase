@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <02 Jul 13 08:23:12 flechsig>  */
+/*  Time-stamp: <02 May 14 09:39:19 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
   setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
 			      &selected, &iord, &numthreads, &format);
 
-#ifdef DEBUG 
+#ifdef DEBUGX 
   strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1);  /* for debugging */
 #endif 
 
