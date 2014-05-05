@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <01 Apr 14 09:09:05 flechsig> 
+dnl   Time-stamp: <05 May 14 15:25:57 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -290,6 +290,19 @@ dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
     enable_debug="no"
     libextension="so"])
 dnl end debugger
+
+dnl deal with experimental code
+AC_ARG_ENABLE([experimental],
+  AS_HELP_STRING([--enable-experimental],[include experimental code/features]),
+    if test "$enable_experimental" = "yes"; then
+       AC_DEFINE([EXPERIMENTAL], 1, "experimental on")
+       AC_MSG_NOTICE(*** include experimental code ***)
+       FFLAGS="${FFLAGS} -DEXPERIMENTAL"
+    fi,
+    [
+    enable_experimental="no"
+    ])
+dnl end experimental
 
 dnl libtool init after selecting the fortran compiler
 AC_PROG_LIBTOOL
