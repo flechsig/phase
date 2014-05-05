@@ -1,12 +1,13 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <05 May 14 14:26:52 flechsig>  */
+ /* Time-stamp: <05 May 14 14:47:17 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
  /* $Date$ */
  /* $Revision$  */
  /* $Author$  */
+
 
 #ifdef HAVE_CONFIG_H
   #include "config.h"
@@ -25,14 +26,14 @@
 #include "heighterror.h"
 
 
-void ApplyHeightError_(int *blp, double *eyre, double *eyim, double *ezre, double *ezim, double *z, double *y, double *dz, double *dy)
+void apply_height_error_(int *blp, double *eyre, double *eyim, double *ezre, double *ezim, double *z, double *y, double *dz, double *dy)
 {
   struct BeamlineType *bl;
 
   bl = (struct BeamlineType *)blp;
 
 #ifdef DEBUG
-  printf("debug: %s, ApplyHeightError_ called\n", __FILE__);
+  printf("\ndebug: %s, ApplyHeightError_ called\n", __FILE__);
 #endif
     /// some code
 
@@ -40,6 +41,6 @@ void ApplyHeightError_(int *blp, double *eyre, double *eyim, double *ezre, doubl
   printf("debug: %s, ApplyHeightError_ end\n", __FILE__);
 #endif
 
-} // end ApplyHeightError
+} // end apply_height_error_
 
 // end /afs/psi.ch/project/phase/src/phase/heighterror.c
