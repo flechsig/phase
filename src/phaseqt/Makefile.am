@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <05 May 14 14:23:36 flechsig> 
+#  Time-stamp: <05 May 14 16:44:48 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -41,6 +41,7 @@ phaseqt_SOURCES = \
         ../phase/phase_integration.F \
 	../phase/posrc.c ../phase/posrc.h \
 	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h \
+	../phase/reflectivity.c ../phase/reflectivity.h \
 	../phase/heighterror.c ../phase/heighterror.h
 ##../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for 
 ##	../phaselib/misali_8.f ../phaselib/misali4_8.f 
