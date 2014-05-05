@@ -1,6 +1,6 @@
-c$$$ File      : ~/phase/src/phase/phase_inegration.F
+c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <05 May 14 14:50:43 flechsig> 
+c$$$ Time-stamp: <05 May 14 15:10:27 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
