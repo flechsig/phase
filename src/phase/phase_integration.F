@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <05 May 14 15:10:27 flechsig> 
+c$$$ Time-stamp: <05 May 14 16:39:09 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -484,14 +484,8 @@ c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
         integer blp
 
 c switch off the height_error_code
-#define WITH_HEIGHT_ERRORS 1
-
-#ifdef WITH_HEIGHT_ERRORS
-        real *8 aaeyre, aaeyim, aaezre, aaezim, aaz, aay, aadz, aady
-#endif
 
 #include '../phase/phase_struct.F'
-
 
         record /constants/ cs
         record /geometryst/ g
@@ -613,16 +607,16 @@ c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on
 c   here we call phase_source.F
         call psdi(g,src,apr,cs,ifl,ra,sr,blp)     
 
-#ifdef WITH_HEIGHT_ERRORS
-        aaeyre= 1
-        aaeyim= 2
-        aaezre= 3
-        aaezim= 4
-        aaz= 5
-        aay= 6
-        aadz= 7
-        aady= 8
-        call apply_height_error(blp, aaeyre, aaeyim, aaezre, aaezim, aaz, aay, aadz, aady)
+c experimental code to deal with slope errors 
+c contributed by Walan Grizolli 
+c procedure takes the beamline pointer, w and l and
+c the electrical field picked up for the particular "ray" as input
+c the field will be overwritten in place 
+#ifdef EXPERIMENTAL
+        call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
+                                sr.densyim, sr.denszre, sr.denszim)
+        call apply_reflectivity(blp, sr.densyre, sr.densyim, 
+                                sr.denszre, sr.denszim)
 #endif
 
 c----------------------------------------

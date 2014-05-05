@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <05 May 14 15:25:57 flechsig> 
+dnl   Time-stamp: <05 May 14 15:29:11 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -498,5 +498,6 @@ echo "root:                    : ${have_root}"
 echo "f2c:                     : ${enable_F2C}"
 echo "MPI:                     : ${use_mpi}"
 echo "FFTW3:                   : ${acx_fftw3_ok}"
+echo "incl. experiental code   : ${enable_experimental}"
 echo " "
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
