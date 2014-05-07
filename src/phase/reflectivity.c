@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <06 May 14 16:27:40 flechsig>  */
+/* Time-stamp: <07 May 14 10:13:02 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -59,14 +59,18 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
 #endif
 } // end apply_reflectivity
 
-void ReadHenke(char *element, double *en0, double *f10, double *f20)
+void ReadHenke(char *element, double energy, double *f1, double *f2)
 {
-  char tabname[MaxPathLength];
+  char tabname[MaxPathLength], buffer[MaxPathLength];
   FILE *f;
+  double e1, e2, f11, f12, f21, f22;
+  int  found;
 
 #ifdef DEBUG
   printf("debug: ReadHenke called for %s\n", element);
 #endif
+
+  f1= f2= -1;
 
   snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/%s.f12\0", getenv("PHASE_HOME"), element);
   if ((f= fopen(tabname, "r")) == NULL) 
@@ -75,6 +79,35 @@ void ReadHenke(char *element, double *en0, double *f10, double *f20)
       return;
     }  
 
+  if ((energy < 10) || (energy > 30000)) 
+    {
+      fprintf(stderr, "error ReadHenke- energy- %f out of tabulated range (10eV..30keV) - return\n", energy);
+      return;
+    }  
+
+  fgets(buffer, (MaxPathLength-1), f);                 // read first line
+  
+  if (strstr(buffer, "(Energy (eV),f1,f2)") == NULL)   // check 1st line
+    {
+      fprintf(stderr, "error: Henke Table %s has not the expected format- return\n", tabname);
+      return;
+    }
+
+  fgets(buffer, (MaxPathLength-1), f);                 // read first data
+  sscanf(buffer, "%lf %lf %lf", &e1, &f11, &f21);
+
+  found= 0;
+  while (! feof(f) && ! found)
+    {
+      fgets(buffer, (MaxPathLength-1), f);
+      sscanf(buffer, "%lf %lf %lf", &e2, &f12, &f22);
+      if (e2 > energy)
+	{
+	  found= 1;
+	}
+    }
+
+  //(Energy (eV),f1,f2)
   fclose(f);
 } // ReadHenke
 
@@ -87,6 +120,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 #ifdef DEBUG
   printf("debug: ReadMaterial called for %s\n", element);
 #endif
+
   *a= *rho= *z= -1;
   snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/rhoatom.dat\0", getenv("PHASE_HOME"));
   if ((f= fopen(tabname, "r")) == NULL) 
@@ -95,8 +129,8 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
       return;
     }
 
-  fgets(buffer, (MaxPathLength-1), f);   // read first line
-  found= strncmp(buffer, "Element\tZ\tA\t\trho", 16); // check 1st line
+  fgets(buffer, (MaxPathLength-1), f);                  // read first line
+  found= strncmp(buffer, "Element\tZ\tA\t\trho", 16);   // check 1st line
   if (found != 0)
     {
       fprintf(stderr, "error: Material Table %s has not the expected format- return\n", tabname);
@@ -123,4 +157,27 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
   printf("debug: found=%sparsed: %s, %d, %lf, %lf\n", buffer, str, *z, *a, *rho);
 #endif
 } // ReadMaterial
+
+// expect wavelength in m
+void SetReflectivity(struct ReflecType *r, double wavelength)
+{
+  double f1, f2, a, rho, energy;
+  int    z;
+
+#ifdef DEBUG
+  printf("debug: SetReflectivity called, file= %s\n", __FILE__);
+#endif
+
+  if (!(wavelength > 0.0))
+    {
+      fprintf(stderr, "error SetReflectivity: wavelength not defined (%f)- return");
+      return;
+    }
+
+  energy= 1240e-9/ wavelength; 
+
+  ReadMaterial(r->material, &z, &a, &rho);
+  ReadHenke(r->material, energy, &f1, &f2);
+  
+} // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c
