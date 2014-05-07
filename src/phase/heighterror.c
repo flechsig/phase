@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <05 May 14 14:47:17 flechsig>  */
+ /* Time-stamp: <07 May 14 14:12:58 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -38,8 +38,8 @@ void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *e
   struct BeamlineType *bl;
   bl = (struct BeamlineType *)blp;
   FILE *f;  
-  char name[255]="/home/wcgrizolli/pythonWorkspace/metrology/data/mirrorsProfile.hdf5";
-  
+  //  char name[255]="/home/wcgrizolli/pythonWorkspace/metrology/data/mirrorsProfile.hdf5";
+  char name[255]="mirrorsProfile.hdf5";
 
   
 #ifdef DEBUG
