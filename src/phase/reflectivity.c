@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <07 May 14 10:13:02 flechsig>  */
+/* Time-stamp: <07 May 14 16:25:22 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -63,7 +63,7 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
 {
   char tabname[MaxPathLength], buffer[MaxPathLength];
   FILE *f;
-  double e1, e2, f11, f12, f21, f22;
+  double e1, e2, f11, f12, f21, f22, de;
   int  found;
 
 #ifdef DEBUG
@@ -101,15 +101,30 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
     {
       fgets(buffer, (MaxPathLength-1), f);
       sscanf(buffer, "%lf %lf %lf", &e2, &f12, &f22);
-      if (e2 > energy)
+      if (energy < e2)
 	{
-	  found= 1;
+	  e1 = e2;
+	  f11= f12;
+	  f21= f22;
 	}
+      else 
+	found= 1;
     }
-
-  //(Energy (eV),f1,f2)
   fclose(f);
-} // ReadHenke
+
+  if (! found)
+    {
+      fprintf(stderr, "error: parsing Henke Table, energy %f out of range- return\n", energy);
+      return;
+    }
+  // interpolate
+  de= e2- e1; 
+  if (de > 0.0)
+    {
+      *f1= f11+ (f12- f11)/de * (energy- e1);
+      *f2= f21+ (f22- f21)/de * (energy- e1);
+    }
+ } // ReadHenke
 
 void ReadMaterial(char *element, int *z, double *a, double *rho)
 {

@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <25 Mar 14 16:47:53 flechsig>  */
+/*   Time-stamp: <07 May 14 16:59:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -29,7 +29,8 @@
 #include "cutils.h"   
 #include "phase_struct.h"
 #include "phase.h"
-#include "rtrace.h"                 
+#include "rtrace.h" 
+#include "reflectivity.h"                
 #include "common.h" 
 
 extern const char *global_rundir;
@@ -80,7 +81,12 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
 	     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, elindex);    
   //DefGeometryCnew(&listpt->GDat, &listpt->geo);
-  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);  
+  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions); 
+
+#ifdef EXPERIMENTAL
+  SetReflectivity(&listpt->reflec, bl->BLOptions.lambda*1e-3);
+#endif
+ 
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
   
   if (listpt->tpe == NULL) listpt->tpe= XMALLOC(struct TmpMapType, 1);
@@ -197,7 +203,10 @@ void BuildBeamline(struct BeamlineType *bl)
 		     bl->BLOptions.REDUCE_maps, bl->BLOptions.WithAlign, (elcounter- 1)); 
 	  //DefGeometryCnew(&listpt->GDat, &listpt->geo);
 	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);
-            
+
+#ifdef EXPERIMENTAL
+          SetReflectivity(&listpt->reflec, bl->BLOptions.lambda*1e-3);
+#endif  
 	  MakeMapandMatrix(listpt, bl, &elindex); 
 	  //printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
 	   /* listpt-> wc,xlc,matrix,MtoSource,xlm sind erzeugt */
@@ -214,7 +223,6 @@ void BuildBeamline(struct BeamlineType *bl)
       elcounter++; listpt++; elindex++;
     } /* Schleife ueber alle Elemente fertig */
       
-
   /* 2nd generate beamline matrix */  
   elcounter= 1; elindex= 0;
   listpt= bl->ElementList;  

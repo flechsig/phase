@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Jun 13 18:28:08 flechsig> 
+#  Time-stamp: <07 May 14 17:04:15 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -24,7 +24,10 @@ phaseextract_SOURCES    = phaseextract.c cost.c cost.h \
 	../phase/phasefor.F \
 	../phase/error.c        ../phase/xstrdup.c \
 	../phase/cutils.c       ../phase/rtrace.c \
-	../phase/bline.c
+	../phase/bline.c \
+	../phase/reflectivity.c ../phase/reflectivity.h 
+##\
+##	../phase/heighterror.c ../phase/heighterror.h
 
 phaseextract_LDADD = $(libdir)/@LIBPHASE@
 

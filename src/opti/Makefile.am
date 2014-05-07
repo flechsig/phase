@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <24 Jun 13 18:29:27 flechsig> 
+#  Time-stamp: <07 May 14 17:04:54 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -25,7 +25,8 @@ phaseopti_SOURCES = phaseopti.cpp phaseopti.h \
 	../phase/phasefor.F \
 	../phase/error.c        ../phase/xstrdup.c \
 	../phase/cutils.c       ../phase/rtrace.c \
-	../phase/bline.c        
+	../phase/bline.c  \
+	../phase/reflectivity.c ../phase/reflectivity.h       
 
 opti_root_example_SOURCES = opti_root_example.cpp opti_root_example.h
 
