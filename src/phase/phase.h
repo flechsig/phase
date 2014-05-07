@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2014-03-20 13:31:04 flechsig>  */
+/*   Time-stamp: <07 May 14 09:13:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -312,6 +312,11 @@ struct RESULTType {
   int  typ, points1, points2, dim1; 
 };  
 
+struct ReflecType {
+  char material[10];
+  double ryamp, ryphas, rzamp, rzphas, runpol;
+};
+
 struct Spa3TableType {
   unsigned int datapoints;
   double dx;
@@ -364,6 +369,7 @@ struct ElementType
   struct gdatset GDat;
   char elementname[MaxPathLength];
   struct TmpMapType *tpe;
+  struct ReflecType reflec;
 };
 
 struct PSOptionsType                   /* 20.9.96 */
