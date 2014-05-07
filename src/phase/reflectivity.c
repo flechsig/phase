@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <07 May 14 16:25:22 flechsig>  */
+/* Time-stamp: <07 May 14 17:41:23 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -67,12 +67,17 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   int  found;
 
 #ifdef DEBUG
-  printf("debug: ReadHenke called for %s\n", element);
+  printf("debug: ReadHenke called for >>%s<<\n", element);
 #endif
 
   f1= f2= -1;
 
   snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/%s.f12\0", getenv("PHASE_HOME"), element);
+
+#ifdef DEBUG
+  printf("debug: open table >>%s<<\n", tabname);
+#endif
+
   if ((f= fopen(tabname, "r")) == NULL) 
     {
       fprintf(stderr, "error can't find Henke Table %s - return\n", tabname);
@@ -84,24 +89,27 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
       fprintf(stderr, "error ReadHenke- energy- %f out of tabulated range (10eV..30keV) - return\n", energy);
       return;
     }  
+  //printf("debug: step >>%d<<\n", 1);
 
   fgets(buffer, (MaxPathLength-1), f);                 // read first line
-  
+  //printf("debug: step >>%d<<\n", 2); 
   if (strstr(buffer, "(Energy (eV),f1,f2)") == NULL)   // check 1st line
     {
       fprintf(stderr, "error: Henke Table %s has not the expected format- return\n", tabname);
       return;
     }
-
+  //printf("debug: step >>%d<<\n", 3);
   fgets(buffer, (MaxPathLength-1), f);                 // read first data
   sscanf(buffer, "%lf %lf %lf", &e1, &f11, &f21);
-
+  //printf("%lf %lf %lf\n", e1, f11, f21);
   found= 0;
   while (! feof(f) && ! found)
     {
+      printf("debug: step >>%d<<\n", 4);
       fgets(buffer, (MaxPathLength-1), f);
       sscanf(buffer, "%lf %lf %lf", &e2, &f12, &f22);
-      if (energy < e2)
+      //printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
+      if (e2 < energy)
 	{
 	  e1 = e2;
 	  f11= f12;
@@ -118,12 +126,17 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
       return;
     }
   // interpolate
+  
   de= e2- e1; 
+
+  printf("%lf %lf %lf de= %lf\n", e1, f11, f21, de);
+  printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
   if (de > 0.0)
     {
-      *f1= f11+ (f12- f11)/de * (energy- e1);
-      *f2= f21+ (f22- f21)/de * (energy- e1);
+      //      *f1= f11+ (f12- f11)/de * (energy- e1);
+      //*f2= f21+ (f22- f21)/de * (energy- e1);
     }
+  //*f1= 22;
  } // ReadHenke
 
 void ReadMaterial(char *element, int *z, double *a, double *rho)
@@ -162,13 +175,13 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 
   if (! found)
     {
-      fprintf(stderr, "error: Element %s not found in Material Table %s - return\n", element, tabname);
+      fprintf(stderr, "error: Element >>%s<< not found in Material Table %s - return\n", element, tabname);
       return;
     }
 
   sscanf(buffer, "%9s\t%d\t%lf\t\t%lf", str, z, a, rho);
 
-#ifdef DEBUG1
+#ifdef DEBUG
   printf("debug: found=%sparsed: %s, %d, %lf, %lf\n", buffer, str, *z, *a, *rho);
 #endif
 } // ReadMaterial
@@ -182,6 +195,10 @@ void SetReflectivity(struct ReflecType *r, double wavelength)
 #ifdef DEBUG
   printf("debug: SetReflectivity called, file= %s\n", __FILE__);
 #endif
+
+  snprintf(r->material, 9, "%s", "Au");
+  fprintf(stderr, "!!! use hardcoded coating material: %s, file %s\n", r->material, __FILE__);
+
 
   if (!(wavelength > 0.0))
     {

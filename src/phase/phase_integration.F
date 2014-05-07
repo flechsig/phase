@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <05 May 14 16:50:08 flechsig> 
+c$$$ Time-stamp: <07 May 14 17:06:48 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -612,7 +612,7 @@ c contributed by Walan Grizolli
 c procedure takes the beamline pointer, w and l and
 c the electrical field picked up for the particular "ray" as input
 c the field will be overwritten in place 
-#ifdef EXPERIMENTAL
+#ifdef EXPERIMENTALX
         call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
      &                          sr.densyim, sr.denszre, sr.denszim)
         call apply_reflectivity(blp, sr.densyre, sr.densyim, 
