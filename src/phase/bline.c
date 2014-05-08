@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 May 14 09:17:52 flechsig>  */
+/*   Time-stamp: <08 May 14 09:47:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -30,7 +30,8 @@
 #include "phase_struct.h"
 #include "phase.h"
 #include "rtrace.h" 
-#include "reflectivity.h"                
+#include "reflectivity.h"  
+#include "heighterror.h"               
 #include "common.h" 
 
 extern const char *global_rundir;
@@ -85,6 +86,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 
 #ifdef EXPERIMENTAL
   SetReflectivity(&listpt->reflec, bl->BLOptions.lambda*1e-3);
+  read_hdf5_height_file((int *)&listpt, bl->filenames.h5surfacename);
 #endif
  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
