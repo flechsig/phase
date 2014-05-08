@@ -56,7 +56,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   *wwert = 106.09346e-3;
   *lwert = 3.4925634e-3;
   
-  surf_height_interp_(sf, wwert, lwert, &u_interp);
+//   surf_height_interp_(sf, wwert, lwert, &u_interp);
   
   //   sf = &bl->ElementList[bl->position].surf;
   //   dummy values to test
@@ -69,113 +69,116 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
 } // end apply_height_error_
 
 
-void surf_height_interp_(SurfaceType *sf, double *wwert, double *lwert, double *uwert)
+// void surf_height_interp_(struct SurfaceType *sf, double *wwert, double *lwert, double *uwert)
+// {
+//   
+//   hid_t  file_id;
+//   int index_w, index_l;
+//   double u_interp, fact1, fact2, fact3, fact4;
+//   
+//   double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
+//   int i, j, nw, nl, nu;
+//   
+//   char fname[255]="./mirrorsProfile.hdf5";
+//     
+//   read_hdf5_height_file(elp, fname);
+//   
+//   
+//   wvecp = sf->w;
+//   nw = sf->nw;
+//   
+//   lvecp = sf->l;
+//   nl = sf->nl;
+//   
+//   uvecp = sf->u;
+//   nu = nl*nw;
+//   
+//   
+//   
+//  
+//    
+// #ifdef DEBUG  
+//   printf("debug: apply_height_error_: number of points nw= %d, nl= %d\n", nw, nl);;
+//   printf("debug: apply_height_error_: number of height nu %d\n", nu);
+// #endif 
+//   
+//   
+//   for (j= 0; j < nl - 1; j= j + 10)
+//   {
+//       for (i= 0; i < nw - 1; i = i + 10)
+// 	{
+// 	  printf("ApplyHeightError: (i, j, p) = %d, %d, %d\n", i, j, j*nw+i);
+// 	  printf("(w, l, u) = %g, %g, %.4g\n", wvecp[i], lvecp[j], uvecp[j*nw+i]);
+// 	}
+//   }
+// 
+// #ifdef DEBUG
+//   printf("debug: %s, ApplyHeightError_ end\n", __FILE__);
+// #endif
+//   
+//   index_w=0;
+//   index_l=0;
+//   
+//   while(wvecp[index_w] < *wwert )
+//   {
+//    index_w++;
+//   }
+//     
+//   while(lvecp[index_l] < *lwert )
+//   {
+//     index_l++;
+//   }
+//   
+//   w1 = wvecp[index_w-1];
+//   w2 = wvecp[index_w];
+//   
+//   l1 = lvecp[index_l-1];
+//   l2 = lvecp[index_l];
+//   
+//   
+//   
+//   u1 =  uvecp[(index_l-1)*nw + (index_w -1)];	//u1 = u(w1,l1)
+//   u2 =  uvecp[(index_l-1)*nw + index_w];	//u2 = u(w2,l1)
+//   u3 =  uvecp[index_l*nw + (index_w -1)];	//u3 = u(w1,l2)
+//   u4 =  uvecp[index_l*nw + index_w];		//u4 = u(w2,l2)
+//   
+//   printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
+//   printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
+//   printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
+//   printf("w1 , l2, u3 = %g, %g, %.4g\n", w1 , l2, u3);
+//   printf("w2 , l2, u4 = %g, %g, %.4g\n", w2 , l2, u4);
+//   
+//   
+//   dwl = (w2-w1)*(l2-l1);
+//   
+//   fact1 = (*wwert - w1)*(*lwert - l1)/dwl;
+//   fact2 = (w2 - *wwert)*(*lwert - l1)/dwl;
+//   fact3 = (*wwert - w1)*(l2 -*lwert)/dwl;
+//   fact4 = (w2 - *wwert)*(l2 -*lwert)/dwl;
+//   
+//   u_interp = fact1*u4 + fact2*u3 + fact3*u2 + fact4*u1;
+//   
+//   
+//   
+//   
+// #ifdef DEBUG
+//   printf("fact1 = %g\n", fact1);
+//   printf("fact2 = %g\n", fact2);
+//   printf("fact3 = %g\n", fact3);
+//   printf("fact4 = %g\n", fact4);
+//   printf("u_interp = %.4g\n", u_interp);
+// #endif
+// }
+
+void read_hdf5_height_file(char* fname, struct ElementType* elm )
 {
   
-  hid_t  file_id;
-  int index_w, index_l;
-  double u_interp, fact1, fact2, fact3, fact4;
-  
-  double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
-  int i, j, nw, nl, nu;
-  
-  char fname[255]="./mirrorsProfile.hdf5";
-    
-  read_hdf5_height_file(elp, fname);
-  
-  
-  wvecp = sf->w;
-  nw = sf->nw;
-  
-  lvecp = sf->l;
-  nl = sf->nl;
-  
-  uvecp = sf->u;
-  nu = nl*nw;
-  
-  
-  
- 
-   
-#ifdef DEBUG  
-  printf("debug: apply_height_error_: number of points nw= %d, nl= %d\n", nw, nl);;
-  printf("debug: apply_height_error_: number of height nu %d\n", nu);
-#endif 
-  
-  
-  for (j= 0; j < nl - 1; j= j + 10)
-  {
-      for (i= 0; i < nw - 1; i = i + 10)
-	{
-	  printf("ApplyHeightError: (i, j, p) = %d, %d, %d\n", i, j, j*nw+i);
-	  printf("(w, l, u) = %g, %g, %.4g\n", wvecp[i], lvecp[j], uvecp[j*nw+i]);
-	}
-  }
-
-#ifdef DEBUG
-  printf("debug: %s, ApplyHeightError_ end\n", __FILE__);
-#endif
-  
-  index_w=0;
-  index_l=0;
-  
-  while(wvecp[index_w] < *wwert )
-  {
-   index_w++;
-  }
-    
-  while(lvecp[index_l] < *lwert )
-  {
-    index_l++;
-  }
-  
-  w1 = wvecp[index_w-1];
-  w2 = wvecp[index_w];
-  
-  l1 = lvecp[index_l-1];
-  l2 = lvecp[index_l];
-  
-  
-  
-  u1 =  uvecp[(index_l-1)*nw + (index_w -1)];	//u1 = u(w1,l1)
-  u2 =  uvecp[(index_l-1)*nw + index_w];	//u2 = u(w2,l1)
-  u3 =  uvecp[index_l*nw + (index_w -1)];	//u3 = u(w1,l2)
-  u4 =  uvecp[index_l*nw + index_w];		//u4 = u(w2,l2)
-  
-  printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
-  printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
-  printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
-  printf("w1 , l2, u3 = %g, %g, %.4g\n", w1 , l2, u3);
-  printf("w2 , l2, u4 = %g, %g, %.4g\n", w2 , l2, u4);
-  
-  
-  dwl = (w2-w1)*(l2-l1);
-  
-  fact1 = (*wwert - w1)*(*lwert - l1)/dwl;
-  fact2 = (w2 - *wwert)*(*lwert - l1)/dwl;
-  fact3 = (*wwert - w1)*(l2 -*lwert)/dwl;
-  fact4 = (w2 - *wwert)*(l2 -*lwert)/dwl;
-  
-  u_interp = fact1*u4 + fact2*u3 + fact3*u2 + fact4*u1;
-  
-  
-  
-  
-#ifdef DEBUG
-  printf("fact1 = %g\n", fact1);
-  printf("fact2 = %g\n", fact2);
-  printf("fact3 = %g\n", fact3);
-  printf("fact4 = %g\n", fact4);
-  printf("u_interp = %.4g\n", u_interp);
-#endif
-}
-
-void read_hdf5_height_file(char* fname, ElementType* elp )
-{
+#ifdef XXX
   hid_t  file_id;   /* , group_id */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
    
   struct SurfaceType *sf;
+  struct ElementType *elp;
   
   elp = (struct ElementType *)elm;
   sf = &elp->surf;
@@ -241,7 +244,7 @@ void read_hdf5_height_file(char* fname, ElementType* elp )
 //   }
 
   
-  
+#endif
 
   printf("read_hdf5_height_file: %s => done\n", fname);
 }  /* read_hdf5_file */
