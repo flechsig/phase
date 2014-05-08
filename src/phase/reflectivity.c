@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 13:53:22 flechsig>  */
+/* Time-stamp: <08 May 14 14:08:46 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -36,7 +36,7 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
 
   bl= (struct BeamlineType *)blp;
   ep= (struct ElementType *)bl->ElementList;
-  coating= ep->
+  // coating= ep->
 
 #ifdef DEBUG
   printf("\ndebug: %s, apply_reflectivity_ called\n", __FILE__);
