@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <24 Mar 14 12:34:39 flechsig> 
+//  Time-stamp: <08 May 14 09:32:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -137,16 +137,14 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
   dialog->selectFile(oldname);
 
   QString selectedFilter;
-  QString fileName= ( strstr(description, "input") || strstr(description, "fsource") ) ? 
+  QString fileName= ( strstr(description, "input") || strstr(description, "fsource") || strstr(description, "errors")) ? 
     dialog->getOpenFileName(this, tr("Define Input File"), QDir::currentPath(), tr(filter), 
 			    &selectedFilter, QFileDialog::DontConfirmOverwrite) :
     dialog->getSaveFileName(this, tr("Define Output File"), QDir::currentPath(), tr(filter));   // different dialogs for in/out
 
   if (!fileName.isEmpty()) 
     {
-
       fname= fileName.toLatin1().data();
-
 
       // update data
       if ( !strncmp(description, "optimization input", 16) ) 
@@ -194,11 +192,14 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 				if ( !strncmp(description, "hdf5", 4) ) 
 				  strncpy(myparent->myBeamline()->filenames.hdf5_out, fname, MaxPathLength);
 				else
-				  {
-				    cout << "selectSlot: error: no matching description: >>" 
-					 << description << "<< - exit" << endl;
-				    exit(-1);
-				  }
+				  if ( !strncmp(description, "surface errors", 14) ) 
+				    strncpy(myparent->myBeamline()->filenames.h5surfacename, fname, MaxPathLength);
+				  else
+				    {
+				      cout << "selectSlot: error: no matching description: >>" 
+					   << description << "<< - exit" << endl;
+				      exit(-1);
+				    }
       
       // update widget
       mymodel->setData(mymodel->index(index.row(), 1), fname);
@@ -222,6 +223,7 @@ QStandardItemModel *ConfigWindow::createConfigModel(QObject *parent)
 void ConfigWindow::fillList()
 {
   // add in reverse order
+  addRow("surface errors",       myparent->myBeamline()->filenames.h5surfacename,  "h5");
   addRow("hdf5 output",          myparent->myBeamline()->filenames.hdf5_out,       "h5");
   addRow("so7 (hdf5 input)",     myparent->myBeamline()->filenames.so7_hdf5,       "h5");
   addRow("so6_fsource6",         myparent->myBeamline()->filenames.so6_fsource6,   "s6");
@@ -266,6 +268,7 @@ void ConfigWindow::updateList()
   mymodel->setData(mymodel->index(10, 1), myparent->myBeamline()->filenames.so6_fsource6);
   mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so7_hdf5);
   mymodel->setData(mymodel->index(12, 1), myparent->myBeamline()->filenames.hdf5_out);
+  mymodel->setData(mymodel->index(13, 1), myparent->myBeamline()->filenames.h5surfacename);
 } // updateList
 
 void ConfigWindow::checkFileNames()
