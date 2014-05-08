@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.h */
  /* Date      : <05 May 14 14:17:45 flechsig>  */
- /* Time-stamp: <05 May 14 14:46:12 flechsig>  */
+ /* Time-stamp: <08 May 14 14:03:06 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -18,7 +18,9 @@
 
 void apply_height_error_(int *, double *, double *, double *, double *, double *, double *);
 
-void read_hdf5_height_file(char *, ElementType *);
+
+void read_hdf5_height_file(char* , struct ElementType *);
+
 
 
 
