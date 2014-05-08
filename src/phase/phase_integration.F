@@ -615,8 +615,8 @@ c the field will be overwritten in place
 #ifdef EXPERIMENTALX
         call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
      &                          sr.densyim, sr.denszre, sr.denszim)
-        call apply_reflectivity(blp, sr.densyre, sr.densyim, 
-     &                          sr.denszre, sr.denszim)
+c        call apply_reflectivity(blp, sr.densyre, sr.densyim, 
+c     &                          sr.denszre, sr.denszim)
 #endif
 
 c----------------------------------------

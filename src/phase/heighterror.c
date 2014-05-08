@@ -37,42 +37,49 @@ void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *e
   int i, j, nw, nl, nu;
   hid_t  file_id;
   int index_w, index_l;
+  
   double w1, w2, l1, l2, u1, u2, u3, u4;
   struct BeamlineType *bl;
-  struct SurfaceType *sfp;
+  struct ElementType *el;
+  int *elp;
+  struct SurfaceType *sf;
   
-  bl = (struct BeamlineType *)blp;
-<<<<<<< heighterror.c
-  sfp = &bl->ElementList[0].surf;
-  //   sfp = &bl->ElementList[bl->position].surf;
   
-//   dummy values to test
-  *w = 50.46346;
-  *l = 33.2543634;
-    
-=======
-  FILE *f;  
-  //  char name[255]="/home/wcgrizolli/pythonWorkspace/metrology/data/mirrorsProfile.hdf5";
-  char name[255]="mirrorsProfile.hdf5";
->>>>>>> 1.5
-
-  char fname[255]="/home/wcgrizolli/pythonWorkspace/metrology/data/mirrorsProfile.hdf5";
-  
-#ifdef DEBUG
+  #ifdef DEBUG
   printf("\ndebug: %s, apply_height_error_ called\n", __FILE__);
 #endif
   
   
-  read_hdf5_height_file(blp, fname);
+  bl = (struct BeamlineType *)blp;
+  
+  el = &bl->ElementList[0];
+  
+  sf = &el->surf;
+  
+  //   sf = &bl->ElementList[bl->position].surf;
+  //   dummy values to test
+  *w = 50.46346;
+  *l = 33.2543634;
+    
+
+  char fname[255]="./mirrorsProfile.hdf5";
+  
+
+  
+  elp = (int *)el;
   
   
-  wvecp = sfp->w;
-  nw = sfp->nw;
   
-  lvecp = sfp->l;
-  nl = sfp->nl;
+  read_hdf5_height_file(elp, fname);
   
-  uvecp = sfp->u;
+  
+  wvecp = sf->w;
+  nw = sf->nw;
+  
+  lvecp = sf->l;
+  nl = sf->nl;
+  
+  uvecp = sf->u;
   nu = nl*nw;
   
   
@@ -146,11 +153,19 @@ void read_hdf5_height_file(int *elm, char* fname)
   hid_t  file_id;   /* , group_id */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
   
-  struct BeamlineType *bl;
-  struct SurfaceType *sfp;
+//   struct BeamlineType *bl;
+//   struct SurfaceType *sf;
+//   
+//   elp = (struct ElementType *)blp;
+//   sf = &bl->ElementList[0].surf;
   
-  elp = (struct ElementType *)blp;
-  sfp = &bl->ElementList[0].surf;
+  struct ElementType *elp;
+  struct SurfaceType *sf;
+  
+  elp = (struct ElementType *)elm;
+  sf = &elp->surf;
+  
+
 
 
 
@@ -182,20 +197,20 @@ void read_hdf5_height_file(int *elm, char* fname)
 #endif 
   
 
-  if (sfp->w != NULL ) XFREE(sfp->w);
-  if (sfp->l != NULL ) XFREE(sfp->w);
-  if (sfp->u != NULL ) XFREE(sfp->w);
+  if (sf->w != NULL ) XFREE(sf->w);
+  if (sf->l != NULL ) XFREE(sf->w);
+  if (sf->u != NULL ) XFREE(sf->w);
   
-  sfp->w = XMALLOC(double, nw);
-  sfp->l = XMALLOC(double, nl);
-  sfp->u = XMALLOC(double, nu);
+  sf->w = XMALLOC(double, nw);
+  sf->l = XMALLOC(double, nl);
+  sf->u = XMALLOC(double, nu);
 
-  readDataDouble(file_id, "/M1/height_vec", sfp->u, nu);
-  readDataDouble(file_id, "/M1/wvec", sfp->w, nw);
-  readDataDouble(file_id, "/M1/lvec", sfp->l, nl);
+  readDataDouble(file_id, "/M1/height_vec", sf->u, nu);
+  readDataDouble(file_id, "/M1/wvec", sf->w, nw);
+  readDataDouble(file_id, "/M1/lvec", sf->l, nl);
   
-  sfp->nw=nw;
-  sfp->nl=nl;
+  sf->nw=nw;
+  sf->nl=nl;
   
   H5Fclose(file_id);
   
@@ -206,7 +221,7 @@ void read_hdf5_height_file(int *elm, char* fname)
 //       for (j= 0; j < nl - 1; j= j + 10)
 // 	{
 // 	  printf("(i, j, p) = %d, %d, %d\n", i, j, i*nl+j);
-// 	  printf("(w, l, u) = %f, %f, %f\n", sfp->w[i], sfp->l[j], sfp->u[i*nl+j]);
+// 	  printf("(w, l, u) = %f, %f, %f\n", sf->w[i], sf->l[j], sf->u[i*nl+j]);
 // 	}
 //   }
 
