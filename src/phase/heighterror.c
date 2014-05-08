@@ -33,66 +33,125 @@
 
 void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *eyim, double *ezre, double *ezim)
 {
-  double *wvecp, *lvecp, *heightp;
-  int i, wvec_size, lvec_size;
+  double *wvecp, *lvecp, *uvecp;
+  int i, j, nw, nl, nu;
+  hid_t  file_id;
+  int index_w, index_l;
+  double w1, w2, l1, l2, u1, u2, u3, u4;
   struct BeamlineType *bl;
+  struct SurfaceType *sfp;
+  
   bl = (struct BeamlineType *)blp;
+<<<<<<< heighterror.c
+  sfp = &bl->ElementList[0].surf;
+  //   sfp = &bl->ElementList[bl->position].surf;
+  
+//   dummy values to test
+  *w = 50.46346;
+  *l = 33.2543634;
+    
+=======
   FILE *f;  
   //  char name[255]="/home/wcgrizolli/pythonWorkspace/metrology/data/mirrorsProfile.hdf5";
   char name[255]="mirrorsProfile.hdf5";
+>>>>>>> 1.5
 
+  char fname[255]="/home/wcgrizolli/pythonWorkspace/metrology/data/mirrorsProfile.hdf5";
   
 #ifdef DEBUG
   printf("\ndebug: %s, apply_height_error_ called\n", __FILE__);
 #endif
   
-  /// some code
-  read_hdf5_height_file(wvecp, lvecp, &wvec_size, &lvec_size, heightp,name);
   
-  printf("Hej\n\n");
+  read_hdf5_height_file(blp, fname);
   
-//   *wvec_size = 5;
   
-  printf("Hej2\n");
+  wvecp = sfp->w;
+  nw = sfp->nw;
   
+  lvecp = sfp->l;
+  nl = sfp->nl;
+  
+  uvecp = sfp->u;
+  nu = nl*nw;
+  
+  
+  
+ 
+   
 #ifdef DEBUG  
-  printf("debug: apply_height_error_: number of points wvec= %d, lvec= %d\n", wvec_size, lvec_size);
-//   printf("debug: apply_height_error_: number of height points %d\n", height_vec_size);
+  printf("debug: apply_height_error_: number of points nw= %d, nl= %d\n", nw, nl);;
+  printf("debug: apply_height_error_: number of height nu %d\n", nu);
 #endif 
   
   
-  printf("Hej3\n");
   
-#ifdef DEBUG  
-//   for (i= 0; i < wvec_size; i++)
-//   {
-//     printf("apply_height_error_ wvec = %f\n", *wvecp);
-//   }
-/*    for (i= 0; i < lvec_size; i++)
+  for (i= 0; i < nw - 1; i = i + 10)
   {
-    printf("lvec = %f\n", lvecp[i]);
+      for (j= 0; j < nl - 1; j= j + 10)
+	{
+	  printf("ApplyHeightError: (i, j, p) = %d, %d, %d\n", i, j, i*nl+j);
+	  printf("(w, l, u) = %f, %f, %f\n", wvecp[i], lvecp[j], uvecp[i*nl+j]);
+	}
   }
-    for (i= 0; i < wvec_size*lvec_size; i++)
-  {
-    printf("height = %f\n", heightp[i]);
-  } */ 
-#endif 
-  
-  
 
 #ifdef DEBUG
   printf("debug: %s, ApplyHeightError_ end\n", __FILE__);
 #endif
+  
+  index_w=0;
+  index_l=0;
+  
+  while(wvecp[index_w] < *w )
+  {
+   index_w++;
+  }
+    
+  while(lvecp[index_l] < *l )
+  {
+    index_l++;
+  }
+  
+  w1 = wvecp[index_w-1];
+  w2 = wvecp[index_w];
+  
+  l1 = lvecp[index_l-1];
+  l2 = lvecp[index_l];
+  
+  u1 =  uvecp[(index_w-1)*nl + (index_l -1)];
+  u2 =  uvecp[index_w*nl     +  (index_l -1)];
+  u3 =  uvecp[(index_w-1)*nl +  index_l];
+  u4 =  uvecp[index_w*nl     +  index_l];
+  
+  printf("w1 , l1, u1 = %f, %f, %f\n", w1 , l1, u1);
+  printf("w2 , l1, u2 = %f, %f, %f\n", w2 , l1, u2);
+  printf("w1 , l2, u3 = %f, %f, %f\n", w1 , l2, u3);
+  printf("w2 , l2, u4 = %f, %f, %f\n", w2 , l2, u4);
+  
+  
+  
+#ifdef DEBUG
+  printf("index_w,index_l = %d, %d\n", index_w, index_l);
+  printf("index u4 = %d\n", index_w*nl     +  index_l);
+#endif
+  
 
 } // end apply_height_error_
 
 
 
 
-void read_hdf5_height_file(double* wvecp, double* lvecp, int* wvecp_size, int* lvecp_size, double* heightp, char* fname)
+void read_hdf5_height_file(int *elm, char* fname)
 {
   hid_t  file_id;   /* , group_id */
-  int    w_size, l_size, height_vec_size, i;  /* slicecount= 1, */
+  int    nw, nl, nu, i, j;  /* slicecount= 1, */
+  
+  struct BeamlineType *bl;
+  struct SurfaceType *sfp;
+  
+  elp = (struct ElementType *)blp;
+  sfp = &bl->ElementList[0].surf;
+
 
 
 
@@ -106,56 +165,51 @@ void read_hdf5_height_file(double* wvecp, double* lvecp, int* wvecp_size, int* l
  /* Open an existing file. */
   file_id = myH5Fopen(fname);
 
-  w_size = getDatasetSize(file_id, "/M1/wvec");
-  l_size = getDatasetSize(file_id, "/M1/lvec");
-  height_vec_size = getDatasetSize(file_id, "/M1/height_vec");
+  nw = getDatasetSize(file_id, "/M1/wvec");
+  nl = getDatasetSize(file_id, "/M1/lvec");
+  nu = nw*nl;
   
-//   *wvecp_size = 5;
-//   *lvecp_size = 10;
-  
-  printf("Hej115\n");
-  
-  *wvecp_size = w_size;
-  
-   printf("Hej116\n");
-  *lvecp_size = l_size;
-  
-  printf("Hej118\n");
+  if (nu != nw*nl)
+  {
+    printf("stderr: read_hdf5_height_file: error on the vector sizes of the surface profile %s\n", __FILE__);
+    printf("stderr: read_hdf5_height_file: surface file %s\n", fname);
+  }
+    
 
 #ifdef DEBUG  
-  printf("debug: read_hdf5_height_file: number of points wvec= %d, lvec= %d\n", w_size, l_size);
-  printf("debug: read_hdf5_height_file: number of points wvec= %d, lvec= %d\n", *wvecp_size, *lvecp_size);
-  printf("debug: read_hdf5_height_file: number of points wvec= %d, lvec= %d\n", &wvecp_size, &lvecp_size);
-  printf("debug: read_hdf5_height_file: number of height points %d\n", height_vec_size);
+  printf("debug: read_hdf5_height_file: number of points wvec= %d, lvec= %d\n", nw, nl);;
+  printf("debug: read_hdf5_height_file: number of height points %d\n", nu);
 #endif 
   
-  printf("Hej131\n");
 
-  wvecp = XMALLOC(double, w_size);
-  lvecp = XMALLOC(double, l_size);
-  heightp = XMALLOC(double, height_vec_size);
+  if (sfp->w != NULL ) XFREE(sfp->w);
+  if (sfp->l != NULL ) XFREE(sfp->w);
+  if (sfp->u != NULL ) XFREE(sfp->w);
+  
+  sfp->w = XMALLOC(double, nw);
+  sfp->l = XMALLOC(double, nl);
+  sfp->u = XMALLOC(double, nu);
 
-  readDataDouble(file_id, "/M1/height_vec", heightp, height_vec_size);
-  readDataDouble(file_id, "/M1/wvec", wvecp, w_size);
-  readDataDouble(file_id, "/M1/lvec", lvecp, l_size);
+  readDataDouble(file_id, "/M1/height_vec", sfp->u, nu);
+  readDataDouble(file_id, "/M1/wvec", sfp->w, nw);
+  readDataDouble(file_id, "/M1/lvec", sfp->l, nl);
+  
+  sfp->nw=nw;
+  sfp->nl=nl;
+  
   H5Fclose(file_id);
   
 
-
 // #ifdef DEBUG  
-  for (i= 0; i < w_size; i++)
-  {
-    printf("wvec = %f\n", wvecp[i]);
-  }
-//     for (i= 0; i < l_size; i++)
+//   for (i= 0; i < nw - 1; i = i + 10)
 //   {
-//     printf("lvec = %f\n", lvecp[i]);
+//       for (j= 0; j < nl - 1; j= j + 10)
+// 	{
+// 	  printf("(i, j, p) = %d, %d, %d\n", i, j, i*nl+j);
+// 	  printf("(w, l, u) = %f, %f, %f\n", sfp->w[i], sfp->l[j], sfp->u[i*nl+j]);
+// 	}
 //   }
-//     for (i= 0; i < height_vec_size; i++)
-//   {
-//     printf("height = %f\n", heightp[i]);
-//   }  
-// #endif 
+
   
   
 

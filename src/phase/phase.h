@@ -317,6 +317,11 @@ struct ReflecType {
   double ryamp, ryphas, rzamp, rzphas, runpol;
 };
 
+struct SurfaceType {
+  double *u, *w, *l;
+  int nw, nl;
+};
+
 struct Spa3TableType {
   unsigned int datapoints;
   double dx;
@@ -370,6 +375,7 @@ struct ElementType
   char elementname[MaxPathLength];
   struct TmpMapType *tpe;
   struct ReflecType reflec;
+  struct SurfaceType surf;
 };
 
 struct PSOptionsType                   /* 20.9.96 */

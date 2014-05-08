@@ -12,6 +12,12 @@
   #include "config.h"
 #endif
 
+
+#ifndef HAVE_HDF5
+ #define HAVE_HDF5
+#endif
+
+
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h> 	      	      /* needed for fopen      */  
 #include <string.h>                           

@@ -13,11 +13,12 @@
 
 #define WITH_HEIGHT_ERRORS 1
 
+
 // protoptype in alphabetic order
 
 void apply_height_error_(int *, double *, double *, double *, double *, double *, double *);
 
-void read_hdf5_height_file(double* , double* , int*, int*, double*, char*);
+void read_hdf5_height_file(int * , char* );
 
 
 
