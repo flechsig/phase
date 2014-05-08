@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <07 May 14 17:41:23 flechsig>  */
+/* Time-stamp: <08 May 14 10:09:54 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -89,26 +89,21 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
       fprintf(stderr, "error ReadHenke- energy- %f out of tabulated range (10eV..30keV) - return\n", energy);
       return;
     }  
-  //printf("debug: step >>%d<<\n", 1);
-
+ 
   fgets(buffer, (MaxPathLength-1), f);                 // read first line
-  //printf("debug: step >>%d<<\n", 2); 
   if (strstr(buffer, "(Energy (eV),f1,f2)") == NULL)   // check 1st line
     {
       fprintf(stderr, "error: Henke Table %s has not the expected format- return\n", tabname);
       return;
     }
-  //printf("debug: step >>%d<<\n", 3);
+  
   fgets(buffer, (MaxPathLength-1), f);                 // read first data
   sscanf(buffer, "%lf %lf %lf", &e1, &f11, &f21);
-  //printf("%lf %lf %lf\n", e1, f11, f21);
   found= 0;
   while (! feof(f) && ! found)
     {
-      printf("debug: step >>%d<<\n", 4);
       fgets(buffer, (MaxPathLength-1), f);
       sscanf(buffer, "%lf %lf %lf", &e2, &f12, &f22);
-      //printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
       if (e2 < energy)
 	{
 	  e1 = e2;
@@ -126,10 +121,9 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
       return;
     }
   // interpolate
-  
   de= e2- e1; 
 
-  printf("%lf %lf %lf de= %lf\n", e1, f11, f21, de);
+  printf("%lf %lf %lf de= %lf\n",     e1, f11, f21, de);
   printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
   if (de > 0.0)
     {
@@ -197,8 +191,7 @@ void SetReflectivity(struct ReflecType *r, double wavelength)
 #endif
 
   snprintf(r->material, 9, "%s", "Au");
-  fprintf(stderr, "!!! use hardcoded coating material: %s, file %s\n", r->material, __FILE__);
-
+  fprintf(stderr, "!!! use hardcoded coating material: %s, file %s !!!\n", r->material, __FILE__);
 
   if (!(wavelength > 0.0))
     {
