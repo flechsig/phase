@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 10:34:14 flechsig>  */
+/* Time-stamp: <08 May 14 11:58:47 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -184,17 +184,14 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 } // ReadMaterial
 
 // expect wavelength in m
-void SetReflectivity(struct ReflecType *r, double wavelength)
+void SetReflectivity(char *material, double wavelength, struct ReflecType *r)
 {
   double f1, f2, a, rho, energy;
   int    z;
 
 #ifdef DEBUG
-  printf("debug: SetReflectivity called, file= %s\n", __FILE__);
+  printf("debug: SetReflectivity called, material= >%s<, file= %s\n", material, __FILE__);
 #endif
-
-  snprintf(r->material, 9, "%s", "Au");
-  fprintf(stderr, "!!! use hardcoded coating material: %s, file %s !!!\n", r->material, __FILE__);
 
   if (!(wavelength > 0.0))
     {
@@ -204,8 +201,8 @@ void SetReflectivity(struct ReflecType *r, double wavelength)
 
   energy= 1240e-9/ wavelength; 
 
-  ReadMaterial(r->material, &z, &a, &rho);
-  ReadHenke(r->material, energy, &f1, &f2);
+  ReadMaterial(material, &z, &a, &rho);
+  ReadHenke(material, energy, &f1, &f2);
   
 } // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c

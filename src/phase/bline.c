@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 May 14 09:47:40 flechsig>  */
+/*   Time-stamp: <08 May 14 12:28:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -85,8 +85,8 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions); 
 
 #ifdef EXPERIMENTAL
-  SetReflectivity(&listpt->reflec, bl->BLOptions.lambda*1e-3);
-  read_hdf5_height_file((int *)&listpt, bl->filenames.h5surfacename);
+  SetReflectivity(listpt->MDat.material, bl->BLOptions.lambda*1e-3, &listpt->reflec);
+  read_hdf5_height_file(bl->filenames.h5surfacename, &listpt);
 #endif
  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
@@ -207,7 +207,8 @@ void BuildBeamline(struct BeamlineType *bl)
 	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);
 
 #ifdef EXPERIMENTAL
-          SetReflectivity(&listpt->reflec, bl->BLOptions.lambda*1e-3);
+	  SetReflectivity(listpt->MDat.material, bl->BLOptions.lambda*1e-3, &listpt->reflec);
+	  read_hdf5_height_file(bl->filenames.h5surfacename, &listpt);
 #endif  
 	  MakeMapandMatrix(listpt, bl, &elindex); 
 	  //printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
@@ -1490,7 +1491,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
      fprintf(f, "%20lg     misalignment dRu (rad)\n", listpt->MDat.dRu);
      fprintf(f, "%20lg     misalignment dRw (rad)\n", listpt->MDat.dRw);
      fprintf(f, "%20lg     misalignment dRl (rad)\n", listpt->MDat.dRl);
-
+     fprintf(f, "%20s     material\n",               listpt->MDat.material);
      /* end mirror section */ 
      /* end element        */
      elnumber++; listpt++;
@@ -2002,6 +2003,18 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	       fscanf(f, " %lf %255[^\n]s %c", &listpt->MDat.dRw, buffer, &buf);
 	       fscanf(f, " %lf %255[^\n]s %c", &listpt->MDat.dRl, buffer, &buf);
 	     }
+	   if (version >= 20140508)
+	     fscanf(f, " %9[a-zA-Z0-9]s %255[^\n]s %c", listpt->MDat.material, buffer, &buf);
+	       
+	   if (strlen(listpt->MDat.material) == 0) 
+	     {
+	       snprintf(listpt->MDat.material, 9, "%s", "Au");
+	       printf("material not defined- set default: %s\n", listpt->MDat.material);
+	     }
+#ifdef DEBUG
+	       printf("debug: Material: >>%s<<\n", listpt->MDat.material);
+#endif	       
+	     
 #ifdef DEBUG1
 	   printf("   mirror read\n"); 
 #endif

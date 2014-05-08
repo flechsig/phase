@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.h */
  /* Date      : <05 May 14 16:42:48 flechsig>  */
- /* Time-stamp: <07 May 14 09:38:08 flechsig>  */
+ /* Time-stamp: <08 May 14 11:59:25 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -19,6 +19,6 @@
 void apply_reflectivity_(int *, double *, double *, double *, double *);
 void ReadHenke(char *, double, double *, double *);
 void ReadMaterial(char *, int *, double *, double *);
-void SetReflectivity(struct ReflecType *, double);
+void SetReflectivity(char *, double, struct ReflecType *);
 #endif
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.h

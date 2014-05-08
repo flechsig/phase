@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <08 May 14 10:38:33 flechsig>  */
+/*   Time-stamp: <08 May 14 11:59:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -315,7 +315,7 @@ struct RESULTType {
 };  
 
 struct ReflecType {
-  char material[10];
+  //  char material[10];
   double ryamp, ryphas, rzamp, rzphas, runpol;
 };
 
