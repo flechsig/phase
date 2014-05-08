@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 10:09:54 flechsig>  */
+/* Time-stamp: <08 May 14 10:21:52 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -63,7 +63,7 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
 {
   char tabname[MaxPathLength], buffer[MaxPathLength];
   FILE *f;
-  double e1, e2, f11, f12, f21, f22, de;
+  double e1, e2, f11, f12, f21, f22, f13, f23, de;
   int  found;
 
 #ifdef DEBUG
@@ -127,10 +127,16 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
   if (de > 0.0)
     {
-      //      *f1= f11+ (f12- f11)/de * (energy- e1);
-      //*f2= f21+ (f22- f21)/de * (energy- e1);
+      f13= f11+ (f12- f11)/de * (energy- e1);
+      f23= f21+ (f22- f21)/de * (energy- e1);
     }
-  //*f1= 22;
+
+#ifdef DEBUG
+  printf("debug: ReadHenke end: material=%s, energy=%lf, f1=%lf, f2=%lf\n", element, energy, f13, f23);
+#endif
+
+  //  *f1= f13;
+  //  *f2= f23;
  } // ReadHenke
 
 void ReadMaterial(char *element, int *z, double *a, double *rho)
@@ -176,7 +182,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
   sscanf(buffer, "%9s\t%d\t%lf\t\t%lf", str, z, a, rho);
 
 #ifdef DEBUG
-  printf("debug: found=%sparsed: %s, %d, %lf, %lf\n", buffer, str, *z, *a, *rho);
+  printf("debug: found: material=%s, z=%d, a=%lf, rho=%lf\n", str, *z, *a, *rho);
 #endif
 } // ReadMaterial
 
