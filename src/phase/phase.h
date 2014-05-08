@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <08 May 14 09:07:39 flechsig>  */
+/*   Time-stamp: <08 May 14 10:38:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -265,7 +265,8 @@ struct mdatset
   double w1, w2, l1, l2;
   double slopew, slopel;
   double du, dw, dl, dRu, dRw, dRl;
-  int Art;   /* UF 9.7.04 */
+  int Art;           /* UF 9.7.04 */
+  char material[10]; /* UF 8.5.14 */
 };  
 
 struct xlenmaptype {
