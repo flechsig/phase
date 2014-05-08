@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 May 14 09:16:21 flechsig>  */
+/*   Time-stamp: <08 May 14 09:17:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1326,7 +1326,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version MAR 2014\n");
+   fprintf(f, "This is a datafile of PHASE, file version MAY 2014\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
