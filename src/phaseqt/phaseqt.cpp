@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <24 Mar 14 15:38:03 flechsig> 
+//  Time-stamp: <08 May 14 09:38:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -138,6 +138,7 @@ void PhaseQt::initSet(const char *fname, const int all)
   if (all) snprintf(this->filenames.so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
   if (all) snprintf(this->filenames.so7_hdf5,        MaxPathLength, "%s.%s", name, "h5");
   snprintf(this->filenames.hdf5_out,        MaxPathLength, "%s_out.%s", name, "h5");
+  snprintf(this->filenames.h5surfacename,   MaxPathLength, "%s_surf_err.%s", name, "h5");
   snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");	  
 } // initSet
 
