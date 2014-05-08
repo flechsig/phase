@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 11:58:47 flechsig>  */
+/* Time-stamp: <08 May 14 13:53:22 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -28,12 +28,15 @@
 void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, double *ezim)
 {
   struct BeamlineType *bl;
+  struct ElementType  *ep;
   double yamp, ypha, zamp, zpha;
   double f1, f2, f1tab, f2tab, entab, a, rho;
   int    z;
-  char   *element= "Au";
+  char   *coating;
 
-  bl = (struct BeamlineType *)blp;
+  bl= (struct BeamlineType *)blp;
+  ep= (struct ElementType *)bl->ElementList;
+  coating= ep->
 
 #ifdef DEBUG
   printf("\ndebug: %s, apply_reflectivity_ called\n", __FILE__);
@@ -167,7 +170,6 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
       fgets(buffer, (MaxPathLength-1), f);
       found= (strncmp(buffer, element, 2) == 0) ? 1 : 0;
     }
-
   fclose(f);
 
   if (! found)
@@ -200,9 +202,7 @@ void SetReflectivity(char *material, double wavelength, struct ReflecType *r)
     }
 
   energy= 1240e-9/ wavelength; 
-
   ReadMaterial(material, &z, &a, &rho);
   ReadHenke(material, energy, &f1, &f2);
-  
 } // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c
