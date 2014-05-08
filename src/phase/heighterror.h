@@ -18,7 +18,7 @@
 
 void apply_height_error_(int *, double *, double *, double *, double *, double *, double *);
 
-void read_hdf5_height_file(int * , char* );
+void read_hdf5_height_file(char *, ElementType *);
 
 
 

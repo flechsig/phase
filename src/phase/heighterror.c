@@ -31,14 +31,11 @@
 #include "heighterror.h"
 
 
-void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *eyim, double *ezre, double *ezim)
+void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, double *eyim, double *ezre, double *ezim)
 {
   double *wvecp, *lvecp, *uvecp;
   int i, j, nw, nl, nu;
-  hid_t  file_id;
-  int index_w, index_l;
-  
-  double w1, w2, l1, l2, u1, u2, u3, u4;
+
   struct BeamlineType *bl;
   struct ElementType *el;
   int *elp;
@@ -56,20 +53,34 @@ void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *e
   
   sf = &el->surf;
   
+  *wwert = 106.09346e-3;
+  *lwert = 3.4925634e-3;
+  
+  surf_height_interp_(sf, wwert, lwert, &u_interp);
+  
   //   sf = &bl->ElementList[bl->position].surf;
   //   dummy values to test
-  *w = 50.46346;
-  *l = 33.2543634;
+
     
 
-  char fname[255]="./mirrorsProfile.hdf5";
+  
   
 
+} // end apply_height_error_
+
+
+void surf_height_interp_(SurfaceType *sf, double *wwert, double *lwert, double *uwert)
+{
   
-  elp = (int *)el;
+  hid_t  file_id;
+  int index_w, index_l;
+  double u_interp, fact1, fact2, fact3, fact4;
   
+  double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
+  int i, j, nw, nl, nu;
   
-  
+  char fname[255]="./mirrorsProfile.hdf5";
+    
   read_hdf5_height_file(elp, fname);
   
   
@@ -92,13 +103,12 @@ void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *e
 #endif 
   
   
-  
-  for (i= 0; i < nw - 1; i = i + 10)
+  for (j= 0; j < nl - 1; j= j + 10)
   {
-      for (j= 0; j < nl - 1; j= j + 10)
+      for (i= 0; i < nw - 1; i = i + 10)
 	{
-	  printf("ApplyHeightError: (i, j, p) = %d, %d, %d\n", i, j, i*nl+j);
-	  printf("(w, l, u) = %f, %f, %f\n", wvecp[i], lvecp[j], uvecp[i*nl+j]);
+	  printf("ApplyHeightError: (i, j, p) = %d, %d, %d\n", i, j, j*nw+i);
+	  printf("(w, l, u) = %g, %g, %.4g\n", wvecp[i], lvecp[j], uvecp[j*nw+i]);
 	}
   }
 
@@ -109,12 +119,12 @@ void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *e
   index_w=0;
   index_l=0;
   
-  while(wvecp[index_w] < *w )
+  while(wvecp[index_w] < *wwert )
   {
    index_w++;
   }
     
-  while(lvecp[index_l] < *l )
+  while(lvecp[index_l] < *lwert )
   {
     index_l++;
   }
@@ -125,41 +135,46 @@ void apply_height_error_(int *blp, double *w, double *l, double *eyre, double *e
   l1 = lvecp[index_l-1];
   l2 = lvecp[index_l];
   
-  u1 =  uvecp[(index_w-1)*nl + (index_l -1)];
-  u2 =  uvecp[index_w*nl     +  (index_l -1)];
-  u3 =  uvecp[(index_w-1)*nl +  index_l];
-  u4 =  uvecp[index_w*nl     +  index_l];
   
-  printf("w1 , l1, u1 = %f, %f, %f\n", w1 , l1, u1);
-  printf("w2 , l1, u2 = %f, %f, %f\n", w2 , l1, u2);
-  printf("w1 , l2, u3 = %f, %f, %f\n", w1 , l2, u3);
-  printf("w2 , l2, u4 = %f, %f, %f\n", w2 , l2, u4);
+  
+  u1 =  uvecp[(index_l-1)*nw + (index_w -1)];	//u1 = u(w1,l1)
+  u2 =  uvecp[(index_l-1)*nw + index_w];	//u2 = u(w2,l1)
+  u3 =  uvecp[index_l*nw + (index_w -1)];	//u3 = u(w1,l2)
+  u4 =  uvecp[index_l*nw + index_w];		//u4 = u(w2,l2)
+  
+  printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
+  printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
+  printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
+  printf("w1 , l2, u3 = %g, %g, %.4g\n", w1 , l2, u3);
+  printf("w2 , l2, u4 = %g, %g, %.4g\n", w2 , l2, u4);
+  
+  
+  dwl = (w2-w1)*(l2-l1);
+  
+  fact1 = (*wwert - w1)*(*lwert - l1)/dwl;
+  fact2 = (w2 - *wwert)*(*lwert - l1)/dwl;
+  fact3 = (*wwert - w1)*(l2 -*lwert)/dwl;
+  fact4 = (w2 - *wwert)*(l2 -*lwert)/dwl;
+  
+  u_interp = fact1*u4 + fact2*u3 + fact3*u2 + fact4*u1;
+  
   
   
   
 #ifdef DEBUG
-  printf("index_w,index_l = %d, %d\n", index_w, index_l);
-  printf("index u4 = %d\n", index_w*nl     +  index_l);
+  printf("fact1 = %g\n", fact1);
+  printf("fact2 = %g\n", fact2);
+  printf("fact3 = %g\n", fact3);
+  printf("fact4 = %g\n", fact4);
+  printf("u_interp = %.4g\n", u_interp);
 #endif
-  
+}
 
-} // end apply_height_error_
-
-
-
-
-void read_hdf5_height_file(int *elm, char* fname)
+void read_hdf5_height_file(char* fname, ElementType* elp )
 {
   hid_t  file_id;   /* , group_id */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
-  
-//   struct BeamlineType *bl;
-//   struct SurfaceType *sf;
-//   
-//   elp = (struct ElementType *)blp;
-//   sf = &bl->ElementList[0].surf;
-  
-  struct ElementType *elp;
+   
   struct SurfaceType *sf;
   
   elp = (struct ElementType *)elm;
@@ -228,7 +243,7 @@ void read_hdf5_height_file(int *elm, char* fname)
   
   
 
-  printf("read hdf5 file: %s => done\n", fname);
+  printf("read_hdf5_height_file: %s => done\n", fname);
 }  /* read_hdf5_file */
 
 // end /afs/psi.ch/project/phase/src/phase/heighterror.c

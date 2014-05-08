@@ -612,7 +612,7 @@ c contributed by Walan Grizolli
 c procedure takes the beamline pointer, w and l and
 c the electrical field picked up for the particular "ray" as input
 c the field will be overwritten in place 
-#ifdef EXPERIMENTALX
+#ifdef EXPERIMENTAL
         call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
      &                          sr.densyim, sr.denszre, sr.denszim)
 c        call apply_reflectivity(blp, sr.densyre, sr.densyim, 
