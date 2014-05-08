@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <07 May 14 16:59:30 flechsig>  */
+/*   Time-stamp: <08 May 14 09:16:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1296,7 +1296,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20140325;    /* today */
+   int  i, version= 20140508;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1696,6 +1696,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%s     so6_fsource6\n",         pp->so6_fsource6);
    fprintf(f, "%s     so7 (hdf5 input)\n",     pp->so7_hdf5);
    fprintf(f, "%s     hdf5 output\n",          pp->hdf5_out); 
+   fprintf(f, "%s     surface errors (h5)\n",  pp->h5surfacename);
    /* end FILENAMES section */
 
    fprintf(f,"\n*** end of file ***\n");    
@@ -1715,7 +1716,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20140325;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20140508;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -2246,6 +2247,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     fscanf(f, " %254s %255[^\n]s %c", pp->so7_hdf5,  buffer, &buf);
 	   if (version >= 20130318)
 	     fscanf(f, " %254s %255[^\n]s %c", pp->hdf5_out,  buffer, &buf);
+	   if (version >= 20140508)
+	     fscanf(f, " %254s %255[^\n]s %c", pp->h5surfacename,  buffer, &buf);
 	   
 	   /* UF 32.7.13 so4 is obsolete */
 	   /*
