@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 10:21:52 flechsig>  */
+/* Time-stamp: <08 May 14 10:34:14 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -61,17 +61,16 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
 
 void ReadHenke(char *element, double energy, double *f1, double *f2)
 {
-  char tabname[MaxPathLength], buffer[MaxPathLength];
-  FILE *f;
-  double e1, e2, f11, f12, f21, f22, f13, f23, de;
-  int  found;
+  char   tabname[MaxPathLength], buffer[MaxPathLength];
+  FILE   *f;
+  double e1, e2, f11, f12, f21, f22, de;
+  int    found;
 
 #ifdef DEBUG
   printf("debug: ReadHenke called for >>%s<<\n", element);
 #endif
 
-  f1= f2= -1;
-
+  *f1= *f2= -1;
   snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/%s.f12\0", getenv("PHASE_HOME"), element);
 
 #ifdef DEBUG
@@ -123,21 +122,19 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   // interpolate
   de= e2- e1; 
 
-  printf("%lf %lf %lf de= %lf\n",     e1, f11, f21, de);
-  printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
+  //  printf("%lf %lf %lf de= %lf\n",     e1, f11, f21, de);
+  //  printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
   if (de > 0.0)
     {
-      f13= f11+ (f12- f11)/de * (energy- e1);
-      f23= f21+ (f22- f21)/de * (energy- e1);
+      *f1= f11+ (f12- f11)/de * (energy- e1);
+      *f2= f21+ (f22- f21)/de * (energy- e1);
     }
 
 #ifdef DEBUG
-  printf("debug: ReadHenke end: material=%s, energy=%lf, f1=%lf, f2=%lf\n", element, energy, f13, f23);
+  printf("debug: ReadHenke end: material=%s, energy=%lf, f1=%lf, f2=%lf\n", element, energy, *f1, *f2);
 #endif
 
-  //  *f1= f13;
-  //  *f2= f23;
- } // ReadHenke
+} // ReadHenke
 
 void ReadMaterial(char *element, int *z, double *a, double *rho)
 {
