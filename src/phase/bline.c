@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <08 May 14 14:07:54 flechsig>  */
+/*   Time-stamp: <08 May 14 15:36:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -85,7 +85,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
   DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions); 
 
 #ifdef EXPERIMENTAL
-  SetReflectivity(listpt->MDat.material, bl->BLOptions.lambda*1e-3, &listpt->reflec);
+  SetReflectivity(listpt, bl->BLOptions.lambda*1e-3);
   read_hdf5_height_file(bl->filenames.h5surfacename, listpt);
 #endif
  
@@ -207,7 +207,7 @@ void BuildBeamline(struct BeamlineType *bl)
 	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);
 
 #ifdef EXPERIMENTAL
-	  SetReflectivity(listpt->MDat.material, bl->BLOptions.lambda*1e-3, &listpt->reflec);
+	  SetReflectivity(listpt, bl->BLOptions.lambda*1e-3);
 	  read_hdf5_height_file(bl->filenames.h5surfacename, listpt);
 #endif  
 	  MakeMapandMatrix(listpt, bl, &elindex); 

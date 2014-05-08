@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <08 May 14 12:30:39 flechsig> 
+#  Time-stamp: <08 May 14 14:44:32 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -102,7 +102,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 ../data/henke/Ti.f12 ../data/henke/Tl.f12 ../data/henke/Tm.f12 \
 ../data/henke/U.f12  ../data/henke/V.f12  ../data/henke/W.f12  \
 ../data/henke/Xe.f12 ../data/henke/Yb.f12 ../data/henke/Y.f12  \
-../data/henke/Zn.f12 ../data/henke/Zr.f12
+../data/henke/Zn.f12 ../data/henke/Zr.f12 ../data/henke/B4C.f12
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.

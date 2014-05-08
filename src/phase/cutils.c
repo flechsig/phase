@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <2014-02-16 19:01:46 flechsig>  */
+/*   Time-stamp: <08 May 14 16:39:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -215,4 +215,19 @@ void complex_x(COMPLEX *a, COMPLEX *b, COMPLEX *c)
   c->re= a->re* b->re- a->im* b->im;
   c->im= a->re* b->im+ a->im* b->re;
 } /* end complex_x */
+
+/* c= a^b */
+void complex_pow(COMPLEX *a, double b, COMPLEX *c)
+{
+  double aamp, apha, camp, cpha;
+  
+  aamp= sqrt(pow(a->re,2) + pow(a->im,2));
+  apha= atan2(a->im, a->re);
+
+  camp= exp(b * log(aamp));
+  cpha= b* apha;
+
+  c->re= camp* cos(cpha);
+  c->im= camp* sin(cpha);
+} /* end complex_pow */
 /* end cutils.c */

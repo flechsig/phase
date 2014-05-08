@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 14:08:46 flechsig>  */
+/* Time-stamp: <08 May 14 16:11:33 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -29,14 +29,13 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
 {
   struct BeamlineType *bl;
   struct ElementType  *ep;
+  struct ReflecType   *rp;
   double yamp, ypha, zamp, zpha;
-  double f1, f2, f1tab, f2tab, entab, a, rho;
-  int    z;
-  char   *coating;
+    
 
   bl= (struct BeamlineType *)blp;
   ep= (struct ElementType *)bl->ElementList;
-  // coating= ep->
+  rp= (struct ReflecType *)&ep->reflec;
 
 #ifdef DEBUG
   printf("\ndebug: %s, apply_reflectivity_ called\n", __FILE__);
@@ -186,10 +185,16 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 } // ReadMaterial
 
 // expect wavelength in m
-void SetReflectivity(char *material, double wavelength, struct ReflecType *r)
+void SetReflectivity(struct ElementType *ep, double wavelength)
 {
-  double f1, f2, a, rho, energy;
+  double f1, f2, a, rho, energy, nt, delta, beta, ac, sinag, cosag;
   int    z;
+  COMPLEX n, n2, wu, crs, cts, crp, ctp, c1, c2;
+  char *material;
+  struct ReflecType *rp;
+
+  material= ep->MDat.material;
+  rp= (struct ReflecType *)&ep->reflec;
 
 #ifdef DEBUG
   printf("debug: SetReflectivity called, material= >%s<, file= %s\n", material, __FILE__);
@@ -204,5 +209,24 @@ void SetReflectivity(char *material, double wavelength, struct ReflecType *r)
   energy= 1240e-9/ wavelength; 
   ReadMaterial(material, &z, &a, &rho);
   ReadHenke(material, energy, &f1, &f2);
+
+  
+  nt= 1e6* rho * NA / a;              // Teilchendichte  (1/m^3), rho is in (g/cm^3)
+
+  delta= RE * pow(wavelength, 2) * nt * f1 / (2.0 * PI);
+  beta = RE * pow(wavelength, 2) * nt * f2 / (2.0 * PI);
+  ac   = acos(1.0 - delta);            // critical (grazing) angle in rad
+  complex_in(&n, (1.0- delta), beta);  // complex index of refraction
+
+  sinag= ep->geo.cosa;           // sin(grazing angle) grazing angle in rad
+  cosag= ep->geo.sina;           // sin <-> cos change for grazing angle
+
+  complex_x(&n, &n, &n2);        // n^2
+  complex_in(&c1, pow(cosag, 2.0), 0.0);
+  complex_minus(&n2, &c1, &c2);
+  //complex_pow(&c2, 0.5, &wu);
+  
+  // fill double ryamp, ryphas, rzamp, rzphas, runpol;
+
 } // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c

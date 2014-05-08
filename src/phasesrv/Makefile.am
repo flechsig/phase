@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <08 May 14 13:41:09 flechsig> 
+#  Time-stamp: <08 May 14 14:43:54 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -100,7 +100,7 @@ pkgdata_DATA = ../data/coefficient-example.dat \
 ../data/henke/Ti.f12 ../data/henke/Tl.f12 ../data/henke/Tm.f12 \
 ../data/henke/U.f12  ../data/henke/V.f12  ../data/henke/W.f12  \
 ../data/henke/Xe.f12 ../data/henke/Yb.f12 ../data/henke/Y.f12  \
-../data/henke/Zn.f12 ../data/henke/Zr.f12
+../data/henke/Zn.f12 ../data/henke/Zr.f12 ../data/henke/B4C.f12
 
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
