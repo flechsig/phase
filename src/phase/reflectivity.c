@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 12:23:14 flechsig>  */
+/* Time-stamp: <09 May 14 12:24:50 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -180,10 +180,10 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 // expect wavelength in m
 void SetReflectivity(struct ElementType *ep, double wavelength)
 {
-  double f1, f2, a, rho, energy, nt, delta, beta, ac, sinag, cosag, xx, Rs, Rp;
+  double f1, f2, a, rho, energy, nt, delta, beta, ac, sinag, cosag, Rs, Rp;
   int    z;
   COMPLEX cn, cn2, cwu, crs, cts, crp, ctp, c1, c2, c3, csinag;
-  char *material;
+  char    *material;
   struct ReflecType *rp;
 
   material= ep->MDat.material;
@@ -225,17 +225,15 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   complex_plus (&csinag, &cwu,  &c2);        // nenner in c2
   complex_div  (&c1,     &c2,   &crs);       // calc crs
 
-  xx= 2.0* sinag;
-  complex_in (&c1, xx, 0.0);                 // zehler in c1
-  complex_div(&c1, &c2, &cts);               // calc cts
+  complex_in (&c1, (2* sinag), 0.0);         // zehler in c1
+  complex_div(&c1, &c2,        &cts);        // calc cts
 
   complex_x    (&cn2, &csinag, &c3);         // c3
   complex_minus(&c3,  &cwu,    &c1);         // zehler in c1  
   complex_plus (&c3,  &cwu,    &c2);         // nenner in c2  
   complex_div  (&c1,  &c2,     &crp);        // calc crp
 
-  xx= 2.0;
-  complex_in (&c1, xx,      0.0);           // 2.0 in c1
+  complex_in (&c1, 2.0,     0.0);           // 2.0 in c1
   complex_x  (&c1, &cn,     &c3);           // 2n in c3
   complex_x  (&c3, &csinag, &c1);           // zaehler in c1
   complex_div(&c1, &c2,     &ctp);          // calc ctp
