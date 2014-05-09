@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <08 May 14 16:11:33 flechsig>  */
+/* Time-stamp: <09 May 14 08:39:43 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -187,9 +187,9 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 // expect wavelength in m
 void SetReflectivity(struct ElementType *ep, double wavelength)
 {
-  double f1, f2, a, rho, energy, nt, delta, beta, ac, sinag, cosag;
+  double f1, f2, a, rho, energy, nt, delta, beta, ac, sinag, cosag, xx, Rs, Rp;
   int    z;
-  COMPLEX n, n2, wu, crs, cts, crp, ctp, c1, c2;
+  COMPLEX cn, cn2, cwu, crs, cts, crp, ctp, c1, c2, c3, csinag;
   char *material;
   struct ReflecType *rp;
 
@@ -210,22 +210,43 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   ReadMaterial(material, &z, &a, &rho);
   ReadHenke(material, energy, &f1, &f2);
 
-  
   nt= 1e6* rho * NA / a;              // Teilchendichte  (1/m^3), rho is in (g/cm^3)
 
   delta= RE * pow(wavelength, 2) * nt * f1 / (2.0 * PI);
   beta = RE * pow(wavelength, 2) * nt * f2 / (2.0 * PI);
   ac   = acos(1.0 - delta);            // critical (grazing) angle in rad
-  complex_in(&n, (1.0- delta), beta);  // complex index of refraction
+  complex_in(&cn, (1.0- delta), beta);  // complex index of refraction
 
   sinag= ep->geo.cosa;           // sin(grazing angle) grazing angle in rad
   cosag= ep->geo.sina;           // sin <-> cos change for grazing angle
 
-  complex_x(&n, &n, &n2);        // n^2
-  complex_in(&c1, pow(cosag, 2.0), 0.0);
-  complex_minus(&n2, &c1, &c2);
-  //complex_pow(&c2, 0.5, &wu);
-  
+  complex_x    (&cn,  &cn, &cn2);              // n^2
+  complex_in   (&c1,  pow(cosag, 2.0), 0.0);   // cos(theta))^2 saved in c1
+  complex_minus(&cn2, &c1, &c2);               // c2= n2- c1
+  complex_pow  (&c2,  0.5, &cwu);              // wu= sqrt(c2)
+
+  complex_in   (&csinag, sinag, 0.0);        // sin(theta) saved in csinag
+  complex_minus(&csinag, &cwu,  &c1);        // zehler in c1
+  complex_plus (&csinag, &cwu,  &c2);        // nenner in c2
+  complex_div  (&c1,     &c2,   &crs);       // calc crs
+
+  xx= 2.0* sinag;
+  complex_in (&c1, &xx, 0.0);                // zehler in c1
+  complex_div(&c1, &c2, &cts);               // calc cts
+
+  complex_x    (&cn2, &csinag, &c3);         // c3
+  complex_minus(&c3,  &cwu,    &c1);         // zehler in c1  
+  complex_plus (&c3,  &cwu,    &c2);         // nenner in c2  
+  complex_div  (&c1,  &c2,     &crp);        // calc crp
+
+  xx= 2.0;
+  complex_in (&c1, &xx,     0.0);           // 2.0 in c1
+  complex_x  (&c1, &cn,     &c3);           // 2n in c3
+  complex_x  (&c3, &csinag, &c1);           // zaehler in c1
+  complex_div(&c1, &c2,     &ctp);          // calc ctp
+
+  Rs= pow(crs->re, 2)+ pow(crs->im, 2);     // abs()^2
+  Rp= pow(crp->re, 2)+ pow(crp->im, 2);     // abs()^2;
   // fill double ryamp, ryphas, rzamp, rzphas, runpol;
 
 } // SetReflectivity
