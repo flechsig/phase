@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 08:43:18 flechsig>  */
+/* Time-stamp: <09 May 14 08:43:48 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -232,7 +232,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
 
   xx= 2.0* sinag;
   complex_in (&c1, xx, 0.0);                // zehler in c1
-  complex_div(&c1, &c2, &cts);               // calc cts
+  complex_div(&c1, &c2, &cts);              // calc cts
 
   complex_x    (&cn2, &csinag, &c3);         // c3
   complex_minus(&c3,  &cwu,    &c1);         // zehler in c1  
