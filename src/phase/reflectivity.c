@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 11:59:56 flechsig>  */
+/* Time-stamp: <09 May 14 12:09:09 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -32,30 +32,26 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
   struct ReflecType   *rp;
   double yamp, ypha, zamp, zpha;
     
-
   bl= (struct BeamlineType *)blp;
   ep= (struct ElementType *)bl->ElementList;
   rp= (struct ReflecType *)&ep->reflec;
+
+  // works that way  only for one element !!!
 
 #ifdef DEBUG
   printf("\ndebug: %s, apply_reflectivity_ called\n", __FILE__);
 #endif
   
-  yamp= sqrt(pow(*eyre, 2.0) + pow(*eyim, 2.0));
-  zamp= sqrt(pow(*ezre, 2.0) + pow(*ezim, 2.0));
-  ypha= atan2(*eyim, *eyre);
-  zpha= atan2(*ezim, *ezre);
+  yamp= sqrt(pow(*eyre, 2.0) + pow(*eyim, 2.0)) * rp->ryamp;
+  zamp= sqrt(pow(*ezre, 2.0) + pow(*ezim, 2.0)) * rp->rzamp;
+  ypha= atan2(*eyim, *eyre) + rp->rypha;
+  zpha= atan2(*ezim, *ezre) + rp->rzpha;
 
-  //  ReadHenke(element, &entab, &f1tab, &f2tab);
-  // ReadMaterial(element, &z, &a, &rho);
-
-  /*
   *eyre= yamp* cos(ypha);
   *ezre= zamp* cos(zpha);
   *eyim= yamp* sin(ypha);
   *ezim= zamp* sin(zpha);
-  */
-
+  
 #ifdef DEBUG
   printf("debug: %s, apply_reflectivity_ end\n", __FILE__);
 #endif
@@ -251,22 +247,22 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
 
   rp->runpol= 0.5 * (Rs + Rp);
 
-  // fill double ryamp, ryphas, rzamp, rzphas, runpol;
+  // fill double ryamp, rypha, rzamp, rzpha, runpol;
   switch (ep->GDat.azimut) /* vertikal 0; nach links 1; nach unten 2 ; nach rechts 3 */
     {
     case 0: 
     case 2:
-      rp->ryamp = sqrt(pow(crp.re, 2)+ pow(crp.im, 2));
-      rp->ryphas= atan2(crp.im, crp.re);
-      rp->rzamp = sqrt(pow(crs.re, 2)+ pow(crs.im, 2));
-      rp->rzphas= atan2(crs.im, crs.re);
+      rp->ryamp= sqrt(pow(crp.re, 2)+ pow(crp.im, 2));
+      rp->rypha= atan2(crp.im, crp.re);
+      rp->rzamp= sqrt(pow(crs.re, 2)+ pow(crs.im, 2));
+      rp->rzpha= atan2(crs.im, crs.re);
       break;
     case 1:
     case 3:
-      rp->rzamp = sqrt(pow(crp.re, 2)+ pow(crp.im, 2));
-      rp->rzphas= atan2(crp.im, crp.re);
-      rp->ryamp = sqrt(pow(crs.re, 2)+ pow(crs.im, 2));
-      rp->ryphas= atan2(crs.im, crs.re);
+      rp->rzamp= sqrt(pow(crp.re, 2)+ pow(crp.im, 2));
+      rp->rzpha= atan2(crp.im, crp.re);
+      rp->ryamp= sqrt(pow(crs.re, 2)+ pow(crs.im, 2));
+      rp->rypha= atan2(crs.im, crs.re);
       break;
     
     default: 
