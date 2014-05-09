@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 12:11:22 flechsig>  */
+/* Time-stamp: <09 May 14 12:23:14 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -25,6 +25,7 @@
 #include "common.h"
 #include "reflectivity.h"
 
+// called from fortran
 void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, double *ezim)
 {
   struct BeamlineType *bl;
@@ -36,25 +37,22 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
   ep= (struct ElementType *)bl->ElementList;
   rp= (struct ReflecType *)&ep->reflec;
 
-  // works that way  only for one element !!!
+  // works that way only for one element (we read the reflectivity of the first element)!!!
 
 #ifdef DEBUG
-  printf("\ndebug: %s, apply_reflectivity_ called\n", __FILE__);
+  printf("debug: %s, apply_reflectivity_ called (single element)\n", __FILE__);
 #endif
   
   yamp= sqrt(pow(*eyre, 2.0) + pow(*eyim, 2.0)) * rp->ryamp;
   zamp= sqrt(pow(*ezre, 2.0) + pow(*ezim, 2.0)) * rp->rzamp;
-  ypha= atan2(*eyim, *eyre) + rp->rypha;
-  zpha= atan2(*ezim, *ezre) + rp->rzpha;
+  ypha= atan2(*eyim, *eyre)  + rp->rypha;
+  zpha= atan2(*ezim, *ezre)  + rp->rzpha;
 
   *eyre= yamp* cos(ypha);
   *ezre= zamp* cos(zpha);
   *eyim= yamp* sin(ypha);
   *ezim= zamp* sin(zpha);
   
-#ifdef DEBUG
-  printf("debug: %s, apply_reflectivity_ end\n", __FILE__);
-#endif
 } // end apply_reflectivity
 
 void ReadHenke(char *element, double energy, double *f1, double *f2)
@@ -75,6 +73,8 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   printf("debug: open table >>%s<<\n", tabname);
 #endif
 
+
+  // do some tests
   if ((f= fopen(tabname, "r")) == NULL) 
     {
       fprintf(stderr, "error can't find Henke Table %s - return\n", tabname);
@@ -87,14 +87,14 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
       return;
     }  
  
-  fgets(buffer, (MaxPathLength-1), f);                 // read first line
-  if (strstr(buffer, "(Energy (eV),f1,f2)") == NULL)   // check 1st line
+  fgets(buffer, (MaxPathLength- 1), f);                // read first line (header)
+  if (strstr(buffer, "(Energy (eV),f1,f2)") == NULL)   // check 1st line !! do not edit pattern !! 
     {
       fprintf(stderr, "error: Henke Table %s has not the expected format- return\n", tabname);
       return;
     }
   
-  fgets(buffer, (MaxPathLength-1), f);                 // read first data
+  fgets(buffer, (MaxPathLength-1), f);                 // read first data line
   sscanf(buffer, "%lf %lf %lf", &e1, &f11, &f21);
   found= 0;
   while (! feof(f) && ! found)
@@ -119,9 +119,6 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
     }
   // interpolate
   de= e2- e1; 
-
-  //  printf("%lf %lf %lf de= %lf\n",     e1, f11, f21, de);
-  //  printf("%lf %lf %lf energy= %lf\n", e2, f12, f22, energy);
   if (de > 0.0)
     {
       *f1= f11+ (f12- f11)/de * (energy- e1);
@@ -270,7 +267,5 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
       fprintf(stderr, "error in file %s- azimut >>%d<<out of range\n", __FILE__, ep->GDat.azimut);
       exit(-1);
     }
-
-
 } // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c
