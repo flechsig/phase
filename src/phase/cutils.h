@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <08 May 14 16:23:43 flechsig>  */
+/*   Time-stamp: <09 May 14 07:50:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -40,6 +40,7 @@ void     complex_in(COMPLEX *, double, double);
 void     complex_minus(COMPLEX *, COMPLEX *, COMPLEX *);
 void     complex_plus(COMPLEX *, COMPLEX *, COMPLEX *);
 void     complex_x(COMPLEX *, COMPLEX *, COMPLEX *);
+void     complex_div(COMPLEX *, COMPLEX *, COMPLEX *);
 void     complex_pow(COMPLEX *, double, COMPLEX *);
 int      fidx_mX4(int, int, int, int, int);
 int      fexists(char *); 
