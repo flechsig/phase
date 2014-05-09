@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <30 Apr 14 11:23:34 flechsig> 
+//  Time-stamp: <09 May 14 14:04:28 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -931,6 +931,12 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(frAct, SIGNAL(triggered()), this, SLOT(frslot()));
 
   shapeLabel = new QLabel(tr("unknown")); // return value of menu
+  
+  QGroupBox   *coatingBox=    new QGroupBox(tr("coating"));
+  QHBoxLayout *coatingLayout= new QHBoxLayout;
+  coatingE= new QLineEdit;
+  coatingLayout->addWidget(coatingE);
+  coatingBox->setLayout(coatingLayout);
 
   groupBox1 = new QGroupBox(tr("&Element")); 
   QHBoxLayout *hbox1 = new QHBoxLayout;
@@ -938,6 +944,7 @@ QWidget *MainWindow::createOpticalElementBox()
   hbox1->addStretch(1);
   hbox1->addWidget(shapeLabel);
   hbox1->addStretch(1);
+  hbox1->addWidget(coatingBox);
   hbox1->addWidget(orientationBox);
   groupBox1->setLayout(hbox1);
 
@@ -2014,6 +2021,7 @@ void MainWindow::UpdateElementBox(int number)
   cff = cos(fi- teta)/ cos(fi+ teta);
 
    // update widgets
+  coatingE->setText(qst.fromLatin1(md->material));
   cffE   ->setText(qst.setNum(cff,        'f', 6));
   preE   ->setText(qst.setNum(gd->r,      'g', 6));
   sucE   ->setText(qst.setNum(gd->rp,     'g', 6));
