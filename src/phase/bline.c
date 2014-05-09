@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 May 14 12:26:12 flechsig>  */
+/*   Time-stamp: <09 May 14 15:11:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1299,7 +1299,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20140508;    /* today */
+   int  i, version= 20140509;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1679,7 +1679,9 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     flag <> 2 fixed grid integr.\n", op->PSO.intmod); 
    fprintf(f,"%20d     use (old) REDUCE maps (up to 4th order) \n", op->REDUCE_maps);            /* new sep 2011 */
    fprintf(f,"%20d     pst_mode (0: pstf.F, 1: pstc, 2: pstc_with m2p)\n", op->ifl.pst_mode);        /* new May 2012 */
-  
+
+   fprintf(f,"%20d     PO with_coating (0,1) \n", op->PSO.with_coating);        /* new May 2014 */
+   fprintf(f,"%20d     PO with_herror  (0,1) \n", op->PSO.with_herror);         /* new May 2014 */
 /* end options section */ 
 
    fprintf(f, "\nFILENAMES\n");
@@ -1719,7 +1721,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20140508;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20140509;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -2230,6 +2232,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %d %255[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
        if (version >= 20110902) fscanf(f, " %d %255[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
        if (version >= 20120508) fscanf(f, " %d %255[^\n]s %c", &op->ifl.pst_mode, buffer, &buf);
+
+       if (version >= 20140509) fscanf(f, " %d %255[^\n]s %c", &op->PSO.with_coating, buffer, &buf);
+       if (version >= 20140509) fscanf(f, " %d %255[^\n]s %c", &op->PSO.with_herror, buffer, &buf);
+
      } else rcode= -1;  /* end OPTIONS */     
 
    if (version >= 20120320)
