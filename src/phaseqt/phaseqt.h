@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Mar 14 17:12:03 flechsig>  */
+/*  Time-stamp: <09 May 14 14:52:27 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -32,6 +32,8 @@ extern "C" {
   #include "posrc.h"
   #include "myfftw3.h"
   #include "pst.h"
+  #include "reflectivity.h"
+  #include "heighterror.h"
 }
 
 class MainWindow;          // forward declaration
@@ -134,8 +136,10 @@ public:
   void myRayTracec() { RayTracec(this); }
   
   void myRayTraceFull() { RayTraceFull(this); }
+  void myread_hdf5_height_file(struct ElementType *ep) { read_hdf5_height_file(this->filenames.h5surfacename, ep); }
   void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, 
 		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
+  void mySetReflectivity(struct ElementType *ep) { SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
   void myposrc_ini() { posrc_ini(this); }
   void mysource7c_ini() { source7c_ini(this); }
