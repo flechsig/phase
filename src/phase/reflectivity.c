@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 08:39:43 flechsig>  */
+/* Time-stamp: <09 May 14 08:43:18 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -231,7 +231,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   complex_div  (&c1,     &c2,   &crs);       // calc crs
 
   xx= 2.0* sinag;
-  complex_in (&c1, &xx, 0.0);                // zehler in c1
+  complex_in (&c1, xx, 0.0);                // zehler in c1
   complex_div(&c1, &c2, &cts);               // calc cts
 
   complex_x    (&cn2, &csinag, &c3);         // c3
@@ -240,13 +240,13 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   complex_div  (&c1,  &c2,     &crp);        // calc crp
 
   xx= 2.0;
-  complex_in (&c1, &xx,     0.0);           // 2.0 in c1
+  complex_in (&c1, xx,     0.0);           // 2.0 in c1
   complex_x  (&c1, &cn,     &c3);           // 2n in c3
   complex_x  (&c3, &csinag, &c1);           // zaehler in c1
   complex_div(&c1, &c2,     &ctp);          // calc ctp
 
-  Rs= pow(crs->re, 2)+ pow(crs->im, 2);     // abs()^2
-  Rp= pow(crp->re, 2)+ pow(crp->im, 2);     // abs()^2;
+  Rs= pow(crs.re, 2)+ pow(crs.im, 2);     // abs()^2
+  Rp= pow(crp.re, 2)+ pow(crp.im, 2);     // abs()^2;
   // fill double ryamp, ryphas, rzamp, rzphas, runpol;
 
 } // SetReflectivity
