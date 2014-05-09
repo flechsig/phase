@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <09 May 14 14:52:27 flechsig>  */
+/*  Time-stamp: <09 May 14 15:33:53 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -38,7 +38,8 @@ extern "C" {
 
 class MainWindow;          // forward declaration
 
-#define NPARS 65
+//#define NPARS 65         // 9.5.14
+#define NPARS 67
 #define PLOT_GO_SOURCE   0x1
 #define PLOT_GO_RESULT   0x2
 #define PLOT_GO_SPA      0x4
