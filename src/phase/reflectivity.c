@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 08:43:48 flechsig>  */
+/* Time-stamp: <09 May 14 11:59:56 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -220,6 +220,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   sinag= ep->geo.cosa;           // sin(grazing angle) grazing angle in rad
   cosag= ep->geo.sina;           // sin <-> cos change for grazing angle
 
+  // we calculate the compex reflectivity and transmission coefficients
   complex_x    (&cn,  &cn, &cn2);              // n^2
   complex_in   (&c1,  pow(cosag, 2.0), 0.0);   // cos(theta))^2 saved in c1
   complex_minus(&cn2, &c1, &c2);               // c2= n2- c1
@@ -231,8 +232,8 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   complex_div  (&c1,     &c2,   &crs);       // calc crs
 
   xx= 2.0* sinag;
-  complex_in (&c1, xx, 0.0);                // zehler in c1
-  complex_div(&c1, &c2, &cts);              // calc cts
+  complex_in (&c1, xx, 0.0);                 // zehler in c1
+  complex_div(&c1, &c2, &cts);               // calc cts
 
   complex_x    (&cn2, &csinag, &c3);         // c3
   complex_minus(&c3,  &cwu,    &c1);         // zehler in c1  
@@ -240,14 +241,39 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   complex_div  (&c1,  &c2,     &crp);        // calc crp
 
   xx= 2.0;
-  complex_in (&c1, xx,     0.0);           // 2.0 in c1
+  complex_in (&c1, xx,      0.0);           // 2.0 in c1
   complex_x  (&c1, &cn,     &c3);           // 2n in c3
   complex_x  (&c3, &csinag, &c1);           // zaehler in c1
   complex_div(&c1, &c2,     &ctp);          // calc ctp
 
-  Rs= pow(crs.re, 2)+ pow(crs.im, 2);     // abs()^2
-  Rp= pow(crp.re, 2)+ pow(crp.im, 2);     // abs()^2;
+  Rs= pow(crs.re, 2)+ pow(crs.im, 2);       // abs()^2
+  Rp= pow(crp.re, 2)+ pow(crp.im, 2);       // abs()^2;
+
+  rp->runpol= 0.5 * (Rs + Rp);
+
   // fill double ryamp, ryphas, rzamp, rzphas, runpol;
+  switch (ep->GDat.azimut) /* vertikal 0; nach links 1; nach unten 2 ; nach rechts 3 */
+    {
+    case 0: 
+    case 2:
+      rp->ryamp = sqrt(pow(crp.re, 2)+ pow(crp.im, 2));
+      rp->ryphas= atan2(crp.im, crp.re);
+      rp->rzamp = sqrt(pow(crs.re, 2)+ pow(crs.im, 2));
+      rp->rzphas= atan2(crs.im, crs.re);
+      break;
+    case 1:
+    case 3:
+      rp->rzamp = sqrt(pow(crp.re, 2)+ pow(crp.im, 2));
+      rp->rzphas= atan2(crp.im, crp.re);
+      rp->ryamp = sqrt(pow(crs.re, 2)+ pow(crs.im, 2));
+      rp->ryphas= atan2(crs.im, crs.re);
+      break;
+    
+    default: 
+      fprintf(stderr, "error in file %s- azimut >>%d<<out of range\n", __FILE__, ep->GDat.azimut);
+      exit(-1);
+    }
+
 
 } // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c
