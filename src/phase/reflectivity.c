@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 12:24:50 flechsig>  */
+/* Time-stamp: <09 May 14 15:30:04 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -42,6 +42,14 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
 #ifdef DEBUG
   printf("debug: %s, apply_reflectivity_ called (single element)\n", __FILE__);
 #endif
+
+  if (! bl->BLOptions.PSO.with_coating) 
+    {
+#ifdef DEBUG
+      printf("debug: %s reflectivity calculation switched off - return\n", __FILE__);
+#endif
+      return;
+    }
   
   yamp= sqrt(pow(*eyre, 2.0) + pow(*eyim, 2.0)) * rp->ryamp;
   zamp= sqrt(pow(*ezre, 2.0) + pow(*ezim, 2.0)) * rp->rzamp;
