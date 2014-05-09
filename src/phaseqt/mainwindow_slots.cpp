@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <30 Apr 14 11:08:17 flechsig> 
+//  Time-stamp: <09 May 14 14:27:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1182,6 +1182,10 @@ void MainWindow::elementApplyBslot()
   md->r2    = imageE ->text().toDouble(); 
   md->rmi   = rE     ->text().toDouble();         
   md->rho   = rhoE   ->text().toDouble(); 
+  
+  snprintf(md->material, 9, "%s", coatingE->text().toLatin1().data());
+
+  //  printf("vvvvvvvvvvvvvvvvvvvvv %s\n", md->material);
 
   //  gd->lambdag = lambdagE->text().toDouble()*1E-6;
   gd->xdens[0]= lineDensity->text().toDouble(); 
