@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <08 May 14 16:39:52 flechsig>  */
+/*   Time-stamp: <09 May 14 07:56:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -216,15 +216,32 @@ void complex_x(COMPLEX *a, COMPLEX *b, COMPLEX *c)
   c->im= a->re* b->im+ a->im* b->re;
 } /* end complex_x */
 
+/* c= a/b */
+void complex_div(COMPLEX *a, COMPLEX *b, COMPLEX *c)
+{
+  double aamp, apha, bamp, bpha, camp, cpha;
+  
+  aamp= sqrt(pow(a->re, 2) + pow(a->im, 2));
+  bamp= sqrt(pow(b->re, 2) + pow(b->im, 2));
+  apha= atan2(a->im, a->re);
+  bpha= atan2(b->im, b->re);
+
+  camp= aamp/bamp;
+  cpha= apha- bpha;
+
+  c->re= camp* cos(cpha);
+  c->im= camp* sin(cpha);
+} /* end complex_div */
+
 /* c= a^b */
 void complex_pow(COMPLEX *a, double b, COMPLEX *c)
 {
   double aamp, apha, camp, cpha;
   
-  aamp= sqrt(pow(a->re,2) + pow(a->im,2));
+  aamp= sqrt(pow(a->re, 2) + pow(a->im, 2));
   apha= atan2(a->im, a->re);
 
-  camp= exp(b * log(aamp));
+  camp= pow(aamp, b);
   cpha= b* apha;
 
   c->re= camp* cos(cpha);
