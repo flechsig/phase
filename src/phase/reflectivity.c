@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 12:09:09 flechsig>  */
+/* Time-stamp: <09 May 14 12:11:22 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -217,6 +217,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   cosag= ep->geo.sina;           // sin <-> cos change for grazing angle
 
   // we calculate the compex reflectivity and transmission coefficients
+  // transmission coefficients not used so far
   complex_x    (&cn,  &cn, &cn2);              // n^2
   complex_in   (&c1,  pow(cosag, 2.0), 0.0);   // cos(theta))^2 saved in c1
   complex_minus(&cn2, &c1, &c2);               // c2= n2- c1
