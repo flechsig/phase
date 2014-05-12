@@ -26,7 +26,8 @@ phaseopti_SOURCES = phaseopti.cpp phaseopti.h \
 	../phase/error.c        ../phase/xstrdup.c \
 	../phase/cutils.c       ../phase/rtrace.c \
 	../phase/bline.c  \
-	../phase/reflectivity.c ../phase/reflectivity.h       
+	../phase/reflectivity.c ../phase/reflectivity.h  \
+	../phase/heighterror.c ../phase/heighterror.h    
 
 opti_root_example_SOURCES = opti_root_example.cpp opti_root_example.h
 
