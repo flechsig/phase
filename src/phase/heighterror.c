@@ -40,8 +40,16 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   struct ElementType *el;
   struct SurfaceType *sf;
   
-  //lvars for ocal copies
+  //lvars for local copies
   double lambda, cosa, cosb;
+  
+    if (! bl->BLOptions.PSO.with_herror) 
+    {
+#ifdef DEBUG
+      printf("debug: %s slope errors calculation switched off - return\n", __FILE__);
+#endif
+      return;
+    }
   
   //temp vars
   double buffer_eyre, buffer_eyim, buffer_ezre, buffer_ezim, intensity;
