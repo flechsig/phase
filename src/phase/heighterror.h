@@ -17,6 +17,7 @@
 // protoptype in alphabetic order
 
 void apply_height_error_(int *, double *, double *, double *, double *, double *, double *);
+void surf_height_interp(struct SurfaceType *, double *, double *, double *);
 void read_hdf5_height_file(char *, struct ElementType *);
 
 

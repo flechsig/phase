@@ -33,167 +33,223 @@
 
 void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, double *eyim, double *ezre, double *ezim)
 {
-  double *wvecp, *lvecp, *uvecp;
+  
+  double u_interp, phaseshift;
   int i, j, nw, nl, nu;
-
   struct BeamlineType *bl;
   struct ElementType *el;
-  int *elp;
   struct SurfaceType *sf;
+  
+  //lvars for ocal copies
+  double lambda, cosa, cosb;
+  
+  //temp vars
+  double buffer_eyre, buffer_eyim, buffer_ezre, buffer_ezim, intensity;
+
+  
+    
+  #ifdef DEBUG  
+  printf("\ndebug: apply_height_error_ called! file: %s\n", __FILE__);
+  #endif
+  
+  bl = (struct BeamlineType *)blp;
+  el = &bl->ElementList[0];
+  sf = &el->surf;
+  
+  lambda = bl->BLOptions.lambda; // in [mm]
+  cosa = el->geo.cosa;
+  cosb = el->geo.cosb;
+  
+ 
+
+  printf("debug: apply_height_error_ received values of wwert, lwert: %g, %g\n", *wwert, *lwert);
+  *wwert = 0.09346e-3;
+  *lwert = 0.4925634e-3;
+
+  
+  surf_height_interp(sf, wwert, lwert, &u_interp);
+  
+  phaseshift=2*PI/lambda*u_interp*(1/fabs(cosa)+1/fabs(cosb));
+  
+    
+
+  #ifdef DEBUG
+  printf("cosa, cosb, sina, sinb: %g, %g, %g, %g\n", el->geo.cosa, el->geo.cosb, el->geo.sina, el->geo.sinb);
+  printf("r, rp: %g, %g\n", el->geo.r, el->geo.rp);
+  printf("lambda, cosa, cosb: %g, %g, %g\n", lambda, cosa, cosb);
+  printf("phaseshift, phaseshift/2PI, u_interp: %g, %g, %g\n", phaseshift, phaseshift/2/PI, u_interp);
+  printf("debug: apply_height_error_ => done! file: %s\n", __FILE__);
+  #endif
   
   
   #ifdef DEBUG
-  printf("\ndebug: %s, apply_height_error_ called\n", __FILE__);
-#endif
+  printf("eyre, eyim: %g, %g\n", *eyre, *eyim);
+  printf("ezre, ezim: %g, %g\n", *ezre, *ezim);
+  intensity = pow(*eyre,2) + pow(*eyim,2);
+  printf("eyre^2 + eyim^2: %g\n", intensity);
+  printf("cos(phaseshift), sin(phaseshift): %g, %g\n", cos(phaseshift), sin(phaseshift));
+  #endif
   
+//   *eyre = *eyre * cos(phaseshift) - *eyim * sin(phaseshift);
+//   *eyim = *eyre * sin(phaseshift) + *eyim * cos(phaseshift);
+//   *ezre = *ezre * cos(phaseshift) - *ezim * sin(phaseshift);
+//   *ezim = *ezre * sin(phaseshift) + *ezim * cos(phaseshift);
+//   
+//   #ifdef DEBUG
+//   printf("shifted eyre, eyim: %g, %g\n", *eyre, *eyim);
+//   printf("shifted ezre, ezim: %g, %g\n", *ezre, *ezim);
+//   intensity = pow(*eyre,2) + pow(*eyim,2);
+//   printf("eyre^2 + eyim^2: %g\n", intensity);
+//   #endif
   
-  bl = (struct BeamlineType *)blp;
+//     buffer_eyre = *eyim;
+//     buffer_eyim = *eyre;
+//     buffer_ezre = *ezre;
+//     buffer_ezim = *ezim;
   
-  el = &bl->ElementList[0];
-  
-  sf = &el->surf;
-  
-  *wwert = 106.09346e-3;
-  *lwert = 3.4925634e-3;
-  
-//   surf_height_interp_(sf, wwert, lwert, &u_interp);
-  
-  //   sf = &bl->ElementList[bl->position].surf;
-  //   dummy values to test
-
+    buffer_eyre = *eyre * cos(phaseshift) - *eyim * sin(phaseshift);
+    buffer_eyim = *eyre * sin(phaseshift) + *eyim * cos(phaseshift);
+    buffer_ezre = *ezre * cos(phaseshift) - *ezim * sin(phaseshift);
+    buffer_ezim = *ezre * sin(phaseshift) + *ezim * cos(phaseshift);
     
+    
+  *eyre=buffer_eyre;
+  *eyim=buffer_eyim;
+  *ezre=buffer_ezre;
+  *ezim=buffer_ezim;
+  
+  #ifdef DEBUG
+  printf("shifted eyre, eyim: %g, %g\n", *eyre, *eyim);
+  printf("shifted ezre, ezim: %g, %g\n", *ezre, *ezim);
+  intensity = pow(*eyre,2) + pow(*eyim,2);
+  printf("eyre^2 + eyim^2: %g\n", intensity);
+  #endif
 
-  
-  
+//   #ifdef DEBUG
+//   printf("shifted eyre, eyim: %g, %g\n", buffer_eyre, buffer_eyim);
+//   printf("shifted ezre, ezim: %g, %g\n", buffer_ezre, buffer_ezim);
+//   intensity = pow(buffer_eyre,2) + pow(buffer_eyim,2);
+//   printf("eyre^2 + eyim^2: %g\n", intensity);
+//   #endif
 
 } // end apply_height_error_
 
 
-// void surf_height_interp_(struct SurfaceType *sf, double *wwert, double *lwert, double *uwert)
-// {
+void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, double *u_interp)
+{
+  
+  double *wvecp, *lvecp, *uvecp;
+  int nw, nl, nu;  
+  int i, j;
+  
+  int index_w, index_l;
+  double factor1, factor2, factor3, factor4; 
+  double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
+    
+  printf("debug: surf_height_interp received values of wwert, lwert: %g, %g\n", *wwert, *lwert);
+  // copy the variables locally
+  wvecp = sf->w;
+  nw = sf->nw; 
+  lvecp = sf->l;
+  nl = sf->nl; 
+  uvecp = sf->u;
+  nu = nl*nw;
+
+   
+  #ifdef DEBUG  
+  printf("debug: surf_height_interp called! file: %s\n", __FILE__);
+
+//   printf("debug: surf_height_interp: number of points nw= %d, nl= %d\n", nw, nl);;
+//   printf("debug: surf_height_interp: number of height nu %d\n", nu);
+// 
 //   
-//   hid_t  file_id;
-//   int index_w, index_l;
-//   double u_interp, fact1, fact2, fact3, fact4;
-//   
-//   double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
-//   int i, j, nw, nl, nu;
-//   
-//   char fname[255]="./mirrorsProfile.hdf5";
-//     
-//   read_hdf5_height_file(elp, fname);
-//   
-//   
-//   wvecp = sf->w;
-//   nw = sf->nw;
-//   
-//   lvecp = sf->l;
-//   nl = sf->nl;
-//   
-//   uvecp = sf->u;
-//   nu = nl*nw;
-//   
-//   
-//   
-//  
-//    
-// #ifdef DEBUG  
-//   printf("debug: apply_height_error_: number of points nw= %d, nl= %d\n", nw, nl);;
-//   printf("debug: apply_height_error_: number of height nu %d\n", nu);
-// #endif 
-//   
-//   
-//   for (j= 0; j < nl - 1; j= j + 10)
+//   for (j= 0; j < nl - 1; j= j + 100)
 //   {
-//       for (i= 0; i < nw - 1; i = i + 10)
+//       for (i= 0; i < nw - 1; i = i + 100)
 // 	{
-// 	  printf("ApplyHeightError: (i, j, p) = %d, %d, %d\n", i, j, j*nw+i);
+// 	  printf("surf_height_interp: (i, j, p) = %d, %d, %d\n", i, j, j*nw+i);
 // 	  printf("(w, l, u) = %g, %g, %.4g\n", wvecp[i], lvecp[j], uvecp[j*nw+i]);
 // 	}
 //   }
-// 
-// #ifdef DEBUG
-//   printf("debug: %s, ApplyHeightError_ end\n", __FILE__);
-// #endif
-//   
-//   index_w=0;
-//   index_l=0;
-//   
-//   while(wvecp[index_w] < *wwert )
-//   {
-//    index_w++;
-//   }
-//     
-//   while(lvecp[index_l] < *lwert )
-//   {
-//     index_l++;
-//   }
-//   
-//   w1 = wvecp[index_w-1];
-//   w2 = wvecp[index_w];
-//   
-//   l1 = lvecp[index_l-1];
-//   l2 = lvecp[index_l];
-//   
-//   
-//   
-//   u1 =  uvecp[(index_l-1)*nw + (index_w -1)];	//u1 = u(w1,l1)
-//   u2 =  uvecp[(index_l-1)*nw + index_w];	//u2 = u(w2,l1)
-//   u3 =  uvecp[index_l*nw + (index_w -1)];	//u3 = u(w1,l2)
-//   u4 =  uvecp[index_l*nw + index_w];		//u4 = u(w2,l2)
-//   
-//   printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
-//   printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
-//   printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
-//   printf("w1 , l2, u3 = %g, %g, %.4g\n", w1 , l2, u3);
-//   printf("w2 , l2, u4 = %g, %g, %.4g\n", w2 , l2, u4);
-//   
-//   
-//   dwl = (w2-w1)*(l2-l1);
-//   
-//   fact1 = (*wwert - w1)*(*lwert - l1)/dwl;
-//   fact2 = (w2 - *wwert)*(*lwert - l1)/dwl;
-//   fact3 = (*wwert - w1)*(l2 -*lwert)/dwl;
-//   fact4 = (w2 - *wwert)*(l2 -*lwert)/dwl;
-//   
-//   u_interp = fact1*u4 + fact2*u3 + fact3*u2 + fact4*u1;
-//   
-//   
-//   
-//   
-// #ifdef DEBUG
-//   printf("fact1 = %g\n", fact1);
-//   printf("fact2 = %g\n", fact2);
-//   printf("fact3 = %g\n", fact3);
-//   printf("fact4 = %g\n", fact4);
-//   printf("u_interp = %.4g\n", u_interp);
-// #endif
-// }
+  #endif 
+  
+ 
+  // start interpolation
+  
+  // search closest values to wwert and lwert in the vectors for w, l and u
+  index_w=0;
+  index_l=0;
+  
+  while(wvecp[index_w] < *wwert )
+  {
+   index_w++;
+  }
+    
+  while(lvecp[index_l] < *lwert )
+  {
+    index_l++;
+  }
+  
+  w1 = wvecp[index_w-1];
+  w2 = wvecp[index_w];
+  
+  l1 = lvecp[index_l-1];
+  l2 = lvecp[index_l];
+  
+  u1 =  uvecp[(index_l-1)*nw + (index_w -1)];	//u1 = u(w1,l1)
+  u2 =  uvecp[(index_l-1)*nw + index_w];	//u2 = u(w2,l1)
+  u3 =  uvecp[index_l*nw + (index_w -1)];	//u3 = u(w1,l2)
+  u4 =  uvecp[index_l*nw + index_w];		//u4 = u(w2,l2)
+  
+  //calculation of weight factors
+  dwl = (w2-w1)*(l2-l1);
+  
+  factor1 = (*wwert - w1)*(*lwert - l1)/dwl;
+  factor2 = (w2 - *wwert)*(*lwert - l1)/dwl;
+  factor3 = (*wwert - w1)*(l2 -*lwert)/dwl;
+  factor4 = (w2 - *wwert)*(l2 -*lwert)/dwl;
+  
+  // weighted sum 
+  *u_interp = (factor1*u4 + factor2*u3 + factor3*u2 + factor4*u1);
 
-void read_hdf5_height_file(char* fname, struct ElementType* elm )
+  
+  // end of the interpolation
+  
+#ifdef DEBUG
+  printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
+  printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
+  printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
+  printf("w1 , l2, u3 = %g, %g, %.4g\n", w1 , l2, u3);
+  printf("w2 , l2, u4 = %g, %g, %.4g\n", w2 , l2, u4);
+  printf("fact1 = %g\n", factor1);
+  printf("fact2 = %g\n", factor2);
+  printf("fact3 = %g\n", factor3);
+  printf("fact4 = %g\n", factor4);
+  printf("u_interp = %.4g\n", *u_interp);
+#endif
+  
+#ifdef DEBUG
+  printf("debug: %s, surf_height_interp end\n", __FILE__);
+#endif
+} /* surf_height_interp */
+
+void read_hdf5_height_file(char* fname, struct ElementType* elmp )
 {
   
-#ifdef XXX
+
   hid_t  file_id;   /* , group_id */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
    
+  
   struct SurfaceType *sf;
-  struct ElementType *elp;
-  
-  elp = (struct ElementType *)elm;
-  sf = &elp->surf;
-  
 
-
-
-
-
+  sf = &elmp->surf;
   
 #ifdef DEBUG  
   printf("debug: read_hdf5_height_file called! file: %s\n", __FILE__);
 #endif 
   
-  
+
 
  /* Open an existing file. */
   file_id = myH5Fopen(fname);
@@ -201,6 +257,10 @@ void read_hdf5_height_file(char* fname, struct ElementType* elm )
   nw = getDatasetSize(file_id, "/M1/wvec");
   nl = getDatasetSize(file_id, "/M1/lvec");
   nu = nw*nl;
+  
+//   double buffer_w[nw];
+//   double buffer_l[nl];
+//   double buffer_u[nu];
   
   if (nu != nw*nl)
   {
@@ -219,34 +279,53 @@ void read_hdf5_height_file(char* fname, struct ElementType* elm )
   if (sf->l != NULL ) XFREE(sf->w);
   if (sf->u != NULL ) XFREE(sf->w);
   
-  sf->w = XMALLOC(double, nw);
+  sf->w = XMALLOC(double, nw); // allocate memory
   sf->l = XMALLOC(double, nl);
   sf->u = XMALLOC(double, nu);
 
-  readDataDouble(file_id, "/M1/height_vec", sf->u, nu);
+  // load the values to the beamline->element->surface object WG
+  readDataDouble(file_id, "/M1/height_vec", sf->u, nu); 
   readDataDouble(file_id, "/M1/wvec", sf->w, nw);
   readDataDouble(file_id, "/M1/lvec", sf->l, nl);
-  
   sf->nw=nw;
   sf->nl=nl;
   
+  for (i= 0; i < nw - 1; i = i + 1)
+  {
+    sf->w[i] = sf->w[i]*1e3;
+  }
+  for (i= 0; i < nl - 1; i = i + 1)
+  {
+    sf->l[i] = sf->l[i]*1e3;
+  }
+   for (i= 0; i < nu - 1; i = i + 1)
+  {
+    sf->u[i] = sf->u[i]*1e3;
+  }
+  
+//   *sf->u=buffer_u; //convertion from m (hdf5) to mm (phase standard)
+//   *sf->w=buffer_w;
+//   *sf->l=buffer_l;
+
+  
   H5Fclose(file_id);
+  
+  printf("read_hdf5_height_file: %s => done\n", fname);
   
 
 // #ifdef DEBUG  
-//   for (i= 0; i < nw - 1; i = i + 10)
+//   for (i= 0; i < nw - 1; i = i + 1)
 //   {
-//       for (j= 0; j < nl - 1; j= j + 10)
+//       for (j= 0; j < nl - 1; j= j + 1)
 // 	{
-// 	  printf("(i, j, p) = %d, %d, %d\n", i, j, i*nl+j);
-// 	  printf("(w, l, u) = %f, %f, %f\n", sf->w[i], sf->l[j], sf->u[i*nl+j]);
+// 	  printf("(i, j, p) = %d, %d, %d\n", i, j, j*nw+i);
+// 	  printf("(w, l, u) = %g, %g, %g\n", sf->w[i], sf->l[j], sf->u[j*nw+i]);
 // 	}
 //   }
-
+// #endif 
   
-#endif
 
-  printf("read_hdf5_height_file: %s => done\n", fname);
+
 }  /* read_hdf5_file */
 
 // end /afs/psi.ch/project/phase/src/phase/heighterror.c
