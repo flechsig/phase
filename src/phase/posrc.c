@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <25 Mar 14 15:20:24 flechsig>  */
+/*  Time-stamp: <12 May 14 14:31:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -650,7 +650,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
 {
   hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
-  int     no_time_slices= 1, col, row, cols, rows, fieldsize, it;
+  int     no_time_slices= 1, col, row, cols, rows, fieldsize, it, fversion;
   double  wavelength, *field, t_vec= 0.5;
   struct PSDType *p;
 
@@ -682,6 +682,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
 
   fieldsize= rows*cols * 4 * no_time_slices;
   wavelength= bl->BLOptions.lambda* 1e-3;
+  fversion= PHASE_H5_VERSION;
 
   field= XMALLOC(double, fieldsize);
   it= 0;
@@ -698,6 +699,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   writeDataDouble(file_id, "/y_vec", p->y, rows, "y vector in mm");
   writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
   writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
+  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
