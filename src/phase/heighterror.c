@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <07 May 14 14:12:58 flechsig>  */
+ /* Time-stamp: <13 May 14 08:28:16 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -45,7 +45,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   
     if (! bl->BLOptions.PSO.with_herror) 
     {
-#ifdef DEBUG
+#ifdef DEBUG1
       printf("debug: %s slope errors calculation switched off - return\n", __FILE__);
 #endif
       return;
