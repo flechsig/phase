@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <13 May 14 08:19:26 flechsig>  */
+/*   Time-stamp: <13 May 14 17:22:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -526,9 +526,10 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
 
-
 #ifdef EXPERIMENTAL
-  apply_reflectivity_((int *)bl, &xirp->yzintey.re, &xirp->yzintey.im, &xirp->yzintez.re, &xirp->yzintez.im);
+  // apply phase shift of coating
+  if (bl->BLOptions.PSO.with_coating) 
+    apply_reflectivity(bl, &xirp->yzintey.re, &xirp->yzintey.im, &xirp->yzintez.re, &xirp->yzintez.im);
 #endif
 
 #ifdef DEBUG2

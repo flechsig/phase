@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <09 May 14 15:30:04 flechsig>  */
+/* Time-stamp: <13 May 14 17:23:29 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -25,21 +25,21 @@
 #include "common.h"
 #include "reflectivity.h"
 
-// called from fortran
-void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, double *ezim)
+//void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, double *ezim)
+void apply_reflectivity(struct BeamlineType *bl, double *eyre, double *eyim, double *ezre, double *ezim)
 {
-  struct BeamlineType *bl;
+  //  struct BeamlineType *bl;
   struct ElementType  *ep;
   struct ReflecType   *rp;
   double yamp, ypha, zamp, zpha;
     
-  bl= (struct BeamlineType *)blp;
+  //bl= (struct BeamlineType *)blp;
   ep= (struct ElementType *)bl->ElementList;
   rp= (struct ReflecType *)&ep->reflec;
 
   // works that way only for one element (we read the reflectivity of the first element)!!!
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: %s, apply_reflectivity_ called (single element)\n", __FILE__);
 #endif
 
