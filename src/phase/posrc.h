@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <06 Mar 14 12:21:04 flechsig>  */
+/*  Time-stamp: <12 May 14 14:05:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -13,6 +13,8 @@
 
 #ifndef POSRC_H
 #define POSRC_H
+
+#define PHASE_H5_VERSION 20140512
 
 #ifdef HAVE_HDF5
    #include "hdf5.h"
