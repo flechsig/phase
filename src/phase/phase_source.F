@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <2014-03-20 15:19:49 flechsig> 
+c$$$ Time-stamp: <13 May 14 09:12:02 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -512,6 +512,12 @@ c          original code von JB
 #else
 c          new code with dynamic source does also the range test 
 	   call source4c_inter_2d(sr,xwert,ywert,blp);
+#ifdef EXPERIMENTAL
+c        call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
+c     &                          sr.densyim, sr.denszre, sr.denszim)
+c        call apply_reflectivity(blp, sr.densyre, sr.densyim, 
+c     &                          sr.denszre, sr.denszim)
+#endif
 #endif
 c	endif
 
