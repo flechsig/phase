@@ -425,9 +425,12 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
     fact5* so4->zezim[ix1+ iy2* so4->iex]+
     fact6* so4->zezim[ix2+ iy2* so4->iex];
 
-#ifdef DEBUG1
+#ifdef DEBUG
   printf("debug: factsum: %lf\n", fact3+fact4+fact5+fact6);
-  //printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
+  printf("debug: %s-> source4c_inter_2d_: sr->densyre= %lg\n", __FILE__, sr->densyre);
+  printf("debug: %s-> source4c_inter_2d_: sr->densyim= %lg\n", __FILE__, sr->densyim);
+  printf("debug: %s-> source4c_inter_2d_: sr->denszre= %lg\n", __FILE__, sr->denszre);
+  printf("debug: %s-> source4c_inter_2d_: sr->denszim= %lg\n", __FILE__, sr->denszim);
 #endif
 
 } /* end source4c_inter_2d_ */

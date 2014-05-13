@@ -138,7 +138,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   *eyre=buffer_eyre;
   *eyim=buffer_eyim;
   *ezre=buffer_ezre;
-  *ezim=2.0*buffer_ezim;
+  *ezim=buffer_ezim;
   
   #ifdef DEBUG
   printf("shifted eyre, eyim: %g, %g\n", *eyre, *eyim);
