@@ -46,7 +46,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   //temp vars, to be deleted after debugging
   double buffer_eyre, buffer_eyim, buffer_ezre, buffer_ezim, intensity;
   
-#ifdef DEBUGXXX
+#ifdef DEBUG1
   printf("\ndebug: apply_height_error_ called! file: %s\n", __FILE__);
 #endif
   
@@ -58,7 +58,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   if (! bl->BLOptions.PSO.with_herror)
     {
 
-#ifdef DEBUGXXX
+#ifdef DEBUG1
     printf("debug: %s slope errors calculation switched off - return\n", __FILE__);
 #endif
     return;
@@ -68,7 +68,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   
   if (fabs(*eyre) < 1e-20 && fabs(*eyim) < 1e-20)
   {
-#ifdef DEBUG
+#ifdef DEBUG1
     printf("debug: %s: value of filed equal to zero\n", __FILE__);
 #endif
     return;
@@ -82,7 +82,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   cosb = el->geo.cosb;
   
  
-#ifdef DEBUGXXX
+#ifdef DEBUG1
   printf("debug: apply_height_error_ received values of wwert, lwert: %g, %g\n", *wwert, *lwert);
 #endif
 //   *wwert = 0.09346e-3;
@@ -95,7 +95,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   
     
 
-  #ifdef DEBUG
+  #ifdef DEBUG1
   printf("cosa, cosb, sina, sinb: %g, %g, %g, %g\n", el->geo.cosa, el->geo.cosb, el->geo.sina, el->geo.sinb);
   printf("r, rp: %g, %g\n", el->geo.r, el->geo.rp);
   printf("lambda, cosa, cosb: %g, %g, %g\n", lambda, cosa, cosb);
@@ -104,7 +104,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   #endif
   
   
-  #ifdef DEBUG
+  #ifdef DEBUG1
   printf("eyre, eyim: %g, %g\n", *eyre, *eyim);
   printf("ezre, ezim: %g, %g\n", *ezre, *ezim);
   intensity = pow(*eyre,2) + pow(*eyim,2);
@@ -117,7 +117,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
 //   *ezre = *ezre * cos(phaseshift) - *ezim * sin(phaseshift);
 //   *ezim = *ezre * sin(phaseshift) + *ezim * cos(phaseshift);
 //   
-//   #ifdef DEBUGXXX
+//   #ifdef DEBUG1
 //   printf("shifted eyre, eyim: %g, %g\n", *eyre, *eyim);
 //   printf("shifted ezre, ezim: %g, %g\n", *ezre, *ezim);
 //   intensity = pow(*eyre,2) + pow(*eyim,2);
@@ -140,7 +140,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   *ezre=buffer_ezre;
   *ezim=buffer_ezim;
   
-  #ifdef DEBUG
+  #ifdef DEBUG1
   printf("shifted eyre, eyim: %g, %g\n", *eyre, *eyim);
   printf("shifted ezre, ezim: %g, %g\n", *ezre, *ezim);
   intensity = pow(*eyre,2) + pow(*eyim,2);
@@ -163,7 +163,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
     
   
-#ifdef DEBUGXXX
+#ifdef DEBUG1
   printf("debug: surf_height_interp received values of wwert, lwert: %g, %g\n", *wwert, *lwert);
 #endif
   // copy the variables locally
@@ -175,7 +175,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   nu = nl*nw;
 
    
-  #ifdef DEBUGXXX  
+  #ifdef DEBUG1  
   printf("debug: surf_height_interp called! file: %s\n", __FILE__);
 
 //   printf("debug: surf_height_interp: number of points nw= %d, nl= %d\n", nw, nl);;
@@ -234,7 +234,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   
   // end of the interpolation
   
-#ifdef DEBUGXXX
+#ifdef DEBUG1
   printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
   printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
   printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
@@ -247,7 +247,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   printf("u_interp = %.4g\n", *u_interp);
 #endif
   
-#ifdef DEBUGXXX
+#ifdef DEBUG1
   printf("debug: %s, surf_height_interp end\n", __FILE__);
 #endif
 } /* surf_height_interp */
@@ -264,7 +264,7 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
 
   sf = &elmp->surf;
   
-#ifdef DEBUGXXX  
+#ifdef DEBUG1  
   printf("debug: read_hdf5_height_file called! file: %s\n", __FILE__);
 #endif 
   
@@ -288,7 +288,7 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
   }
     
 
-#ifdef DEBUGXXX  
+#ifdef DEBUG1  
   printf("debug: read_hdf5_height_file: number of points wvec= %d, lvec= %d\n", nw, nl);;
   printf("debug: read_hdf5_height_file: number of height points %d\n", nu);
 #endif 
@@ -332,7 +332,7 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
   printf("read_hdf5_height_file: %s => done\n", fname);
   
 
-// #ifdef DEBUGXXX  
+// #ifdef DEBUG1  
 //   for (i= 0; i < nw - 1; i = i + 1)
 //   {
 //       for (j= 0; j < nl - 1; j= j + 1)

@@ -45,7 +45,7 @@ void apply_reflectivity_(int *blp, double *eyre, double *eyim, double *ezre, dou
 
   if (! bl->BLOptions.PSO.with_coating) 
     {
-#ifdef DEBUG
+#ifdef DEBUG1
       printf("debug: %s reflectivity calculation switched off - return\n", __FILE__);
 #endif
       return;
@@ -70,14 +70,14 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   double e1, e2, f11, f12, f21, f22, de;
   int    found;
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: ReadHenke called for >>%s<<\n", element);
 #endif
 
   *f1= *f2= -1;
   snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/%s.f12\0", getenv("PHASE_HOME"), element);
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: open table >>%s<<\n", tabname);
 #endif
 
@@ -133,7 +133,7 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
       *f2= f21+ (f22- f21)/de * (energy- e1);
     }
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: ReadHenke end: material=%s, energy=%lf, f1=%lf, f2=%lf\n", element, energy, *f1, *f2);
 #endif
 
@@ -145,7 +145,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
   FILE *f;
   int  found;
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: ReadMaterial called for %s\n", element);
 #endif
 
@@ -180,7 +180,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 
   sscanf(buffer, "%9s\t%d\t%lf\t\t%lf", str, z, a, rho);
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: found: material=%s, z=%d, a=%lf, rho=%lf\n", str, *z, *a, *rho);
 #endif
 } // ReadMaterial
@@ -197,7 +197,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   material= ep->MDat.material;
   rp= (struct ReflecType *)&ep->reflec;
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: SetReflectivity called, material= >%s<, file= %s\n", material, __FILE__);
 #endif
 
