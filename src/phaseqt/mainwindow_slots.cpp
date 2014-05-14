@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 May 14 11:47:09 flechsig> 
+//  Time-stamp: <14 May 14 15:40:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1712,7 +1712,8 @@ void MainWindow::grautoscaleslot()
 	  cout << "error: nwl < 1- probably no surface data loaded- return" << endl;
 	  return;
 	}
-      
+      //     printf("call autoscale with,x1=%f, x2=%f, y1=%f, y2=%f, nw=%d, nl=%d\n", 
+      //	     surfp->w[0], surfp->w[surfp->nw- 1], surfp->l[0], surfp->l[surfp->nl- 1], surfp->nw, surfp->nl);
       d_plot->autoScale(surfp->w[0], surfp->w[surfp->nw- 1], surfp->l[0], surfp->l[surfp->nl- 1]);
     }
   
