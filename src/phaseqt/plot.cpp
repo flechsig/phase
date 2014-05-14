@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <26 Mar 14 15:55:08 flechsig> 
+//  Time-stamp: <14 May 14 09:05:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -332,7 +332,15 @@ void Plot::contourPlot()
 	  setAxisTitle(2, tr("y (mm)"));
 	  setAxisTitle(0, tr("dy (mrad)"));
 	}
+      else    
+	if (plotsubject & PLOT_SURF_PROF)
+	{
+	  setAxisTitle(2, tr("w (mm)"));
+	  setAxisTitle(0, tr("l (mm)"));
+	}
       else    // default
+
+// default
 	{
 	  setAxisTitle(2, tr("z (mm)"));
 	  setAxisTitle(0, tr("y (mm)"));
@@ -1055,6 +1063,56 @@ void Plot::hfill2(struct PSDType *rp, int type)
   cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
 #endif
 } // hfill2 PO_phase
+
+// fills a 2d histogram, PO surface
+void Plot::hfill2(struct SurfaceType *rp)
+{
+  int i, ix, iy, h2a_n, idc;
+  double h2range;
+  
+#ifdef DEBUG
+  cout << "Plot::hfill2 called (PO surface error version (PLOT_SURF_PROF))" << endl;
+#endif
+
+  if (!rp)
+    {
+      cout << "error: empty pointer- probably no surface data loaded- return" << endl;
+      return;
+    }
+
+  h2a_nx= rp->nw;
+  h2a_ny= rp->nl;
+  pox   = rp->w;
+  poy   = rp->l;
+
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  h2max= -1e300;
+  h2min=  1e300;
+
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	idc= ix + iy* h2a_nx;
+	h2a[idc]= rp->u[idc]; 
+	h2max= max(h2max, h2a[idc]);
+	h2min= min(h2min, h2a[idc]);
+      } // end for
+
+  statistics();
+
+  // scale range into 0 to 10
+  h2range= h2max- h2min;
+  if (h2range > 0.0)
+    for (i=0; i< h2a_n; i++)
+      h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
+  
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+#endif
+} // hfill2 PO_surf
 
 
 // fills a 2d histogram with PO source field version

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 May 14 14:53:42 flechsig> 
+//  Time-stamp: <14 May 14 08:45:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -789,6 +789,12 @@ if (!action.compare("fourierAct"))
       updateGraphicsInput(mwplotsubject);
     }
 
+  if (!action.compare("grSurfProfAct")) 
+    {
+      mwplotsubject= PLOT_SURF_PROF;
+      updateGraphicsInput(mwplotsubject);
+    }
+
   if (!action.compare("grPoSintreAct")) 
     {
       mwplotsubject= PLOT_PO_SINTRE;
@@ -1554,6 +1560,13 @@ void MainWindow::grapplyslot()
       d_plot->contourPlot();
       break;
 
+    case (PLOT_SURF_PROF):
+      cout << "plot height error experimental start " << endl;
+      cout << "use manual saling " << endl;
+      d_plot->hfill2((struct SurfaceType *)&(myparent->myBeamline()->ElementList[0].surf));
+      d_plot->setPoData("PO height error");
+      d_plot->contourPlot();
+      break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z  | PLOT_UNWRAP):
       cout << "plot source PO_PHASE_Z experimental start " << endl;
@@ -1615,6 +1628,7 @@ void MainWindow::grautoscaleslot()
   struct PSImageType *psip;
   struct PSDType     *psdp;
   struct source4c    *srcp;
+  struct SurfaceType *surfp;
 
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject: 0x" << hex << mwplotsubject << endl;
@@ -1682,6 +1696,18 @@ void MainWindow::grautoscaleslot()
       cout << "autoscale: PO source experimental" << endl;
       srcp= (struct source4c *)&(myparent->myBeamline()->posrc);
       d_plot->autoScale(srcp->gridx[0], srcp->gridx[srcp->iex - 1], srcp->gridy[0], srcp->gridy[srcp->iey - 1]);
+    }
+
+  if (mwplotsubject & PLOT_SURF_PROF) // generic for PO surface
+    { 
+      cout << "autoscale: PO surface error" << endl;
+      if (!surfp)
+	{
+	  cout << "error: empty pointer- probably no surface data loaded- return" << endl;
+	  return;
+	}
+      surfp= (struct SurfaceType *)&(myparent->myBeamline()->ElementList[0].surf);
+      d_plot->autoScale(surfp->w[0], surfp->w[surfp->nw- 1], surfp->l[0], surfp->l[surfp->nl- 1]);
     }
   
   // update the widget

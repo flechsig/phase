@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <09 May 14 15:41:23 flechsig> 
+//  Time-stamp: <14 May 14 08:57:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -507,6 +507,7 @@ QWidget *MainWindow::createGraphicBox()
   grisoAct        = new QAction(tr("&iso lines"), this);
   grHorProfAct    = new QAction(tr("profile hor."), this);
   grVerProfAct    = new QAction(tr("profile ver."), this);
+  
 
   plotstyleMenu->addAction(grscatterAct);
   plotstyleMenu->addAction(grcontourAct);
@@ -558,6 +559,7 @@ QWidget *MainWindow::createGraphicBox()
   grPoSourcePYAct=  new QAction(tr("PO source phase Ey"), this);
   grPoSourcePZUAct= new QAction(tr("PO sou pha_unwr Ez"), this);
   grPoSourcePYUAct= new QAction(tr("PO sou pha_unwr Ey"), this);
+  grSurfProfAct   = new QAction(tr("PO height error"), this);
   grPoResultAct  = new QAction(tr("PO resu&lt (S0)"), this);
   grPoResultS1Act= new QAction(tr("PO result S&1"), this);
   grPoResultS2Act= new QAction(tr("PO result S&2"), this);
@@ -605,6 +607,8 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grPoResultPZUAct);
   subject->addAction(grPoResultPYUAct);
   subject->addSeparator();
+  subject->addAction(grSurfProfAct);
+  subject->addSeparator();
   subject->addAction(grPoSimpreAct);
   subject->addAction(grPoSimpimAct);
   subject->addAction(grPoSintreAct);
@@ -646,6 +650,7 @@ QWidget *MainWindow::createGraphicBox()
   connect(grPoResultPYAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultPZUAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoResultPYUAct, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grSurfProfAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSimpimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSintreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -685,6 +690,7 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grPoResultPYAct, QString("grPoResultPYAct"));
   grsignalMapper->setMapping(grPoResultPZUAct, QString("grPoResultPZUAct"));
   grsignalMapper->setMapping(grPoResultPYUAct, QString("grPoResultPYUAct"));
+  grsignalMapper->setMapping(grSurfProfAct,   QString("grSurfProfAct"));
   grsignalMapper->setMapping(grPoSintreAct,   QString("grPoSintreAct"));
   grsignalMapper->setMapping(grPoSintimAct,   QString("grPoSintimAct"));
   grsignalMapper->setMapping(grPoSimpreAct,   QString("grPoSimpreAct"));
@@ -2663,12 +2669,21 @@ void MainWindow::updateGraphicsInput(int style)
       ymaxLabel->setText(QString(tr("dymax (mrad)")));
     } 
   else
-    {
-      zminLabel->setText(QString(tr("zmin (mm)"))); 
-      zmaxLabel->setText(QString(tr("zmax (mm)")));
-      yminLabel->setText(QString(tr("ymin (mm)"))); 
-      ymaxLabel->setText(QString(tr("ymax (mm)")));
-    }
+    if (style & PLOT_SURF_PROF)
+      {   
+	zminLabel->setText(QString(tr("wmin (mm)"))); 
+	zmaxLabel->setText(QString(tr("wmax (mm)")));
+	yminLabel->setText(QString(tr("lmin (mm)"))); 
+	ymaxLabel->setText(QString(tr("lmax (mm)")));
+      } else
+      {
+	zminLabel->setText(QString(tr("zmin (mm)"))); 
+	zmaxLabel->setText(QString(tr("zmax (mm)")));
+	yminLabel->setText(QString(tr("ymin (mm)"))); 
+	ymaxLabel->setText(QString(tr("ymax (mm)")));
+      }
+  
+
 } // updateGraphicsInput
 
 
