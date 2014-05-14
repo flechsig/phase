@@ -309,15 +309,15 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
   sf->nw=nw;
   sf->nl=nl;
   
-  for (i= 0; i < nw - 1; i = i + 1)
+  for (i= 0; i < nw; i++)
   {
     sf->w[i] = sf->w[i]*1e3;
   }
-  for (i= 0; i < nl - 1; i = i + 1)
+  for (i= 0; i < nl ; i++)
   {
     sf->l[i] = sf->l[i]*1e3;
   }
-   for (i= 0; i < nu - 1; i = i + 1)
+   for (i= 0; i < nu - 1; i++)
   {
     sf->u[i] = sf->u[i]*1e3;
   }
