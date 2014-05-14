@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <14 May 14 09:05:57 flechsig> 
+//  Time-stamp: <14 May 14 11:42:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1074,16 +1074,16 @@ void Plot::hfill2(struct SurfaceType *rp)
   cout << "Plot::hfill2 called (PO surface error version (PLOT_SURF_PROF))" << endl;
 #endif
 
-  if (!rp)
-    {
-      cout << "error: empty pointer- probably no surface data loaded- return" << endl;
-      return;
-    }
-
   h2a_nx= rp->nw;
   h2a_ny= rp->nl;
   pox   = rp->w;
   poy   = rp->l;
+
+  if ((h2a_nx < 1) || (h2a_ny < 1))
+    {
+      cout << "error: h2a_nxy < 1- probably no surface data loaded- return" << endl;
+      return;
+    }
 
   h2a_n= h2a_nx * h2a_ny;
   if (h2a != NULL) delete h2a;

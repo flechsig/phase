@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 May 14 08:45:38 flechsig> 
+//  Time-stamp: <14 May 14 11:47:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1701,12 +1701,18 @@ void MainWindow::grautoscaleslot()
   if (mwplotsubject & PLOT_SURF_PROF) // generic for PO surface
     { 
       cout << "autoscale: PO surface error" << endl;
-      if (!surfp)
+      surfp= (struct SurfaceType *)&(myparent->myBeamline()->ElementList[0].surf);
+      if ( !surfp )
 	{
 	  cout << "error: empty pointer- probably no surface data loaded- return" << endl;
 	  return;
 	}
-      surfp= (struct SurfaceType *)&(myparent->myBeamline()->ElementList[0].surf);
+      if ((surfp->nw < 1) || (surfp->nl < 1))
+	{
+	  cout << "error: nwl < 1- probably no surface data loaded- return" << endl;
+	  return;
+	}
+      
       d_plot->autoScale(surfp->w[0], surfp->w[surfp->nw- 1], surfp->l[0], surfp->l[surfp->nl- 1]);
     }
   
