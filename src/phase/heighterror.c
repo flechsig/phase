@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <15 May 14 12:22:32 flechsig>  */
+ /* Time-stamp: <15 May 14 12:34:07 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -143,9 +143,9 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
 void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, double *u_interp)
 {
   double *wvecp, *lvecp, *uvecp;
-  int nw, nl, nu;  
-  int i, j;
-  int index_w, index_l;
+  int    nw, nl, nu;  
+  int    i, j;
+  int    index_w, index_l;
   double factor1, factor2, factor3, factor4; 
   double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
     
@@ -159,7 +159,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   lvecp = sf->l;
   nl    = sf->nl; 
   uvecp = sf->u;
-  nu    = nl*nw;
+  nu    = nl* nw;
 
    
 #ifdef DEBUG1  
@@ -183,40 +183,32 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   // start interpolation
   
   // search closest values to wwert and lwert in the vectors for w, l and u
-  index_w=0;
-  index_l=0;
-  
-  while(wvecp[index_w] < *wwert )
-  {
-   index_w++;
-  }
+  index_w= 0;
+  index_l= 0;
+  while(wvecp[index_w] < *wwert) index_w++;
+  while(lvecp[index_l] < *lwert) index_l++;
     
-  while(lvecp[index_l] < *lwert )
-  {
-    index_l++;
-  }
-  
-  w1 = wvecp[index_w-1];
+  w1 = wvecp[index_w- 1];
   w2 = wvecp[index_w];
   
-  l1 = lvecp[index_l-1];
+  l1 = lvecp[index_l- 1];
   l2 = lvecp[index_l];
   
-  u1 =  uvecp[(index_l-1)*nw + (index_w -1)];	//u1 = u(w1,l1)
-  u2 =  uvecp[(index_l-1)*nw + index_w];	//u2 = u(w2,l1)
-  u3 =  uvecp[index_l*nw + (index_w -1)];	//u3 = u(w1,l2)
-  u4 =  uvecp[index_l*nw + index_w];		//u4 = u(w2,l2)
+  u1 = uvecp[(index_l- 1)* nw + (index_w- 1)];	// u1 = u(w1,l1)
+  u2 = uvecp[(index_l- 1)* nw + index_w];	// u2 = u(w2,l1)
+  u3 = uvecp[index_l* nw + (index_w- 1)];	// u3 = u(w1,l2)
+  u4 = uvecp[index_l* nw + index_w];		// u4 = u(w2,l2)
   
   //calculation of weight factors
-  dwl = (w2-w1)*(l2-l1);
+  dwl = (w2- w1)* (l2- l1);
   
-  factor1 = (*wwert - w1)*(*lwert - l1)/dwl;
-  factor2 = (w2 - *wwert)*(*lwert - l1)/dwl;
-  factor3 = (*wwert - w1)*(l2 -*lwert)/dwl;
-  factor4 = (w2 - *wwert)*(l2 -*lwert)/dwl;
+  factor1 = (*wwert- w1)* (*lwert- l1) / dwl;
+  factor2 = (w2- *wwert)* (*lwert- l1) / dwl;
+  factor3 = (*wwert- w1)* (l2- *lwert) / dwl;
+  factor4 = (w2- *wwert)* (l2- *lwert) / dwl;
   
   // weighted sum 
-  *u_interp = (factor1*u4 + factor2*u3 + factor3*u2 + factor4*u1);
+  *u_interp = factor1* u4 + factor2* u3 + factor3* u2 + factor4* u1;
 
   
   // end of the interpolation
