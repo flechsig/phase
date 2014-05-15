@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <15 May 14 12:14:02 flechsig>  */
+ /* Time-stamp: <15 May 14 12:21:23 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -37,8 +37,8 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   double u_interp, phaseshift;
   int i, j, nw, nl, nu;
   struct BeamlineType *bl;
-  struct ElementType *el;
-  struct SurfaceType *sf;
+  struct ElementType  *el;
+  struct SurfaceType  *sf;
   
   //lvars for local copies
   double lambda, cosa, cosb;
@@ -50,23 +50,17 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   printf("\ndebug: apply_height_error_ called! file: %s\n", __FILE__);
 #endif
   
-  
-  bl = (struct BeamlineType *)blp;
-  
-
+   bl = (struct BeamlineType *)blp;
   
   if (! bl->BLOptions.PSO.with_herror)
     {
-
 #ifdef DEBUG1
-    printf("debug: %s slope errors calculation switched off - return\n", __FILE__);
+      printf("debug: %s slope errors calculation switched off - return\n", __FILE__);
 #endif
     return;
     }
   
-  
-  
-  if (fabs(*eyre) < 1e-20 && fabs(*eyim) < 1e-20)
+  if ((fabs(*eyre) < 1e-30) && (fabs(*eyim) < 1e-30))
   {
 #ifdef DEBUG1
     printf("debug: %s: value of filed equal to zero\n", __FILE__);
@@ -78,8 +72,8 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   sf = &el->surf;
   
   lambda = bl->BLOptions.lambda; // in [mm]
-  cosa = el->geo.cosa;
-  cosb = el->geo.cosb;
+  cosa   = el->geo.cosa;
+  cosb   = el->geo.cosb;
   
  
 #ifdef DEBUG1
@@ -91,26 +85,24 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   
   surf_height_interp(sf, wwert, lwert, &u_interp);
   
-  phaseshift=-2*PI/lambda*u_interp*(1/fabs(cosa)+1/fabs(cosb));
+  phaseshift= -2* PI/ lambda* u_interp* (1/fabs(cosa)+ 1/fabs(cosb));
   
-    
-
-  #ifdef DEBUG1
+#ifdef DEBUG1
   printf("cosa, cosb, sina, sinb: %g, %g, %g, %g\n", el->geo.cosa, el->geo.cosb, el->geo.sina, el->geo.sinb);
   printf("r, rp: %g, %g\n", el->geo.r, el->geo.rp);
   printf("lambda, cosa, cosb: %g, %g, %g\n", lambda, cosa, cosb);
   printf("phaseshift, phaseshift/2PI, u_interp: %g, %g, %g\n", phaseshift, phaseshift/2/PI, u_interp);
   printf("debug: apply_height_error_ => done! file: %s\n", __FILE__);
-  #endif
+#endif
   
   
-  #ifdef DEBUG1
+#ifdef DEBUG1
   printf("eyre, eyim: %g, %g\n", *eyre, *eyim);
   printf("ezre, ezim: %g, %g\n", *ezre, *ezim);
   intensity = pow(*eyre,2) + pow(*eyim,2);
   printf("eyre^2 + eyim^2: %g\n", intensity);
   printf("cos(phaseshift), sin(phaseshift): %g, %g\n", cos(phaseshift), sin(phaseshift));
-  #endif
+#endif
   
 //   *eyre = *eyre * cos(phaseshift) - *eyim * sin(phaseshift);
 //   *eyim = *eyre * sin(phaseshift) + *eyim * cos(phaseshift);
@@ -129,25 +121,22 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
 //     buffer_ezre = *ezre;
 //     buffer_ezim = *ezim;
   
-    buffer_eyre = *eyre * cos(phaseshift) - *eyim * sin(phaseshift);
-    buffer_eyim = *eyre * sin(phaseshift) + *eyim * cos(phaseshift);
-    buffer_ezre = *ezre * cos(phaseshift) - *ezim * sin(phaseshift);
-    buffer_ezim = *ezre * sin(phaseshift) + *ezim * cos(phaseshift);
-    
-    
+  buffer_eyre = *eyre * cos(phaseshift) - *eyim * sin(phaseshift);
+  buffer_eyim = *eyre * sin(phaseshift) + *eyim * cos(phaseshift);
+  buffer_ezre = *ezre * cos(phaseshift) - *ezim * sin(phaseshift);
+  buffer_ezim = *ezre * sin(phaseshift) + *ezim * cos(phaseshift);
+  
   *eyre=buffer_eyre;
   *eyim=buffer_eyim;
   *ezre=buffer_ezre;
   *ezim=buffer_ezim;
   
-  #ifdef DEBUG1
+#ifdef DEBUG1
   printf("shifted eyre, eyim: %g, %g\n", *eyre, *eyim);
   printf("shifted ezre, ezim: %g, %g\n", *ezre, *ezim);
   intensity = pow(*eyre,2) + pow(*eyim,2);
   printf("eyre^2 + eyim^2: %g\n", intensity);
-  #endif
-
-
+#endif
 } // end apply_height_error_
 
 
