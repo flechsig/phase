@@ -317,7 +317,7 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
   {
     sf->l[i] = sf->l[i]*1e3;
   }
-   for (i= 0; i < nu - 1; i++)
+   for (i= 0; i < nu ; i++)
   {
     sf->u[i] = sf->u[i]*1e3;
   }
