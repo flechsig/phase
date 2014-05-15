@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <15 May 14 12:21:23 flechsig>  */
+ /* Time-stamp: <15 May 14 12:22:32 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -142,11 +142,9 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
 
 void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, double *u_interp)
 {
-  
   double *wvecp, *lvecp, *uvecp;
   int nw, nl, nu;  
   int i, j;
-  
   int index_w, index_l;
   double factor1, factor2, factor3, factor4; 
   double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
@@ -157,14 +155,14 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 #endif
   // copy the variables locally
   wvecp = sf->w;
-  nw = sf->nw; 
+  nw    = sf->nw; 
   lvecp = sf->l;
-  nl = sf->nl; 
+  nl    = sf->nl; 
   uvecp = sf->u;
-  nu = nl*nw;
+  nu    = nl*nw;
 
    
-  #ifdef DEBUG1  
+#ifdef DEBUG1  
   printf("debug: surf_height_interp called! file: %s\n", __FILE__);
 
 //   printf("debug: surf_height_interp: number of points nw= %d, nl= %d\n", nw, nl);;
@@ -179,7 +177,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 // 	  printf("(w, l, u) = %g, %g, %.4g\n", wvecp[i], lvecp[j], uvecp[j*nw+i]);
 // 	}
 //   }
-  #endif 
+#endif 
   
  
   // start interpolation
