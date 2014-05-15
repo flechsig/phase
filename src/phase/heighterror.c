@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <15 May 14 12:11:11 flechsig>  */
+ /* Time-stamp: <15 May 14 12:12:54 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -254,12 +254,8 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 
 void read_hdf5_height_file(char* fname, struct ElementType* elmp )
 {
-  
-
-  hid_t  file_id;   /* , group_id */
+  hid_t  file_id;           /* group_id       */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
-   
-  
   struct SurfaceType *sf;
 
   sf = &elmp->surf;
@@ -268,8 +264,6 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
   printf("debug: read_hdf5_height_file called! file: %s\n", __FILE__);
 #endif 
   
-
-
  /* Open an existing file. */
   file_id = myH5Fopen(fname);
 
@@ -336,8 +330,6 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
 //   }
 // #endif 
   
-
-
 }  /* read_hdf5_file */
 
 // end /afs/psi.ch/project/phase/src/phase/heighterror.c
