@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <13 May 14 08:28:16 flechsig>  */
+ /* Time-stamp: <15 May 14 12:10:55 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -309,18 +309,10 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
   sf->nw=nw;
   sf->nl=nl;
   
-  for (i= 0; i < nw; i++)
-  {
-    sf->w[i] = sf->w[i]*1e3;
-  }
-  for (i= 0; i < nl ; i++)
-  {
-    sf->l[i] = sf->l[i]*1e3;
-  }
-   for (i= 0; i < nu ; i++)
-  {
-    sf->u[i] = sf->u[i]*1e3;
-  }
+  for (i= 0; i < nw; i++) sf->w[i] = sf->w[i]* 1e3;
+  for (i= 0; i < nl; i++) sf->l[i] = sf->l[i]* 1e3;
+  for (i= 0; i < nu; i++) sf->u[i] = sf->u[i]* 1e3;
+  
   
 //   *sf->u=buffer_u; //convertion from m (hdf5) to mm (phase standard)
 //   *sf->w=buffer_w;
