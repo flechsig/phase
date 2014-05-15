@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <15 May 14 13:42:01 flechsig>  */
+ /* Time-stamp: <15 May 14 13:42:29 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -185,6 +185,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   // search closest values to wwert and lwert in the vectors for w, l and u
   index_w= 0;
   index_l= 0;
+  // add some test to avoid memory overrun
   while (wvecp[index_w] < *wwert) 
     {
       index_w++;
