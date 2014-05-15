@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <15 May 14 12:12:54 flechsig>  */
+ /* Time-stamp: <15 May 14 12:14:02 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -252,7 +252,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 #endif
 } /* surf_height_interp */
 
-void read_hdf5_height_file(char* fname, struct ElementType* elmp )
+void read_hdf5_height_file(char* fname, struct ElementType* elmp)
 {
   hid_t  file_id;           /* group_id       */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
@@ -298,8 +298,8 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp )
 
   // load the values to the beamline->element->surface object WG
   readDataDouble(file_id, "/M1/height_vec", sf->u, nu); 
-  readDataDouble(file_id, "/M1/wvec", sf->w, nw);
-  readDataDouble(file_id, "/M1/lvec", sf->l, nl);
+  readDataDouble(file_id, "/M1/wvec",       sf->w, nw);
+  readDataDouble(file_id, "/M1/lvec",       sf->l, nl);
   
   sf->nw= nw;
   sf->nl= nl;
