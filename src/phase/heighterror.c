@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <16 May 14 15:39:22 flechsig>  */
+ /* Time-stamp: <16 May 14 16:06:18 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -55,10 +55,12 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
    sf= &el->surf;
    
    // check w, l
+   printf("try: %f, %f\n", *wwert, *lwert);
    if ((*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2)) 
      {
        ((struct PSDType *)bl->RESULT.RESp)->outside_wl++;
-       *eyre= *eyim= *ezre= *ezim= 0.0;
+       printf(" no: %f, %f\n", *wwert, *lwert);
+       //      *eyre= *eyim= *ezre= *ezim= 0.0;
        return;
      }
 
@@ -255,7 +257,7 @@ void read_hdf5_height_file(char* fname, struct ElementType* elmp)
 
   sf = &elmp->surf;
   
-#ifdef DEBUG1  
+#ifdef DEBUG  
   printf("debug: read_hdf5_height_file called! file: %s\n", __FILE__);
 #endif 
   
