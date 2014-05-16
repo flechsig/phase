@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 May 14 08:57:10 flechsig> 
+//  Time-stamp: <16 May 14 17:39:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2497,7 +2497,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double trans;
   QString qst;
-  int     po;
+  int     po, porays;
 
 #ifdef DEBUG
   cout << "debug: UpdateStatistics called" << endl;
@@ -2505,7 +2505,17 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 
   po= (rays == 0) ? 1 : 0;
 
-  trans= po ? 0 : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 
+  if (po)
+    {
+      porays= 
+	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iy* 
+	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iz* 
+	myparent->myBeamline()->BLOptions.xi.ianzy0* 
+	myparent->myBeamline()->BLOptions.xi.ianzz0;
+      trans= 1.0- ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl/ (double)porays;
+    }
+
+  trans= po ? trans : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 
 		   (double)myparent->myBeamline()->RESULT.points1/ 
 		   (double)myparent->myBeamline()->RTSource.raynumber : -1.0);
   
@@ -2565,9 +2575,14 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       //wdyLabel->setStatusTip(tr("intensity integral xx"));
       wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6, 'g', 4)+ "</FONT>");  // give out value per m^2
       wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");
+
+      rayLabel0->setText(QString(tr("porays")));
+      rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
+      traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
     }
   else
     {
+      rayLabel0->setText(QString(tr("rays")));
       wdzLabel0->setStatusTip(tr("horizontal divergence"));
       wdyLabel0->setStatusTip(tr("vertical divergence"));
     }
