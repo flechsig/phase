@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 May 14 15:40:04 flechsig> 
+//  Time-stamp: <16 May 14 16:09:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -139,6 +139,7 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	  ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
 	  //myparent->myPST();
 	  fillTaskVector(psip->iy * psip->iz);
 
@@ -176,6 +177,7 @@ void MainWindow::activateProc(const QString &action)
 	  
 
 	  watcher->setFuture(*future);
+	  
 	}
     }
 
@@ -1230,7 +1232,8 @@ void MainWindow::elementApplyBslot()
 
 #ifdef EXPERIMENTAL
   myparent->mySetReflectivity(&(myparent->myBeamline()->ElementList[number]));   // routine takes wavelength in m
-  myparent->myread_hdf5_height_file(&(myparent->myBeamline()->ElementList[number]));
+  if (myparent->myBeamline()->BLOptions.PSO.with_herror) 
+    myparent->myread_hdf5_height_file(&(myparent->myBeamline()->ElementList[number]));
 #endif
 
   myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), (int *)&number);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <13 May 14 17:22:53 flechsig>  */
+/*   Time-stamp: <16 May 14 16:30:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -240,7 +240,7 @@ void MPST(struct BeamlineType *bl)
 } /* end MPST */
 
 void PST(struct BeamlineType *bl) 
-/* Phasenraumtransformation interface zur Fortran Routine (obsolete) */
+/* Phasenraumtransformation interface zur Fortran Routine (not obsolete) */
 {
 
  #ifdef DEBUG  
@@ -344,7 +344,7 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType
 /* beamline goes in, integration results and statistics goes out */
 void pstc(struct BeamlineType *bl)
 {
-  int    i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next;  
+  int    i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next, totrays;  
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
   struct map4 *m4p;
   struct constants cs;
@@ -397,11 +397,13 @@ void pstc(struct BeamlineType *bl)
 
   npoints= sp->iheigh * sp->iwidth;
   next= 0;
+  PSDp->outside_wl= 0;
 
   for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 
   printf("\n");
-
+  totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
+  printf("outside_wl: %d out of %d (%f %)\n", PSDp->outside_wl, totrays, 100.0*PSDp->outside_wl/totrays);
   
   
   iinumb=0;
