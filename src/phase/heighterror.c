@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <16 May 14 15:23:16 flechsig>  */
+ /* Time-stamp: <16 May 14 15:34:56 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -39,8 +39,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
   struct BeamlineType *bl;
   struct ElementType  *el;
   struct SurfaceType  *sf;
-  struct PSDType      *PSDp;
-  
+    
   //lvars for local copies
   double lambda, cosa, cosb;
   
@@ -54,12 +53,11 @@ void apply_height_error_(int *blp, double *wwert, double *lwert, double *eyre, d
    bl= (struct BeamlineType *)blp;
    el= &bl->ElementList[0];
    sf= &el->surf;
-   PSDp= (struct PSDType *)bl->RESULT.RESp;
-
+   
    // check w, l
    if ((*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2)) 
      {
-       PSDp->outside_wl++;
+       ((struct PSDType *)bl->RESULT.RESp)->outside_wl= 0;
        return;
      }
 
