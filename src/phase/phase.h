@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <09 May 14 15:05:25 flechsig>  */
+/*   Time-stamp: <16 May 14 14:51:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -306,7 +306,7 @@ struct PSDType  {
   double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
     sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
     simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4], d12[MAX_INTEGRATION_SIZE*2*3];
-  int iy, iz;
+  int iy, iz, outside_wl;
 };
 
 struct RESULTType {
