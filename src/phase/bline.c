@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <09 May 14 15:11:21 flechsig>  */
+/*   Time-stamp: <16 May 14 16:02:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -86,7 +86,8 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 
 #ifdef EXPERIMENTAL
   SetReflectivity(listpt, bl->BLOptions.lambda*1e-3);   // routine takes wavelength in m
-  read_hdf5_height_file(bl->filenames.h5surfacename, listpt);
+
+  if (bl->BLOptions.PSO.with_herror) read_hdf5_height_file(bl->filenames.h5surfacename, listpt);
 #endif
  
   // MakeMapandMatrix(listpt, bl);   /* elementOK wird hier gesetzt */
