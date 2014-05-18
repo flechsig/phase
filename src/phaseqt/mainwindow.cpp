@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <16 May 14 17:39:42 flechsig> 
+//  Time-stamp: <2014-05-18 22:48:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2576,7 +2576,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6, 'g', 4)+ "</FONT>");  // give out value per m^2
       wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");
 
-      rayLabel0->setText(QString(tr("porays")));
+      rayLabel0->setText(QString(tr("principle r.")));
       rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
       traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
     }
