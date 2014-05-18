@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <31 Mar 14 17:28:54 flechsig>  */
+ /* Time-stamp: <2014-05-18 22:10:15 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -100,6 +100,7 @@ void drift_fourier(struct BeamlineType *bl)
   printf("drift_fourier end\n");
 } /* drift fourier */
 
+#ifdef HAVE_FFTW3
 /* one polarization     */
 /* re0, im0 -> re1, im1 */
 void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw_plan *p2p, 
@@ -159,6 +160,7 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
   
   get_fftw(out, re1, im1, rows, cols, fftwscale);
 } /* drift_fourier_sub */
+#endif
 
 /* free space propagation with Fresnel propagator              */
 /* UF 28.2.14 fehlt denke ich noch eine phasen faktor nach fft */
@@ -224,6 +226,7 @@ void drift_fresnel(struct BeamlineType *bl)
   printf("drift_fresnel end\n");
 } /* end drift_fresnel */
 
+#ifdef HAVE_FFTW3
 /* one polarization     */
 /* re0, im0 -> re1, im1 */
 void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, 
@@ -276,7 +279,7 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 	im1[idxf]= amp* sin(pha);
       }
 } // drift_fresnel_sub
-
+#endif
 /* free space propagation with Fraunhofer propagator           */
 /* debugged, scaling der image plane ist korrekt               */
 void drift_fraunhofer(struct BeamlineType *bl)
@@ -342,6 +345,7 @@ void drift_fraunhofer(struct BeamlineType *bl)
   printf("drift_fraunhofer end\n");
 } /* end drift_fraunhofer */
 
+#ifdef HAVE_FFTW3
 /* one polarization     */
 /* re0, im0 -> re1, im1 */
 void drift_fraunhofer_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, 
@@ -382,7 +386,7 @@ void drift_fraunhofer_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 	im1[idxf]= amp* sin(pha);
       }
 } // drift_fraunhofer_sub
-
+#endif
 
 /****************************
   start with helper functions 
