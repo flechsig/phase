@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <13 May 13 14:21:06 flechsig>  */
+/*  Time-stamp: <2014-05-20 23:24:43 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -22,7 +22,7 @@
 #include "myhdf5.h"
 
 #ifdef HAVE_HDF5
-   #include "hdf5.h"
+#include "hdf5.h"
 
 /* add description attribute */
 void add_desc(hid_t dataset_id, char *content)
@@ -64,6 +64,17 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
   H5Tclose(type_id);
   H5Sclose(dataspace_id);
 } /* add_string_attribute_d */
+
+// check existence of a field 
+int check4Field(hid_t fid, char *s1, char *s2)
+{
+   char fieldname[255];
+   int myret;
+
+   snprintf(fieldname, 254, "/%s/%s", s1, s2);
+   myret= (H5Lexists(fid, fieldname, H5P_DEFAULT) < 1) ? 0 : 1; 
+   return myret;
+} // check4Field
 
 int getDatasetSize(hid_t fid, char *name)
 {

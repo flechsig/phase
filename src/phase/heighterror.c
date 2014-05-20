@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <2014-05-19 23:31:46 flechsig>  */
+ /* Time-stamp: <2014-05-20 23:38:00 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -89,6 +89,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
   surf_height_interp(sf, wwert, lwert, &u_interp);
 
   // apply the phase shift=  -k * u * (sin(alpha_g) + sin(beta_g)) ???  
+  // uf do we really need fabs(cos()) ???
   phaseshift= -2* PI/ lambda* u_interp* (1/fabs(cosa)+ 1/fabs(cosb));
 
   // apply phase shift
@@ -103,7 +104,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
 
 } // end apply_height_error_
 
-
+// interpolate the height
 void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, double *u_interp)
 {
   double *wvecp, *lvecp, *uvecp;
@@ -212,6 +213,9 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
        return;
     }
 
+  if ( !check_hdf5_4_height(fname, elmp->elementname, 1) ) return;
+
+
  /* Open an existing file. */
   file_id = myH5Fopen(fname);
 
@@ -246,9 +250,9 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
   snprintf(buffer, 254, "/%s/height_vec", elmp->elementname);
   readDataDouble(file_id, buffer, sf->u, nu); 
   snprintf(buffer, 254, "/%s/wvec", elmp->elementname);
-  readDataDouble(file_id, buffer,       sf->w, nw);
+  readDataDouble(file_id, buffer, sf->w, nw);
   snprintf(buffer, 254, "/%s/lvec", elmp->elementname);
-  readDataDouble(file_id, buffer,       sf->l, nl);
+  readDataDouble(file_id, buffer, sf->l, nl);
   
   sf->nw= nw;
   sf->nl= nl;
@@ -280,5 +284,38 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 // #endif 
   
 }  /* read_hdf5_file */
+
+/* returns true if mirror surface type has been detected */
+int check_hdf5_4_height(char *fname, char *mname, int verbose)
+{
+  int myreturn;
+  hid_t file_id;
+  
+#ifdef DEBUG
+  printf("debug: file %s => check type of file %s\n", __FILE__, fname);
+#endif
+
+  file_id= myH5Fopen(fname);
+ 
+  myreturn= (   check4Field(file_id, mname, "wvec")
+		&& check4Field(file_id, mname, "lvec")
+		&& check4Field(file_id, mname, "height_vec")	) ;
+  
+  if (!myreturn)
+    {
+      fprintf(stderr, "file %s does not contain surface data for element %s\n", fname, mname);
+    }
+    
+  H5Fclose(file_id);
+
+  if ( verbose && (myreturn == 0)) printf("file %s has not the expected type\n", fname);
+
+#ifdef DEBUG
+  printf("debug: file %s check type of file returns %d\n", __FILE__, myreturn);
+#endif
+
+  return myreturn;
+}  /* check_hdf5_4_height */
+
 
 // end /afs/psi.ch/project/phase/src/phase/heighterror.c
