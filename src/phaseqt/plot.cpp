@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <14 May 14 11:42:13 flechsig> 
+//  Time-stamp: <2014-05-21 23:27:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -250,14 +250,25 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   // MidButton for the panning
   // RightButton: zoom out by 1
   // Ctrl+RighButton: zoom out to full size
-  
-  zoomer = new MyZoomer(canvas());
+
+#if (QWT_VERSION < 0x060100)
+  QwtPlotCanvas *mycanvas= canvas();
+#else 
+  //  QWidget *mycanvas= canvas();
+  QwtPlotCanvas *mycanvas = static_cast<QwtPlotCanvas*>(canvas());
+#endif
+
+  //  zoomer = new MyZoomer(canvas());
+  zoomer = new MyZoomer(mycanvas);
+
   zoomer->setMousePattern(QwtEventPattern::MouseSelect2,
 			  Qt::RightButton, Qt::ControlModifier);
   zoomer->setMousePattern(QwtEventPattern::MouseSelect3,
 			  Qt::RightButton);
-  
-  QwtPlotPanner *panner = new QwtPlotPanner(canvas());
+
+  //QwtPlotPanner *panner = new QwtPlotPanner(canvas());
+  QwtPlotPanner *panner = new QwtPlotPanner(mycanvas);
+    
   panner->setAxisEnabled(QwtPlot::yRight, false);
   panner->setMouseButton(Qt::MidButton);
   
