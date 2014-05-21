@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-02-16 20:09:04 flechsig> 
+//  Time-stamp: <2014-05-22 00:02:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -115,8 +115,13 @@ void Plot2x2::myattach()
 	{
 	  QwtPlotGrid *grid = new QwtPlotGrid();
 	  grid->enableXMin( true );
+#if (QWT_VERSION < 0x060100)
 	  grid->setMajPen( QPen( Qt::gray, 0, Qt::DotLine ) );
 	  grid->setMinPen( QPen( Qt::gray, 0, Qt::DotLine ) );
+#else 
+	  grid->setMajorPen( QPen( Qt::gray, 0, Qt::DotLine ) );
+	  grid->setMinorPen( QPen( Qt::gray, 0, Qt::DotLine ) );
+#endif
 	  plt= plot(row, col);
 	  plt->setCanvasBackground( QColor( Qt::white ) );
 	  grid->attach(plt);

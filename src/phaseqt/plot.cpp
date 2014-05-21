@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-05-21 23:27:53 flechsig> 
+//  Time-stamp: <2014-05-21 23:54:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -708,7 +708,14 @@ void Plot::printPlot(QPrinter &printerp )
   QwtPlotRenderer renderer;
 
   renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
+
+#if (QWT_VERSION < 0x060100)
   renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
+#else
+  renderer.setLayoutFlag(QwtPlotRenderer::FrameWithScales, true);
+  //  renderer.setLayoutFlag(QwtPlotRenderer::DefaultLayout, true);
+#endif
+
   renderer.renderTo(this, printerp);
 
 
@@ -1418,7 +1425,11 @@ void Plot::SetLog(int axisId, bool yes)
    //the old ones are deleted by in the setAxisScaleFunction() function see: 128 of file qwt_plot_axis.cpp
   if (yes) 
     {
+#if (QWT_VERSION < 0x060100)
       setAxisScaleEngine(axisId, new QwtLog10ScaleEngine());
+#else
+      setAxisScaleEngine(axisId, new QwtLogScaleEngine(10));
+#endif
       if (axisId == QwtPlot::xBottom) 
 	setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine());
       else 
