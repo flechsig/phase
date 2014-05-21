@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <2014-05-20 23:38:00 flechsig>  */
+ /* Time-stamp: <2014-05-21 17:41:17 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -215,7 +215,7 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 
   if ( !check_hdf5_4_height(fname, elmp->elementname, 1) ) return;
 
-
+#ifdef HAVE_HDF5
  /* Open an existing file. */
   file_id = myH5Fopen(fname);
 
@@ -223,6 +223,7 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
   nw = getDatasetSize(file_id, buffer);
   snprintf(buffer, 254, "/%s/lvec", elmp->elementname);
   nl = getDatasetSize(file_id, buffer);
+#endif
   nu = nw*nl;
   
 //   double buffer_w[nw];
@@ -248,12 +249,13 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 
   // load the values to the beamline->element->surface object WG
   snprintf(buffer, 254, "/%s/height_vec", elmp->elementname);
+#ifdef HAVE_HDF5
   readDataDouble(file_id, buffer, sf->u, nu); 
   snprintf(buffer, 254, "/%s/wvec", elmp->elementname);
   readDataDouble(file_id, buffer, sf->w, nw);
   snprintf(buffer, 254, "/%s/lvec", elmp->elementname);
   readDataDouble(file_id, buffer, sf->l, nl);
-  
+#endif  
   sf->nw= nw;
   sf->nl= nl;
   
@@ -266,8 +268,9 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 //   *sf->w=buffer_w;
 //   *sf->l=buffer_l;
 
-  
+#ifdef HAVE_HDF5  
   H5Fclose(file_id);
+#endif
   
   printf("read_hdf5_height_file: %s => done\n", fname);
   
@@ -289,6 +292,7 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 int check_hdf5_4_height(char *fname, char *mname, int verbose)
 {
   int myreturn;
+#ifdef HAVE_HDF5
   hid_t file_id;
   
 #ifdef DEBUG
@@ -313,7 +317,7 @@ int check_hdf5_4_height(char *fname, char *mname, int verbose)
 #ifdef DEBUG
   printf("debug: file %s check type of file returns %d\n", __FILE__, myreturn);
 #endif
-
+#endif
   return myreturn;
 }  /* check_hdf5_4_height */
 
