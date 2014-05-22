@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/myzoomer.cpp
 //  Date      : <09 Jan 12 10:44:28 flechsig> 
-//  Time-stamp: <10 Jan 12 16:41:00 flechsig> 
+//  Time-stamp: <2014-05-22 05:36:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -16,7 +16,11 @@
 #include "myzoomer.h"
 
 // constructor
-MyZoomer::MyZoomer(QwtPlotCanvas *canvas): QwtPlotZoomer(canvas)
+#if (QWT_VERSION < 0x060100)
+   MyZoomer::MyZoomer(QwtPlotCanvas *canvas): QwtPlotZoomer(canvas)
+#else
+   MyZoomer::MyZoomer(QWidget *canvas): QwtPlotZoomer(canvas)
+#endif
 {
   setTrackerMode(AlwaysOn);
 } // end constructor

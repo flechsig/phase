@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-05-21 23:54:58 flechsig> 
+//  Time-stamp: <2014-05-22 05:39:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -254,8 +254,8 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 #if (QWT_VERSION < 0x060100)
   QwtPlotCanvas *mycanvas= canvas();
 #else 
-  //  QWidget *mycanvas= canvas();
-  QwtPlotCanvas *mycanvas = static_cast<QwtPlotCanvas*>(canvas());
+    QWidget *mycanvas= canvas();
+  //  QwtPlotCanvas *mycanvas = static_cast<QwtPlotCanvas*>(canvas());
 #endif
 
   //  zoomer = new MyZoomer(canvas());

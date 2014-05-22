@@ -1,7 +1,7 @@
 # -*-sh-*-
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/KnownProblems
 # Date      : <13 May 14 08:02:14 flechsig> 
-# Time-stamp: <13 May 14 08:05:59 flechsig> 
+# Time-stamp: <2014-05-22 06:41:09 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -14,4 +14,4 @@
 # collect infos date,who,description,solution/remarks  
 # example: 
 
-* 20140512 |  UF |  qwt.6.1.1 not usable- call to zoomer changed- workaround use qwt.6.0.1 | |
+* 20140512 |  UF |  qwt.6.1.1 not usable- call to zoomer changed- workaround use qwt.6.0.1 | solved UF 22.5.14|

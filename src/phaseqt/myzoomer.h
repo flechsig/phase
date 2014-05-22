@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/myzoomer.h */
 /*  Date      : <09 Jan 12 10:44:10 flechsig>  */
-/*  Time-stamp: <10 Jan 12 16:42:01 flechsig>  */
+/*  Time-stamp: <2014-05-22 05:39:11 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -21,7 +21,11 @@ class Plot;
 class MyZoomer: public QwtPlotZoomer
 {
 public:
+#if (QWT_VERSION < 0x060100)
   MyZoomer(QwtPlotCanvas *);
+#else
+  MyZoomer(QWidget *);
+#endif
 
 virtual QwtText trackerTextF(const QPointF &pos) const
 {

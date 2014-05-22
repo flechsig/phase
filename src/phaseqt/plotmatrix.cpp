@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plotmatrix.cpp
 //  Date      : <14 May 12 14:01:24 flechsig> 
-//  Time-stamp: <15 May 12 17:28:57 flechsig> 
+//  Time-stamp: <2014-05-22 06:36:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -188,6 +188,11 @@ void PlotMatrix::scaleDivChanged()
 
     if ( plt )
     {
+#if (QWT_VERSION < 0x060100)
+      // nix in 6.02
+#else
+      const QwtScaleDiv scaleDiv = plt->axisScaleDiv( axisId );
+#endif
 
         // synchronize the axes
         if ( axisId == QwtPlot::xBottom || axisId == QwtPlot::xTop )
@@ -196,7 +201,11 @@ void PlotMatrix::scaleDivChanged()
             {
                 QwtPlot *p = plot( row, rowOrColumn );
                 if ( p != plt )
-                    p->setAxisScaleDiv( axisId, *plt->axisScaleDiv( axisId ) );
+#if (QWT_VERSION < 0x060100)
+		  p->setAxisScaleDiv( axisId, *plt->axisScaleDiv( axisId ) );
+#else
+		  p->setAxisScaleDiv( axisId, scaleDiv );
+#endif
             }
         }
         else
@@ -205,7 +214,11 @@ void PlotMatrix::scaleDivChanged()
             {
                 QwtPlot *p = plot( rowOrColumn, col );
                 if ( p != plt )
+#if (QWT_VERSION < 0x060100)
                     p->setAxisScaleDiv( axisId, *plt->axisScaleDiv( axisId ) );
+#else
+		    p->setAxisScaleDiv( axisId, scaleDiv );
+#endif
             }
         }
 
