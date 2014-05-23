@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2014-05-22 13:35:02 flechsig> 
+dnl   Time-stamp: <2014-05-23 23:22:59 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -201,7 +201,22 @@ dnl end gridsize
 dnl ****************** QT **************************
 dnl new qt test in config/ax_have_qt
 AX_HAVE_QT
+
+dnl test qt5
 echo "have qt:" ${have_qt}
+if test "x${have_qt}" = "xyes"; then
+   qt5=`echo ${QT_LIBS} | grep "Qt-5"`	
+   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
+   if test -n "${qt5}"; then
+       have_qt5="yes"
+       AC_DEFINE([QT5], 1, [qt5])
+   else  
+       have_qt5="no" 
+       AC_DEFINE([QT5], 0, [qt5])
+   fi
+   echo "have_qt5" ${have_qt5}
+fi
+dnl end qt5
 
 dnl ****************** QWT **************************
 AC_ARG_WITH([qwt],
@@ -488,6 +503,7 @@ echo "prefix:                  : ${prefix}"
 echo "seventh order:           : ${enable_SEVEN}"
 echo "OpenMP:                  : ${enable_OPENMP}"
 echo "Qt:                      : ${have_qt}"
+echo "Qt5:                     : ${have_qt5}"
 echo "QT_DIR:                  : ${QT_DIR}"
 echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"
