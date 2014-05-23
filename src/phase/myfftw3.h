@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.h */
  /* Date      : <06 Jan 14 14:10:12 flechsig>  */
- /* Time-stamp: <31 Mar 14 17:27:31 flechsig>  */
+ /* Time-stamp: <23 May 14 11:53:29 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -16,6 +16,7 @@
   #include "fftw3.h"
 #endif
 
+double check_sampling(struct BeamlineType *, double *, double, int);
 void drift_fourier(struct BeamlineType *);
 void drift_fresnel(struct BeamlineType *);
 void drift_fraunhofer(struct BeamlineType *);

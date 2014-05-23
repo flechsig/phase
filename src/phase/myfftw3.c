@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <23 May 14 15:03:15 flechsig>  */
+ /* Time-stamp: <23 May 14 15:49:22 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -51,28 +51,40 @@ double check_sampling(struct BeamlineType *bl, double *lambda_x_x, double target
 
   *lambda_x_x= driftlen* lambda;
  
-  yratio= *lambda_x_x * rows/pow(ywidth, 2);
-  zratio= *lambda_x_x * cols/pow(zwidth, 2);
+  yratio= 1.0/(*lambda_x_x * rows/pow(ywidth, 2));
+  zratio= 1.0/(*lambda_x_x * cols/pow(zwidth, 2));
   
   ratio= 0.5 * (yratio + zratio);
 
   if ((ratio > 1.0) && (target < 1.0)) 
     {
+      printf("*****************************************************************\n");
       printf("warning: expect sampling artifacts\n");
       printf("         you use an IR propagator and oversampling (r= %f)\n", ratio);
       printf("         probably a TR propagator (Fourier) is better\n");
+      printf("*****************************************************************\n");
     }
 
   if ((ratio < 1.0) && (target > 1.0)) 
     {
+      printf("******************************************************************\n");
       printf("warning: expect sampling artifacts\n");
       printf("         you use a TR propagator and undersampling (r= %f)\n", ratio);
       printf("         probably an IR propagator (Fresnel, Fraunhofer) is better\n");
+      printf("******************************************************************\n");
     }
+
+  if (verbose && (ratio < 1.0)) printf("==========> undersampling, ratio= %f\n", ratio);
+  if (verbose && (ratio > 1.0)) printf("==========> oversampling,  ratio= %f\n", ratio);
+#ifdef DEBUG
+  printf("debug: check_ssampling: target %f\n", target);
+  printf("debug: critical_sampling= %f (mm^2)\n", *lambda_x_x);
+  printf("debug: act. hor_sampling= %f (mm^2)\n", pow(zwidth, 2)/ cols);
+  printf("debug: act.vert_sampling= %f (mm^2)\n", pow(ywidth, 2)/ rows);
+#endif
 
   return ratio;
 } // end check_sampling
-
 
 /* free space propagation with Transfer function propagator */
 /* the drift distance is s1+s2 of the first element         */
@@ -80,7 +92,7 @@ double check_sampling(struct BeamlineType *bl, double *lambda_x_x, double target
 void drift_fourier(struct BeamlineType *bl)
 {
   int    row, rows, col, cols;
-  double driftlen, k, totz, toty, p0, lambda, *u, *v;
+  double driftlen, k, totz, toty, p0, lambda, *u, *v, tmp;
   struct ElementType *el;
   struct source4c *so4;
   struct PSDType  *psd;
@@ -89,6 +101,8 @@ void drift_fourier(struct BeamlineType *bl)
   fftw_complex *in, *out;
   fftw_plan    p1, p2;
 #endif
+
+  tmp= check_sampling(bl, &tmp, 1.1, 1);
 
   so4= (struct source4c *)&(bl->posrc);
   cols= so4->iex;
@@ -220,11 +234,13 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 void drift_fresnel(struct BeamlineType *bl)
 {
   int    row, col, rows, cols;
-  double driftlen, lambda, k, dz0, dy0, p0;
+  double driftlen, lambda, k, dz0, dy0, p0, tmp;
   struct ElementType *el;
   struct source4c *so4;
   struct PSDType  *psd;
   
+  tmp= check_sampling(bl, &tmp, 0.9, 1);
+
   so4= (struct source4c *)&(bl->posrc);
   cols= so4->iex;
   rows= so4->iey;
@@ -337,11 +353,13 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 void drift_fraunhofer(struct BeamlineType *bl)
 {
   int    row, col, rows, cols;
-  double driftlen, lambda, k, dz0, dy0, p0;
+  double driftlen, lambda, k, dz0, dy0, p0, tmp;
   struct ElementType *el;
   struct source4c *so4;
   struct PSDType  *psd;
   
+  tmp= check_sampling(bl, &tmp, 0.9, 1);
+
   so4= (struct source4c *)&(bl->posrc);
   cols= so4->iex;
   rows= so4->iey;
