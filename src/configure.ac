@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2014-05-23 23:24:40 flechsig> 
+dnl   Time-stamp: <2014-05-23 23:50:07 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -215,6 +215,7 @@ dnl   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
        AC_DEFINE([QT5], 0, [qt5])
    fi
    echo "have_qt5" ${have_qt5}
+   AM_CONDITIONAL([QT5], [test x$have_qt5 = xyes])
 fi
 dnl end qt5
 

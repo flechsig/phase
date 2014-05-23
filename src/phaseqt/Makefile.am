@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2014-05-21 07:26:25 flechsig> 
+#  Time-stamp: <2014-05-23 23:46:56 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -112,7 +112,12 @@ EXTRA_DIST = ../phase/phase_struct.F  $(pkgdata_DATA) \
 	README
 
 ## flags
-AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+if QT5
+   AM_CPPFLAGS = -DQT5 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+else
+   AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+endif
+
 ###-I@QT_DIR@/mkspecs/linux-g++ 
 ### -fPIC  
 AM_CXXFLAGS   =  -fPIC \
