@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <2014-05-18 22:10:15 flechsig>  */
+ /* Time-stamp: <23 May 14 15:03:15 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -21,6 +21,58 @@
 #include "phase.h"
 #include "myfftw3.h"
 #include "common.h"
+
+// checks the sampling off a field versus the critical_sampling
+// critical_sampling= lambda * x = z_width * delta_z = z_width^2/ Nz
+// output is the ratio to critical_sampling and the value for critical_sampling
+// the target should be a value less or above 1 - it controls the messages if verbose > 0
+// target > 1 means oversampling is good (transfer function or fourier propagator) 
+// target < 1 means undersampling is good (impulse response or fresnel/fraunhofer propagator) 
+double check_sampling(struct BeamlineType *bl, double *lambda_x_x, double target, int verbose)
+{
+  int    cols, rows;
+  double driftlen, ratio, yratio, zratio, lambda, zwidth, ywidth;
+  struct ElementType *el;
+  struct source4c *so4;
+
+#ifdef DEBUG
+  printf("debug: check_sampling called with target %f\n", target);
+#endif
+
+  so4= (struct source4c *)&(bl->posrc);
+  cols= so4->iex;
+  rows= so4->iey;
+  zwidth= so4->gridx[cols- 1]- so4->gridx[0];
+  ywidth= so4->gridy[rows- 1]- so4->gridy[0];
+
+  el= &(bl->ElementList[0]);
+  driftlen= el->GDat.r+ el->GDat.rp;
+  lambda  = bl->BLOptions.lambda;
+
+  *lambda_x_x= driftlen* lambda;
+ 
+  yratio= *lambda_x_x * rows/pow(ywidth, 2);
+  zratio= *lambda_x_x * cols/pow(zwidth, 2);
+  
+  ratio= 0.5 * (yratio + zratio);
+
+  if ((ratio > 1.0) && (target < 1.0)) 
+    {
+      printf("warning: expect sampling artifacts\n");
+      printf("         you use an IR propagator and oversampling (r= %f)\n", ratio);
+      printf("         probably a TR propagator (Fourier) is better\n");
+    }
+
+  if ((ratio < 1.0) && (target > 1.0)) 
+    {
+      printf("warning: expect sampling artifacts\n");
+      printf("         you use a TR propagator and undersampling (r= %f)\n", ratio);
+      printf("         probably an IR propagator (Fresnel, Fraunhofer) is better\n");
+    }
+
+  return ratio;
+} // end check_sampling
+
 
 /* free space propagation with Transfer function propagator */
 /* the drift distance is s1+s2 of the first element         */
