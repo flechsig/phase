@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2014-05-23 23:22:59 flechsig> 
+dnl   Time-stamp: <2014-05-23 23:24:40 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -206,7 +206,7 @@ dnl test qt5
 echo "have qt:" ${have_qt}
 if test "x${have_qt}" = "xyes"; then
    qt5=`echo ${QT_LIBS} | grep "Qt-5"`	
-   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
+dnl   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
    if test -n "${qt5}"; then
        have_qt5="yes"
        AC_DEFINE([QT5], 1, [qt5])
