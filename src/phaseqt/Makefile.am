@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <26 May 14 09:39:04 flechsig> 
+#  Time-stamp: <26 May 14 09:39:27 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -117,7 +117,7 @@ else
 endif
 
 if QT5
-AM_CXXFLAGS = -fPIC \
+   AM_CXXFLAGS = -fPIC \
 	@QT_CXXFLAGS@ \
 	@QT_CXXFLAGS@/QtCore \
 	@QT_CXXFLAGS@/QtGui \
@@ -128,7 +128,7 @@ AM_CXXFLAGS = -fPIC \
 	-I@QWTI@/ \
 	-I../phase
 else
-AM_CXXFLAGS = -fPIC \
+   AM_CXXFLAGS = -fPIC \
 	@QT_CXXFLAGS@ \
 	@QT_CXXFLAGS@/QtCore \
 	@QT_CXXFLAGS@/QtGui \
