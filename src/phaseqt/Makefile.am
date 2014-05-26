@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <26 May 14 09:38:08 flechsig> 
+#  Time-stamp: <26 May 14 09:38:55 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -150,12 +150,12 @@ AM_CFLAGS = @HDF5_CFLAGS@
 ### -lQt5Concurrent
 ### UF explicit linking to -lQtGui -lQtCore -lQtSvg is required for ubuntu
 if QT5
-AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
+   AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent \
 	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 else
-AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
+   AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQtGui -lQtCore -lQtSvg \
 	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
