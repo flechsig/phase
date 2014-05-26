@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <26 May 14 12:12:43 flechsig> 
+;  Time-stamp: <26 May 14 12:23:12 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -106,18 +106,25 @@ ywidth  = myy_vec[rows-1]- myy_vec[0];
 
 lambda_x_x= mylambda* drift
 
-yratio= 1.0/(lambda_x_x * rows/ywidth^2);
-zratio= 1.0/(lambda_x_x * cols/zwidth^2) ;
+yratio= 1.0/(lambda_x_x * rows/ywidth^2)
+zratio= 1.0/(lambda_x_x * cols/zwidth^2) 
   
   ratio= 0.5 * (yratio + zratio);
 
   
 
   print, 'check_sampling'
-  print, 'debug: critical_sampling= ', lambda_x_x, ' (mm^2)'
-  print, 'debug: act. hor_sampling= ', zwidth^2/ cols, ' (mm^2)'
-  print, 'debug: act.vert_sampling= ', ywidth^2/ rows, ' (mm^2)'
+  print, 'critical_sampling= ', lambda_x_x, ' (mm^2)'
+  print, 'act. hor_sampling= ', zwidth^2/ cols, ' (mm^2)'
+  print, 'act.vert_sampling= ', ywidth^2/ rows, ' (mm^2)'
 
+if (ratio gt 1.0) then begin
+    print, 'drift= ', drift, ' yields to oversampling'
+    print, 'use transfer function (TR) based propagator (fourier)'
+endif else begin
+    print, 'drift= ', drift, ' yields to undersampling'
+    print, 'use impulse response (IR) based propagator (fresnel, fraunhofer)'
+endelse
 
 return
 end ;; check_sampling
