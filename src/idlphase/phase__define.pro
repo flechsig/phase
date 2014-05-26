@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <31 Mar 14 16:07:59 flechsig> 
+;  Time-stamp: <26 May 14 12:12:43 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -66,6 +66,61 @@ aperture, emf, _EXTRA=extra
 *self.y_vec= emf.y_vec
 return
 end ;; aperture
+
+pro phase::check_sampling, drift=drift
+;+
+; NAME:
+;   phase::check_sampling
+;
+; PURPOSE:
+;   checks critical sampling
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;    
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   drift     : drift distance in m
+;
+; OUTPUTS:
+;   
+;
+; EXAMPLE:
+;  idl> emf->check_sampling
+;
+; MODIFICATION HISTORY:
+;   UF 26.5.14
+;-
+myz_vec = *self.z_vec
+myy_vec = *self.y_vec
+mylambda= self.wavelength
+cols    = n_elements(myz_vec)
+rows    = n_elements(myy_vec)
+zwidth  = myz_vec[cols-1]- myz_vec[0];
+ywidth  = myy_vec[rows-1]- myy_vec[0];
+
+lambda_x_x= mylambda* drift
+
+yratio= 1.0/(lambda_x_x * rows/ywidth^2);
+zratio= 1.0/(lambda_x_x * cols/zwidth^2) ;
+  
+  ratio= 0.5 * (yratio + zratio);
+
+  
+
+  print, 'check_sampling'
+  print, 'debug: critical_sampling= ', lambda_x_x, ' (mm^2)'
+  print, 'debug: act. hor_sampling= ', zwidth^2/ cols, ' (mm^2)'
+  print, 'debug: act.vert_sampling= ', ywidth^2/ rows, ' (mm^2)'
+
+
+return
+end ;; check_sampling
 
 pro phase::crl, _EXTRA=extra
 ;+
