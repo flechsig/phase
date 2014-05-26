@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <26 May 14 12:23:12 flechsig> 
+;  Time-stamp: <26 May 14 12:24:54 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -113,7 +113,7 @@ zratio= 1.0/(lambda_x_x * cols/zwidth^2)
 
   
 
-  print, 'check_sampling'
+  print, 'check_sampling, ratio= ', ratio
   print, 'critical_sampling= ', lambda_x_x, ' (mm^2)'
   print, 'act. hor_sampling= ', zwidth^2/ cols, ' (mm^2)'
   print, 'act.vert_sampling= ', ywidth^2/ rows, ' (mm^2)'
