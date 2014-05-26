@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2014-05-25 22:36:12 flechsig> 
+#  Time-stamp: <26 May 14 09:38:08 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -156,7 +156,7 @@ AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 else
 AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
-	@QT_LIBS@ -lQtGui -lQt5Core -lQtSvg \
+	@QT_LIBS@ -lQtGui -lQtCore -lQtSvg \
 	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 endif
