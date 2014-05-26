@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <23 May 14 15:49:22 flechsig>  */
+ /* Time-stamp: <26 May 14 10:39:06 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -28,16 +28,18 @@
 // the target should be a value less or above 1 - it controls the messages if verbose > 0
 // target > 1 means oversampling is good (transfer function or fourier propagator) 
 // target < 1 means undersampling is good (impulse response or fresnel/fraunhofer propagator) 
-double check_sampling(struct BeamlineType *bl, double *lambda_x_x, double target, int verbose)
+double check_sampling(struct BeamlineType *bl, double *lambda_x_x_p, double target, int verbose)
 {
   int    cols, rows;
-  double driftlen, ratio, yratio, zratio, lambda, zwidth, ywidth;
+  double driftlen, ratio, yratio, zratio, lambda, zwidth, ywidth, lambda_x_x_local, *lambda_x_x;
   struct ElementType *el;
   struct source4c *so4;
 
 #ifdef DEBUG
   printf("debug: check_sampling called with target %f\n", target);
 #endif
+
+  lambda_x_x= &lambda_x_x_local;
 
   so4= (struct source4c *)&(bl->posrc);
   cols= so4->iex;
@@ -82,6 +84,8 @@ double check_sampling(struct BeamlineType *bl, double *lambda_x_x, double target
   printf("debug: act. hor_sampling= %f (mm^2)\n", pow(zwidth, 2)/ cols);
   printf("debug: act.vert_sampling= %f (mm^2)\n", pow(ywidth, 2)/ rows);
 #endif
+
+  if (lambda_x_x_p != NULL) *lambda_x_x_p= *lambda_x_x;
 
   return ratio;
 } // end check_sampling

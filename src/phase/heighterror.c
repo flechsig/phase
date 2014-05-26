@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <2014-05-21 17:41:17 flechsig>  */
+ /* Time-stamp: <26 May 14 09:53:53 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -209,8 +209,9 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
   
   if ( !fexists(fname) )
     { 
-       fprintf(stderr, "warning: surface error file >>%s<< not found - return\n", fname);
-       return;
+      beep(5);
+      fprintf(stderr, "warning: surface error file >>%s<< not found - return\n", fname);
+      return;
     }
 
   if ( !check_hdf5_4_height(fname, elmp->elementname, 1) ) return;
@@ -307,7 +308,7 @@ int check_hdf5_4_height(char *fname, char *mname, int verbose)
   
   if (!myreturn)
     {
-      fprintf(stderr, "file %s does not contain surface data for element %s\n", fname, mname);
+      fprintf(stderr, "file %s does not contain surface data for element >>%s<<\n", fname, mname);
     }
     
   H5Fclose(file_id);

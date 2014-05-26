@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2014-05-18 22:48:30 flechsig> 
+//  Time-stamp: <26 May 14 10:23:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -206,6 +206,12 @@ void MainWindow::createActions()
     fourierAct->setStatusTip(tr("Fourier Propagation"));
     signalMapper->setMapping(fourierAct, QString("fourierAct"));
     connect(fourierAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    fourfresAct = new QAction(QIcon(":/images/Blue-tarrow-32.png"),tr("PO Four/Fres"), this);
+    //fourfresAct = new QAction(QIcon(":/images/Blue-arrow-right-32.png"),tr("PO Fourfres (exp)"), this);
+    fourfresAct->setStatusTip(tr("Fourier or Fresnel Propagation (autoselect)"));
+    signalMapper->setMapping(fourfresAct, QString("fourfresAct"));
+    connect(fourfresAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     copyPOAct = new QAction(tr("copy PO"), this);
     copyPOAct->setStatusTip(tr("copy PO source fields to image fields"));
@@ -849,6 +855,7 @@ void MainWindow::createMenus()
     calcMenu->addAction(fraunhAct);
     calcMenu->addAction(fresnelAct);
     calcMenu->addAction(fourierAct);
+    calcMenu->addAction(fourfresAct);
     calcMenu->addAction(copyPOAct);
     calcMenu->addSeparator();
     calcMenu->addAction(asynMapAct);
@@ -1459,6 +1466,7 @@ void MainWindow::createToolBars()
     editToolBar->addAction(asynPOAct);
     editToolBar->addAction(fresnelAct);
     editToolBar->addAction(fourierAct);
+    editToolBar->addAction(fourfresAct);
 } // createToolBars
 
 

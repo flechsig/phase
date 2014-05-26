@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <16 May 14 16:09:27 flechsig> 
+//  Time-stamp: <26 May 14 10:52:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -315,6 +315,36 @@ void MainWindow::activateProc(const QString &action)
       UpdateStatus();
     }
 
+if (!action.compare("fourfresAct")) 
+    { 
+
+#ifdef DEBUG
+      cout << "debug: fourfresAct button pressed" << endl;
+#endif
+
+      if (elementListIsEmpty()) return;
+      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      UpdateStatus();
+      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+	{
+	  myparent->myposrc_ini();
+	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	}
+
+      if (myparent->mycheck_sampling() > 1.0 )
+	{
+	  cout << "autoselect Fourier propagator (TF type) due to sampling" << endl;
+	  myparent->mydrift_fourier();
+	}
+      else
+	{
+	  cout << "autoselect Fresnel propagator (IR type) due to sampling" << endl;
+	  myparent->mydrift_fresnel();
+	}
+
+      myparent->myBeamline()->beamlineOK |= resultOK;
+      UpdateStatus();
+    }
 
 
 if (!action.compare("fourierAct")) 
