@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plot1d.cpp
 //  Date      : <16 Nov 11 15:12:25 flechsig> 
-//  Time-stamp: <16 Nov 11 17:25:15 flechsig> 
+//  Time-stamp: <27 May 14 10:47:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -8,7 +8,7 @@
 //  $Revision$ 
 //  $Author$ 
 
-
+#ifdef HAVE_QWT
 #include "plot1d.h"
 
 using namespace std;
@@ -143,5 +143,6 @@ void plot1D::SetLineStyle(int s)
     }
   setPen(*pen_ptr);
 } // SetLineStyle
-
+#endif 
+//qwt
 // end /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plot1d.cpp

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <26 May 14 10:23:40 flechsig> 
+//  Time-stamp: <27 May 14 14:22:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -44,9 +44,14 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
   this->c_window= NULL;
   this->m4p_cpp= NULL;
   this->csp_cpp= NULL;
+
+#ifdef HAVE_QWT
   this->zone= NULL;
+  //#endif
+
   graphicBox= createGraphicBox();
   setCentralWidget(graphicBox);
+#endif
   createActions();
   createMenus();
   createToolBars();
@@ -1281,7 +1286,7 @@ QWidget *MainWindow::createPlotBox()
 {
   plotBox = new QWidget();
   plotLayout = new QGridLayout;
-   
+#ifdef HAVE_QWT   
   d_plot = new Plot(plotBox);
   //zone   = new PlotMatrix( 2  , 2 );
   d_plot->setAxisTitle(2, tr("z (mm)"));
@@ -1299,6 +1304,8 @@ QWidget *MainWindow::createPlotBox()
   //plotLayout->addWidget(d_plot,0,0);
   //plotLayout->addWidget(zone,1,0);
   plotBox->setLayout(plotLayout);
+#endif
+
   return plotBox;
 } // end createPlotBox
 
@@ -2500,6 +2507,7 @@ void MainWindow::UpdateSourceBox()
     }
 } // end UpdateSourceBox
 
+#ifdef HAVE_QWT
 // update the statistics in graphic box, ray version if rays > 0
 void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
@@ -2595,6 +2603,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       wdyLabel0->setStatusTip(tr("vertical divergence"));
     }
 } // UpdateStatistics
+#endif
 
 // Update the status window
 void MainWindow::UpdateStatus()

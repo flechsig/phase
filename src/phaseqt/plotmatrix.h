@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plotmatrix.h */
 /*  Date      : <14 May 12 14:01:02 flechsig>  */
-/*  Time-stamp: <15 May 12 13:31:57 flechsig>  */
+/*  Time-stamp: <27 May 14 14:26:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -46,5 +46,4 @@ private:
     class PrivateData;
     PrivateData *d_data;
 };
-
 #endif

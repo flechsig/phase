@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <26 May 14 10:20:26 flechsig>  */
+/*  Time-stamp: <27 May 14 10:23:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -19,15 +19,17 @@
 #include <QMessageBox>
 #include <sys/stat.h>
 
-
 #include "phaseqt.h"
 #include "singleray.h"
 #include "optiinput.h"
 #include "configwindow.h"
-#include "plot.h"
 #include "treemodel.h"
+
+#ifdef HAVE_QWT
+#include "plot.h"
 #include "plotmatrix.h"
 #include "plot2x2.h"
+#endif
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -140,7 +142,9 @@ private slots:
 
     //void addParagraph(const QString &paragraph);
     void activateProc(const QString &action);
+#ifdef HAVE_QWT
     void UpdateStatistics(Plot *, const char *, int);
+#endif
     
 private:
     void createActions();
@@ -378,12 +382,11 @@ private:
     QAction *grexample1Act;
     QAction *grexample2Act;
     QAction *grexample3Act;
-    Plot    *d_plot;
+    
     SingleRay *s_ray;
     OptiInput *o_input;
     ConfigWindow *c_window;
-    Plot2x2  *zone;
-
+ 
     QPushButton *grautoButton;
     QPushButton *grapplyButton;
     QLineEdit *grzminE;
@@ -454,6 +457,11 @@ private:
     int    mwplotsubject;  // mainwindow variable
     int    mwplotstyle;    // mainwindow variable
     int    myMaxThreads;
+
+#ifdef HAVE_QWT
+    Plot     *d_plot;
+    Plot2x2  *zone;
+#endif
 };
 
 

@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <27 May 14 12:16:37 flechsig> 
+#  Time-stamp: <27 May 14 14:36:43 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -47,11 +47,18 @@ phaseqt_SOURCES = \
 	../phase/heighterror.c   ../phase/heighterror.h
 
 # for all *.h and *.qrc add one *.cpp
-nodist_phaseqt_SOURCES = \
+if QWT
+  nodist_phaseqt_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
 	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
 	moc_plotmatrix.cpp moc_plot2x2.cpp
+else
+  nodist_phaseqt_SOURCES = \
+	moc_configwindow.cpp moc_mainwindow.cpp \
+	moc_optiinput.cpp moc_singleray.cpp  \
+	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp 
+endif
 
 phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
@@ -113,7 +120,7 @@ EXTRA_DIST = ../phase/phase_struct.F  $(pkgdata_DATA) \
 if QT5
    AM_CPPFLAGS = -DQT5 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED 
 else
-   AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED 
+   AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 endif
 
 if QT5

@@ -1,12 +1,16 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-05-22 05:39:44 flechsig> 
+//  Time-stamp: <27 May 14 14:32:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
 //  $Date$
 //  $Revision$ 
 //  $Author$ 
+
+#ifdef HAVE_CONFIG_H
+  #include "config.h"
+#endif
 
 // taken from qwt examples
 #if (QT_VERSION < 0x050000)
@@ -16,8 +20,9 @@
 #endif
 
 #include <qprinter.h>
-
 #include <qprintdialog.h>
+
+#ifdef HAVE_QWT
 #include <qwt_color_map.h>
 //#include <qwt_plot_spectrom.h>
 #include <qwt_scale_widget.h>
@@ -1478,5 +1483,6 @@ double Plot::minv(double *vec, int len)
   for (i= 0; i< len; i++) val= min(vec[i], val);
   return val;
 } // minv
-
+#endif
+// end qwt
 // end /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp

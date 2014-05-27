@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <26 May 14 10:52:53 flechsig> 
+//  Time-stamp: <27 May 14 10:38:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -21,16 +21,20 @@
 #if (QT_VERSION > 0x050000)
 #include <QtConcurrent>
 #include <QPrintDialog>
+#include <QPrinter>
 #endif
 
 #include <cmath>                     // for abs
 #include <tr1/functional>            // for std::tr1
-#include <qwt_plot_grid.h>
 
 #include "mainwindow.h"
 #include "phaseqt.h"
+
+#ifdef HAVE_QWT
+#include <qwt_plot_grid.h>
 #include "plotmatrix.h"
 #include "plot2x2.h"
+#endif
 
 using namespace std;   // fuer cout z.B.
 
@@ -631,6 +635,7 @@ if (!action.compare("fourierAct"))
 	}
     } 
 
+#ifdef HAVE_QWT
   if (!action.compare("grscatterAct")) 
     { 
       printf("grscatterAct button pressed\n"); 
@@ -677,6 +682,7 @@ if (!action.compare("fourierAct"))
       mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_SPA ;
       updateGraphicsInput(mwplotsubject);
     }
+
   if (!action.compare("grGoSourceDivAct")) 
     {
       mwplotsubject= PLOT_GO_SOURCE | PLOT_GO_DIV ;
@@ -860,6 +866,8 @@ if (!action.compare("fourierAct"))
       //  d_plot->setTitle(tr("PhaseQt: example 2"));
       //   d_plot->setdefaultData2();
     }
+#endif
+  // end qwt
 
   if (!action.compare("readFg34Act")) 
     { 
@@ -1278,8 +1286,10 @@ void MainWindow::fwhmslot()
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " fwhmslot called" << endl;
 #endif
+#ifdef HAVE_QWT
   d_plot->fwhmon= 1;
   grapplyslot();
+#endif
 } // fwhmslot
 
 // slot goButton
@@ -1306,6 +1316,7 @@ void MainWindow::goButtonslot()
 // gr apply
 void MainWindow::grapplyslot()
 {
+#ifdef HAVE_QWT
   struct PSDType *psdp;
   struct BeamlineType *bl;
 
@@ -1651,12 +1662,14 @@ void MainWindow::grapplyslot()
 #ifdef DEBUG
   cout << "debug: grapplyslot end with replot" << endl;
 #endif
-  
+#endif 
+  //have_qwt  
 } // grapply
 
 // slot autscale
 void MainWindow::grautoscaleslot()
 {
+#ifdef HAVE_QWT
   QString yminqst, ymaxqst, zminqst, zmaxqst;
   struct PSImageType *psip;
   struct PSDType     *psdp;
@@ -1755,6 +1768,8 @@ void MainWindow::grautoscaleslot()
   grymaxE->setText(ymaxqst.setNum(d_plot->Plot::ymax, 'g', 4));
   grzminE->setText(zminqst.setNum(d_plot->Plot::zmin, 'g', 4));
   grzmaxE->setText(zmaxqst.setNum(d_plot->Plot::zmax, 'g', 4));
+#endif
+  // have_qwt
 } // end slot autoscale
 
 // slot grating
@@ -2207,7 +2222,9 @@ void MainWindow::print()
     //  document->print(&printer);
     //printer.setOrientation(QPrinter::Landscape);
     //render( &printer );
+#ifdef HAVE_QWT
     d_plot->printPlot( printer );
+#endif
     statusBar()->showMessage(tr("Ready"), 4000);
 #endif
 } // end print()
@@ -2488,8 +2505,10 @@ void MainWindow::sigmaslot()
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " sigmaslot called" << endl;
 #endif
+#ifdef HAVE_QWT
   d_plot->fwhmon= 0;
   grapplyslot();
+#endif
 } // sigmaslot
 
 // apply slot for source

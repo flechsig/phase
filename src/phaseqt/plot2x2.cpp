@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <27 May 14 12:26:54 flechsig> 
+//  Time-stamp: <27 May 14 14:18:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -10,9 +10,12 @@
 
 #include <iostream>
 #include "phaseqt.h"
+
 #ifdef HAVE_QWT
 #include "plot2x2.h"
+#endif
 
+#ifdef HAVE_QWT
 using namespace std;   // fuer cout z.B.
 
 // constructor of the plot

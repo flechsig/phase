@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2014-05-23 23:50:07 flechsig> 
+dnl   Time-stamp: <27 May 14 10:58:44 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -226,11 +226,14 @@ AC_ARG_WITH([qwt],
     qwt=${with_qwt}
     if test "${qwt}" = "no"; then
        echo "do not use qwt"
+       have_qwt="no"
     else
       dnl   echo "do use qwt"
       AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
       [
         AC_SUBST(QWT, [${qwt}])
+	have_qwt="yes"
+	AC_DEFINE([HAVE_QWT], 1, [qwt])
         qwti=${qwt}
 	AC_SUBST(QWTI,[${qwti}])
       ],
@@ -245,6 +248,8 @@ AC_ARG_WITH([qwt],
         AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
 	dnl check if we find the libqwt.so there 
 	AC_SUBST(QWT,  [${qwt}])
+	have_qwt="yes"
+        AC_DEFINE([HAVE_QWT], 1, [qwt])
 	qwti=${qwt}
         AC_SUBST(QWTI, [${qwti}])
     else
@@ -253,7 +258,9 @@ AC_ARG_WITH([qwt],
       qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | tail -1 | sed -e 's|/lib/libqwt.so||'`
       if test -n "${qwt}"; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
-         AC_SUBST(QWT,  [${qwt}])
+         AC_SUBST(QWT, [${qwt}])
+	 have_qwt="yes"
+         AC_DEFINE([HAVE_QWT], 1, [qwt])
 	 qwti=${qwt}
          AC_SUBST(QWTI, [${qwti}])
       else
@@ -263,12 +270,15 @@ AC_ARG_WITH([qwt],
       qwti=`find /usr/include -name qwt_plot.h -print 2>/dev/null | tail -1 | sed -e 's|/qwt_plot.h||'`
       if test -n "${qwti}"; then
          AC_MSG_NOTICE([(2) we found qwt_plot.h under ${qwti} - OK])
+	 have_qwt="yes"
+	 AC_DEFINE([HAVE_QWT], 1, [qwt])
          AC_SUBST(QWTI, [${qwti}])
       else
          AC_MSG_ERROR(cannot find any qwt_plot.h)
       fi
     fi
   ])
+  AM_CONDITIONAL([QWT], [test x$have_qwt = xyes])
 dnl end QWT
 
 dnl Check for HDF5 support

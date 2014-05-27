@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <15 May 12 17:25:08 flechsig>  */
+/*  Time-stamp: <27 May 14 14:27:22 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -36,5 +36,6 @@ private:
     double        *c1x, *c4x, *c1y, *c2y, *c3y, *c4y;
     double        z1min, z1max, z4min, z4max, ymin[4], ymax[4];
 };
+
 #endif
 // end
