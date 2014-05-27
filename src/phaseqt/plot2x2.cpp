@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-05-22 00:02:10 flechsig> 
+//  Time-stamp: <27 May 14 12:26:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -9,8 +9,9 @@
 //  $Author$ 
 
 #include <iostream>
-#include "plot2x2.h"
 #include "phaseqt.h"
+#ifdef HAVE_QWT
+#include "plot2x2.h"
 
 using namespace std;   // fuer cout z.B.
 
@@ -149,6 +150,6 @@ void Plot2x2::myattach()
   plt->setAxisScale(QwtPlot::xBottom, z4min, z4max, 0 );
   plt->setCanvasBackground( QColor( Qt::yellow ) );
   d_curve4->attach(plt);
-
-  
 } /* myattach */
+#endif
+// end qwt

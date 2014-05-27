@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/plotmatrix.cpp
 //  Date      : <14 May 12 14:01:24 flechsig> 
-//  Time-stamp: <2014-05-22 06:36:12 flechsig> 
+//  Time-stamp: <27 May 14 12:30:36 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -19,6 +19,11 @@
 
 // UF more or less as example but without synchronized scales
 
+#ifdef HAVE_CONFIG_H
+  #include "config.h"
+#endif
+
+#ifdef HAVE_QWT
 #include <qlayout.h>
 #include <qpen.h>
 #include <qwt_plot.h>
@@ -316,3 +321,6 @@ void PlotMatrix::alignVAxes( int col, int axis )
         }
     }
 }
+#endif 
+//qwt
+// end
