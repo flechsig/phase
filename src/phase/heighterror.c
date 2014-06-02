@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <26 May 14 09:53:53 flechsig>  */
+ /* Time-stamp: <02 Jun 14 17:04:22 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -40,7 +40,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
   struct ElementType  *el;
   struct SurfaceType  *sf;
     
-  //lvars for local copies
+  // lvars for local copies
   double lambda, cosa, cosb;
   
 #ifdef DEBUG1
@@ -53,16 +53,16 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
    
    // check w, l, set field outside to zero
    // increase the number of lost principle rays
-   if ((*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || 
-       (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2)) 
+   if ( (*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || 
+        (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2) ) 
      {
-       ((struct PSDType *)bl->RESULT.RESp)->outside_wl++;
+       ((struct PSDType *)bl->RESULT.RESp)->outside_wl++;  // increase lost "rays"
        *eyre= *eyim= *ezre= *ezim= 0.0;
        return;
      }
 
    // return if height error is switched off
-   if (! bl->BLOptions.PSO.with_herror)
+   if ( !bl->BLOptions.PSO.with_herror )
     {
 #ifdef DEBUG1
       printf("debug: %s slope errors calculation switched off - return\n", __FILE__);
@@ -90,7 +90,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
 
   // apply the phase shift=  -k * u * (sin(alpha_g) + sin(beta_g)) ???  
   // uf do we really need fabs(cos()) ???
-  phaseshift= -2* PI/ lambda* u_interp* (1/fabs(cosa)+ 1/fabs(cosb));
+  phaseshift= -2* PI/ lambda* u_interp* (1.0/fabs(cosa)+ 1.0/fabs(cosb));
 
   // apply phase shift
   ypha+= phaseshift;
@@ -137,20 +137,19 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   index_l= 0;
   // add some test to avoid memory overrun
   while (wvecp[index_w] < *wwert) 
-    {
-      index_w++;
-    }
+    if (index_w < (nw- 1)) index_w++; else break;  // break ends the loop
+   
   while (lvecp[index_l] < *lwert) 
-    {
-      index_l++;
-    }
+    if (index_l < (nl- 1)) index_l++; else break;
     
-  w1 = wvecp[index_w- 1];
+  w1 = (index_w) ? wvecp[index_w- 1] : wvecp[0];
   w2 = wvecp[index_w];
   
-  l1 = lvecp[index_l- 1];
+  l1 = (index_l) ? lvecp[index_l- 1] : lvecp[0];
   l2 = lvecp[index_l];
   
+  // w2 is higher than w1 or the same- ame for l
+
   u1 = uvecp[(index_l- 1)* nw + (index_w- 1)];	// u1 = u(w1,l1)
   u2 = uvecp[(index_l- 1)* nw + index_w];	// u2 = u(w2,l1)
   u3 = uvecp[index_l* nw + (index_w- 1)];	// u3 = u(w1,l2)
@@ -293,6 +292,7 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 int check_hdf5_4_height(char *fname, char *mname, int verbose)
 {
   int myreturn;
+
 #ifdef HAVE_HDF5
   hid_t file_id;
   
@@ -302,9 +302,9 @@ int check_hdf5_4_height(char *fname, char *mname, int verbose)
 
   file_id= myH5Fopen(fname);
  
-  myreturn= (   check4Field(file_id, mname, "wvec")
-		&& check4Field(file_id, mname, "lvec")
-		&& check4Field(file_id, mname, "height_vec")	) ;
+  myreturn= (    check4Field(file_id, mname, "wvec")
+	      && check4Field(file_id, mname, "lvec")
+	      && check4Field(file_id, mname, "height_vec") );
   
   if (!myreturn)
     {
@@ -313,14 +313,13 @@ int check_hdf5_4_height(char *fname, char *mname, int verbose)
     
   H5Fclose(file_id);
 
-  if ( verbose && (myreturn == 0)) printf("file %s has not the expected type\n", fname);
+  if (verbose && (myreturn == 0)) printf("file %s has not the expected type\n", fname);
 
 #ifdef DEBUG
   printf("debug: file %s check type of file returns %d\n", __FILE__, myreturn);
 #endif
+
 #endif
   return myreturn;
 }  /* check_hdf5_4_height */
-
-
 // end /afs/psi.ch/project/phase/src/phase/heighterror.c
