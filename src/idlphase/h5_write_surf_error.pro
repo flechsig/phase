@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <03 Jun 14 11:25:50 flechsig> 
+;  Time-stamp: <03 Jun 14 11:39:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -70,6 +70,8 @@ if nu ne (nw*nl) then begin
     return
 endif
 
+datatype_double_id = H5T_IDL_CREATE(w[0])
+
 file_id  = H5F_CREATE(fname)
 group_id = H5G_CREATE(file_id, ename)
 
@@ -78,10 +80,10 @@ u_dataspace_id = H5S_create_simple(nu)
 w_dataspace_id = H5S_create_simple(nw)
 l_dataspace_id = H5S_create_simple(nl)
 
-a_dataset_id = H5D_CREATE(file_id,  'height2D',   datatype_double_id, a_dataspace_id);
-u_dataset_id = H5D_CREATE(file_id,  'height_vec', datatype_double_id, u_dataspace_id);
-w_dataset_id = H5D_CREATE(file_id,  'wvec',       datatype_double_id, w_dataspace_id);
-l_dataset_id = H5D_CREATE(file_id,  'lvec',       datatype_double_id, l_dataspace_id);
+a_dataset_id = H5D_CREATE(group_id,  'height2D',   datatype_double_id, a_dataspace_id);
+u_dataset_id = H5D_CREATE(group_id,  'height_vec', datatype_double_id, u_dataspace_id);
+w_dataset_id = H5D_CREATE(group_id,  'wvec',       datatype_double_id, w_dataspace_id);
+l_dataset_id = H5D_CREATE(group_id,  'lvec',       datatype_double_id, l_dataspace_id);
 
 H5D_WRITE, a_dataset_id, u2
 H5D_WRITE, u_dataset_id, u1

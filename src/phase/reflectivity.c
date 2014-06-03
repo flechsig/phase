@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <13 May 14 17:23:29 flechsig>  */
+/* Time-stamp: <03 Jun 14 12:12:53 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -197,7 +197,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   material= ep->MDat.material;
   rp= (struct ReflecType *)&ep->reflec;
 
-#ifdef DEBUG1
+#ifdef DEBUG
   printf("debug: SetReflectivity called, material= >%s<, file= %s\n", material, __FILE__);
 #endif
 
