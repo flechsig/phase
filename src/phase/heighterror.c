@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <03 Jun 14 09:56:42 flechsig>  */
+ /* Time-stamp: <03 Jun 14 12:25:14 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -336,14 +336,20 @@ int check_hdf5_4_height(char *fname, char *mname, int verbose)
   if (!myreturn)
     {
       fprintf(stderr, "file %s does not contain surface data for element >>%s<<\n", fname, mname);
-    }
+    } 
     
   H5Fclose(file_id);
 
-  if (verbose && (myreturn == 0)) printf("file %s has not the expected type\n", fname);
+  if (verbose)
+    { 
+      if (myreturn == 0) 
+	printf("file %s has not the expected type or element not found\n", fname);
+      else
+	printf("file %s has the expected type, data for element >>%s<< found\n", fname, mname);
+    }
 
 #ifdef DEBUG
-  printf("debug: file %s check type of file returns %d\n", __FILE__, myreturn);
+  printf("debug: file %s check type of file returns %d (> 0 means OK)\n", __FILE__, myreturn);
 #endif
 
 #endif
