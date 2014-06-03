@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <02 Jun 14 17:04:22 flechsig>  */
+ /* Time-stamp: <03 Jun 14 09:48:28 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -28,7 +28,7 @@
 #include "common.h"
 #include "heighterror.h"
 
-// called from fortran (adaptive_int)
+// called from fortran in phase_source.F
 // function: aperture check and height error phase shift
 // uf rewrite to amplitude and phase for debugging and consistency (compl. math)
 void apply_height_error_(int *blp, double *wwert, double *lwert, 
@@ -85,7 +85,8 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
 	 *wwert, *lwert);
 #endif
 
-  // get interpolated height for w and l 
+  // get interpolated height depending on w and l 
+  // should work for 1d and 2d maps
   surf_height_interp(sf, wwert, lwert, &u_interp);
 
   // apply the phase shift=  -k * u * (sin(alpha_g) + sin(beta_g)) ???  
@@ -104,15 +105,16 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
 
 } // end apply_height_error_
 
-// interpolate the height
+// interpolate the height depending on w and l
+// function should work for 1d and 2d maps
 void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, double *u_interp)
 {
   double *wvecp, *lvecp, *uvecp;
   int    nw, nl, nu;  
   int    i, j;
-  int    index_w, index_l;
+  int    iw1, iw2, il1, il2, diw, dil, diwl;
   double factor1, factor2, factor3, factor4; 
-  double w1, w2, l1, l2, u1, u2, u3, u4, dwl;
+  double w1, w2, l1, l2, u1, u2, u3, u4, dw, dl, dwl;
     
 #ifdef DEBUG1
   printf("debug: surf_height_interp received values of wwert, lwert: %g, %g\n", *wwert, *lwert);
@@ -131,45 +133,67 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 #endif 
   
   // start interpolation
-  
   // search closest values to wwert and lwert in the vectors for w, l and u
-  index_w= 0;
-  index_l= 0;
-  // add some test to avoid memory overrun
-  while (wvecp[index_w] < *wwert) 
-    if (index_w < (nw- 1)) index_w++; else break;  // break ends the loop
-   
-  while (lvecp[index_l] < *lwert) 
-    if (index_l < (nl- 1)) index_l++; else break;
-    
-  w1 = (index_w) ? wvecp[index_w- 1] : wvecp[0];
-  w2 = wvecp[index_w];
   
-  l1 = (index_l) ? lvecp[index_l- 1] : lvecp[0];
-  l2 = lvecp[index_l];
-  
-  // w2 is higher than w1 or the same- ame for l
+  iw1= iw2= il1= il2= 0; // initialize the index
 
-  u1 = uvecp[(index_l- 1)* nw + (index_w- 1)];	// u1 = u(w1,l1)
-  u2 = uvecp[(index_l- 1)* nw + index_w];	// u2 = u(w2,l1)
-  u3 = uvecp[index_l* nw + (index_w- 1)];	// u3 = u(w1,l2)
-  u4 = uvecp[index_l* nw + index_w];		// u4 = u(w2,l2)
-  
-  //calculation of weight factors
-  dwl = (w2- w1)* (l2- l1);
-  
-  factor1 = (*wwert- w1)* (*lwert- l1) / dwl;
-  factor2 = (w2- *wwert)* (*lwert- l1) / dwl;
-  factor3 = (*wwert- w1)* (l2- *lwert) / dwl;
-  factor4 = (w2- *wwert)* (l2- *lwert) / dwl;
-  
-  // weighted sum 
-  *u_interp = factor1* u4 + factor2* u3 + factor3* u2 + factor4* u1;
+  // added some test to avoid memory overrun
+  while ( *wwert > wvecp[iw2] ) 
+    if (iw2 < (nw- 1)) iw2++; else break;  // break ends the loop
 
-    // end of the interpolation
+  while ( *lwert > lvecp[il2] ) 
+    if (il2 < (nl- 1)) il2++; else break;  // break ends the loop
+
+  if (iw2 > 0) iw1= iw2- 1;
+  if (il2 > 0) il1= il2- 1;
+
+  // index are now determined !! iw1== iw2 is allowed, same for l !!
+  // fill variables
+  w1 = wvecp[iw1];
+  w2 = wvecp[iw2];
+  l1 = lvecp[il1];
+  l2 = lvecp[il2];
+  u1 = uvecp[il1* nw + iw1];	// u1 = u(w1,l1)
+  u2 = uvecp[il1* nw + iw2];	// u2 = u(w2,l1)
+  u3 = uvecp[il2* nw + iw1];	// u3 = u(w1,l2)
+  u4 = uvecp[il2* nw + iw2];	// u4 = u(w2,l2)
+  dw = w2- w1;
+  dl = l2- l1;
+  dwl= dw * dl;
+  diw= iw2- iw1;
+  dil= il2- il1;
+  diwl= diw* dil;
+
+  // calculation of weight factors case dependent
+  *u_interp= u1;        // default value for return
+  if (diwl && (fabs(dwl) > ZERO)) // 2d case
+    {
+      factor1 = (*wwert- w1)* (*lwert- l1) / dwl;
+      factor2 = (w2- *wwert)* (*lwert- l1) / dwl;
+      factor3 = (*wwert- w1)* (l2- *lwert) / dwl;
+      factor4 = (w2- *wwert)* (l2- *lwert) / dwl;
+      *u_interp = factor1* u4 + factor2* u3 + factor3* u2 + factor4* u1; // weighted sum 
+    } else        // 1d case     
+    {
+      if (diw && !dil && (fabs(dw) > ZERO)) // 1d in w
+	{
+	  factor3 = (*wwert- w1) / dw;
+	  factor4 = (w2- *wwert) / dw;
+	  *u_interp = factor3* u2 + factor4* u1; // weighted sum 
+	} else
+	{
+	  if (dil && !diw && (fabs(dl) > ZERO)) // 1d in l
+	    {
+	      factor2 = (*lwert- l1) / dl;
+	      factor4 = (l2- *lwert) / dl;
+	      *u_interp = factor2* u3 + factor4* u1; // weighted sum 
+	    } // no else since we have a default
+	} // end 1d in l
+    }
+  // end of the interpolation
   
 #ifdef DEBUG1
-  printf("i, j, p  = %d, %d, %d\n", index_w-1, index_l-1, (index_l-1)*nw + (index_w -1));
+  printf("i, j, p  = %d, %d, %d\n", iw1, il1, il1* nw + iw1);
   printf("w1 , l1, u1 = %g, %g, %.4g\n", w1 , l1, u1);
   printf("w2 , l1, u2 = %g, %g, %.4g\n", w2 , l1, u2);
   printf("w1 , l2, u3 = %g, %g, %.4g\n", w1 , l2, u3);
