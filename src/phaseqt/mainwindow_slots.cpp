@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <27 May 14 10:38:49 flechsig> 
+//  Time-stamp: <03 Jun 14 12:09:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1268,11 +1268,9 @@ void MainWindow::elementApplyBslot()
   
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
 
-#ifdef EXPERIMENTAL
   myparent->mySetReflectivity(&(myparent->myBeamline()->ElementList[number]));   // routine takes wavelength in m
   if (myparent->myBeamline()->BLOptions.PSO.with_herror) 
     myparent->myread_hdf5_height_file(&(myparent->myBeamline()->ElementList[number]));
-#endif
 
   myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), (int *)&number);
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
