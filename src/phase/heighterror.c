@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <03 Jun 14 09:48:28 flechsig>  */
+ /* Time-stamp: <03 Jun 14 09:56:42 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -107,6 +107,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
 
 // interpolate the height depending on w and l
 // function should work for 1d and 2d maps
+// for easy understanding we introduce a number of local variables 
 void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, double *u_interp)
 {
   double *wvecp, *lvecp, *uvecp;
@@ -149,38 +150,40 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 
   // index are now determined !! iw1== iw2 is allowed, same for l !!
   // fill variables
-  w1 = wvecp[iw1];
-  w2 = wvecp[iw2];
-  l1 = lvecp[il1];
-  l2 = lvecp[il2];
-  u1 = uvecp[il1* nw + iw1];	// u1 = u(w1,l1)
-  u2 = uvecp[il1* nw + iw2];	// u2 = u(w2,l1)
-  u3 = uvecp[il2* nw + iw1];	// u3 = u(w1,l2)
-  u4 = uvecp[il2* nw + iw2];	// u4 = u(w2,l2)
-  dw = w2- w1;
-  dl = l2- l1;
-  dwl= dw * dl;
-  diw= iw2- iw1;
-  dil= il2- il1;
+  w1  = wvecp[iw1];
+  w2  = wvecp[iw2];
+  l1  = lvecp[il1];
+  l2  = lvecp[il2];
+  u1  = uvecp[il1* nw + iw1];	// u1 = u(w1,l1)
+  u2  = uvecp[il1* nw + iw2];	// u2 = u(w2,l1)
+  u3  = uvecp[il2* nw + iw1];	// u3 = u(w1,l2)
+  u4  = uvecp[il2* nw + iw2];	// u4 = u(w2,l2)
+  dw  = w2- w1;
+  dl  = l2- l1;
+  dwl = dw * dl;
+  diw = iw2- iw1;
+  dil = il2- il1;
   diwl= diw* dil;
 
-  // calculation of weight factors case dependent
-  *u_interp= u1;        // default value for return
+  // calculation of weight factors is case dependent
+  *u_interp= u1;    // the default value for return is index 0
   if (diwl && (fabs(dwl) > ZERO)) // 2d case
     {
-      factor1 = (*wwert- w1)* (*lwert- l1) / dwl;
-      factor2 = (w2- *wwert)* (*lwert- l1) / dwl;
-      factor3 = (*wwert- w1)* (l2- *lwert) / dwl;
-      factor4 = (w2- *wwert)* (l2- *lwert) / dwl;
-      *u_interp = factor1* u4 + factor2* u3 + factor3* u2 + factor4* u1; // weighted sum 
-    } else        // 1d case     
+      factor1  = (*wwert- w1)* (*lwert- l1) / dwl;
+      factor2  = (w2- *wwert)* (*lwert- l1) / dwl;
+      factor3  = (*wwert- w1)* (l2- *lwert) / dwl;
+      factor4  = (w2- *wwert)* (l2- *lwert) / dwl;
+      *u_interp= factor1* u4 + factor2* u3 + factor3* u2 + factor4* u1; // weighted sum 
+    } 
+  else        // 1d case     
     {
       if (diw && !dil && (fabs(dw) > ZERO)) // 1d in w
 	{
-	  factor3 = (*wwert- w1) / dw;
-	  factor4 = (w2- *wwert) / dw;
+	  factor3   = (*wwert- w1) / dw;
+	  factor4   = (w2- *wwert) / dw;
 	  *u_interp = factor3* u2 + factor4* u1; // weighted sum 
-	} else
+	} 
+      else
 	{
 	  if (dil && !diw && (fabs(dl) > ZERO)) // 1d in l
 	    {
@@ -188,8 +191,8 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 	      factor4 = (l2- *lwert) / dl;
 	      *u_interp = factor2* u3 + factor4* u1; // weighted sum 
 	    } // no else since we have a default
-	} // end 1d in l
-    }
+	} // end 1d 
+    } // end 
   // end of the interpolation
   
 #ifdef DEBUG1
