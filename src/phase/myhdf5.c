@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2014-05-20 23:24:43 flechsig>  */
+/*  Time-stamp: <04 Jun 14 15:50:27 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -58,12 +58,18 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
   //H5Tset_size(type_id, H5T_VARIABLE); does not work
   H5Tset_size(type_id, strlen(content)+1); 
   dataspace_id= H5Screate(H5S_SCALAR);
-  attr_id= H5Acreate (dataset_id, aname, type_id, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
+  attr_id= H5Acreate(dataset_id, aname, type_id, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
   H5Awrite(attr_id, type_id, content); 
   H5Aclose(attr_id);
   H5Tclose(type_id);
   H5Sclose(dataspace_id);
 } /* add_string_attribute_d */
+
+/* add unit attribute */
+void add_unit(hid_t dataset_id, char *content)
+{
+  add_string_attribute_d(dataset_id, "unit", content);
+}  /* add_unit */
 
 // check existence of a field 
 int check4Field(hid_t fid, char *s1, char *s2)
@@ -75,6 +81,32 @@ int check4Field(hid_t fid, char *s1, char *s2)
    myret= (H5Lexists(fid, fieldname, H5P_DEFAULT) < 1) ? 0 : 1; 
    return myret;
 } // check4Field
+
+void getAttribute(hid_t fid, char *gname, char *aname, char *content)
+{
+  hid_t   attr_id, dataset_id;
+  void *buf;
+
+  buf= (void *)content;
+  dataset_id= H5Dopen(fid, gname, H5P_DEFAULT);
+  if (dataset_id < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, gname);
+      exit(-1);
+    }
+  attr_id= H5Aopen(dataset_id, aname, H5P_DEFAULT);
+  if (attr_id < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: attribute %s not found in %s- exit\n", __FILE__, aname, gname);
+      exit(-1);
+    }
+  H5Aread(attr_id, H5P_DEFAULT, buf);
+#ifdef DEBUG
+  printf("debug: attribute %s/%s= %s\n", gname, aname, content);
+#endif
+  H5Aclose(attr_id);
+  H5Dclose(dataset_id);
+} /* getAttribute */
 
 int getDatasetSize(hid_t fid, char *name)
 {
@@ -94,6 +126,12 @@ int getDatasetSize(hid_t fid, char *name)
   H5Sclose(dataspace_id);
   return dims[0];
 }  /* getDatasetSize */
+
+void getUnit(hid_t fid, char *gname, char *content)
+{
+  char unit[5]= "unit";
+  getAttribute(fid, gname, unit, content);
+} /* getUnit */
 
 /* H5Fopen wrapper with error handling */
 hid_t myH5Fopen(char *name)

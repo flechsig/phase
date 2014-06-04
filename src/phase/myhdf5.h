@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myhdf5.h */
 /*  Date      : <20 Mar 13 16:46:54 flechsig>  */
-/*  Time-stamp: <04 Jun 14 15:24:09 flechsig>  */
+/*  Time-stamp: <04 Jun 14 15:35:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -24,8 +24,9 @@ void  add_unit(hid_t, char *);
 int   check4Field(hid_t, char *, char *);
 void  readDataDouble(hid_t, char *, double *, int);
 void  readDataInt(hid_t, char *, int *, int);
+void  getAttribute(hid_t, char *, char *, char *);
 int   getDatasetSize(hid_t, char *);
-void  getUnit(hid_t, char *);
+void  getUnit(hid_t, char *, char *);
 hid_t myH5Fopen(char *);
 void  writeDataDouble(hid_t, char *, double *, int, char *);
 void  writeDataInt(hid_t, char *, int *, int, char *);
