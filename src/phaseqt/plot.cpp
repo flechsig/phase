@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <27 May 14 14:32:04 flechsig> 
+//  Time-stamp: <04 Jun 14 16:25:04 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1275,8 +1275,8 @@ void Plot::statistics()
   tt *= binsize;   // value normalized to m^2
   cout << "statistics: binsize= " << binsize << " mm^2, tt=" << tt << endl;
 
-  if (cz < 1e-3) cz= 0.0;
-  if (cy < 1e-3) cy= 0.0;
+  if (fabs(cz) < 1e-3) cz= 0.0;
+  if (fabs(cy) < 1e-3) cy= 0.0;
   if (wz < 1e-3) wz= 0.0;
   if (wy < 1e-3) wy= 0.0;
   
