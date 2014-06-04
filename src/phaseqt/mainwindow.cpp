@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <04 Jun 14 17:18:13 flechsig> 
+//  Time-stamp: <04 Jun 14 17:19:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2604,9 +2604,9 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
 
       rzLabel0->setText(tr("min @ (z, y)")); // 50
-      rzLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
+      rzLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 2)+ ","+ qst.setNum(pp->stminy, 'g', 2)+ ")</FONT>"); // 41
       ryLabel0->setText(tr("max @ (z, y)")); // 51
-      ryLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>"); // 41
+      ryLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 2)+ ","+ qst.setNum(pp->stmaxy, 'g', 2)+ ")</FONT>"); // 41
     }
   else
     {
