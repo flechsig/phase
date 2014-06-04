@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <27 May 14 14:25:59 flechsig>  */
+/*  Time-stamp: <04 Jun 14 16:26:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -70,7 +70,7 @@ public:
     int    h2a_nx, h2a_ny;
     double *pox, *poy ;
     double h2max, h2min;
-    double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz, tt;  // statistics
+    double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz, tt, mi, ma;  // statistics
     int    fwhmon;
     void   hfill1(double *, double, double, int);
     void   hfill2(int);  // GO
