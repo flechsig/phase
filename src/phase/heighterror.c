@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <04 Jun 14 08:40:38 flechsig>  */
+ /* Time-stamp: <04 Jun 14 08:45:00 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -169,7 +169,8 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   // UF Jun 14 borders and outside region to be checked if interpolation is correct  
 
   *u_interp= u1;    // the default value for return is index 0
-  if (diwl && (fabs(dwl) > ZERO)) // 2d case
+
+  if (diwl && (fabs(dwl) > ZERO)) // 2d case inside
     {
       factor1  = (*wwert- w1)* (*lwert- l1) / dwl;
       factor2  = (w2- *wwert)* (*lwert- l1) / dwl;
@@ -177,9 +178,9 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
       factor4  = (w2- *wwert)* (l2- *lwert) / dwl;
       *u_interp= factor1* u4 + factor2* u3 + factor3* u2 + factor4* u1; // weighted sum 
     } 
-  else        // 1d case     
+  else        // end 2d begin 1d case     
     {
-      if (diw && !dil && (fabs(dw) > ZERO)) // 1d in w
+      if (diw && !dil && (fabs(dw) > ZERO)) // 1d in w inside
 	{
 	  factor3   = (*wwert- w1) / dw;
 	  factor4   = (w2- *wwert) / dw;
@@ -187,12 +188,16 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 	} 
       else
 	{
-	  if (dil && !diw && (fabs(dl) > ZERO)) // 1d in l
+	  if (dil && !diw && (fabs(dl) > ZERO)) // 1d in l inside
 	    {
 	      factor2 = (*lwert- l1) / dl;
 	      factor4 = (l2- *lwert) / dl;
 	      *u_interp = factor2* u3 + factor4* u1; // weighted sum 
-	    } // no else since we have a default
+	    } 
+	  else // what happens outside ??
+	    {
+
+	    }
 	} // end 1d 
     } // end 
   // end of the interpolation
