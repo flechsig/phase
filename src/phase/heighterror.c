@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <03 Jun 14 12:25:14 flechsig>  */
+ /* Time-stamp: <04 Jun 14 08:40:38 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -165,7 +165,9 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
   dil = il2- il1;
   diwl= diw* dil;
 
-  // calculation of weight factors is case dependent
+  // calculation of weight factors depends on 1d or 2d
+  // UF Jun 14 borders and outside region to be checked if interpolation is correct  
+
   *u_interp= u1;    // the default value for return is index 0
   if (diwl && (fabs(dwl) > ZERO)) // 2d case
     {
