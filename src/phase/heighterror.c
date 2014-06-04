@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <04 Jun 14 15:12:48 flechsig>  */
+ /* Time-stamp: <04 Jun 14 15:13:55 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -191,7 +191,7 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 	      factor4 = (l2- *lwert) / dl;
 	      *u_interp = factor2* u3 + factor4* u1; // weighted sum 
 	    } 
-	  else     // outside defined region i.e. dil=diw=0
+	  else     // outside defined region i.e. dil=diw=0, wl1=wl2
 	    *u_interp= u1;  	      
 	} // end 1d 
     } // end 
