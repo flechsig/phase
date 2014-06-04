@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <27 May 14 14:22:21 flechsig> 
+//  Time-stamp: <04 Jun 14 17:18:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2509,9 +2509,10 @@ void MainWindow::UpdateSourceBox()
 
 #ifdef HAVE_QWT
 // update the statistics in graphic box, ray version if rays > 0
+// UF renaming the fields with generic names would be better
 void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
-  double trans;
+  double  trans;
   QString qst;
   int     po, porays;
 
@@ -2537,10 +2538,10 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
-  czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>");
-  cyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>");		   
-  wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>");
-  wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	
+  czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>"); // 00
+  cyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>");	// 01	   
+  wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>"); // 10
+  wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	// 11
 
   if ( !po )  // go
     {
@@ -2584,23 +2585,39 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 
   if (po) 
     {
-      wdzLabel0->setText(QString(tr("max (W/m^2)")));
-      wdzLabel0->setStatusTip(tr("maximum of intensity (W/m^2)"));
-      wdyLabel0->setText(QString(tr("total (W)")));
-      wdyLabel0->setStatusTip(tr("intensity integral (W)"));
-      //wdyLabel->setStatusTip(tr("intensity integral xx"));
-      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6, 'g', 4)+ "</FONT>");  // give out value per m^2
-      wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");
+      cdzLabel0->setText(QString(tr("max (W/m^2)")));  // 30
+      cdzLabel0->setStatusTip(tr("maximum of intensity (W/m^2)"));
+      cdyLabel0->setText(QString(tr("total (W)")));    // 31
+      cdyLabel0->setStatusTip(tr("intensity integral (W)"));
+      cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6, 'g', 4)+ "</FONT>");  // 30 give out value per m^2
+      cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");         // 31
 
-      rayLabel0->setText(QString(tr("principle r.")));
-      rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
-      traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
+      wdzLabel0->setText(QString(tr("principle rays")));  // 40
+      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
+      wdyLabel0->setText(QString(tr("tansmittance")));  // 40
+      wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>"); // 41
+
+      rayLabel0->setText(QString(tr("min")));  // 40
+      rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
+
+      traLabel0->setText(QString(tr("max")));  // 40
+      traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
+
+      rzLabel0->setText(tr("min @ (z, y)")); // 50
+      rzLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
+      ryLabel0->setText(tr("max @ (z, y)")); // 51
+      ryLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>"); // 41
     }
   else
     {
-      rayLabel0->setText(QString(tr("rays")));
-      wdzLabel0->setStatusTip(tr("horizontal divergence"));
-      wdyLabel0->setStatusTip(tr("vertical divergence"));
+      rayLabel0->setText(QString(tr("rays")));  // 40
+      wdzLabel0->setStatusTip(tr("horizontal divergence")); // 30
+      wdyLabel0->setStatusTip(tr("vertical divergence"));  // 31
+      rzLabel0->setText(tr("z E/dE FWHM")); // 50
+      ryLabel0->setText(tr("y E/dE FWHM")); // 51
+      traLabel0->setText(QString(tr("tansmittance")));  // 40
+      cdzLabel0->setText(tr("dz center (mrad)"));
+      cdyLabel0->setText(tr("dy center (mrad)"));
     }
 } // UpdateStatistics
 #endif
