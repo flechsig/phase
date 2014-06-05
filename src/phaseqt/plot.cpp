@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <04 Jun 14 16:25:04 flechsig> 
+//  Time-stamp: <04 Jun 14 18:04:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1251,6 +1251,10 @@ void Plot::statistics()
   cz= cy= wz= wy= cdz= cdy= wdz= wdy= ry= rz= tt= 0.0;
   h2a_n= h2a_nx * h2a_ny;
 
+  stmin= stmax= h2a[0];
+  stminz= stmaxz= pox[0];
+  stminy= stmaxy= poy[0];
+
   // we expect to have filled pox, poy, h2a, h2a_nx, h2a_ny
   for (ix=0; ix< h2a_nx; ix++)
     for (iy=0; iy< h2a_ny; iy++) 
@@ -1261,6 +1265,19 @@ void Plot::statistics()
 	cy += poy[iy]* h2a[idxc];
         wz += h2a[idxc]* pow(pox[ix], 2);
 	wy += h2a[idxc]* pow(poy[iy], 2);
+	if (h2a[idxc] <  stmin) 
+	  {  
+	    stmin = h2a[idxc];
+	    stminy= poy[iy];
+	    stminz= pox[ix];
+	  }
+	if (h2a[idxc] >  stmax) 
+	  {  
+	    stmax = h2a[idxc];
+	    stmaxy= poy[iy];
+	    stmaxz= pox[ix];
+	  }
+	//	cout << " xxxxxxx" << stmax << " " << stmaxz << " " << stmaxy << endl;
       }
 
   if (fabs(tt) > ZERO)
@@ -1287,6 +1304,7 @@ void Plot::statistics()
       wdz*= fwhmfac;
       wdy*= fwhmfac;
     }
+  cout << " xxxxxxx" << stmax << " " << stmaxz << " " << stmaxy << endl;
 
 } // Plot::statistics po type
 
