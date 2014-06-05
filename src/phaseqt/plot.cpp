@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <04 Jun 14 18:04:17 flechsig> 
+//  Time-stamp: <05 Jun 14 09:14:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1304,7 +1304,7 @@ void Plot::statistics()
       wdz*= fwhmfac;
       wdy*= fwhmfac;
     }
-  cout << " xxxxxxx" << stmax << " " << stmaxz << " " << stmaxy << endl;
+  //  cout << " xxxxxxx" << stmax << " " << stmaxz << " " << stmaxy << endl;
 
 } // Plot::statistics po type
 
