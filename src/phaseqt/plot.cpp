@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <05 Jun 14 09:14:09 flechsig> 
+//  Time-stamp: <12 Jun 14 15:15:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -672,7 +672,7 @@ void Plot::setPoData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
-  printf("debug: Plot::setphaseData called, datatype: %s\n", datatype);
+  printf("debug: Plot::setPoData called, datatype: %s\n", datatype);
 #endif  
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
