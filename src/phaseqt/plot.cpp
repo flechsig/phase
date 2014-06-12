@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <12 Jun 14 15:15:51 flechsig> 
+//  Time-stamp: <12 Jun 14 15:22:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -674,6 +674,13 @@ void Plot::setPoData(const char *datatype)
 #ifdef DEBUG
   printf("debug: Plot::setPoData called, datatype: %s\n", datatype);
 #endif  
+
+  if ((h2a_nx < 1) || (h2a_ny < 1))
+    {
+      cout << "error: h2a_nxy < 1- probably no data loaded- return" << endl;
+      return;
+    }
+ 
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");

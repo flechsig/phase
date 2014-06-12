@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Jun 14 13:53:25 flechsig> 
+//  Time-stamp: <12 Jun 14 17:24:01 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1619,9 +1619,9 @@ void MainWindow::grapplyslot()
       cout << "use manual saling " << endl;
       d_plot->hfill2((struct SurfaceType *)&(myparent->myBeamline()->ElementList[0].surf));
       d_plot->setPoData("PO height error");
-      UpdateStatistics(d_plot, "Surface height error", 0);
       d_plot->contourPlot();
-      UpdateStatistics(d_plot, "PO Height", 0);
+      UpdateStatistics(d_plot, "Surface height error", -1);
+      
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z  | PLOT_UNWRAP):

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <04 Jun 14 23:51:24 flechsig> 
+//  Time-stamp: <12 Jun 14 17:21:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2514,13 +2514,15 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double  trans;
   QString qst, qst1;
-  int     po, porays;
+  int     po, porays, sf;
 
 #ifdef DEBUG
   cout << "debug: UpdateStatistics called" << endl;
 #endif
 
   po= (rays == 0) ? 1 : 0;
+  sf= (rays < 0)  ? 1 : 0;
+  trans= 0;
 
   if (po)
     {
@@ -2529,10 +2531,10 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iz* 
 	myparent->myBeamline()->BLOptions.xi.ianzy0* 
 	myparent->myBeamline()->BLOptions.xi.ianzz0;
-      trans= 1.0- ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl/ (double)porays;
+      trans= (porays > 0) ? 1.0- ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl/ (double)porays : 0.0;
     }
 
-  trans= po ? trans : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 
+  trans= (po | sf) ? trans : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 
 		   (double)myparent->myBeamline()->RESULT.points1/ 
 		   (double)myparent->myBeamline()->RTSource.raynumber : -1.0);
   
@@ -2583,7 +2585,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       wdyLabel0->setText(QString(tr("dy RMS (mrad)")));
     }
 
-  if (po) 
+  if (po | sf) 
     {
       cdzLabel0->setText(QString(tr("max (W/m^2)")));  // 30
       cdzLabel0->setStatusTip(tr("maximum of intensity (W/m^2)"));
