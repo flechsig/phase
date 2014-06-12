@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <04 Jun 14 17:24:13 flechsig> 
+//  Time-stamp: <12 Jun 14 13:53:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1503,6 +1503,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, PLOT_PO_S1);
       d_plot->setPoData("PO result S1");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_S2):
@@ -1511,6 +1512,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, PLOT_PO_S2);
       d_plot->setPoData("PO result S2");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_S3):
@@ -1519,6 +1521,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, PLOT_PO_S3);
       d_plot->setPoData("PO result S3");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z):
@@ -1527,6 +1530,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, PLOT_PO_PHASE_Z);
       d_plot->setPoData("phase Ez");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z | PLOT_UNWRAP):
@@ -1535,6 +1539,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, (PLOT_PO_PHASE_Z | PLOT_UNWRAP));
       d_plot->setPoData("phase Ez");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y):
@@ -1543,6 +1548,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, PLOT_PO_PHASE_Y);
       d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y | PLOT_UNWRAP):
@@ -1551,6 +1557,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2(psdp, (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
       d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Result", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_S0):
@@ -1568,6 +1575,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S1);
       d_plot->setPoData("PO source S1");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_S2):
@@ -1576,6 +1584,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S2);
       d_plot->setPoData("PO source S2");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_S3):
@@ -1584,6 +1593,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S3);
       d_plot->setPoData("PO source S3");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z):
@@ -1592,6 +1602,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_PHASE_Z);
       d_plot->setPoData("PO source PHASE Z");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y):
@@ -1600,6 +1611,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_PHASE_Y);
       d_plot->setPoData("PO source PHASE Y");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
     case (PLOT_SURF_PROF):
@@ -1609,6 +1621,7 @@ void MainWindow::grapplyslot()
       d_plot->setPoData("PO height error");
       UpdateStatistics(d_plot, "Surface height error", 0);
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Height", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z  | PLOT_UNWRAP):
@@ -1617,6 +1630,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), (PLOT_PO_PHASE_Z  | PLOT_UNWRAP));
       d_plot->setPoData("PO source PHASE Z");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y | PLOT_UNWRAP):
@@ -1625,6 +1639,7 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
       d_plot->setPoData("PO source PHASE Y");
       d_plot->contourPlot();
+      UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
 
