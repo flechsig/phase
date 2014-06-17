@@ -1,19 +1,18 @@
-;; -*-idlwave-*-
-;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
-;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <03 Jun 14 11:39:23 flechsig> 
-;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-;  $Source$ 
-;  $Date$
-;  $Revision$ 
-;  $Author$ 
+; -*-idlwave-*-
+; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/h5_write_surf_error.pro
+; Date      : <17 Jun 14 11:38:15 flechsig> 
+; Time-stamp: <17 Jun 14 11:38:57 flechsig> 
+; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+;
+; $Source$ 
+; $Date$
+; $Revision$ 
+; $Author$ 
 
 pro h5_write_surf_error, fname, ename, u, w, l, verbose=verbose
 ;+
 ; NAME:
 ;   h5_write_surf_error
-;
 ;
 ; PURPOSE:
 ;   write phase surface error file, units m, u can be 1d or 2d data
@@ -22,6 +21,7 @@ pro h5_write_surf_error, fname, ename, u, w, l, verbose=verbose
 ;   phase_h5
 ;
 ; CALLING SEQUENCE:
+;   h5_write_surf_error, fname, ename, u, w, l [,/verbose]
 ;
 ; INPUTS:
 ;   fname: filename
@@ -37,8 +37,13 @@ pro h5_write_surf_error, fname, ename, u, w, l, verbose=verbose
 ;  no
 ;
 ; EXAMPLE:
-;  idl> h5_write_surf_error, 'mysurface', 'm1', u, w, l
-;
+; idl> length= 1.0    ;; m
+; idl> slope = 5e-11  ;; rad
+; idl> file  = 'mysurf-1a.h5'
+; idl> w= (dindgen(101)/100- 0.5)  ;; 1 m
+; idl> l= 0.0
+; idl> u= slope* w
+; idl> h5_write_surf_error, file, 'M1', u, w, l
 ;
 ; MODIFICATION HISTORY:
 ;    25.6.14 UF

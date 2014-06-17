@@ -42,6 +42,7 @@ idl_with_doc_header = \
 	h5_read_genesis.pro \
 	h5_read_phase.pro \
 	h5_read_pha4idl.pro \
+	h5_read_surf_error.pro \
         h5_test.pro \
         h5_write_genesis.pro \
         h5_write_phase.pro \
