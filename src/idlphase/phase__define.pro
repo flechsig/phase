@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Jun 14 09:42:47 flechsig> 
+;  Time-stamp: <18 Jun 14 10:15:43 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -123,6 +123,11 @@ endif else begin
     print, 'drift= ', drift, ' yields to undersampling'
     print, 'use impulse response (IR) based propagator (fresnel, fraunhofer)'
 endelse
+
+myydrift= ywidth^2/ rows/ mylambda
+myzdrift= zwidth^2/ cols/ mylambda
+mydrift = 0.5* (myydrift+ myzdrift)
+print, 'critical drift= ', mydrift
 
 return
 end ;; check_sampling
