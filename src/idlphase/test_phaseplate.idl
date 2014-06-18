@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_phaseplate.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <18 Jun 14 14:15:40 flechsig> 
+; Time-stamp: <18 Jun 14 14:30:13 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -14,7 +14,7 @@
 ;; c) a propagator to see the tilt
 
 drift2=33                         ;; drift after phaseplate 33 m
-cols=4                            ;; 3 columns
+cols=3                            ;; 3 columns
 rows=4                            ;; 4 rows
 theta= 1e-6                       ;; the angle of the outgoing wave in rad (1e-6)
 sizez= 1e-3                       ;; the hor and vertical FOV
