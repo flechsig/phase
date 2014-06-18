@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mywindow.pro
  ; Date      : <18 Jun 14 08:35:17 flechsig> 
- ; Time-stamp: <18 Jun 14 08:39:29 flechsig> 
+ ; Time-stamp: <18 Jun 14 09:01:28 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -43,17 +43,19 @@ pro mywindow, row, col, rows=rows, cols=cols
 ;   UF Jun 2014
 ;-
 
-if n_elements(rows) eq 0 then rows=4
-if n_elements(cols) eq 0 then cols=4
+if n_elements(rows) eq 0 then rows= 4
+if n_elements(cols) eq 0 then cols= 4
 
 ;--------- Get Screen size in pixel -----------
 device, Get_Screen_size=size
-screenX=size[0]
-ScreenY=size[1]
-Wx=ScreenX/rows
-Wy=ScreenY/cols
+screenX= size[0]
+ScreenY= size[1]
+borderx= 5       ;; experimentally determinded
+bordery= 30      ;; experimentally determinded
+Wx= (ScreenX/ rows)- borderx
+Wy= (ScreenY/ cols)- bordery
 
 wnumber= col+ row* cols
-window, wnumber, XSIZE=wx, YSIZE=wy ,XPOS=screenx-wx,YPOS=screeny-1*wy
+window, wnumber, XSIZE=wx, YSIZE=wy, XPOS= wx*(col-1), YPOS= screeny- wy* row
 return
 end
