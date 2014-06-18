@@ -48,6 +48,7 @@ idl_with_doc_header = \
         h5_write_phase.pro \
         h5_write_surf_error.pro \
         initphase.pro \
+	mywindow.pro \
         phaPutEMField.pro \
         phase__define.pro \
 	phunwrap.pro \
