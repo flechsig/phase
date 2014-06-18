@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mywindow.pro
  ; Date      : <18 Jun 14 08:35:17 flechsig> 
- ; Time-stamp: <18 Jun 14 09:27:36 flechsig> 
+ ; Time-stamp: <18 Jun 14 09:29:19 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -13,8 +13,9 @@ pro mywindow, row, col, rows=rows, cols=cols
 ; NAME:
 ;   mywindow
 ;
-; PURPOSE:
-;   position a window in row and col on the screen
+; PURPOSE: 
+;   osition a window in row and col on the screen, the screen
+;   is divided in rows and cols, mywindow,1,1 is the upper left corner
 ;
 ; CATEGORY:
 ;   generic
