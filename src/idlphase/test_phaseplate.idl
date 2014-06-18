@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_phaseplate.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <18 Jun 14 14:01:52 flechsig> 
+; Time-stamp: <18 Jun 14 14:14:45 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -10,19 +10,26 @@
 ; $Author$ 
 
 ;; test the phaseplate routine
-emf=initphase()
-drift2=33
-cols=3
-rows=4
-theta= 1e-6                       ;; the angle of the outgoing wave in rad
+;; a) gaussian source in 125 m, b) a phase plate to tilt the wavefront
+;; c) a propagator to see the tilt
+
+drift2=33                         ;; drift after phaseplate 33 m
+cols=3                            ;; 3 columns
+rows=4                            ;; 4 rows
+theta= 1e-6                       ;; the angle of the outgoing wave in rad (1e-6)
 sizez= 1e-3                       ;; the hor and vertical FOV
-wavelength= 1.24e-10              ;; wavelength
-;;total_phase_shift= 20 * !pi
+wavelength= 1.24e-10              ;; wavelength 1A
+
 total_path_shift= sizez* theta
 total_phase_shift= total_path_shift *2 *!pi/ wavelength 
 
+print, 'total_path_shift = ', total_path_shift, ' (m)'
+print, 'total_phase_shift= ', total_phase_shift, ' (rad)'
+
+emf=initphase()
+
 ;; source
-emf->gaussbeam, dist=125, Nz=243, sizez=0.001, w0=27.7e-6 , wavelength=wavelength
+emf->gaussbeam, dist=125, Nz=243, sizez=sizez, w0=27.7e-6 , wavelength=wavelength
 mywindow,1,1,cols=cols,rows=rows 
 emf->plotintensity
 f= emf->getphase(/raw)
@@ -78,4 +85,6 @@ mycontour,fu,z,y
 mywindow,4,3,cols=cols,rows=rows
 emf->plotphase
 emf->statistics
+print, 'check: the center should be at: ', drift2* theta
 
+;; end
