@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Jun 14 10:15:43 flechsig> 
+;  Time-stamp: <18 Jun 14 10:37:31 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -118,10 +118,10 @@ print, 'act.vert_sampling= ', ywidth^2/ rows, ' (m^2)'
 
 if (ratio gt 1.0) then begin
     print, 'drift= ', drift, ' yields to oversampling'
-    print, 'use transfer function (TR) based propagator (fourier)'
+    print, 'recommend transfer function (TR) based propagator (fourier)'
 endif else begin
     print, 'drift= ', drift, ' yields to undersampling'
-    print, 'use impulse response (IR) based propagator (fresnel, fraunhofer)'
+    print, 'recommend impulse response (IR) based propagator (fresnel, fraunhofer)'
 endelse
 
 myydrift= ywidth^2/ rows/ mylambda
@@ -1270,8 +1270,8 @@ f= self->getfield()
 sizef= size(f,   /dimensions)
 sizea= size(arr, /dimensions)
 
-if sizef ne sizea then begin
-    print, 'phaseplate error: size mismatch ', sizef, ' != ', sizea
+if (sizef[0] ne sizea[0]) or (sizef[1] ne sizea[1]) then begin
+    print, 'phaseplate error: size mismatch '
     print, 'phaseplate return'
     return
 endif
