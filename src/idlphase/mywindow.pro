@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mywindow.pro
  ; Date      : <18 Jun 14 08:35:17 flechsig> 
- ; Time-stamp: <18 Jun 14 09:26:09 flechsig> 
+ ; Time-stamp: <18 Jun 14 09:27:36 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -30,8 +30,8 @@ pro mywindow, row, col, rows=rows, cols=cols
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;   rows: number of rows-    default= 4
-;   cols: number of columns- default= 4
+;   rows: number of rows,    default= 4
+;   cols: number of columns, default= 4
 ;
 ; OUTPUTS:
 ;   no
