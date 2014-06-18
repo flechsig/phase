@@ -110,6 +110,9 @@ idl_DATA  = help.html \
 	test_5000.out-ezimc \
 	test_5000.out-eyrec \
 	test_5000.out-eyimc \
+	test_mirrorg.idl \
+	test_mirrorp.idl \
+	test_mirrort.idl \
 	test_phaseplate.idl \
 	pha4idlstart.idl 	
 

@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Jun 14 10:37:31 flechsig> 
+;  Time-stamp: <18 Jun 14 16:05:23 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1084,9 +1084,9 @@ endcase
 
 ; we calculated the coordinate wm, lm on the mirror as function of y_vec, z_vec, azimut and thetag 
 ; now we calculate the 2d height matrix um
-
+print , 'call interp2d'
 um= interp2d(u, w, l, wm, lm, /grid)  
-
+print , 'mirrorg start loop'
 for i=0, nz-1 do begin
   for j=0, ny-1 do begin
     f1 = um[i,j] * sin(thetag)    ;; 2d interpolator
@@ -1132,7 +1132,7 @@ pro phase::mirrorp, thetag=thetag, azimut=azimut
 ; PROCEDURE:
 ;
 ; EXAMPLE:
-;   idl> emf->mirrorp
+;   idl> emf->mirrorp, thetag=1e-6
 ;
 ; MODIFICATION HISTORY:
 ;   UF Nov 2013
@@ -1228,7 +1228,7 @@ sarr= shift(e0ft,szi,syi)
 myf1= fft(sarr, 1, /center, /double)     
 
 *self.field= myf1   ;; factor
-
+print, 'mirrort not yet debugged!'
 return 
 end
 ;; end mirrort
