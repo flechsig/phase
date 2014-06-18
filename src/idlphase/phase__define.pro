@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <26 May 14 12:24:54 flechsig> 
+;  Time-stamp: <18 Jun 14 09:42:47 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -88,10 +88,10 @@ pro phase::check_sampling, drift=drift
 ;   drift     : drift distance in m
 ;
 ; OUTPUTS:
-;   
+;   no
 ;
 ; EXAMPLE:
-;  idl> emf->check_sampling
+;  idl> emf->check_sampling, drift=drift
 ;
 ; MODIFICATION HISTORY:
 ;   UF 26.5.14
@@ -101,22 +101,20 @@ myy_vec = *self.y_vec
 mylambda= self.wavelength
 cols    = n_elements(myz_vec)
 rows    = n_elements(myy_vec)
-zwidth  = myz_vec[cols-1]- myz_vec[0];
-ywidth  = myy_vec[rows-1]- myy_vec[0];
+zwidth  = myz_vec[cols-1]- myz_vec[0] ;
+ywidth  = myy_vec[rows-1]- myy_vec[0] ;
 
 lambda_x_x= mylambda* drift
 
 yratio= 1.0/(lambda_x_x * rows/ywidth^2)
 zratio= 1.0/(lambda_x_x * cols/zwidth^2) 
-  
-  ratio= 0.5 * (yratio + zratio);
 
-  
+ratio= 0.5 * (yratio + zratio)  ;
 
-  print, 'check_sampling, ratio= ', ratio
-  print, 'critical_sampling= ', lambda_x_x, ' (mm^2)'
-  print, 'act. hor_sampling= ', zwidth^2/ cols, ' (mm^2)'
-  print, 'act.vert_sampling= ', ywidth^2/ rows, ' (mm^2)'
+print, 'check_sampling, ratio= ', ratio
+print, 'critical_sampling= ', lambda_x_x, ' (m^2)'
+print, 'act. hor_sampling= ', zwidth^2/ cols, ' (m^2)'
+print, 'act.vert_sampling= ', ywidth^2/ rows, ' (m^2)'
 
 if (ratio gt 1.0) then begin
     print, 'drift= ', drift, ' yields to oversampling'
@@ -1135,6 +1133,7 @@ pro phase::mirrorp, thetag=thetag, azimut=azimut
 ;   UF Nov 2013
 ;-
 
+print, 'mirrorp caleed with thetag= ', thetag
 if n_elements(azimut) eq 0 then azimut= 0.0 else print, 'azimut not yet implemented!'
 if n_elements(thetag) eq 0 then thetag= !dpi/2.0
 if (abs(thetag)- 1e-9) lt 0.0 then thetag= 1e-9
@@ -1228,6 +1227,56 @@ myf1= fft(sarr, 1, /center, /double)
 return 
 end
 ;; end mirrort
+
+pro phase::phaseplate, arr
+;+
+; NAME:
+;   phase::phaseplate
+;
+; PURPOSE:
+;   multiplys the field by a matrix, the dimensions of the matrix must be the same as the field  
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->phaseplate
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->phaseplate, arr
+;
+; MODIFICATION HISTORY:
+;   UF Jun 2014
+;-
+
+print, 'phaseplate called'
+
+f= self->getfield()
+sizef= size(f,   /dimensions)
+sizea= size(arr, /dimensions)
+
+if sizef ne sizea then begin
+    print, 'phaseplate error: size mismatch ', sizef, ' != ', sizea
+    print, 'phaseplate return'
+    return
+endif
+
+f*= arr
+self->setfield, f
+
+return 
+end
+;; end phaseplate
 
 pro phase::plotamplitude, window=window, _EXTRA=extra
 ;+
