@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Jun 14 16:05:23 flechsig> 
+;  Time-stamp: <18 Jun 14 16:21:03 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1220,8 +1220,10 @@ v = v * (Ny-1)/yy
 
 E0ft = fft(myfield, -1, /center, /double)
 
-szi= 30
-syi= 50
+szi= 0 ;;;30
+;; syi has to be determined from thetag- how???
+syi= 22;fix(ny*thetag/(!pi/2.0))
+print, '******************* syi= ', syi
 
 sarr= shift(e0ft,szi,syi)
 

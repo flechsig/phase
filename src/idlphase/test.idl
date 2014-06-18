@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <29 Aug 13 15:55:02 flechsig> 
+;  Time-stamp: <17 Jun 14 11:44:24 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -68,6 +68,7 @@
 ; MODIFICATION HISTORY:
 ;    11.7.2013 UF
 ;    22.8.2013 RF  renamed from crl_rolf.idl to  crl_focus_1A.idl
+;-
 ;
 ; cd /home/scratch/phase/src/idlphase 
 ;
