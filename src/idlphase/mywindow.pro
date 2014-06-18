@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/mywindow.pro
  ; Date      : <18 Jun 14 08:35:17 flechsig> 
- ; Time-stamp: <18 Jun 14 09:01:28 flechsig> 
+ ; Time-stamp: <18 Jun 14 09:20:48 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -52,10 +52,14 @@ screenX= size[0]
 ScreenY= size[1]
 borderx= 5       ;; experimentally determinded
 bordery= 30      ;; experimentally determinded
-Wx= (ScreenX/ rows)- borderx
-Wy= (ScreenY/ cols)- bordery
+offsetx= 1       ;; experimentally determinded
+offsety= 27      ;; experimentally determinded
+Wx= ((ScreenX- offsetx)/ rows)- borderx
+Wy= ((ScreenY- offsety)/ cols)- bordery
 
 wnumber= col+ row* cols
-window, wnumber, XSIZE=wx, YSIZE=wy, XPOS= wx*(col-1), YPOS= screeny- wy* row
+xpos= (wx+ borderx)* (col-1)
+ypos= screeny- wy- (row-1)* (wy+ bordery)
+window, wnumber, XSIZE=wx, YSIZE=wy, XPOS=xpos, YPOS=ypos
 return
 end
