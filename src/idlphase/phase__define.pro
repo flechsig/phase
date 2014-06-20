@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Jun 14 16:21:03 flechsig> 
+;  Time-stamp: <20 Jun 14 13:38:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1218,12 +1218,19 @@ v = (dindgen(Ny)/(Ny-1) - 0.5)                ;; for even and odd values of Ny, 
 u = u * (Nz-1)/zz                             ;; ok with odd number of elements
 v = v * (Ny-1)/yy
 
-E0ft = fft(myfield, -1, /center, /double)
+E0ft = fft(myfield, -1, /center, /double)     ;; remember: the frequencies are the 
+                                              ;; direction cosines divided by lambda
 
+fy= sin(2.*thetag)/ self.wavelength
 szi= 0 ;;;30
+idx= max(where(u lt fy))
+center_idx= Ny/2
 ;; syi has to be determined from thetag- how???
-syi= 22;fix(ny*thetag/(!pi/2.0))
-print, '******************* syi= ', syi
+
+syi= idx-center_idx ;;8;;fix(sin(thetag)/ self.wavelength)
+
+print, '******************* syi= ', syi, ny/2.0
+print, u
 
 sarr= shift(e0ft,szi,syi)
 
