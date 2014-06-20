@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <20 Jun 14 13:43:26 flechsig> 
+;  Time-stamp: <20 Jun 14 16:08:53 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -885,7 +885,7 @@ return
 end
 ;; end lens
 
-pro phase::mirror, hw=hw, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w
+pro phase::mirror, u=u, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w, l=l
 ;+
 ; NAME:
 ;   phase::mirror
@@ -904,11 +904,12 @@ pro phase::mirror, hw=hw, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w
 ;
 ; KEYWORD PARAMETERS:
 ;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
-;   hw:     the height error of the mirror as a vector of the mirror coordinate w
+;   u:     the height error of the mirror as a vector of the mirror coordinate w
 ;   rl:     short radius
 ;   rw:     long radius
 ;   thetag: grazing angle in rad   
 ;   w     : the mirror coordinate
+;   l     : the mirror coordinate
 ; 
 ; OUTPUTS:
 ;   no
@@ -968,6 +969,7 @@ case azimut of
   end
 endcase
 
+;; the phase shift of a lens
 for i=0, nz-1 do begin
   for j=0, ny-1 do begin
     f1 = myz_vec[i]^2/(2.0*fl) + myy_vec[j]^2/(2.0*fw) ;; phase   
@@ -979,12 +981,12 @@ endfor
 *self.field*= lcomp   ;; factor
 
 ;; deal with error
-if n_elements(hw) ne 0 then begin
+if n_elements(u) ne 0 then begin
     print, 'mirror with height error'
-    if n_elements(w) eq 0 then message, 'we need als the mirror coordinate'
+    if n_elements(w) eq 0 then message, 'we need w as the mirror coordinate'
     print, 'deal with height error'
-    hw1= hw* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
-    w1 = w * sin(thetag) ;; the projection of the mirror
+    hw1= u* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
+    w1 = w* sin(thetag) ;; the projection of the mirror
     hw2= interpol(hw1, w1, myy_vec)
     for i=0, nz-1 do begin
         for j=0, ny-1 do begin
