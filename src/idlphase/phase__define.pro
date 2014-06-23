@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <20 Jun 14 16:08:53 flechsig> 
+;  Time-stamp: <23 Jun 14 14:30:01 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1940,9 +1940,66 @@ max= mymax
 return
 end ;; statistics
 
+pro phase::torus, degree=degree, rl=rl, rw=rw, s1=s1, s2=s2, thetan=thetan, thetag=thetag, verbose=verbose
+;+
+; NAME:
+;   phase::torus
+;
+; PURPOSE:
+;   calculate radii of a toroidal mirror- angle in rad or degree, grazing or normal
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;    
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   /degree: theta in degree, default is rad
+;   rl     : short radius
+;   rw     : long radius
+;   s1     : source distance
+;   s2     : image distance
+;   thetan : angle to normal
+;   thetag : grazing angle
+;   /verbose
+; 
+; OUTPUTS:
+;   no
+;
+; EXAMPLE:
+;  idl> emf->torus, /degree, s1=10, s2=1, thetag=2, /verbose
+;
+; MODIFICATION HISTORY:
+;   UF 26.5.14
+;-
 
+if (n_elements(thetan) ne 0) and (n_elements(degree) ne 0) then thetan= thetan*!dpi/180.
+if (n_elements(thetag) ne 0) and (n_elements(degree) ne 0) then thetan= !dpi/2.0- thetag*!dpi/180.
+if (n_elements(thetag) ne 0) and (n_elements(degree) eq 0) then thetan= !dpi/2.0- thetag
+if (abs(thetan) ge !dpi/2.0) or (abs(s1) lt 1e-10) or (abs(s2) lt 1e-10) then begin
+    message, 'unphysical input- return'
+    return
+endif
 
+rw= 1.0/((1.0/s1+ 1.0/s2) * cos(thetan)/2.0)
+rl= 1.0/((1.0/s1+ 1.0/s2) / (2.0 * cos(thetan)))
+thetag= !dpi/2.0- thetan
 
+if (n_elements(verbose) ne 0) then begin
+    print, 's1    = ', s1, ' m'
+    print, 's2    = ', s2, ' m'
+    print, 'thetan= ', thetan, ' = ', thetan* 180/ !dpi, ' deg.'
+    print, 'thetag= ', thetag, ' = ', thetag* 180/ !dpi, ' deg.'
+    print, 'rw    = ', rw, ' m'
+    print, 'rl    = ', rl, ' m'
+endif
+
+return
+end ;; torus
 
 ;; the phase object
 pro phase__define
