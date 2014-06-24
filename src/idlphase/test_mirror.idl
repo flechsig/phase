@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_mirror.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <24 Jun 14 09:15:49 flechsig> 
+; Time-stamp: <24 Jun 14 09:24:47 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -41,17 +41,17 @@ emf->plotphase
 emf->h5_write,'test_mirror.h5'
 
 ;; height error
-w= 1.0* (dindgen(101)/100- 0.5)    ;; 1 m mirror
-l= 1e-2* (dindgen(11)/10- 0.5)   ;; 1cm
-u2= dblarr(101,11)
-u1= dblarr(101)
-for i=0,100 do u1[i]= slope_err* w[i]
-for j=0,10  do u2[*,j]= u1
+w= 1.0 * (dindgen(101)/100- 0.5)    ;; 1 m mirror
+l= 1e-2* (dindgen(11)/10- 0.5)      ;; 1cm
+u2= dblarr(101, 11)                 ;; 2d error matrix
+u1= dblarr(101)                     ;; 1d error vector
+for i=0,100 do u1[i]= slope_err* w[i]  ;; 1d
+for j=0,10  do u2[*,j]= u1             ;; 2d
 
 ;; mirror
 emf->torus,s1=125,s2=drift2,thetag=thetag,/verb
-;emf->mirror, thetag=thetag, rw=rw, rl=rl,u=u1, w=w, l=l
-emf->mirror, thetag=thetag, rw=rw, rl=rl,u=u2, w=w, l=l
+;emf->mirror, thetag=thetag, rw=rw, rl=rl,u=u1, w=w, l=l       ;; 1d
+emf->mirror, thetag=thetag, rw=rw, rl=rl,u=u2, w=w, l=l        ;; 2d
 ;emf->statistics
 mywindow,2,1,cols=cols,rows=rows 
 emf->plotintensity
