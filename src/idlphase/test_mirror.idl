@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_mirror.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <24 Jun 14 09:24:47 flechsig> 
+; Time-stamp: <24 Jun 14 13:52:06 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -30,12 +30,8 @@ emf=initphase()
 emf->gaussbeam, dist=125, Nz=243, sizez=sizez, w0=27.7e-6 , wavelength=wavelength
 mywindow,1,1,cols=cols,rows=rows 
 emf->plotintensity
-f= emf->getphase(/raw)
-z= emf->getz_vec()
-y= emf->gety_vec()
-fu= unwrap_phase(f)
 mywindow,1,2,cols=cols,rows=rows
-mycontour,fu,z,y
+emf->plotphase,/unwrap
 mywindow,1,3,cols=cols,rows=rows
 emf->plotphase
 emf->h5_write,'test_mirror.h5'
@@ -55,12 +51,8 @@ emf->mirror, thetag=thetag, rw=rw, rl=rl,u=u2, w=w, l=l        ;; 2d
 ;emf->statistics
 mywindow,2,1,cols=cols,rows=rows 
 emf->plotintensity
-f= emf->getphase(/raw)
-z= emf->getz_vec()
-y= emf->gety_vec()
-fu= unwrap_phase(f)
 mywindow,2,2,cols=cols,rows=rows
-mycontour,fu,z,y
+emf->plotphase,/unwrap
 mywindow,2,3,cols=cols,rows=rows
 emf->plotphase
 
@@ -70,12 +62,8 @@ emf->check_sampling, drift=drift2
 emf->propfourier,drift=drift2
 mywindow,3,1,cols=cols,rows=rows 
 emf->plotintensity
-f= emf->getphase(/raw)
-z= emf->getz_vec()
-y= emf->gety_vec()
-fu= unwrap_phase(f)
 mywindow,3,2,cols=cols,rows=rows
-mycontour,fu,z,y
+emf->plotphase,/unwrap
 mywindow,3,3,cols=cols,rows=rows
 emf->plotphase
 emf->statistics
