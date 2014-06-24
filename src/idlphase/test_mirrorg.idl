@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_phaseplate.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <18 Jun 14 15:31:13 flechsig> 
+; Time-stamp: <24 Jun 14 09:09:31 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -50,8 +50,7 @@ u= thetag* w
 arr= dblarr(243, 243)
 for i=0,242 do arr[i,*]= u
 
-
-emf->mirrorg, u=arr,w=w, l=l, thetag=thetag
+emf->mirrorg, u=arr, w=w, l=l, thetag=thetag
 
 mywindow,2,1,cols=cols,rows=rows 
 emf->plotintensity
