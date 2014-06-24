@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <23 Jun 14 14:30:01 flechsig> 
+;  Time-stamp: <23 Jun 14 17:21:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -885,7 +885,7 @@ return
 end
 ;; end lens
 
-pro phase::mirror, u=u, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w, l=l
+pro phase::mirror, u=u, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w, l=l, nowarning=nowarning
 ;+
 ; NAME:
 ;   phase::mirror
@@ -904,7 +904,8 @@ pro phase::mirror, u=u, rl=rl, rw=rw, thetag=thetag, azimut=azimut, w=w, l=l
 ;
 ; KEYWORD PARAMETERS:
 ;   azimut: azimut angle or Rx in rad, math. positive, 0 means vertical deflecting 
-;   u:     the height error of the mirror as a vector of the mirror coordinate w
+;   nowarning: suppress warning for outside points
+;   u:     the height error of the mirror as a vector of the mirror coordinate w or matrix u(w,l)
 ;   rl:     short radius
 ;   rw:     long radius
 ;   thetag: grazing angle in rad   
@@ -981,26 +982,51 @@ endfor
 *self.field*= lcomp   ;; factor
 
 ;; deal with error
+
+
+
 if n_elements(u) ne 0 then begin
     print, 'mirror with height error'
-    if n_elements(w) eq 0 then message, 'we need w as the mirror coordinate'
-    print, 'deal with height error'
-    hw1= u* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
-    w1 = w* sin(thetag) ;; the projection of the mirror
-    hw2= interpol(hw1, w1, myy_vec)
-    for i=0, nz-1 do begin
-        for j=0, ny-1 do begin
-
-            if (myy_vec[j] > min(w1)) and (myy_vec[j] < max(w1)) then begin
-                f1= hw2[j]    
-                f1*= (-4)* !dpi/ self.wavelength
-                lcomp[i,j] = complex(cos(f1), sin(f1), /double)
-            endif else begin
-                lcomp[i,j]= complex(0.0, 0.0, /double)
-            endelse
+    if n_elements(w) eq 0 then message, 'we need w as the mirror coordinate' && return
+    if (size(u, /n_dimensions) eq 2) and (n_elements(l) eq 0) then message, 'we need l as the mirror coordinate' && return
+    if (size(u, /n_dimensions) eq 1) then begin
+        print, 'deal with 1d height error'
+        hw1= u* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
+        w1 = w* sin(thetag) ;; the projection of the mirror
+        hw2= interpol(hw1, w1, myy_vec)
+        for i=0, nz-1 do begin
+            for j=0, ny-1 do begin
+                
+                if (myy_vec[j] > min(w1)) and (myy_vec[j] < max(w1)) then begin
+                    f1= hw2[j]    
+                    f1*= (-4)* !dpi/ self.wavelength
+                    lcomp[i,j] = complex(cos(f1), sin(f1), /double)
+                endif else begin
+                    if n_elements(nowarning) eq 0 and (i eq 0) then print, 'warning: outside point j= ', j
+                    lcomp[i,j]= complex(0.0, 0.0, /double)
+                endelse
+            endfor
         endfor
-    endfor
-
+    endif else begin
+        print, 'deal with 2d height error- not yet done'
+        hw1= u* sin(thetag) ;; the projection of the mirror UF: nicht sicher ob das stimmt
+        w1 = w* sin(thetag) ;; the projection of the mirror
+        hw2= interpol(hw1, w1, myy_vec)
+        for i=0, nz-1 do begin
+            for j=0, ny-1 do begin
+                
+                if (myy_vec[j] > min(w1)) and (myy_vec[j] < max(w1)) then begin
+                    f1= hw2[j]    
+                    f1*= (-4)* !dpi/ self.wavelength
+                    lcomp[i,j] = complex(cos(f1), sin(f1), /double)
+                endif else begin
+                    if n_elements(nowarning) eq 0 and (i eq 0) then print, 'warning: outside point j= ', j
+                    lcomp[i,j]= complex(0.0, 0.0, /double)
+                endelse
+            endfor
+        endfor
+    endelse
+    
     *self.field*= lcomp
 
 endif
@@ -1953,7 +1979,6 @@ pro phase::torus, degree=degree, rl=rl, rw=rw, s1=s1, s2=s2, thetan=thetan, thet
 ;
 ; CALLING SEQUENCE:
 ;    
-;
 ; INPUTS:
 ;   no
 ;
@@ -1971,10 +1996,10 @@ pro phase::torus, degree=degree, rl=rl, rw=rw, s1=s1, s2=s2, thetan=thetan, thet
 ;   no
 ;
 ; EXAMPLE:
-;  idl> emf->torus, /degree, s1=10, s2=1, thetag=2, /verbose
+;  idl> emf->torus, /degree, s1=10, s2=1, thetag=2, rl=rl, rw=rw, /verbose
 ;
 ; MODIFICATION HISTORY:
-;   UF 26.5.14
+;   UF 23.6.14
 ;-
 
 if (n_elements(thetan) ne 0) and (n_elements(degree) ne 0) then thetan= thetan*!dpi/180.
@@ -1990,12 +2015,14 @@ rl= 1.0/((1.0/s1+ 1.0/s2) / (2.0 * cos(thetan)))
 thetag= !dpi/2.0- thetan
 
 if (n_elements(verbose) ne 0) then begin
+    print, '=========== torus =============='
     print, 's1    = ', s1, ' m'
     print, 's2    = ', s2, ' m'
     print, 'thetan= ', thetan, ' = ', thetan* 180/ !dpi, ' deg.'
     print, 'thetag= ', thetag, ' = ', thetag* 180/ !dpi, ' deg.'
     print, 'rw    = ', rw, ' m'
     print, 'rl    = ', rl, ' m'
+    print, '========== torus end ==========='
 endif
 
 return
