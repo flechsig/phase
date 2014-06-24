@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <24 Jun 14 09:21:25 flechsig> 
+;  Time-stamp: <24 Jun 14 10:42:11 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -660,19 +660,24 @@ if keyword_set(raw) then begin
 endif
 
 if keyword_set(phunwrap) then begin
-    print, 'call phunwrap- does not work so far- call phunwrap separately'
+    print, 'call phunwrap'
     phi0= self->getphase(/raw)
     phi= phi0*1d0
-    phi= phunwrap(phi0)
+    phi= myphunwrap(phi0)
     help, phi
     return, phi
 endif
 
 if keyword_set(unwrap_phase) then begin
-    print, 'call unwrap - does not work so far - call unwrap_phase separately'
+    print, 'call unwrap_phase'
     phi0= self->getphase(/raw)
-    phi= unwrap_phase(phi0)
-    help, phi
+    ;;print, 'self->getphase: returned from self->getphase(/raw)'
+    ;;help, phi0
+    ;;phi = phi0
+    ;;print, 'self->getphase: call unwrap_phase(phi0)'
+    phi= myunwrap_phase(phi0)
+    ;;print, 'returned from unwrap_phase(phi0)'
+    ;;help, phi
     return, phi
 endif
 
