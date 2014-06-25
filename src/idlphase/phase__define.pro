@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <25 Jun 14 11:35:55 flechsig> 
+;  Time-stamp: <25 Jun 14 17:58:17 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -717,6 +717,7 @@ function phase::getprofile, amplitude=amplitude, y=y, z=z
 ;   UF 4.12.13
 ;-
 if n_elements(amplitude) ne 0 then field = self->getamplitude() else field= self->getintensity()
+
 help,field
 s= size(field)
 nz= s[1]
@@ -727,8 +728,8 @@ my= mindex / ny
 
 print, nz, ny, mz, my, m, mindex
 
-if n_elements(z) ne 0 then prof= reform(field[*,my])
-if n_elements(y) ne 0 then prof= reform(field[mz,*])
+if n_elements(z) ne 0 then prof= reform(field[*,my]) else prof= reform(field[mz,*])
+;;if n_elements(y) ne 0 then prof= reform(field[mz,*])
 
 return, prof
 end ;; getprofile
