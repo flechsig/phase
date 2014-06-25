@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <25 Jun 14 11:19:15 flechsig> 
+;  Time-stamp: <25 Jun 14 11:35:55 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -67,7 +67,7 @@ aperture, emf, _EXTRA=extra
 return
 end ;; aperture
 
-pro phase::check_sampling, drift=drift, ratio=ratio
+pro phase::check_sampling, drift=drift, ratio=ratio, verbose=verbose
 ;+
 ; NAME:
 ;   phase::check_sampling
@@ -87,6 +87,7 @@ pro phase::check_sampling, drift=drift, ratio=ratio
 ; KEYWORD PARAMETERS:
 ;   drift     : drift distance in m
 ;   ratio     : sampling ratio
+;   /verbose  : default verbose on
 ;
 ; OUTPUTS:
 ;   no
@@ -97,6 +98,8 @@ pro phase::check_sampling, drift=drift, ratio=ratio
 ; MODIFICATION HISTORY:
 ;   UF 26.5.14
 ;-
+if n_elements(verbose) eq 0 then verbose=1
+
 myz_vec = *self.z_vec
 myy_vec = *self.y_vec
 mylambda= self.wavelength
@@ -110,26 +113,28 @@ lambda_x_x= mylambda* drift
 yratio= 1.0/(lambda_x_x * rows/ywidth^2)
 zratio= 1.0/(lambda_x_x * cols/zwidth^2) 
 
-ratio= 0.5 * (yratio + zratio)  ;
-
-print, 'check_sampling, ratio= ', ratio
-print, 'critical_sampling= ', lambda_x_x, ' (m^2)'
-print, 'act. hor_sampling= ', zwidth^2/ cols, ' (m^2)'
-print, 'act.vert_sampling= ', ywidth^2/ rows, ' (m^2)'
-
-if (ratio gt 1.0) then begin
-    print, 'drift= ', drift, ' yields to oversampling'
-    print, 'recommend transfer function (TR) based propagator (fourier)'
-endif else begin
-    print, 'drift= ', drift, ' yields to undersampling'
-    print, 'recommend impulse response (IR) based propagator (fresnel, fraunhofer)'
-endelse
+ratio= 0.5 * (yratio + zratio)  
 
 myydrift= ywidth^2/ rows/ mylambda
 myzdrift= zwidth^2/ cols/ mylambda
 mydrift = 0.5* (myydrift+ myzdrift)
-print, 'critical drift= ', mydrift
 
+if verbose then begin
+    print, 'check_sampling, ratio= ', ratio
+    print, 'critical_sampling= ', lambda_x_x, ' (m^2)'
+    print, 'act. hor_sampling= ', zwidth^2/ cols, ' (m^2)'
+    print, 'act.vert_sampling= ', ywidth^2/ rows, ' (m^2)'
+    
+    if (ratio gt 1.0) then begin
+        print, 'drift= ', drift, ' yields to oversampling'
+        print, 'recommend transfer function (TR) based propagator (fourier)'
+    endif else begin
+        print, 'drift= ', drift, ' yields to undersampling'
+        print, 'recommend impulse response (IR) based propagator (fresnel, fraunhofer)'
+    endelse
+    
+    print, 'critical drift= ', mydrift
+endif ;; verbose
 return
 end ;; check_sampling
 
@@ -1492,12 +1497,12 @@ pro phase::propagate, drift=drift
 ;  idl> emf->propagate, drift=drift
 ;
 ; MODIFICATION HISTORY:
-;   UF Nov 2013
+;   UF Jun 2014
 ;-
+print,'propagate called- automatic selection of propagator '
+self->check_sampling, drift=drift, ratio=ratio, verbose=0
 
-this->check_sampling, drift=drift, ratio=ratio
-
-if (ratio gt 1.0) then this->propfourier, drift=drift else this->propfresnel, drift=drift 
+if (ratio gt 1.0) then self->propfourier, drift=drift else self->propfresnel, drift=drift 
 
 return 
 end ;;propagate  
