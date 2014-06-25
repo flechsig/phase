@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <24 Jun 14 13:45:49 flechsig> 
+;  Time-stamp: <25 Jun 14 11:19:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -67,7 +67,7 @@ aperture, emf, _EXTRA=extra
 return
 end ;; aperture
 
-pro phase::check_sampling, drift=drift
+pro phase::check_sampling, drift=drift, ratio=ratio
 ;+
 ; NAME:
 ;   phase::check_sampling
@@ -86,6 +86,7 @@ pro phase::check_sampling, drift=drift
 ;
 ; KEYWORD PARAMETERS:
 ;   drift     : drift distance in m
+;   ratio     : sampling ratio
 ;
 ; OUTPUTS:
 ;   no
@@ -1461,6 +1462,45 @@ oplot, y*1e3, yp, color=2
 legend, ['z','y'], color=[1,2], linestyle=[0,0]
 return 
 end ;; plotprofile
+
+pro phase::propagate, drift=drift
+;+
+; NAME:
+;   phase::propagate
+;
+; PURPOSE:
+;   propagate with fresnel or fourier propagator depending on sampling
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->propagate
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   drift     : drift distance in m
+;
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;  idl> emf->propagate, drift=drift
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+
+this->check_sampling, drift=drift, ratio=ratio
+
+if (ratio gt 1.0) then this->propfourier, drift=drift else this->propfresnel, drift=drift 
+
+return 
+end ;;propagate  
 
 pro phase::propfraunhofer, _EXTRA=extra
 ;+
