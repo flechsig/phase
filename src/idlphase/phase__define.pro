@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <25 Jun 14 17:58:17 flechsig> 
+;  Time-stamp: <26 Jun 14 12:34:41 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -687,28 +687,31 @@ help, phi
 return, phi
 end ;; getphase
 
-function phase::getprofile, amplitude=amplitude, y=y, z=z
+function phase::getprofile, amplitude=amplitude, min=min, phase=phase, z=z
 ;+
 ; NAME:
 ;   phase::getprofile
 ;
 ; PURPOSE:
-;   export phase, optional with unwrapping
+;   get the profile (cut) at the maximum or minimum for intensity, amplitude or phase
 ;
 ; CATEGORY:
 ;   phase
 ;
 ; CALLING SEQUENCE:
-;   phase= phase::getprofile([/phunwrap][/unwrap_phase])
+;   emf->getprofile()
 ;
 ; INPUTS:
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;     z: the horizontal profile
+;     /amplitude: get amplitude profile  (default: intensity)
+;     /min      : profile at minimum     (default: maximum)
+;     /phase    : get phase profile      (default: intensity)
+;     /z        : the horizontal profile (default: vertical)
 ;
 ; OUTPUTS:
-;   the phase
+;   the profile
 ;
 ; EXAMPLE:
 ;   idl> zprof= emf->getprofile(/z)
@@ -716,20 +719,21 @@ function phase::getprofile, amplitude=amplitude, y=y, z=z
 ;; MODIFICATION HISTORY:
 ;   UF 4.12.13
 ;-
-if n_elements(amplitude) ne 0 then field = self->getamplitude() else field= self->getintensity()
+if n_elements(amplitude) ne 0 then field = self->getamplitude()
+if n_elements(phase)     ne 0 then field = self->getphase(/unwrap)
+if (n_elements(amplitude) eq 0) and  (n_elements(phase) eq 0) then field= self->getintensity() 
 
 help,field
 s= size(field)
 nz= s[1]
 ny= s[2]
-m= max(field, mindex)
+if n_elements(min) ne 0 then m= min(field, mindex) else m= max(field, mindex)
 mz= mindex mod ny 
 my= mindex / ny
 
 print, nz, ny, mz, my, m, mindex
 
 if n_elements(z) ne 0 then prof= reform(field[*,my]) else prof= reform(field[mz,*])
-;;if n_elements(y) ne 0 then prof= reform(field[mz,*])
 
 return, prof
 end ;; getprofile
@@ -1413,13 +1417,13 @@ mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
 return 
 end ;; plotphase
 
-pro phase::plotprofile, window=window, _EXTRA=extra
+pro phase::plotprofile, window=window, ylog=ylog, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::plotprofile
 ;
 ; PURPOSE:
-;   plot the profiles
+;   plot the profiles in z and y
 ;
 ; CATEGORY:
 ;   phase
@@ -1431,6 +1435,8 @@ pro phase::plotprofile, window=window, _EXTRA=extra
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;   _EXTRA: passed to getprofile
+;   ylog  : ylog
 ;
 ; EXAMPLE:
 ;   idl> emf->plotprofile
@@ -1443,7 +1449,7 @@ if n_elements(window) ne 0 then window, window
 
 title= self.name+ ' profile'
 zp= self->getprofile(/z, _EXTRA=extra)
-yp= self->getprofile(/y, _EXTRA=extra)
+yp= self->getprofile(_EXTRA=extra)
 y = self->gety_vec()
 z = self->getz_vec()
 
@@ -1462,7 +1468,7 @@ miyzp= min(miyp,mizp)
 mayzp= max(mayp,mazp)
 
 plot, [miyz, mayz], [miyzp, mayzp], title=title, $
-  xtitle='[z,y] (mm)', ytitle='intensity', /nodata
+  xtitle='[z,y] (mm)', ytitle='intensity', ylog=ylog, /nodata
 oplot, z*1e3, zp, color=1
 oplot, y*1e3, yp, color=2
 legend, ['z','y'], color=[1,2], linestyle=[0,0]
