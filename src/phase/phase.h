@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <16 May 14 14:51:55 flechsig>  */
+/*   Time-stamp: <27 Jun 14 14:33:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -498,15 +498,16 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
 #endif
 /************************* Prototypen *****************************/
 
-int	  
-  getgrfiletype(char *), 
-  GetOElement(),  GetPHASE(struct  PHASEset *, char *),
-  iindex(int, int), 
-  OnElement(struct mdatset *, double, double), 
-  ReadBLFile(char *, struct BeamlineType *), 
-  SetFilePos(FILE *, char *),
-  CheckBLOK(int, int, char*);   
-int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *, int *); 
+int CheckBLOK(int, int, char*); 
+int BuildBeamline(struct BeamlineType *);
+int getgrfiletype(char *);
+int GetOElement();
+int GetPHASE(struct  PHASEset *, char *);
+int iindex(int, int);
+int OnElement(struct mdatset *, double, double);
+int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *, int *);
+int ReadBLFile(char *, struct BeamlineType *);
+int SetFilePos(FILE *, char *);
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
 void StackTest(); 
@@ -518,7 +519,7 @@ void
   AutoScale(struct RayType *, GRDATSTRUCTTYPE *, struct BeamlineType *),  
   BatchMode(struct BeamlineType *, int, int, int, int, int),
   Beauty(double *, double *), 
-  BuildBeamline(struct BeamlineType *),
+  
   BuildElement(unsigned int, struct BeamlineType *),
   Check_iord(struct BeamlineType *),
   create_hormap(),

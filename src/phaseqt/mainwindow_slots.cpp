@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Jun 14 17:24:01 flechsig> 
+//  Time-stamp: <27 Jun 14 15:40:44 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -123,7 +123,12 @@ void MainWindow::activateProc(const QString &action)
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
 
-      myparent->myBuildBeamline();
+      if (!myparent->myBuildBeamline()) 
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	  return;
+	}
 
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
@@ -138,51 +143,48 @@ void MainWindow::activateProc(const QString &action)
       if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
       
-      if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
-		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
+      if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
+		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
 	{
-	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-	  ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
-	  //myparent->myPST();
-	  fillTaskVector(psip->iy * psip->iz);
-
-	  qDebug() << "test asynchronous PO with threads " << psip->iy * psip->iz << " points";; 
-	  
-	  // *future= QtConcurrent::map(vector, my_funcv);
-	  // to pass additional parameters we have to use boost or std::tr1
-	  
-	  myparent->myTest4Grating();
-          
-#ifdef DEBUG2
-	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
-	  if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) 
-	    {
-	      fill_m4(myparent->myBeamline(), m4p_cpp);
-	      cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
-	      size_t n= sizeof(struct map4);
-	      short *vp= (short *)m4p_cpp;
-	      std::copy(vp, vp+ n, vp);
-	    }
-#else
-	  if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
-	  if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
-#endif
-	  
-	  if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
-	  initconstants(csp_cpp);
-	 
-	  myparent->myBeamline()->BLOptions.PSO.intmod= 2;
-
-	  *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
-							    m4p_cpp, csp_cpp
-							    )); // one additional par 
-	
-	  
-
-	  watcher->setFuture(*future);
-	  
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>CheckBLOK</b> look into debug messages for details!"));
+	  return;
 	}
+      
+      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+      ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
+      //myparent->myPST();
+      fillTaskVector(psip->iy * psip->iz);
+      
+      qDebug() << "asynchronous PO with threads " << psip->iy * psip->iz << " points";; 
+      
+      myparent->myTest4Grating();
+      
+#ifdef DEBUG2
+      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
+      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) 
+	{
+	  fill_m4(myparent->myBeamline(), m4p_cpp);
+	  cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
+	  size_t n= sizeof(struct map4);
+	  short *vp= (short *)m4p_cpp;
+	  std::copy(vp, vp+ n, vp);
+	}
+#else
+      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
+      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
+#endif
+      
+      if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
+      initconstants(csp_cpp);
+      
+      myparent->myBeamline()->BLOptions.PSO.intmod= 2;
+      
+      *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
+							m4p_cpp, csp_cpp
+							    )); // one additional par 
+      watcher->setFuture(*future);
     }
 
   if (!action.compare("copyPOAct")) myparent->mycopySrc2Psd();
@@ -202,7 +204,12 @@ void MainWindow::activateProc(const QString &action)
       //QMessageBox *mmBox = nebw QMessageBox;
       //mmBox->setText(tr("calculation running- be patient!"));
       //mmBox->show();
-      if (!(myparent->myBeamline()->beamlineOK & sourceOK)) myparent->myMakeRTSource();
+      if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>MakeRTSource</b> look into debug messages for details!"));
+	  return;
+	}
       
       //statusBar()->clearMessage();
       
@@ -215,7 +222,12 @@ void MainWindow::activateProc(const QString &action)
       myparent->myUpdateFlags(FIRST);
       
       //myparent->buildBeamlineParallel();      // for tests so far
-      myparent->myBuildBeamline();
+      if (!myparent->myBuildBeamline()) 
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	  return;
+	}
       myparent->myRayTracec(); 
       
       if (myparent->myBeamline()->BLOptions.need_another_run)  /* double wavelength calculation */
@@ -223,7 +235,14 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myUpdateFlags(SECOND);
 	  
 	  //myparent->buildBeamlineParallel();      // for tests so far
-	  myparent->myBuildBeamline();
+	  
+	  if (!myparent->myBuildBeamline()) 
+	    {
+	      QMessageBox::critical(this, tr("ERROR"), 
+				    tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	      return;
+	    }
+
 	  myparent->myRayTracec(); 
 	}
 #ifdef DEBUG      
@@ -243,19 +262,35 @@ void MainWindow::activateProc(const QString &action)
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
 
-      if (!(myparent->myBeamline()->beamlineOK & sourceOK)) myparent->myMakeRTSource();
-
+      if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>MakeRTSource</b> look into debug messages for details!"));
+	  return;
+	}
       myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.dlambdaflag), 
 				myparent->myBeamline()->RTSource.raynumber, 0);
       
       myparent->myUpdateFlags(FIRST);
-      myparent->myBuildBeamline();
+      
+      if (!myparent->myBuildBeamline()) 
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	  return;
+	}
       myparent->myRayTraceFull(); 
 
       if (myparent->myBeamline()->BLOptions.need_another_run)  /* double wavelength calculation */
 	{
 	  myparent->myUpdateFlags(SECOND);
-	  myparent->myBuildBeamline();
+	  
+	  if (!myparent->myBuildBeamline()) 
+	    {
+	      QMessageBox::critical(this, tr("ERROR"), 
+				    tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	      return;
+	    }
 	  myparent->myRayTraceFull();
 	}
 
@@ -272,12 +307,24 @@ void MainWindow::activateProc(const QString &action)
       if (elementListNotSelected())
 	return;
 
-      if (!(myparent->myBeamline()->beamlineOK & sourceOK))
-	myparent->myMakeRTSource();
+     
+if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>MakeRTSource</b> look into debug messages for details!"));
+	  return;
+	}
+
 
       myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
 				myparent->myBeamline()->BLOptions.plrayset, 0);  
-      myparent->myBuildBeamline();
+      
+if (!myparent->myBuildBeamline()) 
+	    {
+	      QMessageBox::critical(this, tr("Build Beamline"), 
+				    tr("<B>BuildBeamline error</b> look into debug messages for details!"));
+	      return;
+	    }
       myparent->myFootprint((elementList->currentRow()+1));
       cout << "footprint-> done" << endl;
       statusBar()->showMessage(tr("Footprint-> done!"), 4000);
@@ -403,8 +450,13 @@ if (!action.compare("fourierAct"))
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
 
-      myparent->myBuildBeamline();
-
+     
+      if (!myparent->myBuildBeamline()) 
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	  return;
+	}
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
 #ifdef OLD_PO_SOURCE
@@ -418,13 +470,16 @@ if (!action.compare("fourierAct"))
       if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
 			
-      if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
-		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
+      if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
+		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
 	{
-	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-	  myparent->myPST();
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>CheckBLOK</b> look into debug messages for details!"));
+	  return;
 	}
+      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+      myparent->myPST();
     }
 
   if (!action.compare("mphasespaceAct")) 
@@ -438,8 +493,13 @@ if (!action.compare("fourierAct"))
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
 
-      myparent->myBuildBeamline();
-
+      
+      if (!myparent->myBuildBeamline()) 
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>BuildBeamline</b> look into debug messages for details!"));
+	  return;
+	}
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
 #ifdef OLD_PO_SOURCE
@@ -453,13 +513,17 @@ if (!action.compare("fourierAct"))
       if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
 			
-      if (CheckBLOK(myparent->myBeamline()->beamlineOK, 
-		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
+      if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
+		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
 	{
-	  psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-	  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-	  myparent->myMPST();
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("<B>CheckBLOK</b> look into debug messages for details!"));
+	  return;
 	}
+	
+      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+      myparent->myMPST();
   }
 
   if (!action.compare("rthAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
@@ -1268,9 +1332,27 @@ void MainWindow::elementApplyBslot()
   
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
 
-  myparent->mySetReflectivity(&(myparent->myBeamline()->ElementList[number]));   // routine takes wavelength in m
+  if (myparent->myBeamline()->BLOptions.PSO.with_coating) 
+    {
+      if ( !myparent->mySetReflectivity(&(myparent->myBeamline()->ElementList[number])))   // routine takes wavelength in m
+	{
+	  QMessageBox::critical(this, tr("elementApplyBslot"), 
+				tr("coating data not available- deactivate <i>with_coating</i> in <b><i>PO Controls</i></b> or look into debug messages for details!"));
+	  UpdateStatus();
+	  return;
+	}
+   }
+
   if (myparent->myBeamline()->BLOptions.PSO.with_herror) 
-    myparent->myread_hdf5_height_file(&(myparent->myBeamline()->ElementList[number]));
+    {
+      if (myparent->myread_hdf5_height_file(&(myparent->myBeamline()->ElementList[number])) < 1) 
+	{
+	  QMessageBox::critical(this, tr("ERROR"), 
+				tr("surface error data not available- deactivate <i>with_herror</i> in <b><i>PO Controls</i></b> or look into debug messages for details!"));
+	  UpdateStatus();
+	  return;
+	}
+    }
 
   myparent->myMakeMapandMatrix(&(myparent->myBeamline()->ElementList[number]), (int *)&number);
   //  myparent->myBeamline()->ElementList[number].ElementOK |= elementOK;
@@ -2653,7 +2735,12 @@ void MainWindow::sourceApplyBslot()
   myparent->myBeamline()->BLOptions.wrSource = (sourceFileBox->isChecked() == true) ?  1 : 0;  
   if (sou != 'I') 
     {
-      myparent->myMakeRTSource();
+      if (!myparent->myMakeRTSource()) 
+	{
+	  QMessageBox::critical(this, tr("MakeRTSource"), 
+				tr("<B>MakeRTSource error</b> look into debug messages for details!"));
+	  return;
+	}
       myparent->myBeamline()->beamlineOK |= sourceOK;
     } 
   else
@@ -2683,10 +2770,13 @@ void MainWindow::sourceAutoGuessBslot()
   // check beamline status
   bl->beamlineOK &= ~resultOK;
   UpdateStatus();
-
- 
-  myparent->myBuildBeamline();
-
+  
+  if (!myparent->myBuildBeamline()) 
+    {
+      QMessageBox::critical(this, tr("Build Beamline"), 
+			    tr("<B>BuildBeamline error</b> look into debug messages for details!"));
+      return;
+    }
   if (!(bl->beamlineOK & pstsourceOK))
   {
 #ifdef OLD_PO_SOURCE
@@ -2700,28 +2790,32 @@ void MainWindow::sourceAutoGuessBslot()
   if (!(bl->beamlineOK & pstimageOK)) 
     sourceApplyBslot();
       
-  if (CheckBLOK(bl->beamlineOK, 
-    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: ") > 0)
-  {
-    psip = (struct PSImageType *)bl->RTSource.Quellep;
-    myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-    
-    // get guessed values for range
-    myparent->myFindIntRange();
-  }
+  if (!CheckBLOK(bl->beamlineOK, 
+		 (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
+    {
+      QMessageBox::critical(this, tr("ERROR"), 
+			    tr("<B>CheckBLOK</b> look into debug messages for details!"));
+      return;
+    }
+  psip = (struct PSImageType *)bl->RTSource.Quellep;
+  myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+  
+  // get guessed values for range
+  myparent->myFindIntRange();
+  
   
   // update GUI  
-/*  S1E->setText(QString().setNum(psip->ymin, 'g', 4));
-  S2E->setText(QString().setNum(psip->zmin, 'g', 4));    
-  S3E->setText(QString().setNum(psip->ymax, 'g', 4));  
-  S4E->setText(QString().setNum(psip->zmax, 'g', 4));  */
-   
+  /*  S1E->setText(QString().setNum(psip->ymin, 'g', 4));
+      S2E->setText(QString().setNum(psip->zmin, 'g', 4));    
+      S3E->setText(QString().setNum(psip->ymax, 'g', 4));  
+      S4E->setText(QString().setNum(psip->zmax, 'g', 4));  */
+  
   parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.ymin*1e3, 'g', 4), 28);
   parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.ymax*1e3, 'g', 4), 29);
   parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.zmin*1e3, 'g', 4), 35);
   parameterModel->updateItemVal(QString().setNum(bl->BLOptions.xi.zmax*1e3, 'g', 4), 36);
-    
-
+  
+  
   UpdateStatus();
   myparent->writeBackupFile();
 } // sourceApplyBslot

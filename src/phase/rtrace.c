@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <14 Mar 14 15:15:01 flechsig>  */
+/*   Time-stamp: <27 Jun 14 14:59:11 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -310,13 +310,7 @@ double gauss(double sigma)
    return  zz1;
 }                                                        
 
-void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl) 
-/* 20.5.96 
-   3.7.96 phase hinzugefuegt
-   Source rays werden allociert! */      
-/* last modification: 24 Sep 97 09:32:34 flechsig */
-/* modification: 17 Oct 97 09:21:43 flechsig */
-/* 29.3.99 wellenlaenge beim Undulator explizit aus bloptions setzen */ 
+int MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl) 
 {
   /*struct RayType *rays;*/
    struct UndulatorSourceType  *up;
@@ -332,8 +326,8 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
 
    if (bl->RTSource.QuellTyp == 'I')
      {
-       printf("MakeRTSource: select a GO source (you slected PO image plane) - exit\n");
-       exit(1);
+       printf("MakeRTSource: select a GO source (you slected PO image plane) - return\n");
+       return 0;
      }
 
    if (bl->localalloc == DOALLOC) 
@@ -431,6 +425,7 @@ void MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
    printf("MakeRTSource   end: beamlineOK: %X, raynumber: %d\n", bl->beamlineOK, bl->RTSource.raynumber);
 #endif
    /* 2.5.96 free(bl->RTSource.SourceRays);           */
+   return 1;
 }  /* end makertsource */
 
 

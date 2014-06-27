@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.h */
 /*  Date      : <28 Nov 06 09:06:56 flechsig>  */
-/*  Time-stamp: <19 Jun 12 07:56:44 flechsig>  */
+/*  Time-stamp: <27 Jun 14 14:49:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -18,8 +18,10 @@
 #ifndef __RTRACE_LOADED
 #define __RTRACE_LOADED	1         
 
+int MakeRTSource(struct PHASEset *, struct BeamlineType *);
+
 void RayTracec(struct BeamlineType *), 
-     MakeRTSource(struct PHASEset *, struct BeamlineType *),   
+        
      WritePlotFile(char *, int *, struct RayType *),     
      WriteRayFile (char *, int *, struct RayType *), 
      MakeHardEdgeSource (struct RTSourceType *), 

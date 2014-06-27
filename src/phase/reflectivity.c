@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <03 Jun 14 12:12:53 flechsig>  */
+/* Time-stamp: <27 Jun 14 14:09:10 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -63,7 +63,7 @@ void apply_reflectivity(struct BeamlineType *bl, double *eyre, double *eyim, dou
   
 } // end apply_reflectivity
 
-void ReadHenke(char *element, double energy, double *f1, double *f2)
+int ReadHenke(char *element, double energy, double *f1, double *f2)
 {
   char   tabname[MaxPathLength], buffer[MaxPathLength];
   FILE   *f;
@@ -86,20 +86,20 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   if ((f= fopen(tabname, "r")) == NULL) 
     {
       fprintf(stderr, "error can't find Henke Table %s - return\n", tabname);
-      return;
+      return 0;
     }  
 
   if ((energy < 10) || (energy > 30000)) 
     {
       fprintf(stderr, "error ReadHenke- energy- %f out of tabulated range (10eV..30keV) - return\n", energy);
-      return;
+      return 0;
     }  
  
   fgets(buffer, (MaxPathLength- 1), f);                // read first line (header)
   if (strstr(buffer, "(Energy (eV),f1,f2)") == NULL)   // check 1st line !! do not edit pattern !! 
     {
       fprintf(stderr, "error: Henke Table %s has not the expected format- return\n", tabname);
-      return;
+      return 0;
     }
   
   fgets(buffer, (MaxPathLength-1), f);                 // read first data line
@@ -123,7 +123,7 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
   if (! found)
     {
       fprintf(stderr, "error: parsing Henke Table, energy %f out of range- return\n", energy);
-      return;
+      return 0;
     }
   // interpolate
   de= e2- e1; 
@@ -136,10 +136,10 @@ void ReadHenke(char *element, double energy, double *f1, double *f2)
 #ifdef DEBUG1
   printf("debug: ReadHenke end: material=%s, energy=%lf, f1=%lf, f2=%lf\n", element, energy, *f1, *f2);
 #endif
-
+  return 1;
 } // ReadHenke
 
-void ReadMaterial(char *element, int *z, double *a, double *rho)
+int ReadMaterial(char *element, int *z, double *a, double *rho)
 {
   char tabname[MaxPathLength], buffer[MaxPathLength], str[10];
   FILE *f;
@@ -154,7 +154,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
   if ((f= fopen(tabname, "r")) == NULL) 
     {
       fprintf(stderr, "error can't find Material Table %s - return\n", tabname);
-      return;
+      return 0;
     }
 
   fgets(buffer, (MaxPathLength-1), f);                  // read first line
@@ -162,7 +162,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
   if (found != 0)
     {
       fprintf(stderr, "error: Material Table %s has not the expected format- return\n", tabname);
-      return;
+      return 0;
     }
 
   while (! feof(f) && ! found)
@@ -175,7 +175,7 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
   if (! found)
     {
       fprintf(stderr, "error: Element >>%s<< not found in Material Table %s - return\n", element, tabname);
-      return;
+      return 0;
     }
 
   sscanf(buffer, "%9s\t%d\t%lf\t\t%lf", str, z, a, rho);
@@ -183,13 +183,14 @@ void ReadMaterial(char *element, int *z, double *a, double *rho)
 #ifdef DEBUG1
   printf("debug: found: material=%s, z=%d, a=%lf, rho=%lf\n", str, *z, *a, *rho);
 #endif
+  return 1;
 } // ReadMaterial
 
 // expect wavelength in m
-void SetReflectivity(struct ElementType *ep, double wavelength)
+int SetReflectivity(struct ElementType *ep, double wavelength)
 {
   double f1, f2, a, rho, energy, nt, delta, beta, ac, sinag, cosag, Rs, Rp;
-  int    z;
+  int    z, myreturn;
   COMPLEX cn, cn2, cwu, crs, cts, crp, ctp, c1, c2, c3, csinag;
   char    *material;
   struct ReflecType *rp;
@@ -204,12 +205,12 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
   if (!(wavelength > 0.0))
     {
       fprintf(stderr, "error SetReflectivity: wavelength not defined (%f)- return");
-      return;
+      return 0;
     }
 
   energy= 1240e-9/ wavelength; 
-  ReadMaterial(material, &z, &a, &rho);
-  ReadHenke(material, energy, &f1, &f2);
+  myreturn=   ReadMaterial(material, &z, &a, &rho);
+  myreturn &= ReadHenke(material, energy, &f1, &f2);
 
   nt= 1e6* rho * NA / a;              // Teilchendichte  (1/m^3), rho is in (g/cm^3)
 
@@ -273,5 +274,7 @@ void SetReflectivity(struct ElementType *ep, double wavelength)
       fprintf(stderr, "error in file %s- azimut >>%d<<out of range\n", __FILE__, ep->GDat.azimut);
       exit(-1);
     }
+
+  return myreturn;
 } // SetReflectivity
 // end /afs/psi.ch/project/phase/src/phase/reflectivity.c

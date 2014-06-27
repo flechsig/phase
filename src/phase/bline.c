@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <26 May 14 12:34:00 flechsig>  */
+/*   Time-stamp: <27 Jun 14 14:22:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -165,7 +165,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 /****************************************************************/
 /* Beamline zusammensetzen              			*/
 /****************************************************************/
-void BuildBeamline(struct BeamlineType *bl)  
+int BuildBeamline(struct BeamlineType *bl)  
 {
   unsigned int elcounter;
   static int elindex;            /* must be kept */
@@ -184,12 +184,12 @@ void BuildBeamline(struct BeamlineType *bl)
 	 bl->elementzahl,  bl->BLOptions.ifl.iord);
   /*--------------------------------------------------------*/ 
   if (bl->elementzahl < 1)
-    return;
+    return 0;
 
   if (bl->beamlineOK & mapOK)  
     {   
       printf("\nBuildBeamline: all beamline elements are already OK- return\n\n");
-      return;  /* nothing to do */
+      return 1;  /* nothing to do */
     }
 
   /* 1st loop */  
@@ -204,8 +204,8 @@ void BuildBeamline(struct BeamlineType *bl)
 	  //DefGeometryCnew(&listpt->GDat, &listpt->geo);
 	  DefGeometryC(&listpt->GDat, &listpt->geo, &bl->BLOptions);
 
-	  SetReflectivity(listpt, bl->BLOptions.lambda*1e-3); // routine takes wavelength in m
-	  if (bl->BLOptions.PSO.with_herror) read_hdf5_height_file(bl->filenames.h5surfacename, listpt);
+	  if ((bl->BLOptions.PSO.with_coating) && !SetReflectivity(listpt, bl->BLOptions.lambda*1e-3)) return 0; // routine takes wavelength in m
+	  if ((bl->BLOptions.PSO.with_herror)  && !read_hdf5_height_file(bl->filenames.h5surfacename, listpt)) return 0;
 
 	  MakeMapandMatrix(listpt, bl, &elindex); 
 	  //printf("1xxxxxxxx: %f %f\n", listpt->ypc1[0][0][0][0], bl->ypc1[0][0][0][0]);	  
@@ -401,6 +401,7 @@ void BuildBeamline(struct BeamlineType *bl)
 #ifdef DEBUG1
   printf("BuildBeamline: end: beamlineOK: %X\n", bl->beamlineOK); 
 #endif
+  return 1;
 }   /* end BuildBeamline */
 
 void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)  

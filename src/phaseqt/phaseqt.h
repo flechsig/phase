@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <26 May 14 10:39:12 flechsig>  */
+/*  Time-stamp: <27 Jun 14 14:57:39 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -110,9 +110,9 @@ public:
   
   void myAllocRTSource() { AllocRTSource(this); }
   void myBatchMode(int cmode, int selected, int iord, int numthreads, int format) { BatchMode(this, cmode, selected, iord, numthreads, format); }
-  void myBuildBeamline() { BuildBeamline(this); }
+  int  myBuildBeamline() { return BuildBeamline(this); }
 #ifdef HAVE_HDF5
-  int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb);}
+  int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb); }
 #endif
   double mycheck_sampling() { return check_sampling(this, NULL, 1.0, 1); }
   void mycopySrc2Psd() { copySrc2Psd(this); }
@@ -126,7 +126,7 @@ public:
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt, int *elindex) { MakeMapandMatrix(listpt, this, elindex); }
-  void myMakeRTSource() { MakeRTSource(&(this->filenames), this);  }
+  int  myMakeRTSource() { return MakeRTSource(&(this->filenames), this);  }
   void myMPST() { MPST(this); }
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads, int *format) { 
     return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord, numthreads, format); }
@@ -139,10 +139,10 @@ public:
   void myRayTracec() { RayTracec(this); }
   
   void myRayTraceFull() { RayTraceFull(this); }
-  void myread_hdf5_height_file(struct ElementType *ep) { read_hdf5_height_file(this->filenames.h5surfacename, ep); }
+  int  myread_hdf5_height_file(struct ElementType *ep) { return read_hdf5_height_file(this->filenames.h5surfacename, ep); }
   void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, 
 		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
-  void mySetReflectivity(struct ElementType *ep) { SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
+  int  mySetReflectivity(struct ElementType *ep) { return SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
   void myposrc_ini() { posrc_ini(this); }
   void mysource7c_ini() { source7c_ini(this); }

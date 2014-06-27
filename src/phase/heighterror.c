@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <04 Jun 14 15:13:55 flechsig>  */
+ /* Time-stamp: <27 Jun 14 14:21:37 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -216,7 +216,8 @@ void surf_height_interp(struct SurfaceType *sf, double *wwert, double *lwert, do
 } /* surf_height_interp */
 
 // read file data into element struct
-void read_hdf5_height_file(char *fname, struct ElementType *elmp)
+// return > 0 is OK
+int read_hdf5_height_file(char *fname, struct ElementType *elmp)
 {
   hid_t  file_id;           /* group_id       */
   int    nw, nl, nu, i, j;  /* slicecount= 1, */
@@ -239,10 +240,10 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
     { 
       beep(5);
       fprintf(stderr, "warning: surface error file >>%s<< not found - return\n", fname);
-      return;
+      return 0;
     }
 
-  if ( !check_hdf5_4_height(fname, elmp->elementname, 1) ) return;
+  if ( !check_hdf5_4_height(fname, elmp->elementname, 1) ) return 0;
 
 #ifdef HAVE_HDF5
  /* Open an existing file. */
@@ -263,6 +264,7 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
   {
     printf("stderr: read_hdf5_height_file: error on the vector sizes of the surface profile %s\n", __FILE__);
     printf("stderr: read_hdf5_height_file: surface file %s\n", fname);
+    return 0;
   }
     
 
@@ -314,7 +316,8 @@ void read_hdf5_height_file(char *fname, struct ElementType *elmp)
 // 	}
 //   }
 // #endif 
-  
+
+  return 1;
 }  /* read_hdf5_file */
 
 /* returns true if mirror surface type has been detected */
