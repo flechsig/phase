@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <27 Jun 14 14:22:19 flechsig>  */
+/*   Time-stamp: <30 Jun 14 11:51:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1760,6 +1760,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 #ifndef OPTI
 #ifndef EXTR
        initdatset(&Fg3DefDat, &Beamline); 		/* source init with defaults*/
+#else
+       fprintf(stderr, "warning: Initialization temporarely deactivated in file: %s\n", __FILE__);
 #endif
 #endif
 #endif
