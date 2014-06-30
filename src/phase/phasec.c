@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <30 Jun 14 09:16:41 flechsig>  */
+/*   Time-stamp: <30 Jun 14 15:40:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -550,45 +550,45 @@ void SetDefaultParameter(struct BeamlineType *bl)
      /* Uwe 21. 10. 96 */ 
      /* Stand 17. 2. 97 */ 
 {
-  bl->BLOptions.epsilon= 1e-5; 
-  bl->BLOptions.ifl.iord= 4; 
-  bl->BLOptions.PSO.intmod= 1;
-  bl->BLOptions.PSO.PSSource.yhard=  0;
-  bl->BLOptions.PSO.PSSource.dyhard= 0;
-  bl->BLOptions.PSO.PSSource.zhard=  0;
-  bl->BLOptions.PSO.PSSource.dzhard= 0; 
-  bl->BLOptions.PSO.PSSource.sigy=   0.03;
-  bl->BLOptions.PSO.PSSource.sigdy=  4e-5;
-  bl->BLOptions.PSO.PSSource.sigz=   0.3;
-  bl->BLOptions.PSO.PSSource.sigdz=  4e-5; 
-  bl->BLOptions.PSO.ndyfix=          30;
-  bl->BLOptions.PSO.dyminfix= -1e-2;
-  bl->BLOptions.PSO.dymaxfix=  1e-2;
-  bl->BLOptions.PSO.ndzfix=    30;
-  bl->BLOptions.PSO.dzminfix= -1e-2;
-  bl->BLOptions.PSO.dzmaxfix=  1e-2;
+#ifdef DEBUG
+  printf("debug: SetDefaultParameter called, file= %s\n", __FILE__);
+#endif
 
-  /*bl->BLOptions.xi.itery0=  5;*/
-  bl->BLOptions.xi.ianzy0=  15;
-  /*  bl->BLOptions.xi.imaxy=   25;*/
-  /*bl->BLOptions.xi.fracy=   0.7;*/
-  /*bl->BLOptions.xi.frac1y=  0.2;*/
+  bl->BLOptions.epsilon         = 1e-4; 
+  bl->BLOptions.ifl.iord        = 4; 
+  bl->BLOptions.REDUCE_maps     = 0;
+  bl->BLOptions.ifl.pst_mode    = 2;
+  bl->BLOptions.ifl.iexpand     = 1;
+  bl->BLOptions.ifl.iplmode     = 1;
+  bl->BLOptions.PSO.with_coating= 0;
+  bl->BLOptions.PSO.with_herror = 0;
+  bl->BLOptions.ifl.inorm       = 0;
+  bl->BLOptions.ifl.inorm1      = 0;
+  bl->BLOptions.ifl.inorm2      = 40;
+  bl->src.isrctype              = 7;
+  bl->BLOptions.xi.distfocy     = 0;
+  bl->BLOptions.xi.distfocz     = 0;
+  
+  bl->BLOptions.ifl.ibright     = 1;
 
-  /*bl->BLOptions.xi.iterz0=  5;*/
-  bl->BLOptions.xi.ianzz0=  15;
-  /*bl->BLOptions.xi.imaxz=   25;*/
-  /*bl->BLOptions.xi.fracz=   0.7;*/
-  /*bl->BLOptions.xi.frac1z=  0.2;*/
+  bl->BLOptions.ifl.ispline     = 0;
+  bl->BLOptions.xi.ianzy0       = 51;
+  bl->BLOptions.xi.ymin         = -1e-3;
+  bl->BLOptions.xi.ymax         = 1e-3;
+  bl->BLOptions.xi.ianzz0       = 51;
+  bl->BLOptions.xi.zmin         = -1e-3;
+  bl->BLOptions.xi.zmax         = 1e-3;
 
-  printf("\nDefaults sind nicht mehr aktuell!\n");
- 
+  bl->BLOptions.xi.d12_max      = 0;
+  bl->BLOptions.xi.id12         = 0;
+  bl->BLOptions.xi.ianz0_cal    = 0;
+  bl->BLOptions.xi.ianz0_fixed  = 0;
+  bl->BLOptions.xi.iamp_smooth  = 0;
+  bl->BLOptions.xi.iord_amp     = 0;
+  bl->BLOptions.xi.ifm_amp      = 0;
+  bl->BLOptions.xi.iord_pha     = 0;
+  bl->BLOptions.xi.ifm_pha      = 0;
 } /* end SetDefaultParameter  */
-
-
-
-
-
-
 
 
 /* initialisiert ein indexfeld mit n Integern die als variable Liste  	*/
@@ -814,8 +814,8 @@ void minitdatset(struct mdatset *x)
          x->r1		= 10000;     
 	 x->r2		= 1000;
 	 /*x->alpha	= 88;*/                           
-	 x->rmi		= 2000;
-	 x->rho		= 2000;           
+	 x->rmi		= 52000;
+	 x->rho		= 63;           
       	 x->iflagmi	= 0;  
          x->w1          = -100 ;
 	 x->w2          = 100;
@@ -825,7 +825,46 @@ void minitdatset(struct mdatset *x)
 	 x->slopel      = 1;
 	 x->du= x->dw= x->dl= x->dRu= x->dRw= x->dRl= 0.0;
 	 x->Art= 188;
+	 snprintf(x->material, 6, "%s", "Au");
 }
+
+/* set defaults in struct BeamlineType */
+/* replaces initdatset                 */
+void InitBeamline(struct BeamlineType *bl)
+{
+  struct HardEdgeSourceType  *hp;
+
+#ifdef DEBUG
+  printf("debug: InitBeamline called, file: %s\n", __FILE__);
+#endif
+
+  SetDefaultParameter(bl);
+  /* rt hard edge */
+  
+  bl->RTSource.QuellTyp= 'H';
+  AllocRTSource(bl);
+  hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
+  
+  
+  hp->disty	= .1;  
+  hp->iy 	= 3;   
+  hp->distz	= .2;  
+  hp->iz	= 3;   
+  hp->divy	= 1.;  
+  hp->idy	= 7;   
+  hp->divz	= 4.;  
+  hp->idz	= 7;   
+  bl->RTSource.raynumber= hp->iy * hp->iz * hp->idy * hp->idz;
+  
+  // others
+  bl->BLOptions.lambda    = 0;
+  bl->BLOptions.displength= 0;
+  bl->BLOptions.dlambda   = 0;
+  bl->BLOptions.dlambdaflag= 0;
+  bl->BLOptions.SourcetoImage= 1;
+  bl->BLOptions.WithAlign    = 0;
+  bl->BLOptions.plrayset     = PLRaySet1;
+} /* end InitBeamline */
 
 void initdatset(struct datset *x, struct BeamlineType *bl)
 {

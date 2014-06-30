@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <27 Jun 14 14:57:39 flechsig>  */
+/*  Time-stamp: <30 Jun 14 15:56:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -144,7 +144,7 @@ public:
 		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
   int  mySetReflectivity(struct ElementType *ep) { return SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
-  void myposrc_ini() { posrc_ini(this); }
+  int  myposrc_ini() { return posrc_ini(this); }
   void mysource7c_ini() { source7c_ini(this); }
   void mysource8c_ini() { source8c_ini(this); }
   void myTest4Grating() { Test4Grating(this); }

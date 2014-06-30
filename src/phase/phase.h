@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <30 Jun 14 09:13:28 flechsig>  */
+/*   Time-stamp: <30 Jun 14 15:02:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -389,7 +389,8 @@ struct PSOptionsType                   /* 20.9.96 */
 
 struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda */
 {
-  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, act_ray_set, dlambdaflag, plrayset, need_another_run;
+  int SourcetoImage, wrMatrix, CalcMod, wrSource, WithAlign, REDUCE_maps, act_ray_set, dlambdaflag, 
+    plrayset, need_another_run;
   double epsilon, lambda, xlam_save, displength, dlambda;
   struct PSOptionsType PSO;
   struct control_flags ifl;
@@ -498,16 +499,17 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
 #endif
 /************************* Prototypen *****************************/
 
-int CheckBLOK(int, int, char*); 
-int BuildBeamline(struct BeamlineType *);
-int getgrfiletype(char *);
-int GetOElement();
-int GetPHASE(struct  PHASEset *, char *);
-int iindex(int, int);
-int OnElement(struct mdatset *, double, double);
-int ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *, int *);
-int ReadBLFile(char *, struct BeamlineType *);
-int SetFilePos(FILE *, char *);
+int  CheckBLOK(int, int, char*); 
+int  BuildBeamline(struct BeamlineType *);
+int  getgrfiletype(char *);
+int  GetOElement();
+int  GetPHASE(struct  PHASEset *, char *);
+int  iindex(int, int);
+void InitBeamline(struct BeamlineType *);
+int  OnElement(struct mdatset *, double, double);
+int  ProcComandLine(struct PHASEset *, int, char **, int *,  int *, int *, int *, int *);
+int  ReadBLFile(char *, struct BeamlineType *);
+int  SetFilePos(FILE *, char *);
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
 int  StackTest(); 

@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <30 Jun 14 11:51:04 flechsig>  */
+/*   Time-stamp: <30 Jun 14 15:09:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1753,18 +1753,24 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
   
    if ((f= fopen(fname, "r")) == NULL) 
      {
-       fprintf(stderr, "File %s not found- defaults used!\n", fname);
+       fprintf(stderr, "File %s not found- set defaults!\n", fname);
        bl->elementzahl= 0;
-       
-#ifndef QTGUI
-#ifndef OPTI
-#ifndef EXTR
+
+#if defined (QTGUI) || defined (OPTI) || defined (EXTR) 
+#define __SKIPINIT__    
+#endif
+
+#ifndef __SKIPINIT__
+       fprintf(stderr, "info: call initdatset\n");
        initdatset(&Fg3DefDat, &Beamline); 		/* source init with defaults*/
 #else
-       fprintf(stderr, "warning: Initialization temporarely deactivated in file: %s\n", __FILE__);
+       fprintf(stderr, "warning: Initialization - preliminary version, file: %s\n", __FILE__);
+#ifndef EXTR
+       //SetDefaultParameter(bl); 
+       InitBeamline(bl);
 #endif
 #endif
-#endif
+
        return -1;         /* file not found- return -1 */
      }
    

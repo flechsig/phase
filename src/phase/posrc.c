@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <04 Jun 14 15:56:36 flechsig>  */
+/*  Time-stamp: <30 Jun 14 15:49:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -41,7 +41,7 @@ void posrc_construct(struct BeamlineType *bl)
 } /* end posrc_construct */
 
 /* initializes the source depending on type */
-void posrc_ini(struct BeamlineType *bl)
+int posrc_ini(struct BeamlineType *bl)
 {
   int type;
 
@@ -69,11 +69,13 @@ void posrc_ini(struct BeamlineType *bl)
 
   if ( type == 7 )
     {
+      if (!fexists(bl->filenames.so7_hdf5)) return 0;
       if ( check_hdf5_type(bl->filenames.so7_hdf5, 7, 1) ) 
 	source7c_ini(bl);
       else 
 	source8c_ini(bl);
     }
+  return 1;
 } /* posrc_ini */
 
 

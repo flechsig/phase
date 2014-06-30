@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <12 Jun 14 17:21:15 flechsig> 
+//  Time-stamp: <30 Jun 14 15:32:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1539,17 +1539,17 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
     case 3:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iexpand);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iexpand= 1;   // default
       qst.setNum(op->ifl.iexpand);
       break;
     case 4:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.iplmode);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.iplmode= 1;   // default
       qst.setNum(op->ifl.iplmode);
       break;
     case 5:
       if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
-      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 7;   // default
       qst.setNum(myparent->myBeamline()->src.isrctype);
       break; 
     case 6:
@@ -1636,7 +1636,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
     case 22:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.inorm2);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.inorm2= 40;   // default
       qst.setNum(op->ifl.inorm2);
       break;
     case 23:
@@ -1676,7 +1676,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  scanned= sscanf(text, "%lg", &op->xi.ymin);
 	  op->xi.ymin*= 1e-3;
 	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ymin= -1;   // default
       qst.setNum(op->xi.ymin* 1e3, 'g', 4);
       break;
     case 29:
@@ -1685,12 +1685,12 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  scanned= sscanf(text, "%lg", &op->xi.ymax);
 	  op->xi.ymax*= 1e-3;
 	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ymax= 1;   // default
       qst.setNum(op->xi.ymax* 1e3, 'g', 4);
       break;
     case 30:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzy0);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzy0= 51;   // default
       qst.setNum(op->xi.ianzy0);
       break;
 
@@ -1725,7 +1725,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  scanned= sscanf(text, "%lg", &op->xi.zmin);
 	  op->xi.zmin*=1e-3;
 	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->xi.zmin= -1;   // default
       qst.setNum(op->xi.zmin* 1e3, 'g', 4);
       break;
     case 36:
@@ -1734,18 +1734,18 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 	  scanned= sscanf(text, "%lg", &op->xi.zmax);
 	  op->xi.zmax*= 1e-3;
 	}
-      if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->xi.zmax= 1;   // default
       qst.setNum(op->xi.zmax* 1e3, 'g', 4);
       break;
     case 37:
       if (!init) scanned= sscanf(text, "%d", &op->xi.ianzz0);
-      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->xi.ianzz0= 51;   // default
       qst.setNum(op->xi.ianzz0);
       break;
 
     case 38:
       if (!init) scanned= sscanf(text, "%d", &op->ifl.ibright);
-      if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 0;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->ifl.ibright= 1;   // default
       qst.setNum(op->ifl.ibright);
       break;
 
@@ -1890,13 +1890,13 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
 
     case 65:
       if (!init) scanned= sscanf(text, "%d", &op->PSO.with_coating);
-      if ((scanned == EOF) || (scanned == 0)) op->PSO.with_coating= 1;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->PSO.with_coating= 0;   // default
       qst.setNum(op->PSO.with_coating);
       break;
 
     case 66:
       if (!init) scanned= sscanf(text, "%d", &op->PSO.with_herror);
-      if ((scanned == EOF) || (scanned == 0)) op->PSO.with_herror= 1;   // default
+      if ((scanned == EOF) || (scanned == 0)) op->PSO.with_herror= 0;   // default
       qst.setNum(op->PSO.with_herror);
       break;
 

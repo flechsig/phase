@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <27 Jun 14 15:40:44 flechsig> 
+//  Time-stamp: <30 Jun 14 17:14:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -135,7 +135,12 @@ void MainWindow::activateProc(const QString &action)
 #ifdef OLD_PO_SOURCE
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
 #else
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
 #endif
           myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
@@ -340,7 +345,12 @@ if (!myparent->myBuildBeamline())
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
       myparent->mydrift_fresnel();
@@ -358,7 +368,12 @@ if (!myparent->myBuildBeamline())
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
       myparent->mydrift_fraunhofer();
@@ -378,7 +393,12 @@ if (!action.compare("fourfresAct"))
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
@@ -409,7 +429,13 @@ if (!action.compare("fourierAct"))
       UpdateStatus();
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
+
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
       myparent->mydrift_fourier();
@@ -462,7 +488,12 @@ if (!action.compare("fourierAct"))
 #ifdef OLD_PO_SOURCE
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
 #else
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
 #endif
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
@@ -505,7 +536,12 @@ if (!action.compare("fourierAct"))
 #ifdef OLD_PO_SOURCE
 	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
 #else
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
 #endif
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
@@ -1005,7 +1041,13 @@ if (!action.compare("fourierAct"))
 #else
 	  
 	  cout << "call myposrc_ini" << endl;
-	  myparent->myposrc_ini();
+	  if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
+
 #endif
 	  
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
@@ -2782,7 +2824,13 @@ void MainWindow::sourceAutoGuessBslot()
 #ifdef OLD_PO_SOURCE
     myparent->mysrc_ini(&bl->src); 
 #else
-    myparent->myposrc_ini();
+   if (!myparent->myposrc_ini()) 
+	    {
+	      QMessageBox::critical(this, tr("error"),
+			     tr("PO source file not found!"));
+	      return;
+	    }
+
 #endif
     bl->beamlineOK |= pstsourceOK;
   }

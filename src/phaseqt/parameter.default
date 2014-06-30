@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <09 May 14 16:03:19 flechsig> 
+#  Time-stamp: <30 Jun 14 15:31:42 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -34,8 +34,8 @@ Generic
 PO Controls
     iexpand		1	expansion of pathlength (0,1)				1	3
     iplmode		1	subtraction of ideal path length (0,1)			1	4
-    with_coating	1	PO with reflectivity  (0,1)	1	65
-    with_herror		1	PO with surface error (0,1)				1	66	
+    with_coating	1	PO with reflectivity  (0,1)	0	65
+    with_herror		1	PO with surface error (0,1)				0	66	
 
 PO Scaling factors
     inorm		0	normalize output (0,1) 					0	20
@@ -45,7 +45,6 @@ PO Scaling factors
 PO Source
     isrctype		7	source type (4,7), 7: hdf5				7	5
     source 4 & 7	-	E- field from files (filenames see Edit/Configure)	
-       so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
        xi.distfocy	0	distance of image plane to vertical focus		0.	49
        xi.distfocz	0	distance of image plane to horizontal focus		0.	50
     source 6		-	brightness from file (filename see Edit/Configure)
@@ -63,13 +62,13 @@ PO Integration
     phase reconstruction during integration
         d12_max		0	-							0	40 
         id12		0	print d12 on file, (0,1)				0	41
-        xi.ianz0_cal	-	-							-	42
-        xi.ianz0_fixed	-	-							-	43
-        xi.iamp_smooth	-	(0,1,2)							-	44
-        xi.iord_amp	-	-							-	45
-        xi.ifm_amp	-	-							-	46
-        xi.iord_pha	-	-							-	47
-        xi.ifm_pha	-	-							-	48
+        xi.ianz0_cal	-	-							0	42
+        xi.ianz0_fixed	-	-							0	43
+        xi.iamp_smooth	-	(0,1,2)							0	44
+        xi.iord_amp	-	-							0	45
+        xi.ifm_amp	-	-							0	46
+        xi.iord_pha	-	-							0	47
+        xi.ifm_pha	-	-							0	48
 
 PO time dependent
     so4.nfreqtot	2048	total number of frequency slices 			2048	56
@@ -109,7 +108,9 @@ PO Obsolete parameters
         sigmaz 	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	33
         sigmazp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	34
     source 2	-	Zernike polynomials in FIT_EY_RE.PAR and FIT_EY_IM.PAR
-    source 3	-	Source from files EYRE0_500.SPL and EYIM0_500.SPL	
+    source 3	-	Source from files EYRE0_500.SPL and EYIM0_500.SPL
+#    source 4	-	Source from files 
+#	       so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
     source 5	-	dipole source (analytical representation)
         dipcy	0	Dipole: Cy							0	16
         dipcz	0	Dipole: Cz							0	17
