@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <30 Apr 14 10:58:05 flechsig> 
+//  Time-stamp: <30 Jun 14 09:48:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -10,6 +10,7 @@
 
 
 #include <QApplication>
+#include <QMessageBox>
 
 #include "mainwindow.h"
 #include "phaseqt.h"
@@ -30,7 +31,7 @@ void my_funcv(int &image, int &parameter)
 
 int main(int argc, char *argv[])
 {
-  int setupswitch, cmode, selected, iord, numthreads, format; 
+  int setupswitch, cmode, selected, iord, numthreads, format, stackOK; 
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
@@ -50,8 +51,25 @@ int main(int argc, char *argv[])
     } 
 #endif
   
-  StackTest();
-
+  stackOK= StackTest(); 
+  if (!stackOK) 
+    {
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(QString("<b>Stacksize too low!</b>\n"));
+      msgBox->setInformativeText(QString("see debug messages for details"));
+      msgBox->setStandardButtons(QMessageBox::Abort | QMessageBox::Ignore);
+      msgBox->setDefaultButton(QMessageBox::Abort);
+      msgBox->setIcon(QMessageBox::Warning);
+      int ret = msgBox->exec();
+      if (ret == QMessageBox::Abort) 
+	{ 
+	  cout << "return" << endl;
+	  return 0; 
+	} 
+      else 
+	cout << "Stacksize warning ignored -- expect \"Segmentation fault\"" << endl << endl;
+    }
+  
   setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord, &numthreads, &format);
 
 #ifdef DEBUG 

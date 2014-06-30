@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <27 Jun 14 14:33:29 flechsig>  */
+/*   Time-stamp: <30 Jun 14 09:13:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -510,7 +510,7 @@ int ReadBLFile(char *, struct BeamlineType *);
 int SetFilePos(FILE *, char *);
  
 void *SetGrDatStruct(char *, struct BeamlineType *, GRDATSTRUCTTYPE *);
-void StackTest(); 
+int  StackTest(); 
 
 
 	

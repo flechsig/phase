@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <12 Jun 14 17:27:40 flechsig>  */
+/*   Time-stamp: <30 Jun 14 09:16:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -981,11 +981,11 @@ void init_posrc(struct source4c *sp)
   sp->gridy= NULL;
 } /* end init_posrc() */
 
-void StackTest()
+int StackTest()
 {
   struct rlimit rls;
   double mywarning= 100e6;
-    
+      
   getrlimit(RLIMIT_STACK, &rls);
  
   printf("StackTest- limits: rlim_cur: %f Mb, rlim_max: %d byte\n", 
@@ -999,7 +999,9 @@ void StackTest()
       printf("!!!!!!!!!!!!!    in case of \"Segmentation fault\" increase stacksize to at least 100Mb\n\n");
       printf("example for tcsh > limit stacksize 100megabytes\n");
       printf("example for bash > ulimit -s 100Mb or ulimit -s 100000\n\n");
+      return 0;
     }
+  return 1;
 } /* end stacktest */
 
 
