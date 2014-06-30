@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <30 Jun 14 09:48:54 flechsig> 
+//  Time-stamp: <30 Jun 14 09:52:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -31,7 +31,7 @@ void my_funcv(int &image, int &parameter)
 
 int main(int argc, char *argv[])
 {
-  int setupswitch, cmode, selected, iord, numthreads, format, stackOK; 
+  int setupswitch, cmode, selected, iord, numthreads, format; 
   QApplication app(argc, argv);
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
@@ -51,8 +51,7 @@ int main(int argc, char *argv[])
     } 
 #endif
   
-  stackOK= StackTest(); 
-  if (!stackOK) 
+  if ( !StackTest() ) 
     {
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setText(QString("<b>Stacksize too low!</b>\n"));
