@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <26 Jun 14 13:41:30 flechsig> 
+;  Time-stamp: <01 Jul 14 14:02:26 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -185,6 +185,122 @@ crl, field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, wavelength=self.wa
 return 
 end
 ;; end crl
+
+pro phase::fermidiracbeam, example=example, fwhm=fwhm, plot=plot, slope=slope, $
+         wavelength=wavelength, z_off=z_off, y_off=y_off, sizez=sizez, sizey=sizey, Nz=Nz, Ny=Ny
+;+
+; NAME:
+;   phase::fermidiracbeam
+;
+; PURPOSE:
+;   generate fermidirac like beam
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->fermidiracbeam
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   example:      example calculation plus plot (HeNe laser)
+;   fwhm:         fwhm of field               in m fwhminensity=fwhmfield/sqrt(0.5)
+;   dist:         distance to waist           in m
+;   wavelength    the wavelength              in m
+;   Nz            points hor.
+;   Ny            points vert, default = Nz
+;   sizey:        height (m),  default = sizez
+;   sizez:        width (m);
+;   slope:        dieout factor, default: 0.05*fwhm
+;
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;   fills the object 
+;
+; EXAMPLE:
+;   idl> emf->fermidiracbeam, Nz=243, sizez=0.0002, fwhm=27.7e-6 , wavelength=1.24e-10
+;
+; MODIFICATION HISTORY:
+;   UF Jun 2014
+;-
+self.name = 'Fermi-Dirac-Beam'
+print, 'fermidiracbeam called'
+
+IF KEYWORD_SET(EXAMPLE) THEN BEGIN
+    print, '**********************************************************'
+    print, 'example: HeNe Laser '
+    print, 'wavelength=633e-9, fwhm= 1e-3, sizez=1e-2'
+    print, '**********************************************************'
+    self->fermidiracbeam, wavelength=633e-9, fwhm=1e-3, sizez=1e-2, /plot
+    print, '**********************************************************'
+    print, 'end example'
+    print, '**********************************************************'
+    return
+endif  ;; end example
+
+if n_elements(Nz        ) eq 0 then Nz        = 243  ;; 3^5
+if n_elements(Ny        ) eq 0 then Ny        = Nz  
+if n_elements(wavelength) eq 0 then wavelength= 1e-10  
+if n_elements(fwhm      ) eq 0 then fwhm      = 5e-4  
+if n_elements(sizez     ) eq 0 then sizez     = 1e-3
+if n_elements(sizey     ) eq 0 then sizey     = sizez
+if n_elements(slope     ) eq 0 then slope     = 0.05* fwhm
+if n_elements(z_off     ) eq 0 then z_off     = 0.0
+if n_elements(y_off     ) eq 0 then y_off     = 0.0
+
+wavelength = double(wavelength)
+sizey      = double(sizey)
+sizez      = double(sizez)
+fwhm       = double(fwhm)
+
+field  = dcomplexarr(Nz, Ny) 
+z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez 
+y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
+
+print, 'wavelength (m) = ', wavelength
+print, 'Nz     = ', Nz      , ', Ny     = ', Ny
+print, 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey
+print, 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off
+print, 'fwhm    (m) = ', fwhm      , ', slope  (m) = ', slope
+
+for i=0, Nz-1 do begin
+  for j=0, Ny-1 do begin
+    r   =  sqrt((z_vec[i]-z_off)^2 + (y_vec[j]-y_off)^2)
+    arg0= (r- 0.5 * fwhm)/ slope 
+    arg1= 1.0/(1.0 + exp(arg0))
+         
+    field[i,j]= complex(arg1, 0.0, /double)
+  endfor
+endfor
+
+;; plot using mycontour
+if n_elements(plot) ne 0 then begin
+  bamp = abs(field)
+  window, 20
+  stat = dblarr(7)
+  fit   = gauss2dfit(bamp,    stat, z_vec, y_vec) 
+  fit2  = gauss2dfit(bamp^2, stat2, z_vec, y_vec) 
+  print, 'gaussfit amplitude: rms_z, rms_y (m)= ', stat(2),  stat(3)
+  print, 'gaussfit intensity: rms_z, rms_y (m)= ', stat2(2), stat2(3)
+  title= 'fermi-dirac beam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' + string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
+  mycontour, bamp, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title=title
+
+  
+endif ;; plot
+
+
+self.wavelength= wavelength
+self.field= ptr_new(field)
+self.z_vec= ptr_new(z_vec)
+self.y_vec= ptr_new(y_vec)
+
+return 
+end 
+;; end fermidiracbeam
 
 pro phase::h5_read, fname, vertical=vertical, _EXTRA=extra
 ;+
