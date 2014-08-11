@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <27 May 14 10:23:02 flechsig>  */
+/*  Time-stamp: <11 Aug 14 13:11:34 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -113,7 +113,10 @@ private slots:
     void coslot();
     void geslot();
     void apslot();
-    void frslot();
+    void faaslot();
+    void fouslot();
+    void freslot();
+    void fraslot();
     void grslot();
     void grvlsslot();
    
@@ -252,7 +255,10 @@ private:
     QAction *coAct;
     QAction *geAct;
     QAction *apAct;
-    QAction *frAct;
+    QAction *faaAct;
+    QAction *fouAct;
+    QAction *freAct;
+    QAction *fraAct;
     
     QSpinBox  *integerSpinBox;   // grating
     QGroupBox *gratingGroup;

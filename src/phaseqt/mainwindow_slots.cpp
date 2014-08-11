@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <30 Jun 14 17:14:26 flechsig> 
+//  Time-stamp: <11 Aug 14 15:59:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -153,6 +153,62 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
 				tr("<B>CheckBLOK</b> look into debug messages for details!"));
+	  return;
+	}
+
+      struct source4c *so4= (struct source4c *)&(myparent->myBeamline()->posrc);
+
+      if ((myparent->myBeamline()->ElementList[0].MDat.Art >= 100) && (myparent->myBeamline()->ElementList[0].MDat.Art <= 103)) 
+	{
+	  cout << "PO Fourier Optics- start" << endl;
+	  myparent->myBeamline()->emf.nz= so4->iex;
+	  myparent->myBeamline()->emf.ny= so4->iey;
+	  myparent->myBeamline()->emf.z= XMALLOC(double, myparent->myBeamline()->emf.nz);
+	  myparent->myBeamline()->emf.y= XMALLOC(double, myparent->myBeamline()->emf.ny);
+	  myparent->myBeamline()->emf.eyre= XMALLOC(double, myparent->myBeamline()->emf.ny);
+	  myparent->myBeamline()->emf.eyim= XMALLOC(double, myparent->myBeamline()->emf.ny);
+	  myparent->myBeamline()->emf.ezre= XMALLOC(double, myparent->myBeamline()->emf.nz);
+	  myparent->myBeamline()->emf.ezim= XMALLOC(double, myparent->myBeamline()->emf.nz);
+
+	  int n= 0;
+	  
+	  int sizez= myparent->myBeamline()->emf.nz* sizeof(double);
+	  int sizey= myparent->myBeamline()->emf.ny* sizeof(double);
+
+	  while (n < elementList->count())
+	    {
+	      myparent->myBeamline()->position= n+1;
+	      if ((myparent->myBeamline()->ElementList[n].MDat.Art >= 100) && (myparent->myBeamline()->ElementList[n].MDat.Art <= 103))
+		cout << "FO- OK n= " << n << endl;
+	      else 
+		{
+		  cout << "FO and SP mix will not work- exit n= " << n << endl;
+		  exit(1);
+		}
+	      
+	      myparent->mydrift_fourier();
+	      struct PSDType *psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+	      memcpy(myparent->myBeamline()->emf.y, psd->y, sizey);
+	      memcpy(myparent->myBeamline()->emf.z, psd->z, sizez);
+	      memcpy(myparent->myBeamline()->emf.eyre, psd->eyrec, sizey);
+	      memcpy(myparent->myBeamline()->emf.eyim, psd->eyimc, sizey);
+	      memcpy(myparent->myBeamline()->emf.ezre, psd->ezrec, sizez);
+	      memcpy(myparent->myBeamline()->emf.ezim, psd->ezimc, sizez);
+	      n++;
+	    }
+	  XFREE(myparent->myBeamline()->emf.z);
+	  XFREE(myparent->myBeamline()->emf.y);
+	  XFREE(myparent->myBeamline()->emf.eyre);
+	  XFREE(myparent->myBeamline()->emf.eyim);
+	  XFREE(myparent->myBeamline()->emf.ezre);
+	  XFREE(myparent->myBeamline()->emf.ezim);
+
+	  return;
+	} // end foloop
+
+      if (elementList->count() > 1) 
+	{
+	  cout << "multiple elements return" << endl;
 	  return;
 	}
       
@@ -2620,8 +2676,38 @@ void MainWindow::apslot()
   UpdateElementBox(number); 
 }
 
-// slot shapeMenu fresnel slot
-void MainWindow::frslot()
+// slot shapeMenu auto slot
+void MainWindow::faaslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  cout << "Auto slot not yet ready!" << endl;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEAuto;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu fourier slot
+void MainWindow::fouslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  cout << "Fourier slot not yet ready!" << endl;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEFourier;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu fourier slot
+void MainWindow::freslot()
 {
   int number= elementList->currentRow();
   if (number < 0) 
@@ -2632,6 +2718,21 @@ void MainWindow::frslot()
     }
   cout << "Fresnel slot not yet ready!" << endl;
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOEFresnel;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu fraunhofer slot
+void MainWindow::fraslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  cout << "Fraunhofer slot not yet ready!" << endl;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEFraunhofer;
   UpdateElementBox(number); 
 }
 // end slots shapeMenu

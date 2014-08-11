@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <30 Jun 14 15:32:22 flechsig> 
+//  Time-stamp: <11 Aug 14 13:22:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -924,7 +924,10 @@ QWidget *MainWindow::createOpticalElementBox()
   coAct = new QAction(tr("&conical"), this);
   geAct = new QAction(tr("&generic"), this); 
   apAct = new QAction(tr("&Aperture/Slit"), this); 
-  frAct = new QAction(tr("PO drift (&Fresnel) (exp)"), this);
+  faaAct = new QAction(tr("PO drift (Auto) (exp)"), this);
+  fouAct = new QAction(tr("PO drift (Fourier) (exp)"), this);
+  freAct = new QAction(tr("PO drift (Fresnel) (exp)"), this);
+  fraAct = new QAction(tr("PO drift (Fraunhofer) (exp)"), this);
   shapeMenu->addAction(pmAct);
   shapeMenu->addAction(toAct);
   shapeMenu->addAction(peAct);
@@ -934,8 +937,12 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(geAct);
   shapeMenu->addSeparator();
   shapeMenu->addAction(apAct);
-  //shapeMenu->addSeparator();
-  //shapeMenu->addAction(frAct);
+  shapeMenu->addSeparator();
+  shapeMenu->addAction(faaAct);
+  shapeMenu->addAction(fouAct);
+  shapeMenu->addAction(freAct);
+  shapeMenu->addAction(fraAct);
+
   shapeMenu->setDefaultAction(toAct);
   shapeButton->setMenu(shapeMenu);
 
@@ -946,7 +953,10 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(coAct, SIGNAL(triggered()), this, SLOT(coslot()));
   connect(geAct, SIGNAL(triggered()), this, SLOT(geslot()));
   connect(apAct, SIGNAL(triggered()), this, SLOT(apslot()));
-  connect(frAct, SIGNAL(triggered()), this, SLOT(frslot()));
+  connect(faaAct, SIGNAL(triggered()), this, SLOT(faaslot()));
+  connect(fouAct, SIGNAL(triggered()), this, SLOT(fouslot()));
+  connect(freAct, SIGNAL(triggered()), this, SLOT(freslot()));
+  connect(fraAct, SIGNAL(triggered()), this, SLOT(fraslot()));
 
   shapeLabel = new QLabel(tr("unknown")); // return value of menu
   
@@ -2170,9 +2180,19 @@ void MainWindow::UpdateElementBox(int number)
     case kEOESlit:
       shapeLabel->setText(QString(tr("Aperture/Slit"))); 
       break;
+    case kEOEAuto:
+      shapeLabel->setText(QString(tr("PO drift (Auto)"))); 
+      break;
+    case kEOEFourier:
+      shapeLabel->setText(QString(tr("PO drift (Fourier)"))); 
+      break;
     case kEOEFresnel:
       shapeLabel->setText(QString(tr("PO drift (Fresnel)"))); 
       break;
+    case kEOEFraunhofer:
+      shapeLabel->setText(QString(tr("PO drift (Fraunhofer)"))); 
+      break;
+
     default: 
       shapeLabel->setText(QString(tr("unknown")));
       QMessageBox::warning(this, tr("UpdateElementBox"),
