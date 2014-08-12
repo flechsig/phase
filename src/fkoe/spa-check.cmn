@@ -1,7 +1,7 @@
 c -*-fortran-*-
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa-check.cmn
 c$$$ Date      : <01 Apr 14 09:30:53 flechsig> 
-c$$$ Time-stamp: <01 Apr 14 09:31:05 flechsig> 
+c$$$ Time-stamp: <12 Aug 14 16:39:34 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -46,3 +46,5 @@ c$$$ $Author$
 	common/fkoe4/ey0(1024,1024),ez0(1024,1024),
      &     ey1(1024,1024),ez1(1024,1024),xm1,sqrtm1,fact0,fact
 
+
+c end
