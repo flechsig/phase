@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <30 Jun 14 15:09:02 flechsig>  */
+/*   Time-stamp: <11 Aug 14 13:36:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2748,7 +2748,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("DefMirrorC: elindex: %d slit- geometry and element data are ignored - ", elindex);
       printf("fill dummy entries from toroid\n"); 
     case kEOEFresnel:
-      printf("DefMirrorC: elindex: %d PO Fresnel- geometry and element data are ignored - ", elindex);
+    case kEOEAuto:
+    case kEOEFourier:
+    case kEOEFraunhofer:
+      printf("DefMirrorC: elindex: %d PO Fourier Optics- geometry and element data are ignored - ", elindex);
       printf("fill dummy entries from toroid\n"); 
     case kEOEDrift:
       printf("DefMirrorC: drift- geometry and element data are ignored - ");
@@ -2970,7 +2973,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #endif
 	}
       break;
- 
+
     default:
       fprintf(stderr, "defmirrorc: %d - unknown shape\n", etype); 
       exit(-1);

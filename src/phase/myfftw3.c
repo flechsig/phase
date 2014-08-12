@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <26 May 14 10:39:06 flechsig>  */
+ /* Time-stamp: <11 Aug 14 15:27:09 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -30,24 +30,25 @@
 // target < 1 means undersampling is good (impulse response or fresnel/fraunhofer propagator) 
 double check_sampling(struct BeamlineType *bl, double *lambda_x_x_p, double target, int verbose)
 {
-  int    cols, rows;
+  int    cols, rows, eidx;
   double driftlen, ratio, yratio, zratio, lambda, zwidth, ywidth, lambda_x_x_local, *lambda_x_x;
   struct ElementType *el;
   struct source4c *so4;
 
+  eidx= bl->position- 1;
 #ifdef DEBUG
-  printf("debug: check_sampling called with target %f\n", target);
+  printf("debug: check_sampling called with target %f, eidx= %d\n", target, eidx);
 #endif
-
+  
   lambda_x_x= &lambda_x_x_local;
 
   so4= (struct source4c *)&(bl->posrc);
   cols= so4->iex;
   rows= so4->iey;
-  zwidth= so4->gridx[cols- 1]- so4->gridx[0];
-  ywidth= so4->gridy[rows- 1]- so4->gridy[0];
+  zwidth= (eidx) ? (bl->emf.z[bl->emf.nz- 1]- bl->emf.z[0]) : (so4->gridx[cols- 1]- so4->gridx[0]);
+  ywidth= (eidx) ? (bl->emf.y[bl->emf.ny- 1]- bl->emf.y[0]) : (so4->gridy[rows- 1]- so4->gridy[0]);
 
-  el= &(bl->ElementList[0]);
+  el= &(bl->ElementList[eidx]);
   driftlen= el->GDat.r+ el->GDat.rp;
   lambda  = bl->BLOptions.lambda;
 
@@ -95,7 +96,7 @@ double check_sampling(struct BeamlineType *bl, double *lambda_x_x_p, double targ
 /* process ez and ey in sequence                            */
 void drift_fourier(struct BeamlineType *bl)
 {
-  int    row, rows, col, cols;
+  int    row, rows, col, cols, eidx;
   double driftlen, k, totz, toty, p0, lambda, *u, *v, tmp;
   struct ElementType *el;
   struct source4c *so4;
@@ -105,6 +106,9 @@ void drift_fourier(struct BeamlineType *bl)
   fftw_complex *in, *out;
   fftw_plan    p1, p2;
 #endif
+
+  eidx= bl->position- 1;
+  printf("drift_fourier: eno= %d\n", eidx);
 
   tmp= check_sampling(bl, &tmp, 1.1, 1);
 
@@ -121,24 +125,25 @@ void drift_fourier(struct BeamlineType *bl)
   psd->iz= cols;
   
 //el= &(bl->ElementList[bl->position]); // oder -1
-  el= &(bl->ElementList[0]);
+  el= &(bl->ElementList[eidx]);
   driftlen= el->GDat.r+ el->GDat.rp;
   lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
   p0 = fmod(driftlen, lambda);          // phase rest
-  totz= so4->xemax- so4->xemin;
-  toty= so4->yemax- so4->yemin;
+  totz= (!eidx) ? (so4->xemax- so4->xemin) : (bl->emf.z[bl->emf.nz- 1]- bl->emf.z[0]);
+  toty= (!eidx) ? (so4->yemax- so4->yemin) : (bl->emf.y[bl->emf.ny- 1]- bl->emf.y[0]);
 
   // fill frequency vectors and output
   for (col= 0; col< cols; col++) 
     {
       u[col]= (col/ (cols- 1.0)- 0.5)* (cols- 1.0)/ totz; 
-      psd->z[col]= so4->gridx[col];
+      psd->z[col]= (!eidx) ? so4->gridx[col] : bl->emf.z[col];
     }
+
   for (row= 0; row< rows; row++) 
     {
       v[row]= (row/ (rows- 1.0)- 0.5)* (rows- 1.0)/ toty;
-      psd->y[row]= so4->gridy[row];
+      psd->y[row]= (!eidx) ? so4->gridy[row] : bl->emf.y[row];
     }
 
   printf("drift_fourier called, drift= %f mm, file= %s\n", driftlen, __FILE__);

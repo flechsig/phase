@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <30 Jun 14 15:02:01 flechsig>  */
+/*   Time-stamp: <11 Aug 14 13:54:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -104,7 +104,11 @@
 #define kEOEElli                78
 #define kEOEPElli               79
 #define kEOESlit                99
-#define kEOEFresnel             100
+#define kEOEAuto                100
+#define kEOEFourier             101
+#define kEOEFresnel             102
+#define kEOEFraunhofer          103
+
 
 #define kESundulatorSourceButton 107      
 #define kESUndulatorSISButton   108 
@@ -397,6 +401,13 @@ struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda
   struct apertures apr;
   struct integration xi;
 };    
+
+// basic electromagnetic field
+struct EmfType
+{
+  int nz, ny;
+  double *y, *z, *eyre, *eyim, *ezre, *ezim;
+};
                                             
 struct BeamlineType
 {
@@ -418,6 +429,7 @@ struct BeamlineType
   struct TmpMapType *tp;
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
+  struct EmfType emf;
 };
 
 /* mod 20121102 */
