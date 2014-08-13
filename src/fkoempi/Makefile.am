@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <13 Aug 14 14:08:34 flechsig> 
+#  Time-stamp: <13 Aug 14 14:08:58 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -15,8 +15,6 @@ bin_PROGRAMS     = fkoempi
 fkoempi_SOURCES  = fkoempi.c fkoempi.h
 
 #fkoe_mpi_LDADD = 
-
-
 
 # files installed under data
 pkgdata_DATA = fkoempi.par
