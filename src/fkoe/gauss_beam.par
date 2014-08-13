@@ -1,7 +1,7 @@
-10.	! wavelength in nm
-0.07	! beam waist radius in mm
-301,301	! ianzy,ianzz
+10.	        ! wavelength in nm
+0.07	        ! beam waist radius in mm
+301,301	        ! ianzy,ianzz
 -0.8 0.8 	! ymin,ymax in mm
--0.8 0.8      ! zmin,zmax in mm
+-0.8 0.8        ! zmin,zmax in mm
 -0.,  -0.	! offsets dy, dz
-5000.	! distance to waist in mm
+5000.	        ! distance to waist in mm
