@@ -46,7 +46,7 @@ double dz0, dy0;
 struct extends e1_extends, s_extends;
 //double z1_min, z1_max, y1_min, y1_max;
 
-
+// end global vars
 
 /************************************************************************
  initialize master and slave threads, 
@@ -54,13 +54,13 @@ struct extends e1_extends, s_extends;
 *************************************************************************/
 int main(int argc, char *argv[])
 {
-  int i,j;
-  int res, nthreads;
+  int    i, j;
+  int    res, nthreads;
   double z0_min, z0_max, y0_min, y0_max; 
   
   // global   
   
-  res = MPI_Init(&argc, &argv);
+  res= MPI_Init(&argc, &argv);
   if (res != 0)
   {
     fprintf(stderr, "Could not initialize OpenMPI!\n"); 
@@ -85,56 +85,51 @@ int main(int argc, char *argv[])
   {
     case 10:
       build_dest_axis(&e1_extends, ny1, nz1, sy1, sz1);
-    break;
+      break;
     
     case 1:
       slave_load_surface(surffilename, &ny1, &nz1, sy1, sz1);            
-    break;      
+      break;      
     
     case 2:
       slave_load_surface(surffilename, &ny0, &nz0, sy0, sz0);      
       build_dest_axis(&e1_extends, ny1, nz1, sy1, sz1);            
-    break;      
+      break;      
         
     case 3:
       fprintf(stderr, "mode 3 not yet supported\n");
       exit(-2); // not yet 
       //slave_load_surface(surffilename, &ny1, &nz1, sy1, sz1);      
-      
-    break;      
+      break;      
     
     default:
       fprintf(stderr, "Unsupported mode %d!\n", mode);
       MPI_Finalize();
       return -1;
-    break;      
+      break;      
   }
   
   // determine parameters for source field
-  xlam=xlam*1.0e-6;
-  cc=(2.0*M_PI)/xlam;    
-  z0_min = sz0[0]; z0_max = sz0[nz0-1];
-  y0_min = sy0[0]; y0_max = sy0[ny0-1];  
-  dz0 = (z0_max-z0_min)/(nz0-1); 
-  dy0 = (y0_max-y0_min)/(ny0-1); 
+  xlam  = xlam* 1.0e-6;
+  cc    = (2.0* M_PI)/xlam;    
+  z0_min= sz0[0]; z0_max= sz0[nz0- 1];
+  y0_min= sy0[0]; y0_max= sy0[ny0- 1];  
+  dz0   = (z0_max- z0_min)/(nz0- 1); 
+  dy0   = (y0_max- y0_min)/(ny0- 1); 
    
   // start master/slave specific tasks
-  if (rank==0)
+  if (rank == 0)
   {
     int nslaves;
     
     printf("M: Starting FKOE with %d processes\n", nthreads); 
-  
-    nslaves = nthreads-1;
-  
+    nslaves= nthreads- 1;
     master_propagate(nslaves);
     master_save_fields(BASEOFNAME, ny1, nz1);            
-    
     printf("M: done\n");
   }
-  else
+  else         // slaves
   {    
-    
     switch (mode)
     {
       case 10:        
@@ -151,7 +146,6 @@ int main(int argc, char *argv[])
     }        
   }
    
-  
   MPI_Finalize();
   return 0;
 }
@@ -164,6 +158,8 @@ void all_load_parameters(const char *parfname)
   int t;
   FILE *fp;
   double angle_deg;
+
+  //  fprintf(stderr, "Read parameter from file %s\n", parfname);
   
   fp = fopen(parfname, "r");
   if (!fp)
@@ -173,42 +169,39 @@ void all_load_parameters(const char *parfname)
     exit (-1);    
   }
     
-  fprintf(stdout, "Read parameter from file %s\n", parfname);
-
   // parse
-  for (t=0; t<4; t++)
+  for (t= 0; t< 4; t++)
     fscanf(fp, "%255s %*[^\n]", srcfilenames[t]);
   
-  fscanf(fp, "%d %*[^\n]", &mode);
+  fscanf(fp, "%d %*[^\n]",      &mode);
   fscanf(fp, "%lf,%lf %*[^\n]", &dist, &dista);
-  fscanf(fp, "%lf %*[^\n]", &angle_deg);
-  fscanf(fp, "%lf %*[^\n]", &xlam);
+  fscanf(fp, "%lf %*[^\n]",     &angle_deg);
+  fscanf(fp, "%lf %*[^\n]",     &xlam);
   
   fscanf(fp, "%lf %lf %*[^\n]", &e1_extends.y_min, &e1_extends.y_max);
-  fscanf(fp, "%d %*[^\n]", &ny1);
+  fscanf(fp, "%d %*[^\n]",      &ny1);
   
   fscanf(fp, "%lf %lf %*[^\n]", &e1_extends.z_min, &e1_extends.z_max);
-  fscanf(fp, "%d %*[^\n]", &nz1);
+  fscanf(fp, "%d %*[^\n]",      &nz1);
   
-  fscanf(fp, "%255s %*[^\n]", surffilename);
+  fscanf(fp, "%255s %*[^\n]",   surffilename);
   
-  
-  angle = angle_deg*M_PI/180.0;
+  angle = angle_deg* M_PI/180.0;
   
   fclose(fp);   
-}
+} // all_load_parameters
 
 
 /************************************************************************
- read in EM-field data
+ read in EM-field data from files
 *************************************************************************/
 void all_load_fields()
 {
   FILE *fp[4];
-  int t, i, j;
+  int  t, i, j, nz00, ny00;
   
   // open the four field files
-  for (t=0; t<4; t++)
+  for (t= 0; t< 4; t++)
   {
     fp[t] = fopen(srcfilenames[t], "r");
     if (!fp[t])
@@ -219,22 +212,34 @@ void all_load_fields()
     }
     
     // determine grid size/increase file pointer
-    fscanf(fp[t], "%d %d\n", &nz0, &ny0);
-  } 
+    fscanf(fp[t], "%d %d\n", &nz0, &ny0);  // read the first line, the values in fp[3] are kept 
+    
+    if (t == 0)  // basic check of file consistency
+      {
+	nz00= nz0;
+	ny00= ny0;
+      } 
+    else
+      if ((nz00 != nz0) || (ny00 != ny0))
+	{
+	  fprintf(stderr, "Inconsistent files\n");
+	  MPI_Finalize();
+	  exit (-1);
+	}
+  } // end file loop (files still open, first line read)
   
   // read in values
-  for (j=0; j<ny0; j++)
-    for (i=0; i<nz0; i++)
+  for (j= 0; j< ny0; j++)
+    for (i= 0; i< nz0; i++)
     {
-      fscanf(fp[0], "%lf %lf %lf\n", &sz0[i], &sy0[j], &ey0[j][i].re);
+      fscanf(fp[0], "%lf %lf %lf\n",   &sz0[i], &sy0[j], &ey0[j][i].re);
       fscanf(fp[1], "%*lf %*lf %lf\n", &ey0[j][i].im);
       fscanf(fp[2], "%*lf %*lf %lf\n", &ez0[j][i].re);
       fscanf(fp[3], "%*lf %*lf %lf\n", &ez0[j][i].im);    
     }
       
-  for (t=0; t<4; t++)
-    fclose(fp[t]);  
-}
+  for (t= 0; t< 4; t++) fclose(fp[t]); // close all files  
+} // all_load_fields
 
 /************************************************************************
  read in surface profile
@@ -266,9 +271,8 @@ void slave_load_surface(const char *surffilename, int *ny, int *nz, double sy[],
       fscanf(fp, "%lf %lf %lf\n", &sz[i], &sy[j], &surf[j][i]);      
     }
       
-  
   fclose(fp);  
-}
+} // end slave_load_surface
 
 /************************************************************************
  write EM-field data to files
@@ -279,7 +283,6 @@ void master_save_fields(const char* baseofname, int ny, int nz)
   int i,j,t;
   const char *extensions[4] = {"eyrec", "eyimc", "ezrec", "ezimc"};
 
-  
   for (t=0; t<4; t++)
   {
     char fname[256];
@@ -312,7 +315,7 @@ void master_save_fields(const char* baseofname, int ny, int nz)
     
   for (t=0; t<4; t++)
     fclose(fp[t]);
-}
+} // end master_save_fields
 
 /************************************************************************
  interpolate and initialize the axis scales for the image plane
@@ -342,57 +345,56 @@ void build_dest_axis(const struct extends *e, int ny, int nz, double sy[], doubl
 *************************************************************************/
 void master_propagate(int nslaves)
 {
-  int i,j = 0;
+  int i, j = 0;
   int *lines;
   
-  
-  lines = malloc(nslaves * sizeof(int));    
+  lines= malloc(nslaves * sizeof(int));    
     
-    do 
+  do                    // loop over rows in image plane??)
     {
       int n, nrtasks;
       
       // distribute tasks 
-      nrtasks = nslaves;
-      if ((j+nrtasks) > ny1) nrtasks = ny1-j;
+      nrtasks= nslaves;
+      if ((j+ nrtasks) > ny1) nrtasks = ny1- j;
             
-      for (n=0; n<nrtasks; n++)
+      for (n= 0; n< nrtasks; n++) // loop over hosts
       {
-        lines[n] = j;
+        lines[n]= j;
                 
         //printf("M: assign task(%d) to process %d\n", lines[n], n+1);
-        MPI_Send(&lines[n], 1, MPI_INT, n+1, 0, MPI_COMM_WORLD);
+        MPI_Send(&lines[n], 1, MPI_INT, n+1, 0, MPI_COMM_WORLD); // send row number
         
         j++;
       }
       
       // wait for tasks to report results
-      for (n=0; n<nrtasks; n++)
+      for (n= 0; n< nrtasks; n++)
       {
         int c;
-        struct complex vals[2*nz1];
+        struct complex vals[2* nz1];
         
-        MPI_Recv(vals, nz1*2*2, MPI_DOUBLE, n+1, 1, MPI_COMM_WORLD, NULL);
+        MPI_Recv(vals, nz1*4, MPI_DOUBLE, n+1, 1, MPI_COMM_WORLD, NULL);
 
         //printf("M: got result from process %d (task %d)\n", n+1, lines[n]);
         
         // copy obtained line to target field
         //printf("M: [%d] = (%.2f,%.2f)\n", 0, vals[0].re*1000, vals[0].im*1000);
-        for (c=0; c<nz1; c++)
+        for (c= 0; c< nz1; c++)
         {          
           ey1[lines[n]][c] = vals[c];
-          ez1[lines[n]][c] = vals[c+nz1];
+          ez1[lines[n]][c] = vals[c+ nz1];
         }
         
         //for (c=0; c<NZ1; c++)
-          //printf("M: result(%d)[%d] = (%.2f, %.2f)\n", n+1, c, vals[c].re, vals[c].im);
+        //printf("M: result(%d)[%d] = (%.2f, %.2f)\n", n+1, c, vals[c].re, vals[c].im);
       }
       
       printf("j = %d\n", j);
-    } while (j<ny1);
+    } while (j< ny1);
     
     // tell slaves to exit
-    for (i=0; i<nslaves; i++)
+    for (i= 0; i< nslaves; i++)
     {
       int nexit = -1;
       MPI_Send(&nexit, 1, MPI_INT, i+1, 0, MPI_COMM_WORLD);
@@ -486,88 +488,82 @@ void slave_propagate_10()
 *************************************************************************/
 void slave_propagate_1(double angle)
 {
-  int i, tag, src;
-    int j;
-    double fact0;
+  int    i, j, tag, src;
+  double fact0;
     
-    
-    fact0 = (dz0*dy0)/xlam*sqrt(cos(angle)); 
-    
-    // slave thread
-    // receive and process until getting j=-1
-    do 
+  fact0 = (dz0*dy0)/xlam*sqrt(cos(angle)); 
+  
+  // slave thread
+  // receive and process until getting j=-1
+  do 
     {
       MPI_Recv(&j, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, NULL);
-    
+      
       if (j != -1)
-      {
-        int i;
-        int k,l;
-        struct complex vals[2*nz1];
-        
-        //printf("S[%d]: got task(%d)\n", rank, j);
-                          
-        //calculate_line
-        for (i=0; i<nz1; i++)
-        {
-          struct complex val_y = {0.0, 0.0}, val_z = {0.0, 0.0};
-          double xstart, ystart, zstart;
-          double xend, yend, zend;
-          double phase;          
-          struct complex fact;
-
-          // optical element is oriented on top
-          xend = sy1[j];
-          yend = -surf[j][i];
-          zend = sz1[i];
-          
-          for (l=0; l<ny0; l++)
-            for (k=0; k<nz0; k++)
-            {
-              struct complex y = ey0[l][k];
-              struct complex z = ez0[l][k];                                     
-              double dist1;
-              
-              
-              xstart = -dist*sin(angle)-sy0[l]*cos(angle);
-              ystart = -dist*cos(angle)+sy0[l]*sin(angle);
-              zstart = sz0[k];
-              
-              dist1 = sqrt((xstart-xend)*(xstart-xend) + (ystart-yend)*(ystart-yend) + 
-                           (zstart-zend)*(zstart-zend)) - fabs(dist);
-            
-                               
-              if (dist > 0)
-                phase = dist1*cc;
-              else
-                phase = -dist1*cc;
-         
-              fact.re = fact0*cos(phase)/(dist+dist1);
-              fact.im = fact0*sin(phase)/(dist+dist1);
-                  
-              // y-polarized
-              val_y.re += y.re*fact.re-y.im*fact.im;
-              val_y.im += y.im*fact.re+y.re*fact.im;
-              
-              // z-polarized
-              val_z.re += z.re*fact.re-z.im*fact.im;
-              val_z.im += z.im*fact.re+z.re*fact.im;
-            }
- 
-            vals[i] = val_y;
-            vals[i+nz1] = val_z;
-          }
-                            
-        //printf("S[%d]: [%d] = (%.2f,%.2f)\n", rank, 0, vals[0].re*1000, vals[0].im*1000);
-        MPI_Send(vals, nz1*2*2, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD);
-
-        //printf("S[%d]: sent result for task(%d)\n", rank, j);
-      }
+	{
+	  int i;
+	  int k,l;
+	  struct complex vals[2*nz1];
+	  
+	  //printf("S[%d]: got task(%d)\n", rank, j);
+	  
+	  // calculate_line j is the row number
+	  for (i= 0; i< nz1; i++)
+	    {
+	      struct complex val_y = {0.0, 0.0}, val_z = {0.0, 0.0};
+	      double xstart, ystart, zstart;
+	      double xend, yend, zend;
+	      double phase;          
+	      struct complex fact;
+	      
+	      // optical element is oriented on top
+	      xend = sy1[j];
+	      yend = -surf[j][i];
+	      zend = sz1[i];
+	      
+	      for (l= 0; l< ny0; l++)
+		for (k= 0; k< nz0; k++)
+		  {
+		    struct complex y = ey0[l][k];
+		    struct complex z = ez0[l][k];                                     
+		    double dist1;
+		    
+		    xstart= -dist* sin(angle)- sy0[l]* cos(angle);
+		    ystart= -dist* cos(angle)+ sy0[l]* sin(angle);
+		    zstart= sz0[k];
+		    
+		    dist1 = sqrt((xstart-xend)*(xstart-xend) + (ystart-yend)*(ystart-yend) + 
+				 (zstart-zend)*(zstart-zend)) - fabs(dist);
+		    
+		    phase= (dist > 0) ? (dist1* cc) : (-dist1* cc);
+		    
+		    fact.re= fact0*cos(phase)/(dist+dist1);
+		    fact.im= fact0*sin(phase)/(dist+dist1);
+		    
+		    // y-polarized
+		    val_y.re+= y.re* fact.re- y.im* fact.im;
+		    val_y.im+= y.im* fact.re+ y.re* fact.im;
+		    
+		    // z-polarized
+		    val_z.re+= z.re* fact.re- z.im* fact.im;
+		    val_z.im+= z.im* fact.re+ z.re* fact.im;
+		  }
+	      
+	      vals[i]     = val_y;
+	      vals[i+ nz1]= val_z;
+	    }
+	  
+	  // printf("S[%d]: [%d] = (%.2f,%.2f)\n", rank, 0, vals[0].re*1000, vals[0].im*1000);
+	  // sendet die daten einer horizontalen zeile (4 double Werte pro punkt, erst alle y dann z) 
+	  MPI_Send(vals, nz1*4, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD);
+	  
+	  //printf("S[%d]: sent result for task(%d)\n", rank, j);
+	}
       else
         printf("S[%d]: got exit signal\n", rank);        
     } while(j != -1);
-    
-      printf("S[%d]: done\n", rank);   
+  
+  printf("S[%d]: done\n", rank);   
 } /* end slave_propagate_1 */
 
 /************************************************************************
