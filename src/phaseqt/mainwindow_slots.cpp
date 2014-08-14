@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Aug 14 16:55:33 flechsig> 
+//  Time-stamp: <14 Aug 14 16:36:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -161,50 +161,41 @@ void MainWindow::activateProc(const QString &action)
       if ((myparent->myBeamline()->ElementList[0].MDat.Art >= 100) && (myparent->myBeamline()->ElementList[0].MDat.Art <= 103)) 
 	{
 	  cout << "PO Fourier Optics- start" << endl;
-	  emf_construct(&(myparent->myBeamline()->emf), so4->iex, so4->iey);
-	  /*	
-  myparent->myBeamline()->emf.nz= so4->iex;
-	  myparent->myBeamline()->emf.ny= so4->iey;
-	  myparent->myBeamline()->emf.z= XMALLOC(double, myparent->myBeamline()->emf.nz);
-	  myparent->myBeamline()->emf.y= XMALLOC(double, myparent->myBeamline()->emf.ny);
-	  myparent->myBeamline()->emf.eyre= XMALLOC(double, myparent->myBeamline()->emf.ny);
-	  myparent->myBeamline()->emf.eyim= XMALLOC(double, myparent->myBeamline()->emf.ny);
-	  myparent->myBeamline()->emf.ezre= XMALLOC(double, myparent->myBeamline()->emf.nz);
-	  myparent->myBeamline()->emf.ezim= XMALLOC(double, myparent->myBeamline()->emf.nz);
-	  */
-	  int n= 0;
-	  
-	  int sizez= myparent->myBeamline()->emf.nz* sizeof(double);
-	  int sizey= myparent->myBeamline()->emf.ny* sizeof(double);
+	  myparent->mysource4c_2_emfp();
+	  cout << "source in emfp" << endl;
 
+	  struct EmfType *emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	  
+	  int n= 0;
 	  while (n < elementList->count())
 	    {
-	      myparent->myBeamline()->position= n+1;
-	      if ((myparent->myBeamline()->ElementList[n].MDat.Art >= 100) && (myparent->myBeamline()->ElementList[n].MDat.Art <= 103))
-		cout << "FO- OK n= " << n << endl;
-	      else 
+	      double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
+	      switch (myparent->myBeamline()->ElementList[n].MDat.Art)
 		{
+		case 100:
+		  drift_auto_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+		  break;
+		case 101:
+		  drift_fourier_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+		  break;
+		case 102:
+		  drift_fresnel_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+		  break;
+		case 103:
+		  drift_fraunhofer_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+		  break;
+		default:
 		  cout << "FO and SP mix will not work- exit n= " << n << endl;
 		  exit(1);
 		}
-	      
-	      myparent->mydrift_fourier();
-	      struct PSDType *psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-	      memcpy(myparent->myBeamline()->emf.y, psd->y, sizey);
-	      memcpy(myparent->myBeamline()->emf.z, psd->z, sizez);
-	      memcpy(myparent->myBeamline()->emf.eyre, psd->eyrec, sizey);
-	      memcpy(myparent->myBeamline()->emf.eyim, psd->eyimc, sizey);
-	      memcpy(myparent->myBeamline()->emf.ezre, psd->ezrec, sizez);
-	      memcpy(myparent->myBeamline()->emf.ezim, psd->ezimc, sizez);
+	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
 	      n++;
 	    }
-	  XFREE(myparent->myBeamline()->emf.z);
-	  XFREE(myparent->myBeamline()->emf.y);
-	  XFREE(myparent->myBeamline()->emf.eyre);
-	  XFREE(myparent->myBeamline()->emf.eyim);
-	  XFREE(myparent->myBeamline()->emf.ezre);
-	  XFREE(myparent->myBeamline()->emf.ezim);
 
+	  myparent->mypsd_2_emfp();
+	  emfp_free(emfp);
+	  myparent->myemfp_free();
+	  
 	  return;
 	} // end foloop
 
@@ -460,7 +451,7 @@ if (!action.compare("fourfresAct"))
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
-      if (myparent->mycheck_sampling() > 1.0 )
+      if (myparent->mycheck_sampling() > 1.0)
 	{
 	  cout << "autoselect Fourier propagator (TF type) due to sampling" << endl;
 	  myparent->mydrift_fourier();

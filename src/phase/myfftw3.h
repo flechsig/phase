@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.h */
  /* Date      : <06 Jan 14 14:10:12 flechsig>  */
- /* Time-stamp: <13 Aug 14 15:53:41 flechsig>  */
+ /* Time-stamp: <14 Aug 14 15:03:53 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -18,6 +18,7 @@
 
 double check_sampling(struct BeamlineType *, double *, double, int);
 double check_sampling_emf(struct EmfType *, double, double, double, int);
+void drift_auto_emf(struct EmfType *, struct EmfType *, double, double);
 void drift_fourier(struct BeamlineType *);
 void drift_fourier_emf(struct EmfType *, struct EmfType *, double, double);
 void drift_fresnel(struct BeamlineType *);

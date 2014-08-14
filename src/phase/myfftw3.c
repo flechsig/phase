@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <13 Aug 14 16:17:28 flechsig>  */
+ /* Time-stamp: <14 Aug 14 15:24:44 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -149,6 +149,20 @@ double check_sampling_emf(struct EmfType *emf, double lambda, double target, dou
 
   return ratio;
 } // end check_sampling_emf
+
+void drift_auto_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda, double driftlen)
+{
+  if (check_sampling_emf(emfin, lambda, 1.0, driftlen, 1) > 1.0)
+    {
+      printf("autoselect Fourier propagator (TF type) due to sampling\n");
+      drift_fourier_emf(emfin, emfout, lambda, driftlen);
+    }
+  else
+    {
+      printf("autoselect Fresnel propagator (IR type) due to sampling\n");
+      drift_fresnel_emf(emfin, emfout, lambda, driftlen);
+    }
+} // end drift_auto_emf
 
 /* free space propagation with Transfer function propagator */
 /* the drift distance is s1+s2 of the first element         */

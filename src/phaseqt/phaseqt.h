@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <30 Jun 14 15:56:59 flechsig>  */
+/*  Time-stamp: <14 Aug 14 13:56:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -123,6 +123,7 @@ public:
   void mydrift_fresnel() { drift_fresnel(this); }
   void mydrift_fraunhofer() { drift_fraunhofer(this); }
   void mydrift_fourier() { drift_fourier(this); }
+  void myemfp_free() { emfp_free(this->emfp); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt, int *elindex) { MakeMapandMatrix(listpt, this, elindex); }
@@ -131,6 +132,7 @@ public:
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads, int *format) { 
     return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord, numthreads, format); }
   void myPST() { PST(this); }
+  void mypsd_2_emfp() { psd_2_emfp(this); }
   void myFindIntRange() { FindIntRange(this); }  
   void myPutPHASE(char *name) { PutPHASE(&(this->filenames), name); }
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
@@ -145,6 +147,7 @@ public:
   int  mySetReflectivity(struct ElementType *ep) { return SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
   int  myposrc_ini() { return posrc_ini(this); }
+  void mysource4c_2_emfp() { source4c_2_emfp(this); }
   void mysource7c_ini() { source7c_ini(this); }
   void mysource8c_ini() { source8c_ini(this); }
   void myTest4Grating() { Test4Grating(this); }

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <11 Aug 14 13:54:34 flechsig>  */
+/*   Time-stamp: <14 Aug 14 11:23:00 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -405,7 +405,7 @@ struct OptionsType                   			/* Jun 2012 add ray_sets and deltalambda
 // basic electromagnetic field
 struct EmfType
 {
-  int nz, ny;
+  int    nz, ny;
   double *y, *z, *eyre, *eyim, *ezre, *ezim;
 };
                                             
@@ -429,7 +429,7 @@ struct BeamlineType
   struct TmpMapType *tp;
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
-  struct EmfType emf;
+  struct EmfType *emfp, emf;  /* for temporary fields */
 };
 
 /* mod 20121102 */

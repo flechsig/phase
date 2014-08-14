@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <13 Aug 14 16:52:52 flechsig>  */
+/*  Time-stamp: <14 Aug 14 16:32:55 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -36,18 +36,28 @@
 /* allocate an existing pointer */
 void emf_construct(struct EmfType *emf, int cols, int rows)
 {
-  if (!emf) return;
+  int twod;
+
+  if (!emf) 
+    {
+      fprintf(stderr, "error: emf_construct: emf pointer not allocated\n");
+      exit -1;
+    };
   
   emf->nz= cols;
   emf->ny= rows;
+  twod= rows* cols;
+
   emf->z   = XMALLOC(double, cols);
-  emf->ezre= XMALLOC(double, cols);
-  emf->ezim= XMALLOC(double, cols);
+  emf->ezre= XMALLOC(double, twod);
+  emf->ezim= XMALLOC(double, twod);
 
   emf->y   = XMALLOC(double, rows);
-  emf->eyre= XMALLOC(double, rows);
-  emf->ezim= XMALLOC(double, rows);
-  
+  emf->eyre= XMALLOC(double, twod);
+  emf->eyim= XMALLOC(double, twod);
+#ifdef DEBUG
+  printf("debug: emf_construct-> allocated structure with %d x %d (cols x rows)\n", cols, rows);
+#endif
 } /* end emf_construct */
 
 struct EmfType *emfp_construct(int cols, int rows)
@@ -56,6 +66,7 @@ struct EmfType *emfp_construct(int cols, int rows)
   
   emf= XMALLOC(struct EmfType, 1);
   emf_construct(emf, cols, rows);
+  
   return emf;
 } /* end emfp_construct */
 
@@ -73,6 +84,27 @@ void emf_free(struct EmfType *emf)
   XFREE(emf->ezim);
 } /* end emf_free */
 
+void emfp_cpy(struct EmfType *dest, struct EmfType *source)
+{
+  size_t size2, sizey, sizez;
+
+  if ((!dest) || (!source)) return;
+  if ((dest->ny != source->ny) || (dest->nz != source->nz)) return;
+
+  sizez= source->nz* sizeof(double); 
+  sizey= source->ny* sizeof(double);
+  size2= source->ny * sizez;
+  
+  memcpy(dest->z, source->z, sizez);
+  memcpy(dest->y, source->y, sizey);
+
+  memcpy(dest->ezre, source->ezre, size2);
+  memcpy(dest->eyre, source->eyre, size2);
+
+  memcpy(dest->ezim, source->ezim, size2);
+  memcpy(dest->eyim, source->eyim, size2);
+} // end emfp_cpy
+
 /* frees the complete pointer */
 void emfp_free(struct EmfType *emf)
 {
@@ -80,6 +112,30 @@ void emfp_free(struct EmfType *emf)
   emf_free(emf);
   XFREE(emf);
 } /* end emfp_free */
+
+void emfp_2_psd(struct BeamlineType *bl)
+{
+  size_t size2, sizey, sizez;
+  struct PSDType *psd;
+
+  psd= (struct PSDType *)bl->RESULT.RESp;
+
+  if (!bl->emfp) return;
+  ReAllocResult(bl, PLphspacetype, bl->emfp->ny, bl->emfp->nz);
+
+  sizez= bl->emfp->nz* sizeof(double); 
+  sizey= bl->emfp->ny* sizeof(double);
+  size2= bl->emfp->ny * sizez;
+
+  memcpy(psd->y, bl->emfp->y, sizey);
+  memcpy(psd->z, bl->emfp->z, sizez);
+
+  memcpy(psd->eyrec, bl->emfp->eyre, size2);
+  memcpy(psd->ezrec, bl->emfp->ezre, size2);
+
+  memcpy(psd->eyimc, bl->emfp->eyim, size2);
+  memcpy(psd->ezimc, bl->emfp->ezim, size2);
+} // emfp_2_psd
 
 /* initializes the pointers with NULL */
 void posrc_construct(struct BeamlineType *bl)
@@ -885,5 +941,59 @@ FILE *posrc_fopen(char *name)
 
   return fa;
 } /* posrc_fopen */
+
+void psd_2_emfp(struct BeamlineType *bl)
+{
+  size_t size2, sizey, sizez;
+  struct PSDType *psd;
+
+  psd= (struct PSDType *)bl->RESULT.RESp;
+
+  if (bl->emfp) emfp_free(bl->emfp);
+  bl->emfp= emfp_construct(psd->iz, psd->iy);
+  sizez= bl->posrc.iex* sizeof(double); 
+  sizey= bl->posrc.iey* sizeof(double);
+  size2= bl->posrc.iey * sizez;
+
+  memcpy(bl->emfp->y, psd->y, sizey);
+  memcpy(bl->emfp->z, psd->z, sizez);
+
+  memcpy(bl->emfp->eyre, psd->eyrec, size2);
+  memcpy(bl->emfp->ezre, psd->ezrec, size2);
+
+  memcpy(bl->emfp->eyim, psd->eyimc, size2);
+  memcpy(bl->emfp->ezim, psd->ezimc, size2);
+} // psd_2_emf
+
+void source4c_2_emfp(struct BeamlineType *bl)
+{
+  size_t size2, sizey, sizez;
+  
+#ifdef DEBUG
+  printf("debug: source4c_2_emfp called\n");
+#endif
+
+  if (bl->emfp) emfp_free(bl->emfp);
+  
+  bl->emfp= emfp_construct(bl->posrc.iex, bl->posrc.iey);
+  sizez= bl->posrc.iex* sizeof(double); 
+  sizey= bl->posrc.iey* sizeof(double);
+  size2= sizez * bl->posrc.iey;
+
+  memcpy(bl->emfp->y, bl->posrc.gridy, sizey);
+  memcpy(bl->emfp->z, bl->posrc.gridx, sizez);
+
+  //  printf("1\n");
+
+  memcpy(&bl->emfp->eyre[0], bl->posrc.zeyre, size2);
+  //printf("2\n");
+  memcpy(bl->emfp->eyim, bl->posrc.zeyim, size2);
+  memcpy(bl->emfp->ezre, bl->posrc.zezre, size2);
+  memcpy(bl->emfp->ezim, bl->posrc.zezim, size2);
+
+#ifdef DEBUG
+  printf("debug: source4c_2_emfp done\n");
+#endif
+} // end source4c_2_emf
 
 /* end */
