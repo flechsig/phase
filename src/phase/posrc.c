@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <30 Jun 14 15:49:33 flechsig>  */
+/*  Time-stamp: <13 Aug 14 16:52:52 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -32,6 +32,54 @@
    #include "hdf5.h"
    #include "myhdf5.h"
 #endif 
+
+/* allocate an existing pointer */
+void emf_construct(struct EmfType *emf, int cols, int rows)
+{
+  if (!emf) return;
+  
+  emf->nz= cols;
+  emf->ny= rows;
+  emf->z   = XMALLOC(double, cols);
+  emf->ezre= XMALLOC(double, cols);
+  emf->ezim= XMALLOC(double, cols);
+
+  emf->y   = XMALLOC(double, rows);
+  emf->eyre= XMALLOC(double, rows);
+  emf->ezim= XMALLOC(double, rows);
+  
+} /* end emf_construct */
+
+struct EmfType *emfp_construct(int cols, int rows)
+{
+  struct EmfType *emf;
+  
+  emf= XMALLOC(struct EmfType, 1);
+  emf_construct(emf, cols, rows);
+  return emf;
+} /* end emfp_construct */
+
+/* frees the content */
+void emf_free(struct EmfType *emf)
+{
+  if (!emf) return;
+  emf->nz= 0;
+  emf->ny= 0;
+  XFREE(emf->z);
+  XFREE(emf->y);
+  XFREE(emf->eyre);
+  XFREE(emf->eyim);
+  XFREE(emf->ezre);
+  XFREE(emf->ezim);
+} /* end emf_free */
+
+/* frees the complete pointer */
+void emfp_free(struct EmfType *emf)
+{
+  if (!emf) return;
+  emf_free(emf);
+  XFREE(emf);
+} /* end emfp_free */
 
 /* initializes the pointers with NULL */
 void posrc_construct(struct BeamlineType *bl)

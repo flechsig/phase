@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <11 Aug 14 15:59:08 flechsig> 
+//  Time-stamp: <13 Aug 14 16:55:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -161,7 +161,9 @@ void MainWindow::activateProc(const QString &action)
       if ((myparent->myBeamline()->ElementList[0].MDat.Art >= 100) && (myparent->myBeamline()->ElementList[0].MDat.Art <= 103)) 
 	{
 	  cout << "PO Fourier Optics- start" << endl;
-	  myparent->myBeamline()->emf.nz= so4->iex;
+	  emf_construct(&(myparent->myBeamline()->emf), so4->iex, so4->iey);
+	  /*	
+  myparent->myBeamline()->emf.nz= so4->iex;
 	  myparent->myBeamline()->emf.ny= so4->iey;
 	  myparent->myBeamline()->emf.z= XMALLOC(double, myparent->myBeamline()->emf.nz);
 	  myparent->myBeamline()->emf.y= XMALLOC(double, myparent->myBeamline()->emf.ny);
@@ -169,7 +171,7 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myBeamline()->emf.eyim= XMALLOC(double, myparent->myBeamline()->emf.ny);
 	  myparent->myBeamline()->emf.ezre= XMALLOC(double, myparent->myBeamline()->emf.nz);
 	  myparent->myBeamline()->emf.ezim= XMALLOC(double, myparent->myBeamline()->emf.nz);
-
+	  */
 	  int n= 0;
 	  
 	  int sizez= myparent->myBeamline()->emf.nz* sizeof(double);
