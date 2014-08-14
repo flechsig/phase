@@ -28,16 +28,14 @@ struct complex
   double re, im;
 };
 
-
-
 /* function prototypes */
 void all_load_parameters(const char *parfname);
 void all_load_fields();
 void master_save_fields(const char *baseofname, int ny, int nz);
-void slave_load_surface(const char *surffilename, int *ny, int *nz, double sy[], double sz[]);
-
-void build_dest_axis(const struct extends *e, int ny, int nz, double sy[], double sz[]);
-
+void slave_load_surface(const char *surffilename, int *ny, int *nz, 
+			double sy[], double sz[]);
+void build_dest_axis(const struct extends *e, int ny, int nz, 
+		     double sy[], double sz[]);
 void master_propagate(int nslaves);
 void slave_propagate_1(double angle);
 void slave_propagate_2(double angle);

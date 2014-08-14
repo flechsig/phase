@@ -173,6 +173,8 @@ void all_load_parameters(const char *parfname)
     exit (-1);    
   }
     
+  fprintf(stdout, "Read parameter from file %s\n", parfname);
+
   // parse
   for (t=0; t<4; t++)
     fscanf(fp, "%255s %*[^\n]", srcfilenames[t]);
