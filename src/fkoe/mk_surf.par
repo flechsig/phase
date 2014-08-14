@@ -5,6 +5,6 @@
 -1.8	! zmin
 1.8 	! zmax
 15000.  ! r1
-500.  ! r2
+500.    ! r2
 88.	! grazing angle
 1	! (1) toroid (0) plan

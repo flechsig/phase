@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <13 Aug 14 13:53:37 flechsig> 
+c$$$ Time-stamp: <14 Aug 14 08:23:53 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -907,7 +907,7 @@ c----------------------------------------------------------------------
       
       dimension w(10024),xl(124),opl(10024,124)
       dimension ww(0:5),xll(0:5),a(0:5,0:5)
-      dimension opl_ref(10000),fourth(10000)
+      dimension opl_ref(10000)   !,fourth(10000)
       
       write(6,*)' selected: '
       write(6,*)' evaluate optical path length   (4)'
@@ -1039,50 +1039,50 @@ c     referenz von phase
       enddo
       close(10)
       
-	csum=0.
-	ssum=0.
-        csumr=0.
-	ssumr=0.
-
-        write(6,*)' writing pathlength to opl_1d.cos'
-	open(unit=10,name='opl_1d.cos',type='unknown')
-	j0=(ianzl+1)/2
-	do i=1,ianzw
-           write(10,*)w(i),cos(xk*(opl(i,j0)-r1-r2+dd)),
-     &          sin(xk*(opl(i,j0)-r1-r2+dd))
-           csum=csum+cos(xk*(opl(i,j0)-r1-r2+dd))
-           ssum=ssum+sin(xk*(opl(i,j0)-r1-r2+dd))
-           csumr=csumr+cos(opl_ref(i))
-           ssumr=ssumr+sin(opl_ref(i))
-	enddo
-	close(10)
-        
-        write(6,*)' writing pathlength to opl_1d.dat'
-	open(unit=10,name='opl_1d.dat',type='unknown')
-	j0=(ianzl+1)/2
-	do i=1,ianzw   
-           write(10,*)w(i),xk*(opl(i,j0)-r1-r2+dd),opl_ref(i)
-	enddo
-	close(10)
-        
-        write(6,*)' writing pathlength to opl_1d_ref.cos'
-	open(unit=10,name='opl_1d_ref.cos',type='unknown')
-	do i=1,ianzw   
-           write(10,*)w(i),cos(opl_ref(i)-r1-r2+dd),
-     &          sin(opl_ref(i)-r1-r2+dd)
-	enddo
-	close(10)
-        
-        csum=csum*dw
-        ssum=ssum*dw
-        csumr=csumr*dw
-        ssumr=ssumr*dw
-	type*,' cos-sum ',csum
-	type*,' sin-sum ',ssum
-	type*,' cos-sumr ',csumr
-	type*,' sin-sumr ',ssumr
-        
-	return
-	end
+      csum=0.
+      ssum=0.
+      csumr=0.
+      ssumr=0.
+      
+      write(6,*)' writing pathlength to opl_1d.cos'
+      open(unit=10,name='opl_1d.cos',type='unknown')
+      j0=(ianzl+1)/2
+      do i=1,ianzw
+         write(10,*)w(i),cos(xk*(opl(i,j0)-r1-r2+dd)),
+     &        sin(xk*(opl(i,j0)-r1-r2+dd))
+         csum=csum+cos(xk*(opl(i,j0)-r1-r2+dd))
+         ssum=ssum+sin(xk*(opl(i,j0)-r1-r2+dd))
+         csumr=csumr+cos(opl_ref(i))
+         ssumr=ssumr+sin(opl_ref(i))
+      enddo
+      close(10)
+      
+      write(6,*)' writing pathlength to opl_1d.dat'
+      open(unit=10,name='opl_1d.dat',type='unknown')
+      j0=(ianzl+1)/2
+      do i=1,ianzw   
+         write(10,*)w(i),xk*(opl(i,j0)-r1-r2+dd),opl_ref(i)
+      enddo
+      close(10)
+      
+      write(6,*)' writing pathlength to opl_1d_ref.cos'
+      open(unit=10,name='opl_1d_ref.cos',type='unknown')
+      do i=1,ianzw   
+         write(10,*)w(i),cos(opl_ref(i)-r1-r2+dd),
+     &        sin(opl_ref(i)-r1-r2+dd)
+      enddo
+      close(10)
+      
+      csum=csum*dw
+      ssum=ssum*dw
+      csumr=csumr*dw
+      ssumr=ssumr*dw
+      type*,' cos-sum ',csum
+      type*,' sin-sum ',ssum
+      type*,' cos-sumr ',csumr
+      type*,' sin-sumr ',ssumr
+      
+      return
+      end
       
 c end     
