@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 Aug 14 16:42:07 flechsig> 
+//  Time-stamp: <15 Aug 14 15:02:18 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -156,90 +156,87 @@ void MainWindow::activateProc(const QString &action)
 	  return;
 	}
 
+      // all tests done - we can start
+
       struct source4c *so4= (struct source4c *)&(myparent->myBeamline()->posrc);
 
-      if ((myparent->myBeamline()->ElementList[0].MDat.Art >= 100) && (myparent->myBeamline()->ElementList[0].MDat.Art <= 103)) 
+      int n= 0;
+      while (n < elementList->count())
 	{
-	  cout << "PO Fourier Optics- start" << endl;
+	  double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
 	  myparent->mysource4c_2_emfp();
-	  cout << "source in emfp" << endl;
-
 	  struct EmfType *emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
 	  
-	  int n= 0;
-	  while (n < elementList->count())
-	    {
-	      double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
-	      switch (myparent->myBeamline()->ElementList[n].MDat.Art)
-		{
-		case 100:
-		  drift_auto_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-		  break;
-		case 101:
-		  drift_fourier_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-		  break;
-		case 102:
-		  drift_fresnel_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-		  break;
-		case 103:
-		  drift_fraunhofer_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-		  break;
-		default:
-		  cout << "FO and SP mix will not work- exit n= " << n << endl;
-		  exit(1);
-		}
-	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
-	      n++;
-	    }
-
-	  myparent->myemfp_2_psd();
-	  emfp_free(emfp);
-	  myparent->myemfp_free();
+	  cout << "*************************************" << endl;
+	  cout << "*** PO element No " << n << ", drift= " << driftlen  << endl;
+	  cout << "*************************************" << endl;
 	  
-	  return;
-	} // end foloop
-
-      if (elementList->count() > 1) 
-	{
-	  cout << "multiple elements return" << endl;
-	  return;
-	}
-      
-      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-      ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
-      //myparent->myPST();
-      fillTaskVector(psip->iy * psip->iz);
-      
-      qDebug() << "asynchronous PO with threads " << psip->iy * psip->iz << " points";; 
-      
-      myparent->myTest4Grating();
-      
+	  switch (myparent->myBeamline()->ElementList[n].MDat.Art)
+	    {
+	    case 100:
+	      drift_auto_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      break;
+	    case 101:
+	      drift_fourier_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      break;
+	    case 102:
+	      drift_fresnel_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      break;
+	    case 103:
+	      drift_fraunhofer_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      break;
+	    default:
+	      emfp_cpy(emfp, myparent->myBeamline()->emfp);  // save the source
+	      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+	      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	      ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
+	      fillTaskVector(psip->iy * psip->iz);
+	      qDebug() << "asynchronous PO with threads " << psip->iy * psip->iz << " points";
+	      myparent->myTest4Grating();
 #ifdef DEBUG2
-      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
-      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) 
-	{
-	  fill_m4(myparent->myBeamline(), m4p_cpp);
-	  cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
-	  size_t n= sizeof(struct map4);
-	  short *vp= (short *)m4p_cpp;
-	  std::copy(vp, vp+ n, vp);
-	}
+	      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
+	      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) 
+		{
+		  fill_m4(myparent->myBeamline(), m4p_cpp);
+		  cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
+		  size_t n= sizeof(struct map4);
+		  short *vp= (short *)m4p_cpp;
+		  std::copy(vp, vp+ n, vp);
+		}
 #else
-      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
-      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
+	      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
+	      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
 #endif
+	      if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
+	      initconstants(csp_cpp);
+	      
+	      myparent->myBeamline()->BLOptions.PSO.intmod= 2;
+	      
+	      *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
+								m4p_cpp, csp_cpp
+								)); // one additional par 
+	      watcher->setFuture(*future);
+	      
+	      if (n < (elementList->count()- 1))
+		{
+		  myparent->mypsd_2_emfp();
+		  emfp_cpy(myparent->myBeamline()->emfp, emfp);   // restore the source
+		  myparent->myemfp_2_source4c();
+		}
+	    }  // end switch
+	  // the result is in efmp
+	  
+	  emfp_free(emfp);
+	  n++;
+	}
       
-      if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
-      initconstants(csp_cpp);
-      
-      myparent->myBeamline()->BLOptions.PSO.intmod= 2;
-      
-      *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
-							m4p_cpp, csp_cpp
-							    )); // one additional par 
-      watcher->setFuture(*future);
-    }
+      myparent->myemfp_2_psd();
+      myparent->myemfp_free();
+    } // asyn
 
   if (!action.compare("copyPOAct")) myparent->mycopySrc2Psd();
 

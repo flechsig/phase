@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <14 Aug 14 16:43:26 flechsig>  */
+/*  Time-stamp: <15 Aug 14 14:11:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -125,6 +125,7 @@ public:
   void mydrift_fourier() { drift_fourier(this); }
   void myemfp_free() { emfp_free(this->emfp); }
   void myemfp_2_psd() { emfp_2_psd(this); }
+  void myemfp_2_source4c() { emfp_2_source4c(this); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt, int *elindex) { MakeMapandMatrix(listpt, this, elindex); }

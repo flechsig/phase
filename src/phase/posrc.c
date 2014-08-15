@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Aug 14 16:51:16 flechsig>  */
+/*  Time-stamp: <15 Aug 14 14:46:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -126,7 +126,6 @@ void emfp_2_psd(struct BeamlineType *bl)
   printf("debug: emfp_2_psd called\n");
 #endif
 
-  
   if (!bl->emfp) return;
   ReAllocResult(bl, PLphspacetype, bl->emfp->ny, bl->emfp->nz);
   
@@ -149,6 +148,45 @@ void emfp_2_psd(struct BeamlineType *bl)
   printf("debug: emfp_2_psd done\n");
 #endif
 } // emfp_2_psd
+
+void emfp_2_source4c(struct BeamlineType *bl)
+{
+  size_t size2, sizey, sizez;
+  struct source4c *so4;
+  
+#ifdef DEBUG
+  printf("debug: emfp_2_source4c called\n");
+#endif
+
+  if (!bl->emfp) return;
+
+  so4= (struct source4c *)&(bl->posrc);
+  if ((so4->iex != bl->emfp->nz) || (so4->iey != bl->emfp->ny))
+    {
+      fprintf(stderr, "allocated size of emfp and source4c do not match\n");
+      fprintf(stderr, "this version requires same grid for source and image plane- exit\n");
+      exit -1;
+    }
+
+  printf("start memcpy\n");
+
+  sizez= bl->emfp->nz* sizeof(double); 
+  sizey= bl->emfp->ny* sizeof(double);
+  size2= bl->emfp->ny * sizez;
+
+  memcpy(so4->gridy, bl->emfp->y, sizey);
+  memcpy(so4->gridx, bl->emfp->z, sizez);
+
+  memcpy(so4->zeyre, bl->emfp->eyre, size2);
+  memcpy(so4->zezre, bl->emfp->ezre, size2);
+
+  memcpy(so4->zeyim, bl->emfp->eyim, size2);
+  memcpy(so4->zezim, bl->emfp->ezim, size2);
+
+#ifdef DEBUG
+  printf("debug: emfp_2_psd done\n");
+#endif
+} // emfp_2_source4c
 
 /* initializes the pointers with NULL */
 void posrc_construct(struct BeamlineType *bl)

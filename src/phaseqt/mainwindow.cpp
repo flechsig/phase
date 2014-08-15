@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <11 Aug 14 13:22:00 flechsig> 
+//  Time-stamp: <15 Aug 14 11:53:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -752,8 +752,8 @@ QWidget *MainWindow::createGraphicBox()
   sigmaButton = new QRadioButton(tr("&RMS"));
   fwhmButton  = new QRadioButton(tr("&FWHM"));
   fwhmButton->setChecked(true);
-  connect(sigmaButton,    SIGNAL(clicked()), this, SLOT(sigmaslot()));
-  connect(fwhmButton,     SIGNAL(clicked()), this, SLOT(fwhmslot()));
+  connect(sigmaButton, SIGNAL(clicked()), this, SLOT(sigmaslot()));
+  connect(fwhmButton,  SIGNAL(clicked()), this, SLOT(fwhmslot()));
 
   czLabel   = new QLabel("0");
   cyLabel   = new QLabel("0");
@@ -2611,8 +2611,8 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
       cdzLabel0->setStatusTip(tr("maximum of intensity (W/m^2)"));
       cdyLabel0->setText(QString(tr("total (W)")));    // 31
       cdyLabel0->setStatusTip(tr("intensity integral (W)"));
-      cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6, 'g', 4)+ "</FONT>");  // 30 give out value per m^2
-      cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt, 'g', 4)+ "</FONT>");         // 31
+      cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // 30 give out value per m^2
+      cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");         // 31
 
       wdzLabel0->setText(QString(tr("principle rays")));  // 40
       wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");

@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <14 Aug 14 15:24:44 flechsig>  */
+ /* Time-stamp: <15 Aug 14 14:56:56 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -152,6 +152,10 @@ double check_sampling_emf(struct EmfType *emf, double lambda, double target, dou
 
 void drift_auto_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda, double driftlen)
 {
+#ifdef DEBUG
+  printf("debug: drift_auto_emf called\n");
+#endif
+
   if (check_sampling_emf(emfin, lambda, 1.0, driftlen, 1) > 1.0)
     {
       printf("autoselect Fourier propagator (TF type) due to sampling\n");
@@ -256,10 +260,13 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   int    row, rows, col, cols;
   double k, totz, toty, p0, *u, *v, tmp, lambda_drift;
   
-
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
   fftw_plan    p1, p2;
+#endif
+
+#ifdef DEBUG
+  printf("debug: drift_fourier_emf called\n");
 #endif
 
   tmp= check_sampling_emf(emfin, lambda, 1.1, driftlen, 1);
@@ -458,7 +465,11 @@ void drift_fresnel_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   fftw_complex *in, *out;
   fftw_plan    p;
 #endif
-  
+ 
+#ifdef DEBUG
+  printf("debug: drift_fresnel_emf called\n");
+#endif
+ 
   tmp= check_sampling_emf(emfin, lambda, 0.9, driftlen, 1);
 
   lambda_drift= driftlen* lambda;
@@ -635,6 +646,10 @@ void drift_fraunhofer_emf(struct EmfType *emfin, struct EmfType *emfout, double 
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
   fftw_plan    p;
+#endif
+
+#ifdef DEBUG
+  printf("debug: drift_fraunhofer_emf called\n");
 #endif
 
   tmp= check_sampling_emf(emfin, lambda, 0.9, driftlen, 1);
