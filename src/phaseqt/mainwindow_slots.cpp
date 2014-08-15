@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 Aug 14 16:36:26 flechsig> 
+//  Time-stamp: <14 Aug 14 16:42:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -192,7 +192,7 @@ void MainWindow::activateProc(const QString &action)
 	      n++;
 	    }
 
-	  myparent->mypsd_2_emfp();
+	  myparent->myemfp_2_psd();
 	  emfp_free(emfp);
 	  myparent->myemfp_free();
 	  

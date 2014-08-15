@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Aug 14 16:32:55 flechsig>  */
+/*  Time-stamp: <14 Aug 14 16:51:16 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -88,6 +88,10 @@ void emfp_cpy(struct EmfType *dest, struct EmfType *source)
 {
   size_t size2, sizey, sizez;
 
+#ifdef DEBUG
+  printf("debug: emfp_cpy called\n");
+#endif
+
   if ((!dest) || (!source)) return;
   if ((dest->ny != source->ny) || (dest->nz != source->nz)) return;
 
@@ -118,10 +122,16 @@ void emfp_2_psd(struct BeamlineType *bl)
   size_t size2, sizey, sizez;
   struct PSDType *psd;
 
-  psd= (struct PSDType *)bl->RESULT.RESp;
+#ifdef DEBUG
+  printf("debug: emfp_2_psd called\n");
+#endif
 
+  
   if (!bl->emfp) return;
   ReAllocResult(bl, PLphspacetype, bl->emfp->ny, bl->emfp->nz);
+  
+  psd= (struct PSDType *)bl->RESULT.RESp;
+  printf("start memcpy\n");
 
   sizez= bl->emfp->nz* sizeof(double); 
   sizey= bl->emfp->ny* sizeof(double);
@@ -135,6 +145,9 @@ void emfp_2_psd(struct BeamlineType *bl)
 
   memcpy(psd->eyimc, bl->emfp->eyim, size2);
   memcpy(psd->ezimc, bl->emfp->ezim, size2);
+#ifdef DEBUG
+  printf("debug: emfp_2_psd done\n");
+#endif
 } // emfp_2_psd
 
 /* initializes the pointers with NULL */
