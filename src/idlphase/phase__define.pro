@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <01 Jul 14 14:02:26 flechsig> 
+;  Time-stamp: <15 Aug 14 12:09:06 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -680,7 +680,7 @@ function phase::getintensity
 ;   phase::getintensity
 ;
 ; PURPOSE:
-;   export intensity
+;   export intensity, the squared field divided by the vacuum impedance
 ;
 ; CATEGORY:
 ;   phase
@@ -703,7 +703,7 @@ function phase::getintensity
 ; MODIFICATION HISTORY:
 ;   UF 4.11.13
 ;-
-intensity= abs(*self.field)^2
+intensity= abs(*self.field)^2/377.0
 
 return, intensity
 end ;; intensity
@@ -2053,7 +2053,7 @@ pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, y
 ;   comment
 ;
 ; KEYWORD PARAMETERS:
-;   amplitude: statistics of field - default is intensity field^2
+;   amplitude: statistics of field - default is intensity field^2/377
 ;   max:       maximum output
 ;   total:     integral output
 ;   yfwhm:     vertical fwhm (output)
@@ -2071,9 +2071,13 @@ pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, y
 if n_elements(amplitude) eq 0 then begin
     title= 'intensity statistics'
     myfield= self->getintensity()
+    mymaxstr= 'max intensity (W/m^2) = ' 
+    mytotstr= 'total intensity (W)   = '
 endif else begin 
     title= 'amplitude statistics'
     myfield= self->getamplitude() 
+    mymaxstr= 'max field       (V/m) = ' 
+    mytotstr= 'total field     (V m) = '
 endelse
 
 if n_elements(comment) ne 0 then title+= ' => '+comment
@@ -2087,14 +2091,13 @@ ymin= min(y_vec)
 ymax= max(y_vec)
 binsize= (z_vec[1]- z_vec[0])*(y_vec[1]- y_vec[0])
 
-mymax= max(myfield)                     ;; photons/m^2
+mymax= max(myfield)                        ;; photons/m^2
 mysum= total(myfield, /double)
 mytot= total(myfield, /double) * binsize   ;; sum of all bins*binsize
 
 field_n= myfield/mymax                ;; normalized
-stat= dblarr(7)
-fit = gauss2dfit(field_n, stat, z_vec, y_vec)
-
+stat   = dblarr(7)
+fit    = gauss2dfit(field_n, stat, z_vec, y_vec)
 
 print, '=============================================================================='
 print, title
@@ -2106,8 +2109,8 @@ print, 'y0    =',stat[5], ' m'
 print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
 print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
-print, 'max intensity (W/m^2) = ', mymax
-print, 'total intensity (W)   = ', mytot
+print, mymaxstr, mymax
+print, mytotstr, mytot
 ;;print, 'debug: mysum, binsize=', mysum, binsize
 print, '=============================================================================='
 print, 'result of gauss2dfit in (m):', stat
