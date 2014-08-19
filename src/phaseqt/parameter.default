@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <19 Aug 14 09:29:35 flechsig> 
+#  Time-stamp: <19 Aug 14 16:40:10 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -48,6 +48,7 @@ PO Source
         nyz     	243	number of points in y and z                     	243	24
         waist   	20	waist in mum                                    	20	25
         widthyz 	1	width in y and z in mm                          	1	26
+#        delta   	1	width in y and z in mm                          	1	27
     source 4 & 7	-	E- field from files (filenames see Edit/Configure)	
        xi.distfocy	0	distance of image plane to vertical focus		0.	49
        xi.distfocz	0	distance of image plane to horizontal focus		0.	50
@@ -106,7 +107,7 @@ PO Obsolete parameters
 #        isrcy	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	24   reused
 #        isrcdy 	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	25 reused
 #        sigmay	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	26 reused
-        sigmayp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	27
+#        sigmayp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	27
         isrcz 	0	source type (size/div.):(0)sigma val.,(1)hard edgeetc...	0	31
         isrcdz 	0	source type (size/div.):(0)sigma val.,(1)hard edgeetc...	0	32
         sigmaz 	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	33
