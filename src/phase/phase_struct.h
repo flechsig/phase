@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <2014-03-20 15:07:23 flechsig>  */
+/*   Time-stamp: <19 Aug 14 09:14:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -156,6 +156,11 @@ struct  source1 {                 /* Gauss + Hard edge */
   int  isrcy,isrcdy,isrcz,isrcdz;
 };  
 
+struct  source1c {                 /* Gauss  */ 
+  double waist, widthyz;
+  int    nyz;
+};  
+
 struct  source2 {
   char fsource2a[80], fsource2b[80];
   double ceyre[61][121], ceyim[61][121],
@@ -236,7 +241,7 @@ struct  sources {                            /* Sammelstruktur         */
 #endif
   /* struct source5 so5;     */                   /* Dipol Quelle           */
   /* struct source6 so6;     */                   /* Brightness             */
-  
+  struct source1c so1c;                        /* Gauss + Hard edge      */
   int  isrctype;
 };     
 

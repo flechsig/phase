@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Aug 14 11:53:45 flechsig> 
+//  Time-stamp: <20 Aug 14 16:48:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1656,16 +1656,27 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       break;
 
     case 24:
+      if (!init) scanned= sscanf(text, "%d", &mysrc->so1c.nyz);
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.nyz= 243;   // default
+      qst.setNum(mysrc->so1c.nyz);
       //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
       //if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
       //qst.setNum(mysrc->so1.isrcy);
       break;
     case 25:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1c.waist);
+      //mysrc->so1c.waist*= 1e-6;
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.waist= 2e-5;   // default
+      qst.setNum(mysrc->so1c.waist*1e6);
       //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
       //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
       //qst.setNum(mysrc->so1.isrcdy);
       break;
     case 26:
+      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1c.widthyz);
+      //mysrc->so1c.widthyz*= 1e-3;
+      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.widthyz= 1e-3;   // default
+      qst.setNum(mysrc->so1c.widthyz*1e3);
       //if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
       //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
       //qst.setNum(mysrc->so1.sigmay, 'g', 4);

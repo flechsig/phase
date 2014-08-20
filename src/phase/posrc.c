@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Aug 14 14:46:18 flechsig>  */
+/*  Time-stamp: <20 Aug 14 12:24:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -158,17 +158,16 @@ void emfp_2_source4c(struct BeamlineType *bl)
   printf("debug: emfp_2_source4c called\n");
 #endif
 
-  if (!bl->emfp) return;
-
-  so4= (struct source4c *)&(bl->posrc);
-  if ((so4->iex != bl->emfp->nz) || (so4->iey != bl->emfp->ny))
+  if (!bl->emfp) 
     {
-      fprintf(stderr, "allocated size of emfp and source4c do not match\n");
-      fprintf(stderr, "this version requires same grid for source and image plane- exit\n");
-      exit -1;
+      printf("warning: bl->emfp undefined- return\n");
+      return;
     }
 
-  printf("start memcpy\n");
+  so4= (struct source4c *)&(bl->posrc);
+  reallocate_posrc(bl, bl->emfp->ny, bl->emfp->nz);                    /* reserve memory         */
+
+  //  printf("start memcpy\n");
 
   sizez= bl->emfp->nz* sizeof(double); 
   sizey= bl->emfp->ny* sizeof(double);
@@ -187,6 +186,81 @@ void emfp_2_source4c(struct BeamlineType *bl)
   printf("debug: emfp_2_psd done\n");
 #endif
 } // emfp_2_source4c
+
+// we use m as unit
+void gauss_source1c(struct BeamlineType *bl)
+{
+  int row, col, rows, cols, truncation;
+  double wavelength, k, z0, w, w2, eta, rho2, arg1, arg2,  Ri, dist, w0, mywidthyz;  //phas2re, phas2im,
+  struct EmfType *emfp;
+
+#ifdef DEBUG
+  printf("debug: gauss_source1c called\n");
+#endif
+
+  dist      = 0.0;
+  rows= cols= bl->src.so1c.nyz;
+  w0        = bl->src.so1c.waist*1e3;
+  wavelength= bl->BLOptions.lambda;
+  k         = PI * 2/ wavelength;                           // wave number
+  z0        = PI * pow(w0, 2)/ wavelength;       
+           // Rayleigh Range
+  w         = w0 * sqrt(1.0+ pow((dist/z0), 2));            // w(dist)
+  w2        = pow(w, 2);
+  eta       = atan(dist/z0);
+  Ri        = dist / (pow(dist,2) + pow(z0,2));             // curvature Ri  = 1/R;
+  truncation= 0;
+  mywidthyz = bl->src.so1c.widthyz* 1e3;
+
+  printf("xxxxxxxxxxxx= %g\n", bl->src.so1c.widthyz);
+ 
+  printf("wavelength (m) = %g\n", wavelength*1e-3);
+  printf("Nz             = %d, Ny     = %d\n", cols, rows);
+  printf("sizeyz (mm)    = %g\n", mywidthyz);
+  printf("w0    (mu) = %g,  dist  (m) = \n", w0*1e3, dist);
+  printf("z0    (mm) = %g, (Rayleigh Range= +/- z0)\n", z0);
+  printf("w     (mm) = %g, w2 (mm^2) = %g\n", w, w2);
+  printf("eta  (rad) = %g,  Ri (1/m) = %g\n", eta, Ri);
+
+  if ((rows < 1) || (cols < 1)) 
+    {
+      printf("warning: rows || cols < 1- return\n");
+      return;
+    }
+
+  emfp= emfp_construct(cols, rows);
+
+  for (row=0; row< rows; row++)
+    emfp->y[row]= emfp->z[row]= (row/(rows- 1) - 0.5) * mywidthyz;
+  
+    for (row=0; row< rows; row++)
+      for (col=0; col< cols; col++)
+      {
+	rho2=  pow(emfp->z[col], 2) + pow(emfp->y[row], 2);
+	arg1  = -1 *  rho2 / w2;
+	if (arg1 <= -40)
+	  { 
+	    arg1= -40;  //-40, but -80 is still ok
+	    truncation= 1;
+	  }
+	arg2= 0.5 * k * rho2 * Ri + k*dist - eta;                    //;; For notation of Siegman multiply by -1                    
+	//	phas2re= cos(arg2);
+	//      phas2im= sin(arg2);     
+	emfp->eyre[col+ row* cols]= cos(arg2) * exp(arg1) * w0 / w;
+	emfp->eyim[col+ row* cols]= sin(arg2) * exp(arg1) * w0 / w;
+	emfp->ezre[col+ row* cols]= cos(arg2) * exp(arg1) * w0 / w;
+	emfp->ezim[col+ row* cols]= sin(arg2) * exp(arg1) * w0 / w;
+      }
+  if (truncation)  printf("!! gauss_source1c warning -- some outside points are truncated !!\n");
+  
+  bl->emfp= emfp;
+  emfp_2_source4c(bl);
+  bl->emfp= NULL;
+  emfp_free(emfp);
+#ifdef DEBUG
+  printf("debug: gauss_source1c done\n");
+#endif
+} // gauss_source1c
 
 /* initializes the pointers with NULL */
 void posrc_construct(struct BeamlineType *bl)
@@ -207,29 +281,30 @@ int posrc_ini(struct BeamlineType *bl)
 
   type= bl->src.isrctype;
 
-  if (( type != 4 ) && ( type != 7 ))
+  switch (type)
     {
-      fprintf(stderr, "error: source type %d not supported- exit file: %s\n", type, __FILE__);
-      exit(-1);
-    }
-  
-  if ( type == 4 )
-    {
+    case 1:
+      gauss_source1c(bl);
+      break;
+    case 4:
       if ( !source4c_ini(bl) )
 	{
 	  fprintf(stderr, "error: source4c_ini - exit\n");
 	  exit(-1);
 	}
-    }
-
-  if ( type == 7 )
-    {
+      break;
+    case 7:
       if (!fexists(bl->filenames.so7_hdf5)) return 0;
       if ( check_hdf5_type(bl->filenames.so7_hdf5, 7, 1) ) 
 	source7c_ini(bl);
       else 
 	source8c_ini(bl);
+      break;
+    default:
+      fprintf(stderr, "error: posrc_ini: source type %d not supported- exit file: %s\n", type, __FILE__);
+      exit(-1);
     }
+
   return 1;
 } /* posrc_ini */
 

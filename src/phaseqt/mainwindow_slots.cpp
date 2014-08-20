@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <15 Aug 14 15:02:18 flechsig> 
+//  Time-stamp: <20 Aug 14 11:18:03 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1045,6 +1045,9 @@ if (!action.compare("fourierAct"))
             
       switch (myparent->myBeamline()->src.isrctype)
 	{
+	  case 1:
+	    filesOK= 1;
+	    break;
 #ifdef OBSOLETE
 	case 2:
 	  filesOK= fexists(myparent->myBeamline()->src.so2.fsource2a) & 
@@ -2291,6 +2294,11 @@ void MainWindow::parameterUpdateSlot()
     case 37:  // grid
     case 64:  // pstmode
       cout << "parameterUpdateSlot: keep maps" << endl;
+      break;
+    case 24:  // inorm
+    case 25:  // inorm1
+    case 26:  // inorm2
+      myparent->myBeamline()->beamlineOK &= ~pstsourceOK;          // source
       break;
     default:  // rebuild maps
       myparent->myBeamline()->beamlineOK &= ~mapOK;

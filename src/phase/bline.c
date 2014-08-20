@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <11 Aug 14 13:36:09 flechsig>  */
+/*   Time-stamp: <19 Aug 14 09:52:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1297,7 +1297,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20140509;    /* today */
+   int  i, version= 20140818;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1327,7 +1327,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version MAY 2014\n");
+   fprintf(f, "This is a datafile of PHASE, file version AUG 2014\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1600,6 +1600,11 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20lg so1: sigmaz  \n", bl->src.so1.sigmaz);
    fprintf(f, "%20lg so1: sigmazp \n", bl->src.so1.sigmazp);
    */
+   /* source 1c */
+   fprintf(f, "%20d  so1c: nyz         \n", bl->src.so1c.nyz);
+   fprintf(f, "%20lg  so1c: waist (m)   \n", bl->src.so1c.waist);
+   fprintf(f, "%20lg  so1c: widthyz (m) \n", bl->src.so1c.widthyz);
+
 
    /* source 4 */
    /* UF 20.3. 2012 */
@@ -1719,7 +1724,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20140509;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20140818;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -2137,6 +2142,13 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
 	   */
 	 }
+       if (version > 20140817)
+	 {
+	   fscanf(f, " %d %255[^\n]s %c",  &bl->src.so1c.nyz,     buffer, &buf);
+	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1c.waist,   buffer, &buf);
+	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1c.widthyz, buffer, &buf);  
+	 }
+
        /* source 4 */
        if (version < 20120320)
 	 {

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/drift.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <21 Nov 13 12:23:40 flechsig> 
+;  Time-stamp: <18 Aug 14 14:37:02 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -95,8 +95,8 @@ ny = n_elements(y_vec)
 zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)                      ;; total width, 12.9.2013: corrected for nz/(nz-1)
 yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      ;; total height,     -"-
 
-print, 'width = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
-print, 'drift = ', drift
+print, 'width (input) = ', zz*1e3, ' x ', yy*1e3, ' mm^2 '
+print, 'drift         = ', drift
 ;;------------------------ Multipy input field with phase factor -------
 
 driftarr= dcomplexarr(nz, ny)                                    ;; make a complex array

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <2014-03-20 15:07:26 flechsig> 
+c$$$ Time-stamp: <19 Aug 14 09:01:56 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -158,6 +158,11 @@ c---------------- sources -----------------------------------
            real*8 sigmay,sigmayp,sigmaz,sigmazp
 	   integer isrcy,isrcdy,isrcz,isrcdz
         end structure
+
+        structure/source1c/                 ! Gauss  
+           real*8 waist, widthyz
+	   integer nyz
+        end structure
  
 	structure/source2/
 	   character*80 fsource2a,fsource2b
@@ -225,6 +230,7 @@ c           record/source3/so3              ! radiale Vert. vom File
 #endif
 c	   record/source5/so5	           ! Dipol Quelle
 c           record/source6/so6              ! Brightness
+	   record/source1c/so1c              ! Gauss
 	   integer isrctype
         end structure   
 
