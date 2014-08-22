@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <22 Aug 14 09:55:14 flechsig> 
+#  Time-stamp: <22 Aug 14 11:43:58 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -23,7 +23,8 @@
 #         C1: actual Value (same as default)
 #         C2: description
 #         C3: default
-#         C4: index this is a unique number to identify the parameter (keep it when moving the parameter #             to a different category) 
+#         C4: index this is a unique number to identify the parameter (keep it when moving the parameter 
+#             to a different category) 
 Generic		
     epsilon		1e-4	epsilon for Newton routine (double)			1e-4	0
     iord		4	calculation up to order (1..7)				4	1		
@@ -106,15 +107,15 @@ PO Obsolete parameters
 #        isrcy	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	24   reused
 #        isrcdy 	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	25 reused
 #        sigmay	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	26 reused
-#        sigmayp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	27
+        sigmayp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	27
         isrcz 	0	source type (size/div.):(0)sigma val.,(1)hard edgeetc...	0	31
         isrcdz 	0	source type (size/div.):(0)sigma val.,(1)hard edgeetc...	0	32
         sigmaz 	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	33
         sigmazp	0	source size/div.: sigmay(mm) / sigmayp or half height/angle	0	34
     source 2	-	Zernike polynomials in FIT_EY_RE.PAR and FIT_EY_IM.PAR
     source 3	-	Source from files EYRE0_500.SPL and EYIM0_500.SPL
-#    source 4	-	Source from files 
-#	       so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
+    source 4	-	Source from files 
+       so4.iconj	0	multiply imaginary part of source by -1, (0,1) 		0	62
     source 5	-	dipole source (analytical representation)
         dipcy	0	Dipole: Cy							0	16
         dipcz	0	Dipole: Cz							0	17

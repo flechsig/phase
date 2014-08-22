@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <26 Mar 14 08:19:01 flechsig> 
+//  Time-stamp: <22 Aug 14 11:43:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -150,8 +150,14 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
   QList<int> indentations;
   parents << parent;
   indentations << 0;
-  
+
+#ifdef DEBUG
+  cout << "debug setupModelData" << endl;
+  cout << "config file >>parameter.default<< has " << lines.count() << " lines" << endl;
+#endif
+
   int number = 0;
+  int used_items= 0;
   
   while (number < lines.count()) 
     {
@@ -207,13 +213,36 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	      //   cout << "setupModelData - the index: " << myidx ;
 	      //   cout << " val " <<  myval.toLocal8Bit().constData() << endl;
 	      
-	      if (myidx > -1)
-		itemList[myidx]= myItem;  // save item pointer in linear pointer list
+	      if (myidx > -1) // valid item
+		{
+		  itemList[myidx]= myItem;  // save item pointer in linear pointer list
+		  used_items++;
+		}
+#ifdef DEBUG1
+	      else
+		cout << "  debug: setupModelData item has no index - should be a header" << endl;
+#endif
 	      
 	    } // end line not empty
+#ifdef DEBUG1
+      else
+	cout << "  debug: empty line detected - new top level" << endl;
+#endif
 	} // end if no comment
+#ifdef DEBUG1
+      else
+	cout << "  debug: comment detected" << endl;
+#endif
       number++;
     } // end while
+#ifdef DEBUG
+  cout << "debug: setupModelDat: used_items= " << used_items << " out of " << NPARS << endl;
+#endif
+  if (used_items != NPARS) 
+    {
+      cout << "error in setupModelData- parameter.default is inconsistent- exit" << endl;
+      exit(-1);
+    }
 } // setupModelData()
 
 // the slot called if an item is selected
@@ -255,7 +284,7 @@ void TreeModel::selectSlot(const QModelIndex &index)
 // change the value of an item with index idx
 void TreeModel::updateItemVal(QString val, int idx)
 {
-#ifdef DEBUG1  
+#ifdef DEBUG  
   cout << __FILE__ << ": updateItemVal called, idx: " << idx << " val: " 
        << val.toLocal8Bit().constData() << endl;
 #endif
