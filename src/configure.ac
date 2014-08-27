@@ -1,13 +1,40 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <14 Aug 14 08:52:18 flechsig> 
+dnl   Time-stamp: <27 Aug 14 17:04:51 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
 dnl   $Date$
 dnl   $Revision$ 
 dnl   $Author$ 
- 
+
+dnl ******************************************************************************
+dnl
+dnl     Copyright (C) 2014 Helmholtz-Zentrum Berlin (HZB) and 
+dnl                        Paul Scherrer Institut Villigen (PSI)
+dnl   
+dnl     Author Johannes Bahrdt, johannes.bahrdt@Helmholtz-Berlin.de
+dnl            Uwe Flechsig,    uwe.flechsig@psi.ch
+dnl
+dnl ------------------------------------------------------------------------------
+dnl
+dnl   This file is part of PHASE.
+dnl
+dnl   PHASE is free software: you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation, version 3 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   PHASE is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details.
+dnl
+dnl   You should have received a copy of the GNU General Public License
+dnl   along with PHASE (LICENSE.txt).  If not, see <http://www.gnu.org/licenses/>. 
+dnl
+dnl ******************************************************************************
+
 AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
 AC_INIT([phase],[1.22],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
