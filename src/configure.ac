@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <27 Aug 14 17:04:51 flechsig> 
+dnl   Time-stamp: <27 Aug 14 17:11:51 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -10,11 +10,11 @@ dnl   $Author$
 
 dnl ******************************************************************************
 dnl
-dnl     Copyright (C) 2014 Helmholtz-Zentrum Berlin (HZB) and 
-dnl                        Paul Scherrer Institut Villigen (PSI)
+dnl   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+dnl                      Paul Scherrer Institut Villigen, Switzerland 
 dnl   
-dnl     Author Johannes Bahrdt, johannes.bahrdt@Helmholtz-Berlin.de
-dnl            Uwe Flechsig,    uwe.flechsig@psi.ch
+dnl   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+dnl          Uwe Flechsig,    uwe.flechsig@psi.ch
 dnl
 dnl ------------------------------------------------------------------------------
 dnl
