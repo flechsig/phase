@@ -1,4 +1,6 @@
-phase
+PHASE
 =====
 
-physical optics package
+PHASE is a physical optics software package.
+
+Aug 2014
