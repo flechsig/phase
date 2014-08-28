@@ -6,8 +6,8 @@ tmp-ezimc     ! source file imaginary part
 5000,500	! dist
 88.0		! angle to the surface normal
 10.		! wavelength in nm
--0.02	0.05	! ymin1, ymax1	image grid
+-0.01	0.02	! ymin1, ymax1	image grid
 64		! ianzy1
--0.02	0.02	! zmin1, zmax1
+-0.01	0.01	! zmin1, zmax1
 64		! ianzzz1
 jsurfo_128.dat	! surface file name
