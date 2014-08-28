@@ -1,12 +1,39 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <27 Jun 14 14:59:11 flechsig>  */
+/*   Time-stamp: <28 Aug 14 16:50:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
 /*   $Date$ */
 /*   $Revision$  */
 /*   $Author$  */
+
+// ******************************************************************************
+//
+//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//                      Paul Scherrer Institut Villigen, Switzerland
+//   
+//   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+//          Uwe Flechsig,    uwe.flechsig@psi.ch
+//
+// ------------------------------------------------------------------------------
+//
+//   This file is part of PHASE.
+//
+//   PHASE is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, version 3 of the License, or
+//   (at your option) any later version.
+//
+//   PHASE is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
+//
+// ******************************************************************************
 
 
 /*  UF 0804 no X11 left  */

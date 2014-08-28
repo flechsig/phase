@@ -1,12 +1,43 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <03 Jul 13 14:42:22 flechsig> 
+c$$$ Time-stamp: <28 Aug 14 16:56:15 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
+c ******************************************************************************
+c
+c   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+c                      Paul Scherrer Institut Villigen, Switzerland
+c   
+c   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+c          Uwe Flechsig,    uwe.flechsig@psi.ch
+c
+c ------------------------------------------------------------------------------
+c
+c   This file is part of PHASE.
+c
+c   PHASE is free software: you can redistribute it and/or modify
+c   it under the terms of the GNU General Public License as published by
+c   the Free Software Foundation, version 3 of the License, or
+c   (at your option) any later version.
+c
+c   PHASE is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU General Public License for more details.
+c
+c   You should have received a copy of the GNU General Public License
+c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
+c
+c ******************************************************************************
+
+
+
+
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 c einige routinen aus fgmap3dpp

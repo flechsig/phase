@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <26 May 14 12:35:34 flechsig> 
+c$$$ Time-stamp: <28 Aug 14 16:55:10 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -8,6 +8,34 @@ c$$$ $Source$
 c$$$ $Date$
 c$$$ $Revision$ 
 c$$$ $Author$ 
+
+c ******************************************************************************
+c
+c   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+c                      Paul Scherrer Institut Villigen, Switzerland
+c   
+c   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+c          Uwe Flechsig,    uwe.flechsig@psi.ch
+c
+c ------------------------------------------------------------------------------
+c
+c   This file is part of PHASE.
+c
+c   PHASE is free software: you can redistribute it and/or modify
+c   it under the terms of the GNU General Public License as published by
+c   the Free Software Foundation, version 3 of the License, or
+c   (at your option) any later version.
+c
+c   PHASE is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU General Public License for more details.
+c
+c   You should have received a copy of the GNU General Public License
+c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
+c
+c ******************************************************************************
+
 c
 c--------------------------------------------------------------------------
 c Quelltext phase_source_11.for von J. Bahrdt 20 Jan 2000
