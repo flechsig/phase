@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <29 Aug 14 10:36:17 flechsig> 
+;  Time-stamp: <29 Aug 14 17:47:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -112,8 +112,8 @@ pro h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, yr
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/EZRE_GB_5000.h5' 
 
 file_id= H5F_OPEN(fname)
-z_vec_mm = h5_read_dataset(file_id, '/z_vec')
-y_vec_mm = h5_read_dataset(file_id, '/y_vec')
+z_vec = h5_read_dataset(file_id, '/z_vec')
+y_vec = h5_read_dataset(file_id, '/y_vec')
 t_vec = h5_read_dataset(file_id, '/t_vec')
 field = h5_read_dataset(file_id, '/e_field')
 lambda= h5_read_dataset(file_id, '/wavelength')
@@ -121,9 +121,6 @@ lambda= h5_read_dataset(file_id, '/wavelength')
 h5f_close, file_id
 
 wavelength= lambda[0]  ;; wavelength should be a scalar
-y_vec= y_vec_mm* 1e-3  ;; phase grid in mm
-z_vec= z_vec_mm* 1e-3  ;; phase grid in mm
-field *= 1e3;          ;; in V/m
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
