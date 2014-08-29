@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/Makefile.am
 # Date      : <01 Apr 14 09:25:08 flechsig> 
-# Time-stamp: <28 Aug 14 15:02:56 flechsig> 
+# Time-stamp: <29 Aug 14 09:11:06 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -37,7 +37,7 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS      = spa_check
+bin_PROGRAMS      = fkoe
 spa_check_SOURCES = spa_check.F spa-check.cmn
 #fkoe_mpi_LDADD = 
 
