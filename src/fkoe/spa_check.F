@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <29 Aug 14 17:39:05 flechsig> 
+c$$$ Time-stamp: <29 Aug 14 17:48:48 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -168,7 +168,7 @@ c----------------------------------------------------------------------
       close(10)
       pow=pow*(z(2)-z(1))*(y(2)-y(1))                    ! total power * binsize
 c UF  pow=pow/377                                        ! then the normalized power is 1 W
-c      pow=pow/377.
+      pow=pow/377.
       type*,' power              = ',pow                 ! UF sum 2*amp^2
       type*,' binsize            = ',(z(2)-z(1))*(y(2)-y(1))
       spow=dsqrt(pow)
