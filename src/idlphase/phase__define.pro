@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <29 Aug 14 10:14:56 flechsig> 
+;  Time-stamp: <29 Aug 14 14:13:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -456,7 +456,7 @@ pro phase::gaussbeam, dist=dist, drift=drift, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, 
 ;   currently only a 2dim gaussian distribution (in the waist), UF
 ;   (2b_confirmed) for the intensity distribution we have w=2*sigma
 ;   with sigma= sigma_x = sigma_y the variance of a 2d Gaussian and
-;   sigma_r= sqrt(2) * sigma ???
+;   sigma_r= sqrt(2) * sigma ???, the intensity is normalized to 1W
 ;
 ; CATEGORY:
 ;   Phase
@@ -563,6 +563,13 @@ for i=0, Nz-1 do begin
     field[i,j]= phas2 * exp(arg1) * w0 / w
   endfor
 endfor
+
+;; norm to 1 W  !! we assume only one polarization 
+intensity = abs(field)^2/377.0
+binsize= (z_vec[1]-z_vec[0])*(y_vec[1]-y_vec[0])
+itot= total(intensity)*binsize
+scale= 1.0/sqrt(itot)
+field*= scale
 
 if truncation gt 0 then print, '!! warning -- some outside points are truncated !!'
 
