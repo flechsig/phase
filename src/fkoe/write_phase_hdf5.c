@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <29 Aug 14 17:03:31 flechsig>  */
+ /* Time-stamp: <29 Aug 14 17:41:52 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -54,7 +54,9 @@
 #ifdef HAVE_HDF5
 void write_phase_hdf5_(double *, double *, double *, double *, double *, double *, double *, int *, int *, int *);
 
-void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, double *y, double *z, double *wavelengthp, int *task, int *rowsp, int *colsp)
+// the input units are m
+void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, double *y, double *z, 
+		       double *wavelengthp, int *task, int *rowsp, int *colsp)
 {
   hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
@@ -74,23 +76,17 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
       exit(-1);
     }
 
-  
-
   rows= *rowsp;
   cols= *colsp;
 
   e_dims[3] = cols; 
   e_dims[2] = rows;
-  e_dims[1] = 4;              // eyre, eyim, ezre, ezim
+  e_dims[1] = 4;                           // eyre, eyim, ezre, ezim
   e_dims[0] = no_time_slices;              // no_time_slices
 
   fieldsize= rows*cols * 4 * no_time_slices;
-  wavelength= *wavelengthp;//bl->BLOptions.lambda* 1e-3;
-  fversion= 0;//PHASE_H5_VERSION;
-
-// some debugging
-//  printf("debug file %s: rows= %d, cols= %d, y[0]= %g, z[cols-1]= %g\n", __FILE__, rows, cols, y[0],  z[cols-1]);
-//  printf("debug file %s: zim[301,301]= %g, zim[300, 301]= %g, %g\n", __FILE__, zim[299], zim[300], zim[301]);
+  wavelength= *wavelengthp; //bl->BLOptions.lambda* 1e-3;
+  fversion= 0;  // PHASE_H5_VERSION;
 
   field= XMALLOC(double, fieldsize);
   it= 0;
@@ -103,8 +99,8 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
 	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= zim[row+ col * 1024];
       }
 
-  writeDataDouble(file_id, "/z_vec", z, cols, "z vector in mm");
-  writeDataDouble(file_id, "/y_vec", y, rows, "y vector in mm");
+  writeDataDouble(file_id, "/z_vec", z, cols, "z vector in m");
+  writeDataDouble(file_id, "/y_vec", y, rows, "y vector in m");
   writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
   writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
   writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
@@ -112,9 +108,9 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
-  //  add_string_attribute_d(e_dataset_id, "unit", "mm");
+  //add_string_attribute_d(e_dataset_id, "unit", "m");
   add_unit(e_dataset_id, "mm");
-  add_desc(e_dataset_id, "electrical field in (V/mm) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
+  add_desc(e_dataset_id, "electrical field in (V/m) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
