@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <15 Mar 13 12:41:47 flechsig>  */
+/*  Time-stamp: <29 Aug 14 11:20:30 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -8,11 +8,40 @@
 /*  $Revision$  */
 /*  $Author$  */
 
+// ******************************************************************************
+//
+//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//                      Paul Scherrer Institut Villigen, Switzerland
+//   
+//   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+//          Uwe Flechsig,    uwe.flechsig@psi.ch
+//
+// ------------------------------------------------------------------------------
+//
+//   This file is part of PHASE.
+//
+//   PHASE is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, version 3 of the License, or
+//   (at your option) any later version.
+//
+//   PHASE is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
+//
+// ******************************************************************************
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "hdf5.h"
 #include "common.h"
+#include "myhdf5.h"
 
 /*
 define a hdf5 data structure of phase source data
@@ -20,11 +49,12 @@ a) store 3 vectors: z_vec, y_vec, t_vec
 b) store the e_field in a matrix of rank 4
    - the origin is in the lower left corner
    - dimension 4 is the horizontal z-coordinate and the fastest
-   - demension 3 the vertical (y- coordinate)
+   - dimension 3 the vertical (y- coordinate)
    - dimension 2 the eyre, eyim, ezre, ezim 
    - dimension 1 the time coordinate
 */
 
+#define wavelength "1e-10"
 #define t0         "0.5"
 #define eyrefile   "/afs/psi.ch/project/phase/data/EZRE_GB_5000.DAT"  
 #define eyimfile   "/afs/psi.ch/project/phase/data/EZIM_GB_5000.DAT" 
@@ -38,10 +68,10 @@ void read_file(char *, int, int, double *, double *, double *);
 
 int main(int argc, char **argv)
 {
-  double *y, *z, *t, *a;
-  char   *default_argv[6] = {t0, eyrefile, eyimfile, ezrefile, ezimfile, outputfile};
+  double *y, *z, *t, *a, mywavelength;
+  char   *default_argv[7] = {wavelength, t0, eyrefile, eyimfile, ezrefile, ezimfile, outputfile};
   char   **myargv, *myoutputfile;
-  int    myargc, cols, rows, no_time_slices, array_items, ifile, it;
+  int    myargc, cols, rows, no_time_slices, array_items, ifile, it, fversion= 0;
 
   hid_t       file_id, e_dataset_id, e_dataspace_id, 
     y_dataset_id, y_dataspace_id, z_dataset_id, z_dataspace_id, 
@@ -55,9 +85,9 @@ int main(int argc, char **argv)
   if (argc == 1) 
     { 
       myargv= (char **)default_argv; 
-      myargc = 6; 
+      myargc = 7; 
       printf("**********************************************************************************************************\n");
-      printf("usage: wave2phase_hdf5 list_of_slices outputfile\n");
+      printf("usage: wave2phase_hdf5 wavelength list_of_slices outputfile\n");
       printf("separator is a <space>\n");
       printf("one slice itself is the following list: time_as_double eyrealfilename eyimagfilename ezrealfilename ezimagfilename\n");
       printf("example: wave2phase_hdf5 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
@@ -71,9 +101,9 @@ int main(int argc, char **argv)
       myargv= ++argv; 
     }
 
-  if ((myargc < 6) || ((myargc-1) % 5)) { printf("wrong number of arguments (argc = %d)- exit\n", myargc); exit(-1); }
+  if ((myargc < 7) || ((myargc-2) % 5)) { printf("wrong number of arguments (argc = %d)- exit\n", myargc); exit(-1); }
 
-  get_rows_and_cols(myargv[1], &rows, &cols); /* from first file          */
+  get_rows_and_cols(myargv[2], &rows, &cols); /* from first file          */
   no_time_slices= myargc / 4;                 /* from number of arguments */
   printf("debug: %s: no_time_slices= %d\n", __FILE__, no_time_slices);
 
@@ -86,12 +116,16 @@ int main(int argc, char **argv)
 
   /* loop to get data into memory */
 
+  sscanf(myargv[0], "%lf", &mywavelength);
+
+  printf("mywavelength: %lg\n", mywavelength);
+
   for (it= 0; it< no_time_slices; it++)            /* loop over time slices */
     {
-      sscanf(myargv[it*5], "%lf", &t[it]);
+      sscanf(myargv[1+it*5], "%lf", &t[it]);
       printf("slice: %d, time= %g \n", it, t[it]);
       for (ifile= 0; ifile < 4; ifile++)          /* loop over the 4 files per slice */
-	read_file(myargv[1+ ifile + it*5], it, ifile, y, z, a);
+	read_file(myargv[2+ ifile + it*5], it, ifile, y, z, a);
     }
 
   myoutputfile= myargv[myargc-1];
@@ -131,8 +165,17 @@ int main(int argc, char **argv)
   status = H5Dwrite(y_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, y);
   status = H5Dwrite(z_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, z);
   status = H5Dwrite(t_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, t);
-  
-  
+ 
+ // new routines 
+  writeDataDouble(file_id, "wavelength", &mywavelength, 1, "wavelength in m");
+  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
+  add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
+  add_unit(e_dataset_id, "mm");
+  add_desc(e_dataset_id, "electrical field in (V/mm) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
+  add_desc(t_dataset_id, "time vector in s");
+  add_desc(y_dataset_id, "y vector in mm");
+  add_desc(z_dataset_id, "z vector in mm");
+
   /* End access to the dataset and release resources used by it. */
   status = H5Dclose(e_dataset_id);
   status = H5Dclose(y_dataset_id);
@@ -161,7 +204,7 @@ int main(int argc, char **argv)
 
 void get_rows_and_cols(char *fname, int *rows, int *cols)
 {
-  FILE   *f;
+  FILE *f;
 
   if ((f= fopen(fname, "r")) == NULL) 
     {

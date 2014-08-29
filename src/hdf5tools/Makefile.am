@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/Makefile.am
 #  Date      : <15 Mar 13 12:33:54 flechsig> 
-#  Time-stamp: <2014-05-21 07:31:31 flechsig> 
+#  Time-stamp: <29 Aug 14 11:04:33 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -8,13 +8,40 @@
 #  $Revision$ 
 #  $Author$ 
 
+# ******************************************************************************
+#
+#   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+#                      Paul Scherrer Institut Villigen, Switzerland
+#   
+#   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+#          Uwe Flechsig,    uwe.flechsig@psi.ch
+#
+# ------------------------------------------------------------------------------
+#
+#   This file is part of PHASE.
+#
+#   PHASE is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, version 3 of the License, or
+#   (at your option) any later version.
+#
+#   PHASE is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
+#
+# ******************************************************************************
+
 
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5 genesis_hdf5_2wave
 
 wave2phase_hdf5_SOURCES = wave2phase_hdf5.c ../phase/error.c \
-	../phase/xmalloc.c ../phase/xstrdup.c
+	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c
 
 genesis2phase_hdf5_SOURCES = genesis2phase_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c 
