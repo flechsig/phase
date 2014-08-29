@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <28 Aug 14 14:57:35 flechsig> 
+c$$$ Time-stamp: <29 Aug 14 17:39:05 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -66,11 +66,14 @@ c	create field distribution of Gauss'schen beam to compare with
 c	commercial codes like ZEMAX or GLAD
 c	ampplitudes normalized to one
 c	GLAD manual p38, 39
+c       UF Aug 2014: normalization seems to be not 1W- vacuum empedance not considered
+c                    and factor 1e6
 c----------------------------------------------------------------------
       include 'spa-check.cmn'
       
       complex*16 ez(1024,1024),ey(1024,1024),xi
       real*8 small1,small2,small3
+      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), zim(1024,1024)
 
       pi=4.*atan(1.)
       
@@ -158,13 +161,16 @@ c----------------------------------------------------------------------
          do i=1,ianzz
             dpow= dmax1(dabs(dreal(ez(i,j))),small3)**2+
      &           dmax1(dabs(dimag(ez(i,j))),small3)**2
-            write(10,*)z(i)*1000.,y(j)*1000.,2.d0*dpow
+            write(10,*)z(i)*1000.,y(j)*1000.,2.d0*dpow    ! UF: prog. schreibt 2 x intensity
             pow=pow+dpow
          enddo
       enddo
       close(10)
-      pow=pow*(z(2)-z(1))*(y(2)-y(1))
-      type*,' power              = ',pow
+      pow=pow*(z(2)-z(1))*(y(2)-y(1))                    ! total power * binsize
+c UF  pow=pow/377                                        ! then the normalized power is 1 W
+c      pow=pow/377.
+      type*,' power              = ',pow                 ! UF sum 2*amp^2
+      type*,' binsize            = ',(z(2)-z(1))*(y(2)-y(1))
       spow=dsqrt(pow)
       
       write(6,*)' write file: eph_gb.dat'
@@ -185,8 +191,8 @@ c----------------------------------------------------------------------
       
 c      type*,pow
       
-      pow=pow*(z(2)-z(1))*(y(2)-y(1))
-      type*,' power              = ',pow
+cUF      pow=pow*(z(2)-z(1))*(y(2)-y(1))
+cUF      type*,' binsize: dydz (m^2)         = ',pow               ! UF 
       
       write(6,*)' write file: eyre_gb.s4a'
       open(unit=10,name='eyre_gb.s4a')
@@ -227,6 +233,18 @@ c      type*,pow
          enddo
       enddo
       close(10)
+
+c UF add
+      do j=1,ianzy
+         do i=1,ianzz
+            yre(i,j)=real(ey(i,j))/spow
+            zre(i,j)=real(ez(i,j))/spow
+            yim(i,j)=imag(ey(i,j))/spow
+            zim(i,j)=imag(ez(i,j))/spow
+         enddo
+      enddo
+      
+      call write_phase_hdf5(yre, yim, zre, zim, y, z, xlam, 1, ianzy ,ianzz)
 
       write(6,*)' --> done'
       
