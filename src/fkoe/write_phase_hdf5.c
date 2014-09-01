@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <29 Aug 14 17:41:52 flechsig>  */
+ /* Time-stamp: <01 Sep 14 11:23:17 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -85,8 +85,8 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
   e_dims[0] = no_time_slices;              // no_time_slices
 
   fieldsize= rows*cols * 4 * no_time_slices;
-  wavelength= *wavelengthp; //bl->BLOptions.lambda* 1e-3;
-  fversion= 0;  // PHASE_H5_VERSION;
+  wavelength= *wavelengthp;              // bl->BLOptions.lambda* 1e-3;
+  fversion= 0;                           // PHASE_H5_VERSION;
 
   field= XMALLOC(double, fieldsize);
   it= 0;

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <01 Sep 14 11:42:31 flechsig>  */
+/*  Time-stamp: <01 Sep 14 12:05:09 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -216,6 +216,7 @@ void get_rows_and_cols(char *fname, int *rows, int *cols)
   fclose(f);
 } /* end get_rows_and_cols */
 
+/* output in m */
 void read_file(char *fname, int it, int ifile, double *y, double *z, double *a)
 {
   FILE   *f;
@@ -231,7 +232,13 @@ void read_file(char *fname, int it, int ifile, double *y, double *z, double *a)
 
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
-      fscanf(f, "%lf %lf %lf\n", &y[row], &z[col], &a[col+ row* cols + ifile * (rows * cols) + it * (rows * cols * 4)]);
+      {
+	fscanf(f, "%lf %lf %lf\n", &y[row], &z[col], &a[col+ row* cols + ifile * (rows * cols) + it * (rows * cols * 4)]);
+	// scale to m
+	y[row]*= 1e-3;
+	z[col]*= 1e-3;
+	a[col+ row* cols + ifile * (rows * cols) + it * (rows * cols * 4)]*= 1e3;
+      }
         
   fclose(f);
 } /* end read_file */
