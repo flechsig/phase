@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <29 Aug 14 11:20:30 flechsig>  */
+/*  Time-stamp: <01 Sep 14 11:42:31 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
       printf("usage: wave2phase_hdf5 wavelength list_of_slices outputfile\n");
       printf("separator is a <space>\n");
       printf("one slice itself is the following list: time_as_double eyrealfilename eyimagfilename ezrealfilename ezimagfilename\n");
-      printf("example: wave2phase_hdf5 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
+      printf("example: wave2phase_hdf5 1e-10 0.5  eyreal1 eyimag1 ezreal1 ezimag1 1.0  eyreal2 eyimag2 ezreal2 ezimag2 output.hdf5\n");
       printf("if the command line is to long use xargs\n");
       printf("**********************************************************************************************************\n");
       printf("we now make one hdf5 file as an example\n");
@@ -170,11 +170,11 @@ int main(int argc, char **argv)
   writeDataDouble(file_id, "wavelength", &mywavelength, 1, "wavelength in m");
   writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
   add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
-  add_unit(e_dataset_id, "mm");
-  add_desc(e_dataset_id, "electrical field in (V/mm) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
+  add_unit(e_dataset_id, "m");
+  add_desc(e_dataset_id, "electrical field in (V/m) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   add_desc(t_dataset_id, "time vector in s");
-  add_desc(y_dataset_id, "y vector in mm");
-  add_desc(z_dataset_id, "z vector in mm");
+  add_desc(y_dataset_id, "y vector in m");
+  add_desc(z_dataset_id, "z vector in m");
 
   /* End access to the dataset and release resources used by it. */
   status = H5Dclose(e_dataset_id);
