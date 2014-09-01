@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <29 Aug 14 14:13:22 flechsig> 
+;  Time-stamp: <01 Sep 14 11:33:45 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -567,7 +567,7 @@ endfor
 ;; norm to 1 W  !! we assume only one polarization 
 intensity = abs(field)^2/377.0
 binsize= (z_vec[1]-z_vec[0])*(y_vec[1]-y_vec[0])
-itot= total(intensity)*binsize
+itot= total(intensity)*binsize*0.5
 scale= 1.0/sqrt(itot)
 field*= scale
 
