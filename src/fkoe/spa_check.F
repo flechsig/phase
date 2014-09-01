@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <29 Aug 14 17:48:48 flechsig> 
+c$$$ Time-stamp: <01 Sep 14 11:24:57 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -66,8 +66,7 @@ c	create field distribution of Gauss'schen beam to compare with
 c	commercial codes like ZEMAX or GLAD
 c	ampplitudes normalized to one
 c	GLAD manual p38, 39
-c       UF Aug 2014: normalization seems to be not 1W- vacuum empedance not considered
-c                    and factor 1e6
+c       UF Aug 2014: changed normalization from 1 V^2 to 1 W (E^2/377Ohm)
 c----------------------------------------------------------------------
       include 'spa-check.cmn'
       
@@ -168,7 +167,7 @@ c----------------------------------------------------------------------
       close(10)
       pow=pow*(z(2)-z(1))*(y(2)-y(1))                    ! total power * binsize
 c UF  pow=pow/377                                        ! then the normalized power is 1 W
-      pow=pow/377.
+      pow=2.0*pow/377.                                   ! fac comes from 2.0 Ey and Ez
       type*,' power              = ',pow                 ! UF sum 2*amp^2
       type*,' binsize            = ',(z(2)-z(1))*(y(2)-y(1))
       spow=dsqrt(pow)
@@ -628,7 +627,7 @@ c---------------------------------------------------
       subroutine phadrift_write_output_special
 c---------------------------------------------------
       include 'spa-check.cmn'
-      
+      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), zim(1024,1024)
       integer i,j
 
       open(unit=10,file='eyre_1.dat')
@@ -652,6 +651,7 @@ c---------------------------------------------------
             write(13,*)z1(j),y1(i),dimag(ez1(j,i))
             write(14,*)z1(j),y1(i),dreal(ez1(j,i))**2+dimag(ez1(j,i))**2+
      &           dreal(ey1(j,i))**2+dimag(ey1(j,i))**2
+    
          enddo
       enddo
       close(14)
@@ -660,6 +660,19 @@ c---------------------------------------------------
       close(11)
       close(10)
       
+c UF add
+      do j=1,ianzy1
+         do i=1,ianzz1
+            yre(i,j)=dreal(ey1(i,j))
+            zre(i,j)=dreal(ez1(i,j))
+            yim(i,j)=dimag(ey1(i,j))
+            zim(i,j)=dimag(ez1(i,j))
+         enddo
+      enddo
+
+      write(6,*)'!!!!! debug: xlam correct ?????', xlam
+      call write_phase_hdf5(yre, yim, zre, zim, y1, z1, xlam, 2, ianzy1 ,ianzz1)
+
       return
       end                       ! phadrift_write_output_special
       
