@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <29 Aug 14 09:36:05 flechsig>  */
+/*  Time-stamp: <01 Sep 14 12:29:40 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 
   printf("gridsize: %f\n", gridsize);
   for (i=0; i< rows; i++) 
-    y[i]= z[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+    y[i]= z[i]= (cols/2 * (-1.0) + i) * gridsize;    /* in m */
  
   it= 0;
   for (k=0; k< 4; k++)   
