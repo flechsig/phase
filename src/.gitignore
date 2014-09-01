@@ -13,3 +13,6 @@ Makefile.in
 Makefile
 stamp-h1
 .deps
+*.o
+moc_*.cpp
+qrc_*.cpp
