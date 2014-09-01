@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <29 Aug 14 09:36:27 flechsig>  */
+/*  Time-stamp: <01 Sep 14 12:27:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
   array_items= getDatasetSize(fid, "slice000001/field"); 
   b= XMALLOC(double, array_items);
   readDataDouble(fid, "slice000001/field", b, array_items);
-  readDataDouble(fid, "gridsize",   &gridsize,   1);
+  readDataDouble(fid, "gridsize", &gridsize, 1);
   H5Fclose(fid);
 
   /* hdf5 done */
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 	  k1= k;
 	  if (k==2) k1= 0;
           if (k==3) k1= 1;
-	  a[i+ j* cols + k * (rows * cols) + it * (rows * cols * 4)]= b[k1 + (i + j * cols)* 2];
+	  a[i+ j* cols + k * (rows * cols) + it * (rows * cols * 4)]= b[k1 + (i + j * cols)* 2]*1e-3;
 	}   
   
   myoutputfile= outputbasename;         /*myargv[myargc-1];*/
