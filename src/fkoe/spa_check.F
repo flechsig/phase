@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <01 Sep 14 12:14:50 flechsig> 
+c$$$ Time-stamp: <01 Sep 14 12:20:00 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -172,8 +172,8 @@ c UF the units so far are in m
       pow=pow*(z(2)-z(1))*(y(2)-y(1))                    ! total power * binsize
 c UF  pow=pow/377                                        ! then the normalized power is 1 W
       pow=2.0*pow/377.                                   ! fac comes from 2.0 Ey and Ez
-      type*,' power              = ',pow                 ! UF sum 2*amp^2
-      type*,' binsize            = ',(z(2)-z(1))*(y(2)-y(1))
+      type*,' integral power before norm. (W) = ',pow                 ! UF sum 2*amp^2
+      type*,' binsize (m^2)                   = ',(z(2)-z(1))*(y(2)-y(1))
       spow=dsqrt(pow)
 
 
