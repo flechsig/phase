@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <01 Sep 14 11:24:57 flechsig> 
+c$$$ Time-stamp: <01 Sep 14 12:14:50 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -152,15 +152,19 @@ c----------------------------------------------------------------------
          enddo
       enddo
       
+c UF the units so far are in m
+
+
       pow=0.d0
       write(6,*)' write file: ez2_gb.dat'
       open(unit=10,name='ez2_gb.dat')
+
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
             dpow= dmax1(dabs(dreal(ez(i,j))),small3)**2+
      &           dmax1(dabs(dimag(ez(i,j))),small3)**2
-            write(10,*)z(i)*1000.,y(j)*1000.,2.d0*dpow    ! UF: prog. schreibt 2 x intensity
+            write(10,*)z(i)*1000.,y(j)*1000.,2.d0*dpow*1e-6    ! UF: prog. schreibt 2 x intensity; add the 1e-6
             pow=pow+dpow
          enddo
       enddo
@@ -171,7 +175,8 @@ c UF  pow=pow/377                                        ! then the normalized p
       type*,' power              = ',pow                 ! UF sum 2*amp^2
       type*,' binsize            = ',(z(2)-z(1))*(y(2)-y(1))
       spow=dsqrt(pow)
-      
+
+
       write(6,*)' write file: eph_gb.dat'
       open(unit=10,name='eph_gb.dat')
       write(10,*)ianzz,ianzy
@@ -192,13 +197,15 @@ c      type*,pow
       
 cUF      pow=pow*(z(2)-z(1))*(y(2)-y(1))
 cUF      type*,' binsize: dydz (m^2)         = ',pow               ! UF 
+c UF Sep 14 correct the unit of the field in the wave file to V/mm
+c UF i.e. add the factor 1e-3 to the field
       
       write(6,*)' write file: eyre_gb.s4a'
       open(unit=10,name='eyre_gb.s4a')
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
-            write(10,*)z(i)*1000.,y(j)*1000.,real(ez(i,j))/spow
+            write(10,*)z(i)*1000.,y(j)*1000.,real(ez(i,j))*1e-3/spow
          enddo
       enddo
       close(10)
@@ -208,7 +215,7 @@ cUF      type*,' binsize: dydz (m^2)         = ',pow               ! UF
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
-            write(10,*)z(i)*1000.,y(j)*1000.,imag(ez(i,j))/spow
+            write(10,*)z(i)*1000.,y(j)*1000.,imag(ez(i,j))*1e-3/spow
          enddo
       enddo
       close(10)
@@ -218,7 +225,7 @@ cUF      type*,' binsize: dydz (m^2)         = ',pow               ! UF
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
-            write(10,*)z(i)*1000.,y(j)*1000.,real(ez(i,j))/spow
+            write(10,*)z(i)*1000.,y(j)*1000.,real(ez(i,j))*1e-3/spow
          enddo
       enddo
       close(10)
@@ -228,7 +235,7 @@ cUF      type*,' binsize: dydz (m^2)         = ',pow               ! UF
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
-            write(10,*)z(i)*1000.,y(j)*1000.,imag(ez(i,j))/spow
+            write(10,*)z(i)*1000.,y(j)*1000.,imag(ez(i,j))*1e-3/spow
          enddo
       enddo
       close(10)
@@ -627,7 +634,7 @@ c---------------------------------------------------
       subroutine phadrift_write_output_special
 c---------------------------------------------------
       include 'spa-check.cmn'
-      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), zim(1024,1024)
+      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), zim(1024,1024), yvec(1024), zvec(1024)
       integer i,j
 
       open(unit=10,file='eyre_1.dat')
@@ -662,11 +669,13 @@ c---------------------------------------------------
       
 c UF add
       do j=1,ianzy1
+         yvec(j)=y1(j)*1e-3
          do i=1,ianzz1
-            yre(i,j)=dreal(ey1(i,j))
-            zre(i,j)=dreal(ez1(i,j))
-            yim(i,j)=dimag(ey1(i,j))
-            zim(i,j)=dimag(ez1(i,j))
+            zvec(i)=z1(i)*1e-3
+            yre(i,j)=dreal(ey1(i,j))*1e3
+            zre(i,j)=dreal(ez1(i,j))*1e3
+            yim(i,j)=dimag(ey1(i,j))*1e3
+            zim(i,j)=dimag(ez1(i,j))*1e3
          enddo
       enddo
 
