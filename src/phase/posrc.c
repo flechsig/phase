@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:50:21 flechsig>  */
+/*  Time-stamp: <29 Aug 14 17:58:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -915,7 +915,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
   int     no_time_slices= 1, col, row, cols, rows, fieldsize, it, fversion;
-  double  wavelength, *field, t_vec= 0.5;
+  double  wavelength, *field, t_vec= 0.5, *zvec, *yvec;
   struct PSDType *p;
 
   /*  if (!(bl->beamlineOK & resultOK)) 
@@ -945,22 +945,26 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   e_dims[0] = no_time_slices;              // no_time_slices
 
   fieldsize= rows*cols * 4 * no_time_slices;
-  wavelength= bl->BLOptions.lambda* 1e-3;
+  wavelength= bl->BLOptions.lambda* 1e-3;   // write in m
   fversion= PHASE_H5_VERSION;
 
   field= XMALLOC(double, fieldsize);
+  zvec= XMALLOC(double, cols);
+  yvec= XMALLOC(double, rows);
   it= 0;
   for (col= 0; col < cols; col++)   // in the file the rows are fast
+    zvec[col]= p->z[col]*1e-3;
     for (row= 0; row < rows; row++)
       {
+	yvec[row]= p->y[row]*1e-3;
 	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= p->eyrec[row+ col* rows];
 	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= p->eyimc[row+ col* rows];
 	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= p->ezrec[row+ col* rows];
 	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows];
       }
 
-  writeDataDouble(file_id, "/z_vec", p->z, cols, "z vector in mm");
-  writeDataDouble(file_id, "/y_vec", p->y, rows, "y vector in mm");
+  writeDataDouble(file_id, "/z_vec", zvec, cols, "z vector in m");
+  writeDataDouble(file_id, "/y_vec", yvec, rows, "y vector in m");
   writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
   writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
   writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
@@ -969,11 +973,13 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
   //  add_string_attribute_d(e_dataset_id, "unit", "mm");
-  add_unit(e_dataset_id, "mm");
-  add_desc(e_dataset_id, "electrical field in (V/mm) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
+  add_unit(e_dataset_id, "m");
+  add_desc(e_dataset_id, "electrical field in (V/m) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
   XFREE(field);
+  XFREE(yvec);
+  XFREE(zvec);
   add_phase_psd_to_hdf5(file_id, bl);
   add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
   H5Fclose(file_id);
