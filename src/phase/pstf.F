@@ -1,7 +1,35 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pstf.F
 c$$$ Date      : <07 Apr 08 15:37:17 flechsig> 
-c$$$ Time-stamp: <28 Aug 12 15:21:43 flechsig> 
+c$$$ Time-stamp: <02 Sep 14 11:56:41 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+c ******************************************************************************
+c
+c   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+c                      Paul Scherrer Institut Villigen, Switzerland
+c   
+c   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
+c          Uwe Flechsig,    uwe.flechsig@psi.ch
+c
+c ------------------------------------------------------------------------------
+c
+c   This file is part of PHASE.
+c
+c   PHASE is free software: you can redistribute it and/or modify
+c   it under the terms of the GNU General Public License as published by
+c   the Free Software Foundation, version 3 of the License, or
+c   (at your option) any later version.
+c
+c   PHASE is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU General Public License for more details.
+c
+c   You should have received a copy of the GNU General Public License
+c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
+c
+c ******************************************************************************
+
 
 c May 2012 this routine is obsolete - 
 c has been replaced with pstc in file pst.c
