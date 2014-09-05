@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <28 Aug 14 16:12:08 flechsig> 
+//  Time-stamp: <05 Sep 14 16:12:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2584,6 +2584,13 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 
   if (po)
     {
+      
+      if (!((struct PSDType *) myparent->myBeamline()->RESULT.RESp) )
+	{
+	  cout << "warning: pointer error UpdateStatistics-- return" << endl;
+	  return;
+	}
+
       porays= 
 	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iy* 
 	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iz* 
