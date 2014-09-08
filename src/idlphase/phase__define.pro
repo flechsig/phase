@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <01 Sep 14 11:33:45 flechsig> 
+;  Time-stamp: <08 Sep 14 09:34:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -412,21 +412,20 @@ spha4idl= 0
 if (n_elements(phase) eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
 if (n_elements(phase) ne 0 ) then sphase= 1
 if (n_elements(pha4idl) ne 0) then spha4idl= 1
-if (n_elements(delta) eq 0)   then delta= !dpi/6.
-if (n_elements(yscale) eq 0)  then yscale= 0.9
+if (n_elements(delta) eq 0)   then delta= 0.0
+if (n_elements(yscale) eq 0)  then yscale= 1.0
 
 if sgenesis gt 0 then $
   h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
   z_vec=*self.z_vec, y_vec=*self.y_vec, _EXTRA=extra 
 
 if sphase gt 0 then begin
-    if (abs(delta) gt 0.0) then begin
-        amp= abs(*self.field)
-        pha= atan(*self.field, /phase)
-        pha+= delta
-        amp*= yscale
-        ycomp= complex(amp*cos(pha), amp*sin(pha)) 
-    endif 
+    amp= abs(*self.field)
+    pha= atan(*self.field, /phase)
+    pha+= delta
+    amp*= yscale
+    ycomp= complex(amp*cos(pha), amp*sin(pha)) 
+    
     print, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
     print, '!! we save the field to zcomp AND ycomp !!'
     print, '!! use parameters delta and yscale      !!'
@@ -564,10 +563,10 @@ for i=0, Nz-1 do begin
   endfor
 endfor
 
-;; norm to 1 W  !! we assume only one polarization 
+;; norm to 0.5 W  !! we assume only one polarization 
 intensity = abs(field)^2/377.0
 binsize= (z_vec[1]-z_vec[0])*(y_vec[1]-y_vec[0])
-itot= total(intensity)*binsize*0.5
+itot= total(intensity)*binsize*2.0
 scale= 1.0/sqrt(itot)
 field*= scale
 

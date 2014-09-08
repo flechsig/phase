@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <29 Aug 14 17:58:46 flechsig>  */
+/*  Time-stamp: <08 Sep 14 17:20:41 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -489,8 +489,8 @@ void source7c_ini(struct BeamlineType *bl)
   it= 0;          /* so far - read only first slice */
 
   /* grid */
-  for (i=0; i< bl->posrc.iey; i++) bl->posrc.gridy[i]= y[i];
-  for (i=0; i< bl->posrc.iex; i++) bl->posrc.gridx[i]= z[i];
+  for (i=0; i< bl->posrc.iey; i++) bl->posrc.gridy[i]= y[i]*1e3;
+  for (i=0; i< bl->posrc.iex; i++) bl->posrc.gridx[i]= z[i]*1e3;
 
   posrc_fill_min_max(bl);
 
@@ -914,9 +914,15 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
 {
   hid_t   file_id, e_dataspace_id, e_dataset_id;
   hsize_t e_dims[4];
-  int     no_time_slices= 1, col, row, cols, rows, fieldsize, it, fversion;
+  int     no_time_slices= 1, col, row, cols, rows, it, fversion;
+  long    fieldsize, debugidx;
   double  wavelength, *field, t_vec= 0.5, *zvec, *yvec;
   struct PSDType *p;
+
+#ifdef DEBUG
+  printf("debug: %s write_phase_hdf5_file called\n", __FILE__);
+#endif
+
 
   /*  if (!(bl->beamlineOK & resultOK)) 
     {
@@ -939,6 +945,10 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   rows= p->iy;
   cols= p->iz;
 
+#ifdef DEBUG
+  printf("debug: rows=%d, cols= %d\n", rows, cols);
+#endif
+
   e_dims[3] = cols; 
   e_dims[2] = rows;
   e_dims[1] = 4;              // eyre, eyim, ezre, ezim
@@ -949,20 +959,23 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   fversion= PHASE_H5_VERSION;
 
   field= XMALLOC(double, fieldsize);
-  zvec= XMALLOC(double, cols);
-  yvec= XMALLOC(double, rows);
+  zvec = XMALLOC(double, cols);
+  yvec = XMALLOC(double, rows);
   it= 0;
+  //debugidx=cols/2+ rows/2* cols + 0 * (rows * cols) + it * (rows * cols * 4);
   for (col= 0; col < cols; col++)   // in the file the rows are fast
-    zvec[col]= p->z[col]*1e-3;
-    for (row= 0; row < rows; row++)
-      {
-	yvec[row]= p->y[row]*1e-3;
-	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= p->eyrec[row+ col* rows];
-	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= p->eyimc[row+ col* rows];
-	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= p->ezrec[row+ col* rows];
-	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows];
-      }
-
+    {
+      zvec[col]= p->z[col]* 1e-3;
+      for (row= 0; row < rows; row++)
+	{
+	  yvec[row]= p->y[row]* 1e-3;
+	  field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= p->eyrec[row+ col* rows]*1e3;
+	  field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= p->eyimc[row+ col* rows]*1e3;
+	  field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= p->ezrec[row+ col* rows]*1e3;
+	  field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows]*1e3;
+	}
+    }
+  
   writeDataDouble(file_id, "/z_vec", zvec, cols, "z vector in m");
   writeDataDouble(file_id, "/y_vec", yvec, rows, "y vector in m");
   writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
@@ -977,10 +990,22 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   add_desc(e_dataset_id, "electrical field in (V/m) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");
   H5Dclose(e_dataset_id);
   H5Sclose(e_dataspace_id);
+
+#ifdef DEBUG1
+  printf("debug: z=[%f, %f], y=[%f, %f]\n", zvec[0], zvec[cols-1], yvec[0], yvec[rows-1]);
+  printf("debug: colidx=%d, centeryz= [%f, %f, %f, %f]\n", 
+	 cols/2, 
+	 p->eyrec[rows/2*(1+rows)], p->eyimc[rows/2*(1+rows)], 
+	 p->ezrec[cols/2*(1+rows)], p->ezimc[cols/2*(1+rows)]);
+  debugidx=cols/2+ rows/2* cols + 0 * (rows * cols) + it * (rows * cols * 4);
+  printf("debug: debugidx=%d, field[%f, %f, %f, %f]\n", debugidx, field[debugidx], field[rows/2*(1+rows)+ rows*rows], 
+	 field[rows/2*(1+rows)+ 2* rows*rows], field[rows/2*(1+rows)+ 3* rows*rows]);
+#endif
+
   XFREE(field);
   XFREE(yvec);
   XFREE(zvec);
-  add_phase_psd_to_hdf5(file_id, bl);
+  // add_phase_psd_to_hdf5(file_id, bl);
   add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
   H5Fclose(file_id);
   printf("wrote phase_hdf5 file: %s\n", fname);
@@ -1065,7 +1090,7 @@ void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset,
   for (j=0; j< rows; j++)                 /* fill matrix in c memory model */
     for (i=0; i< cols; i++) 
       {
-	val= field[i + j* cols + offset * (rows * cols) + it * (rows * cols * 4)];
+	val= 1e-3* field[i + j* cols + offset * (rows * cols) + it * (rows * cols * 4)];
 	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
 	a[i+ j* cols]= val;
       }
