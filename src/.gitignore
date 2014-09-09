@@ -25,3 +25,6 @@ hdf5tools/wave2phase_hdf5
 phasesrv/phasesrv
 *TAGS
 idlphase/help.html
+phaselib/.libs/
+phaselib/libphaseifc.la
+phaselib/*.lo
