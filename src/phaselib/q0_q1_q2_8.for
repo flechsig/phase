@@ -1,3 +1,13 @@
+c$$$ File      : /afs/psi.ch/project/phase/GIT/phase/src/phaselib/q0_q1_q2_8.for
+c$$$ Date      : <09 Sep 14 14:08:28 flechsig> 
+c$$$ Time-stamp: <09 Sep 14 14:08:40 flechsig> 
+c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+c$$$
+c$$$ $Source$ 
+c$$$ $Date$
+c$$$ $Revision$ 
+c$$$ $Author$ 
+
 c ******************************************************************************
 c
 c   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -25,7 +35,7 @@ c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>.
 c
 c ******************************************************************************
 
-     subroutine q0_q1_q2_8(a,sina,sinb,cosa,
+      subroutine q0_q1_q2_8(a,sina,sinb,cosa,
      &    cosb,r,rp,xdens,xlam,xdefl,q0,q1,q2)
       implicit real*8(a-h,o-z)
       dimension a(0:8,0:8),xdens(0:4)
