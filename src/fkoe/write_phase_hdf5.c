@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <01 Sep 14 11:23:17 flechsig>  */
+ /* Time-stamp: <09 Sep 14 11:06:31 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -106,7 +106,8 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
   writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
-  e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, 
+			     H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(e_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, field);
   //add_string_attribute_d(e_dataset_id, "unit", "m");
   add_unit(e_dataset_id, "mm");
