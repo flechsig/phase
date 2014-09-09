@@ -1,4 +1,4 @@
- c ******************************************************************************
+c ******************************************************************************
 c
 c   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
 c                      Paul Scherrer Institut Villigen, Switzerland
