@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=phaseqt
+Exec=konsole -e /usr/local/bin/phaseqt
+Icon=kgolf
+Comment=
+Path=/home/phaseuser/phase/data

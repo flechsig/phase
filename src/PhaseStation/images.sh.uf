@@ -1,0 +1,5 @@
+# is called at the beginning
+# man kiwi::images.sh
+# to install additional packages
+echo "@@@@@@@@@@@@@@@@@@@@@@@@@@ call images.sh @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+cp -r /usr/local /scratch1/myphasestation/root
