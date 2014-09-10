@@ -2,7 +2,7 @@
 GAUSSIAN SOURCE
 ===============
 default parameters:
-10.             ! wavelength in nm
+10.             ! wavelength in nm 
 0.07            ! beam waist radius in mm
 301,301         ! ianzy,ianzz
 -0.8 0.8        ! ymin,ymax in mm
