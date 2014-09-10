@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<image schemaversion="5.4" name="suse-12.2-live">
+	<description type="system">
+		<author>Uwe Flechsig</author>
+		<contact>uwe.flechsig@psi.ch</contact>
+		<specification>PhaseStation phaseqt Live system for CD/DVD and USB Stick</specification>
+	</description>
+	<preferences>
+		<type image="iso" primary="true" boot="isoboot/suse-12.2" hybrid="true" flags="clic"/>
+		<version>2.5.2</version>
+		<packagemanager>zypper</packagemanager>
+		<rpm-check-signatures>false</rpm-check-signatures>
+		<rpm-force>true</rpm-force>
+		<timezone>UTC</timezone>
+		<hwclock>localtime</hwclock>
+		<locale>en_US</locale>
+		<keytable>us.map.gz</keytable>
+	</preferences>
+	<users group="root">
+		<user pwd="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root"/>
+	</users>
+	<users group="users">
+		<user pwd="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/home/tux" name="tux"/>
+	</users>
+	<users group="users">
+		<user pwd="PfA6truX1sZ1E" home="/home/phaseuser" name="phaseuser"/>
+	</users>
+
+	<repository type="yast2">
+	  <source path="/mnt"/>
+	  <!--<source path="iso://scratch2/openSUSE-12.2-DVD-x86_64.iso"/> -->
+	  <!--<source path="opensuse://12.2/repo/oss/"/> -->
+
+	</repository>
+	<packages type="image">
+		<package name="bootsplash-branding-openSUSE" bootinclude="true" bootdelete="true"/>
+		<package name="gfxboot-branding-openSUSE" bootinclude="true" bootdelete="true"/>
+		<package name="kernel-default"/>
+		<package name='iputils'/>
+		<!--<package name="ifplugd"/>-->
+		<package name='yast2-qt-pkg'/>
+		<package name='yast2-qt'/>
+		<package name='yast2-control-center-qt'/>
+		<package name='soprano-backend-virtuoso'/>
+		<package name='sax2-tools'/>
+		<package name='konsole'/>
+		<package name='kdm'/>
+		<package name='kdebase4-workspace-branding-openSUSE'/>
+		<package name='kdebase4-openSUSE'/>
+		<package name='yast2-live-installer'/>
+		<package name='yast2-users'/>
+		<package name="vim"/>
+                <package name="emacs"/>
+		<package name="xorg-x11-server"/>
+		<package name='xorg-x11-fonts'/>
+		<package name='xorg-x11-driver-video'/>
+		<package name='xorg-x11-driver-input'/>
+		<package name='xorg-x11'/>
+		<package name='x11-tools'/>
+		<package name='dbus-1-x11'/>
+		<package name='ConsoleKit-x11'/>
+		<package name="perl"/>
+		<package name="kdm"/>
+		<package name="yast2-firstboot"/> 
+		<opensusePattern name="base"/>
+		<opensusePattern name="kde4"/>
+   		<opensusePattern name="x11"/>
+	</packages>
+	<packages type="bootstrap">
+		<package name="filesystem"/>
+		<package name="glibc-locale"/>
+	</packages>
+</image>
