@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <01 Sep 14 12:05:09 flechsig>  */
+/*  Time-stamp: <10 Sep 14 14:59:56 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -230,10 +230,11 @@ void read_file(char *fname, int it, int ifile, double *y, double *z, double *a)
   fscanf(f, "%d %d\n", &cols, &rows);
   printf("debug: %s: read_file: %s, rows= %d, cols= %d\n", __FILE__, fname, rows, cols);
 
-  for (col= 0; col < cols; col++)   // in the file the rows are fast
-    for (row= 0; row < rows; row++)
+  for (row= 0; row < rows; row++)
+    for (col= 0; col < cols; col++)   // in the file the rows are fast
+    //    for (row= 0; row < rows; row++)
       {
-	fscanf(f, "%lf %lf %lf\n", &y[row], &z[col], &a[col+ row* cols + ifile * (rows * cols) + it * (rows * cols * 4)]);
+	fscanf(f, "%lf %lf %lf\n", &z[col], &y[row], &a[col+ row* cols + ifile * (rows * cols) + it * (rows * cols * 4)]);
 	// scale to m
 	y[row]*= 1e-3;
 	z[col]*= 1e-3;
