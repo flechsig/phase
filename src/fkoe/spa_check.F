@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <11 Sep 14 08:50:34 flechsig> 
+c$$$ Time-stamp: <11 Sep 14 13:41:41 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -853,7 +853,7 @@ c----------------------------------------------------------
 c---------------propagation between plane parallel surfaces
          
          do i=1,ianzy1
-            write(6,*)'i = ', i  
+            write(6,*)'i = ', i, ' of ',ianzy1  
             do j=1,ianzz1
                ey1(j,i)=0.d0
                ez1(j,i)=0.d0
@@ -920,7 +920,7 @@ c------------------------------------------------------------
 c------------------------------------------------------------
          
          do i=1,ianzy1
-            write(6,*)'i = ', i  
+            write(6,*)'i = ', i, ' of ',ianzy1    
             do j=1,ianzz1
             ey1(j,i)=0.d0
             ez1(j,i)=0.d0
