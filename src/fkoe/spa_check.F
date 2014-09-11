@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <10 Sep 14 15:46:42 flechsig> 
+c$$$ Time-stamp: <11 Sep 14 08:50:34 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -35,7 +35,10 @@ c
 c ******************************************************************************
 
 c------------ main ---------------------------------
-      integer iflag
+      integer iflag, seconds, t1, t2
+      real *8 hours, minutes
+
+      call mytime(t1)
 
       write(6,*)'***********************************'
       write(6,*)'*  Frenel Kirchhoff Integration   *'
@@ -54,6 +57,14 @@ c------------ main ---------------------------------
       if(iflag.eq.3)call fkoe
       if(iflag.eq.4)call pathlength
 
+      call mytime(t2)
+      seconds= t2-t1
+      hours= seconds/3600.
+      minutes= seconds/60.
+      
+      write(6,*)'processing time in hours:   ', hours
+      write(6,*)'processing time in minutes: ', minutes
+      write(6,*)'processing time in seconds: ', seconds
       write(6,*)' ==> done '
       stop
       end

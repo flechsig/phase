@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/Makefile.am
 # Date      : <01 Apr 14 09:25:08 flechsig> 
-# Time-stamp: <29 Aug 14 15:23:58 flechsig> 
+# Time-stamp: <11 Sep 14 08:42:44 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -39,7 +39,7 @@
 
 bin_PROGRAMS = fkoe
 fkoe_SOURCES = spa_check.F spa-check.cmn write_phase_hdf5.c \
-	../phase/myhdf5.c ../phase/myhdf5.h \
+	../phase/myhdf5.c ../phase/myhdf5.h mytime.c \
 	../phase/xmalloc.c ../phase/xstrdup.c ../phase/error.c 
 #fkoe_mpi_LDADD = 
 
