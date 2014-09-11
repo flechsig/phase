@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/Makefile.am
 #  Date      : <15 Mar 13 12:33:54 flechsig> 
-#  Time-stamp: <29 Aug 14 11:04:33 flechsig> 
+#  Time-stamp: <11 Sep 14 15:36:05 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -38,7 +38,7 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5 genesis_hdf5_2wave
+bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5 genesis_hdf5_2wave phase_hdf5_2wave
 
 wave2phase_hdf5_SOURCES = wave2phase_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c
@@ -51,6 +51,9 @@ wave2genesis_hdf5_SOURCES = wave2genesis_hdf5.c ../phase/error.c \
 
 genesis_hdf5_2wave_SOURCES = genesis_hdf5_2wave.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c
+
+phase_hdf5_2wave_SOURCES = phase_hdf5_2wave.c ../phase/error.c \
+	../phase/xmalloc.c ../phase/xstrdup.c  ../phase/myhdf5.c
 
 ##dummy_DATA = \
 ##	configwindow.cpp configwindow.h \
@@ -87,9 +90,7 @@ genesis_hdf5_2wave_SOURCES = genesis_hdf5_2wave.c ../phase/error.c \
 #phasesrv_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
-pkgdata_DATA = ../data/coefficient-example.dat \
- ../data/map70_lh.omx\
- ../data/map70_rh.omx
+pkgdata_DATA = 
 
 # This is to ensure the myapp.h file is distributed in your myapp-0.1.tar.gz
 # I also have a resources.qrc I need to include. The png is used in myapp.
