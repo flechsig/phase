@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <09 Sep 14 11:06:31 flechsig>  */
+ /* Time-stamp: <11 Sep 14 10:40:39 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -79,6 +79,8 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
   rows= *rowsp;
   cols= *colsp;
 
+  //  printf("rows= %d, cols= %d\n", rows, cols);
+
   e_dims[3] = cols; 
   e_dims[2] = rows;
   e_dims[1] = 4;                           // eyre, eyim, ezre, ezim
@@ -93,10 +95,15 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {   // !!! fortran input
-	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= yre[row+ col * 1024];
-	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= yim[row+ col * 1024];
-	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= zre[row+ col * 1024];
-	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= zim[row+ col * 1024];
+	/* 
+	   UF 11.Sep 2014 ich verstehe irgendwas nicht: yre[row* 1024+ col] funktioniert 
+	   erwartet hatte ich yre[row+ col * 1024]
+	   yre muesste ja im Fortran memory model kommen
+	*/
+	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= yre[row* 1024+ col];
+	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= yim[row* 1024+ col];
+	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= zre[row* 1024+ col];
+	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= zim[row* 1024+ col];
       }
 
   writeDataDouble(file_id, "/z_vec", z, cols, "z vector in m");
