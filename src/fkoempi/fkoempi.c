@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.c */
  /* Date      : <01 Apr 14 09:15:01 flechsig>  */
- /* Time-stamp: <28 Aug 14 15:37:55 flechsig>  */
+ /* Time-stamp: <12 Sep 14 15:09:15 flechsig>  */
  
  /* $Source$  */
  /* $Date$ */
@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "fkoempi.h"
 
@@ -149,11 +150,19 @@ int main(int argc, char *argv[])
   if (rank == 0)
   {
     int nslaves;
+    int t1, t2, seconds;
+    double minutes, hours;
+    t1= (int)time(NULL);
     
     printf("M: Starting FKOE with %d processes\n", nthreads); 
     nslaves= nthreads- 1;
     master_propagate(nslaves);
-    master_save_fields(BASEOFNAME, ny1, nz1);            
+    master_save_fields(BASEOFNAME, ny1, nz1);        
+    t2= (int)time(NULL);
+    seconds= t2- t1;
+    minutes= seconds/ 60.;
+    hours  = seconds/ 3600.;
+    printf("time: %f hours or %f minutes or %d seconds\n", hours, minutes, seconds);
     printf("M: done\n");
   }
   else         // slaves
@@ -343,6 +352,32 @@ void master_save_fields(const char* baseofname, int ny, int nz)
     
   for (t=0; t<4; t++)
     fclose(fp[t]);
+
+  // uf write h5 in addition
+  int task;
+  double *yre, *yim, *zre, *zim;
+
+  yre= XMALLOC(double, ny*nz);
+  zre= XMALLOC(double, ny*nz);
+  yim= XMALLOC(double, ny*nz);
+  zim= XMALLOC(double, ny*nz);
+
+  for (j=0; j<ny; j++)
+    for (i=0; i<nz; i++)
+    {
+      yre[i + j * nz]= ey1[j][i].re;
+      yim[i + j * nz]= ey1[j][i].im;
+      zre[i + j * nz]= ez1[j][i].re;
+      zim[i + j * nz]= ez1[j][i].im;
+    }
+
+  task= 3;
+  write_phase_hdf5_(yre, yim, zre, zim, sy1, sz1, &xlam, &task, &ny, &nz);
+
+  XFREE(yre);
+  XFREE(zre);
+  XFREE(yim);
+  XFREE(zim);
 } // end master_save_fields
 
 /************************************************************************
