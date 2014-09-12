@@ -199,7 +199,7 @@ void all_load_parameters(const char *parfname)
   FILE *fp;
   double angle_deg;
 
-  fprintf(stderr, "Read parameter from file %s\n", parfname);
+  // fprintf(stderr, "Read parameter from file %s\n", parfname);
   
   fp = fopen(parfname, "r");
   if (!fp)
@@ -227,8 +227,6 @@ void all_load_parameters(const char *parfname)
   
   fscanf(fp, "%255s %*[^\n]",   surffilename);
 
-  printf(" surffilename: %s\n", surffilename);
-  
   angle = angle_deg* M_PI/180.0;
   
   fclose(fp);   
