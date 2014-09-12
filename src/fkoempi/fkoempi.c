@@ -50,8 +50,8 @@
 
 #include "fkoempi.h"
 #include "hdf5.h"
-#include "../phase/common.h"
-#include "../phase/myhdf5.h"
+#include "common.h"
+#include "myhdf5.h"
 
 /* global vars */
 struct complex ey0[MAXDIM][MAXDIM];

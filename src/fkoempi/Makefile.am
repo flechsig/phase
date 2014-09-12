@@ -52,7 +52,7 @@ EXTRA_DIST =
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DNOGUI
-AM_CFLAGS   = -W 
+AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W 
 AM_LDFLAGS  =  
 
 ##we always use the c linker
