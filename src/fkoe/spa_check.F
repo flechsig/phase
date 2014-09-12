@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <11 Sep 14 13:41:41 flechsig> 
+c$$$ Time-stamp: <12 Sep 14 12:02:18 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -42,7 +42,7 @@ c------------ main ---------------------------------
 
       write(6,*)'***********************************'
       write(6,*)'*  Frenel Kirchhoff Integration   *'
-      write(6,*)'*  (C) PHASE version Aug 2014     *'
+      write(6,*)'*  (C) PHASE version Sep 2014     *'
       write(6,*)'***********************************'
       write(6,*)' create Gaussian beam           (1)'
       write(6,*)' create optical element         (2)'
