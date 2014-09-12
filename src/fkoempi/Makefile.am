@@ -39,7 +39,8 @@
 
 bin_PROGRAMS     = fkoempi 
 fkoempi_SOURCES  = fkoempi.c fkoempi.h ../phase/error.c \
-	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c
+	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c \
+	../fkoe/write_phase_hdf5.c
 
 #fkoe_mpi_LDADD = 
 
