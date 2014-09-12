@@ -457,7 +457,7 @@ void master_propagate(int nslaves)
         //printf("M: result(%d)[%d] = (%.2f, %.2f)\n", n+1, c, vals[c].re, vals[c].im);
       }
       
-      printf("j = %d\n", j);
+      printf("j = %d out of %d\n", j, ny1);
     } while (j< ny1);
     
     // tell slaves to exit
