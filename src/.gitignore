@@ -30,6 +30,5 @@ idlphase/help.html
 phaselib/.libs/
 phaselib/libphaseifc.la
 phaselib/*.lo
-../bin
-../share
+
 
