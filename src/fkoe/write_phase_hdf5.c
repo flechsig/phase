@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <11 Sep 14 10:40:39 flechsig>  */
+ /* Time-stamp: <12 Sep 14 12:36:23 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -64,8 +64,22 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
   double  wavelength, *field, t_vec= 0.5;
   char    fname[100];
 
-  if (*task == 1) snprintf(fname, 99, "%s", "fkoe_source.h5"); else snprintf(fname, 99, "%s", "fkoe_result.h5");
-
+  switch (*task)
+    {
+    case 1:
+      snprintf(fname, 99, "%s", "fkoe_source.h5");
+      break;
+    case 2:
+      snprintf(fname, 99, "%s", "fkoe_result.h5");
+      break;
+    case 3:
+      snprintf(fname, 99, "%s", "fkoempi_result.h5");
+      break;
+    default:
+      fprintf(stderr, "error: unknown task: %d - exit\n");
+      exit(-1);
+    }
+  
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
      the current contents will be deleted so that the application can rewrite the file with new data. */
