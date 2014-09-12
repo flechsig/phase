@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <28 Aug 14 15:38:57 flechsig> 
+#  Time-stamp: <12 Sep 14 15:15:08 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -38,7 +38,8 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS     = fkoempi 
-fkoempi_SOURCES  = fkoempi.c fkoempi.h
+fkoempi_SOURCES  = fkoempi.c fkoempi.h ../phase/error.c \
+	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c
 
 #fkoe_mpi_LDADD = 
 

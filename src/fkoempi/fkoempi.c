@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.c */
  /* Date      : <01 Apr 14 09:15:01 flechsig>  */
- /* Time-stamp: <12 Sep 14 15:09:15 flechsig>  */
+ /* Time-stamp: <12 Sep 14 15:16:03 flechsig>  */
  
  /* $Source$  */
  /* $Date$ */
@@ -49,6 +49,9 @@
 #include <time.h>
 
 #include "fkoempi.h"
+#include "hdf5.h"
+#include "common.h"
+#include "myhdf5.h"
 
 /* global vars */
 struct complex ey0[MAXDIM][MAXDIM];

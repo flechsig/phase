@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.h */
  /* Date      : <13 Aug 14 14:03:44 flechsig>  */
- /* Time-stamp: <13 Aug 14 14:06:35 flechsig>  */
+ /* Time-stamp: <12 Sep 14 15:16:08 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -10,9 +10,9 @@
 
 /* constants */
 #define MAXDIM       2048
+#define MAXDIM2      4194304
 #define PARFNAME     "fkoempi.par"
 #define BASEOFNAME   "fout"
-
 
 /* type definitions */
 struct extends
