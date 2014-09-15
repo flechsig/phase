@@ -359,26 +359,34 @@ void master_save_fields(const char* baseofname, int ny, int nz)
 
   // uf write h5 in addition
   int task;
-  double *yre, *yim, *zre, *zim;
+  double *yre, *yim, *zre, *zim, *y, *z;
 
   yre= XMALLOC(double, ny*nz);
   zre= XMALLOC(double, ny*nz);
   yim= XMALLOC(double, ny*nz);
   zim= XMALLOC(double, ny*nz);
+  yvec= XMALLOC(double, ny);
+  zvec= XMALLOC(double, nz);
 
   for (j=0; j<ny; j++)
-    for (i=0; i<nz; i++)
     {
-      yre[i  * ny+ j]= ey1[j][i].re;
-      yim[i  * ny+ j]= ey1[j][i].im;
-      zre[i  * ny+ j]= ez1[j][i].re;
-      zim[i  * ny+ j]= ez1[j][i].im;
+      yvec[j]= sy1[j]*1e-3;
+      for (i=0; i<nz; i++)
+	{
+	  zvec[i]= sz1[i]*1e-3;
+	  yre[i  * ny+ j]= ey1[j][i].re;
+	  yim[i  * ny+ j]= ey1[j][i].im;
+	  zre[i  * ny+ j]= ez1[j][i].re;
+	  zim[i  * ny+ j]= ez1[j][i].im;
+	}
     }
-
+  
   task= 3;
-  write_phase_hdf5_(yre, yim, zre, zim, sy1*1e-3, sz1*1e-3, 
+  write_phase_hdf5_(yre, yim, zre, zim, yvec, zvec, 
 		    &xlam, &task, &ny, &nz);
 
+  XFREE(yvec);
+  XFREE(zvec);
   XFREE(yre);
   XFREE(zre);
   XFREE(yim);
