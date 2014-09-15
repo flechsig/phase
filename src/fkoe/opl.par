@@ -1,0 +1,10 @@
+0.1e-6		! lamda in mm
+-0., 0		! yi, zi
+0, 0	 	! yp, zp
+10000., 1000.	! r,rp
+-89.6,89.6	! alpha, beta
+1.		! xdefl
+-5., 5.		! wmin, wmax
+5001		! ianzw
+-1.e-7, 1.e-7 	! xlmin, xlmax
+3		! ianzl
