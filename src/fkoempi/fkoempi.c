@@ -361,10 +361,10 @@ void master_save_fields(const char* baseofname, int ny, int nz)
   int task;
   double *yre, *yim, *zre, *zim, *yvec, *zvec;
 
-  yre= XMALLOC(double, ny*nz);
-  zre= XMALLOC(double, ny*nz);
-  yim= XMALLOC(double, ny*nz);
-  zim= XMALLOC(double, ny*nz);
+  yre = XMALLOC(double, ny*nz);
+  zre = XMALLOC(double, ny*nz);
+  yim = XMALLOC(double, ny*nz);
+  zim = XMALLOC(double, ny*nz);
   yvec= XMALLOC(double, ny);
   zvec= XMALLOC(double, nz);
 
