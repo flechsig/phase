@@ -376,7 +376,8 @@ void master_save_fields(const char* baseofname, int ny, int nz)
     }
 
   task= 3;
-  write_phase_hdf5_(yre, yim, zre, zim, sy1, sz1, &xlam, &task, &ny, &nz);
+  write_phase_hdf5_(yre, yim, zre, zim, sy1*1e-3, sz1*1e-3, 
+		    &xlam, &task, &ny, &nz);
 
   XFREE(yre);
   XFREE(zre);
