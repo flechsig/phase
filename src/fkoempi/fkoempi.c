@@ -359,7 +359,7 @@ void master_save_fields(const char* baseofname, int ny, int nz)
 
   // uf write h5 in addition
   int task;
-  double *yre, *yim, *zre, *zim, *y, *z;
+  double *yre, *yim, *zre, *zim, *yvec, *zvec;
 
   yre= XMALLOC(double, ny*nz);
   zre= XMALLOC(double, ny*nz);
