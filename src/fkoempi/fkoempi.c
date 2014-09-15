@@ -195,11 +195,11 @@ int main(int argc, char *argv[])
 *************************************************************************/
 void all_load_parameters(const char *parfname)
 {
-  int t;
+  int t, dummy;
   FILE *fp;
   double angle_deg;
 
-  //  fprintf(stderr, "Read parameter from file %s\n", parfname);
+  // fprintf(stderr, "Read parameter from file %s\n", parfname);
   
   fp = fopen(parfname, "r");
   if (!fp)
@@ -212,9 +212,10 @@ void all_load_parameters(const char *parfname)
   // parse
   for (t= 0; t< 4; t++)
     fscanf(fp, "%255s %*[^\n]", srcfilenames[t]);
-  
+
   fscanf(fp, "%d %*[^\n]",      &mode);
   fscanf(fp, "%lf,%lf %*[^\n]", &dist, &dista);
+  fscanf(fp, "%d %*[^\n]",      &dummy);         // uf to make it compatibel with fkoe
   fscanf(fp, "%lf %*[^\n]",     &angle_deg);
   fscanf(fp, "%lf %*[^\n]",     &xlam);
   
@@ -225,7 +226,7 @@ void all_load_parameters(const char *parfname)
   fscanf(fp, "%d %*[^\n]",      &nz1);
   
   fscanf(fp, "%255s %*[^\n]",   surffilename);
-  
+
   angle = angle_deg* M_PI/180.0;
   
   fclose(fp);   
@@ -246,7 +247,7 @@ void all_load_fields()
     fp[t] = fopen(srcfilenames[t], "r");
     if (!fp[t])
     {
-      fprintf(stderr, "Could not open file %s\n", srcfilenames[t]);
+      fprintf(stderr, "all_load_fields: Could not open file %s\n", srcfilenames[t]);
       MPI_Finalize();
       exit (-1);    
     }
@@ -293,7 +294,7 @@ void slave_load_surface(const char *surffilename, int *ny, int *nz, double sy[],
   fp = fopen(surffilename, "r");
   if (!fp)
   {
-    fprintf(stderr, "Could not open file %s\n", surffilename);
+    fprintf(stderr, "slave_load_surface: Could not open file %s\n", surffilename);
    
     //TODO: tell master load failed
     
@@ -456,7 +457,7 @@ void master_propagate(int nslaves)
         //printf("M: result(%d)[%d] = (%.2f, %.2f)\n", n+1, c, vals[c].re, vals[c].im);
       }
       
-      printf("j = %d\n", j);
+      printf("j = %d out of %d\n", j, ny1);
     } while (j< ny1);
     
     // tell slaves to exit

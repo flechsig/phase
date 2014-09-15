@@ -76,7 +76,7 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
       snprintf(fname, 99, "%s", "fkoempi_result.h5");
       break;
     default:
-      fprintf(stderr, "error: unknown task: %d - exit\n");
+      fprintf(stderr, "error: unknown task: %d - exit\n", *task);
       exit(-1);
     }
   

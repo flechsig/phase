@@ -4,6 +4,7 @@ tmp-ezrec     ! source file real part
 tmp-ezimc     ! source file imaginary part
 2  		! (1) src to oe, (2) oe to image, (3) source to image (not yet)
 5000,500	! dist
+0		! (0) take fixed distances, (<>0) variable distances (not used in fkoempi)
 88.0		! angle to the surface normal
 10.		! wavelength in nm
 -0.01	0.02	! ymin1, ymax1	image grid

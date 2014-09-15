@@ -39,7 +39,8 @@
 
 bin_PROGRAMS     = fkoempi 
 fkoempi_SOURCES  = fkoempi.c fkoempi.h ../phase/error.c \
-	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c
+	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c \
+	../fkoe/write_phase_hdf5.c
 
 #fkoe_mpi_LDADD = 
 
@@ -52,8 +53,8 @@ EXTRA_DIST =
 
 ## flags
 AM_CPPFLAGS = -DLINUX -DNOGUI
-AM_CFLAGS   = -W 
-AM_LDFLAGS  =  
+AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W 
+AM_LDFLAGS  =  @HDF5_LDFLAGS@ -lm -lz
 
 ##we always use the c linker
 F77LINK = $(LINK)

@@ -18,6 +18,7 @@ moc_*.cpp
 qrc_*.cpp
 extr/phaseextract
 fkoe/fkoe
+fkoempi/fkoempi
 hdf5tools/genesis2phase_hdf5
 hdf5tools/genesis_hdf5_2wave
 hdf5tools/phase_hdf5_2wave
@@ -29,3 +30,5 @@ idlphase/help.html
 phaselib/.libs/
 phaselib/libphaseifc.la
 phaselib/*.lo
+
+
