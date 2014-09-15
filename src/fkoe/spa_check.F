@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <12 Sep 14 12:02:18 flechsig> 
+c$$$ Time-stamp: <15 Sep 14 17:50:33 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -1135,7 +1135,8 @@ c     referenz von phase
       enddo
       close(10)
       
-      write(6,*)' writing pathlength to opl_1d.dat'
+      write(6,*)' writing pathlength PL(w) @ l/2 to opl_1d.dat '
+      
       open(unit=10,name='opl_1d.dat',type='unknown')
       j0=(ianzl+1)/2
       do i=1,ianzw   
