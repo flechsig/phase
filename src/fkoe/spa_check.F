@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <15 Sep 14 17:50:33 flechsig> 
+c$$$ Time-stamp: <16 Sep 14 10:01:42 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -261,7 +261,7 @@ c UF add
          enddo
       enddo
       
-      call write_phase_hdf5(yre, yim, zre, zim, y, z, xlam, 1, ianzy ,ianzz)
+      call write_phase_hdf5(yre, yim, zre, zim, y, z, xlam, 1, ianzy, ianzz, 1024)
 
       write(6,*)' --> done'
       
@@ -692,7 +692,7 @@ c UF add
 
       xlamm= xlam*1e-3
       write(6,*)'!!!!! debug: xlam correct ?????', xlamm
-      call write_phase_hdf5(yre, yim, zre, zim, yvec, zvec, xlamm, 2, ianzy1 ,ianzz1)
+      call write_phase_hdf5(yre, yim, zre, zim, yvec, zvec, xlamm, 2, ianzy1, ianzz1, 1024)
 
       return
       end                       ! phadrift_write_output_special
