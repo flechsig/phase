@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.c */
  /* Date      : <01 Apr 14 09:15:01 flechsig>  */
- /* Time-stamp: <16 Sep 14 10:07:08 flechsig>  */
+ /* Time-stamp: <16 Sep 14 12:33:42 flechsig>  */
  
  /* $Source$  */
  /* $Date$ */
@@ -374,15 +374,10 @@ void master_save_fields(const char* baseofname, int ny, int nz)
       for (i=0; i<nz; i++)
 	{
 	  zvec[i]= sz1[i]*1e-3;
-	  //	  yre[i  * ny+ j]= ey1[j][i].re;
-	  //yim[i  * ny+ j]= ey1[j][i].im;
-	  //zre[i  * ny+ j]= ez1[j][i].re;
-	  //zim[i  * ny+ j]= ez1[j][i].im;
-
-	  yre[i+ j* nz]= ey1[j][i].re;
-	  yim[i+ j* nz]= ey1[j][i].im;
-	  zre[i+ j* nz]= ez1[j][i].re;
-	  zim[i+ j* nz]= ez1[j][i].im;
+	  yre[i+ j* nz]= ey1[j][i].re* 1e3;
+	  yim[i+ j* nz]= ey1[j][i].im* 1e3;
+	  zre[i+ j* nz]= ez1[j][i].re* 1e3;
+	  zim[i+ j* nz]= ez1[j][i].im* 1e3;
 	}
     }
   
