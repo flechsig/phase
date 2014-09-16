@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <16 Sep 14 09:59:58 flechsig>  */
+ /* Time-stamp: <16 Sep 14 10:09:07 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -114,10 +114,10 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
 	   erwartet hatte ich yre[row+ col * 1024]
 	   yre muesste ja im Fortran memory model kommen
 	*/
-	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= yre[row* coldim+ col];
-	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= yim[row* coldim+ col];
-	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= zre[row* coldim+ col];
-	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= zim[row* coldim+ col];
+	field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= yre[row* *coldim+ col];
+	field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= yim[row* *coldim+ col];
+	field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= zre[row* *coldim+ col];
+	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= zim[row* *coldim+ col];
       }
 
   writeDataDouble(file_id, "/z_vec", z, cols, "z vector in m");
