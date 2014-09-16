@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.c */
  /* Date      : <01 Apr 14 09:15:01 flechsig>  */
- /* Time-stamp: <15 Sep 14 17:54:13 flechsig>  */
+ /* Time-stamp: <16 Sep 14 10:07:08 flechsig>  */
  
  /* $Source$  */
  /* $Date$ */
@@ -388,7 +388,7 @@ void master_save_fields(const char* baseofname, int ny, int nz)
   
   task= 3;
   write_phase_hdf5_(yre, yim, zre, zim, yvec, zvec, 
-		    &xlam, &task, &ny, &nz);
+		    &xlam, &task, &ny, &nz, &nz);
 
   XFREE(yvec);
   XFREE(zvec);
