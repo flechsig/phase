@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <08 Sep 14 09:34:15 flechsig> 
+;  Time-stamp: <18 Sep 14 12:14:15 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -706,7 +706,6 @@ field= *self.field
 return, field
 end ;; field
 
-
 function phase::getintensity
 ;+
 ; NAME:
@@ -835,6 +834,41 @@ phi= atan(*self.field, /phase)
 help, phi
 return, phi
 end ;; getphase
+
+function phase::getphotons
+;+
+; NAME:
+;   phase::getphotons
+;
+; PURPOSE:
+;   export intensity as photons
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getphotons()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the photons
+;
+; EXAMPLE:
+;  idl> int= getphotons()
+;
+; MODIFICATION HISTORY:
+;   UF 19.09.14
+;-
+photons= abs(*self.field)^2/377.0/1.6e-19
+
+return, photons
+end ;; photons
+
 
 function phase::getprofile, amplitude=amplitude, min=min, phase=phase, z=z
 ;+
@@ -1527,8 +1561,9 @@ pro phase::plotintensity, window=window, _EXTRA=extra
 ;-
 if n_elements(window) ne 0 then window, window
 title= self.name+ ' intensity'
-mycontour, abs(*self.field)^2, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
-  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity', _EXTRA=extra 
+a= self->getintensity()
+mycontour, a, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity (W/m^2)', _EXTRA=extra 
 return 
 end
 ; end plotintensity
@@ -1565,6 +1600,40 @@ mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
   xtitle='z (mm)', ytitle='y (mm)', ztitle='phase', _EXTRA=extra
 return 
 end ;; plotphase
+
+pro phase::plotphotons, window=window, _EXTRA=extra
+;+
+; NAME:
+;   phase::plotphotons
+;
+; PURPOSE:
+;   plot photons
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->plotphotons
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   
+; EXAMPLE:
+;   idl> emf->plotphotons
+;
+; MODIFICATION HISTORY:
+;   UF Sep 2014
+;-
+if n_elements(window) ne 0 then window, window
+title= self.name+ ' photon intensity'
+a= self->getphotons()
+mycontour, a, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity (photons/m^2)', _EXTRA=extra 
+return 
+end
+; end plotphotons
 
 pro phase::plotprofile, window=window, ylog=ylog, _EXTRA=extra
 ;+
@@ -2146,6 +2215,10 @@ print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
 print, mymaxstr, mymax
 print, mytotstr, mytot
+if n_elements(amplitude) eq 0 then begin
+print, 'max intensity (photons/m^2) = ', mymax/1.6e-19
+print, 'total intensity (photons)   = ', mytot/1.6e-19
+endif
 ;;print, 'debug: mysum, binsize=', mysum, binsize
 print, '=============================================================================='
 print, 'result of gauss2dfit in (m):', stat
