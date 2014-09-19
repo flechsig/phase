@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.c */
  /* Date      : <01 Apr 14 09:15:01 flechsig>  */
- /* Time-stamp: <16 Sep 14 12:33:42 flechsig>  */
+ /* Time-stamp: <19 Sep 14 15:43:43 flechsig>  */
  
  /* $Source$  */
  /* $Date$ */
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
     case 3:
       fprintf(stderr, "mode 3 not yet supported\n");
       exit(-2); // not yet 
-      //slave_load_surface(surffilename, &ny1, &nz1, sy1, sz1);      
+      slave_load_surface(surffilename, &ny1, &nz1, sy1, sz1);      
       break;      
     
     default:
