@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <05 Sep 14 16:12:29 flechsig> 
+//  Time-stamp: <19 Sep 14 17:14:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -778,64 +778,75 @@ QWidget *MainWindow::createGraphicBox()
   
   sigmaButton = new QRadioButton(tr("&RMS"));
   fwhmButton  = new QRadioButton(tr("&FWHM"));
+
+  wattButton = new QRadioButton(tr("&Watt"));
+  photonButton  = new QRadioButton(tr("&photons"));
+
   fwhmButton->setChecked(true);
+  photonButton->setChecked(true);
+
   connect(sigmaButton, SIGNAL(clicked()), this, SLOT(sigmaslot()));
   connect(fwhmButton,  SIGNAL(clicked()), this, SLOT(fwhmslot()));
+  connect(wattButton, SIGNAL(clicked()), this, SLOT(wattslot()));
+  connect(photonButton,  SIGNAL(clicked()), this, SLOT(photonslot()));
 
-  czLabel   = new QLabel("0");
-  cyLabel   = new QLabel("0");
-  wzLabel   = new QLabel("0");
-  wyLabel   = new QLabel("0");
-  cdzLabel  = new QLabel("0");
-  cdyLabel  = new QLabel("0");
-  wdzLabel  = new QLabel("0");
-  wdyLabel  = new QLabel("0");
-  rayLabel  = new QLabel("0");
-  traLabel  = new QLabel("0");
-  ryLabel   = new QLabel("0");
-  rzLabel   = new QLabel("0");
 
-  czLabel0   = new QLabel(tr("z center (mm)"));
-  cyLabel0   = new QLabel(tr("y center (mm)"));
-  wzLabel0   = new QLabel(tr("z FWHM (mm)"));
-  wyLabel0   = new QLabel(tr("y FWHM (mm)"));
-  cdzLabel0  = new QLabel(tr("dz center (mrad)"));
-  cdyLabel0  = new QLabel(tr("dy center (mrad)"));
-  wdzLabel0  = new QLabel(tr("dz FWHM (mrad)"));
-  wdyLabel0  = new QLabel(tr("dy FWHM (mrad)"));
-  rayLabel0  = new QLabel(tr("rays"));
-  traLabel0  = new QLabel(tr("transmittance"));
-  ryLabel0   = new QLabel(tr("y E/dE FWHM"));
-  rzLabel0   = new QLabel(tr("z E/dE FWHM"));
+  stLabel11 = new QLabel("0");
+  stLabel13 = new QLabel("0");
+  stLabel21 = new QLabel("0");
+  stLabel23 = new QLabel("0");
+  stLabel31 = new QLabel("0");
+  stLabel33 = new QLabel("0");
+  stLabel41 = new QLabel("0");
+  stLabel43 = new QLabel("0");
+  stLabel51 = new QLabel("0");
+  stLabel53 = new QLabel("0");
+  stLabel61 = new QLabel("0");
+  stLabel63 = new QLabel("0");
+
+  stLabel10 = new QLabel(tr("z center (mm)"));
+  stLabel12 = new QLabel(tr("y center (mm)"));
+  stLabel20 = new QLabel(tr("z FWHM (mm)"));
+  stLabel22 = new QLabel(tr("y FWHM (mm)"));
+  stLabel30 = new QLabel(tr("dz center (mrad)"));
+  stLabel32 = new QLabel(tr("dy center (mrad)"));
+  stLabel40 = new QLabel(tr("dz FWHM (mrad)"));
+  stLabel42 = new QLabel(tr("dy FWHM (mrad)"));
+  stLabel50 = new QLabel(tr("rays"));
+  stLabel52 = new QLabel(tr("transmittance"));
+  stLabel60 = new QLabel(tr("y E/dE FWHM"));
+  stLabel62 = new QLabel(tr("z E/dE FWHM"));
 
   statLayout->addWidget(sigmaButton, 0, 0);
   statLayout->addWidget(fwhmButton,  0, 1);
+  statLayout->addWidget(wattButton, 0, 2);
+  statLayout->addWidget(photonButton,  0, 3);
 
-  statLayout->addWidget(czLabel0,  1, 0);
-  statLayout->addWidget(cyLabel0,  1, 2);
-  statLayout->addWidget(wzLabel0,  2, 0);
-  statLayout->addWidget(wyLabel0,  2, 2);
-  statLayout->addWidget(cdzLabel0, 3, 0);
-  statLayout->addWidget(cdyLabel0, 3, 2);
-  statLayout->addWidget(wdzLabel0, 4, 0);
-  statLayout->addWidget(wdyLabel0, 4, 2);
-  statLayout->addWidget(rayLabel0, 5, 0);
-  statLayout->addWidget(traLabel0, 5, 2);
-  statLayout->addWidget(ryLabel0,  6, 2);
-  statLayout->addWidget(rzLabel0,  6, 0);
+  statLayout->addWidget(stLabel10, 1, 0);
+  statLayout->addWidget(stLabel12, 1, 2);
+  statLayout->addWidget(stLabel20, 2, 0);
+  statLayout->addWidget(stLabel22, 2, 2);
+  statLayout->addWidget(stLabel30, 3, 0);
+  statLayout->addWidget(stLabel32, 3, 2);
+  statLayout->addWidget(stLabel40, 4, 0);
+  statLayout->addWidget(stLabel42, 4, 2);
+  statLayout->addWidget(stLabel50, 5, 0);
+  statLayout->addWidget(stLabel52, 5, 2);
+  statLayout->addWidget(stLabel62, 6, 2);
+  statLayout->addWidget(stLabel60, 6, 0);
 
-  statLayout->addWidget(czLabel,  1, 1);
-  statLayout->addWidget(cyLabel,  1, 3);
-  statLayout->addWidget(wzLabel,  2, 1);
-  statLayout->addWidget(wyLabel,  2, 3);
-  statLayout->addWidget(cdzLabel, 3, 1);
-  statLayout->addWidget(cdyLabel, 3, 3);
-  statLayout->addWidget(wdzLabel, 4, 1);
-  statLayout->addWidget(wdyLabel, 4, 3);
-  statLayout->addWidget(rayLabel, 5, 1);
-  statLayout->addWidget(traLabel, 5, 3);
-  statLayout->addWidget(ryLabel,  6, 3);
-  statLayout->addWidget(rzLabel,  6, 1);
+  statLayout->addWidget(stLabel11, 1, 1);
+  statLayout->addWidget(stLabel13, 1, 3);
+  statLayout->addWidget(stLabel21, 2, 1);
+  statLayout->addWidget(stLabel23, 2, 3);
+  statLayout->addWidget(stLabel31, 3, 1);
+  statLayout->addWidget(stLabel33, 3, 3);
+  statLayout->addWidget(stLabel41, 4, 1);
+  statLayout->addWidget(stLabel43, 4, 3);
+  statLayout->addWidget(stLabel51, 5, 1);
+  statLayout->addWidget(stLabel53, 5, 3);
+  statLayout->addWidget(stLabel63, 6, 3);
+  statLayout->addWidget(stLabel61, 6, 1);
 
   statGroup->setLayout(statLayout);
 
@@ -2575,7 +2586,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   int     po, porays, sf;
 
 #ifdef DEBUG
-  cout << "debug: UpdateStatistics called" << endl;
+  cout << "debug: " __FILE__ << " UpdateStatistics called" << endl;
 #endif
 
   po= (rays == 0) ? 1 : 0;
@@ -2605,88 +2616,88 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
-  czLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>"); // 00
-  cyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>");	// 01	   
-  wzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>"); // 10
-  wyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	// 11
+  stLabel11->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>"); // 00
+  stLabel13->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>");	// 01	   
+  stLabel21->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>"); // 10
+  stLabel23->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	// 11
 
   if ( !po )  // go
     {
-      cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
-      cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
-      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 4)+ "</FONT>");	
-      wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 4)+ "</FONT>");
+      stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
+      stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
+      stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 4)+ "</FONT>");	
+      stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 4)+ "</FONT>");
       
-      rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
-      traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
+      stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
+      stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
       
-      rzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
-      ryLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
+      stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
+      stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
     }
   else // in po mode we do not print the undefined values 
     {
-      cdzLabel->setText("");	
-      cdyLabel->setText("");
-      wdzLabel->setText("");	
-      wdyLabel->setText("");
-      rayLabel->setText("");
-      traLabel->setText("");
-      rzLabel->setText("");    
-      ryLabel->setText("");
+      stLabel31->setText("");	
+      stLabel33->setText("");
+      stLabel41->setText("");	
+      stLabel43->setText("");
+      stLabel51->setText("");
+      stLabel53->setText("");
+      stLabel61->setText("");    
+      stLabel63->setText("");
     }
 
   if (pp->fwhmon)
     {
-      wzLabel0->setText(QString(tr("z FWHM (mm)")));
-      wyLabel0->setText(QString(tr("y FWHM (mm)")));
-      wdzLabel0->setText(QString(tr("dz FWHM (mrad)")));
-      wdyLabel0->setText(QString(tr("dy FWHM (mrad)")));
+      stLabel20->setText(QString(tr("z FWHM (mm)")));
+      stLabel22->setText(QString(tr("y FWHM (mm)")));
+      stLabel40->setText(QString(tr("dz FWHM (mrad)")));
+      stLabel42->setText(QString(tr("dy FWHM (mrad)")));
     } 
   else
     {
-      wzLabel0->setText(QString(tr("z RMS (mm)")));
-      wyLabel0->setText(QString(tr("y RMS (mm)")));
-      wdzLabel0->setText(QString(tr("dz RMS (mrad)")));
-      wdyLabel0->setText(QString(tr("dy RMS (mrad)")));
+      stLabel20->setText(QString(tr("z RMS (mm)")));
+      stLabel22->setText(QString(tr("y RMS (mm)")));
+      stLabel40->setText(QString(tr("dz RMS (mrad)")));
+      stLabel42->setText(QString(tr("dy RMS (mrad)")));
     }
 
   if (po | sf) 
     {
-      cdzLabel0->setText(QString(tr("max (W/m^2)")));  // 30
-      cdzLabel0->setStatusTip(tr("maximum of intensity (W/m^2)"));
-      cdyLabel0->setText(QString(tr("total (W)")));    // 31
-      cdyLabel0->setStatusTip(tr("intensity integral (W)"));
-      cdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // 30 give out value per m^2
-      cdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");         // 31
+      stLabel30->setText(QString(tr("max (W/m^2)")));  // 30
+      stLabel30->setStatusTip(tr("maximum of intensity (W/m^2)"));
+      stLabel32->setText(QString(tr("total (W)")));    // 31
+      stLabel32->setStatusTip(tr("intensity integral (W)"));
+      stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // 30 give out value per m^2
+      stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");         // 31
 
-      wdzLabel0->setText(QString(tr("principle rays")));  // 40
-      wdzLabel->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
-      wdyLabel0->setText(QString(tr("tansmittance")));  // 40
-      wdyLabel->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>"); // 41
+      stLabel40->setText(QString(tr("principle rays")));  // 40
+      stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
+      stLabel42->setText(QString(tr("tansmittance")));  // 40
+      stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>"); // 41
 
-      rayLabel0->setText(QString(tr("min")));  // 40
-      rayLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
+      stLabel50->setText(QString(tr("min")));  // 40
+      stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
 
-      traLabel0->setText(QString(tr("max")));  // 40
-      traLabel->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
+      stLabel52->setText(QString(tr("max")));  // 40
+      stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
 
-      rzLabel0->setText(tr("min @ (z, y)")); // 50
-      rzLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
-      ryLabel0->setText(tr("max @ (z, y)")); // 51
+      stLabel60->setText(tr("min @ (z, y)")); // 50
+      stLabel61->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
+      stLabel62->setText(tr("max @ (z, y)")); // 51
       
       //cout << " xxxxxxxzzzzzzz@@@@@@@@@" << pp->stmax << " " << pp->stmaxz << " " << pp->stmaxy << endl;
-      ryLabel->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst1.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>");
+      stLabel63->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst1.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>");
     }
   else
     {
-      rayLabel0->setText(QString(tr("rays")));  // 40
-      wdzLabel0->setStatusTip(tr("horizontal divergence")); // 30
-      wdyLabel0->setStatusTip(tr("vertical divergence"));  // 31
-      rzLabel0->setText(tr("z E/dE FWHM")); // 50
-      ryLabel0->setText(tr("y E/dE FWHM")); // 51
-      traLabel0->setText(QString(tr("tansmittance")));  // 40
-      cdzLabel0->setText(tr("dz center (mrad)"));
-      cdyLabel0->setText(tr("dy center (mrad)"));
+      stLabel50->setText(QString(tr("rays")));  // 40
+      stLabel40->setStatusTip(tr("horizontal divergence")); // 30
+      stLabel42->setStatusTip(tr("vertical divergence"));  // 31
+      stLabel60->setText(tr("z E/dE FWHM")); // 50
+      stLabel62->setText(tr("y E/dE FWHM")); // 51
+      stLabel52->setText(QString(tr("tansmittance")));  // 40
+      stLabel30->setText(tr("dz center (mrad)"));
+      stLabel32->setText(tr("dy center (mrad)"));
     }
 
   //cout << " xxxxxxxzzzzzzz" << pp->stmax << " " << pp->stmaxz << " " << pp->stmaxy << endl;

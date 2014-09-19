@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:12:23 flechsig>  */
+/*  Time-stamp: <19 Sep 14 17:07:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -161,6 +161,8 @@ private slots:
     void elementApplyBslot();    
     void sigmaslot();
     void fwhmslot();
+    void wattslot();
+    void photonslot();
     void sourceApplyBslot();
     void sourceDefaultBslot();
     void sourceAutoGuessBslot();
@@ -220,6 +222,10 @@ private:
     QRadioButton *poButton;
     QRadioButton *sigmaButton;
     QRadioButton *fwhmButton;
+
+    QRadioButton *wattButton;
+    QRadioButton *photonButton;
+
     QCheckBox    *misaliBox;
     QCheckBox    *dlambdaBox;
     QCheckBox    *dlambdaBox1;
@@ -432,32 +438,43 @@ private:
     QLabel *yminLabel;
     QLabel *ymaxLabel;
 
-    QGroupBox   *statGroup;
-    QLabel *czLabel;   
-    QLabel *cyLabel;   
-    QLabel *wzLabel;   
-    QLabel *wyLabel;   
-    QLabel *cdzLabel;  
-    QLabel *cdyLabel;  
-    QLabel *wdzLabel;  
-    QLabel *wdyLabel;  
-    QLabel *rayLabel;  
-    QLabel *traLabel;
-    QLabel *ryLabel;
-    QLabel *rzLabel;
+    QGroupBox  *statGroup;
+    QLabel *stLabel10;
+    QLabel *stLabel11;
+    QLabel *stLabel12;
+    QLabel *stLabel13;
+    QLabel *stLabel20;
+    QLabel *stLabel21;
+    QLabel *stLabel22;
+    QLabel *stLabel23;
+    QLabel *stLabel30;
+    QLabel *stLabel31;
+    QLabel *stLabel32;
+    QLabel *stLabel33;
+    QLabel *stLabel40;
+    QLabel *stLabel41;
+    QLabel *stLabel42;
+    QLabel *stLabel43;
+    QLabel *stLabel50;
+    QLabel *stLabel51;
+    QLabel *stLabel52;
+    QLabel *stLabel53;
+    QLabel *stLabel60;
+    QLabel *stLabel61;
+    QLabel *stLabel62;
+    QLabel *stLabel63;
 
-    QLabel *czLabel0;   
-    QLabel *cyLabel0;   
-    QLabel *wzLabel0;   
-    QLabel *wyLabel0;   
-    QLabel *cdzLabel0;  
-    QLabel *cdyLabel0;  
-    QLabel *wdzLabel0;  
-    QLabel *wdyLabel0;  
-    QLabel *rayLabel0;  
-    QLabel *traLabel0;
-    QLabel *ryLabel0;
-    QLabel *rzLabel0;
+      
+    
+    
+    
+    
+
+       
+    
+      
+    
+    
     
     QLabel *sourceStatLabel;  
     QLabel *imageStatLabel;  
