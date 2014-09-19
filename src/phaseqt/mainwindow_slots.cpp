@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <28 Aug 14 16:40:19 flechsig> 
+//  Time-stamp: <19 Sep 14 17:14:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2775,6 +2775,38 @@ void MainWindow::sigmaslot()
   grapplyslot();
 #endif
 } // sigmaslot
+
+// wattbutton 
+void MainWindow::wattslot()
+{
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " wattslot called" << endl;
+#endif
+
+ cout << "debug: " << __FILE__ << " wattslot no function so far" << endl;
+
+  /*
+#ifdef HAVE_QWT
+  d_plot->fwhmon= 0;
+  grapplyslot();
+#endif
+  */
+} // wattslot
+
+// wattbutton 
+void MainWindow::photonslot()
+{
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " photonslot called" << endl;
+#endif
+cout << "debug: " << __FILE__ << " photonslot no function so far" << endl;
+  /*
+#ifdef HAVE_QWT
+  d_plot->fwhmon= 0;
+  grapplyslot();
+#endif
+  */
+} // photonslot
 
 // apply slot for source
 void MainWindow::sourceDefaultBslot()
