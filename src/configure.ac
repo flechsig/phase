@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <27 Aug 14 17:11:51 flechsig> 
+dnl   Time-stamp: <19 Sep 14 15:51:10 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -270,7 +270,7 @@ AC_ARG_WITH([qwt],
   [ dnl qwt is not given- we do a search
     AC_MSG_NOTICE((1) search for QWT lib libqwt.so in /usr/local)
     dnl to avoid permission denied measages
-    qwt=`find /usr/local -name libqwt.so -print 2>/dev/null | tail -1 | sed -e 's|/lib/libqwt.so||'`
+    qwt=`find /usr/local -name libqwt.so -print 2>/dev/null | sort | tail -1 | sed -e 's|/lib/libqwt.so||'`
     if test -n "${qwt}"; then
         AC_MSG_NOTICE((1) we found libqwt.so under ${qwt} - OK)
 	dnl check if we find the libqwt.so there 
@@ -282,7 +282,7 @@ AC_ARG_WITH([qwt],
     else
       AC_MSG_NOTICE((1) did not found libqwt.so in /usr/local)
       AC_MSG_NOTICE((2) search for libqwt.so in /usr/lib)
-      qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | tail -1 | sed -e 's|/lib/libqwt.so||'`
+      qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | sort | tail -1 | sed -e 's|/lib/libqwt.so||'`
       if test -n "${qwt}"; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
          AC_SUBST(QWT, [${qwt}])
@@ -294,7 +294,7 @@ AC_ARG_WITH([qwt],
          AC_MSG_ERROR(cannot find any libqwt.so)
       fi
       AC_MSG_NOTICE((2) search for qwt_plot.h on /usr/include)	 
-      qwti=`find /usr/include -name qwt_plot.h -print 2>/dev/null | tail -1 | sed -e 's|/qwt_plot.h||'`
+      qwti=`find /usr/include -name qwt_plot.h -print 2>/dev/null | sort | tail -1 | sed -e 's|/qwt_plot.h||'`
       if test -n "${qwti}"; then
          AC_MSG_NOTICE([(2) we found qwt_plot.h under ${qwti} - OK])
 	 have_qwt="yes"
