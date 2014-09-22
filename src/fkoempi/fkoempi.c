@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoempi/fkoempi.c */
  /* Date      : <01 Apr 14 09:15:01 flechsig>  */
- /* Time-stamp: <19 Sep 14 15:43:43 flechsig>  */
+ /* Time-stamp: <22 Sep 14 09:19:14 flechsig>  */
  
  /* $Source$  */
  /* $Date$ */
@@ -129,9 +129,9 @@ int main(int argc, char *argv[])
       break;      
         
     case 3:
-      fprintf(stderr, "mode 3 not yet supported\n");
-      exit(-2); // not yet 
-      slave_load_surface(surffilename, &ny1, &nz1, sy1, sz1);      
+      fprintf(stderr, "fkoempi does not support mode 3 -- use mode 1 and 2 in sequence! - exit\n");
+      MPI_Finalize();
+      return -1;
       break;      
     
     default:
@@ -155,12 +155,14 @@ int main(int argc, char *argv[])
     int nslaves;
     int t1, t2, seconds;
     double minutes, hours;
+
+    printf("M: Starting FKOE with %d processes\n", nthreads); 
     t1= (int)time(NULL);
     
-    printf("M: Starting FKOE with %d processes\n", nthreads); 
     nslaves= nthreads- 1;
-    master_propagate(nslaves);
-    master_save_fields(BASEOFNAME, ny1, nz1);        
+    master_propagate(nslaves);                   // master
+    master_save_fields(BASEOFNAME, ny1, nz1);    // save results
+    
     t2= (int)time(NULL);
     seconds= t2- t1;
     minutes= seconds/ 60.;
@@ -183,6 +185,7 @@ int main(int argc, char *argv[])
       case 2:
         slave_propagate_2(angle);
       break;      
+         
     }        
   }
    
