@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <19 Sep 14 17:07:01 flechsig>  */
+/*  Time-stamp: <22 Sep 14 09:39:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -438,7 +438,7 @@ private:
     QLabel *yminLabel;
     QLabel *ymaxLabel;
 
-    QGroupBox  *statGroup;
+    QGroupBox *statGroup;
     QLabel *stLabel10;
     QLabel *stLabel11;
     QLabel *stLabel12;
@@ -463,18 +463,10 @@ private:
     QLabel *stLabel61;
     QLabel *stLabel62;
     QLabel *stLabel63;
-
-      
-    
-    
-    
-    
-
-       
-    
-      
-    
-    
+    QLabel *stLabel70;
+    QLabel *stLabel71;
+    QLabel *stLabel72;
+    QLabel *stLabel73;
     
     QLabel *sourceStatLabel;  
     QLabel *imageStatLabel;  

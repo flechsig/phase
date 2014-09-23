@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 Sep 14 17:14:45 flechsig> 
+//  Time-stamp: <22 Sep 14 15:21:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -803,6 +803,8 @@ QWidget *MainWindow::createGraphicBox()
   stLabel53 = new QLabel("0");
   stLabel61 = new QLabel("0");
   stLabel63 = new QLabel("0");
+  stLabel71 = new QLabel("");
+  stLabel73 = new QLabel("");
 
   stLabel10 = new QLabel(tr("z center (mm)"));
   stLabel12 = new QLabel(tr("y center (mm)"));
@@ -816,37 +818,42 @@ QWidget *MainWindow::createGraphicBox()
   stLabel52 = new QLabel(tr("transmittance"));
   stLabel60 = new QLabel(tr("y E/dE FWHM"));
   stLabel62 = new QLabel(tr("z E/dE FWHM"));
+  stLabel70 = new QLabel(tr(""));
+  stLabel72 = new QLabel(tr(""));
 
   statLayout->addWidget(sigmaButton, 0, 0);
   statLayout->addWidget(fwhmButton,  0, 1);
-  statLayout->addWidget(wattButton, 0, 2);
-  statLayout->addWidget(photonButton,  0, 3);
+  //  statLayout->addWidget(wattButton, 0, 2);
+  //  statLayout->addWidget(photonButton,  0, 3);
 
   statLayout->addWidget(stLabel10, 1, 0);
-  statLayout->addWidget(stLabel12, 1, 2);
-  statLayout->addWidget(stLabel20, 2, 0);
-  statLayout->addWidget(stLabel22, 2, 2);
-  statLayout->addWidget(stLabel30, 3, 0);
-  statLayout->addWidget(stLabel32, 3, 2);
-  statLayout->addWidget(stLabel40, 4, 0);
-  statLayout->addWidget(stLabel42, 4, 2);
-  statLayout->addWidget(stLabel50, 5, 0);
-  statLayout->addWidget(stLabel52, 5, 2);
-  statLayout->addWidget(stLabel62, 6, 2);
-  statLayout->addWidget(stLabel60, 6, 0);
-
   statLayout->addWidget(stLabel11, 1, 1);
+  statLayout->addWidget(stLabel12, 1, 2);
   statLayout->addWidget(stLabel13, 1, 3);
+  statLayout->addWidget(stLabel20, 2, 0);
   statLayout->addWidget(stLabel21, 2, 1);
+  statLayout->addWidget(stLabel22, 2, 2);
   statLayout->addWidget(stLabel23, 2, 3);
+  statLayout->addWidget(stLabel30, 3, 0);
   statLayout->addWidget(stLabel31, 3, 1);
+  statLayout->addWidget(stLabel32, 3, 2);
   statLayout->addWidget(stLabel33, 3, 3);
+  statLayout->addWidget(stLabel40, 4, 0);
   statLayout->addWidget(stLabel41, 4, 1);
+  statLayout->addWidget(stLabel42, 4, 2);
   statLayout->addWidget(stLabel43, 4, 3);
+  statLayout->addWidget(stLabel50, 5, 0);
   statLayout->addWidget(stLabel51, 5, 1);
+  statLayout->addWidget(stLabel52, 5, 2);
   statLayout->addWidget(stLabel53, 5, 3);
-  statLayout->addWidget(stLabel63, 6, 3);
+  statLayout->addWidget(stLabel60, 6, 0);
   statLayout->addWidget(stLabel61, 6, 1);
+  statLayout->addWidget(stLabel62, 6, 2);
+  statLayout->addWidget(stLabel63, 6, 3);
+  statLayout->addWidget(stLabel70, 7, 0);
+  statLayout->addWidget(stLabel71, 7, 1);
+  statLayout->addWidget(stLabel72, 7, 2);
+  statLayout->addWidget(stLabel73, 7, 3);
 
   statGroup->setLayout(statLayout);
 
@@ -1702,8 +1709,11 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       //qst.setNum(mysrc->so1.isrcy);
       break;
     case 25:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1c.waist);
-      //mysrc->so1c.waist*= 1e-6;
+      if (!init) 
+	{
+	  scanned= sscanf(text, "%lg", &mysrc->so1c.waist);
+	  mysrc->so1c.waist*= 1e-6;
+	}
       if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.waist= 2e-5;   // default
       qst.setNum(mysrc->so1c.waist*1e6);
       //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
@@ -1711,8 +1721,11 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       //qst.setNum(mysrc->so1.isrcdy);
       break;
     case 26:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1c.widthyz);
-      //mysrc->so1c.widthyz*= 1e-3;
+      if (!init) 
+	{
+	  scanned= sscanf(text, "%lg", &mysrc->so1c.widthyz);
+	  mysrc->so1c.widthyz*= 1e-3;
+	}
       if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.widthyz= 1e-3;   // default
       qst.setNum(mysrc->so1c.widthyz*1e3);
       //if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
@@ -2578,7 +2591,6 @@ void MainWindow::UpdateSourceBox()
 
 #ifdef HAVE_QWT
 // update the statistics in graphic box, ray version if rays > 0
-// UF renaming the fields with generic names would be better
 void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double  trans;
@@ -2592,6 +2604,28 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   po= (rays == 0) ? 1 : 0;
   sf= (rays < 0)  ? 1 : 0;
   trans= 0;
+
+  // clean up
+  stLabel30->setText("");
+  stLabel31->setText("");
+  stLabel32->setText("");
+  stLabel33->setText("");
+
+  stLabel40->setText("");
+  stLabel41->setText("");
+  stLabel42->setText("");
+  stLabel43->setText("");
+
+  stLabel50->setText("");
+  stLabel51->setText("");
+  stLabel52->setText("");
+  stLabel53->setText("");
+
+  stLabel70->setText("");
+  stLabel71->setText("");
+  stLabel72->setText("");
+  stLabel73->setText("");
+
 
   if (po)
     {
@@ -2608,7 +2642,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 	myparent->myBeamline()->BLOptions.xi.ianzy0* 
 	myparent->myBeamline()->BLOptions.xi.ianzz0;
       trans= (porays > 0) ? 1.0- ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl/ (double)porays : 0.0;
-    }
+    }  // end po
 
   trans= (po | sf) ? trans : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 
 		   (double)myparent->myBeamline()->RESULT.points1/ 
@@ -2616,91 +2650,89 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   
   
   statGroup->setTitle(QString(label)+= QString(tr(" Statistics")));
-  stLabel11->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>"); // 00
-  stLabel13->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>");	// 01	   
-  stLabel21->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>"); // 10
-  stLabel23->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");	// 11
+  // line 1 is    always shown (constant labels)
+  stLabel11->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cz, 'g', 4)+ "</FONT>"); 
+  stLabel13->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cy, 'g', 4)+ "</FONT>"); 
 
-  if ( !po )  // go
+  // line 2
+  if (pp->fwhmon) stLabel20->setText(QString(tr("z FWHM (mm)"))); else stLabel20->setText(QString(tr("z RMS (mm)")));
+  stLabel21->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wz, 'g', 4)+ "</FONT>"); 
+  if (pp->fwhmon) stLabel22->setText(QString(tr("y FWHM (mm)"))); else stLabel22->setText(QString(tr("y RMS (mm)")));
+  stLabel23->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wy, 'g', 4)+ "</FONT>");   
+
+  if ( !po && !sf)  // go
     {
-      stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");	
+      stLabel30->setText(tr("dz center (mrad)"));
+      stLabel30->setStatusTip(tr("horizontal divergence")); 
+      stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdz* 1e3, 'g', 4)+ "</FONT>");
+      stLabel32->setText(tr("dy center (mrad)"));
+      stLabel32->setStatusTip(tr("vertical divergence"));  
       stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->cdy* 1e3, 'g', 4)+ "</FONT>");
+
+      if (pp->fwhmon) stLabel40->setText(QString(tr("dz FWHM (mrad)"))); else stLabel40->setText(QString(tr("dz RMS (mrad)")));
+      stLabel40->setStatusTip(tr("horizontal divergence")); 
       stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdz* 1e3, 'g', 4)+ "</FONT>");	
+      if (pp->fwhmon) stLabel42->setText(QString(tr("dy FWHM (mrad)"))); else stLabel42->setText(QString(tr("dy RMS (mrad)")));
+      stLabel42->setStatusTip(tr("vertical divergence"));
       stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(pp->wdy* 1e3, 'g', 4)+ "</FONT>");
-      
+   
+      stLabel50->setText(QString(tr("rays")));
       stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(rays)+ "</FONT>");
+      stLabel52->setText(QString(tr("tansmittance")));
       stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>");
-      
+
+      stLabel60->setText(tr("z E/dE FWHM"));
       stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->rz, 'g', 4)+ "</FONT>");
+      stLabel62->setText(tr("y E/dE FWHM"));
       stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ry, 'g', 4)+ "</FONT>");	
     }
-  else // in po mode we do not print the undefined values 
+  else // end go i.e. po  or sf
     {
-      stLabel31->setText("");	
-      stLabel33->setText("");
-      stLabel41->setText("");	
-      stLabel43->setText("");
-      stLabel51->setText("");
-      stLabel53->setText("");
-      stLabel61->setText("");    
-      stLabel63->setText("");
-    }
+      if ( sf )
+	{
+	  stLabel60->setText(QString(tr("min")));  // 40
+	  stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
+	  stLabel62->setText(QString(tr("max")));  // 40
+	  stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
 
-  if (pp->fwhmon)
-    {
-      stLabel20->setText(QString(tr("z FWHM (mm)")));
-      stLabel22->setText(QString(tr("y FWHM (mm)")));
-      stLabel40->setText(QString(tr("dz FWHM (mrad)")));
-      stLabel42->setText(QString(tr("dy FWHM (mrad)")));
-    } 
-  else
-    {
-      stLabel20->setText(QString(tr("z RMS (mm)")));
-      stLabel22->setText(QString(tr("y RMS (mm)")));
-      stLabel40->setText(QString(tr("dz RMS (mrad)")));
-      stLabel42->setText(QString(tr("dy RMS (mrad)")));
-    }
+	  stLabel70->setText(tr("min @ (z, y)")); // 50
+	  stLabel71->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
+	  stLabel72->setText(tr("max @ (z, y)")); // 51
+	  stLabel73->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst1.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>");
+	} // end sf
+      else // PO
+	{
+	  stLabel30->setText(QString(tr("max (W/m^2)")));  // 30
+	  stLabel30->setStatusTip(tr("maximum of intensity (W/m^2)"));
+	  stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // give out value per m^2
+	  stLabel32->setText(QString(tr("total (W)")));    // 31
+	  stLabel32->setStatusTip(tr("intensity integral (W)"));
+	  stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  
 
-  if (po | sf) 
-    {
-      stLabel30->setText(QString(tr("max (W/m^2)")));  // 30
-      stLabel30->setStatusTip(tr("maximum of intensity (W/m^2)"));
-      stLabel32->setText(QString(tr("total (W)")));    // 31
-      stLabel32->setStatusTip(tr("intensity integral (W)"));
-      stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // 30 give out value per m^2
-      stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");         // 31
+	  stLabel40->setText(QString(tr("max (phot/m^2)")));  // 30
+	  stLabel40->setStatusTip(tr("maximum of intensity (photons/m^2)"));
+	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");  // give out value per m^2
+	  stLabel42->setText(QString(tr("total (photons)")));    // 31
+	  stLabel42->setStatusTip(tr("intensity integral (photons)"));
+	  stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");
+	  
+	  stLabel50->setText(QString(tr("principle rays")));  // 40
+	  stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
+	  stLabel52->setText(QString(tr("tansmittance")));  // 40
+	  stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>"); // 41
 
-      stLabel40->setText(QString(tr("principle rays")));  // 40
-      stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");
-      stLabel42->setText(QString(tr("tansmittance")));  // 40
-      stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(trans, 'g', 4)+ "</FONT>"); // 41
+	  stLabel60->setText(QString(tr("min")));  // 40
+	  stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
+	  stLabel62->setText(QString(tr("max")));  // 40
+	  stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
 
-      stLabel50->setText(QString(tr("min")));  // 40
-      stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
-
-      stLabel52->setText(QString(tr("max")));  // 40
-      stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
-
-      stLabel60->setText(tr("min @ (z, y)")); // 50
-      stLabel61->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
-      stLabel62->setText(tr("max @ (z, y)")); // 51
-      
-      //cout << " xxxxxxxzzzzzzz@@@@@@@@@" << pp->stmax << " " << pp->stmaxz << " " << pp->stmaxy << endl;
-      stLabel63->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst1.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>");
-    }
-  else
-    {
-      stLabel50->setText(QString(tr("rays")));  // 40
-      stLabel40->setStatusTip(tr("horizontal divergence")); // 30
-      stLabel42->setStatusTip(tr("vertical divergence"));  // 31
-      stLabel60->setText(tr("z E/dE FWHM")); // 50
-      stLabel62->setText(tr("y E/dE FWHM")); // 51
-      stLabel52->setText(QString(tr("tansmittance")));  // 40
-      stLabel30->setText(tr("dz center (mrad)"));
-      stLabel32->setText(tr("dy center (mrad)"));
-    }
-
-  //cout << " xxxxxxxzzzzzzz" << pp->stmax << " " << pp->stmaxz << " " << pp->stmaxy << endl;
+	  stLabel70->setText(tr("min @ (z, y)")); // 50
+	  stLabel71->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
+	  stLabel72->setText(tr("max @ (z, y)")); // 51
+	  stLabel73->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst1.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>");
+	  
+	} // end po
+    } // end all
 } // UpdateStatistics
 
 #endif

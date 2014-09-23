@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <08 Sep 14 17:20:41 flechsig>  */
+/*  Time-stamp: <22 Sep 14 15:59:49 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -218,18 +218,18 @@ void emfp_2_source4c(struct BeamlineType *bl)
 // we use m as unit
 void gauss_source1c(struct BeamlineType *bl)
 {
-  int row, col, rows, cols, truncation;
-  double wavelength, k, z0, w, w2, eta, rho2, arg1, arg2,  Ri, dist, w0, mywidthyz;  //phas2re, phas2im,
+  int row, col, rows, cols, truncation, idx;
+  double wavelength, k, z0, w, w2, eta, rho2, arg1, arg2,  Ri, dist, w0, mywidthyz, power;  //phas2re, phas2im,
   struct EmfType *emfp;
 
 #ifdef DEBUG
-  printf("debug: gauss_source1c called\n");
+  printf("debug: %s gauss_source1c called\n", __FILE__);
 #endif
 
   dist      = 0.0;
   rows= cols= bl->src.so1c.nyz;
-  w0        = bl->src.so1c.waist*1e3;
-  wavelength= bl->BLOptions.lambda;
+  w0        = bl->src.so1c.waist;
+  wavelength= bl->BLOptions.lambda*1e-3;
   k         = PI * 2/ wavelength;                           // wave number
   z0        = PI * pow(w0, 2)/ wavelength;       
            // Rayleigh Range
@@ -238,16 +238,15 @@ void gauss_source1c(struct BeamlineType *bl)
   eta       = atan(dist/z0);
   Ri        = dist / (pow(dist,2) + pow(z0,2));             // curvature Ri  = 1/R;
   truncation= 0;
-  mywidthyz = bl->src.so1c.widthyz* 1e3;
+  mywidthyz = bl->src.so1c.widthyz;
 
-  printf("xxxxxxxxxxxx= %g\n", bl->src.so1c.widthyz);
- 
-  printf("wavelength (m) = %g\n", wavelength*1e-3);
+  printf("bl->src.so1c.widthyz= %g\n", bl->src.so1c.widthyz);
+  printf("wavelength (m) = %g\n", wavelength);
   printf("Nz             = %d, Ny     = %d\n", cols, rows);
-  printf("sizeyz (mm)    = %g\n", mywidthyz);
-  printf("w0    (mu) = %g,  dist  (m) = \n", w0*1e3, dist);
-  printf("z0    (mm) = %g, (Rayleigh Range= +/- z0)\n", z0);
-  printf("w     (mm) = %g, w2 (mm^2) = %g\n", w, w2);
+  printf("sizeyz (m)    = %g\n", mywidthyz);
+  printf("w0    (m) = %g,  dist  (m) = %g\n", w0, dist);
+  printf("z0    (m) = %g, (Rayleigh Range= +/- z0)\n", z0);
+  printf("w     (m) = %g, w2 (m^2) = %g\n", w, w2);
   printf("eta  (rad) = %g,  Ri (1/m) = %g\n", eta, Ri);
 
   if ((rows < 1) || (cols < 1)) 
@@ -256,15 +255,17 @@ void gauss_source1c(struct BeamlineType *bl)
       return;
     }
 
-  emfp= emfp_construct(cols, rows);
+  emfp= emfp_construct(cols, rows);  
+  power= 0.0;
 
   for (row=0; row< rows; row++)
-    emfp->y[row]= emfp->z[row]= (row/(rows- 1) - 0.5) * mywidthyz;
+    emfp->y[row]= emfp->z[row]= (row/(rows- 1.) - 0.5) * mywidthyz;
   
-    for (row=0; row< rows; row++)
-      for (col=0; col< cols; col++)
+  for (row=0; row< rows; row++)
+    for (col=0; col< cols; col++)
       {
 	rho2=  pow(emfp->z[col], 2) + pow(emfp->y[row], 2);
+	printf("z= %f, y= %f\n", emfp->z[col], emfp->y[row]);
 	arg1  = -1 *  rho2 / w2;
 	if (arg1 <= -40)
 	  { 
@@ -273,16 +274,26 @@ void gauss_source1c(struct BeamlineType *bl)
 	  }
 	arg2= 0.5 * k * rho2 * Ri + k*dist - eta;                    //;; For notation of Siegman multiply by -1                    
 	//	phas2re= cos(arg2);
-	//      phas2im= sin(arg2);     
-	emfp->eyre[col+ row* cols]= cos(arg2) * exp(arg1) * w0 / w;
-	emfp->eyim[col+ row* cols]= sin(arg2) * exp(arg1) * w0 / w;
-	emfp->ezre[col+ row* cols]= cos(arg2) * exp(arg1) * w0 / w;
-	emfp->ezim[col+ row* cols]= sin(arg2) * exp(arg1) * w0 / w;
+	//      phas2im= sin(arg2);    
+	idx= col+ row* cols;
+	emfp->eyre[idx]= cos(arg2) * exp(arg1) * w0 / w;
+	emfp->eyim[idx]= sin(arg2) * exp(arg1) * w0 / w;
+	emfp->ezre[idx]= cos(arg2) * exp(arg1) * w0 / w;
+	emfp->ezim[idx]= sin(arg2) * exp(arg1) * w0 / w;
+	power+= (pow(emfp->eyre[idx], 2) + pow(emfp->eyim[idx], 2) + pow(emfp->ezre[idx], 2) + pow(emfp->ezim[idx], 2));
       }
+  power/= VAC_IMPEDANCE;
+
   if (truncation)  printf("!! gauss_source1c warning -- some outside points are truncated !!\n");
   
+  for (row=0; row< rows; row++)  //;; scale to mm
+    {
+      emfp->y[row]*= 1e3;
+      emfp->z[row]*= 1e3;
+    }
+
   bl->emfp= emfp;
-  emfp_2_source4c(bl);
+  emfp_2_source4c(bl, 1e3);
   bl->emfp= NULL;
   emfp_free(emfp);
 #ifdef DEBUG
