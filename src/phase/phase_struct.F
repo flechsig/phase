@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <01 Sep 14 12:30:53 flechsig> 
+c$$$ Time-stamp: <23 Sep 14 12:25:39 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -188,7 +188,7 @@ c---------------- sources -----------------------------------
         end structure
 
         structure/source1c/                 ! Gauss  
-           real*8 waist, widthyz
+           real*8 waist, widthyz, dist
 	   integer nyz
         end structure
  

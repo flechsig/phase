@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:47:12 flechsig>  */
+/*   Time-stamp: <23 Sep 14 12:24:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -185,7 +185,7 @@ struct  source1 {                 /* Gauss + Hard edge */
 };  
 
 struct  source1c {                 /* Gauss  */ 
-  double waist, widthyz;
+  double waist, widthyz, dist;
   int    nyz;
 };  
 

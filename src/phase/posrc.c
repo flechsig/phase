@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <22 Sep 14 15:59:49 flechsig>  */
+/*  Time-stamp: <23 Sep 14 12:27:37 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -219,14 +219,14 @@ void emfp_2_source4c(struct BeamlineType *bl)
 void gauss_source1c(struct BeamlineType *bl)
 {
   int row, col, rows, cols, truncation, idx;
-  double wavelength, k, z0, w, w2, eta, rho2, arg1, arg2,  Ri, dist, w0, mywidthyz, power;  //phas2re, phas2im,
+  double wavelength, k, z0, w, w2, eta, rho2, arg1, arg2,  Ri, dist, w0, mywidthyz, power, scale, binsize; 
   struct EmfType *emfp;
 
 #ifdef DEBUG
   printf("debug: %s gauss_source1c called\n", __FILE__);
 #endif
 
-  dist      = 0.0;
+  dist      = bl->src.so1c.dist;
   rows= cols= bl->src.so1c.nyz;
   w0        = bl->src.so1c.waist;
   wavelength= bl->BLOptions.lambda*1e-3;
@@ -240,7 +240,7 @@ void gauss_source1c(struct BeamlineType *bl)
   truncation= 0;
   mywidthyz = bl->src.so1c.widthyz;
 
-  printf("bl->src.so1c.widthyz= %g\n", bl->src.so1c.widthyz);
+  printf("dist (m)       = %g\n", dist);
   printf("wavelength (m) = %g\n", wavelength);
   printf("Nz             = %d, Ny     = %d\n", cols, rows);
   printf("sizeyz (m)    = %g\n", mywidthyz);
@@ -265,7 +265,7 @@ void gauss_source1c(struct BeamlineType *bl)
     for (col=0; col< cols; col++)
       {
 	rho2=  pow(emfp->z[col], 2) + pow(emfp->y[row], 2);
-	printf("z= %f, y= %f\n", emfp->z[col], emfp->y[row]);
+	//printf("z= %f, y= %f\n", emfp->z[col], emfp->y[row]);
 	arg1  = -1 *  rho2 / w2;
 	if (arg1 <= -40)
 	  { 
@@ -280,9 +280,14 @@ void gauss_source1c(struct BeamlineType *bl)
 	emfp->eyim[idx]= sin(arg2) * exp(arg1) * w0 / w;
 	emfp->ezre[idx]= cos(arg2) * exp(arg1) * w0 / w;
 	emfp->ezim[idx]= sin(arg2) * exp(arg1) * w0 / w;
-	power+= (pow(emfp->eyre[idx], 2) + pow(emfp->eyim[idx], 2) + pow(emfp->ezre[idx], 2) + pow(emfp->ezim[idx], 2));
+	power+= pow(emfp->eyre[idx], 2) + pow(emfp->eyim[idx], 2) + 
+	  pow(emfp->ezre[idx], 2) + pow(emfp->ezim[idx], 2);
       }
-  power/= VAC_IMPEDANCE;
+
+  binsize= (emfp->z[1]- emfp->z[0]) * (emfp->y[1]- emfp->y[0]);
+  power*= binsize/ VAC_IMPEDANCE;  // total power
+  scale= (power > 0.0) ? 1.0/ sqrt(power) : 1.0;
+  scale*= 1e-3;  // V/mm
 
   if (truncation)  printf("!! gauss_source1c warning -- some outside points are truncated !!\n");
   
@@ -291,9 +296,27 @@ void gauss_source1c(struct BeamlineType *bl)
       emfp->y[row]*= 1e3;
       emfp->z[row]*= 1e3;
     }
+  
+  power= 0.0;
+  for (row=0; row< rows; row++)
+    for (col=0; col< cols; col++)
+      {
+	idx= col+ row* cols;
+	emfp->eyre[idx]*= scale;
+	emfp->eyim[idx]*= scale;
+	emfp->ezre[idx]*= scale;
+	emfp->ezim[idx]*= scale;
+	power+= pow(emfp->eyre[idx], 2) + pow(emfp->eyim[idx], 2) + 
+	  pow(emfp->ezre[idx], 2) + pow(emfp->ezim[idx], 2);
+      }
+
+  binsize= (emfp->z[1]- emfp->z[0]) * (emfp->y[1]- emfp->y[0]);  // in mm^2
+  power*= binsize/ VAC_IMPEDANCE;  // total power
+
+ printf("powercheck: total power = %f W\n", power);
 
   bl->emfp= emfp;
-  emfp_2_source4c(bl, 1e3);
+  emfp_2_source4c(bl);
   bl->emfp= NULL;
   emfp_free(emfp);
 #ifdef DEBUG
