@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:50:21 flechsig>  */
+/*   Time-stamp: <29 Sep 14 13:56:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -575,15 +575,14 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 
 void SetDefaultParameter(struct BeamlineType *bl) 
      /* setzt defaults fuer Parameterbox */ 
-     /* Uwe 21. 10. 96 */ 
-     /* Stand 17. 2. 97 */ 
 {
 #ifdef DEBUG
   printf("debug: SetDefaultParameter called, file= %s\n", __FILE__);
 #endif
 
   bl->BLOptions.epsilon         = 1e-4; 
-  bl->BLOptions.ifl.iord        = 4; 
+  bl->BLOptions.ifl.iord        = 4;
+  bl->BLOptions.ifl.iordsc      = 0;
   bl->BLOptions.REDUCE_maps     = 0;
   bl->BLOptions.ifl.pst_mode    = 2;
   bl->BLOptions.ifl.iexpand     = 1;
@@ -598,7 +597,7 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.xi.distfocz     = 0;
   
   bl->BLOptions.ifl.ibright     = 1;
-
+  bl->BLOptions.ifl.ipinarr     = 0;
   bl->BLOptions.ifl.ispline     = 0;
   bl->BLOptions.xi.ianzy0       = 51;
   bl->BLOptions.xi.ymin         = -1e-3;
@@ -616,6 +615,23 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.xi.ifm_amp      = 0;
   bl->BLOptions.xi.iord_pha     = 0;
   bl->BLOptions.xi.ifm_pha      = 0;
+
+  bl->BLOptions.apr.rpin   =  100;
+  bl->BLOptions.apr.srcymin= -100;
+  bl->BLOptions.apr.srcymax=  100;
+  bl->BLOptions.apr.srczmin= -100;
+  bl->BLOptions.apr.srczmax=  100;
+
+  bl->BLOptions.apr.rpin_ap= 0.;
+  bl->BLOptions.apr.ymin_ap= 0.;
+  bl->BLOptions.apr.ymax_ap= 0.;
+  bl->BLOptions.apr.zmin_ap= 0.;
+  bl->BLOptions.apr.zmax_ap= 0.;
+
+  bl->src.so1c.waist  = 2e-5;
+  bl->src.so1c.nyz    = 243;
+  bl->src.so1c.widthyz= 1;
+  bl->src.so1c.dist   = 0;
 } /* end SetDefaultParameter  */
 
 
@@ -873,8 +889,7 @@ void InitBeamline(struct BeamlineType *bl)
   AllocRTSource(bl);
   hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
   
-  
-  hp->disty	= .1;  
+    hp->disty	= .1;  
   hp->iy 	= 3;   
   hp->distz	= .2;  
   hp->iz	= 3;   
