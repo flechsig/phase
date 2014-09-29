@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <23 Sep 14 12:27:37 flechsig>  */
+/*  Time-stamp: <29 Sep 14 17:31:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -101,7 +101,15 @@ struct EmfType *emfp_construct(int cols, int rows)
 /* frees the content */
 void emf_free(struct EmfType *emf)
 {
+#ifdef DEBUG
+  printf("debug: emf_free called, %d, file: %s\n", (int)emf, __FILE__);
+#endif
+
   if (!emf) return;
+#ifdef DEBUG
+  printf("debug: emf_free old nz= %d, ny= %d\n", emf->nz, emf->ny);
+#endif
+
   emf->nz= 0;
   emf->ny= 0;
   XFREE(emf->z);
@@ -117,7 +125,7 @@ void emfp_cpy(struct EmfType *dest, struct EmfType *source)
   size_t size2, sizey, sizez;
 
 #ifdef DEBUG
-  printf("debug: emfp_cpy called\n");
+  printf("debug: emfp_cpy called => ");
 #endif
 
   if ((!dest) || (!source)) return;
@@ -125,7 +133,7 @@ void emfp_cpy(struct EmfType *dest, struct EmfType *source)
 
   sizez= source->nz* sizeof(double); 
   sizey= source->ny* sizeof(double);
-  size2= source->ny * sizez;
+  size2= source->ny* sizez;
   
   memcpy(dest->z, source->z, sizez);
   memcpy(dest->y, source->y, sizey);
@@ -135,14 +143,27 @@ void emfp_cpy(struct EmfType *dest, struct EmfType *source)
 
   memcpy(dest->ezim, source->ezim, size2);
   memcpy(dest->eyim, source->eyim, size2);
+
+#ifdef DEBUG
+  printf("emfp_cpy done\n");
+#endif
 } // end emfp_cpy
 
 /* frees the complete pointer */
-void emfp_free(struct EmfType *emf)
+void emfp_free(struct EmfType *emfp)
 {
-  if (!emf) return;
-  emf_free(emf);
-  XFREE(emf);
+#ifdef DEBUG
+  printf("debug: emfp_free called, %d, file: %s\n", (int)emfp, __FILE__);
+#endif
+
+  if (!emfp) return;
+#ifdef DEBUG
+  printf("debug: emfp_free old nz= %d, ny= %d\n", emfp->nz, emfp->ny);
+#endif
+
+  emf_free(emfp);
+
+  XFREE(emfp);
 } /* end emfp_free */
 
 void emfp_2_psd(struct BeamlineType *bl)
@@ -151,7 +172,7 @@ void emfp_2_psd(struct BeamlineType *bl)
   struct PSDType *psd;
 
 #ifdef DEBUG
-  printf("debug: emfp_2_psd called\n");
+  printf("debug: emfp_2_psd called, ny= %d, nz= %d\n", bl->emfp->ny, bl->emfp->nz);
 #endif
 
   if (!bl->emfp) return;

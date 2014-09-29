@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <29 Sep 14 13:56:59 flechsig>  */
+/*   Time-stamp: <29 Sep 14 15:18:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -630,7 +630,7 @@ void SetDefaultParameter(struct BeamlineType *bl)
 
   bl->src.so1c.waist  = 2e-5;
   bl->src.so1c.nyz    = 243;
-  bl->src.so1c.widthyz= 1;
+  bl->src.so1c.widthyz= 1e-3;
   bl->src.so1c.dist   = 0;
 } /* end SetDefaultParameter  */
 

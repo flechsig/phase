@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <23 Sep 14 15:10:42 flechsig>  */
+/*   Time-stamp: <23 Sep 14 17:06:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2179,8 +2179,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	 } else
 	 {
 	   bl->src.so1c.nyz= 243;
-	   bl->src.so1c.waist= 20.;
-	   bl->src.so1c.widthyz= 1;
+	   bl->src.so1c.waist= 20.e-6;
+	   bl->src.so1c.widthyz= 1e-3;
 	   bl->src.so1c.dist= 0.0;
 	 }
 
@@ -2283,11 +2283,11 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fscanf(f, " %d %255[^\n]s %c", &op->PSO.PSSource.zhard, buffer, &buf);  
        fscanf(f, " %d %255[^\n]s %c", &op->PSO.PSSource.dzhard, buffer, &buf); 
        fscanf(f, " %d %255[^\n]s %c", &op->PSO.intmod, buffer, &buf); 
-       if (version >= 20110902) fscanf(f, " %d %255[^\n]s %c", &op->REDUCE_maps, buffer, &buf);
-       if (version >= 20120508) fscanf(f, " %d %255[^\n]s %c", &op->ifl.pst_mode, buffer, &buf);
+       if (version >= 20110902) fscanf(f, " %d %*[^\n]", &op->REDUCE_maps);  else op->REDUCE_maps  = 0;
+       if (version >= 20120508) fscanf(f, " %d %*[^\n]", &op->ifl.pst_mode); else op->ifl.pst_mode = 2;
 
-       if (version >= 20140509) fscanf(f, " %d %255[^\n]s %c", &op->PSO.with_coating, buffer, &buf);
-       if (version >= 20140509) fscanf(f, " %d %255[^\n]s %c", &op->PSO.with_herror, buffer, &buf);
+       if (version >= 20140509) fscanf(f, " %d %*[^\n]", &op->PSO.with_coating); else op->PSO.with_coating= 0;
+       if (version >= 20140509) fscanf(f, " %d %*[^\n]", &op->PSO.with_herror);  else op->PSO.with_herror= 0;
 
      } else rcode= -1;  /* end OPTIONS */     
 

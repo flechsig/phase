@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 Sep 14 17:14:09 flechsig> 
+//  Time-stamp: <29 Sep 14 17:42:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -192,8 +192,8 @@ void MainWindow::activateProc(const QString &action)
       while (n < elementList->count())
 	{
 	  double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
-	  myparent->mysource4c_2_emfp();
-	  struct EmfType *emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	  //myparent->mysource4c_2_emfp();
+	  struct EmfType *emfp= NULL; //emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
 	  
 	  cout << "*************************************" << endl;
 	  cout << "*** PO element No " << n << ", drift= " << driftlen  << endl;
@@ -218,9 +218,11 @@ void MainWindow::activateProc(const QString &action)
 	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
 	      break;
 	    default:
-	      emfp_cpy(emfp, myparent->myBeamline()->emfp);  // save the source
+	      //emfp_cpy(emfp, myparent->myBeamline()->emfp);  // save the source in emfp
+	      cout << "source saved in emfp" << endl;
 	      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	      cout << "result allocated" << endl;
 	      ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
 	      fillTaskVector(psip->iy * psip->iz);
 	      qDebug() << "asynchronous PO with threads " << psip->iy * psip->iz << " points";
@@ -231,9 +233,9 @@ void MainWindow::activateProc(const QString &action)
 		{
 		  fill_m4(myparent->myBeamline(), m4p_cpp);
 		  cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
-		  size_t n= sizeof(struct map4);
+		  size_t nm4= sizeof(struct map4);
 		  short *vp= (short *)m4p_cpp;
-		  std::copy(vp, vp+ n, vp);
+		  std::copy(vp, vp+ nm4, vp);
 		}
 #else
 	      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
@@ -244,13 +246,17 @@ void MainWindow::activateProc(const QString &action)
 	      
 	      myparent->myBeamline()->BLOptions.PSO.intmod= 2;
 	      
+	      cout << "create future" << endl;
 	      *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
 								m4p_cpp, csp_cpp
 								)); // one additional par 
 	      watcher->setFuture(*future);
 	      
+	      cout << "after future" << endl;
+	      
 	      if (n < (elementList->count()- 1))
 		{
+		  cout << "xxx restore source n= "<< n << " elements: " << elementList->count() << endl;
 		  myparent->mypsd_2_emfp();
 		  emfp_cpy(myparent->myBeamline()->emfp, emfp);   // restore the source
 		  myparent->myemfp_2_source4c();
@@ -260,9 +266,9 @@ void MainWindow::activateProc(const QString &action)
 	  
 	  emfp_free(emfp);
 	  n++;
-	}
-      
-      myparent->myemfp_2_psd();
+	} // end while
+      cout << "after while wip" << endl;
+      //    myparent->myemfp_2_psd();
       myparent->myemfp_free();
     } // asyn
 
@@ -1950,6 +1956,7 @@ void MainWindow::grautoscaleslot()
       //d_plot->autoScale(d_plot->minv(psdp->z, psdp->iz), d_plot->maxv(psdp->z, psdp->iz), 
       //d_plot->minv(psdp->y, psdp->iy), d_plot->maxv(psdp->y, psdp->iy));
       d_plot->autoScale(psdp->z[0], psdp->z[psdp->iz-1], psdp->y[0], psdp->y[psdp->iy-1]);
+      printf("uwe: %f %f %f %f %d\n", psdp->z[0], psdp->z[1], psdp->z[2], psdp->z[psdp->iz-1], psdp->iz);
     }
 
   if (mwplotsubject & PLOT_PO_SOURCE) // generic for PO source
