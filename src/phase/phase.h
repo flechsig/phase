@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <03 Oct 14 12:19:03 flechsig>  */
+/*   Time-stamp: <03 Oct 14 12:26:36 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -452,7 +452,7 @@ struct BeamlineType
   struct sources src;   /* muss noch drin bleiben da viele parameter noch gesetzt werden koennen */
 /* #endif */
   struct source4c posrc;   /* 120423 */
-  struct source1c posrc1;
+  struct source1c poso1c;
   struct TmpMapType *tp;
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
