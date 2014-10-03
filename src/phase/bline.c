@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <03 Oct 14 11:36:09 flechsig>  */
+/*   Time-stamp: <03 Oct 14 12:27:20 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1626,13 +1626,12 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20lg so1: sigmaz  \n", bl->src.so1.sigmaz);
    fprintf(f, "%20lg so1: sigmazp \n", bl->src.so1.sigmazp);
    */
-#ifdef SO1C
+
    /* source 1c */
-   fprintf(f, "%20d  so1c: nyz         \n", bl->src.so1c.nyz);
-   fprintf(f, "%20lg  so1c: waist (m)   \n", bl->src.so1c.waist);
-   fprintf(f, "%20lg  so1c: widthyz (m) \n", bl->src.so1c.widthyz);
-   fprintf(f, "%20lg  so1c: dist (m)    \n", bl->src.so1c.dist);
-#endif
+   fprintf(f, "%20d  so1c: nyz         \n", bl->poso1c.nyz);
+   fprintf(f, "%20lg  so1c: waist (m)   \n", bl->poso1c.waist);
+   fprintf(f, "%20lg  so1c: widthyz (m) \n", bl->poso1c.widthyz);
+   fprintf(f, "%20lg  so1c: dist (m)    \n", bl->poso1c.dist);
 
    /* source 4 */
    /* UF 20.3. 2012 */
@@ -2170,22 +2169,22 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
 	   */
 	 }
-#ifdef SO1C
+
        if (version > 20140817)
 	 {
-	   fscanf(f, " %d %255[^\n]s %c",  &bl->src.so1c.nyz,     buffer, &buf);
-	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1c.waist,   buffer, &buf);
-	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1c.widthyz, buffer, &buf);
+	   fscanf(f, " %d %255[^\n]s %c",  &bl->poso1c.nyz,     buffer, &buf);
+	   fscanf(f, " %lf %255[^\n]s %c", &bl->poso1c.waist,   buffer, &buf);
+	   fscanf(f, " %lf %255[^\n]s %c", &bl->poso1c.widthyz, buffer, &buf);
 	   if (version > 20140922) 
-	     fscanf(f, " %lf %*[^\n]", &bl->src.so1c.dist); else bl->src.so1c.dist= 0.0;
+	     fscanf(f, " %lf %*[^\n]", &bl->poso1c.dist); else bl->poso1c.dist= 0.0;
 	 } else
 	 {
-	   bl->src.so1c.nyz= 243;
-	   bl->src.so1c.waist= 20.e-6;
-	   bl->src.so1c.widthyz= 1e-3;
-	   bl->src.so1c.dist= 0.0;
+	   bl->poso1c.nyz= 243;
+	   bl->poso1c.waist= 20.e-6;
+	   bl->poso1c.widthyz= 1e-3;
+	   bl->poso1c.dist= 0.0;
 	 }
-#endif
+
        /* source 4 */
        if (version < 20120320)
 	 {
