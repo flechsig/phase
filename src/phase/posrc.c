@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <03 Oct 14 11:38:24 flechsig>  */
+/*  Time-stamp: <03 Oct 14 12:31:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -246,10 +246,10 @@ void gauss_source1c(struct BeamlineType *bl)
 #ifdef DEBUG
   printf("debug: %s gauss_source1c called\n", __FILE__);
 #endif
-#ifdef SO1C
-  dist      = bl->src.so1c.dist;
-  rows= cols= bl->src.so1c.nyz;
-  w0        = bl->src.so1c.waist;
+
+  dist      = bl->poso1c.dist;
+  rows= cols= bl->poso1c.nyz;
+  w0        = bl->poso1c.waist;
   wavelength= bl->BLOptions.lambda*1e-3;
   k         = PI * 2/ wavelength;                           // wave number
   z0        = PI * pow(w0, 2)/ wavelength;       
@@ -259,7 +259,7 @@ void gauss_source1c(struct BeamlineType *bl)
   eta       = atan(dist/z0);
   Ri        = dist / (pow(dist,2) + pow(z0,2));             // curvature Ri  = 1/R;
   truncation= 0;
-  mywidthyz = bl->src.so1c.widthyz;
+  mywidthyz = bl->poso1c.widthyz;
 
   printf("dist (m)       = %g\n", dist);
   printf("wavelength (m) = %g\n", wavelength);
@@ -340,7 +340,7 @@ void gauss_source1c(struct BeamlineType *bl)
   emfp_2_source4c(bl);
   bl->emfp= NULL;
   emfp_free(emfp);
-#endif
+
 #ifdef DEBUG
   printf("debug: gauss_source1c done\n");
 #endif
