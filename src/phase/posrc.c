@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <29 Sep 14 17:31:58 flechsig>  */
+/*  Time-stamp: <03 Oct 14 11:38:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -246,7 +246,7 @@ void gauss_source1c(struct BeamlineType *bl)
 #ifdef DEBUG
   printf("debug: %s gauss_source1c called\n", __FILE__);
 #endif
-
+#ifdef SO1C
   dist      = bl->src.so1c.dist;
   rows= cols= bl->src.so1c.nyz;
   w0        = bl->src.so1c.waist;
@@ -340,6 +340,7 @@ void gauss_source1c(struct BeamlineType *bl)
   emfp_2_source4c(bl);
   bl->emfp= NULL;
   emfp_free(emfp);
+#endif
 #ifdef DEBUG
   printf("debug: gauss_source1c done\n");
 #endif

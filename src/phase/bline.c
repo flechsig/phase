@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <23 Sep 14 17:06:18 flechsig>  */
+/*   Time-stamp: <03 Oct 14 11:36:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1626,12 +1626,13 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20lg so1: sigmaz  \n", bl->src.so1.sigmaz);
    fprintf(f, "%20lg so1: sigmazp \n", bl->src.so1.sigmazp);
    */
+#ifdef SO1C
    /* source 1c */
    fprintf(f, "%20d  so1c: nyz         \n", bl->src.so1c.nyz);
    fprintf(f, "%20lg  so1c: waist (m)   \n", bl->src.so1c.waist);
    fprintf(f, "%20lg  so1c: widthyz (m) \n", bl->src.so1c.widthyz);
    fprintf(f, "%20lg  so1c: dist (m)    \n", bl->src.so1c.dist);
-
+#endif
 
    /* source 4 */
    /* UF 20.3. 2012 */
@@ -2169,6 +2170,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   fscanf(f, " %lf %255[^\n]s %c", &bl->src.so1.sigmazp, buffer, &buf);
 	   */
 	 }
+#ifdef SO1C
        if (version > 20140817)
 	 {
 	   fscanf(f, " %d %255[^\n]s %c",  &bl->src.so1c.nyz,     buffer, &buf);
@@ -2183,7 +2185,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	   bl->src.so1c.widthyz= 1e-3;
 	   bl->src.so1c.dist= 0.0;
 	 }
-
+#endif
        /* source 4 */
        if (version < 20120320)
 	 {
