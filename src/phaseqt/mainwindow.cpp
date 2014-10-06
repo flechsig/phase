@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Oct 14 11:33:55 flechsig> 
+//  Time-stamp: <06 Oct 14 09:09:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1568,6 +1568,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
  
   struct OptionsType   *op = myparent->myOptions();
   struct sources    *mysrc = &(myparent->myBeamline()->src);
+  struct source1c  *mysrc1 = &(myparent->myBeamline()->poso1c);
   
 #ifdef DEBUG1
   cout << __FILE__ << " debug: parameterUpdate: pos: " << pos << endl;
@@ -1699,23 +1700,24 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
       qst.setNum(op->ifl.matrel);
       break;
-#ifdef SO1C
+
     case 24:
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so1c.nyz);
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.nyz= 243;   // default
-      qst.setNum(mysrc->so1c.nyz);
+      if (!init) scanned= sscanf(text, "%d", &mysrc1->nyz);
+      if ((scanned == EOF) || (scanned == 0)) mysrc1->nyz= 243;   // default
+      qst.setNum(mysrc1->nyz);
       //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcy);
       //if ((scanned == EOF) || (scanned == 0))  mysrc->so1.isrcy= 0;   // default
       //qst.setNum(mysrc->so1.isrcy);
       break;
+
     case 25:
       if (!init) 
 	{
-	  scanned= sscanf(text, "%lg", &mysrc->so1c.waist);
-	  mysrc->so1c.waist*= 1e-6;
+	  scanned= sscanf(text, "%lg", &mysrc1->waist);
+	  mysrc1->waist*= 1e-6;
 	}
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.waist= 2e-5;   // default
-      qst.setNum(mysrc->so1c.waist*1e6);
+      if ((scanned == EOF) || (scanned == 0))  mysrc1->waist= 2e-5;   // default
+      qst.setNum(mysrc1->waist*1e6);
       //if (!init) scanned= sscanf(text, "%d", &mysrc->so1.isrcdy);
       //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.isrcdy= 0;   // default
       //qst.setNum(mysrc->so1.isrcdy);
@@ -1723,19 +1725,19 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
     case 26:
       if (!init) 
 	{
-	  scanned= sscanf(text, "%lg", &mysrc->so1c.widthyz);
-	  mysrc->so1c.widthyz*= 1e-3;
+	  scanned= sscanf(text, "%lg", &mysrc1->widthyz);
+	  mysrc1->widthyz*= 1e-3;
 	}
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.widthyz= 1e-3;   // default
-      qst.setNum(mysrc->so1c.widthyz*1e3);
+      if ((scanned == EOF) || (scanned == 0))  mysrc1->widthyz= 1e-3;   // default
+      qst.setNum(mysrc1->widthyz*1e3);
       //if (!init) scanned= sscanf(text, "%lg", &mysrc->so1.sigmay);
       //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmay= 0;   // default
       //qst.setNum(mysrc->so1.sigmay, 'g', 4);
       break;
     case 27:
-      if (!init) scanned= sscanf(text, "%lg", &mysrc->so1c.dist);
-      if ((scanned == EOF) || (scanned == 0))  mysrc->so1c.dist= 0.0;   // default
-      qst.setNum(mysrc->so1c.dist);
+      if (!init) scanned= sscanf(text, "%lg", &mysrc1->dist);
+      if ((scanned == EOF) || (scanned == 0))  mysrc1->dist= 0.0;   // default
+      qst.setNum(mysrc1->dist);
       //if (!init) 
 	//{ 
 	  //scanned= sscanf(text, "%lg", &mysrc->so1.sigmayp);
@@ -1744,7 +1746,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       //if ((scanned == EOF) || (scanned == 0)) mysrc->so1.sigmayp= 0;   // default
       //qst.setNum(mysrc->so1.sigmayp*1e3,  'g', 4);
       break;
-#endif
+
     case 28:
       if (!init) 
 	{
