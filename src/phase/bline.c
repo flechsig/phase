@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Oct 14 08:34:13 flechsig>  */
+/*   Time-stamp: <06 Oct 14 08:34:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2179,10 +2179,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     fscanf(f, " %lf %*[^\n]", &bl->poso1c.dist); else bl->poso1c.dist= 0.0;
 	 } else
 	 {
-	   bl->poso1c.nyz= 243;
-	   bl->poso1c.waist= 20.e-6;
+	   bl->poso1c.nyz    = 243;
+	   bl->poso1c.waist  = 20.e-6;
 	   bl->poso1c.widthyz= 1e-3;
-	   bl->poso1c.dist= 0.0;
+	   bl->poso1c.dist   = 0.0;
 	 }
 
        /* source 4 */
