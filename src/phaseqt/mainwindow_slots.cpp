@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <06 Oct 14 09:21:15 flechsig> 
+//  Time-stamp: <06 Oct 14 09:25:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1080,9 +1080,9 @@ if (!action.compare("fourierAct"))
 
   if (!action.compare("poInitSourceAct")) 
     { 
-      cout << "poInitSourceAct button pressed: source_type= " << myparent->myBeamline()->src.isrctype << endl; 
+      cout << "poInitSourceAct button pressed: source_type= " << myparent->myBeamline()->isrctype_c << endl; 
             
-      switch (myparent->myBeamline()->src.isrctype)
+      switch (myparent->myBeamline()->isrctype_c)
 	{
 	  case 1:
 	    filesOK= 1;
@@ -1113,14 +1113,14 @@ if (!action.compare("fourierAct"))
 	default:
 	  QMessageBox::warning(this, tr("warning src_ini"),
 			     tr("source type %1 : no files need to be read!\nreturn").
-			     arg(myparent->myBeamline()->src.isrctype));
+			     arg(myparent->myBeamline()->isrctype_c));
 	  return;
 	}
 
       if ( !filesOK )
 	QMessageBox::warning(this, tr("error src_ini"),
 			     tr("source type %1 : source file(s) not found!\nreturn").
-			     arg(myparent->myBeamline()->src.isrctype));
+			     arg(myparent->myBeamline()->isrctype_c));
       else /* files are OK */
 	{
 #ifdef OLD_PO_SOURCE	  
