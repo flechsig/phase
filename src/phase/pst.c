@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <06 Oct 14 15:02:24 flechsig>  */
+/*   Time-stamp: <06 Oct 14 15:11:15 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -476,7 +476,9 @@ void pstc_ii(int index, struct BeamlineType *bl)
   if (bl->BLOptions.ifl.pst_mode == 1) XFREE(m4p);
 } /* end pstc_ii */
 
-/* the internal wrapper function for adaptive int for index i */
+/* the internal wrapper function for adaptive int for index i  */
+/* UF OCT 14 !! der wert outside_wl ist noch nicht thread safe */
+/* das hochzaehlen sollte in c++ mit std::atomic erfolgen      */
 void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct constants *csp)
 {
   struct PSImageType         *psip;
