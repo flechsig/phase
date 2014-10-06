@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <28 Aug 14 16:55:10 flechsig> 
+c$$$ Time-stamp: <06 Oct 14 09:51:46 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -95,7 +95,7 @@ c	if(src.isrctype.eq.6)call src6_ini(src.so6)
 c------------------end src_ini -------------------------
 
 c**************************************************************
-        subroutine psdi(g,src,apr,cs,ifl,ra,sr,blp)
+        subroutine psdi(g,isrctype,apr,cs,ifl,ra,sr,blp)
 c**************************************************************
 c
 c       Berechnung der Phasenraumdichte in der Gegenstandsebene
@@ -178,7 +178,7 @@ c	record /source3/ so3
 c	record /source4/ so4
 c	record /source5/ so5
 c	record /source6/ so6
-	record /sources/ src
+c	record /sources/ src
 	record /apertures/ apr
 
 #ifdef DEBUG2
@@ -239,8 +239,8 @@ c	if(iii.eq.1)then
 c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
 c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
-	if(src.isrctype.eq.4)call src4(cs,g,ra,sr,ifl,blp)
-	if(src.isrctype.eq.7)call src4(cs,g,ra,sr,ifl,blp)
+	if(isrctype.eq.4)call src4(cs,g,ra,sr,ifl,blp)
+	if(isrctype.eq.7)call src4(cs,g,ra,sr,ifl,blp)
 c uf2.7.13	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c uf2.7.13	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
