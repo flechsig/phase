@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <06 Oct 14 09:53:48 flechsig>  */
+/*  Time-stamp: <06 Oct 14 14:19:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -673,6 +673,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 	 so4->xemin, *xwert, so4->xemax,  so4->yemin, *ywert, so4->yemax);
 #endif
 
+  // UF OCT 14 besser minima und maxima aus den Werten nehmen
   if ((*xwert < so4->xemin) || (*xwert > so4->xemax) || 
       (*ywert < so4->yemin) || (*ywert > so4->yemax)) 
     {

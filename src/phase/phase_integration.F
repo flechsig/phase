@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 09:45:07 flechsig> 
+c$$$ Time-stamp: <06 Oct 14 14:43:53 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -151,6 +151,8 @@ c        call debug_beamline_type_f(blp)
 c        write(*,*),'adaptive_int called2'
 c#endif
 
+  
+                   
 	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
            write(*,*)'************************************'

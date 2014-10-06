@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <28 Aug 14 16:50:22 flechsig>  */
+ /* Time-stamp: <06 Oct 14 14:03:35 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -80,6 +80,7 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
    
    // check w, l, set field outside to zero
    // increase the number of lost principle rays
+   // UF OCT 2014 this is not thread safe (no atomic operation- use std::atomic
    if ( (*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || 
         (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2) ) 
      {

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Oct 14 09:27:34 flechsig> 
+//  Time-stamp: <06 Oct 14 13:44:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2600,7 +2600,8 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 {
   double  trans;
   QString qst, qst1;
-  int     po, porays, sf;
+  int     po, sf;
+  long    porays;
 
 #ifdef DEBUG
   cout << "debug: " __FILE__ << " UpdateStatistics called" << endl;
@@ -2647,6 +2648,11 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 	myparent->myBeamline()->BLOptions.xi.ianzy0* 
 	myparent->myBeamline()->BLOptions.xi.ianzz0;
       trans= (porays > 0) ? 1.0- ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl/ (double)porays : 0.0;
+#ifdef DEBUG
+      printf("trans  = %lf\n", trans);
+      printf("outside= %ld\n", ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl);
+      printf("porays = %ld or %lf\n", porays, (double)porays);
+#endif
     }  // end po
 
   trans= (po | sf) ? trans : ((myparent->myBeamline()->RTSource.raynumber > 0) ? 

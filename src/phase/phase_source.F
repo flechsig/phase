@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 09:51:46 flechsig> 
+c$$$ Time-stamp: <06 Oct 14 14:21:55 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -543,10 +543,12 @@ c          new code with dynamic source does also the range test
 
 
 c code to deal with slope errors 
-c contributed by Walan Grizolli 
+c contributed by Walan Grizolli modified and extended by UF
 c procedure takes the beamline pointer, w and l and
 c the electrical field picked up for the particular "ray" as input
 c the field will be overwritten in place 
+c routine does also the aperture check
+c UF OCT 14 routine is not thread safe for the transmittance
         call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
      &                          sr.densyim, sr.denszre, sr.denszim)
 
