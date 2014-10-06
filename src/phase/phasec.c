@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <03 Oct 14 11:36:49 flechsig>  */
+/*   Time-stamp: <06 Oct 14 08:39:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -627,12 +627,12 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.apr.ymax_ap= 0.;
   bl->BLOptions.apr.zmin_ap= 0.;
   bl->BLOptions.apr.zmax_ap= 0.;
-#ifdef SO1C
-  bl->src.so1c.waist  = 2e-5;
-  bl->src.so1c.nyz    = 243;
-  bl->src.so1c.widthyz= 1e-3;
-  bl->src.so1c.dist   = 0;
-#endif
+
+  bl->poso1c.waist  = 2e-5;
+  bl->poso1c.nyz    = 243;
+  bl->poso1c.widthyz= 1e-3;
+  bl->poso1c.dist   = 0;
+
 } /* end SetDefaultParameter  */
 
 
