@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 14:21:55 flechsig> 
+c$$$ Time-stamp: <06 Oct 14 14:58:43 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -95,7 +95,7 @@ c	if(src.isrctype.eq.6)call src6_ini(src.so6)
 c------------------end src_ini -------------------------
 
 c**************************************************************
-        subroutine psdi(g,isrctype,apr,cs,ifl,ra,sr,blp)
+        subroutine psdi(g,isrctype,apr,cs,ifl,ra,sr,lostwl,blp)
 c**************************************************************
 c
 c       Berechnung der Phasenraumdichte in der Gegenstandsebene
@@ -162,7 +162,7 @@ c
 c**************************************************************
 
 	implicit real*8(a-h,o-z)
-	integer blp
+	integer lostwl,blp
 
 cc	include 'phase_struct.for'
 #include 'phase_struct.F'
@@ -239,8 +239,8 @@ c	if(iii.eq.1)then
 c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
 c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
-	if(isrctype.eq.4)call src4(cs,g,ra,sr,ifl,blp)
-	if(isrctype.eq.7)call src4(cs,g,ra,sr,ifl,blp)
+	if(isrctype.eq.4)call src4(cs,g,ra,sr,ifl,lostwl,blp)
+	if(isrctype.eq.7)call src4(cs,g,ra,sr,ifl,lostwl,blp)
 c uf2.7.13	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c uf2.7.13	if(src.isrctype.eq.7)call src4(cs,g,ra,src.so4,sr,ifl,blp)
 c	if(src.isrctype.eq.5)call src5(cs,g,ra,src.so5,sr,ifl)
@@ -388,13 +388,13 @@ c----------------------- end src3---------------------
 
 c*****************************************************************
 c UF 2.7.13	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
-        subroutine src4(cs,g,ra,sr,ifl,blp)
+        subroutine src4(cs,g,ra,sr,ifl,lostwl,blp)
 c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
 	implicit real*8(a-h,o-z)
 	complex*16 factor
-	integer blp               ! the beamline pointer 
+	integer lostwl,blp               ! the beamline pointer 
 
 cc	include 'phase_struct.for'
 #include 'phase_struct.F'
@@ -548,8 +548,8 @@ c procedure takes the beamline pointer, w and l and
 c the electrical field picked up for the particular "ray" as input
 c the field will be overwritten in place 
 c routine does also the aperture check
-c UF OCT 14 routine is not thread safe for the transmittance
-        call apply_height_error(blp, ra.oe.w, ra.oe.xl, sr.densyre, 
+
+        call apply_height_error(blp, lostwl, ra.oe.w, ra.oe.xl, sr.densyre, 
      &                          sr.densyim, sr.denszre, sr.denszim)
 
 #endif

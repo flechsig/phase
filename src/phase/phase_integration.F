@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 14:43:53 flechsig> 
+c$$$ Time-stamp: <06 Oct 14 15:02:19 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -69,8 +69,8 @@ c------------------------------------------------------------------
 c UF 20. Mar 2014 removed statistics 
 c UF OCT 14 remove src and give isrctype directly
 c*********************************************************
-         subroutine adaptive_int(m4,g,isrctype,apr,cs,ra,
-     &                       ifl,xi,xir,sp,blp)
+      subroutine adaptive_int(m4,g,isrctype,apr,cs,ra,
+     &     ifl,xi,xir,sp,lostwl,blp)
 c*********************************************************
 c	22.4.1999
 c	ACHTUNG:
@@ -112,7 +112,7 @@ c
 c************************************************
 
 	implicit real*8(a-h,o-z)
-        integer blp, isrctype
+        integer blp, isrctype, lostwl
 c UF 28.6.13	complex*16 fwert,fwerty,fwertz,
 c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
 c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
@@ -255,7 +255,7 @@ c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
 c UF	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
            call yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
      &		z(i),fwerty,fwertz,
-     &          yintya,yintyp,yintza,yintzp,sr,blp)
+     &          yintya,yintyp,yintza,yintzp,sr,lostwl,blp)
 	   if(ifl.ispline.ge.0)then
 c	   	fzey(i)=fwerty
 c	   	fzez(i)=fwertz
@@ -325,7 +325,7 @@ c*************************************************************
 c       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
        subroutine yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
      &		dzi,yintey,yintez,
-     &          yintya,yintyp,yintza,yintzp,sr,blp)
+     &          yintya,yintyp,yintza,yintzp,sr,lostwl,blp)
 c*************************************************************
 c
 c	INPUT : dzi
@@ -334,7 +334,7 @@ c
 c*************************************************************
 
 	implicit real*8(a-h,o-z)
-        integer blp
+        integer lostwl,blp
 	complex*16 
 c UF 28.6.13     &      fwert,fwerty,fwertz,
 c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
@@ -464,7 +464,7 @@ c        write(6,*)' call fywert, i=', i
 c#endif
  
  	  call fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
-     &		y(i),fyey(i),sr,blp)
+     &		y(i),fyey(i),sr,lostwl,blp)
 
 	 densiyre(i)=sr.densyre
 	 densiyim(i)=sr.densyim
@@ -510,12 +510,12 @@ c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
 c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
 c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
  	subroutine fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
-     &		          dyi,fwerty,sr,blp)
+     &		          dyi,fwerty,sr,lostwl,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
 c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
         complex*16 fwerty,ff,ff1,eycpl,ezcpl
-        integer blp
+        integer lostwl,blp
 
 c switch off the height_error_code
 
@@ -639,7 +639,7 @@ c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on
         endif
 
 c   here we call phase_source.F
-        call psdi(g,isrctype,apr,cs,ifl,ra,sr,blp)     
+        call psdi(g,isrctype,apr,cs,ifl,ra,sr,lostwl,blp)     
 
 c----------------------------------------
 

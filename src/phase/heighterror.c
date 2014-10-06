@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <06 Oct 14 14:03:35 flechsig>  */
+ /* Time-stamp: <06 Oct 14 14:54:37 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -58,7 +58,7 @@
 // called from fortran in phase_source.F
 // function: aperture check and height error phase shift
 // uf rewrite to amplitude and phase for debugging and consistency (compl. math)
-void apply_height_error_(int *blp, double *wwert, double *lwert, 
+void apply_height_error_(int *blp, int *lostwl, double *wwert, double *lwert, 
 			 double *eyre, double *eyim, double *ezre, double *ezim)
 {
   double u_interp, phaseshift;
@@ -84,7 +84,8 @@ void apply_height_error_(int *blp, double *wwert, double *lwert,
    if ( (*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || 
         (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2) ) 
      {
-       ((struct PSDType *)bl->RESULT.RESp)->outside_wl++;  // increase lost "rays"
+       //      ((struct PSDType *)bl->RESULT.RESp)->outside_wl++;  // increase lost "rays"
+       (*lostwl)++;  // UF local var threadsafe
        *eyre= *eyim= *ezre= *ezim= 0.0;
        return;
      }

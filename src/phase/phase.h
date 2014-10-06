@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <06 Oct 14 12:30:50 flechsig>  */
+/*   Time-stamp: <06 Oct 14 14:47:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -540,7 +540,7 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
 /************************* Prototypen *****************************/
 int  adaptive_int(struct map4 *, struct geometryst *, int *, struct apertures *, 
 		  struct constants *, struct rayst *, struct control_flags *, struct integration *, 
-		  struct integration_results *, struct psimagest *, int *);
+		  struct integration_results *, struct psimagest *, int *, int *);
 int  CheckBLOK(int, int, char*); 
 int  BuildBeamline(struct BeamlineType *);
 int  getgrfiletype(char *);

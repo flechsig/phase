@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.h */
  /* Date      : <05 May 14 14:17:45 flechsig>  */
- /* Time-stamp: <28 Aug 14 16:47:13 flechsig>  */
+ /* Time-stamp: <06 Oct 14 14:55:33 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -41,7 +41,7 @@
 
 // protoptype in alphabetic order
 
-void apply_height_error_(int *, double *, double *, double *, double *, double *, double *);
+void apply_height_error_(int *, int *, double *, double *, double *, double *, double *, double *);
 int  check_hdf5_4_height(char *, char *, int);
 int  read_hdf5_height_file(char *, struct ElementType *);
 void surf_height_interp(struct SurfaceType *, double *, double *, double *);

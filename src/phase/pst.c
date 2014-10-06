@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <06 Oct 14 09:32:02 flechsig>  */
+/*   Time-stamp: <06 Oct 14 15:02:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -487,8 +487,10 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct map4                *m4p;
 
  //struct constants *csp;
-  int    points, ny, nz, nzhalf;
+  int    points, ny, nz, nzhalf, lostwl;
   double yi, zi;
+
+  lostwl= 0;
 
   psip = (struct PSImageType *) bl->RTSource.Quellep;
   sp   = (struct psimagest *)   bl->RTSource.Quellep;
@@ -558,7 +560,9 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   */
 
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->isrctype_c, &bl->BLOptions.apr, 
-	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
+	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, &lostwl, (int *)bl);
+
+  ((struct PSDType *)bl->RESULT.RESp)->outside_wl+= lostwl;  // UF OCT 14 not threadsafe !!!!
 
   // apply phase shift of coating
   if (bl->BLOptions.PSO.with_coating) 
