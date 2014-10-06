@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:13:02 flechsig>  */
+/*  Time-stamp: <06 Oct 14 09:22:33 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -172,8 +172,8 @@ public:
   
   void myRayTraceFull() { RayTraceFull(this); }
   int  myread_hdf5_height_file(struct ElementType *ep) { return read_hdf5_height_file(this->filenames.h5surfacename, ep); }
-  void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, 
-		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
+  //  void myreadfg34_par(struct sources *src, struct apertures  *apr, struct control_flags *ifl, 
+  //		      struct integration *xi, double *epsilon) { readfg34_par(src,apr,ifl,xi,epsilon); }
   int  mySetReflectivity(struct ElementType *ep) { return SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
   int  myposrc_ini() { return posrc_ini(this); }

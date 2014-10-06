@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <29 Sep 14 17:42:35 flechsig> 
+//  Time-stamp: <06 Oct 14 09:21:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1055,10 +1055,15 @@ if (!action.compare("fourierAct"))
       printf("Initialize parameters with fg34.par from J. Bahrdt\n"); 
       if (fexists((char *)"fg34.par") == 1)
 	{
+	  cout << "obsolete functionality- has been deactivated OCT 2014" << endl;
+	  QMessageBox::warning(this, tr("readFg34Act"),
+			     tr("obsolete function- deactivated OCT 2014"));
+	  /* 
 	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
 	  myparent->myreadfg34_par(&myparent->myBeamline()->src, &myparent->myBeamline()->BLOptions.apr,
 				   &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
 				   &myparent->myBeamline()->BLOptions.epsilon);
+	  */
 	  /*
 	  strncpy(myparent->myBeamline()->filenames.so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
 	  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
