@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <03 Oct 14 12:31:21 flechsig>  */
+/*  Time-stamp: <06 Oct 14 09:53:48 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -363,7 +363,7 @@ int posrc_ini(struct BeamlineType *bl)
   spa3TableTest(bl);
 #endif
 
-  type= bl->src.isrctype;
+  type= bl->isrctype_c;
 
   switch (type)
     {

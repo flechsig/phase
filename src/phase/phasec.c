@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <06 Oct 14 08:39:22 flechsig>  */
+/*   Time-stamp: <06 Oct 14 09:29:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -592,7 +592,7 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.ifl.inorm       = 0;
   bl->BLOptions.ifl.inorm1      = 0;
   bl->BLOptions.ifl.inorm2      = 40;
-  bl->src.isrctype              = 7;
+  bl->isrctype_c                = 7;
   bl->BLOptions.xi.distfocy     = 0;
   bl->BLOptions.xi.distfocz     = 0;
   

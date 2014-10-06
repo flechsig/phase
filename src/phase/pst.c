@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:50:20 flechsig>  */
+/*   Time-stamp: <06 Oct 14 09:32:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -272,7 +272,7 @@ void PST(struct BeamlineType *bl)
 
  #ifdef DEBUG  
    printf("debug: pst.c: phase space trafo PST called");
-   printf(" debug:   source typ: %d\n", bl->src.isrctype); 
+   printf(" debug:   source typ: %d\n", bl->isrctype_c); 
  #endif
 
    Test4Grating(bl); /* not in threads */
@@ -552,7 +552,12 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   check_2_m4_(m4p);
 #endif
 
+  /* < OCT 14
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->src, &bl->BLOptions.apr, 
+	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
+  */
+
+  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->isrctype_c, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
 
   // apply phase shift of coating

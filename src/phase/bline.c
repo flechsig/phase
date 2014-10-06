@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Oct 14 08:34:46 flechsig>  */
+/*   Time-stamp: <06 Oct 14 09:28:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1612,7 +1612,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
       /* end integration */
 
    fprintf(f, "\nPSSOURCES\n"); 
-   fprintf(f, "%20d  source type \n", bl->src.isrctype);
+   fprintf(f, "%20d  source type \n", bl->isrctype_c);
 
    /* source 1 */
    /* removed 24.6.13 */
@@ -2153,7 +2153,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    if (SetFilePos(f, "PSSOURCES"))
      { 
        
-       fscanf(f, " %d %255[^\n]s %c", &bl->src.isrctype, buffer, &buf); 
+       fscanf(f, " %d %255[^\n]s %c", &bl->isrctype_c, buffer, &buf); 
        /* source 1 */
        if (version < 20130624)
 	 {

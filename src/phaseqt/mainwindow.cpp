@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Oct 14 09:09:50 flechsig> 
+//  Time-stamp: <06 Oct 14 09:27:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1567,7 +1567,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
   QString qst;
  
   struct OptionsType   *op = myparent->myOptions();
-  struct sources    *mysrc = &(myparent->myBeamline()->src);
+  //  struct sources    *mysrc = &(myparent->myBeamline()->src);
   struct source1c  *mysrc1 = &(myparent->myBeamline()->poso1c);
   
 #ifdef DEBUG1
@@ -1604,9 +1604,9 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       qst.setNum(op->ifl.iplmode);
       break;
     case 5:
-      if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->src.isrctype));
-      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->src.isrctype= 7;   // default
-      qst.setNum(myparent->myBeamline()->src.isrctype);
+      if (!init) scanned= sscanf(text, "%d", &(myparent->myBeamline()->isrctype_c));
+      if ((scanned == EOF) || (scanned == 0)) myparent->myBeamline()->isrctype_c= 7;   // default
+      qst.setNum(myparent->myBeamline()->isrctype_c);
       break; 
     case 6:
       if (!init) scanned= sscanf(text, "%lg", &op->apr.rpin);
