@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <06 Oct 14 09:34:35 flechsig>  */
+/*   Time-stamp: <06 Oct 14 09:58:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -449,7 +449,7 @@ struct BeamlineType
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
   /* #ifdef OLD_PO_SOURCE */
-  //  struct sources src;   /* muss noch drin bleiben da viele parameter noch gesetzt werden koennen */
+  //  struct sources src;   
 /* #endif */
   struct source4c posrc;   /* 120423 */
   struct source1c poso1c;
