@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <28 Aug 14 16:56:33 flechsig> 
+c$$$ Time-stamp: <06 Oct 14 09:45:07 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -67,8 +67,9 @@ c      wird zum Ruecksprung benutzt
 c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
 c UF 20. Mar 2014 removed statistics 
+c UF OCT 14 remove src and give isrctype directly
 c*********************************************************
-         subroutine adaptive_int(m4,g,src,apr,cs,ra,
+         subroutine adaptive_int(m4,g,isrctype,apr,cs,ra,
      &                       ifl,xi,xir,sp,blp)
 c*********************************************************
 c	22.4.1999
@@ -111,7 +112,7 @@ c
 c************************************************
 
 	implicit real*8(a-h,o-z)
-        integer blp
+        integer blp, isrctype
 c UF 28.6.13	complex*16 fwert,fwerty,fwertz,
 c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
 c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
@@ -128,7 +129,7 @@ c     &      yzint,yzintey,yzintez
         record /source_results/ sr
         record /integration_results/ xir
         record /control_flags/ ifl
-        record /sources/ src
+c//        record /sources/ src
 	record /integration/ xi
 	record /apertures/ apr
 c uf	record /mirrortype/ am
@@ -241,15 +242,16 @@ c---------------- first grid is equdistant, the following are not
 
 c-----------------------------------------------------------
 
-       if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &     (src.isrctype.eq.6).or.(src.isrctype.eq.7))then
+       if((isrctype.eq.4).or.(isrctype.eq.5).or.
+     &     (isrctype.eq.6).or.(isrctype.eq.7))then
 c-----------------------------------------------------------
 c !$OMP PARALLEL DO PRIVATE(i, ra)
 	do i=1,ianzz    
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
 c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
+c UF	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
+           call yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 	   if(ifl.ispline.ge.0)then
@@ -318,7 +320,8 @@ c------------------------------------------------------------
 c-------------------- end adaptive_int ----------------------
 
 c*************************************************************
-       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
+c       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
+       subroutine yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
      &		dzi,yintey,yintez,
      &          yintya,yintyp,yintza,yintzp,sr,blp)
 c*************************************************************
@@ -349,7 +352,7 @@ c UF	complex*16 fyey(4096),fyez(4096)
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
-        record /sources/ src
+c        record /sources/ src
 	record /integration/ xi
 	record /integration_results/ xir
 c UF 28.6.13        record /source6/ so6
@@ -439,8 +442,8 @@ c---------------- first grid is equdistant, the following are not
 	endif
 
 c------------------------------------------------------------
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &     (src.isrctype.eq.6).or.(src.isrctype.eq.7))then
+	if((isrctype.eq.4).or.(isrctype.eq.5).or.
+     &     (isrctype.eq.6).or.(isrctype.eq.7))then
 c------------------------------------------------------------
 
 c-------------------------------------------------------------------------
@@ -458,7 +461,7 @@ c#ifdef DEBUG
 c        write(6,*)' call fywert, i=', i
 c#endif
  
- 	  call fywert(m4,g,src,xi,apr,cs,ra,ifl,
+ 	  call fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
      &		y(i),fyey(i),sr,blp)
 
 	 densiyre(i)=sr.densyre
@@ -504,7 +507,7 @@ c*************************************************************
 c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
 c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
 c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
- 	subroutine fywert(m4,g,src,xi,apr,cs,ra,ifl,
+ 	subroutine fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
      &		          dyi,fwerty,sr,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
@@ -521,7 +524,7 @@ c switch off the height_error_code
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
-        record /sources/ src
+c        record /sources/ src
 	record /integration/ xi
 c uf	record /integration_results/ xir
 	record /apertures /apr
@@ -634,12 +637,12 @@ c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on
         endif
 
 c   here we call phase_source.F
-        call psdi(g,src,apr,cs,ifl,ra,sr,blp)     
+        call psdi(g,isrctype,apr,cs,ifl,ra,sr,blp)     
 
 c----------------------------------------
 
-	if((src.isrctype.eq.4).or.(src.isrctype.eq.5).or.
-     &     (src.isrctype.eq.7))then
+	if((isrctype.eq.4).or.(isrctype.eq.5).or.
+     &     (isrctype.eq.7))then
 
 c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
 c	 wird nicht in phase_integration gesetzt, da hier nicht 
@@ -953,7 +956,7 @@ c------------------------------------------------
 	endif   ! isrctype.eq.4 or 5 or 7
 
 c--------------- ist zu checken
-	if(src.isrctype.eq.6)then
+	if(isrctype.eq.6)then
 	fwerty=sr.densy*abs(fd)
 	endif
 
