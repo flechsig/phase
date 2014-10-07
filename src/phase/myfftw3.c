@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <28 Aug 14 16:50:21 flechsig>  */
+ /* Time-stamp: <07 Oct 14 09:21:05 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -235,8 +235,8 @@ void drift_fourier(struct BeamlineType *bl)
   lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
   p0 = fmod(driftlen, lambda);          // phase rest
-  totz= (!eidx) ? (so4->xemax- so4->xemin) : (bl->emf.z[bl->emf.nz- 1]- bl->emf.z[0]);
-  toty= (!eidx) ? (so4->yemax- so4->yemin) : (bl->emf.y[bl->emf.ny- 1]- bl->emf.y[0]);
+  totz= (!eidx) ? (so4->gridx[so4->iex- 1]- so4->gridx[0]) : (bl->emf.z[bl->emf.nz- 1]- bl->emf.z[0]);
+  toty= (!eidx) ? (so4->gridy[so4->iey- 1]- so4->gridy[0]) : (bl->emf.y[bl->emf.ny- 1]- bl->emf.y[0]);
 
   // fill frequency vectors and output
   for (col= 0; col< cols; col++) 
@@ -451,8 +451,10 @@ void drift_fresnel(struct BeamlineType *bl)
   lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
   p0 = driftlen/ lambda;
-  dy0= so4->dy;
-  dz0= so4->dx;
+  //  dy0= so4->dy;
+  dy0= (so4->iey > 1) ? (so4->gridy[1]- so4->gridy[0]) : 0.0;
+  //  dz0= so4->dx;
+  dz0= (so4->iex > 1) ? (so4->gridx[1]- so4->gridx[0]) : 0.0;
 
   printf("drift_fresnel called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
 
@@ -630,8 +632,10 @@ void drift_fraunhofer(struct BeamlineType *bl)
   lambda  = bl->BLOptions.lambda;
   k= 2.0 * PI/ lambda;
   p0 = driftlen/ lambda;
-  dy0= so4->dy;
-  dz0= so4->dx;
+  // dy0= so4->dy;
+  dy0= (so4->iey > 1) ? (so4->gridy[1]- so4->gridy[0]) : 0.0;
+  // dz0= so4->dx;
+  dz0= (so4->iex > 1) ? (so4->gridx[1]- so4->gridx[0]) : 0.0;
 
   printf("drift_fraunhofer called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
 

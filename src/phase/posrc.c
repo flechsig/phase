@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <06 Oct 14 14:19:01 flechsig>  */
+/*  Time-stamp: <07 Oct 14 10:10:14 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -454,8 +454,6 @@ void source8c_ini(struct BeamlineType *bl)
       bl->posrc.gridy[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
     }
 
-  posrc_fill_min_max(bl);
- 
   /*  */
   printf("!! linear horizontal polarization is hardcoded !!, file: %s\n", __FILE__);
   posrc_fill8(bl, bl->posrc.zezre, field, 0);
@@ -466,7 +464,7 @@ void source8c_ini(struct BeamlineType *bl)
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
   printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
-	 so4->xemin, "z", so4->xemax,  so4->yemin, "y", so4->yemax);
+	 so4->gridx[0], "z", so4->gridx[so4->iex- 1],  so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
 #endif
 
 #ifdef DEBUG
@@ -548,8 +546,6 @@ void source7c_ini(struct BeamlineType *bl)
   for (i=0; i< bl->posrc.iey; i++) bl->posrc.gridy[i]= y[i]*1e3;
   for (i=0; i< bl->posrc.iex; i++) bl->posrc.gridx[i]= z[i]*1e3;
 
-  posrc_fill_min_max(bl);
-
   posrc_fill7(bl, bl->posrc.zeyre, field, 0, it, 0);
   posrc_fill7(bl, bl->posrc.zeyim, field, 1, it, 1);
   posrc_fill7(bl, bl->posrc.zezre, field, 2, it, 0);
@@ -563,7 +559,7 @@ void source7c_ini(struct BeamlineType *bl)
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
   printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
-	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
+	 so4->gridx[0], "z", so4->gridx[so4->iex- 1],  so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
 #endif
 
 #else
@@ -616,8 +612,7 @@ int source4c_ini(struct BeamlineType *bl)
   fscanf(fa, "%d %d", &cols, &rows);                   /* read first line        */
   reallocate_posrc(bl, rows, cols);                    /* reserve memory         */
   posrc_fill4(bl, bl->posrc.zeyre, fa, 0);             /* fill array, close file */
-  posrc_fill_min_max(bl);                              /* fill min max etc.      */
-  
+    
   /* y imag */
   printf("read file: %s ", bl->filenames.so4_fsource4b);
   fscanf(fb, "%d %d", &cols, &rows);                   /* read first line */
@@ -639,7 +634,7 @@ int source4c_ini(struct BeamlineType *bl)
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
   printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
-	 so4->xemin, "y", so4->xemax,  so4->yemin, "z", so4->yemax);
+	 so4->gridx[0], "z", so4->gridx[so4->iex- 1],  so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
   printf("debug: source4c_ini done\n");
 #endif
   myreturn= 1;      /* if we reach this point it is OK */ 
@@ -658,7 +653,8 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   struct BeamlineType *bl;
   struct source4c *so4;
   int    ix1, ix2, iy1, iy2;
-  double x1, x2, y1, y2, ddxy, fact3, fact4, fact5, fact6;
+  double x1, x2, y1, y2, fact3, fact4, fact5, fact6;
+  double zmin, zmax, ymin, ymax, dz, dy, dyz;
   
 #ifdef DEBUG1
   printf("debug: %s source4c_inter_2d_ called\n\n", __FILE__);
@@ -667,21 +663,37 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   bl = (struct BeamlineType *)blp;
   so4= (struct source4c *)&(bl->posrc);
 
+  if ((so4->iey < 2) || (so4->iex < 2))
+    {
+      printf("error: source4c_inter_2d_, file: %s => iey or iez < 2 - return\n");
+      return;
+    }
+
+  zmin= so4->gridx[0];
+  ymin= so4->gridy[0];
+  zmax= so4->gridx[so4->iex- 1];
+  ymax= so4->gridy[so4->iey- 1];
+  dz  = so4->gridx[1]- so4->gridx[0];
+  dy  = so4->gridy[1]- so4->gridy[0];
+  dyz = dy* dz;
+
 #ifdef DEBUG1
   printf("debug: %s : x= %f, y= %f, position: %u\n", __FILE__, *xwert, *ywert, bl->position);
   printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
 	 so4->xemin, *xwert, so4->xemax,  so4->yemin, *ywert, so4->yemax);
 #endif
 
-  // UF OCT 14 besser minima und maxima aus den Werten nehmen
-  if ((*xwert < so4->xemin) || (*xwert > so4->xemax) || 
-      (*ywert < so4->yemin) || (*ywert > so4->yemax)) 
+  if ((*xwert < zmin) || (*xwert > zmax) || 
+      (*ywert < ymin) || (*ywert > ymax)) 
     {
       //printf("out of range: %f, %f \n", *xwert , *ywert);
       //sr->densyre= sr->denszre= sr->densyim= sr->denszim= 0.0;
       return;
     }
-  
+
+  if (!(dz  > 0.0)) return;
+  if (!(dy  > 0.0)) return;
+  if (!(dyz > 0.0)) return;
 
 //  fact1=cs.sqrtm1; ! UF 6.6.12 wird gar nicht genutzt
 
@@ -693,9 +705,9 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 // im c- code muss die +1 weg bei ix1 und iy1
 // erlaubter index= 0...(N-1) 
-  ix1= (int)((*xwert- so4->xemin)/so4->dx);
+  ix1= (int)((*xwert- zmin)/dz);
   ix2= ix1+ 1;
-  iy1= (int)((*ywert- so4->yemin)/so4->dy);
+  iy1= (int)((*ywert- ymin)/dy);
   iy2= iy1+ 1;
 
   /* exclude index overrun */
@@ -706,19 +718,10 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   y1  = so4->gridy[iy1];
   y2  = so4->gridy[iy2];
        
-  ddxy= so4->dx* so4->dy;     
-
-  if (fabs(ddxy) < 1e-20)        /* exclude devide by zero */
-    {
-      printf("error source4c_inter_2d_, file: %s, - exit\n", __FILE__);
-      printf("debug x= %f y= %f ddxy= %f\n", *xwert, *ywert, ddxy);
-      exit(-1);
-    }   
-                                   
-  fact3= ((x2- *xwert)* (y2- *ywert))/ ddxy;
-  fact4= ((*xwert- x1)* (y2- *ywert))/ ddxy;
-  fact5= ((x2- *xwert)* (*ywert- y1))/ ddxy;
-  fact6= ((*xwert- x1)* (*ywert- y1))/ ddxy;
+  fact3= ((x2- *xwert)* (y2- *ywert))/ dyz;
+  fact4= ((*xwert- x1)* (y2- *ywert))/ dyz;
+  fact5= ((x2- *xwert)* (*ywert- y1))/ dyz;
+  fact6= ((*xwert- x1)* (*ywert- y1))/ dyz;
 
   sr->densyre= fact3* so4->zeyre[ix1+ iy1* so4->iex]+
     fact4* so4->zeyre[ix2+ iy1* so4->iex]+
@@ -1097,17 +1100,6 @@ void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
   memset(bl->posrc.zeyim, 0, sizeof(double)* twodsize);
   memset(bl->posrc.zezim, 0, sizeof(double)* twodsize);
 } /* end reallocate_posrc */
-
-void posrc_fill_min_max(struct BeamlineType *bl)
-{
-  bl->posrc.xemin= bl->posrc.gridx[0]; 
-  bl->posrc.yemin= bl->posrc.gridy[0];
-  bl->posrc.xemax= bl->posrc.gridx[bl->posrc.iex- 1];
-  bl->posrc.yemax= bl->posrc.gridy[bl->posrc.iey- 1];
-  bl->posrc.dx  = (bl->posrc.xemax- bl->posrc.xemin)/(double)(bl->posrc.iex- 1);
-  bl->posrc.dy  = (bl->posrc.yemax- bl->posrc.yemin)/(double)(bl->posrc.iey- 1);
-} /* posrc_fill_min_max */
-
 
 void check_file_consistency(struct BeamlineType *bl, int rows, int cols)
 {
