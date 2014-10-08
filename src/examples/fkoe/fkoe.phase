@@ -1,0 +1,158 @@
+Fg3PickFileType 20140923
+This is a datafile of PHASE, file version SEP 2014
+Written by WriteBLFile on Tue Oct  7 17:13:16 2014
+
+SOURCE
+                   I    *** Phase Space Transformation Image***
+               -0.01    ymin
+                0.02    ymax
+               -0.01    zmin
+                0.01    zmax
+                 101    y points
+                  51    z points
+               25000    number of GO points
+
+Data of optical Elements
+ELEMENTS
+                   1   number of elements 
+
+
+Element 1
+                  m1     name of elem. 
+
+GEOMETRY 1
+                 -88  theta              
+               10000     source distance    
+                 500     image  distance    
+                   0  line density x[0] 
+                   0  line density x[1] 
+                   0  line density x[2] 
+                   0  line density x[3] 
+                   0  line density x[4] 
+                   1     diffraction order  
+                   0     flag               
+                   2     azimut * Pi/2      
+
+MIRROR 1  
+                  66     element type
+               15000     source distance (ARC)
+                 500     image  distance (ARC)
+                -1.1     theta (ARC)
+             27729.4     radius rw (r)       
+             33.7737     radius rl (rho)     
+                   0     translation flag
+                 -60     wmin
+                  60     wmax
+                -1.8     lmin
+                 1.8     lmax
+                 0.1     slope w (arcsec rms)
+                   1     slope l (arcsec rms)
+                   0     misalignment du
+                   0     misalignment dw
+                   0     misalignment dl
+                   0     misalignment dRu (rad)
+                   0     misalignment dRw (rad)
+                   0     misalignment dRl (rad)
+                  Au     material
+
+CONTROL_FLAGS
+                   4     map- order (3, 4)
+                   0     iordsc (4)
+                   1     expansion of pathlength (1)
+                   1 numerical (0), analytical (1) subtraction of ideal path length
+                   1     write 4-dim brightness to file (1)
+                   0     Integration simps (0), spline 1, -1
+                   0 (1) normalize output, (0) do not normalize
+                   0 inorm1
+                  40 inorm2 (0, 1, 2)
+               32567 derive matrix elements in 3 different ways (1) (for debugging)
+                   0 (1): phase advance for grating, (0): mirror
+                   0  insert pinhole array in source plane (0)
+                   0  enable delta lambda
+                   0  delta lambda (nm)
+                   1  GO enable ray_set1
+
+APERTURES
+                 100 radius of pinhole in source plane (mm)
+                -100 aperture in source plane, ymin (mm)
+                 100 aperture in source plane, ymax (mm)
+                -100 aperture in source plane, zmin (mm)
+                 100 aperture in source plane, zmax (mm)
+                   0 radius in aperture plane
+                   0 aperture in ap. plane, ymin (mm)
+                   0 aperture in ap. plane, ymax (mm)
+                   0 aperture in ap. plane, zmin (mm)
+                   0 aperture in ap. plane, zmax (mm)
+
+INTEGRATION
+                   0 distance to focus 
+                   0 distance to focus 
+                 301     ianzy0
+                 101     ianzz0
+             -0.0022     ymin 
+              0.0022     ymax 
+             -0.0036     zmin 
+              0.0036     zmax 
+                   0     d12_max 
+                   0  iamp_smooth (0,1,2)   
+                   0  iord_amp   
+                   0  iord_pha   
+                   0  ifm_amp   
+                   0  ifm_pha   
+                   0  id12; (1) print d12 on file 
+                   0  ianz0_cal 
+                   0  ianz0_fixed 
+
+PSSOURCES
+                   7  source type 
+                 301  so1c: nyz         
+               7e-05  so1c: waist (m)   
+              0.0016  so1c: widthyz (m) 
+                   5  so1c: dist (m)    
+
+OPTIONS
+                   2     (1) RT Source to Image 
+              0.0001     epsilon
+                  91     flag calculation modus
+                  10     lambda [nm]
+                   0     dispersive length
+                   0     * y = dlambda
+                   0     with alignment
+                   1     footprint at element
+                  63     dy integr. points (PS fixed grid)
+          1283851584     dz integr. points (PS fixed grid)
+        6.92374e-310     dymin [rad] (PS fixed grid)
+        1.35335e-312     dymax [rad] (PS fixed grid)
+        6.91088e-310     dzmin [rad] (PS fixed grid)
+        6.91088e-310     dzmax [rad] (PS fixed grid)
+        1.35547e-312     y  [mm]   (PS Source)
+        1.35481e-312     dy [rad] (PS Source)
+        9.29937e+199     z  [mm]   (PS Source)
+        4.92977e+204     dz [rad] (PS Source)
+           796156773     flag y  1^= +/-hard, 0^= sigma (0,1)
+          1935763568     flag dy '' (PS Source)
+          1768042341     flag z  '' (PS Source)
+          1752182638     flag dz '' (PS Source)
+                   2     flag <> 2 fixed grid integr.
+                   0     use (old) REDUCE maps (up to 4th order) 
+                   2     pst_mode (0: pstf.F, 1: pstc, 2: pstc_with m2p)
+                   0     PO with_coating (0,1) 
+                   0     PO with_herror  (0,1) 
+
+FILENAMES
+/afs/psi.ch/project/phase/data/fkoe.map     Map name
+/afs/psi.ch/project/phase/data/fkoe.omx     Matrix name
+/afs/psi.ch/project/phase/data/fkoe.inp     GO input
+/afs/psi.ch/project/phase/data/fkoe.out     PO/GO output
+/afs/psi.ch/project/phase/data/fkoe.pcko     Optimization input
+/afs/psi.ch/project/phase/data/fkoe.opti     Optimization results
+/afs/psi.ch/project/phase/data/fkoe.s4a     so4_fsource4a
+/afs/psi.ch/project/phase/data/fkoe.s4b     so4_fsource4b
+/afs/psi.ch/project/phase/data/fkoe.s4c     so4_fsource4c
+/afs/psi.ch/project/phase/data/fkoe.s4d     so4_fsource4d
+/afs/psi.ch/project/phase/data/fkoe.s6     so6_fsource6
+/afs/psi.ch/project/phase/data/fkoe_inp.h5     so7 (hdf5 input)
+/afs/psi.ch/project/phase/data/fkoe_out.h5     hdf5 output
+/afs/psi.ch/project/phase/data/fkoe_surf_err.h5     surface errors (h5)
+
+*** end of file ***
