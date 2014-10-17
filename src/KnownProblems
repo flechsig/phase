@@ -1,7 +1,7 @@
 # -*-sh-*-
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/KnownProblems
 # Date      : <13 May 14 08:02:14 flechsig> 
-# Time-stamp: <05 Jun 14 15:49:05 flechsig> 
+# Time-stamp: <17 Oct 14 09:02:56 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -16,3 +16,4 @@
 
 * 20140512 |  UF |  qwt.6.1.1 not usable- call to zoomer changed- workaround use qwt.6.0.1 | solved UF 22.5.14|
 * 20140605 |  UF |  PO mode alignment errors w and l mixed or go into wrong direction ?? | |
+* 20140605 |  UF |  bootstrap warning: source file '../phase/elli_8.F' is in a subdirectory | |
