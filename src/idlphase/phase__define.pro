@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <18 Sep 14 12:18:06 flechsig> 
+;  Time-stamp: <24 Oct 14 17:00:38 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -328,6 +328,77 @@ self.y_vec= ptr_new(y_vec)
 return 
 end 
 ;; end fermidiracbeam
+
+pro phase::fzp, f=f, d=d, _EXTRA=extra
+;+
+; NAME:
+;   phase::fzp
+;
+; PURPOSE:
+;   calculate the electric field after a Fresnel zone plate
+;
+; CATEGORY:
+;   Phase
+;
+; CALLING SEQUENCE:
+;   phase->fzp
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   f: first order focal length in m
+;   d: diameter in m
+;
+; OUTPUTS:
+;   no
+;
+; PROCEDURE:
+;
+; EXAMPLE:
+;   idl> emf->fzp
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+field= *self.field
+y_vec= *self.y_vec
+z_vec= *self.z_vec
+wavelength= self.wavelength
+
+drn= f*wavelength/d   ;; outermost zone width
+n  = d/(4*drn)
+res= 1.22 * drn
+na = 0.610*wavelength/ res   ;; spatial resolution
+dof= wavelength/(2.0*na*na)  ;; depth of field +/-
+dlambda= wavelength/n        ;; otherwise chromatic blurring
+
+print, '** Fresnel zone plate **'
+print, 'focal length     f (m) =', f
+print, 'diameter         D (m) =', d
+print, 'wavelength         (m) =', wavelength
+print, 'outerm. zone width (m) =', drn
+print, 'number of zones  N     =', n
+print, 'spatial resolution (m) =', res
+print, 'numerical aperture     =', na
+print, 'DOF +/-            (m) =', dof
+print, 'dlambda must be    (m) <', dlambda
+
+nz= n_elements(z_vec)
+ny= n_elements(y_vec)
+frzcomp= dcomplexarr(nz, ny) ;; make a complex array 
+for i=0, nz-1 do begin
+    for j=0, ny-1 do begin
+        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)           ;; the radial distance 
+        
+        crlcomp[i,j] = complex(1.0, sin(f2), /double)
+    endfor
+endfor
+
+return 
+end
+;; end fzp
+
 
 pro phase::h5_read, fname, vertical=vertical, _EXTRA=extra
 ;+
