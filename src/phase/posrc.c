@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <07 Oct 14 10:10:14 flechsig>  */
+/*  Time-stamp: <27 Oct 14 08:40:51 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -377,6 +377,7 @@ int posrc_ini(struct BeamlineType *bl)
 	  exit(-1);
 	}
       break;
+#ifdef HAVE_HDF5
     case 7:
       if (!fexists(bl->filenames.so7_hdf5)) return 0;
       if ( check_hdf5_type(bl->filenames.so7_hdf5, 7, 1) ) 
@@ -384,6 +385,7 @@ int posrc_ini(struct BeamlineType *bl)
       else 
 	source8c_ini(bl);
       break;
+#endif
     default:
       fprintf(stderr, "error: posrc_ini: source type %d not supported- exit file: %s\n", type, __FILE__);
       exit(-1);

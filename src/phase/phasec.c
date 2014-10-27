@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <06 Oct 14 09:29:17 flechsig>  */
+/*   Time-stamp: <27 Oct 14 08:41:56 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -40,11 +40,11 @@
   #include "config.h"
 #endif
 
-
+/* UF Oct 2014 was soll das
 #ifndef HAVE_HDF5
  #define HAVE_HDF5
 #endif
-
+*/
 
 #include <stdio.h>                    /* For printf and so on. */
 #include <stdlib.h> 	      	      /* needed for fopen      */  
@@ -140,14 +140,16 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	case 1:
 	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	  break;
+#ifdef HAVE_HDF5
 	case 2:
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
 	case 3:
 	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
+#endif
 	default:
-	  printf("error: %d output format not defined- use default\n", format);
+	  printf("error: %d output format not defined or supported- use default\n", format);
 	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	}
       break;
@@ -192,14 +194,16 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	case 1:
 	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	  break;
+#ifdef HAVE_HDF5
 	case 2:
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
 	case 3:
 	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
 	  break;
+#endif
 	default:
-	  printf("error: %d output format not defined- use default\n", format);
+	  printf("error: %d output format not defined or supported- use default\n", format);
 	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
 	}
       break;
