@@ -1,0 +1,123 @@
+;; -*-idlwave-*-
+;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
+;  Date      : <11 Jul 13 08:23:00 flechsig> 
+;  Time-stamp: <27 Oct 14 10:07:17 flechsig> 
+;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+
+;  $Source$ 
+;  $Date$
+;  $Revision$ 
+;  $Author$ 
+
+
+;; test routine for fzp
+
+;+ 
+; NAME:
+;   fzp_test
+;
+;
+; PURPOSE:
+;   test script for fzp 
+;
+;
+; CATEGORY:
+;   phase_calc
+;
+;
+; CALLING SEQUENCE:
+;
+;
+;
+; INPUTS:
+;   
+;
+;
+; OPTIONAL INPUTS:
+;
+;
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+;
+;
+; OPTIONAL OUTPUTS:
+;
+;
+;
+; COMMON BLOCKS:
+;
+;
+;
+; SIDE EFFECTS:
+;
+;
+;
+; RESTRICTIONS:
+;
+; PROCEDURE:
+;
+;
+;
+; EXAMPLE:
+;   @fzp_test.idl
+;
+;
+; MODIFICATION HISTORY:
+;    11.7.13 UF
+;-
+;
+; cd /home/scratch/phase/src/idlphase 
+;
+
+
+
+Nz         = 201
+wavelength = 1e-10
+sourcedist = 0
+waist      = 27.7e-6 
+
+Nu=300
+sizeu=0.001
+Nv=Nu
+sizev=sizeu
+
+emf=initphase()
+
+;; source
+emf->gaussbeam, dist=sourcedist, sizez=0.0006, w0=waist,  wavelength=wavelength
+title = 'source'
+mywindow,1,1
+emf->plotintensity, title=title+ ' (intensity)'
+mywindow,1,2
+emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+
+;; drift
+drift = 120
+emf->propagate, drift=drift
+title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+mywindow,2,1
+emf->plotintensity, title=title+ ' (intensity)'
+mywindow,2,2
+emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+
+;; fzp
+f= 1
+d= 1e-3
+emf->fzp, f=f, d=d
+title = 'after FZP' 
+mywindow,3,1
+emf->plotintensity, title=title+ ' (intensity)'
+mywindow,3,2
+emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+
+;; drift
+drift = f
+emf->propagate, drift=drift
+title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
+mywindow,4,1
+emf->plotintensity, title=title+ ' (intensity)'
+mywindow,4,2
+emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
