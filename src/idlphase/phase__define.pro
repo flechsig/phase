@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <24 Oct 14 17:00:38 flechsig> 
+;  Time-stamp: <27 Oct 14 09:43:38 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -366,10 +366,10 @@ y_vec= *self.y_vec
 z_vec= *self.z_vec
 wavelength= self.wavelength
 
-drn= f*wavelength/d   ;; outermost zone width
-n  = d/(4*drn)
-res= 1.22 * drn
-na = 0.610*wavelength/ res   ;; spatial resolution
+drn= f* wavelength/d   ;; outermost zone width
+n  = d/(4* drn)
+res= 1.22* drn
+na = 0.610* wavelength/ res   ;; spatial resolution
 dof= wavelength/(2.0*na*na)  ;; depth of field +/-
 dlambda= wavelength/n        ;; otherwise chromatic blurring
 
@@ -390,11 +390,14 @@ frzcomp= dcomplexarr(nz, ny) ;; make a complex array
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         rr= sqrt(z_vec[i]^2 + y_vec[j]^2)           ;; the radial distance 
-        
-        crlcomp[i,j] = complex(1.0, sin(f2), /double)
+        nr= 2.0/wavelength*(sqrt(f*f+ rr*rr)- f)    ;; calc n(r)
+        ;; the pathlength == n * wavelength/2 + f
+        ;; the phase shift n/2 * 2pi
+        pshift= nr * !dpi
+        crlcomp[i,j] = complex(cos(pshift), sin(pshift), /double)
     endfor
 endfor
-
+*self.field= crlcomp* field
 return 
 end
 ;; end fzp
