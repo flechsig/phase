@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <28 Oct 14 08:23:55 flechsig> 
+dnl   Time-stamp: <28 Oct 14 12:20:09 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -554,4 +554,8 @@ echo "MPI:                     : ${use_mpi}"
 echo "FFTW3:                   : ${acx_fftw3_ok}"
 echo "incl. experiental code   : ${enable_experimental}"
 echo " "
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_CFLAGS  =" $HDF5_CFLAGS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_CPPFLAGS=" $HDF5_CPPFLAGS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_LDFLAGS =" $HDF5_LDFLAGS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_VERSION =" $HDF5_VERSION
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
