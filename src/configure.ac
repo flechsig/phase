@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <28 Oct 14 13:59:07 flechsig> 
+dnl   Time-stamp: <28 Oct 14 14:01:51 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -548,14 +548,15 @@ echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"
 echo "GRIDSIZE:                : ${gridsize}"
 echo "hdf5:                    : ${with_hdf5}"
+echo "HDF5_VERSION             : ${HDF5_VERSION}"
 echo "root:                    : ${have_root}"
 echo "f2c:                     : ${enable_F2C}"
 echo "MPI:                     : ${use_mpi}"
 echo "FFTW3:                   : ${acx_fftw3_ok}"
 echo "incl. experiental code   : ${enable_experimental}"
 echo " "
-echo "******* UF debug ax_lib_hdf5.m4 HDF5_CFLAGS  =" $HDF5_CFLAGS
-echo "******* UF debug ax_lib_hdf5.m4 HDF5_CPPFLAGS=" $HDF5_CPPFLAGS
-echo "******* UF debug ax_lib_hdf5.m4 HDF5_LDFLAGS =" $HDF5_LDFLAGS
-echo "******* UF debug ax_lib_hdf5.m4 HDF5_VERSION =" $HDF5_VERSION
+dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_CFLAGS  =" $HDF5_CFLAGS
+dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_CPPFLAGS=" $HDF5_CPPFLAGS
+dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_LDFLAGS =" $HDF5_LDFLAGS
+dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_VERSION =" $HDF5_VERSION
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
