@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <28 Aug 14 16:04:44 flechsig> 
+#  Time-stamp: <28 Oct 14 13:48:25 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -145,9 +145,9 @@ EXTRA_DIST = ../phase/phase_struct.F  $(pkgdata_DATA) \
 
 ## flags
 if QT5
-   AM_CPPFLAGS = -DQT5 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED 
+   AM_CPPFLAGS = -DQT5 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED @HDF5_CPPFLAGS@
 else
-   AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+   AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED @HDF5_CPPFLAGS@
 endif
 
 if QT5
@@ -174,14 +174,6 @@ else
 	-I../phase
 endif
 
-AM_CFLAGS = @HDF5_CFLAGS@ 
-
-### -pipe -g -D_REENTRANT -Wall -W 
-### -I@QT_DIR@/mkspecs/linux-g++       
-### AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-### @FLIBS@    @CFORLIB@
-### -L@QT_DIR@/lib -lQtGui -lQtCore -lQtSvg 
-### -lQt5Concurrent
 ### UF explicit linking to -lQtGui -lQtCore -lQtSvg is required for ubuntu
 if QT5
 if QWT
