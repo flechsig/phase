@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <27 Oct 14 09:43:38 flechsig> 
+;  Time-stamp: <27 Oct 14 10:25:48 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -386,7 +386,7 @@ print, 'dlambda must be    (m) <', dlambda
 
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
-frzcomp= dcomplexarr(nz, ny) ;; make a complex array 
+fzpcomp= dcomplexarr(nz, ny) ;; make a complex array 
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         rr= sqrt(z_vec[i]^2 + y_vec[j]^2)           ;; the radial distance 
@@ -394,10 +394,10 @@ for i=0, nz-1 do begin
         ;; the pathlength == n * wavelength/2 + f
         ;; the phase shift n/2 * 2pi
         pshift= nr * !dpi
-        crlcomp[i,j] = complex(cos(pshift), sin(pshift), /double)
+        fzpcomp[i,j] = complex(cos(pshift), sin(pshift), /double)
     endfor
 endfor
-*self.field= crlcomp* field
+*self.field= fzpcomp* field
 return 
 end
 ;; end fzp

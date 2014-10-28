@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Oct 14 10:07:17 flechsig> 
+;  Time-stamp: <27 Oct 14 10:30:55 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -72,32 +72,23 @@
 ; cd /home/scratch/phase/src/idlphase 
 ;
 
+print, 'charsize: ', !P.CHARSIZE
+!P.CHARSIZE= 0.6
+print, 'charsize: ', !P.CHARSIZE
 
 
-Nz         = 201
+Nz         = 243
 wavelength = 1e-10
-sourcedist = 0
+sourcedist = 120
 waist      = 27.7e-6 
-
-Nu=300
-sizeu=0.001
-Nv=Nu
-sizev=sizeu
+size       = 1.5e-3
 
 emf=initphase()
 
 ;; source
-emf->gaussbeam, dist=sourcedist, sizez=0.0006, w0=waist,  wavelength=wavelength
-title = 'source'
-mywindow,1,1
-emf->plotintensity, title=title+ ' (intensity)'
-mywindow,1,2
-emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+emf->gaussbeam, dist=sourcedist, sizez=size, w0=waist,  wavelength=wavelength
+title = 'source in ' +  string(sourcedist,FORMAT="(f6.1)") + 'm'
 
-;; drift
-drift = 120
-emf->propagate, drift=drift
-title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
 mywindow,2,1
 emf->plotintensity, title=title+ ' (intensity)'
 mywindow,2,2
@@ -114,7 +105,7 @@ mywindow,3,2
 emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
 
 ;; drift
-drift = f
+drift = 2*f
 emf->propagate, drift=drift
 title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
 mywindow,4,1

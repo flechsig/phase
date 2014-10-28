@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <19 Sep 14 15:51:10 flechsig> 
+dnl   Time-stamp: <28 Oct 14 08:23:55 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -42,7 +42,7 @@ AC_REVISION([$Revision$]) # no autoscan
 AC_CONFIG_AUX_DIR([config]) # no autoscan
 AC_CONFIG_MACRO_DIR([config])
 
-AM_INIT_AUTOMAKE # no autoscan
+AM_INIT_AUTOMAKE([subdir-objects]) # no autoscan
 
 dnl AC_CONFIG_HEADERS([phase/config.h]) # autoscan AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_HEADERS([config.h])
