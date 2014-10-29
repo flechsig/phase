@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <27 Oct 14 10:25:48 flechsig> 
+;  Time-stamp: <29 Oct 14 16:54:30 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -329,7 +329,7 @@ return
 end 
 ;; end fermidiracbeam
 
-pro phase::fzp, f=f, d=d, _EXTRA=extra
+pro phase::fzp, f=f, d=d, phasemap=phasemap, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::fzp
@@ -398,6 +398,7 @@ for i=0, nz-1 do begin
     endfor
 endfor
 *self.field= fzpcomp* field
+if n_elements(phasemap) ne 0 then phasemap=atan(fzpcomp,/phase)
 return 
 end
 ;; end fzp
