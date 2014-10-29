@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/Makefile.am
 # Date      : <01 Apr 14 09:25:08 flechsig> 
-# Time-stamp: <11 Sep 14 08:42:44 flechsig> 
+# Time-stamp: <29 Oct 14 10:50:13 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -51,10 +51,10 @@ pkgdata_DATA =
 EXTRA_DIST = fkoe.par gauss_beam.par mk_surf.par 
 
 ## flags
-AM_CPPFLAGS = -DLINUX -DNOGUI
+AM_CPPFLAGS = -DLINUX -DNOGUI @HDF5_CPPFLAGS@
 AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W 
 
-AM_LDFLAGS =  @HDF5_LDFLAGS@ @FLIBS@   ##-L@HDF5@/lib -lhdf5
+AM_LDFLAGS =  @MY_HDF5_LIBS@ @FLIBS@   ##-L@HDF5@/lib -lhdf5
 
 ##we always use the c linker
 ##F77LINK = $(LINK)

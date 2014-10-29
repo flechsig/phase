@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <28 Oct 14 14:01:51 flechsig> 
+dnl   Time-stamp: <29 Oct 14 10:43:16 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -310,6 +310,9 @@ dnl end QWT
 
 dnl Check for HDF5 support
 AX_LIB_HDF5
+dnl UF Oct 2014 I observed problems in the substitution of HDF5_LIBS 
+dnl UF Oct 2014 I merge HDF5_LDFLAGS and HDF5_LIBS into MY_HDF5_LIBS
+AC_SUBST([MY_HDF5_LIBS], [${HDF5_LDFLAGS} ${HDF5_LIBS}])
 
 dnl Check for FFTW3 (FFT)
 dnl AX_CHECK_FFTW3
@@ -555,8 +558,10 @@ echo "MPI:                     : ${use_mpi}"
 echo "FFTW3:                   : ${acx_fftw3_ok}"
 echo "incl. experiental code   : ${enable_experimental}"
 echo " "
-dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_CFLAGS  =" $HDF5_CFLAGS
-dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_CPPFLAGS=" $HDF5_CPPFLAGS
-dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_LDFLAGS =" $HDF5_LDFLAGS
-dnl echo "******* UF debug ax_lib_hdf5.m4 HDF5_VERSION =" $HDF5_VERSION
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_CFLAGS  =" $HDF5_CFLAGS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_CPPFLAGS=" $HDF5_CPPFLAGS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_LDFLAGS =" $HDF5_LDFLAGS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_LIBS    =" $HDF5_LIBS
+echo "******* UF debug             MY_HDF5_LIBS    =" $MY_HDF5_LIBS
+echo "******* UF debug ax_lib_hdf5.m4 HDF5_VERSION =" $HDF5_VERSION
 ## end /afs/psi.ch/user/f/flechsig/phase/src/configure.ac

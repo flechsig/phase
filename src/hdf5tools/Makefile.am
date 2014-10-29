@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/Makefile.am
 #  Date      : <15 Mar 13 12:33:54 flechsig> 
-#  Time-stamp: <11 Sep 14 15:36:05 flechsig> 
+#  Time-stamp: <29 Oct 14 10:50:54 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -105,7 +105,7 @@ AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W
 #####-I@QT@/mkspecs/linux-g++       
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
-AM_LDFLAGS = @HDF5_LDFLAGS@ -lm -lz    
+AM_LDFLAGS = @MY_HDF5_LIBS@ -lm -lz    
 
 ##we always use the c linker
 F77LINK = $(LINK)

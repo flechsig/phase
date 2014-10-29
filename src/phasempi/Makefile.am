@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <02 Sep 14 12:20:53 flechsig> 
+#  Time-stamp: <29 Oct 14 10:51:22 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -145,7 +145,7 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 	README
 
 ## flags
-AM_CPPFLAGS = -DLINUX -DNOGUI
+AM_CPPFLAGS = -DLINUX -DNOGUI @HDF5_CPPFLAGS@
 AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W 
 
 ##-I@HDF5@/include \
@@ -155,7 +155,7 @@ AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W
 ###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
 #####	     @FLIBS@    @CFORLIB@
 
-AM_LDFLAGS =  @HDF5_LDFLAGS@ @FLIBS@   ##-L@HDF5@/lib -lhdf5
+AM_LDFLAGS =  @MY_HDF5_LIBS@ @FLIBS@   ##-L@HDF5@/lib -lhdf5
 
 ##we always use the c linker
 F77LINK = $(LINK)

@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <28 Oct 14 14:06:46 flechsig> 
+#  Time-stamp: <29 Oct 14 10:57:48 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -51,7 +51,7 @@ phaseextract_SOURCES    = phaseextract.c cost.c cost.h \
 	../phase/phasefor.F \
 	../phase/error.c        ../phase/xstrdup.c \
 	../phase/cutils.c       ../phase/rtrace.c \
-	../phase/bline.c \
+	../phase/bline.c         \
         ../phase/myhdf5.c       ../phase/myhdf5.h \
 	../phase/reflectivity.c ../phase/reflectivity.h \
 	../phase/heighterror.c  ../phase/heighterror.h
@@ -61,7 +61,7 @@ phaseextract_LDADD = $(libdir)/@LIBPHASE@
 AM_CPPFLAGS = -DLINUX -DEXTR -DNOGUI @HDF5_CPPFLAGS@
 AM_CFLAGS   = -I../phase -W 
 ##AM_FFLAGS   = @FDEBUG@
-AM_LDFLAGS =  @HDF5_LDFLAGS@ @FLIBS@ @CFORLIB@
+AM_LDFLAGS =  @MY_HDF5_LIBS@ @FLIBS@ @CFORLIB@
 
 ##we use the c linker
 F77LINK = $(LINK)

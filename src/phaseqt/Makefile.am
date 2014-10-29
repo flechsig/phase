@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <28 Oct 14 13:48:25 flechsig> 
+#  Time-stamp: <29 Oct 14 10:48:18 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -175,28 +175,28 @@ else
 endif
 
 ### UF explicit linking to -lQtGui -lQtCore -lQtSvg is required for ubuntu
-if QT5
+if QT5 
 if QWT
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent \
-	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
+	-L@QWT@/lib -lqwt @MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 else
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent \
-	@HDF5_LDFLAGS@  \
+	@HDF5_LDFLAGS@ @MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 endif
 else
 if QWT
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQtGui -lQtCore -lQtSvg \
-	-L@QWT@/lib -lqwt @HDF5_LDFLAGS@  \
+	-L@QWT@/lib -lqwt @MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 else
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQtGui -lQtCore -lQtSvg \
-	@HDF5_LDFLAGS@  \
+	@MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 endif
 endif
