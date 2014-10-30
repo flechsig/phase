@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <29 Oct 14 10:43:16 flechsig> 
+dnl   Time-stamp: <30 Oct 14 08:37:54 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -312,7 +312,7 @@ dnl Check for HDF5 support
 AX_LIB_HDF5
 dnl UF Oct 2014 I observed problems in the substitution of HDF5_LIBS 
 dnl UF Oct 2014 I merge HDF5_LDFLAGS and HDF5_LIBS into MY_HDF5_LIBS
-AC_SUBST([MY_HDF5_LIBS], [${HDF5_LDFLAGS} ${HDF5_LIBS}])
+AC_SUBST([MY_HDF5_LIBS], ["${HDF5_LDFLAGS} ${HDF5_LIBS}"])
 
 dnl Check for FFTW3 (FFT)
 dnl AX_CHECK_FFTW3
