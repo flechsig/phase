@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <29 Oct 14 17:06:37 flechsig> 
+;  Time-stamp: <31 Oct 14 09:16:40 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -370,20 +370,23 @@ drn= f* wavelength/d   ;; outermost zone width
 n  = d/(4* drn)
 res= 1.22* drn
 na = 0.610* wavelength/ res   ;; spatial resolution
-dof= wavelength/(2.0*na*na)  ;; depth of field +/-
-dlambda= wavelength/n        ;; otherwise chromatic blurring
+dof= wavelength/(2.0*na*na)   ;; depth of field +/-
+dlambda= wavelength/n         ;; otherwise chromatic blurring
+r1= sqrt(wavelength*(f+ wavelength/4.0)) ;; first edge
 
 print, '** Fresnel zone plate **'
+print, '========================'
 print, 'focal length     f (m) =', f
 print, 'diameter         D (m) =', d
 print, 'wavelength         (m) =', wavelength
 print, 'outerm. zone width (m) =', drn
+print, 'inner zone rad. r1 (m) =', r1
 print, 'number of zones  N     =', n
 print, 'spatial resolution (m) =', res
 print, 'numerical aperture     =', na
 print, 'DOF +/-            (m) =', dof
 print, 'dlambda must be    (m) <', dlambda
-
+print, '========================'
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
 fzpcomp= dcomplexarr(nz, ny) ;; make a complex array 
@@ -397,8 +400,7 @@ for i=0, nz-1 do begin
             ;; the phase shift n/2 * 2pi
             pshift= nr * !dpi
             fzpcomp[i,j] = complex(cos(pshift), sin(pshift), /double)
-        endif
-        else begin
+        endif else begin
             fzpcomp[i,j] = complex(0.0, 0.0, /double)
         endelse
     endfor
