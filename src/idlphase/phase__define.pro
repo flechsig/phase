@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <31 Oct 14 09:16:40 flechsig> 
+;  Time-stamp: <31 Oct 14 10:09:13 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -374,6 +374,7 @@ dof= wavelength/(2.0*na*na)   ;; depth of field +/-
 dlambda= wavelength/n         ;; otherwise chromatic blurring
 r1= sqrt(wavelength*(f+ wavelength/4.0)) ;; first edge
 
+
 print, '** Fresnel zone plate **'
 print, '========================'
 print, 'focal length     f (m) =', f
@@ -386,6 +387,7 @@ print, 'spatial resolution (m) =', res
 print, 'numerical aperture     =', na
 print, 'DOF +/-            (m) =', dof
 print, 'dlambda must be    (m) <', dlambda
+print, 'our grid dz        (m) =', z_vec[1]-z_vec[0]
 print, '========================'
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)

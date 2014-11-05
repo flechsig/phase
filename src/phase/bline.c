@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <06 Oct 14 09:28:22 flechsig>  */
+/*   Time-stamp: <04 Nov 14 16:33:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3309,7 +3309,7 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
   for (i= 0; i <= maxord; i++) 
     for (j= 0; j <= maxord; j++) 
 /* write also i and j to file J.B. 9.11.2003 */
-      if ((i + j) <= maxord)  fprintf(f, "%d %d %lE\n", i, j, dp[i+j*(maxord+1)]);  
+      if ((i + j) <= maxord)  fprintf(f, "%d %d %+.12lE\n", i, j, dp[i+j*(maxord+1)]);  
   fclose(f); 
 #ifdef DEBUG
   printf("WriteMKos: done\n");

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <27 Oct 14 10:30:55 flechsig> 
+;  Time-stamp: <31 Oct 14 10:28:28 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -77,38 +77,41 @@ print, 'charsize: ', !P.CHARSIZE
 print, 'charsize: ', !P.CHARSIZE
 
 
-Nz         = 243
-wavelength = 1e-10
-sourcedist = 120
-waist      = 27.7e-6 
-size       = 1.5e-3
+Nz         = 501
+wavelength = 3e-9
+sourcedist = 1
+waist      = 10e-6 
+size       = 1e-3
 
 emf=initphase()
 
 ;; source
-emf->gaussbeam, dist=sourcedist, sizez=size, w0=waist,  wavelength=wavelength
-title = 'source in ' +  string(sourcedist,FORMAT="(f6.1)") + 'm'
+emf->gaussbeam, dist=sourcedist, sizez=size, w0=waist,  wavelength=wavelength, nz=nz
+title = 'source in ' +  string(sourcedist, FORMAT="(f6.1)") + 'm'
 
 mywindow,2,1
-emf->plotintensity, title=title+ ' (intensity)'
+emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
 mywindow,2,2
-emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE
+;;emf->statistics
+
 
 ;; fzp
-f= 1
-d= 1e-3
+f= 0.5
+d= 5e-4
 emf->fzp, f=f, d=d
 title = 'after FZP' 
 mywindow,3,1
-emf->plotintensity, title=title+ ' (intensity)'
+emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
 mywindow,3,2
-emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+;;emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+;;emf->plotphase, title=title+ ' (phase)',charsize=!P.CHARSIZE;
 
 ;; drift
-drift = 2*f
+drift = f/4
 emf->propagate, drift=drift
 title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
 mywindow,4,1
-emf->plotintensity, title=title+ ' (intensity)'
+emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
 mywindow,4,2
-emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+emf->plotphase, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE
