@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <31 Oct 14 10:28:28 flechsig> 
+;  Time-stamp: <06 Nov 14 17:32:22 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -76,42 +76,45 @@ print, 'charsize: ', !P.CHARSIZE
 !P.CHARSIZE= 0.6
 print, 'charsize: ', !P.CHARSIZE
 
-
 Nz         = 501
 wavelength = 3e-9
-sourcedist = 1
-waist      = 10e-6 
+sourcedist = 20
+waist      = 100e-6 ;; 100 mum = 117 mum fwhm
 size       = 1e-3
 
 emf=initphase()
 
 ;; source
-emf->gaussbeam, dist=sourcedist, sizez=size, w0=waist,  wavelength=wavelength, nz=nz
+emf->gaussbeam, dist=sourcedist, sizez=size, w0=waist,  wavelength=wavelength, nz=nz 
 title = 'source in ' +  string(sourcedist, FORMAT="(f6.1)") + 'm'
 
-mywindow,2,1
-emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
-mywindow,2,2
-emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE
+;mywindow,2,1
+;emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
+;mywindow,2,2
+;emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE
 ;;emf->statistics
 
-
 ;; fzp
-f= 0.5
+f= 0.2
 d= 5e-4
 emf->fzp, f=f, d=d
 title = 'after FZP' 
 mywindow,3,1
 emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
 mywindow,3,2
-;;emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)'
+emf->plotphase,  title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE, /phunwrap
 ;;emf->plotphase, title=title+ ' (phase)',charsize=!P.CHARSIZE;
+;;emf->statistics
 
 ;; drift
-drift = f/4
+drift = 1.15*f;;1.15*f
 emf->propagate, drift=drift
+emf->aperture, type=20, p1=d/4.0 ;; needed otherwise we see -1st order
 title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
 mywindow,4,1
 emf->plotintensity, title=title+ ' (intensity)',charsize=!P.CHARSIZE
 mywindow,4,2
-emf->plotphase, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE
+emf->plotphase, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE,/phunw
+mywindow,4,3
+emf->plotprofile, title=title+ ' (profile)'
+emf->statistics,/nofit
