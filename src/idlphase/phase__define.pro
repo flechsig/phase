@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <31 Oct 14 10:09:13 flechsig> 
+;  Time-stamp: <06 Nov 14 15:26:46 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -335,7 +335,7 @@ pro phase::fzp, f=f, d=d, phasemap=phasemap, _EXTRA=extra
 ;   phase::fzp
 ;
 ; PURPOSE:
-;   calculate the electric field after a Fresnel zone plate
+;   calculate the electric field after a Fresnel zone plate, includes a zero order stop
 ;
 ; CATEGORY:
 ;   Phase
@@ -396,7 +396,7 @@ maxr= 0.5*d
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         rr= sqrt(z_vec[i]^2 + y_vec[j]^2)           ;; the radial distance 
-        if rr lt maxr then begin 
+        if (rr gt r1) and (rr lt maxr) then begin   ;; zero order stop and apertur
             nr= 2.0/wavelength*(sqrt(f*f+ rr*rr)- f)    ;; calc n(r)
             ;; the pathlength == n * wavelength/2 + f
             ;; the phase shift n/2 * 2pi
@@ -2220,7 +2220,8 @@ self.z_vec= ptr_new(z_vec)
 return
 end ;; setz_vec
 
-pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig, max=max, total=total
+pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, ysig=ysig, zsig=zsig, $
+         max=max, total=total, nofit=nofit
 ;+
 ; NAME:
 ;   phase::statistics
@@ -2244,6 +2245,7 @@ pro phase::statistics, comment, amplitude=amplitude, yfwhm=yfwhm, zfwhm=zfwhm, y
 ; KEYWORD PARAMETERS:
 ;   amplitude: statistics of field - default is intensity field^2/377
 ;   max:       maximum output
+;   nofit:     no fit
 ;   total:     integral output
 ;   yfwhm:     vertical fwhm (output)
 ;   ysig :     vertical rms (output)
@@ -2286,15 +2288,17 @@ mytot= total(myfield, /double) * binsize   ;; sum of all bins*binsize
 
 field_n= myfield/mymax                ;; normalized
 stat   = dblarr(7)
-fit    = gauss2dfit(field_n, stat, z_vec, y_vec)
+if n_elements(nofit) eq 0 then fit= gauss2dfit(field_n, stat, z_vec, y_vec)
 
 print, '=============================================================================='
 print, title
 print, '=============================================================================='
+if n_elements(nofit) eq 0 then begin
 print, 'z fwhm=',stat[2]*2.35, ' m, rms = ',stat[2], ' m'
 print, 'y fwhm=',stat[3]*2.35, ' m, rms = ',stat[3], ' m'
 print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
+endif
 print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
 print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
@@ -2306,8 +2310,10 @@ print, 'total intensity (photons)   = ', mytot/1.6e-19
 endif
 ;;print, 'debug: mysum, binsize=', mysum, binsize
 print, '=============================================================================='
+if n_elements(nofit) eq 0 then begin
 print, 'result of gauss2dfit in (m):', stat
 print, '=============================================================================='
+endif
 
 total=mytot
 max= mymax
