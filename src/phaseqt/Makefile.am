@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <29 Oct 14 10:48:18 flechsig> 
+#  Time-stamp: <05 Nov 14 14:19:29 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -178,12 +178,12 @@ endif
 if QT5 
 if QWT
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
-	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent \
+	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
 	-L@QWT@/lib -lqwt @MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 else
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
-	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent \
+	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
 	@HDF5_LDFLAGS@ @MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 endif
