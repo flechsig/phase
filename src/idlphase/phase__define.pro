@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <06 Nov 14 15:26:46 flechsig> 
+;  Time-stamp: <07 Nov 14 16:56:44 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -400,7 +400,7 @@ for i=0, nz-1 do begin
             nr= 2.0/wavelength*(sqrt(f*f+ rr*rr)- f)    ;; calc n(r)
             ;; the pathlength == n * wavelength/2 + f
             ;; the phase shift n/2 * 2pi
-            pshift= nr * !dpi
+            pshift= fix(nr) * !dpi
             fzpcomp[i,j] = complex(cos(pshift), sin(pshift), /double)
         endif else begin
             fzpcomp[i,j] = complex(0.0, 0.0, /double)
