@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <14 Nov 14 17:28:52 flechsig>  */
+/*   Time-stamp: <14 Nov 14 17:30:49 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -45,11 +45,6 @@
 #include <string.h>
 #include <time.h> 
 #include <math.h>
-
-/* workaround */
-#ifdef NOGUI
-#define QTGUI
-#endif
 
 #include "cutils.h"
 
