@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <14 Nov 14 17:09:43 flechsig>  */
+/*   Time-stamp: <14 Nov 14 17:12:58 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -62,7 +62,8 @@ void     complex_div(COMPLEX *, COMPLEX *, COMPLEX *);
 void     complex_pow(COMPLEX *, double, COMPLEX *);
 int      fidx_mX4(int, int, int, int, int);
 int      fexists(char *); 
-double   uRandom(double), RVZ();   
+double   uRandom(double);
+double   RVZ();   
    
 #endif  /*  CUTILS_H */     
 /* end cutils.h */
