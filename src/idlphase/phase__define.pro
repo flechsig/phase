@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <14 Nov 14 12:45:38 flechsig> 
+;  Time-stamp: <14 Nov 14 13:33:41 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -404,7 +404,7 @@ for i=0, nz-1 do begin
         rr= sqrt(z_vec[i]^2 + y_vec[j]^2)                  ;; the radial distance 
         if (rr gt r1) and (rr lt maxr) then begin          ;; zero order stop and apertur
             nr= fix(2.0/wavelength*(sqrt(f*f+ rr*rr)- f))  ;; calc n(r) (zone edge number)
-            if (N MOD 2) ne 0 then fzpcomp[i,j]= complex(1.0, 0.0, /double) ;; amplitude
+            if (nr MOD 2) ne 0 then fzpcomp[i,j]= complex(1.0, 0.0, /double) ;; amplitude
             ;; the pathlength == n * wavelength/2 + f
             ;; the phase shift n/2 * 2pi
             ;; pshift= fix(nr) * !dpi
