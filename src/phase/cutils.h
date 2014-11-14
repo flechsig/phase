@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:47:14 flechsig>  */
+/*   Time-stamp: <14 Nov 14 16:57:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -56,9 +56,6 @@ typedef struct ComplexStruct {
 	double re,im; 
 	} COMPLEX ;
 
-
-char    *delversion(char *); /* entfernt Versionsnummer von VMS- Filenamen */
-char    *FnameBody(char *);  /* holt Rumpf von VMS- - Filenamen            */
 char    *PrependEnv(char* , char *);
 void 	 beep(int); 
 void	 CheckUser(char *, char *); 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:50:22 flechsig>  */
+/*   Time-stamp: <14 Nov 14 16:57:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -56,15 +56,8 @@
 void beep(int n)
 {
   while ((n--) > 0)
-    fprintf(stderr,"%c", 7);
+    fprintf(stderr, "%c", 7);
 }
-
-char *delversion(char *fname) /* entfernt Versionsnummer von VMS- Filenamen */ 
-{
-  char *semi;
-  if ((semi= strchr(fname, ';')) != NULL) *semi= '\0'; 
-  return fname;
-}   
 
 char *PrependEnv(char* env, char *str)
 /* prepend the contents of an environment variable on a string, 
@@ -91,19 +84,6 @@ char *PrependEnv(char* env, char *str)
      }
    return str;
 } /* end PrependEnv */
-
-/* filename without extension */
-char *FnameBody(char *pfad)      
-/* a) sucht von rechts /   */
-/* b) replace . with \0    */
-/* !! modifiziert pfad!    */
-{
-  char *ch, *ch1;
-
-  if ((ch1= strrchr(pfad, '/')) == NULL) ch1= pfad;
-  if ((ch = strrchr(ch1, '.'))  != NULL) *ch= '\0'; 
-  return pfad;
-}
 
 double uRandom(double max)         /* Zufallszahl zw 0... max */
 /* musste am 24.4.98 umgenannt werden da es bei der neuen vms- Version 
