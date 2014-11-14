@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <28 Aug 14 16:12:38 flechsig> 
+//  Time-stamp: <14 Nov 14 16:56:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -135,9 +135,11 @@ void PhaseQt::buildElement(struct ElementType *listpt)
 // removes a possible extension
 void PhaseQt::initSet(const char *fname, const int all)
 {
-  char name[MaxPathLength];
-  strncpy(name, fname, MaxPathLength);
-  FnameBody(name);
+  char name0[MaxPathLength], *name;
+  strncpy(name0, fname, MaxPathLength);
+  //  FnameBody(name);
+
+  name= basename(name0);
 
 #ifdef DEBUG
   cout << "debug: PhaseQt::initSet called, all= " << all << endl; 

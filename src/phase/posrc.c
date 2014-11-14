@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <27 Oct 14 08:40:51 flechsig>  */
+/*  Time-stamp: <14 Nov 14 16:35:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -244,13 +244,22 @@ void gauss_source1c(struct BeamlineType *bl)
   struct EmfType *emfp;
 
 #ifdef DEBUG
-  printf("debug: %s gauss_source1c called\n", __FILE__);
+  printf("debug: %s: gauss_source1c called\n", __FILE__);
 #endif
 
   dist      = bl->poso1c.dist;
   rows= cols= bl->poso1c.nyz;
   w0        = bl->poso1c.waist;
   wavelength= bl->BLOptions.lambda*1e-3;
+
+  if ((fabs(wavelength) <= ZERO) || (fabs(w0) <= ZERO))
+    {
+      beep(5);
+      printf("error: !!! source calculation not possible, wavelength == %f, w0 == %f-- return !!\n", 
+	     wavelength, w0);
+      return;
+    } 
+
   k         = PI * 2/ wavelength;                           // wave number
   z0        = PI * pow(w0, 2)/ wavelength;       
            // Rayleigh Range
@@ -261,15 +270,17 @@ void gauss_source1c(struct BeamlineType *bl)
   truncation= 0;
   mywidthyz = bl->poso1c.widthyz;
 
+  printf("\n>>> GAUSSian source parameter >>>\n");
   printf("dist (m)       = %g\n", dist);
   printf("wavelength (m) = %g\n", wavelength);
-  printf("Nz             = %d, Ny     = %d\n", cols, rows);
-  printf("sizeyz (m)    = %g\n", mywidthyz);
-  printf("w0    (m) = %g,  dist  (m) = %g\n", w0, dist);
-  printf("z0    (m) = %g, (Rayleigh Range= +/- z0)\n", z0);
-  printf("w     (m) = %g, w2 (m^2) = %g\n", w, w2);
-  printf("eta  (rad) = %g,  Ri (1/m) = %g\n", eta, Ri);
-
+  printf("Nz x Ny        = %d x %d\n", cols, rows);
+  printf("sizeyz (m)     = %g\n", mywidthyz);
+  printf("w0 (m)         = %g\n", w0);
+  printf("z0 (m)         = %g (Rayleigh Range= +/- z0)\n", z0);
+  printf("w (m)          = %g\n", w);
+  printf("eta (rad)      = %g\n", eta);
+  printf("Ri (1/m)       = %g\n", Ri);
+  printf("<<< GAUSSian source parameter <<<\n\n");
   if ((rows < 1) || (cols < 1)) 
     {
       printf("warning: rows || cols < 1- return\n");

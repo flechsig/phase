@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <22 Aug 14 11:43:15 flechsig> 
+//  Time-stamp: <14 Nov 14 15:37:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -153,7 +153,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 #ifdef DEBUG
   cout << "debug setupModelData" << endl;
-  cout << "config file >>parameter.default<< has " << lines.count() << " lines" << endl;
+  cout << "      config file >>parameter.default<< has " << lines.count() << " lines" << endl;
 #endif
 
   int number = 0;
@@ -284,7 +284,7 @@ void TreeModel::selectSlot(const QModelIndex &index)
 // change the value of an item with index idx
 void TreeModel::updateItemVal(QString val, int idx)
 {
-#ifdef DEBUG  
+#ifdef DEBUG1  
   cout << __FILE__ << ": updateItemVal called, idx: " << idx << " val: " 
        << val.toLocal8Bit().constData() << endl;
 #endif

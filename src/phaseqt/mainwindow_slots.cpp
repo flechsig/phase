@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <06 Oct 14 09:25:41 flechsig> 
+//  Time-stamp: <14 Nov 14 15:50:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1166,10 +1166,10 @@ void MainWindow::appendElement()
     myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
+  printf("debug: appendElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
 #endif 
  
-  QListWidgetItem *item= new QListWidgetItem("New Element");
+  QListWidgetItem *item= new QListWidgetItem("New_Element");
   elementList->insertItem(pos, item);
   item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
   tmplist= XMALLOC(struct ElementType, myparent->myBeamline()->elementzahl); // alloc memory
@@ -1187,7 +1187,7 @@ void MainWindow::appendElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  snprintf(listpt->elementname, MaxPathLength, "%s", "New Element");
+	  snprintf(listpt->elementname, MaxPathLength, "%s", "New_Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -2063,7 +2063,6 @@ void MainWindow::insertElement()
   printf("debug: insertElement called\n");
 #endif
 
-
   struct ElementType *tmplist, *listpt, *tmplistpt;
   int i;
   int pos= elementList->currentRow();
@@ -2071,10 +2070,10 @@ void MainWindow::insertElement()
   if (abs((int)(myparent->myBeamline()->elementzahl)) > 1000) myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("AddBLElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
+  printf("debug: insertElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
 #endif 
  
-  QListWidgetItem *item= new QListWidgetItem("New Element");
+  QListWidgetItem *item= new QListWidgetItem("New_Element");
   elementList->insertItem(pos, item);
   item->setFlags (item->flags () | Qt::ItemIsEditable);               // edit item
   tmplist= XMALLOC(struct ElementType, myparent->myBeamline()->elementzahl); // alloc memory
@@ -2088,12 +2087,12 @@ void MainWindow::insertElement()
   for (i= 0; i< (int)myparent->myBeamline()->elementzahl; i++, listpt++)
     {
 #ifdef DEBUG
-      printf("i= %d, pos= %d, nmax %u\n", i, pos, myparent->myBeamline()->elementzahl);
+      printf("debug: i= %d, pos= %d, nmax %u\n", i, pos, myparent->myBeamline()->elementzahl);
 #endif
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  snprintf(listpt->elementname, MaxPathLength, "%s", "New Element");
+	  snprintf(listpt->elementname, MaxPathLength, "%s", "New_Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -2105,7 +2104,9 @@ void MainWindow::insertElement()
   myparent->myBeamline()->beamlineOK &= ~(mapOK | resultOK);
   //  WriteBLFile(PHASESet.beamlinename, bl); 
   XFREE(tmplist);
-  printf("inserElement: end list should have %u elements\n", myparent->myBeamline()->elementzahl);
+#ifdef DEBUG
+  printf("debug: insertElement: end, list should have %u elements\n", myparent->myBeamline()->elementzahl);
+#endif
 } // insertElement
 
 // slot changed  lambda

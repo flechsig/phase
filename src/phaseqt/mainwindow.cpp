@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <06 Oct 14 13:44:19 flechsig> 
+//  Time-stamp: <14 Nov 14 15:27:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -170,7 +170,7 @@ void MainWindow::createActions()
 
     // UF test code 11.1.2012
 #ifdef DEBUG
-    printf("\nQT_VERSION: 0x%X\n\n", QT_VERSION);
+    printf("\nQT_VERSION: 0x%X, QTW_VERSION: 0x%X\n\n", QT_VERSION, QWT_VERSION);
 #endif
 #if QT_VERSION > 0x406000        
     quitAct->setShortcuts(QKeySequence::Quit);  // not available for QT_VERSION < 0x406000
