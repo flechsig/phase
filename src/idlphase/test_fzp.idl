@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <14 Nov 14 13:15:07 flechsig> 
+;  Time-stamp: <14 Nov 14 13:45:31 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -78,7 +78,7 @@ print, 'charsize: ', !P.CHARSIZE
 
 Nz         = 501
 wavelength = 3e-9
-sourcedist = 1
+sourcedist = 5
 waist      = 100e-6 ;; 100 mum = 117 mum fwhm
 size       = 1e-3
 
@@ -107,7 +107,7 @@ emf->plotphase,  title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE, /phunwrap
 ;;emf->statistics
 
 ;; drift
-drift = 1.*f;;1.15*f
+drift = 1.2*f;;1.15*f
 emf->propagate, drift=drift
 ;;emf->aperture, type=20, p1=d/4.0 ;; needed otherwise we see -1st order
 title = 'Propagated to ' +  string(drift,FORMAT="(f6.1)") + 'm'
@@ -117,4 +117,4 @@ mywindow,4,2
 emf->plotphase, title=title+ ' (phase /phunw)',charsize=!P.CHARSIZE,/phunw
 mywindow,4,3
 emf->plotprofile, title=title+ ' (profile)'
-emf->statistics,/nofit
+emf->statistics;;,/nofit
