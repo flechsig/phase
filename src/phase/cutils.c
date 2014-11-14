@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <14 Nov 14 17:03:35 flechsig>  */
+/*   Time-stamp: <14 Nov 14 17:28:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -139,9 +139,9 @@ void CheckUser(char *logname, char *progname)
   FILE *f;
   
   time(&Times); lokal= localtime(&Times); p= asctime(lokal);
-#ifndef QTGUI
-  cuserid(puffer); 
-#endif
+
+  strncpy(puffer, getenv("LOGNAME"), 99);
+
   if ((f= fopen(logname, "r")) == NULL)
     {
       fprintf(stderr, 
@@ -149,13 +149,13 @@ void CheckUser(char *logname, char *progname)
 	      progname); 
       exit(-1);
     } else fclose(f);
+
   if ((f= fopen(logname, "a+")) != NULL)
     {
       fprintf(f,"%s\t%s\t%s", puffer, progname, p);  
       fclose(f);
     }   
 }
-
 
 int fexists(char *path)
      /* Uwe 3.6.96 					*/
