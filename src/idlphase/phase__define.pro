@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <07 Nov 14 16:56:44 flechsig> 
+;  Time-stamp: <14 Nov 14 12:45:38 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -329,13 +329,14 @@ return
 end 
 ;; end fermidiracbeam
 
-pro phase::fzp, f=f, d=d, phasemap=phasemap, _EXTRA=extra
+pro phase::fzp, ampmap=ampmap, f=f, d=d, phasemap=phasemap, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::fzp
 ;
 ; PURPOSE:
-;   calculate the electric field after a Fresnel zone plate, includes a zero order stop
+;   calculate the electric field after a Fresnel zone plate, includes a zero order stop, 
+;   no material properties so far, the current version has just an amplitude map
 ;
 ; CATEGORY:
 ;   Phase
@@ -347,8 +348,10 @@ pro phase::fzp, f=f, d=d, phasemap=phasemap, _EXTRA=extra
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;   ampmap: amplitude map
 ;   f: first order focal length in m
 ;   d: diameter in m
+;   phasemap: export the phasemap as double array
 ;
 ; OUTPUTS:
 ;   no
@@ -366,13 +369,15 @@ y_vec= *self.y_vec
 z_vec= *self.z_vec
 wavelength= self.wavelength
 
-drn= f* wavelength/d   ;; outermost zone width
-n  = d/(4* drn)
-res= 1.22* drn
-na = 0.610* wavelength/ res   ;; spatial resolution
-dof= wavelength/(2.0*na*na)   ;; depth of field +/-
-dlambda= wavelength/n         ;; otherwise chromatic blurring
-r1= sqrt(wavelength*(f+ wavelength/4.0)) ;; first edge
+d      = double(d) 
+f      = double(f)
+drn    = f* wavelength/d          ;; outermost zone width
+n      = d/(4* drn)
+res    = 1.22* drn
+na     = 0.610* wavelength/ res   ;; spatial resolution
+dof    = wavelength/(2.0*na*na)   ;; depth of field +/-
+dlambda= wavelength/n             ;; otherwise chromatic blurring
+r1     = sqrt(wavelength*(f+ wavelength/4.0)) ;; first edge
 
 
 print, '** Fresnel zone plate **'
@@ -395,20 +400,22 @@ fzpcomp= dcomplexarr(nz, ny) ;; make a complex array
 maxr= 0.5*d
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
-        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)           ;; the radial distance 
-        if (rr gt r1) and (rr lt maxr) then begin   ;; zero order stop and apertur
-            nr= 2.0/wavelength*(sqrt(f*f+ rr*rr)- f)    ;; calc n(r)
+        fzpcomp[i,j]= complex(0.0, 0.0, /double)           ;; initialize with 0
+        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)                  ;; the radial distance 
+        if (rr gt r1) and (rr lt maxr) then begin          ;; zero order stop and apertur
+            nr= fix(2.0/wavelength*(sqrt(f*f+ rr*rr)- f))  ;; calc n(r) (zone edge number)
+            if (N MOD 2) ne 0 then fzpcomp[i,j]= complex(1.0, 0.0, /double) ;; amplitude
             ;; the pathlength == n * wavelength/2 + f
             ;; the phase shift n/2 * 2pi
-            pshift= fix(nr) * !dpi
-            fzpcomp[i,j] = complex(cos(pshift), sin(pshift), /double)
-        endif else begin
-            fzpcomp[i,j] = complex(0.0, 0.0, /double)
-        endelse
+            ;; pshift= fix(nr) * !dpi
+            ;; fzpcomp[i,j] = complex(cos(pshift), sin(pshift), /double) ;; computing time
+            ;; if (N MOD 2) eq 0 then fzpcomp[i,j] = complex(-1.0, 0.0, /double) else fzpcomp[i,j] = complex(1.0, 0.0, /double)
+        endif 
     endfor
 endfor
 *self.field= fzpcomp* field
-if n_elements(phasemap) ne 0 then phasemap=atan(fzpcomp,/phase)
+if n_elements(phasemap) ne 0 then phasemap= atan(fzpcomp,/phase)
+if n_elements(ampmap)   ne 0 then ampmap  = abs(fzpcomp)
 return 
 end
 ;; end fzp
