@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.h */
 /*  Date      : <28 Nov 06 09:06:56 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:47:10 flechsig>  */
+/*  Time-stamp: <14 Nov 14 17:07:43 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -64,10 +64,9 @@ void RayTracec(struct BeamlineType *),
 #endif
 
 extern void extractmap35(double *, double*, double *, double *, double*, 
-			 int *),
-	    ray_tracef(struct RayType *, struct RayType *, int *, 
-                       double *, double*, double *, double *),
-            readmatrixfile35(FString *, double *);
+			 int *);
+extern void ray_tracef(struct RayType *, struct RayType *, int *, 
+                       double *, double*, double *, double *);
 	    
 double gauss(double);
 #endif

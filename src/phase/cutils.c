@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <14 Nov 14 16:57:50 flechsig>  */
+/*   Time-stamp: <14 Nov 14 17:03:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -156,26 +156,11 @@ void CheckUser(char *logname, char *progname)
     }   
 }
 
-FString *CreateFString(FString *fstring, char *cstring)  
-/* erzeugt einen Fortran- String fuer VMS */
-/* unter Unix funktioniert das nur falls nur ein Parameter uebergeben wird,
-   der Absoft Compiler erwartet den char * an der richtigen Position
-   die Laengen Parameter werden als Liste am Ende angehaengt
-*/
-
-{        
-  int l= strlen(cstring);
-
-  fstring->string= cstring;
-  fstring->length= l;
-   
-  return (fstring);
-}         
 
 int fexists(char *path)
-     /* Uwe 3.6.96 						*/
-     /* testet ob eine Datei mit namen path existiert        */
-     /* return: 1 wenn existiert, sonst 0                    */
+     /* Uwe 3.6.96 					*/
+     /* testet ob eine Datei mit namen path existiert   */
+     /* return: 1 wenn existiert, sonst 0               */
 {
   FILE *f;
   int ex;
