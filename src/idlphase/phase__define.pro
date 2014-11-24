@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <14 Nov 14 13:33:41 flechsig> 
+;  Time-stamp: <24 Nov 14 17:05:18 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1006,7 +1006,7 @@ if n_elements(min) ne 0 then m= min(field, mindex) else m= max(field, mindex)
 mz= mindex mod ny 
 my= mindex / ny
 
-print, nz, ny, mz, my, m, mindex
+print, 'getprofile: ', nz, ny, mz, my, m, mindex
 
 if n_elements(z) ne 0 then prof= reform(field[*,my]) else prof= reform(field[mz,*])
 
