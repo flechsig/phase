@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <24 Nov 14 17:14:35 flechsig> 
+;  Time-stamp: <25 Nov 14 15:19:31 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -329,7 +329,7 @@ return
 end 
 ;; end fermidiracbeam
 
-pro phase::fzp, ampmap=ampmap, f=f, d=d, phasemap=phasemap, _EXTRA=extra
+pro phase::fzp, ampmap=ampmap, f=f, d=d, phasemap=phasemap, y_off=y_off, z_off=z_off, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::fzp
@@ -352,6 +352,8 @@ pro phase::fzp, ampmap=ampmap, f=f, d=d, phasemap=phasemap, _EXTRA=extra
 ;   f: first order focal length in m
 ;   d: diameter in m
 ;   phasemap: export the phasemap as double array
+;   y_off: y offset
+;   z_off: z offset
 ;
 ; OUTPUTS:
 ;   no
@@ -368,6 +370,8 @@ field= *self.field
 y_vec= *self.y_vec
 z_vec= *self.z_vec
 wavelength= self.wavelength
+if n_elements(z_off) eq 0 then z_off     = 0.0
+if n_elements(y_off) eq 0 then y_off     = 0.0
 
 d      = double(d) 
 f      = double(f)
@@ -392,7 +396,8 @@ print, 'spatial resolution (m) =', res
 print, 'numerical aperture     =', na
 print, 'DOF +/-            (m) =', dof
 print, 'dlambda must be    (m) <', dlambda
-print, 'our grid dz        (m) =', z_vec[1]-z_vec[0]
+print, 'our grid dz        (m) =', z_vec[1]- z_vec[0]
+print, 'our grid dy        (m) =', y_vec[1]- y_vec[0]
 print, '========================'
 nz= n_elements(z_vec)
 ny= n_elements(y_vec)
@@ -401,7 +406,7 @@ maxr= 0.5*d
 for i=0, nz-1 do begin
     for j=0, ny-1 do begin
         fzpcomp[i,j]= complex(0.0, 0.0, /double)           ;; initialize with 0
-        rr= sqrt(z_vec[i]^2 + y_vec[j]^2)                  ;; the radial distance 
+        rr= sqrt((z_vec[i]- z_off)^2 + (y_vec[j]- y_off)^2);; the radial distance 
         if (rr gt r1) and (rr lt maxr) then begin          ;; zero order stop and apertur
             nr= fix(2.0/wavelength*(sqrt(f*f+ rr*rr)- f))  ;; calc n(r) (zone edge number)
             if (nr MOD 2) ne 0 then fzpcomp[i,j]= complex(1.0, 0.0, /double) ;; amplitude
@@ -1787,8 +1792,13 @@ mayz = max(may, maz)* 1e3
 miyzp= min(miyp,mizp)
 mayzp= max(mayp,mazp)
 
+if n_elements(ylog) ne 0 then begin
+    mayzp*= 1.5
+    miyzp= mayzp* 1e-3
+endif 
+
 plot, [miyz, mayz], [miyzp, mayzp], title=title, $
-  xtitle='[z,y] (mm)', ytitle='intensity etc.', ylog=ylog, /nodata
+  xtitle='[z,y] (mm)', ytitle='intensity etc.', ylog=ylog, /nodata, _EXTRA=extra
 oplot, z*1e3, zp, color=1
 oplot, y*1e3, yp, color=2
 legend, ['z','y'], color=[1,2], linestyle=[0,0]
@@ -2299,13 +2309,31 @@ ymin= min(y_vec)
 ymax= max(y_vec)
 binsize= (z_vec[1]- z_vec[0])*(y_vec[1]- y_vec[0])
 
-mymax= max(myfield)                        ;; photons/m^2
+mymax= max(myfield, mymaxidx)                        ;; photons/m^2
 mysum= total(myfield, /double)
 mytot= total(myfield, /double) * binsize   ;; sum of all bins*binsize
 
-field_n= myfield/mymax                ;; normalized
+if mymax gt 0 then field_n= myfield/mymax else field_n= myfield     ;; normalized field for fit
+
 stat   = dblarr(7)
-if n_elements(nofit) eq 0 then fit= gauss2dfit(field_n, stat, z_vec, y_vec)
+if n_elements(nofit) eq 0 then fit= gauss2dfit(field_n, stat, z_vec, y_vec) else begin
+    print, 'we do not fit- we search fwhm'
+    z0i= mymaxidx mod  n_elements(z_vec)
+    y0i= mymaxidx / n_elements(z_vec)
+    mymax05= 0.5* mymax
+;    print,'z0i,y0i,mymax05',z0i,y0i,mymax05
+    zcut= reform(myfield[*,y0i])
+    ycut= reform(myfield[z0i,*])
+;    plot, ycut
+;    print, 'zcut::::', zcut
+    zidx= where(zcut gt mymax05)
+;    print, 'zidx::::', zidx
+ ;   help, zidx
+    yidx= where(ycut gt mymax05)
+    
+    if n_elements(zidx) gt 1 then zfwhm= z_vec[zidx[n_elements(zidx)-1]]- z_vec[zidx[0]] else zfwhm= 0
+    if n_elements(yidx) gt 1 then yfwhm= y_vec[yidx[n_elements(yidx)-1]]- y_vec[yidx[0]] else yfwhm= 0
+endelse
 
 print, '=============================================================================='
 print, title
@@ -2315,7 +2343,12 @@ print, 'z fwhm=',stat[2]*2.35, ' m, rms = ',stat[2], ' m'
 print, 'y fwhm=',stat[3]*2.35, ' m, rms = ',stat[3], ' m'
 print, 'z0    =',stat[4], ' m'
 print, 'y0    =',stat[5], ' m'
-endif
+endif else begin
+print, 'z fwhm=', zfwhm, ' m'
+print, 'y fwhm=', yfwhm, ' m'
+print, 'z0    =', z_vec[z0i], ' m'
+print, 'y0    =', y_vec[y0i], ' m'
+endelse
 print, 'zmin, zmax (m) =', zmin, zmax, ', nz=', n_elements(z_vec)
 print, 'ymin, ymax (m) =', ymin, ymax, ', ny=', n_elements(y_vec)
 print, 'wavelength (nm)=', lambda*1e9
