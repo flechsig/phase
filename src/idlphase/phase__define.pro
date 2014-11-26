@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <25 Nov 14 15:19:31 flechsig> 
+;  Time-stamp: <25 Nov 14 15:25:19 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1801,7 +1801,7 @@ plot, [miyz, mayz], [miyzp, mayzp], title=title, $
   xtitle='[z,y] (mm)', ytitle='intensity etc.', ylog=ylog, /nodata, _EXTRA=extra
 oplot, z*1e3, zp, color=1
 oplot, y*1e3, yp, color=2
-legend, ['z','y'], color=[1,2], linestyle=[0,0]
+legend, ['z','y'], color=[1,2], linestyle=[0,0], /right
 return 
 end ;; plotprofile
 
