@@ -1,0 +1,58 @@
+;; -*-idlwave-*-
+
+;print, 'charsize: ', !P.CHARSIZE
+!P.CHARSIZE= 0.6        ;; 
+
+;; unit: meter
+wavelength    = 20e-9    ;; 20e-9
+sourcedist    = 72       ;; 72
+waist         = 66e-6    ;; 66mu gives about 8mm in 72 m
+sizez         = 8e-3     ;; 8e-3 hor size
+sizey         = 15e-3    ;; 25e-3 vert size
+fzp_offset    = -5.5e-3  ;; -5.5e-3
+source_offset = fzp_offset+ 7.9e-3
+Nz            = 3        ;; 301
+Ny            = 5*177147 ;; 3^11=177147
+
+emf=initphase()  ;; needed just once
+
+;; source
+emf->gaussbeam, dist=sourcedist, sizez=sizez, sizey=sizey, w0=waist, $
+  wavelength=wavelength, nz=nz, ny=ny, y_off=source_offset 
+
+title = 'source in ' + string(sourcedist, FORMAT="(f6.1)") + 'm'
+mywindow,2,1
+emf->plotintensity, title=title+ ' (intensity)', charsize=!P.CHARSIZE
+mywindow,2,2
+emf->plotphase, /phunwrap, title=title+ ' (phase /phunw)', charsize=!P.CHARSIZE
+emf->statistics, /nofit
+
+;; rectangular aperture
+emf->aperture, type=1, p1=4.8e-3, p2=4.8e-3, p3=0, p4=source_offset
+emf->statistics,/nofit
+
+;; fzp
+f= 0.08                 ;; focal length
+d= 20.6e-3              ;; diameter
+emf->fzp, f=f, d=d, y_off=fzp_offset      ;; fzp
+
+title = 'after FZP' 
+mywindow,3,1
+emf->plotintensity, title=title+ ' (intensity)', charsize=!P.CHARSIZE
+mywindow,3,2
+emf->plotphase,  title=title+ ' (phase /phunw)', charsize=!P.CHARSIZE, /phunwrap
+emf->statistics, /nofit
+
+;; drift
+drift= 1.0*f
+print, 'drift=', drift
+emf->propagate, drift=drift
+
+title = 'Propagated to ' + string(drift,FORMAT="(f6.2)") + 'm'
+mywindow,4,1
+emf->plotintensity, title=title+ ' (intensity)', charsize=!P.CHARSIZE
+mywindow,4,2
+emf->plotphase, title=title+ ' (phase /phunw)', charsize=!P.CHARSIZE, /phunw
+mywindow,4,3
+emf->plotprofile, title=title+ ' (profile)', /ylog 
+emf->statistics, /nofit
