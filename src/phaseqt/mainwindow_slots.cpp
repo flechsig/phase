@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <14 Nov 14 15:50:25 flechsig> 
+//  Time-stamp: <27 Nov 14 17:03:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -192,8 +192,9 @@ void MainWindow::activateProc(const QString &action)
       while (n < elementList->count())
 	{
 	  double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
-	  //myparent->mysource4c_2_emfp();
-	  struct EmfType *emfp= NULL; //emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	  myparent->mysource4c_2_emfp();
+	  struct EmfType *emfp= NULL; 
+	  emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
 	  
 	  cout << "*************************************" << endl;
 	  cout << "*** PO element No " << n << ", drift= " << driftlen  << endl;
@@ -219,7 +220,7 @@ void MainWindow::activateProc(const QString &action)
 	      break;
 	    default:
 	      //emfp_cpy(emfp, myparent->myBeamline()->emfp);  // save the source in emfp
-	      cout << "source saved in emfp" << endl;
+	      //cout << "source saved in emfp" << endl;
 	      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
 	      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
 	      cout << "result allocated" << endl;
@@ -563,6 +564,7 @@ if (!action.compare("fourierAct"))
 				tr("<B>BuildBeamline</b> look into debug messages for details!"));
 	  return;
 	}
+
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
 #ifdef OLD_PO_SOURCE
@@ -588,7 +590,10 @@ if (!action.compare("fourierAct"))
 				tr("<B>CheckBLOK</b> look into debug messages for details!"));
 	  return;
 	}
-      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+
+      // all tests done - we can start
+
+      psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
       myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
       myparent->myPST();
     }

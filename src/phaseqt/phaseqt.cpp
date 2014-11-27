@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <27 Nov 14 09:33:18 flechsig> 
+//  Time-stamp: <27 Nov 14 15:46:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -160,7 +160,8 @@ void PhaseQt::initSet(const char *fname, const int all)
   snprintf(this->filenames.plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
   snprintf(this->filenames.printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
   snprintf(this->filenames.optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
-  snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", name, "phase");	  
+  snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", name, "phase");
+  //snprintf(this->filenames.beamlinename,    MaxPathLength, "%s", name0);  
   if (all) snprintf(this->filenames.so4_fsource4a,   MaxPathLength, "%s.%s", name, "s4a");	  
   if (all) snprintf(this->filenames.so4_fsource4b,   MaxPathLength, "%s.%s", name, "s4b");	  
   if (all) snprintf(this->filenames.so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  

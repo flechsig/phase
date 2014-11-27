@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <07 Oct 14 09:21:05 flechsig>  */
+ /* Time-stamp: <27 Nov 14 17:00:23 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -496,11 +496,22 @@ void drift_fresnel_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   fftw_plan    p;
 #endif
  
+  if (emfout==NULL) 
+    {
+      printf("error: file=%s emfout==NULL\n", __FILE__);
+      exit(-1);
+    }
+
+
 #ifdef DEBUG
   printf("debug: drift_fresnel_emf called\n");
 #endif
  
   tmp= check_sampling_emf(emfin, lambda, 0.9, driftlen, 1);
+
+#ifdef DEBUG
+  printf("debug: drift_fresnel_emf continue\n");
+#endif
 
   lambda_drift= driftlen* lambda;
   cols= emfin->nz;

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <06 Oct 14 15:11:15 flechsig>  */
+/*   Time-stamp: <27 Nov 14 17:02:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -54,6 +54,7 @@
 #include "pst.h"      
 #include "rtrace.h" 
 #include "common.h"
+#include "myfftw3.h"
 
 void PSTxx(struct BeamlineType *bl) 
 {
@@ -270,10 +271,10 @@ void PST(struct BeamlineType *bl)
 /* Phasenraumtransformation interface zur Fortran Routine (not obsolete) */
 {
 
- #ifdef DEBUG  
+#ifdef DEBUG  
    printf("debug: pst.c: phase space trafo PST called");
    printf(" debug:   source typ: %d\n", bl->isrctype_c); 
- #endif
+#endif
 
    Test4Grating(bl); /* not in threads */
 
@@ -372,14 +373,15 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType
 void pstc(struct BeamlineType *bl)
 {
   int    i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next, totrays;  
-  double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi;
+  unsigned int nu;
+  double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi, driftlen;
   struct map4 *m4p;
   struct constants cs;
+  struct EmfType *emfp;
   FILE   *fd;
   void   *vv, *vv1;
   size_t n;
 
-  
   /*struct integration_results xir;*/
   /*struct statistics st;*/
   
@@ -426,7 +428,50 @@ void pstc(struct BeamlineType *bl)
   next= 0;
   PSDp->outside_wl= 0;
 
-  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
+  nu= 0;
+  while (nu < bl->elementzahl)
+    {
+      driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
+      source4c_2_emfp(bl);
+      emfp= NULL;
+      emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+      printf("*************************************\n");
+      printf("*** PO element No %d, drift= %f\n", nu, driftlen);
+      printf("*************************************\n");
+
+      switch (bl->ElementList[nu].MDat.Art)
+	{
+	  case 100:
+	      drift_auto_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
+	      emfp_cpy(bl->emfp, emfp);
+	      break;
+	    case 101:
+	      drift_fourier_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
+	      emfp_cpy(bl->emfp, emfp);
+	      break;
+	    case 102:
+	      drift_fresnel_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
+	      emfp_cpy(bl->emfp, emfp);
+	      break;
+	    case 103:
+	      drift_fraunhofer_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
+	      emfp_cpy(bl->emfp, emfp);
+	      break;
+	    default:
+	      for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
+	      if (nu < (bl->elementzahl- 1))
+		{
+		  printf("xxx restore source n= %d, elements: %d\n", nu, bl->elementzahl);
+		  psd_2_emfp();
+		  emfp_cpy(bl->emfp, emfp);   // restore the source
+		  emfp_2_source4c();
+		}
+	}
+      emfp_free(emfp);
+      nu++;
+    }
+
+  // for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 
   printf("\n");
   totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
