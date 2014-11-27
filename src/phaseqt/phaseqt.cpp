@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <27 Nov 14 09:32:56 flechsig> 
+//  Time-stamp: <27 Nov 14 09:33:18 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -144,9 +144,6 @@ void PhaseQt::initSet(const char *fname, const int all)
 
 #ifdef DEBUG
   cout << "debug: PhaseQt::initSet called, all= " << all << endl; 
-  cout << "fname=" << fname << endl;
-  cout << "name0=" << name0 << endl;
-  cout << "name=" << name << endl;
 #endif
 
   snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", name, "omx");
