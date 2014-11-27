@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 15:02:19 flechsig> 
+c$$$ Time-stamp: <27 Nov 14 15:05:28 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -237,15 +237,15 @@ c---------------- START ---------------------------------------
 c---------------- first grid is equdistant, the following are not
 
 	if(ianzz.eq.1)then
-	dzz=0.d0
+           dzz=0.d0
 	else
-	dzz=(xi.zmax-xi.zmin)/dflotj(ianzz-1)
+           dzz=(xi.zmax-xi.zmin)/dflotj(ianzz-1)
 	endif
-
+        
 c-----------------------------------------------------------
-
-       if((isrctype.eq.4).or.(isrctype.eq.5).or.
-     &     (isrctype.eq.6).or.(isrctype.eq.7))then
+C UF Nov 14 take out if
+c uf       if((isrctype.eq.4).or.(isrctype.eq.5).or.
+c uf     &     (isrctype.eq.6).or.(isrctype.eq.7))then
 c-----------------------------------------------------------
 c !$OMP PARALLEL DO PRIVATE(i, ra)
 	do i=1,ianzz    
@@ -273,53 +273,53 @@ c	   	fzez(i)=fwertz
 c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 	   dz(i)=dzz
 	enddo
-
+        
 	ispline_save=ifl.ispline
 
 	if(ifl.ispline.eq.-2)then
-	ifl.ispline=0
-	do i=1,ianzz
-		fzey(i)=fya(i)*(dcos(fyp(i))+cs.sqrtm1*dsin(fyp(i)))
-		fzez(i)=fza(i)*(dcos(fzp(i))+cs.sqrtm1*dsin(fzp(i)))
-	enddo		
+           ifl.ispline=0
+           do i=1,ianzz
+              fzey(i)=fya(i)*(dcos(fyp(i))+cs.sqrtm1*dsin(fyp(i)))
+              fzez(i)=fza(i)*(dcos(fzp(i))+cs.sqrtm1*dsin(fzp(i)))
+           enddo		
 	endif
-
-       if(ifl.ispline.eq.-1)then
-          call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
-       endif
-	iyz=2
-c UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
-       call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
-     &			xir.yzintya,xir.yzintyp,
-     &          densiyre,densiyim,xintyzre,xintyzim,iyz)
-
-        sr.xintyre=xintyzre
-        sr.xintyim=xintyzim
-
+        
         if(ifl.ispline.eq.-1)then
-          call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+           call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
         endif
 	iyz=2
-c	call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
-       call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
-     &			xir.yzintza,xir.yzintzp,
-     &          densizre,densizim,xintyzre,xintyzim,iyz)
-
+c     UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
+        call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
+     &       xir.yzintya,xir.yzintyp,
+     &       densiyre,densiyim,xintyzre,xintyzim,iyz)
+        
+        sr.xintyre=xintyzre
+        sr.xintyim=xintyzim
+        
+        if(ifl.ispline.eq.-1)then
+           call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+        endif
+	iyz=2
+c     call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
+        call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
+     &       xir.yzintza,xir.yzintzp,
+     &       densizre,densizim,xintyzre,xintyzim,iyz)
+        
         sr.xintzre=xintyzre
         sr.xintzim=xintyzim
-
+        
 	ifl.ispline=ispline_save
-
+        
 c------------------------------------------------------------
-	endif
+c      endif
 c------------------------------------------------------------
-
-	xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
-	xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
-
-	return
-	end
-c-------------------- end adaptive_int ----------------------
+      
+      xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
+      xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
+      
+      return
+      end
+c--------------------end adaptive_int ----------------------
 
 c*************************************************************
 c       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
@@ -438,14 +438,15 @@ c---------------- START ---------------------------------------
 c---------------- first grid is equdistant, the following are not
 
 	if(ianzy.eq.1)then
-	dyy=0.d0
+           dyy=0.d0
 	else
-	dyy=(xi.ymax-xi.ymin)/dflotj(ianzy-1)
+           dyy=(xi.ymax-xi.ymin)/dflotj(ianzy-1)
 	endif
 
 c------------------------------------------------------------
-	if((isrctype.eq.4).or.(isrctype.eq.5).or.
-     &     (isrctype.eq.6).or.(isrctype.eq.7))then
+C UF Nov 14 take out if
+c uf 	if((isrctype.eq.4).or.(isrctype.eq.5).or.
+c uf     &     (isrctype.eq.6).or.(isrctype.eq.7))then
 c------------------------------------------------------------
 
 c-------------------------------------------------------------------------
@@ -466,42 +467,42 @@ c#endif
  	  call fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
      &		y(i),fyey(i),sr,lostwl,blp)
 
-	 densiyre(i)=sr.densyre
-	 densiyim(i)=sr.densyim
-	 densizre(i)=sr.denszre
-	 densizim(i)=sr.denszim
+          densiyre(i)=sr.densyre
+          densiyim(i)=sr.densyim
+          densizre(i)=sr.denszre
+          densizim(i)=sr.denszim
+          
+c     UF	  if(ifl.ibright.eq.1)then
+c     UF	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
+c     UF	  endif
 
-c UF	  if(ifl.ibright.eq.1)then
-c UF	  src.so6.abr(ra.n1,ra.n2,ra.n3,ra.n4)=dreal(fwerty)
-c UF	  endif
-
-	dy(i)=dyy
-	enddo
-
-	iyz=1
-c UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
-        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
-     &		yintey,yintya,yintyp,densiyre,densiyim,
-     &          xintyzre,xintyzim,iyz)
-        sr.xintyre=xintyzre
-        sr.xintyim=xintyzim
-
-	iyz=1
-c UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
-        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
-     &		yintez,yintza,yintzp,densizre,densizim,
-     &          xintyzre,xintyzim,iyz)
-        sr.xintzre=xintyzre
-        sr.xintzim=xintyzim
-
+          dy(i)=dyy
+       enddo
+       
+       iyz=1
+c     UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
+       call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
+     &      yintey,yintya,yintyp,densiyre,densiyim,
+     &      xintyzre,xintyzim,iyz)
+       sr.xintyre=xintyzre
+       sr.xintyim=xintyzim
+       
+       iyz=1
+c     UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
+       call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
+     &      yintez,yintza,yintzp,densizre,densizim,
+     &      xintyzre,xintyzim,iyz)
+       sr.xintzre=xintyzre
+       sr.xintzim=xintyzim
+       
 c---------------------------------------------------------
-	endif
+c uf      endif
 c---------------------------------------------------------
 
-c	st.inumb(st.nn1,st.nn2)=st.inumb(st.nn1,st.nn2)+ianzy
-
-	return
-	end
+c     st.inumb(st.nn1,st.nn2)=st.inumb(st.nn1,st.nn2)+ianzy
+      
+      return
+      end
 c--------------------- end yyint -------------------------
 
 
@@ -642,10 +643,10 @@ c   here we call phase_source.F
         call psdi(g,isrctype,apr,cs,ifl,ra,sr,lostwl,blp)     
 
 c----------------------------------------
-
-	if((isrctype.eq.4).or.(isrctype.eq.5).or.
-     &     (isrctype.eq.7))then
-
+C UF Nov 14 change
+c	if((isrctype.eq.4).or.(isrctype.eq.5).or.
+c     &     (isrctype.eq.7))then
+        if(isrctype.ne.6)then
 c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
 c	 wird nicht in phase_integration gesetzt, da hier nicht 
 c	 unterschieden wird, ob ein OE oder die Summe von mehreren 

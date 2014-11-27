@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 14:58:43 flechsig> 
+c$$$ Time-stamp: <27 Nov 14 15:07:41 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -160,9 +160,12 @@ c	iexpand = 0 : explicit calculation of
 c		      optical path length
 c
 c**************************************************************
+c UF 25.11.14 add isrctype = 1 new gauss source
+c             this routine is more or less obsolete could be removed/replaced
+
 
 	implicit real*8(a-h,o-z)
-	integer lostwl,blp
+	integer lostwl, blp
 
 cc	include 'phase_struct.for'
 #include 'phase_struct.F'
@@ -181,7 +184,7 @@ c	record /source6/ so6
 c	record /sources/ src
 	record /apertures/ apr
 
-#ifdef DEBUG2
+#ifdef DEBUG1
 	write(*,*),'DEBUG1: psdi called'
         call debug_beamline_type_f(blp)
 #endif
@@ -239,6 +242,7 @@ c	if(iii.eq.1)then
 c	if(src.isrctype.eq.1)call src1(cs,g,ra,src.so1,sr,ifl)
 c	if(src.isrctype.eq.2)call src2(cs,g,ra,src.so2,sr,ifl)
 c	if(src.isrctype.eq.3)call src3(cs,g,ra,src.so3,sr,ifl)
+	if(isrctype.eq.1)call src4(cs,g,ra,sr,ifl,lostwl,blp)
 	if(isrctype.eq.4)call src4(cs,g,ra,sr,ifl,lostwl,blp)
 	if(isrctype.eq.7)call src4(cs,g,ra,sr,ifl,lostwl,blp)
 c uf2.7.13	if(src.isrctype.eq.4)call src4(cs,g,ra,src.so4,sr,ifl,blp)

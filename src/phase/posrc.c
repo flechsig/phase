@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <14 Nov 14 16:35:05 flechsig>  */
+/*  Time-stamp: <27 Nov 14 15:06:48 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -345,7 +345,7 @@ void gauss_source1c(struct BeamlineType *bl)
   binsize= (emfp->z[1]- emfp->z[0]) * (emfp->y[1]- emfp->y[0]);  // in mm^2
   power*= binsize/ VAC_IMPEDANCE;  // total power
 
- printf("powercheck: total power = %f W\n", power);
+  printf("powercheck: total power = %f W\n", power);
 
   bl->emfp= emfp;
   emfp_2_source4c(bl);
@@ -572,7 +572,7 @@ void source7c_ini(struct BeamlineType *bl)
 #ifdef DEBUG
   so4= (struct source4c *)&(bl->posrc);
   printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
-	 so4->gridx[0], "z", so4->gridx[so4->iex- 1],  so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
+	 so4->gridx[0], "z", so4->gridx[so4->iex- 1], so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
 #endif
 
 #else
