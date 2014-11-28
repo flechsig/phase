@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <06 Oct 14 14:47:38 flechsig>  */
+/*   Time-stamp: <28 Nov 14 17:07:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -337,12 +337,13 @@ struct PSDType  {
     sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
     simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4], d12[MAX_INTEGRATION_SIZE*2*3];
   int iy, iz;
-  long outside_wl;
+  //long outside_wl;
 };
 
 struct RESULTType {
   void *RESp;         
   int  typ, points1, points2, dim1; 
+  long outside_wl;
 };  
 
 struct ReflecType {
@@ -458,6 +459,7 @@ struct BeamlineType
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
   struct EmfType *emfp, emf;  /* for temporary fields */
+  struct EmfType *source_emfp, *result_emfp;  /* new for po */
 };
 
 /* mod 20121102 */

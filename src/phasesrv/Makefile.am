@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <29 Oct 14 10:51:52 flechsig> 
+#  Time-stamp: <28 Nov 14 09:01:15 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -54,6 +54,7 @@ phasesrv_SOURCES = \
 	../phase/taylor-ops.for      ../phase/phase_source.F \
 	../phase/heighterror.c   ../phase/heighterror.h \
 	../phase/myhdf5.c        ../phase/myhdf5.h \
+	../phase/myfftw3.c       ../phase/myfftw3.h \
         ../phase/posrc.c         ../phase/posrc.h \
 	../phase/pst_thread.c    ../phase/pst_thread.h \
 	../phase/reflectivity.c  ../phase/reflectivity.h \
@@ -107,7 +108,7 @@ EXTRA_DIST = ../phase/phase_struct.F  $(pkgdata_DATA) \
 ## flags
 AM_CPPFLAGS = -DLINUX -DNOGUI @HDF5_CPPFLAGS@ 
 AM_CFLAGS   = -I../phase -W 
-AM_LDFLAGS  = -lpthread @MY_HDF5_LIBS@ @FLIBS@   
+AM_LDFLAGS  = -lpthread @MY_HDF5_LIBS@ @FLIBS@ @FFTW3_LIBS@ 
 
 ##we always use the c linker
 F77LINK = $(LINK)

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <28 Aug 14 16:13:30 flechsig> 
+//  Time-stamp: <28 Nov 14 15:28:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1063,6 +1063,97 @@ void Plot::hfill2(struct PSDType *rp, int type)
 	double phz= atan2(rp->ezimc[idf], rp->ezrec[idf]);
 	double phy= atan2(rp->eyimc[idf], rp->eyrec[idf]);
 	//double pz0= rp->ezimc[idf]/rp->ezrec[idf];
+	double delta= phz- phy; // sign according Born Wolf p. 30
+	
+	switch (type)
+	  {
+	  case PLOT_PO_S0:
+	    h2a[idc]= az2+ ay2; 
+	    break;
+	  case PLOT_PO_S1:
+	    h2a[idc]= az2- ay2; 
+	    break;
+	  case PLOT_PO_S2:
+	    h2a[idc]= 2.0* sqrt(az2)* sqrt(ay2)* cos(delta); 
+	    break;
+	  case PLOT_PO_S3:
+	    h2a[idc]= 2.0* sqrt(az2)* sqrt(ay2)* sin(delta); 
+	    break;
+	  case PLOT_PO_PHASE_Z:
+	    h2a[idc]= phz; 
+	    break;
+	  case (PLOT_PO_PHASE_Z | PLOT_UNWRAP):
+	    h2a[idc]= phz; 
+	    break;
+	  case PLOT_PO_PHASE_Y:
+	    h2a[idc]= phy; 
+	    break;
+	  case (PLOT_PO_PHASE_Y | PLOT_UNWRAP):
+	    h2a[idc]= phy; 
+	    break;
+	  }
+	h2max= max(h2max, h2a[idc]);
+	h2min= min(h2min, h2a[idc]);
+      } // end for
+
+  if (type & PLOT_UNWRAP)
+    {
+      cout << "call unwrap_phase" << endl;
+      unwrap_phase(h2a, h2a_nx, h2a_ny);
+      h2max= -1e300;
+      h2min=  1e300;
+      for (i=0; i< h2a_n; i++)
+	{
+	  h2max= max(h2max, h2a[i]);
+	  h2min= min(h2min, h2a[i]);
+	}
+    }
+  
+  statistics();
+
+  // scale range into 0 to 10
+  h2range= h2max- h2min;
+  if (h2range > 0.0)
+    for (i=0; i< h2a_n; i++)
+      h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
+  
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+#endif
+} // hfill2 PO_phase
+
+// fills a 2d histogram, PO field version
+void Plot::hfill2(struct EmfType *emfpp, int type)
+{
+  int i, ix, iy, h2a_n, idf, idc;
+  double h2range;
+  
+#ifdef DEBUG
+  cout << "Plot::hfill2 called (PO field version (emf))" << endl;
+#endif
+
+  h2a_nx= emfpp->nz;
+  h2a_ny= emfpp->ny;
+  pox   = emfpp->z;
+  poy   = emfpp->y;
+
+  h2a_n= h2a_nx * h2a_ny;
+  if (h2a != NULL) delete h2a;
+  if (h2a_n > 0) h2a= new double[h2a_n];
+  
+  h2max= -1e300;
+  h2min=  1e300;
+
+  for (ix=0; ix< h2a_nx; ix++)
+    for (iy=0; iy< h2a_ny; iy++) 
+      {
+	idc= ix + iy* h2a_nx;
+	idf= iy + ix* h2a_ny;
+	double az2= pow(emfpp->ezre[idf], 2) + pow(emfpp->ezim[idf], 2);
+	double ay2= pow(emfpp->eyre[idf], 2) + pow(emfpp->eyim[idf], 2);
+	double phz= atan2(emfpp->ezim[idf], emfpp->ezre[idf]);
+	double phy= atan2(emfpp->eyim[idf], emfpp->eyre[idf]);
+	//double pz0= emfpp->ezimc[idf]/emfpp->ezrec[idf];
 	double delta= phz- phy; // sign according Born Wolf p. 30
 	
 	switch (type)

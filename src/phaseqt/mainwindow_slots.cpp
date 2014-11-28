@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <27 Nov 14 17:03:54 flechsig> 
+//  Time-stamp: <28 Nov 14 17:04:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -166,7 +166,7 @@ void MainWindow::activateProc(const QString &action)
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source file not found!"));
+			     tr("PO source not found!"));
 	      return;
 	    }
 #endif
@@ -186,45 +186,48 @@ void MainWindow::activateProc(const QString &action)
 
       // all tests done - we can start
 
-      struct source4c *so4= (struct source4c *)&(myparent->myBeamline()->posrc);
-
+      //uf nov 2014      struct source4c *so4= (struct source4c *)&(myparent->myBeamline()->posrc);
+      if (myparent->myBeamline()->emfp) emfp_free(myparent->myBeamline()->emfp);
+      myparent->myBeamline()->emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, myparent->myBeamline()->source_emfp->ny);
+      emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->source_emfp); // source-> emfp
+      
       int n= 0;
       while (n < elementList->count())
 	{
 	  double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
-	  myparent->mysource4c_2_emfp();
-	  struct EmfType *emfp= NULL; 
-	  emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
-	  
 	  cout << "*************************************" << endl;
 	  cout << "*** PO element No " << n << ", drift= " << driftlen  << endl;
 	  cout << "*************************************" << endl;
-	  
+	  if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
 	  switch (myparent->myBeamline()->ElementList[n].MDat.Art)
 	    {
 	    case 100:
-	      drift_auto_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	      drift_auto_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp, 
+			     myparent->myBeamline()->BLOptions.lambda, driftlen);
 	      break;
 	    case 101:
-	      drift_fourier_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	      drift_fourier_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp, 
+				myparent->myBeamline()->BLOptions.lambda, driftlen);
 	      break;
 	    case 102:
-	      drift_fresnel_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	      drift_fresnel_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp, 
+				myparent->myBeamline()->BLOptions.lambda, driftlen);
 	      break;
 	    case 103:
-	      drift_fraunhofer_emf(myparent->myBeamline()->emfp, emfp, myparent->myBeamline()->BLOptions.lambda, driftlen);
-	      emfp_cpy(myparent->myBeamline()->emfp, emfp);
+	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
+	      drift_fraunhofer_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp,
+				   myparent->myBeamline()->BLOptions.lambda, driftlen);
 	      break;
 	    default:
-	      //emfp_cpy(emfp, myparent->myBeamline()->emfp);  // save the source in emfp
-	      //cout << "source saved in emfp" << endl;
 	      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-	      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
-	      cout << "result allocated" << endl;
-	      ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl= 0;
+	      myparent->myBeamline()->result_emfp= emfp_construct(psip->iz, psip->iy);
+	      
+	      //myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
+	      //cout << "result allocated" << endl;
+	      myparent->myBeamline()->RESULT.outside_wl= 0;
 	      fillTaskVector(psip->iy * psip->iz);
 	      qDebug() << "asynchronous PO with threads " << psip->iy * psip->iz << " points";
 	      myparent->myTest4Grating();
@@ -255,25 +258,26 @@ void MainWindow::activateProc(const QString &action)
 	      
 	      cout << "after future" << endl;
 	      
-	      if (n < (elementList->count()- 1))
-		{
-		  cout << "xxx restore source n= "<< n << " elements: " << elementList->count() << endl;
-		  myparent->mypsd_2_emfp();
-		  emfp_cpy(myparent->myBeamline()->emfp, emfp);   // restore the source
-		  myparent->myemfp_2_source4c();
-		}
+	      //myparent->mypsd_2_emfp();  
+	      
 	    }  // end switch
 	  // the result is in efmp
-	  
-	  emfp_free(emfp);
 	  n++;
 	} // end while
       cout << "after while wip" << endl;
-      //    myparent->myemfp_2_psd();
-      myparent->myemfp_free();
+      //myparent->myemfp_2_psd();
+      //myparent->myemfp_free();
     } // asyn
 
-  if (!action.compare("copyPOAct")) myparent->mycopySrc2Psd();
+  if (!action.compare("copyPOAct")) 
+    {
+      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
+							  myparent->myBeamline()->source_emfp->ny);
+      emfp_cpy(myparent->myBeamline()->result_emfp, myparent->myBeamline()->source_emfp);
+      myparent->myBeamline()->RESULT.outside_wl= 0;
+      // myparent->mycopySrc2Psd();
+    }
 
   if (!action.compare("normPOAct")) cout << "normPOAct no longer used- we scale the outputs depending on inorm" << endl;
   
@@ -429,12 +433,18 @@ if (!myparent->myBuildBeamline())
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source file not found!"));
+			     tr("PO source not found!"));
 	      return;
 	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-      myparent->mydrift_fresnel();
+      // myparent->mydrift_fresnel();
+      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
+      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
+							  myparent->myBeamline()->source_emfp->ny);
+      drift_fresnel_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
+			myparent->myBeamline()->BLOptions.lambda, driftlen);
       myparent->myBeamline()->beamlineOK |= resultOK;
       UpdateStatus();
     }
@@ -1533,6 +1543,7 @@ void MainWindow::grapplyslot()
 {
 #ifdef HAVE_QWT
   struct PSDType *psdp;
+  struct EmfType *emfpp;
   struct BeamlineType *bl;
 
 #ifdef DEBUG
@@ -1541,9 +1552,10 @@ void MainWindow::grapplyslot()
 
   bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
   psdp= (struct PSDType *)bl->RESULT.RESp;
-
+  emfpp= bl->result_emfp;
+  cout << "UF temporarely deactivate tests in file "<< __FILE__ << endl;
   // (1) a few tests
-
+#ifdef XXX
   if ((mwplotsubject & PLOT_PO_SOURCE) && !(myparent->myBeamline()->beamlineOK & pstsourceOK))
     {
       QMessageBox::warning(this, tr("grapplyslot"), tr("No valid PO source available"));
@@ -1569,7 +1581,7 @@ void MainWindow::grapplyslot()
   if ((mwplotsubject & PLOT_PO_RESULT) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
     return;
-
+#endif
   // (2) construct/destruct objects do common tasks
   switch (mwplotsubject)
     {
@@ -1706,8 +1718,9 @@ void MainWindow::grapplyslot()
       
     case (PLOT_PO_RESULT | PLOT_PO_S0):
       cout << "plot PO_RESULT experimental start " << endl;
-      cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, PLOT_PO_S0);
+      cout << "use manual saling" << endl;
+      //d_plot->hfill2(psdp, PLOT_PO_S0);
+      d_plot->hfill2(emfpp, PLOT_PO_S0);
       d_plot->setPoData("PO result S0");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1717,7 +1730,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_S1):
       cout << "plot PO_S1 experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, PLOT_PO_S1);
+      d_plot->hfill2(emfpp, PLOT_PO_S1);
       d_plot->setPoData("PO result S1");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1726,7 +1739,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_S2):
       cout << "plot PO_S2 experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, PLOT_PO_S2);
+      d_plot->hfill2(emfpp, PLOT_PO_S2);
       d_plot->setPoData("PO result S2");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1735,7 +1748,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_S3):
       cout << "plot PO_S3 experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, PLOT_PO_S3);
+      d_plot->hfill2(emfpp, PLOT_PO_S3);
       d_plot->setPoData("PO result S3");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1744,7 +1757,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, PLOT_PO_PHASE_Z);
+      d_plot->hfill2(emfpp, PLOT_PO_PHASE_Z);
       d_plot->setPoData("phase Ez");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1753,7 +1766,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Z | PLOT_UNWRAP):
       cout << "plot PO_RESULT_PHASE plus unwrap experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, (PLOT_PO_PHASE_Z | PLOT_UNWRAP));
+      d_plot->hfill2(emfpp, (PLOT_PO_PHASE_Z | PLOT_UNWRAP));
       d_plot->setPoData("phase Ez");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1762,7 +1775,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, PLOT_PO_PHASE_Y);
+      d_plot->hfill2(emfpp, PLOT_PO_PHASE_Y);
       d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1771,7 +1784,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_RESULT | PLOT_PO_PHASE_Y | PLOT_UNWRAP):
       cout << "plot PO_RESULT_PHASE experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2(psdp, (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
+      d_plot->hfill2(emfpp, (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
       d_plot->setPoData("phase Ey");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Result", 0);
@@ -1780,7 +1793,8 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_S0):
       cout << "plot PO_SOURCE experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S0);
+      //d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S0);
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, PLOT_PO_S0);
       d_plot->setPoData("PO source");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1789,7 +1803,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_S1):
       cout << "plot source PO_S1 experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S1);
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, PLOT_PO_S1);
       d_plot->setPoData("PO source S1");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1798,7 +1812,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_S2):
       cout << "plot source PO_S2 experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S2);
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, PLOT_PO_S2);
       d_plot->setPoData("PO source S2");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1807,7 +1821,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_S3):
       cout << "plot source PO_S3 experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_S3);
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, PLOT_PO_S3);
       d_plot->setPoData("PO source S3");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1816,7 +1830,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z):
       cout << "plot source PO_PHASE_Z experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_PHASE_Z);
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, PLOT_PO_PHASE_Z);
       d_plot->setPoData("PO source PHASE Z");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1825,7 +1839,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y):
       cout << "plot source PO_PHASE_Y experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), PLOT_PO_PHASE_Y);
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, PLOT_PO_PHASE_Y);
       d_plot->setPoData("PO source PHASE Y");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1844,7 +1858,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z  | PLOT_UNWRAP):
       cout << "plot source PO_PHASE_Z experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), (PLOT_PO_PHASE_Z  | PLOT_UNWRAP));
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, (PLOT_PO_PHASE_Z  | PLOT_UNWRAP));
       d_plot->setPoData("PO source PHASE Z");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1853,7 +1867,7 @@ void MainWindow::grapplyslot()
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Y | PLOT_UNWRAP):
       cout << "plot source PO_PHASE_Y experimental start " << endl;
       cout << "use manual saling " << endl;
-      d_plot->hfill2((struct source4c *)&(myparent->myBeamline()->posrc), (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
+      d_plot->hfill2(myparent->myBeamline()->source_emfp, (PLOT_PO_PHASE_Y | PLOT_UNWRAP));
       d_plot->setPoData("PO source PHASE Y");
       d_plot->contourPlot();
       UpdateStatistics(d_plot, "PO Source", 0);
@@ -1903,7 +1917,8 @@ void MainWindow::grautoscaleslot()
 #ifdef HAVE_QWT
   QString yminqst, ymaxqst, zminqst, zmaxqst;
   struct PSImageType *psip;
-  struct PSDType     *psdp;
+  //struct PSDType     *psdp;
+  struct EmfType     *emfpp;
   struct source4c    *srcp;
   struct SurfaceType *surfp;
 
@@ -1958,22 +1973,27 @@ void MainWindow::grautoscaleslot()
     }
 
   if (mwplotsubject & PLOT_PO_RESULT && 
-      checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+    checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
     { 
       // UF 8.1.14 psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
       // UF 8.1.14 d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      //psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      emfpp= myparent->myBeamline()->result_emfp;
       //d_plot->autoScale(d_plot->minv(psdp->z, psdp->iz), d_plot->maxv(psdp->z, psdp->iz), 
       //d_plot->minv(psdp->y, psdp->iy), d_plot->maxv(psdp->y, psdp->iy));
-      d_plot->autoScale(psdp->z[0], psdp->z[psdp->iz-1], psdp->y[0], psdp->y[psdp->iy-1]);
-      printf("uwe: %f %f %f %f %d\n", psdp->z[0], psdp->z[1], psdp->z[2], psdp->z[psdp->iz-1], psdp->iz);
+      //d_plot->autoScale(psdp->z[0], psdp->z[psdp->iz-1], psdp->y[0], psdp->y[psdp->iy-1]);
+      d_plot->autoScale(emfpp->z[0], emfpp->z[emfpp->nz-1], emfpp->y[0], emfpp->y[emfpp->ny-1]);
+      //printf("uwe: %f %f %f %f %d\n", psdp->z[0], psdp->z[1], psdp->z[2], psdp->z[psdp->iz-1], psdp->iz);
+      printf("uwe: %f %f %f %f %d\n", emfpp->z[0], emfpp->z[1], emfpp->z[2], emfpp->z[emfpp->nz-1], emfpp->nz);
     }
 
   if (mwplotsubject & PLOT_PO_SOURCE) // generic for PO source
     { 
       cout << "autoscale: PO source experimental" << endl;
-      srcp= (struct source4c *)&(myparent->myBeamline()->posrc);
-      d_plot->autoScale(srcp->gridx[0], srcp->gridx[srcp->iex - 1], srcp->gridy[0], srcp->gridy[srcp->iey - 1]);
+      //srcp= (struct source4c *)&(myparent->myBeamline()->posrc);
+      emfpp= myparent->myBeamline()->source_emfp;
+      d_plot->autoScale(emfpp->z[0], emfpp->z[emfpp->nz-1], emfpp->y[0], emfpp->y[emfpp->ny-1]);
+      //d_plot->autoScale(srcp->gridx[0], srcp->gridx[srcp->iex - 1], srcp->gridy[0], srcp->gridy[srcp->iey - 1]);
     }
 
   if (mwplotsubject & PLOT_SURF_PROF) // generic for PO surface

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <27 Nov 14 15:06:48 flechsig>  */
+/*  Time-stamp: <28 Nov 14 15:08:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -84,17 +84,25 @@ void emf_construct(struct EmfType *emf, int cols, int rows)
   emf->eyre= XMALLOC(double, twod);
   emf->eyim= XMALLOC(double, twod);
 #ifdef DEBUG
-  printf("debug: emf_construct-> allocated structure with %d x %d (cols x rows)\n", cols, rows);
+  printf("debug: emf_construct done-> allocated structure with %d x %d (cols x rows)\n", cols, rows);
 #endif
 } /* end emf_construct */
 
 struct EmfType *emfp_construct(int cols, int rows)
 {
   struct EmfType *emf;
+
+#ifdef DEBUG
+  printf("debug: emfp_construct called, file: %s\n",  __FILE__);
+#endif
   
   emf= XMALLOC(struct EmfType, 1);
   emf_construct(emf, cols, rows);
   
+#ifdef DEBUG
+  printf("debug: emfp_construct return allocated pointer %d\n",  (int)emf);
+#endif
+
   return emf;
 } /* end emfp_construct */
 
@@ -120,6 +128,7 @@ void emf_free(struct EmfType *emf)
   XFREE(emf->ezim);
 } /* end emf_free */
 
+// copy structures- of same size (no memory mangement)
 void emfp_cpy(struct EmfType *dest, struct EmfType *source)
 {
   size_t size2, sizey, sizez;
@@ -175,7 +184,14 @@ void emfp_2_psd(struct BeamlineType *bl)
   printf("debug: emfp_2_psd called, ny= %d, nz= %d\n", bl->emfp->ny, bl->emfp->nz);
 #endif
 
-  if (!bl->emfp) return;
+  if (!bl->emfp) 
+    {
+      printf("error: emfp_2_psd: bl->emfp == NULL- return\n");
+      return;
+    }
+#ifdef DEBUG
+  printf("debug: emfp_2_psd emfp=%d\n", (int)bl->emfp);
+#endif
   ReAllocResult(bl, PLphspacetype, bl->emfp->ny, bl->emfp->nz);
   
   psd= (struct PSDType *)bl->RESULT.RESp;
@@ -198,6 +214,7 @@ void emfp_2_psd(struct BeamlineType *bl)
 #endif
 } // emfp_2_psd
 
+// does not free the memory
 void emfp_2_source4c(struct BeamlineType *bl)
 {
   size_t size2, sizey, sizez;
@@ -232,7 +249,7 @@ void emfp_2_source4c(struct BeamlineType *bl)
   memcpy(so4->zezim, bl->emfp->ezim, size2);
 
 #ifdef DEBUG
-  printf("debug: emfp_2_psd done\n");
+  printf("debug: emfp_2_source4c done\n");
 #endif
 } // emfp_2_source4c
 
@@ -241,7 +258,7 @@ void gauss_source1c(struct BeamlineType *bl)
 {
   int row, col, rows, cols, truncation, idx;
   double wavelength, k, z0, w, w2, eta, rho2, arg1, arg2,  Ri, dist, w0, mywidthyz, power, scale, binsize; 
-  struct EmfType *emfp;
+  struct EmfType *emfp_tmp;
 
 #ifdef DEBUG
   printf("debug: %s: gauss_source1c called\n", __FILE__);
@@ -251,7 +268,7 @@ void gauss_source1c(struct BeamlineType *bl)
   rows= cols= bl->poso1c.nyz;
   w0        = bl->poso1c.waist;
   wavelength= bl->BLOptions.lambda*1e-3;
-
+  
   if ((fabs(wavelength) <= ZERO) || (fabs(w0) <= ZERO))
     {
       beep(5);
@@ -259,10 +276,10 @@ void gauss_source1c(struct BeamlineType *bl)
 	     wavelength, w0);
       return;
     } 
-
+  
   k         = PI * 2/ wavelength;                           // wave number
   z0        = PI * pow(w0, 2)/ wavelength;       
-           // Rayleigh Range
+  // Rayleigh Range
   w         = w0 * sqrt(1.0+ pow((dist/z0), 2));            // w(dist)
   w2        = pow(w, 2);
   eta       = atan(dist/z0);
@@ -287,17 +304,17 @@ void gauss_source1c(struct BeamlineType *bl)
       return;
     }
 
-  emfp= emfp_construct(cols, rows);  
+  emfp_tmp= emfp_construct(cols, rows);  // reserves the memory
   power= 0.0;
-
+  
   for (row=0; row< rows; row++)
-    emfp->y[row]= emfp->z[row]= (row/(rows- 1.) - 0.5) * mywidthyz;
+    emfp_tmp->y[row]= emfp_tmp->z[row]= (row/(rows- 1.) - 0.5) * mywidthyz;
   
   for (row=0; row< rows; row++)
     for (col=0; col< cols; col++)
       {
-	rho2=  pow(emfp->z[col], 2) + pow(emfp->y[row], 2);
-	//printf("z= %f, y= %f\n", emfp->z[col], emfp->y[row]);
+	rho2=  pow(emfp_tmp->z[col], 2) + pow(emfp_tmp->y[row], 2);
+	//printf("z= %f, y= %f\n", emfp_tmp->z[col], emfp_tmp->y[row]);
 	arg1  = -1 *  rho2 / w2;
 	if (arg1 <= -40)
 	  { 
@@ -308,25 +325,25 @@ void gauss_source1c(struct BeamlineType *bl)
 	//	phas2re= cos(arg2);
 	//      phas2im= sin(arg2);    
 	idx= col+ row* cols;
-	emfp->eyre[idx]= cos(arg2) * exp(arg1) * w0 / w;
-	emfp->eyim[idx]= sin(arg2) * exp(arg1) * w0 / w;
-	emfp->ezre[idx]= cos(arg2) * exp(arg1) * w0 / w;
-	emfp->ezim[idx]= sin(arg2) * exp(arg1) * w0 / w;
-	power+= pow(emfp->eyre[idx], 2) + pow(emfp->eyim[idx], 2) + 
-	  pow(emfp->ezre[idx], 2) + pow(emfp->ezim[idx], 2);
+	emfp_tmp->eyre[idx]= cos(arg2) * exp(arg1) * w0 / w;
+	emfp_tmp->eyim[idx]= sin(arg2) * exp(arg1) * w0 / w;
+	emfp_tmp->ezre[idx]= cos(arg2) * exp(arg1) * w0 / w;
+	emfp_tmp->ezim[idx]= sin(arg2) * exp(arg1) * w0 / w;
+	power+= pow(emfp_tmp->eyre[idx], 2) + pow(emfp_tmp->eyim[idx], 2) + 
+	  pow(emfp_tmp->ezre[idx], 2) + pow(emfp_tmp->ezim[idx], 2);
       }
-
-  binsize= (emfp->z[1]- emfp->z[0]) * (emfp->y[1]- emfp->y[0]);
-  power*= binsize/ VAC_IMPEDANCE;  // total power
-  scale= (power > 0.0) ? 1.0/ sqrt(power) : 1.0;
-  scale*= 1e-3;  // V/mm
-
+  
+  binsize= (emfp_tmp->z[1]- emfp_tmp->z[0]) * (emfp_tmp->y[1]- emfp_tmp->y[0]);
+  power *= binsize/ VAC_IMPEDANCE;  // total power
+  scale  = (power > 0.0) ? 1.0/ sqrt(power) : 1.0;
+  scale *= 1e-3;  // V/mm
+  
   if (truncation)  printf("!! gauss_source1c warning -- some outside points are truncated !!\n");
   
   for (row=0; row< rows; row++)  //;; scale to mm
     {
-      emfp->y[row]*= 1e3;
-      emfp->z[row]*= 1e3;
+      emfp_tmp->y[row]*= 1e3;
+      emfp_tmp->z[row]*= 1e3;
     }
   
   power= 0.0;
@@ -334,23 +351,30 @@ void gauss_source1c(struct BeamlineType *bl)
     for (col=0; col< cols; col++)
       {
 	idx= col+ row* cols;
-	emfp->eyre[idx]*= scale;
-	emfp->eyim[idx]*= scale;
-	emfp->ezre[idx]*= scale;
-	emfp->ezim[idx]*= scale;
-	power+= pow(emfp->eyre[idx], 2) + pow(emfp->eyim[idx], 2) + 
-	  pow(emfp->ezre[idx], 2) + pow(emfp->ezim[idx], 2);
+	emfp_tmp->eyre[idx]*= scale;
+	emfp_tmp->eyim[idx]*= scale;
+	emfp_tmp->ezre[idx]*= scale;
+	emfp_tmp->ezim[idx]*= scale;
+	power+= pow(emfp_tmp->eyre[idx], 2) + pow(emfp_tmp->eyim[idx], 2) + 
+	  pow(emfp_tmp->ezre[idx], 2) + pow(emfp_tmp->ezim[idx], 2);
       }
 
-  binsize= (emfp->z[1]- emfp->z[0]) * (emfp->y[1]- emfp->y[0]);  // in mm^2
+  binsize= (emfp_tmp->z[1]- emfp_tmp->z[0]) * (emfp_tmp->y[1]- emfp_tmp->y[0]);  // in mm^2
   power*= binsize/ VAC_IMPEDANCE;  // total power
 
   printf("powercheck: total power = %f W\n", power);
 
-  bl->emfp= emfp;
+  if (bl->source_emfp) emfp_free(bl->source_emfp);
+  bl->source_emfp= emfp_construct(cols, rows);
+  emfp_cpy(bl->source_emfp, emfp_tmp);
+
+  bl->emfp= emfp_tmp;                   // just put the pointer no memory transfer
   emfp_2_source4c(bl);
   bl->emfp= NULL;
-  emfp_free(emfp);
+#ifdef DEBUG
+  printf("debug: gauss_source1c: clean temporary memory\n");
+#endif
+  emfp_free(emfp_tmp);
 
 #ifdef DEBUG
   printf("debug: gauss_source1c done\n");
@@ -457,7 +481,9 @@ void source8c_ini(struct BeamlineType *bl)
 
    /* the rest is a copy of functionality from source4c_ini */
   reallocate_posrc(bl, rows, cols); /* allocate plus init   */
-  
+  if (bl->source_emfp) emfp_free(bl->source_emfp);
+  bl->source_emfp= emfp_construct(cols, rows);
+
   /*  it= 0;     */     /* so far - read only first slice */
 
   /* grid - genesis has a symetric grid*/
@@ -465,12 +491,17 @@ void source8c_ini(struct BeamlineType *bl)
     {
       bl->posrc.gridx[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
       bl->posrc.gridy[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+      bl->source_emfp->y[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
+      bl->source_emfp->z[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
     }
 
   /*  */
   printf("!! linear horizontal polarization is hardcoded !!, file: %s\n", __FILE__);
   posrc_fill8(bl, bl->posrc.zezre, field, 0);
   posrc_fill8(bl, bl->posrc.zezim, field, 1);
+  
+  emfp_fill8(bl, bl->source_emfp->ezre, field, 0);
+  emfp_fill8(bl, bl->source_emfp->ezim, field, 1);
   
   XFREE(field);
 
@@ -552,12 +583,22 @@ void source7c_ini(struct BeamlineType *bl)
   
   /* the rest is a copy of functionality from source4c_ini */
   reallocate_posrc(bl, rows, cols);
+  if (bl->source_emfp) emfp_free(bl->source_emfp);
+  bl->source_emfp= emfp_construct(cols, rows);
 
   it= 0;          /* so far - read only first slice */
 
   /* grid */
   for (i=0; i< bl->posrc.iey; i++) bl->posrc.gridy[i]= y[i]*1e3;
   for (i=0; i< bl->posrc.iex; i++) bl->posrc.gridx[i]= z[i]*1e3;
+
+  for (i=0; i< bl->source_emfp->ny; i++) bl->source_emfp->y[i]= y[i]*1e3;
+  for (i=0; i< bl->source_emfp->nz; i++) bl->source_emfp->z[i]= z[i]*1e3;
+
+  emfp_fill7(bl, bl->source_emfp->eyre, field, 0, it, 0);
+  emfp_fill7(bl, bl->source_emfp->eyim, field, 1, it, 1);
+  emfp_fill7(bl, bl->source_emfp->ezre, field, 2, it, 0);
+  emfp_fill7(bl, bl->source_emfp->ezim, field, 3, it, 1);
 
   posrc_fill7(bl, bl->posrc.zeyre, field, 0, it, 0);
   posrc_fill7(bl, bl->posrc.zeyim, field, 1, it, 1);
@@ -619,35 +660,40 @@ int source4c_ini(struct BeamlineType *bl)
       return myreturn;
     }
   /* if we reach this point- all files are open */
-  
+
+  if (bl->source_emfp) emfp_free(bl->source_emfp);
+    
  /* y real */
   printf("read file: %s ", bl->filenames.so4_fsource4a);
   fscanf(fa, "%d %d", &cols, &rows);                   /* read first line        */
+  bl->source_emfp= emfp_construct(cols, rows);
   reallocate_posrc(bl, rows, cols);                    /* reserve memory         */
   posrc_fill4(bl, bl->posrc.zeyre, fa, 0);             /* fill array, close file */
+  emfp_fill4(bl, bl->source_emfp->eyre, fa, 0);        /* fill array, close file */
     
   /* y imag */
   printf("read file: %s ", bl->filenames.so4_fsource4b);
   fscanf(fb, "%d %d", &cols, &rows);                   /* read first line */
   check_file_consistency(bl, rows, cols);
   posrc_fill4(bl, bl->posrc.zeyim, fb, 1);         /* fill array, close file */
-  
+  emfp_fill4(bl, bl->source_emfp->eyim, fb, 0);    /* fill array, close file */
   /* z real */
   printf("read file: %s ", bl->filenames.so4_fsource4c);
   fscanf(fc, "%d %d", &cols, &rows);                   /* read first line */
   check_file_consistency(bl, rows, cols);
   posrc_fill4(bl, bl->posrc.zezre, fc, 0);         /* fill array, close file */
-  
+  emfp_fill4(bl, bl->source_emfp->ezre, fc, 0);    /* fill array, close file */
+
   /* z imag */
   printf("read file: %s ", bl->filenames.so4_fsource4d);
   fscanf(fd, "%d %d", &cols, &rows);                   /* read first line */
   check_file_consistency(bl, rows, cols);
   posrc_fill4(bl, bl->posrc.zezim, fd, 1);         /* fill array, close file */
-    
+  emfp_fill4(bl, bl->source_emfp->ezim, fd, 0);    /* fill array, close file */  
 #ifdef DEBUG
-  so4= (struct source4c *)&(bl->posrc);
-  printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
-	 so4->gridx[0], "z", so4->gridx[so4->iex- 1],  so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
+  //  so4= (struct source4c *)&(bl->posrc);
+  //  printf("debug: limits: %g < %s < %g, %g < %s < %g\n", 
+  //	 so4->gridx[0], "z", so4->gridx[so4->iex- 1],  so4->gridy[0], "y", so4->gridy[so4->iey- 1]);
   printf("debug: source4c_ini done\n");
 #endif
   myreturn= 1;      /* if we reach this point it is OK */ 
@@ -872,7 +918,8 @@ void read_hdf5_file(struct BeamlineType *bl, char *fname)
   hid_t  file_id;   /* , group_id */
   int    col, row, cols, rows, fieldsize, hdf5type, t_size;  /* slicecount= 1, */
   double  gridsize, *field;  /* wavelength, gridsize, */
-  struct PSDType *p;
+  // struct PSDType *p;
+  struct EmfType *p;
 
 #ifdef DEBUG  
   printf("debug: read_hdf5_file called! file: %s\n", __FILE__);
@@ -895,20 +942,23 @@ void read_hdf5_file(struct BeamlineType *bl, char *fname)
       rows= cols= sqrt(t_size / 2);
     }
 
-  ReAllocResult(bl, PLphspacetype, rows, cols);
+  // ReAllocResult(bl, PLphspacetype, rows, cols);
+  if (bl->result_emfp) emfp_free(bl->result_emfp);
+  bl->result_emfp= emfp_construct(cols, rows);
 
   fieldsize= rows* cols;
 
   field= XMALLOC(double, fieldsize);
-  p= (struct PSDType *)bl->RESULT.RESp;
+  // p= (struct PSDType *)bl->RESULT.RESp;
+  p= bl->result_emfp;
 
   readDataDouble(file_id, "/phase_psd/psd", field, fieldsize);
   readDataDouble(file_id, "/phase_psd/z", p->z, cols);
   readDataDouble(file_id, "/phase_psd/y", p->y, rows);
   H5Fclose(file_id);
 
-  p->iy= rows;
-  p->iz= cols;
+  p->ny= rows;
+  p->nz= cols;
     
   XFREE(field);
 
@@ -920,7 +970,8 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   hid_t  file_id, group_id;
   int    slicecount= 1, col, row, cols, rows, fieldsize;
   double wavelength, gridsize, *field;
-  struct PSDType *p;
+  //struct PSDType *p;
+  struct EmfType *p;
 
   /* if (!(bl->beamlineOK & resultOK)) 
     {
@@ -939,9 +990,9 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
       exit(-1);
     }
 
-  p= (struct PSDType *)bl->RESULT.RESp;
-  rows= p->iy;
-  cols= p->iz;
+  p= bl->result_emfp;
+  rows= p->ny;
+  cols= p->nz;
 
   if (rows != cols)
     {
@@ -960,8 +1011,8 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname)
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
-	field[   (col + row * cols) * 2]= p->ezrec[row+ col* rows]*1e3;  // fortran memory
-	field[1+ (col + row * cols) * 2]= p->ezimc[row+ col* rows]*1e3;  // genesis in m^2 intensity normalization
+	field[   (col + row * cols) * 2]= p->ezre[row+ col* rows]*1e3;  // fortran memory
+	field[1+ (col + row * cols) * 2]= p->ezim[row+ col* rows]*1e3;  // genesis in m^2 intensity normalization
       }
 
   wavelength= bl->BLOptions.lambda* 1e-3;
@@ -990,7 +1041,8 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
   int     no_time_slices= 1, col, row, cols, rows, it, fversion;
   long    fieldsize, debugidx;
   double  wavelength, *field, t_vec= 0.5, *zvec, *yvec;
-  struct PSDType *p;
+  //struct PSDType *p;
+  struct EmfType *p;
 
 #ifdef DEBUG
   printf("debug: %s write_phase_hdf5_file called\n", __FILE__);
@@ -1014,9 +1066,10 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
       exit(-1);
     }
 
-  p= (struct PSDType *)bl->RESULT.RESp;
-  rows= p->iy;
-  cols= p->iz;
+  //p= (struct PSDType *)bl->RESULT.RESp;
+  p= bl->result_emfp;
+  rows= p->ny;
+  cols= p->nz;
 
 #ifdef DEBUG
   printf("debug: rows=%d, cols= %d\n", rows, cols);
@@ -1042,10 +1095,10 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
       for (row= 0; row < rows; row++)
 	{
 	  yvec[row]= p->y[row]* 1e-3;
-	  field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= p->eyrec[row+ col* rows]*1e3;
-	  field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= p->eyimc[row+ col* rows]*1e3;
-	  field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= p->ezrec[row+ col* rows]*1e3;
-	  field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezimc[row+ col* rows]*1e3;
+	  field[col+ row* cols + 0 * (rows * cols) + it * (rows * cols * 4)]= p->eyre[row+ col* rows]*1e3;
+	  field[col+ row* cols + 1 * (rows * cols) + it * (rows * cols * 4)]= p->eyim[row+ col* rows]*1e3;
+	  field[col+ row* cols + 2 * (rows * cols) + it * (rows * cols * 4)]= p->ezre[row+ col* rows]*1e3;
+	  field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= p->ezim[row+ col* rows]*1e3;
 	}
     }
   
@@ -1123,6 +1176,22 @@ void check_file_consistency(struct BeamlineType *bl, int rows, int cols)
     }
 } /* check_file_consistency */
 
+void emfp_fill4(struct BeamlineType *bl, double *a,  FILE *f, int imag)
+{
+  int i, j;
+  double val;
+
+  for (j=0; j< bl->source_emfp->ny; j++)                 /* fill matrix in c memory model */
+    for (i=0; i< bl->source_emfp->nz; i++) 
+      {
+	fscanf(f, "%lf %lf %lf", &bl->source_emfp->z[i], &bl->source_emfp->y[j], &val);
+	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	a[i+ j* bl->source_emfp->nz]= val;
+      }
+
+  fclose(f);
+  printf(" ==> done\n");
+} /* emfp_fill4 */
 
 void posrc_fill4(struct BeamlineType *bl, double *a,  FILE *f, int imag)
 {
@@ -1141,6 +1210,24 @@ void posrc_fill4(struct BeamlineType *bl, double *a,  FILE *f, int imag)
   printf(" ==> done\n");
 } /* posrc_fill4 */
 
+void emfp_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, int it, int imag)
+{
+  int i, j, rows, cols;
+  double val;
+
+  rows= bl->source_emfp->ny;
+  cols= bl->source_emfp->nz;
+
+  for (j=0; j< rows; j++)                 /* fill matrix in c memory model */
+    for (i=0; i< cols; i++) 
+      {
+	val= 1e-3* field[i + j* cols + offset * (rows * cols) + it * (rows * cols * 4)];
+	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	a[i+ j* cols]= val;
+      }
+} /* emfp_fill7 */
+
+
 void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, int it, int imag)
 {
   int i, j, rows, cols;
@@ -1157,6 +1244,25 @@ void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset,
 	a[i+ j* cols]= val;
       }
 } /* posrc_fill7 */
+
+/* genesis data are a linear array of real and imag numbers- use imag as offset */
+void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
+{
+  int i, j, rows, cols;
+  double val;
+
+  rows= bl->source_emfp->ny;
+  cols= bl->source_emfp->nz;
+
+  for (j=0; j< rows; j++)                 /* fill matrix in fortran memory model */
+    for (i=0; i< cols; i++) 
+      {
+	val= field[imag + (i + j * cols)* 2];
+	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	a[i+ j* cols]= val * 1e-3;  // genesis data are per m^2 !!! intensity normalization !!!
+	// intensity is field ^2 therefore it is not 1e-6 but 1e-3
+      }
+} /* emfp_fill8 */
 
 /* genesis data are a linear array of real and imag numbers- use imag as offset */
 void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
@@ -1189,12 +1295,17 @@ FILE *posrc_fopen(char *name)
   return fa;
 } /* posrc_fopen */
 
+// copy psd to emfp including memory management
 void psd_2_emfp(struct BeamlineType *bl)
 {
   size_t size2, sizey, sizez;
   struct PSDType *psd;
 
   psd= (struct PSDType *)bl->RESULT.RESp;
+
+#ifdef DEBUG
+  printf("debug: psd_2_emfp called, file=%s\n", __FILE__);
+#endif
 
   if (bl->emfp) emfp_free(bl->emfp);
   bl->emfp= emfp_construct(psd->iz, psd->iy);
@@ -1210,8 +1321,14 @@ void psd_2_emfp(struct BeamlineType *bl)
 
   memcpy(bl->emfp->eyim, psd->eyimc, size2);
   memcpy(bl->emfp->ezim, psd->ezimc, size2);
-} // psd_2_emf
 
+#ifdef DEBUG
+  printf("debug: psd_2_emfp done, file=%s\n", __FILE__);
+#endif
+} // psd_2_emfp
+
+// copy source to emfp in bl struct including memory management
+// frees and reserves the memory
 void source4c_2_emfp(struct BeamlineType *bl)
 {
   size_t size2, sizey, sizez;

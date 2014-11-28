@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <27 Nov 14 17:02:31 flechsig>  */
+/*   Time-stamp: <28 Nov 14 16:04:46 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -377,7 +377,7 @@ void pstc(struct BeamlineType *bl)
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi, driftlen;
   struct map4 *m4p;
   struct constants cs;
-  struct EmfType *emfp;
+  struct EmfType *emfp_tmp;
   FILE   *fd;
   void   *vv, *vv1;
   size_t n;
@@ -426,56 +426,58 @@ void pstc(struct BeamlineType *bl)
 
   npoints= sp->iheigh * sp->iwidth;
   next= 0;
-  PSDp->outside_wl= 0;
-
+  bl->RESULT.outside_wl= 0;
+  source4c_2_emfp(bl);  // copy source to emfp (emfp in bl structure)
+  // inside the loop we use emfp
   nu= 0;
+  emfp_tmp= NULL;  
   while (nu < bl->elementzahl)
     {
       driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
-      source4c_2_emfp(bl);
-      emfp= NULL;
-      emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
       printf("*************************************\n");
 
       switch (bl->ElementList[nu].MDat.Art)
 	{
-	  case 100:
-	      drift_auto_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
-	      emfp_cpy(bl->emfp, emfp);
-	      break;
-	    case 101:
-	      drift_fourier_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
-	      emfp_cpy(bl->emfp, emfp);
-	      break;
-	    case 102:
-	      drift_fresnel_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
-	      emfp_cpy(bl->emfp, emfp);
-	      break;
-	    case 103:
-	      drift_fraunhofer_emf(bl->emfp, emfp, bl->BLOptions.lambda, driftlen);
-	      emfp_cpy(bl->emfp, emfp);
-	      break;
-	    default:
-	      for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
-	      if (nu < (bl->elementzahl- 1))
-		{
-		  printf("xxx restore source n= %d, elements: %d\n", nu, bl->elementzahl);
-		  psd_2_emfp();
-		  emfp_cpy(bl->emfp, emfp);   // restore the source
-		  emfp_2_source4c();
-		}
-	}
-      emfp_free(emfp);
+	case 100:
+	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
+	  drift_auto_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
+	  emfp_cpy(bl->emfp, emfp_tmp);
+	  emfp_free(emfp_tmp);            // free local emfp
+	  break;
+	case 101:
+	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
+	  drift_fourier_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
+	  emfp_cpy(bl->emfp, emfp_tmp);
+	  emfp_free(emfp_tmp);            // free local emfp
+	  break;
+	case 102:
+	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
+	  drift_fresnel_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
+	  emfp_cpy(bl->emfp, emfp_tmp);
+	  emfp_free(emfp_tmp);            // free local emfp
+	  break;
+	case 103:
+	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
+	  drift_fraunhofer_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
+	  emfp_cpy(bl->emfp, emfp_tmp);
+	  emfp_free(emfp_tmp);            // free local emfp
+	  break;
+	default:
+	  printf("*** stationary phase propagation ****\n");
+	  printf("*************************************\n");
+	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
+	  //psd_2_emfp(bl);  // copy Zwischenergebnis nach emfp in bl struct
+	} // switch
       nu++;
-    }
+    } // while
 
-  // for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
-
+  //emfp_2_psd(bl); // copy emfp to psd
+  //emfp_free(bl);
   printf("\n");
   totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
-  printf("outside_wl: %d out of %d (%f %)\n", PSDp->outside_wl, totrays, 100.0*PSDp->outside_wl/totrays);
+  printf("outside_wl: %d out of %d (%f %)\n", bl->RESULT.outside_wl, totrays, 100.0*bl->RESULT.outside_wl/totrays);
   
   
   iinumb=0;
@@ -609,7 +611,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->isrctype_c, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, &lostwl, (int *)bl);
 
-  ((struct PSDType *)bl->RESULT.RESp)->outside_wl+= lostwl;  // UF OCT 14 not threadsafe !!!!
+  bl->RESULT.outside_wl+= lostwl;  // UF OCT 14 not threadsafe !!!!
 
   // apply phase shift of coating
   if (bl->BLOptions.PSO.with_coating) 

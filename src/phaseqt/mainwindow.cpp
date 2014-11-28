@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Nov 14 15:27:39 flechsig> 
+//  Time-stamp: <28 Nov 14 16:31:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2635,22 +2635,22 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 
   if (po)
     {
-      
-      if (!((struct PSDType *) myparent->myBeamline()->RESULT.RESp) )
+      //      cout << "!! warning: source statistics likely not OK !!" << endl;
+      if ( !myparent->myBeamline()->result_emfp )
 	{
 	  cout << "warning: pointer error UpdateStatistics-- return" << endl;
 	  return;
 	}
 
       porays= 
-	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iy* 
-	((struct PSDType *) myparent->myBeamline()->RESULT.RESp)->iz* 
+	myparent->myBeamline()->result_emfp->ny* 
+	myparent->myBeamline()->result_emfp->nz* 
 	myparent->myBeamline()->BLOptions.xi.ianzy0* 
 	myparent->myBeamline()->BLOptions.xi.ianzz0;
-      trans= (porays > 0) ? 1.0- ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl/ (double)porays : 0.0;
+      trans= (porays > 0) ? 1.0- myparent->myBeamline()->RESULT.outside_wl/ (double)porays : 0.0;
 #ifdef DEBUG
       printf("trans  = %lf\n", trans);
-      printf("outside= %ld\n", ((struct PSDType *)myparent->myBeamline()->RESULT.RESp)->outside_wl);
+      printf("outside= %ld\n", myparent->myBeamline()->RESULT.outside_wl);
       printf("porays = %ld or %lf\n", porays, (double)porays);
 #endif
     }  // end po
@@ -2857,8 +2857,6 @@ void MainWindow::updateGraphicsInput(int style)
 	yminLabel->setText(QString(tr("ymin (mm)"))); 
 	ymaxLabel->setText(QString(tr("ymax (mm)")));
       }
-  
-
 } // updateGraphicsInput
 
 
