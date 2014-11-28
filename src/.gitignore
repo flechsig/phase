@@ -16,6 +16,7 @@ stamp-h1
 *.o
 moc_*.cpp
 qrc_*.cpp
+phase.pck
 extr/phaseextract
 fkoe/fkoe
 fkoempi/fkoempi
