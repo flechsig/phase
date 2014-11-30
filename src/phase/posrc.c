@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2014-11-30 18:56:44 flechsig>  */
+/*  Time-stamp: <2014-11-30 19:24:42 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -719,13 +719,12 @@ int source4c_ini(struct BeamlineType *bl)
 /* !! reads the input from bl->posrc and not sources! */
 /* routine wird gerufen von fortran - daher underscore  */
 /* principle: weighted average over 4 adjacent points */
+/* Nov 2014 switch to emf source */
 void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
-#ifndef OBSOLETE
-  printf("call to obsolete function\n", __FILE__);
-#else
   struct BeamlineType *bl;
-  struct source4c *so4;
+  // struct source4c *so4;
+  struct EmfType *emfpp;
   int    ix1, ix2, iy1, iy2;
   double x1, x2, y1, y2, fact3, fact4, fact5, fact6;
   double zmin, zmax, ymin, ymax, dz, dy, dyz;
@@ -735,27 +734,29 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 #endif
 
   bl = (struct BeamlineType *)blp;
-  so4= (struct source4c *)&(bl->posrc);
+  //so4= (struct source4c *)&(bl->posrc);
+  emfpp= bl->emfp;
 
-  if ((so4->iey < 2) || (so4->iex < 2))
+  if (!emfpp)
     {
-      printf("error: source4c_inter_2d_, file: %s => iey or iez < 2 - return\n");
+      printf("error: source4c_inter_2d_, source == NULL - return\n");
       return;
     }
 
-  zmin= so4->gridx[0];
-  ymin= so4->gridy[0];
-  zmax= so4->gridx[so4->iex- 1];
-  ymax= so4->gridy[so4->iey- 1];
-  dz  = so4->gridx[1]- so4->gridx[0];
-  dy  = so4->gridy[1]- so4->gridy[0];
-  dyz = dy* dz;
+  //if ((so4->iey < 2) || (so4->iex < 2))
+  if ((emfpp->ny < 2) || (emfpp->nz < 2))
+    {
+      printf("error: source4c_inter_2d_, file: %s => ny or nz < 2 - return\n");
+      return;
+    }
 
-#ifdef DEBUG1
-  printf("debug: %s : x= %f, y= %f, position: %u\n", __FILE__, *xwert, *ywert, bl->position);
-  printf("debug: %s : limits: %e < %e < %e, %e < %e < %e\n", __FILE__, 
-	 so4->xemin, *xwert, so4->xemax,  so4->yemin, *ywert, so4->yemax);
-#endif
+  zmin= emfpp->z[0];
+  ymin= emfpp->y[0];
+  zmax= emfpp->z[emfpp->nz- 1];
+  ymax= emfpp->y[emfpp->ny- 1];
+  dz  = emfpp->z[1]- emfpp->z[0];
+  dy  = emfpp->y[1]- emfpp->y[0];
+  dyz = dy* dz;
 
   if ((*xwert < zmin) || (*xwert > zmax) || 
       (*ywert < ymin) || (*ywert > ymax)) 
@@ -785,39 +786,39 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   iy2= iy1+ 1;
 
   /* exclude index overrun */
-  if ((ix2 >= so4->iex) || (iy2 >= so4->iey)) return; /* UF 18.2.14 */
+  if ((ix2 >= emfpp->nz) || (iy2 >= emfpp->ny)) return; /* UF 18.2.14 */
     
-  x1  = so4->gridx[ix1];
-  x2  = so4->gridx[ix2];
-  y1  = so4->gridy[iy1];
-  y2  = so4->gridy[iy2];
+  x1  = emfpp->z[ix1];
+  x2  = emfpp->z[ix2];
+  y1  = emfpp->y[iy1];
+  y2  = emfpp->y[iy2];
        
   fact3= ((x2- *xwert)* (y2- *ywert))/ dyz;
   fact4= ((*xwert- x1)* (y2- *ywert))/ dyz;
   fact5= ((x2- *xwert)* (*ywert- y1))/ dyz;
   fact6= ((*xwert- x1)* (*ywert- y1))/ dyz;
 
-  sr->densyre= fact3* so4->zeyre[ix1+ iy1* so4->iex]+
-    fact4* so4->zeyre[ix2+ iy1* so4->iex]+
-    fact5* so4->zeyre[ix1+ iy2* so4->iex]+
-    fact6* so4->zeyre[ix2+ iy2* so4->iex];
+  sr->densyre= fact3* emfpp->eyre[ix1+ iy1* emfpp->nz]+
+    fact4* emfpp->eyre[ix2+ iy1* emfpp->nz]+
+    fact5* emfpp->eyre[ix1+ iy2* emfpp->nz]+
+    fact6* emfpp->eyre[ix2+ iy2* emfpp->nz];
   
-  sr->densyim= fact3* so4->zeyim[ix1+ iy1* so4->iex]+
-    fact4* so4->zeyim[ix2+ iy1* so4->iex]+
-    fact5* so4->zeyim[ix1+ iy2* so4->iex]+
-    fact6* so4->zeyim[ix2+ iy2* so4->iex];
+  sr->densyim= fact3* emfpp->eyim[ix1+ iy1* emfpp->nz]+
+    fact4* emfpp->eyim[ix2+ iy1* emfpp->nz]+
+    fact5* emfpp->eyim[ix1+ iy2* emfpp->nz]+
+    fact6* emfpp->eyim[ix2+ iy2* emfpp->nz];
   
   //c---------  Interpolation of Ez, same grid as for Ey
 
-  sr->denszre= fact3* so4->zezre[ix1+ iy1* so4->iex]+
-    fact4* so4->zezre[ix2+ iy1* so4->iex]+
-    fact5* so4->zezre[ix1+ iy2* so4->iex]+
-    fact6* so4->zezre[ix2+ iy2* so4->iex];
+  sr->denszre= fact3* emfpp->ezre[ix1+ iy1* emfpp->nz]+
+    fact4* emfpp->ezre[ix2+ iy1* emfpp->nz]+
+    fact5* emfpp->ezre[ix1+ iy2* emfpp->nz]+
+    fact6* emfpp->ezre[ix2+ iy2* emfpp->nz];
   
-  sr->denszim= fact3* so4->zezim[ix1+ iy1* so4->iex]+
-    fact4* so4->zezim[ix2+ iy1* so4->iex]+
-    fact5* so4->zezim[ix1+ iy2* so4->iex]+
-    fact6* so4->zezim[ix2+ iy2* so4->iex];
+  sr->denszim= fact3* emfpp->ezim[ix1+ iy1* emfpp->nz]+
+    fact4* emfpp->ezim[ix2+ iy1* emfpp->nz]+
+    fact5* emfpp->ezim[ix1+ iy2* emfpp->nz]+
+    fact6* emfpp->ezim[ix2+ iy2* emfpp->nz];
 
 #ifdef DEBUG1
   printf("debug: factsum: %lf\n", fact3+fact4+fact5+fact6);
@@ -826,7 +827,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   printf("debug: %s-> source4c_inter_2d_: sr->denszre= %lg\n", __FILE__, sr->denszre);
   printf("debug: %s-> source4c_inter_2d_: sr->denszim= %lg\n", __FILE__, sr->denszim);
 #endif
-#endif
+
 } /* end source4c_inter_2d_ */
 
 
@@ -1165,8 +1166,8 @@ void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
   if (bl->posrc.zeyim != NULL) XFREE(bl->posrc.zeyim);   
   if (bl->posrc.zezre != NULL) XFREE(bl->posrc.zezre);
   if (bl->posrc.zezim != NULL) XFREE(bl->posrc.zezim);
-  if (bl->posrc.gridx != NULL) XFREE(bl->posrc.gridx);
-  if (bl->posrc.gridy != NULL) XFREE(bl->posrc.gridy);
+  if (bl->posrc.z != NULL) XFREE(bl->posrc.z);
+  if (bl->posrc.y != NULL) XFREE(bl->posrc.y);
 
   bl->posrc.iex= cols; 
   bl->posrc.iey= rows;
@@ -1176,8 +1177,8 @@ void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
   bl->posrc.zeyim= XMALLOC(double, twodsize);
   bl->posrc.zezre= XMALLOC(double, twodsize); 
   bl->posrc.zezim= XMALLOC(double, twodsize); 
-  bl->posrc.gridx= XMALLOC(double, bl->posrc.iex);
-  bl->posrc.gridy= XMALLOC(double, bl->posrc.iey);
+  bl->posrc.z= XMALLOC(double, bl->posrc.iex);
+  bl->posrc.y= XMALLOC(double, bl->posrc.iey);
 
   memset(bl->posrc.zeyre, 0, sizeof(double)* twodsize); /* set to 0.0 */
   memset(bl->posrc.zezre, 0, sizeof(double)* twodsize);
@@ -1366,8 +1367,8 @@ void source4c_2_emfp(struct BeamlineType *bl)
   sizey= bl->posrc.iey* sizeof(double);
   size2= sizez * bl->posrc.iey;
 
-  memcpy(bl->emfp->y, bl->posrc.gridy, sizey);
-  memcpy(bl->emfp->z, bl->posrc.gridx, sizez);
+  memcpy(bl->emfp->y, bl->posrc.y, sizey);
+  memcpy(bl->emfp->z, bl->posrc.z, sizez);
 
   //  printf("1\n");
 
