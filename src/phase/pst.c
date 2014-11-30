@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <28 Nov 14 16:04:46 flechsig>  */
+/*   Time-stamp: <2014-11-30 18:43:25 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -800,6 +800,9 @@ void check_2_m4_(struct map4 *m4)
 
 void copySrc2Psd(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   struct source4c *so4;
   struct PSDType  *psd;
   int    row, col, rows, cols, idxf, idxc;
@@ -844,6 +847,7 @@ void copySrc2Psd(struct BeamlineType *bl)
 
   psd->iy= cols;
   psd->iz= rows;
+#endif
 } // end copySrc2Psd()
 
 /* export geometrystruct of grating to fortran */

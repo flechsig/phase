@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <28 Nov 14 15:28:10 flechsig> 
+//  Time-stamp: <2014-11-30 18:29:45 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1275,6 +1275,8 @@ void Plot::hfill2(struct source4c *rp, int type)
   cout << "Plot::hfill2 called (PO source field version (POSF))" << endl;
 #endif
 
+#ifdef OBSOLETE
+
   h2a_nx= rp->iex;
   h2a_ny= rp->iey;
   pox   = rp->gridx;
@@ -1348,7 +1350,10 @@ void Plot::hfill2(struct source4c *rp, int type)
   if (h2range > 0.0)
     for (i=0; i< h2a_n; i++)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
-  
+#else
+printf("obsolete call to hfill2, file=%s\n", __FILE__);
+#endif
+   
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " hfill2 POSF end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
 #endif

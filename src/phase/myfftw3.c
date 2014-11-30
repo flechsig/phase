@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <27 Nov 14 17:00:23 flechsig>  */
+ /* Time-stamp: <2014-11-30 18:40:37 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -58,6 +58,9 @@
 // target < 1 means undersampling is good (impulse response or fresnel/fraunhofer propagator) 
 double check_sampling(struct BeamlineType *bl, double *lambda_x_x_p, double target, int verbose)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   int    cols, rows, eidx;
   double driftlen, ratio, yratio, zratio, lambda, zwidth, ywidth, lambda_x_x_local, *lambda_x_x;
   struct ElementType *el;
@@ -117,6 +120,7 @@ double check_sampling(struct BeamlineType *bl, double *lambda_x_x_p, double targ
   if (lambda_x_x_p != NULL) *lambda_x_x_p= *lambda_x_x;
 
   return ratio;
+#endif
 } // end check_sampling
 
 // checks the sampling off a field versus the critical_sampling
@@ -201,6 +205,9 @@ void drift_auto_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda
 /* process ez and ey in sequence                            */
 void drift_fourier(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   int    row, rows, col, cols, eidx;
   double driftlen, k, totz, toty, p0, lambda, *u, *v, tmp;
   struct ElementType *el;
@@ -278,6 +285,7 @@ void drift_fourier(struct BeamlineType *bl)
   XFREE(u);
   XFREE(v);
   printf("drift_fourier end\n");
+#endif
 } /* drift fourier */
 
 /* free space propagation with Transfer function propagator */
@@ -422,6 +430,9 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 /* free space propagation with Fresnel propagator              */
 void drift_fresnel(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   int    row, col, rows, cols;
   double driftlen, lambda, k, dz0, dy0, p0, tmp;
   struct ElementType *el;
@@ -483,6 +494,7 @@ void drift_fresnel(struct BeamlineType *bl)
 #endif
 
   printf("drift_fresnel end\n");
+#endif
 } /* end drift_fresnel */
 
 /* free space propagation with Fresnel propagator              */
@@ -614,6 +626,9 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 /* debugged, scaling der image plane ist korrekt               */
 void drift_fraunhofer(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   int    row, col, rows, cols;
   double driftlen, lambda, k, dz0, dy0, p0, tmp;
   struct ElementType *el;
@@ -677,6 +692,7 @@ void drift_fraunhofer(struct BeamlineType *bl)
 #endif
 
   printf("drift_fraunhofer end\n");
+#endif
 } /* end drift_fraunhofer */
 
 /* free space propagation with Fraunhofer propagator           */

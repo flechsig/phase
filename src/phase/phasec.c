@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <27 Oct 14 08:41:56 flechsig>  */
+/*   Time-stamp: <2014-11-30 18:28:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1060,12 +1060,16 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 /* 1204 initializes the pointers in source4c */
 void init_posrc(struct source4c *sp)
 {
+#ifdef OBSOLETE
   sp->zeyre= NULL;
   sp->zeyim= NULL;
   sp->zezre= NULL;
   sp->zezim= NULL;
   sp->gridx= NULL;
   sp->gridy= NULL;
+#else
+  printf("obsolete call to init_posrc, file=%s\n", __FILE__);
+#endif
 } /* end init_posrc() */
 
 int StackTest()

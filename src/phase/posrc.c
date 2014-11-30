@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <28 Nov 14 15:08:44 flechsig>  */
+/*  Time-stamp: <2014-11-30 18:56:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -177,6 +177,9 @@ void emfp_free(struct EmfType *emfp)
 
 void emfp_2_psd(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   size_t size2, sizey, sizez;
   struct PSDType *psd;
 
@@ -212,11 +215,15 @@ void emfp_2_psd(struct BeamlineType *bl)
 #ifdef DEBUG
   printf("debug: emfp_2_psd done\n");
 #endif
+#endif
 } // emfp_2_psd
 
 // does not free the memory
 void emfp_2_source4c(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   size_t size2, sizey, sizez;
   struct source4c *so4;
   
@@ -250,6 +257,7 @@ void emfp_2_source4c(struct BeamlineType *bl)
 
 #ifdef DEBUG
   printf("debug: emfp_2_source4c done\n");
+#endif
 #endif
 } // emfp_2_source4c
 
@@ -384,8 +392,12 @@ void gauss_source1c(struct BeamlineType *bl)
 /* initializes the pointers with NULL */
 void posrc_construct(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   bl->posrc.zeyre= bl->posrc.zeyim= bl->posrc.zezre= 
     bl->posrc.zezim= bl->posrc.gridx= bl->posrc.gridy= NULL;
+#endif
 } /* end posrc_construct */
 
 /* initializes the source depending on type */
@@ -600,10 +612,10 @@ void source7c_ini(struct BeamlineType *bl)
   emfp_fill7(bl, bl->source_emfp->ezre, field, 2, it, 0);
   emfp_fill7(bl, bl->source_emfp->ezim, field, 3, it, 1);
 
-  posrc_fill7(bl, bl->posrc.zeyre, field, 0, it, 0);
-  posrc_fill7(bl, bl->posrc.zeyim, field, 1, it, 1);
-  posrc_fill7(bl, bl->posrc.zezre, field, 2, it, 0);
-  posrc_fill7(bl, bl->posrc.zezim, field, 3, it, 1);
+  //  posrc_fill7(bl, bl->posrc.zeyre, field, 0, it, 0);
+  //posrc_fill7(bl, bl->posrc.zeyim, field, 1, it, 1);
+  //posrc_fill7(bl, bl->posrc.zezre, field, 2, it, 0);
+  //posrc_fill7(bl, bl->posrc.zezim, field, 3, it, 1);
 
   XFREE(y);
   XFREE(z);
@@ -668,27 +680,27 @@ int source4c_ini(struct BeamlineType *bl)
   fscanf(fa, "%d %d", &cols, &rows);                   /* read first line        */
   bl->source_emfp= emfp_construct(cols, rows);
   reallocate_posrc(bl, rows, cols);                    /* reserve memory         */
-  posrc_fill4(bl, bl->posrc.zeyre, fa, 0);             /* fill array, close file */
+  //posrc_fill4(bl, bl->posrc.zeyre, fa, 0);             /* fill array, close file */
   emfp_fill4(bl, bl->source_emfp->eyre, fa, 0);        /* fill array, close file */
     
   /* y imag */
   printf("read file: %s ", bl->filenames.so4_fsource4b);
   fscanf(fb, "%d %d", &cols, &rows);                   /* read first line */
   check_file_consistency(bl, rows, cols);
-  posrc_fill4(bl, bl->posrc.zeyim, fb, 1);         /* fill array, close file */
+  //posrc_fill4(bl, bl->posrc.zeyim, fb, 1);         /* fill array, close file */
   emfp_fill4(bl, bl->source_emfp->eyim, fb, 0);    /* fill array, close file */
   /* z real */
   printf("read file: %s ", bl->filenames.so4_fsource4c);
   fscanf(fc, "%d %d", &cols, &rows);                   /* read first line */
   check_file_consistency(bl, rows, cols);
-  posrc_fill4(bl, bl->posrc.zezre, fc, 0);         /* fill array, close file */
+  //posrc_fill4(bl, bl->posrc.zezre, fc, 0);         /* fill array, close file */
   emfp_fill4(bl, bl->source_emfp->ezre, fc, 0);    /* fill array, close file */
 
   /* z imag */
   printf("read file: %s ", bl->filenames.so4_fsource4d);
   fscanf(fd, "%d %d", &cols, &rows);                   /* read first line */
   check_file_consistency(bl, rows, cols);
-  posrc_fill4(bl, bl->posrc.zezim, fd, 1);         /* fill array, close file */
+  //posrc_fill4(bl, bl->posrc.zezim, fd, 1);         /* fill array, close file */
   emfp_fill4(bl, bl->source_emfp->ezim, fd, 0);    /* fill array, close file */  
 #ifdef DEBUG
   //  so4= (struct source4c *)&(bl->posrc);
@@ -709,6 +721,9 @@ int source4c_ini(struct BeamlineType *bl)
 /* principle: weighted average over 4 adjacent points */
 void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   struct BeamlineType *bl;
   struct source4c *so4;
   int    ix1, ix2, iy1, iy2;
@@ -811,7 +826,7 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   printf("debug: %s-> source4c_inter_2d_: sr->denszre= %lg\n", __FILE__, sr->denszre);
   printf("debug: %s-> source4c_inter_2d_: sr->denszim= %lg\n", __FILE__, sr->denszim);
 #endif
-
+#endif
 } /* end source4c_inter_2d_ */
 
 
@@ -1141,6 +1156,9 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname)
 
 void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   int twodsize;
 
   if (bl->posrc.zeyre != NULL) XFREE(bl->posrc.zeyre);                   /* free memory */
@@ -1165,6 +1183,7 @@ void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
   memset(bl->posrc.zezre, 0, sizeof(double)* twodsize);
   memset(bl->posrc.zeyim, 0, sizeof(double)* twodsize);
   memset(bl->posrc.zezim, 0, sizeof(double)* twodsize);
+#endif
 } /* end reallocate_posrc */
 
 void check_file_consistency(struct BeamlineType *bl, int rows, int cols)
@@ -1331,6 +1350,9 @@ void psd_2_emfp(struct BeamlineType *bl)
 // frees and reserves the memory
 void source4c_2_emfp(struct BeamlineType *bl)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function\n", __FILE__);
+#else
   size_t size2, sizey, sizez;
   
 #ifdef DEBUG
@@ -1357,6 +1379,7 @@ void source4c_2_emfp(struct BeamlineType *bl)
 
 #ifdef DEBUG
   printf("debug: source4c_2_emfp done\n");
+#endif
 #endif
 } // end source4c_2_emf
 
