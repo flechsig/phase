@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <28 Nov 14 17:07:44 flechsig>  */
+/*   Time-stamp: <01 Dec 14 16:31:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -37,6 +37,9 @@
 
 #ifndef PHASE_H
 #define PHASE_H   
+
+#define ON  1
+#define OFF 0
 
 #define DefGeometryC DefGeometryC_UF
 //#define DefGeometryC DefGeometryC_JB
@@ -331,8 +334,8 @@ struct RTSourceType {
 };       
 
 struct PSDType  {
-  double *y, *z, //*stfd1phmaxc, *stinumbc,  //*psd, *s1c, *s2c, *s3c, 
-    *eyrec, *ezrec, *eyimc, *ezimc;
+  double *y, *z; //*stfd1phmaxc, *stinumbc,  //*psd, *s1c, *s2c, *s3c, 
+  //*eyrec, *ezrec, *eyimc, *ezimc;
   double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
     sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
     simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4], d12[MAX_INTEGRATION_SIZE*2*3];
@@ -460,6 +463,7 @@ struct BeamlineType
   struct Spa3TableType spa3table;
   struct EmfType *emfp, emf;  /* for temporary fields */
   struct EmfType *source_emfp, *result_emfp;  /* new for po */
+  double *int_details;
 };
 
 /* mod 20121102 */

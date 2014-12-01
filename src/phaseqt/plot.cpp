@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2014-11-30 18:29:45 flechsig> 
+//  Time-stamp: <01 Dec 14 14:04:37 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1034,6 +1034,9 @@ void Plot::hfill2(int settype)
 // fills a 2d histogram, PO field version
 void Plot::hfill2(struct PSDType *rp, int type)
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function hfill2(struct PSDType\n", __FILE__);
+#else
   int i, ix, iy, h2a_n, idf, idc;
   double h2range;
   
@@ -1120,12 +1123,13 @@ void Plot::hfill2(struct PSDType *rp, int type)
 #ifdef DEBUG
   cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
 #endif
+#endif
 } // hfill2 PO_phase
 
 // fills a 2d histogram, PO field version
 void Plot::hfill2(struct EmfType *emfpp, int type)
 {
-  int i, ix, iy, h2a_n, idf, idc;
+  int i, ix, iy, h2a_n, idc;
   double h2range;
   
 #ifdef DEBUG
@@ -1148,11 +1152,11 @@ void Plot::hfill2(struct EmfType *emfpp, int type)
     for (iy=0; iy< h2a_ny; iy++) 
       {
 	idc= ix + iy* h2a_nx;
-	idf= iy + ix* h2a_ny;
-	double az2= pow(emfpp->ezre[idf], 2) + pow(emfpp->ezim[idf], 2);
-	double ay2= pow(emfpp->eyre[idf], 2) + pow(emfpp->eyim[idf], 2);
-	double phz= atan2(emfpp->ezim[idf], emfpp->ezre[idf]);
-	double phy= atan2(emfpp->eyim[idf], emfpp->eyre[idf]);
+	
+	double az2= pow(emfpp->ezre[idc], 2) + pow(emfpp->ezim[idc], 2);
+	double ay2= pow(emfpp->eyre[idc], 2) + pow(emfpp->eyim[idc], 2);
+	double phz= atan2(emfpp->ezim[idc], emfpp->ezre[idc]);
+	double phy= atan2(emfpp->eyim[idc], emfpp->eyre[idc]);
 	//double pz0= emfpp->ezimc[idf]/emfpp->ezrec[idf];
 	double delta= phz- phy; // sign according Born Wolf p. 30
 	

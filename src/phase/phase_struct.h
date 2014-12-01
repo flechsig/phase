@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <2014-11-30 18:20:51 flechsig>  */
+/*   Time-stamp: <01 Dec 14 09:13:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -230,8 +230,9 @@ struct source4c {
   //#ifdef xxx
   double //xemin, xemax,  yemin, //yemax, // dy, dx,
   //UF    *zeyre, *zeyim,
-    *zezre, *zezim,
-    *gridx, *gridy, deltatime,
+  //UF  *zezre, *zezim,
+  //UF  *gridx, *gridy, 
+  deltatime,
   //    ampeyre, ampeyim, ampezre, ampezim,
     xlam;
   //#endif

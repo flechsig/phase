@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <28 Nov 14 16:48:13 flechsig>  */
+/*  Time-stamp: <01 Dec 14 15:10:38 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -151,7 +151,8 @@ public:
   void mydrift_fresnel() { drift_fresnel(this); }
   void mydrift_fraunhofer() { drift_fraunhofer(this); }
   void mydrift_fourier() { drift_fourier(this); }
-  void myemfp_free() { emfp_free(this->emfp); }
+  void myemfp_construct(int nz, int ny) { this->emfp= emfp_construct(nz, ny); }
+  void myemfp_free() { this->emfp= emfp_free(this->emfp); }
   void myemfp_2_psd() { emfp_2_psd(this); }
   void myemfp_2_source4c() { emfp_2_source4c(this); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
@@ -178,7 +179,7 @@ public:
   void mysrc_ini(struct sources *src) { src_ini(src); }
   int  myposrc_ini() { return posrc_ini(this); }
   void mysource4c_2_emfp() { source4c_2_emfp(this); }
-  void mysource7c_ini() { source7c_ini(this); }
+  void mysource7c_ini(int checktype) { source7c_ini(this, checktype); }
   void mysource8c_ini() { source8c_ini(this); }
   void myTest4Grating() { Test4Grating(this); }
   void myUpdateFlags(int run) { UpdateFlags(this, run); }

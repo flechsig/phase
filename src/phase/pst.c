@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <2014-11-30 18:43:25 flechsig>  */
+/*   Time-stamp: <01 Dec 14 16:31:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -76,6 +76,9 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
 /* Uwe 2.8.96 					*/
 /* last mod. 7.8.96 				*/   
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function file=%s\n", __FILE__);
+#else
    FILE *f0,*f1,*f2,*f3,*f4;
    int i, j, dim;
 
@@ -99,6 +102,7 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
        }
    fclose(f0); 
    printf("WriteMPsd: --> done\n");
+#endif
 }  /* end writempsd */
 
 
@@ -300,6 +304,9 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType
 /* schreibt phasenraumdichte auf ein file 	*/
 /* UF umgeschrieben auf felder Mar 2014 */
 {
+#ifndef OBSOLETE
+  printf("call to obsolete function file=%s\n", __FILE__);
+#else
    FILE *f0, *f1, *f2, *f3, *f4;
    int i, j, dim, idxf;
    double s0, scale;
@@ -366,6 +373,7 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType
        }
    fclose(f0); fclose(f1); fclose(f2); fclose(f3); fclose(f4);  
    printf("WritePsd: --> done\n");
+#endif
 }  /* end writepsd */
 
 /* replacement of pstf() in file pstf.F */
@@ -377,7 +385,7 @@ void pstc(struct BeamlineType *bl)
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi, driftlen;
   struct map4 *m4p;
   struct constants cs;
-  struct EmfType *emfp_tmp;
+  
   FILE   *fd;
   void   *vv, *vv1;
   size_t n;
@@ -385,15 +393,15 @@ void pstc(struct BeamlineType *bl)
   /*struct integration_results xir;*/
   /*struct statistics st;*/
   
-  struct psimagest *sp;
-  // struct PSImageType *psip;
+  //struct psimagest *sp;
+  struct PSImageType *psip;
   struct PSDType     *PSDp;
   
   printf("called pstc\n ");
 
   PSDp= (struct PSDType *)bl->RESULT.RESp;
-  sp=   (struct psimagest *)bl->RTSource.Quellep;
-  //sp=   (struct PSImageType *)bl->RTSource.Quellep;
+  //sp=   (struct psimagest *)bl->RTSource.Quellep;
+  psip=   (struct PSImageType *)bl->RTSource.Quellep;
 
   bl->BLOptions.PSO.intmod= 2;
 
@@ -424,66 +432,64 @@ void pstc(struct BeamlineType *bl)
   printf("pstc: start\n");
 #endif
 
-  npoints= sp->iheigh * sp->iwidth;
+  npoints= psip->iy * psip->iz;
   next= 0;
   bl->RESULT.outside_wl= 0;
-  source4c_2_emfp(bl);  // copy source to emfp (emfp in bl structure)
-  // inside the loop we use emfp
+  
+
+  if (bl->emfp) bl->emfp= emfp_free(bl->emfp);
+  bl->emfp= emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
+  emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
+
   nu= 0;
-  emfp_tmp= NULL;  
+   
   while (nu < bl->elementzahl)
     {
       driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
       printf("*************************************\n");
-
+      if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);
       switch (bl->ElementList[nu].MDat.Art)
 	{
 	case 100:
-	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
-	  drift_auto_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
-	  emfp_cpy(bl->emfp, emfp_tmp);
-	  emfp_free(emfp_tmp);            // free local emfp
+	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny); 
+	  drift_auto_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 101:
-	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
-	  drift_fourier_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
-	  emfp_cpy(bl->emfp, emfp_tmp);
-	  emfp_free(emfp_tmp);            // free local emfp
+	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  drift_fourier_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 102:
-	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
-	  drift_fresnel_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
-	  emfp_cpy(bl->emfp, emfp_tmp);
-	  emfp_free(emfp_tmp);            // free local emfp
+	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  drift_fresnel_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 103:
-	  emfp_tmp= emfp_construct(bl->emfp->nz, bl->emfp->ny); // construct a local emfp
-	  drift_fraunhofer_emf(bl->emfp, emfp_tmp, bl->BLOptions.lambda, driftlen);
-	  emfp_cpy(bl->emfp, emfp_tmp);
-	  emfp_free(emfp_tmp);            // free local emfp
+	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  drift_fraunhofer_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	default:
 	  printf("*** stationary phase propagation ****\n");
 	  printf("*************************************\n");
+	  bl->result_emfp= emfp_construct(psip->iz, psip->iy);
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
-	  //psd_2_emfp(bl);  // copy Zwischenergebnis nach emfp in bl struct
 	} // switch
       nu++;
+      if (nu < bl->elementzahl)
+	{
+	  bl->emfp= emfp_free(bl->emfp);
+	  bl->emfp= emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
+	  emfp_cpy(bl->emfp, bl->result_emfp);
+	}
     } // while
-
-  //emfp_2_psd(bl); // copy emfp to psd
-  //emfp_free(bl);
+  bl->emfp= emfp_free(bl->emfp);
+  // bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");
   totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
   printf("outside_wl: %d out of %d (%f %)\n", bl->RESULT.outside_wl, totrays, 100.0*bl->RESULT.outside_wl/totrays);
   
-  
   iinumb=0;
   //for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i+1];   // fraglich
-  
-
   
 #ifdef DEBUG1
   if ((fd= fopen("simpre.debug", "w+")) == NULL)
@@ -536,13 +542,13 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct map4                *m4p;
 
  //struct constants *csp;
-  int    points, ny, nz, nzhalf, lostwl;
+  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf;
   double yi, zi;
 
   lostwl= 0;
 
-  psip = (struct PSImageType *) bl->RTSource.Quellep;
-  sp   = (struct psimagest *)   bl->RTSource.Quellep;
+  psip = (struct PSImageType *) bl->RTSource.Quellep; // the c structure in phase.h
+  sp   = (struct psimagest *)   bl->RTSource.Quellep; // the c and fortran structure in phase_struct.[FH]
   PSDp = (struct PSDType *)     bl->RESULT.RESp;
     
   xirp = XMALLOC(struct integration_results, 1);
@@ -582,6 +588,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 //  rap->xlam_test= bl->BLOptions.lambda;
   rap->ri.yi    = yi; 
   rap->ri.zi    = zi;
+  
   rap->n1       = nz+1;          /* UF warum vertauschte nummern ny war n1 ????? */
   rap->n2       = ny+1;
   
@@ -635,6 +642,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   // debug output of first point
 #ifdef DEBUG  
   nzhalf= sp->iwidth/2;       /* better to print the center point */
+  nyhalf= sp->iheigh/2;
   /*   if ((ny==0) || (nz==0)) */
   if ( nz== nzhalf )
   {
@@ -645,7 +653,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     printf(" yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
   }
 #endif 
-
+#ifdef OBSOLETE
   // SG: added code to fill field components into PSDp, is this the right place?
   PSDp->eyrec[ny+nz*sp->iheigh] = xirp->yzintey.re;
   PSDp->eyimc[ny+nz*sp->iheigh] = xirp->yzintey.im;
@@ -655,8 +663,19 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   // axes
   PSDp->y[ny]= yi;
   PSDp->z[nz]= zi;
+#endif
+  idx= nz+ ny*bl->result_emfp->nz;
+  bl->result_emfp->eyre[idx]= xirp->yzintey.re;
+  bl->result_emfp->eyim[idx]= xirp->yzintey.im;
+  bl->result_emfp->ezre[idx]= xirp->yzintez.re;   
+  bl->result_emfp->ezim[idx]= xirp->yzintez.im;
+
+  bl->result_emfp->y[ny]= yi;
+  bl->result_emfp->z[nz]= zi;
 
   // contains always the last point
+#ifdef OBSOLETE
+  // UF dec 14 temporarely deactivate it
   memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);       
   memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
   memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
@@ -665,7 +684,16 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
   //TODO: check if MAX_INTEGRATION_SIZE is appropriate for d12 as well
   memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
-  
+#endif  
+
+  if ((ny == nyhalf) && (nz == nzhalf)) // store integration details for central point
+    {
+      //if (bl->int_details) XFREE(bl->int_details);
+      //bl->int_details= XMALLOC(double, (3* bl->ianzy0+ bl->ianzz0));
+      bl->int_details= XMALLOC(double, (MAX_INTEGRATION_SIZE*2*4));
+      memcpy(bl->int_details, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4); 
+    }
+
   XFREE(xirp);
   XFREE(rap);
   if (bl->BLOptions.ifl.pst_mode >= 2) XFREE(m4p);
@@ -752,20 +780,20 @@ void fill_xirp(struct BeamlineType *bl, struct integration_results *xirp)
 } /* end fill_xirp */
 
 /*  */
-double getIntensityMax(struct PSDType *p)
+double getIntensityMax(struct EmfType *p)
 {
   double surfmax;
-  int row, rows, col, cols, idxf;
+  int row, rows, col, cols, idxc;
   
-  rows= p->iy;
-  cols= p->iz;
+  rows= p->ny;
+  cols= p->nz;
   surfmax= -1e300;
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
-	idxf= row + col * rows;
-	surfmax= max((pow(p->eyrec[idxf], 2)+ pow(p->eyimc[idxf], 2)+ 
-		      pow(p->ezrec[idxf], 2) + pow(p->ezimc[idxf], 2)), (surfmax));
+	idxc= col+ row* cols;;
+	surfmax= max((pow(p->eyre[idxc], 2)+ pow(p->eyim[idxc], 2)+ 
+		      pow(p->ezre[idxc], 2) + pow(p->ezim[idxc], 2)), (surfmax));
       }
 
   printf("norm_output: normalization done, max= %e\n", surfmax);

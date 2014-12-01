@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <01 Dec 14 08:25:11 flechsig> 
+//  Time-stamp: <01 Dec 14 17:31:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -145,8 +145,7 @@ void MainWindow::activateProc(const QString &action)
 #ifdef DEBUG  
       cout << "debug: " << __FILE__ << " asynPOAct button pressed" << endl; 
 #endif
-      if (elementListIsEmpty()) 
-	return;
+      if (elementListIsEmpty()) return;
 
       myparent->myBeamline()->beamlineOK &= ~resultOK;
       UpdateStatus();
@@ -175,6 +174,8 @@ void MainWindow::activateProc(const QString &action)
 
       if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
+
+      //cout << "xxx" << endl;
       
       if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
@@ -184,11 +185,12 @@ void MainWindow::activateProc(const QString &action)
 	  return;
 	}
 
+      //exit(0);
       // all tests done - we can start
 
-      //uf nov 2014      struct source4c *so4= (struct source4c *)&(myparent->myBeamline()->posrc);
-      if (myparent->myBeamline()->emfp) emfp_free(myparent->myBeamline()->emfp);
-      myparent->myBeamline()->emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, myparent->myBeamline()->source_emfp->ny);
+      //uf nov 2014      
+      if (myparent->emfp) myparent->myemfp_free();
+      myparent->myemfp_construct(myparent->myBeamline()->source_emfp->nz, myparent->myBeamline()->source_emfp->ny);
       emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->source_emfp); // source-> emfp
       
       int n= 0;
@@ -263,6 +265,13 @@ void MainWindow::activateProc(const QString &action)
 	    }  // end switch
 	  // the result is in efmp
 	  n++;
+	  if (n < elementList->count())
+	    {
+	      cout << "multiple elements can not be handled in asynchronous mode" << endl;
+	      //  myparent->myemfp_free();
+	      //myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
+	      //emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
+	    }
 	} // end while
       cout << "after while wip" << endl;
       //myparent->myemfp_2_psd();
@@ -1566,7 +1575,8 @@ void MainWindow::goButtonslot()
 void MainWindow::grapplyslot()
 {
 #ifdef HAVE_QWT
-  struct PSDType *psdp;
+  //  struct PSDType *psdp;
+  double *int4;
   struct EmfType *emfpp;
   struct BeamlineType *bl;
 
@@ -1575,7 +1585,7 @@ void MainWindow::grapplyslot()
 #endif
 
   bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
-  psdp= (struct PSDType *)bl->RESULT.RESp;
+  //psdp= (struct PSDType *)bl->RESULT.RESp;
   emfpp= bl->result_emfp;
   cout << "UF temporarely deactivate tests in file "<< __FILE__ << endl;
   // (1) a few tests
@@ -1617,7 +1627,8 @@ void MainWindow::grapplyslot()
       if (zone)   delete (zone);   zone= NULL;
       zone= new Plot2x2(plotBox);
       plotLayout->addWidget(zone, 0, 0);
-      psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      //psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+      int4= (double *)myparent->myBeamline()->int_details;
       break;
     default: 
       //if (d_plot) delete (d_plot); d_plot= NULL;
@@ -1901,27 +1912,28 @@ void MainWindow::grapplyslot()
 
     case PLOT_PO_SIMPRE:
       cout << "plot PLOT_PO_SIMPRE start " << endl;
-      zone->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0);
+      //zone->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0);
+      zone->hfill4(&int4[1], myparent->myBeamline()->BLOptions.xi.ianzy0);
       //zone->setWindowTitle(QString("SIMPRE"));
       zone->myattach();
       break;
 
     case PLOT_PO_SIMPIM:
       cout << "plot PLOT_PO_SIMPIM start " << endl;
-      zone->hfill4(psdp->simpim, myparent->myBeamline()->BLOptions.xi.ianzy0);
+      zone->hfill4(&int4[2], myparent->myBeamline()->BLOptions.xi.ianzy0);
       // zone->setWindowTitle(QString("SIMPIM"));
       zone->myattach();
       break;
 
     case PLOT_PO_SINTRE:
       cout << "plot PLOT_PO_SINTRE start " << endl;
-      zone->hfill4(psdp->sintre, myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
+      zone->hfill4(&int4[3], myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
       zone->myattach();
       break;
 
     case PLOT_PO_SINTIM:
       cout << "plot PLOT_PO_SINTIM start" << endl;
-      zone->hfill4(psdp->sintim, myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
+      zone->hfill4(&int4[4], myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
       zone->myattach();
       break;
       

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <28 Nov 14 10:56:04 flechsig>  */
+/*   Time-stamp: <01 Dec 14 09:36:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -977,10 +977,14 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       //PSDp->s1c=         XMALLOC(double, ii);
       //PSDp->s2c=         XMALLOC(double, ii);
       //PSDp->s3c=         XMALLOC(double, ii);
+
+      printf("debug: call to obsolete routine, file=%s\n",__FILE__);
+#ifdef OBSOLETE
       PSDp->eyrec=       XMALLOC(double, ii);
       PSDp->ezrec=       XMALLOC(double, ii);
       PSDp->eyimc=       XMALLOC(double, ii);
       PSDp->ezimc=       XMALLOC(double, ii);
+#endif
       PSDp->iy=iy;     /* initialize UF 26.11.07 */
       PSDp->iz=iz;     /* initialize UF 26.11.07 */
       break;
@@ -1024,13 +1028,18 @@ void FreeResultMem(struct RESULTType *Re)
   if (Re->typ & PLphspacetype) 
     {  
 #ifdef DEBUG  
-  printf("debug: FreeResultMem: clean PLphspacetype\n"); 
-#endif     
+      printf("debug: FreeResultMem: clean PLphspacetype\n"); 
+#endif    
+
+      printf("call to obsolete routine, file=%s\n", __FILE__);
+
       PSDp= (struct PSDType *)Re->RESp;
+#ifdef OBSOLETE
       if (PSDp->eyrec) XFREE(PSDp->eyrec);
       if (PSDp->ezrec) XFREE(PSDp->ezrec);
       if (PSDp->eyimc) XFREE(PSDp->eyimc);
       if (PSDp->ezimc) XFREE(PSDp->ezimc);
+#endif
       if (PSDp->y)     XFREE(PSDp->y);
       if (PSDp->z)     XFREE(PSDp->z);
       if (Re->RESp)    XFREE(Re->RESp);
