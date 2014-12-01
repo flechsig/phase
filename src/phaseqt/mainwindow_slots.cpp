@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <28 Nov 14 17:04:29 flechsig> 
+//  Time-stamp: <01 Dec 14 08:25:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -445,6 +445,7 @@ if (!myparent->myBuildBeamline())
 							  myparent->myBeamline()->source_emfp->ny);
       drift_fresnel_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
 			myparent->myBeamline()->BLOptions.lambda, driftlen);
+
       myparent->myBeamline()->beamlineOK |= resultOK;
       UpdateStatus();
     }
@@ -462,13 +463,20 @@ if (!myparent->myBuildBeamline())
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source file not found!"));
+			     tr("PO source not found!"));
 	      return;
 	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-      myparent->mydrift_fraunhofer();
+      //myparent->mydrift_fraunhofer();
+      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
+      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
+							  myparent->myBeamline()->source_emfp->ny);
+      drift_fraunhofer_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
+			myparent->myBeamline()->BLOptions.lambda, driftlen);
       myparent->myBeamline()->beamlineOK |= resultOK;
+
       UpdateStatus();
     }
 
@@ -487,21 +495,31 @@ if (!action.compare("fourfresAct"))
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source file not found!"));
+			     tr("PO source not found!"));
 	      return;
 	    }
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
+      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
+      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
+							  myparent->myBeamline()->source_emfp->ny);
+      
+
       if (myparent->mycheck_sampling() > 1.0)
 	{
 	  cout << "autoselect Fourier propagator (TF type) due to sampling" << endl;
-	  myparent->mydrift_fourier();
+	  //myparent->mydrift_fourier();
+	  drift_fourier_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
+			    myparent->myBeamline()->BLOptions.lambda, driftlen);
 	}
       else
 	{
 	  cout << "autoselect Fresnel propagator (IR type) due to sampling" << endl;
-	  myparent->mydrift_fresnel();
+	  //myparent->mydrift_fresnel();
+	  drift_fresnel_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
+			    myparent->myBeamline()->BLOptions.lambda, driftlen);
 	}
 
       myparent->myBeamline()->beamlineOK |= resultOK;
@@ -523,13 +541,19 @@ if (!action.compare("fourierAct"))
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source file not found!"));
+			     tr("PO source not found!"));
 	      return;
 	    }
-
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
-      myparent->mydrift_fourier();
+      //myparent->mydrift_fourier();
+      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
+      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
+							  myparent->myBeamline()->source_emfp->ny);
+      drift_fourier_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
+			myparent->myBeamline()->BLOptions.lambda, driftlen);
+
       myparent->myBeamline()->beamlineOK |= resultOK;
       UpdateStatus();
     }
