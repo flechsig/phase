@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <01 Dec 14 15:10:38 flechsig>  */
+/*  Time-stamp: <03 Dec 14 09:21:21 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -143,7 +143,7 @@ public:
   int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb); }
 #endif
   double mycheck_sampling() { return check_sampling(this, NULL, 1.0, 1); }
-  void mycopySrc2Psd() { copySrc2Psd(this); }
+  //void mycopySrc2Psd() { copySrc2Psd(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 
@@ -153,7 +153,7 @@ public:
   void mydrift_fourier() { drift_fourier(this); }
   void myemfp_construct(int nz, int ny) { this->emfp= emfp_construct(nz, ny); }
   void myemfp_free() { this->emfp= emfp_free(this->emfp); }
-  void myemfp_2_psd() { emfp_2_psd(this); }
+  //void myemfp_2_psd() { emfp_2_psd(this); }
   void myemfp_2_source4c() { emfp_2_source4c(this); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
@@ -163,7 +163,7 @@ public:
   int  myProcComandLine(int argc, char *argv[], int *cmode, int *selected, int *iord, int *numthreads, int *format) { 
     return ProcComandLine(&(this->filenames), argc, argv, cmode, selected, iord, numthreads, format); }
   void myPST() { PST(this); }
-  void mypsd_2_emfp() { psd_2_emfp(this); }
+  //void mypsd_2_emfp() { psd_2_emfp(this); }
   void myFindIntRange() { FindIntRange(this); }  
   void myPutPHASE(char *name) { PutPHASE(&(this->filenames), name); }
   int  myReadBLFile(char *name) { return ReadBLFile(name, this); }
@@ -190,7 +190,7 @@ public:
                    writemapc(fname, header, iord, 
 			     ypc1, zpc1, dypc,   dzpc,
 			     wc,   xlc,  xlen1c, xlen2c); }
-  void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz, this); }
+  //void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz, this); }
 #ifdef HAVE_HDF5
   void my_read_hdf5_file() { read_hdf5_file(this, this->filenames.hdf5_out); }
   void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out); }

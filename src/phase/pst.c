@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <02 Dec 14 17:04:24 flechsig>  */
+/*   Time-stamp: <03 Dec 14 10:15:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -71,6 +71,7 @@ void PSTxx(struct BeamlineType *bl)
    printf("PST: end \n");
 }
 
+#ifdef OBSOLETE
 void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)   
 /* schreibt phasenraumdichte auf ein file 	*/
 /* Uwe 2.8.96 					*/
@@ -104,7 +105,7 @@ void WriteMPsd(char *fname, struct PSDType *p, int ny, int nz, int n)
    printf("WriteMPsd: --> done\n");
 #endif
 }  /* end writempsd */
-
+#endif
 
 #ifdef OBSOLETE
 void get_nam(int n, 
@@ -300,6 +301,7 @@ void PST(struct BeamlineType *bl)
 #endif
 } /* end PST */
 
+#ifdef OBSOLETE
 void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType *bl)   
 /* schreibt phasenraumdichte auf ein file 	*/
 /* UF umgeschrieben auf felder Mar 2014 */
@@ -375,6 +377,7 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType
    printf("WritePsd: --> done\n");
 #endif
 }  /* end writepsd */
+#endif
 
 /* replacement of pstf() in file pstf.F */
 /* beamline goes in, integration results and statistics goes out */
@@ -435,10 +438,13 @@ void pstc(struct BeamlineType *bl)
   npoints= psip->iy * psip->iz;
   next= 0;
   bl->RESULT.outside_wl= 0;
-  
 
-  if (bl->emfp) bl->emfp= emfp_free(bl->emfp);
-  bl->emfp= emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
+  if (bl->emfp) 
+    {
+      emfp_free(bl->emfp);
+      bl->emfp= NULL;
+    }
+  bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
 
   nu= 0;

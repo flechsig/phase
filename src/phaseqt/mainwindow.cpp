@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <28 Nov 14 16:31:34 flechsig> 
+//  Time-stamp: <03 Dec 14 09:35:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2865,7 +2865,8 @@ void MainWindow::writeSimp()
 {
   int k, ret, fileerror;
   FILE *f1, *f2, *f3, *f4, *f5, *f6;
-  struct PSDType    *psd; 
+  //dec 14 struct PSDType    *psd; 
+  double *psd;
   char *name= myparent->myBeamline()->filenames.imageraysname;
   char fname1[MaxPathLength], fname2[MaxPathLength], fname3[MaxPathLength], fname4[MaxPathLength], fname5[MaxPathLength], fname6[MaxPathLength];
   char infostr[MaxPathLength];
@@ -2883,8 +2884,8 @@ void MainWindow::writeSimp()
   snprintf(fname6,  MaxPathLength, "%s-simpp",  name);
   snprintf(infostr, MaxPathLength, "file(s) %s-si* exists!",  name);
 
-  psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-
+  //psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+  psd= myparent->myBeamline()->int_details;
   if (fexists(fname1) || fexists(fname2) || fexists(fname3) || fexists(fname4) || fexists(fname5) || fexists(fname6))
     {
       QMessageBox *msgBox = new QMessageBox;
@@ -2921,14 +2922,19 @@ void MainWindow::writeSimp()
       fprintf(f6, "#    dy           I_dzmin    I_dz_center     I_dzmax         dz        I_dy_center\n#\n");
       // psd(i,j,k) in fortran memory model
       
+      double *simpre= &psd[MAX_INTEGRATION_SIZE*2*4*0];
+      double *simpim= &psd[MAX_INTEGRATION_SIZE*2*4*1];
+      double *sintre= &psd[MAX_INTEGRATION_SIZE*2*4*2];
+      double *sintim= &psd[MAX_INTEGRATION_SIZE*2*4*3];
+
       for (k= 0; k < myparent->myBeamline()->BLOptions.xi.ianzy0; k++)    // UF was passiert wenn ianzy0 != ianzz0 ??
 	{
-	  fprintf(f1, "% e % e % e % e % e % e\n", psd->simpre[k*8], psd->simpre[k*8+4], psd->simpre[k*8+5], psd->simpre[k*8+6], psd->simpre[k*8+3], psd->simpre[k*8+7]);
-	  fprintf(f2, "% e % e % e % e % e % e\n", psd->simpim[k*8], psd->simpim[k*8+4], psd->simpim[k*8+5], psd->simpim[k*8+6], psd->simpim[k*8+3], psd->simpim[k*8+7]);
-	  fprintf(f3, "% e % e % e % e % e % e\n", psd->sintre[k*8], psd->sintre[k*8+4], psd->sintre[k*8+5], psd->sintre[k*8+6], psd->sintre[k*8+3], psd->simpre[k*8+7]);
-	  fprintf(f4, "% e % e % e % e % e % e\n", psd->sintim[k*8], psd->sintim[k*8+4], psd->sintim[k*8+5], psd->sintim[k*8+6], psd->sintim[k*8+3], psd->sintim[k*8+7]);
-	  fprintf(f5, "% e % e % e % e % e % e\n", psd->simpa[k*8],  psd->simpa[k*8+4],  psd->simpa[k*8+5],  psd->simpa[k*8+6],  psd->simpa[k*8+3],  psd->simpa[k*8+7]);
-	  fprintf(f6, "% e % e % e % e % e % e\n", psd->simpp[k*8],  psd->simpp[k*8+4],  psd->simpp[k*8+5],  psd->simpp[k*8+6],  psd->simpp[k*8+3],  psd->simpp[k*8+7]);     
+	  fprintf(f1, "% e % e % e % e % e % e\n", simpre[k*8], simpre[k*8+4], simpre[k*8+5], simpre[k*8+6], simpre[k*8+3], simpre[k*8+7]);
+	  fprintf(f2, "% e % e % e % e % e % e\n", simpim[k*8], simpim[k*8+4], simpim[k*8+5], simpim[k*8+6], simpim[k*8+3], simpim[k*8+7]);
+	  fprintf(f3, "% e % e % e % e % e % e\n", sintre[k*8], sintre[k*8+4], sintre[k*8+5], sintre[k*8+6], sintre[k*8+3], simpre[k*8+7]);
+	  fprintf(f4, "% e % e % e % e % e % e\n", sintim[k*8], sintim[k*8+4], sintim[k*8+5], sintim[k*8+6], sintim[k*8+3], sintim[k*8+7]);
+	  //fprintf(f5, "% e % e % e % e % e % e\n", psd->simpa[k*8],  psd->simpa[k*8+4],  psd->simpa[k*8+5],  psd->simpa[k*8+6],  psd->simpa[k*8+3],  psd->simpa[k*8+7]);
+	  //fprintf(f6, "% e % e % e % e % e % e\n", psd->simpp[k*8],  psd->simpp[k*8+4],  psd->simpp[k*8+5],  psd->simpp[k*8+6],  psd->simpp[k*8+3],  psd->simpp[k*8+7]);     
 	}
       
       fprintf(f1, "# end\n");

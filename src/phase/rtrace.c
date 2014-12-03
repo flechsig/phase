@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <01 Dec 14 09:36:31 flechsig>  */
+/*   Time-stamp: <03 Dec 14 09:19:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -960,6 +960,8 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 #endif
       break;
     case PLphspacetype:
+      printf("info: obsolete call to ReAllocResult\n", __FILE__);
+#ifdef OBSOLETE
       iy= dim1;
       iz= dim2;
       ii= iy * iz;
@@ -979,14 +981,15 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       //PSDp->s3c=         XMALLOC(double, ii);
 
       printf("debug: call to obsolete routine, file=%s\n",__FILE__);
-#ifdef OBSOLETE
+
       PSDp->eyrec=       XMALLOC(double, ii);
       PSDp->ezrec=       XMALLOC(double, ii);
       PSDp->eyimc=       XMALLOC(double, ii);
       PSDp->ezimc=       XMALLOC(double, ii);
-#endif
+
       PSDp->iy=iy;     /* initialize UF 26.11.07 */
       PSDp->iz=iz;     /* initialize UF 26.11.07 */
+#endif
       break;
     default: 
       fprintf(stderr, 
@@ -996,7 +999,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
     }
   bl->RESULT.typ= newtype;
 #ifdef DEBUG 
-  printf("\n&&&&&&&&&&&&&&&&&debug %s AllocResult, pointer bl->RESULT.RESp=0x%x\n", __FILE__, (int)bl->RESULT.RESp);
+  printf("\ndebug %s AllocResult, pointer bl->RESULT.RESp=0x%x\n", __FILE__, (int)bl->RESULT.RESp);
 #endif
 } /* AllocResult */
 
@@ -1027,6 +1030,8 @@ void FreeResultMem(struct RESULTType *Re)
     }
   if (Re->typ & PLphspacetype) 
     {  
+      printf("info: call to obsolete routine FreeResultMem, file=%s\n", __FILE__); 
+#ifdef OBSOLETE
 #ifdef DEBUG  
       printf("debug: FreeResultMem: clean PLphspacetype\n"); 
 #endif    
@@ -1034,16 +1039,18 @@ void FreeResultMem(struct RESULTType *Re)
       printf("call to obsolete routine, file=%s\n", __FILE__);
 
       PSDp= (struct PSDType *)Re->RESp;
-#ifdef OBSOLETE
+
       if (PSDp->eyrec) XFREE(PSDp->eyrec);
       if (PSDp->ezrec) XFREE(PSDp->ezrec);
       if (PSDp->eyimc) XFREE(PSDp->eyimc);
       if (PSDp->ezimc) XFREE(PSDp->ezimc);
-#endif
+
       if (PSDp->y)     XFREE(PSDp->y);
       if (PSDp->z)     XFREE(PSDp->z);
       if (Re->RESp)    XFREE(Re->RESp);
+#endif
     }
+
   Re->typ= 0;
 } /* end freeResultmem */
 

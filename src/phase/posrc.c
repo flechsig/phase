@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <01 Dec 14 14:59:15 flechsig>  */
+/*  Time-stamp: <03 Dec 14 10:05:57 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -1171,7 +1171,8 @@ void reallocate_posrc(struct BeamlineType *bl, int rows, int cols)
 
 void check_file_consistency(struct BeamlineType *bl, int rows, int cols)
 {
-  if ((cols != bl->posrc.iex) || (rows != bl->posrc.iey))
+  //if ((cols != bl->posrc.iex) || (rows != bl->posrc.iey))
+  if ((cols != bl->source_emfp->nz) || (rows != bl->source_emfp->ny))
     {
       fprintf(stderr, "error: inconsistent file dimensions- exit\n");
       exit(0);
@@ -1233,7 +1234,7 @@ void emfp_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, 
       }
 } /* emfp_fill7 */
 
-
+#ifdef OBSOLETE
 void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, int it, int imag)
 {
   int i, j, rows, cols;
@@ -1250,6 +1251,7 @@ void posrc_fill7(struct BeamlineType *bl, double *a,  double *field, int offset,
 	a[i+ j* cols]= val;
       }
 } /* posrc_fill7 */
+#endif
 
 /* genesis data are a linear array of real and imag numbers- use imag as offset */
 void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
@@ -1270,6 +1272,7 @@ void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
       }
 } /* emfp_fill8 */
 
+#ifdef OBSOLETE
 /* genesis data are a linear array of real and imag numbers- use imag as offset */
 void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
 {
@@ -1288,7 +1291,7 @@ void posrc_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
 	// intensity is field ^2 therefore it is not 1e-6 but 1e-3
       }
 } /* posrc_fill8 */
-
+#endif
 
 /* local fopen wrapper */
 FILE *posrc_fopen(char *name)

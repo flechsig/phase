@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <02 Dec 14 17:05:19 flechsig> 
+//  Time-stamp: <03 Dec 14 09:38:43 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -855,8 +855,9 @@ if (!action.compare("fourierAct"))
       if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0)
 	{
 	  cout << "write PO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
-	  myparent->myWritePsd(myparent->myBeamline()->filenames.imageraysname, 
-			       (struct PSDType *)myparent->myBeamline()->RESULT.RESp);
+	  cout << "warning: function temporarely deactivated- use hdf5 output instead" << endl;
+	  //myparent->myWritePsd(myparent->myBeamline()->filenames.imageraysname, 
+	  //		       (struct PSDType *)myparent->myBeamline()->RESULT.RESp);
 	}
       else
 	{

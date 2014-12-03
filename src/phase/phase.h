@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <01 Dec 14 16:31:52 flechsig>  */
+/*   Time-stamp: <03 Dec 14 09:55:01 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -333,15 +333,18 @@ struct RTSourceType {
   char QuellTyp;
 };       
 
+
 struct PSDType  {
-  double *y, *z; //*stfd1phmaxc, *stinumbc,  //*psd, *s1c, *s2c, *s3c, 
+  //  double *y, *z; //*stfd1phmaxc, *stinumbc,  //*psd, *s1c, *s2c, *s3c, 
   //*eyrec, *ezrec, *eyimc, *ezimc;
   double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
     sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
-    simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4], d12[MAX_INTEGRATION_SIZE*2*3];
+    simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4];
+    //;;, d12[MAX_INTEGRATION_SIZE*2*3];
   int iy, iz;
   //long outside_wl;
 };
+
 
 struct RESULTType {
   void *RESp;         
@@ -453,16 +456,13 @@ struct BeamlineType
   unsigned int beamlineOK, elementzahl, position, hormapsloaded, localalloc, gratingpos, isrctype_c; 
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
-  /* #ifdef OLD_PO_SOURCE */
-  //  struct sources src;   
-/* #endif */
+  
   struct source4c posrc;   /* 120423 */
   struct source1c poso1c;
   struct TmpMapType *tp;
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
-  struct EmfType *emfp, emf;  /* for temporary fields */
-  struct EmfType *source_emfp, *result_emfp;  /* new for po */
+  struct EmfType *emfp, *source_emfp, *result_emfp;  /* new for po */
   double *int_details;
 };
 
