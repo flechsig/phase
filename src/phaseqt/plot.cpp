@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <01 Dec 14 14:04:37 flechsig> 
+//  Time-stamp: <02 Dec 14 11:18:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -361,33 +361,33 @@ void Plot::contourPlot()
 
   if (plotsubject & PLOT_GO_DIV)
     {
-      setAxisTitle(2, tr("dz (mrad)"));
-      setAxisTitle(0, tr("dy (mrad)"));
+      setAxisTitle(QwtPlot::xBottom, tr("dz (mrad)"));
+      setAxisTitle(QwtPlot::yLeft,   tr("dy (mrad)"));
     }
   else
     if (plotsubject & PLOT_GO_HPS)
       {
-	setAxisTitle(2, tr("z (mm)"));
-	setAxisTitle(0, tr("dz (mrad)"));
+	setAxisTitle(QwtPlot::xBottom, tr("z (mm)"));
+	setAxisTitle(QwtPlot::yLeft,   tr("dz (mrad)"));
       }
     else
       if (plotsubject & PLOT_GO_VPS)
 	{
-	  setAxisTitle(2, tr("y (mm)"));
-	  setAxisTitle(0, tr("dy (mrad)"));
+	  setAxisTitle(QwtPlot::xBottom, tr("y (mm)"));
+	  setAxisTitle(QwtPlot::yLeft,   tr("dy (mrad)"));
 	}
       else    
 	if (plotsubject & PLOT_SURF_PROF)
 	{
-	  setAxisTitle(2, tr("w (mm)"));
-	  setAxisTitle(0, tr("l (mm)"));
+	  setAxisTitle(QwtPlot::xBottom, tr("w (mm)"));
+	  setAxisTitle(QwtPlot::yLeft,   tr("l (mm)"));
 	}
       else    // default
 
 // default
 	{
-	  setAxisTitle(2, tr("z (mm)"));
-	  setAxisTitle(0, tr("y (mm)"));
+	  setAxisTitle(QwtPlot::xBottom, tr("z (mm)"));
+	  setAxisTitle(QwtPlot::yLeft,   tr("y (mm)"));
 	}
   
   replot();

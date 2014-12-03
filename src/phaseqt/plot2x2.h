@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:42:49 flechsig>  */
+/*  Time-stamp: <02 Dec 14 16:44:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -51,7 +51,7 @@ public:
     Plot2x2(QWidget * parent= NULL);
     virtual ~Plot2x2();
 
-    void hfill4(double*, int);
+    void hfill4(double*, int, int, int);
     void myattach();
     
 private:

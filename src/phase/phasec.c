@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2014-11-30 18:28:32 flechsig>  */
+/*   Time-stamp: <02 Dec 14 11:54:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -98,6 +98,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
   bl->posrc.iconj= 0;
   bl->BLOptions.ifl.inorm= 0;
   bl->BLOptions.ifl.pst_mode= 2;
+  bl->int_details=NULL;
 
   ReadBLFile(bl->filenames.beamlinename, bl);
   if (iord != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
@@ -912,6 +913,7 @@ void InitBeamline(struct BeamlineType *bl)
   bl->BLOptions.SourcetoImage= 1;
   bl->BLOptions.WithAlign    = 0;
   bl->BLOptions.plrayset     = PLRaySet1;
+  
 } /* end InitBeamline */
 
 void initdatset(struct datset *x, struct BeamlineType *bl)

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <01 Dec 14 17:31:40 flechsig> 
+//  Time-stamp: <02 Dec 14 17:05:19 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -265,12 +265,18 @@ void MainWindow::activateProc(const QString &action)
 	    }  // end switch
 	  // the result is in efmp
 	  n++;
-	  if (n < elementList->count())
+	  if (n < elementList->count())   // ELEMENTS LEFT IN LIST
 	    {
-	      cout << "multiple elements can not be handled in asynchronous mode" << endl;
-	      //  myparent->myemfp_free();
-	      //myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
-	      //emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
+	      cout << "multiple elements in asynchronous mode - very experimental" << endl;
+	      int mytype= myparent->myBeamline()->ElementList[n-1].MDat.Art;
+	      if ((mytype>= 100) && (mytype <= 103))
+		{
+		  myparent->myemfp_free();
+		  myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
+		  emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
+		} else
+		cout << "multiple elements in asynchronous mode is very experimental" << endl 
+		     << "SPC must be last element- result is likely not correct" << endl;
 	    }
 	} // end while
       cout << "after while wip" << endl;
@@ -1908,32 +1914,31 @@ void MainWindow::grapplyslot()
       UpdateStatistics(d_plot, "PO Source", 0);
       break;
 
-
-
     case PLOT_PO_SIMPRE:
       cout << "plot PLOT_PO_SIMPRE start " << endl;
       //zone->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0);
-      zone->hfill4(&int4[1], myparent->myBeamline()->BLOptions.xi.ianzy0);
+      zone->hfill4(&int4[MAX_INTEGRATION_SIZE*2*4*0], myparent->myBeamline()->BLOptions.xi.ianzy0, myparent->myBeamline()->BLOptions.xi.ianzz0, 0);
+      //zone->hfill4(int4, myparent->myBeamline()->BLOptions.xi.ianzy0, myparent->myBeamline()->BLOptions.xi.ianzz0, 0);
       //zone->setWindowTitle(QString("SIMPRE"));
       zone->myattach();
       break;
 
     case PLOT_PO_SIMPIM:
       cout << "plot PLOT_PO_SIMPIM start " << endl;
-      zone->hfill4(&int4[2], myparent->myBeamline()->BLOptions.xi.ianzy0);
+      zone->hfill4(&int4[MAX_INTEGRATION_SIZE*2*4*1], myparent->myBeamline()->BLOptions.xi.ianzy0, myparent->myBeamline()->BLOptions.xi.ianzz0, 1);
       // zone->setWindowTitle(QString("SIMPIM"));
       zone->myattach();
       break;
 
     case PLOT_PO_SINTRE:
       cout << "plot PLOT_PO_SINTRE start " << endl;
-      zone->hfill4(&int4[3], myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
+      zone->hfill4(&int4[MAX_INTEGRATION_SIZE*2*4*2], myparent->myBeamline()->BLOptions.xi.ianzy0-1, myparent->myBeamline()->BLOptions.xi.ianzz0-1, 2);
       zone->myattach();
       break;
 
     case PLOT_PO_SINTIM:
       cout << "plot PLOT_PO_SINTIM start" << endl;
-      zone->hfill4(&int4[4], myparent->myBeamline()->BLOptions.xi.ianzy0- 1);
+      zone->hfill4(&int4[MAX_INTEGRATION_SIZE*2*4*3], myparent->myBeamline()->BLOptions.xi.ianzy0-1, myparent->myBeamline()->BLOptions.xi.ianzz0-1, 3);
       zone->myattach();
       break;
       

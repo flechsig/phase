@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <01 Dec 14 16:31:26 flechsig>  */
+/*   Time-stamp: <02 Dec 14 17:04:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -542,7 +542,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct map4                *m4p;
 
  //struct constants *csp;
-  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf;
+  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf, i;
   double yi, zi;
 
   lostwl= 0;
@@ -653,17 +653,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     printf(" yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
   }
 #endif 
-#ifdef OBSOLETE
-  // SG: added code to fill field components into PSDp, is this the right place?
-  PSDp->eyrec[ny+nz*sp->iheigh] = xirp->yzintey.re;
-  PSDp->eyimc[ny+nz*sp->iheigh] = xirp->yzintey.im;
-  PSDp->ezrec[ny+nz*sp->iheigh] = xirp->yzintez.re;   
-  PSDp->ezimc[ny+nz*sp->iheigh] = xirp->yzintez.im;
-      
-  // axes
-  PSDp->y[ny]= yi;
-  PSDp->z[nz]= zi;
-#endif
+
   idx= nz+ ny*bl->result_emfp->nz;
   bl->result_emfp->eyre[idx]= xirp->yzintey.re;
   bl->result_emfp->eyim[idx]= xirp->yzintey.im;
@@ -686,12 +676,43 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
 #endif  
 
-  if ((ny == nyhalf) && (nz == nzhalf)) // store integration details for central point
+  if ((ny == nyhalf) && (nz == nzhalf)) // store integration details just for central point
     {
-      //if (bl->int_details) XFREE(bl->int_details);
-      //bl->int_details= XMALLOC(double, (3* bl->ianzy0+ bl->ianzz0));
-      bl->int_details= XMALLOC(double, (MAX_INTEGRATION_SIZE*2*4));
-      memcpy(bl->int_details, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4); 
+      printf("fill integration details for central point\n");
+      if (bl->int_details) XFREE(bl->int_details);
+      
+      bl->int_details= XMALLOC(double, (MAX_INTEGRATION_SIZE*2*4*4));
+      
+      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*0], xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*1], xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*2], xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*3], xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+
+      #ifdef NEW
+      if (bl->int_details) XFREE(bl->int_details);
+      bl->int_details= XMALLOC(double, (13 * bl->BLOptions.xi.ianzy0+ 5* bl->BLOptions.xi.ianzz0));
+      for (ny= 0; ny < bl->BLOptions.xi.ianzy0; ny++)
+	{
+	  bl->int_details[ny]= (double)xirp->simpre[8* ny];
+	  for (i= 0; i < 3; i++)
+	    {
+	      &bl->int_details[(1 + i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->simpre[8* ny+ 4+ i]; // 1+0*3+
+	      &bl->int_details[(4 + i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->simpim[8* ny+ 4+ i]; // 1+1*3+
+	      &bl->int_details[(7 + i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->sintre[8* ny+ 4+ i]; // 1+2*3+
+	      &bl->int_details[(10+ i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->sintim[8* ny+ 4+ i]; // 1+3*3+
+	    }
+	}
+      
+      for (nz=0; nz < bl->BLOptions.xi.ianzz0; nz++)
+	{
+	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 0]= xirp->simpre[8* nz+ 3];
+	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 1]= xirp->simpre[8* nz+ 7];
+	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 2]= xirp->simpim[8* nz+ 7];
+	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 3]= xirp->sintre[8* nz+ 7];
+	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 4]= xirp->sintim[8* nz+ 7];
+	}
+
+      #endif
     }
 
   XFREE(xirp);

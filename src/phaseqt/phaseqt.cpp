@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <28 Nov 14 17:07:20 flechsig> 
+//  Time-stamp: <02 Dec 14 11:56:15 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -206,6 +206,10 @@ void PhaseQt::printSet()
 
 void PhaseQt::initBeamline()
 {
+#ifdef DEBUG
+  cout << "debug: initBeamline called, file=" << __FILE__ << endl;
+#endif
+
   beamlineOK         = 0;
   elementzahl        = 0;
   hormapsloaded      = 0;
@@ -240,8 +244,8 @@ void PhaseQt::initBeamline()
   emf.ezim= NULL;
   source_emfp= NULL;
   result_emfp= NULL;
+  int_details= NULL;
 } // end initBeamline
-
 
 // returns a pointer to the beamline struct
 struct BeamlineType *PhaseQt::myBeamline()
@@ -265,13 +269,13 @@ struct OptionsType *PhaseQt::myOptions()
 PhaseQt::PhaseQt()
 {
 #ifdef DEBUG  
-  printf("debug: PhaseQt constructor called\n");
+  cout << "debug: PhaseQt constructor called" << endl;
 #endif
   ActualTask= 0;
   mainWin= NULL;
 
   initSet("default", INIT_ALL);   // initialize the filename structure
-  initBeamline();       // initialize the beamline structure
+  initBeamline();                 // initialize the beamline structure
 } // end constructor
 
 /*
