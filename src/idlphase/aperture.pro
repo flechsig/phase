@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <17 Dec 13 13:39:56 flechsig> 
+;  Time-stamp: <05 Dec 14 15:53:17 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -75,6 +75,11 @@ pro aperture, emf, example=example, field=field, y_vec=y_vec, z_vec=z_vec, type=
 ;
 ;   aperture, field=field,  z_vec=z_vec, y_vec=y_vec, type = 20, P1 = 1e-5, P2=0, plot = 1, N=80, size=8e-5
 ;
+;
+;  generate grating with 1 um pitch, duty cycle 0.2   
+;
+;  aperture, field=field,  z_vec=z_vec, y_vec=y_vec, type=63, p1=1.0e-6 ,p2=0.2, N=1001, size=1e-5
+; 
 ; MODIFICATION HISTORY:
 ;    14.8.13 RF
 ;    Aug 13 UF add some types
@@ -229,14 +234,15 @@ case type of
 
     62: begin
         if n_elements(P2) eq 0 then P2= 0.5
-        print, 'vertcally ruled grating, pitch= ', P1, ' duty cycle= ', P2 
+        shift=P2*P1/2      ;; half size of the opening 
+        print, 'vertcally ruled grating, pitch= ', P1, ' duty cycle= ', P2 , ' shift = ',shift
        
     end
 
     63: begin
         if n_elements(P2) eq 0 then P2= 0.5
-        print, 'horizontally ruled grating, pitch= ', P1, ' duty cycle= ', P2 
-        
+        shift=P2*P1/2      ;; half size of the opening 
+        print, 'horizontally ruled grating, pitch= ', P1, ' duty cycle= ', P2 , ' shift = ',shift
     end
 
     72: begin
@@ -363,10 +369,12 @@ for i=0, nz-1 do begin
 
            62 : begin                                 ;; vertical grating
                if ((abs(z_vec[i])+ 0.5* P2)/P1- floor((abs(z_vec[i])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= double(1.0)
+               ;; if ( (( (z_vec[i]+ shift ) mod P1) + P1) mod P1 ) le P2*P1 then T[i,j]= double(1.0) 
            end
            
            63 : begin                               ;; horizontal slit
-               if ((abs(y_vec[j])+ 0.5* P2)/P1- floor((abs(y_vec[j])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= double(1.0)
+               ;;if ((abs(y_vec[j])+ 0.5* P2)/P1- floor((abs(y_vec[j])+ 0.5* P2)/P1)) le P2/2.0 then T[i,j]= double(1.0)
+               if ( (( (y_vec[j]+ shift ) mod P1) + P1) mod P1 ) le P2*P1 then T[i,j]= double(1.0) 
            end
            
            
@@ -437,6 +445,8 @@ if use_struct eq 1 then begin
     emf.z_vec= z_vec
     print, 'fill emfield structure'
 endif
+
+T=0  ;; free memory
 
 print, 'aperture End'
 return
