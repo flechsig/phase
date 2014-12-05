@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <03 Dec 14 09:21:21 flechsig>  */
+/*  Time-stamp: <05 Dec 14 17:03:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -154,7 +154,7 @@ public:
   void myemfp_construct(int nz, int ny) { this->emfp= emfp_construct(nz, ny); }
   void myemfp_free() { this->emfp= emfp_free(this->emfp); }
   //void myemfp_2_psd() { emfp_2_psd(this); }
-  void myemfp_2_source4c() { emfp_2_source4c(this); }
+  //void myemfp_2_source4c() { emfp_2_source4c(this); }
   void myFootprint(unsigned int enummer) { Footprint(this, enummer); }
   void myGetPHASE(char *name) { GetPHASE(&(this->filenames), name); }
   void myMakeMapandMatrix(struct ElementType *listpt, int *elindex) { MakeMapandMatrix(listpt, this, elindex); }
@@ -178,7 +178,7 @@ public:
   int  mySetReflectivity(struct ElementType *ep) { return SetReflectivity(ep, this->BLOptions.lambda* 1e-3); }
   void mysrc_ini(struct sources *src) { src_ini(src); }
   int  myposrc_ini() { return posrc_ini(this); }
-  void mysource4c_2_emfp() { source4c_2_emfp(this); }
+  
   void mysource7c_ini(int checktype) { source7c_ini(this, checktype); }
   void mysource8c_ini() { source8c_ini(this); }
   void myTest4Grating() { Test4Grating(this); }
@@ -192,9 +192,9 @@ public:
 			     wc,   xlc,  xlen1c, xlen2c); }
   //void myWritePsd(char *name, struct PSDType *PSDp) { WritePsd(name, PSDp, PSDp->iy, PSDp->iz, this); }
 #ifdef HAVE_HDF5
-  void my_read_hdf5_file() { read_hdf5_file(this, this->filenames.hdf5_out); }
-  void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out); }
-  void my_write_phase_hdf5_file() { write_phase_hdf5_file(this, this->filenames.hdf5_out); }
+  void my_read_hdf5_file() { this->source_emfp= read_hdf5_file(this, this->filenames.hdf5_out, this->source_emfp); }
+  void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out, NULL); }
+  void my_write_phase_hdf5_file() { write_phase_hdf5_file(this, this->filenames.hdf5_out, NULL); }
 #endif
   void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();

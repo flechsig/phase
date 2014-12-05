@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <01 Dec 14 14:50:53 flechsig>  */
+/*  Time-stamp: <05 Dec 14 17:01:53 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -57,28 +57,23 @@ void emfp_fill4(struct BeamlineType *, double *, FILE *, int);
 void emfp_fill7(struct BeamlineType *, double *, double *, int, int, int);
 void emfp_fill8(struct BeamlineType *, double *, double *, int);
 struct EmfType *emfp_free(struct EmfType *);
-void emfp_2_psd(struct BeamlineType *);
-void emfp_2_source4c(struct BeamlineType *);
+//void emfp_2_psd(struct BeamlineType *);
+//void emfp_2_source4c(struct BeamlineType *);
 void gauss_source1c(struct BeamlineType *);
 void posrc_construct(struct BeamlineType *);
-void posrc_fill4(struct BeamlineType *, double *, FILE *,   int);
-void posrc_fill7(struct BeamlineType *, double *, double *, int, int, int);
-void posrc_fill8(struct BeamlineType *, double *, double *, int);
 FILE *posrc_fopen(char *);
 int  posrc_ini(struct BeamlineType *);
-void psd_2_emfp(struct BeamlineType *);
-void reallocate_posrc(struct BeamlineType *, int, int);
+
 int  source4c_ini(struct BeamlineType *);
 void source7c_ini(struct BeamlineType *, int);
 void source8c_ini(struct BeamlineType *);
 void source4c_inter_2d_(struct source_results *, double *, double *, int *);
-void source4c_2_emfp(struct BeamlineType *);
+
 #ifdef HAVE_HDF5
-void  add_phase_psd_to_hdf5(hid_t, struct BeamlineType *);
 int   check_hdf5_type(char *, int, int);
-void  read_hdf5_file(struct BeamlineType *, char *);
-void  write_genesis_hdf5_file(struct BeamlineType *, char *);
-void  write_phase_hdf5_file(struct BeamlineType *, char *);
+struct EmfType *read_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
+void  write_genesis_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
+void  write_phase_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
 #endif
 
 #endif 

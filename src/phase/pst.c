@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <03 Dec 14 10:15:19 flechsig>  */
+/*   Time-stamp: <05 Dec 14 16:46:31 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -399,10 +399,11 @@ void pstc(struct BeamlineType *bl)
   //struct psimagest *sp;
   struct PSImageType *psip;
   struct PSDType     *PSDp;
+  //struct EmfType emf1, emf2, emf3;
   
   printf("called pstc\n ");
 
-  PSDp= (struct PSDType *)bl->RESULT.RESp;
+  //PSDp= (struct PSDType *)bl->RESULT.RESp;
   //sp=   (struct psimagest *)bl->RTSource.Quellep;
   psip=   (struct PSImageType *)bl->RTSource.Quellep;
 
@@ -444,13 +445,34 @@ void pstc(struct BeamlineType *bl)
       emfp_free(bl->emfp);
       bl->emfp= NULL;
     }
+
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
+  //bl->result_emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
 
+  //emf_construct(&emf1, bl->source_emfp->nz, bl->source_emfp->ny);
+  //emf_construct(&emf2, bl->source_emfp->nz, bl->source_emfp->ny);
+  //emf_construct(&emf3, bl->source_emfp->nz, bl->source_emfp->ny);
+
+
+  //bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+  //printf("xxxxxxxxxxxxxxxxxxxxxxxxxxx temporaer xxxxxxxxxxxxxxxxxxxxxxxxx\n");
+  //drift_fourier_emf(bl->source_emfp, bl->result_emfp, bl->BLOptions.lambda, 1000);
+  //write_phase_hdf5_file(bl, "d1.h5", &emf1); 
+  //write_phase_hdf5_file(bl, "d0.h5", bl->source_emfp); 
+  //emfp_cpy(bl->emfp, bl->result_emfp);
+  //drift_fourier_emf(&emf1, bl->result_emfp, bl->BLOptions.lambda, 1000);
+
+  //emfp_cpy(bl->emfp, bl->result_emfp);
+  //drift_fresnel_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, 200000);
+  //emfp_cpy(bl->source_emfp, bl->emfp);
+  //drift_fourier_emf(bl->source_emfp, bl->result_emfp, bl->BLOptions.lambda, 2500);
+
   nu= 0;
-   
+  //write_phase_hdf5_file(bl, "xtmp.h5", bl->source_emfp); 
   while (nu < bl->elementzahl)
     {
+      //bl->emfp= read_hdf5_file(bl, "xtmp.h5", bl->emfp); 
       driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
@@ -477,23 +499,27 @@ void pstc(struct BeamlineType *bl)
 	default:
 	  printf("*** stationary phase propagation ****\n");
 	  printf("*************************************\n");
+	  //if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);
 	  bl->result_emfp= emfp_construct(psip->iz, psip->iy);
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 	} // switch
+      //write_phase_hdf5_file(bl, "xtmp.h5", bl->result_emfp);
       nu++;
       if (nu < bl->elementzahl)
 	{
+	  printf("elements left in list: copy result to source\n");
 	  bl->emfp= emfp_free(bl->emfp);
 	  bl->emfp= emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
 	  emfp_cpy(bl->emfp, bl->result_emfp);
 	}
     } // while
-  bl->emfp= emfp_free(bl->emfp);
+  //bl->result_emfp= read_hdf5_file(bl, "xtmp.h5", bl->source_emfp);
+  //bl->emfp= emfp_free(bl->emfp);
   // bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");
   totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
   printf("outside_wl: %d out of %d (%f %)\n", bl->RESULT.outside_wl, totrays, 100.0*bl->RESULT.outside_wl/totrays);
-  
+
   iinumb=0;
   //for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i+1];   // fraglich
   

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <03 Dec 14 09:49:02 flechsig>  */
+/*   Time-stamp: <03 Dec 14 16:14:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -144,10 +144,10 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	  break;
 #ifdef HAVE_HDF5
 	case 2:
-	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 	case 3:
-	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
+	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 #endif
 	default:
@@ -204,10 +204,10 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	  break;
 #ifdef HAVE_HDF5
 	case 2:
-	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 	case 3:
-	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
+	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 #endif
 	default:

@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <2014-11-30 18:40:37 flechsig>  */
+ /* Time-stamp: <05 Dec 14 14:38:18 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -136,7 +136,7 @@ double check_sampling_emf(struct EmfType *emf, double lambda, double target, dou
   double ratio, yratio, zratio, zwidth, ywidth, lambda_drift;
   
 #ifdef DEBUG
-  printf("debug: check_sampling_emf called with target %f, driftlen= %f\n", target, driftlen);
+  printf("debug: check_sampling_emf called with target %f, driftlen= %f, file=%s\n", target, driftlen, __FILE__);
 #endif
   
   cols= emf->nz;
@@ -289,7 +289,6 @@ void drift_fourier(struct BeamlineType *bl)
 } /* drift fourier */
 
 /* free space propagation with Transfer function propagator */
-/* the drift distance is s1+s2 of the first element         */
 /* process ez and ey in sequence                            */
 void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda, double driftlen)
 {
@@ -298,11 +297,12 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
-  fftw_plan    p1, p2;
+  fftw_plan     p1, p2;
 #endif
 
 #ifdef DEBUG
   printf("debug: drift_fourier_emf called\n");
+  printf("       lambda=%e mm, drift= %e mm\n", lambda, driftlen);
 #endif
 
   tmp= check_sampling_emf(emfin, lambda, 1.1, driftlen, 1);
@@ -317,7 +317,7 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   u= XMALLOC(double, cols);  /* frequency vector */
   v= XMALLOC(double, rows);  /* frequency vector */
 
-  k  = (lambda > 0.0) ? (2.0 * PI/ lambda) : 0.0;
+  k  = (lambda > 0.0) ? (2.0 * PI/ lambda)     : 0.0;
   p0 = (lambda > 0.0) ? fmod(driftlen, lambda) : 0.0;          // phase rest
   totz= emfin->z[cols- 1]- emfin->z[0];
   toty= emfin->y[rows- 1]- emfin->y[0];
@@ -380,7 +380,7 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
   fill_fftw(in, re0, im0, rows, cols);
 
 #ifdef DEBUG
-  printf("debug: drift_fourier_sub call FFT %s\n", "forward");
+  printf("debug: drift_fourier_sub call FFT %s, file=%s\n", "forward", __FILE__);
 #endif
 
   fftw_execute(*p1p);                    // forward fft
@@ -401,8 +401,8 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
-	    pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
-	    //pha1= k* driftlen* arg;  // textbook
+	    //pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
+	    pha1= k* driftlen* arg;  // textbook
 	  }
 	else
 	  {
@@ -422,7 +422,8 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 #endif  
 
   fftw_execute(*p2p); // backward fft
-  
+  fftshift(out, rows, cols);             // center
+
   get_fftw(out, re1, im1, rows, cols, fftwscale);
 } /* drift_fourier_sub */
 #endif
@@ -510,10 +511,9 @@ void drift_fresnel_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
  
   if (emfout==NULL) 
     {
-      printf("error: file=%s emfout==NULL\n", __FILE__);
+      printf("error: file=%s emfout == NULL\n", __FILE__);
       exit(-1);
     }
-
 
 #ifdef DEBUG
   printf("debug: drift_fresnel_emf called\n");
@@ -616,8 +616,9 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 	pha4= (v1[row]* v0[0] + u1[col]* u0[0]) * k/ driftlen;
 	pha = pha0 + pha1 + pha2 + pha3 +pha4;
 	amp = amp0 * amp1* fftwscale * yy * zz;
-	re1[idxf]= amp* cos(pha);
-	im1[idxf]= amp* sin(pha);
+	// dec replace idxf with idxc
+	re1[idxc]= amp* cos(pha);
+	im1[idxc]= amp* sin(pha);
       }
 } // drift_fresnel_sub
 #endif
@@ -790,8 +791,8 @@ void drift_fraunhofer_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 	pha4= (v1[row]* v0[0] + u1[col]* u0[0]) * k/ driftlen;
 	pha = pha0 + pha1 + pha2 + pha3 +pha4;
 	amp = amp0 * amp1* fftwscale * yy * zz;
-	re1[idxf]= amp* cos(pha);
-	im1[idxf]= amp* sin(pha);
+	re1[idxc]= amp* cos(pha);
+	im1[idxc]= amp* sin(pha);
       }
 } // drift_fraunhofer_sub
 #endif
@@ -846,14 +847,16 @@ void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
 
 void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, double scale)
 {
-  int row, col, idxf, idxc;
+  int row, col, idxc;
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
       {
 	idxc= row* cols+ col;
-	idxf= col* rows+ row;
-	re[idxf]= out[idxc][0]* scale;
-	im[idxf]= out[idxc][1]* scale;
+	//idxf= col* rows+ row;
+	//Dec 14	re[idxf]= out[idxc][0]* scale;
+	//Dec 14        im[idxf]= out[idxc][1]* scale;
+	re[idxc]= out[idxc][0]* scale;
+	im[idxc]= out[idxc][1]* scale;
       }
 } /* end get_fftw */
 
