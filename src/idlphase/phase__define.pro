@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <25 Nov 14 15:25:19 flechsig> 
+;  Time-stamp: <08 Dec 14 17:24:58 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1805,7 +1805,7 @@ legend, ['z','y'], color=[1,2], linestyle=[0,0], /right
 return 
 end ;; plotprofile
 
-pro phase::propagate, drift=drift
+pro phase::propagate, drift=drift,verbose=verbose
 ;+
 ; NAME:
 ;   phase::propagate
@@ -1837,7 +1837,7 @@ pro phase::propagate, drift=drift
 ;   UF Jun 2014
 ;-
 print,'propagate called- automatic selection of propagator '
-self->check_sampling, drift=drift, ratio=ratio, verbose=0
+self->check_sampling, drift=drift, ratio=ratio, verbose=verbose
 
 if (ratio gt 1.0) then self->propfourier, drift=drift else self->propfresnel, drift=drift 
 
