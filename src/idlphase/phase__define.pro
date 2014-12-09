@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <08 Dec 14 17:24:58 flechsig> 
+;  Time-stamp: <09 Dec 14 10:13:06 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -803,6 +803,40 @@ field= *self.field
 return, field
 end ;; field
 
+function phase::getimag
+;+
+; NAME:
+;   phase::getimag
+;
+; PURPOSE:
+;   export imag part of field
+;
+;; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getimag()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the imag part of the field
+;
+; EXAMPLE:
+;  idl> field= emf->getimag()
+;
+; MODIFICATION HISTORY:
+;   UF 4.12.14
+;-
+imag= imaginary(*self.field)
+
+return, imag
+end ;; getimag
+
 function phase::getintensity
 ;+
 ; NAME:
@@ -1027,6 +1061,41 @@ if n_elements(z) ne 0 then prof= reform(field[*,my]) else prof= reform(field[mz,
 
 return, prof
 end ;; getprofile
+
+function phase::getreal
+;+
+; NAME:
+;   phase::getreal
+;
+; PURPOSE:
+;   export real part of field
+;
+;; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   y= getreal()  
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; OUTPUTS:
+;   the real part of the field
+;
+; EXAMPLE:
+;  idl> field= emf->getreal()
+;
+; MODIFICATION HISTORY:
+;   UF 4.12.14
+;-
+real= real_part(*self.field)
+
+return, real
+end ;; getreal
+
 
 function phase::getwavelength
 ;+
@@ -1641,6 +1710,40 @@ return
 end
 ; end plotamplitude
 
+pro phase::plotimag, window=window, _EXTRA=extra
+;+
+; NAME:
+;   phase::plotimag
+;
+; PURPOSE:
+;   plot imag
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->plotimag
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   
+; EXAMPLE:
+;   idl> emf->plotimag
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+if n_elements(window) ne 0 then window, window
+title= self.name+ ' imag'
+a= self->getimag()
+mycontour, a, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='imag (W/m^2)', _EXTRA=extra 
+return 
+end
+; end plotimag
+
 pro phase::plotintensity, window=window, _EXTRA=extra
 ;+
 ; NAME:
@@ -1804,6 +1907,40 @@ oplot, y*1e3, yp, color=2
 legend, ['z','y'], color=[1,2], linestyle=[0,0], /right
 return 
 end ;; plotprofile
+
+pro phase::plotreal, window=window, _EXTRA=extra
+;+
+; NAME:
+;   phase::plotreal
+;
+; PURPOSE:
+;   plot real
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->plotreal
+;
+; INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   
+; EXAMPLE:
+;   idl> emf->plotreal
+;
+; MODIFICATION HISTORY:
+;   UF Nov 2013
+;-
+if n_elements(window) ne 0 then window, window
+title= self.name+ ' real'
+a= self->getreal()
+mycontour, a, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
+  xtitle='z (mm)', ytitle='y (mm)', ztitle='real (W/m^2)', _EXTRA=extra 
+return 
+end
+; end plotreal
 
 pro phase::propagate, drift=drift,verbose=verbose
 ;+
