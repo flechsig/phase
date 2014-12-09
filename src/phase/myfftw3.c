@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <05 Dec 14 14:38:18 flechsig>  */
+ /* Time-stamp: <09 Dec 14 10:37:12 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -49,79 +49,6 @@
 #include "phase.h"
 #include "myfftw3.h"
 #include "common.h"
-
-// checks the sampling off a field versus the critical_sampling
-// critical_sampling= lambda * x = z_width * delta_z = z_width^2/ Nz
-// output is the ratio to critical_sampling and the value for critical_sampling
-// the target should be a value less or above 1 - it controls the messages if verbose > 0
-// target > 1 means oversampling is good (transfer function or fourier propagator) 
-// target < 1 means undersampling is good (impulse response or fresnel/fraunhofer propagator) 
-double check_sampling(struct BeamlineType *bl, double *lambda_x_x_p, double target, int verbose)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function\n", __FILE__);
-#else
-  int    cols, rows, eidx;
-  double driftlen, ratio, yratio, zratio, lambda, zwidth, ywidth, lambda_x_x_local, *lambda_x_x;
-  struct ElementType *el;
-  struct source4c *so4;
-
-  eidx= bl->position- 1;
-#ifdef DEBUG
-  printf("debug: check_sampling called with target %f, eidx= %d\n", target, eidx);
-#endif
-  
-  lambda_x_x= &lambda_x_x_local;
-
-  so4= (struct source4c *)&(bl->posrc);
-  cols= so4->iex;
-  rows= so4->iey;
-  zwidth= (eidx) ? (bl->emf.z[bl->emf.nz- 1]- bl->emf.z[0]) : (so4->gridx[cols- 1]- so4->gridx[0]);
-  ywidth= (eidx) ? (bl->emf.y[bl->emf.ny- 1]- bl->emf.y[0]) : (so4->gridy[rows- 1]- so4->gridy[0]);
-
-  el= &(bl->ElementList[eidx]);
-  driftlen= el->GDat.r+ el->GDat.rp;
-  lambda  = bl->BLOptions.lambda;
-
-  *lambda_x_x= driftlen* lambda;
- 
-  yratio= 1.0/(*lambda_x_x * rows/pow(ywidth, 2));
-  zratio= 1.0/(*lambda_x_x * cols/pow(zwidth, 2));
-  
-  ratio= 0.5 * (yratio + zratio);
-
-  if ((ratio > 1.0) && (target < 1.0)) 
-    {
-      printf("*****************************************************************\n");
-      printf("warning: expect sampling artifacts\n");
-      printf("         you use an IR propagator and oversampling (r= %f)\n", ratio);
-      printf("         probably a TR propagator (Fourier) is better\n");
-      printf("*****************************************************************\n");
-    }
-
-  if ((ratio < 1.0) && (target > 1.0)) 
-    {
-      printf("******************************************************************\n");
-      printf("warning: expect sampling artifacts\n");
-      printf("         you use a TR propagator and undersampling (r= %f)\n", ratio);
-      printf("         probably an IR propagator (Fresnel, Fraunhofer) is better\n");
-      printf("******************************************************************\n");
-    }
-
-  if (verbose && (ratio < 1.0)) printf("==========> undersampling, ratio= %f\n", ratio);
-  if (verbose && (ratio > 1.0)) printf("==========> oversampling,  ratio= %f\n", ratio);
-#ifdef DEBUG
-  printf("debug: check_ssampling: target %f\n", target);
-  printf("debug: critical_sampling= %f (mm^2)\n", *lambda_x_x);
-  printf("debug: act. hor_sampling= %f (mm^2)\n", pow(zwidth, 2)/ cols);
-  printf("debug: act.vert_sampling= %f (mm^2)\n", pow(ywidth, 2)/ rows);
-#endif
-
-  if (lambda_x_x_p != NULL) *lambda_x_x_p= *lambda_x_x;
-
-  return ratio;
-#endif
-} // end check_sampling
 
 // checks the sampling off a field versus the critical_sampling
 // critical_sampling= lambda * x = z_width * delta_z = z_width^2/ Nz
@@ -201,94 +128,6 @@ void drift_auto_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda
 } // end drift_auto_emf
 
 /* free space propagation with Transfer function propagator */
-/* the drift distance is s1+s2 of the first element         */
-/* process ez and ey in sequence                            */
-void drift_fourier(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function\n", __FILE__);
-#else
-  int    row, rows, col, cols, eidx;
-  double driftlen, k, totz, toty, p0, lambda, *u, *v, tmp;
-  struct ElementType *el;
-  struct source4c *so4;
-  struct PSDType  *psd;
-
-#ifdef HAVE_FFTW3
-  fftw_complex *in, *out;
-  fftw_plan    p1, p2;
-#endif
-
-  eidx= bl->position- 1;
-  printf("drift_fourier: eno= %d\n", eidx);
-
-  tmp= check_sampling(bl, &tmp, 1.1, 1);
-
-  so4= (struct source4c *)&(bl->posrc);
-  cols= so4->iex;
-  rows= so4->iey;
-
-  u= XMALLOC(double, cols);  /* frequency vector */
-  v= XMALLOC(double, rows);  /* frequency vector */
-
-  ReAllocResult(bl, PLphspacetype, rows, cols);
-  psd= (struct PSDType *)bl->RESULT.RESp;
-  psd->iy= rows;
-  psd->iz= cols;
-  
-//el= &(bl->ElementList[bl->position]); // oder -1
-  el= &(bl->ElementList[eidx]);
-  driftlen= el->GDat.r+ el->GDat.rp;
-  lambda  = bl->BLOptions.lambda;
-  k= 2.0 * PI/ lambda;
-  p0 = fmod(driftlen, lambda);          // phase rest
-  totz= (!eidx) ? (so4->gridx[so4->iex- 1]- so4->gridx[0]) : (bl->emf.z[bl->emf.nz- 1]- bl->emf.z[0]);
-  toty= (!eidx) ? (so4->gridy[so4->iey- 1]- so4->gridy[0]) : (bl->emf.y[bl->emf.ny- 1]- bl->emf.y[0]);
-
-  // fill frequency vectors and output
-  for (col= 0; col< cols; col++) 
-    {
-      u[col]= (col/ (cols- 1.0)- 0.5)* (cols- 1.0)/ totz; 
-      psd->z[col]= (!eidx) ? so4->gridx[col] : bl->emf.z[col];
-    }
-
-  for (row= 0; row< rows; row++) 
-    {
-      v[row]= (row/ (rows- 1.0)- 0.5)* (rows- 1.0)/ toty;
-      psd->y[row]= (!eidx) ? so4->gridy[row] : bl->emf.y[row];
-    }
-
-  printf("drift_fourier called, drift= %f mm, file= %s\n", driftlen, __FILE__);
-
-#ifdef HAVE_FFTW3
-  in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_ESTIMATE); /* fast init */
-  p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_ESTIMATE); /* fast init */
-  //p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_MEASURE); /* needs longer but ev. faster execution */
-  //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
-
-  // z polarization
-  drift_fourier_sub(in, out, &p1, &p2, so4->zezre, so4->zezim, psd->ezrec, psd->ezimc,
-		    rows, cols, u, v, lambda, k, driftlen, p0);
-  // y polarization
-  drift_fourier_sub(in, out, &p1, &p2, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
-		    rows, cols, u, v, lambda, k, driftlen, p0);
-
-  fftw_destroy_plan(p1);
-  fftw_destroy_plan(p2);
-  fftw_free(in); 
-  fftw_free(out);
-#else
-  printf("fftw3 not available- skip calculation\n");
-#endif
-  XFREE(u);
-  XFREE(v);
-  printf("drift_fourier end\n");
-#endif
-} /* drift fourier */
-
-/* free space propagation with Transfer function propagator */
 /* process ez and ey in sequence                            */
 void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda, double driftlen)
 {
@@ -321,6 +160,10 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   p0 = (lambda > 0.0) ? fmod(driftlen, lambda) : 0.0;          // phase rest
   totz= emfin->z[cols- 1]- emfin->z[0];
   toty= emfin->y[rows- 1]- emfin->y[0];
+
+#ifdef DEBUG
+  printf("debug: drift_fourier_emf: totz=%e mm, toty= %e mm\n", totz, toty);
+#endif
 
   // fill frequency vectors and output
   for (col= 0; col< cols; col++) 
@@ -401,8 +244,8 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 	if (arg > 0.0) 
 	  {
 	    arg= sqrt(arg);
-	    //pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
-	    pha1= k* driftlen* arg;  // textbook
+	    pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
+	    //pha1= k* driftlen* arg;  // textbook
 	  }
 	else
 	  {
@@ -422,81 +265,12 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 #endif  
 
   fftw_execute(*p2p); // backward fft
-  fftshift(out, rows, cols);             // center
+  //  fftshift(out, rows, cols);             // center
 
   get_fftw(out, re1, im1, rows, cols, fftwscale);
 } /* drift_fourier_sub */
 #endif
 
-/* free space propagation with Fresnel propagator              */
-void drift_fresnel(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function\n", __FILE__);
-#else
-  int    row, col, rows, cols;
-  double driftlen, lambda, k, dz0, dy0, p0, tmp;
-  struct ElementType *el;
-  struct source4c *so4;
-  struct PSDType  *psd;
-  
-  tmp= check_sampling(bl, &tmp, 0.9, 1);
-
-  so4= (struct source4c *)&(bl->posrc);
-  cols= so4->iex;
-  rows= so4->iey;
-
-  ReAllocResult(bl, PLphspacetype, rows, cols);
-  
-  psd= (struct PSDType *)bl->RESULT.RESp;
-  psd->iy= rows;
-  psd->iz= cols;
-
-#ifdef HAVE_FFTW3
-  fftw_complex *in, *out;
-  fftw_plan    p;
-#endif
-
-  //el= &(bl->ElementList[bl->position]); // oder -1
-  el= &(bl->ElementList[0]);
-  driftlen= el->GDat.r+ el->GDat.rp;
-  lambda  = bl->BLOptions.lambda;
-  k= 2.0 * PI/ lambda;
-  p0 = driftlen/ lambda;
-  //  dy0= so4->dy;
-  dy0= (so4->iey > 1) ? (so4->gridy[1]- so4->gridy[0]) : 0.0;
-  //  dz0= so4->dx;
-  dz0= (so4->iex > 1) ? (so4->gridx[1]- so4->gridx[0]) : 0.0;
-
-  printf("drift_fresnel called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
-
-#ifdef HAVE_FFTW3
-  in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
-  // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
- 
-  printf("fftw3 fill vectors\n"); // scaling verified UF 28.2.14
-  for (row= 0; row < rows; row++) psd->y[row]= lambda* driftlen* so4->gridy[row]/(rows* pow(dy0, 2));
-  for (col= 0; col < cols; col++) psd->z[col]= lambda* driftlen* so4->gridx[col]/(cols* pow(dz0, 2));
-
-  // z polarization
-  drift_fresnel_sub(in, out, &p, so4->zezre, so4->zezim, psd->ezrec, psd->ezimc,
-		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
-  // y polarization
-  drift_fresnel_sub(in, out, &p, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
-		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
-
-  fftw_destroy_plan(p);
-  fftw_free(in); 
-  fftw_free(out);
-#else
-  printf("fftw3 not available- skip calculation\n");
-#endif
-
-  printf("drift_fresnel end\n");
-#endif
-} /* end drift_fresnel */
 
 /* free space propagation with Fresnel propagator              */
 void drift_fresnel_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda, double driftlen)
@@ -623,78 +397,6 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 } // drift_fresnel_sub
 #endif
 
-/* free space propagation with Fraunhofer propagator           */
-/* debugged, scaling der image plane ist korrekt               */
-void drift_fraunhofer(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function\n", __FILE__);
-#else
-  int    row, col, rows, cols;
-  double driftlen, lambda, k, dz0, dy0, p0, tmp;
-  struct ElementType *el;
-  struct source4c *so4;
-  struct PSDType  *psd;
-  
-  tmp= check_sampling(bl, &tmp, 0.9, 1);
-
-  so4= (struct source4c *)&(bl->posrc);
-  cols= so4->iex;
-  rows= so4->iey;
-
-  ReAllocResult(bl, PLphspacetype, rows, cols);
-  
-  psd= (struct PSDType *)bl->RESULT.RESp;
-  psd->iy= rows;
-  psd->iz= cols;
-
-#ifdef HAVE_FFTW3
-  fftw_complex *in, *out;
-  fftw_plan    p;
-#endif
-
-  //el= &(bl->ElementList[bl->position]); // oder -1
-  el= &(bl->ElementList[0]);
-  driftlen= el->GDat.r+ el->GDat.rp;
-  lambda  = bl->BLOptions.lambda;
-  k= 2.0 * PI/ lambda;
-  p0 = driftlen/ lambda;
-  // dy0= so4->dy;
-  dy0= (so4->iey > 1) ? (so4->gridy[1]- so4->gridy[0]) : 0.0;
-  // dz0= so4->dx;
-  dz0= (so4->iex > 1) ? (so4->gridx[1]- so4->gridx[0]) : 0.0;
-
-  printf("drift_fraunhofer called, drift= %f mm, file= %s, lambda= %e mm\n", driftlen, __FILE__, bl->BLOptions.lambda);
-
-  printf("!!!!!!!!!!!!! drift_fraunhofer called not yet tested/debugged !!!!!!!!!!!!!!!!!!!\n");
-
-#ifdef HAVE_FFTW3
-  in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
-  p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
-  // p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
- 
-  printf("fftw3 fill vectors\n"); // scaling verified UF 28.2.14
-  for (row= 0; row < rows; row++) psd->y[row]= lambda* driftlen* so4->gridy[row]/(rows* pow(dy0, 2));
-  for (col= 0; col < cols; col++) psd->z[col]= lambda* driftlen* so4->gridx[col]/(cols* pow(dz0, 2));
-
-  // z polarization
-  drift_fraunhofer_sub(in, out, &p, so4->zezre, so4->zezim, psd->ezrec, psd->ezimc,
-		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
-  // y polarization
-  drift_fraunhofer_sub(in, out, &p, so4->zeyre, so4->zeyim, psd->eyrec, psd->eyimc,
-		    rows, cols, so4->gridx, so4->gridy, psd->z, psd->y, lambda, k, driftlen, p0);
-
-  fftw_destroy_plan(p);
-  fftw_free(in); 
-  fftw_free(out);
-#else
-  printf("fftw3 not available- skip calculation\n");
-#endif
-
-  printf("drift_fraunhofer end\n");
-#endif
-} /* end drift_fraunhofer */
 
 /* free space propagation with Fraunhofer propagator           */
 /* debugged, scaling der image plane ist korrekt               */
@@ -848,13 +550,11 @@ void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
 void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, double scale)
 {
   int row, col, idxc;
+
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
       {
 	idxc= row* cols+ col;
-	//idxf= col* rows+ row;
-	//Dec 14	re[idxf]= out[idxc][0]* scale;
-	//Dec 14        im[idxf]= out[idxc][1]* scale;
 	re[idxc]= out[idxc][0]* scale;
 	im[idxc]= out[idxc][1]* scale;
       }

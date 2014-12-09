@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <05 Dec 14 17:03:05 flechsig>  */
+/*  Time-stamp: <09 Dec 14 11:22:45 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -142,15 +142,13 @@ public:
 #ifdef HAVE_HDF5
   int mycheck_hdf5_type(char *name, int type, int verb) { return check_hdf5_type(name, type, verb); }
 #endif
-  double mycheck_sampling() { return check_sampling(this, NULL, 1.0, 1); }
+  double mycheck_sampling_emf(struct EmfType *emf, double driftlen) { return check_sampling_emf(emf, this->BLOptions.lambda, 1.0, driftlen, 0); }
   //void mycopySrc2Psd() { copySrc2Psd(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
 		     int etype, double theta, int lREDUCE_maps) { 
     DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, -1); }
-  void mydrift_fresnel() { drift_fresnel(this); }
-  void mydrift_fraunhofer() { drift_fraunhofer(this); }
-  void mydrift_fourier() { drift_fourier(this); }
+  
   void myemfp_construct(int nz, int ny) { this->emfp= emfp_construct(nz, ny); }
   void myemfp_free() { this->emfp= emfp_free(this->emfp); }
   //void myemfp_2_psd() { emfp_2_psd(this); }

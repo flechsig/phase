@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.h */
  /* Date      : <06 Jan 14 14:10:12 flechsig>  */
- /* Time-stamp: <28 Aug 14 16:47:13 flechsig>  */
+ /* Time-stamp: <09 Dec 14 10:35:14 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -43,14 +43,10 @@
   #include "fftw3.h"
 #endif
 
-double check_sampling(struct BeamlineType *, double *, double, int);
 double check_sampling_emf(struct EmfType *, double, double, double, int);
 void drift_auto_emf(struct EmfType *, struct EmfType *, double, double);
-void drift_fourier(struct BeamlineType *);
 void drift_fourier_emf(struct EmfType *, struct EmfType *, double, double);
-void drift_fresnel(struct BeamlineType *);
 void drift_fresnel_emf(struct EmfType *, struct EmfType *, double, double);
-void drift_fraunhofer(struct BeamlineType *);
 void drift_fraunhofer_emf(struct EmfType *, struct EmfType *, double, double);
 
 #ifdef HAVE_FFTW3
