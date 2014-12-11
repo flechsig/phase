@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <09 Dec 14 10:37:12 flechsig>  */
+ /* Time-stamp: <11 Dec 14 17:16:07 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -131,8 +131,8 @@ void drift_auto_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda
 /* process ez and ey in sequence                            */
 void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lambda, double driftlen)
 {
-  int    row, rows, col, cols;
-  double k, totz, toty, p0, *u, *v, tmp, lambda_drift;
+  int    row, rows, col, cols, cols2, rows2;
+  double k, p0, *u, *v, tmp, lambda_drift, lz, ly;
   
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
@@ -157,24 +157,28 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   v= XMALLOC(double, rows);  /* frequency vector */
 
   k  = (lambda > 0.0) ? (2.0 * PI/ lambda)     : 0.0;
-  p0 = (lambda > 0.0) ? fmod(driftlen, lambda) : 0.0;          // phase rest
-  totz= emfin->z[cols- 1]- emfin->z[0];
-  toty= emfin->y[rows- 1]- emfin->y[0];
+  p0 = (lambda > 0.0) ? fmod(driftlen, lambda) : 0.0;    // phase rest
+  lz= (emfin->z[cols- 1]- emfin->z[0])* cols/(cols- 1);  // the total width is one bin bigger than the border points
+  ly= (emfin->y[rows- 1]- emfin->y[0])* rows/(rows- 1);
 
 #ifdef DEBUG
-  printf("debug: drift_fourier_emf: totz=%e mm, toty= %e mm\n", totz, toty);
+  printf("debug: drift_fourier_emf: lz=%e mm, ly= %e mm\n", lz, ly);
 #endif
 
-  // fill frequency vectors and output
+  // fill frequency vectors and output, frequency in fft order
+  cols2= cols / 2;
   for (col= 0; col< cols; col++) 
     {
-      u[col]= (col/ (cols- 1.0)- 0.5)* (cols- 1.0)/ totz; 
-      emfout->z[col]= emfin->z[col];
+      u[col]= (col <= cols2) ? col : (col- cols);
+      //printf("col=%d, cols2= %d, f=%f\n", col, cols2, u[col]);
+      u[col] /= lz;
+      emfout->z[col]= emfin->z[col]; // output vector= input vector
     }
 
+  rows2= rows / 2;
   for (row= 0; row< rows; row++) 
     {
-      v[row]= (row/ (rows- 1.0)- 0.5)* (rows- 1.0)/ toty;
+      v[row]= (row <= rows2) ? row/ly : (row- rows)/ly;
       emfout->y[row]= emfin->y[row];
     }
 
@@ -185,9 +189,7 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_ESTIMATE); /* fast init */
   p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_ESTIMATE); /* fast init */
-  //p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_MEASURE); /* needs longer but ev. faster execution */
-  //p2 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_MEASURE); /* needs longer but ev. faster execution */
-
+  
   // z polarization
   drift_fourier_sub(in, out, &p1, &p2, emfin->ezre, emfin->ezim, emfout->ezre, emfout->ezim,
 		    rows, cols, u, v, lambda, k, driftlen, p0);
@@ -218,34 +220,26 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
   int    row, col, idxc;
   double amp0, pha0, arg, amp1, pha1, fftwscale;
 
-  fftwscale= 1.0/ (rows * cols);
-
   fill_fftw(in, re0, im0, rows, cols);
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: drift_fourier_sub call FFT %s, file=%s\n", "forward", __FILE__);
 #endif
 
   fftw_execute(*p1p);                    // forward fft
-  fftshift(out, rows, cols);             // center
-
-  // UF Mar 14 soweit ich fftw getestet habe muss nur 1 x scaliert werden (hin oder rueck) 
-  // testprogramm fftw2 - scaliere den output- testergebnis ist korrekt
-
+ 
   for (row= 0; row< rows; row++)         // apply drift in frequency space
     for (col= 0; col< cols; col++)
       {
 	idxc= row* cols+ col;
-	//out[idxc][0]*= fftwscale;       // fftw output is not normalized
-	//out[idxc][1]*= fftwscale;       // fftw output is not normalized
 	amp0= sqrt(pow(out[idxc][0], 2)+ pow(out[idxc][1], 2));       // fft amplitude output
 	pha0= atan2(out[idxc][1], out[idxc][0]);                      // fft phase output
-	arg= 1.0- pow((u[col]* lambda), 2)- pow((v[row]* lambda), 2); // driftlen
-	if (arg > 0.0) 
+	arg= 1.0- pow((u[col]* lambda), 2)- pow((v[row]* lambda), 2); // driftlen^2= 1-(u*la)^2+(v*la)^2
+	if (arg >= 0.0) 
 	  {
 	    arg= sqrt(arg);
-	    pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
-	    //pha1= k* driftlen* arg;  // textbook
+	    //pha1= fmod((driftlen* (arg- 1.0)), lambda ) * k + p0  * k; // more accurate
+	    pha1= k* driftlen* arg;  // textbook
 	  }
 	else
 	  {
@@ -253,6 +247,7 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
 	    arg = sqrt(-1.0* arg);
 	    pha1= -1.0 * k * driftlen* arg;
 	  } // end evanescent wave test
+	
 	amp1= amp0;
 	pha1+= pha0;
 	in[idxc][0]= amp1* cos(pha1);   // fill input fields again
@@ -260,13 +255,13 @@ void drift_fourier_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p, fftw
       } // end forward
   // end for loops
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: drift_fourier_sub call FFT %s\n", "backward");
 #endif  
 
   fftw_execute(*p2p); // backward fft
-  //  fftshift(out, rows, cols);             // center
-
+  
+  fftwscale= 1.0/ (rows * cols);
   get_fftw(out, re1, im1, rows, cols, fftwscale);
 } /* drift_fourier_sub */
 #endif
@@ -520,6 +515,8 @@ void fftshift(fftw_complex *arr0, int rows, int cols)
   row2= rows / 2;
   col2= cols / 2;
 
+  printf("fftshift: rows=%d, row2= %d\n", rows, row2);
+
   for (row=0; row< rows; row++)
     for (col=0; col< cols; col++)
       {
@@ -532,8 +529,8 @@ void fftshift(fftw_complex *arr0, int rows, int cols)
   fftw_free(arr1);
 } /* end fftshift */
 
-/* helper function               */
-/* source4c is in c memory model */
+/* helper function                   */
+/* fill fftw_complex with re and im  */
 void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
 {
   int row, col, idxc;
@@ -544,9 +541,11 @@ void fill_fftw(fftw_complex *in, double *re, double *im, int rows, int cols)
 	idxc= row* cols+ col;
 	in[idxc][0]= re[idxc];
 	in[idxc][1]= im[idxc];
+	//	printf("%4d %4d %4d %13e %13e %13le %13le\n", idxc, col, row, re[idxc], im[idxc], in[idxc][0], in[idxc][1]);
       }
 } /* end fill_fftw */
 
+/* copy data from fftw_complex to re and im and apply a scale factor */
 void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, double scale)
 {
   int row, col, idxc;

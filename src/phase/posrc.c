@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <05 Dec 14 17:21:31 flechsig>  */
+/*  Time-stamp: <11 Dec 14 17:27:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -245,9 +245,9 @@ void gauss_source1c(struct BeamlineType *bl)
 	rho2=  pow(emfp_tmp->z[col], 2) + pow(emfp_tmp->y[row], 2);
 	//printf("z= %f, y= %f\n", emfp_tmp->z[col], emfp_tmp->y[row]);
 	arg1  = -1 *  rho2 / w2;
-	if (arg1 <= -40)
+	if (arg1 <= -80)
 	  { 
-	    arg1= -40;  //-40, but -80 is still ok
+	    arg1= -80;  //-40, but -80 is still ok
 	    truncation= 1;
 	  }
 	arg2= 0.5 * k * rho2 * Ri + k*dist - eta;                    //;; For notation of Siegman multiply by -1                    

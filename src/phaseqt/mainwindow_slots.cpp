@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <09 Dec 14 11:01:56 flechsig> 
+//  Time-stamp: <11 Dec 14 12:47:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -830,8 +830,9 @@ if (!action.compare("fourierAct"))
     { 
       cout << "write PHASE output in genesis_hdf5 format" << endl;
 #ifdef HAVE_HDF5
-      if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
-	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) myparent->my_write_genesis_hdf5_file();
+      //   if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
+      //	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) 
+      myparent->my_write_genesis_hdf5_file();
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
 #endif
@@ -1974,7 +1975,7 @@ void MainWindow::grautoscaleslot()
       cout << "no autoscale required for plotsubject= " <<  mwplotsubject << " return " << endl;
       return;
     }
-
+#ifdef XXX
   if ((mwplotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
     {
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No GO source data available"));
@@ -1992,7 +1993,7 @@ void MainWindow::grautoscaleslot()
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid PO source available"));
       return;
     }
-
+#endif
   // tests done 
 
   d_plot->setPlotSubject(mwplotsubject);
@@ -2014,9 +2015,10 @@ void MainWindow::grautoscaleslot()
       d_plot->autoScale();
     }
 
-  if (mwplotsubject & PLOT_PO_RESULT && 
-    checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
-    { 
+  // if (mwplotsubject & PLOT_PO_RESULT && 
+  //   checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+ if (mwplotsubject & PLOT_PO_RESULT ) // generic for PO result 
+  { 
       // UF 8.1.14 psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
       // UF 8.1.14 d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
       //psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
