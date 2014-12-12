@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <11 Dec 14 12:47:56 flechsig> 
+//  Time-stamp: <12 Dec 14 11:03:40 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -63,6 +63,7 @@
 #include "plotmatrix.h"
 #include "plot2x2.h"
 #endif
+
 
 using namespace std;   // fuer cout z.B.
 
@@ -1589,7 +1590,7 @@ void MainWindow::grapplyslot()
   struct BeamlineType *bl;
 
 #ifdef DEBUG
-  cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << mwplotsubject << endl;
+  cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << hex << showbase << mwplotsubject << endl;
 #endif
 
   bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
