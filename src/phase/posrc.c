@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <11 Dec 14 17:27:59 flechsig>  */
+/*  Time-stamp: <12 Dec 14 15:48:10 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -92,14 +92,14 @@ struct EmfType *emfp_construct(int cols, int rows)
 {
   struct EmfType *emf;
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: emfp_construct called, file: %s\n",  __FILE__);
 #endif
   
   emf= XMALLOC(struct EmfType, 1);
   emf_construct(emf, cols, rows);
   
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: emfp_construct return allocated pointer 0x%X\n",  (int)emf);
 #endif
 
@@ -109,12 +109,12 @@ struct EmfType *emfp_construct(int cols, int rows)
 /* frees the content */
 void emf_free(struct EmfType *emf)
 {
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: emf_free called, pointer=0x%X, file: %s\n", (int)emf, __FILE__);
 #endif
 
   if (!emf) return;
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: emf_free old nz= %d, ny= %d\n", emf->nz, emf->ny);
 #endif
 
@@ -166,12 +166,12 @@ void emfp_cpy(struct EmfType *dest, struct EmfType *source)
 /* frees the complete pointer */
 struct EmfType *emfp_free(struct EmfType *emfp)
 {
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: emfp_free called, pointer=0x%X, file: %s\n", (int)emfp, __FILE__);
 #endif
 
   if (!emfp) return;
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: emfp_free old nz= %d, ny= %d\n", emfp->nz, emfp->ny);
 #endif
 
@@ -780,54 +780,6 @@ int check_hdf5_type(char *name, int type, int verbose)
   return myreturn;
 }  /* check_hdf5_type */
 
-/* add phase psd to hdf5 file- linear array in c memory model */ 
-void add_phase_psd_to_hdf5(hid_t file_id, struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function add_phase_psd_to_hdf5, file=%s\n", __FILE__);
-#else
-  int row, rows, col, cols, fieldsize, idxf;
-  hid_t group_id;
-  double *field, scale;
-  struct PSDType *p;
-
-#ifdef DEBUG
-  printf("add_phase_psd_to_hdf5 called\n");
-#endif
-
-  p= (struct PSDType *)bl->RESULT.RESp;
-  scale= 1.0;
-  if (bl->BLOptions.ifl.inorm == 1)
-    {
-      printf("normalized intensity output\n");
-      scale= getIntensityMax(p);
-      scale= (fabs(scale) > 0.0) ? 1.0/scale : 1.0;
-    }
-
-  rows= p->iy;
-  cols= p->iz;
-  fieldsize= rows* cols;
-
-  field= XMALLOC(double, fieldsize);
-
-  for (col= 0; col < cols; col++)   // in the file the rows are fast
-    for (row= 0; row < rows; row++)
-      {
-	idxf= row + col * rows;
-	field[col + row * cols]= (pow(p->eyrec[idxf], 2)+ pow(p->eyimc[idxf], 2)+ 
-				  pow(p->ezrec[idxf], 2) + pow(p->ezimc[idxf], 2)) * scale;
-      }
-
-  group_id= H5Gcreate(file_id, "/phase_psd", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  writeDataDouble(file_id, "/phase_psd/z", p->z, cols, "z (horizontal) vector in mm");
-  writeDataDouble(file_id, "/phase_psd/y", p->y, rows, "y (vertical)   vector in mm");
-  writeDataDouble(file_id, "/phase_psd/psd", field, fieldsize, "intensity as c_style linear array");
-  add_desc(group_id, "phase intensity output");
-  XFREE(field);
-  H5Gclose(group_id);
-#endif
-}  /* end add_phase_psd_to_hdf5 */
-
 /* reads genesis and phase hdf5 generic */
 struct EmfType *read_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfType *p)
 {
@@ -893,12 +845,8 @@ struct EmfType *read_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfT
       emfp_fill8(bl, p->ezim, field, 1);
       XFREE(field);
     }
-
   
   H5Fclose(file_id);
-
-  
-
   printf("read hdf5 file: %s => done\n", fname);
   return p;
 }  /* read_hdf5_file */
@@ -1141,78 +1089,5 @@ FILE *posrc_fopen(char *name)
 
   return fa;
 } /* posrc_fopen */
-
-// copy psd to emfp including memory management
-void psd_2_emfp(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function psd_2_emfp\n", __FILE__);
-#else
-  size_t size2, sizey, sizez;
-  struct PSDType *psd;
-
-  psd= (struct PSDType *)bl->RESULT.RESp;
-
-#ifdef DEBUG
-  printf("debug: psd_2_emfp called, file=%s\n", __FILE__);
-#endif
-
-  if (bl->emfp) emfp_free(bl->emfp);
-  bl->emfp= emfp_construct(psd->iz, psd->iy);
-  sizez= bl->posrc.iex* sizeof(double); 
-  sizey= bl->posrc.iey* sizeof(double);
-  size2= bl->posrc.iey * sizez;
-
-  memcpy(bl->emfp->y, psd->y, sizey);
-  memcpy(bl->emfp->z, psd->z, sizez);
-
-  memcpy(bl->emfp->eyre, psd->eyrec, size2);
-  memcpy(bl->emfp->ezre, psd->ezrec, size2);
-
-  memcpy(bl->emfp->eyim, psd->eyimc, size2);
-  memcpy(bl->emfp->ezim, psd->ezimc, size2);
-
-#ifdef DEBUG
-  printf("debug: psd_2_emfp done, file=%s\n", __FILE__);
-#endif
-#endif
-} // psd_2_emfp
-
-// copy source to emfp in bl struct including memory management
-// frees and reserves the memory
-void source4c_2_emfp(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function source4c_2_emfp\n", __FILE__);
-#else
-  size_t size2, sizey, sizez;
-  
-#ifdef DEBUG
-  printf("debug: source4c_2_emfp called\n");
-#endif
-
-  if (bl->emfp) emfp_free(bl->emfp);
-  
-  bl->emfp= emfp_construct(bl->posrc.iex, bl->posrc.iey);
-  sizez= bl->posrc.iex* sizeof(double); 
-  sizey= bl->posrc.iey* sizeof(double);
-  size2= sizez * bl->posrc.iey;
-
-  memcpy(bl->emfp->y, bl->posrc.y, sizey);
-  memcpy(bl->emfp->z, bl->posrc.z, sizez);
-
-  //  printf("1\n");
-
-  memcpy(&bl->emfp->eyre[0], bl->posrc.zeyre, size2);
-  //printf("2\n");
-  memcpy(bl->emfp->eyim, bl->posrc.zeyim, size2);
-  memcpy(bl->emfp->ezre, bl->posrc.zezre, size2);
-  memcpy(bl->emfp->ezim, bl->posrc.zezim, size2);
-
-#ifdef DEBUG
-  printf("debug: source4c_2_emfp done\n");
-#endif
-#endif
-} // end source4c_2_emf
 
 /* end */

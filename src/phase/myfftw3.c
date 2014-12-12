@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <12 Dec 14 09:52:47 flechsig>  */
+ /* Time-stamp: <12 Dec 14 15:29:06 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -161,7 +161,7 @@ void drift_fourier_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   lz= (emfin->z[cols- 1]- emfin->z[0])* cols/(cols- 1);  // the total width is one bin bigger than the border points
   ly= (emfin->y[rows- 1]- emfin->y[0])* rows/(rows- 1);
 
-#ifdef DEBUG
+#ifdef DEBUG1
   printf("debug: drift_fourier_emf: lz=%e mm, ly= %e mm\n", lz, ly);
 #endif
 
@@ -319,7 +319,7 @@ void drift_fresnel_emf(struct EmfType *emfin, struct EmfType *emfout, double lam
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   p = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD, FFTW_ESTIMATE); /* fast init */
    
-  printf("fftw3 fill vectors\n"); // scaling verified UF 28.2.14
+  //printf("fftw3 fill vectors\n"); // scaling verified UF 28.2.14
   for (row= 0; row < rows; row++) emfout->y[row]= lambda_drift* emfin->y[row]/(rows* pow(dy0, 2));
   for (col= 0; col < cols; col++) emfout->z[col]= lambda_drift* emfin->z[col]/(cols* pow(dz0, 2));
 
@@ -356,7 +356,7 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
   zz= (u0[cols-1]- u0[0]) * cols / (cols-1);   // the total width
   yy= (v0[rows-1]- v0[0]) * rows / (rows-1);
 
-  printf("fftw3 fill arrays \n");
+  // printf("fftw3 fill arrays \n");
   // we  fill "in" manually 
   for (row= 0; row < rows; row++)
     for (col= 0; col < cols; col++)
@@ -370,11 +370,11 @@ void drift_fresnel_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 	in[idxc][1]= amp0* sin(pha);
       }
   
-  printf("fftw3 execute FFT\n");
+  //printf("fftw3 execute FFT\n");
   fftw_execute(*p1p);
   fftshift(out, rows, cols);
   
-  printf("fftw3 export result\n");
+  //printf("fftw3 export result\n");
   amp1= 1/(driftlen* lambda);  // scale2_b
   pha1= -0.5* PI;              // scale2_a
   pha2= k* driftlen;  
@@ -518,7 +518,7 @@ void fftshift(fftw_complex *arr0, int rows, int cols)
   rows2= rows/ 2;
   cols2= cols/ 2;
 
-  printf("fftshift: rows=%d, row2= %d\n", rows, rows2);
+  //  printf("fftshift: rows=%d, row2= %d\n", rows, rows2);
 
   for (row= 0; row< rows; row++)
     {

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Dec 14 09:35:41 flechsig> 
+//  Time-stamp: <12 Dec 14 11:30:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -114,7 +114,7 @@ int MainWindow::checkResultType(struct RESULTType *rp, int typ)
 
   if (!myret)
     QMessageBox::warning(this, tr("checkResultType"),
-			 tr("Available calculation results incompatible with selected plotsubject!<p>info: points1= %1, type= %2, requested type= %3").arg(rp->points1).arg(rp->typ).arg(typ));
+			 tr("Available calculation results incompatible with selected plotsubject!<p>info: points1= %1, type= 0x%2, requested type= 0x%3").arg(rp->points1).arg(rp->typ,0,16).arg(typ,0,16));
 
   return myret;
 } // checkResultType

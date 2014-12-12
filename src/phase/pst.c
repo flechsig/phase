@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <05 Dec 14 16:46:31 flechsig>  */
+/*   Time-stamp: <12 Dec 14 15:12:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -272,8 +272,8 @@ void MPST(struct BeamlineType *bl)
 #endif
 } /* end MPST */
 
-void PST(struct BeamlineType *bl) 
 /* Phasenraumtransformation interface zur Fortran Routine (not obsolete) */
+void PST(struct BeamlineType *bl) 
 {
 
 #ifdef DEBUG  
@@ -282,20 +282,11 @@ void PST(struct BeamlineType *bl)
 #endif
 
    Test4Grating(bl); /* not in threads */
-
-   if (bl->BLOptions.ifl.pst_mode <= 0)                       /* pst_mode == 0 the fortran version */
-     { 
-       printf("%s: pst_mode == %d, you try to call obsolete function pstf()\n", __FILE__, bl->BLOptions.ifl.pst_mode);
-       exit(-1);
-     }
-   else    // c replacement
-     {
-       printf("************** call pstc ****************\n ");
-       pstc(bl);
-     }
-   
+   printf("************** call pstc ****************\n ");
+   pstc(bl);
+     
    bl->beamlineOK |= resultOK;  
-      
+   bl->RESULT.typ = PLphspacetype;   
 #ifdef DEBUG
    printf("debug: pst.c: phase space trafo PST end\n"); 
 #endif
@@ -388,7 +379,6 @@ void pstc(struct BeamlineType *bl)
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi, driftlen;
   struct map4 *m4p;
   struct constants cs;
-  
   FILE   *fd;
   void   *vv, *vv1;
   size_t n;
@@ -398,12 +388,11 @@ void pstc(struct BeamlineType *bl)
   
   //struct psimagest *sp;
   struct PSImageType *psip;
-  struct PSDType     *PSDp;
+  
   //struct EmfType emf1, emf2, emf3;
   
   printf("called pstc\n ");
 
-  //PSDp= (struct PSDType *)bl->RESULT.RESp;
   //sp=   (struct psimagest *)bl->RTSource.Quellep;
   psip=   (struct PSImageType *)bl->RTSource.Quellep;
 
@@ -433,7 +422,7 @@ void pstc(struct BeamlineType *bl)
 
 #ifdef DEBUG      
   //  printf("debug: wc 4000: %f \n", bl->wc[0][0][0][4]);
-  printf("pstc: start\n");
+  printf("debug: pstc: start\n");
 #endif
 
   npoints= psip->iy * psip->iz;
@@ -447,37 +436,16 @@ void pstc(struct BeamlineType *bl)
     }
 
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
-  //bl->result_emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
 
-  //emf_construct(&emf1, bl->source_emfp->nz, bl->source_emfp->ny);
-  //emf_construct(&emf2, bl->source_emfp->nz, bl->source_emfp->ny);
-  //emf_construct(&emf3, bl->source_emfp->nz, bl->source_emfp->ny);
-
-
-  //bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
-  //printf("xxxxxxxxxxxxxxxxxxxxxxxxxxx temporaer xxxxxxxxxxxxxxxxxxxxxxxxx\n");
-  //drift_fourier_emf(bl->source_emfp, bl->result_emfp, bl->BLOptions.lambda, 1000);
-  //write_phase_hdf5_file(bl, "d1.h5", &emf1); 
-  //write_phase_hdf5_file(bl, "d0.h5", bl->source_emfp); 
-  //emfp_cpy(bl->emfp, bl->result_emfp);
-  //drift_fourier_emf(&emf1, bl->result_emfp, bl->BLOptions.lambda, 1000);
-
-  //emfp_cpy(bl->emfp, bl->result_emfp);
-  //drift_fresnel_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, 200000);
-  //emfp_cpy(bl->source_emfp, bl->emfp);
-  //drift_fourier_emf(bl->source_emfp, bl->result_emfp, bl->BLOptions.lambda, 2500);
-
   nu= 0;
-  //write_phase_hdf5_file(bl, "xtmp.h5", bl->source_emfp); 
   while (nu < bl->elementzahl)
     {
-      //bl->emfp= read_hdf5_file(bl, "xtmp.h5", bl->emfp); 
       driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
       printf("*************************************\n");
-      if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);
+      if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);  // clean up result
       switch (bl->ElementList[nu].MDat.Art)
 	{
 	case 100:
@@ -499,11 +467,9 @@ void pstc(struct BeamlineType *bl)
 	default:
 	  printf("*** stationary phase propagation ****\n");
 	  printf("*************************************\n");
-	  //if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);
-	  bl->result_emfp= emfp_construct(psip->iz, psip->iy);
+	  bl->result_emfp= emfp_construct(psip->iz, psip->iy); // !! image plane - not source
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 	} // switch
-      //write_phase_hdf5_file(bl, "xtmp.h5", bl->result_emfp);
       nu++;
       if (nu < bl->elementzahl)
 	{
@@ -513,9 +479,8 @@ void pstc(struct BeamlineType *bl)
 	  emfp_cpy(bl->emfp, bl->result_emfp);
 	}
     } // while
-  //bl->result_emfp= read_hdf5_file(bl, "xtmp.h5", bl->source_emfp);
-  //bl->emfp= emfp_free(bl->emfp);
-  // bl->emfp= NULL;  // needs explicit 0 dontknow why 
+  bl->emfp= emfp_free(bl->emfp); // clean up
+  bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");
   totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
   printf("outside_wl: %d out of %d (%f %)\n", bl->RESULT.outside_wl, totrays, 100.0*bl->RESULT.outside_wl/totrays);

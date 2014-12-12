@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Dec 14 11:03:40 flechsig> 
+//  Time-stamp: <12 Dec 14 15:49:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -268,7 +268,6 @@ void MainWindow::activateProc(const QString &action)
 	  n++;
 	  if (n < elementList->count())   // ELEMENTS LEFT IN LIST
 	    {
-	      cout << "multiple elements in asynchronous mode - very experimental" << endl;
 	      int mytype= myparent->myBeamline()->ElementList[n-1].MDat.Art;
 	      if ((mytype>= 100) && (mytype <= 103))
 		{
@@ -276,11 +275,22 @@ void MainWindow::activateProc(const QString &action)
 		  myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
 		  emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
 		} else
-		cout << "multiple elements in asynchronous mode is very experimental" << endl 
-		     << "SPC must be last element- result is likely not correct" << endl;
+		{  // wait for end of asynchronous task
+		  cout << "start waiting in element loop to finish asynchronous task" << endl;
+		  while ( watcher->isRunning() )
+		    {
+		      QEventLoop loop;
+		      QTimer::singleShot(1000, &loop, SLOT(quit()));
+		      loop.exec();
+		    }
+		  cout << "waiting done - goto next element" << endl;
+		}
 	    }
 	} // end while
-      cout << "after while wip" << endl;
+      cout << "all elements done" << endl;
+      myparent->myemfp_free();
+      myparent->myBeamline()->RESULT.typ = PLphspacetype;
+      myparent->myBeamline()->beamlineOK |= resultOK;
       //myparent->myemfp_2_psd();
       //myparent->myemfp_free();
     } // asyn
@@ -292,6 +302,8 @@ void MainWindow::activateProc(const QString &action)
 							  myparent->myBeamline()->source_emfp->ny);
       emfp_cpy(myparent->myBeamline()->result_emfp, myparent->myBeamline()->source_emfp);
       myparent->myBeamline()->RESULT.outside_wl= 0;
+      myparent->myBeamline()->RESULT.typ = PLphspacetype;
+      myparent->myBeamline()->beamlineOK |= resultOK;
       // myparent->mycopySrc2Psd();
     }
 
@@ -439,7 +451,8 @@ if (!myparent->myBuildBeamline())
   if (!action.compare("fresnelAct")) 
     { 
 #ifdef DEBUG
-      cout << "debug: fresnelAct button pressed" << endl;
+      cout << endl << "debug: fresnelAct button pressed" << endl
+	   << "(propagate just 1st element)" << endl; 
 #endif
       if (elementListIsEmpty()) return;
       myparent->myBeamline()->beamlineOK &= ~resultOK;
@@ -463,13 +476,15 @@ if (!myparent->myBuildBeamline())
 			myparent->myBeamline()->BLOptions.lambda, driftlen);
 
       myparent->myBeamline()->beamlineOK |= resultOK;
+      myparent->myBeamline()->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
 
   if (!action.compare("fraunhAct")) 
     { 
 #ifdef DEBUG
-      cout << "debug: fraunhAct button pressed" << endl;
+      cout << endl << "debug: fraunhAct button pressed" << endl
+	   << "(propagate just 1st element)" << endl; 
 #endif
       if (elementListIsEmpty()) return;
       myparent->myBeamline()->beamlineOK &= ~resultOK;
@@ -492,15 +507,15 @@ if (!myparent->myBuildBeamline())
       drift_fraunhofer_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
 			myparent->myBeamline()->BLOptions.lambda, driftlen);
       myparent->myBeamline()->beamlineOK |= resultOK;
-
+      myparent->myBeamline()->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
 
-if (!action.compare("fourfresAct")) 
+  if (!action.compare("fourfresAct")) 
     { 
-
 #ifdef DEBUG
-      cout << "debug: fourfresAct button pressed" << endl;
+      cout << endl << "debug: fourfresAct button pressed" << endl
+	<< "(propagate just 1st element)" << endl;
 #endif
 
       if (elementListIsEmpty()) return;
@@ -539,14 +554,15 @@ if (!action.compare("fourfresAct"))
 	}
 
       myparent->myBeamline()->beamlineOK |= resultOK;
+      myparent->myBeamline()->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
 
-
-if (!action.compare("fourierAct")) 
+ if (!action.compare("fourierAct")) 
     { 
 #ifdef DEBUG
-      cout << "debug: fourierAct button pressed" << endl;
+      cout << endl << "debug: fourierAct button pressed" << endl 
+	   << "(propagate just 1st element)" << endl; 
 #endif
 
       if (elementListIsEmpty()) return;
@@ -564,13 +580,17 @@ if (!action.compare("fourierAct"))
 	}
       //myparent->mydrift_fourier();
       double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
+
       if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+
       myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
 							  myparent->myBeamline()->source_emfp->ny);
+
       drift_fourier_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
 			myparent->myBeamline()->BLOptions.lambda, driftlen);
 
       myparent->myBeamline()->beamlineOK |= resultOK;
+      myparent->myBeamline()->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
   
@@ -617,16 +637,13 @@ if (!action.compare("fourierAct"))
 
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-#ifdef OLD_PO_SOURCE
-	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
-#else
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source file not found!"));
+				    tr("PO source file not found!"));
 	      return;
 	    }
-#endif
+	  
 	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
@@ -643,8 +660,6 @@ if (!action.compare("fourierAct"))
 
       // all tests done - we can start
 
-      psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-      myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
       myparent->myPST();
     }
 
@@ -1584,7 +1599,7 @@ void MainWindow::goButtonslot()
 void MainWindow::grapplyslot()
 {
 #ifdef HAVE_QWT
-  //  struct PSDType *psdp;
+  
   double *int4;
   struct EmfType *emfpp;
   struct BeamlineType *bl;
@@ -1594,11 +1609,11 @@ void MainWindow::grapplyslot()
 #endif
 
   bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
-  //psdp= (struct PSDType *)bl->RESULT.RESp;
+  
   emfpp= bl->result_emfp;
-  cout << "UF temporarely deactivate tests in file "<< __FILE__ << endl;
+  
   // (1) a few tests
-#ifdef XXX
+
   if ((mwplotsubject & PLOT_PO_SOURCE) && !(myparent->myBeamline()->beamlineOK & pstsourceOK))
     {
       QMessageBox::warning(this, tr("grapplyslot"), tr("No valid PO source available"));
@@ -1617,6 +1632,12 @@ void MainWindow::grapplyslot()
       return;
     }
 
+  if ((mwplotsubject & PLOT_PO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
+    {
+      QMessageBox::warning(this, tr("grapplyslot"), tr("No valid PO results available"));
+      return;
+    }
+
   if ((mwplotsubject & PLOT_GO_RESULT) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLrttype))
     return;
@@ -1624,7 +1645,7 @@ void MainWindow::grapplyslot()
   if ((mwplotsubject & PLOT_PO_RESULT) && 
       !checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype))
     return;
-#endif
+  
   // (2) construct/destruct objects do common tasks
   switch (mwplotsubject)
     {
@@ -1961,13 +1982,11 @@ void MainWindow::grautoscaleslot()
 #ifdef HAVE_QWT
   QString yminqst, ymaxqst, zminqst, zmaxqst;
   struct PSImageType *psip;
-  //struct PSDType     *psdp;
   struct EmfType     *emfpp;
-  struct source4c    *srcp;
   struct SurfaceType *surfp;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject: 0x" << hex << mwplotsubject << endl;
+  cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject=" << hex << showbase << mwplotsubject << endl;
 #endif
 
 // a few tests
@@ -1976,7 +1995,7 @@ void MainWindow::grautoscaleslot()
       cout << "no autoscale required for plotsubject= " <<  mwplotsubject << " return " << endl;
       return;
     }
-#ifdef XXX
+
   if ((mwplotsubject & PLOT_GO_SOURCE) && !(myparent->myBeamline()->beamlineOK & sourceOK))
     {
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No GO source data available"));
@@ -1994,7 +2013,13 @@ void MainWindow::grautoscaleslot()
       QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid PO source available"));
       return;
     }
-#endif
+
+  if ((mwplotsubject & PLOT_PO_RESULT) && !(myparent->myBeamline()->beamlineOK & resultOK))
+    {
+      QMessageBox::warning(this, tr("grautoscaleslot"), tr("No valid PO result available"));
+      return;
+    }
+
   // tests done 
 
   d_plot->setPlotSubject(mwplotsubject);
@@ -2016,29 +2041,23 @@ void MainWindow::grautoscaleslot()
       d_plot->autoScale();
     }
 
-  // if (mwplotsubject & PLOT_PO_RESULT && 
-  //   checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
- if (mwplotsubject & PLOT_PO_RESULT ) // generic for PO result 
-  { 
-      // UF 8.1.14 psip= (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-      // UF 8.1.14 d_plot->autoScale(psip->zmin, psip->zmax, psip->ymin, psip->ymax);
-      //psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+  if (mwplotsubject & PLOT_PO_RESULT && 
+     checkResultType((struct RESULTType *)&myparent->myBeamline()->RESULT, PLphspacetype)) // generic for PO result
+    { 
       emfpp= myparent->myBeamline()->result_emfp;
       //d_plot->autoScale(d_plot->minv(psdp->z, psdp->iz), d_plot->maxv(psdp->z, psdp->iz), 
       //d_plot->minv(psdp->y, psdp->iy), d_plot->maxv(psdp->y, psdp->iy));
       //d_plot->autoScale(psdp->z[0], psdp->z[psdp->iz-1], psdp->y[0], psdp->y[psdp->iy-1]);
       d_plot->autoScale(emfpp->z[0], emfpp->z[emfpp->nz-1], emfpp->y[0], emfpp->y[emfpp->ny-1]);
       //printf("uwe: %f %f %f %f %d\n", psdp->z[0], psdp->z[1], psdp->z[2], psdp->z[psdp->iz-1], psdp->iz);
-      printf("uwe: %f %f %f %f %d\n", emfpp->z[0], emfpp->z[1], emfpp->z[2], emfpp->z[emfpp->nz-1], emfpp->nz);
+      //printf("uwe: %f %f %f %f %d\n", emfpp->z[0], emfpp->z[1], emfpp->z[2], emfpp->z[emfpp->nz-1], emfpp->nz);
     }
 
   if (mwplotsubject & PLOT_PO_SOURCE) // generic for PO source
     { 
       cout << "autoscale: PO source experimental" << endl;
-      //srcp= (struct source4c *)&(myparent->myBeamline()->posrc);
       emfpp= myparent->myBeamline()->source_emfp;
       d_plot->autoScale(emfpp->z[0], emfpp->z[emfpp->nz-1], emfpp->y[0], emfpp->y[emfpp->ny-1]);
-      //d_plot->autoScale(srcp->gridx[0], srcp->gridx[srcp->iex - 1], srcp->gridy[0], srcp->gridy[srcp->iey - 1]);
     }
 
   if (mwplotsubject & PLOT_SURF_PROF) // generic for PO surface

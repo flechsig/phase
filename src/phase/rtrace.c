@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <03 Dec 14 16:57:03 flechsig>  */
+/*   Time-stamp: <12 Dec 14 12:22:52 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -1007,8 +1007,6 @@ void FreeResultMem(struct RESULTType *Re)
 /* macht den Speicher frei */
 /* uwe 8.8.96 */
 {
-  struct PSDType *PSDp;
-
 #ifdef DEBUG  
   printf("debug: FreeResultMem called, file=%s\n", __FILE__); 
 #endif
@@ -1030,25 +1028,7 @@ void FreeResultMem(struct RESULTType *Re)
     }
   if (Re->typ & PLphspacetype) 
     {  
-      printf("info: call to obsolete routine FreeResultMem, file=%s\n", __FILE__); 
-#ifdef OBSOLETE
-#ifdef DEBUG  
-      printf("debug: FreeResultMem: clean PLphspacetype\n"); 
-#endif    
-
-      printf("call to obsolete routine, file=%s\n", __FILE__);
-
-      PSDp= (struct PSDType *)Re->RESp;
-
-      if (PSDp->eyrec) XFREE(PSDp->eyrec);
-      if (PSDp->ezrec) XFREE(PSDp->ezrec);
-      if (PSDp->eyimc) XFREE(PSDp->eyimc);
-      if (PSDp->ezimc) XFREE(PSDp->ezimc);
-
-      if (PSDp->y)     XFREE(PSDp->y);
-      if (PSDp->z)     XFREE(PSDp->z);
-      if (Re->RESp)    XFREE(Re->RESp);
-#endif
+      printf("info: obsolete call to routine FreeResultMem, file=%s\n", __FILE__); 
     }
 
   Re->typ= 0;
