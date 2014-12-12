@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Dec 14 15:49:34 flechsig> 
+//  Time-stamp: <12 Dec 14 16:36:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -144,7 +144,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("asynPOAct")) 
     { 
 #ifdef DEBUG  
-      cout << "debug: " << __FILE__ << " asynPOAct button pressed" << endl; 
+      cout << endl <<  "debug: " << __FILE__ << " asynPOAct button pressed" << endl; 
 #endif
       if (elementListIsEmpty()) return;
 
@@ -288,7 +288,7 @@ void MainWindow::activateProc(const QString &action)
 	    }
 	} // end while
       cout << "all elements done" << endl;
-      myparent->myemfp_free();
+      //myparent->myemfp_free(); // !!!! we should not free since task may still run
       myparent->myBeamline()->RESULT.typ = PLphspacetype;
       myparent->myBeamline()->beamlineOK |= resultOK;
       //myparent->myemfp_2_psd();
