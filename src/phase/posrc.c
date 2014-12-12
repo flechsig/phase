@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <12 Dec 14 15:48:10 flechsig>  */
+/*  Time-stamp: <12 Dec 14 16:29:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -629,13 +629,14 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 #endif
 
   bl = (struct BeamlineType *)blp;
-  //so4= (struct source4c *)&(bl->posrc);
+  
   emfpp= bl->emfp;
 
   if (!emfpp)
     {
       printf("error: source4c_inter_2d_, source == NULL - return\n");
-      return;
+      exit(-1);
+      //return;
     }
 
   //if ((so4->iey < 2) || (so4->iex < 2))
