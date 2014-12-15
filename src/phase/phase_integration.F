@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <15 Dec 14 14:23:50 flechsig> 
+c$$$ Time-stamp: <15 Dec 14 15:26:28 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -640,7 +640,7 @@ c UF 29.6.13 valgrind finds error next line: Conditional jump or move depends on
         fd1phb=dabs(fd1phb)
         endif
 
-c   here we call phase_source.F
+c   here we call psdi.F (former phase_source.F)
         call psdi(g,isrctype,apr,cs,ifl,ra,sr,lostwl,blp)     
 
 c----------------------------------------

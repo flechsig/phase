@@ -1,13 +1,8 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <15 Dec 14 15:02:39 flechsig> 
+c$$$ Time-stamp: <15 Dec 14 15:20:06 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-c$$$
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
 
 c ******************************************************************************
 c
@@ -37,6 +32,7 @@ c
 c ******************************************************************************
 
 c UF extract from phase_source.F
+c UF called from psdi.F
 
 c*****************************************************************
 c UF 2.7.13	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
@@ -177,11 +173,11 @@ c------- end 19.1.2000 ----------------------------------
         xwert=ra.rf.zp	        ! units are mm
 	ywert=ra.rf.yp	        ! units are mm
 
-c        if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then   ! for tests
+c     if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then   ! for tests
 
-c          new code with dynamic source does also the range test 
-	   call source4c_inter_2d(sr,xwert,ywert,blp);
-
+c     new code with dynamic source does also the range test 
+        call source4c_inter_2d(sr,xwert,ywert,blp);
+        
 
 c code to deal with slope errors 
 c contributed by Walan Grizolli modified and extended by UF
