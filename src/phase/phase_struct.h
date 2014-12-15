@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <05 Dec 14 17:20:28 flechsig>  */
+/*   Time-stamp: <15 Dec 14 11:48:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -226,7 +226,7 @@ struct source4 {
 
 /* 1204 the c version with dynamic memory */
 /* this struct uses the c memory model    */
-struct source4c {
+//struct source4c {
   //#ifdef xxx
   //double //xemin, xemax,  yemin, //yemax, // dy, dx,
   //UF    *zeyre, *zeyim,
@@ -238,8 +238,8 @@ struct source4c {
   //#endif
   //int //iex, iey,
   //nsource, nimage, nfreqtot, nfreqpos, nfreqneg, 
-  int iconj;
-};  
+//  int iconj;
+//};  
 
 struct  source5 {                 /* Dipol Quelle  */
   double dipcy,   dipcz,   dipdisy, dipdisz,

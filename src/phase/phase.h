@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <15 Dec 14 10:58:50 flechsig>  */
+/*   Time-stamp: <15 Dec 14 14:08:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -334,16 +334,16 @@ struct RTSourceType {
 };       
 
 
-struct PSDType  {
+//struct PSDType  {
   //  double *y, *z; //*stfd1phmaxc, *stinumbc,  //*psd, *s1c, *s2c, *s3c, 
   //*eyrec, *ezrec, *eyimc, *ezimc;
-  double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
-    sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
-    simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4];
+//  double simpre[MAX_INTEGRATION_SIZE*2*4], simpim[MAX_INTEGRATION_SIZE*2*4], 
+//  sintre[MAX_INTEGRATION_SIZE*2*4], sintim[MAX_INTEGRATION_SIZE*2*4], 
+//  simpa[MAX_INTEGRATION_SIZE*2*4], simpp[MAX_INTEGRATION_SIZE*2*4];
     //;;, d12[MAX_INTEGRATION_SIZE*2*3];
-  int iy, iz;
+  //  int iy, iz;
   //long outside_wl;
-};
+//};
 
 
 struct RESULTType {
@@ -463,7 +463,7 @@ struct BeamlineType
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
   struct EmfType *emfp, *source_emfp, *result_emfp;  /* new for po */
-  double *int_details;
+  double *int_details, *simpre, *simpim, *sintre, *sintim;
 };
 
 /* mod 20121102 */
@@ -617,7 +617,6 @@ void
   intersection_8(struct mirrortype *, MAP7TYPE, MAP7TYPE, 
 	       struct RayType *, double *, double *, double *, int *),  
   initconstants(struct  constants *),  
-  init_posrc(struct source4c *),
   InitDataSets(struct BeamlineType *, char *),   
   InitSourceType(struct BeamlineType *, int),  
                        

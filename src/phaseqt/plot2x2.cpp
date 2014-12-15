@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <02 Dec 14 16:43:57 flechsig> 
+//  Time-stamp: <15 Dec 14 13:53:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -79,8 +79,7 @@ Plot2x2::~Plot2x2()
 } // end destructor
 
 /* fills simpre style data into curves sets min/max      */
-/* array format fortran: arr[4][2][MAX_INTEGRATION_SIZE] */
-void Plot2x2::hfill4(double *arr, int ndatay, int ndataz, int set)
+void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
 {
 #ifdef DEBUG
   cout << "debug: hfill4 called, file=" << __FILE__ << endl;

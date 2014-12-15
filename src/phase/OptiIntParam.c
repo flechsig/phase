@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/GIT/phase/src/phase/OptiIntParam.c */
 /* Date      : <15 Dec 14 11:59:33 flechsig>  */
-/* Time-stamp: <15 Dec 14 12:24:39 flechsig>  */
+/* Time-stamp: <15 Dec 14 14:07:40 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 // ******************************************************************************
@@ -52,7 +52,7 @@ void FindIntRange(struct BeamlineType *bl)
   int i, n, nonzeros, imodus;  
   int ianzy0,ianzz0;
   double y1, y2, z1, z2;
-  struct PSDType *psdp;  
+  //struct PSDType *psdp;  
   struct PSImageType *psip;
   struct PSImageType backup_psip; 
   
@@ -90,12 +90,12 @@ void FindIntRange(struct BeamlineType *bl)
 	  
 	  
 	  // pointer to simpsons data and vector length
-	  psdp = (struct PSDType *)bl->RESULT.RESp;
+	  //psdp = (struct PSDType *)bl->RESULT.RESp;
 	  
 	  // determine unused (near zero) percentage of result   
 	  for (n=0; n<ianzy0; n++) 
 	    {
-	      double c2y = psdp->simpre[8* n+ 5];
+	      double c2y = bl->simpre[8* n+ 5];
 	      if (fabs(c2y) >= 1E-10) nonzeros++;
 	    }
 	  printf("Autorange: pass %d, utilisation: %d\n", i, nonzeros);
@@ -128,11 +128,11 @@ void FindIntRange(struct BeamlineType *bl)
 	  
 	  // determine unused (near zero) percentage of result
 	  // pointer to simpsons data and vector length
-	  psdp = (struct PSDType *)bl->RESULT.RESp;
+	  //psdp = (struct PSDType *)bl->RESULT.RESp;
 	  nonzeros=0;
 	  for (n=0; n<ianzy0; n++) 
 	    {
-	      double c2y = psdp->simpre[8*n+5];
+	      double c2y = bl->simpre[8*n+5];
 	      if (fabs(c2y) >= 1E-10) nonzeros++;
 	    }
 	  
@@ -153,11 +153,11 @@ void FindIntRange(struct BeamlineType *bl)
 	  
 	  // determine unused (near zero) percentage of result
 	  // pointer to simpsons data and vector length
-	  psdp = (struct PSDType *)bl->RESULT.RESp;
+	  //psdp = (struct PSDType *)bl->RESULT.RESp;
 	  nonzeros=0;
 	  for (n=0; n<ianzy0; n++) 
 	    {
-	      double c2y = psdp->simpre[8*n+5];
+	      double c2y = bl->simpre[8*n+5];
 	      if (fabs(c2y) >= 1E-10) nonzeros++;
 	    }
 	  printf("===== Autorange yb =======: ymin %e, ymax %e, nonzeros: %d\n", y1, y2, nonzeros);     
@@ -193,12 +193,12 @@ void FindIntRange(struct BeamlineType *bl)
 	  
 	  // determine unused (near zero) percentage of result
 	  // pointer to simpsons data and vector length
-	  psdp = (struct PSDType *)bl->RESULT.RESp;
+	  //psdp = (struct PSDType *)bl->RESULT.RESp;
 	  for (n=0; n<ianzy0; n++) 
 	    {
-	      double c1y = psdp->simpre[8*n+4]; // upper left
-	      double c3y = psdp->simpre[8*n+6]; // lower left
-	      double c4y = psdp->simpre[8*n+7]; // lower right (yellow)
+	      double c1y = bl->simpre[8*n+4]; // upper left
+	      double c3y = bl->simpre[8*n+6]; // lower left
+	      double c4y = bl->simpre[8*n+7]; // lower right (yellow)
 	      
 	      if (fabs(c1y) >= 1E-10) nonzeros_l++;
 	      if (fabs(c3y) >= 1E-10) nonzeros_r++;
@@ -239,11 +239,11 @@ void FindIntRange(struct BeamlineType *bl)
 	  
 	  // determine unused (near zero) percentage of result
 	  // pointer to simpsons data and vector length
-	  psdp = (struct PSDType *)bl->RESULT.RESp;
+	  //psdp = (struct PSDType *)bl->RESULT.RESp;
 	  nonzeros=0;
 	  for (n=0; n<ianzz0; n++) 
 	    {
-	      double c4y = psdp->simpre[8*n+7];
+	      double c4y = bl->simpre[8*n+7];
 	      if (fabs(c4y) >= 1E-10) nonzeros++;
 	    }
 	  
@@ -264,11 +264,11 @@ void FindIntRange(struct BeamlineType *bl)
 	  
 	  // determine unused (near zero) percentage of result
 	  // pointer to simpsons data and vector length
-	  psdp = (struct PSDType *)bl->RESULT.RESp;
+	  //psdp = (struct PSDType *)bl->RESULT.RESp;
 	  nonzeros=0;
 	  for (n=0; n<ianzz0; n++) 
 	    {
-	      double c4y = psdp->simpre[8*n+7];
+	      double c4y = bl->simpre[8*n+7];
 	      if (fabs(c4y) >= 1E-10) nonzeros++;
 	    }
 	  printf("===== Autorange zb =======: zmin %e, zmax %e, nonzeros: %d\n", z1, z2, nonzeros);     

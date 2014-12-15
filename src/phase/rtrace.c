@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <12 Dec 14 12:22:52 flechsig>  */
+/*   Time-stamp: <15 Dec 14 12:04:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -961,35 +961,6 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
       break;
     case PLphspacetype:
       printf("info: obsolete call to ReAllocResult\n", __FILE__);
-#ifdef OBSOLETE
-      iy= dim1;
-      iz= dim2;
-      ii= iy * iz;
-#ifdef DEBUG 
-      printf("debug 0711: phase space allocate iy iz ii %d %d %d\n", iy, iz, ii);
-#endif
-      bl->RESULT.RESp= XMALLOC(struct PSDType, 1);
-      PSDp= bl->RESULT.RESp;
-      /* PSDp->y  = XMALLOC(double, psip->iy); */
-      PSDp->y          = XMALLOC(double, iy);
-      PSDp->z          = XMALLOC(double, iz);
-      //PSDp->psd        = XMALLOC(double, ii);
-      //      PSDp->stfd1phmaxc= XMALLOC(double, ii);
-      //PSDp->stinumbc=    XMALLOC(double, ii);
-      //PSDp->s1c=         XMALLOC(double, ii);
-      //PSDp->s2c=         XMALLOC(double, ii);
-      //PSDp->s3c=         XMALLOC(double, ii);
-
-      printf("debug: call to obsolete routine, file=%s\n",__FILE__);
-
-      PSDp->eyrec=       XMALLOC(double, ii);
-      PSDp->ezrec=       XMALLOC(double, ii);
-      PSDp->eyimc=       XMALLOC(double, ii);
-      PSDp->ezimc=       XMALLOC(double, ii);
-
-      PSDp->iy=iy;     /* initialize UF 26.11.07 */
-      PSDp->iz=iz;     /* initialize UF 26.11.07 */
-#endif
       break;
     default: 
       fprintf(stderr, 
@@ -1026,10 +997,7 @@ void FreeResultMem(struct RESULTType *Re)
       printf("debug: FreeResultMem: clean PLrttype\n");
       XFREE(Re->RESp); 
     }
-  if (Re->typ & PLphspacetype) 
-    {  
-      printf("info: obsolete call to routine FreeResultMem, file=%s\n", __FILE__); 
-    }
+  
 
   Re->typ= 0;
 } /* end freeResultmem */

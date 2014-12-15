@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <12 Dec 14 15:12:13 flechsig>  */
+/*   Time-stamp: <15 Dec 14 13:53:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -670,46 +670,26 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
   memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
   //TODO: check if MAX_INTEGRATION_SIZE is appropriate for d12 as well
-  memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
+  // memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
 #endif  
 
   if ((ny == nyhalf) && (nz == nzhalf)) // store integration details just for central point
     {
       printf("fill integration details for central point\n");
-      if (bl->int_details) XFREE(bl->int_details);
-      
-      bl->int_details= XMALLOC(double, (MAX_INTEGRATION_SIZE*2*4*4));
-      
-      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*0], xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*1], xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*2], xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-      memcpy(&bl->int_details[MAX_INTEGRATION_SIZE*2*4*3], xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+      if (bl->simpre) XFREE(bl->simpre);
+      if (bl->simpim) XFREE(bl->simpim);
+      if (bl->sintre) XFREE(bl->sintre);
+      if (bl->sintim) XFREE(bl->sintim);
 
-      #ifdef NEW
-      if (bl->int_details) XFREE(bl->int_details);
-      bl->int_details= XMALLOC(double, (13 * bl->BLOptions.xi.ianzy0+ 5* bl->BLOptions.xi.ianzz0));
-      for (ny= 0; ny < bl->BLOptions.xi.ianzy0; ny++)
-	{
-	  bl->int_details[ny]= (double)xirp->simpre[8* ny];
-	  for (i= 0; i < 3; i++)
-	    {
-	      &bl->int_details[(1 + i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->simpre[8* ny+ 4+ i]; // 1+0*3+
-	      &bl->int_details[(4 + i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->simpim[8* ny+ 4+ i]; // 1+1*3+
-	      &bl->int_details[(7 + i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->sintre[8* ny+ 4+ i]; // 1+2*3+
-	      &bl->int_details[(10+ i)* bl->BLOptions.xi.ianzy0+ ny]= xirp->sintim[8* ny+ 4+ i]; // 1+3*3+
-	    }
-	}
+      bl->simpre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
+      bl->simpim= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
+      bl->sintre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
+      bl->sintim= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
       
-      for (nz=0; nz < bl->BLOptions.xi.ianzz0; nz++)
-	{
-	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 0]= xirp->simpre[8* nz+ 3];
-	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 1]= xirp->simpre[8* nz+ 7];
-	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 2]= xirp->simpim[8* nz+ 7];
-	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 3]= xirp->sintre[8* nz+ 7];
-	  &bl->int_details[13* bl->BLOptions.xi.ianzy0+ nz+ bl->BLOptions.xi.ianzz0* 4]= xirp->sintim[8* nz+ 7];
-	}
-
-      #endif
+      memcpy(bl->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+      memcpy(bl->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+      memcpy(bl->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4); 
+      memcpy(bl->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
     }
 
   XFREE(xirp);
