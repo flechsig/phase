@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <12 Dec 14 11:30:20 flechsig> 
+//  Time-stamp: <15 Dec 14 11:38:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1946,10 +1946,10 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       qst.setNum(mysrc->so4.deltatime, 'g', 4); */
       break;
       
-    case 62: /*
-      if (!init) scanned= sscanf(text, "%d", &mysrc->so4.iconj);
-      if ((scanned == EOF) || (scanned == 0)) mysrc->so4.iconj= 0;   // default
-      qst.setNum(mysrc->so4.iconj); */
+    case 62: 
+      if (!init) scanned= sscanf(text, "%d", &op->PSO.iconj);
+      if ((scanned == EOF) || (scanned == 0)) op->PSO.iconj= 0;   // default
+      qst.setNum(op->PSO.iconj); 
       break;
 
     case 63:

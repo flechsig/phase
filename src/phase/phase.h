@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <03 Dec 14 09:55:01 flechsig>  */
+/*   Time-stamp: <15 Dec 14 10:58:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -420,7 +420,7 @@ struct ElementType
 
 struct PSOptionsType                   /* 20.9.96 */
 {
-  int    intmod, ndyfix, ndzfix, with_coating, with_herror;
+  int    intmod, ndyfix, ndzfix, with_coating, with_herror, iconj;
   struct PSSourceType PSSource;
   double dyminfix, dymaxfix, dzminfix, dzmaxfix;
 };     
@@ -457,7 +457,7 @@ struct BeamlineType
   struct OptionsType BLOptions;
   double deltalambdafactor, xlen0;
   
-  struct source4c posrc;   /* 120423 */
+  //struct source4c posrc;   /* 120423 */
   struct source1c poso1c;
   struct TmpMapType *tp;
   struct PHASEset filenames;

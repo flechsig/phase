@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <12 Dec 14 16:29:54 flechsig>  */
+/*  Time-stamp: <15 Dec 14 11:28:50 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -1032,15 +1032,13 @@ void emfp_fill4(struct BeamlineType *bl, double *a,  FILE *f, int imag)
     for (i=0; i< bl->source_emfp->nz; i++) 
       {
 	fscanf(f, "%lf %lf %lf", &bl->source_emfp->z[i], &bl->source_emfp->y[j], &val);
-	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	if ( imag  && (bl->BLOptions.PSO.iconj == 1)) val*= -1.0;
 	a[i+ j* bl->source_emfp->nz]= val;
       }
 
   fclose(f);
   printf(" ==> done\n");
 } /* emfp_fill4 */
-
-
 
 void emfp_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, int it, int imag)
 {
@@ -1054,7 +1052,7 @@ void emfp_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, 
     for (i=0; i< cols; i++) 
       {
 	val= 1e-3* field[i + j* cols + offset * (rows * cols) + it * (rows * cols * 4)];
-	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	if ( imag  && bl->BLOptions.PSO.iconj ) val*= -1.0;
 	a[i+ j* cols]= val;
       }
 } /* emfp_fill7 */
@@ -1073,7 +1071,7 @@ void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
     for (i=0; i< cols; i++) 
       {
 	val= field[imag + (i + j * cols)* 2];
-	if ( imag  && (bl->posrc.iconj == 1)) val*= -1.0;
+	if ( imag  && bl->BLOptions.PSO.iconj ) val*= -1.0;
 	a[i+ j* cols]= val * 1e-3;  // genesis data are per m^2 !!! intensity normalization !!!
 	// intensity is field ^2 therefore it is not 1e-6 but 1e-3
       }

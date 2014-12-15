@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <12 Dec 14 16:36:33 flechsig> 
+//  Time-stamp: <12 Dec 14 16:45:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -269,22 +269,18 @@ void MainWindow::activateProc(const QString &action)
 	  if (n < elementList->count())   // ELEMENTS LEFT IN LIST
 	    {
 	      int mytype= myparent->myBeamline()->ElementList[n-1].MDat.Art;
-	      if ((mytype>= 100) && (mytype <= 103))
+	      // wait for end of asynchronous task
+	      cout << "start waiting in element loop to finish asynchronous task" << endl;
+	      while ( watcher->isRunning() )
 		{
-		  myparent->myemfp_free();
-		  myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
-		  emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
-		} else
-		{  // wait for end of asynchronous task
-		  cout << "start waiting in element loop to finish asynchronous task" << endl;
-		  while ( watcher->isRunning() )
-		    {
-		      QEventLoop loop;
-		      QTimer::singleShot(1000, &loop, SLOT(quit()));
-		      loop.exec();
-		    }
-		  cout << "waiting done - goto next element" << endl;
+		  QEventLoop loop;
+		  QTimer::singleShot(1000, &loop, SLOT(quit()));
+		  loop.exec();
 		}
+	      cout << "waiting done - goto next element" << endl;
+	      myparent->myemfp_free();
+	      myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
+	      emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
 	    }
 	} // end while
       cout << "all elements done" << endl;

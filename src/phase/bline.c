@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 Nov 14 16:33:22 flechsig>  */
+/*   Time-stamp: <15 Dec 14 11:45:27 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1323,7 +1323,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20140923;    /* today */
+   int  i, version= 20141215;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1353,7 +1353,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version SEP 2014\n");
+   fprintf(f, "This is a datafile of PHASE, file version DEC 2014\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1712,6 +1712,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 
    fprintf(f,"%20d     PO with_coating (0,1) \n", op->PSO.with_coating);        /* new May 2014 */
    fprintf(f,"%20d     PO with_herror  (0,1) \n", op->PSO.with_herror);         /* new May 2014 */
+   fprintf(f,"%20d     PO iconj        (0,1) \n", op->PSO.iconj);               /* new Dec 2014 */
 /* end options section */ 
 
    fprintf(f, "\nFILENAMES\n");
@@ -1751,7 +1752,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20140923;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20141215;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -2289,7 +2290,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 
        if (version >= 20140509) fscanf(f, " %d %*[^\n]", &op->PSO.with_coating); else op->PSO.with_coating= 0;
        if (version >= 20140509) fscanf(f, " %d %*[^\n]", &op->PSO.with_herror);  else op->PSO.with_herror= 0;
-
+       if (version >= 20141215) fscanf(f, " %d %*[^\n]", &op->PSO.iconj);        else op->PSO.iconj= 0;
      } else rcode= -1;  /* end OPTIONS */     
 
    if (version >= 20120320)
