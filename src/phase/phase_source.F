@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <27 Nov 14 15:07:41 flechsig> 
+c$$$ Time-stamp: <15 Dec 14 15:23:19 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
@@ -35,6 +35,8 @@ c   You should have received a copy of the GNU General Public License
 c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
 c
 c ******************************************************************************
+
+c UF Dec 2014 routine is obsolete and no longer used
 
 c
 c--------------------------------------------------------------------------
