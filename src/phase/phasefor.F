@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <28 Aug 14 16:56:15 flechsig> 
+c$$$ Time-stamp: <15 Dec 14 14:32:22 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -1993,10 +1993,10 @@ c     write(*,*)' isig ',isig
       return
       end
 c******* end sig  ***************************************** 
-
+#ifdef OBSOLETE
 c*********readfg34_par ******************************
       subroutine readfg34_par(src,apr,ifl,xi,epsilon) 
-#ifdef OBSOLETE
+
 c liest ein Parameterfile von Johannes, Button im edit- menu
 c add epsilon feb 04 
 
@@ -2135,11 +2135,11 @@ c      read(16,*)xi.dphi_min
       close(16)
       return
  777  write(*,*)'readfg34_par: error open file fg34.par '
-#endif
+
       return
       end
 c**** end readfg34_par *************************************
-
+#endif
 
 c*************************************************************
       integer function clen1(str)

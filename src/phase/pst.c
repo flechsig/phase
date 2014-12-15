@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <15 Dec 14 13:53:59 flechsig>  */
+/*   Time-stamp: <15 Dec 14 14:24:53 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -659,19 +659,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 
   bl->result_emfp->y[ny]= yi;
   bl->result_emfp->z[nz]= zi;
-
-  // contains always the last point
-#ifdef OBSOLETE
-  // UF dec 14 temporarely deactivate it
-  memcpy(PSDp->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);       
-  memcpy(PSDp->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-  memcpy(PSDp->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-  memcpy(PSDp->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-  memcpy(PSDp->simpa,  xirp->simpa,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-  memcpy(PSDp->simpp,  xirp->simpp,  sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-  //TODO: check if MAX_INTEGRATION_SIZE is appropriate for d12 as well
-  // memcpy(PSDp->d12,    xirp->d12,    sizeof(double)*MAX_INTEGRATION_SIZE*2*3);
-#endif  
 
   if ((ny == nyhalf) && (nz == nzhalf)) // store integration details just for central point
     {

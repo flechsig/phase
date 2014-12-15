@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <27 Nov 14 15:05:28 flechsig> 
+c$$$ Time-stamp: <15 Dec 14 14:23:50 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -68,6 +68,7 @@ c     siehe (5) und dort gesetzt siehe c UF 12.1.2000
 c------------------------------------------------------------------
 c UF 20. Mar 2014 removed statistics 
 c UF OCT 14 remove src and give isrctype directly
+c UF isrctype wird wegen brightness gebraucht
 c*********************************************************
       subroutine adaptive_int(m4,g,isrctype,apr,cs,ra,
      &     ifl,xi,xir,sp,lostwl,blp)
@@ -129,7 +130,7 @@ c     &      yzint,yzintey,yzintez
         record /source_results/ sr
         record /integration_results/ xir
         record /control_flags/ ifl
-c//        record /sources/ src
+c        record /sources/ src
 	record /integration/ xi
 	record /apertures/ apr
 c uf	record /mirrortype/ am

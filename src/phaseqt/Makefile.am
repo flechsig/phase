@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <05 Nov 14 14:19:29 flechsig> 
+#  Time-stamp: <15 Dec 14 15:03:02 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -66,14 +66,15 @@ phaseqt_SOURCES = \
 	../phase/get_partial_etc.for ../phase/replace_6v4v.F \
 	../phase/replace_wl_in_u.F   ../phase/replace_wl_in_ypzp.F \
 	../phase/taylor-ops.for \
-	../phase/phase_source.F  ../phase/pst.c ../phase/pst.h \
+	 ../phase/pst.c ../phase/pst.h \
         ../phase/phase_integration.F \
 	../phase/posrc.c         ../phase/posrc.h \
 	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h \
 	../phase/reflectivity.c  ../phase/reflectivity.h \
-	../phase/heighterror.c   ../phase/heighterror.h
+	../phase/heighterror.c   ../phase/heighterror.h \
+	../phase/psdi.F          ../phase/src4.F
 
-# for all *.h and *.qrc add one *.cpp
+# for all *.h and *.qrc add one *.cpp ../phase/phase_source.F 
 if QWT
   nodist_phaseqt_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \

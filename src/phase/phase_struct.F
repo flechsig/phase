@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <06 Oct 14 08:41:41 flechsig> 
+c$$$ Time-stamp: <15 Dec 14 14:34:51 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -180,6 +180,7 @@ c--------------- geometry -----------------------------------
 	   integer iheigh,iwidth   
         end structure 
 
+#ifdef OBSOLETE
 c---------------- sources -----------------------------------
 
         structure/source1/                 ! Gauss + Hard edge  
@@ -248,20 +249,18 @@ c---------------- sources -----------------------------------
      &		   iabrpy,iabrpx,iabry,iabrx
 	end structure
 
-        structure/sources/                 ! Sammelstruktur
+c        structure/sources/                 ! Sammelstruktur
 c        real*8 pin_yl0,pin_yl,pin_zl0,pin_zl ! changed position 17.12.2005
 c           record/source1/so1              ! Gauss + Hard edge
 c           record/source2/so2              ! Zernike
 c           record/source3/so3              ! radiale Vert. vom File
-#ifdef OLD_PO_SOURCE
-           record/source4/so4              ! Quelle von File
-#endif
+c           record/source4/so4              ! Quelle von File
 c	   record/source5/so5	           ! Dipol Quelle
 c           record/source6/so6              ! Brightness
-
-	   integer isrctype
-        end structure   
-
+c
+c	   integer isrctype
+c        end structure   
+#endif
 c---------------- integration --------------------------------
 
 	structure/integration/

@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <28 Nov 14 09:01:15 flechsig> 
+#  Time-stamp: <15 Dec 14 15:06:27 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -51,14 +51,15 @@ phasesrv_SOURCES = \
 	../phase/rekursiv_2d_8.F     ../phase/phasefor.F  \
 	../phase/get_partial_etc.for ../phase/replace_6v4v.F \
 	../phase/replace_wl_in_u.F   ../phase/replace_wl_in_ypzp.F \
-	../phase/taylor-ops.for      ../phase/phase_source.F \
+	../phase/taylor-ops.for      ../phase/psdi.F \
 	../phase/heighterror.c   ../phase/heighterror.h \
 	../phase/myhdf5.c        ../phase/myhdf5.h \
 	../phase/myfftw3.c       ../phase/myfftw3.h \
         ../phase/posrc.c         ../phase/posrc.h \
 	../phase/pst_thread.c    ../phase/pst_thread.h \
 	../phase/reflectivity.c  ../phase/reflectivity.h \
-	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h 
+	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h \
+	../phase/src4.F
 
 # the phase lib
 phasesrv_LDADD = $(libdir)/@LIBPHASE@
