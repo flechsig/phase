@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Dec 14 15:30:48 flechsig>  */
+/*   Time-stamp: <16 Dec 14 15:43:39 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -435,7 +435,7 @@ void pstc(struct BeamlineType *bl)
       emfp_free(bl->emfp);
       bl->emfp= NULL;
     }
-  write_phase_hdf5_file(bl, "debug00.h5", bl->source_emfp);
+  write_phase_hdf5_file(bl, "debugsource00.h5", bl->source_emfp);
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
   oldposition= bl->position;           // remember previous value- dont know if important
@@ -474,7 +474,7 @@ void pstc(struct BeamlineType *bl)
 	  bl->result_emfp= emfp_construct(psip->iz, psip->iy); // !! image plane - not source
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 	} // switch
-      snprintf(debugfname, 254, "debug%d.h5", nu);
+      snprintf(debugfname, 254, "debugresult%d.h5", nu);
       write_phase_hdf5_file(bl, debugfname, NULL);
       nu++;
       if (nu < bl->elementzahl)
@@ -483,11 +483,11 @@ void pstc(struct BeamlineType *bl)
 	  bl->emfp= emfp_free(bl->emfp);
 	  bl->emfp= emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
 	  emfp_cpy(bl->emfp, bl->result_emfp);
-	  write_phase_hdf5_file(bl, "zwischenresult1.h5", NULL);
+	  write_phase_hdf5_file(bl, "debuginter.h5", NULL);
 	}
     } // while
   bl->position= oldposition; // restore value
-  write_phase_hdf5_file(bl, "endresult1.h5", NULL);
+  write_phase_hdf5_file(bl, "debugendresult.h5", NULL);
   bl->emfp= emfp_free(bl->emfp); // clean up
   bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");
