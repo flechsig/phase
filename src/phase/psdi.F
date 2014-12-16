@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <16 Dec 14 14:27:07 flechsig> 
+c$$$ Time-stamp: <16 Dec 14 15:25:32 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
@@ -99,22 +99,22 @@ c	koennen spaeter ausgelagert werden
 c------------------------------------------------------
 
 c---------------- Aperture in source plane ------------
-#ifdef XXX
+c#ifdef XXX
 	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
      &       lt.apr.rpin).and.
      &       ((ra.rf.yp.gt.apr.srcymin).and.
      &       (ra.rf.yp.lt.apr.srcymax)).and.
      &       ((ra.rf.zp.gt.apr.srczmin).and.
      &       (ra.rf.zp.lt.apr.srczmax)))then
-#endif          
+c#endif          
            if(isrctype.eq.1)call src4(cs,g,ra,sr,ifl,lostwl,blp)
            if(isrctype.eq.4)call src4(cs,g,ra,sr,ifl,lostwl,blp)
            if(isrctype.eq.7)call src4(cs,g,ra,sr,ifl,lostwl,blp)
-#ifdef XXX           
+c#ifdef XXX           
         else  
            write(*,*)'psdi.F: warning: aperture restriction active'
 	endif                   ! source plane
-#endif        
+c#endif        
 	return
         end
 c----------------------end psdi ------------------------------

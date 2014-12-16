@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <16 Dec 14 14:05:12 flechsig> 
+//  Time-stamp: <16 Dec 14 15:35:28 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -283,7 +283,7 @@ void MainWindow::activateProc(const QString &action)
 	      write_phase_hdf5_file(myparent->myBeamline(), "zwischenresult.h5", NULL);
 	    }
 	} // end while
-      myparent->myBeamline()->position= oldposition; // restore value
+      if (!watcher->isRunning()) myparent->myBeamline()->position= oldposition; // restore value
       cout << "all elements done" << endl;
       //myparent->myemfp_free(); // !!!! we should not free since task may still run
       myparent->myBeamline()->RESULT.typ = PLphspacetype;

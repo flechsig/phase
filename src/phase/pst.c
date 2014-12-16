@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Dec 14 14:00:57 flechsig>  */
+/*   Time-stamp: <16 Dec 14 15:30:48 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -744,7 +744,9 @@ void Test4Grating(struct BeamlineType *bl)
 
 void fill_m4(struct BeamlineType *bl, struct map4 *m4p, struct ElementType *el)
 {
-  // printf("fill m4 ");
+  printf("fill m4 ");
+#define NEW
+#ifdef NEW
   memcpy(m4p->wc,        el->wc,         sizeof(MAP7TYPE));
   memcpy(m4p->xlc,       el->xlc,        sizeof(MAP7TYPE));
   memcpy(m4p->ypc1,      el->ypc1,       sizeof(MAP7TYPE));
@@ -753,6 +755,16 @@ void fill_m4(struct BeamlineType *bl, struct map4 *m4p, struct ElementType *el)
   memcpy(m4p->dzpc,      el->dzpc,       sizeof(MAP7TYPE));
   memcpy(m4p->xlen1c,    el->xlm.xlen1c, sizeof(struct xlenmaptype)/2);
   memcpy(m4p->xlen2c,    el->xlm.xlen2c, sizeof(struct xlenmaptype)/2);
+#else
+  memcpy(m4p->wc,        bl->wc,         sizeof(MAP7TYPE));
+  memcpy(m4p->xlc,       bl->xlc,        sizeof(MAP7TYPE));
+  memcpy(m4p->ypc1,      bl->ypc1,       sizeof(MAP7TYPE));
+  memcpy(m4p->zpc1,      bl->zpc1,       sizeof(MAP7TYPE));
+  memcpy(m4p->dypc,      bl->dypc,       sizeof(MAP7TYPE));
+  memcpy(m4p->dzpc,      bl->dzpc,       sizeof(MAP7TYPE));
+  memcpy(m4p->xlen1c,    bl->xlm.xlen1c, sizeof(struct xlenmaptype)/2);
+  memcpy(m4p->xlen2c,    bl->xlm.xlen2c, sizeof(struct xlenmaptype)/2);
+#endif
   memcpy(m4p->fdetc,     bl->fdetc,      sizeof(MAP7TYPE));
   memcpy(m4p->fdetphc,   bl->fdetphc,    sizeof(MAP7TYPE));
   memcpy(m4p->fdet1phc,  bl->fdet1phc,   sizeof(MAP7TYPE));
