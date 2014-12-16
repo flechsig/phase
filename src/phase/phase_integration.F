@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <15 Dec 14 15:26:28 flechsig> 
+c$$$ Time-stamp: <16 Dec 14 10:03:35 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -69,6 +69,7 @@ c------------------------------------------------------------------
 c UF 20. Mar 2014 removed statistics 
 c UF OCT 14 remove src and give isrctype directly
 c UF isrctype wird wegen brightness gebraucht
+c UF weiterverzweigung erfolgt in Routine psdi
 c*********************************************************
       subroutine adaptive_int(m4,g,isrctype,apr,cs,ra,
      &     ifl,xi,xir,sp,lostwl,blp)

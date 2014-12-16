@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Dec 14 11:45:27 flechsig>  */
+/*   Time-stamp: <16 Dec 14 14:05:12 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -194,7 +194,7 @@ void BuildElement(unsigned int elindex, struct BeamlineType *bl)
 int BuildBeamline(struct BeamlineType *bl)  
 {
   unsigned int elcounter;
-  static int elindex;            /* must be kept */
+  static   int elindex;            /* must be kept */
 #ifdef PHASELIB
   int          imodus;
 #endif

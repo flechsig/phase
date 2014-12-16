@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Dec 14 11:28:50 flechsig>  */
+/*  Time-stamp: <16 Dec 14 10:06:32 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -35,7 +35,7 @@
 //
 // ******************************************************************************
 
-
+ 
 /* soure routines for physical optics */
 /* replaces routines in phase_source.F, only source4 is implemented so far, the reason is the extension to unlimited gridsize */
 /* the data is stored in bl->posrc */
@@ -615,7 +615,7 @@ int source4c_ini(struct BeamlineType *bl)
 /* !! reads the input from bl->posrc and not sources! */
 /* routine wird gerufen von fortran - daher underscore  */
 /* principle: weighted average over 4 adjacent points */
-/* Nov 2014 switch to emf source */
+/* Nov 2014 switch to emf type source */
 void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
   struct BeamlineType *bl;

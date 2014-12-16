@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.h */
  /* Date      : <10 Mar 14 14:20:23 flechsig>  */
- /* Time-stamp: <03 Dec 14 09:22:12 flechsig>  */
+ /* Time-stamp: <16 Dec 14 13:53:13 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -40,7 +40,7 @@
 #define PST_H
 void check_2_m4_(struct map4 *);
 //void copySrc2Psd(struct BeamlineType *);
-void fill_m4(struct BeamlineType *, struct map4 *);
+void fill_m4(struct BeamlineType *, struct map4 *, struct ElementType *);
 void fill_xirp(struct BeamlineType *, struct integration_results *);
 void getgeostr_(int *, double *, double *, double *, double *, double *, double *, double *);
 double getIntensityMax(struct EmfType *);

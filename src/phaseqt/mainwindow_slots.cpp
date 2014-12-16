@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <15 Dec 14 14:01:29 flechsig> 
+//  Time-stamp: <16 Dec 14 14:05:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -160,16 +160,12 @@ void MainWindow::activateProc(const QString &action)
 
       if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
 	{
-#ifdef OLD_PO_SOURCE
-	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
-#else
 	  if (!myparent->myposrc_ini()) 
 	    {
 	      QMessageBox::critical(this, tr("error"),
-			     tr("PO source not found!"));
+				    tr("PO source not found!"));
 	      return;
 	    }
-#endif
           myparent->myBeamline()->beamlineOK |= pstsourceOK;
 	}
 
@@ -194,9 +190,11 @@ void MainWindow::activateProc(const QString &action)
       myparent->myemfp_construct(myparent->myBeamline()->source_emfp->nz, myparent->myBeamline()->source_emfp->ny);
       emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->source_emfp); // source-> emfp
       
-      int n= 0;
+      unsigned int n= 0;
+      unsigned int oldposition= myparent->myBeamline()->position;
       while (n < elementList->count())
 	{
+	  myparent->myBeamline()->position= n;
 	  double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
 	  cout << "*************************************" << endl;
 	  cout << "*** PO element No " << n << ", drift= " << driftlen  << endl;
@@ -246,7 +244,8 @@ void MainWindow::activateProc(const QString &action)
 		}
 #else
 	      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
-	      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp);
+	      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp, 
+									      &myparent->myBeamline()->ElementList[myparent->myBeamline()->position]);
 #endif
 	      if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
 	      initconstants(csp_cpp);
@@ -261,10 +260,10 @@ void MainWindow::activateProc(const QString &action)
 	      
 	      cout << "after future" << endl;
 	      
-	      //myparent->mypsd_2_emfp();  
+	       
 	      
 	    }  // end switch
-	  // the result is in efmp
+	  
 	  n++;
 	  if (n < elementList->count())   // ELEMENTS LEFT IN LIST
 	    {
@@ -281,8 +280,10 @@ void MainWindow::activateProc(const QString &action)
 	      myparent->myemfp_free();
 	      myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
 	      emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
+	      write_phase_hdf5_file(myparent->myBeamline(), "zwischenresult.h5", NULL);
 	    }
 	} // end while
+      myparent->myBeamline()->position= oldposition; // restore value
       cout << "all elements done" << endl;
       //myparent->myemfp_free(); // !!!! we should not free since task may still run
       myparent->myBeamline()->RESULT.typ = PLphspacetype;
@@ -842,8 +843,8 @@ if (!myparent->myBuildBeamline())
     { 
       cout << "write PHASE output in genesis_hdf5 format" << endl;
 #ifdef HAVE_HDF5
-      //   if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
-      //	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) 
+      if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
+      	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) 
       myparent->my_write_genesis_hdf5_file();
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <15 Dec 14 14:24:53 flechsig>  */
+/*   Time-stamp: <16 Dec 14 14:00:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -375,13 +375,14 @@ void WritePsd(char *name, struct PSDType *p, int ny, int nz, struct BeamlineType
 void pstc(struct BeamlineType *bl)
 {
   int    i, j, k, l, iheigh, iwidth, ny, nz, npoints, iinumb, index, next, totrays;  
-  unsigned int nu;
+  unsigned int nu, oldposition;
   double ddisty, ddistz, yi,  zi, surfmax, *dp, yyi, zzi, driftlen;
   struct map4 *m4p;
   struct constants cs;
   FILE   *fd;
   void   *vv, *vv1;
   size_t n;
+  char debugfname[255];
 
   /*struct integration_results xir;*/
   /*struct statistics st;*/
@@ -415,7 +416,7 @@ void pstc(struct BeamlineType *bl)
       
 #else
       m4p = XMALLOC(struct map4, 1);
-      fill_m4(bl, m4p);
+      fill_m4(bl, m4p, &bl->ElementList[bl->position]);
 #endif
       
     }
@@ -434,13 +435,16 @@ void pstc(struct BeamlineType *bl)
       emfp_free(bl->emfp);
       bl->emfp= NULL;
     }
-
+  write_phase_hdf5_file(bl, "debug00.h5", bl->source_emfp);
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
-
+  oldposition= bl->position;           // remember previous value- dont know if important
   nu= 0;
   while (nu < bl->elementzahl)
     {
+      bl->position= nu;                // put elementindex in bl->position
+      snprintf(debugfname, 254, "debugsource%d.h5", nu);
+      write_phase_hdf5_file(bl, debugfname, bl->emfp);
       driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
@@ -470,6 +474,8 @@ void pstc(struct BeamlineType *bl)
 	  bl->result_emfp= emfp_construct(psip->iz, psip->iy); // !! image plane - not source
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 	} // switch
+      snprintf(debugfname, 254, "debug%d.h5", nu);
+      write_phase_hdf5_file(bl, debugfname, NULL);
       nu++;
       if (nu < bl->elementzahl)
 	{
@@ -477,8 +483,11 @@ void pstc(struct BeamlineType *bl)
 	  bl->emfp= emfp_free(bl->emfp);
 	  bl->emfp= emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
 	  emfp_cpy(bl->emfp, bl->result_emfp);
+	  write_phase_hdf5_file(bl, "zwischenresult1.h5", NULL);
 	}
     } // while
+  bl->position= oldposition; // restore value
+  write_phase_hdf5_file(bl, "endresult1.h5", NULL);
   bl->emfp= emfp_free(bl->emfp); // clean up
   bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");
@@ -518,7 +527,7 @@ void pstc_ii(int index, struct BeamlineType *bl)
     { 
       printf("allocate and fill m4p in pstc\n");
       m4p = XMALLOC(struct map4, 1);
-      fill_m4(bl, m4p);
+      fill_m4(bl, m4p, &bl->ElementList[bl->position]);
     } else m4p= NULL;
 
   pstc_i(index, bl, m4p, &cs);
@@ -532,7 +541,7 @@ void pstc_ii(int index, struct BeamlineType *bl)
 void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct constants *csp)
 {
   struct PSImageType         *psip;
-  struct PSDType             *PSDp;
+  struct ElementType         *elp;
   struct integration_results *xirp;
   struct psimagest           *sp;
   struct rayst               *rap;
@@ -546,14 +555,14 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 
   psip = (struct PSImageType *) bl->RTSource.Quellep; // the c structure in phase.h
   sp   = (struct psimagest *)   bl->RTSource.Quellep; // the c and fortran structure in phase_struct.[FH]
-  PSDp = (struct PSDType *)     bl->RESULT.RESp;
-    
+  elp  = (struct ElementType *) &bl->ElementList[bl->position];
+      
   xirp = XMALLOC(struct integration_results, 1);
   rap  = XMALLOC(struct rayst, 1);
   if (bl->BLOptions.ifl.pst_mode >= 2)                       /* pst_mode == 2 allocate a copy of m4p */
     { 
       m4p= XMALLOC(struct map4, 1);
-      fill_m4(bl, m4p);
+      fill_m4(bl, m4p, elp);
     } 
   else
     m4p= m4pp;
@@ -733,17 +742,17 @@ void Test4Grating(struct BeamlineType *bl)
      printf ("Test4Grating: 1 grating- set  igrating= 1\n");
 } /* end Test4Grating */
 
-void fill_m4(struct BeamlineType *bl, struct map4 *m4p)
+void fill_m4(struct BeamlineType *bl, struct map4 *m4p, struct ElementType *el)
 {
   // printf("fill m4 ");
-  memcpy(m4p->wc,        bl->wc,         sizeof(MAP7TYPE));
-  memcpy(m4p->xlc,       bl->xlc,        sizeof(MAP7TYPE));
-  memcpy(m4p->ypc1,      bl->ypc1,       sizeof(MAP7TYPE));
-  memcpy(m4p->zpc1,      bl->zpc1,       sizeof(MAP7TYPE));
-  memcpy(m4p->dypc,      bl->dypc,       sizeof(MAP7TYPE));
-  memcpy(m4p->dzpc,      bl->dzpc,       sizeof(MAP7TYPE));
-  memcpy(m4p->xlen1c,    bl->xlm.xlen1c, sizeof(struct xlenmaptype)/2);
-  memcpy(m4p->xlen2c,    bl->xlm.xlen2c, sizeof(struct xlenmaptype)/2);
+  memcpy(m4p->wc,        el->wc,         sizeof(MAP7TYPE));
+  memcpy(m4p->xlc,       el->xlc,        sizeof(MAP7TYPE));
+  memcpy(m4p->ypc1,      el->ypc1,       sizeof(MAP7TYPE));
+  memcpy(m4p->zpc1,      el->zpc1,       sizeof(MAP7TYPE));
+  memcpy(m4p->dypc,      el->dypc,       sizeof(MAP7TYPE));
+  memcpy(m4p->dzpc,      el->dzpc,       sizeof(MAP7TYPE));
+  memcpy(m4p->xlen1c,    el->xlm.xlen1c, sizeof(struct xlenmaptype)/2);
+  memcpy(m4p->xlen2c,    el->xlm.xlen2c, sizeof(struct xlenmaptype)/2);
   memcpy(m4p->fdetc,     bl->fdetc,      sizeof(MAP7TYPE));
   memcpy(m4p->fdetphc,   bl->fdetphc,    sizeof(MAP7TYPE));
   memcpy(m4p->fdet1phc,  bl->fdet1phc,   sizeof(MAP7TYPE));
@@ -810,58 +819,6 @@ void check_2_m4_(struct map4 *m4)
       exit(-1);
     }
 } /* end check_2_m4 */
-
-void copySrc2Psd(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function\n", __FILE__);
-#else
-  struct source4c *so4;
-  struct PSDType  *psd;
-  int    row, col, rows, cols, idxf, idxc;
-  
-#ifdef DEBUG  
-  printf("debug: file: %s, copy PO source fields to output fields\n", __FILE__); 
-#endif
-
-  if (!(bl->beamlineOK & pstsourceOK))
-    {
-      posrc_ini();
-      bl->beamlineOK |= pstsourceOK;
-    }
-  
-  so4= (struct source4c *)&(bl->posrc);
-  cols= so4->iex;
-  rows= so4->iey;
-  
-  ReAllocResult(bl, PLphspacetype, rows, cols);
-  psd= (struct PSDType  *)bl->RESULT.RESp;
-
-  printf("copySrc2Psd: start copy fields\n");
-  
-  //  cout << "start copy vectors" << endl;
-  memcpy(psd->z, so4->gridx, sizeof(double)* cols);
-  memcpy(psd->y, so4->gridy, sizeof(double)* rows);
-
-  //bl->beamlineOK |= resultOK;
-  printf("memcpy done\n");
-
-  // psdfields2intensity(struct PSDType *psd, int rows, int cols)
-  for (row=0; row< rows; row++ )
-    for (col=0; col< cols; col++ )
-      {
-	idxf= row + col* rows;
-	idxc= col + row* cols;
-	psd->eyrec[idxf]=so4->zeyre[idxc];
-	psd->ezrec[idxf]=so4->zezre[idxc];
-	psd->eyimc[idxf]=so4->zeyim[idxc];
-	psd->ezimc[idxf]=so4->zezim[idxc];
-      }
-
-  psd->iy= cols;
-  psd->iz= rows;
-#endif
-} // end copySrc2Psd()
 
 /* export geometrystruct of grating to fortran */
 void getgeostr_(int *blp, double *sina, double *cosa, double *sinb, double *cosb, double *r, double *rp, double *xlam)
