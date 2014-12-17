@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <16 Dec 14 14:05:12 flechsig>  */
+/*   Time-stamp: <17 Dec 14 15:39:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -255,7 +255,13 @@ int BuildBeamline(struct BeamlineType *bl)
   bl->xlen0= bl->deltalambdafactor= 0.0;     /* Laenge der opt. achse */
 
   /* 1st element */
-  if (listpt->MDat.Art != kEOESlit)         /* slit not */
+  if (
+      (listpt->MDat.Art != kEOESlit)         /* slit not */
+      && (listpt->MDat.Art != kEOEFourier)
+      && (listpt->MDat.Art != kEOEFresnel)
+      && (listpt->MDat.Art != kEOEAuto)
+      && (listpt->MDat.Art != kEOEFraunhofer)
+      )
     {
 #ifdef DEBUG1
       printf("BuildBeamline: init beamline matrix\n"); 
@@ -297,41 +303,13 @@ int BuildBeamline(struct BeamlineType *bl)
 #ifdef PHASELIB
       imodus= 0; /* fuer det source to image ????? */
 #endif      
-
-      if (bl->BLOptions.REDUCE_maps == 0)
+      
+      ltp=bl->tp;
+      if (ltp == NULL)
 	{
-	  ltp=bl->tp;
-	  if (ltp == NULL)
-	    {
-	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
-	      exit(-1);
-	    }
-#ifdef XXX
-	  fdet_8(bl->wc, bl->xlc,
-		 bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
-		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-	         ltp->dfdwidlj,ltp->dfdww, ltp->dfdwl, ltp->dfdll,
-		 bl->fdetc, bl->fdetphc, bl->fdet1phc,bl->fdet1phca, bl->fdet1phcb, 
-		 &bl->ElementList[0].geo, 
-		 &bl->BLOptions.ifl.inorm1, 
-		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
-#endif
-	  /*	  XFREE(ltp); */
-	  /* bl->tp= NULL; */
+	  fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
+	  exit(-1);
 	}
-      else
-	{
-	  printf("7 - 4 not ready\n");
-#ifdef PHASELIB
-	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-#else
-       printf("phaselib not enabled - exit\n");
-       exit(-1);
-#endif 
-
-	}
-
       
       /* baue xlenkoeffizienten und Ruecktrafomatrix */
       elcounter--; listpt--;  elindex--;   /* Zaehler auf letztes Element */
@@ -348,7 +326,12 @@ int BuildBeamline(struct BeamlineType *bl)
       while (elcounter > 1)	      /* nur bei mehreren Elementen */
 	{				     /* Schleife von hinten */
 	  elcounter--; listpt--; elindex--;
-	  if (listpt->MDat.Art != kEOESlit)
+	  if (   (listpt->MDat.Art != kEOESlit)
+	      && (listpt->MDat.Art != kEOEFourier)
+	      && (listpt->MDat.Art != kEOEFresnel)
+	      && (listpt->MDat.Art != kEOEAuto)
+	      && (listpt->MDat.Art != kEOEFraunhofer)
+	      ) 
 	    {
 	      GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
 		       &bl->BLOptions.ifl.iord, 1); 
@@ -381,42 +364,31 @@ int BuildBeamline(struct BeamlineType *bl)
 		 (double *)bl->dzpc, 
 		 &bl->BLOptions.ifl.iord); 
       
-
-      if (bl->BLOptions.REDUCE_maps == 0)
+      if (bl->BLOptions.REDUCE_maps != 0)
 	{
-	  ltp=bl->tp;
-	  if (ltp == NULL)
-	    {
-	      fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
-	      exit(-1);
-	    }
-#define FDET_8 
-/* #ifdef FDET_8 */ 
-	  fdet_8(bl->wc, bl->xlc,
-		 bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
-		 ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
-	         ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll,
-		 bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb,  
-		 &bl->ElementList[0].geo, 
-		 &bl->BLOptions.ifl.inorm1, 
-		 &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
-	  printf(" returned from fdet_8\n");
-/* #endif */
-	  XFREE(ltp);
-	  bl->tp= NULL;
+	  printf("REDUCE_maps != 0, obsolete function- removed 17.12.2014- exit\n");
+	  exit(-1);
 	}
-      else
+	
+      ltp= bl->tp;
+      if (ltp == NULL)
 	{
-	  printf("7 - 4 not ready\n");
-#ifdef PHASELIB
-	  fdet_4(&imodus, &bl->BLOptions.ifl.iord, &bl->fdetc, &bl->fdetphc, 
-		 &bl->fdet1phc, &bl->ypc1, &bl->zpc1, &bl->dypc, &bl->dzpc);
-#else
-	    printf("phaselib not enabled - exit\n");
-	    exit(-1);
-#endif
+	  fprintf(stderr, "Buildbeamline: error: ltp == NULL\nexit\n");
+	  exit(-1);
 	}
-
+      
+      fdet_8(bl->wc, bl->xlc,
+	     bl->ypc1, bl->zpc1, ltp->ypc, ltp->zpc, bl->dypc, bl->dzpc, 
+	     ltp->opl6, ltp->dfdw6, ltp->dfdl6, ltp->dfdww6, ltp->dfdwl6, ltp->dfdll6, ltp->dfdwww6,
+	     ltp->dfdwidlj, ltp->dfdww, ltp->dfdwl, ltp->dfdll,
+	     bl->fdetc, bl->fdetphc, bl->fdet1phc, bl->fdet1phca, bl->fdet1phcb,  
+	     &bl->ElementList[0].geo, 
+	     &bl->BLOptions.ifl.inorm1, 
+	     &bl->BLOptions.ifl.inorm2, &bl->BLOptions.ifl.iord);
+      printf(" returned from fdet_8\n");
+      
+      XFREE(ltp);
+      bl->tp= NULL;
       
     } /* image to source */
   /*********** map und det fertig ***********/
@@ -1181,12 +1153,9 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, int *
 	   map4to7(&dzpc4, listpt->dzpc);
 	 }
        
-
-       
        if(listpt->MDat.Art==999)
 	 {imodus=imodus+1000;};
        
-
        if (bl->BLOptions.REDUCE_maps == 0)
 	 make_matrix_8(listpt->M_ItoS, listpt->ypc1, listpt->zpc1,
 		       listpt->dypc, listpt->dzpc, &bl->BLOptions.ifl.iord);
@@ -1218,7 +1187,6 @@ void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, int *
 	   map4to7(&xlm4.xlen2c, &listpt->xlm.xlen2c);
 	   
 	 }
-       
        
 #ifdef DEBUG       
        printf("MakeMapandMatrix: image to source map and matrix created\n");  

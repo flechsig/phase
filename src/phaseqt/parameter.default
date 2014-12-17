@@ -1,7 +1,7 @@
 #  -*-sh-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/parameter.default
 #  Date      : <22 Nov 11 13:58:58 flechsig> 
-#  Time-stamp: <15 Dec 14 11:35:30 flechsig> 
+#  Time-stamp: <17 Dec 14 15:03:26 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 #
 #  $Source$ 
@@ -28,7 +28,6 @@
 Generic		
     epsilon		1e-4	epsilon for Newton routine (double)			1e-4	0
     iord		4	calculation up to order (1..7)				4	1		
-    REDUCE_maps		0	use old REDUCE maps (0,1)				0	63
     pst_mode	        0	pstf, pstc, pstc_m4p  (0,1,2)				2	64
 #    PO_dyn_arrays	0	PO dynamic arrays	                                0	64 
 
@@ -105,6 +104,7 @@ PO Obsolete parameters
     src.pin_zl0		1.	1st parameter for pinhole array in z (double)		1.	54
     src.pin_zl		1.	2nd parameter for pinhole array in z (double)		1.	55
     matrel 	-	derive matrix elements in 3 different ways (1) (for debugging)	-	23
+    REDUCE_maps		0	use old REDUCE maps (0,1)				0	63
     source 1	-	hard edge or Gaussian 
 #        isrcy	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	24   reused
 #        isrcdy 	0	source type (size/div.):(0)sigma val.,(1)hard edge, (2)file	0	25 reused

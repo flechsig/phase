@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <16 Dec 14 15:35:28 flechsig> 
+//  Time-stamp: <17 Dec 14 14:37:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1527,7 +1527,7 @@ void MainWindow::elementApplyBslot()
 			myparent->myBeamline()->ElementList[number].elementname);
   // we always call DefMirrorC to apply misalignment
   myparent->myDefMirrorC(md, &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
-			   gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps);
+			 gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps, number);
   
   myparent->myDefGeometryC(gd, &(myparent->myBeamline()->ElementList[number].geo));
 

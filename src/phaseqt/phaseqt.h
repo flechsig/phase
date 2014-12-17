@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <15 Dec 14 14:38:03 flechsig>  */
+/*  Time-stamp: <17 Dec 14 14:37:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -146,8 +146,8 @@ public:
   //void mycopySrc2Psd() { copySrc2Psd(this); }
   void myDefGeometryC (struct gdatset *x, struct geometrytype *gout) { DefGeometryC(x, gout, &(this->BLOptions)); }
   void myDefMirrorC (struct mdatset *x, struct mirrortype *a, 
-		     int etype, double theta, int lREDUCE_maps) { 
-    DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, -1); }
+		     int etype, double theta, int lREDUCE_maps, int elindex) { 
+    DefMirrorC(x, a, etype, theta, lREDUCE_maps, this->BLOptions.WithAlign, elindex); }
   
   void myemfp_construct(int nz, int ny) { this->emfp= emfp_construct(nz, ny); }
   void myemfp_free() { this->emfp= emfp_free(this->emfp); }
