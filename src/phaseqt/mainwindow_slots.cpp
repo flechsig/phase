@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <17 Dec 14 14:37:58 flechsig> 
+//  Time-stamp: <19 Dec 14 15:39:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -97,6 +97,7 @@ void MainWindow::activateProc(const QString &action)
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType *psip;
   struct constants *csp;
+  struct BeamlineType *bl;
   //struct mirrortype *am;
   //struct geometryst *g;
   struct map4 *m4p;
@@ -108,6 +109,8 @@ void MainWindow::activateProc(const QString &action)
   cout << "debug: " << __FILE__ << " MainWindow::activateProc called with action: " << qPrintable(action) << endl;
 #endif
   
+  bl= (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
+
   if (action.isEmpty())
           return;
   
@@ -116,16 +119,16 @@ void MainWindow::activateProc(const QString &action)
       if (elementListIsEmpty())
 	return;
 
-      fillTaskVector(myparent->myBeamline()->elementzahl);
-      if (myparent->myBeamline()->hormapsloaded != myparent->myBeamline()->BLOptions.ifl.iord) 
-	MakeHorMaps(myparent->myBeamline());
+      fillTaskVector(bl->elementzahl);
+      if (bl->hormapsloaded != bl->BLOptions.ifl.iord) 
+	MakeHorMaps(bl);
       
       qDebug() << __FILE__ << "asynMapAct: create maps in parallel threads";
 
       // *future= QtConcurrent::map(vector, my_funcv);
       // to pass additional parameters we have to use boost or std::tr1
       *future= QtConcurrent::map(vector, std::tr1::bind(BuildElement, 
-							std::tr1::placeholders::_1, myparent->myBeamline())); // one additional par 
+							std::tr1::placeholders::_1, bl)); // one additional par 
       watcher->setFuture(*future);
     }
   
@@ -148,7 +151,7 @@ void MainWindow::activateProc(const QString &action)
 #endif
       if (elementListIsEmpty()) return;
 
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
 
       if (!myparent->myBuildBeamline()) 
@@ -158,7 +161,7 @@ void MainWindow::activateProc(const QString &action)
 	  return;
 	}
 
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -166,15 +169,15 @@ void MainWindow::activateProc(const QString &action)
 				    tr("PO source not found!"));
 	      return;
 	    }
-          myparent->myBeamline()->beamlineOK |= pstsourceOK;
+          bl->beamlineOK |= pstsourceOK;
 	}
 
-      if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+      if (!(bl->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
 
       //cout << "xxx" << endl;
       
-      if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
+      if (!CheckBLOK(bl->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
@@ -187,87 +190,91 @@ void MainWindow::activateProc(const QString &action)
 
       //uf nov 2014      
       if (myparent->emfp) myparent->myemfp_free();
-      myparent->myemfp_construct(myparent->myBeamline()->source_emfp->nz, myparent->myBeamline()->source_emfp->ny);
-      emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->source_emfp); // source-> emfp
+      myparent->myemfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
+      emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
       
       unsigned int n= 0;
-      unsigned int oldposition= myparent->myBeamline()->position;
+      unsigned int oldposition= bl->position;
       while (n < elementList->count())
 	{
-	  myparent->myBeamline()->position= n;
-	  double driftlen= myparent->myBeamline()->ElementList[n].GDat.r+ myparent->myBeamline()->ElementList[n].GDat.rp;
+	  bl->position= n;
+	  double driftlen= bl->ElementList[n].GDat.r+ bl->ElementList[n].GDat.rp;
 	  cout << "*************************************" << endl;
 	  cout << "*** PO element No " << n << ", drift= " << driftlen  << endl;
 	  cout << "*************************************" << endl;
-	  if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
-	  switch (myparent->myBeamline()->ElementList[n].MDat.Art)
+	  if (bl->result_emfp) emfp_free(bl->result_emfp);
+	  switch (bl->ElementList[n].MDat.Art)
 	    {
 	    case 100:
-	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
-	      drift_auto_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp, 
-			     myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	      drift_auto_emf(bl->emfp, bl->result_emfp, 
+			     bl->BLOptions.lambda, driftlen);
 	      break;
 	    case 101:
-	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
-	      drift_fourier_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp, 
-				myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	      drift_fourier_emf(bl->emfp, bl->result_emfp, 
+				bl->BLOptions.lambda, driftlen);
 	      break;
 	    case 102:
-	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
-	      drift_fresnel_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp, 
-				myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	      drift_fresnel_emf(bl->emfp, bl->result_emfp, 
+				bl->BLOptions.lambda, driftlen);
 	      break;
 	    case 103:
-	      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->emfp->nz, myparent->myBeamline()->emfp->ny);
-	      drift_fraunhofer_emf(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp,
-				   myparent->myBeamline()->BLOptions.lambda, driftlen);
+	      bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	      drift_fraunhofer_emf(bl->emfp, bl->result_emfp,
+				   bl->BLOptions.lambda, driftlen);
+	      break;
+	    case kEOECopy:      // 104
+	      bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	      qDebug() << "kEOECopy: copy bl->emfp to bl->result_emfp";
+	      //QApplication::beep();
+	      emfp_cpy(bl->result_emfp, bl->emfp);
 	      break;
 	    default:
-	      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
-	      myparent->myBeamline()->result_emfp= emfp_construct(psip->iz, psip->iy);
+	      psip = (struct PSImageType *)bl->RTSource.Quellep;
+	      bl->result_emfp= emfp_construct(psip->iz, psip->iy);
 	      
 	      //myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
 	      //cout << "result allocated" << endl;
-	      myparent->myBeamline()->RESULT.outside_wl= 0;
+	      bl->RESULT.outside_wl= 0;
 	      fillTaskVector(psip->iy * psip->iz);
 	      qDebug() << "asynchronous PO with threads " << psip->iy * psip->iz << " points";
 	      myparent->myTest4Grating();
 #ifdef DEBUG2
-	      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
-	      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) 
+	      if ((m4p_cpp == NULL) && (bl->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 2);
+	      if (bl->BLOptions.ifl.pst_mode < 2) 
 		{
-		  fill_m4(myparent->myBeamline(), m4p_cpp);
+		  fill_m4(bl, m4p_cpp);
 		  cout << "**************** m4p filled twice for debugging !!!!!!!!!!!!!!!!!!\n" << endl;
 		  size_t nm4= sizeof(struct map4);
 		  short *vp= (short *)m4p_cpp;
 		  std::copy(vp, vp+ nm4, vp);
 		}
 #else
-	      if ((m4p_cpp == NULL) && (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
-	      if (myparent->myBeamline()->BLOptions.ifl.pst_mode < 2) fill_m4(myparent->myBeamline(), m4p_cpp, 
-									      &myparent->myBeamline()->ElementList[myparent->myBeamline()->position]);
+	      if ((m4p_cpp == NULL) && (bl->BLOptions.ifl.pst_mode < 2)) m4p_cpp= XMALLOC(struct map4, 1);
+	      if (bl->BLOptions.ifl.pst_mode < 2) fill_m4(bl, m4p_cpp, 
+									      &bl->ElementList[bl->position]);
 #endif
 	      if (csp_cpp == NULL) csp_cpp= XMALLOC(struct constants, 1);
 	      initconstants(csp_cpp);
 	      
-	      myparent->myBeamline()->BLOptions.PSO.intmod= 2;
+	      bl->BLOptions.PSO.intmod= 2;
 	      
 	      cout << "create future" << endl;
-	      *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, myparent->myBeamline(), 
+	      *future= QtConcurrent::map(vector, std::tr1::bind(pstc_i, std::tr1::placeholders::_1, bl, 
 								m4p_cpp, csp_cpp
 								)); // one additional par 
 	      watcher->setFuture(*future);
 	      
 	      cout << "after future" << endl;
 	      
-	       
-	      
 	    }  // end switch
 	  
 	  n++;
 	  if (n < elementList->count())   // ELEMENTS LEFT IN LIST
 	    {
-	      int mytype= myparent->myBeamline()->ElementList[n-1].MDat.Art;
+	      int mytype= bl->ElementList[n-1].MDat.Art;
 	      // wait for end of asynchronous task
 	      cout << "start waiting in element loop to finish asynchronous task" << endl;
 	      while ( watcher->isRunning() )
@@ -278,29 +285,29 @@ void MainWindow::activateProc(const QString &action)
 		}
 	      cout << "waiting done - goto next element" << endl;
 	      myparent->myemfp_free();
-	      myparent->myemfp_construct(myparent->myBeamline()->result_emfp->nz, myparent->myBeamline()->result_emfp->ny);
-	      emfp_cpy(myparent->myBeamline()->emfp, myparent->myBeamline()->result_emfp);
-	      write_phase_hdf5_file(myparent->myBeamline(), "zwischenresult.h5", NULL);
+	      myparent->myemfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
+	      emfp_cpy(bl->emfp, bl->result_emfp);
+	      //	      write_phase_hdf5_file(bl, "zwischenresult.h5", NULL);
 	    }
 	} // end while
-      if (!watcher->isRunning()) myparent->myBeamline()->position= oldposition; // restore value
+      if (!watcher->isRunning()) bl->position= oldposition; // restore value
       cout << "all elements done" << endl;
       //myparent->myemfp_free(); // !!!! we should not free since task may still run
-      myparent->myBeamline()->RESULT.typ = PLphspacetype;
-      myparent->myBeamline()->beamlineOK |= resultOK;
+      bl->RESULT.typ = PLphspacetype;
+      bl->beamlineOK |= resultOK;
       //myparent->myemfp_2_psd();
       //myparent->myemfp_free();
     } // asyn
 
-  if (!action.compare("copyPOAct")) 
+  if (!action.compare("copyPOAct")) // copy source to result
     {
-      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
-      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
-							  myparent->myBeamline()->source_emfp->ny);
-      emfp_cpy(myparent->myBeamline()->result_emfp, myparent->myBeamline()->source_emfp);
-      myparent->myBeamline()->RESULT.outside_wl= 0;
-      myparent->myBeamline()->RESULT.typ = PLphspacetype;
-      myparent->myBeamline()->beamlineOK |= resultOK;
+      if (bl->result_emfp) emfp_free(bl->result_emfp);
+      bl->result_emfp= emfp_construct(bl->source_emfp->nz, 
+							  bl->source_emfp->ny);
+      emfp_cpy(bl->result_emfp, bl->source_emfp);
+      bl->RESULT.outside_wl= 0;
+      bl->RESULT.typ = PLphspacetype;
+      bl->beamlineOK |= resultOK;
       // myparent->mycopySrc2Psd();
     }
 
@@ -312,14 +319,14 @@ void MainWindow::activateProc(const QString &action)
 	return;
       
       printf("\nraytracesimpleAct button  pressed, localalloc: %d hormaps_loaded: %d\n", 
-	     myparent->myBeamline()->localalloc, myparent->myBeamline()->hormapsloaded);
+	     bl->localalloc, bl->hormapsloaded);
       
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
       //QMessageBox *mmBox = nebw QMessageBox;
       //mmBox->setText(tr("calculation running- be patient!"));
       //mmBox->show();
-      if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+      if ((!(bl->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
 				tr("<B>MakeRTSource</b> look into debug messages for details!"));
@@ -328,11 +335,11 @@ void MainWindow::activateProc(const QString &action)
       
       //statusBar()->clearMessage();
       
-      cout << "********** plrayset=" << myparent->myBeamline()->BLOptions.plrayset << endl;
+      cout << "********** plrayset=" << bl->BLOptions.plrayset << endl;
       statusBar()->showMessage(tr("Quick ray trace->calculation running - be patient"), 0);
 		
-      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.dlambdaflag), 
-				myparent->myBeamline()->RTSource.raynumber, 0);  
+      myparent->myReAllocResult((PLrttype | bl->BLOptions.dlambdaflag), 
+				bl->RTSource.raynumber, 0);  
       
       myparent->myUpdateFlags(FIRST);
       
@@ -345,7 +352,7 @@ void MainWindow::activateProc(const QString &action)
 	}
       myparent->myRayTracec(); 
       
-      if (myparent->myBeamline()->BLOptions.need_another_run)  /* double wavelength calculation */
+      if (bl->BLOptions.need_another_run)  /* double wavelength calculation */
 	{
 	  myparent->myUpdateFlags(SECOND);
 	  
@@ -374,17 +381,17 @@ void MainWindow::activateProc(const QString &action)
 
       if (elementListIsEmpty())	return;
 
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
 
-      if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+      if ((!(bl->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
 				tr("<B>MakeRTSource</b> look into debug messages for details!"));
 	  return;
 	}
-      myparent->myReAllocResult((PLrttype | myparent->myBeamline()->BLOptions.dlambdaflag), 
-				myparent->myBeamline()->RTSource.raynumber, 0);
+      myparent->myReAllocResult((PLrttype | bl->BLOptions.dlambdaflag), 
+				bl->RTSource.raynumber, 0);
       
       myparent->myUpdateFlags(FIRST);
       
@@ -396,7 +403,7 @@ void MainWindow::activateProc(const QString &action)
 	}
       myparent->myRayTraceFull(); 
 
-      if (myparent->myBeamline()->BLOptions.need_another_run)  /* double wavelength calculation */
+      if (bl->BLOptions.need_another_run)  /* double wavelength calculation */
 	{
 	  myparent->myUpdateFlags(SECOND);
 	  
@@ -423,7 +430,7 @@ void MainWindow::activateProc(const QString &action)
 	return;
 
      
-if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+if ((!(bl->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
 				tr("<B>MakeRTSource</b> look into debug messages for details!"));
@@ -431,8 +438,8 @@ if ((!(myparent->myBeamline()->beamlineOK & sourceOK)) && !myparent->myMakeRTSou
 	}
 
 
-      myparent->myReAllocResult(PLrttype, myparent->myBeamline()->RTSource.raynumber* 
-				myparent->myBeamline()->BLOptions.plrayset, 0);  
+      myparent->myReAllocResult(PLrttype, bl->RTSource.raynumber* 
+				bl->BLOptions.plrayset, 0);  
       
 if (!myparent->myBuildBeamline()) 
 	    {
@@ -452,9 +459,9 @@ if (!myparent->myBuildBeamline())
 	   << "(propagate just 1st element)" << endl; 
 #endif
       if (elementListIsEmpty()) return;
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -462,18 +469,18 @@ if (!myparent->myBuildBeamline())
 			     tr("PO source not found!"));
 	      return;
 	    }
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	}
       // myparent->mydrift_fresnel();
-      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
-      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
-      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
-							  myparent->myBeamline()->source_emfp->ny);
-      drift_fresnel_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
-			myparent->myBeamline()->BLOptions.lambda, driftlen);
+      double driftlen= bl->ElementList[0].GDat.r+ bl->ElementList[0].GDat.rp;
+      if (bl->result_emfp) emfp_free(bl->result_emfp);
+      bl->result_emfp= emfp_construct(bl->source_emfp->nz, 
+							  bl->source_emfp->ny);
+      drift_fresnel_emf(bl->source_emfp, bl->result_emfp, 
+			bl->BLOptions.lambda, driftlen);
 
-      myparent->myBeamline()->beamlineOK |= resultOK;
-      myparent->myBeamline()->RESULT.typ = PLphspacetype;
+      bl->beamlineOK |= resultOK;
+      bl->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
 
@@ -484,9 +491,9 @@ if (!myparent->myBuildBeamline())
 	   << "(propagate just 1st element)" << endl; 
 #endif
       if (elementListIsEmpty()) return;
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -494,17 +501,17 @@ if (!myparent->myBuildBeamline())
 			     tr("PO source not found!"));
 	      return;
 	    }
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	}
       //myparent->mydrift_fraunhofer();
-      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
-      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
-      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
-							  myparent->myBeamline()->source_emfp->ny);
-      drift_fraunhofer_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
-			myparent->myBeamline()->BLOptions.lambda, driftlen);
-      myparent->myBeamline()->beamlineOK |= resultOK;
-      myparent->myBeamline()->RESULT.typ = PLphspacetype;
+      double driftlen= bl->ElementList[0].GDat.r+ bl->ElementList[0].GDat.rp;
+      if (bl->result_emfp) emfp_free(bl->result_emfp);
+      bl->result_emfp= emfp_construct(bl->source_emfp->nz, 
+							  bl->source_emfp->ny);
+      drift_fraunhofer_emf(bl->source_emfp, bl->result_emfp, 
+			bl->BLOptions.lambda, driftlen);
+      bl->beamlineOK |= resultOK;
+      bl->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
 
@@ -516,9 +523,9 @@ if (!myparent->myBuildBeamline())
 #endif
 
       if (elementListIsEmpty()) return;
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -526,32 +533,32 @@ if (!myparent->myBuildBeamline())
 			     tr("PO source not found!"));
 	      return;
 	    }
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	}
 
-      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
-      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
-      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
-							  myparent->myBeamline()->source_emfp->ny);
+      double driftlen= bl->ElementList[0].GDat.r+ bl->ElementList[0].GDat.rp;
+      if (bl->result_emfp) emfp_free(bl->result_emfp);
+      bl->result_emfp= emfp_construct(bl->source_emfp->nz, 
+							  bl->source_emfp->ny);
       
 
-      if (myparent->mycheck_sampling_emf(myparent->myBeamline()->source_emfp, driftlen) > 1.0)
+      if (myparent->mycheck_sampling_emf(bl->source_emfp, driftlen) > 1.0)
 	{
 	  cout << "autoselect Fourier propagator (TF type) due to sampling" << endl;
 	  //myparent->mydrift_fourier();
-	  drift_fourier_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
-			    myparent->myBeamline()->BLOptions.lambda, driftlen);
+	  drift_fourier_emf(bl->source_emfp, bl->result_emfp, 
+			    bl->BLOptions.lambda, driftlen);
 	}
       else
 	{
 	  cout << "autoselect Fresnel propagator (IR type) due to sampling" << endl;
 	  //myparent->mydrift_fresnel();
-	  drift_fresnel_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
-			    myparent->myBeamline()->BLOptions.lambda, driftlen);
+	  drift_fresnel_emf(bl->source_emfp, bl->result_emfp, 
+			    bl->BLOptions.lambda, driftlen);
 	}
 
-      myparent->myBeamline()->beamlineOK |= resultOK;
-      myparent->myBeamline()->RESULT.typ = PLphspacetype;
+      bl->beamlineOK |= resultOK;
+      bl->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
 
@@ -563,9 +570,9 @@ if (!myparent->myBuildBeamline())
 #endif
 
       if (elementListIsEmpty()) return;
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -573,21 +580,21 @@ if (!myparent->myBuildBeamline())
 			     tr("PO source not found!"));
 	      return;
 	    }
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	}
       //myparent->mydrift_fourier();
-      double driftlen= myparent->myBeamline()->ElementList[0].GDat.r+ myparent->myBeamline()->ElementList[0].GDat.rp;
+      double driftlen= bl->ElementList[0].GDat.r+ bl->ElementList[0].GDat.rp;
 
-      if (myparent->myBeamline()->result_emfp) emfp_free(myparent->myBeamline()->result_emfp);
+      if (bl->result_emfp) emfp_free(bl->result_emfp);
 
-      myparent->myBeamline()->result_emfp= emfp_construct(myparent->myBeamline()->source_emfp->nz, 
-							  myparent->myBeamline()->source_emfp->ny);
+      bl->result_emfp= emfp_construct(bl->source_emfp->nz, 
+							  bl->source_emfp->ny);
 
-      drift_fourier_emf(myparent->myBeamline()->source_emfp, myparent->myBeamline()->result_emfp, 
-			myparent->myBeamline()->BLOptions.lambda, driftlen);
+      drift_fourier_emf(bl->source_emfp, bl->result_emfp, 
+			bl->BLOptions.lambda, driftlen);
 
-      myparent->myBeamline()->beamlineOK |= resultOK;
-      myparent->myBeamline()->RESULT.typ = PLphspacetype;
+      bl->beamlineOK |= resultOK;
+      bl->RESULT.typ = PLphspacetype;
       UpdateStatus();
     }
   
@@ -604,11 +611,11 @@ if (!myparent->myBuildBeamline())
 
   if (!action.compare("optiInputAct")) 
     { 
-      cout << "optiInputAct button pressed, elementzahl=" << myparent->myBeamline()->elementzahl << endl;
+      cout << "optiInputAct button pressed, elementzahl=" << bl->elementzahl << endl;
       if (!o_input) 
-	o_input= new OptiInput(myparent->myBeamline()->ElementList, myparent->myBeamline()->elementzahl,
-			       myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->filenames.optipckname, 
-			       myparent->myBeamline()->filenames.opresname); 
+	o_input= new OptiInput(bl->ElementList, bl->elementzahl,
+			       bl->filenames.beamlinename, bl->filenames.optipckname, 
+			       bl->filenames.opresname); 
       else 
 	o_input->optiInputBox->show();
     }
@@ -621,7 +628,7 @@ if (!myparent->myBuildBeamline())
       if (elementListIsEmpty()) 
 	return;
 
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
 
      
@@ -632,7 +639,7 @@ if (!myparent->myBuildBeamline())
 	  return;
 	}
 
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -641,13 +648,13 @@ if (!myparent->myBuildBeamline())
 	      return;
 	    }
 	  
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	}
 
-      if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+      if (!(bl->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
 			
-      if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
+      if (!CheckBLOK(bl->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
@@ -668,7 +675,7 @@ if (!myparent->myBuildBeamline())
       if (elementListIsEmpty()) 
 	return;
 
-      myparent->myBeamline()->beamlineOK &= ~resultOK;
+      bl->beamlineOK &= ~resultOK;
       UpdateStatus();
 
       
@@ -678,10 +685,10 @@ if (!myparent->myBuildBeamline())
 				tr("<B>BuildBeamline</b> look into debug messages for details!"));
 	  return;
 	}
-      if (!(myparent->myBeamline()->beamlineOK & pstsourceOK))
+      if (!(bl->beamlineOK & pstsourceOK))
 	{
 #ifdef OLD_PO_SOURCE
-	  myparent->mysrc_ini(&myparent->myBeamline()->src); 
+	  myparent->mysrc_ini(&bl->src); 
 #else
 	  if (!myparent->myposrc_ini()) 
 	    {
@@ -690,13 +697,13 @@ if (!myparent->myBuildBeamline())
 	      return;
 	    }
 #endif
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	}
 
-      if (!(myparent->myBeamline()->beamlineOK & pstimageOK)) 
+      if (!(bl->beamlineOK & pstimageOK)) 
 	sourceApplyBslot();
 			
-      if (!CheckBLOK(myparent->myBeamline()->beamlineOK, 
+      if (!CheckBLOK(bl->beamlineOK, 
 		    (pstsourceOK | mapOK | pstimageOK), (char *)"act_pr: "))
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
@@ -704,22 +711,22 @@ if (!myparent->myBuildBeamline())
 	  return;
 	}
 	
-      psip = (struct PSImageType *)myparent->myBeamline()->RTSource.Quellep;
+      psip = (struct PSImageType *)bl->RTSource.Quellep;
       myparent->myReAllocResult(PLphspacetype, psip->iy, psip->iz);
       myparent->myMPST();
   }
 
-  if (!action.compare("rthAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
-  if (!action.compare("dipAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'D'; UpdateSourceBox(); }
-  if (!action.compare("poiAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'o'; UpdateSourceBox(); }
-  if (!action.compare("rinAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'R'; UpdateSourceBox(); }   
-  if (!action.compare("genAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'G'; UpdateSourceBox(); }    
-  if (!action.compare("b2hAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }   
-  if (!action.compare("b2lAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }    
-  if (!action.compare("sisAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
-  if (!action.compare("simAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
-  if (!action.compare("sffAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }  
-  if (!action.compare("impAct")) { myparent->myBeamline()->RTSource.QuellTyp= 'I'; UpdateSourceBox(); }  
+  if (!action.compare("rthAct")) { bl->RTSource.QuellTyp= 'H'; UpdateSourceBox(); }
+  if (!action.compare("dipAct")) { bl->RTSource.QuellTyp= 'D'; UpdateSourceBox(); }
+  if (!action.compare("poiAct")) { bl->RTSource.QuellTyp= 'o'; UpdateSourceBox(); }
+  if (!action.compare("rinAct")) { bl->RTSource.QuellTyp= 'R'; UpdateSourceBox(); }   
+  if (!action.compare("genAct")) { bl->RTSource.QuellTyp= 'G'; UpdateSourceBox(); }    
+  if (!action.compare("b2hAct")) { bl->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }   
+  if (!action.compare("b2lAct")) { bl->RTSource.QuellTyp= 'U'; UpdateSourceBox(); }    
+  if (!action.compare("sisAct")) { bl->RTSource.QuellTyp= 'L'; UpdateSourceBox(); }   
+  if (!action.compare("simAct")) { bl->RTSource.QuellTyp= 'M'; UpdateSourceBox(); }   
+  if (!action.compare("sffAct")) { bl->RTSource.QuellTyp= 'F'; UpdateSourceBox(); }  
+  if (!action.compare("impAct")) { bl->RTSource.QuellTyp= 'I'; UpdateSourceBox(); }  
 
   if (!action.compare("writemapAct")) 
     { 
@@ -728,27 +735,27 @@ if (!myparent->myBuildBeamline())
 #endif 
       if (elementListIsEmpty())
 	return;
-      if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
-	  (myparent->myBeamline()->position != 0))
+      if ((bl->position <= bl->elementzahl) && 
+	  (bl->position != 0))
 	{
-	  cout << "write map of element " << myparent->myBeamline()->position << " to file" << endl;
+	  cout << "write map of element " << bl->position << " to file" << endl;
 
 	  snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d%d", 
-		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->position, 
-		  myparent->myBeamline()->BLOptions.ifl.iord,0);
-	  snprintf(buffer, MaxPathLength, "%s-%d", myparent->myBeamline()->filenames.mapname, myparent->myBeamline()->position);
+		  bl->filenames.beamlinename, bl->position, 
+		  bl->BLOptions.ifl.iord,0);
+	  snprintf(buffer, MaxPathLength, "%s-%d", bl->filenames.mapname, bl->position);
 
 
 	  /* casting 15.12.99 ist noch nicht OK */
-	  writemapc(buffer, header, myparent->myBeamline()->BLOptions.ifl.iord, 
-		    (double *)(myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].ypc1), 
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].zpc1, 
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].dypc, 
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].dzpc,
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].wc, 
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].xlc, 
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].xlm.xlen1c, 
-		    (double *) myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].xlm.xlen2c);
+	  writemapc(buffer, header, bl->BLOptions.ifl.iord, 
+		    (double *)(bl->ElementList[bl->position- 1].ypc1), 
+		    (double *) bl->ElementList[bl->position- 1].zpc1, 
+		    (double *) bl->ElementList[bl->position- 1].dypc, 
+		    (double *) bl->ElementList[bl->position- 1].dzpc,
+		    (double *) bl->ElementList[bl->position- 1].wc, 
+		    (double *) bl->ElementList[bl->position- 1].xlc, 
+		    (double *) bl->ElementList[bl->position- 1].xlm.xlen1c, 
+		    (double *) bl->ElementList[bl->position- 1].xlm.xlen2c);
 	} 
       
       //  else wir schreiben hier immer beides
@@ -756,16 +763,16 @@ if (!myparent->myBuildBeamline())
 	  cout << "write map of beamline to file" << endl; 
 
 	  snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
-		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->BLOptions.ifl.iord);
-	  snprintf(buffer, MaxPathLength, "%s-0", myparent->myBeamline()->filenames.mapname);
+		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord);
+	  snprintf(buffer, MaxPathLength, "%s-0", bl->filenames.mapname);
 
 	  myparent->mywritemapc(buffer,  header,  
-				myparent->myBeamline()->BLOptions.ifl.iord, 
-				(double *) myparent->myBeamline()->ypc1, (double *) myparent->myBeamline()->zpc1, 
-				(double *) myparent->myBeamline()->dypc, (double *) myparent->myBeamline()->dzpc,
-				(double *) myparent->myBeamline()->wc,   (double *) myparent->myBeamline()->xlc, 
-				(double *) myparent->myBeamline()->xlm.xlen1c, 
-				(double *) myparent->myBeamline()->xlm.xlen2c);
+				bl->BLOptions.ifl.iord, 
+				(double *) bl->ypc1, (double *) bl->zpc1, 
+				(double *) bl->dypc, (double *) bl->dzpc,
+				(double *) bl->wc,   (double *) bl->xlc, 
+				(double *) bl->xlm.xlen1c, 
+				(double *) bl->xlm.xlen2c);
 	}
     } 
 
@@ -774,19 +781,19 @@ if (!myparent->myBuildBeamline())
       cout << "writematAct button pressed" << endl;
       if (elementListIsEmpty())
 	return;
-      if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
-	  (myparent->myBeamline()->position != 0))
+      if ((bl->position <= bl->elementzahl) && 
+	  (bl->position != 0))
 	{
-	  printf("write matrix of element %d to file\n", myparent->myBeamline()->position); 
+	  printf("write matrix of element %d to file\n", bl->position); 
 
 
 	  snprintf(header, MaxPathLength, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
-		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->position, 
-		  myparent->myBeamline()->BLOptions.ifl.iord,
-		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-%d\x00", myparent->myBeamline()->filenames.matrixname, myparent->myBeamline()->position);
+		  bl->filenames.beamlinename, bl->position, 
+		  bl->BLOptions.ifl.iord,
+		  bl->BLOptions.REDUCE_maps);
+	  snprintf(buffer, MaxPathLength, "%s-%d\x00", bl->filenames.matrixname, bl->position);
 
-          writematrixfile((double *)myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].M_StoI,
+          writematrixfile((double *)bl->ElementList[bl->position- 1].M_StoI,
 			  buffer, header, strlen(buffer), strlen(header)); // add hidden length parameter 
 	} 
       
@@ -795,11 +802,11 @@ if (!myparent->myBuildBeamline())
 	  printf("activateProc: write matrix of beamline to file\n"); 
 
 	  snprintf(header, MaxPathLength, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
-		  myparent->myBeamline()->filenames.beamlinename, myparent->myBeamline()->BLOptions.ifl.iord, 
-		  myparent->myBeamline()->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-0\x00", myparent->myBeamline()->filenames.matrixname);
+		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord, 
+		  bl->BLOptions.REDUCE_maps);
+	  snprintf(buffer, MaxPathLength, "%s-0\x00", bl->filenames.matrixname);
 
-	  writematrixfile((double *)myparent->myBeamline()->M_StoI, buffer, header, strlen(buffer), strlen(header));
+	  writematrixfile((double *)bl->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
     } 
 
@@ -810,16 +817,16 @@ if (!myparent->myBuildBeamline())
 #endif
       if (elementListIsEmpty())
 	return;
-      if ((myparent->myBeamline()->position <= myparent->myBeamline()->elementzahl) && 
-	  (myparent->myBeamline()->position != 0))
+      if ((bl->position <= bl->elementzahl) && 
+	  (bl->position != 0))
 	{
-	  printf("write coefficients of element %d to file\n", myparent->myBeamline()->position);
+	  printf("write coefficients of element %d to file\n", bl->position);
       //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
 	  snprintf(buffer, MaxPathLength, "%s.coeff", elementList->currentItem()->text().toLatin1().data());
 	  printf("write coefficients to file: %s\n", buffer);
-	  WriteMKos((struct mirrortype *)&myparent->myBeamline()->ElementList[myparent->myBeamline()->position- 1].mir, buffer);
+	  WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
 	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
-	} else fprintf(stderr, "%d: no valid position\n", myparent->myBeamline()->position); 
+	} else fprintf(stderr, "%d: no valid position\n", bl->position); 
     }
 
   if (!action.compare("writesimpAct")) 
@@ -832,8 +839,8 @@ if (!myparent->myBuildBeamline())
     { 
       cout << "write PHASE output in phase_hdf5 format" << endl;
 #ifdef HAVE_HDF5
-      if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
-	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
+      if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
+	   && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
 #endif
@@ -843,8 +850,8 @@ if (!myparent->myBuildBeamline())
     { 
       cout << "write PHASE output in genesis_hdf5 format" << endl;
 #ifdef HAVE_HDF5
-      if ( ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0) 
-      	   && FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out) ) 
+      if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
+      	   && FileExistCheckOK(bl->filenames.hdf5_out) ) 
       myparent->my_write_genesis_hdf5_file();
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
@@ -855,7 +862,7 @@ if (!myparent->myBuildBeamline())
     { 
       cout << "read PHASE output in hdf5 format" << endl;
 #ifdef HAVE_HDF5
-      if ( FileExistCheckOK(myparent->myBeamline()->filenames.hdf5_out, "read") ) 
+      if ( FileExistCheckOK(bl->filenames.hdf5_out, "read") ) 
 	myparent->my_read_hdf5_file();
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
@@ -865,21 +872,21 @@ if (!myparent->myBuildBeamline())
   if (!action.compare("writeResultAct")) 
     { 
       cout << "writereResultAct button pressed, result type: " <<  
-	myparent->myBeamline()->RESULT.typ << endl; 
-      if ((myparent->myBeamline()->RESULT.typ & PLphspacetype) > 0)
+	bl->RESULT.typ << endl; 
+      if ((bl->RESULT.typ & PLphspacetype) > 0)
 	{
-	  cout << "write PO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
+	  cout << "write PO result to file " << bl->filenames.imageraysname << endl;
 	  cout << "warning: function temporarely deactivated- use hdf5 output instead" << endl;
-	  //myparent->myWritePsd(myparent->myBeamline()->filenames.imageraysname, 
-	  //		       (struct PSDType *)myparent->myBeamline()->RESULT.RESp);
+	  //myparent->myWritePsd(bl->filenames.imageraysname, 
+	  //		       (struct PSDType *)bl->RESULT.RESp);
 	}
       else
 	{
 
-	  cout << "write GO result to file " << myparent->myBeamline()->filenames.imageraysname << endl;
-	  myparent->myWriteRayFile(myparent->myBeamline()->filenames.imageraysname, &myparent->myBeamline()->RESULT.points1,
-				   (struct RayType *)myparent->myBeamline()->RESULT.RESp);
-	  if (myparent->myBeamline()->BLOptions.dlambdaflag) 
+	  cout << "write GO result to file " << bl->filenames.imageraysname << endl;
+	  myparent->myWriteRayFile(bl->filenames.imageraysname, &bl->RESULT.points1,
+				   (struct RayType *)bl->RESULT.RESp);
+	  if (bl->BLOptions.dlambdaflag) 
 	    cout << "!! wrote only the rayset for lambda. lambda + dlambda is not implemented so far !!" << endl;
 	}
     } 
@@ -1129,17 +1136,17 @@ if (!myparent->myBuildBeamline())
 			     tr("obsolete function- deactivated OCT 2014"));
 	  /* 
 	  //	  correct but src not yet implemented readfg34_par(this->src, this->BLOptions.apr,
-	  myparent->myreadfg34_par(&myparent->myBeamline()->src, &myparent->myBeamline()->BLOptions.apr,
-				   &myparent->myBeamline()->BLOptions.ifl, &myparent->myBeamline()->BLOptions.xi,
-				   &myparent->myBeamline()->BLOptions.epsilon);
+	  myparent->myreadfg34_par(&bl->src, &bl->BLOptions.apr,
+				   &bl->BLOptions.ifl, &bl->BLOptions.xi,
+				   &bl->BLOptions.epsilon);
 	  */
 	  /*
-	  strncpy(myparent->myBeamline()->filenames.so4_fsource4a, myparent->myBeamline()->src.so4.fsource4a, 80);
-	  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, myparent->myBeamline()->src.so4.fsource4b, 80);
-	  strncpy(myparent->myBeamline()->filenames.so4_fsource4c, myparent->myBeamline()->src.so4.fsource4c, 80);
-	  strncpy(myparent->myBeamline()->filenames.so4_fsource4d, myparent->myBeamline()->src.so4.fsource4d, 80);
+	  strncpy(bl->filenames.so4_fsource4a, bl->src.so4.fsource4a, 80);
+	  strncpy(bl->filenames.so4_fsource4b, bl->src.so4.fsource4b, 80);
+	  strncpy(bl->filenames.so4_fsource4c, bl->src.so4.fsource4c, 80);
+	  strncpy(bl->filenames.so4_fsource4d, bl->src.so4.fsource4d, 80);
 	  */
-	  //strncpy(myparent->myBeamline()->filenames.so6_fsource6,  myparent->myBeamline()->src.so6.fsource6,  80);
+	  //strncpy(bl->filenames.so6_fsource6,  bl->src.so6.fsource6,  80);
 	  if (c_window) c_window->updateList();
 	  parameterUpdateAll(NPARS);
 	} else
@@ -1149,52 +1156,52 @@ if (!myparent->myBuildBeamline())
 
   if (!action.compare("poInitSourceAct")) 
     { 
-      cout << "poInitSourceAct button pressed: source_type= " << myparent->myBeamline()->isrctype_c << endl; 
+      cout << "poInitSourceAct button pressed: source_type= " << bl->isrctype_c << endl; 
             
-      switch (myparent->myBeamline()->isrctype_c)
+      switch (bl->isrctype_c)
 	{
 	  case 1:
 	    filesOK= 1;
 	    break;
 #ifdef OBSOLETE
 	case 2:
-	  filesOK= fexists(myparent->myBeamline()->src.so2.fsource2a) & 
-	    fexists(myparent->myBeamline()->src.so2.fsource2b);
+	  filesOK= fexists(bl->src.so2.fsource2a) & 
+	    fexists(bl->src.so2.fsource2b);
 	  break;
 	case 3:
-	  filesOK= fexists(myparent->myBeamline()->src.so3.fsource3a) & 
-	    fexists(myparent->myBeamline()->src.so3.fsource3b);
+	  filesOK= fexists(bl->src.so3.fsource3a) & 
+	    fexists(bl->src.so3.fsource3b);
  	  break;
 #endif
 	case 4: 
 	  filesOK= 
-	    fexists(myparent->myBeamline()->filenames.so4_fsource4a) & 
-	    fexists(myparent->myBeamline()->filenames.so4_fsource4b) & 
-	    fexists(myparent->myBeamline()->filenames.so4_fsource4c) &
-	    fexists(myparent->myBeamline()->filenames.so4_fsource4d); 
+	    fexists(bl->filenames.so4_fsource4a) & 
+	    fexists(bl->filenames.so4_fsource4b) & 
+	    fexists(bl->filenames.so4_fsource4c) &
+	    fexists(bl->filenames.so4_fsource4d); 
 	  break;
 	case 6:
-	  //filesOK= fexists(myparent->myBeamline()->src.so6.fsource6);
+	  //filesOK= fexists(bl->src.so6.fsource6);
 	  break;
 	case 7:
-	  filesOK= fexists(myparent->myBeamline()->filenames.so7_hdf5);
+	  filesOK= fexists(bl->filenames.so7_hdf5);
 	  break;
 	default:
 	  QMessageBox::warning(this, tr("warning src_ini"),
 			     tr("source type %1 : no files need to be read!\nreturn").
-			     arg(myparent->myBeamline()->isrctype_c));
+			     arg(bl->isrctype_c));
 	  return;
 	}
 
       if ( !filesOK )
 	QMessageBox::warning(this, tr("error src_ini"),
 			     tr("source type %1 : source file(s) not found!\nreturn").
-			     arg(myparent->myBeamline()->isrctype_c));
+			     arg(bl->isrctype_c));
       else /* files are OK */
 	{
 #ifdef OLD_PO_SOURCE	  
 	  cout << "call mysrc_ini" << endl;
-	  myparent->mysrc_ini(&myparent->myBeamline()->src);
+	  myparent->mysrc_ini(&bl->src);
 #else
 	  
 	  cout << "call myposrc_ini" << endl;
@@ -1207,7 +1214,7 @@ if (!myparent->myBuildBeamline())
 
 #endif
 	  
-	  myparent->myBeamline()->beamlineOK |= pstsourceOK;
+	  bl->beamlineOK |= pstsourceOK;
 	} /* end files are OK */
     } // end poInitSourceAct
   
@@ -1228,14 +1235,17 @@ if (!myparent->myBuildBeamline())
 void MainWindow::appendElement()
 {
   struct ElementType *tmplist, *listpt, *tmplistpt;
+  struct BeamlineType *bl;
   int i;
   int pos= elementList->count();
+ 
+  bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
   if (pos < 0) pos= 0;  // empty list 
-  if (abs((int)(myparent->myBeamline()->elementzahl)) > 1000) 
-    myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
+  if (abs((int)(bl->elementzahl)) > 1000) 
+    bl->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("debug: appendElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
+  printf("debug: appendElement: AddItem at pos %d, out of %u\n", pos, bl->elementzahl);  
 #endif 
  
   QListWidgetItem *item= new QListWidgetItem("New_Element");
@@ -2826,7 +2836,6 @@ void MainWindow::fouslot()
 			   tr("(nothing selected)"));
       return;
     }
-  cout << "Fourier slot not yet ready!" << endl;
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOEFourier;
   UpdateElementBox(number); 
 }
@@ -2858,6 +2867,21 @@ void MainWindow::fraslot()
     }
   cout << "Fraunhofer slot not yet ready!" << endl;
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOEFraunhofer;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu fraunhofer slot
+void MainWindow::copyslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  cout << "copy slot not yet ready!" << endl;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOECopy;
   UpdateElementBox(number); 
 }
 // end slots shapeMenu

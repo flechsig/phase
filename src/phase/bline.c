@@ -1,6 +1,6 @@
 /*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <17 Dec 14 15:39:59 flechsig>  */
+/*   Time-stamp: <19 Dec 14 15:16:43 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -261,6 +261,7 @@ int BuildBeamline(struct BeamlineType *bl)
       && (listpt->MDat.Art != kEOEFresnel)
       && (listpt->MDat.Art != kEOEAuto)
       && (listpt->MDat.Art != kEOEFraunhofer)
+      && (listpt->MDat.Art != kEOECopy)
       )
     {
 #ifdef DEBUG1
@@ -331,6 +332,7 @@ int BuildBeamline(struct BeamlineType *bl)
 	      && (listpt->MDat.Art != kEOEFresnel)
 	      && (listpt->MDat.Art != kEOEAuto)
 	      && (listpt->MDat.Art != kEOEFraunhofer)
+		 && (listpt->MDat.Art != kEOECopy)
 	      ) 
 	    {
 	      GlueXlen(&bl->xlm, &listpt->xlm, (double *)bl->M_ItoS, 
@@ -2762,16 +2764,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break;  /* end plane */
 
     case kEOESlit:
-      printf("DefMirrorC: elindex: %d slit- geometry and element data are ignored - ", elindex);
-      printf("fill dummy entries from toroid\n"); 
     case kEOEFresnel:
     case kEOEAuto:
     case kEOEFourier:
     case kEOEFraunhofer:
-      printf("DefMirrorC: elindex: %d PO Fourier Optics- geometry and element data are ignored - ", elindex);
-      printf("fill dummy entries from toroid\n"); 
+    case kEOECopy:
     case kEOEDrift:
-      printf("DefMirrorC: drift- geometry and element data are ignored - ");
+      printf("DefMirrorC: elindex: %d special Optics- geometry and element data are ignored - ", elindex);
       printf("fill dummy entries from toroid\n"); 
 
     case kEOETM:                          /* index a(i,j) */

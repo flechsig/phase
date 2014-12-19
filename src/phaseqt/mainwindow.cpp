@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <15 Dec 14 11:38:29 flechsig> 
+//  Time-stamp: <19 Dec 14 10:50:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -973,6 +973,7 @@ QWidget *MainWindow::createOpticalElementBox()
   fouAct = new QAction(tr("PO drift (Fourier) (exp)"), this);
   freAct = new QAction(tr("PO drift (Fresnel) (exp)"), this);
   fraAct = new QAction(tr("PO drift (Fraunhofer) (exp)"), this);
+  copyAct = new QAction(tr("PO drift (copy) (exp)"), this);
   shapeMenu->addAction(pmAct);
   shapeMenu->addAction(toAct);
   shapeMenu->addAction(peAct);
@@ -987,6 +988,8 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(fouAct);
   shapeMenu->addAction(freAct);
   shapeMenu->addAction(fraAct);
+  shapeMenu->addSeparator();
+  shapeMenu->addAction(copyAct);
 
   shapeMenu->setDefaultAction(toAct);
   shapeButton->setMenu(shapeMenu);
@@ -1002,6 +1005,7 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(fouAct, SIGNAL(triggered()), this, SLOT(fouslot()));
   connect(freAct, SIGNAL(triggered()), this, SLOT(freslot()));
   connect(fraAct, SIGNAL(triggered()), this, SLOT(fraslot()));
+  connect(copyAct, SIGNAL(triggered()), this, SLOT(copyslot()));
 
   shapeLabel = new QLabel(tr("unknown")); // return value of menu
   
@@ -2258,6 +2262,9 @@ void MainWindow::UpdateElementBox(int number)
       break;
     case kEOEFraunhofer:
       shapeLabel->setText(QString(tr("PO drift (Fraunhofer)"))); 
+      break;
+    case kEOECopy:
+      shapeLabel->setText(QString(tr("PO drift (copy)"))); 
       break;
 
     default: 

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <16 Dec 14 15:43:39 flechsig>  */
+/*   Time-stamp: <19 Dec 14 15:27:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -467,6 +467,11 @@ void pstc(struct BeamlineType *bl)
 	case 103:
 	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
 	  drift_fraunhofer_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
+	  break;
+	case kEOECopy:      // 104
+	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  printf("kEOECopy: copy bl->emfp to bl->result_emfp\n");
+	  emfp_cpy(bl->result_emfp, bl->emfp);
 	  break;
 	default:
 	  printf("*** stationary phase propagation ****\n");
