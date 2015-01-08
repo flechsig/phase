@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 Dec 14 10:50:39 flechsig> 
+//  Time-stamp: <08 Jan 15 14:19:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2727,11 +2727,11 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 	  stLabel32->setStatusTip(tr("intensity integral (W)"));
 	  stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  
 
-	  stLabel40->setText(QString(tr("max (phot/m^2)")));  // 30
-	  stLabel40->setStatusTip(tr("maximum of intensity (photons/m^2)"));
+	  stLabel40->setText(QString(tr("max (phot/(s m^2))")));  // 30
+	  stLabel40->setStatusTip(tr("maximum of intensity (photons/(s m^2))"));
 	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");  // give out value per m^2
-	  stLabel42->setText(QString(tr("total (photons)")));    // 31
-	  stLabel42->setStatusTip(tr("intensity integral (photons)"));
+	  stLabel42->setText(QString(tr("total (phot/s)")));    // 31
+	  stLabel42->setStatusTip(tr("intensity integral (photons/s)"));
 	  stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");
 	  
 	  stLabel50->setText(QString(tr("principle rays")));  // 40

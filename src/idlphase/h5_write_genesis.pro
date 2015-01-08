@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <03 Mar 14 16:00:06 flechsig> 
+;  Time-stamp: <08 Jan 15 12:33:14 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -69,6 +69,7 @@ pro h5_write_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ; MODIFICATION HISTORY:
 ;    25.3.13 UF
+;     8.1.15 UF correct normalization
 ;-
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/mygenesis.h5'
@@ -81,10 +82,10 @@ endif
 
 file_id = H5F_CREATE(fname)
 
-lambda  = double(wavelength)
+lambda   = double(wavelength)
 gridsizey= double(y_vec[1]- y_vec[0])
 gridsizez= double(z_vec[1]- z_vec[0])
-gridsize= gridsizey 
+gridsize = gridsizey 
 slicecount= double(1.0)
 
 nz= n_elements(z_vec)
@@ -96,7 +97,7 @@ if (ny ne nz) or (abs(gridsizey- gridsizez) gt 0.0) then begin
 endif
 
 fsize= nz*ny*2
-field = dblarr(fsize)
+field= dblarr(fsize)
 k= 0L
 
 help, nz, ny, k, field, real, imag, gridsize, lambda
@@ -107,6 +108,11 @@ for j=0, ny-1 do begin
        k+= 2
     endfor
 endfor 
+
+;; normalization
+eev= 511000   ;; electronen ruhemasse in eV
+kk  = 2.0*!dpi/ wavelength
+field*= kk/eev
 
 datatype_double_id = H5T_IDL_CREATE(lambda)
 

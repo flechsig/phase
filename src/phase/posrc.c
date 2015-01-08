@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <16 Dec 14 10:06:32 flechsig>  */
+/*  Time-stamp: <08 Jan 15 14:11:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -359,7 +359,6 @@ int posrc_ini(struct BeamlineType *bl)
   return 1;
 } /* posrc_ini */
 
-
 /* reads the h5 output file from GENESIS and puts the results into bl->source_emfp */
 void source8c_ini(struct BeamlineType *bl)
 {
@@ -367,7 +366,7 @@ void source8c_ini(struct BeamlineType *bl)
 
   int    t_size, slicecount, rows, cols, i;
   hid_t  file_id;                         /* identifiers */
-  double wavelength, gridsize, *field;
+  double wavelength_m, gridsize, *field;
 
 #ifdef DEBUG
   printf("debug: %s source8c_ini called- read hdf5 file: %s from GENESIS\n", 
@@ -385,7 +384,7 @@ void source8c_ini(struct BeamlineType *bl)
   file_id = myH5Fopen(bl->filenames.so7_hdf5);
     
   /* Open an existing dataset. */
-  readDataDouble(file_id, "wavelength", &wavelength, 1);
+  readDataDouble(file_id, "wavelength", &wavelength_m, 1);
   readDataDouble(file_id, "gridsize",   &gridsize,   1);
   readDataInt   (file_id, "slicecount", &slicecount, 1);
   t_size= getDatasetSize(file_id, "slice000001/field");
@@ -405,7 +404,7 @@ void source8c_ini(struct BeamlineType *bl)
 
 #ifdef DEBUG
   printf("debug: first value= %lg, wavelength= %lg m, gridsize= %lg m, slicecount= %d, gridpoints= %d x %d\n", 
-	 *field, wavelength, gridsize, slicecount, rows, cols);
+	 *field, wavelength_m, gridsize, slicecount, rows, cols);
 #endif
 
    /* the rest is a copy of functionality from source4c_ini */
@@ -413,7 +412,7 @@ void source8c_ini(struct BeamlineType *bl)
   bl->source_emfp= emfp_construct(cols, rows);
   
   /*  it= 0;     */     /* so far - read only first slice */
-
+  
   /* grid - genesis has a symetric grid*/
   for (i=0; i< rows; i++) 
     {
@@ -423,8 +422,8 @@ void source8c_ini(struct BeamlineType *bl)
 
   /*  */
   printf("!! linear horizontal polarization is hardcoded !!, file: %s\n", __FILE__);
-  emfp_fill8(bl, bl->source_emfp->ezre, field, 0);
-  emfp_fill8(bl, bl->source_emfp->ezim, field, 1);
+  emfp_fill8(bl, bl->source_emfp->ezre, field, 0, wavelength_m);
+  emfp_fill8(bl, bl->source_emfp->ezim, field, 1, wavelength_m);
   
   XFREE(field);
 
@@ -436,7 +435,7 @@ void source8c_ini(struct BeamlineType *bl)
 
 #ifdef DEBUG
    printf("debug: %s source8c_ini done (input from GENESIS linear horizontal polarisation), wavelength= %lg nm\n", 
-	  __FILE__, wavelength * 1e9);
+	  __FILE__, wavelength_m * 1e9);
 #endif
 
 #else         /* no hdf5 */
@@ -786,7 +785,7 @@ struct EmfType *read_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfT
 {
   hid_t  file_id;   /* , group_id */
   int    col, row, cols, rows, fieldsize, hdf5type, t_size, array_items, i, it, slicecount;  /* slicecount= 1, */
-  double  gridsize, *field, *y, *z, *t, wavelength;  /* wavelength, gridsize, */
+  double  gridsize, *field, *y, *z, *t, wavelength_m;  /* wavelength, gridsize, */
   
 
 #ifdef DEBUG  
@@ -828,7 +827,7 @@ struct EmfType *read_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfT
     }
   else // genesis
     {
-      readDataDouble(file_id, "wavelength", &wavelength, 1);
+      readDataDouble(file_id, "wavelength", &wavelength_m, 1);
       readDataDouble(file_id, "gridsize",   &gridsize,   1);
       readDataInt   (file_id, "slicecount", &slicecount, 1);
       t_size= getDatasetSize(file_id, "slice000001/field");
@@ -842,8 +841,8 @@ struct EmfType *read_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfT
 	  p->y[i]= (cols/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
 	  p->z[i]= (rows/2 * (-1.0) + i) * gridsize * 1e3;    /* in mm */
 	}
-      emfp_fill8(bl, p->ezre, field, 0);
-      emfp_fill8(bl, p->ezim, field, 1);
+      emfp_fill8(bl, p->ezre, field, 0, wavelength_m);
+      emfp_fill8(bl, p->ezim, field, 1, wavelength_m);
       XFREE(field);
     }
   
@@ -856,7 +855,7 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfTyp
 {
   hid_t  file_id, group_id;
   int    slicecount= 1, col, row, cols, rows, fieldsize;
-  double wavelength, gridsize, *field;
+  double wavelength_m, gridsize, *field, scaler;
   
   /* if (!(bl->beamlineOK & resultOK)) 
     {
@@ -890,22 +889,23 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfTyp
     }
 
   fieldsize= rows*cols*2;
+  wavelength_m= bl->BLOptions.lambda* 1e-3;
+  scaler= (wavelength_m > 0.0) ? (1e3 * (2.0 * PI/wavelength_m)/ EEV ) : 1e3;
 
   field= XMALLOC(double, fieldsize);
 
   for (col= 0; col < cols; col++)   // in the file the rows are fast
     for (row= 0; row < rows; row++)
       {
-	field[   (col + row * cols) * 2]= p->ezre[col+ row* cols]* 1e3;  
-	field[1+ (col + row * cols) * 2]= p->ezim[col+ row* cols]* 1e3;  // genesis in m^2 intensity normalization
+	field[   (col + row * cols) * 2]= p->ezre[col+ row* cols]* scaler;  
+	field[1+ (col + row * cols) * 2]= p->ezim[col+ row* cols]* scaler;  // genesis in m^2 intensity normalization
       }
 
-  wavelength= bl->BLOptions.lambda* 1e-3;
   gridsize  = (p->z[1]- p->z[0])* 1e-3;        // mm to m
 
   group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices");
-  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
+  writeDataDouble(file_id, "wavelength", &wavelength_m, 1, "wavelength in m");
   writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
   writeDataDouble(file_id, "slice000001/field", field, fieldsize, 
 		  "electrical field in (V/m) as c_style list (real,imag), (real, imag),...");
@@ -1059,21 +1059,24 @@ void emfp_fill7(struct BeamlineType *bl, double *a,  double *field, int offset, 
 
 
 /* genesis data are a linear array of real and imag numbers- use imag as offset */
-void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag)
+void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag, double wavelength_m)
 {
   int i, j, rows, cols;
-  double val;
+  double val, scaler;
 
   rows= bl->source_emfp->ny;
   cols= bl->source_emfp->nz;
+
+  scaler= 1e-3; // genesis data are per m^2 !!! intensity normalization !!!
+                // intensity is field ^2 therefore it is not 1e-6 but 1e-3
+  scaler= scaler* EEV/(2.0*PI/wavelength_m);
 
   for (j=0; j< rows; j++)                 /* fill matrix in fortran memory model */
     for (i=0; i< cols; i++) 
       {
 	val= field[imag + (i + j * cols)* 2];
 	if ( imag  && bl->BLOptions.PSO.iconj ) val*= -1.0;
-	a[i+ j* cols]= val * 1e-3;  // genesis data are per m^2 !!! intensity normalization !!!
-	// intensity is field ^2 therefore it is not 1e-6 but 1e-3
+	a[i+ j* cols]= val * scaler;  
       }
 } /* emfp_fill8 */
 

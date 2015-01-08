@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <09 Dec 14 10:13:06 flechsig> 
+;  Time-stamp: <08 Jan 15 12:33:18 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -506,11 +506,11 @@ pro phase::h5_write, fname, genesis=genesis, phase=phase, pha4idl=pha4idl, delta
 sgenesis= 0
 sphase  = 0
 spha4idl= 0
-if (n_elements(phase) eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
-if (n_elements(phase) ne 0 ) then sphase= 1
-if (n_elements(pha4idl) ne 0) then spha4idl= 1
-if (n_elements(delta) eq 0)   then delta= 0.0
-if (n_elements(yscale) eq 0)  then yscale= 1.0
+if (n_elements(phase)   eq 0 and n_elements(pha4idl) eq 0) or n_elements(genesis) ne 0 then sgenesis=1
+if (n_elements(phase)   ne 0 ) then sphase= 1
+if (n_elements(pha4idl) ne 0)  then spha4idl= 1
+if (n_elements(delta)   eq 0)  then delta= 0.0
+if (n_elements(yscale)  eq 0)  then yscale= 1.0
 
 if sgenesis gt 0 then $
   h5_write_genesis, fname, comp=*self.field, wavelength=self.wavelength, $
@@ -571,7 +571,7 @@ pro phase::gaussbeam, dist=dist, drift=drift, w0=w0, Nz=Nz, Ny=Ny, sizez=sizez, 
 ;   Nz            points hor.
 ;   Ny            points vert, default = Nz
 ;   sizey:        height (m),  default = sizez
-;   sizez:        width (m);
+;   sizez:        width (m); !! we assume sizez is distance between the extreme grid points- the real size is one bin bigger
 ;
 ; OUTPUTS:
 ;   no
@@ -627,10 +627,13 @@ w0         = double(w0)
 field  = dcomplexarr(Nz, Ny) 
 z_vec  = (dindgen(Nz)/(Nz-1) - 0.5) * sizez 
 y_vec  = (dindgen(Ny)/(Ny-1) - 0.5) * sizey
+dz     = z_vec[1]- z_vec[0]
+dy     = y_vec[1]- y_vec[0]
 
 print, 'wavelength (m) = ', wavelength
 print, 'Nz     = ', Nz      , ', Ny     = ', Ny
 print, 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey
+print, 'dz (m)    = ', dz      , ', dy (m)    = ', dy
 print, 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off
 print, 'w0    (m) = ', w0      , ', dist  (m) = ', dist
 
@@ -2495,7 +2498,7 @@ if n_elements(amplitude) eq 0 then begin
 print, 'max intensity (photons/m^2) = ', mymax/1.6e-19
 print, 'total intensity (photons)   = ', mytot/1.6e-19
 endif
-;;print, 'debug: mysum, binsize=', mysum, binsize
+print, 'debug: mysum, binsize=', mysum, binsize
 print, '=============================================================================='
 if n_elements(nofit) eq 0 then begin
 print, 'result of gauss2dfit in (m):', stat

@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <18 Feb 14 10:24:54 flechsig> 
+;  Time-stamp: <08 Jan 15 12:23:50 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -11,7 +11,7 @@
 
 pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
                      phase=phase, amp=amp, z_vec=z_vec, y_vec=y_vec, $
-                     wavelength=wavelength, beam=beam, verbose=verbose
+                     wavelength=wavelength, verbose=verbose
 ;+
 ; NAME:
 ;   h5_read_genesis
@@ -80,6 +80,7 @@ pro h5_read_genesis, fname, comp=comp, real=real, imag=imag, $
 ;
 ; MODIFICATION HISTORY:
 ;    25.3.13 UF
+;     8.1.15 UF correct normalization, remove beam
 ;-
 
 if n_elements(fname) eq 0 then fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.h5'
@@ -89,7 +90,6 @@ field0    = h5_read_dataset(file_id, 'slice000001/field')
 gridsize  = h5_read_dataset(file_id, 'gridsize')
 lambda    = h5_read_dataset(file_id, 'wavelength')
 h5f_close, file_id
-
 
 wavelength= lambda[0] ;; wavelength should be a scalar
 ;; help, wavelength, lambda
@@ -107,7 +107,11 @@ if (size2 ne len) then begin
     return
 endif
 
-field2= reform(field0, 2, size, size)
+;; normalization
+eev= 511000   ;; electronen ruhemasse in eV
+k  = 2.0*!dpi/ wavelength
+
+field2= reform(field0, 2, size, size)* eev/k  ;; scaled field
 
 real= reform(field2[0,*,*], size, size)
 imag= reform(field2[1,*,*], size, size)
@@ -121,31 +125,6 @@ comp= complex(real, imag, /double)
 x0= dindgen(size)- size/2
 z_vec = x0* gridsize[0]
 y_vec = z_vec * 1.0
-
-if KEYWORD_SET(beam) ne 0 then begin
-    print, 'fill beam structure'
-    beam={source4}  
-    beam.iezrex   = long(NZ)
-    beam.iezrey   = long(NY)
-    beam.ieyrex   = long(NZ)
-    beam.ieyrey   = long(NY)
-    beam.iezimx   = long(NZ)
-    beam.iezimy   = long(NY)
-    beam.ieyimx   = long(NZ)
-    beam.ieyimy   = long(NY)
-
-    beam.zezre(0:NY-1, 0:NZ-1)= zreal
-    beam.zeyre(0:NY-1, 0:NZ-1)= yreal
-    beam.zezim(0:NY-1, 0:NZ-1)= zimag
-    beam.zeyim(0:NY-1, 0:NZ-1)= yimag
-
-    beam.xezremin= min(z_vec)
-    beam.xezremax= max(z_vec)
-    beam.yezremin= min(y_vec)
-    beam.yezremax= max(y_vec)
-
-    beam.xlam= wavelength
-endif
 
 return
 end

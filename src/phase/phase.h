@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <19 Dec 14 10:32:53 flechsig>  */
+/*   Time-stamp: <08 Jan 15 13:49:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -55,6 +55,7 @@
 #define LIGHT_VELO      2.998e11         /* light velocity in mm/s   */   
 #define PI 3.141592653589793238462643383279502884197169399375105820974944592   /* double precision */
 #define VAC_IMPEDANCE   377.0              /* vacuum impedance z0; E^2 = z0 * Intensity (377 Ohm)  */
+#define EEV             511000             /* electron mass in eV */
            
 #define NEWARTBIT          1024             /* bit for new type of optical element in Art */
 #define GRATINGBIT         4096             /* grating bit */

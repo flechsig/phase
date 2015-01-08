@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <29 Aug 14 10:17:09 flechsig> 
+;  Time-stamp: <08 Jan 15 12:19:06 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -39,7 +39,7 @@
 
 pro h5_read, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp, $
              ycomp=ycomp, yreal=yreal, yimag=yimag, yphase=yphase, yamp=yamp, $
-             z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose 
+             z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose 
 ;+
 ; NAME:
 ;   h5_read
@@ -66,7 +66,6 @@ pro h5_read, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=z
 ;
 ; KEYWORD PARAMETERS:
 ;   amp:        amplitude (2d)
-;   beam:       beam structure (source4)
 ;   comp:       complex field (2d)
 ;   imag:       imaginary part (2d)
 ;   phase:      phase: (2d)
@@ -122,12 +121,12 @@ if (n_elements(verbose) ne 0) then print, 'h5_read: h5type=', h5type
 case h5type of
     7: h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp, $
       ycomp=ycomp, yreal=yreal, yimag=yimag, yphase=yphase, yamp=yamp, $
-      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose 
+      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose 
     8: h5_read_genesis, fname, comp=zcomp,  real=zreal, imag=zimag, phase=zphase, amp=zamp, $
-      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose
+      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose
     9: h5_read_pha4idl, fname, zcomp=zcomp,  zreal=zreal, zimag=zimag, zphase=zphase, zamp=zamp, $
       ycomp=ycomp, yreal=yreal, yimag=yimag, yphase=yphase, yamp=yamp, $
-      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose
+      z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, verbose=verbose
     else: print, 'no valid hdf5 file'
 endcase
 
