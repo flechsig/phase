@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <08 Jan 15 14:19:33 flechsig> 
+//  Time-stamp: <08 Jan 15 16:54:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -390,8 +390,16 @@ QWidget *MainWindow::createBeamlineBox()
     dlambdaE = new QLineEdit;
     dislenE  = new QLineEdit;
 
-    QLabel *lambdaLabel  = new QLabel(tr("lambda (nm)"));
-    QLabel *dlambdaLabel = new QLabel(tr("dla (nm)"));
+    QString str = tr(" (nm)");
+    str.prepend(QChar(0x03bb));
+    str.prepend(QChar(0x0394));
+
+    QString str0 = tr(" (nm)");
+    str0.prepend(QChar(0x03bb));
+
+    QLabel *lambdaLabel  = new QLabel(str0);
+    //QLabel *dlambdaLabel = new QLabel(tr("dla (nm)"));
+    QLabel *dlambdaLabel = new QLabel(str);
     QLabel *dislenLabel  = new QLabel(tr("dispersive length (mm)"));
 
     lambdaLabel->setStatusTip(tr("wavelength lambda"));
@@ -416,9 +424,18 @@ QWidget *MainWindow::createBeamlineBox()
     poButton = new QRadioButton(tr("&physical optic (PO)"));
     goButton->setChecked(true);
     misaliBox   = new QCheckBox(tr("with misalignment"));
-    dlambdaBox  = new QCheckBox(tr("dla mode"));
-    dlambdaBox1 = new QCheckBox(tr("la"));
-    dlambdaBox2 = new QCheckBox(tr("la+dla"));
+    QString str1 = tr(" mode");
+    str1.prepend(QChar(0x03bb));
+    str1.prepend(QChar(0x0394));
+    QString str2 = QChar(0x03bb);
+    QString str3 = tr("+");
+    str3.prepend(QChar(0x03bb));
+    str3.append(QChar(0x0394));
+    str3.append(QChar(0x03bb));
+
+    dlambdaBox  = new QCheckBox(str1);
+    dlambdaBox1 = new QCheckBox(str2);
+    dlambdaBox2 = new QCheckBox(str3);
 
     beamlineCalcLayout->addWidget(goButton,  0, 0);
     beamlineCalcLayout->addWidget(poButton,  1, 0);
@@ -2720,14 +2737,14 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 	} // end sf
       else // PO
 	{
-	  stLabel30->setText(QString(tr("max (W/m^2)")));  // 30
+	  stLabel30->setText(QString(tr("max (W/m<sup>2</sup>)")));  // 30
 	  stLabel30->setStatusTip(tr("maximum of intensity (W/m^2)"));
 	  stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // give out value per m^2
 	  stLabel32->setText(QString(tr("total (W)")));    // 31
 	  stLabel32->setStatusTip(tr("intensity integral (W)"));
 	  stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  
 
-	  stLabel40->setText(QString(tr("max (phot/(s m^2))")));  // 30
+	  stLabel40->setText(QString(tr("max (phot/(s m<sup>2</sup>))")));  // 30
 	  stLabel40->setStatusTip(tr("maximum of intensity (photons/(s m^2))"));
 	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");  // give out value per m^2
 	  stLabel42->setText(QString(tr("total (phot/s)")));    // 31
