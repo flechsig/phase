@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <28 Aug 14 16:50:20 flechsig>  */
+/* Time-stamp: <13 Jan 15 16:43:11 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -195,7 +195,8 @@ int ReadMaterial(char *element, int *z, double *a, double *rho)
   while (! feof(f) && ! found)
     {
       fgets(buffer, (MaxPathLength-1), f);
-      found= (strncmp(buffer, element, 2) == 0) ? 1 : 0;
+      found= (strncmp(buffer, element, strlen(element)) == 0) ? 1 : 0;
+      //     printf("found= %d, %s, %s\n", found, buffer, element);
     }
   fclose(f);
 
