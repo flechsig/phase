@@ -57,12 +57,12 @@
 int main(int argc, char *argv[])
 {
   int        i, size, size_save, rank, numtasks, taskid, sender, index, ny, nz, resultid;
-  int        setupswitch, cmode, selected, iord, numthreads, format;
+  int        setupswitch, cmode, selected, iord, numthreads, format, idx;
   MPI_Status status;
   double     starttime, endtime, duration, results[N_RESULTS];
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
-  struct PSDType     *PSDp;
+  //struct PSDType     *PSDp;
       
   MPI_Init(&argc, &argv);
   starttime= MPI_Wtime();
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
   bl->tp= NULL;
   bl->RTSource.Quellep= NULL;
   bl->RTSource.QuellTyp= '0';
-  bl->posrc.iconj= 0;
+  // bl->posrc.iconj= 0;
   bl->BLOptions.ifl.inorm= 0;
   bl->BLOptions.ifl.pst_mode= 2;
 
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
   ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
   numtasks= psip->iy * psip->iz;
  
-  PSDp= (struct PSDType *)bl->RESULT.RESp;
+  //PSDp= (struct PSDType *)bl->RESULT.RESp;
   //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
   /* end phase */
   Test4Grating(bl);
@@ -169,14 +169,25 @@ int main(int argc, char *argv[])
 	       index=  resultid- 1;  /* index starts from 0, the tasks from 1 */
 	       nz= index % psip->iz; // c loop
 	       ny= index / psip->iz; // c loop
-	     
+
+	       idx= nz+ ny*bl->result_emfp->nz;
+	       bl->result_emfp->eyre[idx]= results[1];//xirp->yzintey.re;
+	       bl->result_emfp->eyim[idx]= results[2];//xirp->yzintey.im;
+	       bl->result_emfp->ezre[idx]= results[3];// xirp->yzintez.re;   
+	       bl->result_emfp->ezim[idx]= results[4];//xirp->yzintez.im;
+	       
+	       bl->result_emfp->y[ny]=  results[6];//yi;
+	       bl->result_emfp->z[nz]=  results[7];//zi;
+
+  /*	     
 	       PSDp->eyrec[ny+nz*psip->iy]= results[1];
 	       PSDp->eyimc[ny+nz*psip->iy]= results[2];
 	       PSDp->ezrec[ny+nz*psip->iy]= results[3];
 	       PSDp->ezimc[ny+nz*psip->iy]= results[4]; 
-	       /* PSDp->psd[ny+nz*psip->iy]  = results[5]; */
+	       PSDp->psd[ny+nz*psip->iy]  = results[5]; 
 	       PSDp->y[ny]		  = results[6];
 	       PSDp->z[nz]		  = results[7];
+  */
 	       //printf("master -> save result with id= %d saved\n", resultid);
 	     } 
 
@@ -245,13 +256,27 @@ int main(int argc, char *argv[])
 	      nz= index % psip->iz; // c loop
 	      ny= index / psip->iz; // c loop
 	      results[0]= (double)taskid;                 // first is taskid
+
+
+	      /* UF Jan15
+	      results[1]= PSDp->eyrec[ny+nz*psip->iy];
+	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
+	      results[3]= PSDp->ezrec[ny+nz*psip->iy];
+	      results[4]= PSDp->ezimc[ny+nz*psip->iy]; 
+	      results[6]= PSDp->y[ny];
+	      results[7]= PSDp->z[nz];
+	      */
+
+
+	      /*
 	      results[1]= PSDp->eyrec[ny+nz*psip->iy];
 	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
 	      results[3]= PSDp->ezrec[ny+nz*psip->iy];
 	      results[4]= PSDp->ezimc[ny+nz*psip->iy]; 
 	      /*	      results[5]= PSDp->psd[ny+nz*psip->iy];*/
-	      results[6]= PSDp->y[ny];
+	      /* results[6]= PSDp->y[ny];
 	      results[7]= PSDp->z[nz];
+*/
 
 #ifdef DEBUG
 	      printf("%d: solve task %d done\n", rank, taskid);
@@ -290,7 +315,7 @@ int main(int argc, char *argv[])
       switch (format)
 	{
 	case 1:
-	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  //	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	  break;
 	case 2:
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
@@ -300,7 +325,7 @@ int main(int argc, char *argv[])
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
-	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
+	  // WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	}
       
       duration= endtime- starttime;

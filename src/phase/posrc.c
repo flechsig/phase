@@ -170,7 +170,7 @@ struct EmfType *emfp_free(struct EmfType *emfp)
   printf("debug: emfp_free called, pointer=0x%X, file: %s\n", (int)emfp, __FILE__);
 #endif
 
-  if (!emfp) return;
+  if (!emfp) return emfp;
 #ifdef DEBUG1
   printf("debug: emfp_free old nz= %d, ny= %d\n", emfp->nz, emfp->ny);
 #endif
