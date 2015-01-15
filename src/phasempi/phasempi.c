@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <15 Jan 15 11:44:13 flechsig>  */
+/*  Time-stamp: <15 Jan 15 16:29:01 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
   //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
   /* end phase */
   Test4Grating(bl);
- 
+  bl->position= 0;
   //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
   //numtasks= 2;  // for debugging
 
@@ -179,6 +179,7 @@ int main(int argc, char *argv[])
 	       ny= index / psip->iz; // c loop
 
 	       idx= nz+ ny*bl->result_emfp->nz;
+	       /*
 	       bl->result_emfp->eyre[idx]= results[1];//xirp->yzintey.re;
 	       bl->result_emfp->eyim[idx]= results[2];//xirp->yzintey.im;
 	       bl->result_emfp->ezre[idx]= results[3];// xirp->yzintez.re;   
