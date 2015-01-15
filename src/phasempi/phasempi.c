@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <15 Jan 15 16:29:01 flechsig>  */
+/*  Time-stamp: <15 Jan 15 16:44:04 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -141,9 +141,18 @@ int main(int argc, char *argv[])
   /* end phase */
   Test4Grating(bl);
   bl->position= 0;
+  if (bl->emfp) 
+    {
+      emfp_free(bl->emfp);
+      bl->emfp= NULL;
+    }
+  bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
+  emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
+  if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);  // clean up result
+  bl->result_emfp= emfp_construct(psip->iz, psip->iy); // !! image plane - not source
   //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
   //numtasks= 2;  // for debugging
-
+  
   /* mpi */
   taskid= numtasks;
   while (1)  /* the main loop executed on each host */
