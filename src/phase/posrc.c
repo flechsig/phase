@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <08 Jan 15 14:11:28 flechsig>  */
+/*  Time-stamp: <15 Jan 15 10:01:36 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -307,17 +307,6 @@ void gauss_source1c(struct BeamlineType *bl)
 #endif
 } // gauss_source1c
 
-/* initializes the pointers with NULL */
-void posrc_construct(struct BeamlineType *bl)
-{
-#ifndef OBSOLETE
-  printf("call to obsolete function posrc_construct\n", __FILE__);
-#else
-  bl->posrc.zeyre= bl->posrc.zeyim= bl->posrc.zezre= 
-    bl->posrc.zezim= bl->posrc.gridx= bl->posrc.gridy= NULL;
-#endif
-} /* end posrc_construct */
-
 /* initializes the source depending on type */
 int posrc_ini(struct BeamlineType *bl)
 {
@@ -444,12 +433,12 @@ void source8c_ini(struct BeamlineType *bl)
 
 }  /* source8c_ini */
 
-/* reads the source files and puts the results into bl->posrc */
+/* reads the source files and puts the results into bl->source_emfp */
 void source7c_ini(struct BeamlineType *bl, int checktype)
 {
 #ifdef HAVE_HDF5
   
-  int i, t_size,  cols, rows, it, array_items;
+  int i, t_size, cols, rows, it, array_items;
   hid_t  file_id;  /* identifiers */
   /* , e_dataset_id, y_dataset_id, z_dataset_id, t_dataset_id, 
      y_dataspace_id, z_dataspace_id, t_dataspace_id, e_dataspace_id */
@@ -816,6 +805,7 @@ struct EmfType *read_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfT
       p= emfp_construct(cols, rows);
       for (i=0; i< bl->source_emfp->ny; i++) p->y[i]= y[i]*1e3;
       for (i=0; i< bl->source_emfp->nz; i++) p->z[i]= z[i]*1e3;
+      it= 0;          /* so far - read only first slice */
       emfp_fill7(bl, p->eyre, field, 0, it, 0);
       emfp_fill7(bl, p->eyim, field, 1, it, 1);
       emfp_fill7(bl, p->ezre, field, 2, it, 0);

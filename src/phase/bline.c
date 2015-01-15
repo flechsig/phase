@@ -1,6 +1,6 @@
-/*   File      : S_UF/afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
+/*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <19 Dec 14 15:16:43 flechsig>  */
+/*   Time-stamp: <15 Jan 15 09:35:08 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */

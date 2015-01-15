@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/project/phase/src/phase/pst_thread.c */
 /*  Date      : <21 Mar 13 15:03:19 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:50:20 flechsig>  */
+/*  Time-stamp: <15 Jan 15 11:09:45 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -74,8 +74,19 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
   sp= (struct psimagest *)bl->RTSource.Quellep;
   npoints= sp->iheigh * sp->iwidth;
   bl->BLOptions.PSO.intmod= 2;   
-  Test4Grating(bl);          
+  Test4Grating(bl);     
 
+  bl->RESULT.outside_wl= 0;  
+  if (bl->emfp) 
+    {
+      emfp_free(bl->emfp);
+      bl->emfp= NULL;
+    }
+  bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
+  emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
+  if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);  // clean up result
+  bl->result_emfp= emfp_construct(sp->iwidth, sp->iheigh); // !! image plane - not source
+  bl->position= 0;
   /*
     this has the effect of rounding up the number of tasks
     per thread, which is useful in case ARRAYSIZE does not

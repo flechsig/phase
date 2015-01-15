@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 Dec 14 15:39:24 flechsig> 
+//  Time-stamp: <15 Jan 15 10:18:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -630,7 +630,6 @@ if (!myparent->myBuildBeamline())
 
       bl->beamlineOK &= ~resultOK;
       UpdateStatus();
-
      
       if (!myparent->myBuildBeamline()) 
 	{

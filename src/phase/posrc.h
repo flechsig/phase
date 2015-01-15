@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <08 Jan 15 13:59:17 flechsig>  */
+/*  Time-stamp: <15 Jan 15 09:55:25 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -60,7 +60,7 @@ struct EmfType *emfp_free(struct EmfType *);
 //void emfp_2_psd(struct BeamlineType *);
 //void emfp_2_source4c(struct BeamlineType *);
 void gauss_source1c(struct BeamlineType *);
-void posrc_construct(struct BeamlineType *);
+
 FILE *posrc_fopen(char *);
 int  posrc_ini(struct BeamlineType *);
 

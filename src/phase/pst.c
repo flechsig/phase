@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <19 Dec 14 15:27:59 flechsig>  */
+/*   Time-stamp: <15 Jan 15 10:31:17 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -435,7 +435,7 @@ void pstc(struct BeamlineType *bl)
       emfp_free(bl->emfp);
       bl->emfp= NULL;
     }
-  write_phase_hdf5_file(bl, "debugsource00.h5", bl->source_emfp);
+  //write_phase_hdf5_file(bl, "debugsource00.h5", bl->source_emfp);
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
   oldposition= bl->position;           // remember previous value- dont know if important
@@ -443,8 +443,8 @@ void pstc(struct BeamlineType *bl)
   while (nu < bl->elementzahl)
     {
       bl->position= nu;                // put elementindex in bl->position
-      snprintf(debugfname, 254, "debugsource%d.h5", nu);
-      write_phase_hdf5_file(bl, debugfname, bl->emfp);
+      //snprintf(debugfname, 254, "debugsource%d.h5", nu);
+      //write_phase_hdf5_file(bl, debugfname, bl->emfp);
       driftlen= bl->ElementList[nu].GDat.r+ bl->ElementList[nu].GDat.rp;
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
@@ -480,7 +480,7 @@ void pstc(struct BeamlineType *bl)
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 	} // switch
       snprintf(debugfname, 254, "debugresult%d.h5", nu);
-      write_phase_hdf5_file(bl, debugfname, NULL);
+      //write_phase_hdf5_file(bl, debugfname, NULL);
       nu++;
       if (nu < bl->elementzahl)
 	{
@@ -488,11 +488,11 @@ void pstc(struct BeamlineType *bl)
 	  bl->emfp= emfp_free(bl->emfp);
 	  bl->emfp= emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
 	  emfp_cpy(bl->emfp, bl->result_emfp);
-	  write_phase_hdf5_file(bl, "debuginter.h5", NULL);
+	  //write_phase_hdf5_file(bl, "debuginter.h5", NULL);
 	}
     } // while
   bl->position= oldposition; // restore value
-  write_phase_hdf5_file(bl, "debugendresult.h5", NULL);
+  //write_phase_hdf5_file(bl, "debugendresult.h5", NULL);
   bl->emfp= emfp_free(bl->emfp); // clean up
   bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");

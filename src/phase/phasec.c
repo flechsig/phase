@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <15 Dec 14 11:49:48 flechsig>  */
+/*   Time-stamp: <15 Jan 15 11:23:47 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -70,7 +70,7 @@
 #include "rtrace.h"
 #include "posrc.h"
 #include "version.h"
-
+ 
 /* Batchmodus */
 void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int threads, int format)
 {
@@ -100,6 +100,14 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
   bl->BLOptions.ifl.inorm= 0;
   bl->BLOptions.ifl.pst_mode= 2;
   bl->int_details=NULL;
+  bl->emfp= NULL;
+  bl->source_emfp= NULL;
+  bl->result_emfp= NULL;
+  bl->int_details= NULL;
+  bl->simpre= NULL;
+  bl->simpim= NULL;
+  bl->sintre= NULL;
+  bl->sintim= NULL;
 
   ReadBLFile(bl->filenames.beamlinename, bl);
   if (iord != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord */
@@ -127,21 +135,14 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
     
     case 3: 
       printf("BatchMode: Phase Space Transformation\n");
-#ifdef OLD_PO_SOURCE
-      src_ini(&bl->src); 
-#else
-      posrc_construct(bl);
       posrc_ini(bl);
-#endif 
-      psip = (struct PSImageType *)bl->RTSource.Quellep;
-      ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       PST(bl);
-      PSDp= (struct PSDType *)bl->RESULT.RESp;
+      
       switch (format)
 	{
 	case 1:
-	  printf("warning: WritePsd is obsolete and temporarely deactivated- use hdf5 output instead\n");
-	  //WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
+	  printf("warning: WritePsd is obsolete and deactivated- use hdf5 output instead- exit\n");
+	  exit(-1);
 	  break;
 #ifdef HAVE_HDF5
 	case 2:
@@ -150,11 +151,14 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	case 3:
 	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
-#endif
 	default:
 	  printf("error: %d output format not defined or supported- use default\n", format);
-	  printf("warning: WritePsd is obsolete and temporarely deactivated- use hdf5 output instead\n");
-	  //WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
+#else
+	  default:
+	    printf("error: %d output format not defined or supported and no hdf5 available- exit\n", format);
+	    exit(-1);
+#endif
 	}
       break;
 
@@ -169,7 +173,7 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
       break;
 
     case 5:
-      printf("BatchMode: multiple Phase Space Imaging is obsolete and deactivate\n");
+      printf("BatchMode: multiple Phase Space Imaging is obsolete and deactivated\n");
 
 #ifdef OBSOLETE
 #ifdef OLD_PO_SOURCE
@@ -189,19 +193,16 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 
     case 6: 
       printf("BatchMode: Phase Space Transformation in multiple threads (experimental)\n");
-      posrc_construct(bl);
       posrc_ini(bl);
-      psip = (struct PSImageType *)bl->RTSource.Quellep;
-      ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
       if (threads < 1) threads= 4;   /* set some default */
       pst_thread(bl, threads);
       threadinfo= threads;
-      PSDp= (struct PSDType *)bl->RESULT.RESp;
+      
       switch (format)
 	{
 	case 1:
-	  printf("warning: WritePsd is obsolete and temporarely deactivated- use hdf5 output instead\n");
-	  //WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
+	  printf("warning: WritePsd is obsolete and temporarely deactivated- use hdf5 output instead- exit\n");
+	  exit(-1);
 	  break;
 #ifdef HAVE_HDF5
 	case 2:
@@ -210,11 +211,14 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
 	case 3:
 	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
-#endif
 	default:
 	  printf("error: %d output format not defined or supported- use default\n", format);
-	  printf("warning: WritePsd is obsolete and temporarely deactivated- use hdf5 output instead\n");
-	  //WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz, bl);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
+#else
+	  default:
+	    printf("error: %d output format not defined or supported and no hdf5 available- exit\n", format);
+	    exit(-1);
+#endif
 	}
       break;
 

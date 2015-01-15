@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <02 Sep 14 12:20:10 flechsig>  */
+/*  Time-stamp: <15 Jan 15 11:28:25 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -114,6 +114,14 @@ int main(int argc, char *argv[])
   // bl->posrc.iconj= 0;
   bl->BLOptions.ifl.inorm= 0;
   bl->BLOptions.ifl.pst_mode= 2;
+  bl->emfp= NULL;
+  bl->source_emfp= NULL;
+  bl->result_emfp= NULL;
+  bl->int_details= NULL;
+  bl->simpre= NULL;
+  bl->simpim= NULL;
+  bl->sintre= NULL;
+  bl->sintim= NULL;
 
   ReadBLFile(bl->filenames.beamlinename, bl);
 
@@ -315,6 +323,8 @@ int main(int argc, char *argv[])
       switch (format)
 	{
 	case 1:
+	  printf("error: %d output format obsolete- use default\n", format);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
 	  //	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	  break;
 	case 2:
@@ -325,6 +335,7 @@ int main(int argc, char *argv[])
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
 	  // WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	}
       
