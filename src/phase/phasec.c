@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <15 Jan 15 11:23:47 flechsig>  */
+/*   Time-stamp: <15 Jan 15 17:11:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -99,7 +99,6 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
   bl->BLOptions.PSO.iconj= 0;
   bl->BLOptions.ifl.inorm= 0;
   bl->BLOptions.ifl.pst_mode= 2;
-  bl->int_details=NULL;
   bl->emfp= NULL;
   bl->source_emfp= NULL;
   bl->result_emfp= NULL;
