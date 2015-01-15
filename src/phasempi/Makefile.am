@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <15 Dec 14 15:05:22 flechsig> 
+#  Time-stamp: <15 Jan 15 11:37:48 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -42,22 +42,25 @@
 bin_PROGRAMS  = phasempi 
 phasempi_SOURCES = \
         phasempi.c       phasempi.h \
-        ../phase/bline.c ../phase/cutils.c ../phase/error.c \
-        ../phase/phasec.c ../phase/rtrace.c ../phase/myhdf5.c ../phase/myhdf5.h \
-        ../phase/xmalloc.c ../phase/xstrdup.c  ../phase/pst_thread.c ../phase/thread.h\
-	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
-	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
-	../phase/rekursiv_2d_8.F \
-	../phase/phasefor.F  \
+        ../phase/bline.c ../phase/cutils.c \
+	../phase/error.c ../phase/pst.c \
+        ../phase/phasec.c     ../phase/rtrace.c \
+        ../phase/xmalloc.c    ../phase/xstrdup.c  \
+	../phase/drift_8.for  ../phase/elli_8.F \
+	../phase/fdet_8.for   ../phase/phase_integration.F \
+	../phase/fgmapidp_8.F        ../phase/make_matrix_8.for \
+	../phase/rekursiv_2d_8.F     ../phase/phasefor.F  \
 	../phase/get_partial_etc.for ../phase/replace_6v4v.F \
-	../phase/replace_wl_in_u.F ../phase/replace_wl_in_ypzp.F \
-	../phase/taylor-ops.for \
-	../phase/pst.c ../phase/phase_integration.F \
-  -     ../phase/posrc.c ../phase/posrc.h \
+	../phase/replace_wl_in_u.F   ../phase/replace_wl_in_ypzp.F \
+	../phase/taylor-ops.for      ../phase/psdi.F \
+	../phase/heighterror.c   ../phase/heighterror.h \
+	../phase/myhdf5.c        ../phase/myhdf5.h \
+	../phase/myfftw3.c       ../phase/myfftw3.h \
+        ../phase/posrc.c         ../phase/posrc.h \
+	../phase/pst_thread.c    ../phase/pst_thread.h \
+	../phase/reflectivity.c  ../phase/reflectivity.h \
 	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h \
-	../phase/reflectivity.c ../phase/reflectivity.h \
-	../phase/heighterror.c ../phase/heighterror.h \
-	../phase/psdi.F          ../phase/src4.F
+	../phase/src4.F
 
 ##dummy_DATA = \
 ##	configwindow.cpp configwindow.h \
