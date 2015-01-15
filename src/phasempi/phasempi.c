@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <15 Jan 15 11:28:25 flechsig>  */
+/*  Time-stamp: <15 Jan 15 11:44:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -129,11 +129,11 @@ int main(int argc, char *argv[])
 
   BuildBeamline(bl);
 
-  posrc_construct(bl);
+  //posrc_construct(bl);
   posrc_ini(bl);
   psip = (struct PSImageType *)bl->RTSource.Quellep;
 
-  ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
+  //ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
   numtasks= psip->iy * psip->iz;
  
   //PSDp= (struct PSDType *)bl->RESULT.RESp;
