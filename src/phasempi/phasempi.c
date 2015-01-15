@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <15 Jan 15 16:44:04 flechsig>  */
+/*  Time-stamp: <15 Jan 15 16:55:30 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -148,6 +148,7 @@ int main(int argc, char *argv[])
     }
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
+  
   if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);  // clean up result
   bl->result_emfp= emfp_construct(psip->iz, psip->iy); // !! image plane - not source
   //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
@@ -188,7 +189,7 @@ int main(int argc, char *argv[])
 	       ny= index / psip->iz; // c loop
 
 	       idx= nz+ ny*bl->result_emfp->nz;
-	       /*
+	       
 	       bl->result_emfp->eyre[idx]= results[1];//xirp->yzintey.re;
 	       bl->result_emfp->eyim[idx]= results[2];//xirp->yzintey.im;
 	       bl->result_emfp->ezre[idx]= results[3];// xirp->yzintez.re;   
@@ -275,15 +276,15 @@ int main(int argc, char *argv[])
 	      ny= index / psip->iz; // c loop
 	      results[0]= (double)taskid;                 // first is taskid
 
-
-	      /* UF Jan15
-	      results[1]= PSDp->eyrec[ny+nz*psip->iy];
-	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
-	      results[3]= PSDp->ezrec[ny+nz*psip->iy];
-	      results[4]= PSDp->ezimc[ny+nz*psip->iy]; 
-	      results[6]= PSDp->y[ny];
-	      results[7]= PSDp->z[nz];
-	      */
+	      idx= nz+ ny*bl->result_emfp->nz;
+	      
+	      results[1]= bl->result_emfp->eyre[idx];
+	      results[2]= bl->result_emfp->eyim[idx];
+	      results[3]= bl->result_emfp->ezre[idx];
+	      results[4]= bl->result_emfp->ezim[idx]; 
+	      results[6]= bl->result_emfp->y[ny];
+	      results[7]= bl->result_emfp->z[nz];
+	      
 
 
 	      /*
