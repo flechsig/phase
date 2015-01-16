@@ -62,8 +62,7 @@ int main(int argc, char *argv[])
   double     starttime, endtime, duration, results[N_RESULTS];
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
-  //struct PSDType     *PSDp;
-      
+        
   MPI_Init(&argc, &argv);
   starttime= MPI_Wtime();
   MPI_Comm_size(MPI_COMM_WORLD, &size); // the number of involved cores
@@ -77,7 +76,7 @@ int main(int argc, char *argv[])
   setupswitch= ProcComandLine(&Beamline.filenames, argc, argv, &cmode, 
 			      &selected, &iord, &numthreads, &format);
   /* ignore parameters: cmode, selected, numthreads and also setupswitch */
-  /* we evaluaete the filenames, iord and format */
+  /* we evaluate the filenames, iord and format */
 
 #ifdef DEBUG 
   /*  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1); */ /* for debugging */
@@ -125,7 +124,7 @@ int main(int argc, char *argv[])
 
   ReadBLFile(bl->filenames.beamlinename, bl);
 
-  if (iord  != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord if provided */
+  if (iord != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord if provided */
 
   BuildBeamline(bl);
 
@@ -136,7 +135,6 @@ int main(int argc, char *argv[])
   //ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
   numtasks= psip->iy * psip->iz;
  
-  //PSDp= (struct PSDType *)bl->RESULT.RESp;
   //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
   /* end phase */
   Test4Grating(bl);
@@ -190,23 +188,15 @@ int main(int argc, char *argv[])
 
 	       idx= nz+ ny*bl->result_emfp->nz;
 	       
-	       bl->result_emfp->eyre[idx]= results[1];//xirp->yzintey.re;
-	       bl->result_emfp->eyim[idx]= results[2];//xirp->yzintey.im;
-	       bl->result_emfp->ezre[idx]= results[3];// xirp->yzintez.re;   
-	       bl->result_emfp->ezim[idx]= results[4];//xirp->yzintez.im;
+	       bl->result_emfp->eyre[idx]= results[1];
+	       bl->result_emfp->eyim[idx]= results[2];
+	       bl->result_emfp->ezre[idx]= results[3];   
+	       bl->result_emfp->ezim[idx]= results[4];
 	       
-	       bl->result_emfp->y[ny]=  results[6];//yi;
-	       bl->result_emfp->z[nz]=  results[7];//zi;
+	       bl->result_emfp->y[ny]=  results[6];
+	       bl->result_emfp->z[nz]=  results[7];
 
-  /*	     
-	       PSDp->eyrec[ny+nz*psip->iy]= results[1];
-	       PSDp->eyimc[ny+nz*psip->iy]= results[2];
-	       PSDp->ezrec[ny+nz*psip->iy]= results[3];
-	       PSDp->ezimc[ny+nz*psip->iy]= results[4]; 
-	       PSDp->psd[ny+nz*psip->iy]  = results[5]; 
-	       PSDp->y[ny]		  = results[6];
-	       PSDp->z[nz]		  = results[7];
-  */
+ 
 	       //printf("master -> save result with id= %d saved\n", resultid);
 	     } 
 
@@ -335,18 +325,20 @@ int main(int argc, char *argv[])
 	{
 	case 1:
 	  printf("error: %d output format obsolete- use default\n", format);
-	  //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+	  //for (i=0; i< 10; i++) printf("%d, %f\n", i, bl->result_emfp->y[i]);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  //	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	  break;
 	case 2:
-	  write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 	case 3:
-	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname);
+	  printf("write results to file %s\n",   bl->filenames.imageraysname);
+	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
-	  //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
+	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  // WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	}
       
