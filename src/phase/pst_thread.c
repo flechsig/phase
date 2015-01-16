@@ -84,8 +84,8 @@ void pst_thread(struct BeamlineType *bl, int numthreads)
     }
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
-  if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);  // clean up result
-  bl->result_emfp= emfp_construct(sp->iwidth, sp->iheigh); // !! image plane - not source
+  if (bl->result_emfp) bl->result_emfp= (struct EmfType *)emfp_free(bl->result_emfp);  // clean up result
+  bl->result_emfp= (struct EmfType *)emfp_construct(sp->iwidth, sp->iheigh); // !! image plane - not source
   bl->position= 0;
   /*
     this has the effect of rounding up the number of tasks

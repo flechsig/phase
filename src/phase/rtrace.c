@@ -960,7 +960,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
 #endif
       break;
     case PLphspacetype:
-      printf("info: obsolete call to ReAllocResult\n", __FILE__);
+      printf("info: obsolete call to ReAllocResult, file=%s\n", __FILE__);
       break;
     default: 
       fprintf(stderr, 

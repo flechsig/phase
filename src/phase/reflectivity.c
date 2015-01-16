@@ -232,7 +232,7 @@ int SetReflectivity(struct ElementType *ep, double wavelength)
 
   if (!(wavelength > 0.0))
     {
-      fprintf(stderr, "error SetReflectivity: wavelength not defined (%f)- return");
+      fprintf(stderr, "error SetReflectivity: wavelength not defined (%f)- return\n", wavelength);
       return 0;
     }
 

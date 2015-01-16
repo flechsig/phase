@@ -1078,7 +1078,7 @@ int StackTest()
       
   getrlimit(RLIMIT_STACK, &rls);
  
-  printf("StackTest- limits: rlim_cur: %f Mb, rlim_max: %d byte\n", 
+  printf("StackTest- limits: rlim_cur: %f Mb, rlim_max: %ld byte\n", 
 	 rls.rlim_cur* 1e-6, rls.rlim_max);
 
   if ((double)rls.rlim_cur < mywarning)

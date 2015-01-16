@@ -449,34 +449,34 @@ void pstc(struct BeamlineType *bl)
       printf("*************************************\n");
       printf("*** PO element No %d, drift= %f\n", nu, driftlen);
       printf("*************************************\n");
-      if (bl->result_emfp) bl->result_emfp= emfp_free(bl->result_emfp);  // clean up result
+      if (bl->result_emfp) bl->result_emfp= (struct EmfType *)emfp_free(bl->result_emfp);  // clean up result
       switch (bl->ElementList[nu].MDat.Art)
 	{
 	case 100:
-	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny); 
+	  bl->result_emfp= (struct EmfType *)emfp_construct(bl->emfp->nz, bl->emfp->ny); 
 	  drift_auto_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 101:
-	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  bl->result_emfp= (struct EmfType *)emfp_construct(bl->emfp->nz, bl->emfp->ny);
 	  drift_fourier_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 102:
-	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  bl->result_emfp= (struct EmfType *)emfp_construct(bl->emfp->nz, bl->emfp->ny);
 	  drift_fresnel_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 103:
-	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  bl->result_emfp= (struct EmfType *)emfp_construct(bl->emfp->nz, bl->emfp->ny);
 	  drift_fraunhofer_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case kEOECopy:      // 104
-	  bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  bl->result_emfp= (struct EmfType *)emfp_construct(bl->emfp->nz, bl->emfp->ny);
 	  printf("kEOECopy: copy bl->emfp to bl->result_emfp\n");
 	  emfp_cpy(bl->result_emfp, bl->emfp);
 	  break;
 	default:
 	  printf("*** stationary phase propagation ****\n");
 	  printf("*************************************\n");
-	  bl->result_emfp= emfp_construct(psip->iz, psip->iy); // !! image plane - not source
+	  bl->result_emfp= (struct EmfType *)emfp_construct(psip->iz, psip->iy); // !! image plane - not source
 	  for (index= 0; index < npoints; index++) pstc_i(index, bl, m4p, &cs); /* calculation */
 	} // switch
       snprintf(debugfname, 254, "debugresult%d.h5", nu);
@@ -485,19 +485,19 @@ void pstc(struct BeamlineType *bl)
       if (nu < bl->elementzahl)
 	{
 	  printf("elements left in list: copy result to source\n");
-	  bl->emfp= emfp_free(bl->emfp);
-	  bl->emfp= emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
+	  bl->emfp= (struct EmfType *)emfp_free(bl->emfp);
+	  bl->emfp= (struct EmfType *)emfp_construct(bl->result_emfp->nz, bl->result_emfp->ny);
 	  emfp_cpy(bl->emfp, bl->result_emfp);
 	  //write_phase_hdf5_file(bl, "debuginter.h5", NULL);
 	}
     } // while
   bl->position= oldposition; // restore value
   //write_phase_hdf5_file(bl, "debugendresult.h5", NULL);
-  bl->emfp= emfp_free(bl->emfp); // clean up
+  bl->emfp= (struct EmfType *)emfp_free(bl->emfp); // clean up
   bl->emfp= NULL;  // needs explicit 0 dontknow why 
   printf("\n");
   totrays= npoints* bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
-  printf("outside_wl: %d out of %d (%f %)\n", bl->RESULT.outside_wl, totrays, 100.0*bl->RESULT.outside_wl/totrays);
+  printf("outside_wl: %ld out of %d (%f %)\n", bl->RESULT.outside_wl, totrays, 100.0*bl->RESULT.outside_wl/totrays);
 
   iinumb=0;
   //for (i= 0; i < npoints; i++) iinumb+= stp->inumb[i+1];   // fraglich
@@ -626,7 +626,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
   */
 
-  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, &bl->isrctype_c, &bl->BLOptions.apr, 
+  adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, (int *)&bl->isrctype_c, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, &lostwl, (int *)bl);
 
   bl->RESULT.outside_wl+= lostwl;  // UF OCT 14 not threadsafe !!!!
