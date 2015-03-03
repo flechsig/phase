@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <08 Jan 15 12:19:06 flechsig> 
+;  Time-stamp: <03 Mar 15 16:40:10 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -51,18 +51,11 @@ pro h5_read, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=z
 ; CATEGORY:
 ;   hdf5
 ;
-;
 ; CALLING SEQUENCE:
-;
-;
+;   h5_read, 'fname', ...
 ;
 ; INPUTS:
 ;   fname: filename
-;
-;
-; OPTIONAL INPUTS:
-;
-;
 ;
 ; KEYWORD PARAMETERS:
 ;   amp:        amplitude (2d)
@@ -74,30 +67,6 @@ pro h5_read, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, zphase=zphase, zamp=z
 ;   wavelength: wavelength
 ;   y:          vertical vector
 ;   z:          horizontal vector 
-;
-; OUTPUTS:
-;
-;
-;
-; OPTIONAL OUTPUTS:
-;
-;
-;
-; COMMON BLOCKS:
-;
-;
-;
-; SIDE EFFECTS:
-;
-;
-;
-; RESTRICTIONS:
-;
-;
-;
-; PROCEDURE:
-;
-;
 ;
 ; EXAMPLE:
 ;   idl> h5_read,'abc.h5', amp=a, z=z, y=y
