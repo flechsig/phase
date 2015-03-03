@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/h5_test.pro
 ;  Date      : <18 Jul 13 09:04:13 flechsig> 
-;  Time-stamp: <18 Jul 13 09:28:16 flechsig> 
+;  Time-stamp: <03 Mar 15 16:33:10 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -74,7 +74,7 @@ if n_elements(fname) eq 0 then $
   fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
 if n_elements(verbose) ne 0 then verbose=verbose else verbose=0
 
-cmd= 'file -b '+ fname
+cmd= 'file -bL '+ fname
 spawn, cmd, result
 if result eq 'Hierarchical Data Format (version 5) data' then begin
     if verbose then print, '>>', fname, '<< is a hdf5 file' 
