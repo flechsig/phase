@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <06 Oct 14 14:54:37 flechsig>  */
+ /* Time-stamp: <10 Mar 15 14:27:48 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -119,8 +119,7 @@ void apply_height_error_(int *blp, int *lostwl, double *wwert, double *lwert,
   surf_height_interp(sf, wwert, lwert, &u_interp);
 
   // apply the phase shift=  -k * u * (sin(alpha_g) + sin(beta_g)) ???  
-  // uf do we really need fabs(cos()) ???
-  phaseshift= -2* PI/ lambda* u_interp* (1.0/fabs(cosa)+ 1.0/fabs(cosb));
+  phaseshift= -2* PI/ lambda* u_interp* (cosa+ cosb);
 
   // apply phase shift
   ypha+= phaseshift;
