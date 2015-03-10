@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_phaseplate.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <09 Mar 15 15:54:09 flechsig> 
+; Time-stamp: <10 Mar 15 14:02:26 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -13,6 +13,9 @@
 ;; a) gaussian source in 125 m, b) a phase plate to tilt the wavefront
 ;; c) a propagator to see the tilt
 
+p_charsize_save= !P.CHARSIZE
+!P.CHARSIZE=0.6
+
 drift2=33                         ;; drift after phaseplate 33 m
 cols=4                            ;; 3 columns
 rows=4                            ;; 4 rows
@@ -20,71 +23,64 @@ theta= 1e-6                       ;; the angle of the outgoing wave in rad (1e-6
 sizez= 1e-3                       ;; the hor and vertical FOV
 wavelength= 1.24e-10              ;; wavelength 1A
 
-total_path_shift= sizez* theta
-total_phase_shift= total_path_shift *2 *!pi/ wavelength 
-
-print, 'total_path_shift = ', total_path_shift, ' (m)'
-print, 'total_phase_shift= ', total_phase_shift, ' (rad)'
-
 emf=initphase()
 
 ;; source
 emf->gaussbeam, dist=125, Nz=243, sizez=sizez, w0=27.7e-6 , wavelength=wavelength
 mywindow,1,1,cols=cols,rows=rows 
 emf->plotintensity
-f= emf->getphase(/raw)
-z= emf->getz_vec()
-y= emf->gety_vec()
-fu= unwrap_phase(f)
 mywindow,1,2,cols=cols,rows=rows
-mycontour,fu,z,y
+emf->plotphase,/unw
 mywindow,1,3,cols=cols,rows=rows
 emf->plotphase
 
 ;; phaseplate
-phased= (dindgen(243)/242- 0.5)* total_phase_shift
-ampl= 2.0
-phasec= complex(ampl*cos(phased), ampl*sin(phased), /double)
-val=complex(-1.0, 0.0, /double)
-arr= make_array(243, 243, value=val)
+
+z= emf->getz_vec()
+y= emf->gety_vec()
+deltapl= y*theta
+mywindow,2,1,cols=cols,rows=rows
+plot, y*1e3, deltapl*1e9, xtitle='y (mm)',ytitle='path (nm)'
+deltaphase= 2.0*!dpi*deltapl/wavelength   ;; phase differenz
+phasec= complex(cos(deltaphase), sin(deltaphase), /double)
+arr= dcomplexarr(243, 243)                                  ;; empty complex array
 for i=0,242 do arr[i,*]= phasec
-aamp= abs(arr)
 apha= atan(arr,/phase)
 upha= unwrap_phase(apha)
+ppha= phunwrap(apha)
 mywindow,2,2,cols=cols,rows=rows
-mycontour,upha,z,y
+mycontour,upha,z*1e3,y*1e3,xtitle='z (mm)',ytitle='y (mm)',ztitle='phase'
 mywindow,2,3,cols=cols,rows=rows
-mycontour,apha,z,y
+mycontour,apha,z*1e3,y*1e3,xtitle='z (mm)',ytitle='y (mm)',ztitle='phase'
+mywindow,2,4,cols=cols,rows=rows
+mycontour,ppha,z*1e3,y*1e3,xtitle='z (mm)',ytitle='y (mm)',ztitle='phase phunwrap'
 
 ;emf->statistics
 emf->phaseplate, arr
 ;emf->statistics
+emf->setname,'after phaseplate'
 mywindow,3,1,cols=cols,rows=rows 
 emf->plotintensity
-f= emf->getphase(/raw)
-z= emf->getz_vec()
-y= emf->gety_vec()
-fu= unwrap_phase(f)
 mywindow,3,2,cols=cols,rows=rows
-mycontour,fu,z,y
+emf->plotphase,/unw
 mywindow,3,3,cols=cols,rows=rows
 emf->plotphase
 
 ;; propagate
-emf->check_sampling, drift=drift2
+;emf->check_sampling, drift=drift2
 ;emf->propfresnel,drift=drift2
+emf->setname,'after propfourier 33 m'
 emf->propfourier,drift=drift2
 mywindow,4,1,cols=cols,rows=rows 
 emf->plotintensity
-f= emf->getphase(/raw)
-z= emf->getz_vec()
-y= emf->gety_vec()
-fu= unwrap_phase(f)
 mywindow,4,2,cols=cols,rows=rows
-mycontour,fu,z,y
+emf->plotphase,/unw
 mywindow,4,3,cols=cols,rows=rows
 emf->plotphase
 emf->statistics
 print, 'check: the center should be at: ', drift2* theta
-
+print, '**** deltaphase (rad)', max(deltaphase)-min(deltaphase), ', deltapl (nm)', max(deltapl)-min(deltapl)*1e9
+;;print, !P.CHARSIZE
+!P.CHARSIZE=P_CHARSIZE_save
+;; Betrag der Ablage stimmt- Vorzeichen verstehe ich nicht UF 10.3.15
 ;; end
