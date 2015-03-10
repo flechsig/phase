@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_phaseplate_1.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <09 Mar 15 17:08:52 flechsig> 
+; Time-stamp: <10 Mar 15 08:32:25 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -16,13 +16,14 @@
 drift2=33                         ;; drift after phaseplate 33 m
 cols=4                            ;; 3 columns
 rows=4                            ;; 4 rows
-thetag= 3e-3                      ;; grazing angle in rad (3e-3)
+thetag= !dpi/2.0;;3e-3                      ;; grazing angle in rad (3e-3)
 sizez= 1e-3                       ;; the hor and vertical FOV
 wavelength= 1.24e-10              ;; wavelength 1A
-hamp= 1e-9                        ;; height amplitude
-nomega=1.0                        ;; number of sin() on mirror 
+hamp= 0.5e-9                        ;; height amplitude
+nomega=1.0                        ;; number of sin() periods on mirror 
 
 emf=initphase()
+
 ;; source
 emf->gaussbeam, dist=125, Nz=243, sizez=sizez, w0=27.7e-6 , wavelength=wavelength
 mywindow,1,1,cols=cols,rows=rows 
@@ -35,29 +36,30 @@ emf->plotphase
 ;; phaseplate
 z= emf->getz_vec()
 y= emf->gety_vec()
-w= y / sin(thetag)
-l= z
+w= y / sin(thetag)  ;; the mirror coordinate
+l= z                ;; transverse mirror coordinate
+length= w[n_elements(w)-1]- w[0]   ;; mirror length
 
-omega= 2*!pi/(w[n_elements(w)-1]- w[0])
-u= hamp* sin(nomega*omega*w)
+omega= 2*!pi/length
+u= hamp* sin(nomega*omega*w)            ;; height profile
 mywindow,2,1,cols=cols,rows=rows
 plot, w*1e3, u*1e9, xtitle='w (mm)',ytitle='u (nm)'
-deltapl= 2.0* u /sin(thetag)
-deltaphase= 2.0*!dpi*deltapl/wavelength
-print, 'max(deltaphase)', max(deltaphase), max(deltapl)
-phasec= complex(cos(deltaphase), sin(deltaphase), /double)
-val=complex(1.0, 0.0, /double)
-arr= make_array(243, 243, value=val)
-for i=0,242 do arr[i,*]= phasec
+deltapl= (-2.0)* u /sin(thetag)           ;; path length differenz
+deltaphase= 2.0*!dpi*deltapl/wavelength   ;; phase differenz
+
+phasec= complex(cos(deltaphase), sin(deltaphase), /double) ;; complex vector phase(y)
+arr= dcompexarr(243, 243)                                  ;; empty complex array
+for i=0,242 do arr[i,*]= phasec                            ;; fill array with vector
 mywindow,2,2,cols=cols,rows=rows
-apha= atan(arr, /phase)
-upha= unwrap_phase(apha)
+apha= atan(arr, /phase)                                    ;; get phase- array
+upha= unwrap_phase(apha)                                   ;; unwrap
 mycontour,upha,z*1e3,y*1e3
 mywindow,2,3,cols=cols,rows=rows
 mycontour,apha,z*1e3,y*1e3
 
+;; phase plate
 ;emf->statistics
-emf->phaseplate, arr
+emf->phaseplate, arr                                       ;; phase plate
 ;emf->statistics
 mywindow,3,1,cols=cols,rows=rows 
 emf->plotintensity
@@ -67,8 +69,8 @@ mywindow,3,3,cols=cols,rows=rows
 emf->plotphase
 
 ;; propagate
-emf->check_sampling, drift=drift2
-;emf->propfresnel,drift=drift2
+;;emf->check_sampling, drift=drift2
+;;emf->propfresnel,drift=drift2
 emf->propfourier,drift=drift2
 mywindow,4,1,cols=cols,rows=rows 
 emf->plotintensity
@@ -76,7 +78,7 @@ mywindow,4,2,cols=cols,rows=rows
 emf->plotphase,/unw
 mywindow,4,3,cols=cols,rows=rows
 emf->plotphase
-emf->statistics
-print, 'check: the center should be at: ', drift2* theta
+;;emf->statistics
 
+print, '******************** deltaphase (rad)', max(deltaphase)-min(deltaphase), ', deltapl (nm)', max(deltapl)-min(deltapl)*1e9
 ;; end
