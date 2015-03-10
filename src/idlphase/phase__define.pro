@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <08 Jan 15 12:33:18 flechsig> 
+;  Time-stamp: <05 Mar 15 16:35:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1558,13 +1558,13 @@ pro phase::mirrort, thetag=thetag, azimut=azimut
 ;   calculate the electric field after a "thin" flat mirror defined as phase shifter, 
 ;   the method uses the transfer function approach first fft to angular spectrum, 
 ;   second apply angular shift, third fft back to spatial distribution. The granularity 
-;   of the shiftare frequency steps   
+;   of the shift are frequency steps   
 ;
 ; CATEGORY:
 ;   Phase
 ;
 ; CALLING SEQUENCE:
-;   phase->mirrorp
+;   phase->mirrort
 ;
 ; INPUTS:
 ;   no

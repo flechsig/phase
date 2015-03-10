@@ -1,7 +1,7 @@
 ;-*-idlwave-*-
 ; File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/test_phaseplate_1.idl
 ; Date      : <18 Jun 14 11:36:21 flechsig> 
-; Time-stamp: <10 Mar 15 12:33:19 flechsig> 
+; Time-stamp: <10 Mar 15 14:14:04 flechsig> 
 ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ; $Source$ 
@@ -18,10 +18,10 @@ p_charsize_save= !P.CHARSIZE
 drift2=33                         ;; drift after phaseplate 33 m
 cols=4                            ;; 3 columns
 rows=4                            ;; 4 rows
-thetag= 3e-3;;!dpi/2.0;;3e-3                      ;; grazing angle in rad (3e-3)
+thetag= 3e-3;;!dpi/2.0;;3e-3      ;; grazing angle in rad (3e-3)
 sizez= 1e-3                       ;; the hor and vertical FOV
 wavelength= 1.24e-10              ;; wavelength 1A
-hamp= 100e-9                        ;; height amplitude
+hamp= 30e-9                       ;; height amplitude
 nomega=1.0                        ;; number of sin() periods on mirror 
 
 emf=initphase()

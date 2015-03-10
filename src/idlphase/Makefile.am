@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/Makefile.am
 # Date      : <28 Aug 14 16:08:16 flechsig> 
-# Time-stamp: <27 Oct 14 10:09:22 flechsig> 
+# Time-stamp: <09 Mar 15 16:22:22 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -141,6 +141,7 @@ idl_DATA  = help.html \
 	test_mirrorp.idl \
 	test_mirrort.idl \
 	test_phaseplate.idl \
+        test_phaseplate_1.idl \
 	pha4idlstart.idl 	
 
 ###
