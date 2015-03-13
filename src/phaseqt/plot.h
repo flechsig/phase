@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <28 Nov 14 15:23:27 flechsig>  */
+/*  Time-stamp: <13 Mar 15 17:03:28 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -97,16 +97,16 @@ public:
     int    h2a_nx, h2a_ny;
     double *pox, *poy ;
     double h2max, h2min;
-    double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz, tt;  // statistics
-    double stmin, stmax, stminy, stmaxy, stminz, stmaxz;    // statistics
+    double cz, cy, wz, wy, cdz, cdy, wdz, wdy, ry, rz, tt, tt2;  // statistics
+    double stmin, stmax, stminy, stmaxy, stminz, stmaxz;         // statistics
     int    fwhmon;
     void   hfill1(double *, double, double, int);
     void   hfill2(int);  // GO
     void   hfill2(struct PSDType *,  int);      // PO result phase
     void   hfill2(struct source4c *, int);      // PO source
     void   hfill2(struct EmfType *, int);       // PO emf
-    void   hfill2(struct SurfaceType *);   // PO surface
-    void   statistics();                   // PO type
+    void   hfill2(struct SurfaceType *);        // PO surface
+    void   statistics();                        // PO type
     void   statistics(struct RayType *, int, double, double);  // raytype
     void   contourPlot();
     void   si2by2Plot();

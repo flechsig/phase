@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <02 Dec 14 11:18:25 flechsig> 
+//  Time-stamp: <13 Mar 15 17:03:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1220,7 +1220,7 @@ void Plot::hfill2(struct EmfType *emfpp, int type)
 // fills a 2d histogram, PO surface
 void Plot::hfill2(struct SurfaceType *rp)
 {
-  int i, ix, iy, h2a_n, idc;
+  int    i, ix, iy, h2a_n, idc;
   double h2range;
   
 #ifdef DEBUG
@@ -1383,10 +1383,10 @@ void Plot::statistics()
 #endif
 
   fwhmfac= 2.0* sqrt(2.0 * log(2.0));
-  cz= cy= wz= wy= cdz= cdy= wdz= wdy= ry= rz= tt= 0.0;
+  cz= cy= wz= wy= cdz= cdy= wdz= wdy= ry= rz= tt= tt2= 0.0;
   h2a_n= h2a_nx * h2a_ny;
 
-  stmin= stmax= h2a[0];
+  stmin = stmax = h2a[0];
   stminz= stmaxz= pox[0];
   stminy= stmaxy= poy[0];
 
@@ -1396,6 +1396,7 @@ void Plot::statistics()
       {
 	idxc= ix + iy* h2a_nx;            // data kommt im c memory  model
 	tt += h2a[idxc];                  // total
+	tt2+= pow(h2a[idxc], 2);
 	cz += pox[ix]* h2a[idxc];
 	cy += poy[iy]* h2a[idxc];
         wz += h2a[idxc]* pow(pox[ix], 2);

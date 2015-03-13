@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <08 Jan 15 16:54:33 flechsig> 
+//  Time-stamp: <13 Mar 15 17:25:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2725,10 +2725,22 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     {
       if ( sf )
 	{
-	  stLabel60->setText(QString(tr("min")));  // 40
-	  stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin, 'g', 4)+ "</FONT>");
-	  stLabel62->setText(QString(tr("max")));  // 40
-	  stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax, 'g', 4)+ "</FONT>"); // 41
+	  double ex = pp->tt /(pp->h2a_nx*pp->h2a_ny);
+	  double ex2= pp->tt2/(pp->h2a_nx*pp->h2a_ny);
+	  double ex3= sqrt(ex2- pow(ex,2));
+	  
+	  stLabel40->setText(QString(tr("height pv (nm)")));  
+	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*(pp->stmax-pp->stmin), 'g', 4)+ "</FONT>");
+
+	  stLabel50->setText(QString(tr("height av. (nm)")));  
+	  stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*ex, 'g', 4)+ "</FONT>");
+	  stLabel52->setText(QString(tr("height rms (nm)")));  
+	  stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*ex3, 'g', 4)+ "</FONT>"); // 41
+	  
+	  stLabel60->setText(QString(tr("min (nm)")));  // 40
+	  stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin*1e6, 'g', 4)+ "</FONT>");
+	  stLabel62->setText(QString(tr("max (nm)")));  // 40
+	  stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax*1e6, 'g', 4)+ "</FONT>"); // 41
 
 	  stLabel70->setText(tr("min @ (z, y)")); // 50
 	  stLabel71->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
