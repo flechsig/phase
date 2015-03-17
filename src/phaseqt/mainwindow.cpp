@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <13 Mar 15 17:25:10 flechsig> 
+//  Time-stamp: <17 Mar 15 11:05:57 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2656,7 +2656,6 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   stLabel72->setText("");
   stLabel73->setText("");
 
-
   if (po)
     {
       //      cout << "!! warning: source statistics likely not OK !!" << endl;
@@ -2725,26 +2724,56 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
     {
       if ( sf )
 	{
+	  double *rawdata= myparent->myBeamline()->ElementList[elementList->currentRow()].surf.u;
 	  double ex = pp->tt /(pp->h2a_nx*pp->h2a_ny);
 	  double ex2= pp->tt2/(pp->h2a_nx*pp->h2a_ny);
 	  double ex3= sqrt(ex2- pow(ex,2));
-	  
-	  stLabel40->setText(QString(tr("height pv (nm)")));  
-	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*(pp->stmax-pp->stmin), 'g', 4)+ "</FONT>");
+	  double mydw= pp->pox[1]- pp->pox[0];
+	  mydw= (mydw > 0.0) ? mydw : 1.0;
+	  double myslope1= 0.0;
+	  double myslope2= 0.0;
 
-	  stLabel50->setText(QString(tr("height av. (nm)")));  
-	  stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*ex, 'g', 4)+ "</FONT>");
-	  stLabel52->setText(QString(tr("height rms (nm)")));  
-	  stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*ex3, 'g', 4)+ "</FONT>"); // 41
-	  
-	  stLabel60->setText(QString(tr("min (nm)")));  // 40
-	  stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin*1e6, 'g', 4)+ "</FONT>");
-	  stLabel62->setText(QString(tr("max (nm)")));  // 40
-	  stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax*1e6, 'g', 4)+ "</FONT>"); // 41
+	  cout << "sum= " << pp->tt << endl;
 
-	  stLabel70->setText(tr("min @ (z, y)")); // 50
+	  for (int myrow= 0; myrow < pp->h2a_ny; myrow++) 
+	    for (int mycol= 1; mycol < pp->h2a_nx; mycol++) // !! start from 1
+	      {
+		int myidxc= mycol + myrow* pp->h2a_nx;
+		double myslope= (rawdata[myidxc]- rawdata[myidxc-1])/ mydw;
+		myslope1+= myslope;
+		myslope2+= pow(myslope, 2);
+	      }
+	  //	  cout << "0 point: " << rawdata[0] << " 1st: " << rawdata[1] << " 2nd: " << rawdata[2] << endl;
+	  //cout << "************" << myslope1 << " >> "<< myslope2<< " >> " << mydw << 
+	  //  " >> " << pp->h2a_nx << " >> " << pp->h2a_ny << endl;
+	  myslope1/= (pp->h2a_nx - 1)*pp->h2a_ny; 
+	  myslope2/= (pp->h2a_nx - 1)*pp->h2a_ny; 
+
+	  //cout << "************" << myslope1 << " >> "<< myslope2<< endl;
+
+	  double slope_rms= sqrt(myslope2- pow(myslope1, 2));
+
+	  stLabel30->setText(QString(tr("height pv (nm)")));  
+	  stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*(pp->stmax-pp->stmin), 'g', 3)+ "</FONT>");
+
+	  stLabel40->setText(QString(tr("height av. (nm)")));  
+	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*ex, 'g', 3)+ "</FONT>");
+	  stLabel42->setText(QString(tr("slopew av. (rad)")));  
+	  stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(myslope1, 'g', 3)+ "</FONT>");
+
+	  stLabel50->setText(QString(tr("height rms (nm)")));  
+	  stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(1e6*ex3, 'g', 3)+ "</FONT>"); 
+	  stLabel52->setText(QString(tr("slopew rms (nrad)")));  
+	  stLabel53->setText("<FONT COLOR=blue>"+ qst.setNum(1e9*slope_rms, 'g', 3)+ "</FONT>");
+	  
+	  stLabel60->setText(QString(tr("min (nm)")));  
+	  stLabel61->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmin*1e6, 'g', 3)+ "</FONT>");
+	  stLabel62->setText(QString(tr("max (nm)")));  
+	  stLabel63->setText("<FONT COLOR=blue>"+ qst.setNum(pp->stmax*1e6, 'g', 3)+ "</FONT>"); 
+
+	  stLabel70->setText(tr("min @ (z, y)")); 
 	  stLabel71->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stminz, 'g', 3)+ ","+ qst1.setNum(pp->stminy, 'g', 3)+ ")</FONT>"); // 41
-	  stLabel72->setText(tr("max @ (z, y)")); // 51
+	  stLabel72->setText(tr("max @ (z, y)")); 
 	  stLabel73->setText("<FONT COLOR=blue>("+ qst.setNum(pp->stmaxz, 'g', 3)+ ","+ qst1.setNum(pp->stmaxy, 'g', 3)+ ")</FONT>");
 	} // end sf
       else // PO
@@ -2754,14 +2783,14 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
 	  stLabel31->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  // give out value per m^2
 	  stLabel32->setText(QString(tr("total (W)")));    // 31
 	  stLabel32->setStatusTip(tr("intensity integral (W)"));
-	  stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  
+	  stLabel33->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ttm2/VAC_IMPEDANCE, 'g', 4)+ "</FONT>");  
 
 	  stLabel40->setText(QString(tr("max (phot/(s m<sup>2</sup>))")));  // 30
 	  stLabel40->setStatusTip(tr("maximum of intensity (photons/(s m^2))"));
 	  stLabel41->setText("<FONT COLOR=blue>"+ qst.setNum(pp->h2max*1e6/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");  // give out value per m^2
 	  stLabel42->setText(QString(tr("total (phot/s)")));    // 31
 	  stLabel42->setStatusTip(tr("intensity integral (photons/s)"));
-	  stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(pp->tt/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");
+	  stLabel43->setText("<FONT COLOR=blue>"+ qst.setNum(pp->ttm2/VAC_IMPEDANCE/1.6e-19, 'g', 1)+ "</FONT>");
 	  
 	  stLabel50->setText(QString(tr("principle rays")));  // 40
 	  stLabel51->setText("<FONT COLOR=blue>"+ qst.setNum(porays)+ "</FONT>");

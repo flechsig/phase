@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Mar 15 16:21:12 flechsig> 
+//  Time-stamp: <17 Mar 15 10:04:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1923,7 +1923,10 @@ void MainWindow::grapplyslot()
       d_plot->hfill2((struct SurfaceType *)&(myparent->myBeamline()->ElementList[elementList->currentRow()].surf));
       d_plot->setPoData("PO height error");
       d_plot->contourPlot();
-      UpdateStatistics(d_plot, "Surface height error", -1);
+      char mybuffer[256];
+      snprintf(mybuffer, 255, "%s: Surface height error", 
+	       myparent->myBeamline()->ElementList[elementList->currentRow()].elementname);
+      UpdateStatistics(d_plot, mybuffer, -1);
       break;
 
     case (PLOT_PO_SOURCE | PLOT_PO_PHASE_Z  | PLOT_UNWRAP):
@@ -2069,7 +2072,7 @@ void MainWindow::grautoscaleslot()
   if (mwplotsubject & PLOT_SURF_PROF) // generic for PO surface
     { 
       cout << "autoscale: PO surface error" << endl;
-      surfp= (struct SurfaceType *)&(myparent->myBeamline()->ElementList[0].surf);
+      surfp= (struct SurfaceType *)&(myparent->myBeamline()->ElementList[elementList->currentRow()].surf);
       if ( !surfp )
 	{
 	  cout << "error: empty pointer- probably no surface data loaded- return" << endl;

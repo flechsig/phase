@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <13 Mar 15 17:03:26 flechsig> 
+//  Time-stamp: <17 Mar 15 10:16:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1425,7 +1425,8 @@ void Plot::statistics()
     }
 
   binsize= (pox[1]- pox[0]) * (poy[1]- poy[0]);
-  tt *= binsize;   // value normalized to m^2
+  //  tt *= binsize;   // value normalized to m^2
+  ttm2= tt * binsize; // value normalized to m^2
   cout << "statistics: binsize= " << binsize << " mm^2, tt=" << tt << endl;
 
   if (fabs(cz) < 1e-3) cz= 0.0;
