@@ -1,0 +1,4 @@
+#!/bin/sh
+./configure --prefix=${HOME}/phase --with-qwt=${HOME}/qwt-6.1.2 --enable-debug \
+--with-Qt-dir=/opt/qt/qt-4.8.4
+
