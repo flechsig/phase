@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <05 Mar 15 16:35:09 flechsig> 
+;  Time-stamp: <19 Mar 15 12:15:44 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -2495,8 +2495,8 @@ print, 'wavelength (nm)=', lambda*1e9
 print, mymaxstr, mymax
 print, mytotstr, mytot
 if n_elements(amplitude) eq 0 then begin
-print, 'max intensity (photons/m^2) = ', mymax/1.6e-19
-print, 'total intensity (photons)   = ', mytot/1.6e-19
+print, 'max intensity (photons/m^2) = ', mymax/(1.6e-19*1240e-9/self.wavelength)
+print, 'total intensity (photons)   = ', mytot/(1.6e-19*1240e-9/self.wavelength)
 endif
 print, 'debug: mysum, binsize=', mysum, binsize
 print, '=============================================================================='
