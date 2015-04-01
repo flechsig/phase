@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <15 Dec 14 14:24:49 flechsig>  */
+/*   Time-stamp: <01 Apr 15 17:19:42 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -354,14 +354,15 @@ struct  source_results {
 };  
 /* ----------------- U. F. 21.12.99 ----------------------------- */
 // this struct seems to be obsolete and probably can be removed
+// UF 1504: the integers are still filled- not sure whether they are really used
 struct simps1 {
-  double fya1[MAX_INTEGRATION_SIZE],fyp1[MAX_INTEGRATION_SIZE],fza1[MAX_INTEGRATION_SIZE],fzp1[MAX_INTEGRATION_SIZE];
-  double fya2[MAX_INTEGRATION_SIZE],fyp2[MAX_INTEGRATION_SIZE],fza2[MAX_INTEGRATION_SIZE],fzp2[MAX_INTEGRATION_SIZE];
-  double z1,z2;
+  //  double fya1[MAX_INTEGRATION_SIZE],fyp1[MAX_INTEGRATION_SIZE],fza1[MAX_INTEGRATION_SIZE],fzp1[MAX_INTEGRATION_SIZE];
+  //  double fya2[MAX_INTEGRATION_SIZE],fyp2[MAX_INTEGRATION_SIZE],fza2[MAX_INTEGRATION_SIZE],fzp2[MAX_INTEGRATION_SIZE];
+  //  double z1,z2;
   //  double tya[301][301],tza[301][301];
   //  double typ[301][301],tzp[301][301];
-  int ianz0_save[301][301];
-  int iiheigh,iiwidth,jmult;
+    int ianz0_save[301][301];
+    int iiheigh,iiwidth,jmult;
 };
 /* ----------------- results from integration --------------------*/
 

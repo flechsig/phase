@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <15 Dec 14 14:34:51 flechsig> 
+c$$$ Time-stamp: <01 Apr 15 16:59:42 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -340,13 +340,13 @@ c------------------ results from sources ------------------------
 c----------------- U. F. 21.12.99 -------------------------------
 c common simps  
        structure/simps1/
-       real*8 fya1(MAX_INTEGRATION_SIZE),fyp1(MAX_INTEGRATION_SIZE),fza1(MAX_INTEGRATION_SIZE),fzp1(MAX_INTEGRATION_SIZE)
-       real*8 fya2(MAX_INTEGRATION_SIZE),fyp2(MAX_INTEGRATION_SIZE),fza2(MAX_INTEGRATION_SIZE),fzp2(MAX_INTEGRATION_SIZE)
-       real*8 z1,z2
+c       real*8 fya1(MAX_INTEGRATION_SIZE),fyp1(MAX_INTEGRATION_SIZE),fza1(MAX_INTEGRATION_SIZE),fzp1(MAX_INTEGRATION_SIZE)
+c       real*8 fya2(MAX_INTEGRATION_SIZE),fyp2(MAX_INTEGRATION_SIZE),fza2(MAX_INTEGRATION_SIZE),fzp2(MAX_INTEGRATION_SIZE)
+c       real*8 z1,z2
 c           real*8 tya(256,256),tza(256,256)
 c           real*8 typ(256,256),tzp(256,256)
            integer ianz0_save(301,301)
-         integer iiheigh,iiwidth,jmult
+           integer iiheigh,iiwidth,jmult
         end structure
 c------------------ results from integration --------------------
 

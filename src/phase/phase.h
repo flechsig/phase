@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <08 Jan 15 13:49:08 flechsig>  */
+/*   Time-stamp: <01 Apr 15 16:33:09 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -146,13 +146,13 @@
 #define kESUndulatorButton      110
 #define kESourceMenuButton      132   
 #define kESDefaults         	143 
-#define        kEOElement                 156   
-#define        kEOOptMenu	          192
-#define        kEOEAB2                    193     /*! noch opt. Element  */
-#define        kEOEAB4                    194                             
+#define kEOElement              156   
+#define kEOOptMenu	        192
+#define kEOEAB2                 193     /*! noch opt. Element  */
+#define kEOEAB4                 194                             
 
-#define        kEOEInputLabel         	  195 
-#define        kEOElementButton      	  196  
+#define kEOEInputLabel         	195 
+#define kEOElementButton      	196  
 
 
 #define kEOEGeneral              350
