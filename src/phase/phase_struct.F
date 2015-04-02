@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 11:32:45 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 12:12:53 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -356,11 +356,12 @@ c------------------ results from integration --------------------
 	   real*8 yzintya,yzintyp,yzintza,yzintzp
 	   integer isimp(100),iisimp,nsimp
            real*8 sintre(4,2,MAX_INTEGRATION_SIZE),sintim(4,2,MAX_INTEGRATION_SIZE)
-           real*8 simpa(4,2,MAX_INTEGRATION_SIZE),simpp(4,2,MAX_INTEGRATION_SIZE)
+c  Apr 15         real*8 simpa(4,2,MAX_INTEGRATION_SIZE),simpp(4,2,MAX_INTEGRATION_SIZE)
            real*8 simpre(4,2,MAX_INTEGRATION_SIZE),simpim(4,2,MAX_INTEGRATION_SIZE)
 	   integer isintre(4),isintim(4),isimpa(4),isimpp(4)
 	   integer isimpre(4),isimpim(4)
-           real*8 d12(2,3,MAX_INTEGRATION_SIZE),ianzd12(3)
+c           real*8 d12(2,3,MAX_INTEGRATION_SIZE)
+           real*8 ianzd12(3)
 c	   record/simps1/si1                  ! UF 21.12.99
 	end structure
 

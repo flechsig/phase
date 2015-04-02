@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 11:31:30 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 12:16:49 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -1263,20 +1263,20 @@ c	Output
 c----------------------------------
 
 	do i=1,ianz
-	xir.d12(1,1,i)=x(i)
-	xir.d12(2,1,i)=d1(i)
+c UF Apr15 unbenutzt	xir.d12(1,1,i)=x(i)
+c UF Apr15 unbenutzt	xir.d12(2,1,i)=d1(i)
 	enddo
 	xir.ianzd12(1)=ianz
 
 	do i=1,ianz
-	xir.d12(1,2,i)=x(i)
-	xir.d12(2,2,i)=d2(i)
+c UF Apr15 unbenutzt	xir.d12(1,2,i)=x(i)
+c UF Apr15 unbenutzt	xir.d12(2,2,i)=d2(i)
 	enddo
 	xir.ianzd12(2)=ianz
 
 	do i=1,ianz
-	xir.d12(1,3,i)=x(i)
-	xir.d12(2,3,i)=d12(i)
+c UF Apr15 unbenutzt	xir.d12(1,3,i)=x(i)
+c UF Apr15 unbenutzt	xir.d12(2,3,i)=d12(i)
 	enddo
 	xir.ianzd12(3)=ianz
 
@@ -1818,19 +1818,19 @@ c     UF
 c     UF
               xx=xxsave
               do i=1,ianz_loc
-                 xir.simpa(ii,1,i)=xx
-                 xir.simpa(ii,2,i)=fyza_loc(i)
+c UF Apr15 unbenutzt               xir.simpa(ii,1,i)=xx
+c UF Apr15 unbenutzt                xir.simpa(ii,2,i)=fyza_loc(i)
                  xx=xx+dyz_loc(i)
               enddo
-              xir.isimpa(ii)=ianz_loc
+c UF Apr15 unbenutzt             xir.isimpa(ii)=ianz_loc
 c     UF
               xx=xxsave
               do i=1,ianz_loc
-                 xir.simpp(ii,1,i)=xx
-                 xir.simpp(ii,2,i)=fyzp_loc(i)
+c UF Apr15 unbenutzt                 xir.simpp(ii,1,i)=xx
+c UF Apr15 unbenutzt                xir.simpp(ii,2,i)=fyzp_loc(i)
                  xx=xx+dyz_loc(i)
 	enddo
-	xir.isimpp(ii)=ianz_loc
+c UF Apr15 unbenutzt	xir.isimpp(ii)=ianz_loc
         
       endif
       enddo
