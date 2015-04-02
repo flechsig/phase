@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 12:16:49 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 14:30:44 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -325,10 +325,9 @@ c------------------------------------------------------------
 c--------------------end adaptive_int ----------------------
 
 c*************************************************************
-c       subroutine yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
-       subroutine yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
-     &		dzi,yintey,yintez,
-     &          yintya,yintyp,yintza,yintzp,sr,lostwl,blp)
+      subroutine yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
+     &     dzi,yintey,yintez,
+     &     yintya,yintyp,yintza,yintzp,sr,lostwl,blp)
 c*************************************************************
 c
 c	INPUT : dzi
@@ -338,14 +337,8 @@ c*************************************************************
 
 	implicit real*8(a-h,o-z)
         integer lostwl,blp
-	complex*16 
-c UF 28.6.13     &      fwert,fwerty,fwertz,
-c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-c     &      yint,yintey,yintez
-     &       yintey,yintez
-c UF	complex*16 fyey(4096),fyez(4096)
-        complex*16 fyey(4096)
+	complex*16 yintey,yintez
+        complex*16 fyey(MAX_INTEGRATION_SIZE)
 
 	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
      &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
@@ -357,18 +350,14 @@ c UF	complex*16 fyey(4096),fyez(4096)
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
-c        record /sources/ src
 	record /integration/ xi
 	record /integration_results/ xir
-c UF 28.6.13        record /source6/ so6
 	record /apertures/ apr
-c uf        record / statistics/ st
-c uf	record /mirrortype/ am
 	record /map4/ m4
 
-	dimension y(4096),dy(4096)
-	dimension fya(4096),fyp(4096)
-	dimension fza(4096),fzp(4096)
+	dimension y(MAX_INTEGRATION_SIZE),dy(MAX_INTEGRATION_SIZE)
+	dimension fya(MAX_INTEGRATION_SIZE),fyp(MAX_INTEGRATION_SIZE)
+	dimension fza(MAX_INTEGRATION_SIZE),fzp(MAX_INTEGRATION_SIZE)
 
 c*******************************************************
 c	Erstellen eines nochmals reduzierten 
@@ -379,6 +368,7 @@ c       write(*,*),'yyint called'
 c      call debug_beamline_type_f(blp)
 c#endif
 
+
         if(dabs(xi.distfocz).gt.1.e-10)then
            dzii=dzi+ra.ri.zi/xi.distfocz
         else
@@ -387,8 +377,6 @@ c#endif
 
 	ra.ri.dzi=dzii
 
-        
-c#ifdef SEVEN_ORDER
         call subm27(m4.fdetrc,dzii,m4.fdtrrc)
         call subm27(m4.fdetphrc,dzii,m4.fdtphrrc)
         call subm27(m4.fdet1phrc,dzii,m4.fdt1phrrc)
@@ -404,23 +392,6 @@ c#ifdef SEVEN_ORDER
         call subm27(m4.xlen2c_r,dzii,m4.xlen2c_rr)
         call subm27(m4.wrc,dzii,m4.wrrc)
         call subm27(m4.xlrc,dzii,m4.xlrrc)
-c#else
-c        call subm2(m4.fdetrc,dzii,m4.fdtrrc)
-c       call subm2(m4.fdetphrc,dzii,m4.fdtphrrc)
-c        call subm2(m4.fdet1phrc,dzii,m4.fdt1phrrc)
-c        call subm2(m4.fdet1phrca,dzii,m4.fdt1phrrca)
-c        call subm2(m4.fdet1phrcb,dzii,m4.fdt1phrrcb)
-c        call subm2(m4.yprc1,dzii,m4.yprrc1)
-c        call subm2(m4.zprc1,dzii,m4.zprrc1)
-c        call subm2(m4.dyprc,dzii,m4.dyprrc)
-c        call subm2(m4.dzprc,dzii,m4.dzprrc)
-c        call subm2(m4.ypc_ap_r,dzii,m4.ypc_ap_rr)
-c        call subm2(m4.zpc_ap_r,dzii,m4.zpc_ap_rr)
-c        call subm2(m4.xlen1c_r,dzii,m4.xlen1c_rr)
-c        call subm2(m4.xlen2c_r,dzii,m4.xlen2c_rr)
-c        call subm2(m4.wrc,dzii,m4.wrrc)
-c        call subm2(m4.xlrc,dzii,m4.xlrrc)
-c#endif
 
 c         do ii=0,4
 c          write(6,*)'==',m4.fdtphrrc(ii)
@@ -491,7 +462,7 @@ c     UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
        sr.xintyim=xintyzim
        
        iyz=1
-c     UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyez,fza,fzp,
+
        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
      &      yintez,yintza,yintzp,densizre,densizim,
      &      xintyzre,xintyzim,iyz)
@@ -510,14 +481,10 @@ c--------------------- end yyint -------------------------
 
 
 c*************************************************************
-c 	subroutine fywert(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-c     &		dyi,fwerty,fwertz,fwya,fwyp,fwza,fwzp,sr,blp)
-c UF remove unused vars am , xir, st, fwertz, fwya, fwyp, fwza, fwzp
- 	subroutine fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
-     &		          dyi,fwerty,sr,lostwl,blp)
+      subroutine fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
+     &     dyi,fwerty,sr,lostwl,blp)
 c*************************************************************
 	implicit real*8(a-h,o-z)
-c UF	complex*16 densy,densz,fwert,fwerty,fwertz,fd1phcpl,ff,eycpl,ezcpl
         complex*16 fwerty,ff,ff1,eycpl,ezcpl
         integer lostwl,blp
 
@@ -530,15 +497,13 @@ c switch off the height_error_code
         record /rayst/ ra
         record /source_results/ sr
         record /control_flags/ ifl
-c        record /sources/ src
 	record /integration/ xi
-c uf	record /integration_results/ xir
 	record /apertures /apr
-c uf        record /statistics/ st
+
 c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
-c uf	record /mirrortype/ am
+
 	record /map4/ m4
 
         dimension bb(0:165)
@@ -646,11 +611,8 @@ c   here we call psdi.F (former phase_source.F)
         call psdi(g,isrctype,apr,cs,ifl,ra,sr,lostwl,blp)     
 
 c----------------------------------------
-C UF Nov 14 change
-c	if((isrctype.eq.4).or.(isrctype.eq.5).or.
-c     &     (isrctype.eq.7))then
         if(isrctype.ne.6)then
-c------- ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
+c-------ACHTUNG. Vorfaktor sqrt(cos(a)cos(b))/(r*rp)
 c	 wird nicht in phase_integration gesetzt, da hier nicht 
 c	 unterschieden wird, ob ein OE oder die Summe von mehreren 
 c	 OEs berechnet wird. Reihenentwicklungen fuer die Vorfaktoren 
@@ -963,7 +925,7 @@ c------------------------------------------------
 
 c--------------- ist zu checken
 	if(isrctype.eq.6)then
-	fwerty=sr.densy*abs(fd)
+           fwerty=sr.densy*abs(fd)
 	endif
 
 	return

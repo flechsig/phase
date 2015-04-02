@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Jan 15 10:01:36 flechsig>  */
+/*  Time-stamp: <02 Apr 15 16:07:25 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -596,14 +596,15 @@ int source4c_ini(struct BeamlineType *bl)
   return myreturn;
 }  /* source4c_ini */
 
-/* output interpolated source_results for x and y     */
-/* c replacement of source_inter_2d in phase_source.F */
-/* takes integer pointer to beamline struct           */
-/* range test is included!                            */
-/* !! reads the input from bl->posrc and not sources! */
+/* output interpolated source_results for x and y       */
+/* c replacement of source_inter_2d in phase_source.F   */
+/* takes integer pointer to beamline struct             */
+/* range test is included!                              */
+/* !! reads the input from bl->posrc and not sources!   */
 /* routine wird gerufen von fortran - daher underscore  */
-/* principle: weighted average over 4 adjacent points */
-/* Nov 2014 switch to emf type source */
+/* principle: weighted average over 4 adjacent points   */
+/* fills sr->dens[y|z][re|im]                           */
+/* Nov 2014 switch to emf type source                   */
 void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert, int *blp)
 {
   struct BeamlineType *bl;
@@ -627,7 +628,6 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
       //return;
     }
 
-  //if ((so4->iey < 2) || (so4->iex < 2))
   if ((emfpp->ny < 2) || (emfpp->nz < 2))
     {
       printf("error: source4c_inter_2d_, file: %s => ny or nz < 2 - return\n", __FILE__);
@@ -672,10 +672,10 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
   /* exclude index overrun */
   if ((ix2 >= emfpp->nz) || (iy2 >= emfpp->ny)) return; /* UF 18.2.14 */
     
-  x1  = emfpp->z[ix1];
-  x2  = emfpp->z[ix2];
-  y1  = emfpp->y[iy1];
-  y2  = emfpp->y[iy2];
+  x1= emfpp->z[ix1];
+  x2= emfpp->z[ix2];
+  y1= emfpp->y[iy1];
+  y2= emfpp->y[iy2];
        
   fact3= ((x2- *xwert)* (y2- *ywert))/ dyz;
   fact4= ((*xwert- x1)* (y2- *ywert))/ dyz;

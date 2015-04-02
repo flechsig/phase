@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 15:02:34 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 16:18:08 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
@@ -180,6 +180,7 @@ c       factorim=dsin(delphi+phase)
 c     if ((ifl.pst_mode.gt.2).or.(ifl.pst_mode.lt.0))then   ! for tests
 
 c     new code with dynamic source does also the range test 
+c     fills sr.dens[y|z][re|im] 
         call source4c_inter_2d(sr,xwert,ywert,blp);
         
 
