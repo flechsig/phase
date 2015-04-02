@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <15 Dec 14 15:20:06 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 15:02:34 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
@@ -35,20 +35,21 @@ c UF extract from phase_source.F
 c UF called from psdi.F
 
 c*****************************************************************
-c UF 2.7.13	subroutine src4(cs,g,ra,so4,sr,ifl,blp)
         subroutine src4(cs,g,ra,sr,ifl,lostwl,blp)
 c*****************************************************************
 c	returns complex*16 densy, densz
 c--------------------------------------
-	implicit real*8(a-h,o-z)
+c	implicit real*8(a-h,o-z)
 	complex*16 factor
-	integer lostwl,blp               ! the beamline pointer 
+        real*8 phase,xlength,delphi,w2,w3,w4,w5,xden,f
+        real*8 grdist,xnn,factorre,factorim,xwert,ywert
+        real*8 srdensyre,srdensyim,srdenszre,srdenszim
+	integer lostwl,blp,isig,nn               
 
-cc	include 'phase_struct.for'
 #include 'phase_struct.F'
 
 	record /constants/ cs
-	record /geometryst/ g
+	record /geometryst/ g 
 	record /rayst/ ra 
 	record /source_results/ sr 
 	record /control_flags/ ifl
@@ -166,8 +167,11 @@ c------- end 19.1.2000 ----------------------------------
 
 	endif			! grating
 
-	factorre=dcos(delphi+phase)
-        factorim=dsin(delphi+phase)
+c	factorre=dcos(delphi+phase)
+c       factorim=dsin(delphi+phase)
+	factorre=cos(delphi+phase)
+        factorim=sin(delphi+phase)
+
         if(ifl.ispline.ge.0)factor=exp(cs.sqrtm1*(delphi+phase))
 
         xwert=ra.rf.zp	        ! units are mm
@@ -188,7 +192,7 @@ c routine does also the aperture check
 
         call apply_height_error(blp, lostwl, ra.oe.w, ra.oe.xl, sr.densyre, 
      &                          sr.densyim, sr.denszre, sr.denszim)
-
+        
 
 c	endif
 
