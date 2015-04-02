@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <16 Dec 14 10:03:35 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 11:31:30 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -153,8 +153,8 @@ c        call debug_beamline_type_f(blp)
 c        write(*,*),'adaptive_int called2'
 c#endif
 
-  
-                   
+#ifdef OBSOLETE  
+c UF 2.4.15 si1 wird nirgends genutzt                   
 	if((xir.si1.iiheigh.eq.1).and.(xir.si1.iiwidth.eq.1).and.
      &		(ifl.ispline.lt.0))then
            write(*,*)'************************************'
@@ -162,6 +162,7 @@ c#endif
            write(*,*)'************************************'
 c	call guess(m4,g,am,src,apr,cs,ra,ifl,xi,xir,st,blp)
 	endif
+#endif
 
 #ifdef DEBUG1
 1       format(d15.5)
@@ -1254,7 +1255,7 @@ c	raauskommentiert am 26.4.1999
 c	ianz0=ianz0-1
 c-----------------------------------
 c------------- neu 22.4.1999
-        xir.si1.ianz0_save(ra.n2,ra.n1)=ianz0
+c UF 2.4.15- auskommentiert feld wird wird nie benutzt        xir.si1.ianz0_save(ra.n2,ra.n1)=ianz0
 
 c----------------------------------
 	if(xi.id12.eq.1)then

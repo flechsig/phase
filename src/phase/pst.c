@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <01 Apr 15 16:59:39 flechsig>  */
+/*   Time-stamp: <02 Apr 15 11:34:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -786,8 +786,8 @@ void fill_xirp(struct BeamlineType *bl, struct integration_results *xirp)
   xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
   xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
   xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
-  xirp->si1.iiheigh= 0;
-  xirp->si1.iiwidth= 0;
+  //  xirp->si1.iiheigh= 0;     // Apr 2015
+  //  xirp->si1.iiwidth= 0;
 } /* end fill_xirp */
 
 /*  */

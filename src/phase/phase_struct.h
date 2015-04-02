@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <01 Apr 15 17:19:42 flechsig>  */
+/*   Time-stamp: <02 Apr 15 11:32:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -361,8 +361,9 @@ struct simps1 {
   //  double z1,z2;
   //  double tya[301][301],tza[301][301];
   //  double typ[301][301],tzp[301][301];
-    int ianz0_save[301][301];
-    int iiheigh,iiwidth,jmult;
+  //  int ianz0_save[301][301];
+  int iiheigh,iiwidth;
+  // int jmult;
 };
 /* ----------------- results from integration --------------------*/
 
@@ -376,7 +377,7 @@ struct  integration_results {
   int  isintre[4],isintim[4],isimpa[4],isimpp[4];
   int  isimpre[4],isimpim[4];
   double d12[2][3][MAX_INTEGRATION_SIZE],ianzd12[3]; //SG: is MAX_INTEGRATION_SIZE correct here?
-  struct simps1 si1;            /* UF 21.12.99 */
+  //  struct simps1 si1;            /* UF 21.12.99 */
 };  
 
 /* ----------------- flags ---------------------------------------*/
