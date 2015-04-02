@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <02 Apr 15 11:34:50 flechsig>  */
+/*   Time-stamp: <02 Apr 15 16:59:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -579,8 +579,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   // UF Mar 2014 add check
   if ((psip->iy > 255) || (psip->iz > 255)) 
     {
-      fprintf(stderr, "error in file %s gridsize beyond (255 x 255) limit - exit\n", __FILE__);
-      exit(-1);
+      fprintf(stderr, "warning in %s gridsize beyond (255 x 255) limit - expect unstable operation\n", __FILE__);
+      //exit(-1);
     }
   
   // nz= index / sp->iheigh; // fortran loop
