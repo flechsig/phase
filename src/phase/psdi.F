@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <16 Dec 14 15:25:32 flechsig> 
+c$$$ Time-stamp: <02 Apr 15 16:16:34 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
@@ -57,8 +57,8 @@ c UF 25.11.14 add isrctype = 1 new gauss source
 c             this routine is more or less obsolete could be removed/replaced
 
 
-	implicit real*8(a-h,o-z)
-	integer lostwl, blp
+c	implicit real*8(a-h,o-z)
+	integer lostwl, blp, isrctype
 
 cc	include 'phase_struct.for'
 #include 'phase_struct.F'
