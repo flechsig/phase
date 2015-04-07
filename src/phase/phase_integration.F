@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 14:30:44 flechsig> 
+c$$$ Time-stamp: <07 Apr 15 17:12:37 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 c$$$
 c$$$ $Source$ 
@@ -114,6 +114,7 @@ c
 c************************************************
 
 	implicit real*8(a-h,o-z)
+c        implicit none
         integer blp, isrctype, lostwl
 c UF 28.6.13	complex*16 fwert,fwerty,fwertz,
 c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
@@ -254,8 +255,6 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
 	do i=1,ianzz    
 	   ra.n3=i
  	   z(i)=xi.zmin+dflotj(i-1)*dzz
-c uf	   call yyint(m4,g,am,src,xi,xir,apr,cs,ra,ifl,st,
-c UF	   call yyint(m4,g,src,xi,xir,apr,cs,ra,ifl,
            call yyint(m4,g,isrctype,xi,xir,apr,cs,ra,ifl,
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,lostwl,blp)
@@ -291,7 +290,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
            call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
         endif
 	iyz=2
-c     UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
+
         call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
      &       xir.yzintya,xir.yzintyp,
      &       densiyre,densiyim,xintyzre,xintyzim,iyz)
@@ -303,7 +302,7 @@ c     UF	call simpson(cs,ifl,xi,xir,ianzz,dz,fzey,fya,fyp,xir.yzintey,
            call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
         endif
 	iyz=2
-c     call simpson(cs,ifl,xi,xir,ianzz,dz,fzez,fza,fzp,xir.yzintez,
+
         call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
      &       xir.yzintza,xir.yzintzp,
      &       densizre,densizim,xintyzre,xintyzim,iyz)
@@ -454,7 +453,7 @@ c     UF	  endif
        enddo
        
        iyz=1
-c     UF	call simpson(cs,ifl,xi,xir,ianzy,dy,fyey,fya,fyp,
+
        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
      &      yintey,yintya,yintyp,densiyre,densiyim,
      &      xintyzre,xintyzim,iyz)
@@ -1504,11 +1503,9 @@ c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b)
 c--------------------end fitpar ----------------
 
 c******************************************************************
-c UF	subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyz,fyza,fyzp,xint,
-c take out unused fyz
        subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyza,fyzp,xint,
-     &                      xinta,xintp,densiyzre,densiyzim,
-     &                      xintre,xintim,iyz)
+     &                    xinta,xintp,densiyzre,densiyzim,
+     &                    xintre,xintim,iyz)
 c******************************************************************
 c
 c	''Turbo Version'' 
@@ -1549,20 +1546,30 @@ c
 c	iyz = 1 call from y-loop
 c	iyz = 2 call from z-loop
 c-----------------------------------------------------------------------
-
+c UF we should change to implicit none for more safety 
 	implicit real*8(a-h,o-z)
-
-	dimension densiyzre(MAX_INTEGRATION_SIZE),densiyzim(MAX_INTEGRATION_SIZE)
+c       implicit none
 
 #include '../phase/phase_struct.F'
 
-        record /constants/ cs
-        record /integration_results/ xir
-        record /integration/ xi
-        record /control_flags/ ifl
+c definition of calling parameter
+        record  /constants/           cs
+        record  /control_flags/       ifl
+        record  /integration/         xi
+        record  /integration_results/ xir
+        integer ianz
+        real*8  dyz, fyza, fyzp
+        dimension dyz(4096), fyza(4096), fyzp(4096)
+        complex*16 xint
+        real*8  xinta, xintp
+        real*8  densiyzre, densiyzim
+	dimension densiyzre(MAX_INTEGRATION_SIZE),densiyzim(MAX_INTEGRATION_SIZE)
+        real*8  xintre, xintim
+        integer iyz
+c end definition of calling parameter
 
-c UF	complex*16 xint,fyz(4096),f1,f2,xxx(4096)
-        complex*16 xint,xxx(4096)
+        complex*16 xxx(4096)
+        real*8 xxxre, xxxim
 	dimension xxxre(4096),xxxim(4096)
 
 	real*8 fyza_loc(4096),fyzp_loc(4096)
@@ -1577,13 +1584,21 @@ C UF	real*4 xxr(4096),ffyza(4096),ffyzp(4096)
 c	dimension fyza_loc(4096),fyzp_loc(4096)
 c	dimension x_loc(4096),dyz_loc(4096)
 c	dimension xxr(4096),ffyza(4096),ffyzp(4096)
-
+        real*8 partre_int, partim_int
 	dimension partre_int(4096),partim_int(4096)
 
-	dimension dyz(4096)
-c uf	dimension x(4096),y(4096)
+	real*8 x
         dimension x(4096)
-	dimension fyza(4096),fyzp(4096)
+	
+
+c UF definitions to have implicit none
+        real*8 a, b, c, partim, partre, r, s
+        real*8 e1, e11, e2, e22
+        real*8 xx, xxsave, xk_loc, ph1, ph2
+        real*8 x1, x2, x3, y1, y2, y3 
+        real*8 dphi_loc_min, dsinph1, dcosph1, dsinph2, dcosph2
+        integer i, ii, ianz_loc
+        integer iordap_loc
 
 	dphi_loc_min=1.e-2
 	iordap_loc=2
@@ -1599,7 +1614,7 @@ c---------------------------------------------------------
 
 	x(1)=0.d0
 	do i=2,ianz
-	x(i)=x(i-1)+dyz(i)
+           x(i)=x(i-1)+dyz(i)
 	enddo
 
 c111	format(3(3x,d12.5))
@@ -1615,10 +1630,10 @@ c	ianz --> ianz_loc
 
 	ianz_loc=ianz
 	do i=1,ianz_loc
-	dyz_loc(i)=dyz(i)
-	x_loc(i)=x(i)
-	fyza_loc(i)=fyza(i)
-	fyzp_loc(i)=fyzp(i)
+           dyz_loc(i)=dyz(i)
+           x_loc(i)=x(i)
+           fyza_loc(i)=fyza(i)
+           fyzp_loc(i)=fyzp(i)
 	enddo
 
 	ph2=fyzp_loc(1)
@@ -1630,58 +1645,58 @@ c	ianz --> ianz_loc
 	y3=fyza_loc(2)
 
 	do i=1,ianz_loc-1
-	ph1=ph2		
-	ph2=fyzp_loc(i+1)
-	dsinph1=dsinph2
-	dcosph1=dcosph2
-	dsinph2=dsin(ph2)
-	dcosph2=dcos(ph2)
-	xk_loc=(ph2-ph1)/dyz_loc(i)
-	x1=x2		
-	x2=x3		
-	y1=y2		
-	y2=y3		
-	if(i.lt.ianz_loc-1)then
-		x3=x_loc(i+2)
-		y3=fyza_loc(i+2)
-	      else
-		x3=x_loc(i-1)
-		y3=fyza_loc(i-1)
-	endif
-
-c------------ order of expansion of amplitude ---------
-
-	if(iordap_loc.eq.0)then
-		a=0.d0
-		b=0.d0
-		c=0.5d0*(y1+y2)
-	endif
-
-	if(iordap_loc.eq.1)then
-		a=0.d0
-		b=(y1-y2)/(x1-x2)
-		c=y1-b*x1
-	endif
-
-	if(iordap_loc.eq.2)then
-	r=x2*x2-x1*x1
-	s=x3*x3-x1*x1
-
-	b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
-	a=(y3-y1-b*(x3-x1)) / s
-	c=y1-a*x1*x1-b*x1
-
-	endif
+           ph1=ph2		
+           ph2=fyzp_loc(i+1)
+           dsinph1=dsinph2
+           dcosph1=dcosph2
+           dsinph2=dsin(ph2)
+           dcosph2=dcos(ph2)
+           xk_loc=(ph2-ph1)/dyz_loc(i)
+           x1=x2		
+           x2=x3		
+           y1=y2		
+           y2=y3		
+           if(i.lt.ianz_loc-1)then
+              x3=x_loc(i+2)
+              y3=fyza_loc(i+2)
+           else
+              x3=x_loc(i-1)
+              y3=fyza_loc(i-1)
+           endif
+           
+c------------order of expansion of amplitude ---------
+           
+           if(iordap_loc.eq.0)then
+              a=0.d0
+              b=0.d0
+              c=0.5d0*(y1+y2)
+           endif
+           
+           if(iordap_loc.eq.1)then
+              a=0.d0
+              b=(y1-y2)/(x1-x2)
+              c=y1-b*x1
+           endif
+           
+           if(iordap_loc.eq.2)then
+              r=x2*x2-x1*x1
+              s=x3*x3-x1*x1
+              
+              b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
+              a=(y3-y1-b*(x3-x1)) / s
+              c=y1-a*x1*x1-b*x1
+              
+           endif
 
 c-------------------------------------------------
 
 	if(dabs(ph2-ph1).gt.dphi_loc_min)then
-		a=a/xk_loc**3
-		b=b/xk_loc**2
-	      else
-		a=0.d0
-		b=0.d0
-		c=0.5d0*(y1+y2)
+           a=a/xk_loc**3
+           b=b/xk_loc**2
+        else
+           a=0.d0
+           b=0.d0
+           c=0.5d0*(y1+y2)
 	endif
 
 	e1=x1*xk_loc
@@ -1732,6 +1747,7 @@ c-------------------------------------------------
 
 	endif
 c------------------------
+c UF xinta and xintp are return values
 	xinta=cdabs(xint)
 	if(xinta.gt.SMALL_PHA)then
 		xintp=dimag(cdlog(xint/xinta))
@@ -1927,6 +1943,7 @@ c----------------
 
 	return
 	end
+c end simpson
 	
 *CMZ : 00.00/15 12/10/2013  12.22.24  by  Michael Scheer
 *CMZ : 00.00/07 02/05/2008  13.10.35  by  Michael Scheer
@@ -2176,6 +2193,8 @@ c calculate yp=a1+2*a2*dx
       RETURN
       END
 *CMZ : 00.00/15 05/01/2012  13.52.39  by  Michael Scheer
+
+
 *CMZ : 00.00/00 11/01/95  11.41.04  by  Michael Scheer
 *-- Author :
       SUBROUTINE UTIL_SORT_FUNC(N,RA,YA)
@@ -2231,7 +2250,7 @@ C--- ARRAY YA IS FUNCTION OF RA AND SORTED ACCORDINGLY
         YA(I)=YYA
       GO TO 10
       END
-
-
+c end UTIL_SORT_FUNC
+c end phase_integration.F
 
 

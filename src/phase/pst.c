@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <07 Apr 15 13:59:37 flechsig>  */
+/*   Time-stamp: <07 Apr 15 15:48:04 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -530,7 +530,9 @@ void pstc_ii(int index, struct BeamlineType *bl)
 
   if (bl->BLOptions.ifl.pst_mode == 1) /* pst_mode == 1 pst with external mp4 */
     { 
+#ifdef DEBUG
       printf("allocate and fill m4p in pstc\n");
+#endif
       m4p = XMALLOC(struct map4, 1);
       fill_m4(bl, m4p, &bl->ElementList[bl->position]);
     } else m4p= NULL;
@@ -576,14 +578,6 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 
   points= psip->iy * psip->iz;
 
-#ifdef TOBEMOVED
-  // UF Mar 2014 add check
-  if ((psip->iy > 255) || (psip->iz > 255)) 
-    {
-      fprintf(stderr, "warning in %s gridsize beyond (255 x 255) limit - expect unstable operation\n", __FILE__);
-      //exit(-1);
-    }
-#endif
   
   // nz= index / sp->iheigh; // fortran loop
   // ny= index % sp->iheigh; // fortran loop
