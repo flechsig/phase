@@ -1,12 +1,7 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <07 Apr 15 17:12:37 flechsig> 
+c$$$ Time-stamp: <09 Apr 15 17:48:00 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
-c$$$
-c$$$ $Source$ 
-c$$$ $Date$
-c$$$ $Revision$ 
-c$$$ $Author$ 
 
 c ******************************************************************************
 c
@@ -34,7 +29,6 @@ c   You should have received a copy of the GNU General Public License
 c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
 c
 c ******************************************************************************
-
 
 c
 c phase_integration.F enthaelt folgende routinen:
@@ -112,38 +106,37 @@ c	   ifl.matrel  = 0 --------- " ------------
 c	   ifl.iexpand = 0 --------- " ------------
 c
 c************************************************
-
+c UF wants to avoid implicit for better debugging
 	implicit real*8(a-h,o-z)
 c        implicit none
-        integer blp, isrctype, lostwl
-c UF 28.6.13	complex*16 fwert,fwerty,fwertz,
-c     &      s1,s1eyre,s1eyim,s1ezre,s1ezim,
-c     &      s2,s2eyre,s2eyim,s2ezre,s2ezim,
-c     &      yzint,yzintey,yzintez
-        complex*16 fwerty,fwertz
-     
-	complex*16 fzey(4096),fzez(4096)
 
 #include '../phase/phase_struct.F'
 
-        record /constants/ cs
+c UF the type definition of the calling vars
+        record /map4/ m4
         record /geometryst/ g
+        integer isrctype
+        record /apertures/ apr
+        record /constants/ cs
         record /rayst/ ra
-        record /source_results/ sr
-        record /integration_results/ xir
         record /control_flags/ ifl
-c        record /sources/ src
-	record /integration/ xi
-	record /apertures/ apr
-c uf	record /mirrortype/ am
-	record /map4/ m4
-        record /psimagest/ sp
-
+        record /integration/ xi
+        record /integration_results/ xir
+        record /psimagest/ sp                               
+        integer lostwl, blp
+c UF end type definition of the calling vars
+        
+        complex*16 fwerty,fwertz
+     	complex*16 fzey(4096),fzez(4096)
+        record /source_results/ sr
+        real*8 densiyre,densiyim,densizre,densizim
+        real*8 z,dz,fya,fyp,fza,fzp
 	dimension densiyre(MAX_INTEGRATION_SIZE),
      &            densiyim(MAX_INTEGRATION_SIZE),
      &            densizre(MAX_INTEGRATION_SIZE),
      &            densizim(MAX_INTEGRATION_SIZE)
-
+ 
+c UF Apr 15 field also with MAX_INTEGRATION_SIZE ??      
   	dimension z(4096),dz(4096)
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
