@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <09 Apr 15 17:48:00 flechsig> 
+c$$$ Time-stamp: <10 Apr 15 10:45:43 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -64,6 +64,12 @@ c UF 20. Mar 2014 removed statistics
 c UF OCT 14 remove src and give isrctype directly
 c UF isrctype wird wegen brightness gebraucht
 c UF weiterverzweigung erfolgt in Routine psdi
+
+c UF Verbesserungsvorschlaege Apr 2015
+c umstellen auf implicit none - macht den code weniger Fehleranfaellig und uebersichtlicher
+c entfernen aller unused variables
+c grosses Ziel: entfernen des 4096 limits bzw MAX_INTEGRATION_SIZE damit waere der code dann fuer user- inputs voll dynamisch
+
 c*********************************************************
       subroutine adaptive_int(m4,g,isrctype,apr,cs,ra,
      &     ifl,xi,xir,sp,lostwl,blp)
