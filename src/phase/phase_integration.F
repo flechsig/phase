@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Apr 15 10:53:52 flechsig> 
+c$$$ Time-stamp: <10 Apr 15 15:31:01 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -114,8 +114,8 @@ c	   ifl.iexpand = 0 --------- " ------------
 c
 c************************************************
 c UF wants to avoid implicit for better debugging
-	implicit real*8(a-h,o-z)
-c        implicit none
+c	implicit real*8(a-h,o-z)
+        implicit none
 
 #include '../phase/phase_struct.F'
 
@@ -148,7 +148,10 @@ c UF Apr 15 field also with MAX_INTEGRATION_SIZE ??
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
 
-        real*8 yi,zi
+        real*8  yi,zi,dzz,yintya,yintyp,yintza,yintzp
+        real*8  xintyzre,xintyzim
+        integer ianzz,i,ispline_save,iyz
+
 
 #ifdef OBSOLETE  
 c UF 2.4.15 si1 wird nirgends genutzt                   
@@ -237,12 +240,12 @@ c !$OMP PARALLEL DO PRIVATE(i, ra)
      &		z(i),fwerty,fwertz,
      &          yintya,yintyp,yintza,yintzp,sr,lostwl,blp)
 	   if(ifl.ispline.ge.0)then
-c	   	fzey(i)=fwerty
-c	   	fzez(i)=fwertz
-	   densiyre(i)=sr.xintyre
-	   densiyim(i)=sr.xintyim
-	   densizre(i)=sr.xintzre
-	   densizim(i)=sr.xintzim
+c             fzey(i)=fwerty
+c             fzez(i)=fwertz
+              densiyre(i)=sr.xintyre
+              densiyim(i)=sr.xintyim
+              densizre(i)=sr.xintzre
+              densizim(i)=sr.xintzim
            endif
 	   if(ifl.ispline.lt.0)then
 	 	fya(i)=yintya
@@ -265,7 +268,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 	endif
         
         if(ifl.ispline.eq.-1)then
-           call phacor(cs,ra,xi,xir,dz,fya,fyp,ianzz,sp)
+           call phacor(cs,xi,xir,dz,fya,fyp,ianzz,sp)
         endif
 	iyz=2
 
@@ -277,7 +280,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
         sr.xintyim=xintyzim
         
         if(ifl.ispline.eq.-1)then
-           call phacor(cs,ra,xi,xir,dz,fza,fzp,ianzz,sp)
+           call phacor(cs,xi,xir,dz,fza,fzp,ianzz,sp)
         endif
 	iyz=2
 
@@ -311,27 +314,38 @@ c	INPUT : dzi
 c      OUTPUT : yint, yintey, yintez
 c
 c*************************************************************
+c UF wants to avoid implicit for better debugging
+c	implicit real*8(a-h,o-z)
+        implicit none
 
-	implicit real*8(a-h,o-z)
-        integer lostwl,blp
-	complex*16 yintey,yintez
+#include '../phase/phase_struct.F'
+
+c UF the type definition of the calling vars
+        record /map4/ m4
+        record /geometryst/ g
+        integer isrctype
+        record /integration/ xi
+        record /integration_results/ xir
+        record /apertures/ apr
+        record /constants/ cs
+        record /rayst/ ra
+        record /control_flags/ ifl
+        real*8 dzi
+        complex*16 yintey,yintez
+        real*8 yintya,yintyp,yintza,yintzp
+        record /source_results/ sr
+        integer lostwl, blp
+c UF end type definition of the calling vars
+        
+        real*8  dzii, fmax, dyy, y, dy, fya, fyp
+        real*8  densiyre, densiyim, densizre, densizim
+        real*8  xintyzre,xintyzim,fza,fzp
+        integer ianzy, i, iyz
+	
         complex*16 fyey(MAX_INTEGRATION_SIZE)
 
 	dimension densiyre(MAX_INTEGRATION_SIZE),densiyim(MAX_INTEGRATION_SIZE),
      &            densizre(MAX_INTEGRATION_SIZE),densizim(MAX_INTEGRATION_SIZE)
-
-#include '../phase/phase_struct.F'
-
-        record /constants/ cs
-        record /geometryst/ g
-        record /rayst/ ra
-        record /source_results/ sr
-        record /control_flags/ ifl
-	record /integration/ xi
-	record /integration_results/ xir
-	record /apertures/ apr
-	record /map4/ m4
-
 	dimension y(MAX_INTEGRATION_SIZE),dy(MAX_INTEGRATION_SIZE)
 	dimension fya(MAX_INTEGRATION_SIZE),fyp(MAX_INTEGRATION_SIZE)
 	dimension fza(MAX_INTEGRATION_SIZE),fzp(MAX_INTEGRATION_SIZE)
@@ -340,11 +354,6 @@ c*******************************************************
 c	Erstellen eines nochmals reduzierten 
 c       Konstantensatzes
 c*******************************************************
-c#ifdef DEBUG      
-c       write(*,*),'yyint called'
-c      call debug_beamline_type_f(blp)
-c#endif
-
 
         if(dabs(xi.distfocz).gt.1.e-10)then
            dzii=dzi+ra.ri.zi/xi.distfocz
@@ -461,47 +470,44 @@ c*************************************************************
       subroutine fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
      &     dyi,fwerty,sr,lostwl,blp)
 c*************************************************************
-	implicit real*8(a-h,o-z)
-        complex*16 fwerty,ff,ff1,eycpl,ezcpl
-        integer lostwl,blp
-
-c switch off the height_error_code
+c UF wants to avoid implicit for better debugging
+c	implicit real*8(a-h,o-z)
+        implicit none
 
 #include '../phase/phase_struct.F'
 
-        record /constants/ cs
+c UF the type definition of the calling vars
+        record /map4/ m4
         record /geometryst/ g
+        integer isrctype
+        record /integration/ xi
+        record /apertures /apr
+        record /constants/ cs
         record /rayst/ ra
-        record /source_results/ sr
         record /control_flags/ ifl
-	record /integration/ xi
-	record /apertures /apr
+        real*8 dyi
+        complex*16 fwerty
+        record /source_results/ sr
+        integer lostwl,blp
+c UF end type definition of the calling vars
+
+        complex*16 ff,ff1,eycpl,ezcpl
+        real*8 dyii, fd, fdph, fd1ph, fd1pha, fd1phb, var0
+        real*8 xw3sign, xw2sign, xl2sign, arg, spur
+        real*8 ax, bx, cx, at, bt, asig, bsig
+        real*8 divmax, xlenmir, small_fd1ph, convlim, w0a
+        real*8 redu, fd1ph_sav, fd1phb_sav, fact1, fact2
+        real*8 tl,abar,bbar,bbar1,ssin,scos,sumcos,sumsin
+        integer ii, n, nk, nmaxc, nmaxs
 
 c UF28.6.13        record /parder/ pd                          !!! UF 5.9.2011 
 c kann ev. probleme machen in phase_struct ist parder abhaengig von Seven_order
 c in der phaselib benutze ich parder4 
 
-	record /map4/ m4
 
+        real*8 bb
         dimension bb(0:165)
 
-c      dimension p1(0:7,0:7,0:7,0:7)
-c      dimension p2(0:7,0:7,0:7,0:7)
-c      dimension p12(0:7,0:7,0:7,0:7)
-c      dimension p3(0:7,0:7,0:7,0:7)
-c      dimension p4(0:7,0:7,0:7,0:7)
-c      dimension p34(0:7,0:7,0:7,0:7)
-c      dimension p1234(0:7,0:7,0:7,0:7)
-c      dimension p11(0:7,0:7,0:7,0:7)
-c      dimension p22(0:7,0:7,0:7,0:7)
-c      dimension p1122(0:7,0:7,0:7,0:7)
-c      dimension p1a(0:7,0:7,0:7,0:7)
-c      dimension p2a(0:7,0:7,0:7,0:7)
-c      dimension p3a(0:7,0:7,0:7,0:7)
-c      dimension p4a(0:7,0:7,0:7,0:7)
-c      dimension p11a(0:7,0:7,0:7,0:7)
-c      dimension p22a(0:7,0:7,0:7,0:7)
-c      dimension p1122a(0:7,0:7,0:7,0:7)
 #ifdef DEBUG1
         write(*,*),'fywert called'
         call debug_beamline_type_f(blp)
@@ -824,7 +830,7 @@ c------------- only quadratic terms
 c------------- include 3rd order Term in w
         bb(0)=1.d0
         do n=1,nk
-         bb(n)=bb(n-1)*bbar
+           bb(n)=bb(n-1)*bbar
         enddo
 
         sumcos=0.d0
@@ -834,10 +840,10 @@ c------------- include 3rd order Term in w
         nmaxs=2*((nk+1)/2)-1
 
         do n=0,nmaxc,2
-          sumcos=sumcos+bb(n)*cs.fc(n)     
+           sumcos=sumcos+bb(n)*cs.fc(n)     
         enddo
         do n=1,nmaxs,2
-          sumsin=sumsin+bb(n)*cs.fs(n)     
+           sumsin=sumsin+bb(n)*cs.fs(n)     
         enddo
 
         sumcos=sumcos*abar
@@ -911,8 +917,7 @@ c---------------------- end fywert -----------------------
 
 
 c***********************************************************
-c UF 12.1.2000
-	subroutine phacor(cs,ra,xi,xir,dx,amp,pha,ianz,sp)
+	subroutine phacor(cs,xi,xir,dx,amp,pha,ianz,sp)
 c***********************************************************
 c
 c	PHACOR funktioniert folgendermassen:
@@ -1007,18 +1012,28 @@ c	was passiert, wenn x3=-x1 und damit x3**2-x1**2=0 wird???
 c	(kein Problem bei linearer Extrapolation)
 c
 c-----------------
-
-	implicit real*8(a-h,o-z)
-
+c UF wants to avoid implicit for better debugging
+c	implicit real*8(a-h,o-z)
+        implicit none
+	
 #include '../phase/phase_struct.F'
 
-        record /rayst/ ra
+c UF the type definition of the calling vars
         record /constants/ cs
-	record /integration_results/ xir
-	record /integration/ xi
-c UF        record /control_flags/ ifl
+        record /integration/ xi
+        record /integration_results/ xir
+        real*8 dx, amp, pha
+        integer ianz
         record /psimagest/ sp
+c UF end type definition of the calling vars
 
+        real*8 SMALL_PHA1, x, d1, d2, d12
+        real*8 x1,x2,x3,y1,y2,y3,r,s
+        real*8 a,b,c,pha_guess,x_fit,amp_fit,xx,amp_guess
+        real*8 coef,pha_new,pha_fit,xipi,dd,dd1
+        integer iii,ii,i,ianz0,j,istart_flag,iend_flag
+        integer iimax, iregion, iiregion, istart, iend
+        integer iiord, iiend, iistart,ianz_fit,ipi 
 	dimension dx(4096),x(4096),
      &            amp(4096),pha(4096),pha_new(4096),
      &		  d1(4096),d2(4096),d12(4096),
@@ -1026,7 +1041,6 @@ c UF        record /control_flags/ ifl
 
 
 	dimension x_fit(1024),amp_fit(1024),pha_fit(1024)
-c UF	dimension coef(1024),coef1(1024),xx(1024)
         dimension coef(1024),xx(1024)
 
 	SMALL_PHA1=SMALL_PHA*1.0d5
@@ -1034,7 +1048,7 @@ c UF	dimension coef(1024),coef1(1024),xx(1024)
 
 	x(1)=0.d0
 	do i=2,ianz
-	x(i)=x(i-1)+dx(i-1)
+           x(i)=x(i-1)+dx(i-1)
 	enddo
 
 	if(xi.ianz0_cal.eq.0)then
@@ -1065,20 +1079,20 @@ c-------------------------------------------------------
 c-------- Scan from left to right 
 
 	do i=1,ianz-3
-	x1=x(i)
-	x2=x(i+1)
-	x3=x(i+2)
-	y1=pha(i)
-	y2=pha(i+1)
-	y3=pha(i+2)
-
-	r=x2*x2-x1*x1
-	s=x3*x3-x1*x1
-
-	b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
-
-	a=(y3-y1-b*(x3-x1)) / s
-
+           x1=x(i)
+           x2=x(i+1)
+           x3=x(i+2)
+           y1=pha(i)
+           y2=pha(i+1)
+           y3=pha(i+2)
+           
+           r=x2*x2-x1*x1
+           s=x3*x3-x1*x1
+           
+           b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
+           
+           a=(y3-y1-b*(x3-x1)) / s
+           
 c UF 27.5.11 hier steigt es aus
 c The shapes of the array expressions do not conform
 
@@ -1093,24 +1107,24 @@ c The shapes of the array expressions do not conform
 c-------- Scan from right to left 
 
 	do i=ianz,4,-1
-	x1=x(i)
-	x2=x(i-1)
-	x3=x(i-2)
-	y1=pha(i)
-	y2=pha(i-1)
-	y3=pha(i-2)
-
-	r=x2*x2-x1*x1
-	s=x3*x3-x1*x1
-
-	b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
-	a=(y3-y1-b*(x3-x1)) / s
-	c=y1-a*x1*x1-b*x1
-
-	pha_guess=a*x(i-3)*x(i-3)+b*x(i-3)+c
-
-	d2(i-3)=dabs(pha_guess-pha(i-3))
-
+           x1=x(i)
+           x2=x(i-1)
+           x3=x(i-2)
+           y1=pha(i)
+           y2=pha(i-1)
+           y3=pha(i-2)
+           
+           r=x2*x2-x1*x1
+           s=x3*x3-x1*x1
+           
+           b=( (y3-y1)/s - (y2-y1)/r ) / ( (x3-x1)/s - (x2-x1)/r )
+           a=(y3-y1-b*(x3-x1)) / s
+           c=y1-a*x1*x1-b*x1
+           
+           pha_guess=a*x(i-3)*x(i-3)+b*x(i-3)+c
+           
+           d2(i-3)=dabs(pha_guess-pha(i-3))
+           
 	enddo
 
 c------ determine smoothness of the phase
@@ -1123,8 +1137,8 @@ c------ determine smoothness of the phase
 	d12(ianz-2)=99.d0
 
 	do i=4,ianz-3
-	d12(i)=dsqrt(dabs(d1(i)*d2(i)))
-	if(d12(i).eq.0.d0)d12(i)=99
+           d12(i)=dsqrt(dabs(d1(i)*d2(i)))
+           if(d12(i).eq.0.d0)d12(i)=99
 	enddo
 
 c------ now, search ianz0
@@ -1134,39 +1148,39 @@ c------ now, search ianz0
 
 	iregion=0
 	do i=1,ianz
-	if(istart_flag.eq.1)then
-		if(d12(i).lt.xi.d12_max)then
-			iregion=iregion+1		
-			istart(iregion)=i
-			istart_flag=0	! do not search for istart
-			iend_flag=1	! search for iend
-		endif
-	endif
-	if(iend_flag.eq.1)then
-		if(d12(i).lt.xi.d12_max)then
-			iend(iregion)=i
-		       else
-			istart_flag=1
-			iend_flag=0
-		endif
-	endif
-
+           if(istart_flag.eq.1)then
+              if(d12(i).lt.xi.d12_max)then
+                 iregion=iregion+1		
+                 istart(iregion)=i
+                 istart_flag=0	! do not search for istart
+                 iend_flag=1	! search for iend
+              endif
+           endif
+           if(iend_flag.eq.1)then
+              if(d12(i).lt.xi.d12_max)then
+                 iend(iregion)=i
+              else
+                 istart_flag=1
+                 iend_flag=0
+              endif
+           endif
+           
 	enddo
 
 	iimax=0
 
 	iiregion=0
 	if(iregion.gt.0)then
-	do i=1,iregion
-	ii=iend(i)-istart(i)+1
-	if(ii.gt.iimax)then
-		iimax=ii
-		iiregion=i
-	endif
-	enddo
-
-	ianz0=(istart(iiregion)+iend(iiregion))/2
-
+           do i=1,iregion
+              ii=iend(i)-istart(i)+1
+              if(ii.gt.iimax)then
+                 iimax=ii
+                 iiregion=i
+              endif
+           enddo
+           
+           ianz0=(istart(iiregion)+iend(iiregion))/2
+           
 	endif
 
 	if(iiregion.eq.0)then
@@ -1233,71 +1247,71 @@ c------- check smoothness of amplitude ------------------
 
 c-------- go from ianz0 to the right
 	if(ianz0.le.ianz-2)then
-	iiend=ianz0
-	do i=ianz0,ianz-2
-	iiend=iiend+1
-	iistart=jmax0(ianz0-1,iiend-xi.ifm_amp+1)
-	ianz_fit=iiend-iistart+1
-	do j=iistart,iiend
-	  x_fit(j-iistart+1)=x(j)
-	  amp_fit(j-iistart+1)=amp(j)
-	enddo
-	call fitpar(ianz_fit,x_fit,amp_fit,iiord,coef)
-
-	xx(1)=1.d0
-	do j=1,iiord
-	xx(j+1)=xx(j)*x(i+2)
-	enddo
-
-	amp_guess=0.d0
-	do j=1,iiord+1
-	amp_guess=amp_guess+coef(j)*xx(j)
-	enddo
-
-	if(dabs(amp_guess-amp(i+2)).gt.
-     &		dabs(amp_guess+amp(i+2)) )then
-		amp(i+2)=-amp(i+2)
-		pha(i+2)=pha(i+2)+cs.pi
-	endif
-
-	enddo
+           iiend=ianz0
+           do i=ianz0,ianz-2
+              iiend=iiend+1
+              iistart=jmax0(ianz0-1,iiend-xi.ifm_amp+1)
+              ianz_fit=iiend-iistart+1
+              do j=iistart,iiend
+                 x_fit(j-iistart+1)=x(j)
+                 amp_fit(j-iistart+1)=amp(j)
+              enddo
+              call fitpar(ianz_fit,x_fit,amp_fit,iiord,coef)
+              
+              xx(1)=1.d0
+              do j=1,iiord
+                 xx(j+1)=xx(j)*x(i+2)
+              enddo
+              
+              amp_guess=0.d0
+              do j=1,iiord+1
+                 amp_guess=amp_guess+coef(j)*xx(j)
+              enddo
+              
+              if(dabs(amp_guess-amp(i+2)).gt.
+     &             dabs(amp_guess+amp(i+2)) )then
+                 amp(i+2)=-amp(i+2)
+                 pha(i+2)=pha(i+2)+cs.pi
+              endif
+              
+           enddo
 	endif
 
 c-------- go from ianz0 to the left 
 	if(ianz0.ge.2)then
-	iiend=ianz0
-	do i=ianz0,3,-1
-	iiend=iiend-1
-	iistart=jmin0(ianz0+1,iiend+xi.ifm_amp-1)
-	ianz_fit=iistart-iiend+1
-	do j=iiend,iistart
-	  x_fit(j-iiend+1)=x(j)
-	  amp_fit(j-iiend+1)=amp(j)
-	enddo
-
-	call fitpar(ianz_fit,x_fit,amp_fit,iiord,coef)
-
-	xx(1)=1.d0
-	do j=1,iiord
-	xx(j+1)=xx(j)*x(i-2)
-	enddo
-
-	amp_guess=0.d0
-	do j=1,iiord+1
-	amp_guess=amp_guess+coef(j)*xx(j)
-	enddo
-
-	if(dabs(amp_guess-amp(i-2)).gt.
-     &		dabs(amp_guess+amp(i-2)) )then
-		amp(i-2)=-amp(i-2)
-		pha(i-2)=pha(i-2)+cs.pi
+           iiend=ianz0
+           do i=ianz0,3,-1
+              iiend=iiend-1
+              iistart=jmin0(ianz0+1,iiend+xi.ifm_amp-1)
+              ianz_fit=iistart-iiend+1
+              do j=iiend,iistart
+                 x_fit(j-iiend+1)=x(j)
+                 amp_fit(j-iiend+1)=amp(j)
+              enddo
+              
+              call fitpar(ianz_fit,x_fit,amp_fit,iiord,coef)
+              
+              xx(1)=1.d0
+              do j=1,iiord
+                 xx(j+1)=xx(j)*x(i-2)
+              enddo
+              
+              amp_guess=0.d0
+              do j=1,iiord+1
+                 amp_guess=amp_guess+coef(j)*xx(j)
+              enddo
+              
+              if(dabs(amp_guess-amp(i-2)).gt.
+     &             dabs(amp_guess+amp(i-2)) )then
+                 amp(i-2)=-amp(i-2)
+                 pha(i-2)=pha(i-2)+cs.pi
+              endif
+              
+           enddo
 	endif
-
-	enddo
-	endif
-
+        
 9988	continue
-c--------------- end amplitude correction -------------------
+c---------------end amplitude correction -------------------
 
 c----------------------------------
 c--------- start phase correction
@@ -1307,108 +1321,108 @@ c----------------------------------
 
 c-------- go from ianz0 to the right
 	if(ianz0.le.ianz-2)then
-	do i=ianz0-1,ianz0+1
-	pha_new(i)=pha(i)
-	enddo
-	iiend=ianz0
-	do i=ianz0,ianz-2
-	iiend=iiend+1
-	iistart=jmax0(ianz0-1,iiend-xi.ifm_pha+1)
-	ianz_fit=iiend-iistart+1
-	do j=iistart,iiend
-	  x_fit(j-iistart+1)=x(j)
-	  pha_fit(j-iistart+1)=pha_new(j)
-	enddo
-	call fitpar(ianz_fit,x_fit,pha_fit,iiord,coef)
-
-	xx(1)=1.d0
-	do j=1,iiord
-	xx(j+1)=xx(j)*x(i+2)
-	enddo
-
-	pha_guess=0.d0
-	do j=1,iiord+1
-	pha_guess=pha_guess+coef(j)*xx(j)
-	enddo
-
-c----------- now, correct phase
-	xipi=pha_guess/(2.d0*cs.pi)
-	ipi=xipi
-	ipi=ipi-5
-	pha_new(i+2)=pha(i+2)+dflotj(ipi)*2.d0*cs.pi
-	dd=dabs(pha_guess-pha_new(i+2))
+           do i=ianz0-1,ianz0+1
+              pha_new(i)=pha(i)
+           enddo
+           iiend=ianz0
+           do i=ianz0,ianz-2
+              iiend=iiend+1
+              iistart=jmax0(ianz0-1,iiend-xi.ifm_pha+1)
+              ianz_fit=iiend-iistart+1
+              do j=iistart,iiend
+                 x_fit(j-iistart+1)=x(j)
+                 pha_fit(j-iistart+1)=pha_new(j)
+              enddo
+              call fitpar(ianz_fit,x_fit,pha_fit,iiord,coef)
+              
+              xx(1)=1.d0
+              do j=1,iiord
+                 xx(j+1)=xx(j)*x(i+2)
+              enddo
+              
+              pha_guess=0.d0
+              do j=1,iiord+1
+                 pha_guess=pha_guess+coef(j)*xx(j)
+              enddo
+              
+c-----------now, correct phase
+              xipi=pha_guess/(2.d0*cs.pi)
+              ipi=xipi
+              ipi=ipi-5
+              pha_new(i+2)=pha(i+2)+dflotj(ipi)*2.d0*cs.pi
+              dd=dabs(pha_guess-pha_new(i+2))
 30	continue
 	pha_new(i+2)=pha_new(i+2)+2.d0*cs.pi
 	dd1=dabs(pha_new(i+2)-pha_guess) 
 	if(dabs(dabs(dd1)-dabs(dd)).gt.SMALL_PHA1)then
-	if(dabs(dd1).lt.dabs(dd))then
-		dd=dd1
-		goto 30
-	endif	
+           if(dabs(dd1).lt.dabs(dd))then
+              dd=dd1
+              goto 30
+           endif	
 	endif
 	pha_new(i+2)=pha_new(i+2)-2.d0*cs.pi
-
-	enddo
-	endif
-
-c-------- go from ianz0 to the left 
-
-	if(ianz0.ge.2)then
+        
+      enddo
+      endif
+      
+c--------go from ianz0 to the left 
+      
+      if(ianz0.ge.2)then
 	iiend=ianz0
 	do i=ianz0,3,-1
-	iiend=iiend-1
-	iistart=jmin0(ianz0+1,iiend+xi.ifm_pha-1)
-	ianz_fit=iistart-iiend+1
-	do j=iiend,iistart
-	  x_fit(j-iiend+1)=x(j)
-	  pha_fit(j-iiend+1)=pha_new(j)
-	enddo
-
-	call fitpar(ianz_fit,x_fit,pha_fit,iiord,coef)
-
-	xx(1)=1.d0
-	do j=1,iiord
-	xx(j+1)=xx(j)*x(i-2)
-	enddo
-
-	pha_guess=0.d0
-	do j=1,iiord+1
-	pha_guess=pha_guess+coef(j)*xx(j)
-	enddo
-
-c----------- now,correct phase
-	xipi=pha_guess/(2.d0*cs.pi)
-	ipi=xipi
-	ipi=ipi-5
-	pha_new(i-2)=pha(i-2)+dflotj(ipi)*2.d0*cs.pi
-	dd=dabs(pha_guess-pha_new(i-2))
+           iiend=iiend-1
+           iistart=jmin0(ianz0+1,iiend+xi.ifm_pha-1)
+           ianz_fit=iistart-iiend+1
+           do j=iiend,iistart
+              x_fit(j-iiend+1)=x(j)
+              pha_fit(j-iiend+1)=pha_new(j)
+           enddo
+           
+           call fitpar(ianz_fit,x_fit,pha_fit,iiord,coef)
+           
+           xx(1)=1.d0
+           do j=1,iiord
+              xx(j+1)=xx(j)*x(i-2)
+           enddo
+           
+           pha_guess=0.d0
+           do j=1,iiord+1
+              pha_guess=pha_guess+coef(j)*xx(j)
+           enddo
+           
+c-----------now,correct phase
+           xipi=pha_guess/(2.d0*cs.pi)
+           ipi=xipi
+           ipi=ipi-5
+           pha_new(i-2)=pha(i-2)+dflotj(ipi)*2.d0*cs.pi
+           dd=dabs(pha_guess-pha_new(i-2))
 31	continue
 	pha_new(i-2)=pha_new(i-2)+2.d0*cs.pi
 	dd1=dabs(pha_new(i-2)-pha_guess) 
 	if(dabs(dabs(dd1)-dabs(dd)).gt.SMALL_PHA1)then
-	if(dabs(dd1).lt.dabs(dd))then
-		dd=dd1
-		goto 31
-	endif	
+           if(dabs(dd1).lt.dabs(dd))then
+              dd=dd1
+              goto 31
+           endif	
 	endif
 	pha_new(i-2)=pha_new(i-2)-2.d0*cs.pi
-
-	enddo
-	endif
-
-	do i=1,ianz
-	pha(i)=pha_new(i)
-	enddo
-
-c	open(unit=10,name='t1_phacor.dat',type='new')
-c	do i=1,ianz
-c	write(10,*)x(i),amp(i),pha(i)
-c	enddo
-c	close(10)
-
-	return
-	end
-c--------------------------- end phacor ---------------
+        
+      enddo
+      endif
+      
+      do i=1,ianz
+         pha(i)=pha_new(i)
+      enddo
+      
+c     open(unit=10,name='t1_phacor.dat',type='new')
+c     do i=1,ianz
+c     write(10,*)x(i),amp(i),pha(i)
+c     enddo
+c     close(10)
+      
+      return
+      end
+c---------------------------end phacor ---------------
 
 c******************************************************************
 	subroutine fitpar(ianz,x,y,iiord,c)
@@ -1419,8 +1433,19 @@ c	Routine fits a polynomial of order iiord through
 c	a set of data points
 c
 c------------------------------------------------------
+c UF wants to avoid implicit for better debugging
+c	implicit real*8(a-h,o-z)
+        implicit none
 
-	implicit real*8 (a-h,o-z)
+c UF the type definition of the calling vars
+	integer ianz
+        real*8 x,y
+        integer iiord
+        real*8 c
+c UF end type definition of the calling vars
+
+        integer number,i,j,k,lnum,ifail1
+        real*8 xx,b,a
 
 	parameter(number=210)
 
@@ -1432,50 +1457,51 @@ c UF	dimension work(number)
 
 c-------- check order and number of data points
 	if((ianz-1).lt.iiord)then
-		print*,'******** error in fitpar *************'
-		print*,'******** not enough data points ******'	
-		stop
+           print*,'******** error in fitpar *************'
+           print*,'******** not enough data points ******'	
+           stop
 	endif
-
+        
 c-------- products of x(i)
 	do j=1,ianz
-		xx(1,j)=1.d0
-		do i=1,2*iiord
-			xx(i+1,j)=xx(i,j)*x(j)
-		enddo
+           xx(1,j)=1.d0
+           do i=1,2*iiord
+              xx(i+1,j)=xx(i,j)*x(j)
+           enddo
 	enddo			
-
-c-------- derivation of vector B 
+        
+c--------derivation of vector B 
 	do i=1,iiord+1
-		b(i)=0.d0
-		do j=1,ianz
-			b(i)=b(i)+y(j)*xx(i,j)
-		enddo
+           b(i)=0.d0
+           do j=1,ianz
+              b(i)=b(i)+y(j)*xx(i,j)
+           enddo
 	enddo
-
-c-------- derivation of matrix A 
+        
+c--------derivation of matrix A 
 	do i=iiord+1,1,-1
-		do j=iiord+1,1,-1
-			a(i,j)=0.d0
-			do k=1,ianz
-				a(i,j)=a(i,j)+xx(i+j-1,k)
-			enddo
-		enddo
+           do j=iiord+1,1,-1
+              a(i,j)=0.d0
+              do k=1,ianz
+                 a(i,j)=a(i,j)+xx(i+j-1,k)
+              enddo
+           enddo
 	enddo
-
+        
 	lnum=iiord+1
 c 14.3.06 kann deqn nicht finden
-c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b)
+c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b) UF set ifail1 to 1
+        ifail1=1
  	if(ifail1.ne.0)then
-		print*,'******* Fehler in FITPAR ******'
-		print*,'******* Fehler beim Loesen' 
-		print*,'******* des Gleichungssystems ******'
+           print*,'******* Fehler in FITPAR ******'
+           print*,'******* Fehler beim Loesen' 
+           print*,'******* des Gleichungssystems ******'
 	endif
-
+        
 	do i=1,iiord+1
-		c(i)=b(i)
+           c(i)=b(i)
 	enddo
-
+        
 	return
 	end
 c--------------------end fitpar ----------------
