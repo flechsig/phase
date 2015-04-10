@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Apr 15 15:31:01 flechsig> 
+c$$$ Time-stamp: <10 Apr 15 15:38:42 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -1439,13 +1439,13 @@ c	implicit real*8(a-h,o-z)
 
 c UF the type definition of the calling vars
 	integer ianz
-        real*8 x,y
+        real*8  x,y
         integer iiord
-        real*8 c
+        real*8  c
 c UF end type definition of the calling vars
 
         integer number,i,j,k,lnum,ifail1
-        real*8 xx,b,a
+        real*8  xx,b,a
 
 	parameter(number=210)
 
@@ -1462,7 +1462,7 @@ c-------- check order and number of data points
            stop
 	endif
         
-c-------- products of x(i)
+c--------products of x(i)
 	do j=1,ianz
            xx(1,j)=1.d0
            do i=1,2*iiord
@@ -1492,6 +1492,7 @@ c--------derivation of matrix A
 c 14.3.06 kann deqn nicht finden
 c UF!!!	call deqn(lnum,a,number,work,ifail1,1,b) UF set ifail1 to 1
         ifail1=1
+        write(6,*)'UF Apr 15, FITPAR will fail'
  	if(ifail1.ne.0)then
            print*,'******* Fehler in FITPAR ******'
            print*,'******* Fehler beim Loesen' 
