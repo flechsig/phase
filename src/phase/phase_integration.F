@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Apr 15 10:45:43 flechsig> 
+c$$$ Time-stamp: <10 Apr 15 10:47:22 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -68,6 +68,7 @@ c UF weiterverzweigung erfolgt in Routine psdi
 c UF Verbesserungsvorschlaege Apr 2015
 c umstellen auf implicit none - macht den code weniger Fehleranfaellig und uebersichtlicher
 c entfernen aller unused variables
+c entfernen von debugging code oder klammern mit #ifdef DEBUG
 c grosses Ziel: entfernen des 4096 limits bzw MAX_INTEGRATION_SIZE damit waere der code dann fuer user- inputs voll dynamisch
 
 c*********************************************************
