@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Apr 15 10:47:22 flechsig> 
+c$$$ Time-stamp: <10 Apr 15 10:53:52 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -148,11 +148,7 @@ c UF Apr 15 field also with MAX_INTEGRATION_SIZE ??
 	dimension fya(4096),fyp(4096)
 	dimension fza(4096),fzp(4096)
 
-c#ifdef DEBUG1
-c       write(*,*),'adaptive_int called1'
-c        call debug_beamline_type_f(blp)
-c        write(*,*),'adaptive_int called2'
-c#endif
+        real*8 yi,zi
 
 #ifdef OBSOLETE  
 c UF 2.4.15 si1 wird nirgends genutzt                   
@@ -187,7 +183,6 @@ c*******************************************************
 	yi=ra.ri.yi
 	zi=ra.ri.zi
 
-c#ifdef SEVEN_ORDER
         call subm17(m4.fdetc,yi,zi,m4.fdetrc)
         call subm17(m4.fdetphc,yi,zi,m4.fdetphrc)
         call subm17(m4.fdet1phc,yi,zi,m4.fdet1phrc)
@@ -203,23 +198,6 @@ c#ifdef SEVEN_ORDER
         call subm17(m4.xlen2c,yi,zi,m4.xlen2c_r)
         call subm17(m4.wc,yi,zi,m4.wrc)
         call subm17(m4.xlc,yi,zi,m4.xlrc)
-c#else
-c        call subm1(m4.fdetc,yi,zi,m4.fdetrc)
-c        call subm1(m4.fdetphc,yi,zi,m4.fdetphrc)
-c        call subm1(m4.fdet1phc,yi,zi,m4.fdet1phrc)
-c        call subm1(m4.fdet1phca,yi,zi,m4.fdet1phrca)
-c        call subm1(m4.fdet1phcb,yi,zi,m4.fdet1phrcb)
-c        call subm1(m4.ypc1,yi,zi,m4.yprc1)
-c        call subm1(m4.zpc1,yi,zi,m4.zprc1)
-c        call subm1(m4.dypc,yi,zi,m4.dyprc)
-c        call subm1(m4.dzpc,yi,zi,m4.dzprc)
-c        call subm1(m4.ypc_ap,yi,zi,m4.ypc_ap_r)
-c        call subm1(m4.zpc_ap,yi,zi,m4.zpc_ap_r)
-c        call subm1(m4.xlen1c,yi,zi,m4.xlen1c_r)
-c        call subm1(m4.xlen2c,yi,zi,m4.xlen2c_r)
-c        call subm1(m4.wc,yi,zi,m4.wrc)
-c        call subm1(m4.xlc,yi,zi,m4.xlrc)
-c#endif
 
 c        write(6,*)'m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)',m4.fdet1phrcb(0,0),m4.fdet1phrcb(1,0)
 c------------------------------------------------------
