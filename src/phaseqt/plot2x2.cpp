@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <22 Apr 15 16:15:09 flechsig> 
+//  Time-stamp: <22 Apr 15 16:18:20 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -186,8 +186,8 @@ void Plot2x2::hfill4dyn(double *arr, int ndatay, int ndataz)
 
   for (int k= 0; k < ndataz; k++) 
     {
-      c4x[k]= arr[offset+ k]*1e3;
-      c4y[k]= arr[offset+ k+ ndataz];
+      c4x[k]= arr[offset4+ k]*1e3;
+      c4y[k]= arr[offset4+ k+ ndataz];
     }
   
   z1min= c1x[0];
