@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <07 Apr 15 15:48:04 flechsig>  */
+/*   Time-stamp: <22 Apr 15 17:10:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -555,7 +555,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct map4                *m4p;
 
  //struct constants *csp;
-  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf, i;
+  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf, i, size6, offset4;
   double yi, zi;
 
   lostwl= 0;
@@ -678,15 +678,31 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
       if (bl->sintre) XFREE(bl->sintre);
       if (bl->sintim) XFREE(bl->sintim);
 
+#ifdef old
       bl->simpre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
       bl->simpim= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
       bl->sintre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
       bl->sintim= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
-      
       memcpy(bl->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
       memcpy(bl->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
       memcpy(bl->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4); 
       memcpy(bl->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
+#else
+      /* neu */
+      offset4= bl->BLOptions.xi.ianzy0* 4;
+      size6  = bl->BLOptions.xi.ianzz0* 2+ offset4;
+            
+      bl->simpre= XMALLOC(double, size6);
+      bl->simpim= XMALLOC(double, size6);
+      bl->sintre= XMALLOC(double, size6);
+      bl->sintim= XMALLOC(double, size6);
+
+      fill_si(bl, bl->simpre, xirp->simpre);
+      fill_si(bl, bl->simpim, xirp->simpim);
+      fill_si(bl, bl->sintre, xirp->sintre);
+      fill_si(bl, bl->sintim, xirp->sintim);
+#endif
+ 
     }
 
   XFREE(xirp);
@@ -854,6 +870,29 @@ void getgeostr_(int *blp, double *sina, double *cosa, double *sinb, double *cosb
   *rp  = el->geo.rp;
   *xlam= el->geo.xlam;
 } /* getgeostr_ */
+
+void fill_si(struct BeamlineType *bl, double *si, double *xirps)
+{
+  int i, o4;
+  
+  o4= bl->BLOptions.xi.ianzy0* 4;
+  
+  for (i= 0; i< bl->BLOptions.xi.ianzy0; i++)
+    {
+      si[i]                            = xirps[8* i];
+      si[i+ bl->BLOptions.xi.ianzy0]   = xirps[8* i+ 4];
+      si[i+ bl->BLOptions.xi.ianzy0* 2]= xirps[8* i+ 5];
+      si[i+ bl->BLOptions.xi.ianzy0* 3]= xirps[8* i+ 6];
+      
+    }
+  for (i= 0; i< bl->BLOptions.xi.ianzz0; i++)
+    {
+      si[o4+ i]                         = xirps[8* i+ 3];
+      si[o4+ i+ bl->BLOptions.xi.ianzz0]= xirps[8* i+ 7];
+    }
+  
+} /* end fill_si */
+
 /* end pst.c */
 
 

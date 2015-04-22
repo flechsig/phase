@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <22 Apr 15 16:18:20 flechsig> 
+//  Time-stamp: <22 Apr 15 17:07:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -78,6 +78,7 @@ Plot2x2::~Plot2x2()
   cout << "Plot2x2 destructor called" << endl;
 } // end destructor
 
+#ifdef OLD
 /* fills simpre style data into curves sets min/max      */
 void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
 {
@@ -143,10 +144,10 @@ void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
   d_curve4->setRawSamples(c4x, c4y, ndataz);
     
 } /* end hfill4 */
-
+#else
 /* fills simpre style data into curves sets min/max      */
 /* UF Apr 15 new data ordering */
-void Plot2x2::hfill4dyn(double *arr, int ndatay, int ndataz)
+void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
 {
   int offset4;
 
@@ -220,8 +221,8 @@ void Plot2x2::hfill4dyn(double *arr, int ndatay, int ndataz)
   d_curve3->setRawSamples(c1x, c3y, ndatay);
   d_curve4->setRawSamples(c4x, c4y, ndataz);
     
-} /* end hfill4dyn */
-
+} /* end hfill4 */
+#endif
 
 // attach the curves to the plots
 void Plot2x2::myattach()
