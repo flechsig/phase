@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <15 Dec 14 13:53:58 flechsig> 
+//  Time-stamp: <22 Apr 15 16:15:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -143,6 +143,85 @@ void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
   d_curve4->setRawSamples(c4x, c4y, ndataz);
     
 } /* end hfill4 */
+
+/* fills simpre style data into curves sets min/max      */
+/* UF Apr 15 new data ordering */
+void Plot2x2::hfill4dyn(double *arr, int ndatay, int ndataz)
+{
+  int offset4;
+
+#ifdef DEBUG
+  cout << "debug: hfill4dyn called, file=" << __FILE__ << endl;
+#endif
+
+  if (!arr) 
+    {
+      cout << "hfill4dyn error- array emty- return" << endl;
+      return;
+    }
+
+  if (c1x) XFREE(c1x);
+  if (c4x) XFREE(c4x);
+  if (c1y) XFREE(c1y);
+  if (c2y) XFREE(c2y);
+  if (c3y) XFREE(c3y);
+  if (c4y) XFREE(c4y);
+
+  c1x= XMALLOC(double, ndatay);
+  c4x= XMALLOC(double, ndataz);
+  c1y= XMALLOC(double, ndatay);
+  c2y= XMALLOC(double, ndatay);
+  c3y= XMALLOC(double, ndatay);
+  c4y= XMALLOC(double, ndataz);
+
+  for (int k= 0; k < ndatay; k++) 
+    {
+      c1x[k]= arr[k]*1e3;
+      c1y[k]= arr[k+ ndatay];
+      c2y[k]= arr[k+ ndatay* 2];
+      c3y[k]= arr[k+ ndatay* 3];
+    }
+
+  offset4= ndatay* 4;
+
+  for (int k= 0; k < ndataz; k++) 
+    {
+      c4x[k]= arr[offset+ k]*1e3;
+      c4y[k]= arr[offset+ k+ ndataz];
+    }
+  
+  z1min= c1x[0];
+  z4min= c4x[0]; 
+  z1max= c1x[ndatay-1];
+  z4max= c4x[ndataz-1]; 
+  
+  ymin[0]= ymax[0]= c1y[0];
+  ymin[1]= ymax[1]= c2y[0];
+  ymin[2]= ymax[2]= c3y[0];
+  ymin[3]= ymax[3]= c4y[0];
+  for (int k= 0; k < ndatay; k++) 
+    {
+      ymin[0]= qMin(c1y[k], ymin[0]);
+      ymax[0]= qMax(c1y[k], ymax[0]);
+      ymin[1]= qMin(c2y[k], ymin[1]);
+      ymax[1]= qMax(c2y[k], ymax[1]);
+      ymin[2]= qMin(c3y[k], ymin[2]);
+      ymax[2]= qMax(c3y[k], ymax[2]);
+    }
+
+  for (int k= 0; k < ndataz; k++) 
+    {
+      ymin[3]= qMin(c4y[k], ymin[3]);
+      ymax[3]= qMax(c4y[k], ymax[3]);
+    }
+  
+  d_curve1->setRawSamples(c1x, c1y, ndatay);
+  d_curve2->setRawSamples(c1x, c2y, ndatay);
+  d_curve3->setRawSamples(c1x, c3y, ndatay);
+  d_curve4->setRawSamples(c4x, c4y, ndataz);
+    
+} /* end hfill4dyn */
+
 
 // attach the curves to the plots
 void Plot2x2::myattach()

@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <10 Apr 15 15:38:42 flechsig> 
+c$$$ Time-stamp: <22 Apr 15 15:16:03 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -128,7 +128,7 @@ c UF the type definition of the calling vars
         record /rayst/ ra
         record /control_flags/ ifl
         record /integration/ xi
-        record /integration_results/ xir
+        record /integration_results/ xir                 ! enthaelt MAX_INTEGRATION_SIZE
         record /psimagest/ sp                               
         integer lostwl, blp
 c UF end type definition of the calling vars
