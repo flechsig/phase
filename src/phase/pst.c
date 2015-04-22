@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <22 Apr 15 17:10:19 flechsig>  */
+/*   Time-stamp: <22 Apr 15 17:33:18 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -458,6 +458,7 @@ void pstc(struct BeamlineType *bl)
 	  break;
 	case 101:
 	  bl->result_emfp= (struct EmfType *)emfp_construct(bl->emfp->nz, bl->emfp->ny);
+	  //bl->result_emfp= emfp_construct(bl->emfp->nz, bl->emfp->ny);
 	  drift_fourier_emf(bl->emfp, bl->result_emfp, bl->BLOptions.lambda, driftlen);
 	  break;
 	case 102:
@@ -697,10 +698,10 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
       bl->sintre= XMALLOC(double, size6);
       bl->sintim= XMALLOC(double, size6);
 
-      fill_si(bl, bl->simpre, xirp->simpre);
-      fill_si(bl, bl->simpim, xirp->simpim);
-      fill_si(bl, bl->sintre, xirp->sintre);
-      fill_si(bl, bl->sintim, xirp->sintim);
+      fill_si(bl, bl->simpre, (double *)xirp->simpre);
+      fill_si(bl, bl->simpim, (double *)xirp->simpim);
+      fill_si(bl, bl->sintre, (double *)xirp->sintre);
+      fill_si(bl, bl->sintim, (double *)xirp->sintim);
 #endif
  
     }
