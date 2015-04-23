@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <23 Apr 15 14:34:13 flechsig> 
+c$$$ Time-stamp: <23 Apr 15 17:11:36 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -274,7 +274,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 
         call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
      &       xir.yzintya,xir.yzintyp,
-     &       densiyre,densiyim,xintyzre,xintyzim,iyz)
+     &       densiyre,densiyim,xintyzre,xintyzim,iyz,blp)
         
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
@@ -286,7 +286,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 
         call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
      &       xir.yzintza,xir.yzintzp,
-     &       densizre,densizim,xintyzre,xintyzim,iyz)
+     &       densizre,densizim,xintyzre,xintyzim,iyz,blp)
         
         sr.xintzre=xintyzre
         sr.xintzim=xintyzim
@@ -443,7 +443,7 @@ c     UF	  endif
 
        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
      &      yintey,yintya,yintyp,densiyre,densiyim,
-     &      xintyzre,xintyzim,iyz)
+     &      xintyzre,xintyzim,iyz,blp)
        sr.xintyre=xintyzre
        sr.xintyim=xintyzim
        
@@ -451,7 +451,7 @@ c     UF	  endif
 
        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
      &      yintez,yintza,yintzp,densizre,densizim,
-     &      xintyzre,xintyzim,iyz)
+     &      xintyzre,xintyzim,iyz,blp)
        sr.xintzre=xintyzre
        sr.xintzim=xintyzim
        
@@ -1510,7 +1510,7 @@ c--------------------end fitpar ----------------
 c******************************************************************
        subroutine simpson(cs,ifl,xi,xir,ianz,dyz,fyza,fyzp,xint,
      &                    xinta,xintp,densiyzre,densiyzim,
-     &                    xintre,xintim,iyz)
+     &                    xintre,xintim,iyz,blp)
 c******************************************************************
 c
 c	''Turbo Version'' 
@@ -1570,7 +1570,7 @@ c definition of calling parameter
         real*8  densiyzre, densiyzim
 	dimension densiyzre(MAX_INTEGRATION_SIZE),densiyzim(MAX_INTEGRATION_SIZE)
         real*8  xintre, xintim
-        integer iyz
+        integer iyz, blp
 c end definition of calling parameter
 
         complex*16 xxx(4096)
@@ -1794,6 +1794,7 @@ c     UF
                  xx=xx+dyz_loc(i)
                  xir.sintre(ii,1,i)=xx
                  xir.sintre(ii,2,i)=dreal(xxx(i))
+                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, dreal(xxx(i)), 1)
               enddo
               xir.isintre(ii)=ianz_loc-1
 c     UF
@@ -1802,6 +1803,9 @@ c     UF
                  xx=xx+dyz_loc(i)
                  xir.sintim(ii,1,i)=xx
                  xir.sintim(ii,2,i)=dimag(xxx(i))
+                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, dimag(xxx(i)), 2)
+                 if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
+     &                 call fill_si_f(blp, ii, i, xx, 0)
               enddo
               xir.isintim(ii)=ianz_loc-1
 c     UF
@@ -1863,8 +1867,11 @@ c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
                xx=xxsave
                do i=1,ianz-1         ! sintre
                   xx=xx+dyz(i)
-                  xir.sintre(ii,1,i)=xx    
-                  xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
+                  xir.sintre(ii,1,i)=xx 
+                  xir.sintre(ii,2,i)=xxxre(i)*dyz(1)   
+                  
+c                  call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
+                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
                enddo
                xir.isintre(ii)=ianz-1
 c     UF
@@ -1873,6 +1880,7 @@ c     UF
                   xx=xx+dyz(i)
                   xir.sintim(ii,1,i)=xx
                   xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2)
                enddo
                xir.isintim(ii)=ianz-1
 c     UF
@@ -1881,6 +1889,7 @@ c     UF
                   xir.simpre(ii,1,i)=xx
                   xir.simpre(ii,2,i)=densiyzre(i)
                   xx=xx+dyz(i)
+                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzre(i), 3)
                enddo
                xir.isimpre(ii)=ianz
 c     UF
@@ -1889,6 +1898,9 @@ c     UF
                   xir.simpim(ii,1,i)=xx
                   xir.simpim(ii,2,i)=densiyzim(i)
                   xx=xx+dyz(i)
+                  if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
+     &                 call fill_si_f(blp, ii, i, xx, 0)
+                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzim(i), 4)
                enddo
                xir.isimpim(ii)=ianz
                
@@ -1925,6 +1937,7 @@ c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
                  xx=xx+dyz(i)
                  xir.sintre(ii,1,i)=xx
                  xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
+                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
               enddo
               xir.isintre(ii)=ianz-1
 c UF
@@ -1933,6 +1946,7 @@ c UF
                  xx=xx+dyz(i)
                  xir.sintim(ii,1,i)=xx
                  xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2)
               enddo
               xir.isintim(ii)=ianz-1
 c UF
@@ -1941,6 +1955,7 @@ c UF
                  xir.simpre(ii,1,i)=xx
                  xir.simpre(ii,2,i)=densiyzre(i)
                  xx=xx+dyz(i)
+                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzre(i), 3)
               enddo
               xir.isimpre(ii)=ianz
 c UF
@@ -1948,6 +1963,9 @@ c UF
               do i=1,ianz
                  xir.simpim(ii,1,i)=xx
                  xir.simpim(ii,2,i)=densiyzim(i)
+                 if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
+     &                 call fill_si_f(blp, ii, i, xx, 0)
+                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzim(i), 4)
                  xx=xx+dyz(i)
               enddo
               xir.isimpim(ii)=ianz

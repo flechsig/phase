@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <02 Apr 15 12:12:57 flechsig>  */
+/*   Time-stamp: <23 Apr 15 16:31:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -378,6 +378,7 @@ struct  integration_results {
   int  isimpre[4],isimpim[4];
   //double d12[2][3][MAX_INTEGRATION_SIZE]; //SG: is MAX_INTEGRATION_SIZE correct here?
   double ianzd12[3]; 
+  int call_fill_si;
   //  struct simps1 si1;            /* UF 21.12.99 */
 };  
 

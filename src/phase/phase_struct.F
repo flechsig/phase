@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 12:12:53 flechsig> 
+c$$$ Time-stamp: <23 Apr 15 16:32:20 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -363,6 +363,7 @@ c  Apr 15         real*8 simpa(4,2,MAX_INTEGRATION_SIZE),simpp(4,2,MAX_INTEGRATI
 c           real*8 d12(2,3,MAX_INTEGRATION_SIZE)
            real*8 ianzd12(3)
 c	   record/simps1/si1                  ! UF 21.12.99
+           integer call_fill_si
 	end structure
 
 c------------------ flags ---------------------------------------

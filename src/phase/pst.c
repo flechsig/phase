@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <23 Apr 15 14:32:28 flechsig>  */
+/*   Time-stamp: <23 Apr 15 17:12:40 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -556,7 +556,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   struct map4                *m4p;
 
  //struct constants *csp;
-  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf, i, size6, offset4;
+  int    points, ny, nz, nzhalf, lostwl, idx, nyhalf, i, size6;
   double yi, zi;
 
   lostwl= 0;
@@ -623,6 +623,30 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, (int *)bl);
   */
 
+  nzhalf= sp->iwidth/2;       /* better to print the center point */
+  nyhalf= sp->iheigh/2;
+  if ((ny == nyhalf) && (nz == nzhalf)) // store integration details just for central point
+    {
+      printf("fill integration details for central point\n");
+      size6  = 3* bl->BLOptions.xi.ianzy0+ bl->BLOptions.xi.ianzz0;
+      if (bl->simpre) XFREE(bl->simpre);
+      if (bl->simpim) XFREE(bl->simpim);
+      if (bl->sintre) XFREE(bl->sintre);
+      if (bl->sintim) XFREE(bl->sintim);
+      if (bl->vdy)    XFREE(bl->vdy);
+      if (bl->vdz)    XFREE(bl->vdz);
+      
+      bl->simpre= XMALLOC(double, size6);
+      bl->simpim= XMALLOC(double, size6);
+      bl->sintre= XMALLOC(double, size6);
+      bl->sintim= XMALLOC(double, size6);
+      bl->vdy   = XMALLOC(double, bl->BLOptions.xi.ianzy0);
+      bl->vdz   = XMALLOC(double, bl->BLOptions.xi.ianzz0);
+
+      xirp->call_fill_si= 1;
+    }
+  else xirp->call_fill_si= 0;
+  
   adaptive_int(m4p, (struct geometryst *)&bl->ElementList[bl->gratingpos].geo, (int *)&bl->isrctype_c, &bl->BLOptions.apr, 
 	       csp, rap, &bl->BLOptions.ifl, &bl->BLOptions.xi, xirp, sp, &lostwl, (int *)bl);
 
@@ -649,8 +673,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   
   // debug output of first point
 #ifdef DEBUG  
-  nzhalf= sp->iwidth/2;       /* better to print the center point */
-  nyhalf= sp->iheigh/2;
+  
   /*   if ((ny==0) || (nz==0)) */
   if ( nz== nzhalf )
   {
@@ -671,6 +694,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   bl->result_emfp->y[ny]= yi;
   bl->result_emfp->z[nz]= zi;
 
+#ifdef OLD
+  /* deactivate xirp */
   if ((ny == nyhalf) && (nz == nzhalf)) // store integration details just for central point
     {
       printf("fill integration details for central point\n");
@@ -681,20 +706,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
       if (bl->vdy)    XFREE(bl->vdy);
       if (bl->vdz)    XFREE(bl->vdz);
       
-
-#ifdef old
-      bl->simpre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
-      bl->simpim= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
-      bl->sintre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
-      bl->sintim= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
-      memcpy(bl->simpre, xirp->simpre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-      memcpy(bl->simpim, xirp->simpim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-      memcpy(bl->sintre, xirp->sintre, sizeof(double)*MAX_INTEGRATION_SIZE*2*4); 
-      memcpy(bl->sintim, xirp->sintim, sizeof(double)*MAX_INTEGRATION_SIZE*2*4);
-#else
-      /* neu */
-      offset4= bl->BLOptions.xi.ianzy0* 4;
-      size6  = bl->BLOptions.xi.ianzz0* 2+ offset4;
+      size6  = 3* bl->BLOptions.xi.ianzy0+ bl->BLOptions.xi.ianzz0;
             
       bl->simpre= XMALLOC(double, size6);
       bl->simpim= XMALLOC(double, size6);
@@ -709,9 +721,8 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
       fill_si(bl, bl->sintim, (double *)xirp->sintim, 0);
       fill_si(bl, bl->vdy,    (double *)xirp->simpre, 1);
       fill_si(bl, bl->vdz,    (double *)xirp->simpre, 2);
-#endif
- 
     }
+#endif
 
   XFREE(xirp);
   XFREE(rap);
@@ -910,6 +921,33 @@ void fill_si(struct BeamlineType *bl, double *si, double *xirps, int opt)
       si[i]= xirps[8* i+ 3];
 
 } /* end fill_si */
+
+void fill_si_f_(int *blp, int *ii, int *i, double *val, int *opt)
+{
+  int k, l;
+  struct BeamlineType *bl;
+
+#ifdef DEBUG1
+  printf("\ncall to fill_si_f_ with opt= %d, ii= %d, i= %d, val= %f\n\n", *opt, *ii, *i, *val);
+#endif 
+
+  bl= (struct BeamlineType *)blp;
+  k= *i- 1;
+  l= *ii- 1;
+  
+  switch (*opt)
+    {
+    case 0: 
+      //     if (!bl->vdy) printf("error\n"); return;
+      if (l < 3) bl->vdy[k]= *val; else bl->vdz[k]= *val; break;
+    case 1: bl->sintre[k+ l* bl->BLOptions.xi.ianzy0]= *val; break;  
+    case 2: bl->sintim[k+ l* bl->BLOptions.xi.ianzy0]= *val; break;
+    case 3: bl->simpre[k+ l* bl->BLOptions.xi.ianzy0]= *val; break;
+    case 4: bl->simpim[k+ l* bl->BLOptions.xi.ianzy0]= *val; break;
+    }
+  //  printf("end opt\n"); 
+} /* end fill_si_f_ */
+
 
 #ifdef XXX
 /* called from fortran - fills simpre, simpim, sintre, sintim in Bl struct */
