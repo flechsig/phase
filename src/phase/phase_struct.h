@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <23 Apr 15 16:31:32 flechsig>  */
+/*   Time-stamp: <23 Apr 15 17:41:32 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -371,9 +371,9 @@ struct  integration_results {
   COMPLEX yzintey,yzintez;
   double yzintya,yzintyp,yzintza,yzintzp;
   int  isimp[100],iisimp,nsimp;
-  double sintre[4][2][MAX_INTEGRATION_SIZE],sintim[4][2][MAX_INTEGRATION_SIZE];
+  //double sintre[4][2][MAX_INTEGRATION_SIZE],sintim[4][2][MAX_INTEGRATION_SIZE];
   //  double simpa[4][2][MAX_INTEGRATION_SIZE],simpp[4][2][MAX_INTEGRATION_SIZE]; Apr 15
-  double simpre[4][2][MAX_INTEGRATION_SIZE],simpim[4][2][MAX_INTEGRATION_SIZE];
+  //double simpre[4][2][MAX_INTEGRATION_SIZE],simpim[4][2][MAX_INTEGRATION_SIZE];
   int  isintre[4],isintim[4],isimpa[4],isimpp[4];
   int  isimpre[4],isimpim[4];
   //double d12[2][3][MAX_INTEGRATION_SIZE]; //SG: is MAX_INTEGRATION_SIZE correct here?

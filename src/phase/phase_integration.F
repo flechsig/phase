@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <23 Apr 15 17:11:36 flechsig> 
+c$$$ Time-stamp: <23 Apr 15 17:56:24 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -1792,8 +1792,8 @@ c     UF
               xx=xxsave
               do i=1,ianz_loc-1
                  xx=xx+dyz_loc(i)
-                 xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=dreal(xxx(i))
+c                 xir.sintre(ii,1,i)=xx
+c                 xir.sintre(ii,2,i)=dreal(xxx(i))
                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, dreal(xxx(i)), 1)
               enddo
               xir.isintre(ii)=ianz_loc-1
@@ -1801,8 +1801,8 @@ c     UF
               xx=xxsave
               do i=1,ianz_loc-1
                  xx=xx+dyz_loc(i)
-                 xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=dimag(xxx(i))
+c                 xir.sintim(ii,1,i)=xx
+c                 xir.sintim(ii,2,i)=dimag(xxx(i))
                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, dimag(xxx(i)), 2)
                  if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
      &                 call fill_si_f(blp, ii, i, xx, 0)
@@ -1835,9 +1835,13 @@ c---------------------------------------------------------
 c---------------------------------------------------------
       if(ifl.ispline.eq.0)then  ! UF Apr 15 (default)
 c---------------------------------------------------------
-         
+c UF warning?? Apr 2015
+c die loop geht bis ianz
+c was passiert wenn die felder in y und z nicht gleich gross sind?? - nicht die richtigen Werte anzeigen oder sogar abstuerzen
+c          
          xintre=0.d0
          xintim=0.d0
+         write(*,*)'UF debug: ianz,ii',ianz,ii
          if(ianz.ge.2)then
             do i=1,ianz
                xintre=xintre+densiyzre(i)
@@ -1851,7 +1855,7 @@ c---------------------------------------------------------
          xintim=xintim*dyz(1)
          
 c-----------output
-c     UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
+
          if(iyz.eq.1)xx=xi.ymin ! y loop
          if(iyz.eq.2)xx=xi.zmin ! z loop
          xxsave=xx
@@ -1865,16 +1869,18 @@ c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
 
             if(xir.isimp(ii).eq.xir.nsimp)then ! xir.nsimp calls to simpson
                xx=xxsave
-               do i=1,ianz-1         ! sintre
-                  xx=xx+dyz(i)
-                  xir.sintre(ii,1,i)=xx 
-                  xir.sintre(ii,2,i)=xxxre(i)*dyz(1)   
-                  
-c                  call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
-                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
+               do i=1,ianz-1         
+c                 xx=xx+dyz(i)
+c                 xir.sintre(ii,1,i)=xx 
+c                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)   
+                  if(xir.call_fill_si.eq.1)then
+                     call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) !new replacement routine, 1 -> sintre
+                     call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2) !new replacement routine  1 -> sintim
+                  endif
                enddo
                xir.isintre(ii)=ianz-1
 c     UF
+#ifdef OLD
                xx=xxsave               
                do i=1,ianz-1
                   xx=xx+dyz(i)
@@ -1882,17 +1888,23 @@ c     UF
                   xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
                   if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2)
                enddo
+#endif
                xir.isintim(ii)=ianz-1
 c     UF
                xx=xxsave               
                do i=1,ianz                 
-                  xir.simpre(ii,1,i)=xx
-                  xir.simpre(ii,2,i)=densiyzre(i)
+c                  xir.simpre(ii,1,i)=xx
+c                  xir.simpre(ii,2,i)=densiyzre(i)
+                  if(xir.call_fill_si.eq.1)then
+                     call fill_si_f(blp, ii, i, densiyzre(i), 3) ! 3 -> simpre
+                     call fill_si_f(blp, ii, i, densiyzim(i), 4) ! 4 -> simpim
+                     if((ii.eq.1).or.(ii.eq.4))call fill_si_f(blp, ii, i, xx, 0) ! 0 -> dy or dz
+                  endif
                   xx=xx+dyz(i)
-                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzre(i), 3)
                enddo
                xir.isimpre(ii)=ianz
 c     UF
+#ifdef OLD
                xx=xxsave              
                do i=1,ianz
                   xir.simpim(ii,1,i)=xx
@@ -1902,6 +1914,7 @@ c     UF
      &                 call fill_si_f(blp, ii, i, xx, 0)
                   if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzim(i), 4)
                enddo
+#endif
                xir.isimpim(ii)=ianz
                
             endif
@@ -1935,8 +1948,8 @@ c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
               xx=xxsave
               do i=1,ianz-1
                  xx=xx+dyz(i)
-                 xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
+c                 xir.sintre(ii,1,i)=xx
+c                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
               enddo
               xir.isintre(ii)=ianz-1
@@ -1944,16 +1957,16 @@ c UF
               xx=xxsave               
               do i=1,ianz-1
                  xx=xx+dyz(i)
-                 xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+c                 xir.sintim(ii,1,i)=xx
+c                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2)
               enddo
               xir.isintim(ii)=ianz-1
 c UF
               xx=xxsave               
               do i=1,ianz                 
-                 xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=densiyzre(i)
+c                 xir.simpre(ii,1,i)=xx
+c                 xir.simpre(ii,2,i)=densiyzre(i)
                  xx=xx+dyz(i)
                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzre(i), 3)
               enddo
@@ -1961,8 +1974,8 @@ c UF
 c UF
               xx=xxsave              
               do i=1,ianz
-                 xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=densiyzim(i)
+c                 xir.simpim(ii,1,i)=xx
+c                 xir.simpim(ii,2,i)=densiyzim(i)
                  if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
      &                 call fill_si_f(blp, ii, i, xx, 0)
                   if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzim(i), 4)
