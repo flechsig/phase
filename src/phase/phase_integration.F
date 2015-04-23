@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <23 Apr 15 17:56:24 flechsig> 
+c$$$ Time-stamp: <23 Apr 15 18:26:49 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -1841,7 +1841,7 @@ c was passiert wenn die felder in y und z nicht gleich gross sind?? - nicht die 
 c          
          xintre=0.d0
          xintim=0.d0
-         write(*,*)'UF debug: ianz,ii',ianz,ii
+         
          if(ianz.ge.2)then
             do i=1,ianz
                xintre=xintre+densiyzre(i)
@@ -1861,22 +1861,22 @@ c-----------output
          xxsave=xx
          
          do ii=1,xir.iisimp        ! harcoded to 4
+            
 c  definitions in pst.c fill_xirp
 c  xirp->isimp[0]= 2;
 c  xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
 c  xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
 c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
 
-            if(xir.isimp(ii).eq.xir.nsimp)then ! xir.nsimp calls to simpson
+            if((xir.isimp(ii).eq.xir.nsimp).and.(xir.call_fill_si.eq.1))then ! xir.nsimp calls to simpson
+               write(*,*)'UF debug: ianz,ii,xir.nsimp',ianz,ii,xir.nsimp
                xx=xxsave
                do i=1,ianz-1         
 c                 xx=xx+dyz(i)
 c                 xir.sintre(ii,1,i)=xx 
 c                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)   
-                  if(xir.call_fill_si.eq.1)then
-                     call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) !new replacement routine, 1 -> sintre
-                     call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2) !new replacement routine  1 -> sintim
-                  endif
+                  call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) !new replacement routine, 1 -> sintre
+                  call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2) !new replacement routine  1 -> sintim
                enddo
                xir.isintre(ii)=ianz-1
 c     UF
@@ -1895,11 +1895,9 @@ c     UF
                do i=1,ianz                 
 c                  xir.simpre(ii,1,i)=xx
 c                  xir.simpre(ii,2,i)=densiyzre(i)
-                  if(xir.call_fill_si.eq.1)then
-                     call fill_si_f(blp, ii, i, densiyzre(i), 3) ! 3 -> simpre
-                     call fill_si_f(blp, ii, i, densiyzim(i), 4) ! 4 -> simpim
-                     if((ii.eq.1).or.(ii.eq.4))call fill_si_f(blp, ii, i, xx, 0) ! 0 -> dy or dz
-                  endif
+                  call fill_si_f(blp, ii, i, densiyzre(i), 3) ! 3 -> simpre
+                  call fill_si_f(blp, ii, i, densiyzim(i), 4) ! 4 -> simpim
+                  if((ii.eq.1).or.(ii.eq.4))call fill_si_f(blp, ii, i, xx, 0) ! 0 -> dy or dz
                   xx=xx+dyz(i)
                enddo
                xir.isimpre(ii)=ianz

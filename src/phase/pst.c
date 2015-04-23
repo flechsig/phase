@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <23 Apr 15 17:12:40 flechsig>  */
+/*   Time-stamp: <23 Apr 15 18:16:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -934,7 +934,7 @@ void fill_si_f_(int *blp, int *ii, int *i, double *val, int *opt)
   bl= (struct BeamlineType *)blp;
   k= *i- 1;
   l= *ii- 1;
-  
+ 
   switch (*opt)
     {
     case 0: 
@@ -946,31 +946,11 @@ void fill_si_f_(int *blp, int *ii, int *i, double *val, int *opt)
     case 4: bl->simpim[k+ l* bl->BLOptions.xi.ianzy0]= *val; break;
     }
   //  printf("end opt\n"); 
+
 } /* end fill_si_f_ */
 
 
-#ifdef XXX
-/* called from fortran - fills simpre, simpim, sintre, sintim in Bl struct */
-/* n: number of points */
-/* x0: start */
-/* dx: vector of steps */
-/* fx: function value  */
-/* scale: scaler to function value */
-/* iyz: switch (1 means y loop, 2 means z loop) */
-void fill_sint_simp_(struct BeamlineType *bl, int *ny, int nz, double *x0, double *dx, double *fx, 
-		     double *scale, int *iyz, int *ii)
-{
-  int i, offset;
-  double x, val;
 
-  x= *x0;
-  for (i= 0; i< n; i++)
-    {
-      fx[i]= x;
-      x+= dx[i];
-    }
-}  /* end fill_sint_simp_ */
-#endif
 /* end pst.c */
 
 
