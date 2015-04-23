@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <15 Dec 14 12:16:57 flechsig> 
+//  Time-stamp: <23 Apr 15 14:22:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -234,6 +234,8 @@ void PhaseQt::initBeamline()
   simpim= NULL;
   sintre= NULL;
   sintim= NULL;
+  vdy   = NULL;
+  vdz   = NULL;
 } // end initBeamline
 
 // returns a pointer to the beamline struct

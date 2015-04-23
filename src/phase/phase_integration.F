@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <22 Apr 15 15:16:03 flechsig> 
+c$$$ Time-stamp: <23 Apr 15 14:34:13 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -270,7 +270,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
         if(ifl.ispline.eq.-1)then
            call phacor(cs,xi,xir,dz,fya,fyp,ianzz,sp)
         endif
-	iyz=2
+	iyz=2   ! z loop
 
         call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
      &       xir.yzintya,xir.yzintyp,
@@ -282,7 +282,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
         if(ifl.ispline.eq.-1)then
            call phacor(cs,xi,xir,dz,fza,fzp,ianzz,sp)
         endif
-	iyz=2
+	iyz=2   ! z loop
 
         call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
      &       xir.yzintza,xir.yzintzp,
@@ -439,7 +439,7 @@ c     UF	  endif
           dy(i)=dyy
        enddo
        
-       iyz=1
+       iyz=1       ! yloop
 
        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
      &      yintey,yintya,yintyp,densiyre,densiyim,
@@ -447,7 +447,7 @@ c     UF	  endif
        sr.xintyre=xintyzre
        sr.xintyim=xintyzim
        
-       iyz=1
+       iyz=1       ! y loop
 
        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
      &      yintez,yintza,yintzp,densizre,densizim,
@@ -1777,11 +1777,17 @@ c	close(10)
 c
 c	endif
 c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
-	if(iyz.eq.1)xx=xi.ymin
-	if(iyz.eq.2)xx=xi.zmin
+	if(iyz.eq.1)xx=xi.ymin ! y loop
+	if(iyz.eq.2)xx=xi.zmin ! z loop
         xxsave=xx
-	do ii=1,xir.iisimp
-           if(xir.isimp(ii).eq.xir.nsimp)then
+	do ii=1,xir.iisimp       ! harcoded to 4
+c  definitions in pst.c fill_xirp
+c  xirp->isimp[0]= 2;
+c  xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
+c  xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
+c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
+
+           if(xir.isimp(ii).eq.xir.nsimp)then   ! xir.nsimp calls to simpson
 c     UF
               xx=xxsave
               do i=1,ianz_loc-1
@@ -1800,11 +1806,11 @@ c     UF
               xir.isintim(ii)=ianz_loc-1
 c     UF
               xx=xxsave
-              do i=1,ianz_loc
+c              do i=1,ianz_loc
 c UF Apr15 unbenutzt               xir.simpa(ii,1,i)=xx
 c UF Apr15 unbenutzt                xir.simpa(ii,2,i)=fyza_loc(i)
-                 xx=xx+dyz_loc(i)
-              enddo
+c                 xx=xx+dyz_loc(i)
+c              enddo
 c UF Apr15 unbenutzt             xir.isimpa(ii)=ianz_loc
 c     UF
               xx=xxsave
@@ -1823,70 +1829,76 @@ c---------------------------------------------------------
       endif                     ! ispline.lt.0
 
 c---------------------------------------------------------
-	if(ifl.ispline.eq.0)then
+      if(ifl.ispline.eq.0)then  ! UF Apr 15 (default)
 c---------------------------------------------------------
+         
+         xintre=0.d0
+         xintim=0.d0
+         if(ianz.ge.2)then
+            do i=1,ianz
+               xintre=xintre+densiyzre(i)
+               xintim=xintim+densiyzim(i)
+               xxxre(i)=xintre
+               xxxim(i)=xintim
+            enddo
+         endif
+         
+         xintre=xintre*dyz(1)
+         xintim=xintim*dyz(1)
+         
+c-----------output
+c     UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
+         if(iyz.eq.1)xx=xi.ymin ! y loop
+         if(iyz.eq.2)xx=xi.zmin ! z loop
+         xxsave=xx
+         
+         do ii=1,xir.iisimp        ! harcoded to 4
+c  definitions in pst.c fill_xirp
+c  xirp->isimp[0]= 2;
+c  xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
+c  xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
+c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
 
-	xintre=0.d0
-	xintim=0.d0
-	if(ianz.ge.2)then
-	do i=1,ianz
-	xintre=xintre+densiyzre(i)
-	xintim=xintim+densiyzim(i)
-	xxxre(i)=xintre
-	xxxim(i)=xintim
-	enddo
-	endif
-
-	xintre=xintre*dyz(1)
-	xintim=xintim*dyz(1)
-
-c----------- output
-c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
-	if(iyz.eq.1)xx=xi.ymin
-	if(iyz.eq.2)xx=xi.zmin
-        xxsave=xx
-
-	do ii=1,xir.iisimp
-           if(xir.isimp(ii).eq.xir.nsimp)then
-              xx=xxsave
-              do i=1,ianz-1
-                 xx=xx+dyz(i)
-                 xir.sintre(ii,1,i)=xx
-                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
-              enddo
-              xir.isintre(ii)=ianz-1
-c UF
-              xx=xxsave               
-              do i=1,ianz-1
-                 xx=xx+dyz(i)
-                 xir.sintim(ii,1,i)=xx
-                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
-              enddo
-              xir.isintim(ii)=ianz-1
-c UF
-              xx=xxsave               
-              do i=1,ianz                 
-                 xir.simpre(ii,1,i)=xx
-                 xir.simpre(ii,2,i)=densiyzre(i)
-                 xx=xx+dyz(i)
-              enddo
-              xir.isimpre(ii)=ianz
-c UF
-              xx=xxsave              
-              do i=1,ianz
-                 xir.simpim(ii,1,i)=xx
-                 xir.simpim(ii,2,i)=densiyzim(i)
-                 xx=xx+dyz(i)
-              enddo
-              xir.isimpim(ii)=ianz
-              
-           endif
-	enddo
+            if(xir.isimp(ii).eq.xir.nsimp)then ! xir.nsimp calls to simpson
+               xx=xxsave
+               do i=1,ianz-1         ! sintre
+                  xx=xx+dyz(i)
+                  xir.sintre(ii,1,i)=xx    
+                  xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
+               enddo
+               xir.isintre(ii)=ianz-1
+c     UF
+               xx=xxsave               
+               do i=1,ianz-1
+                  xx=xx+dyz(i)
+                  xir.sintim(ii,1,i)=xx
+                  xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+               enddo
+               xir.isintim(ii)=ianz-1
+c     UF
+               xx=xxsave               
+               do i=1,ianz                 
+                  xir.simpre(ii,1,i)=xx
+                  xir.simpre(ii,2,i)=densiyzre(i)
+                  xx=xx+dyz(i)
+               enddo
+               xir.isimpre(ii)=ianz
+c     UF
+               xx=xxsave              
+               do i=1,ianz
+                  xir.simpim(ii,1,i)=xx
+                  xir.simpim(ii,2,i)=densiyzim(i)
+                  xx=xx+dyz(i)
+               enddo
+               xir.isimpim(ii)=ianz
+               
+            endif
+         enddo
 c-------------------
       endif                     ! ispline.eq.0
-
+      
 c------------------------------------------------------------
-	if((ifl.ispline.eq.1).or.(ifl.ispline.eq.2))then
+      if((ifl.ispline.eq.1).or.(ifl.ispline.eq.2))then
 c------- spline integtration von Michael
 
          x_loc(1)=0.d0

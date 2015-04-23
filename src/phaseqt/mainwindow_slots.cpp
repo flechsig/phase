@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <17 Mar 15 10:04:00 flechsig> 
+//  Time-stamp: <23 Apr 15 14:05:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1950,7 +1950,7 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SIMPRE:
       cout << "plot PLOT_PO_SIMPRE start " << endl;
       //zone->hfill4(psdp->simpre, myparent->myBeamline()->BLOptions.xi.ianzy0);
-      zone->hfill4(bl->simpre, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0);
+      zone->hfill4(bl->simpre, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
       //zone->hfill4(int4, myparent->myBeamline()->BLOptions.xi.ianzy0, myparent->myBeamline()->BLOptions.xi.ianzz0, 0);
       //zone->setWindowTitle(QString("SIMPRE"));
       zone->myattach();
@@ -1958,20 +1958,20 @@ void MainWindow::grapplyslot()
 
     case PLOT_PO_SIMPIM:
       cout << "plot PLOT_PO_SIMPIM start " << endl;
-      zone->hfill4(bl->simpim, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0);
+      zone->hfill4(bl->simpim, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
       //zone->setWindowTitle(QString("SIMPIM"));
       zone->myattach();
       break;
 
     case PLOT_PO_SINTRE:
       cout << "plot PLOT_PO_SINTRE start " << endl;
-      zone->hfill4(bl->sintre, bl->BLOptions.xi.ianzy0-1, bl->BLOptions.xi.ianzz0-1);
+      zone->hfill4(bl->sintre, bl->BLOptions.xi.ianzy0-1, bl->BLOptions.xi.ianzz0-1, bl->vdy, bl->vdz);
       zone->myattach();
       break;
 
     case PLOT_PO_SINTIM:
       cout << "plot PLOT_PO_SINTIM start" << endl;
-      zone->hfill4(bl->sintim, bl->BLOptions.xi.ianzy0-1, bl->BLOptions.xi.ianzz0-1);
+      zone->hfill4(bl->sintim, bl->BLOptions.xi.ianzy0-1, bl->BLOptions.xi.ianzz0-1, bl->vdy, bl->vdz);
       zone->myattach();
       break;
       

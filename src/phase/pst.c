@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <22 Apr 15 17:33:18 flechsig>  */
+/*   Time-stamp: <23 Apr 15 14:32:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -678,6 +678,9 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
       if (bl->simpim) XFREE(bl->simpim);
       if (bl->sintre) XFREE(bl->sintre);
       if (bl->sintim) XFREE(bl->sintim);
+      if (bl->vdy)    XFREE(bl->vdy);
+      if (bl->vdz)    XFREE(bl->vdz);
+      
 
 #ifdef old
       bl->simpre= XMALLOC(double, MAX_INTEGRATION_SIZE*2*4);
@@ -697,11 +700,15 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
       bl->simpim= XMALLOC(double, size6);
       bl->sintre= XMALLOC(double, size6);
       bl->sintim= XMALLOC(double, size6);
+      bl->vdy   = XMALLOC(double, bl->BLOptions.xi.ianzy0);
+      bl->vdz   = XMALLOC(double, bl->BLOptions.xi.ianzz0);
 
-      fill_si(bl, bl->simpre, (double *)xirp->simpre);
-      fill_si(bl, bl->simpim, (double *)xirp->simpim);
-      fill_si(bl, bl->sintre, (double *)xirp->sintre);
-      fill_si(bl, bl->sintim, (double *)xirp->sintim);
+      fill_si(bl, bl->simpre, (double *)xirp->simpre, 0);
+      fill_si(bl, bl->simpim, (double *)xirp->simpim, 0);
+      fill_si(bl, bl->sintre, (double *)xirp->sintre, 0);
+      fill_si(bl, bl->sintim, (double *)xirp->sintim, 0);
+      fill_si(bl, bl->vdy,    (double *)xirp->simpre, 1);
+      fill_si(bl, bl->vdz,    (double *)xirp->simpre, 2);
 #endif
  
     }
@@ -872,28 +879,60 @@ void getgeostr_(int *blp, double *sina, double *cosa, double *sinb, double *cosb
   *xlam= el->geo.xlam;
 } /* getgeostr_ */
 
-void fill_si(struct BeamlineType *bl, double *si, double *xirps)
+void fill_si(struct BeamlineType *bl, double *si, double *xirps, int opt)
 {
-  int i, o4;
-  
-  o4= bl->BLOptions.xi.ianzy0* 4;
-  
-  for (i= 0; i< bl->BLOptions.xi.ianzy0; i++)
+  int i, o3;
+
+  printf("call to fill_si with opt == %d\n", opt);
+
+  o3= bl->BLOptions.xi.ianzy0* 3;
+
+  if (opt == 0)
     {
-      si[i]                            = xirps[8* i];
-      si[i+ bl->BLOptions.xi.ianzy0]   = xirps[8* i+ 4];
-      si[i+ bl->BLOptions.xi.ianzy0* 2]= xirps[8* i+ 5];
-      si[i+ bl->BLOptions.xi.ianzy0* 3]= xirps[8* i+ 6];
-      
+      for (i= 0; i< bl->BLOptions.xi.ianzy0; i++)
+	{
+	  si[i]= xirps[8* i+ 4];
+	  si[i+ bl->BLOptions.xi.ianzy0]= xirps[8* i+ 5];
+	  si[i+ bl->BLOptions.xi.ianzy0* 2]= xirps[8* i+ 6];
+	}
+
+      for (i= 0; i< bl->BLOptions.xi.ianzz0; i++)
+	si[o3+ i]= xirps[8* i+ 7];
+	
     }
-  for (i= 0; i< bl->BLOptions.xi.ianzz0; i++)
-    {
-      si[o4+ i]                         = xirps[8* i+ 3];
-      si[o4+ i+ bl->BLOptions.xi.ianzz0]= xirps[8* i+ 7];
-    }
-  
+
+  if (opt == 1)
+    for (i= 0; i< bl->BLOptions.xi.ianzy0; i++)
+      si[i]= xirps[8* i];
+
+  if (opt == 2)
+    for (i= 0; i< bl->BLOptions.xi.ianzz0; i++)
+      si[i]= xirps[8* i+ 3];
+
 } /* end fill_si */
 
+#ifdef XXX
+/* called from fortran - fills simpre, simpim, sintre, sintim in Bl struct */
+/* n: number of points */
+/* x0: start */
+/* dx: vector of steps */
+/* fx: function value  */
+/* scale: scaler to function value */
+/* iyz: switch (1 means y loop, 2 means z loop) */
+void fill_sint_simp_(struct BeamlineType *bl, int *ny, int nz, double *x0, double *dx, double *fx, 
+		     double *scale, int *iyz, int *ii)
+{
+  int i, offset;
+  double x, val;
+
+  x= *x0;
+  for (i= 0; i< n; i++)
+    {
+      fx[i]= x;
+      x+= dx[i];
+    }
+}  /* end fill_sint_simp_ */
+#endif
 /* end pst.c */
 
 

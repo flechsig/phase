@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <22 Apr 15 17:07:17 flechsig> 
+//  Time-stamp: <23 Apr 15 14:36:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -78,78 +78,11 @@ Plot2x2::~Plot2x2()
   cout << "Plot2x2 destructor called" << endl;
 } // end destructor
 
-#ifdef OLD
-/* fills simpre style data into curves sets min/max      */
-void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
-{
-#ifdef DEBUG
-  cout << "debug: hfill4 called, file=" << __FILE__ << endl;
-#endif
-  if (c1x) XFREE(c1x);
-  if (c4x) XFREE(c4x);
-  if (c1y) XFREE(c1y);
-  if (c2y) XFREE(c2y);
-  if (c3y) XFREE(c3y);
-  if (c4y) XFREE(c4y);
-
-  c1x= XMALLOC(double, ndatay);
-  c4x= XMALLOC(double, ndataz);
-  c1y= XMALLOC(double, ndatay);
-  c2y= XMALLOC(double, ndatay);
-  c3y= XMALLOC(double, ndatay);
-  c4y= XMALLOC(double, ndataz);
-
-  for (int k= 0; k < ndatay; k++) 
-    {
-      c1x[k]= arr[8*k]*1e3;
-      c1y[k]= arr[8*k+4];
-      c2y[k]= arr[8*k+5];
-      c3y[k]= arr[8*k+6];
-    }
-
-  for (int k= 0; k < ndataz; k++) 
-    {
-      c4x[k]= arr[8*k+3]*1e3;
-      c4y[k]= arr[8*k+7];
-    }
-  
-  z1min= c1x[0];
-  z4min= c4x[0]; 
-  z1max= c1x[ndatay-1];
-  z4max= c4x[ndataz-1]; 
-  
-  ymin[0]= ymax[0]= c1y[0];
-  ymin[1]= ymax[1]= c2y[0];
-  ymin[2]= ymax[2]= c3y[0];
-  ymin[3]= ymax[3]= c4y[0];
-  for (int k= 0; k < ndatay; k++) 
-    {
-      ymin[0]= qMin(c1y[k], ymin[0]);
-      ymax[0]= qMax(c1y[k], ymax[0]);
-      ymin[1]= qMin(c2y[k], ymin[1]);
-      ymax[1]= qMax(c2y[k], ymax[1]);
-      ymin[2]= qMin(c3y[k], ymin[2]);
-      ymax[2]= qMax(c3y[k], ymax[2]);
-    }
-
-  for (int k= 0; k < ndataz; k++) 
-    {
-      ymin[3]= qMin(c4y[k], ymin[3]);
-      ymax[3]= qMax(c4y[k], ymax[3]);
-    }
-  
-  d_curve1->setRawSamples(c1x, c1y, ndatay);
-  d_curve2->setRawSamples(c1x, c2y, ndatay);
-  d_curve3->setRawSamples(c1x, c3y, ndatay);
-  d_curve4->setRawSamples(c4x, c4y, ndataz);
-    
-} /* end hfill4 */
-#else
 /* fills simpre style data into curves sets min/max      */
 /* UF Apr 15 new data ordering */
-void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
+void Plot2x2::hfill4(double *arr, int ndatay, int ndataz, double *dy, double *dz)
 {
-  int offset4;
+  int offset3;
 
 #ifdef DEBUG
   cout << "debug: hfill4dyn called, file=" << __FILE__ << endl;
@@ -177,18 +110,18 @@ void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
 
   for (int k= 0; k < ndatay; k++) 
     {
-      c1x[k]= arr[k]*1e3;
-      c1y[k]= arr[k+ ndatay];
-      c2y[k]= arr[k+ ndatay* 2];
-      c3y[k]= arr[k+ ndatay* 3];
+      c1x[k]= dy[k]*1e3;
+      c1y[k]= arr[k];
+      c2y[k]= arr[k+ ndatay];
+      c3y[k]= arr[k+ ndatay* 2];
     }
 
-  offset4= ndatay* 4;
+  offset3= ndatay* 3;
 
   for (int k= 0; k < ndataz; k++) 
     {
-      c4x[k]= arr[offset4+ k]*1e3;
-      c4y[k]= arr[offset4+ k+ ndataz];
+      c4x[k]= dz[k]*1e3;
+      c4y[k]= arr[offset3+ k];
     }
   
   z1min= c1x[0];
@@ -222,7 +155,7 @@ void Plot2x2::hfill4(double *arr, int ndatay, int ndataz)
   d_curve4->setRawSamples(c4x, c4y, ndataz);
     
 } /* end hfill4 */
-#endif
+
 
 // attach the curves to the plots
 void Plot2x2::myattach()

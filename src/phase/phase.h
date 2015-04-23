@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <01 Apr 15 16:33:09 flechsig>  */
+/*   Time-stamp: <23 Apr 15 14:00:02 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -464,7 +464,7 @@ struct BeamlineType
   struct PHASEset filenames;
   struct Spa3TableType spa3table;
   struct EmfType *emfp, *source_emfp, *result_emfp;  /* new for po */
-  double *int_details, *simpre, *simpim, *sintre, *sintim;
+  double *int_details, *simpre, *simpim, *sintre, *sintim, *vdy, *vdz; /* replacement of integration_results format (list): dy1,dy2,dy3,ydz1 */
 };
 
 /* mod 20121102 */
