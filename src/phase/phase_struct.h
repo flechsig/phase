@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct_10.h */
 /*   Date      : <31 Oct 03 12:31:32 flechsig>  */
-/*   Time-stamp: <23 Apr 15 17:41:32 flechsig>  */
+/*   Time-stamp: <24 Apr 15 12:21:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -169,7 +169,7 @@ struct  parder {
 struct  geometryst {
   double sina,cosa,sinb,cosb,
     r,rp,xdens[5],xlam;
-  int  idefl;   
+  int  idefl, alignment;   // alignment dummy to avoid warnings
 };    
 
 struct  psimagest {               /* Bilddimensionen */
@@ -378,10 +378,10 @@ struct  integration_results {
   int  isimpre[4],isimpim[4];
   //double d12[2][3][MAX_INTEGRATION_SIZE]; //SG: is MAX_INTEGRATION_SIZE correct here?
   double ianzd12[3]; 
-  int call_fill_si;
+  int fill_results, alignment;
   //  struct simps1 si1;            /* UF 21.12.99 */
 };  
-
+ 
 /* ----------------- flags ---------------------------------------*/
 
 struct  control_flags {

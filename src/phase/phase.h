@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <23 Apr 15 14:00:02 flechsig>  */
+/*   Time-stamp: <24 Apr 15 12:21:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -264,7 +264,7 @@ struct mirrortype {
 /* in phase_struct.h ist die analoge structur geometryst */
 struct geometrytype {
   double sina, cosa, sinb, cosb, r, rp, x[5], xlam;
-  int idefl;
+  int idefl, alignment;   // alignment dummy to avoid warnings
 }; 
 
 struct gdatset 

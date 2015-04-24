@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <23 Apr 15 17:41:30 flechsig> 
+c$$$ Time-stamp: <24 Apr 15 12:21:54 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -172,7 +172,7 @@ c--------------- geometry -----------------------------------
         structure/geometryst/
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
-	   integer idefl   
+	   integer idefl, alignment   ! alignment dummy to avoid warnings
         end structure  
 
         structure/psimagest/               ! Bilddimensionen 
@@ -363,7 +363,7 @@ c           real*8 simpre(4,2,MAX_INTEGRATION_SIZE),simpim(4,2,MAX_INTEGRATION_S
 c           real*8 d12(2,3,MAX_INTEGRATION_SIZE)
            real*8 ianzd12(3)
 c	   record/simps1/si1                  ! UF 21.12.99
-           integer call_fill_si
+           integer fill_results, alignment    ! alignment dummy to avoid warnings
 	end structure
 
 c------------------ flags ---------------------------------------

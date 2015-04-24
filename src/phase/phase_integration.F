@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <23 Apr 15 18:26:49 flechsig> 
+c$$$ Time-stamp: <24 Apr 15 12:22:52 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -116,7 +116,7 @@ c************************************************
 c UF wants to avoid implicit for better debugging
 c	implicit real*8(a-h,o-z)
         implicit none
-
+ 
 #include '../phase/phase_struct.F'
 
 c UF the type definition of the calling vars
@@ -272,6 +272,8 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
         endif
 	iyz=2   ! z loop
 
+c UF wird nur 1x aufgerufen um inegration details zu ermitteln??
+c     1st call with imaginary part
         call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
      &       xir.yzintya,xir.yzintyp,
      &       densiyre,densiyim,xintyzre,xintyzim,iyz,blp)
@@ -284,6 +286,7 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
         endif
 	iyz=2   ! z loop
 
+c     2nd  call with real part
         call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
      &       xir.yzintza,xir.yzintzp,
      &       densizre,densizim,xintyzre,xintyzim,iyz,blp)
@@ -299,6 +302,10 @@ c------------------------------------------------------------
       
       xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
       xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
+
+#ifdef DEBUG
+      write(*,*)'debug: total calls to simpson: xir.nsimp= ',xir.nsimp
+#endif
       
       return
       end
@@ -440,7 +447,7 @@ c     UF	  endif
        enddo
        
        iyz=1       ! yloop
-
+c      1st call imaginary
        call simpson(cs,ifl,xi,xir,ianzy,dy,fya,fyp,
      &      yintey,yintya,yintyp,densiyre,densiyim,
      &      xintyzre,xintyzim,iyz,blp)
@@ -449,6 +456,7 @@ c     UF	  endif
        
        iyz=1       ! y loop
 
+c    2nd call real part     
        call simpson(cs,ifl,xi,xir,ianzy,dy,fza,fzp,
      &      yintez,yintza,yintzp,densizre,densizim,
      &      xintyzre,xintyzim,iyz,blp)
@@ -1591,15 +1599,13 @@ c	dimension x_loc(4096),dyz_loc(4096)
 c	dimension xxr(4096),ffyza(4096),ffyzp(4096)
         real*8 partre_int, partim_int
 	dimension partre_int(4096),partim_int(4096)
-
 	real*8 x
         dimension x(4096)
 	
-
-c UF definitions to have implicit none
+c UF definitions to have implicit none 
         real*8 a, b, c, partim, partre, r, s
         real*8 e1, e11, e2, e22
-        real*8 xx, xxsave, xk_loc, ph1, ph2
+        real*8 xx, xk_loc, ph1, ph2
         real*8 x1, x2, x3, y1, y2, y3 
         real*8 dphi_loc_min, dsinph1, dcosph1, dsinph2, dcosph2
         integer i, ii, ianz_loc
@@ -1776,69 +1782,61 @@ c	enddo
 c	close(10)
 c
 c	endif
-c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
-	if(iyz.eq.1)xx=xi.ymin ! y loop
-	if(iyz.eq.2)xx=xi.zmin ! z loop
-        xxsave=xx
-	do ii=1,xir.iisimp       ! harcoded to 4
-c  definitions in pst.c fill_xirp
-c  xirp->isimp[0]= 2;
-c  xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
-c  xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
-c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
 
-           if(xir.isimp(ii).eq.xir.nsimp)then   ! xir.nsimp calls to simpson
+	
+c----------- save  integration details
+c     defined in pst.c fill_xirp are the calles to simpson which should be recorded
+c     dy(dz=min), dy(dz=half), dy(dz=max), dz(dy=half)
+c     xir.fill_results: controls recording
+
+        if(xir.fill_results.eq.1)then ! only when active
+           if(iyz.eq.1)xx=xi.ymin ! y loop
+           if(iyz.eq.2)xx=xi.zmin ! z loop
+           do ii=1,xir.iisimp   ! loop over slices harcoded to 4
+              if(xir.isimp(ii).eq.xir.nsimp)then ! if number as defined
+#ifdef DEBUG
+                 write(*,*)'debug: ianz_loc,ii,xir.nsimp',ianz_loc,ii,xir.nsimp
+#endif
+                 do i=1,ianz_loc-1
+                    call fill_si_f(blp, ii, i, dreal(xxx(i)), 1) ! 1 -> sintre
+                    call fill_si_f(blp, ii, i, dimag(xxx(i)), 2) ! 2 -> sintim
+                    call fill_si_f(blp, ii, i, densiyzre(i), 3) ! 3 -> simpre
+                    call fill_si_f(blp, ii, i, densiyzim(i), 4) ! 4 -> simpim
+                    if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1) ! -1 -> dy
+                    if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2) ! -2 -> dz
+                    xx=xx+dyz_loc(i)
+                 enddo
+c     remember filled items 
+                 xir.isintre(ii)=ianz_loc-1
+                 xir.isintim(ii)=ianz_loc-1
+                 
+                 
+c     do i=1,ianz_loc
+c     UF Apr15 unbenutzt               xir.simpa(ii,1,i)=xx
+c     UF Apr15 unbenutzt                xir.simpa(ii,2,i)=fyza_loc(i)
+c     xx=xx+dyz_loc(i)
+c     enddo
+c     UF Apr15 unbenutzt             xir.isimpa(ii)=ianz_loc
 c     UF
-              xx=xxsave
-              do i=1,ianz_loc-1
-                 xx=xx+dyz_loc(i)
-c                 xir.sintre(ii,1,i)=xx
-c                 xir.sintre(ii,2,i)=dreal(xxx(i))
-                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, dreal(xxx(i)), 1)
-              enddo
-              xir.isintre(ii)=ianz_loc-1
-c     UF
-              xx=xxsave
-              do i=1,ianz_loc-1
-                 xx=xx+dyz_loc(i)
-c                 xir.sintim(ii,1,i)=xx
-c                 xir.sintim(ii,2,i)=dimag(xxx(i))
-                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, dimag(xxx(i)), 2)
-                 if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
-     &                 call fill_si_f(blp, ii, i, xx, 0)
-              enddo
-              xir.isintim(ii)=ianz_loc-1
-c     UF
-              xx=xxsave
-c              do i=1,ianz_loc
-c UF Apr15 unbenutzt               xir.simpa(ii,1,i)=xx
-c UF Apr15 unbenutzt                xir.simpa(ii,2,i)=fyza_loc(i)
-c                 xx=xx+dyz_loc(i)
-c              enddo
-c UF Apr15 unbenutzt             xir.isimpa(ii)=ianz_loc
-c     UF
-              xx=xxsave
-              do i=1,ianz_loc
-c UF Apr15 unbenutzt                 xir.simpp(ii,1,i)=xx
-c UF Apr15 unbenutzt                xir.simpp(ii,2,i)=fyzp_loc(i)
-                 xx=xx+dyz_loc(i)
-	enddo
-c UF Apr15 unbenutzt	xir.isimpp(ii)=ianz_loc
-        
-      endif
-      enddo
+c     xx=xxsave
+c     do i=1,ianz_loc
+c     UF Apr15 unbenutzt                 xir.simpp(ii,1,i)=xx
+c     UF Apr15 unbenutzt                xir.simpp(ii,2,i)=fyzp_loc(i)
+c     xx=xx+dyz_loc(i)
+c     enddo
+c     UF Apr15 unbenutzt	xir.isimpp(ii)=ianz_loc
+                 
+              endif             ! xir.nsimp slice 2bstored
+           enddo                ! loop over slices
+        endif                   ! xir.fill_results
       
 c---------------------------------------------------------
       
       endif                     ! ispline.lt.0
 
 c---------------------------------------------------------
-      if(ifl.ispline.eq.0)then  ! UF Apr 15 (default)
+      if(ifl.ispline.eq.0)then  ! UF Apr 23, 2015 (default)
 c---------------------------------------------------------
-c UF warning?? Apr 2015
-c die loop geht bis ianz
-c was passiert wenn die felder in y und z nicht gleich gross sind?? - nicht die richtigen Werte anzeigen oder sogar abstuerzen
-c          
          xintre=0.d0
          xintim=0.d0
          
@@ -1854,135 +1852,104 @@ c
          xintre=xintre*dyz(1)
          xintim=xintim*dyz(1)
          
-c-----------output
-
-         if(iyz.eq.1)xx=xi.ymin ! y loop
-         if(iyz.eq.2)xx=xi.zmin ! z loop
-         xxsave=xx
-         
-         do ii=1,xir.iisimp        ! harcoded to 4
-            
-c  definitions in pst.c fill_xirp
-c  xirp->isimp[0]= 2;
-c  xirp->isimp[1]= bl->BLOptions.xi.ianzy0+ 1;
-c  xirp->isimp[2]= 2* bl->BLOptions.xi.ianzy0;
-c  xirp->isimp[3]= 2* bl->BLOptions.xi.ianzz0+ 2;
-
-            if((xir.isimp(ii).eq.xir.nsimp).and.(xir.call_fill_si.eq.1))then ! xir.nsimp calls to simpson
-               write(*,*)'UF debug: ianz,ii,xir.nsimp',ianz,ii,xir.nsimp
-               xx=xxsave
-               do i=1,ianz-1         
-c                 xx=xx+dyz(i)
-c                 xir.sintre(ii,1,i)=xx 
-c                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)   
-                  call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) !new replacement routine, 1 -> sintre
-                  call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2) !new replacement routine  1 -> sintim
-               enddo
-               xir.isintre(ii)=ianz-1
-c     UF
-#ifdef OLD
-               xx=xxsave               
-               do i=1,ianz-1
-                  xx=xx+dyz(i)
-                  xir.sintim(ii,1,i)=xx
-                  xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
-                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2)
-               enddo
+c----------- save  integration details
+c     defined in pst.c fill_xirp are the calles to simpson which should be recorded
+c     dy(dz=min), dy(dz=half), dy(dz=max), dz(dy=half)
+c     xir.fill_results: controls recording 
+    
+         if(xir.fill_results.eq.1)then    ! only when active
+            if(iyz.eq.1)xx=xi.ymin        ! y loop
+            if(iyz.eq.2)xx=xi.zmin        ! z loop
+            do ii=1,xir.iisimp            ! loop over slices harcoded to 4
+               if(xir.isimp(ii).eq.xir.nsimp)then ! if number as defined
+#ifdef DEBUG
+                  write(*,*)'debug: ianz,ii,xir.nsimp',ianz,ii,xir.nsimp
 #endif
-               xir.isintim(ii)=ianz-1
-c     UF
-               xx=xxsave               
-               do i=1,ianz                 
-c                  xir.simpre(ii,1,i)=xx
-c                  xir.simpre(ii,2,i)=densiyzre(i)
+                  do i=1,ianz-1 ! ianz-1 since integration has 1 point less    
+                     call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) ! 1 -> sintre
+                     call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2) ! 2 -> sintim
+                     call fill_si_f(blp, ii, i, densiyzre(i), 3)      ! 3 -> simpre
+                     call fill_si_f(blp, ii, i, densiyzim(i), 4)      ! 4 -> simpim
+                     if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1)    ! -1 -> dy
+                     if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2)    ! -2 -> dz
+                     xx=xx+dyz(i)
+                  enddo
+c     fill last point 
+                  i= ianz       ! last point
                   call fill_si_f(blp, ii, i, densiyzre(i), 3) ! 3 -> simpre
                   call fill_si_f(blp, ii, i, densiyzim(i), 4) ! 4 -> simpim
-                  if((ii.eq.1).or.(ii.eq.4))call fill_si_f(blp, ii, i, xx, 0) ! 0 -> dy or dz
-                  xx=xx+dyz(i)
-               enddo
-               xir.isimpre(ii)=ianz
-c     UF
-#ifdef OLD
-               xx=xxsave              
-               do i=1,ianz
-                  xir.simpim(ii,1,i)=xx
-                  xir.simpim(ii,2,i)=densiyzim(i)
-                  xx=xx+dyz(i)
-                  if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
-     &                 call fill_si_f(blp, ii, i, xx, 0)
-                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzim(i), 4)
-               enddo
-#endif
-               xir.isimpim(ii)=ianz
-               
-            endif
-         enddo
+                  if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1) ! -1 -> dy
+                  if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2) ! -2 -> dz
+c     remember filled items (wozu eigentlich?)
+                  xir.isintre(ii)=ianz-1
+                  xir.isintim(ii)=ianz-1
+                  xir.isimpre(ii)=ianz
+                  xir.isimpim(ii)=ianz
+               endif            ! xir.nsimp slice 2bstored
+            enddo               ! loop over slices
+         endif                  ! xir.fill_results
+
+c     UF keep some significant fragments of old code (before Apr 2015)
+c     xx=xx+dyz(i)
+c     xir.sintre(ii,1,i)=xx 
+c     xir.sintre(ii,2,i)=xxxre(i)*dyz(1)  
+c     xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
+c     xir.simpre(ii,2,i)=densiyzre(i)
+c     xir.simpim(ii,2,i)=densiyzim(i)
 c-------------------
       endif                     ! ispline.eq.0
       
 c------------------------------------------------------------
       if((ifl.ispline.eq.1).or.(ifl.ispline.eq.2))then
-c------- spline integtration von Michael
-
+c-------spline integtration von Michael
+         
          x_loc(1)=0.d0
          do i=2,ianz
-         x_loc(i)=x_loc(i-1)+dyz(1)
+            x_loc(i)=x_loc(i-1)+dyz(1)
          enddo
-
+         
          call UTIL_SPLINE_INTEGRAL(x_loc,densiyzre,xintre,
-     &          COEF,WORK1,WORK2,WORK3,WORK4,ianz,ifl.ispline)
-
+     &        COEF,WORK1,WORK2,WORK3,WORK4,ianz,ifl.ispline)
+         
          call UTIL_SPLINE_INTEGRAL(x_loc,densiyzim,xintim,
-     &          COEF,WORK1,WORK2,WORK3,WORK4,ianz,ifl.ispline)
-
-c----------- output
-c UF 11.2.00 xx muss bestimmt festgehalten werden xxsave
-        if(iyz.eq.1)xx=xi.ymin
-        if(iyz.eq.2)xx=xi.zmin
-        xxsave=xx
-
-        do ii=1,xir.iisimp
-           if(xir.isimp(ii).eq.xir.nsimp)then
-              xx=xxsave
-              do i=1,ianz-1
-                 xx=xx+dyz(i)
-c                 xir.sintre(ii,1,i)=xx
-c                 xir.sintre(ii,2,i)=xxxre(i)*dyz(1)
-                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1)
-              enddo
-              xir.isintre(ii)=ianz-1
-c UF
-              xx=xxsave               
-              do i=1,ianz-1
-                 xx=xx+dyz(i)
-c                 xir.sintim(ii,1,i)=xx
-c                 xir.sintim(ii,2,i)=xxxim(i)*dyz(1)
-                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2)
-              enddo
-              xir.isintim(ii)=ianz-1
-c UF
-              xx=xxsave               
-              do i=1,ianz                 
-c                 xir.simpre(ii,1,i)=xx
-c                 xir.simpre(ii,2,i)=densiyzre(i)
-                 xx=xx+dyz(i)
-                 if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzre(i), 3)
-              enddo
-              xir.isimpre(ii)=ianz
-c UF
-              xx=xxsave              
-              do i=1,ianz
-c                 xir.simpim(ii,1,i)=xx
-c                 xir.simpim(ii,2,i)=densiyzim(i)
-                 if((xir.call_fill_si.eq.1).and.((ii.eq.1).or.(ii.eq.4)))
-     &                 call fill_si_f(blp, ii, i, xx, 0)
-                  if(xir.call_fill_si.eq.1)call fill_si_f(blp, ii, i, densiyzim(i), 4)
-                 xx=xx+dyz(i)
-              enddo
-              xir.isimpim(ii)=ianz
-              
-           endif
-        enddo
+     &        COEF,WORK1,WORK2,WORK3,WORK4,ianz,ifl.ispline)
+         
+c----------- save  integration details
+c     defined in pst.c fill_xirp are the calles to simpson which should be recorded
+c     dy(dz=min), dy(dz=half), dy(dz=max), dz(dy=half)
+c     xir.fill_results: controls recording 
+    
+         if(xir.fill_results.eq.1)then    ! only when active
+            if(iyz.eq.1)xx=xi.ymin        ! y loop
+            if(iyz.eq.2)xx=xi.zmin        ! z loop
+            do ii=1,xir.iisimp            ! loop over slices harcoded to 4
+               if(xir.isimp(ii).eq.xir.nsimp)then ! if number as defined
+#ifdef DEBUG
+                  write(*,*)'debug: ianz,ii,xir.nsimp',ianz,ii,xir.nsimp
+#endif
+                  do i=1,ianz-1 ! ianz-1 since integration has 1 point less    
+                     call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) ! 1 -> sintre
+                     call fill_si_f(blp, ii, i, (xxxim(i)*dyz(1)), 2) ! 2 -> sintim
+                     call fill_si_f(blp, ii, i, densiyzre(i), 3)      ! 3 -> simpre
+                     call fill_si_f(blp, ii, i, densiyzim(i), 4)      ! 4 -> simpim
+                     if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1)    ! -1 -> dy
+                     if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2)    ! -2 -> dz
+                     xx=xx+dyz(i)  !! UF muesste ev das x_loc sein ??
+                  enddo
+c     fill last point 
+                  i= ianz       ! last point
+                  call fill_si_f(blp, ii, i, densiyzre(i), 3) ! 3 -> simpre
+                  call fill_si_f(blp, ii, i, densiyzim(i), 4) ! 4 -> simpim
+                  if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1) ! -1 -> dy
+                  if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2) ! -2 -> dz
+c     remember filled items 
+                  xir.isintre(ii)=ianz-1
+                  xir.isintim(ii)=ianz-1
+                  xir.isimpre(ii)=ianz
+                  xir.isimpim(ii)=ianz
+               endif            ! xir.nsimp slice 2bstored
+            enddo               ! loop over slices
+         endif                  ! xir.fill_results
 
 c----------------
 	endif    ! ispline.eq.1
