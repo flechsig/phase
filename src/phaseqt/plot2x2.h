@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.h */
 /*  Date      : <08 Jul 11 15:53:58 flechsig>  */
-/*  Time-stamp: <23 Apr 15 14:01:55 flechsig>  */
+/*  Time-stamp: <24 Apr 15 16:49:32 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -40,6 +40,7 @@
 
 #include <qwt_plot_curve.h>
 #include <qwt_plot_grid.h>
+#include <qwt_plot_marker.h>
 
 #include "plotmatrix.h"
 
@@ -59,6 +60,10 @@ private:
     QwtPlotCurve  *d_curve2;
     QwtPlotCurve  *d_curve3;
     QwtPlotCurve  *d_curve4;
+    QwtPlotMarker *pm1;
+    QwtPlotMarker *pm2;
+    QwtPlotMarker *pm3;
+    QwtPlotMarker *pm4;
 
     double        *c1x, *c4x, *c1y, *c2y, *c3y, *c4y;
     double        z1min, z1max, z4min, z4max, ymin[4], ymax[4];
