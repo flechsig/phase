@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <23 Apr 15 14:05:02 flechsig> 
+//  Time-stamp: <2015-04-25 11:03:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1099,7 +1099,18 @@ if (!myparent->myBuildBeamline())
       mwplotsubject= PLOT_PO_SINTIM;
       updateGraphicsInput(mwplotsubject);
     }
-  
+
+  if (!action.compare("grPoAmpAct")) 
+    {
+      mwplotsubject= PLOT_PO_AMP;
+      updateGraphicsInput(mwplotsubject);
+    }
+
+   if (!action.compare("grPoPhaAct")) 
+    {
+      mwplotsubject= PLOT_PO_PHA;
+      updateGraphicsInput(mwplotsubject);
+    }
   
   if (!action.compare("grexample1Act")) 
     { 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 Mar 15 12:11:41 flechsig> 
+//  Time-stamp: <2015-04-25 12:40:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -627,6 +627,8 @@ QWidget *MainWindow::createGraphicBox()
   grPoSimpimAct  = new QAction(tr("PO Simpim"), this);
   grPoSintreAct  = new QAction(tr("PO Sintre"), this);
   grPoSintimAct  = new QAction(tr("PO Sintim"), this);
+  grPoAmpAct     = new QAction(tr("PO Amp"), this);
+  grPoPhaAct     = new QAction(tr("PO Pha"), this);
 
   grexample1Act  = new QAction(tr("example &1"), this);
   grexample2Act  = new QAction(tr("example &2"), this);
@@ -668,6 +670,8 @@ QWidget *MainWindow::createGraphicBox()
   subject->addAction(grPoSimpimAct);
   subject->addAction(grPoSintreAct);
   subject->addAction(grPoSintimAct);
+  subject->addAction(grPoAmpAct);
+  subject->addAction(grPoPhaAct);
   subject->addSeparator();
   subject->addAction(grexample1Act);
   subject->addAction(grexample2Act);
@@ -710,6 +714,8 @@ QWidget *MainWindow::createGraphicBox()
   connect(grPoSimpimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSintreAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grPoSintimAct,   SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoAmpAct,      SIGNAL(triggered()), grsignalMapper, SLOT(map()));
+  connect(grPoPhaAct,      SIGNAL(triggered()), grsignalMapper, SLOT(map()));
 
   connect(grexample1Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grexample2Act, SIGNAL(triggered()), grsignalMapper, SLOT(map()));
@@ -750,6 +756,8 @@ QWidget *MainWindow::createGraphicBox()
   grsignalMapper->setMapping(grPoSintimAct,   QString("grPoSintimAct"));
   grsignalMapper->setMapping(grPoSimpreAct,   QString("grPoSimpreAct"));
   grsignalMapper->setMapping(grPoSimpimAct,   QString("grPoSimpimAct"));
+  grsignalMapper->setMapping(grPoAmpAct,      QString("grPoAmpAct"));
+  grsignalMapper->setMapping(grPoPhaAct,      QString("grPoPhaAct"));
 
   grsignalMapper->setMapping(grexample1Act, QString("grexample1Act"));
   grsignalMapper->setMapping(grexample2Act, QString("grexample2Act"));
