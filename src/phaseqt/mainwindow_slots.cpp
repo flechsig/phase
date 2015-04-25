@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-04-25 11:03:33 flechsig> 
+//  Time-stamp: <2015-04-25 12:57:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1670,6 +1670,8 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SIMPIM:
     case PLOT_PO_SINTRE:
     case PLOT_PO_SINTIM:
+    case PLOT_PO_AMP:
+    case PLOT_PO_PHA:
       if (d_plot) delete (d_plot); d_plot= NULL;
       if (zone)   delete (zone);   zone= NULL;
       zone= new Plot2x2(plotBox);
@@ -1983,6 +1985,23 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SINTIM:
       cout << "plot PLOT_PO_SINTIM start" << endl;
       zone->hfill4(bl->sintim, bl->BLOptions.xi.ianzy0-1, bl->BLOptions.xi.ianzz0-1, bl->vdy, bl->vdz);
+      zone->myattach();
+      break;
+
+    case PLOT_PO_AMP:
+      cout << "plot PLOT_PO_AMP start" << endl;
+      /*   int mypoints= bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
+      double *myamp;
+      myamp= XMALLOC(double, mypoints);
+      for (int i=0; i< mypoints; i++) myamp[i]= sqrt(pow(bl->simpre[i], 2) + pow(bl->simpim[i], 2));
+      zone->hfill4(myamp, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
+      XFREE(myamp);
+      zone->myattach();*/
+      break;
+
+    case PLOT_PO_PHA:
+      cout << "plot PLOT_PO_PHA start" << endl;
+      zone->hfill4(bl->simpim, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
       zone->myattach();
       break;
       
