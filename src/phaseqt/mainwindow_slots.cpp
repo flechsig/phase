@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-04-25 12:57:30 flechsig> 
+//  Time-stamp: <2015-04-25 18:18:42 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1102,13 +1102,13 @@ if (!myparent->myBuildBeamline())
 
   if (!action.compare("grPoAmpAct")) 
     {
-      mwplotsubject= PLOT_PO_AMP;
+      mwplotsubject= PLOT_PO_AMP4;
       updateGraphicsInput(mwplotsubject);
     }
 
    if (!action.compare("grPoPhaAct")) 
     {
-      mwplotsubject= PLOT_PO_PHA;
+      mwplotsubject= PLOT_PO_PHA4;
       updateGraphicsInput(mwplotsubject);
     }
   
@@ -1670,8 +1670,8 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SIMPIM:
     case PLOT_PO_SINTRE:
     case PLOT_PO_SINTIM:
-    case PLOT_PO_AMP:
-    case PLOT_PO_PHA:
+    case PLOT_PO_AMP4:
+    case PLOT_PO_PHA4:
       if (d_plot) delete (d_plot); d_plot= NULL;
       if (zone)   delete (zone);   zone= NULL;
       zone= new Plot2x2(plotBox);
@@ -1988,20 +1988,27 @@ void MainWindow::grapplyslot()
       zone->myattach();
       break;
 
-    case PLOT_PO_AMP:
+    case PLOT_PO_AMP4:
       cout << "plot PLOT_PO_AMP start" << endl;
-      /*   int mypoints= bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
+      int mypoints;
       double *myamp;
+      mypoints= bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
       myamp= XMALLOC(double, mypoints);
       for (int i=0; i< mypoints; i++) myamp[i]= sqrt(pow(bl->simpre[i], 2) + pow(bl->simpim[i], 2));
       zone->hfill4(myamp, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
       XFREE(myamp);
-      zone->myattach();*/
+      zone->myattach();/**/
       break;
 
-    case PLOT_PO_PHA:
+    case PLOT_PO_PHA4:
       cout << "plot PLOT_PO_PHA start" << endl;
-      zone->hfill4(bl->simpim, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
+      int mypoints1;
+      double *mypha;
+      mypoints1= bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
+      mypha= XMALLOC(double, mypoints1);
+      for (int i=0; i< mypoints1; i++) mypha[i]= atan2(bl->simpim[i], bl->simpre[i]);
+      zone->hfill4(mypha, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
+      XFREE(mypha);
       zone->myattach();
       break;
       
