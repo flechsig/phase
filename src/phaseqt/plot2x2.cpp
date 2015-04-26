@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <24 Apr 15 16:48:39 flechsig> 
+//  Time-stamp: <2015-04-26 22:06:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -197,12 +197,14 @@ void Plot2x2::myattach()
   plt->setAxisScale(QwtPlot::yLeft, ymin[0], ymax[0], 0 );
   plt->setAxisScale(QwtPlot::xTop, z1min, z1max, 0 );
   d_curve1->attach(plt);
+  pm1->setValue((z1min+z1max)/2.0,(ymin[0]+ymax[0])/2.0);
   pm1->attach(plt);
 
   plt = plot(0, 1);
   plt->setAxisScale(QwtPlot::yRight, ymin[1], ymax[1], 0 );
   plt->setAxisScale(QwtPlot::xTop, z1min, z1max, 0 );
   d_curve2->attach(plt);
+  pm2->setValue((z1min+z1max)/2.0,(ymin[1]+ymax[1])/2.0);
   pm2->attach(plt);
 
   plt = plot(1, 0);
@@ -210,6 +212,7 @@ void Plot2x2::myattach()
   plt->setAxisScale(QwtPlot::xBottom, z1min, z1max, 0 );
   plt->setAxisTitle(QwtPlot::xBottom, tr("dy (mrad)"));
   d_curve3->attach(plt);
+  pm3->setValue((z1min+z1max)/2.0,(ymin[2]+ymax[2])/2.0);
   pm3->attach(plt);
 
   plt = plot(1, 1);
@@ -218,6 +221,7 @@ void Plot2x2::myattach()
   plt->setAxisTitle(QwtPlot::xBottom, tr("dz (mrad)"));
   plt->setCanvasBackground( QColor( Qt::yellow ) );
   d_curve4->attach(plt);
+  pm4->setValue((z4min+z4max)/2.0,(ymin[3]+ymax[3])/2.0);
   pm4->attach(plt);
 } /* myattach */
 #endif
