@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <15 Dec 14 12:04:22 flechsig>  */
+/*   Time-stamp: <27 Apr 15 12:08:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -988,8 +988,8 @@ void FreeResultMem(struct RESULTType *Re)
       return;
     }
 
-#ifdef DEBUG  
-  printf("debug: FreeResultMem: type=%d, type=0x%X, Re->RESp=0x%x\n", Re->typ, Re->typ, (int)Re->RESp); 
+#ifdef DEBUG1  
+  printf("debug: FreeResultMem: type=%d, type=0x%X, Re->RESp=0x%x\n", Re->typ, Re->typ, (long)Re->RESp); 
 #endif
 
   if (Re->typ & PLrttype) 
