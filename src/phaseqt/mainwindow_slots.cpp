@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-04-25 18:18:42 flechsig> 
+//  Time-stamp: <27 Apr 15 10:12:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1616,10 +1616,10 @@ void MainWindow::goButtonslot()
 void MainWindow::grapplyslot()
 {
 #ifdef HAVE_QWT
-  
-  double *int4;
   struct EmfType *emfpp;
   struct BeamlineType *bl;
+  unsigned int   mypoints;
+  double *myarray;
 
 #ifdef DEBUG
   cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << hex << showbase << mwplotsubject << endl;
@@ -1676,8 +1676,6 @@ void MainWindow::grapplyslot()
       if (zone)   delete (zone);   zone= NULL;
       zone= new Plot2x2(plotBox);
       plotLayout->addWidget(zone, 0, 0);
-      //psdp= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
-      int4= (double *)myparent->myBeamline()->int_details;
       break;
     default: 
       //if (d_plot) delete (d_plot); d_plot= NULL;
@@ -1990,25 +1988,21 @@ void MainWindow::grapplyslot()
 
     case PLOT_PO_AMP4:
       cout << "plot PLOT_PO_AMP start" << endl;
-      int mypoints;
-      double *myamp;
-      mypoints= bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
-      myamp= XMALLOC(double, mypoints);
-      for (int i=0; i< mypoints; i++) myamp[i]= sqrt(pow(bl->simpre[i], 2) + pow(bl->simpim[i], 2));
-      zone->hfill4(myamp, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
-      XFREE(myamp);
-      zone->myattach();/**/
+      mypoints= 3* bl->BLOptions.xi.ianzy0+ bl->BLOptions.xi.ianzz0;
+      myarray = XMALLOC(double, mypoints);
+      for (unsigned int i=0; i< mypoints; i++) myarray[i]= sqrt( pow(bl->simpre[i], 2) + pow(bl->simpim[i], 2));
+      zone->hfill4(myarray, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
+      XFREE(myarray);
+      zone->myattach();
       break;
 
     case PLOT_PO_PHA4:
       cout << "plot PLOT_PO_PHA start" << endl;
-      int mypoints1;
-      double *mypha;
-      mypoints1= bl->BLOptions.xi.ianzy0* bl->BLOptions.xi.ianzz0;
-      mypha= XMALLOC(double, mypoints1);
-      for (int i=0; i< mypoints1; i++) mypha[i]= atan2(bl->simpim[i], bl->simpre[i]);
-      zone->hfill4(mypha, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
-      XFREE(mypha);
+      mypoints= 3* bl->BLOptions.xi.ianzy0+ bl->BLOptions.xi.ianzz0;
+      myarray= XMALLOC(double, mypoints);
+      for (unsigned int i= 0; i< mypoints; i++) myarray[i]= atan2(bl->simpim[i], bl->simpre[i]);
+      zone->hfill4(myarray, bl->BLOptions.xi.ianzy0, bl->BLOptions.xi.ianzz0, bl->vdy, bl->vdz);
+      XFREE(myarray);
       zone->myattach();
       break;
       

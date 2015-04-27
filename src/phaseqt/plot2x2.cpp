@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <27 Apr 15 08:39:48 flechsig> 
+//  Time-stamp: <27 Apr 15 09:35:34 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -37,6 +37,7 @@
 
 
 #include <iostream>
+#include <cmath> 
 #include "phaseqt.h"
 
 #ifdef HAVE_QWT
@@ -65,10 +66,11 @@ Plot2x2::Plot2x2(QWidget *parent): PlotMatrix(2, 2, parent)
   pm3 = new QwtPlotMarker();
   pm4 = new QwtPlotMarker();
 
-  pm1->setLabel( QString::fromLatin1( "@ dzmin" ) );
-  pm2->setLabel( QString::fromLatin1( "@ dz center" ) );
-  pm3->setLabel( QString::fromLatin1( "@ dzmax" ) );
-  pm4->setLabel( QString::fromLatin1( "@ dy center" ) );
+  // the labels in the 2x2 plots
+  pm1->setLabel( QString::fromLatin1( "f(dy) @ dzmin" ) );
+  pm2->setLabel( QString::fromLatin1( "f(dy) @ dz center" ) );
+  pm3->setLabel( QString::fromLatin1( "f(dy) @ dzmax" ) );
+  pm4->setLabel( QString::fromLatin1( "f(dz) @ dy center" ) );
 
   c1x= c4x= c1y= c2y= c3y= c4y= NULL;
   z1min= z1max= z4min= z4max= 0.0;
@@ -196,23 +198,23 @@ void Plot2x2::myattach()
   plt= plot(0, 0);
   plt->setAxisScale(QwtPlot::yLeft, ymin[0], ymax[0], 0 );
   plt->setAxisScale(QwtPlot::xTop, z1min, z1max, 0 );
+  pm1->setValue((z1min+z1max)/2.0, ymin[0]+ 0.95* (ymax[0]- ymin[0]));
   d_curve1->attach(plt);
-  pm1->setValue((z1min+z1max)/2.0,(ymin[0]+ymax[0])/2.0);
   pm1->attach(plt);
 
   plt = plot(0, 1);
   plt->setAxisScale(QwtPlot::yRight, ymin[1], ymax[1], 0 );
   plt->setAxisScale(QwtPlot::xTop, z1min, z1max, 0 );
+  pm2->setValue((z1min+z1max)/2.0, ymin[1]+ 0.95* (ymax[1]- ymin[1]));
   d_curve2->attach(plt);
-  pm2->setValue((z1min+z1max)/2.0,(ymin[1]+ymax[1])/2.0);
   pm2->attach(plt);
 
   plt = plot(1, 0);
   plt->setAxisScale(QwtPlot::yLeft, ymin[2], ymax[2], 0 );
   plt->setAxisScale(QwtPlot::xBottom, z1min, z1max, 0 );
   plt->setAxisTitle(QwtPlot::xBottom, tr("dy (mrad)"));
+  pm3->setValue((z1min+z1max)/2.0, ymin[2]+ 0.95* (ymax[2]- ymin[2]));
   d_curve3->attach(plt);
-  pm3->setValue((z1min+z1max)/2.0,(ymin[2]+ymax[2])/2.0);
   pm3->attach(plt);
 
   plt = plot(1, 1);
@@ -220,8 +222,8 @@ void Plot2x2::myattach()
   plt->setAxisScale(QwtPlot::xBottom, z4min, z4max, 0 );
   plt->setAxisTitle(QwtPlot::xBottom, tr("dz (mrad)"));
   plt->setCanvasBackground( QColor( Qt::yellow ) );
+  pm4->setValue((z4min+z4max)/2.0, ymin[3]+ 0.95* (ymax[3]- ymin[3]));
   d_curve4->attach(plt);
-  pm4->setValue((z4min+z4max)/2.0,(ymin[3]+ymax[3])/2.0);
   pm4->attach(plt);
 } /* myattach */
 #endif
