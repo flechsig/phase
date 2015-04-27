@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <24 Apr 15 11:28:05 flechsig>  */
+/*   Time-stamp: <27 Apr 15 12:20:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -50,7 +50,8 @@
                                             
 #include "cutils.h" 
 #include "phase_struct.h"
-#include "phase.h"   
+#include "phase.h"  
+#include "posrc.h"
 #include "pst.h"      
 #include "rtrace.h" 
 #include "common.h"
@@ -435,7 +436,7 @@ void pstc(struct BeamlineType *bl)
       emfp_free(bl->emfp);
       bl->emfp= NULL;
     }
-  //write_phase_hdf5_file(bl, "debugsource00.h5", bl->source_emfp);
+  //write_phase_hdf5_file(bl, "debugsource00.h5", bl->source_emfp); 
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
   emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
   oldposition= bl->position;           // remember previous value- dont know if important
