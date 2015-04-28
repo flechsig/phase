@@ -42,26 +42,26 @@ c-----------------------------------------------------------------
         subroutine Tay_abs_6(a,iord)
 c-----------------------------------------------------------------
 
-c        implicit real*8(a-h,o-z)
+        implicit real*8(a-h,o-z)
         real*8 a
         integer iord
         integer i,j,k,l,m,n
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7)
 
 	if(a(0,0,0,0,0,0).lt.0.d0)then
-           do i=0,iord
-              do j=0,iord-i
-                 do k=0,iord-i-j
-                    do l=0,iord-i-j-k
-                       do m=0,iord-i-j-k-l
-                          do n=0,iord-i-j-k-l-m
-                             a(i,j,k,l,m,n)=-a(i,j,k,l,m,n)
-                          enddo
-                       enddo
-                    enddo
-                 enddo
-              enddo
+	do i=0,iord
+	 do j=0,iord-i
+	  do k=0,iord-i-j
+	   do l=0,iord-i-j-k
+	    do m=0,iord-i-j-k-l
+             do n=0,iord-i-j-k-l-m
+	     a(i,j,k,l,m,n)=-a(i,j,k,l,m,n)
+	     enddo
+            enddo
            enddo
+          enddo
+         enddo
+        enddo
 	endif	 
 
         return
@@ -76,22 +76,13 @@ c
 c-----------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,d
-        integer iord,n
-        real*8  b,c,x,cc,f0,cbrtf0
+        real*8 a,d
+        integer iord
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7),
      &            d(0:7,0:7,0:7,0:7,0:7,0:7),
      &            x(0:7,0:7,0:7,0:7,0:7,0:7)
-
-c        INTERFACE
-c           FUNCTION Tay_cbrt_fact (N)
-c           REAL*8 Tay_cbrt_fact
-c           integer N
-c           END FUNCTION
-c        END INTERFACE
-        
 
         call Tay_clear_6(d,iord)                ! array for results
 
@@ -100,37 +91,37 @@ c        END INTERFACE
 
 c------ iord = 0
 	if(iord.eq.0)then
-           d(0,0,0,0,0,0)=1.d0
-           goto 100
+          d(0,0,0,0,0,0)=1.d0
+          goto 100
 	endif
         
 c------ iord = 1
 	if(iord.ge.1)then       
-           call Tay_copy_6(a,x,iord)
-           call Tay_const_6(x,1.d0/f0,iord) 
-           x(0,0,0,0,0,0)=0.d0  ! abs(x) lt. 1, contains orders up to iord
-           d(0,0,0,0,0,0)=1.d0
-           call Tay_copy_6(x,c,iord)
-           cc=1.d0/3.d0
-           call Tay_const_6(c,cc,iord)        
-           call Tay_add_6(c,d,iord)
-           if(iord.eq.1)goto 100
+ 	  call Tay_copy_6(a,x,iord)
+          call Tay_const_6(x,1.d0/f0,iord) 
+          x(0,0,0,0,0,0)=0.d0                     ! abs(x) lt. 1, contains orders up to iord
+          d(0,0,0,0,0,0)=1.d0
+          call Tay_copy_6(x,c,iord)
+	  cc=1.d0/3.d0
+          call Tay_const_6(c,cc,iord)        
+          call Tay_add_6(c,d,iord)
+	  if(iord.eq.1)goto 100
         endif
-        
-c---------iord gt. 1
+
+c--------- iord gt. 1
 c          start summation,
 c          store intermediate exponentials in b
 c          collecting data in d
 c
         if(iord.gt.1)then
-           call Tay_copy_6(x,b,iord)
-           do n=2,iord
-              call Tay_mult_6(x,b,c,iord)
-              call Tay_copy_6(c,b,iord)
-              call Tay_const_6(c,Tay_cbrt_fact(n),iord)
-              call Tay_add_6(c,d,iord)
-           enddo       
-           goto 100
+	  call Tay_copy_6(x,b,iord)
+	  do n=2,iord
+            call Tay_mult_6(x,b,c,iord)
+            call Tay_copy_6(c,b,iord)
+            call Tay_const_6(c,Tay_cbrt_fact(n),iord)
+            call Tay_add_6(c,d,iord)
+          enddo       
+	  goto 100
         endif
         
 100     call Tay_const_6(d,cbrtf0,iord)
@@ -139,11 +130,11 @@ c
         end
 
 c------------------------------------------------------
-        real*8 function Tay_cbrt_fact(n)
+        function Tay_cbrt_fact(n)
 c------------------------------------------------------
-        implicit none
+
+        implicit real*8(a-h,o-z)
         integer n
-        real*8  r0,fact
         integer m
 
         if(n.eq.0)Tay_cbrt_fact=1.d0
@@ -170,78 +161,83 @@ c-----------------------------------------------------------------
         subroutine Tay_clear_6(c,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  c
+        real*8 c
         integer iord
-        integer i,j,k,l,m,n
 
         dimension c(0:7,0:7,0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    do m=0,iord-i-j-k-l
-                       do n=0,iord-i-j-k-l-m
-                          c(i,j,k,l,m,n)=0.d0
-                       enddo
-                    enddo
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+        do m=0,iord-i-j-k-l
+        do n=0,iord-i-j-k-l-m
+
+        c(i,j,k,l,m,n)=0.d0
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+        enddo
+        enddo
+
         return
         end
 
 c-----------------------------------------------------------------
         subroutine Tay_clear_6a(c,iord)
 c-----------------------------------------------------------------
-        real*8  c
+        implicit real*8(a-h,o-z)
+        real*8 c
         integer iord
-        integer i,j,k,l,m,n,iord1
         dimension c(0:8,0:8,0:8,0:8,0:8,0:8)
 
         iord1=iord+1
 
         do i=0,iord1
-           do j=0,iord1-i
-              do k=0,iord1-i-j
-                 do l=0,iord1-i-j-k
-                    do m=0,iord1-i-j-k-l
-                       do n=0,iord1-i-j-k-l-m
-                          c(i,j,k,l,m,n)=0.d0
-                       enddo
-                    enddo
-                 enddo
-              enddo
-           enddo
+        do j=0,iord1-i
+        do k=0,iord1-i-j
+        do l=0,iord1-i-j-k
+        do m=0,iord1-i-j-k-l
+        do n=0,iord1-i-j-k-l-m
+
+        c(i,j,k,l,m,n)=0.d0
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+        enddo
+        enddo
+
         return
         end
 
 c-----------------------------------------------------------------
         subroutine Tay_fill_6(c,val,iord)
 c-----------------------------------------------------------------
-        real*8  c,val
+        implicit real*8(a-h,o-z)
+        real*8 c,val
         integer iord
-        integer i,j,k,l,m,n
         dimension c(0:7,0:7,0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    do m=0,iord-i-j-k-l
-                       do n=0,iord-i-j-k-l-m
-                          c(i,j,k,l,m,n)=val
-                       enddo
-                    enddo
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+        do m=0,iord-i-j-k-l
+        do n=0,iord-i-j-k-l-m
+
+        c(i,j,k,l,m,n)=val
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+        enddo
+        enddo
+
         return
         end
 
@@ -249,55 +245,57 @@ c-----------------------------------------------------------------
         subroutine Tay_copy_6(a,c,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  a,c
+        real*8 a,c
         integer iord
-        integer i,j,k,l,m,n
+
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    do m=0,iord-i-j-k-l
-                       do n=0,iord-i-j-k-l-m
-                          c(i,j,k,l,m,n)=a(i,j,k,l,m,n)
-                       enddo
-                    enddo
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+        do m=0,iord-i-j-k-l
+        do n=0,iord-i-j-k-l-m
+       
+        c(i,j,k,l,m,n)=a(i,j,k,l,m,n)
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+        enddo
+        enddo
+
         return
         end
 
 c-----------------------------------------------------------------
-c uf iord not used        subroutine Tay_copy_6_87(a8,c,iord)
         subroutine Tay_copy_6_87(a8,c,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  a8,c
+        real*8 a8,c
         integer iord
         integer i,j,k,l,n,m
         dimension a8(0:8,0:8,0:8,0:8,0:8,0:8),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7)
 
-        iord=iord               ! to avoid warning
         do i=0,7
-           do j=0,7-i
-              do k=0,7-i-j
-                 do l=0,7-i-j-k
-                    do m=0,7-i-j-k-l
-                       do n=0,7-i-j-k-l-m
-                          c(i,j,k,l,m,n)=a8(i,j,k,l,m,n)
-                       enddo
-                    enddo
-                 enddo
-              enddo
-           enddo
+        do j=0,7-i
+        do k=0,7-i-j
+        do l=0,7-i-j-k
+        do m=0,7-i-j-k-l
+        do n=0,7-i-j-k-l-m
+       
+        c(i,j,k,l,m,n)=a8(i,j,k,l,m,n)
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+        enddo
+        enddo
+
         return
         end
 
@@ -344,8 +342,6 @@ c       the order of expansion is iord
 cc--------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,c
-        integer iord
         integer i,j,k,l,n,m
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7)
@@ -374,23 +370,23 @@ c-----------------------------------------------------------------
         subroutine Tay_const_6(a,const,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  a,const
-        integer iord
         integer i,j,k,l,n,m
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    do m=0,iord-i-j-k-l
-                       do n=0,iord-i-j-k-l-m
-                          a(i,j,k,l,m,n)=a(i,j,k,l,m,n)*const
-                       enddo
-                    enddo
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+        do m=0,iord-i-j-k-l
+        do n=0,iord-i-j-k-l-m
+       
+        a(i,j,k,l,m,n)=a(i,j,k,l,m,n)*const
+
+        enddo
+        enddo
+        enddo
+        enddo
+        enddo
         enddo
 
         return
@@ -404,11 +400,7 @@ c       the order of expansion is iord
 cc--------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,b,c
-        integer iord
         integer i,j,k,l,n,m
-        integer m1,m2,m3,m4,m5,m6
-        integer n1,n2,n3,n4,n5,n6
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7)
@@ -465,10 +457,7 @@ c       the order of expansion is iord
 c---------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,c
-        integer iexp,iord
-        real*8  b
-        integer i,j,k,l,n,m,ii
+        integer i,j,k,l,n,m
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7)
@@ -519,11 +508,7 @@ c-----------------------------------------------------------------
         subroutine Tay_sqrt_6(a,d,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  a,d
-        integer iord
-        real*8  b,c,x,f0,sqf0
-        integer n
-        dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
+       dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7,0:7,0:7),
      &            d(0:7,0:7,0:7,0:7,0:7,0:7),
@@ -574,10 +559,10 @@ c
 
 
 c------------------------------------------------------
-        real*8 function Tay_sqrt_fact(n)
+        function Tay_sqrt_fact(n)
 c------------------------------------------------------
-        integer n
-c        real*8 Tay_sqrt_fact
+
+        implicit real*8(a-h,o-z)
 
         if(n.eq.0)Tay_sqrt_fact=1.d0
         if(n.eq.1)Tay_sqrt_fact=0.5d0
@@ -597,10 +582,7 @@ c UF remove facult- it is already in phasefor.F
 c-----------------------------------------------------------------
         subroutine Tay_inv_6(a,d,iord)
 c-----------------------------------------------------------------
-        real*8  a,d
-        integer iord
-        real*8  b,c,x,f0
-        integer n
+        implicit real*8(a-h,o-z)
 
         dimension a(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7,0:7,0:7),
@@ -651,10 +633,10 @@ c
         end
 
 c------------------------------------------------------
-        real*8 function Tay_inv_fact(n)
+        function Tay_inv_fact(n)
 c------------------------------------------------------
-c        implicit real*8(a-h,o-z)
-        integer n
+
+        implicit real*8(a-h,o-z)
 
         if(n.eq.0)Tay_inv_fact=1.d0
         if(n.ge.1)Tay_inv_fact=(-1.d0)**n
@@ -670,9 +652,7 @@ c       n0-times partial derivative of the Taylor series a
 c       with respect to the m0-th variable
 c
         implicit real*8(a-h,o-z)
-        real*8 a8,c8
-        integer m0,n0,iord
-        integer i,j,k,l,n,m,iord1
+        integer i,j,k,l,n,m
         dimension a8(0:8,0:8,0:8,0:8,0:8,0:8),
      &            c8(0:8,0:8,0:8,0:8,0:8,0:8)
 
@@ -749,9 +729,7 @@ c       n0-times partial derivative of the Taylor series a
 c       with respect to the m0-th variable
 c
         implicit real*8(a-h,o-z)
-        real*8 a8,c8
-        integer m0,n0,iord
-        integer i,j,k,l,m,n
+
         dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
      &            c8(0:7,0:7,0:7,0:7,0:7,0:7)
 
@@ -826,9 +804,7 @@ c       n0-times partial derivative of the Taylor series a
 c       with respect to the m0-th variable
 c
         implicit real*8(a-h,o-z)
-        real*8 a7,c7
-        integer m0,n0,iord
-        integer i,j,k,l
+
         dimension a7(0:7,0:7,0:7,0:7),
      &            c7(0:7,0:7,0:7,0:7)
 
@@ -886,9 +862,7 @@ c       n2-times partial derivative with respeft to variable m2
 c       of the Taylor series a
 c
         implicit real*8(a-h,o-z)
-        real*8  a8,b8,c8
-        integer m1,n1,m2,n2,iord
-        integer iord1,i,j,k,l,m,n
+
         dimension a8(0:8,0:8,0:8,0:8,0:8,0:8),
      &            b8(0:8,0:8,0:8,0:8,0:8,0:8),
      &            c8(0:8,0:8,0:8,0:8,0:8,0:8)
@@ -1030,8 +1004,6 @@ c       n2-times partial derivative with respeft to variable m2
 c       of the Taylor series a
 c
         implicit real*8(a-h,o-z)
-        real*8 a8,b8,c8
-        integer m1,n1,m2,n2,iord
         integer i,j,k,l,n,m
         dimension a8(0:7,0:7,0:7,0:7,0:7,0:7),
      &            b8(0:7,0:7,0:7,0:7,0:7,0:7),
@@ -1169,9 +1141,8 @@ c------------------------------------------------------------
 c-----------------------------------------------------------------
         subroutine Tay_abs_4(a,iord)
 c-----------------------------------------------------------------
-        real*8  a
-        integer iord
-        integer i,j,k,l
+
+        implicit real*8(a-h,o-z)
         dimension a(0:7,0:7,0:7,0:7)
 
 	if(a(0,0,0,0).lt.0.d0)then
@@ -1198,11 +1169,7 @@ c
 c-----------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,d
-        integer iord
-        real*8  b,c,x,f0,cbrtf0,cc
-        integer n
-        dimension a(0:7,0:7,0:7,0:7),
+       dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7),
      &            d(0:7,0:7,0:7,0:7),
@@ -1256,20 +1223,20 @@ c
 c-----------------------------------------------------------------
         subroutine Tay_clear_4(c,iord)
 c-----------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
-        real*8  c
-        integer iord
+        implicit real*8(a-h,o-z)
         integer i,j,k,l
         dimension c(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    c(i,j,k,l)=0.d0
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+
+        c(i,j,k,l)=0.d0
+
+        enddo
+        enddo
+        enddo
         enddo
 
         return
@@ -1278,44 +1245,44 @@ c        implicit real*8(a-h,o-z)
 c-----------------------------------------------------------------
         subroutine Tay_clear_4a(c,iord)
 c-----------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
-        real*8 c
-        integer iord
-        integer i,j,k,l,iord1
+        implicit real*8(a-h,o-z)
+        integer i,j,k,l
         dimension c(0:8,0:8,0:8,0:8)
-        
+
         iord1=iord+1
-        
+
         do i=0,iord1
-           do j=0,iord1-i
-              do k=0,iord1-i-j
-                 do l=0,iord1-i-j-k
-                    c(i,j,k,l)=0.d0
-                 enddo
-              enddo
-           enddo
+        do j=0,iord1-i
+        do k=0,iord1-i-j
+        do l=0,iord1-i-j-k
+
+        c(i,j,k,l)=0.d0
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+
         return
         end
 
 c-----------------------------------------------------------------
         subroutine Tay_fill_4(c,val,iord)
 c-----------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
-        real*8 c,val
-        integer iord
+        implicit real*8(a-h,o-z)
         integer i,j,k,l
         dimension c(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    c(i,j,k,l)=val
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+
+        c(i,j,k,l)=val
+
+        enddo
+        enddo
+        enddo
         enddo
 
         return
@@ -1324,23 +1291,23 @@ c        implicit real*8(a-h,o-z)
 c-----------------------------------------------------------------
         subroutine Tay_copy_4(a,c,iord)
 c-----------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
-        real*8  a,c
-        integer iord
-        integer i,j,k,l
+        implicit real*8(a-h,o-z)
+
         dimension a(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    c(i,j,k,l)=a(i,j,k,l)
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+       
+        c(i,j,k,l)=a(i,j,k,l)
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+
         return
         end
 
@@ -1350,24 +1317,25 @@ c---------------------------------------------------------------
 c       Sum of two Taylor series with six Variables
 c       the order of expansion is iord
 cc--------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
-        real*8  a,b,c
-        integer iord
+
+        implicit real*8(a-h,o-z)
         integer i,j,k,l
         dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    c(i,j,k,l)=a(i,j,k,l)+b(i,j,k,l)
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+
+        c(i,j,k,l)=a(i,j,k,l)+b(i,j,k,l)
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+
         return
         end
 
@@ -1380,44 +1348,45 @@ c       the order of expansion is iord
 cc--------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,c
-        integer iord
         integer i,j,k,l
         dimension a(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7)
 
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    c(i,j,k,l)=c(i,j,k,l)+a(i,j,k,l)
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+
+        c(i,j,k,l)=c(i,j,k,l)+a(i,j,k,l)
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+
         return
         end
 
 c-----------------------------------------------------------------
         subroutine Tay_const_4(a,const,iord)
 c-----------------------------------------------------------------
-        real*8  a,const
-        integer iord
-        integer i,j,k,l
+        implicit real*8(a-h,o-z)
+
         dimension a(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    a(i,j,k,l)=a(i,j,k,l)*const
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+       
+        a(i,j,k,l)=a(i,j,k,l)*const
+
         enddo
-        
+        enddo
+        enddo
+        enddo
+
         return
         end
 
@@ -1429,43 +1398,41 @@ c       the order of expansion is iord
 cc--------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8 a,b,c
-        integer iord
-        integer i,j,k,l,m1,m2,m3,m4,n1,n2,n3,n4
+        integer i,j,k,l
         dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    
-                    c(i,j,k,l)=0.d0
-                    
-                    do m1=0,i
-                       do m2=0,j
-                          do m3=0,k
-                             do m4=0,l
-                                
-                                n1=i-m1
-                                n2=j-m2
-                                n3=k-m3
-                                n4=l-m4
-                                
-                                c(i,j,k,l)=c(i,j,k,l)+
-     &                               a(m1,m2,m3,m4)*b(n1,n2,n3,n4)
-                                
-                             enddo
-                          enddo
-                       enddo
-                    enddo
-                    
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+
+        c(i,j,k,l)=0.d0
+
+        do m1=0,i
+        do m2=0,j
+        do m3=0,k
+        do m4=0,l
+
+        n1=i-m1
+        n2=j-m2
+        n3=k-m3
+        n4=l-m4
+
+        c(i,j,k,l)=c(i,j,k,l)+
+     &    a(m1,m2,m3,m4)*b(n1,n2,n3,n4)
+
+         enddo
         enddo
-        
+        enddo
+        enddo
+
+        enddo
+        enddo
+        enddo
+        enddo
+
         return
         end
 
@@ -1478,38 +1445,35 @@ c       the order of expansion is iord
 c---------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
-        real*8  a,c
-        integer iexp, iord
-        real*8  b
-        integer i,j,k,l,ii
+
         dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7)
 
         do i=0,iord
-           do j=0,iord-i
-              do k=0,iord-i-j
-                 do l=0,iord-i-j-k
-                    
-                    if(iexp.eq.0)then
-                       c(i,j,k,l)=0.d0
-                    else
-                       b(i,j,k,l)=a(i,j,k,l)
-                    endif
-                    
-                 enddo
-              enddo
-           enddo
+        do j=0,iord-i
+        do k=0,iord-i-j
+        do l=0,iord-i-j-k
+       
+        if(iexp.eq.0)then
+          c(i,j,k,l)=0.d0
+          else
+          b(i,j,k,l)=a(i,j,k,l)
+        endif
+
+        enddo
+        enddo
+        enddo
         enddo
 
         if(iexp.eq.0)then
-           c(0,0,0,0)=1.d0
-           goto 100
+          c(0,0,0,0)=1.d0
+          goto 100
         endif
-        
+
         if(iexp.eq.1)then
-           call Tay_copy_4(b,c,iord)
-           goto 100
+          call Tay_copy_4(b,c,iord)
+          goto 100
         endif
 
         do ii=2,iexp
@@ -1527,11 +1491,7 @@ c-----------------------------------------------------------------
         subroutine Tay_sqrt_4(a,d,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  a,d
-        integer iord
-        real*8  f0, sqf0,b,c,x
-        integer n
-        dimension a(0:7,0:7,0:7,0:7),
+       dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7),
      &            d(0:7,0:7,0:7,0:7),
@@ -1544,8 +1504,8 @@ c-----------------------------------------------------------------
 
 c----- iord = 0
         if(iord.eq.0)then
-           d(0,0,0,0)=sqf0
-           goto 100
+          d(0,0,0,0)=sqf0
+          goto 100
         endif
         
 c----- iord = 1 
@@ -1584,10 +1544,7 @@ c-----------------------------------------------------------------
         subroutine Tay_inv_4(a,d,iord)
 c-----------------------------------------------------------------
         implicit real*8(a-h,o-z)
-        real*8  a,d
-        integer iord
-        real*8  f0,b,c,x
-        integer n
+
         dimension a(0:7,0:7,0:7,0:7),
      &            b(0:7,0:7,0:7,0:7),
      &            c(0:7,0:7,0:7,0:7),
@@ -1600,14 +1557,14 @@ c-----------------------------------------------------------------
  
 c----- iord = 0
         if(iord.eq.0)then
-           d(0,0,0,0)=1.d0/f0
-           goto 100
+          d(0,0,0,0)=1.d0/f0
+          goto 100
         endif
         
 c----- iord = 1 
         call Tay_copy_4(a,x,iord)
         call Tay_const_4(x,1.d0/f0,iord) 
-        x(0,0,0,0)=0.d0         ! abs(x) lt. 1
+        x(0,0,0,0)=0.d0                     ! abs(x) lt. 1
         d(0,0,0,0)=1.d0
 
         call Tay_copy_4(x,b,iord)
@@ -1621,25 +1578,25 @@ c          store intermediate exponentials in b
 c          collecting data in d
 c
         if(iord.gt.1)then
-           do n=2,iord
-              call Tay_mult_4(x,b,c,iord)
-              call Tay_copy_4(c,b,iord)
-              call Tay_const_4(c,Tay_inv_fact(n),iord)
-              call Tay_add_4(c,d,iord)
-           enddo        
+        do n=2,iord
+          call Tay_mult_4(x,b,c,iord)
+          call Tay_copy_4(c,b,iord)
+          call Tay_const_4(c,Tay_inv_fact(n),iord)
+          call Tay_add_4(c,d,iord)
+        enddo        
         endif     
           
         call Tay_const_4(d,1.d0/f0,iord)
-        
+
 100     continue
-        
+
         return
         end
 
 c-----------------------------------------------------------------
         subroutine Tay_copy_vm_4(cc1,cc,k0,l0,m0,n0,iord)
 c-----------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
+        implicit real*8(a-h,o-z)
         real*8  cc1,cc
         integer k0,l0,m0,n0,iord
         integer icol,k,l,m,n
@@ -1664,7 +1621,7 @@ c        implicit real*8(a-h,o-z)
 c-----------------------------------------------------------------
         subroutine Tay_copy_mv_4(cc,cc1,k0,l0,m0,n0,iord)
 c-----------------------------------------------------------------
-c        implicit real*8(a-h,o-z)
+        implicit real*8(a-h,o-z)
         real*8  cc,cc1
         integer k0,l0,m0,n0,iord
         integer icol,k,l,m,n
