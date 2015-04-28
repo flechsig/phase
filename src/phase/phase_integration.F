@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <24 Apr 15 12:22:52 flechsig> 
+c$$$ Time-stamp: <28 Apr 15 17:25:49 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -303,7 +303,7 @@ c------------------------------------------------------------
       xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
       xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
 
-#ifdef DEBUG
+#ifdef DEBUG1
       write(*,*)'debug: total calls to simpson: xir.nsimp= ',xir.nsimp
 #endif
       
