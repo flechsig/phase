@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <29 Apr 15 14:02:04 flechsig>  */
+/*  Time-stamp: <29 Apr 15 14:06:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -276,8 +276,6 @@ int main(int argc, char *argv[])
 	      results[6]= bl->result_emfp->y[ny];
 	      results[7]= bl->result_emfp->z[nz];
 	      
-
-
 	      /*
 	      results[1]= PSDp->eyrec[ny+nz*psip->iy];
 	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
