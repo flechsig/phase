@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <29 Apr 15 14:06:54 flechsig>  */
+/*  Time-stamp: <29 Apr 15 14:38:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -82,7 +82,6 @@ int main(int argc, char *argv[])
   /*  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1); */ /* for debugging */
 #endif
 
-
   if  (size <= 1)     // abort if no slaves available
     {
       fprintf(stderr, "size= %d, no slaves available- exit\n\n", size);
@@ -92,17 +91,17 @@ int main(int argc, char *argv[])
 
   /* phase copy from batchmode */
   /* build beamline on each host */
-  bl= &Beamline;
+  bl= &Beamline;                 /* init bl pointer */
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
 
 #ifdef DEBUG 
   /*
-  strncpy(Beamline.filenames.beamlinename, "/gpfs/home/flechsig/phase/data/test_5000.phase", MaxPathLength- 1);  
+  strncpy(Beamline.filenames.beamlinename,  "/gpfs/home/flechsig/phase/data/test_5000.phase",    MaxPathLength- 1);  
   strncpy(Beamline.filenames.imageraysname, "/gpfs/home/flechsig/phase/data/test_5000.phase.h5", MaxPathLength- 1);
   */
 #endif
 
-  bl->ElementList= NULL;                       /* 15.12.99 */
+  bl->ElementList= NULL;                       
   bl->raysout= NULL;
   bl->RESULT.RESp= NULL;
   bl->RTSource.SourceRays= NULL;
@@ -110,7 +109,6 @@ int main(int argc, char *argv[])
   bl->tp= NULL;
   bl->RTSource.Quellep= NULL;
   bl->RTSource.QuellTyp= '0';
-  // bl->posrc.iconj= 0;
   bl->BLOptions.ifl.inorm= 0;
   bl->BLOptions.ifl.pst_mode= 2;
   bl->emfp= NULL;
@@ -132,8 +130,6 @@ int main(int argc, char *argv[])
   //posrc_construct(bl);
   posrc_ini(bl);
   psip = (struct PSImageType *)bl->RTSource.Quellep;
-
-  //ReAllocResult(bl, PLphspacetype, psip->iy, psip->iz);
   numtasks= psip->iy * psip->iz;
  
   //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
@@ -161,7 +157,7 @@ int main(int argc, char *argv[])
 	{
 
 #ifdef DEBUG
-	  printf("\nmaster -> wait for slave\n");
+	  printf("\nmaster -> wait for slave(s)\n");
 #endif
 
 	  /* get sender_id  from slave in the status tag, and results */
@@ -173,7 +169,7 @@ int main(int argc, char *argv[])
 	  sender  = status.MPI_TAG;                 /* slave id       */
 
 #ifdef DEBUG
-	  printf("master -> resultid= %d\n", resultid );
+	  printf("master -> received result with id= %d\n", resultid );
 #endif
 
 	  if ( resultid > 0 ) /* store the result */    
@@ -193,12 +189,10 @@ int main(int argc, char *argv[])
 	       bl->result_emfp->eyim[idx]= results[2];
 	       bl->result_emfp->ezre[idx]= results[3];   
 	       bl->result_emfp->ezim[idx]= results[4];
-	       
-	       bl->result_emfp->y[ny]=  results[6];
-	       bl->result_emfp->z[nz]=  results[7];
+	       bl->result_emfp->y[ny]    = results[6];
+	       bl->result_emfp->z[nz]    = results[7];
 
- 
-	       //printf("master -> save result with id= %d saved\n", resultid);
+ 	       //printf("master -> save result with id= %d saved\n", resultid);
 	     } 
 
 #ifdef DEBUG
@@ -208,7 +202,7 @@ int main(int argc, char *argv[])
 
 	  if ( resultid < 0 )     /* a slave said good bye */
 	    {
-	      size--; /* the number of hosts */
+	      size--;             /* reduce the number of hosts */
 
 #ifdef DEBUG
 	      printf("master -> received good bye from slave %d, %d processor(s) left\n", sender, size);
@@ -222,7 +216,7 @@ int main(int argc, char *argv[])
 		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  /* send taskid to slave "sender" */
 
 #ifdef DEBUG
-		  printf("master -> submit task %d to %d\n", taskid, sender);
+		  printf("master -> submit task %d to slave %d\n", taskid, sender);
 #endif
 
 		  --taskid;
@@ -231,7 +225,7 @@ int main(int argc, char *argv[])
 		{
 		  
 #ifdef DEBUG
-		  printf("master -> submit task %d (stop) to %d\n", taskid, sender);
+		  printf("master -> submit task %d (stop) to slave %d\n", taskid, sender);
 #endif
 
 		  MPI_Send(&taskid, 1, MPI_INT, sender, 0, MPI_COMM_WORLD);  /* send taskid = 0 to slave */
@@ -257,7 +251,7 @@ int main(int argc, char *argv[])
 	    {
 
 #ifdef DEBUG
-	      printf("%d: solve task %d\n", rank, taskid);
+	      printf("slave %d: solve task %d\n", rank, taskid);
 #endif
 
 	      index= taskid- 1;               /* index counts from 0 */
@@ -276,18 +270,8 @@ int main(int argc, char *argv[])
 	      results[6]= bl->result_emfp->y[ny];
 	      results[7]= bl->result_emfp->z[nz];
 	      
-	      /*
-	      results[1]= PSDp->eyrec[ny+nz*psip->iy];
-	      results[2]= PSDp->eyimc[ny+nz*psip->iy];
-	      results[3]= PSDp->ezrec[ny+nz*psip->iy];
-	      results[4]= PSDp->ezimc[ny+nz*psip->iy]; 
-	      /*	      results[5]= PSDp->psd[ny+nz*psip->iy];*/
-	      /* results[6]= PSDp->y[ny];
-	      results[7]= PSDp->z[nz];
-*/
-
 #ifdef DEBUG
-	      printf("%d: solve task %d done\n", rank, taskid);
+	      printf("slave %d: solve task %d done\n", rank, taskid);
 #endif
 
 	      /* result is sent in the next call */
@@ -296,14 +280,14 @@ int main(int argc, char *argv[])
 	    {
 
 #ifdef DEBUG
-	      printf("%d: received task %d => say good bye\n", rank, taskid);
+	      printf("slave %d: received task %d => say good bye\n", rank, taskid);
 #endif
 
               results[0]= -1.0;       /* negative first index terminates master */
 	      MPI_Send(&results, N_RESULTS, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);  /* acknowledge termination */
 
 #ifdef DEBUG
-	      printf("%d: results sent, index= %f\n", rank,  results[0]);
+	      printf("slave %d: results sent, index= %f\n", rank,  results[0]);
 #endif
 	      break;                   // slave: escape from loop - close slave 
 	    }
@@ -326,19 +310,17 @@ int main(int argc, char *argv[])
 	  printf("error: %d output format obsolete- use default\n", format);
 	  //for (i=0; i< 10; i++) printf("%d, %f\n", i, bl->result_emfp->y[i]);
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
-	  //	  WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	  break;
 	case 2:
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 	case 3:
-	  printf("write results to file %s\n",   bl->filenames.imageraysname);
+	  printf("write results to file %s\n",  bl->filenames.imageraysname);
 	  write_genesis_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	  break;
 	default:
 	  printf("error: %d output format not defined- use default\n", format);
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
-	  // WritePsd(bl->filenames.imageraysname, PSDp, PSDp->iy, PSDp->iz);
 	}
       
       duration= endtime- starttime;

@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <15 Jan 15 11:40:45 flechsig> 
+#  Time-stamp: <29 Apr 15 14:57:12 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -35,8 +35,6 @@
 #
 # ******************************************************************************
 
-
-
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phasempi 
@@ -62,44 +60,12 @@ phasempi_SOURCES = \
 	../phase/spa_3rd_order.c ../phase/spa_3rd_order.h \
 	../phase/src4.F
 
-##dummy_DATA = \
-##	configwindow.cpp configwindow.h \
-##	main.cpp mainwindow.cpp mainwindow_slots.cpp mainwindow.h \
-##        myzoomer.cpp myzoomer.h \
-##        optiinput.cpp optiinput.h  \
-##	phaseqt.cpp phaseqt.h \
-##	plot.cpp plot.h \
-##	plot1d.cpp plot1d.h \
-##	singleray.cpp singleray.h \
-##        treemodel.cpp treemodel.h \
-##        treeitem.cpp treeitem.h \
-##	plotmatrix.cpp plotmatrix.h \
-##        plot2x2.cpp plot2x2.h \
-##        ../phase/bline.c ../phase/cutils.c ../phase/error.c \
-##	../phase/phasec.c  ../phase/rtrace.c \
-##        ../phase/xmalloc.c   \
-##	../phase/drift_8.for    ../phase/elli_8.F ../phase/fdet_8.for \
-##	../phase/fgmapidp_8.F   ../phase/make_matrix_8.for \
-##	../phase/q0_q1_q2_8.for ../phase/rekursiv_2d_8.for \
-##	../phase/phasefor.F  \
-##	../phase/get_partial_etc.for ../phase/replace_6v4v.for \
-##	../phase/replace_wl_in_u.for ../phase/replace_wl_in_ypzp.for \
-##	../phase/taylor-ops.for \
-##	../phase/phase_source.F ../phase/pst.c ../phase/phase_integration.F \
-##        ../phase/wdfgmapm17.for ../phase/wdfgmapm27.for ../phase/wdfgmapl7.for \
-##        ../phase/pstf.F ../phase/posrc.c ../phase/posrc.h \
-##	../phaselib/misali_8.f ../phaselib/misali4_8.f \
-##        ../phaselib/misali3_8.f ../phaselib/misali2_8.f ../phaselib/misali1_8.f
-
-
-
-
 phasempi_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
 pkgdata_DATA = ../data/coefficient-example.dat \
- ../data/map70_lh.omx\
- ../data/map70_rh.omx\
+../data/map70_lh.omx\
+../data/map70_rh.omx\
 ../data/spa3table.tab \
 ../data/spa3table_20001.tab \
 ../data/material/rhoatom.dat \
@@ -151,20 +117,10 @@ EXTRA_DIST = ../phase/phase_struct.F ../phase/beamline_struct.F $(pkgdata_DATA) 
 ## flags
 AM_CPPFLAGS = -DLINUX -DNOGUI @HDF5_CPPFLAGS@
 AM_CFLAGS   =  @HDF5_CFLAGS@ -I../phase -W 
-
-##-I@HDF5@/include \
-##		-I@HDF5I@ \
-###-pipe -g -D_REENTRANT -Wall -W 
-#####-I@QT@/mkspecs/linux-g++       
-###AM_LDFLAGS = $(X_LIBS) -lXm -lMrm -lXt -lXext -lXp -lX11 -lm -lc -lnsl\
-#####	     @FLIBS@    @CFORLIB@
-
-AM_LDFLAGS =  @MY_HDF5_LIBS@ @FLIBS@  @FFTW3_LIBS@ ##-L@HDF5@/lib -lhdf5
+AM_LDFLAGS  =  @MY_HDF5_LIBS@ @FLIBS@ @FFTW3_LIBS@ 
 
 ##we always use the c linker
 F77LINK = $(LINK)
-
-
 
 # This line ensures that generated moc_*.cpp and resources.cpp files are
 # deleted when we make clean.

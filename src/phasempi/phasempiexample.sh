@@ -1,13 +1,13 @@
 #!/bin/bash
- # File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/phasempiexample.sh
- # Date      : <30 Apr 14 10:26:54 flechsig> 
- # Time-stamp: <02 Sep 14 12:21:22 flechsig> 
- # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+# File      : /afs/psi.ch/user/f/flechsig/phase/src/phasempi/phasempiexample.sh
+# Date      : <30 Apr 14 10:26:54 flechsig> 
+# Time-stamp: <29 Apr 15 14:54:19 flechsig> 
+# Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
- # $Source$ 
- # $Date$
- # $Revision$ 
- # $Author$ 
+# $Source$ 
+# $Date$
+# $Revision$ 
+# $Author$ 
 
 # ******************************************************************************
 #
