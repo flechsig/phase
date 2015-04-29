@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <15 Jan 15 16:59:51 flechsig>  */
+/*  Time-stamp: <29 Apr 15 14:02:04 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -121,7 +121,8 @@ int main(int argc, char *argv[])
   bl->simpim= NULL;
   bl->sintre= NULL;
   bl->sintim= NULL;
-
+  bl->vdy   = NULL;
+  bl->vdz   = NULL;
   ReadBLFile(bl->filenames.beamlinename, bl);
 
   if (iord != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord if provided */
