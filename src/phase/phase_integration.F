@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <28 Apr 15 17:25:49 flechsig> 
+c$$$ Time-stamp: <30 Apr 15 14:15:30 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -64,6 +64,8 @@ c UF 20. Mar 2014 removed statistics
 c UF OCT 14 remove src and give isrctype directly
 c UF isrctype wird wegen brightness gebraucht
 c UF weiterverzweigung erfolgt in Routine psdi
+c UF rueckgabe der Ergebnisse in xir.yzintey xir.yzintez
+c UF rueckgabe der details erfolgt direct in die bl struct
 
 c UF Verbesserungsvorschlaege Apr 2015
 c umstellen auf implicit none - macht den code weniger Fehleranfaellig und uebersichtlicher
@@ -138,6 +140,7 @@ c UF end type definition of the calling vars
         record /source_results/ sr
         real*8 densiyre,densiyim,densizre,densizim
         real*8 z,dz,fya,fyp,fza,fzp
+        
 	dimension densiyre(MAX_INTEGRATION_SIZE),
      &            densiyim(MAX_INTEGRATION_SIZE),
      &            densizre(MAX_INTEGRATION_SIZE),
@@ -268,27 +271,29 @@ c	   fmax=dmax1(fmax,cdabs(fwerty),cdabs(fwertz))
 	endif
         
         if(ifl.ispline.eq.-1)then
-           call phacor(cs,xi,xir,dz,fya,fyp,ianzz,sp)
+c           call phacor(cs,xi,xir,dz,fya,fyp,ianzz,sp)
+           call phacor(cs,xi,dz,fya,fyp,ianzz,sp)
         endif
 	iyz=2   ! z loop
 
-c UF wird nur 1x aufgerufen um inegration details zu ermitteln??
+c     UF wird nur 1x aufgerufen um inegration details zu ermitteln??
 c     1st call with imaginary part
         call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
-     &       xir.yzintya,xir.yzintyp,
+     &       yintya,yintyp,
      &       densiyre,densiyim,xintyzre,xintyzim,iyz,blp)
         
         sr.xintyre=xintyzre
         sr.xintyim=xintyzim
         
         if(ifl.ispline.eq.-1)then
-           call phacor(cs,xi,xir,dz,fza,fzp,ianzz,sp)
+c           call phacor(cs,xi,xir,dz,fza,fzp,ianzz,sp)
+           call phacor(cs,xi,dz,fza,fzp,ianzz,sp)
         endif
 	iyz=2   ! z loop
 
 c     2nd  call with real part
         call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
-     &       xir.yzintza,xir.yzintzp,
+     &       yintza,yintzp,    
      &       densizre,densizim,xintyzre,xintyzim,iyz,blp)
         
         sr.xintzre=xintyzre
@@ -478,13 +483,13 @@ c*************************************************************
       subroutine fywert(m4,g,isrctype,xi,apr,cs,ra,ifl,
      &     dyi,fwerty,sr,lostwl,blp)
 c*************************************************************
-c UF wants to avoid implicit for better debugging
-c	implicit real*8(a-h,o-z)
-        implicit none
+c     UF wants to avoid implicit for better debugging
+c     implicit real*8(a-h,o-z)
+      implicit none
 
 #include '../phase/phase_struct.F'
 
-c UF the type definition of the calling vars
+c     UF the type definition of the calling vars
         record /map4/ m4
         record /geometryst/ g
         integer isrctype
@@ -497,7 +502,7 @@ c UF the type definition of the calling vars
         complex*16 fwerty
         record /source_results/ sr
         integer lostwl,blp
-c UF end type definition of the calling vars
+c     UF end type definition of the calling vars
 
         complex*16 ff,ff1,eycpl,ezcpl
         real*8 dyii, fd, fdph, fd1ph, fd1pha, fd1phb, var0
@@ -526,7 +531,7 @@ c in der phaselib benutze ich parder4
         else
            dyii=dyi
         endif
-
+        
 	ra.ri.dyi=dyii	
 
 	ra.rf.yp=0.d0
@@ -925,7 +930,8 @@ c---------------------- end fywert -----------------------
 
 
 c***********************************************************
-	subroutine phacor(cs,xi,xir,dx,amp,pha,ianz,sp)
+c	subroutine phacor(cs,xi,xir,dx,amp,pha,ianz,sp)
+      subroutine phacor(cs,xi,dx,amp,pha,ianz,sp)
 c***********************************************************
 c
 c	PHACOR funktioniert folgendermassen:
@@ -1029,7 +1035,7 @@ c	implicit real*8(a-h,o-z)
 c UF the type definition of the calling vars
         record /constants/ cs
         record /integration/ xi
-        record /integration_results/ xir
+c        record /integration_results/ xir
         real*8 dx, amp, pha
         integer ianz
         record /psimagest/ sp
@@ -1223,23 +1229,23 @@ c----------------------------------
 c	Output
 c----------------------------------
 
-	do i=1,ianz
+c	do i=1,ianz
 c UF Apr15 unbenutzt	xir.d12(1,1,i)=x(i)
 c UF Apr15 unbenutzt	xir.d12(2,1,i)=d1(i)
-	enddo
-	xir.ianzd12(1)=ianz
+c	enddo
+c	xir.ianzd12(1)=ianz
 
-	do i=1,ianz
+c	do i=1,ianz
 c UF Apr15 unbenutzt	xir.d12(1,2,i)=x(i)
 c UF Apr15 unbenutzt	xir.d12(2,2,i)=d2(i)
-	enddo
-	xir.ianzd12(2)=ianz
+c	enddo
+c	xir.ianzd12(2)=ianz
 
-	do i=1,ianz
+c	do i=1,ianz
 c UF Apr15 unbenutzt	xir.d12(1,3,i)=x(i)
 c UF Apr15 unbenutzt	xir.d12(2,3,i)=d12(i)
-	enddo
-	xir.ianzd12(3)=ianz
+c	enddo
+c	xir.ianzd12(3)=ianz
 
 	endif
 

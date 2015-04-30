@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <15 Dec 14 14:32:22 flechsig> 
+c$$$ Time-stamp: <30 Apr 15 15:56:55 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -2216,14 +2216,17 @@ c---------- lh deflection
 	   dzpc(0,0,1,0)=1.
 	endif
 
-#ifdef SEVEN_ORDER            
+	idim=0
+c	write(*,*) 'iord=', iord
+c#ifdef SEVEN_ORDER            
 	idim=330
 	call make_matrix_8(xmap7,ypc1,zpc1,dypc,dzpc,iord)
-#else
-	idim=70 
-        call make_hor_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
-#endif
-	write(*,*)'create_hormap: made matrix of dimension: ',idim
+c#else
+c	idim=70 
+c        call make_hor_matrix(xmap7,ypc1,zpc1,dypc,dzpc,iord,idim)
+c#endif
+
+c	write(*,*)'create_hormap: made matrix of dimension: 330'           !,idim
 
 
 #ifdef DEBUGFILES

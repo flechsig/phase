@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <24 Apr 15 12:21:55 flechsig>  */
+/*   Time-stamp: <30 Apr 15 16:12:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -604,6 +604,7 @@ void
   
   FixFocus(double, double, double, int, double *, double *),
   Footprint(struct BeamlineType *, unsigned int),
+  free_elementlist(struct BeamlineType *),
   GeneratePrintDataFile(),
   getoptipickfile(struct optistruct *, char *),
   ginitdatset (struct gdatset *),

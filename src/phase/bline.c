@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <15 Jan 15 09:35:08 flechsig>  */
+/*   Time-stamp: <30 Apr 15 16:20:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1939,6 +1939,10 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    while (elnumber<= bl->elementzahl) 
      {
        listpt->ElementOK= 0;       /* reset OK */
+       listpt->surf.u= NULL;
+       listpt->surf.w= NULL;
+       listpt->surf.l= NULL;
+       listpt->tpe= NULL;
        
        snprintf(buffer, MaxPathLength, "Element %u", elnumber);	
        if (SetFilePos(f, buffer)) 

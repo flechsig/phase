@@ -64,6 +64,8 @@ c
 c--------------- get dimension of square matrix
 
 c        ypca(0,0,0,0)=1111.
+	
+	idim=0
 
 	call matrix_dim(iord,idim)
 

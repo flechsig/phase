@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <27 Apr 15 12:20:35 flechsig>  */
+/*   Time-stamp: <30 Apr 15 12:20:30 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -661,7 +661,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
   
   if (bl->BLOptions.ifl.ispline == -1) 
     {
-      printf("ispline not yet impemented\n");
+      printf("pstc_i: ispline not yet impemented\n");
 	      /* UF was soll gemacht werden?? 
 		xirp->yzintey= xirp->yzintya* exp(cs.sqrtm1* xirp->yzintyp);
 	        xirp->yzintez= xirp->yzintza* exp(cs.sqrtm1* xirp->yzintzp);
@@ -676,7 +676,7 @@ void pstc_i(int index, struct BeamlineType *bl, struct map4 *m4pp, struct consta
     printf("\n");
     fflush(stdout);
     printf("DEBUG z[%d], y[%d]:", nz, ny);
-    printf(" yzintey = %g + I*%g;", xirp->yzintey.re, xirp->yzintey.im);
+    printf(" yzintey = %g + I*%g;",  xirp->yzintey.re, xirp->yzintey.im);
     printf(" yzintez = %g + I*%g\n", xirp->yzintez.re, xirp->yzintez.im);
   }
 #endif 

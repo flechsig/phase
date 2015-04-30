@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <15 Jan 15 17:11:35 flechsig>  */
+/*   Time-stamp: <30 Apr 15 16:17:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -92,6 +92,8 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
   bl->RESULT.RESp= NULL;
   bl->RTSource.SourceRays= NULL;
   bl->beamlineOK= 0;
+  bl->hormapsloaded= 0;
+  bl->elementzahl= 0;
   bl->tp= NULL;
   bl->RTSource.Quellep= NULL;
   bl->RTSource.QuellTyp= '0';
@@ -225,7 +227,8 @@ void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int t
       printf("BatchMode: unknown CalcMod: %d\n", cmode);
     }
   /* clean up memory */
-  XFREE(bl->ElementList);
+  //XFREE(bl->ElementList);
+  free_elementlist(bl);
   XFREE(bl->raysout);
   XFREE(bl->RESULT.RESp);
   XFREE(bl->RTSource.SourceRays);
@@ -262,7 +265,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   /* explicitly init ps->imageraysname to start with '\0',
      so we later can tell whether it was set by -o option */
   //TODO: maybe move that to where structure is initalized first time
-  ps->imageraysname[0] = '\0';
+  ps->imageraysname[0]= '\0';
   
   /* parse options */
   while ((c = getopt(argc, argv, "BbF:f:Hhi:I:M:m:NnO:o:S:s:T:t:V")) != -1)
@@ -1094,6 +1097,23 @@ int StackTest()
   return 1;
 } /* end stacktest */
 
+
+void free_elementlist(struct BeamlineType *bl)
+{
+  struct ElementType *elp;
+  int i;
+  
+  for (i=0; i< bl->elementzahl; i++)
+    {
+      elp= &bl->ElementList[i];
+      XFREE(elp->surf.u);
+      XFREE(elp->surf.w);
+      XFREE(elp->surf.l);
+      XFREE(elp->tpe);
+    }
+  bl->elementzahl= 0;
+  XFREE(bl->ElementList);
+}
 
 /* end of file phasec.c */     
                            
