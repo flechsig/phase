@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2015-04-25 12:40:54 flechsig> 
+//  Time-stamp: <30 Apr 15 16:39:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1577,8 +1577,8 @@ void MainWindow::parameterUpdateAll(int zahl)
 #ifdef DEBUG
   cout << "debug: parameterUpdateAll: number: " << zahl << endl;
 #endif
-  int i;
-  for (i=0; i< zahl; i++) parameterUpdate(i, " ", 1);
+  
+  for (int i= 0; i< zahl; i++) parameterUpdate(i, " ", 1);
 } // parameterUpdateAll
 
 
@@ -1591,18 +1591,17 @@ void MainWindow::parameterUpdateAll(int zahl)
 // c) update the item in the list
 void MainWindow::parameterUpdate(int pos, const char *text, int init)
 {
-  
-  int scanned= 1;
+  int scanned;
   QString qst;
  
   struct OptionsType   *op = myparent->myOptions();
-  //  struct sources    *mysrc = &(myparent->myBeamline()->src);
   struct source1c  *mysrc1 = &(myparent->myBeamline()->poso1c);
   
 #ifdef DEBUG1
   cout << __FILE__ << " debug: parameterUpdate: pos: " << pos << endl;
 #endif
 
+  scanned= 1;
   switch (pos)
     {
     case 0: 
@@ -1725,6 +1724,7 @@ void MainWindow::parameterUpdate(int pos, const char *text, int init)
       qst.setNum(op->ifl.inorm2);
       break;
     case 23:
+      op->ifl.matrel= 0;
       if (!init) scanned= sscanf(text, "%d", &op->ifl.matrel);
       if ((scanned == EOF) || (scanned == 0)) op->ifl.matrel= 0;   // default
       qst.setNum(op->ifl.matrel);

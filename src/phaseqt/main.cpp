@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <28 Aug 14 16:11:42 flechsig> 
+//  Time-stamp: <30 Apr 15 17:13:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
 
+  cmode= selected= iord= numthreads= format= 0;
+  
 #ifdef EXPIRE
   cout << "  The program expires " << EXPIRE << endl;
   time(&timev);
