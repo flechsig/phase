@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <30 Apr 15 15:56:55 flechsig> 
+c$$$ Time-stamp: <01 May 15 11:48:51 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -654,6 +654,7 @@ c--------------------------------------------------
      &            yi(i)*zi(j)*dyi(k)*dzi(l)
 	     xlength2=xlength2+xlm.xlen2c(i,j,k,l)*
      &            yi(i)*zi(j)*dyi(k)*dzi(l)
+c	     write(*,*)'xx',i,j,k,l,xlength1,xlength2
             enddo
 	   enddo
 	  enddo

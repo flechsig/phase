@@ -322,7 +322,8 @@ c
         call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord) 
 
 c------ hier ist Berechnung für Ray Tracing zu Ende
-        if(imodus.eq.1)goto 1111
+c UF May 1 2015 ich will pathlength auch fuer Ray Tracing
+c uf        if(imodus.eq.1)goto 1111
 
 c------------- get path length in variable (w,l,y,z)
 c       input:  opl6(w,l,y,z,yp,zp),

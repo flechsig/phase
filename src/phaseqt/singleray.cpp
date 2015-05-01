@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <28 Aug 14 16:40:20 flechsig> 
+//  Time-stamp: <01 May 15 11:55:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -305,7 +305,7 @@ void SingleRay::RayTraceSingleRayCpp(PhaseQt *bl)
 	  printf("  phaseshift over element: %.4g, \ttotal: %.4g \t(rad)\n",
 		 dphase, phase);
 #ifdef DEBUG
-	  printf("      debug: xlength1: %g, xlength2: %g\n", 
+	  printf("      debug: xlength1: %g mm, xlength2: %g mm\n", 
 		 xlength1, xlength2);    
 	  printf("             slopelength: %g mm, wavelength: %g nm\n", 
 		 slopelen, bl->BLOptions.lambda);       
