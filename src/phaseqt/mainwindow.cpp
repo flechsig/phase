@@ -1,10 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-<<<<<<< HEAD
-//  Time-stamp: <2015-05-02 09:26:39 flechsig> 
-=======
-//  Time-stamp: <2015-05-02 12:45:11 flechsig> 
->>>>>>> d69d31454f1cfeac52d3ec49655a5c15d8f86377
+//  Time-stamp: <2015-05-02 19:14:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -90,14 +86,8 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
   createDockWindows();
   createProgress();
   setWindowTitle(tr("PHASE Qt"));
-<<<<<<< HEAD
-  cout << "detect display (h x w): " << x << " x " << y << endl;
-  x= (x > 1400) ? 1400 : x; // avoid overfill on laptops
-  y= (y > 940)  ?  940 : y; 
-=======
   x= (screenx > 1400) ? 1400 : screenx; // avoid overfill on laptops
   y= (screeny > 940)  ?  940 : screeny; 
->>>>>>> d69d31454f1cfeac52d3ec49655a5c15d8f86377
   resize(x, y); 
   // progress etc.
   mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
