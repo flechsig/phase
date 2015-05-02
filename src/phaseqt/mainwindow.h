@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2015-05-02 11:06:54 flechsig>  */
+/*  Time-stamp: <2015-05-02 22:01:59 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -187,10 +187,9 @@ private:
     void createDockWindows();
     void parameterUpdate(int, const char *, int);
     
-    
     void UpdateElementBox(int);
     void updateGraphicsInput(int);
-    void writeSimp();
+    void writeSimp2h5();
 
     QTextEdit   *textEdit;
     QListWidget *customerList;

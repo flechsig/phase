@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2015-05-02 21:49:46 flechsig> 
+//  Time-stamp: <2015-05-02 22:44:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -49,6 +49,8 @@
 #include "mainwindow.h"
 #include "phaseqt.h"
 #include "treemodel.h"
+#include "myhdf5.h"
+#include "hdf5.h"
 
 using namespace std;
 
@@ -290,8 +292,8 @@ void MainWindow::createActions()
     signalMapper->setMapping(writecoeffAct, QString("writecoeffAct"));
     connect(writecoeffAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    writesimpAct = new QAction(tr("Write &PO density cuts (real/im.)"), this);
-    writesimpAct->setStatusTip(tr("Write simpre/simpim file in PO mode"));
+    writesimpAct = new QAction(tr("Add &PO density cuts (real/im.) to hdf5"), this);
+    writesimpAct->setStatusTip(tr("Add simpre/simpim arrays in PO mode"));
     signalMapper->setMapping(writesimpAct, QString("writesimpAct"));
     connect(writesimpAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
@@ -2932,7 +2934,42 @@ void MainWindow::updateGraphicsInput(int style)
       }
 } // updateGraphicsInput
 
+// write files si* density cuts
+void MainWindow::writeSimp2h5()
+{
+  hid_t  file_id, group_id;
+  struct BeamlineType *bl;
+  bl= myparent->myBeamline();
+  int size= bl->BLOptions.xi.ianzy0*3 + bl->BLOptions.xi.ianzz0;
+  char *fname= bl->filenames.hdf5_out;
 
+#ifdef DEBUG
+  cout << "debug: writeSimp2h5 called" << endl;
+#endif
+
+  file_id = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT);
+  if (!(H5Lexists(file_id, "/integration_details", H5P_DEFAULT) < 1))   // vorhanden 
+    {
+      group_id= H5Gopen(file_id, "/integration_details", H5P_DEFAULT);
+
+    }
+  group_id= H5Gcreate(file_id, "/integration_details", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  writeDataInt(group_id, "dypoints", &bl->BLOptions.xi.ianzy0, 1, "number of points in dy");
+  writeDataInt(group_id, "dzpoints", &bl->BLOptions.xi.ianzz0, 1, "number of points in dz");
+  writeDataDouble(group_id, "vdy", bl->vdy, bl->BLOptions.xi.ianzy0, "dy vector");
+  writeDataDouble(group_id, "vdz", bl->vdz, bl->BLOptions.xi.ianzz0, "dz vector");
+  writeDataDouble(group_id, "simpre", bl->simpre, size, "simpre");
+  writeDataDouble(group_id, "simpim", bl->simpim, size, "simpim");
+  writeDataDouble(group_id, "sintre", bl->sintre, size, "sintre");
+  writeDataDouble(group_id, "sintim", bl->sintim, size, "sintim");
+  H5Gclose(group_id);
+  
+  H5Fclose(file_id);
+} // end writeSimp2h5
+
+
+
+#ifdef OLD
 // write files si* density cuts
 void MainWindow::writeSimp()
 {
@@ -3027,7 +3064,7 @@ void MainWindow::writeSimp()
   if (f5) fclose(f5);
   if (f6) fclose(f6);
 } // end writeSimp
-
+#endif
 
 /////////////////////////////////
 // end widget handling section //
