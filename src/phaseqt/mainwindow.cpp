@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2015-05-02 19:14:58 flechsig> 
+//  Time-stamp: <2015-05-02 20:20:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2940,8 +2940,8 @@ void MainWindow::writeSimp()
   FILE *f1, *f2, *f3, *f4, *f5, *f6;
   double *psd;
   char *name= myparent->myBeamline()->filenames.imageraysname;
-  char fname1[MaxPathLength], fname2[MaxPathLength], fname3[MaxPathLength], 
-    fname4[MaxPathLength], fname5[MaxPathLength], fname6[MaxPathLength];
+  char fname1[MaxPathLength], fname2[MaxPathLength], fname3[MaxPathLength]; 
+  char fname4[MaxPathLength], fname5[MaxPathLength], fname6[MaxPathLength];
   char infostr[MaxPathLength];
 
 #ifdef DEBUG
@@ -2958,7 +2958,7 @@ void MainWindow::writeSimp()
   snprintf(infostr, MaxPathLength, "file(s) %s-si* exists!",  name);
 
   
-  psd= myparent->myBeamline()->int_details;
+  //psd= myparent->myBeamline()->int_details;
   if (fexists(fname1) || fexists(fname2) || fexists(fname3) || 
       fexists(fname4) || fexists(fname5) || fexists(fname6))
     {
@@ -3027,6 +3027,7 @@ void MainWindow::writeSimp()
   if (f5) fclose(f5);
   if (f6) fclose(f6);
 } // end writeSimp
+
 
 /////////////////////////////////
 // end widget handling section //

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-05-02 11:34:11 flechsig> 
+//  Time-stamp: <2015-05-02 20:22:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -831,7 +831,8 @@ if (!myparent->myBuildBeamline())
   if (!action.compare("writesimpAct")) 
     { 
       printf("writesimpAct button pressed\n");
-      writeSimp();
+      cout << "function currently not available- will be implemented in hdf5 soon" << endl;
+      //writeSimp();
     }
 
   if (!action.compare("writeResultPh5Act"))  // phase hdf5
