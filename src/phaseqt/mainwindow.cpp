@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <30 Apr 15 16:39:23 flechsig> 
+//  Time-stamp: <2015-05-02 09:26:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -74,11 +74,10 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
 
 #ifdef HAVE_QWT
   this->zone= NULL;
-  //#endif
-
   graphicBox= createGraphicBox();
   setCentralWidget(graphicBox);
 #endif
+
   createActions();
   createMenus();
   createToolBars();
@@ -86,6 +85,7 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
   createDockWindows();
   createProgress();
   setWindowTitle(tr("PHASE Qt"));
+  cout << "detect display (h x w): " << x << " x " << y << endl;
   x= (x > 1400) ? 1400 : x; // avoid overfill on laptops
   y= (y > 940)  ?  940 : y; 
   resize(x, y); 
