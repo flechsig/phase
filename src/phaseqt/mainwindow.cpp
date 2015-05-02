@@ -1,6 +1,10 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
+<<<<<<< HEAD
 //  Time-stamp: <2015-05-02 09:26:39 flechsig> 
+=======
+//  Time-stamp: <2015-05-02 12:45:11 flechsig> 
+>>>>>>> d69d31454f1cfeac52d3ec49655a5c15d8f86377
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -56,8 +60,9 @@ using namespace std;
 MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
 {
   QDesktopWidget dw;
-  int x= dw.width();
-  int y= dw.height();
+  int x, y;
+  screenx= dw.width();
+  screeny= dw.height();
 
   setmyMaxThreads(QThread::idealThreadCount());  // must be called before createProgress()
   if ((numthreads > 0) && (numthreads < QThread::idealThreadCount()))
@@ -66,11 +71,11 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
       QThreadPool::globalInstance()->setMaxThreadCount(numthreads);
     }
 
-  this->s_ray= NULL;
-  this->o_input= NULL;
+  this->s_ray   = NULL;
+  this->o_input = NULL;
   this->c_window= NULL;
-  this->m4p_cpp= NULL;
-  this->csp_cpp= NULL;
+  this->m4p_cpp = NULL;
+  this->csp_cpp = NULL;
 
 #ifdef HAVE_QWT
   this->zone= NULL;
@@ -85,9 +90,14 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
   createDockWindows();
   createProgress();
   setWindowTitle(tr("PHASE Qt"));
+<<<<<<< HEAD
   cout << "detect display (h x w): " << x << " x " << y << endl;
   x= (x > 1400) ? 1400 : x; // avoid overfill on laptops
   y= (y > 940)  ?  940 : y; 
+=======
+  x= (screenx > 1400) ? 1400 : screenx; // avoid overfill on laptops
+  y= (screeny > 940)  ?  940 : screeny; 
+>>>>>>> d69d31454f1cfeac52d3ec49655a5c15d8f86377
   resize(x, y); 
   // progress etc.
   mwplotsubject= PLOT_GO_RESULT | PLOT_GO_SPA;
@@ -2938,10 +2948,10 @@ void MainWindow::writeSimp()
 {
   int k, ret, fileerror;
   FILE *f1, *f2, *f3, *f4, *f5, *f6;
-  //dec 14 struct PSDType    *psd; 
   double *psd;
   char *name= myparent->myBeamline()->filenames.imageraysname;
-  char fname1[MaxPathLength], fname2[MaxPathLength], fname3[MaxPathLength], fname4[MaxPathLength], fname5[MaxPathLength], fname6[MaxPathLength];
+  char fname1[MaxPathLength], fname2[MaxPathLength], fname3[MaxPathLength], 
+    fname4[MaxPathLength], fname5[MaxPathLength], fname6[MaxPathLength];
   char infostr[MaxPathLength];
 
 #ifdef DEBUG
@@ -2957,9 +2967,10 @@ void MainWindow::writeSimp()
   snprintf(fname6,  MaxPathLength, "%s-simpp",  name);
   snprintf(infostr, MaxPathLength, "file(s) %s-si* exists!",  name);
 
-  //psd= (struct PSDType *)myparent->myBeamline()->RESULT.RESp;
+  
   psd= myparent->myBeamline()->int_details;
-  if (fexists(fname1) || fexists(fname2) || fexists(fname3) || fexists(fname4) || fexists(fname5) || fexists(fname6))
+  if (fexists(fname1) || fexists(fname2) || fexists(fname3) || 
+      fexists(fname4) || fexists(fname5) || fexists(fname6))
     {
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setText(tr(infostr));

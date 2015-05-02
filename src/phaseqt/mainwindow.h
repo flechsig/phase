@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2015-04-25 11:06:04 flechsig>  */
+/*  Time-stamp: <2015-05-02 11:06:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -500,9 +500,11 @@ private:
     struct map4      *m4p_cpp;
     struct constants *csp_cpp;
 
-    int    mwplotsubject;  // mainwindow variable
-    int    mwplotstyle;    // mainwindow variable
-    int    myMaxThreads;
+    int mwplotsubject;  // mainwindow variable
+    int mwplotstyle;    // mainwindow variable
+    int myMaxThreads;
+    int screenx;
+    int screeny;
 
 #ifdef HAVE_QWT
     Plot     *d_plot;
