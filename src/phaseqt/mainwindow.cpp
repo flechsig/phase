@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2015-05-02 20:20:30 flechsig> 
+//  Time-stamp: <2015-05-02 21:49:46 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -3079,7 +3079,7 @@ int MainWindow::FileExistCheckOK(std::string name1)
 } // FileExistCheckOK 
 
 // returns 0 if not found variante read
-//int MainWindow::FileExistCheckOK(char *name, char *read)
+// int MainWindow::FileExistCheckOK(char *name, char *read)
 int MainWindow::FileExistCheckOK(std::string name1, std::string read)
 {
   char *name= (char *)name1.c_str();

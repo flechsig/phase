@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-05-02 20:22:54 flechsig> 
+//  Time-stamp: <2015-05-02 21:46:11 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -832,6 +832,13 @@ if (!myparent->myBuildBeamline())
     { 
       printf("writesimpAct button pressed\n");
       cout << "function currently not available- will be implemented in hdf5 soon" << endl;
+#ifdef HAVE_HDF5
+      if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
+	&& FileExistCheckOK(bl->filenames.hdf5_out, "read") ) 
+	write_int_to_hdf5_file();
+      else
+	cout << "to append data the file must exist and be readable" << endl;
+#endif
       //writeSimp();
     }
 
