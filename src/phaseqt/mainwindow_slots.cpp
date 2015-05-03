@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-05-02 21:56:49 flechsig> 
+//  Time-stamp: <2015-05-03 08:52:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -835,7 +835,7 @@ if (!myparent->myBuildBeamline())
 #ifdef HAVE_HDF5
       if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
 	&& FileExistCheckOK(bl->filenames.hdf5_out, "read") ) 
-	writeSimp2h5();
+	myparent->my_addSimp2h5();
       else
 	cout << "to append data the file must exist and be readable" << endl;
 #endif
@@ -1633,7 +1633,7 @@ void MainWindow::grapplyslot()
   cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << hex << showbase << mwplotsubject << endl;
 #endif
 
-  bl  = (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
+  bl= (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
   
   emfpp= bl->result_emfp;
   

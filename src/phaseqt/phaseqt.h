@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2015-04-25 18:12:59 flechsig>  */
+/*  Time-stamp: <2015-05-03 08:52:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -196,6 +196,7 @@ public:
   void my_read_hdf5_file() { this->source_emfp= read_hdf5_file(this, this->filenames.hdf5_out, this->source_emfp); }
   void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out, NULL); }
   void my_write_phase_hdf5_file() { write_phase_hdf5_file(this, this->filenames.hdf5_out, NULL); }
+  void my_addSimp2h5() { addSimp2h5(this); }
 #endif
   void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2015-05-02 22:44:27 flechsig> 
+//  Time-stamp: <2015-05-03 08:47:28 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2934,6 +2934,7 @@ void MainWindow::updateGraphicsInput(int style)
       }
 } // updateGraphicsInput
 
+#ifdef OLD
 // write files si* density cuts
 void MainWindow::writeSimp2h5()
 {
@@ -2969,7 +2970,7 @@ void MainWindow::writeSimp2h5()
 
 
 
-#ifdef OLD
+
 // write files si* density cuts
 void MainWindow::writeSimp()
 {

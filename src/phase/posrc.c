@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Apr 15 16:07:25 flechsig>  */
+/*  Time-stamp: <2015-05-03 08:56:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -716,6 +716,40 @@ void source4c_inter_2d_(struct source_results *sr, double *xwert, double *ywert,
 
 
 #ifdef HAVE_HDF5
+
+// add a simp group to a hdf5
+void  addSimp2h5(struct BeamlineType *bl)
+{
+  hid_t  file_id, group_id;
+  int size;
+  char *fname;
+
+#ifdef DEBUG
+  printf("debug: addSimp2h5 called");
+#endif
+
+  size = bl->BLOptions.xi.ianzy0*3 + bl->BLOptions.xi.ianzz0;
+  fname= bl->filenames.hdf5_out;
+
+  file_id = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT);
+  if (!(H5Lexists(file_id, "/integration_details", H5P_DEFAULT) < 1))   // vorhanden 
+    group_id= H5Gopen(file_id, "/integration_details", H5P_DEFAULT);
+  else
+    group_id= H5Gcreate(file_id, "/integration_details", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
+  writeDataInt(group_id, "dypoints", &bl->BLOptions.xi.ianzy0, 1, "number of points in dy");
+  writeDataInt(group_id, "dzpoints", &bl->BLOptions.xi.ianzz0, 1, "number of points in dz");
+  writeDataDouble(group_id, "vdy", bl->vdy, bl->BLOptions.xi.ianzy0, "dy vector");
+  writeDataDouble(group_id, "vdz", bl->vdz, bl->BLOptions.xi.ianzz0, "dz vector");
+  writeDataDouble(group_id, "simpre", bl->simpre, size, "simpre");
+  writeDataDouble(group_id, "simpim", bl->simpim, size, "simpim");
+  writeDataDouble(group_id, "sintre", bl->sintre, size, "sintre");
+  writeDataDouble(group_id, "sintim", bl->sintim, size, "sintim");
+  H5Gclose(group_id);
+  
+  H5Fclose(file_id);
+
+} // end addSimp2h5
 
 /* returns true if type has been detected */
 /* type=7: phase_hdf5, type=8: GENESIS    */

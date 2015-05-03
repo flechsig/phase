@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.h */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <15 Jan 15 09:55:25 flechsig>  */
+/*  Time-stamp: <2015-05-03 08:42:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -70,10 +70,11 @@ void source8c_ini(struct BeamlineType *);
 void source4c_inter_2d_(struct source_results *, double *, double *, int *);
 
 #ifdef HAVE_HDF5
+void  addSimp2h5(struct BeamlineType *);
 int   check_hdf5_type(char *, int, int);
 struct EmfType *read_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
-void  write_genesis_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
-void  write_phase_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
+void   write_genesis_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
+void     write_phase_hdf5_file(struct BeamlineType *, char *, struct EmfType *);
 #endif
 
 #endif 
