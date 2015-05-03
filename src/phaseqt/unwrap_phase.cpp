@@ -1,6 +1,6 @@
  // File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/unwrap_phase.cpp
  // Date      : <26 Mar 14 09:31:57 flechsig> 
- // Time-stamp: <28 Aug 14 16:36:17 flechsig> 
+ // Time-stamp: <2015-05-03 15:52:20 flechsig> 
  // Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  // $Source$ 
@@ -48,6 +48,7 @@
 // The wrapped phase map is floating point data type. Also, the unwrapped phase map is foloating point
 
 #include <iostream>
+#include <iomanip> 
 #include <stdlib.h>
 #include <string.h>
 
@@ -96,6 +97,11 @@ void unwrap_phase(double *inout, int cols, int rows)
   delete pixel;
   delete edge;
   cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+  double a= MYPI;
+  //  cout << "1pi= " << std::setprecision(16) << MYPI << endl;
+  //cout << "1pi= " << std::setprecision(16) << a << endl;
+  //cout << "2pi= " << std::setprecision(16) << TWOMYPI << endl;
+  //cout << "2pi= " << std::setprecision(16) << 2.0* a << endl;
 }
 // end unwrap_phase
 

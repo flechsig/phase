@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/unwrap_phase.h */
  /* Date      : <26 Mar 14 11:59:12 flechsig>  */
- /* Time-stamp: <2015-05-03 10:27:15 flechsig>  */
+ /* Time-stamp: <2015-05-03 15:50:50 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -38,8 +38,9 @@
 #ifndef UNWRAP_PHASE_H
 #define UNWRAP_PHASE_H
 
-#define MYPI    3.141592654
-//#define MYPI    3.141592653589793238462643383279502884197169399375105820974944592
+//#define MYPI    3.141592654
+#define MYPI    3.14159265358979
+                
 #define TWOMYPI 6.283185307 
 
 typedef enum {yes, no} yes_no;
