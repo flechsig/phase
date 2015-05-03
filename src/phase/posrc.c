@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2015-05-03 08:56:54 flechsig>  */
+/*  Time-stamp: <2015-05-03 10:39:30 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -731,7 +731,7 @@ void  addSimp2h5(struct BeamlineType *bl)
   size = bl->BLOptions.xi.ianzy0*3 + bl->BLOptions.xi.ianzz0;
   fname= bl->filenames.hdf5_out;
 
-  file_id = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT);
+  file_id = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT);
   if (!(H5Lexists(file_id, "/integration_details", H5P_DEFAULT) < 1))   // vorhanden 
     group_id= H5Gopen(file_id, "/integration_details", H5P_DEFAULT);
   else

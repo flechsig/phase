@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/Makefile.am
 #  Date      : <15 Mar 13 12:33:54 flechsig> 
-#  Time-stamp: <30 Oct 14 16:20:56 flechsig> 
+#  Time-stamp: <2015-05-03 09:52:43 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -38,7 +38,10 @@
 
 # this is the makefile template to built phase with automake/ autoconfig
 
-bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5 genesis_hdf5_2wave phase_hdf5_2wave
+bin_PROGRAMS  = wave2phase_hdf5 genesis2phase_hdf5 wave2genesis_hdf5 genesis_hdf5_2wave phase_hdf5_2wave add_phaseu_2h5
+
+add_phaseu_2h5_SOURCES = add_phaseu_2h5.c ../phase/error.c \
+	../phase/xmalloc.c ../phase/xstrdup.c  ../phase/myhdf5.c ../phaseqt/unwrap_phase.cpp
 
 wave2phase_hdf5_SOURCES = wave2phase_hdf5.c ../phase/error.c \
 	../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c
