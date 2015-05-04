@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
   bl->emfp= NULL;
   bl->source_emfp= NULL;
   bl->result_emfp= NULL;
-  bl->int_details= NULL;
+  //bl->int_details= NULL;
   bl->simpre= NULL;
   bl->simpim= NULL;
   bl->sintre= NULL;
