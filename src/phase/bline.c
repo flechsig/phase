@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <30 Apr 15 16:20:38 flechsig>  */
+/*   Time-stamp: <04 May 15 09:31:22 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -640,8 +640,6 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
 	    exit(-1);
 #endif
 	    }
-
-
      	} /* image to source */
       /*********** map und det fertig ***********/
       bl->beamlineOK |= mapOK;    
@@ -651,7 +649,6 @@ void BuildBeamlineM(double lambda_local, struct BeamlineType *bl)
       printf("BuildBeamlineM: whole Beamline is now OK\n");
 #endif 
    }
-
 }   /* end BuildBeamlineM */
 
 
@@ -682,8 +679,8 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
        (enummer <= bl->elementzahl) && (enummer > 0))    
    {
       printf("Footprint: at element %u ", enummer); 
-      msiz= dim* dim* sizeof(double); 
-      matrix= (double *)xmalloc(msiz);
+      msiz= dim* dim; 
+      matrix= XMALLOC(double, msiz);
        
       listpt= bl->ElementList; 
       if (enummer > 1)
@@ -711,7 +708,6 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
       Re->typ= PLrttype; 
       Re->RESp= XREALLOC(struct RayType, Re->RESp, Re->points1);
       
-                    
       Raysin= bl->RTSource.SourceRays; foot= Re->RESp;  
       listpt= &bl->ElementList[enummer-1]; 
 
@@ -720,8 +716,6 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
          /* muss erst noch einen rtrace nachen */
          if (enummer > 1)
          {
-	   /* UF 6.6.11 habe ray_tracef fuer 7 order angepasst */
-
 	   ray_tracef(Raysin, &elray, &bl->BLOptions.ifl.iord, 
 		      (double *)ypc1, (double *)zpc1, 
 		      (double *)dypc, (double *)dzpc); 
@@ -734,11 +728,11 @@ void Footprint(struct BeamlineType *bl, unsigned int enummer)
 	 intersection(&listpt->mir, listpt->wc, listpt->xlc, elrayp, 
 	              &uu, &ww, &ll, &bl->BLOptions.ifl.iord); 
 
-	 foot->y= ww;    
-         foot->z= ll;    
-         foot->dy= uu/1000.;       /* sonst paw ueberlauf */
-         foot->dz= i/1000.0;        /* */
-         foot->phi= 1.0;            /* dummy */
+	 foot->y  = ww;    
+         foot->z  = ll;    
+         foot->dy = uu/1000.;       /* sonst paw ueberlauf */
+         foot->dz = i/1000.0;       /* */
+         foot->phi= Raysin->dy;     /* dummy */
          Raysin++; foot++;  
       }
       bl->beamlineOK |= resultOK;
