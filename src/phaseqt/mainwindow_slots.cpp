@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2015-05-03 08:52:13 flechsig> 
+//  Time-stamp: <04 May 15 09:19:16 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -424,33 +424,29 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("footprintAct")) 
     { 
       cout << "footprintAct button  pressed" << endl;
-      if (elementListIsEmpty())
-	return;
-      if (elementListNotSelected())
-	return;
-
-     
-if ((!(bl->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
+      if (elementListIsEmpty())     return;
+      if (elementListNotSelected()) return;
+      
+      if ((!(bl->beamlineOK & sourceOK)) && !myparent->myMakeRTSource())
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
 				tr("<B>MakeRTSource</b> look into debug messages for details!"));
 	  return;
 	}
 
-
       myparent->myReAllocResult(PLrttype, bl->RTSource.raynumber* 
 				bl->BLOptions.plrayset, 0);  
       
-if (!myparent->myBuildBeamline()) 
+      if (!myparent->myBuildBeamline()) 
 	    {
 	      QMessageBox::critical(this, tr("Build Beamline"), 
 				    tr("<B>BuildBeamline error</b> look into debug messages for details!"));
 	      return;
 	    }
-      myparent->myFootprint((elementList->currentRow()+1));
+      myparent->myFootprint((elementList->currentRow()+ 1));
       cout << "footprint-> done" << endl;
       statusBar()->showMessage(tr("Footprint-> done!"), 4000);
-    }
+    }  // end footprint
 
   if (!action.compare("fresnelAct")) 
     { 

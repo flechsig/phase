@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2015-05-03 10:39:30 flechsig>  */
+/*  Time-stamp: <04 May 15 10:17:32 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -725,7 +725,7 @@ void  addSimp2h5(struct BeamlineType *bl)
   char *fname;
 
 #ifdef DEBUG
-  printf("debug: addSimp2h5 called");
+  printf("debug: addSimp2h5 called\n");
 #endif
 
   size = bl->BLOptions.xi.ianzy0*3 + bl->BLOptions.xi.ianzz0;
@@ -733,19 +733,27 @@ void  addSimp2h5(struct BeamlineType *bl)
 
   file_id = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT);
   if (!(H5Lexists(file_id, "/integration_details", H5P_DEFAULT) < 1))   // vorhanden 
-    group_id= H5Gopen(file_id, "/integration_details", H5P_DEFAULT);
+    {
+      //group_id= H5Gopen(file_id, "/integration_details", H5P_DEFAULT);
+      beep(1);
+      printf("info: group >>/integration_details<< is already in file %s\n", fname);
+      printf("      you have to create a new file before you can add >>/integration_details<< again\n");
+    }
   else
-    group_id= H5Gcreate(file_id, "/integration_details", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-
-  writeDataInt(group_id, "dypoints", &bl->BLOptions.xi.ianzy0, 1, "number of points in dy");
-  writeDataInt(group_id, "dzpoints", &bl->BLOptions.xi.ianzz0, 1, "number of points in dz");
-  writeDataDouble(group_id, "vdy", bl->vdy, bl->BLOptions.xi.ianzy0, "dy vector");
-  writeDataDouble(group_id, "vdz", bl->vdz, bl->BLOptions.xi.ianzz0, "dz vector");
-  writeDataDouble(group_id, "simpre", bl->simpre, size, "simpre");
-  writeDataDouble(group_id, "simpim", bl->simpim, size, "simpim");
-  writeDataDouble(group_id, "sintre", bl->sintre, size, "sintre");
-  writeDataDouble(group_id, "sintim", bl->sintim, size, "sintim");
-  H5Gclose(group_id);
+    {
+      group_id= H5Gcreate(file_id, "/integration_details", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+      
+      writeDataInt(group_id, "dypoints", &bl->BLOptions.xi.ianzy0, 1, "number of points in dy");
+      writeDataInt(group_id, "dzpoints", &bl->BLOptions.xi.ianzz0, 1, "number of points in dz");
+      writeDataDouble(group_id, "vdy", bl->vdy, bl->BLOptions.xi.ianzy0, "dy vector");
+      writeDataDouble(group_id, "vdz", bl->vdz, bl->BLOptions.xi.ianzz0, "dz vector");
+      writeDataDouble(group_id, "simpre", bl->simpre, size, "simpre");
+      writeDataDouble(group_id, "simpim", bl->simpim, size, "simpim");
+      writeDataDouble(group_id, "sintre", bl->sintre, size, "sintre");
+      writeDataDouble(group_id, "sintim", bl->sintim, size, "sintim");
+      H5Gclose(group_id);
+      printf("info: group >>/integration_details<< added to file %s\n", fname);
+    }
   
   H5Fclose(file_id);
 
