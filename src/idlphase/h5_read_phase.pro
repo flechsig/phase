@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/plothdf5.pro
 ;  Date      : <25 Mar 13 10:51:13 flechsig> 
-;  Time-stamp: <29 Aug 14 17:47:09 flechsig> 
+;  Time-stamp: <04 May 15 16:59:37 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -39,7 +39,7 @@
 
 pro h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, yreal=yreal, yimag=yimag,$
                    zphase=zphase, zamp=zamp, yphase=yphase, yamp=yamp, $
-                   z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, verbose=verbose
+                   z_vec=z_vec, y_vec=y_vec, wavelength=wavelength, beam=beam, phaseu=phaseu, verbose=verbose
 ;+
 ; NAME:
 ;   h5_read_phase
@@ -68,6 +68,7 @@ pro h5_read_phase, fname, zcomp=zcomp, zreal=zreal, zimag=zimag, ycomp=ycomp, yr
 ; KEYWORD PARAMETERS:
 ;   [yz]amp:    amplitude (2d)
 ;   beam:       beam structure (source4)
+;   phaseu:     unwraped phase if present in /phaseu/paz 
 ;   [yz]comp:   complex field (2d)
 ;   [yz]imag:   imaginary part (2d)
 ;   [yz]phase:  phase: (2d)
@@ -117,6 +118,11 @@ y_vec = h5_read_dataset(file_id, '/y_vec')
 t_vec = h5_read_dataset(file_id, '/t_vec')
 field = h5_read_dataset(file_id, '/e_field')
 lambda= h5_read_dataset(file_id, '/wavelength')
+
+if n_elements(phaseu) ne 0 then begin
+    phaseu= h5_read_dataset(file_id, '/phaseu/pzu')
+    phaseu= reform(phaseu, n_elements(z_vec), n_elements(y_vec))
+endif
 
 h5f_close, file_id
 

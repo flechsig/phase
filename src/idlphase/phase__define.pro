@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <19 Mar 15 12:15:44 flechsig> 
+;  Time-stamp: <04 May 15 17:14:16 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -908,7 +908,7 @@ name= self.name
 return, name
 end ;; name
 
-function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
+function phase::getphase, phaseu=phaseu, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::getphase
@@ -920,12 +920,14 @@ function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw,
 ;   phase
 ;
 ; CALLING SEQUENCE:
-;   phase= phase::getphase([/phunwrap][/unwrap_phase])
+;   phase= phase::getphase([/phasu][/phunwrap][/unwrap_phase])
 ;
 ; INPUTS:
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;   /phaseu      : unwrap using /phasu/pzu in hdf file created by program 
+;                  add_phaseu_2h5 (c code after Herra´ez algorithm)
 ;   /phunwrap    : unwrap using phunwrap.pro
 ;   /raw         : get raw phase (default)
 ;   /unwrap_phase: unwrap using unwrap_phase.pro
@@ -943,6 +945,19 @@ function phase::getphase, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw,
 if keyword_set(raw) then begin
     phi= atan(*self.field, /phase)
     print, 'get raw phase'
+    help, phi
+    return, phi
+endif
+
+if keyword_set(phaseu) then begin
+    print, 'get unwraped phase from /phaseu/pzu in hfd5 (add_phaseu_2h5)'
+    print, 'not yet available'
+    print, 'arr=[1]'
+    print, 'hdf=xyz.h5'
+    print, 'h5_read_phase,hdf,phaseu=arr'
+    print, 'p->plotphase,phasein=arr'
+    phi0= self->getphase(/raw)
+    phi= phi0*1d0
     help, phi
     return, phi
 endif
@@ -1781,7 +1796,7 @@ return
 end
 ; end plotintensity
 
-pro phase::plotphase, window=window, _EXTRA=extra
+pro phase::plotphase, window=window, phasein=phasein, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::plotphase
@@ -1799,6 +1814,7 @@ pro phase::plotphase, window=window, _EXTRA=extra
 ;   no
 ;
 ; KEYWORD PARAMETERS:
+;  phasein: overwrite the array from getphase
 ;
 ; EXAMPLE:
 ;   idl> emf->plotphase
@@ -1809,6 +1825,7 @@ pro phase::plotphase, window=window, _EXTRA=extra
 if n_elements(window) ne 0 then window, window
 title= self.name+ ' phase'
 myphase= self->getphase(_EXTRA=extra)
+if n_elements(phasein) ne 0 then myphase=phasein
 mycontour, myphase, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
   xtitle='z (mm)', ytitle='y (mm)', ztitle='phase', _EXTRA=extra
 return 
