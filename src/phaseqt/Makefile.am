@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <15 Dec 14 15:03:02 flechsig> 
+#  Time-stamp: <05 May 15 12:02:04 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -144,6 +144,7 @@ EXTRA_DIST = ../phase/phase_struct.F  $(pkgdata_DATA) \
 	images/save.png           images/undo.png images/up-32.png \
 	README
 
+
 ## flags
 if QT5
    AM_CPPFLAGS = -DQT5 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED @HDF5_CPPFLAGS@
@@ -221,4 +222,5 @@ qrc_%.cpp : %.qrc
 ## CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) 
 ## CLEANFILES is a variable called from target clean: rm -f $CLEANFILES
 CLEANFILES = moc_*.cpp qrc_*.cpp *.f90 *.mod
+
 # end
