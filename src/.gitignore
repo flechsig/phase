@@ -35,5 +35,6 @@ phaselib/*.lo
 .dirstamp
 idlphase/.libs/
 idlphase/unwrap_herra.la
+phaseqt/unwrap_phase.lo
 
 
