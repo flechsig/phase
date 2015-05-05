@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <04 May 15 17:14:16 flechsig> 
+;  Time-stamp: <05 May 15 12:21:05 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -908,7 +908,7 @@ name= self.name
 return, name
 end ;; name
 
-function phase::getphase, phaseu=phaseu, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
+function phase::getphase, herra=herra, phunwrap=phunwrap, unwrap_phase=unwrap_phase, raw=raw, _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::getphase
@@ -920,16 +920,15 @@ function phase::getphase, phaseu=phaseu, phunwrap=phunwrap, unwrap_phase=unwrap_
 ;   phase
 ;
 ; CALLING SEQUENCE:
-;   phase= phase::getphase([/phasu][/phunwrap][/unwrap_phase])
+;   phase= phase::getphase([/herra][/phunwrap][/unwrap_phase])
 ;
 ; INPUTS:
 ;   no
 ;
 ; KEYWORD PARAMETERS:
-;   /phaseu      : unwrap using /phasu/pzu in hdf file created by program 
-;                  add_phaseu_2h5 (c code after Herra´ez algorithm)
+;   /herra       : unwrap using c code after Herra´ez algorithm (recommended and default)
 ;   /phunwrap    : unwrap using phunwrap.pro
-;   /raw         : get raw phase (default)
+;   /raw         : get raw phase 
 ;   /unwrap_phase: unwrap using unwrap_phase.pro
 ;
 ; OUTPUTS:
@@ -949,16 +948,16 @@ if keyword_set(raw) then begin
     return, phi
 endif
 
-if keyword_set(phaseu) then begin
-    print, 'get unwraped phase from /phaseu/pzu in hfd5 (add_phaseu_2h5)'
-    print, 'not yet available'
-    print, 'arr=[1]'
-    print, 'hdf=xyz.h5'
-    print, 'h5_read_phase,hdf,phaseu=arr'
-    print, 'p->plotphase,phasein=arr'
+if keyword_set(herra) then begin
+;    print, 'recipe to get unwraped phase from /phaseu/pzu in hfd5 (add_phaseu_2h5)'
+;    print, 'arr=[1]'
+;    print, 'hdf=xyz.h5'
+;    print, 'h5_read_phase,hdf,herra=arr'
+;    print, 'p->plotphase,phasein=arr'
+;    print, 'idl implementation'
     phi0= self->getphase(/raw)
     phi= phi0*1d0
-    help, phi
+    phi= unwrap_herra(phi0, verbose=verbose)
     return, phi
 endif
 
@@ -978,8 +977,11 @@ if keyword_set(unwrap_phase) then begin
     return, phi
 endif
 
-print, 'getphase default called' 
-phi= atan(*self.field, /phase) 
+print, 'getphase default called (default= /herra)' 
+phi0= self->getphase(/raw)
+phi= phi0*1d0
+phi= unwrap_herra(phi0, verbose=verbose)
+
 help, phi
 return, phi
 end ;; getphase
