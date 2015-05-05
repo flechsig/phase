@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/Makefile.am
 # Date      : <28 Aug 14 16:08:16 flechsig> 
-# Time-stamp: <09 Mar 15 16:22:22 flechsig> 
+# Time-stamp: <05 May 15 12:01:00 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -100,7 +100,7 @@ idl_with_doc_header = \
 	reflec.pro \
         resize.pro \
         tag_exist.pro \
-	unwrap_phase.pro myunwrap_phase.pro
+	unwrap_phase.pro myunwrap_phase.pro unwrap_herra.pro
 
 ## everything 2b installed in idldir
 idl_DATA  = help.html \
@@ -148,6 +148,7 @@ idl_DATA  = help.html \
 help.html: $(idl_with_doc_header) 
 	./updateidlphasehelp.csh	
 
+
 ## phase_structures_256.pro \
 ## phase_structures_1024.pro \
 
@@ -158,7 +159,9 @@ help.html: $(idl_with_doc_header)
 
 ## idl_HTML = help.html
 
-
-##
+## the shared library for phase unwrapping
+lib_LTLIBRARIES         = unwrap_herra.la
+unwrap_herra_la_SOURCES = ../phaseqt/unwrap_phase.cpp ../phaseqt/unwrap_phase.h
+unwrap_herra_la_LDFLAGS = -module -avoid-version -shared
 
 # end
