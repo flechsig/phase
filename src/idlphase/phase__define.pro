@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <05 May 15 12:21:05 flechsig> 
+;  Time-stamp: <05 May 15 12:39:59 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -957,7 +957,7 @@ if keyword_set(herra) then begin
 ;    print, 'idl implementation'
     phi0= self->getphase(/raw)
     phi= phi0*1d0
-    phi= unwrap_herra(phi0, verbose=verbose)
+    phi= unwrap_herra(phi0, _EXTRA=extra)
     return, phi
 endif
 
