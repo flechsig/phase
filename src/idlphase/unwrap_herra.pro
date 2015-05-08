@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/project/phase/GIT/phase/src/idlphase/unwrap_herra.pro
  ; Date      : <05 May 15 10:22:30 flechsig> 
- ; Time-stamp: <05 May 15 11:59:19 flechsig> 
+ ; Time-stamp: <08 May 15 14:31:26 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -55,7 +55,7 @@ ny= decision[2]
 ;; the shared lib
 unwrap_herra_lib= getenv('PHASE_HOME')+'/lib/unwrap_herra.so'
 
-if verbose then print,'shared lib: ', unwrap_herra_lib
+if n_elements(verbose) ne 0 then print,'shared lib: ', unwrap_herra_lib
 
 result = call_external(unwrap_herra_lib,'unwrap_phase',$
                        data,  $
