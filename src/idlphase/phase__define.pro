@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <05 May 15 12:39:59 flechsig> 
+;  Time-stamp: <12 May 15 16:45:09 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -2237,6 +2237,39 @@ self.y_vec= ptr_new(y_vec)
 
 return
 end ;; resize
+
+pro phase::scalefield, scaler
+;+
+; NAME:
+;   phase::scalefield
+;
+; PURPOSE:
+;   multiply scaler to field
+;
+; CATEGORY:
+;   phase
+;
+; CALLING SEQUENCE:
+;   emf->scalefield, scaler
+;
+; INPUTS:
+;   the scaler (real or complex)
+;
+; OPTIONAL INPUTS:
+;   no
+;
+; KEYWORD PARAMETERS:
+;   no
+;
+; EXAMPLE:
+;   idl> emf->scalefield, 0.8
+;
+; MODIFICATION HISTORY:
+;   UF May 2015
+;-
+self.field*= scaler 
+return
+end ;; scalefield
 
 pro phase::setField, field
 ;+
