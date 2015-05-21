@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 	  if ( resultid > 0 ) /* store the result */    
 	     {
 
-#ifdef DEBUG
+#ifdef DEBUG1
 	       printf("master -> save result with id= %d\n", resultid);
 #endif
 
