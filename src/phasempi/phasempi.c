@@ -43,7 +43,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include <mpi.h>
 
 #include "cutils.h" 
@@ -64,13 +63,18 @@ int main(int argc, char *argv[])
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
         
-  MPI_Init(&argc, &argv);
-  starttime= MPI_Wtime();
+  MPI_Init(&argc, &argv);               // mpi
+  starttime= MPI_Wtime();               // mpi time     
   MPI_Comm_size(MPI_COMM_WORLD, &size); // the number of involved cores
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); // the if of the core
   size_save= size;                      // remember the size
-
-  for (i= 0; i < N_RESULTS; i++) results[i]= 0.0;  // initialize result
+  for (i= 0; i< N_RESULTS; i++) results[i]= 0.0;  // mpi initialize result
+  if (size <= 1)     // abort if no slaves available
+    {
+      fprintf(stderr, "size= %d, no slaves available- exit\n\n", size);
+      MPI_Finalize();
+      exit(0);
+    }                                     
 
   printf("%d: phasempi start, size= %d, rank= %d\n", rank, size, rank);
 
@@ -79,29 +83,9 @@ int main(int argc, char *argv[])
   /* ignore parameters: cmode, selected, numthreads and also setupswitch */
   /* we evaluate the filenames, iord and format */
 
-#ifdef DEBUG 
-  /*  strncpy(Beamline.filenames.beamlinename, "test_5000.phase", MaxPathLength- 1); */ /* for debugging */
-#endif
-
-  if  (size <= 1)     // abort if no slaves available
-    {
-      fprintf(stderr, "size= %d, no slaves available- exit\n\n", size);
-      MPI_Finalize();
-      exit(0);
-    }
-
-  /* phase copy from batchmode */
-  /* build beamline on each host */
-  bl= &Beamline;                 /* init bl pointer */
-  Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
-
-#ifdef DEBUG 
-  /*
-  strncpy(Beamline.filenames.beamlinename,  "/gpfs/home/flechsig/phase/data/test_5000.phase",    MaxPathLength- 1);  
-  strncpy(Beamline.filenames.imageraysname, "/gpfs/home/flechsig/phase/data/test_5000.phase.h5", MaxPathLength- 1);
-  */
-#endif
-
+  /* build beamline on each host (copy from batchmode)                 */
+  bl= &Beamline;                                    /* init bl pointer */
+  bl->localalloc= DOALLOC;       /* phasesrv should reserve the memory */ 
   bl->ElementList= NULL;                       
   bl->raysout= NULL;
   bl->RESULT.RESp= NULL;
@@ -115,61 +99,51 @@ int main(int argc, char *argv[])
   bl->emfp= NULL;
   bl->source_emfp= NULL;
   bl->result_emfp= NULL;
-  //bl->int_details= NULL;
   bl->simpre= NULL;
   bl->simpim= NULL;
   bl->sintre= NULL;
   bl->sintim= NULL;
   bl->vdy   = NULL;
   bl->vdz   = NULL;
-  ReadBLFile(bl->filenames.beamlinename, bl);
+  ReadBLFile(bl->filenames.beamlinename, bl);    // read the data file
 
   if (iord != -1) bl->BLOptions.ifl.iord= iord;  /* overwrite iord if provided */
 
   BuildBeamline(bl);
 
-  //posrc_construct(bl);
   posrc_ini(bl);
   psip = (struct PSImageType *)bl->RTSource.Quellep;
   numtasks= psip->iy * psip->iz;
  
-  //write_phase_hdf5_file(bl, bl->filenames.imageraysname);
-  /* end phase */
   Test4Grating(bl);
   bl->position= 0;
   if (bl->emfp) 
     {
+      printf("!!!!!!!!! warning: das sollte nie gerufen werden\n");
       emfp_free(bl->emfp);
       bl->emfp= NULL;
     }
   bl->emfp= (struct EmfType *)emfp_construct(bl->source_emfp->nz, bl->source_emfp->ny);
-  emfp_cpy(bl->emfp, bl->source_emfp); // source-> emfp
+  emfp_cpy(bl->emfp, bl->source_emfp);                                 // source-> emfp
   
   if (bl->result_emfp) bl->result_emfp= (struct EmfType *)emfp_free(bl->result_emfp);  // clean up result
   bl->result_emfp= (struct EmfType *)emfp_construct(psip->iz, psip->iy); // !! image plane - not source
-  //printf("%d >>>>>>>>>>>>>\n\n\n", rank);
-  //numtasks= 2;  // for debugging
-  
+   
   /* mpi */
   taskid= numtasks;
   logid= 0;
-  if (rank == 0) /* master special - open logfile */
-    {
-      if ((log= fopen(MY_LOGFILE_NAME, "w")) == NULL) 
-	{ 
-	  fprintf(stderr, "error: can't open file: %s - exit\n", MY_LOGFILE_NAME); 
-	  exit(-1); 
-	}
-      fprintf(log, "# logid  taskid         y             z             yre           yim           zre           zim\n");
-      fprintf(log, "# ====================================================================================================\n");
-    }
+
+  /* master special - open incremental logfile to have some results in case of a crash */
+  if (rank == 0) log= openlogfile(bl, numtasks);
+
   while (1)  /* the main loop executed on each host */
     {
       if (rank == 0)   /* master special */
 	{
 
 #ifdef DEBUG
-	  printf("\nmaster -> wait for slave(s)\n");
+	  printf("\n");
+	  //printf("\nmaster -> wait for slave(s)\n");
 #endif
 
 	  /* get sender_id  from slave in the status tag, and results */
@@ -181,7 +155,7 @@ int main(int argc, char *argv[])
 	  sender  = status.MPI_TAG;                 /* slave id       */
 
 #ifdef DEBUG
-	  printf("master -> received result with id= %d\n", resultid );
+	  printf("master -> received msg_id= %d from slave_id= %d\n", resultid, sender);
 #endif
 
 	  if ( resultid > 0 ) /* store the result */    
@@ -265,7 +239,7 @@ int main(int argc, char *argv[])
 	    {
 
 #ifdef DEBUG
-	      printf("slave %d: solve task %d\n", rank, taskid);
+	      printf("slave %d: received task %d\n", rank, taskid);
 #endif
 
 	      index= taskid- 1;               /* index counts from 0 */
@@ -285,7 +259,7 @@ int main(int argc, char *argv[])
 	      results[7]= bl->result_emfp->z[nz];
 	      
 #ifdef DEBUG
-	      printf("slave %d: solve task %d done\n", rank, taskid);
+	      printf("slave %d: finished task %d \n", rank, taskid);
 #endif
 
 	      /* result is sent in the next call */
@@ -309,7 +283,7 @@ int main(int argc, char *argv[])
     } /* while main loop */
 
 #ifdef DEBUG 
-  printf("%d: phasempi done\n", rank);
+  printf("      %d: phasempi done\n", rank);
 #endif
 
   endtime= MPI_Wtime();
@@ -336,6 +310,7 @@ int main(int argc, char *argv[])
 	  printf("error: %d output format not defined- use default\n", format);
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	}
+      fprintf(log, "# ====================================================================================================\n");
       fclose(log);
       duration= endtime- starttime;
       printf("%d: elapsed time= %f s = %f h with %d processors\n", rank, duration, duration/3600., size_save );
@@ -351,4 +326,26 @@ int main(int argc, char *argv[])
   
   exit(0);
 }
+
+FILE *openlogfile(struct BeamlineType *bl, int numtasks)
+{
+  char mylogfilename[MaxPathLength];
+  FILE *log;
+
+  snprintf(mylogfilename, MaxPathLength- 1, "%s%s", bl->filenames.imageraysname, LOGFILE_EXT);
+  printf("master -> open logfile %s\n", mylogfilename); 
+  
+  if ((log= fopen(mylogfilename, "w")) == NULL) 
+    { 
+      fprintf(stderr, "error: can't open file: %s - exit\n", mylogfilename); 
+      MPI_Finalize();
+      exit(-1); 
+    }
+  fprintf(log, "# ====================================================================================================\n");
+  fprintf(log, "# phasempi textlog ==> numtasks= %d\n", numtasks);
+  fprintf(log, "# logid  taskid         y             z             yre           yim           zre           zim\n");
+  fprintf(log, "# ====================================================================================================\n");
+
+  return log;
+} // end openlogfile
 /* end */

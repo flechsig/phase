@@ -37,11 +37,12 @@
 
 
 #ifndef PHASEMPI_H
-
 #define PHASEMPI_H
 
 #define N_RESULTS 8
-#define MY_LOGFILE_NAME "/gpfs/home/flechsig/phasempi.log"
+#define LOGFILE_EXT ".txtlog"
+
+FILE *openlogfile(struct BeamlineType *, int);
 
 #endif
 /* end */
