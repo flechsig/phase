@@ -56,10 +56,11 @@
  
 int main(int argc, char *argv[])
 {
-  int        i, size, size_save, rank, numtasks, taskid, sender, index, ny, nz, resultid;
+  int        i, size, size_save, rank, numtasks, taskid, sender, index, ny, nz, resultid, logid;
   int        setupswitch, cmode, selected, iord, numthreads, format, idx;
   MPI_Status status;
   double     starttime, endtime, duration, results[N_RESULTS];
+  FILE       *log;
   struct BeamlineType Beamline, *bl;
   struct PSImageType *psip;
         
@@ -151,6 +152,17 @@ int main(int argc, char *argv[])
   
   /* mpi */
   taskid= numtasks;
+  logid= 0;
+  if (rank == 0) /* master special - open logfile */
+    {
+      if ((log= fopen(MY_LOGFILE_NAME, "w")) == NULL) 
+	{ 
+	  fprintf(stderr, "error: can't open file: %s - exit\n", MY_LOGFILE_NAME); 
+	  exit(-1); 
+	}
+      fprintf(log, "# logid  taskid         y             z             yre           yim           zre           zim\n");
+      fprintf(log, "# ====================================================================================================\n");
+    }
   while (1)  /* the main loop executed on each host */
     {
       if (rank == 0)   /* master special */
@@ -191,7 +203,9 @@ int main(int argc, char *argv[])
 	       bl->result_emfp->ezim[idx]= results[4];
 	       bl->result_emfp->y[ny]    = results[6];
 	       bl->result_emfp->z[nz]    = results[7];
-
+	       fprintf(log, "%-8d %-8d % e % e % e % e % e % e\n",
+		       logid, index, results[6], results[7], results[1], results[2], results[3], results[4]);
+	       logid++;
  	       //printf("master -> save result with id= %d saved\n", resultid);
 	     } 
 
@@ -322,7 +336,7 @@ int main(int argc, char *argv[])
 	  printf("error: %d output format not defined- use default\n", format);
 	  write_phase_hdf5_file(bl, bl->filenames.imageraysname, NULL);
 	}
-      
+      fclose(log);
       duration= endtime- starttime;
       printf("%d: elapsed time= %f s = %f h with %d processors\n", rank, duration, duration/3600., size_save );
     }

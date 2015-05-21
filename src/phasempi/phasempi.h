@@ -41,6 +41,7 @@
 #define PHASEMPI_H
 
 #define N_RESULTS 8
+#define MY_LOGFILE_NAME "/gpfs/home/flechsig/phasempi.log"
 
 #endif
 /* end */
