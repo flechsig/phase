@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/phasesrv.c */
 /*  Date      : <14 Sep 12 16:34:45 flechsig>  */
-/*  Time-stamp: <29 Apr 15 14:38:13 flechsig>  */
+/*  Time-stamp: <22 May 15 14:15:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -343,7 +343,8 @@ FILE *openlogfile(struct BeamlineType *bl, int numtasks)
       exit(-1); 
     }
   fprintf(log, "# ====================================================================================================\n");
-  fprintf(log, "# phasempi textlog ==> numtasks= %d\n", numtasks);
+  fprintf(log, "# phasempi textlog ==> numtasks= %d ==> wavelength= %lf ==> cols= %d ==> rows= %d\n", 
+	  numtasks, bl->BLOptions.lambda*1e-3, bl->RTSource.Quellep->iz, bl->RTSource.Quellep->iy);
   fprintf(log, "# logid  taskid         y             z             yre           yim           zre           zim\n");
   fprintf(log, "# ====================================================================================================\n");
 
