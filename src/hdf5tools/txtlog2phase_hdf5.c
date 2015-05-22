@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/txtlog2phase_hdf5.c */
 /* Date      : <22 May 15 10:36:12 flechsig>  */
-/* Time-stamp: <22 May 15 14:06:48 flechsig>  */
+/* Time-stamp: <22 May 15 14:32:08 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -97,8 +97,8 @@ hid_t       file_id, e_dataset_id, e_dataspace_id,
   for (i= 0; i< array_items; i++) a[i]= 0.0;
 
   i= 0;
-  //while (!feof(f) && (i < numtasks))
-  while (!feof(f) && (i < 5))
+  while (!feof(f) && (i < numtasks))
+  //  while (!feof(f) && (i < 5))
     {
       fgets(buffer, 255, f);  // the comment
       sscanf(buffer, "%d %d %le %le %le %le %le %le", &line, &task, &yy, &zz, &yre, &yim, &zre, &zim);
