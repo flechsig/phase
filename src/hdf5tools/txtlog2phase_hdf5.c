@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/txtlog2phase_hdf5.c */
 /* Date      : <22 May 15 10:36:12 flechsig>  */
-/* Time-stamp: <22 May 15 14:32:08 flechsig>  */
+/* Time-stamp: <22 May 15 15:16:27 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -48,30 +48,28 @@ int main(int argc, char **argv)
   int    i, numtasks, row, col, rows, cols, array_items, task, line, fversion= 0;
   char   *myoutputfile, *myinputfile, buffer[256];
   double mywavelength, *y, *z, *a, *t, yy, zz, yre, yim, zre, zim;
-  FILE *f;
+  FILE   *f;
 
-hid_t       file_id, e_dataset_id, e_dataspace_id, 
+  hid_t  file_id, e_dataset_id, e_dataspace_id, 
     y_dataset_id, y_dataspace_id, z_dataset_id, z_dataspace_id, 
     t_dataset_id, t_dataspace_id;  /* identifiers */
-  hsize_t     e_dims[4], y_dims[1], z_dims[1], t_dims[1];
-  herr_t      status;
-
+  hsize_t e_dims[4], y_dims[1], z_dims[1], t_dims[1];
+  herr_t  status;
 
 /* start with some tests */
   printf("file: %s start, argc= %d\n", __FILE__, argc);
 
-  if (argc != 4) 
+  if (argc != 3) 
     { 
       printf("**********************************************************************************************************\n");
-      printf("usage: txtlog2phase_hdf5 wavelength txtlogfile outputfile\n");
+      printf("usage: txtlog2phase_hdf5 txtlogfile outputfile\n");
       printf("**********************************************************************************************************\n");
       exit(1);
     } 
 
-  sscanf(argv[1], "%lf", &mywavelength);
-  myinputfile= argv[2];
-  myoutputfile= argv[3];
-  printf("mywavelength: %lg\n", mywavelength);
+  myinputfile= argv[1];
+  myoutputfile= argv[2];
+  
   printf("input   file: %s\n", myinputfile);
   printf("output  file: %s\n", myoutputfile);
 
