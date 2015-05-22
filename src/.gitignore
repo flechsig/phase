@@ -26,6 +26,7 @@ hdf5tools/genesis_hdf5_2wave
 hdf5tools/phase_hdf5_2wave
 hdf5tools/wave2genesis_hdf5
 hdf5tools/wave2phase_hdf5
+hdf5tools/txtlog2phase_hdf5
 phasesrv/phasesrv
 *TAGS
 idlphase/help.html
