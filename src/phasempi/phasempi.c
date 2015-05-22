@@ -332,7 +332,9 @@ FILE *openlogfile(struct BeamlineType *bl, int numtasks)
 {
   char mylogfilename[MaxPathLength];
   FILE *log;
+  struct PSImageType *psip;
 
+  psip = (struct PSImageType *)bl->RTSource.Quellep;
   snprintf(mylogfilename, MaxPathLength- 1, "%s%s", bl->filenames.imageraysname, LOGFILE_EXT);
   printf("master -> open logfile %s\n", mylogfilename); 
   
@@ -343,8 +345,8 @@ FILE *openlogfile(struct BeamlineType *bl, int numtasks)
       exit(-1); 
     }
   fprintf(log, "# ====================================================================================================\n");
-  fprintf(log, "# phasempi textlog ==> numtasks= %d ==> wavelength= %lf ==> cols= %d ==> rows= %d\n", 
-	  numtasks, bl->BLOptions.lambda*1e-3, bl->RTSource.Quellep->iz, bl->RTSource.Quellep->iy);
+  fprintf(log, "# phasempi textlog ==> numtasks= %d ==> wavelength= %e ==> cols= %d ==> rows= %d\n", 
+	  numtasks, bl->BLOptions.lambda*1e-3, psip->iz, psip->iy);
   fprintf(log, "# logid  taskid         y             z             yre           yim           zre           zim\n");
   fprintf(log, "# ====================================================================================================\n");
 
