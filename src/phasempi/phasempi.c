@@ -179,6 +179,7 @@ int main(int argc, char *argv[])
 	       bl->result_emfp->z[nz]    = results[7];
 	       fprintf(log, "%-8d %-8d % e % e % e % e % e % e\n",
 		       logid, index, results[6], results[7], results[1], results[2], results[3], results[4]);
+	       fflush(log);
 	       logid++;
  	       //printf("master -> save result with id= %d saved\n", resultid);
 	     } 
