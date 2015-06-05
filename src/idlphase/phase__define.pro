@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <12 May 15 16:45:09 flechsig> 
+;  Time-stamp: <05 Jun 15 16:36:34 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1040,6 +1040,8 @@ function phase::getprofile, amplitude=amplitude, min=min, phase=phase, z=z
 ;
 ; KEYWORD PARAMETERS:
 ;     /amplitude: get amplitude profile  (default: intensity)
+;     iy        : vertical   index iz
+;     iz        : horizontal index iz
 ;     /min      : profile at minimum     (default: maximum)
 ;     /phase    : get phase profile      (default: intensity)
 ;     /z        : the horizontal profile (default: vertical)
@@ -1053,9 +1055,9 @@ function phase::getprofile, amplitude=amplitude, min=min, phase=phase, z=z
 ;; MODIFICATION HISTORY:
 ;   UF 4.12.13
 ;-
-if n_elements(amplitude) ne 0 then field = self->getamplitude()
-if n_elements(phase)     ne 0 then field = self->getphase(/unwrap)
-if (n_elements(amplitude) eq 0) and  (n_elements(phase) eq 0) then field= self->getintensity() 
+if n_elements(amplitude)  ne 0 then field = self->getamplitude()
+if n_elements(phase)      ne 0 then field = self->getphase(/unwrap)
+if (n_elements(amplitude) eq 0) and (n_elements(phase) eq 0) then field= self->getintensity() 
 
 help,field
 s= size(field)
@@ -1078,7 +1080,8 @@ endif
 print, 'getprofile: nz, ny, mz, my, m, mindex:', nz, ny, mz, my, m, mindex
 
 if n_elements(z) ne 0 then prof= reform(field[*,my]) else prof= reform(field[mz,*])
-
+if n_elements(iz) ne 0 then prof= reform(field[iz,*]) 
+if n_elements(iy) ne 0 then prof= reform(field[*,iy]) 
 return, prof
 end ;; getprofile
 
@@ -1798,7 +1801,7 @@ return
 end
 ; end plotintensity
 
-pro phase::plotphase, window=window, phasein=phasein, _EXTRA=extra
+pro phase::plotphase, window=window, phasein=phasein,  _EXTRA=extra
 ;+
 ; NAME:
 ;   phase::plotphase
@@ -1817,6 +1820,7 @@ pro phase::plotphase, window=window, phasein=phasein, _EXTRA=extra
 ;
 ; KEYWORD PARAMETERS:
 ;  phasein: overwrite the array from getphase
+;  window:  plot on a certain window
 ;
 ; EXAMPLE:
 ;   idl> emf->plotphase
