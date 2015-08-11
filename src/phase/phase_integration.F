@@ -1,6 +1,6 @@
 c$$$ File      : ~/phase/src/phase/phase_integration.F
 c$$$ Date      : <21 Nov 07 12:42:16 flechsig> 
-c$$$ Time-stamp: <30 Apr 15 14:15:30 flechsig> 
+c$$$ Time-stamp: <11 Aug 15 12:14:15 flechsig> 
 c$$$ Author    : J.B. + modification Uwe Flechsig
 
 c ******************************************************************************
@@ -130,7 +130,8 @@ c UF the type definition of the calling vars
         record /rayst/ ra
         record /control_flags/ ifl
         record /integration/ xi
-        record /integration_results/ xir                 ! enthaelt MAX_INTEGRATION_SIZE
+c        record /integration_results/ xir                 ! enthaelt MAX_INTEGRATION_SIZE
+        TYPE(integration_results) xir
         record /psimagest/ sp                               
         integer lostwl, blp
 c UF end type definition of the calling vars
@@ -278,7 +279,7 @@ c           call phacor(cs,xi,xir,dz,fya,fyp,ianzz,sp)
 
 c     UF wird nur 1x aufgerufen um inegration details zu ermitteln??
 c     1st call with imaginary part
-        call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir.yzintey,
+        call simpson(cs,ifl,xi,xir,ianzz,dz,fya,fyp,xir%yzintey,
      &       yintya,yintyp,
      &       densiyre,densiyim,xintyzre,xintyzim,iyz,blp)
         
@@ -292,7 +293,7 @@ c           call phacor(cs,xi,xir,dz,fza,fzp,ianzz,sp)
 	iyz=2   ! z loop
 
 c     2nd  call with real part
-        call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir.yzintez,
+        call simpson(cs,ifl,xi,xir,ianzz,dz,fza,fzp,xir%yzintez,
      &       yintza,yintzp,    
      &       densizre,densizim,xintyzre,xintyzim,iyz,blp)
         
@@ -305,11 +306,11 @@ c------------------------------------------------------------
 c      endif
 c------------------------------------------------------------
       
-      xir.yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
-      xir.yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
+      xir%yzintey=sr.xintyre+cs.sqrtm1*sr.xintyim
+      xir%yzintez=sr.xintzre+cs.sqrtm1*sr.xintzim
 
 #ifdef DEBUG1
-      write(*,*)'debug: total calls to simpson: xir.nsimp= ',xir.nsimp
+      write(*,*)'debug: total calls to simpson: xir%nsimp= ',xir%nsimp
 #endif
       
       return
@@ -337,7 +338,8 @@ c UF the type definition of the calling vars
         record /geometryst/ g
         integer isrctype
         record /integration/ xi
-        record /integration_results/ xir
+c        record /integration_results/ xir
+        TYPE(integration_results) xir
         record /apertures/ apr
         record /constants/ cs
         record /rayst/ ra
@@ -1575,7 +1577,8 @@ c definition of calling parameter
         record  /constants/           cs
         record  /control_flags/       ifl
         record  /integration/         xi
-        record  /integration_results/ xir
+c        record  /integration_results/ xir
+        TYPE(integration_results) xir
         integer ianz
         real*8  dyz, fyza, fyzp
         dimension dyz(4096), fyza(4096), fyzp(4096)
@@ -1620,7 +1623,7 @@ c UF definitions to have implicit none
 	dphi_loc_min=1.e-2
 	iordap_loc=2
 
-	xir.nsimp=xir.nsimp+1	! number of calls of simpson
+	xir%nsimp=xir%nsimp+1	! number of calls of simpson
 
 c---------------------------------------------------------
 	if(ifl.ispline.lt.0)then
@@ -1795,13 +1798,13 @@ c     defined in pst.c fill_xirp are the calles to simpson which should be recor
 c     dy(dz=min), dy(dz=half), dy(dz=max), dz(dy=half)
 c     xir.fill_results: controls recording
 
-        if(xir.fill_results.eq.1)then ! only when active
+        if(xir%fill_results.eq.1)then ! only when active
            if(iyz.eq.1)xx=xi.ymin ! y loop
            if(iyz.eq.2)xx=xi.zmin ! z loop
-           do ii=1,xir.iisimp   ! loop over slices harcoded to 4
-              if(xir.isimp(ii).eq.xir.nsimp)then ! if number as defined
+           do ii=1,xir%iisimp   ! loop over slices harcoded to 4
+              if(xir%isimp(ii).eq.xir%nsimp)then ! if number as defined
 #ifdef DEBUG
-                 write(*,*)'debug: ianz_loc,ii,xir.nsimp',ianz_loc,ii,xir.nsimp
+                 write(*,*)'debug: ianz_loc,ii,xir%nsimp',ianz_loc,ii,xir%nsimp
 #endif
                  do i=1,ianz_loc-1
                     call fill_si_f(blp, ii, i, dreal(xxx(i)), 1) ! 1 -> sintre
@@ -1813,8 +1816,8 @@ c     xir.fill_results: controls recording
                     xx=xx+dyz_loc(i)
                  enddo
 c     remember filled items 
-                 xir.isintre(ii)=ianz_loc-1
-                 xir.isintim(ii)=ianz_loc-1
+                 xir%isintre(ii)=ianz_loc-1
+                 xir%isintim(ii)=ianz_loc-1
                  
                  
 c     do i=1,ianz_loc
@@ -1863,13 +1866,13 @@ c     defined in pst.c fill_xirp are the calles to simpson which should be recor
 c     dy(dz=min), dy(dz=half), dy(dz=max), dz(dy=half)
 c     xir.fill_results: controls recording 
     
-         if(xir.fill_results.eq.1)then    ! only when active
+         if(xir%fill_results.eq.1)then    ! only when active
             if(iyz.eq.1)xx=xi.ymin        ! y loop
             if(iyz.eq.2)xx=xi.zmin        ! z loop
-            do ii=1,xir.iisimp            ! loop over slices harcoded to 4
-               if(xir.isimp(ii).eq.xir.nsimp)then ! if number as defined
+            do ii=1,xir%iisimp            ! loop over slices harcoded to 4
+               if(xir%isimp(ii).eq.xir%nsimp)then ! if number as defined
 #ifdef DEBUG
-                  write(*,*)'debug: ianz,ii,xir.nsimp',ianz,ii,xir.nsimp
+                  write(*,*)'debug: ianz,ii,xir%nsimp',ianz,ii,xir%nsimp
 #endif
                   do i=1,ianz-1 ! ianz-1 since integration has 1 point less    
                      call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) ! 1 -> sintre
@@ -1887,10 +1890,10 @@ c     fill last point
                   if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1) ! -1 -> dy
                   if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2) ! -2 -> dz
 c     remember filled items (wozu eigentlich?)
-                  xir.isintre(ii)=ianz-1
-                  xir.isintim(ii)=ianz-1
-                  xir.isimpre(ii)=ianz
-                  xir.isimpim(ii)=ianz
+                  xir%isintre(ii)=ianz-1
+                  xir%isintim(ii)=ianz-1
+                  xir%isimpre(ii)=ianz
+                  xir%isimpim(ii)=ianz
                endif            ! xir.nsimp slice 2bstored
             enddo               ! loop over slices
          endif                  ! xir.fill_results
@@ -1925,13 +1928,13 @@ c     defined in pst.c fill_xirp are the calles to simpson which should be recor
 c     dy(dz=min), dy(dz=half), dy(dz=max), dz(dy=half)
 c     xir.fill_results: controls recording 
     
-         if(xir.fill_results.eq.1)then    ! only when active
+         if(xir%fill_results.eq.1)then    ! only when active
             if(iyz.eq.1)xx=xi.ymin        ! y loop
             if(iyz.eq.2)xx=xi.zmin        ! z loop
-            do ii=1,xir.iisimp            ! loop over slices harcoded to 4
-               if(xir.isimp(ii).eq.xir.nsimp)then ! if number as defined
+            do ii=1,xir%iisimp            ! loop over slices harcoded to 4
+               if(xir%isimp(ii).eq.xir%nsimp)then ! if number as defined
 #ifdef DEBUG
-                  write(*,*)'debug: ianz,ii,xir.nsimp',ianz,ii,xir.nsimp
+                  write(*,*)'debug: ianz,ii,xir%nsimp',ianz,ii,xir%nsimp
 #endif
                   do i=1,ianz-1 ! ianz-1 since integration has 1 point less    
                      call fill_si_f(blp, ii, i, (xxxre(i)*dyz(1)), 1) ! 1 -> sintre
@@ -1949,10 +1952,10 @@ c     fill last point
                   if(ii.eq.1)call fill_si_f(blp, ii, i, xx, -1) ! -1 -> dy
                   if(ii.eq.4)call fill_si_f(blp, ii, i, xx, -2) ! -2 -> dz
 c     remember filled items 
-                  xir.isintre(ii)=ianz-1
-                  xir.isintim(ii)=ianz-1
-                  xir.isimpre(ii)=ianz
-                  xir.isimpim(ii)=ianz
+                  xir%isintre(ii)=ianz-1
+                  xir%isintim(ii)=ianz-1
+                  xir%isimpre(ii)=ianz
+                  xir%isimpim(ii)=ianz
                endif            ! xir.nsimp slice 2bstored
             enddo               ! loop over slices
          endif                  ! xir.fill_results
