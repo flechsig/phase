@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase_struct.F
 c$$$ Date      : <27 Oct 10 11:39:08 flechsig> 
-c$$$ Time-stamp: <30 Apr 15 14:09:50 flechsig> 
+c$$$ Time-stamp: <11 Aug 15 12:04:33 flechsig> 
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 c$$$
 c$$$ $Source$ 
@@ -188,11 +188,13 @@ c---------------- sources -----------------------------------
 	   integer isrcy,isrcdy,isrcz,isrcdz
         end structure
 
-        structure/source1c/                 ! Gauss  
-           real*8 waist, widthyz, dist
-	   integer nyz
-        end structure
- 
+c	TYPE source1c
+c        structure/source1c/                 ! Gauss  
+c           real*8 waist, widthyz, dist
+c	   integer nyz
+c        end structure
+c	END TYPE
+
 	structure/source2/
 	   character*80 fsource2a,fsource2b
      	   real*8 ceyre(0:60,-60:60),ceyim(0:60,-60:60),
@@ -350,8 +352,8 @@ c           integer ianz0_save(301,301)
 c	   integer jmult
         end structure
 c------------------ results from integration --------------------
-
-	structure/integration_results/
+	TYPE integration_results
+c	structure/integration_results/
 	   complex*16 yzintey,yzintez         ! results
 c Apr 15	   real*8 yzintya,yzintyp,yzintza,yzintzp
 	   integer isimp(100),iisimp,nsimp
@@ -365,8 +367,8 @@ c           real*8 d12(2,3,MAX_INTEGRATION_SIZE)
 c           real*8 ianzd12(3)
 c	   record/simps1/si1                  ! UF 21.12.99
            integer fill_results, alignment    ! alignment dummy to avoid warnings
-	end structure
-
+c	end structure
+	end TYPE
 c------------------ flags ---------------------------------------
 
         structure/control_flags/
