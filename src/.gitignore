@@ -32,6 +32,7 @@ phasesrv/phasesrv
 idlphase/help.html
 phaselib/.libs/
 phaselib/libphaseifc.la
+phaselib/libphasegnu.la
 phaselib/*.lo
 .dirstamp
 idlphase/.libs/

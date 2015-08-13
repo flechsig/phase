@@ -136,7 +136,7 @@ c------------------------------------------------------
 	r0=1.d0/3.d0
 	fact=r0
 	do m=2,n
-	fact=fact*((r0-dflotj(m-1))/dflotj(m))
+	fact=fact*((r0-dble(m-1))/dble(m))
 	enddo
 
 c         Tay_sqrt_fact=((-1.d0)**n*facult(2*n))/

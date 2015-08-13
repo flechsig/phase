@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <04 May 15 09:19:16 flechsig> 
+//  Time-stamp: <13 Aug 15 09:51:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -74,10 +74,28 @@ using namespace std;   // fuer cout z.B.
 // slot
 void MainWindow::about()
 {
+  char fcompiler[30]= "unknown";
+
 #ifdef SEVEN_ORDER
   const char *onoff= "on";
 #else
   const char *onoff= "off";
+#endif
+
+#ifdef HAVE_GFORTRAN_F77
+  snprintf(fcompiler, 29, "GNU gfortran");
+#endif
+
+#ifdef HAVE_ABSOFT_F77
+  snprintf(fcompiler, 29, "ABSOFT f77");
+#endif
+
+#ifdef HAVE_INTEL_F77
+  snprintf(fcompiler, 29, "INTEL");
+#endif
+
+#ifdef HAVE_PORTLAND_F77
+  snprintf(fcompiler, 29, "PORTLAND pgf77");
 #endif
 
    QMessageBox::about(this, tr("About PhaseQt"),
@@ -87,7 +105,8 @@ void MainWindow::about()
                "<center>phaseqt version: '%1',<br>"
                "configured: '%2',<br>"
                "SEVEN_ORDER: '%3',<br>"
-	       "GRIDSIZE: '%4'</center>").arg(VERSION).arg(CONFIGURED).arg(onoff).arg(GRIDSIZE));
+	       "GRIDSIZE: '%4',<br>"
+	       "Fortran compiler: '%5'</center>").arg(VERSION).arg(CONFIGURED).arg(onoff).arg(GRIDSIZE).arg(fcompiler));
 } // about
 
 // UF slot

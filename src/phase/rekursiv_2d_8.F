@@ -104,12 +104,12 @@ c end uf
 	a1=a1+
      &          eq1c(0,0,0,0,n5,n6)*
      &          exp_special(ypca(0,0,0,0),(n5-1))*
-     &          dflotj(n5)*
+     &          dble(n5)*
      &          exp_special(zpca(0,0,0,0),n6)
 	a2=a2+
      &          eq2c(0,0,0,0,n5,n6)*
      &          exp_special(ypca(0,0,0,0),(n5-1))*
-     &          dflotj(n5)*
+     &          dble(n5)*
      &          exp_special(zpca(0,0,0,0),n6)
 	endif
 
@@ -121,12 +121,12 @@ c---------------------------------------------------------
 	b1=b1+
      &          eq1c(0,0,0,0,n5,n6)*
      &          exp_special(ypca(0,0,0,0),n5)*
-     &          dflotj(n6)*
+     &          dble(n6)*
      &          exp_special(zpca(0,0,0,0),(n6-1))
 	b2=b2+
      &          eq2c(0,0,0,0,n5,n6)*
      &          exp_special(ypca(0,0,0,0),n5)*
-     &          dflotj(n6)*
+     &          dble(n6)*
      &          exp_special(zpca(0,0,0,0),(n6-1))
 	endif
 
@@ -532,7 +532,7 @@ c-------------------------------------------------
 
 	if(i.gt.0)then
 	e1y=e1y+eq1c(0,0,0,0,i,0)*
-     &     dflotj(i)*exp_special(ypca(0,0,0,0),(i-1))
+     &     dble(i)*exp_special(ypca(0,0,0,0),(i-1))
 	endif
 
 	enddo
@@ -582,19 +582,19 @@ ccUF 9.8.2011      acc=1.e-10
      &     exp_special(zpca(0,0,0,0),j)
 	if(i.gt.0)then
 	e1y=e1y+eq1c(0,0,0,0,i,j)*
-     &     dflotj(i)*exp_special(ypca(0,0,0,0),(i-1))*
+     &     dble(i)*exp_special(ypca(0,0,0,0),(i-1))*
      &     exp_special(zpca(0,0,0,0),j)
 	e2y=e2y+eq2c(0,0,0,0,i,j)*
-     &     dflotj(i)*exp_special(ypca(0,0,0,0),(i-1))*
+     &     dble(i)*exp_special(ypca(0,0,0,0),(i-1))*
      &     exp_special(zpca(0,0,0,0),j)
 	endif
 
 	if(j.gt.0)then
 	e1z=e1z+eq1c(0,0,0,0,i,j)*
-     &     dflotj(j)*exp_special(ypca(0,0,0,0),i)*
+     &     dble(j)*exp_special(ypca(0,0,0,0),i)*
      &     exp_special(zpca(0,0,0,0),(j-1))
 	e2z=e2z+eq2c(0,0,0,0,i,j)*
-     &     dflotj(j)*exp_special(ypca(0,0,0,0),i)*
+     &     dble(j)*exp_special(ypca(0,0,0,0),i)*
      &     exp_special(zpca(0,0,0,0),(j-1))
 	endif
 

@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <02 Apr 15 14:55:35 flechsig> 
+dnl   Time-stamp: <13 Aug 15 10:06:09 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -112,7 +112,7 @@ dnl do LIBTOOL test after fortran stuff
 dnl define the search preference of fortran compilers
 dnl ************** FORTRAN specials *********************
 dnl !!the environment variable F77 overwrites this test!!
-AC_PROG_F77(ifort ifc pgf77 f77 gfortran g77)
+AC_PROG_F77(gfortran ifort ifc pgf77 f77 g77)
 AC_F77_LIBRARY_LDFLAGS
 AC_SUBST(F77LIBS,${FLIBS})
 echo "debug: found FLIBS: ${FLIBS}"
@@ -121,8 +121,8 @@ dnl set fortran compiler specials
 AC_MSG_CHECKING(for a supported compiler type)
 
 if test "$G77" = "yes"; then
-   AC_MSG_RESULT(no)
-   AC_MSG_ERROR([[GNU Fortran g77 will not work (lack of VAX extensions)]])
+   AC_MSG_RESULT(yes)
+   AC_MSG_WARN([[support of GNU gfortran is new (not much tested)]])
 fi
 
 dnl check for fortran compatibility libs
@@ -131,44 +131,41 @@ AC_CHECK_LIB(g2c,fseek_)
 
 dnl if $F77 is already defined we should strip a possible path
 F77bn=`basename $F77`
-
+wantgnu=false
+wantabsoft=false
+wantifc=false
+wantportland=false
 case "$F77bn" in
   "ifc")        # intel compiler
       AC_MSG_RESULT(found Intel ifc)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
-      AC_SUBST([FFLAGS],"-132")   # -vms
+      AC_SUBST([FFLAGS],"-DINTEL -132")   # -vms
       libphasename=libphaseifc
       libphaselinkname=lphaseifc
-      wantifc=true
-      wantabsoft=false
-      wantportland=false;;
+      wantifc=true;;
   "ifort")        # intel compiler
       AC_MSG_RESULT(found Intel ifort)
       AC_DEFINE(HAVE_INTEL_F77,"yes","Intel f77 compiler")
       if test "$machine" = "x86_64"; then   
-      AC_SUBST([FFLAGS],"-nogen-interfaces -threads -auto -noalign -132")  # opti. fails on 64 bit -noalign ??
+      AC_SUBST([FFLAGS],"-DINTEL -nogen-interfaces -threads -auto -noalign -132")  # opti. fails on 64 bit -noalign ??
 dnl UF cforlib="-lintlc"
 dnl UF to be modified and tested 
          AC_CHECK_LIB(intlc,put_any_routine_from_intlc)
       else
-         AC_SUBST([FFLAGS],"-threads -auto -noalign -132") #  -noalign ?? -auto required for threads
+         AC_SUBST([FFLAGS],"-DINTEL -threads -auto -noalign -132") #  -noalign ?? -auto required for threads
       fi	 
       libphasename=libphaseifc
       libphaselinkname=lphaseifc
-      wantifc=true
-      wantabsoft=false
-      wantportland=false;;
+      wantifc=true;;
   "pgf77")        # portland compiler
       AC_MSG_RESULT(found Portland pgf77)
       AC_DEFINE(HAVE_PORTLAND_F77,"yes","Portland f77 compiler")
-      AC_SUBST([FFLAGS],"-w")
+      AC_SUBST([FFLAGS],"-DPORTLAND -w")
 
 ## FFLAGS -silent: no warnings ??
 ##        -w     : no warnings
       libphasename=libphaseportland
       libphaselinkname=lphaseportland
-      wantifc=false
-      wantabsoft=false
       wantportland=true;;
   "f77")
       # assume absoft compiler as default
@@ -176,8 +173,6 @@ dnl UF to be modified and tested
       AC_DEFINE(HAVE_ABSOFT_F77,"yes","Absoft f77 compiler")
       libphasename=libphaseabsoft
       libphaselinkname=lphaseabsoft
-      wantifc=false
-      wantportland=false
       wantabsoft=true
       AC_SUBST([FFLAGS],"-DABSOFT -f -B108 -W -s -N3 -N51 -N22 -N33");;
 
@@ -196,7 +191,16 @@ dnl UF to be modified and tested
 ##	-m0 give more error messages
 ##	-N22 append underscore to common block names (wichtig wegen pawc)
 ##      -N33 pack structures (kein alignment) 
+   "gfortran")	
+      AC_MSG_RESULT(found gfortran)
+      AC_DEFINE(HAVE_GFORTRAN_F77,"yes","gfortran f77 compiler")
+##      AC_SUBST([FFLAGS],"-DGNU --std=gnu")
+      AC_SUBST([FFLAGS],"-DGNU --std=legacy")
+##    --std=gnu or --std=legacy allows real numbers as index 
 
+      libphasename=libphasegnu
+      libphaselinkname=lphasegnu
+      wantgnu=true;;
    *)
       AC_MSG_ERROR([Your Fortran compiler $F77bn can not be used to built PHASE]);;
 esac
@@ -205,7 +209,8 @@ cforlib=""
 AC_SUBST([CFORLIB],${cforlib})
 AM_CONDITIONAL([WANT_IFC],      [test x"$wantifc"      = xtrue])  
 AM_CONDITIONAL([WANT_ABSOFT],   [test x"$wantabsoft"   = xtrue])
-AM_CONDITIONAL([WANT_PORTLAND], [test x"$wantportland" = xtrue])  
+AM_CONDITIONAL([WANT_PORTLAND], [test x"$wantportland" = xtrue]) 
+AM_CONDITIONAL([WANT_GNU],      [test x"$wantgnu"      = xtrue])  
 dnl end fortran specials
 
 dnl ***************** PO SOURCE MAX GRIDSIZE ***********

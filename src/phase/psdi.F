@@ -1,6 +1,6 @@
 c$$$ File      : phase_source.F
 c$$$ Date      : <19 Nov 07 09:34:34 flechsig> 
-c$$$ Time-stamp: <02 Apr 15 16:16:34 flechsig> 
+c$$$ Time-stamp: <12 Aug 15 10:06:57 flechsig> 
 c$$$ Author    : Johannes Bahrdt
 c$$$ Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
@@ -55,21 +55,20 @@ c
 c**************************************************************
 c UF 25.11.14 add isrctype = 1 new gauss source
 c             this routine is more or less obsolete could be removed/replaced
-
-
-c	implicit real*8(a-h,o-z)
-	integer lostwl, blp, isrctype
-
-cc	include 'phase_struct.for'
-#include 'phase_struct.F'
 c**************************************************
 
-	record /constants/ cs
-	record /geometryst/ g
-	record /rayst/ ra 
-	record /source_results/ sr 
-	record /control_flags/ ifl
-	record /apertures/ apr
+        implicit none
+
+#include <../phase/phase_struct.F>
+
+        integer lostwl, blp, isrctype
+
+	TYPE(constants)      cs
+	TYPE(geometryst)     g
+	TYPE(rayst)          ra 
+	TYPE(source_results) sr 
+	TYPE(control_flags)  ifl
+	TYPE(apertures)      apr
 
 #ifdef DEBUG1
 	write(*,*),'DEBUG1: psdi called'
@@ -81,17 +80,17 @@ c	write(*,*) 'UF psdi: source type:',src.isrctype
 
 c---------------- set values to zero by default
 
-	sr.dens=0.d0
-	sr.densy=0.d0
-	sr.densz=0.d0
-	sr.eya=0.d0
-	sr.eza=0.d0
-	sr.eyp=0.d0
-	sr.ezp=0.d0
-	sr.densyre=0.d0
-	sr.densyim=0.d0
-	sr.denszre=0.d0
-	sr.denszim=0.d0
+	sr%dens=0.d0
+	sr%densy=0.d0
+	sr%densz=0.d0
+	sr%eya=0.d0
+	sr%eza=0.d0
+	sr%eyp=0.d0
+	sr%ezp=0.d0
+	sr%densyre=0.d0
+	sr%densyim=0.d0
+	sr%denszre=0.d0
+	sr%denszim=0.d0
 
 c------------------------------------------------------
 c	die folgenden drei Abfragen nach den Aperturen
@@ -100,12 +99,12 @@ c------------------------------------------------------
 
 c---------------- Aperture in source plane ------------
 c#ifdef XXX
-	if((dsqrt(ra.rf.zp*ra.rf.zp+ra.rf.yp*ra.rf.yp).
-     &       lt.apr.rpin).and.
-     &       ((ra.rf.yp.gt.apr.srcymin).and.
-     &       (ra.rf.yp.lt.apr.srcymax)).and.
-     &       ((ra.rf.zp.gt.apr.srczmin).and.
-     &       (ra.rf.zp.lt.apr.srczmax)))then
+	if((dsqrt(ra%rf%zp*ra%rf%zp+ra%rf%yp*ra%rf%yp).
+     &       lt.apr%rpin).and.
+     &       ((ra%rf%yp.gt.apr%srcymin).and.
+     &       (ra%rf%yp.lt.apr%srcymax)).and.
+     &       ((ra%rf%zp.gt.apr%srczmin).and.
+     &       (ra%rf%zp.lt.apr%srczmax)))then
 c#endif          
            if(isrctype.eq.1)call src4(cs,g,ra,sr,ifl,lostwl,blp)
            if(isrctype.eq.4)call src4(cs,g,ra,sr,ifl,lostwl,blp)

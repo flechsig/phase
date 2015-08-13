@@ -29,12 +29,12 @@ c-------------------------------------------------------------
      &  xlc,ypc1,zpc1,dypc,dzpc,imodus,iord)
 c-------------------------------------------------------------
 	implicit real*8(a-h,o-z)
-	structure/geometryst/
+	TYPE geometryst
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
            integer idefl
-        end structure
-        record /geometryst/g
+        end TYPE
+        TYPE(geometryst) g
         dimension   wc(0:7,0:7,0:7,0:7),
      &              xlc(0:7,0:7,0:7,0:7),
      &              ypc1(0:7,0:7,0:7,0:7),
@@ -42,7 +42,7 @@ c-------------------------------------------------------------
      &              dypc(0:7,0:7,0:7,0:7),
      &              dzpc(0:7,0:7,0:7,0:7)
 
-        drift=g.r+g.rp
+        drift=g%r+g%rp
         do n1=0,iord
          do n2=0,iord-n1
           do n3=0,iord-n1-n2

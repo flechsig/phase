@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/elli_8.F
 c$$$ Date      : <08 Aug 11 12:08:09 flechsig> 
-c$$$ Time-stamp: <02 Sep 14 11:55:29 flechsig> 
+c$$$ Time-stamp: <11 Aug 15 15:54:39 flechsig> 
 
 c$$$
 c$$$ $Source$ 
@@ -85,7 +85,8 @@ c     get ellipse parameters
       cx1=-a**2*cd*sd+b**2*cd*sd
       dx0=a**2*cd**2+b**2*sd**2
 
-      type*,ax0,ax1,ax2,bx0,cx0,cx1,dx0
+c UF     type*,ax0,ax1,ax2,bx0,cx0,cx1,dx0
+      write(*,*),ax0,ax1,ax2,bx0,cx0,cx1,dx0
       a1(0.0,0.0)=(dsqrt(ax0)*bx0+cx0)/dx0
       a1(0.0,1.0)=0.0
       a1(0.0,2.0)=(dsqrt(ax0)*az2*bx0)/(2.0*ax0*dx0)

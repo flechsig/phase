@@ -91,19 +91,19 @@ c---------------------------------------------------------------------
 
         implicit real*8(a-h,o-z)
 c        integer elindex
-#include '../phase/phase_struct.F'
-        structure/pathlength/
+#include <../phase/phase_struct.F>
+        TYPE pathlength
             real*8 xlen1c(0:7,0:7,0:7,0:7),
      &             xlen2c(0:7,0:7,0:7,0:7)
-        end structure
+        end TYPE
 c       structure/geometryst/
 c         real*8 sina,cosa,sinb,cosb,
 c     &      r,rp,xdens(0:4),xlam
 c         integer idefl
 c       end structure
-        record /geometryst/ g
-        record /mirrortype/ am
-        record /pathlength/xlm
+        TYPE(geometryst) g
+        TYPE(mirrortype) am
+        TYPE(pathlength) xlm
 c       dimension a(0:8,0:8)              ! mirror
         dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),
@@ -198,14 +198,14 @@ c         write(6,*)'=============================== '
         if(idrift.eq.0)then
 
         if(imodus.eq.2)then
-          g.xdens(1)=-g.xdens(1)
-          g.xdens(3)=-g.xdens(3)
+          g%xdens(1)=-g%xdens(1)
+          g%xdens(3)=-g%xdens(3)
           call transponiere_8(am,g)
         endif
 
-        xdefl=dflotj(g.idefl)
-        call q0_q1_q2_8(am.a,g.sina,g.sinb,g.cosa,
-     &       g.cosb,g.r,g.rp,g.xdens,g.xlam,xdefl,
+        xdefl=dble(g%idefl)
+        call q0_q1_q2_8(am%a,g%sina,g%sinb,g%cosa,
+     &       g%cosb,g%r,g%rp,g%xdens,g%xlam,xdefl,
      &       q0_8,q1_8,q2_8)
 
 c------------- get optical path length for phase factor
@@ -285,7 +285,7 @@ c#ifdef DEBUG
 c        write(*,*)'debug: fgmapidp_8: back from subd345a'
 c#endif
 
-c        write(6,*)'================ am.a(0,0)',am.a(0,0)
+c        write(6,*)'================ am%a(0,0)',am%a(0,0)
 c        write(6,*)'================ q0_8(1,0,0,0,0,0)',q0_8(1,0,0,0,0,0)
 c        write(6,*)'================ dq0w_8(0,0,0,0,0,0)',dq0w_8(0,0,0,0,0,0)
 c        write(6,*)'================ dq0w(0,0,0,0,0,0)',dq0w(0,0,0,0,0,0)
@@ -297,7 +297,7 @@ c        write(6,*)'================ ypc(0,0,0,0) ',ypc(0,0,0,0)
 c------------- set up eqs. 27 & 28
 c       output: eq(27)(w,l,y,z,dy,dz) & eq(28)(w,l,y,z,dy,dz)
 c
-        call get_dydz(am.a,g,eq27,eq28,iord)
+        call get_dydz(am%a,g,eq27,eq28,iord)
 
 c------------- get Taylor expansion of w and l
 c       solve set of linear equations
@@ -319,7 +319,7 @@ c       input:  wc(y,z,dy,dz),xlc(y,z,dy,dz),
 c               ypc1(y,z,dy,dz),zpc2(y,z,dy,dz)
 c       output: dypc(y,z,dy,dz) & dzpc(y,z,dy,dz)
 c
-        call get_dypdzp(am.a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord) 
+        call get_dypdzp(am%a,g,wc,xlc,ypc1,zpc1,dypc,dzpc,iord) 
 
 c------ hier ist Berechnung für Ray Tracing zu Ende
 c UF May 1 2015 ich will pathlength auch fuer Ray Tracing
@@ -351,9 +351,9 @@ c
         call replace_wl_in_ypzp(opl4,opl4,wc,xlc,
      &                          opl,opl,1,iord) 
         call replace_wl_in_ypzp(xloc1_4,xloc1_4,wc,xlc,
-     &                          xlm.xlen1c,xlm.xlen1c,1,iord)
+     &                          xlm%xlen1c,xlm%xlen1c,1,iord)
         call replace_wl_in_ypzp(xloc2_4,xloc2_4,wc,xlc,
-     &                          xlm.xlen2c,xlm.xlen2c,1,iord)
+     &                          xlm%xlen2c,xlm%xlen2c,1,iord)
 	
 c------------- get partial derivatives in variables (w,l,y,z)
         call replace_6v4v(dfdw6,ypc,zpc,dfdw4,iord)
@@ -377,9 +377,9 @@ c------------- get partial derivatives in variables (y,z,dy,dz)
      &                          dfdll,dfdll,1,iord)
 
         if(iplmode.eq.1)then
-          opl(0,0,0,0)=opl(0,0,0,0)-g.r-g.rp
-          xlm.xlen1c(0,0,0,0)=xlm.xlen1c(0,0,0,0)-g.r
-          xlm.xlen2c(0,0,0,0)=xlm.xlen2c(0,0,0,0)-g.rp
+          opl(0,0,0,0)=opl(0,0,0,0)-g%r-g%rp
+          xlm%xlen1c(0,0,0,0)=xlm%xlen1c(0,0,0,0)-g%r
+          xlm%xlen2c(0,0,0,0)=xlm%xlen2c(0,0,0,0)-g%rp
         endif
 
 c-------- get further partial derivatives
@@ -402,30 +402,30 @@ c------------------------------------------------------------
          do j=0,iord-i
           do k=0,iord-i-j
            do l=0,iord-i-j-k
-            xlm.xlen1c(i,j,k,l)=0.d0
-            xlm.xlen2c(i,j,k,l)=0.d0
+            xlm%xlen1c(i,j,k,l)=0.d0
+            xlm%xlen2c(i,j,k,l)=0.d0
            enddo
           enddo
          enddo
         enddo
 
-        cc0=g.r+g.rp
-        cc1=dsqrt((g.r+g.rp)**2+((g.r+g.rp)*dypc(0,0,1,0))**2)
-        cc2=dsqrt((g.r+g.rp)**2+((g.r+g.rp)*dzpc(0,0,0,1))**2)
-        cc3=dsqrt((g.r+g.rp)**2+
-     &     ((g.r+g.rp)*dypc(0,0,1,0))**2+
-     &     ((g.r+g.rp)*dypc(0,0,1,0))**2)
+        cc0=g%r+g%rp
+        cc1=dsqrt((g%r+g%rp)**2+((g%r+g%rp)*dypc(0,0,1,0))**2)
+        cc2=dsqrt((g%r+g%rp)**2+((g%r+g%rp)*dzpc(0,0,0,1))**2)
+        cc3=dsqrt((g%r+g%rp)**2+
+     &     ((g%r+g%rp)*dypc(0,0,1,0))**2+
+     &     ((g%r+g%rp)*dypc(0,0,1,0))**2)
 
         do i=0,iord
          do j=0,iord-i
-            xlm.xlen1c(i,j,0,0)=cc0/2.d0
-            xlm.xlen2c(i,j,0,0)=cc0/2.d0
-            xlm.xlen1c(i,j,1,0)=cc1/2.d0
-            xlm.xlen2c(i,j,1,0)=cc1/2.d0
-            xlm.xlen1c(i,j,0,1)=cc2/2.d0
-            xlm.xlen2c(i,j,0,1)=cc2/2.d0
-            xlm.xlen1c(i,j,1,1)=cc3/2.d0
-            xlm.xlen2c(i,j,1,1)=cc3/2.d0
+            xlm%xlen1c(i,j,0,0)=cc0/2.d0
+            xlm%xlen2c(i,j,0,0)=cc0/2.d0
+            xlm%xlen1c(i,j,1,0)=cc1/2.d0
+            xlm%xlen2c(i,j,1,0)=cc1/2.d0
+            xlm%xlen1c(i,j,0,1)=cc2/2.d0
+            xlm%xlen2c(i,j,0,1)=cc2/2.d0
+            xlm%xlen1c(i,j,1,1)=cc3/2.d0
+            xlm%xlen2c(i,j,1,1)=cc3/2.d0
          enddo
         enddo
 
@@ -439,8 +439,8 @@ c#ifdef DEBUG
 c          write(*,*)'fgmapidp: make map for image to source iord=',iord
 c#endif
           call transponiere_8(am,g)    ! bild zur quelle
-          g.xdens(1)=-g.xdens(1)
-          g.xdens(3)=-g.xdens(3)
+          g%xdens(1)=-g%xdens(1)
+          g%xdens(3)=-g%xdens(3)
           do n1=0,iord
            do n2=0,iord-n1
             do n3=0,iord-n1-n2
@@ -467,10 +467,10 @@ c#endif
      &                         dfdwl(n1,n2,n3,n4)
               dfdll(n1,n2,n3,n4)=((-1)**(n2+n3))*
      &                         dfdll(n1,n2,n3,n4)
-              xlm.xlen1c(n1,n2,n3,n4)=((-1)**(n2+n3))*
-     &                         xlm.xlen1c(n1,n2,n3,n4)
-              xlm.xlen2c(n1,n2,n3,n4)=((-1)**(n2+n3))*
-     &                         xlm.xlen2c(n1,n2,n3,n4)
+              xlm%xlen1c(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         xlm%xlen1c(n1,n2,n3,n4)
+              xlm%xlen2c(n1,n2,n3,n4)=((-1)**(n2+n3))*
+     &                         xlm%xlen2c(n1,n2,n3,n4)
              enddo
             enddo
            enddo

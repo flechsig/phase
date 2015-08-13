@@ -29,6 +29,8 @@ c   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>.
 c
 c ******************************************************************************
 
+c UF Aug 2015: why do we have a real number as array index?
+
       subroutine misali3_8(a,anew,drw)
       implicit real*8(a-h,o-z)
       dimension a(0:8,0:8),anew(0:8,0:8)

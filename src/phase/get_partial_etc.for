@@ -211,12 +211,12 @@ c--------------------------------------------------------
 
         implicit real*8(a-h,o-z)
 
-        structure/geometryst/
+        TYPE geometryst
           real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
           integer idefl
-        end structure
-        record /geometryst/ g
+        end TYPE
+        TYPE (geometryst) g
 
         dimension a(0:8,0:8)
 
@@ -229,7 +229,7 @@ c--------------------------------------------------------
         dimension eq28dn(0:7,0:7,0:7,0:7,0:7,0:7)
         dimension eq28dni(0:7,0:7,0:7,0:7,0:7,0:7)
 
-        xdefl=dflotj(g.idefl)
+        xdefl=dble(g%idefl)
         
         do i=0,iord
         do j=0,iord-i
@@ -252,22 +252,22 @@ c------- eq27
 c------- eq27 nominator
         do m=0,iord
         do n=0,iord-m
-          eq27n(0,0,0,0,m,n)=-xdefl*g.sina*a(m,n)
+          eq27n(0,0,0,0,m,n)=-xdefl*g%sina*a(m,n)
         enddo
         enddo
 
-        eq27n(0,0,0,0,1,0)=eq27n(0,0,0,0,1,0)+xdefl*g.cosa
+        eq27n(0,0,0,0,1,0)=eq27n(0,0,0,0,1,0)+xdefl*g%cosa
         eq27n(1,0,0,0,0,0)=eq27n(1,0,0,0,0,0)-1.d0
        
 c------- eq27 denominator
         do m=0,iord
         do n=0,iord-m
-          eq27dn(0,0,0,0,m,n)=-g.cosa*a(m,n)
+          eq27dn(0,0,0,0,m,n)=-g%cosa*a(m,n)
         enddo
         enddo
 
-        eq27dn(0,0,0,0,0,0)=eq27dn(0,0,0,0,0,0)+g.r
-        eq27dn(0,0,0,0,1,0)=eq27dn(0,0,0,0,1,0)-g.sina
+        eq27dn(0,0,0,0,0,0)=eq27dn(0,0,0,0,0,0)+g%r
+        eq27dn(0,0,0,0,1,0)=eq27dn(0,0,0,0,1,0)-g%sina
        
 c-------- eq27
         call Tay_inv_6(eq27dn,eq27dni,iord)
@@ -282,12 +282,12 @@ c------- eq28 nominator
 c------- eq28 denominator
         do m=0,iord
         do n=0,iord-m
-          eq28dn(0,0,0,0,m,n)=-g.cosa*a(m,n)
+          eq28dn(0,0,0,0,m,n)=-g%cosa*a(m,n)
         enddo
         enddo
 
-        eq28dn(0,0,0,0,0,0)=eq28dn(0,0,0,0,0,0)+g.r
-        eq28dn(0,0,0,0,1,0)=eq28dn(0,0,0,0,1,0)-g.sina
+        eq28dn(0,0,0,0,0,0)=eq28dn(0,0,0,0,0,0)+g%r
+        eq28dn(0,0,0,0,1,0)=eq28dn(0,0,0,0,1,0)-g%sina
 
 c-------- eq28
         call Tay_inv_6(eq28dn,eq28dni,iord)
@@ -318,12 +318,12 @@ c--------------------------------------------------------
 
         implicit real*8(a-h,o-z)
 
-        structure/geometryst/
+        TYPE geometryst
           real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
           integer idefl
-        end structure
-        record /geometryst/ g
+        end TYPE
+        TYPE (geometryst) g
 
         dimension a(0:8,0:8)
         dimension a1(0:7,0:7,0:7,0:7)
@@ -355,7 +355,7 @@ c
 c       2)       then, evaluate the quotient getting dypc and dzpc
 c
 c-----------------------------------------------------------------
-        xdefl=dflotj(g.idefl)
+        xdefl=dble(g%idefl)
          
         do i=0,iord
         do j=0,iord-i
@@ -376,8 +376,8 @@ c------- eq33 nominator
         do j=0,iord-i
         do k=0,iord-i-j
         do l=0,iord-i-j-k
-          eq33n(i,j,k,l)=-xdefl*a1(i,j,k,l)*g.sinb
-     &         +xdefl*wc(i,j,k,l)*g.cosb+ypc1(i,j,k,l)
+          eq33n(i,j,k,l)=-xdefl*a1(i,j,k,l)*g%sinb
+     &         +xdefl*wc(i,j,k,l)*g%cosb+ypc1(i,j,k,l)
         enddo
         enddo
         enddo
@@ -388,14 +388,14 @@ c------- eq33 denominator
         do j=0,iord-i
         do k=0,iord-i-j
         do l=0,iord-i-j-k
-          eq33dn(i,j,k,l)=-a1(i,j,k,l)*g.cosb
-     &         -wc(i,j,k,l)*g.sinb
+          eq33dn(i,j,k,l)=-a1(i,j,k,l)*g%cosb
+     &         -wc(i,j,k,l)*g%sinb
         enddo
         enddo
         enddo
         enddo
 
-        eq33dn(0,0,0,0)=eq33dn(0,0,0,0)+g.rp
+        eq33dn(0,0,0,0)=eq33dn(0,0,0,0)+g%rp
        
 c-------- eq33
         call Tay_inv_4(eq33dn,eq33dni,iord)
@@ -418,14 +418,14 @@ c------- eq34 denominator
         do j=0,iord-i
         do k=0,iord-i-j
         do l=0,iord-i-j-k
-          eq34dn(i,j,k,l)=-wc(i,j,k,l)*g.sinb
-     &                    -a1(i,j,k,l)*g.cosb
+          eq34dn(i,j,k,l)=-wc(i,j,k,l)*g%sinb
+     &                    -a1(i,j,k,l)*g%cosb
         enddo
         enddo
         enddo
         enddo
 
-        eq34dn(0,0,0,0)=eq34dn(0,0,0,0)+g.rp
+        eq34dn(0,0,0,0)=eq34dn(0,0,0,0)+g%rp
        
 c-------- eq34
         call Tay_inv_4(eq34dn,eq34dni,iord)

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/spa_check.F
 c$$$ Date      : <01 Apr 14 09:29:33 flechsig> 
-c$$$ Time-stamp: <16 Sep 14 10:01:42 flechsig> 
+c$$$ Time-stamp: <12 Aug 15 14:22:57 flechsig> 
 c$$$
 c$$$ $Source$ 
 c$$$ $Date$
@@ -83,7 +83,8 @@ c----------------------------------------------------------------------
       
       complex*16 ez(1024,1024),ey(1024,1024),xi
       real*8 small1,small2,small3
-      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), zim(1024,1024)
+      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), 
+     &     zim(1024,1024)
 
       pi=4.*atan(1.)
       
@@ -97,7 +98,7 @@ c----------------------------------------------------------------------
       write(6,*)' '
 
       write(6,*)' read file: gauss_beam.par'
-      open(unit=10,name='gauss_beam.par',type='old',readonly)
+      open(unit=10,file='gauss_beam.par',status='old',action='read')
       read(10,*)xlam		! wavelength in nm
       xlam=xlam*1.e-9           ! units in m
       xk=(2.*pi)/xlam           ! wave vector
@@ -105,17 +106,17 @@ c----------------------------------------------------------------------
       w0=w0/1000.		! units in m
       xr=(pi*w0**2)/xlam	! rayleigh length
       
-      type*,' rayleigh range / m = ',xr
+      write(*,*)' rayleigh range / m = ',xr
       
       read(10,*)ianzy,ianzz	! number of data points
       read(10,*)ymin,ymax	! vertical dimension
       ymin=ymin/1000.
       ymax=ymax/1000.
-      dy=(ymax-ymin)/floatj(ianzy-1)
+      dy=(ymax-ymin)/dble(ianzy-1)
       read(10,*)zmin,zmax	! horizontal dimension
       zmin=zmin/1000.
       zmax=zmax/1000.
-      dz=(zmax-zmin)/floatj(ianzz-1)
+      dz=(zmax-zmin)/dble(ianzz-1)
       read(10,*)offy,offz
       offy=offy/1000.
       offz=offz/1000.
@@ -123,7 +124,7 @@ c----------------------------------------------------------------------
       deltax=deltax/1000.
       w=w0*sqrt(1.+(deltax/xr)**2)
       
-      type*,' waist radius   / m = ',w
+      write(*,*)' waist radius   / m = ',w
       
       theta=atan(deltax/xr)	! Gouy phase
       if(abs(deltax).gt.small3)then
@@ -132,15 +133,15 @@ c----------------------------------------------------------------------
          R=0.d0
       endif
       
-      type*,' phase radius   / m = ',R
+      write(*,*)' phase radius   / m = ',R
       
       close(10)
       
       do i=1,ianzz
-         z(i)=zmin+floatj(i-1)*dz
+         z(i)=zmin+dble(i-1)*dz
       enddo	
       do j=1,ianzy
-         y(j)=ymin+floatj(j-1)*dy
+         y(j)=ymin+dble(j-1)*dy
       enddo	
       
       xi=csqrt((-1.,0.))
@@ -150,7 +151,8 @@ c----------------------------------------------------------------------
             arg=-((z(i)-offz)**2+(y(j)-offy)**2)/w**2
             if(arg.gt.small1)then
                if(abs(R).gt.small3)then
-                  fact=cdexp((xi*xk*((z(i)-offz)**2+(y(j)-offy)**2))/(2.*R))
+                  fact=cdexp((xi*xk*((z(i)-offz)**2+(y(j)-offy)**2))/
+     &                 (2.*R))
                else
                   fact=1.d0
                endif
@@ -168,7 +170,7 @@ c UF the units so far are in m
 
       pow=0.d0
       write(6,*)' write file: ez2_gb.dat'
-      open(unit=10,name='ez2_gb.dat')
+      open(unit=10,file='ez2_gb.dat')
 
       write(10,*)ianzz,ianzy
       do j=1,ianzy
@@ -183,13 +185,14 @@ c UF the units so far are in m
       pow=pow*(z(2)-z(1))*(y(2)-y(1))                    ! total power * binsize
 c UF  pow=pow/377                                        ! then the normalized power is 1 W
       pow=2.0*pow/377.                                   ! fac comes from 2.0 Ey and Ez
-      type*,' integral power before norm. (W) = ',pow                 ! UF sum 2*amp^2
-      type*,' binsize (m^2)                   = ',(z(2)-z(1))*(y(2)-y(1))
+      write(*,*)' integral power before norm. (W) = ',pow                 ! UF sum 2*amp^2
+      write(*,*)' binsize (m^2)                   = ',
+     &     (z(2)-z(1))*(y(2)-y(1))
       spow=dsqrt(pow)
 
 
       write(6,*)' write file: eph_gb.dat'
-      open(unit=10,name='eph_gb.dat')
+      open(unit=10,file='eph_gb.dat')
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
@@ -204,15 +207,15 @@ c UF  pow=pow/377                                        ! then the normalized p
       enddo
       close(10)
       
-c      type*,pow
+c      write(*,*)pow
       
 cUF      pow=pow*(z(2)-z(1))*(y(2)-y(1))
-cUF      type*,' binsize: dydz (m^2)         = ',pow               ! UF 
+cUF      write(*,*)' binsize: dydz (m^2)         = ',pow               ! UF 
 c UF Sep 14 correct the unit of the field in the wave file to V/mm
 c UF i.e. add the factor 1e-3 to the field
       
       write(6,*)' write file: eyre_gb.s4a'
-      open(unit=10,name='eyre_gb.s4a')
+      open(unit=10,file='eyre_gb.s4a')
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
@@ -222,7 +225,7 @@ c UF i.e. add the factor 1e-3 to the field
       close(10)
       
       write(6,*)' write file: eyim_gb.s4b'
-      open(unit=10,name='eyim_gb.s4b')
+      open(unit=10,file='eyim_gb.s4b')
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
@@ -232,7 +235,7 @@ c UF i.e. add the factor 1e-3 to the field
       close(10)
       
       write(6,*)' write file: ezre_gb.s4c'
-      open(unit=10,name='ezre_gb.s4c')
+      open(unit=10,file='ezre_gb.s4c')
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
@@ -242,7 +245,7 @@ c UF i.e. add the factor 1e-3 to the field
       close(10)
       
       write(6,*)' write file: ezim_gb.s4d'
-      open(unit=10,name='ezim_gb.s4d')
+      open(unit=10,file='ezim_gb.s4d')
       write(10,*)ianzz,ianzy
       do j=1,ianzy
          do i=1,ianzz
@@ -261,7 +264,8 @@ c UF add
          enddo
       enddo
       
-      call write_phase_hdf5(yre, yim, zre, zim, y, z, xlam, 1, ianzy, ianzz, 1024)
+      call write_phase_hdf5(yre, yim, zre, zim, y, z, xlam, 1, 
+     &     ianzy, ianzz, 1024)
 
       write(6,*)' --> done'
       
@@ -328,15 +332,15 @@ c------------------------------
       write(6,*)'a(2,2) = ',a(2,2)  
       write(6,*)'a(4,0) = ',a(4,0)  
       
-      dz_1=(zmax1-zmin1)/floatj(ianzz1-1)
-      dy_1=(ymax1-ymin1)/floatj(ianzy1-1)
+      dz_1=(zmax1-zmin1)/dble(ianzz1-1)
+      dy_1=(ymax1-ymin1)/dble(ianzy1-1)
       
       do i=1,ianzz1
-         z_1(i)=zmin1+floatj(i-1)*dz_1
+         z_1(i)=zmin1+dble(i-1)*dz_1
       enddo
       
       do i=1,ianzy1
-         y_1(i)=ymin1+floatj(i-1)*dy_1
+         y_1(i)=ymin1+dble(i-1)*dy_1
       enddo
       
       write(6,*)'writing surf.dat'
@@ -347,7 +351,8 @@ c------------------------------
             u=0.d0
             do k=0,4
                do l=0,4-k
-                  if(itoroid.eq.1)u=u+a(k,l)*dabs(y_1(i))**k*dabs(z_1(j))**l
+                  if(itoroid.eq.1)u=u+a(k,l)*dabs(y_1(i))**k*
+     &                 dabs(z_1(j))**l
                enddo
             enddo
             write(10,*)z_1(j),y_1(i),u  
@@ -645,7 +650,8 @@ c---------------------------------------------------
       subroutine phadrift_write_output_special
 c---------------------------------------------------
       include 'spa-check.cmn'
-      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), zim(1024,1024), yvec(1024), zvec(1024)
+      real*8 yre(1024,1024), yim(1024,1024), zre(1024,1024), 
+     &     zim(1024,1024), yvec(1024), zvec(1024)
       integer i,j
 
       open(unit=10,file='eyre_1.dat')
@@ -667,7 +673,8 @@ c---------------------------------------------------
             write(11,*)z1(j),y1(i),dimag(ey1(j,i))
             write(12,*)z1(j),y1(i),dreal(ez1(j,i))
             write(13,*)z1(j),y1(i),dimag(ez1(j,i))
-            write(14,*)z1(j),y1(i),dreal(ez1(j,i))**2+dimag(ez1(j,i))**2+
+            write(14,*)z1(j),y1(i),dreal(ez1(j,i))**2+
+     &           dimag(ez1(j,i))**2+
      &           dreal(ey1(j,i))**2+dimag(ey1(j,i))**2
     
          enddo
@@ -692,7 +699,8 @@ c UF add
 
       xlamm= xlam*1e-3
       write(6,*)'!!!!! debug: xlam correct ?????', xlamm
-      call write_phase_hdf5(yre, yim, zre, zim, yvec, zvec, xlamm, 2, ianzy1, ianzz1, 1024)
+      call write_phase_hdf5(yre, yim, zre, zim, yvec, zvec, xlamm, 2, 
+     &     ianzy1, ianzz1, 1024)
 
       return
       end                       ! phadrift_write_output_special
@@ -896,7 +904,8 @@ c-------------------------------------------------------------
                      ystart=-dist*dcos(winkel)+y0(k)*dsin(winkel)
                      zstart=z0(l)      
                      
-                     dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+(zstart-zend)**2)
+                     dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+
+     &                    (zstart-zend)**2)
      &                    -dabs(dist)
                      phase=dist1*cc*pmf                
                      if(irrpmod.eq.0)then
@@ -935,7 +944,8 @@ c------------------------------------------------------------
                   yend=-dist*dcos(winkel)+y1(i)*dsin(winkel)
                   zend=z1(j)
                   
-                  dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+(zstart-zend)**2)
+                  dist1=dsqrt((xstart-xend)**2+(ystart-yend)**2+
+     &                 (zstart-zend)**2)
      &                 -dabs(dist)
                   
                   phase=dist1*cc*pmf
@@ -992,7 +1002,7 @@ c----------------------------------------------------------------------
       write(6,*)' '
 
       write(6,*)' read file: opl.par'
-      open(unit=10,name='opl.par')
+      open(unit=10,file='opl.par')
       read(10,*)xlam
       read(10,*)yi,zi
       read(10,*)yp,zp
@@ -1034,8 +1044,8 @@ c----------------------------------------------------------------------
       xk=(2.d0*pi)/xlam
       write(6,*)' xk ',xk
       
-      dw=(wmax-wmin)/dflotj(ianzw-1)
-      dl=(xlmax-xlmin)/dflotj(ianzl-1)
+      dw=(wmax-wmin)/dble(ianzw-1)
+      dl=(xlmax-xlmin)/dble(ianzl-1)
       
       dd=5000.
       xxi=(r1-dd)*cosa+xdefl*yi*sina
@@ -1046,12 +1056,12 @@ c----------------------------------------------------------------------
       write(6,*)xxi,yyi,xxp,yyp      
       
       do i=1,ianzw
-         w(i)=wmin+dflotj(i-1)*dw
+         w(i)=wmin+dble(i-1)*dw
          
          do j=1,ianzl
-            xl(j)=xlmin+dflotj(j-1)*dl
+            xl(j)=xlmin+dble(j-1)*dl
             
-c     type*,w(i),xl(j)
+c     write(*,*)w(i),xl(j)
             
             ww(0)=1.d0
             ww(1)=w(i)
@@ -1074,7 +1084,7 @@ c     type*,w(i),xl(j)
                enddo
             enddo
             
-c     type*,w(i),xl(j),u
+c     write(*,*)w(i),xl(j),u
             
             opl1=dsqrt(    (  dabs(xxi-u)      )**2  +
      &           (  dabs(yyi-w(i))   )**2  +
@@ -1098,7 +1108,7 @@ c     referenz von phase
       enddo
       
       write(6,*)' writing pathlength to opl.dat'
-      open(unit=10,name='opl.dat',type='unknown')
+      open(unit=10,file='opl.dat',status='unknown')
       write(10,*)ianzw,ianzl
       do j=1,ianzl
          do i=1,ianzw
@@ -1108,7 +1118,7 @@ c     referenz von phase
       close(10)
       
       write(6,*)' writing pathlength to opl.cos'
-      open(unit=10,name='opl.cos',type='unknown')
+      open(unit=10,file='opl.cos',status='unknown')
       write(10,*)ianzw,ianzl
       do j=1,ianzl
          do i=1,ianzw
@@ -1123,7 +1133,7 @@ c     referenz von phase
       ssumr=0.
       
       write(6,*)' writing pathlength to opl_1d.cos'
-      open(unit=10,name='opl_1d.cos',type='unknown')
+      open(unit=10,file='opl_1d.cos',status='unknown')
       j0=(ianzl+1)/2
       do i=1,ianzw
          write(10,*)w(i),cos(xk*(opl(i,j0)-r1-r2+dd)),
@@ -1137,7 +1147,7 @@ c     referenz von phase
       
       write(6,*)' writing pathlength PL(w) @ l/2 to opl_1d.dat '
       
-      open(unit=10,name='opl_1d.dat',type='unknown')
+      open(unit=10,file='opl_1d.dat',status='unknown')
       j0=(ianzl+1)/2
       do i=1,ianzw   
          write(10,*)w(i),xk*(opl(i,j0)-r1-r2+dd),opl_ref(i)
@@ -1145,7 +1155,7 @@ c     referenz von phase
       close(10)
       
       write(6,*)' writing pathlength to opl_1d_ref.cos'
-      open(unit=10,name='opl_1d_ref.cos',type='unknown')
+      open(unit=10,file='opl_1d_ref.cos',status='unknown')
       do i=1,ianzw   
          write(10,*)w(i),cos(opl_ref(i)-r1-r2+dd),
      &        sin(opl_ref(i)-r1-r2+dd)
@@ -1156,10 +1166,10 @@ c     referenz von phase
       ssum=ssum*dw
       csumr=csumr*dw
       ssumr=ssumr*dw
-      type*,' cos-sum ',csum
-      type*,' sin-sum ',ssum
-      type*,' cos-sumr ',csumr
-      type*,' sin-sumr ',ssumr
+      write(*,*)' cos-sum ',csum
+      write(*,*)' sin-sum ',ssum
+      write(*,*)' cos-sumr ',csumr
+      write(*,*)' sin-sumr ',ssumr
       
       return
       end

@@ -1,6 +1,6 @@
 c$$$ File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasefor.for
 c$$$ Date      : <06 Feb 04 08:50:29 flechsig> 
-c$$$ Time-stamp: <01 May 15 11:48:51 flechsig> 
+c$$$ Time-stamp: <12 Aug 15 13:57:32 flechsig> 
 c$$$ Author    : Uwe Flechsig, flechsig@psi.ch
 c$$$
 c$$$ $Source$ 
@@ -92,7 +92,7 @@ c*********************************************************
         if(n.ge.2)then
 	   facult=1.d0
 	   do i=2,n
-	      facult=facult*dflotj(i)
+	      facult=facult*dble(i)
 	   enddo
         endif
 	
@@ -106,17 +106,17 @@ c	initialisieren der Konstanten
 c	U. Flechsig 21.1.97
 c----------------------------------------------------------
 	subroutine initconstants(cs)
+	implicit none
 
-#include '../phase/phase_struct.F'
-
+#include <../phase/phase_struct.F>
 
         complex*16 xm1
-	record /constants/ cs
+	TYPE(constants) cs
 	
 	xm1=-1.
-	cs.pi=4.d0*datan(1.d0)
-        cs.sqrtm1=cdsqrt(xm1)
-        call gamma_func(cs.pi,cs.gam,cs.fs,cs.fc)
+	cs%pi=4.d0*datan(1.d0)
+        cs%sqrtm1=cdsqrt(xm1)
+        call gamma_func(cs%pi,cs%gam,cs%fs,cs%fc)
         
         return
         end
@@ -137,7 +137,7 @@ c--------------------------------------------------------
 c       ganzzhlige Argumente    
         do i=4,igam,3
           j=2*((i-1)/3)+1
-          gam(i)=gam(i-3)*dflotj((j-1)*(j-2))
+          gam(i)=gam(i-3)*dble((j-1)*(j-2))
         enddo
 
 c       2/3-Argumente   
@@ -145,23 +145,23 @@ c       2/3-Argumente
         do i=5,igam+1,3
           j=2*((i+1)/3)-1
           gam(i)=gam(i-3)*
-     &      (dflotj(j-1)+2.d0/3.d0)*
-     &      (dflotj(j-2)+2.d0/3.d0)
+     &      (dble(j-1)+2.d0/3.d0)*
+     &      (dble(j-2)+2.d0/3.d0)
         enddo
 
 c       1/3-Argumente   
         do i=3,igam+2,3
           j=2*(i/3)
           gam(i)=gam(i-3)*
-     &      (dflotj(j-1)+1.d0/3.d0)*
-     &      (dflotj(j-2)+1.d0/3.d0)
+     &      (dble(j-1)+1.d0/3.d0)*
+     &      (dble(j-2)+1.d0/3.d0)
         enddo
 
         do i=0,igam+2
           fs(i)=-((2.d0*gam(i))/(3.d0*facult(i)))*
-     &      dsin(((1.d0-dflotj(i))/6.d0)*pi)
+     &      dsin(((1.d0-dble(i))/6.d0)*pi)
           fc(i)=((2.d0*gam(i))/(3.d0*facult(i)))*
-     &      dcos(((1.d0-dflotj(i))/6.d0)*pi)
+     &      dcos(((1.d0-dble(i))/6.d0)*pi)
 
         enddo
 
@@ -179,12 +179,12 @@ c 2.9.11 umbenannt in _4
 c 4th order routine only
  	implicit real*8(a-h,o-z) 
         integer iord
-       	structure/geometryst/
+       	TYPE geometryst/
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
-        end structure   
-        record /geometryst/ g   
+        end TYPE   
+        TYPE(geometryst) g   
 
         dimension a(0:5,0:5)              ! mirror     
 
@@ -420,20 +420,20 @@ c #include '../phase/phase_struct.F'
 	 real *8 wc,xlc,ypc1,zpc1
 c---------- Typen ---------------------------------------------
        	
-	structure/geometryst/
+	TYPE geometryst/
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
-        end structure 
+        end TYPE 
 	
-        structure/xlenmap4/                 ! Entw. Koeffizienten
+        TYPE xlenmap4)                 ! Entw. Koeffizienten
 	   real*8 xlen1c(0:4,0:4,0:4,0:4), ! der Pfadlaenge
      &  	  xlen2c(0:4,0:4,0:4,0:4)
-	end structure   
+	end TYPE   
 
-  	structure/mirrortype4/	! Entw. Koeffizienten
+  	TYPE mirrortype4/	! Entw. Koeffizienten
 	   real*8 a(0:5,0:5)
-       	end structure 
+       	end TYPE 
 
         dimension wc(0:4,0:4,0:4,0:4),
      &            xlc(0:4,0:4,0:4,0:4),
@@ -451,9 +451,9 @@ c---------- Typen ---------------------------------------------
 
 c--------- Variablen ------------------------------------------   
 
-	record /xlenmap4/ xlm     
-        record /geometryst/ g 
-	record /mirrortype4/ am
+	TYPE(xlenmap4) xlm     
+        TYPE(geometryst) g 
+	TYPE(mirrortype4) am
 
 	integer iord,n1,n2,n3,n4,n5,n6,iplmode,isti  ! ,i,j,k,l
 
@@ -467,12 +467,12 @@ c*****************************************************************
         write(*,*) 'pathlen0: do not subtract r and rp from path length' 
 #endif
 	if(isti.eq.1)then
-	  call lsubb(am.a,g.sinb,g.cosb,g.sina,g.cosa,g.rp,g.r,
-     &               -g.idefl,dql1,dql2)
+	  call lsubb(am.a,g%sinb,g%cosb,g%sina,g%cosa,g%rp,g%r,
+     &               -g%idefl,dql1,dql2)
 	endif
 	if(isti.ne.1)then
-	  call lsubb(am.a,g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,
-     &                g.idefl,dql1,dql2) 
+	  call lsubb(am.a,g%sina,g%cosa,g%sinb,g%cosb,g%r,g%rp,
+     &                g%idefl,dql1,dql2) 
 	endif
 	
         do n1=0,iord
@@ -541,10 +541,10 @@ c----------------------------------
 #ifdef DEBUG
 	write(*,*)'pathlen0: subtract r and rp from path length'
 #endif
-	if(isti.eq.1)call lsubab(am.a,g.sinb,g.cosb,g.sina,g.cosa,
-     &              g.rp,g.r,-g.idefl,dsqrpl1,dsqrpl2)
-	if(isti.ne.1)call lsubab(am.a,g.sina,g.cosa,g.sinb,g.cosb,
-     &              g.r,g.rp,g.idefl,dsqrpl1,dsqrpl2)
+	if(isti.eq.1)call lsubab(am.a,g%sinb,g%cosb,g%sina,g%cosa,
+     &              g%rp,g%r,-g%idefl,dsqrpl1,dsqrpl2)
+	if(isti.ne.1)call lsubab(am.a,g%sina,g%cosa,g%sinb,g%cosb,
+     &              g%r,g%rp,g%idefl,dsqrpl1,dsqrpl2)
 	do n1=0,iord
          do n2=0,iord
 	  do n3=0,iord
@@ -613,7 +613,7 @@ c**************************************************************
         implicit real*8(a-h,o-z)
         integer iord,i,j,k,l
 
-#include '../phase/phase_struct.F'      
+#include <../phase/phase_struct.F>      
 	
 c---------- Typen ---------------------------------------------
 c       	structure/raytype/                 ! ein Phasenraumpunkt
@@ -626,8 +626,8 @@ c     &  	  xlen2c(0:4,0:4,0:4,0:4)
 c	end structure
 c--------- Variablen ------------------------------------------   
 
-	record /ray_i/ rin
-	record /xlenmap/ xlm     
+	TYPE(ray_i) rin
+	TYPE(xlenmap) xlm     
 
        	dimension yi(0:7),zi(0:7),dyi(0:7),dzi(0:7)
        
@@ -638,10 +638,10 @@ c*****************************************************************
 	dyi(0)=1.d0
 	dzi(0)=1.d0
 	do i=1,iord
-	   yi(i)=yi(i-1)*rin.yi
-	   zi(i)=zi(i-1)*rin.zi
-	   dyi(i)=dyi(i-1)*rin.dyi
-	   dzi(i)=dzi(i-1)*rin.dzi
+	   yi(i)=yi(i-1)*rin%yi
+	   zi(i)=zi(i-1)*rin%zi
+	   dyi(i)=dyi(i-1)*rin%dyi
+	   dzi(i)=dzi(i-1)*rin%dzi
 	enddo
 c--------------------------------------------------
         xlength1=0.d0
@@ -650,9 +650,9 @@ c--------------------------------------------------
           do j=0,iord-i
            do k=0,iord-i-j
             do l=0,iord-i-j-k
-	     xlength1=xlength1+xlm.xlen1c(i,j,k,l)*
+	     xlength1=xlength1+xlm%xlen1c(i,j,k,l)*
      &            yi(i)*zi(j)*dyi(k)*dzi(l)
-	     xlength2=xlength2+xlm.xlen2c(i,j,k,l)*
+	     xlength2=xlength2+xlm%xlen2c(i,j,k,l)*
      &            yi(i)*zi(j)*dyi(k)*dzi(l)
 c	     write(*,*)'xx',i,j,k,l,xlength1,xlength2
             enddo
@@ -848,12 +848,12 @@ c       map7 und map8 gehen heraus
 c 	wird von fgmapidp genutzt
 c       4th order only
 c----------------------------------------------------------
-        structure/geometryst/
+        TYPE geometryst
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
-        end structure
-        record /geometryst/ g 
+        end TYPE
+        TYPE(geometryst) g 
 
         dimension a(0:5,0:5)
 
@@ -906,7 +906,7 @@ c----------------------------------------------------------
         dimension dyp2c(0:4,0:4,0:4,0:4,0:4,0:4),
      &            dzp2c(0:4,0:4,0:4,0:4,0:4,0:4)
 
-        drift=g.r+g.rp
+        drift=g%r+g%rp
 	do n1=0,4
 	 do n2=0,4
 	  do n3=0,4
@@ -926,13 +926,13 @@ c----------------------------------------------------------
         ypc1(0,0,0,1)=drift
 		
 	wc(0,1,0,0)=1.d0
-	wc(0,0,0,1)=g.r
+	wc(0,0,0,1)=g%r
 				
 	zpc1(1,0,0,0)=1.d0
 	zpc1(0,0,1,0)=drift
 						
 	xlc(1,0,0,0)=1.d0
-	xlc(0,0,1,0)=g.r
+	xlc(0,0,1,0)=g%r
 								
 	dypc(0,0,0,1)=1.d0
 									
@@ -951,12 +951,12 @@ c       map7 und map8 gehen heraus
 c 	wird von fgmapidp genutzt
 c       4rd order routine only!
 c----------------------------------------------------------
-        structure/geometryst/
+        TYPE geometryst/
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
-        end structure
-        record /geometryst/ g  
+        end TYPE
+        TYPE(geometryst) g  
 
         dimension a(0:5,0:5)
       	dimension   dq1(0:4,0:4,0:4,0:4,0:4,0:4),
@@ -1042,7 +1042,7 @@ c-------------------------------------------------------------------
 c Reduce Rechnungen
 
         call subc(a,
-     &            g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,
+     &            g%sina,g%cosa,g%sinb,g%cosb,g%r,g%rp,g%idefl,
      &            dq1,dq2,dq3,dq4,dq5,dq6)  	!wdfgmapc3   
         call subb(dq2,dsqrq1)      		!wdfgmapb3  
         call suba(dsqrq1,dq3,f2c1) 		!wdfgmapa3 
@@ -1058,7 +1058,7 @@ c--------------- line density ------------------------------------
 c-------- produziere density aus xdens(5) ------------------------      
  
         do n1=0,4
-	   density(n1,0,0,0,0,0)=g.xdens(n1)
+	   density(n1,0,0,0,0,0)=g%xdens(n1)
 	enddo     
 
 c----------- 18.1.2000
@@ -1088,14 +1088,14 @@ c----------- end 18.1.2000
         call suba(density,g2cc,g2c) !wdfgmapa3 
 c-------------------------------------------------------
 
-        call subd1(g.xlam,
+        call subd1(g%xlam,
      &             f2c1,f2c2,f2c3,f2c4,g2c,
      &		   eq1c,eq2c)  			!wdfgmap14
         call subd3(acc,eq1c,eq2c,ypc,zpc)       !wdfgmapd34
         call subd4(acc,eq1c,eq2c,ypc,zpc)
         call subd5(acc,eq1c,eq2c,ypc,zpc)
         call subf(a,
-     &            g.sina,g.cosa,g.sinb,g.cosb,g.r,g.rp,g.idefl,
+     &            g%sina,g%cosa,g%sinb,g%cosb,g%r,g%rp,g%idefl,
      &            dq7,dq8,dq9,dqa,dqb,dqc,dqd,dqe)
         call sube2(dq8,dqk)
         call sube1(dq7,dqk,dyic)
@@ -1130,12 +1130,12 @@ c	werden lokal in reduce_1 umgedreht
 c       4th order routine only
 c********************************************************** 
 	implicit real*8(a-h,o-z)    
-	structure/geometryst/
+	TYPE geometryst
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam  
 	   integer idefl   
-        end structure
-        record /geometryst/ g  
+        end TYPE
+        TYPE(geometryst) g  
 
 	dimension a(0:5,0:5)
     
@@ -1146,16 +1146,16 @@ c**********************************************************
           enddo
         enddo  
 
-	xxx=g.rp
-	g.rp=g.r
-	g.r=xxx
-	g.xlam=-g.xlam
-	xxx=g.cosa
-	g.cosa=g.cosb
-	g.cosb=xxx
-	xxx=g.sina
-	g.sina=-g.sinb
-	g.sinb=-xxx
+	xxx=g%rp
+	g%rp=g%r
+	g%r=xxx
+	g%xlam=-g%xlam
+	xxx=g%cosa
+	g%cosa=g%cosb
+	g%cosb=xxx
+	xxx=g%sina
+	g%sina=-g%sinb
+	g%sinb=-xxx
 	return
         end
 c******* end transponiere  ********************************** 
@@ -1174,32 +1174,32 @@ c	werden lokal in reduce_1 umgedreht
 c
 c********************************************************** 
 	implicit real*8(a-h,o-z)
-#include '../phase/phase_struct.F'
+#include <../phase/phase_struct.F>
 c	structure/geometryst/
 c           real*8 sina,cosa,sinb,cosb,
 c     &            r,rp,xdens(0:4),xlam  
 c	   integer idefl   
 c        end structure
-        record /geometryst/ g  
-        record /mirrortype/ am  
+        TYPE(geometryst) g  
+        TYPE(mirrortype) am  
 c        dimension a(0:5,0:5)    
 
         do i=0,8
           do j=0,8
-              am.a(i,j)=((-1)**(i+j)) * am.a(i,j)
+              am%a(i,j)=((-1)**(i+j)) * am%a(i,j)
           enddo
         enddo  
 
-	xxx=g.rp
-	g.rp=g.r
-	g.r=xxx
-	g.xlam=-g.xlam
-	xxx=g.cosa
-	g.cosa=g.cosb
-	g.cosb=xxx
-	xxx=g.sina
-	g.sina=-g.sinb
-	g.sinb=-xxx
+	xxx=g%rp
+	g%rp=g%r
+	g%r=xxx
+	g%xlam=-g%xlam
+	xxx=g%cosa
+	g%cosa=g%cosb
+	g%cosb=xxx
+	xxx=g%sina
+	g%sina=-g%sinb
+	g%sinb=-xxx
 	return
         end
 c******* end transponiere_8  ********************************** 
@@ -1343,12 +1343,12 @@ c*****************************************************
  	subroutine geometrd(gname, g)  
 c*****************************************************
         implicit real*8(a-h,o-z)
-       	structure/geometryst/
+       	TYPE geometryst
            real*8 sina,cosa,sinb,cosb,
      &            r,rp,xdens(0:4),xlam
 	   integer idefl   
-        end structure
-        record /geometryst/ g   
+        end TYPE
+        TYPE(geometryst) g   
     	character*255  	gname
 c----------------------------------------------------------
         pi= 4.d0*datan(1.d0)
@@ -1357,25 +1357,25 @@ c----------------------------------------------------------
         write(*,*) '***read Geometry data from: ',gname
         read(10,*)alpha
         read(10,*)beta   
-	read(10,*)g.r
-        read(10,*)g.rp    
+	read(10,*)g%r
+        read(10,*)g%rp    
 	do i=0,4
-             read(10,*)g.xdens(i)
+             read(10,*)g%xdens(i)
 	enddo
-        read(10,*)g.xlam
-	read(10,*)g.idefl
+        read(10,*)g%xlam
+	read(10,*)g%idefl
         close(10) 
         goto 668
  667    write(*,*)'geometrd: error open file ', gname
  668    continue
         alpha=alpha*(pi/180.d0)
         beta=beta*(pi/180.d0)
-        g.xlam=g.xlam*1.d-6
+        g%xlam=g%xlam*1.d-6
         
-        g.sina=dsin(alpha)
-        g.cosa=dcos(alpha)
-        g.sinb=dsin(beta)
-        g.cosb=dcos(beta)
+        g%sina=dsin(alpha)
+        g%cosa=dcos(alpha)
+        g%sinb=dsin(beta)
+        g%cosb=dcos(beta)
 
         return
         end
@@ -2005,12 +2005,12 @@ c add epsilon feb 04
 ccc      include 'phase_struct.for'
 c a trick to have the struct only in the ./phase and find it from opti 
 cc        include '../phase/phase_struct.for'
-#include '../phase/phase_struct.F'
+#include <../phase/phase_struct.F>
 
-      record /control_flags/ ifl
-      record /sources/ src
-      record /integration/ xi
-      record /apertures/ apr
+      TYPE(control_flags) ifl
+      TYPE(sources) src
+      TYPE(integration) xi
+      TYPE(apertures) apr
       character*80 dfile
       character*1 dummy
       integer iname,clen1
@@ -2402,21 +2402,21 @@ c copys a SEVEN_ORDER mirror array into a 4th order one
 	subroutine mirror7to4(a7,a4)
         implicit none
 
-	structure/mirrortype4/	! Entw. Koeffizienten
+	TYPE mirrortype4	! Entw. Koeffizienten
 	   real*8 a(0:5,0:5)
-       	end structure
+       	end TYPE
 
-	structure/mirrortype7/	! Entw. Koeffizienten
+	TYPE mirrortype7	! Entw. Koeffizienten
 	   real*8 a(0:8,0:8)
-       	end structure
+       	end TYPE
 
 	integer i, j
-	record /mirrortype4/ a4
-	record /mirrortype7/ a7
+	TYPE (mirrortype4) a4
+	TYPE (mirrortype7) a7
 
 	do i=0,5
 	   do j=0,5
-	      a4.a(i,j)=a7.a(i,j)
+	      a4%a(i,j)=a7%a(i,j)
 	   enddo
 	enddo
 	return
@@ -2427,23 +2427,24 @@ c copys a 4th into SEVEN_ORDER mirror array
 	subroutine mirror4to7(a4,a7)
         implicit none
 
-	structure/mirrortype4/	! Entw. Koeffizienten
+	TYPE mirrortype4	! Entw. Koeffizienten
 	   real*8 a(0:5,0:5)
-       	end structure
+       	end TYPE
 
-	structure/mirrortype7/	! Entw. Koeffizienten
+	TYPE mirrortype7	! Entw. Koeffizienten
 	   real*8 a(0:8,0:8)
-       	end structure
+       	end TYPE
 
 	integer i, j
-	record /mirrortype4/ a4
-	record /mirrortype7/ a7
+	TYPE (mirrortype4) a4
+	TYPE (mirrortype7) a7
 
 	do i=0,5
 	   do j=0,5
-	      a7.a(i,j)=a4.a(i,j)
+	      a7%a(i,j)=a4%a(i,j)
 	   enddo
 	enddo
+
 	return
         end
 

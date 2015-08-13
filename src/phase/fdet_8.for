@@ -38,12 +38,12 @@ c------------------------------------------------------------------
 c------------------------------------------------------------------
 	implicit real*8(a-h,o-z)
 
-	structure/geometryst/
+	TYPE geometryst
 	  real*8 sina,cosa,sinb,cosb,
      &      r,rp,xdens(0:4),xlam
 	  integer idefl
-	end structure
-	record /geometryst/g
+	end TYPE
+	TYPE(geometryst) g
 
        dimension wc(0:7,0:7,0:7,0:7),
      &            xlc(0:7,0:7,0:7,0:7),        
@@ -151,14 +151,14 @@ c	write(*,*)'fdet_8 called'
 
 c---- routine wird nur gerufen wenn imodus = 2 (PO)
        pi_loc=datan(1.d0)*4.d0
-       fact=(dsqrt(dabs(g.cosa))*
-     &        dsqrt(dabs(g.cosb)))/(g.r*g.rp)
+       fact=(dsqrt(dabs(g%cosa))*
+     &        dsqrt(dabs(g%cosb)))/(g%r*g%rp)
 
        fact1=fact
        fact2=fact*dsqrt(pi_loc)/dsqrt(2.0d0)
        fact3=2.d0/pi_loc
-       fact4=1.d0/((g.r+g.rp)*g.xlam) 
-       fact5=1.d0/g.xlam    
+       fact4=1.d0/((g%r+g%rp)*g%xlam) 
+       fact5=1.d0/g%xlam    
 
 c------------- change signs of ypc1 and zpc1
           do n1=0,iord
