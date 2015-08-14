@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/src/phase/heighterror.c */
  /* Date      : <05 May 14 14:12:11 flechsig>  */
- /* Time-stamp: <10 Mar 15 14:27:48 flechsig>  */
+ /* Time-stamp: <14 Aug 15 12:58:31 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -77,12 +77,13 @@ void apply_height_error_(int *blp, int *lostwl, double *wwert, double *lwert,
    bl= (struct BeamlineType *)blp;
    el= &bl->ElementList[0];
    sf= &el->surf;
-   
+
    // check w, l, set field outside to zero
    // increase the number of lost principle rays
    // UF OCT 2014 this is not thread safe (no atomic operation- use std::atomic
-   if ( (*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || 
-        (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2) ) 
+   if ( bl->BLOptions.PSO.wl_check && (
+       (*wwert < el->MDat.w1) || (*wwert > el->MDat.w2) || 
+       (*lwert < el->MDat.l1) || (*lwert > el->MDat.l2) ) )
      {
        //      ((struct PSDType *)bl->RESULT.RESp)->outside_wl++;  // increase lost "rays"
        (*lostwl)++;  // UF local var threadsafe

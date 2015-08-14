@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <04 May 15 09:31:22 flechsig>  */
+/*   Time-stamp: <14 Aug 15 14:41:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1287,7 +1287,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20141215;    /* today */
+   int  i, version= 20150814;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1317,7 +1317,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version DEC 2014\n");
+   fprintf(f, "This is a datafile of PHASE, file version AUG 2015\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1503,8 +1503,8 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "%20d inorm1\n", op->ifl.inorm1); 
    fprintf(f, "%20d inorm2 (0, 1, 2)\n", op->ifl.inorm2); 
    fprintf(f, 
-   "%20d derive matrix elements in 3 different ways (1) (for debugging)\n",
-	   op->ifl.matrel);
+	   "%20d derive matrix elements in 3 different ways (1) (for debugging)\n", 0);
+   // obsolete parameter	   op->ifl.matrel);
    fprintf(f, "%20d (1): phase advance for grating, (0): mirror\n", 
 	   op->ifl.igrating);
    fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
@@ -1677,6 +1677,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     PO with_coating (0,1) \n", op->PSO.with_coating);        /* new May 2014 */
    fprintf(f,"%20d     PO with_herror  (0,1) \n", op->PSO.with_herror);         /* new May 2014 */
    fprintf(f,"%20d     PO iconj        (0,1) \n", op->PSO.iconj);               /* new Dec 2014 */
+   fprintf(f,"%20d     PO wl_check (check size of optics (0,1)) \n", op->PSO.wl_check);            /* new Aug 2015 */
 /* end options section */ 
 
    fprintf(f, "\nFILENAMES\n");
@@ -1716,7 +1717,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20141215;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20150814;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -1781,7 +1782,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        return -1;
      }
 
-   printf("ReadBLFile: file version: %d, (last version: %d)\n", version, thisversion);
+   printf("ReadBLFile: file version: %d, (actual version: %d)\n", version, thisversion);
 
    if(version > thisversion)   
      {
@@ -2259,6 +2260,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        if (version >= 20140509) fscanf(f, " %d %*[^\n]", &op->PSO.with_coating); else op->PSO.with_coating= 0;
        if (version >= 20140509) fscanf(f, " %d %*[^\n]", &op->PSO.with_herror);  else op->PSO.with_herror= 0;
        if (version >= 20141215) fscanf(f, " %d %*[^\n]", &op->PSO.iconj);        else op->PSO.iconj= 0;
+       if (version >= 20150814) fscanf(f, " %d %*[^\n]", &op->PSO.wl_check);     else op->PSO.wl_check= 0;
      } else rcode= -1;  /* end OPTIONS */     
 
    if (version >= 20120320)

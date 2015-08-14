@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2015-05-02 19:43:28 flechsig>  */
+/*   Time-stamp: <14 Aug 15 12:59:44 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -421,7 +421,7 @@ struct ElementType
 
 struct PSOptionsType                   /* 20.9.96 */
 {
-  int    intmod, ndyfix, ndzfix, with_coating, with_herror, iconj;
+  int    intmod, ndyfix, ndzfix, with_coating, with_herror, wl_check, iconj;
   struct PSSourceType PSSource;
   double dyminfix, dymaxfix, dzminfix, dzmaxfix;
 };     
