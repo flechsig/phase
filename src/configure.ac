@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <14 Aug 15 14:37:56 flechsig> 
+dnl   Time-stamp: <21 Aug 15 16:38:29 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -84,7 +84,9 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+dnl UF Aug 15 AC_PROG_RANLIB
+AC_LIBTOOL_DLOPEN
+
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
@@ -562,7 +564,7 @@ echo "root:                    : ${have_root}"
 echo "f2c:                     : ${enable_F2C}"
 echo "MPI:                     : ${use_mpi}"
 echo "FFTW3:                   : ${acx_fftw3_ok}"
-echo "incl. experiental code   : ${enable_experimental}"
+echo "incl. experimental code  : ${enable_experimental}"
 echo " "
 echo "******* UF debug ax_lib_hdf5.m4 HDF5_CFLAGS  =" $HDF5_CFLAGS
 echo "******* UF debug ax_lib_hdf5.m4 HDF5_CPPFLAGS=" $HDF5_CPPFLAGS
