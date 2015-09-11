@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/project/phase/src/phase/reflectivity.c */
 /* Date      : <05 May 14 16:40:19 flechsig>  */
-/* Time-stamp: <13 Jan 15 16:43:11 flechsig>  */
+/* Time-stamp: <31 Aug 15 16:07:18 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -258,16 +258,16 @@ int SetReflectivity(struct ElementType *ep, double wavelength)
   complex_pow  (&c2,  0.5, &cwu);              // wu= sqrt(c2)
 
   complex_in   (&csinag, sinag, 0.0);        // sin(theta) saved in csinag
-  complex_minus(&csinag, &cwu,  &c1);        // zehler in c1
-  complex_plus (&csinag, &cwu,  &c2);        // nenner in c2
+  complex_minus(&csinag, &cwu,  &c1);        // zaehler in c1
+  complex_plus (&csinag, &cwu,  &c2);        // nenner  in c2
   complex_div  (&c1,     &c2,   &crs);       // calc crs
 
   complex_in (&c1, (2* sinag), 0.0);         // zehler in c1
   complex_div(&c1, &c2,        &cts);        // calc cts
 
   complex_x    (&cn2, &csinag, &c3);         // c3
-  complex_minus(&c3,  &cwu,    &c1);         // zehler in c1  
-  complex_plus (&c3,  &cwu,    &c2);         // nenner in c2  
+  complex_minus(&c3,  &cwu,    &c1);         // zaehler in c1  
+  complex_plus (&c3,  &cwu,    &c2);         // nenner  in c2  
   complex_div  (&c1,  &c2,     &crp);        // calc crp
 
   complex_in (&c1, 2.0,     0.0);           // 2.0 in c1

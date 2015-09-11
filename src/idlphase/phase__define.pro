@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <05 Jun 15 16:36:34 flechsig> 
+;  Time-stamp: <01 Sep 15 16:58:43 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -1795,8 +1795,9 @@ pro phase::plotintensity, window=window, _EXTRA=extra
 if n_elements(window) ne 0 then window, window
 title= self.name+ ' intensity'
 a= self->getintensity()
+ztitle=textoidl('intensity (W/m^2)')
 mycontour, a, *self.z_vec*1e3, *self.y_vec*1e3, title=title, $
-  xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity (W/m^2)', _EXTRA=extra 
+  xtitle='z (mm)', ytitle='y (mm)', ztitle=ztitle, _EXTRA=extra 
 return 
 end
 ; end plotintensity
