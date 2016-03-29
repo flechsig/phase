@@ -1,6 +1,6 @@
  ; File      : /afs/psi.ch/project/phase/GIT/phase/src/idlphase/unwrap_herra.pro
  ; Date      : <05 May 15 10:22:30 flechsig> 
- ; Time-stamp: <11 Sep 15 13:38:02 flechsig> 
+ ; Time-stamp: <11 Sep 15 13:50:25 flechsig> 
  ; Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
  ; $Source$ 
@@ -40,7 +40,7 @@ FUNCTION dipolh2paw, x, verbose=verbose
 ;       written by UF May 2015
 ;-
 
-print, 'dipolh2 called (phase unwrapping using Herras code)'
+print, 'dipolh2 called (using MS code'
 help, data
 
  
@@ -53,11 +53,11 @@ c_c340_main_lib= getenv('PHASE_HOME')+'/lib/c_c340_main.so'
 
 if n_elements(verbose) ne 0 then print,'shared lib: ', c_c340_main_lib
 
-result = call_external(c_c340_main_lib,'c_c340_main',$
+result = call_external(c_c340_main_lib,'c_c340_main__',$
                        nx,  $
                        1.0, x, y, 2, $
-                       value=[0,1,1,1,1], $
-                       /AUTO_GLUE, /IGNORE_EXISTING_GLUE, /CDECL, verbose=verbose)
+                       value=[0,0,0,0,0], $
+                       /AUTO_GLUE, /IGNORE_EXISTING_GLUE, verbose=verbose)
 
 ;;print, 'result:', result
 ;;//unwrap_phase(double *inout, int cols, int rows)

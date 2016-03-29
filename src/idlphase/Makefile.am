@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/Makefile.am
 # Date      : <28 Aug 14 16:08:16 flechsig> 
-# Time-stamp: <11 Sep 15 13:19:29 flechsig> 
+# Time-stamp: <11 Sep 15 13:42:44 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -52,6 +52,7 @@ idl_with_doc_header = \
 	crl.pro \
         crl_focus_1A.idl \
 	test_crl.idl \
+	dipolh2paw.pro \
 	double_slit.idl \
 	drift.pro \
 	driftfrauenhofer.pro \
