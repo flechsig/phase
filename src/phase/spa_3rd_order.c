@@ -120,6 +120,7 @@ void spa3TableInit(struct BeamlineType *bl)
   if ((f= fopen(buffer, "r")) == NULL)
     {
       fprintf(stderr, "fatal Error: read %s\n", buffer);
+      fprintf(stderr, "Hint: your current $PHASE_HOME is: %s and likely not correctly set to the phase version you are running\n", phase_home);
       exit(-1);
     } 
   
