@@ -64,9 +64,9 @@ void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
 {
   hid_t group_id;
   
-#ifdef DEBUG1
+  //#ifdef DEBUG1
   printf("add attribute %s to group %s, content= %s\n", aname, gname, content);
-#endif
+  //#endif
 
   group_id = H5Gopen(fid, gname, H5P_DEFAULT );
   add_string_attribute_d(group_id, gname, content);

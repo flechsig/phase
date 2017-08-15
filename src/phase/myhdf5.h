@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myhdf5.h */
 /*  Date      : <20 Mar 13 16:46:54 flechsig>  */
-/*  Time-stamp: <02 Feb 17 14:39:39 flechsig>  */
+/*  Time-stamp: <02 Feb 17 16:27:44 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
