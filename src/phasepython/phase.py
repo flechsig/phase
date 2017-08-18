@@ -1,12 +1,12 @@
-# File      : /afs/psi.ch/user/f/flechsig/phase/src/pythonphase/pythonphase.py
-# Date      : <26 Aug 16 11:29:30 flechsig> 
-# Time-stamp: <26 Aug 16 14:52:35 flechsig> 
-# Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+ # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
+ # Date      : <15 Aug 17 16:25:49 flechsig> 
+ # Time-stamp: <17 Aug 17 16:55:41 flechsig> 
+ # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
-# $Source$ 
-# $Date$
-# $Revision$ 
-# $Author$ 
+ # $Source$ 
+ # $Date$
+ # $Revision$ 
+ # $Author$ 
 
 # ******************************************************************************
 #
@@ -39,30 +39,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class emf:
-   ' The electromagnetic field '
-   def __init__( self, name ):
+   ''' The electromagnetic field '''
+   def __init__( self ):
       " constructor "
-      self.name = name
+      self.name = ""
       self.wavelength = 1e-10
-      self.y_vec= np.array([0.0])
-      self.z_vec= np.array([0.0])
-      self.field= np.array([[0.0+0.0j],[0.0+0.0j]])
+      self.y_vec = np.array([0.0])
+      self.z_vec = np.array([0.0])
+      self.field = np.array([[0.0+0.0j],[0.0+0.0j]])
+
+   def __str__(self):
+        if self.name != '':
+            s = "dataset name: \"%s\",  wavelength: %e m" % (
+                self.name, self.wavelength)
+        else:
+            s = "no data (nothing read in)"
+
+        return s   
 
    def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
                wavelength=1e-10, plot=False, example=False, \
                z_off=0.0, y_off=0.0):
        "generate gaussian beam"
-       self.name= 'Gaussbeam'
+       self.name = 'Gaussbeam'
 
        if example is True :
-           print '**********************************************************'
-           print 'example: HeNe Laser '
-           print 'wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2'
-           print '**********************************************************'
+           print( '**********************************************************')
+           print( 'example: HeNe Laser ')
+           print( 'wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2')
+           print( '**********************************************************')
+           #self.gaussbeam(dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2, plot=True)
            self.gaussbeam(dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2, plot=True)
-           print '**********************************************************'
-           print 'end example'
-           print '**********************************************************'
+           print( '**********************************************************')
+           print( 'end example')
+           print( '**********************************************************')
            return
    
        if drift is not None:
@@ -72,18 +82,18 @@ class emf:
        if sizey is None:
            sizey= sizez
 
-       field  = np.zeros((Ny, Nz), dtype=complex) 
+       field  = np.zeros((Nz, Ny), dtype=complex) 
        z_vec  = np.linspace(-0.5*sizez, 0.5*sizez, Nz)  
        y_vec  = np.linspace(-0.5*sizey, 0.5*sizey, Ny)
        dz     = z_vec[1]- z_vec[0]
        dy     = y_vec[1]- y_vec[0]
 
-       print 'wavelength (m) = ', wavelength
-       print 'Nz     = ', Nz      , ', Ny     = ', Ny
-       print 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey
-       print 'dz (m)    = ', dz      , ', dy (m)    = ', dy
-       print 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off
-       print 'w0    (m) = ', w0      , ', dist  (m) = ', dist
+       print( 'wavelength (m) = ', wavelength)
+       print( 'Nz     = ', Nz      , ', Ny     = ', Ny)
+       print( 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey)
+       print( 'dz (m)    = ', dz      , ', dy (m)    = ', dy)
+       print( 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off)
+       print( 'w0    (m) = ', w0      , ', dist  (m) = ', dist)
 
        k   = np.pi * 2    / wavelength     #;; wave number
        z0  = np.pi * w0**2 / wavelength     #;; Rayleigh Range
@@ -92,9 +102,9 @@ class emf:
        eta = np.arctan(dist/z0)
        Ri  = dist / (dist**2 + z0**2)       #;; curvature Ri  = 1/R;
 
-       print 'z0    (m) = ', z0, ' (Rayleigh Range= +/- z0)'
-       print 'w     (m) = ', w   ,', w2 (m^2) = ', w2
-       print 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri
+       print( 'z0    (m) = ', z0, ' (Rayleigh Range= +/- z0)')
+       print( 'w     (m) = ', w   ,', w2 (m^2) = ', w2)
+       print( 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri)
 
        truncation= 0 
        for i in range(0, Nz-1):
@@ -118,10 +128,12 @@ class emf:
        field*= scale
 
        if truncation > 0:
-           print '!! warning -- some outside points are truncated !!'
+           print ('!! warning -- some outside points are truncated !!')
 
 #;; plot using mycontour
+#       plot= False
        if plot is True:
+           print('plot')
            bamp = np.absolute(field)
            #window, 20
            #stat = dblarr(7)
@@ -130,15 +142,15 @@ class emf:
            #print 'gaussfit amplitude: rms_z, rms_y (m)= ', stat(2),  stat(3)
            #print 'gaussfit intensity: rms_z, rms_y (m)= ', stat2(2), stat2(3)
            #title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' + string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
-           self.mycontour(bamp, self.z_vec*1e3, self.y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity (W)', title=self.name)
+           self.mycontour(bamp, z_vec*1e3, y_vec*1e3, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity $(W/m^2)$', title=self.name)
 
            pha = np.angle(field)
            if np.amax(pha)- np.amin(pha) > 1e-10: 
-               print "no yet "
+               print( "no yet ")
                #window,21
                #mycontour, pha, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
            else:
-              print 'phase(z,y) is zero- no phase plot'
+              print( 'phase(z,y) is zero- no phase plot')
               #device,window_state=window_list
               #if window_list[21] gt 0 then wdelete, 21
               #endelse
@@ -149,18 +161,145 @@ class emf:
        self.z_vec= z_vec
        self.y_vec= y_vec
 
-   def mycontour(self, z, x, y, xtitle='z (mm)', ytitle='y (mm)', ztitle='intensity (W)', title='title'): 
+   def mycontour(self, z, x, y, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity (W)', title='title'): 
        "contour plot"
        cp= plt.contour(x, y, z, 15, linewidths = 0.5, colors = 'k')  # contour linien
        plt.pcolormesh(x, y, z, cmap = plt.get_cmap('rainbow'))       # farbe
        cbar= plt.colorbar() 
-       cbar.set_label(ztitle)#, rotation=270)
-       plt.xlabel(xtitle)
-       plt.ylabel(ytitle)
+       cbar.set_label(zlabel)#, rotation=270)
+       plt.xlabel(xlabel)
+       plt.ylabel(ylabel)
        plt.title(title)
        plt.clabel(cp, inline=True, 
                   fontsize=10)
        plt.show()
+       # mycontour
+   
+   def propfraunhofer(self, drift=None):
+       '''propfraunhofer'''
+       field = self.field
+       y_vec = self.y_vec
+       z_vec = self.z_vec
+       wavelength = self.wavelength
+
+       u1    = 'usage: propfraunhofer, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
+       u2    = '[, plot=plot][, wavelength=wavelength]'    
+       usage = u1+u2
+       if drift is None:
+          print("drift not given - set default drift to 10 m")
+          print(usage)
+          drift = 10.0
+
+       print('------------------ propfraunhofer called ----------------------------')
+
+       k  = 2* np.pi/wavelength
+       nz = len(z_vec)
+       ny = len(y_vec)
+       zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)                      # total width, 12.9.2013: corrected for nz/(nz-1)
+       yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      # total height,     -"-
+  
+       print('width (input) = ', zz*1e3, ' x ', yy*1e3, ' mm^2 ')
+       print('drift         = ', drift)
+
+       newfield0 = np.fft.fft2(modfield)                               #;; forward 2d fft, centered output           
+       newfield  = np.fft.fftshift(newfield0)
+       u0        = np.arange(nz)/(nz-1) - 0.5                           #;; define the vectors in the image plane     
+       v0        = np.arange(ny)/(ny-1) - 0.5   
+       uscale   = (drift*wavelength)/zz * nz                            ;; why is uscale,vscale of type array[1] ?   
+       vscale   = (drift*wavelength)/yy * ny                            ;;-> wavelength comes as array[1], solved    
+       u        = u0*uscale
+       v        = v0*vscale
+       z0       = z_vec[0]
+       y0       = y_vec[0]
+       print( ' z0 = ',z0, ' y0 = ',y0)
+       print( ' nz = ',nz, ' ny = ',ny)
+
+       scale   = np.zeros((nz, ny), dtype=complex)                                     #;; make a complex array
+       for i in range(0, nz-1):
+           for j in range(0, ny-1):
+               phase = (u[i]**2 + v[j]**2) * k/(2.0*drift)             
+               phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        #;; set origin  12.9.2013: changed sign from - to +
+               scale[i,j]= complex(np.cos(phase), np.sin(phase)) 
+
+       scale1 = complex(np.cos(k*drift), np.sin(k*drift))      #;; why is this of type array[1] ?
+       scale2 = complex(0.0         , (wavelength*drift))      #;; -> wavelength comes as array[1] -> k is array[1]
+       self.field  = zz * yy * newfield * scale  * scale1/ scale2
+       self.z_vec  = u
+       self.y_vec  = v
+       print( '------------------ propfraunhofer end ----------------------------')
+   # end propfraunhofer
+
+   def propfresnel(self, drift=None):
+       '''propfresnel'''
+       field = self.field
+       y_vec = self.y_vec
+       z_vec = self.z_vec
+       wavelength = self.wavelength
+
+       print('------------------ propfresnel called ----------------------------')
+
+       
+
+       u1    = 'usage: propfresnel, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
+       u2    = '[, plot=plot][, wavelength=wavelength]'    
+       usage = u1+u2   
+       if drift is None:
+          print("drift not given - set default drift to 10 m")
+          print(usage)
+          drift = 10.0
+
+       k  = 2* np.pi/wavelength
+       nz = len(z_vec)
+       ny = len(y_vec)
+       zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)                      # total width, 12.9.2013: corrected for nz/(nz-1)
+       yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      # total height,     -"-
+
+       print('width (input) = ', zz*1e3, ' x ', yy*1e3, ' mm^2 ')
+       print('drift         = ', drift)
+
+#;;------------------------ Multipy input field with phase factor -------)
+       driftarr= np.zeros((nz, ny), dtype=complex)                      #;; make a complex array
+       for i in range(0, nz-1):
+           for j in range(0, ny-1):
+               phase= k*(z_vec[i]**2 + y_vec[j]**2)/(2.0*drift)         
+               driftarr[i,j]= complex(np.cos(phase), np.sin(phase))
+       
+       modfield = field * driftarr
+       #; print, '--------------- FT of Source field ------------------ exp(-i ...)'
+       
+       newfield0 = np.fft.fft2(modfield)                               #;; forward 2d fft, centered output           
+       newfield  = np.fft.fftshift(newfield0)
+       u0       = np.arange(nz)/(nz-1) - 0.5                           #;; define the vectors in the image plane     
+       v0       = np.arange(ny)/(ny-1) - 0.5   
+       uscale   = (drift*wavelength)/zz * nz                           #;; why is uscale,vscale of type array[1] ?   
+       vscale   = (drift*wavelength)/yy * ny                           #;;-> wavelength comes as array[1], solved    
+       u        = u0*uscale
+       v        = v0*vscale
+       z0       = z_vec[0]
+       y0       = y_vec[0]
+
+       print( ' z0 = ',z0, ' y0 = ',y0)
+       print( ' nz = ',nz, ' ny = ',ny)
+#;;-------------------- Multiply new field with phase factor ----------------
+
+       scale   = np.zeros((nz, ny), dtype=complex)                                     #;; make a complex array
+       for i in range(0, nz-1):
+           for j in range(0, ny-1):
+               phase = (u[i]**2 + v[j]**2) * k/(2.0*drift)             
+               phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        #;; set origin  12.9.2013: changed sign from - to +
+               scale[i,j]= complex(np.cos(phase), np.sin(phase))   
+       
+
+       scale1 = complex(np.cos(k*drift), np.sin(k*drift))      #;; why is this of type array[1] ?
+       scale2 = complex(0.0         , (wavelength*drift))      #;; -> wavelength comes as array[1] -> k is array[1]
+       
+       self.field  = zz * yy * newfield * scale  * scale1/ scale2
+       self.z_vec  = u
+       self.y_vec  = v
+
+       print('------------------ propfresnel end ----------------------------')
+
+       #propfresnel
 
    def getfield( self ):
        "returns the field"
@@ -178,17 +317,20 @@ class emf:
        "returns the nameof the field"
        return self.name
 
-   def getphase(self, param):
+   def getphase(self, param='raw'):
        "returns the phase of the field"
        phi= 0.0
        if param == "raw":
-          print "get raw phase" 
-          phi= angle(self.field)
+          print( "get raw phase") 
+          phi= np.angle(self.field)
        elif param == "herra":
-          print "herra not yet implemented"
-       else :
-          print "default not yet implemented"
+          print( "herra not yet implemented")
+       elif param == "numpy":
+          print("numpy unwrap")
+          phi0= np.angle(self.field)
+          phi= np.unwrap(phi0)
        return phi
+  # getphase
 
    def getphotons(self):
       "returns the photons"
@@ -241,5 +383,9 @@ class emf:
 #       statements
 #a= Myobj()  # create an instance of the object
 
+class initphase(emf):
+    def __init__(self):
+        super().__init__()
+        print("initphase done")
 
 # end
