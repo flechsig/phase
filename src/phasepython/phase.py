@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <22 Aug 17 16:02:11 flechsig> 
+# Time-stamp: <23 Aug 17 12:37:23 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -60,14 +60,23 @@ class emf(object):
 
         return s   
 
-   def aperture(self, example=False, shape=1, p1=None, p2=None, p3=None, p4=None, 
-                plot=False, Ny=None, sizey=None, Nz=None, sizez=None, verbose=True):
+   def aperture(self, p1=None, p2=None, p3=None, p4=None, 
+                Ny=None, sizey=None, Nz=None, sizez=None, 
+                plot=False, norm=True, example=False, shape=1, verbose=True):
       """acts as an aperture, or generates wavefield with amplitude according to 'shape'
+         field generation needs Ny, Nz, sizey, sizez otherwise the field is kept and 
+         multiplied by the mask
 
       Args:
-         example=False (bool):
-         field
-         example
+         p[1..4]=None (double): generic parameters depending on shape 
+         Ny=None (int): number of points vertical for field generation
+         Nz=None (int): number of points horizontal for field generation
+         sizey=None (float): size vertical for for field generation
+         sizez=None (float): size horizontal for for field generation
+         example=False (bool): make an example
+         norm=True (bool): field generation: norm output to 0.5 W
+         plot=False (bool): plot the mask
+         
          shape=1 (int):      shape of aperture
             shape 1  : rectangular              P1 = hsize, P2 = vsize
             shape 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
@@ -82,11 +91,11 @@ class emf(object):
             shape 33 : horizontalal mirror      P1 = length, P2 = grazing angle (rad)
 
       Returns:
-         mask (float): the mask array as np array
+         mask (float): the mask as np array
 
       Example:
           >>> emf = phase.initphase()
-              mask= emf.aperture()
+              mask= emf.aperture(example=True)
       """
    
       usage= 'usage: aperture, [emf,][field=field, y_vec=y_vec, z_vec=z_vec,] shape=shape, [P1=P1,] [P2=P2,] '
@@ -98,14 +107,15 @@ class emf(object):
          print('**********************************************************')
          print('example: double slit ')
          print('**********************************************************')
-         self.aperture(shape=12, p1=2e-3, p2=5e-3, Ny=51, sizey=2e-2, plot=True)
+         T= self.aperture(shape=12, p1=2e-3, p2=5e-3, Ny=101, sizey=2e-2, plot=True)
          print('**********************************************************')
          print('end example')
          print('**********************************************************')
-         return
+         return T
      
+      createfield = False
       if (Ny and sizey) or (Nz and sizez) :  # generate a field
-         create= True
+         createfield = True
          print("generate a new field")
          if (Ny and sizey) and not (Nz and sizez) :
             Nz= Ny
@@ -155,7 +165,7 @@ class emf(object):
          p1half= 0.5 * p1
          p2half= 0.5 * p2
          if verbose : 
-            print('vertical double slit (hwidth, hpos): ', p1, p2)
+            print('vertical double slit (hwidth, hsep): ', p1, p2)
       # end 2
 
       if not shapefound :
@@ -179,15 +189,21 @@ class emf(object):
                if (np.abs(self.z_vec[col]) <= (p2half + p1half)) and (np.abs(self.z_vec[col]) >= (p2half - p1half)) :
                   T[row, col]= 1.0
       # 2d for loop
-      
-      #print("T: ", T)
-      #self.mycontour(T, self.z_vec, self.y_vec)
-      self.field*= T      
+            
+      self.field*= T      # apply the mask
+
+      if createfield and norm :                   # norm to 0.5 W  !! we assume only one polarization
+         print("normalize intensity to 0.5 W")
+         intensity = self.getintensity()
+         binsize = (self.z_vec[1] - self.z_vec[0]) * (self.y_vec[1] - self.y_vec[0])
+         itot = np.sum(intensity) * binsize * 2.0
+         scale = 1.0 / np.sqrt(itot)
+         self.field *= scale
+
+      if plot :
+         self.mycontour(T, self.z_vec*1e3, self.y_vec*1e3, title='aperture (field mask)', zlabel='factor')
+
       return T                                                    
-   """   self.wavelength= wavelength
-      self.field = field
-      self.z_vec = z_vec
-      self.y_vec = y_vec"""
    # end aperture
 
    def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
@@ -312,14 +328,17 @@ class emf(object):
        self.y_vec = y_vec
    # end gaussbeam
 
-   def mycontour(self, z, x, y, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity (W)', title='title', figure=True): 
-       """make a contour plot (helper function)
+   def mycontour(self, z, x=None, y=None, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity (W)', 
+                 title='title', figure=True, cmap='rainbow', plot_contours=False): 
+       """mycontour(z, x, y) - make a 2d contour plot z(x, y) (helper function)
 
        Args:
           z (double): a 2d array
-          x (double): vector in horizontal direction
-          y (double): vector in vertical direction
+          x=None (double): vector in horizontal direction
+          y=None (double): vector in vertical direction
+          cmap='rainbow' (str): colormap {'rainbow', 'gray'}
           figure=True (bool): plot a new figure
+          plot_contours=False (bool): plot contour lines with labels
           title='title' (string): title
           xlabel='z (mm)' (string): label
           ylabel='y (mm)' (string): label
@@ -334,15 +353,22 @@ class emf(object):
        """
        if figure is True:
           plt.figure()
-       cp= plt.contour(x, y, z, 15, linewidths = 0.5, colors = 'k')  # contour linien
-       plt.pcolormesh(x, y, z, cmap = plt.get_cmap('rainbow'))       # farbe
+
+       if (x is None) or (y is None): 
+          x= np.arange(np.shape(z)[1])
+          y= np.arange(np.shape(z)[0])
+       if plot_contours :
+          cp= plt.contour(x, y, z, 15, linewidths= 0.5, colors= 'k')  # contour linien
+          plt.clabel(cp, inline=True, fontsize=10)
+       else :
+          plt.axis([np.min(x), np.max(x), np.min(y), np.max(y)])
+
+       plt.pcolormesh(x, y, z, cmap=plt.get_cmap(cmap))       # farbe
        cbar= plt.colorbar() 
        cbar.set_label(zlabel)#, rotation=270)
        plt.xlabel(xlabel)
        plt.ylabel(ylabel)
        plt.title(title)
-       plt.clabel(cp, inline=True, 
-                  fontsize=10)
        plt.show()
        # mycontour
 
@@ -371,6 +397,19 @@ class emf(object):
       title= self.getname()+ " imaginary part"
       self.mycontour(self.getimag(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'imaginary part (a. u.)', title=title)
    # end plotimag
+
+   def plotintensity( self ):
+      """plot the intensity of the field
+
+      Example:
+          >>> emf = phase.initphase()
+              emf.gaussbeam(example=True)
+              emf.plotintensity()
+      """
+      
+      title= self.getname()+ " intensity"
+      self.mycontour(self.getintensity(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'intensity ($W/m^2$)', title=title)
+   # end plotintensity
 
    def plotphotons( self ):
       """plot the field intensity as photons
@@ -619,14 +658,14 @@ class emf(object):
       return self.field.real
    # getreal
 
-   def getWavelength( self ):  
+   def getwavelength( self ):  
       """returns the wavelength in m
 
       Returns:
          wavelength (double): wavelength in m
       """
       return self.wavelength
-   # getWavelength
+   # getwavelength
 
    def gety_vec( self ):
        """returns the y vector
@@ -664,7 +703,7 @@ class emf(object):
       self.name= name
    # setName
 
-   def setWavelength( self, wavelength ):  
+   def setwavelength( self, wavelength ):  
       """set a new wavelength in m
 
      Arg:
@@ -672,11 +711,11 @@ class emf(object):
 
         Example:
           >>> emf = phase.initphase()
-              emf.setWavelength(1e-10)
-              emf.getWavelength()
+              emf.setwavelength(1e-10)
+              emf.getwavelength()
       """
       self.wavelength= wavelength
-   # end setWavelength   
+   # end setwavelength   
 
    def sety_vec( self, vec ):  
       """set a new y_vec
@@ -708,13 +747,13 @@ class emf(object):
       self.z_vec= vec
       # end setz_vec
 
-   def statistics(self, comment=None, amplitude=False, nofit=False):
+   def statistics(self, comment=None, amplitude=False, fit=True):
       """shows statistics 
 
       Args:
          comment=None (string): comment string (optional)
          amplitude=False (bool): amplitude statistics - default: intensity
-         nofit=False (bool): skip 2d fit
+         fit=True (bool): if false skip 2d fit
       
      Returns:
           stat (dictionary)
@@ -733,7 +772,7 @@ class emf(object):
       else :
          title= "intensity statistics"
          myfield= self.getintensity()
-         mymaxstr= 'max intensity ($W/m^2$) = ' 
+         mymaxstr= 'max intensity (W/m^2) = ' 
          mytotstr= 'total intensity (W)   = '
 
       if comment :
@@ -760,7 +799,7 @@ class emf(object):
 
  ##    stat   = dblarr(7)
 
-      if not nofit :
+      if fit :
          ##fit= ##gauss2dfit(field_n, stat, z_vec, y_vec) 
          stat= gausfitter2.gaussfit(field_n)
       else :
@@ -768,22 +807,19 @@ class emf(object):
          z0i= mymaxidx[1]
          y0i= mymaxidx[0]
          mymax05= 0.5 * mymax
-#;    print('z0i,y0i,mymax05',z0i,y0i,mymax05
-         zcut= myfield[:,y0i]
-         ycut= myfield[z0i,:]
-#;    plot, ycut
-#;    print( 'zcut::::', zcut
-         zidx= (zcut > mymax05).nonzero()
-#;    print( 'zidx::::', zidx
-# ;   help, zidx
-         yidx= (ycut > mymax05).nonzero()
+         print('z0i,y0i,mymax05',z0i,y0i,mymax05)
+         zcut= myfield[y0i,:] # cut at certain vertical position
+         ycut= myfield[:,z0i]
+         zidx= np.asarray((zcut > mymax05).nonzero())  # where function
+         yidx= np.asarray((ycut > mymax05).nonzero())
+         print(zidx, len(zidx), np.shape(zidx), type(zidx), zidx.size)
     
-         if len(zidx) > 1 :
-            zfwhm= z_vec[zidx[len(zidx)-1]]- z_vec[zidx[0]]
+         if zidx.size > 1 :
+            zfwhm= z_vec[zidx[-1]]- z_vec[zidx[0]]
          else :
-            zfwhm= 0
-         if len(yidx) > 1 :
-            yfwhm= y_vec[yidx[len(yidx)-1]]- y_vec[yidx[0]]
+            zfwhm= -10
+         if yidx.size > 1 :
+            yfwhm= y_vec[yidx[-1]]- y_vec[yidx[0]]
          else :
             yfwhm= 0
 
@@ -791,17 +827,17 @@ class emf(object):
       print('==============================================================================')
       print( title )
       print('==============================================================================')
-      if not nofit :
+      if fit :
          print('z fwhm = {:7.5g} m, rms = {:.5g} m'.format(stat[2] * 2.35, stat[2]))
          print('y fwhm = {:7.5g} m, rms = {:.5g} m'.format(stat[3] * 2.35, stat[3]))
          print('z0     = {:7.5g} m'.format(stat[4]))
          print('y0     = {:7.5g} m'.format(stat[5]))
       else :
-         print('z fwhm=', zfwhm, ' m')
-         print( 'y fwhm=', yfwhm, ' m')
-         print( 'z0    =', z_vec[z0i], ' m')
-         print( 'y0    =', y_vec[y0i], ' m')
-
+         print('z fwhm = {:7.5g} m'.format(zfwhm))
+         print('y fwhm = {:7.5g} m'.format(yfwhm))
+         print('z0     = {:7.5g} m'.format(z_vec[z0i]))
+         print('y0     = {:7.5g} m'.format(y_vec[z0i]))
+         
       print( 'zmin, zmax (m) =', zmin, zmax, ', nz=', len(z_vec))
       print( 'ymin, ymax (m) =', ymin, ymax, ', ny=', len(y_vec))
       print('wavelength (nm)= {:.3f}'.format(wavelength * 1e9))
@@ -813,13 +849,12 @@ class emf(object):
 
       print('debug: mysum, binsize=', mysum, binsize)
       print( '==============================================================================')
-      if not nofit :
+      if fit :
          print( 'result of gauss2dfit in (m):', stat)
          print( '==============================================================================')
 
-
-      total=mytot
-      max= mymax
+      mydict= {'total': mytot, 'max':mymax}
+      return mydict
 
 
    # end statistics
