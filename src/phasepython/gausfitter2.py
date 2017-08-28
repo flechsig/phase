@@ -1,5 +1,10 @@
 # gaussfitter2.py
 # created by Adam Ginsburg (adam.ginsburg@colorado.edu or keflavich@gmail.com) 3/17/08)
+
+## UF the routine has been tested using gausfitter2_test.py
+## check the very strange parameter output there
+## otherwise the results seem to be reasonabel
+
 from numpy import *
 from scipy import optimize
 from scipy import stats
@@ -100,6 +105,7 @@ def twodgaussian(inpars, circle, rotate, vheight):
 def gaussfit(data,err=None,params=[],autoderiv=1,return_all=0,circle=0,rotate=1,vheight=1):
     """
     Gaussian fitter with the ability to fit a variety of different forms of 2-dimensional gaussian.
+    UF: check gausfitter2_test.py for output parameters
     
     Input Parameters:
         data - 2-dimensional data array

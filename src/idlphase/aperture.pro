@@ -1,7 +1,7 @@
 ;; -*-idlwave-*-
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseidl/crl.pro
 ;  Date      : <11 Jul 13 08:23:00 flechsig> 
-;  Time-stamp: <05 Dec 14 15:53:17 flechsig> 
+;  Time-stamp: <25 Aug 17 11:34:28 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -309,8 +309,10 @@ for i=0, nz-1 do begin
             
             4 : begin
                 pos = abs(z_vec[i]) 
-                if   ( pos le p1half) then begin T[i,j]= double(1.0)   ; inside  P1: T=1      
-                endif else begin
+                if   ( pos le p1half) then begin 
+                   T[i,j]= double(1.0)   ; inside  P1: T=1      
+                endif 
+                else begin
                   if ( pos ge p2half) then begin T[i,j]= double(0.0)   ; outside P2: T=0      
                 endif else begin
                   d     = 2*sqrt(P3^2 - ( P3- (pos - p1half) )^2 )                  

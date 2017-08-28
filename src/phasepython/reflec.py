@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <24 Aug 17 09:03:04 flechsig> 
+# Time-stamp: <25 Aug 17 09:14:37 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -18,31 +18,32 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
 
    Args:
       element (str): element as chemical formula (String, case sensitive)
-      energy (double):  energy vector
+      energy (double): energy vector
       theta (double): Grazing incidence angle (rad)   
       log=True (bool): logscale plot  
       plot=True (bool): plot
-      Verbose=True (bool)
+      verbose=True (bool): verbosity
 
    Returns:
-      result: dictionary
-      ;   ac:      critical grazing angle in rad (output)
-      ;   crp:     complex reflectivity rp (output
-      ;   crs:     complex reflectivity rs (output
-      ;   beta:    Im(n)= beta, imaginary part of refractive index (output)
-      ;   delta:   Re(n)= 1-delta, real part of refractive index (output)
-      ;   n:       complex refractive index n= 1-delta + j*beta (output)
-      ;   rp:      reflectivity rp
-      ;   rs:      reflectivity rs
-      ;   tp:      transmission tp
-      ;   ts:      transmission ts
+      result (dictionary):
+         ac:      critical grazing angle in rad (output)
+         crp:     complex reflectivity rp (output
+         crs:     complex reflectivity rs (output
+         beta:    Im(n)= beta, imaginary part of refractive index (output)
+         delta:   Re(n)= 1-delta, real part of refractive index (output)
+         n:       complex refractive index n= 1-delta + j*beta (output)
+         rp:      reflectivity rp
+         rs:      reflectivity rs
+         tp:      transmission tp
+         ts:      transmission ts
 
    Example:
           >>> en=np.arange(101)/100*970+30 
-              reflec('Au', en, 4e-3)
+              dict=reflec('Au', en, 4e-3)
+              print('Rp= ', dict['rp'])
    """
 
-   usage= "usage: reflec('Au', en, 4e-3)"
+   usage= "usage: dict=reflec('Au', en, 4e-3)"
 
    print("Usage: ", usage) 
  
@@ -76,10 +77,10 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
    crp = (n**2 * np.sin(theta) - wu ) / ( n**2 *np.sin(theta) + wu)  # reflection coeff. p-pol
    ctp = (2*n * np.sin(theta)      ) / ( n**2 *np.sin(theta) + wu)   # transmiss. coeff. s-pol
    
-   Rs    =  np.abs(crs)**2                                          # reflectance s-pol   
-   Rp    =  np.abs(crp)**2                                          # reflectance p-pol.  
-   Ts    =  np.abs( 2*  wu / (       np.sin(theta) + wu))**2            # transmitance s-pol        
-   Tp    =  np.abs( 2*n*wu / (n**2 * np.sin(theta) + wu))**2            # transmitance p-pol  
+   Rs  =  np.abs(crs)**2                                          # reflectance s-pol   
+   Rp  =  np.abs(crp)**2                                          # reflectance p-pol.  
+   Ts  =  np.abs( 2*  wu / (       np.sin(theta) + wu))**2        # transmitance s-pol        
+   Tp  =  np.abs( 2*n*wu / (n**2 * np.sin(theta) + wu))**2        # transmitance p-pol  
    
    if plot :
       thetag= theta*180./np.pi 
@@ -116,7 +117,7 @@ def readhenke(element, verbose=True) :
    f1= field1[:, 1]
    f2= field1[:, 2]
    if verbose :
-      print("read Henke table from :", fname)
+      print("read Henke table from: ", fname)
    return en, f1, f2
 #end readhenke
 
@@ -129,7 +130,7 @@ def readmaterial(element, verbose=True) :
 
    fname = '/afs/psi.ch/project/soft_x/OpticsTools/ray_reflec/material/rhoatom_idl.dat'
    if verbose :
-      print("read mat table from :", fname)
+      print("read mat table from: ", fname)
 
    f = open(fname, 'r')
    for line in f:

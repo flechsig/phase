@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <23 Aug 17 12:37:23 flechsig> 
+# Time-stamp: <25 Aug 17 17:12:16 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -37,9 +37,11 @@
 
 # the class methods are in alphabetical order
 
+import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
 import gausfitter2
+import tkinter.filedialog
 
 class emf(object):
    """main object of an electromagnetic field """
@@ -78,17 +80,26 @@ class emf(object):
          plot=False (bool): plot the mask
          
          shape=1 (int):      shape of aperture
-            shape 1  : rectangular              P1 = hsize, P2 = vsize
-            shape 2  : vertical slit            P1 = hsize, P2 = hpos (default= 0)
-            shape 3  : horizontal slit          P1 = vsize, P2 = vpos (default= 0)
-            shape 12 : double slit vertical,    P1 = hsize, P2= hsep
-            shape 13 : double slit horizontal,  P1 = vsize, P2= vsep
-            shape 20 : circular                 P1 = Radius
+            shape 1  : rectangular              p1 = hsize, p2 = vsize
+            shape 2  : vertical slit            p1 = hsize, p2 = hpos (default= 0)
+            shape 3  : horizontal slit          p1 = vsize, p2 = vpos (default= 0)
+            shape 4  : vertical slit with LCLS like cylinders   p1 = hsize, p2 = limits,  p3=Radius of cylinders.  RF 18.12.2013
+            shape 12 : double slit vertical,    p1 = hsize, p2= hsep
+            shape 13 : double slit horizontal,  p1 = vsize, p2= vsep
+            shape 20 : circular                 p1 = Radius
                       Radius > 0: central circular part is transparent
                       Radius < 0: central circular part is oblique
-            shape 21 : annular                  P1 = Outer radius, P2 = inner radius
-            shape 32 : vertical mirror          P1 = length, P2 = grazing angle (rad)
-            shape 33 : horizontalal mirror      P1 = length, P2 = grazing angle (rad)
+            shape 21 : annular                  p1 = Outer radius, p2 = inner radius
+            shape 32 : vertical mirror          p1 = length, p2 = grazing angle (rad)
+            shape 33 : horizontalal mirror      p1 = length, p2 = grazing angle (rad)
+            shape 40 : diamond                  P1= width, P2= hpos, P3= vpos
+            shape 50 : triangle                 P1= width, P2= hpos, P3= vpos
+            shape 62 : transmission grating ruled vertical,   P1= pitch, P2= duty cycle (opening/pitch), center transparent
+            shape 63 : transmission grating ruled horizontal, P1= pitch, P2= duty cycle (opening/pitch), center transparent
+            shape 72 : phase grating ruled vertical,   P1= pitch, P2= duty cycle (opening/pitch), P3= phase_shift (rad), center transparent
+            shape 73 : phase grating ruled horizontal, P1= pitch, P2= duty cycle (opening/pitch), P3= phase_shift (rad), center transparent
+            shape 82 : vertical   slit with round blades, P1 = vsize, P2 = hpos (default= 0), P3= edge radius
+            shape 83 : horizontal slit with round blades, P1 = vsize, P2 = hpos (default= 0), P3= edge radius
 
       Returns:
          mask (float): the mask as np array
@@ -98,7 +109,7 @@ class emf(object):
               mask= emf.aperture(example=True)
       """
    
-      usage= 'usage: aperture, [emf,][field=field, y_vec=y_vec, z_vec=z_vec,] shape=shape, [P1=P1,] [P2=P2,] '
+      usage= 'usage: aperture, [emf,][field=field, y_vec=y_vec, z_vec=z_vec,] shape=shape, [p1=p1,] [p2=p2,] '
       print('aperture called')
 
       self.name = 'Aperture'
@@ -106,6 +117,7 @@ class emf(object):
       if example :
          print('**********************************************************')
          print('example: double slit ')
+         print('T= emf.aperture(shape=12, p1=2e-3, p2=5e-3, Ny=101, sizey=2e-2, plot=True)')
          print('**********************************************************')
          T= self.aperture(shape=12, p1=2e-3, p2=5e-3, Ny=101, sizey=2e-2, plot=True)
          print('**********************************************************')
@@ -129,67 +141,48 @@ class emf(object):
          self.field = np.zeros((Ny, Nz), dtype=complex) + 1.0 + 0j   # complex array with 1.0 = 0j  
       # end generate field 1 
 
-#;; call case twice for speed     
-      shapefound=False
-      if shape == 1 :         # rectangular
-         shapefound=True
-         if not p2 : 
-            p2 = p1
-         if not p3 :
-            h0= 0.0 
-         else : 
-            h0= p3
-         if not p4 :
-            v0= 0.0 
-         else : 
-            v0= p4
-         p1half= 0.5 * p1
-         p2half= 0.5 * p2
-         if verbose : 
-            print('rectangular aperture (h x v): ', p1, p2, ' offsets: ', h0, v0)
-      # end 1
-
-      if shape == 2 :         # vertical slit
-         shapefound=True
-         if not p2 : 
-            p2 = 0.0
-         p1half= 0.5 * p1
-         if verbose : 
-            print('vertical slit (hwidth, hpos): ', p1, p2)
-      # end 2
-
-      if shape == 12 :         # vertical double slit
-         shapefound=True
-         if not p2 : 
-            p2 = p1
-         p1half= 0.5 * p1
-         p2half= 0.5 * p2
-         if verbose : 
-            print('vertical double slit (hwidth, hsep): ', p1, p2)
-      # end 2
-
-      if not shapefound :
-         print("error: unknown shape, shape= ", shape, " => return")
+# switch 
+      if shape == 1 :
+         T= self.aperture1(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose) 
+      elif shape == 2 :
+         T= self.aperture2(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 3 :
+         T= self.aperture3(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 4 :
+         T= self.aperture4(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 12 :
+         T= self.aperture12(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 13 :
+         T= self.aperture13(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 20 :
+         T= self.aperture20(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 21 :
+         T= self.aperture21(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 32 :
+         T= self.aperture32(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 33 :
+         T= self.aperture33(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 40 :
+         T= self.aperture40(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 50 :
+         T= self.aperture50(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 62 :
+         T= self.aperture62(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 63 :
+         T= self.aperture63(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 72 :
+         T= self.aperture72(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 73 :
+         T= self.aperture73(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 82 :
+         T= self.aperture82(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      elif shape == 83 :
+         T= self.aperture83(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+      else :
+         print("error- unknown shape, shape = ", shape)
          return
-      #end shape definitions
 
-# fill
-      Ny= len(self.y_vec)
-      Nz= len(self.z_vec)
-      T= np.zeros((Ny, Nz), dtype=float)
-      for row in np.arange(Ny) :
-         for col in np.arange(Nz) :
-            if shape == 1 :
-               if ((np.abs(self.z_vec[col]- h0) <= p1half) and (np.abs(self.y_vec[row]- v0) <= p2half)) :
-                  T[row, col]= 1.0
-            if shape == 2 :
-               if np.abs(self.z_vec[col]- p2) <= p1half :
-                  T[row, col]= 1.0
-            if shape == 12 :
-               if (np.abs(self.z_vec[col]) <= (p2half + p1half)) and (np.abs(self.z_vec[col]) >= (p2half - p1half)) :
-                  T[row, col]= 1.0
-      # 2d for loop
-            
+      # print("xxxxxxxxxxx", type(T), type(self.field))    
       self.field*= T      # apply the mask
 
       if createfield and norm :                   # norm to 0.5 W  !! we assume only one polarization
@@ -201,10 +194,711 @@ class emf(object):
          self.field *= scale
 
       if plot :
-         self.mycontour(T, self.z_vec*1e3, self.y_vec*1e3, title='aperture (field mask)', zlabel='factor')
+         if np.iscomplexobj(T) :
+            print("complex mask: print just real part")
+            self.mycontour(np.real(T), self.z_vec*1e3, self.y_vec*1e3, title='aperture (complex field mask)', 
+                           zlabel='factor (real part)')
+         else :
+            self.mycontour(T, self.z_vec*1e3, self.y_vec*1e3, title='aperture (field mask)', zlabel='factor')
 
       return T                                                    
    # end aperture
+
+   def aperture1(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture1"""
+
+      if not p2 : 
+         p2 = p1
+      if not p3 :
+         h0= 0.0 
+      else : 
+         h0= p3
+      if not p4 :
+         v0= 0.0 
+      else : 
+         v0= p4
+      p1half= 0.5 * p1
+      p2half= 0.5 * p2
+      if verbose : 
+         print('rectangular aperture (h x v): ', p1, p2, ' offsets: ', h0, v0)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if ((np.abs(self.z_vec[col]- h0) <= p1half) and (np.abs(self.y_vec[row]- v0) <= p2half)) :
+               T[row, col]= 1.0
+            
+      return T
+   # aperture 1
+
+   def aperture2(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture2"""
+
+      if not p2 : 
+         p2 = 0.0
+      p1half= 0.5 * p1
+      if verbose : 
+         print('vertical slit (hwidth, hpos): ', p1, p2)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if np.abs(self.z_vec[col]- p2) <= p1half :
+               T[row, col]= 1.0
+
+      return T
+   # aperture 2
+   
+   def aperture3(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture3"""
+
+      if not p2 : 
+         p2 = 0.0
+      p1half= 0.5 * p1
+      if verbose : 
+         print('horizontal slit (vwidth, vpos): ', p1, p2)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if np.abs(self.y_vec[row]- p2) <= p1half :
+                  T[row, col]= 1.0
+      return T
+   # aperture3
+
+   def aperture4(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture4"""
+
+      rene        = 1.39e15   # 1/m^2  Be
+      mu3kev      = 39.1e2    # 1/m    Be       optical constants of Be - can be extended to other materials
+      mu12p4kev   = 0.4e2     # 1/m    Be
+
+      rene        = 1.8e15    # 1/m^2  B4C above  2 keV
+      mu12p4kev   = 1.33e2    # 1/m    B4C 1.33@12.4 keV
+      mu          = mu12p4kev         # hard for 1 A       
+      p1half      = 0.5 * p1
+
+      if not p3 :
+         print('usage error- aperture  ... r3=Radius')
+         return
+      if not p2 :
+         p2half = p1half + p3
+      else :
+         p2half= 0.5 * p2
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=complex)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            pos = np.abs(self.z_vec[col])
+            if pos <= p1half :
+               T[row, col]= complex(1.0, 0.0)   # inside  P1: T=1
+            elif  pos < p2half :
+               d = 2* np.sqrt(p3**2 - ( p3- (pos - p1half) )**2 )                  
+               f0 = np.exp(-mu*d/2.0)                                  # absorption 
+               f2 = (-1.0) * rene * self.wavelength * d                # phase shift
+               T[row,col] = complex(f0*np.cos(f2), f0*np.sin(f2))
+ 
+      return T
+   # aperture 4
+
+   def aperture12(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture12"""
+
+      if not p2 : 
+         p2 = p1
+      p1half= 0.5 * p1
+      p2half= 0.5 * p2
+      if verbose : 
+         print('vertical double slit (hwidth, hsep): ', p1, p2)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if (np.abs(self.z_vec[col]) <= (p2half + p1half)) and (np.abs(self.z_vec[col]) >= (p2half - p1half)) :
+                  T[row, col]= 1.0
+      return T
+   # aperture 12
+
+   def aperture13(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture13"""
+
+      if not p2 : 
+         p2 = p1
+      p1half= 0.5 * p1
+      p2half= 0.5 * p2
+      if verbose : 
+         print('horizontal double slit (vwidth, vsep): ', p1, p2)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if (np.abs(self.y_vec[row]) <= (p2half + p1half)) and (np.abs(self.y_vec[row]) >= (p2half - p1half)) :
+                  T[row, col]= 1.0
+      return T
+   # aperture 13
+
+   def aperture20(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture20"""
+
+      if verbose : 
+         print('circular aperture: R= ', p1)
+         if p1 > 0.0 :
+            print('Radius > 0: central circular part is transparent') 
+         else :
+            print('Radius < 0: central circular part is oblique') 
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            rr= self.z_vec[col]**2 + self.y_vec[row]**2 
+            if (p1 > 0.0) and (rr <= p1**2) :
+                  T[row, col]= 1.0
+            if (p1 < 0.0) and (rr >= p1**2) :
+                  T[row, col]= 1.0      
+      return T
+   # aperture 20
+
+   def aperture21(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture21"""
+
+
+      if verbose : 
+         print('annular aperture: outer radius= ', p1, ', inner radius= ', p2)
+         
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            rr= self.z_vec[col]**2 + self.y_vec[row]**2 
+            if (rr <= p1**2) and (rr >= p2**2) :
+               T[row, col]= 1.0
+                 
+      return T
+   # aperture 21
+
+   def aperture32(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture32"""
+
+      ap    = p1  * np.sin(p2)
+      aphalf= 0.5 * ap
+      if verbose : 
+         print('mirror vertical (w, theta_g): ', p1, p2, ' rad, ap= ', ap)
+      # vertical mirror (assuming l= infinite)   
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if np.abs(self.y_vec[row]) <= aphalf :
+               T[row,col]= 1.0
+
+      return T
+   # aperture 32
+
+   def aperture33(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture33"""
+
+      ap    = p1  * np.sin(p2)
+      aphalf= 0.5 * ap
+      if verbose : 
+         print('mirror horizontal (w, theta_g): ', p1, p2, ' rad, ap= ', ap)
+      # vertical mirror (assuming l= infinite)   
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if np.abs(self.z_vec[col]) <= aphalf :
+               T[row,col]= 1.0
+
+      return T
+   # aperture 33
+
+   def aperture40(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture33"""
+
+      const= p1/np.sqrt(2.0)
+      if p2 is None :
+         h0= 0.0 
+      else :
+         h0= p2
+      if p3 is None :
+         v0= 0.0 
+      else :
+         v0= p3
+
+      print('diamond width= ', p1) 
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if (self.y_vec[row] - v0 <= self.z_vec[col] - h0 + const) and \
+               (self.y_vec[row]-v0 <= (-1.0) * (self.z_vec[col]- h0) + const)  and \
+               (self.y_vec[row]-v0 >= self.z_vec[col]-h0 - const)  and \
+               (self.y_vec[row]-v0 >= (-1.0)*(self.z_vec[col]- h0) - const) :
+               T[row,col]= 1.0
+
+      return T
+   # aperture 40 
+
+   def aperture50(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture50"""
+
+      m= np.sqrt(3.0)
+      const= p1/4.0* np.sqrt(3.0)
+      if p2 is None:
+         h0= 0.0 
+      else:
+         h0= p2
+      if p3 is None:
+         v0= 0.0 
+      else :
+         v0= p3
+
+      print('triangle width= ', p1) 
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if (self.y_vec[row]-v0 <= m*(self.z_vec[col]-h0) + const) and \
+               (self.y_vec[row]-v0 <= (-1.0)*m*(self.z_vec[col]-h0) + const)  and \
+               (self.y_vec[row]-v0 >= ((-1.0)* const) ) : 
+               T[row,col]= 1.0
+
+      return T
+   # aperture 50 
+
+   def aperture62(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture62"""
+
+      if p2 is None :
+         p2= 0.5
+      shift= p2*p1/2.      # half size of the opening 
+      print('vertcally ruled grating, pitch= ', p1, ' duty cycle= ', p2 , ' shift = ',shift)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if ((np.abs(self.z_vec[col])+ 0.5* p2)/p1- np.floor((np.abs(self.z_vec[col])+ 0.5* p2)/p1)) <= p2/2.0 : 
+               T[row,col]= 1.0
+
+      return T
+   # aperture 62
+
+   def aperture63(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture63"""
+
+      if p2 is None :
+         p2= 0.5
+      shift= p2*p1/2.      # half size of the opening 
+      print('horizontally ruled grating, pitch= ', p1, ' duty cycle= ', p2 , ' shift = ',shift)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=float)
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            #if ((np.abs(self.z_vec[col])+ 0.5* p2)/p1- np.floor((np.abs(self.z_vec[i])+ 0.5* p2)/p1)) <= p2/2.0 : 
+            if ( (( (self.y_vec[row]+ shift ) % p1) + p1) % p1 ) <= p2*p1 :
+               T[row,col]= 1.0
+
+      return T
+   # aperture 63
+
+   def aperture72(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture72"""
+
+      if p2 is None:
+          p2= 0.5
+      if p3 is None:
+         p3= np.pi
+      print('vertcally ruled phase grating, pitch= ', p1, ' duty cycle= ', p2, ' phase_shift= ', p3)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=complex)+ 1+ 0j
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if ((np.abs(self.z_vec[col])+ 0.5* p2)/p1- np.floor((np.abs(self.z_vec[col])+ 0.5* p2)/p1)) <= p2/2.0 :
+               T[row,col]= complex(np.cos(p3), np.sin(p3))
+
+
+      return T
+   # aperture 72
+
+   def aperture73(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture73"""
+
+      if p2 is None:
+          p2= 0.5
+      if p3 is None:
+         p3= np.pi
+      print('horizontally ruled phase grating, pitch= ', p1, ' duty cycle= ', p2, ' phase_shift= ', p3)
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=complex)+ 1+ 0j
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            if ((np.abs(self.y_vec[row])+ 0.5* p2)/p1- np.floor((np.abs(self.y_vec[row])+ 0.5* p2)/p1)) <= p2/2.0 :
+               T[row,col]= complex(np.cos(p3), np.sin(p3))
+
+      return T
+   # aperture 73
+
+   def aperture82(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture82"""
+
+      if p2 is None: 
+         p2= 0.0 
+      if p3 is None:
+         p3= 1e-2 
+      p1half= 0.5 * p1
+      k= 2.0*np.pi/self.wavelength
+      print('vertical slit with round edges (vwidth, vpos, edge_radius): ', p1, p2, p3)
+      print('routine not debugged- probably not correct')
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=complex)+ 1+ 0j
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            T[row,col]= complex(np.cos(p3), np.sin(p3))
+
+      return T
+   # aperture 82
+
+   def aperture83(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+      """helper function aperture83"""
+
+      if p2 is None: 
+         p2= 0.0 
+      if p3 is None:
+         p3= 1e-2 
+      p1half= 0.5 * p1
+      k= 2.0* np.pi/self.wavelength
+      print('horizontal slit with round edges (vwidth, vpos, edge_radius): ', p1, p2, p3)
+      print('routine not debugged- probably not correct')
+
+      Ny= len(self.y_vec)
+      Nz= len(self.z_vec)
+      T= np.zeros((Ny, Nz), dtype=complex)+ 1+ 0j
+      for row in np.arange(Ny) :
+         for col in np.arange(Nz) :
+            T[row,col]= complex(np.cos(p3), np.sin(p3))
+
+      return T
+   # aperture 83
+
+   def check_sampling(self, drift, verbose=True) :
+      """ check critical sampling
+
+      Args:
+         drift (double): drift distance in m
+
+      Returns:
+         ratio (double): sampling ratio
+         
+      Example:
+          >>> emf.check_sampling(22.3) 
+      """
+      cols= len(self.z_vec)
+      rows= len(self.y_vec)
+      zwidth = self.z_vec[-1]- self.z_vec[0] 
+      ywidth = self.y_vec[-1]- self.y_vec[0]
+      lambda_x_x= self.wavelength* drift
+      yratio= 1.0/(lambda_x_x * rows/ywidth**2)
+      zratio= 1.0/(lambda_x_x * cols/zwidth**2) 
+      ratio= 0.5 * (yratio + zratio)
+      myydrift= ywidth**2/ rows/ self.wavelength
+      myzdrift= zwidth**2/ cols/ self.wavelength
+      mydrift = 0.5* (myydrift+ myzdrift)
+
+      if verbose :
+         print('check_sampling, ratio= {:.2f}'.format(ratio))
+         print('critical_sampling= ', lambda_x_x, ' (m^2)')
+         print('act. hor_sampling= {:3g} (m^2)'.format(zwidth**2/ cols))
+         print('act.vert_sampling= {:3g} (m^2)'.format(ywidth**2/ rows))
+    
+         if (ratio > 1.0) :
+            print('drift= ', drift, ' yields to oversampling')
+            print('recommend transfer function (TR) based propagator (fourier)')
+         else :
+            print('drift= ', drift, ' yields to undersampling')
+            print('recommend impulse response (IR) based propagator (fresnel, fraunhofer)')
+         print('critical drift= {:.3g}'.format(mydrift))
+
+      return ratio
+   # end check_sampling
+
+   def crl(self, radius=5e-4, size=None, thickness=2e-5) :
+      """calculate the electric field after a parabolic compound refractive
+         (Be) lens, (thin lens approximation), units (m) and (rad)
+
+      Args:
+         radius=5e-4 (double): radius
+         size (double): aperture
+         thickness=2e-5 (double): thickness
+
+      Returns:
+          crlfactor (complex): np.array factor which has been applied to the field
+
+      Example:
+          >>> emf = phase.initphase()
+              mask= emf.aperture(example=True)
+              crl= emf.crl()
+      """
+      
+      if not size :
+         size = 2 * radius # aperture 
+      
+      maxr = 0.5 * size                  # define a maximum radius
+
+      print('crl start calculation')
+
+# optical constants of Be - can be extended to other materials
+      rene        = 1.39e15   # 1/m^2
+      mu3kev      = 39.1e2    # 1/m
+      mu12p4kev   = 0.4e2     # 1/m
+      delta3kev   = 3.8e-5    
+      delta12p4kev= 2.21e-6   
+
+# interpolate mu and delta - should be improved
+      kev   = 1e-3* 1240e-9/self.wavelength     # photon energy in keV
+      mu    = mu3kev+    ((mu12p4kev- mu3kev)/(12.4- 3.0))       * (kev- 3.0)
+      delta = delta3kev+ ((delta12p4kev- delta3kev)/(12.4- 3.0)) * (kev- 3.0)
+
+      mu    = mu12p4kev         # hard for 1 A
+      if (mu    < 0.0): 
+         mu   = 0.0     #;; avoid overflow
+      if (delta < 0.0): 
+         delta= 0.0     #;; avoid overflow
+
+      print('photon energy=', kev,', mu=', mu, ', delta=', delta,' radius = ',radius,' aperture=', 2.0*maxr) 
+
+      nz= len(self.z_vec)
+      ny= len(self.y_vec)
+
+#;; determine lens-propagator for the crl
+      crlcomp = np.zeros((ny, nz), dtype=complex) #;; make a complex array
+      for col in np.arange(nz) :
+         for row in np.arange(ny) :
+            rr= np.sqrt(self.z_vec[col]**2 + self.y_vec[row]**2)           # the radial distance 
+            if rr < maxr :                              # inside the aperture
+               f0= np.exp(-mu*thickness/2.0)            # absorption  in the central part of the lens 
+               f1= np.exp(-0.5*mu*rr**2/radius)         # absorption  of the curved  part of the lens, 
+               f2= (-1.0)*rene*self.wavelength*rr**2/radius  # phase shift in the curved  part of the lens
+            else :
+               f0= 0.0   
+               f1= 0.0
+               f2= 0.0
+        
+        #;; print,'f0=',f0,' f1=', f1, ' f2', f2
+            crlcomp[row, col] = complex(np.cos(f2), np.sin(f2))
+            crlcomp[row, col] *= f0 * f1      
+
+
+      self.field *= crlcomp
+      print('crl end')
+      return crlcomp
+   # end crl
+
+   def fermidiracbeam(self, nz=243, ny=None, sizez=1e-3, sizey=None, z_off=0.0, y_off=0.0, fwhm= 5e-4, slope=None, example=False):
+      """generate the electromagnetic field of a fermidirac like beam
+
+      Args:
+         fwhm=5e-4 (double): fwhm
+         ny=None (int): number of points in y (vertical), default is nz
+         nz=243 (int): number of points in z (horizontal)
+         sizey=None (double): size y (vertical) in m, default is sizez
+         sizez=1e-3 (double): size z (horizontal) in m 
+         slope=None (double): slope
+         y_off=0.0
+         z_off=0.0
+
+      Example:
+          >>> emf = phase.initphase()
+              emf.fermidiracbeam(example=True)
+
+      """
+      self.name = 'fermidiracbeam'
+ 
+      if example :
+         print('**********************************************************')
+         print('**********************************************************')
+         self.fermidiracbeam(fwhm=1e-3, sizez=1e-2)
+         print('**********************************************************')
+         print('end example')
+         print('**********************************************************')
+         return
+
+      if ny is None:
+         ny= nz
+      if sizey is None:
+         sizey= sizez
+      if slope is None:
+         slope = 0.05* fwhm
+
+      field = np.zeros((ny, nz), dtype=complex)
+      z_vec = np.linspace(-0.5*sizez, 0.5*sizez, nz)  
+      y_vec = np.linspace(-0.5*sizey, 0.5*sizey, ny)
+      dz    = z_vec[1]- z_vec[0]
+      dy    = y_vec[1]- y_vec[0]
+
+      print('wavelength (m) = ', self.wavelength)
+      print('Nz     = ', nz      , ', Ny     = ', ny)
+      print('sizez (m) = ', sizez   , ', sizey (m) = ', sizey)
+      print('z_off (m) = ', z_off   , ', y_off (m) = ', y_off)
+      print('fwhm    (m) = ', fwhm      , ', slope  (m) = ', slope)
+
+      for col in np.arange(nz) :
+         for row in np.arange(ny) :
+            r = np.sqrt((z_vec[col]-z_off)**2 + (y_vec[row]-y_off)**2)
+            arg0= (r- 0.5 * fwhm)/ slope 
+            arg1= 1.0/(1.0 + np.exp(arg0))
+            field[row,col]= complex(arg1, 0.0)
+
+
+      self.field= field
+      self.z_vec= z_vec
+      self.y_vec= y_vec
+   #end fermidiracbeam
+
+   def fzp(self, f=1.0, d=1e-3, y_off=0.0, z_off=0.0) :
+      """calculate the electric field after a Fresnel zone plate, includes a zero order stop, 
+         no material properties so far, the current version has just an amplitude map
+
+      Args:
+         d=1e-3 (double): diameter in m
+         f=1.0 (double): first order focal length in m
+         y_off=0.0 (double):
+         z_off=0.0 (double):
+
+      Returns:
+          fzpfactor (complex): np.array factor which has been applied to the field
+
+      Example:
+         >>> emf = phase.initphase()
+             emf.fzp()
+      """
+      drn    = f* self.wavelength/d          # outermost zone width
+      n      = d/(4* drn)
+      res    = 1.22* drn
+      na     = 0.610* self.wavelength/ res   # spatial resolution
+      dof    = self.wavelength/(2.0*na*na)   # depth of field +/-
+      dlambda= self.wavelength/n             # otherwise chromatic blu
+      r1     = np.sqrt(self.wavelength*(f+ self.wavelength/4.0)) # first edge
+
+      print('** Fresnel zone plate **')
+      print('========================')
+      print('focal length     f (m) =', f)
+      print('diameter         D (m) =', d)
+      print('wavelength         (m) =', self.wavelength)
+      print('outerm. zone width (m) =', drn)
+      print('inner zone rad. r1 (m) =', r1)
+      print('number of zones  N     =', n)
+      print('spatial resolution (m) =', res)
+      print('numerical aperture     =', na)
+      print('DOF +/-            (m) =', dof)
+      print('dlambda must be    (m) <', dlambda)
+      print('our grid dz        (m) =', self.z_vec[1]- self.z_vec[0])
+      print('our grid dy        (m) =', self.y_vec[1]- self.y_vec[0])
+      print('========================')
+
+      nz= len(self.z_vec)
+      ny= len(self.y_vec)
+      comp = np.zeros((ny, nz), dtype=complex)
+      maxr= 0.5 * d
+      for col in np.arange(nz) :
+         for row in np.arange(ny) :
+            rr= np.sqrt(self.z_vec[col]**2 + self.y_vec[row]**2)           # the radial distance
+            if (rr > r1) and (rr < maxr) :
+               nr= int(2.0/self.wavelength*(np.sqrt(f*f+ rr*rr)- f))  #;; calc n(r) (zone edge number)
+               if (nr % 2) != 0 :
+                  comp[row,col]= complex(1.0, 0.0) #;; amplitude
+      self.field*= comp
+
+      return comp
+   # end fzp
+
+   def h5_read(self, fname=None, vertical=False, verbose=True) :
+      """read genesis-, phase- and pha4idl- hdf5 files with automatic detection of the type
+
+      Args:
+         fname=None (string): filename, if None open selection dialog
+         verbose=False (bool): verbosity
+         vertical=False (bool): read in vertical polarization
+       
+         Example:
+            >>> emf = phase.initphase()
+                emf.h5_read("myh5.h5")
+      """
+      if not fname :
+         #fname = tkinter.filedialog.Open().show(filetypes=['*.h5'])
+         fname = tkinter.filedialog.Open().show()
+         print('got fname= ',fname)
+      
+      if not self.h5_test(fname) :
+         print('file >>',fname,'<< is not a hdf5- exit')
+         return
+      print('file >>',fname,'<< is hdf5- exit')
+      return
+      h5type= h5_check_type(fname, verbose=verbose)
+      if verbose :
+         print('h5_read: h5type=', h5type)
+      if h5type == 7 :
+         h5_read_phase(fname)
+      elif h5type == 8 :
+         h5_read_genesis(fname)
+      elif h5type == 9 :
+         h5_read_pha4idl(fname)
+      else :
+         print('not a recognized hdf5 file type')
+
+   # end h5_read
+
+   def h5_test(self, fname=None, verbose=False) :
+      """test if hdf5 file
+
+      Args:
+         fname=None (string): filename, if None take a default
+         verbose=False (bool): verbosity
+
+      Returns:
+         result (bool): True if hdf5
+
+      """
+      if not fname:
+         fname='/afs/psi.ch/project/phase/data/SwissFEL.out.dfl.phase_hdf5.h5'
+      
+      sp=subprocess.run(['file', '-bL', fname], stdout=subprocess.PIPE)
+      h5=False
+      if sp.stdout == b'Hierarchical Data Format (version 5) data\n' :
+         h5=True
+      return h5
+      
+   # end h5_test
 
    def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
                wavelength=1e-10, plot=False, example=False, \
@@ -801,37 +1495,43 @@ class emf(object):
 
       if fit :
          ##fit= ##gauss2dfit(field_n, stat, z_vec, y_vec) 
-         stat= gausfitter2.gaussfit(field_n)
+         stat= gausfitter2.gaussfit(field_n, rotate=0)  # dont wonder about strange parameter mapping
+         zscale= z_vec[1] - z_vec[0]
+         yscale= y_vec[1] - y_vec[0]
+         bgr= stat[0]
+         amp= stat[1]
+         y0= y_vec[0]+ stat[2]*yscale
+         z0= z_vec[0]+ stat[3]*zscale
+         sigmay= np.abs(stat[4]* yscale)  # UF dont know why sometimes negative
+         sigmaz= np.abs(stat[5]* zscale)
       else :
          print('we do not fit- we search fwhm')
          z0i= mymaxidx[1]
          y0i= mymaxidx[0]
          mymax05= 0.5 * mymax
-         print('z0i,y0i,mymax05',z0i,y0i,mymax05)
+         #print('z0i, y0i, mymax05 ',z0i, y0i, mymax05)
          zcut= myfield[y0i,:] # cut at certain vertical position
          ycut= myfield[:,z0i]
-         zidx= np.asarray((zcut > mymax05).nonzero())  # where function
-         yidx= np.asarray((ycut > mymax05).nonzero())
-         print(zidx, len(zidx), np.shape(zidx), type(zidx), zidx.size)
-    
+         zidx= np.reshape(np.asarray((zcut >= mymax05).nonzero()), -1)  # where function
+         yidx= np.reshape(np.asarray((ycut >= mymax05).nonzero()), -1)
+         #print(zidx, len(zidx), np.shape(zidx), type(zidx), zidx.size)
          if zidx.size > 1 :
             zfwhm= z_vec[zidx[-1]]- z_vec[zidx[0]]
          else :
-            zfwhm= -10
+            zfwhm= 0
          if yidx.size > 1 :
             yfwhm= y_vec[yidx[-1]]- y_vec[yidx[0]]
          else :
             yfwhm= 0
-
-
+         
       print('==============================================================================')
       print( title )
       print('==============================================================================')
       if fit :
-         print('z fwhm = {:7.5g} m, rms = {:.5g} m'.format(stat[2] * 2.35, stat[2]))
-         print('y fwhm = {:7.5g} m, rms = {:.5g} m'.format(stat[3] * 2.35, stat[3]))
-         print('z0     = {:7.5g} m'.format(stat[4]))
-         print('y0     = {:7.5g} m'.format(stat[5]))
+         print('z fwhm = {:7.5g} m, rms = {:.5g} m'.format(sigmaz * 2.35, sigmaz))
+         print('y fwhm = {:7.5g} m, rms = {:.5g} m'.format(sigmay * 2.35, sigmay))
+         print('z0     = {:7.5g} m'.format(z0))
+         print('y0     = {:7.5g} m'.format(y0))
       else :
          print('z fwhm = {:7.5g} m'.format(zfwhm))
          print('y fwhm = {:7.5g} m'.format(yfwhm))
@@ -855,8 +1555,6 @@ class emf(object):
 
       mydict= {'total': mytot, 'max':mymax}
       return mydict
-
-
    # end statistics
 
    def torus(self, degree=False, s1=10.0, s2=5.0, thetan=0.0, thetag=None, verbose=True):
