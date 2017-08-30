@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <25 Aug 17 17:12:16 flechsig> 
+# Time-stamp: <29 Aug 17 14:02:33 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -38,6 +38,7 @@
 # the class methods are in alphabetical order
 
 import subprocess
+import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 import gausfitter2
@@ -842,6 +843,56 @@ class emf(object):
       return comp
    # end fzp
 
+   def h5_check_type(self, fname, verbose=False):
+      """check hdf5 structure for genesis-, phase- and pha4idl (helper function)
+
+      Args: 
+         fname (str): filename
+         verbose=False (bool): verbosity
+  
+      Returns: 
+         file type (int)
+      """
+      f = h5py.File(fname)
+      myreturn = 0
+      #;; test phase type
+      e= 'e_field' in f
+      e= e and 'y_vec' in f
+      e= e and 'z_vec' in f
+      e= e and 't_vec' in f
+      if e:
+         if verbose:
+            print('h5_check_type: file ', fname, ' => hdf5 file from phase (source7)') 
+         myreturn = 7
+
+      # genesis type
+      e= 'slice000001' in f       
+      #myreturn*= tag_exist(fstructure, 'slice000001/field') 
+      e= e and 'wavelength' in f        
+      e= e and 'gridsize' in f          
+      e= e and 'slicecount'in f
+      if e :
+         if verbose:
+            print('h5_check_type: file ', fname, ' => hdf5 file from GENESIS (source7)') 
+         myreturn= 8
+
+      # test phase4idl type
+      e= 'data' in f      
+      e= e and 'delta' in f         
+      e= e and 'lambda' in f         
+      e= e and 'origin' in f
+      if e :
+         if verbose:
+            print('h5_check_type: file ', fname, ' => hdf5 file from phase4idl (source7)') 
+         myreturn= 9
+      
+      if myreturn == 0 and verbose:
+         print('h5_check_type: unknown type: ')
+      
+      f.close()
+      return myreturn
+   # end h5_check_type 
+
    def h5_read(self, fname=None, vertical=False, verbose=True) :
       """read genesis-, phase- and pha4idl- hdf5 files with automatic detection of the type
 
@@ -863,20 +914,79 @@ class emf(object):
          print('file >>',fname,'<< is not a hdf5- exit')
          return
       print('file >>',fname,'<< is hdf5- exit')
-      return
-      h5type= h5_check_type(fname, verbose=verbose)
+      
+      h5type= self.h5_check_type(fname, verbose=verbose)
       if verbose :
          print('h5_read: h5type=', h5type)
       if h5type == 7 :
-         h5_read_phase(fname)
+         self.h5_read_phase(fname, verbose=verbose)
       elif h5type == 8 :
-         h5_read_genesis(fname)
+         self.h5_read_genesis(fname, verbose=verbose)
       elif h5type == 9 :
-         h5_read_pha4idl(fname)
+         self.h5_read_pha4idl(fname, verbose=verbose)
       else :
          print('not a recognized hdf5 file type')
 
    # end h5_read
+
+   def h5_read_genesis(self, fname, verbose=False):
+      """read genesis helper function
+
+         read genesis source, Genesis calculates an EM field on a centered,
+         equidistant, quadratic grid, the output is one field - no polarization
+
+      Args:
+        fname (str): filename
+        verbose=False (bool): verbosity
+
+      example:
+          >>> emf.h5_read_genesis('/afs/psi.ch/project/phase/data/SwissFEL_3keV.out.dfl.h5')
+      """
+      f = h5py.File(fname)
+      field0= f['slice000001/field'][:]   # 1d array
+      gridsize= f['gridsize'][:]
+      self.wavelength= f['wavelength'][:]
+      f.close()
+
+      size2 = field0.size / 2       # number of complex vals
+      size  = int(np.sqrt(size2))
+      
+
+
+      if verbose:
+         print('read GENESIS file -- units: (m)')
+         print('size       = ', size, ' gridsize= ', gridsize)
+         print('size^2     = ', size2)
+         print('wavelength = ',  self.wavelength)
+
+#;; normalization
+      eev= 511000   #;; electronen ruhemasse in eV
+      k  = 2.0*np.pi/ self.wavelength
+      field1= field0.view(complex) 
+      field1.resize((size,size))
+      self.field= field1* eev/k # scaled field
+      x0= np.arange(size)- size/2
+      self.z_vec = x0* gridsize[0]
+      self.y_vec = self.z_vec * 1.0
+   #end h5_read_genesis
+
+   def h5_read_phase(self, fname):
+      """read phase helper function"""
+      f = h5py.File(fname)
+      self.z_vec = f['/z_vec'][:]
+      self.y_vec = f['/y_vec'][:]
+      self.t_vec = f['/t_vec'][:]
+      self.field = f['/e_field'][:] 
+      self.wavelength= f['/wavelength'][:]
+      f.close()
+      print("untested")
+
+   #end h5_read_phase
+
+   def h5_read_pha4idl(self, fname):
+      """read pha4idl helper function"""
+      print("not yet implemented")
+   #end h5_read_pha4idl
 
    def h5_test(self, fname=None, verbose=False) :
       """test if hdf5 file
@@ -897,7 +1007,6 @@ class emf(object):
       if sp.stdout == b'Hierarchical Data Format (version 5) data\n' :
          h5=True
       return h5
-      
    # end h5_test
 
    def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
