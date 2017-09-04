@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <29 Aug 17 14:02:33 flechsig> 
+# Time-stamp: <31 Aug 17 17:12:19 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -895,6 +895,7 @@ class emf(object):
 
    def h5_read(self, fname=None, vertical=False, verbose=True) :
       """read genesis-, phase- and pha4idl- hdf5 files with automatic detection of the type
+      opens file selection dialog if called without filename
 
       Args:
          fname=None (string): filename, if None open selection dialog
@@ -907,7 +908,9 @@ class emf(object):
       """
       if not fname :
          #fname = tkinter.filedialog.Open().show(filetypes=['*.h5'])
-         fname = tkinter.filedialog.Open().show()
+         #fname = tkinter.filedialog.Open().show()
+         fname = tkinter.filedialog.askopenfilename(filetypes=(("hdf5 files", "*.h5"),
+                                                               ("All files", "*.*") ))
          print('got fname= ',fname)
       
       if not self.h5_test(fname) :
@@ -951,8 +954,6 @@ class emf(object):
       size2 = field0.size / 2       # number of complex vals
       size  = int(np.sqrt(size2))
       
-
-
       if verbose:
          print('read GENESIS file -- units: (m)')
          print('size       = ', size, ' gridsize= ', gridsize)
@@ -963,29 +964,97 @@ class emf(object):
       eev= 511000   #;; electronen ruhemasse in eV
       k  = 2.0*np.pi/ self.wavelength
       field1= field0.view(complex) 
-      field1.resize((size,size))
-      self.field= field1* eev/k # scaled field
+      field2= np.resize(field1,(size,size))
+      self.field= field2* eev/k # scaled field
       x0= np.arange(size)- size/2
       self.z_vec = x0* gridsize[0]
       self.y_vec = self.z_vec * 1.0
    #end h5_read_genesis
 
-   def h5_read_phase(self, fname):
-      """read phase helper function"""
+   def h5_read_phase(self, fname, vertical=False, verbose=False):
+      """read phase helper function
+
+      Args:
+        fname (str): filename
+        vertical=False (bool): vertical polarization
+        verbose=False (bool): verbosity
+
+      example:
+          >>> emf.h5_read_phase('/afs/psi.ch/project/phase/data/EZRE_GB_5000.h5')
+      """
+
       f = h5py.File(fname)
       self.z_vec = f['/z_vec'][:]
       self.y_vec = f['/y_vec'][:]
       self.t_vec = f['/t_vec'][:]
-      self.field = f['/e_field'][:] 
+      e_field = f['/e_field'][:] 
       self.wavelength= f['/wavelength'][:]
       f.close()
-      print("untested")
+      
+      cols= self.z_vec.size
+      rows= self.y_vec.size
+      no_time_slices= self.t_vec.size
+      #print("untested")
+      if verbose:
+         print('read Phase file -- units: (m)')
+         print('cols       = ', cols)
+         print('rows       = ', rows)
+         print('time slices= ', no_time_slices)
+         print('wavelength = ', self.wavelength)
+         print('field_size = ', e_field.size)
 
+      ycomp= np.zeros((rows,cols), dtype=complex)         
+      zcomp= np.zeros((rows,cols), dtype=complex)
+      # print("field shape: ", e_field.shape)
+
+
+      #i+ j* cols + k * (rows * cols) + it * (rows * cols * 4)
+      for it in np.arange(no_time_slices):
+         for row in np.arange(rows):
+            for col in np.arange(cols):
+               ycomp[row,col]= complex(e_field[it, 0, row, col], e_field[it, 1, row, col])
+               zcomp[row,col]= complex(e_field[it, 2, row, col], e_field[it, 3, row, col])
+
+      if vertical:
+         print("field represents vertical polarization")
+         self.field= ycomp
+      else: 
+         print("field represents horizontal polarization")
+         self.field= zcomp
    #end h5_read_phase
 
-   def h5_read_pha4idl(self, fname):
-      """read pha4idl helper function"""
-      print("not yet implemented")
+   def h5_read_pha4idl(self, fname, vertical=False, verbose=False):
+      """read pha4idl helper function
+
+      Args:
+        fname (str): filename
+        verbose=False (bool): verbosity
+        vertical=False (bool): vertical polarization
+
+      example:
+          >>> emf.h5_read_pha4idl('/afs/psi.ch/project/phase/data/uf-gauss.h5')
+      """
+
+      f = h5py.File(fname)
+      self.wavelength= f['lambda'][:]
+      origin = f['origin'][:] # read origin vector (y0, z0)
+      delta  = f['delta'][:] # ; read the delta vector (dy, dz)
+      ezre   = f['data/ezre'][:] # field
+      eyre   = f['data/eyre'][:] # field
+      ezim   = f['data/ezim'][:] # field
+      eyim   = f['data/eyim'][:] # field
+      ny, nz= ezre.shape
+      print("NY:NZ = ", ny, "", nz)
+
+      self.z_vec= origin[0]+ np.arange(nz)*delta[0]
+      self.z_vec= origin[1]+ np.arange(ny)*delta[1]
+      if vertical:
+         print("field represents vertical polarization")
+         self.field= ycomp
+      else: 
+         print("field represents horizontal polarization")
+         self.field= zcomp
+      f.close()
    #end h5_read_pha4idl
 
    def h5_test(self, fname=None, verbose=False) :
@@ -1008,6 +1077,71 @@ class emf(object):
          h5=True
       return h5
    # end h5_test
+
+   def h5_write(self, fname, delta=np.pi/6, genesis=False, phase=False, pha4idl=False, verbose=False, yscale=0.9):
+      """write hdf5 output - default is GENESIS format with multiple format switches
+
+      Args:
+         fname (str): filename
+         delta=np.pi/6 (flt): phase shift between Ez and Ey (phase format only), default= pi/6
+         genesis=False (bool): Genesis format (default if not type is given)
+         phase=False (bool):  Phase format
+         pha4idl=False (bool): pha4idl format
+         verbose=True (bool): verbosity
+         yscale=0.9 (flt): scale of y amplitude (default= 0.9)
+
+      Example:
+          >>> h5_write("myoutput.h5")   
+      """
+      genesis= not phase and not pha4idl
+      if genesis:
+         print('save genesis h5')
+         if self.y_vec.size != self.z_vec.size :
+            print("GENESIS hdf5 files need a quadratic grid- return")
+            return
+         eev= 511000
+         kk  = 2.0* np.pi/ self.wavelength
+         field= self.field* kk/eev
+         field1= np.resize(field,(field.size, 1))
+         field2= field1.view(float)
+         gridsize=self.y_vec[1]-self.y_vec[0]
+         slicecount=1
+         f = h5py.File(fname, 'w')
+         f.create_dataset('wavelength', data=self.wavelength)
+         f.create_dataset('gridsize',   data=np.array([gridsize]))
+         f.create_dataset('slicecount', data=np.array([slicecount]))
+         f.create_dataset('slice000001/field', data=field2)
+         f.close()
+      if phase:
+         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+         print('!! we save the field to zcomp AND ycomp !!')
+         print('!! use parameters delta and yscale      !!')
+         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+         cols= self.z_vec.size
+         rows= self.y_vec.size
+         no_time_slices= 1
+         field=np.zeros((no_time_slices, 4, rows, cols), dtype=float)
+         for it in np.arange(no_time_slices):
+            for row in np.arange(rows):
+               for col in np.arange(cols):
+                  eabs= np.absolute(self.field[row,col])* yscale
+                  angl= np.angle(self.field[row,col])+ delta
+                  field[it,0,row,col]= eabs* np.cos(angl)
+                  field[it,1,row,col]= eabs* np.sin(angl)
+                  field[it,2,row,col]= np.real(self.field[row,col])
+                  field[it,3,row,col]= np.imag(self.field[row,col])
+
+         f = h5py.File(fname, 'w')
+         f.create_dataset('/wavelength', data=self.wavelength)
+         f.create_dataset('/z_vec',      data=self.z_vec)
+         f.create_dataset('/y_vec',      data=self.y_vec)
+         f.create_dataset('/t_vec',      data=np.array([1]))
+         f.create_dataset('/e_field',    data=field)
+         f.close()
+      if pha4idl:
+         print('save pha4idl h5 - not available so far')
+
+   # end h5_write
 
    def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
                wavelength=1e-10, plot=False, example=False, \
@@ -1175,6 +1309,19 @@ class emf(object):
        plt.show()
        # mycontour
 
+   def phaseplate(self, arr): 
+      """ multiply the field by a matrix - same as scalefield but with error handling
+
+      Args:
+         arr (float or complex): matrix
+
+      """
+      if self.field.shape == arr.shape :
+         self.field*= arr
+      else:
+         print("error: shape mismatch- do nothing")
+   #end phaseplate
+
    def plotamplitude( self ):
       """plot the amplitude
       
@@ -1185,7 +1332,8 @@ class emf(object):
       """
       
       title= self.getname()+ " amplitude"
-      self.mycontour(self.getamplitude(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'amplitude ($V/m^3$)', title=title)
+      self.mycontour(self.getamplitude(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
+                     zlabel= 'amplitude ($V/m^3$)', title=title)
    # end plotamplitude 
  
    def plotimag( self ):
@@ -1198,7 +1346,8 @@ class emf(object):
       """
       
       title= self.getname()+ " imaginary part"
-      self.mycontour(self.getimag(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'imaginary part (a. u.)', title=title)
+      self.mycontour(self.getimag(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
+                     zlabel= 'imaginary part (a. u.)', title=title)
    # end plotimag
 
    def plotintensity( self ):
@@ -1211,8 +1360,26 @@ class emf(object):
       """
       
       title= self.getname()+ " intensity"
-      self.mycontour(self.getintensity(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'intensity ($W/m^2$)', title=title)
+      self.mycontour(self.getintensity(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
+                     zlabel= 'intensity ($W/m^2$)', title=title)
    # end plotintensity
+
+   def plotphase( self, param='raw' ):
+      """plot the phase of the field
+
+      Args:
+          param='raw' (string): the phase style ("raw", "herra", "numpy"), handed over to getphase
+                
+      Example:
+          >>> emf = phase.initphase()
+              emf.gaussbeam(example=True)
+              emf.plotphase()
+      """
+      
+      title= self.getname()+ " phase"
+      self.mycontour(self.getphase(param=param), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
+                     zlabel= 'phase (rad)', title=title)
+   # end plotphase
 
    def plotphotons( self ):
       """plot the field intensity as photons
@@ -1224,8 +1391,69 @@ class emf(object):
       """
       
       title= self.getname()+ " photons"
-      self.mycontour(self.getphotons(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'photon density ($1photons/s m^2$)', title=title)
+      self.mycontour(self.getphotons(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
+                     zlabel= 'photon density ($1photons/s m^2$)', title=title)
    # end plotphotons
+
+   def plotprofile( self, amplitude=False, merge=False, min=False, phase=False, y0=None, ylog=False, z0=None):
+      """plot the profiles (hor and vertical) see getprofile, UF nice 2have projections
+
+      Args:
+         amplitude=False (bool): amplitude profile (default is intensity) 
+         merge=False (bool): single plot for hor and vert profile    
+         min=False (bool):   profile at minimum (default is maximum)
+         phase=False (bool): phase profile (default is intensity)
+         y0=None (int): horizontal profile at y0 (so far as index)
+         ylog=False (bool): vertical log scale
+         z0=None (int): vertical profile at z0 (so far as index)
+
+      Example:
+          >>> emf = phase.initphase()
+              emf.gaussbeam(example=True)
+              emf.plotprofile()
+      """
+      
+      title= self.getname()+ " profile"
+      zp= self.getprofile(amplitude=amplitude, min=min, phase=phase, y0=y0, z=True, z0=z0)
+      yp= self.getprofile(amplitude=amplitude, min=min, phase=phase, y0=y0, z=False, z0=z0)
+      y= self.gety_vec()
+      z= self.getz_vec()
+
+      plt.figure()
+      if merge:
+         miyz = np.amin([np.amin(y), np.amin(z)])
+         mayz = np.amin([np.amax(y), np.amax(z)])
+         miyzp= np.amin([np.amin(yp), np.amin(zp)])
+         mayzp= np.amin([np.amax(yp), np.amax(zp)])
+         
+         plt.plot(z*1e3, zp, label='horizontal')
+         plt.plot(y*1e3, yp, label='vertical')
+         plt.xlabel('yz axis (mm)')
+         plt.ylabel('profile ()')
+         plt.title(title)
+         plt.xlim([miyz*1e3,mayz*1e3])
+         plt.ylim([miyzp,mayzp])
+         plt.legend()
+         if ylog:
+            plt.semilogy()
+      else :
+         plt.subplot(1, 2, 1)
+         plt.plot(z*1e3, zp, label='horizontal')
+         plt.xlabel('z (mm)')
+         plt.ylabel('profile')
+         plt.title(title)
+         if ylog:
+            plt.semilogy()
+         plt.subplot(1, 2, 2)
+         plt.plot(yp, y*1e3, label='vertical')
+         plt.ylabel('y (mm)')
+         plt.xlabel('profile')
+         plt.title(title)
+         if ylog:
+            plt.semilogx()
+
+      plt.show
+# end plotprofile
 
    def plotreal( self ):
       """plot the real part of the field
@@ -1237,11 +1465,36 @@ class emf(object):
       """
       
       title= self.getname()+ " real part"
-      self.mycontour(self.getreal(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, zlabel= 'real part (a. u.)', title=title)
+      self.mycontour(self.getreal(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
+                     zlabel= 'real part (a. u.)', title=title)
    # end plotreal  
    
+   def propagate(self, drift=None):
+      """propagate with fresnel or fourier (FFT(-1) -> FFT(1)) depending on sampling
+
+      Args: 
+         drift=None (flt): drift in m
+
+      Example:
+          >>> emf.propagate(100)
+      """ 
+      ratio= self.check_sampling(drift=drift)
+      if ratio > 1.0:
+         self.propfourier(drift)
+      else:
+         self.propfesnel(drift)
+   # end propagate  
+   
    def propfraunhofer(self, drift=None):
-       '''propfraunhofer'''
+       '''propagate using Fraunhofer propagator
+
+       Args: 
+         drift=None (flt): drift in m
+
+      Example:
+          >>> emf.propfraunhofer(100)
+       '''
+
        field = self.field
        y_vec = self.y_vec
        z_vec = self.z_vec
@@ -1260,18 +1513,18 @@ class emf(object):
        k  = 2* np.pi/wavelength
        nz = len(z_vec)
        ny = len(y_vec)
-       zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)                      # total width, 12.9.2013: corrected for nz/(nz-1)
-       yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      # total height,     -"-
+       zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)            # total width, 12.9.2013: corrected for nz/(nz-1)
+       yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)            # total height,     -"-
   
        print('width (input) = ', zz*1e3, ' x ', yy*1e3, ' mm^2 ')
        print('drift         = ', drift)
 
-       newfield0 = np.fft.fft2(modfield)                               # forward 2d fft, centered output           
+       newfield0 = np.fft.fft2(field)                               # forward 2d fft, centered output           
        newfield  = np.fft.fftshift(newfield0)
-       u0        = np.arange(nz)/(nz-1) - 0.5                           # define the vectors in the image plane     
+       u0        = np.arange(nz)/(nz-1) - 0.5                       # define the vectors in the image plane     
        v0        = np.arange(ny)/(ny-1) - 0.5   
-       uscale   = (drift*wavelength)/zz * nz                            # why is uscale,vscale of type array[1] ?   
-       vscale   = (drift*wavelength)/yy * ny                            #-> wavelength comes as array[1], solved    
+       uscale   = (drift*wavelength)/zz * nz                        # why is uscale,vscale of type array[1] ?   
+       vscale   = (drift*wavelength)/yy * ny                        #-> wavelength comes as array[1], solved    
        u        = u0*uscale
        v        = v0*vscale
        z0       = z_vec[0]
@@ -1375,7 +1628,7 @@ class emf(object):
        Returns:
           field (real): amplitude as numpy array
        """
-       return np.abs(self.field)
+       return np.absolute(self.field)
    # getamplitude
 
 
@@ -1452,6 +1705,52 @@ class emf(object):
       return np.absolute(self.field)**2/377.0/1.6e-19
    # getphotons
 
+   def getprofile(self, amplitude=False, min=False, phase=False, y0=None, z=False, z0=None):
+      """get the profile (cut) at the maximum or minimum for intensity, amplitude or phase
+     
+      Args:
+         amplitude=False (bool): amplitude profile (default is intensity)      
+         min=False (bool):   profile at minimum (default is maximum)
+         phase=False (bool): phase profile (default is intensity)
+         y0=None (int): horizontal profile at y0 (so far as index)
+         z=False (bool): horizontal profile  (default is vertical)
+         z0=None (int): vertical profile at z0 (so far as index)
+
+      Returns:
+         np.array with profile
+      """
+
+      if amplitude:
+         field= self.getamplitude()
+      elif phase: 
+         field= self.getphase('numpy')
+      else :
+         field= self.getintensity() 
+         
+      if min:
+         mymin= np.amin(field)
+         myminidx= np.unravel_index(field.argmin(), field.shape)
+         print("search minimum: ", mymin, myminidx)
+      else :
+         mymax= np.amax(field)
+         mymaxidx= np.unravel_index(field.argmax(), field.shape)
+         print("search maximum: ", mymax, mymaxidx)
+
+      if z: 
+         prof= field[mymaxidx[0], :]
+      else :
+         prof= field[:, mymaxidx[1]]
+
+      if z0:
+         prof= field[:, z0]
+
+      if y0:
+         prof= field[y0, :]
+
+      return prof
+
+   # getprofile
+
    def getreal(self):
       """returns the real part of the field
 
@@ -1486,7 +1785,120 @@ class emf(object):
           z (double): vector
        """
        return self.z_vec
-   # getz_vec   
+   # getz_vec  
+
+   def lens(self, fy=1e200, fz=1e200): 
+      """field after a thin lens
+
+      Args:
+         fy=1e200 (double): vertical focal length
+         fz=1e200 (double): horizontal focal length
+
+      Returns:
+         complex array with lens factor
+      """
+      print("thin lens with focal length fy= {:.3g} m and fz= {:.3g} m".format(fy,fz))
+      lcomp= self.field * 0+ 0j
+      for row in np.arange(self.y_vec.size):
+         for col in np.arange(self.z_vec.size):
+            f1= self.z_vec[col]**2/(2*fz)+ self.y_vec[row]**2/(2*fy)
+            f1*= (-2* np.pi)/ self.wavelength
+            lcomp[row,col]= complex(np.cos(f1), np.sin(f1))
+
+      self.field*= lcomp
+      return lcomp
+   #end lens
+
+   def resize(self, center=True, interpolate=False, newsize=None, newy_vec=None, newz_vec=None) :
+      """resize the field and grid we assume an equidistant quadratic grid. The default is zero padding 
+      to newsize and keep the spatial resolution. Interpolate keeps the area and interpolates to newsize. 
+      Providing vectors forces the field to be interpolated and zero padded. The routine modifies the 
+      vectors and fields.
+      The method functions and calling parameters are different from resize.pro!
+
+      hint for fast idl fft: N should be built from prime factors 2,3,5,
+      to avoid special treatment of the Nyquist frequency odd N
+      are recommended good examples:
+      3,    9,  27,  81,  243, 729, 2187 
+      5,   25, 125, 625, 3125
+      15,  75, 375, 1875
+      45, 135, 405, 1215
+      225
+      if N= 3^k3 + 5^k5 then time = a*(3*k3+5*k5) i.e. 243=>15, 225=>16
+      i.e. 243 is faster than 225
+
+      Args:
+         interpolate=False (bool): inerpolate, default is zero padding
+         newsize=None (int):     new quadratic gridzize 
+         center=True (bool):    zeropadding without centering 
+         newy_vec=None:       new y_vector
+         newz_vec=None:       new z_vector
+
+         Example:
+          >>>emf.resize()
+      """
+      size= self.field.size
+      if size[0] >= size[1]:
+         sizeField = size[0]
+      else:
+         sizeField = size[1]
+
+      if newsize :
+         if newsize <= sizeField :
+            print('error: newsize < oldsize- return')
+            return
+    
+      if newy_vec :
+         print('error: vector input not yet supported')
+         return
+
+      if newz_vec :
+         print('error: vector input not yet supported')
+         return
+
+      if interpolate:
+         print('-----------------interpolate-----------')
+         print('old= ', sizeField, ' new= ', newsize)
+         field= interpolate(field, z_vec, y_vec, /GRID)
+         z0 = self.z_vec[0]                           # the start value
+         y0 = self.y_vec[0]                           # the start value
+         dz = self.z_vec[1] - z0                      # stepsize
+         dy = self.y_vec[1] - y0                      # stepsize
+         self.z_vec=  np.arange(newsize)* dz + z0
+         self.y_vec=  np.arange(newsize)* dy + y0
+      else :
+         print('----------------- Zero padding of field ------')
+         print('old= ', sizeField, ' new= ', newsize)
+
+         Null = np.zeros((newsize, newsize), dtype=complex)  # make a quadratic array filled with 0
+         
+         zshift = (newsize-size[0])/2     # the index to shift 
+         yshift = (newsize-size[1])/2     # the index to shift
+         Null[0,0] = self.field           # copy original field
+
+#;; now the vectors
+         z0 = self.z_vec[0]                           # the start value
+         y0 = self.y_vec[0]                           # the start value
+         dz = self.z_vec[1] - z0                      # stepsize
+         dy = self.y_vec[1] - y0                      # stepsize
+
+         if center: # center
+            self.z_vec= (np.arange(newsize)- zshift) * dz + z0
+            self.y_vec= (np.arange(newsize)- yshift) * dy + y0 
+         else :
+            self.z_vec=  np.arange(newsize)* dz + z0
+            self.y_vec=  np.arange(newsize)* dy + y0
+        
+   # resize
+
+   def scalefield( self, scaler ):  
+      """ scale the field - similar to phaseplate
+
+      Args:
+         scaler: double or complex number or array
+      """
+      self.field*= scaler
+   # scalefield
 
    def setField( self, field ):  
       """set a new field
