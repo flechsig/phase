@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <31 Aug 17 17:12:19 flechsig> 
+# Time-stamp: <05 Sep 17 16:48:04 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -43,6 +43,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gausfitter2
 import tkinter.filedialog
+import scipy.interpolate
 
 class emf(object):
    """main object of an electromagnetic field """
@@ -1828,7 +1829,7 @@ class emf(object):
       i.e. 243 is faster than 225
 
       Args:
-         interpolate=False (bool): inerpolate, default is zero padding
+         interpolate=False (bool): interpolate, default is zero padding
          newsize=None (int):     new quadratic gridzize 
          center=True (bool):    zeropadding without centering 
          newy_vec=None:       new y_vector
@@ -1837,7 +1838,7 @@ class emf(object):
          Example:
           >>>emf.resize()
       """
-      size= self.field.size
+      size= self.field.shape
       if size[0] >= size[1]:
          sizeField = size[0]
       else:
@@ -1859,36 +1860,49 @@ class emf(object):
       if interpolate:
          print('-----------------interpolate-----------')
          print('old= ', sizeField, ' new= ', newsize)
-         field= interpolate(field, z_vec, y_vec, /GRID)
-         z0 = self.z_vec[0]                           # the start value
-         y0 = self.y_vec[0]                           # the start value
-         dz = self.z_vec[1] - z0                      # stepsize
-         dy = self.y_vec[1] - y0                      # stepsize
+         z_vec= self.z_vec
+         y_vec= self.y_vec
+         field= self.field 
+
          self.z_vec=  np.arange(newsize)* dz + z0
          self.y_vec=  np.arange(newsize)* dy + y0
+         self.z_vec= np.linspace(z_vec[0], zvec[-1], newsize)
+         self.y_vec= np.linspace(y_vec[0], yvec[-1], newsize)
+ #        field= interpolate(field, z_vec, y_vec, /GRID)
+ #        grid_z2 = griddata(points, values, (grid_x, grid_y), method='cubic')
+ #        grid_z2 = griddata(points, values, (grid_x, grid_y), method='cubic')
+ #        self.field = scipy.interpolate.griddata((y_vec, z_vec), field, self.y_vec, self.z_vec, method='cubic')
+ #        y2d, z2d= np.meshgrid(self.y_vec, self.z_vec)
+
+         fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic')
+         fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic')
+         self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
       else :
          print('----------------- Zero padding of field ------')
          print('old= ', sizeField, ' new= ', newsize)
 
-         Null = np.zeros((newsize, newsize), dtype=complex)  # make a quadratic array filled with 0
+         newarr = np.zeros((newsize, newsize), dtype=complex)  # make a quadratic array filled with 0
          
-         zshift = (newsize-size[0])/2     # the index to shift 
-         yshift = (newsize-size[1])/2     # the index to shift
-         Null[0,0] = self.field           # copy original field
+         if center:
+            colshift = (newsize-size[1])/2     # the index to shift 
+            rowshift = (newsize-size[0])/2     # the index to shift
+         else :
+            colshift= 0
+            rowshift= 0
+         
+         for row in np.arange(self.y_vec.size): # copy original field
+            for col in np.arange(self.z_vec.size):
+               newarr[row + rowshift, col + colshift]= self.field[row, col]   
 
-#;; now the vectors
+         #;; now the vectors
          z0 = self.z_vec[0]                           # the start value
          y0 = self.y_vec[0]                           # the start value
          dz = self.z_vec[1] - z0                      # stepsize
          dy = self.y_vec[1] - y0                      # stepsize
 
-         if center: # center
-            self.z_vec= (np.arange(newsize)- zshift) * dz + z0
-            self.y_vec= (np.arange(newsize)- yshift) * dy + y0 
-         else :
-            self.z_vec=  np.arange(newsize)* dz + z0
-            self.y_vec=  np.arange(newsize)* dy + y0
-        
+         self.z_vec= (np.arange(newsize)- colshift) * dz + z0
+         self.y_vec= (np.arange(newsize)- rowshift) * dy + y0 
+         self.field= newarr
    # resize
 
    def scalefield( self, scaler ):  
