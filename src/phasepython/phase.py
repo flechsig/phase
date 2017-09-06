@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <06 Sep 17 09:07:11 flechsig> 
+# Time-stamp: <06 Sep 17 09:11:49 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -1671,7 +1671,7 @@ class emf(object):
       if ratio > 1.0:
          self.propfourier(drift)
       else:
-         self.propfesnel(drift)
+         self.propfresnel(drift)
    # end propagate  
    
    def propfraunhofer(self, drift=None):
