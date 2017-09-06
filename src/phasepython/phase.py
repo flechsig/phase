@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <06 Sep 17 09:02:07 flechsig> 
+# Time-stamp: <06 Sep 17 09:07:11 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -1432,7 +1432,7 @@ class emf(object):
          print('save pha4idl h5 - not available so far')
    # end h5_write
 
-def lens(self, fy=1e200, fz=1e200): 
+   def lens(self, fy=1e200, fz=1e200): 
       """field after a thin lens
 
       Args:
