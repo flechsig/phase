@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <05 Sep 17 16:48:04 flechsig> 
+# Time-stamp: <06 Sep 17 09:02:07 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -844,6 +844,295 @@ class emf(object):
       return comp
    # end fzp
 
+   def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
+               wavelength=1e-10, plot=False, example=False, \
+               z_off=0.0, y_off=0.0):
+       """generate the electromagnetic field of a gaussian beam and fill the emf
+
+       Args:
+          dist=None (double): the drift distance in m
+          drift=None (double): the drift distance in m (overwrites dist)
+          w0=1e-5 (double): w0
+          Nz=243 (int): number of points in z (horizontal)
+          Ny=None (int): number of points in y (vertical), default is Nz
+          sizez=1e-3 (double): size z (horizontal) in m 
+          sizey=None (double): size y (vertical) in m, default is sizez
+          wavelength=1e-10 (double): wavelength
+          plot=False (bool): plot the intensity
+          example=False (bool): make an example (includes the plot)
+          z_off=0.0 (double): offset z in m
+          y_off=0.0 (double): offset y in m
+
+       Example:
+          >>> emf = phase.initphase()
+              emf.gaussbeam(example=True, plot=True)   
+       """
+       self.name = 'Gaussbeam'
+
+       if example is True :
+           print('**********************************************************')
+           print('example: HeNe Laser ')
+           print('wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2')
+           print('**********************************************************')
+           self.gaussbeam(dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2)
+           print('**********************************************************')
+           print('end example')
+           print('**********************************************************')
+           return
+   
+       if drift is not None:
+          dist= drift
+       if Ny is None:
+          Ny= Nz
+       if sizey is None:
+          sizey= sizez
+
+       field = np.zeros((Ny, Nz), dtype=complex) 
+       z_vec = np.linspace(-0.5*sizez, 0.5*sizez, Nz)  
+       y_vec = np.linspace(-0.5*sizey, 0.5*sizey, Ny)
+       dz    = z_vec[1]- z_vec[0]
+       dy    = y_vec[1]- y_vec[0]
+
+       print( 'wavelength (m) = ', wavelength)
+       print( 'Nz     = ', Nz      , ', Ny     = ', Ny)
+       print( 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey)
+       print( 'dz (m)    = ', dz      , ', dy (m)    = ', dy)
+       print( 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off)
+       print( 'w0    (m) = ', w0      , ', dist  (m) = ', dist)
+
+       k   = np.pi * 2    / wavelength        # wave number
+       z0  = np.pi * w0**2 / wavelength       # Rayleigh Range
+       w   = w0 * np.sqrt(1.0+ (dist/z0)**2)  # w(dist)
+       w2  = w**2
+       eta = np.arctan(dist/z0)
+       Ri  = dist / (dist**2 + z0**2)         # curvature Ri  = 1/R;
+
+       print( 'z0    (m) = ', z0, ' (Rayleigh Range= +/- z0)')
+       print( 'w     (m) = ', w   ,', w2 (m^2) = ', w2)
+       print( 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri)
+
+       truncation= 0 
+       for i in range(0, Nz-1):
+          for j in range(0, Ny-1):
+             rho2  =  (z_vec[i]-z_off)**2 + (y_vec[j]-y_off)**2 
+             arg1  = -1 *  rho2 / w2               # the intensity factor as function of aperture
+             if arg1 <= -40: 
+                 arg1 = -40                        #  -40, but -80 is still ok
+                 truncation= 1
+       
+             arg2  = 0.5 * k * rho2 * Ri + k*dist - eta                    # For notation of Siegman multiply by -1                    
+             phas2 = complex(np.cos(arg2), np.sin(arg2))     
+             field[i,j]= phas2 * np.exp(arg1) * w0 / w
+       
+       
+       # norm to 0.5 W  !! we assume only one polarization 
+       intensity = np.absolute(field)**2/377.0
+       binsize= (z_vec[1]-z_vec[0])*(y_vec[1]-y_vec[0])
+       itot= np.sum(intensity) * binsize * 2.0
+       scale= 1.0/np.sqrt(itot)
+       field*= scale
+
+       if truncation > 0:
+           print ('!! warning -- some outside points are truncated !!')
+
+# plot using mycontour
+       if plot is True:
+           print('plot')
+           bamp = np.absolute(field)
+           #window, 20
+           #stat = dblarr(7)
+           #fit   = gauss2dfit(bamp,    stat, z_vec, y_vec) 
+           #fit2  = gauss2dfit(bamp^2, stat2, z_vec, y_vec) 
+           #print 'gaussfit amplitude: rms_z, rms_y (m)= ', stat(2),  stat(3)
+           #print 'gaussfit intensity: rms_z, rms_y (m)= ', stat2(2), stat2(3)
+           #title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' + string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
+           self.mycontour(bamp, z_vec*1e3, y_vec*1e3, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity $(W/m^2)$', title=self.name)
+
+           pha = np.angle(field)
+           if np.amax(pha)- np.amin(pha) > 1e-10: 
+               print( "no yet ")
+               #window,21
+               #mycontour, pha, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
+           else:
+              print( 'phase(z,y) is zero- no phase plot')
+              #device,window_state=window_list
+              #if window_list[21] gt 0 then wdelete, 21
+              #endelse
+           #endif  plot
+
+       self.wavelength= wavelength
+       self.field = field
+       self.z_vec = z_vec
+       self.y_vec = y_vec
+   # end gaussbeam
+
+
+   def getamplitude( self ):
+       """returns the amplitude of the field
+
+       Returns:
+          field (real): amplitude as numpy array
+       """
+       return np.absolute(self.field)
+   # getamplitude
+
+
+   def getfield( self ):
+       """returns the field
+
+       Returns:
+          field (complex): field as numpy array
+       """
+       return self.field
+   # getfield
+
+   def getimag( self ):
+       """returns the imaginary part of the field
+
+       Returns:
+          field (double): imaginary part as numpy array
+       """
+       return np.imag(self.field)
+   # getimag
+
+   def getintensity( self ):
+       """returns the intensity
+
+       Returns:
+          field (double): intensity in W as numpy array
+       """
+       return np.absolute(self.field)**2/377.0
+   # getintensity
+
+   def getname( self ):
+       """returns the nameof the field
+
+       Returns:
+          name (string): the name
+       """
+       return self.name
+   # getname
+
+   def getphase(self, param='raw'):
+       """returns the phase of the field
+
+       Args:
+          param='raw' (string): the phase style ("raw", "herra", "numpy")
+             "raw": no unwrapping
+             "herra": unwrapping with Herra algorithm
+             "numpy": unwrapping with numpy algorithm
+
+       Returns:
+          phase (double): the phase as np array
+       """
+       phi= 0.0
+       if param == "raw":
+          print( "get raw phase") 
+          phi= np.angle(self.field)
+       elif param == "herra":
+          print( "herra not yet implemented")
+       elif param == "numpy":
+          print("numpy unwrap")
+          phi0= np.angle(self.field)
+          phi= np.unwrap(phi0)
+       else :   
+          print("error: unknown algorithm: ", param)
+
+       return phi
+  # getphase
+
+   def getphotons(self):
+      """returns the photons
+
+      Returns:
+         photons (double): the number of photons
+      """
+      return np.absolute(self.field)**2/377.0/1.6e-19
+   # getphotons
+
+   def getprofile(self, amplitude=False, min=False, phase=False, y0=None, z=False, z0=None):
+      """get the profile (cut) at the maximum or minimum for intensity, amplitude or phase
+     
+      Args:
+         amplitude=False (bool): amplitude profile (default is intensity)      
+         min=False (bool):   profile at minimum (default is maximum)
+         phase=False (bool): phase profile (default is intensity)
+         y0=None (int): horizontal profile at y0 (so far as index)
+         z=False (bool): horizontal profile  (default is vertical)
+         z0=None (int): vertical profile at z0 (so far as index)
+
+      Returns:
+         np.array with profile
+      """
+
+      if amplitude:
+         field= self.getamplitude()
+      elif phase: 
+         field= self.getphase('numpy')
+      else :
+         field= self.getintensity() 
+         
+      if min:
+         mymin= np.amin(field)
+         myminidx= np.unravel_index(field.argmin(), field.shape)
+         print("search minimum: ", mymin, myminidx)
+      else :
+         mymax= np.amax(field)
+         mymaxidx= np.unravel_index(field.argmax(), field.shape)
+         print("search maximum: ", mymax, mymaxidx)
+
+      if z: 
+         prof= field[mymaxidx[0], :]
+      else :
+         prof= field[:, mymaxidx[1]]
+
+      if z0:
+         prof= field[:, z0]
+
+      if y0:
+         prof= field[y0, :]
+
+      return prof
+
+   # getprofile
+
+   def getreal(self):
+      """returns the real part of the field
+
+      Returns:
+         field (double): the real part of the field as np array
+      """
+      return self.field.real
+   # getreal
+
+   def getwavelength( self ):  
+      """returns the wavelength in m
+
+      Returns:
+         wavelength (double): wavelength in m
+      """
+      return self.wavelength
+   # getwavelength
+
+   def gety_vec( self ):
+       """returns the y vector
+
+       Returns:
+          y (double): vector
+       """
+       return self.y_vec
+   # gety_vec
+
+   def getz_vec( self ):
+       """returns the z vector
+
+       Returns:
+          z (double): vector
+       """
+       return self.z_vec
+   # getz_vec  
+#### end g ####
+
    def h5_check_type(self, fname, verbose=False):
       """check hdf5 structure for genesis-, phase- and pha4idl (helper function)
 
@@ -1141,130 +1430,29 @@ class emf(object):
          f.close()
       if pha4idl:
          print('save pha4idl h5 - not available so far')
-
    # end h5_write
 
-   def gaussbeam(self, dist=None, drift=None, w0=1e-5, Nz=243, Ny=None, sizez=1e-3, sizey=None, \
-               wavelength=1e-10, plot=False, example=False, \
-               z_off=0.0, y_off=0.0):
-       """generate the electromagnetic field of a gaussian beam and fill the emf
+def lens(self, fy=1e200, fz=1e200): 
+      """field after a thin lens
 
-       Args:
-          dist=None (double): the drift distance in m
-          drift=None (double): the drift distance in m (overwrites dist)
-          w0=1e-5 (double): w0
-          Nz=243 (int): number of points in z (horizontal)
-          Ny=None (int): number of points in y (vertical), default is Nz
-          sizez=1e-3 (double): size z (horizontal) in m 
-          sizey=None (double): size y (vertical) in m, default is sizez
-          wavelength=1e-10 (double): wavelength
-          plot=False (bool): plot the intensity
-          example=False (bool): make an example (includes the plot)
-          z_off=0.0 (double): offset z in m
-          y_off=0.0 (double): offset y in m
+      Args:
+         fy=1e200 (double): vertical focal length
+         fz=1e200 (double): horizontal focal length
 
-       Example:
-          >>> emf = phase.initphase()
-              emf.gaussbeam(example=True, plot=True)   
-       """
-       self.name = 'Gaussbeam'
+      Returns:
+         complex array with lens factor
+      """
+      print("thin lens with focal length fy= {:.3g} m and fz= {:.3g} m".format(fy,fz))
+      lcomp= self.field * 0+ 0j
+      for row in np.arange(self.y_vec.size):
+         for col in np.arange(self.z_vec.size):
+            f1= self.z_vec[col]**2/(2*fz)+ self.y_vec[row]**2/(2*fy)
+            f1*= (-2* np.pi)/ self.wavelength
+            lcomp[row,col]= complex(np.cos(f1), np.sin(f1))
 
-       if example is True :
-           print('**********************************************************')
-           print('example: HeNe Laser ')
-           print('wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2')
-           print('**********************************************************')
-           self.gaussbeam(dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2)
-           print('**********************************************************')
-           print('end example')
-           print('**********************************************************')
-           return
-   
-       if drift is not None:
-          dist= drift
-       if Ny is None:
-          Ny= Nz
-       if sizey is None:
-          sizey= sizez
-
-       field = np.zeros((Ny, Nz), dtype=complex) 
-       z_vec = np.linspace(-0.5*sizez, 0.5*sizez, Nz)  
-       y_vec = np.linspace(-0.5*sizey, 0.5*sizey, Ny)
-       dz    = z_vec[1]- z_vec[0]
-       dy    = y_vec[1]- y_vec[0]
-
-       print( 'wavelength (m) = ', wavelength)
-       print( 'Nz     = ', Nz      , ', Ny     = ', Ny)
-       print( 'sizez (m) = ', sizez   , ', sizey (m) = ', sizey)
-       print( 'dz (m)    = ', dz      , ', dy (m)    = ', dy)
-       print( 'z_off (m) = ', z_off   , ', y_off (m) = ', y_off)
-       print( 'w0    (m) = ', w0      , ', dist  (m) = ', dist)
-
-       k   = np.pi * 2    / wavelength        # wave number
-       z0  = np.pi * w0**2 / wavelength       # Rayleigh Range
-       w   = w0 * np.sqrt(1.0+ (dist/z0)**2)  # w(dist)
-       w2  = w**2
-       eta = np.arctan(dist/z0)
-       Ri  = dist / (dist**2 + z0**2)         # curvature Ri  = 1/R;
-
-       print( 'z0    (m) = ', z0, ' (Rayleigh Range= +/- z0)')
-       print( 'w     (m) = ', w   ,', w2 (m^2) = ', w2)
-       print( 'eta (rad) = ', eta ,', Ri (1/m) = ', Ri)
-
-       truncation= 0 
-       for i in range(0, Nz-1):
-          for j in range(0, Ny-1):
-             rho2  =  (z_vec[i]-z_off)**2 + (y_vec[j]-y_off)**2 
-             arg1  = -1 *  rho2 / w2               # the intensity factor as function of aperture
-             if arg1 <= -40: 
-                 arg1 = -40                        #  -40, but -80 is still ok
-                 truncation= 1
-       
-             arg2  = 0.5 * k * rho2 * Ri + k*dist - eta                    # For notation of Siegman multiply by -1                    
-             phas2 = complex(np.cos(arg2), np.sin(arg2))     
-             field[i,j]= phas2 * np.exp(arg1) * w0 / w
-       
-       
-       # norm to 0.5 W  !! we assume only one polarization 
-       intensity = np.absolute(field)**2/377.0
-       binsize= (z_vec[1]-z_vec[0])*(y_vec[1]-y_vec[0])
-       itot= np.sum(intensity) * binsize * 2.0
-       scale= 1.0/np.sqrt(itot)
-       field*= scale
-
-       if truncation > 0:
-           print ('!! warning -- some outside points are truncated !!')
-
-# plot using mycontour
-       if plot is True:
-           print('plot')
-           bamp = np.absolute(field)
-           #window, 20
-           #stat = dblarr(7)
-           #fit   = gauss2dfit(bamp,    stat, z_vec, y_vec) 
-           #fit2  = gauss2dfit(bamp^2, stat2, z_vec, y_vec) 
-           #print 'gaussfit amplitude: rms_z, rms_y (m)= ', stat(2),  stat(3)
-           #print 'gaussfit intensity: rms_z, rms_y (m)= ', stat2(2), stat2(3)
-           #title= 'gaussbeam intensity '+  'size='+  string(stat2(2)*1e6,FORMAT="(f6.1)")+ ' x ' + string(stat2(3)*1e6, FORMAT="(f6.1)") + textoidl(' \mum^2 rms')
-           self.mycontour(bamp, z_vec*1e3, y_vec*1e3, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity $(W/m^2)$', title=self.name)
-
-           pha = np.angle(field)
-           if np.amax(pha)- np.amin(pha) > 1e-10: 
-               print( "no yet ")
-               #window,21
-               #mycontour, pha, z_vec*1e3, y_vec*1e3, xtitle='z (mm)', ytitle='y (mm)', title='gaussbeam phase'
-           else:
-              print( 'phase(z,y) is zero- no phase plot')
-              #device,window_state=window_list
-              #if window_list[21] gt 0 then wdelete, 21
-              #endelse
-           #endif  plot
-
-       self.wavelength= wavelength
-       self.field = field
-       self.z_vec = z_vec
-       self.y_vec = y_vec
-   # end gaussbeam
+      self.field*= lcomp
+      return lcomp
+   #end lens
 
    def mycontour(self, z, x=None, y=None, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity (W)', 
                  title='title', figure=True, cmap='rainbow', plot_contours=False): 
@@ -1623,193 +1811,6 @@ class emf(object):
 
        #propfresnel
 
-   def getamplitude( self ):
-       """returns the amplitude of the field
-
-       Returns:
-          field (real): amplitude as numpy array
-       """
-       return np.absolute(self.field)
-   # getamplitude
-
-
-   def getfield( self ):
-       """returns the field
-
-       Returns:
-          field (complex): field as numpy array
-       """
-       return self.field
-   # getfield
-
-   def getimag( self ):
-       """returns the imaginary part of the field
-
-       Returns:
-          field (double): imaginary part as numpy array
-       """
-       return np.imag(self.field)
-   # getimag
-
-   def getintensity( self ):
-       """returns the intensity
-
-       Returns:
-          field (double): intensity in W as numpy array
-       """
-       return np.absolute(self.field)**2/377.0
-   # getintensity
-
-   def getname( self ):
-       """returns the nameof the field
-
-       Returns:
-          name (string): the name
-       """
-       return self.name
-   # getname
-
-   def getphase(self, param='raw'):
-       """returns the phase of the field
-
-       Args:
-          param='raw' (string): the phase style ("raw", "herra", "numpy")
-             "raw": no unwrapping
-             "herra": unwrapping with Herra algorithm
-             "numpy": unwrapping with numpy algorithm
-
-       Returns:
-          phase (double): the phase as np array
-       """
-       phi= 0.0
-       if param == "raw":
-          print( "get raw phase") 
-          phi= np.angle(self.field)
-       elif param == "herra":
-          print( "herra not yet implemented")
-       elif param == "numpy":
-          print("numpy unwrap")
-          phi0= np.angle(self.field)
-          phi= np.unwrap(phi0)
-       else :   
-          print("error: unknown algorithm: ", param)
-
-       return phi
-  # getphase
-
-   def getphotons(self):
-      """returns the photons
-
-      Returns:
-         photons (double): the number of photons
-      """
-      return np.absolute(self.field)**2/377.0/1.6e-19
-   # getphotons
-
-   def getprofile(self, amplitude=False, min=False, phase=False, y0=None, z=False, z0=None):
-      """get the profile (cut) at the maximum or minimum for intensity, amplitude or phase
-     
-      Args:
-         amplitude=False (bool): amplitude profile (default is intensity)      
-         min=False (bool):   profile at minimum (default is maximum)
-         phase=False (bool): phase profile (default is intensity)
-         y0=None (int): horizontal profile at y0 (so far as index)
-         z=False (bool): horizontal profile  (default is vertical)
-         z0=None (int): vertical profile at z0 (so far as index)
-
-      Returns:
-         np.array with profile
-      """
-
-      if amplitude:
-         field= self.getamplitude()
-      elif phase: 
-         field= self.getphase('numpy')
-      else :
-         field= self.getintensity() 
-         
-      if min:
-         mymin= np.amin(field)
-         myminidx= np.unravel_index(field.argmin(), field.shape)
-         print("search minimum: ", mymin, myminidx)
-      else :
-         mymax= np.amax(field)
-         mymaxidx= np.unravel_index(field.argmax(), field.shape)
-         print("search maximum: ", mymax, mymaxidx)
-
-      if z: 
-         prof= field[mymaxidx[0], :]
-      else :
-         prof= field[:, mymaxidx[1]]
-
-      if z0:
-         prof= field[:, z0]
-
-      if y0:
-         prof= field[y0, :]
-
-      return prof
-
-   # getprofile
-
-   def getreal(self):
-      """returns the real part of the field
-
-      Returns:
-         field (double): the real part of the field as np array
-      """
-      return self.field.real
-   # getreal
-
-   def getwavelength( self ):  
-      """returns the wavelength in m
-
-      Returns:
-         wavelength (double): wavelength in m
-      """
-      return self.wavelength
-   # getwavelength
-
-   def gety_vec( self ):
-       """returns the y vector
-
-       Returns:
-          y (double): vector
-       """
-       return self.y_vec
-   # gety_vec
-
-   def getz_vec( self ):
-       """returns the z vector
-
-       Returns:
-          z (double): vector
-       """
-       return self.z_vec
-   # getz_vec  
-
-   def lens(self, fy=1e200, fz=1e200): 
-      """field after a thin lens
-
-      Args:
-         fy=1e200 (double): vertical focal length
-         fz=1e200 (double): horizontal focal length
-
-      Returns:
-         complex array with lens factor
-      """
-      print("thin lens with focal length fy= {:.3g} m and fz= {:.3g} m".format(fy,fz))
-      lcomp= self.field * 0+ 0j
-      for row in np.arange(self.y_vec.size):
-         for col in np.arange(self.z_vec.size):
-            f1= self.z_vec[col]**2/(2*fz)+ self.y_vec[row]**2/(2*fy)
-            f1*= (-2* np.pi)/ self.wavelength
-            lcomp[row,col]= complex(np.cos(f1), np.sin(f1))
-
-      self.field*= lcomp
-      return lcomp
-   #end lens
-
    def resize(self, center=True, interpolate=False, newsize=None, newy_vec=None, newz_vec=None) :
       """resize the field and grid we assume an equidistant quadratic grid. The default is zero padding 
       to newsize and keep the spatial resolution. Interpolate keeps the area and interpolates to newsize. 
@@ -1836,8 +1837,9 @@ class emf(object):
          newz_vec=None:       new z_vector
 
          Example:
-          >>>emf.resize()
+          >>>emf.resize(interpolate=True, newsize=729)
       """
+      skip= False            # switch  
       size= self.field.shape
       if size[0] >= size[1]:
          sizeField = size[0]
@@ -1850,11 +1852,28 @@ class emf(object):
             return
     
       if newy_vec :
-         print('error: vector input not yet supported')
-         return
-
+         print('new y vector')
+         skip = True
+         z_vec= self.z_vec
+         y_vec= self.y_vec
+         field= self.field
+         self.y_vec= newy_vec
+         fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value= 0+0j)
+         fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value= 0+0j)
+         self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
+         
       if newz_vec :
-         print('error: vector input not yet supported')
+         print('new z vector')
+         skip = True
+         z_vec= self.z_vec
+         y_vec= self.y_vec
+         field= self.field
+         self.z_vec= newz_vec
+         fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value= 0+0j)
+         fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value= 0+0j)
+         self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
+      
+      if skip :             # skip rest if vectors provided 
          return
 
       if interpolate:
@@ -1864,16 +1883,8 @@ class emf(object):
          y_vec= self.y_vec
          field= self.field 
 
-         self.z_vec=  np.arange(newsize)* dz + z0
-         self.y_vec=  np.arange(newsize)* dy + y0
-         self.z_vec= np.linspace(z_vec[0], zvec[-1], newsize)
-         self.y_vec= np.linspace(y_vec[0], yvec[-1], newsize)
- #        field= interpolate(field, z_vec, y_vec, /GRID)
- #        grid_z2 = griddata(points, values, (grid_x, grid_y), method='cubic')
- #        grid_z2 = griddata(points, values, (grid_x, grid_y), method='cubic')
- #        self.field = scipy.interpolate.griddata((y_vec, z_vec), field, self.y_vec, self.z_vec, method='cubic')
- #        y2d, z2d= np.meshgrid(self.y_vec, self.z_vec)
-
+         self.z_vec= np.linspace(z_vec[0], z_vec[-1], newsize)
+         self.y_vec= np.linspace(y_vec[0], y_vec[-1], newsize)
          fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic')
          fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic')
          self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
@@ -1884,11 +1895,11 @@ class emf(object):
          newarr = np.zeros((newsize, newsize), dtype=complex)  # make a quadratic array filled with 0
          
          if center:
-            colshift = (newsize-size[1])/2     # the index to shift 
-            rowshift = (newsize-size[0])/2     # the index to shift
+            colshift = (newsize - size[1]) / 2     # the index to shift 
+            rowshift = (newsize - size[0]) / 2     # the index to shift
          else :
-            colshift= 0
-            rowshift= 0
+            colshift = 0
+            rowshift = 0
          
          for row in np.arange(self.y_vec.size): # copy original field
             for col in np.arange(self.z_vec.size):
