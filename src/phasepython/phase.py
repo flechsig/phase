@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig> 
-# Time-stamp: <06 Sep 17 09:11:49 flechsig> 
+# Time-stamp: <07 Sep 17 14:43:25 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -1452,7 +1452,251 @@ class emf(object):
 
       self.field*= lcomp
       return lcomp
-   #end lens
+   # end lens
+ 
+   def mirror(self, u=None, rl=0.0, rw=0.0, thetag=np.pi/2.0, azimut=0, w=None, l=None):  
+      """calculate the electric field after a "thin" toroidal mirror with/without 1d or 2d height errors
+
+      Args:
+          azimut=0 (int): azimut angle or Rx in rad, math. positive, 0 means vertical deflecting
+          l=None (flt):     : the mirror coordinate
+          rl=0 (flt):    : short radius
+          rw=0 (flt):    : long radius
+          thetag=pi/2.0 (flt): grazing angle in rad  
+          u=None (flt array): the height error of the mirror as a vector of the mirror coordinate w or matrix u(w,l) 
+          w=None (flt):     : the mirror coordinate
+
+      Example:
+          >>> emf.mirror(thetag=thetag, rw=rw, rl=rl, u=u2, w=w, l=l)    
+      """
+      if (np.abs(rw)- 1e-200) < 0 :
+         rw= 1e200
+      if (np.abs(rl)- 1e-200) < 0 :
+         rl= 1e200
+      if (np.abs(thetag)- 1e-9) < 0 :
+         thetag= 1e-9  
+
+      fl = rl/(2.0* np.sin(thetag))        # brennweiten
+      fw = rw* np.sin(thetag)/ 2.0
+
+      print('mirror with radius rw = {} m, rl = {} m'.format(rw, rl))
+      print('mirror with focus  fw = {} m, fl = {} m'.format(fw, fl))
+
+      myz_vec= self.z_vec
+      myy_vec= self.y_vec
+      nz= myz_vec.size
+      ny= myy_vec.size
+
+      lcomp = np.zeros((ny, nz), dtype=complex)   # make a complex array
+
+      if azimut is 0 :
+         print('vertical up deflecting mirror')
+      elif azimut is 90 : 
+         print('horizontal left deflecting mirror')
+         ff= fw
+         fw= fl
+         fl= ff
+      elif azimut is 180 :
+         print('vertical down deflecting mirror')
+      elif azimut is 270 :
+         print('horzontal right deflecting mirror')
+         ff= fw
+         fw= fl
+         fl= ff
+      else :
+         print('no valid azimut= {}, allowed are: 0 90 180 270'.format(azimut))
+         return
+
+      for col in np.arange(nz):
+         for row in np.arange(ny):
+            f1 = myz_vec[col]**2/(2.0*fl) + myy_vec[row]**2/(2.0*fw) # phase   
+            f1*= (-2)* np.pi/ self.wavelength                        # k
+            lcomp[row,col]= complex(np.cos(f1), np.sin(f1))
+
+      self.field*= lcomp 
+
+      # deal with error
+      if u :
+         print('mirror with height error')
+         if w is None:
+            print('we need w as the mirror coordinate - return')
+            return
+         if (u.ndim == 2) and (l is None ):
+            print('u.ndim == 2: we need l as the mirror coordinate - return')
+            return
+         if (u.ndim == 1) :
+            print('deal with 1d height error')
+            hw1= u* np.sin(thetag) # the phase shift relevant height as function of w
+            w1 = w* np.sin(thetag) # the projection of the mirror to normal incidence
+            f= scipy.interpolate.interp1d(w1, hw1)
+            hw2= f(myy_vec) ## hw2 as function of myy_vec
+            for col in np.arange(nz):
+               for row in np.arange(ny):
+                  f1= hw2[row]    
+                  f1*= (-4)* np.pi/ self.wavelength
+                  lcomp[row, col] = complex(np.cos(f1), np.sin(f1))
+         else :
+            print('deal with 2d height error - not yet debugged')
+            hw1= u* np.sin(thetag) # the phase shift relevant height as function of w
+            w1 = w* np.sin(thetag) # the projection of the mirror to normal incidence
+            f= scipy.interpolate.interp2d(l, w1, hw1, kind='cubic')
+            hw2= f(myy_vec, myz_vec)
+            for col in np.arange(nz):
+               for row in np.arange(ny):
+                  f1= hw2[row, col]    
+                  f1*= (-4)* np.pi/ self.wavelength
+                  lcomp[row, col] = complex(np.cos(f1), np.sin(f1))
+         self.field*= lcomp
+   # end mirror
+
+   def mirrorg(self, u=None, thetag=np.pi/2.0, azimut=0, w=None, l=None):  
+      """calculate the electric field after a generic mirror defined by a height profile u(w,l)
+
+      Args:
+          azimut=0 (int): azimut angle or Rx in rad, math. positive, 0 means vertical deflecting
+          l=None (flt):     : the mirror coordinate
+          thetag=pi/2.0 (flt): grazing angle in rad  
+          u=None (flt array): the height error of the mirror as a vector of the mirror coordinate w or matrix u(w,l) 
+          w=None (flt):     : the mirror coordinate
+
+      Example:
+          >>> emf.mirrorg(thetag=thetag, u=u2, w=w, l=l)    
+      """
+      
+      if (np.abs(thetag)- 1e-9) < 0 :
+         thetag= 1e-9  
+
+      myz_vec= self.z_vec
+      myy_vec= self.y_vec
+      nz= myz_vec.size
+      ny= myy_vec.size
+
+      lcomp = np.zeros((ny, nz), dtype=complex)   # make a complex array
+
+      if azimut is 0 :
+         print('vertical up deflecting mirror')
+         wm= myy_vec/ np.sin(thetag)
+         lm= myz_vec
+      elif azimut is 90 : 
+         print('horizontal left deflecting mirror')
+         wm= (-1.0) * myz_vec /np.sin(thetag)
+         lm= myy_vec
+         
+      elif azimut is 180 :
+         print('vertical down deflecting mirror')
+         wm= (-1.0) * myy_vec/ np.sin(thetag)
+         lm= (-1.0) * myz_vec
+      elif azimut is 270 :
+         print('horzontal right deflecting mirror')
+         wm= myz_vec /np.sin(thetag)
+         lm= (-1.0) * myy_vec
+
+      else :
+         print('no valid azimut= {}, allowed are: 0 90 180 270'.format(azimut))
+         return
+
+# we calculated the coordinate wm, lm on the mirror as function of y_vec, z_vec, azimut and thetag 
+# now we calculate the 2d height matrix um
+      f= scipy.interpolate.interp2d(l, w, u, kind='cubic')
+      um = f(lm, wm)
+      for col in np.arange(nz):
+         for row in np.arange(ny):
+            f1 = um[row, col] * np.sin(thetag) # phase   
+            f1*= (-2)* np.pi/ self.wavelength                        # k
+            lcomp[row,col]= complex(np.cos(f1), np.sin(f1))
+
+      self.field*= lcomp 
+   # end mirrorg
+
+   def mirrorp(self,  thetag=np.pi/2.0, azimut=0):  
+      """calculate the electric field after a "thin" flat mirror defined as phase shifter, 
+      this simple approach does only work in limitd cases where the phase shift is only 
+      a few k (long wavelength and/or small angle), it must fail when the relative phase
+      shift between points approaches 2 pi
+
+
+      Args:
+          azimut=0 (int): azimut angle or Rx in rad, math. positive, 0 means vertical deflecting
+          thetag=pi/2.0 (flt): grazing angle in rad  
+          
+      Example:
+          >>> emf.mirrorp(thetag=thetag)    
+      """
+      
+      if (np.abs(thetag)- 1e-9) < 0 :
+         thetag= 1e-9  
+
+      myz_vec= self.z_vec
+      myy_vec= self.y_vec
+      nz= myz_vec.size
+      ny= myy_vec.size
+
+      lcomp = np.zeros((ny, nz), dtype=complex)   # make a complex array
+
+      if azimut:
+         print('azimut not yet implemented - return')
+         return
+
+      k = 2.0* np.pi/ self.wavelength
+      for col in np.arange(nz):
+         for row in np.arange(ny):
+            f1 = -2.0* k * thetag * myy_vec[row]
+            lcomp[row,col]= complex(np.cos(f1), np.sin(f1))
+
+      self.field*= lcomp 
+   # end mirrorp
+
+   def mirrort(self,  thetag=np.pi/2.0, azimut=0):  
+      """calculate the electric field after a "thin" flat mirror defined as phase shifter, 
+      the method uses the transfer function approach first fft to angular spectrum, 
+      second apply angular shift, third fft back to spatial distribution. The granularity 
+      of the shift are frequency steps
+
+
+      Args:
+          azimut=0 (int): azimut angle or Rx in rad, math. positive, 0 means vertical deflecting
+          thetag=pi/2.0 (flt): grazing angle in rad  
+          
+      Example:
+          >>> emf.mirrort(thetag=thetag)    
+      """
+      
+      if (np.abs(thetag)- 1e-9) < 0 :
+         thetag= 1e-9  
+
+      myz_vec= self.z_vec
+      myy_vec= self.y_vec
+      nz= myz_vec.size
+      ny= myy_vec.size
+
+      lcomp = np.zeros((ny, nz), dtype=complex)   # make a complex array
+
+      if azimut:
+         print('azimut not yet implemented - return')
+         return
+
+      k = 2.0* np.pi/ self.wavelength
+      twopi= 2.0 * np.pi
+      zz  = myz_vec[-1]- myz_vec[0]      #                              ;; total width
+      yy  = myy_vec[-1]- myy_vec[0]      #                              ;; total width
+      u = (np.arange(nz)/(nz-1) - 0.5)       #         ;; runs from -0.5..0.. 0.5 
+      v = (np.arange(ny)/(ny-1) - 0.5)       #         ;; for even and odd values of Ny, Nz 
+      u = u * (nz-1)/zz                    #         ;; ok with odd number of elements
+      v = v * (ny-1)/yy
+
+      fieldfft = np.fft.fftshift(np.fft.fft2(self.field)) #;; remember: the frequencies are the 
+                                                          #;; direction cosines divided by lambda
+      fy= np.sin(2.*thetag)/ self.wavelength
+      szi= 0
+      #idx= max(where(u lt fy))
+      center_idx= Ny/2
+#;; syi has to be determined from thetag- how???
+      syi= idx-center_idx #
+      ######### sarr= shift(e0ft,szi,syi)
+
+      self.field= np.fft.ifft2(fieldfft)
+
+   # end mirrort
 
    def mycontour(self, z, x=None, y=None, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity (W)', 
                  title='title', figure=True, cmap='rainbow', plot_contours=False): 
@@ -1673,7 +1917,7 @@ class emf(object):
       else:
          self.propfresnel(drift)
    # end propagate  
-   
+
    def propfraunhofer(self, drift=None):
        '''propagate using Fraunhofer propagator
 
@@ -1699,47 +1943,51 @@ class emf(object):
 
        print('------------------ propfraunhofer called ----------------------------')
 
-       k  = 2* np.pi/wavelength
-       nz = len(z_vec)
-       ny = len(y_vec)
-       zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)            # total width, 12.9.2013: corrected for nz/(nz-1)
-       yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)            # total height,     -"-
+       k  = 2* np.pi/self.wavelength
+       nz = z_vec.size
+       ny = y_vec.size
+       zz = (z_vec[-1]- z_vec[0]) * nz / (nz - 1)            # total width, 12.9.2013: corrected for nz/(nz-1)
+       yy = (y_vec[-1]- y_vec[0]) * ny / (ny - 1)            # total height,     -"-
   
-       print('width (input) = ', zz*1e3, ' x ', yy*1e3, ' mm^2 ')
+       print('width (input) = ', zz * 1e3, ' x ', yy * 1e3, ' mm^2 ')
        print('drift         = ', drift)
 
        newfield0 = np.fft.fft2(field)                               # forward 2d fft, centered output           
        newfield  = np.fft.fftshift(newfield0)
        u0        = np.arange(nz)/(nz-1) - 0.5                       # define the vectors in the image plane     
        v0        = np.arange(ny)/(ny-1) - 0.5   
-       uscale   = (drift*wavelength)/zz * nz                        # why is uscale,vscale of type array[1] ?   
-       vscale   = (drift*wavelength)/yy * ny                        #-> wavelength comes as array[1], solved    
-       u        = u0*uscale
-       v        = v0*vscale
+       uscale   = (drift * self.wavelength)/zz * nz                 # why is uscale,vscale of type array[1] ?   
+       vscale   = (drift * self.wavelength)/yy * ny                 #-> wavelength comes as array[1], solved    
+       u        = u0 * uscale
+       v        = v0 * vscale
        z0       = z_vec[0]
        y0       = y_vec[0]
        print( ' z0 = ',z0, ' y0 = ',y0)
        print( ' nz = ',nz, ' ny = ',ny)
 
-       scale   = np.zeros((nz, ny), dtype=complex)                                     # make a complex array
-       for i in range(0, nz-1):
-           for j in range(0, ny-1):
-               phase = (u[i]**2 + v[j]**2) * k/(2.0*drift)             
-               phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        # set origin  12.9.2013: changed sign from - to +
-               scale[i,j]= complex(np.cos(phase), np.sin(phase)) 
+       scale = np.zeros((nz, ny), dtype=complex)                                     # make a complex array
+       for col in np.arange(nz):
+           for row in np.arange(ny):
+               phase = (u[col]**2 + v[row]**2) * k/(2.0 * drift)             
+               phase = phase + (u[col] * z0 + v[row] * y0) * k / drift      # set origin  12.9.2013: changed sign from - to +
+               scale[row, col]= complex(np.cos(phase), np.sin(phase)) 
 
        scale1 = complex(np.cos(k*drift), np.sin(k*drift))      # why is this of type array[1] ?
-       scale2 = complex(0.0         , (wavelength*drift))      # -> wavelength comes as array[1] -> k is array[1]
-       self.field  = zz * yy * newfield * scale  * scale1/ scale2
-       self.z_vec  = u
-       self.y_vec  = v
+       scale2 = complex(0.0, (wavelength*drift))               # -> wavelength comes as array[1] -> k is array[1]
+       self.field = zz * yy * newfield * scale  * scale1/ scale2
+       self.z_vec = u
+       self.y_vec = v
        print( '------------------ propfraunhofer end ----------------------------')
    # end propfraunhofer
 
    def propfresnel(self, drift=None):
-       """propfresnel
+       """fresnel propagator
 
        Args:
+          drift=None (flt): the drift distance
+
+       Example:
+          >>> emf.propfresnel(100)
        """
        field = self.field
        y_vec = self.y_vec
@@ -1748,9 +1996,7 @@ class emf(object):
 
        print('------------------ propfresnel called ----------------------------')
 
-       
-
-       u1    = 'usage: propfresnel, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
+        u1    = 'usage: propfresnel, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
        u2    = '[, plot=plot][, wavelength=wavelength]'    
        usage = u1+u2   
        if drift is None:
@@ -1758,21 +2004,21 @@ class emf(object):
           print(usage)
           drift = 10.0
 
-       k  = 2* np.pi/wavelength
-       nz = len(z_vec)
-       ny = len(y_vec)
-       zz = (z_vec[nz-1]- z_vec[0] ) * nz / (nz-1)                      # total width, 12.9.2013: corrected for nz/(nz-1)
-       yy = (y_vec[ny-1]- y_vec[0] ) * ny / (ny-1)                      # total height,     -"-
+       k  = 2* np.pi/self.wavelength
+       nz = z_vec.size
+       ny = y_vec.size
+       zz = (z_vec[-1]- z_vec[0]) * nz / (nz-1)                      # total width, 12.9.2013: corrected for nz/(nz-1)
+       yy = (y_vec[-1]- y_vec[0]) * ny / (ny-1)                      # total height,     -"-
 
        print('width (input) = ', zz*1e3, ' x ', yy*1e3, ' mm^2 ')
        print('drift         = ', drift)
 
 #------------------------ Multipy input field with phase factor -------)
-       driftarr= np.zeros((nz, ny), dtype=complex)                      # make a complex array
-       for i in range(0, nz-1):
-           for j in range(0, ny-1):
-               phase= k*(z_vec[i]**2 + y_vec[j]**2)/(2.0*drift)         
-               driftarr[i,j]= complex(np.cos(phase), np.sin(phase))
+       driftarr= np.zeros((ny, nz), dtype=complex)                      # make a complex array
+       for col in np.arange(nz):
+           for row in np.arange(ny):
+               phase= k*(z_vec[col]**2 + y_vec[row]**2)/(2.0*drift)         
+               driftarr[row, col]= complex(np.cos(phase), np.sin(phase))
        
        modfield = field * driftarr
        #; print, '--------------- FT of Source field ------------------ exp(-i ...)'
@@ -1792,12 +2038,12 @@ class emf(object):
        print( ' nz = ',nz, ' ny = ',ny)
 #-------------------- Multiply new field with phase factor ----------------
 
-       scale   = np.zeros((nz, ny), dtype=complex)                                     # make a complex array
-       for i in range(0, nz-1):
-           for j in range(0, ny-1):
-               phase = (u[i]**2 + v[j]**2) * k/(2.0 * drift)             
-               phase = phase + (u[i]*z0 + v[j] * y0) * k / drift        # set origin  12.9.2013: changed sign from - to +
-               scale[i,j]= complex(np.cos(phase), np.sin(phase))   
+       scale   = np.zeros((ny, nz), dtype=complex)                                     # make a complex array
+       for col in np.arange(nz):
+           for row in np.arange(ny):
+               phase = (u[col]**2 + v[row]**2) * k/(2.0 * drift)             
+               phase = phase + (u[col]* z0 + v[row] * y0) * k / drift        # set origin  12.9.2013: changed sign from - to +
+               scale[row, col]= complex(np.cos(phase), np.sin(phase))   
        
 
        scale1 = complex(np.cos(k*drift), np.sin(k*drift))      # why is this of type array[1] ?
@@ -1808,8 +2054,72 @@ class emf(object):
        self.y_vec  = v
 
        print('------------------ propfresnel end ----------------------------')
+   #propfresnel
 
-       #propfresnel
+   def propfourier(self, drift=None):
+      """fourier (transfer function) propagator
+
+      Args:
+          drift=None (flt): the drift distance
+
+      Example:
+          >>> emf.propfourier(100)    
+      """
+      field = self.field
+      y_vec = self.y_vec
+      z_vec = self.z_vec
+      wavelength = self.wavelength
+
+      if drift is None:
+          print("drift not given - set default drift to 10 m")
+          drift = 10.0
+      print('------------ propfourier called drift= {:.3g} m------------',format(drift))
+
+      k = 2* np.pi/self.wavelength
+      nz = z_vec.size
+      ny = y_vec.size
+      zz = (z_vec[-1]- z_vec[0])
+      yy = (y_vec[-1]- y_vec[0])
+
+      print('width = {:.3g} mm, height = {:.3g} mm'.format(zz*1e3, yy*1e3))
+      u = np.linspace(-0.5, 0.5, nz)               #  runs from -0.5..0.. 0.5 
+      v = np.linspace(-0.5, 0.5, ny)               #  for even and odd values of Ny, Nz 
+      u = u * (nz-1)/zz                            #  ok with odd number of elements
+      v = v * (ny-1)/yy
+      print('u = {:.3g} ... {:.3g}'.format(u[0], u[-1]))
+      print('--------------- FT of Source field ------------------ exp(-i ...)')
+      
+      fieldfft = np.fft.fftshift(np.fft.fft2(field))
+      print('--------------- Propagator for free space ------------------------')
+      phase      = np.zeros(ny,nz)
+      propagator = np.zeros(ny,nz,dtype=complex) 
+      p0         = drift % wavelength
+
+      for col in np.arange(nz):
+         for row in np.arange(ny):
+            arg = 1.0 - (u[col] * wavelength)**2 - (v[row] * wavelength)**2
+            if arg > 0 :
+               arg = np.sqrt(arg)
+               # numerically more accurate than k * drift* arg
+               phase[row, col] = ((drift *(arg - 1.0) ) % wavelength ) * k + p0 * k 
+               propagator[row, col] = complex(np.cos(phase[row, col]), np.sin(phase[row, col]))
+            else :
+               print('sqrt of neg. argument, evanescent wave, arg= {}, row= {}, col= {}'. format(arg, row, col))
+               arg = np.sqrt(-1.0 * arg)
+               phase[row, col] = -1.0 * k * drift* arg
+               if phase[row, col] < -40 :
+                  phase[row, col] = -40
+               propagator[row, col] = complex(np.exp(phase), 0)
+      print('--------------- Propagate in Fourier space -----------------------')
+      eft = fieldfft * propagator   
+      # filter
+      #if hanning > 0 :
+      #   hanning=
+
+      print('--------------- Inverse FT to get output field ------ exp(+i ...)')
+      self.field= np.fft.ifft2(eft)
+      print('--------------- propfourier end ----------------------------------')
+   # end propfourier
 
    def resize(self, center=True, interpolate=False, newsize=None, newy_vec=None, newz_vec=None) :
       """resize the field and grid we assume an equidistant quadratic grid. The default is zero padding 
