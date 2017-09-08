@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <08 Sep 17 10:05:38 flechsig>
+# Time-stamp: <08 Sep 17 16:49:40 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -620,30 +620,30 @@ class emf(object):
         Example:
             >>> emf.check_sampling(22.3) 
         """
-        cols= len(self.z_vec)
-        rows= len(self.y_vec)
-        zwidth = self.z_vec[-1]- self.z_vec[0] 
-        ywidth = self.y_vec[-1]- self.y_vec[0]
-        lambda_x_x= self.wavelength* drift
-        yratio= 1.0/(lambda_x_x * rows/ywidth**2)
-        zratio= 1.0/(lambda_x_x * cols/zwidth**2) 
-        ratio= 0.5 * (yratio + zratio)
-        myydrift= ywidth**2/ rows/ self.wavelength
-        myzdrift= zwidth**2/ cols/ self.wavelength
-        mydrift = 0.5* (myydrift+ myzdrift)
+        cols= self.z_vec.size
+        rows= self.y_vec.size
+        zwidth = self.z_vec[-1] - self.z_vec[0] 
+        ywidth = self.y_vec[-1] - self.y_vec[0]
+        lambda_x_x = self.wavelength * drift
+        yratio = 1.0 / (lambda_x_x * rows/ywidth**2)
+        zratio = 1.0 / (lambda_x_x * cols/zwidth**2) 
+        ratio = 0.5 * (yratio + zratio)
+        myydrift = ywidth**2 / rows / self.wavelength
+        myzdrift = zwidth**2 / cols / self.wavelength
+        mydrift = 0.5* (myydrift + myzdrift)
 
         if verbose :
-            print('check_sampling, ratio= {:.2f}'.format(ratio))
-            print('critical_sampling= ', lambda_x_x, ' (m^2)')
-            print('act. hor_sampling= {:3g} (m^2)'.format(zwidth**2/ cols))
-            print('act.vert_sampling= {:3g} (m^2)'.format(ywidth**2/ rows))
+            print('check_sampling, ratio = {:.2f}'.format(ratio))
+            print('critical_sampling     = {:.3g} m^2'.format(lambda_x_x))
+            print('act. hor  sampling    = {:.3g} m^2'.format(zwidth**2/ cols))
+            print('act. vert sampling    = {:.3g} m^2'.format(ywidth**2/ rows))
             if (ratio > 1.0) :
-                print('drift= ', drift, ' yields to oversampling')
-                print('recommend transfer function (TR) based propagator (fourier)')
+                print('drift = {} m yields to oversampling'.format(drift))
+                print('we recommend a transfer function (TR) based propagator (fourier)')
             else :
-                print('drift= ', drift, ' yields to undersampling')
-                print('recommend impulse response (IR) based propagator (fresnel, fraunhofer)')
-            print('critical drift= {:.3g}'.format(mydrift))
+                print('drift = {} m yields to undersampling '.format(drift))
+                print('we recommend an impulse response (IR) based propagator (fresnel, fraunhofer)')
+            print('critical drift= {:.3g} m'.format(mydrift))
         return ratio
     # end check_sampling
 
@@ -1003,24 +1003,30 @@ class emf(object):
         """returns the phase of the field
 
         Args:
-           param='raw' (string): the phase style ("raw", "herra", "numpy")
-             "raw": no unwrapping
-             "herra": unwrapping with Herra algorithm
-             "numpy": unwrapping with numpy algorithm
+            param='raw' (string): the phase style ("raw", "herra", "numpy")
+                "raw": no unwrapping
+                "herra": unwrapping with Herra algorithm
+                "numpy": unwrapping with numpy algorithm
 
         Returns:
            phase (double): the phase as np array
         """
-        phi= 0.0
+        phi = np.angle(self.field)
+        
         if param == "raw":
             print("get raw phase") 
-            phi= np.angle(self.field)
         elif param == "herra":
-            print("herra not yet implemented")
+            libpath = '/afs/psi.ch/project/phase/lib/'  
+            libname = 'unwrap_herra'                   # without extension
+            print("herra unwrapping call c code from {}.so".format(libpath+libname))
+            unwrap_herra_lib = np.ctypeslib.load_library(libname, libpath)
+            uwh = unwrap_herra_lib.unwrap_phase
+            arg1 = np.ctypeslib.as_ctypes(phi)
+            uwh(arg1, self.z_vec.size, self.y_vec.size)
+            
         elif param == "numpy":
             print("numpy unwrap")
-            phi0 = np.angle(self.field)
-            phi = np.unwrap(phi0)
+            phi = np.unwrap(phi)
         else :   
             print("error: unknown algorithm: ", param)
 
@@ -1902,37 +1908,32 @@ class emf(object):
         z_vec = self.z_vec
         wavelength = self.wavelength
 
-        u1    = 'usage: propfraunhofer, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
-        u2    = '[, plot=plot][, wavelength=wavelength]'    
-        usage = u1+u2
         if drift is None:
             print("drift not given - set default drift to 10 m")
-            print(usage)
             drift = 10.0
 
         print('------------------ propfraunhofer called ----------------------------')
 
-        k  = 2* np.pi/self.wavelength
+        k  = 2 * np.pi/self.wavelength
         nz = z_vec.size
         ny = y_vec.size
         zz = (z_vec[-1]- z_vec[0]) * nz / (nz - 1)            # total width, 12.9.2013: corrected for nz/(nz-1)
         yy = (y_vec[-1]- y_vec[0]) * ny / (ny - 1)            # total height,     -"-
   
-        print('width (input) = ', zz * 1e3, ' x ', yy * 1e3, ' mm^2 ')
-        print('drift         = ', drift)
+        print('size (input), z = {:.3f} mm, y = {:.3f} mm '.format(zz * 1e3, yy * 1e3))
+        print('drift           = {} m'.format(drift))
 
-        newfield0 = np.fft.fft2(field)                               # forward 2d fft, centered output           
-        newfield  = np.fft.fftshift(newfield0)
-        u0        = np.arange(nz)/(nz-1) - 0.5                       # define the vectors in the image plane     
-        v0        = np.arange(ny)/(ny-1) - 0.5   
-        uscale   = (drift * self.wavelength)/zz * nz                 # why is uscale,vscale of type array[1] ?   
-        vscale   = (drift * self.wavelength)/yy * ny                 # -> wavelength comes as array[1], solved    
+        newfield = np.fft.fftshift(np.fft.fft2(field))             # forward 2d fft, centered output
+        u0       = np.arange(nz)/(nz-1) - 0.5                      # define the vectors in the image plane     
+        v0       = np.arange(ny)/(ny-1) - 0.5   
+        uscale   = (drift * self.wavelength) / zz * nz            # why is uscale,vscale of type array[1] ?   
+        vscale   = (drift * self.wavelength) / yy * ny            # -> wavelength comes as array[1], solved    
         u        = u0 * uscale
         v        = v0 * vscale
         z0       = z_vec[0]
         y0       = y_vec[0]
-        print(' z0 = ', z0, ' y0 = ', y0)
-        print(' nz = ', nz, ' ny = ', ny)
+        print(' z0 = {:.3f} mm, y0 = {:.3f} mm'.format(z0*1e3, y0*1e3))
+        print(' nz = {}, ny = {}'.format(nz, ny))
 
         scale = np.zeros((nz, ny), dtype=complex)                                     # make a complex array
         for col in np.arange(nz):
@@ -1941,9 +1942,10 @@ class emf(object):
                 phase = phase + (u[col] * z0 + v[row] * y0) * k / drift      # set origin  12.9.2013: changed sign from - to +
                 scale[row, col]= complex(np.cos(phase), np.sin(phase)) 
                 
-        scale1 = complex(np.cos(k*drift), np.sin(k*drift))      # why is this of type array[1] ?
-        scale2 = complex(0.0, (wavelength*drift))               # -> wavelength comes as array[1] -> k is array[1]
-        self.field = zz * yy * newfield * scale  * scale1/ scale2
+        scale1 = complex(np.cos(k * drift), np.sin(k * drift))      # why is this of type array[1] ?
+        scale2 = complex(0.0, (wavelength * drift))                 # -> wavelength comes as array[1] -> k is array[1]
+        scale3 = newfield.size                                      # python fft is not normalized
+        self.field = zz * yy * newfield * scale * scale1 / (scale2 * scale3)
         self.z_vec = u
         self.y_vec = v
         print('------------------ propfraunhofer end ----------------------------')
@@ -1965,15 +1967,11 @@ class emf(object):
 
         print('------------------ propfresnel called ----------------------------')
 
-        u1    = 'usage: propfresnel, y_vec=y_vec, z_vec=z_vec, field=field,drift=drift'
-        u2    = '[, plot=plot][, wavelength=wavelength]'    
-        usage = u1+u2   
         if drift is None:
             print("drift not given - set default drift to 10 m")
-            print(usage)
             drift = 10.0
 
-        k  = 2* np.pi/self.wavelength
+        k  = 2* np.pi / self.wavelength
         nz = z_vec.size
         ny = y_vec.size
         zz = (z_vec[-1]- z_vec[0]) * nz / (nz-1)                      # total width, 12.9.2013: corrected for nz/(nz-1)
@@ -1986,20 +1984,19 @@ class emf(object):
         driftarr= np.zeros((ny, nz), dtype=complex)                      # make a complex array
         for col in np.arange(nz):
             for row in np.arange(ny):
-                phase= k*(z_vec[col]**2 + y_vec[row]**2)/(2.0*drift)         
-                driftarr[row, col]= complex(np.cos(phase), np.sin(phase))
+                phase = k*(z_vec[col]**2 + y_vec[row]**2) / (2.0 * drift)         
+                driftarr[row, col] = complex(np.cos(phase), np.sin(phase))
                 
         modfield = field * driftarr
         # print, '--------------- FT of Source field ------------------ exp(-i ...)'
        
-        newfield0 = np.fft.fft2(modfield)                               # forward 2d fft, centered output           
-        newfield  = np.fft.fftshift(newfield0)
+        newfield = np.fft.fftshift(np.fft.fft2(modfield))               # forward 2d fft, centered output           
         u0       = np.arange(nz)/(nz-1) - 0.5                           # define the vectors in the image plane     
         v0       = np.arange(ny)/(ny-1) - 0.5   
-        uscale   = (drift*wavelength)/zz * nz                           # why is uscale,vscale of type array[1] ?   
-        vscale   = (drift*wavelength)/yy * ny                           # -> wavelength comes as array[1], solved    
-        u        = u0*uscale
-        v        = v0*vscale
+        uscale   = (drift * wavelength) / zz * nz                       # why is uscale,vscale of type array[1] ?   
+        vscale   = (drift * wavelength) / yy * ny                       # -> wavelength comes as array[1], solved    
+        u        = u0 * uscale
+        v        = v0 * vscale
         z0       = z_vec[0]
         y0       = y_vec[0]
 
@@ -2007,19 +2004,19 @@ class emf(object):
         print(' nz = ', nz, ' ny = ', ny)
 # -------------------- Multiply new field with phase factor ----------------
 
-        scale   = np.zeros((ny, nz), dtype=complex)                                     # make a complex array
+        scale = np.zeros((ny, nz), dtype=complex)                                     # make a complex array
         for col in np.arange(nz):
             for row in np.arange(ny):
-                phase = (u[col]**2 + v[row]**2) * k/(2.0 * drift)             
+                phase = (u[col]**2 + v[row]**2) * k / (2.0 * drift)             
                 phase = phase + (u[col]* z0 + v[row] * y0) * k / drift        # set origin  12.9.2013: changed sign from - to +
                 scale[row, col]= complex(np.cos(phase), np.sin(phase))   
                 
-        scale1 = complex(np.cos(k*drift), np.sin(k*drift))      # why is this of type array[1] ?
-        scale2 = complex(0.0         , (wavelength*drift))      # -> wavelength comes as array[1] -> k is array[1]
-       
-        self.field  = zz * yy * newfield * scale  * scale1/ scale2
-        self.z_vec  = u
-        self.y_vec  = v
+        scale1 = complex(np.cos(k * drift), np.sin(k * drift))      # why is this of type array[1] ?
+        scale2 = complex(0.0           , (wavelength * drift))      # -> wavelength comes as array[1] -> k is array[1]
+        scale3 = newfield.size                                      # python fft is not normalized
+        self.field = zz * yy * newfield * scale * scale1 / (scale2 * scale3)
+        self.z_vec = u
+        self.y_vec = v
 
         print('------------------ propfresnel end ----------------------------')
     # propfresnel
@@ -2028,7 +2025,10 @@ class emf(object):
         """fourier (transfer function) propagator
 
         Args:
-          drift=None (flt): the drift distance
+            drift=None (flt): the drift distance
+
+        ToDo:  
+            tested UF 1709 - OK           
 
         Example:
             >>> emf.propfourier(100)    
@@ -2041,7 +2041,7 @@ class emf(object):
         if drift is None:
             print("drift not given - set default drift to 10 m")
             drift = 10.0
-        print('------------ propfourier called drift= {:.3g} m------------', format(drift))
+        print('------------ propfourier called drift= {:.3g} m------------'.format(drift))
 
         k = 2* np.pi/self.wavelength
         nz = z_vec.size
@@ -2049,7 +2049,7 @@ class emf(object):
         zz = (z_vec[-1]- z_vec[0])
         yy = (y_vec[-1]- y_vec[0])
 
-        print('width = {:.3g} mm, height = {:.3g} mm'.format(zz*1e3, yy*1e3))
+        print('width = {:.3g} mm, height = {:.3g} mm'.format(zz * 1e3, yy * 1e3))
         u = np.linspace(-0.5, 0.5, nz)               # runs from -0.5..0.. 0.5 
         v = np.linspace(-0.5, 0.5, ny)               # for even and odd values of Ny, Nz 
         u = u * (nz-1)/zz                            # ok with odd number of elements
@@ -2059,8 +2059,8 @@ class emf(object):
       
         fieldfft = np.fft.fftshift(np.fft.fft2(field))
         print('--------------- Propagator for free space ------------------------')
-        phase      = np.zeros(ny, nz)
-        propagator = np.zeros(ny, nz, dtype=complex) 
+        phase      = np.zeros((ny, nz))
+        propagator = np.zeros((ny, nz), dtype=complex) 
         p0         = drift % wavelength
 
         for col in np.arange(nz):
@@ -2077,7 +2077,7 @@ class emf(object):
                     phase[row, col] = -1.0 * k * drift* arg
                     if phase[row, col] < -40 :
                         phase[row, col] = -40
-                propagator[row, col] = complex(np.exp(phase), 0)
+                    propagator[row, col] = complex(np.exp(phase), 0)
         print('--------------- Propagate in Fourier space -----------------------')
         eft = fieldfft * propagator   
         # filter
@@ -2264,15 +2264,15 @@ class emf(object):
     # end setz_vec
 
     def statistics(self, comment=None, amplitude=False, fit=True):
-        """shows statistics 
+        """show statistics 
 
         Args:
-         comment=None (string): comment string (optional)
-         amplitude=False (bool): amplitude statistics - default: intensity
-         fit=True (bool): if false skip 2d fit
+           comment=None (string): comment string (optional)
+           amplitude=False (bool): amplitude statistics - default: intensity
+           fit=True (bool): if false skip 2d fit
 
         Returns:
-          stat (dictionary)
+           statistics (dictionary)
 
         Example:
             >>> emf = phase.initphase()
@@ -2283,13 +2283,13 @@ class emf(object):
         if amplitude :
             title = "amplitude statistics"
             myfield = self.getamplitude()
-            mymaxstr = 'max field       (V/m) = ' 
-            mytotstr = 'total field     (V m) = '
+            mymaxstr = 'max field       = {:8.3g} V/m ' 
+            mytotstr = 'total field     = {:8.3g} Vm '
         else :
             title = "intensity statistics"
             myfield = self.getintensity()
-            mymaxstr = 'max intensity (W/m^2) = ' 
-            mytotstr = 'total intensity (W)   = '
+            mymaxstr = 'max intensity   = {:8.3g} W/m^2 ' 
+            mytotstr = 'total intensity = {:8.3g} W   '
 
         if comment :
             title += ' => ' + comment
@@ -2313,11 +2313,9 @@ class emf(object):
         else :
             field_n = myfield     # normalized field for fit
 
-            # stat   = dblarr(7)
-
         if fit :
             # fit= ##gauss2dfit(field_n, stat, z_vec, y_vec) 
-            stat = gausfitter2.gaussfit(field_n, rotate=0)  # dont wonder about strange parameter mapping
+            stat = gausfitter2.gaussfit(field_n, rotate=0)  # don't wonder about strange parameter mapping
             zscale = z_vec[1] - z_vec[0]
             yscale = y_vec[1] - y_vec[0]
             bgr = stat[0]
@@ -2326,55 +2324,66 @@ class emf(object):
             z0 = z_vec[0] + stat[3] * zscale
             sigmay = np.abs(stat[4] * yscale)  # UF dont know why sometimes negative
             sigmaz = np.abs(stat[5] * zscale)
+            zfwhm = sigmaz * 2.35
+            yfwhm = sigmay * 2.35
         else :
             print('we do not fit- we search fwhm')
-            z0i= mymaxidx[1]
-            y0i= mymaxidx[0]
-            mymax05= 0.5 * mymax
+            z0i = mymaxidx[1]
+            y0i = mymaxidx[0]
+            mymax05 = 0.5 * mymax
             # print('z0i, y0i, mymax05 ',z0i, y0i, mymax05)
             zcut= myfield[y0i, :]  # cut at certain vertical position
             ycut= myfield[:, z0i]
             zidx= np.reshape(np.asarray((zcut >= mymax05).nonzero()), -1)  # where function
             yidx= np.reshape(np.asarray((ycut >= mymax05).nonzero()), -1)
             # print(zidx, len(zidx), np.shape(zidx), type(zidx), zidx.size)
-        if zidx.size > 1 :
-            zfwhm= z_vec[zidx[-1]]- z_vec[zidx[0]]
-        else :
-            zfwhm= 0
-        if yidx.size > 1 :
-            yfwhm= y_vec[yidx[-1]]- y_vec[yidx[0]]
-        else :
-            yfwhm= 0
+            if zidx.size > 1 :
+                zfwhm = z_vec[zidx[-1]] - z_vec[zidx[0]]
+                z0 = z_vec[z0i]
+            else :
+                zfwhm = 0
+                z0 = 0
+            if yidx.size > 1 :
+                yfwhm = y_vec[yidx[-1]] - y_vec[yidx[0]]
+                y0 = y_vec[y0i]          
+            else :
+                yfwhm = 0
+                y0 = 0
 
         print('==============================================================================')
         print(title)
         print('==============================================================================')
         if fit :
-            print('z fwhm = {:7.5g} m, rms = {:.5g} m'.format(sigmaz * 2.35, sigmaz))
-            print('y fwhm = {:7.5g} m, rms = {:.5g} m'.format(sigmay * 2.35, sigmay))
-            print('z0     = {:7.5g} m'.format(z0))
-            print('y0     = {:7.5g} m'.format(y0))
+            print('z fwhm = {:7.5g} mm, rms = {:.5g} mm'.format(zfwhm * 1e3, sigmaz * 1e3))
+            print('y fwhm = {:7.5g} mm, rms = {:.5g} mm'.format(yfwhm * 1e3, sigmay * 1e3))
+            print('z0     = {:7.3g} mm'.format(z0 * 1e3))
+            print('y0     = {:7.3g} mm'.format(y0 * 1e3))
         else :
-            print('z fwhm = {:7.5g} m'.format(zfwhm))
-            print('y fwhm = {:7.5g} m'.format(yfwhm))
-            print('z0     = {:7.5g} m'.format(z_vec[z0i]))
-            print('y0     = {:7.5g} m'.format(y_vec[z0i]))         
-        print('zmin, zmax (m) =', zmin, zmax, ', nz=', len(z_vec))
-        print('ymin, ymax (m) =', ymin, ymax, ', ny=', len(y_vec))
-        print('wavelength (nm)= {:.3f}'.format(wavelength * 1e9))
-        print(mymaxstr, mymax)
-        print(mytotstr, mytot)
+            print('z fwhm = {:7.5g} mm'.format(zfwhm * 1e3))
+            print('y fwhm = {:7.5g} mm'.format(yfwhm * 1e3))
+            print('z0     = {:7.3g} mm'.format(z_vec[z0i] * 1e3))
+            print('y0     = {:7.3g} mm'.format(y_vec[z0i] * 1e3))
+         
+        print('zmin   = {} mm, zmax = {} mm, nz = {}'.format(zmin * 1e3, zmax * 1e3, z_vec.size))
+        print('ymin   = {} mm, ymax = {} mm, ny = {}'.format(ymin * 1e3, ymax * 1e3, y_vec.size))
+        print('wavelength      = {:.3f} nm'.format(wavelength * 1e9))
+        print(mymaxstr.format(mymax))
+        print(mytotstr.format(mytot))
+        mymaxp = mymax/(1.6e-19 * 1240e-9 / self.wavelength)
+        mytotp = mytot/(1.6e-19 * 1240e-9 / self.wavelength)
         if not amplitude:
-            print('max intensity (photons/m^2) = {}'.format(mymax/(1.6e-19*1240e-9/self.wavelength)))
-            print('total intensity (photons)   = {}'.format(mytot/(1.6e-19*1240e-9/self.wavelength)))
+            print('max intensity   = {:8.3g} photons/s m^2'.format(mymaxp))
+            print('total intensity = {:8.3g} photons/s'.format(mytotp))
 
+        print()    
         print('debug: mysum, binsize=', mysum, binsize)
         print('==============================================================================')
         if fit :
             print('result of gauss2dfit in (m):', stat)
             print('==============================================================================')
 
-        mydict = {'total': mytot, 'max': mymax}
+        mydict = {'total': mytot, 'max': mymax, 'totalp': mytotp, 'maxp': mymaxp, 
+                  'yfwhm': yfwhm, 'zfwhm': zfwhm, 'y0':y0, 'z0': z0}
         return mydict
     # end statistics
 
