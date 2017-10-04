@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:50:21 flechsig>  */
+/*  Time-stamp: <02 Feb 17 14:38:32 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -64,9 +64,9 @@ void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
 {
   hid_t group_id;
   
-#ifdef DEBUG1
+  //#ifdef DEBUG1
   printf("add attribute %s to group %s, content= %s\n", aname, gname, content);
-#endif
+  //#endif
 
   group_id = H5Gopen(fid, gname, H5P_DEFAULT );
   add_string_attribute_d(group_id, gname, content);
@@ -212,6 +212,25 @@ void readDataInt(hid_t fid, char *name, int *data, int size)
   return;
 }  /* readDataInt */
 
+void readDataULong(hid_t fid, char *name, unsigned long *data, int size)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+
+  dims[0]=size;
+  dataspace_id= H5Screate_simple(1, dims, NULL);
+  dataset_id = H5Dopen(fid, name, H5P_DEFAULT);
+  if (dataset_id < 0)
+    {
+      fprintf(stderr, "hdf5 error in file %s: dataset %s not found - exit\n", __FILE__, name);
+      exit(-1);
+    }
+  H5Dread(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+  H5Dclose(dataset_id);     
+  H5Sclose(dataspace_id);
+  return;
+}  /* readDataULong */
+
 void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc)
 {
   hsize_t dims[1];
@@ -233,6 +252,19 @@ void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc)
   dataspace_id=H5Screate_simple(1,dims,NULL);
   dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
   H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  if (desc) add_desc(dataset_id, desc);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+}
+
+void writeDataULong(hid_t fid, char *name, unsigned long *data, int size, char *desc)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+  dims[0]= size;
+  dataspace_id= H5Screate_simple(1, dims, NULL);
+  dataset_id=H5Dcreate(fid, name, H5T_NATIVE_ULONG, dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
   if (desc) add_desc(dataset_id, desc);
   H5Dclose(dataset_id);
   H5Sclose(dataspace_id);

@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <12 Dec 14 15:29:06 flechsig>  */
+ /* Time-stamp: <16 Jun 17 13:36:18 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -474,6 +474,7 @@ void drift_fraunhofer_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
 
   printf("fftw3 execute FFT\n");
   fftw_execute(*p1p);
+
   fftshift(out, rows, cols);
   
   printf("fftw3 export result\n");
