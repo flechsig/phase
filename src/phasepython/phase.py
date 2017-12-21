@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <08 Sep 17 16:49:40 flechsig>
+# Time-stamp: <21 Dec 17 10:51:34 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -45,6 +45,7 @@ import gausfitter2
 import tkinter.filedialog
 import scipy.interpolate
 
+__version__='0.1'
 
 class emf(object):
     """main object of an electromagnetic field """
@@ -58,11 +59,12 @@ class emf(object):
         self.field = np.array([[0.0 + 0.0j], [0.0 + 0.0j]])
 
     def __str__(self):
+        s= "emf version: %s\n" % __version__
         if self.name != '':
-            s = "dataset name: \"%s\",  wavelength: %e m" % (
+            s = s+ "dataset name: \"%s\",  wavelength: %e m" % (
                 self.name, self.wavelength)
         else:
-            s = "no data (nothing read in)"
+            s = s+ "no data (nothing read in)"
 
         return s
 
@@ -624,24 +626,25 @@ class emf(object):
         rows= self.y_vec.size
         zwidth = self.z_vec[-1] - self.z_vec[0] 
         ywidth = self.y_vec[-1] - self.y_vec[0]
-        lambda_x_x = self.wavelength * drift
-        yratio = 1.0 / (lambda_x_x * rows/ywidth**2)
-        zratio = 1.0 / (lambda_x_x * cols/zwidth**2) 
+        lam_x_x = self.wavelength * float(drift)
+        yratio = 1.0 / (lam_x_x * rows/ywidth**2)
+        zratio = 1.0 / (lam_x_x * cols/zwidth**2) 
         ratio = 0.5 * (yratio + zratio)
         myydrift = ywidth**2 / rows / self.wavelength
         myzdrift = zwidth**2 / cols / self.wavelength
         mydrift = 0.5* (myydrift + myzdrift)
-
+        #print( type(ratio))
+        
         if verbose :
             print('check_sampling, ratio = {:.2f}'.format(ratio))
-            print('critical_sampling     = {:.3g} m^2'.format(lambda_x_x))
+            print('critical_sampling     = {:.3g} m^2'.format(lam_x_x))
             print('act. hor  sampling    = {:.3g} m^2'.format(zwidth**2/ cols))
             print('act. vert sampling    = {:.3g} m^2'.format(ywidth**2/ rows))
             if (ratio > 1.0) :
-                print('drift = {} m yields to oversampling'.format(drift))
+                print('drift = {} m yields to oversampling'.format(float(drift)))
                 print('we recommend a transfer function (TR) based propagator (fourier)')
             else :
-                print('drift = {} m yields to undersampling '.format(drift))
+                print('drift = {} m yields to undersampling '.format(float(drift)))
                 print('we recommend an impulse response (IR) based propagator (fresnel, fraunhofer)')
             print('critical drift= {:.3g} m'.format(mydrift))
         return ratio
@@ -1146,8 +1149,8 @@ class emf(object):
                 print('h5_check_type: file ', fname, ' => hdf5 file from phase (source7)') 
             myreturn = 7
 
-            # genesis type
-            e= 'slice000001' in f       
+        # genesis type
+        e= 'slice000001' in f       
         # myreturn*= tag_exist(fstructure, 'slice000001/field') 
         e = e and 'wavelength' in f        
         e = e and 'gridsize' in f          
@@ -1195,9 +1198,9 @@ class emf(object):
             print('got fname= ', fname)
       
         if not self.h5_test(fname) :
-            print('file >>', fname, '<< is not a hdf5- exit')
+            print('file >>', fname, '<< is not a hdf5- return')
             return
-        print('file >>', fname, '<< is hdf5- exit')
+        print('file >>', fname, '<< is hdf5- return')
       
         h5type= self.h5_check_type(fname, verbose=verbose)
         if verbose :
@@ -1227,7 +1230,7 @@ class emf(object):
         f = h5py.File(fname)
         field0 = f['slice000001/field'][:]   # 1d array
         gridsize = f['gridsize'][:]
-        self.wavelength= f['wavelength'][:]
+        self.wavelength= f['wavelength'][0]
         f.close()
 
         size2 = field0.size / 2       # number of complex vals
@@ -1762,8 +1765,11 @@ class emf(object):
                        zlabel='imaginary part (a. u.)', title=title)
     # end plotimag
 
-    def plotintensity(self):
+    def plotintensity(self, figure=True):
         """plot the intensity of the field
+
+        Args: 
+            figure=True (bool): new figure- goes to mycontour
 
         Example:
             >>> emf = phase.initphase()
@@ -1772,13 +1778,14 @@ class emf(object):
         """
         title= self.getname()+ " intensity"
         self.mycontour(self.getintensity(), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
-                       zlabel='intensity ($W/m^2$)', title=title)
+                       figure=figure, zlabel='intensity ($W/m^2$)', title=title)
     # end plotintensity
 
-    def plotphase(self, param='raw'):
+    def plotphase(self, figure=True, param='raw'):
         """plot the phase of the field
 
         Args:
+            figure=True (bool): print new figure - goes to mycontour
             param='raw' (string): the phase style ("raw", "herra", "numpy"), handed over to getphase
                 
         Example:
@@ -1788,7 +1795,7 @@ class emf(object):
         """
         title = self.getname() + " phase"
         self.mycontour(self.getphase(param=param), self.getz_vec() * 1e3, self.gety_vec() * 1e3, 
-                       zlabel='phase (rad)', title=title)
+                       figure=figure, zlabel='phase (rad)', title=title)
     # end plotphase
 
     def plotphotons(self):
