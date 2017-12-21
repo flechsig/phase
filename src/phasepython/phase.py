@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <21 Dec 17 12:18:43 flechsig>
+# Time-stamp: <21 Dec 17 12:24:33 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2143,8 +2143,8 @@ class emf(object):
             y_vec= self.y_vec
             field= self.field
             self.y_vec= newy_vec
-            fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value=0+0j)
-            fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0+0j)
+            fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value=0.0)
+            fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0.0)
             self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
             
         if newz_vec is not None:
@@ -2154,8 +2154,8 @@ class emf(object):
             y_vec = self.y_vec
             field = self.field
             self.z_vec = newz_vec
-            fre = scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value=0+0j)
-            fim = scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0+0j)
+            fre = scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value=0.0)
+            fim = scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0.0)
             self.field = fre(self.y_vec, self.z_vec) + 1j * fim(self.y_vec, self.z_vec)
             
         if skip :             # skip rest if vectors provided 
