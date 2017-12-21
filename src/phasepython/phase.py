@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <21 Dec 17 10:51:34 flechsig>
+# Time-stamp: <21 Dec 17 12:18:43 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2136,7 +2136,7 @@ class emf(object):
                 print('error: newsize < oldsize- return')
                 return
     
-        if newy_vec :
+        if newy_vec is not None :
             print('new y vector')
             skip = True
             z_vec= self.z_vec
@@ -2147,7 +2147,7 @@ class emf(object):
             fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0+0j)
             self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
             
-        if newz_vec :
+        if newz_vec is not None:
             print('new z vector')
             skip = True
             z_vec = self.z_vec
