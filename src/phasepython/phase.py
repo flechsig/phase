@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <21 Dec 17 12:24:33 flechsig>
+# Time-stamp: <22 Dec 17 12:41:18 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -41,11 +41,12 @@ import subprocess
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mco
 import gausfitter2
 import tkinter.filedialog
 import scipy.interpolate
 
-__version__='0.1'
+__version__='0.2'
 
 class emf(object):
     """main object of an electromagnetic field """
@@ -1036,6 +1037,28 @@ class emf(object):
         return phi
     # getphase
 
+    def getphasergb(self, param='raw'):
+        """returns the phase as rgb array
+ 
+        (contributed code by U. Wagner)
+
+        Args:
+            param='raw' (str): handed over to getphase
+        Returns:
+           phase (rgb image): the phase as rgb image
+        """
+
+        mag= np.abs(self.field)
+        val= mag/np.max(mag)
+        ang= self.getphase(param=param)
+        hue= ang/np.pi/2+.5
+        sat= np.ones(mag.shape)
+        hsv= np.stack((hue, sat, val), axis=-1)
+        rgb= mco.hsv_to_rgb(hsv)
+        
+        return rgb
+    # getphasergb
+
     def getphotons(self):
         """returns the photons
 
@@ -1798,6 +1821,38 @@ class emf(object):
                        figure=figure, zlabel='phase (rad)', title=title)
     # end plotphase
 
+    def plotphasergb(self, figure=True, param='raw'):
+        """plot the phase combined with amplitude i.e. phase to the color and the amplitude to the brightness
+
+        Args:
+            figure=True (bool): print new figure 
+            param='raw' (string): the phase style ("raw", "herra", "numpy"), handed over to getphasergb                
+        Example:
+            >>> emf = phase.initphase()
+                emf.gaussbeam(example=True)
+                emf.plotphasergb()
+        """
+        title = self.getname() + " phase hsv"
+        rgb= self.getphasergb(param=param)
+        z= self.getz_vec()* 1e3
+        y= self.gety_vec()* 1e3
+
+        if figure :
+            plt.figure()
+
+        plt.imshow(rgb, extent=[np.min(z), np.max(z), np.min(y), np.max(y)], origin='lower')
+        xlabel= 'z (mm)'
+        ylabel= 'y (mm)'
+        zlabel= 'phase (rad)' 
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+
+        cbar= plt.colorbar()
+        cbar.set_label(zlabel)
+        plt.title(title)
+        
+    # end plotphasehsv
+
     def plotphotons(self):
         """plot the field intensity as photons
 
@@ -2135,28 +2190,45 @@ class emf(object):
             if newsize <= sizeField :
                 print('error: newsize < oldsize- return')
                 return
-    
-        if newy_vec is not None :
+
+        if newy_vec is not None and newz_vec is not None :
+            print('new y vector and new z vector')
+            skip = True
+            z_vec= self.z_vec
+            y_vec= self.y_vec
+            field= self.field
+            self.y_vec= newy_vec
+            self.z_vec = newz_vec
+            fre= scipy.interpolate.interp2d(z_vec, y_vec, np.real(field), kind='cubic', fill_value=0.0)
+            fim= scipy.interpolate.interp2d(z_vec, y_vec, np.imag(field), kind='cubic', fill_value=0.0)
+            self.field= fre(self.z_vec, self.y_vec) + 1j* fim(self.z_vec, self.y_vec)
+            print("new shape:", self.field.shape)
+
+
+
+        if newy_vec is not None and newz_vec is None:
             print('new y vector')
             skip = True
             z_vec= self.z_vec
             y_vec= self.y_vec
             field= self.field
             self.y_vec= newy_vec
-            fre= scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value=0.0)
-            fim= scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0.0)
-            self.field= fre(self.y_vec, self.z_vec) + 1j* fim(self.y_vec, self.z_vec)
+            fre= scipy.interpolate.interp2d(z_vec, y_vec, np.real(field), kind='cubic', fill_value=0.0)
+            fim= scipy.interpolate.interp2d(z_vec, y_vec, np.imag(field), kind='cubic', fill_value=0.0)
+            self.field= fre(self.z_vec, self.y_vec) + 1j* fim(self.z_vec, self.y_vec)
+            print("new shape:", self.field.shape)
             
-        if newz_vec is not None:
+        if newz_vec is not None and newy_vec is None:
             print('new z vector')
             skip = True
             z_vec = self.z_vec
             y_vec = self.y_vec
             field = self.field
             self.z_vec = newz_vec
-            fre = scipy.interpolate.interp2d(y_vec, z_vec, np.real(field), kind='cubic', fill_value=0.0)
-            fim = scipy.interpolate.interp2d(y_vec, z_vec, np.imag(field), kind='cubic', fill_value=0.0)
-            self.field = fre(self.y_vec, self.z_vec) + 1j * fim(self.y_vec, self.z_vec)
+            fre= scipy.interpolate.interp2d(z_vec, y_vec, np.real(field), kind='cubic', fill_value=0.0)
+            fim= scipy.interpolate.interp2d(z_vec, y_vec, np.imag(field), kind='cubic', fill_value=0.0)
+            self.field= fre(self.z_vec, self.y_vec) + 1j* fim(self.z_vec, self.y_vec)
+            print("new shape:", self.field.shape)
             
         if skip :             # skip rest if vectors provided 
             return
