@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <14 Aug 15 14:41:57 flechsig>  */
+/*   Time-stamp: <27 Feb 18 15:33:54 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1765,8 +1765,14 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        fprintf(stderr, "warning: Initialization - preliminary version, file: %s\n", __FILE__);
 #ifndef EXTR
        //SetDefaultParameter(bl); 
+       // UF Feb 2018
+#ifdef OPTI
+
+#else
        InitBeamline(bl);
 #endif
+#endif
+
 #endif
 
        return -1;         /* file not found- return -1 */

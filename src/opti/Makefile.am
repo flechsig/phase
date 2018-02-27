@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <28 Aug 14 16:05:40 flechsig> 
+#  Time-stamp: <27 Feb 18 15:40:18 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -54,7 +54,8 @@ phaseopti_SOURCES = phaseopti.cpp phaseopti.h \
 	../phase/cutils.c       ../phase/rtrace.c \
 	../phase/bline.c  \
 	../phase/reflectivity.c ../phase/reflectivity.h  \
-	../phase/heighterror.c ../phase/heighterror.h    
+	../phase/heighterror.c ../phase/heighterror.h  \
+	../phase/myhdf5.c        ../phase/myhdf5.h   
 
 opti_root_example_SOURCES = opti_root_example.cpp opti_root_example.h
 
@@ -63,7 +64,7 @@ phaseopti_LDADD = $(libdir)/@LIBPHASE@
 ## flags
 AM_CPPFLAGS = -DLINUX -DOPTI -DNOGUI
 AM_CXXFLAGS=  $(ROOT_CFLAGS) -I. -I../phase -W
-AM_LDFLAGS =  $(ROOT_LIBS) -lMinuit @FLIBS@ @CFORLIB@
+AM_LDFLAGS =  $(ROOT_LIBS) -lMinuit @MY_HDF5_LIBS@ @FLIBS@ @CFORLIB@
 
 ## we use the c linker
 F77LINK = $(LINK)
