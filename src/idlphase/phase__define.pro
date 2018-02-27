@@ -1,6 +1,6 @@
 ;  File      : /afs/psi.ch/user/f/flechsig/phase/src/idlphase/phase__define.pro
 ;  Date      : <04 Oct 13 16:26:36 flechsig> 
-;  Time-stamp: <01 Sep 15 16:58:43 flechsig> 
+;  Time-stamp: <08 Sep 17 14:37:27 flechsig> 
 ;  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 ;  $Source$ 
@@ -2041,8 +2041,6 @@ pro phase::propfraunhofer, _EXTRA=extra
 
 propfraunhofer, field=*self.field, y_vec=*self.y_vec, z_vec=*self.z_vec, $
   wavelength=self.wavelength, _EXTRA=extra
-
-
 
 return 
 end ;;propfraunhofer  
