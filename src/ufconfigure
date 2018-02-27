@@ -1,0 +1,2 @@
+./configure --with-Qt-dir=/usr/local/Qt-5.5.0 --enable-debug --with-hdf5=/usr/local/hdf5/bin/h5cc
+./configure --with-Qt-dir=/usr/local/Qt-5.5.0/ --with-qwt=/usr/local/qwt-6.1.3/ --with-hdf5=/usr/local/hdf5/bin/h5cc --enable-debug
