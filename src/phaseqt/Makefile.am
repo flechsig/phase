@@ -153,7 +153,7 @@ else
 endif
 
 if QT5
-   AM_CXXFLAGS = -fPIC \
+   AM_CXXFLAGS = -fPIC -std=c++11 \
 	@QT_CXXFLAGS@ \
 	@QT_CXXFLAGS@/QtCore \
 	@QT_CXXFLAGS@/QtGui \
