@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/phasepython/Makefile.am
 # Date      : <18 Aug 17 12:13:21 flechsig> 
-# Time-stamp: <18 Aug 17 12:26:30 flechsig> 
+# Time-stamp: <01 Mar 18 09:17:25 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -39,7 +39,7 @@
 ## this directory should be in your python search path
 
 pythondir=$(prefix)/python
-SLSDEST=gfalc.psi.ch:/work/sls/lib/X_OL_PYTH/ # gfalc accepts kerberos ssh 
+SLSDEST=/afs/psi.ch/project/soft_x/OpticsTools/python 
 
 ## everything 2b installed in idldir
 python_DATA  = phase.py \
