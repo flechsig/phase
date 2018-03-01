@@ -32,10 +32,10 @@ def h5_write_surf_error(fname, ename, u, w, l, verbose=True) :
        return
 
    f= h5py.File(fname, 'w')
-   f.create_dataset('/height2D', data=u)
-   f.create_dataset('/height_vec', data=u.reshape((nwnl)))
-   f.create_dataset('/wvec', data=w)
-   f.create_dataset('/lvec', data=l)
+   f.create_dataset(ename+'/height2D', data=u)
+   f.create_dataset(ename+'/height_vec', data=u.reshape((nwnl)))
+   f.create_dataset(ename+'/wvec', data=w)
+   f.create_dataset(ename+'/lvec', data=l)
 
    f.close()
    print('wrote surface error file: ', fname)
