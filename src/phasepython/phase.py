@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <22 Dec 17 12:41:18 flechsig>
+# Time-stamp: <02 Mar 18 11:33:34 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -45,8 +45,9 @@ import matplotlib.colors as mco
 import gausfitter2
 import tkinter.filedialog
 import scipy.interpolate
+import sys
 
-__version__='0.2'
+__version__='0.3'
 
 class emf(object):
     """main object of an electromagnetic field """
@@ -1504,22 +1505,21 @@ class emf(object):
 
         if azimut is 0 :
             print('vertical up deflecting mirror')
-        elif azimut is 90 : 
+        elif azimut == 90 : 
             print('horizontal left deflecting mirror')
             ff = fw
             fw = fl
             fl = ff
-        elif azimut is 180 :
+        elif azimut == 180 :
             print('vertical down deflecting mirror')
-        elif azimut is 270 :
+        elif azimut == 270 :
             print('horzontal right deflecting mirror')
             ff = fw
             fw = fl
             fl = ff
         else :
-            print('no valid azimut= {}, allowed are: 0 90 180 270'.format(azimut))
-            return
-
+            sys.exit('no valid azimut= {}, allowed are: 0 90 180 270'.format(azimut))
+            
         for col in np.arange(nz):
             for row in np.arange(ny):
                 f1 = myz_vec[col]**2 / (2.0 * fl) + myy_vec[row]**2 / (2.0 * fw)  # phase   
@@ -1529,36 +1529,77 @@ class emf(object):
         self.field *= lcomp 
 
         # deal with error
-        if u :
+        if u is not None :
             print('mirror with height error')
             if w is None:
-                print('we need w as the mirror coordinate - return')
-                return
+                sys.exit('we need w as the mirror coordinate - exit')
             if (u.ndim == 2) and (l is None):
-                print('u.ndim == 2: we need l as the mirror coordinate - return')
-                return
+                sys.exit('u.ndim == 2: we need also l as the mirror coordinate - exit')
             if (u.ndim == 1) :
                 print('deal with 1d height error')
                 hw1= u * np.sin(thetag)  # the phase shift relevant height as function of w
                 w1 = w * np.sin(thetag)  # the projection of the mirror to normal incidence
                 f= scipy.interpolate.interp1d(w1, hw1)
-                hw2= f(myy_vec)  # hw2 as function of myy_vec
-                for col in np.arange(nz):
-                    for row in np.arange(ny):
-                        f1 = hw2[row]    
-                        f1 *= (-4) * np.pi / self.wavelength
-                        lcomp[row, col] = complex(np.cos(f1), np.sin(f1))
-            else :
+                if azimut is 0 :
+                    hw2= f(myy_vec)  # hw2 as function of myy_vec
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1 = hw2[row]    
+                            f1 *= (-4) * np.pi / self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1))  # azimut 0
+                elif azimut == 180 :
+                    hw2= f(myy_vec)  # hw2 as function of myy_vec
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1 = hw2[ny- 1- row]    
+                            f1 *= (-4) * np.pi / self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut 180
+                elif azimut == 90 :
+                    hw2= f(myz_vec)  # hw2 as function of myy_vec
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1 = hw2[nz- 1- col]    
+                            f1 *= (-4) * np.pi / self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut 90
+                elif azimut == 270 :
+                    hw2= f(myz_vec)  # hw2 as function of myy_vec
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1 = hw2[col]    
+                            f1 *= (-4) * np.pi / self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut 270
+            else :   # 2d
                 print('deal with 2d height error - not yet debugged')
+                print("u.shape, w.shape, l.shape ", u.shape, w.shape, l.shape, thetag)
                 hw1= u* np.sin(thetag)  # the phase shift relevant height as function of w
                 w1 = w* np.sin(thetag)  # the projection of the mirror to normal incidence
-                f= scipy.interpolate.interp2d(l, w1, hw1, kind='cubic')
-                hw2= f(myy_vec, myz_vec)
-                for col in np.arange(nz):
-                    for row in np.arange(ny):
-                        f1= hw2[row, col]    
-                        f1*= (-4)* np.pi/ self.wavelength
-                        lcomp[row, col] = complex(np.cos(f1), np.sin(f1))
+                f= scipy.interpolate.interp2d(w1, l, hw1, kind='cubic')  # f(x,y)
+                hw2= f(myz_vec, myy_vec)          # height as function of normal incidence aperture
+                if azimut == 90 :
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1= hw2[row, nz-1-col]    
+                            f1*= (-4)* np.pi/ self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut==90
+                elif azimut == 270 :
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1= hw2[row, col]    
+                            f1*= (-4)* np.pi/ self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut==270
+                elif azimut == 0 :
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1= hw2[col, row]    
+                            f1*= (-4)* np.pi/ self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut==0
+                elif azimut == 180 :
+                    for col in np.arange(nz):
+                        for row in np.arange(ny):
+                            f1= hw2[nz-1-col, ny-1-row]    
+                            f1*= (-4)* np.pi/ self.wavelength
+                            lcomp[row, col] = complex(np.cos(f1), np.sin(f1)) # azimut==0
+                            
             self.field *= lcomp
     # end mirror
 
