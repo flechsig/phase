@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <16 Jun 17 13:36:18 flechsig>  */
+ /* Time-stamp: <05 Mar 18 16:58:44 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -569,7 +569,31 @@ void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, dou
       }
 } /* end get_fftw */
 
+// generic in place 2d fft direction -1 is forward
+void myfftw3(double *re, double *im, int rows, int cols, int direction)
+{
+  double scale= 1.0;
+#ifdef HAVE_FFTW3
+  fftw_complex *in, *out;
+  fftw_plan     p1;
 
+  in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
+  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
+  
+  if (direction == -1)
+    p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_FORWARD,  FFTW_ESTIMATE); /* fast init */
+  else
+    p1 = fftw_plan_dft_2d(cols, rows, in, out, FFTW_BACKWARD, FFTW_ESTIMATE); /* fast init */
+
+  fill_fftw(in, re, im, rows, cols);
+  fftw_execute(p1); 
+  get_fftw(out, re, im, rows, cols, scale);
+  fftw_destroy_plan(p1);
+  fftw_free(in); 
+  fftw_free(out);
+
+#endif
+} // end myfftw3
 
 #endif
 
