@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <05 Mar 18 17:00:52 flechsig> 
+#  Time-stamp: <07 Mar 18 10:39:10 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -223,5 +223,6 @@ qrc_%.cpp : %.qrc
 ## CLEANFILES = $(filter moc_%.cpp,$(phaseqt_SOURCES)) 
 ## CLEANFILES is a variable called from target clean: rm -f $CLEANFILES
 CLEANFILES = moc_*.cpp qrc_*.cpp *.f90 *.mod
+
 
 # end

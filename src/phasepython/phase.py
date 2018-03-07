@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <02 Mar 18 11:33:34 flechsig>
+# Time-stamp: <07 Mar 18 10:02:21 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -59,6 +59,7 @@ class emf(object):
         self.y_vec = np.array([0.0])
         self.z_vec = np.array([0.0])
         self.field = np.array([[0.0 + 0.0j], [0.0 + 0.0j]])
+        self.libpath = '/afs/psi.ch/project/phase/lib/'    # path to shared libs for c code extensions
 
     def __str__(self):
         s= "emf version: %s\n" % __version__
@@ -1021,10 +1022,10 @@ class emf(object):
         if param == "raw":
             print("get raw phase") 
         elif param == "herra":
-            libpath = '/afs/psi.ch/project/phase/lib/'  
+            # libpath = '/afs/psi.ch/project/phase/lib/'  
             libname = 'unwrap_herra'                   # without extension
-            print("herra unwrapping call c code from {}.so".format(libpath+libname))
-            unwrap_herra_lib = np.ctypeslib.load_library(libname, libpath)
+            print("herra unwrapping call c code from {}.so".format(self.libpath+libname))
+            unwrap_herra_lib = np.ctypeslib.load_library(libname, self.libpath)
             uwh = unwrap_herra_lib.unwrap_phase
             arg1 = np.ctypeslib.as_ctypes(phi)
             uwh(arg1, self.z_vec.size, self.y_vec.size)
@@ -1034,7 +1035,7 @@ class emf(object):
             phi = np.unwrap(phi)
         else :   
             print("error: unknown algorithm: ", param)
-
+   
         return phi
     # getphase
 

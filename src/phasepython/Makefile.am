@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/phasepython/Makefile.am
 # Date      : <18 Aug 17 12:13:21 flechsig> 
-# Time-stamp: <01 Mar 18 09:17:25 flechsig> 
+# Time-stamp: <07 Mar 18 10:57:09 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -52,6 +52,12 @@ docs:
 	echo "in case of error:"
 	echo "login to slsbl.web.psi.ch and run /home/httpd/htdocs/docs/python/myrun.sh"
 	ssh slsbl.web.psi.ch /home/httpd/htdocs/docs/python/myrun.sh
+
+## the shared library for generic fftw3
+lib_LTLIBRARIES         = myfftw3.la 
+###myfftw3_la_SOURCES = ../phaseqt/unwrap_phase.cpp ../phaseqt/unwrap_phase.h  #../phase/myfftw3.c ../phase/myfftw3.h
+myfftw3_la_SOURCES = ../phase/myfftw3.c ../phase/myfftw3.h ../phase/xmalloc.c ../phase/error.c
+myfftw3_la_LDFLAGS = -module -avoid-version -shared
 
 
 # end Makefile.am

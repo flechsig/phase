@@ -1,2 +1,4 @@
 # -*-sh-*-
 __pycache__
+.libs/
+myfftw3.la

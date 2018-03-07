@@ -1,12 +1,12 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <25 Aug 17 09:14:37 flechsig> 
+# Time-stamp: <07 Mar 18 10:39:08 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
 # $Date$
 # $Revision$ 
-# $Author$ 
+# $Author$  
 
 
 import numpy as np

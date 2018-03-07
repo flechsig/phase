@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <05 Mar 18 16:58:44 flechsig>  */
+ /* Time-stamp: <07 Mar 18 11:02:17 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -576,6 +576,8 @@ void myfftw3(double *re, double *im, int rows, int cols, int direction)
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
   fftw_plan     p1;
+
+  fprintf(stderr, "myfftw3 called sith dims %d, %d and direction = %d\n", rows, cols, direction);
 
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
