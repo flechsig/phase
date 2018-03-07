@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
  /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <07 Mar 18 12:19:53 flechsig>  */
+ /* Time-stamp: <07 Mar 18 13:48:50 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -475,6 +475,7 @@ void drift_fraunhofer_sub(fftw_complex *in, fftw_complex *out, fftw_plan *p1p,
   printf("fftw3 execute FFT\n");
   fftw_execute(*p1p);
 
+  printf("call fftshift\n");
   fftshift(out, rows, cols);
   
   printf("fftw3 export result\n");
@@ -589,6 +590,9 @@ void myfftw3(double *re, double *im, int rows, int cols, int direction)
 
   fill_fftw(in, re, im, rows, cols);
   fftw_execute(p1); 
+
+  fftshift(out, rows, cols);   /* do we always want it ?? */
+
   get_fftw(out, re, im, rows, cols, scale);
   fftw_destroy_plan(p1);
   fftw_free(in); 

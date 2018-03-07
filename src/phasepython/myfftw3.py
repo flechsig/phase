@@ -1,6 +1,6 @@
  # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/myfftw3.py
  # Date      : <07 Mar 18 10:07:16 flechsig> 
- # Time-stamp: <07 Mar 18 11:39:51 flechsig> 
+ # Time-stamp: <07 Mar 18 12:18:04 flechsig> 
  # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
  # $Source$ 
@@ -26,8 +26,8 @@ def myfftw3(field, direction) :
 
     """
 
-    re= field.real* 1.0
-    im= field.imag* 1.0
+    re= field.real.copy()
+    im= field.imag.copy()
     (rows, cols)= field.shape
     libpath = '/afs/psi.ch/project/phase/lib/' 
     libname = 'myfftw3'                   # without extension
