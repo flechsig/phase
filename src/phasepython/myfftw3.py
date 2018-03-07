@@ -1,6 +1,6 @@
  # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/myfftw3.py
  # Date      : <07 Mar 18 10:07:16 flechsig> 
- # Time-stamp: <07 Mar 18 12:18:04 flechsig> 
+ # Time-stamp: <07 Mar 18 14:04:09 flechsig> 
  # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
  # $Source$ 
@@ -11,7 +11,11 @@
 import numpy as np
 
 def myfftw3(field, direction) :
-    """myfftw3 - generic wrapper function for 2d fft using fftw3 immplemnted in c
+    """myfftw3 - generic wrapper function for 2d fft using fftw3 
+
+    the function is implemented in c, it allows forward and backward 
+    transforms, it calls fftshift to center the output, the correct amplitude 
+    scaling is not yet debugged
 
     Args:
         field (complex array): real part of the field
@@ -19,8 +23,7 @@ def myfftw3(field, direction) :
 
     Returns:
         field (complex array): the fft output
-        
-
+    
     Example:
           >>> b= myfftw3(a, -1)
 
