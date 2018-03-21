@@ -1,6 +1,6 @@
  # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/myfftw3.py
  # Date      : <07 Mar 18 10:07:16 flechsig> 
- # Time-stamp: <07 Mar 18 14:04:09 flechsig> 
+ # Time-stamp: <21 Mar 18 12:25:28 flechsig> 
  # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
  # $Source$ 
@@ -10,7 +10,8 @@
 
 import numpy as np
 
-def myfftw3(field, direction) :
+def myfftw3(field, direction, shift=1, verbose=1, 
+            libpath='/afs/psi.ch/project/phase/lib/') :
     """myfftw3 - generic wrapper function for 2d fft using fftw3 
 
     the function is implemented in c, it allows forward and backward 
@@ -18,8 +19,11 @@ def myfftw3(field, direction) :
     scaling is not yet debugged
 
     Args:
-        field (complex array): real part of the field
+        field (complex array): the complex field
         direction (int): -1 means forward fft, 1 means backward
+        shift=1 (int): apply fftshift
+        verbose=1 (int): verbosity
+        libpath='/afs/psi.ch/project/phase/lib/' (string): the path to the shared library myfftw3.so
 
     Returns:
         field (complex array): the fft output
@@ -32,17 +36,18 @@ def myfftw3(field, direction) :
     re= field.real.copy()
     im= field.imag.copy()
     (rows, cols)= field.shape
-    libpath = '/afs/psi.ch/project/phase/lib/' 
+#    libpath = '/afs/psi.ch/project/phase/lib/' 
     libname = 'myfftw3'                   # without extension
-    print("my fftw3 call c code from {}.so".format(libpath+libname))
+    if (verbose > 0) :
+        print("myfftw3: call c code from {}.so".format(libpath+libname))
     myfftw3_lib = np.ctypeslib.load_library(libname, libpath)
-    fft = myfftw3_lib.myfftw3
+    myfftw3 = myfftw3_lib.myfftw3
     arg1 = np.ctypeslib.as_ctypes(re)
     arg2 = np.ctypeslib.as_ctypes(im)
     
     #print("call", arg1)
     
-    fft(arg1, arg2, rows, cols, direction)
+    myfftw3(arg1, arg2, rows, cols, direction, shift, verbose)
 
     #print("returned")
 

@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <07 Mar 18 10:02:21 flechsig>
+# Time-stamp: <07 Mar 18 15:18:42 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -1017,7 +1017,7 @@ class emf(object):
         Returns:
            phase (double): the phase as np array
         """
-        phi = np.angle(self.field)
+        phi = np.angle(self.field).copy()
         
         if param == "raw":
             print("get raw phase") 

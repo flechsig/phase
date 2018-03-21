@@ -1,12 +1,12 @@
- /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
- /* Date      : <06 Jan 14 14:13:01 flechsig>  */
- /* Time-stamp: <07 Mar 18 13:48:50 flechsig>  */
- /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+/* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
+/* Date      : <06 Jan 14 14:13:01 flechsig>  */
+/* Time-stamp: <21 Mar 18 12:18:21 flechsig>  */
+/* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
- /* $Source$  */
- /* $Date$ */
- /* $Revision$  */
- /* $Author$  */
+/* $Source$  */
+/* $Date$ */
+/* $Revision$  */
+/* $Author$  */
 
 // ******************************************************************************
 //
@@ -571,14 +571,16 @@ void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, dou
 } /* end get_fftw */
 
 // generic in place 2d fft direction -1 is forward
-void myfftw3(double *re, double *im, int rows, int cols, int direction)
+// to be called by python 
+void myfftw3(double *re, double *im, int rows, int cols, int direction, int shift, int verbose)
 {
   double scale= 1.0;
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
   fftw_plan     p1;
 
-  fprintf(stderr, "myfftw3 called with dims %d, %d and direction = %d\n", rows, cols, direction);
+  if (verbose)
+    fprintf(stderr, "myfftw3 called with dims %d, %d and direction = %d, fftshift = %d\n", rows, cols, direction, shift);
 
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
@@ -591,8 +593,9 @@ void myfftw3(double *re, double *im, int rows, int cols, int direction)
   fill_fftw(in, re, im, rows, cols);
   fftw_execute(p1); 
 
-  fftshift(out, rows, cols);   /* do we always want it ?? */
-
+  if (shift)          // shift fft
+    fftshift(out, rows, cols);   
+    
   get_fftw(out, re, im, rows, cols, scale);
   fftw_destroy_plan(p1);
   fftw_free(in); 

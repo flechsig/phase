@@ -1,12 +1,12 @@
- /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.h */
- /* Date      : <06 Jan 14 14:10:12 flechsig>  */
- /* Time-stamp: <05 Mar 18 16:51:00 flechsig>  */
- /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+/* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.h */
+/* Date      : <06 Jan 14 14:10:12 flechsig>  */
+/* Time-stamp: <21 Mar 18 12:17:32 flechsig>  */
+/* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
- /* $Source$  */
- /* $Date$ */
- /* $Revision$  */
- /* $Author$  */
+/* $Source$  */
+/* $Date$ */
+/* $Revision$  */
+/* $Author$  */
 
 // ******************************************************************************
 //
@@ -62,7 +62,7 @@ void drift_fresnel_sub(fftw_complex *, fftw_complex *, fftw_plan *,
 void fftshift(fftw_complex *, int, int);
 void fill_fftw(fftw_complex *, double *, double *, int, int);
 void get_fftw(fftw_complex *, double *, double *, int, int, double);
-void myfftw3(double *, double *, int, int, int);
+void myfftw3(double *, double *, int, int, int, int, int);
 #endif
 #endif
 /* end file */
