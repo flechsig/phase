@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
 /* Date      : <06 Jan 14 14:13:01 flechsig>  */
-/* Time-stamp: <21 Mar 18 12:18:21 flechsig>  */
+/* Time-stamp: <21 Mar 18 15:14:12 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -571,10 +571,11 @@ void get_fftw(fftw_complex *out, double *re, double *im, int rows, int cols, dou
 } /* end get_fftw */
 
 // generic in place 2d fft direction -1 is forward
+// the fft is normalized
 // to be called by python 
 void myfftw3(double *re, double *im, int rows, int cols, int direction, int shift, int verbose)
 {
-  double scale= 1.0;
+  double scale;
 #ifdef HAVE_FFTW3
   fftw_complex *in, *out;
   fftw_plan     p1;
@@ -595,6 +596,8 @@ void myfftw3(double *re, double *im, int rows, int cols, int direction, int shif
 
   if (shift)          // shift fft
     fftshift(out, rows, cols);   
+
+  scale= sqrt(rows * cols);
     
   get_fftw(out, re, im, rows, cols, scale);
   fftw_destroy_plan(p1);
