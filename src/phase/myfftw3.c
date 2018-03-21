@@ -1,6 +1,6 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myfftw3.c */
 /* Date      : <06 Jan 14 14:13:01 flechsig>  */
-/* Time-stamp: <21 Mar 18 15:15:52 flechsig>  */
+/* Time-stamp: <21 Mar 18 15:28:31 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /* $Source$  */
@@ -42,6 +42,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "cutils.h" 
@@ -583,6 +584,12 @@ void myfftw3(double *re, double *im, int rows, int cols, int direction, int shif
   if (verbose)
     fprintf(stderr, "myfftw3 called with dims %d, %d and direction = %d, fftshift = %d\n", rows, cols, direction, shift);
 
+  if ((rows < 1) || (cols < 1))
+    {
+      fprintf(stderr, "no 2d field - exit\n");
+      exit(-1);	
+    }
+
   in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * rows * cols);
   
@@ -597,7 +604,7 @@ void myfftw3(double *re, double *im, int rows, int cols, int direction, int shif
   if (shift)          // shift fft
     fftshift(out, rows, cols);    
 
-  scale= sqrt(rows * cols);
+  scale= 1.0/ sqrt(rows * cols);
     
   get_fftw(out, re, im, rows, cols, scale);
   fftw_destroy_plan(p1);

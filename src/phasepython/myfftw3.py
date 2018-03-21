@@ -1,6 +1,6 @@
  # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/myfftw3.py
  # Date      : <07 Mar 18 10:07:16 flechsig> 
- # Time-stamp: <21 Mar 18 15:18:34 flechsig> 
+ # Time-stamp: <21 Mar 18 15:44:23 flechsig> 
  # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
  # $Source$ 
@@ -10,7 +10,7 @@
 
 import numpy as np
 
-def myfftw3(field, direction, shift=1, verbose=1, 
+def myfftw3(field, direction, shift=0, verbose=1, 
             libpath='/afs/psi.ch/project/phase/lib/') :
     """myfftw3 - generic wrapper function for 2d fft using fftw3 
 
@@ -21,7 +21,7 @@ def myfftw3(field, direction, shift=1, verbose=1,
     Args:
         field (complex array): the complex field
         direction (int): -1 means forward fft, 1 means backward
-        shift=1 (int): apply fftshift
+        shift=0 (int): apply fftshift
         verbose=1 (int): verbosity
         libpath='/afs/psi.ch/project/phase/lib/' (string): the path to the shared library myfftw3.so
 
