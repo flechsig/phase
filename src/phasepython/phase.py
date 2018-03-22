@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <07 Mar 18 15:18:42 flechsig>
+# Time-stamp: <22 Mar 18 11:14:50 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -40,6 +40,8 @@
 import subprocess
 import h5py
 import numpy as np
+import numpy.fft as np_fft
+import scipy.fftpack as sc_fft
 import matplotlib.pyplot as plt
 import matplotlib.colors as mco
 import gausfitter2
@@ -47,7 +49,8 @@ import tkinter.filedialog
 import scipy.interpolate
 import sys
 
-__version__='0.3'
+__version__ = '0.4'
+__author__ = 'U. Flechsig'
 
 class emf(object):
     """main object of an electromagnetic field """
@@ -59,7 +62,11 @@ class emf(object):
         self.y_vec = np.array([0.0])
         self.z_vec = np.array([0.0])
         self.field = np.array([[0.0 + 0.0j], [0.0 + 0.0j]])
-        self.libpath = '/afs/psi.ch/project/phase/lib/'    # path to shared libs for c code extensions
+        self.libpath = '/afs/psi.ch/project/phase/lib/'  # path to shared libs for c code extensions
+        self.verbose = True
+        self.usefft = 'myfftw3'          # string: [numpy, scipy, myfftw3]
+        if self.verbose :
+            print(self)
 
     def __str__(self):
         s= "emf version: %s\n" % __version__
@@ -69,6 +76,9 @@ class emf(object):
         else:
             s = s+ "no data (nothing read in)"
 
+        s += "\nsettings:\n  verbose:{}\n  libpath: {}".format(self.verbose, self.libpath)      
+        s += "\n  usefft: {} ['numpy','scipy','myfftw3']".format(self.usefft)
+    
         return s
 
     def aperture(self, p1=None, p2=None, p3=None, p4=None,
@@ -722,7 +732,8 @@ class emf(object):
         return crlcomp
     # end crl
 
-    def fermidiracbeam(self, nz=243, ny=None, sizez=1e-3, sizey=None, z_off=0.0, y_off=0.0, fwhm=5e-4, slope=None, example=False):
+    def fermidiracbeam(self, nz=243, ny=None, sizez=1e-3, sizey=None, z_off=0.0, 
+                       y_off=0.0, fwhm=5e-4, slope=None, example=False):
         """generate the electromagnetic field of a fermidirac like beam
 
       Args:
@@ -912,9 +923,9 @@ class emf(object):
                 rho2 = (z_vec[col] - z_off)**2 + (y_vec[row] - y_off)**2 
                 arg1 = -1 * rho2 / w2               # the intensity factor as function of aperture
                 if arg1 <= -40: 
-                    arg1 = -40                        # -40, but -80 is still ok
+                    arg1 = -40                      # -40, but -80 is still ok
                     truncation= 1
-                arg2  = 0.5 * k * rho2 * Ri + k * dist - eta                    # For notation of Siegman multiply by -1                    
+                arg2  = 0.5 * k * rho2 * Ri + k * dist - eta  # For notation of Siegman multiply by -1                    
                 phas2 = complex(np.cos(arg2), np.sin(arg2))     
                 field[row, col] = phas2 * np.exp(arg1) * w0 / w
 
@@ -1725,26 +1736,42 @@ class emf(object):
             return
 
         k = 2.0* np.pi/ self.wavelength
-        twopi= 2.0 * np.pi
-        zz  = myz_vec[-1]- myz_vec[0]      # total width
-        yy  = myy_vec[-1]- myy_vec[0]      # total width
+        twopi = 2.0 * np.pi
+        zz = myz_vec[-1] - myz_vec[0]      # total width
+        yy = myy_vec[-1] - myy_vec[0]      # total width
         u = (np.arange(nz)/(nz-1) - 0.5)   # runs from -0.5..0.. 0.5 
         v = (np.arange(ny)/(ny-1) - 0.5)   # for even and odd values of Ny, Nz 
         u = u * (nz-1)/zz                  # ok with odd number of elements
         v = v * (ny-1)/yy
 
-        fieldfft = np.fft.fftshift(np.fft.fft2(self.field))  # remember: the frequencies are the 
+        if self.usefft == 'numpy' :
+            fieldfft = np_fft.fftshift(np_fft.fft2(self.field))  # remember: the frequencies are the 
+        elif self.usefft == 'scipy' :   
+            fieldfft = sc_fft.fftshift(sc_fft.fft2(self.field))  # remember: the frequencies are the
+        elif self.usefft == 'myfftw3' :
+            fieldfft = self.myfftw3(self.field, -1, shift=1)
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
+
         # direction cosines divided by lambda
-        fy= np.sin(2.*thetag)/ self.wavelength
+        fy = np.sin(2.*thetag)/ self.wavelength
         szi= 0
         # idx= max(where(u lt fy))
         center_idx = Ny/2
-# syi has to be determined from thetag- how???
+        # syi has to be determined from thetag- how???
         syi= idx-center_idx  #
         # sarr= shift(e0ft,szi,syi)
 
-        self.field= np.fft.ifft2(fieldfft)
-
+        if self.usefft == 'numpy' :
+            self.field = np_fft.ifft2(fieldfft)
+        elif self.usefft == 'scipy' :
+            self.field = sc_fft.ifft2(fieldfft)
+        elif self.usefft == 'myfftw3' :
+            self.field = self.myfftw3(fieldfft, 1, shift=0)
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
     # end mirrort
 
     def mycontour(self, z, x=None, y=None, xlabel='z (mm)', ylabel='y (mm)', zlabel='intensity (W)', 
@@ -1789,6 +1816,47 @@ class emf(object):
         plt.title(title)
         plt.show()
     # mycontour
+
+    def myfftw3(self, field, direction, shift=0) :
+        """myfftw3 - generic wrapper function for 2d fft using fftw3
+
+        the function is implemented in c, it allows forward and backward 
+        transforms, as option it calls fftshift to center the output, the correct amplitude 
+        scaling is debugged- the fft is normalized (energy is kept)
+        
+        Args:
+            field (complex array): the complex field
+            direction (int): -1 means forward fft, 1 means backward
+            shift=0 (int): apply fftshift
+            
+        Returns:
+            field (complex array): the fft output
+    
+        Example:
+              >>> b= myfftw3(a, -1)
+
+        """
+
+        re = field.real.copy()
+        im = field.imag.copy()
+        (rows, cols) = field.shape
+        libname = 'myfftw3'                   # without extension
+
+        if (self.verbose > 0) :
+            print("myfftw3: call c code from {}.so".format(self.libpath + libname))
+        
+        myfftw3_lib = np.ctypeslib.load_library(libname, self.libpath)
+        myfftw3_ = myfftw3_lib.myfftw3
+        arg1 = np.ctypeslib.as_ctypes(re)
+        arg2 = np.ctypeslib.as_ctypes(im)
+            
+        myfftw3_(arg1, arg2, rows, cols, direction, shift, self.verbose)
+            
+        ore = np.ctypeslib.as_array(arg1)
+        oim = np.ctypeslib.as_array(arg2)
+        out = ore + oim * 1j
+        return out
+    # myfftw3    
 
     def phaseplate(self, arr): 
         """ multiply the field by a matrix - same as scalefield but with error handling
@@ -2027,7 +2095,20 @@ class emf(object):
         print('size (input), z = {:.3f} mm, y = {:.3f} mm '.format(zz * 1e3, yy * 1e3))
         print('drift           = {} m'.format(drift))
 
-        newfield = np.fft.fftshift(np.fft.fft2(field))             # forward 2d fft, centered output
+        if self.usefft == 'numpy' :
+            newfield = np_fft.fftshift(np_fft.fft2(field))             # forward 2d fft, centered output
+            scale3 = newfield.size                                      # python fft is not normalized
+        elif self.usefft == 'scipy' :   
+            newfield = sc_fft.fftshift(sc_fft.fft2(field))  
+            scale3 = newfield.size                                      # python fft is not normalized
+        elif self.usefft == 'myfftw3' :
+            newfield = self.myfftw3(field, -1, shift=1)
+            scale3 = np.sqrt(newfield.size)
+            #print("myfftw3 normalization not debugged for this case")
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()    
+
         u0       = np.arange(nz)/(nz-1) - 0.5                      # define the vectors in the image plane     
         v0       = np.arange(ny)/(ny-1) - 0.5   
         uscale   = (drift * self.wavelength) / zz * nz            # why is uscale,vscale of type array[1] ?   
@@ -2048,7 +2129,7 @@ class emf(object):
                 
         scale1 = complex(np.cos(k * drift), np.sin(k * drift))      # why is this of type array[1] ?
         scale2 = complex(0.0, (wavelength * drift))                 # -> wavelength comes as array[1] -> k is array[1]
-        scale3 = newfield.size                                      # python fft is not normalized
+        
         self.field = zz * yy * newfield * scale * scale1 / (scale2 * scale3)
         self.z_vec = u
         self.y_vec = v
@@ -2094,7 +2175,21 @@ class emf(object):
         modfield = field * driftarr
         # print, '--------------- FT of Source field ------------------ exp(-i ...)'
        
-        newfield = np.fft.fftshift(np.fft.fft2(modfield))               # forward 2d fft, centered output           
+        #newfield = np_fft.fftshift(np_fft.fft2(modfield))               # forward 2d fft, centered output    
+        if self.usefft == 'numpy' :
+            newfield = np_fft.fftshift(np_fft.fft2(modfield))             # forward 2d fft, centered output
+            scale3 = newfield.size                                      # python fft is not normalized
+        elif self.usefft == 'scipy' :   
+            newfield = sc_fft.fftshift(sc_fft.fft2(modfield))  
+            scale3 = newfield.size                                      # python fft is not normalized
+        elif self.usefft == 'myfftw3' :
+            newfield = self.myfftw3(modfield, -1, shift=1)
+            scale3 = np.sqrt(newfield.size)
+            #print("myfftw3 normalization not debugged for this case")
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
+       
         u0       = np.arange(nz)/(nz-1) - 0.5                           # define the vectors in the image plane     
         v0       = np.arange(ny)/(ny-1) - 0.5   
         uscale   = (drift * wavelength) / zz * nz                       # why is uscale,vscale of type array[1] ?   
@@ -2117,7 +2212,7 @@ class emf(object):
                 
         scale1 = complex(np.cos(k * drift), np.sin(k * drift))      # why is this of type array[1] ?
         scale2 = complex(0.0           , (wavelength * drift))      # -> wavelength comes as array[1] -> k is array[1]
-        scale3 = newfield.size                                      # python fft is not normalized
+        #scale3 = newfield.size                                      # python fft is not normalized
         self.field = zz * yy * newfield * scale * scale1 / (scale2 * scale3)
         self.z_vec = u
         self.y_vec = v
@@ -2161,7 +2256,17 @@ class emf(object):
         print('u = {:.3g} ... {:.3g}'.format(u[0], u[-1]))
         print('--------------- FT of Source field ------------------ exp(-i ...)')
       
-        fieldfft = np.fft.fftshift(np.fft.fft2(field))
+        #fieldfft = np_fft.fftshift(np_fft.fft2(field))
+        if self.usefft == 'numpy' :
+            fieldfft = np_fft.fftshift(np_fft.fft2(field))  # remember: the frequencies are the 
+        elif self.usefft == 'scipy' :   
+            fieldfft = sc_fft.fftshift(sc_fft.fft2(field))  # remember: the frequencies are the
+        elif self.usefft == 'myfftw3' :
+            fieldfft = self.myfftw3(field, -1, shift=1)
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
+
         print('--------------- Propagator for free space ------------------------')
         phase      = np.zeros((ny, nz))
         propagator = np.zeros((ny, nz), dtype=complex) 
@@ -2189,7 +2294,17 @@ class emf(object):
         #   hanning=
 
         print('--------------- Inverse FT to get output field ------ exp(+i ...)')
-        self.field= np.fft.ifft2(eft)
+
+        #self.field= np_fft.ifft2(eft)
+        if self.usefft == 'numpy' :
+            self.field = np_fft.ifft2(eft)
+        elif self.usefft == 'scipy' :
+            self.field = sc_fft.ifft2(eft)
+        elif self.usefft == 'myfftw3' :
+            self.field = self.myfftw3(eft, 1, shift=0)
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
         print('--------------- propfourier end ----------------------------------')
     # end propfourier
 
@@ -2245,8 +2360,6 @@ class emf(object):
             fim= scipy.interpolate.interp2d(z_vec, y_vec, np.imag(field), kind='cubic', fill_value=0.0)
             self.field= fre(self.z_vec, self.y_vec) + 1j* fim(self.z_vec, self.y_vec)
             print("new shape:", self.field.shape)
-
-
 
         if newy_vec is not None and newz_vec is None:
             print('new y vector')
@@ -2573,5 +2686,5 @@ class initphase(emf):
     def __init__(self):
         super().__init__()
         print("initphase done")
-
+        
 # end
