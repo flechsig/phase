@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <22 Mar 18 11:14:50 flechsig>
+# Time-stamp: <22 Mar 18 11:23:59 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2681,7 +2681,8 @@ class emf(object):
 #       statements
 # a= Myobj()  # create an instance of the object
 
-
+# alias class 
+# emf = phase.initphase() and emf = phase.emf() are identical
 class initphase(emf):
     def __init__(self):
         super().__init__()
