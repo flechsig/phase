@@ -14,7 +14,8 @@ def h5_write_surf_error(fname, ename, u, w, l, verbose=True) :
    """
 
    usage= "usage: h5_write_surf_error('surf_err.h5', 'ename', u, w, l)"
-   print("Usage: ", usage) 
+   if verbose :
+       print("Usage: ", usage) 
 
 # make double
    u*= 1.0

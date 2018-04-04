@@ -1,12 +1,12 @@
- // File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/unwrap_phase.cpp
- // Date      : <26 Mar 14 09:31:57 flechsig> 
- // Time-stamp: <2015-05-03 15:52:20 flechsig> 
- // Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
+// File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/unwrap_phase.cpp
+// Date      : <26 Mar 14 09:31:57 flechsig> 
+// Time-stamp: <22 Mar 18 15:21:35 flechsig> 
+// Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
- // $Source$ 
- // $Date$
- // $Revision$ 
- // $Author$ 
+// $Source$ 
+// $Date$
+// $Revision$ 
+// $Author$ 
 
 // ******************************************************************************
 //
@@ -59,14 +59,17 @@ using namespace std;
 // unwarap a phase image- overwrite the original data 
 void unwrap_phase(double *inout, int cols, int rows)
 {
-  cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 #ifdef DEBUG
-  cout << "debug: unwrap_phase called (experimental)" << endl;
+  //  cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+  //  cout << "debug: unwrap_phase called (experimental)" << endl;
 #endif
+  cout << "unwrap_phase (c++ code) called ";
 
   int n_pixels    = rows* cols;
   int No_of_Edges = cols* (rows- 1) + (cols-1)* rows;
-  cout << "reserve memory" << endl;
+#ifdef DEBUG
+  //  cout << "reserve memory" << endl;
+#endif
   //  double *out = new double[n_pixels];
   PIXEL *pixel= (PIXEL *) new PIXEL[n_pixels];             // UF allocate pixel
   EDGE  *edge = (EDGE *)  new EDGE[No_of_Edges];           // UF allocate edge
@@ -92,11 +95,17 @@ void unwrap_phase(double *inout, int cols, int rows)
   //copy the image from PIXEL structure to the wrapped phase array passed to this function
   returnImage(pixel, inout, cols, rows);
 
-  cout << "clean up memory" << endl;
+#ifdef DEBUG
+  //  cout << "clean up memory" << endl;
+#endif
+
   //  delete out;
   delete pixel;
   delete edge;
-  cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+#ifdef DEBUG
+  //  cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+#endif
+  cout << "==> done" << endl;
   double a= MYPI;
   //  cout << "1pi= " << std::setprecision(16) << MYPI << endl;
   //cout << "1pi= " << std::setprecision(16) << a << endl;
@@ -115,7 +124,7 @@ void initialisePIXELs(double *WrappedImage, PIXEL *pixel, int image_width, int i
   int i, j;
 
 #ifdef DEBUG
-  cout << "debug: initialisePIXELs called" << endl;
+  //  cout << "debug: initialisePIXELs called" << endl;
 #endif
   
   for (i=0; i < image_height; i++)
@@ -202,7 +211,7 @@ void  verticalEDGEs(PIXEL *pixel, EDGE *edge, int image_width, int image_height)
   EDGE *edge_pointer = edge + (image_height) * (image_width - 1); 
 
 #ifdef DEBUG
-  cout << "debug: verticalEDGEs called" << endl;
+  //  cout << "debug: verticalEDGEs called" << endl;
 #endif
   
   for (i=0; i<image_height - 1; i++)
