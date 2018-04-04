@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <04 Apr 18 16:08:48 flechsig>
+# Time-stamp: <04 Apr 18 17:11:13 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -207,7 +207,7 @@ class emf(object):
             return
 
         # print("xxxxxxxxxxx", type(T), type(self.field))    
-        self.field*= T + T*1j      # apply the mask
+        self.field*= T + 0j      # apply the mask
 
         if createfield and norm :                   # norm to 0.5 W  !! we assume only one polarization
             print("normalize intensity to 0.5 W")
