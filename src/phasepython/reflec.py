@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <07 Mar 18 10:39:08 flechsig> 
+# Time-stamp: <05 Jul 18 09:41:39 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 def reflec(element, en, theta, log=True, plot=True, verbose=True) :
 
-   """calculate reflectivity as function of photon energy
+   """calculate reflectivity of a thick mirror as function of photon energy
 
    Args:
       element (str): element as chemical formula (String, case sensitive)
@@ -59,13 +59,13 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
    NA = 6.0221e23                                              # Avogadronumber
    re = 2.81794e-15                                            # Classical electron radius (m)
    Nt = 1e6* rho * NA / A                                      # Teilchendichte  (1/m^3), rho is in (g/cm^3)
-   wavelength = 1240e-9/ en                                    # Wavelength      (m)
+   wavelength = 1239.842e-9/ en                                # Wavelength      (m)
 
    delta = re * wavelength**2 * Nt * f1 / (2.0 * np.pi)
    beta  = re * wavelength**2 * Nt * f2 / (2.0 * np.pi)
    
    #n     = np.complex(1.0 - delta, beta)                      # complex index of refraction
-   n= np.zeros(len(delta), dtype=complex)
+   n = np.zeros(len(delta), dtype=complex)
    for i in np.arange(len(delta)) :
       n[i]= complex(1.0 - delta[i], beta[i])
 
@@ -81,6 +81,8 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
    Rp  =  np.abs(crp)**2                                          # reflectance p-pol.  
    Ts  =  np.abs( 2*  wu / (       np.sin(theta) + wu))**2        # transmitance s-pol        
    Tp  =  np.abs( 2*n*wu / (n**2 * np.sin(theta) + wu))**2        # transmitance p-pol  
+
+   mu  = 2 * re * wavelength * Nt * f2                            # mu linear absorption coefficient (not yet debugged)
    
    if plot :
       thetag= theta*180./np.pi 
@@ -97,15 +99,16 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
    # end plot  
    
    # return data, access example: a= reflec(...)  print(a['rs'])
-   dict= {'ac': ac, 'crp': crp, 'crs': crs, 'beta': beta, 'delta': delta, 'n': n, 'rp': Rp, 'rs': Rs, 'tp': Tp, 'ts': Ts}
+   dict= {'ac': ac, 'crp': crp, 'crs': crs, 'beta': beta, 'delta': delta, 'n': n, 'rp': Rp, 'rs': Rs, 'tp': Tp, 'ts': Ts, 'mu': mu}
    return dict 
    # end reflec
 
 def readhenke(element, verbose=True) :
-   """readhenke read henke tables
+   """readhenke read henke tables (path hardcoded)
 
    Args: 
       element (str): element
+      verbose=True (bool): verbosity
    """
 
    path ='/afs/psi.ch/project/soft_x/OpticsTools/ray_reflec/henke/'
@@ -122,10 +125,11 @@ def readhenke(element, verbose=True) :
 #end readhenke
 
 def readmaterial(element, verbose=True) :
-   """read material table
+   """read material table (path hardcoded)
 
    Args: 
       element (str): element
+      verbose=True (bool): verbosity
    """
 
    fname = '/afs/psi.ch/project/soft_x/OpticsTools/ray_reflec/material/rhoatom_idl.dat'
