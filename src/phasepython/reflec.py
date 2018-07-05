@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <05 Jul 18 09:41:39 flechsig> 
+# Time-stamp: <05 Jul 18 15:07:38 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -12,14 +12,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def reflec(element, en, theta, log=True, plot=True, verbose=True) :
+def reflec(element, en, theta, d=1.0, log=True, plot=True, verbose=True) :
 
-   """calculate reflectivity of a thick mirror as function of photon energy
+   """calculate reflectivity of a thick mirror as function of photon energy 
+      and the transmittance of a foil with thickness d 
+
+      ! for very thin layers we have to combine transmission tp, ts and trans !
 
    Args:
       element (str): element as chemical formula (String, case sensitive)
       energy (double): energy vector
-      theta (double): Grazing incidence angle (rad)   
+      theta (double): Grazing incidence angle (rad) 
+      d=1.0 (double): thickness of the foil or gas in m 
       log=True (bool): logscale plot  
       plot=True (bool): plot
       verbose=True (bool): verbosity
@@ -31,11 +35,13 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
          crs:     complex reflectivity rs (output
          beta:    Im(n)= beta, imaginary part of refractive index (output)
          delta:   Re(n)= 1-delta, real part of refractive index (output)
+         mu:      linear absorption coefficient (output)
          n:       complex refractive index n= 1-delta + j*beta (output)
          rp:      reflectivity rp
          rs:      reflectivity rs
          tp:      transmission tp
          ts:      transmission ts
+         trans:   transmission of a foil
 
    Example:
           >>> en=np.arange(101)/100*970+30 
@@ -82,7 +88,8 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
    Ts  =  np.abs( 2*  wu / (       np.sin(theta) + wu))**2        # transmitance s-pol        
    Tp  =  np.abs( 2*n*wu / (n**2 * np.sin(theta) + wu))**2        # transmitance p-pol  
 
-   mu  = 2 * re * wavelength * Nt * f2                            # mu linear absorption coefficient (not yet debugged)
+   mu  = 2 * re * wavelength * Nt * f2                            # mu linear absorption coefficient 
+   trans = exp(-d * mu)                                           # transmission through a filter
    
    if plot :
       thetag= theta*180./np.pi 
@@ -99,7 +106,8 @@ def reflec(element, en, theta, log=True, plot=True, verbose=True) :
    # end plot  
    
    # return data, access example: a= reflec(...)  print(a['rs'])
-   dict= {'ac': ac, 'crp': crp, 'crs': crs, 'beta': beta, 'delta': delta, 'n': n, 'rp': Rp, 'rs': Rs, 'tp': Tp, 'ts': Ts, 'mu': mu}
+   dict= {'ac': ac, 'crp': crp, 'crs': crs, 'beta': beta, 'delta': delta, 'n': n, 
+          'rp': Rp, 'rs': Rs, 'tp': Tp, 'ts': Ts, 'mu': mu, 'trans': trans}
    return dict 
    # end reflec
 
