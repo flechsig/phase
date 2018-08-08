@@ -242,8 +242,9 @@ AX_HAVE_QT
 dnl test qt5
 echo "have qt:" ${have_qt}
 if test "x${have_qt}" = "xyes"; then
-   qt5=`echo ${QT_LIBS} | grep "Qt-5"`	
+   qt5=`echo ${QT_LIBS} | grep "Qt.5"`	
 dnl   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
+dnl   echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
    if test -n "${qt5}"; then
        have_qt5="yes"
        AC_DEFINE([QT5], 1, [qt5])
