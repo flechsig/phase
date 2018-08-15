@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <04 Apr 18 17:11:13 flechsig>
+# Time-stamp: <15 Aug 18 16:41:02 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -1459,24 +1459,37 @@ class emf(object):
             print('save pha4idl h5 - not available so far')
     # end h5_write
 
-    def lens(self, fy=1e200, fz=1e200): 
+    def lens(self, fy=1e200, fz=1e200, exact=False): 
         """field after a thin lens
 
         Args:
+            exact=False (bool): use sqrt() to calculate phase
             fy=1e200 (double): vertical focal length
             fz=1e200 (double): horizontal focal length
 
         Returns:
             complex array with lens factor
+
+        Note: 
+            a) UF: not yet debugged-
+            b) default uses the approximation for the phase term 
         """
         print("thin lens with focal length fy= {:.3g} m and fz= {:.3g} m".format(fy, fz))
         lcomp = self.field * (0 + 0j)
-        for row in np.arange(self.y_vec.size):
-            for col in np.arange(self.z_vec.size):
-                f1 = self.z_vec[col]**2 / (2 * fz) + self.y_vec[row]**2 / (2 * fy)
-                f1 *= (-2* np.pi)/ self.wavelength
-                lcomp[row, col]= complex(np.cos(f1), np.sin(f1))
-
+        if exact :
+            print("using exact mode")
+            for row in np.arange(self.y_vec.size):
+                for col in np.arange(self.z_vec.size):
+                    f1 = sqrt(fz**2 + self.z_vec[col]**2) + sqrt(fy**2 + self.y_vec[row]**2)
+                    f1 *= (-2* np.pi)/ self.wavelength
+                    lcomp[row, col]= complex(np.cos(f1), np.sin(f1))
+        else :
+            for row in np.arange(self.y_vec.size):
+                for col in np.arange(self.z_vec.size):
+                    f1 = self.z_vec[col]**2 / (2 * fz) + self.y_vec[row]**2 / (2 * fy)
+                    f1 *= (-2* np.pi)/ self.wavelength
+                    lcomp[row, col]= complex(np.cos(f1), np.sin(f1))
+                    
         self.field*= lcomp
         return lcomp
     # end lens
@@ -2412,7 +2425,7 @@ class emf(object):
                 rowshift = (newsize - size[0]) / 2     # the index to shift
             else :
                 colshift = 0
-            rowshift = 0
+                rowshift = 0
          
             for row in np.arange(self.y_vec.size):  # copy original field
                 for col in np.arange(self.z_vec.size):
