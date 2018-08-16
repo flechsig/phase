@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <16 Aug 18 15:20:10 flechsig>
+# Time-stamp: <16 Aug 18 16:04:11 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2080,7 +2080,7 @@ class emf(object):
             self.propfresnel(drift)
     # end propagate  
 
-    def proccapillary(self, drift=None):
+    def proccapillary(self, a=None, b=None):
         """fourier (transfer function) propagator for an ellipsoidal capillary
         
         the function does the propagation from one focal point to the
@@ -2090,23 +2090,32 @@ class emf(object):
         pi/lambda) and do the inverse fft (not debugged, not finished yet)
 
         Args:
-            drift=None (flt): the drift distance
+            a=None (flt): the long half- axis
+            b=None (flt): the short half- axis
 
         ToDo:  
             tested UF 1709 - OK           
 
         Example:
-            >>> emf.propfourier(100)    
+            >>> emf.proccapillary(a=200,b=1)    
         """
         field = self.field
         y_vec = self.y_vec
         z_vec = self.z_vec
         wavelength = self.wavelength
 
-        if drift is None:
-            print("drift not given - set default drift to 10 m")
-            drift = 10.0
-        print('------------ propfourier called drift= {:.3g} m------------'.format(drift))
+        if a is None or b is None:
+            print("a, b not given - return")
+            return
+
+        if b > a :
+            print("b > a is not meaningful - return")
+            return
+
+        c = np.sqrt(a**2 - b**2)
+        drift= 2 * c
+
+        print('------------ proccapillary drift= {:.3g} m------------'.format(drift))
 
         k = 2* np.pi/self.wavelength
         nz = z_vec.size
@@ -2144,7 +2153,7 @@ class emf(object):
                 if arg > 0 :
                     arg = np.sqrt(arg)
                     # numerically more accurate than k * drift* arg
-                    phase[row, col] = ((drift * (arg - 1.0)) % wavelength) * k + p0 * k 
+                    phase[row, col] = 2 * a / k 
                     propagator[row, col] = complex(np.cos(phase[row, col]), np.sin(phase[row, col]))
                 else :
                     print('sqrt of neg. argument, evanescent wave, arg= {}, row= {}, col= {}'. format(arg, row, col))
