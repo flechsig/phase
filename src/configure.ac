@@ -35,6 +35,9 @@ dnl   along with PHASE (LICENSE.txt).  If not, see <http://www.gnu.org/licenses/
 dnl
 dnl ******************************************************************************
 
+dnl hardcoded version for -std=c++11 required for qt-5.9 - can cause problems with old versions
+
+
 AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
 AC_INIT([phase],[1.25],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
@@ -239,8 +242,9 @@ AX_HAVE_QT
 dnl test qt5
 echo "have qt:" ${have_qt}
 if test "x${have_qt}" = "xyes"; then
-   qt5=`echo ${QT_LIBS} | grep "Qt-5"`	
+   qt5=`echo ${QT_LIBS} | grep "Qt.5"`	
 dnl   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
+dnl   echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
    if test -n "${qt5}"; then
        have_qt5="yes"
        AC_DEFINE([QT5], 1, [qt5])
@@ -346,12 +350,14 @@ dnl	       FFLAGS="-DDEBUG -g -O0 -check all -debug -warn all -warn nodeclaratio
        fi
 dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
        CFLAGS="-DDEBUG -ggdb"             # -static
-       CXXFLAGS="-DDEBUG -ggdb"
+dnl UF 20180612 add -std=c++11 for qt-5.9
+       CXXFLAGS="-DDEBUG -ggdb -std=c++11"
        ####LDFLAGS="-static"
        libextension="a"
     fi,
     [AC_MSG_NOTICE(***** produce production code *****)
     enable_debug="no"
+    CXXFLAGS="-std=c++11"
     libextension="so"])
 dnl end debugger
 
