@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <15 Aug 18 16:41:02 flechsig>
+# Time-stamp: <16 Aug 18 15:20:10 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -49,7 +49,7 @@ import tkinter.filedialog
 import scipy.interpolate
 import sys
 
-__version__ = '0.4'
+__version__ = '0.5'
 __author__ = 'U. Flechsig'
 
 class emf(object):
@@ -2079,6 +2079,100 @@ class emf(object):
         else:
             self.propfresnel(drift)
     # end propagate  
+
+    def proccapillary(self, drift=None):
+        """fourier (transfer function) propagator for an ellipsoidal capillary
+        
+        the function does the propagation from one focal point to the
+        other focal point of an ellipsoid i.e. 2 times the
+        ecentricity, first we do the fft to go into the angular space,
+        then we add the constant phase advance of 2 a times k (2
+        pi/lambda) and do the inverse fft (not debugged, not finished yet)
+
+        Args:
+            drift=None (flt): the drift distance
+
+        ToDo:  
+            tested UF 1709 - OK           
+
+        Example:
+            >>> emf.propfourier(100)    
+        """
+        field = self.field
+        y_vec = self.y_vec
+        z_vec = self.z_vec
+        wavelength = self.wavelength
+
+        if drift is None:
+            print("drift not given - set default drift to 10 m")
+            drift = 10.0
+        print('------------ propfourier called drift= {:.3g} m------------'.format(drift))
+
+        k = 2* np.pi/self.wavelength
+        nz = z_vec.size
+        ny = y_vec.size
+        zz = (z_vec[-1]- z_vec[0])
+        yy = (y_vec[-1]- y_vec[0])
+
+        print('width = {:.3g} mm, height = {:.3g} mm'.format(zz * 1e3, yy * 1e3))
+        u = np.linspace(-0.5, 0.5, nz)               # runs from -0.5..0.. 0.5 
+        v = np.linspace(-0.5, 0.5, ny)               # for even and odd values of Ny, Nz 
+        u = u * (nz-1)/zz                            # ok with odd number of elements
+        v = v * (ny-1)/yy
+        print('u = {:.3g} ... {:.3g}'.format(u[0], u[-1]))
+        print('--------------- FT of Source field ------------------ exp(-i ...)')
+      
+        #fieldfft = np_fft.fftshift(np_fft.fft2(field))
+        if self.usefft == 'numpy' :
+            fieldfft = np_fft.fftshift(np_fft.fft2(field))  # remember: the frequencies are the 
+        elif self.usefft == 'scipy' :   
+            fieldfft = sc_fft.fftshift(sc_fft.fft2(field))  # remember: the frequencies are the
+        elif self.usefft == 'myfftw3' :
+            fieldfft = self.myfftw3(field, -1, shift=1)
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
+
+        print('--------------- Propagator for free space ------------------------')
+        phase      = np.zeros((ny, nz))
+        propagator = np.zeros((ny, nz), dtype=complex) 
+        p0         = drift % wavelength
+
+        for col in np.arange(nz):
+            for row in np.arange(ny):
+                arg = 1.0 - (u[col] * wavelength)**2 - (v[row] * wavelength)**2
+                if arg > 0 :
+                    arg = np.sqrt(arg)
+                    # numerically more accurate than k * drift* arg
+                    phase[row, col] = ((drift * (arg - 1.0)) % wavelength) * k + p0 * k 
+                    propagator[row, col] = complex(np.cos(phase[row, col]), np.sin(phase[row, col]))
+                else :
+                    print('sqrt of neg. argument, evanescent wave, arg= {}, row= {}, col= {}'. format(arg, row, col))
+                    arg = np.sqrt(-1.0 * arg)
+                    phase[row, col] = -1.0 * k * drift* arg
+                    if phase[row, col] < -40 :
+                        phase[row, col] = -40
+                    propagator[row, col] = complex(np.exp(phase), 0)
+        print('--------------- Propagate in Fourier space -----------------------')
+        eft = fieldfft * propagator   
+        # filter
+        # if hanning > 0 :
+        #   hanning=
+
+        print('--------------- Inverse FT to get output field ------ exp(+i ...)')
+
+        #self.field= np_fft.ifft2(eft)
+        if self.usefft == 'numpy' :
+            self.field = np_fft.ifft2(eft)
+        elif self.usefft == 'scipy' :
+            self.field = sc_fft.ifft2(eft)
+        elif self.usefft == 'myfftw3' :
+            self.field = self.myfftw3(eft, 1, shift=0)
+        else :
+            print("self.usefft: {} unknown - exit".format(self.usefft))
+            sys.exit()
+        print('--------------- propcapillary end ----------------------------------')
+    # end propcapillary
 
     def propfraunhofer(self, drift=None):
         '''propagate using Fraunhofer propagator
