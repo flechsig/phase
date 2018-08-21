@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <16 Aug 18 16:04:11 flechsig>
+# Time-stamp: <21 Aug 18 08:58:30 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2094,11 +2094,12 @@ class emf(object):
             b=None (flt): the short half- axis
 
         ToDo:  
-            tested UF 1709 - OK           
+            test           
 
         Example:
             >>> emf.proccapillary(a=200,b=1)    
         """
+
         field = self.field
         y_vec = self.y_vec
         z_vec = self.z_vec
@@ -2115,7 +2116,7 @@ class emf(object):
         c = np.sqrt(a**2 - b**2)
         drift= 2 * c
 
-        print('------------ proccapillary drift= {:.3g} m------------'.format(drift))
+        print('------------ proccapillary drift= {:.6g} m------------'.format(drift))
 
         k = 2* np.pi/self.wavelength
         nz = z_vec.size
@@ -2145,23 +2146,12 @@ class emf(object):
         print('--------------- Propagator for free space ------------------------')
         phase      = np.zeros((ny, nz))
         propagator = np.zeros((ny, nz), dtype=complex) 
-        p0         = drift % wavelength
-
+        
         for col in np.arange(nz):
             for row in np.arange(ny):
-                arg = 1.0 - (u[col] * wavelength)**2 - (v[row] * wavelength)**2
-                if arg > 0 :
-                    arg = np.sqrt(arg)
-                    # numerically more accurate than k * drift* arg
-                    phase[row, col] = 2 * a / k 
-                    propagator[row, col] = complex(np.cos(phase[row, col]), np.sin(phase[row, col]))
-                else :
-                    print('sqrt of neg. argument, evanescent wave, arg= {}, row= {}, col= {}'. format(arg, row, col))
-                    arg = np.sqrt(-1.0 * arg)
-                    phase[row, col] = -1.0 * k * drift* arg
-                    if phase[row, col] < -40 :
-                        phase[row, col] = -40
-                    propagator[row, col] = complex(np.exp(phase), 0)
+                phase[row, col] = drift / k 
+                propagator[row, col] = complex(np.cos(phase[row, col]), np.sin(phase[row, col]))
+                
         print('--------------- Propagate in Fourier space -----------------------')
         eft = fieldfft * propagator   
         # filter
