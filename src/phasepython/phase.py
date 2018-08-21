@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <21 Aug 18 09:17:21 flechsig>
+# Time-stamp: <21 Aug 18 10:02:51 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2144,7 +2144,7 @@ class emf(object):
             sys.exit()
 
         print('--------------- Propagator for free space ------------------------')
-        phase      = drift * k
+        phase      = (drift % wavelength) * k
         propagator = np.zeros((ny, nz), dtype=complex) 
         
         for col in np.arange(nz):
