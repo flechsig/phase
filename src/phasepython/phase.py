@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <21 Aug 18 08:58:30 flechsig>
+# Time-stamp: <21 Aug 18 09:06:47 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2149,7 +2149,7 @@ class emf(object):
         
         for col in np.arange(nz):
             for row in np.arange(ny):
-                phase[row, col] = drift / k 
+                phase[row, col] = drift * k 
                 propagator[row, col] = complex(np.cos(phase[row, col]), np.sin(phase[row, col]))
                 
         print('--------------- Propagate in Fourier space -----------------------')
