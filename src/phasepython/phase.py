@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <21 Aug 18 10:02:51 flechsig>
+# Time-stamp: <23 Aug 18 08:53:24 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -877,7 +877,7 @@ class emf(object):
 
         if example is True :
             print('**********************************************************')
-            print('example: HeNe Laser ')
+            print('example: HeNe La_uper ')
             print('wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2')
             print('**********************************************************')
             self.gaussbeam(dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2)
@@ -2080,7 +2080,7 @@ class emf(object):
             self.propfresnel(drift)
     # end propagate  
 
-    def proccapillary(self, a=None, b=None):
+    def propcapillary(self, a=None, b=None, dia_up=None, dia_down=0.0):
         """fourier (transfer function) propagator for an ellipsoidal capillary
         
         the function does the propagation from one focal point to the
@@ -2092,12 +2092,14 @@ class emf(object):
         Args:
             a=None (flt): the long half- axis
             b=None (flt): the short half- axis
+            dia_up=None  (flt): the upstream diameter of the capillary
+            dia_down=0.0 (flt): the downstream diameter of the capillary
 
         ToDo:  
             test           
 
         Example:
-            >>> emf.proccapillary(a=200,b=1)    
+            >>> emf.proccapillary(a=200, b=1, dia_up=5e-3, dia_down=1e-3)    
         """
 
         field = self.field
@@ -2105,13 +2107,16 @@ class emf(object):
         z_vec = self.z_vec
         wavelength = self.wavelength
 
-        if a is None or b is None:
+        if a is None or b is None :
             print("a, b not given - return")
             return
 
         if b > a :
             print("b > a is not meaningful - return")
             return
+
+        if dia_up is None :
+            dia_up = 2 * b
 
         c = np.sqrt(a**2 - b**2)
         drift= 2 * c
@@ -2134,9 +2139,9 @@ class emf(object):
       
         #fieldfft = np_fft.fftshift(np_fft.fft2(field))
         if self.usefft == 'numpy' :
-            fieldfft = np_fft.fftshift(np_fft.fft2(field))  # remember: the frequencies are the 
+            fieldfft = np_fft.fftshift(np_fft.fft2(field))  
         elif self.usefft == 'scipy' :   
-            fieldfft = sc_fft.fftshift(sc_fft.fft2(field))  # remember: the frequencies are the
+            fieldfft = sc_fft.fftshift(sc_fft.fft2(field))  
         elif self.usefft == 'myfftw3' :
             fieldfft = self.myfftw3(field, -1, shift=1)
         else :
@@ -2145,18 +2150,17 @@ class emf(object):
 
         print('--------------- Propagator for free space ------------------------')
         phase      = (drift % wavelength) * k
-        propagator = np.zeros((ny, nz), dtype=complex) 
+        propagator = np.zeros((ny, nz), dtype=complex) # 2d array with complex 0.0
         
         for col in np.arange(nz):
             for row in np.arange(ny):
-                propagator[row, col] = complex(np.cos(phase), np.sin(phase))
+                d = drift * 2.0 * np.sqrt(u[col] * wavelength)**2 + (v[row] * wavelength)**2)
+                if d > dia_down and d < dia_up :
+                    propagator[row, col] = complex(np.cos(phase), np.sin(phase))
                 
         print('--------------- Propagate in Fourier space -----------------------')
         eft = fieldfft * propagator   
-        # filter
-        # if hanning > 0 :
-        #   hanning=
-
+        
         print('--------------- Inverse FT to get output field ------ exp(+i ...)')
 
         #self.field= np_fft.ifft2(eft)
