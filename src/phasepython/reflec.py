@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <05 Jul 18 15:07:38 flechsig> 
+# Time-stamp: <28 Aug 18 17:07:40 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -8,11 +8,12 @@
 # $Revision$ 
 # $Author$  
 
-
+import os.path
 import numpy as np
 import matplotlib.pyplot as plt
+import atomparser
 
-def reflec(element, en, theta, d=1.0, log=True, plot=True, verbose=True) :
+def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True) :
 
    """calculate reflectivity of a thick mirror as function of photon energy 
       and the transmittance of a foil with thickness d 
@@ -24,23 +25,34 @@ def reflec(element, en, theta, d=1.0, log=True, plot=True, verbose=True) :
       energy (double): energy vector
       theta (double): Grazing incidence angle (rad) 
       d=1.0 (double): thickness of the foil or gas in m 
-      log=True (bool): logscale plot  
-      plot=True (bool): plot
+      log='' (str): logscal for axis ['', 'x', 'y', 'xy']   
+      plot='reflectivity' (str): plot ['', 'reflectivity', 'transmittance']
       verbose=True (bool): verbosity
 
    Returns:
       result (dictionary):
          ac:      critical grazing angle in rad (output)
+
          crp:     complex reflectivity rp (output
+
          crs:     complex reflectivity rs (output
+
          beta:    Im(n)= beta, imaginary part of refractive index (output)
+
          delta:   Re(n)= 1-delta, real part of refractive index (output)
+
          mu:      linear absorption coefficient (output)
+
          n:       complex refractive index n= 1-delta + j*beta (output)
+
          rp:      reflectivity rp
+
          rs:      reflectivity rs
+
          tp:      transmission tp
+
          ts:      transmission ts
+
          trans:   transmission of a foil
 
    Example:
@@ -49,12 +61,17 @@ def reflec(element, en, theta, d=1.0, log=True, plot=True, verbose=True) :
               print('Rp= ', dict['rp'])
    """
 
-   usage= "usage: dict=reflec('Au', en, 4e-3)"
+   usage= "usage: dict=reflec('Au', en, 4e-3, d=1e-4)"
 
    print("Usage: ", usage) 
- 
+
    (en0, f10, f20) = readhenke(element)
    (Z  , A  , rho) = readmaterial(element)
+
+   if (en == -1) or (Z == -1) :
+      dict = atomparser.parse_formula(element)
+      print("compounds not yet implemented", dict)
+      return
 
 #   if isinstance( en, int ):                                  # UF does not work 
 #      en = en0
@@ -89,9 +106,9 @@ def reflec(element, en, theta, d=1.0, log=True, plot=True, verbose=True) :
    Tp  =  np.abs( 2*n*wu / (n**2 * np.sin(theta) + wu))**2        # transmitance p-pol  
 
    mu  = 2 * re * wavelength * Nt * f2                            # mu linear absorption coefficient 
-   trans = exp(-d * mu)                                           # transmission through a filter
+   trans = np.exp(-d * mu)                                        # transmission through a filter
    
-   if plot :
+   if plot == 'reflectivity' :
       thetag= theta*180./np.pi 
       title = element + ',   grazing angle = {:.3f} mrad = {:.3f} deg.'.format(theta*1e3,thetag)
       plt.plot(en, Rs, label='Rs')
@@ -99,11 +116,32 @@ def reflec(element, en, theta, d=1.0, log=True, plot=True, verbose=True) :
       plt.legend()
       plt.ylabel('reflectivity')
       plt.xlabel('photon energy (eV)')
-      if log:
+      if log == 'x' :
          plt.semilogx()
+      if log == 'y' :
+          plt.semilogx()
+      if log == 'xy' :
+         plt.loglog()
       plt.title(title)
       plt.show()
-   # end plot  
+   # end plot 
+
+   if plot == 'transmittance' :
+      thetag= theta*180./np.pi 
+      title = element + ',   thickness = {:.2e} m'.format(d)
+      plt.plot(en, trans, label=element)
+      plt.legend()
+      plt.ylabel('transmittance')
+      plt.xlabel('photon energy (eV)')
+      if log == 'x' :
+         plt.semilogx()
+      if log == 'y' :
+          plt.semilogx()
+      if log == 'xy' :
+         plt.loglog()
+      plt.title(title)
+      plt.show()
+   # end plot 
    
    # return data, access example: a= reflec(...)  print(a['rs'])
    dict= {'ac': ac, 'crp': crp, 'crs': crs, 'beta': beta, 'delta': delta, 'n': n, 
@@ -122,6 +160,10 @@ def readhenke(element, verbose=True) :
    path ='/afs/psi.ch/project/soft_x/OpticsTools/ray_reflec/henke/'
    ext = '.f12'
    fname = path + element + ext
+   
+   if os.path.isfile(fname) == False :
+      print("readhenke: did not found table: ", fname)
+      return -1, -1, -1
 
    field1 = np.loadtxt(fname, skiprows=1)
    en= field1[:, 0]
@@ -150,7 +192,8 @@ def readmaterial(element, verbose=True) :
       if element == el :
          print("found: ", el, z, r, t)
          return int(z), float(r), float(t)
-   
-   print("error")
+
+   return -1, -1, -1
+   print("did not found element: ", el)
 #end readmaterial
 
