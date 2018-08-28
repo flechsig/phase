@@ -79,7 +79,7 @@ def _parse(formula):
 
 
 def parse_formula(formula):
-    """Parse the formula and return a dict with occurences of each atom.
+    """Parse the formula and return a dict with occurences of each atom. Works only with integer weights.
 
     Args:
        formula (str): the chemical formula 

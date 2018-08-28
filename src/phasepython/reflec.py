@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <28 Aug 18 17:07:40 flechsig> 
+# Time-stamp: <28 Aug 18 17:30:24 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -68,7 +68,7 @@ def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True)
    (en0, f10, f20) = readhenke(element)
    (Z  , A  , rho) = readmaterial(element)
 
-   if (en == -1) or (Z == -1) :
+   if (en0[0] < 0) or (Z < 0) :
       dict = atomparser.parse_formula(element)
       print("compounds not yet implemented", dict)
       return
@@ -163,14 +163,16 @@ def readhenke(element, verbose=True) :
    
    if os.path.isfile(fname) == False :
       print("readhenke: did not found table: ", fname)
-      return -1, -1, -1
-
-   field1 = np.loadtxt(fname, skiprows=1)
-   en= field1[:, 0]
-   f1= field1[:, 1]
-   f2= field1[:, 2]
-   if verbose :
-      print("read Henke table from: ", fname)
+      en= [-1.0]
+      f1= [-1.0]
+      f2= [-1.0]
+   else :  
+      field1 = np.loadtxt(fname, skiprows=1)
+      en= field1[:, 0]
+      f1= field1[:, 1]
+      f2= field1[:, 2]
+      if verbose :
+         print("read Henke table from: ", fname)
    return en, f1, f2
 #end readhenke
 
@@ -186,14 +188,16 @@ def readmaterial(element, verbose=True) :
    if verbose :
       print("read mat table from: ", fname)
 
+   z = -1
+   r = -1
+   t = -1   
    f = open(fname, 'r')
    for line in f:
       el, z, r, t = line.strip().split()
       if element == el :
          print("found: ", el, z, r, t)
-         return int(z), float(r), float(t)
 
-   return -1, -1, -1
+   return int(z), float(r), float(t)
    print("did not found element: ", el)
 #end readmaterial
 
