@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <28 Aug 18 17:30:24 flechsig> 
+# Time-stamp: <29 Aug 18 17:51:00 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -8,12 +8,33 @@
 # $Revision$ 
 # $Author$  
 
+import re
 import os.path
 import numpy as np
 import matplotlib.pyplot as plt
 import atomparser
 
-def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True) :
+COMMON_MATERIALS = {'Quartz':  ['SiO2', 2.65],
+                    'Silica':  ['SiO2', 2.2],
+                    'ULE':     ['Si0.925Ti0.075O2', 2.205],
+                    'Zerodur': ['Si0.56Al0.5P0.16Li0.04Ti0.02Zr0.02Zn0.03O2.46', 2.53],
+                    'polyimide': ['C22H10N2O5', 1.43],
+                    'boron nitride': ['BN', 2.25],
+                    'silicon nitride': ['Si3N4', 3.44],
+                    'polypropylene': ['C3H6', 0.9],
+                    'PMMA': ['C5H8O2', 1.19],
+                    'polycarbonate': ['C16H14O3', 1.2],
+                    'mylar': ['C10H8O4',1.4],
+                    'Teflon': ['C2F4', 2.2],
+                    'Parylene-C': ['C8H7Cl', 1.29],
+                    'Parylene-N': ['C8H8', 1.11],
+                    'Air': ['N1.562O.42C.0003Ar.0094', 0],
+                    'P-10': ['Ar.9C.1H.4', 0],
+                    'Methane': ['C1H4', 0],
+                    'Propane': ['C3H8', 0],
+                    }  # dict with formula and density
+
+def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', rho=-1, T=-1, verbose=True) :
 
    """calculate reflectivity of a thick mirror as function of photon energy 
       and the transmittance of a foil with thickness d 
@@ -26,7 +47,10 @@ def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True)
       theta (double): Grazing incidence angle (rad) 
       d=1.0 (double): thickness of the foil or gas in m 
       log='' (str): logscal for axis ['', 'x', 'y', 'xy']   
+      p=-1 (float): gas pressure in Pa (pressure in mbar x 100)
       plot='reflectivity' (str): plot ['', 'reflectivity', 'transmittance']
+      rho=-1 (float): density in g/cm^3 - overwrites value from table(s)
+      T=-1 (float): gas temperature in K
       verbose=True (bool): verbosity
 
    Returns:
@@ -61,28 +85,48 @@ def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True)
               print('Rp= ', dict['rp'])
    """
 
-   usage= "usage: dict=reflec('Au', en, 4e-3, d=1e-4)"
+   usage= "usage example: dict=reflec('Au', en, 4e-3, d=1e-4)"
 
-   print("Usage: ", usage) 
+   if verbose:
+      print("Usage: ", usage) 
 
-   (en0, f10, f20) = readhenke(element)
-   (Z  , A  , rho) = readmaterial(element)
+   elements, rho0 = _check_common_materials(element, verbose=verbose)  # check for common materials first
+   
+   if rho0 < 0 :
+      elements = element
+   
+   dict = atomparser.parse_formula(elements)
+   
+   (f1, f2) = _readhenkes(en, dict, verbose=verbose)
+   (Z, A, rho1) = _readmaterials(dict, verbose=verbose)
+   if verbose:
+      print("readmaterials returns averaged Z= {}, A= {}, rho= {} ".format(Z, A, rho1))
+   
+   if rho > 0 :
+      if verbose:
+         print("take rho from input ({})".format(rho))
+   else :
+      if rho0 > 0 :   
+         rho = rho0
+         if verbose:
+            print("take rho from common materials ({})".format(rho))
+      else :
+         rho = rho1
+         if verbose:
+            print("take rho from table(s) ({})".format(rho))
 
-   if (en0[0] < 0) or (Z < 0) :
-      dict = atomparser.parse_formula(element)
-      print("compounds not yet implemented", dict)
-      return
-
-#   if isinstance( en, int ):                                  # UF does not work 
-#      en = en0
-
-   f1 = np.interp(en, en0, f10)
-   f2 = np.interp(en, en0, f20)
-
+   
+   R0 = 8.3144598                                              # Gas constant Nm/(K mol) or m^3 Pa/(K mol) 
    NA = 6.0221e23                                              # Avogadronumber
    re = 2.81794e-15                                            # Classical electron radius (m)
    Nt = 1e6* rho * NA / A                                      # Teilchendichte  (1/m^3), rho is in (g/cm^3)
    wavelength = 1239.842e-9/ en                                # Wavelength      (m)
+
+   if T > 0 and p > 0 :
+      #Nt = 1e-2 * p * NA * A/(T * R0)
+      Nt = 2e-2 * p * NA * A/(T * R0)                          # dont know the factor
+      print("gas transmittance Nt= {} m^-3".format(Nt))
+      
 
    delta = re * wavelength**2 * Nt * f1 / (2.0 * np.pi)
    beta  = re * wavelength**2 * Nt * f2 / (2.0 * np.pi)
@@ -111,8 +155,8 @@ def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True)
    if plot == 'reflectivity' :
       thetag= theta*180./np.pi 
       title = element + ',   grazing angle = {:.3f} mrad = {:.3f} deg.'.format(theta*1e3,thetag)
-      plt.plot(en, Rs, label='Rs')
-      plt.plot(en, Rp, label='Rp')
+      plt.plot(en, Rs, label='{}: Rs'.format(element))
+      plt.plot(en, Rp, label='{}: Rp'.format(element))
       plt.legend()
       plt.ylabel('reflectivity')
       plt.xlabel('photon energy (eV)')
@@ -146,8 +190,30 @@ def reflec(element, en, theta, d=1.0, log='', plot='reflectivity', verbose=True)
    # return data, access example: a= reflec(...)  print(a['rs'])
    dict= {'ac': ac, 'crp': crp, 'crs': crs, 'beta': beta, 'delta': delta, 'n': n, 
           'rp': Rp, 'rs': Rs, 'tp': Tp, 'ts': Ts, 'mu': mu, 'trans': trans}
+ 
    return dict 
    # end reflec
+
+def _readhenkes(en, tuples, verbose=True) :
+   """read a material dictionary returns averages plus interpolation"""
+   w1 = 0.0
+   f1 = 0.0
+   f2 = 0.0
+   
+   for atom in tuples:
+      w = tuples[atom]
+      (en0, f10, f20) = readhenke(atom, verbose=verbose)
+      f11 = np.interp(en, en0, f10)
+      f22 = np.interp(en, en0, f20)
+      f1 += w * f11
+      f2 += w * f22
+      w1 += w
+      
+   if w1 > 0.0 :
+      return f1/w1, f2/w1   # return averages
+   else :
+      raise ValueError("sum of weights == 0")
+#end _readhenkes
 
 def readhenke(element, verbose=True) :
    """readhenke read henke tables (path hardcoded)
@@ -162,19 +228,39 @@ def readhenke(element, verbose=True) :
    fname = path + element + ext
    
    if os.path.isfile(fname) == False :
-      print("readhenke: did not found table: ", fname)
-      en= [-1.0]
-      f1= [-1.0]
-      f2= [-1.0]
-   else :  
-      field1 = np.loadtxt(fname, skiprows=1)
-      en= field1[:, 0]
-      f1= field1[:, 1]
-      f2= field1[:, 2]
-      if verbose :
-         print("read Henke table from: ", fname)
+      errst= "readhenke: did not found table: {}".format(fname)
+      raise ValueError(errst)
+     
+   field1 = np.loadtxt(fname, skiprows=1)
+   en= field1[:, 0]
+   f1= field1[:, 1]
+   f2= field1[:, 2]
+   if verbose :
+      print("read Henke table from: ", fname)
+
    return en, f1, f2
 #end readhenke
+
+def _readmaterials(tuples, verbose=True) :
+   """read a material dictionary returns averages"""
+
+   w1 = 0.0
+   z1 = 0.0
+   a1 = 0.0
+   r1 = 0.0
+   for atom in tuples:
+      w = tuples[atom]
+      (z, a, r) = readmaterial(atom, verbose=verbose)
+      z1 += w * z
+      a1 += w * a
+      r1 += w * r
+      w1 += w
+      
+   if w1 > 0.0 :
+      return z1/w1, a1/w1, r1/w1   # return averages
+
+   raise ValueError("sum of weights == 0")
+# end _readmaterials
 
 def readmaterial(element, verbose=True) :
    """read material table (path hardcoded)
@@ -188,16 +274,27 @@ def readmaterial(element, verbose=True) :
    if verbose :
       print("read mat table from: ", fname)
 
-   z = -1
-   r = -1
-   t = -1   
    f = open(fname, 'r')
    for line in f:
       el, z, r, t = line.strip().split()
       if element == el :
-         print("found: ", el, z, r, t)
+         if verbose :
+            print("readmaterial -> found: ", el, z, r, t)
+         return int(z), float(r), float(t)
 
-   return int(z), float(r), float(t)
-   print("did not found element: ", el)
+   raise ValueError("did not found element: ", el)
 #end readmaterial
 
+def _check_common_materials(element, verbose=True) :
+   """check for common materials"""
+
+   formula = ""
+   density = -2
+   if element in COMMON_MATERIALS :
+      formula= COMMON_MATERIALS[element][0]
+      density= COMMON_MATERIALS[element][1]
+      if verbose:
+         print("found >>{}<< in table of common materials: formula= {}, density= {} g/cm^3".format(element, formula, density))
+   
+   return formula, density   
+#end _check_common_materials()

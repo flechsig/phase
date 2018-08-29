@@ -1,11 +1,23 @@
+# File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/atomparser.py
+# Date      : <29 Aug 18 10:02:57 flechsig> 
+# Time-stamp: <29 Aug 18 10:03:07 flechsig> 
+# Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
+
+# $Source$ 
+# $Date$
+# $Revision$ 
+# $Author$ 
+
 ## code from https://github.com/Zapaan/python-chemical-formula-parser/blob/master/parser.py
 ## saved as atomparser
+## UF Aug 2018 add floating weights functionality
 
 import re
 from collections import Counter
 
 
-ATOM_REGEX = '([A-Z][a-z]*)(\d*)'
+# UF ATOM_REGEX = '([A-Z][a-z]*)(\d*)'    
+ATOM_REGEX = '([A-Z][a-z]*)(\d*\.*\d*)'    # UF add \.*\d*
 OPENERS = '({['
 CLOSERS = ')}]'
 
@@ -22,9 +34,13 @@ def _dictify(tuples):
     res = dict()
     for atom, n in tuples:
         try:
-            res[atom] += int(n or 1)
+            # UF res[atom] += int(n or 1)
+            res[atom] += float(n or 1)
+            # print("debug _dictify UF try atom={}, n={}, tuples={}".format(atom,n,tuples))
         except KeyError:
-            res[atom] = int(n or 1)
+            # UFres[atom] = int(n or 1)
+            # print("debug _dictify UF keyerror, atom={}, n={}, tuples={}".format(atom,n,tuples))
+            res[atom] = float(n or 1)
     return res
 
 
@@ -34,6 +50,7 @@ def _fuse(mol1, mol2, w=1):
 
     This fusion does not follow the laws of physics.
     """
+    # print("UF debug call fuse mol1={}, mol2={}, w={}".format(mol1, mol2, w))
     return {atom: (mol1.get(atom, 0) + mol2.get(atom, 0)) * w for atom in set(mol1) | set(mol2)}
 
 
@@ -54,9 +71,12 @@ def _parse(formula):
 
         if token in CLOSERS:
             # Check for an index for this part
-            m = re.match('\d+', formula[i+1:])
+            # UF m = re.match('\d+', formula[i+1:])
+            m = re.match('\d+\.*\d*', formula[i+1:])  # UF match also float
             if m:
-                weight = int(m.group(0))
+                # UF weight = int(m.group(0))
+                weight = float(m.group(0))
+                # print("UF debug weight: {}".format(weight))
                 i += len(m.group(0))
             else:
                 weight = 1
@@ -71,15 +91,19 @@ def _parse(formula):
             i += l + 1
         else:
             q.append(token)
+            # print("uf debug append ", q)
 
-        i+=1
+        i += 1
+        # heinz= re.findall(ATOM_REGEX, ''.join(q))
+        # print("UF debug heinz={}, i= {}".format(heinz, i))
 
     # Fuse in all that's left at base level
     return _fuse(mol, _dictify(re.findall(ATOM_REGEX, ''.join(q)))), i
+# end _parse
 
 
 def parse_formula(formula):
-    """Parse the formula and return a dict with occurences of each atom. Works only with integer weights.
+    """Parse the formula and return a dict with occurences of each atom.
 
     Args:
        formula (str): the chemical formula 
@@ -91,6 +115,7 @@ def parse_formula(formula):
           >>> dict = parse_formula('H2O')
               print(dict)   
     """
+
     if not is_balanced(formula):
         raise ValueError("Watch your brackets ![{]$[&?)]}!]")
 
