@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <29 Aug 18 17:51:00 flechsig> 
+# Time-stamp: <30 Aug 18 17:08:37 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -34,7 +34,7 @@ COMMON_MATERIALS = {'Quartz':  ['SiO2', 2.65],
                     'Propane': ['C3H8', 0],
                     }  # dict with formula and density
 
-def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', rho=-1, T=-1, verbose=True) :
+def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='pascal', rho=-1, T=-1, verbose=True) :
 
    """calculate reflectivity of a thick mirror as function of photon energy 
       and the transmittance of a foil with thickness d 
@@ -49,6 +49,7 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', rho=-1,
       log='' (str): logscal for axis ['', 'x', 'y', 'xy']   
       p=-1 (float): gas pressure in Pa (pressure in mbar x 100)
       plot='reflectivity' (str): plot ['', 'reflectivity', 'transmittance']
+      punit='pascal' (str): pressure unit ['pascal', 'mbar', 'torr'...]
       rho=-1 (float): density in g/cm^3 - overwrites value from table(s)
       T=-1 (float): gas temperature in K
       verbose=True (bool): verbosity
@@ -117,16 +118,20 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', rho=-1,
 
    
    R0 = 8.3144598                                              # Gas constant Nm/(K mol) or m^3 Pa/(K mol) 
+   KB = 1.38066e-23                                            # Boltzmann constant Nm/K
    NA = 6.0221e23                                              # Avogadronumber
    re = 2.81794e-15                                            # Classical electron radius (m)
    Nt = 1e6* rho * NA / A                                      # Teilchendichte  (1/m^3), rho is in (g/cm^3)
    wavelength = 1239.842e-9/ en                                # Wavelength      (m)
 
-   if T > 0 and p > 0 :
-      #Nt = 1e-2 * p * NA * A/(T * R0)
-      Nt = 2e-2 * p * NA * A/(T * R0)                          # dont know the factor
-      print("gas transmittance Nt= {} m^-3".format(Nt))
-      
+   if T > 0 and p > 0 : 
+# we can calculate rho= P * A /( R0 * T) but how to take into account O2 ???
+# there is still something wrong with the molar mass
+      p = p2pa(p, punit, verbose=verbose)
+      Nt = p / (T * KB)   
+      if verbose :
+         print("gas transmittance mode (particle density Nt= {:.3e} m^-3, p= {:.3e} Pa, A={} g/mol)".format(Nt,p, A))
+         print("!!!results for compound gases may be not correct - 2b debugged!!!")
 
    delta = re * wavelength**2 * Nt * f1 / (2.0 * np.pi)
    beta  = re * wavelength**2 * Nt * f2 / (2.0 * np.pi)
@@ -136,6 +141,8 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', rho=-1,
    for i in np.arange(len(delta)) :
       n[i]= complex(1.0 - delta[i], beta[i])
 
+   #arg = 1.0 - delta
+   #print("arg= {}".format(arg))
    ac  = np.arccos(1.0 - delta)                                # critical (grazing) angle in rad
    wu  = np.sqrt( n**2 - (np.cos(theta))**2 )                  # Fresnel - formulas
    crs = (      np.sin(theta) - wu ) / ( np.sin(theta) + wu)   # reflection coeff. s-pol
@@ -193,6 +200,37 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', rho=-1,
  
    return dict 
    # end reflec
+
+def p2pa(p, punit='pascal', verbose=True) :
+   """calculates pressure in pascal
+
+   Args:
+      p (flt): pressure
+      punit='pascal' (str): ['pascal', 'mbar', 'torr'...]
+
+   Returns: (flt) pressure in Pa
+      
+   Example:
+          >>> ppa= p2pa(p, punit='torr')
+
+   """
+
+   factors= {'pascal': 1.0, 'bar': 1e5, 'mbar': 1e2, 'torr': 133.322, 'mm Hg':133.322, 
+             'at' : 0.981e5,  # techn. atm kp/cm^2 
+             'atm': 1.013e5,  # phys atm
+             'psi': 6895.,    # lb/in^2
+            }
+
+   if punit in factors :
+      factor = factors[punit]
+   else : 
+      raise ValueError("error: unknown pressure unit: {}".format(punit))
+   if verbose :
+      print("{} {} = {} Pa".format(p, punit, p * factor))
+
+   return p * factor
+
+#end p2pa
 
 def _readhenkes(en, tuples, verbose=True) :
    """read a material dictionary returns averages plus interpolation"""
