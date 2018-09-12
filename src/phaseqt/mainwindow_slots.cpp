@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Aug 15 09:51:41 flechsig> 
+//  Time-stamp: <12 Sep 18 14:42:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -863,6 +863,14 @@ void MainWindow::activateProc(const QString &action)
 #ifdef HAVE_HDF5
       if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
 	   && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
+      else
+	if ( ((bl->RESULT.typ & PLphspacetype) > 0)
+	  { 
+	    cout << "hdf5 ray to be implemented" << endl
+	     //&& FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
+	  }
+	else
+	  cout << "error: no valid results" << endl; 
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
 #endif
