@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <18 Aug 17 12:17:45 flechsig> 
+dnl   Time-stamp: <13 Sep 18 12:19:36 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -267,7 +267,7 @@ AC_ARG_WITH([qwt],
        have_qwt="no"
     else
       dnl   echo "do use qwt"
-      AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
+      AC_CHECK_FILE([${qwt}/lib64/libqwt.so], 
       [
         AC_SUBST(QWT, [${qwt}])
 	have_qwt="yes"
@@ -292,8 +292,8 @@ AC_ARG_WITH([qwt],
         AC_SUBST(QWTI, [${qwti}])
     else
       AC_MSG_NOTICE((1) did not found libqwt.so in /usr/local)
-      AC_MSG_NOTICE((2) search for libqwt.so in /usr/lib)
-      qwt=`find /usr/lib -name libqwt.so -print 2>/dev/null | sort | tail -1 | sed -e 's|/lib/libqwt.so||'`
+      AC_MSG_NOTICE((2) search for libqwt.so in /usr/lib64)
+      qwt=`find /usr/lib64 -name libqwt.so -print 2>/dev/null | sort | tail -1 | sed -e 's|/lib64/libqwt.so||'`
       if test -n "${qwt}"; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
          AC_SUBST(QWT, [${qwt}])
