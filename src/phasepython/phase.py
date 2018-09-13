@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <23 Aug 18 08:53:24 flechsig>
+# Time-stamp: <11 Sep 18 15:24:21 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -877,7 +877,7 @@ class emf(object):
 
         if example is True :
             print('**********************************************************')
-            print('example: HeNe La_uper ')
+            print('example: HeNe Laser ')
             print('wavelength=633e-9, w0= 1e-3, dist= 10., sizez=1e-2')
             print('**********************************************************')
             self.gaussbeam(dist=10., wavelength=633e-9, w0=1e-3, sizez=1e-2)

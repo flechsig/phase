@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <30 Aug 18 17:08:37 flechsig> 
+# Time-stamp: <07 Sep 18 16:39:15 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -28,10 +28,10 @@ COMMON_MATERIALS = {'Quartz':  ['SiO2', 2.65],
                     'Teflon': ['C2F4', 2.2],
                     'Parylene-C': ['C8H7Cl', 1.29],
                     'Parylene-N': ['C8H8', 1.11],
-                    'Air': ['N1.562O.42C.0003Ar.0094', 0],
-                    'P-10': ['Ar.9C.1H.4', 0],
-                    'Methane': ['C1H4', 0],
-                    'Propane': ['C3H8', 0],
+                    'Air': ['N1.562O.42C.0003Ar.0094', -1],
+                    'P-10': ['Ar.9C.1H.4', -1],
+                    'Methane': ['C1H4', -1],
+                    'Propane': ['C3H8', -1],
                     }  # dict with formula and density
 
 def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='pascal', rho=-1, T=-1, verbose=True) :
@@ -93,17 +93,20 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
 
    elements, rho0 = _check_common_materials(element, verbose=verbose)  # check for common materials first
    
-   if rho0 < 0 :
+   if rho0 < -5 :                       # element not found in common_materials hand it over to atomparser
       elements = element
    
    dict = atomparser.parse_formula(elements)
    
-   (f1, f2) = _readhenkes(en, dict, verbose=verbose)
+   (f1, f2, ni) = _readhenkes(en, dict, verbose=verbose)
    (Z, A, rho1) = _readmaterials(dict, verbose=verbose)
    if verbose:
-      print("readmaterials returns averaged Z= {}, A= {}, rho= {} ".format(Z, A, rho1))
+      print("readmaterials returns Z= {}, A= {}, rho= {} ".format(Z, A, rho1))
+      print("ni = {} mol".format(ni))
+
+   R0 = 8.3144598                                              # Gas constant Nm/(K mol) or m^3 Pa/(K mol)
    
-   if rho > 0 :
+   if rho > 0 :         # command line input has highest priority                    
       if verbose:
          print("take rho from input ({})".format(rho))
    else :
@@ -112,27 +115,31 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
          if verbose:
             print("take rho from common materials ({})".format(rho))
       else :
-         rho = rho1
-         if verbose:
-            print("take rho from table(s) ({})".format(rho))
+         if T > 0 and p > 0 :                 # gas input
+            # we can calculate rho= P * A /( R0 * T) but how to take into account O2 ???
+            # there is still something wrong with the molar mass
+            p = p2pa(p, punit, verbose=verbose)
+            rho= 1e-6 * p * A /( R0 * T)
+            # Nt = p / (T * KB)   
+            if verbose :
+               print("gas transmittance mode (rho= {} g/cm^3,  p= {:.3e} Pa, A={} g/mol)".format(rho, p, A))
+               print("!!!results for compound gases may be not correct - 2b debugged!!!")
+         else :
+            rho = rho1
+            if verbose:
+               print("take averaged rho from table(s) ({})".format(rho))
 
    
-   R0 = 8.3144598                                              # Gas constant Nm/(K mol) or m^3 Pa/(K mol) 
+    
    KB = 1.38066e-23                                            # Boltzmann constant Nm/K
    NA = 6.0221e23                                              # Avogadronumber
    re = 2.81794e-15                                            # Classical electron radius (m)
-   Nt = 1e6* rho * NA / A                                      # Teilchendichte  (1/m^3), rho is in (g/cm^3)
+   Nt = 1e6* ni * rho * NA / A                                 # Teilchendichte  (1/m^3), rho is in (g/cm^3)
    wavelength = 1239.842e-9/ en                                # Wavelength      (m)
 
-   if T > 0 and p > 0 : 
-# we can calculate rho= P * A /( R0 * T) but how to take into account O2 ???
-# there is still something wrong with the molar mass
-      p = p2pa(p, punit, verbose=verbose)
-      Nt = p / (T * KB)   
-      if verbose :
-         print("gas transmittance mode (particle density Nt= {:.3e} m^-3, p= {:.3e} Pa, A={} g/mol)".format(Nt,p, A))
-         print("!!!results for compound gases may be not correct - 2b debugged!!!")
-
+   if verbose :
+      print("debug Nt= {:.3e} m^-3, p= {:.3e} Pa, A={} g/mol)".format(Nt,p, A))
+   
    delta = re * wavelength**2 * Nt * f1 / (2.0 * np.pi)
    beta  = re * wavelength**2 * Nt * f2 / (2.0 * np.pi)
    
@@ -149,7 +156,7 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
    cts = (  2 * np.sin(theta)      ) / ( np.sin(theta) + wu)   # transmiss. coeff. s-pol
    
    crp = (n**2 * np.sin(theta) - wu ) / ( n**2 *np.sin(theta) + wu)  # reflection coeff. p-pol
-   ctp = (2*n * np.sin(theta)      ) / ( n**2 *np.sin(theta) + wu)   # transmiss. coeff. s-pol
+   ctp = (2* n * np.sin(theta)      ) / ( n**2 *np.sin(theta) + wu)  # transmiss. coeff. s-pol
    
    Rs  =  np.abs(crs)**2                                          # reflectance s-pol   
    Rp  =  np.abs(crp)**2                                          # reflectance p-pol.  
@@ -248,7 +255,7 @@ def _readhenkes(en, tuples, verbose=True) :
       w1 += w
       
    if w1 > 0.0 :
-      return f1/w1, f2/w1   # return averages
+      return f1/w1, f2/w1, w1   # return averages and sum
    else :
       raise ValueError("sum of weights == 0")
 #end _readhenkes
@@ -280,22 +287,22 @@ def readhenke(element, verbose=True) :
 #end readhenke
 
 def _readmaterials(tuples, verbose=True) :
-   """read a material dictionary returns averages"""
+   """read a material dictionary returns averages and molar mass respectively """
 
    w1 = 0.0
    z1 = 0.0
    a1 = 0.0
    r1 = 0.0
    for atom in tuples:
-      w = tuples[atom]
+      w = tuples[atom]    
       (z, a, r) = readmaterial(atom, verbose=verbose)
       z1 += w * z
-      a1 += w * a
+      a1 += w * a 
       r1 += w * r
       w1 += w
       
    if w1 > 0.0 :
-      return z1/w1, a1/w1, r1/w1   # return averages
+      return z1/w1, a1, r1/w1   # return averages for z snd rho and molar mass
 
    raise ValueError("sum of weights == 0")
 # end _readmaterials
@@ -327,7 +334,7 @@ def _check_common_materials(element, verbose=True) :
    """check for common materials"""
 
    formula = ""
-   density = -2
+   density = -9
    if element in COMMON_MATERIALS :
       formula= COMMON_MATERIALS[element][0]
       density= COMMON_MATERIALS[element][1]

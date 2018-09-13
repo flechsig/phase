@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 Sep 18 12:19:36 flechsig> 
+dnl   Time-stamp: <13 Sep 18 16:06:43 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -267,7 +267,7 @@ AC_ARG_WITH([qwt],
        have_qwt="no"
     else
       dnl   echo "do use qwt"
-      AC_CHECK_FILE([${qwt}/lib64/libqwt.so], 
+      AC_CHECK_FILE([${qwt}/lib/libqwt.so], 
       [
         AC_SUBST(QWT, [${qwt}])
 	have_qwt="yes"
@@ -351,7 +351,8 @@ dnl	       FFLAGS="-DDEBUG -g -O0 -check all -debug -warn all -warn nodeclaratio
 dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
        CFLAGS="-DDEBUG -ggdb"             # -static
 dnl UF 20180612 add -std=c++11 for qt-5.9
-       CXXFLAGS="-DDEBUG -ggdb -std=c++11"
+       CXXFLAGS="-DDEBUG -ggdb 
+###-std=c++11"
        ####LDFLAGS="-static"
        libextension="a"
     fi,
