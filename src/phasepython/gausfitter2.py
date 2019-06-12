@@ -14,6 +14,7 @@ def moments(data,circle,rotate,vheight):
     the gaussian parameters of a 2D distribution by calculating its
     moments.  Depending on the input parameters, will only output 
     a subset of the above"""
+
     total = data.sum()
     X, Y = indices(data.shape)
     x = (X*data).sum()/total
@@ -58,6 +59,7 @@ def twodgaussian(inpars, circle, rotate, vheight):
             vheight=1 - default allows a variable height-above-zero, i.e. an additive constant
                 for the Gaussian function.  Can remove first parameter by setting this to 0
         """
+
     inpars_old = inpars
     inpars = list(inpars)
     if vheight == 1:
@@ -133,6 +135,7 @@ def gaussfit(data,err=None,params=[],autoderiv=1,return_all=0,circle=0,rotate=1,
 
         Warning: Does NOT necessarily output a rotation angle between 0 and 360 degrees.
     """
+
     if params == []:
         params = (moments(data,circle,rotate,vheight))
     if err == None:
