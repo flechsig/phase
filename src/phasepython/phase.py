@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <11 Sep 18 15:24:21 flechsig>
+# Time-stamp: <12 Jun 19 11:58:21 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2154,7 +2154,7 @@ class emf(object):
         
         for col in np.arange(nz):
             for row in np.arange(ny):
-                d = drift * 2.0 * np.sqrt(u[col] * wavelength)**2 + (v[row] * wavelength)**2)
+                d = drift * 2.0 * np.sqrt((u[col] * wavelength)**2 + (v[row] * wavelength)**2)
                 if d > dia_down and d < dia_up :
                     propagator[row, col] = complex(np.cos(phase), np.sin(phase))
                 
