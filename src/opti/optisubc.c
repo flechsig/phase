@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:52:03 flechsig>  */
+/*   Time-stamp: <19 Sep 19 16:59:19 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -86,7 +86,7 @@ void buildsystem(struct BeamlineType *bl)
       elcounter++; listpt++; 
     } /* Schleife ueber alle Elemente fertig */
  
-  extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
+   extractmap(bl->M_StoI, bl->ypc1, bl->zpc1, bl->dypc, bl->dzpc, 
 	     &bl->BLOptions.ifl.iord); 
    bl->beamlineOK |= mapOK;
   /* bline ist fertig, map ist erzeugt */
