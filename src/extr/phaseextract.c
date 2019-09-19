@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/extr/phaseextract.c */
 /*   Date      : <31 Oct 03 10:22:38 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:52:23 flechsig>  */
+/*   Time-stamp: <19 Sep 19 17:43:33 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -125,7 +125,7 @@ int main(argc, argv)
       fprintf(stderr, "syntax: phaseextract <inputfilename> [calculation_methode]\n");
       exit(-1);    
     }   
-  printf("read from file: %s\n", argv[1]);    
+  printf("try to read from file: %s\n", argv[1]);    
   getoptipickfile(&optistructure, argv[1]); 
   if (argc == 3)
      {

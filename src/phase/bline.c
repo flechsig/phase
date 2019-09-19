@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <27 Feb 18 15:33:54 flechsig>  */
+/*   Time-stamp: <19 Sep 19 17:54:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2402,7 +2402,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   
   if ((f= fopen(pickname, "r")) == NULL)
     {
-      fprintf(stderr, "no file: %s - init optistruct with defaults\n", pickname);
+      fprintf(stderr, "no file: %s - - init optistruct with defaults\n", pickname);
+      fprintf(stderr, "!!! UF: this initialization is currently (2019) not working - use any old pcko file to get started !!!\n");
       return;
     }  
 
