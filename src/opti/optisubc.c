@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <19 Sep 19 16:59:19 flechsig>  */
+/*   Time-stamp: <19 Sep 19 17:26:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -110,10 +110,9 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
   ipos    = index & 0x7f;
 
   listpt= &bl->ElementList[elnumber]; 
-  listpt->ElementOK &= (~mapOK);
+  listpt->ElementOK &= (~(mapOK | elementOK));
   if (mtype)
     {
-      listpt->ElementOK &= (~elementOK); 
       mdat= &listpt->MDat; 
       switch (ipos)
 	{  
