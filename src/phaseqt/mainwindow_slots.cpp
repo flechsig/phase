@@ -864,7 +864,7 @@ void MainWindow::activateProc(const QString &action)
       if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
 	   && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
       else
-	if ( ((bl->RESULT.typ & PLphspacetype) > 0)
+	if  ((bl->RESULT.typ & PLphspacetype) > 0)
 	  { 
 	    cout << "hdf5 ray to be implemented" << endl;
 	     //&& FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
