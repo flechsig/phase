@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <13 Sep 18 12:31:36 flechsig> 
+//  Time-stamp: <24 Sep 19 16:22:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2674,7 +2674,15 @@ void MainWindow::screenshotMain()
               // otherwise the area under the file menu is empty
   
   QString format = "png";
-  QPixmap pixmap = QPixmap::grabWindow(this->winId());
+  //QPixmap pixmap = QPixmap::grabWindow(this->winId()); // deprecated sep 2019
+  
+  QScreen *screen = QGuiApplication::primaryScreen();
+  if (const QWindow *window = windowHandle())
+    screen = window->screen();
+  if (!screen)
+    return;
+  QPixmap pixmap = screen->grabWindow(0);
+
   QString initialPath = QDir::currentPath() + tr("/screenshot.") + format;
   QString fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
                                 initialPath,
