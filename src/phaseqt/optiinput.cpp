@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <28 Aug 14 16:39:30 flechsig> 
+//  Time-stamp: <24 Sep 19 15:51:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -438,10 +438,12 @@ void OptiInput::inputUpdateSlot()
   switch (pos)
     {
     case 0: 
-      snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toLatin1().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());
+      //UF sep 2019 snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toLatin1().data());
       break;
     case 1: 
-      snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toLatin1().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());
+      //UF sep 2019 snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toLatin1().data());
       break;
     default:
       snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());

@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <01 Jul 13 08:11:38 flechsig> 
+ Time-stamp: <24 Sep 19 15:09:49 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -60,6 +60,9 @@ Errors
 
 - make will not run through the first time - you have to install the library 
   first by doing make install and then do a make again
+
+- python errors in make (related to python3)
+  export PATH=/afs/psi.ch/project/phase/bin:/afs/psi.ch/user/f/flechsig/bin:/usr/local/bin:/usr/bin:/bin
 
 SIGN of w and l
 ===============

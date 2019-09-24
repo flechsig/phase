@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <20 Sep 19 08:13:56 flechsig>  */
+/*   Time-stamp: <24 Sep 19 16:02:38 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2398,6 +2398,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   x->npars  = x->xindex= x->yindex=  0;
   x->dx= x->dy= 0.0;
   x->xpoints= x->ypoints= 1;
+  x->start= x->step= x->min= x->max= x->parindex= NULL;
+  x->parnames= '\0';
   snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
   
   if ((f= fopen(pickname, "r")) == NULL)
@@ -2407,7 +2409,7 @@ void getoptipickfile(struct optistruct *x, char *pickname)
       exit(0);
 #else
       fprintf(stderr, "no file: %s - init optistruct with defaults\n", pickname);
-      fprintf(stderr, "!!! UF: this initialization is currently (2019) not working - use any old pcko file to get started !!!\n");
+      //fprintf(stderr, "!!! UF: this initialization is currently (2019) not working - use any old pcko file to get started !!!\n");
       return;
 #endif
     }  
