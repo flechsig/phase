@@ -186,7 +186,7 @@ void SingleRay::RayTraceSingleRayCpp(PhaseQt *bl)
   int          elnumber;
   unsigned int elcounter;
   double       uu, ww, ll, xlength, xlength1, xlength2, phase, raylen, 
-    slopelen, dela, res, dphase;
+    slopelen= -1.0, dela, res, dphase;
   struct ElementType *ds; 
   
   Raysin = &rayin;   // for compatibility with the previous code we use pointers
