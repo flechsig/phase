@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <22 Nov 19 15:41:58 flechsig>  */
+/*   Time-stamp: <22 Nov 19 15:44:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -253,7 +253,7 @@ void in_struct(struct BeamlineType* bl, double *z, int index)
 	  if (gdat->azimut > 1) gdat->theta0= -fabs(gdat->theta0);
 	  break;
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 	case 17: xd[4]= (*z) - xd[5];     /*cl r2 fest*/
 	  gdat->r= (*z)- gdat->rp;
 #pragma GCC diagnostic pop
