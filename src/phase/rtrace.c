@@ -970,7 +970,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
     }
   bl->RESULT.typ= newtype;
 #ifdef DEBUG 
-  printf("\ndebug %s AllocResult, pointer bl->RESULT.RESp=0x%x\n", __FILE__, (int)bl->RESULT.RESp);
+  printf("\ndebug %s AllocResult, pointer bl->RESULT.RESp=0x%x\n", __FILE__, (long)bl->RESULT.RESp);
 #endif
 } /* AllocResult */
 

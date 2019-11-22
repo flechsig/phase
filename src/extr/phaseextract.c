@@ -51,6 +51,7 @@
 #include "../phase/common.h"
 #include "../phase/phase_struct.h"
 #include "../phase/phase.h"
+#include "../phase/rtrace.h"
 #include "../opti/optisubc.h" 
 #include "cost.h"
 
