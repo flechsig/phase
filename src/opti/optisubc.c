@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/opti/optisubc.c */
 /*   Date      : <31 Oct 03 08:15:40 flechsig>  */
-/*   Time-stamp: <19 Sep 19 17:26:28 flechsig>  */
+/*   Time-stamp: <22 Nov 19 15:29:29 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -53,8 +53,9 @@
 /* baut beamline und extrahiert map        */
 void buildsystem(struct BeamlineType *bl) 
 {
-  int     elcounter, i, mdim;
-  struct  ElementType *listpt;    
+  int i, mdim;
+  unsigned int elcounter;
+  struct ElementType *listpt;    
 
   mdim= 330;
 
