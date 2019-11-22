@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <22 Nov 19 15:18:14 flechsig>  */
+/*   Time-stamp: <22 Nov 19 15:23:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2398,7 +2398,8 @@ void getoptipickfile(struct optistruct *x, char *pickname)
   x->npars  = x->xindex= x->yindex=  0;
   x->dx= x->dy= 0.0;
   x->xpoints= x->ypoints= 1;
-  x->start= x->step= x->min= x->max= x->parindex= NULL;
+  x->start= x->step= x->min= x->max= NULL;
+  x->parindex= NULL;
   x->parnames= '\0';
   snprintf(x->resultfilename, MaxPathLength, "opti_out.dat");
   
