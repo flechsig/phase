@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <24 Sep 19 15:09:49 flechsig> 
+ Time-stamp: <22 Nov 19 14:57:27 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -205,14 +205,15 @@ solution a) upgrade libtool
 
 
 
-REQUIRED PACKAGES (NOV 2012)
+REQUIRED PACKAGES (NOV 2019)
 ============================
-hdf5  | hdf5-1.8.9.tar.gz                         | optional, hdf5 support, required for source7
-ifort | intel-10.0                                | required for everything, fortran compiler, alternatives: portland fortran, absoft fortran, 
-      |                                           | (gnu fortran does not work due to the lack of VAX extensions) 
-qt    | qt-everywhere-opensource-src-4.7.3.tar.gz | required for phaseqt, gui
-qwt   | qwt-6.0                                   | required for phaseqt, graphics package for plotting
-root  | root-5.22                                 | optional, CERN data analysis tool, required for phaseopti    
-idl   | idl                                       | optional, required for idl interface    
+hdf5    | hdf5                                    | optional, hdf5 support, required for source7
+fftw    | fftw                                    | optional
+fortran | gfortran or intel or ...                | required for everything, fortran compiler, alternatives: portland fortran, absoft fortran.. 
+qt5     |                                         | required for phaseqt, gui, Qt4 works in priciple but automatic configuration has been abandoned in 2019 
+qwt     | qwt-6.x                                 | required for phaseqt, graphics package for plotting
+root    | root                                    | optional, CERN data analysis tool, required for phaseopti    
+idl     | idl                                     | optional, required for idl interface    
+python3 | python                                  | optional, required for python lib
 
 To build phase we need the development packages of qt and qwt (verify in case you use preinstalled versions). Other required tools are recent versions of: gcc, make, gnu autotools (libtool, automake, autoconfig)
