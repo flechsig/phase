@@ -153,14 +153,14 @@ else
 endif
 
 if QT5
-#######AM_CXXFLAGS = -fPIC -std=c++11 
+#######AM_CXXFLAGS = -fPIC -std=c++11
+## NOV19 @QT_CXXFLAGS@/QtCore \
+##	@QT_CXXFLAGS@/QtGui \
+##	@QT_CXXFLAGS@/QtWidgets \
+##	@QT_CXXFLAGS@/QtPrintSupport \
+##	@QT_CXXFLAGS@/QtConcurrent 
    AM_CXXFLAGS = -fPIC  \
 	@QT_CXXFLAGS@ \
-	@QT_CXXFLAGS@/QtCore \
-	@QT_CXXFLAGS@/QtGui \
-	@QT_CXXFLAGS@/QtWidgets \
-	@QT_CXXFLAGS@/QtPrintSupport \
-	@QT_CXXFLAGS@/QtConcurrent \
 	-I@QWT@/include \
 	-I@QWTI@/ \
 	-I../phase

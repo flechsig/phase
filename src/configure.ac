@@ -242,9 +242,9 @@ AX_HAVE_QT
 dnl test qt5
 echo "have qt:" ${have_qt}
 if test "x${have_qt}" = "xyes"; then
-   qt5=`echo ${QT_LIBS} | grep "Qt.5"`	
-dnl   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
-dnl   echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
+   qt5=`echo ${QT_LIBS} | grep "Qt5"`	
+dnl echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
+dnl echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
    if test -n "${qt5}"; then
        have_qt5="yes"
        AC_DEFINE([QT5], 1, [qt5])
@@ -253,6 +253,11 @@ dnl   echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
        AC_DEFINE([QT5], 0, [qt5])
    fi
    echo "have_qt5" ${have_qt5}
+else
+   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+   echo "hint: some distributions call the Qt tools name-qt5 like qmake-qt5 instead of the default qmake"
+   echo "      create symbolic links in your path for qmake, moc, uic, rcc, lrelease, lupdate"
+   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 fi
 AM_CONDITIONAL([QT5], [test x$have_qt5 = xyes])
 dnl end qt5
