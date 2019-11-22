@@ -70,6 +70,7 @@
 #include "rtrace.h"
 #include "posrc.h"
 #include "version.h"
+#include "pst_thread.h"
  
 /* Batchmodus */
 void BatchMode(struct BeamlineType *bl, int cmode, int selected, int iord, int threads, int format)
@@ -382,6 +383,7 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
 		       "Unknown option character `\\x%x'.\n", optopt);
 	    exit (-1);
 	  }
+	__attribute__ ((fallthrough));      // suppress fallthrough warning, here we want it
       default:
 	abort ();
       }
@@ -1102,7 +1104,7 @@ int StackTest()
 void free_elementlist(struct BeamlineType *bl)
 {
   struct ElementType *elp;
-  int i;
+  unsigned int i;
   
   for (i=0; i< bl->elementzahl; i++)
     {

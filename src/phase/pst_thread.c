@@ -47,6 +47,8 @@
 #include "phase_struct.h"
 #include "phase.h"
 #include "pst_thread.h"
+#include "pst.h"
+#include "posrc.h"
 #include "common.h"
 
 /* we split the number of points in the pst into numthreads threads or tasks */
@@ -148,7 +150,8 @@ void *pst_it(void *arg)
     { 
       printf("allocate and fill m4p in pstc\n");
       m4p = XMALLOC(struct map4, 1);
-      fill_m4(bl, m4p);
+      printf("UF Warning- critical fix line 153 pst_thread.c\n");
+      fill_m4(bl, m4p, NULL);
     }
 
   for (index= td->start; index < td->stop; index++) 
