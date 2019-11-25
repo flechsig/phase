@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <27 Apr 15 12:08:54 flechsig>  */
+/*   Time-stamp: <25 Nov 19 12:16:03 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -122,6 +122,7 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
    x0= (struct UndulatorSource0Type *) y->Quellep;
    time(&zeit); srand(zeit);                 /* Random initialisieren */
    zweipi= 2.0* PI;                          /* 8.0* atan(1.0);       */
+   deltax= 0.0;                              
 
    switch (high)
    {
@@ -137,7 +138,7 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
        printf("SLS undulator, long straight, lambda= %f mm\n", x->lambda);
        sigez   = (fabs(x->deltaz) > 1e-6) ? 0.165  : 0.1404;         /* mm */
        sigey   = (fabs(x->deltaz) > 1e-6) ? 0.0185 : 0.017;    
-       deltax = 5000.0;                                    /* Quellabstand */  
+       deltax  = 5000.0;                                    /* Quellabstand */  
        sigedz  = (fabs(x->deltaz) > 1e-6) ? 2.9e-5  : 3.38e-5;   
        sigedy  = (fabs(x->deltaz) > 1e-6) ? 2.59e-6 : 2.79e-6;  
      break;
@@ -145,7 +146,7 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
        printf("SLS undulator, medium straight\n");
        sigez   = (fabs(x->deltaz) > 1e-6) ? 0.107  : 0.093;          /* mm */
        sigey   = (fabs(x->deltaz) > 1e-6) ? 0.0148 : 0.0143;
-       deltax = 2000.0;                                    /* Quellabstand */ 
+       deltax  = 2000.0;                                    /* Quellabstand */ 
        sigedz  = (fabs(x->deltaz) > 1e-6) ?  4.5e-5 : 5.1e-5;   
        sigedy  = (fabs(x->deltaz) > 1e-6) ? 3.24e-6 : 3.31e-6; 
      break;
@@ -155,7 +156,6 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
        sigey   = x0->sigmaey;
        sigedz  = (x0->sigmaedz)/1000.;  /* rad */   
        sigedy  = (x0->sigmaedy)/1000.;  /* rad */
-       x->deltaz=0; /* kein horizontaler Versatz */
      break;
      default:
        printf("BESSY II undulator in low beta section\n");
@@ -168,13 +168,14 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
 
 /******** hier gibt es verschieden Definitionen **********************/
 /*** Coisson factor wegen energyspread ??  */
-   factsig=0.21;              /* = 0.210 */
-   factsigp=sqrt(0.34);       /* = 0.583 */
+//   factsig=0.21;              /* = 0.210 */
+//   factsigp=sqrt(0.34);       /* = 0.583 */
    
 /*** fitten von Gaussglocken, Buch von Elleaume oder Rechnungen mit WAVE **/
-
-   factsig=sqrt(2.)/zweipi;   /* = 0.225 */
-   factsigp=1./sqrt(2.);       /* = 0.707 */
+// Onuki, H. & Elleaume, P. (2003). Undulators, Wigglers and Their
+// Applications. London: Taylor and Francis.
+   factsig= sqrt(2.)/zweipi;    /* = 0.225 */
+   factsigp= 1./sqrt(2.);       /* = 0.707 */
    
    beugung    = sqrt(x->lambda* x->length)* factsig;
    x->sigvert = sqrt(sigey* sigey + beugung * beugung);
@@ -184,8 +185,10 @@ void MakeUndulatorSource(struct RTSourceType *y, char high)
    sigdz= sqrt(factsigp*factsigp * x->lambda/ x->length + sigedz* sigedz);
    i= 0;
    
-   if (fabs(x->deltaz) > 1e-6)                     /* sls sonderfall */
+   if (fabs(x->deltaz) > 1e-6)                     /* SLS 1.0 Sonderfall SIM */
    {
+      printf("MakeUndulatorSource: special: SLS 1.0 double undulator configuration\n");
+      printf("                     deltaz= %f, deltax= %f\n", x->deltaz, deltax);
       deltax *= 0.5;
       deltaz= x->deltaz* 0.5;	
       while (i < y->raynumber)

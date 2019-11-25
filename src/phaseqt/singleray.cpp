@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/singleray.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <01 May 15 11:55:23 flechsig> 
+//  Time-stamp: <25 Nov 19 12:23:54 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -52,7 +52,9 @@ using namespace std;   // fuer cout z.B.
 // constructor
 SingleRay::SingleRay(PhaseQt *parent, QWidget *pw)
 {
+  QWidget *pw1;                   // just to avoid warning- unused can be removed;
   singleRayBox = new QWidget();
+  pw1= pw;
 
   QGroupBox   *sourceParsGroup  = new QGroupBox(tr("single Ray trace "));
   QGridLayout *sourceParsLayout = new QGridLayout;
