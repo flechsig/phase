@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <25 Nov 19 12:20:29 flechsig>  */
+/*   Time-stamp: <19 Feb 20 15:40:51 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3289,48 +3289,37 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
     {
       fprintf(stderr, "WriteMKos: error: open file %s\n", name); exit(-1);   
     }    
+  // UF 19.2.2020 add header
+  fprintf(f, "# CoefficientFileType 20200219\n");
+  fprintf(f, "# coefficient file for optical elements\n");
+  fprintf(f, "# original file name: %s\n", name);
+  fprintf(f, "# unit: mm\n");
+  fprintf(f, "# structure: i j coeff[i,j]\n");
+  fprintf(f, "# u[row,col]+= coeff[i,j]* w**i * l**j\n");
+  fprintf(f, "# for details see code in file bline.c line 3299\n");
+  fprintf(f, "################################################\n");
+
+  /* python example code for w and l in meter
+  # fill map in loop
+  ue= np.zeros((nl,nw))  # ellipse
+  for li in np.arange(nl) :
+    for wi in np.arange(nw) :
+        k= 0
+        for i in np.arange(9) :
+            for j in np.arange(9) :
+                if (i+j) < 9 :
+                    ue[li,wi]= ue[li,wi]+ ec[k, 2] * 1e3 * w[wi]**i * l[li]**j
+		    k= k+ 1 */
+  
   for (i= 0; i <= maxord; i++) 
     for (j= 0; j <= maxord; j++) 
 /* write also i and j to file J.B. 9.11.2003 */
-      if ((i + j) <= maxord)  fprintf(f, "%d %d %+.12lE\n", i, j, dp[i+j*(maxord+1)]);  
+      if ((i + j) <= maxord)  fprintf(f, "%d %d %+.18lE\n", i, j, dp[i+j*(maxord+1)]);  
   fclose(f); 
 #ifdef DEBUG
   printf("WriteMKos: done\n");
 #endif
 }  /* end  WriteMKos */ 
-
-/* liest mirrorkoordinaten von file */
-/* updated to seven order 11/2010*/
-void ReadMKos(struct mirrortype *a, char *name)
-{
-  FILE   *f;
-  int    i, j, maxord;
-  double *dp; 
-
-#ifdef SEVEN_ORDER
-  maxord= 8;	  
-#else
-  maxord= 5;	  
-#endif
-
-  printf("read mkos from %s ? <1>", name);
-  scanf("%d", &i);
-  if (i == 1)
-    {
-      printf("READMKos called: read from %s\n", name); 
-      dp= (double *)a;
-      if ((f= fopen(name, "r+")) == NULL)
-	{
-	  fprintf(stderr, "ReadMKos: error: open file %s\n", name); 
-	  exit(-1);   
-	}  
- 
-      for (i= 0; i <= maxord; i++) 
-	for (j= 0; j <= maxord; j++) 
-	  if ((i + j) <= maxord) fscanf(f, "%lf\n", &dp[i+j*(maxord+1)]);
-      fclose(f); 
-    }
-}  /* end  ReadMKos */ 
 
 /* check the range of iord */
 void Check_iord(struct BeamlineType *bl)

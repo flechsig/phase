@@ -10,10 +10,11 @@ from scipy import optimize
 from scipy import stats
 
 def moments(data,circle,rotate,vheight):
-    """Returns (height, amplitude, x, y, width_x, width_y, rotation angle)
-    the gaussian parameters of a 2D distribution by calculating its
-    moments.  Depending on the input parameters, will only output 
-    a subset of the above"""
+    """ Returns (height, amplitude, x, y, width_x, width_y, rotation angle)
+        the gaussian parameters of a 2D distribution by calculating its
+        moments.  Depending on the input parameters, will only output 
+        a subset of the above
+    """
 
     total = data.sum()
     X, Y = indices(data.shape)
@@ -58,7 +59,7 @@ def twodgaussian(inpars, circle, rotate, vheight):
                 by setting rotate=0
             vheight=1 - default allows a variable height-above-zero, i.e. an additive constant
                 for the Gaussian function.  Can remove first parameter by setting this to 0
-        """
+    """
 
     inpars_old = inpars
     inpars = list(inpars)
@@ -128,14 +129,15 @@ def gaussfit(data,err=None,params=[],autoderiv=1,return_all=0,circle=0,rotate=1,
            vheight=1 - default allows a variable height-above-zero, i.e. an additive constant
                for the Gaussian function.  Can remove first parameter by setting this to 0
 
-        Output:
+       Output:
             Default output is a set of Gaussian parameters with the same shape as the input parameters
             Can also output the covariance matrix, 'infodict' that contains a lot more detail about
             the fit (see scipy.optimize.leastsq), and a message from leastsq telling what the exit
             status of the fitting routine was
 
-        Warning: 
-            Does NOT necessarily output a rotation angle between 0 and 360 degrees."""
+       Warning: 
+            Does NOT necessarily output a rotation angle between 0 and 360 degrees.
+    """
 
     if params == []:
         params = (moments(data,circle,rotate,vheight))
