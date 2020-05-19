@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <14 Aug 15 14:27:44 flechsig> 
+//  Time-stamp: <19 May 20 14:58:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1132,6 +1132,7 @@ QWidget *MainWindow::createOpticalElementBox()
 
   QLabel *orderLabel   = new QLabel(tr("Diffraction order"));
   QLabel *densityLabel = new QLabel(tr("line density (1/mm)"));
+  densityLabel->setToolTip(tr("groove density xdens[0]"));
   QLabel *lambdagLabel  = new QLabel(tr("lambda_g (nm)"));    
   lambdagE  = new QLineEdit;
   integerSpinBox = new QSpinBox;
@@ -1148,7 +1149,9 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(vlsGroup, SIGNAL(clicked()), this, SLOT(grvlsslot()));
 
   QHBoxLayout *vlslayout = new QHBoxLayout;
-  QLabel *vlsLabel = new QLabel(tr("coeff(1)...coeff(4)"));
+  QLabel *vlsLabel = new QLabel(tr("xdens(1)...xdens(4)"));
+  vlsLabel->setStatusTip(tr("groove density n(w)= xdens[0] + xdens[1] w + xdens[2] w^2 + xdens[3] w^3 + xdens[4] w^4"));
+  vlsLabel->setToolTip(tr("groove density n(w)= xdens[0] + xdens[1] w + xdens[2] w^2 + xdens[3] w^3 + xdens[4] w^4"));
   vls1 = new QLineEdit;
   vls2 = new QLineEdit;
   vls3 = new QLineEdit;

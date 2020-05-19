@@ -2,3 +2,5 @@
 Nov 6, 2014: works with QT5
 Sep 1, 2014 5 pm: switch from cvs to git.
 Nov 22, 2019: better automatic Qt5 configuration- give up Qt4
+              adjust your path to find qmake of your Qt version first
+May 19, 2020: add tooltips to VLS parameters

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/version.h */
 /*   Date      : <25 Jun 02 07:56:56 flechsig>  */
-/*   Time-stamp: <28 Aug 14 16:47:10 flechsig>  */
+/*   Time-stamp: <19 May 20 14:53:21 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -37,8 +37,8 @@
 
 #ifndef VERSION_H
   #define VERSION_H
-  #define              VERSION_STRING        "1.28" 
-  #define              VERSION_DATE          "11-MAR-2011"
+  #define              VERSION_STRING        "1.29" 
+  #define              VERSION_DATE          "19-MAY-2020"
 #endif    /* VERSION_H */   
 
 /* end version.h */

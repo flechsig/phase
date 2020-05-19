@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <24 Sep 19 16:42:10 flechsig> 
+//  Time-stamp: <19 May 20 15:36:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -115,13 +115,13 @@ void MainWindow::activateProc(const QString &action)
 {
   char buffer[MaxPathLength], header[MaxPathLength];
   struct PSImageType *psip;
-  struct constants *csp;
+  //struct constants *csp;
   struct BeamlineType *bl;
   //struct mirrortype *am;
   //struct geometryst *g;
-  struct map4 *m4p;
+  //struct map4 *m4p;
 
-  int filesOK;
+  int filesOK= 0;
   QEventLoop q;
 
 #ifdef DEBUG
@@ -139,7 +139,7 @@ void MainWindow::activateProc(const QString &action)
 	return;
 
       fillTaskVector(bl->elementzahl);
-      if (bl->hormapsloaded != bl->BLOptions.ifl.iord) 
+      if (bl->hormapsloaded != (unsigned int)bl->BLOptions.ifl.iord) 
 	MakeHorMaps(bl);
       
       qDebug() << __FILE__ << "asynMapAct: create maps in parallel threads";
@@ -214,7 +214,7 @@ void MainWindow::activateProc(const QString &action)
       
       unsigned int n= 0;
       unsigned int oldposition= bl->position;
-      while (n < elementList->count())
+      while (n < (unsigned int)elementList->count())
 	{
 	  bl->position= n;
 	  double driftlen= bl->ElementList[n].GDat.r+ bl->ElementList[n].GDat.rp;
@@ -291,9 +291,9 @@ void MainWindow::activateProc(const QString &action)
 	    }  // end switch
 	  
 	  n++;
-	  if (n < elementList->count())   // ELEMENTS LEFT IN LIST
+	  if (n < (unsigned int)elementList->count())   // ELEMENTS LEFT IN LIST
 	    {
-	      int mytype= bl->ElementList[n-1].MDat.Art;
+	      // int mytype= bl->ElementList[n-1].MDat.Art;
 	      // wait for end of asynchronous task
 	      cout << "start waiting in element loop to finish asynchronous task" << endl;
 	      while ( watcher->isRunning() )
@@ -1420,7 +1420,7 @@ void MainWindow::rBslot()
 } // rBslot  
 // end calc slots
 
-// debug
+// debug 
 void MainWindow::debugslot()
 {
   printf("debugslot activated\n");
@@ -1431,7 +1431,7 @@ void MainWindow::debugslot()
 //
 void MainWindow::deleteElement()
 {
-  struct ElementType *tmplist, *listpt, *tmplistpt;
+  struct ElementType *tmplist=NULL, *listpt, *tmplistpt;
   QListWidgetItem *item;
   int i;
   int pos= elementList->currentRow();
@@ -2052,7 +2052,7 @@ void MainWindow::grautoscaleslot()
 {
 #ifdef HAVE_QWT
   QString yminqst, ymaxqst, zminqst, zmaxqst;
-  struct PSImageType *psip;
+  //struct PSImageType *psip;
   struct EmfType     *emfpp;
   struct SurfaceType *surfp;
 
@@ -2314,7 +2314,7 @@ void MainWindow::misaliBoxslot(int newstate)
   
   myparent->myBeamline()->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
   myparent->myBeamline()->beamlineOK= 0;
-  for (int i=0; i< myparent->myBeamline()->elementzahl; i++) 
+  for (unsigned int i=0; i< myparent->myBeamline()->elementzahl; i++) 
     myparent->myBeamline()->ElementList[i].ElementOK= 0;
   UpdateStatus();
 } // misaliBoxslot
@@ -2328,7 +2328,7 @@ void MainWindow::dlambdaBoxslot(int newstate)
   
   myparent->myBeamline()->BLOptions.dlambdaflag= (newstate == Qt::Checked) ? 1 : 0;
   myparent->myBeamline()->beamlineOK= 0;
-  for (int i=0; i< myparent->myBeamline()->elementzahl; i++) 
+  for (unsigned int i=0; i< myparent->myBeamline()->elementzahl; i++) 
     if (myparent->myBeamline()->ElementList[i].MDat.Art & GRATINGBIT) 
       myparent->myBeamline()->ElementList[i].ElementOK= 0;
   UpdateStatus();
@@ -2427,7 +2427,7 @@ void MainWindow::openBeamline()
   // for now, I'll just check that the lengths match and leave a note
   // QString str56 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   name= fileName.toLatin1().data();
-  if (strlen(name) != fileName.length())
+  if ((int)strlen(name) != fileName.length())
   {
     cerr << "ERROR: Conversation error of fileName string in " << __FILE__ << '.' << endl;
     cerr << "Please report the bug and use a filename with a different length for now." << endl;
@@ -2468,8 +2468,8 @@ void MainWindow::parameterUpdateSlot()
   cout << "debug: parameterUpdateSlot called, file: " <<  __FILE__ << endl;
 #endif
 
-  index= parameterList->currentRow();      // old list model
-  index= parameterModel->getActualIndex(); // treemodel
+  //index= parameterList->currentRow();      // old list model
+  index= parameterModel->getActualIndex();   // treemodel
   parameterUpdate(index, parameterE->text().toLatin1().data(), 0); // updates the old list
   parameterModel->updateItemVal(parameterE->text(), parameterModel->getActualIndex());
   
