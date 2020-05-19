@@ -1,0 +1,1 @@
+we use the Qt version which is first in your path. Check: which qmake; qmake --version
