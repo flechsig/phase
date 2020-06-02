@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <19 May 20 15:36:38 flechsig> 
+//  Time-stamp: <26 May 20 12:10:19 roesner_b> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1393,6 +1393,60 @@ void MainWindow::rhoBslot()  // calculate roho
       rhoE->setText(rhostr.setNum(rho, 'g', 6));
     }
  } // rhoBslot
+
+void MainWindow::vlscalcbslot()  // calculate vls parameter
+{
+  double theta, source, image, r, m, lambda, N0, phi, alpha, beta, T1, T2, a1, a2, a3;
+  int number= elementList->currentRow();
+  QString a1string;
+  QString a2string;
+  
+  struct gdatset *gdat= &(myparent->myBeamline()->ElementList[number].GDat);
+#ifdef DEBUG
+  cout << "debug: " << __FILE__ << " vlscalcbslot called" << endl;
+#endif
+    
+  theta =  fabs(thetaE ->text().toDouble())*PI/180.;			// theta angle to surface normal [rad]
+  source = sourceE->text().toDouble(); 					// r1 [mm]
+  image =  imageE ->text().toDouble(); 					// r2 [mm]
+  r = rE ->text().toDouble();						// meridional radius [mm]
+  if (fabs(r) < 1e-18)
+    r = INFINITY;
+	#ifdef DEBUG
+	  cout << "debug: r is inf" << endl;
+	#endif
+  m = integerSpinBox->value();         					// diffraction order
+  lambda = myparent->myBeamline()->BLOptions.lambda; 			// lambda [nm]
+  N0 = gdat->xdens[0];							// line density [mm^⁻1]
+
+
+  if (theta >= 90.0)
+    QMessageBox::warning(this, tr("Calculate Radius"),
+			 tr("theta %1 >= 90 deg.\ntake no action").arg(thetaE ->text()));
+  else
+    {
+      phi = asin(m*lambda*N0/2/cos(theta));					// angle phi [rad]
+      alpha = theta + phi;							// angle alpha [rad]
+      beta = 2*phi-alpha;			 				// angle beta [rad]
+	#ifdef DEBUG
+	  cout << "debug: phi = " << phi/PI*180. << " deg" << endl;
+          cout << "debug: alpha = " << alpha/PI*180. << " deg" << endl;
+	  cout << "debug: beta = " << beta/PI*180. << " deg" << endl;
+	  cout << "debug: lambda = " << lambda*1E6 << " [nm]" << endl;
+	  cout << "debug: R = " << r << " [mm]" << endl;
+	  cout << "debug: N0 = " << N0 << " [mm^-1]" << endl;
+	#endif
+      T1 = pow(cos(alpha),2)/source-cos(alpha)/r;
+      T2 = pow(cos(beta),2)/image-cos(beta)/r;
+      a1 = N0/(sin(alpha)+sin(beta)) * (  pow(cos(alpha),2)/source + pow(cos(beta),2)/image - (cos(alpha)+cos(beta))/(r)  );
+      a2 = 3/(2*m*lambda)*(sin(2*alpha)/(source)* (1/(2*r)-cos(alpha)/(2*source)) + sin(2*beta)/(image)* (1/(2*r)-cos(beta)/(2*image)));
+//      a3 = 1/(2*m*lambda)*(T1/source*(4*pow(sin(alpha),2)/source-T1) + T2/image*(4*pow(sin(beta),2)/image-T2) - (cos(alpha) + cos(beta))/pow(r,3)); // This formula comes from Rolf's document
+      a3 = 1/(2*m*lambda)*(T1/source*(4*pow(sin(alpha),2)/source-T1) + T2/image*(4*pow(sin(beta),2)/image-T2) - (cos(alpha) + cos(beta))/pow(r,3) +1/(source*pow(r,2)) + 1/(image*pow(r,2)));  // This is the exact formula, if the coefficients of the path funciton are considered.
+      vls1->setText(a1string.setNum(a1, 'g', 6));
+      vls2->setText(a2string.setNum(a2, 'g', 6));
+      vls3->setText(a2string.setNum(a3, 'g', 6));
+    }
+ } // vlscalcbslot
 
 void MainWindow::rBslot()
 {

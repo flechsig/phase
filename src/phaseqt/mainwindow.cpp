@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <19 May 20 14:58:35 flechsig> 
+//  Time-stamp: <26 May 20 12:07:13 roesner_b> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1156,7 +1156,10 @@ QWidget *MainWindow::createOpticalElementBox()
   vls2 = new QLineEdit;
   vls3 = new QLineEdit;
   vls4 = new QLineEdit;
+  vlscalcb  = new QPushButton(QIcon(":/images/Blue-arrow-right-32.png"), tr("calc"), this);
+  connect(vlscalcb, SIGNAL(clicked()), this, SLOT(vlscalcbslot()));
   vlslayout->addWidget(vlsLabel);
+  vlslayout->addWidget(vlscalcb);
   vlslayout->addWidget(vls1);
   vlslayout->addWidget(vls2);
   vlslayout->addWidget(vls3);

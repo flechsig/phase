@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2015-05-02 22:01:59 flechsig>  */
+/*  Time-stamp: <26 May 20 12:13:22 roesner_b>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -159,6 +159,7 @@ private slots:
     void imageBslot();
     void rBslot();
     void rhoBslot();
+    void vlscalcbslot();
     void elementApplyBslot();    
     void sigmaslot();
     void fwhmslot();
@@ -304,6 +305,7 @@ private:
     QLineEdit *vls2;
     QLineEdit *vls3;
     QLineEdit *vls4;
+    QPushButton *vlscalcb;
     QLineEdit *duE;  
     QLineEdit *dwE;  
     QLineEdit *dlE;  
