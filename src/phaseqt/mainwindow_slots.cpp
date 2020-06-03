@@ -1396,7 +1396,18 @@ void MainWindow::rhoBslot()  // calculate roho
 
 void MainWindow::vlscalcbslot()  // calculate vls parameter
 {
-  double theta, source, image, r, m, lambda, N0, phi, alpha, beta, T1, T2, a1, a2, a3;
+  double theta, r1, r2, r, m, lambda, N0, phi, al, be, a20, a30, a40, a50, T1, T2, a1, a2, a3, a4;
+  // r1 = source distance [mm]
+  // r2 = image distance [mm]
+  // r = tangential radius [mm]
+  // a20 = surface parameter a20 of toroid
+  // a30 = surface parameter a20 of toroid
+  // a40 = surface parameter a20 of toroid
+  // a50 = surface parameter a50 of toroid
+  // T1(alpha,r) = tangential contribution to shape for entrance arm
+  // T2(alpha,r) = tangential contribution to shape for exit arm  
+  // a1, a2, a3, a4: line density parameters in the form: 
+  //       N(w) = N0 + a1 * w + a2 * w² + ...
   int number= elementList->currentRow();
   QString a1string;
   QString a2string;
@@ -1407,8 +1418,8 @@ void MainWindow::vlscalcbslot()  // calculate vls parameter
 #endif
     
   theta =  fabs(thetaE ->text().toDouble())*PI/180.;			// theta angle to surface normal [rad]
-  source = sourceE->text().toDouble(); 					// r1 [mm]
-  image =  imageE ->text().toDouble(); 					// r2 [mm]
+  r1 = sourceE->text().toDouble(); 					// r1 [mm]
+  r2 =  imageE ->text().toDouble(); 					// r2 [mm]
   r = rE ->text().toDouble();						// meridional radius [mm]
   if (fabs(r) < 1e-18)
     r = INFINITY;
@@ -1425,26 +1436,33 @@ void MainWindow::vlscalcbslot()  // calculate vls parameter
 			 tr("theta %1 >= 90 deg.\ntake no action").arg(thetaE ->text()));
   else
     {
-      phi = asin(m*lambda*N0/2/cos(theta));					// angle phi [rad]
-      alpha = theta + phi;							// angle alpha [rad]
-      beta = 2*phi-alpha;			 				// angle beta [rad]
+      phi = asin(m*lambda*N0/2/cos(theta));				// angle phi [rad]
+      al = theta + phi;							// angle alpha [rad]
+      be = -(2*phi-al);			 				// angle beta [rad]
 	#ifdef DEBUG
 	  cout << "debug: phi = " << phi/PI*180. << " deg" << endl;
-          cout << "debug: alpha = " << alpha/PI*180. << " deg" << endl;
-	  cout << "debug: beta = " << beta/PI*180. << " deg" << endl;
+          cout << "debug: alpha = " << al/PI*180. << " deg" << endl;
+	  cout << "debug: -beta = " << be/PI*180. << " deg" << endl;
 	  cout << "debug: lambda = " << lambda*1E6 << " [nm]" << endl;
 	  cout << "debug: R = " << r << " [mm]" << endl;
 	  cout << "debug: N0 = " << N0 << " [mm^-1]" << endl;
 	#endif
-      T1 = pow(cos(alpha),2)/source-cos(alpha)/r;
-      T2 = pow(cos(beta),2)/image-cos(beta)/r;
-      a1 = N0/(sin(alpha)+sin(beta)) * (  pow(cos(alpha),2)/source + pow(cos(beta),2)/image - (cos(alpha)+cos(beta))/(r)  );
-      a2 = 3/(2*m*lambda)*(sin(2*alpha)/(source)* (1/(2*r)-cos(alpha)/(2*source)) + sin(2*beta)/(image)* (1/(2*r)-cos(beta)/(2*image)));
-//      a3 = 1/(2*m*lambda)*(T1/source*(4*pow(sin(alpha),2)/source-T1) + T2/image*(4*pow(sin(beta),2)/image-T2) - (cos(alpha) + cos(beta))/pow(r,3)); // This formula comes from Rolf's document
-      a3 = 1/(2*m*lambda)*(T1/source*(4*pow(sin(alpha),2)/source-T1) + T2/image*(4*pow(sin(beta),2)/image-T2) - (cos(alpha) + cos(beta))/pow(r,3) +1/(source*pow(r,2)) + 1/(image*pow(r,2)));  // This is the exact formula, if the coefficients of the path funciton are considered.
+      T1 = pow(cos(al),2)/r1-cos(al)/r;
+      T2 = pow(cos(be),2)/r2-cos(be)/r;
+      a20 = 1/2/r;
+      a30 = 0;
+      a40 = 1/8/pow(r,3);
+      a50 = 0;
+// calculate VLS parameters, from the wavefront aberration contributions Ci00 from:
+// James A. Samson, David L. Ederer: Vacuum Ultraviolet Spectroscopy II, Academic Press, London 1998
+      a1 = 2/(m*lambda)*(T1/2+T2/2);
+      a2 = 3/(m*lambda)*(-a30*cos(al) + T1*sin(al)/2/r1 - a30*cos(be) + T2*sin(be)/2/r2);
+      a3 = 4/(m*lambda)*(-a40*cos(al) + 1/8/r1*(4*pow(a20,2)-pow(T1,2)-4*a30*sin(2*al)) + T1*pow(sin(al),2)/2/pow(r1,2) - a40*cos(be) + 1/8/r2*(4*pow(a20,2)-pow(T2,2)-4*a30*sin(2*be)) + T2*pow(sin(be),2)/2/pow(r2,2));
+      a4 = 5/(m*lambda)*(-a50*cos(al) + 1/2/r1*(2*a20*a30+a30*T1*cos(al)-a40*sin(2*al))+sin(al)/2/pow(r1,2)*(pow(a20,2)-a30*sin(2*al))-3*pow(T1,2)*sin(al)/8/pow(r1,2)+T1*pow(sin(al),3)/2/pow(r1,3) - a50*cos(be)+1/2/r2*(2*a20*a30+a30*T2*cos(be)-a40*sin(2*be))+ sin(be)/2/pow(r2,2)*(pow(a20,2)-a30*sin(2*be))-3*pow(T2,2)*sin(be)/8/pow(r2,2)+T2*pow(sin(be),3)/2/pow(r2,3));
       vls1->setText(a1string.setNum(a1, 'g', 6));
       vls2->setText(a2string.setNum(a2, 'g', 6));
       vls3->setText(a2string.setNum(a3, 'g', 6));
+      vls4->setText(a2string.setNum(a4, 'g', 6));
     }
  } // vlscalcbslot
 
