@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <26 May 20 12:07:13 roesner_b> 
+//  Time-stamp: <03 Jun 20 14:58:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1133,7 +1133,7 @@ QWidget *MainWindow::createOpticalElementBox()
   QLabel *orderLabel   = new QLabel(tr("Diffraction order"));
   QLabel *densityLabel = new QLabel(tr("line density (1/mm)"));
   densityLabel->setToolTip(tr("groove density xdens[0]"));
-  QLabel *lambdagLabel  = new QLabel(tr("lambda_g (nm)"));    
+  //QLabel *lambdagLabel  = new QLabel(tr("lambda_g (nm)"));    
   lambdagE  = new QLineEdit;
   integerSpinBox = new QSpinBox;
   integerSpinBox->setRange(-20, 20);
