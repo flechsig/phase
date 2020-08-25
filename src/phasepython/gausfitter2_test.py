@@ -2,6 +2,7 @@ from gausfitter2 import *
 import numpy as np
 import matplotlib.pyplot as plt
 import mycontour
+import sys
 
 """debug the gausfitter2.py
    check the very strange output parameter
@@ -11,6 +12,9 @@ import mycontour
 def source_link():
     """dummy function to show the source link in sphinx 
     """
+
+if __name__ != "__main__":
+    sys.exit()  # stop here for sphinx autodoc
 
 nx= 111
 ny= 123
