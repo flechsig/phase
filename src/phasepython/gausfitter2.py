@@ -55,12 +55,14 @@ def twodgaussian(inpars, circle, rotate, vheight):
         inpars = (height,amplitude,center_x,center_y,width_x,width_y,rota)
 
         You can choose to ignore / neglect some of the above input parameters using the following options:
-            circle=0 - default is an elliptical gaussian (different x, y widths), but can reduce
-                the input by one parameter if it's a circular gaussian
-            rotate=1 - default allows rotation of the gaussian ellipse.  Can remove last parameter
-                by setting rotate=0
-            vheight=1 - default allows a variable height-above-zero, i.e. an additive constant
-                for the Gaussian function.  Can remove first parameter by setting this to 0
+
+    Args:
+        circle=0 (int): default is an elliptical gaussian (different x, y widths), but can reduce
+                        the input by one parameter if it's a circular gaussian
+        rotate=1 (int): default allows rotation of the gaussian ellipse.  Can remove last parameter
+                        by setting rotate=0
+        vheight=1 (int): default allows a variable height-above-zero, i.e. an additive constant
+                         for the Gaussian function.  Can remove first parameter by setting this to 0
     """
 
     inpars_old = inpars
@@ -112,27 +114,28 @@ def twodgaussian(inpars, circle, rotate, vheight):
 
 def gaussfit(data, err=None, params=[], autoderiv=1, return_all=0, circle=0, rotate=1, vheight=1):
     """Gaussian fitter with the ability to fit a variety of different forms of 2-dimensional gaussian.
-       UF: check gausfitter2_test.py for output parameters
+       
+    UF: check gausfitter2_test.py for output parameters
     
-    Input Parameters:
-        data - 2-dimensional data array
-        err=None - error array with same size as data array
-        params=[] - initial input parameters for Gaussian function.
-                    (height, amplitude, x, y, width_x, width_y, rota)
-                    if not input, these will be determined from the moments of the system, 
-                    assuming no rotation
-        autoderiv=1 - use the autoderiv provided in the lmder.f function (the alternative
-                      is to us an analytic derivative with lmdif.f: this method is less robust)
-        return_all=0 - Default is to return only the Gaussian parameters.  See below for
-                       detail on output
-        circle=0 - default is an elliptical gaussian (different x, y widths), but can reduce
-                   the input by one parameter if it's a circular gaussian
-        rotate=1 - default allows rotation of the gaussian ellipse.  Can remove last parameter
-                   by setting rotate=0
-        vheight=1 - default allows a variable height-above-zero, i.e. an additive constant
-               for the Gaussian function.  Can remove first parameter by setting this to 0
+    Args:
+        data (flt):  2-dimensional data array
+        err=None (flt): error array with same size as data array
+        params=[] (arr): initial input parameters for Gaussian function.
+                         (height, amplitude, x, y, width_x, width_y, rota)
+                         if not input, these will be determined from the moments of the system, 
+                         assuming no rotation
+        autoderiv=1 (int): use the autoderiv provided in the lmder.f function (the alternative
+                           is to us an analytic derivative with lmdif.f: this method is less robust)
+        return_all=0 (int): Default is to return only the Gaussian parameters.  See below for
+                            detail on output
+        circle=0 (int): default is an elliptical gaussian (different x, y widths), but can reduce
+                        the input by one parameter if it's a circular gaussian
+        rotate=1 (int): default allows rotation of the gaussian ellipse.  Can remove last parameter
+                        by setting rotate=0
+        vheight=1 (int): default allows a variable height-above-zero, i.e. an additive constant
+                         for the Gaussian function.  Can remove first parameter by setting this to 0
 
-       Output:
+       Returns:
            Default output is a set of Gaussian parameters with the same shape as the input parameters
            Can also output the covariance matrix, 'infodict' that contains a lot more detail about
            the fit (see scipy.optimize.leastsq), and a message from leastsq telling what the exit
