@@ -12,9 +12,10 @@ from scipy import stats
 
 def moments(data, circle, rotate, vheight):
     """ Returns (height, amplitude, x, y, width_x, width_y, rotation angle)
-        the gaussian parameters of a 2D distribution by calculating its
-        moments.  Depending on the input parameters, will only output 
-        a subset of the above
+
+    the gaussian parameters of a 2D distribution by calculating its
+    moments.  Depending on the input parameters, will only output 
+    a subset of the above
     """
 
     total = data.sum()
@@ -42,19 +43,20 @@ def moments(data, circle, rotate, vheight):
 
 def twodgaussian(inpars, circle, rotate, vheight):
     """Returns a 2d gaussian function of the form:
-        x' = cos(rota) * x - sin(rota) * y
-        y' = sin(rota) * x + cos(rota) * y
-        (rota should be in degrees)
-        g = b + a exp ( - ( ((x-center_x)/width_x)**2 +
-        ((y-center_y)/width_y)**2 ) / 2 )
 
-        where x and y are the input parameters of the returned function,
-        and all other parameters are specified by this function
+    x' = cos(rota) * x - sin(rota) * y
+    y' = sin(rota) * x + cos(rota) * y
+    (rota should be in degrees)
+    g = b + a exp ( - ( ((x-center_x)/width_x)**2 +
+    ((y-center_y)/width_y)**2 ) / 2 )
 
-        However, the above values are passed by list.  The list should be:
-        inpars = (height,amplitude,center_x,center_y,width_x,width_y,rota)
+    where x and y are the input parameters of the returned function,
+    and all other parameters are specified by this function
 
-        You can choose to ignore / neglect some of the above input parameters using the following options:
+    However, the above values are passed by list.  The list should be:
+    inpars = (height,amplitude,center_x,center_y,width_x,width_y,rota)
+
+    You can choose to ignore / neglect some of the above input parameters using the following options:
 
     Args:
         circle=0 (int): default is an elliptical gaussian (different x, y widths), but can reduce
@@ -63,6 +65,10 @@ def twodgaussian(inpars, circle, rotate, vheight):
                         by setting rotate=0
         vheight=1 (int): default allows a variable height-above-zero, i.e. an additive constant
                          for the Gaussian function.  Can remove first parameter by setting this to 0
+
+    Returns:
+        array: see above
+
     """
 
     inpars_old = inpars
@@ -143,6 +149,7 @@ def gaussfit(data, err=None, params=[], autoderiv=1, return_all=0, circle=0, rot
 
        Warning: 
            Does NOT necessarily output a rotation angle between 0 and 360 degrees.
+
     """
 
     if params == []:
