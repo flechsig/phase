@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <12 Jun 19 11:58:21 flechsig>
+# Time-stamp: <28 Aug 20 07:58:01 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -2095,8 +2095,8 @@ class emf(object):
             dia_up=None  (flt): the upstream diameter of the capillary
             dia_down=0.0 (flt): the downstream diameter of the capillary
 
-        ToDo:  
-            test           
+        Note:  
+            test todo            
 
         Example:
             >>> emf.proccapillary(a=200, b=1, dia_up=5e-3, dia_down=1e-3)    
@@ -2336,7 +2336,7 @@ class emf(object):
         Args:
             drift=None (flt): the drift distance
 
-        ToDo:  
+        Note:  
             tested UF 1709 - OK           
 
         Example:

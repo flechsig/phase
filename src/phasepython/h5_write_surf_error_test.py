@@ -21,11 +21,12 @@ u= np.zeros((nl, nw))
 height= 22.0e-9
 t1= 0.8
 
-for row in np.arange(nl) :
-    for col in np.arange(nw) :
-        u[row, col]= height*np.cos(2*np.pi/t1 * w[col])+ height*l[row]/0.005
+if __name__ == "__main__":
+    for row in np.arange(nl) :
+        for col in np.arange(nw) :
+            u[row, col]= height*np.cos(2*np.pi/t1 * w[col])+ height*l[row]/0.005
 
-h5_write_surf_error('surf_err.h5', 'test', u, w, l)
+    h5_write_surf_error('surf_err.h5', 'test', u, w, l)
 
 if __name__ == "__main__":
     print("main")
