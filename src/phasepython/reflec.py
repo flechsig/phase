@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <07 Sep 18 16:39:15 flechsig> 
+# Time-stamp: <2020-10-29 09:49:13 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -14,7 +14,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import atomparser
 
-COMMON_MATERIALS = {'Quartz':  ['SiO2', 2.65],
+COMMON_MATERIALS = {'Diamond': ['C', 3.51],
+                    'Quartz':  ['SiO2', 2.65],
                     'Silica':  ['SiO2', 2.2],
                     'ULE':     ['Si0.925Ti0.075O2', 2.205],
                     'Zerodur': ['Si0.56Al0.5P0.16Li0.04Ti0.02Zr0.02Zn0.03O2.46', 2.53],
