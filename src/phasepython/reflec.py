@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <2020-10-29 09:49:13 flechsig> 
+# Time-stamp: <30 Nov 20 09:26:13 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -49,7 +49,7 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
       d=1.0 (double): thickness of the foil or gas in m 
       log='' (str): logscal for axis ['', 'x', 'y', 'xy']   
       p=-1 (float): gas pressure in Pa (pressure in mbar x 100)
-      plot='reflectivity' (str): plot ['', 'reflectivity', 'transmittance']
+      plot='reflectivity' (str): plot ['', 'reflectivity', 'transmittance'], other strings: no plot
       punit='pascal' (str): pressure unit ['pascal', 'mbar', 'torr'...]
       rho=-1 (float): density in g/cm^3 - overwrites value from table(s)
       T=-1 (float): gas temperature in K
@@ -145,8 +145,8 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
    beta  = re * wavelength**2 * Nt * f2 / (2.0 * np.pi)
    
    #n     = np.complex(1.0 - delta, beta)                      # complex index of refraction
-   n = np.zeros(len(delta), dtype=complex)
-   for i in np.arange(len(delta)) :
+   n = np.zeros(delta.size, dtype=complex)
+   for i in np.arange(delta.size) :
       n[i]= complex(1.0 - delta[i], beta[i])
 
    #arg = 1.0 - delta
