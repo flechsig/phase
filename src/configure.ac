@@ -298,7 +298,7 @@ AC_ARG_WITH([qwt],
     else
       AC_MSG_NOTICE((1) did not found libqwt.so in /usr/local)
       AC_MSG_NOTICE((2) search for libqwt.so in /usr/lib64)
-      qwt=`find /usr/lib64 -name libqwt.so -print 2>/dev/null | sort | tail -1 | sed -e 's|/lib64/libqwt.so||'`
+      qwt=`find /usr/lib64/ -name libqwt.so -print 2>/dev/null | sort | tail -1 | sed -e 's|/lib64/libqwt.so||'`
       if test -n "${qwt}"; then
          AC_MSG_NOTICE([(2) we found libqwt.so under ${qwt} - OK])
          AC_SUBST(QWT, [${qwt}])
