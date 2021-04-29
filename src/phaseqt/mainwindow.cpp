@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <03 Jun 20 14:58:47 flechsig> 
+//  Time-stamp: <2021-04-29 11:53:06 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -992,6 +992,7 @@ QWidget *MainWindow::createOpticalElementBox()
   pmAct = new QAction(tr("&flat"), this);
   toAct = new QAction(tr("&toroidal"), this);
   peAct = new QAction(tr("&plane- elliptical"), this);
+  phAct = new QAction(tr("plane- &hyperbolic"), this);
   elAct = new QAction(tr("&elliptical"), this);
   coAct = new QAction(tr("&conical"), this);
   geAct = new QAction(tr("&generic"), this); 
@@ -1004,6 +1005,7 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(pmAct);
   shapeMenu->addAction(toAct);
   shapeMenu->addAction(peAct);
+  shapeMenu->addAction(phAct);
   shapeMenu->addAction(elAct);
   shapeMenu->addAction(coAct);
   shapeMenu->addSeparator();
@@ -1024,6 +1026,7 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(pmAct, SIGNAL(triggered()), this, SLOT(pmslot()));
   connect(toAct, SIGNAL(triggered()), this, SLOT(toslot()));
   connect(peAct, SIGNAL(triggered()), this, SLOT(peslot()));
+  connect(phAct, SIGNAL(triggered()), this, SLOT(phslot()));
   connect(elAct, SIGNAL(triggered()), this, SLOT(elslot()));
   connect(coAct, SIGNAL(triggered()), this, SLOT(coslot()));
   connect(geAct, SIGNAL(triggered()), this, SLOT(geslot()));
@@ -2273,6 +2276,13 @@ void MainWindow::UpdateElementBox(int number)
       sourceE->setEnabled(true);
       imageE->setEnabled(true);
       break;
+    case kEOEPHyp:   
+      shapeLabel->setText(QString(tr("plane-hyperbolic"))); 
+      sourceB->setEnabled(true);
+      imageB->setEnabled(true);
+      sourceE->setEnabled(true);
+      imageE->setEnabled(true);
+      break;  
     case kEOEElli:   
       shapeLabel->setText(QString(tr("elliptical"))); 
       sourceB->setEnabled(true);
