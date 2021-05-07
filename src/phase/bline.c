@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2021-04-29 15:57:55 flechsig>  */
+/*   Time-stamp: <2021-05-07 13:14:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2727,7 +2727,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 {
   double r, rho, *dp, cone, ll,
     alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
-    rpole, fipole, small, kellip, Rellip, ahyp, bhyp, alphahyp, betahyp, gammahyp, thetahyp, s1hyp, s2hyp, x0hyp, y0hyp, tmphyp;
+    rpole, fipole, small, kellip, Rellip, ahyp, bhyp,  gammahyp, deltahyp, thetahyp, s1hyp, s2hyp, x0hyp, y0hyp, ecc;
   int i, k, l;
   struct mirrortype mirror;
 
@@ -3006,30 +3006,33 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       break;
 
     case kEOEPHyp:
+      // see doc/hyperbolic-scheme.pdf 
       fprintf(stderr, "Defmirrorc: plane- hyperbolic shape - Apr 2021 not tested\n");
-      for (i= 0; i < k; i++) dp[i] = 0.0;
+      for (i= 0; i < k; i++) dp[i] = 0.0;  // clean up 
       s1hyp= fabs(x->r1);
       s2hyp= fabs(x->r2);
-      thetahyp= fabs(alpha);
-      betahyp= PI - 2 * thetahyp; // Winkel im Dreieck
-      bhyp= 0.5 * sqrt(pow(s1hyp, 2)+ pow(s2hyp, 2) - 2 * s1hyp * s2hyp * cos(betahyp));  // cosinussatz
-      alphahyp= asin(s2hyp * sin(betahyp)/(2 * bhyp));
-      gammahyp= asin(s1hyp * sin(betahyp)/(2 * bhyp));
-      y0hyp= s2hyp * sin(gammahyp);  // betrag
-      x0hyp= s2hyp * cos(gammahyp)- bhyp; // betrag
-      ahyp = sqrt(pow(x0hyp, 2)* pow(bhyp, 2)/(pow(y0hyp, 2)+ pow(bhyp, 2)));
+      thetahyp= alpha;
+
+      ahyp= fabs(s2hyp - s1hyp) / 2.0;                          // semiaxis a
+      bhyp= sqrt(fabs(s1hyp* s2hyp)) * cos(thetahyp);           // semiaxis b (Kosinussatz)
+      ecc=  sqrt(pow(ahyp,2)+ pow(bhyp,2));                     // eccentricity
+      gammahyp= asin(s1hyp* sin(PI- 2* thetahyp)/(2* ecc));     // angle at virtual focus (Sinussatz)	
+      y0hyp= -1.0 * s2hyp * sin(gammahyp);  // betrag und negativ
+      x0hyp= s2hyp * cos(gammahyp)- ecc;    // betrag
+      deltahyp= gammahyp + (PI/2 - thetahyp); // slope at x0y0 = rotation angle 
+      
       printf("DefMirrorC: hyperbolic parameters: \n");
       printf("source distance (short): %f\n", s1hyp);
       printf("virtual image distance (long): %f\n",  s2hyp);
-      printf("major axis:                   a = %f mm\n", ahyp);
-      printf("minor axis                    b = %f mm\n", bhyp);
+      printf("major axis:                   a = %e mm\n", ahyp);
+      printf("minor axis                    b = %e mm\n", bhyp);
+      printf("eccentricity                  e = %e mm\n", ecc);
       printf("theta:                    theta = %f rad\n", thetahyp);
-      printf("theta:                    theta = %f deg\n", thetahyp* PI/180);
+      printf("theta:                    theta = %f deg\n", thetahyp*  180/ PI);
       printf("x0:                          x0 = %f mm\n", x0hyp);
       printf("y0:                          y0 = %f mm\n", y0hyp);
-      printf("alphahyp:              alphahyp = %f deg.\n", alphahyp* PI/180);
-      printf("betahyp:               betahyp  = %f deg.\n", betahyp* PI/180);
-      printf("gammahyp:              gammahyp = %f deg.\n", gammahyp* PI/180);
+      printf("deltahyp:              deltahyp = %f deg.\n", deltahyp* 180/ PI);
+      printf("gammahyp:              gammahyp = %f deg.\n", gammahyp* 180/ PI);
       printf("DEBUG: mirror coefficients\n");
       //for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
       break;
