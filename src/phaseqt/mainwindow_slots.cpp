@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-04-29 11:38:20 flechsig> 
+//  Time-stamp: <2021-05-28 11:09:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2911,6 +2911,21 @@ void MainWindow::phslot()
     }
   cout << "debug: " << __FILE__ << "\n phslot called - Apr 2021: hyperbolic mirrors not yet tested\n" << endl;
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOEPHyp;
+  UpdateElementBox(number); 
+}
+
+// slot shapeMenu plane hyperbolic mirror
+void MainWindow::hslot()
+{
+  int number= elementList->currentRow();
+  if (number < 0) 
+    {
+      QMessageBox::warning(this, tr("No valid dataset!"),
+			   tr("(nothing selected)"));
+      return;
+    }
+  cout << "debug: " << __FILE__ << "\n hslot called - Apr 2021: hyperbolic mirrors not yet tested\n" << endl;
+  myparent->myBeamline()->ElementList[number].MDat.Art= kEOEHyp;
   UpdateElementBox(number); 
 }
 

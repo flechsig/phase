@@ -61,7 +61,7 @@ let sin(phi)= sina;
 
 off echo$
 on fort$
-out "hyperbola_8.f"$
+out "hyperbola_8.F"$
 write "      subroutine hyperbola_8(a0,b0,w00,u00,phi,a)";
 write "      real*8 a0, b0, w00, u00, phi, a";
 write "      real*8 cosa,sina,l22,w11,c33,w12";
@@ -71,8 +71,8 @@ write "      sina= sin(phi)";
 write "      l22=-cosa**2*(a0**2+b0**2)+b0**2";
 write "      w11=2*b0**2*(u00*sina-w00*cosa)";
 write "      c33=-cosa*w00*w11+sina*u00*w11+2*b0**2*l22";
-write "      w12=-sqrt(2)*cosa*sina*a0**2-sqrt(2)*cosa*sina*b0**2";
-write "      c44=-sqrt(2)*cosa*a0**2*u00+sqrt(2)*sina*b0**2*w00";
+write "      w12=-sqrt(2.0)*cosa*sina*a0**2-sqrt(2.0)*cosa*sina*b0**2";
+write "      c44=-sqrt(2.0)*cosa*a0**2*u00+sqrt(2.0)*sina*b0**2*w00";
 begin
 integer n1,n2;
 for n1:=0:ord
@@ -83,7 +83,7 @@ for n1:=0:ord
 end;
 write "      return";
 write "      end";
-shut "hyperbola_8.f"$
+shut "hyperbola_8.F"$
 off fort$
 on echo$
 

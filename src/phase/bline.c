@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2021-05-07 13:14:41 flechsig>  */
+/*   Time-stamp: <2021-05-28 11:03:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3004,8 +3004,10 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 #endif
 	}
       break;
-
-    case kEOEPHyp:
+      
+    case kEOEHyp:
+    case kEOEPHyp:  
+      fprintf(stderr, "Defmirrorc: hyperbolic shape - Apr 2021 not tested\n");
       // see doc/hyperbolic-scheme.pdf 
       fprintf(stderr, "Defmirrorc: plane- hyperbolic shape - Apr 2021 not tested\n");
       for (i= 0; i < k; i++) dp[i] = 0.0;  // clean up 
@@ -3017,8 +3019,8 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       bhyp= sqrt(fabs(s1hyp* s2hyp)) * cos(thetahyp);           // semiaxis b (Kosinussatz)
       ecc=  sqrt(pow(ahyp,2)+ pow(bhyp,2));                     // eccentricity
       gammahyp= asin(s1hyp* sin(PI- 2* thetahyp)/(2* ecc));     // angle at virtual focus (Sinussatz)	
-      y0hyp= -1.0 * s2hyp * sin(gammahyp);  // betrag und negativ
-      x0hyp= s2hyp * cos(gammahyp)- ecc;    // betrag
+      y0hyp= -1.0 * s2hyp * sin(gammahyp);    // betrag und negativ
+      x0hyp= s2hyp * cos(gammahyp)- ecc;      // betrag
       deltahyp= gammahyp + (PI/2 - thetahyp); // slope at x0y0 = rotation angle 
       
       printf("DefMirrorC: hyperbolic parameters: \n");
@@ -3033,9 +3035,14 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("y0:                          y0 = %f mm\n", y0hyp);
       printf("deltahyp:              deltahyp = %f deg.\n", deltahyp* 180/ PI);
       printf("gammahyp:              gammahyp = %f deg.\n", gammahyp* 180/ PI);
-      printf("DEBUG: mirror coefficients\n");
+      //printf("DEBUG: mirror coefficients\n");
       //for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
-      break;
+      // hyperbola_8();
+      hyperbola_8(&ahyp, &bhyp, &x0hyp, &y0hyp, &deltahyp, dp);
+      if (etype == kEOEPHyp)  // overwrite coefficients for plane hyperbola
+	for (i= l; i < k; i++) dp[i]= 0.0;
+	  
+      break;  // end hyperbola
 
     default:
       fprintf(stderr, "defmirrorc: %d - unknown shape\n", etype); 

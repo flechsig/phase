@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-04-29 11:53:06 flechsig> 
+//  Time-stamp: <2021-05-28 11:31:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -992,8 +992,9 @@ QWidget *MainWindow::createOpticalElementBox()
   pmAct = new QAction(tr("&flat"), this);
   toAct = new QAction(tr("&toroidal"), this);
   peAct = new QAction(tr("&plane- elliptical"), this);
-  phAct = new QAction(tr("plane- &hyperbolic"), this);
+  phAct = new QAction(tr("plane- h&yperbolic"), this);
   elAct = new QAction(tr("&elliptical"), this);
+  hAct = new QAction(tr("&hyperbolic"), this);
   coAct = new QAction(tr("&conical"), this);
   geAct = new QAction(tr("&generic"), this); 
   apAct = new QAction(tr("&Aperture/Slit"), this); 
@@ -1007,6 +1008,7 @@ QWidget *MainWindow::createOpticalElementBox()
   shapeMenu->addAction(peAct);
   shapeMenu->addAction(phAct);
   shapeMenu->addAction(elAct);
+  shapeMenu->addAction(hAct);
   shapeMenu->addAction(coAct);
   shapeMenu->addSeparator();
   shapeMenu->addAction(geAct);
@@ -1028,6 +1030,7 @@ QWidget *MainWindow::createOpticalElementBox()
   connect(peAct, SIGNAL(triggered()), this, SLOT(peslot()));
   connect(phAct, SIGNAL(triggered()), this, SLOT(phslot()));
   connect(elAct, SIGNAL(triggered()), this, SLOT(elslot()));
+  connect(hAct, SIGNAL(triggered()), this, SLOT(hslot()));
   connect(coAct, SIGNAL(triggered()), this, SLOT(coslot()));
   connect(geAct, SIGNAL(triggered()), this, SLOT(geslot()));
   connect(apAct, SIGNAL(triggered()), this, SLOT(apslot()));
@@ -2282,7 +2285,14 @@ void MainWindow::UpdateElementBox(int number)
       imageB->setEnabled(true);
       sourceE->setEnabled(true);
       imageE->setEnabled(true);
-      break;  
+      break;
+    case kEOEHyp:   
+      shapeLabel->setText(QString(tr("hyperbolic"))); 
+      sourceB->setEnabled(true);
+      imageB->setEnabled(true);
+      sourceE->setEnabled(true);
+      imageE->setEnabled(true);
+      break;   
     case kEOEElli:   
       shapeLabel->setText(QString(tr("elliptical"))); 
       sourceB->setEnabled(true);

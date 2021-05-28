@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2021-04-29 11:46:35 flechsig>  */
+/*   Time-stamp: <2021-05-28 11:25:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -133,7 +133,8 @@
 #define kInfoMenuEntry          77 
 #define kEOEElli                78
 #define kEOEPElli               79
-#define kEOEPHyp                80
+#define kEOEHyp                 80
+#define kEOEPHyp                81
 #define kEOESlit                99
 #define kEOEAuto                100
 #define kEOEFourier             101
@@ -536,6 +537,7 @@ void putpickfile(struct datset *, struct BeamlineType *, char *),
   #define mirror4to7      mirror4to7_
   #define misali_8        misali_8_
   #define elli_8          elli_8_
+  #define hyperbola_8     hyperbola_8_
 
   #define fdet_4         fdet_4_
   #define fgmapidp_4     fgmapidp_4_

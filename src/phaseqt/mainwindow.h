@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2021-04-29 11:32:55 flechsig>  */
+/*  Time-stamp: <2021-05-28 11:13:37 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -137,6 +137,7 @@ private slots:
     void toslot();
     void peslot();
     void phslot();
+    void hslot();
     void elslot();
     void coslot();
     void geslot();
@@ -287,6 +288,7 @@ private:
     QAction *toAct;
     QAction *peAct;
     QAction *phAct;
+    QAction *hAct;
     QAction *elAct;
     QAction *coAct;
     QAction *geAct;

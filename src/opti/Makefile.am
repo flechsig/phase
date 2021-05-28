@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaselib/Makefile.am
 #  Date      : <23 Jan 04 09:33:24 flechsig> 
-#  Time-stamp: <27 Feb 18 15:40:18 flechsig> 
+#  Time-stamp: <2021-05-28 11:38:07 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -48,7 +48,7 @@ phaseopti_SOURCES = phaseopti.cpp phaseopti.h \
 	../phase/rekursiv_2d_8.F \
 	../phase/get_partial_etc.for ../phase/replace_6v4v.F \
 	../phase/replace_wl_in_u.F ../phase/replace_wl_in_ypzp.F \
-	../phase/drift_8.for    ../phase/elli_8.F \
+	../phase/drift_8.for    ../phase/elli_8.F ../phase/hyperbola_8.F \
 	../phase/phasefor.F \
 	../phase/error.c        ../phase/xstrdup.c \
 	../phase/cutils.c       ../phase/rtrace.c \
