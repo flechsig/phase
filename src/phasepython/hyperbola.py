@@ -142,5 +142,5 @@ def hyperbola(s1=11, s2=33, theta=89, doplot=True, verbose=True) :
 
 if __name__ == '__main__' :
     print('main called')
-    hyperbola()
+    pars= hyperbola()
 #end     
