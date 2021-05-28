@@ -1,0 +1,33 @@
+% reduce
+% read with 1: in "hyperbolic-scheme.reduce";
+% input:
+% s1, s2, theta
+% s1: source distance
+% s2: image distance (virtual)
+% theta: angle to normal on the mirror
+
+% Winkel im Dreieck: alpha, beta, gamma (clockwise)
+% Winkel beta zwischen s1 und s2
+%beta:= pi - theta;
+
+% Kosinussatz
+% ab2: distance between the two foci of the hyperboloid 2(a+b)
+%ab2 := sqrt(s1^2 + s2^2 - 2 * s1 * s2 * cos(beta));
+
+% calculate a
+%a := ab2/2 - b;
+a:= Q - b;
+
+% use hyperbolic equation
+hyp := x^2/a^2 - y^2/b^2 - 1;
+% solve(hyp,b);
+y:= -b/a * sqrt(x^2-a^2);
+b:=sqrt(c0^2*a^2/x^2*(x^2-a^2));
+
+% simplify
+hyp1:= x^4 + a * x^3 + b * x^2 + c * x + d;
+y:= x - a/4;
+
+hyp2:= y^4 + p * y^2 + q * y + r;
+
+ystrich:= (-b^2*x/a^2)/sqrt(b^2/a^2 * x^2 -b^2)- ys0;
