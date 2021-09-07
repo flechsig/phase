@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <30 Nov 20 09:26:13 flechsig> 
+# Time-stamp: <2021-09-07 12:04:32 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -45,12 +45,12 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
    Args:
       element (str): element as chemical formula (String, case sensitive)
       energy (double): energy vector
-      theta (double): Grazing incidence angle (rad) 
+      theta (double): Grazing incidence angle of mirror (rad) 
       d=1.0 (double): thickness of the foil or gas in m 
       log='' (str): logscal for axis ['', 'x', 'y', 'xy']   
       p=-1 (float): gas pressure in Pa (pressure in mbar x 100)
       plot='reflectivity' (str): plot ['', 'reflectivity', 'transmittance'], other strings: no plot
-      punit='pascal' (str): pressure unit ['pascal', 'mbar', 'torr'...]
+      punit='pascal' (str): pressure unit for gas ['pascal', 'mbar', 'torr'...]
       rho=-1 (float): density in g/cm^3 - overwrites value from table(s)
       T=-1 (float): gas temperature in K
       verbose=True (bool): verbosity
@@ -258,7 +258,7 @@ def _readhenkes(en, tuples, verbose=True) :
    if w1 > 0.0 :
       return f1/w1, f2/w1, w1   # return averages and sum
    else :
-      raise ValueError("sum of weights == 0")
+      raise ValueError("_readhenkes error -> not tablulated material")
 #end _readhenkes
 
 def readhenke(element, verbose=True) :
