@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <2021-09-07 12:04:32 flechsig> 
+# Time-stamp: <2021-09-13 13:38:41 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -149,9 +149,16 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
    for i in np.arange(delta.size) :
       n[i]= complex(1.0 - delta[i], beta[i])
 
-   #arg = 1.0 - delta
-   #print("arg= {}".format(arg))
-   ac  = np.arccos(np.clip(1.0 - delta,-1,1))                  # critical (grazing) angle in rad
+   arg = 1.0 - delta
+   if np.any(np.abs(arg) > 1) :
+       verbose = True
+       if verbose :
+          idxv = np.where(np.abs(arg) > 1)
+          print("warning: critical grazing angles not defined for the following energies: {}".format(en[idxv]))
+       ac = np.arccos(np.clip(arg, -1, 1))                     # critical (grazing) angle in rad
+   else :
+       ac = np.arccos(arg)                                     # critical (grazing) angle in rad
+
    wu  = np.sqrt( n**2 - (np.cos(theta))**2 )                  # Fresnel - formulas
    crs = (      np.sin(theta) - wu ) / ( np.sin(theta) + wu)   # reflection coeff. s-pol
    cts = (  2 * np.sin(theta)      ) / ( np.sin(theta) + wu)   # transmiss. coeff. s-pol
