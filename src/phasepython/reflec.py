@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/reflec.py
 # Date      : <23 Aug 17 16:01:05 flechsig> 
-# Time-stamp: <2021-09-13 13:38:41 flechsig> 
+# Time-stamp: <2021-09-13 14:27:58 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -151,7 +151,7 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
 
    arg = 1.0 - delta
    if np.any(np.abs(arg) > 1) :
-       verbose = True
+       #verbose = True
        if verbose :
           idxv = np.where(np.abs(arg) > 1)
           print("warning: critical grazing angles not defined for the following energies: {}".format(en[idxv]))
