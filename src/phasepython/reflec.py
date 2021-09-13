@@ -151,7 +151,7 @@ def reflec(element, en, theta, d=1.0, log='', p=-1, plot='reflectivity', punit='
 
    #arg = 1.0 - delta
    #print("arg= {}".format(arg))
-   ac  = np.arccos(1.0 - delta)                                # critical (grazing) angle in rad
+   ac  = np.arccos(np.clip(1.0 - delta,-1,1))                  # critical (grazing) angle in rad
    wu  = np.sqrt( n**2 - (np.cos(theta))**2 )                  # Fresnel - formulas
    crs = (      np.sin(theta) - wu ) / ( np.sin(theta) + wu)   # reflection coeff. s-pol
    cts = (  2 * np.sin(theta)      ) / ( np.sin(theta) + wu)   # transmiss. coeff. s-pol
