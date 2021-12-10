@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-10 13:45:49 flechsig> 
+//  Time-stamp: <2021-12-10 15:55:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -68,6 +68,8 @@
 #include <qwt_symbol.h>
 #include <qwt_plot_directpainter.h>
 #include <qpaintengine.h>
+//2112
+#include <qwt_raster_data.h>
 //#include <qapplication.h>
 //#include <qpen.h>
 //#include <qwt_data.h>
@@ -197,9 +199,10 @@ private:
   Plot   *po;
   
 public:
-    SpectrogramDataGO(Plot *plotobj)
+  // uf2112 SpectrogramDataGO(Plot *plotobj)
+  SpectrogramDataGO()
     {
-      po= plotobj;
+      // uf2112 po= plotobj;
       
 #ifdef DEBUG1
       printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
