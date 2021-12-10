@@ -1,7 +1,8 @@
-#   File      : /home/pss060/sls/flechsig/phase/data/coefficient-example.dat
+# -*-sh-*-   emacs hint
+#   File      : phase/data/coefficient-example.coeff
 #   Date      : <04 Jan 01 13:56:09 flechsig> 
-#   Time-stamp: <30 Mar 01 13:18:17 flechsig> 
-#   Author    : Flechsig Uwe OVGA/203a 4535, flechsig@psi.ch
+#   Time-stamp: <2021-12-10 14:19:36 flechsig> 
+#   Author    : Flechsig Uwe 
 #############################################################
 # this is a comment
 # the file with the name of the optical element contains
@@ -16,4 +17,4 @@
 0 2 0.00158366167919
 0 4 0.00000000397179865029
 2 2 7.22267766779e-12 
-# end of /home/pss060/sls/flechsig/phase/data/coefficient-example.dat
+# end of phase/data/coefficient-example.coeff

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2021-05-28 11:03:16 flechsig>  */
+/*   Time-stamp: <2021-12-10 14:29:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -1987,8 +1987,9 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
 	     {
 	       /* read the coefficients once - is required for optimization if only 
 		  particular coefficients should be optimized */
+	        snprintf(buffer, MaxPathLength, "%s.coeff", listpt->elementname);
 		printf("ReadBLFile->read general coefficient file\n");
-		ReadCoefficientFile((double *)&listpt->mir, listpt->elementname);
+		ReadCoefficientFile((double *)&listpt->mir, buffer);
 	     } 
 	   
 	   /*   fehleranfaellig pd= (double *) &listpt->MDat.r1;                 
@@ -3226,7 +3227,7 @@ void ReadCoefficientFile(double *dp, char *fname)
   double x;  
 
   printf("read coefficients a(i,j) from %s\n", fname);
-  printf("see example file: coefficient-example.dat\n");
+  printf("see example file: data/coefficient-example.coeff\n");
 
   if ((f= fopen(fname, "r+")) == NULL)
     {

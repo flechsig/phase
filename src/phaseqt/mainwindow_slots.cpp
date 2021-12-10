@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-10 13:40:58 flechsig> 
+//  Time-stamp: <2021-12-10 14:35:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2970,7 +2970,7 @@ void MainWindow::geslot()
     }
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOEGeneral;
   QMessageBox::information(this, tr("gerneric element slot"),
-			   tr("The elementname must be the file name!\nsave and reload the beamline!"));
+			   tr("The expected file_name is elementname plus extension .coeff!\nTo use the data from the file:\nSave and reload the beamline!"));
   UpdateElementBox(number); 
 }
 
