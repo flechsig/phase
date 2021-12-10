@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-10 14:35:55 flechsig> 
+//  Time-stamp: <2021-12-10 15:31:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -838,8 +838,11 @@ void MainWindow::activateProc(const QString &action)
       //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
 	  snprintf(buffer, MaxPathLength- 1, "%s.coeff", elementList->currentItem()->text().toLatin1().data());
 	  printf("write coefficients to file: %s\n", buffer);
-	  WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
-	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
+	  if (  FileExistCheckOK(buffer) )
+	    {
+	      WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
+	      statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
+	    }
 	} else fprintf(stderr, "%d: no valid position\n", bl->position); 
     }
 
