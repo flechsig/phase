@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <17 Mar 15 10:16:33 flechsig> 
+//  Time-stamp: <2021-12-10 13:45:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -45,6 +45,7 @@
 #include <QtGui>
 #else
 #include <QtWidgets>
+#include <QRectF>
 #endif
 
 #include <qprinter.h>
@@ -513,10 +514,10 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
   ndata1= points1; // fill private var
   ndata2= (settype & PLRaySet2) ? points2 : 0;
 
-  if (c1x) delete c1x; c1x= NULL;
-  if (c1y) delete c1y; c1y= NULL;
-  if (c2x) delete c2x; c2x= NULL;
-  if (c2y) delete c2y; c2y= NULL;
+  if (c1x) { delete c1x; } c1x= NULL;
+  if (c1y) { delete c1y; } c1y= NULL;
+  if (c2x) { delete c2x; } c2x= NULL;
+  if (c2y) { delete c2y; } c2y= NULL;
  
   c1x= new double[ndata1]; 
   c1y= new double[ndata1];
@@ -882,8 +883,8 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       //buffer= new double[ndata1];
       buffer= XMALLOC(double, ndata1);
       memcpy(buffer, dvec, sizeof(double)*ndata1);
-      if (c1x) delete c1x; c1x= NULL;
-      if (c1y) delete c1y; c1y= NULL;
+      if (c1x) { delete c1x; } c1x= NULL;
+      if (c1y) { delete c1y; } c1y= NULL;
       c1x= new double[BINS2];
       c1y= new double[BINS2];
       for (ix= 0; ix< BINS2; ix++)
@@ -895,7 +896,8 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       for (i= 0; i< ndata1; i++)
 	{
 	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
-	  if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
+	  //2112 if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
+	  if (ix < BINS2) c1y[ix]+= 1.0;          // add one hit
 	} 
       //delete buffer;
       XFREE(buffer);
@@ -904,8 +906,8 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
     {
       buffer2= XMALLOC(double, ndata2);
       memcpy(buffer2, dvec, sizeof(double)*ndata2);
-      if (c2x) delete c2x; c2x= NULL;
-      if (c2y) delete c2y; c2y= NULL;
+      if (c2x) { delete c2x; } c2x= NULL;
+      if (c2y) { delete c2y; } c2y= NULL;
       c2x= new double[BINS2];
       c2y= new double[BINS2];
       for (ix= 0; ix< BINS2; ix++)

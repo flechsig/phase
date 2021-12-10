@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/myzoomer.h */
 /*  Date      : <09 Jan 12 10:44:10 flechsig>  */
-/*  Time-stamp: <28 Aug 14 16:42:22 flechsig>  */
+/*  Time-stamp: <2021-12-10 13:03:50 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -42,6 +42,7 @@
 
 #include <qwt_plot_zoomer.h>
 #include <qwt_plot_panner.h>
+#include <qwt_text.h>
 
 class Plot;
 

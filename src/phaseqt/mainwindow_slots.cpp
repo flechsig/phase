@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-05-28 11:09:07 flechsig> 
+//  Time-stamp: <2021-12-10 13:40:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -754,10 +754,10 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  cout << "write map of element " << bl->position << " to file" << endl;
 
-	  snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d%d", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, map of element %d, iord: %d%d", 
 		  bl->filenames.beamlinename, bl->position, 
-		  bl->BLOptions.ifl.iord,0);
-	  snprintf(buffer, MaxPathLength, "%s-%d", bl->filenames.mapname, bl->position);
+		  bl->BLOptions.ifl.iord, 0);
+	  snprintf(buffer, MaxPathLength- 1, "%s-%d", bl->filenames.mapname, bl->position);
 
 
 	  /* casting 15.12.99 ist noch nicht OK */
@@ -776,9 +776,9 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  cout << "write map of beamline to file" << endl; 
 
-	  snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, map of beamline, iord: %d", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord);
-	  snprintf(buffer, MaxPathLength, "%s-0", bl->filenames.mapname);
+	  snprintf(buffer, MaxPathLength- 1, "%s-0", bl->filenames.mapname);
 
 	  myparent->mywritemapc(buffer,  header,  
 				bl->BLOptions.ifl.iord, 
@@ -801,11 +801,11 @@ void MainWindow::activateProc(const QString &action)
 	  printf("write matrix of element %d to file\n", bl->position); 
 
 
-	  snprintf(header, MaxPathLength, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
 		  bl->filenames.beamlinename, bl->position, 
 		  bl->BLOptions.ifl.iord,
 		  bl->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-%d\x00", bl->filenames.matrixname, bl->position);
+	  snprintf(buffer, MaxPathLength- 1, "%s-%d\x00", bl->filenames.matrixname, bl->position);
 
           writematrixfile((double *)bl->ElementList[bl->position- 1].M_StoI,
 			  buffer, header, strlen(buffer), strlen(header)); // add hidden length parameter 
@@ -815,10 +815,10 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
 
-	  snprintf(header, MaxPathLength, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord, 
 		  bl->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-0\x00", bl->filenames.matrixname);
+	  snprintf(buffer, MaxPathLength- 1, "%s-0\x00", bl->filenames.matrixname);
 
 	  writematrixfile((double *)bl->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
@@ -836,7 +836,7 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  printf("write coefficients of element %d to file\n", bl->position);
       //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
-	  snprintf(buffer, MaxPathLength, "%s.coeff", elementList->currentItem()->text().toLatin1().data());
+	  snprintf(buffer, MaxPathLength- 1, "%s.coeff", elementList->currentItem()->text().toLatin1().data());
 	  printf("write coefficients to file: %s\n", buffer);
 	  WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
 	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
@@ -1307,7 +1307,7 @@ void MainWindow::appendElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  snprintf(listpt->elementname, MaxPathLength, "%s", "New_Element");
+	  snprintf(listpt->elementname, MaxPathLength- 1, "%s", "New_Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -1603,7 +1603,7 @@ void MainWindow::elementApplyBslot()
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
 
   strncpy(myparent->myBeamline()->ElementList[number].elementname, 
-	  elementList->currentItem()->text().toLatin1().data(), MaxPathLength); // the name of the element
+	  elementList->currentItem()->text().toLatin1().data(), MaxPathLength- 1); // the name of the element
   
   cout << "elementApplyBslot: feed data from widget into dataset" << endl;
 
@@ -1775,8 +1775,8 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SINTIM:
     case PLOT_PO_AMP4:
     case PLOT_PO_PHA4:
-      if (d_plot) delete (d_plot); d_plot= NULL;
-      if (zone)   delete (zone);   zone= NULL;
+      if (d_plot) { delete (d_plot); } d_plot= NULL;
+      if (zone)   { delete (zone);   } zone= NULL;
       zone= new Plot2x2(plotBox);
       plotLayout->addWidget(zone, 0, 0);
       break;
@@ -2324,7 +2324,7 @@ void MainWindow::insertElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  snprintf(listpt->elementname, MaxPathLength, "%s", "New_Element");
+	  snprintf(listpt->elementname, MaxPathLength- 1, "%s", "New_Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -2704,7 +2704,8 @@ void MainWindow::printMain()
 
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
   printer.setOrientation(QPrinter::Landscape);
-  printer.setPaperSize(QPrinter::A4);
+  // deprecated 2112 printer.setPaperSize(QPrinter::A4);
+  printer.setPageSize(QPrinter::A4);
   printer.setColorMode(QPrinter::Color);
 
   int myresolution= printer.resolution();
@@ -2844,7 +2845,7 @@ void MainWindow::selectParameter()
   if (parameternumber < 0) 
     return;
 
-  strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength);
+  strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
   buffer[MaxPathLength- 1]= '\0';   // ensure termination
   ch= strchr(buffer, ':');
   if (ch != NULL) 

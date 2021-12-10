@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <24 Sep 19 15:51:21 flechsig> 
+//  Time-stamp: <2021-12-10 13:08:24 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -271,7 +271,7 @@ void OptiInput::applySlot()
 
   for (i= 0; i < 2; i++)  
     {
-      strncpy(buffer, inputList->item(i)->text().toLatin1().data(), MaxPathLength);
+      strncpy(buffer, inputList->item(i)->text().toLatin1().data(), MaxPathLength- 1);
       fprintf(oppickfile, "%s\n", buffer);
     }
   
@@ -282,7 +282,7 @@ void OptiInput::applySlot()
   for (i= 0; i < parameterzahl; i++)  
     {
       inputList->setCurrentRow(i+2);
-      strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength);
+      strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
       fprintf(oppickfile, "%s\n", buffer);  
     }
   fprintf(oppickfile, "# end\n");
@@ -475,7 +475,7 @@ void OptiInput::selectInputSlot()
   printf("selectinputSlot\n");
   if (parameternumber < 0) 
     return;
-  strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength);
+  strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
   if (buffer != NULL) inputE->setText(buffer);
   
   switch (parameternumber)
@@ -576,7 +576,8 @@ void OptiInput::fillInputs()
       if (fabs(os.min[i]- os.max[i]) < ZERO) 
 	snprintf(buffer, MaxPathLength, "%d %s %g %g", os.parindex[i], &os.parnames[i * 50], os.start[i], os.step[i]);
       else
-	snprintf(buffer, MaxPathLength, "%d %s %g %g", os.parindex[i], &os.parnames[i * 50], os.start[i], os.step[i], os.min[i], os.max[i]);
+	snprintf(buffer, MaxPathLength, "%d %s %g %g %g %g",
+		 os.parindex[i], &os.parnames[i * 50], os.start[i], os.step[i], os.min[i], os.max[i]);
 
       item->setText(buffer);
       inputList->insertItem(inputList->count(), item);
