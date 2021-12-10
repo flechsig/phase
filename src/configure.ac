@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <13 Sep 18 16:06:43 flechsig> 
+dnl   Time-stamp: <2021-12-10 15:18:44 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -39,7 +39,7 @@ dnl hardcoded version for -std=c++11 required for qt-5.9 - can cause problems wi
 
 
 AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
-AC_INIT([phase],[1.25],[uwe.flechsig@psi.ch])
+AC_INIT([phase],[1.30],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
 AC_REVISION([$Revision$]) # no autoscan
 AC_CONFIG_AUX_DIR([config]) # no autoscan
