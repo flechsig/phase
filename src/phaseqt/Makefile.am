@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2021-05-28 11:19:49 flechsig> 
+#  Time-stamp: <2021-12-13 14:55:28 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -91,7 +91,7 @@ endif
 phaseqt_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
-pkgdata_DATA = ../data/coefficient-example.dat \
+pkgdata_DATA = ../data/coefficient-example.coeff \
 ../data/map70_lh.omx\
 ../data/map70_rh.omx \
 ../data/spa3table.tab \

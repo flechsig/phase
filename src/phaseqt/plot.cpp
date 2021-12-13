@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-10 13:45:49 flechsig> 
+//  Time-stamp: <2021-12-13 15:23:01 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -87,6 +87,7 @@ public:
     {
     }
 
+#ifdef HOME
     virtual QRectF boundingRect() const
     {
         if ( d_boundingRect.width() < 0.0 )
@@ -95,10 +96,13 @@ public:
         return d_boundingRect;
     }
 
+
     inline void append( const QPointF &point )
     {
         d_samples += point;
     }
+
+
 
     void clear()
     {
@@ -106,6 +110,7 @@ public:
         d_samples.squeeze();
         d_boundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
     }
+#endif
 };
 
 // UF the original 2d data
@@ -114,9 +119,11 @@ class SpectrogramData: public QwtRasterData
 public:
     SpectrogramData()
     {
+#ifdef HOME
         setInterval( Qt::XAxis, QwtInterval( -1.5,  1.5 ) );
         setInterval( Qt::YAxis, QwtInterval( -1.5,  1.5 ) );
         setInterval( Qt::ZAxis, QwtInterval(  0.0, 10.0 ) );
+#endif
     }
 
     virtual double value(double x, double y) const
@@ -136,9 +143,11 @@ class SpectrogramData2: public QwtRasterData
 public:
     SpectrogramData2()
     {
+#ifdef HOME
         setInterval( Qt::XAxis, QwtInterval( -2.5,  3.5 ) );
         setInterval( Qt::YAxis, QwtInterval( -2.5,  3.5 ) );
         setInterval( Qt::ZAxis, QwtInterval(  0.0, 22.0 ) );
+#endif
     }
 
     virtual double value(double x, double y) const
@@ -172,9 +181,11 @@ public:
       //      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
+#ifdef HOME
       setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
       setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
       setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
+#endif
 #ifdef DEBUG
       cout << " ==> done"  << endl;
 #endif
@@ -206,9 +217,11 @@ public:
       //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
+#ifdef HOME
       setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
       setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
       setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
+#endif
 #ifdef DEBUG
       cout << " ==> done"  << endl;
 #endif
@@ -254,8 +267,9 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
   
   d_spectrogram->setColorMap(new ColorMap());
-  
+#ifdef HOME  
   d_spectrogram->setData(new SpectrogramData());
+#endif
   d_spectrogram->attach(this);
 
   QList<double> contourLevels;
@@ -688,9 +702,9 @@ void Plot::setGoData(const char *datatype)
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-  
+#ifdef HOME  
   d_spectrogram->setData(new SpectrogramDataGO(this));
-  
+#endif  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -713,9 +727,9 @@ void Plot::setPoData(const char *datatype)
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-  
+#ifdef HOME  
   d_spectrogram->setData(new SpectrogramDataPO(this));
-  
+#endif  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -724,8 +738,9 @@ void Plot::setPoData(const char *datatype)
 void Plot::setdefaultData()
 {
   delete d_spectrogram->data();
-  
+#ifdef HOME  
   d_spectrogram->setData(new SpectrogramData());
+#endif
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -733,10 +748,13 @@ void Plot::setdefaultData()
 
 void Plot::setdefaultData2()
 {
+#ifdef HOME
   delete d_spectrogram->data();
   
   QwtRasterData *data = new SpectrogramData2();
+
   d_spectrogram->setData(data);
+#endif
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -1512,16 +1530,19 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
 void Plot::appendPoint( const QPointF &point )
 {
     CurveData *data = static_cast<CurveData *>( d_curve1->data() );
+#ifdef HOME
     data->append( point );
     //   d_directPainter->drawSeries( d_curve1,
     //			       data->size() - 1, data->size() - 1 );
+#endif
 }
 
 void Plot::clearPoints()
 {
     CurveData *data = static_cast<CurveData *>( d_curve1->data() );
+#ifdef HOME
     data->clear();
-
+#endif
     replot();
 }
 
