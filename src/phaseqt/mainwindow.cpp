@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-05-28 11:31:56 flechsig> 
+//  Time-stamp: <2021-12-13 15:18:12 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -507,12 +507,14 @@ void MainWindow::createDockWindows()
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   addDockWidget(Qt::LeftDockWidgetArea, dock);
   viewMenu->addAction(dock->toggleViewAction());
-  
+
+#ifdef HOME  
   // plot box
   dock = new QDockWidget(tr("Plot Box"), this);
   dock->setWidget(createPlotBox());
   addDockWidget(Qt::TopDockWidgetArea, dock);
   viewMenu->addAction(dock->toggleViewAction());
+#endif
 } // createDockwindows
 
 

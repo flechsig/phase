@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <27 Apr 15 09:35:34 flechsig> 
+//  Time-stamp: <2021-12-13 14:53:41 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -60,7 +60,7 @@ Plot2x2::Plot2x2(QWidget *parent): PlotMatrix(2, 2, parent)
   d_curve2 = new QwtPlotCurve( "simpim" );
   d_curve3 = new QwtPlotCurve( "sintre" );
   d_curve4 = new QwtPlotCurve( "sintim" );
-
+#ifdef HOME
   pm1 = new QwtPlotMarker();
   pm2 = new QwtPlotMarker();
   pm3 = new QwtPlotMarker();
@@ -71,7 +71,7 @@ Plot2x2::Plot2x2(QWidget *parent): PlotMatrix(2, 2, parent)
   pm2->setLabel( QString::fromLatin1( "f(dy) @ dz center" ) );
   pm3->setLabel( QString::fromLatin1( "f(dy) @ dzmax" ) );
   pm4->setLabel( QString::fromLatin1( "f(dz) @ dy center" ) );
-
+#endif
   c1x= c4x= c1y= c2y= c3y= c4y= NULL;
   z1min= z1max= z4min= z4max= 0.0;
   for (int i=0; i< 4; i++) ymin[i]= ymax[i]= 0.0;
@@ -185,8 +185,10 @@ void Plot2x2::myattach()
 	  grid->setMajPen( QPen( Qt::gray, 0, Qt::DotLine ) );
 	  grid->setMinPen( QPen( Qt::gray, 0, Qt::DotLine ) );
 #else 
+#ifdef HOME
 	  grid->setMajorPen( QPen( Qt::gray, 0, Qt::DotLine ) );
 	  grid->setMinorPen( QPen( Qt::gray, 0, Qt::DotLine ) );
+#endif
 #endif
 	  plt= plot(row, col);
 	  plt->setCanvasBackground( QColor( Qt::white ) );
