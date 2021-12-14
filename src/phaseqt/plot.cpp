@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-14 14:30:21 flechsig> 
+//  Time-stamp: <2021-12-14 17:27:59 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -426,9 +426,13 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   
   const QFontMetrics fm(axisWidget(QwtPlot::yLeft)->font());
   QwtScaleDraw *sd = axisScaleDraw(QwtPlot::yLeft);
-  // UF 2112 sd->setMinimumExtent( fm.width("100.00") );
+  // qt version < 5.9.7
+#if (QT_VERSION < 0x051100) 
+    sd->setMinimumExtent( fm.width("100.00") );
+#else
   sd->setMinimumExtent( fm.horizontalAdvance("100.00") );
-  
+#endif
+    
   const QColor c(Qt::darkBlue);
   zoomer->setRubberBandPen(c);
   zoomer->setTrackerPen(c);
