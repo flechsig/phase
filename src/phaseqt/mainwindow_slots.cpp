@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-13 16:45:00 flechsig> 
+//  Time-stamp: <2021-12-14 15:46:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -50,6 +50,7 @@
 #include <QtConcurrent>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QPageSize>
 #endif
 
 #include <cmath>                     // for abs
@@ -1786,7 +1787,7 @@ void MainWindow::grapplyslot()
       break;
     default: 
       //if (d_plot) delete (d_plot); d_plot= NULL;
-      if (zone)   delete (zone);   zone= NULL;
+      if (zone)   { delete (zone); }  zone= NULL;
       if (!d_plot) d_plot= new Plot(plotBox);
       // fill values from manual scaling or autoscale
       d_plot->Plot::ymin= gryminE->text().toDouble();
@@ -2679,8 +2680,10 @@ void MainWindow::print()
   //   QPrinter printer;
 
     QPrinter printer(QPrinter::HighResolution);
-    printer.setOrientation(QPrinter::Landscape);
+    //2112 printer.setOrientation(QPrinter::Landscape);
     printer.setPaperSize(QPrinter::A4);
+    printer.setPageOrientation(QPageLayout::Landscape); // new
+    //printer.setPageSize(QPageSize(A4)); // new
     printer.setColorMode(QPrinter::Color);
 
 
@@ -2703,13 +2706,14 @@ void MainWindow::print()
 void MainWindow::printMain()
 {
 #ifdef DEBUG
-  cout << "debug: MainWindow::printMain called" << endl;
+  cout << "debug "<< __FILE__ << ":" << __LINE__ << ": MainWindow::printMain called" << endl;
 #endif
 
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
-  printer.setOrientation(QPrinter::Landscape);
-  // deprecated 2112 printer.setPaperSize(QPrinter::A4);
-  printer.setPageSize(QPrinter::A4);
+  // 2112 printer.setOrientation(QPrinter::Landscape);
+  printer.setPageOrientation(QPageLayout::Landscape); // new
+  printer.setPaperSize(QPrinter::A4);
+  //printer.setPageSize(QPrinter::A4);
   printer.setColorMode(QPrinter::Color);
 
   int myresolution= printer.resolution();
@@ -2732,8 +2736,12 @@ void MainWindow::printMain()
   double xscale = printer.pageRect().width()/double(this->width());
   double yscale = printer.pageRect().height()/double(this->height());
   double scale = qMin(xscale, yscale);
+  // deprecated 2021
   painter.translate(printer.paperRect().x() + printer.pageRect().width()/2,
 		    printer.paperRect().y() + printer.pageRect().height()/2);
+  
+  /*painter.translate(pageLayout().fullRectPixels(resolution()).x() + pageLayout().fullRectPixels(resolution()).width()/2,
+    pageLayout().fullRectPixels(resolution()).y() + pageLayout().fullRectPixels(resolution()).height()/2);*/
   painter.scale(scale, scale);
   painter.translate(-width()/2, -height()/2);
   

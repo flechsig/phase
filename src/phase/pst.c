@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/pst.c */
 /*   Date      : <08 Apr 04 15:21:48 flechsig>  */
-/*   Time-stamp: <30 Apr 15 12:20:30 flechsig>  */
+/*   Time-stamp: <2021-12-14 14:35:34 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -56,6 +56,7 @@
 #include "rtrace.h" 
 #include "common.h"
 #include "myfftw3.h"
+#include "reflectivity.h"
 
 void PSTxx(struct BeamlineType *bl) 
 {

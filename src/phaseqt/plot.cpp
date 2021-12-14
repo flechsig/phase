@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-13 15:23:01 flechsig> 
+//  Time-stamp: <2021-12-14 14:30:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -68,6 +68,8 @@
 #include <qwt_symbol.h>
 #include <qwt_plot_directpainter.h>
 #include <qpaintengine.h>
+//2112
+#include <qwt_raster_data.h>
 //#include <qapplication.h>
 //#include <qpen.h>
 //#include <qwt_data.h>
@@ -87,7 +89,28 @@ public:
     {
     }
 
-#ifdef HOME
+          virtual QRectF boundingRect() const QWT_OVERRIDE
+        {
+            if ( cachedBoundingRect.width() < 0.0 )
+                cachedBoundingRect = qwtBoundingRect( *this );
+
+            return cachedBoundingRect;
+        }
+
+        inline void append( const QPointF& point )
+        {
+            m_samples += point;
+        }
+
+        void clear()
+        {
+            m_samples.clear();
+            m_samples.squeeze();
+            cachedBoundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
+        }
+
+  //old version
+  #ifdef HOME 
     virtual QRectF boundingRect() const
     {
         if ( d_boundingRect.width() < 0.0 )
@@ -110,22 +133,61 @@ public:
         d_samples.squeeze();
         d_boundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
     }
-#endif
+  #endif
 };
 
+// new qwt 6.2
+class SpectrogramData : public QwtRasterData
+{
+public:
+  SpectrogramData()
+  {
+    // some minor performance improvements when the spectrogram item
+    // does not need to check for NaN values
+    
+    setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval( -1.5, 1.5 );
+    m_intervals[ Qt::YAxis ] = QwtInterval( -1.5, 1.5 );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
+  }
+  
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }
+  
+  virtual double value( double x, double y ) const QWT_OVERRIDE
+  {
+    const double c = 0.842;
+    //const double c = 0.33;
+    
+    const double v1 = x * x + ( y - c ) * ( y + c );
+    const double v2 = x * ( y + c ) + x * ( y + c );
+    
+    return 1.0 / ( v1 * v1 + v2 * v2 );
+  }
+  
+private:
+  QwtInterval m_intervals[3];
+};  // end SpectrogramData
+
+
+#ifdef QWT61
 // UF the original 2d data
 class SpectrogramData: public QwtRasterData
 {
 public:
     SpectrogramData()
     {
-#ifdef HOME
         setInterval( Qt::XAxis, QwtInterval( -1.5,  1.5 ) );
         setInterval( Qt::YAxis, QwtInterval( -1.5,  1.5 ) );
         setInterval( Qt::ZAxis, QwtInterval(  0.0, 10.0 ) );
-#endif
     }
-
+  
     virtual double value(double x, double y) const
     {
         const double c = 0.842;
@@ -135,30 +197,43 @@ public:
 
         return 1.0 / (v1 * v1 + v2 * v2);
     }
+   
 };
+#endif
 
 // UF my copy of the 2d data with slightly changed patrameters
 class SpectrogramData2: public QwtRasterData
 {
 public:
-    SpectrogramData2()
-    {
-#ifdef HOME
-        setInterval( Qt::XAxis, QwtInterval( -2.5,  3.5 ) );
-        setInterval( Qt::YAxis, QwtInterval( -2.5,  3.5 ) );
-        setInterval( Qt::ZAxis, QwtInterval(  0.0, 22.0 ) );
-#endif
-    }
+  SpectrogramData2()
+  {
+    setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval( -2.5, 3.5 );
+    m_intervals[ Qt::YAxis ] = QwtInterval( -2.5, 1.5 );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 22.0 );
+  }
+  
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }
+  
+  virtual double value(double x, double y) const
+  {
+    const double c = 0.542;
+    
+    const double v1 = x * x + (y-c) * (y+c);
+    const double v2 = x * (y+c) + x * (y+c);
+    
+    return 1.0 / (v1 * v1 + v2 * v2);
+  }
 
-    virtual double value(double x, double y) const
-    {
-        const double c = 0.542;
-
-        const double v1 = x * x + (y-c) * (y+c);
-        const double v2 = x * (y+c) + x * (y+c);
-
-        return 1.0 / (v1 * v1 + v2 * v2);
-    }
+private:
+  QwtInterval m_intervals[3];
 };
 
 // keeps the 2d PO data
@@ -181,15 +256,25 @@ public:
       //      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
-#ifdef HOME
-      setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
-      setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
-      setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
-#endif
+         setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval(po->zmin, po->zmax  );
+    m_intervals[ Qt::YAxis ] = QwtInterval( po->ymin, po->ymax );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
+    
+
 #ifdef DEBUG
       cout << " ==> done"  << endl;
 #endif
     }
+
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }
   
     virtual double value(double x, double y) const
     {
@@ -199,6 +284,9 @@ public:
 	return po->h2a[ix+ iy* po->h2a_nx];
       return 10.0; // should never happen
     }
+  
+  private:
+  QwtInterval m_intervals[3];
 };
 
 // keeps the 2d PO data
@@ -208,26 +296,37 @@ private:
   Plot   *po;
   
 public:
-    SpectrogramDataGO(Plot *plotobj)
+  // uf2112 SpectrogramDataGO(Plot *plotobj)
+  SpectrogramDataGO()
     {
-      po= plotobj;
+      // uf2112 po= plotobj;
       
 #ifdef DEBUG1
       printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
       //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
-#ifdef HOME
-      setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
-      setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
-      setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
-#endif
+          setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval( po->zmin, po->zmax  );
+    m_intervals[ Qt::YAxis ] = QwtInterval( po->ymin, po->ymax );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
+    
+
 #ifdef DEBUG
       cout << " ==> done"  << endl;
 #endif
     }
-  
-    virtual double value(double x, double y) const
+
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }  
+
+  virtual double value(double x, double y) const
     {
       int ix = qRound((po->h2a_nx- 1)* (x- po->zmin)/(po->zmax - po->zmin));
       int iy = qRound((po->h2a_ny- 1)* (y- po->ymin)/(po->ymax - po->ymin));
@@ -235,6 +334,9 @@ public:
 	return po->h2a[ix+ iy* po->h2a_nx];
       return 10.0; // should never happen
     }
+
+private:
+  QwtInterval m_intervals[3];
 };
 
 
@@ -257,7 +359,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve1 = new QwtPlotCurve( "dz min" );               // one curve
   d_curve2 = new QwtPlotCurve( "dz center" );            // one curve
   d_curve1->attach( this ); 
-  d_curve2->attach( this ); 
+  d_curve2->attach( this );
   d_curve1->hide();
   d_curve2->hide();
   
@@ -265,13 +367,11 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
-  
   d_spectrogram->setColorMap(new ColorMap());
-#ifdef HOME  
   d_spectrogram->setData(new SpectrogramData());
-#endif
   d_spectrogram->attach(this);
-
+  
+  //#ifdef HOME
   QList<double> contourLevels;
   for ( double level = 0.5; level < 10.0; level += 1.0 )
     contourLevels += level;
@@ -318,14 +418,16 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   QwtPlotPanner *panner = new QwtPlotPanner(mycanvas);
     
   panner->setAxisEnabled(QwtPlot::yRight, false);
-  panner->setMouseButton(Qt::MidButton);
+  // UF2112 panner->setMouseButton(Qt::MidButton);
+  panner->setMouseButton(Qt::MiddleButton); // new
   
   // Avoid jumping when labels with more/less digits
   // appear/disappear when scrolling vertically
   
   const QFontMetrics fm(axisWidget(QwtPlot::yLeft)->font());
   QwtScaleDraw *sd = axisScaleDraw(QwtPlot::yLeft);
-  sd->setMinimumExtent( fm.width("100.00") );
+  // UF 2112 sd->setMinimumExtent( fm.width("100.00") );
+  sd->setMinimumExtent( fm.horizontalAdvance("100.00") );
   
   const QColor c(Qt::darkBlue);
   zoomer->setRubberBandPen(c);
@@ -333,7 +435,8 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 
   /************* end zoom *************/
   this->fwhmon= 1;
-#ifdef DEBUG1  
+  //#endif  
+#ifdef DEBUG  
   cout << "debug: " << __FILE__ << " Plot:constructor called- plotsubject " << plotsubject << endl;
 #endif
   //  this->p_zoomer= zoomer;
@@ -702,9 +805,10 @@ void Plot::setGoData(const char *datatype)
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-#ifdef HOME  
-  d_spectrogram->setData(new SpectrogramDataGO(this));
-#endif  
+  //#ifdef HOME  
+  //UF 2112 d_spectrogram->setData(new SpectrogramDataGO(this));
+  d_spectrogram->setData(new SpectrogramDataGO()); // take away this
+  //#endif  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -727,9 +831,9 @@ void Plot::setPoData(const char *datatype)
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-#ifdef HOME  
+  //#ifdef HOME  
   d_spectrogram->setData(new SpectrogramDataPO(this));
-#endif  
+  //#endif  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -738,9 +842,9 @@ void Plot::setPoData(const char *datatype)
 void Plot::setdefaultData()
 {
   delete d_spectrogram->data();
-#ifdef HOME  
+  //#ifdef HOME  
   d_spectrogram->setData(new SpectrogramData());
-#endif
+  //#endif
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -748,13 +852,13 @@ void Plot::setdefaultData()
 
 void Plot::setdefaultData2()
 {
-#ifdef HOME
+  //#ifdef HOME
   delete d_spectrogram->data();
   
   QwtRasterData *data = new SpectrogramData2();
 
   d_spectrogram->setData(data);
-#endif
+  //#endif
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -937,7 +1041,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       for (i= 0; i< ndata2; i++)
 	{
 	  ix= (unsigned int)((buffer2[i]- x1)/(x2- x1) * BINS2);
-	  if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
+	  if (ix < BINS2) c2y[ix]+= 1.0;          // add one hit
 	} 
       XFREE(buffer2);
     }
@@ -1055,7 +1159,7 @@ void Plot::hfill2(int settype)
 void Plot::hfill2(struct PSDType *rp, int type)
 {
 #ifndef OBSOLETE
-  printf("call to obsolete function hfill2(struct PSDType\n", __FILE__);
+  printf("%s: call to obsolete function hfill2(struct PSDType\n", __FILE__);
 #else
   int i, ix, iy, h2a_n, idf, idc;
   double h2range;
@@ -1530,19 +1634,15 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
 void Plot::appendPoint( const QPointF &point )
 {
     CurveData *data = static_cast<CurveData *>( d_curve1->data() );
-#ifdef HOME
     data->append( point );
     //   d_directPainter->drawSeries( d_curve1,
     //			       data->size() - 1, data->size() - 1 );
-#endif
 }
 
 void Plot::clearPoints()
 {
     CurveData *data = static_cast<CurveData *>( d_curve1->data() );
-#ifdef HOME
     data->clear();
-#endif
     replot();
 }
 
