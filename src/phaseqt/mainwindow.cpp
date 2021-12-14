@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-12-13 15:18:12 flechsig> 
+//  Time-stamp: <2021-12-14 10:27:47 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -508,13 +508,11 @@ void MainWindow::createDockWindows()
   addDockWidget(Qt::LeftDockWidgetArea, dock);
   viewMenu->addAction(dock->toggleViewAction());
 
-#ifdef HOME  
   // plot box
   dock = new QDockWidget(tr("Plot Box"), this);
   dock->setWidget(createPlotBox());
   addDockWidget(Qt::TopDockWidgetArea, dock);
   viewMenu->addAction(dock->toggleViewAction());
-#endif
 } // createDockwindows
 
 
@@ -1386,8 +1384,13 @@ QWidget *MainWindow::createPlotBox()
 {
   plotBox = new QWidget();
   plotLayout = new QGridLayout;
-#ifdef HAVE_QWT   
+ 
+#ifdef HAVE_QWT
+#ifdef DEBUG1
+  cout << "debug " << __FILE__ << ":" << __LINE__ << ": call constructor of Plot" << endl;
+#endif
   d_plot = new Plot(plotBox);
+   
   //zone   = new PlotMatrix( 2  , 2 );
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
@@ -1405,7 +1408,6 @@ QWidget *MainWindow::createPlotBox()
   //plotLayout->addWidget(zone,1,0);
   plotBox->setLayout(plotLayout);
 #endif
-
   return plotBox;
 } // end createPlotBox
 
