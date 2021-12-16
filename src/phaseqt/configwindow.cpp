@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <28 Aug 14 16:10:52 flechsig> 
+//  Time-stamp: <2021-12-10 13:00:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -147,14 +147,14 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 
    //    QMessageBox::warning(this, tr("item"),  item1->text());
 
-   strncpy(description, des->text().toLatin1().data(), MaxPathLength);
-   strncpy(oldname,     fna->text().toLatin1().data(), MaxPathLength);
-   strncpy(extension,   ext->text().toLatin1().data(), 10);
+   strncpy(description, des->text().toLatin1().data(), MaxPathLength- 1);
+   strncpy(oldname,     fna->text().toLatin1().data(), MaxPathLength- 1);
+   strncpy(extension,   ext->text().toLatin1().data(), 9);
 
-   description[(MaxPathLength-1)]= '\0';  // ensure termination
-   oldname[(MaxPathLength-1)]= '\0';      // ensure termination
+   description[(MaxPathLength- 1)]= '\0';  // ensure termination
+   oldname[(MaxPathLength- 1)]= '\0';      // ensure termination
    extension[9]= '\0';                    // ensure termination
-   snprintf(filter, 50, "Files (*.%s);;(*)", extension);
+   snprintf(filter, 49, "Files (*.%s);;(*)", extension);
 
 #ifdef DEBUG1 
    cout << "debug: file: " << __FILE__ << ", line: " << __LINE__ <<  " item: " <<  oldname << endl;
@@ -175,52 +175,52 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 
       // update data
       if ( !strncmp(description, "optimization input", 16) ) 
-	strncpy(myparent->myBeamline()->filenames.optipckname, fname, MaxPathLength); else
+	strncpy(myparent->myBeamline()->filenames.optipckname, fname, MaxPathLength- 1); else
 	if ( !strncmp(description, "optimization results", 16) ) 
-	  strncpy(myparent->myBeamline()->filenames.opresname, fname, MaxPathLength); else
+	  strncpy(myparent->myBeamline()->filenames.opresname, fname, MaxPathLength- 1); else
 	  //if ( !strncmp(description, "minuit input", 10) ) 
 	  //  strncpy(myparent->myBeamline()->filenames.minname, fname, MaxPathLength); else
 	    if ( !strncmp(description, "GO input (source)", 6) ) 
-	      strncpy(myparent->myBeamline()->filenames.sourceraysname, fname, MaxPathLength); else
+	      strncpy(myparent->myBeamline()->filenames.sourceraysname, fname, MaxPathLength- 1); else
 	      if ( !strncmp(description, "GO/PO output (image)", 6) )
-		strncpy(myparent->myBeamline()->filenames.imageraysname, fname, MaxPathLength); else
+		strncpy(myparent->myBeamline()->filenames.imageraysname, fname, MaxPathLength- 1); else
 		if ( !strncmp(description, "matrix", 4) ) 
-		  strncpy(myparent->myBeamline()->filenames.matrixname, fname, MaxPathLength); else
+		  strncpy(myparent->myBeamline()->filenames.matrixname, fname, MaxPathLength- 1); else
 		  if ( !strncmp(description, "mapname", 4) ) 
-		    strncpy(myparent->myBeamline()->filenames.mapname, fname, MaxPathLength); else
+		    strncpy(myparent->myBeamline()->filenames.mapname, fname, MaxPathLength- 1); else
 		    if ( !strncmp(description, "so4_fsource4a", 13) )
 		      { 
-			strncpy(myparent->myBeamline()->filenames.so4_fsource4a, fname, MaxPathLength);
+			strncpy(myparent->myBeamline()->filenames.so4_fsource4a, fname, MaxPathLength- 1);
 			//strncpy(myparent->myBeamline()->src.so4.fsource4a, fname, 80);
 		      } else
 		      if ( !strncmp(description, "so4_fsource4b", 13) ) 
 			{
-			  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, fname, MaxPathLength);
+			  strncpy(myparent->myBeamline()->filenames.so4_fsource4b, fname, MaxPathLength- 1);
 			  //strncpy(myparent->myBeamline()->src.so4.fsource4b, fname, 80);
 			} else
 			if ( !strncmp(description, "so4_fsource4c", 13) )
 			  { 
-			    strncpy(myparent->myBeamline()->filenames.so4_fsource4c, fname, MaxPathLength);
+			    strncpy(myparent->myBeamline()->filenames.so4_fsource4c, fname, MaxPathLength- 1);
 			    //strncpy(myparent->myBeamline()->src.so4.fsource4c, fname, 80);
 			  } else
 			  if ( !strncmp(description, "so4_fsource4d", 13) ) 
 			    {
-			      strncpy(myparent->myBeamline()->filenames.so4_fsource4d, fname, MaxPathLength);
+			      strncpy(myparent->myBeamline()->filenames.so4_fsource4d, fname, MaxPathLength- 1);
 			      //strncpy(myparent->myBeamline()->src.so4.fsource4d, fname, 80);
 			    } else
 			    if ( !strncmp(description, "so6_fsource6", 3) ) 
 			      {
-				strncpy(myparent->myBeamline()->filenames.so6_fsource6, fname, MaxPathLength); 
+				strncpy(myparent->myBeamline()->filenames.so6_fsource6, fname, MaxPathLength- 1); 
 				// strncpy(myparent->myBeamline()->src.so6.fsource6, fname, 80);
 			      } else
 			      if ( !strncmp(description, "so7", 3) ) 
-				strncpy(myparent->myBeamline()->filenames.so7_hdf5, fname, MaxPathLength); 
+				strncpy(myparent->myBeamline()->filenames.so7_hdf5, fname, MaxPathLength- 1); 
 			      else
 				if ( !strncmp(description, "hdf5", 4) ) 
-				  strncpy(myparent->myBeamline()->filenames.hdf5_out, fname, MaxPathLength);
+				  strncpy(myparent->myBeamline()->filenames.hdf5_out, fname, MaxPathLength- 1);
 				else
 				  if ( !strncmp(description, "surface errors", 14) ) 
-				    strncpy(myparent->myBeamline()->filenames.h5surfacename, fname, MaxPathLength);
+				    strncpy(myparent->myBeamline()->filenames.h5surfacename, fname, MaxPathLength- 1);
 				  else
 				    {
 				      cout << "selectSlot: error: no matching description: >>" 
@@ -310,8 +310,8 @@ void ConfigWindow::checkFileNames()
       fna = mymodel->item(i, 1);
       ext = mymodel->item(i, 2);
 
-      strncpy(name,      fna->text().toLatin1().data(), MaxPathLength);
-      strncpy(extension, ext->text().toLatin1().data(), 10);
+      strncpy(name,      fna->text().toLatin1().data(), MaxPathLength- 1);
+      strncpy(extension, ext->text().toLatin1().data(), 9);
       name[MaxPathLength- 1]= '\0';  // ensure termination
       extension[9]= '\0';            // ensure termination
 

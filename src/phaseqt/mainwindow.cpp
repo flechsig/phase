@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-05-28 11:31:56 flechsig> 
+//  Time-stamp: <2021-12-14 15:45:18 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -507,7 +507,7 @@ void MainWindow::createDockWindows()
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   addDockWidget(Qt::LeftDockWidgetArea, dock);
   viewMenu->addAction(dock->toggleViewAction());
-  
+
   // plot box
   dock = new QDockWidget(tr("Plot Box"), this);
   dock->setWidget(createPlotBox());
@@ -1384,8 +1384,13 @@ QWidget *MainWindow::createPlotBox()
 {
   plotBox = new QWidget();
   plotLayout = new QGridLayout;
-#ifdef HAVE_QWT   
+ 
+#ifdef HAVE_QWT
+#ifdef DEBUG1
+  cout << "debug " << __FILE__ << ":" << __LINE__ << ": call constructor of Plot" << endl;
+#endif
   d_plot = new Plot(plotBox);
+   
   //zone   = new PlotMatrix( 2  , 2 );
   d_plot->setAxisTitle(2, tr("z (mm)"));
   d_plot->setAxisTitle(0, tr("y (mm)"));
@@ -1403,7 +1408,6 @@ QWidget *MainWindow::createPlotBox()
   //plotLayout->addWidget(zone,1,0);
   plotBox->setLayout(plotLayout);
 #endif
-
   return plotBox;
 } // end createPlotBox
 
@@ -3126,10 +3130,14 @@ int MainWindow::FileExistCheckOK(std::string name1)
   int  ret;
   char infostr[MaxPathLength];
   char *name= (char *)name1.c_str();
+
+#ifdef DEBUG
+  cout << "debug MainWindow::FileExistCheckOK, file: " << __FILE__<< ":" <<__LINE__ << endl;  
+#endif
   
   if (fexists(name))
     {
-      snprintf(infostr, MaxPathLength, "file %s exists!",  name);
+      snprintf(infostr, MaxPathLength, "file <b>%s</b> exists!",  name);
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setText(tr(infostr));
       msgBox->setInformativeText(tr("replace file"));

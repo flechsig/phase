@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-05-28 11:09:07 flechsig> 
+//  Time-stamp: <2021-12-16 11:33:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -50,6 +50,7 @@
 #include <QtConcurrent>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QPageSize>
 #endif
 
 #include <cmath>                     // for abs
@@ -754,10 +755,10 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  cout << "write map of element " << bl->position << " to file" << endl;
 
-	  snprintf(header, MaxPathLength, "beamline: %s, map of element %d, iord: %d%d", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, map of element %d, iord: %d%d", 
 		  bl->filenames.beamlinename, bl->position, 
-		  bl->BLOptions.ifl.iord,0);
-	  snprintf(buffer, MaxPathLength, "%s-%d", bl->filenames.mapname, bl->position);
+		  bl->BLOptions.ifl.iord, 0);
+	  snprintf(buffer, MaxPathLength- 1, "%s-%d", bl->filenames.mapname, bl->position);
 
 
 	  /* casting 15.12.99 ist noch nicht OK */
@@ -776,9 +777,9 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  cout << "write map of beamline to file" << endl; 
 
-	  snprintf(header, MaxPathLength, "beamline: %s, map of beamline, iord: %d", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, map of beamline, iord: %d", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord);
-	  snprintf(buffer, MaxPathLength, "%s-0", bl->filenames.mapname);
+	  snprintf(buffer, MaxPathLength- 1, "%s-0", bl->filenames.mapname);
 
 	  myparent->mywritemapc(buffer,  header,  
 				bl->BLOptions.ifl.iord, 
@@ -801,11 +802,11 @@ void MainWindow::activateProc(const QString &action)
 	  printf("write matrix of element %d to file\n", bl->position); 
 
 
-	  snprintf(header, MaxPathLength, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
 		  bl->filenames.beamlinename, bl->position, 
 		  bl->BLOptions.ifl.iord,
 		  bl->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-%d\x00", bl->filenames.matrixname, bl->position);
+	  snprintf(buffer, MaxPathLength- 1, "%s-%d\x00", bl->filenames.matrixname, bl->position);
 
           writematrixfile((double *)bl->ElementList[bl->position- 1].M_StoI,
 			  buffer, header, strlen(buffer), strlen(header)); // add hidden length parameter 
@@ -815,10 +816,10 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
 
-	  snprintf(header, MaxPathLength, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, MaxPathLength- 1, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord, 
 		  bl->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength, "%s-0\x00", bl->filenames.matrixname);
+	  snprintf(buffer, MaxPathLength- 1, "%s-0\x00", bl->filenames.matrixname);
 
 	  writematrixfile((double *)bl->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
@@ -836,10 +837,14 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  printf("write coefficients of element %d to file\n", bl->position);
       //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
-	  snprintf(buffer, MaxPathLength, "%s.coeff", elementList->currentItem()->text().toLatin1().data());
-	  printf("write coefficients to file: %s\n", buffer);
-	  WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
-	  statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
+	  snprintf(buffer, MaxPathLength- 1, "%s.coeff", 
+		   elementList->currentItem()->text().toLatin1().data());
+	  cout << "write coefficients to file: " << buffer << endl;
+	  if (  FileExistCheckOK(buffer) )
+	    {
+	      WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
+	      statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
+	    }
 	} else fprintf(stderr, "%d: no valid position\n", bl->position); 
     }
 
@@ -1307,7 +1312,7 @@ void MainWindow::appendElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  snprintf(listpt->elementname, MaxPathLength, "%s", "New_Element");
+	  snprintf(listpt->elementname, MaxPathLength- 1, "%s", "New_Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -1603,7 +1608,7 @@ void MainWindow::elementApplyBslot()
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
 
   strncpy(myparent->myBeamline()->ElementList[number].elementname, 
-	  elementList->currentItem()->text().toLatin1().data(), MaxPathLength); // the name of the element
+	  elementList->currentItem()->text().toLatin1().data(), MaxPathLength- 1); // the name of the element
   
   cout << "elementApplyBslot: feed data from widget into dataset" << endl;
 
@@ -1775,14 +1780,14 @@ void MainWindow::grapplyslot()
     case PLOT_PO_SINTIM:
     case PLOT_PO_AMP4:
     case PLOT_PO_PHA4:
-      if (d_plot) delete (d_plot); d_plot= NULL;
-      if (zone)   delete (zone);   zone= NULL;
+      if (d_plot) { delete (d_plot); } d_plot= NULL;
+      if (zone)   { delete (zone);   } zone= NULL;
       zone= new Plot2x2(plotBox);
       plotLayout->addWidget(zone, 0, 0);
       break;
     default: 
       //if (d_plot) delete (d_plot); d_plot= NULL;
-      if (zone)   delete (zone);   zone= NULL;
+      if (zone)   { delete (zone); }  zone= NULL;
       if (!d_plot) d_plot= new Plot(plotBox);
       // fill values from manual scaling or autoscale
       d_plot->Plot::ymin= gryminE->text().toDouble();
@@ -2324,7 +2329,7 @@ void MainWindow::insertElement()
       if (i == pos)
 	{
 	  listpt->ElementOK= 0;
-	  snprintf(listpt->elementname, MaxPathLength, "%s", "New_Element");
+	  snprintf(listpt->elementname, MaxPathLength- 1, "%s", "New_Element");
 	  minitdatset(&listpt->MDat);
 	  listpt->MDat.Art= kEOETM;   // overwrite kEOEDefaults
 	  ginitdatset(&listpt->GDat);
@@ -2675,8 +2680,14 @@ void MainWindow::print()
   //   QPrinter printer;
 
     QPrinter printer(QPrinter::HighResolution);
-    printer.setOrientation(QPrinter::Landscape);
+    printer.setCreator( "phaseqt" );
     printer.setPaperSize(QPrinter::A4);
+#if QT_VERSION >= 0x050300    
+    printer.setPageOrientation(QPageLayout::Landscape); 
+#else
+    printer.setOrientation( QPrinter::Landscape );
+#endif    
+    //printer.setPageSize(QPageSize(A4)); // new
     printer.setColorMode(QPrinter::Color);
 
 
@@ -2699,12 +2710,19 @@ void MainWindow::print()
 void MainWindow::printMain()
 {
 #ifdef DEBUG
-  cout << "debug: MainWindow::printMain called" << endl;
+  cout << "debug "<< __FILE__ << ":" << __LINE__ << ": MainWindow::printMain called" << endl;
 #endif
 
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
-  printer.setOrientation(QPrinter::Landscape);
+  printer.setCreator( "phaseqt" );
+#if QT_VERSION >= 0x050300
+    printer.setPageOrientation( QPageLayout::Landscape );
+#else
+    printer.setOrientation( QPrinter::Landscape );
+#endif  
+  
   printer.setPaperSize(QPrinter::A4);
+  //printer.setPageSize(QPrinter::A4);
   printer.setColorMode(QPrinter::Color);
 
   int myresolution= printer.resolution();
@@ -2727,8 +2745,12 @@ void MainWindow::printMain()
   double xscale = printer.pageRect().width()/double(this->width());
   double yscale = printer.pageRect().height()/double(this->height());
   double scale = qMin(xscale, yscale);
+  // deprecated 2021
   painter.translate(printer.paperRect().x() + printer.pageRect().width()/2,
 		    printer.paperRect().y() + printer.pageRect().height()/2);
+  
+  /*painter.translate(pageLayout().fullRectPixels(resolution()).x() + pageLayout().fullRectPixels(resolution()).width()/2,
+    pageLayout().fullRectPixels(resolution()).y() + pageLayout().fullRectPixels(resolution()).height()/2);*/
   painter.scale(scale, scale);
   painter.translate(-width()/2, -height()/2);
   
@@ -2844,7 +2866,7 @@ void MainWindow::selectParameter()
   if (parameternumber < 0) 
     return;
 
-  strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength);
+  strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
   buffer[MaxPathLength- 1]= '\0';   // ensure termination
   ch= strchr(buffer, ':');
   if (ch != NULL) 
@@ -2969,7 +2991,7 @@ void MainWindow::geslot()
     }
   myparent->myBeamline()->ElementList[number].MDat.Art= kEOEGeneral;
   QMessageBox::information(this, tr("gerneric element slot"),
-			   tr("The elementname must be the file name!\nsave and reload the beamline!"));
+			   tr("The expected file_name is elementname plus extension .coeff!\nTo use the data from the file:\nSave and reload the beamline!"));
   UpdateElementBox(number); 
 }
 

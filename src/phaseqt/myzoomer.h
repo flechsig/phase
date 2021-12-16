@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/myzoomer.h */
 /*  Date      : <09 Jan 12 10:44:10 flechsig>  */
-/*  Time-stamp: <2021-12-13 10:32:04 flechsig>  */
+/*  Time-stamp: <2021-12-16 11:57:24 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <17 Mar 15 10:16:33 flechsig> 
+//  Time-stamp: <2021-12-16 11:18:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -45,6 +45,7 @@
 #include <QtGui>
 #else
 #include <QtWidgets>
+#include <QRectF>
 #endif
 
 #include <qprinter.h>
@@ -67,6 +68,8 @@
 #include <qwt_symbol.h>
 #include <qwt_plot_directpainter.h>
 #include <qpaintengine.h>
+//2112
+#include <qwt_raster_data.h>
 //#include <qapplication.h>
 //#include <qpen.h>
 //#include <qwt_data.h>
@@ -86,6 +89,28 @@ public:
     {
     }
 
+          virtual QRectF boundingRect() const QWT_OVERRIDE
+        {
+            if ( cachedBoundingRect.width() < 0.0 )
+                cachedBoundingRect = qwtBoundingRect( *this );
+
+            return cachedBoundingRect;
+        }
+
+        inline void append( const QPointF& point )
+        {
+            m_samples += point;
+        }
+
+        void clear()
+        {
+            m_samples.clear();
+            m_samples.squeeze();
+            cachedBoundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
+        }
+
+  //old version
+  #ifdef HOME 
     virtual QRectF boundingRect() const
     {
         if ( d_boundingRect.width() < 0.0 )
@@ -94,10 +119,13 @@ public:
         return d_boundingRect;
     }
 
+
     inline void append( const QPointF &point )
     {
         d_samples += point;
     }
+
+
 
     void clear()
     {
@@ -105,8 +133,50 @@ public:
         d_samples.squeeze();
         d_boundingRect = QRectF( 0.0, 0.0, -1.0, -1.0 );
     }
+  #endif
 };
 
+// new qwt 6.2
+class SpectrogramData : public QwtRasterData
+{
+public:
+  SpectrogramData()
+  {
+    // some minor performance improvements when the spectrogram item
+    // does not need to check for NaN values
+    
+    setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval( -1.5, 1.5 );
+    m_intervals[ Qt::YAxis ] = QwtInterval( -1.5, 1.5 );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
+  }
+  
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }
+  
+  virtual double value( double x, double y ) const QWT_OVERRIDE
+  {
+    const double c = 0.842;
+    //const double c = 0.33;
+    
+    const double v1 = x * x + ( y - c ) * ( y + c );
+    const double v2 = x * ( y + c ) + x * ( y + c );
+    
+    return 1.0 / ( v1 * v1 + v2 * v2 );
+  }
+  
+private:
+  QwtInterval m_intervals[3];
+};  // end SpectrogramData
+
+
+#ifdef QWT61
 // UF the original 2d data
 class SpectrogramData: public QwtRasterData
 {
@@ -117,7 +187,7 @@ public:
         setInterval( Qt::YAxis, QwtInterval( -1.5,  1.5 ) );
         setInterval( Qt::ZAxis, QwtInterval(  0.0, 10.0 ) );
     }
-
+  
     virtual double value(double x, double y) const
     {
         const double c = 0.842;
@@ -127,28 +197,43 @@ public:
 
         return 1.0 / (v1 * v1 + v2 * v2);
     }
+   
 };
+#endif
 
 // UF my copy of the 2d data with slightly changed patrameters
 class SpectrogramData2: public QwtRasterData
 {
 public:
-    SpectrogramData2()
-    {
-        setInterval( Qt::XAxis, QwtInterval( -2.5,  3.5 ) );
-        setInterval( Qt::YAxis, QwtInterval( -2.5,  3.5 ) );
-        setInterval( Qt::ZAxis, QwtInterval(  0.0, 22.0 ) );
-    }
+  SpectrogramData2()
+  {
+    setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval( -2.5, 3.5 );
+    m_intervals[ Qt::YAxis ] = QwtInterval( -2.5, 1.5 );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 22.0 );
+  }
+  
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }
+  
+  virtual double value(double x, double y) const
+  {
+    const double c = 0.542;
+    
+    const double v1 = x * x + (y-c) * (y+c);
+    const double v2 = x * (y+c) + x * (y+c);
+    
+    return 1.0 / (v1 * v1 + v2 * v2);
+  }
 
-    virtual double value(double x, double y) const
-    {
-        const double c = 0.542;
-
-        const double v1 = x * x + (y-c) * (y+c);
-        const double v2 = x * (y+c) + x * (y+c);
-
-        return 1.0 / (v1 * v1 + v2 * v2);
-    }
+private:
+  QwtInterval m_intervals[3];
 };
 
 // keeps the 2d PO data
@@ -171,13 +256,25 @@ public:
       //      printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
-      setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
-      setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
-      setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
+         setAttribute( QwtRasterData::WithoutGaps, true );
+    
+    m_intervals[ Qt::XAxis ] = QwtInterval(po->zmin, po->zmax  );
+    m_intervals[ Qt::YAxis ] = QwtInterval( po->ymin, po->ymax );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
+    
+
 #ifdef DEBUG
       cout << " ==> done"  << endl;
 #endif
     }
+
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }
   
     virtual double value(double x, double y) const
     {
@@ -187,33 +284,46 @@ public:
 	return po->h2a[ix+ iy* po->h2a_nx];
       return 10.0; // should never happen
     }
+  
+  private:
+  QwtInterval m_intervals[3];
 };
 
 // keeps the 2d PO data
 class SpectrogramDataGO: public QwtRasterData
 {
 private:
-  Plot   *po;
+  Plot *po;
   
 public:
-    SpectrogramDataGO(Plot *plotobj)
-    {
-      po= plotobj;
-      
-#ifdef DEBUG1
-      printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
+  SpectrogramDataGO(Plot *plotobj)
+  {
+    po= plotobj;
+    
+#ifdef DEBUG
+    OUTDBG("constructor SpectrogramDataGO: zmin " <<  po->zmin << " zmax " << po->zmax << " h2max: " << po->h2max);
       //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
-      setInterval( Qt::XAxis, QwtInterval( po->zmin, po->zmax ) );
-      setInterval( Qt::YAxis, QwtInterval( po->ymin, po->ymax ) );
-      setInterval( Qt::ZAxis, QwtInterval( 0.0, 10. ) );
+    setAttribute( QwtRasterData::WithoutGaps, true );
+    m_intervals[ Qt::XAxis ] = QwtInterval( po->zmin, po->zmax  );
+    m_intervals[ Qt::YAxis ] = QwtInterval( po->ymin, po->ymax );
+    m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
+    
 #ifdef DEBUG
-      cout << " ==> done"  << endl;
+    OUTDBG(" ==> done");
 #endif
     }
-  
-    virtual double value(double x, double y) const
+
+  virtual QwtInterval interval( Qt::Axis axis ) const QWT_OVERRIDE
+  {
+    if ( axis >= 0 && axis <= 2 )
+      return m_intervals[ axis ];
+    
+    return QwtInterval();
+  }  
+
+  virtual double value(double x, double y) const
     {
       int ix = qRound((po->h2a_nx- 1)* (x- po->zmin)/(po->zmax - po->zmin));
       int iy = qRound((po->h2a_ny- 1)* (y- po->ymin)/(po->ymax - po->ymin));
@@ -221,6 +331,9 @@ public:
 	return po->h2a[ix+ iy* po->h2a_nx];
       return 10.0; // should never happen
     }
+
+private:
+  QwtInterval m_intervals[3];
 };
 
 
@@ -243,7 +356,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   d_curve1 = new QwtPlotCurve( "dz min" );               // one curve
   d_curve2 = new QwtPlotCurve( "dz center" );            // one curve
   d_curve1->attach( this ); 
-  d_curve2->attach( this ); 
+  d_curve2->attach( this );
   d_curve1->hide();
   d_curve2->hide();
   
@@ -251,12 +364,11 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   
   d_spectrogram = new QwtPlotSpectrogram();
   d_spectrogram->setRenderThreadCount(0); // use system specific thread count
-  
   d_spectrogram->setColorMap(new ColorMap());
-  
   d_spectrogram->setData(new SpectrogramData());
   d_spectrogram->attach(this);
-
+  
+  //#ifdef HOME
   QList<double> contourLevels;
   for ( double level = 0.5; level < 10.0; level += 1.0 )
     contourLevels += level;
@@ -303,23 +415,31 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   QwtPlotPanner *panner = new QwtPlotPanner(mycanvas);
     
   panner->setAxisEnabled(QwtPlot::yRight, false);
-  panner->setMouseButton(Qt::MidButton);
+  // UF2112 panner->setMouseButton(Qt::MidButton);
+  panner->setMouseButton(Qt::MiddleButton); // new
   
   // Avoid jumping when labels with more/less digits
   // appear/disappear when scrolling vertically
   
   const QFontMetrics fm(axisWidget(QwtPlot::yLeft)->font());
   QwtScaleDraw *sd = axisScaleDraw(QwtPlot::yLeft);
+  // qt version < 5.9.7
+#if (QT_VERSION < 0x050A00)
+  //  OUTDBG("###########################################" << QT_VERSION);
   sd->setMinimumExtent( fm.width("100.00") );
-  
+#else
+  sd->setMinimumExtent( fm.horizontalAdvance("100.00") );
+#endif
+    
   const QColor c(Qt::darkBlue);
   zoomer->setRubberBandPen(c);
   zoomer->setTrackerPen(c);
 
   /************* end zoom *************/
   this->fwhmon= 1;
-#ifdef DEBUG1  
-  cout << "debug: " << __FILE__ << " Plot:constructor called- plotsubject " << plotsubject << endl;
+  //#endif  
+#ifdef DEBUG
+  OUTDBG( " Plot:constructor called- plotsubject " << plotsubject );
 #endif
   //  this->p_zoomer= zoomer;
 } // end constructor
@@ -327,7 +447,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 Plot::~Plot()
 {
 #ifdef DEBUG  
-  cout << "debug: " << __FILE__ << " Plot:destructor called" <<  endl;
+  OUTDBG(" Plot:destructor called");
 #endif
   if (c1x) XFREE(c1x);
   if (c1y) XFREE(c1y);
@@ -347,7 +467,7 @@ void Plot::example3()
 void Plot::contourPlot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " contour plot experimental" << endl;
+  OUTDBG(" contour plot experimental");
 #endif
   d_curve1->hide();
   d_curve2->hide();
@@ -495,7 +615,7 @@ void Plot::profilePlot(int subject, int style, int settype)
 
 void Plot::fillData()
 {
-  printf("fill data called- is empty\n");
+  cout << "fill data called- is empty" << endl;
 } // fillData
 
 // creates the temporary arrays xdata etc out of the ray structure depending on plotsubject
@@ -506,17 +626,16 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
   struct RayType *rp;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " fillGoPlotArrays called, plotsubject: " 
-       << plotsubject << " ray_set_type=" << settype << endl;
+  OUTDBG(" fillGoPlotArrays called, plotsubject: " << plotsubject << " ray_set_type=" << settype);
 #endif
 
   ndata1= points1; // fill private var
   ndata2= (settype & PLRaySet2) ? points2 : 0;
 
-  if (c1x) delete c1x; c1x= NULL;
-  if (c1y) delete c1y; c1y= NULL;
-  if (c2x) delete c2x; c2x= NULL;
-  if (c2y) delete c2y; c2y= NULL;
+  if (c1x) { delete c1x; } c1x= NULL;
+  if (c1y) { delete c1y; } c1y= NULL;
+  if (c2x) { delete c2x; } c2x= NULL;
+  if (c2y) { delete c2y; } c2y= NULL;
  
   c1x= new double[ndata1]; 
   c1y= new double[ndata1];
@@ -682,14 +801,12 @@ void Plot::setGoData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
-  printf("debug: Plot::setphaseData called, datatype: %s\n", datatype);
+  OUTDBG("Plot::setGoData called, datatype: " << datatype);
 #endif  
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-  
   d_spectrogram->setData(new SpectrogramDataGO(this));
-  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -700,7 +817,7 @@ void Plot::setPoData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
-  printf("debug: Plot::setPoData called, datatype: %s\n", datatype);
+  OUTDBG("Plot::setPoData called, datatype: " << datatype);
 #endif  
 
   if ((h2a_nx < 1) || (h2a_ny < 1))
@@ -712,9 +829,9 @@ void Plot::setPoData(const char *datatype)
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-  
+  //#ifdef HOME  
   d_spectrogram->setData(new SpectrogramDataPO(this));
-  
+  //#endif  
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -723,8 +840,9 @@ void Plot::setPoData(const char *datatype)
 void Plot::setdefaultData()
 {
   delete d_spectrogram->data();
-  
+  //#ifdef HOME  
   d_spectrogram->setData(new SpectrogramData());
+  //#endif
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -732,10 +850,13 @@ void Plot::setdefaultData()
 
 void Plot::setdefaultData2()
 {
+  //#ifdef HOME
   delete d_spectrogram->data();
   
   QwtRasterData *data = new SpectrogramData2();
+
   d_spectrogram->setData(data);
+  //#endif
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());
@@ -869,10 +990,10 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 {
   int i;
   unsigned int ix;
-  double *dp, *buffer, *buffer2;
+  double *buffer, *buffer2;
   
 #ifdef DEBUG
-  cout << "Plot::hfill1 called set=" << set << endl;
+  OUTDBG("set= " << set);
 #endif
 
   if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
@@ -882,8 +1003,8 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       //buffer= new double[ndata1];
       buffer= XMALLOC(double, ndata1);
       memcpy(buffer, dvec, sizeof(double)*ndata1);
-      if (c1x) delete c1x; c1x= NULL;
-      if (c1y) delete c1y; c1y= NULL;
+      if (c1x) { delete c1x; } c1x= NULL;
+      if (c1y) { delete c1y; } c1y= NULL;
       c1x= new double[BINS2];
       c1y= new double[BINS2];
       for (ix= 0; ix< BINS2; ix++)
@@ -895,7 +1016,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       for (i= 0; i< ndata1; i++)
 	{
 	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
-	  if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
+	  if (ix < BINS2) c1y[ix]+= 1.0;          // add one hit
 	} 
       //delete buffer;
       XFREE(buffer);
@@ -904,8 +1025,8 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
     {
       buffer2= XMALLOC(double, ndata2);
       memcpy(buffer2, dvec, sizeof(double)*ndata2);
-      if (c2x) delete c2x; c2x= NULL;
-      if (c2y) delete c2y; c2y= NULL;
+      if (c2x) { delete c2x; } c2x= NULL;
+      if (c2y) { delete c2y; } c2y= NULL;
       c2x= new double[BINS2];
       c2y= new double[BINS2];
       for (ix= 0; ix< BINS2; ix++)
@@ -917,7 +1038,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       for (i= 0; i< ndata2; i++)
 	{
 	  ix= (unsigned int)((buffer2[i]- x1)/(x2- x1) * BINS2);
-	  if ((ix < BINS2) && (ix >= 0)) c2y[ix]+= 1.0;          // add one hit
+	  if (ix < BINS2) c2y[ix]+= 1.0;          // add one hit
 	} 
       XFREE(buffer2);
     }
@@ -953,7 +1074,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
     }
   
 #ifdef DEBUG
-  printf("debug: hfill1 end\n");
+  OUTDBG("hfill1 end");
 #endif
 } // hfill1
 
@@ -1035,13 +1156,13 @@ void Plot::hfill2(int settype)
 void Plot::hfill2(struct PSDType *rp, int type)
 {
 #ifndef OBSOLETE
-  printf("call to obsolete function hfill2(struct PSDType\n", __FILE__);
+  cout << __FILE__ << "call to obsolete function hfill2(struct PSDType" << endl;
 #else
   int i, ix, iy, h2a_n, idf, idc;
   double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO field version (PORF))" << endl;
+  OUTDBG("Plot::hfill2 called (PO field version (PORF))");
 #endif
 
   h2a_nx= rp->iz;
@@ -1121,7 +1242,7 @@ void Plot::hfill2(struct PSDType *rp, int type)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+  OUTDBG(" hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 #endif
 } // hfill2 PO_phase
@@ -1133,7 +1254,7 @@ void Plot::hfill2(struct EmfType *emfpp, int type)
   double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO field version (emf))" << endl;
+  OUTDBG("Plot::hfill2 called (PO field version (emf))");
 #endif
 
   h2a_nx= emfpp->nz;
@@ -1213,7 +1334,7 @@ void Plot::hfill2(struct EmfType *emfpp, int type)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+  OUTDBG(" hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 } // hfill2 PO_phase
 
@@ -1224,7 +1345,7 @@ void Plot::hfill2(struct SurfaceType *rp)
   double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO surface error version (PLOT_SURF_PROF))" << endl;
+  OUTDBG("Plot::hfill2 called (PO surface error version (PLOT_SURF_PROF))");
 #endif
 
   h2a_nx= rp->nw;
@@ -1263,7 +1384,7 @@ void Plot::hfill2(struct SurfaceType *rp)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+  OUTDBG(" hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 } // hfill2 PO_surf
 
@@ -1276,7 +1397,7 @@ void Plot::hfill2(struct source4c *rp, int type)
   double h2range;
     
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO source field version (POSF))" << endl;
+  OUTDBG("Plot::hfill2 called (PO source field version (POSF))");
 #endif
 
 #ifdef OBSOLETE
@@ -1359,7 +1480,7 @@ printf("obsolete call to hfill2, file=%s\n", __FILE__);
 #endif
    
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 POSF end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+ OUTDBG(" hfill2 POSF end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 } // hfill2 PO source field
 
@@ -1379,7 +1500,7 @@ void Plot::statistics()
   int idxc, ix, iy, h2a_n;
 
 #ifdef DEBUG
-  cout << "debug: Plot::statistics (PO) called" << endl;
+  OUTDBG("Plot::statistics (PO) called");
 #endif
 
   fwhmfac= 2.0* sqrt(2.0 * log(2.0));
@@ -1503,7 +1624,7 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
       wdy*= fwhmfac;
     }
 #ifdef DEBUG1  
-  cout << "debug " << __FILE__ << " ==> statistics done" << endl;
+  OUTDBG(" ==> statistics done");
 #endif
 } // Plot::statistics
 
@@ -1519,7 +1640,6 @@ void Plot::clearPoints()
 {
     CurveData *data = static_cast<CurveData *>( d_curve1->data() );
     data->clear();
-
     replot();
 }
 
@@ -1547,7 +1667,7 @@ void Plot::getData()
 void Plot::SetLog(bool yes)
 {
 #ifdef DEBUG
-  cout << "debug: slot Plot::SetLog(bool stat) called with yes = " << yes << endl;
+  OUTDBG("slot Plot::SetLog(bool stat) called with yes = " << yes);
 #endif
 
   logscaleon= yes;        // remember status
@@ -1566,7 +1686,7 @@ void Plot::SetLog(bool yes)
 void Plot::SetLog(int axisId, bool yes)
 {
 #ifdef DEBUG
-  cout << "debug: slot Plot::SetLog(int axisId, bool yes) called for axisId= " << axisId << endl;
+  OUTDBG("slot Plot::SetLog(int axisId, bool yes) called for axisId= " << axisId);
 #endif
 
   //  zoomer->ResetZoomBase();  //needs to be done before setting Engine
