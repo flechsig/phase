@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-16 10:27:09 flechsig> 
+//  Time-stamp: <2021-12-16 10:52:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -426,8 +426,9 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   const QFontMetrics fm(axisWidget(QwtPlot::yLeft)->font());
   QwtScaleDraw *sd = axisScaleDraw(QwtPlot::yLeft);
   // qt version < 5.9.7
-#if (QT_VERSION < 0x051100) 
-    sd->setMinimumExtent( fm.width("100.00") );
+#if (QT_VERSION < 0x050A00)
+  //  OUTDBG("###########################################" << QT_VERSION);
+  sd->setMinimumExtent( fm.width("100.00") );
 #else
   sd->setMinimumExtent( fm.horizontalAdvance("100.00") );
 #endif
@@ -995,7 +996,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
   double *dp, *buffer, *buffer2;
   
 #ifdef DEBUG
-  cout << "Plot::hfill1 called set=" << set << endl;
+  OUTDBG("set= " << set);
 #endif
 
   if ((x2- x1) < ZERO ) x2 = x1 + 1.0;
@@ -1018,7 +1019,6 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
       for (i= 0; i< ndata1; i++)
 	{
 	  ix= (unsigned int)((buffer[i]- x1)/(x2- x1) * BINS2);
-	  //2112 if ((ix < BINS2) && (ix >= 0)) c1y[ix]+= 1.0;          // add one hit
 	  if (ix < BINS2) c1y[ix]+= 1.0;          // add one hit
 	} 
       //delete buffer;
