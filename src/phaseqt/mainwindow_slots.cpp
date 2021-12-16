@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-16 11:33:48 flechsig> 
+//  Time-stamp: <2021-12-16 14:17:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -126,7 +126,7 @@ void MainWindow::activateProc(const QString &action)
   QEventLoop q;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " MainWindow::activateProc called with action: " << qPrintable(action) << endl;
+  OUTDBG(" MainWindow::activateProc called with action: " << qPrintable(action));
 #endif
   
   bl= (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
@@ -167,7 +167,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("asynPOAct")) 
     { 
 #ifdef DEBUG  
-      cout << endl <<  "debug: " << __FILE__ << " asynPOAct button pressed" << endl; 
+      OUTDBG(endl << " asynPOAct button pressed"); 
 #endif
       if (elementListIsEmpty()) return;
 
@@ -388,7 +388,7 @@ void MainWindow::activateProc(const QString &action)
 	  myparent->myRayTracec(); 
 	}
 #ifdef DEBUG      
-      cout << "debug: ray trace-> done" << endl;
+      OUTDBG("ray trace-> done");
 #endif
       //mmBox->close();
       
@@ -471,8 +471,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("fresnelAct")) 
     { 
 #ifdef DEBUG
-      cout << endl << "debug: fresnelAct button pressed" << endl
-	   << "(propagate just 1st element)" << endl; 
+      OUTDBG(endl << "fresnelAct button pressed" << endl << "(propagate just 1st element)"); 
 #endif
       if (elementListIsEmpty()) return;
       bl->beamlineOK &= ~resultOK;
@@ -639,7 +638,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("phasespaceAct"))
     {   
 #ifdef DEBUG  
-      cout << "debug: " << __FILE__ << " phasespaceAct button pressed" << endl; 
+      OUTDBG(" phasespaceAct button pressed"); 
 #endif
       if (elementListIsEmpty()) 
 	return;
@@ -746,7 +745,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writemapAct")) 
     { 
 #ifdef DEBUG
-      cout << "debug: writemapAct button pressed" << endl;
+      OUTDBG("writemapAct button pressed");
 #endif 
       if (elementListIsEmpty())
 	return;
@@ -828,7 +827,7 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("writecoeffAct")) 
     { 
 #ifdef DEBUG
-      cout << "debug: writecoeffmapAct button pressed" << endl;
+      OUTDBG("writecoeffmapAct button pressed");
 #endif
       if (elementListIsEmpty())
 	return;
@@ -1291,7 +1290,7 @@ void MainWindow::appendElement()
     bl->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("debug: appendElement: AddItem at pos %d, out of %u\n", pos, bl->elementzahl);  
+  OUTDBG("appendElement: AddItem at pos " << pos << " out of " << bl->elementzahl);  
 #endif 
  
   QListWidgetItem *item= new QListWidgetItem("New_Element");
@@ -1338,7 +1337,7 @@ void MainWindow::thetaBslot()  // SetTheta from cff
   QString cffstr;
 
 #ifdef DEBUG
-  cout << "thetaBslot" << endl;
+  OUTDBG("thetaBslot");
 #endif
 
   if (number < 0) 
@@ -1382,7 +1381,7 @@ void MainWindow::rhoBslot()  // calculate roho
   QString rhostr;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " rhoBslot called" << endl;
+  OUTDBG(" rhoBslot called");
 #endif
     
   theta=  thetaE ->text().toDouble();
@@ -1419,7 +1418,7 @@ void MainWindow::vlscalcbslot()  // calculate vls parameter
   
   struct gdatset *gdat= &(myparent->myBeamline()->ElementList[number].GDat);
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " vlscalcbslot called" << endl;
+  OUTDBG(" vlscalcbslot called");
 #endif
     
   theta =  fabs(thetaE ->text().toDouble())*PI/180.;			// theta angle to surface normal [rad]
@@ -1427,10 +1426,12 @@ void MainWindow::vlscalcbslot()  // calculate vls parameter
   r2 =  imageE ->text().toDouble(); 					// r2 [mm]
   r = rE ->text().toDouble();						// meridional radius [mm]
   if (fabs(r) < 1e-18)
-    r = INFINITY;
-	#ifdef DEBUG
-	  cout << "debug: r is inf" << endl;
-	#endif
+    {
+      r = INFINITY;
+#ifdef DEBUG
+      OUTDBG("r is inf");
+#endif
+    }
   m = integerSpinBox->value();         					// diffraction order
   lambda = myparent->myBeamline()->BLOptions.lambda; 			// lambda [nm]
   N0 = gdat->xdens[0];							// line density [mm^⁻1]
@@ -1477,7 +1478,7 @@ void MainWindow::rBslot()
   QString qst;
  
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " rBslot called" << endl;
+  OUTDBG(" rBslot called");
 #endif
 
   theta=  thetaE ->text().toDouble();
@@ -1514,7 +1515,7 @@ void MainWindow::deleteElement()
   int pos= elementList->currentRow();
  
 #ifdef DEBUG
-  printf("debug: deleteElement: delete element with idx %d out of %u\n", pos, myparent->myBeamline()->elementzahl);
+  OUTDBG("deleteElement: delete element with idx " << pos << " out of " << myparent->myBeamline()->elementzahl);
 #endif
 
   if (pos >= 0)
@@ -1569,7 +1570,7 @@ void MainWindow::deleteElement()
 void MainWindow::dislenSlot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " dislenSlot called" << endl;
+  OUTDBG(" dislenSlot called");
 #endif
 
   myparent->myBeamline()->BLOptions.displength= dislenE->text().toDouble();
@@ -1590,7 +1591,7 @@ void MainWindow::elementApplyBslot()
   int number= elementList->currentRow();
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " elementApplyBslot activated" << endl;
+  OUTDBG(" elementApplyBslot activated");
 #endif
 
   if (number < 0) 
@@ -1691,7 +1692,7 @@ void MainWindow::elementApplyBslot()
 void MainWindow::fwhmslot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " fwhmslot called" << endl;
+  OUTDBG(" fwhmslot called");
 #endif
 #ifdef HAVE_QWT
   d_plot->fwhmon= 1;
@@ -1703,7 +1704,7 @@ void MainWindow::fwhmslot()
 void MainWindow::goButtonslot()
 {
 #ifdef DEBUG
-  cout << "debug: goButtonslot called" << endl;
+  OUTDBG("goButtonslot called");
 #endif
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 1;
@@ -1730,7 +1731,7 @@ void MainWindow::grapplyslot()
   double *myarray;
 
 #ifdef DEBUG
-  cout << endl << "debug: " << __FILE__ << " grapplyslot called, mwplotsubject=" << hex << showbase << mwplotsubject << endl;
+  OUTDBG(" grapplyslot called, mwplotsubject=" << hex << showbase << mwplotsubject);
 #endif
 
   bl= (struct BeamlineType *)myparent->myBeamline();  // abkuerzung
@@ -2118,7 +2119,7 @@ void MainWindow::grapplyslot()
   
     //d_plot->replot();
 #ifdef DEBUG
-  cout << "debug: grapplyslot end with replot" << endl;
+  OUTDBG("grapplyslot end with replot");
 #endif
 #endif 
   //have_qwt  
@@ -2134,7 +2135,7 @@ void MainWindow::grautoscaleslot()
   struct SurfaceType *surfp;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " grautoscaleslot called, mwplotsubject=" << hex << showbase << mwplotsubject << endl;
+  OUTDBG(" grautoscaleslot called, mwplotsubject=" << hex << showbase << mwplotsubject);
 #endif
 
 // a few tests
@@ -2242,7 +2243,7 @@ void MainWindow::grslot()
   int number= elementList->currentRow();
 
 #ifdef DEBUG
-  cout << "debug: grslot called" << endl;
+  OUTDBG("grslot called");
 #endif
 
   if (number < 0) 
@@ -2270,7 +2271,7 @@ void MainWindow::grvlsslot()
   int number= elementList->currentRow();
 
 #ifdef DEBUG
-  cout << "debug: grvlsslot called" << endl;
+  OUTDBG("grvlsslot called");
 #endif
 
   if (number < 0) 
@@ -2297,7 +2298,7 @@ void MainWindow::insertElement()
 {
 
 #ifdef DEBUG
-  printf("debug: insertElement called\n");
+  OUTDBG("insertElement called");
 #endif
 
   struct ElementType *tmplist, *listpt, *tmplistpt;
@@ -2307,7 +2308,7 @@ void MainWindow::insertElement()
   if (abs((int)(myparent->myBeamline()->elementzahl)) > 1000) myparent->myBeamline()->elementzahl= 0;  // fix falls elementzahl nicht initialisiert
 
 #ifdef DEBUG
-  printf("debug: insertElement: AddItem at pos %d, out of %u\n", pos, myparent->myBeamline()->elementzahl);  
+  OUTDBG("insertElement: AddItem at pos " << pos << " out of " << myparent->myBeamline()->elementzahl);  
 #endif 
  
   QListWidgetItem *item= new QListWidgetItem("New_Element");
@@ -2352,7 +2353,7 @@ void MainWindow::lambdaSlot()
   unsigned int i;
 
 #ifdef DEBUG
-  cout << "lambdaSlot called" << endl;
+  OUTDBG("lambdaSlot called");
 #endif
 
   myparent->myBeamline()->BLOptions.lambda= lambdaE->text().toDouble()* 1e-6;
@@ -2368,7 +2369,7 @@ void MainWindow::dlambdaSlot()
   unsigned int i;
 
 #ifdef DEBUG
-  cout << "dlambdaSlot called" << endl;
+  OUTDBG("dlambdaSlot called");
 #endif
 
   myparent->myBeamline()->BLOptions.dlambda= dlambdaE->text().toDouble()* 1e-6;
@@ -2386,7 +2387,7 @@ void MainWindow::dlambdaSlot()
 void MainWindow::misaliBoxslot(int newstate)
 {
 #ifdef DEBUG
-  cout << "misaliBoxslot called: new state: " << newstate << endl;
+  OUTDBG("misaliBoxslot called: new state: " << newstate);
 #endif
   
   myparent->myBeamline()->BLOptions.WithAlign= (newstate == Qt::Checked) ? 1 : 0;
@@ -2400,7 +2401,7 @@ void MainWindow::misaliBoxslot(int newstate)
 void MainWindow::dlambdaBoxslot(int newstate)
 {
 #ifdef DEBUG
-  cout << "dlambdaBoxslot called: new state: " << newstate << endl;
+  OUTDBG("dlambdaBoxslot called: new state: " << newstate);
 #endif
   
   myparent->myBeamline()->BLOptions.dlambdaflag= (newstate == Qt::Checked) ? 1 : 0;
@@ -2412,8 +2413,7 @@ void MainWindow::dlambdaBoxslot(int newstate)
   UpdateBeamlineBox();
 
 #ifdef DEBUG
-  cout << "debug: dlambdaBoxslot out:dlambdaflag= " <<  
-    myparent->myBeamline()->BLOptions.dlambdaflag <<  endl;
+  OUTDBG("dlambdaBoxslot out:dlambdaflag= " << myparent->myBeamline()->BLOptions.dlambdaflag);
 #endif
 } // dlambdaBoxslot
 
@@ -2426,8 +2426,7 @@ void MainWindow::dlambdaBox1slot(int newstate)
     myparent->myBeamline()->BLOptions.plrayset & PLRaySet2;
 
 #ifdef DEBUG
-  cout << "debug: dlambdaBox1slot out:= plrayset" <<  
-    myparent->myBeamline()->BLOptions.plrayset <<  endl;
+  OUTDBG("dlambdaBox1slot out:= plrayset " << myparent->myBeamline()->BLOptions.plrayset);
 #endif
 } // dlambdaBox1slot
 
@@ -2439,8 +2438,7 @@ void MainWindow::dlambdaBox2slot(int newstate)
     myparent->myBeamline()->BLOptions.plrayset & PLRaySet1;
 
 #ifdef DEBUG
-  cout << "debug: dlambdaBox2slot out:= plrayset" <<  
-    myparent->myBeamline()->BLOptions.plrayset <<  endl;
+  OUTDBG("dlambdaBox2slot out:= plrayset " << myparent->myBeamline()->BLOptions.plrayset);
 #endif
 } // dlambdaBox2slot
 
@@ -2484,7 +2482,7 @@ void MainWindow::openBeamline()
   int rcode;
   
 #ifdef DEBUG
-  cout << "Debug: slot openBeamline activated" << endl;
+  OUTDBG("slot openBeamline activated");
   //  myQtPhase->myPHASEset::print();
 #endif
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
@@ -2542,7 +2540,7 @@ void MainWindow::parameterUpdateSlot()
   int index;
 
 #ifdef DEBUG
-  cout << "debug: parameterUpdateSlot called, file: " <<  __FILE__ << endl;
+  OUTDBG("parameterUpdateSlot called");
 #endif
 
   //index= parameterList->currentRow();      // old list model
@@ -2591,7 +2589,7 @@ void MainWindow::parameterUpdateSlot()
 void MainWindow::poButtonslot()
 {
 #ifdef DEBUG
-  cout << "debug: poButtonslot called" << endl;
+  OUTDBG("poButtonslot called");
 #endif
 
   myparent->myBeamline()->BLOptions.SourcetoImage= 2;
@@ -2672,7 +2670,7 @@ void MainWindow::rright4slot()
 void MainWindow::print()
 {
 #ifdef DEBUG
-  cout << "debug: MainWindow::print called" << endl;
+  OUTDBG("MainWindow::print called");
 #endif
 
 #ifndef QT_NO_PRINTDIALOG
@@ -2710,7 +2708,7 @@ void MainWindow::print()
 void MainWindow::printMain()
 {
 #ifdef DEBUG
-  cout << "debug "<< __FILE__ << ":" << __LINE__ << ": MainWindow::printMain called" << endl;
+  OUTDBG("MainWindow::printMain called");
 #endif
 
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
@@ -2763,7 +2761,7 @@ void MainWindow::printMain()
 void MainWindow::screenshotMain()
 {
 #ifdef DEBUG
-  cout << "debug: MainWindow::screenshotMain called" << endl;
+  OUTDBG("MainWindow::screenshotMain called");
 #endif
 
   repaint();  // force an update outside the main loop, 
@@ -2809,7 +2807,7 @@ void MainWindow::saveas()
   if (fileName.isEmpty()) return;
 
 #ifdef DEBUG
-    cout << "debug: saveas() called" << endl;
+  OUTDBG("saveas() called");
 #endif
 
     name= fileName.toLatin1().data();
@@ -2842,7 +2840,7 @@ void MainWindow::selectElement()
   int elementnumber= elementList->currentRow();
  
 #ifdef DEBUG
-  cout << "debug: selectElement called, selected: " << elementnumber << endl;
+  OUTDBG("selectElement called, selected: " << elementnumber);
 #endif
   
   if (elementnumber < 0) return;
@@ -2858,7 +2856,7 @@ void MainWindow::selectElement()
 void MainWindow::selectParameter()
 {
 #ifdef DEBUG
-  cout << "debug: selectParameter called" << endl;
+  OUTDBG("selectParameter called");
 #endif
   char buffer[MaxPathLength], *ch;
   int parameternumber= parameterList->currentRow();
@@ -3089,7 +3087,7 @@ void MainWindow::copyslot()
 void MainWindow::sigmaslot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " sigmaslot called" << endl;
+  OUTDBG(" sigmaslot called");
 #endif
 #ifdef HAVE_QWT
   d_plot->fwhmon= 0;
@@ -3101,7 +3099,7 @@ void MainWindow::sigmaslot()
 void MainWindow::wattslot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " wattslot called" << endl;
+  OUTDBG(" wattslot called");
 #endif
 
  cout << "debug: " << __FILE__ << " wattslot no function so far" << endl;
@@ -3118,7 +3116,7 @@ void MainWindow::wattslot()
 void MainWindow::photonslot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " photonslot called" << endl;
+  OUTDBG(" photonslot called");
 #endif
 cout << "debug: " << __FILE__ << " photonslot no function so far" << endl;
   /*
@@ -3133,7 +3131,7 @@ cout << "debug: " << __FILE__ << " photonslot no function so far" << endl;
 void MainWindow::sourceDefaultBslot()
 {
 #ifdef DEBUG
-  printf("sourceDefaultBslot activated\n");
+  OUTDBG("sourceDefaultBslot activated");
 #endif
   //sourceSetDefaults();
   oldsource='0';    // something not valid
@@ -3159,7 +3157,7 @@ void MainWindow::sourceApplyBslot()
   //struct PSSourceType         *pssp; 
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " sourceApplyBslot activated" << endl;
+  OUTDBG(" sourceApplyBslot activated");
 #endif
 
   if (myparent->myBeamline()->RTSource.Quellep == NULL )
@@ -3281,7 +3279,7 @@ void MainWindow::sourceAutoGuessBslot()
   struct PSImageType *psip;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " sourceAutoGuessBslot activated" << endl;
+  OUTDBG(" sourceAutoGuessBslot activated");
 #endif
 
   bl = myparent->myBeamline();

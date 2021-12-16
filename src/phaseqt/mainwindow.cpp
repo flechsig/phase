@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-12-14 15:45:18 flechsig> 
+//  Time-stamp: <2021-12-16 13:44:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1275,7 +1275,7 @@ QWidget *MainWindow::createParameterBox()
   int i;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " createParameterBox called" << endl;
+  OUTDBG(" createParameterBox called");
 #endif
 
   // upper part
@@ -1593,7 +1593,7 @@ void MainWindow::createToolBars()
 void MainWindow::parameterUpdateAll(int zahl)
 {
 #ifdef DEBUG
-  cout << "debug: parameterUpdateAll: number: " << zahl << endl;
+  OUTDBG( "debug: parameterUpdateAll: number: " << zahl);
 #endif
   
   for (int i= 0; i< zahl; i++) parameterUpdate(i, " ", 1);
@@ -2059,7 +2059,7 @@ void MainWindow::ReadBLFileInteractive(char *blname)
   time_t mtime_data, mtime_backup;
   
 #ifdef DEBUG
-  cout << "debug: ReadBLFileInteractive called with file >>" << blname << "<<" << endl;
+  OUTDBG("ReadBLFileInteractive called with file >>" << blname << "<<");
 #endif
 
   strncpy(fname, blname, (MaxPathLength - 1));
@@ -2356,8 +2356,8 @@ void MainWindow::UpdateElementList()
   struct ElementType *list;
   
 #ifdef DEBUG
-  printf("MainWindow::UpdateElementList(): elements in widget:  %d\n", elementList->count());
-  printf("MainWindow::UpdateElementList(): elements in dataset: %d\n", myparent->myBeamline()->elementzahl);
+  OUTDBG("MainWindow::UpdateElementList(): elements in widget:  " << elementList->count());
+  OUTDBG("MainWindow::UpdateElementList(): elements in dataset: " << myparent->myBeamline()->elementzahl);
 #endif
 
   // loesche alles
@@ -2671,7 +2671,7 @@ void MainWindow::UpdateStatistics(Plot *pp, const char *label, int rays)
   long    porays;
 
 #ifdef DEBUG
-  cout << "debug: " __FILE__ << " UpdateStatistics called" << endl;
+  OUTDBG(" UpdateStatistics called");
 #endif
 
   po= (rays == 0) ? 1 : 0;
@@ -2978,7 +2978,7 @@ void MainWindow::writeSimp2h5()
   char *fname= bl->filenames.hdf5_out;
 
 #ifdef DEBUG
-  cout << "debug: writeSimp2h5 called" << endl;
+  OUTDBG("writeSimp2h5 called");
 #endif
 
   file_id = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT);
@@ -3016,8 +3016,8 @@ void MainWindow::writeSimp()
   char infostr[MaxPathLength];
 
 #ifdef DEBUG
-  cout << "debug: writeSimp called" << endl;
-  cout << "debug: result type: " << myparent->myBeamline()->RESULT.typ << endl;
+  OUTDBG("writeSimp called");
+  OUTDBG("result type: " << myparent->myBeamline()->RESULT.typ);
 #endif
 
   snprintf(fname1,  MaxPathLength, "%s-simpre", name);
@@ -3132,7 +3132,7 @@ int MainWindow::FileExistCheckOK(std::string name1)
   char *name= (char *)name1.c_str();
 
 #ifdef DEBUG
-  cout << "debug MainWindow::FileExistCheckOK, file: " << __FILE__<< ":" <<__LINE__ << endl;  
+  OUTDBG( "MainWindow::FileExistCheckOK");  
 #endif
   
   if (fexists(name))

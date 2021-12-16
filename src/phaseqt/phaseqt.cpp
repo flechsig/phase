@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <2015-05-02 19:45:20 flechsig> 
+//  Time-stamp: <2021-12-16 14:23:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -59,7 +59,7 @@ void PhaseQt::buildBeamlineParallel()
   struct TmpMapType  *ltp;              /* local pointer */
 
 #ifdef DEBUG
-  cout << endl << "debug: " << __FILE__ << " buildBeamlineParallel() called, beamlineOK=" << this->beamlineOK << endl;
+  OUTDBG("buildBeamlineParallel() called, beamlineOK=" << this->beamlineOK);
 #endif
 
   Check_iord(this);                                 /* check the range of iord */
@@ -90,13 +90,13 @@ void PhaseQt::buildBeamlineParallel()
 	   /* wc,xlc,xlm sind richtungsabhaengig !!*/
 	  
 #ifdef DEBUG
-	  cout <<  "debug: " << __FILE__ << " BeamlineParallel() matrixes and maps of element "<< elcounter << " created" << endl;
+	  OUTDBG("BeamlineParallel() matrixes and maps of element "<< elcounter << " created");
 #endif 
 	}             /* map ist OK */
       else
 	{
 #ifdef DEBUG
-	  cout <<  "debug: " << __FILE__ << " BeamlineParallel() element "<< elcounter << " already OK- keep matrix" << endl;
+	  OUTDBG("BeamlineParallel() element "<< elcounter << " already OK- keep matrix");
 #endif 
 	  
 	} /* end if (listpt->ElementOK == 0) */
@@ -113,7 +113,7 @@ void PhaseQt::buildBeamlineParallel()
   //watcher->setFuture(result);
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " buildBeamlineParallel() end, beamlineOK=" << beamlineOK << endl << endl;
+  OUTDBG("buildBeamlineParallel() end, beamlineOK=" << beamlineOK);
 #endif
 } //  end buildBeamlineParallel
 
@@ -122,7 +122,7 @@ void PhaseQt::buildElement(struct ElementType *listpt)
 {
   int number= 99;
 #ifdef DEBUG
-  cout <<  "debug: " << __FILE__ << " buildElement called" << endl;
+  OUTDBG("buildElement called");
 #endif
 
   DefMirrorC(&listpt->MDat, &listpt->mir, listpt->MDat.Art, listpt->GDat.theta0, 
@@ -143,7 +143,7 @@ void PhaseQt::initSet(const char *fname, const int all)
   if ((ch= strrchr(name, '.')) != NULL) *ch= '\0';  // remove extension
 
 #ifdef DEBUG
-  cout << "debug: PhaseQt::initSet called, all= " << all << endl; 
+  OUTDBG("PhaseQt::initSet called, all= " << all); 
 #endif
 
   snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", name, "omx");
@@ -207,7 +207,7 @@ void PhaseQt::printSet()
 void PhaseQt::initBeamline()
 {
 #ifdef DEBUG
-  cout << "debug: initBeamline called, file=" << __FILE__ << endl;
+  OUTDBG("initBeamline called");
 #endif
 
   beamlineOK         = 0;
@@ -260,7 +260,7 @@ struct OptionsType *PhaseQt::myOptions()
 PhaseQt::PhaseQt()
 {
 #ifdef DEBUG  
-  cout << "debug: PhaseQt constructor called" << endl;
+  OUTDBG("PhaseQt constructor called");
 #endif
   ActualTask= 0;
   mainWin= NULL;
