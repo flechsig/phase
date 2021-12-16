@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-14 17:27:59 flechsig> 
+//  Time-stamp: <2021-12-16 10:27:09 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -293,15 +293,14 @@ public:
 class SpectrogramDataGO: public QwtRasterData
 {
 private:
-  Plot   *po;
+  Plot *po;
   
 public:
-  // uf2112 SpectrogramDataGO(Plot *plotobj)
-  SpectrogramDataGO()
-    {
-      // uf2112 po= plotobj;
-      
-#ifdef DEBUG1
+  SpectrogramDataGO(Plot *plotobj)
+  {
+    po= plotobj;
+    
+#ifdef DEBUG
       printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
       //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
@@ -804,15 +803,12 @@ void Plot::setGoData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
-  printf("debug: Plot::setphaseData called, datatype: %s\n", datatype);
+  OUTDBG("Plot::setGoData called, datatype: " << datatype);
 #endif  
 
   //delete d_spectrogram->data();   // clean up the old data - correct??
   //printf("delete d_spectrogram->data() ==> done\n");
-  //#ifdef HOME  
-  //UF 2112 d_spectrogram->setData(new SpectrogramDataGO(this));
-  d_spectrogram->setData(new SpectrogramDataGO()); // take away this
-  //#endif  
+  d_spectrogram->setData(new SpectrogramDataGO(this));
   d_spectrogram->show();
   replot();
   zoomer->setZoomBase(canvas());

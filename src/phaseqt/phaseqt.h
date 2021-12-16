@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2015-05-03 08:52:00 flechsig>  */
+/*  Time-stamp: <2021-12-16 10:21:02 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -111,6 +111,9 @@ class MainWindow;          // forward declaration
 #define PLOT_VPROF      64
 
 #define INIT_ALL        1
+
+// debug macro: usage: OUTDBG("Hello Heinz" << " Hello Bernd k= " << k );
+#define OUTDBG( message ) (cerr << "debug " <<  __FILE__ << ":" << __LINE__ << ":" << __func__ << ": " << message << endl)
 
 typedef QFutureWatcher <int> ElementWatcher;
 
