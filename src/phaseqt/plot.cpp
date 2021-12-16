@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-16 10:52:55 flechsig> 
+//  Time-stamp: <2021-12-16 11:18:23 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -301,19 +301,17 @@ public:
     po= plotobj;
     
 #ifdef DEBUG
-      printf("debug: constructor SpectrogramDataGO: zmin %f zmax %f h2max: %f", po->zmin, po->zmax,  po->h2max);
+    OUTDBG("constructor SpectrogramDataGO: zmin " <<  po->zmin << " zmax " << po->zmax << " h2max: " << po->h2max);
       //   printf("debug: h2a_nx= %d, h2a_ny= %d\n ", po->h2a_nx, po->h2a_ny);
 #endif
       //QwtRasterData(QwtDoubleRect(zmin, zmax, ymin, ymax));
-          setAttribute( QwtRasterData::WithoutGaps, true );
-    
+    setAttribute( QwtRasterData::WithoutGaps, true );
     m_intervals[ Qt::XAxis ] = QwtInterval( po->zmin, po->zmax  );
     m_intervals[ Qt::YAxis ] = QwtInterval( po->ymin, po->ymax );
     m_intervals[ Qt::ZAxis ] = QwtInterval( 0.0, 10.0 );
     
-
 #ifdef DEBUG
-      cout << " ==> done"  << endl;
+    OUTDBG(" ==> done");
 #endif
     }
 
@@ -440,8 +438,8 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
   /************* end zoom *************/
   this->fwhmon= 1;
   //#endif  
-#ifdef DEBUG  
-  cout << "debug: " << __FILE__ << " Plot:constructor called- plotsubject " << plotsubject << endl;
+#ifdef DEBUG
+  OUTDBG( " Plot:constructor called- plotsubject " << plotsubject );
 #endif
   //  this->p_zoomer= zoomer;
 } // end constructor
@@ -449,7 +447,7 @@ Plot::Plot(QWidget *parent): QwtPlot(parent)
 Plot::~Plot()
 {
 #ifdef DEBUG  
-  cout << "debug: " << __FILE__ << " Plot:destructor called" <<  endl;
+  OUTDBG(" Plot:destructor called");
 #endif
   if (c1x) XFREE(c1x);
   if (c1y) XFREE(c1y);
@@ -469,7 +467,7 @@ void Plot::example3()
 void Plot::contourPlot()
 {
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " contour plot experimental" << endl;
+  OUTDBG(" contour plot experimental");
 #endif
   d_curve1->hide();
   d_curve2->hide();
@@ -617,7 +615,7 @@ void Plot::profilePlot(int subject, int style, int settype)
 
 void Plot::fillData()
 {
-  printf("fill data called- is empty\n");
+  cout << "fill data called- is empty" << endl;
 } // fillData
 
 // creates the temporary arrays xdata etc out of the ray structure depending on plotsubject
@@ -628,8 +626,7 @@ void Plot::fillGoPlotArrays(struct RayType *rays, int points1, int points2, int 
   struct RayType *rp;
 
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " fillGoPlotArrays called, plotsubject: " 
-       << plotsubject << " ray_set_type=" << settype << endl;
+  OUTDBG(" fillGoPlotArrays called, plotsubject: " << plotsubject << " ray_set_type=" << settype);
 #endif
 
   ndata1= points1; // fill private var
@@ -820,7 +817,7 @@ void Plot::setPoData(const char *datatype)
 {
   // struct BeamlineType *bt;
 #ifdef DEBUG
-  printf("debug: Plot::setPoData called, datatype: %s\n", datatype);
+  OUTDBG("Plot::setPoData called, datatype: " << datatype);
 #endif  
 
   if ((h2a_nx < 1) || (h2a_ny < 1))
@@ -993,7 +990,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 {
   int i;
   unsigned int ix;
-  double *dp, *buffer, *buffer2;
+  double *buffer, *buffer2;
   
 #ifdef DEBUG
   OUTDBG("set= " << set);
@@ -1077,7 +1074,7 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
     }
   
 #ifdef DEBUG
-  printf("debug: hfill1 end\n");
+  OUTDBG("hfill1 end");
 #endif
 } // hfill1
 
@@ -1159,13 +1156,13 @@ void Plot::hfill2(int settype)
 void Plot::hfill2(struct PSDType *rp, int type)
 {
 #ifndef OBSOLETE
-  printf("%s: call to obsolete function hfill2(struct PSDType\n", __FILE__);
+  cout << __FILE__ << "call to obsolete function hfill2(struct PSDType" << endl;
 #else
   int i, ix, iy, h2a_n, idf, idc;
   double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO field version (PORF))" << endl;
+  OUTDBG("Plot::hfill2 called (PO field version (PORF))");
 #endif
 
   h2a_nx= rp->iz;
@@ -1245,7 +1242,7 @@ void Plot::hfill2(struct PSDType *rp, int type)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+  OUTDBG(" hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 #endif
 } // hfill2 PO_phase
@@ -1257,7 +1254,7 @@ void Plot::hfill2(struct EmfType *emfpp, int type)
   double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO field version (emf))" << endl;
+  OUTDBG("Plot::hfill2 called (PO field version (emf))");
 #endif
 
   h2a_nx= emfpp->nz;
@@ -1337,7 +1334,7 @@ void Plot::hfill2(struct EmfType *emfpp, int type)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+  OUTDBG(" hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 } // hfill2 PO_phase
 
@@ -1348,7 +1345,7 @@ void Plot::hfill2(struct SurfaceType *rp)
   double h2range;
   
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO surface error version (PLOT_SURF_PROF))" << endl;
+  OUTDBG("Plot::hfill2 called (PO surface error version (PLOT_SURF_PROF))");
 #endif
 
   h2a_nx= rp->nw;
@@ -1387,7 +1384,7 @@ void Plot::hfill2(struct SurfaceType *rp)
       h2a[i]= (h2a[i]- h2min)* 10.0/ h2range;
   
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+  OUTDBG(" hfill2 end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 } // hfill2 PO_surf
 
@@ -1400,7 +1397,7 @@ void Plot::hfill2(struct source4c *rp, int type)
   double h2range;
     
 #ifdef DEBUG
-  cout << "Plot::hfill2 called (PO source field version (POSF))" << endl;
+  OUTDBG("Plot::hfill2 called (PO source field version (POSF))");
 #endif
 
 #ifdef OBSOLETE
@@ -1483,7 +1480,7 @@ printf("obsolete call to hfill2, file=%s\n", __FILE__);
 #endif
    
 #ifdef DEBUG
-  cout << "debug: " << __FILE__ << " hfill2 POSF end:  hmin=" <<  h2min << " hmax=" <<  h2max << endl;
+ OUTDBG(" hfill2 POSF end:  hmin=" <<  h2min << " hmax=" <<  h2max);
 #endif
 } // hfill2 PO source field
 
@@ -1503,7 +1500,7 @@ void Plot::statistics()
   int idxc, ix, iy, h2a_n;
 
 #ifdef DEBUG
-  cout << "debug: Plot::statistics (PO) called" << endl;
+  OUTDBG("Plot::statistics (PO) called");
 #endif
 
   fwhmfac= 2.0* sqrt(2.0 * log(2.0));
@@ -1627,7 +1624,7 @@ void Plot::statistics(struct RayType *rays, int points, double deltalambdafactor
       wdy*= fwhmfac;
     }
 #ifdef DEBUG1  
-  cout << "debug " << __FILE__ << " ==> statistics done" << endl;
+  OUTDBG(" ==> statistics done");
 #endif
 } // Plot::statistics
 
@@ -1670,7 +1667,7 @@ void Plot::getData()
 void Plot::SetLog(bool yes)
 {
 #ifdef DEBUG
-  cout << "debug: slot Plot::SetLog(bool stat) called with yes = " << yes << endl;
+  OUTDBG("slot Plot::SetLog(bool stat) called with yes = " << yes);
 #endif
 
   logscaleon= yes;        // remember status
@@ -1689,7 +1686,7 @@ void Plot::SetLog(bool yes)
 void Plot::SetLog(int axisId, bool yes)
 {
 #ifdef DEBUG
-  cout << "debug: slot Plot::SetLog(int axisId, bool yes) called for axisId= " << axisId << endl;
+  OUTDBG("slot Plot::SetLog(int axisId, bool yes) called for axisId= " << axisId);
 #endif
 
   //  zoomer->ResetZoomBase();  //needs to be done before setting Engine
