@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-14 15:46:29 flechsig> 
+//  Time-stamp: <2021-12-16 11:33:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2680,9 +2680,13 @@ void MainWindow::print()
   //   QPrinter printer;
 
     QPrinter printer(QPrinter::HighResolution);
-    //2112 printer.setOrientation(QPrinter::Landscape);
+    printer.setCreator( "phaseqt" );
     printer.setPaperSize(QPrinter::A4);
-    printer.setPageOrientation(QPageLayout::Landscape); // new
+#if QT_VERSION >= 0x050300    
+    printer.setPageOrientation(QPageLayout::Landscape); 
+#else
+    printer.setOrientation( QPrinter::Landscape );
+#endif    
     //printer.setPageSize(QPageSize(A4)); // new
     printer.setColorMode(QPrinter::Color);
 
@@ -2710,8 +2714,13 @@ void MainWindow::printMain()
 #endif
 
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
-  // 2112 printer.setOrientation(QPrinter::Landscape);
-  printer.setPageOrientation(QPageLayout::Landscape); // new
+  printer.setCreator( "phaseqt" );
+#if QT_VERSION >= 0x050300
+    printer.setPageOrientation( QPageLayout::Landscape );
+#else
+    printer.setOrientation( QPrinter::Landscape );
+#endif  
+  
   printer.setPaperSize(QPrinter::A4);
   //printer.setPageSize(QPrinter::A4);
   printer.setColorMode(QPrinter::Color);
