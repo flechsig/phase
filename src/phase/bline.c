@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2021-12-10 14:29:34 flechsig>  */
+/*   Time-stamp: <2021-12-17 10:29:24 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -3242,20 +3242,19 @@ void ReadCoefficientFile(double *dp, char *fname)
 #else
   dim1= 36;	  
 #endif
-  for (i=0; i < dim1; i++) dp[i]= 0.0;
-
+  for (i= 0; i < dim1; i++) dp[i]= 0.0;
 
   while (!feof(f))    
   {
     /*   fgets(buffer, 99, f); */
     fscanf(f, " %254[^\n]s %c", buffer, &buf); 
-#ifdef DEBUG  
+#ifdef DEBUG1  
     printf("read: %254s\n", buffer); 
 #endif 
     if (buffer[0] != '#')             /* skip comments */
       {
 	sscanf(buffer, "%d %d %lg", &i, &j, &x);
-#ifdef DEBUG  
+#ifdef DEBUG1  
       printf("took: %d %d %15.10lg\n", i, j, x);
 #endif 
 

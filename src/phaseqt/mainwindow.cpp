@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-12-16 13:44:25 flechsig> 
+//  Time-stamp: <2021-12-17 10:37:52 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1593,7 +1593,7 @@ void MainWindow::createToolBars()
 void MainWindow::parameterUpdateAll(int zahl)
 {
 #ifdef DEBUG
-  OUTDBG( "debug: parameterUpdateAll: number: " << zahl);
+  OUTDBG("number: " << zahl);
 #endif
   
   for (int i= 0; i< zahl; i++) parameterUpdate(i, " ", 1);
@@ -2164,6 +2164,7 @@ void MainWindow::UpdateBeamlineBox()
 // UpdateElementBox
 // box at right buttom
 // called with the index of the optical element in the list
+
 void MainWindow::UpdateElementBox(int number)
 {
   double cff, teta, fi;
@@ -2394,8 +2395,8 @@ void MainWindow::UpdateSourceBox()
   myparent->myBeamline()->beamlineOK &= ~(sourceOK | resultOK | pstimageOK); 
         
 #ifdef DEBUG 
-  printf("debug: %s, UpdateSourceBox: bl->RTSource.QuellTyp: %c, beamlineOK: %X, oldsource: %c\n", 
-	 __FILE__, myparent->myBeamline()->RTSource.QuellTyp, myparent->myBeamline()->beamlineOK, oldsource);   
+  OUTDBG("bl->RTSource.QuellTyp: " << myparent->myBeamline()->RTSource.QuellTyp << \
+	 " beamlineOK: " << myparent->myBeamline()->beamlineOK << " oldsource: " << oldsource);
 #endif   
  
     if (myparent->myBeamline()->RTSource.Quellep == NULL)

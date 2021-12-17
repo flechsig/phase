@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-16 14:17:17 flechsig> 
+//  Time-stamp: <2021-12-17 10:17:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -692,7 +692,6 @@ void MainWindow::activateProc(const QString &action)
       bl->beamlineOK &= ~resultOK;
       UpdateStatus();
 
-      
       if (!myparent->myBuildBeamline()) 
 	{
 	  QMessageBox::critical(this, tr("ERROR"), 
@@ -1589,9 +1588,10 @@ void MainWindow::doubleclickElement()
 void MainWindow::elementApplyBslot()
 {
   int number= elementList->currentRow();
+  char buffer[MaxPathLength];
   
 #ifdef DEBUG
-  OUTDBG(" elementApplyBslot activated");
+  OUTDBG("elementApplyBslot activated");
 #endif
 
   if (number < 0) 
@@ -1652,8 +1652,10 @@ void MainWindow::elementApplyBslot()
   gd->iflag= (nimBox->isChecked() == true) ? 1 : 0;
   // build the element
   if (md->Art == kEOEGeneral )
-    ReadCoefficientFile((double *)&(myparent->myBeamline()->ElementList[number].mir), 
-			myparent->myBeamline()->ElementList[number].elementname);
+    {
+      snprintf(buffer, MaxPathLength- 1, "%s.coeff",  myparent->myBeamline()->ElementList[number].elementname);
+      ReadCoefficientFile((double *)&(myparent->myBeamline()->ElementList[number].mir), buffer);
+    }
   // we always call DefMirrorC to apply misalignment
   myparent->myDefMirrorC(md, &(myparent->myBeamline()->ElementList[number].mir), md->Art, 
 			 gd->theta0, myparent->myBeamline()->BLOptions.REDUCE_maps, number);
@@ -1692,7 +1694,7 @@ void MainWindow::elementApplyBslot()
 void MainWindow::fwhmslot()
 {
 #ifdef DEBUG
-  OUTDBG(" fwhmslot called");
+  OUTDBG("fwhmslot called");
 #endif
 #ifdef HAVE_QWT
   d_plot->fwhmon= 1;
@@ -2838,12 +2840,17 @@ void MainWindow::selectElement()
 {
   QListWidgetItem *item;
   int elementnumber= elementList->currentRow();
+  char buffer[MaxPathLength];
  
-#ifdef DEBUG
-  OUTDBG("selectElement called, selected: " << elementnumber);
-#endif
-  
   if (elementnumber < 0) return;
+
+  snprintf(buffer, MaxPathLength- 1, "%s", elementList->currentItem()->text().toLatin1().data());
+  snprintf(myparent->myBeamline()->ElementList[elementnumber].elementname, MaxPathLength- 1, "%s", buffer);
+  // update name
+
+#ifdef DEBUG
+  OUTDBG("selectElement called, selected: " << elementnumber << " name: " << myparent->myBeamline()->ElementList[elementnumber].elementname);
+#endif
 
   myparent->myBeamline()->position= elementnumber+ 1;
   item= elementList->currentItem();
