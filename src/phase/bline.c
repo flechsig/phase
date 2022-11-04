@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2021-12-17 10:29:24 flechsig>  */
+/*   Time-stamp: <2022-11-04 16:22:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -2788,9 +2788,13 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
     case kEOEDrift:
       printf("DefMirrorC: elindex: %d special Optics- geometry and element data are ignored - ", elindex);
       printf("fill dummy entries from toroid\n"); 
-      //__attribute__ ((fallthrough));      // suppress fallthrough warning, here we want it
+      __attribute__ ((fallthrough));      // suppress fallthrough warning, here we want it
     case kEOETM:                          /* index a(i,j) */
-    case kEOETG:                          /* = i+ j* l    */
+      //[[fallthrough]];
+      //__attribute__ ((fallthrough))
+    case kEOETG:
+      /* = i+ j* l    */
+      //[[fallthrough]];
     case kEOEVLSG:  
       printf("DefMirrorC: elindex: %d generic toroidal shape \n", elindex);                 
       if (fabs(rho) > small) 

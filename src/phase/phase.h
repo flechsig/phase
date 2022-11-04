@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2021-05-28 11:25:16 flechsig>  */
+/*   Time-stamp: <2022-11-04 16:13:05 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -585,6 +585,7 @@ void
   DefGeometryCM(double, double, struct gdatset *, struct geometrytype *),
   DefMirrorC(struct mdatset *, struct mirrortype *, int, double, int, int, int),  
   elli_8(),
+  hyperbola_8(),
   ExpandFileNames(),
   extractmap(),
   fdet_8(MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4, MAPTYPE_8X4,
