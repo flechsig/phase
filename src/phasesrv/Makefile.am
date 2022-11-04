@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phasesrv/Makefile.am
 #  Date      : <17 May 13 17:36:23 flechsig> 
-#  Time-stamp: <2021-05-28 11:37:37 flechsig> 
+#  Time-stamp: <2022-11-04 15:55:08 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -65,7 +65,7 @@ phasesrv_SOURCES = \
 phasesrv_LDADD = $(libdir)/@LIBPHASE@
 
 # files installed under data
-pkgdata_DATA = ../data/coefficient-example.dat \
+pkgdata_DATA = ../data/coefficient-example.coeff \
  ../data/map70_lh.omx\
  ../data/map70_rh.omx\
 ../data/spa3table_20001.tab \
