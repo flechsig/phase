@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2021-12-17 10:17:17 flechsig> 
+//  Time-stamp: <2022-11-04 18:05:07 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -111,10 +111,10 @@ void MainWindow::about()
 } // about
 
 // UF slot
-// here we call our own code dependign on which button has been pressed
+// here we call our own code depending on which button has been pressed
 void MainWindow::activateProc(const QString &action)
 {
-  char buffer[MaxPathLength], header[MaxPathLength];
+  char buffer[300], header[400];  // bigger than maxpathlength
   struct PSImageType *psip;
   //struct constants *csp;
   struct BeamlineType *bl;
@@ -753,10 +753,10 @@ void MainWindow::activateProc(const QString &action)
 	{
 	  cout << "write map of element " << bl->position << " to file" << endl;
 
-	  snprintf(header, MaxPathLength- 1, "beamline: %s, map of element %d, iord: %d%d", 
+	  snprintf(header, 399, "beamline: %s, map of element %d, iord: %d%d", 
 		  bl->filenames.beamlinename, bl->position, 
 		  bl->BLOptions.ifl.iord, 0);
-	  snprintf(buffer, MaxPathLength- 1, "%s-%d", bl->filenames.mapname, bl->position);
+	  snprintf(buffer, 299, "%s%c%d", bl->filenames.mapname, '-', bl->position);
 
 
 	  /* casting 15.12.99 ist noch nicht OK */
@@ -775,9 +775,9 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  cout << "write map of beamline to file" << endl; 
 
-	  snprintf(header, MaxPathLength- 1, "beamline: %s, map of beamline, iord: %d", 
+	  snprintf(header, 399, "beamline: %s, map of beamline, iord: %d", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord);
-	  snprintf(buffer, MaxPathLength- 1, "%s-0", bl->filenames.mapname);
+	  snprintf(buffer, 299, "%s-0", bl->filenames.mapname);
 
 	  myparent->mywritemapc(buffer,  header,  
 				bl->BLOptions.ifl.iord, 
@@ -800,11 +800,11 @@ void MainWindow::activateProc(const QString &action)
 	  printf("write matrix of element %d to file\n", bl->position); 
 
 
-	  snprintf(header, MaxPathLength- 1, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d\x00", 
+ 	  snprintf(header, 399, "beamline: %s, matrix of element %d, iord: %d, REDUCE_maps: %d", 
 		  bl->filenames.beamlinename, bl->position, 
 		  bl->BLOptions.ifl.iord,
 		  bl->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength- 1, "%s-%d\x00", bl->filenames.matrixname, bl->position);
+	  snprintf(buffer, 299, "%s%c%d", bl->filenames.matrixname, '-', bl->position);
 
           writematrixfile((double *)bl->ElementList[bl->position- 1].M_StoI,
 			  buffer, header, strlen(buffer), strlen(header)); // add hidden length parameter 
@@ -814,10 +814,10 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
 
-	  snprintf(header, MaxPathLength- 1, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, 399, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord, 
 		  bl->BLOptions.REDUCE_maps);
-	  snprintf(buffer, MaxPathLength- 1, "%s-0\x00", bl->filenames.matrixname);
+	  snprintf(buffer, 299, "%s-0", bl->filenames.matrixname);
 
 	  writematrixfile((double *)bl->M_StoI, buffer, header, strlen(buffer), strlen(header));
 	}
@@ -2844,8 +2844,8 @@ void MainWindow::selectElement()
  
   if (elementnumber < 0) return;
 
-  snprintf(buffer, MaxPathLength- 1, "%s", elementList->currentItem()->text().toLatin1().data());
-  snprintf(myparent->myBeamline()->ElementList[elementnumber].elementname, MaxPathLength- 1, "%s", buffer);
+  snprintf(buffer, MaxPathLength- 2, "%s", elementList->currentItem()->text().toLatin1().data());
+  snprintf(myparent->myBeamline()->ElementList[elementnumber].elementname, MaxPathLength, "%s", buffer);
   // update name
 
 #ifdef DEBUG
