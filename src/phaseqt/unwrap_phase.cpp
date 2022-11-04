@@ -1,6 +1,6 @@
 // File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/unwrap_phase.cpp
 // Date      : <26 Mar 14 09:31:57 flechsig> 
-// Time-stamp: <22 Mar 18 15:21:35 flechsig> 
+// Time-stamp: <2022-11-04 16:54:44 flechsig> 
 // Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 // $Source$ 
@@ -100,13 +100,13 @@ void unwrap_phase(double *inout, int cols, int rows)
 #endif
 
   //  delete out;
-  delete pixel;
-  delete edge;
+  delete[] pixel;
+  delete[] edge;
 #ifdef DEBUG
   //  cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 #endif
   cout << "==> done" << endl;
-  double a= MYPI;
+  //  double a= MYPI;
   //  cout << "1pi= " << std::setprecision(16) << MYPI << endl;
   //cout << "1pi= " << std::setprecision(16) << a << endl;
   //cout << "2pi= " << std::setprecision(16) << TWOMYPI << endl;
@@ -285,6 +285,7 @@ yes_no find_pivot(EDGE *left, EDGE *right, double *pivot_ptr)
 	}
       return no;
     }
+  return no;
 } // end find pivot
 
 EDGE *partition(EDGE *left, EDGE *right, double pivot)
