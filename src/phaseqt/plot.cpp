@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-16 11:18:23 flechsig> 
+//  Time-stamp: <2022-11-04 17:04:10 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -1082,7 +1082,9 @@ void Plot::hfill1(double *dvec, double x1, double x2, int set)
 void Plot::hfill2(int settype)
 {
   int i, ix, iy, h2a_n, idx;
+#ifdef DEBUG1  
   double xm, ym;
+#endif
   
 #ifdef DEBUG1
   cout << "debug: Plot::hfill2 called (ray version)" << endl;
@@ -1111,8 +1113,10 @@ void Plot::hfill2(int settype)
 	      h2a[idx]+= 1.0;          // add one hit
 	      if (h2a[idx] > h2max) 
 		{
+#ifdef DEBUG1		  
 		  xm= c1x[i]; 
 		  ym= c1y[i];
+#endif		  
 		  h2max= h2a[idx];
 		}
 	    }
@@ -1132,8 +1136,10 @@ void Plot::hfill2(int settype)
 	      h2a[idx]+= 1.0;          // add one hit
 	      if (h2a[idx] > h2max) 
 		{
+#ifdef DEBUG1		  
 		  xm= c2x[i]; 
 		  ym= c2y[i];
+#endif		  
 		  h2max= h2a[idx];
 		}
 	    }
@@ -1393,7 +1399,7 @@ void Plot::hfill2(struct SurfaceType *rp)
 // !! source4c uses c memory model 
 void Plot::hfill2(struct source4c *rp, int type)
 {
-  int i, ix, iy, h2a_n, idc; 
+  //  int i, ix, iy, h2a_n, idc; 
   double h2range;
     
 #ifdef DEBUG
