@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2021-12-17 10:41:40 flechsig> 
+dnl   Time-stamp: <2022-11-29 15:54:57 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 
 dnl   $Source$ 
@@ -36,6 +36,7 @@ dnl
 dnl ******************************************************************************
 
 dnl hardcoded version for -std=c++11 required for qt-5.9 - can cause problems with old versions
+dnl for root 6.26 we even need -std=c++17
 
 
 AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
@@ -356,6 +357,7 @@ dnl	       FFLAGS="-DDEBUG -g -O0 -check all -debug -warn all -warn nodeclaratio
 dnl       CFLAGS="-DDEBUG -gdwarf-2 -g3 ${CFLAGS}"
        CFLAGS="-DDEBUG -ggdb"             # -static
 dnl UF 20180612 add -std=c++11 for qt-5.9
+dnl uf 20221129 root need -std=c++17
        CXXFLAGS="-DDEBUG -ggdb 
 ###-std=c++11"
        ####LDFLAGS="-static"
@@ -363,7 +365,7 @@ dnl UF 20180612 add -std=c++11 for qt-5.9
     fi,
     [AC_MSG_NOTICE(***** produce production code *****)
     enable_debug="no"
-    CXXFLAGS="-std=c++11"
+    CXXFLAGS="-std=c++17"
     libextension="so"])
 dnl end debugger
 
