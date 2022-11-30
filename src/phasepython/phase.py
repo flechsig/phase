@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <28 Aug 20 07:58:01 flechsig>
+# Time-stamp: <2022-11-30 15:46:42 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -110,6 +110,7 @@ class emf(object):
                        Radius > 0: central circular part is transparent
                        Radius < 0: central circular part is oblique
             shape 21 : annular                  p1 = Outer radius, p2 = inner radius
+            shape 22 : Siemens star             p1 = Outer radius, p2 = inner radius, p3 = devisions
             shape 32 : vertical mirror          p1 = length, p2 = grazing angle (rad)
             shape 33 : horizontalal mirror      p1 = length, p2 = grazing angle (rad)
             shape 40 : diamond                  P1= width, P2= hpos, P3= vpos
@@ -182,6 +183,8 @@ class emf(object):
             T= self.aperture20(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
         elif shape == 21 :
             T= self.aperture21(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
+        elif shape == 22 :
+            T= self.aperture22(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
         elif shape == 32 :
             T= self.aperture32(p1=p1, p2=p2, p3=p3, p4=p4, verbose=verbose)
         elif shape == 33 :
@@ -410,6 +413,26 @@ class emf(object):
                     T[row, col]= 1.0
         return T
     # aperture 21
+
+    def aperture22(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
+        """helper function aperture22 (Siemens star)"""
+
+        if verbose : 
+            print('Siemens: outer radius= ', p1, ', inner radius= ', p2, ' devisions= ', p3)
+
+        Ny= len(self.y_vec)
+        Nz= len(self.z_vec)
+        T= np.zeros((Ny, Nz), dtype=float)
+        for row in np.arange(Ny) :
+            for col in np.arange(Nz) :
+                rr= self.z_vec[col]**2 + self.y_vec[row]**2 
+                fi= np.arcsin(self.y_vec[col]/rr)  
+                sw= 2* np.pi/devisions  # sector width (grating pitch)
+                ni= fi % sw             # rest          
+                if (rr <= p1**2) and (rr >= p2**2) and (ni <= 0.5):
+                    T[row, col]= 1.0
+        return T
+    # aperture 22
 
     def aperture32(self, p1=None, p2=None, p3=None, p4=None, verbose=False) :
         """helper function aperture32"""
