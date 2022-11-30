@@ -1,1 +1,7 @@
+221129 
+======
+switch to new c compiler standard to be compatible with root 6.26
+@PSI RH7 linux use: module add gcc/12.1.0
+
+
 we use the Qt version which is first in your path. Check: which qmake; qmake --version

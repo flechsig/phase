@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <2022-11-30 15:46:42 flechsig>
+# Time-stamp: <2022-11-30 17:21:10 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -426,10 +426,12 @@ class emf(object):
         for row in np.arange(Ny) :
             for col in np.arange(Nz) :
                 rr= self.z_vec[col]**2 + self.y_vec[row]**2 
-                fi= np.arcsin(self.y_vec[col]/rr)  
-                sw= 2* np.pi/devisions  # sector width (grating pitch)
-                ni= fi % sw             # rest          
-                if (rr <= p1**2) and (rr >= p2**2) and (ni <= 0.5):
+                fi= np.pi+np.arctan2(self.y_vec[row],self.z_vec[col])  
+                sw= 2.0* np.pi/p3  # sector width (grating pitch)
+                ni= fi % sw             # rest   
+                if (row < 4) and (col < 4) :
+                    print(row, col, rr, fi, sw)       
+                if (rr <= p1**2) and (rr >= p2**2) and (ni <= 0.75):
                     T[row, col]= 1.0
         return T
     # aperture 22

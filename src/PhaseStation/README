@@ -1,3 +1,17 @@
 kiwi --prepare /scratch1/PhaseStation --root /scratch1/myphasestation
 kiwi --create /scratch1/myphasestation --type iso -d /scratch1/myphasestation-result 
-qemu-... -cdrom /scratch1/myphasestation-result/..... -m 512
+qemu-... -cdrom /scratch1/myphasestation-result/..... -m 512#su --
+mount /dev/sdb1 /verbatim
+mount -o loop /verbatim/susedvd/openSUSE-13.1-DVD-x86_64.iso /verbatim/susedvd/mnt
+kiwi --build <ImageDescriptionPath> --destdir <DestinationPath> --set-repo /mnt
+kiwi --prepare <ImageDescriptionPath> --root <RootPath> --set-repo /mnt
+kiwi --create <RootPath> --destdir <DestinationPath>
+kiwi --list
+kiwi --build suse-13.1-JeOS --destdir /verbatim/jeos1 --type iso # --set-repo /verbatim/susedvd/mnt --setrepotype rpm-md
+repository does not work
+
+mount /dev/sdb1 /verbatim
+kiwi -p /usr/share/doc/packages/kiwi/examples/suse-13.1/suse-live-usbstick --root /verbatim/myoem
+kiwi --create /verbatim/myoem --type oem -d /verbatim/myoem-result --fat-storage 300
+
+qemu-system-x86_64 /verbatim/myoem-result/suse-13.1-live.x86_64-2.5.3.raw -m 512
