@@ -1,6 +1,6 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/phase.py
 # Date      : <15 Aug 17 16:25:49 flechsig>
-# Time-stamp: <2022-11-30 17:21:10 flechsig>
+# Time-stamp: <2022-12-01 13:23:31 flechsig>
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$
@@ -423,16 +423,22 @@ class emf(object):
         Ny= len(self.y_vec)
         Nz= len(self.z_vec)
         T= np.zeros((Ny, Nz), dtype=float)
+        #print("{:}, {:3s}  {:7s}  {:7s}  {:7s}  {:6s}  {:6s}  {:6s}".
+        #      format('r', 'c', 'z', 'y', 'r', 'fi', 'sw', 'ni')) 
         for row in np.arange(Ny) :
             for col in np.arange(Nz) :
-                rr= self.z_vec[col]**2 + self.y_vec[row]**2 
-                fi= np.pi+np.arctan2(self.y_vec[row],self.z_vec[col])  
-                sw= 2.0* np.pi/p3  # sector width (grating pitch)
-                ni= fi % sw             # rest   
-                if (row < 4) and (col < 4) :
-                    print(row, col, rr, fi, sw)       
-                if (rr <= p1**2) and (rr >= p2**2) and (ni <= 0.75):
+                rr= np.sqrt(self.z_vec[col]**2 + self.y_vec[row]**2) 
+                fi= np.pi+ np.arctan2(self.y_vec[row], self.z_vec[col]) 
+                # fi starts west in positive direction from 0 to 2pi
+                sw= 2.0/p3 * np.pi     # sector width (grating pitch)
+                ni= fi/sw - np.floor_divide(fi, sw)  # floating point remainder 
+                
+                #if (row < 2) and (col < 100) :
+                #    print("{:d}, {:d}, {:7.4f}, {:7.4f}, {:7.4f}, {:6.3f}, {:6.3f}, {:6.3f}, {:6.3f}".
+                #          format(row, col, self.z_vec[col], self.y_vec[row], np.sqrt(rr), fi, sw, ni, ni/np.pi))       
+                if (rr <= p1) and (rr >= p2) and (ni <= 0.5):
                     T[row, col]= 1.0
+        #print(type(fi), type(sw), type(ni), ni.shape)
         return T
     # aperture 22
 
