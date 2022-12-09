@@ -39,7 +39,7 @@ dnl hardcoded version for -std=c++11 required for qt-5.9 - can cause problems wi
 dnl for root 6.26 we even need -std=c++17
 
 
-AC_PREREQ([2.59])  # autoscan: AC_PREREQ([2.69])
+AC_PREREQ([2.71])  # autoscan: AC_PREREQ([2.71])
 AC_INIT([phase],[1.32],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([phase/bline.c])
 AC_REVISION([$Revision$]) # no autoscan
@@ -89,7 +89,10 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 dnl UF Aug 15 AC_PROG_RANLIB
-AC_LIBTOOL_DLOPEN
+_LT_SET_OPTION([LT_INIT],[dlopen])
+m4_warn([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
+put the 'dlopen' option into LT_INIT's first parameter.])
+
 
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
@@ -383,7 +386,7 @@ AC_ARG_ENABLE([experimental],
 dnl end experimental
 
 dnl libtool init after selecting the fortran compiler
-AC_PROG_LIBTOOL
+LT_INIT
 
 ## expire option
 AC_ARG_ENABLE([EXPIRE],
@@ -496,7 +499,15 @@ dnl AC_CHECK_LIB([z], [main])
 dnl Checks for header files.
 AC_PATH_X        # autoscan
 AC_PATH_XTRA     # UF 13.5.13 ??
-AC_HEADER_STDC   # autoscan
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+   # autoscan
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h strings.h unistd.h]) # autoscan
 
 dnl Checks for typedefs, structures, and compiler characteristics.
