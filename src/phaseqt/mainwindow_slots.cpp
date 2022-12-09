@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2022-11-04 18:05:07 flechsig> 
+//  Time-stamp: <2022-12-09 17:06:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2508,7 +2508,10 @@ void MainWindow::openBeamline()
   {
     cerr << "ERROR: Conversation error of fileName string in " << __FILE__ << '.' << endl;
     cerr << "Please report the bug and use a filename with a different length for now." << endl;
-    exit(-1);
+    cerr << "UF DEC 2022 take out exit and add debug code" << endl;
+    cerr << "cname: >>" << name <<"<< clength: " << (int)strlen(name) << endl;
+    cerr << "qlength : " << fileName.length() << endl;
+    //exit(-1);
   }
   
   if (!fileName.isEmpty()) 
