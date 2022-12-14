@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/plot.cpp
 //  Date      : <29 Jun 11 16:12:43 flechsig> 
-//  Time-stamp: <2021-12-14 17:15:03 flechsig> 
+//  Time-stamp: <2022-12-14 17:12:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -75,10 +75,10 @@ Plot2x2::Plot2x2(QWidget *parent): PlotMatrix(2, 2, parent)
   pm3->setLabel( QwtText( "f(dy) @ dzmax" ) );
   pm4->setLabel( QwtText( "f(dz) @ dy center" ) );
   // old 2112
-  //pm1->setLabel( QString::fromLatin1( "f(dy) @ dzmin" ) );
-  //pm2->setLabel( QString::fromLatin1( "f(dy) @ dz center" ) );
-  //pm3->setLabel( QString::fromLatin1( "f(dy) @ dzmax" ) );
-  //pm4->setLabel( QString::fromLatin1( "f(dz) @ dy center" ) );
+  //pm1->setLabel( QString::fromLocal8Bit( "f(dy) @ dzmin" ) );
+  //pm2->setLabel( QString::fromLocal8Bit( "f(dy) @ dz center" ) );
+  //pm3->setLabel( QString::fromLocal8Bit( "f(dy) @ dzmax" ) );
+  //pm4->setLabel( QString::fromLocal8Bit( "f(dz) @ dy center" ) );
 
   c1x= c4x= c1y= c2y= c3y= c4y= NULL;
   z1min= z1max= z4min= z4max= 0.0;

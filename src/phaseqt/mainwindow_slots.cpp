@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2022-12-09 17:06:33 flechsig> 
+//  Time-stamp: <2022-12-14 17:03:33 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -836,7 +836,7 @@ void MainWindow::activateProc(const QString &action)
 	  printf("write coefficients of element %d to file\n", bl->position);
       //  snprintf(buffer, MaxPathLength, "%s", "mirror-coefficients.dat");
 	  snprintf(buffer, MaxPathLength- 1, "%s.coeff", 
-		   elementList->currentItem()->text().toLatin1().data());
+		   elementList->currentItem()->text().toLocal8Bit().data());
 	  cout << "write coefficients to file: " << buffer << endl;
 	  if (  FileExistCheckOK(buffer) )
 	    {
@@ -1609,7 +1609,7 @@ void MainWindow::elementApplyBslot()
   myparent->myBeamline()->ElementList[number].ElementOK = 0;
 
   strncpy(myparent->myBeamline()->ElementList[number].elementname, 
-	  elementList->currentItem()->text().toLatin1().data(), MaxPathLength- 1); // the name of the element
+	  elementList->currentItem()->text().toLocal8Bit().data(), MaxPathLength- 1); // the name of the element
   
   cout << "elementApplyBslot: feed data from widget into dataset" << endl;
 
@@ -1621,7 +1621,7 @@ void MainWindow::elementApplyBslot()
   md->rmi   = rE     ->text().toDouble();         
   md->rho   = rhoE   ->text().toDouble(); 
   
-  snprintf(md->material, 9, "%s", coatingE->text().toLatin1().data());
+  snprintf(md->material, 9, "%s", coatingE->text().toLocal8Bit().data());
 
   //  printf("vvvvvvvvvvvvvvvvvvvvv %s\n", md->material);
 
@@ -2493,30 +2493,10 @@ void MainWindow::openBeamline()
 						  tr("Phase files (*.phase);;(*)")
 						  );
   char *name;
-  //  int result;
-  //myparent->myBeamline()->QtPhase::print();
-
-  //#warning unresolved spurious bug
-  //TODO: SG found spurious bug: on pc7753, if the string in variable filename 
-  // has the length 56, toLatin1().data() points to a C-string of the length 57
-  // and this filename will then not be found;
-  // this is either a bug in QT on pc7753 or some buffer overwrite in PhaseQT;
-  // for now, I'll just check that the lengths match and leave a note
-  // QString str56 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  name= fileName.toLatin1().data();
-  if ((int)strlen(name) != fileName.length())
-  {
-    cerr << "ERROR: Conversation error of fileName string in " << __FILE__ << '.' << endl;
-    cerr << "Please report the bug and use a filename with a different length for now." << endl;
-    cerr << "UF DEC 2022 take out exit and add debug code" << endl;
-    cerr << "cname: >>" << name <<"<< clength: " << (int)strlen(name) << endl;
-    cerr << "qlength : " << fileName.length() << endl;
-    //exit(-1);
-  }
   
   if (!fileName.isEmpty()) 
     {
-      name= fileName.toLatin1().data();
+      name= fileName.toLocal8Bit().data();
       cout << "MainWindow::newBeamline: try to read file: " << name << endl;
       rcode= myparent->myReadBLFile(name);
       if (rcode != -1)
@@ -2550,7 +2530,7 @@ void MainWindow::parameterUpdateSlot()
 
   //index= parameterList->currentRow();      // old list model
   index= parameterModel->getActualIndex();   // treemodel
-  parameterUpdate(index, parameterE->text().toLatin1().data(), 0); // updates the old list
+  parameterUpdate(index, parameterE->text().toLocal8Bit().data(), 0); // updates the old list
   parameterModel->updateItemVal(parameterE->text(), parameterModel->getActualIndex());
   
   myparent->myBeamline()->beamlineOK &= ~resultOK;  // any change needs new calculation
@@ -2789,7 +2769,7 @@ void MainWindow::screenshotMain()
                                 .arg(format.toUpper())
                                 .arg(format));
   if (!fileName.isEmpty())
-    pixmap.save(fileName, format.toLatin1().constData());
+    pixmap.save(fileName, format.toLocal8Bit().constData());
 
 } // end printMain()
 
@@ -2815,7 +2795,7 @@ void MainWindow::saveas()
   OUTDBG("saveas() called");
 #endif
 
-    name= fileName.toLatin1().data();
+    name= fileName.toLocal8Bit().data();
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -2847,7 +2827,7 @@ void MainWindow::selectElement()
  
   if (elementnumber < 0) return;
 
-  snprintf(buffer, MaxPathLength- 2, "%s", elementList->currentItem()->text().toLatin1().data());
+  snprintf(buffer, MaxPathLength- 2, "%s", elementList->currentItem()->text().toLocal8Bit().data());
   snprintf(myparent->myBeamline()->ElementList[elementnumber].elementname, MaxPathLength, "%s", buffer);
   // update name
 
@@ -2874,7 +2854,7 @@ void MainWindow::selectParameter()
   if (parameternumber < 0) 
     return;
 
-  strncpy(buffer, parameterList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
+  strncpy(buffer, parameterList->currentItem()->text().toLocal8Bit().data(), MaxPathLength- 1);
   buffer[MaxPathLength- 1]= '\0';   // ensure termination
   ch= strchr(buffer, ':');
   if (ch != NULL) 

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2021-12-17 10:37:52 flechsig> 
+//  Time-stamp: <2022-12-14 17:11:29 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -2184,7 +2184,7 @@ void MainWindow::UpdateElementBox(int number)
   cff = cos(fi- teta)/ cos(fi+ teta);
 
    // update widgets
-  coatingE->setText(qst.fromLatin1(md->material));
+  coatingE->setText(qst.fromLocal8Bit(md->material));
   cffE   ->setText(qst.setNum(cff,        'f', 6));
   preE   ->setText(qst.setNum(gd->r,      'g', 6));
   sucE   ->setText(qst.setNum(gd->rp,     'g', 6));

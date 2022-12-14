@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2021-12-10 13:00:53 flechsig> 
+//  Time-stamp: <2022-12-14 16:59:49 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -147,9 +147,9 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 
    //    QMessageBox::warning(this, tr("item"),  item1->text());
 
-   strncpy(description, des->text().toLatin1().data(), MaxPathLength- 1);
-   strncpy(oldname,     fna->text().toLatin1().data(), MaxPathLength- 1);
-   strncpy(extension,   ext->text().toLatin1().data(), 9);
+   strncpy(description, des->text().toLocal8Bit().data(), MaxPathLength- 1);
+   strncpy(oldname,     fna->text().toLocal8Bit().data(), MaxPathLength- 1);
+   strncpy(extension,   ext->text().toLocal8Bit().data(), 9);
 
    description[(MaxPathLength- 1)]= '\0';  // ensure termination
    oldname[(MaxPathLength- 1)]= '\0';      // ensure termination
@@ -171,7 +171,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 
   if (!fileName.isEmpty()) 
     {
-      fname= fileName.toLatin1().data();
+      fname= fileName.toLocal8Bit().data();
 
       // update data
       if ( !strncmp(description, "optimization input", 16) ) 
@@ -310,8 +310,8 @@ void ConfigWindow::checkFileNames()
       fna = mymodel->item(i, 1);
       ext = mymodel->item(i, 2);
 
-      strncpy(name,      fna->text().toLatin1().data(), MaxPathLength- 1);
-      strncpy(extension, ext->text().toLatin1().data(), 9);
+      strncpy(name,      fna->text().toLocal8Bit().data(), MaxPathLength- 1);
+      strncpy(extension, ext->text().toLocal8Bit().data(), 9);
       name[MaxPathLength- 1]= '\0';  // ensure termination
       extension[9]= '\0';            // ensure termination
 

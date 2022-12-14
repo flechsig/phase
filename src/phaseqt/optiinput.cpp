@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/optiinput.cpp
 //  Date      : <29 Jul 11 13:55:53 flechsig> 
-//  Time-stamp: <2021-12-10 13:08:24 flechsig> 
+//  Time-stamp: <2022-12-14 16:58:55 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -243,7 +243,7 @@ void OptiInput::applySlot()
   
   printf("applySlot called\n");
 
-  char *text= targetLabel->text().toLatin1().data();
+  char *text= targetLabel->text().toLocal8Bit().data();
   if (strcmp(text, "use cost.F") == 0) methode= OptiCost; else
     if (strcmp(text, "Focus special") == 0) methode= OptiFocus; else
       if (strcmp(text, "Transmittance") == 0) methode= OptiTrans; else
@@ -271,7 +271,7 @@ void OptiInput::applySlot()
 
   for (i= 0; i < 2; i++)  
     {
-      strncpy(buffer, inputList->item(i)->text().toLatin1().data(), MaxPathLength- 1);
+      strncpy(buffer, inputList->item(i)->text().toLocal8Bit().data(), MaxPathLength- 1);
       fprintf(oppickfile, "%s\n", buffer);
     }
   
@@ -282,7 +282,7 @@ void OptiInput::applySlot()
   for (i= 0; i < parameterzahl; i++)  
     {
       inputList->setCurrentRow(i+2);
-      strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
+      strncpy(buffer, inputList->currentItem()->text().toLocal8Bit().data(), MaxPathLength- 1);
       fprintf(oppickfile, "%s\n", buffer);  
     }
   fprintf(oppickfile, "# end\n");
@@ -438,15 +438,15 @@ void OptiInput::inputUpdateSlot()
   switch (pos)
     {
     case 0: 
-      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());
-      //UF sep 2019 snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toLatin1().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLocal8Bit().data());
+      //UF sep 2019 snprintf(buffer, MaxPathLength, "x : %s", inputE->text().toLocal8Bit().data());
       break;
     case 1: 
-      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());
-      //UF sep 2019 snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toLatin1().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLocal8Bit().data());
+      //UF sep 2019 snprintf(buffer, MaxPathLength, "y : %s", inputE->text().toLocal8Bit().data());
       break;
     default:
-      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLatin1().data());
+      snprintf(buffer, MaxPathLength, "%s", inputE->text().toLocal8Bit().data());
     };
   item->setText(buffer);
   inputList->clearSelection();
@@ -475,7 +475,7 @@ void OptiInput::selectInputSlot()
   printf("selectinputSlot\n");
   if (parameternumber < 0) 
     return;
-  strncpy(buffer, inputList->currentItem()->text().toLatin1().data(), MaxPathLength- 1);
+  strncpy(buffer, inputList->currentItem()->text().toLocal8Bit().data(), MaxPathLength- 1);
   if (buffer != NULL) inputE->setText(buffer);
   
   switch (parameternumber)
