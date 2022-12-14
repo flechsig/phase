@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/version.h */
 /*   Date      : <25 Jun 02 07:56:56 flechsig>  */
-/*   Time-stamp: <2021-12-10 15:09:16 flechsig>  */
+/*   Time-stamp: <2022-12-14 17:26:26 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -37,8 +37,8 @@
 
 #ifndef VERSION_H
   #define VERSION_H
-  #define              VERSION_STRING        "1.30" 
-  #define              VERSION_DATE          "10-DEC-2021"
+  #define              VERSION_STRING        "1.33" 
+  #define              VERSION_DATE          "14-DEC-2022"
 #endif    /* VERSION_H */   
 
 /* end version.h */
