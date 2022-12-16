@@ -1,13 +1,8 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2022-12-14 17:15:46 flechsig> 
+dnl   Time-stamp: <2022-12-16 14:55:04 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
-
-dnl   $Source$ 
-dnl   $Date$
-dnl   $Revision$ 
-dnl   $Author$ 
-
+dnl
 dnl ******************************************************************************
 dnl
 dnl   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -89,11 +84,6 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 dnl UF Aug 15 AC_PROG_RANLIB
-_LT_SET_OPTION([LT_INIT],[dlopen])
-m4_warn([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
-put the 'dlopen' option into LT_INIT's first parameter.])
-
-
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
@@ -386,7 +376,7 @@ AC_ARG_ENABLE([experimental],
 dnl end experimental
 
 dnl libtool init after selecting the fortran compiler
-LT_INIT
+LT_INIT([dlopen])   # UF 16.12.22
 
 ## expire option
 AC_ARG_ENABLE([EXPIRE],
@@ -499,15 +489,12 @@ dnl AC_CHECK_LIB([z], [main])
 dnl Checks for header files.
 AC_PATH_X        # autoscan
 AC_PATH_XTRA     # UF 13.5.13 ??
-m4_warn([obsolete],
-[The preprocessor macro `STDC_HEADERS' is obsolete.
-  Except in unusual embedded environments, you can safely include all
-  ISO C90 headers unconditionally.])dnl
+
 # Autoupdate added the next two lines to ensure that your configure
 # script's behavior did not change.  They are probably safe to remove.
 AC_CHECK_INCLUDES_DEFAULT
 AC_PROG_EGREP
-   # autoscan
+# autoscan
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h strings.h unistd.h]) # autoscan
 
 dnl Checks for typedefs, structures, and compiler characteristics.
