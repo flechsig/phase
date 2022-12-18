@@ -1,22 +1,9 @@
-#  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
-#  Date      : <27 Aug 13 09:09:38 flechsig> 
-#  Time-stamp: <27 Aug 13 09:09:49 flechsig> 
-#  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-#  $Source$ 
-#  $Date$
-#  $Revision$ 
-#  $Author$ 
-
 dnl ####################### -*- Mode: M4 -*- ###########################
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/mdl_have_root.m4
 #  Date      : <27 Sep 12 17:51:19 flechsig> 
-#  Time-stamp: <27 Aug 13 09:09:36 flechsig> 
+#  Time-stamp: <2022-12-18 17:52:34 flechsig> 
 
-#  $Source$ 
-#  $Date$
-#  $Revision$ 
-#  $Author$ 
+# UF 221219 : new help string macro
 
 
 dnl mdl_have_root.m4 -- 
@@ -65,19 +52,19 @@ dnl UF make problems- we do not need graphics libs in root  AC_REQUIRE([MDL_GX_L
     mdl_cv_have_root=no
 
     # Save the "AC_MSG_RESULT file descriptor" to FD 8.
-    exec 8>&AC_FD_MSG
+    exec 8>&AS_MESSAGE_FD
 
     # Temporarily turn off AC_MSG_RESULT so that the user gets pretty
     # messages.
-    exec AC_FD_MSG>/dev/null
+    exec AS_MESSAGE_FD>/dev/null
 
 dnl Allow the user to specify the top of the ROOT installation
 dnl directory.
-dnl uf thats wrong  AC_HELP_STRING([--with-rootsys], [top of the ROOT installation directory], rootsys_help_string)
+dnl uf thats wrong  AS_HELP_STRING([--with-rootsys],[top of the ROOT installation directory],[rootsys_help_string])
 dnl uf    AC_ARG_WITH(rootsys, $rootsys_help_string, user_rootsys=$withval, user_rootsys="none")
 dnl uf replacement
     AC_ARG_WITH([rootsys], 
-		AC_HELP_STRING([--with-rootsys], [top of the ROOT installation directory]), 
+		AS_HELP_STRING([--with-rootsys], [top of the ROOT installation directory]), 
 	[user_rootsys=$withval], [user_rootsys="none"])
 
     if test ! x"$user_rootsys" = xnone; then
@@ -151,7 +138,8 @@ dnl 2.22.10 and later.
         LIBS="$LIBS $ROOT_LIBS"
 
         AC_LANG_SAVE
-        AC_LANG_CPLUSPLUS
+        ## UF AC_LANG([C++])
+	AC_LANG([C++])
 
         changequote(, )dnl
         cat > conftest.$ac_ext <<EOF
@@ -200,7 +188,7 @@ dnl UF move section to end
     fi
 
     # Restore pretty messages.
-    exec AC_FD_MSG>&8
+    exec AS_MESSAGE_FD>&8
 
     have_root=$mdl_cv_have_root
   ])

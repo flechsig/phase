@@ -13,6 +13,7 @@ dnl @category InstalledPackages
 dnl @author Jonathan D. Dobson <dobsonjd@ornl.gov>
 dnl @version 2011-06-01
 dnl @license GPLWithACException
+dnl UF 221217 AC_HELP_STRING -> AS_HELP_STRING
 
 AC_DEFUN([ACX_FFTW3], [
 AC_PREREQ(2.50)
@@ -24,8 +25,8 @@ dnl
 try_func=fftw_malloc
 
 AC_ARG_WITH(fftw3,
-        [AC_HELP_STRING([--with-fftw3=<lib>], [use FFTW3 library <lib>])
-AC_HELP_STRING([--without-fftw3], [disable FFTW3 library]) ])
+        [AS_HELP_STRING([--with-fftw3=<lib>], [use FFTW3 library <lib>])
+AS_HELP_STRING([--without-fftw3], [disable FFTW3 library]) ])
 case $with_fftw3 in
         yes | "") ;;
         no) acx_fftw3_ok=disable ;;

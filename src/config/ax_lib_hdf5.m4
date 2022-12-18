@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/config/ax_lib_hdf5.m4
 #  Date      : <07 Nov 12 16:38:55 flechsig> 
-#  Time-stamp: <28 Oct 14 13:42:59 flechsig> 
+#  Time-stamp: <2022-12-18 17:48:52 flechsig> 
 #  Author    : 
 
 # ===========================================================================
@@ -254,7 +254,8 @@ HDF5 support is being disabled (equivalent to --with-hdf5=no).
           AC_MSG_WARN([Unable to compile HDF5 test program])
         fi
         dnl Look for HDF5's high level library
-        AC_HAVE_LIBRARY([hdf5_hl], [HDF5_LIBS="$HDF5_LIBS -lhdf5_hl"], [], [])
+        ## UF 221217 AC_HAVE_LIBRARY([hdf5_hl], [HDF5_LIBS="$HDF5_LIBS -lhdf5_hl"], [], [])
+	AC_CHECK_LIB([hdf5_hl], [H5Fclose], [HDF5_LIBS="$HDF5_LIBS -lhdf5_hl"], [], [])
 
         CC=$ax_lib_hdf5_save_CC
         CPPFLAGS=$ax_lib_hdf5_save_CPPFLAGS
