@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2022-12-16 14:55:04 flechsig> 
+dnl   Time-stamp: <2022-12-18 17:28:04 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************
@@ -36,15 +36,16 @@ dnl for root 6.26 we even need -std=c++17
 
 AC_PREREQ([2.71])  # autoscan: AC_PREREQ([2.71])
 AC_INIT([phase],[1.33],[uwe.flechsig@psi.ch])
-AC_CONFIG_SRCDIR([phase/bline.c])
+AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_HEADERS([config.h])
+#AC_CONFIG_SRCDIR([phase/bline.c])
 AC_REVISION([$Revision$]) # no autoscan
 AC_CONFIG_AUX_DIR([config]) # no autoscan
 AC_CONFIG_MACRO_DIR([config])
 
 AM_INIT_AUTOMAKE([subdir-objects]) # no autoscan
 
-dnl AC_CONFIG_HEADERS([phase/config.h]) # autoscan AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_HEADERS([config.h])
+
 
 dnl uf Aug 2011
 dnl AC_CONFIG_MACRO_DIR([m4])
@@ -84,6 +85,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 dnl UF Aug 15 AC_PROG_RANLIB
+AC_PROG_RANLIB
 
 dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
@@ -121,7 +123,7 @@ AC_MSG_CHECKING(for a supported compiler type)
 
 if test "$G77" = "yes"; then
    AC_MSG_RESULT(yes)
-   AC_MSG_WARN([[support of GNU gfortran is new (not much tested)]])
+   dnl AC_MSG_WARN([[support of GNU gfortran is new (not much tested)]])
 fi
 
 dnl check for fortran compatibility libs
@@ -488,24 +490,20 @@ dnl AC_CHECK_LIB([z], [main])
 
 dnl Checks for header files.
 AC_PATH_X        # autoscan
-AC_PATH_XTRA     # UF 13.5.13 ??
+#AC_PATH_XTRA     # UF 13.5.13 ??
 
-# Autoupdate added the next two lines to ensure that your configure
-# script's behavior did not change.  They are probably safe to remove.
-AC_CHECK_INCLUDES_DEFAULT
-AC_PROG_EGREP
-# autoscan
-AC_CHECK_HEADERS([stdint.h stdlib.h string.h strings.h unistd.h]) # autoscan
+AC_CHECK_HEADERS([stdint.h strings.h sys/time.h unistd.h]) # autoscan
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL # autoscan
 AC_C_CONST        # autoscan
 AC_C_INLINE       # autoscan
 AC_TYPE_SIZE_T    # autoscan
-dnl AC_TYPE_INT32_T   # autoscan64
-dnl AC_TYPE_SSIZE_T   # autoscan64
-dnl AC_TYPE_UINT16_T  # autoscan64
-dnl AC_TYPE_UINT32_T  # autoscan64
+AC_TYPE_INT32_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+
 AC_STRUCT_TM      # autoscan
 AC_C_VOLATILE     # autoscan
 
