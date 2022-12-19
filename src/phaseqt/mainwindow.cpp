@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2022-12-14 17:11:29 flechsig> 
+//  Time-stamp: <2022-12-19 15:23:51 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -214,6 +214,15 @@ void MainWindow::createActions()
     singleRayAct->setStatusTip(tr("geometrical optics, single Ray trace"));
     signalMapper->setMapping(singleRayAct, QString("singleRayAct"));
     connect(singleRayAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    QString e2wavelengthActstr = tr("photon h"); 
+    e2wavelengthActstr.append(QChar(0x03bd));   // nue
+    e2wavelengthActstr.append(tr(" <=> "));
+    e2wavelengthActstr.append(QChar(0x03bb));   // lambda 
+    e2wavelengthAct = new QAction(e2wavelengthActstr, this);
+    e2wavelengthAct->setStatusTip(tr("photon energy to wavelength conversion"));
+    signalMapper->setMapping(e2wavelengthAct, QString("e2wavelengthAct"));
+    connect(e2wavelengthAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
     asynMapAct = new QAction(tr("make maps in parallel (test)"), this);
     asynMapAct->setStatusTip(tr("make maps in parallel (test)"));
@@ -924,6 +933,7 @@ void MainWindow::createMenus()
     calcMenu->addAction(raytracefullAct);
     calcMenu->addAction(footprintAct);
     calcMenu->addAction(singleRayAct);
+    calcMenu->addAction(e2wavelengthAct);
     
     calcMenu->addSeparator();
     calcMenu->addAction(phasespaceAct);

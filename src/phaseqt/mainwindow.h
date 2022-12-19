@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2021-05-28 11:13:37 flechsig>  */
+/*  Time-stamp: <2022-12-19 12:24:30 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -360,6 +360,7 @@ private:
     QAction *raytracefullAct;
     QAction *footprintAct;
     QAction *singleRayAct;
+    QAction *e2wavelengthAct;
     QAction *asynMapAct;
     QAction *asynPOAct;
     QAction *fraunhAct;

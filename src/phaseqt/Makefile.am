@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2021-12-13 14:55:28 flechsig> 
+#  Time-stamp: <2022-12-19 15:19:53 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -48,6 +48,7 @@ phaseqt_SOURCES = \
 	plot.cpp         plot.h \
 	plot1d.cpp       plot1d.h \
 	singleray.cpp    singleray.h \
+        e2wavelength.cpp e2wavelength.h \
         treemodel.cpp    treemodel.h \
         treeitem.cpp     treeitem.h \
 	plotmatrix.cpp   plotmatrix.h \
