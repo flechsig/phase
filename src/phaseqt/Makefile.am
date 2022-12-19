@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2022-12-19 15:19:53 flechsig> 
+#  Time-stamp: <2022-12-19 16:08:55 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -38,6 +38,7 @@
 # this is the makefile template to built phase with automake/ autoconfig
 
 bin_PROGRAMS  = phaseqt 
+##e2wavelength.cpp e2wavelength.h 
 phaseqt_SOURCES = \
 	configwindow.cpp configwindow.h \
 	main.cpp         mainwindow_slots.cpp \
@@ -48,7 +49,6 @@ phaseqt_SOURCES = \
 	plot.cpp         plot.h \
 	plot1d.cpp       plot1d.h \
 	singleray.cpp    singleray.h \
-        e2wavelength.cpp e2wavelength.h \
         treemodel.cpp    treemodel.h \
         treeitem.cpp     treeitem.h \
 	plotmatrix.cpp   plotmatrix.h \
