@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2022-12-18 17:28:04 flechsig> 
+dnl   Time-stamp: <2022-12-19 10:58:10 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************
@@ -91,9 +91,9 @@ dnl check for root http://root.cern.ch/root/roottalk/roottalk01/0009.html
 MDL_HAVE_ROOT
 
 # Checks for libraries.
-if test x"${have_root}" = "xyes"; then
-   AC_CHECK_LIB([Minuit], [TMinuit::mnparm])
-fi
+#if test x"${have_root}" = "xyes"; then
+#   AC_CHECK_LIB([Minuit], [TMinuit::mnparm])
+#fi
 
 dnl check 64bit linux
 AC_MSG_CHECKING(for 64 bit linux)
