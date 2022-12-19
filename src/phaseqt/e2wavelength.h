@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/e2wavelength.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <2022-12-19 16:18:39 flechsig>  */
+/*  Time-stamp: <2022-12-19 17:00:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -56,43 +56,18 @@
 
 class E2wavelength : public QWidget
 {
-    Q_OBJECT
+  //Q_OBJECT  // this makes the error
     
-    
-
 public:
-    QWidget     *e2wavelengthBox;
-    E2wavelength(PhaseQt *);
+    //QWidget     *e2wavelengthBox;
+    E2wavelength();
     ~E2wavelength();
 
 private slots:
-    void defaultSlot();
-    void applySlot();
-    void quitSlot();
+
 
 private:
-    QLabel      *S1Label;        // source box
-    QLabel      *S2Label;
-    QLabel      *S3Label;
-    QLabel      *S4Label;
-    QLabel      *S5Label;
-    QLabel      *S6Label;
-    QLabel      *S7Label;
-    QLabel      *S8Label;
-    QLabel      *S9Label;
-    QLabel      *S10Label;
-    QLineEdit   *S1E;
-    QLineEdit   *S2E;
-    QLineEdit   *S3E;
-    QLineEdit   *S4E;
-    QLineEdit   *S5E;
-    QPushButton *sourceDefaultB;
-    QPushButton *sourceApplyB;
-    QPushButton *sourceQuitB;
-    //    struct BeamlineType  *myparent;
-    //void        RayTraceE2wavelengthCpp(PhaseQt *);
-
-    PhaseQt *myparent;
+  
        
 };
 #endif

@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-19 16:18:17 flechsig> 
+//  Time-stamp: <2022-12-19 16:35:32 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -50,10 +50,10 @@
 using namespace std;   // fuer cout z.B.
 
 // constructor
-E2wavelength::E2wavelength(PhaseQt *parent)
+E2wavelength::E2wavelength()
 {
-  QWidget *pw1;                   // just to avoid warning- unused can be removed;
-  e2wavelengthBox = new QWidget();
+  //QWidget *pw1;                   // just to avoid warning- unused can be removed;
+  //e2wavelengthBox = new QWidget();
   
 
 
@@ -65,33 +65,8 @@ E2wavelength::E2wavelength(PhaseQt *parent)
 // destructor
 E2wavelength::~E2wavelength()
 {
-  //#ifdef DEBUG
-  //printf("debug: E2wavelength destructor called, file: %s, line: %d\n", __FILE__, __LINE__);
-  //#endif
-} // destructor
+}  
 
-
-void E2wavelength::applySlot()
-{
-  QString qst;
-  
-#ifdef DEBUG
-  cout << "debug: applySlot called" << endl;
-#endif
-
-} // end applySlot
-
-// set defaults for single ray
-void E2wavelength::defaultSlot()
-{
-
-} // end defaultSlot
-
-void E2wavelength::quitSlot()
-{
-  cout << "quitSlot called" << endl;
-  e2wavelengthBox->close();
-} // quitSlot
 
 
 
