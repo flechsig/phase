@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2022-12-19 16:08:55 flechsig> 
+#  Time-stamp: <2022-12-19 16:19:11 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -40,6 +40,7 @@
 bin_PROGRAMS  = phaseqt 
 ##e2wavelength.cpp e2wavelength.h 
 phaseqt_SOURCES = \
+	e2wavelength.cpp e2wavelength.h \
 	configwindow.cpp configwindow.h \
 	main.cpp         mainwindow_slots.cpp \
         mainwindow.cpp   mainwindow.h \

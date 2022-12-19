@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-19 16:04:27 flechsig> 
+//  Time-stamp: <2022-12-19 16:18:17 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -50,11 +50,11 @@
 using namespace std;   // fuer cout z.B.
 
 // constructor
-E2wavelength::E2wavelength(PhaseQt *parent, QWidget *pw)
+E2wavelength::E2wavelength(PhaseQt *parent)
 {
   QWidget *pw1;                   // just to avoid warning- unused can be removed;
   e2wavelengthBox = new QWidget();
-  pw1= pw;
+  
 
 
 #ifdef DEBUG

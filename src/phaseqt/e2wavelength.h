@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/e2wavelength.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <2022-12-19 15:29:21 flechsig>  */
+/*  Time-stamp: <2022-12-19 16:18:39 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -58,11 +58,11 @@ class E2wavelength : public QWidget
 {
     Q_OBJECT
     
-    struct RayType rayin, rayout;
+    
 
 public:
     QWidget     *e2wavelengthBox;
-    E2wavelength(PhaseQt *, QWidget *);
+    E2wavelength(PhaseQt *);
     ~E2wavelength();
 
 private slots:
