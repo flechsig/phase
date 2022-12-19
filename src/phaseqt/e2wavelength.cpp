@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-19 15:48:43 flechsig> 
+//  Time-stamp: <2022-12-19 15:49:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -117,7 +117,7 @@ E2wavelength::E2wavelength(PhaseQt *parent, QWidget *pw)
 } // constructor
 
 // destructor
-E2wavelength::~E2wavelength()
+virtual E2wavelength::~E2wavelength()
 {
   //#ifdef DEBUG
   //printf("debug: E2wavelength destructor called, file: %s, line: %d\n", __FILE__, __LINE__);
