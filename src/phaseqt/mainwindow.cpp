@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2022-12-19 15:23:51 flechsig> 
+//  Time-stamp: <2022-12-19 15:54:31 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -104,6 +104,7 @@ MainWindow::~MainWindow()
   cout << "MainWindow destructor called" << endl;
   if (c_window) c_window->configWindowBox->close();
   if (s_ray)    s_ray->singleRayBox->close();
+  if (e_2w)     e_2w->e2wavelengthBox->close();
   if (o_input)  o_input->optiInputBox->close();
 }
 

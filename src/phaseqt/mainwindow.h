@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2022-12-19 12:24:30 flechsig>  */
+/*  Time-stamp: <2022-12-19 15:56:23 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -48,6 +48,7 @@
 
 #include "phaseqt.h"
 #include "singleray.h"
+#include "e2wavelength.h"
 #include "optiinput.h"
 #include "configwindow.h"
 #include "treemodel.h"
@@ -433,6 +434,7 @@ private:
     QAction *grexample3Act;
     
     SingleRay *s_ray;
+    E2wavelength *e_2w;
     OptiInput *o_input;
     ConfigWindow *c_window;
  
