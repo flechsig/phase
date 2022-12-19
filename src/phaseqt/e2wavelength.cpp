@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-19 15:40:56 flechsig> 
+//  Time-stamp: <2022-12-19 15:43:25 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -163,7 +163,7 @@ void E2wavelength::applySlot()
 
   S10Label->setText(qst);
   //  this->parent->UpdateStatus();
-#endif UWE
+#endif
 } // end applySlot
 
 // set defaults for single ray
