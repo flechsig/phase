@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-19 15:30:19 flechsig> 
+//  Time-stamp: <2022-12-19 15:40:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -133,6 +133,7 @@ void E2wavelength::applySlot()
   cout << "debug: applySlot called" << endl;
 #endif
 
+#ifdef UWE
   rayin.y  = S1E->text().toDouble();
   rayin.z  = S2E->text().toDouble();
   rayin.dy = S3E->text().toDouble();
@@ -141,6 +142,7 @@ void E2wavelength::applySlot()
 
   rayin.dz*= 1e-3; // into rad
   rayin.dy*= 1e-3; // into rad
+
   //  bl->beamlineOK |= sourceOK;
   
   //myparent->myBuildBeamline();
@@ -161,16 +163,19 @@ void E2wavelength::applySlot()
 
   S10Label->setText(qst);
   //  this->parent->UpdateStatus();
+#endif UWE
 } // end applySlot
 
 // set defaults for single ray
 void E2wavelength::defaultSlot()
 {
+#ifdef UWE
   S1E->setText(QString("0.0"));
   S2E->setText(QString("0.0"));
   S3E->setText(QString("0.0"));
   S4E->setText(QString("0.0"));
   S5E->setText(QString("0.0"));
+#endif
 } // end defaultSlot
 
 void E2wavelength::quitSlot()
