@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2022-12-19 16:39:32 flechsig> 
+//  Time-stamp: <2022-12-22 14:17:08 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -627,11 +627,11 @@ void MainWindow::activateProc(const QString &action)
   if (!action.compare("e2wavelengthAct")) 
     { 
       cout << "e2wavelengthAct button pressed" << endl;
-      cout << "221219 new -> still empty " << endl;
-      //if (!e_2w) 
-	//e_2w= new E2wavelength(); 
-      //else 
-	//e_2w->e2wavelengthBox->show();
+      //cout << "221219 new -> still empty " << endl;
+      if (!e_2w) 
+	e_2w= new E2wavelength(); 
+      else 
+        e_2w->e2wavelengthBox->show();
       /*
       if (elementListIsEmpty())
 	return;

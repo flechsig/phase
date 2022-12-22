@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/e2wavelength.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <2022-12-19 17:00:06 flechsig>  */
+/*  Time-stamp: <2022-12-22 15:13:32 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -59,15 +59,23 @@ class E2wavelength : public QWidget
   //Q_OBJECT  // this makes the error
     
 public:
-    //QWidget     *e2wavelengthBox;
+    QWidget *e2wavelengthBox;
     E2wavelength();
     ~E2wavelength();
 
 private slots:
-
+    void defaultSlot();
+    void applySlot();
+    void quitSlot();
 
 private:
-  
-       
+  QLabel      *E1Label;        // source box
+  QLabel      *E2Label;
+  QLabel      *E3Label;
+  QLineEdit   *E1E;
+  //QLineEdit   *E2E;
+  QPushButton *EDefaultB;
+  QPushButton *EApplyB;
+  QPushButton *EQuitB;     
 };
 #endif

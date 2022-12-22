@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-19 16:35:32 flechsig> 
+//  Time-stamp: <2022-12-22 15:53:03 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -53,22 +53,78 @@ using namespace std;   // fuer cout z.B.
 E2wavelength::E2wavelength()
 {
   //QWidget *pw1;                   // just to avoid warning- unused can be removed;
-  //e2wavelengthBox = new QWidget();
+  e2wavelengthBox = new QWidget();
   
+  QGroupBox   *EParsGroup  = new QGroupBox(tr("photon energy <=> wavelength conversion "));
+  QGridLayout *EParsLayout = new QGridLayout;
 
+  E1Label  = new QLabel(tr("input: photon energy (eV) or wavelength (nm)"));
+  E2Label  = new QLabel(tr("output: nm or eV"));
+  E1E      = new QLineEdit;
+  E3Label  = new QLabel(tr("0"));
+  EDefaultB = new QPushButton(tr("&Defaults"));
+  EApplyB   = new QPushButton(tr("&Apply"));
+  EQuitB    = new QPushButton(tr("&Quit"));
+  
+  EParsLayout->addWidget(E1Label, 0, 0);
+  EParsLayout->addWidget(E2Label, 1, 0);
+  EParsLayout->addWidget(E3Label, 1, 1);
+  EParsLayout->addWidget(E1E,     0, 1);
+  
+  EParsLayout->addWidget(EDefaultB, 0, 3);
+  EParsLayout->addWidget(EApplyB,   1, 3);
+  EParsLayout->addWidget(EQuitB,    3, 3);
+  EParsGroup->setLayout(EParsLayout);
+  
+  QVBoxLayout *vbox = new QVBoxLayout;
+  vbox->addWidget(EParsGroup);
+  e2wavelengthBox->setLayout(vbox);
 
-#ifdef DEBUG
+  //connect(EDefaultB, SIGNAL(clicked()), this,  SLOT(defaultSlot()));
+  //connect(EApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
+  //connect(EQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
+  
+  e2wavelengthBox->show();
+  
+  //#ifdef DEBUG
   printf("debug: E2wavelength: constructor called, file: %s, line: %d\n", __FILE__,  __LINE__);
-#endif
+  //#endif
 } // constructor
 
 // destructor
 E2wavelength::~E2wavelength()
 {
-}  
+}
 
+void E2wavelength::defaultSlot()
+{
+  cout << "defaultSlot called" << endl;
+  E1E->setText(QString("1240.0"));
+  E3Label->setText(QString("1.0"));
+} // end defaultSlot
 
+void E2wavelength::quitSlot()
+{
+  cout << "quitSlot called" << endl;
+  e2wavelengthBox->close();
+} // quitSlot
 
+void E2wavelength::applySlot()
+{
+  cout << "applySlot called" << endl;
+  QString qst;
 
+  double result= 1.1;
+  double input= E1E->text().toDouble();
+  
+  if (input < 1e-20) 
+    qst= tr("undef"); 
+  else
+    {
+      result= 1240/input;
+      qst.setNum(result, 'g', 3);
+    }
+  E3Label->setText(qst);
+}
 // end
 
