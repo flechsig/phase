@@ -1,12 +1,11 @@
 # File      : /afs/psi.ch/project/phase/GIT/phase/src/phasepython/atomparser.py
 # Date      : <29 Aug 18 10:02:57 flechsig> 
-# Time-stamp: <29 Aug 18 10:03:07 flechsig> 
+# Time-stamp: <2023-03-01 11:07:19 flechsig> 
 # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
-# $Source$ 
-# $Date$
-# $Revision$ 
-# $Author$ 
+"""atomparser module"""
+
+
 
 ## code from https://github.com/Zapaan/python-chemical-formula-parser/blob/master/parser.py
 ## saved as atomparser
@@ -109,11 +108,12 @@ def parse_formula(formula):
        formula (str): the chemical formula 
 
     Returns:
-       dict with occurences of each atom
+       dict: dictionary with occurences of each atom
 
     Example:
           >>> dict = parse_formula('H2O')
-              print(dict)   
+              print(dict)  
+ 
     """
 
     if not is_balanced(formula):

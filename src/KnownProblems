@@ -1,7 +1,7 @@
 # -*-sh-*-
 # File      : /afs/psi.ch/user/f/flechsig/phase/src/KnownProblems
 # Date      : <13 May 14 08:02:14 flechsig> 
-# Time-stamp: <05 Nov 14 10:49:02 flechsig> 
+# Time-stamp: <2023-04-13 14:59:21 flechsig> 
 # Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 # $Source$ 
@@ -18,3 +18,4 @@
 * 20140605 |  UF |  PO mode alignment errors w and l mixed or go into wrong direction ?? | |
 * 20140605 |  UF |  bootstrap warning: source file '../phase/elli_8.F' is in a subdirectory | solved UF 28.10.14 |
 * 20141105 |  UF |  the maximum source distance is about 300 km (3e8mm), for bigger distances the footprint routine fails  |  |
+* 20230413 |  UF |  initialization with unsigned int fails, load of beamline with button does not work for source type  |  |
