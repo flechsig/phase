@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2022-12-19 16:19:11 flechsig> 
+#  Time-stamp: <2023-08-08 11:28:14 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -59,7 +59,7 @@ phaseqt_SOURCES = \
 	../phase/phasec.c ../phase/OptiIntParam.c \
         ../phase/rtrace.c \
         ../phase/myhdf5.c  ../phase/myhdf5.h \
-	../phase/myfftw3.c ../phase/myfftw3.h ../phase/hyperbola_8.F \
+	../phase/myfftw3.c ../phase/myfftw3.h \
         ../phase/xmalloc.c ../phase/pst_thread.c ../phase/pst_thread.h   \
 	../phase/drift_8.for ../phase/elli_8.F  ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F ../phase/make_matrix_8.for \

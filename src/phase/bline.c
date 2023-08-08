@@ -1,16 +1,12 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2022-12-15 16:26:39 flechsig>  */
+/*   Time-stamp: <2023-08-08 11:26:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
-/*   $Source$  */
-/*   $Date$ */
-/*   $Revision$  */
-/*   $Author$  */
 
 // ******************************************************************************
 //
-//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//   Copyright (C) 2014, 2023 Helmholtz-Zentrum Berlin, Germany and 
 //                      Paul Scherrer Institut Villigen, Switzerland
 //   
 //   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
@@ -2729,7 +2725,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 		int etype, double theta, int lREDUCE_maps, int withAlign, int elindex)  
 {
   double r, rho, *dp, cone, ll,
-    alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
+    alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, thetag, p, q, pq, sint, cost, 
     rpole, fipole, small, kellip, Rellip, ahyp, bhyp,  gammahyp, deltahyp, thetahyp, s1hyp, s2hyp, x0hyp, y0hyp, ecc;
   int i, k, l;
   struct mirrortype mirror;
@@ -3014,14 +3010,23 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       
     case kEOEHyp:
     case kEOEPHyp:  
-      fprintf(stderr, "Defmirrorc: hyperbolic shape - Apr 2021 not tested\n");
+      fprintf(stderr, "Defmirrorc: hyperbolic shape (202308 NEW version!)\n");
       // see doc/hyperbolic-scheme.pdf 
-      fprintf(stderr, "Defmirrorc: plane- hyperbolic shape - Apr 2021 not tested\n");
+      // Aug 23 we use the math from UFs hyperbola.py following Goldberg and del Rio in JSR 30, 2023
+      // !! their math has a few errors
+      
       for (i= 0; i < k; i++) dp[i] = 0.0;  // clean up 
       s1hyp= fabs(x->r1);
       s2hyp= fabs(x->r2);
+      if (s1hyp > s2hyp)
+	{
+	  fprintf(stderr, "input error: (s1 > s2) is not allowed - return\n");
+	  fprintf(stderr, "       info: s1 = %.3f mm; s1 = %.3f mm\n", s1hyp, s2hyp);
+	  return;
+	}
+	
       thetahyp= alpha;
-
+      
       ahyp= fabs(s2hyp - s1hyp) / 2.0;                          // semiaxis a
       bhyp= sqrt(fabs(s1hyp* s2hyp)) * cos(thetahyp);           // semiaxis b (Kosinussatz)
       ecc=  sqrt(pow(ahyp,2)+ pow(bhyp,2));                     // eccentricity
@@ -3033,19 +3038,45 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("DefMirrorC: hyperbolic parameters: \n");
       printf("source distance (short): %f\n", s1hyp);
       printf("virtual image distance (long): %f\n",  s2hyp);
-      printf("major axis:                   a = %e mm\n", ahyp);
+      printf("major axis:  (0 to vertice)   a = %e mm\n", ahyp);
       printf("minor axis                    b = %e mm\n", bhyp);
-      printf("eccentricity                  e = %e mm\n", ecc);
+      printf("eccentricity (0 to focus)     e = %e mm\n", ecc);
       printf("theta:                    theta = %f rad\n", thetahyp);
       printf("theta:                    theta = %f deg\n", thetahyp*  180/ PI);
       printf("x0:                          x0 = %f mm\n", x0hyp);
       printf("y0:                          y0 = %f mm\n", y0hyp);
       printf("deltahyp:              deltahyp = %f deg.\n", deltahyp* 180/ PI);
       printf("gammahyp:              gammahyp = %f deg.\n", gammahyp* 180/ PI);
-      //printf("DEBUG: mirror coefficients\n");
-      //for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
-      // hyperbola_8();
-      hyperbola_8(&ahyp, &bhyp, &x0hyp, &y0hyp, &deltahyp, dp);
+      
+      // map goldberg coordinates
+      thetag= PI/2 - thetahyp;
+      p= s1hyp;
+      q= s2hyp;
+      pq= p * q;
+      sint= sin(thetag);
+      cost= cos(thetag);
+
+      dp[2* l]   = (-p+q)/(4.0*pq*sint);                		       // 0,2 
+      dp[2]      = (sint*(-p+q))/(4.0*pq);                                     // 2,0
+      dp[1+ 2* l]= (cost*(pow(p,2)-pow(q,2)))/(8.0*pow(pq,2)*sint);            // 1,2
+      dp[3]      = (cost*sint*(pow(p,2)-pow(q,2)))/(8.0*pow(pq,2));            // 3,0
+      dp[2+ 2* l]= (3.0*pow(p, 3)*pow(sint,2)-3.0*pow(p,3)+3.0*p*pq*pow(sint,2)+p*pq-3.0*pq*q*
+		    pow(sint,2)-pq*q-3.0*pow(q,3)*pow(sint,2)+3.0*pow(q,3))/(32.0*pow(pq,3)*sint);
+      dp[4*l]    = (pow(p,3)*pow(sint,2)-pow(p,3)+p*pq*pow(sint,2)+3.0*p*pq-pq*q*pow(sint,2)-3.0*
+		    pq*q-pow(q,3)*pow(sint,2)+pow(q,3))/(64.0*pow(pq,3)*pow(sint,3)); 
+      dp[4]      = (sint*(-5.0*pow(cost,2)*pow(p,3)-5.0*pow(cost,2)*p*pq+5.0*pow(cost,2)*pq*q+
+			  5.0*pow(cost,2)*pow(q,3)+4.0*p*pq-4.0*pq*q))/(64.0*pow(pq,3));
+      dp[1, 4* l]= (3.0*cost*(-pow(p,4)*pow(sint,2)+pow(p,4)-2.0*pow(p,2)*pq*pow(sint,2)-2.0*pow(p,2)*
+			      pq+2.0*pq*pow(q,2)*pow(sint,2)+2.0*pq*pow(q,2)+pow(q,4)*pow(sint,2)-pow(q,4)))/
+	                     (128.0*pow(pq,4)*pow(sint,3));
+      dp[3+ 2* l]= (cost*(-5.0*pow(p,4)*pow(sint,2)+5.0*pow(p,4)-10.0*pow(p,2)*pq*pow(sint,2)-2.0*
+			  pow(p,2)*pq+10.0*pq*pow(q,2)*pow(sint,2)+2.0*pq*pow(q,2)+5.0*pow(q,4)*pow(sint,2)-5.0*
+			  pow(q,4)))/(64.0*pow(pq,4)*sint);
+      dp[5]      = (cost*sint*(7.0*pow(cost,2)*pow(p,4)+14.0*pow(cost,2)*pow(p,2)*pq-14.0*
+			       pow(cost,2)*pq*pow(q,2)-7.0*pow(cost,2)*pow(q,4)-12.0*pow(p,2)*pq+12.0*pq*pow(q,2)))/(
+											     128.0*pow(pq,4));
+
+
       if (etype == kEOEPHyp)  // overwrite coefficients for plane hyperbola
 	for (i= l; i < k; i++) dp[i]= 0.0;
 	  
