@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2022-11-04 16:13:05 flechsig>  */
+/*   Time-stamp: <2023-08-08 13:23:06 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -684,7 +684,7 @@ void
   MMatrix(),
   UpdateFlags(struct BeamlineType *, int),	        
   WriteBLFile(char *, struct BeamlineType *),
-  WriteMKos(struct mirrortype *, char *),
+  WriteMKos(struct mirrortype *, char *, int),
   writemapc(char *, char *, int, double *, double *, double *, double *,
 	    double *, double *, double *, double *),
 /* writematrixfile(char *, int, char *, int, double *),  */

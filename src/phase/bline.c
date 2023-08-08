@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2023-08-08 11:26:06 flechsig>  */
+/*   Time-stamp: <2023-08-08 16:55:37 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 
@@ -3014,15 +3014,18 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       // see doc/hyperbolic-scheme.pdf 
       // Aug 23 we use the math from UFs hyperbola.py following Goldberg and del Rio in JSR 30, 2023
       // !! their math has a few errors
+      // use hyperbola_goldberg2d.red
       
       for (i= 0; i < k; i++) dp[i] = 0.0;  // clean up 
       s1hyp= fabs(x->r1);
       s2hyp= fabs(x->r2);
       if (s1hyp > s2hyp)
 	{
-	  fprintf(stderr, "input error: (s1 > s2) is not allowed - return\n");
-	  fprintf(stderr, "       info: s1 = %.3f mm; s1 = %.3f mm\n", s1hyp, s2hyp);
-	  return;
+	  fprintf(stderr, "input error: (s1 > s2) is not allowed - exit\n");
+	  fprintf(stderr, "       info: s1 = %.3f mm; s2 = %.3f mm\n", s1hyp, s2hyp);
+          beep(20);
+	  //return;
+          exit(-1);
 	}
 	
       thetahyp= alpha;
@@ -3066,15 +3069,33 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 		    pq*q-pow(q,3)*pow(sint,2)+pow(q,3))/(64.0*pow(pq,3)*pow(sint,3)); 
       dp[4]      = (sint*(-5.0*pow(cost,2)*pow(p,3)-5.0*pow(cost,2)*p*pq+5.0*pow(cost,2)*pq*q+
 			  5.0*pow(cost,2)*pow(q,3)+4.0*p*pq-4.0*pq*q))/(64.0*pow(pq,3));
-      dp[1, 4* l]= (3.0*cost*(-pow(p,4)*pow(sint,2)+pow(p,4)-2.0*pow(p,2)*pq*pow(sint,2)-2.0*pow(p,2)*
+      dp[1+ 4* l]= (3.0*cost*(-pow(p,4)*pow(sint,2)+pow(p,4)-2.0*pow(p,2)*pq*pow(sint,2)-2.0*pow(p,2)*
 			      pq+2.0*pq*pow(q,2)*pow(sint,2)+2.0*pq*pow(q,2)+pow(q,4)*pow(sint,2)-pow(q,4)))/
 	                     (128.0*pow(pq,4)*pow(sint,3));
       dp[3+ 2* l]= (cost*(-5.0*pow(p,4)*pow(sint,2)+5.0*pow(p,4)-10.0*pow(p,2)*pq*pow(sint,2)-2.0*
 			  pow(p,2)*pq+10.0*pq*pow(q,2)*pow(sint,2)+2.0*pq*pow(q,2)+5.0*pow(q,4)*pow(sint,2)-5.0*
 			  pow(q,4)))/(64.0*pow(pq,4)*sint);
       dp[5]      = (cost*sint*(7.0*pow(cost,2)*pow(p,4)+14.0*pow(cost,2)*pow(p,2)*pq-14.0*
-			       pow(cost,2)*pq*pow(q,2)-7.0*pow(cost,2)*pow(q,4)-12.0*pow(p,2)*pq+12.0*pq*pow(q,2)))/(
-											     128.0*pow(pq,4));
+			       pow(cost,2)*pq*pow(q,2)-7.0*pow(cost,2)*pow(q,4)-12.0*pow(p,2)*pq+12.0*pq*pow(q,2)))/
+	                       (128.0*pow(pq,4));
+
+      dp[6]      = (sint*(-21.0*pow(p,5)*pow(sint,4)+42.0*pow(p,5)*pow(sint,2)-21.0*pow(p,5)-63.0*
+			  pow(p,3)*pq*pow(sint,4)+70.0*pow(p,3)*pq*pow(sint,2)-7.0*pow(p,3)*pq-42.0*p*pow(pq,2)*
+			  pow(sint,4)+28.0*p*pow(pq,2)*pow(sint,2)-2.0*p*pow(pq,2)+42.0*pow(pq,2)*q*pow(sint,4)-
+			  28.0*pow(pq,2)*q*pow(sint,2)+2.0*pow(pq,2)*q+63.0*pq*pow(q,3)*pow(sint,4)-70.0*pq*
+			  pow(q,3)*pow(sint,2)+7.0*pq*pow(q,3)+21.0*pow(q,5)*pow(sint,4)-42.0*pow(q,5)*pow(sint,2)+
+			  21.0*pow(q,5)))/(512.0*pow(pq,5));
+      dp[4+ 2* l]= (-35.0*pow(p,5)*pow(sint,4)+70.0*pow(p,5)*pow(sint,2)-35.0*pow(p,5)-105.0*pow(p,3)*
+		    pq*pow(sint,4)+90.0*pow(p,3)*pq*pow(sint,2)+15.0*pow(p,3)*pq-70.0*p*pow(pq,2)*pow(sint,4)+
+		    20.0*p*pow(pq,2)*pow(sint,2)+2.0*p*pow(pq,2)+70.0*pow(pq,2)*q*pow(sint,4)-20.0
+		    *pow(pq,2)*q*pow(sint,2)-2.0*pow(pq,2)*q+105.0*pq*pow(q,3)*pow(sint,4)-90.0*pq*pow(q,3)*
+		    pow(sint,2)-15.0*pq*pow(q,3)+35.0*pow(q,5)*pow(sint,4)-70.0*pow(q,5)*pow(sint,2)+
+		    35.0*pow(q,5))/(512.0*pow(pq,5)*sint);
+      dp[6* l]   = (-pow(p,5)*pow(sint,4)+2.0*pow(p,5)*pow(sint,2)-pow(p,5)-3.0*pow(p,3)*pq*pow(sint,4)-
+		    2.0*pow(p,3)*pq*pow(sint,2)+5.0*pow(p,3)*pq-2.0*p*pow(pq,2)*pow(sint,4)-4.0*p*pow(pq,2)*
+		    pow(sint,2)-10.0*p*pow(pq,2)+2.0*pow(pq,2)*q*pow(sint,4)+4.0*pow(pq,2)*q*pow(sint,2)
+		    +10.0*pow(pq,2)*q+3.0*pq*pow(q,3)*pow(sint,4)+2.0*pq*pow(q,3)*pow(sint,2)-5.0*pq*pow(q,3)+
+		    pow(q,5)*pow(sint,4)-2.0*pow(q,5)*pow(sint,2)+pow(q,5))/(512.0*pow(pq,5)*pow(sint,5));
 
 
       if (etype == kEOEPHyp)  // overwrite coefficients for plane hyperbola
@@ -3341,13 +3362,15 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
 }  /* end ReadRayFile */
 
 /* schreibt mirrorkoordinaten auf file */
-/* updated to seven order 11/2010*/
-void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
+/* updated to seven order 11/2010      */
+// 230808 compact option -> write just the coefficients != 0
+void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength], int compact)
 {
   FILE   *f;
   int    i, j, maxord;
-  double *dp; 
+  double *dp, val; 
   char   *name;  
+  time_t ltime;
 
 #ifdef SEVEN_ORDER
   maxord= 8;	  
@@ -3356,24 +3379,29 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
 #endif
    
   name= &buffer[0];  
+
 #ifdef DEBUG
   printf("WriteMKos: write to %s\n", name);
+  //  compact= 0;
 #endif 
+
   dp= (double *)a;
+  time(&ltime); 
 
   if ((f= fopen(name, "w+")) == NULL)
     {
       fprintf(stderr, "WriteMKos: error: open file %s\n", name); exit(-1);   
     }    
-  // UF 19.2.2020 add header
-  fprintf(f, "# CoefficientFileType 20200219\n");
-  fprintf(f, "# coefficient file for optical elements\n");
+  
+  fprintf(f, "# CoefficientFileType 20230808\n");
+  fprintf(f, "# coefficient file for optical elements, compact= %d\n", compact);
+  fprintf(f, "# written by WriteMKos on %s", ctime(&ltime));
   fprintf(f, "# original file name: %s\n", name);
   fprintf(f, "# unit: mm\n");
   fprintf(f, "# structure: i j coeff[i,j]\n");
   fprintf(f, "# u[row,col]+= coeff[i,j]* w**i * l**j\n");
-  fprintf(f, "# for details see code in file bline.c line 3299\n");
-  fprintf(f, "################################################\n");
+  fprintf(f, "# for details see code in file %s line %d\n", __FILE__, __LINE__);
+  fprintf(f, "#########################################################\n");
 
   /* python example code for w and l in meter
   # fill map in loop
@@ -3386,12 +3414,17 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
                 if (i+j) < 9 :
                     ue[li,wi]= ue[li,wi]+ ec[k, 2] * 1e3 * w[wi]**i * l[li]**j
 		    k= k+ 1 */
-  
+
   for (i= 0; i <= maxord; i++) 
     for (j= 0; j <= maxord; j++) 
-/* write also i and j to file J.B. 9.11.2003 */
-      if ((i + j) <= maxord)  fprintf(f, "%d %d %+.18lE\n", i, j, dp[i+j*(maxord+1)]);  
+      if ((i + j) <= maxord)  
+	{
+	  val= dp[i+j*(maxord+1)];
+	  if ((fabs(val) > ZERO) || (!compact))       // compact
+	    fprintf(f, "%d %d %+.18lE\n", i, j, val);  
+	}
   fclose(f); 
+
 #ifdef DEBUG
   printf("WriteMKos: done\n");
 #endif

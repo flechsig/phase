@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2022-12-19 16:40:19 flechsig> 
+//  Time-stamp: <2023-08-08 14:54:27 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -3149,11 +3149,13 @@ int MainWindow::FileExistCheckOK(std::string name1)
   
   if (fexists(name))
     {
+      beep(20);
       snprintf(infostr, MaxPathLength, "file <b>%s</b> exists!",  name);
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setText(tr(infostr));
       msgBox->setInformativeText(tr("replace file"));
       msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel); 
+      msgBox->setStyleSheet("background-color:yellow;");
       ret= msgBox->exec();
       delete msgBox;
       if (ret == QMessageBox::Cancel) 
