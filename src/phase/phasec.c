@@ -1,13 +1,8 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2023-08-09 12:19:57 flechsig>  */
+/*   Time-stamp: <2023-08-09 15:11:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
-/*   $Source$  */
-/*   $Date$ */
-/*   $Revision$  */
-/*   $Author$  */ 
-
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -517,7 +512,7 @@ void InitDataSets(struct BeamlineType *bl, char *mainpickname)
   /* PHASEgraf.c */
   /*   optistructure.fileliste= NULL;     */
 #ifdef DEBUG
-  printf("InitDatSets end\n");   
+  OUTDBGC("InitDatSets end");   
 #endif  
 }
 
@@ -643,11 +638,11 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.apr.srczmin= -100;
   bl->BLOptions.apr.srczmax=  100;
 
-  bl->BLOptions.apr.rpin_ap= 0.;
-  bl->BLOptions.apr.ymin_ap= 0.;
-  bl->BLOptions.apr.ymax_ap= 0.;
-  bl->BLOptions.apr.zmin_ap= 0.;
-  bl->BLOptions.apr.zmax_ap= 0.;
+  bl->BLOptions.apr.rpin_ap= 100.;
+  bl->BLOptions.apr.ymin_ap= -100.;
+  bl->BLOptions.apr.ymax_ap= 100.;
+  bl->BLOptions.apr.zmin_ap= -100.;
+  bl->BLOptions.apr.zmax_ap= 100.;
 
   bl->poso1c.waist  = 2e-5;
   bl->poso1c.nyz    = 243;

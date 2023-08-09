@@ -1,13 +1,8 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2023-08-08 13:28:14 flechsig> 
+//  Time-stamp: <2023-08-09 14:53:50 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -2807,13 +2802,19 @@ void MainWindow::saveas()
                         tr("Choose a file name"), ".",
                         tr("PHASE (*.phase)"));
   
-  if (fileName.isEmpty()) return;
+  if (fileName.isEmpty()) 
+    {
+      cerr << "filename is empty - return" << endl; 
+      return;
+    }
+
+  name= fileName.toLocal8Bit().data();
 
 #ifdef DEBUG
-  OUTDBG("saveas() called");
+  OUTDBG("saveas() called, filename: " << name );
 #endif
 
-    name= fileName.toLocal8Bit().data();
+    
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {

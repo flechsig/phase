@@ -1,9 +1,8 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2023-08-09 12:24:13 flechsig>  */
+/*   Time-stamp: <2023-08-09 15:11:55 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
-
 // ******************************************************************************
 //
 //   Copyright (C) 2014, 2023 Helmholtz-Zentrum Berlin, Germany and 
@@ -1709,7 +1708,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20150814;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20230809;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
