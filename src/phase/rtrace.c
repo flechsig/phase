@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <25 Nov 19 12:16:03 flechsig>  */
+/*   Time-stamp: <2023-08-09 16:40:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -56,6 +56,11 @@
 #include "phase.h"         
 #include "rtrace.h"
 #include "common.h" 
+
+#ifdef HAVE_HDF5
+   #include "hdf5.h"
+   #include "myhdf5.h"
+#endif 
  
 /***********************************************************************/
 /* Hard edge Quelle                   	                 19.3.96       */
@@ -868,6 +873,50 @@ void WriteRayFile(char *name, int *zahl, struct RayType *Rp)
     }
 }  /* end WriteRayFile */
 
+void WriteRayFileHdf5(char *fname, int *zahl, struct RayType *Rp) 
+{
+  hid_t   file_id, e_dataspace_id, e_dataset_id;
+  double *yvec, *zvec, *dyvec, *dzvec;
+  int i;
+
+  OUTDBGC("202308 NEW function: not yet debugged");
+
+  /* Create a new file using default properties. */
+  /* specifies that if the file already exists, 
+     the current contents will be deleted so that the application can rewrite the file with new data. */
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      exit(-1);
+    }
+
+  yvec  = XMALLOC(double, *zahl);
+  zvec  = XMALLOC(double, *zahl);
+  dyvec = XMALLOC(double, *zahl);
+  dzvec = XMALLOC(double, *zahl);
+  for (i= 0; i< *zahl; i++)
+    {
+      yvec[i] = Rp[i].y* 1e3;
+      zvec[i] = Rp[i].z* 1e3;
+      dyvec[i]= Rp[i].dy;
+      dzvec[i]= Rp[i].dz;
+    }
+ 
+  writeDataDouble(file_id, "/y_vec",  yvec,  *zahl, "y vector in m");
+  writeDataDouble(file_id, "/z_vec",  zvec,  *zahl, "z vector in m");
+  writeDataDouble(file_id, "/dy_vec", dyvec, *zahl, "dy vector in rad");
+  writeDataDouble(file_id, "/dz_vec", zvec,  *zahl, "dz vector in rad");
+
+  XFREE(yvec);
+  XFREE(zvec);
+  XFREE(dyvec);
+  XFREE(dzvec);
+  add_string_attribute_f(file_id, "/", "file_type", "ray_hdf5");
+  H5Fclose(file_id);
+
+  printf("wrote phase_hdf5 file: %s\n", fname);
+} // end WriteRayFileHdf5
 
 /* reserves memory for a RTSource */
 /* use the XREALLOC macro         */

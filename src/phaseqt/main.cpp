@@ -1,12 +1,7 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <2023-08-09 12:22:23 flechsig> 
+//  Time-stamp: <2023-08-09 15:30:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
 
 // ******************************************************************************
 //

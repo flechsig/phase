@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <04 May 15 10:17:32 flechsig>  */
+/*  Time-stamp: <2023-08-09 16:01:17 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -961,7 +961,7 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfType 
   //struct EmfType *p;
 
 #ifdef DEBUG
-  printf("debug: %s write_phase_hdf5_file called\n", __FILE__);
+  OUTDBGC("write_phase_hdf5_file called");
 #endif
 
 

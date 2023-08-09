@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2023-08-09 14:13:17 flechsig> 
+//  Time-stamp: <2023-08-09 15:29:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -826,7 +826,6 @@ QWidget *MainWindow::createGraphicBox()
   connect(fwhmButton,  SIGNAL(clicked()), this, SLOT(fwhmslot()));
   connect(wattButton, SIGNAL(clicked()), this, SLOT(wattslot()));
   connect(photonButton,  SIGNAL(clicked()), this, SLOT(photonslot()));
-
 
   stLabel11 = new QLabel("0");
   stLabel13 = new QLabel("0");
@@ -2089,7 +2088,7 @@ void MainWindow::ReadBLFileInteractive(char *blname)
       msgBox->setInformativeText(QString(tr("Do you want to continue?")));
       msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
       msgBox->setDefaultButton(QMessageBox::Yes);
-      msgBox->setIcon(QMessageBox::Question);
+      msgBox->setIcon(QMessageBox::Warning);
       int ret = msgBox->exec();
       if (ret != QMessageBox::Yes) 
 	{
