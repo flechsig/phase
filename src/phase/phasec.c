@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phasec.c */
 /*   Date      : <24 Jun 02 09:51:36 flechsig>  */
-/*   Time-stamp: <2015-05-02 19:46:45 flechsig>  */
+/*   Time-stamp: <2023-08-09 12:19:57 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 /*   $Source$  */
@@ -263,11 +263,6 @@ int ProcComandLine(struct PHASEset *ps, int argc, char *argv[], int *cmode, int 
   opterr    =  0;
   *numthreads= -1;
   *format    = 1; 
-  
-  /* explicitly init ps->imageraysname to start with '\0',
-     so we later can tell whether it was set by -o option */
-  //TODO: maybe move that to where structure is initalized first time
-  ps->imageraysname[0]= '\0';
   
   /* parse options */
   while ((c = getopt(argc, argv, "BbF:f:Hhi:I:M:m:NnO:o:S:s:T:t:V")) != -1)
@@ -556,7 +551,8 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 {                              
   FILE *f;
   int version= 20121105; /* 20110814; */
-  printf("putphase: write filenames\n");
+
+  printf("putphase: write filename(s) to %s\n", mainpickname);
 
   if ((f= fopen(mainpickname, "w")) == NULL)
     {
@@ -600,10 +596,11 @@ void SetDefaultParameter(struct BeamlineType *bl)
      /* setzt defaults fuer Parameterbox */ 
 {
 #ifdef DEBUG
-  printf("debug: SetDefaultParameter called, file= %s\n", __FILE__);
+  OUTDBGC("called");
 #endif
 
   bl->BLOptions.epsilon         = 1e-4; 
+  bl->BLOptions.CalcMod         = 0;  
   bl->BLOptions.ifl.iord        = 4;
   bl->BLOptions.ifl.iordsc      = 0;
   bl->BLOptions.REDUCE_maps     = 0;
@@ -619,6 +616,7 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->BLOptions.xi.distfocy     = 0;
   bl->BLOptions.xi.distfocz     = 0;
   
+  bl->BLOptions.ifl.igrating    = 1;
   bl->BLOptions.ifl.ibright     = 1;
   bl->BLOptions.ifl.ipinarr     = 0;
   bl->BLOptions.ifl.ispline     = 0;
@@ -656,6 +654,25 @@ void SetDefaultParameter(struct BeamlineType *bl)
   bl->poso1c.widthyz= 1e-3;
   bl->poso1c.dist   = 0;
 
+  // 2023
+  bl->deltalambdafactor= 0;
+  bl->BLOptions.PSO.ndyfix= 512;
+  bl->BLOptions.PSO.ndzfix= 512;
+  bl->BLOptions.PSO.dyminfix = -0.1;
+  bl->BLOptions.PSO.dymaxfix = 0.1;
+  bl->BLOptions.PSO.dzminfix = -0.1;
+  bl->BLOptions.PSO.dzmaxfix = 0.1;
+  bl->BLOptions.PSO.PSSource.sigy= 0.1;
+  bl->BLOptions.PSO.PSSource.sigdy= 0.001;
+  bl->BLOptions.PSO.PSSource.sigz= 0.1;
+  bl->BLOptions.PSO.PSSource.sigdz= 0.001;
+  bl->BLOptions.PSO.PSSource.yhard= 0;
+  bl->BLOptions.PSO.PSSource.dyhard= 0;
+  bl->BLOptions.PSO.PSSource.zhard= 0;
+  bl->BLOptions.PSO.PSSource.dzhard= 0;
+  bl->BLOptions.PSO.intmod= 2;
+  bl->BLOptions.PSO.iconj= 0;
+  bl->BLOptions.PSO.wl_check= 0;
 } /* end SetDefaultParameter  */
 
 
@@ -903,7 +920,7 @@ void InitBeamline(struct BeamlineType *bl)
   struct HardEdgeSourceType  *hp;
 
 #ifdef DEBUG
-  printf("debug: InitBeamline called, file: %s\n", __FILE__);
+  OUTDBGC("called"); 
 #endif
 
   SetDefaultParameter(bl);
@@ -913,7 +930,7 @@ void InitBeamline(struct BeamlineType *bl)
   AllocRTSource(bl);
   hp= (struct HardEdgeSourceType *)bl->RTSource.Quellep;
   
-    hp->disty	= .1;  
+  hp->disty	= .1;  
   hp->iy 	= 3;   
   hp->distz	= .2;  
   hp->iz	= 3;   

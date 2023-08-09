@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2023-08-08 16:55:37 flechsig>  */
+/*   Time-stamp: <2023-08-09 12:24:13 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
 
@@ -1283,7 +1283,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20150814;    /* today */
+   int  i, version= 20230809;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1313,7 +1313,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version AUG 2015\n");
+   fprintf(f, "This is a datafile of PHASE, file version AUG 2023\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1484,30 +1484,26 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    op= (struct OptionsType *) &(bl->BLOptions);
 
    fprintf(f, "\nCONTROL_FLAGS\n");
-   fprintf(f, "%20d     map- order (3, 4)\n", op->ifl.iord); 
-   fprintf(f, "%20d     iordsc (4)\n", op->ifl.iordsc); 
-   fprintf(f, "%20d     expansion of pathlength (1)\n", op->ifl.iexpand); 
+   fprintf(f, "%20d map- order (3, 4)\n", op->ifl.iord); 
+   fprintf(f, "%20d iordsc (4)\n", op->ifl.iordsc); 
+   fprintf(f, "%20d expansion of pathlength (1)\n", op->ifl.iexpand); 
    fprintf(f,
   "%20d numerical (0), analytical (1) subtraction of ideal path length\n", 
 	  op->ifl.iplmode);
-   fprintf(f, "%20d     write 4-dim brightness to file (1)\n", 
-	   op->ifl.ibright); 
-   fprintf(f, "%20d     Integration simps (0), spline 1, -1\n", 
+   fprintf(f, "%20d write 4-dim brightness to file (1)\n", op->ifl.ibright); 
+   fprintf(f, "%20d Integration simps (0), spline 1, -1\n", 
 	   op->ifl.ispline); 
-   fprintf(f, "%20d (1) normalize output, (0) do not normalize\n", 
-	   op->ifl.inorm); 
+   fprintf(f, "%20d (1) normalize output, (0) do not normalize\n", op->ifl.inorm); 
    fprintf(f, "%20d inorm1\n", op->ifl.inorm1); 
-   fprintf(f, "%20d inorm2 (0, 1, 2)\n", op->ifl.inorm2); 
-   fprintf(f, 
-	   "%20d derive matrix elements in 3 different ways (1) (for debugging)\n", 0);
+   fprintf(f, "%20d inorm2 (0, 1, 2, 40)\n", op->ifl.inorm2); 
+   fprintf(f, "%20d derive matrix elements in 3 different ways (1) (for debugging)\n", 0);
    // obsolete parameter	   op->ifl.matrel);
-   fprintf(f, "%20d (1): phase advance for grating, (0): mirror\n", 
-	   op->ifl.igrating);
-   fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
+   fprintf(f, "%20d (1): phase advance for grating, (0): mirror\n", op->ifl.igrating);
+   fprintf(f, "%20d insert pinhole array in source plane (0)\n", 
 	   op->ifl.ipinarr);
-   fprintf(f, "%20d  enable delta lambda\n", op->dlambdaflag);
-   fprintf(f, "%20.12lg  delta lambda (nm)\n",  op->dlambda*1e6);
-   fprintf(f, "%20d  GO enable ray_set1\n", op->plrayset);
+   fprintf(f, "%20d enable delta lambda\n", op->dlambdaflag);
+   fprintf(f, "%20.12lg delta lambda (nm)\n", op->dlambda*1e6);
+   fprintf(f, "%20d GO enable ray_set1\n", op->plrayset);
       /* end control_flags */
 
    fprintf(f,"\nAPERTURES\n"); 
@@ -1640,7 +1636,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     (1) RT Source to Image \n", op->SourcetoImage);  
    
    fprintf(f,"%20lg     epsilon\n", op->epsilon);     
-   fprintf(f,"%20d     flag calculation modus\n", op->CalcMod);    
+   fprintf(f,"%20d     command line flag -m calculation mode\n", op->CalcMod);    
    fprintf(f,"%20.12lg     lambda [nm]\n", op->lambda* 1e6);  
    fprintf(f,"%20lg     dispersive length\n", op->displength); 
    fprintf(f,"%20lg     * y = dlambda\n", bl->deltalambdafactor);
@@ -1679,21 +1675,21 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "\nFILENAMES\n");
    pp= (struct PHASEset *)&(bl->filenames);
    
-   fprintf(f, "%s     Map name\n",             pp->mapname);
-   fprintf(f, "%s     Matrix name\n",          pp->matrixname);
-   fprintf(f, "%s     GO input\n",             pp->sourceraysname);
-   fprintf(f, "%s     PO/GO output\n",         pp->imageraysname);
-   /*fprintf(f, "%s     Minuit input (obsolete)\n",         pp->minname); 20121105 */
-   fprintf(f, "%s     Optimization input\n",   pp->optipckname);
-   fprintf(f, "%s     Optimization results\n", pp->opresname);
-   fprintf(f, "%s     so4_fsource4a\n",        pp->so4_fsource4a);
-   fprintf(f, "%s     so4_fsource4b\n",        pp->so4_fsource4b);
-   fprintf(f, "%s     so4_fsource4c\n",        pp->so4_fsource4c);
-   fprintf(f, "%s     so4_fsource4d\n",        pp->so4_fsource4d);
-   fprintf(f, "%s     so6_fsource6\n",         pp->so6_fsource6);
-   fprintf(f, "%s     so7 (hdf5 input)\n",     pp->so7_hdf5);
-   fprintf(f, "%s     hdf5 output\n",          pp->hdf5_out); 
-   fprintf(f, "%s     surface errors (h5)\n",  pp->h5surfacename);
+   fprintf(f, "%-20s     Map name\n",             pp->mapname);
+   fprintf(f, "%-20s     Matrix name\n",          pp->matrixname);
+   fprintf(f, "%-20s     GO input\n",             pp->sourceraysname);
+   fprintf(f, "%-20s     PO/GO output\n",         pp->imageraysname);
+   /*fprintf(f, "%-20s     Minuit input (obsolete)\n",         pp->minname); 20121105 */
+   fprintf(f, "%-20s     Optimization input\n",   pp->optipckname);
+   fprintf(f, "%-20s     Optimization results\n", pp->opresname);
+   fprintf(f, "%-20s     so4_fsource4a\n",        pp->so4_fsource4a);
+   fprintf(f, "%-20s     so4_fsource4b\n",        pp->so4_fsource4b);
+   fprintf(f, "%-20s     so4_fsource4c\n",        pp->so4_fsource4c);
+   fprintf(f, "%-20s     so4_fsource4d\n",        pp->so4_fsource4d);
+   fprintf(f, "%-20s     so6_fsource6\n",         pp->so6_fsource6);
+   fprintf(f, "%-20s     so7 (hdf5 input)\n",     pp->so7_hdf5);
+   fprintf(f, "%-20s     hdf5 output\n",          pp->hdf5_out); 
+   fprintf(f, "%-20s     surface errors (h5)\n",  pp->h5surfacename);
    /* end FILENAMES section */
 
    fprintf(f,"\n*** end of file ***\n");    
@@ -1759,7 +1755,8 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        initdatset(&Fg3DefDat, &Beamline); 		/* source init with defaults*/
 #else
        // __SKIPINIT__ defined 
-       fprintf(stderr, "warning: Initialization - preliminary version, file: %s\n", __FILE__);
+       fprintf(stderr, "warning: Initialization - preliminary version (update 2023), file: %s, line: %d\n", 
+	       __FILE__, __LINE__);
 #ifndef EXTR
        // __SKIPINIT__ defined and !EXTR
        //SetDefaultParameter(bl); 

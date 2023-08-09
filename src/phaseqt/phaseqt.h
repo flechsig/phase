@@ -1,12 +1,8 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2021-12-16 10:21:02 flechsig>  */
+/*  Time-stamp: <2023-08-09 10:11:18 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */
-/*  $Author$  */
 
 // ******************************************************************************
 //

@@ -29,8 +29,9 @@ let cos(theta)^2 = 1- sin(theta)^2;
 %a50 := df(u,w,5,l,0)/120;
 %a60 := df(u,w,6,l,0)/720;
 %a42 := df(u,w,4,l,2)/48;
-a06 := df(u,w,0,l,6)/720;
-%a70 := df(u,w,7,l,0)/5040;
+%a06 := df(u,w,0,l,6)/720;
+a70 := df(u,w,7,l,0)/5040;  
+% 70 geht nicht wegen heap overflow versuche -td 10000
 %a80 := df(u,w,8,l,0)/40320;
 
 let w=0;
@@ -69,8 +70,8 @@ write "      pq= p * q";
 %write a50:=a50;
 %write a60:=a60;
 %write a42:=a42;
-write a06:=a06;
-%write a70:=a70;
+%write a06:=a06;
+write a70:=a70;
 %write a80:=a80;
 
 shut "hyperbola_goldberg2d_coeff.f"$
