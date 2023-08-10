@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2023-08-10 09:23:21 flechsig> 
+//  Time-stamp: <2023-08-10 11:30:30 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -881,8 +881,8 @@ void MainWindow::activateProc(const QString &action)
 	   && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
       else
 	if ( ((bl->RESULT.typ & PLrttype) > 0)
-	  && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->myWriteRayFileHdf5(bl->filenames.hdf5_out, &bl->RESULT.points1,
-										     (struct RayType *)bl->RESULT.RESp);
+	  && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->myWriteRayFileHdf5(bl->filenames.hdf5_out, 
+										     (struct RESULTType *)&bl->RESULT);
         else
 	  cout << "error: no valid results" << endl; 
 #else

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <2023-08-10 08:54:16 flechsig>  */
+/*   Time-stamp: <2023-08-10 12:05:45 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -632,7 +632,7 @@ void RayTracec(struct BeamlineType *bl)
 /* normal RT                             */
 /* umgeschrieben auf pointer UF 28.11.06 */
 /* phaseset wird nicht mehr benutzt      */
-/* erweitert auf mehrere raysets Jun 12 */
+/* erweitert auf mehrere raysets Jun 12  */
 {
   struct RayType *Raysin, *Raysout;   
   int i, set;
@@ -873,13 +873,17 @@ void WriteRayFile(char *name, int *zahl, struct RayType *Rp)
     }
 }  /* end WriteRayFile */
 
-void WriteRayFileHdf5(char *fname, int *zahl, struct RayType *Rp) 
+void WriteRayFileHdf5(char *fname, struct RESULTType *Res) 
 {
   hid_t  file_id, e_dataspace_id, e_dataset_id;
-  double *yvec, *zvec, *dyvec, *dzvec;
+  double *yvec1, *zvec1, *dyvec1, *dzvec1, *yvec2, *zvec2, *dyvec2, *dzvec2;
   int i;
-
+  struct RayType *Rp;
+  
   OUTDBGC("202308 NEW function: not yet debugged");
+
+  Rp= (struct RayType *)Res->RESp;
+  printf("points1= %d, points2= %d\n", Res->points1, Res->points2); 
 
   /* Create a new file using default properties. */
   /* specifies that if the file already exists, 
@@ -891,27 +895,55 @@ void WriteRayFileHdf5(char *fname, int *zahl, struct RayType *Rp)
       exit(-1);
     }
 
-  yvec  = XMALLOC(double, *zahl);
-  zvec  = XMALLOC(double, *zahl);
-  dyvec = XMALLOC(double, *zahl);
-  dzvec = XMALLOC(double, *zahl);
-  for (i= 0; i< *zahl; i++)
+  yvec1  = XMALLOC(double, Res->points1);
+  zvec1  = XMALLOC(double, Res->points1);
+  dyvec1 = XMALLOC(double, Res->points1);
+  dzvec1 = XMALLOC(double, Res->points1);
+  
+  for (i= 0; i< Res->points1; i++)
     {
-      yvec[i] = Rp[i].y* 1e3;
-      zvec[i] = Rp[i].z* 1e3;
-      dyvec[i]= Rp[i].dy;
-      dzvec[i]= Rp[i].dz;
+      yvec1[i] = Rp[i].y* 1e3;
+      zvec1[i] = Rp[i].z* 1e3;
+      dyvec1[i]= Rp[i].dy;
+      dzvec1[i]= Rp[i].dz;
     }
  
-  writeDataDouble(file_id, "/y_vec",  yvec,  *zahl, "y vector", "m");
-  writeDataDouble(file_id, "/z_vec",  zvec,  *zahl, "z vector", "m");
-  writeDataDouble(file_id, "/dy_vec", dyvec, *zahl, "dy vector", "rad");
-  writeDataDouble(file_id, "/dz_vec", dzvec, *zahl, "dz vector", "rad");
+  writeDataDouble(file_id, "/y_vec1",  yvec1,  Res->points1, "y vector", "m");
+  writeDataDouble(file_id, "/z_vec1",  zvec1,  Res->points1, "z vector", "m");
+  writeDataDouble(file_id, "/dy_vec1", dyvec1, Res->points1, "dy vector", "rad");
+  writeDataDouble(file_id, "/dz_vec1", dzvec1, Res->points1, "dz vector", "rad");
 
-  XFREE(yvec);
-  XFREE(zvec);
-  XFREE(dyvec);
-  XFREE(dzvec);
+  XFREE(yvec1);
+  XFREE(zvec1);
+  XFREE(dyvec1);
+  XFREE(dzvec1);
+
+   
+  if (Res->points2 > 0)
+    {
+      yvec2  = XMALLOC(double, Res->points2);
+      zvec2  = XMALLOC(double, Res->points2);
+      dyvec2 = XMALLOC(double, Res->points2);
+      dzvec2 = XMALLOC(double, Res->points2);
+  
+      for (i= 0; i< Res->points2; i++)
+	{
+	  yvec2[i] = Rp[Res->points1+ i].y* 1e3;
+	  zvec2[i] = Rp[Res->points1+ i].z* 1e3;
+	  dyvec2[i]= Rp[Res->points1+ i].dy;
+	  dzvec2[i]= Rp[Res->points1+ i].dz;
+	}
+ 
+      writeDataDouble(file_id, "/y_vec2",  yvec2,  Res->points2, "y vector  + deltalambda", "m");
+      writeDataDouble(file_id, "/z_vec2",  zvec2,  Res->points2, "z vector  + deltalambda", "m");
+      writeDataDouble(file_id, "/dy_vec2", dyvec2, Res->points2, "dy vector + deltalambda", "rad");
+      writeDataDouble(file_id, "/dz_vec2", dzvec2, Res->points2, "dz vector + deltalambda", "rad");
+
+      XFREE(yvec2);
+      XFREE(zvec2);
+      XFREE(dyvec2);
+      XFREE(dzvec2);
+    } // end 2nd set
   add_string_attribute_f(file_id, "/", "file_type", "ray_hdf5");
   H5Fclose(file_id);
 

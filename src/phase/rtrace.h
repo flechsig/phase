@@ -1,8 +1,8 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.h */
 /*  Date      : <28 Nov 06 09:06:56 flechsig>  */
-/*  Time-stamp: <2023-08-09 16:09:05 flechsig>  */
+/*  Time-stamp: <2023-08-10 11:21:26 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -41,7 +41,7 @@ void RayTracec(struct BeamlineType *),
         
      WritePlotFile(char *, int *, struct RayType *),     
      WriteRayFile (char *, int *, struct RayType *),
-     WriteRayFileHdf5 (char *, int *, struct RayType *),
+     WriteRayFileHdf5 (char *, struct RESULTType *),
      MakeHardEdgeSource (struct RTSourceType *), 
      MakeUndulatorSource(struct RTSourceType *, char),  
      MakeDipolSource    (struct RTSourceType *),

@@ -1,9 +1,8 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/phaseqt.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2023-08-09 16:10:00 flechsig>  */
+/*  Time-stamp: <2023-08-10 11:26:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -196,7 +195,7 @@ public:
   void my_write_genesis_hdf5_file() { write_genesis_hdf5_file(this, this->filenames.hdf5_out, NULL); }
   void my_write_phase_hdf5_file() { write_phase_hdf5_file(this, this->filenames.hdf5_out, NULL); }
   void my_addSimp2h5() { addSimp2h5(this); }
-  void myWriteRayFileHdf5(char *name, int *zahl, struct RayType *Rp) { WriteRayFileHdf5(name, zahl, Rp); }
+  void myWriteRayFileHdf5(char *name, struct RESULTType *Rp) { WriteRayFileHdf5(name, Rp); }
 #endif
   void myWriteRayFile(char *name, int *zahl, struct RayType *Rp) { WriteRayFile(name, zahl, Rp); }
   void sourceSetDefaults();
