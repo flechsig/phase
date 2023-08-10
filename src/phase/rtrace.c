@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <2023-08-10 12:05:45 flechsig>  */
+/*   Time-stamp: <2023-08-10 12:10:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -369,7 +369,7 @@ int MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
      {
        
 #ifdef DEBUG
-   printf("MakeRTSource: realloc source\n");
+   OUTDBGC("realloc source");
 #endif
 
 
@@ -1028,7 +1028,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
   FreeResultMem(&bl->RESULT); 
 
 #ifdef DEBUG 
-  printf("debug: start allocating\n");
+  OUTDBGC("start allocating");
 #endif
 
   type = newtype & ~1; // strip off last bit
@@ -1063,7 +1063,7 @@ void FreeResultMem(struct RESULTType *Re)
 /* uwe 8.8.96 */
 {
 #ifdef DEBUG  
-  printf("debug: FreeResultMem called, file=%s\n", __FILE__); 
+  OUTDBGC("called"); 
 #endif
   
   if (Re->RESp == NULL)
