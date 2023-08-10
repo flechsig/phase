@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <2023-08-09 16:40:28 flechsig>  */
+/*   Time-stamp: <2023-08-10 08:54:16 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -875,7 +875,7 @@ void WriteRayFile(char *name, int *zahl, struct RayType *Rp)
 
 void WriteRayFileHdf5(char *fname, int *zahl, struct RayType *Rp) 
 {
-  hid_t   file_id, e_dataspace_id, e_dataset_id;
+  hid_t  file_id, e_dataspace_id, e_dataset_id;
   double *yvec, *zvec, *dyvec, *dzvec;
   int i;
 
@@ -903,10 +903,10 @@ void WriteRayFileHdf5(char *fname, int *zahl, struct RayType *Rp)
       dzvec[i]= Rp[i].dz;
     }
  
-  writeDataDouble(file_id, "/y_vec",  yvec,  *zahl, "y vector in m");
-  writeDataDouble(file_id, "/z_vec",  zvec,  *zahl, "z vector in m");
-  writeDataDouble(file_id, "/dy_vec", dyvec, *zahl, "dy vector in rad");
-  writeDataDouble(file_id, "/dz_vec", zvec,  *zahl, "dz vector in rad");
+  writeDataDouble(file_id, "/y_vec",  yvec,  *zahl, "y vector", "m");
+  writeDataDouble(file_id, "/z_vec",  zvec,  *zahl, "z vector", "m");
+  writeDataDouble(file_id, "/dy_vec", dyvec, *zahl, "dy vector", "rad");
+  writeDataDouble(file_id, "/dz_vec", dzvec, *zahl, "dz vector", "rad");
 
   XFREE(yvec);
   XFREE(zvec);

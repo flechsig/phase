@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2023-08-09 16:16:50 flechsig> 
+//  Time-stamp: <2023-08-10 09:23:21 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -95,7 +95,7 @@ void MainWindow::about()
 #endif
 
    QMessageBox::about(this, tr("About PhaseQt"),
-            tr("<b>phaseqt</b> is the new graphical user interface for the software package <b>phase</b>-"
+            tr("<b>phaseqt</b> is the graphical user interface for the software package <b>phase</b>-"
                "the wave front propagation and ray tracing code developed by "
                "<center><a href=mailto:Johannes.Bahrdt@helmholtz-berlin.de>Johannes Bahrdt</a>, <a href=mailto:uwe.flechsig&#64;psi.&#99;&#104;>Uwe Flechsig</a> and others. </center><hr>"
                "<center>phaseqt version: '%1',<br>"
@@ -2462,9 +2462,24 @@ void MainWindow::newBeamline()
   const char *name= "new_beamline.phase";
 
   if ( fexists((char *)name) ) 
-    QMessageBox::warning(this, tr("Phase: newBeamline"),
-			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
-  
+    {
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(QString(tr("<b>warning:</b> File: <b>%1</b> already exists but we do not read it!\n").arg(name)) +
+                      QString(tr("continue with 'Yes' will overwite it!\n")));
+      msgBox->setInformativeText(QString(tr("Do you want to continue?")));
+      msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox->setDefaultButton(QMessageBox::Yes);
+      msgBox->setIcon(QMessageBox::Warning);
+      int ret = msgBox->exec();
+      if (ret != QMessageBox::Yes) 
+	{
+	  cerr << "newBeamline -> abort and return" << endl;
+	  return;
+	} 
+      else
+	cerr << "we will overwrite " << name << endl;
+    }
+
   myparent->myBeamline()->beamlineOK= 0;
   //myparent->myBeamline()->myPHASEset::init(name);
   myparent->initSet(name, INIT_ALL);

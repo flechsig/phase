@@ -1,13 +1,8 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myhdf5.h */
 /*  Date      : <20 Mar 13 16:46:54 flechsig>  */
-/*  Time-stamp: <02 Feb 17 16:27:44 flechsig>  */
+/*  Time-stamp: <2023-08-10 07:49:58 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */
-/*  $Author$  */
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -56,9 +51,9 @@ void  getAttribute(hid_t, char *, char *, char *);
 int   getDatasetSize(hid_t, char *);
 void  getUnit(hid_t, char *, char *);
 hid_t myH5Fopen(char *);
-void  writeDataDouble(hid_t, char *, double *, int, char *);
-void  writeDataInt(hid_t, char *, int *, int, char *);
-void  writeDataULong(hid_t, char *, unsigned long *, int, char *);
+void  writeDataDouble(hid_t, char *, double *, int, char *, char *);
+void  writeDataInt(hid_t, char *, int *, int, char *, char *);
+void  writeDataULong(hid_t, char *, unsigned long *, int, char *, char *);
 #endif
 
 #endif 

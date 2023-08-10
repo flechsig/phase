@@ -1,13 +1,8 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.h */
 /*  Date      : <31 May 11 17:01:23 flechsig>  */
-/*  Time-stamp: <2022-12-19 15:56:23 flechsig>  */
+/*  Time-stamp: <2023-08-10 10:54:15 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */
-/*  $Author$  */
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 

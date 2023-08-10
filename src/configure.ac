@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2022-12-19 10:58:10 flechsig> 
+dnl   Time-stamp: <2023-08-10 07:58:58 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************
@@ -35,7 +35,7 @@ dnl for root 6.26 we even need -std=c++17
 
 
 AC_PREREQ([2.71])  # autoscan: AC_PREREQ([2.71])
-AC_INIT([phase],[1.33],[uwe.flechsig@psi.ch])
+AC_INIT([phase],[1.34],[uwe.flechsig@psi.ch])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 #AC_CONFIG_SRCDIR([phase/bline.c])

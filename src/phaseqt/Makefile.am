@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2023-08-08 11:28:14 flechsig> 
+#  Time-stamp: <2023-08-10 10:11:19 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -82,12 +82,12 @@ if QWT
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
 	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
-	moc_plotmatrix.cpp moc_plot2x2.cpp
+	moc_plotmatrix.cpp moc_plot2x2.cpp moc_e2wavelength.cpp
 else
   nodist_phaseqt_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_singleray.cpp  \
-	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp 
+	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp moc_e2wavelength.cpp
 endif
 
 phaseqt_LDADD = $(libdir)/@LIBPHASE@

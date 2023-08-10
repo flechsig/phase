@@ -1,13 +1,8 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/e2wavelength.h */
 /*  Date      : <15 Jul 11 14:16:20 flechsig>  */
-/*  Time-stamp: <2022-12-22 15:13:32 flechsig>  */
+/*  Time-stamp: <2023-08-10 10:46:09 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */
-/*  $Author$  */
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -37,6 +32,7 @@
 
 //
 // this E2wavelength class defines the E2wavelength widget
+// do not forget to create the moc file see Makefile.am
 //
 
 #ifndef E2WAVELENGTH_H
@@ -56,7 +52,7 @@
 
 class E2wavelength : public QWidget
 {
-  //Q_OBJECT  // this makes the error
+  Q_OBJECT  
     
 public:
     QWidget *e2wavelengthBox;
@@ -69,11 +65,10 @@ private slots:
     void quitSlot();
 
 private:
-  QLabel      *E1Label;        // source box
+  QLabel      *E1Label;        
   QLabel      *E2Label;
   QLabel      *E3Label;
   QLineEdit   *E1E;
-  //QLineEdit   *E2E;
   QPushButton *EDefaultB;
   QPushButton *EApplyB;
   QPushButton *EQuitB;     

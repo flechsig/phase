@@ -1,13 +1,7 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2023-08-09 16:01:17 flechsig>  */
-/*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */ 
-/*  $Author$  */
-
+/*  Time-stamp: <2023-08-10 07:56:43 flechsig>  */
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -743,14 +737,14 @@ void  addSimp2h5(struct BeamlineType *bl)
     {
       group_id= H5Gcreate(file_id, "/integration_details", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
       
-      writeDataInt(group_id, "dypoints", &bl->BLOptions.xi.ianzy0, 1, "number of points in dy");
-      writeDataInt(group_id, "dzpoints", &bl->BLOptions.xi.ianzz0, 1, "number of points in dz");
-      writeDataDouble(group_id, "vdy", bl->vdy, bl->BLOptions.xi.ianzy0, "dy vector");
-      writeDataDouble(group_id, "vdz", bl->vdz, bl->BLOptions.xi.ianzz0, "dz vector");
-      writeDataDouble(group_id, "simpre", bl->simpre, size, "simpre");
-      writeDataDouble(group_id, "simpim", bl->simpim, size, "simpim");
-      writeDataDouble(group_id, "sintre", bl->sintre, size, "sintre");
-      writeDataDouble(group_id, "sintim", bl->sintim, size, "sintim");
+      writeDataInt(group_id, "dypoints", &bl->BLOptions.xi.ianzy0, 1, "number of points in dy", NULL);
+      writeDataInt(group_id, "dzpoints", &bl->BLOptions.xi.ianzz0, 1, "number of points in dz", NULL);
+      writeDataDouble(group_id, "vdy", bl->vdy, bl->BLOptions.xi.ianzy0, "dy vector", NULL);
+      writeDataDouble(group_id, "vdz", bl->vdz, bl->BLOptions.xi.ianzz0, "dz vector", NULL);
+      writeDataDouble(group_id, "simpre", bl->simpre, size, "simpre", NULL);
+      writeDataDouble(group_id, "simpim", bl->simpim, size, "simpim", NULL);
+      writeDataDouble(group_id, "sintre", bl->sintre, size, "sintre", NULL);
+      writeDataDouble(group_id, "sintim", bl->sintim, size, "sintim", NULL);
       H5Gclose(group_id);
       printf("info: group >>/integration_details<< added to file %s\n", fname);
     }
@@ -936,11 +930,11 @@ void write_genesis_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfTyp
   gridsize  = (p->z[1]- p->z[0])* 1e-3;        // mm to m
 
   group_id= H5Gcreate(file_id, "/slice000001", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-  writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices");
-  writeDataDouble(file_id, "wavelength", &wavelength_m, 1, "wavelength in m");
-  writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m");
+  writeDataInt   (file_id, "slicecount", &slicecount, 1, "number of time slices", NULL);
+  writeDataDouble(file_id, "wavelength", &wavelength_m, 1, "wavelength in m", "m");
+  writeDataDouble(file_id, "gridsize",   &gridsize,   1, "distance between gridpoints in m", "m");
   writeDataDouble(file_id, "slice000001/field", field, fieldsize, 
-		  "electrical field in (V/m) as c_style list (real,imag), (real, imag),...");
+		  "electrical field in (V/m) as c_style list (real,imag), (real, imag),...", "V/m");
   
   add_desc(group_id, "first time slice");
   add_unit(group_id, "m");
@@ -1018,11 +1012,11 @@ void write_phase_hdf5_file(struct BeamlineType *bl, char *fname, struct EmfType 
 	}
     }
   
-  writeDataDouble(file_id, "/z_vec", zvec, cols, "z vector in m");
-  writeDataDouble(file_id, "/y_vec", yvec, rows, "y vector in m");
-  writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
-  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
-  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
+  writeDataDouble(file_id, "/z_vec", zvec, cols, "z vector in m", "m");
+  writeDataDouble(file_id, "/y_vec", yvec, rows, "y vector in m", "m");
+  writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s", "s");
+  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m", "m");
+  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file", NULL);
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);

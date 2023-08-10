@@ -1,13 +1,8 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/e2wavelength.cpp
 //  Date      : <26 Jul 11 12:52:43 flechsig> 
-//  Time-stamp: <2022-12-22 15:53:03 flechsig> 
+//  Time-stamp: <2023-08-10 10:54:13 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -55,7 +50,7 @@ E2wavelength::E2wavelength()
   //QWidget *pw1;                   // just to avoid warning- unused can be removed;
   e2wavelengthBox = new QWidget();
   
-  QGroupBox   *EParsGroup  = new QGroupBox(tr("photon energy <=> wavelength conversion "));
+  QGroupBox   *EParsGroup  = new QGroupBox(tr("photon energy <=> wavelength conversion"));
   QGridLayout *EParsLayout = new QGridLayout;
 
   E1Label  = new QLabel(tr("input: photon energy (eV) or wavelength (nm)"));
@@ -80,15 +75,16 @@ E2wavelength::E2wavelength()
   vbox->addWidget(EParsGroup);
   e2wavelengthBox->setLayout(vbox);
 
-  //connect(EDefaultB, SIGNAL(clicked()), this,  SLOT(defaultSlot()));
-  //connect(EApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
-  //connect(EQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
+  connect(EDefaultB, SIGNAL(clicked()), this,  SLOT(defaultSlot()));
+  connect(EApplyB,   SIGNAL(clicked()), this,  SLOT(applySlot()));
+  connect(EQuitB,    SIGNAL(clicked()), this,  SLOT(quitSlot()));
+  connect(E1E,       SIGNAL(editingFinished()), this,  SLOT(applySlot()));
   
   e2wavelengthBox->show();
   
-  //#ifdef DEBUG
-  printf("debug: E2wavelength: constructor called, file: %s, line: %d\n", __FILE__,  __LINE__);
-  //#endif
+#ifdef DEBUG
+  OUTDBG("E2wavelength: constructor called\n");
+#endif
 } // constructor
 
 // destructor
@@ -100,7 +96,7 @@ void E2wavelength::defaultSlot()
 {
   cout << "defaultSlot called" << endl;
   E1E->setText(QString("1240.0"));
-  E3Label->setText(QString("1.0"));
+  E3Label->setText(QString("0.99987"));
 } // end defaultSlot
 
 void E2wavelength::quitSlot()
@@ -113,7 +109,6 @@ void E2wavelength::applySlot()
 {
   cout << "applySlot called" << endl;
   QString qst;
-
   double result= 1.1;
   double input= E1E->text().toDouble();
   
@@ -121,8 +116,8 @@ void E2wavelength::applySlot()
     qst= tr("undef"); 
   else
     {
-      result= 1240/input;
-      qst.setNum(result, 'g', 3);
+      result= 1.23984198e3/input;
+      qst.setNum(result, 'g', 6);
     }
   E3Label->setText(qst);
 }
