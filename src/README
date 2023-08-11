@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <22 Nov 19 14:57:27 flechsig> 
+ Time-stamp: <2023-08-11 15:05:29 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -27,14 +27,12 @@ Installation
 1a) install the package from the tarball
    tar -xzvf phase-xxxx.tgz
 
-1b) or import the cvs tree
-   cvs -d :pserver:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot login
-   cvs -d :pserver:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot co phase
-   ...
-   cvs logout         (removes the locally stored passwordfile $HOME/.cvspass)
+1b) cvs obsolete
 
-1c) or try methode ext
-   cvs -d :ext:slslc.psi.ch:/afs/psi.ch/user/f/flechsig/cvsroot co phase
+1c) cvs obsolete
+
+1d) git
+    git clone git@github.com:flechsig/phase.git
 
 2) for maintainers only: configure libtool
    libtoolize
