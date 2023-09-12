@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2023-08-10 11:30:30 flechsig> 
+//  Time-stamp: <2023-09-12 10:44:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -2680,9 +2680,14 @@ void MainWindow::rright4slot()
 // slot
 void MainWindow::print()
 {
+  char name0[MaxPathLength], *name, *ch;
 #ifdef DEBUG
   OUTDBG("MainWindow::print called");
 #endif
+
+  strncpy(name0, myparent->myBeamline()->filenames.beamlinename, MaxPathLength); // make a copy of beamlinename
+  name= basename(name0);                            // remove path
+  if ((ch= strrchr(name, '.')) != NULL) *ch= '\0';  // remove extension - result is in "name"
 
 #ifndef QT_NO_PRINTDIALOG
   //QTextDocument *document = textEdit->document();
@@ -2698,7 +2703,7 @@ void MainWindow::print()
 #endif    
     //printer.setPageSize(QPageSize(A4)); // new
     printer.setColorMode(QPrinter::Color);
-
+    printer.setOutputFileName(QString(tr(name) + ".pdf")); // default: is $HOME/print.pdf
 
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
     
@@ -2718,10 +2723,16 @@ void MainWindow::print()
 // slot
 void MainWindow::printMain()
 {
+  char name0[MaxPathLength], *name, *ch;
+
 #ifdef DEBUG
   OUTDBG("MainWindow::printMain called");
 #endif
 
+  strncpy(name0, myparent->myBeamline()->filenames.beamlinename, MaxPathLength); // make a copy of beamlinename
+  name= basename(name0);                            // remove path
+  if ((ch= strrchr(name, '.')) != NULL) *ch= '\0';  // remove extension - result is in "name"
+  
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
   printer.setCreator( "phaseqt" );
 #if QT_VERSION >= 0x050300
@@ -2733,6 +2744,7 @@ void MainWindow::printMain()
   printer.setPaperSize(QPrinter::A4);
   //printer.setPageSize(QPrinter::A4);
   printer.setColorMode(QPrinter::Color);
+  printer.setOutputFileName(QString(tr(name) + ".pdf")); // default: is $HOME/print.pdf
 
   int myresolution= printer.resolution();
   if ( myresolution > 300 )
