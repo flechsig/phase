@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <10 Sep 14 14:59:56 flechsig>  */
+/*  Time-stamp: <2023-08-11 15:22:19 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -167,8 +167,8 @@ int main(int argc, char **argv)
   status = H5Dwrite(t_dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, t);
  
  // new routines 
-  writeDataDouble(file_id, "wavelength", &mywavelength, 1, "wavelength in m");
-  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
+  writeDataDouble(file_id, "wavelength", &mywavelength, 1, "wavelength in m", NULL);
+  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file", NULL);
   add_string_attribute_f(file_id, "/", "file_type", "phase_hdf5");
   add_unit(e_dataset_id, "m");
   add_desc(e_dataset_id, "electrical field in (V/m) as 4d c_style array [time][y_re,y_im,z_re,z_im][col][row]");

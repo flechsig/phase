@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/project/phase/GIT/phase/src/hdf5tools/phase2wave.c */
  /* Date      : <11 Sep 14 15:27:35 flechsig>  */
- /* Time-stamp: <2015-05-03 13:43:29 flechsig>  */
+ /* Time-stamp: <2023-08-11 15:23:03 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
   else
     {
       gid= H5Gcreate(fid, "/phaseu", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-      writeDataDouble(gid, "pzu", p, size, "pzu");
+      writeDataDouble(gid, "pzu", p, size, "pzu", NULL);
     }
 
   H5Gclose(gid);

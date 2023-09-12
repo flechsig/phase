@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/fkoe/write_phase_hdf5.c */
  /* Date      : <29 Aug 14 14:38:59 flechsig>  */
- /* Time-stamp: <16 Sep 14 10:09:07 flechsig>  */
+ /* Time-stamp: <2023-08-11 15:27:50 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -120,11 +120,11 @@ void write_phase_hdf5_(double *yre, double *yim, double *zre, double *zim, doubl
 	field[col+ row* cols + 3 * (rows * cols) + it * (rows * cols * 4)]= zim[row* *coldim+ col];
       }
 
-  writeDataDouble(file_id, "/z_vec", z, cols, "z vector in m");
-  writeDataDouble(file_id, "/y_vec", y, rows, "y vector in m");
-  writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s");
-  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m");
-  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file");
+  writeDataDouble(file_id, "/z_vec", z, cols, "z vector in m", "m");
+  writeDataDouble(file_id, "/y_vec", y, rows, "y vector in m", "m");
+  writeDataDouble(file_id, "/t_vec", &t_vec, 1,  "time vector in s", "s");
+  writeDataDouble(file_id, "wavelength", &wavelength, 1, "wavelength in m", "m");
+  writeDataInt(file_id, "fversion", &fversion, 1, "the version of the file", NULL);
 
   e_dataspace_id = H5Screate_simple(4, e_dims, NULL);
   e_dataset_id   = H5Dcreate(file_id, "/e_field", H5T_NATIVE_DOUBLE, e_dataspace_id, 
