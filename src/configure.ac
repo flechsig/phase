@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2022-12-19 10:58:10 flechsig> 
+dnl   Time-stamp: <2024-10-09 21:32:07 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************
@@ -233,21 +233,35 @@ dnl end gridsize
 	
 dnl ****************** QT **************************
 dnl new qt test in config/ax_have_qt
+echo "xxxxxxxxxxxxxxxxxx configure  call AX-HAVE-QT xxxxxx"
+
 AX_HAVE_QT
 
-dnl test qt5
+echo "xxxxxxxxxxxxxxxxxxx configure  return ax_have_qt xxxxx"
+dnl test qt5 and qt6
 echo "have qt:" ${have_qt}
 if test "x${have_qt}" = "xyes"; then
-   qt5=`echo ${QT_LIBS} | grep "Qt5"`	
+   qt5=`echo ${QT_LIBS} | grep "Qt5"`
+   qt6=`echo ${QT_LIBS} | grep "Qt6"`
 dnl echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
 dnl echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
-   if test -n "${qt5}"; then
+   if test -n "${qt6}"; then
+       have_qt6="yes"
+       AC_DEFINE([QT6], 1, [qt6])
+       have_qt5="no" 
+       AC_DEFINE([QT5], 0, [qt5])
+   elif test -n "${qt5}"; then
        have_qt5="yes"
        AC_DEFINE([QT5], 1, [qt5])
+       have_qt6="no" 
+       AC_DEFINE([QT6], 0, [qt6])
    else  
+       have_qt6="no" 
+       AC_DEFINE([QT6], 0, [qt6])
        have_qt5="no" 
        AC_DEFINE([QT5], 0, [qt5])
    fi
+   echo "have_qt6" ${have_qt6}
    echo "have_qt5" ${have_qt5}
 else
    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -256,7 +270,8 @@ else
    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 fi
 AM_CONDITIONAL([QT5], [test x$have_qt5 = xyes])
-dnl end qt5
+AM_CONDITIONAL([QT6], [test x$have_qt6 = xyes])
+dnl end qt5 and qt6
 
 dnl ****************** QWT **************************
 AC_ARG_WITH([qwt],
@@ -564,7 +579,15 @@ echo "seventh order:           : ${enable_SEVEN}"
 echo "OpenMP:                  : ${enable_OPENMP}"
 echo "Qt:                      : ${have_qt}"
 echo "Qt5:                     : ${have_qt5}"
+echo "Qt6:                     : ${have_qt6}"
 echo "QT_DIR:                  : ${QT_DIR}"
+echo "QT_CXXFLAGS:             : ${QT_CXXFLAGS}"
+echo "QT_LIBS:                 : ${QT_LIBS}"
+echo "QT_MOC:                  : ${QT_MOC}"
+echo "QT_UIC:                  : ${QT_UIC}"
+echo "QT_RCC:                  : ${QT_RCC}"
+echo "QT_LRELEASE:             : ${QT_LRELEASE}"
+echo "QT_LUPDATE:              : ${QT_LUPDATE}"
 echo "qwt:                     : ${qwt}"
 echo "qwti:                    : ${qwti}"
 echo "CPPFLAGS:                : ${CPPFLAGS}"

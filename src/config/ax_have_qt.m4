@@ -63,7 +63,7 @@ AC_DEFUN([AX_HAVE_QT],
   AC_REQUIRE([AC_PATH_X])
   AC_REQUIRE([AC_PATH_XTRA])
 
-  AC_MSG_CHECKING(for Qt)
+  AC_MSG_CHECKING(for Qt UF)
   # If we have Qt5 or later in the path, we're golden
   ver=`qmake --version | grep -o "Qt version ."`
   if test "$ver" ">" "Qt version 4"; then

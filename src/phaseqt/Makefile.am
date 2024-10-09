@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2022-12-19 16:19:11 flechsig> 
+#  Time-stamp: <2024-10-09 22:00:49 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -148,12 +148,23 @@ EXTRA_DIST = ../phase/phase_struct.F  $(pkgdata_DATA) \
 
 
 ## flags
+if QT6
+   AM_CPPFLAGS = -DQT6 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED @HDF5_CPPFLAGS@
+else
 if QT5
    AM_CPPFLAGS = -DQT5 -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED @HDF5_CPPFLAGS@
 else
    AM_CPPFLAGS = -DLINUX -DQTGUI -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED @HDF5_CPPFLAGS@
 endif
+endif
 
+if QT6
+   AM_CXXFLAGS = -fPIC -fdiagnostics-all-candidates \
+        @QT_CXXFLAGS@ \
+	-I@QWT@/include \
+	-I@QWTI@/ \
+	-I../phase
+else
 if QT5
 #######AM_CXXFLAGS = -fPIC -std=c++11
 ## NOV19 @QT_CXXFLAGS@/QtCore \
@@ -167,7 +178,7 @@ if QT5
 	-I@QWTI@/ \
 	-I../phase
 else
-   AM_CXXFLAGS = -fPIC \
+   AM_CXXFLAGS = -fPIC  \
 	@QT_CXXFLAGS@ \
 	@QT_CXXFLAGS@/QtCore \
 	@QT_CXXFLAGS@/QtGui \
@@ -178,8 +189,22 @@ else
 	-I@QWTI@/ \
 	-I../phase
 endif
+endif
 
 ### UF explicit linking to -lQtGui -lQtCore -lQtSvg is required for ubuntu
+if QT6
+if QWT
+    AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
+	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
+	-L@QWT@/lib -lqwt @MY_HDF5_LIBS@ \
+	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
+else
+    AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
+	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
+	@HDF5_LDFLAGS@ @MY_HDF5_LIBS@ \
+	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
+endif
+else
 if QT5 
 if QWT
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
@@ -203,6 +228,7 @@ else
 	@QT_LIBS@ -lQtGui -lQtCore -lQtSvg \
 	@MY_HDF5_LIBS@ \
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
+endif
 endif
 endif
 ## we always use the c linker
