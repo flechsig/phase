@@ -9,6 +9,12 @@
 % convert it to unix with dos2unix - add some comments
 % add hyperbel spezifische inputs
 
+% UF 230808 comparison with python code hyperbola.py shows some
+% problems
+% a) the coefficients have the same numbers but different exponent (unit)
+% b) a00, a10, a01 are not zero
+% c) decision: use math from hyperbola.py
+
 % UF order of output variables
 order w,l,yi,zi,yp,zp,yp2,zp2,yp3,zp3;
 factor w,l,yi,zi,yp,zp,yp2,zp2,yp3,zp3;
@@ -34,7 +40,8 @@ u1 := -w * sin(phi) + u2 * cos(phi);
 l0 := l;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ergebnis sigma0 u(w,l)
-u := rhs(second(solve(sigma0,u2)));  
+%u := rhs(second(solve(sigma0,u2)));
+u := rhs(first(solve(sigma0,u2)));  
 
 % vereinfache wurzelausdruck
 let sin(phi)^2 = 1- cos(phi)^2;

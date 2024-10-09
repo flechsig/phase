@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2022-12-19 16:40:19 flechsig> 
+//  Time-stamp: <2023-08-09 15:29:38 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -826,7 +826,6 @@ QWidget *MainWindow::createGraphicBox()
   connect(fwhmButton,  SIGNAL(clicked()), this, SLOT(fwhmslot()));
   connect(wattButton, SIGNAL(clicked()), this, SLOT(wattslot()));
   connect(photonButton,  SIGNAL(clicked()), this, SLOT(photonslot()));
-
 
   stLabel11 = new QLabel("0");
   stLabel13 = new QLabel("0");
@@ -2079,6 +2078,25 @@ void MainWindow::ReadBLFileInteractive(char *blname)
   oname[MaxPathLength - 2]= '\0';   // ensure termination
   strcat(fname, "~");               // append ~
 
+  if ( (! strcmp(blname, "default.phase")) && fexists(blname) ) 
+    {
+      cerr << "warning: you read from a user generated file >>default.phase<<" << endl; 
+      cerr << "         remove the file to start phase with default data" << endl; 
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(QString(tr("<b>warning:</b> you read from a user generated file <b>default.phase</b>\n")) +
+                      QString(tr("remove the file to start phase with default data\n")));
+      msgBox->setInformativeText(QString(tr("Do you want to continue?")));
+      msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox->setDefaultButton(QMessageBox::Yes);
+      msgBox->setIcon(QMessageBox::Warning);
+      int ret = msgBox->exec();
+      if (ret != QMessageBox::Yes) 
+	{
+	  cerr << "call exit(-1)" << endl;
+	  exit(-1);
+	}
+    }
+
   if (fexists(fname))
     {
       if (stat(fname, &fstatus) == 0)
@@ -3014,8 +3032,6 @@ void MainWindow::writeSimp2h5()
 } // end writeSimp2h5
 
 
-
-
 // write files si* density cuts
 void MainWindow::writeSimp()
 {
@@ -3149,11 +3165,13 @@ int MainWindow::FileExistCheckOK(std::string name1)
   
   if (fexists(name))
     {
+      beep(20);
       snprintf(infostr, MaxPathLength, "file <b>%s</b> exists!",  name);
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setText(tr(infostr));
       msgBox->setInformativeText(tr("replace file"));
       msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel); 
+      msgBox->setStyleSheet("background-color:yellow;");
       ret= msgBox->exec();
       delete msgBox;
       if (ret == QMessageBox::Cancel) 

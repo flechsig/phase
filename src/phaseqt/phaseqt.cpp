@@ -1,12 +1,7 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtphase.cpp
 //  Date      : <08 Jun 11 16:14:16 flechsig> 
-//  Time-stamp: <2021-12-16 14:23:33 flechsig> 
+//  Time-stamp: <2023-08-09 11:14:39 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
 
 // ******************************************************************************
 //
@@ -170,7 +165,9 @@ void PhaseQt::initSet(const char *fname, const int all)
   if (all) snprintf(this->filenames.so7_hdf5,        MaxPathLength, "%s.%s", name, "h5");
   snprintf(this->filenames.hdf5_out,        MaxPathLength, "%s_out.%s", name, "h5");
   snprintf(this->filenames.h5surfacename,   MaxPathLength, "%s_surf_err.%s", name, "h5");
-  snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");	  
+  snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");
+
+  //this->printSet();	  
 } // initSet
 
 // print the contents of the data for debugging

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <02 Feb 17 14:38:32 flechsig>  */
+/*  Time-stamp: <2023-08-10 08:19:46 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -73,7 +73,7 @@ void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
   H5Gclose(group_id);
 } /* add_attribute */
 
-/* add a string attribute to a open dataset     */
+/* add a string attribute to an open dataset     */
 void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 {
   hid_t attr_id, dataspace_id, type_id;
@@ -231,7 +231,7 @@ void readDataULong(hid_t fid, char *name, unsigned long *data, int size)
   return;
 }  /* readDataULong */
 
-void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc)
+void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc, char *unit)
 {
   hsize_t dims[1];
   hid_t dataspace_id, dataset_id;
@@ -240,11 +240,12 @@ void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc)
   dataset_id=H5Dcreate(fid,name,H5T_NATIVE_DOUBLE,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
   H5Dwrite(dataset_id,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
   if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
   H5Dclose(dataset_id);
   H5Sclose(dataspace_id);
 }
 
-void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc)
+void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc, char *unit)
 {
   hsize_t dims[1];
   hid_t dataspace_id, dataset_id;
@@ -253,11 +254,12 @@ void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc)
   dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
   H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
   if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
   H5Dclose(dataset_id);
   H5Sclose(dataspace_id);
 }
 
-void writeDataULong(hid_t fid, char *name, unsigned long *data, int size, char *desc)
+void writeDataULong(hid_t fid, char *name, unsigned long *data, int size, char *desc, char *unit)
 {
   hsize_t dims[1];
   hid_t dataspace_id, dataset_id;
@@ -266,6 +268,7 @@ void writeDataULong(hid_t fid, char *name, unsigned long *data, int size, char *
   dataset_id=H5Dcreate(fid, name, H5T_NATIVE_ULONG, dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
   if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
   H5Dclose(dataset_id);
   H5Sclose(dataspace_id);
 }

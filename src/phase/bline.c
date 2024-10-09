@@ -1,16 +1,11 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/bline.c */
 /*   Date      : <10 Feb 04 16:34:18 flechsig>  */
-/*   Time-stamp: <2022-12-15 16:26:39 flechsig>  */
+/*   Time-stamp: <2023-08-09 15:14:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
  
-/*   $Source$  */
-/*   $Date$ */
-/*   $Revision$  */
-/*   $Author$  */
-
 // ******************************************************************************
 //
-//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//   Copyright (C) 2014, 2023 Helmholtz-Zentrum Berlin, Germany and 
 //                      Paul Scherrer Institut Villigen, Switzerland
 //   
 //   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
@@ -1287,7 +1282,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 /**************************************************************************/
 {   
    FILE *f;
-   int  i, version= 20150814;    /* today */
+   int  i, version= 20230809;    /* today */
    unsigned int elnumber;
    time_t ltime;
    struct UndulatorSourceType  *up;
@@ -1317,7 +1312,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
 #endif
 
    fprintf(f, "%s %d\n", Fg3PickFileHeader, version); /* einige Infos ins file */
-   fprintf(f, "This is a datafile of PHASE, file version AUG 2015\n");
+   fprintf(f, "This is a datafile of PHASE, file version AUG 2023\n");
    fprintf(f, "Written by WriteBLFile on %s\n", ctime(&ltime));
 
    fprintf(f, "SOURCE\n");
@@ -1488,30 +1483,26 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    op= (struct OptionsType *) &(bl->BLOptions);
 
    fprintf(f, "\nCONTROL_FLAGS\n");
-   fprintf(f, "%20d     map- order (3, 4)\n", op->ifl.iord); 
-   fprintf(f, "%20d     iordsc (4)\n", op->ifl.iordsc); 
-   fprintf(f, "%20d     expansion of pathlength (1)\n", op->ifl.iexpand); 
+   fprintf(f, "%20d map- order (3, 4)\n", op->ifl.iord); 
+   fprintf(f, "%20d iordsc (4)\n", op->ifl.iordsc); 
+   fprintf(f, "%20d expansion of pathlength (1)\n", op->ifl.iexpand); 
    fprintf(f,
   "%20d numerical (0), analytical (1) subtraction of ideal path length\n", 
 	  op->ifl.iplmode);
-   fprintf(f, "%20d     write 4-dim brightness to file (1)\n", 
-	   op->ifl.ibright); 
-   fprintf(f, "%20d     Integration simps (0), spline 1, -1\n", 
+   fprintf(f, "%20d write 4-dim brightness to file (1)\n", op->ifl.ibright); 
+   fprintf(f, "%20d Integration simps (0), spline 1, -1\n", 
 	   op->ifl.ispline); 
-   fprintf(f, "%20d (1) normalize output, (0) do not normalize\n", 
-	   op->ifl.inorm); 
+   fprintf(f, "%20d (1) normalize output, (0) do not normalize\n", op->ifl.inorm); 
    fprintf(f, "%20d inorm1\n", op->ifl.inorm1); 
-   fprintf(f, "%20d inorm2 (0, 1, 2)\n", op->ifl.inorm2); 
-   fprintf(f, 
-	   "%20d derive matrix elements in 3 different ways (1) (for debugging)\n", 0);
+   fprintf(f, "%20d inorm2 (0, 1, 2, 40)\n", op->ifl.inorm2); 
+   fprintf(f, "%20d derive matrix elements in 3 different ways (1) (for debugging)\n", 0);
    // obsolete parameter	   op->ifl.matrel);
-   fprintf(f, "%20d (1): phase advance for grating, (0): mirror\n", 
-	   op->ifl.igrating);
-   fprintf(f, "%20d  insert pinhole array in source plane (0)\n", 
+   fprintf(f, "%20d (1): phase advance for grating, (0): mirror\n", op->ifl.igrating);
+   fprintf(f, "%20d insert pinhole array in source plane (0)\n", 
 	   op->ifl.ipinarr);
-   fprintf(f, "%20d  enable delta lambda\n", op->dlambdaflag);
-   fprintf(f, "%20.12lg  delta lambda (nm)\n",  op->dlambda*1e6);
-   fprintf(f, "%20d  GO enable ray_set1\n", op->plrayset);
+   fprintf(f, "%20d enable delta lambda\n", op->dlambdaflag);
+   fprintf(f, "%20.12lg delta lambda (nm)\n", op->dlambda*1e6);
+   fprintf(f, "%20d GO enable ray_set1\n", op->plrayset);
       /* end control_flags */
 
    fprintf(f,"\nAPERTURES\n"); 
@@ -1644,7 +1635,7 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f,"%20d     (1) RT Source to Image \n", op->SourcetoImage);  
    
    fprintf(f,"%20lg     epsilon\n", op->epsilon);     
-   fprintf(f,"%20d     flag calculation modus\n", op->CalcMod);    
+   fprintf(f,"%20d     command line flag -m calculation mode\n", op->CalcMod);    
    fprintf(f,"%20.12lg     lambda [nm]\n", op->lambda* 1e6);  
    fprintf(f,"%20lg     dispersive length\n", op->displength); 
    fprintf(f,"%20lg     * y = dlambda\n", bl->deltalambdafactor);
@@ -1683,21 +1674,21 @@ void WriteBLFile(char *fname, struct BeamlineType *bl)
    fprintf(f, "\nFILENAMES\n");
    pp= (struct PHASEset *)&(bl->filenames);
    
-   fprintf(f, "%s     Map name\n",             pp->mapname);
-   fprintf(f, "%s     Matrix name\n",          pp->matrixname);
-   fprintf(f, "%s     GO input\n",             pp->sourceraysname);
-   fprintf(f, "%s     PO/GO output\n",         pp->imageraysname);
-   /*fprintf(f, "%s     Minuit input (obsolete)\n",         pp->minname); 20121105 */
-   fprintf(f, "%s     Optimization input\n",   pp->optipckname);
-   fprintf(f, "%s     Optimization results\n", pp->opresname);
-   fprintf(f, "%s     so4_fsource4a\n",        pp->so4_fsource4a);
-   fprintf(f, "%s     so4_fsource4b\n",        pp->so4_fsource4b);
-   fprintf(f, "%s     so4_fsource4c\n",        pp->so4_fsource4c);
-   fprintf(f, "%s     so4_fsource4d\n",        pp->so4_fsource4d);
-   fprintf(f, "%s     so6_fsource6\n",         pp->so6_fsource6);
-   fprintf(f, "%s     so7 (hdf5 input)\n",     pp->so7_hdf5);
-   fprintf(f, "%s     hdf5 output\n",          pp->hdf5_out); 
-   fprintf(f, "%s     surface errors (h5)\n",  pp->h5surfacename);
+   fprintf(f, "%-20s     Map name\n",             pp->mapname);
+   fprintf(f, "%-20s     Matrix name\n",          pp->matrixname);
+   fprintf(f, "%-20s     GO input\n",             pp->sourceraysname);
+   fprintf(f, "%-20s     PO/GO output\n",         pp->imageraysname);
+   /*fprintf(f, "%-20s     Minuit input (obsolete)\n",         pp->minname); 20121105 */
+   fprintf(f, "%-20s     Optimization input\n",   pp->optipckname);
+   fprintf(f, "%-20s     Optimization results\n", pp->opresname);
+   fprintf(f, "%-20s     so4_fsource4a\n",        pp->so4_fsource4a);
+   fprintf(f, "%-20s     so4_fsource4b\n",        pp->so4_fsource4b);
+   fprintf(f, "%-20s     so4_fsource4c\n",        pp->so4_fsource4c);
+   fprintf(f, "%-20s     so4_fsource4d\n",        pp->so4_fsource4d);
+   fprintf(f, "%-20s     so6_fsource6\n",         pp->so6_fsource6);
+   fprintf(f, "%-20s     so7 (hdf5 input)\n",     pp->so7_hdf5);
+   fprintf(f, "%-20s     hdf5 output\n",          pp->hdf5_out); 
+   fprintf(f, "%-20s     surface errors (h5)\n",  pp->h5surfacename);
    /* end FILENAMES section */
 
    fprintf(f,"\n*** end of file ***\n");    
@@ -1717,7 +1708,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
    /*   char * line = NULL; */
    /*   size_t len = 0; */
    /*   ssize_t read; */
-   int  rcode, i, version, dummy_i, thisversion= 20150814;   /* das aktuelle Datum */
+   int  rcode, i, version, dummy_i, thisversion= 20230809;   /* das aktuelle Datum */
    unsigned int elnumber;
    char buffer[256], buf;    /* UF Feb 14, do not use MaxPathLength on purpose */
                              
@@ -1763,7 +1754,7 @@ int ReadBLFile(char *fname, struct BeamlineType *bl)
        initdatset(&Fg3DefDat, &Beamline); 		/* source init with defaults*/
 #else
        // __SKIPINIT__ defined 
-       fprintf(stderr, "warning: Initialization - preliminary version, file: %s\n", __FILE__);
+       OUTDBGC("warning: Initialization update Aug 2023- check carefully");
 #ifndef EXTR
        // __SKIPINIT__ defined and !EXTR
        //SetDefaultParameter(bl); 
@@ -2729,7 +2720,7 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
 		int etype, double theta, int lREDUCE_maps, int withAlign, int elindex)  
 {
   double r, rho, *dp, cone, ll,
-    alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, 
+    alpha, aellip, bellip, eellip, epsilon, f, xpole, ypole, thetag, p, q, pq, sint, cost, 
     rpole, fipole, small, kellip, Rellip, ahyp, bhyp,  gammahyp, deltahyp, thetahyp, s1hyp, s2hyp, x0hyp, y0hyp, ecc;
   int i, k, l;
   struct mirrortype mirror;
@@ -3014,14 +3005,26 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       
     case kEOEHyp:
     case kEOEPHyp:  
-      fprintf(stderr, "Defmirrorc: hyperbolic shape - Apr 2021 not tested\n");
+      fprintf(stderr, "Defmirrorc: hyperbolic shape (202308 NEW version!)\n");
       // see doc/hyperbolic-scheme.pdf 
-      fprintf(stderr, "Defmirrorc: plane- hyperbolic shape - Apr 2021 not tested\n");
+      // Aug 23 we use the math from UFs hyperbola.py following Goldberg and del Rio in JSR 30, 2023
+      // !! their math has a few errors
+      // use hyperbola_goldberg2d.red
+      
       for (i= 0; i < k; i++) dp[i] = 0.0;  // clean up 
       s1hyp= fabs(x->r1);
       s2hyp= fabs(x->r2);
+      if (s1hyp > s2hyp)
+	{
+	  fprintf(stderr, "input error: (s1 > s2) is not allowed - exit\n");
+	  fprintf(stderr, "       info: s1 = %.3f mm; s2 = %.3f mm\n", s1hyp, s2hyp);
+          beep(20);
+	  //return;
+          exit(-1);
+	}
+	
       thetahyp= alpha;
-
+      
       ahyp= fabs(s2hyp - s1hyp) / 2.0;                          // semiaxis a
       bhyp= sqrt(fabs(s1hyp* s2hyp)) * cos(thetahyp);           // semiaxis b (Kosinussatz)
       ecc=  sqrt(pow(ahyp,2)+ pow(bhyp,2));                     // eccentricity
@@ -3033,19 +3036,63 @@ void DefMirrorC(struct mdatset *x, struct mirrortype *a,
       printf("DefMirrorC: hyperbolic parameters: \n");
       printf("source distance (short): %f\n", s1hyp);
       printf("virtual image distance (long): %f\n",  s2hyp);
-      printf("major axis:                   a = %e mm\n", ahyp);
+      printf("major axis:  (0 to vertice)   a = %e mm\n", ahyp);
       printf("minor axis                    b = %e mm\n", bhyp);
-      printf("eccentricity                  e = %e mm\n", ecc);
+      printf("eccentricity (0 to focus)     e = %e mm\n", ecc);
       printf("theta:                    theta = %f rad\n", thetahyp);
       printf("theta:                    theta = %f deg\n", thetahyp*  180/ PI);
       printf("x0:                          x0 = %f mm\n", x0hyp);
       printf("y0:                          y0 = %f mm\n", y0hyp);
       printf("deltahyp:              deltahyp = %f deg.\n", deltahyp* 180/ PI);
       printf("gammahyp:              gammahyp = %f deg.\n", gammahyp* 180/ PI);
-      //printf("DEBUG: mirror coefficients\n");
-      //for (i= 0; i < 15; i++) printf("%d %le\n", i, dp[i]);
-      // hyperbola_8();
-      hyperbola_8(&ahyp, &bhyp, &x0hyp, &y0hyp, &deltahyp, dp);
+      
+      // map goldberg coordinates
+      thetag= PI/2 - thetahyp;
+      p= s1hyp;
+      q= s2hyp;
+      pq= p * q;
+      sint= sin(thetag);
+      cost= cos(thetag);
+
+      dp[2* l]   = (-p+q)/(4.0*pq*sint);                		       // 0,2 
+      dp[2]      = (sint*(-p+q))/(4.0*pq);                                     // 2,0
+      dp[1+ 2* l]= (cost*(pow(p,2)-pow(q,2)))/(8.0*pow(pq,2)*sint);            // 1,2
+      dp[3]      = (cost*sint*(pow(p,2)-pow(q,2)))/(8.0*pow(pq,2));            // 3,0
+      dp[2+ 2* l]= (3.0*pow(p, 3)*pow(sint,2)-3.0*pow(p,3)+3.0*p*pq*pow(sint,2)+p*pq-3.0*pq*q*
+		    pow(sint,2)-pq*q-3.0*pow(q,3)*pow(sint,2)+3.0*pow(q,3))/(32.0*pow(pq,3)*sint);
+      dp[4*l]    = (pow(p,3)*pow(sint,2)-pow(p,3)+p*pq*pow(sint,2)+3.0*p*pq-pq*q*pow(sint,2)-3.0*
+		    pq*q-pow(q,3)*pow(sint,2)+pow(q,3))/(64.0*pow(pq,3)*pow(sint,3)); 
+      dp[4]      = (sint*(-5.0*pow(cost,2)*pow(p,3)-5.0*pow(cost,2)*p*pq+5.0*pow(cost,2)*pq*q+
+			  5.0*pow(cost,2)*pow(q,3)+4.0*p*pq-4.0*pq*q))/(64.0*pow(pq,3));
+      dp[1+ 4* l]= (3.0*cost*(-pow(p,4)*pow(sint,2)+pow(p,4)-2.0*pow(p,2)*pq*pow(sint,2)-2.0*pow(p,2)*
+			      pq+2.0*pq*pow(q,2)*pow(sint,2)+2.0*pq*pow(q,2)+pow(q,4)*pow(sint,2)-pow(q,4)))/
+	                     (128.0*pow(pq,4)*pow(sint,3));
+      dp[3+ 2* l]= (cost*(-5.0*pow(p,4)*pow(sint,2)+5.0*pow(p,4)-10.0*pow(p,2)*pq*pow(sint,2)-2.0*
+			  pow(p,2)*pq+10.0*pq*pow(q,2)*pow(sint,2)+2.0*pq*pow(q,2)+5.0*pow(q,4)*pow(sint,2)-5.0*
+			  pow(q,4)))/(64.0*pow(pq,4)*sint);
+      dp[5]      = (cost*sint*(7.0*pow(cost,2)*pow(p,4)+14.0*pow(cost,2)*pow(p,2)*pq-14.0*
+			       pow(cost,2)*pq*pow(q,2)-7.0*pow(cost,2)*pow(q,4)-12.0*pow(p,2)*pq+12.0*pq*pow(q,2)))/
+	                       (128.0*pow(pq,4));
+
+      dp[6]      = (sint*(-21.0*pow(p,5)*pow(sint,4)+42.0*pow(p,5)*pow(sint,2)-21.0*pow(p,5)-63.0*
+			  pow(p,3)*pq*pow(sint,4)+70.0*pow(p,3)*pq*pow(sint,2)-7.0*pow(p,3)*pq-42.0*p*pow(pq,2)*
+			  pow(sint,4)+28.0*p*pow(pq,2)*pow(sint,2)-2.0*p*pow(pq,2)+42.0*pow(pq,2)*q*pow(sint,4)-
+			  28.0*pow(pq,2)*q*pow(sint,2)+2.0*pow(pq,2)*q+63.0*pq*pow(q,3)*pow(sint,4)-70.0*pq*
+			  pow(q,3)*pow(sint,2)+7.0*pq*pow(q,3)+21.0*pow(q,5)*pow(sint,4)-42.0*pow(q,5)*pow(sint,2)+
+			  21.0*pow(q,5)))/(512.0*pow(pq,5));
+      dp[4+ 2* l]= (-35.0*pow(p,5)*pow(sint,4)+70.0*pow(p,5)*pow(sint,2)-35.0*pow(p,5)-105.0*pow(p,3)*
+		    pq*pow(sint,4)+90.0*pow(p,3)*pq*pow(sint,2)+15.0*pow(p,3)*pq-70.0*p*pow(pq,2)*pow(sint,4)+
+		    20.0*p*pow(pq,2)*pow(sint,2)+2.0*p*pow(pq,2)+70.0*pow(pq,2)*q*pow(sint,4)-20.0
+		    *pow(pq,2)*q*pow(sint,2)-2.0*pow(pq,2)*q+105.0*pq*pow(q,3)*pow(sint,4)-90.0*pq*pow(q,3)*
+		    pow(sint,2)-15.0*pq*pow(q,3)+35.0*pow(q,5)*pow(sint,4)-70.0*pow(q,5)*pow(sint,2)+
+		    35.0*pow(q,5))/(512.0*pow(pq,5)*sint);
+      dp[6* l]   = (-pow(p,5)*pow(sint,4)+2.0*pow(p,5)*pow(sint,2)-pow(p,5)-3.0*pow(p,3)*pq*pow(sint,4)-
+		    2.0*pow(p,3)*pq*pow(sint,2)+5.0*pow(p,3)*pq-2.0*p*pow(pq,2)*pow(sint,4)-4.0*p*pow(pq,2)*
+		    pow(sint,2)-10.0*p*pow(pq,2)+2.0*pow(pq,2)*q*pow(sint,4)+4.0*pow(pq,2)*q*pow(sint,2)
+		    +10.0*pow(pq,2)*q+3.0*pq*pow(q,3)*pow(sint,4)+2.0*pq*pow(q,3)*pow(sint,2)-5.0*pq*pow(q,3)+
+		    pow(q,5)*pow(sint,4)-2.0*pow(q,5)*pow(sint,2)+pow(q,5))/(512.0*pow(pq,5)*pow(sint,5));
+
+
       if (etype == kEOEPHyp)  // overwrite coefficients for plane hyperbola
 	for (i= l; i < k; i++) dp[i]= 0.0;
 	  
@@ -3310,13 +3357,15 @@ void ReadRayFile(char *name, int *zahl, struct RESULTType *Re)
 }  /* end ReadRayFile */
 
 /* schreibt mirrorkoordinaten auf file */
-/* updated to seven order 11/2010*/
-void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
+/* updated to seven order 11/2010      */
+// 230808 compact option -> write just the coefficients != 0
+void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength], int compact)
 {
   FILE   *f;
   int    i, j, maxord;
-  double *dp; 
+  double *dp, val; 
   char   *name;  
+  time_t ltime;
 
 #ifdef SEVEN_ORDER
   maxord= 8;	  
@@ -3325,24 +3374,29 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
 #endif
    
   name= &buffer[0];  
+
 #ifdef DEBUG
   printf("WriteMKos: write to %s\n", name);
+  //  compact= 0;
 #endif 
+
   dp= (double *)a;
+  time(&ltime); 
 
   if ((f= fopen(name, "w+")) == NULL)
     {
       fprintf(stderr, "WriteMKos: error: open file %s\n", name); exit(-1);   
     }    
-  // UF 19.2.2020 add header
-  fprintf(f, "# CoefficientFileType 20200219\n");
-  fprintf(f, "# coefficient file for optical elements\n");
+  
+  fprintf(f, "# CoefficientFileType 20230808\n");
+  fprintf(f, "# coefficient file for optical elements, compact= %d\n", compact);
+  fprintf(f, "# written by WriteMKos on %s", ctime(&ltime));
   fprintf(f, "# original file name: %s\n", name);
   fprintf(f, "# unit: mm\n");
   fprintf(f, "# structure: i j coeff[i,j]\n");
   fprintf(f, "# u[row,col]+= coeff[i,j]* w**i * l**j\n");
-  fprintf(f, "# for details see code in file bline.c line 3299\n");
-  fprintf(f, "################################################\n");
+  fprintf(f, "# for details see code in file %s line %d\n", __FILE__, __LINE__);
+  fprintf(f, "#########################################################\n");
 
   /* python example code for w and l in meter
   # fill map in loop
@@ -3355,12 +3409,17 @@ void WriteMKos(struct mirrortype *a, char buffer[MaxPathLength])
                 if (i+j) < 9 :
                     ue[li,wi]= ue[li,wi]+ ec[k, 2] * 1e3 * w[wi]**i * l[li]**j
 		    k= k+ 1 */
-  
+
   for (i= 0; i <= maxord; i++) 
     for (j= 0; j <= maxord; j++) 
-/* write also i and j to file J.B. 9.11.2003 */
-      if ((i + j) <= maxord)  fprintf(f, "%d %d %+.18lE\n", i, j, dp[i+j*(maxord+1)]);  
+      if ((i + j) <= maxord)  
+	{
+	  val= dp[i+j*(maxord+1)];
+	  if ((fabs(val) > ZERO) || (!compact))       // compact
+	    fprintf(f, "%d %d %+.18lE\n", i, j, val);  
+	}
   fclose(f); 
+
 #ifdef DEBUG
   printf("WriteMKos: done\n");
 #endif

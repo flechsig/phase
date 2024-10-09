@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/rtrace.c */
 /*   Date      : <23 Mar 04 11:27:42 flechsig>  */
-/*   Time-stamp: <25 Nov 19 12:16:03 flechsig>  */
+/*   Time-stamp: <2023-08-10 12:10:50 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -56,6 +56,11 @@
 #include "phase.h"         
 #include "rtrace.h"
 #include "common.h" 
+
+#ifdef HAVE_HDF5
+   #include "hdf5.h"
+   #include "myhdf5.h"
+#endif 
  
 /***********************************************************************/
 /* Hard edge Quelle                   	                 19.3.96       */
@@ -364,7 +369,7 @@ int MakeRTSource(struct PHASEset *xp, struct BeamlineType *bl)
      {
        
 #ifdef DEBUG
-   printf("MakeRTSource: realloc source\n");
+   OUTDBGC("realloc source");
 #endif
 
 
@@ -627,7 +632,7 @@ void RayTracec(struct BeamlineType *bl)
 /* normal RT                             */
 /* umgeschrieben auf pointer UF 28.11.06 */
 /* phaseset wird nicht mehr benutzt      */
-/* erweitert auf mehrere raysets Jun 12 */
+/* erweitert auf mehrere raysets Jun 12  */
 {
   struct RayType *Raysin, *Raysout;   
   int i, set;
@@ -868,6 +873,82 @@ void WriteRayFile(char *name, int *zahl, struct RayType *Rp)
     }
 }  /* end WriteRayFile */
 
+void WriteRayFileHdf5(char *fname, struct RESULTType *Res) 
+{
+  hid_t  file_id, e_dataspace_id, e_dataset_id;
+  double *yvec1, *zvec1, *dyvec1, *dzvec1, *yvec2, *zvec2, *dyvec2, *dzvec2;
+  int i;
+  struct RayType *Rp;
+  
+  OUTDBGC("202308 NEW function: not yet debugged");
+
+  Rp= (struct RayType *)Res->RESp;
+  printf("points1= %d, points2= %d\n", Res->points1, Res->points2); 
+
+  /* Create a new file using default properties. */
+  /* specifies that if the file already exists, 
+     the current contents will be deleted so that the application can rewrite the file with new data. */
+  file_id= H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  if (file_id < 0)
+    {
+      fprintf(stderr, "error: can't open %s - exit\n", fname);
+      exit(-1);
+    }
+
+  yvec1  = XMALLOC(double, Res->points1);
+  zvec1  = XMALLOC(double, Res->points1);
+  dyvec1 = XMALLOC(double, Res->points1);
+  dzvec1 = XMALLOC(double, Res->points1);
+  
+  for (i= 0; i< Res->points1; i++)
+    {
+      yvec1[i] = Rp[i].y* 1e3;
+      zvec1[i] = Rp[i].z* 1e3;
+      dyvec1[i]= Rp[i].dy;
+      dzvec1[i]= Rp[i].dz;
+    }
+ 
+  writeDataDouble(file_id, "/y_vec1",  yvec1,  Res->points1, "y vector", "m");
+  writeDataDouble(file_id, "/z_vec1",  zvec1,  Res->points1, "z vector", "m");
+  writeDataDouble(file_id, "/dy_vec1", dyvec1, Res->points1, "dy vector", "rad");
+  writeDataDouble(file_id, "/dz_vec1", dzvec1, Res->points1, "dz vector", "rad");
+
+  XFREE(yvec1);
+  XFREE(zvec1);
+  XFREE(dyvec1);
+  XFREE(dzvec1);
+
+   
+  if (Res->points2 > 0)
+    {
+      yvec2  = XMALLOC(double, Res->points2);
+      zvec2  = XMALLOC(double, Res->points2);
+      dyvec2 = XMALLOC(double, Res->points2);
+      dzvec2 = XMALLOC(double, Res->points2);
+  
+      for (i= 0; i< Res->points2; i++)
+	{
+	  yvec2[i] = Rp[Res->points1+ i].y* 1e3;
+	  zvec2[i] = Rp[Res->points1+ i].z* 1e3;
+	  dyvec2[i]= Rp[Res->points1+ i].dy;
+	  dzvec2[i]= Rp[Res->points1+ i].dz;
+	}
+ 
+      writeDataDouble(file_id, "/y_vec2",  yvec2,  Res->points2, "y vector  + deltalambda", "m");
+      writeDataDouble(file_id, "/z_vec2",  zvec2,  Res->points2, "z vector  + deltalambda", "m");
+      writeDataDouble(file_id, "/dy_vec2", dyvec2, Res->points2, "dy vector + deltalambda", "rad");
+      writeDataDouble(file_id, "/dz_vec2", dzvec2, Res->points2, "dz vector + deltalambda", "rad");
+
+      XFREE(yvec2);
+      XFREE(zvec2);
+      XFREE(dyvec2);
+      XFREE(dzvec2);
+    } // end 2nd set
+  add_string_attribute_f(file_id, "/", "file_type", "ray_hdf5");
+  H5Fclose(file_id);
+
+  printf("wrote phase_hdf5 file: %s\n", fname);
+} // end WriteRayFileHdf5
 
 /* reserves memory for a RTSource */
 /* use the XREALLOC macro         */
@@ -947,7 +1028,7 @@ void ReAllocResult(struct BeamlineType *bl, int newtype, int dim1, int dim2)
   FreeResultMem(&bl->RESULT); 
 
 #ifdef DEBUG 
-  printf("debug: start allocating\n");
+  OUTDBGC("start allocating");
 #endif
 
   type = newtype & ~1; // strip off last bit
@@ -982,7 +1063,7 @@ void FreeResultMem(struct RESULTType *Re)
 /* uwe 8.8.96 */
 {
 #ifdef DEBUG  
-  printf("debug: FreeResultMem called, file=%s\n", __FILE__); 
+  OUTDBGC("called"); 
 #endif
   
   if (Re->RESp == NULL)

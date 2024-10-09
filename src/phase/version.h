@@ -1,13 +1,8 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/version.h */
 /*   Date      : <25 Jun 02 07:56:56 flechsig>  */
-/*   Time-stamp: <2022-12-14 17:26:26 flechsig>  */
+/*   Time-stamp: <2023-08-10 07:57:59 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
-
-/*   $Source$  */
-/*   $Date$ */
-/*   $Revision$  */
-/*   $Author$  */
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -37,8 +32,8 @@
 
 #ifndef VERSION_H
   #define VERSION_H
-  #define              VERSION_STRING        "1.33" 
-  #define              VERSION_DATE          "14-DEC-2022"
+  #define              VERSION_STRING        "1.34" 
+  #define              VERSION_DATE          "10-AUG-2023"
 #endif    /* VERSION_H */   
 
 /* end version.h */

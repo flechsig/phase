@@ -1,12 +1,7 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/main.cpp
 //  Date      : <31 May 11 16:51:36 flechsig> 
-//  Time-stamp: <2021-12-16 13:34:55 flechsig> 
+//  Time-stamp: <2023-08-09 15:30:53 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
 
 // ******************************************************************************
 //
@@ -96,13 +91,13 @@ int main(int argc, char *argv[])
       else 
 	cout << "Stacksize warning ignored -- expect \"Segmentation fault\"" << endl << endl;
     }
-  
+   
   setupswitch= myphaseQt.myProcComandLine(argc, argv, &cmode, &selected, &iord, &numthreads, &format);
 
 #ifdef DEBUG 
   OUTDBG(" setupswitch = " <<  setupswitch);
 #endif
-
+  
   switch (setupswitch)
     {
     case 3:
@@ -119,6 +114,8 @@ int main(int argc, char *argv[])
     default:
       myphaseQt.myGetPHASE((char*) MainPickName);
     }
+
+  //myphaseQt.printSet();
 
   myphaseQt.mainWin = new MainWindow(&myphaseQt, numthreads);     // create the mainwindow on the heap
   myphaseQt.mainWin->ReadBLFileInteractive(myphaseQt.myBeamline()->filenames.beamlinename);

@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/phase.h */
 /*   Date      : <08 Mar 04 13:35:03 flechsig>  */
-/*   Time-stamp: <2022-11-04 16:13:05 flechsig>  */
+/*   Time-stamp: <2023-08-09 10:23:41 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -37,6 +37,9 @@
 
 #ifndef PHASE_H
 #define PHASE_H   
+
+// debug macro: usage: OUTDBGC("Hello Heinz");  use OUTDBGC for c and OUTDBG for c++
+#define OUTDBGC( message ) ( fprintf(stderr, "debug %s:%d:%s: %s\n", __FILE__, __LINE__, __func__, message) )
 
 #define ON  1
 #define OFF 0
@@ -684,7 +687,7 @@ void
   MMatrix(),
   UpdateFlags(struct BeamlineType *, int),	        
   WriteBLFile(char *, struct BeamlineType *),
-  WriteMKos(struct mirrortype *, char *),
+  WriteMKos(struct mirrortype *, char *, int),
   writemapc(char *, char *, int, double *, double *, double *, double *,
 	    double *, double *, double *, double *),
 /* writematrixfile(char *, int, char *, int, double *),  */

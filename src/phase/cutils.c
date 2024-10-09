@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.c */
 /*   Date      : <25 Jun 02 08:20:05 flechsig>  */
-/*   Time-stamp: <14 Nov 14 17:30:49 flechsig>  */
+/*   Time-stamp: <2023-11-23 17:10:28 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -75,7 +75,7 @@ char *PrependEnv(char* env, char *str)
        strncat(string, str, (255- lstp- 1));
        string[254]= '\0';
        strncpy(str, string, 255);
-       str[254]= '\0';
+       str[254]= '\0';  // string is terminated
      }
    return str;
 } /* end PrependEnv */
@@ -135,7 +135,7 @@ void CheckUser(char *logname, char *progname)
   
   time(&Times); lokal= localtime(&Times); p= asctime(lokal);
 
-  strncpy(puffer, getenv("LOGNAME"), 99);
+  mystrcpy(puffer, getenv("LOGNAME"), 100);
 
   if ((f= fopen(logname, "r")) == NULL)
     {
@@ -235,4 +235,20 @@ void complex_pow(COMPLEX *a, double b, COMPLEX *c)
   c->re= camp* cos(cpha);
   c->im= camp* sin(cpha);
 } /* end complex_pow */
+
+
+// UF safe version of strcpy if dst[dst_size] correkt
+// 
+char *mystrcpy(char *dst, const char *src, int dst_size)
+{
+  if (strlen(src) < dst_size)
+    strcpy(dst, src);         // safe no buffer overflow
+  else
+    {
+      fprintf(stderr, "error: string too long for buffer - call exit(-1)\nstring: %s\n", src);
+      exit(-1);
+    }
+  return dst;
+}
+
 /* end cutils.c */

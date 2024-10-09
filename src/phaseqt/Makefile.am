@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2024-10-09 22:00:49 flechsig> 
+#  Time-stamp: <2024-10-09 22:37:46 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -59,7 +59,7 @@ phaseqt_SOURCES = \
 	../phase/phasec.c ../phase/OptiIntParam.c \
         ../phase/rtrace.c \
         ../phase/myhdf5.c  ../phase/myhdf5.h \
-	../phase/myfftw3.c ../phase/myfftw3.h ../phase/hyperbola_8.F \
+	../phase/myfftw3.c ../phase/myfftw3.h \
         ../phase/xmalloc.c ../phase/pst_thread.c ../phase/pst_thread.h   \
 	../phase/drift_8.for ../phase/elli_8.F  ../phase/fdet_8.for \
 	../phase/fgmapidp_8.F ../phase/make_matrix_8.for \
@@ -82,12 +82,12 @@ if QWT
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_plot.cpp moc_singleray.cpp  \
 	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp \
-	moc_plotmatrix.cpp moc_plot2x2.cpp
+	moc_plotmatrix.cpp moc_plot2x2.cpp moc_e2wavelength.cpp
 else
   nodist_phaseqt_SOURCES = \
 	moc_configwindow.cpp moc_mainwindow.cpp \
 	moc_optiinput.cpp moc_singleray.cpp  \
-	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp 
+	qrc_phaseqt.cpp moc_treemodel.cpp moc_treeitem.cpp moc_e2wavelength.cpp
 endif
 
 phaseqt_LDADD = $(libdir)/@LIBPHASE@

@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2024-10-09 21:32:07 flechsig> 
+dnl   Time-stamp: <2024-10-09 22:36:53 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************

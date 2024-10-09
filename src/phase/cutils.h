@@ -1,6 +1,6 @@
 /*   File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/cutils.h */
 /*   Date      : <08 Apr 04 15:05:08 flechsig>  */
-/*   Time-stamp: <14 Nov 14 17:12:58 flechsig>  */
+/*   Time-stamp: <2023-11-23 17:05:35 flechsig>  */
 /*   Author    : Uwe Flechsig, flechsig@psi.ch */
 
 /*   $Source$  */
@@ -51,6 +51,7 @@ typedef struct ComplexStruct {
 	} COMPLEX ;
 
 char    *PrependEnv(char* , char *);
+char    *mystrcpy(char *, const char *, int);
 void 	 beep(int); 
 void	 CheckUser(char *, char *); 
 int 	 CheckFileHeader(FILE *, char *, int *);   

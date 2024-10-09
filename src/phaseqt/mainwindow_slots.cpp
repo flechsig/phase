@@ -1,13 +1,8 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2022-12-22 14:17:08 flechsig> 
+//  Time-stamp: <2023-09-12 10:44:05 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
-
-//  $Source$ 
-//  $Date$
-//  $Revision$ 
-//  $Author$ 
-
+//
 // ******************************************************************************
 //
 //   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
@@ -100,7 +95,7 @@ void MainWindow::about()
 #endif
 
    QMessageBox::about(this, tr("About PhaseQt"),
-            tr("<b>phaseqt</b> is the new graphical user interface for the software package <b>phase</b>-"
+            tr("<b>phaseqt</b> is the graphical user interface for the software package <b>phase</b>-"
                "the wave front propagation and ray tracing code developed by "
                "<center><a href=mailto:Johannes.Bahrdt@helmholtz-berlin.de>Johannes Bahrdt</a>, <a href=mailto:uwe.flechsig&#64;psi.&#99;&#104;>Uwe Flechsig</a> and others. </center><hr>"
                "<center>phaseqt version: '%1',<br>"
@@ -832,7 +827,7 @@ void MainWindow::activateProc(const QString &action)
 	{ 
 	  printf("activateProc: write matrix of beamline to file\n"); 
 
-	  snprintf(header, 399, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d\x00", 
+	  snprintf(header, 399, "beamline: %s, matrix of beamline, iord: %d, REDUCE_maps: %d", 
 		  bl->filenames.beamlinename, bl->BLOptions.ifl.iord, 
 		  bl->BLOptions.REDUCE_maps);
 	  snprintf(buffer, 299, "%s-0", bl->filenames.matrixname);
@@ -858,7 +853,7 @@ void MainWindow::activateProc(const QString &action)
 	  cout << "write coefficients to file: " << buffer << endl;
 	  if (  FileExistCheckOK(buffer) )
 	    {
-	      WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer);
+	      WriteMKos((struct mirrortype *)&bl->ElementList[bl->position- 1].mir, buffer, 1);
 	      statusBar()->showMessage(tr("Wrote mirror coefficients to file '%1'.").arg(buffer), 4000);
 	    }
 	} else fprintf(stderr, "%d: no valid position\n", bl->position); 
@@ -885,12 +880,10 @@ void MainWindow::activateProc(const QString &action)
       if ( ((bl->RESULT.typ & PLphspacetype) > 0) 
 	   && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
       else
-	if  ((bl->RESULT.typ & PLphspacetype) > 0)
-	  { 
-	    cout << "hdf5 ray to be implemented" << endl;
-	     //&& FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->my_write_phase_hdf5_file();
-	  }
-	else
+	if ( ((bl->RESULT.typ & PLrttype) > 0)
+	  && FileExistCheckOK(bl->filenames.hdf5_out) ) myparent->myWriteRayFileHdf5(bl->filenames.hdf5_out, 
+										     (struct RESULTType *)&bl->RESULT);
+        else
 	  cout << "error: no valid results" << endl; 
 #else
       cout << "error: this version has been built without hdf5 support" << endl; 
@@ -2469,9 +2462,24 @@ void MainWindow::newBeamline()
   const char *name= "new_beamline.phase";
 
   if ( fexists((char *)name) ) 
-    QMessageBox::warning(this, tr("Phase: newBeamline"),
-			 tr("File %1. already exists but we do not read it!\n 'Save as' will overwite it!").arg(name));
-  
+    {
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setText(QString(tr("<b>warning:</b> File: <b>%1</b> already exists but we do not read it!\n").arg(name)) +
+                      QString(tr("continue with 'Yes' will overwite it!\n")));
+      msgBox->setInformativeText(QString(tr("Do you want to continue?")));
+      msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox->setDefaultButton(QMessageBox::Yes);
+      msgBox->setIcon(QMessageBox::Warning);
+      int ret = msgBox->exec();
+      if (ret != QMessageBox::Yes) 
+	{
+	  cerr << "newBeamline -> abort and return" << endl;
+	  return;
+	} 
+      else
+	cerr << "we will overwrite " << name << endl;
+    }
+
   myparent->myBeamline()->beamlineOK= 0;
   //myparent->myBeamline()->myPHASEset::init(name);
   myparent->initSet(name, INIT_ALL);
@@ -2672,9 +2680,14 @@ void MainWindow::rright4slot()
 // slot
 void MainWindow::print()
 {
+  char name0[MaxPathLength], *name, *ch;
 #ifdef DEBUG
   OUTDBG("MainWindow::print called");
 #endif
+
+  strncpy(name0, myparent->myBeamline()->filenames.beamlinename, MaxPathLength); // make a copy of beamlinename
+  name= basename(name0);                            // remove path
+  if ((ch= strrchr(name, '.')) != NULL) *ch= '\0';  // remove extension - result is in "name"
 
 #ifndef QT_NO_PRINTDIALOG
   //QTextDocument *document = textEdit->document();
@@ -2690,7 +2703,7 @@ void MainWindow::print()
 #endif    
     //printer.setPageSize(QPageSize(A4)); // new
     printer.setColorMode(QPrinter::Color);
-
+    printer.setOutputFileName(QString(tr(name) + ".pdf")); // default: is $HOME/print.pdf
 
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
     
@@ -2710,10 +2723,16 @@ void MainWindow::print()
 // slot
 void MainWindow::printMain()
 {
+  char name0[MaxPathLength], *name, *ch;
+
 #ifdef DEBUG
   OUTDBG("MainWindow::printMain called");
 #endif
 
+  strncpy(name0, myparent->myBeamline()->filenames.beamlinename, MaxPathLength); // make a copy of beamlinename
+  name= basename(name0);                            // remove path
+  if ((ch= strrchr(name, '.')) != NULL) *ch= '\0';  // remove extension - result is in "name"
+  
   QPrinter printer(QPrinter::HighResolution);  // 1200 dpi for ps
   printer.setCreator( "phaseqt" );
 #if QT_VERSION >= 0x050300
@@ -2725,6 +2744,7 @@ void MainWindow::printMain()
   printer.setPaperSize(QPrinter::A4);
   //printer.setPageSize(QPrinter::A4);
   printer.setColorMode(QPrinter::Color);
+  printer.setOutputFileName(QString(tr(name) + ".pdf")); // default: is $HOME/print.pdf
 
   int myresolution= printer.resolution();
   if ( myresolution > 300 )
@@ -2807,13 +2827,19 @@ void MainWindow::saveas()
                         tr("Choose a file name"), ".",
                         tr("PHASE (*.phase)"));
   
-  if (fileName.isEmpty()) return;
+  if (fileName.isEmpty()) 
+    {
+      cerr << "filename is empty - return" << endl; 
+      return;
+    }
+
+  name= fileName.toLocal8Bit().data();
 
 #ifdef DEBUG
-  OUTDBG("saveas() called");
+  OUTDBG("saveas() called, filename: " << name );
 #endif
 
-    name= fileName.toLocal8Bit().data();
+    
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
