@@ -1,6 +1,6 @@
  File      : /afs/psi.ch/user/f/flechsig/phase/src/README
  Date      : <23 Jan 04 11:06:09 flechsig> 
- Time-stamp: <2023-08-11 15:05:29 flechsig> 
+ Time-stamp: <2024-10-09 22:49:15 flechsig> 
  Author    : Uwe Flechsig, flechsig@psi.ch
 
  $Source$ 
@@ -215,3 +215,8 @@ idl     | idl                                     | optional, required for idl i
 python3 | python                                  | optional, required for python lib
 
 To build phase we need the development packages of qt and qwt (verify in case you use preinstalled versions). Other required tools are recent versions of: gcc, make, gnu autotools (libtool, automake, autoconfig)
+
+QT6 remarks
+===========
+the simplest is to put the path to qmake and moc to the begin of your path. !!moc etc is now in libexec and no longer in bin!!
+example for bash: export PATH=/usr/local/qt6/bin:/usr/local/qt6/libexec:${PATH}

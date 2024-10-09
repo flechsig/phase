@@ -5,3 +5,5 @@ Nov 22, 2019: better automatic Qt5 configuration- give up Qt4
               adjust your path to find qmake of your Qt version first
 May 19, 2020: add tooltips to VLS parameters
 Dec 14, 2022: allow utf8 local, for example umlaute in filenames
+Oct 9, 2024:  build now also with qt6
+
