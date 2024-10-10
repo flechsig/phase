@@ -1,6 +1,6 @@
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/Makefile.am
 #  Date      : <26 Nov 03 15:37:47 flechsig> 
-#  Time-stamp: <2024-10-09 22:37:46 flechsig> 
+#  Time-stamp: <2024-10-10 12:10:19 flechsig> 
 #  Author    : Uwe Flechsig, flechsig@psi.ch
 
 #  $Source$ 
@@ -192,20 +192,7 @@ endif
 endif
 
 ### UF explicit linking to -lQtGui -lQtCore -lQtSvg is required for ubuntu
-if QT6
-if QWT
-    AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
-	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
-	-L@QWT@/lib -lqwt @MY_HDF5_LIBS@ \
-	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
-else
-    AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
-	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
-	@HDF5_LDFLAGS@ @MY_HDF5_LIBS@ \
-	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
-endif
-else
-if QT5 
+if QT56
 if QWT
     AM_LDFLAGS = -Wl,-rpath,@QT_DIR@/lib \
 	@QT_LIBS@ -lQt5Gui -lQt5Core -lQt5Svg -lQt5PrintSupport -lQt5Concurrent -lQt5OpenGL \
@@ -230,7 +217,7 @@ else
 	@FLIBS@ @FFTW3_LIBS@ @CFORLIB@
 endif
 endif
-endif
+
 ## we always use the c linker
 F77LINK = $(LINK)
 

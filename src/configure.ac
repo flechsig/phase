@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2024-10-09 22:36:53 flechsig> 
+dnl   Time-stamp: <2024-10-10 12:14:39 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************
@@ -247,22 +247,29 @@ dnl echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>"${qt5}"<<"
 dnl echo "xxxxxxxxxxxxx QT_LIBS xxxxxxxxxx>>"${QT_LIBS}"<<"
    if test -n "${qt6}"; then
        have_qt6="yes"
+       have_qt56="yes"
+       have_qt5="no"
        AC_DEFINE([QT6], 1, [qt6])
-       have_qt5="no" 
+       AC_DEFINE([QT56], 1, [qt56]) 
        AC_DEFINE([QT5], 0, [qt5])
    elif test -n "${qt5}"; then
        have_qt5="yes"
-       AC_DEFINE([QT5], 1, [qt5])
+       have_qt56="yes"
        have_qt6="no" 
+       AC_DEFINE([QT5], 1, [qt5])
+       AC_DEFINE([QT56], 1, [qt56])
        AC_DEFINE([QT6], 0, [qt6])
    else  
        have_qt6="no" 
+       have_qt56="no"
+       have_qt5="no"
        AC_DEFINE([QT6], 0, [qt6])
-       have_qt5="no" 
        AC_DEFINE([QT5], 0, [qt5])
+       AC_DEFINE([QT56], 0, [qt56])
    fi
    echo "have_qt6" ${have_qt6}
    echo "have_qt5" ${have_qt5}
+   echo "have_qt56" ${have_qt56}
 else
    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
    echo "hint: some distributions call the Qt tools name-qt5 like qmake-qt5 instead of the default qmake"
@@ -271,6 +278,7 @@ else
 fi
 AM_CONDITIONAL([QT5], [test x$have_qt5 = xyes])
 AM_CONDITIONAL([QT6], [test x$have_qt6 = xyes])
+AM_CONDITIONAL([QT56], [test x$have_qt56 = xyes])
 dnl end qt5 and qt6
 
 dnl ****************** QWT **************************
@@ -580,6 +588,7 @@ echo "OpenMP:                  : ${enable_OPENMP}"
 echo "Qt:                      : ${have_qt}"
 echo "Qt5:                     : ${have_qt5}"
 echo "Qt6:                     : ${have_qt6}"
+echo "Qt56:                    : ${have_qt56}"
 echo "QT_DIR:                  : ${QT_DIR}"
 echo "QT_CXXFLAGS:             : ${QT_CXXFLAGS}"
 echo "QT_LIBS:                 : ${QT_LIBS}"
