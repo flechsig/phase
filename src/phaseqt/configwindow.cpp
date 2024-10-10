@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2024-10-10 15:33:52 flechsig> 
+//  Time-stamp: <2024-10-10 15:39:48 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -272,29 +272,29 @@ void ConfigWindow::fillList()
 void ConfigWindow::addRow(const char *desc, const char *fname, const char *ext)
 {
   mymodel->insertRow(0);
-  mymodel->setData(mymodel->index(0, 0), desc);
-  mymodel->setData(mymodel->index(0, 1), fname);
-  mymodel->setData(mymodel->index(0, 2), ext);
+  mymodel->setData(mymodel->index(0, 0), QString(desc));
+  mymodel->setData(mymodel->index(0, 1), QString(fname));
+  mymodel->setData(mymodel->index(0, 2), QString(ext));
 } // addRow
 
 // updates the widget
 // add all files to be configured with description
 void ConfigWindow::updateList()
 {
-  mymodel->setData(mymodel->index(0,  1), myparent->myBeamline()->filenames.optipckname);
-  mymodel->setData(mymodel->index(1,  1), myparent->myBeamline()->filenames.opresname);
+  mymodel->setData(mymodel->index(0,  1), QString(myparent->myBeamline()->filenames.optipckname));
+  mymodel->setData(mymodel->index(1,  1), QString(myparent->myBeamline()->filenames.opresname));
   //mymodel->setData(mymodel->index(2,  1), myparent->myBeamline()->filenames.minname);
-  mymodel->setData(mymodel->index(2,  1), myparent->myBeamline()->filenames.sourceraysname);
-  mymodel->setData(mymodel->index(3,  1), myparent->myBeamline()->filenames.imageraysname);
-  mymodel->setData(mymodel->index(4,  1), myparent->myBeamline()->filenames.matrixname);
-  mymodel->setData(mymodel->index(5,  1), myparent->myBeamline()->filenames.mapname);
-  mymodel->setData(mymodel->index(6,  1), myparent->myBeamline()->filenames.so4_fsource4a);
-  mymodel->setData(mymodel->index(7,  1), myparent->myBeamline()->filenames.so4_fsource4b);
-  mymodel->setData(mymodel->index(8,  1), myparent->myBeamline()->filenames.so4_fsource4c);
-  mymodel->setData(mymodel->index(9,  1), myparent->myBeamline()->filenames.so4_fsource4d);
-  mymodel->setData(mymodel->index(10, 1), myparent->myBeamline()->filenames.so6_fsource6);
-  mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so7_hdf5);
-  mymodel->setData(mymodel->index(12, 1), myparent->myBeamline()->filenames.hdf5_out);
+  mymodel->setData(mymodel->index(2,  1), QString(myparent->myBeamline()->filenames.sourceraysname));
+  mymodel->setData(mymodel->index(3,  1), QString(myparent->myBeamline()->filenames.imageraysname));
+  mymodel->setData(mymodel->index(4,  1), QString(myparent->myBeamline()->filenames.matrixname));
+  mymodel->setData(mymodel->index(5,  1), QString(myparent->myBeamline()->filenames.mapname));
+  mymodel->setData(mymodel->index(6,  1), QString(myparent->myBeamline()->filenames.so4_fsource4a));
+  mymodel->setData(mymodel->index(7,  1), QString(myparent->myBeamline()->filenames.so4_fsource4b));
+  mymodel->setData(mymodel->index(8,  1), QString(myparent->myBeamline()->filenames.so4_fsource4c));
+  mymodel->setData(mymodel->index(9,  1), QString(myparent->myBeamline()->filenames.so4_fsource4d));
+  mymodel->setData(mymodel->index(10, 1), QString(myparent->myBeamline()->filenames.so6_fsource6));
+  mymodel->setData(mymodel->index(11, 1), QString(myparent->myBeamline()->filenames.so7_hdf5));
+  mymodel->setData(mymodel->index(12, 1), QString(myparent->myBeamline()->filenames.hdf5_out));
   mymodel->setData(mymodel->index(13, 1), QString(myparent->myBeamline()->filenames.h5surfacename));  // uf 2410
 } // updateList
 
