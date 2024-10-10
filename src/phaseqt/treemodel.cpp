@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/treemodel.cpp
 //  Date      : <22 Nov 11 14:32:21 flechsig> 
-//  Time-stamp: <14 Nov 14 15:37:06 flechsig> 
+//  Time-stamp: <2024-10-10 17:05:56 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -179,7 +179,12 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	  if (!lineData.isEmpty()) 
 	    {
 	      // Read the column data from the rest of the line.
-	      QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)	      
+	      QStringList columnStrings = lineData.split("\t", Qt::SkipEmptyParts);
+#else
+              QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
+#endif
+	      
 	      QList<QVariant> columnData;
 	      for (int column = 0; column < columnStrings.count(); ++column)
 		columnData << columnStrings[column];
