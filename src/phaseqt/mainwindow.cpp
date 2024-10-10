@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2023-08-09 15:29:38 flechsig> 
+//  Time-stamp: <2024-10-10 16:51:26 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -44,8 +44,11 @@
 // 4) widget handling
 
 #include <QtGui>
+#if QT_VERSION >= 0x06
+#include <QGuiApplication>
+#else
 #include <QDesktopWidget>
-
+#endif
 #include "mainwindow.h"
 #include "phaseqt.h"
 #include "treemodel.h"
@@ -57,10 +60,19 @@ using namespace std;
 // the constructor of the main window
 MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
 {
-  QDesktopWidget dw;
   int x, y;
+#if QT_VERSION >= 0x06
+  QGuiApplication dw;
+  QScreen *ps = dw.primaryScreen();
+  QRect qr = ps->geometry();
+  screenx = qr.width();
+  screeny = qr.height();
+#else  
+  QDesktopWidget dw;
   screenx= dw.width();
   screeny= dw.height();
+#endif  
+  
 
   setmyMaxThreads(QThread::idealThreadCount());  // must be called before createProgress()
   if ((numthreads > 0) && (numthreads < QThread::idealThreadCount()))
