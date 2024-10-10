@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/configwindow.cpp
 //  Date      : <16 Aug 11 12:20:33 flechsig> 
-//  Time-stamp: <2022-12-14 16:59:49 flechsig> 
+//  Time-stamp: <2024-10-10 15:33:52 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -229,7 +229,7 @@ void ConfigWindow::selectSlot(const QModelIndex &index)
 				    }
       
       // update widget
-      mymodel->setData(mymodel->index(index.row(), 1), fname);
+      mymodel->setData(mymodel->index(index.row(), 1), QString(fname)); // uf 2410
     }
 } // end selectslot
 ////////////// end slots ////////////
@@ -295,7 +295,7 @@ void ConfigWindow::updateList()
   mymodel->setData(mymodel->index(10, 1), myparent->myBeamline()->filenames.so6_fsource6);
   mymodel->setData(mymodel->index(11, 1), myparent->myBeamline()->filenames.so7_hdf5);
   mymodel->setData(mymodel->index(12, 1), myparent->myBeamline()->filenames.hdf5_out);
-  mymodel->setData(mymodel->index(13, 1), myparent->myBeamline()->filenames.h5surfacename);
+  mymodel->setData(mymodel->index(13, 1), QString(myparent->myBeamline()->filenames.h5surfacename));  // uf 2410
 } // updateList
 
 void ConfigWindow::checkFileNames()

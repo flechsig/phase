@@ -1,7 +1,7 @@
 # -*-makefile-*-
 #  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/qtgui.pro
 #  Date      : <31 May 11 16:59:10 flechsig> 
-#  Time-stamp: <29 Aug 11 16:30:14 flechsig> 
+#  Time-stamp: <2024-10-10 15:35:21 flechsig> 
 #  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 #  $Source$ 
@@ -37,3 +37,6 @@ LIBS      += ../phase/drift_8.o ../phase/phasefor.o ../phase/make_matrix_8.o ../
 	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/ \
 	-L/usr/lib/gcc/i386-redhat-linux/4.1.2/../../../  \
 	-lifport -lifcore -limf -lm -lipgo -lirc -lgcc_s -lirc_s -ldl /afs/psi.ch/project/phase/lib/libphaseifc.a -lgfortran 
+
+# qt6
+# QT += core5compat
