@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2024-10-10 16:24:18 flechsig> 
+//  Time-stamp: <2024-10-10 17:15:37 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -2695,8 +2695,11 @@ void MainWindow::print()
 
     QPrinter printer(QPrinter::HighResolution);
     printer.setCreator( "phaseqt" );
-    // UF 2410printer.setPaperSize(QPrinter::A4);
+#if QT_VERSION >= 0x060000  
     printer.setPageSize(QPageSize::A4);
+#else
+    printer.setPaperSize(QPrinter::A4);
+#endif    
 #if QT_VERSION >= 0x050300    
     printer.setPageOrientation(QPageLayout::Landscape); 
 #else
@@ -2741,8 +2744,12 @@ void MainWindow::printMain()
 #else
     printer.setOrientation( QPrinter::Landscape );
 #endif  
-  
-  printer.setPageSize(QPageSize::A4);
+    
+#if QT_VERSION >= 0x060000  
+    printer.setPageSize(QPageSize::A4);
+#else
+    printer.setPaperSize(QPrinter::A4);
+#endif  
   printer.setColorMode(QPrinter::Color);
   printer.setOutputFileName(QString(tr(name) + ".pdf")); // default: is $HOME/print.pdf
 
@@ -2763,7 +2770,7 @@ void MainWindow::printMain()
   
   QPainter painter;
   painter.begin(&printer);
-#if QT_VERSION >= 0x06
+#if QT_VERSION >= 0x060000
   //  double xscale = printer.pageLayout().paintRectPixels(resolution()).width()/double(this->width());
   //  double yscale = printer.pageLayout().paintRectPixels(resolution()).height()/double(this->height());
 #else  
