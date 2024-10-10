@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2024-10-10 15:54:22 flechsig> 
+//  Time-stamp: <2024-10-10 16:02:58 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -2763,8 +2763,16 @@ void MainWindow::printMain()
   
   QPainter painter;
   painter.begin(&printer);
-  double xscale = printer.pageRect().width()/double(this->width());
+#if QT_VERSION >= 0x050300
+  double xscale = printer.pageLayout().paintRectPixels(resolution()).width()/double(this->width());
+  double yscale = printer.pageLayout().paintRectPixels(resolution()).height()/double(this->height());
+#else  
+  double xscale = printer.pageRect().width()/double(this->width());  // obsolete 2410
   double yscale = printer.pageRect().height()/double(this->height());
+#endif
+  
+
+  
   double scale = qMin(xscale, yscale);
   // deprecated 2021
   painter.translate(printer.paperRect().x() + printer.pageRect().width()/2,
