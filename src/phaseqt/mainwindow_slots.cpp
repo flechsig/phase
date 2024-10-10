@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2024-10-10 16:02:58 flechsig> 
+//  Time-stamp: <2024-10-10 16:24:18 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -2763,14 +2763,12 @@ void MainWindow::printMain()
   
   QPainter painter;
   painter.begin(&printer);
-#if QT_VERSION >= 0x050300
-  double xscale = printer.pageLayout().paintRectPixels(resolution()).width()/double(this->width());
-  double yscale = printer.pageLayout().paintRectPixels(resolution()).height()/double(this->height());
+#if QT_VERSION >= 0x06
+  //  double xscale = printer.pageLayout().paintRectPixels(resolution()).width()/double(this->width());
+  //  double yscale = printer.pageLayout().paintRectPixels(resolution()).height()/double(this->height());
 #else  
   double xscale = printer.pageRect().width()/double(this->width());  // obsolete 2410
   double yscale = printer.pageRect().height()/double(this->height());
-#endif
-  
 
   
   double scale = qMin(xscale, yscale);
@@ -2782,6 +2780,7 @@ void MainWindow::printMain()
     pageLayout().fullRectPixels(resolution()).y() + pageLayout().fullRectPixels(resolution()).height()/2);*/
   painter.scale(scale, scale);
   painter.translate(-width()/2, -height()/2);
+#endif
   
   this->render( &painter );
    
