@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/qtgui/mainwindow.cpp
 //  Date      : <31 May 11 17:02:14 flechsig> 
-//  Time-stamp: <2024-10-10 16:51:26 flechsig> 
+//  Time-stamp: <2024-10-10 17:00:35 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -62,11 +62,8 @@ MainWindow::MainWindow(PhaseQt *parent, const int numthreads)
 {
   int x, y;
 #if QT_VERSION >= 0x06
-  QGuiApplication dw;
-  QScreen *ps = dw.primaryScreen();
-  QRect qr = ps->geometry();
-  screenx = qr.width();
-  screeny = qr.height();
+  screenx = QGuiApplication::primaryScreen()->geometry().width();
+  screeny = QGuiApplication::primaryScreen()->geometry().height();
 #else  
   QDesktopWidget dw;
   screenx= dw.width();
