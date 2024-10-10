@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2024-10-10 15:52:46 flechsig> 
+//  Time-stamp: <2024-10-10 15:54:22 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -2742,7 +2742,7 @@ void MainWindow::printMain()
     printer.setOrientation( QPrinter::Landscape );
 #endif  
   
-  printer.setPageSize(QPageSize::A4)
+  printer.setPageSize(QPageSize::A4);
   printer.setColorMode(QPrinter::Color);
   printer.setOutputFileName(QString(tr(name) + ".pdf")); // default: is $HOME/print.pdf
 
