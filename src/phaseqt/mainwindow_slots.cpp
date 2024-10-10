@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/mainwindow_slots.cpp
 //  Date      : <09 Sep 11 15:22:29 flechsig> 
-//  Time-stamp: <2023-09-12 10:44:05 flechsig> 
+//  Time-stamp: <2024-10-10 15:47:00 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 //
 // ******************************************************************************
@@ -2695,7 +2695,8 @@ void MainWindow::print()
 
     QPrinter printer(QPrinter::HighResolution);
     printer.setCreator( "phaseqt" );
-    printer.setPaperSize(QPrinter::A4);
+    // UF 2410printer.setPaperSize(QPrinter::A4);
+    printer.setPageSize(QPrinter::A4);
 #if QT_VERSION >= 0x050300    
     printer.setPageOrientation(QPageLayout::Landscape); 
 #else
