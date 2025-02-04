@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2023-08-10 08:19:46 flechsig>  */
+/*  Time-stamp: <2025-02-04 14:47:54 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -77,12 +77,17 @@ void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
 void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 {
   hid_t attr_id, dataspace_id, type_id;
+  //int err;
   
 #ifdef DEBUG1
   printf("add attribute %s to dataset_id %d, content= %s\n", aname, dataset_id, content);
 #endif
 
   type_id= H5Tcopy (H5T_C_S1);
+  //err= H5Tset_cset(type_id, H5T_CSET_UTF8);   // UF 2025
+  //err= H5Tset_size(type_id, 8);
+  //if (err)
+  //fprintf(stderr, "error in add_string_attribute_d\n");
   //H5Tset_size(type_id, H5T_VARIABLE); does not work
   H5Tset_size(type_id, strlen(content)+1); 
   dataspace_id= H5Screate(H5S_SCALAR);
@@ -96,7 +101,7 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 /* add unit attribute */
 void add_unit(hid_t dataset_id, char *content)
 {
-  add_string_attribute_d(dataset_id, "unit", content);
+  add_string_attribute_d(dataset_id, "units", content);
 }  /* add_unit */
 
 // check existence of a field 
