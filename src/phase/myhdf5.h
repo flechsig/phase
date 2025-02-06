@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myhdf5.h */
 /*  Date      : <20 Mar 13 16:46:54 flechsig>  */
-/*  Time-stamp: <2023-08-10 07:49:58 flechsig>  */
+/*  Time-stamp: <2025-02-06 17:16:06 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 //
 // ******************************************************************************
@@ -41,6 +41,8 @@
 
 void  add_desc(hid_t, char *);
 void  add_string_attribute_f(hid_t, char *, char *, char *);
+void  add_double_attribute_d(hid_t, char *, double);
+void  add_int_attribute_d(hid_t, char *, int);
 void  add_string_attribute_d(hid_t, char *, char *);
 void  add_unit(hid_t, char *);
 int   check4Field(hid_t, char *, char *);

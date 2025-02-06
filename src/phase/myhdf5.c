@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2025-02-04 14:47:54 flechsig>  */
+/*  Time-stamp: <2025-02-06 17:27:00 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -73,7 +73,40 @@ void add_string_attribute_f(hid_t fid, char *gname, char *aname, char *content)
   H5Gclose(group_id);
 } /* add_attribute */
 
-/* add a string attribute to an open dataset     */
+/* add a double attribute to an open dataset     */
+void add_double_attribute_d(hid_t dataset_id, char *aname, double content)
+{
+  hid_t attr_id, dataspace_id;
+  //int err;
+  
+#ifdef DEBUG
+  printf("add attribute %s to dataset_id %d, content= %lf\n", aname, dataset_id, content);
+#endif
+
+  dataspace_id= H5Screate(H5S_SCALAR);   // a single value
+  attr_id= H5Acreate2(dataset_id, aname, H5T_NATIVE_DOUBLE, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
+  H5Awrite(attr_id, H5T_NATIVE_DOUBLE, &content); 
+  H5Aclose(attr_id);
+  H5Sclose(dataspace_id);
+} /* add_double_attribute_d */
+
+/* add a int attribute to an open dataset     */
+void add_int_attribute_d(hid_t dataset_id, char *aname, int content)
+{
+  hid_t attr_id, dataspace_id;
+  //int err;
+  
+#ifdef DEBUG
+  printf("add attribute %s to dataset_id %d, content= %lf\n", aname, dataset_id, content);
+#endif
+
+  dataspace_id= H5Screate(H5S_SCALAR);   // a single value
+  attr_id= H5Acreate2(dataset_id, aname, H5T_NATIVE_INT, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
+  H5Awrite(attr_id, H5T_NATIVE_INT, &content); 
+  H5Aclose(attr_id);
+  H5Sclose(dataspace_id);
+} /* add_double_attribute_d */
+
 void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 {
   hid_t attr_id, dataspace_id, type_id;
@@ -83,7 +116,10 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
   printf("add attribute %s to dataset_id %d, content= %s\n", aname, dataset_id, content);
 #endif
 
-  type_id= H5Tcopy (H5T_C_S1);
+  type_id= H5Tcopy (H5T_C_S1);               // Copy string datatype
+  //H5Tset_size(type_id, H5T_VARIABLE);        // Set variable-length string
+  //H5Tset_cset(type_id, H5T_CSET_UTF8);       // Set UTF-8 encoding
+  
   //err= H5Tset_cset(type_id, H5T_CSET_UTF8);   // UF 2025
   //err= H5Tset_size(type_id, 8);
   //if (err)
