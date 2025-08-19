@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/myhdf5.h */
 /*  Date      : <20 Mar 13 16:46:54 flechsig>  */
-/*  Time-stamp: <2025-02-06 17:16:06 flechsig>  */
+/*  Time-stamp: <2025-03-13 16:44:25 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 //
 // ******************************************************************************
@@ -40,6 +40,7 @@
    #include "hdf5.h"
 
 void  add_desc(hid_t, char *);
+void  add_long_name(hid_t, char *);
 void  add_string_attribute_f(hid_t, char *, char *, char *);
 void  add_double_attribute_d(hid_t, char *, double);
 void  add_int_attribute_d(hid_t, char *, int);
@@ -54,8 +55,12 @@ int   getDatasetSize(hid_t, char *);
 void  getUnit(hid_t, char *, char *);
 hid_t myH5Fopen(char *);
 void  writeDataDouble(hid_t, char *, double *, int, char *, char *);
+void  writeDataDouble25(hid_t, char *, double *, int, char *, char *, char *);
+void  writeDataDouble25md(hid_t, char *, double *, int, hsize_t *, char *, char *, char *); // multi dimensional
 void  writeDataInt(hid_t, char *, int *, int, char *, char *);
+void  writeDataIntmd(hid_t, char *, int *, int, hsize_t *, char *, char *);
 void  writeDataULong(hid_t, char *, unsigned long *, int, char *, char *);
+void  writeDataLong(hid_t, char *, long *, int, char *, char *);
 #endif
 
 #endif 

@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2025-02-06 17:27:00 flechsig>  */
+/*  Time-stamp: <2025-03-13 16:43:43 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -50,12 +50,25 @@
 #include "myhdf5.h"
 
 #ifdef HAVE_HDF5
-#include "hdf5.h"
+//#include "hdf5.h"
+#include <H5public.h>
+#include <H5Apublic.h>
+#include <H5Fpublic.h>
+#include <H5Tpublic.h>
+#include <H5Spublic.h>
+#include <H5Ppublic.h>
+#include <H5Gpublic.h>
 
 /* add description attribute */
 void add_desc(hid_t dataset_id, char *content)
 {
   add_string_attribute_d(dataset_id, "description", content);
+}  /* add_desc */
+
+/* add long_name attribute */
+void add_long_name(hid_t dataset_id, char *content)
+{
+  add_string_attribute_d(dataset_id, "long_name", content);
 }  /* add_desc */
 
 /* add variable length string attribute to any group in a open file  */
@@ -117,18 +130,12 @@ void add_string_attribute_d(hid_t dataset_id, char *aname, char *content)
 #endif
 
   type_id= H5Tcopy (H5T_C_S1);               // Copy string datatype
-  //H5Tset_size(type_id, H5T_VARIABLE);        // Set variable-length string
-  //H5Tset_cset(type_id, H5T_CSET_UTF8);       // Set UTF-8 encoding
+  H5Tset_size(type_id, H5T_VARIABLE);        // Set variable-length string
+  H5Tset_cset(type_id, H5T_CSET_UTF8);       // Set UTF-8 encoding
   
-  //err= H5Tset_cset(type_id, H5T_CSET_UTF8);   // UF 2025
-  //err= H5Tset_size(type_id, 8);
-  //if (err)
-  //fprintf(stderr, "error in add_string_attribute_d\n");
-  //H5Tset_size(type_id, H5T_VARIABLE); does not work
-  H5Tset_size(type_id, strlen(content)+1); 
   dataspace_id= H5Screate(H5S_SCALAR);
   attr_id= H5Acreate(dataset_id, aname, type_id, dataspace_id, H5P_DEFAULT, H5P_DEFAULT);  
-  H5Awrite(attr_id, type_id, content); 
+  H5Awrite(attr_id, type_id, &content); 
   H5Aclose(attr_id);
   H5Tclose(type_id);
   H5Sclose(dataspace_id);
@@ -286,12 +293,63 @@ void writeDataDouble(hid_t fid, char *name, double *data, int size, char *desc, 
   H5Sclose(dataspace_id);
 }
 
+void writeDataDouble25(hid_t fid, char *name, double *data, int size, char *desc, char *unit, char *long_name)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id, plist_dataset_id;
+  dims[0]=size;
+  dataspace_id=H5Screate_simple(1,dims,NULL);
+  plist_dataset_id = H5Pcreate(H5P_DATASET_CREATE);
+  H5Pset_attr_creation_order(plist_dataset_id, H5P_CRT_ORDER_TRACKED | H5P_CRT_ORDER_INDEXED);
+  dataset_id=H5Dcreate(fid,name,H5T_NATIVE_DOUBLE,dataspace_id,H5P_DEFAULT,plist_dataset_id,H5P_DEFAULT);
+  H5Dwrite(dataset_id,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
+  if (long_name) add_long_name(dataset_id, long_name);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+  H5Pclose(plist_dataset_id);
+}
+
+// multi dimensional version with rank and dims
+void writeDataDouble25md(hid_t fid, char *name, double *data, int rank, hsize_t *dims, char *desc, char *unit, char *long_name)
+{
+  //hsize_t dims[1];
+  hid_t dataspace_id, dataset_id, plist_dataset_id;
+  //dims[0]=size;
+  dataspace_id= H5Screate_simple(rank, dims, NULL);
+  plist_dataset_id= H5Pcreate(H5P_DATASET_CREATE);
+  H5Pset_attr_creation_order(plist_dataset_id, H5P_CRT_ORDER_TRACKED | H5P_CRT_ORDER_INDEXED);
+  dataset_id= H5Dcreate(fid, name, H5T_NATIVE_DOUBLE, dataspace_id, H5P_DEFAULT, plist_dataset_id, H5P_DEFAULT);
+  H5Dwrite(dataset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+  if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
+  if (long_name) add_long_name(dataset_id, long_name);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+  H5Pclose(plist_dataset_id);
+}
+
 void writeDataInt(hid_t fid, char *name, int *data, int size, char *desc, char *unit)
 {
   hsize_t dims[1];
   hid_t dataspace_id, dataset_id;
   dims[0]=size;
   dataspace_id=H5Screate_simple(1,dims,NULL);
+  dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
+  H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
+  if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+}
+
+void writeDataIntmd(hid_t fid, char *name, int *data, int rank, hsize_t *dims, char *desc, char *unit)
+{
+  //hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+  //dims[0]=size;
+  dataspace_id=H5Screate_simple(rank,dims,NULL);
   dataset_id=H5Dcreate(fid,name,H5T_NATIVE_INT,dataspace_id,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
   H5Dwrite(dataset_id,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,H5P_DEFAULT,data);
   if (desc) add_desc(dataset_id, desc);
@@ -308,6 +366,20 @@ void writeDataULong(hid_t fid, char *name, unsigned long *data, int size, char *
   dataspace_id= H5Screate_simple(1, dims, NULL);
   dataset_id=H5Dcreate(fid, name, H5T_NATIVE_ULONG, dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
   H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+  if (desc) add_desc(dataset_id, desc);
+  if (unit) add_unit(dataset_id, unit);
+  H5Dclose(dataset_id);
+  H5Sclose(dataspace_id);
+}
+
+void writeDataLong(hid_t fid, char *name, long *data, int size, char *desc, char *unit)
+{
+  hsize_t dims[1];
+  hid_t dataspace_id, dataset_id;
+  dims[0]= size;
+  dataspace_id= H5Screate_simple(1, dims, NULL);
+  dataset_id=H5Dcreate(fid, name, H5T_NATIVE_LONG, dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  H5Dwrite(dataset_id, H5T_NATIVE_LONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
   if (desc) add_desc(dataset_id, desc);
   if (unit) add_unit(dataset_id, unit);
   H5Dclose(dataset_id);
