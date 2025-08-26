@@ -1,6 +1,6 @@
  /* File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/common.h */
  /* Date      : <28 Aug 14 16:43:59 flechsig>  */
- /* Time-stamp: <28 Aug 14 16:47:14 flechsig>  */
+ /* Time-stamp: <2025-08-26 16:36:54 flechsig>  */
  /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
  /* $Source$  */
@@ -45,12 +45,14 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#if STDC_HEADERS
+/* obsolete UF 2508 */
+// strings.h is the BSD version
+// #if STDC_HEADERS
 #  include <stdlib.h>
 #  include <string.h>
-#elif HAVE_STRINGS_H
-#  include <strings.h>
-#endif /*STDC_HEADERS*/
+// #elif HAVE_STRINGS_H
+// #  include <strings.h>
+// #endif /*STDC_HEADERS*/
 
 #if HAVE_UNISTD_H
 #  include <unistd.h>

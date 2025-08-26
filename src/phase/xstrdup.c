@@ -27,11 +27,12 @@
 # endif
 #endif
 
-#if STDC_HEADERS || HAVE_STRING_H
+// obsolete UF 2508 #if STDC_HEADERS || HAVE_STRING_H
+// strings.h is BSD
 # include <string.h>
-#else
-# include <strings.h>
-#endif
+// #else
+// # include <strings.h>
+// #endif
 
 #include <sys/types.h>
 
