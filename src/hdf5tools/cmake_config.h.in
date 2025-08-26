@@ -1,0 +1,4 @@
+##example
+#cmakedefine HAVE_HDF5 @HDF5_FOUND@
+#cmakedefine HAVE_FEATURE_B @Feature_B_FOUND@
+#cmakedefine HAVE_FEATURE_BITS @B_BITSIZE@
