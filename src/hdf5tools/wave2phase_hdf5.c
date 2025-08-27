@@ -1,6 +1,6 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <2023-08-11 15:22:19 flechsig>  */
+/*  Time-stamp: <2025-08-27 16:17:05 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
 
 /*  $Source$  */
@@ -39,9 +39,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "hdf5.h"
 #include "common.h"
 #include "myhdf5.h"
+
 
 /*
 define a hdf5 data structure of phase source data

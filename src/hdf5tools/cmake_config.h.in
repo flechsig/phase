@@ -1,4 +1,7 @@
-##example
-#cmakedefine HAVE_HDF5 @HDF5_FOUND@
+// configure file template
+#cmakedefine HDF5_FOUND
+#ifdef HDF5_FOUND
+  #define HAVE_HDF5
+#endif
 #cmakedefine HAVE_FEATURE_B @Feature_B_FOUND@
 #cmakedefine HAVE_FEATURE_BITS @B_BITSIZE@
