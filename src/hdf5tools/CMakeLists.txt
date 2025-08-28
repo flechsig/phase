@@ -1,6 +1,6 @@
 # File      : CMakeLists.txt
 # Date      : <2025-08-13 15:17:26 flechsig> 
-# Time-stamp: <2025-08-28 16:05:58 flechsig> 
+# Time-stamp: <2025-08-28 16:17:30 flechsig> 
 # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
 #******************************************************************************
@@ -32,9 +32,9 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project( hdf5tools LANGUAGES C)
+project( hdf5tools LANGUAGES C CXX)
 
-INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase )  # config.h is in ${CMAKE_BINARY_DIR}
+INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase ../phaseqt )  # config.h is in ${CMAKE_BINARY_DIR}
 
 find_package(HDF5) # sets HDF5_FOUND
 
@@ -43,6 +43,7 @@ add_compile_definitions(HAVE_CONFIG_H)           # use config should be optional
 
 set(AUX_FILES  ../phase/error.c  ../phase/xmalloc.c ../phase/xstrdup.c )
 
+add_executable(add_phaseu_2h5     ${AUX_FILES} ../phase/myhdf5.c ../phaseqt/unwrap_phase.cpp add_phaseu_2h5.c )
 add_executable(genesis2phase_hdf5 ${AUX_FILES} genesis2phase_hdf5.c )
 add_executable(genesis_hdf5_2wave ${AUX_FILES} genesis_hdf5_2wave.c )
 add_executable(phase_hdf5_2wave   ${AUX_FILES} ../phase/myhdf5.c phase_hdf5_2wave.c )
@@ -50,6 +51,7 @@ add_executable(txtlog2phase_hdf5  ${AUX_FILES} ../phase/myhdf5.c txtlog2phase_hd
 add_executable(wave2genesis_hdf5  ${AUX_FILES} wave2genesis_hdf5.c )
 add_executable(wave2phase_hdf5    ${AUX_FILES} ../phase/myhdf5.c wave2phase_hdf5.c )
 
+TARGET_LINK_LIBRARIES(add_phaseu_2h5     PRIVATE HDF5::HDF5 m)
 TARGET_LINK_LIBRARIES(genesis2phase_hdf5 PRIVATE HDF5::HDF5)
 TARGET_LINK_LIBRARIES(genesis_hdf5_2wave PRIVATE HDF5::HDF5 m)
 TARGET_LINK_LIBRARIES(phase_hdf5_2wave   PRIVATE HDF5::HDF5)
