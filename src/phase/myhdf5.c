@@ -1,16 +1,11 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/phase/src/phase/posrc.c */
 /*  Date      : <23 Apr 12 10:44:55 flechsig>  */
-/*  Time-stamp: <2025-03-13 16:43:43 flechsig>  */
+/*  Time-stamp: <2025-08-28 15:08:35 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */ 
-/*  $Author$  */
-
+//
 // ******************************************************************************
 //
-//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//   Copyright (C) 2014, 2025 Helmholtz-Zentrum Berlin, Germany and 
 //                      Paul Scherrer Institut Villigen, Switzerland
 //   
 //   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de

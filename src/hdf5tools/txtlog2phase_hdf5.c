@@ -1,16 +1,11 @@
 /* File      : /afs/psi.ch/user/f/flechsig/phase/src/hdf5tools/txtlog2phase_hdf5.c */
 /* Date      : <22 May 15 10:36:12 flechsig>  */
-/* Time-stamp: <2023-08-11 15:24:04 flechsig>  */
+/* Time-stamp: <2025-08-28 16:02:18 flechsig>  */
 /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/* $Source$  */
-/* $Date$ */
-/* $Revision$  */
-/* $Author$  */
-
+//
 // ******************************************************************************
 //
-//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//   Copyright (C) 2014, 2025 Helmholtz-Zentrum Berlin, Germany and 
 //                      Paul Scherrer Institut Villigen, Switzerland
 //   
 //   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
@@ -38,6 +33,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+  #include "config.h"
+#endif
 
 #include "hdf5.h"
 #include "common.h"

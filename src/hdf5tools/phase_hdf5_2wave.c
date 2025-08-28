@@ -1,17 +1,11 @@
- /* File      : /afs/psi.ch/project/phase/GIT/phase/src/hdf5tools/phase2wave.c */
- /* Date      : <11 Sep 14 15:27:35 flechsig>  */
- /* Time-stamp: <11 Sep 14 16:24:07 flechsig>  */
- /* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
- /* $Source$  */
- /* $Date$ */
- /* $Revision$  */
- /* $Author$  */
-
-
+/* File      : /afs/psi.ch/project/phase/GIT/phase/src/hdf5tools/phase2wave.c */
+/* Date      : <11 Sep 14 15:27:35 flechsig>  */
+/* Time-stamp: <2025-08-28 15:59:58 flechsig>  */
+/* Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
+//
 // ******************************************************************************
 //
-//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//   Copyright (C) 2014, 2025 Helmholtz-Zentrum Berlin, Germany and 
 //                      Paul Scherrer Institut Villigen, Switzerland
 //   
 //   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
@@ -39,6 +33,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+  #include "config.h"
+#endif 
 
 #include "hdf5.h"
 #include "common.h"

@@ -1,16 +1,11 @@
 /*  File      : /afs/psi.ch/user/f/flechsig/c/source7/source7.c */
 /*  Date      : <27 Aug 12 15:44:49 flechsig>  */
-/*  Time-stamp: <01 Sep 14 12:25:35 flechsig>  */
+/*  Time-stamp: <2025-08-28 15:48:13 flechsig>  */
 /*  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104; */
-
-/*  $Source$  */
-/*  $Date$ */
-/*  $Revision$  */
-/*  $Author$  */
-
+//
 // ******************************************************************************
 //
-//   Copyright (C) 2014 Helmholtz-Zentrum Berlin, Germany and 
+//   Copyright (C) 2014, 2025 Helmholtz-Zentrum Berlin, Germany and 
 //                      Paul Scherrer Institut Villigen, Switzerland
 //   
 //   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
@@ -38,6 +33,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+  #include "config.h"
+#endif 
 
 #include "hdf5.h"
 #include "common.h"
