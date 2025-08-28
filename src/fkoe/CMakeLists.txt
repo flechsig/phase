@@ -1,6 +1,6 @@
 # File      : CMakeLists.txt
 # Date      : <2025-08-13 15:17:26 flechsig> 
-# Time-stamp: <2025-08-28 17:06:46 flechsig> 
+# Time-stamp: <2025-08-28 17:25:00 flechsig> 
 # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
 #******************************************************************************
@@ -48,4 +48,9 @@ add_executable(fkoe ${AUX_FILES} spa_check.F spa-check.cmn write_phase_hdf5.c my
 TARGET_LINK_LIBRARIES(fkoe PRIVATE HDF5::HDF5)
 set_target_properties(fkoe PROPERTIES LINKER_LANGUAGE C)
 
+#set (PAR_FILES fkoe.par gauss_beam.par mk_surf.par )
+#install_FILES(${CMAKE_BINARY_DIR} FILES  ${PAR_FILES} )
+configure_file(fkoe.par fkoe.par COPYONLY)
+configure_file(gauss_beam.par gauss_beam.par COPYONLY)
+configure_file(mk_surf.par mk_surf.par COPYONLY)
 # end file
