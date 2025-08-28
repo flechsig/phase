@@ -1,6 +1,6 @@
 # File      : CMakeLists.txt
 # Date      : <2025-08-13 15:17:26 flechsig> 
-# Time-stamp: <2025-08-28 16:17:30 flechsig> 
+# Time-stamp: <2025-08-28 16:20:20 flechsig> 
 # Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
 
 #******************************************************************************
@@ -34,7 +34,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project( hdf5tools LANGUAGES C CXX)
 
-INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase ../phaseqt )  # config.h is in ${CMAKE_BINARY_DIR}
+INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase )  # config.h is in ${CMAKE_BINARY_DIR}
 
 find_package(HDF5) # sets HDF5_FOUND
 
