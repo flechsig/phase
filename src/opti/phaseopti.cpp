@@ -1,6 +1,6 @@
 //  File      : /afs/psi.ch/user/f/flechsig/phase/src/opti_root/opti_root.cpp
 //  Date      : <28 Sep 12 14:29:13 flechsig> 
-//  Time-stamp: <01 Sep 14 14:25:07 flechsig> 
+//  Time-stamp: <2026-05-28 14:50:02 flechsig> 
 //  Author    : Uwe Flechsig, uwe.flechsig&#64;psi.&#99;&#104;
 
 //  $Source$ 
@@ -312,7 +312,7 @@ void SaveOptimizedBeamlineRoot(struct BeamlineType *bl, struct optistruct *os)
       if (listpt->MDat.Art == kEOEGeneral)   
 	{
 	  strcat(listpt->elementname, "-optimized");
-	  WriteMKos(&listpt->mir, listpt->elementname);
+	  WriteMKos(&listpt->mir, listpt->elementname, 0); //260528 add compact=0
 	}
       elnumber++; listpt++;
     }
