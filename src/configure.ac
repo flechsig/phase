@@ -1,6 +1,6 @@
 dnl   File      : /afs/psi.ch/user/f/flechsig/phase/src/configure.ac
 dnl   Date      : <11 Dec 03 13:59:53 flechsig> 
-dnl   Time-stamp: <2024-10-10 12:14:39 flechsig> 
+dnl   Time-stamp: <2026-05-28 15:16:34 flechsig> 
 dnl   Author    : Uwe Flechsig, flechsig@psi.ch
 dnl
 dnl ******************************************************************************
@@ -459,7 +459,7 @@ if test "$prefix" = "NONE" ; then
   if test "$atpsi" = "" ; then
      prefix="/usr/local"
   else
-     prefix="/afs/psi.ch/project/phase"
+     prefix="/psi.ch/project/optics/phase"
   fi
 fi
 
