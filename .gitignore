@@ -1,1 +1,29 @@
+# Editor / OS artifacts
 *~
+.DS_Store
+
+# CMake/Ninja/Make build artifacts
+/build/
+/src/build/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/install_manifest.txt
+/compile_commands.json
+/CTestTestfile.cmake
+/Testing/
+**/CMakeCache.txt
+**/CMakeFiles/
+**/cmake_install.cmake
+**/install_manifest.txt
+**/compile_commands.json
+**/CTestTestfile.cmake
+
+# Qt helper dir
+/.qt/
+
+# Runtime-generated local state
+/phase.pck
+
+# Local VSCode folders
+/src/.vscode/

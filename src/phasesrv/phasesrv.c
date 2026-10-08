@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
   int setupswitch, cmode, selected, iord, numthreads, format;
   struct BeamlineType Beamline;
   
+  memset(&Beamline, 0, sizeof(Beamline));  /* Beamline is on the stack: all pointers (e.g. spa3table.tab) must be NULL */
   Beamline.localalloc= DOALLOC;  /* phasesrv should reserve the memory */ 
   cmode= selected= iord= numthreads= format= 0;
   printf("phasesrv start\n");

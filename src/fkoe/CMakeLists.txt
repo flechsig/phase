@@ -34,7 +34,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project( fkoe LANGUAGES C Fortran)
 
-INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase )  # config.h is in ${CMAKE_BINARY_DIR}
+INCLUDE_DIRECTORIES ( ${CMAKE_CURRENT_BINARY_DIR} ../phase )  # config.h is in ${CMAKE_CURRENT_BINARY_DIR}
 
 find_package(HDF5) # sets HDF5_FOUND
 

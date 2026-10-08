@@ -1,28 +1,61 @@
-# File      : /afs/psi.ch/user/f/flechsig/phase/src/phaseqt/CMakeLists.txt
-# Date      : <2025-08-13 15:17:26 flechsig> 
-# Time-stamp: <2025-08-28 17:36:20 flechsig> 
-# Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
+# Standalone build of this module (as described in src/README.md, e.g.
+#   cmake -B . -S ../phasesrv):
+# delegate to the top-level project with only this module enabled.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND NOT PHASE_STANDALONE_DELEGATE)
+  cmake_minimum_required(VERSION 3.20)
+  project(phasesrv_standalone LANGUAGES NONE)
+  foreach(_m PHASEQT PHASESRV HDF5TOOLS FKOE OPTI BASELIB PHASELIB)
+    set(BUILD_${_m} OFF CACHE BOOL "" FORCE)
+  endforeach()
+  set(BUILD_PHASESRV ON CACHE BOOL "" FORCE)
+  set(PHASE_STANDALONE_DELEGATE ON)
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../.." "${CMAKE_BINARY_DIR}/phase")
+  return()
+endif()
 
-#
-cmake_minimum_required(VERSION 3.16)
-project(phasesrv LANGUAGES C Fortran )
-
-option(GRIDSIZE "define gridsize" 255)
-add_compile_definitions(GRIDSIZE=${GRIDSIZE})
-
-INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase )
-
-configure_file(cmake_config.h.in config.h @ONLY) # put it after all the search
-add_compile_definitions(HAVE_CONFIG_H)           # use config should be optional
-
-set(AUX_FILES  ../phase/error.c  ../phase/xmalloc.c ../phase/xstrdup.c ../phase/myhdf5.c )
-add_executable(phasesrv ${AUX_FILES}
-  phasesrv.c 
-  #../phase/bline.c      ../phase/cutils.c
-        ../phase/pst.c 
-  ../phase/phasec.c     ../phase/rtrace.c
-  
-  ../phase/drift_8.for  ../phase/elli_8.F
+add_executable(phasesrv
+  phasesrv.c
+  phasesrv.h
+  ../phase/bline.c
+  ../phase/cutils.c
+  ../phase/error.c
+  ../phase/pst.c
+  ../phase/phasec.c
+  ../phase/rtrace.c
+  ../phase/xmalloc.c
+  ../phase/xstrdup.c
+  ../phase/drift_8.for
+  ../phase/elli_8.F
+  ../phase/fdet_8.for
+  ../phase/phase_integration.F
+  ../phase/fgmapidp_8.F
+  ../phase/make_matrix_8.for
+  ../phase/rekursiv_2d_8.F
+  ../phase/phasefor.F
+  ../phase/get_partial_etc.for
+  ../phase/replace_6v4v.F
+  ../phase/replace_wl_in_u.F
+  ../phase/replace_wl_in_ypzp.F
+  ../phase/taylor-ops.for
+  ../phase/psdi.F
+  ../phase/heighterror.c
+  ../phase/heighterror.h
+  ../phase/myhdf5.c
+  ../phase/myhdf5.h
+  ../phase/myfftw3.c
+  ../phase/myfftw3.h
+  ../phase/posrc.c
+  ../phase/posrc.h
+  ../phase/pst_thread.c
+  ../phase/pst_thread.h
+  ../phase/reflectivity.c
+  ../phase/reflectivity.h
+  ../phase/spa_3rd_order.c
+  ../phase/spa_3rd_order.h
+  ../phase/src4.F
 )
-    
-TARGET_LINK_LIBRARIES(phasesrv m)
+
+target_compile_definitions(phasesrv PRIVATE NOGUI)
+target_link_libraries(phasesrv PRIVATE phase_common_flags phase_hdf5 phase_fftw3 phase_runtime phase_threads)
+
+install(TARGETS phasesrv RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

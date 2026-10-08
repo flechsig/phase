@@ -42,6 +42,7 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_marker.h>
+#include <QPen>
 
 class plot1D: public QwtPlotCurve
 {

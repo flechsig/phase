@@ -63,6 +63,7 @@ void     complex_div(COMPLEX *, COMPLEX *, COMPLEX *);
 void     complex_pow(COMPLEX *, double, COMPLEX *);
 int      fidx_mX4(int, int, int, int, int);
 int      fexists(char *); 
+int      phase_resolve_data_file(const char *, char *, int);
 double   uRandom(double);
 double   RVZ();   
    

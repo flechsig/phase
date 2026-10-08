@@ -55,6 +55,43 @@
    #include "myhdf5.h"
 #endif 
 
+static int posrc_resolve_input_path(const char *beamline, const char *name,
+                                    char *resolved, int resolved_len)
+{
+  const char *slash;
+
+  if ((name == NULL) || (resolved == NULL) || (resolved_len < 8) || (*name == '\0'))
+    return 0;
+
+  resolved[0]= '\0';
+
+  if (name[0] == '/')
+    {
+      snprintf(resolved, resolved_len, "%s", name);
+      return fexists(resolved);
+    }
+
+  snprintf(resolved, resolved_len, "%s", name);
+  if (fexists(resolved))
+    return 1;
+
+  if ((beamline == NULL) || (*beamline == '\0'))
+    return 0;
+
+  slash= strrchr(beamline, '/');
+  if (slash == NULL)
+    return 0;
+
+  if (slash == beamline)
+    snprintf(resolved, resolved_len, "/%s", name);
+  else
+    snprintf(resolved, resolved_len, "%.*s/%s", (int)(slash - beamline), beamline, name);
+
+  return fexists(resolved);
+}
+
+static FILE *posrc_fopen(struct BeamlineType *bl, char *name);
+
 /* allocate an existing pointer */
 void emf_construct(struct EmfType *emf, int cols, int rows)
 {
@@ -305,6 +342,7 @@ void gauss_source1c(struct BeamlineType *bl)
 int posrc_ini(struct BeamlineType *bl)
 {
   int type;
+  char resolved[MaxPathLength];
 
   if (bl->spa3table.tab == NULL) spa3TableInit(bl);
 #ifdef DEBUG1
@@ -327,7 +365,14 @@ int posrc_ini(struct BeamlineType *bl)
       break;
 #ifdef HAVE_HDF5
     case 7:
-      if (!fexists(bl->filenames.so7_hdf5)) return 0;
+      if (!posrc_resolve_input_path(bl->filenames.beamlinename, bl->filenames.so7_hdf5,
+                                    resolved, MaxPathLength))
+        {
+          fprintf(stderr, "error: PO source file not found: %s (beamline: %s)\n",
+                  bl->filenames.so7_hdf5, bl->filenames.beamlinename);
+          return 0;
+        }
+      snprintf(bl->filenames.so7_hdf5, MaxPathLength, "%s", resolved);
       if ( check_hdf5_type(bl->filenames.so7_hdf5, 7, ON) ) 
 	source7c_ini(bl, OFF);
       else 
@@ -535,19 +580,19 @@ int source4c_ini(struct BeamlineType *bl)
   
   myreturn= 0;
   /* open files, return if a file is not found */ 
-  if ((fa= posrc_fopen(bl->filenames.so4_fsource4a)) == NULL) return myreturn;
-  if ((fb= posrc_fopen(bl->filenames.so4_fsource4b)) == NULL) 
+  if ((fa= posrc_fopen(bl, bl->filenames.so4_fsource4a)) == NULL) return myreturn;
+  if ((fb= posrc_fopen(bl, bl->filenames.so4_fsource4b)) == NULL)
     {
       fclose(fa);               /* clean up- avoid memory leak */
       return myreturn;
     }
-  if ((fc= posrc_fopen(bl->filenames.so4_fsource4c)) == NULL) 
+  if ((fc= posrc_fopen(bl, bl->filenames.so4_fsource4c)) == NULL)
     {
       fclose(fa);       /* clean up- avoid memory leak */
       fclose(fb);       /* clean up- avoid memory leak */
       return myreturn;
     }
-  if ((fd= posrc_fopen(bl->filenames.so4_fsource4d)) == NULL) 
+  if ((fd= posrc_fopen(bl, bl->filenames.so4_fsource4d)) == NULL)
     {
       fclose(fa);    /* clean up- avoid memory leak */
       fclose(fb);    /* clean up- avoid memory leak */
@@ -1108,10 +1153,19 @@ void emfp_fill8(struct BeamlineType *bl, double *a, double *field, int imag, dou
 
 
 /* local fopen wrapper */
-FILE *posrc_fopen(char *name)
+static FILE *posrc_fopen(struct BeamlineType *bl, char *name)
 {
+  char resolved[MaxPathLength];
   FILE *fa;
 
+  if (!posrc_resolve_input_path(bl->filenames.beamlinename, name, resolved, MaxPathLength))
+    {
+      fprintf(stderr, "error: file: %s not found (beamline: %s) - return\n",
+              name, bl->filenames.beamlinename);
+      return NULL;
+    }
+
+  snprintf(name, MaxPathLength, "%s", resolved);
   fa= fopen(name, "r");
   if (fa == NULL) fprintf(stderr, "error: file: %s not found- return\n", name);
 

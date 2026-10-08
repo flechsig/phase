@@ -1,62 +1,78 @@
-# File      : CMakeLists.txt
-# Date      : <2025-08-13 15:17:26 flechsig> 
-# Time-stamp: <2025-08-28 16:20:20 flechsig> 
-# Author    : Flechsig Uwe, uwe.flechsig&#64;psi.&#99;&#104;
+# Standalone build of this module (as described in src/README.md, e.g.
+#   cmake -B . -S ../hdf5tools):
+# delegate to the top-level project with only this module enabled.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND NOT PHASE_STANDALONE_DELEGATE)
+  cmake_minimum_required(VERSION 3.20)
+  project(hdf5tools_standalone LANGUAGES NONE)
+  foreach(_m PHASEQT PHASESRV HDF5TOOLS FKOE OPTI BASELIB PHASELIB)
+    set(BUILD_${_m} OFF CACHE BOOL "" FORCE)
+  endforeach()
+  set(BUILD_HDF5TOOLS ON CACHE BOOL "" FORCE)
+  set(PHASE_STANDALONE_DELEGATE ON)
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../.." "${CMAKE_BINARY_DIR}/phase")
+  return()
+endif()
 
-#******************************************************************************
-#
-#   Copyright (C) 2025 Helmholtz-Zentrum Berlin, Germany and 
-#                      Paul Scherrer Institut Villigen, Switzerland
-#   
-#   Author Johannes Bahrdt, johannes.bahrdt@helmholtz-berlin.de
-#          Uwe Flechsig,    uwe.flechsig@psi.ch
-#
-# ------------------------------------------------------------------------------
-#
-#   This file is part of PHASE.
-#
-#   PHASE is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, version 3 of the License, or
-#   (at your option) any later version.
-#
-#   PHASE is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with PHASE (src/LICENSE).  If not, see <http://www.gnu.org/licenses/>. 
-#
-# ******************************************************************************
+set(PHASE_COMMON_SOURCES
+  ../phase/error.c
+  ../phase/xmalloc.c
+  ../phase/xstrdup.c
+)
 
-cmake_minimum_required(VERSION 3.16)
+add_executable(txtlog2phase_hdf5
+  txtlog2phase_hdf5.c
+  ${PHASE_COMMON_SOURCES}
+  ../phase/myhdf5.c
+)
 
-project( hdf5tools LANGUAGES C CXX)
+add_executable(add_phaseu_2h5
+  add_phaseu_2h5.c
+  ${PHASE_COMMON_SOURCES}
+  ../phase/myhdf5.c
+  ../phaseqt/unwrap_phase.cpp
+)
 
-INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR} ../phase )  # config.h is in ${CMAKE_BINARY_DIR}
+add_executable(wave2phase_hdf5
+  wave2phase_hdf5.c
+  ${PHASE_COMMON_SOURCES}
+  ../phase/myhdf5.c
+)
 
-find_package(HDF5) # sets HDF5_FOUND
+add_executable(genesis2phase_hdf5
+  genesis2phase_hdf5.c
+  ${PHASE_COMMON_SOURCES}
+)
 
-configure_file(cmake_config.h.in config.h @ONLY) # put it after all the search
-add_compile_definitions(HAVE_CONFIG_H)           # use config should be optional
+add_executable(wave2genesis_hdf5
+  wave2genesis_hdf5.c
+  ${PHASE_COMMON_SOURCES}
+)
 
-set(AUX_FILES  ../phase/error.c  ../phase/xmalloc.c ../phase/xstrdup.c )
+add_executable(genesis_hdf5_2wave
+  genesis_hdf5_2wave.c
+  ${PHASE_COMMON_SOURCES}
+)
 
-add_executable(add_phaseu_2h5     ${AUX_FILES} ../phase/myhdf5.c ../phaseqt/unwrap_phase.cpp add_phaseu_2h5.c )
-add_executable(genesis2phase_hdf5 ${AUX_FILES} genesis2phase_hdf5.c )
-add_executable(genesis_hdf5_2wave ${AUX_FILES} genesis_hdf5_2wave.c )
-add_executable(phase_hdf5_2wave   ${AUX_FILES} ../phase/myhdf5.c phase_hdf5_2wave.c )
-add_executable(txtlog2phase_hdf5  ${AUX_FILES} ../phase/myhdf5.c txtlog2phase_hdf5.c )
-add_executable(wave2genesis_hdf5  ${AUX_FILES} wave2genesis_hdf5.c )
-add_executable(wave2phase_hdf5    ${AUX_FILES} ../phase/myhdf5.c wave2phase_hdf5.c )
+add_executable(phase_hdf5_2wave
+  phase_hdf5_2wave.c
+  ${PHASE_COMMON_SOURCES}
+  ../phase/myhdf5.c
+)
 
-TARGET_LINK_LIBRARIES(add_phaseu_2h5     PRIVATE HDF5::HDF5 m)
-TARGET_LINK_LIBRARIES(genesis2phase_hdf5 PRIVATE HDF5::HDF5)
-TARGET_LINK_LIBRARIES(genesis_hdf5_2wave PRIVATE HDF5::HDF5 m)
-TARGET_LINK_LIBRARIES(phase_hdf5_2wave   PRIVATE HDF5::HDF5)
-TARGET_LINK_LIBRARIES(txtlog2phase_hdf5  PRIVATE HDF5::HDF5)
-TARGET_LINK_LIBRARIES(wave2genesis_hdf5  PRIVATE HDF5::HDF5)
-TARGET_LINK_LIBRARIES(wave2phase_hdf5    PRIVATE HDF5::HDF5)
+set(HDF5TOOLS_TARGETS
+  txtlog2phase_hdf5
+  add_phaseu_2h5
+  wave2phase_hdf5
+  genesis2phase_hdf5
+  wave2genesis_hdf5
+  genesis_hdf5_2wave
+  phase_hdf5_2wave
+)
 
-# end file
+foreach(prog IN LISTS HDF5TOOLS_TARGETS)
+  target_compile_definitions(${prog} PRIVATE NOGUI)
+  target_link_libraries(${prog} PRIVATE phase_common_flags phase_hdf5 m z)
+endforeach()
+
+install(TARGETS ${HDF5TOOLS_TARGETS} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ../phase/phase_struct.F README DESTINATION ${CMAKE_INSTALL_DATADIR}/hdf5tools)

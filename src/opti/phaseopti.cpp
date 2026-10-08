@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
   
   if (argc == 3)
     {
-      sscanf(argv[2], "%d", os->methode);
+      sscanf(argv[2], "%d", &os->methode);
       printf("take optimization methode from command line: %d\n", 
 	     os->methode);
     }
@@ -277,7 +277,8 @@ int main(int argc, char *argv[])
   SaveOptimizedBeamlineRoot(&Beamline, &optistructure);
   
   printf("================================== summary =========================================\n");
-  printf("calculation time:                             %d:%d:%d (h:m:s)\n", h, m, s);
+  printf("calculation time:                             %ld:%ld:%ld (h:m:s)\n",
+         (long)h, (long)m, (long)s);
   printf("optimization results in file:                 %s\n",  os->resultfilename);
   printf("optimized beamline (phase input) in file:     %s\n",  os->optiblfilename);
   printf("chi with original parameter set               %g\n",  chistart);

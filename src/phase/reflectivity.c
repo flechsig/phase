@@ -92,7 +92,7 @@ void apply_reflectivity(struct BeamlineType *bl, double *eyre, double *eyim, dou
 
 int ReadHenke(char *element, double energy, double *f1, double *f2)
 {
-  char   tabname[MaxPathLength], buffer[MaxPathLength];
+  char   tabname[MaxPathLength], relname[MaxPathLength], buffer[MaxPathLength];
   FILE   *f;
   double e1, e2, f11, f12, f21, f22, de;
   int    found;
@@ -102,7 +102,12 @@ int ReadHenke(char *element, double energy, double *f1, double *f2)
 #endif
 
   *f1= *f2= -1;
-  snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/%s.f12\0", getenv("PHASE_HOME"), element);
+  snprintf(relname, (MaxPathLength- 1), "%s.f12", element);
+  if (!phase_resolve_data_file(relname, tabname, MaxPathLength))
+    {
+      fprintf(stderr, "error can't resolve Henke Table %s - return\n", relname);
+      return 0;
+    }
 
 #ifdef DEBUG1
   printf("debug: open table >>%s<<\n", tabname);
@@ -177,7 +182,11 @@ int ReadMaterial(char *element, int *z, double *a, double *rho)
 #endif
 
   *a= *rho= *z= -1;
-  snprintf(tabname, (MaxPathLength- 1), "%s/share/phase/rhoatom.dat\0", getenv("PHASE_HOME"));
+  if (!phase_resolve_data_file("rhoatom.dat", tabname, MaxPathLength))
+    {
+      fprintf(stderr, "error can't resolve Material Table rhoatom.dat - return\n");
+      return 0;
+    }
   if ((f= fopen(tabname, "r")) == NULL) 
     {
       fprintf(stderr, "error can't find Material Table %s - return\n", tabname);

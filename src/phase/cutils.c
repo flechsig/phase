@@ -44,6 +44,12 @@
 #include <stdlib.h>   
 #include <string.h>
 #include <time.h> 
+#include <limits.h>
+#include <unistd.h>
+#ifdef __APPLE__
+#include <stdint.h>
+#include <mach-o/dyld.h>
+#endif
 #include <math.h>
 
 #include "cutils.h"
@@ -165,6 +171,85 @@ int fexists(char *path)
       ex= 1; fclose(f);
     }  else ex= 0;
   return ex;
+}
+
+/* directory of the running executable (resolved), returns 1 on success */
+static int phase_exe_dir(char *dir, int dir_len)
+{
+  char path[PATH_MAX], real[PATH_MAX], *slash;
+
+#if defined(__APPLE__)
+  uint32_t size= sizeof(path);
+
+  if (_NSGetExecutablePath(path, &size) != 0) return 0;
+#elif defined(__linux__)
+  ssize_t n= readlink("/proc/self/exe", path, sizeof(path) - 1);
+
+  if (n <= 0) return 0;
+  path[n]= '\0';
+#else
+  return 0;
+#endif
+  if (realpath(path, real) == NULL) return 0;
+  if ((slash= strrchr(real, '/')) == NULL) return 0;
+  *slash= '\0';
+  snprintf(dir, dir_len, "%s", real);
+  return 1;
+}
+
+int phase_resolve_data_file(const char *name, char *resolved, int resolved_len)
+{
+  const char *phase_home;
+  char exedir[PATH_MAX];
+
+  if ((name == NULL) || (resolved == NULL) || (resolved_len < 8))
+    return 0;
+
+  resolved[0]= '\0';
+
+  phase_home= getenv("PHASE_HOME");
+  if ((phase_home != NULL) && (*phase_home != '\0'))
+    {
+      snprintf(resolved, resolved_len, "%s/share/phase/%s", phase_home, name);
+      if (fexists(resolved))
+        return 1;
+
+      snprintf(resolved, resolved_len, "%s/share/phaseqt/data/%s", phase_home, name);
+      if (fexists(resolved))
+        return 1;
+    }
+
+  /* installed layout without PHASE_HOME: <prefix>/bin/<exe>, <prefix>/share/phase/<file> */
+  if (phase_exe_dir(exedir, sizeof(exedir)))
+    {
+      snprintf(resolved, resolved_len, "%s/../share/phase/%s", exedir, name);
+      if (fexists(resolved))
+        return 1;
+
+      snprintf(resolved, resolved_len, "%s/../share/phaseqt/data/%s", exedir, name);
+      if (fexists(resolved))
+        return 1;
+    }
+
+#ifdef PHASE_SOURCE_TREE_DIR
+  if ((PHASE_SOURCE_TREE_DIR[0] != '\0'))
+    {
+      snprintf(resolved, resolved_len, "%s/src/data/%s", PHASE_SOURCE_TREE_DIR, name);
+      if (fexists(resolved))
+        return 1;
+
+      snprintf(resolved, resolved_len, "%s/src/data/henke/%s", PHASE_SOURCE_TREE_DIR, name);
+      if (fexists(resolved))
+        return 1;
+
+      snprintf(resolved, resolved_len, "%s/src/data/material/%s", PHASE_SOURCE_TREE_DIR, name);
+      if (fexists(resolved))
+        return 1;
+    }
+#endif
+
+  resolved[0]= '\0';
+  return 0;
 }
 
 /* calculates the index of a mX4 fortran- array */

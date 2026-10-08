@@ -106,21 +106,19 @@ void spa3TableInit(struct BeamlineType *bl)
   FILE   *f;
   int    version;
   unsigned int i, datapoints;
-  char   buffer[MaxPathLength], *phase_home, *ch;
+  char   buffer[MaxPathLength], *ch;
 
-  if ((phase_home = getenv(PHASE_HOME)) == NULL)
+  if (!phase_resolve_data_file("spa3table.tab", buffer, MaxPathLength))
     {
-      printf("\n:spa3TableInit environment variable %s not defined -- exit\n", PHASE_HOME);
+      printf("\n:spa3TableInit can not resolve spa3table.tab (set %s or install phase data)\n", PHASE_HOME);
       exit(-1);
-    } 
-
-  snprintf(buffer, (MaxPathLength-1), "%s/share/phase/spa3table.tab", phase_home);
+    }
   printf("read sp3table: %s\n", buffer);
   
   if ((f= fopen(buffer, "r")) == NULL)
     {
       fprintf(stderr, "fatal Error: read %s\n", buffer);
-      fprintf(stderr, "Hint: your current $PHASE_HOME is: %s and likely not correctly set to the phase version you are running\n", phase_home);
+      fprintf(stderr, "Hint: set %s or install phase data tables\n", PHASE_HOME);
       exit(-1);
     } 
   

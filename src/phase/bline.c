@@ -931,20 +931,25 @@ void LoadHorMaps(struct BeamlineType *bl, int dim)
 /***********************************************/  
 /* UF Jun 2011 umgeschrieben auf environment variable */
 {
-  char buffer[MaxPathLength], *phase_home;
-				
-  if ((phase_home = getenv(PHASE_HOME)) == NULL)
-    {
-      printf("\nLoadHorMaps: environment variable %s not defined -- exit\n", PHASE_HOME);
-      exit(-1);
-    } 
+  char buffer[MaxPathLength], relname[80];
 
-   snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_lh.omx", phase_home, dim);
-   printf("read hor. matrix: %s\n", buffer);
-   readmatrixfilec(buffer, (double *)bl->lmap, dim);    
-   snprintf(buffer, MaxPathLength, "%s/share/phase/map%d_rh.omx", phase_home, dim);
-   printf("read hor. matrix: %s\n", buffer);
-   readmatrixfilec(buffer, (double *)bl->rmap, dim); 
+  snprintf(relname, 80, "map%d_lh.omx", dim);
+  if (!phase_resolve_data_file(relname, buffer, MaxPathLength))
+    {
+      printf("\nLoadHorMaps: can not resolve %s (set %s or install phase data)\n", relname, PHASE_HOME);
+      exit(-1);
+    }
+  printf("read hor. matrix: %s\n", buffer);
+  readmatrixfilec(buffer, (double *)bl->lmap, dim);
+
+  snprintf(relname, 80, "map%d_rh.omx", dim);
+  if (!phase_resolve_data_file(relname, buffer, MaxPathLength))
+    {
+      printf("\nLoadHorMaps: can not resolve %s (set %s or install phase data)\n", relname, PHASE_HOME);
+      exit(-1);
+    }
+  printf("read hor. matrix: %s\n", buffer);
+  readmatrixfilec(buffer, (double *)bl->rmap, dim);
 } /* end LoadHorMaps */    
 
 void MakeMapandMatrix(struct ElementType *listpt, struct BeamlineType *bl, int *elindex)
@@ -3496,5 +3501,3 @@ void UpdateFlags(struct BeamlineType *bl, int run)
 } /*  UpdateFlags */
 
 /* end bline.c */
-
-

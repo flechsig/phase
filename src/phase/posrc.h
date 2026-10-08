@@ -61,7 +61,6 @@ struct EmfType *emfp_free(struct EmfType *);
 //void emfp_2_source4c(struct BeamlineType *);
 void gauss_source1c(struct BeamlineType *);
 
-FILE *posrc_fopen(char *);
 int  posrc_ini(struct BeamlineType *);
 
 int  source4c_ini(struct BeamlineType *);
