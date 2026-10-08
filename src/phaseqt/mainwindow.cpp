@@ -355,8 +355,12 @@ void MainWindow::createActions()
     //    signalMapper->setMapping(rthardedgeAct, QString("rthardedgeAct"));
     //    connect(mphasespaceAct, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    // finaly connect mapper to acticateProc
+    // finaly connect mapper to activateProc
+#if QT_VERSION >= 0x060000
+    connect(signalMapper, SIGNAL(mappedString(QString)), this, SLOT(activateProc(QString)));
+#else
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
+#endif
 } // createActions
 
 
@@ -597,7 +601,11 @@ QWidget *MainWindow::createGraphicBox()
 
   popupButton->setMenu(plotstyleMenu);
   grsignalMapper = new QSignalMapper(this);
+#if QT_VERSION >= 0x060000
+  connect(grsignalMapper, SIGNAL(mappedString(QString)), this, SLOT(activateProc(QString)));
+#else
   connect(grsignalMapper, SIGNAL(mapped(QString)), this, SLOT(activateProc(QString)));
+#endif
 
   connect(grscatterAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));
   connect(grcontourAct,    SIGNAL(triggered()), grsignalMapper, SLOT(map()));

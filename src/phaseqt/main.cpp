@@ -31,12 +31,56 @@
 // ******************************************************************************
 
 #include <QApplication>
+#include <QDir>
+#include <QFileInfo>
+#include <QLocale>
 #include <QMessageBox>
+#include <QStringList>
+#include <clocale>
 
 #include "mainwindow.h"
 #include "phaseqt.h"
 
 using namespace std;
+
+static void ensurePhaseHome()
+{
+  QByteArray phaseHome= qgetenv(PHASE_HOME);
+  if (!phaseHome.isEmpty())
+    return;
+
+  QString appDir= QCoreApplication::applicationDirPath();
+  QStringList candidates;
+  candidates << QDir(appDir).absoluteFilePath("..")
+             << QDir(appDir).absoluteFilePath("../..");
+#ifdef PHASE_SOURCE_TREE_DIR
+  candidates << QString::fromLocal8Bit(PHASE_SOURCE_TREE_DIR);
+#endif
+
+  for (const QString &candidate : candidates)
+    {
+      QDir cdir(candidate);
+      if (QFileInfo::exists(cdir.filePath("share/phase")) ||
+          QFileInfo::exists(cdir.filePath("share/phaseqt/data")) ||
+          QFileInfo::exists(cdir.filePath("src/data")))
+        {
+          QByteArray bytes= candidate.toLocal8Bit();
+          if (qputenv(PHASE_HOME, bytes))
+            cout << "PHASE_HOME not set, using " << bytes.constData() << endl;
+          break;
+        }
+    }
+}
+
+static void forceNumericCDecimal()
+{
+  // Ensure all C stdio/scanner operations use '.' as decimal separator.
+  if (setlocale(LC_NUMERIC, "C") == NULL)
+    cout << "warning: failed to set LC_NUMERIC to C locale" << endl;
+
+  // Keep Qt numeric conversions/widgets aligned with decimal point '.'
+  QLocale::setDefault(QLocale::c());
+}
 
 // dummy function to test threads
 // it must be a function- no member methode
@@ -54,6 +98,8 @@ int main(int argc, char *argv[])
 {
   int setupswitch, cmode, selected, iord, numthreads, format; 
   QApplication app(argc, argv);
+  forceNumericCDecimal();
+  ensurePhaseHome();
   Q_INIT_RESOURCE(phaseqt);
   PhaseQt myphaseQt;                   // create the object on the stack
 

@@ -545,15 +545,47 @@ void InitPHASE(struct PHASEset *x)                   /* set defaults */
 void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 {                              
   FILE *f;
+  const char *writename;
+  char fallbackname[2 * MaxPathLength];
   int version= 20121105; /* 20110814; */
 
   printf("putphase: write filename(s) to %s\n", mainpickname);
 
-  if ((f= fopen(mainpickname, "w")) == NULL)
+  writename= mainpickname;
+  f= fopen(writename, "w");
+
+  if (f == NULL)
     {
-      fprintf(stderr,"\afatal Error: write %s\n", mainpickname);
-      exit(-1);
-    } else 
+      const char *home;
+      const char *basename;
+      const char *slash;
+
+      home= getenv("HOME");
+      basename= mainpickname;
+      slash= strrchr(mainpickname, '/');
+      if ((slash != NULL) && (*(slash + 1) != '\0'))
+        basename= slash + 1;
+
+      if ((home != NULL) && (*home != '\0'))
+        {
+          snprintf(fallbackname, sizeof(fallbackname), "%s/%s", home, basename);
+          f= fopen(fallbackname, "w");
+          if (f != NULL)
+            {
+              writename= fallbackname;
+              fprintf(stderr, "warning: cannot write %s - using %s\n",
+                      mainpickname, writename);
+            }
+        }
+    }
+
+  if (f == NULL)
+    {
+      fprintf(stderr, "warning: cannot write %s - settings are not saved\n",
+              mainpickname);
+      return;
+    }
+  else 
       {
 	fprintf(f,"%s %d\n", MainPickFileHeader, version);
 #ifdef before_20110814
@@ -583,6 +615,7 @@ void PutPHASE(struct PHASEset *x, char *mainpickname)  /* write mainpickfile */
 	//fprintf(f,"%s\n", x->minname);
 #endif
        	fclose(f);  
+        printf("putphase: wrote filename(s) to %s\n", writename);
       }
 }    /* end putphase */	
 
@@ -1092,15 +1125,34 @@ void initdatset(struct datset *x, struct BeamlineType *bl)
 int StackTest()
 {
   struct rlimit rls;
+  struct rlimit newrls;
   double mywarning= 100e6;
-      
-  getrlimit(RLIMIT_STACK, &rls);
+
+  if (getrlimit(RLIMIT_STACK, &rls) != 0) return 1;
+
+  if (((double)rls.rlim_cur < mywarning) &&
+      (rls.rlim_max != RLIM_INFINITY) &&
+      (rls.rlim_max > rls.rlim_cur))
+    {
+      newrls= rls;
+      newrls.rlim_cur= rls.rlim_max;
+      if (setrlimit(RLIMIT_STACK, &newrls) == 0)
+        getrlimit(RLIMIT_STACK, &rls);
+    }
  
   printf("StackTest- limits: rlim_cur: %f Mb, rlim_max: %ld byte\n", 
 	 rls.rlim_cur* 1e-6, rls.rlim_max);
 
   if ((double)rls.rlim_cur < mywarning)
     {
+      if ((rls.rlim_max != RLIM_INFINITY) && (rls.rlim_cur >= rls.rlim_max))
+        {
+          printf("\n");
+          printf("!!!!!!!!!!!!!\n");
+          printf("!! warning !! -- stacksize below historic 100Mb recommendation\n");
+          printf("!!!!!!!!!!!!!    using system maximum stacksize and continuing\n\n");
+          return 1;
+        }
       printf("\n");
       printf("!!!!!!!!!!!!!\n");
       printf("!! warning !! -- stacksize is likely too low to run phase !!\n");

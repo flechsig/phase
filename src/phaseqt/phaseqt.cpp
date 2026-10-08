@@ -130,42 +130,72 @@ void PhaseQt::buildElement(struct ElementType *listpt)
 // removes a possible extension
 void PhaseQt::initSet(const char *fname, const int all)
 {
-  char name0[MaxPathLength], *name, *ch;
-  strncpy(name0, fname, MaxPathLength);
-  //  FnameBody(name);
+  char path[MaxPathLength], name[MaxPathLength], stem[MaxPathLength];
+  char dirname[MaxPathLength], prefix[MaxPathLength];
+  const char *input, *slash;
+  char *ch;
 
-  name= basename(name0);                            // remove path
-  if ((ch= strrchr(name, '.')) != NULL) *ch= '\0';  // remove extension
+  input= ((fname != NULL) && (*fname != '\0')) ? fname : "default.phase";
+  snprintf(path, MaxPathLength, "%s", input);
+
+  dirname[0]= '\0';
+  name[0]= '\0';
+  slash= strrchr(path, '/');
+  if (slash != NULL)
+    {
+      size_t dirlen= (size_t)(slash - path);
+      if (dirlen == 0)
+        snprintf(dirname, MaxPathLength, "/");
+      else
+        snprintf(dirname, MaxPathLength, "%.*s", (int)dirlen, path);
+      snprintf(name, MaxPathLength, "%s", slash + 1);
+    }
+  else
+    {
+      snprintf(name, MaxPathLength, "%s", path);
+    }
+
+  if (name[0] == '\0') snprintf(name, MaxPathLength, "default.phase");
+  snprintf(stem, MaxPathLength, "%s", name);
+  if ((ch= strrchr(stem, '.')) != NULL) *ch= '\0';  // remove extension
+  if (stem[0] == '\0') snprintf(stem, MaxPathLength, "default");
+
+  if ((dirname[0] == '\0') || (strcmp(dirname, ".") == 0))
+    snprintf(prefix, MaxPathLength, "%s", stem);
+  else if (strcmp(dirname, "/") == 0)
+    snprintf(prefix, MaxPathLength, "/%s", stem);
+  else
+    snprintf(prefix, MaxPathLength, "%s/%s", dirname, stem);
 
 #ifdef DEBUG
   OUTDBG("PhaseQt::initSet called, all= " << all); 
 #endif
 
-  snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", name, "omx");
-  snprintf(this->filenames.mapname,         MaxPathLength, "%s.%s", name, "map");
-  if (all) snprintf(this->filenames.sourceraysname,  MaxPathLength, "%s.%s", name, "inp"); 
-  snprintf(this->filenames.imageraysname,   MaxPathLength, "%s.%s", name, "out");	  
-  snprintf(this->filenames.intersecname,    MaxPathLength, "%s.%s", name, "isec");	  
-  snprintf(this->filenames.geometryname,    MaxPathLength, "%s.%s", name, "datg"); 
-  snprintf(this->filenames.elementname,     MaxPathLength, "%s.%s", name, "date");	  
-  snprintf(this->filenames.sourcepckname,   MaxPathLength, "%s.%s", name, "pcks"); 
-  snprintf(this->filenames.geometrypckname, MaxPathLength, "%s.%s", name, "pckg"); 
-  snprintf(this->filenames.elementpckname,  MaxPathLength, "%s.%s", name, "pcke"); 
-  if (all) snprintf(this->filenames.pssourcename,    MaxPathLength, "%s.%s", name, "pss"); 
-  snprintf(this->filenames.plotpsname,      MaxPathLength, "%s.%s", name, "ps");	  
-  snprintf(this->filenames.printpclname,    MaxPathLength, "%s.%s", name, "pcl"); 
-  snprintf(this->filenames.optipckname,     MaxPathLength, "%s.%s", name, "pcko"); 
-  snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", name, "phase");
+  snprintf(this->filenames.matrixname,      MaxPathLength, "%s.%s", prefix, "omx");
+  snprintf(this->filenames.mapname,         MaxPathLength, "%s.%s", prefix, "map");
+  if (all) snprintf(this->filenames.sourceraysname,  MaxPathLength, "%s.%s", prefix, "inp"); 
+  snprintf(this->filenames.imageraysname,   MaxPathLength, "%s.%s", prefix, "out");	  
+  snprintf(this->filenames.intersecname,    MaxPathLength, "%s.%s", prefix, "isec");	  
+  snprintf(this->filenames.geometryname,    MaxPathLength, "%s.%s", prefix, "datg"); 
+  snprintf(this->filenames.elementname,     MaxPathLength, "%s.%s", prefix, "date");	  
+  snprintf(this->filenames.sourcepckname,   MaxPathLength, "%s.%s", prefix, "pcks"); 
+  snprintf(this->filenames.geometrypckname, MaxPathLength, "%s.%s", prefix, "pckg"); 
+  snprintf(this->filenames.elementpckname,  MaxPathLength, "%s.%s", prefix, "pcke"); 
+  if (all) snprintf(this->filenames.pssourcename,    MaxPathLength, "%s.%s", prefix, "pss"); 
+  snprintf(this->filenames.plotpsname,      MaxPathLength, "%s.%s", prefix, "ps");	  
+  snprintf(this->filenames.printpclname,    MaxPathLength, "%s.%s", prefix, "pcl"); 
+  snprintf(this->filenames.optipckname,     MaxPathLength, "%s.%s", prefix, "pcko"); 
+  snprintf(this->filenames.beamlinename,    MaxPathLength, "%s.%s", prefix, "phase");
   //snprintf(this->filenames.beamlinename,    MaxPathLength, "%s", name0);  
-  if (all) snprintf(this->filenames.so4_fsource4a,   MaxPathLength, "%s.%s", name, "s4a");	  
-  if (all) snprintf(this->filenames.so4_fsource4b,   MaxPathLength, "%s.%s", name, "s4b");	  
-  if (all) snprintf(this->filenames.so4_fsource4c,   MaxPathLength, "%s.%s", name, "s4c");	  
-  if (all) snprintf(this->filenames.so4_fsource4d,   MaxPathLength, "%s.%s", name, "s4d");	  
-  if (all) snprintf(this->filenames.so6_fsource6,    MaxPathLength, "%s.%s", name, "s6");
-  if (all) snprintf(this->filenames.so7_hdf5,        MaxPathLength, "%s.%s", name, "h5");
-  snprintf(this->filenames.hdf5_out,        MaxPathLength, "%s_out.%s", name, "h5");
-  snprintf(this->filenames.h5surfacename,   MaxPathLength, "%s_surf_err.%s", name, "h5");
-  snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", name, "opti");
+  if (all) snprintf(this->filenames.so4_fsource4a,   MaxPathLength, "%s.%s", prefix, "s4a");	  
+  if (all) snprintf(this->filenames.so4_fsource4b,   MaxPathLength, "%s.%s", prefix, "s4b");	  
+  if (all) snprintf(this->filenames.so4_fsource4c,   MaxPathLength, "%s.%s", prefix, "s4c");	  
+  if (all) snprintf(this->filenames.so4_fsource4d,   MaxPathLength, "%s.%s", prefix, "s4d");	  
+  if (all) snprintf(this->filenames.so6_fsource6,    MaxPathLength, "%s.%s", prefix, "s6");
+  if (all) snprintf(this->filenames.so7_hdf5,        MaxPathLength, "%s.%s", prefix, "h5");
+  snprintf(this->filenames.hdf5_out,        MaxPathLength, "%s_out.%s", prefix, "h5");
+  snprintf(this->filenames.h5surfacename,   MaxPathLength, "%s_surf_err.%s", prefix, "h5");
+  snprintf(this->filenames.opresname,       MaxPathLength, "%s.%s", prefix, "opti");
 
   //this->printSet();	  
 } // initSet
